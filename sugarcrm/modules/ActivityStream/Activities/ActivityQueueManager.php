@@ -27,6 +27,7 @@ class ActivityQueueManager
     public static $linkDupeCheck = array();
     public static $moduleBlacklist = array('OAuthTokens', 'SchedulersJobs', 'Activities', 'vCals', 'KBContents',
         'Forecasts', 'ForecastWorksheets', 'ForecastManagerWorksheets', 'Notifications',
+        'Quotes', //Quotes should not allow admin to enable activities until Quotes are converted to sidecar
         // BEGIN SUGARCRM flav=pro && flav!=ent ONLY
         'RevenueLineItems',
         // END SUGARCRM flav=pro && flav!=ent ONLY
@@ -42,10 +43,10 @@ class ActivityQueueManager
      */
     public function eventDispatcher(SugarBean $bean, $event, $args)
     {
-        if ($this->isActivityStreamEnabled()) {
+        if (Activity::isEnabled()) {
             $activity       = BeanFactory::getBean('Activities');
             $eventTriggered = false;
-            if ($event == 'after_save' && self::isAuditable($bean)) {
+            if ($event == 'after_save' && self::isEnabledForModule($bean->module_name)) {
                 $eventTriggered = $this->createOrUpdate($bean, $args, $activity);
             } elseif ($event == 'after_relationship_add' && $this->isValidLink($args)) {
                 $eventTriggered = $this->link($args, $activity);
@@ -64,43 +65,24 @@ class ActivityQueueManager
     }
 
     /**
-     * Checks whether a module has activity stream enabled
-     * @param $moduleName
+     * Checks whether a specific module is activity enabled
+     * Does not verify whether activities are enabled across the app
+     * Use Activity::isEnabled() to check activity status across the app
      *
-     * @return bool
+     * @param $moduleName
+     * @return bool returns true if bean exists and both audit and activity enabled
      */
     public static function isEnabledForModule($moduleName)
     {
-        $isEnabled = false;
-        $bean = BeanFactory::getBean($moduleName);
-
-        if ($bean) {
-            // TODO: Don't special case the 'installing' case. This can be
-            // removed when we don't need to disable the activity stream when
-            // installing. ETA: SugarCore 7.1, see MAR-1314.
-            $isEnabled = (!empty($GLOBALS['installing']) || self::isActivityStreamEnabled()) && self::isAuditable($bean);
-        }
-        return $isEnabled;
-    }
-
-    protected static function isAuditable(SugarBean $bean)
-    {
-        if (in_array($bean->module_name, self::$moduleBlacklist)) {
+        if (in_array($moduleName, self::$moduleBlacklist)) {
             return false;
         }
-        if (in_array($bean->module_name, self::$moduleWhitelist)) {
+        if (in_array($moduleName, self::$moduleWhitelist)) {
             return true;
         }
-        return $bean->is_AuditEnabled();
-    }
 
-    /**
-     * Determines whether Activity Streams is enabled
-     * @return bool
-     */
-    protected function isActivityStreamEnabled()
-    {
-        return Activity::isEnabled();
+        $bean = BeanFactory::getBean($moduleName);
+        return ($bean instanceof SugarBean) && $bean->isActivityEnabled() && $bean->is_AuditEnabled();
     }
 
     /**
@@ -357,7 +339,7 @@ class ActivityQueueManager
      * @param  $module
      * @param  $id
      *
-     * @return $val -  Name field value
+     * @return mixed|null - Name field value
      */
     protected function getReferenceName($module, $id)
     {
@@ -387,7 +369,7 @@ class ActivityQueueManager
      * Get Team Ids for supplied Team Set
      *
      * @param  $teamSetId
-     * @return $rows  array of team names
+     * @return string comma separated list of team names
      */
     protected function getTeamSetInfo($teamSetId)
     {
@@ -411,7 +393,7 @@ class ActivityQueueManager
      * Get Team Name given a team_id
      *
      * @param  $teamId
-     * @return $name
+     * @return string name of the team or empty string if not found
      */
     protected function getTeamNameFromId($teamId)
     {

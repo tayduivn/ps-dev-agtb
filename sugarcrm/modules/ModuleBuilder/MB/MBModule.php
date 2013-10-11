@@ -35,11 +35,17 @@ require_once 'include/MetaDataManager/MetaDataConverter.php';
 class MBModule
 {
     public $name = '' ;
-    public $config = array (
-    //BEGIN SUGARCRM flav=pro ONLY
-    'team_security' => 1 ,
-    //END SUGARCRM flav=pro ONLY
-    'assignable' => 1 , 'acl' => 1 , 'has_tab' => 1 , 'studio' => 1 , 'audit' => 1 ) ;
+    public $config = array(
+        //BEGIN SUGARCRM flav=pro ONLY
+        'team_security' => 1,
+        //END SUGARCRM flav=pro ONLY
+        'assignable' => 1,
+        'acl' => 1,
+        'has_tab' => 1,
+        'studio' => 1,
+        'audit' => 1,
+        'activity_enabled' => 0, //activity stream disabled by default for new modules
+    );
     public $mbpublicdefs ;
     public $errors = array ( ) ;
     public $path = '' ;
@@ -477,6 +483,7 @@ class MBModule
         $class [ 'team_security' ] = ! empty ( $this->config [ 'team_security' ] ) ;
         //END SUGARCRM flav=pro ONLY
         $class [ 'audited' ] = (! empty ( $this->config [ 'audit' ] )) ? 'true' : 'false' ;
+        $class['activity_enabled'] = (!empty($this->config['activity_enabled'])) ? 'true' : 'false';
         $class [ 'acl' ] = ! empty ( $this->config [ 'acl' ] ) ;
         $class [ 'templates' ] = "'basic'" ;
         foreach ( $this->iTemplate as $template )
@@ -1018,4 +1025,3 @@ class MBModule
     }
 
 }
-?>

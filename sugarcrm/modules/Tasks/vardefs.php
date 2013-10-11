@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $dictionary['Task'] = array('table' => 'tasks',
 	'unified_search' => true,
 	'full_text_search' => true,
+    'activity_enabled' => true,
                                'fields' => array (
   'name' =>
   array (

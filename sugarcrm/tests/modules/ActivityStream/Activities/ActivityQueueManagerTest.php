@@ -226,6 +226,9 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedData, $activityData);
     }
 
+    /**
+     * @covers ActivityQueueManager::prepareChanges
+     */
     public function testPrepareChanges_FieldChangesIncludeActivityDisabledField_OnlyNonDisabledFieldsReturned()
     {
         $contact = BeanFactory::getBean('Contacts');
@@ -314,6 +317,8 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderForAddSubscriptions
+     * @covers ActivityQueueManager::createOrUpdate
+     * @covers ActivityQueueManager::addRecordSubscriptions
      */
     public function testAddSubscribers(
         $arg_assigned_user,
@@ -428,24 +433,53 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ActivityQueueManager::isAuditable
-     * @dataProvider dataProviderForecastModulesAuditable
+     * @covers ActivityQueueManager::isEnabledForModule
+     * @dataProvider dataProviderModuleBlackListWhiteList
      */
-    public function testForecastModulesAreNotAuditable($module, $expected)
+    public function testIsEnabledForModule_WithModuleBlackListAndWhiteList($moduleName, $expected, $assertMessage)
     {
         $aqm = new ActivityQueueManager();
-
-        $bean = BeanFactory::getBean($module);
-
-        $this->assertEquals($expected, SugarTestReflection::callProtectedMethod($aqm, 'isAuditable', array($bean)));
+        $this->assertEquals($expected, $aqm->isEnabledForModule($moduleName), $assertMessage);
     }
 
-    public static function dataProviderForecastModulesAuditable()
+    public static function dataProviderModuleBlackListWhiteList()
     {
         return array(
-            array('Forecasts', false),
-            array('ForecastWorksheets', false),
-            array('ForecastManagerWorksheets', false),
+            array('Forecasts', false, 'expected blacklist module to be disabled'),
+            array('Notes', true, 'expected whitelist module to be enabled'),
+            array('Foo', false, 'expected nonexistent module to be disabled'),
+        );
+    }
+
+    /**
+     * @covers ActivityQueueManager::isEnabledForModule
+     * @dataProvider dataProviderDifferentActivityAndAuditFlags
+     */
+    public function testIsEnabledForModule_DifferentActivityAndAuditFlags($auditFlag, $activityFlag, $expected, $assertMessage)
+    {
+        global $dictionary;
+        $moduleNameSingular = 'Contact';
+        $moduleNamePlural = 'Contacts';
+        $auditBefore = $dictionary[$moduleNameSingular]['audited'];
+        $activityBefore = $dictionary[$moduleNameSingular]['activity_enabled'];
+
+        $dictionary[$moduleNameSingular]['audited'] = $auditFlag;
+        $dictionary[$moduleNameSingular]['activity_enabled'] = $activityFlag;
+        $aqm = new ActivityQueueManager();
+        $this->assertEquals($expected, $aqm->isEnabledForModule($moduleNamePlural), $assertMessage);
+
+        //cleanup
+        $dictionary[$moduleNameSingular]['audited'] = $auditBefore;
+        $dictionary[$moduleNameSingular]['activity_enabled'] = $activityBefore;
+    }
+
+    public static function dataProviderDifferentActivityAndAuditFlags()
+    {
+        return array(
+            array(true, true, true, 'expected module with activity and audit enabled to return true'),
+            array(false, false, false, 'expected module with activity and audit disabled to return false'),
+            array(true, false, false, 'expected module with activity disabled to return false'),
+            array(false, true, false, 'expected module with audit disabled to return false'),
         );
     }
 
