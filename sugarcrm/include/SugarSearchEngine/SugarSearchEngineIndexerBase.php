@@ -116,45 +116,34 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
 
     protected function generateFTSQuery($module, $fieldDefs)
     {
-        $queuTableName = self::QUEUE_TABLE;
+        $queueTableName = self::QUEUE_TABLE;
         $bean = BeanFactory::getBean($module);
+        $ftsQuery = new SugarQuery();
+        $ftsQuery->from($bean);
 
         // fields filter (team fields taken from old method, needs to get abstracted out)
         $fieldsFilter = array(
-            'team_id' => true,
-            'team_set_id' => true,
+            'team_id',
+            'team_set_id',
         );
 
         // add fts enabled fields to the filter
-        $addEmailJoin = false;
         foreach ($fieldDefs as $value) {
-
-            // filter email1 field and toggle flag for lv query
+            // filter email1 field and add the join.
             if ($value['name'] == 'email1') {
-                $addEmailJoin = true;
+                $ftsQuery->join('email_addresses_primary', array('alias' => 'email1'));
             }
 
-            $fieldsFilter[$value['name']] = true;
+            $fieldsFilter[] = $value['name'];
         }
 
-        // generate list view query based on selected fields
-        $ftsQuery = $bean->create_new_list_query(
-            "",         // order_by
-            "",         // where
-            $fieldsFilter,
-            array(),    // params
-            0,            // show_deleted
-            "",         // join_type
-            true,       // return_array
-            null,       // parent_bean
-            true,       // single_select
-            $addEmailJoin
-        );
+        $ftsQuery->select($fieldsFilter);
 
-        // add join for queue table
-        $ftsQuery['from'] .= " INNER JOIN {$queuTableName} on {$queuTableName}.bean_id = {$bean->table_name}.id AND {$queuTableName}.processed = 0 ";
+        $join = $ftsQuery->joinTable($queueTableName)->on();
+        $join->equalsField($queueTableName . '.bean_id', 'id');
+        $join->equals($queueTableName . '.bean_id', 0);
 
-        return $ftsQuery['select'] . $ftsQuery['from'] . $ftsQuery['where'];
+        return $ftsQuery->compileSql();
     }
 
     /**
