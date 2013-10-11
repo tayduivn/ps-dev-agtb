@@ -229,16 +229,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     }
 
     /**
-     * In our current implementation we need to strip the -'s from our guids to be searchable correctly
-     * @param string $field_value
-     * @return string
-     */
-    public function formatGuidFields($field_value)
-    {
-        return str_replace('-', '', strval($field_value));
-    }
-
-    /**
      * This indexes one single bean to Elastic Search engine
      * @param SugarBean $bean
      */
@@ -539,9 +529,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $termFilter = new \Elastica\Filter\Terms('team_set_id', array('Non existing team_set_id to fake search term that is always false'));
         } else {
             $teamIDS = TeamSet::getTeamSetIdsForUser($current_user->id);
-            //TODO: Determine why term filters aren't working with the hyphen present.
-            //Term filters dont' work for terms with '-' present so we need to clean
-            $teamIDS = array_map(array($this,'cleanTeamSetID'), $teamIDS);
             $termFilter = new \Elastica\Filter\Terms('team_set_id', $teamIDS);
         }
 
@@ -569,7 +556,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     public function getOwnerTermFilter()
     {
         $ownerTermFilter = new \Elastica\Filter\Term();
-        $ownerTermFilter->setTerm('doc_owner', $this->formatGuidFields($GLOBALS['current_user']->id));
+        $ownerTermFilter->setTerm('doc_owner', $GLOBALS['current_user']->id);
 
         return $ownerTermFilter;
     }
@@ -639,7 +626,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $ownerTermFilter = new \Elastica\Filter\Term();
         // same bug as team set id, looking into a fix in elastic search to allow -'s without tokenizing
 
-        $ownerTermFilter->setTerm('user_favorites', $this->formatGuidFields($GLOBALS['current_user']->id));
+        $ownerTermFilter->setTerm('user_favorites', $GLOBALS['current_user']->id);
         $moduleFilter->addMust($ownerTermFilter);
 
         return $moduleFilter;
@@ -786,17 +773,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             }
             $query->addFacet($typeFacet);
         }
-    }
-
-    /**
-     * Remove the '-' from our team sets.
-     *
-     * @param $teamSetID
-     * @return mixed
-     */
-    protected function cleanTeamSetID($teamSetID)
-    {
-        return str_replace("-", "", strtolower($teamSetID));
     }
 
     /**
