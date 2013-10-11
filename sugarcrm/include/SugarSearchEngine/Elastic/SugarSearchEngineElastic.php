@@ -724,9 +724,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $finalTypes = array();
             if (!empty($options['moduleFilter'])) {
                 foreach ($options['moduleFilter'] as $moduleName) {
-                    $seed = BeanFactory::newBean($moduleName);
                     // only add the module to the list if it can be viewed
-                    if ($seed->ACLAccess('ListView')) {
+                    if ($this->checkAccess($moduleName)) {
                         $finalTypes[] = $moduleName;
                     }
                 }
@@ -827,6 +826,17 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             }
         }
 
+    }
+
+    /**
+     * Checks whether the user has access to view the module being searched.
+     * @param  string $moduleName
+     * @return bool
+     */
+    protected function checkAccess($moduleName)
+    {
+        $seed = BeanFactory::newBean($moduleName);
+        return $seed->ACLAccess('ListView');
     }
 
     /**

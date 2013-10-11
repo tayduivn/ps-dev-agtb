@@ -302,4 +302,9 @@ class SugarSearchEngineElasticTestStub extends SugarSearchEngineElastic
     {
         return parent::constructMainFilter($finalTypes, $options);
     }
+
+    public function checkAccess()
+    {
+        return true;
+    }
 }
