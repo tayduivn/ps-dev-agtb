@@ -27,7 +27,6 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
 require_once 'include/SugarSearchEngine/Elastic/SugarSearchEngineElastic.php';
 
 class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
@@ -106,7 +105,16 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSearch($options)
     {
+        // Elastica\Client mock
+        $client = $this->getMockBuilder('Elastica\\Client')
+            ->setMethods(array('request'))
+            ->getMock();
+        $client->expects($this->once())
+            ->method('request')
+            ->will($this->returnValue(new \Elastica\Response('{}')));
+
         $stub = new SugarSearchEngineElasticTestStub();
+        $stub->setClient($client);
         $searchTerm = 'sk';
         $offset = 0;
         $limit = 20;

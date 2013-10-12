@@ -83,7 +83,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         if (empty($this->_config['timeout'])) {
             $this->_config['timeout'] = 15;
         }
-        $this->_client = new \Elastica\Client($this->_config);
+        $this->setClient(new \Elastica\Client($this->_config));
 
         // Elastic mapping
         $mappingClass = SugarAutoLoader::customClass('SugarSearchEngineElasticMapping');
@@ -99,7 +99,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     protected function checkException($e)
     {
-        if ($e instanceof \Elastica\Exception\ClientException) {
+        if ($e instanceof \Elastica\Exception\Connection\HttpException) {
             $error = $e->getError();
             switch ($error) {
                 case CURLE_UNSUPPORTED_PROTOCOL:
@@ -822,6 +822,15 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     public function getClient()
     {
         return $this->_client;
+    }
+
+    /**
+     * Set Elasttica client
+     * @param \Elastica\Client $client
+     */
+    public function setClient(\Elastica\Client $client)
+    {
+        $this->_client = $client;
     }
 
     /**
