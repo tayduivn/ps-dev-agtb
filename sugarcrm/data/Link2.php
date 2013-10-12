@@ -150,6 +150,13 @@ class Link2 {
     }
 
     /**
+     * Resets the loaded flag on this link so that it must reload the next time it is used
+     */
+    public function resetLoaded() {
+        $this->loaded = false;
+    }
+
+    /**
      *  Perform a query on this relationship.
      *
      * @param array $params An array that can contain the following parameters:<br/>
@@ -431,7 +438,7 @@ class Link2 {
             //fields in the related module
             $relationshipFields = array();
             $seed = BeanFactory::getBean($rel_module);
-            if($seed !== FALSE)
+            if($seed !== false)
             {
                 // Deprecated: This format of relationship fields will be removed
                 // please use the rname_link format instead
@@ -469,7 +476,7 @@ class Link2 {
                 if (empty($this->beans[$id]))
                 {
                     $tmpBean = BeanFactory::getBean($rel_module, $id);
-                    if($tmpBean !== FALSE)
+                    if($tmpBean !== false)
                         $result[$id] = $tmpBean;
                 } else {
                     $result[$id] = $this->beans[$id];
