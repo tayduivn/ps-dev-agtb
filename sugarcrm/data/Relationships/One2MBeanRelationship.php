@@ -161,8 +161,6 @@ class One2MBeanRelationship extends One2MRelationship
      */
     public function load($link, $params = array())
     {
-        $relatedModule = $link->getSide(
-        ) == REL_LHS ? $this->def['rhs_module'] : $this->def['lhs_module'];
         $rows = array();
         //The related bean ID is stored on the RHS table.
         //If the link is RHS, just grab it from the focus.
