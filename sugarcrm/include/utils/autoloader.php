@@ -67,10 +67,16 @@ class SugarAutoLoader
 
     /**
      * Namespace directory mapping
+     * - Prefix should include trailing \
+     * - Directory should NOT contain trailing /
      *
      * Order is important on overlapping prefixes, first match wins !
      *   'Sugarcrm\\lib\\' => 'include'
      *   'Sugarcrm\\' => ''
+     *
+     * To add namespaces dynamically it's advised to use self::addNamespace
+     * as this method will ensure a correct order from more to less
+     * specific namespace prefixes.
      *
      * @var array nsPrefix => directory
      */
@@ -331,6 +337,35 @@ class SugarAutoLoader
 	{
 	    self::$dirMap[] = $dir;
 	}
+
+    /**
+     * Add namespace prefix directory mapping
+     * @param string $prefix
+     * @param string $dir
+     */
+    public static function addNamespace($prefix, $dir)
+    {
+        $prefix = rtrim($prefix, '\\') . '\\';  // enforce trailing \
+        $dir = rtrim($dir, '/');                // remove trailing /
+        self::$namespaceMap[$prefix] = $dir;
+
+        // The order of self::$namespace is important because the first match
+        // will win. When registering new namespace dynamically we need to make
+        // sure this array is ordered from more to less specific.
+
+        uksort(self::$namespaceMap, function ($val1, $val2) {
+            $level1 = substr_count($val1, '\\');
+            $level2 = substr_count($val2, '\\');
+            if ($level1 > $level2) {
+                return -1;
+            } elseif ($level1 < $level2) {
+                return 1;
+            } else {
+                // if levels are the same, sort alphabetically for predictable result
+                return strcasecmp($val1, $val2);
+            }
+        });
+    }
 
 	/**
 	 * Add directory for loading classes by prefix
