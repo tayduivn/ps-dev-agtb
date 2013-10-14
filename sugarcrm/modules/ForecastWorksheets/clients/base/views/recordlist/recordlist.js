@@ -258,9 +258,24 @@
                             this.render();
                         }
                     } else {
-                        // we need to update the data-forecast attribute on the row and the new commit stage is visible
-                        this.$el.find('tr[name=' + model.module + '_' + model.id + ']')
-                            .attr('data-forecast', model.get('commit_stage'));
+                        var commitStage = model.get('commit_stage'),
+                            includedCommitStages = app.metadata.getModule('Forecasts', 'config').commit_stages_included,
+                            el = this.$el.find('tr[name=' + model.module + '_' + model.id + ']'),
+                            isIncluded = _.include(includedCommitStages, commitStage);
+
+                        if (el) {
+                            // we need to update the data-forecast attribute on the row
+                            // and the new commit stage is visible
+                            el.attr('data-forecast', commitStage);
+
+                            if (isIncluded && !el.hasClass('included')) {
+                                // if the commitStage is included, and it doesnt have the included class, add it
+                                el.addClass('included')
+                            } else if (!isIncluded && el.hasClass('included')) {
+                                // if the commitStage isn't included, and it still has the class, remove it
+                                el.removeClass('included');
+                            }
+                        }
                     }
                 }, this);
 
