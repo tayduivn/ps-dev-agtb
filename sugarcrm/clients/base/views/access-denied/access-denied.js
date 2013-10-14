@@ -11,7 +11,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 ({
-    className: 'access-denied tcenter',
+    className: 'error-page',
 
     cubeOptions: {spin: false},
 

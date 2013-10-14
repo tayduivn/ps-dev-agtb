@@ -4084,20 +4084,28 @@ $app_strings = array (
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
     'ERR_HTTP_DEFAULT_TITLE' => 'Unknown Error',
     'ERR_HTTP_DEFAULT_TEXT' => 'Unknown error.',
+    'ERR_HTTP_DEFAULT_ACTION' => 'Return to previous page.',
+
     'ERR_HTTP_404_TYPE' => '404',
     'ERR_HTTP_404_TITLE' => 'HTTP: 404 Not Found',
-    'ERR_HTTP_404_TEXT' => 'We\'re sorry but the resource you asked for cannot be found.',
+    'ERR_HTTP_404_TEXT' => 'The resource you requested does not exist.',
+    'ERR_HTTP_404_ACTION' => 'Return to previous page.',
+
     'ERR_HTTP_500_TYPE' => '500',
     'ERR_HTTP_500_TITLE' => 'HTTP: 500 Internal Server Error',
-    'ERR_HTTP_500_TEXT' => 'There was an error on the server. Please contact technical support.',
+    'ERR_HTTP_500_TEXT' => 'There was an error on the server.',
+    'ERR_HTTP_500_ACTION' => 'Please contact technical support.',
+
     'ERR_RENDER_FAILED_TITLE' => 'View Render Failed',
     'ERR_RENDER_FAILED_MSG' => 'Failed to render a view',
     'ERR_RENDER_FIELD_FAILED_TITLE' => 'Field Render Failed',
     'ERR_RENDER_FIELD_FAILED_MSG' => 'Unable to render the {0} field.',
+
     'ERR_NO_VIEW_ACCESS_TITLE' => 'Access Denied',
     'ERR_NO_VIEW_ACCESS_REASON' => 'You do not have permission to access this page.',
     'ERR_NO_VIEW_ACCESS_ACTION' => 'Contact your administrator to request access.',
     'ERR_NO_VIEW_ACCESS_MSG' => 'Contact your Support Administrator to get access to this view for {0} module.',
+
     'ERR_LAYOUT_RENDER_TITLE' => 'Layout render failed',
     'ERR_LAYOUT_RENDER_MSG' => 'Oops! We are not able to render anything. Please try again later or contact support.',
     'ERR_INTERNAL_ERR_MSG' => 'Internal error',

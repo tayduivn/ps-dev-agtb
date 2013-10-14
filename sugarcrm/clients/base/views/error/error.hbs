@@ -26,9 +26,11 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-  <div class="dark_cube tcenter">
-      <h1>{{str model.attributes.type}}</h1>
-      <hr class="invisible">
-      <p>{{str model.attributes.title}}</p>
-      <p>{{str model.attributes.message}}</p>
-  </div>
+<div class="error-message">
+    <h1>{{str model.attributes.title}}</h1>
+    <p>{{str model.attributes.message}}</p>
+    <p>{{{str model.attributes.link}}}</p>
+</div>
+<div class="sugar-cube-wrapper">
+    {{{subFieldTemplate 'sugar-cube' 'detail' cubeOptions}}}
+</div>

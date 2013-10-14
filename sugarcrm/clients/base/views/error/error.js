@@ -27,6 +27,12 @@
 ({
     className: 'error-page',
 
+    cubeOptions: {spin: false},
+
+    events: {
+        'click .sugar-cube': 'spinCube'
+    },
+
     initialize: function(options) {
         // Adds the metadata for the Error module
         app.metadata.set(this._metadata);
@@ -52,13 +58,15 @@
             attributes = {
                 title: 'ERR_HTTP_404_TITLE',
                 type: 'ERR_HTTP_404_TYPE',
-                message: 'ERR_HTTP_404_TEXT'
+                message: 'ERR_HTTP_404_TEXT',
+                link: '<a href="javascript:window.history.back()">' + app.lang.get('ERR_HTTP_404_ACTION') + '</a>'
             };
         } else if(this.context.get('errorType') ==='500') {
             attributes = {
                 title: 'ERR_HTTP_500_TITLE',
                 type: 'ERR_HTTP_500_TYPE',
-                message: 'ERR_HTTP_500_TEXT'
+                message: 'ERR_HTTP_500_TEXT',
+                link: '<a href="javascript:window.history.back()">' + app.lang.get('ERR_HTTP_500_ACTION') + '</a>'
             };
         } else {
             var error = this.context.get('error') || {};
@@ -95,5 +103,10 @@
                 }
             }
         }
+    },
+
+    spinCube: function() {
+        this.cubeOptions.spin = !this.cubeOptions.spin;
+        this.render();
     }
 })
