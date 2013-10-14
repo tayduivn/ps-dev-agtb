@@ -51,6 +51,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_EDIT_PDF_TEMPLATE',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => '',
+        'icon' => 'icon-pencil',
     ),
 );
