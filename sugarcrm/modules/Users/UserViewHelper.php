@@ -465,23 +465,6 @@ class UserViewHelper {
     protected function setupAdvancedTabNavSettings() {
         global $app_list_strings;
 
-        // Grouped tabs?
-        $useGroupTabs = $this->bean->getPreference('navigation_paradigm');
-        if ( ! isset($useGroupTabs) ) {
-            if ( ! isset($GLOBALS['sugar_config']['default_navigation_paradigm']) ) {
-                $GLOBALS['sugar_config']['default_navigation_paradigm'] = 'gm';
-            }
-            $useGroupTabs = $GLOBALS['sugar_config']['default_navigation_paradigm'];
-        }
-        $this->ss->assign("USE_GROUP_TABS",($useGroupTabs=='gm')?'checked':'');
-
-        $user_subpanel_tabs = $this->bean->getPreference('subpanel_tabs');
-        if(isset($user_subpanel_tabs)) {
-            $this->ss->assign("SUBPANEL_TABS", $user_subpanel_tabs?'checked':'');
-        } else {
-            $this->ss->assign("SUBPANEL_TABS", $GLOBALS['sugar_config']['default_subpanel_tabs']?'checked':'');
-        }
-
         /* Module Tab Chooser */
         require_once('include/templates/TemplateGroupChooser.php');
         require_once('modules/MySettings/TabController.php');

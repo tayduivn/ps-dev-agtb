@@ -384,12 +384,9 @@
     <file sha256="88c2a94d334e66b065b042e41626622b24d2711cb3b031845edabb768316170d" size="2564" name="htdocs/include/SubPanel/SubPanelDynamic.html"/>
     <file sha256="02723672bf83481e7013faee0c16272b13956d23d47105b3b009f9b3ee093893" size="20020" name="htdocs/include/SubPanel/SubPanelTiles.js"/>
     <file sha256="14067a462e2ef45bf0fe313b28b1aa5ab12935a17cecaad4f9f1f39a241fe36e" size="17713" name="htdocs/include/SubPanel/SubPanelTiles.php"/>
-    <file sha256="9cfa2fe80bbbf6b70dd160d2ae69c6e5a75cf37990020e97b15ea92bccbef89b" size="11023" name="htdocs/include/SubPanel/SubPanelTilesTabs.php"/>
     <file sha256="faa914d2466af3ad45dcfe8202752db562d6cfa0b6c69200872a8f2a28bf4681" size="2943" name="htdocs/include/SubPanel/SubPanelViewer.php"/>
-    <file sha256="e9db6dd6fb565232e7160bc710bc9e60f1d7b7badfd8ff6b31be15508365915b" size="3734" name="htdocs/include/SubPanel/SugarTab.php"/>
     <file sha256="2b2f61197a89e088085640b4ced693533cb561061ddc1dabd04d8f8c772c4b13" size="2052" name="htdocs/include/SubPanel/registered_layout_defs.php"/>
     <file sha256="f255cf6dbc967966b8d46c6ef56393dee6252da710e9e3d9c51fbaabfbf770ea" size="18149" name="htdocs/include/SubPanel/subpanels.txt"/>
-    <file sha256="c677a04239366ca53151b9c11384dab5c1c48775e3f38851f7d93a20bc98fcdf" size="5643" name="htdocs/include/SubPanel/tpls/singletabmenu.tpl"/>
     <file sha256="755590a136965fa250d3325d1579e85dbf98f9e4e3a16bb5c9b13ca35035aa09" size="28502" name="htdocs/include/SugarCharts/SugarChart.php"/>
     <file sha256="6c37dc918d7b5d780b9e5e5462542dd8a5013b21145c63ee3ac0db4235bf3504" size="8255" name="htdocs/include/SugarCharts/SugarChartReports.php"/>
     <file sha256="4033ad366f2faffbcc7a8de7177d41112598f756938cc286be050347f2f01240" size="12416" name="htdocs/include/SugarCharts/swf/barChart.swf"/>
@@ -4826,11 +4823,9 @@
     <file sha256="3f936c1ffbe0ab362bcea88f5b076d3a7417cdecc72e3d8999427f49b637cb7f" size="14164" name="htdocs/modules/Studio/DropDowns/EditView.tpl"/>
     <file sha256="0d4faf4e89b220a29e2715bc00a0925259f1089c5b1f5c66950dd302b6ebee65" size="5149" name="htdocs/modules/Studio/Forms.php"/>
     <file sha256="c00114037d04f464697f15f7282770496bdef50c62e42f816bb6d4850247c7b3" size="3028" name="htdocs/modules/Studio/JSTransaction.js"/>
-    <file sha256="02ab6516b6367368fe086284b463d4674afc6c1f617d92ddad965ad2a92cd162" size="2122" name="htdocs/modules/Studio/SaveTabs.php"/>
     <file sha256="06b734cfe17ea0a2607531680b0aacb10f1174a58921fd6ec277f6f29738e952" size="5555" name="htdocs/modules/Studio/TabGroups/EditViewTabs.php"/>
     <file sha256="57b84e8d3a2717f251cff64f01e94b9edeaf264c1fc79b01c061b176ac31d174" size="12055" name="htdocs/modules/Studio/TabGroups/EditViewTabs.tpl"/>
     <file sha256="bb3753f68cf16946150e8ccec290a11928c76fb05e7e4041ce61c49bbc96bd1a" size="6027" name="htdocs/modules/Studio/TabGroups/TabGroupHelper.php"/>
-    <file sha256="afdcf6e7f101113a749ae250b2eaefd563cb357008f9fe34b3a775ba64f38f02" size="1863" name="htdocs/modules/Studio/TabGroups.php"/>
     <file sha256="67cb84de46cb2ee678ed2827abe73e0014dd86cdaf35d5938b25c57aaac5d405" size="4436" name="htdocs/modules/Studio/config.php"/>
     <file sha256="4898638a50be6caf17d14942266b0cbdcdc841d55a33f2675f0e299ea986f3a0" size="4073" name="htdocs/modules/Studio/language/en_us.Portal.html"/>
     <file sha256="d65335059eaed45b487f59b6cbbeb8668d64a4ae8f1576587b5a745b8a1bfac7" size="9210" name="htdocs/modules/Studio/language/en_us.lang.php"/>
