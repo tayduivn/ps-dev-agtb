@@ -91,7 +91,7 @@
             },
 
             /**
-             * Returns true if it's readonly and has no data.
+             * Returns true if it's readonly, had access to read the field and has no data.
              *
              * Override this function for special logic or property to
              * determine nodata property.
@@ -112,7 +112,7 @@
              * otherwise `false`.
              */
             showNoData: function() {
-                return this.def.readonly && this.name && !this.model.has(this.name);
+                return this.def.readonly && app.acl.hasAccessToModel('readonly', this.model, this.name) && this.name && !this.model.has(this.name);
             },
 
             /**

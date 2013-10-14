@@ -74,6 +74,13 @@ describe('Sugar7 field extensions', function () {
             expect(actual).toBe(true);
         });
 
+        it('should not show nodata if the field is readonly, user does not have read access and has no data', function() {
+            field = SugarTest.createField('base', 'name', 'base', 'detail', {readonly: true});
+            field.model = new Backbone.Model({_module: 'Accounts', _acl: {fields: {name: { read: 'no'}}}});
+            var actual = _.result(field, 'showNoData');
+            expect(actual).toBe(false);
+        });
+
         it('should not show nodata if not readonly', function() {
             field = SugarTest.createField('base', 'name', 'base', 'detail', {readonly: false});
             field.model = new Backbone.Model({_module: 'Accounts'});
@@ -84,6 +91,14 @@ describe('Sugar7 field extensions', function () {
         it('should not show nodata if readonly but fields have data', function() {
             var field = SugarTest.createField('base', 'name', 'base', 'detail', {readonly: true});
             field.model = new Backbone.Model();
+            field.model.set('name', 'test');
+            var actual = _.result(field, 'showNoData');
+            expect(actual).toBe(false);
+        });
+
+        it('should not show nodata if readonly, user does not have read access and has data', function() {
+            var field = SugarTest.createField('base', 'name', 'base', 'detail', {readonly: true});
+            field.model = new Backbone.Model({_module: 'Accounts', _acl: {fields: {name: { read: 'no'}}}});
             field.model.set('name', 'test');
             var actual = _.result(field, 'showNoData');
             expect(actual).toBe(false);
