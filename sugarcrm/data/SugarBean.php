@@ -2973,13 +2973,6 @@ class SugarBean
             $query_select .= ", teams_tn.name as tn_name, teams_tn.name_2 as tn_name_2";
             $query_from .= " LEFT JOIN teams teams_tn ON teams_tn.id = {$this->table_name}.team_id";
         }
-        //END SUGARCRM flav=pro ONLY
-
-
-
-
-        //BEGIN SUGARCRM flav=pro ONLY
-
         // ADD FAVORITES LEFT JOIN, this will add favorites to the bean
         // TODO: add global vardef for my_favorite field
         // We should only add Favorites if we know what module we are using and if we have a user.
@@ -5546,10 +5539,6 @@ class SugarBean
                     $return_array[$cache[$field]] = $this->$field;
                 }else{
                     $return_array[$cache[$field]] = $this->$field;
-                }
-                // handle "Assigned User Name"
-                if($field == 'assigned_user_name'){
-                    $return_array['ASSIGNED_USER_NAME'] = get_assigned_user_name($this->assigned_user_id);
                 }
             }
         }

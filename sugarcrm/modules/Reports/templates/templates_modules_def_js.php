@@ -152,6 +152,12 @@ var field_defs_<?php echo $module_name; ?> = new Object();
 			    {
 			       continue;
 			    }
+
+			    if ($field_def['type'] == 'encrypt')
+			    {
+			    	continue;
+			    }
+
 ?>
 field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"] = <?php
 
