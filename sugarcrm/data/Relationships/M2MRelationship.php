@@ -532,7 +532,22 @@ class M2MRelationship extends SugarRelationship
         if (empty($options['ignoreRole'])) {
             $this->buildSugarQueryRoleWhere($sugar_query, $joinTable_alias);
         }
+
+        $this->addCustomToSugarQuery($sugar_query, $options, $linkIsLHS, $targetTable_alias);
+
         return array($joinTable_alias => $relTableJoin, $targetTable_alias => $targetTableJoin);
+    }
+
+    protected function addCustomToSugarQuery($sugar_query, $options, $linkIsLHS, $targetTable_alias ) {
+        if (!empty($options['includeCustom'])) {
+            $bean = BeanFactory::getBean($linkIsLHS ? $this->def['rhs_module'] : $this->def['lhs_module']);
+            if (!empty($bean) && $bean->hasCustomFields()) {
+                $table_cstm = $bean->get_custom_table_name();
+                $alias_cstm = "{$targetTable_alias}_cstm";
+                $sugar_query->joinTable($table_cstm, array('alias' => $alias_cstm, 'joinType' => "LEFT"))
+                    ->on()->equalsField("$alias_cstm.id_c", "{$targetTable_alias}.id");
+            }
+        }
     }
 
 

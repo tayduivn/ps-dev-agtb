@@ -336,6 +336,7 @@ class SugarQuery
             'joinType' => $joinType,
             'ignoreRole' => $ignoreRole,
             'reverse' => true,
+            'includeCustom' => true,
         );
         if (!empty($options['myAlias'])) {
             $joinParams['myAlias'] = $options['myAlias'];
@@ -343,15 +344,9 @@ class SugarQuery
 
         $bean->$link_name->buildJoinSugarQuery($this, $joinParams);
 
+
         if ($team_security === true) {
             $bean->addVisibilityQuery($this, array("table_alias" => $alias, 'as_condition' => true));
-        }
-
-        if ($bean->hasCustomFields()) {
-            $table_cstm = $bean->get_custom_table_name();
-            $alias_cstm = "{$alias}_cstm";
-            $this->joinTable($table_cstm, array('alias' => $alias_cstm, 'joinType' => "LEFT"))
-                ->on()->equalsField("$alias_cstm.id_c", "{$alias}.id");
         }
 
         $this->join[$alias]->addLinkName($link_name);

@@ -38,8 +38,7 @@
     dropdownFields: null,
     events: {
         'click [data-toggle=dropdown]' : 'renderDropdown',
-        'change [data-toggle=dropdownmenu]' : 'dropdownSelected',
-        'touchstart [data-toggle=dropdownmenu]' : 'renderDropdown'
+        'change [data-toggle=dropdownmenu]' : 'dropdownSelected'
     },
     plugins: ['Tooltip'],
 

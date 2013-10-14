@@ -392,8 +392,8 @@
                 if (!events) {
                     return;
                 }
-                events['click a[href="javascript:void(0)"]'] = _.bind(this._handleBadLinkHref, this);
-                events['click a[href="javascript:void(0);"]'] = _.bind(this._handleBadLinkHref, this);
+                events['click a[href="javascript:void(0)"]'] = '_handleBadLinkHref';
+                events['click a[href="javascript:void(0);"]'] = '_handleBadLinkHref';
                 _fieldProto.delegateEvents.call(this, events);
             },
 

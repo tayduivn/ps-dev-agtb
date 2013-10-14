@@ -11,7 +11,6 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-
 $vardefs = array(
     'fields' => array(
         'name' =>
@@ -74,6 +73,8 @@ $vardefs = array(
                 'currency_id',
                 'base_rate'
             ),
+            'convertToBase' => true,
+            'showTransactionalAmount' => true,
         ),
         'amount_usdollar' =>
         array(
@@ -112,8 +113,7 @@ $vardefs = array(
             'duplicate_on_record_copy' => 'always',
             'comment' => 'Currency used for display purposes'
         ),
-        'base_rate' =>
-        array(
+        'base_rate' => array(
             'name' => 'base_rate',
             'vname' => 'LBL_CURRENCY_RATE',
             'type' => 'decimal',
@@ -127,15 +127,13 @@ $vardefs = array(
             'id_name' => 'currency_id',
             'vname' => 'LBL_CURRENCY_NAME',
             'type' => 'relate',
-            'link' => 'currencies',
-            'isnull' => true,
+            'isnull' => 'true',
             'table' => 'currencies',
             'module' => 'Currencies',
             'source' => 'non-db',
             'function' => array('name' => 'getCurrencyNameDropDown', 'returns' => 'html'),
-            'studio' => false,
-            'duplicate_merge' => 'disabled',
-            'massupdate' => false
+            'studio' => 'false',
+            'duplicate_on_record_copy' => 'always',
         ),
         'currency_symbol' =>
         array(
@@ -144,15 +142,12 @@ $vardefs = array(
             'id_name' => 'currency_id',
             'vname' => 'LBL_CURRENCY_SYMBOL',
             'type' => 'relate',
-            'link' => 'currencies',
-            'isnull' => true,
+            'isnull' => 'true',
             'table' => 'currencies',
             'module' => 'Currencies',
             'source' => 'non-db',
             'function' => array('name' => 'getCurrencySymbolDropDown', 'returns' => 'html'),
-            'studio' => false,
-            'duplicate_merge' => 'disabled',
-            'massupdate' => false
+            'duplicate_on_record_copy' => 'always',
         ),
         'date_closed' =>
         array(

@@ -28,7 +28,7 @@
              * @return {Object} A new instance of the related or regular bean.
              */
             createLinkModel: function(parentModel, link) {
-                if (this.context.parent && this.context.parent.isCreate())
+                if (this.context && this.context.parent && this.context.parent.isCreate())
                 {
                     return app.data.createBean(app.data.getRelatedModule(parentModel.module, link));
                 }

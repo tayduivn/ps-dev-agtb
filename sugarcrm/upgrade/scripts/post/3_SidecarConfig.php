@@ -13,6 +13,6 @@ class SugarUpgradeSidecarConfig extends UpgradeScript
         if(!$this->toFlavor('pro')) return;
 
         require_once 'ModuleInstall/ModuleInstaller.php';
-        $this->putFile('config.js', ModuleInstaller::getJSConfig(ModuleInstaller::getBaseConfig()));
+        $this->putFile($this->cacheDir('config.js'), ModuleInstaller::getJSConfig(ModuleInstaller::getBaseConfig()));
     }
 }
