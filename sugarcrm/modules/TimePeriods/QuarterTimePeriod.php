@@ -91,9 +91,8 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
     {
         global $sugar_config;
         $timedate = TimeDate::getInstance();
-        $start = $timedate->fromDbDate($this->start_date)->format($sugar_config['datef']);
-        $end = $timedate->fromDbDate($this->end_date)->format($sugar_config['datef']);
-        return string_format($this->name_template, array($count, $start, $end));
+        $start_year = $timedate->fromDbDate($this->start_date)->format('Y');
+        return string_format($this->name_template, array($count, $start_year));
     }
 
 
