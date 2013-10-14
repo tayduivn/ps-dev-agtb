@@ -270,10 +270,12 @@
 
                             if (isIncluded && !el.hasClass('included')) {
                                 // if the commitStage is included, and it doesnt have the included class, add it
-                                el.addClass('included')
+                                el.addClass('included');
+                                model.set({ includedInForecast: true }, {silent: true});
                             } else if (!isIncluded && el.hasClass('included')) {
                                 // if the commitStage isn't included, and it still has the class, remove it
                                 el.removeClass('included');
+                                model.unset('includedInForecast');
                             }
                         }
                     }
