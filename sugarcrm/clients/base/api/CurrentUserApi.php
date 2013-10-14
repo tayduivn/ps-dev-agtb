@@ -724,6 +724,15 @@ class CurrentUserApi extends SugarApi
         require_once 'modules/MySettings/TabController.php';
         $controller = new TabController();
         $moduleList = $this->list2Array(reset($controller->get_tabs($current_user)));
+        //If `Home` is not the first item of the list
+        if ($moduleList[0] !== 'Home') {
+            //Remove it if it is at a random position
+            if (($key = array_search('Home', $moduleList)) !== false) {
+                unset($moduleList[$key]);
+            }
+            //Add it to the first position
+            array_unshift($moduleList, 'Home');
+        }
         return $moduleList;
     }
     /**
