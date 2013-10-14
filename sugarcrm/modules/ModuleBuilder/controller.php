@@ -468,20 +468,10 @@ class ModuleBuilderController extends SugarController
                     $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->dependency));
                 if (!empty($field->formula))
                     $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->formula));
-                foreach ($relatedMods as $mName => $oName) {
-                    $repair->repairAndClearAll(array('clearVardefs', 'clearTpls'), array($oName), true, false);
-                    VardefManager::clearVardef($mName, $oName);
-                }
-                //END SUGARCRM flav=pro ONLY
-                //#28707 ,clear all the js files in cache
-                $repair->module_list = array();
-                $repair->clearJsFiles();
 
-                // Clear the metadata cache so this change can be reflected
-                // immediately. This could have taken place already in action_SaveLabel
-                // so don't do it again if we don't need to.
-                if (!$this->metadataApiCacheCleared) {
-                    $repair->clearMetadataAPICache();
+                $repair->repairAndClearAll(array('clearAll'), array(translate('LBL_ALL_MODULES')), true, false);
+                foreach($relatedMods AS $mName => $oName) {
+                    VardefManager::loadVardef($mName, $oName, true);
                 }
             }
         } else {

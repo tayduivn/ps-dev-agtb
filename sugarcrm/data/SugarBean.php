@@ -1800,13 +1800,16 @@ class SugarBean
         // use the db independent query generator
         $this->preprocess_fields_on_save();
 
+        $dataChanges = $this->db->getDataChanges($this);
+
         //construct the SQL to create the audit record if auditing is enabled.
         $auditDataChanges=array();
         if ($this->is_AuditEnabled()) {
             if ($isUpdate && !isset($this->fetched_row)) {
                 $GLOBALS['log']->debug('Auditing: Retrieve was not called, audit record will not be created.');
             } else {
-                $auditDataChanges=$this->db->getAuditDataChanges($this);
+                $auditFields = $this->getAuditEnabledFieldDefinitions();
+                $auditDataChanges = array_intersect_key($dataChanges, $auditFields);
             }
         }
         $this->_sendNotifications($check_notify);
@@ -1829,15 +1832,16 @@ class SugarBean
         //BEGIN SUGARCRM flav=pro ONLY
         $this->updateRelatedCalcFields();
         //END SUGARCRM flav=pro ONLY
+
+        // populate fetched row with newest changes in the bean
+        foreach ($dataChanges as $change) {
+            $this->fetched_row[$change['field_name']] = $change['after'];
+        }
+
         // the reason we need to skip this is so that any RelatedBeans that are targeted to be saved
         // after the delete happens, wait to be saved till them.
         if (!static::inOperation('delete')) {
             SugarRelationship::resaveRelatedBeans();
-        }
-
-        // populate fetched row with current bean values
-        foreach ($auditDataChanges as $change) {
-            $this->fetched_row[$change['field_name']] = $change['after'];
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
@@ -2415,45 +2419,52 @@ class SugarBean
 
         foreach ($this->field_defs as $def)
         {
-            if ($def ['type'] == 'relate' && isset ($def ['id_name']) && isset ($def ['link']) && isset ($def['save'])) {
-                if (in_array($def['id_name'], $exclude) || in_array($def['id_name'], $this->relationship_fields))
-                    continue; // continue to honor the exclude array and exclude any relationships that will be handled by the relationship_fields mechanism
-
+            if ($def ['type'] == 'relate' && isset ($def ['id_name']) && isset ($def ['link'])) {
                 $linkField = $def ['link'];
-                if (isset($this->field_defs[$linkField])) {
-                    if ($this->load_relationship($linkField)) {
-                        $idName = $def['id_name'];
+                if (isset ($def['save']))
+                {
+                    if (in_array($def['id_name'], $exclude) || in_array($def['id_name'], $this->relationship_fields))
+                        continue; // continue to honor the exclude array and exclude any relationships that will be handled by the relationship_fields mechanism
 
-                        if (!empty($this->rel_fields_before_value[$idName]) && empty($this->$idName)) {
-                            //if before value is not empty then attempt to delete relationship
-                            $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to remove the relationship record: {$def [ 'link' ]} = {$this->rel_fields_before_value[$def [ 'id_name' ]]}");
-                            $success = $this->$def ['link']->delete($this->id, $this->rel_fields_before_value[$def ['id_name']]);
-                            // just need to make sure it's true and not an array as it's possible to return an array
-                            if($success == true) {
-                                $modified_relationships['remove']['success'][] = $def['link'];
-                            } else {
-                                $modified_relationships['remove']['failure'][] = $def['link'];
-                            }
-                            $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to remove the relationship record returned " . var_export($success, true));
-                        }
+                    if (isset($this->field_defs[$linkField])) {
+                        if ($this->load_relationship($linkField)) {
+                            $idName = $def['id_name'];
 
-                        if (!empty($this->$idName) && is_string($this->$idName)) {
-                            $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to add a relationship record - {$def [ 'link' ]} = {$this->$def [ 'id_name' ]}");
-
-                            $success = $this->$linkField->add($this->$idName);
-
-                            // just need to make sure it's true and not an array as it's possible to return an array
-                            if($success == true) {
-                                $modified_relationships['add']['success'][] = $linkField;
-                            } else {
-                                $modified_relationships['add']['failure'][] = $linkField;
+                            if (!empty($this->rel_fields_before_value[$idName]) && empty($this->$idName)) {
+                                //if before value is not empty then attempt to delete relationship
+                                $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to remove the relationship record: {$def [ 'link' ]} = {$this->rel_fields_before_value[$def [ 'id_name' ]]}");
+                                $success = $this->$def ['link']->delete($this->id, $this->rel_fields_before_value[$def ['id_name']]);
+                                // just need to make sure it's true and not an array as it's possible to return an array
+                                if($success == true) {
+                                    $modified_relationships['remove']['success'][] = $def['link'];
+                                } else {
+                                    $modified_relationships['remove']['failure'][] = $def['link'];
+                                }
+                                $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to remove the relationship record returned " . var_export($success, true));
                             }
 
-                            $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - add a relationship record returned " . var_export($success, true));
+                            if (!empty($this->$idName) && is_string($this->$idName)) {
+                                $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to add a relationship record - {$def [ 'link' ]} = {$this->$def [ 'id_name' ]}");
+
+                                $success = $this->$linkField->add($this->$idName);
+
+                                // just need to make sure it's true and not an array as it's possible to return an array
+                                if($success == true) {
+                                    $modified_relationships['add']['success'][] = $linkField;
+                                } else {
+                                    $modified_relationships['add']['failure'][] = $linkField;
+                                }
+
+                                $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - add a relationship record returned " . var_export($success, true));
+                            }
+                        } else {
+                            $GLOBALS['log']->fatal("Failed to load relationship {$linkField} while saving {$this->module_dir}");
                         }
-                    } else {
-                        $GLOBALS['log']->fatal("Failed to load relationship {$linkField} while saving {$this->module_dir}");
                     }
+                }
+                else if (!empty($this->$linkField) && is_a($this->$linkField, "Link2")) {
+                    //We need to mark these links as out of date, even if we aren't going to update them yet
+                    $this->$linkField->resetLoaded();
                 }
             }
         }
@@ -2577,7 +2588,6 @@ class SugarBean
 
                         }
                         //ok so we didn't find it in the field defs let's save it anyway if we have the relationshp
-
                         $this->$rel = new Link2($rel, $this, array());
                         return $this->$rel->add($new_rel_id);
                     }

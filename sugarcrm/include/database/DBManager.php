@@ -3054,11 +3054,28 @@ protected function checkQuery($sql, $object_name = false)
      *                   for => Who are we getting the changes for, options are audit (default) and activity
      * @return array
      */
-	public function getDataChanges(SugarBean &$bean, array $options = null)
-	{
-        $options['for'] = isset($options['for']) ? $options['for'] : 'audit';
- 		$changed_values=array();
-		$fields = $options['for'] == 'activity' ? $bean->getActivityEnabledFieldDefinitions() : $bean->getAuditEnabledFieldDefinitions();
+    /**
+     * Finds fields whose value has changed.
+     * The before and after values are stored in the bean.
+     * Uses $bean->fetched_row && $bean->fetched_rel_row to compare
+     *
+     * @param SugarBean $bean Sugarbean instance that was changed
+     * @param array|null $options Array of optional arguments
+     *                   field_filter => Array of filter names to be inspected (NULL means all fields)
+     *                   for => Who are we getting the changes for, options are audit (default) and activity
+     * @return array
+     */
+    public function getDataChanges(SugarBean &$bean, array $options = null)
+    {
+        $changed_values=array();
+
+        $fields = $bean->field_defs;
+
+        if (!empty($options['for']) && $options['for'] == 'activity') {
+            $fields = $bean->getActivityEnabledFieldDefinitions();
+        } elseif (!empty($options['for']) && $options['for'] == 'audit') {
+            $fields = $bean->getAuditEnabledFieldDefinitions();
+        }
 
         $fetched_row = array();
         if (is_array($bean->fetched_row)) {
@@ -3078,21 +3095,21 @@ protected function checkQuery($sql, $object_name = false)
         // remove fields which do not exist as bean property
         $fields = array_intersect_key($fields, (array) $bean);
 
-		if (is_array($fields) and count($fields) > 0) {
-			foreach ($fields as $field=>$properties) {
-				if (array_key_exists($field, $fetched_row)) {
-					$before_value = $fetched_row[$field];
-					$after_value=$bean->$field;
-					if (isset($properties['type'])) {
-						$field_type=$properties['type'];
-					} else {
-						if (isset($properties['dbType']))
-							$field_type=$properties['dbType'];
-						else if(isset($properties['data_type']))
-							$field_type=$properties['data_type'];
-						else
-							$field_type=$properties['dbtype'];
-					}
+        if (is_array($fields) and count($fields) > 0) {
+            foreach ($fields as $field=>$properties) {
+                if (array_key_exists($field, $fetched_row)) {
+                    $before_value = $fetched_row[$field];
+                    $after_value=$bean->$field;
+                    if (isset($properties['type'])) {
+                        $field_type=$properties['type'];
+                    } else {
+                        if (isset($properties['dbType']))
+                            $field_type=$properties['dbType'];
+                        else if(isset($properties['data_type']))
+                            $field_type=$properties['data_type'];
+                        else
+                            $field_type=$properties['dbtype'];
+                    }
                 }
 
                 //Because of bug #25078(sqlserver haven't 'date' type, trim extra "00:00:00" when insert into *_cstm table).
@@ -3132,10 +3149,10 @@ protected function checkQuery($sql, $object_name = false)
                         }
                     }
                 }
-			}
+            }
         }
-		return $changed_values;
-	}
+        return $changed_values;
+    }
 
     /**
      * Uses the audit enabled fields array to find fields whose value has changed.
