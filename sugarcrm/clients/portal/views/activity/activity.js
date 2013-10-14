@@ -136,6 +136,9 @@
      * @param event
      */
     openNoteModal: function(event) {
+        if (Modernizr.touch) {
+            app.$contentEl.addClass('content-overflow-visible');
+        }
         // triggers an event to show the modal
         this.layout.trigger("app:view:activity:editmodal");
         this.$('li.open').removeClass('open');
