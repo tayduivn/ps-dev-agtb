@@ -31,6 +31,7 @@ $dictionary['Contact'] = array(
             'source' => 'non-db',
             'len' => '510',
             'importable' => 'false',
+            'studio' => array('formula' => false),
         ),
         'lead_source' => array(
             'name' => 'lead_source',

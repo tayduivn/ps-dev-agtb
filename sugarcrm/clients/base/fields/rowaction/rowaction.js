@@ -28,8 +28,7 @@
     extendsFrom: 'ButtonField',
     initialize: function(options) {
         this.options.def.events = _.extend({}, this.options.def.events, {
-            'click .rowaction': 'rowActionSelect',
-            'touchstart .rowaction': 'rowActionSelect'
+            'click .rowaction': 'rowActionSelect'
         });
         app.view.invokeParent(this, {type: 'field', name: 'button', method: 'initialize', args:[options]});
     },

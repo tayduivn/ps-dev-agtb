@@ -357,6 +357,7 @@ class One2MBeanRelationship extends One2MRelationship
                 $this->def["relationship_role_column_value"]);
         }
 
+        $this->addCustomToSugarQuery($sugar_query, $options, $linkIsLHS, $jta);
 
         return $sugar_query->join[$jta];
     }

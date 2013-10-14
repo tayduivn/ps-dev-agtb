@@ -332,9 +332,15 @@ EOD
     }
     //END SUGARCRM flav=pro ONLY
     if ($report_export_access) {
+        //workaround for SP-1685, Need to clear bwcModel so change confirmation doesn't fire after making a PDF.
         $buttons[] = <<<EOD
         <input type="submit" class="button" name="printPDFButton" id="printPDFButton" accessKey="{$app_strings['LBL_VIEW_PDF_BUTTON_KEY']}" value="{$app_strings['LBL_VIEW_PDF_BUTTON_LABEL']}" title="{$app_strings['LBL_VIEW_PDF_BUTTON_TITLE']}"
-               onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
+               onclick="if (window&&window.parent&&window.parent.App&&window.parent.App.controller
+               &&window.parent.App.controller.layout
+               &&window.parent.App.controller.layout._components[0]
+               &&window.parent.App.controller.layout._components[0].bwcModel
+               &&window.parent.App.controller.layout._components[0].bwcModel.clear)
+               {window.parent.App.controller.layout._components[0].bwcModel.clear({silent:true});this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'}">
 EOD
         ;
     }

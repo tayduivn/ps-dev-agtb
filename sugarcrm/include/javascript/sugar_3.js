@@ -5137,11 +5137,13 @@ setEmailPasswordDisplay: function(id, exists, formName) {
 	pwd = document.getElementById(id);
 	if(!pwd || !link) return;
 	if(exists) {
+            pwd.disabled = true;
     	pwd.style.display = 'none';
     	link.style.display = '';
         if(typeof(formName) != 'undefined')
             removeFromValidate(formName, id);
 	} else {
+            pwd.disabled = false;
     	pwd.style.display = '';
     	link.style.display = 'none';
 	}
@@ -5151,6 +5153,7 @@ setEmailPasswordEdit: function(id) {
 	link = document.getElementById(id+'_link');
 	pwd = document.getElementById(id);
 	if(!pwd || !link) return;
+        pwd.disabled = false;
 	pwd.style.display = '';
 	link.style.display = 'none';
 },

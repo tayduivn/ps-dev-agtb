@@ -228,11 +228,13 @@ describe("sugar7.extensions.bwc", function() {
                         fields: [
                             {
                                 name: 'name',
+                                'type': 'name',
                                 'default': false,
                                 enabled: true
                             },
                             {
                                 name: 'email',
+                                'type': 'email',
                                 'default': false,
                                 enabled: true
                             }
@@ -259,11 +261,13 @@ describe("sugar7.extensions.bwc", function() {
                         fields: [
                             {
                                 name: 'name',
+                                'type': 'name',
                                 'default': false,
                                 enabled: true
                             },
                             {
                                 name: 'email',
+                                'type': 'email',
                                 'default': true,
                                 enabled: true
                             }
@@ -288,6 +292,7 @@ describe("sugar7.extensions.bwc", function() {
                         fields: [
                             {
                                 name: 'name',
+                                'type': 'name',
                                 'default': false,
                                 enabled: true,
                                 asdf: 0,

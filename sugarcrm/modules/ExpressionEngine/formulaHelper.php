@@ -62,6 +62,11 @@ class FormulaHelper
                 case "enum":
                     $fieldArray[$fieldName] = array($fieldName, 'string');
                     break;
+                case 'fullname':
+                    if ($forRelatedField) {
+                        $fieldArray[$fieldName] = array($fieldName, 'string');
+                    }
+                    break;
                 case "date":
                 case "datetime":
                 case "datetimecombo":

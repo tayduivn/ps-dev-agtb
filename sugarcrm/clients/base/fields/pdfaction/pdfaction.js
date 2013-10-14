@@ -30,6 +30,29 @@
     },
 
     /**
+     * {@inheritDoc}
+     *
+     * Prevents the "Email PDF" button from rendering if the user
+     * doesn't have a valid email configuration or the user chooses to use an
+     * external email client. RFC 2368 suggests only the "subject" and "body"
+     * headers are safe headers and that other, unsafe headers do not need to
+     * be supported by the "mailto" implementation. We cannot guarantee that
+     * the "mailto" implementation for the user will allow for adding a PDF
+     * attachment. To be consistent with existing application behavior, the
+     * "Email PDF" option should be hidden for users when they cannot use the
+     * internal email client.
+     *
+     * @private
+     */
+    _render: function() {
+        if (this.def.action === 'email' && app.user.getPreference('use_sugar_email_client') !== 'true') {
+            this.hide();
+        } else {
+            this._super('_render');
+        }
+    },
+
+    /**
      * Define proper filter for PDF template list.
      * Fetch the collection to get available template list.
      * @private

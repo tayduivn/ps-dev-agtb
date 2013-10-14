@@ -99,6 +99,11 @@
 
         if (meta && meta.menu.quickcreate.meta.related) {
             var parentModel = this.context.get('model');
+
+            if (parentModel.isNew()) {
+                return;
+            }
+
             context = _.find(
                 meta.menu.quickcreate.meta.related,
                 function(metadata) {
