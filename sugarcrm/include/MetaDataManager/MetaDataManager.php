@@ -86,6 +86,14 @@ class MetaDataManager
     protected static $clearCacheOnShutdown = array();
 
     /**
+     * Indicates the state of the cleared metadata so that subsequent calls to
+     * clear the cache in the same request are ignored
+     * 
+     * @var boolean
+     */
+    protected static $cacheHasBeenCleared = false;
+
+    /**
      * The constructor for the class.
      *
      * @param User  $user      A User bean
@@ -659,40 +667,42 @@ class MetaDataManager
      */
     public static function clearAPICacheOnShutdown($deleteModuleClientCache = true, $workingDirectory = "")
     {
-        //shutdown functions are not always called from the same working directory as the script that registered it
-        //Need to chdir to ensure we can find the correct files
-        if (!empty($workingDirectory)) {
-            chdir($workingDirectory);
-        }
-
-
-        if ($deleteModuleClientCache) {
-            // Delete this first so there is no race condition between deleting a metadata cache
-            // and the module client cache being stale.
-            MetaDataFiles::clearModuleClientCache();
-        }
-
-        // Wipe out any files from the metadata cache directory
-        $metadataFiles = glob(sugar_cached('api/metadata/').'*');
-        if ( is_array($metadataFiles) ) {
-            foreach ($metadataFiles as $metadataFile) {
-                // This removes the file and the reference from the map. This does
-                // NOT save the file map since that would be expensive in a loop
-                // of many deletes.
-                unlink($metadataFile);
+        if (!self::getCacheHasBeenCleared()) {
+            //shutdown functions are not always called from the same working directory as the script that registered it
+            //Need to chdir to ensure we can find the correct files
+            if (!empty($workingDirectory)) {
+                chdir($workingDirectory);
             }
-        }
+    
+    
+            if ($deleteModuleClientCache) {
+                // Delete this first so there is no race condition between deleting a metadata cache
+                // and the module client cache being stale.
+                MetaDataFiles::clearModuleClientCache();
+            }
 
-        // clear the platform cache from sugar_cache to avoid out of date data as well as platform component files
-        $platforms = self::getPlatformList();
-        foreach ($platforms as $platform) {
-            $platformKey = $platform == "base" ?  "base" : implode(",", array($platform, "base"));
-            $hashKey = "metadata:$platformKey:hash";
-            sugar_cache_clear($hashKey);
-            $jsFiles = glob(sugar_cached("javascript/{$platform}/").'*');
-            if (is_array($jsFiles) ) {
-                foreach ($jsFiles as $jsFile) {
-                    unlink($jsFile);
+            // Wipe out any files from the metadata cache directory
+            $metadataFiles = glob(sugar_cached('api/metadata/').'*');
+            if ( is_array($metadataFiles) ) {
+                foreach ($metadataFiles as $metadataFile) {
+                    // This removes the file and the reference from the map. This does
+                    // NOT save the file map since that would be expensive in a loop
+                    // of many deletes.
+                    unlink($metadataFile);
+                }
+            }
+
+            // clear the platform cache from sugar_cache to avoid out of date data as well as platform component files
+            $platforms = self::getPlatformList();
+            foreach ($platforms as $platform) {
+                $platformKey = $platform == "base" ?  "base" : implode(",", array($platform, "base"));
+                $hashKey = "metadata:$platformKey:hash";
+                sugar_cache_clear($hashKey);
+                $jsFiles = glob(sugar_cached("javascript/{$platform}/").'*');
+                if (is_array($jsFiles) ) {
+                    foreach ($jsFiles as $jsFile) {
+                        unlink($jsFile);
+                    }
                 }
             }
         }
@@ -877,5 +887,27 @@ class MetaDataManager
             $return[] = $lang['module'];
         }
         return $return;
+    }
+
+    /**
+     * Sets the flag that lets the metadata manager know NOT to clear the cache 
+     * again. Used in cases where the cache was nuked for some reason and the 
+     * metadata endpoint was hit, rebuilding certain caches which destroy the 
+     * metadata again.
+     */
+    public static function setCacheHasBeenCleared()
+    {
+        self::$cacheHasBeenCleared = true;
+    }
+
+    /**
+     * Gets the flag that indicates whether the metadata manager has cleared the
+     * cache on this request.
+     * 
+     * @return bool
+     */
+    public static function getCacheHasBeenCleared() 
+    {
+        return self::$cacheHasBeenCleared;
     }
 }

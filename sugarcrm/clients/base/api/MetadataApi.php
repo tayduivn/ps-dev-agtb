@@ -1021,6 +1021,10 @@ class MetadataApi extends SugarApi
         // Write with atomic writing to prevent issues with simultaneous requests
         // for this file
         sugar_file_put_contents_atomic($cacheFile, $write);
+
+        // Let the metadata manager know to not wipe out the cache on shutdown of
+        // this request, in case it is asked to do that
+        MetaDataManager::setCacheHasBeenCleared();
     }
 
     protected function getMetadataCache($platform, $isPublic)
