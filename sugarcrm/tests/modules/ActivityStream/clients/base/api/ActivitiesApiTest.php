@@ -53,6 +53,9 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
+    /**
+     * @covers ActivitiesApi::getQueryObject
+     */
     public function testGetQueryObject_ForHomePage_ShowsOnlyHomePostsAndActivitiesUserLinkedTo()
     {
         $query = ActivitiesApi::getQueryObject($this->api, array('offset' => 0, 'limit' => 5));
@@ -62,6 +65,9 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotSame(false, strpos($sql, "activities_users.parent_type = 'Users'"));
     }
 
+    /**
+     * @covers ActivitiesApi::formatResult
+     */
     public function testListActivities_HomePage_MultipleModuleTypes_UserHasMixedFieldAccess_AppropriateFieldChangesReturned()
     {
         $records = array(
@@ -198,6 +204,9 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual, "Expected Activities Records with Field Access Applied correctly across Modules");
     }
 
+    /**
+     * @covers ActivitiesApi::formatResult
+     */
     public function testListActivities_ListView_UserHasFieldAccess_FieldChangesReturned()
     {
         $records   = array(
@@ -282,6 +291,9 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual, "Expected Activities Records with Changed Fields Listed");
     }
 
+    /**
+     * @covers ActivitiesApi::formatResult
+     */
     public function testListActivities_ListView_UserDoesNotHaveFieldAccess_FieldChangesNotReturned()
     {
         $records   = array(
@@ -360,6 +372,9 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual, "Expected Activities Records without data for Changed Fields");
     }
 
+    /**
+     * @covers ActivitiesApi::formatResult
+     */
     public function testListActivities_RecordView_UserDoesNotHaveFieldAccess_FieldChangesNotReturned()
     {
         $records   = array(
@@ -456,6 +471,9 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual, "Expected Activities Records without data for Changed Fields");
     }
 
+    /**
+     * @covers ActivitiesApi::formatResult
+     */
     public function testListActivities_RecordView_UserHasFieldAccess_FieldChangesReturned()
     {
         $records   = array(
@@ -568,6 +586,9 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual, "Expected Activities Records with all data for Changed Fields");
     }
 
+    /**
+     * @covers ActivitiesApi::checkParentPreviewEnabled
+     */
     public function testCheckParentPreviewEnabled_CheckAlreadyPerformedForRecord_ReturnCachedResults()
     {
         $activitiesApi = new TestActivitiesApi();
@@ -584,6 +605,9 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($cachedResults['Foo.123'], $actualResult, 'Expected result to be pulled from the cached results');
     }
 
+    /**
+     * @covers ActivitiesApi::checkParentPreviewEnabled
+     */
     public function testCheckParentPreviewEnabled_UserHasAccess_ReturnPreviewEnabledAndEmptyReason()
     {
         $activitiesApi = new TestActivitiesApi();
@@ -609,6 +633,9 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResult, $actualResult, 'Expected result to be preview enabled with empty reason');
     }
 
+    /**
+     * @covers ActivitiesApi::checkParentPreviewEnabled
+     */
     public function testCheckParentPreviewEnabled_UserNoAccess_ReturnPreviewEnabledAndEmptyReason()
     {
         $activitiesApi = new TestActivitiesApi();
@@ -636,6 +663,9 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResult, $actualResult, 'Expected result to not be preview enabled with correct reason');
     }
 
+    /**
+     * @covers ActivitiesApi::checkParentPreviewEnabled
+     */
     public function testCheckParentPreviewEnabled_RecordDeleted_ReturnPreviewEnabledAndEmptyReason()
     {
         //full functional test for this to ensure that checkUserAccess returns false for deleted records
