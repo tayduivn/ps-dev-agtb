@@ -79,7 +79,8 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
                         closed_revenue_line_items: 0
                     })],
                     remove: $.noop,
-                    setChunkSize: $.noop
+                    setChunkSize: $.noop,
+                    off: $.noop
                 };
             });
         });
@@ -105,7 +106,8 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
                         closed_revenue_line_items: 1
                     })],
                     remove: $.noop,
-                    setChunkSize: $.noop
+                    setChunkSize: $.noop,
+                    off: $.noop
                 };
             });
         });
@@ -131,7 +133,8 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
                         closed_revenue_line_items: 1
                     })],
                     remove: $.noop,
-                    setChunkSize: $.noop
+                    setChunkSize: $.noop,
+                    off: $.noop
                 };
             });
         });
@@ -158,7 +161,8 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
                         closed_revenue_line_items: 0
                     })],
                     remove: $.noop,
-                    setChunkSize: $.noop
+                    setChunkSize: $.noop,
+                    off: $.noop
                 };
             });
         });
