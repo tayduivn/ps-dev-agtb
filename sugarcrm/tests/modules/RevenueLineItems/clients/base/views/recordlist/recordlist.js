@@ -11,14 +11,14 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-describe("revenuelineitems_view_recordlist", function() {
+describe("RevenueLineItems.Base.Views.RecordList", function() {
     var app, view, options, context, layout;
 
     beforeEach(function() {
         app = SugarTest.app;
         context = app.context.getContext();
         context.set({
-            module: 'RevenueLineItems',
+            module: 'RevenueLineItems'
         });
         context.prepare();
         
@@ -104,6 +104,41 @@ describe("revenuelineitems_view_recordlist", function() {
             model.commit_stage = "exclude";
             message = view.deleteCommitWarning(model);
             expect(message).toEqual(null);
+        });
+    });
+
+    describe('_checkMergeModels', function() {
+        var model1, model2, models = [], view;
+        beforeEach(function() {
+            sinon.stub(app.alert, 'show', function() {});
+            model1 = new Backbone.Model({opportunity_id : 'test_1'});
+            model2 = new Backbone.Model({opportunity_id : 'test_1'});
+            models = [model1, model2];
+            view = SugarTest.createView('base', 'RevenueLineItems', 'recordlist', options.meta, context, true, layout);
+        });
+
+        afterEach(function() {
+            app.alert.show.restore();
+            model1 = undefined;
+            model2 = undefined;
+            models = [];
+            view = undefined;
+        });
+
+        it('should return true', function() {
+            var ret = view._checkMergeModels(models);
+
+            expect(ret).toBeTruthy();
+            expect(app.alert.show).not.toHaveBeenCalled();
+        });
+
+        it('should return false', function() {
+            model2.set('opportunity_id', 'test_2');
+
+            var ret = view._checkMergeModels(models);
+
+            expect(ret).toBeFalsy();
+            expect(app.alert.show).toHaveBeenCalled();
         });
     });
 });

@@ -19,6 +19,33 @@
         this.layout.on("list:record:deleted", function(deletedModel){
             this.deleteCommitWarning(deletedModel);
         }, this);
+
+        this.before('mergeduplicates', this._checkMergeModels, undefined, this);
+    },
+
+    /**
+     * Event handler to make sure that before the merge drawer shows, make sure that all the models contain the first
+     * records opportunity_id
+     *
+     * @param {Array} mergeModels
+     * @returns {boolean}
+     * @private
+     */
+    _checkMergeModels: function(mergeModels) {
+        var primaryRecordOppId = _.first(mergeModels).get('opportunity_id');
+        var invalid_models = _.find(mergeModels, function(model) {
+            return !_.isEqual(model.get('opportunity_id'), primaryRecordOppId);
+        });
+
+        if (!_.isUndefined(invalid_models)) {
+            app.alert.show("merge_duplicates_different_opps_warning", {
+                level: "warning",
+                messages: app.lang.get('WARNING_MERGE_RLIS_WITH_DIFFERENT_OPPORTUNITIES', this.module)
+            });
+            return false;
+        }
+
+        return true;
     },
     
     /**
@@ -70,6 +97,6 @@
         }
         
         return message;
-    },
+    }
 })
 
