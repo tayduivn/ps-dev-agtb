@@ -366,11 +366,11 @@ describe("Create View", function() {
         it("Should hide the restore button when the form is empty", function() {
             view.render();
 
-            expect(view.buttons[view.saveButtonName].isHidden).toBe(false);
-            expect(view.buttons[view.cancelButtonName].isHidden).toBe(false);
-            expect(view.buttons[view.saveAndCreateButtonName].isHidden).toBe(false);
-            expect(view.buttons[view.saveAndViewButtonName].isHidden).toBe(false);
-            expect(view.buttons[view.restoreButtonName].isHidden).toBe(true);
+            expect(view.buttons[view.saveButtonName].isHidden).toBeFalsy();
+            expect(view.buttons[view.cancelButtonName].isHidden).toBeFalsy();
+            expect(view.buttons[view.saveAndCreateButtonName].isHidden).toBeFalsy();
+            expect(view.buttons[view.saveAndViewButtonName].isHidden).toBeFalsy();
+            expect(view.buttons[view.restoreButtonName].isHidden).toBeTruthy();
         });
 
         it("Should hide all buttons except save and cancel when duplicates are found.", function() {
@@ -410,12 +410,12 @@ describe("Create View", function() {
             }, 'handleDuplicateFound should have been called but timeout expired', 1000);
 
             runs(function() {
-                expect(view.buttons[view.saveButtonName].isHidden).toBe(false);
+                expect(view.buttons[view.saveButtonName].isHidden).toBeFalsy();
                 expect(view.buttons[view.saveButtonName].getFieldElement().text()).toBe('LBL_IGNORE_DUPLICATE_AND_SAVE');
-                expect(view.buttons[view.cancelButtonName].isHidden).toBe(false);
-                expect(view.buttons[view.saveAndCreateButtonName].isHidden).toBe(true);
-                expect(view.buttons[view.saveAndViewButtonName].isHidden).toBe(true);
-                expect(view.buttons[view.restoreButtonName].isHidden).toBe(true);
+                expect(view.buttons[view.cancelButtonName].isHidden).toBeFalsy();
+                expect(view.buttons[view.saveAndCreateButtonName].isHidden).toBeTruthy();
+                expect(view.buttons[view.saveAndViewButtonName].isHidden).toBeTruthy();
+                expect(view.buttons[view.restoreButtonName].isHidden).toBeTruthy();
             });
         });
 
@@ -436,12 +436,12 @@ describe("Create View", function() {
             });
             view.context.trigger('list:dupecheck-list-select-edit:fire', app.data.createBean(moduleName, data));
 
-            expect(view.buttons[view.saveButtonName].isHidden).toBe(false);
+            expect(view.buttons[view.saveButtonName].isHidden).toBeFalsy();
             expect(view.buttons[view.saveButtonName].getFieldElement().text()).toBe('LBL_SAVE_BUTTON_LABEL');
-            expect(view.buttons[view.cancelButtonName].isHidden).toBe(false);
-            expect(view.buttons[view.saveAndCreateButtonName].isHidden).toBe(true);
-            expect(view.buttons[view.saveAndViewButtonName].isHidden).toBe(true);
-            expect(view.buttons[view.restoreButtonName].isHidden).toBe(false);
+            expect(view.buttons[view.cancelButtonName].isHidden).toBeFalsy();
+            expect(view.buttons[view.saveAndCreateButtonName].isHidden).toBeTruthy();
+            expect(view.buttons[view.saveAndViewButtonName].isHidden).toBeTruthy();
+            expect(view.buttons[view.restoreButtonName].isHidden).toBeFalsy();
         });
 
         it("Should set the model to selected duplicate values plus any create data for empty fields on selected duplicate", function() {
@@ -493,7 +493,7 @@ describe("Create View", function() {
 
             expect(view.model.get('first_name')).toBe('First');
             expect(view.model.get('last_name')).toBe('Last');
-            expect(view.model.isCopy()).toBe(true);
+            expect(view.model.isCopy()).toBeTruthy();
         });
     });
 
@@ -526,7 +526,7 @@ describe("Create View", function() {
             view.saveModel(success, failure);
 
             SugarTest.server.respond();
-            expect(getCustomSaveOptionsStub.calledOnce).toBe(true);
+            expect(getCustomSaveOptionsStub.calledOnce).toBeTruthy();
             getCustomSaveOptionsStub.restore();
 
             expect(ajaxSpy.getCall(0).args[0].url).toContain('?param1=true&param2=false&viewed=1');
@@ -559,7 +559,7 @@ describe("Create View", function() {
             view.saveModel(success, failure);
 
             SugarTest.server.respond();
-            expect(getCustomSaveOptionsStub.calledOnce).toBe(true);
+            expect(getCustomSaveOptionsStub.calledOnce).toBeTruthy();
             checkFileStub.restore();
             getCustomSaveOptionsStub.restore();
 
@@ -597,7 +597,6 @@ describe("Create View", function() {
     });
 
     describe('Save', function() {
-
         beforeEach(function() {
             SugarTest.clock.restore();
         });
@@ -611,6 +610,7 @@ describe("Create View", function() {
                     success(app.data.createBeanCollection(moduleName));
                 }),
                 saveModelStub = sinonSandbox.stub(view, 'saveModel', function() {
+                    view.model.id = 123;
                     flag = true;
                 });
 
@@ -625,42 +625,69 @@ describe("Create View", function() {
             }, 'Save should have been called but timeout expired', 1000);
 
             runs(function() {
-                expect(validateStub.calledOnce).toBe(true);
-                expect(checkForDuplicateStub.calledOnce).toBe(true);
-                expect(saveModelStub.calledOnce).toBe(true);
+                expect(validateStub.calledOnce).toBeTruthy();
+                expect(checkForDuplicateStub.calledOnce).toBeTruthy();
+                expect(saveModelStub.calledOnce).toBeTruthy();
             });
         });
 
-        it("Should close drawer once save is complete", function() {
-            var flag = false,
-                validateStub = sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
-                    callback(null);
-                }),
-                checkForDuplicateStub = sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
+        describe('once save is complete', function() {
+            var flag, modelId, drawerCloseStub, alertStub;
+            beforeEach(function() {
+                flag = false,
+                    sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
+                        callback(null);
+                    });
+                sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
                     success(app.data.createBeanCollection(moduleName));
-                }),
-                saveModelStub = sinonSandbox.stub(view, 'saveModel', function(success) {
+                });
+                sinonSandbox.stub(view, 'saveModel', function(success) {
+                    view.model.id = modelId;
                     success();
-                }),
+                });
                 drawerCloseStub = sinonSandbox.stub(app.drawer, 'close', function() {
                     flag = true;
                     return;
                 });
+                alertStub = sinonSandbox.stub(view.alerts, 'showSuccessButDeniedAccess');
 
-            view.render();
+                view.render();
+            });
+            it("Should close drawer", function() {
+                modelId = 123;
 
-            runs(function() {
-                view.buttons[view.saveButtonName].getFieldElement().click();
+                runs(function() {
+                    view.buttons[view.saveButtonName].getFieldElement().click();
+                });
+
+                waitsFor(function() {
+                    return flag;
+                }, 'close should have been called but timeout expired', 1000);
+
+                runs(function() {
+                    expect(drawerCloseStub.calledOnce).toBeTruthy();
+                    expect(alertStub.called).toBeFalsy();
+                });
             });
 
-            waitsFor(function() {
-                return flag;
-            }, 'close should have been called but timeout expired', 1000);
+            it('show a warning because the user has no access so the api did not return ID.', function() {
+                modelId = undefined;
 
-            runs(function() {
-                expect(drawerCloseStub.calledOnce).toBe(true);
+                runs(function() {
+                    view.buttons[view.saveButtonName].getFieldElement().click();
+                });
+
+                waitsFor(function() {
+                    return flag;
+                }, 'close should have been called but timeout expired', 1000);
+
+                runs(function() {
+                    expect(drawerCloseStub.calledOnce).toBeTruthy();
+                    expect(alertStub.called).toBeTruthy();
+                });
             });
         });
+
 
         it("Should not save data when save button is clicked but form data are invalid", function() {
             var flag = false,
@@ -729,9 +756,9 @@ describe("Create View", function() {
             }, 'checkForDuplicate should have been called but timeout expired', 2000);
 
             runs(function() {
-                expect(validateStub.calledOnce).toBe(true);
-                expect(checkForDuplicateStub.calledOnce).toBe(true);
-                expect(saveModelStub.called).toBe(false);
+                expect(validateStub.calledOnce).toBeTruthy();
+                expect(checkForDuplicateStub.calledOnce).toBeTruthy();
+                expect(saveModelStub.called).toBeFalsy();
             });
         });
     });
@@ -769,7 +796,7 @@ describe("Create View", function() {
             view.render();
 
             runs(function() {
-                expect(view.skipDupeCheck()).toBe(false);
+                expect(view.skipDupeCheck()).toBeFalsy();
                 view.buttons[view.saveButtonName].getFieldElement().click();
             });
 
@@ -779,7 +806,7 @@ describe("Create View", function() {
 
             runs(function() {
                 flag = false;
-                expect(view.skipDupeCheck()).toBe(true);
+                expect(view.skipDupeCheck()).toBeTruthy();
                 view.buttons[view.saveButtonName].getFieldElement().click();
             });
 
@@ -788,41 +815,42 @@ describe("Create View", function() {
             }, 'close should have been called but timeout expired', 1000);
 
             runs(function() {
-                expect(validateStub.calledTwice).toBe(true);
-                expect(checkForDuplicateStub.calledOnce).toBe(true);
-                expect(saveModelStub.calledOnce).toBe(true);
-                expect(drawerCloseStub.calledOnce).toBe(true);
+                expect(validateStub.calledTwice).toBeTruthy();
+                expect(checkForDuplicateStub.calledOnce).toBeTruthy();
+                expect(saveModelStub.calledOnce).toBeTruthy();
+                expect(drawerCloseStub.calledOnce).toBeTruthy();
             });
         });
     });
 
     describe('Save and Create Another', function() {
-        it("Should save, clear out the form, but not close the drawer.", function() {
-            var flag = false,
-                validateStub = sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
-                    callback(null);
-                }),
-
-                checkForDuplicateStub = sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
-                    success(app.data.createBeanCollection(moduleName));
-                }),
-                saveModelStub = sinonSandbox.stub(view, 'saveModel', function(success) {
-                    success();
-                }),
-                drawerCloseStub = sinonSandbox.stub(app.drawer, 'close', function() {
-                    return;
-                }),
-                clearStub = sinonSandbox.stub(view.model, 'clear', function() {
-                    flag = true;
-                });
-
+        var flag, modelId, saveModelStub, drawerCloseStub, clearStub, navigateStub, alertStub;
+        beforeEach(function() {
+            flag = false;
+            sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
+                callback(null);
+            });
+            sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
+                success(app.data.createBeanCollection(moduleName));
+            });
+            saveModelStub = sinonSandbox.stub(view, 'saveModel', function(success) {
+                view.model.id = modelId;
+                success();
+                flag = true;
+            });
+            navigateStub = sinonSandbox.stub(app, 'navigate');
+            drawerCloseStub = sinonSandbox.stub(app.drawer, 'close');
+            clearStub = sinonSandbox.stub(view.model, 'clear');
+            alertStub = sinonSandbox.stub(view.alerts, 'showSuccessButDeniedAccess');
             view.render();
             view.buttons['main_dropdown'].renderDropdown();
             view.model.set({
                 first_name: 'First',
                 last_name: 'Last'
             });
-
+        });
+        it("Should save, clear out the form, but not close the drawer.", function() {
+            modelId = 123;
             runs(function() {
                 view.buttons[view.saveAndCreateButtonName].getFieldElement().click();
             });
@@ -832,32 +860,57 @@ describe("Create View", function() {
             }, 'clear should have been called but timeout expired', 1000);
 
             runs(function() {
-                expect(saveModelStub.calledOnce).toBe(true);
-                expect(drawerCloseStub.called).toBe(false);
-                expect(clearStub.calledOnce).toBe(true);
+                expect(saveModelStub.calledOnce).toBeTruthy();
+                expect(drawerCloseStub.called).toBeFalsy();
+                expect(clearStub.calledOnce).toBeTruthy();
+                expect(navigateStub.called).toBeFalsy();
+                expect(alertStub.called).toBeFalsy();
+            });
+        });
+        it("Should save and show a warning because the user has no access so the api did not return ID.", function() {
+            modelId = undefined;
+            runs(function() {
+                view.buttons[view.saveAndCreateButtonName].getFieldElement().click();
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'clear should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(saveModelStub.calledOnce).toBeTruthy();
+                expect(drawerCloseStub.called).toBeTruthy();
+                expect(clearStub.called).toBeFalsy();
+                expect(navigateStub.called).toBeFalsy();
+                expect(alertStub.called).toBeTruthy();
             });
         });
     });
 
     describe('Save and View', function() {
-        it("Should save, close the modal, and navigate to the detail view.", function() {
-            var flag = false,
-                validateStub = sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
-                    callback(null);
-                }),
-                checkForDuplicateStub = sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
-                    success(app.data.createBeanCollection(moduleName));
-                }),
-                saveModelStub = sinonSandbox.stub(view, 'saveModel', function(success) {
-                    success();
-                }),
-                navigateStub = sinonSandbox.stub(app, 'navigate', function() {
-                    flag = true;
-                });
+        var flag, modelId, saveModelStub, drawerCloseStub, navigateStub, alertStub;
+        beforeEach(function() {
+            flag = false;
+            sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
+                callback(null);
+            });
+            sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
+                success(app.data.createBeanCollection(moduleName));
+            });
+            saveModelStub = sinonSandbox.stub(view, 'saveModel', function(success) {
+                view.model.id = modelId;
+                success();
+                flag = true;
+            });
+            drawerCloseStub = sinonSandbox.stub(app.drawer, 'close');
+            navigateStub = sinonSandbox.stub(app, 'navigate');
+            alertStub = sinonSandbox.stub(view.alerts, 'showSuccessButDeniedAccess');
 
             view.render();
             view.buttons['main_dropdown'].renderDropdown();
-
+        });
+        it("Should save, close the modal, and navigate to the detail view.", function() {
+            modelId = 123;
             runs(function() {
                 view.buttons[view.saveAndViewButtonName].getFieldElement().click();
             });
@@ -867,8 +920,27 @@ describe("Create View", function() {
             }, 'navigate should have been called but timeout expired', 1000);
 
             runs(function() {
-                expect(saveModelStub.calledOnce).toBe(true);
-                expect(navigateStub.calledOnce).toBe(true);
+                expect(saveModelStub.calledOnce).toBeTruthy();
+                expect(navigateStub.called).toBeTruthy();
+                expect(drawerCloseStub.called).toBeFalsy();
+                expect(alertStub.called).toBeFalsy();
+            });
+        });
+        it("Should save and show a warning because the user has no access so the api did not return ID.", function() {
+            modelId = undefined;
+            runs(function() {
+                view.buttons[view.saveAndViewButtonName].getFieldElement().click();
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'navigate should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(saveModelStub.calledOnce).toBeTruthy();
+                expect(navigateStub.calledOnce).toBeFalsy();
+                expect(drawerCloseStub.called).toBeTruthy();
+                expect(alertStub.called).toBeTruthy();
             });
         });
     });
@@ -899,10 +971,10 @@ describe("Create View", function() {
             }, 'Drawer should have been closed but timeout expired', 1000);
 
             runs(function() {
-                expect(validateStub.calledOnce).toBe(true);
-                expect(checkForDuplicateStub.called).toBe(false);
-                expect(saveModelStub.calledOnce).toBe(true);
-                expect(drawerCloseStub.calledOnce).toBe(true);
+                expect(validateStub.calledOnce).toBeTruthy();
+                expect(checkForDuplicateStub.called).toBeFalsy();
+                expect(saveModelStub.calledOnce).toBeTruthy();
+                expect(drawerCloseStub.calledOnce).toBeTruthy();
             });
         });
     });
