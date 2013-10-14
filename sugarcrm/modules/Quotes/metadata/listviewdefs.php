@@ -53,6 +53,15 @@ $listViewDefs['Quotes'] = array(
         'link' => false,
         'default' => true        
 	),
+    'TOTAL' => array(
+        'width' => '10',
+        'label' => 'LBL_LIST_AMOUNT',
+        'link' => false,
+        'default' => true,
+        'currency_format' => true,
+        'align' => 'right',
+        'sortable' => false,
+    ),
 	'TOTAL_USDOLLAR' => array(
 		'width' => '10', 
 		'label' => 'LBL_LIST_AMOUNT_USDOLLAR',
