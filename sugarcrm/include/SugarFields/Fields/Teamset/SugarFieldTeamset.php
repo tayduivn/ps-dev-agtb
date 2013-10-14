@@ -235,6 +235,7 @@ class SugarFieldTeamset extends SugarFieldBase {
         		if(!$primary){
         			$this->view->bean->{$this->view->value_name}= array('primary'=>array('id'=>$id, 'name'=>$name));
         			$primary = true;
+        			$this->view->add_user_private_team = false;
         		}else{
         			$secondaries['secondaries'][]=array('id'=>$id, 'name'=>$name);
         		}
