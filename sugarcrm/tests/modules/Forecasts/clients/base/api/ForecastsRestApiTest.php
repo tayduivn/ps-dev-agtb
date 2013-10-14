@@ -86,20 +86,6 @@ class ForecastsRestApiTest extends RestTestBase
     }
 
     /**
-     * This test is to make sure Forecasts/init endpoint returns an isManager property
-     * @group forecastapi
-     * @group forecasts
-     */
-    public function testCheckForecastSpecificIsManager()
-    {
-        $this->markTestIncomplete('Move Rest tests to SOAP UI');
-
-        $restReply = $this->_restCall("Forecasts/init");
-        $userData = $restReply['reply']['initData']['userData'];
-        $this->assertArrayHasKey('isManager', $userData, "Forecasts/init did not return isManager");
-    }
-
-    /**
      * This test is to make sure Forecasts/init endpoint returns an showOpps property
      * @group forecastapi
      * @group forecasts

@@ -109,7 +109,6 @@ class ForecastsApi extends SugarApi
         $defaultSelections = array();
 
         // Add Forecasts-specific items to returned data
-        $returnInitData["initData"]["userData"]['isManager'] = User::isManager($current_user->id);
         $returnInitData["initData"]["userData"]['showOpps'] = false;
         $returnInitData["initData"]["userData"]['first_name'] = $current_user->first_name;
         $returnInitData["initData"]["userData"]['last_name'] = $current_user->last_name;
@@ -166,7 +165,7 @@ class ForecastsApi extends SugarApi
         $data['full_name'] = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
         $data['first_name'] = $user->first_name;
         $data['last_name'] = $user->last_name;
-        $data['isManager'] = User::isManager($user->id);
+        $data['is_manager'] = User::isManager($user->id);
         return $data;
     }
 
@@ -285,7 +284,7 @@ class ForecastsApi extends SugarApi
         $data = $quotaBean->getRollupQuota($args['timeperiod_id'], $args['user_id'], $isRollup);
 
         // add if the manager is a top-level manager or not
-        $data['isTopLevelManager'] = User::isTopLevelManager($args['user_id']);
+        $data['is_top_level_manager'] = User::isTopLevelManager($args['user_id']);
 
         return $data;
     }

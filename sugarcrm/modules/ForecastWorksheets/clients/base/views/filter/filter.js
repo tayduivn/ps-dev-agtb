@@ -34,7 +34,11 @@
      */
     initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.selectedUser = {id:app.user.get('id'), isManager:app.user.get('isManager'), showOpps:false};
+        this.selectedUser = {
+            id: app.user.get('id'),
+            is_manager: app.user.get('is_manager'),
+            showOpps: false
+        };
     },
 
     // prevent excessive renders when things change.

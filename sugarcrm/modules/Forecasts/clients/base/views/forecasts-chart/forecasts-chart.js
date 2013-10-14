@@ -351,7 +351,7 @@
         ctx.on('change:selectedUser', function(context, user) {
             this.values.set({
                 user_id: user.id,
-                display_manager: (user.showOpps === false && user.isManager === true)
+                display_manager: (user.showOpps === false && user.is_manager === true)
             });
             this.toggleRepOptionsVisibility();
         }, this);

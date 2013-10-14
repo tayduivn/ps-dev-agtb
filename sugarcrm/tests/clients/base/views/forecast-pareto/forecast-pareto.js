@@ -101,7 +101,7 @@ describe('Base.Views.ForecastPareto', function() {
                 },
                 initData: {
                     userData: {
-                        isManager: 0
+                        is_manager: 0
                     }
                 }
             };

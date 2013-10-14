@@ -131,7 +131,7 @@
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
         this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
         this.selectedTimeperiod = this.context.get('selectedTimePeriod') || this.context.parent.get('selectedTimePeriod') || '';
-        this.context.set('skipFetch', (this.selectedUser.isManager && this.selectedUser.showOpps));    // skip the initial fetch, this will be handled by the changing of the selectedUser
+        this.context.set('skipFetch', (this.selectedUser.is_manager && this.selectedUser.showOpps));    // skip the initial fetch, this will be handled by the changing of the selectedUser
         this.collection.sync = _.bind(this.sync, this);
     },
 
@@ -505,7 +505,7 @@
     beforeRenderCallback: function() {
         // if manager is not set or manager == false
         var ret = true;
-        if (_.isUndefined(this.selectedUser.isManager) || this.selectedUser.isManager == false) {
+        if (_.isUndefined(this.selectedUser.is_manager) || this.selectedUser.is_manager == false) {
             ret = false;
         }
 
@@ -532,7 +532,7 @@
      */
     renderCallback: function() {
         var user = this.selectedUser || this.context.parent.get('selectedUser') || app.user.toJSON();
-        if (user.isManager && user.showOpps == false) {
+        if (user.is_manager && user.showOpps == false) {
             if (!this.layout.isVisible()) {
                 this.layout.once('show', this.calculateTotals, this);
                 this.layout.show();
@@ -583,7 +583,7 @@
         if (this.selectedUser.id != changed.id) {
             doFetch = true;
         }
-        if (!doFetch && this.selectedUser.isManager != changed.isManager) {
+        if (!doFetch && this.selectedUser.is_manager != changed.is_manager) {
             doFetch = true;
         }
         if (!doFetch && this.selectedUser.showOpps != changed.showOpps) {
@@ -604,7 +604,7 @@
         if (doFetch) {
             this.refreshData();
         } else {
-            if (this.selectedUser.isManager && this.selectedUser.showOpps == true && this.layout.isVisible()) {
+            if (this.selectedUser.is_manager && this.selectedUser.showOpps == true && this.layout.isVisible()) {
                 if (this.displayNavigationMessage && this.dirtyUser.id == this.selectedUser.id) {
                     this.processNavigationMessageReturn(this.showNavigationMessage('manager_to_rep'));
                 } else if (this.displayNavigationMessage) {
@@ -677,7 +677,7 @@
         if (!_.isUndefined(this.context.parent) && !_.isUndefined(this.context.parent.get('selectedUser'))) {
             var sl = this.context.parent.get('selectedUser');
 
-            if (sl.isManager == false) {
+            if (sl.is_manager == false) {
                 // they are not a manager, we should always hide this if it's not already hidden
                 if (this.layout.isVisible()) {
                     this.layout.hide();

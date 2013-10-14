@@ -146,7 +146,7 @@
         this.template = app.template.getView('flex-list', this.module);
         this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
         this.selectedTimeperiod = this.context.get('selectedTimePeriod') || this.context.parent.get('selectedTimePeriod') || '';
-        this.context.set('skipFetch', !(this.selectedUser.showOpps || !this.selectedUser.isManager)); // if user is a manager, skip the initial fetch
+        this.context.set('skipFetch', !(this.selectedUser.showOpps || !this.selectedUser.is_manager)); // if user is a manager, skip the initial fetch
         this.filters = this.context.get('selectedRanges') || this.context.parent.get('selectedRanges');
         this.collection.sync = _.bind(this.sync, this);
         this.noAccessDataErrorTemplate = app.template.getField('base', 'noaccess')(this);
@@ -280,7 +280,7 @@
                         var ctx = this.context.parent || this.context;
                         ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, false);
 
-                        if (this.selectedUser.isManager && app.metadata.getModule('Forecasts', 'config').show_forecasts_commit_warnings == 1) {
+                        if (this.selectedUser.is_manager && app.metadata.getModule('Forecasts', 'config').show_forecasts_commit_warnings == 1) {
                             this.collection.once('reset', function() {
                                 this.setNavigationMessage(true, 'LBL_WORKSHEET_COMMIT_ALERT', 'LBL_WORKSHEET_COMMIT_ALERT');
                             }, this)
@@ -431,7 +431,7 @@
         // set the defaults to make it act like a manager so it doesn't actually render till the selected
         // user is updated
         var showOpps = (_.isUndefined(this.selectedUser.showOpps)) ? false : this.selectedUser.showOpps,
-            isManager = (_.isUndefined(this.selectedUser.isManager)) ? true : this.selectedUser.isManager;
+            isManager = (_.isUndefined(this.selectedUser.is_manager)) ? true : this.selectedUser.is_manager;
 
         if (!(showOpps || !isManager) && this.layout.isVisible()) {
             this.layout.hide();
@@ -451,7 +451,7 @@
      */
     renderCallback: function() {
         var user = this.selectedUser || this.context.parent.get('selectedUser') || app.user.toJSON()
-        if (user.showOpps || !user.isManager) {
+        if (user.showOpps || !user.is_manager) {
             if (!this.layout.isVisible()) {
                 this.layout.show();
             }
@@ -491,11 +491,11 @@
         var doFetch = false;
         if (this.selectedUser.id != changed.id) {
             // user changed. make sure it's not a manager view before we say fetch or not
-            doFetch = (changed.showOpps || !changed.isManager);
+            doFetch = (changed.showOpps || !changed.is_manager);
         }
         // if we are already not going to fetch, check to see if the new user is showingOpps or is not
         // a manager, then we want to fetch
-        if (!doFetch && (changed.showOpps || !changed.isManager)) {
+        if (!doFetch && (changed.showOpps || !changed.is_manager)) {
             doFetch = true;
         }
 
@@ -514,7 +514,7 @@
         if (doFetch) {
             this.refreshData();
         } else {
-            if ((!this.selectedUser.showOpps && this.selectedUser.isManager) && this.layout.isVisible()) {
+            if ((!this.selectedUser.showOpps && this.selectedUser.is_manager) && this.layout.isVisible()) {
                 if (this.displayNavigationMessage && this.dirtyUser.id == this.selectedUser.id) {
                     this.processNavigationMessageReturn(this.showNavigationMessage('rep_to_manager'));
                 } else if (this.displayNavigationMessage) {
