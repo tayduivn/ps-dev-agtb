@@ -536,6 +536,8 @@ function smarty_function_sugar_button($params, &$smarty)
                                 }
                             }
 
+                        sort($pdfItems);
+
                         if (!$enable_action_menu) {
                             if (!empty($urlParams)) {
                                 $output .= '<ul class="clickMenu fancymenu">';
@@ -697,6 +699,8 @@ function smarty_function_sugar_button($params, &$smarty)
                                         }
                                     }
                                 }
+
+                        sort($pdfItems);
 
                         if (!$enable_action_menu) {
                             if (!empty($urlParams)) {
