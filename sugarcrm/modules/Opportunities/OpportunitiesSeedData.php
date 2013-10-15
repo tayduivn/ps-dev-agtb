@@ -269,8 +269,6 @@ class OpportunitiesSeedData {
             $worksheet->saveOpportunityProducts($opp);
             //END SUGARCRM flav=ent ONLY
 
-            // Create a linking table entry to assign an account to the opportunity.
-            $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);
             $opp_ids[] = $opp->id;
         }
 
