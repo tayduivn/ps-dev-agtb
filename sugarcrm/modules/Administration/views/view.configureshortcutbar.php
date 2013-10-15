@@ -67,7 +67,6 @@ class ViewConfigureshortcutbar extends SugarView
         $json = new JSON();
 
         global $mod_strings;
-        global $moduleList;
 
         $title = getClassicModuleTitle(
             "Administration",
@@ -78,24 +77,9 @@ class ViewConfigureshortcutbar extends SugarView
             false
         );
         $msg = "";
-        $failed = false;
         $GLOBALS['log']->info("Administration ConfigureShortcutBar view");
 
-        $modulesWithQuickCreate = array();
-
-        // get all modules that have quickcreate menus
-        foreach ($moduleList as $module) {
-            $quickCreateFile = "modules/$module/clients/base/menus/quickcreate/quickcreate.php";
-            if (!file_exists("custom/{$quickCreateFile}") && !file_exists($quickCreateFile)) {
-                continue;
-            }
-            if (file_exists("custom/{$quickCreateFile}")) {
-                include "custom/{$quickCreateFile}";
-            } else {
-                include $quickCreateFile;
-            }
-            $modulesWithQuickCreate[$module] = !empty($viewdefs[$module]['base']['menu']['quickcreate']['visible']) ? $viewdefs[$module]['base']['menu']['quickcreate']['visible'] : false;
-        }
+        $quickCreateModules = $this->getQuickCreateModules();
 
         //If save is set, save then let the user know if the save worked.
         if (!empty($_REQUEST['enabled_modules'])) {
@@ -103,56 +87,25 @@ class ViewConfigureshortcutbar extends SugarView
             // get the enabled
             $enabledModules = array_flip(json_decode($toDecode));
 
-            foreach ($modulesWithQuickCreate as $module => $val) {
+            $successful = $this->saveChangesToQuickCreateMetadata(
+                $quickCreateModules['enabled'],
+                $quickCreateModules['disabled'],
+                $enabledModules
+            );
 
-                // didn't change don't need to change it
-                if ($val === true && array_key_exists($module, $enabledModules)) {
-                    continue;
-                } elseif ($val === false && !array_key_exists($module, $enabledModules)) {
-                    continue;
-                }
-
-                $quickCreateFile = "modules/$module/clients/base/menus/quickcreate/quickcreate.php";
-                $arrayName = "viewdefs['{$module}']['base']['menu']['quickcreate']";
-                // require the file
-                if (file_exists("custom/{$quickCreateFile}")) {
-                    include "custom/{$quickCreateFile}";
-                } else {
-                    include $quickCreateFile;
-                }
-                $viewdefs[$module]['base']['menu']['quickcreate']['visible'] = !$val;
-                sugar_mkdir(dirname("custom/{$quickCreateFile}"), null, true);
-                if (!write_array_to_file(
-                    $arrayName,
-                    $viewdefs[$module]['base']['menu']['quickcreate'],
-                    "custom/{$quickCreateFile}"
-                )) {
-                    $failed = true;
-                }
-            }
-            if ($failed === true) {
-                echo translate("LBL_SAVE_FAILED");
-            } else {
+            if ($successful) {
                 MetaDataManager::clearAPICache();
                 echo "true";
+            } else {
+                echo translate("LBL_SAVE_FAILED");
             }
         } else {
-            //Start with the default module
-            $enabled = array();
-            $disabled = array();
-            foreach ($modulesWithQuickCreate as $module => $value) {
-                if ($value === true) {
-                    $enabled[$module] = array("module" => $module, 'label' => translate($module));
-                } else {
-                    $disabled[$module] = array("module" => $module, 'label' => translate($module));
-                }
-            }
+            $enabled = $this->sortEnabledModules($quickCreateModules['enabled']);
+            $enabled = $this->filterAndFormatModuleList($enabled);
 
-            ksort($enabled);
-            ksort($disabled);
+            ksort($quickCreateModules['disabled']);
+            $disabled = $this->filterAndFormatModuleList($quickCreateModules['disabled']);
 
-            $enabled = $this->filterModules($enabled);
-            $disabled = $this->filterModules($disabled);
             $this->ss->assign('APP', $GLOBALS['app_strings']);
             $this->ss->assign('MOD', $GLOBALS['mod_strings']);
             $this->ss->assign('title', $title);
@@ -171,14 +124,157 @@ class ViewConfigureshortcutbar extends SugarView
         }
     }
 
-    protected function filterModules($moduleList)
+    /**
+     * Get a list of all enabled and disabled quickcreate modules.
+     *
+     * @return array
+     */
+    protected function getQuickCreateModules()
+    {
+        global $moduleList;
+        $enabledModules = array();
+        $disabledModules = array();
+
+        foreach ($moduleList as $module) {
+            $quickCreateMetadata = $this->getQuickCreateMetadata($module);
+
+            if (!empty($quickCreateMetadata)) {
+                $isVisible = !empty($quickCreateMetadata['visible']) ? $quickCreateMetadata['visible'] : false;
+                if ($isVisible) {
+                    if (!array_key_exists('order', $quickCreateMetadata)) {
+                        $quickCreateMetadata['order'] = -1;
+                    }
+                    $enabledModules[$module] = $quickCreateMetadata;
+                } else {
+                    $disabledModules[$module] = $quickCreateMetadata;
+                }
+            }
+        }
+
+        return array(
+            'enabled' => $enabledModules,
+            'disabled' => $disabledModules,
+        );
+    }
+
+    /**
+     * Get quickcreate menu metadata for a given module.
+     *
+     * @param $module string
+     * @return array
+     */
+    protected function getQuickCreateMetadata($module)
+    {
+        $quickCreateFile = "modules/$module/clients/base/menus/quickcreate/quickcreate.php";
+
+        if (!file_exists("custom/{$quickCreateFile}") && !file_exists($quickCreateFile)) {
+            return;
+        }
+
+        if (file_exists("custom/{$quickCreateFile}")) {
+            include "custom/{$quickCreateFile}";
+        } else {
+            include "{$quickCreateFile}";
+        }
+
+        return $viewdefs[$module]['base']['menu']['quickcreate'];
+    }
+
+    /**
+     * Save changes to the quickcreate menu metadata.
+     *
+     * @param $enabled array
+     * @param $disabled array
+     * @param $modulesToEnable array
+     * @return bool
+     */
+    protected function saveChangesToQuickCreateMetadata($enabled, $disabled, $modulesToEnable)
+    {
+        $success = true;
+
+        // Change the metadata if the enabled module has been disabled or if the order has changed.
+        foreach ($enabled as $module => $quickCreateMetadata) {
+            $shouldBeEnabled = array_key_exists($module, $modulesToEnable);
+            if (!$shouldBeEnabled) {
+                $quickCreateMetadata['visible'] = false;
+                unset($quickCreateMetadata['order']);
+                $success = $this->setQuickCreateMetadata($quickCreateMetadata, $module);
+            } elseif ($quickCreateMetadata['order'] !== $modulesToEnable[$module]) {
+                $quickCreateMetadata['order'] = $modulesToEnable[$module];
+                $success = $this->setQuickCreateMetadata($quickCreateMetadata, $module);
+            }
+        }
+
+        // Change the metadata if the disabled module has been enabled.
+        foreach ($disabled as $module => $quickCreateMetadata) {
+            $shouldBeEnabled = array_key_exists($module, $modulesToEnable);
+            if ($shouldBeEnabled) {
+                $quickCreateMetadata['visible'] = true;
+                $quickCreateMetadata['order'] = $modulesToEnable[$module];
+                $success = $this->setQuickCreateMetadata($quickCreateMetadata, $module);
+            }
+        }
+
+        return $success;
+    }
+
+    /**
+     * Write the given quickcreate menu metadata to the server.
+     *
+     * @param $metadata array
+     * @param $module string
+     * @return bool
+     */
+    protected function setQuickCreateMetadata($metadata, $module)
+    {
+        $quickCreateFile = "modules/$module/clients/base/menus/quickcreate/quickcreate.php";
+        $arrayName = "viewdefs['{$module}']['base']['menu']['quickcreate']";
+
+        if (file_exists("custom/{$quickCreateFile}")) {
+            include "custom/{$quickCreateFile}";
+        } else {
+            include "{$quickCreateFile}";
+        }
+
+        sugar_mkdir(dirname("custom/{$quickCreateFile}"), null, true);
+        return (write_array_to_file($arrayName, $metadata, "custom/{$quickCreateFile}"));
+    }
+
+    /**
+     * Sort enabled modules array according to its order value.
+     *
+     * @param $modules array
+     * @return array
+     */
+    protected function sortEnabledModules($modules)
+    {
+        $sortComparison = function ($a, $b) {
+            return ($a['order'] - $b['order']);
+        };
+        uasort($modules, $sortComparison);
+
+        return $modules;
+    }
+
+    /**
+     * Filter out modules that are blacklisted and format the module list so that it is an array of objects.
+     *
+     * @param $moduleList array
+     * @return array
+     */
+    protected function filterAndFormatModuleList($moduleList)
     {
         $results = array();
-        foreach($moduleList as $mod)
-        {
-            if(!in_array($mod['module'], $this->blacklistedModules))
-                $results[] = $mod;
+
+        foreach ($moduleList as $module => $data) {
+            if (!in_array($module, $this->blacklistedModules)) {
+                $results[] = array(
+                    'module' => $module,
+                    'label' => translate($module),
+                );
+            }
         }
+
         return $results;
     }
 }

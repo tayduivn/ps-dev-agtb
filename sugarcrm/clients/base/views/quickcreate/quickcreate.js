@@ -42,7 +42,7 @@
             meta = app.metadata.getModule(module);
             if (meta && meta.menu && meta.menu.quickcreate) {
                 menuItem = meta.menu.quickcreate.meta;
-                if (_.isUndefined(menuItem.visible) || menuItem.visible === true) {
+                if (menuItem.visible === true) {
                     menuItem.module = module;
                     menuItem.type = menuItem.type || 'quickcreate';
                     //TODO: refactor sidecar field hbs helper so it can accept the module name directly
@@ -51,7 +51,21 @@
                 }
             }
         }, this);
-        return returnList;
+        return this._sortByOrder(returnList);
+    },
+
+    /**
+     * Sorts the module list based upon the value of the order attribute.
+     *
+     * @param {Array} moduleList
+     * @returns {Array}
+     * @private
+     */
+    _sortByOrder: function(moduleList) {
+        var sorted = _.sortBy(moduleList, function(menuItem) {
+            return menuItem.order;
+        });
+        return sorted;
     },
 
     _dispose: function(){
