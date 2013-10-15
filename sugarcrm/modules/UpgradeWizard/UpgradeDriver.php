@@ -1453,9 +1453,11 @@ abstract class UpgradeDriver
                     }
                     $this->saveConfig();
                     $this->cleanCaches();
-                    $this->prewarmCache();
                     break;
                 case "cleanup":
+                    // do it on cleanup so that caches from post won't interfere
+                    $this->initSugar();
+                    $this->prewarmCache();
                     // Remove temp files
                     $this->removeTempFiles();
                     break;
