@@ -471,6 +471,40 @@ class RestRelateRecordTest extends RestTestBase {
     /**
      * @group rest
      */
+    public function testCreateRelatedLinks()
+    {
+        $linkName = 'contacts';
+        $this->contacts[] = SugarTestContactUtilities::createContact();
+        $this->contacts[] = SugarTestContactUtilities::createContact();
+        $this->opps[] = SugarTestOpportunityUtilities::createOpportunity();
+
+        $restReply = $this->_restCall(
+            'Opportunities/' . $this->opps[0]->id . '/link',
+            json_encode(
+                array(
+                    'link_name' => $linkName,
+                    'ids' => array(
+                        $this->contacts[0]->id,
+                        $this->contacts[1]->id,
+                    )
+                )
+            ),
+            'POST'
+        );
+
+        $this->opps[0]->load_relationship($linkName);
+        $actualResult = $this->opps[0]->$linkName->getBeans();
+
+        SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+
+        $this->assertArrayHasKey($this->contacts[0]->id, $actualResult);
+        $this->assertArrayHasKey($this->contacts[1]->id, $actualResult);
+    }
+
+    /**
+     * @group rest
+     */
     public function testDeleteRelatedLink() {
         global $db;
 
