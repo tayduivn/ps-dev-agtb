@@ -466,14 +466,16 @@ class ModuleScanner{
 	/**
 	 *Ensures that a file has a valid extension
 	 */
-	public function isValidExtension($file){
+	public function isValidExtension($file)
+	{
 		$file = strtolower($file);
+		$pi = pathinfo($file);
 
-		$extPos = strrpos($file, '.');
 		//make sure they don't override the files.md5
-		if($extPos === false || $file == 'files.md5')return false;
-		$ext = substr($file, $extPos + 1);
-		return in_array($ext, $this->validExt);
+		if(empty($pi['extension']) || $pi['basename'] == 'files.md5' || $pi['basename'] == 'config.php' || $pi['basename'] == 'config_override.php') {
+		    return false;
+		}
+		return in_array($pi['extension'], $this->validExt);
 
 	}
 
