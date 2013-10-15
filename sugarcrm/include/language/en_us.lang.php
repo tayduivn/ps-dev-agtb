@@ -1763,6 +1763,7 @@ $app_list_strings = array (
         'int' => array(
             '$equals' => 'is equal to',
             '$not_equals' => 'is not equal to',
+            '$in' => 'is any of',
             '$gt' => 'is greater than',
             '$lt' => 'is less than',
             '$gte' => 'is greater than or equal to',
