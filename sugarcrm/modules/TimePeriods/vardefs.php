@@ -64,7 +64,8 @@ $dictionary['TimePeriod'] = array(
                 'len' => '14',
                 'required' => true,
                 'enable_range_search' => true,
-                'studio' => false
+                'studio' => false,
+                'reportable' => false,
             ),
         'end_date' =>
             array(
@@ -77,12 +78,13 @@ $dictionary['TimePeriod'] = array(
         'end_date_timestamp' =>
             array(
                 'name' => 'end_date_timestamp',
-                'vname' => 'LBL_TP_START_DATE_TIMESTAMP',
+                'vname' => 'LBL_TP_END_DATE_TIMESTAMP',
                 'type' => 'int',
                 'len' => '14',
                 'required' => true,
                 'enable_range_search' => true,
-                'studio' => false
+                'studio' => false,
+                'reportable' => false,
             ),
         'created_by' =>
             array(
