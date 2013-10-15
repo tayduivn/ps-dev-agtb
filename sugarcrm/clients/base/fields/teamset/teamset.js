@@ -56,7 +56,7 @@
                     plugin.setTeamIndex = function () {
                         self._currentIndex = $(this).data("index");
                     };
-                    plugin.opts.element.on("open", plugin.setTeamIndex);
+                    plugin.opts.element.on("select2-open", plugin.setTeamIndex);
                 }
             });
         }

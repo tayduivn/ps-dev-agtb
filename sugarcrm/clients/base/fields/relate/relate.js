@@ -75,7 +75,7 @@
                 allowClear: self.allow_single_deselect,
                 minimumInputLength: self.minChars,
                 query: _.bind(this.search, this)
-            }).on("open",function () {
+            }).on("select2-open",function () {
                     var plugin = $(this).data('select2');
                     if (!plugin.searchmore) {
                         var $content = $('<li class="select2-result">').append(
