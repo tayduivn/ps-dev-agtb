@@ -140,7 +140,7 @@ class OAuth2ApiTest extends Sugar_PHPUnit_Framework_TestCase
         $ret = $api->isSupportedClientVersion($service, array('client_info'=>
                                                         array('app'=>array(
                                                                   'name'=>'nomad',
-                                                                  'version'=>'1.0.4',
+                                                                  'version'=>'1.2.0',
                                                                   ))));
         $this->assertTrue($ret, "Returned false on an up to date client");
     }
