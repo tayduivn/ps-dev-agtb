@@ -148,7 +148,6 @@
     }
   }
 
-
   p {
     margin: 0;
     padding: 0;
@@ -336,7 +335,9 @@
 
 /* twitter widget */
 .twitter-widget {
-  margin-bottom: 38px;
+  &.scroll {
+    max-height: 428px;
+  }
   .news-article {
     .header {
       h5 {
@@ -387,14 +388,8 @@
         margin-top: -3px;
       }
     }
-    /*&:hover {
-      background: @grayLighter;
-    }*/
   }
   &+.block-footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
     border-radius: 0 0 4px 4px;
     background-color: @white;
     border-top: 1px solid @grayLighter;
@@ -414,6 +409,12 @@
     iframe {
       padding: 2px 0 0 2px;
     }
+  }
+}
+
+.side.sidebar-content .twitter-widget {
+  &.scroll {
+    max-height: 328px;
   }
 }
 

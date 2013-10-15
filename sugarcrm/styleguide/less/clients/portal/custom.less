@@ -12,7 +12,10 @@ ul.nav.nav-tabs li.activity > p {
   * Overrides normal list view styling to make them 'dashlet-like'
   **/
 #content > .row-fluid > .dashboard.main-pane  {
-  top: 0px;
+  top: 0;
+}
+#portal .touch .dashboard {
+  padding-top: 0 !important;
 }
 
 .dashboard {
@@ -71,6 +74,10 @@ ul.nav.nav-tabs li.activity > p {
       border-bottom-width: 0;
     }
     //recover
+    .list-view {
+      width: 100%;
+      overflow: auto;
+    }
   }
   .cols {
     .thumbnail {
@@ -168,7 +175,20 @@ table.dataTable {
 }
 
 .dataTables_filter {
+  position: relative;
+  padding: 5px;
+  background: @grayLighter;
+  border-top: 1px solid darken(@grayLighter, 5%);
+  border-bottom: 1px solid darken(@grayLighter, 5%);
+  z-index: 1000;
+  margin: 0;
+  text-align: center;
+  #gradient > .vertical(darken(@grayLighter, 4%), @grayLighter);
   .box-shadow(~"none");
+  input {
+    width: 100%;
+    margin: 0;
+  }
 }
 
 .modal-body > .form-horizontal {

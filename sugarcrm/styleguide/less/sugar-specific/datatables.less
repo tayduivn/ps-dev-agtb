@@ -423,25 +423,18 @@ FLEXLIST GENERIC */
     & > tbody > tr > td {
       &:first-child {
         width: 55px;
-        padding: 6px 8px;
         text-align: center;
         overflow-x: visible;
-        position: absolute;
-        left: 0;
-      }
-      //8 + 55 + 8 + 1 + 8 = 80
-      &:nth-child(2) {
-        padding-left: 79px;
-      }
-      & > thead > tr > th:first-child {
-        padding: 6px 8px;
-        min-height: 30px;
+
       }
     }
     & > thead > tr > th {
       &:first-child {
+        height: 28px;
+        padding: 7px 8px;
         background: @white;
-        min-height: 30px;
+        vertical-align: top;
+        line-height: 18px;
         span {
           overflow-x: visible;
         }
@@ -449,7 +442,7 @@ FLEXLIST GENERIC */
     }
     & > tbody > tr > td {
       &:first-child {
-        border: none;
+        padding: 6px 8px;
         height: 22px;
         margin: 2px 0;
         z-index: 10;
@@ -465,32 +458,23 @@ FLEXLIST GENERIC */
         width: 55px;
         text-align: center;
         overflow-x: visible;
-        position: absolute;
-        right: 0;
-      }
-      &:nth-last-child(2) {
-        padding-right: 79px;
       }
     }
-
     & > thead > tr > th {
       &:last-child {
-        height: 26px;
+        height: 28px;
+        padding: 7px 8px;
         background: @white;
-        border-left: 1px solid darken(@grayLighter,5%);
-        z-index: 100;
+        vertical-align: top;
+        line-height: 18px;
         > .dropdown {
           overflow: visible;
         }
-      }
-      &:nth-last-child(2) {
-        border-right: none;
       }
     }
     & > tbody > tr > td {
       &:last-child {
         padding: 3px 8px;
-        border: none;
         height: 28px;
         margin: 2px 0;
         .list .btn.rowaction {
@@ -726,6 +710,18 @@ FLEXLIST GENERIC */
 
     /*.flex-list.left-actions to fix the first column*/
     &.left-actions.scroll-width table.dataTable {
+      & > thead > tr > th,
+      & > tbody > tr > td {
+        &:first-child {
+          position: absolute;
+          left: 0;
+          vertical-align: top;
+        }
+        //8 + 55 + 8 + 1 + 8 = 80
+        &:nth-child(2) {
+          padding-left: 79px;
+        }
+      }
       & > thead > tr > th:first-child {
         border-right: none;
         &:after {
@@ -734,6 +730,7 @@ FLEXLIST GENERIC */
         }
       }
       & > tbody > tr > td:first-child {
+        border: none;
         &:after {
           .right-shadow;
         }
@@ -742,6 +739,20 @@ FLEXLIST GENERIC */
 
     /*.flex-list.right-actions to fix the last column*/
     &.right-actions.scroll-width table.dataTable {
+      & > thead > tr > th,
+      & > tbody > tr > td {
+        &:last-child {
+          position: absolute;
+          right: 0;
+          vertical-align: top;
+        }
+        &:nth-last-child(2) {
+          padding-right: 79px;
+        }
+      }
+      & > thead > tr > th:nth-last-child(2) {
+        border-right: none;
+      }
       & > thead > tr > th:last-child {
         border-left: none;
         &:before {
@@ -750,6 +761,7 @@ FLEXLIST GENERIC */
         }
       }
       & > tbody > tr > td:last-child {
+        border: none;
         &:before {
           .left-shadow;
         }
@@ -848,24 +860,6 @@ table th.nosort span:after {
 
 table.dataTable th:active {
   outline: none;
-}
-
-//used in portal
-.dataTables_filter {
-  position: relative;
-  padding: 5px;
-  background: @grayLighter;
-  border-top: 1px solid darken(@grayLighter, 5%);
-  border-bottom: 1px solid darken(@grayLighter, 5%);
-  z-index: 1000;
-  margin: 0;
-  text-align: center;
-  #gradient > .vertical(darken(@grayLighter, 4%), @grayLighter);
-  .box-shadow(~"inset 0 1px 0 rgba(0,0,0,.2), inset 0 -1px 0 rgba(0,0,0,.1);");
-  input {
-    width: 100%;
-    margin: 0;
-  }
 }
 
 .morecol {
