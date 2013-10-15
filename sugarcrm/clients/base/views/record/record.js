@@ -552,41 +552,18 @@
     },
 
     /**
-     * {@inheritdoc}
-     * Attach tab handler to jump into the next target field
+     * Key handlers for inline edit mode.
+     *
+     * Jump into the next or prev target field if `tab` key is pressed.
+     * Calls {@link app.plugins.Editable#nextField} to go to next/prev field.
+     *
+     * @param {Event} e Event object.
+     * @param {View.Field} field Current focused field (field in inline-edit mode).
      */
-    handleKeyDown: function (e, field) {
+    handleKeyDown: function(e, field) {
         if (e.which === 9) { // If tab
             e.preventDefault();
-            field.$(field.fieldTag).trigger("change");
-            var direction = e.shiftKey ? 'prevField' : 'nextField',
-                nextField = field[direction];
-
-            if (!nextField) {
-                return;
-            }
-
-            var hasHiddenPanel = nextField.$el.closest('.panel_hidden').hasClass('hide') &&
-                _.isFunction(this.toggleMoreLess);
-            if (hasHiddenPanel) {
-                this.toggleMoreLess();
-            }
-            this.toggleField(field, false);
-            this.toggleField(nextField, true);
-            // the field we need to toggle until we reach one that's not
-            if (nextField.isDisabled()) {
-                var curField = nextField;
-                while (curField.isDisabled()) {
-                    if (curField[direction]) {
-                        this.toggleField(curField[direction], true);
-                        curField = curField[direction];
-                    } else {
-                        break;
-                    }
-
-                }
-            }
-
+            this.nextField(field, e.shiftKey ? 'prevField' : 'nextField');
             this.adjustHeaderpane();
         }
     },
