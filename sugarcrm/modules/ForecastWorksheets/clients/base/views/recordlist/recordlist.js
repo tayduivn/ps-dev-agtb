@@ -258,9 +258,26 @@
                             this.render();
                         }
                     } else {
-                        // we need to update the data-forecast attribute on the row and the new commit stage is visible
-                        this.$el.find('tr[name=' + model.module + '_' + model.id + ']')
-                            .attr('data-forecast', model.get('commit_stage'));
+                        var commitStage = model.get('commit_stage'),
+                            includedCommitStages = app.metadata.getModule('Forecasts', 'config').commit_stages_included,
+                            el = this.$el.find('tr[name=' + model.module + '_' + model.id + ']'),
+                            isIncluded = _.include(includedCommitStages, commitStage);
+
+                        if (el) {
+                            // we need to update the data-forecast attribute on the row
+                            // and the new commit stage is visible
+                            el.attr('data-forecast', commitStage);
+
+                            if (isIncluded && !el.hasClass('included')) {
+                                // if the commitStage is included, and it doesnt have the included class, add it
+                                el.addClass('included');
+                                model.set({ includedInForecast: true }, {silent: true});
+                            } else if (!isIncluded && el.hasClass('included')) {
+                                // if the commitStage isn't included, and it still has the class, remove it
+                                el.removeClass('included');
+                                model.unset('includedInForecast');
+                            }
+                        }
                     }
                 }, this);
 
@@ -853,28 +870,35 @@
                 worst = parseFloat(model.get('worst_case')),
                 worst_base = app.currency.convertWithRate(worst, base_rate),
                 amount_base = app.currency.convertWithRate(amount, base_rate),
-                best_base = app.currency.convertWithRate(best, base_rate);
+                best_base = app.currency.convertWithRate(best, base_rate),
+                includedInForecast = _.include(commit_stages_in_included_total, commit_stage);
 
-            if (won && _.include(commit_stages_in_included_total, commit_stage)) {
+            if (won && includedInForecast) {
                 wonAmount = app.math.add(wonAmount, amount_base);
                 wonBest = app.math.add(wonBest, best_base);
                 wonWorst = app.math.add(wonWorst, worst_base);
                 wonCount++;
+
+                includedClosedCount++;
+                includedClosedAmount = app.math.add(amount_base, includedClosedAmount);
             } else if (lost) {
                 lostAmount = app.math.add(lostAmount, amount_base);
                 lostBest = app.math.add(lostBest, best_base);
                 lostWorst = app.math.add(lostWorst, worst_base);
                 lostCount++;
             }
-            if (_.include(commit_stages_in_included_total, commit_stage)) {
+
+            if (includedInForecast) {
                 includedAmount += amount_base;
                 includedBest += best_base;
                 includedWorst += worst_base;
                 includedCount++;
-                if (won) {
-                    includedClosedCount++;
-                    includedClosedAmount = app.math.add(amount_base, includedClosedAmount);
-                }
+
+                // since we're already looping through the collection of models and we have
+                // the included commit stages, set or unset the includedInForecast property here
+                model.set({ includedInForecast: true }, {silent: true});
+            } else if(model.has('includedInForecast')) {
+                model.unset('includedInForecast');
             }
 
             overallAmount += amount_base;
