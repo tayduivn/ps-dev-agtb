@@ -477,11 +477,10 @@ class SearchForm {
                                     $this->xtpl->assign($templateVar, 'checked');
                                 break;
                         }
-                    }
-                    else {// regular text input
+                    }                     else {// regular text input
                         if(is_array($params['value'])) {
                             $value = array_map('to_html', $params['value']);
-                        } else {
+                        } else if(is_string($params['value'])) {
                             $value = to_html($params['value']);
                         }
 
