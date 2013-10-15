@@ -58,8 +58,8 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => '',
     ),
     array(
-        'route'=>'#bwc/index.php?module=Import&action=Step1&import_module=ProductCategories&return_module=ProductCategories&return_action=index',
-        'label' =>'LNK_IMPORT_PRODUCT_CATEGORIES',
+        'route'=>'#bwc/index.php?module=Import&action=Step1&import_module=ProductTypes&return_module=ProductTypes&return_action=index',
+        'label' =>'LNK_IMPORT_PRODUCT_TYPES',
         'acl_action'=>'',
         'acl_module'=>'',
         'icon' => 'icon-upload',
