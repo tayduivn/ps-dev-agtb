@@ -176,11 +176,16 @@ class RestResponse extends Zend_Http_Response
                 $response = $this->body;
                 break;
         }
-        
+
         if(!$this->hasHeader("Content-Type")) {
             $this->setContentTypeByType();
         }
-        
+
+        if (!$this->hasHeader("Content-Length") && ini_get('zlib.output_compression') == 0) {
+            // Files will overwrite this in $this->sendFile();
+            $this->setHeader('Content-Length', strlen($response));
+        }
+
         return $response;
     }
 
