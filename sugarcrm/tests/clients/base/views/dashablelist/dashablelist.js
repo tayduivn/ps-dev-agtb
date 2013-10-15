@@ -2,14 +2,35 @@ describe('View.BaseDashablelistView', function() {
     var app,
         view,
         sampleFieldMetadata = [{name: 'foo'}, {name: 'bar'}],
-        sampleColumns = {foo: 'foo', bar: 'bar'};
+        sampleColumns = {foo: 'foo', bar: 'bar'},
+        moduleName = 'Accounts',
+        viewName = 'dashablelist',
+        layoutName = 'record';
 
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate(layoutName, 'layout', 'base');
+        SugarTest.loadComponent('base', 'layout', layoutName);
+        SugarTest.loadComponent('base', 'view', viewName);
+        SugarTest.loadComponent('base', 'field', 'base');
+        SugarTest.testMetadata.addViewDefinition(
+            viewName,
+            {
+                'panels': [
+                    {
+                        fields: []
+                    }
+                ]
+            },
+            moduleName
+        );
         SugarTest.testMetadata.set();
-        view = SugarTest.createView('base', 'Home', 'dashablelist');
-        view.settings = app.data.createBean('Home');
+        app.data.declareModels();
+        SugarTest.loadPlugin('Dashlet');
+        app.user.set('module_list', [moduleName]);
+        layout = SugarTest.createLayout('base', moduleName, layoutName);
+        view = SugarTest.createView('base', moduleName, viewName, null, null, null, layout);
         view._availableModules = {Accounts: 'Accounts', Contacts: 'Contacts'};
     });
 
@@ -20,6 +41,35 @@ describe('View.BaseDashablelistView', function() {
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
+        delete app.plugins.plugins['view']['Dashlet'];
+    });
+
+    it('Get correct link fields between current and main modules', function() {
+        var mainModule = 'Accounts',
+            relateModule = 'Contacts',
+            fieldDefs = [
+                {
+                    name: 'a',
+                    type: 'link',
+                    rel_mod: relateModule
+                }, {
+                    name: 'b',
+                    type: 'bool',
+                    rel_mod: relateModule
+                }, {
+                    name: 'c',
+                    type: 'link',
+                    rel_mod: mainModule
+                }];
+        SugarTest.testMetadata.updateModuleMetadata(mainModule, {fields: fieldDefs});
+
+        sinon.collection.stub(app.data, 'getRelatedModule', function(module, field) {
+            return _.findWhere(app.metadata.getModule(module).fields, {name: field}).rel_mod || '';
+        });
+        sinon.collection.stub(app.lang, 'get').returnsArg(0);
+
+        view.layout.module = mainModule;
+        expect(view.getLinkedFields(relateModule)).toEqual({'a': 'a'});
     });
 
     describe('initialize the dashlet', function() {
@@ -76,6 +126,7 @@ describe('View.BaseDashablelistView', function() {
                 expect(view.settings.get('module')).toBe(firstAvailableModule);
                 expect(view.settings.get('label')).toBe('LBL_MODULE_NAME');
                 expect(view.settings.get('limit')).toBe(5);
+                expect(view.settings.get('intelligent')).toBe('0');
                 expect(view.settings.get('my_items')).toBe('1');
                 expect(view.settings.get('favorites')).toBe('0');
             });
@@ -215,6 +266,7 @@ describe('View.BaseDashablelistView', function() {
             });
 
             it('should return an empty set when the module is not set', function() {
+                view.settings.set('module', null);
                 var columns = view._getAvailableColumns();
                 expect(columns).toEqual({});
             });
@@ -295,6 +347,7 @@ describe('View.BaseDashablelistView', function() {
             });
 
             it('should call BaseDashablelistView#_updateDisplayColumns when display_columns is undefined', function() {
+                view.settings.set('display_columns', null);
                 var stubUpdateDisplayColumns = sinon.collection.stub(view, '_updateDisplayColumns', function() {
                     view.settings.set('display_columns', displayColumns);
                 });

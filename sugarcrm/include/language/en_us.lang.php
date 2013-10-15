@@ -3203,6 +3203,8 @@ $app_strings = array (
     'LBL_DASHLET_CONFIGURE_MY_FAVORITES_ONLY' => 'Only My Favorites',
     'LBL_DASHLET_CONFIGURE_TITLE' => 'Title',
     'LBL_DASHLET_CONFIGURE_DISPLAY_ROWS' => 'Display Rows',
+    'LBL_DASHLET_CONFIGURE_INTELLIGENT' => 'Relate to current record',
+    'LBL_DASHLET_CONFIGURE_LINKED' => 'Linked field',
 
     // MySugar status strings
     'LBL_CREATING_NEW_PAGE' => 'Creating New Page ...',

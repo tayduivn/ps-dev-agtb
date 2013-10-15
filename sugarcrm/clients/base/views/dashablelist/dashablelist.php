@@ -79,6 +79,17 @@ $viewdefs['base']['view']['dashablelist'] = array(
                     'type'    => 'enum',
                     'options' => 'list_visibility_options',
                 ),
+                array(
+                    'name'    => 'intelligent',
+                    'label'   => 'LBL_DASHLET_CONFIGURE_INTELLIGENT',
+                    'type'    => 'bool',
+                ),
+                array(
+                    'name'    => 'linked_fields',
+                    'label'   => 'LBL_DASHLET_CONFIGURE_LINKED',
+                    'type'    => 'enum',
+                    'required' => true
+                ),
             ),
         ),
     ),
