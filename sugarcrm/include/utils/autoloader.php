@@ -414,6 +414,7 @@ class SugarAutoLoader
             if(empty($file)) continue;
             if(is_array($file)) {
                 $out += call_user_func_array(array("SugarAutoLoader", "existingCustom"), $file);
+                continue;
             }
             if(self::fileExists($file)) {
                 $out[] = $file;
