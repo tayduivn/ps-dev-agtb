@@ -1,50 +1,35 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-
-
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 
 require_once('include/export_utils.php');
 
 /*
  * Export API implementation
  */
-class ExportApi extends SugarApi {
+class ExportApi extends SugarApi
+{
 
     /**
      * This function registers the Rest api
      */
-    public function registerApiRest() {
+    public function registerApiRest()
+    {
         return array(
             'exportGet' => array(
                 'reqType' => 'GET',
-                'path' => array('<module>','export','?'),
-                'pathVars' => array('module','','record_list_id'),
+                'path' => array('<module>', 'export', '?'),
+                'pathVars' => array('module', '', 'record_list_id'),
                 'method' => 'export',
                 'rawReply' => true,
                 'allowDownloadCookie' => true,
@@ -56,6 +41,7 @@ class ExportApi extends SugarApi {
 
     /**
      * Export API
+     *
      * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
      * @param $args array The arguments array passed in from the API
      * @return String
@@ -75,14 +61,25 @@ class ExportApi extends SugarApi {
 
         $theModule = clean_string($args['module']);
 
-        if ($sugar_config['disable_export'] || (!empty($sugar_config['admin_export_only']) && !(is_admin($current_user) || (ACLController::moduleSupportsACL($the_module)  && ACLAction::getUserAccessLevel($current_user->id,$the_module, 'access') == ACL_ALLOW_ENABLED &&
-            (ACLAction::getUserAccessLevel($current_user->id, $theModule, 'admin') == ACL_ALLOW_ADMIN ||
-             ACLAction::getUserAccessLevel($current_user->id, $theModule, 'admin') == ACL_ALLOW_ADMIN_DEV))))) {
+        if ($sugar_config['disable_export'] || (!empty($sugar_config['admin_export_only']) && !(is_admin(
+                        $current_user
+                    ) || (ACLController::moduleSupportsACL($theModule) && ACLAction::getUserAccessLevel(
+                            $current_user->id,
+                            $theModule,
+                            'access'
+                        ) == ACL_ALLOW_ENABLED &&
+                        (ACLAction::getUserAccessLevel($current_user->id, $theModule, 'admin') == ACL_ALLOW_ADMIN ||
+                            ACLAction::getUserAccessLevel(
+                                $current_user->id,
+                                $theModule,
+                                'admin'
+                            ) == ACL_ALLOW_ADMIN_DEV))))
+        ) {
             throw new SugarApiExceptionNotAuthorized($GLOBALS['app_strings']['ERR_EXPORT_DISABLED']);
         }
 
         //check to see if this is a request for a sample or for a regular export
-        if(!empty($args['sample'])) {
+        if (!empty($args['sample'])) {
             //call special method that will create dummy data for bean as well as insert standard help message.
             $content = exportSampleFromApi($args);
 
@@ -100,15 +97,28 @@ class ExportApi extends SugarApi {
         $filename = str_replace(' ', '', $filename);
 
 
-        if(isset($args['members']) && $args['members'] == true)
-        {
-                $filename .= '_'.'members';
+        if (isset($args['members']) && $args['members'] == true) {
+            $filename .= '_' . 'members';
         }
         ///////////////////////////////////////////////////////////////////////////////
         ////	BUILD THE EXPORT FILE
         ob_end_clean();
+
+        return $this->doExport($api, $filename, $content);
+    }
+
+    /**
+     * Utility method to allow for subclasses to do the same export calls
+     *
+     * @param ServiceBase $api
+     * @param string $filename The File name for the export
+     * @param string $content What should be in the exported file
+     * @return mixed
+     */
+    protected function doExport(ServiceBase $api, $filename, $content)
+    {
         $api->setHeader("Pragma", "cache");
-        $api->setHeader("Content-Type", "application/octet-stream; charset=".$GLOBALS['locale']->getExportCharset());
+        $api->setHeader("Content-Type", "application/octet-stream; charset=" . $GLOBALS['locale']->getExportCharset());
         $api->setHeader("Content-Disposition", "attachment; filename={$filename}.csv");
         $api->setHeader("Content-transfer-encoding", "binary");
         $api->setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
