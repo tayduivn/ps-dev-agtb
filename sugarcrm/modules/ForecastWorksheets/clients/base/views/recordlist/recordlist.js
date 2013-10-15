@@ -392,35 +392,18 @@
      * Handle the export callback
      */
     exportCallback: function() {
-        var url = 'index.php?module=Forecasts&action=ExportWorksheet';
-        url += '&user_id=' + this.selectedUser.id;
-        url += '&timeperiod_id=' + this.selectedTimeperiod;
+        app.alert.show('massexport_loading', {level: 'process', title: app.lang.getAppString('LBL_LOADING')});
+        var params = {
+            timeperiod_id: this.selectedTimeperiod,
+            user_id: this.selectedUser.id
+        };
+        var url = app.api.buildURL(this.module, 'export/', null, params);
 
-        if (this.canEdit && this.isDirty()) {
-            if (confirm(app.lang.get("LBL_WORKSHEET_EXPORT_CONFIRM", "Forecasts"))) {
-                this.runExport(url);
+        app.api.fileDownload(url, {
+            complete: function(data) {
+                app.alert.dismiss('massexport_loading');
             }
-        } else {
-            this.runExport(url);
-        }
-    },
-
-    /**
-     * runExport
-     * triggers the browser to download the exported file
-     * @param url URL to the file to download
-     */
-    runExport: function(url) {
-        var dlFrame = $("#forecastsDlFrame");
-        //check to see if we got something back
-        if (dlFrame.length == 0) {
-            //if not, create an element
-            dlFrame = $("<iframe>");
-            dlFrame.attr("id", "forecastsDlFrame");
-            dlFrame.css("display", "none");
-            $("body").append(dlFrame);
-        }
-        dlFrame.attr("src", url);
+        }, { iframe: this.$el });
     },
 
     /**
