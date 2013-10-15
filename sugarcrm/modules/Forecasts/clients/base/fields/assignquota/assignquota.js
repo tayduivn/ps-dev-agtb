@@ -71,7 +71,7 @@
      */
     hasAccess: function() {
         var su = (this.context.get('selectedUser')) || app.user.toJSON(),
-            isManager = su.isManager || false,
+            isManager = su.is_manager || false,
             showOpps = su.showOpps || false;
         return (su.id === app.user.get('id') && isManager && showOpps === false);
     },

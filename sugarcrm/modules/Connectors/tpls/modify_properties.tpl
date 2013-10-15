@@ -95,7 +95,7 @@ var SourceTabs = {
 YAHOO.util.Event.onDOMReady(SourceTabs.init);
 </script>
 {/literal}
-<form name="ModifyProperties" method="POST">
+<form name="ModifyProperties" method="POST" action="index.php">
 <input type="hidden" name="modify" value="true">
 <input type="hidden" name="module" value="Connectors">
 <input type="hidden" name="action" value="SaveModifyProperties">

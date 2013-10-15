@@ -137,7 +137,7 @@ describe("Forecasts.Layout.Records", function() {
             });
             initData = {
                 "initData": {
-                    "userData": {"isManager": false, "showOpps": false, "first_name": "Max", "last_name": "Jensen"},
+                    "userData": {"is_manager": false, "showOpps": false, "first_name": "Max", "last_name": "Jensen"},
                     "forecasts_setup": 1
                 },
                 "defaultSelections": {
@@ -175,7 +175,7 @@ describe("Forecasts.Layout.Records", function() {
         beforeEach(function() {
             changedOptions = {
                 id: 'test_id',
-                isManager: false,
+                is_manager: false,
                 showOpps: false
             };
             renderStub = sinon.stub(layout, 'render', function() {
@@ -206,13 +206,13 @@ describe("Forecasts.Layout.Records", function() {
                 expect(layout.model.get('forecastType')).toEqual('Direct');
             });
             it('when manager viewing rep worksheet', function() {
-                changedOptions.isManager = true;
+                changedOptions.is_manager = true;
                 changedOptions.showOpps = true;
                 layout._onceInitSelectedUser(layout.initOptions.context.model, changedOptions);
                 expect(layout.model.get('forecastType')).toEqual('Direct');
             });
             it('when manager viewing manager worksheet', function() {
-                changedOptions.isManager = true;
+                changedOptions.is_manager = true;
                 changedOptions.showOpps = false;
                 layout._onceInitSelectedUser(layout.initOptions.context.model, changedOptions);
                 expect(layout.model.get('forecastType')).toEqual('Rollup');
@@ -229,7 +229,7 @@ describe("Forecasts.Layout.Records", function() {
             });
             layout._onceInitSelectedUser(layout.initOptions.context.model, {
                 id: 'test_id',
-                isManager: false,
+                is_manager: false,
                 showOpps: false
             });
         });

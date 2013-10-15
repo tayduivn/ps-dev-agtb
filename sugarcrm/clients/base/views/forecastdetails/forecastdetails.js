@@ -849,7 +849,7 @@
         this.selectedUser.first_name = selectedUser.first_name;
         this.selectedUser.full_name = selectedUser.full_name;
         this.selectedUser.id = selectedUser.id;
-        this.selectedUser.is_manager = selectedUser.is_manager || selectedUser.isManager; // todo: remove the || isManager in SFA-1863
+        this.selectedUser.is_manager = selectedUser.is_manager;
         this.selectedUser.reportees = selectedUser.reportees;
         this.selectedUser.showOpps = selectedUser.showOpps;
         this.selectedUser.user_name = selectedUser.user_name;

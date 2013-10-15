@@ -86,9 +86,9 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'vname' => 'LBL_DRAFT',
             'type' => 'bool',
         ),
-        'isManager' =>
+        'is_manager' =>
         array(
-            'name' => 'isManager',
+            'name' => 'is_manager',
             'type' => 'bool',
             'source' => 'non-db',
             'comment' => 'needed for commitLog field logic'

@@ -77,7 +77,6 @@ $mod_strings = array (
 'LBL_SW_EDIT_DROPDOWNS'=>'Edit Drop Downs',
 'LBL_SW_EDIT_TABS'=>'Configure Tabs',
 'LBL_SW_RENAME_TABS'=>'Rename Tabs',
-'LBL_SW_EDIT_GROUPTABS'=>'Configure Group Tabs',
 'LBL_SW_EDIT_PORTAL'=>'Edit Portal',
 'LBL_SW_EDIT_WORKFLOW'=>'Edit Workflow',
 'LBL_SW_REPAIR_CUSTOMFIELDS'=>'Repair Custom Fields',

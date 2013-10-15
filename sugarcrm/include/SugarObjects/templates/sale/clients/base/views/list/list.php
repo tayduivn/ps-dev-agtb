@@ -49,13 +49,16 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'enabled' => true,
                 ),
                 array(
-                    'name' => 'amount_usdollar',
+                    'name' => 'amount',
                     'width'   => '10',
                     'label'   => 'LBL_LIST_AMOUNT',
                     'align'   => 'right',
-                    'currency_format' => true,
                     'default' => true,
                     'enabled' => true,
+                    'related_fields' => array(
+                        'currency_id',
+                        'base_rate'
+                    ),
                 ),
                 array(
                     'name' => $_module_name .'_type',

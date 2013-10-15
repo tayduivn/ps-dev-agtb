@@ -326,7 +326,6 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
             'vname' => 'LBL_CURRENCY_RATE',
             'type' => 'decimal',
             'len' => '26,6',
-            'required' => true,
             'studio' => false
         ),
     'products' =>

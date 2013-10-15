@@ -151,7 +151,6 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_CURRENCY_RATE',
             'type' => 'decimal',
             'len' => '26,6',
-            'required' => true,
             'studio' => false
         ),
         'amount_usdollar' => array(
