@@ -26,6 +26,7 @@ class SugarFieldFullname extends SugarFieldBase
          }
          return $vardef;
     }
+
     /**
      * @see SugarFieldBase::importSanitize()
      */
@@ -36,21 +37,29 @@ class SugarFieldFullname extends SugarFieldBase
         ImportFieldSanitize $settings
         )
     {
-        if ( property_exists($focus,'first_name') && property_exists($focus,'last_name') ) {
+        // TODO: figure out how we can parse arbitrary imports
+        if(empty($focus->name_format_map)) {
+            $fn = 'first_name';
+            $ln = 'last_name';
+        } else {
+            $fn = $focus->name_format_map['f'];
+            $fn = $focus->name_format_map['l'];
+        }
+        if ( property_exists($focus, $fn) && property_exists($focus, $ln) ) {
             $name_arr = preg_split('/\s+/',$value);
 
             if ( count($name_arr) == 1) {
-                $focus->last_name = $value;
+                $focus->$ln = $value;
             }
             else {
                 // figure out what comes first, the last name or first name
                 if ( strpos($settings->default_locale_name_format,'l') > strpos($settings->default_locale_name_format,'f') ) {
-                    $focus->first_name = array_shift($name_arr);
-                    $focus->last_name = join(' ',$name_arr);
+                    $focus->$fn = array_shift($name_arr);
+                    $focus->$ln = join(' ',$name_arr);
                 }
                 else {
-                    $focus->last_name = array_shift($name_arr);
-                    $focus->first_name = join(' ',$name_arr);
+                    $focus->$ln = array_shift($name_arr);
+                    $focus->$fn = join(' ',$name_arr);
                 }
             }
         }
