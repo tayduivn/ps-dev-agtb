@@ -149,7 +149,7 @@
             messages: app.lang.get('LBL_DELETE_DASHBOARD_CONFIRM', this.module),
             onConfirm: _.bind(function() {
                 var message = app.lang.get('LBL_DELETE_DASHBOARD_SUCCESS', this.module, {
-                    name: this.model.get('name')
+                    name: app.lang.get(this.model.get('name'), this.module)
                 });
                 this.model.destroy({
                     success: _.bind(function() {
