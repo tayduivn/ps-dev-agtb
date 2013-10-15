@@ -171,8 +171,15 @@ EOQ;
         // Disallowed file names
         $notAllowed = array(
             'docx' => 'test.docx',
+            'docx(2)' => '../sugarcrm.xml/../sugarcrm/test.docx',
             'java' => 'test.java',
             'phtm' => 'test.phtm',
+            'md5' => 'files.md5',
+            'md5(2)' => '../sugarcrm/files.md5',
+            'config' => 'config.php',
+            'config_override' => 'config_override.php',
+            'config(2)' => '../sugarcrm/config.php',
+
         );
 
         // Get our scanner
