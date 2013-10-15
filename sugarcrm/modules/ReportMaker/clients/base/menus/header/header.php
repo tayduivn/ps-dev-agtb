@@ -27,28 +27,28 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_REPORTMAKER',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#bwc/index.php?module=ReportMaker&action=index&return_module=ReportMaker&return_action=index',
         'label' =>'LNK_LIST_REPORTMAKER',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => '',
+        'icon' => 'icon-list',
     ),
     array(
         'route'=>'#bwc/index.php?module=CustomQueries&action=EditView&return_module=CustomQueries&return_action=DetailView',
         'label' =>'LNK_NEW_CUSTOMQUERY',
         'acl_action'=>'admin',
         'acl_module'=>'',
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#bwc/index.php?module=CustomQueries&action=index&return_module=CustomQueries&return_action=DetailView',
         'label' =>'LNK_CUSTOMQUERIES',
         'acl_action'=>'admin',
         'acl_module'=>'',
-        'icon' => '',
+        'icon' => 'icon-list',
     ),
     //BEGIN SUGARCRM flav=int ONLY
     array(
@@ -56,14 +56,14 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_QUERYBUILDER',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#bwc/index.php?module=QueryBuilder&action=index&return_module=QueryBuilder&return_action=DetailView',
         'label' =>'LNK_QUERYBUILDER',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     //END SUGARCRM flav=int ONLY
     array(
@@ -71,14 +71,14 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_DATASET',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#bwc/index.php?module=DataSets&action=index&return_module=DataSets&return_action=index',
         'label' =>'LNK_LIST_DATASET',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => '',
+        'icon' => 'icon-list',
     ),
     array(
         'route'=>'#bwc/index.php?module=Reports&action=index',
