@@ -114,7 +114,7 @@
     /**
      * Draft Save Type
      */
-    draftSaveType : undefined,
+    draftSaveType: undefined,
 
     /**
      * is the collection syncing
@@ -468,35 +468,18 @@
      * Handle the export callback
      */
     exportCallback: function() {
-        var url = 'index.php?module=Forecasts&action=ExportManagerWorksheet';
-        url += '&user_id=' + this.selectedUser.id;
-        url += '&timeperiod_id=' + this.selectedTimeperiod;
+        app.alert.show('massexport_loading', {level: 'process', title: app.lang.getAppString('LBL_LOADING')});
+        var params = {
+            timeperiod_id: this.selectedTimeperiod,
+            user_id: this.selectedUser.id
+        };
+        var url = app.api.buildURL(this.module, 'export/', null, params);
 
-        if (this.canEdit && this.isDirty()) {
-            if (confirm(app.lang.get("LBL_WORKSHEET_EXPORT_CONFIRM", "Forecasts"))) {
-                this.runExport(url);
+        app.api.fileDownload(url, {
+            complete: function(data) {
+                app.alert.dismiss('massexport_loading');
             }
-        } else {
-            this.runExport(url);
-        }
-    },
-
-    /**
-     * runExport
-     * triggers the browser to download the exported file
-     * @param url URL to the file to download
-     */
-    runExport: function(url) {
-        var dlFrame = $("#forecastsDlFrame");
-        //check to see if we got something back
-        if (dlFrame.length == 0) {
-            //if not, create an element
-            dlFrame = $("<iframe>");
-            dlFrame.attr("id", "forecastsDlFrame");
-            dlFrame.css("display", "none");
-            $("body").append(dlFrame);
-        }
-        dlFrame.attr("src", url);
+        }, { iframe: this.$el });
     },
 
     /**
@@ -635,12 +618,12 @@
                 }
                 return false;
             }, this);
-        } else if(this.layout.isVisible() === false && this.canEdit && this.hasCheckedForDraftRecords === false) {
+        } else if (this.layout.isVisible() === false && this.canEdit && this.hasCheckedForDraftRecords === false) {
             // since the layout is not visible, lets wait for it to become visible
             this.layout.once('show', function() {
                 this.checkForDraftRows(lastCommitDate);
             }, this);
-        } else if(this.isCollectionSyncing === true) {
+        } else if (this.isCollectionSyncing === true) {
             this.collection.once('data:sync:complete', function() {
                 this.checkForDraftRows(lastCommitDate);
             }, this);
@@ -655,10 +638,10 @@
             if (field.def.event === 'list:history_log:fire') {
                 // we have a field that needs to be disabled, so disable it!
                 field.setDisabled((field.model.get('show_history_log') == "0"));
-                if((field.model.get('show_history_log') == "0")) {
+                if ((field.model.get('show_history_log') == "0")) {
                     field.$el.find("a.rowaction").attr(
                         "data-original-title",
-                        app.lang.get("LBL_NO_COMMIT","ForecastManagerWorksheets")
+                        app.lang.get("LBL_NO_COMMIT", "ForecastManagerWorksheets")
                     );
                 }
             }
