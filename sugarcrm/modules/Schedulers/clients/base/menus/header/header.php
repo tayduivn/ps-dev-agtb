@@ -27,14 +27,14 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_SCHEDULER',
         'acl_action'=>'admin',
         'acl_module'=>'',
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#bwc/index.php?module=Schedulers&action=index',
         'label' =>'LNK_LIST_SCHEDULER',
         'acl_action'=>'admin',
         'acl_module'=>'',
-        'icon' => '',
+        'icon' => 'icon-list',
     ),
     //BEGIN SUGARCRM flav=int ONLY
     array(
@@ -42,7 +42,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_TEST_SCHEDULER',
         'acl_action'=>'admin',
         'acl_module'=>'',
-        'icon' => '',
+        'icon' => 'icon-time',
     ),
     //END SUGARCRM flav=int ONLY
 );
