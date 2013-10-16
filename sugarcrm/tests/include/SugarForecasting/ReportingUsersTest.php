@@ -118,7 +118,7 @@ class SugarForecasting_ReportingUsersTest extends Sugar_PHPUnit_Framework_TestCa
      */
     public function testReporteeFirstObjectIsParentLink($tree)
     {
-        $this->assertEquals('Parent', $tree[0]['data']);
+        $this->assertEquals(self::$users['mgr']->full_name, $tree[0]['data']);
     }
 
     /**
