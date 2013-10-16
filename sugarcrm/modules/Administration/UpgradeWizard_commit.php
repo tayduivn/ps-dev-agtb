@@ -523,7 +523,7 @@ switch( $mode ){
 // present list to user
 ?>
 <form action="<?php print( $form_action ); ?>" method="post">
-
+<input type="hidden" name="reloadMetadata" value="true" />
 
 <?php
 echo "<div>";

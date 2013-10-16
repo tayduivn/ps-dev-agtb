@@ -264,6 +264,14 @@ eoq3;
 
 echo $form2.$form3;
 
+if (!empty($_REQUEST['reloadMetadata'])) {
+    echo "
+        <script>
+            var app = window.parent.SUGAR.App;
+            app.api.call('read', app.api.buildURL('ping'));
+        </script>";
+}
+
 // scan for new files (that are not installed)
 /*print( "$descItemsQueued<br>\n");
 print( "<ul>\n" );
