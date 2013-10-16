@@ -48,5 +48,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_LIST_SCHEDULER',
         'acl_action'=>'admin',
         'acl_module'=>'Schedulers',
+        'icon' => 'icon-time',
     ),
 );
