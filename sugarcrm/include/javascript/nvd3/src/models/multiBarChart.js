@@ -31,7 +31,7 @@ nv.models.multiBarChart = function() {
     , state = { stacked: false }
     , noData = 'No Data Available.'
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove', 'elementMousemove', 'stateChange', 'changeState')
-    , controlWidth = function(w) { return showControls ? w * 0.3 : 0 }
+    , controlWidth = function(w) { return showControls ? w * 0.3 : 0; }
     ;
 
   multibar
@@ -42,7 +42,7 @@ nv.models.multiBarChart = function() {
     .tickPadding(7)
     .highlightZero(false)
     .showMaxMin(false)
-    .tickFormat(function(d) { return d })
+    .tickFormat(function(d) { return d; })
     ;
   yAxis
     .orient('left')
@@ -77,20 +77,20 @@ nv.models.multiBarChart = function() {
       var container = d3.select(this),
           that = this;
 
-      var availableWidth = (width  || parseInt(container.style('width'), 10) || 960) - margin.left - margin.right,
+      var availableWidth = (width || parseInt(container.style('width'), 10) || 960) - margin.left - margin.right,
           availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
 
       chart.update = function() { container.transition().duration(300).call(chart); };
       chart.container = this;
 
       //set state.disabled
-      state.disabled = data.map(function(d) { return !!d.disabled });
+      state.disabled = data.map(function(d) { return !!d.disabled; });
 
 
       //------------------------------------------------------------
       // Display No Data message if there's nothing to show.
 
-      if (!data || !data.length || !data.filter(function(d) { return d.values.length }).length) {
+      if (!data || !data.length || !data.filter(function(d) { return d.values.length; }).length) {
         var noDataText = container.selectAll('.nv-noData').data([noData]);
 
         noDataText.enter().append('text')
@@ -101,7 +101,7 @@ nv.models.multiBarChart = function() {
         noDataText
           .attr('x', margin.left + availableWidth / 2)
           .attr('y', margin.top + availableHeight / 2)
-          .text(function(d) { return d });
+          .text(function(d) { return d; });
 
         return chart;
       } else {
@@ -134,6 +134,10 @@ nv.models.multiBarChart = function() {
       var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-multiBarWithLegend').append('g');
       var g = wrap.select('g');
 
+      gEnter.append('g').attr('class', 'nv-titleWrap');
+      gEnter.append('g').attr('class', 'nv-legendWrap');
+      gEnter.append('g').attr('class', 'nv-controlsWrap');
+
       gEnter.append('g').attr('class', 'nv-x nv-axis');
       gEnter.append('g').attr('class', 'nv-y nv-axis');
       gEnter.append('g').attr('class', 'nv-barsWrap');
@@ -148,7 +152,6 @@ nv.models.multiBarChart = function() {
         , legendHeight = 0;
 
       if (showLegend) {
-        gEnter.append('g').attr('class', 'nv-legendWrap');
 
         legend.width(availableWidth - controlWidth(availableWidth));
 
@@ -174,7 +177,6 @@ nv.models.multiBarChart = function() {
       }
 
       if (showTitle && properties.title ) {
-        gEnter.append('g').attr('class', 'nv-titleWrap');
 
         g.select('.nv-title').remove();
 
@@ -209,7 +211,6 @@ nv.models.multiBarChart = function() {
       // Controls
 
       if (showControls) {
-        gEnter.append('g').attr('class', 'nv-controlsWrap');
 
         var controlsData = [
           { key: 'Grouped', disabled: multibar.stacked() },
@@ -226,9 +227,7 @@ nv.models.multiBarChart = function() {
 
       //------------------------------------------------------------
 
-
       wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
 
       //------------------------------------------------------------
       // Main Chart Component(s)
@@ -237,7 +236,6 @@ nv.models.multiBarChart = function() {
         .disabled(data.map(function(series) { return series.disabled }))
         .width(availableWidth)
         .height(availableHeight);
-
 
       var barsWrap = g.select('.nv-barsWrap')
           .datum(dataBars.length ? dataBars : [{values:[]}]);
@@ -250,6 +248,8 @@ nv.models.multiBarChart = function() {
       //------------------------------------------------------------
       // Setup Axes
 
+      //------------------------------------------------------------
+      // X-Axis
       xAxis
         .scale(x)
         .ticks(availableWidth / 100)
@@ -289,6 +289,9 @@ nv.models.multiBarChart = function() {
       g.select('.nv-x.nv-axis').selectAll('g.nv-axisMaxMin text')
           .style('opacity', 1);
 
+      //------------------------------------------------------------
+      // Y-Axis
+
       yAxis
         .scale(y)
         .ticks(availableHeight / 36)
@@ -297,10 +300,6 @@ nv.models.multiBarChart = function() {
       g.select('.nv-y.nv-axis').transition()
           .style('opacity', dataBars.length ? 1 : 0)
           .call(yAxis);
-
-      //------------------------------------------------------------
-
-
 
       //============================================================
       // Event Handling/Dispatching (in chart's scope)
@@ -317,7 +316,7 @@ nv.models.multiBarChart = function() {
           });
         }
 
-        state.disabled = data.map(function(d) { return !!d.disabled });
+        state.disabled = data.map(function(d) { return !!d.disabled; });
         dispatch.stateChange(state);
 
         container.transition().duration(300).call(chart);
