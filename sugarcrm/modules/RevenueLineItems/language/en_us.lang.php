@@ -112,6 +112,7 @@ $mod_strings = array(
     'LBL_LEADS_SUBPANEL_TITLE' => 'Leads',
     'LBL_CONTACTS_SUBPANEL_TITLE' => 'Contacts',
     'LBL_CONTRACTS' => 'Contracts',
+    'LBL_PRODUCT_TEMPLATES' => 'Product Templates',
     'LBL_PRODUCT_CATEGORIES' => 'Product Categories',
     'LBL_PRODUCT_TYPES' => 'Product Types',
     'LBL_ASSIGNED_TO_NAME' => 'Assigned to:',
