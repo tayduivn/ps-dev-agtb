@@ -86,11 +86,6 @@ describe("RevenueLineItems.Base.View.CreateActions", function() {
             app.metadata.getModule.restore();
             app.view.views.BaseCreateView.prototype.initialize.restore();
         });
-
-        it("should set up the commit_stage field for products", function () {
-            view.initialize(options);
-            expect(view._parsePanelFields).toHaveBeenCalled();//With(options.meta.panels);
-        });
     });
 
     describe("_parsePanelFields method", function() {
@@ -102,18 +97,6 @@ describe("RevenueLineItems.Base.View.CreateActions", function() {
             });
             view._parsePanelFields(options.meta.panels);
             expect(options.meta.panels[0].fields).toEqual([{ name : 'spacer', span : 6, readonly : true }]);
-            app.metadata.getModule.restore();
-        });
-
-        it("should set the proper options on the commit_stage field if forecasts has been setup", function() {
-            sinon.stub(app.metadata, "getModule", function () {
-                return {
-                    is_setup: true,
-                    buckets_dom: "something_testable"
-                }
-            });
-            view._parsePanelFields(options.meta.panels);
-            expect(options.meta.panels[0].fields[0].options).toEqual("something_testable");
             app.metadata.getModule.restore();
         });
     });
