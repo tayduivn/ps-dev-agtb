@@ -167,7 +167,7 @@ class FilterDuplicateCheck extends DuplicateCheckStrategy
             'module' => $this->bean->module_name,
             'max_num' => self::FILTER_QUERY_LIMIT,
         );
-        return $filterApi->filterList($api, $filterArgs);
+        return $filterApi->filterList($api, $filterArgs, 'view');
     }
 
     /**
