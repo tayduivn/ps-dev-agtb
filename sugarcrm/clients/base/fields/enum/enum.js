@@ -25,7 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    fieldTag: "input",
+    fieldTag: 'input.select2',
 
     plugins: ['EllipsisInline'],
 
@@ -365,6 +365,20 @@
             }
         });
         return result;
+    },
+
+    /**
+     * {@inheritDoc}
+     * Avoid rendering process on select2 change in order to keep focus.
+     */
+    bindDataChange: function() {
+        if (this.model) {
+            this.model.on('change:' + this.name, function() {
+                if (_.isEmpty(this.$(this.fieldTag).data('select2'))) {
+                    this.render();
+                }
+            }, this);
+        }
     },
 
     /**

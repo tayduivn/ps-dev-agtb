@@ -358,6 +358,20 @@
         });
     }, app.config.requiredElapsed || 500),
 
+    /**
+     * {@inheritDoc}
+     * Avoid rendering process on select2 change in order to keep focus.
+     */
+    bindDataChange: function() {
+        if (this.model) {
+            this.model.on('change:' + this.name, function() {
+                if (_.isEmpty(this.$(this.fieldTag).data('select2'))) {
+                    this.render();
+                }
+            }, this);
+        }
+    },
+
     unbindDom: function() {
         this.$(this.fieldTag).select2('destroy');
         app.view.Field.prototype.unbindDom.call(this);
