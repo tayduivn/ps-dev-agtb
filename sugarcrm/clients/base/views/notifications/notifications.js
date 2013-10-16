@@ -1,7 +1,7 @@
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
  * http://www.sugarcrm.com/master-subscription-agreement
  *
  * If Company is not bound by the MSA, then by installing or using this file
@@ -9,6 +9,36 @@
  * certifying that you have authority to bind Company accordingly.
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+/**
+ * Notifications will pull information from the server based on a delay given.
+ *
+ * Supported properties:
+ *
+ * - {Integer} delay How often (minutes) should the pulling mechanism run.
+ * - {Integer} limit Limit imposed to the number of records pulled.
+ * - {Object} severity_css An object where its keys map to a specific
+ * notification severity and values to a matching CSS class.
+ *
+ * Example:
+ * <pre><code>
+ * // ...
+ *     array(
+ *         'delay' => 5,
+ *         'limit' => 4,
+ *         'severity_css' => array(
+ *             'alert' => 'label-important',
+ *             'information' => 'label-info',
+ *             'other' => 'label-inverse',
+ *             'success' => 'label-success',
+ *             'warning' => 'label-warning',
+ *         ),
+ *     ),
+ * //...
+ * </code></pre>
+ *
+ * @class View.Views.BaseNotificationsView
+ * @alias SUGAR.App.view.views.BaseNotificationsView
  */
 ({
     plugins: ['Dropdown', 'Timeago', 'EllipsisInline', 'Tooltip'],
