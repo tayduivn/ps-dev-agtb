@@ -478,7 +478,7 @@ class SearchForm {
                                 break;
                         }
                     }
-                    else {// regular text input
+                    else if(is_string($params['value'])) {// regular text input
                         $this->xtpl->assign($templateVar, to_html($params['value']));
                     }
                 }
