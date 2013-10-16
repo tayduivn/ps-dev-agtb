@@ -1,7 +1,7 @@
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
  * http://www.sugarcrm.com/master-subscription-agreement
  *
  * If Company is not bound by the MSA, then by installing or using this file
@@ -9,6 +9,36 @@
  * certifying that you have authority to bind Company accordingly.
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+/**
+ * Notifications will pull information from the server based on a delay given.
+ *
+ * Supported properties:
+ *
+ * - {Integer} delay How often (minutes) should the pulling mechanism run.
+ * - {Integer} limit Limit imposed to the number of records pulled.
+ * - {Object} severity_css An object where its keys map to a specific
+ * notification severity and values to a matching CSS class.
+ *
+ * Example:
+ * <pre><code>
+ * // ...
+ *     array(
+ *         'delay' => 5,
+ *         'limit' => 4,
+ *         'severity_css' => array(
+ *             'alert' => 'label-important',
+ *             'information' => 'label-info',
+ *             'other' => 'label-inverse',
+ *             'success' => 'label-success',
+ *             'warning' => 'label-warning',
+ *         ),
+ *     ),
+ * //...
+ * </code></pre>
+ *
+ * @class View.Views.BaseNotificationsView
+ * @alias SUGAR.App.view.views.BaseNotificationsView
  */
 ({
     plugins: ['Dropdown', 'Timeago', 'EllipsisInline', 'Tooltip'],
@@ -26,9 +56,14 @@
     _alertsCollections: {},
 
     /**
-     * Intervals for additional modules' reminders.
+     * @property {Number} Timestamp when we started pooling.
      */
-    _intervals: {},
+    dateStarted: null,
+
+    /**
+     * @property {Number} Interval ID for checking reminders.
+     */
+    _remindersIntervalId: null,
 
     /**
      * Interval ID defined when the pulling mechanism is running.
@@ -160,6 +195,7 @@
         });
 
         this.reminderMaxTime = parseInt(max, 10) + this.delay / 1000;
+        this.reminderDelay = 30 * 1000;
 
         _.each(['Calls', 'Meetings'], function(module) {
             this._alertsCollections[module] = app.data.createBeanCollection(module);
@@ -167,7 +203,6 @@
                 limit: this.meta.remindersLimit,
                 fields: ['date_start', 'id', 'name', 'reminder_time', 'location']
             };
-            this._intervals[module] = {};
         }, this);
 
         return this;
@@ -207,23 +242,31 @@
         if (!_.isNull(this._intervalId)) {
             return this;
         }
-
+        this.dateStarted = new Date().getTime();
         var self = this;
 
         this.pull();
         this._pullReminders();
-        this._intervalId = window.setInterval(function() {
-            if (!app.api.isAuthenticated()) {
-                self.stopPulling();
-                return;
-            }
-
-            self.pull();
-            self._pullReminders();
-
-        }, this.delay);
-
+        this._intervalId = window.setTimeout(_.bind(this._pullAction, this), this.delay);
+        this._remindersIntervalId = window.setTimeout(_.bind(this.checkReminders, this), this.reminderDelay);
         return this;
+    },
+
+    /**
+     * Pulling functionality.
+     *
+     * @protected
+     */
+    _pullAction: function() {
+        if (!app.api.isAuthenticated()) {
+            this.stopPulling();
+            return;
+        }
+        var diff = this.delay - (new Date().getTime() - this.dateStarted) % this.delay;
+        this._intervalId = window.setTimeout(_.bind(this._pullAction, this), diff);
+
+        this.pull();
+        this._pullReminders();
     },
 
     /**
@@ -236,7 +279,10 @@
             window.clearInterval(this._intervalId);
             this._intervalId = null;
         }
-
+        if (!_.isNull(this._remindersIntervalId)) {
+            window.clearInterval(this._remindersIntervalId);
+            this._remindersIntervalId = null;
+        }
         return this;
     },
 
@@ -298,12 +344,7 @@
                 silent: true,
                 merge: true,
                 //Notifications should never trigger a metadata refresh
-                apiOptions: {skipMetadataHash: true},
-                success: _.bind(function(data) {
-                    if (!this.disposed) {
-                        this._parseReminders(data);
-                    }
-                }, this)
+                apiOptions: {skipMetadataHash: true}
             });
         }, this);
 
@@ -311,91 +352,29 @@
     },
 
     /**
-     * Creates reminders based on {@link Backbone.Collection#fetch} from latest
-     * pull.
+     * Check if there is a reminder we should show in the near future.
      *
-     * Creates new and delete old reminders for the new data received.
+     * If the reminder exists we immediately show it.
      *
-     * @param {Data.BeanCollection} data Data from response.
-     * @private
+     * @return {View.Notifications} Instance of this view.
      */
-    _parseReminders: function(data) {
-
-        if (!data.length) {
+    checkReminders: function() {
+        if (!app.api.isAuthenticated()) {
+            this.stopPulling();
             return this;
         }
-
-        var deadIds = _.difference(_.keys(this._intervals[data.module]), data.pluck('id'));
-
-        _.each(deadIds, function(id) {
-            this._clearReminders(data.module, id);
+        var date = new Date(),
+            diff = this.reminderDelay - (date.getTime() - this.dateStarted) % this.reminderDelay;
+        this._remindersIntervalId = window.setTimeout(_.bind(this.checkReminders, this), diff);
+        _.each(this._alertsCollections, function(collection) {
+            _.chain(collection.models)
+                .filter(function(model) {
+                    var needDate = new Date(model.get('date_start')) - parseInt(model.get('reminder_time'), 10) * 1000;
+                    return needDate > date && needDate - date <= diff;
+                }, this)
+                .each(this._showReminderAlert, this);
         }, this);
-
-        data.each(function(model) {
-            this._parseReminder(model);
-        }, this);
-
         return this;
-    },
-
-    /**
-     * Creates an alert reminder based on model given.
-     *
-     * If the model didn't change the reminder time and if we already set it
-     * up, keep it.
-     *
-     * @param {Backbone.Model} model The model to create a reminder from.
-     * @private
-     */
-    _parseReminder: function(model) {
-        var hasChanged = !_.has(this._intervals[model.module], model.id) ||
-            !!model.changedAttributes(this._intervals[model.module][model.id].prevAttr);
-
-        if (!hasChanged) {
-            return this;
-        }
-
-        // FIXME we need to support timezone of the user preferences not of the browser/location.
-        var diff = new Date(model.get('date_start')) - new Date(),
-            delay = diff - parseInt(model.get('reminder_time'), 10) * 1000;
-
-        if (delay < 0) {
-            return this;
-        }
-
-        this._clearReminders(model.module, model.id);
-
-        this._intervals[model.module][model.id] = {
-            timer: setTimeout(_.bind(function() {
-                this._showReminderAlert(model);
-            }, this), delay),
-            prevAttr: _.pick(model.attributes, 'reminder_time', 'date_start')
-        };
-
-        return this;
-    },
-
-    /**
-     * Clears alerts' interval of a given record or of all in module given.
-     *
-     * @param {String} module Module to clear intervals for.
-     * @param {String} [id] Id of a record or `undefined` to clear all.
-     * @private
-     */
-    _clearReminders: function(module, id) {
-
-        if (id) {
-            if (_.has(this._intervals[module], id)) {
-                clearTimeout(this._intervals[module][id].timer);
-                delete this._intervals[module][id];
-            }
-            return;
-        }
-
-        _.each(this._intervals[module], function(data) {
-            clearTimeout(data.timer);
-        }, this);
-        this._intervals[module] = {};
     },
 
     /**
@@ -423,7 +402,6 @@
                 app.router.navigate(url, {trigger: true});
             }
         });
-        delete this._intervals[model.module][model.id];
     },
 
     /**
@@ -468,11 +446,6 @@
      */
     _dispose: function() {
         this.stopPulling();
-
-        _.each(this._alertsCollections, function(collection, module) {
-            this._clearReminders(module);
-            collection.off();
-        }, this);
         this._alertsCollections = {};
 
         this._super('_dispose');
