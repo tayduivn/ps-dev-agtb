@@ -317,8 +317,34 @@
                 wizardName: app.user.get('type')
             });
             $('#header').hide(); //Hide the header bar
+            return false;
+        } else {
+            var passwordExpired = false;
+            //If the password has expired (and we're not logging out which is ignored)
+            if (route && route !== 'logout' && app.user && app.user.has('is_password_expired')) {
+                passwordExpired = app.user.get('is_password_expired');
+                if (passwordExpired) {
+                    app.controller.loadView({
+                        layout: 'password-expired',
+                        module: 'Users',
+                        callbacks: {
+                            complete: function() {
+                                app.alert.dismissAll();
+                                app.alert.show('pass_successfully_changed', {
+                                    level: 'success',
+                                    title: app.lang.get('LBL_PASSWORD'),
+                                    messages: app.lang.get('LBL_NEW_USER_PASSWORD_1'),
+                                    autoClose: true});
+                                app.router.logout('1');
+                            }
+                        },
+                        modelId: app.user.get('id')
+                    });
+                    return false;
+                }
+            }
         }
-        return !showWizard;
+        return true;
     });
 
     //template language string for each page
