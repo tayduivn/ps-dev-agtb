@@ -1,5 +1,18 @@
 <?php
 
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+
 require_once 'clients/base/api/RelateApi.php';
 
 class AccountsRelateApi extends RelateApi
@@ -20,7 +33,7 @@ class AccountsRelateApi extends RelateApi
 
     public function filterRelated(ServiceBase $api, array $args)
     {
-        if ($args['module'] !== 'Accounts' || !in_array($args['link_name'], array('calls', 'meetings')) || empty($args['include_child_items'])) {
+        if (empty($args['include_child_items']) || !in_array($args['link_name'], array('calls', 'meetings'))) {
             return parent::filterRelated($api, $args);
         }
 
@@ -39,17 +52,33 @@ class AccountsRelateApi extends RelateApi
         }
 
         if (!$record->ACLAccess('view')) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
+            throw new SugarApiExceptionNotAuthorized(
+                sprintf(
+                    'No access to view records for module: %s',
+                    $args['module']
+                )
+            );
         }
 
         $linkName = $args['link_name'];
         if (!$record->load_relationship($linkName)) {
-            throw new SugarApiExceptionNotFound('Could not find a relationship named: ' . $args['link_name']);
+            throw new SugarApiExceptionNotFound(
+                sprintf(
+                    'Could not find a relationship named: %s',
+                    $args['link_name']
+                )
+            );
         }
+
         $linkModuleName = $record->$linkName->getRelatedModuleName();
         $linkSeed = BeanFactory::getBean($linkModuleName);
         if (!$linkSeed->ACLAccess('list')) {
-            throw new SugarApiExceptionNotAuthorized('No access to list records for module: ' . $linkModuleName);
+            throw new SugarApiExceptionNotAuthorized(
+                sprintf(
+                    'No access to list records for module: %s',
+                    $linkModuleName
+                )
+            );
         }
 
         $options = $this->parseArguments($api, $args, $linkSeed);
