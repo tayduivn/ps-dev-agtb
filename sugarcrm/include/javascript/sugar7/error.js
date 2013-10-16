@@ -127,6 +127,13 @@
     };
 
     /**
+     * 409 Handle conflict error.
+     */
+    app.error.handleMethodConflictError = function(error, model) {
+        //TODO: add the ability to handle data conflicts
+    };
+
+    /**
      * 424 Handle validation error 
      */
     app.error.handleValidationErrorOld = app.error.handleValidationError;

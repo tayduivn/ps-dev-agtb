@@ -556,6 +556,7 @@
                     this.editClicked();
                 }
             }, this),
+            lastModified: this.model.get('date_modified'),
             viewed: true
         };
 

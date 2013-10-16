@@ -71,6 +71,7 @@
                 complete: function() {
                     self.setDisabled(false);
                 },
+                lastModified: self.model.get('date_modified'),
                 //Show alerts for this request
                 showAlerts: {
                     'process': true,
