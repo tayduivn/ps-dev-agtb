@@ -51,19 +51,6 @@ if( is_admin($current_user) && SugarAutoLoader::fileExists('include/SugarSearchE
     }
 
 }
-if (is_admin($current_user))
-{
-    if (!empty($GLOBALS['sugar_config']['fts_disable_notification']))
-    {
-        displayAdminError(translate('LBL_FTS_DISABLED', 'Administration'));
-    }
-
-    // if fts indexing is done, show the notification to admin
-    $admin = Administration::getSettings();
-    if (!empty($admin->settings['info_fts_index_done'])) {
-        displayAdminError(translate('LBL_FTS_INDEXING_DONE', 'Administration'));
-    }
-}
 //END SUGARCRM flav=pro ONLY
 
 
