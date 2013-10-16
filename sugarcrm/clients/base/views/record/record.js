@@ -1,3 +1,15 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 ({
     inlineEditMode: false,
 
@@ -45,27 +57,27 @@
     // width of the layout that contains this view
     _containerWidth: 0,
 
-    initialize: function (options) {
+    initialize: function(options) {
         _.bindAll(this);
         options.meta = _.extend({}, app.metadata.getView(null, 'record'), options.meta);
         app.view.View.prototype.initialize.call(this, options);
         this.buttons = {};
-        this.createMode = this.context.get("create") ? true : false;
+        this.createMode = this.context.get('create') ? true : false;
 
         // Even in createMode we want it to start in detail so that we, later, respect
         // this.editableFields (the list after pruning out readonly fields, etc.)
         this.action = 'detail';
 
-        this.context.on("change:record_label", this.setLabel, this);
-        this.context.set("viewed", true);
-        this.model.on("duplicate:before", this.setupDuplicateFields, this);
-        this.on("editable:keydown", this.handleKeyDown, this);
-        this.on("editable:mousedown", this.handleMouseDown, this);
+        this.context.on('change:record_label', this.setLabel, this);
+        this.context.set('viewed', true);
+        this.model.on('duplicate:before', this.setupDuplicateFields, this);
+        this.on('editable:keydown', this.handleKeyDown, this);
+        this.on('editable:mousedown', this.handleMouseDown, this);
 
         //event register for preventing actions
         // when user escapes the page without confirming deleting
-        app.routing.before("route", this.beforeRouteDelete, this, true);
-        $(window).on("beforeunload.delete" + this.cid, _.bind(this.warnDeleteOnRefresh, this));
+        app.routing.before('route', this.beforeRouteDelete, this, true);
+        $(window).on('beforeunload.delete' + this.cid, _.bind(this.warnDeleteOnRefresh, this));
 
         this.delegateButtonEvents();
 
@@ -84,7 +96,7 @@
     /**
      * Compare with last fetched data and return true if model contains changes
      *
-     * @return true if current model contains unsaved changes
+     * @return {Boolean} true if current model contains unsaved changes.
      * @link {app.plugins.view.editable}
      */
     hasUnsavedChanges: function() {
@@ -105,52 +117,53 @@
     },
 
     /**
-     * Called when current record is being duplicated to allow customization of fields
-     * that will be copied into new record.
+     * Called when current record is being duplicated to allow customization of
+     * fields that will be copied into new record.
      *
-     * Override to setup the fields on this bean prior to being displayed in Create dialog
+     * Override to setup the fields on this bean prior to being displayed in
+     * Create dialog.
      *
-     * @param {Object} prefill Bean that will be used for new record
+     * @param {Object} prefill Bean that will be used for new record.
+     * @template
      */
-    setupDuplicateFields: function (prefill) {
-
+    setupDuplicateFields: function(prefill) {
     },
 
-    setLabel: function (context, value) {
-        this.$(".record-label[data-name=" + value.field + "]").text(value.label);
+    setLabel: function(context, value) {
+        this.$('.record-label[data-name="' + value.field + '"]').text(value.label);
     },
 
     /**
-     * Called each time a validation pass is completed on the model
-     * @param {boolean} isValid TRUE if model is valid
+     * Called each time a validation pass is completed on the model.
+     *
+     * @param {boolean} isValid TRUE if model is valid.
      */
-    validationComplete: function(isValid){
+    validationComplete: function(isValid) {
         if (isValid) {
             this.setButtonStates(this.STATE.VIEW);
             this.handleSave();
         }
     },
 
-    delegateButtonEvents: function () {
+    delegateButtonEvents: function() {
         this.context.on('button:edit_button:click', this.editClicked, this);
         this.context.on('button:save_button:click', this.saveClicked, this);
         this.context.on('button:delete_button:click', this.deleteClicked, this);
         this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
     },
 
-    _render: function () {
+    _render: function() {
         this._buildGridsFromPanelsMetadata(this.meta.panels);
 
         app.view.View.prototype._render.call(this);
 
-        var record_label = this.context.get("record_label");
-        if(record_label) {
-            this.setLabel(this.context, record_label);
+        if (this.context.get('record_label')) {
+            this.setLabel(this.context, this.context.get('record_label'));
         }
 
         // Field labels in headerpane should be hidden on view but displayed in edit and create
-        _.each(this.fields, function (field) {
-            var toggleLabel = _.bind(function () {
+        _.each(this.fields, function(field) {
+            var toggleLabel = _.bind(function() {
                 this.toggleLabelByField(field);
             }, this);
 
@@ -159,7 +172,7 @@
                 field.on('render', toggleLabel);
             }
             // some fields like 'favorite' is readonly by default, so we need to remove edit-link-wrapper
-            if (field.def.readonly && field.name && -1 ==  _.indexOf(this.noEditFields, field.name)) {
+            if (field.def.readonly && field.name && -1 == _.indexOf(this.noEditFields, field.name)) {
                 this.$('.record-edit-link-wrapper[data-name=' + field.name + ']').remove();
             }
         }, this);
@@ -176,14 +189,19 @@
         }
     },
 
-    setEditableFields: function () {
+    setEditableFields: function() {
         delete this.editableFields;
         this.editableFields = [];
 
         var previousField, firstField;
-        _.each(this.fields, function (field, index) {
-            //Exclude read only fields
-            if (field.def.readonly || _.indexOf(this.noEditFields, field.def.name) >= 0 || field.parent || (field.name && this.buttons[field.name])) {
+        _.each(this.fields, function(field) {
+
+            var readonlyField = field.def.readonly ||
+                _.indexOf(this.noEditFields, field.def.name) >= 0 ||
+                field.parent || (field.name && this.buttons[field.name]);
+
+            if (readonlyField) {
+                // exclude read only fields
                 return;
             }
             if (previousField) {
@@ -194,29 +212,33 @@
             }
             previousField = field;
             this.editableFields.push(field);
+
         }, this);
+
         if (previousField) {
             previousField.nextField = firstField;
             firstField.prevField = previousField;
         }
     },
-    initButtons: function () {
+
+    initButtons: function() {
+
         if (this.options.meta && this.options.meta.buttons) {
-            _.each(this.options.meta.buttons, function (button) {
+            _.each(this.options.meta.buttons, function(button) {
                 this.registerFieldAsButton(button.name);
                 if (button.buttons) {
                     var dropdownButton = this.getField(button.name);
-                    if(!dropdownButton) {
+                    if (!dropdownButton) {
                         return;
                     }
-                    _.each(dropdownButton.fields, function (ddButton) {
+                    _.each(dropdownButton.fields, function(ddButton) {
                         this.buttons[ddButton.name] = ddButton;
                     }, this);
                 }
             }, this);
         }
     },
-    showPreviousNextBtnGroup: function () {
+    showPreviousNextBtnGroup: function() {
         var listCollection = this.context.get('listCollection') || new app.data.createBeanCollection(this.module);
         var recordIndex = listCollection.indexOf(listCollection.get(this.model.id));
         if (listCollection && listCollection.models && listCollection.models.length <= 1) {
@@ -230,21 +252,21 @@
         }
     },
 
-    registerFieldAsButton: function (buttonName) {
+    registerFieldAsButton: function(buttonName) {
         var button = this.getField(buttonName);
         if (button) {
             this.buttons[buttonName] = button;
         }
     },
 
-    _renderHtml: function () {
+    _renderHtml: function() {
         this.showPreviousNextBtnGroup();
         app.view.View.prototype._renderHtml.call(this);
         this.adjustHeaderpane();
     },
 
-    bindDataChange: function () {
-        this.model.on("change", function (fieldType) {
+    bindDataChange: function() {
+        this.model.on('change', function(fieldType) {
             if (this.inlineEditMode) {
                 this.setButtonStates(this.STATE.EDIT);
             }
@@ -257,52 +279,54 @@
         }, this);
     },
 
-    duplicateClicked: function () {
+    duplicateClicked: function() {
         var self = this,
             prefill = app.data.createBean(this.model.module);
 
         prefill.copy(this.model);
-        self.model.trigger("duplicate:before", prefill);
-        prefill.unset("id");
+        self.model.trigger('duplicate:before', prefill);
+        prefill.unset('id');
         app.drawer.open({
             layout: 'create-actions',
             context: {
                 create: true,
                 model: prefill
             }
-        }, function (context, newModel) {
+        }, function(context, newModel) {
             if (newModel && newModel.id) {
-                app.router.navigate("#" + self.model.module + "/" + newModel.id, {trigger: true});
+                app.router.navigate(self.model.module + '/' + newModel.id, {trigger: true});
             }
         });
 
         prefill.trigger('duplicate:field', self.model);
     },
 
-    editClicked: function () {
+    editClicked: function() {
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
     },
 
-    saveClicked: function () {
+    saveClicked: function() {
         this.model.doValidate(this.getFields(this.module), _.bind(this.validationComplete, this));
     },
 
-    cancelClicked: function () {
+    cancelClicked: function() {
         this.handleCancel();
         this.setButtonStates(this.STATE.VIEW);
         this.clearValidationErrors(this.editableFields);
     },
 
-    deleteClicked: function () {
+    deleteClicked: function() {
         this.warnDelete();
     },
 
     /**
      * Render fields into either edit or view mode.
-     * @param isEdit
+     *
+     * @param {Boolean} isEdit `true` to set the field in edit mode, `false`
+     *   otherwise.
      */
-    toggleEdit: function (isEdit) {
+    toggleEdit: function(isEdit) {
         this.$('.record-edit-link-wrapper').toggle(!isEdit);
         this.$('.headerpane .record-label').toggle(isEdit);
         this.toggleFields(this.editableFields, isEdit);
@@ -311,19 +335,20 @@
     },
 
     /**
-     * Handler for intent to edit. This handler is called both as a callback from click events, and also
-     * triggered as part of tab focus event.
-     * @param e {Event} jQuery Event object (should be from click)
-     * @param cell {jQuery Node} cell of the target node to edit
+     * Handler for intent to edit. This handler is called both as a callback
+     * from click events, and also triggered as part of tab focus event.
+     *
+     * @param {Event} e Event object (should be click event).
+     * @param {jQuery} cell A jQuery node cell of the target node to edit.
      */
-    handleEdit: function (e, cell) {
+    handleEdit: function(e, cell) {
         var target,
             cellData,
             field;
 
         if (e) { // If result of click event, extract target and cell.
             target = this.$(e.target);
-            cell = target.parents(".record-cell");
+            cell = target.parents('.record-cell');
         }
 
         cellData = cell.data();
@@ -343,18 +368,25 @@
     },
 
     /**
-     * Hide/show all field labels in headerpane
-     * @param isEdit
+     * Hide/show all field labels in headerpane.
+     *
+     * @param {Boolean} isEdit `true` to show the field labels, `false`
+     *   otherwise.
      */
-    toggleHeaderLabels: function (isEdit) {
+    toggleHeaderLabels: function(isEdit) {
         this.$('.headerpane .record-label').toggle(isEdit);
         this.toggleViewButtons(isEdit);
         this.adjustHeaderpane();
     },
 
     /**
-     * Hide view specific button during edit
-     * @param isEdit
+     * Hide view specific button during edit.
+     *
+     * @param {Boolean} isEdit `true` to hide some specific buttons, `false`
+     *   otherwise.
+     *
+     * FIXME this should be done in a more generic way (field or metadata
+     * property).
      */
     toggleViewButtons: function(isEdit) {
         this.$('.headerpane span[data-type="badge"]').toggleClass('hide', isEdit);
@@ -364,10 +396,12 @@
     },
 
     /**
-     * Hide/show field label given a field
-     * @param field
+     * Hide/show field label given a field.
+     *
+     * @param {View.Field} field The field to toggle the label based on current
+     *   action.
      */
-    toggleLabelByField: function (field) {
+    toggleLabelByField: function(field) {
         if (field.action === 'edit') {
             field.$el.closest('.record-cell')
                 .addClass('edit')
@@ -404,7 +438,7 @@
                 }
             }, this),
             error: _.bind(function(error) {
-                if (error.status == 412 && !error.request.metadataRetry) {
+                if (error.status === 412 && !error.request.metadataRetry) {
                     this.handleMetadataSyncError(error);
                 }
                 else {
@@ -431,38 +465,38 @@
         }
     },
 
-    handleMetadataSyncError: function(error){
+    handleMetadataSyncError: function(error) {
         var self = this;
-       //On a metadata sync error, retry the save after the app is synced
-       self.resavingAfterMetadataSync = true;
-       app.once("app:sync:complete", function(){
-           error.request.metadataRetry = true;
-           self.model.once("sync", function(){
-               self.resavingAfterMetadataSync = false;
-               //self.model.changed = {};
-               app.router.refresh();
-           });
-           //add a new sucess callback to refresh the page after the save completes
-           error.request.execute(null, app.api.getMetadataHash());
-       });
+        //On a metadata sync error, retry the save after the app is synced
+        self.resavingAfterMetadataSync = true;
+        app.once('app:sync:complete', function() {
+            error.request.metadataRetry = true;
+            self.model.once('sync', function() {
+                self.resavingAfterMetadataSync = false;
+                //self.model.changed = {};
+                app.router.refresh();
+            });
+            //add a new success callback to refresh the page after the save completes
+            error.request.execute(null, app.api.getMetadataHash());
+        });
     },
 
     getCustomSaveOptions: function(options) {
         return {};
     },
 
-    handleCancel: function () {
+    handleCancel: function() {
         this.model.revertAttributes();
         this.toggleEdit(false);
         this.inlineEditMode = false;
     },
 
     /**
-     * Pre-event handler before current router is changed
+     * Pre-event handler before current router is changed.
      *
-     * @return {Boolean} true to continue routing, false otherwise
+     * @return {Boolean} `true` to continue routing, `false` otherwise.
      */
-    beforeRouteDelete: function () {
+    beforeRouteDelete: function() {
         if (this._modelToDelete) {
             this.warnDelete();
             return false;
@@ -471,8 +505,9 @@
     },
 
     /**
-     * Format the message displayed in the alert
-     * @returns {Object} confirmation and success messages
+     * Format the message displayed in the alert.
+     *
+     * @return {Object} Confirmation and success messages.
      */
     getDeleteMessages: function() {
         var messages = {},
@@ -511,7 +546,7 @@
     /**
      * Popup browser dialog message to confirm delete action
      *
-     * @return {String} the message to be displayed in the browser dialog
+     * @return {String} The message to be displayed in the browser dialog.
      */
     warnDeleteOnRefresh: function() {
         if (this._modelToDelete) {
@@ -536,8 +571,8 @@
             success: function() {
                 var redirect = self._targetUrl !== self._currentUrl;
                 self._modelToDelete = false;
-                
-                self.context.trigger("record:deleted");
+
+                self.context.trigger('record:deleted');
                 if (redirect) {
                     self.unbindBeforeRouteDelete();
                     //Replace the url hash back to the current staying page
@@ -545,48 +580,25 @@
                     return;
                 }
 
-                app.router.navigate("#" + self.module, {trigger: true});
+                app.router.navigate(self.module, {trigger: true});
             }
         });
 
     },
 
     /**
-     * {@inheritdoc}
-     * Attach tab handler to jump into the next target field
+     * Key handlers for inline edit mode.
+     *
+     * Jump into the next or prev target field if `tab` key is pressed.
+     * Calls {@link app.plugins.Editable#nextField} to go to next/prev field.
+     *
+     * @param {Event} e Event object.
+     * @param {View.Field} field Current focused field (field in inline-edit mode).
      */
-    handleKeyDown: function (e, field) {
+    handleKeyDown: function(e, field) {
         if (e.which === 9) { // If tab
             e.preventDefault();
-            field.$(field.fieldTag).trigger("change");
-            var direction = e.shiftKey ? 'prevField' : 'nextField',
-                nextField = field[direction];
-
-            if (!nextField) {
-                return;
-            }
-
-            var hasHiddenPanel = nextField.$el.closest('.panel_hidden').hasClass('hide') &&
-                _.isFunction(this.toggleMoreLess);
-            if (hasHiddenPanel) {
-                this.toggleMoreLess();
-            }
-            this.toggleField(field, false);
-            this.toggleField(nextField, true);
-            // the field we need to toggle until we reach one that's not
-            if (nextField.isDisabled()) {
-                var curField = nextField;
-                while (curField.isDisabled()) {
-                    if (curField[direction]) {
-                        this.toggleField(curField[direction], true);
-                        curField = curField[direction];
-                    } else {
-                        break;
-                    }
-
-                }
-            }
-
+            this.nextField(field, e.shiftKey ? 'prevField' : 'nextField');
             this.adjustHeaderpane();
         }
     },
@@ -600,13 +612,15 @@
     },
 
     /**
-     * Show/hide buttons depending on the state defined for each buttons in the metadata
-     * @param state
+     * Show/hide buttons depending on the state defined for each buttons in the
+     * metadata.
+     *
+     * @param {String} state The {@link #STATE} of the current view.
      */
-    setButtonStates: function (state) {
+    setButtonStates: function(state) {
         this.currentState = state;
 
-        _.each(this.buttons, function (field) {
+        _.each(this.buttons, function(field) {
             var showOn = field.def.showOn;
             if (_.isUndefined(showOn) || (showOn === state)) {
                 field.show();
@@ -617,10 +631,13 @@
     },
 
     /**
-     * Set the title in the header pane
-     * @param title
+     * Set the title in the header pane.
+     *
+     * @param {String} title The new title to set on the headerpane.
+     *
+     * FIXME this should be done with the header pane view + re-render it.
      */
-    setTitle: function (title) {
+    setTitle: function(title) {
         var $title = this.$('.headerpane .module-title');
         if ($title.length > 0) {
             $title.text(title);
@@ -633,11 +650,11 @@
      * Detach the event handlers for warning delete
      */
     unbindBeforeRouteDelete: function() {
-        app.routing.offBefore("route", this.beforeRouteDelete, this);
-        $(window).off("beforeunload.delete" + this.cid);
+        app.routing.offBefore('route', this.beforeRouteDelete, this);
+        $(window).off('beforeunload.delete' + this.cid);
     },
 
-    _dispose: function () {
+    _dispose: function() {
         this.unbindBeforeRouteDelete();
         _.each(this.editableFields, function(field) {
             field.nextField = null;
@@ -645,13 +662,13 @@
         });
         this.buttons = null;
         this.editableFields = null;
-        this.off("editable:keydown", this.handleKeyDown, this);
+        this.off('editable:keydown', this.handleKeyDown, this);
         $(window).off('resize.' + this.cid);
         app.view.View.prototype._dispose.call(this);
     },
 
     _buildGridsFromPanelsMetadata: function(panels) {
-        var lastTabIndex  = 0;
+        var lastTabIndex = 0;
         this.noEditFields = [];
 
         _.each(panels, function(panel) {
@@ -662,7 +679,7 @@
                     panel.fields[index] = field = {name: field};
                 }
                 // disable the pencil icon if the user doesn't have ACLs
-                if (field.type === "fieldset") {
+                if (field.type === 'fieldset') {
                     if (field.readonly || _.every(field.fields, function(field) {
                         return !app.acl.hasAccessToModel('edit', this.model, field.name);
                     }, this)) {
@@ -685,15 +702,15 @@
 
             if (_.isFunction(this.getGridBuilder)) {
                 var options = {
-                        fields:      panel.fields,
-                        columns:     panel.columns,
-                        labels:      panel.labels,
+                        fields: panel.fields,
+                        columns: panel.columns,
+                        labels: panel.labels,
                         labelsOnTop: panel.labelsOnTop,
-                        tabIndex:    lastTabIndex
+                        tabIndex: lastTabIndex
                     },
                     gridResults = this.getGridBuilder(options).build();
 
-                panel.grid   = gridResults.grid;
+                panel.grid = gridResults.grid;
                 lastTabIndex = gridResults.lastTabIndex;
             }
         }, this);
@@ -724,8 +741,9 @@
 
     /**
      * Callback for navigate to new model.
-     * @param model {Data.Bean} model New model to navigate.
-     * @param actionType {String} actionType Side of navigation (prev/next).
+     *
+     * @param {Data.Bean} model model New model to navigate.
+     * @param {String} actionType actionType Side of navigation (prev/next).
      */
     navigateModel: function(model, actionType) {
         if (model && model.id) {
@@ -769,9 +787,11 @@
     },
 
     /**
-     * Get the width of the parent layout that contains getPaneWidth() method.
-     * @param layout
-     * @returns {number}
+     * Get the width of the parent layout that contains `getPaneWidth()`
+     * method.
+     *
+     * @param {View.Layout} layout The parent layout.
+     * @return {Number} The parent layout width.
      * @private
      */
     _getParentLayoutWidth: function(layout) {
@@ -810,7 +830,7 @@
     /**
      * Get the first cell for the field that can be ellipsified.
      * @param {jQuery} $cells
-     * @returns {jQuery}
+     * @return {jQuery}
      * @private
      */
     _getCellToEllipsify: function($cells) {
@@ -825,7 +845,7 @@
      * Calculate the width for the cell that needs to be ellipsified.
      * @param {jQuery} $cells
      * @param {jQuery} $ellipsisCell
-     * @returns {number}
+     * @return {Number}
      * @private
      */
     _calculateEllipsifiedCellWidth: function($cells, $ellipsisCell) {
@@ -835,8 +855,8 @@
             var $cell = $(cell);
 
             if ($cell.is($ellipsisCell)) {
-                width -= (parseInt($ellipsisCell.css('padding-left'), 10)
-                         + parseInt($ellipsisCell.css('padding-right'), 10));
+                width -= (parseInt($ellipsisCell.css('padding-left'), 10) +
+                         parseInt($ellipsisCell.css('padding-right'), 10));
             } else if ($cell.is(':visible')) {
                 $cell.css({'width': 'auto'});
                 width -= $cell.outerWidth();
