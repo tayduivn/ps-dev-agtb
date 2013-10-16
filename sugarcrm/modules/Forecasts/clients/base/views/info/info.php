@@ -18,7 +18,7 @@ $viewdefs['Forecasts']['base']['view']['info'] = array(
         array(
             'name' => 'selectedTimePeriod',
             'label' => 'LBL_TIMEPERIOD_NAME',
-            'type' => 'enum',
+            'type' => 'timeperiod',
             'css_class' => 'forecastsTimeperiod',
             'dropdown_class' => 'topline-timeperiod-dropdown',
             'dropdown_width' => 'auto',

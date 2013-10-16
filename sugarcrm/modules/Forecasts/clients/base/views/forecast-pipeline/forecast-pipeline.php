@@ -29,7 +29,7 @@ $viewdefs['Forecasts']['base']['view']['forecast-pipeline'] = array(
         array(
             'name' => 'selectedTimePeriod',
             'label' => 'TimePeriod',
-            'type' => 'enum',
+            'type' => 'timeperiod',
         ),
     )
 );
