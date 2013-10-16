@@ -113,9 +113,12 @@ class OAuth2Api extends SugarApi
                 // Let them through
             } else {
                 // This is no good, they shouldn't be allowed in.
-                $e = new SugarApiExceptionMaintenance($systemStatus['message'], null, null, 0, $systemStatus['level']);
-                $e->setExtraData("url", $systemStatus['url']);
-                throw $e;
+                $e = new SugarApiExceptionMaintenance($loginStatus['message'], null, null, 0, $loginStatus['level']);
+                if (!empty($loginStatus['url'])) {
+                    $e->setExtraData("url", $loginStatus['url']);
+                }
+                $api->needLogin($e);
+                return;
             }
         }
 
