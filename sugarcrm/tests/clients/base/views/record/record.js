@@ -860,4 +860,41 @@ describe("Record View", function () {
             expect(routerStub).toHaveBeenCalled();
         });
     });
+
+    describe("Check the First Panel", function() {
+        var tempMeta;
+        beforeEach(function() {
+            tempMeta = view.meta;
+            view.meta.panels = [];
+        });
+        afterEach(function() {
+             view.meta = tempMeta;
+        });
+
+        it('should return true when calling checkFirstPanel with header', function() {
+            view.meta.panels.push({header: 1});
+            view.meta.panels.push({newTab: 1});
+
+            expect(view.checkFirstPanel()).toBeTruthy();
+        });
+
+        it('should return true when calling checkFirstPanel with no header', function() {
+            view.meta.panels.push({header: 0, newTab: 1});
+
+            expect(view.checkFirstPanel()).toBeTruthy();
+        });
+
+        it('should return false when calling checkFirstPanel with header', function() {
+            view.meta.panels.push({header: 1, newTab: 1});
+            view.meta.panels.push({newTab: 0});
+
+            expect(view.checkFirstPanel()).toBeFalsy();
+        });
+
+        it('should return false when calling checkFirstPanel with no header', function() {
+            view.meta.panels.push({header: 0, newTab: 0});
+
+            expect(view.checkFirstPanel()).toBeFalsy();
+        });
+    });
 });

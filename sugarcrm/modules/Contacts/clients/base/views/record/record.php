@@ -159,6 +159,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_body',
+            'label' => 'LBL_PANEL_BODY',
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
@@ -174,6 +175,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
         array(
             'columns' => 2,
             'name' => 'panel_hidden',
+            'label' => 'LBL_PANEL_ADVANCED',
             'hide' => true,
             'labelsOnTop' => true,
             'placeholders' => true,

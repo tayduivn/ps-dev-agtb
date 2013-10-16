@@ -61,6 +61,7 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_body',
+            'label' => 'LBL_PANEL_BODY',
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
@@ -81,6 +82,7 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_hidden',
+            'label' => 'LBL_PANEL_ADVANCED',
             'columns' => 2,
             'hide' => true,
             'labelsOnTop' => true,

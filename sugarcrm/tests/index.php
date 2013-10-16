@@ -43,6 +43,7 @@ if (file_exists('../config.js')) {
     <script type="text/javascript" src="../include/javascript/jquery/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="../include/javascript/twitterbootstrap/bootstrap-collapse.js"></script>
     <script type="text/javascript" src="../include/javascript/twitterbootstrap/bootstrap-tooltip.js"></script>
+    <script type="text/javascript" src="../include/javascript/twitterbootstrap/bootstrap-tab.js"></script>
     <script type="text/javascript" src="../include/javascript/twitterbootstrap/bootstrap-dropdown.js"></script>
     <script type="text/javascript" src="../include/javascript/twitterbootstrap/bootstrap-datepicker.js"></script>
     <script type="text/javascript" src="../include/javascript/select2/select2.js"></script>

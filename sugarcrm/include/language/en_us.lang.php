@@ -2793,6 +2793,7 @@ $app_strings = array (
     'LBL_LOWER_OR' => 'or',
     'LBL_PANEL_ASSIGNMENT' => 'Other',
     'LBL_PANEL_ADVANCED' => 'More Information',
+    'LBL_PANEL_BODY' => 'Overview',
     'LBL_PARENT_TYPE' => 'Parent Type',
     'LBL_PERCENTAGE_SYMBOL' => '%',
     'LBL_PHASE' => 'Range',

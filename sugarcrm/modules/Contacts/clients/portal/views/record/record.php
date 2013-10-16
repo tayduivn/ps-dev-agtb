@@ -36,6 +36,7 @@ $viewdefs['Contacts']['portal']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_body',
+            'label' => 'LBL_PANEL_BODY',
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
