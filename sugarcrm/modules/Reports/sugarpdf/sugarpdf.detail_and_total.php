@@ -40,7 +40,7 @@ class ReportsSugarpdfDetail_and_total extends ReportsSugarpdfReports
             for($i= 0 ; $i < sizeof($header_row); $i++) {
                 $label = $header_row[$i];
                 $value = '';
-                if(!empty($row['cells'][$i])) {
+                if (isset($row['cells'][$i])) {
                   $value = $row['cells'][$i];
                 }
                 $item[$count][$label] = $value;
