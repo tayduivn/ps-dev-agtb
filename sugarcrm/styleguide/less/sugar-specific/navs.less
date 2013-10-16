@@ -215,3 +215,37 @@
 .dashlet-tabs.tab5 .dashlet-tab {
   width: 20%;
 }
+
+//Record view tabbed layout
+.record.tab-layout {
+  padding: 0;
+}
+.content-tabs {
+  .nav.nav-tabs {
+    margin-bottom: 0;
+    background-color: @grayLighter;
+    border-top: 1px solid @white;
+    padding-left: 20px;
+    .tab {
+      &.active {
+        border: 1px solid darken(@grayLighter,5%);
+        border-bottom: 1px solid @white;
+        background: @white;
+        margin-top: -2px;
+        a {
+          padding: 12px 8px 10px 8px;
+        }
+      }
+      a {
+        font-size: 11px;
+        border: none;
+        margin: -1px 0 1px;
+        padding: 11px 8px;
+        .border-radius(0);
+      }
+    }
+  }
+  .tab-content {
+    padding: 10px 20px 10px 5px;
+  }
+}
