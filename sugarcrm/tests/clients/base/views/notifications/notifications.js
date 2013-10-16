@@ -1,23 +1,23 @@
-describe('Notifications', function () {
+describe('Notifications', function() {
     var moduleName = 'Notifications',
         viewName = 'notifications';
 
-    describe('Initialization with default values', function () {
+    describe('Initialization with default values', function() {
         var app, view;
 
-        beforeEach(function () {
+        beforeEach(function() {
             view = SugarTest.createView('base', moduleName, viewName);
             app = SugarTest.app;
         });
 
-        afterEach(function () {
+        afterEach(function() {
             sinon.collection.restore();
             SugarTest.app.view.reset();
             view.dispose();
             view = null;
         });
 
-        it('should bootstrap', function () {
+        it('should bootstrap', function() {
             var _initOptions = sinon.collection.stub(view, '_initOptions', $.noop()),
                 _initCollection = sinon.collection.stub(view, '_initCollection', $.noop()),
                 _initReminders = sinon.collection.stub(view, '_initReminders', $.noop()),
@@ -31,7 +31,7 @@ describe('Notifications', function () {
             expect(startPulling).toHaveBeenCalledOnce();
         });
 
-        it('should initialize options with default values', function () {
+        it('should initialize options with default values', function() {
             view._initOptions();
 
             expect(view.delay / 60 / 1000).toBe(view._defaultOptions.delay);
@@ -39,11 +39,11 @@ describe('Notifications', function () {
             expect(view.severityCss).toBe(view._defaultOptions.severity_css);
         });
 
-        it('should initialize collection options with default values', function () {
-            var createBeanCollection = sinon.collection.stub(app.data, 'createBeanCollection', function () {
+        it('should initialize collection options with default values', function() {
+            var createBeanCollection = sinon.collection.stub(app.data, 'createBeanCollection', function() {
                 return {
                     options: {},
-                    off: function () {
+                    off: function() {
                     }
                 };
             });
@@ -61,7 +61,7 @@ describe('Notifications', function () {
         });
     });
 
-    describe('Initialization with metadata overridden values', function () {
+    describe('Initialization with metadata overridden values', function() {
         var app, view, customOptions = {
             delay: 10,
             limit: 8,
@@ -74,7 +74,7 @@ describe('Notifications', function () {
             }
         };
 
-        beforeEach(function () {
+        beforeEach(function() {
             SugarTest.testMetadata.init();
             SugarTest.testMetadata.addViewDefinition(viewName, customOptions, moduleName);
             SugarTest.testMetadata.set();
@@ -83,7 +83,7 @@ describe('Notifications', function () {
             app = SugarTest.app;
         });
 
-        afterEach(function () {
+        afterEach(function() {
             sinon.collection.restore();
             SugarTest.testMetadata.dispose();
             SugarTest.app.view.reset();
@@ -91,7 +91,7 @@ describe('Notifications', function () {
             view = null;
         });
 
-        it('should initialize options with metadata overridden values', function () {
+        it('should initialize options with metadata overridden values', function() {
             view._initOptions();
 
             expect(view.delay / 60 / 1000).toBe(customOptions.delay);
@@ -99,11 +99,11 @@ describe('Notifications', function () {
             expect(view.severityCss).toEqual(customOptions.severity_css);
         });
 
-        it('should initialize collection options with metadata overridden values', function () {
-            var createBeanCollection = sinon.collection.stub(app.data, 'createBeanCollection', function () {
+        it('should initialize collection options with metadata overridden values', function() {
+            var createBeanCollection = sinon.collection.stub(app.data, 'createBeanCollection', function() {
                 return {
                     options: {},
-                    off: function () {
+                    off: function() {
                     }
                 };
             });
@@ -121,21 +121,21 @@ describe('Notifications', function () {
         });
     });
 
-    describe('Pulling mechanism', function () {
+    describe('Pulling mechanism', function() {
         var view;
 
-        beforeEach(function () {
+        beforeEach(function() {
             view = SugarTest.createView('base', moduleName, viewName);
         });
 
-        afterEach(function () {
+        afterEach(function() {
             sinon.collection.restore();
             SugarTest.app.view.reset();
             view.dispose();
             view = null;
         });
 
-        it('should not pull notifications if disposed', function () {
+        it('should not pull notifications if disposed', function() {
             // not calling dispose() directly due to it setting inherently the
             // collection to null
             view.disposed = true;
@@ -145,8 +145,8 @@ describe('Notifications', function () {
             view.disposed = false;
         });
 
-        it('should not pull notifications if disposed after fetch', function () {
-            var fetch = sinon.collection.stub(view.collection, 'fetch', function (o) {
+        it('should not pull notifications if disposed after fetch', function() {
+            var fetch = sinon.collection.stub(view.collection, 'fetch', function(o) {
                 // not calling dispose() directly due to it setting inherently the
                 // collection to null
                 view.disposed = true;
@@ -160,8 +160,8 @@ describe('Notifications', function () {
             view.disposed = false;
         });
 
-        it('should not pull notifications if opened', function () {
-            var isOpened = sinon.collection.stub(view, 'isOpened', function () {
+        it('should not pull notifications if opened', function() {
+            var isOpened = sinon.collection.stub(view, 'isOpened', function() {
                 return true;
             });
 
@@ -170,9 +170,9 @@ describe('Notifications', function () {
             expect(view.collection.fetch).not.toHaveBeenCalled();
         });
 
-        it('should not pull notifications if opened after fetch', function () {
-            var fetch = sinon.collection.stub(view.collection, 'fetch', function (o) {
-                var isOpened = sinon.collection.stub(view, 'isOpened', function () {
+        it('should not pull notifications if opened after fetch', function() {
+            var fetch = sinon.collection.stub(view.collection, 'fetch', function(o) {
+                var isOpened = sinon.collection.stub(view, 'isOpened', function() {
                     return true;
                 });
 
@@ -185,7 +185,7 @@ describe('Notifications', function () {
             expect(view.render).not.toHaveBeenCalled();
         });
 
-        it('should set timeout twice once on multiple start pulling calls', function () {
+        it('should set timeout twice once on multiple start pulling calls', function() {
             var pull = sinon.collection.stub(view, 'pull', $.noop()),
                 _pullReminders = sinon.collection.stub(view, '_pullReminders', $.noop()),
                 setTimeout = sinon.collection.stub(window, 'setTimeout', $.noop());
@@ -197,10 +197,10 @@ describe('Notifications', function () {
             expect(setTimeout).toHaveBeenCalledTwice();
         });
 
-        it('should clear intervals on stop pulling', function () {
+        it('should clear intervals on stop pulling', function() {
             var pull = sinon.collection.stub(view, 'pull', $.noop()),
                 _pullReminders = sinon.collection.stub(view, '_pullReminders', $.noop()),
-                setTimeout = sinon.collection.stub(window, 'setTimeout', function () {
+                setTimeout = sinon.collection.stub(window, 'setTimeout', function() {
                     return intervalId;
                 }),
                 clearInterval = sinon.collection.stub(window, 'clearInterval', $.noop()),
@@ -213,7 +213,7 @@ describe('Notifications', function () {
             expect(view._remindersIntervalId).toBeNull();
         });
 
-        it('should stop pulling on dispose', function () {
+        it('should stop pulling on dispose', function() {
             var stopPulling = sinon.collection.stub(view, 'stopPulling', $.noop());
 
             view.dispose();
@@ -221,14 +221,14 @@ describe('Notifications', function () {
             expect(stopPulling).toHaveBeenCalledOnce();
         });
 
-        it('should stop pulling if authentication expires', function () {
+        it('should stop pulling if authentication expires', function() {
             var app = SugarTest.app,
-                isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function () {
+                isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function() {
                     return false;
                 }),
                 pull = sinon.collection.stub(view, 'pull', $.noop()),
                 _pullReminders = sinon.collection.stub(view, '_pullReminders', $.noop()),
-                setTimeout = sinon.collection.stub(window, 'setTimeout', function (fn) {
+                setTimeout = sinon.collection.stub(window, 'setTimeout', function(fn) {
                     fn();
                 }),
                 stopPulling = sinon.collection.stub(view, 'stopPulling', $.noop());
@@ -242,15 +242,15 @@ describe('Notifications', function () {
         });
     });
 
-    describe('Helpers', function () {
+    describe('Helpers', function() {
         var app, view;
 
-        beforeEach(function () {
+        beforeEach(function() {
             app = SugarTest.app;
             view = SugarTest.createView('base', moduleName, viewName);
         });
 
-        afterEach(function () {
+        afterEach(function() {
             sinon.collection.restore();
             SugarTest.app.view.reset();
             view.dispose();
@@ -258,10 +258,10 @@ describe('Notifications', function () {
         });
 
         // FIXME: refactor this when data providers support is enabled
-        it('should retrieve severity as a label for non-existent severity', function () {
+        it('should retrieve severity as a label for non-existent severity', function() {
             var appList, label, severity;
 
-            appList = sinon.collection.stub(app.lang, 'getAppListStrings', function () {
+            appList = sinon.collection.stub(app.lang, 'getAppListStrings', function() {
                 return {};
             });
 
@@ -273,10 +273,10 @@ describe('Notifications', function () {
         });
 
         // FIXME: refactor this when data providers support is enabled
-        it('should retrieve matching label for existent severity', function () {
+        it('should retrieve matching label for existent severity', function() {
             var appList, label, severity;
 
-            appList = sinon.collection.stub(app.lang, 'getAppListStrings', function () {
+            appList = sinon.collection.stub(app.lang, 'getAppListStrings', function() {
                 return {
                     alert: 'Alert'
                 };
@@ -290,7 +290,7 @@ describe('Notifications', function () {
         });
 
         // FIXME: refactor this when data providers support is enabled
-        it('should retrieve an empty string for non-existent severity', function () {
+        it('should retrieve an empty string for non-existent severity', function() {
             view.severityCss = {};
 
             var css = view.getSeverityCss('non-existent');
@@ -299,7 +299,7 @@ describe('Notifications', function () {
         });
 
         // FIXME: refactor this when data providers support is enabled
-        it('should retrieve a css class for existent severity', function () {
+        it('should retrieve a css class for existent severity', function() {
             view.severityCss = {
                 alert: 'label-important'
             };
@@ -395,8 +395,8 @@ describe('Notifications', function () {
                 delete Handlebars.templates;
             });
 
-            it ('Shouldn\'t check reminders if authentication expires', function() {
-                var isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function () {
+            it('Shouldn\'t check reminders if authentication expires', function() {
+                var isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function() {
                         return false;
                     }),
                     setTimeout = sinon.collection.stub(window, 'setTimeout', $.noop()),
@@ -416,7 +416,7 @@ describe('Notifications', function () {
                     clock = sinon.useFakeTimers(now.getTime(), 'Date'),
                     setTimeout = sinon.collection.stub(window, 'setTimeout', $.noop()),
                     _showReminderAlert = sinon.collection.stub(view, '_showReminderAlert'),
-                    isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function () {
+                    isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function() {
                         return true;
                     }),
                     model = new app.data.createBean(reminderModule, {
@@ -426,7 +426,7 @@ describe('Notifications', function () {
                         'description': 'Meeting',
                         'date_start': dateStart.toISOString(),
                         'reminder_time': '1800'
-                });
+                    });
 
                 view._initReminders();
                 view._alertsCollections[reminderModule].add(model);
@@ -434,7 +434,7 @@ describe('Notifications', function () {
                 view.checkReminders();
 
                 expect(_showReminderAlert).toHaveBeenCalledWith(model);
-                
+
                 clock.restore();
             });
         });
