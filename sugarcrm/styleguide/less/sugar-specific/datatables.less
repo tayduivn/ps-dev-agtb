@@ -727,6 +727,7 @@ FLEXLIST GENERIC */
       }
       & > thead > tr > th:first-child {
         border-right: none;
+        z-index: 11;
         &:after {
           .right-shadow;
           top: -1px;
@@ -819,6 +820,7 @@ FLEXLIST GENERIC */
   padding-right: 18px;
   span {
     margin-right: 9px;
+    position: relative;
   }
   span:after {
     color: @grayLight;
@@ -827,8 +829,8 @@ FLEXLIST GENERIC */
     font-size: 11px;
     line-height: 6px;
     white-space: pre;
-    position: relative;
-    top: 6px;
+    position: absolute;
+    top: 7px;
     right: 0;
     float: right;
     content: "\f0d8\A\f0d7";
