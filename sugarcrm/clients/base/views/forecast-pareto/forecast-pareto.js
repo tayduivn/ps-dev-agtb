@@ -134,10 +134,7 @@
             defaultOptions.timeperiod_id = this.model.get('date_closed_timestamp');
         }
 
-        this.values.set({
-            display_manager: (displayType == 'team'),
-            show_target_quota: (displayType == 'team' && !this.isTopLevelManager)
-        });
+        this.values.set(defaultOptions);
     },
 
     /**
@@ -207,7 +204,10 @@
         var $el = $(e.currentTarget),
             displayType = $el.data('type');
 
-        this.values.set({display_manager: (displayType == 'team')});
+        this.values.set({
+            display_manager: (displayType == 'team'),
+            show_target_quota: (displayType == 'team' && !this.isTopLevelManager)
+        });
     },
 
     /**
