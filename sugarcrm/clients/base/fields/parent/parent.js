@@ -102,10 +102,13 @@
      * Avoid rendering process on select2 change in order to keep focus.
      */
     bindDataChange: function() {
+        this._super('bindDataChange');
         if (this.model) {
-            this.model.on('change:' + this.name, function() {
-                if (_.isEmpty(this.$(this.fieldTag).data('select2'))) {
+            this.model.on('change:parent_type', function() {
+                if (_.isEmpty(this.$(this.typeFieldTag).data('select2'))) {
                     this.render();
+                } else {
+                    this.$(this.typeFieldTag).select2('val', this.model.get('parent_type'));
                 }
             }, this);
         }
