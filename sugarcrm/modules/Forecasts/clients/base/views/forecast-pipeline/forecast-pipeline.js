@@ -96,7 +96,7 @@
         }, this);
         app.events.on('app:toggle:sidebar', function(state) {
             this.state = state;
-            if (this.state == 'open' && !this.preview_open) {
+            if (this.chartLoaded && this.state == 'open' && !this.preview_open) {
                 this.chart.update();
             }
         }, this);
@@ -137,9 +137,11 @@
 
             nv.utils.windowResize(this.chart.update);
             this.resizeOnPrint(this.chart);
+            this.chartLoaded = true;
         } else {
             this.$('.nv-chart').toggleClass('hide', true);
             this.$('.block-footer').toggleClass('hide', false);
+            this.chartLoaded = false;
         }
     },
 
