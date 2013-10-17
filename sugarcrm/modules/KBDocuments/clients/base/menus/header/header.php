@@ -41,6 +41,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LBL_KNOWLEDGE_BASE_ADMIN_MENU',
         'acl_action'=>'admin',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-question-sign',
     ),
 );

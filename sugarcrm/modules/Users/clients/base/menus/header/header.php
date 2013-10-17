@@ -25,7 +25,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' => 'LNK_NEW_USER',
         'acl_action' => 'admin',
         'acl_module' => $moduleName,
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route' => '#bwc/index.php?' . http_build_query(
@@ -40,7 +40,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' => 'LNK_NEW_GROUP_USER',
         'acl_action' => 'admin',
         'acl_module' => $moduleName,
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     //BEGIN SUGARCRM flav=pro ONLY
     array(
@@ -56,7 +56,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' => 'LNK_NEW_PORTAL_USER',
         'acl_action' => 'admin',
         'acl_module' => $moduleName,
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route' => '#bwc/index.php?' . http_build_query(
@@ -68,7 +68,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' => 'LNK_REASSIGN_RECORDS',
         'acl_action' => 'admin',
         'acl_module' => $moduleName,
-        'icon' => '',
+        'icon' => 'icon-move',
     ),
     //END SUGARCRM flav=pro ONLY
     array(
