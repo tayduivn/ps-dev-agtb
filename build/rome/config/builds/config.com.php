@@ -284,6 +284,7 @@ $config['blackList']['com'] = array(
 'sugarcrm/clients/portal'=>1,
 'sugarcrm/clients/mobile'=>1,
 'sugarcrm/portal2' =>1,
+'sugarcrm/tests/clients/portal'=>1,
 'sugarcrm/tests/portal2'=>1,
 'sugarcrm/tests/include/SugarForecasting'=>1,
 'sugarcrm/tests/modules/Forecasts'=>1,
