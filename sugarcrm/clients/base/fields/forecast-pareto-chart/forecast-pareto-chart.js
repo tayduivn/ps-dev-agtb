@@ -132,6 +132,11 @@
             read_options['no_data'] = 1;
         }
 
+        // if this is a manager view, send the target_quota param to the endpoint
+        if(this.model.get('display_manager')) {
+            read_options['target_quota'] = (this.model.get('show_target_quota')) ? 1 : 0;
+        }
+
         var url = app.api.buildURL(this.buildChartUrl(), null, null, read_options);
 
         app.api.call('read', url, {}, options);
@@ -257,6 +262,12 @@
                     valuesOrig: vals
                 };
             }, this);
+
+        if(this.model.get('show_target_quota')) {
+            // add target quota to chart data
+            chartData.properties.targetQuota = +this._serverData.target_quota;
+            chartData.properties.targetQuotaLabel = app.lang.get('LBL_TARGET_QUOTA', 'Forecasts');
+        }
 
         chartData.data = barData.concat(lineData);
         this.d3Data = chartData;

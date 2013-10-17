@@ -147,10 +147,6 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
      */
     protected function getRollupQuota()
     {
-        //get the quota data for user
-        /* @var $quota Quota */
-        $quota = BeanFactory::getBean('Quotas');
-
         //grab user that is the target of this call to check if it is the top level manager
         $targetedUser = BeanFactory::getBean("Users", $this->getArg('user_id'));
 

@@ -52,6 +52,7 @@
             this.values.set({
                 user_id: user.id,
                 display_manager: user.is_manager,
+                show_target_quota: (user.is_manager && !user.is_top_level_manager),
                 ranges: ctx.get('selectedRanges') || ['include'],
                 timeperiod_id: ctx.get('selectedTimePeriod'),
                 dataset: 'likely',
@@ -349,9 +350,12 @@
         var ctx = this.context.parent;
 
         ctx.on('change:selectedUser', function(context, user) {
+            var displayMgr = (user.showOpps === false && user.is_manager === true),
+                showTargetQuota = (displayMgr && !user.is_top_level_manager);
             this.values.set({
                 user_id: user.id,
-                display_manager: (user.showOpps === false && user.is_manager === true)
+                display_manager: displayMgr,
+                show_target_quota: showTargetQuota
             });
             this.toggleRepOptionsVisibility();
         }, this);
@@ -372,14 +376,23 @@
         if (ctx) {
             ctx.off(null, null, this);
         }
+
         if (this.forecastManagerWorksheetContext && this.forecastManagerWorksheetContext.get('collection')) {
             this.forecastManagerWorksheetContext.get('collection').off(null, null, this);
         }
+
         if (this.forecastWorksheetContext && this.forecastWorksheetContext.get('collection')) {
             this.forecastWorksheetContext.get('collection').off(null, null, this);
         }
-        if (this.context) this.context.off(null, null, this);
-        if (this.values) this.values.off(null, null, this);
+
+        if (this.context) {
+            this.context.off(null, null, this);
+        }
+
+        if (this.values) {
+            this.values.off(null, null, this);
+        }
+
         app.view.View.prototype.unbindData.call(this);
     }
 })

@@ -32,6 +32,11 @@
     isManager: false,
 
     /**
+     * Track if the user is a top-level manager
+     */
+    isTopLevelManager: false,
+
+    /**
      * When on a Record view this are fields we should listen to changes in
      */
     validChangedFields: ['amount', 'likely_case', 'best_case', 'worst_case', 'assigned_user_id',
@@ -52,6 +57,12 @@
     initialize: function(options) {
         this.values.clear({silent: true});
         this.isManager = app.user.get('is_manager');
+
+        // if the user is a manager, check if they're toplevel or not
+        if(this.isManager) {
+            this.isTopLevelManager = app.user.get('is_top_level_manager');
+        }
+
         // if the parent exists, use it, otherwise use the main context
         this.initOptions = options;
         this.forecastConfig = app.metadata.getModule('Forecasts', 'config');
@@ -108,6 +119,7 @@
             user_id: app.user.get('id'),
             // !! used here to ensure this is true/false, and not 1/0 as it comes from server to ensure passage for ===
             display_manager: !!this.isManager, // default to 'self' view for reps, and 'team' view for managers
+            show_target_quota: (this.isManager && !this.isTopLevelManager),
             selectedTimePeriod: initData.defaultSelections.timeperiod_id.id,
             timeperiod_id: initData.defaultSelections.timeperiod_id.id,
             timeperiod_label: initData.defaultSelections.timeperiod_id.label,
@@ -122,7 +134,10 @@
             defaultOptions.timeperiod_id = this.model.get('date_closed_timestamp');
         }
 
-        this.values.set(defaultOptions);
+        this.values.set({
+            display_manager: (displayType == 'team'),
+            show_target_quota: (displayType == 'team' && !this.isTopLevelManager)
+        });
     },
 
     /**
