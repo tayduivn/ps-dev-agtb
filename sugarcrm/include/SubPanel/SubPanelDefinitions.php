@@ -69,7 +69,7 @@ class aSubPanel
 	var $bean_name ;
 	var $template_instance ;
 
-	function aSubPanel ( $name , $instance_properties , $parent_bean , $reload = false , $original_only = false )
+	function aSubPanel ( $name , $instance_properties , $parent_bean , $reload = false , $original_only = false, $forApi = false )
 	{
 
 		$this->_instance_properties = $instance_properties ;
@@ -126,7 +126,13 @@ class aSubPanel
                 $this->set_panel_definition($subpanel_layout);
 
 				//BEGIN SUGARCRM flav=pro ONLY
-				SugarACL::listFilter($this->_instance_properties [ 'module' ], $this->panel_definition [ 'list_fields' ], array("owner_override" => true));
+                if (!$forApi) {
+                    SugarACL::listFilter(
+                        $this->_instance_properties['module'],
+                        $this->panel_definition['list_fields'],
+                        array("owner_override" => true)
+                    );
+                }
 				//END SUGARCRM flav=pro ONLY
 			}
 		}
@@ -717,7 +723,7 @@ class SubPanelDefinitions
      * @return boolean|aSubPanel        Returns aSubPanel object or boolean false if one is not found or it can't be
      *      displayed due to ACL reasons.
 	 */
-	function load_subpanel ( $name , $reload = false , $original_only = false )
+	function load_subpanel ( $name , $reload = false , $original_only = false, $forApi = false )
 	{
         // mobile doesn't have subpanel def
         if ($this->platform == 'mobile') {
@@ -726,7 +732,7 @@ class SubPanelDefinitions
 		if (!is_dir('modules/' . $this->layout_defs [ 'subpanel_setup' ][ strtolower ( $name ) ] [ 'module' ]))
 		  return false;
 
-        $subpanel = new aSubPanel ( $name, $this->layout_defs [ 'subpanel_setup' ] [ strtolower ( $name ) ], $this->_focus, $reload, $original_only ) ;
+        $subpanel = new aSubPanel($name, $this->layout_defs['subpanel_setup'][strtolower($name)], $this->_focus, $reload, $original_only, $forApi);
 
         // only return the subpanel object if we can display it.
         if($subpanel->canDisplay == true) {

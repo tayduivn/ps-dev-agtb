@@ -123,7 +123,7 @@ class MetaDataManager
 
         if (is_array($layout_defs) && isset($layout_defs['subpanel_setup'])) {
             foreach ($layout_defs['subpanel_setup'] AS $name => $subpanel_info) {
-                $aSubPanel = $spd->load_subpanel($name, '', $parent_bean);
+                $aSubPanel = $spd->load_subpanel($name, false, false, true);
 
                 if (!$aSubPanel) {
                     continue;
