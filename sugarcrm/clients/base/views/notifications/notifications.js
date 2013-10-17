@@ -11,12 +11,12 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 /**
- * Notifications will pull information from the server based on a delay given.
+ * Notifications will pull information from the server based on a given delay.
  *
  * Supported properties:
  *
- * - {Integer} delay How often (minutes) should the pulling mechanism run.
- * - {Integer} limit Limit imposed to the number of records pulled.
+ * - {Number} delay How often (minutes) should the pulling mechanism run.
+ * - {Number} limit Limit imposed to the number of records pulled.
  * - {Object} severity_css An object where its keys map to a specific
  * notification severity and values to a matching CSS class.
  *
@@ -68,7 +68,7 @@
     /**
      * Interval ID defined when the pulling mechanism is running.
      *
-     * @property {Integer}
+     * @property {Number}
      * @protected
      */
     _intervalId: null,
@@ -111,7 +111,7 @@
     /**
      * Bootstrap feature requirements.
      *
-     * @return {View.Notifications} Instance of this view.
+     * @return {View.Views.BaseNotificationsView} Instance of this view.
      * @protected
      */
     _bootstrap: function() {
@@ -126,7 +126,7 @@
      * Initialize options, default options are used when none are supplied
      * through metadata.
      *
-     * @return {View.Notifications} Instance of this view.
+     * @return {View.Views.BaseNotificationsView} Instance of this view.
      * @protected
      */
     _initOptions: function() {
@@ -142,7 +142,7 @@
     /**
      * Initialize feature collection.
      *
-     * @return {View.Notifications} Instance of this view.
+     * @return {View.Views.BaseNotificationsView} Instance of this view.
      * @protected
      */
     _initCollection: function() {
@@ -185,6 +185,7 @@
      * We also don't check for meta as optional because it is required.
      * We will keep all this code private because we don't want to support it
      *
+     * @return {View.Views.BaseNotificationsView} Instance of this view.
      * @private
      */
     _initReminders: function() {
@@ -236,14 +237,13 @@
      * an interval which is responsible for executing pull requests on time
      * based interval.
      *
-     * @return {View.Notifications} Instance of this view.
+     * @return {View.Views.BaseNotificationsView} Instance of this view.
      */
     startPulling: function() {
         if (!_.isNull(this._intervalId)) {
             return this;
         }
         this.dateStarted = new Date().getTime();
-        var self = this;
 
         this.pull();
         this._pullReminders();
@@ -272,7 +272,7 @@
     /**
      * Stop pulling mechanism.
      *
-     * @return {View.Notifications} Instance of this view.
+     * @return {View.Views.BaseNotificationsView} Instance of this view.
      */
     stopPulling: function() {
         if (!_.isNull(this._intervalId)) {
@@ -290,7 +290,7 @@
      * Pull and render notifications, if view isn't disposed or dropdown isn't
      * opened.
      *
-     * @return {View.Notifications} Instance of this view.
+     * @return {View.Views.BaseNotificationsView} Instance of this view.
      */
     pull: function() {
         if (this.disposed || this.isOpened()) {
@@ -356,7 +356,7 @@
      *
      * If the reminder exists we immediately show it.
      *
-     * @return {View.Notifications} Instance of this view.
+     * @return {View.Views.BaseNotificationsView} Instance of this view.
      */
     checkReminders: function() {
         if (!app.api.isAuthenticated()) {
