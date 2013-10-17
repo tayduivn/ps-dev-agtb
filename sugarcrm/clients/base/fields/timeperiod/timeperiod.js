@@ -43,11 +43,15 @@
     cssClassSelector: '',
 
     /**
+     * Flag to use if Select2 tries to format the tooltips before timeperiod data returns from the server
+     */
+    updateDefaultTooltip: false,
+
+    /**
      * {@inheritDoc}
      */
     initialize: function(options) {
-        app.view.invokeParent(this, {type: 'field', name: 'enum',
-            method: 'initialize', platform: 'base', args: [options]});
+        app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'initialize', args: [options]});
 
         // get timeperiods list
         this.tpCollection = app.data.createBeanCollection("TimePeriods");
@@ -73,13 +77,20 @@
         }, this);
         // since we don't need it any more, destroy it
         this.tpCollection = undefined;
+
+        if(this.updateDefaultTooltip) {
+            this.updateDefaultTooltip = false;
+            // manually update the default selected item's tooltip
+            var tooltipText = app.lang.get('LBL_DROPDOWN_TOOLTIP', 'TimePeriods', this.tpTooltipMap[this.value[0]]);
+            this.$('[rel="tooltip"]').attr('data-original-title', tooltipText);
+        }
     },
 
     /**
      * {@inheritDoc}
      */
     _render: function() {
-        app.view.invokeParent(this, {type: 'field', name: 'enum', method: '_render', platform: 'base'});
+        app.view.invokeParent(this, {type: 'field', name: 'enum', method: '_render'});
         if (this.tplName == 'noaccess') {
             return this;
         }
@@ -116,7 +127,7 @@
      */
     getSelect2Options: function(optionsKeys) {
         var options = app.view.invokeParent(this, {type: 'field', name: 'enum',
-            method: 'getSelect2Options', platform: 'base', args: [optionsKeys]});
+            method: 'getSelect2Options', args: [optionsKeys]});
 
         // this is to format the results
         options.formatResult = _.bind(this.formatOption, this);
@@ -141,6 +152,8 @@
      * @returns {string}
      */
     formatOption: function(object) {
+        // check once if the tpTooltipMap has been built yet
+        this.updateDefaultTooltip = _.isUndefined(this.tpTooltipMap[object.id]);
         return this.tooltipTemplate({tooltip: this.tpTooltipMap[object.id], value: object.text});
     }
 })
