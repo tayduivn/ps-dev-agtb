@@ -235,7 +235,12 @@ field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"].opt
 
 <?php
 			        $options_array = array();
-			        $options_array = $field_def['function']();
+                    if (!empty($field_def['function_bean'])) {
+                        $fbean = BeanFactory::getBean($field_def['function_bean']);
+                        $options_array = $fbean->$field_def['function']();
+                    } else {
+                        $options_array = $field_def['function']();
+                    }
 
 			        foreach($options_array as $option_value=>$option_text)
 			        {
