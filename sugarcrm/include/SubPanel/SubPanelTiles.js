@@ -86,13 +86,53 @@ function subp_nav(m,i,a,t,r){
 
 /*
 * m = module
-* i = record id
-* a = action (detail/edit)
-* t = element to be modified
+* i = record id; when action is 'c' it's the related's parent id
+* a = action (create/detail/edit abbreviated by single character e.g. 'c')
 * */
-function subp_nav_sidecar(m,i,a,t) {
+function subp_nav_sidecar(m,i,a) {
     var app = window.parent.SUGAR.App, url;
     if (!app.metadata.getModule(m).isBwcEnabled) {
+
+        //action is create
+        if (a === 'c') {
+            //Hack: We create parent model with parent id so we can
+            //add it as a link for our related model
+            var parentModuleName = get_module_name();
+            var parentModel = app.data.createBean(parentModuleName, {
+                id: i,
+                module: m
+            });
+
+            //Create related bean and relate it to the parent model
+            var link = m.toLowerCase();
+            var model = app.data.createRelatedBean(parentModel, null, link);
+
+            //Open drawer to create page
+            app.drawer.open({
+                layout: 'create-actions',
+                context: {
+                    create: true,
+                    model: model,
+                    module: m
+                }
+            }, function (context, newModel) {
+                //Following subpanel modules need mapping back to legacy 6.x
+                var map = {
+                  'notes': 'history',
+                  'tasks': 'activities'
+                }
+                m = m.toLowerCase();
+                m = _.has(map, m) ? map[m] : m;
+
+                if (newModel && newModel.id) {
+                    //reload the subpanel so we see our new record
+                    showSubPanel(m, null, true);
+                }
+            });
+            return false;
+        }
+
+        //action is not create
         //TODO:`edit` is ignored today (see SP-1618) but we'll want to add action later e.g.:
         //a = a === 'd' ? '' : 'edit';
         a = '';
@@ -234,7 +274,6 @@ function set_return_and_save_background(popup_reply_data)
 	if (typeof returnstuff != 'undefined' && typeof returnstuff.responseText != 'undefined' && returnstuff.responseText.length != 0) {
 		got_data(returnstuff, true);
 	}
-	
  	if(refresh_page == 1){
  		document.location.reload(true);
  	}
@@ -253,7 +292,7 @@ function got_data(args, inline)
 
 			child_field_loaded[child_field] = 2;
 			list_subpanel.innerHTML='';
-			list_subpanel.innerHTML=args.responseText;			
+			list_subpanel.innerHTML=args.responseText;
 
 		} else {
 			child_field_loaded[child_field] = 1;
@@ -477,7 +516,6 @@ SUGAR.subpanelUtils = function() {
 	            	&& typeof(theForm) !='undefined' && typeof(document.getElementById(theForm)) != 'undefined'
 	                && typeof(document.getElementById(theForm).status) != 'undefined'
 	                && document.getElementById(theForm).status[document.getElementById(theForm).status.selectedIndex].value == 'Completed');
-	                
             YAHOO.util.Connect.setForm(theForm, true, true);
 			var cObj = YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: success, failure: success, upload:success});
 			return false;
@@ -525,11 +563,10 @@ SUGAR.subpanelUtils = function() {
                 SUGAR.subpanelUtils.dataToDOMAvail = false;
 
                 // Show buttons before we remove subpanel
-                if (typeof currentPanelDiv != 'undefined' && currentPanelDiv != null) {            
+                if (typeof currentPanelDiv != 'undefined' && currentPanelDiv != null) {
                     var button_elements = YAHOO.util.Selector.query('td.buttons', currentPanelDiv, false);
-                    YAHOO.util.Dom.setStyle(button_elements, 'display', ''); 
+                    YAHOO.util.Dom.setStyle(button_elements, 'display', '');
                 }
-               
                 // Check if preview subpanel form exists, remove if it does.
                 SUGAR.subpanelUtils.removeSubPanel();
 
@@ -556,7 +593,7 @@ SUGAR.subpanelUtils = function() {
 
 				form_el = YAHOO.util.Selector.query('form', divName, true);
                 YAHOO.util.Dom.setStyle(form_el, 'padding-bottom', '10px');
-                
+
                 subpanelLocked[theDiv] = false;
                 setTimeout("enableQS(false)",500);
 				ajaxStatus.hideStatus();
@@ -565,7 +602,7 @@ SUGAR.subpanelUtils = function() {
 			if (subpanelLocked[theDiv] === true) {
                 return false;
             }
-            
+
 			subpanelLocked[theDiv] = true;
 
 			loadingStr = loadingStr || SUGAR.language.get('app_strings', 'LBL_LOADING');
@@ -604,7 +641,7 @@ SUGAR.subpanelUtils = function() {
             YAHOO.util.Dom.setStyle(button_elements, 'display', '');
             button_elements = YAHOO.util.Selector.query('ul.SugarActionMenu', theDiv, false);
             YAHOO.util.Dom.setStyle(button_elements, 'display', '');
-            
+
 			return false;
 		},
 
@@ -711,7 +748,7 @@ SUGAR.subpanelUtils = function() {
                     continue;
                 }
 				var cur = document.getElementById('whole_subpanel_'+SUGAR.subpanelUtils.subpanelGroups[group][group_sp]);
-			    
+
                 if(cur == null)
                 {
                     continue;
