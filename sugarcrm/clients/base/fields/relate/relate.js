@@ -103,6 +103,9 @@
                         value = (id) ? plugin.selection.find("span").text() : $(this).data('id'),
                         collection = plugin.context,
                         attributes = {};
+                    if (_.isUndefined(id)) {
+                        return;
+                    }
                     if (collection) {
                         // if we have search results use that to set new values
                         var model = collection.get(id);

@@ -98,6 +98,9 @@
                 $el.select2("container").addClass("tleft");
                 $el.on('change', function(ev){
                     var value = ev.val;
+                    if (_.isUndefined(value)) {
+                        return;
+                    }
                     if(self.model && !(self.name == 'currency_id' && _.isUndefined(value))) {
                         self.model.set(self.name, self.unformat(value));
                     }
