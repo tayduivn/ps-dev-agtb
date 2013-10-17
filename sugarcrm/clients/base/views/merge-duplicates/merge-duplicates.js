@@ -674,11 +674,7 @@
 
         this.rowFields = {};
         _.each(this.fields, function(field) {
-            //TODO: the code should be handled different way instead of checking its type later
-            if (field.model.id &&
-                _.isUndefined(field.parent) &&
-                field.type !== 'datetimecombo'
-            ) {
+            if (field.model.id && _.isUndefined(field.parent)) {
                 this.rowFields[field.model.id] = this.rowFields[field.model.id] || [];
                 this.rowFields[field.model.id].push(field);
             }
