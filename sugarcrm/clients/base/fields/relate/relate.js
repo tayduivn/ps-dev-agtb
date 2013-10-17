@@ -367,6 +367,8 @@
             this.model.on('change:' + this.name, function() {
                 if (_.isEmpty(this.$(this.fieldTag).data('select2'))) {
                     this.render();
+                } else {
+                    this.$(this.fieldTag).select2('val', this.model.get(this.name));
                 }
             }, this);
         }
