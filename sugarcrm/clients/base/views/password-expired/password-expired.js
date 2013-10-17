@@ -49,12 +49,9 @@
     _render: function() {
         var self = this;
         var message = app.lang.getAppString('LBL_PASSWORD_EXPIRATION_LOGIN');
-        if (app.user && app.user.has('password_expired_message')) {
-            message = app.user.get('password_expired_message');
-        }
+
         //Hack: Gets rid of leftover loading...
         app.alert.dismissAll();
-        app.alert.show('changePassword', {level: 'warning', title: message, autoClose: false});
         this.logoUrl = app.metadata.getLogoUrl();
 
         // Check if we have any password requirements messages and if so
@@ -68,8 +65,13 @@
                 self.passwordRequirements.push(val);
             });
         }
-
         app.view.View.prototype._render.call(this);
+
+        //Render password expired message (after view rendered)
+        if (app.user && app.user.has('password_expired_message')) {
+            message = app.user.get('password_expired_message');
+        }
+        this.$('.password-reqs-status').text(message);
         return this;
     },
     savePassword: function() {
