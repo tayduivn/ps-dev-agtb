@@ -19,4 +19,5 @@ $viewdefs[$module_name]['base']['menu']['quickcreate'] = array(
     'label' => 'LNK_NEW_CALL',
     'visible' => true,
     'order' => 6,
+    'icon' => 'icon-phone',
 );
