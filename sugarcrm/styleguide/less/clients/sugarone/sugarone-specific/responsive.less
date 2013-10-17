@@ -6,13 +6,6 @@
   .main-pane.span8, .main-pane.span12 {
     margin-top: 0;
   }
-  // [moey] I didn't directly make this change in sugar-specific/responsive-sugar.less
-  //   because it's also used for Sugar7.
-  #searchForm .navbar-search .search-query {
-    .box-sizing(border-box !important);
-    width: 100% !important;
-    height: 28px; // Due to `border-box`.
-  }
 
   // For the 'Search people and ...' text below the omnibar / search field.
   .hybrid-list-info-text {
@@ -21,20 +14,25 @@
   .side >.side-pane.active {
     display: none;
   }
-}
-
-@media (max-width: 480px) {
   #searchForm:not(.active) {
     .search-query {
       display: inline-block;
       position: relative;
       right: auto;
+      width: 100%;
     }
+    .navbar-search {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  #searchForm:not(.active) {
     div.advanced .btn-group {
       .btn {
-        background-image: none;
-        background-color: transparent;
-        border: 1px solid transparent;
+        background: none;
+        border: none;
         .box-shadow(none);
         outline: none;
         text-shadow: none;
@@ -44,7 +42,8 @@
         &.active,
         &.disabled,
         &[disabled] {
-          background-color: @white;
+          background: none !important;
+          border: none;
         }
       }
       a.advanced {
@@ -52,8 +51,7 @@
       }
     }
   }
-}
-
-@media (max-width: 400px) {
-
+  .accordion-heading h2 {
+    margin: 10px 0 8px;
+  }
 }
