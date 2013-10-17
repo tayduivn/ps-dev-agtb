@@ -55,7 +55,6 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 			. "', '" . $layout_def['subpanel_id'] . "');";
 		$onclick .= "document.forms['{$formname}'].record.value='';retValz;return false;";
 
-
 		if($layout_def['EditView'] && $this->isQuickCreateValid($layout_def['module'],$layout_def['subpanel_id'])){
 			return '<a href="#" class="listViewTdToolsS1" id="'.$unique_id .'" onclick="' . $onclick . '">' .
                       $app_strings['LNK_EDIT'] .'</a>';
@@ -111,6 +110,12 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
         global $beanList;
         $isValid = false;
         $layout_defs = $this->getSubpanelDefs($_REQUEST['module']);
+
+        //For Sidecar modules return false as we want caller to add an
+        //onClick routed to the SubPanelTiles.js subp_nav_sidecar function
+        if (!isModuleBWC($module)) {
+            return false;
+        }
 
         //lets check to see if the subpanel buttons are defined, and if they extend quick create
         //If no buttons are defined, then the default ones are used which do NOT use quick create
