@@ -619,7 +619,7 @@
                 }
                 return false;
             }, this);
-        } else if(isVisible && this.canEdit &&_.isUndefined(lastCommitDate) && !this.collection.isEmpty) {
+        } else if (isVisible && this.canEdit &&_.isUndefined(lastCommitDate) && !this.collection.isEmpty) {
             // if there is no commit date, e.g. new manager with no commits yet
             // but there IS data, then the commit button should be enabled
             this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
