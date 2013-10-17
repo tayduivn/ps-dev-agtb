@@ -55,7 +55,7 @@
         }
         if (!this.meta.config && !this.meta.preview) {
             this.context.on('attachment:view:fire', this.previewRecord, this);
-            this.context.on('attachment:unlinkrow:fire', this.unlinkClicked, this);
+            this.on('attachment:unlinkrow:fire', this.unlinkClicked, this);
             if (this.timer > 0) {
                 //disabled previous interval
                 this._disableAutoRefresh();
@@ -230,9 +230,11 @@
      */
     unlinkClicked: function(model) {
         var self = this;
-        app.alert.show('unlink_confirmation', {
+        var name = model.get('name') || '',
+            context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' ' + name.trim();
+        app.alert.show(model.get('id') + ':unlink_confirmation', {
             level: 'confirmation',
-            messages: app.lang.get('NTC_UNLINK_CONFIRMATION'),
+            messages: app.utils.formatString(app.lang.get('NTC_UNLINK_CONFIRMATION_FORMATTED'), [context]),
             onConfirm: function() {
                 model.destroy({
                     //Show alerts for this request
@@ -242,9 +244,7 @@
                         if (self.disposed) {
                             return;
                         }
-                        // We trigger reset after removing the model so that
-                        // the view will re-render and update the list.
-                        self.collection.remove(model).trigger('reset');
+                        self.collection.remove(model);
                         self.render();
                     }
                 });

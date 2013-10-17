@@ -15,9 +15,13 @@ describe('Base.Field.Rowaction', function() {
             'icon':'icon-eye-open',
             'acl_action':'view'
         }, moduleName);
+        field.view = {trigger: function(){}};
+        field.layout = {trigger: function(){}};
     });
 
     afterEach(function() {
+        field.view = null;
+        field.layout = null;
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
@@ -47,4 +51,46 @@ describe('Base.Field.Rowaction', function() {
         expect(field.isHidden).toBeTruthy();
         aclStub.restore();
     });
+
+    describe('rowActionSelect', function(){
+        var e, triggerStub;
+
+        beforeEach(function(){
+            //Wire up event
+            e = jQuery.Event("click");
+            e.currentTarget = field.$el.get(0);
+            field.$el.data('event', field.def.event);
+        });
+
+        afterEach(function(){
+            triggerStub.restore();
+        });
+
+        it('should trigger event on view\'s context by default', function() {
+            field.model = app.data.createBean(moduleName);
+            field.view.context = {trigger: function(){}};
+            triggerStub = sinon.spy(field.view.context, 'trigger');
+            field.rowActionSelect(e);
+            expect(triggerStub.calledOnce).toBe(true);
+        });
+
+        it('should trigger event on view\'s layout when "layout" is set as target', function() {
+            field.def.target = 'layout';
+            field.model = app.data.createBean(moduleName);
+            field.view.layout = {trigger: function(){}};
+            triggerStub = sinon.spy(field.view.layout, 'trigger');
+            field.rowActionSelect(e);
+            expect(triggerStub.calledOnce).toBe(true);
+        });
+
+        it('should trigger event on view when "view" is set as target', function() {
+            field.def.target = 'view';
+            field.model = app.data.createBean(moduleName);
+            field.view.trigger =  function(){};
+            triggerStub = sinon.spy(field.view, 'trigger');
+            field.rowActionSelect(e);
+            expect(triggerStub.calledOnce).toBe(true);
+        });
+    });
+
 });

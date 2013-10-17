@@ -148,6 +148,17 @@ $viewdefs['base']['view']['history'] = array(
             'module' => 'Meetings',
             'order_by' => 'date_start:desc',
             'record_date' => 'date_start',
+            'row_actions' => array(
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'icon-unlink',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'tabbed-dashlet:unlink-record:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_UNLINK_BUTTON',
+                    'acl_action' => 'edit',
+                ),
+            ),
             'include_child_items' => true,
         ),
         array(
@@ -162,6 +173,17 @@ $viewdefs['base']['view']['history'] = array(
             'link' => 'archived_emails',
             'module' => 'Emails',
             'order_by' => 'date_entered:desc',
+            'row_actions' => array(
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'icon-unlink',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'tabbed-dashlet:unlink-record:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_UNLINK_BUTTON',
+                    'acl_action' => 'edit',
+                ),
+            ),
         ),
         array(
             'filter_applied_to' => 'date_start',
@@ -172,6 +194,17 @@ $viewdefs['base']['view']['history'] = array(
             'module' => 'Calls',
             'order_by' => 'date_start:desc',
             'record_date' => 'date_start',
+            'row_actions' => array(
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'icon-unlink',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'tabbed-dashlet:unlink-record:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_UNLINK_BUTTON',
+                    'acl_action' => 'edit',
+                ),
+            ),
             'include_child_items' => true,
         ),
     ),

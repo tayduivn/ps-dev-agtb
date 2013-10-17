@@ -41,7 +41,30 @@
             'click [data-action=date-switcher]': 'dateSwitcher'
         });
 
+        this._super('_initEvents');
+        this.on('planned-activities:close-record:fire', this.heldActivity, this);
+
         return this;
+    },
+
+    /**
+     * Mark the model as held and update the collection and re-render the dashlet to remove it from the view
+     * @param model {app.Bean} Call/Meeting model to be marked as Held
+     */
+    heldActivity: function(model){
+        var self = this;
+        var name = model.get('name') || '',
+            context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' ' + name.trim();
+        app.alert.show('close_activity_confirmation:' + model.get('id'), {
+            level: 'confirmation',
+            messages: app.utils.formatString(app.lang.get('LBL_PLANNED_ACTIVITIES_DASHLET_CONFIRM_CLOSE'), [context]),
+            onConfirm: function() {
+                model.save({status: 'Held'}, {
+                    showAlerts: true,
+                    success: self._getRemoveModelCompleteCallback()
+                });
+            }
+        });
     },
 
     /**

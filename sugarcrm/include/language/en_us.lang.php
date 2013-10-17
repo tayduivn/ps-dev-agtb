@@ -4130,13 +4130,17 @@ $app_strings = array (
     'LBL_PLANNED_ACTIVITIES_DASHLET_FUTURE_BUTTON_LABEL' => 'Future',
     'LBL_PLANNED_ACTIVITIES_DASHLET_USER_BUTTON_LABEL' => 'My History',
     'LBL_PLANNED_ACTIVITIES_DASHLET_GROUP_BUTTON_LABEL' => 'Team History',
+    'LBL_PLANNED_ACTIVITIES_DASHLET_HELD_ACTIVITY' => 'Held',
+    'LBL_PLANNED_ACTIVITIES_DASHLET_CONFIRM_CLOSE' => 'Are you sure you want to close the {0} as held?',
 
     // active tasks dashlet
     'LBL_ACTIVE_TASKS_DASHLET' => 'Active Tasks',
-    'LBL_ACTIVE_TASKS_DASHLET_DESCRIPTION' => 'The Active Tasks dashlet displays due now, upcoming  and to do tasks.',
+    'LBL_ACTIVE_TASKS_DASHLET_DESCRIPTION' => 'The Active Tasks dashlet displays due now, upcoming and to do tasks.',
     'LBL_ACTIVE_TASKS_DASHLET_DUE_NOW' => 'Due Now',
     'LBL_ACTIVE_TASKS_DASHLET_UPCOMING' => 'Upcoming',
     'LBL_ACTIVE_TASKS_DASHLET_TODO' => 'To Do',
+    'LBL_ACTIVE_TASKS_DASHLET_COMPLETE_TASK' => 'Completed',
+    'LBL_ACTIVE_TASKS_DASHLET_CONFIRM_CLOSE' => 'Are you sure you want to close the {0} as completed?',
 
     // inactive tasks dashlet
     'LBL_INACTIVE_TASKS_DASHLET' => 'Inactive Tasks',

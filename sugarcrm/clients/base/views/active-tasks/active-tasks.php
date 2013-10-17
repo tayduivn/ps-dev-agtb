@@ -122,6 +122,26 @@ $viewdefs['base']['view']['active-tasks'] = array(
             'module' => 'Tasks',
             'order_by' => 'date_due:asc',
             'record_date' => 'date_due',
+            'row_actions' => array(
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'icon-remove-circle',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'active-tasks:close-task:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_ACTIVE_TASKS_DASHLET_COMPLETE_TASK',
+                    'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'icon-unlink',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'tabbed-dashlet:unlink-record:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_UNLINK_BUTTON',
+                    'acl_action' => 'edit',
+                ),
+            ),
             'overdue_badge' => array(
                 'name' => 'date_due',
                 'type' => 'overdue-badge',
@@ -137,6 +157,26 @@ $viewdefs['base']['view']['active-tasks'] = array(
             'module' => 'Tasks',
             'order_by' => 'date_due:asc',
             'record_date' => 'date_due',
+            'row_actions' => array(
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'icon-remove-circle',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'active-tasks:close-task:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_ACTIVE_TASKS_DASHLET_COMPLETE_TASK',
+                    'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'icon-unlink',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'tabbed-dashlet:unlink-record:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_UNLINK_BUTTON',
+                    'acl_action' => 'edit',
+                ),
+            ),
         ),
         array(
             'filters' => array(
@@ -147,6 +187,26 @@ $viewdefs['base']['view']['active-tasks'] = array(
             'link' => 'tasks',
             'module' => 'Tasks',
             'order_by' => 'date_entered:asc',
+            'row_actions' => array(
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'icon-remove-circle',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'active-tasks:close-task:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_ACTIVE_TASKS_DASHLET_COMPLETE_TASK',
+                    'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'icon-unlink',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'tabbed-dashlet:unlink-record:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_UNLINK_BUTTON',
+                    'acl_action' => 'edit',
+                ),
+            ),
         ),
     ),
 );

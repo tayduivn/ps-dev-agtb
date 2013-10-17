@@ -32,6 +32,7 @@
  * - {String} order_by Sort records by field.
  * - {String} record_date Date field to be used to print record date, defaults
  *   to 'date_entered' if none supplied.
+ * - {Array} row_actions Row actions to be applied to each record.
  *
  * Example:
  * <pre><code>
@@ -105,6 +106,8 @@
      */
     _initEvents: function() {
         this.settings.on('change:filter', this.loadData, this);
+        this.on('tabbed-dashlet:unlink-record:fire', this.unlinkRecord, this);
+        this.context.on('tabbed-dashlet:refresh', this.refreshTabsForModule, this);
 
         return this;
     },
@@ -310,41 +313,82 @@
      *   fetch method.
      */
     loadData: function(options) {
-        options = options || {};
 
         if (this.disposed || this.meta.config) {
             return;
         }
+        this.loadDataForTabs(this.tabs, options);
 
-        var self = this,
-            totalFetches = 0;
+    },
 
-        _.each(this.tabs, function(tab, index) {
-            tab.collection.options = this._getCollectionOptions(index);
-            tab.collection.filterDef = _.union(
-                this._getCollectionFilters(index),
-                this._getFilters(index)
-            );
+    /**
+     * Refresh tabs for the given module
+     * @param module {String} name of module needing refresh
+     */
+    refreshTabsForModule: function(module){
+        var toRefresh = [];
+        _.each(this.tabs, function(tab){
+            if (tab.module === module) {
+               toRefresh.push(tab);
+            }
+        });
+        this.loadDataForTabs(toRefresh, {});
+    },
 
-            tab.collection.fetch({
-                relate: tab.relate,
-                complete: function() {
-                    totalFetches++;
-
-                    tab.collection.dataFetched = true;
-
-                    if (self.disposed || totalFetches < _.size(self.tabs)) {
-                        return;
+    /**
+     * Load data for passed set of tabs
+     * @param tabs {Array} Set of tabs to update
+     * @param options {Object} load options
+     */
+    loadDataForTabs: function(tabs, options){
+        options = options || {};
+        var self = this;
+        var loadDataRequests = [];
+        _.each(tabs, function(tab, index) {
+            loadDataRequests.push(function(callback){
+                tab.collection.options = self._getCollectionOptions(index);
+                tab.collection.filterDef = _.union(
+                    self._getCollectionFilters(index),
+                    self._getFilters(index)
+                );
+                tab.collection.fetch({
+                    relate: tab.relate,
+                    complete: function() {
+                        tab.collection.dataFetched = true;
+                        callback(null);
                     }
+                });
+            });
+        }, this);
+        if (!_.isEmpty(loadDataRequests)) {
+            async.parallel(loadDataRequests, function(){
+                if (self.disposed) {
+                    return;
+                }
 
-                    self.collection = self.tabs[self.settings.get('activeTab')].collection;
-                    self.render();
+                self.collection = self.tabs[self.settings.get('activeTab')].collection;
+                self.render();
 
-                    if (_.isFunction(options.complete)) {
-                        options.complete.call(this);
-                    }
+                if (_.isFunction(options.complete)) {
+                    options.complete.call(self);
                 }
             });
+        }
+    },
+
+    /**
+     * Convenience callback for updating this and related dashlets once a model has been removed
+     * @return {Function} complete callback
+     * @private
+     */
+    _getRemoveModelCompleteCallback: function() {
+        return _.bind(function(model){
+            if (this.disposed) {
+                return;
+            }
+            this.collection.remove(model);
+            this.render();
+            this.context.trigger("tabbed-dashlet:refresh", model.module);
         }, this);
     },
 
@@ -397,6 +441,28 @@
     },
 
     /**
+     * Unlink the selected record from the list view collection.
+     *
+     * @param {Data.Bean} model Selected model.
+     */
+    unlinkRecord: function(model) {
+        var self = this;
+        var name = model.get('name') || '',
+            context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' ' + name.trim();
+        app.alert.show(model.get('id') + ':unlink_confirmation', {
+            level: 'confirmation',
+            messages: app.utils.formatString(app.lang.get('NTC_UNLINK_CONFIRMATION_FORMATTED'), [context]),
+            onConfirm: function() {
+                model.destroy({
+                    showAlerts: true,
+                    relate: true,
+                    success: self._getRemoveModelCompleteCallback()
+                });
+            }
+        });
+    },
+
+    /**
      * {@inheritDoc}
      *
      * New model related properties are injected into each model:
@@ -422,6 +488,8 @@
         this.toolbarHtml = this._toolbarTpl(this);
         this.tabsHtml = this._tabsTpl(this);
         this.recordsHtml = recordsTpl(this);
+
+        this.row_actions = tab.row_actions;
 
         this._super('_renderHtml');
     },

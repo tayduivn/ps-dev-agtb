@@ -25,6 +25,14 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    /**
+     *
+     * Rowaction is a button that when selected will trigger a backbone event
+     *
+     * @class View.Fields.RowactionField
+     * @alias SUGAR.App.view.fields.RowactionField
+     * @extends View.Fields.ButtonField
+     */
     extendsFrom: 'ButtonField',
     initialize: function(options) {
         this.options.def.events = _.extend({}, this.options.def.events, {
@@ -32,14 +40,25 @@
         });
         app.view.invokeParent(this, {type: 'field', name: 'button', method: 'initialize', args:[options]});
     },
+    /**
+     * Triggers event provided at this.def.event on the view's context object by default.
+     * Can be configured to trigger events on 'view' itself or the view's 'layout'.
+     * @param evt
+     */
     rowActionSelect: function(evt) {
         if(this.isDisabled()){
             return;
         }
         // make sure that we are not disabled first
         if(this.preventClick(evt) !== false) {
+            var target = this.view.context;  // view's 'context' is target by default
+            if (this.def.target === 'view') {
+                target = this.view;
+            } else if (this.def.target === 'layout') {
+                target = this.view.layout;
+            }
             if ($(evt.currentTarget).data('event')) {
-                this.view.context.trigger($(evt.currentTarget).data('event'), this.model);
+                target.trigger($(evt.currentTarget).data('event'), this.model);
             }
         }
     }

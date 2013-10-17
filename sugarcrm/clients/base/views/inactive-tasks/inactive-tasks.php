@@ -121,6 +121,17 @@ $viewdefs['base']['view']['inactive-tasks'] = array(
             'module' => 'Tasks',
             'order_by' => 'date_modified:desc',
             'record_date' => 'date_modified',
+            'row_actions' => array(
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'icon-unlink',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'tabbed-dashlet:unlink-record:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_UNLINK_BUTTON',
+                    'acl_action' => 'edit',
+                ),
+            ),
         ),
         array(
             'filters' => array(
@@ -131,6 +142,17 @@ $viewdefs['base']['view']['inactive-tasks'] = array(
             'module' => 'Tasks',
             'order_by' => 'date_modified:desc',
             'record_date' => 'date_modified',
+            'row_actions' => array(
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'icon-unlink',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'tabbed-dashlet:unlink-record:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_UNLINK_BUTTON',
+                    'acl_action' => 'edit',
+                ),
+            ),
         ),
     ),
 );
