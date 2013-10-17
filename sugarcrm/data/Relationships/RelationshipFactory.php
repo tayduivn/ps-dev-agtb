@@ -200,7 +200,8 @@ class SugarRelationshipFactory {
 
         //Now load all vardefs a second time populating the rel_calc_fields
         foreach ($beanList as $moduleName => $beanName) {
-            VardefManager::loadVardef($moduleName, BeanFactory::getObjectName($moduleName));
+            // need to refresh the vardef so that the related calc fields are loaded
+            VardefManager::loadVardef($moduleName, BeanFactory::getObjectName($moduleName), true);
         }
 
         $buildingRelCache = false;
