@@ -106,9 +106,7 @@ if(document.DetailView != null &&
 		}
 		$div_cookies = get_sub_cookies($this->focus->module_dir . '_divs');
 
-        $tabs = $this->getTabs() ;
-        _ppl($tabs);
-
+        $tabs = $this->getTabs();
 
         $tab_names = array();
 
