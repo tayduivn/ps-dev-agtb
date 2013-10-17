@@ -185,6 +185,7 @@ class CurrentUserApi extends SugarApi
         $current_user->_create_proper_name_field();
         $user_data['full_name'] = $current_user->full_name;
         $user_data['user_name'] = $current_user->user_name;
+        $this->setExpiredPassword($user_data);
         $user_data['picture'] = $current_user->picture;
         $user_data['acl'] = $this->getAcls($api->platform);
         $user_data['is_manager'] = User::isManager($current_user->id);
@@ -231,6 +232,60 @@ class CurrentUserApi extends SugarApi
         return !filter_var($isInstanceConfigured, FILTER_VALIDATE_BOOLEAN);
     }
 
+    /**
+     * If user has exceeded time or number of attempts with a generated password,
+     * this sets user data `is_password_expired` to true (otherwise false). Also,
+     * if password has expired, than `password_expired_message` is set.
+     */
+    public function setExpiredPassword(&$user_data)
+    {
+        $user_data['is_password_expired'] = false;
+        $user_data['password_expired_message'] = "";
+        require_once('modules/Users/password_utils.php');
+        if (hasPasswordExpired($user_data['user_name'])) {
+            $messageLabel = $_SESSION['expiration_label'];
+            $message = translate($messageLabel, 'Users');
+            $user_data['is_password_expired'] = true;
+            $user_data['password_expired_message'] = $message;
+            $passwordSettings = $GLOBALS['sugar_config']['passwordsetting'];
+            $user_data['password_requirements'] = $this->getPasswordRequirements($passwordSettings);
+        }
+    }
+
+    //Essentially 7.X version of legacy smarty_function_sugar_password_requirements_box
+    public function getPasswordRequirements($passwordSettings)
+    {
+        global $current_language;
+        $settings = array();
+        $administrationModStrings = return_module_language($current_language, 'Administration');
+
+        //simple password settings keys
+        $keys = array(
+            'oneupper' => 'LBL_PASSWORD_ONE_UPPER_CASE',
+            'onelower' => 'LBL_PASSWORD_ONE_LOWER_CASE',
+            'onenumber' => 'LBL_PASSWORD_ONE_NUMBER',
+            'onespecial' => 'LBL_PASSWORD_ONE_SPECIAL_CHAR'
+        );
+        foreach ($keys as $key => $labelKey) {
+            if ($passwordSettings[$key] == '1') {
+                $settings[$key] = $administrationModStrings[$labelKey];
+            }
+        }
+        //custom regex
+        if ($passwordSettings['customregex'] != '') {
+            $settings['regex'] = $passwordSettings['regexcomment'];
+        }
+        //Handles min/max password length messages
+        if ($passwordSettings['minpwdlength'] > 0 && $passwordSettings['maxpwdlength'] > 0) {
+            $settings['lengths'] = $administrationModStrings['LBL_PASSWORD_MINIMUM_LENGTH'].' ='.$passwordSettings['minpwdlength'].' '.$administrationModStrings['LBL_PASSWORD_AND_MAXIMUM_LENGTH'].' ='.$passwordSettings['maxpwdlength'];
+        } else if ($passwordSettings['minpwdlength'] > 0) {
+            $settings['lengths'] = $administrationModStrings['LBL_PASSWORD_MINIMUM_LENGTH'].' ='.$passwordSettings['minpwdlength'];
+        } else if ($passwordSettings['maxpwdlength'] >0) {
+            $settings['lengths'] = $administrationModStrings['LBL_PASSWORD_MAXIMUM_LENGTH'].' ='.$passwordSettings['maxpwdlength'];
+        }
+
+        return $settings;
+    }
     /**
      * Updates current user info
      *
