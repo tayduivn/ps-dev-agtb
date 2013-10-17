@@ -1783,6 +1783,12 @@
 													ajaxStatus.hideStatus();
 													return;	
 												}
+                                                if (res.access === 'no') {
+                                                    alert(CAL.lbl_no_access);
+                                                    CAL.editDialog.cancel();
+                                                    ajaxStatus.hideStatus();
+                                                    return;
+                                                }
 													
 												var e,cell_id;
 												if(e = CAL.get(CAL.deleted_id))
