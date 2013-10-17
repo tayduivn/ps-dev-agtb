@@ -306,4 +306,29 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
 
         return $contact;
     }
+
+    /**
+     * Sets any additional data as needed when we load a download token
+     *
+     * @param array $tokenData The token data generated in the base app
+     * @param OAuthToken $token The token bean that the download token is attached to
+     * @param OAuthKey $clientBean The oauth key associated with the download token
+     *
+     * @return array The completely filled in token data
+     */
+    public function getDownloadTokenData(array $tokenData, OAuthToken $tokenBean, OAuthKey $clientBean)
+    {
+        if (empty($tokenBean->contact_id)) {
+            return false;
+        } 
+
+        $tokenData['user_id'] = $tokenBean->assigned_user_id;
+        $_SESSION['type'] = 'support_portal';
+        $_SESSION['contact_id'] = $tokenBean->contact_id;
+        $_SESSION['portal_user_id'] = $tokenBean->assigned_user_id;
+
+        return $tokenData;
+
+    }
+
 }

@@ -380,11 +380,13 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
             $_SESSION = array();
         }
 
-        return array(
+        $tokenData = array(
             'client_id'=>$clientBean->c_key,
             'user_id'=>$token->assigned_user_id,
             'expires'=>$token->expire_ts,
         );
+
+        return $this->getPlatformStore()->getDownloadTokenData($tokenData, $token, $clientBean);
     }
 
     /**

@@ -48,7 +48,7 @@
                 var uri = app.api.buildURL('VCardDownload', 'read', {}, {
                     module: self.model.module,
                     id: self.model.id,
-                    oauth_token: app.api.getOAuthToken()
+                    platform: app.config.platform
                 });
                 if (_.isEmpty(uri)) {
                     app.logger.error('Unable to get the vCard download uri.');

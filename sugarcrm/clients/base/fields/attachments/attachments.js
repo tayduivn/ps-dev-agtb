@@ -284,7 +284,7 @@
             showProgress: true
         });
 
-        var myURL = app.api.buildURL('Mail/attachment', null, null, {oauth_token:app.api.getOAuthToken()});
+        var myURL = app.api.buildURL('Mail/attachment', null, null, {platform:app.config.platform});
         app.api.call('create', myURL, null,{
                 success: _.bind(function (result) {
                     if (this.disposed === true) return; //if field is already disposed, bail out

@@ -119,9 +119,14 @@ class OAuth2Api extends SugarApi
             }
         }
 
+        $platform = 'base';
+        if (!empty($args['platform'])) {
+            $platform = $args['platform'];
+        }
+
         // Adding the setcookie() here instead of calling $api->setHeader() because
         // manually adding a cookie header will break 3rd party apps that use cookies
-        setcookie(RestService::DOWNLOAD_COOKIE, $authData['download_token'], time()+$authData['refresh_expires_in'], ini_get('session.cookie_path'), ini_get('session.cookie_domain'), ini_get('session.cookie_secure'), true);
+        setcookie(RestService::DOWNLOAD_COOKIE.'_'.$platform, $authData['download_token'], time()+$authData['refresh_expires_in'], ini_get('session.cookie_path'), ini_get('session.cookie_domain'), ini_get('session.cookie_secure'), true);
         return $authData;
     }
 
@@ -139,7 +144,7 @@ class OAuth2Api extends SugarApi
             $oauth2Server->storage->unsetRefreshToken($args['refresh_token']);
         }
 
-        setcookie(RestService::DOWNLOAD_COOKIE, false, -1, ini_get('session.cookie_path'), ini_get('session.cookie_domain'), ini_get('session.cookie_secure'), true);
+        setcookie(RestService::DOWNLOAD_COOKIE.'_'.$api->platform, false, -1, ini_get('session.cookie_path'), ini_get('session.cookie_domain'), ini_get('session.cookie_secure'), true);
 
         // The OAuth access token is actually just a session, so we can nuke that here.
         $_SESSION = array();
