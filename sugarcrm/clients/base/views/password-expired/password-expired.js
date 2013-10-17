@@ -99,10 +99,10 @@
                                 }
                             } else if (data.message) {
                                 //Password was deemed invalid by server. Display provided message
-                                app.alert.show('password-invalid', {level: 'warning', title: data.message, autoClose: true});
+                                app.alert.show('password-invalid', {level: 'error', title: data.message, autoClose: true});
                             } else {
                                 //Server should have provided data.message; use a generic message as fallback
-                                app.alert.show('password-invalid', {level: 'warning', title: (app.lang.get('ERR_GENERIC_TITLE') + ': ' + app.lang.get('ERR_CONTACT_TECH_SUPPORT')), autoClose: true});
+                                app.alert.show('password-invalid', {level: 'error', title: (app.lang.get('ERR_GENERIC_TITLE') + ': ' + app.lang.get('ERR_CONTACT_TECH_SUPPORT')), autoClose: true});
                             }
                         },
                         error: function(error) {

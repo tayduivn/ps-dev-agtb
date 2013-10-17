@@ -329,13 +329,7 @@
                         module: 'Users',
                         callbacks: {
                             complete: function() {
-                                app.alert.dismissAll();
-                                app.alert.show('pass_successfully_changed', {
-                                    level: 'success',
-                                    title: app.lang.get('LBL_PASSWORD'),
-                                    messages: app.lang.get('LBL_NEW_USER_PASSWORD_1'),
-                                    autoClose: true});
-                                app.router.logout('1');
+                                window.location.reload();//Reload when password reset
                             }
                         },
                         modelId: app.user.get('id')

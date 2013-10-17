@@ -277,11 +277,11 @@ class CurrentUserApi extends SugarApi
         }
         //Handles min/max password length messages
         if ($passwordSettings['minpwdlength'] > 0 && $passwordSettings['maxpwdlength'] > 0) {
-            $settings['lengths'] = $administrationModStrings['LBL_PASSWORD_MINIMUM_LENGTH'].' ='.$passwordSettings['minpwdlength'].' '.$administrationModStrings['LBL_PASSWORD_AND_MAXIMUM_LENGTH'].' ='.$passwordSettings['maxpwdlength'];
+            $settings['lengths'] = $administrationModStrings['LBL_PASSWORD_MINIMUM_LENGTH'].' = '.$passwordSettings['minpwdlength'].' '.$administrationModStrings['LBL_PASSWORD_AND_MAXIMUM_LENGTH'].' = '.$passwordSettings['maxpwdlength'];
         } else if ($passwordSettings['minpwdlength'] > 0) {
-            $settings['lengths'] = $administrationModStrings['LBL_PASSWORD_MINIMUM_LENGTH'].' ='.$passwordSettings['minpwdlength'];
+            $settings['lengths'] = $administrationModStrings['LBL_PASSWORD_MINIMUM_LENGTH'].' = '.$passwordSettings['minpwdlength'];
         } else if ($passwordSettings['maxpwdlength'] >0) {
-            $settings['lengths'] = $administrationModStrings['LBL_PASSWORD_MAXIMUM_LENGTH'].' ='.$passwordSettings['maxpwdlength'];
+            $settings['lengths'] = $administrationModStrings['LBL_PASSWORD_MAXIMUM_LENGTH'].' = '.$passwordSettings['maxpwdlength'];
         }
 
         return $settings;
