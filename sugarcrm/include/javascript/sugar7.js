@@ -325,7 +325,8 @@
     //i.e. records for listview, record for recordview
     var titles = {
             'records': 'TPL_BROWSER_SUGAR7_RECORDS_TITLE',
-            'record': 'TPL_BROWSER_SUGAR7_RECORD_TITLE'
+            'record': 'TPL_BROWSER_SUGAR7_RECORD_TITLE',
+            'about': 'TPL_BROWSER_SUGAR7_ABOUT_TITLE'
         },
         getTitle = function(model) {
             var context = app.controller.context,
