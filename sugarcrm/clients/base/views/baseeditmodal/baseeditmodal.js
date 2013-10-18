@@ -57,6 +57,9 @@
         });
     },
     cancelButton: function() {
+        if (Modernizr.touch) {
+            app.$contentEl.removeClass('content-overflow-visible');
+        }
         this.$('.modal').modal('hide').find('form').get(0).reset();
         if (this.context.has('createModel')) {
             this.context.get('createModel').clear();
