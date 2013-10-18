@@ -48,7 +48,6 @@ if( !isset($_REQUEST['mode']) || ($_REQUEST['mode'] == "") ){
 if(!file_exists($base_tmp_upgrade_dir)) {
     mkdir($base_tmp_upgrade_dir, 0755, true);
 }
-
 $unzip_dir      = mk_temp_dir( $base_tmp_upgrade_dir );
 $install_file   = hashToFile($_REQUEST['install_file']);
 $hidden_fields = "";
@@ -82,8 +81,13 @@ $remove_tables = 'true';
 
 unzip( $install_file, $unzip_dir );
 if($install_type == 'module' && $mode != 'Uninstall'){
-   if(file_exists($license_file)){
+   if(file_exists($license_file)) {
+        // Add this to the autoloader so that it gets picked up when needed
+        SugarAutoLoader::addToMap($license_file, true);
         $require_license = true;
+   }
+   else {
+        $GLOBALS['log']->error("License File $filename does not exist");
    }
 }
 
