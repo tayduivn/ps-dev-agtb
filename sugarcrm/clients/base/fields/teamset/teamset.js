@@ -24,7 +24,7 @@
     plugins: ['QuickSearchFilter', 'EllipsisInline', 'Tooltip'],
     initialize: function (options) {
         app.view.invokeParent(this, {type: 'field', name: 'relate', method: 'initialize', args:[options]});
-
+        this.currentIndex = 0;
         this.model.on("change:team_name_type", this.appendTeam, this);
     },
     /**
@@ -121,12 +121,16 @@
     },
     addTeam: function () {
         this.value.push({});
+        this.currentIndex++;
         this._updateAndTriggerChange(this.value);
     },
     removeTeam: function (index) {
         // Do not remove last team.
         if (index === 0 && this.value.length === 1) {
             return;
+        }
+        if (this.currentIndex === this.value.length - 1) {
+            this.currentIndex--;
         }
         //Pick first team to be Primary if we're removing Primary team
         var removed = this.value.splice(index, 1);
@@ -165,6 +169,20 @@
     //Forcing change event since backbone isn't picking up on changes within an object within the array.
     inputChanged: function (evt) {
         this._updateAndTriggerChange(this.value);
+    },
+    /**
+     * {@inheritDoc}
+     * Restore the select2 focus location after refresh the dom.
+     */
+    bindDataChange: function() {
+        if (this.model) {
+            this.model.on('change:' + this.name, function() {
+                this.render();
+                if (!_.isEmpty(this.$(this.fieldTag).data('select2'))) {
+                    this.$(this.$(this.fieldTag).get(this.currentIndex)).focus();
+                }
+            }, this);
+        }
     },
     /**
      * Forcing change event on value update since backbone isn't picking up on changes within an object within the array.
