@@ -195,6 +195,14 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
 
         $chartData = $obj->process();
 
+        // check to see if we need to return the target quota with the chartData
+        if (isset($args['target_quota']) && $args['target_quota'] == 1) {
+            /* @var $quota Quota */
+            $quota = BeanFactory::getBean('Quotas');
+            $targetQuota = $quota->getRollupQuota($args['timeperiod_id'], $args['user_id'], true);
+            $chartData['target_quota'] = $targetQuota['amount'];
+        }
+
         return $chartData;
     }
 
