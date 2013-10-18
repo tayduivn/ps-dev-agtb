@@ -1,3 +1,4 @@
+//FILE SUGARCRM flav=ent ONLY
 describe("PortalFileField", function() {
 
     var app, field, model, _oConfigSiteUrl;
