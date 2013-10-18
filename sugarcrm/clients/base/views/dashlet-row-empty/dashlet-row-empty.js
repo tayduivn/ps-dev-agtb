@@ -13,7 +13,20 @@
         this.originalTemplate = this.template;
         this.setMode(this.model.mode);
         this.columnOptions = [];
-        _.times(this.model.maxRowColumns, function(index) {
+
+        var parentLayoutWidth = 12,
+            parentLayout = this;
+        while (parentLayout) {
+            if (parentLayout.type === 'dashlet-row') {
+                parentLayoutWidth = parentLayout.meta.width;
+            }
+            parentLayout = parentLayout.layout;
+        }
+        var allowColumnSize = _.max([
+            1, //should be at least one
+            Math.floor(parentLayoutWidth / this.model.minColumnSpanSize)
+        ]);
+        _.times(allowColumnSize, function(index) {
             var n = index + 1;
             this.columnOptions.push({
                 index: n,

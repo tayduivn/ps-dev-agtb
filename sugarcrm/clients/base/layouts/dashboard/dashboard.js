@@ -42,7 +42,7 @@
                 module: 'Home',
                 dashboardModule: module,
                 maxColumns: (module === 'Home') ? 3 : 1,
-                maxRowColumns: (module === 'Home') ? 3 : 2
+                minColumnSpanSize: (module === 'Home') ? 4 : 12
             }),
             DashboardCollection = app.BeanCollection.extend({
                 sync: sync,
