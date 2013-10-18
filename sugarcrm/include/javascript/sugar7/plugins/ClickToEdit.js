@@ -117,6 +117,13 @@
             },
 
             /**
+             * unregister our bindings
+             */
+            onDetach: function() {
+                $(document).off('mousedown.record' + this.cid);
+            },
+
+            /**
              * Bind plugin events
              */
             bindPluginEvents: function() {
