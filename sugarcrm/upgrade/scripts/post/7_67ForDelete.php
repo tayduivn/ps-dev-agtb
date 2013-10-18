@@ -45,6 +45,8 @@ class SugarUpgrade67ForDelete extends UpgradeScript
             'vendor/phpunit',
             // remove the old base metadata file template for the dashablelist view
             'include/SugarObjects/templates/basic/clients/base/views/dashablelist/dashablelist.php',
+            // old phpmailer in thr include directory is no longer needed or referenced as of 7.0
+            'include/phpmailer',
         );
         $this->fileToDelete($files);
     }
