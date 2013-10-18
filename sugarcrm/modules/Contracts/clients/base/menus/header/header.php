@@ -30,7 +30,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'icon-plus',
     ),
     array(
-        'route'=>'#index.php?module=Contracts&action=index',
+        'route'=>'#bwc/index.php?module=Contracts&action=index',
         'label' =>'LNK_CONTRACT_LIST',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
