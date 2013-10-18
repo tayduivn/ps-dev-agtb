@@ -472,11 +472,23 @@ class ModuleScanner{
 		$pi = pathinfo($file);
 
 		//make sure they don't override the files.md5
-		if(empty($pi['extension']) || $pi['basename'] == 'files.md5' || $pi['basename'] == 'config.php' || $pi['basename'] == 'config_override.php') {
+		if(empty($pi['extension']) || $pi['basename'] == 'files.md5') {
 		    return false;
 		}
 		return in_array($pi['extension'], $this->validExt);
 
+	}
+
+	public function isConfigFile($file)
+	{
+	    $real = realpath($file);
+	    if($real == realpath("config.php")) {
+	        return true;
+	    }
+	    if(file_exists("config_override.php") && $real == realpath("config_override.php")) {
+	        return true;
+	    }
+	    return false;
 	}
 
 	/**
@@ -531,6 +543,11 @@ class ModuleScanner{
 		$issues = array();
 		if(!$this->isValidExtension($file)){
 			$issues[] = translate('ML_INVALID_EXT');
+			$this->issues['file'][$file] = $issues;
+			return $issues;
+		}
+		if($this->isConfigFile($file)){
+			$issues[] = translate('ML_OVERRIDE_CORE_FILES');
 			$this->issues['file'][$file] = $issues;
 			return $issues;
 		}
