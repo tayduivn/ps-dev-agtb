@@ -302,10 +302,10 @@ class DynamicField {
     }
 
    public function getRelateJoin($field_def, $joinTableAlias, $withIdName = true) {
-        if (empty($field_def['type']) || $field_def['type'] != "relate") {
+        if (empty($field_def['type']) || $field_def['type'] != "relate" || empty($field_def['module'])) {
             return false;
         }
-        global $module;
+
         $rel_mod = BeanFactory::getBean($field_def['module']);
         if(empty($rel_mod)) {
             return false;
@@ -315,6 +315,7 @@ class DynamicField {
         if (isset($rel_mod->field_defs['name']))
         {
             $name_field_def = $rel_mod->field_defs['name'];
+
             if(isset($name_field_def['db_concat_fields']))
             {
                 $name_field = db_concat($joinTableAlias, $name_field_def['db_concat_fields']);
@@ -331,11 +332,22 @@ class DynamicField {
         }
         $tableName = isset($field_def['custom_module']) ? "{$this->bean->table_name}_cstm" : $this->bean->table_name ;
         $relID = $field_def['id_name'];
-        $ret_array['rel_table'] = $rel_table;
+
+        $select = '';
+        if ($withIdName) {
+            $select .= ', ' . $tableName . '.' . $relID;
+        }
+
+        $relate_query = $rel_mod->getRelateFieldQuery($field_def, $joinTableAlias);
+        if ($relate_query['select']) {
+            $select .= ', ' . $relate_query['select'];
+        }
+
+        $ret_array['rel_table'] = $rel_table = $rel_mod->table_name;
         $ret_array['name_field'] = $name_field;
-        $ret_array['select'] = ($withIdName ? ", {$tableName}.{$relID}" : "") . ", {$name_field} {$field_def['name']} ";
+        $ret_array['select'] = $select;
         $ret_array['from'] = " LEFT JOIN $rel_table $joinTableAlias ON $tableName.$relID = $joinTableAlias.id"
-                            . " AND $joinTableAlias.deleted=0 ";
+                            . " AND $joinTableAlias.deleted=0 " . $relate_query['join'];
         return $ret_array;
    }
 
