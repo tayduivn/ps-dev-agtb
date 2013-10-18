@@ -869,7 +869,7 @@ class RenameModules
      */
     public function changeModuleModStrings($moduleName, $replacementLabels)
     {
-        $GLOBALS['log']->info("Begining to change module labels for: $moduleName");
+        $GLOBALS['log']->info("Beginning to change module labels for: $moduleName");
         $currentModuleStrings = return_module_language($this->selectedLanguage, $moduleName);
         $labelKeysToReplace = array(
             array('name' => 'LNK_NEW_RECORD', 'type' => 'plural'), //Module built modules, Create <moduleName>
@@ -934,7 +934,7 @@ class RenameModules
     private function replaceSingleLabel($oldStringValue, $replacementLabels, $replacementMetaData, $modifier = '')
     {
         $replaceKey = 'prev_' . $replacementMetaData['type'];
-        $search = html_entity_decode_utf8($replacementLabels[$replaceKey], ENT_QUOTES);
+        $search = $replacementLabels[$replaceKey];
         $replace = $replacementLabels[$replacementMetaData['type']];
         
         if (!empty($modifier)) {
@@ -944,12 +944,11 @@ class RenameModules
 
         // Bug 47957
         // If nothing was replaced - try to replace original string
-        $result = '';
         $replaceCount = 0;
         $result = str_replace($search, $replace, $oldStringValue, $replaceCount);
         if (!$replaceCount){
             $replaceKey = 'key_' . $replacementMetaData['type'];
-            $search = html_entity_decode_utf8($replacementLabels[$replaceKey], ENT_QUOTES);
+            $search = $replacementLabels[$replaceKey];
             $result = str_replace($search, $replace, $oldStringValue, $replaceCount);
         }
         return $result;
