@@ -1297,7 +1297,6 @@
 							
 							CAL.get("record").value = res.record;
 							CAL.get("current_module").value = res.module_name;	
-							
 							var mod_name = res.module_name;	
 							
 							if(mod_name == "Meetings")
@@ -1319,7 +1318,13 @@
 							SugarWidgetScheduler.update_time();											
 							if(CAL.record_editable){
 								CAL.enable_buttons();
-							}														
+							}
+
+                            // don't let disallowed actions work
+                            var acl = res.acl;
+                            if (!acl.delete) {
+                                CAL.get('btn-delete').setAttribute('disabled','disabled');
+                            }
 							
 							CAL.get("form_content").style.display = "";
 							
