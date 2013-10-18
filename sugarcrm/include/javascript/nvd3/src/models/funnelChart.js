@@ -38,8 +38,8 @@ nv.models.funnelChart = function() {
   var showTooltip = function(e, offsetElement, properties) {
     var left = e.pos[0],
         top = e.pos[1],
-        x = (e.point.y * 100 / properties.total).toFixed(1),
-        y = ( yAxis ).tickFormat()( funnel.y()(e.point, e.pointIndex) ),
+        x = (e.point.value * 100 / properties.total).toFixed(1),
+        y = ( yAxis ).tickFormat()( e.point.value  ),
         content = tooltipContent(e.series.key, x, y, e, chart);
     tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
   };
@@ -68,7 +68,7 @@ nv.models.funnelChart = function() {
       //------------------------------------------------------------
       // Display noData message if there's nothing to show.
 
-      if (!data || !data.length || !data.filter(function(d) { return d.values.length }).length) {
+      if (!data || !data.length || !data.filter(function(d) { return d.values.length; }).length) {
         var noDataText = container.selectAll('.nv-noData').data([noData]);
 
         noDataText.enter().append('text')
@@ -79,7 +79,7 @@ nv.models.funnelChart = function() {
         noDataText
           .attr('x', margin.left + availableWidth / 2)
           .attr('y', margin.top + availableHeight / 2)
-          .text(function(d) { return d });
+          .text(function(d) { return d; });
 
         return chart;
       } else {
