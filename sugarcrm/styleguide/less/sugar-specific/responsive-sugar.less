@@ -258,6 +258,11 @@
     margin: 0;
   }
 
+  .touch .content-overflow-visible { /* UIUX-1236 */
+    overflow: visible !important;
+    z-index: 1040;
+  }
+
   .row > .empty,
   .row-fluid > .empty {
     display: none !important;
@@ -381,4 +386,8 @@
 //is this the best place for this? grid.less? it is responsive though
 .row-fluid [class*="span"] {
   .rtlFloat(@direction,right);
+}
+
+.touch .modal-backdrop { /*SC-2000*/
+  display: none;
 }
