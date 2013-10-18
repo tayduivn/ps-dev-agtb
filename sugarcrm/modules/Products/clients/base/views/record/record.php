@@ -67,6 +67,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'acl_module' => 'Products',
+                    'acl_action' => 'create',
                 ),
                 array(
                     'type' => 'rowaction',

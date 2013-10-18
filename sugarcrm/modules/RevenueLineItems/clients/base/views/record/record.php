@@ -444,6 +444,7 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
+                    'acl_module' => 'RevenueLineItems',
                     'acl_action' => 'create',
                 ),
                 array(
