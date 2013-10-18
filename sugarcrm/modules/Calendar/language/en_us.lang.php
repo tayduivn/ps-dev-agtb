@@ -89,6 +89,7 @@ $mod_strings = array (
 	'LBL_CONFIRM_REMOVE_ALL_RECURRING' => 'Are you sure you want to remove all recurring records?',
 	'LBL_EDIT_RECORD' => 'Edit Activity',
 	'LBL_ERROR_SAVING' => 'Error while saving',
+    'LBL_NO_ACCESS' => 'You do not have access',
 	'LBL_ERROR_LOADING' => 'Error while loading',
 	'LBL_GOTO_DATE' => 'Goto Date',
 	'NOTICE_DURATION_TIME' => 'Duration time must be greater than 0',
