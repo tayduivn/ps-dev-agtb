@@ -479,7 +479,13 @@ class SearchForm {
                         }
                     }
                     else {// regular text input
-                        $this->xtpl->assign($templateVar, to_html($params['value']));
+                        if(is_array($params['value'])) {
+                            $value = array_map('to_html', $params['value']);
+                        } else {
+                            $value = to_html($params['value']);
+                        }
+
+                        $this->xtpl->assign($templateVar, $value);
                     }
                 }
             }
