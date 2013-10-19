@@ -362,6 +362,9 @@ body.full-screen .nv-chart {
   stroke: #444;
   stroke-width: 3px;
 }
+.nv-pareto .nv-quotaWrap line.nv-targetQuotaLine {
+  stroke: #777;
+}
 .nv-pareto .nv-y.nv-axis .domain {
   display: none;
 }
@@ -464,7 +467,7 @@ body.full-screen .nv-chart {
   fill: #9467bd;
 }
 .stage_needsanalysis {
-  fill: #d9a400;
+  fill: #b88c12;
 }
 .nv-card {
   fill: #E9EFEF;
@@ -532,196 +535,196 @@ body.full-screen .nv-chart {
   background: url("../../assets/img/texture/texture-noise.png");
 }
 .nv-fill-green {
-  fill: #3FB300;
-  background-color: #3FB300;
+  fill: #37880E;
+  background-color: #37880E;
 }
 .nv-fill-red {
   fill: #E61718;
   background-color: #E61718;
 }
 .nv-fill-blue {
-  fill: #25B2F1;
-  background-color: #25B2F1;
+  fill: #1774E6;
+  background-color: #1774E6;
 }
 .nv-fill00 {
-  fill: #1f77b4;
-  background-color: #1f77b4;
+  fill: #1774E6;
+  background-color: #1774E6;
 }
 .nv-fill01 {
-  fill: #aec7e8;
-  background-color: #aec7e8;
+  fill: #89b9f3;
+  background-color: #89b9f3;
 }
 .nv-fill02 {
-  fill: #ff7f0e;
-  background-color: #ff7f0e;
+  fill: #E61718;
+  background-color: #E61718;
 }
 .nv-fill03 {
-  fill: #ffbb78;
-  background-color: #ffbb78;
+  fill: #f3898a;
+  background-color: #f3898a;
 }
 .nv-fill04 {
-  fill: #2ca02c;
-  background-color: #2ca02c;
+  fill: #37880E;
+  background-color: #37880E;
 }
 .nv-fill05 {
-  fill: #98df8a;
-  background-color: #98df8a;
+  fill: #6ce92c;
+  background-color: #6ce92c;
 }
 .nv-fill06 {
-  fill: #d62728;
-  background-color: #d62728;
+  fill: #0e7488;
+  background-color: #0e7488;
 }
 .nv-fill07 {
-  fill: #ff9896;
-  background-color: #ff9896;
+  fill: #2ccaea;
+  background-color: #2ccaea;
 }
 .nv-fill08 {
-  fill: #9467bd;
-  background-color: #9467bd;
+  fill: #C65517;
+  background-color: #C65517;
 }
 .nv-fill09 {
-  fill: #c5b0d5;
-  background-color: #c5b0d5;
+  fill: #ee9c6e;
+  background-color: #ee9c6e;
 }
 .nv-fill10 {
-  fill: #8c564b;
-  background-color: #8c564b;
+  fill: #788d0e;
+  background-color: #788d0e;
 }
 .nv-fill11 {
-  fill: #c49c94;
-  background-color: #c49c94;
+  fill: #ccea30;
+  background-color: #ccea30;
 }
 .nv-fill12 {
-  fill: #e377c2;
-  background-color: #e377c2;
+  fill: #4b0e88;
+  background-color: #4b0e88;
 }
 .nv-fill13 {
-  fill: #f7b6d2;
-  background-color: #f7b6d2;
+  fill: #8b2cea;
+  background-color: #8b2cea;
 }
 .nv-fill14 {
-  fill: #7f7f7f;
-  background-color: #7f7f7f;
+  fill: #E6AF17;
+  background-color: #E6AF17;
 }
 .nv-fill15 {
-  fill: #c7c7c7;
-  background-color: #c7c7c7;
+  fill: #f3d789;
+  background-color: #f3d789;
 }
 .nv-fill16 {
-  fill: #bcbd22;
-  background-color: #bcbd22;
+  fill: #D81982;
+  background-color: #D81982;
 }
 .nv-fill17 {
-  fill: #dbdb8d;
-  background-color: #dbdb8d;
+  fill: #f080be;
+  background-color: #f080be;
 }
 .nv-fill18 {
-  fill: #17becf;
-  background-color: #17becf;
+  fill: #58595B;
+  background-color: #58595B;
 }
 .nv-fill19 {
-  fill: #9edae5;
-  background-color: #9edae5;
+  fill: #98999b;
+  background-color: #98999b;
 }
 .nv-legend .nv-fill00 {
-  stroke: #1f77b4;
+  stroke: #1774E6;
 }
 .nv-legend .nv-fill01 {
-  stroke: #aec7e8;
+  stroke: #89b9f3;
 }
 .nv-legend .nv-fill02 {
-  stroke: #ff7f0e;
+  stroke: #E61718;
 }
 .nv-legend .nv-fill03 {
-  stroke: #ffbb78;
+  stroke: #f3898a;
 }
 .nv-legend .nv-fill04 {
-  stroke: #2ca02c;
+  stroke: #37880E;
 }
 .nv-legend .nv-fill05 {
-  stroke: #98df8a;
+  stroke: #6ce92c;
 }
 .nv-legend .nv-fill06 {
-  stroke: #d62728;
+  stroke: #0e7488;
 }
 .nv-legend .nv-fill07 {
-  stroke: #ff9896;
+  stroke: #2ccaea;
 }
 .nv-legend .nv-fill08 {
-  stroke: #9467bd;
+  stroke: #C65517;
 }
 .nv-legend .nv-fill09 {
-  stroke: #c5b0d5;
+  stroke: #ee9c6e;
 }
 .nv-legend .nv-fill10 {
-  stroke: #8c564b;
+  stroke: #788d0e;
 }
 .nv-legend .nv-fill11 {
-  stroke: #c49c94;
+  stroke: #ccea30;
 }
 .nv-legend .nv-fill12 {
-  stroke: #e377c2;
+  stroke: #4b0e88;
 }
 .nv-legend .nv-fill13 {
-  stroke: #f7b6d2;
+  stroke: #8b2cea;
 }
 .nv-legend .nv-fill14 {
-  stroke: #7f7f7f;
+  stroke: #E6AF17;
 }
 .nv-legend .nv-fill15 {
-  stroke: #c7c7c7;
+  stroke: #f3d789;
 }
 .nv-legend .nv-fill16 {
-  stroke: #bcbd22;
+  stroke: #D81982;
 }
 .nv-legend .nv-fill17 {
-  stroke: #dbdb8d;
+  stroke: #f080be;
 }
 .nv-legend .nv-fill18 {
-  stroke: #17becf;
+  stroke: #58595B;
 }
 .nv-legend .nv-fill19 {
-  stroke: #9edae5;
+  stroke: #98999b;
 }
 .nv-stroke0 {
-  stroke: #1f77b4;
-  background-color: #1f77b4;
+  stroke: #1774E6;
+  background-color: #1774E6;
 }
 .nv-stroke1 {
-  stroke: #ff7f0e;
-  background-color: #ff7f0e;
+  stroke: #E61718;
+  background-color: #E61718;
 }
 .nv-stroke2 {
-  stroke: #2ca02c;
-  background-color: #2ca02c;
+  stroke: #37880E;
+  background-color: #37880E;
 }
 .nv-stroke3 {
-  stroke: #d62728;
-  background-color: #d62728;
+  stroke: #0e7488;
+  background-color: #0e7488;
 }
 .nv-stroke4 {
-  stroke: #9467bd;
-  background-color: #9467bd;
+  stroke: #C65517;
+  background-color: #C65517;
 }
 .nv-stroke5 {
-  stroke: #8c564b;
-  background-color: #8c564b;
+  stroke: #788d0e;
+  background-color: #788d0e;
 }
 .nv-stroke6 {
-  stroke: #e377c2;
-  background-color: #e377c2;
+  stroke: #4b0e88;
+  background-color: #4b0e88;
 }
 .nv-stroke7 {
-  stroke: #7f7f7f;
-  background-color: #7f7f7f;
+  stroke: #E6AF17;
+  background-color: #E6AF17;
 }
 .nv-stroke8 {
-  stroke: #bcbd22;
-  background-color: #bcbd22;
+  stroke: #D81982;
+  background-color: #D81982;
 }
 .nv-stroke9 {
-  stroke: #17becf;
-  background-color: #17becf;
+  stroke: #58595B;
+  background-color: #58595B;
 }
 .dashboard .thumbnail.widget:not(.collapsed) {
   max-height: 500px;
@@ -927,6 +930,11 @@ span.count.label {
 .tooltip.in {
   opacity: 1;
   filter: alpha(opacity=100);
+}
+.tooltip div,
+.tooltip span,
+.tooltip a {
+  color: #fff;
 }
 .tooltip-inner {
   white-space: pre-wrap;
