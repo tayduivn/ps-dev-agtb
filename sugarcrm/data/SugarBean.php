@@ -6111,9 +6111,6 @@ class SugarBean
     private function _ACLAccess($view,$is_owner='not_set')
     {
         global $current_user;
-        if($current_user->isAdminForModule($this->getACLCategory())) {
-            return true;
-        }
         $not_set = false;
         if($is_owner == 'not_set')
         {
