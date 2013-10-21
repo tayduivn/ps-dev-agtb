@@ -431,11 +431,14 @@
                     // and multiple it by 100 (2 decimals out), if it's not equal to 0, then it changed.
                     var diff = Math.abs(this.unformat(elVal) - this.unformat(field.value));
                     return ((Math.round(diff * 100)) != 0)
+                } else if(field.type == 'date') {
+                    if(_.isUndefined(elVal)) {
+                        elVal = field.$el.find('div').html();
+                    }
+                    return !_.isEqual(this.unformat(elVal), this.unformat(field.value));
                 } else {
                     return !_.isEqual(this.unformat(elVal), this.unformat(field.value));
                 }
-
-
             },
 
             /**
@@ -560,20 +563,7 @@
              * @private
              */
             _verifyDateString: function(value) {
-                var dateFormat = (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy',
-                    isValid = true;
-
-                //First try generic date parse (since we might have an ISO). This should generally work with the
-                //ISO date strings we get from server.
-                if (_.isNaN(Date.parse(value))) {
-                    isValid = false;
-                    //Safari chokes on '.', '-', so retry replacing with '/'
-                    if (_.isNaN(value.replace(/[\.\-]/g, '/'))) {
-                        //Use datepicker plugin to verify datepicker format
-                        isValid = $.prototype.DateVerifier(value, dateFormat);
-                    }
-                }
-                return isValid;
+                return _.isUndefined(app.validation.validators.datetime(this, value))
             },
 
             /**
