@@ -49,7 +49,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LBL_ACTIVITIES_REPORTS',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => '',
+        'icon' => 'icon-reorder',
     ),
     //END SUGARCRM flav=int ONLY
 );
