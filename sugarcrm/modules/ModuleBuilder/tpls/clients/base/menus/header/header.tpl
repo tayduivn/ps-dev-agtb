@@ -44,7 +44,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' => 'LBL_IMPORT',
         'acl_action' => 'import',
         'acl_module' => $moduleName,
-        'icon' => '',
+        'icon' => 'icon-upload',
     ),
 {/if}
 );

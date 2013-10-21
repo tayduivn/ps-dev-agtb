@@ -111,7 +111,7 @@ class MBModuleTest extends Sugar_PHPUnit_Framework_TestCase
                 'label' => 'LBL_IMPORT',
                 'acl_action' => 'import',
                 'acl_module' => $this->mbModuleName,
-                'icon' => '',
+                'icon' => 'icon-upload',
             );
         }
         
