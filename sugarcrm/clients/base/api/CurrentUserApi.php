@@ -268,25 +268,29 @@ class CurrentUserApi extends SugarApi
             'onespecial' => 'LBL_PASSWORD_ONE_SPECIAL_CHAR'
         );
         foreach ($keys as $key => $labelKey) {
-            if ($passwordSettings[$key] == '1') {
-                $settings[$key] = $administrationModStrings[$labelKey];
+            if (!empty($passwordSettings[$key])) {
+                $settings[$key] = isset($administrationModStrings[$labelKey]) ? $administrationModStrings[$labelKey] : '';
             }
         }
         //custom regex
-        if ($passwordSettings['customregex'] != '') {
-            $settings['regex'] = $passwordSettings['regexcomment'];
+        if (!empty($passwordSettings['customregex'])) {
+            $settings['regex'] = isset($passwordSettings['regexcomment']) ? $passwordSettings['regexcomment'] : '';
         }
+
         //Handles min/max password length messages
-        if ($passwordSettings['minpwdlength'] > 0 && $passwordSettings['maxpwdlength'] > 0) {
+        $min = isset($passwordSettings['minpwdlength']) && $passwordSettings['minpwdlength'] > 0;
+        $max = isset($passwordSettings['maxpwdlength']) && $passwordSettings['maxpwdlength'] > 0;
+        if ($min && $max) {
             $settings['lengths'] = $administrationModStrings['LBL_PASSWORD_MINIMUM_LENGTH'].' = '.$passwordSettings['minpwdlength'].' '.$administrationModStrings['LBL_PASSWORD_AND_MAXIMUM_LENGTH'].' = '.$passwordSettings['maxpwdlength'];
-        } else if ($passwordSettings['minpwdlength'] > 0) {
+        } else if ($min) {
             $settings['lengths'] = $administrationModStrings['LBL_PASSWORD_MINIMUM_LENGTH'].' = '.$passwordSettings['minpwdlength'];
-        } else if ($passwordSettings['maxpwdlength'] >0) {
+        } else if ($max) {
             $settings['lengths'] = $administrationModStrings['LBL_PASSWORD_MAXIMUM_LENGTH'].' = '.$passwordSettings['maxpwdlength'];
         }
 
         return $settings;
     }
+
     /**
      * Updates current user info
      *
