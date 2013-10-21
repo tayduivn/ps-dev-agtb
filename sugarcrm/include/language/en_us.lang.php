@@ -4251,6 +4251,8 @@ $app_strings = array (
     'LBL_PASSWORD_REQUEST_ERROR' => 'There was a problem retrieving your username and email combination.',
 
     'LBL_REMINDER_TITLE' => 'Reminder',
+
+    'LBL_CAN_NOT_DISABLE_ALL_LANG' => 'You can not disable all languages.',
 );
 
 $app_list_strings['interactions_options'] = array (
