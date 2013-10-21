@@ -23,6 +23,13 @@ class SugarACLForecastWorksheets extends SugarACLStrategy
     protected static $forecastByBean;
 
     /**
+     * Are we an admin for the current bean?
+     *
+     * @var boolean|null
+     */
+    protected static $isAdminForBean = null;
+
+    /**
      * Run the check Access for this custom ACL helper.
      *
      * @param string $module
@@ -45,6 +52,13 @@ class SugarACLForecastWorksheets extends SugarACLStrategy
         $view = SugarACLStrategy::fixUpActionName($view);
         $bean = $this->getForecastByBean();
         $current_user = $this->getCurrentUser($context);
+
+        if (static::$isAdminForBean === null) {
+            static::$isAdminForBean = $current_user->isAdminForModule($bean->module_name);
+        }
+        if (static::$isAdminForBean) {
+            return true;
+        }
 
         if (empty($view) || empty($current_user->id)) {
             return true;
