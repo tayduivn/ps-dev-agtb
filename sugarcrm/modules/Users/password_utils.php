@@ -77,14 +77,6 @@ function canSendPassword() {
 }
 
 /**
- * Check if password has expired.
- * @return Boolean indicating if password is expired or not
- */
-function hasPasswordExpired  ($username)
-{
-    return _verifyPasswordExpired($username, false);
-}
-/**
  * Updates password has expired if number of login attempts is set
  * @return Boolean indicating if password is expired or not
  */
@@ -93,8 +85,11 @@ function updatePasswordExpired($username)
     return _verifyPasswordExpired($username, true);
 }
 
-//Helper. Please call hasPasswordExpired or updatePasswordExpired instead.
-function _verifyPasswordExpired($username, $updateNumberLogins)
+/**
+ * Check if password has expired.
+ * @return Boolean indicating if password is expired or not
+ */
+function hasPasswordExpired($username, $updateNumberLogins = false)
 {
     $usr_id=User::retrieve_user_id($username);
 	$usr= BeanFactory::getBean('Users', $usr_id);
@@ -117,6 +112,7 @@ function _verifyPasswordExpired($username, $updateNumberLogins)
 		    	global $timedate;
 		    	if ($usr->pwd_last_changed == ''){
 		    		$usr->pwd_last_changed= $timedate->nowDb();
+                    //Suppress date_modified so a new _hash isn't generated
                     $usr->update_date_modified = false;
 		    		$usr->save();
 		    	}
@@ -139,6 +135,7 @@ function _verifyPasswordExpired($username, $updateNumberLogins)
                 if ($updateNumberLogins) {
                     $login = $login + 1;
                     $usr->setPreference('loginexpiration',$login);
+                    //Suppress date_modified so a new _hash isn't generated
                     $usr->update_date_modified = false;
                     $usr->save();
                 }
