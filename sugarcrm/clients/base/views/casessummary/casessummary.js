@@ -129,13 +129,15 @@
         this.tabData = [];
 
         var stati = _.uniq(this.chartCollection.pluck('status'));
+        var statusOptions = app.metadata.getModule('Cases', 'fields').status.options || 'case_status_dom';
+
 
         _.each(stati, function(status, index){
             if (!status2css[status]) {
                 this.tabData.push({
                     index: index,
                     status: status,
-                    statusLabel: app.lang.getAppListStrings("case_status_dom")[status],
+                    statusLabel: app.lang.getAppListStrings(statusOptions)[status],
                     models: this.chartCollection.where({'status':status}),
                     cssClass: status2css[status] ? status2css[status] : 'label-important'
                 });
