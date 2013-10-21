@@ -82,7 +82,7 @@ function canSendPassword() {
  */
 function updatePasswordExpired($username)
 {
-    return _verifyPasswordExpired($username, true);
+    return hasPasswordExpired($username, true);
 }
 
 /**
