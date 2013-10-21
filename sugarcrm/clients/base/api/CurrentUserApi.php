@@ -185,7 +185,7 @@ class CurrentUserApi extends SugarApi
         $current_user->_create_proper_name_field();
         $user_data['full_name'] = $current_user->full_name;
         $user_data['user_name'] = $current_user->user_name;
-        $this->setExpiredPassword($user_data);
+        $user_data = $this->setExpiredPassword($user_data);
         $user_data['picture'] = $current_user->picture;
         $user_data['acl'] = $this->getAcls($api->platform);
         $user_data['is_manager'] = User::isManager($current_user->id);
@@ -237,7 +237,7 @@ class CurrentUserApi extends SugarApi
      * this sets user data `is_password_expired` to true (otherwise false). Also,
      * if password has expired, than `password_expired_message` is set.
      */
-    public function setExpiredPassword(&$user_data)
+    public function setExpiredPassword($user_data)
     {
         $user_data['is_password_expired'] = false;
         $user_data['password_expired_message'] = "";
@@ -250,6 +250,7 @@ class CurrentUserApi extends SugarApi
             $passwordSettings = $GLOBALS['sugar_config']['passwordsetting'];
             $user_data['password_requirements'] = $this->getPasswordRequirements($passwordSettings);
         }
+        return $user_data;
     }
 
     //Essentially 7.X version of legacy smarty_function_sugar_password_requirements_box
