@@ -89,7 +89,7 @@ class ViewEditConvert extends SugarView
         unset($relatableModules['KBDocuments']);
         unset($relatableModules['Products']);
         unset($relatableModules['ProductTemplates']);
-        unset($relatableModules['RevenueLineItems']);
+        // bug 43393 - don't let Leads (or any non-contact module derived from Person) be added to convert flow
         unset($relatableModules['Leads']);
         unset($relatableModules['Users']);
 

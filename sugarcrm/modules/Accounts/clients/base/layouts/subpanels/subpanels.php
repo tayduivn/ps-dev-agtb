@@ -145,6 +145,13 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
           'link' => 'contracts',
       ),
     ),
+    array (
+      'layout' => 'subpanel',
+      'label' => 'LBL_PROJECT_SUBPANEL_TITLE',
+      'context' => array (
+          'link' => 'project',
+      ),
+    ),
   ),
   'type' => 'subpanels',
   'span' => 12,

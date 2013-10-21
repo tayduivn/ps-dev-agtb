@@ -132,6 +132,19 @@ $layout_defs['Quotes'] = array(
                     ),
                 ),
         ),
+		'project' => array(
+			'order' => 40,
+			'module' => 'Project',
+			'sort_order' => 'asc',
+			'sort_by' => 'name',
+			'subpanel_name' => 'default',
+			'title_key' => 'LBL_PROJECTS_SUBPANEL_TITLE',
+			'get_subpanel_data' => 'project',
+			'top_buttons' => array(
+				array('widget_class' => 'SubPanelTopButtonQuickCreate'),
+				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect'),
+			),
+		),
         //BEGIN SUGARCRM flav=pro ONLY
 		'contracts' => array(
 			'order' => 30,

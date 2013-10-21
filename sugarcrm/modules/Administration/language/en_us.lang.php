@@ -1125,6 +1125,8 @@ $mod_strings = array (
 	'Manufacturers'  => 'Manufacturer',
 	'ProductBundleNotes' => 'ProductBundleNote',
 	'ProductBundles'   => 'ProductBundle',
+	'ProjectResources' => 'ProjectResource',
+
 	'Relationships' => 'Relationship',
 	'Releases'       => 'Release',
 	'ReportMaker'  => 'Advanced Reports',

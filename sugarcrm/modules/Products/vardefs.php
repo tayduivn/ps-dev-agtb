@@ -863,6 +863,13 @@ $dictionary['Product'] = array(
             'module' => 'Accounts',
             'source' => 'non-db',
         ),
+        'projects' =>  array(
+            'name' => 'projects',
+            'type' => 'link',
+            'relationship' => 'projects_products',
+            'source' => 'non-db',
+            'vname' => 'LBL_PROJECTS',
+        ),
         'product_bundles' =>  array(
             'name' => 'product_bundles',
             'type' => 'link',

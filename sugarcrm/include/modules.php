@@ -54,6 +54,7 @@ $moduleList[] = 'RevenueLineItems';
 
 $moduleList[] = 'Documents';
 $moduleList[] = 'Cases';
+$moduleList[] = 'Project';
 $moduleList[] = 'Bugs';
 
 // this list defines all of the module names and bean names in the app
@@ -71,6 +72,8 @@ $beanList['Cases']          = 'aCase';
 $beanList['Bugs']           = 'Bug';
 $beanList['ProspectLists']      = 'ProspectList';
 $beanList['Prospects']  = 'Prospect';
+$beanList['Project']            = 'Project';
+$beanList['ProjectTask']            = 'ProjectTask';
 $beanList['Campaigns']          = 'Campaign';
 $beanList['EmailMarketing']  = 'EmailMarketing';
 $beanList['CampaignLog']        = 'CampaignLog';
@@ -180,7 +183,9 @@ $beanList['KBDocumentKBTags'] = 'KBDocumentKBTag';
 $beanList['KBContents'] = 'KBContent';
 $beanList['ContractTypes']  = 'ContractType';
 $beanList['Holidays'] = 'Holiday';
+$beanList['ProjectResources'] = 'ProjectResource';
 //END SUGARCRM flav=pro ONLY
+
 //BEGIN SUGARCRM flav=ent ONLY
 $beanList['CustomQueries']  = 'CustomQuery';
 $beanList['DataSets']  = 'DataSet';
@@ -204,6 +209,8 @@ $beanFiles['aCase']         = 'modules/Cases/Case.php';
 $beanFiles['Bug']           = 'modules/Bugs/Bug.php';
 $beanFiles['Group'] = 'modules/Groups/Group.php';
 $beanFiles['CampaignLog']  = 'modules/CampaignLog/CampaignLog.php';
+$beanFiles['Project']           = 'modules/Project/Project.php';
+$beanFiles['ProjectTask']           = 'modules/ProjectTask/ProjectTask.php';
 $beanFiles['Campaign']          = 'modules/Campaigns/Campaign.php';
 $beanFiles['ProspectList']      = 'modules/ProspectLists/ProspectList.php';
 $beanFiles['Prospect']  = 'modules/Prospects/Prospect.php';
@@ -315,6 +322,7 @@ $beanFiles['KBTag'] = 'modules/KBTags/KBTag.php';
 $beanFiles['KBDocumentKBTag'] = 'modules/KBDocumentKBTags/KBDocumentKBTag.php';
 $beanFiles['KBContent'] = 'modules/KBContents/KBContent.php';
 $beanFiles['ContractType']  = 'modules/ContractTypes/ContractType.php';
+$beanFiles['ProjectResource'] = 'modules/ProjectResources/ProjectResource.php';
 $beanFiles['Holiday'] = 'modules/Holidays/Holiday.php';
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=ent ONLY
@@ -339,8 +347,9 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'KBDocumentRevisions', 'KBDocumentKBTags', 'KBTags', 'KBContents', 'ContractTypes', 'ForecastSchedule',
     'ACLFields', 'Holidays', 'SNIP', 'ForecastDirectReports',
     //END SUGARCRM flav=pro ONLY
-    'Releases','Sync', 'Users',  'Versions', 'LabelEditor','Roles','EmailMarketing', 'OptimisticLock',
-    'TeamMemberships', 'TeamSets', 'TeamSetModule', 'Audit', 'MailMerge', 'MergeRecords', 'EmailAddresses', 'EmailText',
+    'Releases','Sync',
+    'Users',  'Versions', 'LabelEditor','Roles','EmailMarketing'
+    ,'OptimisticLock', 'TeamMemberships', 'TeamSets', 'TeamSetModule', 'Audit', 'MailMerge', 'MergeRecords', 'EmailAddresses','EmailText',
     //BEGIN SUGARCRM flav=int ONLY
     'TeamHierarchy',
     //END SUGARCRM flav=int ONLY
@@ -350,6 +359,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'ACLActions', 'ACLRoles',
     'DocumentRevisions',
     'Empty',
+    'ProjectTask',
     //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
     'RevenueLineItems'
     //END SUGARCRM flav=pro && flav!=ent ONLY
@@ -593,6 +603,13 @@ $bwcModules = array(
     'ProductBundleNotes',
     'ProductBundles',
     'ProductTypes',
+    //END SUGARCRM flav=pro ONLY
+    'Project',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'ProjectResources',
+    //END SUGARCRM flav=pro ONLY
+    'ProjectTask',
+    //BEGIN SUGARCRM flav=pro ONLY
     'Quotes',
     'QueryBuilder',
     //END SUGARCRM flav=pro ONLY

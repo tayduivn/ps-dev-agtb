@@ -210,6 +210,8 @@ $mod_strings = array (
 
     'LBL_CASES_SUBPANEL_TITLE' => 'Cases',
     'LBL_BUGS_SUBPANEL_TITLE' => 'Bugs',
+    'LBL_PROJECTS_SUBPANEL_TITLE' => 'Projects',
+    'LBL_PROJECTS_RESOURCES' => 'Projects Resources',
     'LBL_TARGET_OF_CAMPAIGNS' => 'Campaigns (Target of) :',
     'LBL_CAMPAIGNS'    =>    'Campaigns',
     'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE'=>'Campaign Log',
@@ -228,6 +230,7 @@ $mod_strings = array (
     //END SUGARCRM flav=pro ONLY
     'LBL_CHECKOUT_DATE'=>'Checkout Date',
     'LBL_CONTACTS_SUBPANEL_TITLE' => 'Contacts',
+    'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     'LBL_CAMPAIGNS_SUBPANEL_TITLE' => 'Campaigns',
     'LNK_IMPORT_CONTACTS' => 'Import Contacts',
 

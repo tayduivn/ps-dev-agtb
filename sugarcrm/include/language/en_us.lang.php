@@ -68,6 +68,8 @@ $app_list_strings = array (
     'TaxRates'=>'Tax Rates',
     'ContractTypes' => 'Contract Types',
     'Schedulers'=>'Schedulers',
+    'Project'=>'Projects',
+    'ProjectTask'=>'Project Tasks',
     'Campaigns'=>'Campaigns',
     'CampaignLog'=>'Campaign Log',
     'CampaignTrackers'=>'Campaign Trackers',
@@ -167,7 +169,9 @@ $app_list_strings = array (
     'Feeds' => 'RSS',
     'iFrames'=>'My Sites',
     'TimePeriods'=>'Time Period',
-      'Prospects' => 'Target',
+    'Project'=>'Project',
+    'ProjectTask'=>'Project Task',
+    'Prospects' => 'Target',
     'ProspectLists' => 'Target List',
     'Campaigns'=>'Campaign',
     'CampaignTrackers'=>'Campaign Tracker',
@@ -529,7 +533,47 @@ $app_list_strings = array (
     'Yahoo!' => 'Yahoo!',
     'AOL' => 'AOL',
   ),
-//Note:  do not translate record_type_default_key
+    'project_task_priority_options' => array (
+        'High' => 'High',
+        'Medium' => 'Medium',
+        'Low' => 'Low',
+    ),
+    'project_task_priority_default' => 'Medium',
+
+    'project_task_status_options' => array (
+        'Not Started' => 'Not Started',
+        'In Progress' => 'In Progress',
+        'Completed' => 'Completed',
+        'Pending Input' => 'Pending Input',
+        'Deferred' => 'Deferred',
+    ),
+    'project_task_utilization_options' => array (
+        '0' => 'none',
+        '25' => '25',
+        '50' => '50',
+        '75' => '75',
+        '100' => '100',
+    ),
+
+    'project_status_dom' => array (
+        'Draft' => 'Draft',
+        'In Review' => 'In Review',
+        'Published' => 'Published',
+    ),
+    'project_status_default' => 'Draft',
+
+    'project_duration_units_dom' => array (
+        'Days' => 'Days',
+        'Hours' => 'Hours',
+    ),
+
+    'project_priority_options' => array (
+        'High' => 'High',
+        'Medium' => 'Medium',
+        'Low' => 'Low',
+    ),
+    'project_priority_default' => 'Medium',
+  //Note:  do not translate record_type_default_key
 //       it is the key for the default record_type_module value
   'record_type_default_key' => 'Accounts',
   'record_type_display' =>
@@ -549,8 +593,16 @@ $app_list_strings = array (
 
 
     'Bugs' => 'Bug',
+    'Project' => 'Project',
 
     'Prospects' => 'Target',
+    'ProjectTask' => 'Project Task',
+
+    //BEGIN SUGARCRM flav=int ONLY
+
+    'Project2' => 'Project2',
+
+    //END SUGARCRM flav=int ONLY
 
     'Tasks' => 'Task',
 
@@ -571,6 +623,8 @@ $app_list_strings = array (
     'Emails' => 'Email',
 
     'Bugs' => 'Bug',
+    'Project' => 'Project',
+    'ProjectTask' => 'Project Task',
     'Prospects' => 'Target',
     'Cases' => 'Case',
     'Leads' => 'Lead',
@@ -598,6 +652,10 @@ $app_list_strings = array (
     'Bugs' => 'Bug Tracker',
     'Cases' => 'Case',
     'Leads' => 'Lead',
+
+    'Project' => 'Project',
+    'ProjectTask' => 'Project Task',
+
     'Prospects' => 'Target',
 
   ),
@@ -796,6 +854,7 @@ $app_list_strings = array (
     'Products' => 'Quoted Line Items',
     'RevenueLineItems' => 'Revenue Line Items',
     //END SUGARCRM flav=pro ONLY
+    'Projects' => 'Projects',
     'Quotes' => 'Quotes',
     'Releases' => 'Releases',
     'RSS' => 'RSS',
@@ -1580,6 +1639,18 @@ $app_list_strings = array (
 
 
 //END SUGARCRM flav=pro ONLY
+
+    'projects_priority_options' => array (
+        'high'      => 'High',
+        'medium'    => 'Medium',
+        'low'       => 'Low',
+    ),
+
+    'projects_status_options' => array (
+        'notstarted'    => 'Not Started',
+        'inprogress'    => 'In Progress',
+        'completed'     => 'Completed',
+    ),
     // strings to pass to Flash charts
     'chart_strings' => array (
         'expandlegend'      => 'Expand Legend',
@@ -1923,6 +1994,8 @@ $app_strings = array (
   'LBL_VIEW_INLINE' => 'View' /*for 508 compliance fix*/,
   'LBL_BASIC_SEARCH' => 'Search' /*for 508 compliance fix*/,
   'LBL_BASIC_QUICK_SEARCH' => 'Search...' /*for 508 compliance fix*/,
+  'LBL_PROJECT_MINUS' => 'Remove' /*for 508 compliance fix*/,
+  'LBL_PROJECT_PLUS' => 'Add' /*for 508 compliance fix*/,
   'LBL_Blank' => ' ' /*for 508 compliance fix*/,
   'LBL_ICON_COLUMN_1' => 'Column' /*for 508 compliance fix*/,
   'LBL_ICON_COLUMN_2' => '2 Columns' /*for 508 compliance fix*/,
@@ -2812,6 +2885,8 @@ $app_strings = array (
 
     'LBL_PRODUCT_BUNDLES'=>'Product Bundles',
     'LBL_PRODUCTS'=>'Products',
+    'LBL_PROJECT_TASKS'=>'Project Tasks',
+    'LBL_PROJECTS'=>'Projects',
     'LBL_QUOTE_TO_OPPORTUNITY_KEY' => 'O',
     'LBL_QUOTE_TO_OPPORTUNITY_LABEL' => 'Create Opportunity from Quote',
     'LBL_QUOTE_TO_OPPORTUNITY_TITLE' => 'Create Opportunity from Quote',
@@ -4363,6 +4438,13 @@ $app_list_strings['top10_opportunities_filter_assigned_options'] = array (
 $app_list_strings['moduleList']['Library'] = 'Library';
 $app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');
 $app_list_strings['moduleList']['EmailAddresses'] = 'Email Address';
+$app_list_strings['project_priority_default'] = 'Medium';
+$app_list_strings['project_priority_options'] = array (
+    'High' => 'High',
+    'Medium' => 'Medium',
+    'Low' => 'Low',
+);
+
 
 $app_list_strings['kbdocument_status_dom'] = array (
     'Draft' => 'Draft',

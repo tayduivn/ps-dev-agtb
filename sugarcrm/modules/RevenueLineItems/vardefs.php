@@ -928,6 +928,13 @@ $dictionary['RevenueLineItem'] = array(
             'module' => 'Accounts',
             'source' => 'non-db',
         ),
+        'projects' =>  array(
+            'name' => 'projects',
+            'type' => 'link',
+            'relationship' => 'projects_revenuelineitems',
+            'source' => 'non-db',
+            'vname' => 'LBL_PROJECTS',
+        ),
     ),
     'indices' => array(
         array('name' => 'idx_revenuelineitem', 'type' => 'index', 'fields' => array('name', 'deleted')),
