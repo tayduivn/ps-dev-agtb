@@ -334,21 +334,21 @@ class ConnectorsController extends SugarController {
 		$sources = array();
 		$properties = array();
 		foreach($_REQUEST as $name=>$value) {
-		        if(preg_match("/^source[0-9]+$/", $name, $matches)) {
-	                $source_id = $value;
-	                $properties = array();
-			        foreach($_REQUEST as $arg=>$val) {
-				        if(preg_match("/^{$source_id}_(.*?)$/", $arg, $matches2)) {
-				           $properties[$matches2[1]] = $val;
-				    	}
-					}
-					$source = SourceFactory::getSource($source_id);
+            if(preg_match("/^source[0-9]+$/", $name, $matches)) {
+                $source_id = $value;
+                $properties = array();
+                foreach($_REQUEST as $arg=>$val) {
+                    if(preg_match("/^{$source_id}_(.*?)$/", $arg, $matches2)) {
+                       $properties[$matches2[1]] = $val;
+                    }
+                }
+                $source = SourceFactory::getSource($source_id);
 
-					if(!empty($properties)) {
-					    $source->setProperties($properties);
-					    $source->saveConfig();
-					}
-		    	}
+                if(!empty($properties)) {
+                    $source->setProperties($properties);
+                    $source->saveConfig();
+                }
+            }
 		}
 
 		require_once('include/connectors/utils/ConnectorUtils.php');
@@ -360,6 +360,10 @@ class ConnectorsController extends SugarController {
 	    // BEGIN SUGAR INT
 	    }
 	    // END SUGAR INT
+
+        // force an app sync after modifying properties
+        $mm = new MetadataManager(null);
+        $mm->setUserMetadataHasChanged($GLOBALS['current_user']);
 	}
 
 	function action_SaveModifyDisplay() {

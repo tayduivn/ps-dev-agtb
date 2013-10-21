@@ -274,6 +274,64 @@ class ConnectorUtils
     }
 
     /**
+     *  getEAPMForConnector
+     *  returns EAPM login info for a given connector if it exists
+     */
+    public function getEAPMForConnector($connector) {
+        if (isset($connector['name'])){
+            //Take the substring up to '&' because the name field always ends in '&#169'
+            return EAPM::getLoginInfo(substr($connector['name'], 0, strpos($connector['name'], '&')));
+        }
+        else{
+            return null;
+        }
+    }
+
+    /**
+     *  getSourceForConnector
+     *  returns the source for a given connector if it exists
+     */
+    public function getSourceForConnector($connector) {
+        if (isset($connector['id'])){
+            return SourceFactory::getSource($connector['id']);
+        }
+        else{
+            return null;
+        }
+    }
+
+
+    /**
+     * getValidConnectors
+     * Returns an Array of the connectors if they either don't require a test, or passed their test.
+     * Also adds an 'auth' element that is true if user is logged in with the connector.
+     *
+     * @returns mixed $connectors Array of the connector entries found that satisfy the criteria
+     */
+    public function getValidConnectors($allConnectors)
+    {
+        require_once('include/connectors/sources/SourceFactory.php');
+        $validConnectors = array();
+
+        foreach ($allConnectors as $connector){
+            $eapmBean = $this->getEAPMForConnector($connector);
+            $connector['auth'] = !empty($eapmBean->id);
+
+            $source = $this->getSourceForConnector($connector);
+            if (isset($source)){
+                if (!$source->hasTestingEnabled()){
+                    $validConnectors[] = $connector;
+                }
+                else if ($source->test()){
+                    $validConnectors[] = $connector;
+                }
+            }
+        }
+
+        return $validConnectors;
+    }
+
+    /**
      * Save connectors array to file
      * @param array $connectors Source data to write
      * @param string $toFile filename to use
