@@ -445,9 +445,11 @@
         app.alert.show('massexport_loading', {level: 'process', title: app.lang.getAppString('LBL_LOADING')});
         var params = {
             timeperiod_id: this.selectedTimeperiod,
-            user_id: this.selectedUser.id
+            user_id: this.selectedUser.id,
+            filters: this.filters,
+            platform: app.config.platform
         };
-        var url = app.api.buildURL(this.module, 'export/', null, params);
+        var url = app.api.buildURL(this.module, 'export', null, params);
 
         app.api.fileDownload(url, {
             complete: function(data) {
