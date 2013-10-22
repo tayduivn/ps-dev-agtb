@@ -143,6 +143,7 @@ class Contact extends Person {
         'note_id'=>'notes',
         'task_id'=>'tasks',
         'opportunity_id'=>'opportunities',
+        'contacts_users_id' => 'user_sync',
     );
 
 
