@@ -882,15 +882,6 @@ $dictionary['User'] = array(
             'link_type'=>'one',
             'vname'=>'LBL_FORECASTS',
         ),
-        'worksheets' =>
-        array (
-            'name' => 'worksheets',
-            'type' => 'link',
-            'relationship' => 'users_worksheets',
-            'source'=>'non-db',
-            'link_type'=>'one',
-            'vname'=>'LBL_WORKSHEETS',
-        ),
 //END SUGARCRM flav=pro ONLY
 
     'preferred_language' =>
@@ -1024,17 +1015,6 @@ $dictionary['User'] = array(
             'relationship_role_column_value'=>'Direct'
         ),
 
-        'users_worksheets' => array(
-            'rhs_module'		=> 'Worksheet',
-            'rhs_table'			=> 'worksheet',
-            'rhs_key'			=> 'related_id',
-            'lhs_module'		=> 'Users',
-            'lhs_table'			=> 'users',
-            'lhs_key'			=> 'id',
-            'relationship_type'	=> 'one-to-many',
-            'relationship_role_column'=>'related_forecast_type',
-            'relationship_role_column_value'=>'Direct'
-        ),
         'users_team_sets' => array (
             'lhs_module'        => 'Teams',
             'lhs_table'         => 'teams',
