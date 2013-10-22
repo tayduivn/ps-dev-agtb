@@ -3143,7 +3143,7 @@ class SugarBean
     * @param string $order_by
     * @param string $where Additional where clause
     * @param int $row_offset Optaional,default 0, starting row number
-    * @param init $limit Optional, default -1
+    * @param int $limit Optional, default -1
     * @param int $max Optional, default -1
     * @param boolean $show_deleted Optional, default 0, if set to 1 system will show deleted records.
     * @return array Fetched data.
@@ -3255,7 +3255,7 @@ class SugarBean
     * @param string $order_by
     * @param string $where Additional where clause
     * @param int $row_offset Optaional,default 0, starting row number
-    * @param init $limit Optional, default -1
+    * @param int $limit Optional, default -1
     * @param int $max Optional, default -1
     * @param boolean $show_deleted Optioanl, default 0, if set to 1 system will show deleted records.
     * @return array Fetched data.
