@@ -95,14 +95,17 @@
      * @param {Boolean} silent
      */
     handleChange: function(linkModuleName, linkName, silent) {
+        //this.layout is the filter layout which filter-module-dropdown view
+        //is a child of; we use it here as it has a last_state key in its meta
+        var cacheKey = app.user.lastState.key('subpanels-last', this.layout);
         if (linkName === "all_modules") {
             this.layout.trigger("subpanel:change");
-            // Fixes SP-836; esentially, we need to clear subpanel:last:<module> anytime 'All' selected
-            app.cache.cut("subpanels:last:" + this.module);
+            // Fixes SP-836; esentially, we need to clear subpanel-last-<module> anytime 'All' selected
+            app.user.lastState.remove(cacheKey);
         } else if (linkName && linkName !=='all_modules') {
             this.layout.trigger("filter:create:close");
             this.layout.trigger("subpanel:change", linkName);
-            app.cache.set("subpanels:last:"+ app.controller.context.get('module'), linkName);
+            app.user.lastState.set(cacheKey, linkName);
         }
 
         if (this.filterNode) {
