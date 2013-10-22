@@ -45,7 +45,7 @@ require_once('include/utils/progress_bar_utils.php');
 
 require_once('ModuleInstall/ModuleScanner.php');
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
-
+require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 define('DISABLED_PATH', 'Disabled');
 
 class ModuleInstaller{
@@ -2005,8 +2005,6 @@ private function dir_file_count($path){
      * return null
      */
 	function addFieldsToLayout($layoutAdditions) {
-	    require_once 'modules/ModuleBuilder/parsers/ParserFactory.php' ;
-
         // these modules either lack editviews/detailviews or use custom mechanisms for the editview/detailview.
         // In either case, we don't want to attempt to add a relate field to them
         // would be better if GridLayoutMetaDataParser could handle this gracefully, so we don't have to maintain this list here
@@ -2035,8 +2033,6 @@ private function dir_file_count($path){
 	}
 
 	function removeFieldsFromLayout($layoutAdditions) {
-	require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
-
         // these modules either lack editviews/detailviews or use custom mechanisms for the editview/detailview.
         // In either case, we don't want to attempt to add a relate field to them
         // would be better if GridLayoutMetaDataParser could handle this gracefully, so we don't have to maintain this list here
@@ -2046,10 +2042,16 @@ private function dir_file_count($path){
         {
             if ( ! in_array( strtolower ( $deployedModuleName ) , $invalidModules ) )
             {
-                foreach ( array ( MB_EDITVIEW , MB_DETAILVIEW ) as $view )
-                {
+                // Handle decision making on views for BWC/non-BWC modules
+                if (isModuleBWC($deployedModuleName)) {
+                    $views = array(MB_EDITVIEW, MB_DETAILVIEW);
+                } else {
+                    $views = array(MB_RECORDVIEW);
+                }
+                
+                foreach ($views as $view) {
                     $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": adding $fieldName to $view layout for module $deployedModuleName" ) ;
-                    $parser = new GridLayoutMetaDataParser ( $view, $deployedModuleName ) ;
+                    $parser = ParserFactory::getParser($view, $deployedModuleName);
                     $parser->removeField ( $fieldName ) ;
                     $parser->handleSave ( false ) ;
                 }

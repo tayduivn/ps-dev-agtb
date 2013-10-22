@@ -387,19 +387,15 @@ class UndeployedRelationships extends AbstractRelationships implements Relations
         foreach ( $layoutAdditions as $deployedModuleName => $fieldName )
         {
             if ( ! in_array( strtolower ( $deployedModuleName ) , $invalidModules ) ) {
-                foreach ( array ( MB_EDITVIEW , MB_DETAILVIEW ) as $view )
+                $parsedName = self::parseDeployedModuleName ( $deployedModuleName ) ;
+                if (! isset ( $parsedName [ 'packageName' ] ))
                 {
-                    $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": adding $fieldName to $view layout for module $deployedModuleName" ) ;
-                    $parsedName = self::parseDeployedModuleName ( $deployedModuleName ) ;
-                    if (! isset ( $parsedName [ 'packageName' ] ))
-                    {
-                        $fieldsToAdd [$parsedName [ 'moduleName' ]] = $fieldName;
-                    } 
-                    //Bug 22348: We should add in the field for custom modules not in this package, if they have been deployed.
-                    else if ($parsedName [ 'packageName' ] != $this->packageName 
-                            && isset ( $GLOBALS [ 'beanList' ] [ $deployedModuleName ])){
-                        $fieldsToAdd [$deployedModuleName] = $fieldName;
-                    }
+                    $fieldsToAdd [$parsedName [ 'moduleName' ]] = $fieldName;
+                } 
+                //Bug 22348: We should add in the field for custom modules not in this package, if they have been deployed.
+                else if ($parsedName [ 'packageName' ] != $this->packageName 
+                        && isset ( $GLOBALS [ 'beanList' ] [ $deployedModuleName ])){
+                    $fieldsToAdd [$deployedModuleName] = $fieldName;
                 }
         	}
         }

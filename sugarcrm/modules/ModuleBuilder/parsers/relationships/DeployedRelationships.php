@@ -25,7 +25,7 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
 require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationships.php' ;
 require_once 'modules/ModuleBuilder/parsers/relationships/RelationshipsInterface.php' ;
 require_once 'modules/ModuleBuilder/parsers/relationships/RelationshipFactory.php' ;
-
+require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 
 class DeployedRelationships extends AbstractRelationships implements RelationshipsInterface
 {
@@ -370,22 +370,27 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
      */
     protected function saveFieldsToLayouts ($basepath , $dummy , $relationshipName , $layoutAdditions)
     {
-        require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
-
         // these modules either lack editviews/detailviews or use custom mechanisms for the editview/detailview. In either case, we don't want to attempt to add a relate field to them
         // would be better if GridLayoutMetaDataParser could handle this gracefully, so we don't have to maintain this list here
         $invalidModules = array ( 'emails' , 'kbdocuments' ) ;
 
         foreach ( $layoutAdditions as $deployedModuleName => $fieldName )
         {
-            if (! in_array ( strtolower ( $deployedModuleName ), $invalidModules ))
-                foreach ( array ( MB_EDITVIEW , MB_DETAILVIEW ) as $view )
-                {
+            if (! in_array ( strtolower ( $deployedModuleName ), $invalidModules )) {
+                // Handle decision making on views for BWC/non-BWC modules
+                if (isModuleBWC($deployedModuleName)) {
+                    $views = array(MB_EDITVIEW, MB_DETAILVIEW);
+                } else {
+                    $views = array(MB_RECORDVIEW);
+                }
+                
+                foreach ($views as $view) {
                     $GLOBALS [ 'log' ]->info ( get_class ( $this ) . ": adding $fieldName to $view layout for module $deployedModuleName" ) ;
-                    $parser = new GridLayoutMetaDataParser ( $view, $deployedModuleName ) ;
+                    $parser = ParserFactory::getParser($view, $deployedModuleName);
                     $parser->addField ( array ( 'name' => $fieldName ) ) ;
                     $parser->handleSave ( false ) ;
                 }
+            }
         }
     }
 
@@ -406,12 +411,17 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
         $successful = true ;
         $layoutAdditions = $relationship->buildFieldsToLayouts () ;
 
-        require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
         foreach ( $layoutAdditions as $deployedModuleName => $fieldName )
         {
-            foreach ( array ( MB_EDITVIEW , MB_DETAILVIEW ) as $view )
-            {
-                $parser = new GridLayoutMetaDataParser ( $view, $deployedModuleName ) ;
+            // Handle decision making on views for BWC/non-BWC modules
+            if (isModuleBWC($deployedModuleName)) {
+                $views = array(MB_EDITVIEW, MB_DETAILVIEW);
+            } else {
+                $views = array(MB_RECORDVIEW);
+            }
+            
+            foreach ($views as $view) {
+                $parser = ParserFactory::getParser($view, $deployedModuleName);
                 $parser->removeField ( $fieldName );
                 $parser->handleSave ( false ) ;
 
