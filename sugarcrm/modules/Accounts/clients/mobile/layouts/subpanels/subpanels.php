@@ -80,6 +80,7 @@ $viewdefs['Accounts']['mobile']['layout']['subpanels'] = array(
             ),
             'linkable' => false,
             'creatable' => false,
+            'unlinkable' => false,
         ),
         array(
             'layout' => 'subpanel',
