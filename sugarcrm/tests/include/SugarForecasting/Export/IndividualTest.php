@@ -199,7 +199,7 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         $args['user_id'] = $this->repData['id'];
         $obj = new SugarForecasting_Export_Individual($args);
 
-        $this->assertRegExp("/\_rep\_forecast.csv$/", $obj->getFilename());
+        $this->assertRegExp("/\_rep\_forecast$/", $obj->getFilename());
     }
 
     /**
