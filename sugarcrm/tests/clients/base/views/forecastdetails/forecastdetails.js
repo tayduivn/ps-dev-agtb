@@ -776,11 +776,11 @@ describe("Base.View.Forecastdetails", function() {
         beforeEach(function() {
             view.quotaCollection = new Backbone.Collection();
             view.quotaCollection.add(new Backbone.Model({
-                id: 'id1',
+                user_id: 'id1',
                 quota: 1000
             }));
             view.quotaCollection.add(new Backbone.Model({
-                id: 'id2',
+                user_id: 'id2',
                 quota: 500
             }));
             view.currentModule = 'Forecasts';

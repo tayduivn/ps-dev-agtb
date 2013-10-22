@@ -314,12 +314,12 @@
             this.quotaCollection.on('reset', this.processQuotaCollection, this);
 
             this.quotaCollection.on('change:quota', function(data) {
-                var oldQuota = (this.getOldTotalFromCollectionById(data.get('id'))) ? this.getOldTotalFromCollectionById(data.get('id')).quota : 0,
+                var oldQuota = (this.getOldTotalFromCollectionById(data.get('user_id'))) ? this.getOldTotalFromCollectionById(data.get('user_id')).quota : 0,
                     newQuota = data.get('quota'),
                     diff = app.math.sub(data.get('quota'), oldQuota),
                     newQuotaTotal = app.math.add(this.serverData.get('quota_amount'), diff);
                 // set the new "oldTotals" value
-                this.setOldTotalFromCollectionById(data.get('id'), {quota: newQuota});
+                this.setOldTotalFromCollectionById(data.get('user_id'), {quota: newQuota});
                 // calculate and update the Quota on the frontend
                 this.calculateData({quota_amount: newQuotaTotal});
             }, this);
@@ -427,7 +427,7 @@
             quota = model.get('quota');
             newQuota = app.math.add(newQuota, quota);
             // save all the initial likely values
-            this.setOldTotalFromCollectionById(model.get('id'), {
+            this.setOldTotalFromCollectionById(model.get('user_id'), {
                 quota: quota
             });
         }, this);
