@@ -166,10 +166,6 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
             'parent_link'
         );
 
-        global $current_language;
-        $current_module_strings = return_module_language($current_language, 'Forecasts');
-        $parent['data'] = $current_module_strings['LBL_TREE_PARENT'];
-
         // overwrite the whole attr array for the parent
         $parent['attr'] = array(
             'rel' => 'parent_link',
