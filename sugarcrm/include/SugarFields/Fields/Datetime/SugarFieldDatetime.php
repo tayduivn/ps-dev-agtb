@@ -363,7 +363,10 @@ class SugarFieldDatetime extends SugarFieldBase {
             return;
         }
 
-        $date = $timedate->fromDbType($bean->$fieldName,$properties['type']);
+        $theDate = (!empty($bean->fetched_row[$fieldName])) ? $bean->fetched_row[$fieldName] : $bean->$fieldName;
+
+        $date = $timedate->fromDbType($theDate,$properties['type']);
+
         if ( $date == null ) {
             // Could not parse date... try User format
             $date = $timedate->fromUserType($bean->$fieldName,$properties['type']);

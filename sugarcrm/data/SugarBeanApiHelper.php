@@ -289,14 +289,17 @@ class SugarBeanApiHelper
             // bean is either empty or new, no conflict
             return true;
         }
+
+        $dateToCheck = (!empty($bean->fetched_row['date_modified'])) ? $bean->fetched_row['date_modified'] : $bean->date_modified;
+
         $timedate = TimeDate::getInstance();
         $ts_client = $timedate->fromIso($timestamp);
         if(empty($ts_client)) {
             throw new SugarApiExceptionInvalidParameter("Bad timestamp $timestamp");
         }
-        $ts_server = $timedate->fromDb($bean->date_modified);
+        $ts_server = $timedate->fromDb($dateToCheck);
         if(empty($ts_server)) {
-            $ts_server = $timedate->fromUser($bean->date_modified);
+            $ts_server = $timedate->fromUser($dateToCheck);
         }
         if(empty($ts_server)) {
             // Bean timestamp is incomprehensible, defaulting to no conflict
