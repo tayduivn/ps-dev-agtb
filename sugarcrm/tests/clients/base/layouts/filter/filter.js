@@ -20,15 +20,15 @@
 
 describe("Base.Layout.Filter", function () {
 
-    var app, layout, stubCache;
+    var app, layout, sinonSandbox;
 
     beforeEach(function () {
         app = SugarTest.app;
-        stubCache = undefined;
+        sinonSandbox = sinon.sandbox.create();
     });
 
     afterEach(function () {
-        if(stubCache) stubCache.restore();
+        sinonSandbox.restore();
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
@@ -46,7 +46,7 @@ describe("Base.Layout.Filter", function () {
 
         describe('events', function () {
             it('should call apply on filter:apply', function () {
-                var stub = sinon.stub(layout, 'applyFilter');
+                var stub = sinonSandbox.stub(layout, 'applyFilter');
                 // clear previous events
                 layout.off();
                 // replace the original fn with the spy
@@ -54,7 +54,6 @@ describe("Base.Layout.Filter", function () {
 
                 layout.trigger('filter:apply');
                 expect(stub).toHaveBeenCalled();
-                stub.restore();
             });
 
             it('should null the parent layout editing filter and trigger parent layout filter:create:close', function () {
@@ -80,7 +79,7 @@ describe("Base.Layout.Filter", function () {
                 expect(spy).toHaveBeenCalled();
             });
             it('should call initialize filter state on filter:get', function () {
-                var stub = sinon.stub(layout, 'initializeFilterState');
+                var stub = sinonSandbox.stub(layout, 'initializeFilterState');
                 // clear previous events
                 layout.off();
                 // replace the original fn with the spy
@@ -88,10 +87,9 @@ describe("Base.Layout.Filter", function () {
 
                 layout.trigger('filter:get');
                 expect(stub).toHaveBeenCalled();
-                stub.restore();
             });
             it('should trigger layout filter apply on parent layout filter:apply', function () {
-                var stub = sinon.stub(layout, 'initializeFilterState');
+                var stub = sinonSandbox.stub(layout, 'initializeFilterState');
                 // clear previous events
                 layout.off();
                 // replace the original fn with the spy
@@ -99,10 +97,9 @@ describe("Base.Layout.Filter", function () {
 
                 layout.trigger('filter:get');
                 expect(stub).toHaveBeenCalled();
-                stub.restore();
             });
             it('should call handleFilterPanelChange on parent layout filterpanel:change', function () {
-                var stub = sinon.stub(layout, 'handleFilterPanelChange');
+                var stub = sinonSandbox.stub(layout, 'handleFilterPanelChange');
                 // clear previous events
                 layout.off();
                 parentLayout.off();
@@ -111,23 +108,40 @@ describe("Base.Layout.Filter", function () {
 
                 parentLayout.trigger('filterpanel:change');
                 expect(stub).toHaveBeenCalled();
-                stub.restore();
             });
-            it('should call addFilter  on parent layout filter:add', function () {
-                var stub = sinon.stub(layout, 'addFilter', function () {
+            describe('addFilter', function() {
+                var lastStateStub, setLastFilterStub, clearFilterEditStateStub, layoutTriggerStub;
+                beforeEach(function() {
+                    lastStateStub = sinonSandbox.stub(app.user.lastState, 'set');
+                    setLastFilterStub = sinonSandbox.stub(layout, 'setLastFilter');
+                    clearFilterEditStateStub = sinonSandbox.stub(layout, 'clearFilterEditState');
                 });
-                // clear previous events
-                layout.off();
-                parentLayout.off();
-                // replace the original fn with the spy
-                layout.initialize(layout.options);
+                it('should be called by parent layout', function() {
+                    var addFilterStub = sinonSandbox.stub(layout, 'addFilter');
+                    
+                    // clear previous events
+                    layout.off();
+                    parentLayout.off();
+                    // replace the original fn with the spy
+                    layout.initialize(layout.options);
 
-                parentLayout.trigger('filter:add');
-                expect(stub).toHaveBeenCalled();
-                stub.restore();
+                    parentLayout.trigger('filter:add');
+                    expect(addFilterStub).toHaveBeenCalled();
+                });
+                it('should add the filter, update saved filters, set last state, clear edit state and reinitialize"',
+                    function() {
+                        layoutTriggerStub = sinonSandbox.stub(layout.layout, 'trigger');
+                        layout.addFilter(new Backbone.Model({id: 'new_filter'}));
+                        expect(layout.filters.get('new_filter')).toBeDefined();
+                        expect(lastStateStub).toHaveBeenCalled();
+                        expect(clearFilterEditStateStub).toHaveBeenCalled();
+                        expect(layoutTriggerStub).toHaveBeenCalled();
+                        expect(layoutTriggerStub).toHaveBeenCalledWith('filter:reinitialize');
+                    }
+                );
             });
             it('should call removeFilter  on parent layout filter:remove', function () {
-                var stub = sinon.stub(layout, 'removeFilter');
+                var stub = sinonSandbox.stub(layout, 'removeFilter');
                 // clear previous events
                 layout.off();
                 parentLayout.off();
@@ -136,10 +150,9 @@ describe("Base.Layout.Filter", function () {
 
                 parentLayout.trigger('filter:remove');
                 expect(stub).toHaveBeenCalled();
-                stub.restore();
             });
             it('should call initializeFilterState  on parent layout filter:remove', function () {
-                var stub = sinon.stub(layout, 'initializeFilterState');
+                var stub = sinonSandbox.stub(layout, 'initializeFilterState');
                 // clear previous events
                 layout.off();
                 parentLayout.off();
@@ -148,13 +161,12 @@ describe("Base.Layout.Filter", function () {
 
                 parentLayout.trigger('filter:reinitialize');
                 expect(stub).toHaveBeenCalled();
-                stub.restore();
             });
         });
 
         it('should remove filters', function () {
             var model = new Backbone.Model({id: '123'});
-            stubCache = sinon.stub(app.user.lastState, 'set');
+            var stubCache = sinonSandbox.stub(app.user.lastState, 'set');
             layout.filters.add(model);
             parentLayout.off();
             var spy = sinon.spy();
@@ -170,7 +182,7 @@ describe("Base.Layout.Filter", function () {
 
         it('should add filters', function () {
             var model = new Backbone.Model({id: '123'});
-            stubCache = sinon.stub(app.user.lastState, 'set');
+            var stubCache = sinonSandbox.stub(app.user.lastState, 'set');
             layout.filters.add(model);
             parentLayout.off();
             var spy = sinon.spy();
@@ -188,24 +200,22 @@ describe("Base.Layout.Filter", function () {
             var spy2 = sinon.spy();
             layout.on("filter:render:module", spy1);
             layout.on("filter:change:module", spy2);
-            stubCache = sinon.stub(app.user.lastState, 'get');
-            var stubData = sinon.stub(app.data, 'getRelatedModule');
+            var stubCache = sinonSandbox.stub(app.user.lastState, 'get');
+            var stubData = sinonSandbox.stub(app.data, 'getRelatedModule');
 
             layout.handleFilterPanelChange('Accounts', true);
-
 
             sinon.assert.notCalled(stubCache);
             sinon.assert.notCalled(spy1);
             sinon.assert.notCalled(spy2);
-            stubData.restore();
         });
         it('should handle filter panel change for activity stream', function () {
             var spy1 = sinon.spy();
             var spy2 = sinon.spy();
             layout.on("filter:render:module", spy1);
             layout.on("filter:change:module", spy2);
-            stubCache = sinon.stub(app.user.lastState, 'get');
-            var stubData = sinon.stub(app.data, 'getRelatedModule');
+            var stubCache = sinonSandbox.stub(app.user.lastState, 'get');
+            var stubData = sinonSandbox.stub(app.data, 'getRelatedModule');
 
             layout.handleFilterPanelChange('activitystream', false);
 
@@ -214,8 +224,6 @@ describe("Base.Layout.Filter", function () {
             sinon.assert.notCalled(stubData);
             expect(spy1).toHaveBeenCalled();
             expect(spy2.getCall(0).args[0]).toEqual('Activities');
-
-            stubData.restore();
         });
         it('should handle filter panel change for related records', function () {
             var spy1 = sinon.spy();
@@ -223,11 +231,11 @@ describe("Base.Layout.Filter", function () {
             layout.layoutType = 'record';
             layout.on("filter:render:module", spy1);
             layout.on("filter:change:module", spy2);
-            stubCache = sinon.stub(app.user.lastState, 'get', function () {
-                return 'Bugs'
+            var stubCache = sinonSandbox.stub(app.user.lastState, 'get', function () {
+                return 'Bugs';
             });
-            var stubData = sinon.stub(app.data, 'getRelatedModule', function () {
-                return 'Test'
+            var stubData = sinonSandbox.stub(app.data, 'getRelatedModule', function () {
+                return 'Test';
             });
 
             layout.handleFilterPanelChange('Accounts', false);
@@ -235,27 +243,71 @@ describe("Base.Layout.Filter", function () {
             expect(spy1).toHaveBeenCalled();
             expect(spy2.getCall(0).args[1]).toEqual('Bugs');
             expect(spy2.getCall(0).args[0]).toEqual('Test');
+        });
+        describe('handleFilterChange', function() {
+            var ctxt, lastEditState, model;
+            var quicksearchSpy, stubCache, triggerStub, layoutTriggerStub, retrieveFilterEditStateStub;
+            beforeEach(function() {
+                ctxt = new Backbone.Model({collection: {
+                    resetPagination:function(){},
+                    reset: function(){}
+                }});
 
-            stubData.restore();
-        });
-        it('should handle filter change', function () {
-            var spy = sinon.spy();
-            var model = new Backbone.Model({id: '123', filter_definition: 'test'});
-            var ctxt = new Backbone.Model({collection: {
-                resetPagination:function(){},
-                reset: function(){}
-            }});
-            var contextListStub = sinon.stub(layout, 'getRelevantContextList', function () {
-                return [ctxt];
+                stubCache = sinonSandbox.stub(app.user.lastState, 'set');
+                sinonSandbox.stub(layout, 'getRelevantContextList', function () {
+                    return [ctxt];
+                });
+                triggerStub = sinonSandbox.stub(layout, 'trigger');
+                layoutTriggerStub = sinonSandbox.stub(layout.layout, 'trigger');
+
+                lastEditState = undefined;
+                retrieveFilterEditStateStub = sinonSandbox.stub(layout, 'retrieveFilterEditState', function() {
+                    return lastEditState;
+                });
+
+                model = new Backbone.Model({id: '123', filter_definition: 'test'});
+                layout.filters.add(model);
             });
-            layout.on('filter:clear:quicksearch', spy);
-            layout.filters.add(model);
-            stubCache = sinon.stub(app.user.lastState, 'set');
-            layout.handleFilterChange(model.get('id'), false);
-            expect(stubCache).toHaveBeenCalled();
-            expect(ctxt.get('collection').origFilterDef).toEqual(model.get('filter_definition'));
-            expect(spy).toHaveBeenCalled();
+            it('should save last filter into cache', function() {
+                layout.handleFilterChange(model.get('id'), false);
+                expect(stubCache).toHaveBeenCalled();
+                expect(layoutTriggerStub).not.toHaveBeenCalled();
+            });
+            it('should not save last filter into cache', function() {
+                layout.handleFilterChange(model.get('id'), true);
+                expect(stubCache).not.toHaveBeenCalled();
+                layout.handleFilterChange(undefined, false);
+                expect(stubCache).not.toHaveBeenCalled();
+            });
+            describe('preserving last search', function() {
+                it('should open the filter form if the edit state is available', function() {
+                    lastEditState = {name: 'test', filter_definition: [{'$favorite':''}]};
+                    layout.handleFilterChange(model.get('id'), false);
+                    expect(triggerStub).toHaveBeenCalled();
+                    expect(triggerStub).toHaveBeenCalledWith('filter:create:open');
+                    expect(layoutTriggerStub).toHaveBeenCalled();
+                    expect(layoutTriggerStub).toHaveBeenCalledWith('filter:create:validate');
+                });
+                it('should not open the filter form if no edit state available', function() {
+                    layout.handleFilterChange(model.get('id'), false);
+                    expect(triggerStub).not.toHaveBeenCalledWith('filter:create:open');
+                    expect(layoutTriggerStub).not.toHaveBeenCalled();
+                    expect(layoutTriggerStub).not.toHaveBeenCalledWith('filter:create:validate');
+                });
+            });
+            it('shoud determine if we need to clear the collection(s) and trigger quicksearch if yes', function() {
+                layout.handleFilterChange(model.get('id'), false);
+                expect(ctxt.get('collection').origFilterDef).toEqual(model.get('filter_definition'));
+                expect(triggerStub).toHaveBeenCalled();
+                expect(triggerStub).toHaveBeenCalledWith('filter:clear:quicksearch');
+            });
+            it('shoud determine if we need to clear the collection(s) and do nothing if no', function() {
+                ctxt.get('collection').origFilterDef = model.get('filter_definition');
+                layout.handleFilterChange(model.get('id'), false);
+                expect(triggerStub).not.toHaveBeenCalled();
+            });
         });
+
         it('should be able to apply a filter', function(){
             var ctxt = app.context.getContext();
             ctxt.set({
@@ -266,7 +318,7 @@ describe("Base.Layout.Filter", function () {
             ctxt.prepare();
             var _oResetPagination = ctxt.get('collection').resetPagination;
             ctxt.get('collection').resetPagination = function() {};
-            var stub = sinon.stub(ctxt,'loadData', function(options){options.success();});
+            var stub = sinonSandbox.stub(ctxt,'loadData', function(options){options.success();});
             var resetLoadFlagSpy = sinon.spy(ctxt,'resetLoadFlag');
             var query = 'test query';
             var testFilterDef = {
@@ -277,10 +329,10 @@ describe("Base.Layout.Filter", function () {
             };
             var spy = sinon.spy();
 
-            var contextListStub = sinon.stub(layout, 'getRelevantContextList', function () {
+            sinonSandbox.stub(layout, 'getRelevantContextList', function () {
                 return [ctxt];
             });
-            var getFilterStub = sinon.stub(layout,'buildFilterDef',function(){return testFilterDef1;});
+            sinonSandbox.stub(layout,'buildFilterDef',function(){return testFilterDef1;});
 
             app.events.on('preview:close', spy);
 
@@ -296,13 +348,12 @@ describe("Base.Layout.Filter", function () {
             ctxt.get('collection').resetPagination = _oResetPagination;
         });
         it('should be able to add or remove a clear icon depending on the quicksearch field', function() {
-            var ctxListStub = sinon.stub(layout, 'getRelevantContextList', function() { return []; });
+            sinonSandbox.stub(layout, 'getRelevantContextList', function() { return []; });
             layout.$el = $('<div></div>');
             layout.applyFilter('not empty');
             expect(layout.$('.add-on.icon-remove')[0]).not.toBeUndefined();
             layout.applyFilter('');
             expect(layout.$('.add-on.icon-remove')[0]).toBeUndefined();
-            ctxListStub.restore();
         });
         it('should get relevant context lists for activities', function(){
             layout.showingActivities = true;
@@ -410,7 +461,9 @@ describe("Base.Layout.Filter", function () {
 
             ctxt.prepare();
 
-            sinon.stub(layout,'getModuleQuickSearchFields',function(){return {'name':'name'}});
+            sinonSandbox.stub(layout, 'getModuleQuickSearchFields', function() {
+                return {'name': 'name'};
+            });
             var builtDef = layout.buildFilterDef(odef,searchTerm,ctxt);
             expect(builtDef).toEqual(result);
         });
@@ -443,7 +496,9 @@ describe("Base.Layout.Filter", function () {
 
             ctxt.prepare();
 
-            sinon.stub(layout,'getModuleQuickSearchFields',function(){return {'name':'name'}});
+            sinonSandbox.stub(layout, 'getModuleQuickSearchFields', function() {
+                return {'name': 'name'};
+            });
             var builtDef = layout.buildFilterDef(odef,searchTerm,ctxt);
             expect(builtDef).toEqual(result);
         });
@@ -472,39 +527,59 @@ describe("Base.Layout.Filter", function () {
 
             ctxt.prepare();
 
-            sinon.stub(layout,'getModuleQuickSearchFields',function(){return {'name':'name','last_name':'last_name'}});
+            sinonSandbox.stub(layout, 'getModuleQuickSearchFields', function() {
+                return {'name': 'name', 'last_name': 'last_name'};
+            });
             var builtDef = layout.buildFilterDef(odef,searchTerm,ctxt);
             expect(builtDef).toEqual(result);
         });
-        it('should init filter state', function(){
-            var testFilter = new Backbone.Model({'id': 'testFilter'});
-            layout.filters.add(testFilter);
-            stubCache = sinon.stub(app.user.lastState, 'get', function () {
-                return 'testFilter';
+        describe('initializeFilterState', function() {
+            var lastStateFilter;
+            var stubCache, nextCallStub;
+            beforeEach(function() {
+                lastStateFilter = undefined;
+                stubCache = sinonSandbox.stub(app.user.lastState, 'get', function() {
+                    return lastStateFilter;
+                });
+                nextCallStub = sinonSandbox.stub(layout, 'applyPreviousFilter');
+                // Add the test filter to the filter collection
+                layout.filters.add(new Backbone.Model({'id': 'testFilter'}));
             });
-            var nextCallStub = sinon.stub(layout,'applyPreviousFilter');
-            var expected = ['Accounts',undefined,{'filter':'testFilter'}];
+            it('should apply last filter and not specify link because not on record layout (ie subpanels)', function() {
+                lastStateFilter = 'testFilter';
 
-            layout.initializeFilterState('Accounts');
-            expect(nextCallStub.getCall(0).args).toEqual(expected);
-            layout.layoutType = 'record';
-            layout.showingActivities = false;
-            expected = ['Accounts','testFilter',{'link':'testFilter','filter':'testFilter'}];
-            layout.initializeFilterState('Accounts');
-            expect(nextCallStub.getCall(1).args).toEqual(expected);
-            stubCache.restore();
-            stubCache = sinon.stub(app.user.lastState, 'get');
-            expected = ['Accounts',undefined,{'link':'all_modules','filter':'all_records'}];
-            layout.initializeFilterState('Accounts');
-            expect(nextCallStub.getCall(2).args).toEqual(expected);
+                var expected = ['Accounts', undefined, {'filter': 'testFilter'}];
+                layout.initializeFilterState('Accounts');
+                expect(nextCallStub.lastCall.args).toEqual(expected);
+            });
+            it('should apply subpanel link and filter when a subpanel filter is specified', function() {
+                layout.layoutType = 'record';
+                layout.showingActivities = false;
+                lastStateFilter = 'testFilter';
+
+                var expected = ['Accounts', 'testFilter', {'link': 'testFilter', 'filter': 'testFilter'}];
+                layout.initializeFilterState('Accounts');
+                expect(nextCallStub.lastCall.args).toEqual(expected);
+            });
+            it('should apply "all_modules" link and  "all_records" filter when last subpanel filter not specified',
+                function() {
+                    layout.layoutType = 'record';
+                    layout.showingActivities = false;
+
+                    var expected = ['Accounts', undefined, {'link': 'all_modules', 'filter': 'all_records'}];
+                    layout.initializeFilterState('Accounts');
+                    expect(nextCallStub.lastCall.args).toEqual(expected);
+                }
+            );
         });
+
         it('should be able to apply the previous filter when not showing activites', function(){
             var modName = 'Accounts';
             var linkName = undefined;
             var data = {'filter':'testFilter'};
             var expectedTriggerArgs = [modName,linkName,true];
             var spy = sinon.spy();
-            var getFilterSpy = sinon.stub(layout,'getFilters');
+            var getFilterSpy = sinonSandbox.stub(layout,'getFilters');
             layout.off();
             layout.on('filter:change:module',spy);
             layout.applyPreviousFilter(modName, linkName, data);
@@ -520,10 +595,10 @@ describe("Base.Layout.Filter", function () {
         it('should get filters from cache', function(){
             var modName = 'Accounts';
             var defaultName = 'testDefault';
-            var handleFilterRetrieveStub = sinon.stub(layout, 'handleFilterRetrieve');
+            var handleFilterRetrieveStub = sinonSandbox.stub(layout, 'handleFilterRetrieve');
             var baseController = app.view._getController({type:'layout',name:'filter'});
             baseController.loadedModules[modName] = true;
-            stubCache = sinon.stub(app.user.lastState, 'get', function () {
+            sinonSandbox.stub(app.user.lastState, 'get', function () {
                 return [{id:'1234'},{id:'123'}];
             });
 
@@ -535,16 +610,85 @@ describe("Base.Layout.Filter", function () {
         it('should get filters from the server', function(){
             var modName = 'TestModule';
             var defaultName = 'testDefault';
-            var handleFilterRetrieveStub = sinon.stub(layout, 'handleFilterRetrieve');
-            var filterFetchStub = sinon.stub(layout.filters,'fetch', function(options){options.success();});
+            var handleFilterRetrieveStub = sinonSandbox.stub(layout, 'handleFilterRetrieve');
+            sinonSandbox.stub(layout.filters,'fetch', function(options){options.success();});
             var baseController = app.view._getController({type:'layout',name:'filter'});
 
             layout.getFilters(modName, defaultName);
             expect(baseController.loadedModules[modName]).toBeTruthy();
             expect(handleFilterRetrieveStub.getCall(0).args).toEqual([modName,defaultName]);
         });
+        describe('handleFilterRetrieve', function() {
+            var lastFilter, moduleName = 'TestModule';
+            var getLastFilterCalls, returnUndefinedOnSecondCall;
+            var clearLastFilterStub, triggerStub, layoutTriggerStub;
+            beforeEach(function() {
+                var meta = {
+                    basic: {
+                        meta: {
+                            filters: [
+                                {
+                                    id: 'favorites',
+                                    filter_definition: [
+                                        {'$favorites': ''}
+                                    ]
+                                },
+                                {
+                                    id: 'owner',
+                                    filter_definition: [
+                                        {'$owner': ''}
+                                    ]
+                                }
+                            ],
+                            'default_filter': 'owner'
+                        }
+                    }
+                };
+                lastFilter = undefined;
+                getLastFilterCalls = 0;
+                returnUndefinedOnSecondCall = false;
+                sinonSandbox.stub(layout, 'getLastFilter', function() {
+                    getLastFilterCalls++;
+                    return returnUndefinedOnSecondCall && getLastFilterCalls === 2 ? undefined : lastFilter;
+                });
+                sinonSandbox.stub(layout, 'getModuleFilterMeta', function() { return meta; });
+                clearLastFilterStub = sinonSandbox.stub(layout, 'clearLastFilter');
+                triggerStub = sinonSandbox.stub(layout, 'trigger');
+                layoutTriggerStub = sinonSandbox.stub(layout.layout, 'trigger');
+            });
+            it('should retrieve the default filter from metadata if last filter and defaultId not specified', function() {
+                layout.handleFilterRetrieve(moduleName);
+                expect(clearLastFilterStub).not.toHaveBeenCalled();
+                expect(triggerStub).toHaveBeenCalledWith('filter:change:filter', 'owner');
+            });
+            it('should ensure possible filters are in the filters collection', function() {
+                layout.handleFilterRetrieve(moduleName, 'random_test');
+                expect(clearLastFilterStub).not.toHaveBeenCalled();
+                expect(triggerStub).toHaveBeenCalledWith('filter:change:filter', 'owner');
+            });
+            it('should retrieve the last filter if available in the filter collection', function() {
+                lastFilter = 'my_filter';
+                layout.filters.add({id: 'my_filter'});
+                layout.handleFilterRetrieve(moduleName);
+                expect(clearLastFilterStub).not.toHaveBeenCalled();
+                expect(triggerStub).toHaveBeenCalledWith('filter:change:filter', 'my_filter');
+            });
+            it('should clear last filter if not found in the filter collection', function() {
+                lastFilter = 'random_test';
+                returnUndefinedOnSecondCall = true;
+                layout.handleFilterRetrieve(moduleName, 'random_test');
+                expect(clearLastFilterStub).toHaveBeenCalled();
+                expect(triggerStub).toHaveBeenCalledWith('filter:change:filter', 'owner');
+            });
+            it('should not clear last filter if filter id is equal to create', function() {
+                lastFilter = 'create';
+                layout.handleFilterRetrieve(moduleName);
+                expect(clearLastFilterStub).not.toHaveBeenCalled();
+                expect(triggerStub).toHaveBeenCalledWith('filter:change:filter', 'create');
+            });
+        });
         it('should handle filter retrieve', function(){
-            stubCache = sinon.stub(app.user.lastState, 'get', function () {
+            sinonSandbox.stub(app.user.lastState, 'get', function () {
                 return 'testID';
             });
             var modName = 'Accounts';
@@ -560,52 +704,23 @@ describe("Base.Layout.Filter", function () {
             expect(spy1).toHaveBeenCalled();
             expect(spy2).toHaveBeenCalled();
         });
-        it('should be able to check can create', function(){
-            var ctxt = new Backbone.Model({collection: {}, module:'Accounts'});
-            var contextListStub = sinon.stub(layout, 'getRelevantContextList', function () {
-                return [ctxt];
+        describe('canCreateFilter', function() {
+            var hasAccess, metadata;
+            beforeEach(function() {
+                var ctxt = new Backbone.Model({collection: {}, module: 'Accounts'});
+                sinonSandbox.stub(layout, 'getRelevantContextList', function() {
+                    return [ctxt];
+                });
+                sinonSandbox.stub(app.acl, 'hasAccess', function() {
+                    return hasAccess;
+                });
+                sinonSandbox.stub(app.metadata, 'getModule', function() {
+                    return metadata;
+                });
             });
-            var aclStub =sinon.stub(app.acl,'hasAccess', function(){
-                return true;
-            });
-            var metaStub = sinon.stub(app.metadata, 'getModule', function(){
-                    return {
-                        'filters': {
-                            'f1': {
-                                'meta': {
-                                    'create': true
-                                }
-                            }
-                        }
-                    };
-            });
-
-            expect(layout.canCreateFilter()).toBeTruthy();
-            metaStub.restore();
-            aclStub.restore();
-            var aclStub =sinon.stub(app.acl,'hasAccess', function(){
-                return true;
-            });
-            var metaStub = sinon.stub(app.metadata, 'getModule', function(){
-                return {
-                    'filters': {
-                        'f1': {
-                            'meta': {
-                                'create': false
-                            }
-                        }
-                    }
-                };
-            });
-
-            expect(layout.canCreateFilter()).toBeFalsy();
-            metaStub.restore();
-            aclStub.restore();
-            var aclStub =sinon.stub(app.acl,'hasAccess', function(){
-                return false;
-            });
-            var metaStub = sinon.stub(app.metadata, 'getModule', function(){
-                return {
+            it('should return true because user has access and it is enabled in the metadata', function() {
+                hasAccess = true;
+                metadata = {
                     'filters': {
                         'f1': {
                             'meta': {
@@ -614,15 +729,39 @@ describe("Base.Layout.Filter", function () {
                         }
                     }
                 };
+                expect(layout.canCreateFilter()).toBeTruthy();
             });
-
-            expect(layout.canCreateFilter()).toBeFalsy();
-            metaStub.restore();
-            aclStub.restore();
+            it('should return false because it is set to false in the metadata', function() {
+                hasAccess = true;
+                metadata = {
+                    'filters': {
+                        'f1': {
+                            'meta': {
+                                'create': false
+                            }
+                        }
+                    }
+                };
+                expect(layout.canCreateFilter()).toBeFalsy();
+            });
+            it('should return false because user has no access', function() {
+                hasAccess = false;
+                metadata = {
+                    'filters': {
+                        'f1': {
+                            'meta': {
+                                'create': true
+                            }
+                        }
+                    }
+                };
+                expect(layout.canCreateFilter()).toBeFalsy();
+            });
         });
+
         it('should get module filter meta', function () {
             var result = {'test': 'test'};
-            var metadataStub = sinon.stub(app.metadata, 'getModule', function () {
+            sinonSandbox.stub(app.metadata, 'getModule', function () {
                 return {
                     filters: result
                 };
@@ -630,19 +769,16 @@ describe("Base.Layout.Filter", function () {
 
             var meta = layout.getModuleFilterMeta('Accounts');
             expect(meta).toEqual(result);
-            metadataStub.restore();
         });
         it('should init filter state on render', function () {
-            var initStub = sinon.stub(layout, 'initializeFilterState');
-
+            var initStub = sinonSandbox.stub(layout, 'initializeFilterState');
             layout._render();
-
             expect(initStub).toHaveBeenCalled();
         });
         it('should clear filters on unbind', function () {
             var oFilters = layout.filters;
             layout.filters = new Backbone.Collection();
-            var spy = sinon.spy(layout.filters, 'off');
+            var spy = sinonSandbox.spy(layout.filters, 'off');
 
             layout.unbind();
             expect(layout.filters).toEqual(null);
@@ -650,31 +786,98 @@ describe("Base.Layout.Filter", function () {
             // restore filters that we destroyed
             layout.filters = oFilters;
         });
-        it('should cache filters', function(){
-            var expectedKey = 'Accounts:filter:last-test-test';
-            var expectedValue = 'tvalue'
-            stubCache = sinon.stub(app.user.lastState, 'set');
-            var filterModule='test', layoutName='test', value = 'tvalue';
-            layout.setLastFilter(filterModule, layoutName, value);
-            expect(stubCache).toHaveBeenCalled();
-            expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
-            expect(stubCache.getCall(0).args[1]).toEqual(expectedValue);
+
+        describe('last selected filter', function() {
+            var expectedKey = 'Accounts:filter:last-TestModule-TestLayout',
+                filterModule = 'TestModule',
+                layoutName = 'TestLayout';
+            var stubCache;
+
+            it('should save filter id into cache', function(){
+                var expectedValue = 'tvalue';
+                stubCache = sinonSandbox.stub(app.user.lastState, 'set');
+                layout.setLastFilter(filterModule, layoutName, 'tvalue');
+                expect(stubCache).toHaveBeenCalled();
+                expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
+                expect(stubCache.getCall(0).args[1]).toEqual(expectedValue);
+            });
+            it('should get filter id from cache', function(){
+                stubCache = sinonSandbox.stub(app.user.lastState, 'get');
+                layout.getLastFilter(filterModule, layoutName);
+                expect(stubCache).toHaveBeenCalled();
+                expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
+            });
+            it('should clear filter id from cache', function(){
+                stubCache = sinonSandbox.stub(app.user.lastState, 'remove');
+                layout.clearLastFilter(filterModule, layoutName);
+                expect(stubCache).toHaveBeenCalled();
+                expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
+            });
         });
-        it('should get cached filters', function(){
-            var expectedKey = 'Accounts:filter:last-test-test';
-            stubCache = sinon.stub(app.user.lastState, 'get');
-            var filterModule='test', layoutName='test', value = 'tvalue';
-            layout.getLastFilter(filterModule, layoutName);
-            expect(stubCache).toHaveBeenCalled();
-            expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
+
+        describe('last edit state filter', function() {
+            var expectedKey = 'Accounts:filter:edit-TestModule-TestLayout';
+            var stubCache;
+
+            beforeEach(function() {
+                layout.layout.currentModule = 'TestModule';
+                layout.layoutType = 'TestLayout';
+            });
+
+            it('should save filter definition into cache', function(){
+                var expectedValue = {'filter_definition':[{'account_type':{'$in':['Competitor']}}],'name':'Test Name'};
+                stubCache = sinonSandbox.stub(app.user.lastState, 'set');
+                var filter = {'filter_definition':[{'account_type':{'$in':['Competitor']}}],'name':'Test Name'};
+                layout.saveFilterEditState(filter);
+                expect(stubCache).toHaveBeenCalled();
+                expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
+                expect(stubCache.getCall(0).args[1]).toEqual(expectedValue);
+            });
+            it('should get filter definition from cache', function(){
+                stubCache = sinonSandbox.stub(app.user.lastState, 'get');
+                layout.retrieveFilterEditState();
+                expect(stubCache).toHaveBeenCalled();
+                expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
+            });
+            it('should clear filter definition from cache', function(){
+                stubCache = sinonSandbox.stub(app.user.lastState, 'remove');
+                layout.clearFilterEditState();
+                expect(stubCache).toHaveBeenCalled();
+                expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
+            });
         });
-        it('should clear cached filters', function(){
-            var expectedKey = 'Accounts:filter:last-test-test';
-            stubCache = sinon.stub(app.user.lastState, 'remove');
-            var filterModule='test', layoutName='test', value = 'tvalue';
-            layout.clearLastFilter(filterModule, layoutName);
-            expect(stubCache).toHaveBeenCalled();
-            expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
+
+        describe('filter:create:close', function() {
+            var clearFilterEditStateStub, parentLayoutTriggerStub, clearLastFilterStub;
+            beforeEach(function() {
+                clearFilterEditStateStub = sinonSandbox.stub(layout, 'clearFilterEditState');
+                parentLayoutTriggerStub = sinonSandbox.stub(layout.layout, 'trigger');
+                clearLastFilterStub = sinonSandbox.stub(layout, 'clearLastFilter');
+            });
+            it('should clear filter edit state from cache', function() {
+                layout.trigger('filter:create:close');
+                expect(clearFilterEditStateStub).toHaveBeenCalled();
+            });
+            it('should reset "editingFilter" on parent layout', function() {
+                layout.layout.editingFilter = 'filter_id';
+                layout.trigger('filter:create:close');
+                expect(layout.layout.editingFilter).toBeNull();
+            });
+            it('should trigger "filter:create:close" on parent layout', function() {
+                layout.trigger('filter:create:close');
+                expect(clearLastFilterStub).not.toHaveBeenCalled();
+                expect(parentLayoutTriggerStub).toHaveBeenCalled();
+                expect(parentLayoutTriggerStub).not.toHaveBeenCalledWith('filter:reinitialize');
+                expect(parentLayoutTriggerStub).toHaveBeenCalledWith('filter:create:close');
+            });
+            it('should clear last filter and call "filter:reinitialize" when canceling filter creation', function() {
+                sinonSandbox.stub(layout, 'getLastFilter', function() { return 'create'; });
+                layout.trigger('filter:create:close');
+                expect(clearLastFilterStub).toHaveBeenCalled();
+                expect(parentLayoutTriggerStub).toHaveBeenCalled();
+                expect(parentLayoutTriggerStub).toHaveBeenCalledWith('filter:reinitialize');
+                expect(parentLayoutTriggerStub).toHaveBeenCalledWith('filter:create:close');
+            });
         });
     });
 });

@@ -58,6 +58,13 @@
         this.on('filter:apply', this.applyFilter, this);
 
         this.on('filter:create:close', function() {
+            this.clearFilterEditState();
+            // When canceling creating a new filter, we want to go back to the `all_records` filter
+            if (this.getLastFilter(this.layout.currentModule, this.layoutType) === 'create') {
+                // For that we need to remove the last state key and trigger reinitialize
+                this.clearLastFilter(this.layout.currentModule, this.layoutType);
+                this.layout.trigger("filter:reinitialize");
+            }
             this.layout.editingFilter = null;
             this.layout.trigger('filter:create:close');
         }, this);
@@ -99,6 +106,7 @@
      */
     removeFilter: function(model){
         this.filters.remove(model);
+        this.clearFilterEditState();
         app.user.lastState.set(app.user.lastState.key("saved-" + this.layout.currentModule, this), this.filters.toJSON());
         this.layout.trigger('filter:reinitialize');
     },
@@ -136,6 +144,35 @@
         var key = app.user.lastState.key("last-" + filterModule + "-" + layoutName, this);
         return app.user.lastState.remove(key);
     },
+
+    /**
+     * Saves the current edit state into the cache
+     *
+     * @param {Object} filter
+     */
+    retrieveFilterEditState: function() {
+        var key = app.user.lastState.key("edit-" + this.layout.currentModule + "-" + this.layoutType, this);
+        return app.user.lastState.get(key);
+    },
+
+    /**
+     * Saves the current edit state into the cache
+     *
+     * @param {Object} filter
+     */
+    saveFilterEditState: function(filter) {
+        var key = app.user.lastState.key("edit-" + this.layout.currentModule + "-" + this.layoutType, this);
+        app.user.lastState.set(key, filter);
+    },
+
+    /**
+     * Removes the edit state from the cache
+     */
+    clearFilterEditState: function() {
+        var key = app.user.lastState.key("edit-" + this.layout.currentModule + "-" + this.layoutType, this);
+        app.user.lastState.remove(key);
+    },
+
     /**
      * handles filter additionF
      * @param model
@@ -144,6 +181,7 @@
         this.filters.add(model);
         app.user.lastState.set(app.user.lastState.key("saved-" + this.layout.currentModule, this), this.filters.toJSON());
         this.setLastFilter(this.layout.currentModule, this.layoutType, model.get("id"));
+        this.clearFilterEditState();
         this.layout.trigger('filter:reinitialize');
     },
 
@@ -196,17 +234,30 @@
             this.layout.trigger('filterpanel:lastviewed:set', name);
         }
     },
+
     /**
      * handles filter change
      * @param id
      * @param preventCache
      */
     handleFilterChange: function(id, preventCache) {
-        if (id && id != 'create' && !preventCache) {
+        if (id  && !preventCache) {
             this.setLastFilter(this.layout.currentModule, this.layoutType, id);
         }
-        var filter = this.filters.get(id) || this.emptyFilter,
-            ctxList = this.getRelevantContextList();
+        var filter, editState = this.retrieveFilterEditState();
+        // Figure out if we have an edit state. This would mean user was editing the filter so we want him to retrieve
+        // the filter form in the state he left it.
+        if (editState) {
+            filter = app.data.createBean('Filters');
+            filter.set(editState);
+            // Open the filter form with last edit state
+            this.trigger("filter:create:open", filter);
+            // Validate so `Save` button is available
+            this.layout.trigger("filter:create:validate");
+        } else {
+            filter = this.filters.get(id) || this.emptyFilter;
+        }
+        var ctxList = this.getRelevantContextList();
         var clear = false;
         //Determine if we need to clear the collections
         _.each(ctxList, function(ctx) {
@@ -444,7 +495,8 @@
             possibleFilters = _.filter(possibleFilters, this.filters.get, this.filters);
         }
 
-        if (lastFilter && !(this.filters.get(lastFilter))){
+        // If last filter not found in the filter collection (and not a brand new one), remove the last state.
+        if (lastFilter && !(this.filters.get(lastFilter)) && lastFilter !== 'create'){
             this.clearLastFilter(moduleName, this.layoutType);
         }
         this.layout.trigger('filterpanel:change:module', moduleName);

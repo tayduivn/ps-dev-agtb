@@ -51,5 +51,47 @@ describe("Filter Actions View", function () {
         view.triggerDelete();
         expect(spy).toHaveBeenCalled();
     });
+    describe('filterNameChanged', function() {
+        var layoutTriggerStub, component, saveFilterEditStateStub;
+        beforeEach(function() {
+            layoutTriggerStub = sinon.stub(view.layout, 'trigger');
+            component = {
+                saveFilterEditState: $.noop
+            };
+            view.layout.getComponent = function() { return component; };
+            saveFilterEditStateStub = sinon.stub(component, 'saveFilterEditState');
+        });
+        afterEach(function() {
+            layoutTriggerStub.restore();
+        });
+        it('should trigger validate', function() {
+            view.filterNameChanged();
+            expect(layoutTriggerStub).toHaveBeenCalled();
+            expect(layoutTriggerStub).toHaveBeenCalledWith('filter:create:validate');
+        });
+        it('should save edit state when filter definition is valid', function() {
+            view.rowState = true;
+            view.filterNameChanged();
+            expect(saveFilterEditStateStub).toHaveBeenCalled();
+        });
+        it('should not save edit state when filter definition is not valid', function() {
+            view.rowState = false;
+            view.filterNameChanged();
+            expect(saveFilterEditStateStub).not.toHaveBeenCalled();
+        });
+    });
 
+    describe('triggerClose', function() {
+        it('should trigger "filter:create:close" on the filter layout', function() {
+            var component = {
+                trigger: $.noop
+            };
+            view.layout.getComponent = function() { return component; };
+            var filterLayoutTriggerStub = sinon.stub(component, 'trigger');
+            view.layout.editingFilter = new Backbone.Model({id: 'my_filter'});
+            view.triggerClose();
+            expect(filterLayoutTriggerStub).toHaveBeenCalled();
+            expect(filterLayoutTriggerStub).toHaveBeenCalledWith("filter:create:close", true, 'my_filter');
+        });
+    });
 });

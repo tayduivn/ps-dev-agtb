@@ -67,7 +67,13 @@
      * @param {Event} event
      */
     filterNameChanged: _.debounce(function(event) {
+        if (this.disposed) {
+            return;
+        }
         this.layout.trigger('filter:create:validate');
+        if (this.rowState && this.layout.getComponent('filter-rows')) {
+            this.layout.getComponent('filter-rows').saveFilterEditState();
+        }
     }, 400),
 
     /**
@@ -99,7 +105,7 @@
      */
     triggerClose: function() {
         var id = this.layout.editingFilter.get('id');
-        this.layout.trigger("filter:create:close", true, id);
+        this.layout.getComponent('filter').trigger("filter:create:close", true, id);
     },
 
     /**

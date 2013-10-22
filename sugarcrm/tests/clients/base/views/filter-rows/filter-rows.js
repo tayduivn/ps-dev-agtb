@@ -1,18 +1,25 @@
 describe("BaseFilterRowsView", function() {
-    var view, layout, app;
+    var view, layout, app, sinonSandbox;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'field', 'enum');
+        SugarTest.loadComponent('base', 'layout', 'filter');
+        SugarTest.loadComponent('base', 'layout', 'togglepanel');
+        SugarTest.loadComponent('base', 'layout', 'filterpanel');
         SugarTest.loadComponent('base', 'view', 'filter-rows');
         SugarTest.testMetadata.set();
-        layout = SugarTest.createLayout('base', "Cases", "filter", {}, null, null, { layout: new Backbone.View() });
+        layout = SugarTest.createLayout('base', "Cases", "filterpanel", {}, null, null, { layout: new Backbone.View() });
+        layout._components.push(SugarTest.createLayout('base', "Cases", "filter", {}, null, null, { layout: new Backbone.View() }));
         view = SugarTest.createView("base", "Cases", "filter-rows", null, null, null, layout);
         view.layout = layout;
+        view.layout.editingFilter = new Backbone.Model();
         app = SUGAR.App;
+        sinonSandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
+        sinonSandbox.restore();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
@@ -22,74 +29,66 @@ describe("BaseFilterRowsView", function() {
 
     describe('handleFilterChange', function() {
         it('should return undefined if there is no module metadata', function() {
-            var metadataStub = sinon.stub(app.metadata, 'getModule', function() {
+            sinonSandbox.stub(app.metadata, 'getModule', function() {
                 return;
             });
             view.handleFilterChange('test');
             expect(view.fieldList).toBeUndefined();
-            metadataStub.restore();
         });
     });
 
     describe('openForm', function() {
-        var renderStub, addRowStub, populateFilterStub,
+        var renderStub, addRowStub, populateFilterStub, saveEditStateStub,
             filterModel;
         beforeEach(function() {
-            renderStub = sinon.stub(view, 'render');
-            addRowStub = sinon.stub(view, 'addRow');
-            populateFilterStub = sinon.stub(view, 'populateFilter');
+            renderStub = sinonSandbox.stub(view, 'render');
+            addRowStub = sinonSandbox.stub(view, 'addRow');
+            saveEditStateStub = sinonSandbox.stub(view, 'saveFilterEditState');
+            populateFilterStub = sinonSandbox.stub(view, 'populateFilter');
             filterModel = new Backbone.Model();
-        });
-        afterEach(function() {
-            renderStub.restore();
-            addRowStub.restore();
-            populateFilterStub.restore();
         });
         it('should render the view and add a row', function() {
             view.openForm(filterModel);
             expect(renderStub).toHaveBeenCalled();
             expect(addRowStub).toHaveBeenCalled();
             expect(populateFilterStub).not.toHaveBeenCalled();
+            expect(saveEditStateStub).toHaveBeenCalled();
         });
         it('should populate filter', function() {
-            filterModel.set('filter_definition', { /* ... */ });
+            filterModel.set('filter_definition', [{ /* ... */ }]);
             view.openForm(filterModel);
             expect(renderStub).not.toHaveBeenCalled();
             expect(addRowStub).not.toHaveBeenCalled();
             expect(populateFilterStub).toHaveBeenCalled();
+            expect(saveEditStateStub).toHaveBeenCalled();
         });
     });
 
     describe('saveFilter', function() {
         it('should trigger events', function() {
-            var triggerStub = sinon.stub(view.layout, 'trigger');
-            view.layout.editingFilter = new Backbone.Model();
-            var syncStub = sinon.stub(view.layout.editingFilter, 'sync', function(method, model, options) {
+            var triggerStub = sinonSandbox.stub(view.layout, 'trigger');
+            sinonSandbox.stub(view.layout.editingFilter, 'sync', function(method, model, options) {
                 if (options.success) options.success(model, {}, options);
             });
             view.saveFilter();
             expect(triggerStub).toHaveBeenCalledWith('filter:add', view.layout.editingFilter);
             expect(triggerStub).toHaveBeenCalledWith('filter:create:rowsValid', false);
             expect(triggerStub).toHaveBeenCalledWith('filter:create:close');
-            syncStub.restore();
-            triggerStub.restore();
         });
     });
 
     describe('deleteFilter', function() {
         it('should trigger events', function() {
-            var triggerStub = sinon.stub(view.layout, 'trigger');
-            view.layout.editingFilter = new Backbone.Model();
+            var triggerStub = sinonSandbox.stub(view.layout, 'trigger');
             view.deleteFilter();
             expect(triggerStub).toHaveBeenCalledWith('filter:remove', view.layout.editingFilter);
             expect(triggerStub).toHaveBeenCalledWith('filter:create:close');
-            triggerStub.restore();
         });
     });
 
     describe('getFilterableFields', function() {
         it('should return the list of filterable fields with fields definition', function() {
-            var metadataStub = sinon.stub(app.metadata, 'getModule', function() {
+            sinonSandbox.stub(app.metadata, 'getModule', function() {
                 var moduleMeta = {
                     fields: {
                         name: {
@@ -160,7 +159,6 @@ describe("BaseFilterRowsView", function() {
             };
             expect(fields).toEqual(expected);
             expect(fields.number['readonly']).not.toBe(true);
-            metadataStub.restore();
         });
     });
 
@@ -176,7 +174,7 @@ describe("BaseFilterRowsView", function() {
 
     describe('addRow', function() {
         it('should add the row to the view with an enum field', function() {
-            var createFieldSpy = sinon.spy(view, 'createField');
+            sinonSandbox.spy(view, 'createField');
             view.formRowTemplate = function() {
                 return '<div>';
             };
@@ -185,23 +183,19 @@ describe("BaseFilterRowsView", function() {
             expect($row.data('nameField')).toBeDefined();
             expect($row.data('nameField').type).toEqual('enum');
             expect($row.data('nameField').def.options).toEqual(['test_field']);
-            createFieldSpy.restore();
         });
     });
 
     describe('removeRow', function() {
-        var $event, addRowStub;
+        var $event;
         beforeEach(function() {
             $event = $('<div>');
-            addRowStub = sinon.stub(view, 'addRow', function() {
+            sinonSandbox.stub(view, 'addRow', function() {
                 $('<article>').addClass('filter-body').appendTo(view.$el);
             });
             $('<article>').addClass('filter-body').appendTo(view.$el);
             $('<article>').addClass('filter-body').appendTo(view.$el);
             $('<article>').addClass('filter-body').appendTo(view.$el);
-        });
-        afterEach(function() {
-            addRowStub.restore();
         });
         it('should remove the row from the view', function() {
             $event.appendTo(view.$('article.filter-body:last'));
@@ -218,7 +212,7 @@ describe("BaseFilterRowsView", function() {
             expect(_.size(view.$('article.filter-body'))).toEqual(1);
         });
         it('should dispose fields', function() {
-            var disposeStub = sinon.stub(view, '_disposeFields');
+            var disposeStub = sinonSandbox.stub(view, '_disposeFields');
             view.removeRow({currentTarget: $event});
             expect(disposeStub).toHaveBeenCalled();
             expect(disposeStub.lastCall.args[1]).toEqual([
@@ -226,30 +220,23 @@ describe("BaseFilterRowsView", function() {
                 {'field': 'operatorField', 'value': 'operator'},
                 {'field': 'valueField', 'value': 'value'}
             ]);
-            disposeStub.restore();
         });
         it('should validate rows', function() {
-            var disposeStub = sinon.stub(view, '_disposeFields');
-            var validateStub = sinon.stub(view, 'validateRows');
+            sinonSandbox.stub(view, '_disposeFields');
+            var validateStub = sinonSandbox.stub(view, 'validateRows');
             view.removeRow({currentTarget: $event});
             expect(validateStub).toHaveBeenCalled();
-            validateStub.restore();
-            disposeStub.restore();
         });
     });
 
     describe('validateRows', function() {
         var triggerStub, $rows, jQueryStub;
         beforeEach(function() {
-            triggerStub = sinon.stub(view.layout, 'trigger');
+            triggerStub = sinonSandbox.stub(view.layout, 'trigger');
             $rows = [];
-            jQueryStub = sinon.stub(view, '$', function() {
+            jQueryStub = sinonSandbox.stub(view, '$', function() {
                 return $rows;
             });
-        });
-        afterEach(function() {
-            triggerStub.restore();
-            jQueryStub.restore();
         });
         it('should return true if all rows have a value set', function() {
             $rows.push($('<div>').data({ name: 'abc', value: 'ABC'}));
@@ -322,13 +309,11 @@ describe("BaseFilterRowsView", function() {
                     }
                 ]
             });
-            var triggerStub = sinon.stub(view.layout, 'trigger');
-            var populateRowStub = sinon.stub(view, 'populateRow');
+            var triggerStub = sinonSandbox.stub(view.layout, 'trigger');
+            var populateRowStub = sinonSandbox.stub(view, 'populateRow');
             view.populateFilter();
             expect(triggerStub).toHaveBeenCalledWith('filter:set:name', 'Test');
             expect(populateRowStub.secondCall).toBeDefined();
-            populateRowStub.restore();
-            triggerStub.restore();
         });
     });
 
@@ -341,18 +326,13 @@ describe("BaseFilterRowsView", function() {
                 last_name: {
                 }
             };
-            addRowStub = sinon.stub(view, 'addRow', function() {
+            addRowStub = sinonSandbox.stub(view, 'addRow', function() {
                 return $('<article>').addClass('filter-body').appendTo(view.$el);
             });
-            select2Stub = sinon.stub($.fn, 'select2', function(sel) {
+            select2Stub = sinonSandbox.stub($.fn, 'select2', function(sel) {
                 return $(sel);
             });
-            $triggerStub = sinon.stub($.fn, 'trigger');
-        });
-        afterEach(function() {
-            addRowStub.restore();
-            select2Stub.restore();
-            $triggerStub.restore();
+            $triggerStub = sinonSandbox.stub($.fn, 'trigger');
         });
         it('should retrieve the field, the operator and the value from the filter object (1)', function() {
             view.populateRow({
@@ -410,7 +390,7 @@ describe("BaseFilterRowsView", function() {
             $operatorField = $('<div>').addClass('filter-operator').appendTo($row);
         });
         it('should create an enum field for operators', function() {
-            var createFieldSpy = sinon.spy(view, 'createField');
+            var createFieldSpy = sinonSandbox.spy(view, 'createField');
             view.handleFieldSelected({currentTarget: $filterField});
             expect(createFieldSpy).toHaveBeenCalled();
             expect(createFieldSpy.lastCall.args[1]).toEqual({
@@ -422,17 +402,15 @@ describe("BaseFilterRowsView", function() {
                 searchBarThreshold: 9999
             });
             expect(_.isEmpty($operatorField.html())).toBeFalsy();
-            createFieldSpy.restore();
         });
         it('should dispose previous operator and value fields', function() {
-            var disposeStub = sinon.stub(view, '_disposeFields');
+            var disposeStub = sinonSandbox.stub(view, '_disposeFields');
             view.handleFieldSelected({currentTarget: $filterField});
             expect(disposeStub).toHaveBeenCalled();
             expect(disposeStub.lastCall.args[1]).toEqual([
                 {'field': 'operatorField', 'value': 'operator'},
                 {'field': 'valueField', 'value': 'value'}
             ]);
-            disposeStub.restore();
         });
         it('should set data attributes', function() {
             view.handleFieldSelected({currentTarget: $filterField});
@@ -440,16 +418,14 @@ describe("BaseFilterRowsView", function() {
             expect($row.data('operatorField')).toBeDefined();
         });
         it('should not create an operator field for predefined filters', function() {
-            var createFieldSpy = sinon.spy(view, 'createField');
-            var applyFilterStub = sinon.stub(view, 'fireSearch');
+            var createFieldSpy = sinonSandbox.spy(view, 'createField');
+            var applyFilterStub = sinonSandbox.stub(view, 'fireSearch');
             $filterField.val('$favorite');
             view.handleFieldSelected({currentTarget: $filterField});
             expect(createFieldSpy).not.toHaveBeenCalled();
             expect(_.isEmpty($operatorField.html())).toBeTruthy();
             expect(applyFilterStub).toHaveBeenCalled();
             expect($row.data('isPredefinedFilter')).toBeTruthy();
-            applyFilterStub.restore();
-            createFieldSpy.restore();
         });
     });
 
@@ -486,11 +462,8 @@ describe("BaseFilterRowsView", function() {
         describe('creating fields for filter value', function() {
             var createFieldSpy;
             beforeEach(function() {
-                createFieldSpy = sinon.spy(view, 'createField');
+                createFieldSpy = sinonSandbox.spy(view, 'createField');
             })
-            afterEach(function() {
-                createFieldSpy.restore();
-            });
 
             it('should make enum fields multi selectable', function() {
                 spyOn($.fn, "select2").andReturn("status"); //return "status" as value
@@ -549,27 +522,25 @@ describe("BaseFilterRowsView", function() {
             describe('date type fields', function() {
                 it('should not create a value field for specific date operators', function() {
                     spyOn($.fn, "select2").andReturn("date_created"); //return "date_created" as value
-                    var buildFilterDefStub = sinon.stub(view, 'buildFilterDef');
+                    var buildFilterDefStub = sinonSandbox.stub(view, 'buildFilterDef');
                     $filterField.val('date_created');
                     $operatorField.val('next_30_days');
                     view.handleOperatorSelected({currentTarget: $operatorField});
                     expect(createFieldSpy).not.toHaveBeenCalled();
                     expect(_.isEmpty($valueField.html())).toBeTruthy();
                     expect(buildFilterDefStub).toHaveBeenCalled();
-                    buildFilterDefStub.restore();
                 });
             });
         });
 
         it('should dispose previous value field', function() {
-            var disposeStub = sinon.stub(view, '_disposeFields');
+            var disposeStub = sinonSandbox.stub(view, '_disposeFields');
             spyOn($.fn, "select2").andReturn("case_number");
             view.handleOperatorSelected({currentTarget: $operatorField});
             expect(disposeStub).toHaveBeenCalled();
             expect(disposeStub.lastCall.args[1]).toEqual([
                 {'field': 'valueField', 'value': 'value'}
             ]);
-            disposeStub.restore();
         });
 
         it('should set data attributes', function() {
@@ -580,15 +551,13 @@ describe("BaseFilterRowsView", function() {
         });
         it('should trigger filter:apply when value change', function() {
             spyOn($.fn, "select2").andReturn("case_number");
-            var triggerStub = sinon.stub(view.layout, 'trigger');
-            var renderStub = sinon.stub(app.view.Field.prototype, 'render', $.noop());
+            var triggerStub = sinonSandbox.stub(view.layout, 'trigger');
+            sinonSandbox.stub(app.view.Field.prototype, 'render', $.noop());
             view.handleOperatorSelected({currentTarget: $operatorField});
             view.lastFilterDef = undefined;
             $row.data('valueField').model.set('status', 'firesModelChangeEvent');
             expect(triggerStub).toHaveBeenCalled();
             expect(triggerStub).toHaveBeenCalledWith('filter:apply');
-            triggerStub.restore();
-            renderStub.restore();
         });
         it('should trigger filter:apply when keyup', function() {
             spyOn($.fn, "select2").andReturn("case_number");
@@ -596,12 +565,11 @@ describe("BaseFilterRowsView", function() {
             $operatorField.val('$in');
             view.handleOperatorSelected({currentTarget: $operatorField});
             $row.data('valueField').model.set('case_number', 200);
-            var triggerStub = sinon.stub(view.layout, 'trigger');
+            var triggerStub = sinonSandbox.stub(view.layout, 'trigger');
             view.lastFilterDef = undefined;
             $operatorField.parent('.filter-body').find('.filter-value input').trigger('keyup');
             expect(triggerStub).toHaveBeenCalled();
             expect(triggerStub).toHaveBeenCalledWith('filter:apply');
-            triggerStub.restore();
         });
     });
 
@@ -712,6 +680,48 @@ describe("BaseFilterRowsView", function() {
             filter = view.buildRowFilterDef($row);
             expected = { date_created: { $dateRange: 'last_year' } };
             expect(filter).toEqual(expected);
+        });
+    });
+
+    describe('saveFilterEditState', function() {
+        var component,
+            buildFilterDefStub, saveFilterEditStateStub;
+        beforeEach(function() {
+            component = {
+                '$': function(sel) { return [sel]; },
+                getFilterName: $.noop,
+                saveFilterEditState: $.noop
+            };
+            view.layout.getComponent = function() { return component; };
+            buildFilterDefStub = sinonSandbox.stub(view, 'buildFilterDef', function() {
+                return [{'$favorites': ''}];
+            });
+            sinonSandbox.stub(component, 'getFilterName', function() { return 'AwesomeName'; });
+            saveFilterEditStateStub = sinonSandbox.stub(component, 'saveFilterEditState');
+        });
+        it('should build filter def when no param', function() {
+            view.saveFilterEditState();
+            expect(buildFilterDefStub).toHaveBeenCalled();
+            expect(saveFilterEditStateStub).toHaveBeenCalled();
+            var expectedFilter = {
+                'filter_definition': [
+                    {'$favorites': ''}
+                ],
+                'name': 'AwesomeName'
+            };
+            expect(saveFilterEditStateStub).toHaveBeenCalledWith(expectedFilter);
+        });
+        it('should get the filter def passed in params', function() {
+            view.saveFilterEditState([{'my_filter': {'is': 'cool'}}]);
+            expect(buildFilterDefStub).not.toHaveBeenCalled();
+            expect(saveFilterEditStateStub).toHaveBeenCalled();
+            var expectedFilter = {
+                'filter_definition': [
+                    {'my_filter': {'is': 'cool'}}
+                ],
+                'name': 'AwesomeName'
+            };
+            expect(saveFilterEditStateStub).toHaveBeenCalledWith(expectedFilter);
         });
     });
 

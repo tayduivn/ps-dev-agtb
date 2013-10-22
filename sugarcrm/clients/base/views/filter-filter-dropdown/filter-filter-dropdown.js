@@ -108,10 +108,19 @@
      * @param  {String} id      The GUID of the filter to apply.
      */
     handleChange: function(id) {
-        var filter = this.layout.filters.get(id) || this.layout.emptyFilter;
+        var filter;
+        // Figure out if we have an edit state. This would mean user was editing the filter so we want him to retrieve
+        // the filter form in the state he left it.
+        var editState = this.layout.retrieveFilterEditState();
+        if (id === 'create' || (editState && editState.id === id)) {
+            filter = app.data.createBean('Filters');
+            filter.set(editState);
+        } else {
+            filter = this.layout.filters.get(id) || this.layout.emptyFilter;
+        }
         if (id === "create") {
             this.$('.choice-filter').css("cursor", "not-allowed");
-            this.layout.trigger("filter:create:open", app.data.createBean('Filters'));
+            this.layout.trigger("filter:create:open", filter);
         } else {
             if (filter.get("editable") === false) {
                 this.layout.trigger("filter:create:close");
@@ -151,8 +160,10 @@
                 data = {id: "all_records", text: app.lang.get("LBL_FILTER_ALL_RECORDS")};
             }
 
-            callback(data);
+        } else {
+            data = {id: "create", text: app.lang.get("LBL_FILTER_CREATE_NEW")};
         }
+        callback(data);
     },
 
     /**
