@@ -4,6 +4,7 @@ $viewdefs['Contacts']['mobile']['layout']['subpanels'] = array(
         array(
             'layout' => 'subpanel',
             'label' => 'LBL_CALLS_SUBPANEL_TITLE',
+            'linkable' => false,
             'context' => array(
                 'link' => 'calls',
             ),
@@ -11,6 +12,7 @@ $viewdefs['Contacts']['mobile']['layout']['subpanels'] = array(
         array(
             'layout' => 'subpanel',
             'label' => 'LBL_MEETINGS_SUBPANEL_TITLE',
+            'linkable' => false,
             'context' => array(
                 'link' => 'meetings',
             ),
