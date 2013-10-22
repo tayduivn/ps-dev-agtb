@@ -145,13 +145,16 @@ class RevenueLineItemsPipelineChartApi extends SugarApi
         $return_data = array();
         $series = 0;
         $previous_value = '0';
+
+        $bean = BeanFactory::getBean($args['module']);
+        
         foreach ($data as $key => $item) {
             $value = $item['total'];
             // set up each return key
             $return_data[] = array(
-                'key' => $key,          // the label/sales stage
+                'key' => translate($bean->field_defs['sales_stage']['options'], '', $key),  // the label/sales stage
                 'count' => $item['count'],
-                'values' => array(      // the values used in the grid
+                'values' => array(                                                          // the values used in the grid
                     array(
                         'series' => $series++,
                         'label' => SugarCurrency::formatAmount($value, $currency->id, 0),
