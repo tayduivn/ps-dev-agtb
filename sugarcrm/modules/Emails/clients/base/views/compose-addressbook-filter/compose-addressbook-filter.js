@@ -42,7 +42,7 @@
         var allowedModules = this.collection.allowed_modules;
 
         this._moduleFilterList = [
-            {id: this._allModulesId, text: app.lang.get('LBL_TABGROUP_ALL')}
+            {id: this._allModulesId, text: app.lang.get('LBL_MODULE_ALL')}
         ];
 
         _.each(allowedModules, function(module) {

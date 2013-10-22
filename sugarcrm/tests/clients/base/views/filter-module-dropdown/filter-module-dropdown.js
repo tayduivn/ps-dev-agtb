@@ -89,7 +89,7 @@ describe("BaseFilterModuleDropdownView", function () {
             filterList = view.getModuleListForActivities();
             expect(filterList).toEqual(expected);
             view.module = 'Activities';
-            expected = [{ id: 'Activities', text: app.lang.get("LBL_TABGROUP_ALL")}];
+            expected = [{ id: 'Activities', text: app.lang.get("LBL_MODULE_ALL")}];
             filterList = view.getModuleListForActivities();
             expect(filterList).toEqual(expected);
         });
@@ -102,7 +102,7 @@ describe("BaseFilterModuleDropdownView", function () {
                 return 'Cases';
             })
             var expected, filterList;
-            expected = [{ id: 'all_modules', text: app.lang.get("LBL_TABGROUP_ALL")},
+            expected = [{ id: 'all_modules', text: app.lang.get("LBL_MODULE_ALL")},
                         { id: 'cases', text: app.lang.get("LBL_CONTACTS_SUBPANEL_TITLE") }];
             filterList = view.getModuleListForSubpanels();
             expect(filterList).toEqual(expected);
@@ -124,7 +124,7 @@ describe("BaseFilterModuleDropdownView", function () {
                 }
             })
             var expected, filterList;
-            expected = [{ id: 'all_modules', text: app.lang.get("LBL_TABGROUP_ALL")},
+            expected = [{ id: 'all_modules', text: app.lang.get("LBL_MODULE_ALL")},
                 { id: 'cases', text: app.lang.get("LBL_MODULE_NAME") }];
             filterList = view.getModuleListForSubpanels();
             expect(filterList).toEqual(expected);

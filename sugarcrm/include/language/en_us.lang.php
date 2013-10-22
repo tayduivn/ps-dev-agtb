@@ -3332,6 +3332,7 @@ $app_strings = array (
     //END SUGARCRM flav=pro ONLY
     'LBL_USER_ID' => 'User Id',
     'LBL_MODULE_NAME' => 'Module Name',
+    'LBL_MODULE_ALL' => 'All',
     'LBL_ITEM_ID' => 'Item Id',
     'LBL_ITEM_SUMMARY' => 'Item Summary',
     'LBL_ACTION' => 'Action',

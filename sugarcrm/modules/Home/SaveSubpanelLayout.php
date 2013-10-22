@@ -44,7 +44,7 @@ if(!empty($_REQUEST['layout']) && !empty($_REQUEST['layoutModule'])) {
     
     $layoutParam = $_REQUEST['layoutModule'];
     
-    if(!empty($_REQUEST['layoutGroup']) && $_REQUEST['layoutGroup']!= translate('LBL_TABGROUP_ALL')) {
+    if(!empty($_REQUEST['layoutGroup']) && $_REQUEST['layoutGroup']!= translate('LBL_MODULE_ALL')) {
     	$layoutParam .= ':'.$_REQUEST['layoutGroup'];
     }
     
