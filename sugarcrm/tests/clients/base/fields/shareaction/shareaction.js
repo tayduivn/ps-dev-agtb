@@ -9,15 +9,11 @@ describe('Base.Field.Shareaction', function() {
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
         SugarTest.loadComponent('base', 'field', 'shareaction');
-        field = SugarTest.createField('base', 'shareaction', 'shareaction', 'edit', {
-            'type': 'shareaction',
-            'name': 'share',
-            'acl_action': 'view'
-        }, moduleName);
+
     });
 
     afterEach(function() {
-        app.drawer = undefined; 
+        app.drawer = undefined;
         sinon.collection.restore();
         field.dispose();
         field = null;
@@ -27,14 +23,17 @@ describe('Base.Field.Shareaction', function() {
     });
 
     it('should share using email compose action when user preference is true', function() {
-
         var model, createBeanStub,
-            shareWithMailToStub = sinon.collection.stub(field, '_shareWithMailTo'),
             drawerOpenStub = sinon.collection.stub(app.drawer, 'open'),
             prefStub = sinon.collection.stub(app.user, 'getPreference');
 
-        // FIXME this should send boolean value (need to fix user prefs).
         prefStub.withArgs('use_sugar_email_client').returns('true');
+
+        field = SugarTest.createField('base', 'shareaction', 'shareaction', 'edit', {
+            'type': 'shareaction',
+            'name': 'share',
+            'acl_action': 'view'
+        }, moduleName);
 
         model = app.data.createBean('Emails', {
             subject: 'Subject for this jasmine test',
@@ -69,28 +68,84 @@ describe('Base.Field.Shareaction', function() {
                 model: model
             }
         });
-        expect(shareWithMailToStub).not.toHaveBeenCalled();
+
+        expect(field.options.def.href).toBeUndefined();
+
+        drawerOpenStub.restore();
+        prefStub.restore();
     });
 
-    it('should share using "mailto" when user preference is not set of set to false', function() {
+    it('should share using "mailto" when user preference is set to false', function() {
+        var context, model, view,
+            prefStub = sinon.collection.stub(app.user, 'getPreference'),
+            mailToText = 'MailTo',
 
-        var shareWithMailToStub = sinon.collection.stub(field, '_shareWithMailTo'),
-            shareWithSugarEmailClientStub = sinon.collection.stub(field, '_shareWithSugarEmailClient'),
-            prefStub = sinon.collection.stub(app.user, 'getPreference');
+            shareWithMailToMock = sinon.collection.stub(
+                app.view.fields.BaseShareactionField.prototype, '_shareWithMailTo',
+                function() {
+                    return mailToText;
+                }
+            );
 
-        // FIXME this should send boolean value (need to fix user prefs).
         prefStub.withArgs('use_sugar_email_client').returns('false');
 
-        field.share();
+        context = app.context.getContext();
+        context.set({
+            module: moduleName
+        });
+        context.prepare();
 
-        expect(shareWithMailToStub).toHaveBeenCalled();
-        expect(shareWithSugarEmailClientStub).not.toHaveBeenCalled();
+        view = new app.view.View({ name: 'edit', context: context });
 
-        prefStub.withArgs('use_sugar_email_client').returns();
+        model = new Backbone.Model();
+        model.fields = {};
 
-        field.share();
+        field = app.view.createField({
+            context: context,
+            view: view,
+            model: model,
+            def: { name: 'share', type: 'shareaction', events: {} },
+            module: moduleName
+        });
+        expect(field.options.def.href).toEqual(mailToText);
 
-        expect(shareWithMailToStub).toHaveBeenCalled();
-        expect(shareWithSugarEmailClientStub).not.toHaveBeenCalled();
+        shareWithMailToMock.restore();
     });
+
+    it('should share using "mailto" when user preference is not set', function () {
+        var context, model, view,
+            prefStub = sinon.collection.stub(app.user, 'getPreference'),
+            mailToText = 'MailTo',
+            shareWithMailToMock = sinon.collection.stub(
+                app.view.fields.BaseShareactionField.prototype, '_shareWithMailTo',
+                function () {
+                    return mailToText;
+                }
+            );
+
+        prefStub.withArgs('use_sugar_email_client').returns('false');
+
+        context = app.context.getContext();
+        context.set({
+            module: moduleName
+        });
+        context.prepare();
+
+        view = new app.view.View({ name: 'edit', context: context });
+
+        model = new Backbone.Model();
+        model.fields = {};
+
+        field = app.view.createField({
+            context: context,
+            view: view,
+            model: model,
+            def: { name: 'share', type: 'shareaction', events: {} },
+            module: moduleName
+        });
+        expect(field.options.def.href).toEqual(mailToText);
+
+        shareWithMailToMock.restore();
+    });
+
 });
