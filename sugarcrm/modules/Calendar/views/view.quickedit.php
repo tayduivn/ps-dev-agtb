@@ -82,6 +82,9 @@ class CalendarViewQuickEdit extends SugarView
 				'edit' => $this->editable,
 				'html'=> $this->ev->display(false, true),
 				'gr' => $grJavascript,
+                'acl' => array(
+                    'delete' => $this->bean->aclAccess('delete'),
+                ),
 		);
 		
 		if (!empty($this->view_object_map['repeatData'])) {

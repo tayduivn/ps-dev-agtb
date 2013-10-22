@@ -240,7 +240,7 @@ if(empty($new_studio_mod_files)) {
 }
 echo '<br>';
 if($require_license){
-    $contents = sugar_file_get_contents($license_file);
+    $contents = file_get_contents($license_file);
 	$readme_contents = '';
 	if($found_readme){
 		if(file_exists($readme_file) && filesize($readme_file) > 0){

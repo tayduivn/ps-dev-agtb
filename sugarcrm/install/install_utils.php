@@ -918,6 +918,7 @@ RedirectMatch 403 {$ignoreCase}/+files\.md5$
 
 # Fix mimetype for logo.svg (SP-1395)
 AddType     image/svg+xml     .svg
+AddType     application/json  .json
 
 <IfModule mod_rewrite.c>
     Options +FollowSymLinks
@@ -926,7 +927,11 @@ AddType     image/svg+xml     .svg
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^cache/api/metadata/lang_(.._..)_(.*)_public\.json$ api/rest.php/v10/lang/public/$1?platform=$2 [L,QSA]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^cache/api/metadata/lang_(.._..)_([^_]*)\.json$ api/rest.php/v10/lang/$1?platform=$2 [L,QSA]
 //BEGIN SUGARCRM flav=ent ONLY
     RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]

@@ -49,7 +49,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_ADVANCED_REPORTING',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
-        'icon' => 'icon-cog',
+        'icon' => 'icon-bar-chart',
     ),
     //END SUGARCRM flav=ent ONLY
 );

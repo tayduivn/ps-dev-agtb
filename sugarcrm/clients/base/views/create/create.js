@@ -151,6 +151,10 @@
      */
     saveAndClose: function () {
         this.initiateSave(_.bind(function () {
+            if (!this.model.id) {
+                //If user creates a record he does not have access to, he will see a warning message
+                this.alerts.showSuccessButDeniedAccess();
+            }
             if(app.drawer){
                 app.drawer.close(this.context, this.model);
             }
@@ -172,9 +176,18 @@
     saveAndCreate: function () {
         this.context.lastSaveAction = this.SAVEACTIONS.SAVE_AND_CREATE;
         this.initiateSave(_.bind(function () {
-            this.clear();
-            this.model.set(this.model.relatedAttributes);
-            this.resetDuplicateState();
+            if (this.model.id) {
+                this.clear();
+                this.model.set(this.model.relatedAttributes);
+                this.resetDuplicateState();
+            } else if (app.drawer) {
+                //If user creates a record he does not have access to, close the drawer so it goes to the list view
+                //Keeping the drawer opened is not possible because of the 404 error handler loading the error page
+                this.alerts.showSuccessButDeniedAccess();
+                if(app.drawer){
+                    app.drawer.close(this.context, this.model);
+                }
+            }
         }, this));
     },
 
@@ -184,7 +197,15 @@
     saveAndView: function () {
         this.context.lastSaveAction = this.SAVEACTIONS.SAVE_AND_VIEW;
         this.initiateSave(_.bind(function () {
-            app.navigate(this.context, this.model);
+            if (!this.model.id) {
+                //If user creates a record he does not have access to, close the drawer so it goes to the list view
+                this.alerts.showSuccessButDeniedAccess();
+                if(app.drawer){
+                    app.drawer.close(this.context, this.model);
+                }
+            } else {
+                app.navigate(this.context, this.model);
+            }
         }, this));
     },
 
@@ -277,6 +298,11 @@
             error = _.bind(function (e) {
                 if (e.status == 412 && !e.request.metadataRetry) {
                     this.handleMetadataSyncError(e);
+                } else if (e.status == 404) {
+                    //Special case for 404 error. This happens when the user creates a record he won't have access to.
+                    //In this case the POST request returns a 404 error. As it actually is a success, we want to prevent
+                    //default error handlers and keep going, meaning closing the drawer and going back to the list view
+                    callback();
                 } else {
                     this.alerts.showServerError();
                     callback(true);
@@ -368,8 +394,9 @@
             relate: (self.model.link) ? true : null,
             //Show alerts for this request
             showAlerts: {
-               'process' : true,
-               'success' : false
+                'process': true,
+                'success': false,
+                'error': false //error callback implements its own error handler
             },
             lastSaveAction: this.context.lastSaveAction
         };
@@ -602,6 +629,14 @@
                 level: 'error',
                 messages: 'ERR_GENERIC_SERVER_ERROR',
                 autoClose: false
+            });
+        },
+        showSuccessButDeniedAccess: function() {
+            app.alert.show('invalid-data', {
+                level: 'warning',
+                messages: 'LBL_RECORD_SAVED_ACCESS_DENIED',
+                autoClose: true,
+                autoCloseDelay: 9000
             });
         }
     }

@@ -3425,6 +3425,7 @@ $app_strings = array (
   'ERROR_UNABLE_TO_RETRIEVE_DATA' => 'Error: Unable to retrieve data for {0} Connector.  The service may currently be inaccessible or the configuration settings may be invalid.  Connector error message: ({1}).',
   'ERROR_CONNECTOR_CONFIGURE' => 'Unable to retrieve data.  The service may currently be inaccessible or the configuration settings may be invalid.',
   'LBL_CONNECT_TWITTER'=>'Connect to Twitter',
+  'LBL_ERROR_CANNOT_FIND_TWITTER'=>'Can not find valid timeline for Twitter ID: ',
   'LBL_CONNECT_TWITTER_FOR_ADMIN'=>'Configure Twitter Connector',
   'LBL_CONNECT_TEST_FAIL'=>'Error: The connector configuration settings may be invalid. Please contact your administrator.',
   'LBL_CONFIGURE_TWITTER'=>'Contact your administrator to configure Twitter',
@@ -4156,6 +4157,7 @@ $app_strings = array (
     //record save
     'LBL_RECORD_SAVED' => 'Record saved.', // use when there is no information about the record
     'LBL_RECORD_SAVED_SUCCESS' => 'You successfully created the {{moduleSingularLower}} <a href="#{{buildRoute model=this}}">{{name}}</a>.', // use when a model is available
+    'LBL_RECORD_SAVED_ACCESS_DENIED' => 'You successfully created this record, but you do not have permission to access this record.', // use when user has no access to the model
     'LBL_VALIDATING' => 'Validating...',
 
     //for sidecar alert view

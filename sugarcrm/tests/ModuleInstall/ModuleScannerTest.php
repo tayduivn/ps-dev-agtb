@@ -166,13 +166,18 @@ EOQ;
             'htm' => 'test.htm',
             'xml' => 'test.xml',
             'hbs' => 'test.hbs',
+            'config' => 'custom/config.php',
         );
 
         // Disallowed file names
         $notAllowed = array(
             'docx' => 'test.docx',
+            'docx(2)' => '../sugarcrm.xml/../sugarcrm/test.docx',
             'java' => 'test.java',
             'phtm' => 'test.phtm',
+            'md5' => 'files.md5',
+            'md5(2)' => '../sugarcrm/files.md5',
+
         );
 
         // Get our scanner
@@ -188,6 +193,39 @@ EOQ;
         foreach ($notAllowed as $ext => $file) {
             $valid = $ms->isValidExtension($file);
             $this->assertFalse($valid, "The $ext extension should not be valid on $file but the ModuleScanner is saying it is");
+        }
+    }
+
+    public function testConfigChecks()
+    {
+            $isconfig = array(
+            'config.php',
+            'config_override.php',
+            'custom/../config_override.php',
+            'custom/.././config.php',
+            );
+
+        // Disallowed file names
+        $notconfig = array(
+            'custom/config.php',
+            'custom/modules/config.php',
+            'cache/config_override.php',
+            'modules/Module/config.php'
+        );
+
+        // Get our scanner
+        $ms = new ModuleScanner();
+
+        // Test valid
+        foreach ($isconfig as $file) {
+            $valid = $ms->isConfigFile($file);
+            $this->assertTrue($valid, "$file should be recognized as config file");
+        }
+
+        // Test not valid
+        foreach ($notconfig as $ext => $file) {
+            $valid = $ms->isConfigFile($file);
+            $this->assertFalse($valid, "$file should not be recognized as config file");
         }
     }
 

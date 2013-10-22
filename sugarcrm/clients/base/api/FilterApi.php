@@ -185,11 +185,11 @@ class FilterApi extends SugarApi
         return $options;
     }
 
-    public function filterListSetup(ServiceBase $api, array $args)
+    public function filterListSetup(ServiceBase $api, array $args, $acl = 'list')
     {
         $seed = BeanFactory::newBean($args['module']);
 
-        if (!$seed->ACLAccess('list')) {
+        if (!$seed->ACLAccess($acl)) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
         }
 
@@ -216,7 +216,7 @@ class FilterApi extends SugarApi
         return array($args, $q, $options, $seed);
     }
 
-    public function filterList(ServiceBase $api, array $args)
+    public function filterList(ServiceBase $api, array $args, $acl = 'list')
     {
         if (!empty($args['q'])) {
             if (!empty($args['filter'])||!empty($args['deleted'])) {
@@ -230,7 +230,7 @@ class FilterApi extends SugarApi
             return $search->globalSearch($api, $args);
         }
 
-        list($args, $q, $options, $seed) = $this->filterListSetup($api, $args);
+        list($args, $q, $options, $seed) = $this->filterListSetup($api, $args, $acl);
         $api->action = 'list';
 
         return $this->runQuery($api, $args, $q, $options, $seed);
