@@ -175,6 +175,8 @@
      * Handle click on the cancel link
      */
     cancel: function () {
+        //Clear unsaved changes on cancel.
+        app.events.trigger('create:model:changed', false);
         if(app.drawer){
             app.drawer.close(this.context);
         }
