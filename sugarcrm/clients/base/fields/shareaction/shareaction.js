@@ -1,4 +1,3 @@
-
 ({
     /**
      * Share row action.
@@ -39,14 +38,16 @@
         options.def = options.def || {};
 
         this.events = _.extend({}, this.events, options.def.events || {}, {
-            'click a[name=share]': 'share'
+            'click a[name="share"][data-event="true"]': 'share'
         });
 
         app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args: [options]});
-        // FIXME this hack is needed to load the row action template
-        this.type = 'rowaction';
-
         this._initShareTemplates();
+
+        // FIXME this preference shouldn't be a string
+        if (app.user.getPreference('use_sugar_email_client') !== 'true') {
+            options.def.href = this._shareWithMailTo();
+        }
     },
 
     /**
@@ -87,21 +88,13 @@
      * @protected
      */
     _getShareParams: function() {
-        var module,
-            moduleString = app.lang.getAppListStrings('moduleListSingular');
-
-        if (!moduleString[this.module]) {
-            app.logger.error("Module '" + this.module + "' doesn't have singular translation.");
-            // graceful fallback
-            module = this.module;
-        } else {
-            module = moduleString[this.module];
-        }
+        var moduleString = app.lang.getAppListStrings('moduleListSingular');
 
         return _.extend({}, this.model.attributes, {
-            module: module,
+            module: moduleString[this.module] || this.module,
             appId: app.config.appId,
-            url: window.location.href
+            url: window.location.href,
+            name: this.model.attributes.name || this.model.attributes.full_name
         });
     },
 
@@ -117,13 +110,7 @@
      * @see _shareWithMailTo()
      */
     share: function() {
-
-        // FIXME this preference shouldn't be a string
-        if (app.user.getPreference('use_sugar_email_client') !== 'true') {
-            this._shareWithMailTo();
-        } else {
-            this._shareWithSugarEmailClient();
-        }
+        this._shareWithSugarEmailClient();
     },
 
     /**
@@ -161,15 +148,12 @@
      * @private
      */
     _shareWithMailTo: function() {
-
         var subject = this.shareTplSubject(this._getShareParams()),
             body = this.shareTplBody(this._getShareParams());
 
-        // this hack wouldn't be needed if rowaction would accept a href that isn't hardcoded with #
-        window.location.href = 'mailto:?' + [
+        return 'mailto:?' + [
             'subject=' + encodeURIComponent(subject),
             'body=' + encodeURIComponent(body)
         ].join('&');
-        window.close();
     }
 })

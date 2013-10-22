@@ -1,0 +1,8 @@
+<a class="rowaction" {{#if def.href}}href="{{def.href}}"{{else}}data-event="true" href="javascript:void(0);"{{/if}}
+{{#if def.tooltip}}
+   rel="tooltip"
+   data-placement="bottom"
+   title="{{str def.tooltip module}}"
+{{/if}}
+   name="{{name}}">
+{{#if def.icon}}<i class="{{def.icon}}"></i>{{/if}}{{str label}}</a>
