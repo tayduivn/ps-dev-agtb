@@ -62,6 +62,10 @@
   .btn-toolbar {
     margin-top: 7px;
     padding-left: 0;
+    //needed for iPad (dont' remove)
+    &> .panel-top:first-child {
+      float: left;
+    }
     //for revenue line item
     &> .panel-top:first-child:last-child {
       margin-right: 81px;

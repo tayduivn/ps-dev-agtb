@@ -788,6 +788,18 @@ FLEXLIST GENERIC */
       }
     }
 
+    &:not(.scroll-width) table.dataTable > tbody > tr > td {
+      &:last-child {
+        .overflow-visible.list {
+          position: absolute;
+          .actions.btn-group {
+            position: absolute;
+            top: -14px;
+            left: -27px;
+          }
+        }
+      }
+    }
   }
 }
 
