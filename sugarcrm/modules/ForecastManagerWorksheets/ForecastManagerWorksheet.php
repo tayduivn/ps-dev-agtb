@@ -68,23 +68,23 @@ class ForecastManagerWorksheet extends SugarBean
                 likely_case, likely_case_adjusted, worst_case, worst_case_adjusted, currency_id, base_rate,
                 timeperiod_id, user_id, opp_count, pipeline_opp_count, pipeline_amount, closed_amount ' .
             'FROM ' . $this->table_name . ' ' .
-            'WHERE assigned_user_id = "' . $manager->id . '" AND user_id != "' . $manager->id . '" ' .
-            'AND timeperiod_id = "' . $db->quote($timeperiod) . '" AND draft = 1 AND deleted = 0 ' .
+            'WHERE assigned_user_id = ' . $db->quoted($manager->id) . ' AND user_id != ' . $db->quoted($manager->id) . ' ' .
+            'AND timeperiod_id = ' . $db->quoted($timeperiod) . ' AND draft = 1 AND deleted = 0 ' .
             'UNION ALL ' .
             'SELECT name, assigned_user_id, team_id, team_set_id, quota, best_case, best_case_adjusted,
                     likely_case, likely_case_adjusted, worst_case, worst_case_adjusted, currency_id, base_rate,
                     timeperiod_id, user_id, opp_count, pipeline_opp_count, pipeline_amount, closed_amount ' .
             'FROM ' . $this->table_name . ' ' .
-            'WHERE assigned_user_id = "' . $manager->id . '" AND user_id = "' . $manager->id . '" ' .
-            'AND timeperiod_id = "' . $db->quote($timeperiod) . '" AND draft = 1 AND deleted = 0';
+            'WHERE assigned_user_id = ' . $db->quoted($manager->id) . ' AND user_id = ' . $db->quoted($manager->id) . ' ' .
+            'AND timeperiod_id = ' . $db->quoted($timeperiod) . ' AND draft = 1 AND deleted = 0';
 
 
         $results = $db->query($sql);
 
         if (empty($manager->reports_to_id)) {
             $sqlQuota = 'SELECT sum(quota * base_rate) as quota
-                            FROM ' . $this->table_name . ' WHERE assigned_user_id = "' . $manager->id . '"
-                            AND timeperiod_id = "' . $db->quote($timeperiod) . '" and draft = 1 and deleted = 0';
+                            FROM ' . $this->table_name . ' WHERE assigned_user_id = ' . $db->quoted($manager->id) . '
+                            AND timeperiod_id = ' . $db->quoted($timeperiod) . ' and draft = 1 and deleted = 0';
             $quota = $db->fetchOne($sqlQuota);
             $this->commitQuota(
                 $quota['quota'],
@@ -526,9 +526,9 @@ class ForecastManagerWorksheet extends SugarBean
     {
         $sql = "SELECT sum(q.amount) amount " .
             "FROM quotas q " .
-            "INNER JOIN users u ON u.reports_to_id = '" . $userId . "' " .
+            "INNER JOIN users u ON u.reports_to_id = " . $this->db->quoted($userId) . " " .
             "AND q.user_id = u.id " .
-            "AND q.timeperiod_id = '" . $timeperiodId . "' " .
+            "AND q.timeperiod_id = " . $this->db->quoted($timeperiodId) . " " .
             "AND q.quota_type = 'Rollup'";
         $amount = 0;
 
@@ -563,8 +563,8 @@ class ForecastManagerWorksheet extends SugarBean
             "on q1.user_id = q2.user_id " .
             "and q1.timeperiod_id = q2.timeperiod_id " .
             "and q2.quota_type = 'Direct' " .
-            "where q1.user_id = '" . $userId . "' " .
-            "and q1.timeperiod_id = '" . $timeperiodId . "'" .
+            "where q1.user_id = " . $this->db->quoted($userId) . " " .
+            "and q1.timeperiod_id = " . $this->db->quoted($timeperiodId) . "" .
             "and q1.quota_type = 'Rollup' " .
             "union all " .
             "SELECT q2.amount, q1.id FROM quotas q1 " .
@@ -572,8 +572,8 @@ class ForecastManagerWorksheet extends SugarBean
             "on q1.user_id = q2.user_id " .
             "and q1.timeperiod_id = q2.timeperiod_id " .
             "and q2.quota_type = 'Rollup' " .
-            "where q1.user_id = '" . $userId . "' " .
-            "and q1.timeperiod_id = '" . $timeperiodId . "'" .
+            "where q1.user_id = " . $this->db->quoted($userId) . " " .
+            "and q1.timeperiod_id = " . $this->db->quoted($timeperiodId) . "" .
             "and q1.quota_type = 'Direct'";
 
         $quota = array();
