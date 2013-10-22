@@ -160,9 +160,7 @@
 
         var url = app.api.buildURL(this.module, null, null, {
                 fields: 'id',
-                //FIXME: max_num should be configurable
-                //FIXME: once app.config returns max_mass_update.
-                max_num: 1000,
+                max_num: app.config.maxRecordFetchSize,
                 filter: filterDef
             });
 

@@ -78,8 +78,9 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
                         sales_status: 'Closed Won',
                         closed_revenue_line_items: 0
                     })],
-                    remove: function(){},
-                    off: function(){}
+                    remove: $.noop,
+                    setChunkSize: $.noop,
+                    off: $.noop
                 };
             });
         });
@@ -104,8 +105,9 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
                         sales_status: 'In Progress',
                         closed_revenue_line_items: 1
                     })],
-                    remove: function(){},
-                    off: function(){}
+                    remove: $.noop,
+                    setChunkSize: $.noop,
+                    off: $.noop
                 };
             });
         });
@@ -130,8 +132,9 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
                         sales_status: 'Closed Won',
                         closed_revenue_line_items: 1
                     })],
-                    remove: function(){},
-                    off: function(){}
+                    remove: $.noop,
+                    setChunkSize: $.noop,
+                    off: $.noop
                 };
             });
         });
@@ -157,8 +160,9 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
                         sales_status: null,
                         closed_revenue_line_items: 0
                     })],
-                    remove: function(){},
-                    off: function(){}
+                    remove: $.noop,
+                    setChunkSize: $.noop,
+                    off: $.noop
                 };
             });
         });

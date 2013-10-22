@@ -246,6 +246,9 @@ function make_sugar_config(&$sugar_config)
             'max_cron_runtime' => 60, // max runtime for cron jobs
             'min_cron_interval' => 30, // minimal interval between cron jobs
         ),
+        'max_record_fetch_size' => 1000,
+        'mass_update_chunk_size' => 20,
+        'mass_delete_chunk_size' => 20,
     );
 }
 
@@ -462,6 +465,9 @@ function get_sugar_config_defaults()
             'max_cron_runtime' => 30, // max runtime for cron jobs
             'min_cron_interval' => 30, // minimal interval between cron jobs
         ),
+        'max_record_fetch_size' => 1000,
+        'mass_update_chunk_size' => 20,
+        'mass_delete_chunk_size' => 20,
     );
 
     if (!is_object($locale)) {
