@@ -40,7 +40,7 @@ describe('View.BaseDashablelistView', function() {
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         delete app.plugins.plugins['view']['Dashlet'];
     });
 

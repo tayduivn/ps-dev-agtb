@@ -33,7 +33,7 @@ describe("Leads.Base.View.ConvertPanelHeader", function() {
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         SugarTest.testMetadata.dispose();
     });
 

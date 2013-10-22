@@ -17,7 +17,7 @@ describe("Subpanel List View", function() {
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         view = null;
         layout = null;
     });

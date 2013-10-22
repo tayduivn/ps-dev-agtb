@@ -20,7 +20,7 @@ describe("Twitter View", function() {
         sinonSandbox.restore();
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         view.model = null;
         view = null;
     });

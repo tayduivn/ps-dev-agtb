@@ -27,7 +27,7 @@ describe("Base.Field.TextArea", function() {
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         field = null;
         langLblStub.restore();
     });

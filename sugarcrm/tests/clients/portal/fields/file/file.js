@@ -18,7 +18,7 @@ describe("PortalFileField", function() {
         app.config.siteUrl = _oConfigSiteUrl;
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         model = null;
         field = null;
     });

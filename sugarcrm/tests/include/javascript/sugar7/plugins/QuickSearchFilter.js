@@ -9,7 +9,7 @@ describe("Plugins.Quicksearchfilter", function () {
     afterEach(function () {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
     });
 
     describe('Building the filter definition', function() {

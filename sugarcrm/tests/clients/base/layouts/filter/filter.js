@@ -31,7 +31,7 @@ describe("Base.Layout.Filter", function () {
         if(stubCache) stubCache.restore();
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         layout.dispose();
         layout.context = null;
         layout = null;

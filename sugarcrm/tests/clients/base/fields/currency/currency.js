@@ -76,7 +76,7 @@ describe('Base.Fields.Currency', function() {
         app.cache.cutAll();
         app.view.reset();
         _.defer.restore();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         model = null;
 
         app.metadata.getCurrency.restore();

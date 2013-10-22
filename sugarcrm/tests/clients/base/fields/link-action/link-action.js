@@ -24,7 +24,7 @@ describe('View.Fields.LinkAction', function() {
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         field = null;
         sandbox.restore();
     });

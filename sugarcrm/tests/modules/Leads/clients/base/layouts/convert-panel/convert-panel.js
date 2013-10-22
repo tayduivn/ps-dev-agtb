@@ -37,7 +37,7 @@ describe("Leads.Base.Layout.ConvertPanel", function() {
         dupeViewContextTriggerStub.restore();
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         SugarTest.testMetadata.dispose();
     });
 

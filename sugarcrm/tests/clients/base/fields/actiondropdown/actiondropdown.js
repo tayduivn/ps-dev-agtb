@@ -47,7 +47,7 @@ describe('Base.Field.Actiondropdown', function() {
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         field = null;
     });
 

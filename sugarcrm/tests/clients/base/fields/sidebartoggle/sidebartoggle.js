@@ -23,7 +23,7 @@ describe("Sidebar Toggle", function () {
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
     });
     it("should broadcast sidebarRendered event on _render", function() {
         var contextOn = sinonSandbox.stub(app.controller.context, 'trigger');

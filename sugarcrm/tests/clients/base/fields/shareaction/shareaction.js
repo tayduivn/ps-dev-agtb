@@ -23,7 +23,7 @@ describe('Base.Field.Shareaction', function() {
         field = null;
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
     });
 
     it('should share using email compose action when user preference is true', function() {

@@ -24,7 +24,7 @@ describe('Base.Field.Rowaction', function() {
         field.layout = null;
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         field = null;
     });
 

@@ -218,7 +218,7 @@ describe("Forecasts.View.ForecastsConfigRanges", function() {
 
             app.cache.cutAll();
             app.view.reset();
-            delete Handlebars.templates;
+            Handlebars.templates = {};
         });
 
     });

@@ -13,7 +13,7 @@ describe("Leads.Views.Record", function() {
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
     });
 
     it("should remove blackout fields when copying record and no default", function() {

@@ -28,7 +28,7 @@ describe("Emails.fields.recipients", function() {
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
     });
 
     describe('manipulating the value of the field', function() {

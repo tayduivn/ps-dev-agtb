@@ -35,7 +35,7 @@ describe("Email field", function() {
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         field = null;
         if (oldjQueryFn) {
             $.fn.tooltip = oldjQueryFn;

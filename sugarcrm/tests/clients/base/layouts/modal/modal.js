@@ -18,7 +18,7 @@ xdescribe("Base.Layout.Modal", function() {
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         $.fn.modal = null;
         layout.context = null;
         layout.dispose();

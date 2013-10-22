@@ -12,7 +12,7 @@ describe("Base.Field.ActionMenu", function() {
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         field._loadTemplate = null;
         field = null;
         Account = null;

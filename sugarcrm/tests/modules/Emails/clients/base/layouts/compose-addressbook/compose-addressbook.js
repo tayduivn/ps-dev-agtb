@@ -11,7 +11,7 @@ describe('Emails.Base.Layout.ComposeAddressbook', function() {
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         SugarTest.testMetadata.dispose();
         layout.dispose();
     });

@@ -9,7 +9,7 @@ describe("Base.Field.Button", function() {
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         field.model = null;
         field._loadTemplate = null;
         field = null;

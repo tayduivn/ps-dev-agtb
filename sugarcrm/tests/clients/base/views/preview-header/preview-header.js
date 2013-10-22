@@ -17,7 +17,7 @@ describe("Preview Header View", function() {
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         view.model = null;
         view = null;
         delete app.drawer;

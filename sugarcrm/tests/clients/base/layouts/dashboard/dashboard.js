@@ -29,7 +29,7 @@ describe("Base.Layout.Dashboard", function(){
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         layout.dispose();
         layout.context = null;
         layout = null;

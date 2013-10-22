@@ -16,7 +16,7 @@ describe("Theme Roller View", function() {
         themeApiStub.restore();
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         view = null;
     });
 

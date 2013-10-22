@@ -15,7 +15,7 @@ describe('Base.View.FilteredListView', function() {
         view.dispose();
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         view = null;
         parentLayout = null;
     });

@@ -33,7 +33,7 @@ describe("Base.Layout.Togglepanel", function () {
         getModuleStub.restore();
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         layout.dispose();
         layout.context = null;
         layout = null;
