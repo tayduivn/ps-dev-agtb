@@ -24,7 +24,7 @@
     plugins: ['QuickSearchFilter', 'EllipsisInline', 'Tooltip'],
     initialize: function (options) {
         app.view.invokeParent(this, {type: 'field', name: 'relate', method: 'initialize', args:[options]});
-
+        this._currentIndex = 0;
         this.model.on("change:team_name_type", this.appendTeam, this);
     },
     /**
@@ -54,7 +54,7 @@
                 // If there is a plugin but no team index, set it
                 if (!_.isUndefined(plugin) && _.isUndefined(plugin.setTeamIndex)) {
                     plugin.setTeamIndex = function () {
-                        self.currentIndex = $(this).data("index");
+                        self._currentIndex = $(this).data("index");
                     };
                     plugin.opts.element.on("open", plugin.setTeamIndex);
                 }
@@ -69,7 +69,7 @@
         if (!model) {
             return;
         }
-        var index = this.currentIndex,
+        var index = this._currentIndex,
             team = this.value;
         team[index || 0].id = model.id;
         team[index || 0].name = model.value;
@@ -121,12 +121,16 @@
     },
     addTeam: function () {
         this.value.push({});
+        this._currentIndex++;
         this._updateAndTriggerChange(this.value);
     },
     removeTeam: function (index) {
         // Do not remove last team.
         if (index === 0 && this.value.length === 1) {
             return;
+        }
+        if (this._currentIndex === this.value.length - 1) {
+            this._currentIndex--;
         }
         //Pick first team to be Primary if we're removing Primary team
         var removed = this.value.splice(index, 1);
@@ -165,6 +169,20 @@
     //Forcing change event since backbone isn't picking up on changes within an object within the array.
     inputChanged: function (evt) {
         this._updateAndTriggerChange(this.value);
+    },
+    /**
+     * {@inheritDoc}
+     * Restore the select2 focus location after refresh the dom.
+     */
+    bindDataChange: function() {
+        if (this.model) {
+            this.model.on('change:' + this.name, function() {
+                this.render();
+                if (!_.isEmpty(this.$(this.fieldTag).data('select2'))) {
+                    this.$(this.$(this.fieldTag).get(this._currentIndex)).focus();
+                }
+            }, this);
+        }
     },
     /**
      * Forcing change event on value update since backbone isn't picking up on changes within an object within the array.
