@@ -334,6 +334,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'massupdate' => false,
     'options' => 'forecast_type_dom',
     'comment' => 'Indicator of whether forecast is direct or rollup',
+    'reportable' => false,
   ),
   'opp_count' =>
   array (
@@ -377,6 +378,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'vname' => 'LBL_FORECAST_OPP_WEIGH',
     'type' => 'int',
     'comment' => 'Weighted amount of all opportunities represented by this forecast',
+    'reportable' => false,
   ),
    'currency_id' =>
    array (
@@ -393,6 +395,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
        'vname' => 'LBL_BASE_RATE',
        'type' => 'decimal',
        'len' => '26,6',
+       'reportable' => false,
    ),
    'best_case' =>
   array (
