@@ -69,6 +69,7 @@ class VarDefHandler {
 		global $current_language;
 		global $app_strings;
 		global $app_list_strings;
+        global $modInvisList;
 
 		$temp_module_strings = return_module_language($current_language, $this->module_object->module_dir);
 
@@ -140,6 +141,11 @@ class VarDefHandler {
                 }
 
 				$value = trim($label_name, ':');
+
+                if(($index == 'project' || $index == 'projecttask') && in_array('Project', $modInvisList)) {
+                    continue;
+                }
+
 				if($remove_dups){
 					if(!in_array($value, $this->options_array))
 						$this->options_array[$index] = $value;

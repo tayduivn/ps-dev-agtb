@@ -54,7 +54,6 @@ $moduleList[] = 'RevenueLineItems';
 
 $moduleList[] = 'Documents';
 $moduleList[] = 'Cases';
-$moduleList[] = 'Project';
 $moduleList[] = 'Bugs';
 
 // this list defines all of the module names and bean names in the app
@@ -359,7 +358,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'ACLActions', 'ACLRoles',
     'DocumentRevisions',
     'Empty',
-    'ProjectTask',
+    'ProjectTask', 'Project', 'ProjectResources',
     //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
     'RevenueLineItems'
     //END SUGARCRM flav=pro && flav!=ent ONLY
