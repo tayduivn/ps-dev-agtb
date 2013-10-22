@@ -134,16 +134,16 @@
      * Filter out records that don'w meet date criteria
      * and convert into format convienient for d3
      */
-    evaluateResult: function (data) {
-        // TODO need i18n on this
-        var salesStageMap = {
-                'Negotiation/Review': 'Negotiat./Review',
-                'Perception Analysis': 'Percept. Analysis',
-                'Proposal/Price Quote': 'Proposal/Quote',
-                'Id. Decision Makers': 'Id. Deciders'
-            };
+    evaluateResult: function(data) {
+        var statusOptions = 'sales_stage_dom',
+            fieldMeta = app.metadata.getModule('RevenueLineItems', 'fields');
+        if (fieldMeta) {
+            statusOptions = fieldMeta.sales_stage.options || statusOptions;
+        }
+
         this.dataset = {
-            data: data.records.map(function (d) {
+            data: data.records.map(function(d) {
+                var sales_stage = app.lang.getAppListStrings(statusOptions)[d.sales_stage] || d.sales_stage;
                 return {
                     id: d.id,
                     x: d.date_closed,
@@ -151,8 +151,8 @@
                     shape: 'circle',
                     account_name: d.account_name,
                     assigned_user_name: d.assigned_user_name,
-                    sales_stage: d.sales_stage,
-                    sales_stage_short: salesStageMap[d.sales_stage] || d.sales_stage,
+                    sales_stage: sales_stage,
+                    sales_stage_short: sales_stage,
                     probability: parseInt(d.probability, 10),
                     base_amount: parseInt(d.likely_case, 10),
                     currency_symbol: app.currency.getCurrencySymbol(d.currency_id)
