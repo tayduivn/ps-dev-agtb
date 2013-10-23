@@ -259,7 +259,7 @@ class ModuleApi extends SugarApi {
      */
     protected function getLoadedAndFormattedBean($api, $args, SugarBean $bean)
     {
-        $addAcl = false;
+        $addNoAccessAcl = false;
         // Load the bean fresh to ensure the cache entry from the create process
         // doesn't get in the way of visibility checks
         try {
@@ -271,13 +271,13 @@ class ModuleApi extends SugarApi {
             // with the current user or from edits made to records that do the same
             // thing.
             $args['fields'] = 'id,date_modified';
-            $addAcl = true;
+            $addNoAccessAcl = true;
         }
 
         $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
 
-        if ($addAcl) {
+        if ($addNoAccessAcl) {
             $data['_acl'] = array(
                 'access' => 'no',
                 'view' => 'no',
