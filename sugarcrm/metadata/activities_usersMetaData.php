@@ -59,6 +59,11 @@ $dictionary['activities_users'] = array(
             'type' => 'index',
             'fields' => array('parent_type', 'parent_id'),
         ),
+        array(
+            'name' => 'activities_users_parent',
+            'type' => 'index',
+            'fields' => array('activity_id', 'parent_id', 'parent_type'),
+        ),
     ),
 
     'relationships' => array(

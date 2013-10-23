@@ -33,6 +33,13 @@ $dictionary['Subscription'] = array(
             'required' => true,
         ),
     ),
+    'indices' => array(
+        array(
+            'name' => 'subscription_parent',
+            'type' => 'index',
+            'fields' => array('parent_id'),
+        ),
+    ),
 );
 
 VardefManager::createVardef('ActivityStream/Subscriptions', 'Subscription', array('basic'));
