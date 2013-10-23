@@ -59,15 +59,23 @@ class Bug51172Test extends Sugar_PHPUnit_Framework_TestCase
         $_REQUEST = array();
         sugar_cache_clear('mod_strings.en_us');
 
-        if(file_exists('custom/modules/'.$this->module.'/language/en_us.lang.php'))
+        // Make sure to remove the test files from the filemap cache when removing
+        // them since leaving them in the filemap cache breaks downstream tests
+        // in the suite.
+        $eLang = 'custom/modules/'.$this->module.'/language/en_us.lang.php';
+        $uLang = 'custom/modules/'.$this->add_module.'/language/en_us.lang.php';
+
+        if(file_exists($eLang))
         {
-            unlink('custom/modules/'.$this->module.'/language/en_us.lang.php');
-        }
-        if(file_exists('custom/modules/'.$this->add_module.'/language/en_us.lang.php'))
-        {
-            unlink('custom/modules/'.$this->add_module.'/language/en_us.lang.php');
+            SugarAutoLoader::unlink($eLang, false);
         }
 
+        if(file_exists($uLang))
+        {
+            SugarAutoLoader::unlink($uLang, false);
+        }
+
+        SugarAutoLoader::saveMap();
         SugarTestHelper::tearDown();
         parent::tearDown();
     }

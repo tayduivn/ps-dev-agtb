@@ -120,7 +120,7 @@ if(!empty($_POST['saveConfig'])){
 		$focus->saveConfig();
 
 		// Clean API cache since we may have changed the authentication settings
-		MetaDataManager::clearAPICache();
+		MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_CONFIG));
 
         die("
             <script>

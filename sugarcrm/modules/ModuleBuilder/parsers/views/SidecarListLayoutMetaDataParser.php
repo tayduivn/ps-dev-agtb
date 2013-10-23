@@ -599,8 +599,13 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
     protected function _clearCaches()
     {
         if ($this->implementation->isDeployed()) {
-            MetaDataFiles::clearModuleClientCache($this->_moduleName,'view');
-            MetaDataManager::clearAPICache(false);
+            // Installing and trying to refresh the modules cache is bad juju
+            if (!empty($GLOBALS['installing'])) {
+                // Use the clear NOW method so that if there is a cache it is wiped
+                MetaDataManager::clearAPICacheOnShutdown();
+            } else {
+                MetaDataManager::refreshModulesCache(array($this->_moduleName));
+            }
         }
     }
 

@@ -53,11 +53,14 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
+        
+        // setup test user
+        SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user');
-        // setup test user
-        global $current_user;
+        SugarTestHelper::setUp('app_list_strings');
+        
+        $current_user = $GLOBALS['current_user'];
         $current_user->setPreference('dec_sep', '.');
         $current_user->setPreference('num_grp_sep', ',');
         $current_user->setPreference('default_currency_significant_digits', 2);
@@ -75,10 +78,6 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public static function tearDownAfterClass()
     {
-        // remove test user
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-
         // remove test currencies
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestHelper::tearDown();

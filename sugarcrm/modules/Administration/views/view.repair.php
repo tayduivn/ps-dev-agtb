@@ -35,7 +35,10 @@ class ViewRepair extends SugarView
 	 */
 	public function display()
 	{
-	    $randc = new RepairAndClear();
+	    // To prevent lag in the rendering of the page after clicking the quick repair link...
+        echo "<h2>{$GLOBALS['mod_strings']['LBL_BEGIN_QUICK_REPAIR_AND_REBUILD']}</h2>";
+        ob_flush();
+        $randc = new RepairAndClear();
         $actions = array();
         $actions[] = 'clearAll';
         $randc->repairAndClearAll($actions, array(translate('LBL_ALL_MODULES')), false,true);

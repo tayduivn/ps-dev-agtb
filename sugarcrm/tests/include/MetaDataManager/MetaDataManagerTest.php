@@ -39,7 +39,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->setTestLanguageSettings();
 
         SugarTestHelper::setup('current_user', array(true, true));
-        $this->mm = new MetaDataManager($GLOBALS['current_user']);
+        $this->mm = MetaDataManager::getManager();
     }
 
     public function tearDown()

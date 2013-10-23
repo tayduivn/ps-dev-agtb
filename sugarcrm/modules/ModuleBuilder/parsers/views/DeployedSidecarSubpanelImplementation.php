@@ -276,8 +276,8 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             $this->_viewdefs,
             $this->sidecarFile
         );
-        // clear the cache
-        MetaDataManager::clearAPICache();
+        // clear the cache for this module only
+        MetaDataManager::refreshModulesCache(array($this->_moduleName));
     }
 
     /**

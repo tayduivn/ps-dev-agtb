@@ -53,7 +53,7 @@ class AdministrationController extends SugarController
         }
         
         // BR-29 When changing module tabs the megamenu is not updated on the client
-        MetaDataManager::clearAPICache();
+        MetaDataManager::refreshCache(array('base'));
 
         if (!headers_sent()) {
             header("Location: index.php?module=Administration&action=ConfigureTabs");
@@ -78,7 +78,7 @@ class AdministrationController extends SugarController
             $cfg->handleOverride();
 
             // Clear the metadata cache so changes to languages are picked up right away
-            MetaDataManager::clearAPICache();
+            MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_LANGUAGES));
         }
         
         header("Location: index.php?module=Administration&action=Languages");
@@ -133,8 +133,8 @@ class AdministrationController extends SugarController
             sugar_cache_clear("CONTROLLER_wireless_module_registry_Users");
             sugar_cache_reset();
             
-            // Bug 59121 - Clear the metadata cache
-            MetaDataManager::clearAPICache();
+            // Bug 59121 - Clear the metadata cache for the mobile platform
+            MetaDataManager::refreshCache(array('mobile'));
         }
 
         echo "true";
@@ -240,7 +240,8 @@ class AdministrationController extends SugarController
                  $this->cfg->handleOverride();
              }
 
-             MetaDataManager::clearAPICache();
+             // Refresh the server info section of the metadata
+             MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_SERVERINFO));
              
              if(!$ftsConnectionValid)
                  echo $GLOBALS['mod_strings']['LBL_FTS_CONNECTION_INVALID'];

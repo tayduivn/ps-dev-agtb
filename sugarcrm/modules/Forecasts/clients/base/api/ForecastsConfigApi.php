@@ -230,7 +230,7 @@ class ForecastsConfigApi extends ConfigModuleApi
         $listDefsParser->resetPanelFields();
 
         // get the proper order from the admin panel, where we defined what is displayed, in the order that we want it
-        $mm = new MetadataManager($api->user);
+        $mm = MetadataManager::getManager();
         $views = $mm->getModuleViews('Forecasts');
         $fields = $views['forecastsConfigWorksheetColumns']['meta']['panels'][0]['fields'];
 

@@ -33,20 +33,9 @@ class RestBug55141Test extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
-        // delete all files from cache/api/metadata if it exists
-        $metadata_cache_dir = sugar_cached("cache/api/metadata");
-        if(is_dir($metadata_cache_dir))
-        {
-            if ($handle = opendir($metadata_cache_dir)) {
-                while (false !== ($cache_file = readdir($handle))) {
-                    if ($cache_file != "." && $cache_file != "..") {
-                        $unlink_file = sugar_cached("api/metadata/{$cache_file}");
-                        unlink($unlink_file);
-                    }
-                }
-                closedir($handle);
-            }            
-        }
+
+        // Clear all caches for this test
+        MetaDataManager::clearAPICache();
     }
     
     public function tearDown()
@@ -58,11 +47,11 @@ class RestBug55141Test extends RestTestBase {
      * @group rest
      */
     public function testCache() {
+        // Get the manager to clear the metadata
+        $mm = MetaDataManager::getManager();
+        
         // create metadata cache
-        $metadata = $this->_restCall('metadata');
-
-        // get hash
-        $hash = $metadata['reply']['_hash'];
+        $data = $mm->getMetadata();
 
         // verify hash file exists
         $this->assertTrue(file_exists('cache/api/metadata/metadata_base_private.php'), "Didn't create the cache file");
@@ -77,8 +66,8 @@ class RestBug55141Test extends RestTestBase {
         $rc->clearAdditionalCaches();
         $GLOBALS['current_user'] = $old_user;
         
-        // verify it no longer does
-        $this->assertFalse(file_exists('cache/api/metadata/metadata_base_private.php'), "Didn't really clear the cache");
+        // verify the cache file for this platform and visibility no longer exists
+        $this->assertFileNotExists('cache/api/metadata/metadata_base_private.php', "Didn't really clear the cache");
 
     }
 }

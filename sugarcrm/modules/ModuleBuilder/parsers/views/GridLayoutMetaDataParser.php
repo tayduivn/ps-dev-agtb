@@ -544,17 +544,6 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         	}
         }
 
-/*
-        //Set the tabs setting
-        if (isset($_REQUEST['panels_as_tabs']))
-        {
-        	if ($_REQUEST['panels_as_tabs'] == false || $_REQUEST['panels_as_tabs'] == "false")
-        	   $this->setUseTabs( false );
-        	else
-        	   $this->setUseTabs( true );
-        }
-*/
-
         //Set the tab definitions
         $tabDefs = array();
         $this->setUseTabs( false );

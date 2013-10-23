@@ -50,7 +50,9 @@ class TemplateAddress extends TemplateField
         if (!empty($labelValue)) {
             $labelValue .= ' ';
         }
-        
+        // To prevent mutilple calls to the metadata api cache rebuilder, queue
+        MetaDataManager::enableCacheRefreshQueue();
+
         // To keep consistency with OOTB address groups, add Street to the fields
         foreach ( array ( 'Street', 'City' , 'State' , 'PostalCode' , 'Country' ) as $addressFieldName )
         {
@@ -69,6 +71,9 @@ class TemplateAddress extends TemplateField
             
             $addressField->save ( $df ) ;
         }
+
+        // Handle the metadata api update now
+        MetaDataManager::runCacheRefreshQueue();
     }
 }
 

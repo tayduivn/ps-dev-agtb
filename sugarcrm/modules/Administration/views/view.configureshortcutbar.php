@@ -94,7 +94,7 @@ class ViewConfigureshortcutbar extends SugarView
             );
 
             if ($successful) {
-                MetaDataManager::clearAPICache();
+                MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_MODULES));
                 echo "true";
             } else {
                 echo translate("LBL_SAVE_FAILED");

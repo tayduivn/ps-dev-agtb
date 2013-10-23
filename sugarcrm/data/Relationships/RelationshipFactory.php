@@ -50,7 +50,8 @@ class SugarRelationshipFactory {
 
     public static function rebuildCache()
     {
-        self::getInstance()->buildRelationshipCache();
+        $rf = self::getInstance();
+        $rf->buildRelationshipCache();
     }
 
     public static function deleteCache()
@@ -60,9 +61,6 @@ class SugarRelationshipFactory {
         {
             unlink($file);
         }
-
-        //clear out the api metadata cache
-        MetaDataManager::clearAPICache();
     }
 
     /**
@@ -196,7 +194,28 @@ class SugarRelationshipFactory {
         $out = "<?php \n \$relationships = " . var_export($relationships, true) . ";";
         sugar_file_put_contents_atomic($this->getCacheFile(), $out);
 
+        // There are only certain times when the relationship cache needs to be 
+        // refreshed...
+        // 
+        // If we have a cache, but no internal relationships yet, do NOT rebuild
+        // the api cache. This is a first load of this class.
+        //
+        // If there is no cache, then do NOT rebuild the api cache since there is
+        // nothing to rebuild.
+        //
+        // DO rebuild the cache if there is a cache, there is an internal relationships
+        // property and it is different than $relationships
+        $rebuildApiCache = false;
+        $mm = MetaDataManager::getManager();
+        if (file_exists($mm->getMetadataCacheFileName())) {
+            $rebuildApiCache = !empty($this->relationships) && array_diff($this->relationships, $relationships) !== array();
+        }
+
         $this->relationships = $relationships;
+
+        if ($rebuildApiCache) {
+            MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_RELATIONSHIPS));
+        }
 
         //Now load all vardefs a second time populating the rel_calc_fields
         foreach ($beanList as $moduleName => $beanName) {
@@ -210,7 +229,4 @@ class SugarRelationshipFactory {
 	protected function getCacheFile() {
 		return sugar_cached("Relationships/relationships.cache.php");
 	}
-
-
-
 }

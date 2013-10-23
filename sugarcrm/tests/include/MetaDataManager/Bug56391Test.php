@@ -54,7 +54,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testUsersModule()
     {
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
         // because the user is not an admin the user should only have view and list access
         $expected_result = array(
             'admin' => 'no',
@@ -82,7 +82,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testUsersModuleFields()
     {
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
         // because the user is not an admin the user should only have view and list access
         $expected_result = array(
                                     'user_name' => array('write' => 'no', 'create' => 'no'),
@@ -123,7 +123,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         // set current user as an admin
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
         // because the user is not an admin the user should only have view and list access
 
         $expected_result = array();
@@ -149,7 +149,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         // set current user as an admin
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
         // because the user is not an admin the user should only have view and list access
 
         $expected_result = array(
@@ -192,7 +192,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestACLUtilities::setupUser($role);
         SugarTestHelper::clearACLCache();
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
         foreach ($modules AS $module) {
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
@@ -236,7 +236,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestACLUtilities::setupUser($role);
         SugarTestHelper::clearACLCache();
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
         foreach ($modules AS $module) {
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
@@ -277,7 +277,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         unset($account);
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
 
         $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['access']));
         unset($acls['_hash']);
@@ -313,7 +313,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestACLUtilities::setupUser($role);
         SugarTestHelper::clearACLCache();
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
 
         $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::newBean('Accounts'));
         unset($acls['_hash']);
@@ -353,7 +353,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $account->id = create_guid();
         $account->name = "Tis Awesome";
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
 
         $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], $account);
         unset($acls['_hash']);
@@ -392,7 +392,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestACLUtilities::setupUser($role);
         SugarTestHelper::clearACLCache();
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
 
         $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['no_access']));
 
@@ -428,7 +428,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestACLUtilities::setupUser($role);
         SugarTestHelper::clearACLCache();
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
 
         $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['access']));
         unset($acls['_hash']);
@@ -465,7 +465,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestACLUtilities::setupUser($role);
         SugarTestHelper::clearACLCache();
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
 
         $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['no_access']));
         unset($acls['_hash']);

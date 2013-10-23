@@ -468,11 +468,18 @@ class ModuleBuilderController extends SugarController
                     $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->dependency));
                 if (!empty($field->formula))
                     $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->formula));
-
                 $repair->repairAndClearAll(array('clearAll'), array(translate('LBL_ALL_MODULES')), true, false);
-                foreach($relatedMods AS $mName => $oName) {
+                foreach ($relatedMods as $mName => $oName) {
                     VardefManager::loadVardef($mName, $oName, true);
                 }
+                //END SUGARCRM flav=pro ONLY
+                //#28707 ,clear all the js files in cache
+                $repair->module_list = array();
+                $repair->clearJsFiles();
+
+                // Clear the metadata cache for labels and the requested module
+                $repair->module_list = array($module);
+                $repair->repairMetadataAPICache(MetaDataManager::MM_LABELS);
             }
         } else {
             $mb = new ModuleBuilder ();
@@ -550,11 +557,11 @@ class ModuleBuilderController extends SugarController
 
         // Bug 59210
         // Clear the metadata cache so this change can be reflected
-        // immediately. This could have taken place already in action_SaveLabel
-        // so don't do it again if we don't need to.
-        if (!$this->metadataApiCacheCleared) {
-            $repair->clearMetadataAPICache();
-        }
+        // immediately.
+        $repair->module_list = array($module);
+
+        // Sending false will only rebuild the $module section of the cache
+        $repair->repairMetadataAPICache(false);
 
         $GLOBALS ['mod_strings'] = $MBmodStrings;
     }
@@ -618,7 +625,9 @@ class ModuleBuilderController extends SugarController
         }
 
         $relationships->addFromPost();
-        $relationships->save();
+        // Since the build() call below will call save() again, save the rebuild
+        // of relationship metadata for now
+        $relationships->save(false);
         $GLOBALS['log']->debug("\n\nSTART BUILD");
         if (empty($_REQUEST ['view_package'])) {
             $relationships->build();
@@ -701,8 +710,11 @@ class ModuleBuilderController extends SugarController
         }
 
         // Clear the metadata cache if it hasn't been done already
-        if (!$this->metadataApiCacheCleared) {
-            $this->clearMetaDataAPICache();
+        if (!$this->metadataApiCacheCleared && !empty($moduleName)) {
+            // This removes the labels associated with the field and rebuilds
+            // the api cache for the module
+            $repair->module_list = array($moduleName);
+            $repair->repairMetadataAPICache('labels');
         }
     }
 
@@ -1048,17 +1060,6 @@ class ModuleBuilderController extends SugarController
             $key = in_array($_REQUEST['column'], $valid_columns) ? $_REQUEST['column'] : 'name';
             $val = array('key' => $key, 'direction' => $direction);
             $current_user->setPreference('fieldsTableColumn', getJSONobj()->encode($val), 0, 'ModuleBuilder');
-        }
-    }
-
-    protected function clearMetaDataAPICache()
-    {
-        if (!$this->metadataApiCacheCleared) {
-            // Clear out the api metadata cache
-            MetaDataManager::clearAPICache();
-
-            // Used to prevent duplication of this process
-            $this->metadataApiCacheCleared = true;
         }
     }
 

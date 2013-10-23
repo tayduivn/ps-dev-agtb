@@ -38,9 +38,9 @@ class MetadataApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetModuleTabMap()
     {
-        // Get our data
-        $api  = new MetadataApi;
-        $data = $api->getModuleTabMap();
+        // This used to live in the MetadataApi, hence the reason for this test
+        $mm  = MetaDataManager::getManager();
+        $data = $mm->getModuleTabMap();
 
         // Test see that the map is not empty and an array
         $this->assertInternalType('array', $data, "module_tab_map is not an array");

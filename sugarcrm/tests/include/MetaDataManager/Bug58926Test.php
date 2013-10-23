@@ -62,7 +62,7 @@ class Bug58926Test extends Sugar_PHPUnit_Framework_TestCase
                     ),
             );
 
-        $mm = new MetaDataManagerBug58926($GLOBALS['current_user']);
+        $mm = new MetaDataManagerBug58926();
         
         $test['app_list_strings']['moduleList']['Leads'] = $mm->getDecodeStrings("Lead&#39;s Are Special");
         $test['app_list_strings']['moduleListSingular']['Leads'] = $mm->getDecodeStrings("Leads&#39; Are Special");

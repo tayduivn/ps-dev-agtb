@@ -71,7 +71,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestACLUtilities::setupUser($role);
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
         foreach($modules AS $module) {
             unset($_SESSION['ACL']);
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
@@ -104,7 +104,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestACLUtilities::setupUser($role);
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
         foreach($modules AS $module) {
             unset($_SESSION['ACL']);
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
@@ -136,7 +136,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestACLUtilities::setupUser($role);
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
         foreach($modules AS $module) {
             unset($_SESSION['ACL']);
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
@@ -169,7 +169,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestACLUtilities::setupUser($role);
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
         foreach($modules AS $module) {
             unset($_SESSION['ACL']);
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
@@ -195,7 +195,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestACLUtilities::setupUser($role);
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
         foreach($modules AS $module) {
             unset($_SESSION['ACL']);
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
@@ -232,7 +232,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestACLUtilities::setupUser($role);
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
         foreach($modules AS $module) {
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
@@ -259,7 +259,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestACLUtilities::setupUser($role);
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
         foreach($modules AS $module) {
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
@@ -286,7 +286,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestACLUtilities::setupUser($role);
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
         foreach($modules AS $module) {
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);

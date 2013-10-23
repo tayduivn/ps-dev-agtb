@@ -36,7 +36,9 @@ class Bug63486Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function testMobileSubPanelDefinitions()
     {
-        require_once('modules/Meetings/metadata/wireless.subpaneldefs.php');
+        // Remember to NOT use *_once on includes in unit tests unles you WANT
+        // the suite to fail.
+        require 'modules/Meetings/metadata/wireless.subpaneldefs.php';
         $mobileLayoutDefs = $layout_defs ['Meetings'];
         $bean = BeanFactory::getBean('Meetings');
         // mobile subpanels

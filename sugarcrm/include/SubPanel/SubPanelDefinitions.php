@@ -744,7 +744,7 @@ class SubPanelDefinitions
     {
         require_once 'include/MetaDataManager/MetaDataManager.php';
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        $mm = MetaDataManager::getManager();
 
         $layout_defs [$this->_focus->module_dir] = array();
         $layout_defs [$layout_def_key] = array();

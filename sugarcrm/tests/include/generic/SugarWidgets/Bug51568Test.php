@@ -72,15 +72,16 @@ class Bug51568Test extends Sugar_PHPUnit_Framework_TestCase
         $this->lm = new LayoutManager();
         $this->lm->setAttribute('reporter', new stdClass());
 
-        $this->currency_51568 = new Currency();
+        $this->currency_51568 = BeanFactory::getBean('Currencies', null, array('use_cache' => false));
         $this->currency_51568->symbol = 'TT';
         $this->currency_51568->conversion_rate = 0.5;
         $this->currency_51568->save(false);
-        $this->currency_system = new Currency();
-        $this->currency_system->retrieve(-99);
-        $this->backupSymbol = $this->currency_system->symbol;
-        $this->currency_system->symbol = '¥';
-        $this->currency_system->save(false);
+        
+        $currency = BeanFactory::getBean('Currencies');
+        $currency->retrieve(-99);
+        $this->backupSymbol = $currency->symbol;
+        $currency->symbol = '¥';
+        $currency->save(false);
         $sugar_config['default_currency_symbol'] = '¥';
         get_number_seperators(true);
     }
@@ -198,8 +199,10 @@ class Bug51568Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         global $sugar_config;
-        $this->currency_system->symbol = $this->backupSymbol;
-        $this->currency_system->save(false);
+        $currency = BeanFactory::getBean('Currencies');
+        $currency->retrieve(-99);
+        $currency->symbol = $this->backupSymbol;
+        $currency->save(false);
         $sugar_config['default_currency_symbol'] = $this->backupSymbol;
 
         format_number(0, 0, 0, array(

@@ -231,6 +231,8 @@ class ViewResetmodule extends SugarView
             $rac = new RepairAndClear ( ) ;
             $rac->repairAndClearAll ( array ( 'clearAll' ), array ( $this->module ), true, false ) ;
 			$rac->rebuildExtensions();
+            // This allows the rebuilding of module only metadata 
+            $rac->repairMetadataAPICache(false);
         	$out .= "Cleared extensions for {$this->module}<br/>";
         }
 

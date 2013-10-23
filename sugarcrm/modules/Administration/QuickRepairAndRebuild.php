@@ -60,6 +60,14 @@ class RepairAndClear
         $this->clearVardefs();
         //first  clear the language cache.
         $this->clearLanguageCache();
+        
+        // Enable the metadata manager cache refresh to queue. This allows the
+        // cache refresh processes in metadata manager to be carried out one time
+        // at the end of the rebuild instead of continual processing during the
+        // request. This is set outside of the loop to allow any other cache reset
+        // process to carry itself out as needed without firing off continual
+        // calls to the metadata manager.
+        MetaDataManager::enableCacheRefreshQueue();
         foreach ($this->actions as $current_action)
         switch($current_action)
         {
@@ -96,12 +104,15 @@ class RepairAndClear
             case 'clearAdditionalCaches':
                 $this->clearAdditionalCaches();
                 break;
-            case 'clearMetadataAPICache':
-                $this->clearMetadataAPICache();
+            case 'repairMetadataAPICache':
+                $this->repairMetadataAPICache();
                 break;
             //BEGIN SUGARCRM flav=pro ONLY
             case 'clearPDFFontCache':
                 $this->clearPDFFontCache();
+                break;
+            case 'resetForecasting':
+                $this->resetForecasting();
                 break;
             //END SUGARCRM flav=pro ONLY
             case 'clearAll':
@@ -127,8 +138,13 @@ class RepairAndClear
                 //BEGIN SUGARCRM flav=ent ONLY
                 $this->repairPortalConfig();
                 //END SUGARCRM flav=ent ONLY
+                $this->repairMetadataAPICache();
                 break;
         }
+
+        // Run the metadata cache refresh queue. This will turn queueing off 
+        // after it is run
+        MetaDataManager::runCacheRefreshQueue();
     }
 
 	/////////////OLD
@@ -440,16 +456,17 @@ class RepairAndClear
         $sd = new ServiceDictionary();
         $sd->clearCache();
         
-        // Moving this out so it is accessible without the need to wipe out the 
-        // API service dictionary cache 
-        $this->clearMetadataAPICache();
-
         //Remove cached js component files
         $this->_clearCache(sugar_cached('include/javascript/'), '.js');
     }
 
     /**
-     * Clears out the metadata file cache and memory caches
+     * Clears out the metadata file cache and memory caches. 
+     * 
+     * NOTE: While this is here as part of the collection of methods to be used
+     * for clearing caches, it really should only be used in the most extreme
+     * cases as it will result in long wait times the next time client apps are
+     * called since rebuilding the metadata cache will be done then.
      * 
      * Bug 55141 - Clear the metadata API cache
      */
@@ -461,6 +478,28 @@ class RepairAndClear
         }
         foreach($this->module_list as $module_name_singular ) {
             $this->_clearCache(sugar_cached('modules/').$this->_getModuleNamePlural($module_name_singular).'/clients', '.php');
+        }
+    }
+
+    /**
+     * Cleans out current metadata cache and rebuilds it for
+     * each platform and visibility
+     */
+    public function repairMetadataAPICache($section = '') {
+        // Refresh metadata for selected modules only if there selected modules
+        if (is_array($this->module_list) && !empty($this->module_list) && !in_array(translate('LBL_ALL_MODULES'), $this->module_list)) {
+            MetaDataManager::refreshModulesCache($this->module_list);
+        } 
+
+        // If there is a section named (like 'fields') refresh that section
+        if (!empty($section)) {
+            MetaDataManager::refreshSectionCache($section);
+        } else {
+            // Otherwise refresh the entire thing if the section is not a false,
+            // but only for the base platform
+            if ($section !== false) {
+                MetaDataManager::refreshCache(array('base'));
+            }
         }
     }
 
@@ -548,4 +587,16 @@ class RepairAndClear
 			next($beanList);
 		}
 	}
+    //BEGIN SUGARCRM flav=pro ONLY
+
+    /**
+     * This is a private function to allow forecasts config settings to be reset
+     *
+     */
+    private function resetForecasting() {
+        $db = DBManagerFactory::getInstance();
+        $db->query("UPDATE config SET value = 0 WHERE name = 'is_setup'");
+        $db->query("UPDATE config SET value = 0 WHERE name = 'has_commits'");
+    }
+    //END SUGARCRM flav=pro ONLY
 }
