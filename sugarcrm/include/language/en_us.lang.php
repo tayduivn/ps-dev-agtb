@@ -3272,6 +3272,11 @@ $app_strings = array (
     'LBL_DASHLET_COUNTRY_CHART_NAME' => 'Sales by Country',
     'LBL_DASHLET_COUNTRY_CHART_DESCRIPTION' => 'Displays the sales chart by country map.',
 
+    /* Cases Summary Dashlet */
+    'LBL_DASHLET_CASESSUMMARY_SUMMARY' => 'Summary',
+    'LBL_DASHLET_CASESSUMMARY_CLOSE_CASES' => 'Closed Cases',
+    'LBL_DASHLET_CASESSUMMARY_OPEN_CASES' => 'Open Cases',
+
     // MySugar Menu Options
     'LBL_ADD_PAGE' => 'Add Page',
     'LBL_DELETE_PAGE' => 'Delete Page',

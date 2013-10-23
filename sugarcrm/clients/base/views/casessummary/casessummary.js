@@ -59,12 +59,12 @@
             ]
         };
         this.chartData.data.push({
-            key: 'Closed Cases',
+            key: app.lang.getAppString('LBL_DASHLET_CASESSUMMARY_CLOSE_CASES'),
             class: 'nv-fill-green',
             value: this.closedCases.length
         });
         this.chartData.data.push({
-            key: 'Open Cases',
+            key: app.lang.getAppString('LBL_DASHLET_CASESSUMMARY_OPEN_CASES'),
             class: 'nv-fill-red',
             value: this.openCases
         });
@@ -129,12 +129,15 @@
         this.tabData = [];
 
         var stati = _.uniq(this.chartCollection.pluck('status'));
+        var statusOptions = app.metadata.getModule('Cases', 'fields').status.options || 'case_status_dom';
+
 
         _.each(stati, function(status, index){
             if (!status2css[status]) {
                 this.tabData.push({
                     index: index,
                     status: status,
+                    statusLabel: app.lang.getAppListStrings(statusOptions)[status],
                     models: this.chartCollection.where({'status':status}),
                     cssClass: status2css[status] ? status2css[status] : 'label-important'
                 });
