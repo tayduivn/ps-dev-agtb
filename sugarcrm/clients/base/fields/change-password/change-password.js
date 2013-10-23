@@ -180,6 +180,8 @@
              */
             self.model.set(self.name + '_' + $(this).attr('name'), self.unformat($(this).val()));
         });
+
+        el.on('focus', _.bind(this.handleFocus, this));
     },
 
     /**

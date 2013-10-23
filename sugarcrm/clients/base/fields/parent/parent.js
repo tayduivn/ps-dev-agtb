@@ -27,7 +27,11 @@
                 self.$(self.fieldTag).select2('val', '');
             });
 
-
+            //FIXME: Once select2 upgrades to 3.4.3, this code should use on('select2-focus')
+            var plugin = this.$(this.typeFieldTag).data('select2');
+            if (plugin) {
+                plugin.focusser.on('focus', _.bind(_.debounce(this.handleFocus, 0), this));
+            }
             if(this.model.get(this.def.type_name) !== this.$(this.typeFieldTag).val()) {
                 this.model.set(this.def.type_name, this.$(this.typeFieldTag).val());
             }

@@ -95,6 +95,11 @@
         if (!_.isEmpty(optionsKeys)) {
             if (this.tplName === 'edit' || this.tplName === 'list-edit') {
                 $el.select2(select2Options);
+                //FIXME: Once select2 upgrades to 3.4.3, this code should use on('select2-focus')
+                var plugin = $el.data('select2');
+                if (plugin && plugin.focusser) {
+                    plugin.focusser.on('focus', _.bind(_.debounce(this.handleFocus, 0), this));
+                }
                 $el.select2("container").addClass("tleft");
                 $el.on('change', function(ev){
                     var value = ev.val;

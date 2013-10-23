@@ -130,6 +130,8 @@
             appendTo: appendTarget
         });
 
+        this.$('.datepicker').on('focus', _.bind(this.handleFocus, this));
+
         // Bind Datepicker to our proxy functions
         this.$(".datepicker").datepicker().on({
             show: _.bind(this.showDatepicker, this),
@@ -397,7 +399,7 @@
                 self._setupDatepicker();
             }
         });
-        if (Modernizr.touch) {
+        if (app.utils.isTouchDevice()) {
            this.$("[rel=datepicker]").attr('readonly',true);
         }
     },

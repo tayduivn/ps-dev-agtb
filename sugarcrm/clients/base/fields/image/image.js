@@ -11,6 +11,8 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 ({
+    fieldTag: 'input[type=file]',
+
     /**
      * {@inheritDoc}
      *
@@ -102,6 +104,7 @@
      */
     bindDomChange: function() {
         //Override default behavior
+        this.$(this.fieldTag).on('focus', _.bind(this.handleFocus, this));
     },
 
     /**
