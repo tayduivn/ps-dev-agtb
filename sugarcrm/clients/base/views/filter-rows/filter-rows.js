@@ -538,7 +538,7 @@
                 field.$('input, textarea').on('keyup',_.debounce(_.bind(_keyUpCallback, field), 400));
             });
 
-            if (fieldType === 'relate' && $row.data('value')) {
+            if (fieldDef.type === 'relate' && $row.data('value')) {
                 var self = this,
                     findRelatedName = app.data.createBeanCollection(fieldDef.module);
                 findRelatedName.fetch({fields: [fieldDef.rname], params: {filter: [{'id': $row.data('value')}]},
@@ -547,7 +547,9 @@
                         if (findRelatedName.first()) {
                             model.set(fieldName, findRelatedName.first().get(fieldDef.rname), { silent: true });
                         }
-                        self._renderField(field);
+                        if (!field.disposed) {
+                            self._renderField(field);
+                        }
                     }
                 }});
             } else {
