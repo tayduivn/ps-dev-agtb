@@ -93,13 +93,6 @@
                 <td valign="top" nowrap><slot><input tabindex='3' name='mailmerge_on' disabled class="checkbox" type="checkbox" {$MAILMERGE_ON}></slot></td>
                 <td><slot>{$MOD.LBL_MAILMERGE_TEXT}&nbsp;</slot></td>
                 </tr>
-                <!--//BEGIN SUGARCRM flav=ent ONLY -->
-                <tr>
-                <td valign="top" scope="row"><slot>{$APP.LBL_OC_STATUS|strip_semicolon}:</slot></td>
-                <td valign="top" nowrap><slot>{$OC_STATUS_DISPLAY}&nbsp;</slot></td>
-                <td><slot>{$APP.LBL_OC_STATUS_TEXT}&nbsp;</slot></td>
-                </tr>
-                <!--//END SUGARCRM flav=ent ONLY -->
                 <tr>
                 <td valign="top" scope="row"><slot>{$MOD.LBL_SETTINGS_URL|strip_semicolon}:</slot></td>
                 <td valign="top" nowrap><slot>{$SETTINGS_URL}</slot></td>

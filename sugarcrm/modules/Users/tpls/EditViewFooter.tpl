@@ -250,18 +250,10 @@
                             </td>
                         </tr>
                         <!--//BEGIN SUGARCRM flav=pro ONLY -->
-                        <!-- BEGIN: pro_oc -->
                         <tr>
-                            <!--//BEGIN SUGARCRM flav=ent ONLY -->
-                            <td  scope="row" valign="top"><slot>{$APP.LBL_OC_STATUS}:</slot>&nbsp;{sugar_help text=$APP.LBL_OC_STATUS_TEXT }</td>
-                            <td ><slot><select tabindex='12' name="oc_status" {$IS_ADMIN_DISABLED}>{$OC_STATUS}</select></slot></td>
-                            <!--//END SUGARCRM flav=ent ONLY -->
                             <td scope="row" valign="top"><slot>{$MOD.LBL_OWN_OPPS}:</slot>&nbsp;{sugar_help text=$MOD.LBL_OWN_OPPS_DESC }</td>
                             <td ><slot><input tabindex='12' type="checkbox" name="no_opps" {$NO_OPPS}></slot></td>
                         </tr>
-                        <!-- END: pro_oc -->
-                        <!--//END SUGARCRM flav=pro ONLY -->
-                        <!--//BEGIN SUGARCRM flav=pro ONLY -->
                         <!-- BEGIN: pro -->
                         <tr>
                             {if !empty($SHOW_TEAM_SELECTION)}

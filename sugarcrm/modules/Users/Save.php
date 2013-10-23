@@ -322,13 +322,6 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
         ////	END SIGNATURES
         ///////////////////////////////////////////////////////////////////////////
 
-        //BEGIN SUGARCRM flav=ent ONLY
-        //////////////////////////////////////////////////////////////////////////
-        ////    OFFLINE CLIENT
-        if(isset($_POST['oc_status'])) $focus->setPreference('OfflineClientStatus',$_POST['oc_status'], 0, 'global');
-        ////   END OFFLINE CLIENT
-        //////////////////////////////////////////////////////////////////////////
-        //END SUGARCRM flav=ent ONLY
 
          if(isset($_POST['email_link_type'])) $focus->setPreference('email_link_type', $_REQUEST['email_link_type']);
         if (isset($_REQUEST['email_show_counts'])) {
