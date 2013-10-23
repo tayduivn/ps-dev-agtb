@@ -84,7 +84,7 @@
             level: 'warning',
             autoClose: false,
             title: app.lang.get('LBL_ALERT_TITLE_WARNING') + ':',
-            messages: app.lang.get('TPL_RLI_CREATE', module)
+            messages: Handlebars.compile(app.lang.get('TPL_RLI_CREATE', 'Opportunities'))()
         });
         alert.$el.find('a[href]').on('click.open', _.bind(function() {
             // remove the event handler
