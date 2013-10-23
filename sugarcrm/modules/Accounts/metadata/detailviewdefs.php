@@ -38,9 +38,8 @@ $viewdefs['Accounts']['DetailView'] = array(
                 'module' => 'Accounts',
                 'connectors' => 
                 array (
-                  //0 => 'ext_rest_linkedin',
                   //BEGIN SUGARCRM flav=pro ONLY
-                  1 => 'ext_rest_twitter',
+                  0 => 'ext_rest_twitter',
                   //END SUGARCRM flav=pro ONLY
                 ),
             ),          

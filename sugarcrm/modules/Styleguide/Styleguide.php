@@ -66,7 +66,6 @@ class Styleguide extends Person
     var $last_name;
     var $full_name;
     var $title;
-    var $linkedin;
     var $facebook;
     var $twitter;
     var $googleplus;

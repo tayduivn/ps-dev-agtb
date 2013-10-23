@@ -125,7 +125,6 @@ $viewdefs['Contacts']['DetailView'] = array(
                 'module' => 'Contacts',
                 'connectors' => 
                 array (
-                  //0 => 'ext_rest_linkedin',
                 ),
             ),
           ),

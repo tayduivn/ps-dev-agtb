@@ -104,15 +104,6 @@ $vardefs =array(
             'duplicate_on_record_copy' => 'always',
 			'comment' => 'The title of the contact'
 		),
-    'linkedin' =>
-   		array (
-   			'name' => 'linkedin',
-   			'vname' => 'LBL_LINKEDIN',
-   			'type' => 'varchar',
-   			'len' => '100',
-            'duplicate_on_record_copy' => 'always',
-   			'comment' => 'The linkedin name of the user'
-   		),
     'facebook' =>
     array (
         'name' => 'facebook',

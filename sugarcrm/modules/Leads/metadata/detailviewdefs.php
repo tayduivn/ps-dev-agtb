@@ -128,7 +128,6 @@ $viewdefs['Leads']['DetailView'] = array (
 			       'module' => 'Leads',
 			       'connectors' => 
 			       array (
-			          //0 => 'ext_rest_linkedin',
 			       ),
 			    ),
 			    //END SUGARCRM flav=pro ONLY 
