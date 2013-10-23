@@ -425,7 +425,6 @@ $report_include_modules['Trackers']         = 'Tracker';
 
 
 //BEGIN SUGARCRM flav=pro ONLY
-$report_include_modules['TimePeriods'] = 'TimePeriod';
 $report_include_modules['TrackerPerfs']     = 'TrackerPerf';
 $report_include_modules['TrackerSessions']  = 'TrackerSession';
 $report_include_modules['TrackerQueries']   = 'TrackerQuery';
