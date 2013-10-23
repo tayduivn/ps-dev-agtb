@@ -50,8 +50,18 @@
             //but, in this case, since `fullname.js` is controller, we must handle here.
             this.href = '#' + app.router.buildRoute(this.module||this.context.get('module'), this.model.id, action, this.def.bwcLink);
         }
-        this.template = app.template.getField(this.type, this.view.name + '-' + this.tplName, this.model.module) ||
-                        this.template;
+        var template = app.template.getField(
+            this.type,
+            this.view.name + '-' + this.tplName,
+            this.model.module);
+        //SP-1719: The view-combined template should also follow the view's custom template.
+        if (!template && this.view.meta && this.view.meta.template) {
+            template = app.template.getField(
+                this.type,
+                this.view.meta.template + '-' + this.tplName,
+                this.model.module);
+        }
+        this.template = template || this.template;
     },
 
     /**
