@@ -33,7 +33,7 @@ nv.models.scatter = function() {
     , xDomain      = null // Override x domain (skips the calculation from data)
     , yDomain      = null // Override y domain
     , sizeDomain   = null // Override point size domain
-    , sizeRange    = null
+    , sizeRange    = [16, 256]
     , singlePoint  = false
     , dispatch     = d3.dispatch('elementClick', 'elementMouseover', 'elementMouseout', 'elementMousemove')
     , useVoronoi   = true
@@ -85,7 +85,19 @@ nv.models.scatter = function() {
       x   .domain(xDomain || d3.extent(seriesData.map(function(d) { return d.x }).concat(forceX)))
 
       if (padData && data[0])
-        x.range([(availableWidth * padDataOuter +  availableWidth) / (2 *data[0].values.length), availableWidth - availableWidth * (1 + padDataOuter) / (2 * data[0].values.length)  ]);
+        if (padDataOuter !== 0) {
+          // adjust range to line up with value bars
+          x.range([
+            (availableWidth * padDataOuter + availableWidth) / (2 *data[0].values.length),
+            availableWidth - availableWidth * (1 + padDataOuter) / (2 * data[0].values.length)
+          ]);
+        } else {
+          // shift range so that largest bubble doesn't cover scales
+          x.range([
+            0 + Math.sqrt(sizeRange[1]/Math.PI),
+            availableWidth - Math.sqrt(sizeRange[1]/Math.PI)
+          ]);
+        }
         //x.range([availableWidth * .5 / data[0].values.length, availableWidth * (data[0].values.length - .5)  / data[0].values.length ]);
       else
         x.range([0, availableWidth]);
@@ -94,7 +106,7 @@ nv.models.scatter = function() {
           .range([availableHeight, 0]);
 
       z   .domain(sizeDomain || d3.extent(seriesData.map(function(d) { return d.size }).concat(forceSize)))
-          .range(sizeRange || [16, 256]);
+          .range(sizeRange);
 
       // If scale's domain don't have a range, slightly adjust to make one... so a chart can show a single data point
       if (x.domain()[0] === x.domain()[1] || y.domain()[0] === y.domain()[1]) singlePoint = true;
