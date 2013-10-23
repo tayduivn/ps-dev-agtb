@@ -94,9 +94,12 @@
      */
     showSubpanel: function(linkName) {
         var self = this,
-            cacheKey = "subpanels:last:" + self.module;
+            //this.layout is the filter layout which subpanels is child of; we
+            //use it here as it has a last_state key in its meta
+            cacheKey = app.user.lastState.key('subpanels-last', this.layout);
+
         if (linkName) {
-            app.cache.set(cacheKey, linkName);
+            app.user.lastState.set(cacheKey, linkName);
         }
         _.each(this._components, function(component) {
             var link = component.context.get('link');

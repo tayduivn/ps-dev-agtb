@@ -342,7 +342,6 @@
      */
     initializeFilterState: function(moduleName, linkName) {
         moduleName = moduleName || this.module;
-
         var lastFilter = this.getLastFilter(moduleName, this.layoutType),
             filterData;
         if (!(this.filters.get(lastFilter)))
