@@ -71,6 +71,7 @@ require_once 'modules/ModuleBuilder/parsers/parser.portalconfig.php';
 
 // Used in metadata API cache clear
 require_once 'include/MetaDataManager/MetaDataManager.php';
+include_once 'modules/Administration/QuickRepairAndRebuild.php';
 
 class ModuleBuilderController extends SugarController
 {
@@ -881,6 +882,9 @@ class ModuleBuilderController extends SugarController
             $oldSubpanelParser = new SubpanelMetaDataParser($subpanelName, $_REQUEST ['view_module'], $packageName);
             $oldSubpanelParser->handleSave();
             unset($oldSubpanelParser);
+            $rr = new RepairAndClear();
+            $rr->show_output = false;
+            $rr->rebuildExtensions();
         }
 
         // clear the cache for the linked module and requested module

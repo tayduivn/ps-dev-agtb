@@ -1696,6 +1696,45 @@ class ModuleInstaller{
 	}
 
     /**
+     * Merge the new style extensions
+     * @param  string $module_path Path to the module's directory.
+     */
+    public function mergeExtensionFiles($module_path)
+    {
+        $php_tags = array('<?php', '?>', '<?PHP', '<?');
+        $path = "custom/Extension/{$module_path}/Ext/clients";
+        $clients = MetaDataFiles::getClients();
+        foreach ($clients as $client) {
+            foreach (glob("$path/$client/*", GLOB_ONLYDIR|GLOB_NOSORT) as $layout) {
+                $layoutType = basename($layout);
+                foreach (glob("$layout/*", GLOB_ONLYDIR|GLOB_NOSORT) as $subLayout) {
+                    $subLayoutFileName = basename($subLayout);
+                    $extension = "<?php\n// WARNING: The contents of this file are auto-generated.\n";
+                    $override = array();
+                    foreach (glob("$subLayout/*.php") as $file) {
+                        $basenameFile = basename($file);
+                        if (substr($basenameFile, 0, 9) == '_override') {
+                            $override[] = $file;
+                        } else {
+                            $fileContents = file_get_contents($file);
+                            $extension .= "\n". str_replace($php_tags, '', $fileContents);
+                        }
+                    }
+                    foreach($override AS $file) {
+                        $fileContents = file_get_contents($file);
+                        $extension .= "\n". str_replace($php_tags, '', $fileContents);
+                    }
+                    $cachePath = "custom/{$module_path}/Ext/clients/{$client}/{$layoutType}/{$subLayoutFileName}";
+                    if (!is_dir($cachePath)) {
+                        sugar_mkdir($cachePath, null, true);
+                    }
+                    SugarAutoLoader::put("{$cachePath}/{$subLayoutFileName}.ext.php", $extension, true);
+                }
+            }
+        }
+    }
+
+    /**
      * Internal function used to merge extensions for a module from both core
      * and custom sources.
      * @param  string $module_path Path to the module's directory.
@@ -1705,17 +1744,21 @@ class ModuleInstaller{
      */
     protected function mergeModuleFiles($module_path, $ext_path, $name, $filter)
     {
-        $php_tags = array('<?php', '?>', '<?PHP', '<?');
+        static $php_tags = array('<?php', '?>', '<?PHP', '<?');
         $extension = "<?php\n// WARNING: The contents of this file are auto-generated.\n";
         $shouldSave = false;
-        if ($module_path == 'application') {
-            $paths = array($ext_path);
-            $cache_path = 'custom/application/' . $ext_path;
+        if (stristr($ext_path, '__PH_SUBTYPE__')) {
+            return $this->mergeExtensionFiles($module_path);
         } else {
-            $paths = array($module_path . '/' . $ext_path);
-            $cache_path = 'custom/' . $module_path . '/' . $ext_path;
+            if ($module_path == 'application') {
+                $paths = array($ext_path);
+                $cache_path = 'custom/application/' . $ext_path;
+            } else {
+                $paths = array($module_path . '/' . $ext_path);
+                $cache_path = 'custom/' . $module_path . '/' . $ext_path;
+            }
+            $paths[] = 'custom/Extension' . '/' . $module_path . '/' . $ext_path;
         }
-        $paths[] = 'custom/Extension' . '/' . $module_path . '/' . $ext_path;
 
         foreach ($paths as $path) {
             if (is_dir($path)) {
