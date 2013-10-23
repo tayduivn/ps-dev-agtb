@@ -32,10 +32,6 @@
     <div style="position:fixed;top:0;left:0;width:1px;height:1px;z-index:21;"></div>
     <div class="clear"></div>
 
-<script>
-var max_tabs = {$max_tabs};
-</script>
-
 <div id="main">
     <div id="content">
         {if $use_table_container}

@@ -77,10 +77,6 @@ $(".ui-dialog").appendTo("#content");
 </script>
 {/literal}
 
-<script>
-var max_tabs = {$max_tabs};
-</script>
-
 <div id='shortcuts' class='accessKeyHelp' style="float: right; margin-right: 10px;" onclick="javascript: keyboardShortcuts();">{$APP.LBL_KEYBOARD_SHORTCUTS_HELP_TITLE}</div>
 <div id="main">
     <div id="content">
