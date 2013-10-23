@@ -23,7 +23,9 @@ class Latin{
 		passthru("git fetch -a");
 		passthru("git reset --hard");
 		if(preg_match("/(\d+).(\d+).(\d+)(.*)/", $this->ver, $matchesVer)){
-			$translationBranch = $matchesVer[1] . "_" . $matchesVer[2];
+			//$translationBranch = $matchesVer[1] . "_" . $matchesVer[2];
+			//10/23/2013 (https://sugarcrm.atlassian.net/browse/RM-723) - lets 7.1.5 mango use the 7_0 translation branch.
+			$translationBranch = $matchesVer[1] . "_0";
 			exec("git branch -r", $remoteBranches);
 
 			if (preg_grep("/$translationBranch/", $remoteBranches)) {
