@@ -96,7 +96,8 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     'name' => 'duplicate_button',
                     'event' => 'button:duplicate_button:click',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'acl_module' => 'Tasks'
+                    'acl_module' => 'Tasks',
+                    'acl_action' => 'create',
                 ),
                 array(
                     'type' => 'rowaction',
