@@ -876,7 +876,7 @@ AjaxObject.detailView = {
 		if(!SED.quickCreateDialog) {
 			SED.quickCreateDialog = new YAHOO.widget.Dialog("emailDetailDialog", {
 				modal:true,
-				visible:true,
+				visible:false,
             	//fixedcenter:true,
             	constraintoviewport: true,
             	draggable: true,
