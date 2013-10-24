@@ -40,14 +40,6 @@
             this.model.on("change", this.loadData, this);
         }
     },
-    getConnector: function(connectors){
-        for (var i=0; i < connectors.length; i++) {
-            if (connectors[i].id.indexOf("twitter") >= 0) {
-                return connectors[i];
-            }
-        }
-        return false;
-    },
     loadData: function (options) {
         if (this.disposed || this.meta.config) {
             return;
@@ -75,95 +67,86 @@
 
         this.twitter = twitter;
         var currentUserUrl = app.api.buildURL('connector/twitter/currentUser');
-        if (app.user.get('connectors')) {
-            var twitConnector = this.getConnector(app.user.get('connectors'));
+        if (!self.current_twitter_user_name) {
+            app.api.call('READ', currentUserUrl, {},{
+                success: function(data) {
+                    app.cache.set(self.cacheKey, {
+                        'current_twitter_user_name': data.screen_name,
+                        'current_twitter_user_pic': data.profile_image_url
+                    });
+                    self.current_twitter_user_name = data.screen_name;
+                    self.current_twitter_user_pic = data.profile_image_url;
+                    if (!this.disposed) {
+                        self.render();
+                    }
+                }
+            });
         }
-        if (twitConnector) {
-            if (twitConnector.auth) {
-                if (!self.current_twitter_user_name) {
-                    app.api.call('READ', currentUserUrl, {},{
-                        success: function(data) {
-                            app.cache.set(self.cacheKey, {
-                                'current_twitter_user_name': data.screen_name,
-                                'current_twitter_user_pic': data.profile_image_url
-                            });
-                            self.current_twitter_user_name = data.screen_name;
-                            self.current_twitter_user_pic = data.profile_image_url;
-                            if (!this.disposed) {
-                                self.render();
+        var url = app.api.buildURL('connector/twitter','',{id:twitter},{count:limit});
+        app.api.call('READ', url, {},{
+            success:function (data) {
+
+                if (self.disposed) {
+                    return;
+                }
+
+                var tweets = [];
+                if (data.success !== false) {
+                    _.each(data, function (tweet) {
+                        var time = new Date(tweet.created_at.replace(/^\w+ (\w+) (\d+) ([\d:]+) \+0000 (\d+)$/,
+                                "$1 $2 $4 $3 UTC")),
+                            date = app.date.format(time, "Y/m/d H:i:s"),
+                            // retweeted tweets are sometimes truncated so use the original as source text
+                            text = tweet.retweeted_status ? 'RT @'+tweet.retweeted_status.user.screen_name+': '+tweet.retweeted_status.text : tweet.text,
+                            sourceUrl = tweet.source,
+                            id = tweet.id_str,
+                            name = tweet.user.name,
+                            tokenText = text.split(' '),
+                            screen_name = tweet.user.screen_name,
+                            profile_image_url = tweet.user.profile_image_url_https,
+                            j,
+                            rightNow = new Date(),
+                            diff = (rightNow.getTime() - time.getTime())/(1000*60*60*24),
+                            timeLabel= diff > 1 ? 'LBL_TIME_RELATIVE_TWITTER_LONG' : 'LBL_TIME_RELATIVE_TWITTER_SHORT';
+
+
+                        // Search for links and turn them into hrefs
+                        for (j = 0; j < tokenText.length; j++) {
+                            if (tokenText[j].charAt(0) == 'h' && tokenText[j].charAt(1) == 't') {
+                                tokenText[j] = "<a class='googledoc-fancybox' href=" + '"' + tokenText[j] + '"' + "target='_blank'>" + tokenText[j] + "</a>";
                             }
                         }
-                    });
+
+                        text = tokenText.join(' ');
+                        tweets.push({id: id, name: name, screen_name: screen_name, profile_image_url: profile_image_url, text: text, source: sourceUrl, date: date, timeLabel: timeLabel});
+                    }, this);
                 }
-                var url = app.api.buildURL('connector/twitter','',{id:twitter},{count:limit});
-                app.api.call('READ', url, {},{
-                    success:function (data) {
 
-                        if (self.disposed) {
-                            return;
-                        }
-
-                        var tweets = [];
-                        if (data.success !== false) {
-                            _.each(data, function (tweet) {
-                                var time = new Date(tweet.created_at.replace(/^\w+ (\w+) (\d+) ([\d:]+) \+0000 (\d+)$/,
-                                        "$1 $2 $4 $3 UTC")),
-                                    date = app.date.format(time, "Y/m/d H:i:s"),
-                                    // retweeted tweets are sometimes truncated so use the original as source text
-                                    text = tweet.retweeted_status ? 'RT @'+tweet.retweeted_status.user.screen_name+': '+tweet.retweeted_status.text : tweet.text,
-                                    sourceUrl = tweet.source,
-                                    id = tweet.id_str,
-                                    name = tweet.user.name,
-                                    tokenText = text.split(' '),
-                                    screen_name = tweet.user.screen_name,
-                                    profile_image_url = tweet.user.profile_image_url_https,
-                                    j,
-                                    rightNow = new Date(),
-                                    diff = (rightNow.getTime() - time.getTime())/(1000*60*60*24),
-                                    timeLabel= diff > 1 ? 'LBL_TIME_RELATIVE_TWITTER_LONG' : 'LBL_TIME_RELATIVE_TWITTER_SHORT';
-
-
-                                // Search for links and turn them into hrefs
-                                for (j = 0; j < tokenText.length; j++) {
-                                    if (tokenText[j].charAt(0) == 'h' && tokenText[j].charAt(1) == 't') {
-                                        tokenText[j] = "<a class='googledoc-fancybox' href=" + '"' + tokenText[j] + '"' + "target='_blank'>" + tokenText[j] + "</a>";
-                                    }
-                                }
-
-                                text = tokenText.join(' ');
-                                tweets.push({id: id, name: name, screen_name: screen_name, profile_image_url: profile_image_url, text: text, source: sourceUrl, date: date, timeLabel: timeLabel});
-                            }, this);
-                        }
-
-                        self.tweets = tweets;
-                        if (!this.disposed) {
-                            self.render();
-                        }
-                    },
-                    error: function(xhr,status,error){
-                        app.error.handleHttpError(data, self.model);
-                    },
-                    complete: (options) ? options.complete : null
-                });
-            }
-            else {
-                self.needConnect = true;
-                self.needOAuth = false;
-            }
-        }
-        else {
-            self.needConnect = false;
-            self.needOAuth = true;
-        }
-
-        if (!twitConnector || !twitConnector.auth) {
-            app.cache.cut(self.key)
-            self.showAdmin = app.acl.hasAccess('admin', 'Administration');
-            self.template = app.template.get(self.name + '.twitter-need-configure.Home');
-            if (!self.disposed) {
-                app.view.View.prototype._render.call(self);
-            }
-        }
+                self.tweets = tweets;
+                if (!this.disposed) {
+                    self.render();
+                }
+            },
+            error: function(xhr,status,error){
+                if (xhr.status == 424) {
+                    app.cache.cut(self.key);
+                    self.needConnect = false;
+                    if (xhr.code && xhr.code === 'ERROR_NEED_AUTHORIZE') {
+                        self.needConnect = true;
+                    } else if (xhr.code && xhr.code === 'ERROR_NEED_OAUTH') {
+                        self.needOAuth = true;
+                    } else {
+                        self.showGeneric = true;
+                    }
+                    self.showAdmin = app.acl.hasAccess('admin', 'Administration');
+                    self.template = app.template.get(self.name + '.twitter-need-configure.Home');
+                    if (!self.disposed) {
+                        app.view.View.prototype._render.call(self);
+                    }
+                }
+            },
+            complete: (options) ? options.complete : null
+        });
     },
     _dispose: function() {
         if (this.model) {
