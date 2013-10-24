@@ -61,7 +61,7 @@
                  * @returns {boolean}
                  */
                 has: function(element) {
-                    return !_.isUndefined($(element).data('tooltip'));
+                    return !_.isUndefined($(element).data('bs.tooltip'));
                 }
             },
 
