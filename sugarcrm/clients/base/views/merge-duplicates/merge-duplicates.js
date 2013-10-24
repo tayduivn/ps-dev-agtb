@@ -28,23 +28,41 @@
     },
 
     /**
-     * @property {Object} _defaultSettings The default settings to be applied to merge duplicates.
-     * @property {Number} _defaultSettings.queueFetchConcurrency Determining how many worker functions should be run in parallel for fetch.
-     * @property {Number} _defaultSettings.queueFetchTimeout Timeout for fetch.
-     * @property {Number} _defaultSettings.queueUpdateConcurrency Determining how many worker functions should be run in parallel for update beans.
-     * @property {Number} _defaultSettings.queueUpdateTimeout Timeout for update beans.
-     * @property {Number} _defaultSettings.relatedLinkFetchLimit Max number of records to fetch for related collection.
-     * @property {Number} _defaultSettings.maxAllowAttempt Max number of attemps for merge related.
+     * Default settings used when none are supplied through metadata.
+     *
+     * Supported settings:
+     * - {Number} merge_relate_fetch_concurrency Determining how many worker
+     *   functions should be run in parallel for fetch.
+     * - {Number} merge_relate_fetch_timeout Timeout for fetch related records
+     *   call (milliseconds).
+     * - {Number} merge_relate_fetch_limit Max number of records to fetch
+     *   for related collection at a time.
+     * - {Number} merge_relate_update_concurrency Determining how many worker
+     *   functions should be run in parallel for update beans.
+     * - {Number} merge_relate_update_timeout Timeout for update
+     *   beans (milliseconds).
+     * - {Number} merge_relate_max_attempt Max number of attemps for
+     *   merge related.
+     *
+     * Example:
+     * <pre><code>
+     * // ...
+     * 'settings' => array(
+     *      'merge_relate_fetch_concurrency' => 2,
+     *      'merge_relate_fetch_timeout' => 90000,
+     *      'merge_relate_fetch_limit' => 20,
+     *      'merge_relate_update_concurrency' => 4,
+     *      'merge_relate_update_timeout' => 90000,
+     *      'merge_relate_max_attempt' => 3,
+     *      //...
+     * ),
+     * // ...
+     * </code></pre>
+     *
+     * @property {Object}
      * @protected
      */
-    _defaultSettings: {
-        queueFetchConcurrency: 2,
-        queueFetchTimeout: 90000,
-        queueUpdateConcurrency: 4,
-        queueUpdateTimeout: 90000,
-        relatedLinkFetchLimit: 20,
-        maxAllowAttempt: 3
-    },
+    _defaultSettings: {},
 
     /**
      * List of fields to generate the metadata on the fly.
@@ -188,13 +206,36 @@
      */
     initialize: function(options) {
 
-        app.view.View.prototype.initialize.call(this, options);
-
+        this._super('initialize', [options]);
+        this._initSettings();
         this._initializeMergeFields();
         this._initializeMergeCollection(this._prepareRecords());
 
         this.action = 'list';
         this.layout.on('mergeduplicates:save:fire', this.triggerSave, this);
+    },
+
+    /**
+     * Initialize settings, default settings are used when none are supplied
+     * through metadata.
+     *
+     * @return {View.Views.BaseMergeDuplicatesView} Instance of this view.
+     * @protected
+     */
+    _initSettings: function() {
+        this._settings = _.extend(
+            {
+                merge_relate_fetch_concurrency: app.config.mergeRelateFetchConcurrency,
+                merge_relate_fetch_timeout: app.config.mergeRelateFetchTimeout,
+                merge_relate_fetch_limit: app.config.mergeRelateFetchLimit,
+                merge_relate_update_concurrency: app.config.mergeRelateUpdateConcurrency,
+                merge_relate_update_timeout: app.config.mergeRelateUpdateTimeout,
+                merge_relate_max_attempt: app.config.mergeRelateMaxAttempt
+            },
+            this._defaultSettings,
+            this.meta && this.meta.settings || {}
+        );
+        return this;
     },
 
     /**
@@ -1154,7 +1195,7 @@
                 return;
             }
             self._mergeRelatedCollection(task.collection, callback);
-        }, this._defaultSettings.queueFetchConcurrency || 4);
+        }, this._settings.merge_relate_fetch_concurrency);
         queue.drain = function() {
             self.mergeProgressModel.trigger('massupdate:end');
             if (!self.mergeProgressModel.get('isStopped')) {
@@ -1218,7 +1259,7 @@
 
         return _.extend(relatedCollection, {
             attempt: 0,
-            maxAllowAttempt: this._defaultSettings.maxAllowAttempt || 3,
+            maxAllowAttempt: this._settings.merge_relate_max_attempt,
             objectName: app.data.getRelatedModule(this.primaryRecord.module, link)
         });
     },
@@ -1251,10 +1292,10 @@
 
         collection.fetch({
             relate: true,
-            limit: this._defaultSettings.relatedLinkFetchLimit || 20,
+            limit: this._settings.merge_relate_fetch_limit,
             offset: offset,
             apiOptions: {
-                timeout: this._defaultSettings.queueFetchTimeout,
+                timeout: this._settings.merge_relate_fetch_timeout,
                 skipMetadataHash: true
             },
             success: function(data, response, options) {
@@ -1275,7 +1316,7 @@
                         collection.link.name,
                         callback
                     );
-                }, self._defaultSettings.queueUpdateConcurrency || 10);
+                }, self._settings.merge_relate_update_concurrency);
                 queue.drain = function() {
                     if (!_.isUndefined(data.next_offset) && data.next_offset !== -1) {
                         self._mergeRelatedCollection(collection, callback, data.next_offset);
@@ -1317,7 +1358,7 @@
 
         return _.extend(relatedModel, {
             attempt: 0,
-            maxAllowAttempt: this._defaultSettings.maxAllowAttempt || 3,
+            maxAllowAttempt: this._settings.merge_relate_max_attempt,
             objectName: app.data.getRelatedModule(
                 self.primaryRecord.module,
                 link
@@ -1346,7 +1387,7 @@
             showAlerts: false,
             relate: true,
             apiOptions: {
-                timeout: this._defaultSettings.queueUpdateTimeout,
+                timeout: this._settings.merge_relate_update_timeout,
                 skipMetadataHash: true
             },
             success: function() {
