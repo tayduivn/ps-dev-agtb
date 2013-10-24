@@ -309,3 +309,12 @@ ol.linenums li {
   color: #555;
   padding: 5px 4px 3px;
 }
+.PrimaryButton {
+  background-color: #177EE5;
+}
+.NavigationBar {
+  background-color: #000000;
+}
+.BorderColor {
+  background-color: #E61718;
+}
