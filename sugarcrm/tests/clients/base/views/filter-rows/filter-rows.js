@@ -518,6 +518,7 @@ describe("BaseFilterRowsView", function() {
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
             });
             it('should set auto_increment to false for an integer field', function() {
+                $operatorField.val('$equals');
                 spyOn($.fn, "select2").andReturn("case_number"); //return "case_number" as value
                 view.handleOperatorSelected({currentTarget: $operatorField});
                 expect(createFieldSpy).toHaveBeenCalled();
@@ -527,6 +528,21 @@ describe("BaseFilterRowsView", function() {
                     auto_increment: false
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
+            });
+            it('should convert to varchar and join values for an integer field when operator is $in', function() {
+                $operatorField.val('$in');
+                $row.data('value', [1,20,35]);
+                spyOn($.fn, "select2").andReturn("case_number"); //return "case_number" as value
+                view.handleOperatorSelected({currentTarget: $operatorField});
+                expect(createFieldSpy).toHaveBeenCalled();
+                expect(createFieldSpy.lastCall.args[1]).toEqual({
+                    name: 'case_number',
+                    type: 'varchar',
+                    auto_increment: false,
+                    len: 200
+                });
+                expect(_.isEmpty($valueField.html())).toBeFalsy();
+                expect($row.data('value')).toEqual('1,20,35');
             });
             it('should create two inputs if the operator is in between', function() {
                 spyOn($.fn, "select2").andReturn("case_number"); //return "case_number" as value
@@ -609,6 +625,10 @@ describe("BaseFilterRowsView", function() {
         var $row, filter, expected;
         beforeEach(function() {
             view.fieldList = {
+                case_number: {
+                    name: 'case_number',
+                    type: 'int'
+                },
                 description: {
                     name: 'description',
                     type: 'text'
@@ -665,6 +685,20 @@ describe("BaseFilterRowsView", function() {
                     }
 
                 ]
+            };
+            expect(filter).toEqual(expected);
+        });
+        it('should split values if operator is $in and value is a string', function() {
+            $row = $('<div>').data({
+                name: 'case_number',
+                operator: '$in',
+                value: '1,20,35'
+            });
+            filter = view.buildRowFilterDef($row);
+            expected = {
+                case_number: {
+                    '$in': ['1','20','35']
+                }
             };
             expect(filter).toEqual(expected);
         });

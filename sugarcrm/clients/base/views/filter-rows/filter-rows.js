@@ -452,6 +452,14 @@
                 break;
             case 'int':
                 fieldDef.auto_increment = false;
+                //For $in operator, we need to convert `['1','20','35']` to `1,20,35` to make it work in a varchar field
+                if (operation === '$in') {
+                    fieldDef.type = 'varchar';
+                    fieldDef.len = 200;
+                    if (_.isArray($row.data('value'))) {
+                        $row.data('value', $row.data('value').join(','));
+                    }
+                }
                 break;
             case 'teamset':
                 fieldDef.type = 'relate';
@@ -672,7 +680,8 @@
                 } else if (operator === "$in" || operator === "$not_in") {
                     // IN/NOT IN require an array
                     filter[name] = {};
-                    filter[name][operator] = _.isArray(value) ? value : [value];
+                    //If value is not an array, we split the string by commas to make it an array of values
+                    filter[name][operator] = _.isArray(value) ? value : (value + '').split(',');
                 } else {
                     filter[name] = {};
                     filter[name][operator] = value;
