@@ -96,24 +96,4 @@ describe("Twitter View", function() {
         view.loadData();
         expect(apiStub.getCall(3).args[1].indexOf("bob")).toEqual(-1);
     });
-
-    it("should pull twitter field from config when context parent is null", function() {
-        // workaround since dashlet config not testable atm
-        view.meta.config = false;
-        var apiStub = sinonSandbox.stub(SugarTest.app.api, 'call');
-        var settingsStub = sinonSandbox.stub(view.settings, 'get', function(){return 'bob';});
-        var getConnectorStub = sinonSandbox.stub(view, "getConnector");
-        var getUserStub = sinonSandbox.stub(app.user, "get");
-        getConnectorStub.returns({"auth": 1});
-        getUserStub.returns(1);
-
-        view.loadData();
-
-        expect(apiStub.getCall(1).args[1].indexOf("bob")).toBeGreaterThan(-1);
-
-        view.context.parent = new Backbone.Model();
-        view.model.set('name','test');
-        view.loadData();
-        expect(apiStub.getCall(3).args[1].indexOf("bob")).toEqual(-1);
-    });
 });
