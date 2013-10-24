@@ -251,7 +251,10 @@ $mod_strings = array (
     'LBL_FILENAME' => 'Attachment',
 
     //Dashlet
+    'LBL_LINKEDIN' => 'Linkedin Member Account',
+    'LBL_FACEBOOK' => 'Facebook Account',
     'LBL_TWITTER' => 'Twitter Account',
+    'LBL_GOOGLEPLUS' => 'Google Plus ID',
 
     //Document title
     'TPL_BROWSER_SUGAR7_RECORDS_TITLE' => '{{module}} &raquo; {{appId}}',
