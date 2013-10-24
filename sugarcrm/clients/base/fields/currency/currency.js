@@ -44,11 +44,6 @@
     _currencyField: null,
     /**
      * @type {Boolean}
-     * tracks whether the currency dropdown field is disabled or not
-     */
-    _currencyFieldDisabled: false,
-    /**
-     * @type {Boolean}
      * whether or not the currency dropdown is hidden from view
      */
     hideCurrencyDropdown: false,
@@ -96,7 +91,7 @@
             this._currencyField = null;
         }
         app.view.Field.prototype._render.call(this);
-        if (this.hideCurrencyDropdown === false && (this.action === 'edit' || this.action === 'disabled')) {
+        if (this.hideCurrencyDropdown === false && this.action === 'edit') {
             this.getCurrencyField().setElement(this.$('span[sfuuid="' + this.currencySfId + '"]'));
             this.$el.find('div.select2-container').css('min-width', '8px');
             this.getCurrencyField().render();
@@ -199,9 +194,8 @@
             value = '';
         }
 
-        if (this.tplName === 'edit' || (this.tplName == 'disabled' && this.action == 'disabled')) {
+        if (this.tplName === 'edit') {
             this.currencySfId = this.getCurrencyField().sfId;
-
             return app.utils.formatNumberLocale(value);
         }
 
