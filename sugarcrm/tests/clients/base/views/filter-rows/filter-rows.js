@@ -470,6 +470,10 @@ describe("BaseFilterRowsView", function() {
                 },
                 date_created: {
                     type: 'datetime'
+                },
+                team_name: {
+                    type: 'teamset',
+                    'id_name': 'team_id'
                 }
             };
             view.filterOperatorMap = { 'enum': {
@@ -561,6 +565,39 @@ describe("BaseFilterRowsView", function() {
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
                 expect(_.size($valueField.find('input'))).toEqual(2);
+            });
+            describe('teamset and relate field', function() {
+                var fetchStub;
+                beforeEach(function() {
+                    spyOn($.fn, "select2").andReturn("team_name"); //return "team_name" as field
+                    fetchStub = sinon.stub(Backbone.Collection.prototype, 'fetch');
+                });
+                afterEach(function() {
+                    fetchStub.restore();
+                });
+                it('should convert teamset field to a relate field and fetch name like other relate fields', function() {
+                    $row.data('value', 'West');
+                    view.handleOperatorSelected({currentTarget: $operatorField});
+                    expect(createFieldSpy).toHaveBeenCalled();
+                    expect(createFieldSpy.lastCall.args[1]).toEqual({
+                        name: 'team_name',
+                        type: 'relate',
+                        id_name: 'team_id'
+                    });
+                    expect(_.isEmpty($valueField.html())).toBeFalsy();
+                    expect(fetchStub).toHaveBeenCalled();
+                });
+                it('should convert teamset field to a relate field but not fetch because no value set', function() {
+                    view.handleOperatorSelected({currentTarget: $operatorField});
+                    expect(createFieldSpy).toHaveBeenCalled();
+                    expect(createFieldSpy.lastCall.args[1]).toEqual({
+                        name: 'team_name',
+                        type: 'relate',
+                        id_name: 'team_id'
+                    });
+                    expect(_.isEmpty($valueField.html())).toBeFalsy();
+                    expect(fetchStub).not.toHaveBeenCalled();
+                });
             });
             describe('date type fields', function() {
                 it('should not create a value field for specific date operators', function() {
