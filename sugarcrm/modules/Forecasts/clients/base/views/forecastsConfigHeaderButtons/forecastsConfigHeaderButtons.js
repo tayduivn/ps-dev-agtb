@@ -155,19 +155,25 @@
         var mdl = this.context.get('model');
         if(mdl.get('forecast_ranges') == "show_custom_buckets") {
             var ranges = mdl.get('show_custom_buckets_ranges'),
-                commitStages = [];
+                labels = mdl.get('show_custom_buckets_options'),
+                commitStages = [],
+                finalLabels = [];
+
             mdl.unset('commit_stages_included');
             _.each(ranges, function(range, key) {
                 if(range.in_included_total) {
                     commitStages.push(key)
                 }
                 delete range.in_included_total;
+
+                finalLabels.push([key, labels[key]]);
             }, this);
 
             mdl.set({
                 commit_stages_included: commitStages,
-                show_custom_buckets_ranges: ranges
-            });
+                show_custom_buckets_ranges: ranges,
+                show_custom_buckets_options: finalLabels
+            }, {silent: true});
         }
 
         this.context.get('model').save({}, {

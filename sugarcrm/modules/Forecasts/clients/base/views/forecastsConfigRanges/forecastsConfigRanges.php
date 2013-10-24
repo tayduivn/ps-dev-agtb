@@ -80,7 +80,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRanges'] = array(
                         'enabled' => true,
                     ),
 //END SUGARCRM flav=ent ONLY
-                    ),
+                ),
                 'buckets_dom' => array(
                     'name' => 'buckets_dom',
                     'options' => array(
