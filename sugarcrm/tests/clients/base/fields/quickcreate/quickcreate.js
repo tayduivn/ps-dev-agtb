@@ -37,7 +37,7 @@ describe("Base.Field.QuickCreate", function() {
         app.drawer = drawerBefore;
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         field = null;
     });
 

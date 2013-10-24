@@ -392,7 +392,7 @@ describe('Notifications', function() {
             afterEach(function() {
                 app.data.reset(reminderModule);
                 SugarTest.testMetadata.dispose();
-                delete Handlebars.templates;
+                Handlebars.templates = {};
             });
 
             it('Shouldn\'t check reminders if authentication expires', function() {

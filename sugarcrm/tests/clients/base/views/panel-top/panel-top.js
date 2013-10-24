@@ -17,7 +17,7 @@ describe("PanelTop View", function() {
         app.cache.cutAll();
         app.view.reset();
         view.dispose();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         view.model = null;
         view = null;
     });

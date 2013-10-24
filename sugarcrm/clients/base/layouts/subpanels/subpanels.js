@@ -128,8 +128,18 @@
      * @param options
      */
     loadData: function(options) {
-        _.each(this._components, function(component) {
-            component.loadData(options);
-        });
+        var self = this,
+            load = function(){
+                _.each(this._components, function(component) {
+                    component.loadData(options);
+                });
+            };
+        if (self.context.parent && !self.context.parent.isDataFetched()) {
+            var parent = this.context.parent.get("model");
+            parent.once("sync", load);
+        }
+        else {
+            load();
+        }
     }
 })

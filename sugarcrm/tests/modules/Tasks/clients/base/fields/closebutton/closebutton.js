@@ -20,7 +20,7 @@ describe("Tasks CloseButton", function() {
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         field.model = null;
         field = null;
         context = null;

@@ -15,7 +15,7 @@ describe('Base.Field.Dashletaction', function() {
         sinon.collection.restore();
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
     });
     using('Available params', [
         'stringparm',

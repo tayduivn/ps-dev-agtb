@@ -42,7 +42,7 @@ describe("Base.Field.Parent", function() {
         app.cache.cutAll();
         app.view.reset();
         sinonSandbox.restore();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         field.model = null;
         field = null;
     });

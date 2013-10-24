@@ -255,6 +255,7 @@
                    'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.effects.custombounce.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.nouislider.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/jquery/jquery.dataTables.js' => 'include/javascript/sugar_sidecar.min.js',
                    //BEGIN SUGARCRM flav=pro ONLY
                    //Expression Engine
                    'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_sidecar.min.js',
@@ -312,6 +313,16 @@
                 )
             ),
            //END SUGARCRM flav=ent ONLY
+            
+            $sugar_grp_sugar7 = array(
+                'include/javascript/sugar7.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/bwc.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/utils.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/field.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/hacks.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/alert.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/hbs-helpers.js' => 'include/javascript/sugar_grp7.min.js',
+            )
         );
 
     /**

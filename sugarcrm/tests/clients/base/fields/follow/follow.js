@@ -25,7 +25,7 @@ describe("Base.Field.Follow", function() {
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         field.model = null;
         field._loadTemplate = null;
         field = null;

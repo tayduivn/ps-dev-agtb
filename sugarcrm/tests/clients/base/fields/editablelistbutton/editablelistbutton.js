@@ -13,7 +13,7 @@ describe("BaseEditablelistbuttonField", function() {
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
     });
     it('should be able to trigger filtering to the filterpanel layout.', function() {
         var getModuleStub = sinon.stub(app.metadata, 'getModule', function(module) {

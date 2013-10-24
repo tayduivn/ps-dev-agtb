@@ -50,7 +50,7 @@ describe("Emails.Views.Compose", function() {
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
     });
 
     it("Intialize - model should not be empty", function() {

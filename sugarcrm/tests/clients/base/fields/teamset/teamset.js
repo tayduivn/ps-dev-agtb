@@ -55,7 +55,7 @@ describe("Base.Field.Teamset", function () {
         sinonSandbox.restore();
         buildRouteStub.restore();
         SugarTest.app.router = oRouter;
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         field.model = null;
         field = null;
     });

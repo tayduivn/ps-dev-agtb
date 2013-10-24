@@ -40,7 +40,7 @@ describe("Base.Layout.Toggle", function() {
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         SugarTest.testMetadata.dispose();
     });
 

@@ -31,7 +31,7 @@ describe("Base.Layout.Panel", function () {
     afterEach(function () {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        Handlebars.templates = {};
         togglePanelStub.restore();
         layout.dispose();
         layout.context = null;
