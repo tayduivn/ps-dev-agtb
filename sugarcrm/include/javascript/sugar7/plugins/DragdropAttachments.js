@@ -125,6 +125,7 @@
                                 });
 
                                 data.append("filename", file);
+                                data.append('OAuth-Token', app.api.getOAuthToken());
                                 $.ajax({
                                     url: url,
                                     type: "POST",
