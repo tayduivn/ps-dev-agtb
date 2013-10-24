@@ -27,7 +27,7 @@
                     origSuccess.apply(this, arguments);
                 }
 
-                if (!_.isEmpty(this.model.get('quote_id'))) {
+                if (this.model && !_.isEmpty(this.model.get('quote_id'))) {
                     app.alert.show('save_rli_quote_notice', {
                         level: 'info',
                         messages: app.lang.get(
@@ -37,6 +37,10 @@
                         autoClose: true
                     });
                 }
+
+                // reload opportunities subpanel
+                this.context.parent.trigger('subpanel:reload', {links: ['opportunities']});
+
             }, this)
         };
     }
