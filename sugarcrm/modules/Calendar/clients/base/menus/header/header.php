@@ -37,7 +37,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'icon-plus',
     ),
     array(
-        'route'=>'#bwc/index.php?module=Tasks&action=EditView&return_module=Tasks&return_action=DetailView',
+        'route'=>'#Tasks/create',
         'label' =>'LNK_NEW_TASK',
         'acl_action'=>'create',
         'acl_module'=>'Tasks',
