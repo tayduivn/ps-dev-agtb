@@ -34,9 +34,10 @@ require_once('include/SugarQueue/SugarJobQueue.php');
      public function lookupCurrencies($activeOnly = false)
      {
          $this->focus = BeanFactory::getBean('Currencies');
+         $db = DBManagerFactory::getInstance();
          $where = '';
          if ($activeOnly === true) {
-             $where = $this->focus->table_name . '.status = "Active"';
+             $where = $this->focus->table_name . '.status = ' . $db->quoted('Active');
          }
          $this->list = $this->focus->get_full_list('name', $where);
          $this->focus->retrieve('-99');
