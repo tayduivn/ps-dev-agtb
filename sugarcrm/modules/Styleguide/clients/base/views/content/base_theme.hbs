@@ -1,0 +1,70 @@
+
+<section id="edit-documentation">
+  <div class="page-header">
+    <h1>Custom Theme Variables <small>Instructions for modifying theme colors.</small></h1>
+  </div>
+
+  <h2>Themeable Colors</h2>
+  <div class="row-fluid">
+    <div class="span12">
+      <p>There are three colors in a basic theme that can be customized:</p>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Variable</th>
+        <th>Usage</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <code>@BorderColor</code>
+        </td>
+        <td>
+          Accent border under top navigation menu.
+        </td>
+        <td class="swatch-col"><span class="swatch BorderColor"></span></td>
+      </tr>
+      <tr>
+        <td>
+          <code>@NavigationBar</code>
+        </td>
+        <td>
+          Background color of top navigation menu.
+        </td>
+        <td class="swatch-col"><span class="swatch NavigationBar"></span></td>
+      </tr>
+      <tr>
+        <td>
+          <code>@PrimaryButton</code>
+        </td>
+        <td>
+          Background color of primary action buttons like "Save" and "Create".
+        </td>
+        <td class="swatch-col"><span class="swatch PrimaryButton"></span></td>
+      </tr>
+    </tbody>
+  </table>
+    </div>
+  </div>
+
+  <h2>Theme Variables File</h2>
+  <div class="row-fluid">
+    <div class="span5">
+      <p>To override the default theme colors, a new variables.less file will need to be created.</p>
+      <p>Copy the <code>/sugarcrm/styleguide/themes/clients/base/default/variables.less</code> to <code>/sugarcrm/custom/themes/clients/base/default/variables.less</code> and edit the following three HEX color values.</p>
+    </div>
+    <div class="span7">
+<pre class="prettyprint linenums">
+@BorderColor: #1977cb;
+
+@NavigationBar: #d4742f;
+
+@PrimaryButton: #f54d27;
+</pre>
+    </div>
+  </div>
+
+</section>
+
