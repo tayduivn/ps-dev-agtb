@@ -35,7 +35,8 @@
     tagName: "span",
 
     events: {
-        "click .choice-filter": "handleEditFilter"
+        "click .choice-filter": "handleEditFilter",
+        "click .choice-filter-close": "handleClearFilter"
     },
 
     /**
@@ -203,7 +204,13 @@
         //Escape string to prevent XSS injection
         safeString = Handlebars.Utils.escapeExpression(item.text);
         // Update the text for the selected filter.
-        this.$('.choice-filter').html(safeString);
+        this.$('.choice-filter-label').html(safeString);
+
+        if (item.id !== 'all_records') {
+            this.$('.choice-filter-close').show();
+        } else {
+            this.$('.choice-filter-close').hide();
+        }
 
         ctx.label = app.lang.get("LBL_FILTER");
         ctx.enabled = this.filterDropdownEnabled;
@@ -257,6 +264,18 @@
             translatedText = app.lang.get(label, ['Filters', this.layout.layout.currentModule]);
         }
         return translatedText;
+    },
+
+    /**
+     * When a click happens on the close icon, clear the last filter and trigger reinitialize
+     * @param {Event} evt
+     */
+    handleClearFilter: function(evt) {
+        //This event is fired within .choice-filter and another event is attached to .choice-filter
+        //We want to stop propagation so it doesn't bubble up.
+        evt.stopPropagation();
+        this.layout.clearLastFilter(this.layout.layout.currentModule, this.layout.layoutType);
+        this.layout.trigger('filter:change:filter', 'all_records');
     },
 
     /**
