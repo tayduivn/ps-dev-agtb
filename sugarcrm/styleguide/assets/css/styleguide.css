@@ -116,6 +116,7 @@
 #styleguide .headerpane .select2-container .select2-choice {
   min-width: 200px;
   font-size: 14px;
+  letter-spacing: normal;
 }
 table.accordion .accordion-toggle,
 table.accordion .accordion-body {
@@ -133,6 +134,9 @@ table.accordion .accordion-inner.in {
   overflow: hidden;
   overflow: visible;
   padding: 12px;
+}
+table.accordion .accordion-heading {
+  float: none;
 }
 table.accordion .accordion-heading td,
 table.accordion .accordion-body td {
@@ -308,4 +312,13 @@ ol.linenums li {
   font-size: 18px;
   color: #555;
   padding: 5px 4px 3px;
+}
+.PrimaryButton {
+  background-color: #177EE5;
+}
+.NavigationBar {
+  background-color: #000000;
+}
+.BorderColor {
+  background-color: #E61718;
 }
