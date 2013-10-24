@@ -58,11 +58,13 @@
     delegateDropdown: function(e) {
         var $button = this.$(e.currentTarget).first(), // the dropdown button
             $buttonGroup = $button.parents('.btn-group'), // the button group
-            menuHeight = $button.height() + $button.next('ul').height(), // height of menu and group
-            windowHeight = $(window).height() - 65; // height of window less padding
+            menuHeight,
+            windowHeight;
 
         // fn to detect menu colliding with window bottom
         var needsDropupClass = function(b) {
+                menuHeight = $button.height() + $button.next('ul').height(); // height of menu and group
+                windowHeight = $(window).height() - 65; // height of window less padding
                 return (
                      windowHeight < b.offset().top + menuHeight
                 );
@@ -70,7 +72,6 @@
 
         // fn to turn off event listeners and reenable tooltips
         var resetDropdownDelegate = function() {
-                $(this).tooltip('enable');
                 $(this).parents('.main-pane').off('scroll.right-actions');
                 $(this).off('resetDropdownDelegate.right-actions');
             };
@@ -81,8 +82,6 @@
 
         // don't process already open dropdowns
         if (!$buttonGroup.hasClass('open')) {
-            $button.tooltip('destroy'); // remove tooltip from dropdown button
-            $button.tooltip('disable'); // disable tooltip for dropdown button
             $buttonGroup.toggleClass('dropup', needsDropupClass($button)); // detect window bottom collision
             $button.on('resetDropdownDelegate.right-actions', resetDropdownDelegate); // listen for delegate reset
             // add a listener to scrolling container
