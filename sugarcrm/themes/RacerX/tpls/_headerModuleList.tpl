@@ -48,7 +48,7 @@ $this->assign('tabGroupName', $tabGroupName);
 $this->assign('currentGroupTab', $currentGroupTab);
 {/php}
   {* This is a little hack for Smarty, to make the ID's match up for compatibility *}
-  {if $tabGroupName == $APP.LBL_TABGROUP_ALL}
+  {if $tabGroupName == $APP.LBL_MODULE_ALL}
   {assign var='groupTabId' value=''}
   {else}
   {assign var='groupTabId' value=$tabGroupName$underscore}

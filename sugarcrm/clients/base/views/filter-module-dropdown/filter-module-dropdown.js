@@ -125,7 +125,7 @@
      */
     getModuleListForSubpanels: function() {
         var filters = [];
-        filters.push({id: "all_modules", text: app.lang.get("LBL_TABGROUP_ALL")});
+        filters.push({id: "all_modules", text: app.lang.get("LBL_MODULE_ALL")});
 
         var subpanels = this.pullSubpanelRelationships();
         subpanels = this._pruneHiddenModules(subpanels);
@@ -145,7 +145,7 @@
     getModuleListForActivities: function() {
         var filters = [], label;
         if (this.module == "Activities") {
-            label = app.lang.get("LBL_TABGROUP_ALL");
+            label = app.lang.get("LBL_MODULE_ALL");
         } else {
             label = app.lang.get('LBL_MODULE_NAME', this.module);
         }
@@ -190,7 +190,7 @@
     initSelection: function(el, callback) {
         var selection, label;
         if (el.val() === "all_modules") {
-            label = (this.layout.layoutType === "record") ? app.lang.get("LBL_TABGROUP_ALL") : app.lang.get("LBL_MODULE_NAME", this.module);
+            label = (this.layout.layoutType === "record") ? app.lang.get("LBL_MODULE_ALL") : app.lang.get("LBL_MODULE_NAME", this.module);
             selection = {id: "all_modules", text: label};
         } else if (_.findWhere(this.filterList, {id: el.val()})) {
             selection = _.findWhere(this.filterList, {id: el.val()});

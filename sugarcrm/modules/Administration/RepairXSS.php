@@ -36,7 +36,7 @@ if(isset($runSilent) && $runSilent == true) {
 	sort($moduleList);
 	$options = array();
 	$options[] = $app_strings['LBL_NONE'];
-	$options['all'] = "--{$app_strings['LBL_TABGROUP_ALL']}--";
+	$options['all'] = "--{$app_strings['LBL_MODULE_ALL']}--";
 	
 	foreach($moduleList as $module) {
 		if(!in_array($module, $hide)) {
