@@ -51,10 +51,6 @@ describe("Twitter View", function() {
         SugarTest.server.respondWith("GET", /.*rest\/v10\/connector\/twitter\/test.*/,
             [200, { "Content-Type": "application/json"}, JSON.stringify(tweets)]);
 
-        var getConnectorStub = sinonSandbox.stub(view, "getConnector");
-        var getUserStub = sinonSandbox.stub(app.user, "get");
-        getConnectorStub.returns({"auth": 1});
-        getUserStub.returns(1);
 
         view.loadData();
         SugarTest.server.respond();
@@ -77,10 +73,6 @@ describe("Twitter View", function() {
         SugarTest.server.respondWith("GET", /.*rest\/v10\/connector\/twitter\/test.*/,
             [200, { "Content-Type": "application/json"}, JSON.stringify([])]);
 
-        var getConnectorStub = sinonSandbox.stub(view, "getConnector");
-        var getUserStub = sinonSandbox.stub(app.user, "get");
-        getConnectorStub.returns({"auth": 1});
-        getUserStub.returns(1);
 
         view.loadData();
         SugarTest.server.respond();
@@ -94,10 +86,6 @@ describe("Twitter View", function() {
         view.meta.config = false;
         var apiStub = sinonSandbox.stub(SugarTest.app.api, 'call');
         var settingsStub = sinonSandbox.stub(view.settings, 'get', function(){return 'bob';});
-        var getConnectorStub = sinonSandbox.stub(view, "getConnector");
-        var getUserStub = sinonSandbox.stub(app.user, "get");
-        getConnectorStub.returns({"auth": 1});
-        getUserStub.returns(1);
 
         view.loadData();
 

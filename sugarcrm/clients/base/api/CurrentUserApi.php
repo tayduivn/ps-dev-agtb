@@ -192,8 +192,6 @@ class CurrentUserApi extends SugarApi
         if($user_data['is_manager']) {
             $user_data['is_top_level_manager'] = User::isTopLevelManager($current_user->id);
         }
-        $connectorUtils = new ConnectorUtils();
-        $user_data['connectors'] = $connectorUtils->getValidConnectors(ConnectorUtils::getConnectors());
 
         //BEGIN SUGARCRM flav=pro ONLY
         require_once 'modules/Teams/TeamSetManager.php';
