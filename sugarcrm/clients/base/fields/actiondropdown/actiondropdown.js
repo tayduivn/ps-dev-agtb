@@ -41,7 +41,8 @@
         'change [data-toggle=dropdownmenu]' : 'dropdownSelected',
         //SC-1993: Dropdown is hidden in touch device by dropdownmenu element,
         // so ontouch dropdownmenu should follow the handler for onclick dropdown
-        'touchstart [data-toggle=dropdownmenu]' : 'renderDropdown'
+        //SC-2007: on iOS7, touchstart won't trigger occasionally when select drawer is open.
+        'mousedown [data-toggle=dropdownmenu]' : 'renderDropdown'
     },
     plugins: ['Tooltip'],
 
