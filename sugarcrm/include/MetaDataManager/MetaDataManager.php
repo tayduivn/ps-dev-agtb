@@ -2525,7 +2525,8 @@ class MetaDataManager
             self::MM_FIELDS, 
             self::MM_VIEWS,
             self::MM_LAYOUTS,
-            self::MM_LABELS, 
+            self::MM_LABELS,
+            self::MM_CONFIG,
             self::MM_RELATIONSHIPS,
             self::MM_JSSOURCE, 
             self::MM_SERVERINFO,
@@ -2554,15 +2555,7 @@ class MetaDataManager
         require_once("modules/MySettings/TabController.php");
         $controller = new TabController();
         $moduleList = array_keys($controller->get_user_tabs($this->getCurrentUser()));
-        //If `Home` is not the first item of the list
-        if ($moduleList[0] !== 'Home') {
-            //Remove it if it is at a random position
-            if (($key = array_search('Home', $moduleList)) !== false) {
-                unset($moduleList[$key]);
-            }
-            //Add it to the first position
-            array_unshift($moduleList, 'Home');
-        }
+        $moduleList = $this->addHomeToModuleList($moduleList);
         return $moduleList;
     }
 
@@ -2699,5 +2692,26 @@ class MetaDataManager
                 }
             }
         }
+    }
+    
+    /**
+     * Adds Home as the first module of users modules lists
+     * 
+     * @param array $moduleList Array of modules
+     * @return array
+     */
+    protected function addHomeToModuleList($moduleList)
+    {
+        //If Home is not the first item of the list
+        if (!empty($moduleList) && $moduleList[0] !== 'Home') {
+            //Remove it if it is at a random position
+            if (($key = array_search('Home', $moduleList)) !== false) {
+                unset($moduleList[$key]);
+            }
+            //Add it to the first position
+            array_unshift($moduleList, 'Home');
+        }
+
+        return $moduleList;
     }
 }

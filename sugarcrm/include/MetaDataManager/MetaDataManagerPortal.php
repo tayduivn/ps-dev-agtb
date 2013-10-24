@@ -28,52 +28,12 @@ require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
 
 class MetaDataManagerPortal extends MetaDataManager
 {
-
-    /**
-     * Override to replace logo url by portal logo url
-     *
-     * @param ServiceBase $api
-     * @param array $args
-     * @return array
-     */
-    public function getPublicMetadata(ServiceBase $api, array $args)
-    {
-        $meta = parent::getPublicMetadata($api, $args);
-        $meta['logo_url'] = $this->loadPortalLogoUrl();
-        $meta['_hash'] = $this->hashChunk($meta);
-        return $meta;
-    }
-
-    /**
-     * Override to allow only Portal modules
-     * Override to replace logo url by portal logo url
-     *
-     * @param ServiceBase $api
-     * @param array $args
-     * @return array
-     */
-    protected function getAllMetadata($args = array(), $buildCache = true) 
-    {
-        $portalModuleList = $this->findPortalModules();
-        if (!empty($args['module_filter'])) {
-            //If need be, update module filter to get intersection with Portal enabled modules
-            $intersection = array_intersect($portalModuleList, explode(',', $args['module_filter']));
-            if (!empty($intersection)) { //If we set filter to empty list, then we'd load ALL metadata. (NO.)
-                $portalModuleList = $intersection;
-            }
-        }
-        $args['module_filter'] = implode(',', $portalModuleList);
-        $meta = parent::getAllMetadata($args, $buildCache);
-        $meta['logo_url'] = $this->loadPortalLogoUrl();
-        $meta['_hash'] = $this->hashChunk($meta);
-        return $meta;
-    }
-
     /**
      * Find all modules with Portal metadata
+     * 
      * @return array List of Portal module names
      */
-    public function findPortalModules()
+    protected function getModules()
     {
         $modules = array();
         foreach (SugarAutoLoader::getDirFiles("modules", true) as $mdir) {
@@ -134,11 +94,9 @@ class MetaDataManagerPortal extends MetaDataManager
         // Now that the portal modules are loaded, cross check them with the 
         // visible tabs array for the current user
         $controller = new TabController();
-        $ret = array_intersect_key($controller->get_user_tabs($this->getCurrentUser()), $pb->modules);
-
-        // Needed for portal
-        $ret['Home'] = true;
-        return array_keys($ret);
+        $ret = array_keys(array_intersect_key($controller->get_user_tabs($this->getCurrentUser()), $pb->modules));
+        return $this->addHomeToModuleList($ret);
+        
     }
 
     /**
@@ -146,7 +104,7 @@ class MetaDataManagerPortal extends MetaDataManager
      *
      * @return string url of the portal logo
      */
-    protected function loadPortalLogoUrl() {
+    public function getLogoUrl() {
         global $sugar_config;
         $config = $this->getConfigs();
         if (!empty($config['logoURL'])) {
