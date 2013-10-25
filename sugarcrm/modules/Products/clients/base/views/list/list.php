@@ -21,7 +21,6 @@ $viewdefs['Products']['base']['view']['list'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'readonly' => true,
                     'link' => true,
                     'label' => 'LBL_NAME',
                     'enabled' => true,
