@@ -115,13 +115,20 @@ class SugarOAuth2Server extends OAuth2
         // grantAccessToken directly echo's (BAD), but it's a 3rd party library, so what are you going to do?
         $authData = parent::grantAccessToken($inputData, $authHeaders);
 
-        // Load the refresh token to get the download token, it should already be in memory
-        $tokenSeed = BeanFactory::newBean('OAuthTokens');
-        $token = $tokenSeed->load($authData['refresh_token'],'oauth2');
+        $token = $this->storage->refreshToken;
         $downloadToken = $token->download_token;
 
         $authData['refresh_expires_in'] = $token->expire_ts-time();
         $authData['download_token'] = $token->download_token;
+
+        if (!empty($_SESSION['oauth2']['client_id']) && !empty($token->id)) {
+            $_SESSION['oauth2']['refresh_token'] = $token->id;
+            // PHP parser barfs on $this->storage::TOKEN_CHECK_TIME
+            $storage = $this->storage;
+            $_SESSION['oauth2']['token_check_time'] = time() + $storage::TOKEN_CHECK_TIME;
+        }
+
+
 
         return $authData;
     }
