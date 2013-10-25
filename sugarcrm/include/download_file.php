@@ -81,7 +81,7 @@ class DownloadFile {
         } else {
             header("Content-Type: application/force-download");
             header("Content-type: application/octet-stream");
-            header("Content-Disposition: attachment; filename=\"".$info['name']."\";");
+            header("Content-Disposition: attachment; filename=\"".$info['name']."\"");
         }
         header("X-Content-Type-Options: nosniff");
         header("Content-Length: " . filesize($info['path']));
@@ -345,7 +345,7 @@ class DownloadFileApi extends DownloadFile
             if(empty($info['name'])) {
                 $info['name'] = pathinfo($info['path'], PATHINFO_BASENAME);
             }
-            $this->api->setHeader("Content-Disposition", "attachment; filename=\"".$info['name']."\";");
+            $this->api->setHeader("Content-Disposition", "attachment; filename=\"".$info['name']."\"");
         }
         $this->api->fileResponse($info['path']);
     }
