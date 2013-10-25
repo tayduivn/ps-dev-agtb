@@ -36,24 +36,7 @@
         'click [data-action=delete]': 'deleteFile'
     },
     fileUrl: '',
-    plugins: ['File','EllipsisInline'],
-
-    /**
-     * Contains id of {Data.Bean} from which file should be duplicated.
-     *
-     * @property {String} _duplicateModuleId
-     * @protected
-     */
-    _duplicateModuleId: null,
-
-    /**
-     * Set ups id of {Data.Bean} from which file should be duplicated.
-     *
-     * @param {String} modelId Id of model
-     */
-    duplicateFromModel: function(modelId) {
-        this._duplicateModuleId = modelId;
-    },
+    plugins: ['File', 'FieldDuplicate', 'EllipsisInline'],
 
     /**
      * Handler for delete file control
@@ -127,6 +110,24 @@
                 this.module, this.tplName
             ) || app.template.empty;
             this.tplName = 'list';
+        }
+    },
+
+    /**
+     * Handler to refresh field state.
+     *
+     * Called from {@link app.plugins._onFieldDuplicate}.
+     */
+    onFieldDuplicate: function() {
+        if (this.disposed) {
+            return;
+        }
+
+        if (this.view.name === 'merge-duplicates' &&
+            this.options.viewName &&
+            this.options.viewName === 'edit'
+        ) {
+            this.render();
         }
     },
 
@@ -220,38 +221,8 @@
         this.model.on('change:' + this.name, function() {
             if (_.isUndefined(this.options.viewName) || this.options.viewName !== 'edit') {
                 this.render();
-            } else if (this.view.name === 'merge-duplicates' &&
-                this.options.viewName &&
-                this.options.viewName === 'edit'
-            ) {
-                this.render();
-            }
-            this.duplicateFromModel(null);
-        }, this);
-
-        this.model.on('duplicate:field', this._onDuplicate, this);
-        this.model.on('duplicate:field:' + this.name, this._onDuplicate, this);
-        this.model.on('data:sync:start', function(method, options) {
-            if (!_.isNull(this._duplicateModuleId) &&
-                (method == 'update' || method == 'create')
-            ) {
-                options.params = options.params || {};
-                options.params[this.name + '_duplicateModuleId'] = this._duplicateModuleId;
             }
         }, this);
-    },
-
-    /**
-     * Handler for `duplicate:field` event triggered on model. Set ups id of
-     * model from which file field should be duplicated.
-     *
-     * @param {Data.Bean} model Model from which file should be duplicated.
-     * @private
-     */
-    _onDuplicate: function(model) {
-        if (model instanceof Backbone.Model) {
-            this.duplicateFromModel(model.get('id'));
-        }
     },
 
     /**

@@ -25,7 +25,7 @@
         "change input[type=file]": "selectImage"
     },
 
-    plugins: ['File'],
+    plugins: ['File', 'FieldDuplicate'],
 
     /**
      * @override
@@ -48,6 +48,36 @@
         this.model.hasImageRequiredValidator = false;
         this.model._validationTasks = _.omit(this.model._validationTasks, 'image_required');
         app.view.Field.prototype._dispose.call(this);
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Override field templates for merge-duplicate view.
+     */
+    _loadTemplate: function() {
+        this._super('_loadTemplate');
+        if (this.view.name === 'merge-duplicates') {
+            this.template = app.template.getField(this.type,
+                'detail',
+                this.module, this.tplName
+            ) || app.template.empty;
+            this.tplName = 'list';
+        }
+    },
+
+    /**
+     * Handler to refresh field state.
+     *
+     * Called from {@link app.plugins._onFieldDuplicate}
+     */
+    onFieldDuplicate: function() {
+        if (this.disposed) {
+            return;
+        }
+        if (this.view.name === 'merge-duplicates') {
+            this.render();
+        }
     },
 
     /**
@@ -194,7 +224,7 @@
     buildUrl: function(options) {
         return app.api.buildFileURL({
             module: this.module,
-            id: this.model.id,
+            id: this._duplicateBeanId ? this._duplicateBeanId : this.model.id,
             field: this.name
         }, options);
     },
