@@ -112,19 +112,19 @@ class ForecastsDefaults
             'buckets_dom' => 'commit_stage_binary_dom', // options:  commit_stage_binary_dom, commit_stage_dom, commit_stage_extended_dom
             // the defined binary ranges the different buckets opportunities will fall in by default based on their probability
             'show_binary_ranges' => array(
-                'include' => array('min' => 70, 'max' => 100, 'in_included_total' => true),
+                'include' => array('min' => 70, 'max' => 100),
                 'exclude' => array('min' => 0, 'max' => 69)
             ),
             // the defined bucket ranges the different buckets opportunities will fall in by default based on their probability
             'show_buckets_ranges' => array(
-                'include' => array('min' => 85, 'max' => 100, 'in_included_total' => true),
+                'include' => array('min' => 85, 'max' => 100),
                 'upside' => array('min' => 70, 'max' => 84),
                 'exclude' => array('min' => 0, 'max' => 69)
             ),
             //BEGIN SUGARCRM flav=ent ONLY
             // the defined custom ranges the different buckets opportunities will fall in by default based on their probability
             'show_custom_buckets_ranges' => array(
-                'include' => array('min' => 85, 'max' => 100, 'in_included_total' => true),
+                'include' => array('min' => 85, 'max' => 100),
                 'upside' => array('min' => 70, 'max' => 84),
                 'exclude' => array('min' => 0, 'max' => 69)
             ),

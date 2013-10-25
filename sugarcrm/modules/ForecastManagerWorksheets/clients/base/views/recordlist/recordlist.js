@@ -607,7 +607,8 @@
      * @param lastCommitDate
      */
     checkForDraftRows: function(lastCommitDate) {
-        if (this.layout.isVisible() && this.canEdit && !_.isUndefined(lastCommitDate)
+        var isVisible = this.layout.isVisible();
+        if (isVisible && this.canEdit && !_.isUndefined(lastCommitDate)
             && this.collection.length !== 0 && this.hasCheckedForDraftRecords === false &&
             this.isCollectionSyncing === false) {
             this.hasCheckedForDraftRecords = true;
@@ -618,7 +619,11 @@
                 }
                 return false;
             }, this);
-        } else if (this.layout.isVisible() === false && this.canEdit && this.hasCheckedForDraftRecords === false) {
+        } else if (isVisible && this.canEdit &&_.isUndefined(lastCommitDate) && !this.collection.isEmpty) {
+            // if there is no commit date, e.g. new manager with no commits yet
+            // but there IS data, then the commit button should be enabled
+            this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
+        } else if (isVisible === false && this.canEdit && this.hasCheckedForDraftRecords === false) {
             // since the layout is not visible, lets wait for it to become visible
             this.layout.once('show', function() {
                 this.checkForDraftRows(lastCommitDate);
@@ -715,8 +720,8 @@
         users.unshift({id: this.selectedUser.id, name: this.selectedUser.full_name});
 
         // get the base currency
-        var currency_id = app.currency.getBaseCurrencyId();
-        var currency_base_rate = app.metadata.getCurrency(app.currency.getBaseCurrencyId()).conversion_rate;
+        var currency_id = app.currency.getBaseCurrencyId(),
+            currency_base_rate = app.metadata.getCurrency(app.currency.getBaseCurrencyId()).conversion_rate;
 
         _.each(users, function(user) {
             var row = _.find(data, function(rec) {
@@ -762,6 +767,9 @@
                 }, this));
             }
         }
+
+        this.collection.isEmpty = (_.isEmpty(data));
+
         this.collection.reset(records);
     },
 
