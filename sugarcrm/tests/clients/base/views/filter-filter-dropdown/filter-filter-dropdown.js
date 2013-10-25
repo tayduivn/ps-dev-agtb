@@ -1,5 +1,5 @@
 describe("BaseFilterFilterDropdownView", function () {
-    var view, layout, app;
+    var view, layout, app, sinonSandbox;
 
     beforeEach(function () {
         SugarTest.testMetadata.init();
@@ -9,9 +9,11 @@ describe("BaseFilterFilterDropdownView", function () {
         view = SugarTest.createView("base", "Cases", "filter-filter-dropdown", null, null, null, layout);
         view.layout = layout;
         app = SUGAR.App;
+        sinonSandbox = sinon.sandbox.create();
     });
 
     afterEach(function () {
+        sinonSandbox.restore();
         view.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
@@ -24,8 +26,8 @@ describe("BaseFilterFilterDropdownView", function () {
         var layoutStub, panelOpenStub, filter;
 
         beforeEach(function() {
-            layoutStub = sinon.stub(view.layout, 'trigger');
-            panelOpenStub = sinon.stub(view.layout, 'createPanelIsOpen', function() {
+            layoutStub = sinonSandbox.stub(view.layout, 'trigger');
+            panelOpenStub = sinonSandbox.stub(view.layout, 'createPanelIsOpen', function() {
                 return !!_.reduce(layoutStub.args, function(memo, args){
                     if (!_.isArray(args)) return memo;
                     if (args[0] === 'filter:create:open') return 1;
@@ -37,11 +39,6 @@ describe("BaseFilterFilterDropdownView", function () {
             view.layout.filters = new Backbone.Collection();
             filter = new Backbone.Model({id: 'test_id', editable: false });
             view.layout.filters.add(filter);
-        });
-
-        afterEach(function() {
-            layoutStub.restore();
-            panelOpenStub.restore();
         });
 
         it('should open the filter form because id equals to create', function() {
@@ -59,7 +56,7 @@ describe("BaseFilterFilterDropdownView", function () {
             expect(layoutStub.secondCall).toBeNull();
         });
 
-        it('should open the filter form because filter is editable', function() {
+        it('should open and populate the filter form because filter is editable', function() {
             filter.set('editable', true);
             view.handleChange('test_id');
 
@@ -67,26 +64,36 @@ describe("BaseFilterFilterDropdownView", function () {
             expect(layoutStub.firstCall.args[1]).toEqual(filter);
             expect(layoutStub.secondCall).toBeNull();
         });
+
+        it('should retrieve and populate last edit state', function() {
+            filter.set('editable', true);
+
+            var editState = new Backbone.Model({ id: 'test_id', filter_definition: [{'my_filter': {'is': 'cool'}}]});
+
+            view.layout.retrieveFilterEditState = $.noop;
+            sinonSandbox.stub(view.layout, 'retrieveFilterEditState', function() {
+                return editState.toJSON();
+            });
+
+            view.handleChange('test_id');
+            expect(layoutStub).toHaveBeenCalled();
+            expect(layoutStub.firstCall.args[1].toJSON()).not.toEqual(filter.toJSON());
+            expect(layoutStub.firstCall.args[1].toJSON()).toEqual(editState.toJSON());
+            expect(layoutStub.secondCall).toBeNull();
+        });
     });
 
     describe('handleModuleChange', function(){
-        var getModuleStub;
-
-        afterEach(function(){
-            if(getModuleStub){
-                getModuleStub.restore();
-            }
-        });
 
         it('should disable filter dropdown when All Records is selected', function(){
-            getModuleStub = sinon.stub(app.metadata, 'getModule', function() { return {isBwcEnabled: false}; });
+            sinonSandbox.stub(app.metadata, 'getModule', function() { return {isBwcEnabled: false}; });
             expect(view.filterDropdownEnabled).toBeTruthy();
             view.layout.trigger("filter:change:module", "ALL_RECORDS", "all_modules");
             expect(view.filterDropdownEnabled).toBeFalsy();
         });
 
         it('should disable filter dropdown when a BWC module is selected', function(){
-            getModuleStub = sinon.stub(app.metadata, 'getModule', function() { return {isBwcEnabled: true}; });
+            sinonSandbox.stub(app.metadata, 'getModule', function() { return {isBwcEnabled: true}; });
             expect(view.filterDropdownEnabled).toBeTruthy();
             view.layout.trigger("filter:change:module", "TEST_MODULE", "test_id");
             expect(view.filterDropdownEnabled).toBeFalsy();
@@ -96,7 +103,7 @@ describe("BaseFilterFilterDropdownView", function () {
 
     describe('filterList', function() {
 
-        var expected, filterList, canCreateStub;
+        var expected, filterList;
 
         beforeEach(function() {
             view.layout.filters = new Backbone.Collection();
@@ -105,22 +112,20 @@ describe("BaseFilterFilterDropdownView", function () {
         });
 
         it('should return filter list with translated labels', function() {
-            canCreateStub = sinon.stub(view.layout, 'canCreateFilter', function() { return false; });
+            sinonSandbox.stub(view.layout, 'canCreateFilter', function() { return false; });
             expected = [{ id: 'all_records', text: app.lang.get('ALL_RECORDS')},
                         { id: 'test_id', text: app.lang.get('TEST')}];
             filterList = view.getFilterList();
             expect(filterList).toEqual(expected);
-            canCreateStub.restore();
         });
 
         it('should return filter list (including create) with translated labels', function() {
-            canCreateStub = sinon.stub(view.layout, 'canCreateFilter', function() { return true; });
+            sinonSandbox.stub(view.layout, 'canCreateFilter', function() { return true; });
             expected = [{ id: 'all_records', text: app.lang.get('ALL_RECORDS')},
                         { id: 'test_id', text: app.lang.get('TEST')},
                         { id: 'create', text: app.lang.get('LBL_FILTER_CREATE_NEW')}];
             filterList = view.getFilterList();
             expect(filterList).toEqual(expected);
-            canCreateStub.restore();
         });
     });
 
@@ -138,13 +143,15 @@ describe("BaseFilterFilterDropdownView", function () {
             });
 
 
-            it('should do nothing if selected filter is create', function() {
+            it('should recognize when selected filter is create', function() {
                 var $input = $('<input type="text">').val('create'),
-                    callback = sinon.stub();
+                    callback = sinon.stub(),
+                    expected = {id: "create", text: app.lang.get("LBL_FILTER_CREATE_NEW")};
 
                 view.initSelection($input, callback);
 
-                expect(callback).not.toHaveBeenCalled();
+                expect(callback).toHaveBeenCalled();
+                expect(callback.lastCall.args[0]).toEqual(expected);
             });
 
             it('should get selected filter', function() {

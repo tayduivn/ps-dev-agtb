@@ -80,12 +80,14 @@
      * @param filterModel
      */
     openForm: function(filterModel) {
-        if (!filterModel.get('filter_definition')) {
+        if (_.isEmpty(filterModel.get('filter_definition'))) {
             this.render();
             this.addRow();
         } else {
             this.populateFilter();
         }
+        // After populating the form, save the current edit state
+        this.saveFilterEditState();
     },
 
     /**
@@ -619,10 +621,31 @@
         if (_.isEqual(this.lastFilterDef, filterDef)) {
             return;
         }
+        // Save the current edit state
+        this.saveFilterEditState(filterDef);
+
         this.validateRows();
         this.lastFilterDef = filterDef;
         this.layout.trigger('filter:apply', null, filterDef);
     }, 400),
+
+    /**
+     * Saves the current edit state into the cache
+     *
+     * @param {Object} filterDef(optional) Filter Definition
+     */
+    saveFilterEditState: function(filterDef) {
+        var filter = this.layout.editingFilter.toJSON();
+        filterDef = filterDef || this.buildFilterDef();
+        filter.filter_definition = filterDef;
+
+        // Make sure the filter-actions view is rendered, otherwise it will override the name with an empty name.
+        if (this.layout.getComponent('filter-actions')
+            && this.layout.getComponent('filter-actions').$('input').length === 1) {
+            filter.name = this.layout.getComponent('filter-actions').getFilterName();
+        }
+        this.layout.getComponent('filter').saveFilterEditState(filter);
+    },
 
     /**
      * Build filter definition for all valid rows
