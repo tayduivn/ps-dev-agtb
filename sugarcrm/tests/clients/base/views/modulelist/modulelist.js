@@ -129,6 +129,61 @@ describe("Module List", function() {
 
             getModuleStub.restore();
         });
+        describe('getRecentlyViewedAndFavoriteRecords', function() {
+            var $fakeHtml, evt, module, meta, stubs;
+            beforeEach(function() {
+                $fakeHtml = $('<div class="moduleHolder"><div><div class="event"></div></div></div>');
+                evt = {
+                    currentTarget: $fakeHtml.find('.event')
+                };
+                stubs = {
+                    metadata: sinon.stub(app.metadata, 'getModule', function() {
+                        return meta;
+                    }),
+                    populateDashboards: sinon.stub(view, 'populateDashboards'),
+                    populateFavorites: sinon.stub(view, 'populateFavorites'),
+                    populateRecents: sinon.stub(view, 'populateRecents')
+                };
+            });
+            afterEach(function() {
+                stubs.metadata.restore();
+                stubs.populateDashboards.restore();
+                stubs.populateFavorites.restore();
+                stubs.populateRecents.restore();
+            });
+            it('should populate dashboard if module is Home', function() {
+                $fakeHtml.data('module', 'Home');
+                view.getRecentlyViewedAndFavoriteRecords(evt);
+                expect(stubs.populateDashboards).toHaveBeenCalled();
+                expect(stubs.populateFavorites).not.toHaveBeenCalled();
+                expect(stubs.populateRecents).not.toHaveBeenCalled();
+
+            });
+            it('should populate recents only because favorites are disabled', function() {
+                meta = { fields: { _hash: 'meta_hash', account_type: {} } };
+                $fakeHtml.data('module', 'Accounts');
+                view.getRecentlyViewedAndFavoriteRecords(evt);
+                expect(stubs.populateDashboards).not.toHaveBeenCalled();
+                expect(stubs.populateFavorites).not.toHaveBeenCalled();
+                expect(stubs.populateRecents).toHaveBeenCalled();
+            });
+            it('should populate favorites because favorites are enabled', function() {
+                meta = { favoritesEnabled: true, fields: { _hash: 'meta_hash', account_type: {} } };
+                $fakeHtml.data('module', 'Accounts');
+                view.getRecentlyViewedAndFavoriteRecords(evt);
+                expect(stubs.populateDashboards).not.toHaveBeenCalled();
+                expect(stubs.populateFavorites).toHaveBeenCalled();
+                expect(stubs.populateRecents).toHaveBeenCalled();
+            });
+            it('should not populate because this module does not have fields (ex: Calendar)', function() {
+                meta = { favoritesEnabled: true, fields: { _hash: 'meta_hash' } };
+                $fakeHtml.data('module', 'Calendar');
+                view.getRecentlyViewedAndFavoriteRecords(evt);
+                expect(stubs.populateDashboards).not.toHaveBeenCalled();
+                expect(stubs.populateFavorites).not.toHaveBeenCalled();
+                expect(stubs.populateRecents).not.toHaveBeenCalled();
+            });
+        });
         it("Should populate favorites and call favorite populate callback", function() {
             var cbMock = sinon.mock();
             var module = 'Accounts';

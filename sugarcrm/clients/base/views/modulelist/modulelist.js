@@ -79,9 +79,10 @@
             if (module == 'Home') {
                 this.populateDashboards();
             }
-            else if (moduleMeta && moduleMeta.fields && !_.isArray(moduleMeta.fields)) {
+            else if (moduleMeta && moduleMeta.fields
+                && !_.isArray(moduleMeta.fields) && !_.isEmpty(_.omit(moduleMeta.fields, '_hash'))) {
                 this.clearFavoritesRecents(module);
-                if(moduleMeta.favoritesEnabled){
+                if (moduleMeta.favoritesEnabled) {
                     this.populateFavorites(module);
                 }
                 this.populateRecents(module);
