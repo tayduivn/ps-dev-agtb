@@ -33,10 +33,6 @@ class SugarUpgradeForecastsListViewSetup extends UpgradeScript
             return;
         }
 
-        if (!version_compare($this->from_version, '7.0', "<")) {
-            return;
-        }
-
         /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
         $config = $admin->getConfigForModule('Forecasts');
