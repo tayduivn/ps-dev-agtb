@@ -542,6 +542,7 @@ $app_list_strings = array (
     'Contacts' => 'Contacts', // cn (11/22/2005) added to support Emails
     //BEGIN SUGARCRM flav=pro ONLY
     'ProductTemplates' => 'Revenue Line Item',
+    'RevenueLineItems' => 'Revenue Line Item',
     'Quotes' => 'Quote',
 
     //END SUGARCRM flav=pro ONLY
