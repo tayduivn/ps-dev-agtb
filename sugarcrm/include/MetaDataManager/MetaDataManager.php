@@ -1045,13 +1045,18 @@ class MetaDataManager
         if (!empty($languages)) {
             // We will always need the metadata for this process, but only if there
             // is existing metadata to work (why build a section of an empty set)
-            $data = $this->getMetadata(array(), false);
+            $data = $this->getMetadataCache(true);
             
             if (!empty($data)) {
                 $this->clearLanguagesCache($languages);
                 $data = $this->loadSectionMetadata(self::MM_LABELS, $data);
                 $data['_hash'] = $this->hashChunk($data);
                 $this->putMetadataCache($data);
+                
+                // Build up the language cache now too
+                foreach ((array) $languages as $language) {
+                    $this->getLanguageFileProperties($language);
+                }
             }
         }
     }
@@ -1074,7 +1079,7 @@ class MetaDataManager
             // source. Same as with section caching, we only want to rebuild the
             // modules metadata if there are modules metadata already. 
             if (empty($data)) {
-                $data = $this->getMetadata(array(), false);
+                $data = $this->getMetadataCache(true);
             }
             
             if (!empty($data)) {
@@ -1132,7 +1137,7 @@ class MetaDataManager
         if (!empty($section)) {
             // We will always need the metadata for this process, but only if there
             // is existing metadata to work (why build a section of an empty set)
-            $data = $this->getMetadata(array(), false);
+            $data = $this->getMetadataCache(true);
             
             if (!empty($data)) {
                 // Handle the section(s)
@@ -1472,19 +1477,21 @@ class MetaDataManager
         global $sugar_config;
         $administration = new Administration();
         $administration->retrieveSettings();
+        
         // These configs are controlled via System Settings in Administration module
+        // Defaults copied from include/utils.php make_sugar_config()
         $configs = array(
-            'maxQueryResult' => $sugar_config['list_max_entries_per_page'],
-            'maxSubpanelResult' => $sugar_config['list_max_entries_per_subpanel'],
-            'maxRecordFetchSize' => $sugar_config['max_record_fetch_size'],
-            'massUpdateChunkSize' => $sugar_config['mass_update_chunk_size'],
-            'massDeleteChunkSize' => $sugar_config['mass_delete_chunk_size'],
-            'mergeRelateFetchConcurrency' => $sugar_config['merge_relate_fetch_concurrency'],
-            'mergeRelateFetchTimeout' => $sugar_config['merge_relate_fetch_timeout'],
-            'mergeRelateFetchLimit' => $sugar_config['merge_relate_fetch_limit'],
-            'mergeRelateUpdateConcurrency' => $sugar_config['merge_relate_update_concurrency'],
-            'mergeRelateUpdateTimeout' => $sugar_config['merge_relate_update_timeout'],
-            'mergeRelateMaxAttempt' => $sugar_config['merge_relate_max_attempt'],
+            'maxQueryResult' => isset($sugar_config['list_max_entries_per_page']) ? $sugar_config['list_max_entries_per_page'] : 20,
+            'maxSubpanelResult' => isset($sugar_config['list_max_entries_per_subpanel']) ? $sugar_config['list_max_entries_per_subpanel'] : 5,
+            'maxRecordFetchSize' => isset($sugar_config['max_record_fetch_size']) ? $sugar_config['max_record_fetch_size'] : 1000,
+            'massUpdateChunkSize' => isset($sugar_config['mass_update_chunk_size']) ? $sugar_config['mass_update_chunk_size'] : 20,
+            'massDeleteChunkSize' => isset($sugar_config['mass_delete_chunk_size']) ? $sugar_config['mass_delete_chunk_size'] : 20,
+            'mergeRelateFetchConcurrency' => isset($sugar_config['merge_relate_fetch_concurrency']) ? $sugar_config['merge_relate_fetch_concurrency'] : 2,
+            'mergeRelateFetchTimeout' => isset($sugar_config['merge_relate_fetch_timeout']) ? $sugar_config['merge_relate_fetch_timeout'] : 90000,
+            'mergeRelateFetchLimit' => isset($sugar_config['merge_relate_fetch_limit']) ? $sugar_config['merge_relate_fetch_limit'] : 20,
+            'mergeRelateUpdateConcurrency' => isset($sugar_config['merge_relate_update_concurrency']) ? $sugar_config['merge_relate_update_concurrency'] : 4,
+            'mergeRelateUpdateTimeout' => isset($sugar_config['merge_relate_update_timeout']) ? $sugar_config['merge_relate_update_timeout'] : 90000,
+            'mergeRelateMaxAttempt' => isset($sugar_config['merge_relate_max_attempt']) ? $sugar_config['merge_relate_max_attempt'] : 3,
         );
 
         if (isset($administration->settings['honeypot_on'])) {
@@ -1579,45 +1586,35 @@ class MetaDataManager
      * the database.
      * 
      * @param array $args Arguments passed into the request for metadata
-     * @param bool $buildCache Flag that tells the getters whether to build the
-     *                         cache. 
      * @return mixed
      */
-    public function getMetadata($args = array(), $buildCache = true)
+    public function getMetadata($args = array())
     {
         // Get our metadata
         $data = $this->getMetadataCache();
 
         //If we failed to load the metadata from cache, load it now the hard way.
-        if (empty($data) && $buildCache) {
+        if (empty($data)) {
             // Allow more time for private metadata builds since it is much heavier
             if (!$this->public) {
                 ini_set('max_execution_time', 0);
             }
             $data = $this->loadMetadata($args);
+        }
+
+        // Cache the data so long as the current cache is different from the data 
+        // hash
+        if ($data['_hash'] != $this->getMetadataHash()) {
             $this->putMetadataCache($data);
         }
 
-        // Only finish working the metadata if there was data to start with. There
-        // is a chance that $data will be empty at this point if there is no cache
-        // and $buildCache is false.
-        if (!empty($data)) {
-            // Bug 60345 - Default currency id of -99 was failing hard on 64bit 5.2.X
-            // PHP builds. This was causing metadata to store a different value in the 
-            // cache than -99. The fix was to add a space arround the -99 to force it
-            // to string. This trims that value prior to sending it to the client.
-            // 
-            // @TODO: Is this still relevant?
-            $data = $this->normalizeCurrencyIds($data);
-
-            // We need to see if we need to send any warnings down to the user
-            $systemStatus = apiCheckSystemStatus();
-            if ($systemStatus !== true) {
-                // Something is up with the system status
-                // We need to tack it on and refresh the hash
-                $data['config']['system_status'] = $systemStatus;
-                $data['_hash'] = md5($data['_hash'].serialize($systemStatus));
-            }
+        // We need to see if we need to send any warnings down to the user
+        $systemStatus = apiCheckSystemStatus();
+        if ($systemStatus !== true) {
+            // Something is up with the system status
+            // We need to tack it on and refresh the hash
+            $data['config']['system_status'] = $systemStatus;
+            $data['_hash'] = md5($data['_hash'].serialize($systemStatus));
         }
 
         return $data;
@@ -1625,12 +1622,13 @@ class MetaDataManager
 
     /**
      * Gets the metadata cache for a given platform and visibility
-     * 
+     *
+     * @param boolean $ignoreDevMode If true, ignore developer mode and return cached metadata
      * @return array The metadata cache is it exists, null otherwise
      */
-    protected function getMetadataCache()
+    protected function getMetadataCache($ignoreDevMode = false)
     {
-        if (inDeveloperMode()) {
+        if (inDeveloperMode() && !$ignoreDevMode) {
             return null;
         }
 
@@ -2054,14 +2052,7 @@ class MetaDataManager
                 $currency['name'] = $current->name;
                 $currency['date_entered'] = $current->date_entered;
                 $currency['date_modified'] = $current->date_modified;
-
-                // Bug 60345 - Default currency id of -99 was failing hard on 64bit 5.2.X
-                // PHP builds when writing to the cache because of how PHP was
-                // handling negative int array indexes. This was causing metadata
-                // to store a different value in the cache than -99. The fix was
-                // to add a space around the -99 to force it to string.
-                $id = $current->id == -99 ? '-99 ': $current->id;
-                $currencies[$id] = $currency;
+                $currencies[$current->id] = $currency;
             }
         }
 
@@ -2333,28 +2324,6 @@ class MetaDataManager
         $hashes[$key] = $hash;
         write_array_to_file("hashes", $hashes, $path);
         SugarAutoLoader::addToMap($path);
-    }
-
-    /**
-     * Bug 60345
-     *
-     * Normalizes the -99 currency id to remove the space added to the index prior
-     * to storing in the cache.
-     *
-     * @param  array $data The metadata
-     * @return array
-     */
-    protected function normalizeCurrencyIds($data)
-    {
-        if (isset($data['currencies']['-99 '])) {
-            // Change the spaced index back to normal
-            $data['currencies']['-99'] = $data['currencies']['-99 '];
-
-            // Ditch the spaced index
-            unset($data['currencies']['-99 ']);
-        }
-
-        return $data;
     }
 
     /**
