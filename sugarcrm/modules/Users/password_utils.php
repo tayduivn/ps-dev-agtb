@@ -76,7 +76,20 @@ function canSendPassword() {
     return $mod_strings['LBL_EMAIL_NOT_SENT'];
 }
 
-function  hasPasswordExpired($username)
+/**
+ * Updates password has expired if number of login attempts is set
+ * @return Boolean indicating if password is expired or not
+ */
+function updatePasswordExpired($username)
+{
+    return hasPasswordExpired($username, true);
+}
+
+/**
+ * Check if password has expired.
+ * @return Boolean indicating if password is expired or not
+ */
+function hasPasswordExpired($username, $updateNumberLogins = false)
 {
     $usr_id=User::retrieve_user_id($username);
 	$usr= BeanFactory::getBean('Users', $usr_id);
@@ -91,7 +104,6 @@ function  hasPasswordExpired($username)
 	//END SUGARCRM flav=pro ONLY
 
     if ($usr->portal_only=='0'){
-	    global $mod_strings;
 	    $res=$GLOBALS['sugar_config']['passwordsetting'];
 	  	if ($type != '') {
 		    switch($res[$type.'expiration']){
@@ -100,8 +112,10 @@ function  hasPasswordExpired($username)
 		    	global $timedate;
 		    	if ($usr->pwd_last_changed == ''){
 		    		$usr->pwd_last_changed= $timedate->nowDb();
+                    //Suppress date_modified so a new _hash isn't generated
+                    $usr->update_date_modified = false;
 		    		$usr->save();
-		    		}
+		    	}
 
 		        $expireday = $res[$type.'expirationtype']*$res[$type.'expirationtime'];
 		        $expiretime = $timedate->fromUser($usr->pwd_last_changed)->get("+{$expireday} days")->ts;
@@ -109,18 +123,24 @@ function  hasPasswordExpired($username)
 			    if ($timedate->getNow()->ts < $expiretime)
 			    	return false;
 			    else{
-			    	$_SESSION['expiration_type']= $mod_strings['LBL_PASSWORD_EXPIRATION_TIME'];
+			    	$_SESSION['expiration_label']= 'LBL_PASSWORD_EXPIRATION_TIME';
 			    	return true;
 			    	}
 				break;
 
 
 		    case '2':
-		    	$login=$usr->getPreference('loginexpiration');
-		    	$usr->setPreference('loginexpiration',$login+1);
-		        $usr->save();
-		        if ($login+1 >= $res[$type.'expirationlogin']){
-		        	$_SESSION['expiration_type']= $mod_strings['LBL_PASSWORD_EXPIRATION_LOGIN'];
+		    	$login = $usr->getPreference('loginexpiration');
+                //Only increment number of logins if we're actually doing an update
+                if ($updateNumberLogins) {
+                    $login = $login + 1;
+                    $usr->setPreference('loginexpiration',$login);
+                    //Suppress date_modified so a new _hash isn't generated
+                    $usr->update_date_modified = false;
+                    $usr->save();
+                }
+		        if ($login >= $res[$type.'expirationlogin']){
+		        	$_SESSION['expiration_label']= 'LBL_PASSWORD_EXPIRATION_LOGIN';
 		        	return true;
 		        }
 		        else

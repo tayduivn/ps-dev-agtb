@@ -40,6 +40,8 @@
          * @type {string}
          */
         app.error.errorName2Keys['current_password'] = 'ERR_ENTER_OLD_PASSWORD';
+        app.error.errorName2Keys['new_password'] = 'ERR_ENTER_NEW_PASSWORD';
+
         this.__extendModel();
     },
 
@@ -78,6 +80,13 @@
                     confirmation = this.get(field.name + '_confirm_password');
 
                 if (_.isEmpty(current) && _.isEmpty(password) && _.isEmpty(confirmation)) {
+                    callback(null, fields, errors);
+                    return;
+                }
+                //current is non-empty but we haven't put new/confirm passwords
+                if (!_.isEmpty(current) && _.isEmpty(password) && _.isEmpty(confirmation)) {
+                    errors[field.name] = errors[field.name] || {};
+                    errors[field.name]['new_password'] = true;
                     callback(null, fields, errors);
                     return;
                 }
@@ -154,5 +163,28 @@
             app.view.Field.prototype.decorateError.call(this, errors);
         }
         this.fieldTag = ftag;
-    }
+    },
+
+    /**
+     * @override
+     */
+    clearErrorDecoration: function () {
+        var self = this,
+            ftag = this.fieldTag || '',
+            $ftag = this.$(ftag);
+        // Remove previous exclamation then add back.
+        this.$('.add-on').remove();
+
+        //Not all inputs are necessarily wrapped so check each individually
+        $ftag.each(function(index, el) {
+            var isWrapped = self.$(el).parent().hasClass('input-append');
+            if (isWrapped) {
+                self.$(el).unwrap();
+            }
+        });
+        this.$el.removeClass(ftag);
+        this.$el.removeClass("error");
+        this.$el.closest('.record-cell').removeClass("error");
+    },
+
 })

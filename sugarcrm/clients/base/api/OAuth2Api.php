@@ -88,7 +88,12 @@ class OAuth2Api extends SugarApi
             $GLOBALS['logic_hook']->call_custom_logic('Users', 'before_login');
             $authData = $oauth2Server->grantAccessToken($args);
             // if we're here, the login was OK
+
             if (!empty($GLOBALS['current_user'])) {
+                //Update password expired since user's essentially logged in at this point
+                require_once('modules/Users/password_utils.php');
+                updatePasswordExpired($GLOBALS['current_user']->user_name);
+
                 $GLOBALS['current_user']->call_custom_logic('after_login');
             }
             $cleanupChance = isset($GLOBALS['sugar_config']['token_cleanup_probability'])?(int)$GLOBALS['sugar_config']['token_cleanup_probability']:10;
