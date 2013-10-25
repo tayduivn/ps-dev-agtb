@@ -4332,17 +4332,11 @@ class SugarBean
                             }
                         }
 
-                        if(isset($data['db_concat_fields']))
-                        {
-                            $ret_array['secondary_select'] .= ' , ' . $this->db->concat($params['join_table_alias'], $data['db_concat_fields']) . ' ' . $field;
+                        $relate_query = $rel_mod->getRelateFieldQuery($data, $params['join_table_alias']);
+                        if ($relate_query['select']) {
+                            $ret_array['secondary_select'] .= ', ' . $relate_query['select'];
                         }
-                        else
-                        {
-                            if(!isset($data['relationship_fields']))
-                            {
-                                $ret_array['secondary_select'] .= ' , ' . $params['join_table_alias'] . '.' . $data['rname'] . ' ' . $field;
-                            }
-                        }
+
                         if(!$singleSelect)
                         {
                             $ret_array['select'] .= ", '                                                                                                                                                                                                                                                              ' $field ";
@@ -4899,7 +4893,6 @@ class SugarBean
         $toEnd = strval($row_offset) == 'end';
         global $sugar_config;
         $use_count_query=false;
-        $processing_collection=$subpanel_def->isCollection();
 
         $GLOBALS['log']->debug("process_union_list_query: ".$query);
         if($max_per_page == -1)
@@ -4947,10 +4940,11 @@ class SugarBean
         {
             $row_offset = 0;
         }
-        $list = array();
+
         $previous_offset = $row_offset - $max_per_page;
         $next_offset = $row_offset + $max_per_page;
 
+        $parent_fields = array();
         if($performSecondQuery)
         {
             if(!empty($limit) && $limit != -1 && $limit != -99)
@@ -4963,84 +4957,19 @@ class SugarBean
             }
                 //use -99 to return all
 
+            $data = array();
+
                 // get the current row
                 $index = $row_offset;
-                $row = $db->fetchByAssoc($result);
 
-                $post_retrieve = array();
-                $isFirstTime = true;
-                while($row)
-                {
-                    $function_fields = array();
-                    if(($index < $row_offset + $max_per_page || $max_per_page == -99))
-                    {
-                        if ($processing_collection)
-                        {
-                            $current_bean = $subpanel_def->sub_subpanels[$row['panel_name']]->template_instance;
-                        } else {
-                            $current_bean = $subpanel_def->template_instance;
-                        }
-                        if(!$isFirstTime)
-                        {
-                            $current_bean = $current_bean->getCleanCopy();
-                        }
+            while (($index < $row_offset + $max_per_page || $max_per_page == -99)
+                && ($row = $db->fetchByAssoc($result))) {
+                $data[$row['id']] = $row;
+                $index++;
+            }
 
-                        $isFirstTime = false;
-                        //set the panel name in the bean instance.
-                        if (isset($row['panel_name']))
-                        {
-                            $current_bean->panel_name=$row['panel_name'];
-                        }
-                        foreach($current_bean->field_defs as $field=>$value)
-                        {
-
-                            if (isset($row[$field]))
-                            {
-                                $current_bean->$field = $this->convertField($row[$field], $value);
-                                unset($row[$field]);
-                            }
-                            else if (isset($row[$this->table_name .'.'.$field]))
-                            {
-                                $current_bean->$field = $this->convertField($row[$this->table_name .'.'.$field], $value);
-                                unset($row[$this->table_name .'.'.$field]);
-                            }
-                            else
-                            {
-                                $current_bean->$field = "";
-                                unset($row[$field]);
-                            }
-                            if(isset($value['source']) && $value['source'] == 'function')
-                            {
-                                $function_fields[]=$field;
-                            }
-                        }
-                        foreach($row as $key=>$value)
-                        {
-                            $current_bean->$key = $value;
-                        }
-                        foreach($function_fields as $function_field)
-                        {
-                            $current_bean->$function_field = $this->callUserFunction($current_bean->field_defs[$function_field], $current_bean);
-                        }
-
-                        if(!empty($current_bean->parent_type) && !empty($current_bean->parent_id))
-                        {
-                            if(!isset($post_retrieve[$current_bean->parent_type]))
-                            {
-                                $post_retrieve[$current_bean->parent_type] = array();
-                            }
-                            $post_retrieve[$current_bean->parent_type][] = array('child_id'=>$current_bean->id, 'parent_id'=> $current_bean->parent_id, 'parent_type'=>$current_bean->parent_type, 'type'=>'parent');
-                        }
-                        //$current_bean->fill_in_additional_list_fields();
-                        $list[$current_bean->id] = $current_bean;
-                    }
-                    // go to the next row
-                    $index++;
-                    $row = $db->fetchByAssoc($result);
-                }
             //now handle retrieving many-to-many relationships
-            if(!empty($list))
-            {
+            if ($data) {
                 foreach($secondary_queries as $query2)
                 {
                     $result2 = $db->query($query2);
@@ -5049,25 +4978,37 @@ class SugarBean
                     while($row2)
                     {
                         $id_ref = $row2['ref_id'];
+                        unset($row2['ref_id']);
 
-                        if(isset($list[$id_ref]))
-                        {
-                            foreach($row2 as $r2key=>$r2value)
-                            {
-                                if($r2key != 'ref_id')
-                                {
-                                    $list[$id_ref]->$r2key = $r2value;
-                                }
-                            }
+                        if (isset($data[$id_ref])) {
+                            $data[$id_ref] = array_merge($data[$id_ref], $row2);
                         }
+
                         $row2 = $db->fetchByAssoc($result2);
                     }
                 }
 
             }
 
-            if(isset($post_retrieve))
-            {
+            $list = $this->createSubPanelBeanList($subpanel_def, $data);
+
+            $post_retrieve = array();
+            foreach ($list as $bean) {
+                if (!empty($bean->parent_type) && !empty($bean->parent_id)) {
+                    $parent_type = $bean->parent_type;
+                    if (!isset($post_retrieve[$parent_type])) {
+                        $post_retrieve[$parent_type] = array();
+                    }
+                    $post_retrieve[$parent_type][] = array(
+                        'child_id' => $bean->id,
+                        'parent_id' => $bean->parent_id,
+                        'parent_type'=>$parent_type,
+                        'type' => 'parent',
+                    );
+                }
+            }
+
+            if ($post_retrieve) {
                 $parent_fields = $this->retrieve_parent_fields($post_retrieve);
             }
             else
@@ -5099,8 +5040,8 @@ class SugarBean
         }
         else
         {
-            $row_found 	= 0;
-            $parent_fields = array();
+            $rows_found = 0;
+            $list = array();
         }
         $response = array();
         $response['list'] = $list;
@@ -5112,6 +5053,101 @@ class SugarBean
         $response['query'] = $query;
 
         return $response;
+    }
+
+    /**
+     * Creates list of beans based on subpanel metadata and data fetched from database
+     *
+     * @param aSubpanel $subpanel Subpanel instance
+     * @param array     $data     Data from database
+     *
+     * @return SugarBean[]
+     */
+    protected function createSubPanelBeanList(aSubpanel $subpanel, array $data)
+    {
+        $is_collection = $subpanel->isCollection();
+
+        $list = array();
+        foreach ($data as $row) {
+            $src_subpanel = $subpanel;
+            if ($is_collection) {
+                $src_subpanel = $src_subpanel->sub_subpanels[$row['panel_name']];
+            }
+
+            $bean = BeanFactory::getBean($src_subpanel->template_instance->module_name);
+
+            $function_fields = array();
+            foreach ($bean->field_defs as $field => $value) {
+                $fqn = $bean->table_name . '.' . $field;
+                if (isset($row[$fqn])) {
+                    $row[$field] = $row[$fqn];
+                    unset($row[$fqn]);
+                }
+
+                if (isset($value['source']) && $value['source'] == 'function') {
+                    $function_fields[$field] = $value;
+                }
+            }
+
+            $bean->populateFromRow($row);
+
+            $this->processFunctionFields($bean, $function_fields);
+
+            $list[$bean->id] = $bean;
+        }
+
+        return $list;
+    }
+
+    /**
+     * Populates function fields with calculated values
+     *
+     * @param SugarBean $bean   Bean instance
+     * @param array     $fields Function fields metadata
+     */
+    protected function processFunctionFields(SugarBean $bean, array $fields)
+    {
+        foreach ($fields as $field => $value) {
+            $params = array();
+            $can_execute = true;
+            foreach ($value['function_params'] as $param) {
+                if (empty($value['function_params_source']) || $value['function_params_source'] == 'parent') {
+                    $source = $this;
+                } elseif ($value['function_params_source'] == 'this') {
+                    $source = $bean;
+                } else {
+                    $source = null;
+                    $can_execute = false;
+                    break;
+                }
+
+                if (empty($source->$param)) {
+                    $can_execute = false;
+                    break;
+                } elseif ($param == '$this') {
+                    $params[] = $source;
+                } else {
+                    $params[] = $source->$param;
+                }
+            }
+
+            if ($can_execute) {
+                if (!empty($value['function_require'])) {
+                    require_once($value['function_require']);
+                }
+
+                if (!empty($value['function_class'])) {
+                    $function = array(
+                        $value['function_class'],
+                        $value['function_name'],
+                    );
+                } else {
+                    $function = $value['function_name'];
+                }
+
+                $bean->$field = call_user_func_array($function, $params);
+            }
+        }
     }
 
     /**
