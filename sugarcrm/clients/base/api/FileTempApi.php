@@ -49,6 +49,7 @@ class FileTempApi extends FileApi {
                 'pathVars' => array('module', 'record', '', 'field', 'temp_id'),
                 'method' => 'getTempImage',
                 'rawReply' => true,
+                'allowDownloadCookie' => true,
                 'shortHelp' => 'Reads a temporary image and deletes it.',
                 'longHelp' => 'include/api/help/module_temp_file_field_temp_id_get_help.html',
             ),
