@@ -43,11 +43,10 @@ class SugarFieldFullname extends SugarFieldBase
             $ln = 'last_name';
         } else {
             $fn = $focus->name_format_map['f'];
-            $fn = $focus->name_format_map['l'];
+            $ln = $focus->name_format_map['l'];
         }
         if ( property_exists($focus, $fn) && property_exists($focus, $ln) ) {
             $name_arr = preg_split('/\s+/',$value);
-
             if ( count($name_arr) == 1) {
                 $focus->$ln = $value;
             }

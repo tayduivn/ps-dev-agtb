@@ -483,8 +483,8 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->_ifs->fullname('Bar Foo',array(),$focus);
 
-        $this->assertEquals($focus->first_name,'Foo');
-        $this->assertEquals($focus->last_name,'Bar');
+        $this->assertEquals('Foo', $focus->first_name);
+        $this->assertEquals('Bar', $focus->last_name);
     }
 
     public function testInvalidFullname()
@@ -495,8 +495,8 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->_ifs->fullname('Bar Foo',array(),$focus);
 
-        $this->assertNotEquals($focus->first_name,'Foo');
-        $this->assertNotEquals($focus->last_name,'Bar');
+        $this->assertNotEquals('Foo', $focus->first_name);
+        $this->assertNotEquals('Bar', $focus->last_name);
     }
 
     public function testValidMultiEnum()
