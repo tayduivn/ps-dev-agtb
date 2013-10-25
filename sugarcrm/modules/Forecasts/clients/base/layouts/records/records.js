@@ -156,7 +156,11 @@
                         }, this),
                         onCancel: _.bind(function(){
                             this.context.trigger("forecasts:user:canceled");
-                        }, this)
+                        }, this),
+                        templateOptions: {
+                            cancelContLabel: 'LBL_CANCEL_BUTTON_LABEL_UNSAVED_CONT',
+                            confirmContLabel: 'LBL_CONFIRM_BUTTON_LABEL_UNSAVED_CONT'
+                        }
                     });
                 } else {
                     app.utils.getSelectedUsersReportees(selectedUser, context);
@@ -174,7 +178,11 @@
                         }, this),
                         onCancel: _.bind(function(){
                             this.context.trigger("forecasts:timeperiod:canceled");
-                        }, this)
+                        }, this),
+                        templateOptions: {
+                            cancelContLabel: 'LBL_CANCEL_BUTTON_LABEL_UNSAVED_CONT',
+                            confirmContLabel: 'LBL_CONFIRM_BUTTON_LABEL_UNSAVED_CONT'
+                        }
                     });
                 } else {
                     this.context.set("selectedTimePeriod", model.get("selectedTimePeriod"));

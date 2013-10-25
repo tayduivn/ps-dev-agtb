@@ -434,7 +434,11 @@
                     messages: app.lang.get(this.navigationMessage, 'Forecasts').split("<br>"),
                     onConfirm: _.bind(function(){
                         callback.call(this);
-                    }, this)
+                    }, this),
+                    templateOptions: {
+                        cancelContLabel: 'LBL_CANCEL_BUTTON_LABEL_UNSAVED_CONT',
+                        confirmContLabel: 'LBL_CONFIRM_BUTTON_LABEL_UNSAVED_CONT'
+                    }
                 });
                 return false;
             }
