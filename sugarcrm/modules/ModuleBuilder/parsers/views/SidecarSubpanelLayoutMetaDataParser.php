@@ -50,4 +50,15 @@ class SidecarSubpanelLayoutMetaDataParser extends SidecarListLayoutMetaDataParse
         $this->_fielddefs = $this->implementation->getFieldDefs();
         $this->columns = array('LBL_DEFAULT' => 'getDefaultFields', 'LBL_HIDDEN' => 'getAvailableFields');
     }
+
+    /**
+     * Clears mobile and portal metadata caches that have been created by the API
+     * to allow immediate rendering of changes at the client
+     */
+    protected function _clearCaches()
+    {
+        // Leave this empty. The metadata cache clear that needs to be done for
+        // this has to be done late in the process or at least well after the 
+        // extensions for a subpanel are built.
+    }
 }

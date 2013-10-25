@@ -171,7 +171,8 @@
                 };
             attachments.push(fileObj);
         }
-        return (this.tplName === "list") ? _.first(attachments) : attachments;
+        // Cannot be a hard check against "list" since subpanel-list needs this too
+        return (!_.isUndefined(this.tplName) && this.tplName.indexOf("list") > -1) ? _.first(attachments) : attachments;
     },
     /**
      * This is overriden by portal in order to prepend site url

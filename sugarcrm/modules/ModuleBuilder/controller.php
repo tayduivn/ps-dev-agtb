@@ -883,6 +883,8 @@ class ModuleBuilderController extends SugarController
             unset($oldSubpanelParser);
         }
 
+        // clear the cache for the linked module and requested module
+        MetaDataManager::refreshModulesCache($parser->getAffectedModules());
     }
 
     public function action_dashletSave()

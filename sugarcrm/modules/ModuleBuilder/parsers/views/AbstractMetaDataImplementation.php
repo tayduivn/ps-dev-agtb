@@ -83,6 +83,17 @@ abstract class AbstractMetaDataImplementation
     ) ;
 
     /**
+     * Returns an array of modules affected by this object. In almost all cases
+     * this will be a single array. For subpanels, it will be more than one.
+     * 
+     * @return array List of modules changed within this object
+     */
+    public function getAffectedModules()
+    {
+        return array($this->_moduleName);
+    }
+
+    /**
      * Gets the flag for the deployed state of this implementation
      *
      * @return bool
