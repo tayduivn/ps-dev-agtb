@@ -62,7 +62,14 @@
      * @property {Object}
      * @protected
      */
-    _defaultSettings: {},
+    _defaultSettings: {
+        merge_relate_fetch_concurrency: 2,
+        merge_relate_fetch_timeout: 90000,
+        merge_relate_fetch_limit: 20,
+        merge_relate_update_concurrency: 4,
+        merge_relate_update_timeout: 90000,
+        merge_relate_max_attempt: 3
+    },
 
     /**
      * List of fields to generate the metadata on the fly.
@@ -225,6 +232,7 @@
      */
     _initSettings: function() {
         this._settings = _.extend(
+            this._defaultSettings,
             {
                 merge_relate_fetch_concurrency: app.config.mergeRelateFetchConcurrency,
                 merge_relate_fetch_timeout: app.config.mergeRelateFetchTimeout,
@@ -233,7 +241,6 @@
                 merge_relate_update_timeout: app.config.mergeRelateUpdateTimeout,
                 merge_relate_max_attempt: app.config.mergeRelateMaxAttempt
             },
-            this._defaultSettings,
             this.meta && this.meta.settings || {}
         );
         return this;
