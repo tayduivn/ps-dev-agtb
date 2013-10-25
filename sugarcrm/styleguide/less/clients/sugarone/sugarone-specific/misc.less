@@ -109,24 +109,6 @@ ul.list {
   }
 }
 
-//from nutmeg. to be removed??
-.content {
-  //padding-left: 72px;
-  //position: relative;
-}
-.content.span12 {
-  //padding-right: 20px;
-}
-.content .btn-toolbar {
-  //breaks styleguide
-  //margin: 0 -20px 8px !important;
-  //margin: 0 0 8px!important;
-}
-.content .vcard2 {
-  //z-index: 0;
-  //position: relative;
-}
-
 .drag:hover {
   cursor: move;
 }
@@ -289,7 +271,7 @@ hr.soften {
 //   based on which module / view we're on. The reason is not
 //   all pages need this much / less of space.
 .main-pane {
-	top: 0;
+  top: 0;
 }
 
 .side .dashboard {
@@ -310,8 +292,8 @@ hr.soften {
 
 .sugarone {
     font-size: 16px;
-    margin: 12px 8px 0 10px;	// [moey] `margin-right` is reduced from 10px to 8px,
-    							//   to prevent the search form from being pushed down (<480px).
+    margin: 12px 8px 0 10px;  // [moey] `margin-right` is reduced from 10px to 8px,
+                  //   to prevent the search form from being pushed down (<480px).
 
     a {
         color: @white;
@@ -328,15 +310,6 @@ hr.soften {
   right: 10px;
   font-size: @fontSizeSmall;
   color: @grayLight;
-}
-
-.logo {
-  background: url('@{baseUrl}/img/sugar-red-sm.png') 0 0 no-repeat;
-  display: block;
-  margin: 14px 0 0 10px;
-  text-indent: -7000px;
-  height: 20px;
-  width: 150px;
 }
 
 .divleft {
@@ -599,14 +572,6 @@ hr.soften {
   }
 }
 
-.modal .brand, .thumbnail .brand {
-  background: url('@{baseUrl}/img/sugar-red.png') 50% 50% no-repeat;
-  text-indent: -7000px;
-  margin: 0 auto;
-  width: 220px;
-  height: 42px;
-}
-
 .dropdown-menu {
   &:before,
   &:after {
@@ -758,4 +723,22 @@ ul.unstyled, ol.unstyled {
   -webkit-overflow-scrolling: touch;
   overflow: scroll;
   width: 100%;
+}
+
+.addInitTag {
+  color: @grayLight;
+  text-decoration: none;
+  padding: 5px 0;
+  display: block;
+}
+
+.moreEmails {
+  padding: 10px;
+  display: block;
+  &:hover {
+    background: @grayLighter;
+    cursor: pointer;
+    color: @gray;
+    text-decoration: none;
+  }
 }
