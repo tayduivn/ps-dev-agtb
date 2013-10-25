@@ -500,8 +500,14 @@ $vardefs =array(
             'border' => '',
             'duplicate_on_record_copy' => 'always',
 		),
-	//END SUGARCRM flav!=com ONLY
+	//END SUGARCRM flav!=com ONLY		        
 ),
+     'name_format_map' => array(
+        'f' => 'first_name',
+        'l' => 'last_name',
+        's' => 'salutation',
+        't' => 'title',
+    ),
 'relationships'=>array(
     strtolower($module).'_email_addresses' =>
     array(

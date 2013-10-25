@@ -29,17 +29,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: SugarWidgetFieldname.php 44917 2009-03-09 19:58:48Z jmertic $
-
-
-
 class SugarWidgetFieldFullname extends SugarWidgetFieldName
 {
-    /*
-    function SugarWidgetFieldName(&$layout_manager) {
-        parent::SugarWidgetFieldVarchar($layout_manager);
-        $this->reporter = $this->layout_manager->getAttribute('reporter');  
-    }*/
+    function displayListPlain($layout_def)
+    {
+        $module = $this->reporter->all_fields[$layout_def['column_key']]['module'];
+        $fields = $this->reporter->createNameList($layout_def['table_key']);
+        if(empty($fields)) {
+            return '';
+        }
+        $data = array();
+        foreach($fields as $field) {
+            $field['fields'] = $layout_def['fields'];
+            $data[$field['name']] = $this->_get_list_value($field);
+        }
+        return $GLOBALS['locale']->formatName($module, $data);
+    }
 }
-
-?>

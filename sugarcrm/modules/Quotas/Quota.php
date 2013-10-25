@@ -229,8 +229,8 @@ class Quota extends SugarBean
         $row = Array();
         $row = $this->db->fetchByAssoc($result);
 
-        if ($row != null) {
-            $user_full_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
+        if ($row != NULL) {
+            $user_full_name = $locale->formatName('Users', $row);
             return $user_full_name;
         }
 
@@ -545,7 +545,7 @@ class Quota extends SugarBean
                   . '&user_id=' . $row['user_id']
                   . '&timeperiod_id=' . $timeperiod_id
                   . '" SELECTED>'
-                  . $locale->getLocaleFormattedName($row['first_name'], $row['last_name'])
+                  . $locale->formatName('Users', $row)
                   . '</option>';
      } else {
          if ($row['quota_id'] == null){
@@ -553,7 +553,7 @@ class Quota extends SugarBean
                   . '&user_id=' . $row['user_id']
                   . '&timeperiod_id=' . $timeperiod_id
                   . '">'
-                  . $locale->getLocaleFormattedName($row['first_name'], $row['last_name'])
+                  . $locale->formatName('Users', $row)
                   . '</option>' ;
          } else {
              $options .= '<option value="?edit=true&action=index&module=Quotas&record='
@@ -561,7 +561,7 @@ class Quota extends SugarBean
                   . '&user_id=' . $row['user_id']
                   . '&timeperiod_id=' . $timeperiod_id
                   . '">'
-                  . $locale->getLocaleFormattedName($row['first_name'], $row['last_name'])
+                  . $locale->formatName('Users', $row)
                   . '</option>' ;
          }
      }

@@ -203,11 +203,28 @@ if(isset($_POST['handle']) && $_POST['handle'] == 'Save'){
 	if(isset($contact)){
 		$contact->track_view($current_user->id, 'Contacts');
 		if(isset($_POST['selectedContact']) && $_POST['selectedContact'] == $contact->id){
-			$xtpl->assign('ROWVALUE', "<LI>".$mod_strings['LBL_EXISTING_CONTACT']." - <a href='index.php?action=DetailView&module=Contacts&record=".$contact->id."'>".$locale->getLocaleFormattedName($contact->first_name, $contact->last_name)."</a>" );
+            $xtpl->assign(
+                'ROWVALUE',
+                '<LI>'
+                    . $mod_strings['LBL_EXISTING_CONTACT']
+                    . ' - <a href="index.php?action=DetailView&module=Contacts&record='
+                    . $contact->id
+                    . '">'
+                    . $locale->formatName($contact)
+                    . "</a>"
+            );
 			$xtpl->parse('main.row');
 		}else{
-			
-			$xtpl->assign('ROWVALUE', "<LI>".$mod_strings['LBL_CREATED_CONTACT']." - <a href='index.php?action=DetailView&module=Contacts&record=".$contact->id."'>".$locale->getLocaleFormattedName($contact->first_name, $contact->last_name)."</a>" );
+            $xtpl->assign(
+                'ROWVALUE',
+                '<LI>'
+                    . $mod_strings['LBL_CREATED_CONTACT']
+                    . ' - <a href="index.php?action=DetailView&module=Contacts&record='
+                    . $contact->id
+                    . '">'
+                    . $locale->formatName($contact)
+                    . '</a>'
+            );
 			$xtpl->parse('main.row');
 		}
 	}

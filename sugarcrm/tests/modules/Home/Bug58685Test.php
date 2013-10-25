@@ -30,7 +30,7 @@
  * @ticket 58685
  */
 require_once('modules/Home/views/view.list.php');
-class Bug58685Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug58685Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	public function setUp()
     {
@@ -41,6 +41,7 @@ class Bug58685Test extends Sugar_PHPUnit_Framework_OutputTestCase
         if (isset($_SERVER['CONTENT_LENGTH'])) {
             $this->oldCL = $_SERVER['CONTENT_LENGTH'];
         }
+        SugarTestHelper::setUp('app_strings');
 
 	}
 
@@ -64,9 +65,11 @@ class Bug58685Test extends Sugar_PHPUnit_Framework_OutputTestCase
         //now lets simulate that we are coming from a post, which along with the empty file and post array should trigger the error message
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_SERVER['CONTENT_LENGTH'] = 10;
+        $_FILES = array();
         $view = new HomeViewList();
+        $view->suppressDisplayErrors = true;
         $view->processMaxPostErrors();
-        $this->expectOutputRegex('/.*Please refresh your page and try again.*/');
+        $this->assertContains('There was an error during your upload', join('\n', $view->errors));
     }
 
 }

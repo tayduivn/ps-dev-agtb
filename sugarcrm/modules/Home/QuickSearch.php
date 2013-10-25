@@ -460,11 +460,7 @@ class quicksearchQuery
     {
         global $locale;
 
-        $result[$args['field_list'][0]] = $locale->getLocaleFormattedName(
-            $result['first_name'],
-            $result['last_name'],
-            $result['salutation']
-        );
+        $result[$args['field_list'][0]] = $locale->formatName('Contacts', $result);
 
         return $result;
     }

@@ -482,9 +482,9 @@ function get_sugar_config_defaults()
         'merge_relate_max_attempt' => 3,
     );
 
-    if (!is_object($locale)) {
-        $locale = new Localization();
-    }
+    if (empty($locale)) {
+        $locale = Localization::getObject();
+	}
 
     $sugar_config_defaults['default_currencies'] = $locale->getDefaultCurrencies();
 
@@ -804,7 +804,7 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
     global $sugar_config;
 
     if (empty($locale)) {
-        $locale = new Localization();
+        $locale = Localization::getObject();
     }
 
     if ($from_cache) {
@@ -839,18 +839,18 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
             $temp_result[''] = '';
         }
 
-        // Get the id and the name.
-        while ($row = $db->fetchByAssoc($result)) {
-            if ($use_real_name == true || showFullName()) {
-                if (isset($row['last_name'])) { // cn: we will ALWAYS have both first_name and last_name (empty value if blank in db)
-                    $temp_result[$row['id']] = $locale->getLocaleFormattedName($row['first_name'],$row['last_name']);
-                } else {
-                    $temp_result[$row['id']] = $row['user_name'];
-                }
-            } else {
-                $temp_result[$row['id']] = $row['user_name'];
-            }
-        }
+		// Get the id and the name.
+		while($row = $db->fetchByAssoc($result)) {
+			if($use_real_name == true || showFullName()) {
+				if(isset($row['last_name'])) { // cn: we will ALWAYS have both first_name and last_name (empty value if blank in db)
+                    $temp_result[$row['id']] = $locale->formatName('Users', $row);
+				} else {
+					$temp_result[$row['id']] = $row['user_name'];
+				}
+			} else {
+				$temp_result[$row['id']] = $row['user_name'];
+			}
+		}
 
         $user_array = $temp_result;
         if ($from_cache) {
@@ -907,11 +907,11 @@ function getUserArrayFromFullName($args, $hide_portal_users = false)
     $query .= $inClause;
     $query .= " ORDER BY last_name ASC";
 
-    $r = $db->query($query);
-    $ret = array();
-    while ($a = $db->fetchByAssoc($r)) {
-        $ret[$a['id']] = $locale->getLocaleFormattedName($a['first_name'], $a['last_name']);
-    }
+	$r = $db->query($query);
+	$ret = array();
+	while($a = $db->fetchByAssoc($r)) {
+        $ret[$a['id']] = $locale->formatName('Users', $a);
+	}
 
     return $ret;
 }

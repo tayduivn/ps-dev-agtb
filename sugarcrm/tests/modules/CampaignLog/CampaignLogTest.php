@@ -186,7 +186,7 @@ class CampaignLogTest extends Sugar_PHPUnit_Framework_TestCase
 				$formatted_name = $this->$type_obj->id.$this->$type_obj->module_dir;
 				$this->assertSame($related_name, $formatted_name, 'name retrieved from campaign log does not match the expected formatted name of '.$formatted_name.' for the related '.$type.' object');
 			}else{
-				$formatted_name = $locale->getLocaleFormattedName($this->$type_obj->first_name, $this->$type_obj->last_name);
+				$formatted_name = $locale->formatName($this->$type_obj);
 				$this->assertSame($related_name, $formatted_name, 'name retrieved from campaign log does not match the expected formatted name of '.$formatted_name.' for the related '.$type.' object');
 			}
 

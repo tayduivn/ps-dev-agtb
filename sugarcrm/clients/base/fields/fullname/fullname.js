@@ -21,9 +21,9 @@
      * @property {Object}
      */
     formatMap: {
-        'first_name': 'f',
-        'last_name': 'l',
-        'salutation': 's'
+        'f': 'first_name',
+        'l': 'last_name',
+        's': 'salutation',
     },
 
     /**
@@ -31,11 +31,28 @@
      * Sort the dependant fields by the user locale format order.
      */
     initialize: function(options) {
+    	var context = options.view.context,
+    		module = context.get("module");
+    	
+    	if(module) {
+    		var meta = app.metadata.getModule(module);
+    		if(meta && meta.nameFormat) {
+    			this.formatMap = meta.nameFormat;
+    		}
+    	}
         var formatPlaceholder = app.user.getPreference('default_locale_name_format') || '';
-        options.def.fields = _.sortBy(options.def.fields, function(field) {
-            return formatPlaceholder.indexOf(this.formatMap[field.name]);
-        }, this);
-        this._super('initialize',[options]);
+        // extract fields list from format
+        options.def.fields = _.reduce(formatPlaceholder.split(''), function(fields, letter) {
+    		// only letters a-z may be significant in the format, 
+    		// everything else is translated verbatim
+        	if(letter >= 'a' && letter <= 'z' && this.formatMap[letter]) {
+        		// clone because we'd rewrite it later and we don't want to mess with actual metadata
+        		fields.push(_.clone(meta.fields[this.formatMap[letter]] || this.formatMap[letter]));
+        	}
+        	return fields;
+        }, [], this);
+        options.def.fields = app.metadata._patchFields(module, meta, options.def.fields);
+		this._super('initialize',[options]);
     },
 
     _loadTemplate: function() {
@@ -102,11 +119,7 @@
      * Format name parts to current user locale.
      */
     format: function(name) {
-        return app.utils.formatNameLocale({
-            first_name: this.model.get('first_name'),
-            last_name: this.model.get('last_name'),
-            salutation: this.model.get('salutation')
-        });
+        return app.utils.formatNameModel(this.context.get("module"), this.model.attributes);
     },
 
     /**

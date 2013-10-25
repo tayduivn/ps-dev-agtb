@@ -154,7 +154,7 @@ class Importer
             global $locale;
             if(empty($locale))
             {
-                $locale = new Localization();
+                $locale = Localization::getObject();
             }
             if ( isset($row[$fieldNum]) )
             {

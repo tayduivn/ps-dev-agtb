@@ -103,13 +103,13 @@ class Common {
 
 				//Add to my direct reports array.
 				if (isset($row['reports_to_id']) && $this->current_user == $row['reports_to_id'] ) {
-					$this->my_direct_reports[$row['id']] = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
+                    $this->my_direct_reports[$row['id']] = $locale->formatName('Users', $row);
 				}
 
 				//set name..
                 //jclark - Bug 51212 - Forecasting user rollup shows incorrect user name
 				if ("{$this->current_user}" == "{$row['id']}") {
-					$this->my_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
+                    $this->my_name = $locale->formatName('Users', $row);
 				}
 			}
 		}
@@ -214,7 +214,7 @@ class Common {
 		$result = $this->db->query($query,true," Error fetching user name: ");
 
 		if (($row  =  $this->db->fetchByAssoc($result)) != null) {
-			return $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
+            return $locale->formatName('Users', $row);
 		}
 	}
 

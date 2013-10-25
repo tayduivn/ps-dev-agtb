@@ -644,20 +644,21 @@ class SugarFieldBase {
      * API responses, but can be used througout the app.
      *
      * @param array $vardef
+     * @param array $defs Full vardefs for the same module
      * @return array A transformed vardef with normalizations applied
      */
-    public function getNormalizedDefs($vardef) {
+    public function getNormalizedDefs($vardef, $defs) {
         // Bug 57802 - REST API Metadata: vardef len property must be number, not string
         // Some vardefs set len and size as strings. Custom fields do the same
         // so clean that up here before the metadata is returned.
         if (isset($vardef['len'])) {
             $vardef['len'] = $this->normalizeNumeric($vardef['len']);
         }
-        
+
         if (isset($vardef['size'])) {
             $vardef['size'] = $this->normalizeNumeric($vardef['size']);
         }
-        
+
         // Bug 57890 - Required values should be boolean
         if (isset($vardef['required'])) {
             $vardef['required'] = $this->normalizeBoolean($vardef['required']);
@@ -687,24 +688,24 @@ class SugarFieldBase {
 
     /**
      * Normalizes numeric def values. For non numeric values, returns null
-     * 
+     *
      * @param mixed $value
      * @return int|null
      */
     public function normalizeNumeric($value) {
         if (is_numeric($value)) {
             return intval($value);
-        } 
-        
+        }
+
         return null;
     }
-    
+
     public function normalizeBoolean($value) {
         // If the value is already boolean, send it back
         if ($value === true || $value === false) {
             return $value;
         }
-        
+
         // Check against known values of booleans
         $bools = array(
             0 => false,
@@ -718,11 +719,11 @@ class SugarFieldBase {
             'on' => true,
             'true' => true,
         );
-        
+
         if (isset($bools[$value])) {
             return $bools[$value];
         }
-        
+
         // Just send it back
         return $value;
     }

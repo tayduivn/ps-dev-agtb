@@ -494,8 +494,8 @@ class SugarTestHelper
         if (isset($GLOBALS['locale'])) {
             self::$initVars['GLOBALS']['locale'] = $GLOBALS['locale'];
         }
-        if (self::$initVars['GLOBALS']['locale'] == false) {
-            self::$initVars['GLOBALS']['locale'] = new Localization();
+        if (empty(self::$initVars['GLOBALS']['locale'])) {
+            self::$initVars['GLOBALS']['locale'] = Localization::getObject();
         }
 
         // backup of service_object

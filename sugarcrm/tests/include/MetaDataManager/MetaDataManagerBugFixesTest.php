@@ -31,7 +31,7 @@ class MetaDataManagerBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
     }
-    
+
     public function tearDown()
     {
         SugarTestHelper::tearDown();
@@ -39,20 +39,20 @@ class MetaDataManagerBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Tests that relate fields do not contain the len array
-     * 
+     *
      * @group Bug59676
      */
     public function testBug59676Test()
     {
-        $defs['aaa_test_c'] = array(
+        $defs['fields']['aaa_test_c'] = array(
             'type' => 'relate',
             'name' => 'aaa_test_c',
             'len' => '25',
         );
-        
+
         $mm = new MetaDataHacksBugFixes($GLOBALS['current_user']);
         $newdefs = $mm->getNormalizedFielddefs($defs);
-        
+
         $this->assertFalse(array_key_exists('len', $newdefs));
     }
 }

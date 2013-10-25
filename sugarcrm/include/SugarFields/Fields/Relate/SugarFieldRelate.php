@@ -374,9 +374,9 @@ class SugarFieldRelate extends SugarFieldBase {
      * @param array $vardef
      * @return array of $vardef
      */
-    public function getNormalizedDefs($vardef) {
+    public function getNormalizedDefs($vardef, $defs) {
         unset($vardef['len']);
-        return parent::getNormalizedDefs($vardef);
+        return parent::getNormalizedDefs($vardef, $defs);
     }
 
 }

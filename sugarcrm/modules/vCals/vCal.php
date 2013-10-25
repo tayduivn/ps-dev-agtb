@@ -151,7 +151,7 @@ class vCal extends SugarBean {
            $str .= "PRODID:-//SugarCRM//SugarCRM Calendar//EN\n";
            $str .= "BEGIN:VFREEBUSY\n";
 
-           $name = $locale->getLocaleFormattedName($user_focus->first_name, $user_focus->last_name);
+           $name = $locale->formatName($user_focus);
            $email = $user_focus->email1;
 
            // get current date for the user

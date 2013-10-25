@@ -193,7 +193,7 @@ class Lead extends Person {
 			$result = $this->db->limitQuery($query,0,1,true, "Want only a single row");
 			if(!empty($result)){
 				$row= $this->db->fetchByAssoc($result);
-				$this->contact_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
+                $this->contact_name = $locale->formatName('Contacts', $row);
 				$this->contact_name_owner = $row['contact_name_owner'];
 				$this->contact_name_mod = 'Contacts';
 			}
@@ -420,7 +420,7 @@ class Lead extends Person {
 		global $app_list_strings;
         global $locale;
 
-		$xtpl->assign("LEAD_NAME", $locale->getLocaleFormattedName($lead->first_name, $lead->last_name, $lead->salutation));
+        $xtpl->assign("LEAD_NAME", $locale->formatName($lead));
 		$xtpl->assign("LEAD_SOURCE", (isset($lead->lead_source) && isset($app_list_strings['lead_source_dom'][$lead->lead_source]) ? $app_list_strings['lead_source_dom'][$lead->lead_source] : ""));
 		$xtpl->assign("LEAD_STATUS", (isset($lead->status)? $app_list_strings['lead_status_dom'][$lead->status]:""));
 		$xtpl->assign("LEAD_DESCRIPTION", $lead->description);

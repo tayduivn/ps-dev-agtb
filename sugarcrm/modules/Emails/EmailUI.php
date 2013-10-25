@@ -853,8 +853,15 @@ eoq;
 
 		while($a = $user->db->fetchByAssoc($r)) {
 			$c = array();
-
-			$c['name'] = $locale->getLocaleFormattedName($a['first_name'], "<b>{$a['last_name']}</b>", '', $a['title'], '', $user);
+            $c['name'] = $locale->formatName(
+                $a['module'],
+                array_merge(
+                    $a,
+                    array(
+                        'last_name' => "<b>{$a['last_name']}</b>",
+                    )
+                )
+            );
 			$c['id'] = $a['id'];
 			$c['module'] = $a['module'];
 			$c['email'] = $emailAddress->getAddressesByGUID($a['id'], $a['module']);

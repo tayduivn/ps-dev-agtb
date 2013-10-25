@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 class Bug44324Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	var $contact;
@@ -40,18 +40,18 @@ class Bug44324Test extends Sugar_PHPUnit_Framework_TestCase
         $this->contact = SugarTestContactUtilities::createContact();
         $this->contact->salutation = 'Ms.';
         $this->contact->first_name = 'Lady';
-        $this->contact->last_name = 'Gaga';	
+        $this->contact->last_name = 'Gaga';
         //Save contact with salutation
         $this->contact->save();
 	}
-	
+
 	public function tearDown()
 	{
         unset($GLOBALS['current_user']);
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
 	}
-	
+
     public function testSearchNamePopulatedCorrectly()
     {
     	require_once('include/Popups/PopupSmarty.php');
@@ -59,7 +59,7 @@ class Bug44324Test extends Sugar_PHPUnit_Framework_TestCase
     	$this->contact->_create_proper_name_field();
     	$search_data = array();
     	$search_data[] = array('ID'=>$this->contact->id, 'NAME'=>$this->contact->name, 'FIRST_NAME'=>$this->contact->first_name, 'LAST_NAME'=>$this->contact->last_name);
-    	
+
     	$data = array('data'=>$search_data);
     	$data['pageData']['offsets']['lastOffsetOnPage'] = 0;
     	$data['pageData']['offsets']['current'] = 0;
@@ -67,7 +67,7 @@ class Bug44324Test extends Sugar_PHPUnit_Framework_TestCase
     	$popupSmarty->fieldDefs = array();
     	$popupSmarty->view= 'popup';
     	$popupSmarty->tpl = 'include/Popups/tpls/PopupGeneric.tpl';
-    	$this->assertRegExp('/\"NAME\":\"Lady Gaga\"/', $popupSmarty->display(), 'Assert that NAME value was set to "Lady Gaga"');
+    	$this->assertRegExp('/\"NAME\":\"Ms. Lady Gaga\"/', $popupSmarty->display(), 'Assert that NAME value was set to "Lady Gaga"');
     }
 
 }

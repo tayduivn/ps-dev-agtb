@@ -87,7 +87,7 @@ class ContactQuoteRelationship extends SugarBean {
 
 			if($row != null)
 			{
-				$this->contact_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
+                $this->contact_name = $locale->formatName('Contacts', $row);
 			}
 		}
 

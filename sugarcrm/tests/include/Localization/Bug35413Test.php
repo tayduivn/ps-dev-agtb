@@ -41,7 +41,7 @@ class Bug35413Test extends Sugar_PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        $this->_localization = new Localization();
+        $this->_localization = Localization::getObject();
     }
 
     function stringsProvider()

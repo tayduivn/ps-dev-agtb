@@ -4,7 +4,7 @@ var fixtures = typeof(fixtures) == "object" ? fixtures : {},
 fixtures.jssource = {
    "modules": {
         "Home": {
-            '_hash': '12345678910',
+            '_hash': '12345678910Home',
             "fields": {},
             "views": {
                 "base": {
@@ -23,6 +23,12 @@ fixtures.jssource = {
             '_hash': '98765678910',
             "fields": {},
             "views": {},
+            'nameFormat': {
+                'f': 'first_name',
+                'l': 'last_name',
+                's': 'salutation',
+                't': 'title'
+            },
             "layouts": {
                 "base": {
                     "detailplus": {
@@ -115,7 +121,7 @@ tmpMetadata = {
     },
     "modules": {
         "Cases": {
-            '_hash': '12345678910',
+            '_hash': '12345678910Cases',
             "fields": {
                 "id": {
                     "name": "id",
@@ -421,7 +427,13 @@ tmpMetadata = {
             }
         },
         "Contacts": {
-            '_hash': '12345678910',
+            '_hash': '12345678910Contacts',
+            'nameFormat': {
+                'f': 'first_name',
+                'l': 'last_name',
+                's': 'salutation',
+                't': 'title'
+            },
             "fields": {
                 "id": {
                     "name": "id",
@@ -720,7 +732,7 @@ tmpMetadata = {
             fields: {}
         },
         "Home": {
-            '_hash': '12345678910',
+            '_hash': '12345678910Home',
             "fields": {
                 "username": {
                     "name": "username",

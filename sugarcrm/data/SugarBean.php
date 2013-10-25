@@ -323,6 +323,30 @@ class SugarBean
     protected $module_key = 'encrypt_field';
 
     /**
+     * Map of field name format tokens to bean fields
+     *
+     * @var array
+     */
+    public $name_format_map = array();
+
+    /**
+     * Specification of fields containing names of related users
+     *
+     * @var array
+     */
+    protected $related_user_fields = array(
+        'assigned_user_id' => array(
+            'assigned_user_name', 'au',
+        ),
+        'created_by' => array(
+            'created_by_name', 'cbu',
+        ),
+        'modified_user_id' => array(
+            'modified_by_name', 'mbu',
+        ),
+    );
+
+    /**
      * Beans corresponding to various links on the bean
      * @var array
      */
@@ -490,6 +514,10 @@ class SugarBean
                 $this->field_name_map = $dictionary[$this->object_name]['fields'];
                 $this->field_defs =	$dictionary[$this->object_name]['fields'];
 
+                if (isset($dictionary[$this->object_name]['name_format_map'])) {
+                    $this->name_format_map = $dictionary[$this->object_name]['name_format_map'];
+                }
+
                 if(!empty($dictionary[$this->object_name]['optimistic_locking']))
                 {
                     $this->optimistic_lock=true;
@@ -500,6 +528,7 @@ class SugarBean
             $loaded_defs[$this->object_name]['required_fields'] =& $this->required_fields;
             $loaded_defs[$this->object_name]['field_name_map'] =& $this->field_name_map;
             $loaded_defs[$this->object_name]['field_defs'] =& $this->field_defs;
+            $loaded_defs[$this->object_name]['name_format_map'] =& $this->name_format_map;
         }
         else
         {
@@ -508,6 +537,7 @@ class SugarBean
             $this->required_fields =& $loaded_defs[$this->object_name]['required_fields'];
             $this->field_name_map =& $loaded_defs[$this->object_name]['field_name_map'];
             $this->field_defs =& $loaded_defs[$this->object_name]['field_defs'];
+            $this->name_format_map =& $loaded_defs[$this->object_name]['name_format_map'];
             $this->added_custom_field_defs = true;
 
             if(!isset($this->custom_fields) &&
@@ -2856,11 +2886,27 @@ class SugarBean
 
     }
 
-    protected function getUsersJoin($field, $alias)
+    /**
+     * Returns parts of query needed to compose localized name of related user.
+     *
+     * @param string $id_field    Field of the primary table that should be used as the user ID
+     * @param string $alias       Unique alias of joined table
+     * @param array  $user_fields Fields of users table to be selected
+     *
+     * @return array
+     */
+    protected function getUsersJoin($id_field, $alias, array $user_fields)
     {
+        $table_alias = 'users_' . $alias;
+
+        $select = '';
+        foreach ($user_fields as $user_field) {
+            $select .= ", {$table_alias}.{$user_field} {$alias}_{$user_field}";
+        }
+
         return array(
-            ", users_$alias.first_name as {$alias}_first_name, users_$alias.last_name as {$alias}_last_name",
-            " LEFT JOIN users users_$alias ON users_$alias.id = {$this->table_name}.$field"
+            $select,
+            " LEFT JOIN users {$table_alias} ON {$table_alias}.id = {$this->table_name}.$id_field"
         );
     }
 
@@ -2879,6 +2925,7 @@ class SugarBean
     */
     function retrieve($id='-1', $encode=true,$deleted=true)
     {
+        global $locale;
 
         $custom_logic_arguments['id'] = $id;
         $this->call_custom_logic('before_retrieve', $custom_logic_arguments);
@@ -2902,22 +2949,18 @@ class SugarBean
         $query_select .= " ".$custom_join['select'];
         $query_from .= ' '.$custom_join['join'];
 
-        // Add user names
-        if(!empty($this->field_defs['assigned_user_name']) && !empty($this->field_defs['assigned_user_id'])) {
-            list($usel, $ufrom) = $this->getUsersJoin("assigned_user_id", 'au');
-            $query_select .= $usel;
-            $query_from .= $ufrom;
+        $name_format_fields = $locale->getNameFormatFields('Users');
+        if (!empty($name_format_fields)) {
+            foreach ($this->related_user_fields as $id_field => $params) {
+                list($name_field, $alias) = $params;
+                if (!empty($this->field_defs[$id_field]) && !empty($this->field_defs[$name_field])) {
+                    list($select, $from) = $this->getUsersJoin($id_field, $alias, $name_format_fields);
+                    $query_select .= $select;
+                    $query_from   .= $from;
+                }
+            }
         }
-        if(!empty($this->field_defs['created_by_name']) && !empty($this->field_defs['created_by'])) {
-            list($usel, $ufrom) = $this->getUsersJoin("created_by", 'cbu');
-            $query_select .= $usel;
-            $query_from .= $ufrom;
-        }
-        if(!empty($this->field_defs['modified_by_name']) && !empty($this->field_defs['modified_user_id'])) {
-        	list($usel, $ufrom) = $this->getUsersJoin("modified_user_id", 'mbu');
-        	$query_select .= $usel;
-        	$query_from .= $ufrom;
-        }
+
         //BEGIN SUGARCRM flav=pro ONLY
         if(!empty($this->field_defs['team_name']) && !empty($this->field_defs['team_id']) && (empty($this->field_defs['team_id']['source']))) {
             $query_select .= ", teams_tn.name as tn_name, teams_tn.name_2 as tn_name_2";
@@ -4949,15 +4992,23 @@ class SugarBean
     function fill_in_additional_detail_fields()
     {
         global $locale;
-        if(!empty($this->field_defs['assigned_user_name']) && !empty($this->assigned_user_id) && empty($this->assigned_user_name) && !empty($this->fetched_row['au_last_name'])){
-             $this->assigned_user_name = $locale->getLocaleFormattedName($this->fetched_row['au_first_name'],$this->fetched_row['au_last_name']);
+        $name_format_fields = $locale->getNameFormatFields('Users');
+
+        foreach ($this->related_user_fields as $id_field => $params) {
+            list($name_field, $alias) = $params;
+            if (!empty($this->field_defs[$name_field]) && !empty($id_field) && empty($this->$name_field)) {
+                $data = array();
+                foreach ($name_format_fields as $field) {
+                    if (isset($this->fetched_row[$alias . '_' . $field])) {
+                        $data[$field] = $this->fetched_row[$alias . '_' . $field];
+                    }
+                }
+
+                if (!empty($data)) {
+                    $this->$name_field = $locale->formatName('Users', $data);
+                }
+            }
         }
- 		if(!empty($this->field_defs['created_by_name']) && !empty($this->created_by) && !empty($this->fetched_row['cbu_last_name'])) {
- 		    $this->created_by_name = $locale->getLocaleFormattedName($this->fetched_row['cbu_first_name'],$this->fetched_row['cbu_last_name']);
- 		}
- 		if(!empty($this->field_defs['modified_by_name']) && !empty($this->modified_user_id) && !empty($this->fetched_row['mbu_last_name'])) {
- 		    $this->modified_by_name = $locale->getLocaleFormattedName($this->fetched_row['mbu_first_name'],$this->fetched_row['mbu_last_name']);
- 		}
 
         //BEGIN SUGARCRM flav=pro ONLY
         if(!empty($this->field_defs['team_name']) && !empty($this->team_id) && empty($this->team_name) && !empty($this->fetched_row['tn_name'])) {
@@ -4981,7 +5032,10 @@ class SugarBean
     * This is desgined to be overridden or called from extending bean. This method
     * will fill in any parent_name fields.
     */
-    function fill_in_additional_parent_fields() {
+    function fill_in_additional_parent_fields()
+    {
+        global $locale;
+
         // Added empty parent name check because beans with parent_name in vardef
         // were being nullified on retrieve AFTER save but were not passing the
         // parent_id/last_parent_id conditional, so the bean was losing parent_name
@@ -4993,12 +5047,28 @@ class SugarBean
         }
         if(!empty($this->parent_type)) {
             $this->last_parent_id = $this->parent_id;
-            $this->getRelatedFields($this->parent_type, $this->parent_id, array('name'=>'parent_name', 'document_name' => 'parent_document_name', 'first_name'=>'parent_first_name', 'last_name'=>'parent_last_name'));
-            if(!empty($this->parent_first_name) || !empty($this->parent_last_name) ){
-                $this->parent_name = $GLOBALS['locale']->getLocaleFormattedName($this->parent_first_name, $this->parent_last_name);
-                //note that the line below uses isset() AND checks for blank instead of using empty() on purpose
-                //expected values could return a 0 which would not pass the empty() check.
-            } else if(isset($this->parent_document_name) && $this->parent_document_name != '') {
+
+            $fields = array(
+                'name'          => 'parent_name',
+                'document_name' => 'parent_document_name',
+            );
+
+            $name_format_fields = $locale->getNameFormatFields($this->parent_type);
+            foreach ($name_format_fields as $field) {
+                $fields[$field] = 'parent_' . $field;
+            }
+
+            $this->getRelatedFields($this->parent_type, $this->parent_id, $fields);
+
+            $data = array();
+            foreach ($name_format_fields as $field) {
+                $data[$field] = $this->{'parent_' . $field};
+            }
+
+            $formatted_parent_name = $locale->formatName($this->parent_type, $data);
+            if ($formatted_parent_name != '') {
+                $this->parent_name = $formatted_parent_name;
+            } elseif ($this->parent_document_name != '') {
                 $this->parent_name = $this->parent_document_name;
             }
         }

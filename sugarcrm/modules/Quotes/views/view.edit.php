@@ -90,9 +90,9 @@ class QuotesViewEdit extends ViewEdit
 				$this->bean->contact_id = $_REQUEST['contact_id'];
 				require_once($beanFiles['Contact']);
 				$contact = BeanFactory::getBean('Contacts', $this->bean->contact_id);
-				$this->bean->billing_contact_name 		= $locale->getLocaleFormattedName($contact->first_name, $contact->last_name);
+				$this->bean->billing_contact_name 		= $locale->formatName($contact);
 				$this->bean->billing_contact_id 			= $contact->id;
-				$this->bean->shipping_contact_name 		= $locale->getLocaleFormattedName($contact->first_name, $contact->last_name);
+                $this->bean->shipping_contact_name 		= $locale->formatName($contact);
 				$this->bean->shipping_contact_id 		= $contact->id;
 				$this->bean->shipping_address_street 	= $contact->primary_address_street;
 				$this->bean->shipping_address_city 		= $contact->primary_address_city;

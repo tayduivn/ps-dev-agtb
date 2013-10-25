@@ -510,7 +510,7 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true) {
 						$linkname = $bean->name;
 					}
 					else if(!empty($bean->last_name)){
-						$linkname = $locale->getLocaleFormattedName($bean->first_name, $bean->last_name);
+                        $linkname = $locale->formatName($bean);
 					}
 					else if(!empty($bean->document_name)){
 						$linkname = $bean->document_name;

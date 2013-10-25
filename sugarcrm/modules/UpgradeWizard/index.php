@@ -39,9 +39,10 @@ require_once('modules/Administration/UpgradeHistory.php');
 
 $GLOBALS['top_message'] = '';
 
-if(!isset($locale) || empty($locale)) {
-	$locale = new Localization();
+if (empty($locale)) {
+    $locale = Localization::getObject();
 }
+
 global $sugar_config;
 global $sugar_flavor;
 

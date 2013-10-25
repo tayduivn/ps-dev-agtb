@@ -87,56 +87,15 @@ class Person extends Basic
         $this->emailAddress->handleLegacyRetrieve($this);
     }
 
-    /**
-     * This function helps generate the name and full_name member field
-     * variables from the salutation, title, first_name and last_name fields.
-     * It takes into account the locale format settings as well as ACL settings
-     * if supported.
-     */
-    public function _create_proper_name_field()
-    {
-        global $locale, $app_list_strings;
-
-        $nameparts = array('first_name' => $this->first_name, 'last_name' => $this->last_name,
-            "title" => $this->title);
-        if (isset($this->field_defs['salutation']['options']) &&
-             isset($app_list_strings[$this->field_defs['salutation']['options']]) &&
-             isset($app_list_strings[$this->field_defs['salutation']['options']][$this->salutation])) {
-
-            $nameparts['salutation'] = $app_list_strings[$this->field_defs['salutation']['options']][$this->salutation];
-        } else {
-            $nameparts['salutation'] = '';
-        }
-        // BEGIN SUGARCRM flav=pro ONLY
-        if (isset($GLOBALS['current_user'])) {
-            // Bug# 46125 - make first name, last name, salutation and title of
-            // Contacts respect field level ACLs
-            $this->ACLFilterFieldList($nameparts, array(), array("blank_value" => true));
-        }
-        // END SUGARCRM flav=pro ONLY
-        // Corner Case:
-        // Both first name and last name cannot be empty, at least one must be
-        // shown
-        // In that case, we can ignore field level ACL and just display last
-        // name...
-        // In the ACL field level access settings, last_name cannot be set to
-        // "none"
-        if (empty($nameparts['first_name']) && empty($nameparts['last_name'])) {
-            $full_name = $locale->getLocaleFormattedName("", $this->last_name,
-                $nameparts['salutation'], $nameparts['title']);
-        } else {
-            if ($this->createLocaleFormattedName) {
-                $full_name = $locale->getLocaleFormattedName($nameparts['first_name'],
-                    $nameparts['last_name'], $nameparts['salutation'], $nameparts['title']);
-            } else {
-                $full_name = $locale->getLocaleFormattedName($nameparts['first_name'],
-                    $nameparts['last_name']);
-            }
-        }
-
-        $this->name = $this->full_name = $full_name; // fill_name used by
-                                                     // campaigns
-    }
+	/**
+     * This function helps generate the name and full_name member field variables from the salutation, title, first_name and last_name fields.
+     * It takes into account the locale format settings as well as ACL settings if supported.
+	 */
+	public function _create_proper_name_field()
+	{
+        global $locale;
+        $this->name = $this->full_name = $locale->formatName($this);
+	}
 
     /**
      *

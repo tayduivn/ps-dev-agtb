@@ -54,15 +54,14 @@ class Bug55733CurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         //if locale is not defined, create new global locale object.
         if(empty($locale))
         {
-            require_once('include/Localization/Localization.php');
-            $locale = new Localization();
+            $locale = Localization::getObject();
         }
 
         //create a new SugarFieldCurrency object
         $this->sfr = new SugarFieldCurrency('currency');
 
     }
-    
+
     public function testFormatPrecision()
     {
         //lets test some values with different decimals to make sure the formatting is returned correctly

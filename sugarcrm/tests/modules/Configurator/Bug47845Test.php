@@ -22,7 +22,6 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/Localization/Localization.php');
 require_once('modules/Configurator/views/view.edit.php');
 
 class Bug47845Test extends Sugar_PHPUnit_Framework_OutputTestCase
@@ -36,7 +35,7 @@ public function setUp()
     $app_strings = return_application_language($GLOBALS['current_language']);
     $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
     $sugar_config = $GLOBALS['sugar_config'];
-    $locale = new Localization();
+    $locale = Localization::getObject();
 }
 
 public function tearDown()
@@ -63,11 +62,11 @@ public function testMailMergeAvailability()
 public function testImportMapLinkedInPHPFileExists()
 {
     //BEGIN SUGARCRM flav!=com ONLY
-    $this->assertTrue(file_exists('modules/Import/maps/ImportMapLinkedin.php'), 'Assert that ImportMapLinkedin.php file exists for non-com flavor');
+    $this->assertFileExists('modules/Import/maps/ImportMapLinkedin.php', 'Assert that ImportMapLinkedin.php file exists for non-com flavor');
     //END SUGARCRM flav!=com ONLY
 
     //BEGIN SUGARCRM flav=com ONLY
-    $this->assertFalse(file_exists('modules/Import/maps/ImportMapLinkedin.php'), 'Assert that ImportMapLinkedin.php file does not exist for com flavor');
+    $this->assertFileNotExists('modules/Import/maps/ImportMapLinkedin.php', 'Assert that ImportMapLinkedin.php file does not exist for com flavor');
     //END SUGARCRM flav=com ONLY
 }
 

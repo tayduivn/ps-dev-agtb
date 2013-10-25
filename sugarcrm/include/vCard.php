@@ -176,10 +176,18 @@ class vCard
 			$line = $lines[$index];
 
             // check the encoding and change it if needed
-            $locale = new Localization();
-            $encoding = $locale->detectCharset($line);
+            $locale = Localization::getObject();
+            $encoding = false;
+            //detect charset
+            if (preg_match("/CHARSET=([A-Z]+([A-Z0-9]-?)*):/", $line, $matches)) {
+                //found charset hint in vcard
+                $encoding = $matches[1];
+            } else {
+                //use locale to detect charset automatically
+                $encoding = $locale->detectCharset($line);
+			}
             if ( $encoding != $GLOBALS['sugar_config']['default_charset'] ) {
-                $line = $locale->translateCharset($line,$encoding);
+                $line = $locale->translateCharset($line, $encoding);
             }
 			$line = trim($line);
 			if($start){

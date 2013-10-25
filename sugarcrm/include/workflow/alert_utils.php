@@ -282,7 +282,11 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 		}
 
 		$notify_address = (empty($notify_user->email1)) ? from_html($notify_user->email2) : from_html($notify_user->email1);
-		$notify_name = (empty($notify_user->first_name)) ? from_html($notify_user->user_name) : $locale->getLocaleFormattedName(from_html($notify_user->first_name), from_html($notify_user->last_name));
+        $notify_name = $locale->formatName($notify_user);
+        if ($notify_name == '') {
+            $notify_name = $notify_user->user_name;
+        }
+        $notify_user = from_html($notify_user);
 
 
 		//return true if address is present

@@ -76,7 +76,7 @@ if(count($relArray) > 0)
 			$seed->retrieve($relArray[$key]);
 			$name = "";
 			if($relModule  == "Contacts"){
-				$name = $locale->getLocaleFormattedName($seed->first_name,$seed->last_name);
+                $name = $locale->formatName($seed);
 			}
 			else{
 				$name = $seed->name;

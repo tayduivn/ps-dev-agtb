@@ -12,10 +12,6 @@ describe('Base.Field.Fullname', function() {
                         'name': 'full_name',
                         'type': 'fullname',
                         'link': true,
-                        'fields': [{
-                            name: 'salutation',
-                            type: 'base'
-                        }, 'first_name', 'last_name']
                     }]
                 }
             ]
@@ -44,6 +40,7 @@ describe('Base.Field.Fullname', function() {
 
         model = new Backbone.Model();
         model.set({
+        	id: 'test-contact',
             full_name: fullName,
             first_name: nameParts.first_name,
             last_name: nameParts.last_name,
@@ -71,13 +68,13 @@ describe('Base.Field.Fullname', function() {
             expected: ['salutation', 'first_name', 'last_name']
         },{
             format: 'f l',
-            expected: ['salutation', 'first_name', 'last_name']
+            expected: ['first_name', 'last_name']
         },{
             format: 's l',
-            expected: ['first_name', 'salutation', 'last_name']
+            expected: ['salutation', 'last_name']
         },{
             format: 'l, f',
-            expected: ['salutation', 'last_name', 'first_name']
+            expected: ['last_name', 'first_name']
         },{
             format: 's l, f',
             expected: ['salutation', 'last_name', 'first_name']
@@ -112,6 +109,7 @@ describe('Base.Field.Fullname', function() {
 
             //switches to edit mode
             view.viewName = 'edit';
+            view.action = 'edit';
             view.render();
             field = view.getField('full_name');
             //one placeholder for parent (fullname)

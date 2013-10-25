@@ -21,49 +21,49 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once 'include/SugarObjects/templates/person/Person.php';
 
 class PersonTemplateTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $_bean;
     private $_user;
-    
+
     public function setUp()
     {
-        $this->_bean = new Person;
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        // Can't use Person since Localization needs actual bean
+        $this->_bean = BeanFactory::getBean('Contacts');
+        SugarTestHelper::setUp('current_user');
     }
-    
+
     public function tearDown()
     {
         unset($this->_bean);
-        unset($GLOBALS['current_user']);
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
     }
-    
+
     public function testNameIsReturnedAsSummaryText()
     {
         $GLOBALS['current_user']->setPreference('default_locale_name_format', 'l f');
-        
+
         $this->_bean->first_name = 'Test';
         $this->_bean->last_name = 'Contact';
         $this->_bean->title = '';
         $this->_bean->salutation = '';
-        $this->assertEquals($this->_bean->get_summary_text(),'Contact Test');
+        $this->assertEquals('Contact Test', $this->_bean->get_summary_text());
     }
-    
+
     /**
      * @ticket 38648
      */
     public function testNameIsReturnedAsSummaryTextWhenSalutationIsInvalid()
     {
         $GLOBALS['current_user']->setPreference('default_locale_name_format', 's l f');
-        
+
         $this->_bean->salutation = 'Tester';
         $this->_bean->first_name = 'Test';
         $this->_bean->last_name = 'Contact';
         $this->_bean->title = '';
-        $this->assertEquals($this->_bean->get_summary_text(),'Contact Test');
+        $this->assertEquals('Tester Contact Test', $this->_bean->get_summary_text());
     }
 }

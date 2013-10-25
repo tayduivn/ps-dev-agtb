@@ -108,7 +108,7 @@ class Campaign extends SugarBean {
 
 		//_ppd($user);
 		if(!empty($user)) {
-			$fullName = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
+            $fullName = $locale->formatName($user);
 			$listTmpl->assign('ASSIGNED_USER_NAME', $fullName);
 		}
 	}

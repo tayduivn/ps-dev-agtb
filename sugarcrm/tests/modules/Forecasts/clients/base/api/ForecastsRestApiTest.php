@@ -175,7 +175,7 @@ class ForecastsRestApiTest extends RestTestBase
         $this->_user->savePreferencesToDB();
         $this->_user->reloadPreferences();
         $restReply = $this->_restCall("Forecasts/user/" . self::$currentUser->id);
-        $expectedData = $locale->getLocaleFormattedName(self::$currentUser->first_name, self::$currentUser->last_name);
+        $expectedData = $locale->formatName(self::$currentUser);
         $this->assertEquals($expectedData, $restReply['reply']['full_name']);
         $this->_user->setPreference('default_locale_name_format', $defaultPreference, 0, 'global');
         $this->_user->savePreferencesToDB();
@@ -200,7 +200,7 @@ class ForecastsRestApiTest extends RestTestBase
         $this->_user->savePreferencesToDB();
         $this->_user->reloadPreferences();
         $restReply = $this->_restCall("Forecasts/reportees/" . self::$currentUser->id);
-        $expectedData = $locale->getLocaleFormattedName(self::$currentUser->first_name, self::$currentUser->last_name);
+        $expectedData = $locale->formatName(self::$currentUser);
         $this->assertEquals($expectedData, $restReply['reply']['data']);
         $this->_user->setPreference('default_locale_name_format', $defaultPreference, 0, 'global');
         $this->_user->savePreferencesToDB();

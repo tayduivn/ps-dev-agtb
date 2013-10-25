@@ -268,12 +268,12 @@ class Quote extends SugarBean {
 
 		while($row = $this->db->fetchByAssoc($result))	{
 			if($row != null && $row['contact_role'] == 'Ship To') {
-				$this->shipping_contact_name = $locale->getLocaleFormattedName(stripslashes($row['first_name']), stripslashes($row['last_name']), stripslashes($row['salutation']));
+                $this->shipping_contact_name = $locale->formatName('Contacts', $row);
 				$this->shipping_contact_id = stripslashes($row['id']);
 				$this->shipping_contact_name_owner = stripslashes($row['contact_name_owner']);
 				$this->shipping_contact_name_mod = 'Contacts';
 			} elseif($row != null && $row['contact_role'] == 'Bill To') {
-				$this->billing_contact_name = $locale->getLocaleFormattedName(stripslashes($row['first_name']), stripslashes($row['last_name']), stripslashes($row['salutation']));
+                $this->billing_contact_name = $locale->formatName('Contacts', $row);
 				$this->billing_contact_id = stripslashes($row['id']);
 				$this->billing_contact_name_owner = stripslashes($row['contact_name_owner']);
 				$this->billing_contact_name_mod = 'Contacts';

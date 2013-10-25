@@ -1304,6 +1304,43 @@ return str_replace(' > ','_',
         return 0;
     }
 
+    /**
+     * Create a list of field defs for fullname
+     * @param string $table Table alias for which fullname is created
+     * @return array
+     */
+    public function createNameList($table)
+    {
+        $defs_list = array();
+        if(empty($this->full_bean_list[$table])) {
+            return array();
+        }
+        $bean = $this->full_bean_list[$table];
+        if(empty($bean->name_format_map)) {
+            return array();
+        }
+        foreach(array_unique(array_values($bean->name_format_map)) as $column) {
+            $def = array();
+            if(empty($bean->field_defs[$column])) {
+                // we don't know this field, skip it
+                continue;
+            }
+            $field_def = $bean->field_defs[$column];
+            $def['name'] = $column;
+            $def['type'] = $field_def['type'];
+            $def['table_key'] = $table;
+            $def['column_key'] = $def['table_key'] . ':' . $def['name'];
+            $def['table_alias'] = $this->getTableFromField($def);
+            if (!empty($field_def['source']) && ($field_def['source'] == 'custom_fields' || ($field_def['source'] == 'non-db'
+                    && !empty($field_def['ext2']) && !empty($field_def['id'])))
+            ) {
+                $def['table_alias'] .= '_cstm';
+            }
+            $defs_list[] = $def;
+        }
+        return $defs_list;
+    }
+
     function create_select($key = 'display_columns', $field_list_name = 'select_fields')
     {
         $this->layout_manager->setAttribute('context', 'Select');
@@ -1337,6 +1374,13 @@ return str_replace(' > ','_',
                 // this hack is so that the id field for every table is always selected
                 if (empty($display_column['table_key'])) {
                     $this->handleException('table_key doesnt exist for ' . $display_column['name']);
+                }
+
+                if($display_column['type'] == 'fullname') {
+                    $name = "{$key}_{$display_column['name']}";
+                    $this->report_def[$name] = $this->createNameList($display_column['table_key']);
+                    $this->create_select($name, $field_list_name);
+                    continue;
                 }
 
                 if (empty($got_join[$display_column['table_key']])) {

@@ -34,7 +34,7 @@ class Bug56505Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
     }
-    
+
     public function tearDown()
     {
         SugarTestHelper::tearDown();
@@ -43,21 +43,21 @@ class Bug56505Test extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests that multiselect default values are returned clean in the fields list
      * from the metadata manager
-     * 
+     *
      * @group Bug56505
      */
     public function testMultiselectDefaultFieldValueIsClean()
     {
-        $defs['aaa_test_c'] = array(
+        $defs['fields']['aaa_test_c'] = array(
             'type' => 'multienum',
             'name' => 'aaa_test_c',
             'options' => 'aaa_list',
             'default' => '^bobby^,^billy^',
         );
-        
+
         $mm = new MetaDataHacksBug56505($GLOBALS['current_user']);
         $newdefs = $mm->getNormalizedFielddefs($defs);
-        
+
         $this->assertArrayHasKey('aaa_test_c', $newdefs, "New defs did not return custom test field");
         $this->assertArrayHasKey('default', $newdefs['aaa_test_c'], "Test field def default value is missing");
         $this->assertInternalType('array', $newdefs['aaa_test_c']['default'], "Expected the default value to be an array");

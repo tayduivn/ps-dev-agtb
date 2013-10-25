@@ -160,7 +160,7 @@ class EmailRecipientsService
                 $records[] = array(
                     "id"     => $row["id"],
                     "_module" => $row["module"],
-                    "name"   => $GLOBALS["locale"]->getLocaleFormattedName($row["first_name"], $row["last_name"]),
+                    "name"   => $GLOBALS["locale"]->formatName($row["module"], $row),
                     "email"  => $row["email_address"],
                 );
             }

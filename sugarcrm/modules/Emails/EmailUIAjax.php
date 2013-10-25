@@ -1612,7 +1612,7 @@ eoq;
             $person = array();
             $person['id'] = $a['id'];
             $person['module'] = $a['module'];
-            $person['full_name'] = $locale->getLocaleFormattedName($a['first_name'], $a['last_name'],'');
+            $person['full_name'] = $locale->formatName($a['module'], $a);
             $person['email_address'] = $a['email_address'];
             $out[] = $person;
         }
@@ -1675,7 +1675,7 @@ eoq;
 	            $person = array();
 	            $person['bean_id'] = $a['id'];
 	            $person['bean_module'] = $a['module'];
-	            $person['name'] = $locale->getLocaleFormattedName($a['first_name'], $a['last_name'],'');
+	            $person['name'] = $locale->formatName($a['module'], $a);
 	            $person['email'] = $a['email_address'];
 	            $out[] = $person;
 	        }
