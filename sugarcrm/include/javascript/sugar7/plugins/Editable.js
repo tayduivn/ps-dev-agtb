@@ -159,7 +159,7 @@
                     if (field.action === viewName) {
                         return; //don't toggle if it's the same
                     }
-                    var meta = this.getFieldMeta(field.name);
+                    var meta = field.def;
                     if (meta && isEdit && meta.readonly) {
                         return;
                     }
