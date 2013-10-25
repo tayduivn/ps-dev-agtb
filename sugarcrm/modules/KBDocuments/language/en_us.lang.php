@@ -87,6 +87,9 @@ $mod_strings = array (
     'LBL_CREATED_BY_NAME' => 'LBL_CREATED_BY_NAME',
     'LBL_TAG_ID' => 'LBL_TAG_ID',
     'LBL_KBDOCUMENTS_KBTAGS_ID' => 'LBL_KBDOCUMENTS_KBTAGS_ID',
+    'LBL_CONTRACT_STATUS'=>'Contract Status',
+    'LBL_LINKED_ID'=>'Linked Id',
+    'LBL_VIEWS_NUMBER'=>'Views Number',
 
 	'LBL_REVISION_NAME' => 'Revision Number',
 	'LBL_KBDOCUMENT_REVISION_NUMBER' => 'KBDocument Revision Number',
@@ -96,10 +99,13 @@ $mod_strings = array (
 	'LBL_LATEST_REVISION' => 'Latest Revision Id',
     'LBL_LATEST_REVISION_NAME' => 'Latest Revision Name',
     'LBL_SELECTED_REVISION_NAME' => 'Selected Revision Name',
+    'LBL_SELECTED_REVISION_ID' => 'Selected Revision Id',
+    'LBL_SELECTED_REVISION_FILENAME' => 'Selected Revision File Name',
 	'LBL_CHANGE_LOG'=> 'Change Log',
 	'LBL_ACTIVE_DATE'=> 'Publish Date',
 	'LBL_EXPIRATION_DATE' => 'Expiration Date',
 	'LBL_FILE_EXTENSION'  => 'File Extension',
+    'LBL_KBDOC_APPROVER_NAME' => 'Approver Name',
 
     'LBL_KBDOC_TAGS' => 'Document Tags:',
 	'LBL_KBDOC_BODY' => 'Document Body:',
