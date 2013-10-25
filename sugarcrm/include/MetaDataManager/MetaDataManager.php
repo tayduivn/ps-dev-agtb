@@ -1474,22 +1474,40 @@ class MetaDataManager
         global $sugar_config;
         $administration = new Administration();
         $administration->retrieveSettings();
-        
+
         // These configs are controlled via System Settings in Administration module
-        // Defaults copied from include/utils.php make_sugar_config()
-        $configs = array(
-            'maxQueryResult' => isset($sugar_config['list_max_entries_per_page']) ? $sugar_config['list_max_entries_per_page'] : 20,
-            'maxSubpanelResult' => isset($sugar_config['list_max_entries_per_subpanel']) ? $sugar_config['list_max_entries_per_subpanel'] : 5,
-            'maxRecordFetchSize' => isset($sugar_config['max_record_fetch_size']) ? $sugar_config['max_record_fetch_size'] : 1000,
-            'massUpdateChunkSize' => isset($sugar_config['mass_update_chunk_size']) ? $sugar_config['mass_update_chunk_size'] : 20,
-            'massDeleteChunkSize' => isset($sugar_config['mass_delete_chunk_size']) ? $sugar_config['mass_delete_chunk_size'] : 20,
-            'mergeRelateFetchConcurrency' => isset($sugar_config['merge_relate_fetch_concurrency']) ? $sugar_config['merge_relate_fetch_concurrency'] : 2,
-            'mergeRelateFetchTimeout' => isset($sugar_config['merge_relate_fetch_timeout']) ? $sugar_config['merge_relate_fetch_timeout'] : 90000,
-            'mergeRelateFetchLimit' => isset($sugar_config['merge_relate_fetch_limit']) ? $sugar_config['merge_relate_fetch_limit'] : 20,
-            'mergeRelateUpdateConcurrency' => isset($sugar_config['merge_relate_update_concurrency']) ? $sugar_config['merge_relate_update_concurrency'] : 4,
-            'mergeRelateUpdateTimeout' => isset($sugar_config['merge_relate_update_timeout']) ? $sugar_config['merge_relate_update_timeout'] : 90000,
-            'mergeRelateMaxAttempt' => isset($sugar_config['merge_relate_max_attempt']) ? $sugar_config['merge_relate_max_attempt'] : 3,
+        $configs = array();
+        $configKeys = array(
+            'maxQueryResult' => 'list_max_entries_per_page',
+            'maxSubpanelResult' => 'list_max_entries_per_subpanel',
+            'maxRecordFetchSize' => 'max_record_fetch_size',
         );
+        foreach($configKeys as $jsKey => $sugarKey) {
+            if (isset($sugar_config[$sugarKey])) {
+                $configs[$jsKey] = $sugar_config[$sugarKey];
+            }
+        }
+        $massActionConfigKeys = array(
+            'mass_update' => array(
+                'massUpdateChunkSize' => 'mass_update_chunk_size',
+                'massDeleteChunkSize' => 'mass_delete_chunk_size',
+            ),
+            'merge_duplicates' => array(
+                'mergeRelateFetchConcurrency' => 'merge_relate_fetch_concurrency',
+                'mergeRelateFetchTimeout' => 'merge_relate_fetch_timeout',
+                'mergeRelateFetchLimit' => 'merge_relate_fetch_limit',
+                'mergeRelateUpdateConcurrency' => 'merge_relate_update_concurrency',
+                'mergeRelateUpdateTimeout' => 'merge_relate_update_timeout',
+                'mergeRelateMaxAttempt' => 'merge_relate_max_attempt',
+            )
+        );
+        foreach($massActionConfigKeys as $sugarCategoryKey => $sugarKeys) {
+            foreach($sugarKeys as $jsKey => $sugarKey) {
+                if (isset($sugar_config[$sugarCategoryKey]) && isset($sugar_config[$sugarCategoryKey][$sugarKey])) {
+                    $configs[$jsKey] = $sugar_config[$sugarCategoryKey][$sugarKey];
+                }
+            }
+        }
 
         if (isset($administration->settings['honeypot_on'])) {
             $configs['honeypot_on'] = true;
