@@ -68,6 +68,16 @@ describe("Base.Layout.Togglepanel", function () {
             expect(showSpy).toHaveBeenCalled;
             expect(processToggleSpy).toHaveBeenCalled();
         });
+        //SP-1766-Filter for sidecar modules causes two requests to list view
+        it("should showComponent respecting silent param preventing double render", function () {
+            var triggerStub = sinon.stub(layout, 'trigger');
+            layout.showComponent('foo', true);
+            expect(triggerStub).toHaveBeenCalled();
+            expect(triggerStub.calledWithExactly('filterpanel:change', 'foo', true)).toBeTruthy();
+            triggerStub.reset();
+            layout.showComponent('foo', undefined);
+            expect(triggerStub.calledWithExactly('filterpanel:change', 'foo', undefined)).toBeTruthy();
+        });
         it("should process toggles", function () {
             var meta = {
                 'availableToggles': [

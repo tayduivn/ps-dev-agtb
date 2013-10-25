@@ -43,7 +43,7 @@
             }
         }
 
-        this.showComponent(lastViewed, true);
+        this.showComponent(lastViewed, true);//SP-1766-don't double render!
         // Toggle the appropriate button and layout for initial render
         this.$('[data-view="' + lastViewed + '"]').button('toggle');
     },
@@ -164,6 +164,7 @@
     /**
      * Show a component and triggers "filterpanel:change"
      * @param {String} name
+     * @param {Boolean} silent
      */
     showComponent: function (name, silent) {
         if (!name) return;
