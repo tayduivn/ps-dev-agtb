@@ -154,7 +154,6 @@ class Employee extends Person {
 	}
 
 	function get_list_view_data(){
-
         global $current_user;
 		$this->_create_proper_name_field(); // create proper NAME (by combining first + last)
 		$user_fields = $this->get_list_view_array();
@@ -198,7 +197,6 @@ class Employee extends Person {
 			$cols .= (empty($cols)) ? '' : ', ';
 			$cols .= $field;
 		}
-
 		$query = "SELECT {$cols} FROM users ";
 
 		$where_auto = " users.deleted = 0";
@@ -274,7 +272,7 @@ class Employee extends Person {
         }else{
             $where .= ' and users.portal_only = 0 ';
         }
-
+        $where .= ' and users.show_on_employees = 1 ';
         //return parent method, specifying for array to be returned
         return parent::create_new_list_query($order_by, $where, $filter,$params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect);
     }
