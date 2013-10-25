@@ -36,7 +36,7 @@
              * @param plugin
              */
             onAttach: function(component, plugin) {
-                this.on('init', function() {
+                this.once('init', function() {
                     this.context.on('field:editable:tabkey', this.handleTabbing, this);
                 }, this);
             },
@@ -109,7 +109,7 @@
              * @param plugin
              */
             onAttach: function(component, plugin) {
-                this.on('init', _.bind(function() {
+                this.once('init', _.bind(function() {
                     if (this.checkIfCanEdit()) {
                         this.bindPluginEvents();
                     }
@@ -121,6 +121,8 @@
              */
             onDetach: function() {
                 $(document).off('mousedown.record' + this.cid);
+                // remove any lingering tooltip
+                this.$el.find("[rel=tooltip]").tooltip('destroy');
             },
 
             /**
@@ -148,6 +150,17 @@
                         // some other field is open with an error, close this
                         this.setMode('detail');
                     }
+                }, this);
+                this.on('render', function() {
+                    var cteClass = 'clickToEdit';
+                    if (this.action === 'edit') {
+                        cteClass += ' active';
+                        this.$el.addClass('active');
+                    } else {
+                        this.$el.removeClass('active');
+                    }
+                    this.$el.addClass('isEditable');
+                    this.$el.wrapInner('<div class="' + cteClass + '" data-cid="' + this.cid + '" />');
                 }, this);
             },
 
@@ -179,21 +192,6 @@
                             this._canEdit = false;
                         }
                     }
-
-                    if (this._canEdit) {
-                        // add a css_class to the def
-                        this.on('render', function() {
-                            var cteClass = 'clickToEdit';
-                            if (this.action === 'edit') {
-                                cteClass += ' active'
-                                this.$el.addClass("active");
-                            } else {
-                                this.$el.removeClass("active")
-                            }
-                            this.$el.addClass("isEditable");
-                            this.$el.wrapInner('<div class="' + cteClass + '" data-cid="' + this.cid + '" />');
-                        }, this);
-                    }
                 }
 
                 return this._canEdit;
@@ -203,7 +201,6 @@
              * Overwrite the default bindDomChange since we need to do inline validation
              */
             bindDomChange: function() {
-
                 if (this.type === 'date') return;   // we need to ignore the date field here
 
                 if (!(this.model instanceof Backbone.Model)) return;
@@ -237,7 +234,6 @@
                         el.focus().select();
                     });
                 }
-
             },
 
             /**
