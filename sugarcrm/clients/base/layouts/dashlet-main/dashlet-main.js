@@ -14,7 +14,7 @@
         }
     },
     /**
-     * Relace all components based on the dashboard metadata value
+     * Replace all components based on the dashboard metadata value
      */
     setMetadata: function() {
         if(!this.model.get("metadata")) return;
