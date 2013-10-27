@@ -575,15 +575,6 @@
   }
 }
 
-.select2-choices .select2-search-choice.tag {
-  margin: 5px 5px 0 0;
-  padding: 5px;
-  border: none;
-  background-color: #fff;
-  background-image: none;
-  .box-shadow(none);
-}
-
 .headerpane span[data-type="image"] {
   position: absolute;
   top: 5px;
@@ -597,4 +588,32 @@ h1 > .record-cell {
 .map-canvas {
   display: block;
   clear: both;
+}
+.headerpane {
+  .select2-container {
+    margin: 0;
+    .select2-choices {
+      border: none;
+      box-shadow: none;
+      padding: 0;
+      .select2-search-choice {
+        background: @gray !important;
+        color: @white !important;
+        border: none !important;
+        line-height: 20px !important;
+        padding: 0 5px !important;
+        margin: 0 !important;
+      }
+    }
+  }
+}
+
+.record-cell.edit {
+  .select2-container {
+    .select2-choices {
+      border: 1px solid @grayLight;
+      box-shadow: none;
+      padding: 2px;
+    }
+  }
 }
