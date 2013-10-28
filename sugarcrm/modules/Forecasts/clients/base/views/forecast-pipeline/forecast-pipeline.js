@@ -64,7 +64,12 @@
 
         this.chart = nv.models.funnelChart()
             .showTitle(false)
-            .tooltips(false)
+            .tooltips(true)
+            .tooltipContent( function(key, x, y, e, graph) {
+                return '<p>Stage: <b>' + key + '</b></p>' +
+                    '<p>Amount: <b>$' +  parseInt(y, 10) + 'K</b></p>' +
+                    '<p>Percent: <b>' +  x + '%</b></p>';
+            })
             .colorData('class', {step:2})
             .fmtValueLabel(function(d) {
                 return d.label;
@@ -111,7 +116,7 @@
             this.renderChart();
         }
     },
-    
+
     renderChart: function() {
         if (this.state != 'open' || this.preview_open) {
             return;
