@@ -202,7 +202,7 @@ $dictionary['Task'] = array('table' => 'tasks',
     'type' => 'link',
     'relationship' => 'account_tasks',
     'source'=>'non-db',
-		'vname'=>'LBL_ACCOUNT',
+    'vname'=>'LBL_ACCOUNTS',
   ),
   'opportunities' =>
   array (
