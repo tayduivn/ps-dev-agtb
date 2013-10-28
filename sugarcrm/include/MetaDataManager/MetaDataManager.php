@@ -242,6 +242,50 @@ class MetaDataManager
     protected static $cacheHasBeenCleared = false;
     
     /**
+     * Map of configuration properties.
+     *
+     * Each property can be attached to a specific category, uncategorized
+     * properties should be attached to 'uncategorized'.
+     *
+     * <code>
+     *     array(
+     *         'uncategorized' => array(
+     *             'jsKey1' => 'sugarKey1',
+     *             'jsKey2' => 'sugarKey2',
+     *         ),
+     *         'category1' => array(
+     *             'jsKey3' => 'sugarKey3',
+     *         ),
+     *         'category2' => array(
+     *             'jsKey4' => 'sugarKey4',
+     *         ),
+     *    )
+     * </code>
+     *
+     * @var array
+     * @see getConfigProperties
+     */
+    protected static $configProperties = array(
+        'uncategorized' => array(
+            'maxQueryResult' => 'list_max_entries_per_page',
+            'maxSubpanelResult' => 'list_max_entries_per_subpanel',
+            'maxRecordFetchSize' => 'max_record_fetch_size',
+        ),
+        'mass_actions' => array(
+            'massUpdateChunkSize' => 'mass_update_chunk_size',
+            'massDeleteChunkSize' => 'mass_delete_chunk_size',
+        ),
+        'merge_duplicates' => array(
+            'mergeRelateFetchConcurrency' => 'merge_relate_fetch_concurrency',
+            'mergeRelateFetchTimeout' => 'merge_relate_fetch_timeout',
+            'mergeRelateFetchLimit' => 'merge_relate_fetch_limit',
+            'mergeRelateUpdateConcurrency' => 'merge_relate_update_concurrency',
+            'mergeRelateUpdateTimeout' => 'merge_relate_update_timeout',
+            'mergeRelateMaxAttempt' => 'merge_relate_max_attempt',
+        )
+    );
+
+    /**
      * The constructor for the class. Sets the visibility flag, the visibility 
      * string indicator and loads the appropriate metadata section list.
      *
@@ -1477,34 +1521,19 @@ class MetaDataManager
 
         // These configs are controlled via System Settings in Administration module
         $configs = array();
-        $configKeys = array(
-            'maxQueryResult' => 'list_max_entries_per_page',
-            'maxSubpanelResult' => 'list_max_entries_per_subpanel',
-            'maxRecordFetchSize' => 'max_record_fetch_size',
-        );
-        foreach($configKeys as $jsKey => $sugarKey) {
-            if (isset($sugar_config[$sugarKey])) {
-                $configs[$jsKey] = $sugar_config[$sugarKey];
-            }
-        }
-        $massActionConfigKeys = array(
-            'mass_update' => array(
-                'massUpdateChunkSize' => 'mass_update_chunk_size',
-                'massDeleteChunkSize' => 'mass_delete_chunk_size',
-            ),
-            'merge_duplicates' => array(
-                'mergeRelateFetchConcurrency' => 'merge_relate_fetch_concurrency',
-                'mergeRelateFetchTimeout' => 'merge_relate_fetch_timeout',
-                'mergeRelateFetchLimit' => 'merge_relate_fetch_limit',
-                'mergeRelateUpdateConcurrency' => 'merge_relate_update_concurrency',
-                'mergeRelateUpdateTimeout' => 'merge_relate_update_timeout',
-                'mergeRelateMaxAttempt' => 'merge_relate_max_attempt',
-            )
-        );
-        foreach($massActionConfigKeys as $sugarCategoryKey => $sugarKeys) {
-            foreach($sugarKeys as $jsKey => $sugarKey) {
-                if (isset($sugar_config[$sugarCategoryKey]) && isset($sugar_config[$sugarCategoryKey][$sugarKey])) {
-                    $configs[$jsKey] = $sugar_config[$sugarCategoryKey][$sugarKey];
+
+        $properties = $this->getConfigProperties();
+
+        // FIXME: we should keep the same structure on $configs regarding
+        // categories in order to be consistent with what we have on server side
+        // plus, if we keep it like this we'll run into issues if someone
+        // uses same jsKeys inside different categories
+        foreach($properties as $category => $keys) {
+            foreach($keys as $jsKey => $sugarKey) {
+                if ($category === 'uncategorized' && isset($sugar_config[$sugarKey])) {
+                    $configs[$jsKey] = $sugar_config[$sugarKey];
+                } else if (isset($sugar_config[$category]) && isset($sugar_config[$category][$sugarKey])) {
+                    $configs[$jsKey] = $sugar_config[$category][$sugarKey];
                 }
             }
         }
@@ -1525,6 +1554,16 @@ class MetaDataManager
         }
 
         return $configs;
+    }
+
+    /**
+     * Retrieve configuration properties.
+     *
+     * @return array Map of configuration properties.
+     */
+    protected function getConfigProperties()
+    {
+        return self::$configProperties;
     }
 
     /**
