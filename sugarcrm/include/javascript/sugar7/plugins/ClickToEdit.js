@@ -380,6 +380,10 @@
              * @param field
              */
             handleKeyDown: function(e, field) {
+                // if the field is already disposed, just ignore this bit of code.
+                if (field.disposed) {
+                    return;
+                }
                 if (e.which == 27) { // If esc
                     this.isErrorState = false;
                     this.setMode('detail');
