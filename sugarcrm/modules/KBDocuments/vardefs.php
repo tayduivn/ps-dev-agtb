@@ -213,6 +213,7 @@ $dictionary['KBDocument'] = array(
   'latest_revision' =>
   array (
     'name' => 'latest_revision',
+    'vname' => 'LBL_LATEST_REVISION',
     'type' => 'varchar',
     'reportable'=>false,
     'source'=>'non-db'
@@ -348,6 +349,7 @@ $dictionary['KBDocument'] = array(
   'contract_status' =>
   array (
     'name' => 'contract_status',
+    'vname' => 'LBL_CONTRACT_STATUS',
     'type' => 'varchar',
     'reportable'=>false,
     'source'=>'non-db'
@@ -363,6 +365,7 @@ $dictionary['KBDocument'] = array(
   'linked_id'=>
   array (
     'name' => 'linked_id',
+    'vname' => 'LBL_LINKED_ID',
     'type' => 'varchar',
     'reportable'=>false,
     'source'=>'non-db'
@@ -370,6 +373,7 @@ $dictionary['KBDocument'] = array(
   'selected_revision_id'=>
   array (
     'name' => 'selected_revision_id',
+    'vname' => 'LBL_SELECTED_REVISION_ID',
     'type' => 'varchar',
     'reportable'=>false,
     'source'=>'non-db'
@@ -377,6 +381,7 @@ $dictionary['KBDocument'] = array(
   'latest_revision_id'=>
   array (
     'name' => 'latest_revision_id',
+    'vname' => 'LBL_LATEST_REVISION',
     'type' => 'varchar',
     'reportable'=>false,
     'source'=>'non-db'
@@ -384,6 +389,7 @@ $dictionary['KBDocument'] = array(
   'selected_revision_filename'=>
   array (
     'name' => 'selected_revision_filename',
+    'vname' => 'LBL_SELECTED_REVISION_FILENAME',
     'type' => 'varchar',
     'reportable'=>false,
     'source'=>'non-db'
@@ -421,6 +427,7 @@ $dictionary['KBDocument'] = array(
  'kbdoc_approver_name'=>
   array (
     'name' => 'kbdoc_approver_name',
+    'vname' => 'LBL_KBDOC_APPROVER_NAME',
     'type' => 'varchar',
     'reportable'=>false,
     'source'=>'non-db'
@@ -478,6 +485,7 @@ $dictionary['KBDocument'] = array(
  'views_number'=>
   array (
     'name' => 'views_number',
+    'vname' => 'LBL_VIEWS_NUMBER',
     'type' => 'varchar',
     'reportable'=>false,
     'source'=>'non-db'
