@@ -105,29 +105,33 @@ function hasPasswordExpired($username, $updateNumberLogins = false)
 
     if ($usr->portal_only=='0'){
 	    $res=$GLOBALS['sugar_config']['passwordsetting'];
-	  	if ($type != '') {
-		    switch($res[$type.'expiration']){
 
+	  	if ($type != '') {
+		    switch($res[$type.'expiration']) {
 	        case '1':
 		    	global $timedate;
-		    	if ($usr->pwd_last_changed == ''){
+		    	if ($usr->pwd_last_changed == '') {
 		    		$usr->pwd_last_changed= $timedate->nowDb();
                     //Suppress date_modified so a new _hash isn't generated
                     $usr->update_date_modified = false;
 		    		$usr->save();
 		    	}
+                // SP-1790: Creating user with default password expiration settings results in password expired page on first login
+                // Below, we calc $expireday essentially doing type*time; that requires that expirationtype factor is 1 or
+                // greater, however, expirationtype defaults to following values: 0/day, 7/week, 30/month
+                // (See and {debug} PasswordManager.tpl for more info)
+                $expiretype = $res[$type.'expirationtype'];
+                $expiretype = (!isset($expiretype) || $expiretype == '0') ? '1' : $expiretype;
+                $expireday = $expiretype * $res[$type.'expirationtime'];
+                $expiretime = $timedate->fromUser($usr->pwd_last_changed)->get("+{$expireday} days")->ts;
 
-		        $expireday = $res[$type.'expirationtype']*$res[$type.'expirationtime'];
-		        $expiretime = $timedate->fromUser($usr->pwd_last_changed)->get("+{$expireday} days")->ts;
-
-			    if ($timedate->getNow()->ts < $expiretime)
-			    	return false;
-			    else{
-			    	$_SESSION['expiration_label']= 'LBL_PASSWORD_EXPIRATION_TIME';
-			    	return true;
-			    	}
-				break;
-
+                if ($timedate->getNow()->ts < $expiretime) {
+                    return false;
+                } else {
+                    $_SESSION['expiration_label']= 'LBL_PASSWORD_EXPIRATION_TIME';
+                    return true;
+                }
+                break;
 
 		    case '2':
 		    	$login = $usr->getPreference('loginexpiration');
@@ -142,12 +146,11 @@ function hasPasswordExpired($username, $updateNumberLogins = false)
 		        if ($login >= $res[$type.'expirationlogin']){
 		        	$_SESSION['expiration_label']= 'LBL_PASSWORD_EXPIRATION_LOGIN';
 		        	return true;
-		        }
-		        else
-		            {
-			    	return false;
-			    	}
-		    	break;
+                }
+                else {
+                    return false;
+                }
+                break;
 
 		    case '0':
 		        return false;
