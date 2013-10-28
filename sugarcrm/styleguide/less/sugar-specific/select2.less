@@ -1,11 +1,19 @@
 .select2-search {
   padding: 4px;
-}
-.select2-search input[type="text"] {
-  border: 1px solid @inputBorder;
-  &:focus {
-    border-color: none;
-    .box-shadow(none);
+  &:after {
+    .fontawesome();
+    content: "\f002";
+    position: absolute;
+    top: 10px;
+    right: 9px;
+    color: @grayLight;
+  }
+  input[type="text"] {
+    border: 1px solid @inputBorder;
+    &:focus {
+      border-color: none;
+      .box-shadow(none);
+    }
   }
 }
 
@@ -17,7 +25,7 @@
   &.select2-dropdown-open {
     //can't do this here as it breaks search filter pill
     //min-width: 100px;
-    z-index: 1;
+    z-index: @zindexDropdown;
     .select2-choices {
       .border-radius(3px 3px 0 0);
     }
@@ -171,7 +179,7 @@
     line-height: 26px;
     height: 26px;
     .box-shadow(none);
-    div {
+    .select2-arrow {
       border: none;
       background: none;
       .border-radius(0);
@@ -209,31 +217,19 @@
   }
 }
 
-.fontawesome {
-  width: 14px;
-  height: 14px;
-  display: inline-block;
-  line-height: 14px;
-  font-size: 14px;
-  color: lighten(@gray,20%);
-  background: none;
-  font-family: FontAwesome;
-  font-weight: normal;
-  -webkit-font-smoothing: antialiased;
-  &:before{
-    text-decoration: inherit;
-    display: inline-block;
-    speak: none;
-  }
-}
-
 .selected_recipients .select2-container.select2-container-multi.select2-choices-pills-close.select2-container-disabled .select2-choices {
  // needed for address book recipients
  background-color: @white;
 }
+
+.select2-drop-mask {
+  z-index: (@zindexDropdown - 1);
+}
+
 .select2-drop {
   color: @textColor;
   border-color: @inputBorder;
+  z-index: @zindexDropdown;
   &.select2-drop-active {
     min-width: 100px;
     border-color: rgba(82,168,236,.8);
@@ -352,7 +348,7 @@
 }
 
 .currency {
-  .select2-choice span {
+  .select2-choice .select2-chosen {
     min-width: 8px;
   }
 }
@@ -365,7 +361,7 @@
   display: none;
 }
 .select2-container.select2-allowclear .select2-choice {
-  span {
+  .select2-chosen {
     margin-right: 36px;
   }
   abbr {

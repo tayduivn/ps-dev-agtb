@@ -165,3 +165,22 @@
   #gradient > .vertical(rgba(0,0,0,0.1), rgba(255,255,255,0));
   background-color: transparent; /* gradient function form twitter bootstrap adds background color, we needn't that fallback for shadow */
 }
+
+.fontawesome {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  line-height: 14px;
+  font-size: 14px;
+  color: lighten(@gray,20%);
+  background: none;
+  font-family: FontAwesome;
+  font-weight: normal;
+  -webkit-font-smoothing: antialiased;
+  &:before{
+    text-decoration: inherit;
+    display: inline-block;
+    speak: none;
+  }
+}
+
