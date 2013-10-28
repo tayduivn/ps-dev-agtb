@@ -82,6 +82,7 @@ describe("Base.Field.Attachments", function() {
             triggerStub.restore();
         });
 
+        // test to be fixed under MAR-1493
         it("should remove first attachment from list when its x is clicked", function() {
             field.$('.select2-search-choice-close:first').click();
             expect(field.$node.select2('data')).toEqual([attachment2]);

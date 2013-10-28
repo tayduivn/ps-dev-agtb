@@ -247,7 +247,7 @@
                    'include/javascript/sugar7/error.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/sugar7/touch.js' => 'include/javascript/sugar_sidecar.min.js',
                    'portal2/views/alert-view.js'    => 'include/javascript/sugar_sidecar.min.js',
-                   'include/javascript/select2-release-3.3.2/select2.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/select2/select2.js' => 'include/javascript/sugar_sidecar.min.js',
                    //To fix some issues on select2 plugin.
                    'include/javascript/sugar7/plugins/Select2.js'  => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.timepicker.js'=> 'include/javascript/sugar_sidecar.min.js',

@@ -304,28 +304,25 @@
 
     /**
      * Synchronize the recipient field value with the model and setup tooltips for email pills.
-     *
-     * NOTE: In Select2 v3.4.0, the event names are namespaced (prefixed with "select2-"). So it is expected that the
-     * event handlers defined in this method for the Select2 field will break upon upgrading.
      */
     bindDomChange: function() {
         var self = this;
         this.getFieldElement()
-            .on("change", function() {
-                var value = $(this).select2('data');
-                self.model.get(self.name).reset(value);
-            })
             .on("change", function(event) {
+                var value = $(this).select2('data');
+                if (event.removed) {
+                    value = _.filter(value, function(d) {
+                        return d.id !== event.removed.id;
+                    });
+                }
+                self.model.get(self.name).reset(value);
                 self._initializeTooltips();
-            }).
-            on("selected", _.bind(this._handleEventOnSelected, this));
+            })
+            .on("select2-selecting", _.bind(this._handleEventOnSelected, this));
     },
 
     /**
-     * Event handler for the Select2 "selected" event.
-     *
-     * NOTE: In Select2 v3.4.0, the event names are namespaced (prefixed with "select2-"). So "selected" event will no
-     * longer exist; it will become the "select2-selecting" event.
+     * Event handler for the Select2 "select2-selecting" event.
      *
      * @param event
      * @returns {boolean}

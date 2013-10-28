@@ -107,7 +107,7 @@
     bindDomChange: function() {
         this.$node = this.$(this.fieldSelector);
         this.$node.on("change", _.bind(this.handleChange, this));
-        this.$node.on("opening", function(event) {
+        this.$node.on("select2-opening", function(event) {
             event.preventDefault();
         });
     },
@@ -148,11 +148,11 @@
      * @param event
      */
     handleChange: function(event) {
-        this.updateModel();
-
-        if (event && event.removed && event.removed.type) {
-            this.notifyAttachmentRemoved(event.removed);
+        if (event && event.removed && event.removed.id) {
+            this.removeAttachmentsById(event.removed.id);
         }
+
+        this.updateModel();
         this.notifyAttachmentsChanged();
     },
 
