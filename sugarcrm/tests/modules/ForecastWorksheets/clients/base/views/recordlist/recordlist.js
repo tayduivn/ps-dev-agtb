@@ -444,34 +444,6 @@ describe("ForecastWorksheets.View.RecordList", function() {
             });
         });
 
-        describe("dirty models with correct user_id after selected_user changes", function() {
-            var m, saveStub, safeFetchStub;
-            beforeEach(function() {
-                m = new Backbone.Model({'hello': 'world'});
-                saveStub = sinon.stub(m, 'save', function() {
-                });
-                safeFetchStub = sinon.stub(view.collection, 'fetch', function() {
-                });
-                view.collection.add(m);
-            });
-
-            afterEach(function() {
-                saveStub.restore();
-                safeFetchStub.restore();
-                m = undefined;
-            });
-
-            it('model should contain the old userid', function() {
-                m.set({'hello': 'jon1'});
-                view.updateSelectedUser({'id': 'my_new_user_id'});
-                expect(view.saveWorksheet()).toEqual(1);
-                expect(saveStub).toHaveBeenCalled();
-
-                expect(m.get('current_user')).toEqual('test_userid');
-                expect(view.selectedUser.id).toEqual('my_new_user_id');
-                expect(view.dirtyUser).toEqual(undefined);
-            });
-        });
     });
 
     describe('sync', function() {

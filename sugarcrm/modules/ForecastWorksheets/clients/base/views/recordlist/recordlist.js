@@ -135,6 +135,16 @@
      */
     noAccessDataErrorTemplate: undefined,
 
+    /**
+     * Target URL of the nav action
+     */
+    targetURL: '',
+    
+    /**
+     * Current URL of the module
+     */
+    currentURL: '',
+    
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
@@ -150,6 +160,7 @@
         this.filters = this.context.get('selectedRanges') || this.context.parent.get('selectedRanges');
         this.collection.sync = _.bind(this.sync, this);
         this.noAccessDataErrorTemplate = app.template.getField('base', 'noaccess')(this);
+        this.currentURL = Backbone.history.getFragment();
     },
 
     _dispose: function() {
@@ -192,7 +203,16 @@
                         this.$el.find('tbody').after(tpl(this));
                     }
                 }, this);
-
+                
+                /**
+                 * trigger an event if dirty
+                 */
+                this.dirtyModels.on("add change reset", function(){
+                    if(this.layout.isVisible()){
+                        this.context.parent.trigger("forecasts:worksheet:dirty", this.worksheetType, this.dirtyModels.length > 0);
+                    }
+                }, this);
+                
                 this.context.parent.on('change:selectedTimePeriod', function(model, changed) {
                     this.updateSelectedTimeperiod(changed);
                 }, this);
@@ -300,6 +320,7 @@
                         if (this.selectedUser.is_manager && app.metadata.getModule('Forecasts', 'config').show_forecasts_commit_warnings == 1) {
                             this.collection.once('reset', function() {
                                 this.setNavigationMessage(true, 'LBL_WORKSHEET_COMMIT_ALERT', 'LBL_WORKSHEET_COMMIT_ALERT');
+                                this.showNavigationMessage('forecast');
                             }, this)
                         }
                         this.refreshData();
@@ -309,7 +330,7 @@
                 this.context.parent.on('forecasts:worksheet:is_dirty', function(worksheetType, is_dirty) {
                     if (this.worksheetType == worksheetType) {
                         if (is_dirty) {
-                            this.setNavigationMessage(true, 'LBL_WORKSHEET_SAVE_CONFIRM', 'LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD');
+                            this.setNavigationMessage(true, 'LBL_WARN_UNSAVED_EDITS', 'LBL_WARN_UNSAVED_EDITS');
                         } else {
                             this.setNavigationMessage(false, '', '');
                         }
@@ -349,10 +370,16 @@
     },
 
     beforeRouteHandler: function() {
-        var ret = this.showNavigationMessage('router');
-        this.processNavigationMessageReturn(ret);
+        return this.showNavigationMessage('router');
     },
-
+    
+    /**
+     * default navigation callback for alert message
+     */
+    defaultNavCallback: function(){
+        this.displayNavigationMessage = false;
+        app.router.navigate(this.targetURL, {trigger: true});
+    },
 
     /**
      * {@inheritdoc}
@@ -368,7 +395,11 @@
      * @param type
      * @returns {*}
      */
-    showNavigationMessage: function(type) {
+    showNavigationMessage: function(type, callback) {
+        if (!_.isFunction(callback)) {
+            callback = this.defaultNavCallback;
+        }
+        
         if (this.layout.isVisible()) {
             var canEdit = this.dirtyCanEdit || this.canEdit;
             if (canEdit && this.displayNavigationMessage) {
@@ -379,16 +410,34 @@
                     return false;
                 }
                 if (this.navigationMessage == 'LBL_WORKSHEET_COMMIT_ALERT') {
-                    alert(app.lang.get(this.navigationMessage, 'Forecasts'));
+                    app.alert.show('leave_confirmation', {
+                        level: 'info',
+                        closeable: true,
+                        autoClose: true,
+                        messages: app.lang.get(this.navigationMessage, 'Forecasts').split("<br>"),
+                    });
                     return true;
                 } else {
-                    var ret = confirm(app.lang.get(this.navigationMessage, 'Forecasts').split("<br>"));
-                    return {'message': this.navigationMessage, 'run_action': ret};
+                    this.targetURL = Backbone.history.getFragment();
+                    
+                    //Replace the url hash back to the current staying page
+                    app.router.navigate(this._currentUrl, {trigger: false, replace: true});
+                    
+                    app.alert.show('leave_confirmation', {
+                        level: 'confirmation',
+                        messages: app.lang.get(this.navigationMessage, 'Forecasts').split("<br>"),
+                        onConfirm: _.bind(function(){
+                            callback.call(this);
+                        }, this),
+                        templateOptions: {
+                            cancelContLabel: 'LBL_CANCEL_BUTTON_LABEL_UNSAVED_CONT',
+                            confirmContLabel: 'LBL_CONFIRM_BUTTON_LABEL_UNSAVED_CONT'
+                        }
+                    });
                 }
+                return false;
             }
-            return true;
         }
-
         return true;
     },
 
@@ -403,6 +452,7 @@
         this.displayNavigationMessage = display;
         this.navigationMessage = reload_label;
         this.routeNavigationMessage = route_label;
+        this.context.parent.trigger("forecasts:worksheet:navigationMessage", this.navigationMessage);
     },
 
     /**
@@ -504,7 +554,8 @@
             this.dirtyUser = this.selectedUser;
             this.dirtyCanEdit = this.canEdit;
         }
-
+        this.cleanUpDirtyModels();
+        
         this.selectedUser = changed;
 
         // Set the flag for use in other places around this controller to suppress stuff if we can't edit
@@ -515,12 +566,6 @@
             this.refreshData();
         } else {
             if ((!this.selectedUser.showOpps && this.selectedUser.is_manager) && this.layout.isVisible()) {
-                if (this.displayNavigationMessage && this.dirtyUser.id == this.selectedUser.id) {
-                    this.processNavigationMessageReturn(this.showNavigationMessage('rep_to_manager'));
-                } else if (this.displayNavigationMessage) {
-                    this.processNavigationMessageReturn(this.showNavigationMessage('user_switch'));
-                }
-                this.cleanUpDirtyModels();
                 // we need to hide
                 this.layout.hide();
             }
@@ -731,36 +776,8 @@
      * Custom Method to handle the refreshing of the worksheet Data
      */
     refreshData: function() {
-        var ret = this.showNavigationMessage('forecast');
-
-        if (this.processNavigationMessageReturn(ret)) {
-            this.displayLoadingMessage();
-            this.collection.fetch();
-        }
-    },
-
-    /**
-     * Utility to process the return from the Navigation Message
-     *
-     * @param message_result
-     * @returns {boolean}
-     */
-    processNavigationMessageReturn: function(message_result) {
-        if (_.isObject(message_result) && message_result.run_action === true) {
-            if (message_result.message == 'LBL_WORKSHEET_SAVE_CONFIRM') {
-                this.context.parent.once('forecasts:worksheet:saved', function() {
-                    if (this.layout.isVisible()) {
-                        this.displayLoadingMessage();
-                        this.collection.fetch();
-                    }
-                }, this);
-                this.saveWorksheet(true);
-            }
-
-            return false
-        }
-
-        return true;
+        this.displayLoadingMessage();
+        this.collection.fetch();
     },
 
     /**
