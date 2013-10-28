@@ -108,7 +108,11 @@
     openForm: function(filterModel) {
         if (_.isEmpty(filterModel.get('filter_definition'))) {
             this.render();
-            this.addRow();
+            var $row = this.addRow(),
+                field = $row.data('nameField');
+
+            // Open the dropdown once it's rendered to make form completion easier
+            $row.find(field.fieldTag).select2('open');
         } else {
             this.populateFilter();
         }
@@ -246,6 +250,7 @@
         $row.data('nameField', field);
 
         this._renderField(field);
+
         this.layout.trigger("filter:create:rowsValid", false);
 
         return $row;

@@ -27,6 +27,7 @@
  ********************************************************************************/
 
 $mod_strings = array(
+    'LBL_LISTVIEW_FILTER_ALL' => 'All {0}',
     'LBL_TEAM' => 'Teams',
     'LBL_TEAMS' => 'Teams',
     'LBL_TEAM_ID' => 'Team Id',
@@ -62,7 +63,7 @@ $mod_strings = array(
     'LBL_API_FILTERS_SUBPANEL_TITLE' => 'Filters',
     'LBL_NEW_FORM_TITLE' => 'New Filters',
     'LBL_FILTER_DEFINITION' => 'Filter Definition',
-    'LBL_ASSIGNED_TO_ME' => 'Assigned to Me',
+    'LBL_ASSIGNED_TO_ME' => 'My {0}',
     'LBL_RECENTLY_VIEWED' => 'Recently Viewed',
     'LBL_NEW_RECORDS' => 'Recently Created',
     'LBL_FAVORITES' => 'My Favorites',

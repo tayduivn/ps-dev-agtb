@@ -26,4 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<div><span class="select2-match"></span>{{this}}</div>
+<div class="{{#if icon}}select2-icon-prepend{{else}}select2-no-icon{{/if}}">
+    <span class="select2-match"></span>
+    {{#if icon}}<i class="icon {{icon}}"></i>{{/if}}
+    {{text}}
+</div>

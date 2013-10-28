@@ -53,6 +53,7 @@
 
         this.aclToCheck = (this.layoutType === 'record')? 'view' : 'list';
         this.filters = app.data.createBeanCollection('Filters');
+        this.filters.comparator = _.bind(this.filterCollectionSorting, this);
 
         this.emptyFilter = app.data.createBean('Filters', {
             id: 'all_records',
@@ -521,13 +522,13 @@
             possibleFilters = _.filter(possibleFilters, this.filters.get, this.filters);
         }
 
-        // If last filter not found in the filter collection (and not a brand new one), remove the last state.
-        if (lastFilter && !(this.filters.get(lastFilter)) && lastFilter !== 'create'){
+        if (!lastFilter || (!this.filters.get(lastFilter) && lastFilter !== 'create')) {
             this.clearLastFilter(moduleName, this.layoutType);
+            this.setLastFilter(moduleName, this.layoutType, _.first(possibleFilters) || 'all_records');
         }
         this.layout.trigger('filterpanel:change:module', moduleName);
         this.trigger('filter:render:filter');
-        this.trigger('filter:change:filter', this.getLastFilter(moduleName, this.layoutType) ||  _.first(possibleFilters) || 'all_records', true);
+        this.trigger('filter:change:filter', this.getLastFilter(moduleName, this.layoutType), true);
     },
 
     /**
@@ -590,6 +591,45 @@
             this.$el.append('<i class="add-on icon-remove"></i>');
         } else if (!addIt) {
             this.$('.add-on.icon-remove').remove();
+        }
+    },
+
+    /**
+     * "sort" comparator functions take two models, and return -1 if the first model should come before the second,
+     * 0 if they are of the same rank and 1 if the first model should come after.
+     *
+     * @param {Bean} model1
+     * @param {Bean} model2
+     */
+    filterCollectionSorting: function(model1, model2) {
+        if (model1.get('editable') === false && model2.get('editable') !== false) {
+            return -1;
+        }
+        if (model1.get('editable') !== false && model2.get('editable') === false) {
+            return +1;
+        }
+        if (this._getTranslatedFilterName(model1).toLowerCase() < this._getTranslatedFilterName(model2).toLowerCase()) {
+            return -1;
+        }
+        return +1;
+    },
+
+    /**
+     * If a model is editable, just return the name. If the model is not editable, it must be defined as a label that
+     * is internationalized. We need to retrieve the translated text. Also we allow injecting the translated module
+     * name into filter names.
+     *
+     * @param {Bean} model filter
+     * @returns {String} translated filter name
+     * @private
+     */
+    _getTranslatedFilterName: function(model) {
+        if (model.get('editable') === false) {
+            var moduleName = app.lang.get('LBL_MODULE_NAME', this.layout.currentModule);
+            var text = app.lang.get(model.get('name'), ['Filters', this.layout.currentModule]) || '';
+            return app.utils.formatString(text, [moduleName]);
+        } else {
+            return model.get('name') || '';
         }
     },
 

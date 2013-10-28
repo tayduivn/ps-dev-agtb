@@ -607,6 +607,33 @@ describe("Base.Layout.Filter", function () {
             expect(layout.filters.models.length).toEqual(2);
             expect(handleFilterRetrieveStub.getCall(0).args).toEqual([modName,defaultName]);
         });
+        it('should sort filters alphabetically per categories', function(){
+            sinonSandbox.stub(app.lang, 'get', function(key) {
+                var dictionnary = {
+                    'LBL_MODULE_NAME': 'Leads',
+                    'LBL_ASSIGNED_TO_ME': 'My {0}',
+                    'LBL_FAVORITES': 'My Favorites'
+                };
+                return dictionnary[key];
+            });
+            layout.layout.currentModule = 'Accounts';
+
+            layout.filters.add({id: 'random_id_1', name: 'Best Filter', editable: true});
+            layout.filters.add({id: 'assigned_to_me', name: 'LBL_ASSIGNED_TO_ME', editable: false});
+
+            // Sort results: `My Favorites`, `My Leads`, `Best Filter`, `First Filter`
+            expect(layout.filters.pluck('id')).toEqual(['assigned_to_me', 'random_id_1']);
+
+            layout.filters.add({id: 'random_id_2', name: 'First Filter', editable: true});
+
+            // Sort results: `My Favorites`, `Best Filter`, `First Filter`
+            expect(layout.filters.pluck('id')).toEqual(['assigned_to_me', 'random_id_1', 'random_id_2']);
+
+            layout.filters.add({id: 'favorites', name: 'LBL_FAVORITES', editable: false});
+
+            // Sort results: `My Favorites`, `My Leads`, `Best Filter`, `First Filter`
+            expect(layout.filters.pluck('id')).toEqual(['favorites', 'assigned_to_me', 'random_id_1', 'random_id_2']);
+        });
         it('should get filters from the server', function(){
             var modName = 'TestModule';
             var defaultName = 'testDefault';

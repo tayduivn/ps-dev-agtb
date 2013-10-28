@@ -78,14 +78,23 @@
      */
     getFilterList: function() {
         var filters = [];
-        this.layout.filters.each(function(model) {
-            var isAllRecords = model.id !== "all_records" ? false : true;
-            filters.push({id: model.id, text: this.getTranslatedSelectionText(isAllRecords, model.get("name"))});
-        }, this);
-
         if (this.layout.canCreateFilter()) {
             filters.push({id: "create", text: app.lang.get("LBL_FILTER_CREATE_NEW")});
         }
+        // This flag is used to determine when we have to add the border top (to separate categories)
+        var firstEditable = false;
+        this.layout.filters.each(function(model) {
+            var opts = {
+                id: model.id,
+                text: this.layout._getTranslatedFilterName(model)
+            };
+            if (model.get("editable")!==false && !firstEditable) {
+                opts.firstUserFilter = true;
+                firstEditable = true;
+            }
+            filters.push(opts);
+        }, this);
+
         return filters;
     },
 
@@ -103,6 +112,7 @@
             minimumResultsForSearch: 7,
             formatSelection: _.bind(this.formatSelection, this),
             formatResult: _.bind(this.formatResult, this),
+            formatResultCssClass: _.bind(this.formatResultCssClass, this),
             dropdownCss: {width: 'auto'},
             dropdownCssClass: 'search-filter-dropdown',
             initSelection: _.bind(this.initSelection, this),
@@ -178,11 +188,7 @@
             model = this.layout.filters.get(val);
 
             if (model) {
-                if (val !== "all_records") {
-                    data = {id: model.id, text: this.getTranslatedSelectionText(false, model.get("name"))};
-                } else {
-                    data = {id: "all_records", text: this.getTranslatedSelectionText(true, model.get("name"))};
-                }
+                data = {id: val, text: this.layout._getTranslatedFilterName(model)};
             } else {
                 data = {id: "all_records", text: app.lang.get("LBL_FILTER_ALL_RECORDS")};
             }
@@ -224,8 +230,26 @@
      * @returns {String}
      */
     formatResult: function(option) {
-        // TODO: Determine whether active filters should be highlighted in bold in this menu.
-        return this._select2formatResultTemplate(option.text);
+        if (option.id === this.layout.getLastFilter(this.layout.layout.currentModule, this.layout.layoutType)) {
+            option.icon = 'icon-ok';
+        } else if (option.id === 'create') {
+            option.icon = 'icon-plus';
+        } else {
+            option.icon = undefined;
+        }
+        return this._select2formatResultTemplate(option);
+    },
+
+    /**
+     * Adds a class to the `Create Filter` item (to add border bottom)
+     * and a class to first user custom filter (to add border top)
+     *
+     * @param {Object} item
+     * @returns {string} css class to attach
+     */
+    formatResultCssClass: function(item) {
+        if (item.id === 'create') { return 'select2-result-border-bottom'; }
+        if (item.firstUserFilter) { return 'select2-result-border-top'; }
     },
 
     /**
@@ -245,25 +269,6 @@
      */
     handleModuleChange: function(linkModuleName, linkName) {
         this.filterDropdownEnabled = (linkName !== "all_modules" && !app.metadata.getModule(linkModuleName).isBwcEnabled);
-    },
-
-    /**
-     * Translates the selection text's labels
-     * @param {Boolean} isAllRecords
-     * @param {String} label
-     * @returns {String}
-     */
-    getTranslatedSelectionText: function(isAllRecords, label) {
-        var translatedText, moduleName;
-
-        if (isAllRecords) {
-            moduleName = app.lang.get('LBL_MODULE_NAME', this.layout.layout.currentModule);
-            translatedText = app.lang.get(label, null, {'moduleName': moduleName});
-        }
-        else {
-            translatedText = app.lang.get(label, ['Filters', this.layout.layout.currentModule]);
-        }
-        return translatedText;
     },
 
     /**

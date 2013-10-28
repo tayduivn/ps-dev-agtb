@@ -42,7 +42,7 @@ describe("BaseFilterRowsView", function() {
             filterModel;
         beforeEach(function() {
             renderStub = sinonSandbox.stub(view, 'render');
-            addRowStub = sinonSandbox.stub(view, 'addRow');
+            addRowStub = sinonSandbox.stub(view, 'addRow', function() { return $('<div></div>').data('nameField', {}); });
             saveEditStateStub = sinonSandbox.stub(view, 'saveFilterEditState');
             populateFilterStub = sinonSandbox.stub(view, 'populateFilter');
             filterModel = new Backbone.Model();
