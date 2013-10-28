@@ -40,8 +40,8 @@
 
         app.view.View.prototype.initialize.call(this, options);
 
-        // load page data from headerpane
-        this.pageData = app.metadata.getView('Styleguide', 'sg-headerpane').page_data;
+        // load page data from content view
+        this.pageData = app.metadata.getView(this.module, 'content').page_data;
 
         this.file = this.context.get('page_name');
         if (this.file && this.file !== '') {
@@ -85,7 +85,7 @@
             $find;
 
         // load handlebars content into variable
-        var pageContent = app.template.getView('content.' + this.file, 'Styleguide');
+        var pageContent = app.template.getView('content.' + this.file, this.module);
         if (pageContent) {
             this.content = pageContent(self);
         }
@@ -326,53 +326,6 @@
         view.$('#tp1').timepicker();
     },
 
-    // layouts wizard
-    render_wizard: function(view) {
-
-        view.$('#launch_simple_wizard').on('click.styleguide', function(e) {
-            wizard.init({
-                id: 'wizardSimpleDemo',
-                modalUrl: 'styleguide/content/wizard-modal.html',
-                className: 'setup',
-                headerText: 'Simple Wizard Demo',
-                navMenu: new Array('Screen Two','Screen Screen Three','Screen Four')
-            });
-            e.stopPropagation();
-            e.preventDefault();
-        });
-
-        view.$('#launch_wizard').on('click.styleguide', function(e) {
-            wizard.init({
-                id: 'wizardDemo',
-                modalUrl: 'styleguide/content/wizard-modal.html',
-                className: 'setup',
-                headerText: 'Custom Wizard Demo',
-                navMenu: new Array('Screen Two','Screen Screen Three','Screen Four'),
-                'onWizardStart': function () {
-                    view.$('#wizardDemo .start').live('click', function(){
-                        view.$('#wizardDemo .manual').css('display','none');
-                    });
-                },
-                defaults: {
-                    startText: 'Setup Wizard',
-                    'footer': function () {
-                        return '<div class="modal-footer">' +
-                                '<a href="#" class="btn btn-invisible btn-link pull-left cancel">'+ this.cancelText+'</a>' +
-                                '<a class="btn back" href="#">'+ this.backText+'</a>' +
-                                '<a class="btn btn-primary next" href="#">'+ this.nextText+'</a>' +
-                                '<a class="btn btn-primary finish" href="#">'+ this.finishText+'</a>' +
-                                '<a href="#" class="btn manual">Manual Setup</a>' +
-                                '<a class="btn btn-primary start" href="#">'+ this.startText+'</a>' +
-                                '</div>';
-                    }
-                }
-            });
-            e.stopPropagation();
-            e.preventDefault();
-        });
-
-    },
-
     // components dropdowns
     render_tooltips: function(view) {
         $('body').tooltip({
@@ -438,7 +391,7 @@
                 layout: 'create',
                 context: {
                     create: true,
-                    model: app.data.createBean('Styleguide')
+                    model: app.data.createBean(this.module)
                 }
             });
         });

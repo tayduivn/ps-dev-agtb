@@ -156,11 +156,14 @@
                     var page = '',
                         field = '';
                     if (layout === 'field') {
-                        //route: "Styleguide/field/:field"
+                        //route: "Styleguide/field/text"
                         page = 'field';
                         field = resource;
+                    } else if (layout === 'view') {
+                        //route: "Styleguide/view/list"
+                        page = 'layouts_' + resource;
                     } else if (layout === 'docs') {
-                        //route: "Styleguide/docs/:page"
+                        //route: "Styleguide/docs/base_grid"
                         page = resource;
                     } else if (layout === 'layout') {
                         //route: "Styleguide/layout/records"

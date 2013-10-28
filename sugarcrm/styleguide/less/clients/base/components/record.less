@@ -206,6 +206,9 @@
       label {
         margin-bottom: 0;
       }
+      .input-append.error .add-on {
+        left: 1px;
+      }
     }
 
     &[data-type="radioenum"] {
@@ -290,6 +293,11 @@
       }
     }
 
+    &[data-type="date"] {
+      input[type="text"]{
+        width: 100%;
+      }
+    }
     &[data-type="datetimecombo"] {
       input[type="text"] {
         width: 40%;
@@ -297,45 +305,24 @@
         width: ~"-webkit-calc(100% / 2 - 12px)";
         width: ~"calc(100% / 2 - 12px)";
       }
+      .input-append.date {
+        .ui-timepicker-input,
+        .ui-timepicker-list {
+          margin-left: -26px;
+        }
+        &.error {
+          .ui-timepicker-input,
+          .ui-timepicker-list {
+            margin-left: -50px;
+          }
+        }
+      }
     }
-
     &[data-type="date"],
     &[data-type="datetimecombo"] {
       .add-on {
-        z-index: 2;
-        padding: 4px 0px 4px 4px;
-        margin: -5px 10px 0 -30px;
-        width: 12px;
-        height: 12px;
-        position: relative;
-        top: -4px;
-        left: 7px;
-        background: @white;
-        font-size: 12px;
-      }
-      &[data-type="date"] input[type="text"]{
-        width: 100%;
-      }
-      .input-append.date {
-        .add-on {
-          top: 4px;
-          left: 5px;
-        }
-        .error {
-          .add-on {
-            &:not(.error-tooltip) {
-              left: 1px;
-            }
-          }
-        }
-        .ui-timepicker-input,
-        .ui-timepicker-list {
-          margin-left: 4px;
-        }
-      }
-      .input-append span.error-tooltip.add-on {
-        left: -10px;
-        z-index: 3;
+        top: 2px;
+        margin-top: -5px;
       }
     }
 

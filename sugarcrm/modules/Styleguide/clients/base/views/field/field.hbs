@@ -35,22 +35,23 @@
     {{{description}}}
 {{/unless}}
 
-<div class="record">
+<div class="field-examples">
     {{#useTable}}
     <table class="accordion table table-bordered table-striped table-condensed" id="accordion_fields">
         <thead>
             <tr>
-                <th>Sugar Field</th><th>Field Name</th><th>Complexity</th><th>Example</th><th>Documentation</th>
+                <th>Sugar Field</th><th>Field Name</th><th>Example</th><th>Documentation</th>
             </tr>
         </thead>
     {{/useTable}}
+
     {{#each tempfields}}
+
         {{#if ../useTable}}
         <tbody class="accordion-group">
             <tr class="accordion-heading">
                 <td>{{this.type}}</td>
                 <td>{{this.name}}</td>
-                <td>plugin</td>
                 <td>
                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion_fields" data-target="#collapse_field_{{this.type}}">Example</a>
                 </td>
@@ -61,23 +62,146 @@
                     <div class="accordion-inner" id="collapse_field_{{this.type}}" style="height:0px;">
         {{/if}}
                         <div class="row-fluid">
-                            <h3>Detail</h3>
-                            {{field ../this model=../this.model template="detail"}}
+                            <div class="span4">
+                                <h2>Base View</h2>
+                            </div>
+                            <div class="span4">
+                                <h2>Record View</h2>
+                            </div>
+                            <div class="span4">
+                                <h2>List View</h2>
+                            </div>
                         </div>
                         <div class="row-fluid">
-                            <h3>Edit</h3>
-                            {{field ../this model=../this.model template="edit"}}
-                            {{#each this.errorMeta}}
-                                {{field ../../this model=../../this.model template="error"}}
-                            {{/each}}
+                            <div class="span12">
+                                <h3>Detail</h3>
+                            </div>
                         </div>
+
                         <div class="row-fluid">
-                            <h3>Disabled</h3>
-                            {{field ../this model=../this.model template="disabled"}}
+                            <div class="span4">
+                                <div class="base" id="{{this.type}}_detail_base">
+                                </div>
+                            </div>
+                            <div class="span4">
+                                <div class="record">
+                                    <div class="row-fluid">
+                                        <div class="span12 record-cell" data-type="{{this.type}}" id="{{this.type}}_detail_record">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="span4">
+                                <div class="list-view">
+                                    <table class="table table-striped dataTable">
+                                        <tbody>
+                                            <tr class="single">
+                                                <td data-type="{{this.type}}" id="{{this.type}}_detail_list">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
+
                         <div class="row-fluid">
-                            <h3>List</h3>
-                            {{field ../this model=../this.model template="list"}}
+                            <div class="span12">
+                                <h3>Edit</h3>
+                            </div>
+                        </div>
+
+                        <div class="row-fluid">
+                            <div class="span4">
+                                <div class="base" id="{{this.type}}_edit_base">
+                                </div>
+                            </div>
+                            <div class="span4">
+                                <div class="record">
+                                    <div class="row-fluid">
+                                        <div class="span12 record-cell" data-type="{{this.type}}" id="{{this.type}}_edit_record">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="span4">
+                                <div class="list-view">
+                                    <table class="table table-striped dataTable">
+                                        <tbody>
+                                            <tr class="single">
+                                                <td data-type="{{this.type}}" id="{{this.type}}_edit_list">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <h3>Error</h3>
+                            </div>
+                        </div>
+
+                        <div class="row-fluid">
+                            <div class="span4" data-type="{{this.type}}">
+                                <div class="base" id="{{this.type}}_error_base">
+                                </div>
+                            </div>
+                            <div class="span4">
+                                <div class="record">
+                                    <div class="row-fluid">
+                                        <div class="span12 record-cell" data-type="{{this.type}}" id="{{this.type}}_error_record">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="span4">
+                                <div class="list-view">
+                                    <table class="table table-striped dataTable">
+                                        <tbody>
+                                            <tr class="single">
+                                                <td data-type="{{this.type}}" id="{{this.type}}_error_list">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <h3>Disabled</h3>
+                            </div>
+                        </div>
+
+                        <div class="row-fluid">
+                            <div class="span4">
+                                <div class="base" id="{{this.type}}_disabled_base">
+                                </div>
+                            </div>
+                            <div class="span4">
+                                <div class="record">
+                                    <div class="row-fluid">
+                                        <div class="span12 record-cell" data-type="{{this.type}}" id="{{this.type}}_disabled_record">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="span4">
+                                <div class="list-view">
+                                    <table class="table table-striped dataTable">
+                                        <tbody>
+                                            <tr class="single">
+                                                <td data-type="{{this.type}}" id="{{this.type}}_disabled_list">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
         {{#if ../useTable}}
                     </div>

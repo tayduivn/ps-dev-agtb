@@ -40,7 +40,9 @@
 
         app.view.View.prototype.initialize.call(this, options);
 
-        this.pageData = options.meta.page_data;
+        //this.pageData = options.meta.page_data;
+        // load page data from content view
+        this.pageData = app.metadata.getView(this.module, 'content').page_data;
 
         this.file = this.context.get('page_name');
         if (this.file && this.file !== '') {

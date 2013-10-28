@@ -32,28 +32,28 @@ $viewdefs['Styleguide']['base']['view']['field'] = array(
         // email widget mock data
         'email' => array(
             array(
-                'email_address' => 'kid.phone.sugar@example.info',
-                'primary_address' => '0',
-                'opt_out' => '0',
-                'invalid_email' => '0',
+                'email_address' => 'primary@example.info',
+                'primary_address' => true,
+                'opt_out' => false,
+                'invalid_email' => false,
             ),
             array(
-                'email_address' => 'kid.phone.sugar@example.info',
-                'primary_address' => '1',
-                'opt_out' => '0',
-                'invalid_email' => '0',
+                'email_address' => 'optout@example.info',
+                'primary_address' => false,
+                'opt_out' => true,
+                'invalid_email' => false,
             ),
             array(
-                'email_address' => 'kid.phone.sugar@example.info',
-                'primary_address' => '0',
-                'opt_out' => '1',
-                'invalid_email' => '0',
+                'email_address' => 'invalid@example.info',
+                'primary_address' => false,
+                'opt_out' => false,
+                'invalid_email' => true,
             ),
             array(
-                'email_address' => 'kid.phone.sugar@example.info',
-                'primary_address' => '0',
-                'opt_out' => '0',
-                'invalid_email' => '1',
+                'email_address' => 'normal@example.info',
+                'primary_address' => false,
+                'opt_out' => false,
+                'invalid_email' => false,
             ),
         ),
 
@@ -78,8 +78,32 @@ $viewdefs['Styleguide']['base']['view']['field'] = array(
 
         // date field mock data
         'text' => array(
-            'description' => 'This is a description of the styleguide module.',
-            'description_ERROR' => 'This description is too long.',
+            'description' => 'The styleguide module description.',
+            'description_ERROR' => 'This description of the styleguide module is too long.',
+        ),
+
+        //phone field mock data
+        'phone' => array(
+            'phone_home' => '999-123-4567',
+            'phone_home_ERROR' => '999-123-456',
+        ),
+
+        //url field
+        'url' => array(
+            'website' => 'http://www.sugarcrm.com',
+            'website_ERROR' => 'http://www.sugar',
+        ),
+
+        //textarea field
+        'textarea' => array(
+            'description' => 'Dr. Max Wiznitzer, a pediatric neurologist and autism specialist at the Rainbow and Babies Childrens Hospital in Cleveland, Ohio, says this new study is a continuation of previous work in babies. He says this research makes sense to him. "There is a decrease in the amount of attention to eyes as an early marker of social behavior (think of it as a primitive level of socialization)." Wiznitzer suggests the failure to establish these early social skills has ramifications later as "social behavior shifts into more sophisticated patterns."',
+            'description_ERROR' => 'This description of the styleguide module is too short.',
+        ),
+
+        //url field
+        'password' => array(
+            'secret_password' => 'asd@f23YAS#DFuu&',
+            'secret_password_ERROR' => 'asdf',
         ),
     ),
 );

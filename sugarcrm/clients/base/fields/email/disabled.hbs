@@ -27,15 +27,11 @@
  ********************************************************************************/
 }}
 {{#each value}}
-    <div class="control-group email row-fluid" data-emailaddress="{{email_address}}">
-        <div class="span6">
-            <div class="input-append">
-                <div class="row-fluid">
-                    <input type="text" class="span12 existingAddress" data-id="{{email_address}}" value="{{email_address}}" disabled>
-                </div>
-            </div>
+    <div class="control-group email" data-emailaddress="{{email_address}}">
+        <div class="input-append">
+            <input type="text" class="existingAddress" data-id="{{email_address}}" value="{{email_address}}" disabled>
         </div>
-        <div class="span6 btn-toolbar">
+        <div class="btn-toolbar prevent-mousedown">
             <div class="btn-group" data-parentEmail="{{email_address}}">
                 <button type="button" class="{{#if primary_address}}active {{/if}}is_primary btn" disabled><i class="icon-star"></i></button>
                 <button type="button" class="{{#if opt_out}}active {{/if}}btn" disabled><i class="icon-ban-circle"></i></button>
@@ -44,12 +40,3 @@
         </div>
     </div>
 {{/each}}
-<div class="control-group email row-fluid">
-    <div class="span6 pull-left">
-        <div class="input-append">
-            <div class="row-fluid">
-                <input type="text" class="span12 newEmail input-append" placeholder="{{str "LBL_EMAIL_ADD"}}" disabled>
-            </div>
-        </div>
-    </div>
-</div>

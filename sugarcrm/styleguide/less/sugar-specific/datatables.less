@@ -43,7 +43,7 @@ table.dataTable {
       top: -1px;
     }
     .toggle-all {
-      margin: 10px;
+      margin: 0;
     }
     &.nosort.select-all {
       padding: 0;
@@ -85,10 +85,24 @@ table.dataTable {
             width: 100%;
           }
         }
+        &[data-type="bool"] {
+          .input-append.error .add-on {
+            //margin-left: -2px;
+          }
+        }
+        &[data-type="datetimecombo"] {
+          input[type="text"] {
+            width: 40%;
+            width: ~"-moz-calc(100% / 2 - 4px)";
+            width: ~"-webkit-calc(100% / 2 - 4px)";
+            width: ~"calc(100% / 2 - 4px)";
+          }
+        }
         &> *:not(.overflow-visible) {
           overflow-x: hidden;
           text-overflow: ellipsis;
           max-width: 100%;
+          width: 100%;
           display: inline-block;
           white-space: nowrap;
           word-break: break-word;
@@ -233,6 +247,9 @@ table.dataTable {
         &[data-type="date"] {
           min-width: 108px;
           max-width: 108px !important;
+          input[type="text"] {
+            width: 100%;
+          }
         }
         &[data-type="datetimecombo"] {
           min-width: 180px;
@@ -311,9 +328,6 @@ table.dataTable {
             background-color: @gray;
           }
         }
-        .help-block {
-          display: none;
-        }
       }
     }
     //alert messages
@@ -374,17 +388,21 @@ table.dataTable {
   }
   input[type="text"] {
     min-height: 28px;
-    //min-width: 100px;
+    width: 100%;
     .box-sizing(border-box);
     padding: 4px 6px;
+  }
+  .select2-addon {
+    input[type="text"] {
+      width: 95%;
+      width: ~"-moz-calc(100% - 100px)";
+      width: ~"-webkit-calc(100% - 100px)";
+      width: ~"calc(100% - 100px)";
+    }
   }
   input[type=radio],
   input[type=checkbox] {
     border: 0;
-  }
-  input[type=checkbox] {
-    padding: 0 !important;
-    margin: 0 !important;
   }
   td.number,
   tfoot th.number {
@@ -409,8 +427,12 @@ table.dataTable {
   .active .icon-star {
     color: @orange;
   }
-  .help-block {
-    margin-bottom: 0px;
+  .select2-addon {
+    .input-append {
+      input[type="text"] {
+        width: 100%;
+      }
+    }
   }
 }
 

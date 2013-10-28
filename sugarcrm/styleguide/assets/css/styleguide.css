@@ -95,6 +95,10 @@
 .page-content {
   margin: 20px;
 }
+.field-examples .record {
+  margin: 0;
+  padding: 0;
+}
 #styleguide {
   width: 100%;
   border-right: none;
@@ -117,6 +121,10 @@
   min-width: 200px;
   font-size: 14px;
   letter-spacing: normal;
+}
+table.accordion h3 {
+  font-size: 16px;
+  line-height: 20px;
 }
 table.accordion .accordion-toggle,
 table.accordion .accordion-body {
@@ -209,6 +217,11 @@ ul.sg-main a {
 .bootstrap-examples .thumbnail {
   margin-bottom: 9px;
   background-color: #fff;
+}
+.example-view {
+  padding: 8px;
+  margin-top: 10px;
+  background-color: #C2CD80;
 }
 .bs-docs-example {
   position: relative;
