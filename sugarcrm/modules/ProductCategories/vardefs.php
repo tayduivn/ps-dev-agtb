@@ -135,6 +135,7 @@ $dictionary['ProductCategory'] = array(
             'importable' => 'required',
             'unified_search' => true,
             'full_text_search' => array('boost' => 3),
+            'required' => true,
         ),
         'list_order' =>
         array(
