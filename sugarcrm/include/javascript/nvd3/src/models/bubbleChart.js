@@ -214,7 +214,7 @@ nv.models.bubbleChart = function () {
         noDataText
           .attr('x', margin.left + availableWidth / 2)
           .attr('y', margin.top + availableHeight / 2)
-          .text(function(d) { return d });
+          .text(function(d) { return d; });
 
         return chart;
       } else {
@@ -228,16 +228,17 @@ nv.models.bubbleChart = function () {
                           .entries(data);
 
       //add series index to each data point for reference
-      filteredData = filteredData.sort(function(a,b){
-       //sort legend by key
-          return parseInt(a.key) < parseInt(b.key) ? -1 : parseInt(a.key) > parseInt(b.key) ? 1 : 0;
-      })
-          .map(function (d, i) {
-        d.series = i;
-        d.classes = d.values[0].classes;
-        d.color = d.values[0].color;
-        return d;
-      });
+      filteredData = filteredData
+        .sort(function(a,b){
+          //sort legend by key
+          return parseInt(a.key, 10) < parseInt(b.key, 10) ? -1 : parseInt(a.key, 10) > parseInt(b.key, 10) ? 1 : 0;
+        })
+        .map(function (d, i) {
+          d.series = i;
+          d.classes = d.values[0].classes;
+          d.color = d.values[0].color;
+          return d;
+        });
 
       //properties.title = 'Total = $' + d3.format(',.02d')(total);
       chart.render = function () {
@@ -338,9 +339,9 @@ nv.models.bubbleChart = function () {
                 )
               );
         var xD = [
-              d3.time.month.floor(timeExtent[0]),
-              d3.time.day.offset(d3.time.month.ceil(timeExtent[1]),-1)
-            ];
+          d3.time.month.floor(timeExtent[0]),
+          d3.time.day.offset(d3.time.month.ceil(timeExtent[1]),-1)
+        ];
 
         var yD = d3.extent(
               d3.merge(
@@ -361,6 +362,8 @@ nv.models.bubbleChart = function () {
           .xDomain(xD)
           .yScale(y)
           .yDomain(yD)
+          .padData(true)
+          .padDataOuter(0)
           .width(availableWidth)
           .height(availableHeight)
           //.margin(margin)
@@ -505,19 +508,19 @@ nv.models.bubbleChart = function () {
         params = arguments[1] || {};
 
     switch (type) {
-      case 'graduated':
-        var c1 = params.c1
-          , c2 = params.c2
-          , l = params.l;
-        colors = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(d.series/l); };
-        break;
-      case 'class':
-        colors = function () { return 'inherit'; };
-        classes = function (d,i) {
-          var iClass = (d.series*(params.step || 1))%20;
-          return 'nv-group nv-series-' + i + ' ' + (d.classes || 'nv-fill' + (iClass>9?'':'0') + iClass);
-        };
-        break;
+    case 'graduated':
+      var c1 = params.c1
+        , c2 = params.c2
+        , l = params.l;
+      colors = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(d.series/l); };
+      break;
+    case 'class':
+      colors = function () { return 'inherit'; };
+      classes = function (d,i) {
+        var iClass = (d.series*(params.step || 1))%20;
+        return 'nv-group nv-series-' + i + ' ' + (d.classes || 'nv-fill' + (iClass>9?'':'0') + iClass);
+      };
+      break;
     }
 
     var fill = (!params.gradient) ? colors : function (d,i) {
@@ -565,7 +568,7 @@ nv.models.bubbleChart = function () {
   };
 
   chart.tooltip = function(_) {
-    if (!arguments.length) return tooltip;
+    if (!arguments.length) { return tooltip; }
     tooltip = _;
     return chart;
   };
