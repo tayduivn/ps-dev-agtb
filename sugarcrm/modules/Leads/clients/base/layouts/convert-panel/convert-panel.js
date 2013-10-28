@@ -400,6 +400,9 @@
         this.populateRecords(model, this.meta.fieldMapping);
         if(this.meta.duplicateCheckOnStart) {
             this.triggerDuplicateCheck();
+        } else if (!this.meta.dependentModules || this.meta.dependentModules.length == 0) {
+            //not waiting on other modules before running dupe check, so mark as complete
+            this.dupeCheckComplete();
         }
     },
 
