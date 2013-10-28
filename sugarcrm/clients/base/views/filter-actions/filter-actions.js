@@ -58,12 +58,6 @@
             var self = this,
                 name = model ? model.get("name") : '';
             this.setFilterName(name);
-            if (!name) {
-                // We are creating a new filter.
-                _.defer(function() {
-                    self.$("input").focus();
-                });
-            }
         }, this);
 
         this.listenTo(this.layout, "filter:create:rowsValid", this.toggleRowState);
