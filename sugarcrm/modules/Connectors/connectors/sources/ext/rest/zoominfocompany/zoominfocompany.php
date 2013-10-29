@@ -158,7 +158,7 @@ class ext_rest_zoominfocompany extends ext_rest {
 	}
 
 	protected function endReadListData($parser, $tagName) {
-		if($tagName == $this->recordTag && !$this->inSkipTag && !empty($this->entry)) {
+		if($tagName == $this->recordTag && !$this->inSkipTag && !empty($this->entry) && !empty($this->entry[strtolower($this->idTag)])) {
 			$this->entry['id'] = $this->entry[strtolower($this->idTag)];
 			$this->results[] = $this->entry;
 		}
@@ -180,6 +180,9 @@ class ext_rest_zoominfocompany extends ext_rest {
 		try {
     		$listArgs = array('CompanyID'=>'18579882');
 	    	$item = $this->getItem($listArgs, 'Leads');
+	        if (empty($item['website'])) {
+	            return false;
+	        }
 	        return preg_match('/www\.ibm\.com/', $item['website']);
 		} catch(Exception $ex) {
 		  	return false;
