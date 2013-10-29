@@ -266,7 +266,7 @@
         if(this.model.get('show_target_quota')) {
             // add target quota to chart data
             chartData.properties.targetQuota = +this._serverData.target_quota;
-            chartData.properties.targetQuotaLabel = app.lang.get('LBL_TARGET_QUOTA', 'Forecasts');
+            chartData.properties.targetQuotaLabel = app.lang.get('LBL_QUOTA', 'Forecasts');
         }
 
         chartData.data = barData.concat(lineData);
