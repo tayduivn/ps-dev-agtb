@@ -91,7 +91,6 @@
         'click .addCustomRange': 'addCustomRange',
         'click .removeCustomRange': 'removeCustomRange',
         'keyup input[type=text]': 'updateCustomRangeLabel',
-        'change input[type=checkbox]': 'updateCustomRangeIncludeInTotal',
         'change :radio': 'selectionHandler'
     },
 
@@ -143,6 +142,9 @@
         if(this.model) {
             this.model.on('change', function(model) {
                 this.updateTitleValues(model);
+                if(_.has(model.changed, 'forecast_ranges') && model.changed.forecast_ranges == 'show_custom_buckets') {
+                    this.updateCustomRangesCheckboxes();
+                }
             }, this);
         }
     },
@@ -208,13 +210,11 @@
 
         // after the view renders, check for the range that has been selected and
         // trigger the change event on its element so that it shows
-        _.each(this.$(':radio'), function(el) {
-            // attr('checked') will be undefined unless the el is "checked"
-            if($(el).attr('checked')) {
-                $(el).trigger('change');
-                return true;
-            }
-        }, this);
+        this.$(':radio:checked').trigger('change');
+
+        if(this.model.get('forecast_ranges') == 'show_custom_buckets') {
+            this.updateCustomRangesCheckboxes();
+        }
 
         this.updateTitle();
         return this;
@@ -643,6 +643,11 @@
         bucketDomOptions[key] = label;
         this.model.set(categoryOptions, bucketDomOptions);
 
+        // adding event listener to new custom range
+        rangeField.$(':checkbox').on('click', _.bind(this.updateCustomRangeIncludeInTotal, this));
+        // update checkboxes
+        this.updateCustomRangesCheckboxes();
+
         if(customType == 'custom') {
             // use call to set context back to the view for connecting the sliders
             this.$('#btnAddCustomRange').hide();
@@ -708,6 +713,11 @@
                 previousCustomRange.$(previousCustomRange.fieldTag).noUiSlider('move', {handle: 'lower', to: ranges[previousCustomRange.name].min});
             }
         }
+
+        // removing event listener for custom range
+        range.$(':checkbox').off('click');
+        // update checkboxes
+        this.updateCustomRangesCheckboxes();
 
         // remove view for the range
         this.fieldRanges[category][range.name].remove();
@@ -796,17 +806,61 @@
         var category = $(event.target).data('category'),
             fieldKey = $(event.target).data('key'),
             categoryRanges = category + '_ranges',
+            // modifying the actual model by changing commitStagesIncluded
+            commitStagesIncluded = this.model.get('commit_stages_included'),
             ranges;
 
         if (category && fieldKey) {
             ranges = _.clone(this.model.get(categoryRanges));
             if (ranges && ranges[fieldKey]) {
                 if (fieldKey !== 'exclude' && fieldKey.indexOf('custom_without_probability') == -1) {
-                    ranges[fieldKey].in_included_total = $(event.target).is(':checked');
+                    var isChecked = $(event.target).is(':checked');
+                    ranges[fieldKey].in_included_total = isChecked;
+                    if(isChecked) {
+                        // silently add this range to the commitStagesIncluded
+                        commitStagesIncluded.push(fieldKey);
+                    } else {
+                        // silently remove this range from commitStagesIncluded
+                        this.model.set('commit_stages_included', _.without(commitStagesIncluded, fieldKey));
+                    }
                 } else {
                     ranges[fieldKey].in_included_total = false;
                 }
                 this.model.set(categoryRanges, ranges);
+                this.updateCustomRangesCheckboxes();
+            }
+        }
+    },
+
+    /**
+     * Iterates through custom ranges checkboxes and enables/disables
+     * checkboxes so users can only select certain checkboxes to include ranges
+     */
+    updateCustomRangesCheckboxes: function() {
+        var commitStagesIncluded = this.model.get('commit_stages_included'),
+            els = this.$('#plhCustomDefault :checkbox, #plhCustom :checkbox'),
+            len = els.length,
+            el,
+            fieldKey,
+            i;
+
+        for(i = 0; i < len; i++) {
+            el = els[i];
+            fieldKey = $(el).data('key');
+
+            //disable the checkbox
+            $(el).attr('disabled', true);
+            // remove any click event listeners
+            $(el).off('click');
+
+            // looking specifically for checkboxes that are not the 'include' checkbox but that are
+            // the last included commit stage range or the first non-included commit stage range
+            if(fieldKey !== 'include'
+                && (i == commitStagesIncluded.length - 1 || i == commitStagesIncluded.length)) {
+                // enable the checkbox
+                $(el).attr('disabled', false);
+                // add new click event listener
+                $(el).on('click', _.bind(this.updateCustomRangeIncludeInTotal, this));
             }
         }
     },
