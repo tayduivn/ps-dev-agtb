@@ -200,17 +200,6 @@
      * 2. it is duplicate-merge view and field is in edit mode. Because
      * for this view we display file field as label (not input[type=file])
      * in edit mode we should update view on change.
-     *
-     * Add handler for `duplicate:field` event to setup id of model from which file
-     * field should be duplicated. We need two handlers for `duplicate:field` and
-     * `duplicate:field:[fieldName]` to have ability to handle event when call is
-     * for all fields from model or for certain field. e.g. in merge-duplicates
-     * view we trigger this event for certain field and for copy bean we trigger
-     * it for all fields.
-     *
-     * Also add handler for `data:sync:start` event
-     * to add additional parameter in request (options.params) if file should be
-     * duplicated from another model.
      */
     bindDataChange: function() {
         if (!this.model) {

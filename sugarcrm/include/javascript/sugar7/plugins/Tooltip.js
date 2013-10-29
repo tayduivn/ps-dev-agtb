@@ -109,6 +109,11 @@
                 } else {
                     $tooltips = this._$pluginTooltips;
                 }
+                _.each($tooltips, function(tooltip) {
+                    if ($(tooltip).data('bs.tooltip') && $(tooltip).data('bs.tooltip').$tip) {
+                        $(tooltip).data('bs.tooltip').$tip.remove();
+                    }
+                }, this);
                 app.utils.tooltip.destroy($tooltips);
             },
 

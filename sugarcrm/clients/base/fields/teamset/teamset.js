@@ -21,28 +21,166 @@
         'click .btn[name=primary]': 'setPrimaryItem',
         'change input.select2': 'inputChanged'
     },
-    plugins: ['QuickSearchFilter', 'EllipsisInline', 'Tooltip'],
+    plugins: ['QuickSearchFilter', 'EllipsisInline', 'Tooltip', 'FieldDuplicate'],
     initialize: function (options) {
         app.view.invokeParent(this, {type: 'field', name: 'relate', method: 'initialize', args:[options]});
         this._currentIndex = 0;
         this.model.on("change:team_name_type", this.appendTeam, this);
     },
+
+    /**
+     * Handler on copy teamset values from one model to another.
+     *
+     * Prevent unchecking last team in team set in order to force the existence
+     * of at least one checked team. If primary team is unchecked the next
+     * checked team is defined as primary. Set up `checked` property for
+     * current team and render field. Returns `false` to prevent processing
+     * of teamset field copy cause all logic is implemented in this method.
+     *
+     * Called from {@link app.plugins._beforeFieldDuplicate}.
+     */
+    beforeFieldDuplicate: function(params) {
+
+        if (!params.model || !params.data) {
+            return false;
+        }
+
+        if (params.model.get('id') !== this.model.get('id')) {
+            return true;
+        }
+
+        var checked = params.data.checked || false,
+            teamId = params.data.recordItemId || null,
+            teams = this.model.get(this.name),
+            team = _.findWhere(teams, {'id': teamId}),
+            primaryTeam = _.findWhere(teams, {'primary': true}),
+            checkedTeams = _.where(teams, {'checked': true}),
+            newPrimaryTeam = null;
+
+        if (checked === false && checkedTeams.length === 1) {
+            if (!this.disposed) {
+                this.render();
+            }
+            return false;
+        }
+
+        if (checked === false && primaryTeam === team) {
+            newPrimaryTeam = _.find(checkedTeams, function(item) {
+                return item.id !== team.id;
+            });
+            if (newPrimaryTeam) {
+                team.primary = false;
+                newPrimaryTeam.primary = true;
+            }
+        }
+
+        if (team) {
+            team.checked = checked;
+        }
+
+        if (!this.disposed) {
+            this.render();
+        }
+        return false;
+    },
+
+    /**
+     * Handler to format field for `merge-duplicate` view.
+     *
+     * For teamset field we override value to have set of teams from all models
+     * for primary record in merge-duplicate view.
+     *
+     * Called from {@link app.plugins._formatFieldForDuplicate}.
+     */
+    formatFieldForDuplicate: function() {
+        if (_.isUndefined(this.view.generatedValues) ||
+            _.isUndefined(this.view.generatedValues.teamsets)
+        ) {
+            return;
+        }
+
+        var allTeams = this.view.generatedValues.teamsets[this.name];
+
+        if (!(this.view.collection instanceof Backbone.Collection)) {
+            return;
+        }
+
+        _.each(this.view.collection.models, function(model) {
+            var teamIds = _.compact(_.pluck(model.get(this.name), 'id')),
+                primaryTeam = _.findWhere(model.get(this.name), {primary: true}),
+                teams = [];
+
+            _.each(allTeams, function(team) {
+                if (model === this.view.primaryRecord || _.contains(teamIds, team.id)) {
+                    teams.push(_.extend(app.utils.deepCopy(team), {
+                        checked: (model === this.view.primaryRecord && _.contains(teamIds, team.id) === true),
+                        primary: (primaryTeam && primaryTeam.id === team.id)
+                    }));
+                } else {
+                    teams.push({
+                        checked: false,
+                        primary: false
+                    });
+                }
+            }, this);
+            model.set(this.name, teams, {silent: true});
+        }, this);
+    },
+
+    /**
+     * Handler to unformat field for `merge-duplicate` view.
+     *
+     * For teamset field we should exclude teams that are not selected before
+     * save primary record.
+     *
+     * Called from {@link app.plugins._unformatFieldForDuplicate}.
+     */
+    unformatFieldForDuplicate: function() {
+        if (!this.view.primaryRecord) {
+            return;
+        }
+
+        this.view.primaryRecord.set(
+            this.name,
+            _.where(this.view.primaryRecord.get(this.name), {'checked': true}),
+            {silent: true}
+        );
+    },
+
     /**
      * Changes default behavior when doing inline editing on a List view.  We want to
      * load 'list' template instead of 'edit' template because this keeps the teamset widget
      * read-only during inline editing. See SP-1197.
+     * Overrides templates for `merge-duplicate` view.
      * @override
      * @private
      */
     _loadTemplate: function() {
         app.view.invokeParent(this, {type: 'field', name: 'relate', method: '_loadTemplate'});
-        //If we're loading edit template on List view
-        if (this.view.action === 'list' && this.tplName === 'edit') {
-            //Switch to detail template instead
-            this.template = app.template.getField(this.type, 'list', this.module, this.tplName) ||
-                app.template.empty;
+
+        var template = app.template.getField(
+            this.type,
+            this.view.name + '-' + this.tplName,
+            this.model.module);
+
+        if (!template && this.view.meta && this.view.meta.template) {
+            template = app.template.getField(
+                this.type,
+                this.view.meta.template + '-' + this.tplName,
+                this.model.module);
+        }
+
+        // If we're loading edit template on List view switch to detail template instead
+        if (!template && this.view.action === 'list' && this.tplName === 'edit') {
+            this.template = app.template.getField(
+                this.type,
+                'list',
+                this.module, this.tplName
+            ) || app.template.empty;
             this.tplName = 'list';
         }
+
+        this.template = template || this.template;
     },
     _render: function () {
         var self = this;
@@ -95,7 +233,7 @@
                 }
             ];
         }
-        if (this.view.action === 'list') {
+        if (this.view.action === 'list' && this.view.name !== 'merge-duplicates') {
             //Display primary team in list view
             var primaryTeam = _.find(value, function (team) {
                 return team.primary;
