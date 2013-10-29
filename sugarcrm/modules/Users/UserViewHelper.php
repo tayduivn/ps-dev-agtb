@@ -397,16 +397,7 @@ class UserViewHelper {
         $this->ss->assign("CALENDAR_PUBLISH_URL", $publish_url);
         $this->ss->assign("CALENDAR_SEARCH_URL", $sugar_config['site_url']."/vcal_server.php/type=vfb&key=<span id=\"search_pub_key_span\">$publish_key</span>&email=%NAME%@%SERVER%");
         $this->ss->assign("CALENDAR_ICAL_URL", $ical_url);
-        //BEGIN SUGARCRM flav=ent ONLY
-        $oc_status = $this->bean->getPreference('OfflineClientStatus');
-        $this->ss->assign('OC_STATUS', get_select_options_with_id($app_list_strings['oc_status_dom'], $oc_status));
 
-        if(!empty($oc_status) && isset($app_list_strings['oc_status_dom'][$oc_status])) {
-            $this->ss->assign('OC_STATUS_DISPLAY', $app_list_strings['oc_status_dom'][$oc_status]);
-        } else {
-            $this->ss->assign("OC_STATUS_DISPLAY", '');
-        }
-        //END SUGARCRM flav=ent ONLY
 
         $this->ss->assign("SETTINGS_URL", $sugar_config['site_url']);
 
