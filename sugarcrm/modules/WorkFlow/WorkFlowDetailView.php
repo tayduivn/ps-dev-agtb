@@ -73,6 +73,7 @@ $GLOBALS['log']->info("EmailTemplate detail view");
 $xtpl=new XTemplate ('modules/WorkFlow/WorkFlowDetailView.html');
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
+$xtpl->assign("MOD_EMAILS", return_module_language($GLOBALS['current_language'], 'EmailTemplates'));
 
 if (isset($_REQUEST['return_module'])) $xtpl->assign("RETURN_MODULE", $_REQUEST['return_module']);
 if (isset($_REQUEST['return_action'])) $xtpl->assign("RETURN_ACTION", $_REQUEST['return_action']);
@@ -100,6 +101,20 @@ if ( $focus->published == 'on')
 {
 $xtpl->assign("PUBLISHED","CHECKED");
 }
+
+///////////////////////////////////////////////////////////////////////////////
+////	NOTES (attachements, etc.)
+///////////////////////////////////////////////////////////////////////////////
+$attachments = '';
+$note = BeanFactory::getBean('Notes');
+$notes_list = $note->get_full_list("notes.name", "notes.parent_id=" . $GLOBALS['db']->quoted($focus->id), true);
+if(!empty($notes_list)) {
+    for($i=0; $i<count($notes_list); $i++) {
+        $the_note = $notes_list[$i];
+        $attachments .= "<a href=\"index.php?entryPoint=download&id={$the_note->id}&type=Notes\">".$the_note->name."</a><br />";
+    }
+}
+$xtpl->assign("ATTACHMENTS", $attachments);
 
 global $current_user;
 if((is_admin($current_user)|| is_admin_for_any_module($current_user)) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){

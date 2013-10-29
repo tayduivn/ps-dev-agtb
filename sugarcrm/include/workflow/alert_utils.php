@@ -382,6 +382,7 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
 
         try {
             $mailer                   = MailerFactory::getSystemDefaultMailer();
+            $mailer->getConfig()->setEncoding(Encoding::Base64);
             $mailTransmissionProtocol = $mailer->getMailTransmissionProtocol();
 
             foreach ($address_array['to'] as $userInfo) {
@@ -653,7 +654,12 @@ function fill_mail_object(&$mail_object, &$focus, $template_id, $source_field, $
     }
 
     $mail_object->setSubject(parse_alert_template($focus, $template->subject, $notify_user_id, $alert_user_array));
-
+    // Adding attachments if they exist
+    $note = BeanFactory::getBean('Notes');
+    $notes = $note->get_full_list("notes.name", "notes.parent_id=" . $GLOBALS['db']->quoted($template_id), true);
+    if (!empty($notes)) {
+        $mail_object->handleAttachments($notes);
+    }
     return false; // false=no errors
 }
 
