@@ -1269,4 +1269,6 @@ $mod_strings = array (
     'LBL_CONVERT_DISC_CLIENT_SYNC_COMPLETE' => 'Synchronization complete.',
     'LBL_CONVERT_DISC_CLIENT_SUBMIT' => 'Clicking Submit will convert this installation to a disconnected client. Any existing data will be lost.',
     'LBL_CONVERT_DISC_CLIENT_SYNC_SUBMIT' => 'Clicking Submit will synchronize you with the master server.',
+    'LBL_OFFLINE_ENABLED' => 'Offline enabled',
+    'LBL_OFFLINE_SETTINGS' => 'Offline Settings',
 );
