@@ -43,7 +43,7 @@
             }
         }
 
-        this.showComponent(lastViewed);
+        this.showComponent(lastViewed, true);//SP-1766-don't double render!
         // Toggle the appropriate button and layout for initial render
         this.$('[data-view="' + lastViewed + '"]').button('toggle');
     },
@@ -164,8 +164,9 @@
     /**
      * Show a component and triggers "filterpanel:change"
      * @param {String} name
+     * @param {Boolean} silent
      */
-    showComponent: function (name) {
+    showComponent: function (name, silent) {
         if (!name) return;
         if (this.componentsList[name]) {
             this.componentsList[name].render();
@@ -180,7 +181,9 @@
                 comp.hide();
             }
         }, this);
-        this.trigger('filterpanel:change', name);
+        //Need to respect silent param if true as it prevents double rendering:
+        //SP-1766-Filter for sidecar modules causes two requests to list view
+        this.trigger('filterpanel:change', name, silent);
     },
 
     /**
