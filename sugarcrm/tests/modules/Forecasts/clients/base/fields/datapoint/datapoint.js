@@ -20,7 +20,7 @@
  ********************************************************************************/
 
 describe("Forecasts.Base.Field.Datapoint", function() {
-    var app, field, fieldDef, moduleName = 'Forecasts';
+    var app, field, fieldDef, moduleName = 'Forecasts', sandbox;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -82,5 +82,39 @@ describe("Forecasts.Base.Field.Datapoint", function() {
         expect(app.template.getField).toHaveBeenCalled();
         app.user.getAcls.restore();
         app.template.getField.restore();
+    });
+    
+    describe("when checkIfNeedsCommit is called", function() {
+        beforeEach(function() {
+            sandbox = sinon.sandbox.create();
+            field = SugarTest.createField("base", "best_case", 'datapoint', 'list', fieldDef, moduleName, null, null, true);
+            sandbox.stub(field.context, "trigger", function(){});
+        });
+        
+        afterEach(function() {
+            sandbox.restore();
+        });
+        
+        describe("when the totals are equal", function() {
+            beforeEach(function() {
+                field.total=0;
+                field.initial_total=0;
+                field.checkIfNeedsCommit();
+            });
+            it("should not trigger 'forecasts:worksheet:needs_commit'", function() {
+                expect(field.context.trigger).not.toHaveBeenCalled();
+            });            
+        });
+        
+        describe("when the totals are not equal", function() {
+            beforeEach(function() {
+                field.total=1;
+                field.initial_total=0;
+                field.checkIfNeedsCommit();
+            });
+            it("should trigger 'forecasts:worksheet:needs_commit'", function() {
+                expect(field.context.trigger).toHaveBeenCalledWith('forecasts:worksheet:needs_commit');
+            });            
+        });
     });
 });
