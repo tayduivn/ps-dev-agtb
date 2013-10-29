@@ -198,20 +198,20 @@ class Audit extends SugarBean
             $fieldType = $db->getFieldType($bean->field_defs[$row['field_name']]);
             switch ($fieldType) {
                 case 'date':
-                    $dateBeforeObj = $timedate->fromDbType($row['before']);
-                    $dateAfterObj = $timedate->fromDbType($row['after']);
+                    $dateBeforeObj = $timedate->fromDbType($row['before'], 'date');
+                    $dateAfterObj = $timedate->fromDbType($row['after'], 'date');
                     $row['before'] = $timedate->asIsoDate($dateBeforeObj);
                     $row['after'] = $timedate->asIsoDate($dateAfterObj);
                     break;
                 case 'datetime':
-                    $dateBeforeObj = $timedate->fromDbType($row['before']);
-                    $dateAfterObj = $timedate->fromDbType($row['after']);
+                    $dateBeforeObj = $timedate->fromDbType($row['before'], 'datetime');
+                    $dateAfterObj = $timedate->fromDbType($row['after'], 'datetime');
                     $row['before'] = $timedate->asIso($dateBeforeObj);
                     $row['after'] = $timedate->asIso($dateAfterObj);
                     break;
                 case 'time':
-                    $dateBeforeObj = $timedate->fromDbType($row['before']);
-                    $dateAfterObj = $timedate->fromDbType($row['after']);
+                    $dateBeforeObj = $timedate->fromDbType($row['before'], 'time');
+                    $dateAfterObj = $timedate->fromDbType($row['after'], 'time');
                     $row['before'] = $timedate->asIsoTime($dateBeforeObj);
                     $row['after'] = $timedate->asIsoTime($dateAfterObj);
                     break;
