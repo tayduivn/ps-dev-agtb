@@ -400,4 +400,60 @@ describe('Base.Fields.ForecastParetoChart', function() {
             expect(result[3]).toBe('b');
         });
     });
+    
+    describe("when setServerData is called", function() {
+        beforeEach(function() {
+            sandbox.stub(field, 'convertDataToChartData', function() {
+            });
+            sandbox.stub(field, 'generateD3Chart', function() {
+            });
+        });
+        
+        afterEach(function() {
+            sandbox.restore();
+        });
+        
+        describe("when the pane visible and the preview panel is hidden", function() {
+            beforeEach(function() {
+                field.state = "open";
+                field.preview_open = false;
+                field.setServerData({}, false);
+            });
+            it("should call convertDataToChartData", function() {
+                expect(field.convertDataToChartData).toHaveBeenCalled();
+            });
+            it("should call generateD3Chart", function() {
+                expect(field.generateD3Chart).toHaveBeenCalled();
+            });
+        });
+        
+        describe("when the pane hidden and the preview panel is hidden", function() {
+            beforeEach(function() {
+                field.state = "closed";
+                field.preview_open = false;
+                field.setServerData({}, false);
+            });
+            it("should not call convertDataToChartData", function() {
+                expect(field.convertDataToChartData).not.toHaveBeenCalled();
+            });
+            it("should not call generateD3Chart", function() {
+                expect(field.generateD3Chart).not.toHaveBeenCalled();
+            });
+        });
+        
+        describe("when the preview panel is visible", function() {
+            beforeEach(function() {
+                field.state = "open";
+                field.preview_open = true;
+                field.setServerData({}, false);
+            });
+            it("should not call convertDataToChartData", function() {
+                expect(field.convertDataToChartData).not.toHaveBeenCalled();
+            });
+            it("should not call generateD3Chart", function() {
+                expect(field.generateD3Chart).not.toHaveBeenCalled();
+            });
+        });
+        
+    });
 });
