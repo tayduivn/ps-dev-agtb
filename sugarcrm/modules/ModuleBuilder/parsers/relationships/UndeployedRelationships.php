@@ -385,7 +385,6 @@ class UndeployedRelationships extends AbstractRelationships implements Relations
             if ( ! in_array( strtolower ( $deployedModuleName ) , $invalidModules ) ) {
                 foreach ( array ( MB_RECORDVIEW ) as $view )
                 {
-                    $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": adding $fieldName to $view layout for module $deployedModuleName" ) ;
                     $parsedName = self::parseDeployedModuleName ( $deployedModuleName ) ;
                     if (! isset ( $parsedName [ 'packageName' ] ))
                     {
@@ -397,7 +396,7 @@ class UndeployedRelationships extends AbstractRelationships implements Relations
                         $fieldsToAdd [$deployedModuleName] = $fieldName;
                     }
                 }
-        	}
+            }
         }
         return array(array('additional_fields' => $fieldsToAdd));
     }

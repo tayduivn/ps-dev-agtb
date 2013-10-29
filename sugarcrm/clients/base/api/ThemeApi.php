@@ -117,8 +117,11 @@ class ThemeApi extends SugarApi
         $theme->setVariables($args);
         $theme->setVariable('baseUrl', '"../../styleguide/assets"');
 
-        header('Content-type: text/css');
-        echo $theme->previewCss($minify);
+        $api->setHeader('Content-type', 'text/css');
+        $css = $theme->previewCss($minify);
+        $api->setHeader('Content-Length', strlen($css));
+        
+        echo $css;
         return;
     }
 
