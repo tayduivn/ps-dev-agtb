@@ -25,7 +25,7 @@ $viewdefs['base']['view']['forecastdetails'] = array(
         array(
             'name' => 'selectedTimePeriod',
             'label' => 'TimePeriod',
-            'type' => 'enum',
+            'type' => 'timeperiod',
         ),
     )
 );
