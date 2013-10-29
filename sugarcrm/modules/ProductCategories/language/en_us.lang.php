@@ -59,6 +59,7 @@ $mod_strings = array (
   'LBL_EDITLAYOUT' => '' /*for 508 compliance fix*/,
   'LBL_CREATED_ID'=>'Created By Id',
   'LBL_MODIFIED_ID'=>'Modified By Id',
+  'LBL_ASSIGNED_USER_NAME' => 'Assigned to:',
   //For export labels  
   'LBL_PARENT_CATEGORY'=> 'Parent Category',
   'LBL_EXPORT_PARENT_ID'=> 'Parent Category ID',
