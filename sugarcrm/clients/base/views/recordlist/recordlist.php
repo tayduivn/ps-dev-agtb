@@ -42,6 +42,15 @@ $viewdefs['base']['view']['recordlist'] = array(
                 'acl_action' => 'massupdate',
             ),
             array(
+                'name' => 'calc_field_button',
+                'type' => 'button',
+                'label' => 'LBL_UPDATE_CALC_FIELDS',
+                'events' => array(
+                    'click' => 'list:updatecalcfields:fire',
+                ),
+                'acl_action' => 'massupdate',
+            ),
+            array(
                 'name' => 'merge_button',
                 'type' => 'button',
                 'label' => 'LBL_MERGE',

@@ -1,5 +1,7 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
@@ -39,6 +41,15 @@ $viewdefs['Accounts']['base']['view']['recordlist'] = array(
                 'primary' => true,
                 'events' => array(
                     'click' => 'list:massupdate:fire',
+                ),
+                'acl_action' => 'massupdate',
+            ),
+            array(
+                'name' => 'calc_field_button',
+                'type' => 'button',
+                'label' => 'LBL_UPDATE_CALC_FIELDS',
+                'events' => array(
+                    'click' => 'list:updatecalcfields:fire',
                 ),
                 'acl_action' => 'massupdate',
             ),

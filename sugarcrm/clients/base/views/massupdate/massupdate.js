@@ -114,6 +114,7 @@
         this.layout.on("list:massaction:hide", this.hide, this);
         this.layout.on("list:massdelete:fire", this.warnDelete, this);
         this.layout.on("list:massexport:fire", this.massExport, this);
+        this.layout.on("list:updatecalcfields:fire", this.updateCalcFields, this);
     },
     setMetadata: function(options) {
         options.meta.panels = options.meta.panels || [{fields:[]}];
@@ -578,6 +579,14 @@
         return true;
     },
 
+    /**
+     * Called to allow admins to resave records and update thier calculated fields.
+     */
+    updateCalcFields: function() {
+        this.hideAll();
+        this.save(true);
+    },
+
     massExport: function(evt) {
         this.hideAll();
         var massExport = this.context.get("mass_collection");
@@ -604,9 +613,16 @@
         }
     },
 
-    save: function() {
+    /**
+     * Called to start the massupdate process. Checks for validation errors before
+     * sending down the modified attributes and starting the job queue.
+     *
+     * @param {boolean=} forCalcFields optional causes save to be called with no attributes and only causes
+     * an empty resave of the records.
+     */
+    save: function(forCalcFields) {
         var massUpdate = this.getMassUpdateModel(this.module),
-            attributes = this.getAttributes(),
+            attributes = forCalcFields ? {} : this.getAttributes(),
             self = this;
 
         massUpdate.setChunkSize(this._settings.mass_update_chunk_size);
@@ -664,7 +680,11 @@
             }
         }, this);
 
-        this.checkValidationError();
+        if (forCalcFields) {
+            this.trigger('massupdate:validation:complete', {errors: [], emptyValues: []});
+        } else {
+            this.checkValidationError();
+        }
     },
 
     /**

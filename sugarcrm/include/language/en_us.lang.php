@@ -4277,6 +4277,8 @@ $app_strings = array (
     'LBL_REMINDER_TITLE' => 'Reminder',
 
     'LBL_CAN_NOT_DISABLE_ALL_LANG' => 'You can not disable all languages.',
+
+    'LBL_UPDATE_CALC_FIELDS' => 'Recalculate Values',
 );
 
 $app_list_strings['interactions_options'] = array (
