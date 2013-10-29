@@ -63,6 +63,21 @@
     },
 
     /**
+     * {@inheritDoc}
+     *
+     * Add a change event handler for initializing all the plugin tooltips again
+     */
+    bindDataChange: function() {
+        app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'bindDataChange'});
+        if (this.model) {
+            // when the value changes on the model, we need to initialize the Tooltips again
+            this.model.on('change:' + this.name, function() {
+                this.initializeAllPluginTooltips();
+            }, this);
+        }
+    },
+
+    /**
      * Utility method to take the TimePeriod collection and parse our the start and end dates to be in the user
      * date preference and store them for when the enum is actually opened
      * @param data
