@@ -133,7 +133,7 @@ class SidecarLayoutdefsMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
     public function handleSave()
     {
         return $this->handleSaveArray("viewdefs['{$this->module}']['{$this->client}']['layout']['subpanels']['components'][]",
-            "custom/Extension/modules/{$this->module}/Ext/clients/base/layouts/subpanels/" . basename($this->fullpath));
+            "custom/Extension/modules/{$this->module}/Ext/clients/{$this->client}/layouts/subpanels/" . basename($this->fullpath));
     }
 }
 
