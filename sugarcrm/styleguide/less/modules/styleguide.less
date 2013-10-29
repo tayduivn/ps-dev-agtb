@@ -106,6 +106,7 @@
   .headerpane .select2-container .select2-choice {
     min-width: 200px;
     font-size: 14px;
+    letter-spacing: normal;
   }
 }
 
@@ -128,11 +129,15 @@ table.accordion .accordion-inner.in {
   overflow: visible;
   padding: 12px;
 }
+table.accordion .accordion-heading {
+  float: none;
+}
 table.accordion .accordion-heading td,
 table.accordion .accordion-body td {
   border-right: none;
   border-left: none;
 }
+
 
 ul.sg-main {
   list-style: none;
@@ -306,4 +311,14 @@ ol.linenums li {
   font-size: 18px;
   color: #555;
   padding: 5px 4px 3px;
+}
+
+.PrimaryButton {
+  background-color: @PrimaryButton;
+}
+.NavigationBar {
+  background-color: @NavigationBar;
+}
+.BorderColor {
+  background-color: @BorderColor;
 }
