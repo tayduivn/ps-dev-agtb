@@ -34,8 +34,8 @@ class LeadConvertApi extends ModuleApi {
                 'path' => array('Leads', '?', 'convert'),
                 'pathVars' => array('','leadId',''),
                 'method' => 'convertLead',
-                'shortHelp' => 'Convert Lead to Account/Contact/Opportunity',
-                'longHelp' => 'include/api/html/modules/Leads/LeadsConversionsApi.html#conversions',
+                'shortHelp' => 'Convert Lead to a Contact and optionally link it to a new or existing module such as an Account or Opportunity',
+                'longHelp' => 'modules/Leads/clients/base/api/help/LeadConvertApi.html',
             ),
         );
 
