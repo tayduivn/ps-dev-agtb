@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -180,5 +179,43 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
         // assert the status is what it should be
         $this->assertEquals('testing1', $oppMock->sales_status);
+    }
+
+    public function createHiddenRevenueLineItem()
+    {
+        $oppMock = $this->getMock('Opportunity', array('get_linked_beans', 'save', 'retrieve', 'ACLFieldAccess'));
+        $rliMock = $this->getMock('RevenueLineItem', array('save', 'retrieve_by_string_fields'));
+
+        // we want to test that this gets called once
+        $rliMock->expects($this->once())
+            ->method('save');
+
+        BeanFactory::setBeanClass('RevenueLineItems', get_class($rliMock));
+
+        $oppMock->name = 'Test';
+        $oppMock->id = 'test_id';
+
+        /* @var $hookMock OpportunityHooks */
+        $hookMock = $this->getMockClass('OpportunityHooks', array('isForecastSetup'));
+
+        $hookMock::staticExpects($this->any())
+            ->method('isForecastSetup')
+            ->will($this->returnValue(true));
+
+        $hr = new ReflectionClass($hookMock);
+        $hr->setStaticPropertyValue(
+            'settings',
+            array(
+                'is_setup' => 1,
+                'forecast_by' => 'Opportunities'
+            )
+        );
+
+        $return = $hookMock->processHiddenRevenueLineItem($oppMock, 'after_save', array());
+
+        $this->assertTrue($return);
+
+        // unset it here
+        BeanFactory::setBeanClass('RevenueLineItems');
     }
 }
