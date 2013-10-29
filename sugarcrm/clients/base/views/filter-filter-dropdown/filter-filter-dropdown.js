@@ -156,6 +156,7 @@
             filter = this.layout.filters.get(id) || this.layout.emptyFilter;
         }
         if (id === "create") {
+            this.layout.layout.trigger("filter:set:name", '');
             this.$('.choice-filter').css("cursor", "not-allowed");
             this.layout.trigger("filter:create:open", filter);
         } else {

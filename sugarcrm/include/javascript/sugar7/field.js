@@ -411,6 +411,9 @@
              * Calculate current offset location and pass it to the parent's view.
              */
             handleFocus: function(evt) {
+                if (this.disposed) {
+                    return;
+                }
                 var left = this.$el.offset().left,
                     right = this.$el.outerWidth() + left,
                     top = this.$el.offset().top,

@@ -279,8 +279,11 @@
             filter.set(editState);
             // Open the filter form with last edit state
             this.trigger("filter:create:open", filter);
-            // Validate so `Save` button is available
-            this.layout.trigger("filter:create:validate");
+            if (!filter.id ||
+                (this.filters.get(filter.id) && !_.isEqual(editState, this.filters.get(filter.id).toJSON()))) {
+                // Validate so `Save` button is available
+                this.layout.trigger("filter:create:validate");
+            }
         } else {
             filter = this.filters.get(id) || this.emptyFilter;
         }

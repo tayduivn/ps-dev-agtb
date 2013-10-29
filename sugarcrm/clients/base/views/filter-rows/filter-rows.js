@@ -666,6 +666,9 @@
      * @param {Object} filterDef(optional) Filter Definition
      */
     saveFilterEditState: function(filterDef) {
+        if (!this.layout.editingFilter) {
+            return;
+        }
         var filter = this.layout.editingFilter.toJSON();
         filterDef = filterDef || this.buildFilterDef();
         filter.filter_definition = filterDef;
