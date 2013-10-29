@@ -24,6 +24,7 @@
       padding-top: 15px;
       &:first-child {
         width: 100%;
+        max-width: 100px; //temp until better fix for ellipsis
       }
       .detail {
         display: inline-block;
@@ -171,8 +172,6 @@
         }
       }
       .record-cell:first-child {
-        width: 100%;
-        max-width: 100px; //temp until better fix for ellipsis
         display: table-cell;
         position: relative;
         padding-left: ~"-moz-calc(1.5% + 6px)";
@@ -189,8 +188,6 @@
         padding-top: 16px;
       }
       h1 {
-        float: none;
-        margin: 0;
         input {
           margin-left: -4px;
         }
@@ -202,6 +199,7 @@
         }
         div.dropdown {
           line-height: 24px;
+          padding-right: 24px;
           /*max-width: ~"-moz-calc(100% - 78px)";
           max-width: ~"-webkit-calc(100% - 78px)";
           max-width: ~"calc(100% - 78px)";*/
