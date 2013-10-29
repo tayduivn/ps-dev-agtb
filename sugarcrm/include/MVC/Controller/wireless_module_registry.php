@@ -27,6 +27,9 @@ $wireless_module_registry = array(
 	'Contacts' => array(),
 	'Leads' => array(),
 	'Opportunities' => array('disable_create' => true),
+	//BEGIN SUGARCRM flav=ent ONLY
+	'RevenueLineItems' => array(),
+	//END SUGARCRM flav=ent ONLY
 	'Cases' => array('disable_create' => true),
 	'Calls' => array(),
 	'Tasks' => array(),
