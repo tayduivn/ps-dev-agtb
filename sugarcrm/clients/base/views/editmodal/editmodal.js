@@ -30,14 +30,15 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         if (this.layout) {
-            this.layout.on("app:view:activity:editmodal", function() {
+            this.layout.on('app:view:activity:editmodal', function() {
                 this.context.set('createModel',
-                    app.data.createRelatedBean(app.controller.context.get('model'), null, "notes", {})
+                    app.data.createRelatedBean(app.controller.context.get('model'), null, 'notes', {})
                 );
                 this.render();
-                this.$('.modal').modal({backdrop: "static"});
+                this.$('.modal').modal({backdrop: 'static'});
                 this.$('.modal').modal('show');
-                this.context.get('createModel').on("error:validation", function() {
+                $('.modal-backdrop').insertAfter($('.modal'));
+                this.context.get('createModel').on('error:validation', function() {
                     this.resetButton();
                 }, this);
             }, this);
