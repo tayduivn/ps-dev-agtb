@@ -471,6 +471,7 @@ $mod_strings = array(
                       <ul>
                       <li> Database/Database Management System (Examples: MySQL, SQL Server, Oracle, DB2)</li>
                       <li> Web Server (Apache, IIS)</li>
+                      <li> Elasticsearch</li>
                       </ul>
                       Consult the Compatibility Matrix in the Release Notes for
                       compatible system components for the Sugar version that you are installing.<br>',
@@ -501,7 +502,7 @@ $mod_strings = array(
                                   check again to continue the installation.<br>',
     'REQUIRED_INSTALLTYPE' => 'Typical or Custom install',
     'REQUIRED_INSTALLTYPE_MSG' =>
-                    'After the system check is performed, you can choose either
+                    "After the system check is performed, you can choose either
                       the Typical or the Custom installation.<br><br>
                       For both <b>Typical</b> and <b>Custom</b> installations, you will need to know the following:<br>
                       <ul>
@@ -528,7 +529,14 @@ $mod_strings = array(
                           <li> If you would like to create a new database user for this purpose, you will
                           be able to provide a new username and password during the installation process,
                           and the user will be created during installation. </li>
-                        </ul></ul><p>
+                        </ul>
+                    <li> <b>Elasticsearch host and port</b>
+                      </li>
+                        <ul>
+                          <li> Elasticsearch host is the host the search engine is running on. This defaults to localhost assuming you are running the search engine on the same server as Sugar.</li>
+                          <li> Elasticsearch port is the port number for Sugar to connect to the search engine. This defaults to 9200, which is elasticsearch's default. </li>
+                        </ul>
+                        </ul><p>
 
                       For the <b>Custom</b> setup, you might also need to know the following:<br>
                       <ul>
@@ -542,7 +550,7 @@ $mod_strings = array(
                                   ID that ensures that sessions of one Sugar instance are not used by other instances.<br><br></li>
                                   <li><b>Character Set</b> most commonly used in your locale.<br><br></li></ul>
                                   For more detailed information, please consult the Installation Guide.
-                                ',
+                                ",
     'LBL_WELCOME_PLEASE_READ_BELOW' => 'Please read the following important information before proceeding with the installation.  The information will help you determine whether or not you are ready to install the application at this time.',
 
 //BEGIN SUGARCRM flav=pro ONLY
