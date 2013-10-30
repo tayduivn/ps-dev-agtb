@@ -26,7 +26,7 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'forecastdetails-record',
+                                'type' => 'forecastdetails-record',
                                 'label' => 'LBL_DASHLET_FORECAST_NAME',
                             ),
                             'context' => array(
@@ -40,7 +40,7 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'forecast-pareto',
+                                'type' => 'forecast-pareto',
                                 'label' => 'LBL_DASHLET_FORECAST_PARETO_CHART_NAME',
                             ),
                             'width' => 12,
@@ -49,7 +49,7 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
                     array(
                         array(
                             'view' => array(
-                                'name' => 'planned-activities',
+                                'type' => 'planned-activities',
                                 'label' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
                                 'limit' => '10',
                                 'date' => 'today',
@@ -61,7 +61,7 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
                     array(
                         array(
                             'view' => array(
-                                'name' => 'history',
+                                'type' => 'history',
                                 'label' => 'LBL_HISTORY_DASHLET',
                                 'filter' => '7',
                                 'limit' => '10',
@@ -74,7 +74,7 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'attachments',
+                                'type' => 'attachments',
                                 'label' => 'LBL_DASHLET_ATTACHMENTS_NAME',
                                 'limit' => '5',
                                 'auto_refresh' => '0',

@@ -3,7 +3,7 @@
 $viewdefs['Home']['base']['view']['twitter'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_TWITTER_NAME',
+            'label' => 'LBL_TWITTER_NAME',
             'description' => 'LBL_TWITTER_DESCRIPTION',
             'config' => array(
                 'limit' => '20',

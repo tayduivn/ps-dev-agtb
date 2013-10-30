@@ -81,8 +81,8 @@
 
             var contextDef,
                 component = {
-                    label: app.lang.get(metadata.name, metadata.preview.module),
-                    name: metadata.type,
+                    label: app.lang.get(metadata.label, metadata.preview.module),
+                    type: metadata.type,
                     preview: true
                 };
             if (metadata.preview.module || metadata.preview.link) {
@@ -107,7 +107,7 @@
                 {
                     layout: {
                         type: 'dashlet',
-                        label: app.lang.get(metadata.preview.label || metadata.name, metadata.preview.module),
+                        label: app.lang.get(metadata.preview.label || metadata.label, metadata.preview.module),
                         preview: true,
                         components: [
                             component
@@ -128,12 +128,12 @@
     selectDashlet: function(metadata) {
         app.drawer.load({
             layout: {
-                name: 'dashletconfiguration',
+                type: 'dashletconfiguration',
                 components: [
                     {
                         view: _.extend({}, metadata.config, {
-                            label: app.lang.get(metadata.name, metadata.config.module),
-                            name: metadata.type,
+                            label: app.lang.get(metadata.label, metadata.config.module),
+                            type: metadata.type,
                             config: true,
                             module: metadata.config.module || metadata.module
                         })
@@ -218,7 +218,7 @@
                     module: module,
                     type: name
                 }, dashlet),
-                title: app.lang.get(dashlet.name, dashlet.config.module),
+                title: app.lang.get(dashlet.label, dashlet.config.module),
                 description: description
             });
         }, this);

@@ -16,7 +16,7 @@
 $viewdefs['base']['view']['active-tasks'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_ACTIVE_TASKS_DASHLET',
+            'label' => 'LBL_ACTIVE_TASKS_DASHLET',
             'description' => 'LBL_ACTIVE_TASKS_DASHLET_DESCRIPTION',
             'config' => array(
                 'limit' => 10,

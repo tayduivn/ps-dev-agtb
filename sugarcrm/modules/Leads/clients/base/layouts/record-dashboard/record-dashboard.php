@@ -25,7 +25,7 @@ $viewdefs['Leads']['base']['layout']['record-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'planned-activities',
+                                'type' => 'planned-activities',
                                 'label' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
                                 'limit' => '10',
                                 'date' => 'today',
@@ -37,7 +37,7 @@ $viewdefs['Leads']['base']['layout']['record-dashboard'] = array(
                     array(
                         array(
                             'view' => array(
-                                'name' => 'history',
+                                'type' => 'history',
                                 'label' => 'LBL_HISTORY_DASHLET',
                                 'filter' => '7',
                                 'limit' => '10',

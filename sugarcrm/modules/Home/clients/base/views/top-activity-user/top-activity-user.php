@@ -3,7 +3,7 @@
 $viewdefs['Home']['base']['view']['top-activity-user'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_MOST_ACTIVE_COLLEAGUES',
+            'label' => 'LBL_MOST_ACTIVE_COLLEAGUES',
             'description' => 'LBL_MOST_ACTIVE_COLLEAGUES_DESC',
             'config' => array(
                 'filter_duration' => '7',

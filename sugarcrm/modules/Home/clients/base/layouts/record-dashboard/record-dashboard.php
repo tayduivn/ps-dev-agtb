@@ -23,7 +23,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'twitter',
+                                'type' => 'twitter',
                                 'label' => 'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME',
                                 'twitter' => 'sugarcrm',
                                 'limit' => 20,
@@ -35,7 +35,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'dashablelist',
+                                'type' => 'dashablelist',
                                 'label' => 'TPL_DASHLET_MY_MODULE',
                                 'display_columns' =>
                                 array(
@@ -63,7 +63,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'forecast-pipeline',
+                                'type' => 'forecast-pipeline',
                                 'label' => 'LBL_DASHLET_PIPLINE_NAME',
                                 'display_type' => 'self',
                             ),
@@ -78,7 +78,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'bubblechart',
+                                'type' => 'bubblechart',
                                 'label' => 'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME',
                                 'filter_duration' => 0,
                                 'filter_assigned' => 'my',

@@ -15,7 +15,7 @@
 $viewdefs['base']['view']['saved-reports-chart'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_DASHLET_SAVED_REPORTS_CHART',
+            'label' => 'LBL_DASHLET_SAVED_REPORTS_CHART',
             'description' => 'LBL_DASHLET_SAVED_REPORTS_CHART_DESC',
             'config' => array(
 

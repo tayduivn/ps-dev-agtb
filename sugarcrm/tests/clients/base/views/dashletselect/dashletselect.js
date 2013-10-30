@@ -61,11 +61,11 @@ describe('Base.View.Dashletselect', function() {
             SugarTest.testMetadata.addViewDefinition('dashablelist', {
                 dashlets: [
                     {
-                        name: 'first1',
+                        label: 'first1',
                         config: {}
                     },
                     {
-                        name: 'first2',
+                        label: 'first2',
                         config: {}
                     }
                 ]
@@ -90,17 +90,17 @@ describe('Base.View.Dashletselect', function() {
             SugarTest.testMetadata.addViewDefinition('dashablelist', {
                 dashlets: [
                     {
-                        name: 'first1',
+                        label: 'first1',
                         config: {}
                     },
                     {
-                        name: 'first2',
+                        label: 'first2',
                         config: {
                             module: 'Contacts'
                         }
                     },
                     {
-                        name: 'first3',
+                        label: 'first3',
                         config: {
                             module: 'Notes'
                         }
@@ -125,7 +125,7 @@ describe('Base.View.Dashletselect', function() {
                 dashlets: [
                     //Matched module and layout
                     {
-                        name: 'first1',
+                        label: 'first1',
                         config: {},
                         filter: {
                             module: [
@@ -136,7 +136,7 @@ describe('Base.View.Dashletselect', function() {
                     },
                     //Mismatched the module (Excluded)
                     {
-                        name: 'first2',
+                        label: 'first2',
                         config: {},
                         filter: {
                             module: [
@@ -147,7 +147,7 @@ describe('Base.View.Dashletselect', function() {
                     },
                     //Matched module without filtering view
                     {
-                        name: 'first3',
+                        label: 'first3',
                         config: {},
                         filter: {
                             module: [
@@ -158,7 +158,7 @@ describe('Base.View.Dashletselect', function() {
                     },
                     //Mismatched the view with matched module (Excluded)
                     {
-                        name: 'first4',
+                        label: 'first4',
                         config: {},
                         filter: {
                             module: [

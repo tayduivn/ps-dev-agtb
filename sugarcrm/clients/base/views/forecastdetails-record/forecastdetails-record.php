@@ -3,7 +3,7 @@
 $viewdefs['base']['view']['forecastdetails-record'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_DASHLET_FORECASTS_DETAILS',
+            'label' => 'LBL_DASHLET_FORECASTS_DETAILS',
             'description' => 'LBL_DASHLET_FORECASTS_DETAILS_DESC',
             'config' => array(
                 'module' => 'Forecasts',

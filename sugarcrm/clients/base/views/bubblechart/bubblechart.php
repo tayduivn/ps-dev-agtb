@@ -16,7 +16,7 @@
 $viewdefs['base']['view']['bubblechart'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME',
+            'label' => 'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME',
             'description' => 'LBL_TOP10_OPPORTUNITIES_CHART_DESC',
             'config' => array(),
             'preview' => array(),

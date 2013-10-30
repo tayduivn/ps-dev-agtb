@@ -3,7 +3,7 @@
 $viewdefs['Forecasts']['base']['view']['forecast-pipeline'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_DASHLET_PIPELINE_CHART_NAME',
+            'label' => 'LBL_DASHLET_PIPELINE_CHART_NAME',
             'description' => 'LBL_DASHLET_PIPELINE_CHART_DESC',
             'config' => array(
                 'module' => 'Forecasts'

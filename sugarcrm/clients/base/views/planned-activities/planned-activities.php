@@ -16,7 +16,7 @@
 $viewdefs['base']['view']['planned-activities'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
+            'label' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
             'description' => 'LBL_PLANNED_ACTIVITIES_DASHLET_DESCRIPTION',
             'config' => array(
                 'limit' => '10',
