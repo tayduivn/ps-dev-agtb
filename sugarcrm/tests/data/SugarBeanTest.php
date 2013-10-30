@@ -327,6 +327,119 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param array $parent_data   Parent bean data
+     * @param array $child_data    Child bean data
+     * @param array $fn_field_defs Function field definition
+     * @param mixed $expected      Expected value
+     *
+     * @dataProvider functionFieldProvider
+     */
+    public function testProcessFunctionFields(array $parent_data, array $child_data, array $fn_field_defs, $expected)
+    {
+        $parent = new BeanFunctionFieldsMock();
+        $child = new SugarBean();
+        $child->field_defs['fn_field'] = $fn_field_defs;
+        $child->fn_field = null;
+
+        foreach ($parent_data as $key => $value) {
+            $parent->$key = $value;
+        }
+
+        foreach ($child_data as $key => $value) {
+            $child->$key = $value;
+        }
+
+        $child->field_defs = $fn_field_defs;
+
+        $parent->processFunctionFields($child, array('fn_field' => $fn_field_defs));
+
+        $this->assertEquals($expected, $child->fn_field);
+    }
+
+    public static function functionFieldProvider()
+    {
+        $parent_data = array('foo' => 'bar');
+        $child_data = array('baz' => 'quux');
+
+        return array(
+            // source is parent bean, function is global function
+            array(
+                $parent_data,
+                $child_data,
+                array(
+                    'function_params' => array('foo'),
+                    'function_name' => 'strlen',
+                ),
+                3,
+            ),
+            // source is child bean, function is static function of a class
+            array(
+                $parent_data,
+                $child_data,
+                array(
+                    'function_params' => array('baz'),
+                    'function_params_source' => 'this',
+                    'function_class' => 'BeanFunctionFieldsMock',
+                    'function_name' => 'toUpper',
+                ),
+                'QUUX',
+            ),
+            // function declaration is in external file
+            array(
+                $parent_data,
+                $child_data,
+                array(
+                    'function_params' => array('foo'),
+                    'function_name' => 'SugarBeanTest_external_function',
+                    'function_require' => dirname(__FILE__) . '/SugarBeanTest/external_function.php',
+                ),
+                'bar',
+            ),
+            // argument is $this
+            array(
+                $parent_data,
+                array(),
+                array(
+                    'function_params' => array('$this'),
+                    'function_name' => 'get_class',
+                ),
+                'BeanFunctionFieldsMock',
+            ),
+            // param source is wrong
+            array(
+                $parent_data,
+                $child_data,
+                array(
+                    'function_params' => array('foo'),
+                    'function_params_source' => 'unknown',
+                    'function_name' => 'strlen',
+                ),
+                null,
+            ),
+            // function doesn't exist
+            array(
+                $parent_data,
+                $child_data,
+                array(
+                    'function_params' => array('foo'),
+                    'function_name' => 'SugarBeanTest_unknown',
+                ),
+                null,
+            ),
+            // source field is not set
+            array(
+                $parent_data,
+                $child_data,
+                array(
+                    'function_params' => array('bar'),
+                    'function_name' => 'strlen',
+                ),
+                null,
+            ),
+        );
+    }
+
+    /**
      * Check if SugarBean::checkUserAccess returns false without team access.
      * @covers SugarBean::checkUserAccess
      */
@@ -424,5 +537,18 @@ class BeanIsRelateFieldMock extends SugarBean
     public function is_relate_field($field_name_name)
     {
         return parent::is_relate_field($field_name_name);
+    }
+}
+
+class BeanFunctionFieldsMock extends SugarBean
+{
+    public function processFunctionFields(SugarBean $bean, array $fields)
+    {
+        parent::processFunctionFields($bean, $fields);
+    }
+
+    public static function toUpper($arg)
+    {
+        return strtoupper($arg);
     }
 }

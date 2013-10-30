@@ -5108,6 +5108,10 @@ class SugarBean
     protected function processFunctionFields(SugarBean $bean, array $fields)
     {
         foreach ($fields as $field => $value) {
+            if (!isset($value['function_params']) || !is_array($value['function_params'])) {
+                continue;
+            }
+
             $params = array();
             $can_execute = true;
             foreach ($value['function_params'] as $param) {
@@ -5121,11 +5125,11 @@ class SugarBean
                     break;
                 }
 
-                if (empty($source->$param)) {
+                if ($param == '$this') {
+                    $params[] = $source;
+                } elseif (!isset($source->$param)) {
                     $can_execute = false;
                     break;
-                } elseif ($param == '$this') {
-                    $params[] = $source;
                 } else {
                     $params[] = $source->$param;
                 }
@@ -5145,7 +5149,9 @@ class SugarBean
                     $function = $value['function_name'];
                 }
 
-                $bean->$field = call_user_func_array($function, $params);
+                if (is_callable($function)) {
+                    $bean->$field = call_user_func_array($function, $params);
+                }
             }
         }
     }
