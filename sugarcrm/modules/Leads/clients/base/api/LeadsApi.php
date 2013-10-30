@@ -32,7 +32,7 @@ class LeadsApi extends ModuleApi {
                 'pathVars' => array('module'),
                 'method' => 'createRecord',
                 'shortHelp' => 'This method creates a new Lead record with option to add Target & Email relationships',
-                'longHelp' => 'modules/Leads/api/help/LeadsApi.html',
+                'longHelp' => 'modules/Leads/clients/base/api/help/LeadsApi.html',
             ),
         );
     }
