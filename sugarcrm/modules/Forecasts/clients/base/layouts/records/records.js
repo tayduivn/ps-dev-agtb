@@ -359,11 +359,37 @@
                 // method gets overridden and options just needs an
                 this.collection.fetch();
                 this.context.trigger("forecasts:worksheet:committed", worksheet_type, response);
+                var msg, managerName;
+                if (worksheet_type === 'sales_rep') {
+                    if (user.is_manager) {
+                        // as manager, use own name
+                        managerName = user.full_name;
+                    } else {
+                        // as sales rep, use manager name
+                        managerName = user.reports_to_name;
+                    }
+                } else {
+                    if (user.reports_to_id) {
+                        // if manager has a manager, use reports to name
+                        managerName = user.reports_to_name;
+                    }
+                }
+                if (managerName) {
+                    msg = Handlebars.compile(app.lang.get('LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS_TO', 'Forecasts'))(
+                        {
+                            manager: managerName
+                        }
+                    );
+                } else {
+                    // user does not report to anyone, don't use any name
+                    msg = Handlebars.compile(app.lang.get('LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS', 'Forecasts'))();
+                }
+
                 app.alert.show('success', {
                     level: 'success',
                     autoClose: true,
-                    title: app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
-                    messages: [app.lang.get("LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS", "Forecasts")]
+                    title: app.lang.get('LBL_FORECASTS_WIZARD_SUCCESS_TITLE', 'Forecasts') + ':',
+                    messages: [msg]
                 });
             }
         }, this), silent: true, alerts: { 'success': false }});

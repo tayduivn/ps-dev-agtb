@@ -393,7 +393,8 @@ $mod_strings = array (
     'LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE' => 'The setting has been saved. Please wait while the module reloads.',
     // Labels for Success Messages:
     'LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS' => 'You have saved the forecasting worksheet as draft for the selected time period.',
-    'LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS' => 'You have committed the forecasting worksheet for the selected time period.',
+    'LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS' => 'You have committed your forecast',
+    'LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS_TO' => 'You have committed your forecast to {{manager}}',
 
     // custom ranges
     'LBL_FORECASTS_CUSTOM_RANGES_DEFAULT_NAME' => 'Custom Range',
