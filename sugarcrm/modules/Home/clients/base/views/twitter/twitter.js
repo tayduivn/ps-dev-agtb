@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 ({
     plugins: ['Dashlet', 'Timeago'],
     limit : 20,
@@ -85,7 +111,6 @@
         var url = app.api.buildURL('connector/twitter','',{id:twitter},{count:limit});
         app.api.call('READ', url, {},{
             success:function (data) {
-
                 if (self.disposed) {
                     return;
                 }
@@ -124,25 +149,30 @@
 
                 self.tweets = tweets;
                 if (!this.disposed) {
+                    self.template = app.template.get(self.name + '.Home');
                     self.render();
                 }
             },
             error: function(xhr,status,error){
-                if (xhr.status == 424) {
+                self.showGeneric = true;
+                self.errorLBL = app.lang.get('ERROR_UNABLE_TO_RETRIEVE_DATA');
+                self.template = app.template.get(self.name + '.twitter-need-configure.Home');
+                if (xhr.status === 404) {
+                    self.showGeneric = true;
+                    self.errorLBL = app.lang.get('LBL_ERROR_CANNOT_FIND_TWITTER') + self.twitter;
+                } else if (xhr.status === 424) {
                     app.cache.cut(self.key);
                     self.needConnect = false;
+                    self.showGeneric = false;
                     if (xhr.code && xhr.code === 'ERROR_NEED_AUTHORIZE') {
                         self.needConnect = true;
                     } else if (xhr.code && xhr.code === 'ERROR_NEED_OAUTH') {
                         self.needOAuth = true;
-                    } else {
-                        self.showGeneric = true;
                     }
                     self.showAdmin = app.acl.hasAccess('admin', 'Administration');
-                    self.template = app.template.get(self.name + '.twitter-need-configure.Home');
-                    if (!self.disposed) {
-                        app.view.View.prototype._render.call(self);
-                    }
+                }
+                if (!self.disposed) {
+                    app.view.View.prototype._render.call(self);
                 }
             },
             complete: (options) ? options.complete : null

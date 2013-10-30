@@ -27,6 +27,7 @@ require_once 'modules/ModuleBuilder/parsers/relationships/RelationshipsInterface
 require_once 'modules/ModuleBuilder/parsers/relationships/RelationshipFactory.php' ;
 require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 
+
 class DeployedRelationships extends AbstractRelationships implements RelationshipsInterface
 {
 
@@ -382,7 +383,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
 
         foreach ( $layoutAdditions as $deployedModuleName => $fieldName )
         {
-            if (! in_array ( strtolower ( $deployedModuleName ), $invalidModules ))
+            if (! in_array ( strtolower ( $deployedModuleName ), $invalidModules )) {
                 // Handle decision making on views for BWC/non-BWC modules
                 if (isModuleBWC($deployedModuleName)) {
                     $views = array(MB_EDITVIEW, MB_DETAILVIEW);
@@ -390,12 +391,13 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
                     $views = array(MB_RECORDVIEW);
                 }
                 
-                foreach($views as $view) {
+                foreach ($views as $view) {
                     $GLOBALS [ 'log' ]->info ( get_class ( $this ) . ": adding $fieldName to $view layout for module $deployedModuleName" ) ;
                     $parser = ParserFactory::getParser($view, $deployedModuleName);
                     $parser->addField ( array ( 'name' => $fieldName ) ) ;
                     $parser->handleSave ( false ) ;
                 }
+            }
         }
     }
 
