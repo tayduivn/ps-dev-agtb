@@ -80,6 +80,8 @@
      * @param string module     The module that we are currently on.
      */
     showRLIWarningMessage: function(module) {
+        app.routing.before('route', this.dismissAlert, undefined, this);
+
         var alert = app.alert.show('opp-rli-create', {
             level: 'warning',
             autoClose: false,
@@ -94,11 +96,21 @@
     },
 
     /**
+     * Handle dismissing the RLI create alert
+     */
+    dismissAlert: function() {
+        // close RLI warning alert
+        app.alert.dismiss('opp-rli-create');
+        // remove before route event listener
+        app.routing.offBefore('route', this.dismissAlert, this);
+    },
+
+    /**
      * Open a new Drawer with the RLI Create Form
      */
     openRLICreate: function() {
         // close RLI warning alert
-        app.alert.dismiss('opp-rli-create');
+        this.dismissAlert();
 
         var model = this.createLinkModel(this.createdModel || this.model, 'revenuelineitems');
 
