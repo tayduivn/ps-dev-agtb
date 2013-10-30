@@ -59,7 +59,7 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
             ),
             'hiddenFields' =>
             array(
-                'account_name',
+                'account_name' => 'Accounts',
             ),
         ),
         array(
@@ -123,7 +123,7 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
             ),
             'hiddenFields' =>
             array(
-                'account_name',
+                'account_name' => 'Accounts',
             ),
         ),
     ),

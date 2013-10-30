@@ -138,6 +138,54 @@ class ConvertLayoutMetadataParserTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ConvertLayoutMetadataParser::applyDependenciesAndHiddenFields
+     */
+    public function testApplyDependenciesAndHiddenFields_DependenciesApply_AddedToDef()
+    {
+        $dependency = array('Bar' => array());
+        $this->parser->mockOriginalDef['dependentModules'] = $dependency;
+        $def = array(
+            'module' => 'Foo',
+            'required' => true,
+        );
+        $includedModules = array('Foo', 'Bar');
+        $resultDef = $this->parser->applyDependenciesAndHiddenFields($def, $includedModules);
+        $this->assertEquals($dependency, $resultDef['dependentModules'], 'Dependency should be set');
+    }
+
+    /**
+     * @covers ConvertLayoutMetadataParser::applyDependenciesAndHiddenFields
+     */
+    public function testApplyDependenciesAndHiddenFields_DependencyDoesNotApply_NotAddedToDef()
+    {
+        $dependency = array('Bar' => array());
+        $this->parser->mockOriginalDef['dependentModules'] = $dependency;
+        $def = array(
+            'module' => 'Foo',
+            'required' => true,
+        );
+        $includedModules = array('Foo'); //Bar not included
+        $resultDef = $this->parser->applyDependenciesAndHiddenFields($def, $includedModules);
+        $this->assertFalse(isset($resultDef['dependentModules']), 'Dependency should not be set');
+    }
+
+    /**
+     * @covers ConvertLayoutMetadataParser::applyDependenciesAndHiddenFields
+     */
+    public function testApplyDependenciesAndHiddenFields_HiddenFieldsApply_AddedToDef()
+    {
+        $hiddenFields = array('baz' => 'Bar');
+        $this->parser->mockOriginalDef['hiddenFields'] = $hiddenFields;
+        $def = array(
+            'module' => 'Foo',
+            'required' => true,
+        );
+        $includedModules = array('Foo', 'Bar');
+        $resultDef = $this->parser->applyDependenciesAndHiddenFields($def, $includedModules);
+        $this->assertEquals($hiddenFields, $resultDef['hiddenFields'], 'Hidden fields should be set');
+    }
+
+    /**
      * @covers ConvertLayoutMetadataParser::removeLayout
      */
     public function testRemoveLayout()
@@ -223,6 +271,11 @@ class TestConvertLayoutMetadataParser extends ConvertLayoutMetadataParser
     public function deploy()
     {
         parent::deploy();
+    }
+
+    public function applyDependenciesAndHiddenFields($def, $includedModules)
+    {
+        return parent::applyDependenciesAndHiddenFields($def, $includedModules);
     }
 
     protected function _saveToFile($filename, $defs)

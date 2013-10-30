@@ -76,18 +76,28 @@ class ConvertLayoutMetadataParser extends GridLayoutMetaDataParser
     }
 
     /**
-     * Should take in an updated set of definitions, reorder and override the current panel set with the new one.
+     * Merge new data with existing data and deploy the resulting convert def
      *
      * @param array $data
      */
     public function updateConvertDef($data)
     {
-        //First check if Opportunities is in the list
-        $hasOpp = false;
+        $this->_convertdefs['modules'] = $this->mergeConvertDefs($data);
+        $this->deploy();
+    }
+
+    /**
+     * Should take in an updated set of definitions and override the current panel set with the new one.
+     *
+     * @param $data
+     * @return array result of merging the new data with existing data
+     */
+    public function mergeConvertDefs($data)
+    {
+        $includedModules = array();
         foreach ($data as $newDef) {
-            if (!empty($newDef['module']) && $newDef['module'] === 'Opportunities') {
-                $hasOpp = true;
-                break;
+            if (!empty($newDef['module'])) {
+                $includedModules[] = $newDef['module'];
             }
         }
 
@@ -106,13 +116,57 @@ class ConvertLayoutMetadataParser extends GridLayoutMetaDataParser
                 }
             }
             //if Opp is in the list, Account must be set to required
-            if ($newDef['module'] === 'Accounts' && $hasOpp) {
+            if ($newDef['module'] === 'Accounts' && in_array('Opportunities', $includedModules)) {
                 $newDef['required'] = true;
             }
+            $newDef = $this->applyDependenciesAndHiddenFields($newDef, $includedModules);
+
             $final[] = $newDef;
         }
-        $this->_convertdefs['modules'] = $final;
-        $this->deploy();
+        return $final;
+    }
+
+    /**
+     * Pull default def for module, check if dependencies & hidden fields apply
+     * Add them if they do apply and remove the key altogether if they don't
+     *
+     * @param $def
+     * @param $includedModules
+     * @return mixed
+     */
+    protected function applyDependenciesAndHiddenFields($def, $includedModules)
+    {
+        $defaultDef = $this->getDefaultDefForModule($def['module']);
+
+        if (isset($defaultDef['dependentModules'])) {
+            $dependentModules = array();
+            foreach ($defaultDef['dependentModules'] as $module => $value) {
+                if (in_array($module, $includedModules)) {
+                    $dependentModules[$module] = $value;
+                }
+            }
+            if (!empty($dependentModules)) {
+                $def['dependentModules'] = $dependentModules;
+            } else {
+                unset($def['dependentModules']);
+            }
+        }
+
+        if (isset($defaultDef['hiddenFields'])) {
+            $hiddenFields = array();
+            foreach ($defaultDef['hiddenFields'] as $fieldName => $module) {
+                if (in_array($module, $includedModules)) {
+                    $hiddenFields[$fieldName] = $module;
+                }
+            }
+            if (!empty($hiddenFields)) {
+                $def['hiddenFields'] = $hiddenFields;
+            } else {
+                unset($def['hiddenFields']);
+            }
+        }
+
+        return $def;
     }
 
     /**

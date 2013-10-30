@@ -74,8 +74,11 @@ describe("Leads.Base.Layout.ConvertPanel", function() {
             ]
         };
         var convertMeta = {
-            hiddenFields: ['foo', 'baz']
-        }
+            hiddenFields: {
+                'foo': 'Foo',
+                'baz': 'Foo'
+            }
+        };
         var expectedMeta = {
             panels: [
                 {
@@ -86,7 +89,7 @@ describe("Leads.Base.Layout.ConvertPanel", function() {
                     ]
                 }
             ]
-        }
+        };
         layout.removeFieldsFromMeta(meta, convertMeta);
         expect(meta).toEqual(expectedMeta);
     });
