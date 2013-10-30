@@ -125,6 +125,24 @@ array (
             'popupHelp' => 'LBL_BODY_HTML_POPUP_HELP',
           ),
         ),
+        5 =>
+        array (
+            0 => array(
+                'name' => 'header_title',
+            ),
+            1 => array(
+                'name' => 'header_text',
+            ),
+        ),
+        6 =>
+        array (
+            0 => array(
+                'name' => 'header_logo_url',
+            ),
+            1 => array(
+                'name' => 'footer_text',
+            ),
+        ),
       ),
       'lbl_editview_panel1' =>
       array (
