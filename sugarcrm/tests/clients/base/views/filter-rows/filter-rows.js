@@ -478,7 +478,8 @@ describe("BaseFilterRowsView", function() {
                     type: 'enum',
                     options: 'status_dom',
                     isMultiSelect: true,
-                    searchBarThreshold: 9999
+                    searchBarThreshold: 9999,
+                    required: false
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
             });
@@ -490,7 +491,8 @@ describe("BaseFilterRowsView", function() {
                     name: 'priority',
                     type: 'enum',
                     options: 'boolean_dom',
-                    searchBarThreshold: 9999
+                    searchBarThreshold: 9999,
+                    required: false
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
             });
@@ -502,7 +504,8 @@ describe("BaseFilterRowsView", function() {
                 expect(createFieldSpy.lastCall.args[1]).toEqual({
                     name: 'case_number',
                     type: 'int',
-                    auto_increment: false
+                    auto_increment: false,
+                    required: false
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
             });
@@ -516,7 +519,8 @@ describe("BaseFilterRowsView", function() {
                     name: 'case_number',
                     type: 'varchar',
                     auto_increment: false,
-                    len: 200
+                    len: 200,
+                    required: false
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
                 expect($row.data('value')).toEqual('1,20,35');
@@ -529,12 +533,14 @@ describe("BaseFilterRowsView", function() {
                 expect(createFieldSpy.firstCall.args[1]).toEqual({
                     type: 'int',
                     name: 'case_number_min',
-                    auto_increment: false
+                    auto_increment: false,
+                    required: false
                 });
                 expect(createFieldSpy.lastCall.args[1]).toEqual({
                     type: 'int',
                     name: 'case_number_max',
-                    auto_increment: false
+                    auto_increment: false,
+                    required: false
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
                 expect(_.size($valueField.find('input'))).toEqual(2);
@@ -555,7 +561,8 @@ describe("BaseFilterRowsView", function() {
                     expect(createFieldSpy.lastCall.args[1]).toEqual({
                         name: 'team_name',
                         type: 'relate',
-                        id_name: 'team_id'
+                        id_name: 'team_id',
+                        required: false
                     });
                     expect(_.isEmpty($valueField.html())).toBeFalsy();
                     expect(fetchStub).toHaveBeenCalled();
@@ -566,7 +573,8 @@ describe("BaseFilterRowsView", function() {
                     expect(createFieldSpy.lastCall.args[1]).toEqual({
                         name: 'team_name',
                         type: 'relate',
-                        id_name: 'team_id'
+                        id_name: 'team_id',
+                        required: false
                     });
                     expect(_.isEmpty($valueField.html())).toBeFalsy();
                     expect(fetchStub).not.toHaveBeenCalled();

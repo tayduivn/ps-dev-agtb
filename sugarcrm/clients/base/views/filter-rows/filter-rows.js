@@ -513,7 +513,7 @@
                 fieldDef.auto_populate = true;
                 break;
         }
-        data.isRequired = fieldDef.required;
+        fieldDef.required = false;
 
         // Create new model with the value set
         var model = app.data.createBean(moduleName);
