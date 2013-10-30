@@ -364,10 +364,12 @@ class Currency extends SugarBean
     {
         sugar_cache_clear('currency_list');
 
+        $return = parent::save($check_notify);
+
         // The per-module cache doesn't need to be cleared here
         MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_CURRENCIES));
-
-        return parent::save($check_notify);
+        
+        return $return;
     }
 
     /**
@@ -378,10 +380,10 @@ class Currency extends SugarBean
     {
         sugar_cache_clear('currency_list');
 
+        $return = parent::mark_deleted($id);
+
         // The per-module cache doesn't need to be cleared here
         MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_CURRENCIES));
-
-        return parent::mark_deleted($id);
     }
 
     /**

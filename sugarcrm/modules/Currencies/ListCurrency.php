@@ -25,7 +25,7 @@ require_once('include/SugarQueue/SugarJobQueue.php');
 	var $focus = null;
 	var $list = null;
 	var $javascript = '<script>';
-
+    var $recordSaved = false;
      /**
       * Look up the currencies in the system and set the list
       *
@@ -76,6 +76,8 @@ require_once('include/SugarQueue/SugarJobQueue.php');
                 $currency->conversion_rate = unformat_number($_POST['conversion_rate']);
                 $currency->save();
                 $this->focus = $currency;
+                // Used to tell calling code that a change was made
+                $this->recordSaved = true;
 
                 //Check if the conversion rates changed and, if so, update the rates with a scheduler job
                 if($isUpdate && $previousConversionRate != $currency->conversion_rate)

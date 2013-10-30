@@ -50,6 +50,9 @@ $focus = BeanFactory::getBean('Currencies');
 $lc = new ListCurrency();
 $lc->handleAdd();
 
+// Flag that tells the template whether to request a new metadata payload
+$refreshMetadata = !empty($lc->recordSaved);
+
 if(isset($_REQUEST['merge']) && $_REQUEST['merge'] == 'true'){
 	$isMerge = true;
 	
@@ -166,6 +169,7 @@ $sugar_smarty = new Sugar_Smarty();
 	//if (empty($focus->list_order)) $xtpl->assign('LIST_ORDER', count($focus->get_manufacturers(false,'All'))+1); 
 	//else $xtpl->assign('LIST_ORDER', $focus->list_order);
 	
+	$sugar_smarty->assign('REFRESHMETADATA', $refreshMetadata);
 	$sugar_smarty->display("modules/Currencies/EditView.tpl");
 	
 	$javascript = new javascript();
