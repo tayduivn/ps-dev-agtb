@@ -316,13 +316,6 @@
                         this.cleanUpDirtyModels();
                         var ctx = this.context.parent || this.context;
                         ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, false);
-
-                        if (this.selectedUser.is_manager && app.metadata.getModule('Forecasts', 'config').show_forecasts_commit_warnings == 1) {
-                            this.collection.once('reset', function() {
-                                this.setNavigationMessage(true, 'LBL_WORKSHEET_COMMIT_ALERT', 'LBL_WORKSHEET_COMMIT_ALERT');
-                                this.showNavigationMessage('forecast');
-                            }, this)
-                        }
                         this.refreshData();
                     }
                 }, this);
@@ -409,32 +402,22 @@
                     }
                     return false;
                 }
-                if (this.navigationMessage == 'LBL_WORKSHEET_COMMIT_ALERT') {
-                    app.alert.show('leave_confirmation', {
-                        level: 'info',
-                        closeable: true,
-                        autoClose: true,
-                        messages: app.lang.get(this.navigationMessage, 'Forecasts').split("<br>"),
-                    });
-                    return true;
-                } else {
-                    this.targetURL = Backbone.history.getFragment();
-                    
-                    //Replace the url hash back to the current staying page
-                    app.router.navigate(this._currentUrl, {trigger: false, replace: true});
-                    
-                    app.alert.show('leave_confirmation', {
-                        level: 'confirmation',
-                        messages: app.lang.get(this.navigationMessage, 'Forecasts').split("<br>"),
-                        onConfirm: _.bind(function(){
-                            callback.call(this);
-                        }, this),
-                        templateOptions: {
-                            cancelContLabel: 'LBL_CANCEL_BUTTON_LABEL_UNSAVED_CONT',
-                            confirmContLabel: 'LBL_CONFIRM_BUTTON_LABEL_UNSAVED_CONT'
-                        }
-                    });
-                }
+                this.targetURL = Backbone.history.getFragment();
+
+                //Replace the url hash back to the current staying page
+                app.router.navigate(this._currentUrl, {trigger: false, replace: true});
+
+                app.alert.show('leave_confirmation', {
+                    level: 'confirmation',
+                    messages: app.lang.get(this.navigationMessage, 'Forecasts').split("<br>"),
+                    onConfirm: _.bind(function(){
+                        callback.call(this);
+                    }, this),
+                    templateOptions: {
+                        cancelContLabel: 'LBL_CANCEL_BUTTON_LABEL_UNSAVED_CONT',
+                        confirmContLabel: 'LBL_CONFIRM_BUTTON_LABEL_UNSAVED_CONT'
+                    }
+                });
                 return false;
             }
         }
