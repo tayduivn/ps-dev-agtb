@@ -42,7 +42,7 @@
   .form-horizontal {
     .record-cell,
     .normal {
-      min-height: 50px;
+      min-height: 42px;
       padding-left: 0;
     }
     .record-cell {
@@ -151,7 +151,7 @@
 
     .select2-container {
       z-index: 1;
-      margin: -5px 0 0 -9px;
+      margin: -5px 0 0 -7px;
       .select2-choice {
         color: @gray;
       }
@@ -313,7 +313,6 @@
       }
       .normal .control-group {
         margin-bottom: 4px;
-        height: 28px;
         .btn {
           top: -5px;
         }
@@ -538,6 +537,14 @@
       }
       input[type="text"] {
         margin-top: 0 !important;
+      }
+    }
+    .record-cell[data-type="teamset"] {
+      .controls {
+        margin-left: 0;
+      }
+      .control-group .btn {
+        top: 0;
       }
     }
   }
