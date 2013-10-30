@@ -169,21 +169,18 @@ class LanguageManager
 					'custom/modules/'.$module.'/language/'.$lang.'.lang.php',
 				 );
 
-		#27023, if this module template language file was not attached , get the template from this module vardef cache file if exsits and load the template language files.
-		static $createdModules;
-		if(empty($createdModules[$module]) && isset($GLOBALS['beanList'][$module])){
-				$object = $GLOBALS['beanList'][$module];
+        if (isset($GLOBALS['beanList'][$module])) {
+            $object = $GLOBALS['beanList'][$module];
 
-				if ($object == 'aCase')
-		            $object = 'Case';
+            if ($object == 'aCase') {
+                $object = 'Case';
+            }
 
-		        if(!empty($GLOBALS["dictionary"]["$object"]["templates"])){
-		        	$templates = $GLOBALS["dictionary"]["$object"]["templates"];
-					$loaded_mod_strings = LanguageManager::loadTemplateLanguage($module , $templates, $lang , $loaded_mod_strings);
-					$createdModules[$module] = true;
-		        }
-		}
-		//end of fix #27023
+            if (!empty($GLOBALS["dictionary"][$object]["templates"])) {
+                $templates = $GLOBALS["dictionary"][$object]["templates"];
+                $loaded_mod_strings = LanguageManager::loadTemplateLanguage($module, $templates, $lang, $loaded_mod_strings);
+            }
+        }
 
 		// Add in additional search paths if they were provided.
 		if(!empty($additional_search_paths) && is_array($additional_search_paths))
