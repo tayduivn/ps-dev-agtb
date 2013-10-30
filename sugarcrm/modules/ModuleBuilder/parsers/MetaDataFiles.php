@@ -917,7 +917,7 @@ class MetaDataFiles
                         continue;
                     }
 
-                    $controller = file_get_contents($fileInfo['path']);
+                    $controller = self::trimLicense(file_get_contents($fileInfo['path'], "js"));
                     $results[$fileInfo['subPath']]['controller'][$fileInfo['platform']] = $controller;
                     break;
                 case 'hbs':
@@ -925,7 +925,9 @@ class MetaDataFiles
                     if ( isset($results[$fileInfo['subPath']]['templates'][$layoutName]) ) {
                         continue;
                     }
-                    $results[$fileInfo['subPath']]['templates'][$layoutName] = file_get_contents($fileInfo['path']);
+                    $results[$fileInfo['subPath']]['templates'][$layoutName] = self::trimLicense(
+                        file_get_contents($fileInfo['path'])
+                    );
                     break;
                 case 'php':
                     $viewdefs = array();
@@ -1120,5 +1122,28 @@ class MetaDataFiles
         }
 
         return null;
+    }
+
+    /**
+     * Used to remove the sugarcrm license header from component files that are going to be rolled into a JSON response
+     * @param string $text
+     * @param string $type
+     *
+     * @return string
+     */
+    protected static function trimLicense($text, $type = "hbs") {
+        $start = "{{!";
+        $end = "}}";
+        if ($type == "js") {
+            $start = "/**";
+            $end = "*/";
+        }
+        if (substr($text, 0, 3) == $start) {
+            $endOfLicense = strpos($text, $end) + strlen($end);
+            $text = substr($text, $endOfLicense);
+        }
+
+        return $text;
+
     }
 }
