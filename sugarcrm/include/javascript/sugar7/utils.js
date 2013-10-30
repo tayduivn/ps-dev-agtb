@@ -625,6 +625,23 @@
                 } else {
                     return model.get('name') || '';
                 }
+            },
+
+            /**
+             * Resolve data conflict on bean update. Open a drawer to pick between data in the database
+             * or the data currently in the bean.
+             * @param error
+             * @param model
+             * @param callback
+             */
+            resolve409Conflict: function(error, model, callback) {
+                app.drawer.open({
+                    layout: 'resolve-conflicts',
+                    context: {
+                        dataInDb: error.payload.record,
+                        modelToSave: model
+                    }
+                }, callback);
             }
         });
     });

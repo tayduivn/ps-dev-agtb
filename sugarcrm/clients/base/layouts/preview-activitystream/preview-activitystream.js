@@ -37,27 +37,32 @@
      * @param collection
      * @param fetch
      * @param previewId
+     * @param {boolean} showActivities
      */
-    fetchActivities: function(model, collection, fetch, previewId) {
+    fetchActivities: function(model, collection, fetch, previewId, showActivities) {
         this.disposeAllActivities();
         this.collection.dataFetched = false;
         this.$el.hide();
-        this.collection.reset();
-        this.collection.resetPagination();
-        this.collection.fetch({
-            /*
-             * Retrieve activities for the model that the user wants to preview
-             */
-            endpoint: function(method, collection, options, callbacks) {
-                var url = app.api.buildURL(model.module, 'activities', {id: model.get('id'), link: true}, options.params);
 
-                return app.api.call('read', url, null, callbacks);
-            },
-            /*
-             * Render activity stream
-             */
-            success: _.bind(this.renderActivities, this)
-        });
+        showActivities = _.isUndefined(showActivities) ? true : showActivities;
+        if (showActivities) {
+            this.collection.reset();
+            this.collection.resetPagination();
+            this.collection.fetch({
+                /*
+                 * Retrieve activities for the model that the user wants to preview
+                 */
+                endpoint: function(method, collection, options, callbacks) {
+                    var url = app.api.buildURL(model.module, 'activities', {id: model.get('id'), link: true}, options.params);
+
+                    return app.api.call('read', url, null, callbacks);
+                },
+                /*
+                 * Render activity stream
+                 */
+                success: _.bind(this.renderActivities, this)
+            });
+        }
     },
 
     /**

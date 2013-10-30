@@ -61,12 +61,41 @@
             this.cancelEdit();
             return;
         }
+
+        var successCallback = _.bind(function() {
+                this._save();
+            }, this);
+
+        async.forEachSeries(this.view.rowFields[this.model.id], function(view, callback) {
+            app.file.checkFileFieldsAndProcessUpload(view, {
+                success: function() {
+                    callback.call();
+                }
+            }, {deleteIfFails: false }, true);
+        }, successCallback);
+    },
+
+    _save: function() {
         var self = this,
+            successCallback = function(model) {
+                self.changed = false;
+                self.view.toggleRow(model.id, false);
+                self._refreshListView();
+            },
             options = {
-                success: function(model) {
-                    self.changed = false;
-                    self.view.toggleRow(model.id, false);
-                    self._refreshListView();
+                success: successCallback,
+                error: function(error) {
+                    if (error.status === 409) {
+                        app.utils.resolve409Conflict(error, self.model, function(model, isDatabaseData) {
+                            if (model) {
+                                if (isDatabaseData) {
+                                    successCallback(model);
+                                } else {
+                                    self._save();
+                                }
+                            }
+                        });
+                    }
                 },
                 complete: function() {
                     self.setDisabled(false);
@@ -79,24 +108,12 @@
                         messages: app.lang.get('LBL_RECORD_SAVED', self.module)
                     }
                 },
-                relate: self.model.link ? true : false
+                relate: this.model.link ? true : false
             };
 
-        options = _.extend({}, options, self.getCustomSaveOptions(options));
+        options = _.extend({}, options, this.getCustomSaveOptions(options));
 
-        var callbacks = {
-            success: function() {
-                self.model.save({}, options);
-            }
-        };
-
-        async.forEachSeries(this.view.rowFields[this.model.id], function(view, callback) {
-            app.file.checkFileFieldsAndProcessUpload(view, {
-                success: function() {
-                    callback.call();
-                }
-            }, {deleteIfFails: false }, true);
-        }, callbacks.success);
+        this.model.save({}, options);
     },
 
     getCustomSaveOptions: function(options) {

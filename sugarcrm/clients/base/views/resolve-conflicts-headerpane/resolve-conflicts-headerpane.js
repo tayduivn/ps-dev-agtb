@@ -1,0 +1,79 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+({
+    /**
+     * @class View.ResolveConflictsHeaderpaneView
+     * @alias SUGAR.App.view.views.ResolveConflictsHeaderpaneView
+     * @extends View.HeaderpaneView
+     */
+    extendsFrom: 'HeaderpaneView',
+
+    /**
+     * Register event handlers for the buttons and set the title.
+     * @param options
+     */
+    initialize: function(options) {
+        this.events = _.extend({}, this.events, {
+            'click [name=select_button]': 'selectClicked',
+            'click [name=cancel_button]': 'cancelClicked'
+        });
+
+        this._super('initialize', [options]);
+
+        this._setTitle();
+    },
+
+    /**
+     * Set header pane title.
+     * @private
+     */
+    _setTitle: function() {
+        var modelToSave = this.context.get('modelToSave'),
+            titleTemplate = Handlebars.compile(app.lang.getAppString('LBL_RESOLVE_CONFLICT')),
+            name = modelToSave.get('name');
+
+        this.title = titleTemplate({
+            name: name
+        });
+    },
+
+    /**
+     * Perform action according to whether the client's or database's data was selected.
+     * @param event
+     */
+    selectClicked: function(event) {
+        var selected = this.context.get('selection_model'),
+            modelToSave = this.context.get('modelToSave'),
+            dataInDb = this.context.get('dataInDb'),
+            origin;
+
+        if (selected instanceof Backbone.Model) {
+            origin = selected.get('_dataOrigin');
+            if (origin === 'client') {
+                modelToSave.set('date_modified', dataInDb.date_modified);
+                app.drawer.close(modelToSave, false);
+            } else if (origin === 'database') {
+                modelToSave.set(dataInDb);
+                app.drawer.close(modelToSave, true);
+            }
+        }
+    },
+
+    /**
+     * Close the drawer when cancel is clicked.
+     * @param event
+     */
+    cancelClicked: function(event) {
+        app.drawer.close();
+    }
+})

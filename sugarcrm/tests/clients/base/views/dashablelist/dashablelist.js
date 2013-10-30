@@ -1,6 +1,7 @@
 describe('View.BaseDashablelistView', function() {
     var app,
         view,
+        layout,
         sampleFieldMetadata = [{name: 'foo'}, {name: 'bar'}],
         sampleColumns = {foo: 'foo', bar: 'bar'},
         moduleName = 'Accounts',
@@ -10,8 +11,6 @@ describe('View.BaseDashablelistView', function() {
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        SugarTest.loadHandlebarsTemplate(layoutName, 'layout', 'base');
-        SugarTest.loadComponent('base', 'layout', layoutName);
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.loadComponent('base', 'field', 'base');
         SugarTest.testMetadata.addViewDefinition(
@@ -29,13 +28,26 @@ describe('View.BaseDashablelistView', function() {
         app.data.declareModels();
         SugarTest.loadPlugin('Dashlet');
         app.user.set('module_list', [moduleName]);
-        layout = SugarTest.createLayout('base', moduleName, layoutName);
+
+        var context = app.context.getContext();
+        context.set({
+            module: moduleName,
+            layout: layoutName
+        });
+        context.prepare();
+
+        layout = app.view.createLayout({
+            name: layoutName,
+            context: context
+        });
+
         view = SugarTest.createView('base', moduleName, viewName, null, null, null, layout);
         view._availableModules = {Accounts: 'Accounts', Contacts: 'Contacts'};
     });
 
     afterEach(function() {
         sinon.collection.restore();
+        layout.dispose();
         view.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
@@ -68,7 +80,6 @@ describe('View.BaseDashablelistView', function() {
         });
         sinon.collection.stub(app.lang, 'get').returnsArg(0);
 
-        view.layout.module = mainModule;
         expect(view.getLinkedFields(relateModule)).toEqual({'a': 'a'});
     });
 
