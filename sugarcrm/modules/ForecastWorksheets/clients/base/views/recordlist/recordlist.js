@@ -982,24 +982,45 @@
         _.each(this._fields.visible, function(field) {
             // only adjust the currency fields
             if (field.type === 'currency') {
-                var converted = this.$el.find('span[data-name^="' + field.name + '"] .converted'),
-                    original = this.$el.find('span[data-name^="' + field.name + '"] label.original'),
-                    widths = converted.map(function() {
-                        return $(this).width();
-                    }).get(),
-                    labelWidths = original.map(function() {
-                        return $(this).width();
-                    }).get();
+                var tdSelector = 'td[data-field-name^="' + field.name + '"]',
+                    maxWidth = 0,
+                    maxLabelWidth = 0,
+                    fields = this.$el.find(tdSelector + ' div.currency-field');
 
-                // Added 5 to the calculated amount so that FF plays nice.
-                converted.width(_.max(widths) + 5);
-                original.width(_.max(labelWidths));
+                // find the max widths from the fields
+                _.each(fields, function(field) {
+                    var original = 0,
+                        converted = 0;
 
-                var parentTds = this.$el.find('span[data-name^="' + field.name + '"]'),
-                    parentWidth = _.max(parentTds.map(function() {
-                        return $(this).outerWidth();
-                    }).get()),
-                    finalTDWidth = parentWidth + 20;
+                    if ($(field).has('label.original').length) {
+                        // this is a currency that is not in base, so get the widths of the converted value
+                        // and the original value
+                        original = $(field).find('label.original').width();
+                        converted = $(field).find('.converted').width();
+
+                        // this only needs to run here
+                        if (original > maxLabelWidth) {
+                            maxLabelWidth = original;
+                        }
+                    } else {
+                        // this is a currency in base, just get the width of the div
+                        converted = $(field).width();
+                    }
+
+                    // we always need to run this
+                    if (converted > maxWidth) {
+                        maxWidth = converted;
+                    }
+                });
+
+                maxWidth = maxWidth+5; // Added 5 to the calculated amount so that FF plays nice.
+
+                // adjust the fields for the correct values
+                this.$el.find(tdSelector + ' .converted').width(maxWidth);
+                this.$el.find(tdSelector + ' label.original').width(maxLabelWidth);
+
+                // combine all the widths and add 20 for some extra padding
+                var finalTDWidth = maxWidth + maxLabelWidth + 20;
                 this.$el.find('th[data-fieldname^="' + field.name + '"]')
                     .width(finalTDWidth)
                     .css('maxWidth', finalTDWidth + 'px')

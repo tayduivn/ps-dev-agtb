@@ -398,6 +398,7 @@ $dictionary['ForecastWorksheet'] = array(
             'len' => '26,6',
             'audited' => true,
             'sortable' => true,
+            'align' => 'right',
             'comment' => 'List price of product ("List" in Quote)'
         ),
         'cost_price' =>  array(
@@ -407,6 +408,7 @@ $dictionary['ForecastWorksheet'] = array(
             'len' => '26,6',
             'audited' => true,
             'sortable' => true,
+            'align' => 'right',
             'comment' => 'Product cost ("Cost" in Quote)'
         ),
         'discount_price' =>  array(
@@ -416,6 +418,7 @@ $dictionary['ForecastWorksheet'] = array(
             'len' => '26,6',
             'audited' => true,
             'sortable' => true,
+            'align' => 'right',
             'comment' => 'Discounted price ("Unit Price" in Quote)'
         ),
         'discount_amount' =>  array(
@@ -426,6 +429,7 @@ $dictionary['ForecastWorksheet'] = array(
             'len' => '26,6',
             'precision' => 6,
             'sortable' => true,
+            'align' => 'right',
             'comment' => 'Discounted amount'
         ),
         'quantity' =>  array(
@@ -435,6 +439,7 @@ $dictionary['ForecastWorksheet'] = array(
             'len' => 5,
             'comment' => 'Quantity in use',
             'sortable' => true,
+            'align' => 'right',
             'default' => 1
         ),
         'total_amount' => array(
@@ -442,6 +447,7 @@ $dictionary['ForecastWorksheet'] = array(
             'vname' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
             'reportable' => false,
             'sortable' => true,
+            'align' => 'right',
             'type' => 'currency'
         ),
         'parent_deleted' =>
