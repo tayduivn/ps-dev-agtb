@@ -152,7 +152,7 @@ abstract class SugarForecasting_Export_AbstractExport extends SugarForecasting_A
     {
         $timePeriod = BeanFactory::getBean('TimePeriods');
         $timePeriod->retrieve($this->args['timeperiod_id']);
-        return $timePeriod->name;
+        return str_replace(' ', '_', $timePeriod->name);
     }
 
 
