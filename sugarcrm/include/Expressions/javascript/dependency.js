@@ -350,7 +350,7 @@ AH.getCachedRelatedField = function(link, ftype, view)
  */
 AH.getCollection = function (variable, view) {
     if (!view)view = AH.lastView;
-        var field = AH.COLLECTIONS_MAP[view][variable];
+        var field = (AH.COLLECTIONS_MAP[view] && AH.COLLECTIONS_MAP[view][variable]) ? AH.COLLECTIONS_MAP[view][variable] : null;
         return field;
 }
 
