@@ -407,9 +407,12 @@
         if (adjustLabels === true) {
             this.adjustProbabilityLabels();
         }
-
-        this.convertDataToChartData();
-        this.generateD3Chart();
+        
+        if (this.state == 'open' && !this.preview_open
+                && !_.isUndefined(this._serverData)) {
+            this.convertDataToChartData();
+            this.generateD3Chart();
+        }
     },
 
     /**
