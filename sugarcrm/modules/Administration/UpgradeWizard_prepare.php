@@ -87,7 +87,7 @@ if($install_type == 'module' && $mode != 'Uninstall'){
         $require_license = true;
    }
    else {
-        $GLOBALS['log']->error("License File $filename does not exist");
+        $GLOBALS['log']->error("License File $license_file does not exist");
    }
 }
 
