@@ -180,7 +180,6 @@ $mod_strings = array (
 
     'LBL_QUOTA' => 'Quota',
     'LBL_QUOTA_ADJUSTED' => 'Quota (Adjusted)',
-    'LBL_TARGET_QUOTA' => 'Target Quota',
 
     'LBL_FORECAST_FOR'=>'Forecast Worksheet for: ',
     'LBL_FMT_ROLLUP_FORECAST'=>'(Rollup)',
