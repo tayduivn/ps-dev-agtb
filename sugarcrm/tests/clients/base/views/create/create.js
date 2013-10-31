@@ -669,23 +669,6 @@ describe("Create View", function() {
                     expect(alertStub.called).toBeFalsy();
                 });
             });
-
-            it('show a warning because the user has no access so the api did not return ID.', function() {
-                modelId = undefined;
-
-                runs(function() {
-                    view.buttons[view.saveButtonName].getFieldElement().click();
-                });
-
-                waitsFor(function() {
-                    return flag;
-                }, 'close should have been called but timeout expired', 1000);
-
-                runs(function() {
-                    expect(drawerCloseStub.calledOnce).toBeTruthy();
-                    expect(alertStub.called).toBeTruthy();
-                });
-            });
         });
 
 
@@ -867,24 +850,6 @@ describe("Create View", function() {
                 expect(alertStub.called).toBeFalsy();
             });
         });
-        it("Should save and show a warning because the user has no access so the api did not return ID.", function() {
-            modelId = undefined;
-            runs(function() {
-                view.buttons[view.saveAndCreateButtonName].getFieldElement().click();
-            });
-
-            waitsFor(function() {
-                return flag;
-            }, 'clear should have been called but timeout expired', 1000);
-
-            runs(function() {
-                expect(saveModelStub.calledOnce).toBeTruthy();
-                expect(drawerCloseStub.called).toBeTruthy();
-                expect(clearStub.called).toBeFalsy();
-                expect(navigateStub.called).toBeFalsy();
-                expect(alertStub.called).toBeTruthy();
-            });
-        });
     });
 
     describe('Save and View', function() {
@@ -924,23 +889,6 @@ describe("Create View", function() {
                 expect(navigateStub.called).toBeTruthy();
                 expect(drawerCloseStub.called).toBeFalsy();
                 expect(alertStub.called).toBeFalsy();
-            });
-        });
-        it("Should save and show a warning because the user has no access so the api did not return ID.", function() {
-            modelId = undefined;
-            runs(function() {
-                view.buttons[view.saveAndViewButtonName].getFieldElement().click();
-            });
-
-            waitsFor(function() {
-                return flag;
-            }, 'navigate should have been called but timeout expired', 1000);
-
-            runs(function() {
-                expect(saveModelStub.calledOnce).toBeTruthy();
-                expect(navigateStub.calledOnce).toBeFalsy();
-                expect(drawerCloseStub.called).toBeTruthy();
-                expect(alertStub.called).toBeTruthy();
             });
         });
     });
