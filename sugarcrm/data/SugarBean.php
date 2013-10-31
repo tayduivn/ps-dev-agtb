@@ -6294,17 +6294,19 @@ class SugarBean
     * Gets there where statement for checking if a user is an owner
     *
     * @param GUID $user_id
-    * @return STRING
+    * @param string $table_alias What table name should we be using (optional)
+    * @return STRING 
     */
-    function getOwnerWhere($user_id)
+    function getOwnerWhere($user_id, $table_alias = null)
     {
-        if(isset($this->field_defs['assigned_user_id']))
-        {
-            return " $this->table_name.assigned_user_id ='$user_id' ";
+        if ($table_alias == null) {
+            $table_alias = $this->table_name;
         }
-        if(isset($this->field_defs['created_by']))
-        {
-            return " $this->table_name.created_by ='$user_id' ";
+        if (isset($this->field_defs['assigned_user_id'])) {
+            return " $table_alias.assigned_user_id ='$user_id' ";
+        }
+        if (isset($this->field_defs['created_by'])) {
+            return " $table_alias.created_by ='$user_id' ";
         }
         return '';
     }
