@@ -46,7 +46,7 @@ class RepairAndClear
     public $execute;
     protected $module_list_from_cache;
 
-    public function repairAndClearAll($selected_actions, $modules, $autoexecute=false, $show_output=true)
+    public function repairAndClearAll($selected_actions, $modules, $autoexecute=false, $show_output=true, $metadata_sections=false)
     {
         global $mod_strings;
         $this->module_list= $modules;
@@ -138,7 +138,7 @@ class RepairAndClear
                 //BEGIN SUGARCRM flav=ent ONLY
                 $this->repairPortalConfig();
                 //END SUGARCRM flav=ent ONLY
-                $this->repairMetadataAPICache();
+                $this->repairMetadataAPICache($metadata_sections);
                 break;
         }
 
