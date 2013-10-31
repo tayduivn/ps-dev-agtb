@@ -1248,7 +1248,7 @@ class MetaDataManager
      * @param string $section
      * @param array $platforms
      */
-    public static function refreshSectionCache($section = '', $platforms = array())
+    public static function refreshSectionCache($section, $platforms = array())
     {
         self::refreshCachePart('section', $section, $platforms);
     }
@@ -1259,7 +1259,7 @@ class MetaDataManager
      * @param array $modules
      * @param array $platforms
      */
-    public static function refreshModulesCache($modules = array(), $platforms = array())
+    public static function refreshModulesCache($modules, $platforms = array())
     {
         self::refreshCachePart('modules', $modules, $platforms);
     }
@@ -1271,7 +1271,7 @@ class MetaDataManager
      * @param array $languages Array of languages to refresh the caches of
      * @param array $platforms List of platforms for this request
      */
-    public static function refreshLanguagesCache($languages = array(), $platforms = array())
+    public static function refreshLanguagesCache($languages, $platforms = array())
     {
         self::refreshCachePart('languages', $languages, $platforms);
     }

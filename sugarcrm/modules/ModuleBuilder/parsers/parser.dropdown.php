@@ -115,8 +115,8 @@ class ParserDropDown extends ModuleBuilderParser
         sugar_cache_reset();
         clearAllJsAndJsLangFilesWithoutOutput();
 
-        // Clear out the api metadata cache
-        MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_LABELS));
+        // Clear out the api metadata languages cache for all languages
+        MetaDataManager::refreshLanguagesCache(array_keys(get_languages()));
     }
 
     /**
