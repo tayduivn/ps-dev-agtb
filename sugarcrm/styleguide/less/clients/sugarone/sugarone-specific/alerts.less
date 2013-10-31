@@ -26,7 +26,11 @@
 .alert-success,
 .alert-success .alert-heading {
   background-color: @green;
-  color:  @white;
+  color: @white;
+  a {
+    color: @white;
+    text-decoration: underline;
+  }
 }
 .alert-danger,
 .alert-error {
@@ -37,17 +41,25 @@
 .alert-danger .alert-heading,
 .alert-error .alert-heading {
   color: @white;
+  a {
+    color: @white;
+    text-decoration: underline;
+  }
 }
 .alert-warning {
   background-color: @yellow;
 }
-.alert-warning .alert-heading {
+.alert-warning, .alert-warning .alert-heading {
   color:  @gray !important;
 }
 .alert-info,
 .alert-info .alert-heading {
   background-color: @infoBackground;
   color:  @white;
+  a {
+    color: @white;
+    text-decoration: underline;
+  }
 }
 
 
