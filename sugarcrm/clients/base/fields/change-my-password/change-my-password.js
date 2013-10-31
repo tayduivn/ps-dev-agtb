@@ -39,7 +39,7 @@
          * Manually adds the validation error label to errorName2Keys
          * @type {string}
          */
-        app.error.errorName2Keys['current_password'] = 'ERR_ENTER_OLD_PASSWORD';
+        app.error.errorName2Keys['current_password'] = 'ERR_PASSWORD_MISMATCH';
         app.error.errorName2Keys['new_password'] = 'ERR_ENTER_NEW_PASSWORD';
 
         this.__extendModel();
