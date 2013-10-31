@@ -462,6 +462,9 @@ SUGAR.forms.Dependency.fromMeta = function(meta, context){
  */
 SUGAR.forms.Dependency.prototype.fire = function(undo)
 {
+    if(this.context.view.disposed || !this.context.view.context) {
+        return;
+    }
 	try {
         var model = this.context.view.context.get("model");
         this.lastTriggeredActions = this.lastTriggeredActions || [];
