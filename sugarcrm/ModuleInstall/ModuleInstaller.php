@@ -2511,6 +2511,7 @@ private function dir_file_count($path){
                 "relationships",
                 "server_info",
                 "config",
+                "_override_values",
             ),
         );
         return $sidecarConfig;

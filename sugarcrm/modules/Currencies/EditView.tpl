@@ -63,3 +63,10 @@ js_iso4217 = {$JS_ISO4217};
 <input type='hidden' name='record' value='{$ID}'>
 </form>
 {$JAVASCRIPT}
+{if $REFRESHMETADATA}
+<script type="text/javascript">
+    // ping sidecar to force a fresh metadata hit if there was a change that requires it
+    var app = parent.SUGAR.App;
+    app.api.call('read', app.api.buildURL('ping'));
+</script>
+{/if}
