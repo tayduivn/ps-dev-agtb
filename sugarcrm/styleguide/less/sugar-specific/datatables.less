@@ -420,7 +420,8 @@ FLEXLIST GENERIC */
   /*LEFT ACTIONS ONLY*/
   &.left-actions table.dataTable {
     & > thead > tr > th,
-    & > tbody > tr > td {
+    & > tbody > tr > td,
+    & > tfoot > tr > td {
       &:first-child {
         width: 55px;
         text-align: center;
@@ -456,7 +457,8 @@ FLEXLIST GENERIC */
   /*RIGHT ACTIONS ONLY*/
   &.right-actions table.dataTable {
     & > thead > tr > th,
-    & > tbody > tr > td {
+    & > tbody > tr > td,
+    & > tfoot > tr > td {
       &:last-child {
         width: 55px;
         text-align: center;
@@ -583,9 +585,9 @@ FLEXLIST GENERIC */
         span.detail,
         span.list {
           padding-right: 8px;
-            .ellipsis_inline, .currency-field {
-                padding-left: 14px;
-            }
+          .ellipsis_inline, .currency-field {
+            padding-left: 14px;
+          }
         }
         span.detail:hover,
         span.list:hover {
@@ -654,14 +656,10 @@ FLEXLIST GENERIC */
       &:nth-last-child(2) {
         padding-right: 71px;
       }
-      &:last-child .list {
-        padding: 0;
-      }
     }
     & > tfoot > tr > td {
       &:last-child {
         border-top: none;
-        position: absolute;
       }
       &:nth-last-child(2) {
         padding-right: 79px;
@@ -792,9 +790,12 @@ FLEXLIST GENERIC */
       &:last-child {
         .overflow-visible.list {
           position: absolute;
-          .actions {
+          > .list {
             position: absolute;
             top: -14px;
+            left: -14px;
+          }
+          > .actions.list {
             left: -27px;
           }
         }
