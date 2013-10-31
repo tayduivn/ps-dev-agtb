@@ -4126,8 +4126,8 @@ $app_strings = array (
 
     //quickcreate modal dialog
     'LBL_IGNORE_DUPLICATE_AND_SAVE' => 'Ignore Duplicate and Save',
-    'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and create new',
-    'LBL_SAVE_AND_VIEW' => 'Save and view',
+    'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and Create New',
+    'LBL_SAVE_AND_VIEW' => 'Save and View',
     'LBL_RESTORE' => 'Reset to Original',
 
     // tabbed dashlet
