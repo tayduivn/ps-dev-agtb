@@ -53,7 +53,8 @@
             copyOfModelToSave = app.data.createBean(modelToSave.module);
             originalId = modelToSave.get('id');
 
-            copyOfModelToSave.copy(modelToSave);
+            //cannot use bean.copy() because we need date_modified
+            copyOfModelToSave.set(app.utils.deepCopy(modelToSave.attributes));
 
             this._buildFieldDefinitions(copyOfModelToSave, modelInDb);
 
@@ -159,7 +160,7 @@
      */
     _populateMissingDataFromDatabase: function(modelToSave, modelInDb) {
         _.each(modelInDb.attributes, function(value, attribute) {
-            if (!modelToSave.has(attribute)) {
+            if (!modelToSave.has(attribute) || !app.utils.hasDefaultValueChanged(attribute, modelToSave)) {
                 modelToSave.set(attribute, value);
             }
         })

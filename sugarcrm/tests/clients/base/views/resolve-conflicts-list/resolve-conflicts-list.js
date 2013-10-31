@@ -54,6 +54,38 @@ describe('Resolve Conflicts List View', function() {
 
             expect(clientModel.get('one')).toBe('foo');
         });
+
+        it('should copy over from the database data if the value exists but has not changed from the default value', function() {
+            var clientModel = app.data.createBean(module),
+                databaseModel = app.data.createBean(module);
+
+            clientModel._defaults = {
+                one: 'foo'
+            };
+
+            clientModel.set('one', 'foo');
+            databaseModel.set('one', 'bar');
+
+            view._populateMissingDataFromDatabase(clientModel, databaseModel);
+
+            expect(clientModel.get('one')).toBe('bar');
+        });
+
+        it('should not copy over from the database data if the value exists and has changed from the default value', function() {
+            var clientModel = app.data.createBean(module),
+                databaseModel = app.data.createBean(module);
+
+            clientModel._defaults = {
+                one: '123'
+            };
+
+            clientModel.set('one', 'foo');
+            databaseModel.set('one', 'bar');
+
+            view._populateMissingDataFromDatabase(clientModel, databaseModel);
+
+            expect(clientModel.get('one')).toBe('foo');
+        });
     });
 
     describe('_getFieldViewDefinition', function() {
