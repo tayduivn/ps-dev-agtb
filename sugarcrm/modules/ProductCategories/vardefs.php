@@ -142,6 +142,7 @@ $dictionary['ProductCategory'] = array(
             'name' => 'list_order',
             'vname' => 'LBL_LIST_ORDER',
             'type' => 'int',
+            'validation' => array('type' => 'range', 'min' => 0),
             'len' => '4',
             'comment' => 'Order within list',
             'importable' => 'required',
