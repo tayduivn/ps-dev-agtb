@@ -34,7 +34,7 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('mod_strings', array('Administration', 'Leads'));
-        $this->calls = array();
+        $this->leads = array();
         $this->files = array();
         $this->dir = 'custom/Extension/modules/Leads/Ext/Vardefs';
         $this->search_engine_name = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
@@ -45,7 +45,7 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $leadIds = array();
-        foreach ( $this->calls as $lead ) {
+        foreach ($this->leads as $lead) {
             $this->search_engine->delete($lead);
             $leadIds[] = $lead->id;
         }
@@ -109,7 +109,7 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
 
         $GLOBALS['db']->commit();
 
-        // set Calls Name is High Boost
+        // set Leads Name is High Boost
         if(!is_dir($this->dir)) {
             sugar_mkdir($this->dir, null, true);
         }
@@ -192,7 +192,8 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
         $rc->repairAndClearAll(array('clearAll'), array(), true, false);
         $GLOBALS['current_user'] = $old_user;
 
-        VardefManager::refreshVardefs('Leads', 'Lead');
+        // need to wait to get the search, will review this
+        sleep(10);
 
         // run search again with 5678
         // Run search with 5678
