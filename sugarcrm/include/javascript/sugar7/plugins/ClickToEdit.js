@@ -211,8 +211,9 @@
                     var value = self.validateField(self, self.unformat(el.val()));
                     if (value !== false) {
                         // field is valid, save it
-                        self.isErrorState = false;
-                        self.errorMessage = '';
+                        if(self.isErrorState) {
+                            self.clearErrorDecoration();
+                        }
                         // save to model
                         self.model.set(self.name, value);
                     } else {
@@ -246,11 +247,22 @@
                     this.$el.find('.error-tooltip').addClass('add-on local').removeClass('hide').css('display', 'inline-block');
                     this.$el.find('input').addClass('local-error');
                     // we want to show the tooltip message, but hide the add-on (exclamation)
-                    this.$el.find("[rel=tooltip]").tooltip('destroy'); // so the title is not cached
-                    this.$el.find("[rel=tooltip]").tooltip({container: 'body', placement: 'top', title: this.errorMessage}).tooltip('show').hide();
+                    this.$el.find("[rel=tooltip]")
+                        .tooltip('destroy')
+                        .tooltip({container: 'body', placement: 'top', title: this.errorMessage})
+                        .tooltip('show')
+                        .hide();
                 }
             },
 
+            /**
+             * Clear the Error
+             */
+            clearErrorDecoration: function() {
+                this.$el.find("[rel=tooltip]").tooltip('hide').tooltip('destroy');
+                this.isErrorState = false;
+                this.errorMessage = '';
+            },
 
             /**
              * Show the click to edit icon.
@@ -369,7 +381,6 @@
                     return;
                 }
 
-                this.isErrorState = false;
                 this.setMode('detail');
             },
 
@@ -385,7 +396,11 @@
                     return;
                 }
                 if (e.which == 27) { // If esc
-                    this.isErrorState = false;
+                    if (field.type == 'date') {
+                        // since the field was dirty, we need to flip this back to false so
+                        // it will format the value correctly
+                        this.leaveDirty = false;
+                    }
                     this.setMode('detail');
                 } else if (e.which == 13) {
                     if (this.fieldValueChanged(field)) {
@@ -450,6 +465,9 @@
                     // remove handlers
                     this.$(this.fieldTag).off("keydown.record" + this.cid);
                     $(document).off("mousedown.record" + this.cid);
+                }
+                if (this.isErrorState) {
+                    this.clearErrorDecoration();
                 }
                 app.view.Field.prototype.setMode.call(this, name);
                 this._isInEdit = (this.action === 'edit');
