@@ -144,6 +144,11 @@
      */
     login: function() {
         var self = this;
+        // We have to do this because browser autocomplete does not always trigger DOM change events that would propagate changes into the model
+        this.model.set({
+            password: this.$("input[name=password]").val(),
+            username: this.$("input[name=username]").val()
+        });
         this.model.doValidate(null,
             _.bind(function(isValid) {
                 if (isValid) {
