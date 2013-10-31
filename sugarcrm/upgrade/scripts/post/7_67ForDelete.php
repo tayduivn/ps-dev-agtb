@@ -74,6 +74,13 @@ class SugarUpgrade67ForDelete extends UpgradeScript
             'include/SugarObjects/templates/basic/clients/base/views/dashablelist/dashablelist.php',
             // old phpmailer in thr include directory is no longer needed or referenced as of 7.0
             'include/phpmailer',
+            //remove old connectors
+            'modules/Connectors/connectors/sources/ext/rest/zoominfocompany',
+            'modules/Connectors/connectors/sources/ext/rest/zoominfoperson',
+            'modules/Connectors/connectors/sources/ext/rest/linkedin',
+            'modules/Connectors/connectors/sources/ext/rest/insideview',
+            'modules/Connectors/connectors/sources/ext/eapm/facebook',
+            'modules/Connectors/connectors/sources/ext/soap/hoovers',
         );
         $this->fileToDelete($files);
     }
