@@ -205,19 +205,21 @@
      * @param moduleMeta
      * @return {*}
      */
-    removeFieldsFromMeta: function(meta, moduleMeta){
-        _.each(meta.panels, function(panel){
-            _.each(panel.fields, function(field, index, list){
-                if (_.isString(field)) {
-                    field = {name: field};
-                }
-                if (_.contains(moduleMeta.hiddenFields, field.name || field)) {
-                    field.readonly = true;
-                    field.required = false;
-                    list[index] = field;
-                }
-            });
-        }, this);
+    removeFieldsFromMeta: function(meta, moduleMeta) {
+        if (moduleMeta.hiddenFields) {
+            _.each(meta.panels, function(panel){
+                _.each(panel.fields, function(field, index, list){
+                    if (_.isString(field)) {
+                        field = {name: field};
+                    }
+                    if (moduleMeta.hiddenFields[field.name]) {
+                        field.readonly = true;
+                        field.required = false;
+                        list[index] = field;
+                    }
+                });
+            }, this);
+        }
         return meta;
     },
 
@@ -426,6 +428,9 @@
         this.populateRecords(model, this.meta.fieldMapping);
         if(this.meta.duplicateCheckOnStart) {
             this.triggerDuplicateCheck();
+        } else if (!this.meta.dependentModules || this.meta.dependentModules.length == 0) {
+            //not waiting on other modules before running dupe check, so mark as complete
+            this.dupeCheckComplete();
         }
     },
 

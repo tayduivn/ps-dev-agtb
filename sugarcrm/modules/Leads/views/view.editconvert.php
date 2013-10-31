@@ -1,186 +1,134 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-/*********************************************************************************
- * $Id: view.sugarpdf.php
- * Description: This file is used to override the default Meta-data EditView behavior
- * to provide customization specific to the Quotes module.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+
 require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 require_once('modules/Leads/ConvertLayoutMetadataParser.php');
+require_once('include/MetaDataManager/MetaDataManager.php');
 
-class ViewEditConvert extends SugarView {
+class ViewEditConvert extends SugarView
+{
+    protected $_viewdefs = array();
+    protected $jsonHelper;
 
-	protected $_viewdefs = array();
-	protected $fileName = "modules/Leads/metadata/convertdefs.php";
-
-	function __construct ()
+    function __construct()
     {
-	    parent::SugarView();
+        parent::SugarView();
         global $current_user;
-        if(!$current_user->isDeveloperForModule("Leads"))
-        {
+        if (!$current_user->isDeveloperForModule("Leads")) {
             die("Unauthorized Access to Administration");
         }
 
-        if (isset($_REQUEST['action']) && ($_REQUEST['action'] == "saveLayout" || $_REQUEST['action'] == "saveAndPublishLayout"))
-        {
-        	$this->parser = new ConvertLayoutMetadataParser($_REQUEST['view_module']);
-        	$this->parser->handleSave(true);
-        }
+        $this->jsonHelper = getJSONobj();
+        $this->parser = new ConvertLayoutMetadataParser("Contacts");
 
-        if (isset($_REQUEST['updateOrder']) && $_REQUEST['updateOrder'] && !empty($_REQUEST['data']))
-        {
-            require_once("include/JSON.php");
-        	$json = new JSON();
-        	$this->parser = new ConvertLayoutMetadataParser("Contacts");
-            $this->parser->updateOrder(object_to_array_recursive($json->decode(html_entity_decode_utf8($_REQUEST['data']))));
+        if (isset($_REQUEST['updateConvertDef']) && $_REQUEST['updateConvertDef'] && !empty($_REQUEST['data'])) {
+            $this->parser->updateConvertDef(
+                object_to_array_recursive($this->jsonHelper->decode(html_entity_decode_utf8($_REQUEST['data'])))
+            );
+            // clear the cache for this module only
+            MetaDataManager::refreshModulesCache(array('Leads'));
         }
-
-        if (isset($_REQUEST['removeLayout']) && $_REQUEST['removeLayout'] && !empty($_REQUEST['targetModule']))
-        {
-            require_once("include/JSON.php");
-            $json = new JSON();
-            $this->parser = new ConvertLayoutMetadataParser("Contacts");
-            $this->parser->removeLayout($_REQUEST['targetModule']);
-        }
-
     }
 
-    function display(){
-    	$smarty = $this->constructSmarty();
+    public function display()
+    {
+        $smarty = $this->constructSmarty();
 
-    	$ajax = new AjaxCompose();
-        $ajax->addCrumb(translate('LBL_STUDIO', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard")');
-        $ajax->addCrumb(translate('LBL_MODULE_NAME'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view_module=Leads")');
-        $ajax->addCrumb(translate('LBL_LAYOUTS', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view=layouts&view_module=Leads")');
+        $ajax = new AjaxCompose();
+        $ajax->addCrumb(
+            translate('LBL_STUDIO', 'ModuleBuilder'),
+            'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard")'
+        );
+        $ajax->addCrumb(
+            translate('LBL_MODULE_NAME'),
+            'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view_module=Leads")'
+        );
+        $ajax->addCrumb(
+            translate('LBL_LAYOUTS', 'ModuleBuilder'),
+            'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view=layouts&view_module=Leads")'
+        );
         $ajax->addCrumb(translate('LBL_CONVERTLEAD'), "");
-        $ajax->addSection ( 'center', 'Convert Layout', $smarty->fetch ( "modules/Leads/tpls/EditConvertLead.tpl" ) ) ;
+        $ajax->addSection('center', 'Convert Layout', $smarty->fetch("modules/Leads/tpls/EditConvertLead.tpl"));
 
         echo $ajax->getJavascript();
     }
 
-    protected function constructSmarty ()
+    protected function constructSmarty()
     {
-        global $mod_strings, $current_language;
-        $json = getJSONobj () ;
-
-    	$smarty = new Sugar_Smarty ( ) ;
-        $smarty->assign ( 'translate', true ) ;
-        $smarty->assign ( 'language', "Leads" ) ;
-        $smarty->assign ( 'view_module', "Leads" ) ;
-        $smarty->assign ( 'module', "Leads" ) ;
-        $smarty->assign ( 'helpName', 'listViewEditor' ) ;
-        $smarty->assign ( 'helpDefault', 'modify' ) ;
-        $smarty->assign ( 'title', 'Convert Layout') ;
+        $smarty = new Sugar_Smarty();
+        $smarty->assign('translate', true);
+        $smarty->assign('language', "Leads");
+        $smarty->assign('view_module', "Leads");
+        $smarty->assign('module', "Leads");
+        $smarty->assign('helpName', 'listViewEditor');
+        $smarty->assign('helpDefault', 'modify');
+        $smarty->assign('title', 'Convert Layout');
         $modules = $this->getModulesFromDefs();
-        $smarty->assign ( 'modules', $json->encode ($modules) ) ;
-        require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php' ;
-        $relatableModules = DeployedRelationships::findRelatableModules () ;
+        $smarty->assign('modules', $this->jsonHelper->encode($modules));
 
+        require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php';
+        $relatableModules = DeployedRelationships::findRelatableModules();
+
+        //Modules that shouldn't be allowed to be converted.
         unset($relatableModules['Activities']);
         unset($relatableModules['KBDocuments']);
         unset($relatableModules['Products']);
         unset($relatableModules['ProductTemplates']);
-        // bug 43393 - don't let Leads (or any non-contact module derived from Person) be added to convert flow
+        unset($relatableModules['RevenueLineItems']);
         unset($relatableModules['Leads']);
         unset($relatableModules['Users']);
 
-        foreach($modules as $mDef) {
-            if (isset($relatableModules[$mDef['module']]))
+        foreach ($modules as $mDef) {
+            if (isset($relatableModules[$mDef['module']])) {
                 unset($relatableModules[$mDef['module']]);
+            }
         }
         $displayModules = array();
-        foreach ($relatableModules as $mod => $def)
-        {
-        	$displayModules[$mod] = translate($mod);
+        $moduleDefaults = array();
+        foreach ($relatableModules as $mod => $def) {
+            if (!isModuleBWC($mod)) {
+                $displayModules[$mod] = translate($mod);
+                $moduleDefaults[$mod] = $this->parser->getDefaultDefForModule($mod);
+            }
         }
-        $smarty->assign ( 'availibleModules', $displayModules) ;
-        $smarty->assign ( 'availibleModulesValues', $displayModules) ;
-        $smarty->assign ( 'availibleModulesJSON', $json->encode ($relatableModules) ) ;
-        $smarty->assign ( 'relationships', $json->encode ($this->getRelationshipsForModules($modules))) ;
+        $smarty->assign('availableModules', $displayModules);
+        $smarty->assign('moduleDefaults', $this->jsonHelper->encode($moduleDefaults));
 
-        // Bug 38245 - Warn users if they were using the old lead convert screen and are looking to modify the new one
-        if ( ( SugarAutoLoader::existingCustom('modules/Leads/ConvertLead.php') )
-                && !SugarAutoLoader::existing('custom/modules/Leads/metadata/convertdefs.php') ) {
-            $smarty->assign ( 'warningMessage', translate ('LBL_NOTICE_OLD_LEAD_CONVERT_OVERRIDE','Leads') ) ;
-        }
-
-        return $smarty ;
+        return $smarty;
     }
 
-
-    protected function getModulesFromDefs(){
+    protected function getModulesFromDefs()
+    {
         global $app_list_strings;
 
         $modules = array();
-        if (!isset($this->defs))
-        {
-            $this->loadDefs();
+        if (!isset($this->defs)) {
+            $this->defs = $this->parser->getDefForModules();
         }
-        foreach($this->defs as $module => $views)
-        {
-            foreach($views as $view => $def)
-            {
-                $modules[] = array(
-                    "module" => $module,
-                    "moduleName" => $app_list_strings['moduleList'][$module],
-                    "required" => isset($def['required']) ? $def['required'] : false,
-                    "select"   => isset($def['select'])   ? $def['select']   : false,
-                    "copyData" => isset($def['copyData']) ? $def['copyData'] : false,
-                );
-            }
+        foreach ($this->defs as $def) {
+            $modules[] = array(
+                "module" => $def['module'],
+                "moduleName" => $app_list_strings['moduleList'][$def['module']],
+                "required" => isset($def['required']) ? $def['required'] : false,
+                "copyData" => isset($def['copyData']) ? $def['copyData'] : false,
+                "duplicateCheckOnStart" => isset($def['duplicateCheckOnStart']) ? $def['duplicateCheckOnStart'] : false,
+            );
         }
         return $modules;
     }
-
-    protected function getRelationshipsForModules($modules)
-    {
-    	$ret = array();
-    	$seed = BeanFactory::getBean('Contacts');
-    	$bean_rels = $seed->get_related_fields();
-    	foreach($modules as $mDef)
-    	{
-    		foreach($bean_rels as $field => $fDef)
-    		{
-    			if (!empty($fDef['link']) && !empty($fDef['module']) && $fDef['module'] == $mDef['module'])
-    			{
-    				$ret[$mDef['module']][] = $fDef['name'];
-    			}
-    		}
-    	}
-    	return $ret;
-    }
-
-    protected function loadDefs()
-    {
-        $viewdefs = array();
-        $this->medataDataFile = SugarAutoLoader::existingCustomOne($this->fileName);
-        include($this->medataDataFile);
-        $this->defs = $viewdefs;
-    }
-
-
 }

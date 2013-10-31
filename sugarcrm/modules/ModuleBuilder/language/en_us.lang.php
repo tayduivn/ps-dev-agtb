@@ -2,7 +2,7 @@
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement (\“MSA\”), which is viewable at:
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
  * http://www.sugarcrm.com/master-subscription-agreement
  *
  * If Company is not bound by the MSA, then by installing or using this file
@@ -219,14 +219,14 @@ $mod_strings = array(
         'portalLayoutHelp' => 'The modules within the Sugar Portal appear in this area.<br><br>Select a module to edit the <b>Layouts</b>.',
         'relationshipsHelp' => 'All of the <b>Relationships</b> that exist between the module and other deployed modules appear here.<br><br>The relationship <b>Name</b> is the system-generated name for the relationship.<br><br>The <b>Primary Module</b> is the module that owns the relationships.  For example, all of the properties of the relationships for which the Accounts module is the primary module are stored in the Accounts database tables.<br><br>The <b>Type</b> is the type of relationship exists between the Primary module and the <b>Related Module</b>.<br><br>Click a column title to sort by the column.<br><br>Click a row in the relationship table to view the properties associated with the relationship.<br><br>Click <b>Add Relationship</b> to create a new relationship.<br><br>Relationships can be created between any two deployed modules.',
         'relationshipHelp'=>'<b>Relationships</b> can be created between the module and another deployed module.<br><br> Relationships are visually expressed through subpanels and relate fields in the module records.<br><br>Select one of the following relationship <b>Types</b> for the module:<br><br> <b>One-to-One</b> - Both modules\' records will contain relate fields.<br><br> <b>One-to-Many</b> - The Primary Module\'s record will contain a subpanel, and the Related Module\'s record will contain a relate field.<br><br> <b>Many-to-Many</b> - Both modules\' records will display subpanels.<br><br> Select the <b>Related Module</b> for the relationship. <br><br>If the relationship type involves subpanels, select the subpanel view for the appropriate modules.<br><br> Click <b>Save</b> to create the relationship.',
-        'convertLeadHelp' => "Here you can add modules to the convert layout screen and modify the layouts of existing ones.<br/>
-        You can re-order the modules by dragging their rows in the table.<br/><br/>
-
+        'convertLeadHelp' => "Here you can add modules to the convert layout screen and modify the settings of existing ones.<br/><br/>
+        <b>Ordering:</b><br/>
+        Contacts, Accounts, and Opportunities must maintain their order. You can re-order any other module by dragging its row in the table.<br/><br/>
+        <b>Dependency:</b><br/>
+        If Opportunities is included, Accounts must either be required or removed from the convert layout.<br/><br/>
         <b>Module:</b> The name of the module.<br/><br/>
         <b>Required:</b> Required modules must be created or selected before the lead can be converted.<br/><br/>
         <b>Copy Data:</b> If checked, fields from the lead will be copied to fields with the same name in the newly created records.<br/><br/>
-        <b>Allow Selection:</b> Modules with a relate field in Contacts can be selected rather than created during the convert lead process.<br/><br/>
-        <b>Edit:</b> Modify the convert layout for this module.<br/><br/>
         <b>Delete:</b> Remove this module from the convert layout.<br/><br/>
         ",
         'editDropDownBtn' => 'Edit a global Dropdown',

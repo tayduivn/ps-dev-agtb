@@ -32,6 +32,7 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
         array(
             'module' => 'Contacts',
             'required' => true,
+            'copyData' => true,
             'duplicateCheckOnStart' => true,
             'fieldMapping' =>
             array(
@@ -58,12 +59,13 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
             ),
             'hiddenFields' =>
             array(
-                'account_name',
+                'account_name' => 'Accounts',
             ),
         ),
         array(
             'module' => 'Accounts',
             'required' => true,
+            'copyData' => true,
             'duplicateCheckOnStart' => true,
             'duplicateCheckRequiredFields' =>
             array(
@@ -94,6 +96,7 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
         array(
             'module' => 'Opportunities',
             'required' => false,
+            'copyData' => true,
             'duplicateCheckOnStart' => false,
             'duplicateCheckRequiredFields' =>
             array(
@@ -120,7 +123,7 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
             ),
             'hiddenFields' =>
             array(
-                'account_name',
+                'account_name' => 'Accounts',
             ),
         ),
     ),
