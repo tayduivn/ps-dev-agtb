@@ -60,7 +60,8 @@
             }
             var domParentTypeVal = this.$(this.typeFieldTag).val();
             if(this.model.get(this.def.type_name) !== domParentTypeVal) {
-                this.model.set(this.def.type_name, domParentTypeVal);
+                //SP-1654: Prevents quickcreate from incorrectly considering model changed
+                this.model.set(this.def.type_name, domParentTypeVal, {silent: true});
                 this.model.setDefaultAttribute(this.def.type_name, domParentTypeVal);
             }
 
