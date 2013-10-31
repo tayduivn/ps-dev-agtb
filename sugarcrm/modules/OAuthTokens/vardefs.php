@@ -92,6 +92,14 @@ $dictionary['OAuthToken'] = array(
             'len' => 36,
             'comment' => 'A token used to download images and files.',
       ),
+      'platform' =>
+      array (
+            'name' => 'platform',
+            'type' => 'varchar',
+            'len' => 255,
+            'comment' => 'Which platform is this token attached to',
+            'default' => 'base',
+      ),
 //      'authdata' =>
 //      array (
 //            'name' => 'verify',

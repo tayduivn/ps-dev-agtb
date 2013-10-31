@@ -30,6 +30,13 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
     protected $userType = 'user';
 
     /**
+     * How many simultaneous sessions allowed for this platform
+     *
+     * @var int
+     */
+    public $numSessions = 1;
+
+    /**
      * Gets a user bean
      *
      * @param  string $user_id The ID of the User to get

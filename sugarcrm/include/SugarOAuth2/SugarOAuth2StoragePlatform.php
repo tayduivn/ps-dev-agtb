@@ -63,6 +63,13 @@ abstract class SugarOAuth2StoragePlatform  {
      */
     protected $userType;
 
+    /**
+     * How many simultaneous sessions allowed for this platform
+     *
+     * @var int
+     */
+    public $numSessions = 1;
+
     // BEGIN METHODS FROM IOAuth2GrantUser
 	/**
 	 * Grant access tokens for basic user credentials.

@@ -65,7 +65,15 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
      */
     protected $userType;
 
+    /**
+     * The refresh token
+     *
+     * @var OAuthToken
+     */
+    public $refreshToken;
+
     const SAML_GRANT_TYPE = 'urn:ietf:params:oauth:grant-type:saml2-bearer';
+    const TOKEN_CHECK_TIME = 120;
 
     // BEGIN METHOD FROM SugarOAuth2StorageInterface
     /**
@@ -328,6 +336,21 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         $this->setPlatformStore();
 
         if ( isset($_SESSION['oauth2']) ) {
+            if (!empty($_SESSION['oauth2']['refresh_token'])
+                && !empty($_SESSION['oauth2']['token_check_time'])
+                && $_SESSION['oauth2']['token_check_time'] < time()) {
+                // Refresh token needs to be verified
+                global $db;
+
+                $ret = $db->query("SELECT COUNT(id) AS token_count FROM oauth_tokens WHERE id = '".$db->quote($_SESSION['oauth2']['refresh_token'])."'");
+                $row = $db->fetchByAssoc($ret);
+                if (empty($row['token_count'])) {
+                    // No, or 0 token_count, the refresh token is invalid
+                    return NULL;
+                }
+                // Check came out okay, update the token check time
+                $_SESSION['oauth2']['token_check_time'] = time() + self::TOKEN_CHECK_TIME;
+            }
             return $_SESSION['oauth2'];
         } else if ( !empty($_SESSION['authenticated_user_id']) ) {
             // It's not an oauth2 session, but a normal sugar session we will let them pass
@@ -567,6 +590,8 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
             return null;
         }
 
+        $this->refreshToken = $token;
+
         return array(
             'refresh_token'=>$token->id,
             'client_id'=>$token->consumer_obj->c_key,
@@ -611,6 +636,8 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
             return;
         }
 
+        // Delete other tokens for this user/platform combo
+
         $token = BeanFactory::newBean('OAuthTokens');
 
         $token->id = $refresh_token;
@@ -619,10 +646,15 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         $token->assigned_user_id = $user_id;
         $token->contact_id = $contact_id;
         $token->expire_ts = $expires;
+        $token->platform = $this->platform;
         $token->setState(OAuthToken::ACCESS);
         $token->download_token = create_guid();
 
         $token->save();
+
+        $token->cleanupOldUserTokens($this->getPlatformStore()->numSessions);
+
+        $this->refreshToken = $token;
 
     }
 

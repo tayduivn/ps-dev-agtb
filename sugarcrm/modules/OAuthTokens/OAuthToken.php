@@ -238,6 +238,45 @@ class OAuthToken extends SugarBean
 
 	}
 
+    /**
+     * Clean up extra tokens for a user
+     * @param int $limit How many user tokens should be allowed
+     */
+    public function cleanupOldUserTokens($limit = 1)
+    {
+        global $db;
+
+        $ids = array($db->quote($this->id));
+
+        if ($limit > 1) {
+            // Find request tokens that are under the limit but still not this token
+            $ret = $db->limitQuery(
+                "SELECT id FROM oauth_tokens WHERE "
+                ." tstate = ".self::ACCESS
+                ." AND id <> '".$db->quote($this->id)."' "
+                ." AND platform = '".$db->quote($this->platform)."' "
+                ." AND assigned_user_id = '".$db->quote($this->assigned_user_id)."' "
+                ." AND contact_id = '".$db->quote($this->contact_id)."' "
+                ." ORDER BY expire_ts DESC ",
+                0, $limit - 1, true
+            );
+
+            while ($row = $db->fetchByAssoc($ret)) {
+                $ids[] = $db->quote($row['id']);
+            }
+        }
+
+        // delete request tokens from this user on this platform that aren't for this user
+        $db->query(
+            "DELETE FROM oauth_tokens WHERE "
+            ." tstate = ".self::ACCESS
+            ." AND id NOT IN ('".implode("', '",$ids)."') "
+            ." AND platform = '".$db->quote($this->platform)."' "
+            ." AND assigned_user_id = '".$db->quote($this->assigned_user_id)."' "
+            ." AND contact_id = '".$db->quote($this->contact_id)."' "
+        );
+    }
+
 	/**
 	 * Check if the nonce is valid
 	 * @param string $key
