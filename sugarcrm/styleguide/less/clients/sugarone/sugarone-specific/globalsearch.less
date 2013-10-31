@@ -57,47 +57,48 @@
 
 .search-query-wrapper {
   .box-sizing(border-box);
-  padding: 4px 10px;
-  width: 100%;
+  padding: 4px 5px;
+  width: auto;
   height: 28px;
   line-height: @baseLineHeight;
   background: @white;
-  .border-radius(2px);
+  .border-radius(@borderRadiusSmall);
   color: @grayDark;
   .placeholder(@grayLight);
   .navbar-search & .search-query {
-    margin-left: 2px;
-    display:inline;
-    width:auto;
-    border:none;
-    border-style: none;
+    margin: -10px;
+    display: inline;
+    width: auto;
+    border: none;
     padding: 4px 10px;
-    height: auto;
+    height: inherit;
     background: transparent;
     color: @grayDark;
     &:focus {
       outline-color: transparent;
       outline-style: none;
+      border: none;
+      box-shadow: none;
     }
   }
 }
 
 .tag-wrapper {
-  background: @gray !important;
-  color: @white !important;
-  border: none !important;
-  line-height: 20px !important;
-  padding: 0 5px !important;
-  margin: 0 !important;
-  border-radius: 3px;
-  -webkit-box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0,0,0,0.05);
-  -moz-box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0,0,0,0.05);
-  box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0,0,0,0.05);
+  background: @gray;
+  color: @white;
+  line-height: 20px;
+  padding: 1px 2px 2px 5px;
+  margin: 0 5px 0 0;
+  .border-radius(@borderRadiusSmall);
   .tag-name {
     padding-right: 3px;
   }
   .tag-remove {
     cursor: pointer;
+    color: @black;
+    &:hover {
+      color: @grayLight;
+    }
   }
 }
 

@@ -7,22 +7,7 @@
     right: 9px;
   }
 }
-.record div[data-name="to_addresses"].controls.btn-fit {
-  .select2-container {
-    .select2-choices:before {
-      content: attr(data-content-before);
-      float: right;
-      font-size: 12px;
-      padding: 2px 1px 2px 14px;
-      width: auto;
-    }
-    .select2-search-field input {
-      padding: 1px 7px;
-      margin-left: 0;
-      position: absolute;
-    }
-  }
-}
+
 
 //main record edit
 .record {
@@ -37,8 +22,7 @@
     .record-cell {
       input[type="text"],
       textarea,
-      .uneditable-input,
-      .select2-container {
+      .uneditable-input {
         margin-left: 0 !important;
         z-index: 1;
       }
@@ -108,12 +92,6 @@
       }
     }
 
-    div[class*="span"] {
-      .select2-container {
-        margin-top: -5px;
-      }
-    }
-
     .select2-container {
       z-index: 1;
       margin: -5px 0 7px -9px;
@@ -153,9 +131,6 @@
         margin-top: -5px;
       }
     }
-
-    /*&[data-type="url"] {
-    }*/
 
     &[data-type="email"] {
       .normal > span {
@@ -207,15 +182,6 @@
       .help-block {
         min-height: 0;
       }
-      /*.control-group.email:first-child input[type="text"] {
-        .border-top-left-radius(3px);
-        .border-top-right-radius(3px);
-        border-width: 1px 1px 1px 1px;
-      }
-      .control-group.email:last-child input[type="text"] {
-        .border-bottom-left-radius(3px);
-        .border-bottom-right-radius(3px);
-      }*/
     }
 
     &[data-type="bool"] {
@@ -257,12 +223,6 @@
           right: -5px;
           top: 16px;
         }
-      }
-    }
-
-    &[data-type="parent"] {
-      .span8 .select2-container a {
-        margin-right: -14px;
       }
     }
 
@@ -339,9 +299,6 @@
       }
 
       h1 {
-        .select2-container {
-          margin: 0 14px 0 -7px;
-        }
         input[type="text"] {
           border-width: 1px;
           padding: 6px;
@@ -448,11 +405,6 @@
     .record-cell .uneditable-input {
       margin-left: -7px !important;
       margin-top: 1px !important;
-    }
-
-    .record-cell .select2-container {
-      margin-left: -9px !important;
-      margin-top: -1px !important;
     }
 
     .record-cell input.input-large {
@@ -589,21 +541,12 @@ h1 > .record-cell {
   display: block;
   clear: both;
 }
-.headerpane {
+
+.record-cell {
   .select2-container {
-    margin: 0;
-    .select2-choices {
-      border: none;
-      box-shadow: none;
-      padding: 0;
-      .select2-search-choice {
-        background: @gray !important;
-        color: @white !important;
-        border: none !important;
-        line-height: 20px !important;
-        padding: 0 5px !important;
-        margin: 0 !important;
-      }
+    border: none;
+    &:focus {
+      box-shdow: none;
     }
   }
 }
@@ -611,9 +554,7 @@ h1 > .record-cell {
 .record-cell.edit {
   .select2-container {
     .select2-choices {
-      border: 1px solid @grayLight;
-      box-shadow: none;
-      padding: 2px;
+
     }
   }
 }
