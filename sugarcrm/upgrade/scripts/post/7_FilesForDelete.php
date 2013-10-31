@@ -27,12 +27,12 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /**
- * Files to delete for 6.7 install
+ * Select files to delete during install
  */
-class SugarUpgrade67ForDelete extends UpgradeScript
+class SugarUpgradeFilesForDelete extends UpgradeScript
 {
     public $order = 7000;
-    public $version = '6.7.0';
+    public $version = '7.1.5';
     public $type = self::UPGRADE_CORE;
 
     public function run()
@@ -81,6 +81,49 @@ class SugarUpgrade67ForDelete extends UpgradeScript
             'modules/Connectors/connectors/sources/ext/rest/insideview',
             'modules/Connectors/connectors/sources/ext/eapm/facebook',
             'modules/Connectors/connectors/sources/ext/soap/hoovers',
+            //remove old sidecar files
+            'sidecar/lib/chosen',
+            'sidecar/lib/handlebars/handlebars-1.0.rc.1.js',
+            'sidecar/lib/handlebars/handlebars.runtime-1.0.rc.1.js',
+            'sidecar/lib/jquery-timepicker',
+            'sidecar/lib/twitterbootstrap',
+            'sidecar/src/view/hbt-helpers.js',
+            // Remove old less files from styleguide
+            'styleguide/less/clients/mobile/fixed_variables.less',
+            'styleguide/less/clients/mobile/font-awesome.less',
+            'styleguide/less/clients/mobile/forms.less',
+            'styleguide/less/clients/mobile/labels-badges.less',
+            'styleguide/less/clients/mobile/navbar.less',
+            'styleguide/less/clients/mobile/navs.less',
+            'styleguide/less/clients/mobile/nomad.less',
+            'styleguide/less/clients/mobile/sugarmobile.less',
+            'styleguide/less/clients/portal/config.less',
+            'styleguide/less/modules/nv.d3.less',
+            'styleguide/less/sugar-bootstrap',
+            'styleguide/less/sugar-specific/actions.less',
+            'styleguide/less/sugar-specific/activitystreams.less',
+            'styleguide/less/sugar-specific/chosen.less',
+            'styleguide/less/sugar-specific/clickmenu.less',
+            'styleguide/less/sugar-specific/dcmenu.less',
+            'styleguide/less/sugar-specific/modulelist.less',
+            'styleguide/less/sugar-specific/position.less',
+            'styleguide/less/sugar-specific/progress.less',
+            'styleguide/less/sugar-specific/quickcreate.less',
+            'styleguide/less/sugar-specific/responsive-forecast.less',
+            'styleguide/less/sugar-specific/responsive.less',
+            'styleguide/less/sugar-specific/topline-forecast.less',
+            'styleguide/less/sugar-specific/vcard.less',
+            'styleguide/less/sugar-specific/yui.less',
+            'styleguide/less/twitter-bootstrap/carousel.less',
+            'styleguide/less/twitter-bootstrap/charts.less',
+            'styleguide/less/twitter-bootstrap/chosen.less',
+            'styleguide/less/twitter-bootstrap/datatables.less',
+            'styleguide/less/twitter-bootstrap/pager.less',
+            'styleguide/less/twitter-bootstrap/pagination.less',
+            'styleguide/less/twitter-bootstrap/responsive.less',
+            'styleguide/less/twitter-bootstrap/sprites.less',
+            'styleguide/less/twitter-bootstrap/tiptip.less',
+            'styleguide/less/twitter-bootstrap/toggle.less',
         );
         $this->fileToDelete($files);
     }
