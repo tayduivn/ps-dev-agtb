@@ -1986,41 +1986,55 @@ class InboundEmail extends SugarBean {
 	 * @param string $mbox "::" delimited IMAP mailbox path, ie, INBOX.saved.stuff
 	 * @return bool
 	 */
-	function deleteFolder($mbox) {
-		$returnArray = array();
-		if ($this->getCacheCount($mbox) > 0) {
-			$returnArray['status'] = false;
-			$returnArray['errorMessage'] = "Can not delete {$mbox} as it has emails.";
-			return $returnArray;
-		}
-		$connectString = $this->getConnectString('', $mbox);
-		//Remove Folder cache
-		global $sugar_config;
-		unlink("{$this->EmailCachePath}/{$this->id}/folders/folders.php");
-
-		if(imap_unsubscribe($this->conn, imap_utf7_encode($connectString))) {
-			if(imap_deletemailbox($this->conn, $connectString)) {
-	        	$this->mailbox = str_replace(("," . $mbox), "", $this->mailbox);
-	        	$this->save();
-	        	$sessionFoldersString  = $this->getSessionInboundFoldersString($this->server_url, $this->email_user, $this->port, $this->protocol);
-	        	$sessionFoldersString = str_replace(("," . $mbox), "", $sessionFoldersString);
-				$this->setSessionInboundFoldersString($this->server_url, $this->email_user, $this->port, $this->protocol, $sessionFoldersString);
-				$returnArray['status'] = true;
-				return $returnArray;
-			} else {
-				$GLOBALS['log']->error("*** ERROR: EMAIL2.0 - could not delete IMAP mailbox with path: [ {$connectString} ]");
-				$returnArray['status'] = false;
-				$returnArray['errorMessage'] = "NOOP: could not delete folder: {$connectString}";
-				return $returnArray;
-				return false;
-			}
-		} else {
-			$GLOBALS['log']->error("*** ERROR: EMAIL2.0 - could not unsubscribe from folder, {$connectString} before deletion.");
-			$returnArray['status'] = false;
-			$returnArray['errorMessage'] = "NOOP: could not unsubscribe from folder, {$connectString} before deletion.";
-			return $returnArray;
-		}
-	}
+    public function deleteFolder($mbox)
+    {
+        $returnArray = array();
+        if ($this->getCacheCount($mbox) > 0) {
+            $returnArray['status']       = false;
+            $returnArray['errorMessage'] = "Can not delete {$mbox} as it has emails.";
+        } else {
+            $connectString = $this->getConnectString('', $mbox);
+            //Remove Folder cache
+            unlink("{$this->EmailCachePath}/{$this->id}/folders/folders.php");
+            if (imap_unsubscribe($this->conn, imap_utf7_encode($connectString))) {
+                if (imap_deletemailbox($this->conn, $connectString)) {
+                    $this->mailbox = str_replace(("," . $mbox), "", $this->mailbox);
+                    $this->save();
+                    $sessionFoldersString = $this->getSessionInboundFoldersString(
+                        $this->server_url,
+                        $this->email_user,
+                        $this->port,
+                        $this->protocol
+                    );
+                    $sessionFoldersString = str_replace(("," . $mbox), "", $sessionFoldersString);
+                    $this->setSessionInboundFoldersString(
+                        $this->server_url,
+                        $this->email_user,
+                        $this->port,
+                        $this->protocol,
+                        $sessionFoldersString
+                    );
+                    $returnArray['status'] = true;
+                } else {
+                    $GLOBALS['log']->error(
+                        "*** ERROR: EMAIL2.0 - could not delete IMAP mailbox with path: [ {$connectString} ]"
+                    );
+                    $returnArray['status']       = false;
+                    $returnArray['errorMessage'] = 'ERR_DELETE_FOLDER';
+                }
+            } else {
+                $GLOBALS['log']->error(
+                    "*** ERROR: EMAIL2.0 - could not unsubscribe from folder, {$connectString} before deletion."
+                );
+                $returnArray['status']       = false;
+                $returnArray['errorMessage'] = 'ERR_UNSUBSCRIBE_FROM_FOLDER';
+            }
+        }
+        if (strlen($returnArray['errorMessage']) > 0) {
+            $returnArray['errorMessage'] = translate($returnArray['errorMessage'], $this->module_name);
+        }
+        return $returnArray;
+    }
 
 	/**
 	 * Saves new folders

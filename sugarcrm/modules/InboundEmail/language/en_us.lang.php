@@ -42,6 +42,8 @@ $mod_strings = array(
 	'ERR_NO_IMAP'			=> 'No IMAP libraries found.  Please resolve this before continuing with Inbound Email',
 	'ERR_NO_OPTS_SAVED'		=> 'No optimums were saved with your Inbound Email account.  Please review the settings',
 	'ERR_TEST_MAILBOX'		=> 'Please check your settings and try again.',
+    'ERR_DELETE_FOLDER' => 'Could not delete folder.',
+    'ERR_UNSUBSCRIBE_FROM_FOLDER' => 'Could not unsubscribe from folder before deletion.',
 
 	'LBL_APPLY_OPTIMUMS'	=> 'Apply Optimums',
 	'LBL_ASSIGN_TO_USER'	=> 'Assign To User',
