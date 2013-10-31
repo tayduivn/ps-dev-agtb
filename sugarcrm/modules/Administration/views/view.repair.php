@@ -41,7 +41,7 @@ class ViewRepair extends SugarView
         $randc = new RepairAndClear();
         $actions = array();
         $actions[] = 'clearAll';
-        $randc->repairAndClearAll($actions, array(translate('LBL_ALL_MODULES')), false,true);
+        $randc->repairAndClearAll($actions, array(translate('LBL_ALL_MODULES')), false,true,'');
         
         echo <<<EOHTML
 <br /><br /><a href="index.php?module=Administration&action=index">{$GLOBALS['mod_strings']['LBL_DIAGNOSTIC_DELETE_RETURN']}</a>

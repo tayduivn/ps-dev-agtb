@@ -1029,6 +1029,11 @@ class MetaDataManager
      */
     protected function rebuildModulesSection($data) 
     {
+        // If we are in a rebuild process for the modules section, clear the module
+        // client cache so that module metadata is fresh
+        if (isset(self::$currentProcess[self::MM_MODULES])) {
+            MetaDataFiles::clearModuleClientCache();
+        }
         return $this->setupModuleLists($data);
     }
 
@@ -1046,29 +1051,21 @@ class MetaDataManager
     }
     
     /**
-     * Rebuilds the language file caches
-     * 
-     * @param string|array $languages Languages to rebuild caches for
+     * Rebuilds the label section of metadata and clears language caches
      */
-    public function rebuildLanguagesCache($languages)
+    public function rebuildLanguagesCache()
     {
-        // If there is no languages passed then do nothing
-        if (!empty($languages)) {
-            // We will always need the metadata for this process, but only if there
-            // is existing metadata to work (why build a section of an empty set)
-            $data = $this->getMetadataCache(true);
-            
-            if (!empty($data)) {
-                $this->clearLanguagesCache($languages);
-                $data = $this->loadSectionMetadata(self::MM_LABELS, $data);
-                $data['_hash'] = $this->hashChunk($data);
-                $this->putMetadataCache($data);
-                
-                // Build up the language cache now too
-                foreach ((array) $languages as $language) {
-                    $this->getLanguageFileProperties($language);
-                }
-            }
+        // We will always need the metadata for this process, but only if there
+        // is existing metadata to work (why build a section of an empty set)
+        $data = $this->getMetadataCache(true);
+
+        // NOTE: Do not try to rebuild language cache files as this could be
+        // problematic on installations with many installed languages, like OD
+        if (!empty($data)) {
+            $this->clearLanguagesCache();
+            $data = $this->loadSectionMetadata(self::MM_LABELS, $data);
+            $data['_hash'] = $this->hashChunk($data);
+            $this->putMetadataCache($data);
         }
     }
 
@@ -1194,17 +1191,6 @@ class MetaDataManager
 
             $data = $this->loadMetadata();
             $this->putMetadataCache($data);
-
-            // Handle deleted languages as necessary. This will be set in the
-            // call to deletePlatformVisibilityCaches().
-            if (!empty($this->deletedLanguageCaches)) {
-                foreach ($this->deletedLanguageCaches as $lang) {
-                    $this->getLanguage($lang);
-                }
-
-                // Reset the deleted languages stack
-                $this->deletedLanguageCaches = array();
-            }
         }
     }
 
@@ -2562,34 +2548,36 @@ class MetaDataManager
     }
 
     /**
-     * Deletes a language cache file for this platform and visibility
+     * Deletes all language cache files and references in the hash cache
      * 
-     * @param string|array $langs The language(s) to clear the cache for
      * @return bool True if the file no longer exists or never existed
      */
-    protected function clearLanguagesCache($langs) {
-        // Get the hashes array
+    protected function clearLanguagesCache() {
+        // Get the hashes array handled first
         $hashes = array();
         $path = sugar_cached("api/metadata/hashes.php");
         @include($path);
 
-        $changes = 0;
-        foreach ((array) $langs as $lang) {
-            // Clear the actual file
-            $cache = $this->getLangUrl($lang);
-            if (file_exists($cache)) {
-                @unlink($cache);
-            }
-            
-            // Clear the hash after checking if it existed to control hash cache
-            // writes
-            if (isset($hashes[$cache])) {
-                unset($hashes[$cache]);
-                $changes++;
+        // Track which indexes were deleted
+        $deleted = array();
+        foreach ($hashes as $key => $hash) {
+            // If the index is a .json file path, unset it and delete it
+            if (strpos($key, '.json')) {
+                unset($hashes[$key]);
+                @unlink($key);
+                $deleted[$key] = $key;
             }
         }
 
-        if ($changes) {
+        // Now handle files on the file system. This should yield an empty array
+        // but its better to be safe than sorry
+        $files = glob(sugar_cached("api/metadata/*.json"));
+        foreach ($files as $file) {
+            @unlink($file);
+            $deleted[$file] = $file;
+        }
+
+        if ($deleted) {
             write_array_to_file("hashes", $hashes, $path);
         }
 
