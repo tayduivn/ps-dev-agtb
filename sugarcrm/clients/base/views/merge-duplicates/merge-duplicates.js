@@ -121,7 +121,7 @@
      *
      * TODO: remove types that have properly implementation for merge interface
      */
-    fieldTypesBlacklist: ['currency', 'email', 'team_list', 'teamset', 'link', 'id'],
+    fieldTypesBlacklist: ['currency', 'email', 'team_list', 'teamset', 'link', 'id', 'password'],
 
     /**
      * Links names won't be mergeable.
