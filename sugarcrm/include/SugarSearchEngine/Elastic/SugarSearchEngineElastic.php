@@ -157,6 +157,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         $keyValues = array();
         foreach ($searchFields as $fieldName => $fieldDef) {
+            // when creating a new bean, the auto_increment field can be null, even after save
+            if (!isset($bean->$fieldName) && !empty($fieldDef['auto_increment'])) {
+                $bean->$fieldName = $this->getFieldValue($fieldName, $bean);
+            }
+
             //All fields have already been formatted to db values at this point so no further processing necessary
             if (!empty($bean->$fieldName)) {
                 // 1. elasticsearch does not handle multiple types in a query very well

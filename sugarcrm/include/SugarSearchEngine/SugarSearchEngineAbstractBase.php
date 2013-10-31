@@ -164,4 +164,23 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
             $this->logger->error($e->getMessage());
         }
     }
+
+    /**
+     * This function queries db to get the value of a field.
+     * @param String $fieldName field name
+     * @param String $bean SugarBean
+     * @return Mix field value
+     */
+    protected function getFieldValue($fieldName, $bean)
+    {
+        $value = null;
+
+        if (!empty($bean->table_name) && !empty($fieldName) && !empty($bean->id)) {
+            $db = DBManagerFactory::getInstance('fts');
+            $sql = "SELECT {$fieldName} from {$bean->table_name} where id = " . $db->quoted($bean->id);
+            $value = $db->getOne($sql, false, 'Error getting field value in fts');
+        }
+
+        return $value;
+    }
 }
