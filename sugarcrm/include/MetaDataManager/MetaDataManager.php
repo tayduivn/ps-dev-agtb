@@ -2568,12 +2568,31 @@ class MetaDataManager
      * @return bool True if the file no longer exists or never existed
      */
     protected function clearLanguagesCache($langs) {
+        // Get the hashes array
+        $hashes = array();
+        $path = sugar_cached("api/metadata/hashes.php");
+        @include($path);
+
+        $changes = 0;
         foreach ((array) $langs as $lang) {
+            // Clear the actual file
             $cache = $this->getLangUrl($lang);
             if (file_exists($cache)) {
                 @unlink($cache);
             }
+            
+            // Clear the hash after checking if it existed to control hash cache
+            // writes
+            if (isset($hashes[$cache])) {
+                unset($hashes[$cache]);
+                $changes++;
+            }
         }
+
+        if ($changes) {
+            write_array_to_file("hashes", $hashes, $path);
+        }
+
         return true;
     }
 
