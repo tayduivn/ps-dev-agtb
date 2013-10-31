@@ -27,9 +27,14 @@
  ********************************************************************************/
 }}
 <div class="forecasts-chart-wrapper">
-{{#if isForecastAdmin}}
-    {{{str "LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN" 'Forecasts'}}}
-{{else}}
-    {{{str "LBL_DASHLET_FORECAST_NOT_SETUP" 'Forecasts'}}}
-{{/if}}
+    {{#unless isForecastSetup}}
+        {{#if isForecastAdmin}}
+            {{{str "LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN" 'Forecasts'}}}
+        {{else}}
+            {{{str "LBL_DASHLET_FORECAST_NOT_SETUP" 'Forecasts'}}}
+        {{/if}}
+    {{/unless}}
+    {{#unless forecastsConfigOK}}
+        {{{str "LBL_FORECASTS_MISSING_SALES_STAGE_VALUES" 'Forecasts'}}}
+    {{/unless}}
 </div>
