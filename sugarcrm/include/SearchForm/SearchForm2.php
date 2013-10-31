@@ -409,7 +409,7 @@ require_once('include/EditView/EditView2.php');
 
 	       	 		$function = $this->fieldDefs[$fvName]['function'];
 
-	       			if(is_array($function) && isset($function['name'])){
+                    if(is_array($function) && isset($function['name'])){
 	       				$function_name = $this->fieldDefs[$fvName]['function']['name'];
 	       			}else{
 	       				$function_name = $this->fieldDefs[$fvName]['function'];
@@ -422,6 +422,14 @@ require_once('include/EditView/EditView2.php');
 						$value = call_user_func($function_name, $this->seed, $name, $value, $this->view);
 						$this->fieldDefs[$fvName]['value'] = $value;
 					}else{
+
+                        if (isset($this->fieldDefs[$fvName]['function_bean'])) {
+                            $funcBean =  BeanFactory::getBean($this->fieldDefs[$fvName]['function_bean']);
+                            if (method_exists($funcBean, $function_name)) {
+                                $function_name = array($funcBean, $function_name);
+                            }
+                        }
+
 					    if(!isset($function['params']) || !is_array($function['params'])) {
 							$this->fieldDefs[$fvName]['options'] = call_user_func($function_name, $this->seed, $name, $value, $this->view);
 						} else {

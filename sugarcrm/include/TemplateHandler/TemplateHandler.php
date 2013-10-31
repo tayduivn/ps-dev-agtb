@@ -367,7 +367,7 @@ class TemplateHandler {
                         }
                     } else {
                          $sqs_objects[$name.'_'.$parsedView] = $qsd->getQSParent($field['module']);
-                         if(!isset($field['field_list']) && !isset($field['populate_list'])) {
+                         if(!isset($field['field_list'])) {
                              $sqs_objects[$name.'_'.$parsedView]['populate_list'] = array($field['name'], $field['id_name']);
                              $sqs_objects[$name.'_'.$parsedView]['field_list'] = array('name', 'id');
                          } else {
