@@ -1,38 +1,17 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-
-/**
- * This is the base object for building SugarQueries Where's
- */
 abstract class SugarQuery_Builder_Where
 {
     /**
@@ -45,8 +24,14 @@ abstract class SugarQuery_Builder_Where
      */
     public $conditions = array();
 
-    public function __construct()
+    /**
+     * @var SugarQuery
+     */
+    public $query = false;
+
+    public function __construct(SugarQuery $query)
     {
+        $this->query = $query;
     }
 
     /**
@@ -58,7 +43,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function equals($field, $value, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition();
+        $condition = new SugarQuery_Builder_Condition($this->query);
         $condition->setOperator('=')->setField($field)->setValues($value);
         if ($bean instanceof SugarBean) {
             $condition->setBean($bean);
@@ -78,7 +63,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function equalsField($field1, $field2, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition();
+        $condition = new SugarQuery_Builder_Condition($this->query);
         $condition->setOperator('EQUALFIELD')->setField($field1)->setValues($field2);
         if ($bean instanceof SugarBean) {
             $condition->setBean($bean);
@@ -98,7 +83,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function notEquals($field, $value, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition();
+        $condition = new SugarQuery_Builder_Condition($this->query);
         $condition->setOperator('!=')->setField($field)->setValues($value);
         if ($bean instanceof SugarBean) {
             $condition->setBean($bean);
@@ -118,7 +103,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function notEqualsField($field1, $field2, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition();
+        $condition = new SugarQuery_Builder_Condition($this->query);
         $condition->setOperator('NOTEQUALFIELD')->setField($field1)->setValues($field2);
         if ($bean instanceof SugarBean) {
             $condition->setBean($bean);
@@ -135,7 +120,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function isNull($field, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition();
+        $condition = new SugarQuery_Builder_Condition($this->query);
         $condition->setField($field)->isNull();
         if ($bean instanceof SugarBean) {
             $condition->setBean($bean);
@@ -152,7 +137,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function notNull($field, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition();
+        $condition = new SugarQuery_Builder_Condition($this->query);
         $condition->setField($field)->notNull();
         if ($bean instanceof SugarBean) {
             $condition->setBean($bean);
@@ -170,7 +155,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function contains($field, $value, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition();
+        $condition = new SugarQuery_Builder_Condition($this->query);
         $condition->setOperator('CONTAINS')->setField($field)->setValues($value);
         if ($bean instanceof SugarBean) {
             $condition->setBean($bean);
@@ -188,7 +173,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function notContains($field, $value, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition();
+        $condition = new SugarQuery_Builder_Condition($this->query);
         $condition->setOperator('DOES NOT CONTAIN')->setField($field)->setValues($value);
         if ($bean instanceof SugarBean) {
             $condition->setBean($bean);
@@ -206,7 +191,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function starts($field, $value, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition();
+        $condition = new SugarQuery_Builder_Condition($this->query);
         $condition->setOperator('STARTS')->setField($field)->setValues($value);
         if ($bean instanceof SugarBean) {
             $condition->setBean($bean);
@@ -226,7 +211,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function ends($field, $value, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition();
+        $condition = new SugarQuery_Builder_Condition($this->query);
         $condition->setOperator('ENDS')->setField($field)->setValues($value);
         if ($bean instanceof SugarBean) {
             $condition->setBean($bean);
@@ -259,7 +244,7 @@ abstract class SugarQuery_Builder_Where
                 $this->isNull($field, $bean);
             }
         } else {
-            $condition = new SugarQuery_Builder_Condition();
+            $condition = new SugarQuery_Builder_Condition($this->query);
             $condition->setOperator('IN')->setField($field)->setValues($vals);
             if ($bean instanceof SugarBean) {
                 $condition->setBean($bean);
@@ -289,7 +274,7 @@ abstract class SugarQuery_Builder_Where
                 $this->notNull($field, $bean);
             }
         } else {
-            $condition = new SugarQuery_Builder_Condition();
+            $condition = new SugarQuery_Builder_Condition($this->query);
             $condition->setOperator('NOT IN')->setField($field)->setValues($vals);
             if ($bean instanceof SugarBean) {
                 $condition->setBean($bean);
@@ -309,7 +294,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function between($field, $min, $max, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition();
+        $condition = new SugarQuery_Builder_Condition($this->query);
         $condition->setOperator('BETWEEN')->setField($field)->setValues(array('min' => $min, 'max' => $max));
         if ($bean instanceof SugarBean) {
             $condition->setBean($bean);
@@ -327,7 +312,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function lt($field, $value, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition();
+        $condition = new SugarQuery_Builder_Condition($this->query);
         $condition->setOperator('<')->setField($field)->setValues($value);
         if ($bean instanceof SugarBean) {
             $condition->setBean($bean);
@@ -345,7 +330,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function lte($field, $value, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition();
+        $condition = new SugarQuery_Builder_Condition($this->query);
         $condition->setOperator('<=')->setField($field)->setValues($value);
         if ($bean instanceof SugarBean) {
             $condition->setBean($bean);
@@ -363,7 +348,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function gt($field, $value, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition();
+        $condition = new SugarQuery_Builder_Condition($this->query);
         $condition->setOperator('>')->setField($field)->setValues($value);
         if ($bean instanceof SugarBean) {
             $condition->setBean($bean);
@@ -381,7 +366,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function gte($field, $value, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition();
+        $condition = new SugarQuery_Builder_Condition($this->query);
         $condition->setOperator('>=')->setField($field)->setValues($value);
         if ($bean instanceof SugarBean) {
             $condition->setBean($bean);
@@ -435,7 +420,7 @@ abstract class SugarQuery_Builder_Where
         $leftDate = date_parse($value[0]);
         $rightDate = date_parse($value[1]);
         if (!empty($leftDate['errors']) || !empty($rightDate['errors'])) {
-            throw new SugarApiExceptionInvalidParameter('$dateBetween requires two valid dates');
+            throw new SugarQueryException('$dateBetween requires two valid dates');
         }
         //The right date must cover the full day
         $rightDate = date(
@@ -468,7 +453,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function queryAnd()
     {
-        $where = new SugarQuery_Builder_Andwhere();
+        $where = new SugarQuery_Builder_Andwhere($this->query);
         $this->conditions[] = $where;
         return $where;
     }
@@ -478,7 +463,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function queryOr()
     {
-        $where = new SugarQuery_Builder_Orwhere();
+        $where = new SugarQuery_Builder_Orwhere($this->query);
         $this->conditions[] = $where;
         return $where;
     }

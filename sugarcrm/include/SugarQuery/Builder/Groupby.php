@@ -12,17 +12,19 @@
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-class SugarQuery_Builder_Literal
+class SugarQuery_Builder_Groupby
 {
-	public $value;
+    public $column;
+    public $query;
 
-	public function __construct($value)
-	{
-	    $this->value = $value;
-	}
+    public function __construct($query)
+    {
+        $this->query = $query;
+    }
 
-	public function __toString()
-	{
-	    return strval($this->value);
-	}
+    public function addField($column, $options = array())
+    {
+        $this->column = new SugarQuery_Builder_Field_Groupby($column, $this->query);
+        return $this;
+    }
 }

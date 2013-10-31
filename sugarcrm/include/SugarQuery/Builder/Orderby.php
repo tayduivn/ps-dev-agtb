@@ -12,17 +12,21 @@
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-class SugarQuery_Builder_Literal
+class SugarQuery_Builder_Orderby
 {
-	public $value;
+    public $column;
+    public $direction = 'DESC';
+    public $query;
 
-	public function __construct($value)
-	{
-	    $this->value = $value;
-	}
+    public function __construct($query, $direction = 'DESC')
+    {
+        $this->query = $query;
+        $this->direction = $direction;
+    }
 
-	public function __toString()
-	{
-	    return strval($this->value);
-	}
+    public function addField($column, $options = array())
+    {
+        $this->column = new SugarQuery_Builder_Field_Orderby($column, $this->query, $this->direction);
+        return $this;
+    }
 }

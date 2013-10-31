@@ -12,17 +12,18 @@
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-class SugarQuery_Builder_Literal
+
+/**
+ * SugarQuery_Builder_Field_Having
+ * @api
+ */
+
+class SugarQuery_Builder_Field_Having extends SugarQuery_Builder_Field
 {
-	public $value;
 
-	public function __construct($value)
-	{
-	    $this->value = $value;
-	}
+    public function __construct($field, SugarQuery $query)
+    {
+        parent::__construct($field, $query);
+    }
 
-	public function __toString()
-	{
-	    return strval($this->value);
-	}
 }

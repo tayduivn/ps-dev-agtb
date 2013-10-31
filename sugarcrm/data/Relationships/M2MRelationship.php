@@ -561,7 +561,7 @@ class M2MRelationship extends SugarRelationship
 
     /**
      * Build a Join using an existing SugarQuery Object
-     * @param Link2 $link 
+     * @param Link2 $link
      * @param SugarQuery $sugar_query
      * @param Array $options array of additional paramters. Possible parameters include
      *  - 'myAlias' String name of starting table alias
@@ -577,7 +577,7 @@ class M2MRelationship extends SugarRelationship
         if (!empty($options['reverse'])) {
             $linkIsLHS = !$linkIsLHS;
         }
-        
+
         $startingTable = $linkIsLHS ? $this->def['lhs_table'] : $this->def['rhs_table'];
         if (!empty($options['myAlias'])) {
             $startingTable = $options['myAlias'];
@@ -588,26 +588,28 @@ class M2MRelationship extends SugarRelationship
         $startingJoinKey = $linkIsLHS ? $this->def['join_key_lhs'] : $this->def['join_key_rhs'];
 
         $joinTable = $this->getRelationshipTable();
-
         $joinKey = $linkIsLHS ? $this->def['join_key_rhs'] : $this->def['join_key_lhs'];
 
         $targetTable = $linkIsLHS ? $this->def['rhs_table'] : $this->def['lhs_table'];
         $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
+        $targetModule = $linkIsLHS ? $this->def['rhs_module'] : $this->def['lhs_module'];
+        $join_type= isset($options['joinType']) ? $options['joinType'] : 'INNER';
 
-        $join_type= isset($options['joinType']) ? $options['joinType'] : 'INNER';        
 
         $joinTable_alias = $sugar_query->getJoinTableAlias($joinTable);
         $targetTable_alias = !empty($options['joinTableAlias']) ? $options['joinTableAlias'] : $targetTable;
 
+
         $relTableJoin = $sugar_query->joinTable($joinTable, array('alias'=>$joinTable_alias, 'joinType' => $join_type))
-                    ->on()->equalsField("{$startingTable}.{$startingKey}","{$joinTable_alias}.{$startingJoinKey}")
-                    ->equals("{$joinTable_alias}.deleted","0");
-        
-        $targetTableJoin = $sugar_query->joinTable($targetTable, array('alias' => $targetTable_alias, 'joinType' => $join_type))
-                    ->on()->equalsField("{$targetTable_alias}.{$targetKey}", "{$joinTable_alias}.{$joinKey}")
-                    ->equals("{$targetTable_alias}.deleted","0");
+            ->on()->equalsField("{$startingTable}.{$startingKey}","{$joinTable_alias}.{$startingJoinKey}")
+            ->equals("{$joinTable_alias}.deleted","0");
+
+        $targetTableJoin = $sugar_query->joinTable($targetTable, array('alias' => $targetTable_alias, 'joinType' => $join_type, 'bean' => BeanFactory::newBean($targetModule)));
+        $targetTableJoin->on()->equalsField("{$targetTable_alias}.{$targetKey}", "{$joinTable_alias}.{$joinKey}")
+            ->equals("{$targetTable_alias}.deleted","0");
 
         $sugar_query->join[$targetTable_alias]->relationshipTableAlias = $joinTable_alias;
+
 
         if (empty($options['ignoreRole'])) {
             $this->buildSugarQueryRoleWhere($sugar_query, $joinTable_alias);

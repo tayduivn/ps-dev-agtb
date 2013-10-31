@@ -124,18 +124,20 @@ class One2OneBeanRelationship extends One2MBeanRelationship
         $targetTable = $linkIsLHS ? $this->def['rhs_table'] : $this->def['lhs_table'];
 
         $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
-
+        $targetModule = $linkIsLHS ? $this->def['rhs_module'] : $this->def['lhs_module'];
 
         $join_type= isset($options['joinType']) ? $options['joinType'] : 'INNER';
 
-        $joinParams = array('joinType' => $join_type);
+        $joinParams = array('joinType' => $join_type, 'bean' => BeanFactory::newBean($targetModule));
         $jta = $targetTable;
         if (!empty($options['joinTableAlias'])) {
             $jta = $joinParams['alias'] = $options['joinTableAlias'];
         }
-        $sugar_query->joinTable($targetTable, $joinParams)
-            ->on()->equalsField("{$startingTable}.{$startingKey}","{$jta}.{$targetKey}")
-            ->equals("{$jta}.deleted","0");
+
+        $join = $sugar_query->joinTable($targetTable, $joinParams);
+        $join->on()->equalsField("{$startingTable}.{$startingKey}", "{$jta}.{$targetKey}")
+            ->equals("{$jta}.deleted", "0");
+
 
         if (empty($options['ignoreRole'])) {
             $this->buildSugarQueryRoleWhere($sugar_query, $jta);
