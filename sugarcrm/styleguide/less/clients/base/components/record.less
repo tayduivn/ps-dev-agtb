@@ -457,6 +457,31 @@
   .row-fluid.toggle {
     margin-bottom: 16px;
   }
+
+  // Added for currency field, or any field that has
+  // a select2 field at end of input
+  .select2-addon {
+    margin: 0 -7px;
+    .input-append {
+      input[type="text"] {
+        width: 95%;
+        width: ~"-moz-calc(100% - 14px)";
+        width: ~"-webkit-calc(100% - 14px)";
+        width: ~"calc(100% - 14px)";
+        margin-left: 0;
+      }
+    }
+    > input[type="text"] {
+      width: 50%;
+      width: ~"-moz-calc(100% - 114px)";
+      width: ~"-webkit-calc(100% - 114px)";
+      width: ~"calc(100% - 114px)";
+      margin-left: 0;
+    }
+    .select2-container {
+      margin-left: 0;
+    }
+  }
 }
 
 // labels on left side

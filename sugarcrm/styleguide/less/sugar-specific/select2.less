@@ -347,11 +347,7 @@
   margin: 4px 28px 4px 0;
 }
 
-.currency {
-  .select2-choice .select2-chosen {
-    min-width: 8px;
-  }
-}
+
 .select2-offscreen {
   position: absolute;
   left: -10000px;
@@ -367,4 +363,47 @@
   abbr {
     display: inline;
   }
+}
+
+.currency {
+  .select2-choice .select2-chosen {
+    min-width: 8px;
+  }
+}
+// Added for currency field, or any field that has
+// a select2 field at end of input
+.select2-addon {
+  .input-append {
+    width: 50%;
+    width: ~"-moz-calc(100% - 100px)";
+    width: ~"-webkit-calc(100% - 100px)";
+    width: ~"calc(100% - 100px)";
+    float: left;
+    input[type="text"] {
+      width: 95%;
+      width: ~"-moz-calc(100% - 14px)";
+      width: ~"-webkit-calc(100% - 14px)";
+      width: ~"calc(100% - 14px)";
+      .border-radius(2px 0 0 2px);
+    }
+  }
+  > input[type="text"] {
+    width: 50%;
+    width: ~"-moz-calc(100% - 114px)";
+    width: ~"-webkit-calc(100% - 114px)";
+    width: ~"calc(100% - 114px)";
+    float: left;
+    .border-radius(0 2px 2px 0);
+  }
+  .edit {
+    float: left;
+    width: 100px;
+  }
+  .select2-container .select2-choice {
+    .border-radius(3px 0 0 3px);
+    border-right: none;
+  }
+}
+.error .select2-addon .select2-choice > div {
+  margin-right: 0;
 }
