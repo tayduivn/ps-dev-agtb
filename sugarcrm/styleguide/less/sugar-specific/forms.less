@@ -213,7 +213,6 @@ input[type=radio] {
 }
 
 .control-group {
-  margin-bottom: 0;
   /*this clear both is preventing two column. Needed for forms.html only. Remove*/
   clear: both;
   .btn-toolbar {
@@ -249,7 +248,7 @@ input[type=radio] {
   textarea.inherit-width,
   select.inherit-width {
     width: 100%;
-    min-height: 32px;
+    min-height: 28px;
     .box-sizing(border-box);
   }
   textarea.inherit-width { /* some modern browsers let you resize textarea, this ensures it doesn't go beyond parent container */
@@ -290,7 +289,7 @@ input[type=radio] {
     }
     .btn {
       position: absolute;
-      top: 2px;
+      top: 0;
       right: 0;
       &.fourth {
         right: 108px;
@@ -329,11 +328,14 @@ input[type=radio] {
   margin-left: 10px;
 
   .row-fluid.control-group {
-    margin: 0;
     padding: 0;
+    margin-bottom: 0;
   }
   .control-group {
     margin-bottom: 4px;
+    .controls {
+      margin-bottom: 4px;
+    }
   }
 
   //this is not working since p.help-block after last control-group div
@@ -343,44 +345,8 @@ input[type=radio] {
 
   .controls {
     margin-left: @fluidGridGutterWidth;
-    padding: 0;
     > span {
       padding: 0;
-    }
-    &.btn-fit {
-      &.controls-four {
-        padding-right: 144px;
-      }
-      &.controls-three {
-        padding-right: 108px;
-      }
-      &.controls-two {
-        padding-right: 72px;
-      }
-      &.controls-one {
-        padding-right: 36px;
-      }
-      .tooltip {
-        word-wrap: normal;
-        white-space: nowrap;
-      }
-      .btn {
-        position: absolute;
-        top: 2px;
-        right: 0;
-        &.fourth {
-          right: 108px;
-        }
-        &.third {
-          right: 72px;
-        }
-        &.second {
-          right: 36px;
-        }
-        &.first {
-          /* right:___; default  */
-        }
-      }
     }
   }
 
