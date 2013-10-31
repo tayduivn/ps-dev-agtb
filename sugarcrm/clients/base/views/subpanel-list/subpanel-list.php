@@ -30,7 +30,6 @@ $viewdefs['base']['view']['subpanel-list'] = array(
     'template' => 'recordlist',
     'favorite' => true,
     'rowactions' => array(
-        'css_class' => 'pull-right',
         'actions' => array(
             array(
                 'type' => 'rowaction',
