@@ -639,6 +639,7 @@
                                     self.collection.fetch({
                                         //Don't show alerts for this request
                                         showAlerts: false,
+                                        remove: true,
                                         // Boolean coercion.
                                         relate: !!self.layout.collection.link
                                     });
