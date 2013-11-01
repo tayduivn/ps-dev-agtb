@@ -192,7 +192,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			});
 			mp.resize(true);
 			Event.on(window, 'resize', ModuleBuilder.autoSetLayout, this, true);
-			
+
 			var tree = ModuleBuilder.tree = createTreePanel(TREE_DATA, {
 				id: 'mbTree'
 			});
@@ -1079,11 +1079,17 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			return null;
 		}, 
 		autoSetLayout: function(){
-			var mp = ModuleBuilder.mainPanel;
-			var c = Dom.get("mblayout");
-			mp.set("height", Dom.getViewportHeight() - Dom.getY(c) - 30);
-			mp.set("width", Dom.getViewportWidth() - 40);
-			mp.resize(true);
+			var mp = ModuleBuilder.mainPanel,
+                c = Dom.get('mblayout'),
+                width = Dom.getViewportWidth() - 40,
+                height = Dom.getViewportHeight() - Dom.getY(c) - 30;
+            if (SUGAR.util.isTouchScreen()) {
+                width = parent.SUGAR.App.controller.layout.$el.width() - 40;
+                height = parent.SUGAR.App.controller.layout.$el.height() - 60;
+            }
+            mp.set('height', height);
+            mp.set('width', width);
+            mp.resize(true);
 			var tabEl = ModuleBuilder.tabPanel.get("element");
 			Dom.setStyle(tabEl.firstChild.nextSibling, "overflow-y", "auto");
 			Dom.setStyle(tabEl.firstChild.nextSibling, "height", tabEl.offsetHeight - ModuleBuilder.tabPanel.get("element").firstChild.offsetHeight - 5 + "px");
