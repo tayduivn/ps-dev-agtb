@@ -195,6 +195,15 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
     'source'=>'non-db',
 		'vname'=>'LBL_ACCOUNT',
   ),
+	'project' =>
+	array (
+	    'name' => 'project',
+	    'type' => 'link',
+	    'relationship' => 'projects_cases',
+	    'source'=>'non-db',
+	    'vname'=>'LBL_PROJECTS',
+	),
+
   ), 'indices' => array (
        //BEGIN SUGARCRM flav=pro ONLY
        /*
@@ -284,3 +293,4 @@ VardefManager::createVardef('Cases','Case', array('default', 'assignable',
 //jc - adding for refactor for import to not use the required_fields array
 //defined in the field_arrays.php file
 $dictionary['Case']['fields']['name']['importable'] = 'required';
+?>

@@ -167,7 +167,7 @@ $app_list_strings = array (
     'Feeds' => 'RSS',
     'iFrames'=>'My Sites',
     'TimePeriods'=>'Time Period',
-      'Prospects' => 'Target',
+    'Prospects' => 'Target',
     'ProspectLists' => 'Target List',
     'Campaigns'=>'Campaign',
     'CampaignTrackers'=>'Campaign Tracker',
@@ -529,7 +529,8 @@ $app_list_strings = array (
     'Yahoo!' => 'Yahoo!',
     'AOL' => 'AOL',
   ),
-//Note:  do not translate record_type_default_key
+
+  //Note:  do not translate record_type_default_key
 //       it is the key for the default record_type_module value
   'record_type_default_key' => 'Accounts',
   'record_type_display' =>
@@ -549,7 +550,6 @@ $app_list_strings = array (
 
 
     'Bugs' => 'Bug',
-
     'Prospects' => 'Target',
 
     'Tasks' => 'Task',
@@ -598,6 +598,7 @@ $app_list_strings = array (
     'Bugs' => 'Bug Tracker',
     'Cases' => 'Case',
     'Leads' => 'Lead',
+
     'Prospects' => 'Target',
 
   ),
@@ -1580,6 +1581,8 @@ $app_list_strings = array (
 
 
 //END SUGARCRM flav=pro ONLY
+
+
     // strings to pass to Flash charts
     'chart_strings' => array (
         'expandlegend'      => 'Expand Legend',
@@ -2812,6 +2815,8 @@ $app_strings = array (
 
     'LBL_PRODUCT_BUNDLES'=>'Product Bundles',
     'LBL_PRODUCTS'=>'Products',
+    'LBL_PROJECT_TASKS'=>'Project Tasks',
+    'LBL_PROJECTS'=>'Projects',
     'LBL_QUOTE_TO_OPPORTUNITY_KEY' => 'O',
     'LBL_QUOTE_TO_OPPORTUNITY_LABEL' => 'Create Opportunity from Quote',
     'LBL_QUOTE_TO_OPPORTUNITY_TITLE' => 'Create Opportunity from Quote',
@@ -4363,6 +4368,8 @@ $app_list_strings['top10_opportunities_filter_assigned_options'] = array (
 $app_list_strings['moduleList']['Library'] = 'Library';
 $app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');
 $app_list_strings['moduleList']['EmailAddresses'] = 'Email Address';
+
+
 
 $app_list_strings['kbdocument_status_dom'] = array (
     'Draft' => 'Draft',

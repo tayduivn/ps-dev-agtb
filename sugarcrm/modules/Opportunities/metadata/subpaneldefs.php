@@ -185,6 +185,21 @@ $layout_defs['Opportunities'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
 		),
+        
+        'project' => array(
+			'order' => 70,
+			'module' => 'Project',
+			'get_subpanel_data' => 'project',
+			'sort_order' => 'asc',
+			'sort_by' => 'name',
+			'subpanel_name' => 'default',
+			'title_key' => 'LBL_PROJECTS_SUBPANEL_TITLE',
+			'top_buttons' => array(
+				array('widget_class' => 'SubPanelTopButtonQuickCreate'),
+				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
+			),
+		),
+        
         'revenuelineitems' => array(
             'order' => 60,
             'module' => 'RevenueLineItems',

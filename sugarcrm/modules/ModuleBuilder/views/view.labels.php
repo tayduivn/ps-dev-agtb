@@ -184,6 +184,7 @@ class ViewLabels extends ViewModulefields
                 'Campaigns',
                 'Quotes',
                 'ProductTemplates',
+                'ProjectTask'
             );
 
             if (in_array($module, $hideQuickCreateForModules)) {

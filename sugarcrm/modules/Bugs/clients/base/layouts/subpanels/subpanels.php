@@ -77,6 +77,13 @@ $viewdefs['Bugs']['base']['layout']['subpanels'] = array (
               'link' => 'cases',
           ),
       ),
+      array (
+          'layout' => 'subpanel',
+          'label' => 'LBL_PROJECTS_SUBPANEL_TITLE',
+          'context' => array (
+              'link' => 'project',
+          ),
+      ),
   ),
   'type' => 'subpanels',
   'span' => 12,

@@ -41,6 +41,7 @@ class Bug39749Test extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array('module' => 'KBDocuments', 'get_quick_create' => '0'),
+            array('module' => 'ProjectTask', 'get_quick_create' => '0'),
             array('module' => 'Campaigns', 'get_quick_create' => '0'),
             array('module' => 'ProductTemplates', 'get_quick_create' => '0'),
             array('module' => 'Accounts', 'get_quick_create' => '0'),

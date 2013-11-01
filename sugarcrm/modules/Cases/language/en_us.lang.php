@@ -55,6 +55,7 @@ $mod_strings = array (
 	'LBL_NEW_FORM_TITLE'				=> 'New Case',
 	'LBL_NUMBER'						=> 'Number:',
 	'LBL_PRIORITY'						=> 'Priority:',
+	'LBL_PROJECTS_SUBPANEL_TITLE' 		=> 'Projects',
 	'LBL_DOCUMENTS_SUBPANEL_TITLE' 		=> 'Documents',
 	'LBL_RESOLUTION'					=> 'Resolution:',
 	'LBL_SEARCH_FORM_TITLE'				=> 'Case Search',
@@ -93,6 +94,7 @@ $mod_strings = array (
 
     'LBL_CREATED_USER' => 'Created User',
     'LBL_MODIFIED_USER' => 'Modified User',
+    'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     'LBL_CASE_INFORMATION' => 'Overview',
 
     //For export labels
@@ -134,3 +136,4 @@ $mod_strings = array (
 
 );
 
+?>

@@ -1614,9 +1614,12 @@ function get_admin_modules_for_user($user)
         return $_SESSION['get_workflow_admin_modules_for_user'];
     }
 
-    global $moduleList;
+    global $moduleList, $modInvisList;
     $workflow_mod_list = array();
     foreach ($moduleList as $module) {
+        if($module == 'ProjectTask' && in_array('Project', $modInvisList)) {
+            continue;
+        }
         $workflow_mod_list[$module] = $module;
     }
 
@@ -2767,6 +2770,7 @@ function parse_list_modules(&$listArray)
             $returnArray['ProductTemplates'] = $listArray['ProductTemplates'];
         }
         //END SUGARCRM flav=pro ONLY
+
     }
     $returnArray = SugarACL::filterModuleList($listArray, 'access', true);
     asort($returnArray);

@@ -132,6 +132,7 @@ $module_map = array(
 	'bugs'			=> 'Bugs',
 	'forecasts'		=> 'Forecasts',
 	'leads'			=> 'Leads',
+	'project_task'	=> 'ProjectTask',
 	'prospects'		=> 'Prospects',
 	'quotes'		=> 'Quotes',
 	'calls'			=> 'Calls',
