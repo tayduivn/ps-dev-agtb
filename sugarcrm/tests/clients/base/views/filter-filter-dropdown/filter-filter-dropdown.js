@@ -107,23 +107,30 @@ describe("BaseFilterFilterDropdownView", function () {
 
         beforeEach(function() {
             view.layout.filters = new Backbone.Collection();
-            view.layout.filters.add(new Backbone.Model({id: 'all_records', name: 'ALL_RECORDS' }));
+            view.layout.filters.add(new Backbone.Model({id: 'all_records', name: 'ALL_RECORDS', editable: false }));
             view.layout.filters.add(new Backbone.Model({id: 'test_id', name: 'TEST' }));
+            view.layout.filters.add(new Backbone.Model({id: 'test_id_2', name: 'TEST_2' }));
         });
 
         it('should return filter list with translated labels', function() {
             sinonSandbox.stub(view.layout, 'canCreateFilter', function() { return false; });
-            expected = [{ id: 'all_records', text: app.lang.get('ALL_RECORDS')},
-                        { id: 'test_id', text: app.lang.get('TEST')}];
+            expected = [
+                { id: 'all_records', text: app.lang.get('ALL_RECORDS')},
+                { id: 'test_id', text: app.lang.get('TEST'), firstUserFilter: true},
+                { id: 'test_id_2', text: app.lang.get('TEST_2')}
+            ];
             filterList = view.getFilterList();
             expect(filterList).toEqual(expected);
         });
 
         it('should return filter list (including create) with translated labels', function() {
             sinonSandbox.stub(view.layout, 'canCreateFilter', function() { return true; });
-            expected = [{ id: 'all_records', text: app.lang.get('ALL_RECORDS')},
-                        { id: 'test_id', text: app.lang.get('TEST')},
-                        { id: 'create', text: app.lang.get('LBL_FILTER_CREATE_NEW')}];
+            expected = [
+                { id: 'create', text: app.lang.get('LBL_FILTER_CREATE_NEW')},
+                { id: 'all_records', text: app.lang.get('ALL_RECORDS')},
+                { id: 'test_id', text: app.lang.get('TEST'), firstUserFilter: true},
+                { id: 'test_id_2', text: app.lang.get('TEST_2')}
+            ];
             filterList = view.getFilterList();
             expect(filterList).toEqual(expected);
         });
@@ -190,27 +197,90 @@ describe("BaseFilterFilterDropdownView", function () {
 
         });
 
-        it('should formatSelection for selected module', function() {
-            var expected = {label: app.lang.get("LBL_FILTER"), enabled: view.filterDropdownEnabled },
-                html;
+        describe('formatSelection', function() {
+            beforeEach(function() {
+                //Template replacement
+                view._select2formatSelectionTemplate = function(val) { return val; };
+            });
+            it('should format the filter dropdown on left', function() {
+                var expected = {label: app.lang.get("LBL_FILTER"), enabled: view.filterDropdownEnabled };
 
-            //Template replacement
-            view._select2formatSelectionTemplate = function(val) { return val; };
-
-            html = view.formatSelection({id: 'test', text: 'TEST'});
-
-            expect(html).toEqual(expected);
+                expect(view.formatSelection({id: 'test', text: 'TEST'})).toEqual(expected);
+            });
+            it('should format the selected filter on right', function() {
+                var jQuerySpys = {
+                    html: sinon.spy(),
+                    show: sinon.spy(),
+                    hide: sinon.spy()
+                };
+                sinonSandbox.stub(view, '$', function() {
+                    return jQuerySpys;
+                });
+                view.formatSelection({id: 'test', text: 'TEST'});
+                expect(jQuerySpys.html).toHaveBeenCalled();
+                expect(jQuerySpys.show).toHaveBeenCalled();
+                expect(jQuerySpys.hide).not.toHaveBeenCalled();
+            });
+            it('should hide the close button if the selected filter is "all_records"', function() {
+                var jQuerySpys = {
+                    html: sinon.spy(),
+                    show: sinon.spy(),
+                    hide: sinon.spy()
+                };
+                sinonSandbox.stub(view, '$', function() {
+                    return jQuerySpys;
+                });
+                view.formatSelection({id: 'all_records', text: 'TEST'});
+                expect(jQuerySpys.html).toHaveBeenCalled();
+                expect(jQuerySpys.show).not.toHaveBeenCalled();
+                expect(jQuerySpys.hide).toHaveBeenCalled();
+            });
         });
 
-        it('should formatResult for selected module', function() {
-            var expected = 'TEST',
-                html;
-
+        it('should formatResult for selected filter', function() {
+            sinonSandbox.stub(layout, 'getLastFilter', function() { return 'last_filter'; });
             //Template replacement
             view._select2formatResultTemplate = function(val) { return val; };
-            html = view.formatResult({id: 'test', text: 'TEST'});
 
-            expect(html).toEqual(expected);
+            expect(view.formatResult({id: 'test', text: 'TEST'}))
+                .toEqual({id: 'test', text: 'TEST', icon: undefined});
+
+            expect(view.formatResult({id: 'create', text: 'Create'}))
+                .toEqual({id: 'create', text: 'Create', icon: 'icon-plus'});
+
+            expect(view.formatResult({id: 'last_filter', text: 'Last selected filter'}))
+                .toEqual({id: 'last_filter', text: 'Last selected filter', icon: 'icon-ok'});
+        });
+
+        it('should formatResultCssClass (add css class to visually add borders and separate categories)', function() {
+            sinonSandbox.stub(layout, 'getLastFilter', function() { return 'last_filter'; });
+            //Template replacement
+            view._select2formatResultTemplate = function(val) { return val; };
+
+            expect(view.formatResultCssClass({id: 'test', text: 'TEST'}))
+                .toBeUndefined();
+
+            expect(view.formatResultCssClass({id: 'create', text: 'Create'}))
+                .toEqual('select2-result-border-bottom');
+
+            expect(view.formatResultCssClass({id: 'test', text: 'TEST', firstUserFilter: true}))
+                .toEqual('select2-result-border-top');
+        });
+    });
+
+    describe('handleClearFilter', function() {
+        it('should stop propagation, clear last filter and trigger "filter:reinitialize"', function() {
+            view.filterNode = $('');
+            var evt = {
+                'stopPropagation': sinon.spy()
+            };
+            var clearLastFilterStub = sinonSandbox.stub(layout, 'clearLastFilter');
+            var triggerStub = sinonSandbox.stub(layout, 'trigger');
+            view.handleClearFilter(evt);
+            expect(evt.stopPropagation).toHaveBeenCalled();
+            expect(clearLastFilterStub).toHaveBeenCalled();
+            expect(triggerStub).toHaveBeenCalled();
+            expect(triggerStub).toHaveBeenCalledWith('filter:change:filter', 'all_records');
         });
     });
 });

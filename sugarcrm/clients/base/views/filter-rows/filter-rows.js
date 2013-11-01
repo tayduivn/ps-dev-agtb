@@ -108,7 +108,11 @@
     openForm: function(filterModel) {
         if (_.isEmpty(filterModel.get('filter_definition'))) {
             this.render();
-            this.addRow();
+            var $row = this.addRow(),
+                field = $row.data('nameField');
+
+            // Open the dropdown once it's rendered to make form completion easier
+            $row.find(field.fieldTag).select2('open');
         } else {
             this.populateFilter();
         }
@@ -246,6 +250,7 @@
         $row.data('nameField', field);
 
         this._renderField(field);
+
         this.layout.trigger("filter:create:rowsValid", false);
 
         return $row;
@@ -508,7 +513,7 @@
                 fieldDef.auto_populate = true;
                 break;
         }
-        data.isRequired = fieldDef.required;
+        fieldDef.required = false;
 
         // Create new model with the value set
         var model = app.data.createBean(moduleName);
@@ -661,6 +666,9 @@
      * @param {Object} filterDef(optional) Filter Definition
      */
     saveFilterEditState: function(filterDef) {
+        if (!this.layout.editingFilter) {
+            return;
+        }
         var filter = this.layout.editingFilter.toJSON();
         filterDef = filterDef || this.buildFilterDef();
         filter.filter_definition = filterDef;

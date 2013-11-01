@@ -62,11 +62,11 @@ $viewdefs['base']['layout']['record'] = array(
                                                 'position' => 'prepend'
                                             ),
                                             array(
-                                                'view' => 'filter-actions',
+                                                'view' => 'filter-rows',
                                                 "targetEl" => '.filter-options'
                                             ),
                                             array(
-                                                'view' => 'filter-rows',
+                                                'view' => 'filter-actions',
                                                 "targetEl" => '.filter-options'
                                             ),
                                             array(
