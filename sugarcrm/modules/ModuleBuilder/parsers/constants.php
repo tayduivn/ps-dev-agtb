@@ -37,6 +37,7 @@ define('MB_DASHLETSEARCH', 'dashletsearch');
 define('MB_EDITVIEW', 'editview');
 define('MB_DETAILVIEW', 'detailview');
 define('MB_QUICKCREATE', 'quickcreate');
+define('MB_CONVERT', 'convert');
 define('MB_POPUPLIST', 'popuplist');
 define('MB_POPUPSEARCH', 'popupsearch');
 define('MB_LABEL', 'label');

@@ -84,24 +84,17 @@ class ViewEditConvert extends SugarView
         require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php';
         $relatableModules = DeployedRelationships::findRelatableModules();
 
-        //Modules that shouldn't be allowed to be converted.
-        unset($relatableModules['Activities']);
-        unset($relatableModules['KBDocuments']);
-        unset($relatableModules['Products']);
-        unset($relatableModules['ProductTemplates']);
-        // bug 43393 - don't let Leads (or any non-contact module derived from Person) be added to convert flow
-        unset($relatableModules['Leads']);
-        unset($relatableModules['Users']);
-
+        //pull out modules that have already been chosen
         foreach ($modules as $mDef) {
             if (isset($relatableModules[$mDef['module']])) {
                 unset($relatableModules[$mDef['module']]);
             }
         }
+
         $displayModules = array();
         $moduleDefaults = array();
         foreach ($relatableModules as $mod => $def) {
-            if (!isModuleBWC($mod)) {
+            if ($this->parser->isModuleAllowedInConvert($mod)) {
                 $displayModules[$mod] = translate($mod);
                 $moduleDefaults[$mod] = $this->parser->getDefaultDefForModule($mod);
             }
