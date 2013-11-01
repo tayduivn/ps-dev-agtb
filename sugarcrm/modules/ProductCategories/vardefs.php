@@ -144,7 +144,6 @@ $dictionary['ProductCategory'] = array(
             'type' => 'int',
             'len' => '4',
             'comment' => 'Order within list',
-            'importable' => 'required',
         ),
         'description' =>
         array(
