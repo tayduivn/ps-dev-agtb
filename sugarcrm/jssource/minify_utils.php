@@ -44,17 +44,16 @@ class SugarMinifyUtils
         //add prefix to key if it was passed in
         $compress_exempt_files = array(
             $prefix.sugar_cached('')                => true,
+            $prefix.'include/javascript/nvd3/lib/d3.min.js' => true,
+            $prefix.'include/javascript/nvd3/nv.d3.min.js' => true,
             $prefix.'include/javascript/tiny_mce'   => true,
             $prefix.'include/javascript/yui'        => true,
             $prefix.'modules/Emails'                => true,
             $prefix.'jssource'                      => true,
             $prefix.'modules/ModuleBuilder'         => true,
-            $prefix.'include/javascript/jquery'     => true,
-            $prefix.'include/javascript/jquery/bootstrap'     => true,
             $prefix.'tests/PHPUnit/PHP/CodeCoverage/Report/HTML/Template' => true,
             $prefix.'tests/jssource/minify/expect'  => true,
             $prefix.'tests/jssource/minify/test'    => true,
-            $prefix.'portal2'                       => true,
             $prefix.'sidecar'                       => true,
             $prefix.'styleguide'                    => true,
         );
@@ -74,8 +73,10 @@ class SugarMinifyUtils
         $js_groupings = array();
         if(isset($_REQUEST['root_directory'])){
             require('jssource/JSGroupings.php');
+            require_once('jssource/jsmin.php');
         } else {
             require('JSGroupings.php');
+            require_once('jsmin.php');
         }
         //get array with file sources to concatenate
         $file_groups = $js_groupings;//from JSGroupings.php;
@@ -145,7 +146,14 @@ class SugarMinifyUtils
                     //make sure we have handles to both source and target file
                     if ($trgt_handle) {
                         $buffer = file_get_contents($loc);
-                        $buffer .= "/* End of File $relpath */\n\n";
+                        if(!isset($excludedFiles[$loc])){  //Skip minifying files in exclude list
+                            try {
+                                $buffer = SugarMin::minify($buffer);
+                            } catch (RuntimeException  $e) {
+                                //Use unminified $buffer instead
+                            }
+                        }
+                        $buffer .= "\n/* End of File $relpath */\n\n";
                         $num = fwrite($trgt_handle, $buffer);
 
                         if( $num=== false ){
