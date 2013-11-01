@@ -35,9 +35,27 @@
     tagName: "span",
 
     events: {
-        "click .choice-filter": "handleEditFilter",
+        "click .choice-filter.choice-filter-clickable": "handleEditFilter",
         "click .choice-filter-close": "handleClearFilter"
     },
+
+    /**
+     * These labels are used in the filter dropdown
+     *  - labelDropdownTitle        label used as the dropdown title. ie `Filter`
+     *  - labelCreateNewFilter      label for create new filter action. ie `Create`
+     *  - labelAllRecords           label used on record view when all related modules are selected. ie `All Records`
+     *
+     *  - labelAllRecordsFormatted  label used when all records are selected. ie `All <Module>s`
+     *
+     *                              It is set to null because already defined per module. However, some views are
+     *                              allowed to override it because of the context. For instance, `dupecheck-list` view
+     *                              wants to display `All duplicates` instead of `All <Module>s`
+     */
+    labelDropdownTitle:         'LBL_FILTER',
+    labelCreateNewFilter:       'LBL_FILTER_CREATE_NEW',
+    labelAllRecords:            'LBL_FILTER_ALL_RECORDS',
+    labelAllRecordsFormatted:   null,
+
 
     /**
      * @override
@@ -79,7 +97,11 @@
     getFilterList: function() {
         var filters = [];
         if (this.layout.canCreateFilter()) {
-            filters.push({id: "create", text: app.lang.get("LBL_FILTER_CREATE_NEW")});
+            filters.push({id: "create", text: app.lang.get(this.labelCreateNewFilter)});
+        }
+        if (this.layout.filters.get('all_records') && this.labelAllRecordsFormatted) {
+            this.layout.filters.get('all_records').set('name',  this.labelAllRecordsFormatted);
+            this.layout.filters.sort();
         }
         // This flag is used to determine when we have to add the border top (to separate categories)
         var firstEditable = false;
@@ -161,14 +183,10 @@
         }
         if (id === "create") {
             this.layout.layout.trigger("filter:set:name", '');
-            this.$('.choice-filter').css("cursor", "not-allowed");
             this.layout.trigger("filter:create:open", filter);
         } else {
             if (filter.get("editable") === false) {
                 this.layout.trigger("filter:create:close");
-                this.$('.choice-filter').css("cursor", "not-allowed");
-            } else {
-                this.$('.choice-filter').css("cursor", "pointer");
             }
 
             if (this.layout.createPanelIsOpen()) {
@@ -189,18 +207,24 @@
             model,
             val = el.val();
 
-        if (val !== "create") {
-            model = this.layout.filters.get(val);
-
-            if (model) {
-                data = {id: val, text: this.layout._getTranslatedFilterName(model)};
-            } else {
-                data = {id: "all_records", text: app.lang.get("LBL_FILTER_ALL_RECORDS")};
-            }
+        if (val === 'create') {
+            //It should show `Create`
+            data = {id: "create", text: app.lang.get(this.labelCreateNewFilter)};
 
         } else {
-            data = {id: "create", text: app.lang.get("LBL_FILTER_CREATE_NEW")};
+            model = this.layout.filters.get(val);
+
+            //Fallback to `all_records` filter if not able to retrieve selected filter
+            if (!model) {
+                data = {id: "all_records", text: app.lang.get(this.labelAllRecords)};
+
+            } else if (val === "all_records") {
+                data = this.formatAllRecordsFilter(null, model);
+            } else {
+                data = {id: model.id, text: this.layout._getTranslatedFilterName(model)};
+            }
         }
+
         callback(data);
     },
 
@@ -211,6 +235,16 @@
      */
     formatSelection: function(item) {
         var ctx = {}, safeString;
+
+        //Don't remove this line. We want to update the selected filter name but don't want to change to the filter
+        //name displayed in the dropdown
+        item = _.clone(item);
+
+        this.toggleFilterCursor(this.isFilterEditable(item.id));
+
+        if (item.id === 'all_records') {
+            item = this.formatAllRecordsFilter(item);
+        }
 
         //Escape string to prevent XSS injection
         safeString = Handlebars.Utils.escapeExpression(item.text);
@@ -223,7 +257,7 @@
             this.$('.choice-filter-close').hide();
         }
 
-        ctx.label = app.lang.get("LBL_FILTER");
+        ctx.label = app.lang.get(this.labelDropdownTitle);
         ctx.enabled = this.filterDropdownEnabled;
 
         return this._select2formatSelectionTemplate(ctx);
@@ -258,11 +292,74 @@
     },
 
     /**
+     * Determine if a filter is editable
+     *
+     * @param {String} id
+     * @returns {Boolean} TRUE if filter is editable, FALSE otherwise
+     */
+    isFilterEditable: function(id) {
+        if (!this.filterDropdownEnabled || this.layout.showingActivities) {
+            return false;
+        }
+        if (id === "create" || id === 'all_records') {
+            return true;
+        } else {
+            return !this.layout.filters.get(id) || this.layout.filters.get(id).get('editable') !== false;
+        }
+    },
+
+    /**
+     * Toggles cursor depending if the filter is editable or not.
+     *
+     * @param {Boolean} active TRUE for a pointer cursor, FALSE for a not allowed cursor
+     */
+    toggleFilterCursor: function(editable) {
+        if (editable) {
+            this.$('.choice-filter').css("cursor", "pointer").addClass('choice-filter-clickable');
+        } else {
+            this.$('.choice-filter').css("cursor", "not-allowed").removeClass('choice-filter-clickable');
+        }
+    },
+
+    /**
+     * Formats label for `all_records` filter. When showing all subpanels, we expect `All records`
+     *
+     * @param {Object} item
+     * @returns {Object} item with formatted label
+     */
+    formatAllRecordsFilter: function (item, model) {
+        item = item || {id: 'all_records'};
+
+        //SP-1819: Seeing "All Leads" instead of "All Records" in sub panel
+        //For the record view our Related means all subpanels (so should show `All Records`)
+        var allRelatedModules = _.indexOf([this.module, 'all_modules'], this.layout.layout.currentModule) > -1;
+
+        //If ability to create a filter
+        if (this.isFilterEditable(item.id)) {
+            item.text = app.lang.get(this.labelCreateNewFilter);
+        } else if (this.layout.layoutType === 'record' && allRelatedModules) {
+            item.text = app.lang.get(this.labelAllRecords);
+            this.toggleFilterCursor(false);
+        } else if (model) {
+            item.text = this.layout._getTranslatedFilterName(model);
+        }
+        return item;
+    },
+
+    /**
      * Handler for when the user selects a filter in the filter bar.
      */
     handleEditFilter: function() {
         var filterId = this.filterNode.val(),
+            filterModel;
+
+        if (filterId === 'all_records') {
+            // Figure out if we have an edit state. This would mean user was editing the filter so we want him to retrieve
+            // the filter form in the state he left it.
+            this.layout.trigger("filter:change:filter", 'create');
+        } else {
             filterModel = this.layout.filters.get(filterId);
+        }
 
         if (filterModel && filterModel.get("editable") !== false) {
             this.layout.trigger("filter:create:open", filterModel);

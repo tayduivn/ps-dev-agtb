@@ -57,7 +57,7 @@
 
         this.emptyFilter = app.data.createBean('Filters', {
             id: 'all_records',
-            name: app.lang.get('LBL_FILTER_ALL_RECORDS'),
+            name: '',
             filter_definition: [],
             editable: false
         });
@@ -475,7 +475,7 @@
         ], self = this;
         // TODO: Add filtering on subpanel vs. non-subpanel filters here.
         var filterLayout = app.view._getController({type:'layout',name:'filter'});
-        if (filterLayout.loadedModules[moduleName] && !_.isEmpty(app.user.lastState.get(app.user.lastState.key("saved-" + moduleName, this))))
+        if (filterLayout.loadedModules[moduleName] && !_.isUndefined(app.user.lastState.get(app.user.lastState.key("saved-" + moduleName, this))))
         {
             this.filters.reset();
             var filters = app.user.lastState.get(app.user.lastState.key("saved-" + moduleName, this));

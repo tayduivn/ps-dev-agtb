@@ -123,6 +123,19 @@ describe("BaseFilterFilterDropdownView", function () {
             expect(filterList).toEqual(expected);
         });
 
+        it('should allow to override "all_records" filter', function() {
+            view.labelAllRecordsFormatted = 'LBL_FILTER_ALL_DUPLICATES';
+            sinonSandbox.stub(view.layout, 'canCreateFilter', function() { return false; });
+            sinonSandbox.stub(view.layout.filters, 'sort');
+            expected = [
+                { id: 'all_records', text: app.lang.get('LBL_FILTER_ALL_DUPLICATES')},
+                { id: 'test_id', text: app.lang.get('TEST'), firstUserFilter: true},
+                { id: 'test_id_2', text: app.lang.get('TEST_2')}
+            ];
+            filterList = view.getFilterList();
+            expect(filterList).toEqual(expected);
+        });
+
         it('should return filter list (including create) with translated labels', function() {
             sinonSandbox.stub(view.layout, 'canCreateFilter', function() { return true; });
             expected = [
@@ -172,16 +185,16 @@ describe("BaseFilterFilterDropdownView", function () {
                 expect(callback.lastCall.args[0]).toEqual(expected);
             });
 
-            it('should get all_records filter with the module label', function() {
+            it('should call "formatAllRecordsFilter" when selected filter is "all_records"', function() {
                 view.layout.filters.add(new Backbone.Model({id: 'all_records', name: 'ALL_RECORDS' }));
                 var $input = $('<input type="text">').val('all_records'),
                     callback = sinon.stub(),
-                    expected = { id: 'all_records', text: app.lang.get('ALL_RECORDS')};
+                    formatStub = sinonSandbox.spy(view, 'formatAllRecordsFilter');
 
                 view.initSelection($input, callback);
 
                 expect(callback).toHaveBeenCalled();
-                expect(callback.lastCall.args[0]).toEqual(expected);
+                expect(formatStub).toHaveBeenCalled();
             });
 
             it('should get all_records filter with basic label', function() {
@@ -198,42 +211,125 @@ describe("BaseFilterFilterDropdownView", function () {
         });
 
         describe('formatSelection', function() {
+            var jQueryStubs, toggleFilterCursorStub;
             beforeEach(function() {
+                jQueryStubs = {
+                    html: sinon.stub().returns(jQueryStubs),
+                    show: sinon.stub().returns(jQueryStubs),
+                    hide: sinon.stub().returns(jQueryStubs)
+                };
+               toggleFilterCursorStub = sinonSandbox.stub(view, 'toggleFilterCursor');
+                sinonSandbox.stub(view, '$', function() {
+                    return jQueryStubs;
+                });
                 //Template replacement
-                view._select2formatSelectionTemplate = function(val) { return val; };
+                view._select2formatSelectionTemplate = function(val) {
+                    return val;
+                };
             });
             it('should format the filter dropdown on left', function() {
                 var expected = {label: app.lang.get("LBL_FILTER"), enabled: view.filterDropdownEnabled };
 
                 expect(view.formatSelection({id: 'test', text: 'TEST'})).toEqual(expected);
+                expect(toggleFilterCursorStub).toHaveBeenCalled();
+                expect(toggleFilterCursorStub).toHaveBeenCalledWith(true);
             });
-            it('should format the selected filter on right', function() {
-                var jQuerySpys = {
-                    html: sinon.spy(),
-                    show: sinon.spy(),
-                    hide: sinon.spy()
-                };
-                sinonSandbox.stub(view, '$', function() {
-                    return jQuerySpys;
+            describe('formatting the selected filter (on right)', function() {
+                it('should display the filter label because it is a custom filter', function() {
+                    view.formatSelection({id: 'test', text: 'TEST'});
+                    expect(jQueryStubs.html).toHaveBeenCalled();
+                    expect(jQueryStubs.html).toHaveBeenCalledWith('TEST');
                 });
-                view.formatSelection({id: 'test', text: 'TEST'});
-                expect(jQuerySpys.html).toHaveBeenCalled();
-                expect(jQuerySpys.show).toHaveBeenCalled();
-                expect(jQuerySpys.hide).not.toHaveBeenCalled();
+                it('should call "formatAllRecordsFilter" to format label because filter is "all_records"', function() {
+                    var formatStub = sinonSandbox.spy(view, 'formatAllRecordsFilter');
+                    view.formatSelection({id: 'all_records', text: 'LBL_LISTVIEW_FILTER_ALL'});
+                    expect(formatStub).toHaveBeenCalled();
+                    expect(jQueryStubs.html).toHaveBeenCalled();
+                });
+                it('should hide the close button if the selected filter is "all_records"', function() {
+                    view.formatSelection({id: 'all_records', text: 'TEST'});
+                    expect(jQueryStubs.show).not.toHaveBeenCalled();
+                    expect(jQueryStubs.hide).toHaveBeenCalled();
+                });
+                it('should show the close button otherwise', function() {
+                    view.formatSelection({id: 'my_filter_id', text: 'TEST'});
+                    expect(jQueryStubs.show).toHaveBeenCalled();
+                    expect(jQueryStubs.hide).not.toHaveBeenCalled();
+                });
             });
-            it('should hide the close button if the selected filter is "all_records"', function() {
-                var jQuerySpys = {
-                    html: sinon.spy(),
-                    show: sinon.spy(),
-                    hide: sinon.spy()
-                };
-                sinonSandbox.stub(view, '$', function() {
-                    return jQuerySpys;
+            describe('make the selected filter editable or not', function() {
+                it('should be editable because it is a custom filter', function() {
+                    view.layout.filters = new Backbone.Collection();
+                    view.layout.filters.add({id: 'my_filter_id', editable: true});
+                    view.formatSelection({id: 'my_filter_id', text: 'LBL_LISTVIEW_FILTER_ALL'});
+                    expect(toggleFilterCursorStub).toHaveBeenCalled();
+                    expect(toggleFilterCursorStub).toHaveBeenCalledWith(true);
                 });
-                view.formatSelection({id: 'all_records', text: 'TEST'});
-                expect(jQuerySpys.html).toHaveBeenCalled();
-                expect(jQuerySpys.show).not.toHaveBeenCalled();
-                expect(jQuerySpys.hide).toHaveBeenCalled();
+                it('should not be editable because it is a predefined filter', function() {
+                    view.layout.filters = new Backbone.Collection();
+                    view.layout.filters.add({id: 'favorites', editable: false});
+                    view.formatSelection({id: 'favorites', text: 'LBL_LISTVIEW_FILTER_ALL'});
+                    expect(toggleFilterCursorStub).toHaveBeenCalled();
+                    expect(toggleFilterCursorStub).toHaveBeenCalledWith(false);
+                });
+                it('should not be editable because it is a bwc module', function() {
+                    view.filterDropdownEnabled = false;
+                    view.layout.showingActivities = false;
+                    view.formatSelection({id: 'all_records', text: 'TEST'});
+                    expect(toggleFilterCursorStub).toHaveBeenCalled();
+                    expect(toggleFilterCursorStub).toHaveBeenCalledWith(false);
+                });
+                it('should not be editable because it is on Activity Stream', function() {
+                    view.filterDropdownEnabled = true;
+                    view.layout.showingActivities = true;
+                    view.formatSelection({id: 'all_records', text: 'LBL_LISTVIEW_FILTER_ALL'});
+                    expect(toggleFilterCursorStub).toHaveBeenCalled();
+                    expect(toggleFilterCursorStub).toHaveBeenCalledWith(false);
+                });
+                it('should be editable if not on Activity Stream and not bwc module', function() {
+                    view.filterDropdownEnabled = true;
+                    view.layout.showingActivities = false;
+                    view.formatSelection({id: 'all_records', text: 'LBL_LISTVIEW_FILTER_ALL'});
+                    expect(toggleFilterCursorStub).toHaveBeenCalled();
+                    expect(toggleFilterCursorStub).toHaveBeenCalledWith(true);
+                });
+            });
+        });
+
+        describe('formatAllRecordsFilter', function() {
+            var model;
+            beforeEach(function() {
+                model = new Backbone.Model({id: 'all_records'});
+                view.layout.layoutType = 'record';
+                view.layout.layout.currentModule = 'Cases';
+            });
+            it('should display "Create" for any sidecar module', function() {
+                view.filterDropdownEnabled = true;
+                view.layout.showingActivities = false;
+                var item = view.formatAllRecordsFilter({id: 'all_records'});
+                expect(item.text).toEqual(view.labelCreateNewFilter);
+            });
+            it('should display "All <Module>s" for any bwc module', function() {
+                model.set('name', 'LBL_LISTVIEW_FILTER_ALL');
+                view.filterDropdownEnabled = false;
+                view.layout.showingActivities = false;
+                var item = view.formatAllRecordsFilter({id: 'all_records'}, model);
+                expect(item.text).toEqual(view.labelAllRecords);
+            });
+            it('should display "All records" because record layout and filtering all related modules', function() {
+                model.set('name', 'LBL_LISTVIEW_FILTER_ALL');
+                view.filterDropdownEnabled = false;
+                view.layout.showingActivities = false;
+                var item = view.formatAllRecordsFilter({id: 'all_records'}, model);
+                expect(item.text).toEqual(view.labelAllRecords);
+            });
+            it('should display "All Activities" because Activity Stream', function() {
+                model.set('name', 'LBL_LISTVIEW_FILTER_ALL');
+                view.layout.layout.currentModule = 'Activities';
+                view.filterDropdownEnabled = false;
+                view.layout.showingActivities = false;
+                var item = view.formatAllRecordsFilter({id: 'all_records'}, model);
+                expect(item.text).toEqual('LBL_LISTVIEW_FILTER_ALL');
             });
         });
 
@@ -265,6 +361,30 @@ describe("BaseFilterFilterDropdownView", function () {
 
             expect(view.formatResultCssClass({id: 'test', text: 'TEST', firstUserFilter: true}))
                 .toEqual('select2-result-border-top');
+        });
+    });
+
+
+    describe('handleEditFilter', function() {
+        var filterId;
+        beforeEach(function() {
+            view.filterNode = $('');
+            sinonSandbox.stub(view.filterNode, 'val', function() { return filterId; });
+            view.layout.filters.add({id: 'test_id'});
+        });
+        it('should trigger "filter:create:open" if action is edit filter', function() {
+            filterId = 'test_id';
+            var triggerStub = sinonSandbox.stub(layout, 'trigger');
+            view.handleEditFilter();
+            expect(triggerStub).toHaveBeenCalled();
+            expect(triggerStub).toHaveBeenCalledWith('filter:create:open');
+        });
+        it('should trigger "filter:change:filter" if action is create new filter', function() {
+            filterId = 'all_records';
+            var triggerStub = sinonSandbox.stub(layout, 'trigger');
+            view.handleEditFilter();
+            expect(triggerStub).toHaveBeenCalled();
+            expect(triggerStub).toHaveBeenCalledWith('filter:change:filter', 'create');
         });
     });
 
