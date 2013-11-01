@@ -804,4 +804,17 @@ describe("BaseFilterRowsView", function() {
         });
     });
 
+    describe('resetFilterValues', function() {
+        it('should call clear on value field models so all value fields are cleared', function() {
+            var model1 = new Backbone.Model();
+            var model2 = new Backbone.Model();
+            var stubs = [sinonSandbox.stub(model1, 'clear'), sinonSandbox.stub(model2, 'clear')];
+            $('<article>').addClass('filter-body').data('valueField', {model: model1 }).appendTo(view.$el);
+            $('<article>').addClass('filter-body').data('valueField', {model: model2 }).appendTo(view.$el);
+            view.resetFilterValues();
+            expect(stubs[0]).toHaveBeenCalled();
+            expect(stubs[1]).toHaveBeenCalled();
+        });
+    });
+
 });

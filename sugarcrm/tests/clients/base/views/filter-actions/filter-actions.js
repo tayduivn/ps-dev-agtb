@@ -82,14 +82,28 @@ describe("Filter Actions View", function () {
     });
 
     describe('triggerClose', function() {
-        it('should trigger "filter:create:close" on the filter layout', function() {
-            var component = {
-                trigger: $.noop
+        var component, filterLayoutTriggerStub, layoutTriggerStub;
+        beforeEach(function() {
+            component = {
+                trigger: $.noop,
+                buildFilterDef: function() { return [{$favorite: ''}]; }
             };
             view.layout.getComponent = function() { return component; };
-            var filterLayoutTriggerStub = sinon.stub(component, 'trigger');
+            filterLayoutTriggerStub = sinon.stub(component, 'trigger');
+            layoutTriggerStub = sinon.stub(view.layout, 'trigger');
+        });
+        it('should trigger "filter:create:close" on the filter layout', function() {
+            view.layout.getComponent = function() { return component; };
             view.layout.editingFilter = new Backbone.Model({id: 'my_filter'});
             view.triggerClose();
+            expect(filterLayoutTriggerStub).toHaveBeenCalled();
+            expect(filterLayoutTriggerStub).toHaveBeenCalledWith("filter:create:close", true, 'my_filter');
+        });
+        it('should trigger "filter:apply" on the filter layout to cancel changes in filter definition', function() {
+            view.layout.editingFilter = new Backbone.Model({id: 'my_filter', filter_definition: [{$owner: ''}]});
+            view.triggerClose();
+            expect(layoutTriggerStub).toHaveBeenCalled();
+            expect(layoutTriggerStub).toHaveBeenCalledWith("filter:apply", null, [{$owner: ''}]);
             expect(filterLayoutTriggerStub).toHaveBeenCalled();
             expect(filterLayoutTriggerStub).toHaveBeenCalledWith("filter:create:close", true, 'my_filter');
         });

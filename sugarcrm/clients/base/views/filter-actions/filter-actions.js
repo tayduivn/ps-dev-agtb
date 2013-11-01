@@ -35,6 +35,7 @@
     events: {
         "change input": "filterNameChanged",
         "keyup input": "filterNameChanged",
+        "click a.reset_button": "triggerReset",
         "click a.filter-close": "triggerClose",
         "click a.save_button:not(.disabled)": "triggerSave",
         "click a.delete_button:not(.hide)": "triggerDelete"
@@ -55,8 +56,7 @@
         app.view.View.prototype.initialize.call(this, opts);
 
         this.layout.on("filter:create:open", function(model) {
-            var self = this,
-                name = model ? model.get("name") : '';
+            var name = model ? model.get("name") : '';
             this.setFilterName(name);
         }, this);
 
@@ -125,7 +125,21 @@
      */
     triggerClose: function() {
         var id = this.layout.editingFilter.get('id');
+
+        //Check the current filter definition
+        var filterDef = this.layout.getComponent('filter-rows').buildFilterDef();
+        //Apply the previous filter definition if something has changed meanwhile
+        if (!_.isEqual(this.layout.editingFilter.get('filter_definition'), filterDef)) {
+            this.layout.trigger('filter:apply', null, this.layout.editingFilter.get('filter_definition'));
+        }
         this.layout.getComponent('filter').trigger("filter:create:close", true, id);
+    },
+
+    /**
+     * Call a method on filter-rows to reset filter values
+     */
+    triggerReset: function() {
+        this.layout.getComponent('filter-rows').resetFilterValues();
     },
 
     /**

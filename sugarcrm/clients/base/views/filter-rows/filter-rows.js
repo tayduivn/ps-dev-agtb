@@ -752,6 +752,19 @@
     },
 
     /**
+     * Reset filter values on filter form. Called after a click on `Reset` button
+     */
+    resetFilterValues: function() {
+        var $rows = this.$('article.filter-body');
+        _.each($rows, function(row) {
+            var $row = $(row);
+            if ($row.data('valueField')) {
+                $row.data('valueField').model.clear();
+            }
+        });
+    },
+
+    /**
      * Internal function that disposes fields stored in the data attribute of the row el.
      * @param  {jQuery el} $row The row which fields are to be disposed.
      * @param  {array} opts An array of objects, corresponding with the data obj of the row.
