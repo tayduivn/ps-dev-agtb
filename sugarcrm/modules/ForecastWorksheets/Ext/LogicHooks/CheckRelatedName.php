@@ -23,3 +23,15 @@ $hook_array['before_save'][] = array(
     'ForecastWorksheetHooks',
     'checkRelatedName',
 );
+
+/**
+ * Handle removing the names if they id's are removed from the forecast worksheets since how the relationships are
+ * updated now it doesn't resave the bean
+ */
+$hook_array['after_relationship_delete'][] = array(
+    1,
+    'afterRelationshipDelete',
+    'modules/ForecastWorksheets/ForecastWorksheetHooks.php',
+    'ForecastWorksheetHooks',
+    'afterRelationshipDelete',
+);
