@@ -64,6 +64,8 @@
                 app.drawer.close(modelToSave, false);
             } else if (origin === 'database') {
                 modelToSave.set(dataInDb);
+                // trigger sync so that synced attributes are reset
+                modelToSave.trigger('sync');
                 app.drawer.close(modelToSave, true);
             }
         }
