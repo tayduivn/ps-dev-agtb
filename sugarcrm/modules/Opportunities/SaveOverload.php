@@ -17,7 +17,6 @@
  */
 function perform_save($focus)
 {
-    //BEGIN SUGARCRM flav=pro ONLY
     global $app_list_strings, $timedate, $current_language;
     $app_list_strings = return_app_list_strings_language($current_language);
 
@@ -45,50 +44,9 @@ function perform_save($focus)
 
     // Bug49495: amount may be a calculated field
     $focus->updateCalculatedFields();
-    //END SUGARCRM flav=pro ONLY
 
     //Store the base currency value
     if (isset($focus->amount) && !number_empty($focus->amount)) {
         $focus->amount_usdollar = SugarCurrency::convertWithRate($focus->amount, $focus->base_rate);
-    }
-
-    if ($settings['is_setup']) {
-        if (empty($focus->id)) {
-            $focus->id = create_guid();
-            $focus->new_with_id = true;
-        }
-//BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-        //We create a related product entry for any new opportunity so that we may forecast on products
-        // create an empty product module
-        /* @var $rli RevenueLineItem */
-        $rli = BeanFactory::getBean('RevenueLineItems');
-        
-        //We still need to update the associated product with changes
-        if ($focus->new_with_id == false) {
-            $rli->retrieve_by_string_fields(array('opportunity_id' => $focus->id));
-        }
-        
-        //If $rli is set then we need to copy values into it from the opportunity
-        if (isset($rli)) {
-            $rli->name = $focus->name;
-            $rli->best_case = $focus->best_case;
-            $rli->likely_case = $focus->amount;
-            $rli->worst_case = $focus->worst_case;
-            $rli->cost_price = $focus->amount;
-            $rli->quantity = 1;
-            $rli->currency_id = $focus->currency_id;
-            $rli->base_rate = $focus->base_rate;
-            $rli->probability = $focus->probability;
-            $rli->date_closed = $focus->date_closed;
-            $rli->date_closed_timestamp = $focus->date_closed_timestamp;
-            $rli->assigned_user_id = $focus->assigned_user_id;
-            $rli->opportunity_id = $focus->id;
-            $rli->account_id = $focus->account_id;
-            $rli->commit_stage = $focus->commit_stage;
-            $rli->sales_stage = $focus->sales_stage;
-            $rli->deleted = $focus->deleted;
-            $rli->save();
-        }
-//END SUGARCRM flav=pro && flav!=ent ONLY
     }
 }
