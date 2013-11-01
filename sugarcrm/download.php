@@ -192,7 +192,7 @@ else {
             {
                 header("Content-type: application/octet-stream");
             }
-               header("Content-Disposition: attachment; filename=\"".$name."\";");
+               header("Content-Disposition: attachment; filename=\"".$name."\"");
             
 		}
 		// disable content type sniffing in MSIE
