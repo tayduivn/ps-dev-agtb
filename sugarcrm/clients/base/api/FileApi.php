@@ -288,7 +288,10 @@ class FileApi extends SugarApi {
                 }
 
                 // This is a good return
-                return array($field => $fileinfo);
+                return array(
+                    $field => $fileinfo,
+                    'record' => $this->formatBean($api, $args, $bean)
+                );
             }
         }
 

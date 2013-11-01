@@ -531,7 +531,10 @@
         self.inlineEditMode = false;
 
         app.file.checkFileFieldsAndProcessUpload(self, {
-                success: function() {
+                success: function(response) {
+                    if (response.record && response.record.date_modified) {
+                        self.model.set('date_modified', response.record.date_modified);
+                    }
                     self._saveModel();
                 }
             }, {
