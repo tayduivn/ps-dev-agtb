@@ -457,14 +457,15 @@ enableInsideViewConnector();
         $current_user->retrieve(1);
         include("install/populateSeedData.php");
         installerHook('post_installDemoData');
-        //BEGIN SUGARCRM flav=pro ONLY
-        if(!empty($_SESSION['fts_type']) || !empty($_SESSION['setup_fts_type']))
-        {
-            require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
-            $indexer = new SugarSearchEngineFullIndexer();
-            $results = $indexer->performFullSystemIndex();
-        }
-        //END SUGARCRM flav=pro ONLY
+    }
+
+    if((!empty($_SESSION['fts_type']) || !empty($_SESSION['setup_fts_type'])) &&
+            (empty($_SESSION['setup_fts_skip'])))
+    {
+        installLog('running full indexer');
+        require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
+        $indexer = new SugarSearchEngineFullIndexer();
+        $results = $indexer->performFullSystemIndex();
     }
 
     $endTime = microtime(true);
