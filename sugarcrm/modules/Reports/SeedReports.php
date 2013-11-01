@@ -1,26 +1,16 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
- 
-
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 
 function create_default_reports($is_upgrade=false) {
     global $current_language;
@@ -29,8 +19,10 @@ function create_default_reports($is_upgrade=false) {
 
     $default_reports = array();
 
+    $quarter = get_quarter();
+
     
-    $default_reports[] = array('Opportunities', $lang_strings['DEFAULT_REPORT_TITLE_1'], '{"display_columns":[{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"name","label":"Name","table_key":"Opportunities:accounts"},{"name":"amount_usdollar","label":"Amount","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"user_name","label":"User Name","table_key":"Opportunities:assigned_user_link"}],"module":"Opportunities","group_defs":[],"summary_columns":[],"report_name":"Current Quarter Forecast","do_round":1,"numerical_chart_column":"","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"tabular","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"},"Opportunities:accounts":{"name":"Opportunities  >  Accounts","parent":"self","link_def":{"name":"accounts","relationship_name":"accounts_opportunities","bean_is_lhs":false,"link_type":"one","label":"Accounts","table_key":"Opportunities:accounts"},"dependents":["display_cols_row_2"],"module":"Accounts","label":"Accounts"},"Opportunities:assigned_user_link":{"name":"Opportunities  >  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"opportunities_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","table_key":"Opportunities:assigned_user_link"},"dependents":["display_cols_row_6"],"module":"Users","label":"Assigned to User"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"date_closed","table_key":"self","qualifier_name":"between_dates","runtime":1,"input_name0":"2009-10-01","input_name1":"2009-12-31"}}},"chart_type":"none"}','tabular');
+    $default_reports[] = array('Opportunities', $lang_strings['DEFAULT_REPORT_TITLE_1'], '{"display_columns":[{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"name","label":"Name","table_key":"Opportunities:accounts"},{"name":"amount_usdollar","label":"Amount","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"user_name","label":"User Name","table_key":"Opportunities:assigned_user_link"}],"module":"Opportunities","group_defs":[],"summary_columns":[],"report_name":"Current Quarter Forecast","do_round":1,"numerical_chart_column":"","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"tabular","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"},"Opportunities:accounts":{"name":"Opportunities  >  Accounts","parent":"self","link_def":{"name":"accounts","relationship_name":"accounts_opportunities","bean_is_lhs":false,"link_type":"one","label":"Accounts","table_key":"Opportunities:accounts"},"dependents":["display_cols_row_2"],"module":"Accounts","label":"Accounts"},"Opportunities:assigned_user_link":{"name":"Opportunities  >  Assigned to User","parent":"self","link_def":{"name":"assigned_user_link","relationship_name":"opportunities_assigned_user","bean_is_lhs":false,"link_type":"one","label":"Assigned to User","table_key":"Opportunities:assigned_user_link"},"dependents":["display_cols_row_6"],"module":"Users","label":"Assigned to User"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"date_closed","table_key":"self","qualifier_name":"between_dates","runtime":1,"input_name0":"' . $quarter['start'] . '","input_name1":"' . $quarter['end'] . '"}}},"chart_type":"none"}','tabular');
     //$default_reports[] = array('Opportunities', $lang_strings['DEFAULT_REPORT_TITLE_1'], '{"display_columns":[{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"name","label":"Account Name","table_key":"accounts"},{"name":"amount_usdollar","label":"Amount","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"},{"name":"full_name","label":"Assigned to","table_key":"assigned_user_link"}],"summary_columns":[],"order_by":[{"name":"probability","label":"Probability (%)","table_key":"self","sort_dir":"a"}],"filters_def":[{"name":"date_closed","table_key":"self","qualifier_name":"between_dates","input_name0":"2005-07-01","input_name1":"2005-09-30"}],"group_defs":[],"links_def":["accounts","team_link","created_by_link","modified_user_link","assigned_user_link"],"module":"Opportunities","report_name":"Current Quarter Forecast\\n","report_type":"tabular"}','tabular');
     $default_reports[] = array('Opportunities', $lang_strings['DEFAULT_REPORT_TITLE_2'], '{"display_columns":[{"name":"name","label":"Opportunity Name","table_key":"self"},{"name":"name","label":"Account Name","table_key":"accounts"},{"name":"amount_usdollar","label":"Amount","table_key":"self"},{"name":"description","label":"Description","table_key":"self"},{"name":"next_step","label":"Next Step","table_key":"self"},{"name":"date_closed","label":"Expected Close Date","table_key":"self"},{"name":"probability","label":"Probability (%)","table_key":"self"}],"summary_columns":[],"order_by":[{"name":"probability","label":"Probability (%)","table_key":"self","sort_dir":"a"}],"filters_def":[],"group_defs":[],"links_def":["accounts","team_link","created_by_link","modified_user_link","assigned_user_link"],"module":"Opportunities","report_name":"Detailed Forecast","report_type":"tabular"}','tabular');
     $default_reports[] = array('Accounts', $lang_strings['DEFAULT_REPORT_TITLE_3'], '{"display_columns":[{"name":"name","label":"Account Name","table_key":"self"},{"name":"phone_office","label":"Phone Office","table_key":"self"},{"name":"description","label":"Description","table_key":"self"},{"name":"annual_revenue","label":"Annual Revenue","table_key":"self"},{"name":"account_type","label":"Type","table_key":"self"},{"name":"full_name","label":"Assigned to","table_key":"assigned_user_link"}],"summary_columns":[],"filters_def":[{"name":"account_type","table_key":"self","qualifier_name":"is","input_name0":"Partner"}],"group_defs":[],"links_def":["member_of","team_link","created_by_link","modified_user_link","assigned_user_link"],"module":"Accounts","report_name":"Partner Account List","order_by":[],"report_type":"tabular"}','tabular');
@@ -139,5 +131,38 @@ function create_default_reports($is_upgrade=false) {
         	$result = $saved_report->save_report(-1, 1, $report[1], $report[0], $report[3], $report[2], 1, '1', $report[4]);
         }
     }
-                                                                                                       
+
+}
+
+/**
+ * Get the date for the current quarter
+ *
+ * @return array
+ */
+function get_quarter()
+{
+    $y = date('Y');
+    $m = date('m');
+    switch ($m) {
+        case $m >= 1 && $m <= 3:
+            $start = $y . '-01-01';
+            $end = $y . '-03-31';
+            break;
+        case $m >= 4 && $m <= 6:
+            $start = $y . '-04-01';
+            $end = $y . '-06-30';
+            break;
+        case $m >= 7 && $m <= 9:
+            $start = $y . '-07-01';
+            $end = $y . '-09-30';
+            break;
+        case $m >= 10 && $m <= 12:
+            $start = $y . '-10-01';
+            $end = $y . '-12-31';
+            break;
+    }
+    return array(
+        'start' => $start,
+        'end' => $end,
+    );
 }
