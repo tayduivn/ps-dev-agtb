@@ -1222,10 +1222,9 @@ $mod_strings = array (
     'LBL_PDFMANAGER_SETTINGS_DESC' => 'Manage templates for generated PDF files',
 //END SUGARCRM flav=pro ONLY
     'LBL_FTS_PAGE_DESC' => 'To enable full text searching:<br>
-1) Select the search engine that will be used<br>
-2) Enter the host and port of the search engine<br>
-3) Click Test to make sure Sugar can connect to the search engine<br>
-4) Click Schedule System Index. Make sure that crontab is set up to run cron.php. This will handle indexing as well as the fallback mechanism when the connection to the search engine is interrupted.',
+1) Enter the host and port of the search engine<br>
+2) Click Test to make sure Sugar can connect to the search engine<br>
+3) Click Schedule System Index. Make sure that crontab is set up to run cron.php. This will handle indexing as well as the fallback mechanism when the connection to the search engine is interrupted.',
     'LBL_FTS_DISABLED' => 'Full Text Search has been disabled because the system is not able to connect to the search engine.',
     'LBL_FTS_CONNECTION_INVALID' => 'The Full Text Search Settings you have entered are invalid and may slow down system performance.  Please change or clear your settings.',
     'LBL_FTS_INDEXING_DONE' => 'Full Text Search Indexing completed.',
