@@ -373,6 +373,7 @@ class EmailMan extends SugarBean{
                     $noteAudit->parent_id = $retId;
                     $noteAudit->parent_type = $this->ref_email->module_dir;
                     $noteAudit->description = "[".$note->filename."] ".$mod_strings['LBL_ATTACHMENT_AUDIT'];
+                    $noteAudit->name = $note->name;
                     $noteAudit->filename=$filename;
                     $noteAudit->file_mime_type=$mime_type;
                     $noteAudit_id=$noteAudit->save();
@@ -459,6 +460,7 @@ class EmailMan extends SugarBean{
             $noteAudit              = BeanFactory::getBean('Notes');
             $noteAudit->parent_id   = $retId;
             $noteAudit->parent_type = $email->module_dir;
+            $noteAudit->name        = $note->name;
             $noteAudit->description = "[{$note->filename}] {$mod_strings['LBL_ATTACHMENT_AUDIT']}";
             $noteAudit->save();
         }
