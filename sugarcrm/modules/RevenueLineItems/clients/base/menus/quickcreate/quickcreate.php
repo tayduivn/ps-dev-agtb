@@ -20,18 +20,4 @@ $viewdefs[$module_name]['base']['menu']['quickcreate'] = array(
     'visible' => true,
     'order' => 10,
     'icon' => 'icon-plus',
-    'related' => array(
-        array(
-            'module' => 'Accounts',
-            'link' => 'revenuelineitems',
-        ),
-        array(
-            'module' => 'Contacts',
-            'link' => 'revenuelineitems',
-        ),
-        array(
-            'module' => 'Opportunities',
-            'link' => 'revenuelineitems',
-        ),
-    ),
 );
