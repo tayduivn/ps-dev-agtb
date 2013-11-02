@@ -52,6 +52,10 @@ class WebUpgrader extends UpgradeDriver
         return true;
     }
 
+    /**
+     * Get user from state
+     * @see UpgradeDriver::getUser()
+     */
     protected function getUser()
     {
         $user = BeanFactory::getBean('Users', $this->state['admin']);
@@ -63,6 +67,7 @@ class WebUpgrader extends UpgradeDriver
 
     /**
      * Files that are used by the upgrade driver
+     * We copy them so that upgrading would not mess them up
      * @var array
      */
     protected $upgradeFiles = array('WebUpgrader.php', 'UpgradeDriver.php', 'upgrade_screen.php');
@@ -98,7 +103,7 @@ class WebUpgrader extends UpgradeDriver
 
     /**
      * Get upgrade status
-     * @return multitype:multitype:
+     * @return array
      */
     protected function getStatus()
     {
@@ -137,6 +142,10 @@ class WebUpgrader extends UpgradeDriver
         return $this->runStep($action);
     }
 
+    /**
+     * Messages for upload errors
+     * @var array
+     */
     protected $upload_errors = array(
         0=>"There is no error, the file uploaded with success",
         1=>"The uploaded file exceeds the upload_max_filesize directive in php.ini",
