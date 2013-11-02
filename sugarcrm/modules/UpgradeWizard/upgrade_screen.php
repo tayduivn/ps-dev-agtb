@@ -268,119 +268,161 @@ a:hover {
 <![endif]-->
 
 <script>
-    if(top !== self) {
+    if (top !== self) {
         top.location.href = location.href;
     }
 
     $(window).bind("load", function () {
 
-        var uploader = {token: "<?= $token ?>"};
-        uploader.hideError = function () {
-            $('#errorBox').addClass('hide');
-            $('.bar-error').removeClass('bar-error');
-        };
-        uploader.displayError = function (error) {
-            $('#errorBox').removeClass('hide')
-            $('#errorBox').find('div').addClass('bar-error').text(error);
-            $('#' + uploader.stages[uploader.stage] + 'Bar').addClass('bar-error');
-            $('#' + uploader.stages[uploader.stage] + 'MicroBar').width('100%').addClass('bar-error').removeClass('bar-success');
-        };
-        uploader.updateProgress = function (bar, percent) {
+            var uploader = {token: "<?= $token ?>"};
+            uploader.hideError = function () {
+                $('#errorBox').addClass('hide');
+                $('.bar-error').removeClass('bar-error');
+            };
+            uploader.displayError = function (error) {
+                $('#errorBox').removeClass('hide')
+                $('#errorBox').find('div').addClass('bar-error').text(error);
+                $('#' + uploader.stages[uploader.stage] + 'Bar').addClass('bar-error');
+                $('#' + uploader.stages[uploader.stage] + 'MicroBar').width('100%').addClass('bar-error').removeClass('bar-success');
+                uploader.clearStatusUpdate();
+            };
+            uploader.updateProgress = function (bar, percent) {
 
-            if (uploader.stage == -1)debugger;
-            $('#upgradeTitle').text('Upgrade Progress ' + uploader.stage + ' of ' + uploader.stages.length);
-            if (percent == 100) {
-                $('#' + bar + 'Bar').addClass('bar-success');
+                if (uploader.stage == -1)debugger;
+                $('#upgradeTitle').text('Upgrade Progress ' + uploader.stage + ' of ' + uploader.stages.length);
+                if (percent == 100) {
+                    $('#' + bar + 'Bar').addClass('bar-success');
+                    $('#' + bar + 'MicroBar').addClass('bar-success');
+                }
+                $('#' + bar + 'Bar').width(percent + '%');
+                $('#' + bar + 'MicroBar').width(percent + '%');
             }
-            $('#' + bar + 'Bar').width(percent + '%');
-            $('#' + bar + 'MicroBar').width(percent + '%');
-        }
-        uploader.stage = 0;
-        uploader.stages = ['unpack', 'pre', 'commit', 'post', 'cleanup'];
 
-        uploader.executeStage = function () {
-            uploader.hideError();
-            $.ajax({
-                type: 'POST',
-                url: 'UpgradeWizard.php',
-                data: {
-                    token: uploader.token,
-                    action: uploader.stages[uploader.stage]
-                },
-                success: function (e) {
-                    if (e.status == 'error') {
-                        uploader.displayError(e.message);
-                    } else {
-                        if(e.data === true){
-
-                            uploader.updateProgress(uploader.stages[uploader.stage], 100);
-                            $('#upgradeTitle').text('Upgrade Complete');
-                            $('#successBox').removeClass('hide');
-                        }else{
-                            uploader.stage = uploader.stages.indexOf(e.data);
-
-                            if (uploader.stage > 0) {
-                                uploader.updateProgress(uploader.stages[uploader.stage - 1], 100);
+            uploader.statusUpdates = false;
+            uploader.stage = 0;
+            uploader.stages = ['unpack', 'pre', 'commit', 'post', 'cleanup'];
+            uploader.counterStages = ['pre', 'post'];
+            uploader.updateStatus = function () {
+                $.ajax({
+                    type: 'POST',
+                    url: 'UpgradeWizard.php',
+                    data: {
+                        token: uploader.token,
+                        action: 'status'
+                    },
+                    success: function (e) {
+                        if (uploader.statusUpdates) {
+                            for(var i in e.data.script_count){
+                                uploader.updateProgress(i, Object.keys(e.data.scripts[i]).length/ e.data.script_count[i] * 100);
                             }
-                            uploader.updateProgress(e.data, 25);
-                            uploader.executeStage();
+                            uploader.setNextStatusUpdate();
                         }
-
-                    }
-                },
-                error: function (e) {
-                    uploader.displayError("A server error occurred please check your logs");
-                    $('#' + uploader.stages[uploader.stage] + 'Bar').addClass('bar-error');
-                }
-
-
-
-            })
-
-        }
-        ;
-
-
-        $('#uploadForm').submit(function (evt) {
-            uploader.hideError();
-            evt.preventDefault();
-            uploader.stage = uploader.stages.indexOf('unpack');
-            $('#uploadBox').addClass('hide');
-            $('#progressBox').removeClass('hide');
-            uploader.updateProgress('unpack', 25);
-
-            $.ajax('UpgradeWizard.php', {
-                    data: $(":hidden", this).serialize(),
-                    files: $(":file", this),
-                    iframe: true,
-                    processData: false,
-                    error: function (e) {
-                        uploader.displayError("A server error occurred please check your logs");
-                    }
-                }
-            ).complete(function (data) {
-
-                    try {
-                        var response = $.parseJSON(data.responseText);
-                        if (response.status == 'error') {
-                            $('#uploadBox').removeClass('hide');
-                            uploader.displayError(response.message);
-                        } else {
-
-                            uploader.stage = uploader.stages.indexOf(response.data);
-                            uploader.updateProgress('unpack', 100);
-                            uploader.executeStage();
-                        }
-                    } catch (e) {
-                        $('#uploadBox').removeClass('hide');
-                        uploader.displayError(data);
-
                     }
 
                 });
-        });
 
-    })
+            }
+            uploader.setNextStatusUpdate = function () {
+                uploader.statusUpdates = true;
+                uploader.updateInterval = setTimeout(uploader.updateStatus, 250);
+            }
+            uploader.clearStatusUpdate = function () {
+                uploader.statusUpdates = false;
+                if (uploader.updateInterval) {
+                    clearTimeout(uploader.updateInterval);
+                }
+            }
+
+
+            uploader.executeStage = function () {
+                uploader.hideError();
+                $.ajax({
+                    type: 'POST',
+                    url: 'UpgradeWizard.php',
+                    data: {
+                        token: uploader.token,
+                        action: uploader.stages[uploader.stage]
+                    },
+                    success: function (e) {
+                        if (e.status == 'error') {
+                            uploader.displayError(e.message);
+                        } else {
+                            if (e.data === true) {
+                                uploader.clearStatusUpdate();
+                                uploader.updateProgress(uploader.stages[uploader.stage], 100);
+                                $('#upgradeTitle').text('Upgrade Complete');
+                                $('#successBox').removeClass('hide');
+                            } else {
+                                uploader.stage = uploader.stages.indexOf(e.data);
+
+                                if (uploader.stage > 0) {
+                                    uploader.updateProgress(uploader.stages[uploader.stage - 1], 100);
+                                }
+                                var percentComplete = 0;
+                                if(uploader.counterStages.indexOf(e.data) == -1){
+                                    percentComplete = 25;
+                                }
+                                uploader.updateProgress(e.data, percentComplete);
+                                uploader.executeStage();
+                            }
+
+                        }
+                    },
+                    error: function (e) {
+                        uploader.displayError("A server error occurred please check your logs");
+                        $('#' + uploader.stages[uploader.stage] + 'Bar').addClass('bar-error');
+                    }
+
+
+
+                })
+
+            }
+            ;
+
+
+            $('#uploadForm').submit(function (evt) {
+                uploader.hideError();
+                evt.preventDefault();
+                uploader.stage = uploader.stages.indexOf('unpack');
+                $('#uploadBox').addClass('hide');
+                $('#progressBox').removeClass('hide');
+                uploader.updateProgress('unpack', 25);
+
+                $.ajax('UpgradeWizard.php', {
+                        data: $(":hidden", this).serialize(),
+                        files: $(":file", this),
+                        iframe: true,
+                        processData: false,
+                        error: function (e) {
+                            uploader.displayError("A server error occurred please check your logs");
+                        }
+                    }
+                ).complete(function (data) {
+
+                        try {
+                            var response = $.parseJSON(data.responseText);
+                            if (response.status == 'error') {
+                                $('#uploadBox').removeClass('hide');
+                                uploader.displayError(response.message);
+                            } else {
+
+                                uploader.stage = uploader.stages.indexOf(response.data);
+                                uploader.updateProgress('unpack', 100);
+                                uploader.executeStage();
+                                uploader.setNextStatusUpdate();
+                            }
+                        } catch (e) {
+                            $('#uploadBox').removeClass('hide');
+                            uploader.displayError(data);
+
+                        }
+
+                    });
+            });
+
+        }
+    )
     ;
 
 
