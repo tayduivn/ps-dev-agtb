@@ -297,7 +297,7 @@ a:hover {
                 $('#' + bar + 'Bar').width(percent + '%');
                 $('#' + bar + 'MicroBar').width(percent + '%');
             }
-
+            uploader.STATUS_FREQ = 1000;
             uploader.statusUpdates = false;
             uploader.stage = 0;
             uploader.stages = ['unpack', 'pre', 'commit', 'post', 'cleanup'];
@@ -324,7 +324,7 @@ a:hover {
             }
             uploader.setNextStatusUpdate = function () {
                 uploader.statusUpdates = true;
-                uploader.updateInterval = setTimeout(uploader.updateStatus, 250);
+                uploader.updateInterval = setTimeout(uploader.updateStatus, uploader.STATUS_FREQ);
             }
             uploader.clearStatusUpdate = function () {
                 uploader.statusUpdates = false;
@@ -384,6 +384,10 @@ a:hover {
             $('#uploadForm').submit(function (evt) {
                 uploader.hideError();
                 evt.preventDefault();
+                if(!$('#uploadBox input[type=file]')[0].value) {
+                	uploader.displayError("Please select upgrade package file");
+                	return;
+                }
                 uploader.stage = uploader.stages.indexOf('unpack');
                 $('#uploadBox').addClass('hide');
                 $('#progressBox').removeClass('hide');
