@@ -74,6 +74,7 @@
     height: inherit;
     background: transparent;
     color: @grayDark;
+    box-shadow: none;
     &:focus {
       outline-color: transparent;
       outline-style: none;
@@ -87,16 +88,22 @@
   background: @gray;
   color: @white;
   line-height: 20px;
-  padding: 1px 2px 2px 5px;
-  margin: 0 5px 0 0;
+  font-size: @fontSizeSmall;
+  font-weight: 600;
+  padding: 0;
+  margin: -2px 2px 0 -3px;
   border: none;
+  display: inline-block;
   .border-radius(@borderRadiusSmall);
   .tag-name {
-    padding: 3px;
+    padding: 2px 0 2px 5px;
+    display: inline-block;
   }
   .tag-remove {
     cursor: pointer;
     color: @black;
+    padding: 4px;
+    display: inline-block;
     &:hover {
       color: @grayLight;
     }
@@ -133,5 +140,9 @@
         outline: none;
       }
     }
+    .tag-name {
+    padding: 2px 5px;
+    display: inline-block;
+  }
   }
 }
