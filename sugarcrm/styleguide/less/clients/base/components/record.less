@@ -184,42 +184,14 @@
       .normal > span {
         display: block !important;
       }
-      .control-group.email > span,
-      .control-group.email > del {
-        color: @grayLight;
+      .detail {
+        line-height: 20px;
       }
       .edit .control-group.email {
-        padding-right: 132px;
-        position: relative;
-        input[type="text"] {
-          min-height: 18px;
-        }
-        .input-append.widget {
-          margin-bottom: 0;
-          input[type="text"],
-          textarea,
-          .uneditable-input {
-            .box-sizing(border-box);
-            height: 32px;
-            margin-top: 0;
-            width: 100%;
-            .border-radius(0);
-            border-width: 0 1px 1px 1px;
-            &:focus {
-              z-index: 2;
-            }
-          }
-        }
+        padding-right: 135px;
+        margin-right: -7px;
         .btn-toolbar {
-          position: absolute;
-          /* Must be same as input[type="text"] margin-top definition */
           top: -5px;
-          right: 0;
-          width: 118px;
-          padding: 0;
-          .btn-group {
-            float: left;
-          }
         }
       }
     }
@@ -288,7 +260,11 @@
           margin-bottom: 0;
         }
       }
-      .normal .control-group {
+      .edit .control-group {
+        margin-right: -7px;
+        .controls-three {
+          padding-right: 101px;
+        }
         .btn {
           top: -5px;
         }
