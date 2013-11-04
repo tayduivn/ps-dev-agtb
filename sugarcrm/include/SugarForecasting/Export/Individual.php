@@ -74,7 +74,7 @@ class SugarForecasting_Export_Individual extends SugarForecasting_Export_Abstrac
 
         $seed = BeanFactory::getBean('ForecastWorksheets');
 
-        return $this->getContent($data['records'], $seed, $fields_array);
+        return $this->getContent($data['records'], $seed, $fields_array, 'commit_stage', $this->getArg('filters'));
     }
 
 

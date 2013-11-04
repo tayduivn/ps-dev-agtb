@@ -173,6 +173,7 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         $args = array();
         $args['timeperiod_id'] = $this->timeperiod->id;
         $args['user_id'] = $this->repData['id'];
+        $args['filters'] = array('include');
 
         //hide/show any columns
         SugarTestConfigUtilities::setConfig('Forecasts', $hide, $value);

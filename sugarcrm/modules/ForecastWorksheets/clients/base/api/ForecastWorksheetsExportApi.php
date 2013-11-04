@@ -46,6 +46,11 @@ class ForecastWorksheetsExportApi extends ExportApi
 
         $args['timeperiod_id'] = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
         $args['user_id'] = isset($args['user_id']) ? $args['user_id'] : $api->user->id;
+        if (!isset($args['filters'])) {
+            $args['filters'] = array();
+        } elseif (!is_array($args['filters'])) {
+            $args['filters'] = array($args['filters']);
+        }
         // don't allow encoding to html for data used in export
         $args['encode_to_html'] = false;
 

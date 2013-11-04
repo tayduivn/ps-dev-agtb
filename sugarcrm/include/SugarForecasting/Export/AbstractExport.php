@@ -1,29 +1,15 @@
 <?php
-/**
- * LICENSE: The contents of this file are subject to the SugarCRM Professional
- * End User License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You
- * may not use this file except in compliance with the License.  Under the
- * terms of the license, You shall not, among other things: 1) sublicense,
- * resell, rent, lease, redistribute, assign or otherwise transfer Your
- * rights to the Software, and 2) use the Software for timesharing or service
- * bureau purposes such as hosting the Software for commercial gain and/or for
- * the benefit of a third party.  Use of the Software may be subject to
- * applicable fees and any use of the Software without first paying applicable
- * fees is strictly prohibited.  You do not have the right to remove SugarCRM
- * copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
 require_once('include/SugarForecasting/ForecastProcessInterface.php');
@@ -44,7 +30,7 @@ abstract class SugarForecasting_Export_AbstractExport extends SugarForecasting_A
      */
     public function __construct($args)
     {
-        if(!empty($args['dataset'])) {
+        if (!empty($args['dataset'])) {
             $this->dataset = $args['dataset'];
         }
 
@@ -70,25 +56,25 @@ abstract class SugarForecasting_Export_AbstractExport extends SugarForecasting_A
      * @param $data
      * @param $focus
      * @param $fields_array
+     * @param string $filter_by     What field that should be filtered on
+     * @param array $filters        The values to check $filter_by
      *
      * @return string content for the export file
      */
-    protected function getContent($data, $focus, $fields_array)
+    protected function getContent($data, $focus, $fields_array, $filter_by = null, array $filters = array())
     {
         require_once('include/export_utils.php');
         $fields_array = get_field_order_mapping($focus->object_name, $fields_array);
 
-        foreach($fields_array as $key=>$label)
-        {
+        foreach ($fields_array as $key => $label) {
              $fields_array[$key] = translateForExport($label, $focus);
         }
 
         // setup the "header" line with proper delimiters
         $content = "\"".implode("\"".getDelimiter()."\"", array_values($fields_array))."\"\r\n";
 
-        if(!empty($data))
-        {
-            $content .= $this->getExportDataContent($data, $focus, $fields_array);
+        if (!empty($data)) {
+            $content .= $this->getExportDataContent($data, $focus, $fields_array, $filter_by, $filters);
         }
 
         return $content;
@@ -102,10 +88,12 @@ abstract class SugarForecasting_Export_AbstractExport extends SugarForecasting_A
      * @param $data
      * @param $focus
      * @param $fields_array
+     * @param string $filter_by     What field that should be filtered on
+     * @param array $filters        The values to check $filter_by
      *
      * @return string content for the data portion of export
      */
-    protected function getExportDataContent($data, $focus, $fields_array)
+    protected function getExportDataContent($data, $focus, $fields_array, $filter_by = null, array $filters = array())
     {
         require_once('include/SugarFields/SugarFieldHandler.php');
         require_once('include/export_utils.php');
@@ -115,32 +103,31 @@ abstract class SugarForecasting_Export_AbstractExport extends SugarForecasting_A
         $delimiter = getDelimiter();
 
         //process retrieved record
-        //BEGIN SUGARCRM flav=pro ONLY
         $isAdminUser = is_admin($current_user);
-        //END SUGARCRM flav=pro ONLY
 
-        foreach($data as $val)
-        {
+        foreach ($data as $val) {
+            if (!empty($filter_by)  // make sure we have something to filter by
+                && !empty($filters) // make sure we have filters
+                && isset($val[$filter_by]) // make sure the row has what we are filtering by
+                && !in_array($val[$filter_by], $filters)) {     // make sure the value from the row is in the filters
+                // skip this row as it's not in the filters
+                continue;
+            }
 
             $new_arr = array();
 
-            //BEGIN SUGARCRM flav=pro ONLY
-            if(!$isAdminUser)
-            {
+            if (!$isAdminUser) {
                 $focus->id = (!empty($val['id']))?$val['id']:'';
                 $focus->assigned_user_id = (!empty($val['assigned_user_id']))?$val['assigned_user_id']:'' ;
                 $focus->created_by = (!empty($val['created_by']))?$val['created_by']:'';
                 $focus->ACLFilterFieldList($val, array(), array("blank_value" => true));
             }
-            //END SUGARCRM flav=pro ONLY
 
-            foreach ($fields_array as $key => $label)
-            {
+            foreach ($fields_array as $key => $label) {
                 $value = $val[$key];
 
                 //getting content values depending on their types
-                if(isset($focus->field_defs[$key]))
-                {
+                if (isset($focus->field_defs[$key])) {
                     $sfh = SugarFieldHandler::getSugarField($focus->field_defs[$key]['type']);
                     $value = $sfh->exportSanitize($value, $focus->field_defs[$key], $focus, $val);
                 }
@@ -161,7 +148,8 @@ abstract class SugarForecasting_Export_AbstractExport extends SugarForecasting_A
      *
      * @return string name of the filename to export contents into
      */
-    public function getFilename() {
+    public function getFilename()
+    {
         $timePeriod = BeanFactory::getBean('TimePeriods');
         $timePeriod->retrieve($this->args['timeperiod_id']);
         return $timePeriod->name;
@@ -179,9 +167,9 @@ abstract class SugarForecasting_Export_AbstractExport extends SugarForecasting_A
         $filename = $this->getFilename();
         header("Content-Disposition: attachment; filename=\"{$filename}\"");
         header("Content-Type: text/x-csv");
-        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
-        header("Last-Modified: " . TimeDate::httpTime() );
-        header("Cache-Control: post-check=0, pre-check=0", false );
+        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+        header("Last-Modified: " . TimeDate::httpTime());
+        header("Cache-Control: post-check=0, pre-check=0", false);
         header("Content-Length: ".mb_strlen($locale->translateCharset($contents, 'UTF-8', $locale->getExportCharset())));
         echo $locale->translateCharset($contents, 'UTF-8', $locale->getExportCharset());
     }
