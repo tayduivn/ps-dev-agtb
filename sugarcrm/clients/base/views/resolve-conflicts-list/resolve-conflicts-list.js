@@ -96,6 +96,11 @@
         // determine which fields have different values
         fieldsThatDiffer = app.utils.compareBeans(modelToSave, modelInDb);
 
+        // remove modified_by_name if exists
+        fieldsThatDiffer = _.filter(fieldsThatDiffer, function(name) {
+            return name !== 'modified_by_name';
+        });
+
         // get field view definitions
         fieldDefinition = this._getFieldViewDefinition(fieldsThatDiffer);
 

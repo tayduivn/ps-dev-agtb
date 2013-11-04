@@ -174,6 +174,24 @@ describe('Resolve Conflicts List View', function() {
             getFieldViewDefinitionStub.restore();
         });
 
+        it('should remove modified by name column', function() {
+            var clientModel = app.data.createBean(module),
+                databaseModel = app.data.createBean(module),
+                getFieldViewDefinitionStub = sinon.stub(view, '_getFieldViewDefinition', function() {
+                    return []
+                });
+
+            clientModel.set('modified_by_name', 'foo');
+            databaseModel.set('modified_by_name', 'bar');
+
+            view._buildFieldDefinitions(clientModel, databaseModel);
+
+            expect(_.isArray(getFieldViewDefinitionStub.args[0][0])).toBe(true);
+            expect(getFieldViewDefinitionStub.args[0][0].length).toBe(0);
+
+            getFieldViewDefinitionStub.restore();
+        });
+
         it('should set all columns to not sort', function() {
             var clientModel = app.data.createBean(module),
                 databaseModel = app.data.createBean(module),
