@@ -42,59 +42,41 @@
 			</td>
 		</tr>
 	</table>
-	
-	<div class='add_table' style='margin-bottom:5px'>
-		<table id="enableWirelessModules" class="enableWirelessModules edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0" width="25%">
-			<tr>
-			    <td colspan="2">
-			        <table>
+
+    <div class='add_table' style='margin-bottom:5px'>
+        <table id="enableWirelessModules" class="enableWirelessModules edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0" width="25%">
+            <tr>
+                <td colspan="2">
+                    <table>
                     {if $url}
-                    <tr>
-                        <td scope="row" nowrap="nowrap">
-                            {sugar_translate module='Configurator' label='LBL_WIRELESS_SERVER_URL'}:
-                            {sugar_help text=$MOD.LBL_WIRELESS_URL_HELP}
-                        </td>
-                        </td>
-                        <td>
-                            <a href="{$url}" target="_blank">{$url}</a>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td scope="row" nowrap="nowrap">
+                                {sugar_translate module='Configurator' label='LBL_WIRELESS_SERVER_URL'}:
+                                {sugar_help text=$MOD.LBL_WIRELESS_URL_HELP}
+                            </td>
+                            </td>
+                            <td>
+                                <a href="{$url}" target="_blank">{$url}</a>
+                            </td>
+                        </tr>
                     {/if}
-                    <tr>
-                        <td scope="row" nowrap="nowrap">{sugar_translate module='Configurator' label='LBL_WIRELESS_LIST_ENTRIES'}: <br><small>{sugar_translate label='LBL_WIRELESS_LEGACY_ONLY'}</small></td>
-                        <td>
-                            <input type='text' size='4' id="max_list" name='wl_list_max_entries_per_page' value='{$config.wl_list_max_entries_per_page}'>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td scope="row" nowrap="nowrap">{sugar_translate module='Configurator' label='LBL_WIRELESS_SUBPANEL_LIST_ENTRIES'}: <br><small>{sugar_translate label='LBL_WIRELESS_LEGACY_ONLY'}</small></bt> </td>
-                        <td>
-                            <input type='text' size='4' id="max_subs" name='wl_list_max_entries_per_subpanel' value='{$config.wl_list_max_entries_per_subpanel}'>
-                        </td>
-                    </tr>
-                     <tr>
-                        <td colspan="2" white-space="wrap" style="font-style: italic;"><span>{sugar_translate label='LBL_WIRELESS_MODULES_ENABLE_DESC2'}</span></td>
-                    </tr>
                 </td>
             </tr>
-		    <tr>
-				<td width='1%'>
-					<div id="enabled_div"></div>	
-				</td>
-				<td>
-					<div id="disabled_div"></div>
-				</td>
-			</tr>
-		</table>
-	</div>
+            <tr>
+                <td colspan="2" white-space="wrap" style="font-style: italic;"><span>{sugar_translate label='LBL_WIRELESS_MODULES_ENABLE_DESC2'}</span></td>
+            </tr>
+            <tr>
+                <td width='1%'>
+                    <div id="enabled_div"></div>
+                </td>
+                <td>
+                    <div id="disabled_div"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
 	
 	<table border="0" cellspacing="1" cellpadding="1">
-	   <tr>
-	       <td colspan="2">{sugar_translate module='Configurator' label='LBL_MOBILE_MOD_REPORTS_RESTRICTION2'}</td>
-       </tr>
-        <tr>
-           <td colspan="2">{sugar_translate label='LBL_WIRELESS_SUPPORTED_MODULES2'}</td>
-       </tr>
 		<tr>
 			<td>
 				<input title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button primary" onclick="SUGAR.saveMobileSettings();" type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">
@@ -110,7 +92,6 @@
 	Connect.url = 'index.php';
     Connect.method = 'POST';
     Connect.timeout = 300000;
-	var get = YAHOO.util.Dom.get;
 
 	var enabled_modules = {$enabled_modules};
 	var disabled_modules = {$disabled_modules};
@@ -161,9 +142,7 @@
 			SUGAR.util.paramsToUrl({
 				module: "Administration",
 				action: "updateWirelessEnabledModules",
-				enabled_modules: modules,
-				wl_list_max_entries_per_page : get('max_list').value,
-				wl_list_max_entries_per_subpanel : get('max_subs').value
+				enabled_modules: modules
 			}) + "to_pdf=1"
         );
 		

@@ -68,6 +68,15 @@ class AdministrationViewEnablewirelessmodules extends SugarView
         $enabled_modules = array();
         $disabled_modules = array();
 
+        // todo: should we move this config to another place?
+        $wireless_not_supported_modules = array(
+            'Bugs',
+            'Campaigns',
+            'Contracts',
+            'KBDocuments', // Knowledge base
+            'Prospects' // this is Targets
+        );
+
         // replicate the essential part of the behavior of the private loadMapping() method in SugarController
         foreach (SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file)
         {
@@ -76,10 +85,10 @@ class AdministrationViewEnablewirelessmodules extends SugarView
 
         foreach ( $wireless_module_registry as $e => $def )
         {
-            if (in_array($e, $GLOBALS['moduleList']))
-            {
-                $enabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? $e : ($app_list_strings['moduleList'][$e]);
-            }
+            if (in_array($e, $GLOBALS['moduleList']) && !in_array($e, $wireless_not_supported_modules))
+        {
+            $enabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? $e : ($app_list_strings['moduleList'][$e]);
+        }
         }
 
         // Employees should be in the mobile module list by default
@@ -94,7 +103,7 @@ class AdministrationViewEnablewirelessmodules extends SugarView
 
         foreach ( $browser->modules as $e => $def)
         {
-            if ( empty ( $enabled_modules [ $e ]) && in_array($e, $GLOBALS['moduleList']) )
+            if ( empty ( $enabled_modules [ $e ]) && in_array($e, $GLOBALS['moduleList']) && !in_array($e, $wireless_not_supported_modules) )
             {
                 $disabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? $e : ($app_list_strings['moduleList'][$e]);
             }
