@@ -34,6 +34,16 @@
     selectedUserId: '',
 
     /**
+     * Holds the current timeperiod object
+     */
+    currentTP: undefined,
+
+    /**
+     * Holds the business card's model's timeperiod object (original Opps TP)
+     */
+    modelTP: undefined,
+
+    /**
      * Holds a reference to the RevenueLineItems subpanel collection
      */
     rliCollection: undefined,
@@ -135,7 +145,7 @@
             ctxMdl = ctx.get('model');
 
         ctxMdl.on('sync', function(model) {
-            this.fetchNewTPByDate(model.get('date_closed'));
+            this.fetchNewTPByDate(model.get('date_closed'), undefined, true);
         }, this);
 
         if(this.currentModule == 'Opportunities') {
@@ -152,8 +162,17 @@
                 this.rliCollection.on('change:commit_stage', this.processCommitStage, this);
 
                 this.rliCollection.on('change:date_closed', function(model, date) {
-                    if(this.checkDateAgainstCurrentTP(date)) {
-                        this.fetchNewTPByDate(date)
+                    // check if date falls outside current timeperiod, if outside of current timeperiod
+                    // we need to fetch new timeperiod & projected data
+                    if(!this.isDateInTimePeriod(date, this.currentTP)) {
+                        // handle if date is before model (Opportunity) timeperiod
+                        if(app.date.isDateBefore(date, this.modelTP.start_date)) {
+                            // if trying to move the RLI to a timeperiod before the Opportunity timeperiod start date
+                            // set the date to the same start date as the Opp so we don't pull an older timeperiod
+                            date = this.modelTP.start_date;
+                        }
+
+                        this.fetchNewTPByDate(date, model)
                     }
                 }, this);
 
@@ -173,8 +192,8 @@
             ctxMdl.on('change:commit_stage', this.processCommitStage, this);
 
             ctxMdl.on('change:date_closed', function(model, date) {
-                if(this.checkDateAgainstCurrentTP(date)) {
-                    this.fetchNewTPByDate(date)
+                if(!this.isDateInTimePeriod(date, this.currentTP)) {
+                    this.fetchNewTPByDate(date, model)
                 }
             }, this);
 
@@ -217,10 +236,11 @@
     handleNewDataFromServer: function(data) {
         // since the user might add this dashlet after they have changed the RLI model, but before they saved it
         // we have to check and make sure that we're accounting for any changes in the dashlet totals that come
-        // from the server
-        if(this.currentModule == 'RevenueLineItems' && this.context) {
+        // from the server, but only if this has not already been parsed by a beforeParseData function
+        if(this.currentModule == 'RevenueLineItems' && this.context && _.isUndefined(data.parsedData)) {
             var mdl = this.context.parent.get('model') || this.context.get('model'),
                 lhsData = mdl.get('lhsData');
+
             if(lhsData.likely != mdl.get('likely_case')) {
                 data.amount = data.amount - (lhsData.likely - mdl.get('likely_case'));
             }
@@ -231,6 +251,7 @@
                 data.worst_case = data.worst_case - (lhsData.worst - mdl.get('worst_case'));
             }
         }
+
         this.calculateData(this.mapAllTheThings(data, false));
     },
 
@@ -294,9 +315,9 @@
             && _.contains(this.includedIds, model.get('id'))) {
             var data = _.clone(model.toJSON()),
                 diff = 0,
-                old = 0;
+                old = 0,
+                totals = {};
 
-            var totals = {};
             if(this.currentModule == 'Opportunities') {
                 // if amount is not undefined, push amount into likely_case
                 data.likely_case = (!_.isUndefined(data.amount)) ? data.amount : data.likely_case;
@@ -434,7 +455,7 @@
             this.serverData.set({
                 likely: app.math.sub(this.serverData.get('likely'), model.get('likely_case')),
                 best: app.math.sub(this.serverData.get('best'), model.get('best_case')),
-                worst: app.math.sub(this.serverData.get('worst'), model.get('worst_case')),
+                worst: app.math.sub(this.serverData.get('worst'), model.get('worst_case'))
             });
 
             updatedData = true;
@@ -446,7 +467,7 @@
             this.serverData.set({
                 likely: app.math.add(this.serverData.get('likely'), model.get('likely_case')),
                 best: app.math.add(this.serverData.get('best'), model.get('best_case')),
-                worst: app.math.add(this.serverData.get('worst'), model.get('worst_case')),
+                worst: app.math.add(this.serverData.get('worst'), model.get('worst_case'))
             });
             updatedData = true;
         }
@@ -462,16 +483,82 @@
      *
      * @param {String} date
      */
-    fetchNewTPByDate: function(date) {
+    fetchNewTPByDate: function(date, model, updateModelTP) {
+        var options = {};
+
+        // if model has been passed in
+        if(model) {
+            var ctx = this.context.parent.get('model'),
+                currentDate = ctx.get('date_closed'),
+                inRLI = (this.currentModule == 'RevenueLineItems'),
+                // if this is Opps use the modelTP as the timeperiod to check against
+                timePeriod = (!inRLI) ? this.modelTP : this.currentTP,
+                dateCompare;
+
+            if(currentDate && !this.isDateInTimePeriod(date, timePeriod)) {
+                // compare the new date vs the current date on the record
+                dateCompare = app.date.compareDates(date, currentDate);
+                if(dateCompare == -1) {
+                    // changing to a date that is in the past,
+                    // so remove the changed models totals from server data
+                    // and bind the changed model into the function as its first param
+                    options.beforeParseData =  _.bind(this.removeModelTotalsFromServerData, this, model);
+                } else if(dateCompare == 1
+                    || (dateCompare == 0 && inRLI && !this.isDateInTimePeriod(date, this.modelTP))) {
+                    // changing to a date that is in the future, or in RLI changing outside the TP any time
+                    // so add the changed models totals to server data
+                    // and bind the changed model into the function as its first param
+                    options.beforeParseData = _.bind(this.addModelTotalsToServerData, this, model);
+                }
+            }
+        }
+
         app.api.call('GET', app.api.buildURL('TimePeriods/' + date), null, {
-            success: _.bind(function(o) {
+            success: _.bind(function(data) {
                 // Make sure the model is here when we get back and this isn't mid-pageload or anything
                 if(this.model) {
-                    this.model.set({selectedTimePeriod: o.id}, {silent: true});
-                    this.loadData();
+                    // if we're updating the model timeperiod
+                    if(updateModelTP) {
+                        // if the Opp model changed, update the model's TP
+                        this.modelTP = _.clone(data);
+                    }
+
+                    this.currentTP = data;
+                    this.model.set({selectedTimePeriod: data.id}, {silent: true});
+                    this.loadData(options);
                 }
             }, this)
         });
+    },
+
+    /**
+     * Adds the model's likely/best/worst totals to the data totals
+     *
+     * @param {Backbone.Model} model the model with values to add to server data
+     * @param {Object} data values being returned from the server endpoint with totals
+     * @returns {Object} returns the data Object back with updated totals
+     */
+    addModelTotalsToServerData: function(model, data) {
+        data.amount = app.math.add(data.amount, model.get('likely_case'));
+        data.best_case = app.math.add(data.best_case, model.get('best_case'));
+        data.worst_case = app.math.add(data.worst_case, model.get('worst_case'));
+
+        return data;
+    },
+
+    /**
+     * Removes the model's likely/best/worst totals from the data totals
+     *
+     * @param {Backbone.Model} model the model with values to remove from server data
+     * @param {Object} data values being returned from the server endpoint with totals
+     * @returns {Object} returns the data Object back with updated totals
+     */
+    removeModelTotalsFromServerData: function(model, data) {
+        data.amount = app.math.sub(data.amount, model.get('likely_case'));
+        data.best_case = app.math.sub(data.best_case, model.get('best_case'));
+        data.worst_case = app.math.sub(data.worst_case, model.get('worst_case'));
+
+        return data;
     },
 
     /**
@@ -498,18 +585,22 @@
         if(!_.isEmpty(date)) {
             // get the current timeperiod
             app.api.call('GET', app.api.buildURL('TimePeriods/' + date), null, {
-                success: _.bind(function(o) {
+                success: _.bind(function(data) {
                     if(this.model) {
                         // Make sure the model is here when we get back and this isn't mid-pageload or anything
                         this.initDataLoaded = true;
-                        this.model.set({selectedTimePeriod: o.id}, {silent: true});
+
+                        // update the initial timeperiod
+                        this.modelTP = _.clone(data);
+                        this.currentTP = data;
+                        this.model.set({selectedTimePeriod: data.id}, {silent: true});
                         this.loadData();
                     }
                 }, this),
                 complete: options ? options.complete : null
             });
         } else {
-            // this model doesnt have a selectedTimePeriod yet, so use the current date
+            // this model doesn't have a selectedTimePeriod yet, so use the current date
             var d = new Date(),
                 month = (d.getUTCMonth().toString().length == 1) ? '0' + d.getUTCMonth() : d.getUTCMonth(),
                 day = (d.getUTCDate().toString().length == 1) ? '0' + d.getUTCDate() : d.getUTCDate()
@@ -527,17 +618,14 @@
      * @param date
      * @returns {boolean} true if a new timeperiod should be fetched from server
      */
-    checkDateAgainstCurrentTP: function(date) {
-        var fetchNewTP = false;
-        date = new Date(date).getTime();
+    isDateInTimePeriod: function(date, timePeriod) {
+        var inTimePeriod = false;
 
-        // if there isnt a currentTimeperiod yet, or date is AFTER the end of the current timeperiod or BEFORE the start
-        if(_.isUndefined(this.currentTimeperiod)
-            || date >= this.currentTimeperiod.end_date_timestamp
-            || date <= this.currentTimeperiod.start_date_timestamp) {
-            fetchNewTP = true;
+        // check if date is between the timePeriod
+        if(app.date.isDateBetween(date, timePeriod.start_date, timePeriod.end_date)) {
+            inTimePeriod = true;
         }
 
-        return fetchNewTP;
+        return inTimePeriod;
     }
 })
