@@ -24,13 +24,8 @@ class SugarUpgradeOpportunityBestWorstSync extends UpgradeScript
             return;
         }
 
-        // are we going to 7.0 standard
-        if (!version_compare($this->to_version, '7.0', '<')) {
-            return;
-        }
-
-        // we need to ignore CE
-        if (!$this->fromFlavor('pro')) {
+        // are we going to 7.0 or higher
+        if (!version_compare($this->to_version, '7.0', '>=')) {
             return;
         }
 
