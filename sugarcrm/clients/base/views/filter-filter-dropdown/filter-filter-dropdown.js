@@ -135,6 +135,10 @@
              * @param {Event} e
              */
             function(e) {
+                //When user clicks on `Create` we expect to see the form totally empty.
+                if (e.val === 'create') {
+                    self.layout.clearFilterEditState();
+                }
                 self.layout.trigger("filter:change:filter", e.val);
             }
         );
