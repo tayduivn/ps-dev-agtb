@@ -445,10 +445,11 @@ class OracleManager extends DBManager
     {
         $sql = $this->updateSQL($bean,$where);
         $this->tableName = $bean->getTableName();
-
         $ret = $this->AltlobExecute($this->tableName, $bean->getFieldDefinitions(), get_object_vars($bean), $sql);
+
         $msg = "Error updating table: ".$this->tableName;
         $this->checkError($msg.' Query Failed: ' . $sql, true);
+        return $ret;
     }
 
     /**
@@ -462,6 +463,7 @@ class OracleManager extends DBManager
 
         $msg = "Error inserting into table: ".$this->tableName;
         $this->checkError($msg.' Query Failed: ' . $sql, true);
+        return $ret;
     }
 
     /**

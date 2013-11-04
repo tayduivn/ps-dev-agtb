@@ -755,7 +755,7 @@ class SugarBean
      */
     function get_audit_table_name()
     {
-        return $this->getTableName().'_audit';
+        return $GLOBALS['db']->getValidDBName($this->getTableName().'_audit', true, 'table');
     }
     /**
      * Return true if activity is enabled for this object
