@@ -65,23 +65,23 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $obj->currency_id = '-99';
 
         $vardef = $obj->field_defs['amount'];
-
         $field = SugarFieldHandler::getSugarField('currency');
-        $value = $field->exportSanitize($obj->amount, $vardef, $obj);
+
+        // expect value in base currency
         $expectedValue = SugarCurrency::formatAmountUserLocale($obj->amount, -99);
+
+        $value = $field->exportSanitize($obj->amount, $vardef, $obj);
         $this->assertEquals($expectedValue, $value);
 
+        // value will still be base if currency type is changed on opp
         $obj->currency_id = self::$currency->id;
-        $expectedValue = SugarCurrency::formatAmountUserLocale($obj->amount, self::$currency->id);
         $value = $field->exportSanitize($obj->amount, $vardef, $obj);
         $this->assertEquals($expectedValue, $value);
 
         //Test that we can use the row overload feature in exportSanitize
         $obj->currency_id = '';
-        $expectedValue = SugarCurrency::formatAmountUserLocale($obj->amount, self::$currency->id);
         $value = $field->exportSanitize($obj->amount, $vardef, $obj, array('currency_id'=>self::$currency->id));
         $this->assertEquals($expectedValue, $value);
-
 
     }
 
