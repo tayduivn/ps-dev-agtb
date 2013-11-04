@@ -68,7 +68,7 @@
     },
 
     /**
-     * Default settings used when none are provided via metadata
+     * Default settings used when none are provided via metadata.
      *
      * @template
      * @protected
@@ -182,7 +182,7 @@
     },
 
     /**
-     * Sets up settings, starting with defaults
+     * Sets up settings, starting with defaults.
 
      * @return {View.Views.BaseTabbedDashletView} Instance of this view.
      * @protected

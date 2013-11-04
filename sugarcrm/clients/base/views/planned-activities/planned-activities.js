@@ -35,11 +35,20 @@
 
     /**
      * {@inheritDoc}
+     *
+     * @property {String} _defaultSettings.date Date against which retrieved
+     *   records will be filtered, supported values are 'today' and 'future',
+     *   defaults to 'today'.
+     * @property {Number} _defaultSettings.limit Maximum number of records to
+     *   load per request, defaults to '10'.
+     * @property {String} _defaultSettings.visibility Records visibility
+     *   regarding current user, supported values are 'user' and 'group',
+     *   defaults to 'user'.
      */
     _defaultSettings: {
-        date: 'today', // what date to show activities
-        limit: 10, // max number of rows to show
-        visibility: 'user' // default to show
+        date: 'today',
+        limit: 10,
+        visibility: 'user'
     },
 
     /**
