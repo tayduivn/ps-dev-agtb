@@ -399,7 +399,9 @@
      * @override
      */
     loadData: function(options) {
-        if(this.meta.config) {
+        // if in dashlet config, or if Forecasts is not configured properly,
+        // do not load data
+        if(this.meta.config || !this.forecastsConfigOK) {
             return;
         }
 
