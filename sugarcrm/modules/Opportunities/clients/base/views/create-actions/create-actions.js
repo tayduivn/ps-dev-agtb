@@ -100,14 +100,10 @@
             var ctx = this.listContext || this.context;
 
             ctx.reloadData({recursive: false});
-            // make opp and rli subpanels refresh
-            if (!_.isUndefined(ctx.children)) {
-                _.each(ctx.children, function(child) {
-                    if (_.contains(['Opportunities', 'RevenueLineItems'], child.get('module'))) {
-                        child.reloadData({recursive: false});
-                    }
-                });
-            }
+
+            // reload opportunities and RLIs subpanels
+            ctx.trigger('subpanel:reload', {links: ['opportunities', 'revenuelineitems']});
+
         }, this));
     }
 
