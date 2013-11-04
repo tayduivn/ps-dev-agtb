@@ -55,4 +55,22 @@ class ForecastHooks extends AbstractForecastHooks
             }
         }
     }
+
+    /**
+     * @param RevenueLineItem|Opportunity|SugarBean $bean
+     * @param string $event
+     * @param array $params
+     */
+    public function setBestWorstEqualToLikelyAmount($bean, $event, $params = array())
+    {
+        // only run on before_save logic hooks
+        if ($event != 'before_save' || empty($bean->sales_stage)) {
+            return;
+        }
+        if (static::isForecastSetup() && in_array($bean->sales_stage, static::getForecastClosedStages())) {
+            $field = ($bean->module_dir == 'Opportunities') ? 'amount' : 'likely_case';
+            $bean->best_case = $bean->$field;
+            $bean->worst_case = $bean->$field;
+        }
+    }
 }

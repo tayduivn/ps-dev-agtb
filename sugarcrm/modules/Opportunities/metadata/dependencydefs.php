@@ -43,5 +43,85 @@ $dependencies['Opportunities']['commit_stage_readonly_set_value'] = array(
                 ifElse(equal($sales_stage, "Closed Lost"), "exclude", $commit_stage))', //Formula
             ),
         )
-    ),
+    )
+);
+
+/**
+ * This dependency set the best and worst values to equal likely when the sales stage is
+ * set to closed won.
+ */
+$dependencies['Opportunities']['best_worst_sales_stage_read_only'] = array(
+    'hooks' => array("edit"),
+    //Trigger formula for the dependency. Defaults to 'true'.
+    'trigger' => 'true',
+    'triggerFields' => array('sales_stage'),
+    'onload' => true,
+    //Actions is a list of actions to fire when the trigger is true
+    'actions' => array(
+        array(
+            'name' => 'ReadOnly', //Action type
+            //The parameters passed in depend on the action type
+            'params' => array(
+                'target' => 'best_case',
+                'label' => 'best_case_label', //normally <field>_label
+                'value' => 'isInList($sales_stage, createList("Closed Won"))', //Formula
+            ),
+        ),
+        array(
+            'name' => 'ReadOnly', //Action type
+            //The parameters passed in depend on the action type
+            'params' => array(
+                'target' => 'worst_case',
+                'label' => 'worst_case_label', //normally <field>_label
+                'value' => 'isInList($sales_stage, createList("Closed Won"))', //Formula
+            ),
+        ),
+        array(
+            'name' => 'SetValue', //Action type
+            //The parameters passed in depend on the action type
+            'params' => array(
+                'target' => 'best_case',
+                'label' => 'best_case_label',
+                'value' => 'ifElse(isInList($sales_stage, createList("Closed Won")), $amount, $best_case)',
+            ),
+        ),
+        array(
+            'name' => 'SetValue', //Action type
+            //The parameters passed in depend on the action type
+            'params' => array(
+                'target' => 'worst_case',
+                'label' => 'worst_case_label',
+                'value' => 'ifElse(isInList($sales_stage, createList("Closed Won")), $amount, $worst_case)',
+            ),
+        ),
+    )
+);
+
+$dependencies['Opportunities']['likely_case_copy_when_closed'] = array(
+    'hooks' => array("edit"),
+    //Trigger formula for the dependency. Defaults to 'true'.
+    'trigger' => 'true',
+    'triggerFields' => array('$amount'),
+    'onload' => true,
+    //Actions is a list of actions to fire when the trigger is true
+    'actions' => array(
+        array(
+            'name' => 'SetValue', //Action type
+            //The parameters passed in depend on the action type
+            'params' => array(
+                'target' => 'best_case',
+                'label' => 'best_case_label',
+                'value' => 'ifElse(isInList($sales_stage, createList("Closed Won")), $amount, $best_case)',
+            ),
+        ),
+        array(
+            'name' => 'SetValue', //Action type
+            //The parameters passed in depend on the action type
+            'params' => array(
+                'target' => 'worst_case',
+                'label' => 'worst_case_label',
+                'value' => 'ifElse(isInList($sales_stage, createList("Closed Won")), $amount, $worst_case)',
+            ),
+        ),
+    )
 );

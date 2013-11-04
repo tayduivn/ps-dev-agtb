@@ -142,4 +142,56 @@ class ForecastHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals('include', $bean->commit_stage);
     }
+
+    public function testSetBestWorstEqualToLikelyAmountWorks()
+    {
+        $hook = $this->getMock('ForecastHooks', array('isForecastSetup', 'getForecastClosedStages'));
+
+        $hook::staticExpects($this->any())
+            ->method('isForecastSetup')
+            ->will($this->returnValue(true));
+
+        $hook::staticExpects($this->any())
+            ->method('getForecastClosedStages')
+            ->will($this->returnValue(array('Closed Won')));
+
+        /** @var Opportunity $bean */
+        $bean = $this->getMock('Opportunity', array('save'));
+        $bean->amount = 500;
+        $bean->best_case = 600;
+        $bean->worst_case = 400;
+        $bean->sales_stage = 'Closed Won';
+
+        /* @var $hook ForecastHooks */
+        $hook->setBestWorstEqualToLikelyAmount($bean, 'before_save');
+
+        $this->assertEquals($bean->amount, $bean->best_case);
+        $this->assertEquals($bean->amount, $bean->worst_case);
+    }
+
+    public function testSetBestWorstEqualToLikelyAmountDoesntCopyValues()
+    {
+        $hook = $this->getMock('ForecastHooks', array('isForecastSetup', 'getForecastClosedStages'));
+
+        $hook::staticExpects($this->any())
+            ->method('isForecastSetup')
+            ->will($this->returnValue(true));
+
+        $hook::staticExpects($this->any())
+            ->method('getForecastClosedStages')
+            ->will($this->returnValue(array('Closed Won')));
+
+        /** @var Opportunity $bean */
+        $bean = $this->getMock('Opportunity', array('save'));
+        $bean->amount = 500;
+        $bean->best_case = 600;
+        $bean->worst_case = 400;
+        $bean->sales_stage = 'Prospecting';
+
+        /* @var $hook ForecastHooks */
+        $hook->setBestWorstEqualToLikelyAmount($bean, 'before_save');
+
+        $this->assertEquals(600, $bean->best_case);
+        $this->assertEquals(400, $bean->worst_case);
+    }
 }
