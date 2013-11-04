@@ -491,6 +491,17 @@ FLEXLIST GENERIC */
 
   /*DUPLICATES*/
   table.dataTable.duplicates {
+    thead > tr > th,
+    thead > tr > th:first-child,
+    thead > tr > th:last-child {
+      background-color: lighten(@yellow_duplicate, 5%);
+    }
+    tbody > tr:nth-child(odd) > td {
+      background-color: @yellow_duplicate;
+    }
+    tbody > tr:nth-child(even) > td {
+      background-color: lighten(@yellow_duplicate, 5%);
+    }
     tbody > tr > td:last-child .list {
       overflow: visible;
       display: inline-block;
