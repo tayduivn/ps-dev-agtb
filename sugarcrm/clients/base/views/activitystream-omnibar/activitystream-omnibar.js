@@ -38,7 +38,8 @@
         }) : '';
 
         this.toggleSubmitButton = _.debounce(this.toggleSubmitButton, 200);
-        this.on('attachments:add attachments:remove', this.toggleSubmitButton, this);
+        this.on('attachments:add attachments:remove attachments:end', this.toggleSubmitButton, this);
+        this.on('attachments:start', this.disableSubmitButton, this);
     },
 
     /**
@@ -137,10 +138,24 @@
             attachments = this.getAttachments();
 
         if ((post.value.length === 0) && (_.size(attachments) === 0)) {
-            this.$('.addPost').addClass('disabled');
+            this.disableSubmitButton();
         } else {
-            this.$('.addPost').removeClass('disabled');
+            this.enableSubmitButton();
         }
+    },
+
+    /**
+     * Enable Submit button
+     */
+    enableSubmitButton: function() {
+        this.$('.addPost').removeClass('disabled');
+    },
+
+    /**
+     * Disable Submit button
+     */
+    disableSubmitButton: function() {
+        this.$('.addPost').addClass('disabled');
     },
 
     /**
