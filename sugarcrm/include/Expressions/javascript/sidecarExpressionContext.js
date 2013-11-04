@@ -75,6 +75,8 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
         } else if (typeof(value) == "number") {
             //Cast to a string before send to toConstant.
             result =  SEC.parser.toConstant("" + value);
+        } else if (_.isBoolean(value)) {
+            result =  value ? new SUGAR.expressions.TrueExpression() : new SUGAR.expressions.FalseExpression();
         } else {
             result = SEC.parser.toConstant('""');
         }
