@@ -123,6 +123,7 @@ class SugarArrayIntersectMergeTest extends Sugar_PHPUnit_Framework_TestCase
                 '86400' => '1 day',
                 '172800' => '2 days',
                 '259200' => '3 days',
+                '867-5309' => 'jenny',
             ),
         );
         $dom = array(
@@ -130,6 +131,7 @@ class SugarArrayIntersectMergeTest extends Sugar_PHPUnit_Framework_TestCase
                 '86400' => '1 day translated',
                 '259200' => '3 days translated',
                 '123456' => '25 years translated',
+                '867-5309' => '',  // Should not replace gimp since this is empty
             ),
         );
         $expected = array(
@@ -137,6 +139,7 @@ class SugarArrayIntersectMergeTest extends Sugar_PHPUnit_Framework_TestCase
                 '86400' => '1 day translated',
                 '172800' => '2 days',
                 '259200' => '3 days translated',
+                '867-5309' => 'jenny',
             ),
         );
         $this->assertEquals(sugarArrayIntersectMerge($gimp, $dom), $expected);
