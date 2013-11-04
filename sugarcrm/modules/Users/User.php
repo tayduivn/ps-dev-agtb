@@ -898,8 +898,9 @@ EOQ;
 	 */
 	function change_password($user_password, $new_password, $system_generated = '0')
 	{
-	    global $mod_strings;
+		global $current_language;
 		global $current_user;
+		$mod_strings = return_module_language($current_language, 'Users');
 		$GLOBALS['log']->debug("Starting password change for $this->user_name");
 
 		if (!isset ($new_password) || $new_password == "") {

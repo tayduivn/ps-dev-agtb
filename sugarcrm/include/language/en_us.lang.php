@@ -4079,8 +4079,9 @@ $app_strings = array (
     'ERR_PASSWORD_MISMATCH' => 'Password entered does not match that in our system.',
     'LBL_NEW_USER_PASSWORD_1' => 'Your password has been successfully updated.',
     'LBL_CANNOT_SEND_PASSWORD' => 'Cannot send password',
-
     'LBL_REQUEST_PASSWORD' => 'Request Password',
+    'LBL_PASSWORD_UPDATE_GENERIC_ISSUE' => 'Error: There was a problem updating password for this user.',
+    'LBL_INCORRECT_PASSWORD' => 'Error: Incorrect password.',
 
     'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
 
