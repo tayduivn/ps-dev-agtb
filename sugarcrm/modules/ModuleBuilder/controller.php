@@ -880,7 +880,6 @@ class ModuleBuilderController extends SugarController
             //BEGIN SUGARCRM flav=ent ONLY
         }
         //END SUGARCRM flav=ent ONLY
-        $parser->handleSave();
         // for backwards compatibility we need to parse the subpanel the old way as well
         // TODO: Remove this when all BWC Modules are converted
         if($parser instanceof SidecarSubpanelLayoutMetaDataParser) {
@@ -892,6 +891,7 @@ class ModuleBuilderController extends SugarController
             $rr->show_output = false;
             $rr->rebuildExtensions();
         }
+        $parser->handleSave();
 
         // clear the cache for the linked module and requested module
         MetaDataManager::refreshModulesCache($parser->getAffectedModules());
