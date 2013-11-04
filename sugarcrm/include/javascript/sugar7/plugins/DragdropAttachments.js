@@ -131,6 +131,9 @@
                     var self = this,
                         attachments = this.getAttachments(),
                         callback = _.after(_.size(attachments), this.clearAttachments);
+
+                    component.trigger('attachments:start');
+
                     _.each(attachments, function(file) {
                         var note = app.data.createBean('Notes');
                         note.set('name', file.name);
@@ -186,6 +189,7 @@
                                 });
                             }
                         ], function(err, activity) {
+                            component.trigger('attachments:end');
                             if (err) {
                                 var errorMessage = app.lang.getAppString('LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED');
                                 app.alert.show('upload_error', errorMessage);
