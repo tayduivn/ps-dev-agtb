@@ -43,7 +43,6 @@ class StudioBrowser{
             if (($e == "Project" || $e == "ProjectTask") && in_array($e, $modInvisList)) {
                 continue;
             }
-			asort($select_array);
 			if(substr($e, 0, 1) == '.' || !is_dir('modules/' . $e))continue;
 			if(file_exists('modules/' . $e . '/metadata/studio.php') && isset($GLOBALS [ 'beanList' ][$e]) && (in_array($e, $access) || $current_user->isAdmin())) // installed modules must also exist in the beanList
 			{
