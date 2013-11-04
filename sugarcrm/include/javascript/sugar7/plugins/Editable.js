@@ -52,6 +52,9 @@
                     }
                     app.drawer.before('reset', this.beforeRouteChange, this, true);
 
+                    //when user confirms exit with unsaved changes, unbind all listeners - no multiple warnings
+                    app.events.on('editable:beforehandlers:off', this.unbindBeforeHandler, this);
+
                     this._currentUrl = Backbone.history.getFragment();
                 });
             },
@@ -143,8 +146,14 @@
              * Continue navigating target location once user confirms the discard changes.
              */
             onConfirmRoute: function() {
-                this.unbindBeforeHandler();
-                app.router.navigate(this._targetUrl, {trigger: true});
+                //user has confirmed, now turn off all unsaved changes listeners - prevent multiple warnings
+                app.events.trigger('editable:beforehandlers:off');
+                //if we're in a quick create drawer, it is possible to navigate to same URL
+                if (this._currentUrl === this._targetUrl) {
+                    app.router.refresh();
+                } else {
+                    app.router.navigate(this._targetUrl, {trigger: true});
+                }
             },
 
             /**
@@ -344,6 +353,7 @@
                 $(document).off('mousedown', this.editableMouseClicked);
                 this.editableKeyDowned = null;
                 this.editableMouseClicked = null;
+                app.events.off('editable:beforehandlers:off', null, this);
                 this.unbindBeforeHandler();
             }
         });

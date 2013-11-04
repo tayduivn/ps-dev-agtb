@@ -101,7 +101,8 @@ describe("Editable Plugin", function() {
         var alertShowStub;
         beforeEach(function() {
             app.router = {
-                navigate: function() {}
+                navigate: function() {},
+                refresh: function() {}
             };
             alertShowStub = sinonSandbox.stub(app.alert, "show");
             sinonSandbox.stub(Backbone.history, "getFragment");

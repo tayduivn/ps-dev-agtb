@@ -60,7 +60,9 @@
      * @private
      */
     _dispose: function() {
-        this.context.parent.off('subpanel:reload', null, this);
+        if (this.context.parent) {
+            this.context.parent.off('subpanel:reload', null, this);
+        }
         app.view.invokeParent(this, {type: 'layout', name: 'panel', method: '_dispose'});
     }
 })
