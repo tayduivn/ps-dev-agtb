@@ -5658,6 +5658,23 @@ a.tabFormAdvLink:visited
 {
     font-size: 13px;
 }
+
+a.tabFormAdvLink .tabFormAdvLink-icon {
+    display:none;
+}
+
+a.tabFormAdvLink .tabFormAdvLink-advanced {
+    display:inline-block;
+}
+
+a.tabFormAdvLink.expanded .tabFormAdvLink-advanced {
+    display:none;
+}
+
+a.tabFormAdvLink.expanded .tabFormAdvLink-basic {
+    display:inline-block;
+}
+
 /* calendar styles */
 .monthBox,
 .monthCalBody td,
