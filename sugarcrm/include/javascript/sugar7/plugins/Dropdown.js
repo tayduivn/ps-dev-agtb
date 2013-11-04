@@ -10,22 +10,63 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-/**
- * Adds the ability to hide the dropdown menu when the mouse leaves.
- *
- * @dependency twitter bootstrap
- */
-(function (app) {
-    app.events.on("app:init", function () {
+(function(app) {
+    app.events.on('app:init', function() {
+        /**
+         * Adds the ability to hide the dropdown menu
+         * when the mouse is clicked on bwc elements.
+         */
         app.plugins.register('Dropdown', ['view'], {
-            events:{
-                'mouseleave .dropdown-menu': 'closeDropdown'
+            onAttach: function(component, plugin) {
+                this.on('init', function() {
+                    app.events.on('app:view:change', this.bindIframeListener, this);
+                    app.routing.before('route', this.closeDropdown, this, true);
+                });
             },
 
-            closeDropdown: function(event) {
-                var $target = $(event.currentTarget);
-                $target.trigger('click.bs.dropdown');
+            /**
+             * Bind the mouse click listener on bwc iframe elements.
+             */
+            bindIframeListener: function() {
+                var view = app.controller.layout.getComponent('bwc'),
+                    self = this;
+                if (!view) {
+                    return;
+                }
+
+                view.$el.load(function() {
+                    $(this.contentWindow.document).children('html')
+                        .on('click.dropdown', _.bind(self.closeDropdown, self));
+                });
+            },
+
+            /**
+             * Close the dropdown menu.
+             */
+            closeDropdown: function() {
+                this.$('.dropdown-menu').trigger('click.bs.dropdown');
+            },
+
+            /**
+             * Detach the event handlers for closing dropdown menu.
+             */
+            unbindBeforeHandler: function() {
+                app.routing.offBefore('route', this.closeDropdown, this);
+            },
+
+            /**
+             * {@inheritDoc}
+             * Unbind beforeHandlers.
+             */
+            onDetach: function() {
+                var view = app.controller.layout && app.controller.layout.getComponent('bwc');
+                if (view) {
+                    $(view.$el.contentWindow.document).children('html').off('click.dropdown');
+                }
+                app.events.off('app:view:change', null, this);
+                this.unbindBeforeHandler();
             }
+
         });
     });
 })(SUGAR.App);
