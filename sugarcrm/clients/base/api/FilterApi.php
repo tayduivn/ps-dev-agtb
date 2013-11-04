@@ -182,6 +182,21 @@ class FilterApi extends SugarApi
             array_merge($options['select'], self::$mandatory_fields)
         );
 
+        // Some modules have fields that are composed of or require other fields
+        // Add those in now so that they can be selected and set onto the bean
+        // so formatting can use them. This is necessary for file type fields.
+        if (!empty($seed)) {
+            foreach ($seed->field_defs as $field => $def) {
+                if (isset($def['name']) && in_array($def['name'], $options['select']) && isset($def['fields'])) {
+                    foreach ($def['fields'] as $field) {
+                        if (!in_array($field, $options['select'])) {
+                            $options['select'][] = $field;
+                        }
+                    }
+                }
+            }
+        }
+
         return $options;
     }
 

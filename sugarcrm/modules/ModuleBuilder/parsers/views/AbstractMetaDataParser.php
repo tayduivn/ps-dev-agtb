@@ -44,6 +44,17 @@ abstract class AbstractMetaDataParser
      */
     protected $implementation;
 
+    /**
+     * Returns an array of modules affected by this object. In almost all cases
+     * this will be a single array. For subpanels, it will be more than one.
+     * 
+     * @return array List of modules changed within this object
+     */
+    public function getAffectedModules()
+    {
+        return $this->implementation->getAffectedModules();
+    }
+
     function getLayoutAsArray ()
     {
         $viewdefs = $this->_panels ;

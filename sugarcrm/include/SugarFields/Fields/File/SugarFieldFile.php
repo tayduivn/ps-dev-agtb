@@ -242,4 +242,39 @@ class SugarFieldFile extends SugarFieldBase
             }
         }
     }
+
+    /**
+     * Formats a field for the Sugar API
+     *
+     * @param array     $data
+     * @param SugarBean $bean
+     * @param array     $args
+     * @param string    $fieldName
+     * @param array     $properties
+     */
+    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
+        // Handle the parent so our current data element is set
+        parent::apiFormatField($data, $bean, $args, $fieldName, $properties);
+        
+        // Get fields related to this field but only if the current field is empty
+        // If the current field is empty, set it to the related field(s) until it 
+        // isn't empty. This happens in the case of upload file fields in File 
+        // type SugarObject based custom modules. In most cases the fields array
+        // will either be empty or one entry long.
+        if (empty($data[$fieldName]) && isset($properties['fields'])) {
+            foreach ($properties['fields'] as $field) {
+                if (empty($data[$field])) {
+                    $data[$field] = empty($bean->$field) ? '' : $bean->$field;
+                }
+
+                $data[$fieldName] = $data[$field];
+                break;
+            }
+        }
+        
+        // Add in file_mime_type
+        if (empty($data['file_mime_type'])) {
+            $data['file_mime_type'] = empty($bean->file_mime_type) ? '' : $bean->file_mime_type;
+        }
+    }
 }

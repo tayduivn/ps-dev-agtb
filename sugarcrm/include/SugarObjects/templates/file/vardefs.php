@@ -64,6 +64,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'len' => '255',
     'studio' => 'false',
     'duplicate_on_record_copy' => 'always',
+    // Associating file_ext and file_mime_type to force these fields to be valued
+    // when selecting filename
+    'fields' => array('file_ext', 'file_mime_type'),
   ),
   'file_ext' =>
   array (
@@ -90,8 +93,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
      'type' => 'file',
      'source' => 'non-db',
      'duplicate_on_record_copy' => 'always',
-    //'noChange' => true,
-    // jwhitcraft BUG44657 - Take this out as it was causing the remove button not to show up on custom modules
+     'fields' => array('filename'),
   ),
 
 'active_date' =>

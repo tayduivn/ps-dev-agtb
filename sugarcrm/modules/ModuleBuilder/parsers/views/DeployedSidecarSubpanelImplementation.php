@@ -81,6 +81,17 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
     }
 
     /**
+     * Returns an array of modules affected by this object. In almost all cases
+     * this will be a single array. For subpanels, it will be more than one.
+     * 
+     * @return array List of modules changed within this object
+     */
+    public function getAffectedModules()
+    {
+        return array($this->_moduleName, $this->loadedModule);
+    }
+
+    /**
      * If a subpanel cannot be found in sidecar, try to find it in legacy
      * and convert it
      * @return bool
@@ -276,8 +287,6 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             $this->_viewdefs,
             $this->sidecarFile
         );
-        // clear the cache for this module only
-        MetaDataManager::refreshModulesCache(array($this->_moduleName));
     }
 
     /**
