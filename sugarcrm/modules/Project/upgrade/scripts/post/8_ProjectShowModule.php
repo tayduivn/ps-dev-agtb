@@ -28,8 +28,8 @@ class SugarUpgradeProjectShowModule extends UpgradeScript
         if ($this->db->tableExists("project") && $this->db->fetchOne("SELECT id FROM project")
             && !SugarAutoLoader::fileExists($path . '/Include/' . $file_name)) {
 
-            if (!sugar_is_dir($path)) {
-                sugar_mkdir($path, null, true);
+            if (!sugar_is_dir($path. '/Include/')) {
+                sugar_mkdir($path . '/Include/', null, true);
             }
 
             $file_contents = '
@@ -130,6 +130,10 @@ $app_list_strings[\'project_priority_defaul=t\'] = \'Medium\';
 $app_strings[\'LBL_PROJECT_MINUS\'] = \'Remove\';
 $app_strings[\'LBL_PROJECT_PLUS\'] = \'Add\';
 ';
+
+            if (!sugar_is_dir($path. '/Language/')) {
+                sugar_mkdir($path . '/Language/', null, true);
+            }
             
             sugar_file_put_contents($path . '/Language/' . $file_name, $lang_file_contents);
         }
