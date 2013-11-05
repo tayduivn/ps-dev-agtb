@@ -499,6 +499,24 @@
   }
 }
 
+.record-cell[data-name="title"], .record-cell[data-name="account_name"]  {
+  font-size: @baseFontSize;
+}
+
+.record-cell[data-name="date_modified_by"] {
+  position: absolute !important;
+  right: 0;
+  bottom: -28px;
+  text-align: right;
+  .normal {
+    font-size: @fontSizeSmall;
+    color: @grayLight;
+    display: inline !important;
+  }
+}
+.record .record-cell[data-name="date_modified_by"][data-type="date"] .normal > span,  .record .record-cell[data-name="date_modified_by"][data-type="datetimecombo"] .normal > span,  .record .record-cell[data-name="date_modified_by"][data-type="fieldset"] .normal > span,  .record .record-cell[data-name="date_modified_by"] .record-label {
+  display: inline !important;
+}
 
 #drawers > .drawer {
   .box-sizing(border-box);
