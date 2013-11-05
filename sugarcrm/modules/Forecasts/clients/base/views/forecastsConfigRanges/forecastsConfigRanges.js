@@ -645,8 +645,6 @@
 
         // adding event listener to new custom range
         rangeField.$(':checkbox').on('click', _.bind(this.updateCustomRangeIncludeInTotal, this));
-        // update checkboxes
-        this.updateCustomRangesCheckboxes();
 
         if(customType == 'custom') {
             // use call to set context back to the view for connecting the sliders
@@ -661,6 +659,9 @@
                 }
             }, this);
         }
+
+        // update checkboxes
+        this.updateCustomRangesCheckboxes();
     },
 
     /**
@@ -714,10 +715,11 @@
             }
         }
 
+        // update included ranges
+        this.includedCommitStages = _.without(this.includedCommitStages, range.name)
+
         // removing event listener for custom range
         range.$(':checkbox').off('click');
-        // update checkboxes
-        this.updateCustomRangesCheckboxes();
 
         // remove view for the range
         this.fieldRanges[category][range.name].remove();
@@ -746,6 +748,9 @@
         if(lastCustomRange.$el) {
             lastCustomRange.$('.addCustomRange').parent().show();
         }
+
+        // update checkboxes
+        this.updateCustomRangesCheckboxes();
     },
 
     /**
@@ -806,8 +811,6 @@
         var category = $(event.target).data('category'),
             fieldKey = $(event.target).data('key'),
             categoryRanges = category + '_ranges',
-            // modifying the actual model by changing commitStagesIncluded
-            commitStagesIncluded = this.model.get('commit_stages_included'),
             ranges;
 
         if (category && fieldKey) {
@@ -817,12 +820,15 @@
                     var isChecked = $(event.target).is(':checked');
                     ranges[fieldKey].in_included_total = isChecked;
                     if(isChecked) {
-                        // silently add this range to the commitStagesIncluded
-                        commitStagesIncluded.push(fieldKey);
+                        // silently add this range to the includedCommitStages
+                        this.includedCommitStages.push(fieldKey);
                     } else {
-                        // silently remove this range from commitStagesIncluded
-                        this.model.set('commit_stages_included', _.without(commitStagesIncluded, fieldKey));
+                        // silently remove this range from includedCommitStages
+                        this.includedCommitStages = _.without(this.includedCommitStages, fieldKey)
                     }
+
+                    this.model.set('commit_stages_included', this.includedCommitStages);
+
                 } else {
                     ranges[fieldKey].in_included_total = false;
                 }
@@ -837,8 +843,7 @@
      * checkboxes so users can only select certain checkboxes to include ranges
      */
     updateCustomRangesCheckboxes: function() {
-        var commitStagesIncluded = this.model.get('commit_stages_included'),
-            els = this.$('#plhCustomDefault :checkbox, #plhCustom :checkbox'),
+        var els = this.$('#plhCustomDefault :checkbox, #plhCustom :checkbox'),
             len = els.length,
             el,
             fieldKey,
@@ -856,7 +861,7 @@
             // looking specifically for checkboxes that are not the 'include' checkbox but that are
             // the last included commit stage range or the first non-included commit stage range
             if(fieldKey !== 'include'
-                && (i == commitStagesIncluded.length - 1 || i == commitStagesIncluded.length)) {
+                && (i == this.includedCommitStages.length - 1 || i == this.includedCommitStages.length)) {
                 // enable the checkbox
                 $(el).attr('disabled', false);
                 // add new click event listener
