@@ -252,7 +252,7 @@
         //Route links for BWC modules through bwc/ route
         if (app.metadata.getModule(module).isBwcEnabled) {
             //Remove any './' nonsense in existing hrefs
-            href = href.replace(/^.\//, '');
+            href = href.replace(/^.*\//, '');
             return "bwc/" + href;
         }
         id = (_.isArray(id)) ? id[1] : null;
