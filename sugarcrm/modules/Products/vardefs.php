@@ -890,6 +890,24 @@ $dictionary['Product'] = array(
             'rel_fields' => array('product_index' => array('type' => 'integer')),
             'vname' => 'LBL_PRODUCTS',
         ),
+        'calls' => array(
+            'name' => 'calls',
+            'type' => 'link',
+            'relationship' => 'product_calls',
+            'module' => 'Calls',
+            'bean_name' => 'Call',
+            'source' => 'non-db',
+            'vname' => 'LBL_CALLS',
+        ),
+        'meetings' => array(
+            'name' => 'meetings',
+            'type' => 'link',
+            'relationship' => 'product_meetings',
+            'module' => 'Meetings',
+            'bean_name' => 'Meeting',
+            'source' => 'non-db',
+            'vname' => 'LBL_MEETINGS',
+        ),
     ),
     'indices' => array(  array('name' => 'idx_products', 'type' => 'index', 'fields' => array('name', 'deleted')),  array(
         'name' => 'idx_prod_user_dc_timestamp',
@@ -992,6 +1010,28 @@ $dictionary['Product'] = array(
             'relationship_type' => 'one-to-one'
         ),
         //END SUGARCRM flav=pro ONLY
+        'product_calls' => array(
+            'lhs_module' => 'Products',
+            'lhs_table' => 'products',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Calls',
+            'rhs_table' => 'calls',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Products'
+        ),
+        'product_meetings' => array(
+            'lhs_module' => 'Products',
+            'lhs_table' => 'products',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Meetings',
+            'rhs_table' => 'meetings',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Products'
+        ),
     ),
 
     'duplicate_check' => array(

@@ -287,6 +287,24 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source'=>'non-db',
     'vname'=>'LBL_ACCOUNT',
   ),
+        'revenuelineitems' => array(
+            'name' => 'revenuelineitems',
+            'type' => 'link',
+            'relationship' => 'revenuelineitem_calls',
+            'module' => 'RevenueLineItems',
+            'bean_name' => 'RevenueLineItem',
+            'source' => 'non-db',
+            'vname' => 'LBL_REVENUELINEITEMS',
+        ),
+        'products' => array(
+            'name' => 'products',
+            'type' => 'link',
+            'relationship' => 'product_calls',
+            'module' => 'Products',
+            'bean_name' => 'Product',
+            'source' => 'non-db',
+            'vname' => 'LBL_PRODUCTS',
+        ),
     'bugs' =>
     array (
         'name' => 'bugs',
