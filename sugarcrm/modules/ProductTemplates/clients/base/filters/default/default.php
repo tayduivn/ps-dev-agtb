@@ -39,13 +39,5 @@ $viewdefs['ProductTemplates']['base']['filter']['default'] = array(
         'date_available' => array(),
         'url' => array(),
         'support_term' => array(),
-        '$owner' => array(
-            'predefined_filter' => true,
-            'vname' => 'LBL_CURRENT_USER_FILTER',
-        ),
-        '$favorite' => array(
-            'predefined_filter' => true,
-            'vname' => 'LBL_FAVORITES_FILTER',
-        ),
     ),
 );
