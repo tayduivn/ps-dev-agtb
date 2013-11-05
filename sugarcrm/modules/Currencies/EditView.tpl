@@ -24,7 +24,15 @@
 *}
 
 <script type="text/javascript">
-js_iso4217 = {$JS_ISO4217};
+    js_iso4217 = {$JS_ISO4217};
+    function confirm_delete(form) {$smarty.ldelim}
+        if (confirm('{$MOD.NTC_DELETE_CONFIRMATION}')) {$smarty.ldelim}
+            form.edit.value='false';
+            form.action.value='Delete';
+            return true;
+        {$smarty.rdelim}
+        return false;
+    {$smarty.rdelim}
 </script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Currencies/EditView.js'}"></script>
 <table width="100%" cellspacing="0" cellpadding="0" border="0" class="edit view">
@@ -60,7 +68,16 @@ js_iso4217 = {$JS_ISO4217};
 </td>
 </tr>
 </table>
-<input type='hidden' name='record' value='{$ID}'>
+<table>
+    <tr>
+        <td>
+            <input type='hidden' name='record' value='{$ID}'>
+            <input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button" onclick="this.form.edit.value='true';this.form.action.value='index';return check_form('EditView');" type="submit" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">
+            {if $ID ne ""}<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="return confirm_delete(this.form);" type="submit" name="button" value="{$APP.LBL_DELETE_BUTTON_LABEL}">{/if}
+            <input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="this.form.edit.value='false';this.form.action.value='index';" type="submit" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
+        </td>
+    </tr>
+</table>
 </form>
 {$JAVASCRIPT}
 {if $REFRESHMETADATA}
