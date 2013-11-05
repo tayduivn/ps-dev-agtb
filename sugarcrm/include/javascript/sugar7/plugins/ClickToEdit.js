@@ -29,46 +29,103 @@
          * Others may work work but have not been tested or inline validation written for them.
          */
         app.plugins.register('CteTabbing', ['view'], {
+            
             /**
-             * Attach code for when the plugin is regisred on a view
+             * current index in the CTE list
+             */
+            currentIndex: -1,
+            
+            /**
+             * current CTE list (dom elements)
+             */
+            currentCTEList: [],
+            
+            /**
+             * Attach code for when the plugin is registered on a view
              *
              * @param component
              * @param plugin
              */
             onAttach: function(component, plugin) {
                 this.once('init', function() {
-                    this.context.on('field:editable:tabkey', this.handleTabbing, this);
+                    this.context.on('field:editable:click', this.handleClickIndex, this);
+                    $(window).on('keydown.' + this.cid, _.bind(function(e){
+                        if (this.layout.isVisible()) {
+                            this.handleKeyDown(e);
+                        }
+                    }, this));
+                    this.on('render', this.resetCTEList, this);
                 }, this);
             },
 
             /**
-             * Handle moving depending on which way the event goes
-             * @param event         The event that was fired
-             * @param shiftKey      Was the shift key pressed
-             * @param field         The field that the event came from
+             * Detach code for when the plugin is removed from a view
+             *
+             * @param component
+             * @param plugin
              */
-            handleTabbing: function(event, shiftKey, field) {
-                event.preventDefault();
-
-                var indexFound = false,
-                    nextField = {};
-
-                _.find(this.$el.find('div.clickToEdit'), function(el, idx, list) {
-                    var $el = $(el);
-                    if (indexFound === false && $el.data('cid') == field.cid) {
-                        indexFound = true;
-                        var nextIndex = (shiftKey === true) ? idx - 1 : idx + 1;
-                        if (nextIndex === list.length) {
-                            nextIndex = 0;
+            onDetach: function(component, plugin) {
+                this.context.off('field:editable:click');
+                $(window).off('keydown.' + this.cid);
+            },
+            
+            /**
+             * handles custom window keydown events
+             * @param e Event object
+             */
+            handleKeyDown: function(e){
+                //onTab
+                if (e.which == 9) {
+                    e.preventDefault();
+                    if(!e.shiftKey){
+                        if (this.currentIndex + 1 < this.currentCTEList.length) {
+                            this.currentIndex++;
+                        } else {
+                            this.currentIndex = 0;
                         }
-                        nextField = list.splice(nextIndex, 1);
+                    } else {
+                        if (this.currentIndex - 1 >= 0) {
+                            this.currentIndex--;
+                        } else {
+                            this.currentIndex = this.currentCTEList.length - 1;
+                        }
                     }
-
-                    return indexFound;
-                });
-
-                $(nextField).click();
-            }
+                    $(this.currentCTEList[this.currentIndex]).find("div.clickToEdit").click();
+                }
+            },
+            
+            /**
+             * resets the CTE list of dom elements
+             */
+            resetCTEList: function() {
+                var oldLength = this.currentCTEList.length
+                this.currentCTEList = this.$el.find('.isEditable');
+                
+                /*
+                 * If the length of the CTE list changes (less rows), then most likely the cell we were on initiated
+                 * that change.  We need to reset the current tab index to trigger the same cell, becuase 
+                 * the original one is now gone.
+                 * 
+                 * Note: if business rules change, this will have to be revisited.
+                 */
+                if (oldLength > this.currentCTEList.length) {
+                    this.currentIndex--;
+                }
+            },
+            
+            /**
+             * handle setting the current index from a click
+             * @param field Field that is clicked
+             */
+            handleClickIndex: function(field) {
+                _.find(this.currentCTEList, function(el, idx, list) {
+                    var $el = $(el);
+                    if (_.isEqual($el.find("div.clickToEdit").data('cid'), field.cid)) {
+                        this.currentIndex = idx;
+                        return true;
+                    }
+                }, this);
+            },
         });
 
         app.plugins.register('ClickToEdit', ['field'], {
@@ -306,6 +363,7 @@
              */
             handleFieldClick: function(event) {
                 if (this._canEdit && !this._isInEdit) {
+                    this.context.trigger("field:editable:click", this);
                     this.setMode('edit');
                     if (_.isFunction(this.focus)) {
                         this.focus();
@@ -409,25 +467,6 @@
                         }, this);
                     } else {
                         this.setMode('detail');
-                    }
-                } else if (e.which == 9) {
-                    // on tab being presses, fire an event, and pass up the following
-                    // e: current event
-                    // e.shiftKey: was the shift key pressed
-                    // field: the field we are currently on
-
-                    if (field.type !== 'date' && field.type !== 'enum' && this.fieldValueChanged((field))) {
-                        field.$el.find(field.fieldTag).change();
-                    }
-
-                    // this errors out when tabbing off a change of the commit_stage field, since it auto hides
-                    if (this.context) {
-                        // this even will be listened by the cte-tab plugin on the layout
-                        this.context.trigger('field:editable:tabkey', e, e.shiftKey, field);
-                    }
-
-                    if (field.type === 'date') {
-                        this.hideDatepicker();
                     }
                 }
             },
