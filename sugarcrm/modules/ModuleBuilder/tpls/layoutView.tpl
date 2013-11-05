@@ -156,21 +156,17 @@
           <span class='panel_id' id='le_paneldep_{$idCount}'>{$dependencies.$panelid}</span>
           {* //END SUGARCRM flav=een ONLY *}
         </div>
-        {* Record Views should not allow any type of panel edits *}
-        {if $panelid ne 'default' && $view ne 'recordview'}
+        {if $panelid ne 'default'}
             {capture assign="otherAttributes"}class="le_edit" style="float:left; cursor:pointer;" onclick="editPanelProperties('{$idCount}');"{/capture}
             {sugar_getimage name="edit_inline" ext=".gif" other_attributes=$otherAttributes}
         {/if}
 
+        <span id="le_paneltype_{$idCount}" style="float:left;">
+        &nbsp;&nbsp;{sugar_translate label="LBL_TABDEF_TYPE" module="ModuleBuilder"}&nbsp;{sugar_help text=$mod.LBL_TABDEF_TYPE_OPTION_HELP}:
         {if $idCounter == 1}
             {assign var="firstpanelid" value=$panelid}
             {assign var="firstpanelidcount" value=$idCount}
         {/if}
-
-        {* Record Views should not allow any type of panel edits *}
-        {if $view ne 'recordview'}
-        <span id="le_paneltype_{$idCount}" style="float:left;">
-        &nbsp;&nbsp;{sugar_translate label="LBL_TABDEF_TYPE" module="ModuleBuilder"}&nbsp;{sugar_help text=$mod.LBL_TABDEF_TYPE_OPTION_HELP}:
         <select id="le_paneltype_select_{$idCount}" onchange="document.forms.prepareForSave.tabDefs_{$panelid}_newTab.value=this.value; showHideBox(this.value, {$idCount}, '{$panelid}', '{$firstpanelid}', {$firstpanelidcount});"
                 title="{sugar_translate label="LBL_TABDEF_TYPE_HELP" module="ModuleBuilder"}">
           <option value="0" {if $tabDefs[$panel_upper].newTab == false}selected="selected"{/if}>{sugar_translate label="LBL_TABDEF_TYPE_OPTION_PANEL" module="ModuleBuilder"}</option>
@@ -184,8 +180,6 @@
         <input type="checkbox" title="{sugar_translate label="LBL_TABDEF_COLLAPSE_HELP" module="ModuleBuilder"}" {if $tabDefs[$panel_upper].panelDefault == "collapsed"}checked="checked"{/if}
           onclick="{literal}if(this.checked) { document.forms.prepareForSave.tabDefs_{/literal}{$panelid}{literal}_panelDefault.value='collapsed'; } else { document.forms.prepareForSave.tabDefs_{/literal}{$panelid}{literal}_panelDefault.value='expanded';}{/literal}" />
         </span>
-        {/if}
-
         {counter name='idCount' assign='idCount' print=false}
 
         {foreach from=$panel item='row' key='rid'}
@@ -291,11 +285,8 @@
 //BEGIN SUGARCRM flav=pro ONLY
 Studio2.calcFieldList = {/literal}{$calc_field_list}{literal};
 //END SUGARCRM flav=pro ONLY
-{/literal}
 
-{* Record Views should not allow any type of panel edits *}
-{if $view ne 'recordview'}
-{literal}
+
 var editPanelProperties = function (panelId, view) {
     panelId = "" + panelId;
 	var key_label = document.getElementById('le_panelid_' + panelId).innerHTML.replace(/^\s+|\s+$/g,'');
@@ -313,7 +304,7 @@ var editPanelProperties = function (panelId, view) {
                 + "&title_label=" + encodeURIComponent(SUGAR.language.get("ModuleBuilder", "LBL_LABEL_TITLE")) + "&value_label=" + encodeURIComponent(value_label);
     ModuleBuilder.getContent(params);
 };
-{/literal}{/if}{literal}
+
 var showHideBox = function (newTab, idCount, panelId, firstPanelId, firstPanelIdCount) {
     var collapseBox = document.getElementById('le_panelcollapse_' + idCount);
     if (newTab == "1") {
@@ -359,8 +350,6 @@ var editFieldProperties = function (idCount, label) {ldelim}
 	
 {rdelim}
 
-// Studio2 needs to know the view so it can decide on panel editability
-Studio2.view = "{$view}";
 Studio2.firstPanelId = "{$firstpanelid}";
 Studio2.firstPanelIdCount = {$firstpanelidcount};
 Studio2.init();
