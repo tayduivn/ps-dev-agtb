@@ -248,25 +248,6 @@ hr.soften {
   }
 }
 
-.record-cell[data-name="title"], .record-cell[data-name="account_name"]  {
-  font-size: 12px !important;
-}
-
-.record-cell[data-name="date_modified_by"] {
-  position: absolute !important;
-  right: 0;
-  bottom: -28px;
-  text-align: right;
-}
-.record .record-cell[data-name="date_modified_by"][data-type="date"] .normal > span,  .record .record-cell[data-name="date_modified_by"][data-type="datetimecombo"] .normal > span,  .record .record-cell[data-name="date_modified_by"][data-type="fieldset"] .normal > span,  .record .record-cell[data-name="date_modified_by"] .record-label {
-  display: inline !important;
-}
-.record .record-cell[data-name="date_modified_by"] .normal {
-  font-size: @fontSizeSmall;
-  color: @grayLight;
-  display: inline !important;
-}
-
 // Just a thought - ideally, we could adjust this position
 //   based on which module / view we're on. The reason is not
 //   all pages need this much / less of space.
@@ -763,3 +744,5 @@ ul.unstyled, ol.unstyled {
   height: 150px;
   width: 100%;
 }
+
+.select2-search-hidden {display: none;}
