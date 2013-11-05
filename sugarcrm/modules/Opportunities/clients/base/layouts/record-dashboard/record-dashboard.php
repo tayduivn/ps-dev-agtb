@@ -60,6 +60,16 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
                     ),
                     array(
                         array(
+                            'view' =>
+                                array(
+                                    'name' => 'active-tasks',
+                                    'label' => 'LBL_ACTIVE_TASKS_DASHLET',
+                                ),
+                            'width' => 12,
+                        ),
+                    ),
+                    array(
+                        array(
                             'view' => array(
                                 'name' => 'history',
                                 'label' => 'LBL_HISTORY_DASHLET',
