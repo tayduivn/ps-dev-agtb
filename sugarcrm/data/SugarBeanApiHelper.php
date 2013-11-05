@@ -109,6 +109,11 @@ class SugarBeanApiHelper
             }
             if (isset($bean->deleted) && $bean->deleted == true) {
                 $data['deleted'] = (bool)$bean->deleted;
+            } else {
+                if (isset($bean->date_modified) && !empty($bean->field_defs['date_modified'])) {
+                    $field = $sfh->getSugarField($bean->field_defs['date_modified']['type']);
+                    $field->apiFormatField($data, $bean, array(), 'date_modified', $bean->field_defs['date_modified']);
+                }
             }
             if ($this->api->user->isAdmin()) {
                 // BR-759 requests that assigned_user_id is returned on deleted records

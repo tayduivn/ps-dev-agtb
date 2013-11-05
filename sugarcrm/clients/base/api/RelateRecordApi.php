@@ -195,6 +195,7 @@ class RelateRecordApi extends ModuleApi {
     }
 
     function createRelatedLink($api, $args) {
+        $api->action = 'save';
         $primaryBean = $this->loadBean($api, $args);
 
         list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','view');
@@ -216,6 +217,7 @@ class RelateRecordApi extends ModuleApi {
 
 
     function updateRelatedLink($api, $args) {
+        $api->action = 'save';
         $primaryBean = $this->loadBean($api, $args);
 
         list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','edit');

@@ -4088,12 +4088,12 @@ $app_strings = array (
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
     'ERR_HTTP_DEFAULT_TITLE' => 'Unknown Error',
     'ERR_HTTP_DEFAULT_TEXT' => 'Unknown error.',
-    'ERR_HTTP_DEFAULT_ACTION' => 'Return to previous page.',
+    'ERR_HTTP_DEFAULT_ACTION' => 'Go back to previous page.',
 
     'ERR_HTTP_404_TYPE' => '404',
-    'ERR_HTTP_404_TITLE' => 'HTTP: 404 Not Found',
-    'ERR_HTTP_404_TEXT' => 'The resource you requested does not exist.',
-    'ERR_HTTP_404_ACTION' => 'Return to previous page.',
+    'ERR_HTTP_404_TITLE' => 'Data not available',
+    'ERR_HTTP_404_TEXT' => 'Page does not exist or you do not have permission to access this page.',
+    'ERR_HTTP_404_ACTION' => 'Go back to previous page.',
 
     'ERR_HTTP_500_TYPE' => '500',
     'ERR_HTTP_500_TITLE' => 'HTTP: 500 Internal Server Error',

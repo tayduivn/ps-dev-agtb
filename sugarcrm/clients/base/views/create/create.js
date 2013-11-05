@@ -151,10 +151,6 @@
      */
     saveAndClose: function () {
         this.initiateSave(_.bind(function () {
-            if (!this.model.id) {
-                //If user creates a record he does not have access to, he will see a warning message
-                this.alerts.showSuccessButDeniedAccess();
-            }
             if(app.drawer){
                 app.drawer.close(this.context, this.model);
             }
@@ -176,18 +172,9 @@
     saveAndCreate: function () {
         this.context.lastSaveAction = this.SAVEACTIONS.SAVE_AND_CREATE;
         this.initiateSave(_.bind(function () {
-            if (this.model.id) {
                 this.clear();
                 this.model.set(this.model.relatedAttributes);
                 this.resetDuplicateState();
-            } else if (app.drawer) {
-                //If user creates a record he does not have access to, close the drawer so it goes to the list view
-                //Keeping the drawer opened is not possible because of the 404 error handler loading the error page
-                this.alerts.showSuccessButDeniedAccess();
-                if(app.drawer){
-                    app.drawer.close(this.context, this.model);
-                }
-            }
         }, this));
     },
 
@@ -197,15 +184,7 @@
     saveAndView: function () {
         this.context.lastSaveAction = this.SAVEACTIONS.SAVE_AND_VIEW;
         this.initiateSave(_.bind(function () {
-            if (!this.model.id) {
-                //If user creates a record he does not have access to, close the drawer so it goes to the list view
-                this.alerts.showSuccessButDeniedAccess();
-                if(app.drawer){
-                    app.drawer.close(this.context, this.model);
-                }
-            } else {
                 app.navigate(this.context, this.model);
-            }
         }, this));
     },
 
@@ -292,17 +271,29 @@
      * @param callback
      */
     createRecordWaterfall: function (callback) {
-        var success = function () {
-                callback(false);
-            },
+        var success = _.bind(function () {
+                var acls = this.model.get('_acl');
+                if (!_.isEmpty(acls) && acls.access === 'no' && acls.view === 'no') {
+                    //This happens when the user creates a record he won't have access to.
+                    //In this case the POST request returns a 200 code with empty response and acls set to no.
+                    this.alerts.showSuccessButDeniedAccess();
+                    callback(false);
+                } else {
+                    app.alert.show('create-success', {
+                        level: 'success',
+                        messages: this.buildSuccessMessage(this.model),
+                        autoClose: true,
+                        autoCloseDelay: 10000,
+                        onLinkClick: function() {
+                            app.alert.dismiss('create-success');
+                        }
+                    });
+                    callback(false);
+                }
+            }, this),
             error = _.bind(function (e) {
                 if (e.status == 412 && !e.request.metadataRetry) {
                     this.handleMetadataSyncError(e);
-                } else if (e.status == 404) {
-                    //Special case for 404 error. This happens when the user creates a record he won't have access to.
-                    //In this case the POST request returns a 404 error. As it actually is a success, we want to prevent
-                    //default error handlers and keep going, meaning closing the drawer and going back to the list view
-                    callback();
                 } else {
                     this.alerts.showServerError();
                     callback(true);
@@ -367,21 +358,9 @@
         var self = this,
             options;
         success = _.wrap(success, function (func, model) {
-            var successMessage = self.buildSuccessMessage(model);
-
             app.file.checkFileFieldsAndProcessUpload(self, {
                     success: function () {
-                        var successKey = 'create-success';
                         func();
-                        app.alert.show(successKey, {
-                            level: 'success',
-                            messages: successMessage,
-                            autoClose: true,
-                            autoCloseDelay: 10000,
-                            onLinkClick: function() {
-                                app.alert.dismiss(successKey);
-                            }
-                        });
                     }
                 },
                 {deleteIfFails: true}
