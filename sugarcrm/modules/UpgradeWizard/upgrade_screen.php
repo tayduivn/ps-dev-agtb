@@ -258,6 +258,216 @@ a:hover {
         top: 0
     }
 }
+// License dialog
+      html {
+        overflow-y: scroll;
+      }
+
+      .has-overlay {
+        overflow: hidden;
+      }
+      .has-overlay > body {
+        height: 100%;
+        overflow-y: scroll;
+      }
+
+      .semantic-content {
+        -webkit-transform: translate(0, 100%);
+        -moz-transform: translate(0, 100%);
+        -o-transform: translate(0, 100%);
+        -ms-transform: translate(0, 100%);
+        transform: translate(0, 100%);
+        -webkit-transform: translate3d(0, 100%, 0);
+        transform: translate3d(0, 100%, 0);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 999;
+        opacity: 0;
+        color: #222;
+        line-height: 1.3;
+        display: none\9;
+      }
+      .semantic-content:target {
+        -webkit-transform: translate(0, 0);
+        -moz-transform: translate(0, 0);
+        -o-transform: translate(0, 0);
+        -ms-transform: translate(0, 0);
+        transform: translate(0, 0);
+        opacity: 1;
+      }
+      .is-active.semantic-content {
+        display: block\9;
+      }
+      .semantic-content:target {
+        display: block\9;
+      }
+      .semantic-content .modal-inner {
+        position: absolute;
+        top: 50px;
+        left: 50%;
+        z-index: 20;
+        margin-left: -325px;
+        width: 650px;
+        overflow-x: hidden;
+        border-radius: 2px;
+        background: #fff;
+        -webkit-box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+      }
+      .semantic-content .modal-inner > img,
+      .semantic-content .modal-inner > video,
+      .semantic-content .modal-inner > iframe {
+        width: 100%;
+        height: auto;
+        min-height: 300px;
+      }
+      .semantic-content .modal-inner > img {
+        width: auto;
+        max-width: 100%;
+      }
+      .semantic-content header {
+        border-bottom: 1px solid #dddddd;
+        padding: 0 1.2em;
+      }
+      .semantic-content header > h2 {
+        margin: 0.5em 0;
+      }
+      .semantic-content .modal-content {
+        max-height: 400px;
+        max-height: 70vh;
+        border-bottom: 1px solid #dddddd;
+        padding: 15px 1.2em;
+        overflow-x: hidden;
+        overflow-y: auto;
+      	text-align: justify;
+      }
+      .semantic-content .modal-content > * {
+        max-width: 100%;
+      }
+      .semantic-content footer {
+        padding: 0;
+        background: #fff;
+        border-radius: 2px;
+        border-bottom: 1px solid #dddddd;
+      }
+      .semantic-content footer a:hover {
+        background: #f0f0f0;
+        color: #111;
+      }
+      .semantic-content .modal-close {
+        display: block;
+        text-indent: -100px;
+        overflow: hidden;
+      }
+      .semantic-content .modal-close:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 10;
+        background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAEElEQVR42gEFAPr/AAAAAMwA0QDNTiUx4gAAAABJRU5ErkJggg==");
+      }
+      .semantic-content .modal-close:after {
+        content: '\00d7';
+        position: absolute;
+        top: 55px;
+        left: 50%;
+        z-index: 20;
+        margin-left: 285px;
+        background: #fff;
+        border-radius: 2px;
+        padding: 6px 10px;
+        font-size: 24px;
+        text-decoration: none;
+        text-indent: 0;
+      }
+      @media screen and (max-width: 690px) {
+        .semantic-content .modal-inner {
+          width: auto;
+          left: 20px;
+          right: 20px;
+          margin-left: 0;
+        }
+        .semantic-content .modal-close {
+          left: auto;
+          right: 33px;
+          margin-left: 0;
+        }
+        .semantic-content .modal-close:after {
+          margin-left: 40%;
+        }
+      }
+      @media screen and (max-width: 30em) {
+        .semantic-content {
+          -webkit-transform: translate(0, 400px);
+          -webkit-transform: translate3d(0, 100%, 0);
+          transform: translate3d(0, 100%, 0);
+          -webkit-transition: -webkit-transform .25s ease-in-out, opacity 1ms .25s;
+          -moz-transition: -moz-transform .25s ease-in-out, opacity 1ms .25s;
+          -o-transition: -o-transform .25s ease-in-out, opacity 1ms .25s;
+          -ms-transition: -ms-transform .25s ease-in-out, opacity 1ms .25s;
+          transition: transform .25s ease-in-out, opacity 1ms .25s;
+          display: block;
+          height: 100%;
+          bottom: auto;
+        }
+        .semantic-content:target {
+          -webkit-transition: -webkit-transform .25s ease-in-out;
+          -moz-transition: -moz-transform .25s ease-in-out;
+          -o-transition: -o-transform .25s ease-in-out;
+          -ms-transition: -ms-transform .25s ease-in-out;
+          transition: transform .25s ease-in-out;
+        }
+        .semantic-content .modal-inner {
+          -webkit-box-sizing: border-box;
+          -moz-box-sizing: border-box;
+          box-sizing: border-box;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 100%;
+          overflow: scroll;
+          -webkit-box-shadow: none;
+          box-shadow: none;
+        }
+        .semantic-content .modal-content {
+          max-height: none;
+        }
+        .semantic-content .modal-close {
+          display: none;
+        }
+      }
+      @media screen and (max-height: 46em) and (min-width: 30em) {
+        .semantic-content .modal-content {
+          max-height: 340px;
+          max-height: 50vh;
+        }
+      }
+      @media screen and (max-height: 36em) and (min-width: 30em) {
+        .semantic-content .modal-content {
+          max-height: 265px;
+          max-height: 40vh;
+        }
+      }
+
+      @media screen and (min-width: 30em) {
+        .semantic-content {
+          -webkit-transition: opacity 0.4s;
+          -o-transition: opacity 0.4s;
+          transition: opacity 0.4s;
+        }
+      }
+
+      .semantic-content h1 {font-size: 24px; margin: 0; padding: 10px 0;}
+      .semantic-content h2, .semantic-content h3 {font-size: 12px;}
+      .semantic-content footer a {display: inline-block; width: calc(50%); text-align: center; padding: 15px 0; text-decoration: none; color: #555; text-decoration: none; color: #555;}
+      .semantic-content .left-pedal {width: calc(50% - 1px); border-right: 1px solid #ccc;}
+      .semantic-content .right-pedal {width: calc(50%);}
 </style>
 <!--[if lt IE 10]>
 <style type="text/css">
@@ -274,7 +484,7 @@ a:hover {
 
     $(window).bind("load", function () {
 
-            var uploader = {token: "<?= $token ?>"};
+            var uploader = {token: "<?php echo $token ?>"};
             uploader.hideError = function () {
                 $('#errorBox').addClass('hide');
                 $('.bar-error').removeClass('bar-error');
@@ -288,17 +498,24 @@ a:hover {
             };
             uploader.updateProgress = function (bar, percent) {
 
-                if (uploader.stage == -1)debugger;
+                if (uploader.stage == -1) {
+                    debugger;
+                    return;
+                }
                 $('#upgradeTitle').text('Upgrade Progress ' + uploader.stage + ' of ' + uploader.stages.length);
                 if (percent == 100) {
                     $('#' + bar + 'Bar').addClass('bar-success');
                     $('#' + bar + 'MicroBar').addClass('bar-success');
+                } else {
+                    $('#' + bar + 'Bar').removeClass('bar-success');
+                    $('#' + bar + 'MicroBar').removeClass('bar-success');
                 }
                 $('#' + bar + 'Bar').width(percent + '%');
                 $('#' + bar + 'MicroBar').width(percent + '%');
             }
             uploader.STATUS_FREQ = 1000;
             uploader.statusUpdates = false;
+            uploader.acceptedLicense = false;
             uploader.stage = 0;
             uploader.stages = ['unpack', 'pre', 'commit', 'post', 'cleanup'];
             uploader.counterStages = ['pre', 'post'];
@@ -312,8 +529,10 @@ a:hover {
                     },
                     success: function (e) {
                         if (uploader.statusUpdates) {
-                            for(var i in e.data.script_count){
-                                uploader.updateProgress(i, Object.keys(e.data.scripts[i]).length/ e.data.script_count[i] * 100);
+                            if(e.data.script_count) {
+                              for(var i in e.data.script_count){
+                                  uploader.updateProgress(i, Object.keys(e.data.scripts[i]).length/ e.data.script_count[i] * 100);
+                              }
                             }
                             uploader.setNextStatusUpdate();
                         }
@@ -344,8 +563,9 @@ a:hover {
                         action: uploader.stages[uploader.stage]
                     },
                     success: function (e) {
-                        if (e.status == 'error') {
-                            uploader.displayError(e.message);
+                        if (e.status == 'error' || e.status == undefined) {
+                            uploader.displayError(e.message || "A server error occurred, please check your logs");
+                            $('#' + uploader.stages[uploader.stage] + 'Bar').addClass('bar-error');
                         } else {
                             if (e.data === true) {
                                 uploader.clearStatusUpdate();
@@ -357,6 +577,8 @@ a:hover {
 
                                 if (uploader.stage > 0) {
                                     uploader.updateProgress(uploader.stages[uploader.stage - 1], 100);
+                                } else {
+                                	uploader.clearStatusUpdate();
                                 }
                                 var percentComplete = 0;
                                 if(uploader.counterStages.indexOf(e.data) == -1){
@@ -369,7 +591,7 @@ a:hover {
                         }
                     },
                     error: function (e) {
-                        uploader.displayError("A server error occurred please check your logs");
+                        uploader.displayError("A server error occurred, please check your logs");
                         $('#' + uploader.stages[uploader.stage] + 'Bar').addClass('bar-error');
                     }
 
@@ -413,8 +635,12 @@ a:hover {
 
                                 uploader.stage = uploader.stages.indexOf(response.data);
                                 uploader.updateProgress('unpack', 100);
-                                uploader.executeStage();
-                                uploader.setNextStatusUpdate();
+                                if(response.license || response.readme) {
+                                    uploader.displayLicense(response);
+                                } else {
+                                    uploader.executeStage();
+                                    uploader.setNextStatusUpdate();
+                                }
                             }
                         } catch (e) {
                             $('#uploadBox').removeClass('hide');
@@ -423,7 +649,37 @@ a:hover {
                         }
 
                     });
+
             });
+
+            uploader.displayLicense = function(response) {
+            	window.location.hash = 'modal-text';
+            	$('#licenseText')[0].innerText = response.license;
+            	window.addEventListener('hashchange', function(e) {
+                    var hash = window.location.hash.replace('#', '');
+                    console.log(hash);
+            	    if(hash == 'accepted') {
+                        window.removeEventListener('hashchange', arguments.callee);
+                        if(uploader.acceptedLicense) {
+                            // ensure we launch the rest of the upgrade only once
+                            return;
+                        } else {
+                            uploader.acceptedLicense = true;
+                        }
+                        $('#uploadBox').addClass('hide');
+                        $('#progressBox').removeClass('hide');
+                        uploader.updateProgress('unpack', 100);
+                        uploader.executeStage();
+                        uploader.setNextStatusUpdate();
+            	    } else if(hash == 'modal-text') {
+                	    /* do nothing */
+            	    } else {
+                        $('#uploadBox').removeClass('hide');
+                        $('#progressBox').addClass('hide');
+                        uploader.updateProgress('unpack', 0);
+            	    }
+            	}, false);
+            };
 
         }
     )
@@ -440,36 +696,13 @@ a:hover {
     <div class="bar bar-error" style="width: 100%;">
     </div>
 </div>
-<?php
-if (!$token) {
-    ?>
-    <div class="box" id='loginBox'>
-        <p>
-            <small>Please authenticate as an administrator</small>
-        </p>
-        <form id='login' method='POST'>
-            <input type="hidden" name="action" value="login"/>
-            <input type="text" name="username" value="" placeholder="Admin User Name"/>
-            <input type="password" name="password" value="" placeholder="Admin Password"/>
-            <a class="btn btn-success" onclick='$("#login").submit()'>Authenticate</a>
-        </form>
-
-        <div id='uploadBar' class="progress check hide">
-            <div class="bar bar-error" style="width: 100%;"></div>
-        </div>
-
-
-    </div>
-<?php
-} else {
-    ?>
     <div class="box" id='uploadBox'>
         <p>
-            <small>Upload your instance files to begin the upgrade process.</small>
+            <small>Upload the upgrade package to begin the upgrade process.</small>
         </p>
         <form id='uploadForm'>
             <!-- MAX_FILE_SIZE must precede the file input field -->
-            <input type="hidden" name="token" value="<?= $token ?>"/>
+            <input type="hidden" name="token" value="<?php echo $token ?>"/>
             <input type="hidden" name="action" value="unpack"/>
             <input type="hidden" name="MAX_FILE_SIZE" value="300000000"/>
             <!-- Name of input element determines name in $_FILES array -->
@@ -547,9 +780,6 @@ if (!$token) {
         <a class="btn btn-success" href="index.php">Back to SugarCRM</a>
         </div>
 </span>
-<?php
-}
-?>
 <div class="box">
     <p>
         <small>
@@ -557,5 +787,13 @@ if (!$token) {
         </small>
     </p>
 </div>
+  <section class="semantic-content" id="modal-text" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+    <div class="modal-inner">
+        <header id="modal-label"><h1>SugarCRM License Agreement</h1></header>
+        <div class="modal-content"><h2>Please read and accept this license</h2><p id="licenseText">LICENSE.txt</p></div>
+        <footer><a href="#accepted" class="left-pedal" data-close="Close" data-dismiss="modal">Accept</a><a href="#!" class="right-pedal" data-close="Close" data-dismiss="modal">Cancel</a></footer>
+    </div>
+    <a href="#!" class="modal-close" title="Close this modal" data-close="Close" data-dismiss="modal">×</a>
+  </section>
 </body>
 </html>

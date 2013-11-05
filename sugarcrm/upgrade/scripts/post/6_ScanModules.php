@@ -178,6 +178,8 @@ class SugarUpgradeScanModules extends UpgradeScript
                 if(!$this->isMBModule($module)) {
                     // new and not MB - list as BWC
                     $this->log("Setting $module_name as BWC module");
+                    // keep list of modules we BWC'ed in state so we could tell the user
+                    $this->upgrader->state['bwcModules'][] = $module_name;
                     $this->bwcModules[] = $module_name;
                 } else {
                     $mbModules[] = $module_name;

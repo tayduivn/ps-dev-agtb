@@ -764,15 +764,15 @@ abstract class UpgradeDriver
         }
 
         // load manifest
-        if(!file_exists("$unzip_dir/manifest.php")) {
-            $this->cleanDir($unzip_dir);
+        if(!file_exists($this->context['temp_dir']."/manifest.php")) {
+            $this->cleanDir($this->context['temp_dir']);
             return $this->error("Package does not contain manifest.php", true);
         }
         // validate manifest
         list($this->from_version, $this->from_flavor) = $this->loadVersion();
         $res = $this->validateManifest();
         if($res !== true) {
-            $this->cleanDir($unzip_dir);
+            $this->cleanDir($this->context['temp_dir']);
             return $this->error($res, true);
         }
         $this->log("**** Upgrade checks passed");

@@ -33,6 +33,12 @@ $res = $upg->process($_REQUEST['action']);
 if($res !== false && $upg->success) {
     // OK
     $reply = array("status" => "ok", "data" => $res);
+    if(!empty($upg->license)) {
+        $reply['license'] = $upg->license;
+    }
+    if(!empty($upg->readme)) {
+        $reply['readme'] = $upg->readme;
+    }
 } else {
     // error
     $reply = array("status" => "error", "message" => $upg->error?$upg->error:"Stage {$_REQUEST['action']} failed");
