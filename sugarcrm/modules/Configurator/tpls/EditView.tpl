@@ -69,44 +69,6 @@
 		</td>
 	</tr>
 	<tr>
-		<td  scope="row">{$MOD.LOCK_HOMEPAGE}: </td>
-		<td  >
-			{if !empty($config.lock_homepage)}
-				{assign var='lock_homepage_checked' value='CHECKED'}
-			{else}
-				{assign var='lock_homepage_checked' value=''}
-			{/if}
-			<input type='hidden' name='lock_homepage' value='false'>
-			<input type='checkbox' name='lock_homepage' value='true' {$lock_homepage_checked}>
-		</td>
-		<td  scope="row">{$MOD.LOCK_SUBPANELS}: </td>
-		<td  >
-			{if !empty($config.lock_subpanels)}
-				{assign var='lock_subpanels_checked' value='CHECKED'}
-			{else}
-				{assign var='lock_subpanels_checked' value=''}
-			{/if}
-			<input type='hidden' name='lock_subpanels' value='false'>
-			<input type='checkbox' name='lock_subpanels' value='true' {$lock_subpanels_checked}>
-		</td>
-	</tr>
-	<tr>
-		<td  scope="row" nowrap>{$MOD.MAX_DASHLETS}: </td>
-		<td>
-			<input type='text' size='4' name='max_dashlets_homepage' value='{$config.max_dashlets_homepage}'>
-		</td>
-		<td  scope="row" nowrap>{$MOD.LBL_USE_REAL_NAMES}: &nbsp;{sugar_help text=$MOD.LBL_USE_REAL_NAMES_DESC}</td>
-		{if !empty($config.use_real_names)}
-			{assign var='use_real_names' value='CHECKED'}
-		{else}
-			{assign var='use_real_names' value=''}
-		{/if}
-		<td >
-			<input type='hidden' name='use_real_names' value='false'>
-			<input name='use_real_names'  type="checkbox" value="true" {$use_real_names}>
-		</td>
-	</tr>
-	<tr>
 		<td  scope="row">{$MOD.DISPLAY_RESPONSE_TIME}: </td>
 		{if !empty($config.calculate_response_time )}
 			{assign var='calculate_response_time_checked' value='CHECKED'}
@@ -130,10 +92,18 @@
 		<td width='35%'>
 			<input type='text' name='system_name' value='{$settings.system_name}'>
 		</td>
-		<td scope="row" width='15%' nowrap>{$MOD.LBL_MIN_AUTO_REFRESH_INTERVAL} &nbsp;{sugar_help text=$MOD.LBL_MIN_AUTO_REFRESH_INTERVAL_HELP} </td>
-		<td width='35%'>
-		    <select name='dashlet_auto_refresh_min' id='dashlet_auto_refresh_min'>{$AUTO_REFRESH_INTERVAL_OPTIONS}</select>
-		</td>
+    
+        
+        <td  scope="row" nowrap>{$MOD.LBL_USE_REAL_NAMES}: &nbsp;{sugar_help text=$MOD.LBL_USE_REAL_NAMES_DESC}</td>
+        {if !empty($config.use_real_names)}
+            {assign var='use_real_names' value='CHECKED'}
+        {else} 
+            {assign var='use_real_names' value=''}
+        {/if}  
+        <td >  
+            <input type='hidden' name='use_real_names' value='false'>
+            <input name='use_real_names'  type="checkbox" value="true" {$use_real_names}>
+        </td>  
     </tr>
     <tr>
         <td  scope="row" width='12%' nowrap>
@@ -172,7 +142,17 @@
             <input type='hidden' name='enable_action_menu' value='false'>
             <input name='enable_action_menu'  type="checkbox" value="true" {$enable_action_menu}>
         </td>
-        <td colspan="2">&nbsp;</td>
+        
+        <td  scope="row">{$MOD.LOCK_SUBPANELS}: &nbsp;{sugar_help text=$MOD.LBL_LOCK_SUBPANELS_DESC}</td>
+        <td  >
+            {if !empty($config.lock_subpanels)}
+                {assign var='lock_subpanels_checked' value='CHECKED'}
+            {else}
+                {assign var='lock_subpanels_checked' value=''}
+            {/if}
+            <input type='hidden' name='lock_subpanels' value='false'>
+            <input type='checkbox' name='lock_subpanels' value='true' {$lock_subpanels_checked}>
+        </td>
     </tr>
 </table>
 
