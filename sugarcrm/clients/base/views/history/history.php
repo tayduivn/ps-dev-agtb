@@ -46,35 +46,6 @@ $viewdefs['base']['view']['history'] = array(
     'custom_toolbar' => array(
         'buttons' => array(
             array(
-                'type' => 'actiondropdown',
-                'no_default_action' => true,
-                'icon' => 'icon-plus',
-                'buttons' => array(
-                    array(
-                        'type' => 'dashletaction',
-                        'action' => 'createRecord',
-                        'params' => array(
-                            'link' => 'meetings',
-                            'module' => 'Meetings',
-                        ),
-                        'label' => 'LBL_SCHEDULE_MEETING',
-                        'acl_action' => 'create',
-                        'acl_module' => 'Meetings',
-                    ),
-                    array(
-                        'type' => 'dashletaction',
-                        'action' => 'createRecord',
-                        'params' => array(
-                            'link' => 'calls',
-                            'module' => 'Calls',
-                        ),
-                        'label' => 'LBL_SCHEDULE_CALL',
-                        'acl_action' => 'create',
-                        'acl_module' => 'Calls',
-                    ),
-                ),
-            ),
-            array(
                 'dropdown_buttons' => array(
                     array(
                         'type' => 'dashletaction',
