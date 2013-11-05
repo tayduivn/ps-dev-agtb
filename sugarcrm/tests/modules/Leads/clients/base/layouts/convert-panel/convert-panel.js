@@ -226,19 +226,46 @@ describe("Leads.Base.Layout.ConvertPanel", function() {
     });
 
     it("should populate create model with lead fields and trigger dupe check when lead model passed on context", function() {
-        var createModel = new Backbone.Model(),
-            leadModel = new Backbone.Model({foo: 'Foo', bar: 'Bar', baz: 'Baz'});
+        var leadModel = new Backbone.Model({
+                foo:'Foo',
+                bar:'Bar',
+                baz:'Baz',
+                north:'Lead Value for NORTH',
+                south:'Lead Value for SOUTH',
+                east:'Lead Value for EAST',
+                _module:'Leads'
+            }),
+            createModel = new Backbone.Model({
+                north:'Contact Value for NORTH',
+                west:'Contact Value for WEST',
+                east:'Contact Value for EAST'
+            });
         layout.createView.model = createModel;
         layout.meta.duplicateCheckOnStart = true;
         layout.meta.fieldMapping = {
-            'contact_foo': 'foo',
-            'contact_baz': 'baz'
+            'contact_foo':'foo',
+            'contact_baz':'baz',
+            'east':'north'
         };
+
+        var getModuleStub = sinon.stub(app.metadata, 'getModule');
+        getModuleStub.withArgs('Leads', 'fields').returns(
+            { north:'north', south:'south', east:'east' }
+        );
+        getModuleStub.withArgs('Contacts', 'fields').returns(
+            { north:'north', west:'west', east:'east' }
+        );
+
         layout.handlePopulateRecords(leadModel);
         expect(createModel.get('contact_foo')).toEqual('Foo');
         expect(createModel.get('contact_bar')).toBeUndefined();
         expect(createModel.get('contact_baz')).toEqual('Baz');
+        expect(createModel.get('north')).toEqual('Lead Value for NORTH');
+        expect(createModel.get('south')).toBeUndefined();
+        expect(createModel.get('east')).toEqual('Lead Value for NORTH');
+        expect(createModel.get('west')).toEqual('Contact Value for WEST');
         expect(dupeViewContextTriggerStub.callCount).toBe(1);
+        getModuleStub.restore();
     });
 
     it("should trigger dupe check when panel is enabled and not already complete", function() {
