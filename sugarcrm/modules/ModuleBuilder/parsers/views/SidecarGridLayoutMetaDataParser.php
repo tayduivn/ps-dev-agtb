@@ -63,6 +63,64 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         'panel_hidden' => 'LBL_RECORD_SHOWMORE',
     );
 
+    protected $tabProperties = array(
+        'panelDefault',
+        'newTab'
+    );
+
+    /**
+     * @return array array of tab definitions
+     */
+    public function getTabDefs() {
+        $tabDefs = array();
+        $this->setUseTabs( false );
+        foreach ( $this->_viewdefs [ 'panels' ] as $panelID => $panel )
+        {
+
+            $tabDefs [ strtoupper($panelID) ] = array();
+
+            // panel or tab setting
+            if ( isset($this->extraPanelMeta[ strtoupper($panelID) ] [ 'newTab' ])
+                && is_bool($this->extraPanelMeta [ strtoupper($panelID) ] [ 'newTab' ]))
+            {
+                $tabDefs [ strtoupper($panelID) ] [ 'newTab' ] = $this->extraPanelMeta [ strtoupper($panelID) ] [ 'newTab' ];
+                if ($tabDefs [ strtoupper($panelID) ] [ 'newTab' ] == true)
+                    $this->setUseTabs( true );
+            }
+            else
+            {
+                $tabDefs [ strtoupper($panelID) ] [ 'newTab' ] = false;
+            }
+
+            // collapsed panels
+            if ( isset($this->extraPanelMeta [ strtoupper($panelID) ] [ 'panelDefault' ])
+                && $this->extraPanelMeta [ strtoupper($panelID) ] [ 'panelDefault' ] == 'collapsed' )
+            {
+                $tabDefs [ strtoupper($panelID) ] [ 'panelDefault' ] = 'collapsed';
+            }
+            else
+            {
+                $tabDefs [ strtoupper($panelID) ] [ 'panelDefault' ] = 'expanded';
+            }
+        }
+        return $tabDefs;
+    }
+
+    /**
+     * sets tab defintions
+     * @param array $tabDefs tab definition array
+     */
+    public function setTabDefs($tabDefs) {
+        foreach ($tabDefs as $panelID => $paneTabInfo) {
+
+            if (isset($this->extraPanelMeta [ strtoupper($panelID) ])) {
+                $this->extraPanelMeta [ strtoupper($panelID) ] = array_merge($this->extraPanelMeta [ strtoupper($panelID) ], $paneTabInfo);
+            } else {
+                $this->extraPanelMeta [ strtoupper($panelID) ] = $paneTabInfo;
+            }
+        }
+    }
+
     /**
      * Checks for the existence of the view variable for portal metadata
      *
@@ -226,19 +284,19 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     protected function isFiller($field)
     {
         if (is_array($field))  {
-            return ($field == MBConstants::$FILLER);
+            return ($field === MBConstants::$FILLER);
         }
 
-        return ($field == $this->FILLER['name']);
+        return ($field === $this->FILLER['name']);
     }
 
     protected function isEmpty($field)
     {
         if (is_array($field))  {
-            return ($field == MBConstants::$EMPTY);
+            return ($field === MBConstants::$EMPTY);
         }
 
-        return ($field == MBConstants::$EMPTY['name']);
+        return ($field === MBConstants::$EMPTY['name']);
     }
 
     /**
@@ -278,9 +336,6 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
      */
     protected function _convertToCanonicalForm($panels , $fielddefs)
     {
-        //$previousViewDef = $this->getFieldsFromLayout($this->implementation->getViewDefs());
-        //$currentFields = $this->getFieldsFromLayout($panels);
-
         $canonicalPanels = array();
 
         // reset any span info already in the fields, we're going to figure it out again
@@ -306,10 +361,19 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             $fields = array();
             // get number of panel columns default to 2
             $panelColumns = 2;
-            if (!empty($this->extraPanelMeta[$pName]['columns'])) {
-                $panelColumns = $this->extraPanelMeta[$pName]['columns'];
+            if (!empty($this->extraPanelMeta[strtoupper($pName)]['columns'])) {
+                $panelColumns = $this->extraPanelMeta[strtoupper($pName)]['columns'];
             }
             $singleSpanUnit = $this->maxSpan/$panelColumns;
+
+            $panelDefaults = array(
+                'name' => $pName,
+                'label' => strtoupper($pName),
+                'columns' =>$panelColumns,
+                'labelsOnTop' => 1,
+                'placeholders' => 1
+            );
+
             foreach ($panel as $row) {
                 $offset = 1; // reset
                 $lastField = null; // holder for the field to put in
@@ -335,12 +399,14 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                         // is set and we are an end column
                         if ($panelColumns - $offset === 1) {
                             $lastRowIndex = count($fields) - 1;
-                            if (!is_array($fields[$lastRowIndex])) {
-                                $fields[$lastRowIndex] = array(
-                                    'name' => $fields[$lastRowIndex]
-                                );
+                            if ($lastRowIndex > 1) {
+                                if (isset($fields[$lastRowIndex]) && !is_array($fields[$lastRowIndex])) {
+                                    $fields[$lastRowIndex] = array(
+                                        'name' => $fields[$lastRowIndex]
+                                    );
+                                }
+                                $fields[$lastRowIndex]['span'] = $singleSpanUnit;
                             }
-                            $fields[$lastRowIndex]['span'] = $singleSpanUnit;
                         }
 
                         $lastField = array(
@@ -369,18 +435,26 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                         // If the field defs is empty it needs to be an array
                         $lastField = $this->getNewRowItem($source, (empty($fielddefs[$fieldName]) ? array() : $fielddefs[$fieldName]));
                     }
-
                 }
 
                 // dump out the last field we stored
                 if ($lastField !== null) {
                     $fields = array_merge($fields,$this->_addCell($lastField,$offset,$singleSpanUnit));
                 }
-
             }
-            if (!empty($this->extraPanelMeta[$pName])) {
+
+            if (!empty($this->extraPanelMeta[strtoupper($pName)])) {
                 // restore any extra panel meta
-                $newPanel = $this->extraPanelMeta[$pName];
+                $newPanel = $this->extraPanelMeta[strtoupper($pName)];
+            } else {
+                $newPanel = $panelDefaults;
+            }
+
+            // set some sane defaults
+            foreach($panelDefaults as $defaultKey => $defaultValue) {
+                if (!isset($newPanel[$defaultKey])) {
+                    $newPanel[$defaultKey] = $defaultValue;
+                }
             }
 
             $newPanel['fields'] = $fields;
@@ -442,11 +516,12 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             // panels now have meta at this level so we need to store that
             $panelMeta = $panel;
             unset($panelMeta['fields']);
-            $this->extraPanelMeta[$pLabel] = $panelMeta;
+            $this->extraPanelMeta[strtoupper($pLabel)] = $panelMeta;
 
             // going from a list of fields to putting them in rows,cols format.
             $internalFieldRows = array();
             $row = array();
+
             foreach ($panel['fields'] as $field) {
 
                 // figure out the colspan of the current field
@@ -455,7 +530,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 } else {
                     // Simple aesthetics... make the name field a full span but
                     // only if this is the header panel
-                    if (isset($panel['name']) && $panel['name'] == 'panel_header' && $field == 'name') {
+                    if (isset($panel['name']) && $panel['name'] === 'panel_header' && $field === 'name') {
                         $colspan = $panelColumns;
                     } else {
                         $colspan = 1;

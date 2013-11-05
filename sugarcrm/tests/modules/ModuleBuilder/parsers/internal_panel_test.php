@@ -29,7 +29,6 @@ $internals = array(
             'description',
         ),
     )),
-
     array('0' => array(
         array( // row 1
             'name',
@@ -37,6 +36,12 @@ $internals = array(
         ),
         array( // row 2
             'description',
+            MBConstants::$FILLER['name']
+        ),
+    )),
+    array('0' => array(
+        array( // row 2
+            MBConstants::$FILLER['name'],
             MBConstants::$FILLER['name']
         ),
     )),
