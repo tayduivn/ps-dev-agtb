@@ -36,10 +36,10 @@ class SugarTestContactUtilities
      * @param array $contactValues
      * @return Contact
      */
-    public static function createContact($id = '', $contactValues = array())
+    public static function createContact($id = '', $contactValues = array(), $class = 'Contact')
     {
         $time = mt_rand();
-        $contact = new Contact();
+        $contact = new $class();
 
         if (isset($contactValues['first_name'])) {
             $contact->first_name = $contactValues['first_name'];
@@ -109,5 +109,20 @@ class SugarTestContactUtilities
             $contact_ids[] = $contact->id;
         }
         return $contact_ids;
+    }
+}
+
+
+class ContactMock extends Contact
+{
+    public function getNotificationEmailTemplate($test = false)
+    {
+        if ($test) {
+            $templateName = $this->getTemplateNameForNotificationEmail();
+            return $this->createNotificationEmailTemplate($templateName);    
+        }
+        
+        return $this->createNotificationEmailTemplate($templateName);
+
     }
 }
