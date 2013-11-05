@@ -5246,7 +5246,7 @@ $app_list_strings['web_hook_request_method_list'] = array(
     'DELETE' => 'DELETE',
 );
 
-$app_list_strings['LBL_EMAIL_CHECK_INTERVAL_DOM'] = array(
+$app_list_strings['email_check_interval_dom'] = array(
     '-1' => "Manually",
     '5' => 'Every 5 minutes',
     '15' => 'Every 15 minutes',
