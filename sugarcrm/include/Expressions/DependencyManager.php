@@ -205,7 +205,7 @@ class DependencyManager
         global $app_list_strings;
 
         foreach ($fields as $field => $def) {
-            if ($def['type'] == "enum" && !empty ($def ['visibility_grid'])) {
+            if (isset($def['type']) && $def['type'] == "enum" && !empty ($def ['visibility_grid'])) {
                 $grid = $def ['visibility_grid'];
                 if (!isset($grid['values']) || !isset($fields[$grid['trigger']]))
                     continue;
@@ -425,7 +425,7 @@ class DependencyManager
         $links = array();
         foreach ($fields as $name => $def)
         {
-            if ($def['type'] == 'link' && self::validLinkField($def)) {
+            if (isset($def['type']) && $def['type'] == 'link' && self::validLinkField($def)) {
                 $links[$name] = array('relationship' => $def['relationship']);
                 if (!empty($def['module']))
                     $links[$name]['module'] = $def['module'];
@@ -434,7 +434,7 @@ class DependencyManager
         //Now attempt to map the relate field to the link
         foreach ($fields as $name => $def)
         {
-            if ($def['type'] == 'relate' && !empty($def['link']) && isset($links[$def['link']]) && !empty($def['id_name'])) {
+            if (isset($def['type']) && $def['type'] == 'relate' && !empty($def['link']) && isset($links[$def['link']]) && !empty($def['id_name'])) {
                 $links[$def['link']]['id_name'] = $def['id_name'];
                 if (empty($links[$def['link']]['module']) && !empty($def['module']))
                     $links[$def['link']]['module'] = $def['module'];
