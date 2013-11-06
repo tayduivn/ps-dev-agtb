@@ -177,7 +177,7 @@ describe("Base.View.RecordList", function () {
             view.toggleRow(selectedModelId, true);
             var model = view.collection.get(selectedModelId);
 
-            model._setSyncedAttributes({
+            model.setSyncedAttributes({
                 name: 'Original',
                 case_number: 456,
                 description: 'Previous description',

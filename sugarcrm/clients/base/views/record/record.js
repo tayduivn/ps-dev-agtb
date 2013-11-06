@@ -94,9 +94,11 @@
     },
 
     /**
-     * Compare with last fetched data and return true if model contains changes
+     * Compare with last fetched data and return true if model contains changes.
      *
-     * @return {Boolean} true if current model contains unsaved changes.
+     * Check changes for fields that are editable only.
+     *
+     * @return {Boolean} `true` if current model contains unsaved changes, otherwise `false`.
      * @link {app.plugins.view.editable}
      */
     hasUnsavedChanges: function() {
@@ -108,8 +110,7 @@
         if (_.isEmpty(changedAttributes)) {
             return false;
         }
-        // if model contains changed attributes,
-        // check whether those are among the editable fields or not
+
         var formFields = _.compact(_.pluck(this.editableFields, 'name')),
             unsavedFields = _.intersection(_.keys(changedAttributes), formFields);
 

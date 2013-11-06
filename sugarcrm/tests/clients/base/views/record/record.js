@@ -717,13 +717,13 @@ describe("Record View", function () {
                 case_number: 456,
                 description: 'Previous description'
             };
-            view.model._setSyncedAttributes(attrs);
+            view.model.setSyncedAttributes(attrs);
             view.model.set(attrs);
             var actual = view.hasUnsavedChanges();
             expect(actual).toBe(false);
         });
         it('should warn unsaved changes among the synced attributes', function() {
-            view.model._setSyncedAttributes({
+            view.model.setSyncedAttributes({
                 name: 'Original',
                 case_number: 456,
                 description: 'Previous description'
@@ -737,7 +737,7 @@ describe("Record View", function () {
             expect(actual).toBe(true);
         });
         it('should warn unsaved changes ONLY IF the changes are editable fields', function() {
-            view.model._setSyncedAttributes({
+            view.model.setSyncedAttributes({
                 name: 'Original',
                 case_number: 456,
                 description: 'Previous description',
