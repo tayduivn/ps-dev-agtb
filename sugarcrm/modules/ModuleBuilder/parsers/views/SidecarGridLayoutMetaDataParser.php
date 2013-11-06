@@ -71,36 +71,32 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     /**
      * @return array array of tab definitions
      */
-    public function getTabDefs() {
+    public function getTabDefs(){
         $tabDefs = array();
-        $this->setUseTabs( false );
-        foreach ( $this->_viewdefs [ 'panels' ] as $panelID => $panel )
-        {
-
-            $tabDefs [ strtoupper($panelID) ] = array();
+        $this->setUseTabs(false);
+        foreach ($this->_viewdefs['panels'] as $panelID => $panel) {
+            $id = strtoupper($panelID);
+            $tabDefs [$id] = array();
 
             // panel or tab setting
-            if ( isset($this->extraPanelMeta[ strtoupper($panelID) ] [ 'newTab' ])
-                && is_bool($this->extraPanelMeta [ strtoupper($panelID) ] [ 'newTab' ]))
-            {
-                $tabDefs [ strtoupper($panelID) ] [ 'newTab' ] = $this->extraPanelMeta [ strtoupper($panelID) ] [ 'newTab' ];
-                if ($tabDefs [ strtoupper($panelID) ] [ 'newTab' ] == true)
-                    $this->setUseTabs( true );
-            }
-            else
-            {
-                $tabDefs [ strtoupper($panelID) ] [ 'newTab' ] = false;
+            if (isset($this->extraPanelMeta[$id]['newTab'])
+                && is_bool($this->extraPanelMeta[$id]['newTab'])
+            ) {
+                $tabDefs[$id]['newTab'] = $this->extraPanelMeta[$id]['newTab'];
+                if ($tabDefs[$id]['newTab'] == true) {
+                    $this->setUseTabs(true);
+                }
+            } else {
+                $tabDefs [$id] ['newTab'] = false;
             }
 
             // collapsed panels
-            if ( isset($this->extraPanelMeta [ strtoupper($panelID) ] [ 'panelDefault' ])
-                && $this->extraPanelMeta [ strtoupper($panelID) ] [ 'panelDefault' ] == 'collapsed' )
-            {
-                $tabDefs [ strtoupper($panelID) ] [ 'panelDefault' ] = 'collapsed';
-            }
-            else
-            {
-                $tabDefs [ strtoupper($panelID) ] [ 'panelDefault' ] = 'expanded';
+            if (isset($this->extraPanelMeta[$id]['panelDefault'])
+                && $this->extraPanelMeta[$id]['panelDefault'] == 'collapsed'
+            ) {
+                $tabDefs[$id]['panelDefault'] = 'collapsed';
+            } else {
+                $tabDefs[$id]['panelDefault'] = 'expanded';
             }
         }
         return $tabDefs;
@@ -112,11 +108,11 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
      */
     public function setTabDefs($tabDefs) {
         foreach ($tabDefs as $panelID => $paneTabInfo) {
-
-            if (isset($this->extraPanelMeta [ strtoupper($panelID) ])) {
-                $this->extraPanelMeta [ strtoupper($panelID) ] = array_merge($this->extraPanelMeta [ strtoupper($panelID) ], $paneTabInfo);
+            $panelKey = strtoupper($panelID);
+            if (isset($this->extraPanelMeta [$panelKey])) {
+                $this->extraPanelMeta[$panelKey] = array_merge($this->extraPanelMeta [$panelKey], $paneTabInfo);
             } else {
-                $this->extraPanelMeta [ strtoupper($panelID) ] = $paneTabInfo;
+                $this->extraPanelMeta[$panelKey] = $paneTabInfo;
             }
         }
     }
@@ -357,18 +353,18 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 $canonicalPanels[$panelIndex] = $this->headerPanelMeta;
                 $panelIndex++;
             }
-
+            $panelName = strtoupper($pName);
             $fields = array();
             // get number of panel columns default to 2
             $panelColumns = 2;
-            if (!empty($this->extraPanelMeta[strtoupper($pName)]['columns'])) {
-                $panelColumns = $this->extraPanelMeta[strtoupper($pName)]['columns'];
+            if (!empty($this->extraPanelMeta[$panelName]['columns'])) {
+                $panelColumns = $this->extraPanelMeta[$panelName]['columns'];
             }
             $singleSpanUnit = $this->maxSpan/$panelColumns;
 
             $panelDefaults = array(
-                'name' => $pName,
-                'label' => strtoupper($pName),
+                'name' => $panelName,
+                'label' => $panelName,
                 'columns' =>$panelColumns,
                 'labelsOnTop' => 1,
                 'placeholders' => 1
@@ -443,18 +439,17 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 }
             }
 
-            if (!empty($this->extraPanelMeta[strtoupper($pName)])) {
+            if (!empty($this->extraPanelMeta[$panelName])) {
                 // restore any extra panel meta
-                $newPanel = $this->extraPanelMeta[strtoupper($pName)];
+                $newPanel = $this->extraPanelMeta[$panelName];
+                // set some sane defaults
+                foreach($panelDefaults as $defaultKey => $defaultValue) {
+                    if (!isset($newPanel[$defaultKey])) {
+                        $newPanel[$defaultKey] = $defaultValue;
+                    }
+                }
             } else {
                 $newPanel = $panelDefaults;
-            }
-
-            // set some sane defaults
-            foreach($panelDefaults as $defaultKey => $defaultValue) {
-                if (!isset($newPanel[$defaultKey])) {
-                    $newPanel[$defaultKey] = $defaultValue;
-                }
             }
 
             $newPanel['fields'] = $fields;

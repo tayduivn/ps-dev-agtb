@@ -33,7 +33,8 @@
         'click .record-edit-link-wrapper': 'handleEdit',
         'click a[name=cancel_button]': 'cancelClicked',
         'click [data-action=scroll]': 'paginateRecord',
-        'click .record-panel-header': 'togglePanel'
+        'click .record-panel-header': 'togglePanel',
+        'click .tab a': 'setActiveTab'
     },
 
     /**
@@ -156,7 +157,9 @@
 
     _render: function() {
         this._buildGridsFromPanelsMetadata(this.meta.panels);
-
+        if (this.meta && this.meta.panels) {
+            this._initTabsAndPanels();
+        }
         app.view.View.prototype._render.call(this);
 
         if (this.context.get('record_label')) {
@@ -190,9 +193,7 @@
             this.toggleFields(this.editableFields, true);
         }
 
-        if (this.meta && this.meta.panels) {
-            this._initTabsAndPanels();
-        }
+        this.handleActiveTab();
     },
 
     /**
@@ -230,12 +231,50 @@
             this.meta.useTabsAndPanels = true;
         }
 
-        // If tabs, show first tab on render
-        if (this.meta.useTabsAndPanels && this.checkFirstPanel()) {
+        // set states
+        _.each(this.meta.panels, function(panel){
+
+            var panelKey = app.user.lastState.key(panel.name+':tabState', this);
+            var panelState = app.user.lastState.get(panelKey);
+            if (panelState) {
+                panel.panelState = panelState;
+            }
+        }, this);
+    },
+    /**
+     * handles setting active tab
+     */
+    handleActiveTab: function() {
+        var activeTabHref = app.user.lastState.get(app.user.lastState.key('activeTab', this));
+        var activeTab = this.$('ul a[href="'+activeTabHref+'"]');
+        if (activeTabHref && activeTab) {
+            activeTab.tab('show');
+        } else if (this.meta.useTabsAndPanels && this.checkFirstPanel()) {
+            // If tabs and no last state set, show first tab on render
             this.$('#recordTab a:first').tab('show');
         }
     },
-
+    /**
+     * sets active tab in user last state
+     * @param {Event} event
+     */
+    setActiveTab: function(event) {
+       var tabTarget = this.$(event.currentTarget).attr('href');
+       var tabKey = app.user.lastState.key('activeTab', this);
+       app.user.lastState.set(tabKey, tabTarget);
+    },
+    /**
+     * saves panel state in user last state
+     * @param {String} panelID
+     * @param {String} state
+     */
+    savePanelState: function(panelID, state) {
+        var panelKey = app.user.lastState.key(panelID+':tabState', this);
+        app.user.lastState.set(panelKey, state);
+    },
+    /**
+     * sets editable fields
+     */
     setEditableFields: function() {
         delete this.editableFields;
         this.editableFields = [];
@@ -990,6 +1029,12 @@
         if ($panelHeader && $panelHeader.find('i')) {
             $panelHeader.find('i').toggleClass('icon-chevron-up icon-chevron-down');
         }
+        var panelName = this.$(e.currentTarget).parent().data('panelname');
+        var state = 'collapsed';
+        if (this.$(e.currentTarget).next().is(":visible")) {
+            state = 'expanded';
+        }
+        this.savePanelState(panelName, state);
     },
 
     /**
