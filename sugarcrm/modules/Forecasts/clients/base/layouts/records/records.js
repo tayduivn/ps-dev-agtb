@@ -125,7 +125,8 @@
             // if the model changes, run a fetch
             this.model.on('change', function() {
                 // clear this out this someone on the model change, this will be set once the collection resets
-                this.context.set({'currentForecastCommitDate' : undefined}, {silent: true});
+                // set the value to null since it can be undefined
+                this.context.set({'currentForecastCommitDate' : null}, {silent: true});
                 this.collection.fetch();
             }, this);
 
@@ -248,7 +249,8 @@
 
         // set items on the context from the initData payload
         ctx.set({
-            currentForecastCommitDate: undefined,
+            // set the value to null since it can be undefined
+            currentForecastCommitDate: null,
             selectedTimePeriod: data.defaultSelections.timeperiod_id.id,
             selectedRanges: data.defaultSelections.ranges
         }, {silent: true});
@@ -326,7 +328,7 @@
         }, this);
 
         callbacks = app.data.getSyncCallbacks(method, model, options);
-        this.trigger("data:sync:start", method, model, options);
+        this.collection.trigger("data:sync:start", method, model, options);
 
         url = app.api.buildURL("Forecasts/filter", null, null, options.params);
         app.api.call("create", url, filter, callbacks);
