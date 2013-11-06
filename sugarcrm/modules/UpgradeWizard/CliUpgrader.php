@@ -154,8 +154,12 @@ eoq2;
      */
     public function fixupContext($context)
     {
-        $context['zip'] = realpath($context['zip']);
-        $context['source_dir'] = realpath($context['source_dir']);
+        if(!empty($context['zip'])) {
+            $context['zip'] = realpath($context['zip']);
+        }
+        if(!empty($context['source_dir'])) {
+            $context['source_dir'] = realpath($context['source_dir']);
+        }
         if(isset($context['script_mask'])) {
             $context['script_mask'] = $this->parseScriptMask($context['script_mask']);
         }
@@ -259,7 +263,9 @@ eoq2;
         }
         $context = $this->mapArgs($argv);
         $context['php'] = $php_path."php";
-        $context['script'] = __FILE__;
+        if(empty($context['script'])) {
+            $context['script'] = __FILE__;
+        }
         $context['argv'] = $argv;
         $this->context = $context;
         $this->log("Setting context to: ".var_export($context, true));

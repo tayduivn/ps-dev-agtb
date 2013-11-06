@@ -20,7 +20,6 @@ class ShadowUpgrader extends CliUpgrader
             'pre_template' => array(true, 'f', 'from'),
             'post_template' => array(true, 't', 'to'),
             "source_dir" => array(true, 's', 'source'),
-            "zip" => array(true, 'z', 'zip'),
             "log" => array(true, 'l', 'log'),
             "admin" => array(true, 'u', 'user'),
             "backup" => array(false, 'b', 'backup'),
@@ -39,17 +38,16 @@ class ShadowUpgrader extends CliUpgrader
 		list($version, $build) = static::getVersion();
     	$usage =<<<eoq2
 Shadow Upgrader v.$version (build $build)
-php ShadowUpgrader.php -f oldTemplate -t newTemplate -s pathToSugarInstance -z zip -l logFile -u admin-user
+php ShadowUpgrader.php -f oldTemplate -t newTemplate -s pathToSugarInstance -l logFile -u admin-user
 
 Example:
-    php ShadowUpgrader.php -f /sugar/templates/7.0.0 -t /sugar/templates/7.1.0 path-to-sugar-instance/ \
-    	    -z SugarEnt-Upgrade-7.0.x-to-7.1.0.zip -l silentupgrade.log -u admin
+    php ShadowUpgrader.php -f /sugar/templates/7.0.0 -t /sugar/templates/7.1.0 -s path-to-sugar-instance/ \
+    	    -l silentupgrade.log -u admin
 
 Arguments:
     -f/--from oldTemplate                : Pre-upgrade template
     -t/--to newTemplate                  : Target template
     -s/--source pathToSugarInstance      : Sugar instance being upgraded.
-    -z/--zip upgrade.zip                 : Upgrade package file.
     -l/--log logFile                     : Upgarde log file (by default relative to instance dir)
     -u/--user admin-user                 : admin user performing the upgrade
 Optional arguments:
@@ -91,6 +89,14 @@ eoq2;
     	return true;
     }
 
+    protected function getVersionFromPath($path)
+    {
+        $parts = explode(DIRECTORY_SEPARATOR, $path);
+        $f = array_pop($parts);
+        $v = array_pop($parts);
+        return $v.$f;
+    }
+
     /**
      * Fix values in the context
      * @param array $context
@@ -99,15 +105,62 @@ eoq2;
     public function fixupContext($context)
     {
         $context = parent::fixupContext($context);
+        $context['script'] = __FILE__;
         $context['pre_template'] = realpath($context['pre_template']);
         $context['post_template'] = realpath($context['post_template']);
+        $from = $this->getVersionFromPath($context['pre_template']);
+        $to = $this->getVersionFromPath($context['post_template']);
+        $context['zip'] = "ShadowUpgrade-$from-$to";
         // only use custom and DB scripts
         if(isset($context['script_mask'])) {
             $context['script_mask'] &= UpgradeScript::UPGRADE_CUSTOM|UpgradeScript::UPGRADE_DB;
         } else {
             $context['script_mask'] = UpgradeScript::UPGRADE_CUSTOM|UpgradeScript::UPGRADE_DB;
         }
+        $context['new_source_dir'] = $context['post_template'];
+        $context['backup'] = 0;
         return $context;
+    }
+
+    protected function extractZip($zip)
+    {
+        // no zip, nothing to extract
+        return true;
+    }
+
+    public function unlink($file)
+    {
+        if($file[0] == '/') {
+            return parent::unlink($file);
+        }
+        // check relative paths against source dir
+        if(file_exists($this->context['source_dir']."/".$file)) {
+            return @unlink($file);
+        }
+        return true;
+    }
+
+    protected function getManifest()
+    {
+        // load target data
+        chdir($this->context['post_template']);
+        list($to_version, $to_flavor) = $this->loadVersion();
+        chdir($this->context['source_dir']);
+        // return fake manifest
+        return array(
+            'description' => 'Shadow Upgrade from {$this->from_version}/{$this->from_flavor} to $to_version/$to_flavor',
+            'acceptable_sugar_flavors' => array($this->from_flavor),
+            'acceptable_sugar_versions' => array('exact_matches' => array($this->from_version)),
+            'type' => 'patch',
+            'version' => $to_version,
+            'flavor' => $to_flavor,
+        );
+    }
+
+    protected function verify($zip, $dir)
+    {
+        chdir($this->context['pre_template']);
+        return parent::verify($zip, $dir);
     }
 
     protected function initSugar()

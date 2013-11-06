@@ -328,7 +328,7 @@ abstract class UpgradeDriver
     {
         $files = $this->findFiles($dir);
         foreach($files as $file) {
-            unlink("$dir/$file");
+            $this->unlink("$dir/$file");
         }
     }
 
@@ -361,6 +361,19 @@ abstract class UpgradeDriver
     }
 
     /**
+     * Unlink file
+     * @param string $file
+     * @return boolean
+     */
+    public function unlink($file)
+    {
+        if(file_exists($file)) {
+            return @unlink($file);
+        }
+        return true;
+    }
+
+    /**
      * Remove directory with all files in it
      * @param string $path
      * @return boolean
@@ -368,7 +381,7 @@ abstract class UpgradeDriver
     public function removeDir($path)
     {
         if(is_file( $path)) {
-        	return unlink($path);
+        	return $this->unlink($path);
         }
         if(!is_dir($path)){
             $this->log("Directory does not exist: $path, ignoring delete request");
@@ -384,7 +397,7 @@ abstract class UpgradeDriver
         		continue;
         	}
         	if(is_file("$path/$f")) {
-        	    unlink("$path/$f");
+        	    $this->unlink("$path/$f");
         	} else {
         	    $status &= $this->removeDir("$path/$f");
         	}
@@ -677,6 +690,38 @@ abstract class UpgradeDriver
     }
 
     /**
+     * Extrack zip package
+     * @param string $zip
+     * @return boolean
+     */
+    protected function extractZip($zip)
+    {
+        // Create target dir
+        $unzip_dir = realpath($this->context['temp_dir']);
+        $this->cleanDir($unzip_dir);
+        // unzip file
+        $zip = new ZipArchive;
+        $res = $zip->open($this->context['zip']);
+        if($res !== true) {
+            return $this->error(sprintf("ZIP Error(%d): Status(%s): Arhive(%s): Directory(%s)", $res, $zip->status, $this->context['zip'], $unzip_dir));
+        }
+        $this->log("Starting extracting {$this->context['zip']} to $unzip_dir");
+        $res = $zip->extractTo($unzip_dir);
+        if($res !== true) {
+            return $this->error(sprintf("ZIP Error(%d): Status(%s): Arhive(%s): Directory(%s)", $res, $zip->status, $this->context['zip'], $unzip_dir));
+        }
+        unset($zip);
+
+        // check manifest
+        if(!file_exists("$unzip_dir/manifest.php")) {
+            $this->cleanDir($unzip_dir);
+            return $this->error("Package does not contain manifest.php");
+        }
+
+        return true;
+    }
+
+    /**
      * Verify upgrade package
      * @param string $zip ZIP filename
      * @param string $dir Temp dir to use for zip files
@@ -697,30 +742,13 @@ abstract class UpgradeDriver
             return $this->error("{$this->context['admin']} is not a valid admin user");
         }
 
-        // Create target dir
-        $unzip_dir = realpath($this->context['temp_dir']);
-        $this->cleanDir($unzip_dir);
-        // unzip file
-        $zip = new ZipArchive;
-        $res = $zip->open($this->context['zip']);
-        if($res !== true) {
-            return $this->error(sprintf("ZIP Error(%d): Status(%s): Arhive(%s): Directory(%s)", $res, $zip->status, $this->context['zip'], $unzip_dir));
+        if(!$this->extractZip($zip)) {
+            return false;
         }
-        $this->log("Starting extracting {$this->context['zip']} to $unzip_dir");
-        $res = $zip->extractTo($unzip_dir);
-        if($res !== true) {
-        	return $this->error(sprintf("ZIP Error(%d): Status(%s): Arhive(%s): Directory(%s)", $res, $zip->status, $this->context['zip'], $unzip_dir));
-        }
-        unset($zip);
 
-        // load manifest
-        if(!file_exists("$unzip_dir/manifest.php")) {
-            $this->cleanDir($unzip_dir);
-            return $this->error("Package does not contain manifest.php");
-        }
         // validate manifest
         list($this->from_version, $this->from_flavor) = $this->loadVersion();
-        $res = $this->validateManifest("$unzip_dir/manifest.php");
+        $res = $this->validateManifest();
         if($res !== true) {
             return $this->error($res);
         }
@@ -862,11 +890,15 @@ abstract class UpgradeDriver
         return $mod_strings;
     }
 
-    protected function validateManifest($file)
+    /**
+     * Validate package manifest
+     * @return string|boolean True or error message
+     */
+    protected function validateManifest()
     {
         // takes a manifest.php manifest array and validates contents
         $this->log('validating manifest.php file');
-        $manifest = $this->dataInclude($file, 'manifest');
+        $manifest = $this->getManifest();
 
         if(!isset($manifest['type'])) {
         	return $this->mod_strings['ERROR_MANIFEST_TYPE'];
