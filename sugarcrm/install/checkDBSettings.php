@@ -187,12 +187,13 @@ function checkDBSettings($silent=false) {
 
         //BEGIN SUGARCRM flav=pro ONLY
         //Test FTS Settings
-        if(!empty($_SESSION['fts_type']))
-        {
-            if(! checkFTSSettings() )
-            {
+        if (empty($_SESSION['fts_type'])) {
+            installLog("ERROR:: Elastic Search is required.");
+            $errors['ERR_FTS'] = $mod_strings['LBL_FTS_REQUIRED'];
+        } else {
+            if (!checkFTSSettings()) {
                 installLog("ERROR:: Unable to connect to FTS." . $_REQUEST['fts_type']);
-                $errors['ERR_FTS'] =  $mod_strings['LBL_FTS_ERROR'];
+                $errors['ERR_FTS'] = $mod_strings['LBL_FTS_ERROR'];
             }
         }
         //END SUGARCRM flav=pro ONLY
@@ -249,9 +250,15 @@ function copyInputsIntoSession(){
             if(isset($_REQUEST['setup_db_host_name'])){$_SESSION['setup_db_host_name']              = $_REQUEST['setup_db_host_name'];}
 
             //FTS Support
-            $_SESSION['fts_type'] = isset($_REQUEST['fts_type']) ? $_REQUEST['fts_type'] : "";
-            if(isset($_REQUEST['fts_host'])){$_SESSION['fts_host']              = $_REQUEST['fts_host'];}
-            if(isset($_REQUEST['fts_port'])){$_SESSION['fts_port']              = $_REQUEST['fts_port'];}
+            if (isset($_REQUEST['fts_type'])) {
+                $_SESSION['fts_type'] = $_REQUEST['fts_type'];
+            }
+            if (isset($_REQUEST['fts_host'])) {
+                $_SESSION['fts_host'] = $_REQUEST['fts_host'];
+            }
+            if (isset($_REQUEST['fts_port'])) {
+                $_SESSION['fts_port'] = $_REQUEST['fts_port'];
+            }
 
             if(isset($_SESSION['setup_db_type']) && (!isset($_SESSION['setup_db_manager']) || isset($_REQUEST['setup_db_type']))) {
                 $_SESSION['setup_db_manager'] = DBManagerFactory::getManagerByType($_SESSION['setup_db_type']);

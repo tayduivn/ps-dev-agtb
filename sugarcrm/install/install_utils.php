@@ -759,19 +759,21 @@ function handleSugarConfig() {
     $sugar_config['log_dir']                        = $setup_site_log_dir;
     $sugar_config['log_file']                       = $setup_site_log_file;
 
-    //Setup FTS
-    if(!empty($_SESSION['fts_type']))
-        $sugar_config['full_text_engine']               = array($_SESSION['fts_type'] => array('host'=> $_SESSION['fts_host'], 'port' => $_SESSION['fts_port']));
-
-    // for silent install
-    if(!empty($_SESSION['setup_fts_type']))
-    {
-        $sugar_config['full_text_engine']               = array($_SESSION['setup_fts_type'] => array('host'=> $_SESSION['setup_fts_host'], 'port' => $_SESSION['setup_fts_port']));
-        if (isset($_SESSION['setup_fts_hide_config']))
-        {
-            $sugar_config['hide_full_text_engine_config'] = $_SESSION['setup_fts_hide_config'];
-        }
+    // It is possible to hide the Full Text Search Engine config form
+    if (isset($_SESSION['setup_fts_hide_config'])) {
+        $sugar_config['hide_full_text_engine_config'] = $_SESSION['setup_fts_hide_config'];
     }
+
+    //Setup FTS
+    if (!empty($_SESSION['fts_type'])) {
+        $sugar_config['full_text_engine'] = array(
+            $_SESSION['fts_type'] => array(
+                'host' => $_SESSION['fts_host'],
+                'port' => $_SESSION['fts_port']
+            )
+        );
+    }
+
 
 	/*nsingh(bug 22402): Consolidate logger settings under $config['logger'] as liked by the new logger! If log4pphp exists,
 		these settings will be overwritten by those in log4php.properties when the user access admin->system settings.*/
@@ -1605,7 +1607,8 @@ function pullSilentInstallVarsIntoSession() {
                      'default_currency_iso4217', 'default_currency_name', 'default_currency_significant_digits',
                      'default_currency_symbol',  'default_date_format', 'default_time_format', 'default_decimal_seperator',
                      'default_export_charset', 'default_language', 'default_locale_name_format', 'default_number_grouping_seperator',
-                     'export_delimiter', 'cache_dir', 'setup_db_options');
+                     'export_delimiter', 'cache_dir', 'setup_db_options',
+    );
     copyFromArray($sugar_config_si, $needles, $derived);
     $all_config_vars = array_merge( $config_subset, $sugar_config_si, $derived );
 
@@ -1616,6 +1619,15 @@ function pullSilentInstallVarsIntoSession() {
 
     foreach( $all_config_vars as $key => $value ){
         $_SESSION[$key] = $value;
+    }
+
+    // for silent install
+    if (!empty($_SESSION['setup_fts_type'])) {
+        $_SESSION['fts_type'] = $_SESSION['setup_fts_type'];
+        $_SESSION['fts_host'] = $_SESSION['setup_fts_host'];
+        $_SESSION['fts_port'] = $_SESSION['setup_fts_port'];
+    } else {
+        installLog("ERROR::  {$mod_strings['LBL_FTS_REQUIRED']}");
     }
 }
 
