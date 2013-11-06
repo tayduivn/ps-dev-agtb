@@ -54,7 +54,7 @@
         <input id="formula_display" type="text" name="formula_display" value="{$vardef.formula}" readonly="1" style="background-color:#eee"/>
 	    <input type="button" class="button"  name="editFormula" style="margin-top: -2px"
 		      value="{sugar_translate label="LBL_BTN_EDIT_FORMULA"}"
-            onclick="ModuleBuilder.moduleLoadFormula(YAHOO.util.Dom.get('formula').value, 'formula')"/>
+            onclick="ModuleBuilder.moduleLoadFormula(YAHOO.util.Dom.get('formula').value, 'formula', '{$calcFieldType}')"/>
     </td>
 </tr>
 {/if}

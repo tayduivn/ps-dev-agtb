@@ -321,6 +321,21 @@ class ViewModulefield extends SugarView
         } else {
             $fv->ss->assign('show_fts', false);
         }
+        //Ensure certain field types always have correct formula return types for validation.
+        if (!empty($vardef['type'])) {
+            switch ($vardef['type']) {
+                case 'date':
+                case 'datetime':
+                    $fv->ss->assign('calcFieldType', 'date');
+                    break;
+                case 'bool':
+                    $fv->ss->assign('calcFieldType', 'boolean');
+                    break;
+                default:
+                    $fv->ss->assign('calcFieldType', '');
+                    break;
+            }
+        }
         //END SUGARCRM flav=pro ONLY
 
         $fv->ss->assign('importable_options', $GLOBALS['app_list_strings']['custom_fields_importable_dom']);
@@ -354,23 +369,6 @@ class ViewModulefield extends SugarView
 		}
 		//END SUGARCRM flav=pro ONLY
 		// end
-
-        //BEGIN SUGARCRM flav=int ONLY
-        /*
-        //Determine whether or not to show the Global Search option
-        require_once('modules/Home/UnifiedSearchAdvanced.php');
-        $usa = new UnifiedSearchAdvanced();
-        $unified_search_modules_display = $usa->getUnifiedSearchModulesDisplay();
-        $globalSearchEnabled = true;
-
-        if(isset($unified_search_modules_display[$moduleName]['visible']))
-        {
-            $globalSearchEnabled = $unified_search_modules_display[$moduleName]['visible'];
-        }
-
-        $fv->ss->assign('globalSearchEnabled', $tf->supports_unified_search && $globalSearchEnabled);
-        */
-        //END SUGARCRM flav=int ONLY
 
         $layout = $fv->getLayout($vardef);
 
