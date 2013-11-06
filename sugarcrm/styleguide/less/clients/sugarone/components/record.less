@@ -572,11 +572,20 @@ h1 > .record-cell {
 
 .record-cell {
   .select2-container {
+    .tag-wrapper {
+      z-index: 1001;
+      position: relative;
+      .tag-name {
+        &:hover {
+          text-decoration: none;
+        }
+      }
+    }
     select {
       border: none;
       height: auto;
       &:focus {
-        box-shdow: none;
+        box-shadow: none;
       }
     }
   }
