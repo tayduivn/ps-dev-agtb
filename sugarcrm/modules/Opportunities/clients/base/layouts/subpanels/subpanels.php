@@ -121,6 +121,13 @@ $viewdefs['Opportunities']['base']['layout']['subpanels'] = array(
                 'link' => 'contracts',
             ),
         ),
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_EMAILS_SUBPANEL_TITLE',
+            'context' => array (
+                'link' => 'emails',
+            ),
+        ),
     ),
     'type' => 'subpanels',
     'span' => 12,

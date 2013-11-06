@@ -1,8 +1,6 @@
-<?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
+ * Agreement (""License"") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -16,7 +14,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
+ *  (i) the ""Powered by SugarCRM"" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -26,51 +24,19 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Leads']['base']['layout']['subpanels'] = array (
-  'components' => array (
-      array(
-          'layout' => 'subpanel',
-          'label' => 'LBL_CALLS_SUBPANEL_TITLE',
-          'context' => array(
-              'link' => 'calls',
-          ),
-      ),
-      array(
-          'layout' => 'subpanel',
-          'label' => 'LBL_MEETINGS_SUBPANEL_TITLE',
-          'context' => array(
-              'link' => 'meetings',
-          ),
-      ),
-      array(
-          'layout' => 'subpanel',
-          'label' => 'LBL_TASKS_SUBPANEL_TITLE',
-          'context' => array(
-              'link' => 'tasks',
-          ),
-      ),
-      array(
-          'layout' => 'subpanel',
-          'label' => 'LBL_NOTES_SUBPANEL_TITLE',
-          'context' => array(
-              'link' => 'notes',
-          ),
-      ),
-    array (
-      'layout' => 'subpanel',
-      'label' => 'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE',
-      'context' => array (
-          'link' => 'campaigns',
-      ),
-    ),
-    array(
-        'layout' => 'subpanel',
-        'label' => 'LBL_EMAILS_SUBPANEL_TITLE',
-        'context' => array (
-            'link' => 'emails',
-        ),
-    ),
-  ),
-  'type' => 'subpanels',
-  'span' => 12,
-);
+({
+    extendsFrom: 'PanelTopView',
+    
+    /**
+     * {@inheritdoc}
+     */
+    initialize: function(options){
+        app.view.invokeParent(this, {type: 'view', name: 'panel-top', method: 'initialize', args: [options]});
+        this.meta.buttons = _.filter(this.meta.buttons, function(item){
+            if (item.type != "actiondropdown") {
+                return true;
+            }
+            return false;
+        });
+    }
+})
