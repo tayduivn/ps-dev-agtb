@@ -2257,13 +2257,18 @@ class Email extends SugarBean {
 			}
 		//}
 
+
 		$this->link_action = 'DetailView';
 
 		if(!empty($this->type)) {
 			if($this->type == 'out' && $this->status == 'send_error') {
 				$this->type_name = $mod_strings['LBL_NOT_SENT'];
 			} else {
-				$this->type_name = $app_list_strings['dom_email_types'][$this->type];
+                if (isset($app_list_strings['dom_email_types'][$this->type])) {
+                    $this->type_name = $app_list_strings['dom_email_types'][$this->type];
+                } else {
+                    $this->type_name = $this->type;
+                }
 			}
 
 			if(($this->type == 'out' && $this->status == 'send_error') || $this->type == 'draft') {

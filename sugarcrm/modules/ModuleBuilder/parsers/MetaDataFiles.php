@@ -773,6 +773,9 @@ class MetaDataFiles
      */
     public static function getModuleClientCache( $platforms, $type, $module )
     {
+        if (empty($module)) {
+            return null;
+        }
         $clientCache = array();
         $cacheFile = sugar_cached('modules/'.$module.'/clients/'.$platforms[0].'/'.$type.'.php');
         if ( !file_exists($cacheFile) ) {
