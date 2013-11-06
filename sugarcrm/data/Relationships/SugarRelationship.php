@@ -336,6 +336,15 @@ abstract class SugarRelationship
                 $roleCheck .= " = '$this->relationship_role_column_value'";
             }
         }
+        if (!empty($this->def['primary_flag_column']) 
+            && !empty($this->primaryOnly)
+            && !$ignore_role_filter) {
+
+            $field = $table.'.'.$this->def['primary_flag_column'];
+            
+            $roleCheck .= " AND {$field} = 1 ";
+        }
+
         return $roleCheck;
     }
 
@@ -392,6 +401,18 @@ abstract class SugarRelationship
                 }
             }
         }
+
+        if (!empty($this->def['primary_flag_column']) 
+            && !empty($this->primaryOnly)
+            && !$ignore_role_filter) {
+
+            $field = $this->def['primary_flag_column'];
+            if (!empty($table)) {
+                $field = "$table.{$field}";
+            }
+            $sugar_query->join[$table]->on()->equals($field, '1');
+        }
+
         return $sugar_query;
     }
 

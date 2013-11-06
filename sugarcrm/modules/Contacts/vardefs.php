@@ -241,6 +241,7 @@ $dictionary['Contact'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_ACCOUNT',
             'duplicate_merge' => 'disabled',
+            'primary_only' => true,
         ),
         'reports_to_link' => array(
             'name' => 'reports_to_link',

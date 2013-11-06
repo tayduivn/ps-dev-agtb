@@ -66,7 +66,6 @@ class SugarQueryPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $query->from($contact);
         $contact->addVisibilityQuery($query);
         $queryShouldBe = "SELECT  * FROM contacts INNER JOIN  accounts_contacts ON contacts.id=accounts_contacts.contact_id AND accounts_contacts.deleted=0
-
  INNER JOIN  accounts accounts_pv ON accounts_pv.id=accounts_contacts.account_id AND accounts_pv.deleted=0
  AND accounts_pv.id IN ('1','2','3','4')  WHERE contacts.deleted = 0";
         

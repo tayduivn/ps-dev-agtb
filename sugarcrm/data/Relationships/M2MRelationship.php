@@ -196,6 +196,31 @@ class M2MRelationship extends SugarRelationship
                 }
             }
         }
+        if (!empty($this->def['primary_flag_column'])) {
+            if (!isset($additionalFields[$this->def['primary_flag_column']])) {
+                if (!empty($this->def['primary_flag_default'])) {
+                    $row[$this->def['primary_flag_column']] = true;
+                } else {
+                    $row[$this->def['primary_flag_column']] = false;
+                }
+            } else {
+                $row[$this->def['primary_flag_column']] = $additionalFields[$this->def['primary_flag_column']];
+            }
+
+            if ($row[$this->def['primary_flag_column']]) {
+                $db = DBManagerFactory::getInstance();
+                // The primary flag is true, that means we need to block
+                // out the old primary flag
+                $query = "UPDATE {$this->getRelationshipTable()} SET "
+                    ."{$this->def['primary_flag_column']} = 0 WHERE ";
+                if ($this->def['primary_flag_side'] == 'rhs') {
+                    $query .= "{$this->def['join_key_rhs']} = '".$db->quote($rhs->id)."'";
+                } else {
+                    $query .= "{$this->def['join_key_lhs']} = '".$db->quote($lhs->id)."'";
+                }
+                $db->query($query);
+            }
+        }
         if (!empty($additionalFields))
         {
             $row = array_merge($row, $additionalFields);
@@ -288,6 +313,8 @@ class M2MRelationship extends SugarRelationship
             }
         }
 
+        $this->setNewPrimary($dataToRemove);
+
         return true;
     }
 
@@ -307,6 +334,57 @@ class M2MRelationship extends SugarRelationship
                 $this->def['join_key_rhs'] => $lhs->id
             );
             $this->removeRow($dataToRemove);
+        }
+    }
+
+    /**
+     * Sets a new primary record for this relationship, if necessary
+     * @param array $rowData
+     * @return void
+     */
+    protected function setNewPrimary($rowData)
+    {
+        if (empty($this->def['primary_flag_column']) 
+            || empty($this->def['primary_flag_default'])) {
+            // No primary flag, don't need to worry about a new primary record
+            return;
+        }
+        $db = DBManagerFactory::getInstance();
+
+        $stringSets = array();
+        foreach ($rowData as $field => $val) {
+            $stringSets[] = $field." = '".$db->quote($val)."'";
+        }
+        $wherePart = implode(" AND ",$stringSets);
+
+        $query = "SELECT id,{$this->def['primary_flag_column']} "
+            ." FROM {$this->getRelationshipTable()} WHERE "
+            ." {$this->def['primary_flag_column']} = 1 AND {$wherePart}";
+
+        $ret = $db->query($query,true);
+        $oldRow = $db->fetchByAssoc($ret);
+
+        if (!empty($oldRow)) {
+            // Deleted the primary record, and we need a default primary
+            $colName = $this->def['join_key_'.$this->def['primary_flag_side']];
+            $queryColPart = "{$colName} = '".$db->quote($rowData[$colName])."' ";
+
+            // Mark everything related to this record not primary
+            $db->query("UPDATE {$this->getRelationshipTable()} SET "
+                       ."{$this->def['primary_flag_column']} = 0 WHERE ".$queryColPart);
+
+            $query = "SELECT id,date_modified FROM {$this->getRelationshipTable()} "
+                ." WHERE deleted = 0 AND ".$queryColPart
+                ." ORDER BY date_modified";
+            $ret = $db->limitQuery($query, 0, 1, true);
+            $row = $db->fetchByAssoc($ret);
+            if (empty($row)) {
+                // No other relationships to set as primary
+                return;
+            }
+            
+            $query = "UPDATE {$this->getRelationshipTable()} SET {$this->def['primary_flag_column']} = 1 WHERE id = '".$db->quote($row['id'])."'";
+            $db->query($query);
         }
     }
 
@@ -460,11 +538,13 @@ class M2MRelationship extends SugarRelationship
 
 
         //First join the relationship table
-        $join .= "$join_type $joinTableWithAlias ON $join1 AND $joinTable.deleted=0\n"
-        //Next add any role filters
-               . $this->getRoleWhere($joinTable) . "\n"
+        $join .= "$join_type $joinTableWithAlias ON $join1 AND $joinTable.deleted=0\n";
+        if (empty($params['ignore_role'])) {
+            //Next add any role filters
+            $join .= $this->getRoleWhere($joinTable) . "\n";
+        }
         //Then finally join the related module's table
-               . "$join_type $targetTableWithAlias ON $join2 AND $targetTable.deleted=0\n";
+        $join .= "$join_type $targetTableWithAlias ON $join2 AND $targetTable.deleted=0\n";
 
         if($return_array){
             return array(
@@ -622,6 +702,14 @@ class M2MRelationship extends SugarRelationship
             }
             $ret.= "\n";
         }
+        if (!empty($this->def['primary_flag_column']) 
+            && !empty($this->primaryOnly)) {
+
+            $field = $this->getRelationshipTable().'.'.$this->def['primary_flag_column'];
+            
+            $ret .= " AND {$field} = 1 ";
+        }
+
         return $ret;
     }
 
