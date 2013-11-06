@@ -48,21 +48,12 @@
 
         // binding so subpanels can trigger other subpanels to reload by link name
         // example: ctx.trigger('subpanel:reload', {links: ['opportunities','revenuelineitems']});
-        this.context.parent.on('subpanel:reload', function(args) {
-            if (!_.isUndefined(args) && _.isArray(args.links) && _.contains(args.links, this.context.get('link'))) {
-                this.context.reloadData({recursive: false});
-            }
-        }, this);
-    },
-
-    /**
-     * dispose events
-     * @private
-     */
-    _dispose: function() {
         if (this.context.parent) {
-            this.context.parent.off('subpanel:reload', null, this);
+            this.context.parent.on('subpanel:reload', function(args) {
+                if (!_.isUndefined(args) && _.isArray(args.links) && _.contains(args.links, this.context.get('link'))) {
+                    this.context.reloadData({recursive: false});
+                }
+            }, this);
         }
-        app.view.invokeParent(this, {type: 'layout', name: 'panel', method: '_dispose'});
     }
 })
