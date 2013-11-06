@@ -41,7 +41,17 @@
             id: app.user.get("id"),
             field: "picture"
         }) : '';
-
         this.render();
+    },
+    /**
+     * Filters single menu data
+     * @param Array menu data
+     * @return {Array}
+     */
+    filterMenuProperties:function(singleItem){
+        if(singleItem['label'] === 'LBL_PROFILE'){
+            singleItem['img_url'] = this.pictureUrl;
+        }
+        return singleItem;
     }
 })

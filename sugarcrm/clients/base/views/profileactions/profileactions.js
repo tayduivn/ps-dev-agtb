@@ -14,7 +14,7 @@
     plugins: ['Dropdown', 'Tooltip'],
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-
+        app.events.on("app:sync:complete", this.render, this);
         app.events.on("app:sync:complete", this.setCurrentUserData, this);
         app.user.on("change:picture", this.setCurrentUserData, this);
         app.user.on("change:full_name", this.setCurrentUserData, this);
@@ -29,14 +29,55 @@
         if (!app.router || !app.api.isAuthenticated() || app.config.appStatus === 'offline') {
             return;
         }
-
-        this.showAdmin = app.acl.hasAccess('admin', 'Administration') ||
-            app.acl.hasAccessToAny('admin') ||
-            app.acl.hasAccessToAny('developer');
-
+        if(!_.isEmpty(this.meta)){
+            this.menulist = this.filterAvailableMenu(this.meta);
+        }
         app.view.View.prototype._renderHtml.call(this);
     },
 
+    /**
+     * Filters menu metadata
+     * @param Array menuMeta
+     * @return {Array}
+     */
+    filterAvailableMenu: function(menuMeta){
+        var result = [];
+        _.each(menuMeta,function(item){
+            item = this.filterMenuProperties(item);
+            if(!_.isEmpty(item['acl_module'])){
+                if(app.acl.hasAccess(item.acl_action, item.acl_module)) {
+                    result.push(item);
+                }
+            }else{
+                // push the menu item if current user is a admin or
+                // current user has access to admin or current user
+                // is a developer, the last conditon is for
+                // if all three acls checks are not met, it will only
+                // push if the menu item is not admin, which skips the admin menu
+                if(app.acl.hasAccess('admin', 'Administration') ||
+                    app.acl.hasAccessToAny('admin') ||
+                    app.acl.hasAccessToAny('developer') ||
+                    item['acl_action'] !== 'admin'){
+                    result.push(item);
+                }
+            }
+
+        },this);
+        return result;
+    },
+
+    /**
+     * Filters single menu data
+     * @param Array menu data
+     * @return {Array}
+     */
+    filterMenuProperties:function(singleItem){
+        if(singleItem['label'] === 'LBL_PROFILE'){
+            singleItem['img_url'] = this.pictureUrl;
+            singleItem['route'] = '#bwc/index.php?module=Users&action=DetailView&record=' + this.userId;
+        }
+        return singleItem;
+    },
     /**
      * Sets the current user's information like full name, user name, avatar, etc.
      * @protected
@@ -45,7 +86,6 @@
         this.fullName = app.user.get("full_name");
         this.userName = app.user.get("user_name");
         this.userId = app.user.get('id');
-
         var picture = app.user.get("picture");
 
         this.pictureUrl = picture ? app.api.buildFileURL({

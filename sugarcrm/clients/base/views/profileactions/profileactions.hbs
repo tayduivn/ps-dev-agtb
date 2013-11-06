@@ -39,15 +39,11 @@
             </a>
             <div class="dropdown-menu scroll pull-right">
                 <ul role="menu">
-                    <li class="profileactions-profile"><a href="#{{buildRoute module='Users' action='detail' id=userId}}">
-                        {{#if pictureUrl}}<img src="{{pictureUrl}}" alt="{{userName}}" class="avatar">{{else}}<i class="icon-user"></i>{{/if}}{{str "LBL_PROFILE"}}</a>
-                    </li>
-                    <li class="profileactions-employees"><a href="#{{buildRoute module='Employees'}}"><i class="icon-group"></i>{{str "LBL_EMPLOYEES"}}</a></li>
-                    {{#if showAdmin}}
-                        <li class="administration"><a href="#{{buildRoute module='Administration'}}"><i class="icon-cogs"></i>{{str "LBL_ADMIN"}}</a></li>
-                    {{/if}}
-                    <li class="profileactions-about"><a href="#{{buildRoute action='about'}}"><i class="icon-info-sign"></i>{{str "LNK_ABOUT"}}</a></li>
-                    <li class="profileactions-logout"><a href="#logout/?clear=1"><i class="icon-signout"></i>{{str "LBL_LOGOUT"}}</a></li>
+                    {{#each menulist}}
+                        {{#if css_class}}<li class="{{css_class}}">{{else}}<li>{{/if}}<a href="{{route}}">
+                            {{#if img_url}}<img src="{{img_url}}" alt="{{../../userName}}" class="avatar">{{else}}<i class="{{icon}}"></i>{{/if}}{{str label}}</a>
+                        </li>
+                    {{/each}}
                 </ul>
             </div>
         </div>
