@@ -29,6 +29,24 @@ class ForecastManagerWorksheetHooks
     }
 
     /**
+     * Set the Manager Saved Flag
+     *
+     * If the person saving the worksheet is the one who the worksheet is assigned to, then set the flag to be true
+     *
+     * @param ForecastManagerWorksheet $worksheet
+     * @param $event
+     * @param array $params
+     */
+    public static function setManagerSavedFlag(ForecastManagerWorksheet $worksheet, $event, $params = array())
+    {
+        if ($event == 'before_save' && $worksheet->draft == true
+            && $worksheet->manager_saved == false && $worksheet->draft_save_type != 'assign_quota'
+            && $worksheet->assigned_user_id == $worksheet->modified_user_id) {
+                $worksheet->manager_saved = true;
+        }
+    }
+
+    /**
      * This checks to see if the only thing that has changed is the quota, if it is, then don't update the date
      * modified
      *

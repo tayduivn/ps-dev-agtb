@@ -180,6 +180,8 @@ $mod_strings = array (
     'LBL_EDITABLE_INVALID' => 'Invalid Value for {{field_name}}',
     'LBL_EDITABLE_INVALID_RANGE' => 'Value must be between {{min}} and {{max}}',
     'LBL_HISTORY_LOG' => 'Last Commit',
-    'LBL_NO_COMMIT' => 'No Previous Commit'
+    'LBL_NO_COMMIT' => 'No Previous Commit',
+
+    'LBL_MANGER_SAVED' => 'Manager Saved'
 
 );

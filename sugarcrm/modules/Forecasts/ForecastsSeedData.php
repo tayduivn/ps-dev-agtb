@@ -270,6 +270,7 @@ class ForecastsSeedData
             $data["best_adjusted"] = $data["best_case"];
             $data["worst_adjusted"] = $data["worst_case"];
         }
+        $worksheet->manager_saved = true;
         $worksheet->reporteeForecastRollUp($user, $data);
     }
 

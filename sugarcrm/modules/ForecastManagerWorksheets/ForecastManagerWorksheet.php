@@ -37,6 +37,7 @@ class ForecastManagerWorksheet extends SugarBean
     public $show_history_log = 0;
     public $draft = 0;
     public $date_modified;
+    public $manager_saved = false;
     public $object_name = 'ForecastManagerWorksheet';
     public $module_name = 'ForecastManagerWorksheets';
     public $module_dir = 'ForecastManagerWorksheets';
@@ -237,16 +238,12 @@ class ForecastManagerWorksheet extends SugarBean
             $copyMap[] = array("worst_case" => "worst_adjusted");
         }
 
-        //check to see if the manager has a quota, if not, we need to copy over base values to adjusted values
-        $quota = $quotaSeed->getRollupQuota($data['timeperiod_id'], $reportee->id, true);
-
-        // we don't have a row to update, so set the values to the adjusted column
-        if (empty($this->id) || $quota['amount'] == 0) {
+        if (empty($this->id) || $this->manager_saved == false) {
             if ($data["forecast_type"] == "Rollup") {
                 $copyMap[] = array('likely_case_adjusted' => 'likely_adjusted');
                 $copyMap[] = array('best_case_adjusted' => 'best_adjusted');
                 $copyMap[] = array('worst_case_adjusted' => 'worst_adjusted');
-            } else if ($data["forecast_type"] == "Direct") {
+            } elseif ($data["forecast_type"] == "Direct") {
                 $copyMap[] = array('likely_case_adjusted' => 'likely_case');
                 $copyMap[] = array('best_case_adjusted' => 'best_case');
                 $copyMap[] = array('worst_case_adjusted' => 'worst_case');
@@ -258,9 +255,9 @@ class ForecastManagerWorksheet extends SugarBean
                 $quotaSeed = BeanFactory::getBean('Quotas');
 
                 // check if we need to get the roll up amount
-                $getRollupQuota = (User::isManager(
-                        $reportee->id
-                    ) && isset($data['forecast_type']) && $data['forecast_type'] == 'Rollup');
+                $getRollupQuota = (User::isManager($reportee->id)
+                    && isset($data['forecast_type'])
+                    && $data['forecast_type'] == 'Rollup');
 
                 $quota = $quotaSeed->getRollupQuota($data['timeperiod_id'], $reportee->id, $getRollupQuota);
                 $data['quota'] = $quota['amount'];
@@ -289,7 +286,8 @@ class ForecastManagerWorksheet extends SugarBean
 
     /**
      * @param ForecastManagerWorksheet $worksheet   The Draft Worksheet
-     * @param array $copyMap                        What we want to copy, if left empty it will default to worst, likely and best case fields
+     * @param array $copyMap                        What we want to copy, if left empty it will default to
+     *                                              worst, likely and best case fields
      * @return bool
      */
     protected function rollupDraftToCommittedWorksheet(ForecastManagerWorksheet $worksheet, $copyMap = array())
