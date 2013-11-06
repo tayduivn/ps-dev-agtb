@@ -8080,7 +8080,7 @@ nv.models.paretoChart = function() {
             );
 
             var lx = x.domain(d3.merge(seriesX)).rangeBands([0, availableWidth - margin.left - margin.right], 0.3),
-                ly = Math.max(d3.max(d3.merge(seriesY)), quotaValue),
+                ly = Math.max(d3.max(d3.merge(seriesY)), quotaValue, targetQuotaValue),
                 forceY = Math.round((ly + ly * 0.1) * 0.1) * 10,
                 lOffset = lx(1) + lx.rangeBand() / (multibar.stacked() || dataLines.length === 1 ? 2 : 4);
 
