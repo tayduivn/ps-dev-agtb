@@ -122,9 +122,12 @@
                 drawerHeight = this._determineDrawerHeight();
 
             //temporarily remove transitions so that the drawer can be closed immediately
-            drawers.$top.removeClass('transition').removeClass('active');
-            drawers.$bottom.removeClass('transition').removeClass('inactive')
-                .addClass('active');
+            drawers.$top
+                .removeClass('transition active');
+            drawers.$bottom
+                .removeClass('transition inactive')
+                .addClass('active')
+                .removeAttr('aria-hidden');
             if (drawers.$next) {
                 drawers.$next.removeClass('transition');
             }
@@ -164,7 +167,7 @@
 
         drawers = this._getDrawers(true);
         drawers.$next
-            .addClass('drawer')
+            .addClass('drawer transition active')
             .css({
                 top: top,
                 height: height
@@ -217,7 +220,8 @@
 
         if ($main.hasClass('drawer')) {
             $main
-                .removeClass('drawer')
+                .removeClass('drawer transition inactive')
+                .removeAttr('aria-hidden')
                 .css('top','');
             this._removeTabAndBackdrop($main);
         }
@@ -267,6 +271,7 @@
             drawers.$top
                 .addClass('transition inactive')
                 .removeClass('active')
+                .attr('aria-hidden', true)
                 .css('top', this._isMainAppContent(drawers.$top) ? drawerHeight : drawers.$top.offset().top + drawerHeight);
 
             drawers.$next
@@ -313,6 +318,7 @@
         drawers.$bottom
             .removeClass('inactive')
             .addClass('active')
+            .removeAttr('aria-hidden')
             .css('top','');
 
         //this is a failsafe to ensure that drawer will always close
