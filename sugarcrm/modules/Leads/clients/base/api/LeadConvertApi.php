@@ -68,6 +68,7 @@ class LeadConvertApi extends ModuleApi {
      * @param $module The module name to be loaded/created.
      * @param $data The posted data
      * @return SugarBean The loaded bean
+     * @throws SugarApiExceptionInvalidParameter
      */
     protected function loadModule($api, $module, $data) {
         if (isset($data['id'])) {
@@ -79,7 +80,12 @@ class LeadConvertApi extends ModuleApi {
         }
         else {
             $bean = BeanFactory::newBean($module);
-            $this->updateBean($bean,$api, $data);
+            //populate bean
+            $result = $this->populateFromApi($api, $bean, $data);
+            if ($result !== true) {
+                $GLOBALS['log']->error("Failure attempting to load up {$module} bean from given data. Error: {$result}");
+                throw new SugarApiExceptionInvalidParameter("Unable to convert lead. There were validation errors on the submitted data.");
+            }
         }
         return $bean;
     }
@@ -88,7 +94,7 @@ class LeadConvertApi extends ModuleApi {
      * This method loads an array of beans based on available modules for lead convert
      *
      * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $module Array The modules that will be loaded/created.
+     * @param $modulesToConvert Array The modules that will be loaded/created.
      * @param $data The posted data
      * @return Array SugarBean The loaded beans
      */
@@ -103,4 +109,19 @@ class LeadConvertApi extends ModuleApi {
         }
         return $beans;
     }
+
+    /**
+     * Populate the given bean from the args passed into the api
+     *
+     * @param $api
+     * @param $bean
+     * @param $args
+     * @param array $options
+     * @return mixed
+     */
+    protected function populateFromApi($api, $bean, $args, $options=array())
+    {
+        return ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args,$options);
+    }
+
 }
