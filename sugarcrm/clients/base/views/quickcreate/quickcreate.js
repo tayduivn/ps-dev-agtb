@@ -14,17 +14,24 @@
     plugins: ['Dropdown', 'Tooltip'],
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
-        app.user.on("change:module_list", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
     },
 
     _renderHtml: function() {
-        if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
+        if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') {
+            return;
+        }
 
         // loadAdditionalComponents fires render before the private metadata is ready, check for this
-        if( !(_.isEmpty(app.metadata.getStrings("mod_strings"))) ) {
-            var moduleList = app.metadata.getModuleNames(true, "create");
-            this.createMenuItems = this._getMenuMeta(moduleList);
+        if (!(_.isEmpty(app.metadata.getStrings("mod_strings")))) {
+            var modules = app.metadata.getModules();
+            // remove any modules for which the user doesn't have create access
+            _.each(modules, function(metadata, name) {
+                if (!app.acl.hasAccess('create', name)) {
+                    delete modules[name];
+                }
+            });
+            this.createMenuItems = this._getMenuMeta(modules);
             app.view.View.prototype._renderHtml.call(this);
         }
     },
@@ -33,20 +40,19 @@
      * Retrieve the quickcreate metadata from each module in the list
      * Uses the visible flag on the metadata to determine if admin has elected to hide the module from the list
      *
-     * @param {Array} moduleList
+     * @param {Array} modules
      * @return {Array} list of visible menu item metadata
      */
-    _getMenuMeta: function(moduleList) {
-        var meta, menuItem, returnList = [];
-        _.each(moduleList, function(module) {
-            meta = app.metadata.getModule(module);
+    _getMenuMeta: function(modules) {
+        var menuItem, returnList = [];
+        _.each(modules, function(meta, name) {
             if (meta && meta.menu && meta.menu.quickcreate) {
                 menuItem = meta.menu.quickcreate.meta;
                 if (menuItem.visible === true) {
-                    menuItem.module = module;
+                    menuItem.module = name;
                     menuItem.type = menuItem.type || 'quickcreate';
                     //TODO: refactor sidecar field hbs helper so it can accept the module name directly
-                    menuItem.model = app.data.createBean(module);
+                    menuItem.model = app.data.createBean(name);
                     returnList.push(menuItem);
                 }
             }
@@ -66,10 +72,5 @@
             return menuItem.order;
         });
         return sorted;
-    },
-
-    _dispose: function(){
-        app.user.off("change:module_list", this.render);
-        app.view.View.prototype._dispose.call(this);
     }
 })
