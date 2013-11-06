@@ -39,10 +39,6 @@
         min-height: 8px;
       }
     }
-    .record-edit-link-wrapper {
-      top: 2px;
-      left: -32px;
-    }
     .mceLayout {
       width: 100% !important;
       .border-radius(4px);
@@ -62,6 +58,10 @@
 
     .normal > span {
       display: block;
+    }
+    .normal .detail a {
+      position: relative;
+      z-index: 1001;
     }
 
     .ellipsis_inline {
@@ -349,11 +349,6 @@
     }
   }
 
-  .record-edit-link-wrapper {
-    top: 0px;
-    left: -18px;
-  }
-
   .wide {
     width: 100%;
   }
@@ -428,20 +423,32 @@
   }
 }
 
+.normal .edit {
+  z-index: 1001;
+  position: relative;
+}
 
 //common to both .record and .headerpane
 .record-edit-link-wrapper {
   position: absolute;
-  z-index: 0;
+  top: 0;
+  left: -20px;
+  width: inherit;
+  min-width: 300px;
+  height: 100%;
+  min-height: 42px;
+  z-index: 1000;
+  &:hover {
+    .btn-invisible {
+      border: 1px solid transparent;
+      background: none;
+    }
+  }
   .record-edit-link {
     display: none;
     padding: 4px 7px 4px;
     text-decoration: none;
     cursor: pointer;
-    &.btn-invisible:hover {
-      border: 1px solid transparent;
-      background: none;
-    }
   }
   &:hover .record-edit-link{
     display: block;
