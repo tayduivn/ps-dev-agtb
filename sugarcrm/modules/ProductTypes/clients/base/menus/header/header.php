@@ -48,18 +48,21 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_PRODUCT_LIST',
         'acl_action'=>'',
         'acl_module'=>'',
+        'icon' => 'icon-list',
     ),
     array(
         'route'=>'#bwc/index.php?module=Manufacturers&action=DetailView',
         'label' =>'LNK_NEW_MANUFACTURER',
         'acl_action'=>'',
         'acl_module'=>'',
+        'icon' => 'icon-list',
     ),
     array(
         'route'=>'#ProductCategories',
         'label' =>'LNK_NEW_PRODUCT_CATEGORY',
         'acl_action'=>'',
         'acl_module'=>'',
+        'icon' => 'icon-list',
     ),
     array(
         'route'=>'#bwc/index.php?module=Import&action=Step1&import_module=ProductTypes&return_module=ProductTypes&return_action=index',
