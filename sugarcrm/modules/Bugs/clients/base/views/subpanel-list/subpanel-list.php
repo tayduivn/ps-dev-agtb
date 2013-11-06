@@ -23,6 +23,7 @@ $viewdefs['Bugs']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_NUMBER',
           'enabled' => true,
           'default' => true,
+          'readonly' => true,
           'name' => 'bug_number',
         ),
         array(
