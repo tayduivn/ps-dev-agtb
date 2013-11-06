@@ -442,6 +442,28 @@
      * Handle the export callback
      */
     exportCallback: function() {
+
+        if (this.canEdit && this.isDirty()) {
+            app.alert.show('leave_confirmation', {
+                level: 'confirmation',
+                messages: app.lang.get('LBL_WORKSHEET_EXPORT_CONFIRM', 'Forecasts'),
+                onConfirm: _.bind(function() {
+                    this.doExport();
+                }, this),
+                templateOptions: {
+                    cancelContLabel: app.lang.get('LBL_WORKSHEET_EXPORT_CANCEL_LABEL', 'Forecasts'),
+                    confirmContLabel: app.lang.get('LBL_WORKSHEET_EXPORT_CONFIRM_LABEL', 'Forecasts')
+                }
+            });
+        } else {
+            this.doExport();
+        }
+    },
+
+    /**
+     * Actually run the export
+     */
+    doExport: function() {
         app.alert.show('massexport_loading', {level: 'process', title: app.lang.getAppString('LBL_LOADING')});
         var params = {
             timeperiod_id: this.selectedTimeperiod,
