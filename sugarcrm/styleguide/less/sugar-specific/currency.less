@@ -11,7 +11,9 @@
   .converted {
     display: inline-block;
     .rtlMargin(@direction,0 16px 0 0);
-    width: calc(50% - 6px);
+    width: ~"-moz-calc(50% - 6px)";
+    width: ~"-webkit-calc(50% - 6px)";
+    width: ~"calc(50% - 6px)";
   }
 }
 

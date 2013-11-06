@@ -82,6 +82,7 @@ table.dataTable {
           max-width: 200px !important;
           .list {
             .box-sizing(border-box);
+            width: 100%;
           }
         }
         &> *:not(.overflow-visible) {
@@ -605,6 +606,8 @@ FLEXLIST GENERIC */
         span.detail,
         span.list {
           padding-right: 8px;
+          width: 100%;
+          box-sizing: border-box;
           .ellipsis_inline, .currency-field {
             padding-left: 14px;
           }
