@@ -137,11 +137,10 @@
                 break;
         }
 {/literal}
-        url = '#bwc/index.php?module=' + m + '&offset=' + offset + '&stamp={$pageData.stamp}&return_module=' +
+        var url = '#bwc/index.php?module=' + m + '&offset=' + offset + '&stamp={$pageData.stamp}&return_module=' +
             m +'&action=' + act + '&record=' + id;
 {literal}
         t.attr('href', location.origin + location.pathname + url);
-
         if (!_.isUndefined(parent.SUGAR) && !_.isUndefined(parent.SUGAR.App.view)) {
             parent.SUGAR.App.controller.layout.getComponent('bwc').convertToSidecarLink(t);
         }
