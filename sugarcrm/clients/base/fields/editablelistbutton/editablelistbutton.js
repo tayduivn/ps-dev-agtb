@@ -139,7 +139,9 @@
         this.view.toggleRow(this.model.id, false);
     },
     saveClicked: function(evt) {
-        this.saveModel();
+        if (!$(evt.currentTarget).hasClass('disabled')) {
+            this.saveModel();
+        }
     },
     cancelClicked: function(evt) {
         this.cancelEdit();

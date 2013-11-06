@@ -31,6 +31,8 @@
         this._super('initialize', [options]);
 
         this._setTitle();
+
+        this.context.on("change:selection_model", this.enableSelectButton, this);
     },
 
     /**
@@ -68,6 +70,17 @@
                 modelToSave.trigger('sync');
                 app.drawer.close(modelToSave, true);
             }
+        }
+    },
+
+    /**
+     * Enable select button when a row has been selected.
+     * @param context
+     * @param selected
+     */
+    enableSelectButton: function(context, selected) {
+        if (selected) {
+            this.$('[name=select_button]').removeClass('disabled');
         }
     },
 

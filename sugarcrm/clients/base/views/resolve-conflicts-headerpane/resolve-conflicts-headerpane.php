@@ -26,7 +26,7 @@ $viewdefs['base']['view']['resolve-conflicts-headerpane'] = array(
             'name' => 'select_button',
             'type' => 'button',
             'label' => 'LBL_SELECT_BUTTON_LABEL',
-            'css_class' => 'btn-primary',
+            'css_class' => 'btn-primary disabled',
             'acl_action' => 'edit',
         ),
         array(
