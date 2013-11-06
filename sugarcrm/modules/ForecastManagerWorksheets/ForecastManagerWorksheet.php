@@ -739,9 +739,10 @@ class ForecastManagerWorksheet extends SugarBean
      *
      * @param string $userId
      * @param string $timeperiodId
+     * @param boolean $useDraftRecords
      * @return array|bool            Return calculated totals or boolean false if timeperiod is not valid
      */
-    public function worksheetTotals($userId, $timeperiodId)
+    public function worksheetTotals($userId, $timeperiodId, $useDraftRecords = false)
     {
         /* @var $tp TimePeriod */
         $tp = BeanFactory::getBean('TimePeriods', $timeperiodId);
@@ -764,13 +765,15 @@ class ForecastManagerWorksheet extends SugarBean
             "closed_amount" => '0'
         );
 
+        global $current_user;
+
         require_once('include/SugarQuery/SugarQuery.php');
         $sq = new SugarQuery();
         $sq->select(array('*'));
         $sq->from(BeanFactory::getBean($this->module_name))->where()
             ->equals('timeperiod_id', $tp->id)
             ->equals('assigned_user_id', $userId)
-            ->equals('draft', 1)
+            ->equals('draft', ($current_user->id == $userId || $useDraftRecords === true) ? 1 : 0)
             ->equals('deleted', 0);
         $results = $sq->execute();
 

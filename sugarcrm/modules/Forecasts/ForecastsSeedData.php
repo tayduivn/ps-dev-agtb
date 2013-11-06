@@ -64,7 +64,7 @@ class ForecastsSeedData
                     // get the worksheet total for a given user
                     /* @var $worksheet ForecastWorksheet */
                     $worksheet = BeanFactory::getBean('ForecastWorksheets');
-                    $totals = $worksheet->worksheetTotals($timeperiod_id, $commit_type_array[0], $forecast_by);
+                    $totals = $worksheet->worksheetTotals($timeperiod_id, $commit_type_array[0], $forecast_by, true);
 
                     if ($totals['total_opp_count'] == 0) {
                         continue;
@@ -191,7 +191,7 @@ class ForecastsSeedData
 
                     /* @var $mgr_worksheet ForecastManagerWorksheet */
                     $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
-                    $totals = $mgr_worksheet->worksheetTotals($commit_type_array[0], $timeperiod_id);
+                    $totals = $mgr_worksheet->worksheetTotals($commit_type_array[0], $timeperiod_id, true);
 
                     if ($totals['included_opp_count'] == 0) {
                         continue;
