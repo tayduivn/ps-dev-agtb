@@ -539,15 +539,17 @@ class SidecarMetaDataUpgrader
             }
         }
         $this->getExtensionFiles("layoutdefs");
+        $this->getExtensionFiles("wireless_subpanels", 'mobile');
         $this->getCustomModuleMetadata('base', 'subpanels/', true);
+        $this->getCustomModuleMetadata('mobile', 'subpanels/', true);
     }
 
     /**
      * Add Extensions/ files to the list
      * @param string $extename Extension type
-     * @param string $module Module name
+     * @param string $client the client type
      */
-    protected function getExtensionFiles($extename)
+    protected function getExtensionFiles($extename, $client='base')
     {
         if(empty($this->extensions[$extename])) {
             return;
@@ -560,7 +562,7 @@ class SidecarMetaDataUpgrader
         foreach($dirs as $dir) {
             $comps = explode('/', $dir);
             $module = $comps[3];
-            $files = $this->getUpgradeableFilesInPath($dir."/", $module, 'base', 'custom', null, true, true);
+            $files = $this->getUpgradeableFilesInPath($dir."/", $module, $client, 'custom', null, true, true);
             $this->files = array_merge($this->files, $files);
         }
     }
@@ -685,6 +687,10 @@ class SidecarMetaDataUpgrader
         }
 
         if(strpos($fullname, '/Ext/Layoutdefs/') !== false) {
+            return 'layoutdef';
+        }
+
+        if(strpos($fullname, '/Ext/WirelessLayoutdefs/') !== false) {
             return 'layoutdef';
         }
 
