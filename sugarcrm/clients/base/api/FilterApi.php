@@ -803,11 +803,12 @@ class FilterApi extends SugarApi
         $where->queryAnd()->gte("tracker.date_modified", $td->asDb());
 
         // Now, if they want tracker records, so let's order it by the tracker date_modified
-        // clear order by
+        foreach ($q->select()->select as $v) {
+            $q->groupBy($v->table . '.' . $v->field);
+        }
         $q->order_by = array();
-        $q->orderBy('tracker.date_modified', 'DESC');
+        $q->orderByRaw('MAX(tracker.date_modified)', 'DESC');
         // need this to eliminate dupe id's in case you visit the same record many-a-time
-        $q->groupBy('id');
         $q->distinct(false);
     }
 }
