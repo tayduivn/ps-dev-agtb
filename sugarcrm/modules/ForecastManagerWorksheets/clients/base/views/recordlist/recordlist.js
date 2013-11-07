@@ -831,13 +831,13 @@
                 mClosed_amount = model.get("closed_amount"),
                 mOpp_count = model.get("opp_count");
 
-            quota += app.currency.convertWithRate(model.get('quota'), base_rate);
-            best_case += app.currency.convertWithRate(model.get('best_case'), base_rate);
-            best_case_adjusted += app.currency.convertWithRate(model.get('best_case_adjusted'), base_rate);
-            likely_case += app.currency.convertWithRate(model.get('likely_case'), base_rate);
-            likely_case_adjusted += app.currency.convertWithRate(model.get('likely_case_adjusted'), base_rate);
-            worst_case += app.currency.convertWithRate(model.get('worst_case'), base_rate);
-            worst_case_adjusted += app.currency.convertWithRate(model.get('worst_case_adjusted'), base_rate);
+            quota = app.math.add(app.currency.convertWithRate(model.get('quota'), base_rate), quota);
+            best_case = app.math.add(app.currency.convertWithRate(model.get('best_case'), base_rate), best_case);
+            best_case_adjusted = app.math.add(app.currency.convertWithRate(model.get('best_case_adjusted'), base_rate), best_case_adjusted);
+            likely_case = app.math.add(app.currency.convertWithRate(model.get('likely_case'), base_rate), likely_case);
+            likely_case_adjusted = app.math.add(app.currency.convertWithRate(model.get('likely_case_adjusted'), base_rate), likely_case_adjusted);
+            worst_case = app.math.add(app.currency.convertWithRate(model.get('worst_case'), base_rate), worst_case);
+            worst_case_adjusted = app.math.add(app.currency.convertWithRate(model.get('worst_case_adjusted'), base_rate), worst_case_adjusted);
             included_opp_count += (_.isUndefined(mOpp_count)) ? 0 : parseInt(mOpp_count);
             pipeline_opp_count += (_.isUndefined(mPipeline_opp_count)) ? 0 : parseInt(mPipeline_opp_count);
             if (!_.isUndefined(mPipeline_amount)) {

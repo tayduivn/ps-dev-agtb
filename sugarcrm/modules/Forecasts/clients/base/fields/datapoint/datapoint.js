@@ -78,7 +78,7 @@
             }
             // adjust the arrow
             this.arrow = app.utils.getArrowIconColorClass(this.total, this.initial_total);
-
+            this.checkIfNeedsCommit()
             return true;
         }, this);
         //if user resizes browser, adjust datapoint layout accordingly
@@ -90,6 +90,15 @@
             this.resize();
             return true;
         }, this);
+    },
+    
+    /**
+     * Check to see if the worksheet needs commit
+     */
+    checkIfNeedsCommit: function(){
+        if (this.total != this.initial_total){
+            this.context.trigger('forecasts:worksheet:needs_commit', null);
+        }
     },
 
     /**
