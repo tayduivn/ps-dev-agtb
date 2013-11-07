@@ -32,21 +32,15 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
         if(!isset($this->def['source']) || $this->def['source'] == 'db') {
             return;
         }
-        if (!empty($this->def['rname']) && !empty($this->def['table'])) {
-            $this->table = $this->query->getJoinAlias($this->def['table']);
-            $this->field = $this->def['rname'];
-        } elseif(!empty($this->def['rname']) && !empty($this->def['link'])) {
+        if(!empty($this->def['rname']) && !empty($this->def['link'])) {
             $this->table = $this->query->getJoinAlias($this->def['link']);
             $this->field = $this->def['rname'];
+        } elseif (!empty($this->def['rname']) && !empty($this->def['table'])) {
+            $this->table = $this->query->getJoinAlias($this->def['table']);
+            $this->field = $this->def['rname'];
         }  elseif(!empty($this->def['rname_link']) && !empty($this->def['link'])) {
-            //$this->table = $this->query->getJoinAlias($this->def['link']);
             $this->field = $this->def['rname_link'];
         }
-    }
-
-    public function shouldMarkDeleted()
-    {
-        $this->deleted = 0;
     }
 
     /**

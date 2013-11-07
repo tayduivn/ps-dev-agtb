@@ -20,10 +20,4 @@
 
 class SugarQuery_Builder_Field_Having extends SugarQuery_Builder_Field
 {
-
-    public function __construct($field, SugarQuery $query)
-    {
-        parent::__construct($field, $query);
-    }
-
 }
