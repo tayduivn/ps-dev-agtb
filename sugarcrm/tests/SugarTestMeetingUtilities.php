@@ -33,7 +33,7 @@ class SugarTestMeetingUtilities
     {
         $time = mt_rand();
         $name = 'Meeting';
-        $meeting = new Meeting();
+        $meeting = new MeetingMock();
         $meeting->name = $name . $time;
         $meeting->duration_hours = '0';
         $meeting->duration_minutes = '15';
@@ -95,5 +95,19 @@ class SugarTestMeetingUtilities
             $meeting_ids[] = $meeting->id;
         }
         return $meeting_ids;
+    }
+}
+
+class MeetingMock extends Meeting
+{
+
+    public function set_notification_body($xtpl, &$meeting) {
+        return $xtpl;
+    }
+
+    public function getNotificationEmailTemplate()
+    {
+        $templateName = $this->getTemplateNameForNotificationEmail();
+        return $this->createNotificationEmailTemplate($templateName);
     }
 }

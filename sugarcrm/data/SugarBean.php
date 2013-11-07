@@ -2273,7 +2273,9 @@ class SugarBean
         if (in_array('set_notification_body', get_class_methods($this))) {
             $xtpl = $this->set_notification_body($xtpl, $this);
         } else {
-            $xtpl->assign("OBJECT", translate('LBL_MODULE_NAME'));
+            //Default uses OBJECT key for both subject and body (see en_us.notify_template.html)
+            $singularModuleLabel = $GLOBALS['app_list_strings']['moduleListSingular'][$this->getObjectName()];
+            $xtpl->assign("OBJECT", $singularModuleLabel);
         }
 
         $xtpl->assign("ASSIGNED_USER", $this->new_assigned_user_name);
@@ -2290,7 +2292,12 @@ class SugarBean
         $path		= !empty($parsedSiteUrl['path']) ? $parsedSiteUrl['path'] : "";
         $cleanUrl	= "{$parsedSiteUrl['scheme']}://{$host}{$port}{$path}";
 
-        $xtpl->assign("URL", $cleanUrl."/index.php?module={$this->module_dir}&action=DetailView&record={$this->id}");
+        if (isModuleBWC($this->module_name)) {
+            $xtpl->assign("URL", $cleanUrl."/#bwc/index.php?module={$this->module_dir}&action=DetailView&record={$this->id}");
+        } else {
+            $xtpl->assign('URL', $cleanUrl . '/index.php#' . $this->module_name . '/' . $this->id);
+        }
+
         $xtpl->assign("SUGAR", "Sugar v{$sugar_version}");
         $xtpl->parse($templateName);
         $xtpl->parse($templateName . "_Subject");
