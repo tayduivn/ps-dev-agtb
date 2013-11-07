@@ -334,13 +334,9 @@ class CurrentUserApi extends SugarApi
         $bean = $this->getUserIfPassword($oldpass);
         if (null !== $bean) {
             $change = $this->changePassword($bean, $oldpass, $newpass);
-            if (!$change) {
-                $user_data['message'] = 'Error: There was a problem updating password for this user.';
-            } else {
-                $user_data = array_merge($user_data, $change);
-            }
+            $user_data = array_merge($user_data, $change);
         } else {
-            $user_data['message'] = 'Error: Incorrect password.';
+            $user_data['message'] = $GLOBALS['app_strings']['LBL_INCORRECT_PASSWORD'];
         }
 
         return $user_data;
@@ -633,8 +629,12 @@ class CurrentUserApi extends SugarApi
                 'expiration' => $bean->getPreference('loginexpiration'),
             );
         }
-
-        return array();
+        //Legacy change_password populates user bean with an error_string on error
+        $errorMessage = isset($bean->error_string) ? $bean->error_string : $GLOBALS['app_strings']['LBL_PASSWORD_UPDATE_GENERIC_ISSUE'];
+        return array(
+            'valid' => false,
+            'message' => $errorMessage,
+        );
     }
 
     /**
