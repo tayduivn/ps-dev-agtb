@@ -512,4 +512,45 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
             expect(view.totals.worst_case_display).not.toBeDefined();
         });
     });
+
+    describe('exportCallback', function() {
+        var sandbox = sinon.sandbox.create();
+        beforeEach(function() {
+            sandbox.stub(view, 'doExport', function() {
+            });
+            sandbox.stub(app.alert, 'show', function() {
+            });
+        });
+
+        afterEach(function() {
+            sandbox.restore();
+            view.canEdit = true;
+        });
+
+        it('when is dirty and can edit should show alert', function() {
+            sandbox.stub(view, 'isDirty', function() {
+                return true;
+            });
+
+            view.canEdit = true;
+
+            view.exportCallback();
+
+            expect(view.doExport).not.toHaveBeenCalled();
+            expect(app.alert.show).toHaveBeenCalled();
+        });
+
+        it('when is not dirty and cant edit', function() {
+            sandbox.stub(view, 'isDirty', function() {
+                return false;
+            });
+
+            view.canEdit = false;
+
+            view.exportCallback();
+
+            expect(view.doExport).toHaveBeenCalled();
+            expect(app.alert.show).not.toHaveBeenCalled();
+        });
+    });
 });
