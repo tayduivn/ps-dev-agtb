@@ -57,6 +57,31 @@ class ForecastWorksheetHooks extends AbstractForecastHooks
     }
 
     /**
+     * After the relationship is deleted, we need to also delete the name field,
+     * the reason we have to do it this way is that the one to many relationship
+     * is it doesn't resave the bean, but just runs a query to unset the id field
+     *
+     * @param ForecastWorksheet $bean
+     * @param string $event
+     * @param array $args
+     */
+    public static function afterRelationshipDelete($bean, $event, $args)
+    {
+        if ($event == 'after_relationship_delete') {
+            if ($bean->load_relationship($args['link'])) {
+                $relationshipDef = $bean->$args['link']->getRelationshipObject()->def;
+                $name_field = str_replace('_id', '_name', $relationshipDef['rhs_key']);
+                if ($bean->getFieldDefinition($name_field)) {
+                    $sql = "UPDATE {$bean->table_name} SET {$name_field} = NULL WHERE id = "
+                        . $bean->db->quoted($bean->id);
+                    $bean->db->query($sql);
+                }
+            }
+        }
+    }
+
+
+    /**
      * @param ForecastWorksheet $bean
      * @param string $event
      * @param array $args

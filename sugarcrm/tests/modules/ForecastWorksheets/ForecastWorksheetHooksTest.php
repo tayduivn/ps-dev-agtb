@@ -304,4 +304,61 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
             array('opportunity', 'some_value', false),
         );
     }
+
+    public function testAfterRelationshipDelete()
+    {
+        $hook = $this->getMock(
+            'ForecastWorksheetHooks',
+            array('isForecastSetup')
+        );
+
+        $dbMock = new SugarTestDatabaseMock();
+        $dbMock->setUp();
+
+        $worksheet = $this->getMock('ForecastWorksheet', array('save', 'load_relationship', 'getFieldDefinition'));
+        $worksheet->db = $dbMock;
+
+        $worksheet->expects($this->once())
+            ->method('load_relationship')
+            ->will($this->returnValue(true));
+        $worksheet->expects($this->once())
+            ->method('getFieldDefinition')
+            ->will($this->returnValue(true));
+
+        $relMock = $this->getMockBuilder('One2MBeanRelationship', array('__get'))
+            ->disableOriginalConstructor()
+            ->getMock();
+        $relMock->expects($this->any())
+            ->method('__get')
+            ->will(
+                $this->returnCallback(
+                    function () {
+                        return array('rhs_key' => 'test_id');
+                    }
+                )
+            );
+
+        $linkMock = $this->getMockBuilder('Link2')
+            ->setMethods(array('getRelationshipObject'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $linkMock->expects($this->any())
+            ->method('getRelationshipObject')
+            ->will($this->returnValue($relMock));
+
+        $worksheet->test = $linkMock;
+
+        $dbMock->queries['name_query'] = array(
+            'match' => '/test_name/',
+            'rows' => array()
+        );
+        /* @var $hook ForecastWorksheetHooks */
+        /* @var $worksheet ForecastWorksheet */
+        $hook->afterRelationshipDelete($worksheet, 'after_relationship_delete', array('link' => 'test'));
+
+        $this->assertEquals(1, $dbMock->queries['name_query']['runCount']);
+
+        $dbMock->tearDown();
+    }
 }
