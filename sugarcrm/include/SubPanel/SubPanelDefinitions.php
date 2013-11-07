@@ -508,6 +508,10 @@ class aSubPanel
 		if (! empty ( $module_name ))
 		{
 		    $this->template_instance = BeanFactory::getBean($module_name);
+		    if(empty($this->template_instance)) {
+		        $GLOBALS['log']->fatal("Bad module name for subpanel: $module_name");
+		        return null;
+		    }
 			$this->template_instance->force_load_details = true ;
 			$this->table_name = $this->template_instance->table_name ;
 		}
