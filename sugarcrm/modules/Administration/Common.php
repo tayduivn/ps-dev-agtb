@@ -173,13 +173,26 @@ function create_dropdown_type_all_lang($dropdown_name)
 }
 
 /**
+ * Utility function that allows saving of custom app strings. This is a wrapper
+ * for save_custom_app_list_strings_contents() primarily because it will do the
+ * exact same thing but with a different cache key for clearing.
+ * 
+ * @param string $contents The contents of the new file
+ * @param string $language The language to save
+ * @return boolean
+ */
+function save_custom_app_strings_contents($contents, $language)
+{
+    return save_custom_app_list_strings_contents($contents, $language, 'app_strings');
+}
+/**
  * @return bool
  * @param array contents $app_list_strings
  * @param string $language
  * @param string $custom_dir_name
  * @desc Saves the app_list_strings to file in the 'custom' dir.
  */
-function save_custom_app_list_strings_contents($contents, $language, $custom_dir_name = '')
+function save_custom_app_list_strings_contents($contents, $language, $cache_index = 'app_list_strings')
 {
     $dirname = 'custom/include/language';
     if(SugarAutoLoader::ensureDir($dirname)) {
@@ -187,7 +200,7 @@ function save_custom_app_list_strings_contents($contents, $language, $custom_dir
         if(!SugarAutoLoader::put($filename, $contents, true)) {
             $GLOBALS['log']->fatal("Unable to write edited language pak to file: $filename");
         } else {
-            $cache_key = 'app_list_strings.' . $language;
+            $cache_key = $cache_index . '.' . $language;
             sugar_cache_clear($cache_key);
             return true;
         }

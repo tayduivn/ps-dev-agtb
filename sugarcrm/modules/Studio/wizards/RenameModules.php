@@ -27,8 +27,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-require_once('modules/Studio/DropDowns/DropDownHelper.php');
-require_once 'modules/ModuleBuilder/parsers/parser.label.php' ;
+require_once 'modules/Studio/DropDowns/DropDownHelper.php';
+require_once 'modules/ModuleBuilder/parsers/parser.label.php';
+require_once 'modules/Administration/Common.php';
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class RenameModules
 {
@@ -54,366 +56,15 @@ class RenameModules
      */
     private $renamedModules = array();
 
-
     /**
-     * An array containing the modules and their labels to be changed when module is renamed.
+     * Definition data for which modules contain strings related to a module being
+     * renamed. Also contains global app strings entries that need to be addressed
+     * as well. This will be set in {@see SetRenameDefs()} and is defined in 
+     * renamedefs.php. 
+     * 
+     * @var array
      */
-    private static $labelMap = array(
-        'Accounts' => array(
-            array('name' => 'LBL_CAMPAIGNS', 'type' => 'plural', 'source' => 'Campaigns'),
-            array('name' => 'LBL_CAMPAIGN_ID', 'type' => 'singular', 'source' => 'Campaigns'),
-            array('name' => 'LBL_PARENT_ACCOUNT_ID', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LBL_PROSPECT_LIST', 'type' => 'singular', 'source' => 'Prospects'),
-            array('name' => 'LBL_RLI_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_REVENUELINEITEMS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-        ),
-        'Administration' => array(
-            array('name' => 'LBL_FORECAST_TITLE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_DESC', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_MANAGE_FORECASTS', 'type' => 'plural', 'source' => 'Forecasts'),
-        ),
-        'Bugs' => array(
-            array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'singular', 'source' => 'Bugs'),
-            array('name' => 'LBL_LIST_MY_BUGS', 'type' => 'plural', 'source' => 'Bugs'),
-            array('name' => 'LBL_SEARCH_FORM_TITLE', 'type' => 'singular', 'source' => 'Bugs'),
-            array('name' => 'LNK_BUG_LIST', 'type' => 'plural', 'source' => 'Bugs'),
-            array('name' => 'LNK_BUG_REPORTS', 'type' => 'singular', 'source' => 'Bugs'),
-            array('name' => 'LNK_IMPORT_BUGS', 'type' => 'plural', 'source' => 'Bugs'),
-            array('name' => 'LNK_NEW_BUG', 'type' => 'singular', 'source' => 'Bugs'),
-        ),
-        'Calls' => array(
-            array('name' => 'LBL_LIST_CONTACT', 'type' => 'singular', 'source' => 'Contacts'),
-        ),
-        'Campaigns' => array(
-            array('name' => 'LBL_ACCOUNTS', 'type' => 'plural', 'source' => 'Accounts'),
-            array('name' => 'LBL_CONTACTS', 'type' => 'plural', 'source' => 'Contacts'),
-            array('name' => 'LBL_LIST_CAMPAIGN_NAME', 'type' => 'singular', 'source' => 'Campaigns'),
-            array('name' => 'LBL_LOG_ENTRIES_CONTACT_TITLE', 'type' => 'plural', 'source' => 'Contacts'),
-            array('name' => 'LBL_LOG_ENTRIES_LEAD_TITLE', 'type' => 'plural', 'source' => 'Leads'),
-            array('name' => 'LBL_OPPORTUNITIES', 'type' => 'plural', 'source' => 'Opportunities'),
-            array('name' => 'LBL_PROSPECT_LIST_SUBPANEL_TITLE', 'type' => 'singular', 'source' => 'Targets'),
-        ),
-        'Cases' => array(
-            array('name' => 'LBL_BUGS_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Bugs'),
-            array('name' => 'LBL_LIST_ACCOUNT_NAME', 'type' => 'singular', 'source' => 'Accounts'),
-        ),
-        'Contacts' => array(
-            array('name' => 'LBL_BUGS_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Bugs'),
-            array('name' => 'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Campaigns'),
-            array('name' => 'LBL_CONTRACTS', 'type' => 'plural', 'source' => 'Contracts'),
-            array('name' => 'LBL_LIST_ACCOUNT_NAME', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LBL_LEAD_SOURCE', 'type' => 'singular', 'source' => 'Leads'),
-            array('name' => 'LBL_OPPORTUNITIES', 'type' => 'singular', 'source' => 'Opportunities'),
-            array('name' => 'LBL_OPPORTUNITY_ROLE', 'type' => 'singular', 'source' => 'Opportunities'),
-            array('name' => 'LBL_OPPORTUNITY_ROLE_ID', 'type' => 'singular', 'source' => 'Opportunities'),
-            array('name' => 'LBL_PRODUCTS_TITLE', 'type' => 'plural', 'source' => 'Products'),
-            array('name' => 'LBL_PROSPECT_LIST', 'type' => 'singular', 'source' => 'Prospects'),
-        ),
-        'Contracts' => array(
-            array('name' => 'LBL_CONTRACT_NAME', 'type' => 'singular', 'source' => 'Contracts'),
-            array('name' => 'LBL_CONTRACT_TERM', 'type' => 'singular', 'source' => 'Contracts'),
-            array('name' => 'LBL_DOCUMENTS', 'type' => 'plural', 'source' => 'Documents'),
-            array('name' => 'LBL_LIST_ACCOUNT_NAME', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LBL_LIST_CONTRACT_NAME', 'type' => 'singular', 'source' => 'Contracts'),
-            array('name' => 'LBL_OPPORTUNITY', 'type' => 'singular', 'source' => 'Opportunities'),
-            array('name' => 'LBL_SEARCH_FORM_TITLE', 'type' => 'singular', 'source' => 'Contracts'),
-            array('name' => 'LBL_TOTAL_CONTRACT_VALUE', 'type' => 'singular', 'source' => 'Contracts'),
-            array('name' => 'LBL_TOTAL_CONTRACT_VALUE_USDOLLAR', 'type' => 'singular', 'source' => 'Contracts'),
-            array('name' => 'LNK_NEW_CONTRACT', 'type' => 'singular', 'source' => 'Contracts'),
-        ),
-        'Documents' => array(
-            array('name' => 'LBL_BUGS_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Bugs'),
-            array('name' => 'LBL_CONTRACTS', 'type' => 'plural', 'source' => 'Contracts'),
-            array('name' => 'LBL_CONTRACT_NAME', 'type' => 'singular', 'source' => 'Contracts'),
-            array('name' => 'LBL_CONTRACT_STATUS', 'type' => 'singular', 'source' => 'Contracts'),
-            array('name' => 'LBL_DET_RELATED_DOCUMENT_VERSION', 'type' => 'singular', 'source' => 'Documents'),
-            array('name' => 'LBL_DET_TEMPLATE_TYPE', 'type' => 'singular', 'source' => 'Documents'),
-            array('name' => 'LBL_DOC_ID', 'type' => 'singular', 'source' => 'Documents'),
-            array('name' => 'LBL_DOC_NAME', 'type' => 'singular', 'source' => 'Documents'),
-            array('name' => 'LBL_DOC_REV_HEADER', 'type' => 'singular', 'source' => 'Documents'),
-            array('name' => 'LBL_DOC_URL', 'type' => 'singular', 'source' => 'Documents'),
-            array('name' => 'LBL_NAME', 'type' => 'singular', 'source' => 'Documents'),
-            array('name' => 'LBL_TEMPLATE_TYPE', 'type' => 'singular', 'source' => 'Documents'),
-        ),
-        'Forecasts' => array(
-            array('name' => 'LBL_MODULE_NAME', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_MODULE_NAME_SINGULAR', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_MODULE_TITLE', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LNK_UPD_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LNK_FORECAST_LIST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_HISTORY', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_ID', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_TYPE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_QC_DIRECT_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_QC_ROLLUP_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_QC_UPCOMING_FORECASTS', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_SVFS_HEADER', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FS_FORECAST_START_DATE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FS_MODULE_NAME', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_HEADER', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_MY_FORECASTS', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_MY_TEAM', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_FORECAST_PERIOD', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_COMMIT_HEADER', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_FORECAST_ROLLUP', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_LV_TYPE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_NO_ACTIVE_TIMEPERIOD', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_FOR', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_GRAPH_TITLE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_GRAPH_COMMIT_LEGEND', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_CHART_FOOTER', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_IN_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_TITLE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_CONFIG_TITLE', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_MISSING_STAGE_TITLE', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_MISSING_SALES_STAGE_VALUES', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_ACLS_NO_ACCESS_TITLE', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_ACLS_NO_ACCESS_MSG', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_CONFIG_TITLE_FORECAST_SETTINGS', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_CONFIG_TITLE_RANGES', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_CONFIG_TITLE_FORECAST_BY', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_CONFIG_HOWTO_TITLE_FORECAST_BY', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_CONFIG_HELP_TIMEPERIODS', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_CONFIG_HELP_WORKSHEET_COLUMNS', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_CONFIG_HELP_FORECAST_BY', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_CONFIG_SETTINGS_SAVED', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_CONFIG_RANGES_SETUP_NOTICE', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_CONFIG_RANGES', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_CONFIG_RANGES_EXCLUDE_INFO', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DASHLET_FORECAST_NOT_SETUP', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_NO_ACCESS_TO_CFG_TITLE', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECASTS_NO_ACCESS_TO_CFG_MSG', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DASHLET_MY_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DASHLET_MY_TEAMS_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-        ),
-        'ForecastManagerWorksheets' => array(
-            array('name' => 'LBL_MY_OPPS_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_MODULE_NAME', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_MODULE_NAME_SINGULAR', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LNK_UPD_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LNK_FORECAST_LIST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_HISTORY', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_ID', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_TYPE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_QC_DIRECT_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_QC_ROLLUP_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_QC_UPCOMING_FORECASTS', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_SVFS_HEADER', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FS_FORECAST_START_DATE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FS_MODULE_NAME', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FDR_OPPORTUNITIES', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_HEADER', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_MY_FORECASTS', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_MY_TEAM', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_FORECAST_PERIOD', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_FORECAST_OPPORTUNITY', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_COMMIT_HEADER', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_FORECAST_ROLLUP', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_LV_TYPE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_NO_ACTIVE_TIMEPERIOD', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-        ),
-        'ForecastWorksheets' => array(
-            array('name' => 'LBL_REVENUELINEITEM_NAME', 'type' => 'singular', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_MODULE_NAME', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_MODULE_NAME_SINGULAR', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_MODULE_TITLE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LNK_UPD_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LNK_FORECAST_LIST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_ID', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_TYPE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_QC_DIRECT_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_QC_ROLLUP_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_SVFS_HEADER', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FS_FORECAST_START_DATE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FS_MODULE_NAME', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FDR_OPPORTUNITIES', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_MY_FORECASTS', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_FORECAST_PERIOD', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_FORECAST_OPPORTUNITY', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_COMMIT_HEADER', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_FORECAST_ROLLUP', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_LV_TYPE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_NO_ACTIVE_TIMEPERIOD', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_HISTORY', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_QC_UPCOMING_FORECASTS', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_HEADER', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_MY_TEAM', 'type' => 'plural', 'source' => 'Forecasts'),
-        ),
-        'ForecastSchedule' => array(
-            array('name' => 'LBL_MODULE_NAME_SINGULAR', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_TYPE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_TYPE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_TYPE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_TYPE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FS_FORECAST_START_DATE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FS_MODULE_NAME', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FDR_OPPORTUNITIES', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_MY_FORECASTS', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_FORECAST_PERIOD', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_FORECAST_OPPORTUNITY', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_COMMIT_HEADER', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_FORECAST_ROLLUP', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_LV_TYPE', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_NO_ACTIVE_TIMEPERIOD', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_MODULE_NAME', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_MODULE_TITLE', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_FORECAST_TYPE', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_HEADER', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DV_MY_TEAM', 'type' => 'plural', 'source' => 'Forecasts'),
-        ),
-        'KBDocuments' => array(
-            array('name' => 'LBL_CASES', 'type' => 'plural', 'source' => 'Cases'),
-            array('name' => 'LBL_CONTRACTS', 'type' => 'plural', 'source' => 'Contracts'),
-            array('name' => 'LBL_CONTRACT_NAME', 'type' => 'plural', 'source' => 'Contracts'),
-        ),
-        'Leads' => array(
-            array('name' => 'LNK_SELECT_###MODULE_PLURAL###', 'type' => 'singular', 'source' => 'Leads'),
-            array('name' => 'LNK_SELECT_###MODULE_SINGULAR###', 'type' => 'singular', 'source' => 'Leads'),
-            array('name' => 'LBL_ACCOUNT_DESCRIPTION', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LBL_ACCOUNT_ID', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LBL_ACCOUNT_NAME', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LBL_CAMPAIGN_ID', 'type' => 'singular', 'source' => 'Campaigns'),
-            array('name' => 'LBL_CAMPAIGN_LEAD', 'type' => 'plural', 'source' => 'Campaigns'),
-            array('name' => 'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Campaigns'),
-            array('name' => 'LBL_CONTACT_ID', 'type' => 'singular', 'source' => 'Contacts'),
-            array('name' => 'LBL_LEAD_SOURCE', 'type' => 'singular', 'source' => 'Leads'),
-            array('name' => 'LBL_LEAD_SOURCE_DESCRIPTION', 'type' => 'singular', 'source' => 'Leads'),
-            array('name' => 'LBL_LIST_ACCOUNT_NAME', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LBL_OPPORTUNITY_AMOUNT', 'type' => 'singular', 'source' => 'Opportunities'),
-            array('name' => 'LBL_OPPORTUNITY_ID', 'type' => 'singular', 'source' => 'Opportunities'),
-            array('name' => 'LBL_OPPORTUNITY_NAME', 'type' => 'singular', 'source' => 'Opportunities'),
-            array('name' => 'LBL_CONVERTED_ACCOUNT', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LNK_SELECT_ACCOUNTS', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LNK_NEW_ACCOUNT', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LBL_CONVERTED_CONTACT', 'type' => 'singular', 'source' => 'Contacts'),
-            array('name' => 'LBL_CONVERTED_OPP', 'type' => 'singular', 'source' => 'Opportunities'),
-
-        ),
-        'Meetings' => array(
-            array('name' => 'LBL_LIST_CONTACT', 'type' => 'singular', 'source' => 'Contacts'),
-            array('name' => 'LBL_LIST_JOIN_MEETING', 'type' => 'singular', 'source' => 'Meetings'),
-            array('name' => 'LBL_PASSWORD', 'type' => 'singular', 'source' => 'Meetings'),
-            array('name' => 'LBL_TYPE', 'type' => 'singular', 'source' => 'Meetings'),
-            array('name' => 'LBL_URL', 'type' => 'singular', 'source' => 'Meetings'),
-        ),
-        'Notes' => array(
-            array('name' => 'LBL_ACCOUNT_ID', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LBL_CASE_ID', 'type' => 'singular', 'source' => 'Cases'),
-            array('name' => 'LBL_CONTACT_ID', 'type' => 'singular', 'source' => 'Contacts'),
-            array('name' => 'LBL_LIST_CONTACT', 'type' => 'singular', 'source' => 'Contacts'),
-            array('name' => 'LBL_LIST_CONTACT_NAME', 'type' => 'singular', 'source' => 'Contacts'),
-            array('name' => 'LBL_NOTE_STATUS', 'type' => 'singular', 'source' => 'Notes'),
-            array('name' => 'LBL_OPPORTUNITY_ID', 'type' => 'singular', 'source' => 'Opportunities'),
-            array('name' => 'LBL_PRODUCT_ID', 'type' => 'singular', 'source' => 'Products'),
-            array('name' => 'LBL_QUOTE_ID', 'type' => 'singular', 'source' => 'Quotes'),
-        ),
-        'Opportunities' => array(
-            array('name' => 'LBL_ACCOUNT_ID', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LBL_AMOUNT', 'type' => 'singular', 'source' => 'Opportunities'),
-            array('name' => 'LBL_CAMPAIGN_OPPORTUNITY', 'type' => 'plural', 'source' => 'Campaigns'),
-            array('name' => 'LBL_CONTRACTS', 'type' => 'plural', 'source' => 'Contracts'),
-            array('name' => 'LBL_LEAD_SOURCE', 'type' => 'singular', 'source' => 'Leads'),
-            array('name' => 'LBL_LIST_ACCOUNT_NAME', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LBL_OPPORTUNITY_NAME', 'type' => 'singular', 'source' => 'Opportunities'),
-            array('name' => 'LBL_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_TOTAL_RLIS', 'type' => 'singular', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_CLOSED_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-            array('name' => 'NOTICE_NO_DELETE_CLOSED_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-            array('name' => 'WARNING_NO_DELETE_CLOSED_SELECTED', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_TOTAL_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_CLOSED_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-        ),
-        'PdfManager' => array(
-            array('name' => 'LBL_TPL_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-        ),
-        'ProductTemplates' => array(
-            array('name' => 'LBL_PRODUCT_ID', 'type' => 'singular', 'source' => 'Products'),
-            array('name' => 'LBL_PRODUCT_TEMPLATES', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-        ),
-        'Products' => array(
-            array('name' => 'LBL_ACCOUNT_ID', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LBL_CONTACT', 'type' => 'singular', 'source' => 'Contacts'),
-            array('name' => 'LBL_CONTACT_ID', 'type' => 'singular', 'source' => 'Contacts'),
-            array('name' => 'LBL_CONTRACTS', 'type' => 'plural', 'source' => 'Contacts'),
-            array('name' => 'LBL_LIST_ACCOUNT_NAME', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LBL_LIST_NAME', 'type' => 'singular', 'source' => 'Products'),
-            array('name' => 'LBL_NAME', 'type' => 'singular', 'source' => 'Products'),
-            array('name' => 'LBL_QUOTE_ID', 'type' => 'singular', 'source' => 'Quotes'),
-            array('name' => 'LBL_RELATED_PRODUCTS', 'type' => 'plural', 'source' => 'Products'),
-            array('name' => 'LBL_URL', 'type' => 'singular', 'source' => 'Products'),
-            array('name' => 'LBL_REVENUELINEITEM_NAME', 'type' => 'singular', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_REVENUELINEITEMS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_REVENUELINEITEM_ID', 'type' => 'singular', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_REVENUELINEITEM', 'type' => 'singular', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-        ),
-        'ProjectTask' => array(
-            array('name' => 'LBL_PARENT_NAME', 'type' => 'singular', 'source' => 'Projects'),
-            array('name' => 'LBL_PROJECT_ID', 'type' => 'singular', 'source' => 'Projects'),
-            array('name' => 'LBL_PROJECT_NAME', 'type' => 'singular', 'source' => 'Projects'),
-            array('name' => 'LBL_PROJECT_TASK_ID', 'type' => 'singular', 'source' => 'Projects'),
-        ),
-        'Project' => array(
-            array('name' => 'LBL_BUGS_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Bugs'),
-            array('name' => 'LBL_CONTACTS_RESOURCE', 'type' => 'singular', 'source' => 'Contacts'),
-            array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'singular', 'source' => 'Projects'),
-            array('name' => 'LBL_OPPORTUNITIES', 'type' => 'plural', 'source' => 'Opportunities'),
-            array('name' => 'LBL_PROJECT_HOLIDAYS_TITLE', 'type' => 'singular', 'source' => 'Projects'),
-            array('name' => 'LBL_PROJECT_TASKS_SUBPANEL_TITLE', 'type' => 'singular', 'source' => 'Projects'),
-            array('name' => 'LBL_SEARCH_FORM_TITLE', 'type' => 'singular', 'source' => 'Projects'),
-            array('name' => 'LNK_NEW_PROJECT', 'type' => 'singular', 'source' => 'Projects'),
-            array('name' => 'LNK_PROJECT_LIST', 'type' => 'singular', 'source' => 'Projects'),
-        ),
-        'Quotes' => array(
-            array('name' => 'LBL_ACCOUNT_ID', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LBL_CONTRACTS', 'type' => 'plural', 'source' => 'Contracts'),
-            array('name' => 'LBL_LIST_ACCOUNT_NAME', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LBL_QUOTE_NUM', 'type' => 'singular', 'source' => 'Quotes'),
-            array('name' => 'LBL_LIST_PRODUCT_NAME', 'type' => 'singular', 'source' => 'Products'),
-            array('name' => 'LBL_REVENUELINEITEMS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-        ),
-        'Quotas' => array(
-            array('name' => 'LNK_FORECAST_LIST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LNK_FORECAST_HISTORY', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LNK_UPD_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_MODULE_FORECASTS_NAME', 'type' => 'plural', 'source' => 'Forecasts'),
-        ),
-        'RevenueLineItems' => array(
-            array('name' => 'LBL_LIST_NAME', 'type' => 'singular', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_MODULE_TITLE', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_NAME', 'type' => 'singular', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_DEFAULT_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT', 'type' => 'singular', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_RLI_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_CONVERT_TO_QUOTE_INFO_MESSAGE', 'type' => 'singular', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_CONVERT_INVALID_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_CONVERT_INVALID_RLI_PRODUCT', 'type' => 'singular', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE', 'type' => 'singular', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-            array('name' => 'LBL_COMMIT_STAGE_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-        ),
-        'Targets' => array(
-            array('name' => 'LBL_ACCOUNT_NAME', 'type' => 'singular', 'source' => 'Accounts'),
-            array('name' => 'LBL_CAMPAIGN_ID', 'type' => 'plural', 'source' => 'Campaigns'),
-            array('name' => 'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE', 'type' => 'singular', 'source' => 'Campaigns'),
-            array('name' => 'LBL_PROSPECT_LIST', 'type' => 'singular', 'source' => 'Prospects'),
-        ),
-        'Tasks' => array(
-            array('name' => 'LBL_CONTACT', 'type' => 'singular', 'source' => 'Contacts'),
-            array('name' => 'LBL_CONTACT_ID', 'type' => 'singular', 'source' => 'Contacts'),
-            array('name' => 'LBL_CONTACT_PHONE', 'type' => 'singular', 'source' => 'Contacts'),
-        ),
-    );
+    protected $renameDefs = array('module' => array(), 'global' => array());
 
     /**
      *
@@ -520,12 +171,20 @@ class RenameModules
         //Retrieve changes the user is requesting and store previous values for future use.
         $this->changedModules = $this->getChangedModules();
 
-        //Change module, appStrings, subpanels, and related links.
-        $this->changeAppStringEntries()->changeAllModuleModStrings()->renameAllRelatedLinks()->renameAllSubpanels()->renameAllDashlets();
+        // Queue the metadata manager so that writes and rewrites only happen once
+        MetaDataManager::enableCacheRefreshQueue();
 
-        foreach (self::$labelMap as $module=>$labelsArr) {
-            $this->renameCertainModuleModStrings($module, $labelsArr);
-        }
+        //Change module, appStrings, subpanels, and related links.
+        $this->changeAppStringEntries()
+             ->changeAllModuleModStrings()
+             ->renameAllRelatedLinks()
+             ->renameAllSubpanels()
+             ->renameAllDashlets()
+             ->changeStringsInRelatedModules()
+             ->changeGlobalAppStrings();
+
+        // Run the metadata cache refresh queue so changes take effect
+        MetaDataManager::runCacheRefreshQueue();
 
         //Refresh the page again so module tabs are changed as the save process happens after module tabs are already generated.
         if($redirect) {
@@ -536,6 +195,129 @@ class RenameModules
                 </script>";
 
         }
+    }
+
+    /**
+     * Sets the rename defs array into this object for use in renaming strings in 
+     * related modules and in the global app and app list strings
+     */
+    protected function setRenameDefs()
+    {
+        if (empty($this->renameDefs['modules'])) {
+            require 'modules/Studio/wizards/renamedefs.php';
+            if (isset($renamedefs)) {
+                $this->renameDefs = $renamedefs;
+            }
+        }
+    }
+
+    /**
+     * Changes module names in related module strings
+     * 
+     * @return RenameModules
+     */
+    protected function changeStringsInRelatedModules()
+    {
+        $this->setRenameDefs();
+        if (isset($this->renameDefs['modules']) && is_array($this->renameDefs['modules'])) {
+            foreach ($this->renameDefs['modules'] as $module => $defs) {
+                $this->renameCertainModuleModStrings($module, $defs);
+            }
+        }
+        
+        return $this;
+    }
+
+    /**
+     * Changes module name in global app and app list strings
+     * 
+     * @return RenameModules
+     */
+    protected function changeGlobalAppStrings()
+    {
+        $this->setRenameDefs();
+        if (!isset($this->renameDefs['global']) || !is_array($this->renameDefs['global'])) {
+            $GLOBALS['log']->warn("No rename defs found for global app strings");
+            return;
+        }
+        
+        // Get the current app_strings for checking keys and values
+        $app_strings = return_application_language($this->selectedLanguage);
+        
+        $new = array();
+        foreach ($this->changedModules as $changedModuleName => $renameFields) {
+            // Loop over all defined app string keys to handle replacements
+            foreach ($this->renameDefs['global'] as $def) {
+                // Make sure changes to Global app strings only affect specific 
+                // strings for a module
+                if (isset($def['source']) && $def['source'] == $changedModuleName) {
+                    // Only change something that exists to begin with
+                    if (isset($app_strings[$def['name']])) {
+                        $oldValue = $app_strings[$def['name']];
+                        $newValue = $this->replaceSingleLabel($oldValue, $renameFields, $def);
+                        // If there was a change, add it to the new array
+                        if ($newValue != $oldValue) {
+                            $new[$def['name']] = $newValue;
+                            // And add it to globals so its available immediately
+                            $GLOBALS['app_strings'][$def['name']] = $newValue;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Save the new strings now
+        $this->saveCustomLanguageStrings($new);
+        return $this;
+    }
+    
+    /**
+     * Saves new custom language strings for the application
+     * 
+     * @param array $appStrings The new app strings array values to save
+     * @return boolean
+     */
+    public function saveCustomLanguageStrings($appStrings)
+    {
+        if (empty($appStrings)) {
+            // Nothing to save...
+            return true;
+        }
+        
+        $contents = return_custom_app_list_strings_file_contents($this->selectedLanguage);
+        
+        // Clean up the closing PHP tag
+        $contents = str_replace("?>", '', $contents);
+        
+        // Create our file opening
+        if (empty($contents)) {
+            $contents = "<?php\n";
+        }
+        
+        // Get the current strings to see what might need to be changed
+        $all_app_strings = return_application_language($language);
+        
+        // Flag that will tell us if there is a need to write
+        $cached = false;
+        
+        // Now loop the new strings and check what has changed, if anything
+        foreach ($appStrings as $key => $value) {
+            if (!isset($all_app_strings[$key]) || $all_app_strings[$key] !== $value) {
+                //clear out the old value
+                $pattern_match = '/\s*\$app_strings\s*\[\s*\''.$key.'\'\s*\]\s*=\s*[\'\"]{1}.*?[\'\"]{1};\s*/ism';
+                $contents = preg_replace($pattern_match, "\n", $contents);
+                $contents .= "\n\$app_strings['$key']=" . var_export_helper($value) . ";";
+                $changed = true;
+            }
+        }
+        
+        // Only bother saving if there were changes to save
+        if ($changed) {
+            return save_custom_app_strings_contents($contents, $this->selectedLanguage);
+        }
+        
+        // No changes, no worries
+        return true;
     }
 
     /**
@@ -939,7 +721,11 @@ class RenameModules
             $search = call_user_func($modifier, $search);
             $replace = call_user_func($modifier, $replace);
         }
-
+        
+        // Handle resetting routes in strings, since some modules like Forecasting
+        // include links in their strings.
+        $oldStringValue = str_replace("#{$search}/", "____TEMP_ROUTER_HOLDER____", $oldStringValue);
+        
         // Bug 47957
         // If nothing was replaced - try to replace original string
         $replaceCount = 0;
@@ -949,6 +735,9 @@ class RenameModules
             $search = $replacementLabels[$replaceKey];
             $result = str_replace($search, $replace, $oldStringValue, $replaceCount);
         }
+        
+        // Add the route back in if it was found
+        $result = str_replace("____TEMP_ROUTER_HOLDER____", "#{$search}/", $result);
         return $result;
     }
 
@@ -969,7 +758,7 @@ class RenameModules
         $newParams['dropdown_name'] = 'moduleListSingular';
         $newParams['dropdown_lang'] = isset($_REQUEST['dropdown_lang']) ? $_REQUEST['dropdown_lang'] : '';
         $newParams['use_push'] = true;
-        DropDownHelper::saveDropDown($this->createModuleListSingularPackage($newParams, $this->changedModules));
+        DropDownHelper::saveDropDown($this->createModuleListSingularPackage($newParams, $this->getAllModulesFromRequest()));
 
         //Save changes to the "*type_display*" app_list_strings entry.
         global $app_list_strings;
@@ -1014,12 +803,13 @@ class RenameModules
     }
 
     /**
-     * Determine which modules have been updated and return an array with the module name as the key
-     * and the singular/plural entries as the value.
-     *
+     * Gets all modules from the request. This is used to build the singular 
+     * module list for changes so that the entire list is set properly into the
+     * global array after save. This is also used to get all changed modules.
+     * 
      * @return array
      */
-    private function getChangedModules()
+    protected function getAllModulesFromRequest()
     {
         global $locale;
         $count = 0;
@@ -1064,14 +854,39 @@ class RenameModules
             $pvalue = $e['p'];
             $prev_plural = $current_app_list_string['moduleList'][$k];
             $prev_singular = isset($current_app_list_string['moduleListSingular'][$k]) ? $current_app_list_string['moduleListSingular'][$k] : $prev_plural;
-            if (strcmp($prev_plural, $pvalue) != 0 || (strcmp($prev_singular, $svalue) != 0)) {
-                $results[$k] = array('singular' => $svalue, 'plural' => $pvalue, 'prev_singular' => $prev_singular, 'prev_plural' => $prev_plural,
-                                     'key_plural' => $k, 'key_singular' => $this->getModuleSingularKey($k)
-                );
-            }
+            $results[$k] = array(
+                'singular' => $svalue,
+                'plural' => $pvalue,
+                'prev_singular' => $prev_singular,
+                'prev_plural' => $prev_plural,
+                'key_plural' => $k,
+                'key_singular' => $this->getModuleSingularKey($k),
+                'changed' => strcmp($prev_plural, $pvalue) != 0 || strcmp($prev_singular, $svalue) != 0,
+            );
         }
 
         return $results;
+    }
+
+    /**
+     * Determine which modules have been updated and return an array with the module name as the key
+     * and the singular/plural entries as the value.
+     *
+     * @return array
+     */
+    private function getChangedModules()
+    {
+        $request = $this->getAllModulesFromRequest();
+        $return = array();
+        $index = 0;
+        foreach ($request as $params) {
+            if ($params['changed']) {
+                unset($params['changed']);
+                $return[$index] = $params;
+            }
+            $index++;
+        }
+        return $return;
     }
 
     /**
