@@ -161,7 +161,7 @@
             {capture assign="otherAttributes"}class="le_edit" style="float:left; cursor:pointer;" onclick="editPanelProperties('{$idCount}');"{/capture}
             {sugar_getimage name="edit_inline" ext=".gif" other_attributes=$otherAttributes}
         {/if}
-        
+
         {if $idCounter == 1}
             {assign var="firstpanelid" value=$panelid}
             {assign var="firstpanelidcount" value=$idCount}

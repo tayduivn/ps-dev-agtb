@@ -150,6 +150,7 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_body',
+            'label' => 'LBL_PANEL_BODY',
             'columns' => 2,
             'labels' => true,
             'labelsOnTop' => true,
@@ -165,6 +166,7 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_hidden',
+            'label' => 'LBL_PANEL_ADVANCED',
             'hide' => true,
             'columns' => 2,
             'labelsOnTop' => true,

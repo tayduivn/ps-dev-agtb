@@ -32,7 +32,8 @@
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
         'click a[name=cancel_button]': 'cancelClicked',
-        'click [data-action=scroll]': 'paginateRecord'
+        'click [data-action=scroll]': 'paginateRecord',
+        'click .record-panel-header': 'togglePanel'
     },
 
     /**
@@ -187,6 +188,51 @@
             // RecordView starts with action as detail; once this.editableFields has been set (e.g.
             // readonly's pruned out), we can call toggleFields - so only fields that should be are editable
             this.toggleFields(this.editableFields, true);
+        }
+
+        if (this.meta && this.meta.panels) {
+            this._initTabsAndPanels();
+        }
+    },
+
+    /**
+     * Handles initiation of Tabs and Panels view upon render
+     * @private
+     */
+    _initTabsAndPanels: function() {
+        this.meta.firstPanelIsTab = this.checkFirstPanel();
+        this.meta.lastPanelIndex = this.meta.panels.length-1;
+
+        _.each(this.meta.panels, function(panel, i) {
+            if (panel.header) {
+                this.meta.firstNonHeaderPanelIndex = (i + 1);
+            }
+        }, this);
+
+        // Tell the view to use Tabs and Panels view if either there exists a tab or if the number of panels isn't
+        // equivalent to the amount expected for Business Card view (2 panels + possibly 1 if header exists)
+        var headerExists = 0;
+        if (_.first(this.meta.panels).header) {
+            headerExists = 1;
+        }
+
+        this.meta.useTabsAndPanels = false;
+
+        //Check if there are any newTabs
+        for (i = headerExists; i < this.meta.panels.length; i++) {
+            if (this.meta.panels[i].newTab) {
+                this.meta.useTabsAndPanels = true;
+            }
+        }
+
+        //Check for panel number
+        if (this.meta.panels.length > (2 + headerExists)) {
+            this.meta.useTabsAndPanels = true;
+        }
+
+        // If tabs, show first tab on render
+        if (this.meta.useTabsAndPanels && this.checkFirstPanel()) {
+            this.$('#recordTab a:first').tab('show');
         }
     },
 
@@ -930,5 +976,34 @@
             fields = _.union(fields, ['my_favorite']);
         }
         return fields;
-    }
+    },
+
+    /**
+     * Hide or show panel based on click to the panel header
+     * @param e - event
+     */
+    togglePanel: function(e) {
+        var $panelHeader = this.$(e.currentTarget);
+        if ($panelHeader && $panelHeader.next()) {
+            $panelHeader.next().toggle();
+        }
+        if ($panelHeader && $panelHeader.find('i')) {
+            $panelHeader.find('i').toggleClass('icon-chevron-up icon-chevron-down');
+        }
+    },
+
+    /**
+     * Returns true if the first non-header panel has useTabs set to true
+     */
+    checkFirstPanel: function() {
+        if (this.meta && this.meta.panels) {
+            if (this.meta.panels[0] && this.meta.panels[0].newTab && !this.meta.panels[0].header) {
+                return true;
+            }
+            if (this.meta.panels[1] && this.meta.panels[1].newTab) {
+                return true;
+            }
+        }
+        return false;
+    },
 })
