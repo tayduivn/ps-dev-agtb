@@ -234,12 +234,12 @@
         this._settings = _.extend(
             this._defaultSettings,
             {
-                merge_relate_fetch_concurrency: app.config.mergeRelateFetchConcurrency,
-                merge_relate_fetch_timeout: app.config.mergeRelateFetchTimeout,
-                merge_relate_fetch_limit: app.config.mergeRelateFetchLimit,
-                merge_relate_update_concurrency: app.config.mergeRelateUpdateConcurrency,
-                merge_relate_update_timeout: app.config.mergeRelateUpdateTimeout,
-                merge_relate_max_attempt: app.config.mergeRelateMaxAttempt
+                merge_relate_fetch_concurrency: app.config.mergeDuplicates.mergeRelateFetchConcurrency,
+                merge_relate_fetch_timeout: app.config.mergeDuplicates.mergeRelateFetchTimeout,
+                merge_relate_fetch_limit: app.config.mergeDuplicates.mergeRelateFetchLimit,
+                merge_relate_update_concurrency: app.config.mergeDuplicates.mergeRelateUpdateConcurrency,
+                merge_relate_update_timeout: app.config.mergeDuplicates.mergeRelateUpdateTimeout,
+                merge_relate_max_attempt: app.config.mergeDuplicates.mergeRelateMaxAttempt
             },
             this.meta && this.meta.settings || {}
         );
