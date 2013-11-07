@@ -254,7 +254,7 @@
     }
 
     &[data-type="parent"] {
-      .span8 .select2-container a {
+      .edit {
         margin-right: -14px;
       }
     }
@@ -292,10 +292,10 @@
 
     &[data-type="datetimecombo"] {
       input[type="text"] {
-          width: 40%;
-          width: ~"-moz-calc(100% / 2 - 12px)";
-          width: ~"-webkit-calc(100% / 2 - 12px)";
-          width: ~"calc(100% / 2 - 12px)";
+        width: 40%;
+        width: ~"-moz-calc(100% / 2 - 12px)";
+        width: ~"-webkit-calc(100% / 2 - 12px)";
+        width: ~"calc(100% / 2 - 12px)";
       }
     }
 
@@ -313,36 +313,30 @@
         background: @white;
         font-size: 12px;
       }
-
       &[data-type="date"] input[type="text"]{
         width: 100%;
       }
-
       .input-append.date {
         .add-on {
-            top: 4px;
-            left: 5px;
+          top: 4px;
+          left: 5px;
         }
         .error {
-            .add-on {
-              &:not(.error-tooltip) {
-                left: 1px;
-              }
+          .add-on {
+            &:not(.error-tooltip) {
+              left: 1px;
             }
+          }
         }
         .ui-timepicker-input,
         .ui-timepicker-list {
-            margin-left: 10px;
+          margin-left: 4px;
         }
       }
       .input-append span.error-tooltip.add-on {
         left: -10px;
         z-index: 3;
       }
-
-
-
-
     }
 
     &[data-type="fieldset"] {
@@ -408,6 +402,12 @@
 
     &[data-type="favorite"] {
       display: none;
+    }
+
+    &[data-type="file"] {
+      .edit {
+        margin-left: -7px;
+      }
     }
 
     &[data-type="compose-actionbar"] {
