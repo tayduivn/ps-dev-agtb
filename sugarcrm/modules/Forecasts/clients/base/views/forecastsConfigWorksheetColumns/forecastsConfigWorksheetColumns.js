@@ -59,10 +59,6 @@
      */
     worstFieldObj: {},
 
-    events: {
-        'click .resetLink': 'onResetLinkClicked'
-    },
-
     /**
      * {@inheritdoc}
      */
@@ -116,20 +112,6 @@
 
             index++;
         }, this);
-    },
-
-    /**
-     * Handles when reset to defaults link has been clicked
-     *
-     * @param {jQuery.Event} evt click event
-     */
-    onResetLinkClicked: function(evt) {
-        evt.preventDefault();
-        evt.stopImmediatePropagation();
-
-        /**
-         * todo implement resetting to defaults
-         */
     },
 
     /**

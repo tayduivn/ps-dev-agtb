@@ -32,10 +32,6 @@
      */
     toggleTitleTpl: {},
 
-    events: {
-        'click .resetLink': 'onResetLinkClicked'
-    },
-
     /**
      * {@inheritdoc}
      */
@@ -44,20 +40,6 @@
         this.titleViewNameTitle = app.lang.get('LBL_FORECASTS_CONFIG_TITLE_TIMEPERIODS', 'Forecasts');
         this.titleMessage = app.lang.get('LBL_FORECASTS_CONFIG_TITLE_MESSAGE_TIMEPERIODS', 'Forecasts');
         this.toggleTitleTpl = app.template.getView('forecastsConfigHelpers.toggleTitle', 'Forecasts');
-    },
-
-    /**
-     * Handles when reset to defaults link has been clicked
-     *
-     * @param {jQuery.Event} evt click event
-     */
-    onResetLinkClicked: function(evt) {
-        evt.preventDefault();
-        evt.stopImmediatePropagation();
-
-        /**
-         * todo implement resetting to defaults
-         */
     },
 
     /**

@@ -60,10 +60,6 @@
      */
     defaultForecastedAmountKey: 'show_worksheet_likely',
 
-    events: {
-        'click .resetLink': 'onResetLinkClicked'
-    },
-
     /**
      * {@inheritdoc}
      *
@@ -101,20 +97,6 @@
         }, this);
 
         this.toggleTitleTpl = app.template.getView('forecastsConfigHelpers.toggleTitle', 'Forecasts');
-    },
-
-    /**
-     * Handles when reset to defaults link has been clicked
-     *
-     * @param {jQuery.Event} evt click event
-     */
-    onResetLinkClicked: function(evt) {
-        evt.preventDefault();
-        evt.stopImmediatePropagation();
-
-        /**
-         * todo implement resetting to defaults
-         */
     },
 
     /**
