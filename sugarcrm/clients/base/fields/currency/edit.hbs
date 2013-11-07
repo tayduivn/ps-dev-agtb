@@ -27,10 +27,10 @@
  ********************************************************************************/
 }}
 {{#if hideCurrencyDropdown}}
-    <input type="text" name="{{name}}" value="{{value}}" class="input-large">
+    <input type="text" name="{{name}}" value="{{value}}" class="inherit-width">
 {{else}}
-    <div class="row-fluid">
-        <div class="span8"><input type="text" name="{{name}}" value="{{value}}" class="input-large"></div>
-        <div class="span4"><span sfuuid="{{currencySfId}}" class="currency"></span><p class="help-block"></p></div>
+    <div class="select2-addon">
+        <span sfuuid="{{currencySfId}}" class="currency"></span>
+        <input type="text" name="{{name}}" value="{{value}}">
     </div>
 {{/if}}
