@@ -244,6 +244,7 @@
         var module = this.showingActivities ? "Activities" : this.module;
         var link;
 
+        this.$el.css('visibility', app.acl.hasAccess(this.aclToCheck, module) ? 'visible' : 'hidden');
         if(this.layoutType === 'record' && !this.showingActivities) {
             module = link = app.user.lastState.get(app.user.lastState.key("subpanels-last", this)) || 'all_modules';
             if (link !== 'all_modules') {

@@ -280,7 +280,7 @@
         if (this.colSpan < 2) {
             this.colSpan = null;
         }
-        app.view.View.prototype._renderHtml.call(this, ctx, options);
+        this._super('_renderHtml', [ctx, options]);
 
         if (this.leftColumns.length) {
             this.$el.addClass('left-actions');

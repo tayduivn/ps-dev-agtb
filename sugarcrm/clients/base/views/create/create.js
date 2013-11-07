@@ -66,6 +66,11 @@
         var moduleMetadata = app.metadata.getModule(this.module);
         this.enableDuplicateCheck = (moduleMetadata && moduleMetadata.dupCheckEnabled) || false;
 
+        // If user has no list acl it doesn't make sense to enable dupecheck
+        if (!app.acl.hasAccess('list', this.module)) {
+            this.enableDuplicateCheck = false;
+        }
+
         var fields = (moduleMetadata && moduleMetadata.fields) ? moduleMetadata.fields : [];
 
         this.model.relatedAttributes = this.model.relatedAttributes || {};
@@ -134,7 +139,10 @@
 
         this.setButtonStates(this.STATE.CREATE);
 
-        this.renderDupeCheckList();
+        // Don't need to add dupecheck layout if dupecheck disabled
+        if (this.enableDuplicateCheck) {
+            this.renderDupeCheckList();
+        }
 
         //SP-1502: Broadcast model changes so quickcreate field can keep track of unsaved changes
         app.events.trigger('create:model:changed', false);

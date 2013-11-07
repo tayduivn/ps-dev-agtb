@@ -87,6 +87,19 @@
     },
 
     /**
+     * @override
+     * @private
+     */
+    _render: function () {
+        app.view.View.prototype._render.call(this);
+        //If user has no `list` access, render `noaccess.hbs` template
+        if (!app.acl.hasAccessToModel(this.action, this.model)) {
+            this._noAccessTemplate = this._noAccessTemplate || app.template.get("list.noaccess");
+            this.$el.html(this._noAccessTemplate());
+        }
+    },
+
+    /**
      * Parse the metadata to make sure that the follow attributes conform to specific standards
      *  - Align: valid options are left, center and right
      *  - Width: any percentage below 100 is valid

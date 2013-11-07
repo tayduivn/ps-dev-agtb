@@ -97,7 +97,7 @@
         if(error.code == "portal_not_configured"){
             backToLogin(true);
         }
-        alertUser("forbidden_request_error", "LBL_RESOURCE_UNAVAILABLE_TITLE", error.message ? error.message : "LBL_RESOURCE_UNAVAILABLE");
+        app.logger.error(app.lang.get(error.message ? error.message : "LBL_RESOURCE_UNAVAILABLE"));
     };
     
     /**
