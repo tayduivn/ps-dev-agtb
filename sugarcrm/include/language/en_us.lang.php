@@ -117,6 +117,7 @@ $app_list_strings = array (
     'OAuthTokens' => 'OAuth Tokens',
     'Filters' => 'Filters',
     'UserSignatures' => 'User Signatures',
+    'Shippers' => 'Shipping Providers',
   ),
 
     'moduleIconList' =>
@@ -191,8 +192,8 @@ $app_list_strings = array (
    'ProductTemplates' => 'Product Template',
    'ProductCategories' => 'Product Category',
    'ProductTypes' => 'Product Type',
-
-        ),
+   'Shippers' => 'Shipping Provider',
+  ),
 
   'checkbox_dom'=> array(
     ''=>'',
