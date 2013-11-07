@@ -209,9 +209,14 @@
             ctxMdl.on('change:commit_stage', this.processCommitStage, this);
 
             this.context.parent.on('button:cancel_button:click', function(model, date) {
+                var ctx = this.context.parent || this.context,
+                    ctxModel = ctx.get('model'),
+                    options = {
+                        beforeParseData: _.bind(this.addModelTotalsToServerData, this, ctxModel)
+                    };
                 // no way to really tell what all manual math we've done, so when the row
                 // gets cancelled, just completely reload the data
-                this.loadData();
+                this.loadData(options);
             }, this);
 
             ctxMdl.on('change:date_closed', this.checkFetchNewTPByDate, this);
@@ -508,32 +513,36 @@
             shouldFetch = false,
             inTimePeriod = this.isDateInTimePeriod(newDate, this.modelTP.toJSON()),
             options = {},
-            inOpps = (this.currentModule == 'Opportunities');
+            inOpps = (this.currentModule == 'Opportunities'),
+            modelId = model.get('id');
 
         if(!inOpps) {
             // RevenueLineItems
 
+            // always fetch for RLIs
+            shouldFetch = true;
+
             if(!inTimePeriod) {
                 // since we don't have parent/Opp data available here, whatever TP the new closed date
                 // falls in should be fetched and this new total added to it if it isn't already included
-                shouldFetch = true;
-
                 // after fetching, add this model to the server data that comes back
                 options.beforeParseData = _.bind(this.addModelTotalsToServerData, this, model);
             }
         } else {
             // Opportunities
-            var alreadyInTP = _.contains(this.includedIdsInTP, model.get('id')),
+            var alreadyInTP = _.contains(this.includedIdsInTP, modelId),
                 newTotals;
 
             // check if date falls outside current timeperiod, if outside of current timeperiod
             // we need to fetch new timeperiod & projected data
             if(inTimePeriod) {
+                // check if RLI is being moved into the TP,
+                // if it has already been in the TP, dont do anything
                 if(!alreadyInTP) {
                     // item has been moved into the TP
 
                     // add model ID to included ids in timeperiod
-                    this.includedIdsInTP.push(model.get('id'));
+                    this.includedIdsInTP.push(modelId);
 
                     // fetch new TP based on the new date if user changed item's date
                     // to be outside & after the current timeperiod
@@ -545,6 +554,7 @@
             } else {
                 // date is not inside the current timeperiod
 
+                // check if the newDate is before or after the current TP
                 if(app.date.isDateAfter(newDate, this.modelTP.get('end_date'))) {
                     // handle if date is after model (Opportunity) timeperiod
 
@@ -557,14 +567,26 @@
                 } else if(app.date.isDateBefore(newDate, this.modelTP.get('start_date'))) {
                     // handle if date is before model (Opportunity) timeperiod
 
-                    // only need to handle if the item is moved out of the timeperiod, before the
-                    // start date of the main timeperiod, and it used to be in the timeperiod so
-                    // this item's totals went into the main totals for the timeperiod
+                    // check if this RLI has already been inside the TP
                     if(alreadyInTP) {
-                        // item has been moved out of the TP so subtract the model totals
-                        // from the current TP totals
-                        newTotals = this.removeModelTotalsFromServerData(model, this.serverData.toJSON());
-                        this.calculateData(this.mapAllTheThings(newTotals));
+                        // RLI was in the TP, but is being moved out to before the TP
+
+                        // check to see if this is the last RLI in the TP
+                        var isLastRLIInTP = (this.includedIdsInTP.length === 1 && this.includedIdsInTP[0] === modelId);
+
+                        if(isLastRLIInTP) {
+                            // since this is the last RLI in the timeperiod, when we move this to an
+                            // older timeperiod, fetch new TP based on the new date
+                            shouldFetch = true;
+
+                            // after fetching, add this model to the server data that comes back
+                            options.beforeParseData = _.bind(this.addModelTotalsToServerData, this, model);
+                        } else {
+                            // item has been moved out of the TP, but other RLIs in the TP are keeping
+                            // the dashlet from updating, so subtract the model totals from the current TP totals
+                            newTotals = this.removeModelTotalsFromServerData(model, this.serverData.toJSON());
+                            this.calculateData(this.mapAllTheThings(newTotals));
+                        }
                     } else {
                         // if trying to move the RLI to a timeperiod before the Opportunity timeperiod start date
                         // set the date to the same start date as the Opp so we don't pull an older timeperiod
@@ -577,7 +599,7 @@
 
                 // if this model is already in the timeperiod, remove it
                 if(alreadyInTP) {
-                    this.includedIdsInTP = _.without(this.includedIdsInTP, model.get('id'));
+                    this.includedIdsInTP = _.without(this.includedIdsInTP, modelId);
                 }
             }
         }
@@ -622,9 +644,15 @@
      * @returns {Object} returns the data Object back with updated totals
      */
     addModelTotalsToServerData: function(model, data) {
-        data.amount = app.math.add(data.amount, model.get('likely_case'));
-        data.best_case = app.math.add(data.best_case, model.get('best_case'));
-        data.worst_case = app.math.add(data.worst_case, model.get('worst_case'));
+        // if these totals haven't already been added into the data from the server
+        // occurs when an RLI was previously saved outside of a timeperiod and is being
+        // brought back into this timeperiod. If the RLI *did* start in the current TP
+        // and has been moved around and is being brought back in, then don't re-add the totals
+        if(!_.contains(data.includedIdsInLikelyTotal, model.get('id'))) {
+            data.amount = app.math.add(data.amount, model.get('likely_case'));
+            data.best_case = app.math.add(data.best_case, model.get('best_case'));
+            data.worst_case = app.math.add(data.worst_case, model.get('worst_case'));
+        }
 
         return data;
     },
