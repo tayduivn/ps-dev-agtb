@@ -439,6 +439,11 @@ FLEXLIST GENERIC */
         span {
           overflow-x: visible;
         }
+        .btn-group {
+          position: absolute;
+          margin-top: -9px;
+          left: 8px;
+        }
         .btn.checkall {
           padding: 4px 7px;
         }
@@ -905,14 +910,16 @@ table.dataTable th:active {
     margin: 0;
   }
   .dropdown {
-    position: absolute;
-    right: 0;
-    width: 72px;
-    &.open > .btn {
-      .box-shadow(none);
-      background-color: darken(@grayLighter, 5%);
-      > [class^="icon-"] {
-        color: @grayDark;
+    &.open {
+      position: absolute;
+      right: 0;
+      width: 72px;
+      .btn {
+        .box-shadow(none);
+        background-color: darken(@grayLighter, 5%);
+        > [class^="icon-"] {
+          color: @grayDark;
+        }
       }
     }
   }
