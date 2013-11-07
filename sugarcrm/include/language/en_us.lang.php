@@ -34,6 +34,7 @@ $app_list_strings = array (
     'Calendar' => 'Calendar',
     'Leads' => 'Leads',
     'Currencies' => 'Currencies',
+    'Project' => 'Project',
     //BEGIN SUGARCRM flav=pro ONLY
     'Contracts'=>'Contracts',
     'Quotes' => 'Quotes',
