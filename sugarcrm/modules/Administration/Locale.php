@@ -24,6 +24,7 @@ global $current_user, $sugar_config;
 if (!is_admin($current_user)) sugar_die("Unauthorized access to administration.");
 
 require_once('modules/Configurator/Configurator.php');
+require_once('include/MetaDataManager/MetaDataManager.php');
 
 
 echo getClassicModuleTitle(
@@ -56,7 +57,17 @@ if(isset($_REQUEST['process']) && $_REQUEST['process'] == 'true') {
     if ($locale->invalidLocaleNameFormatUpgrade()) {
         $locale->removeInvalidLocaleNameFormatUpgradeNotice();
     }
-	header('Location: index.php?module=Administration&action=index');
+
+    //Rebuild language cache then using ping to trigger refresh of client metadata if necessary
+    $mm = MetaDataManager::getManager();
+    $mm->rebuildLanguagesCache();
+    echo("
+            <script>
+            var app = window.parent.SUGAR.App;
+            app.api.call('read', app.api.buildURL('ping'));
+            app.router.navigate('#bwc/index.php?module=Administration&action=index', {trigger:true, replace:true});
+            </script>"
+    );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

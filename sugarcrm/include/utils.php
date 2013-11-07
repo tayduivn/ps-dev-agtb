@@ -4004,7 +4004,7 @@ function sugarArrayIntersectMerge($gimp, $dom)
             if (isset($dom[$domKey])) {
                 if (is_array($dom[$domKey])) {
                     foreach ($gimp[$domKey] as $key => $value) {
-                        if (isset($dom[$domKey][$key])) {
+                        if (!empty($dom[$domKey][$key])) { // SP-1818: should not overwrite if string is empty
                             $gimp[$domKey][$key] = $dom[$domKey][$key];
                         }
                     }
@@ -4036,12 +4036,14 @@ function sugarLangArrayMerge($gimp, $dom)
                 if (is_array($domVal)) {
                     $tempArr = array();
                     foreach ( $domVal as $domArrKey => $domArrVal )
-                        $tempArr[$domArrKey] = $domArrVal;
+                        if (!empty($domArrVal)) // SP-1818: should not overwrite if string is empty
+                            $tempArr[$domArrKey] = $domArrVal;
                     foreach ( $gimp[$domKey] as $gimpArrKey => $gimpArrVal )
                         if ( !isset($tempArr[$gimpArrKey]) )
                             $tempArr[$gimpArrKey] = $gimpArrVal;
-                    $gimp[$domKey] = $tempArr;
-                } else {
+                    $domVal = $tempArr;
+                }
+                if (!empty($domVal)) { // SP-1818: should not overwrite if string is empty
                     $gimp[$domKey] = $domVal;
                 }
             } else {
