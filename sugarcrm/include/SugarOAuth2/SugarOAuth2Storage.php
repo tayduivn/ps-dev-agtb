@@ -383,6 +383,9 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
     {
         $tokenSeed = BeanFactory::newBean('OAuthTokens');
         $token = $tokenSeed->retrieve_by_string_fields(array('download_token'=>$oauth_token));
+        if (empty($token->id)) {
+            return NULL;
+        }
 
         $clientBean = BeanFactory::retrieveBean('OAuthKeys',$token->consumer);
 
