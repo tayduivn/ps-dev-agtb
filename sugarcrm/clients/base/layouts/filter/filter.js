@@ -643,7 +643,6 @@
     _render: function() {
         if (app.acl.hasAccess(this.aclToCheck, this.module)) {
             app.view.Layout.prototype._render.call(this);
-            this.initializeFilterState();
         }
     },
 

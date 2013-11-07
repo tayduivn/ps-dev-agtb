@@ -62,6 +62,13 @@ describe("Base.Layout.Filterpanel", function(){
             expect(spy).toHaveBeenCalled();
         });
 
+        it("should trigger `filter:reinitialize` on render", function() {
+            var spy = sinon.spy();
+            layout.on('filter:reinitialize', spy);
+            layout.render();
+            expect(spy).toHaveBeenCalled();
+        });
+
         describe('events', function(){
            it('should update current module and link on filter change', function(){
                layout.trigger('filterpanel:change:module','test','testLink');

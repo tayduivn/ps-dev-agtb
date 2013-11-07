@@ -151,7 +151,7 @@ describe("Base.Layout.Filter", function () {
                 parentLayout.trigger('filter:remove');
                 expect(stub).toHaveBeenCalled();
             });
-            it('should call initializeFilterState  on parent layout filter:remove', function () {
+            it('should call initializeFilterState  on parent layout filter:reinitialize', function () {
                 var stub = sinonSandbox.stub(layout, 'initializeFilterState');
                 // clear previous events
                 layout.off();
@@ -814,10 +814,11 @@ describe("Base.Layout.Filter", function () {
             var meta = layout.getModuleFilterMeta('Accounts');
             expect(meta).toEqual(result);
         });
-        it('should init filter state on render', function () {
+        //See SP-1820. We should initialize filter state if and only if all the filter components are already rendered.
+        it('should not init filter state on render', function () {
             var initStub = sinonSandbox.stub(layout, 'initializeFilterState');
             layout._render();
-            expect(initStub).toHaveBeenCalled();
+            expect(initStub).not.toHaveBeenCalled();
         });
         it('should clear filters on unbind', function () {
             var oFilters = layout.filters;

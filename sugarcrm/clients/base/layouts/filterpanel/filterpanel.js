@@ -105,5 +105,17 @@
                 }
             });
         }
+    },
+
+    /**
+     * @override
+     * @private
+     */
+    _render: function() {
+        this._super('_render');
+        // `filter-rows` view is outside of `filter` layout and is rendered after `filter` layout is rendered.
+        // Now that we are able to preserve last search, we need to initialize filter only once all the filter
+        // components rendered.
+        this.trigger('filter:reinitialize');
     }
 })
