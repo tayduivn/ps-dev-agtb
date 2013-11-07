@@ -1,7 +1,8 @@
 describe("enum field", function() {
     var app, field, stub_appListStrings,
         module = 'Contacts',
-        fieldName = 'test_enum';
+        fieldName = 'test_enum',
+        model;
 
     beforeEach(function() {
         Handlebars.templates = {};
@@ -13,6 +14,9 @@ describe("enum field", function() {
         SugarTest.testMetadata.set();
         SugarTest.testMetadata._addDefinition(fieldName, 'fields', {
         }, module);
+
+        SugarTest.app.data.declareModels();
+        model = app.data.createBean(module);
 
         stub_appListStrings = sinon.stub(app.lang, 'getAppListStrings', function() {
             return {"":"","Defect":"DefectValue","Feature":"FeatureValue"};
@@ -37,6 +41,7 @@ describe("enum field", function() {
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
+        model = null;
         field = null;
         stub_appListStrings.restore();
     });
@@ -72,7 +77,7 @@ describe("enum field", function() {
     });
 
     it("should default the value of the field to the first option if undefined", function() {
-        var field = SugarTest.createField("base", fieldName, "enum", "edit", {options: "bugs_type_dom"});
+        var field = SugarTest.createField('base', fieldName, 'enum', 'edit', {options: "bugs_type_dom"}, module, model);
         field.items = {'first': 'first', 'second': 'second'};
         var loadEnumSpy = sinon.spy(field, "loadEnumOptions");
         field.render();
@@ -127,13 +132,14 @@ describe("enum field", function() {
         });
         it('should avoid duplicate enum api call', function() {
             var apiSpy = sinon.spy(app.api, 'enumOptions');
-            field = SugarTest.createField('base', fieldName, 'enum', 'detail', {}, module);
-            var field2 = SugarTest.createField('base', fieldName, 'enum', 'detail', {}, module, null, field.context),
-                expected = {
+            var field = SugarTest.createField('base', fieldName, 'enum', 'detail', {}, module, model);
+            var field2 = SugarTest.createField('base', fieldName, 'enum', 'detail', {}, module, model, field.context);
+            var expected = {
                     aaa: 'bbb',
                     fake1: 'fvalue1',
                     fake2: 'fvalue2'
                 };
+            sinon.stub(field.model, 'setDefaultAttribute');
             //setup fake REST end-point for enum
             SugarTest.seedFakeServer();
             SugarTest.server.respondWith('GET', /.*rest\/v10\/Contacts\/enum\/test_enum.*/,

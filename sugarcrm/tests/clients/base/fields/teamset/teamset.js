@@ -24,9 +24,11 @@ describe("Base.Field.Teamset", function () {
         };
         sinonSandbox = sinon.sandbox.create();
         SugarTest.loadComponent("base", "field", "relate");
-        var model = new Backbone.Model({team_name: [
-            {id: 'test-id', name: 'blahblah', primary: false}
-        ]});
+        var model = new Backbone.Model({
+            team_name: [{id: 'test-id', name: 'blahblah', primary: false}],
+            setDefaultAttribute: sinon.stub(),
+            removeDefaultAttribute: sinon.stub()
+        });
         field = SugarTest.createField("base", "team_name", "teamset", "edit", fieldDef, null, model);
 
         if (!$.fn.select2) {
@@ -77,6 +79,8 @@ describe("Base.Field.Teamset", function () {
 
     it("should load the default team setting that is specified in the user profile settings", function () {
         field.model = new Backbone.Model();
+        field.model.setDefaultAttribute = sinon.stub();
+        field.model.removeDefaultAttribute = sinon.stub();
         var expected = [
                 {
                     id: '1', name: 'global'
