@@ -438,4 +438,7 @@ $mod_strings = array (
 
     'LBL_DASHLET_MY_FORECAST' => 'My Forecast',
     'LBL_DASHLET_MY_TEAMS_FORECAST' => "My Team's Forecast",
+
+    'LBL_CANCEL_BUTTON_LABEL_ORDERBY_CONT' => 'to not sort the worksheet.',
+    'LBL_CONFIRM_BUTTON_LABEL_ORDERBY_CONT' => 'to sort the worksheet and discard changes.'
 );

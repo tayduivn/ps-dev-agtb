@@ -234,13 +234,25 @@
         collection.orderBy = self.orderBy;
         options = self.getSortOptions(collection);
 
+        if(this.triggerBefore('list:orderby', options)) {
+            self._setOrderBy(options);
+        }
+    },
+
+    /**
+     * Run the order by on the collection
+     *
+     * @param {Object} options
+     * @private
+     */
+    _setOrderBy: function(options) {
         if(this.orderByLastStateKey) {
-            app.user.lastState.set(this.orderByLastStateKey, self.orderBy);
+            app.user.lastState.set(this.orderByLastStateKey, this.orderBy);
         }
         // refetch the collection
-        self.context.resetLoadFlag(false);
-        self.context.set('skipFetch', false);
-        self.context.loadData(options);
+        this.context.resetLoadFlag(false);
+        this.context.set('skipFetch', false);
+        this.context.loadData(options);
     },
     /**
      * Gets options for fetch call for list sorting
