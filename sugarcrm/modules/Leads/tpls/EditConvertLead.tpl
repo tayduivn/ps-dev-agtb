@@ -147,22 +147,22 @@ grid.render();
 {/literal}
 //tooltips
 new YAHOO.widget.Tooltip("module_tooltip", {ldelim}
-    context: grid.getColumn(0).getThEl(),
+    context: grid.getColumn(2).getThEl(),
     text: '{sugar_translate label="LBL_MODULE_TIP"}',
     showDelay: 500
 {rdelim});
 new YAHOO.widget.Tooltip("required_tooltip", {ldelim}
-    context: grid.getColumn(1).getThEl(),
+    context: grid.getColumn(3).getThEl(),
     text: '{sugar_translate label="LBL_REQUIRED_TIP"}',
     showDelay: 500
 {rdelim});
 new YAHOO.widget.Tooltip("copy_tooltip", {ldelim}
-    context: grid.getColumn(2).getThEl(),
+    context: grid.getColumn(4).getThEl(),
     text: '{sugar_translate label="LBL_COPY_TIP"}',
     showDelay: 500
 {rdelim});
 new YAHOO.widget.Tooltip("delete_tooltip", {ldelim}
-    context: grid.getColumn(3).getThEl(),
+    context: grid.getColumn(5).getThEl(),
     text: '{sugar_translate label="LBL_DELETE_TIP"}',
     showDelay: 500
 {rdelim});

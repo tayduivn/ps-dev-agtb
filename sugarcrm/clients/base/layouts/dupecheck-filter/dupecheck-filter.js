@@ -12,6 +12,15 @@
  */
 ({
     extendsFrom: 'FilterLayout',
+    initialFilter: 'all_records',
+
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        this.name = 'filter';
+
+        //initialize the last filter to show all duplicates before allowing user to change the filter
+        this.setLastFilter(this.module, this.layoutType, this.initialFilter);
+    },
 
     /**
      * {@inheritDoc}
@@ -26,19 +35,11 @@
     /**
      * {@inheritDoc}
      *
-     * Deactivate stickiness on find duplicates filter.
-     */
-    setLastFilter: function() {
-        return '';
-    },
-
-    /**
-     * {@inheritDoc}
-     *
      * Override getting last filter in order to retrieve found duplicates for
      * initial set.
      */
     getLastFilter: function() {
-        return 'all_records';
+        var lastFilter = this._super('getLastFilter', arguments);
+        return (_.isUndefined(lastFilter)) ? this.initialFilter : lastFilter;
     }
 })

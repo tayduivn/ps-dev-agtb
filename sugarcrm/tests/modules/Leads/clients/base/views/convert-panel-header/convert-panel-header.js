@@ -183,6 +183,14 @@ describe("Leads.Base.View.ConvertPanelHeader", function() {
         expect(view.getField('reset_button').$el).toBeHidden();
     });
 
+    it("should switch subview toggle labels if no duplicates found", function() {
+        var dupecheckLabelBefore = view.$('.toggle-link.dupecheck').text(),
+            createLabelBefore = view.$('.toggle-link.create').text();
+        view.setDupeCheckResults(0);
+        expect(view.$('.toggle-link.dupecheck').text()).not.toEqual(dupecheckLabelBefore);
+        expect(view.$('.toggle-link.create').text()).not.toEqual(createLabelBefore);
+    });
+
     var toggleSubView = function(toggle) {
         view.layout.currentToggle = toggle;
         view.handleToggleChange(toggle);

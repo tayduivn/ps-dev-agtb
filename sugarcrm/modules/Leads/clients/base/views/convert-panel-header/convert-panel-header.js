@@ -228,9 +228,8 @@
             this.renderDupeCheckResults('results');
         } else {
             this.renderDupeCheckResults('clear');
-            this.toggleSubViewLink('dupecheck', false);
-            this.toggleSubViewLink('create', false);
         }
+        this.setSubViewToggleLabels(duplicateCount);
     },
 
     /**
@@ -287,12 +286,37 @@
     },
 
     /**
+     * Switch subview toggle labels based on whether duplicates were found or not
+     * @param duplicateCount
+     */
+    setSubViewToggleLabels: function(duplicateCount) {
+        if (duplicateCount > 0) {
+            this.setSubViewToggleLabel('dupecheck', 'LBL_CONVERT_IGNORE_DUPLICATES');
+            this.setSubViewToggleLabel('create', 'LBL_CONVERT_BACK_TO_DUPLICATES');
+            this.searchMode = false;
+        } else {
+            this.setSubViewToggleLabel('dupecheck', 'LBL_CONVERT_SWITCH_TO_CREATE');
+            this.setSubViewToggleLabel('create', 'LBL_CONVERT_SWITCH_TO_SEARCH');
+            this.searchMode = true;
+        }
+    },
+
+    /**
+     * Set label for given subview toggle
+     * @param currentToggle
+     * @param label
+     */
+    setSubViewToggleLabel: function(currentToggle, label) {
+        this.$('.subview-toggle .' + currentToggle).text(this.getLabel(label, {}));
+    },
+
+    /**
      * Toggle between Associate and Reset buttons
      * @param complete
      */
     toggleButtons: function(complete) {
         var associateButton = 'associate_button',
-            resetButton = 'reset_button'
+            resetButton = 'reset_button';
         if (complete) {
             this.getField(associateButton).hide();
             this.getField(resetButton).show();
