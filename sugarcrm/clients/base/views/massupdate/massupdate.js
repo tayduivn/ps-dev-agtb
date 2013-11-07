@@ -102,8 +102,8 @@
         this._settings = _.extend(
             this._defaultSettings,
             {
-                mass_delete_chunk_size: app.config.massDeleteChunkSize,
-                mass_update_chunk_size: app.config.massUpdateChunkSize
+                mass_delete_chunk_size: app.config.massActions.massDeleteChunkSize,
+                mass_update_chunk_size: app.config.massActions.massUpdateChunkSize
             },
             this.meta && this.meta.settings || {}
         );
