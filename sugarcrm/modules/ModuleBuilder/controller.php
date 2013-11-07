@@ -442,6 +442,7 @@ class ModuleBuilderController extends SugarController
 
                 $df = new DynamicField ($module);
                 $mod = BeanFactory::getBean($module);
+                $obj = BeanFactory::getObjectName($module);
                 $df->setup($mod);
 
                 $field->save($df);
@@ -458,8 +459,9 @@ class ModuleBuilderController extends SugarController
                 $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($class_name), true, false);
                 if ($module == 'Users') {
                     $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array('Employee'), true, false);
-
                 }
+                //Ensure the vardefs are up to date for this module before we rebuild the cache now.
+                VardefManager::loadVardef($module, $obj, true);
 
                 //BEGIN SUGARCRM flav=pro ONLY
                 //Make sure to clear the vardef for related modules as well
@@ -513,6 +515,7 @@ class ModuleBuilderController extends SugarController
 
         $df = new StandardField ($module);
         $mod = BeanFactory::getBean($module);
+        $obj = BeanFactory::getObjectName($module);
         $class_name = $GLOBALS ['beanList'] [$module];
         $df->setup($mod);
 
@@ -536,6 +539,9 @@ class ModuleBuilderController extends SugarController
         //#28707 ,clear all the js files in cache
         $repair->module_list = array();
         $repair->clearJsFiles();
+
+        //Ensure the vardefs are up to date for this module before we rebuild the cache now.
+        VardefManager::loadVardef($module, $obj, true);
         //BEGIN SUGARCRM flav=pro ONLY
         //Make sure to clear the vardef for related modules as well
         $relatedMods = array();
