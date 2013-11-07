@@ -63,6 +63,13 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
         'link' => 'members',
       ),
     ),
+    array(
+        'layout' => 'subpanel',
+        'label' => 'LBL_EMAILS_SUBPANEL_TITLE',
+        'context' => array (
+            'link' => 'emails',
+        ),
+    ),
     array (
       'layout' => 'subpanel',
       'label' => 'LBL_CONTACTS_SUBPANEL_TITLE',

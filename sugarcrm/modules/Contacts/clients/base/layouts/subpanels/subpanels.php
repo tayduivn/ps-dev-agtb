@@ -70,6 +70,13 @@ $viewdefs['Contacts']['base']['layout']['subpanels'] = array (
         'link' => 'opportunities',
       ),
     ),
+    array(
+        'layout' => 'subpanel',
+        'label' => 'LBL_EMAILS_SUBPANEL_TITLE',
+        'context' => array (
+            'link' => 'emails',
+        ),
+    ),
     array (
       'layout' => "subpanel",
       'label' => 'LBL_CASES_SUBPANEL_TITLE',
