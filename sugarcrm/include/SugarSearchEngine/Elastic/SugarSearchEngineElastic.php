@@ -347,7 +347,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $displayText = "";
         $timeOutValue = $this->_client->getConfig('timeout');
         try {
-            $this->_client->setConfigValue('timeout', 2);
+            $this->_client->setConfigValue('timeout', 5);
             $results = $this->_client->getStatus()->getServerStatus();
             if (!empty($results['ok']) ) {
                 $isValid = true;
