@@ -55,10 +55,12 @@
             messages: [app.lang.get(msg, "Forecasts")]
         });
 
-        alert.getCloseSelector().on('click', function() {
-            alert.getCloseSelector().off();
+        var $close = alert.getCloseSelector();
+        $close.on('click', function() {
+            $close.off();
             app.router.navigate('#Home', {trigger: true});
         });
+        app.accessibility.run($close, 'click');
     },
 
     /**

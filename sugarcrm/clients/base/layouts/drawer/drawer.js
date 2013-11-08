@@ -433,6 +433,7 @@
             }
             return false;
         }, this));
+        app.accessibility.run($drawerTab, 'click');
     },
 
     /**

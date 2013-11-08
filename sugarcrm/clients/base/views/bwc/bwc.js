@@ -309,6 +309,7 @@
             parent.SUGAR.App.router.navigate(sidecarUrl, {trigger: true});
             return false;
         });
+        app.accessibility.run(elem, 'click');
     },
 
     /**

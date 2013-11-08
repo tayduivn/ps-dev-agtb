@@ -88,6 +88,9 @@
      * @param string module     The module that we are currently on.
      */
     showRLIWarningMessage: function(module) {
+        var self = this,
+            $close;
+        
         // add a callback to close the alert if users navigate from the page
         app.routing.before('route', this.dismissAlert, undefined, this);
 
@@ -102,16 +105,22 @@
             messages: message
         });
 
-        this.alert.$('a[href]').on('click.open', _.bind(function() {
-            // remove the event handler
-            this.alert.$('a[href]').off('click.open');
-            this.openRLICreate();
-        }, this));
+        this.alert.$('a[href]').each(function() {
+            var $el = $(this);
+            $el.on('click.open', function() {
+                // remove the event handler
+                $el.off('click.open');
+                self.openRLICreate();
+            });
+            app.accessibility.run($el, 'click');
+        });
 
-        this.alert.getCloseSelector().on('click', _.bind(function() {
-            this.alert.getCloseSelector().off('click');
+        $close = this.alert.getCloseSelector();
+        $close.on('click', _.bind(function() {
+            $close.off('click');
             app.routing.offBefore('route', this.dismissAlert, this);
         }, this));
+        app.accessibility.run($close, 'click');
     },
 
     /**

@@ -155,6 +155,7 @@
             $('#systemTour #screen1').removeClass("hide");
             centerModal();
         });
+            app.accessibility.run(this.$('#systemTour a.close'), 'click');
         this.$("#systemTour .screen .done").click(function() {
             $('#systemTour').modal('hide');
             $('#systemTour #screen1').removeClass("hide");
@@ -164,11 +165,12 @@
             $(arrows[numArrows-1].target).popoverext('hide');
             centerModal();
         });
-
+            app.accessibility.run(this.$('#systemTour a.close'), 'click');
         this.$("#systemTour .screen .next").each(function(index){
             var screenId = "#screen" + (index+1);
             var nextScreenId = "#screen" + (index+2);
-                $(this).click(function() {
+            var $el = $(this);
+            $el.click(function() {
                     $('#systemTour '+screenId).toggleClass("hide");
                     $('#systemTour '+nextScreenId).toggleClass("hide");
                     if(index > 0) {
@@ -180,13 +182,15 @@
 
                         centerModal();
                 });
+            app.accessibility.run($el, 'click');
         });
 
         this.$("#systemTour .screen .back").each(function(index){
             var screenId = "#screen" + (index+2);
             var prevNum = (index+1);
             var prevScreenId = "#screen" + (index+1);
-                $(this).click(function() {
+            var $el = $(this);
+            $el.click(function() {
                     $('#systemTour '+screenId).toggleClass("hide");
                     $('#systemTour '+prevScreenId).toggleClass("hide");
                     if(index > 0) {
@@ -195,23 +199,21 @@
                     $(arrows[index].target).popoverext('hide');
                         centerModal();
                 });
-
-
+            app.accessibility.run($el, 'click');
         });
 
         this.$("#systemTour .screen .skip").each(function(index){
             var screenId = "#screen" + (index+1);
             var totalScreens = $("#systemTour .screen").length,
-                lastScreenId = "#screen" +totalScreens;
-
-
-            $(this).click(function() {
+                lastScreenId = "#screen" +totalScreens,
+                $el = $(this);
+            $el.click(function() {
                 $('#systemTour '+screenId).toggleClass("hide");
                 $('#systemTour '+lastScreenId).toggleClass("hide");
 //                $(arrows[numArrows-1].target).popoverext('show');
                 centerModal()
             });
-
+            app.accessibility.run($el, 'click');
         });
         }
 

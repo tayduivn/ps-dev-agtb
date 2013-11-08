@@ -274,13 +274,15 @@
         var $searchBox = this.$('[data-provide=typeahead]');
 
         if (!$searchBox.is(':visible')) {
+            var body = $('body');
             this.$el.addClass('active');
-            $('body').on('click.globalsearch.data-api', _.bind(function(event) {
+            body.on('click.globalsearch.data-api', _.bind(function(event) {
                 if (!$.contains(this.el, event.target)) {
                     this.$el.removeClass('active');
-                    $('body').off('click.globalsearch.data-api');
+                    body.off('click.globalsearch.data-api');
                 }
             }, this));
+            app.accessibility.run(body, 'click');
             $searchBox.focus();
             return;
         }

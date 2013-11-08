@@ -218,10 +218,14 @@
         });
 
         // Bind clock icon click to open up the timepicker
-        this.$('.ui-timepicker-input').parent().find('.add-on:last').on('click', function(evt) {
-            evt.preventDefault();
-            evt.stopPropagation();
-            self.$('.ui-timepicker-input').timepicker('show');
+        this.$('.ui-timepicker-input').parent().find('.add-on:last').each(function() {
+            var $el = $(this);
+            $el.on('click', function(evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                self.$('.ui-timepicker-input').timepicker('show');
+            });
+            app.accessibility.run($el, 'click');
         });
     },
 
