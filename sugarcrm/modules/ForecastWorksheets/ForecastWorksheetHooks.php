@@ -89,6 +89,11 @@ class ForecastWorksheetHooks extends AbstractForecastHooks
      */
     public static function managerNotifyCommitStage($bean, $event, $args)
     {
+
+        /**
+         * Always Return false for now as notifications are not setup.
+         */
+        return false;
         /**
          * Only run this logic hook when the following conditions are met
          *  - Bean is not a Draft Record
