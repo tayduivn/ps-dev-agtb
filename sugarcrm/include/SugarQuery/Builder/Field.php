@@ -228,7 +228,7 @@ class SugarQuery_Builder_Field
     }
 
     /**
-     * Check if the field should be marked deleted
+     * Determines if a field should be marked nonDb and calls markNondb if so
      */
     public function shouldMarkDeleted()
     {
@@ -238,7 +238,9 @@ class SugarQuery_Builder_Field
     }
 
     /**
-     * place-holder, overwritten in child classes
+     * Will clean the field by using the vardefs to determine if the field can be added to the query
+     * it will also add additional fields to the query or modify the table, field variables of the object
+     * so that on compilation the field is a correct db field.
      */
     public function cleanField()
     {
