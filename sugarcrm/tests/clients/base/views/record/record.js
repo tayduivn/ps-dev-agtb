@@ -767,7 +767,44 @@ describe("Record View", function () {
             expect(_.contains(editableFields, 'description')).toBe(true);
             expect(actual).toBe(true);
         });
+        it('should warn unsaved changes when values inside a fieldset changes', function() {
+            view.meta.panels[0].fields.push({
+                name: 'foo',
+                fields: [{
+                    name: 'bar'
+                }]
+            });
+            view.model.setSyncedAttributes({
+                bar: 'test1'
+            });
+            view.model.set({
+                bar: 'test2'
+            });
 
+            expect(view.hasUnsavedChanges()).toBe(true);
+        });
+        it('should not warn unsaved changes when the value changed is marked as non-editable.', function() {
+            view.noEditFields = ['case_number'];
+            view.model.setSyncedAttributes({
+                case_number: 'test1'
+            });
+            view.model.set({
+                case_number: 'test2'
+            });
+
+            expect(view.hasUnsavedChanges()).toBe(false);
+        });
+        it('should not warn unsaved changes when the value changed is a read-only field.', function() {
+            view.meta.panels[1].fields[1].readonly = true;
+            view.model.setSyncedAttributes({
+                case_number: 'test1'
+            });
+            view.model.set({
+                case_number: 'test2'
+            });
+
+            expect(view.hasUnsavedChanges()).toBe(false);
+        });
     });
 
     describe('_getCellToEllipsify', function () {

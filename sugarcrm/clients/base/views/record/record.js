@@ -103,17 +103,42 @@
      * @link {app.plugins.view.editable}
      */
     hasUnsavedChanges: function() {
+        var changedAttributes,
+            editableFieldNames = [],
+            unsavedFields,
+            self = this,
+            setAsEditable = function(fieldName) {
+                if (fieldName && _.indexOf(self.noEditFields, fieldName) === -1) {
+                    editableFieldNames.push(fieldName);
+                }
+            };
+
         if (this.resavingAfterMetadataSync)
             return false;
 
-        var changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
+        changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
 
         if (_.isEmpty(changedAttributes)) {
             return false;
         }
 
-        var formFields = _.compact(_.pluck(this.editableFields, 'name')),
-            unsavedFields = _.intersection(_.keys(changedAttributes), formFields);
+        // get names of all editable fields on the page including fields in a fieldset
+        _.each(this.meta.panels, function(panel) {
+            _.each(panel.fields, function(field) {
+                if (!field.readonly) {
+                    if (field.fields && _.isArray(field.fields)) {
+                        _.each(field.fields, function(field) {
+                            setAsEditable(field.name);
+                        });
+                    } else {
+                        setAsEditable(field.name);
+                    }
+                }
+            });
+        });
+
+        // check whether the changed attributes are among the editable fields
+        unsavedFields = _.intersection(_.keys(changedAttributes), editableFieldNames);
 
         return !_.isEmpty(unsavedFields);
     },
