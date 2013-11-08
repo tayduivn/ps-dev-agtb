@@ -204,6 +204,7 @@ class ModuleScanner{
 	'sugar_fopen',
 	'sugar_mkdir',
 	'sugar_file_put_contents',
+	'sugar_file_put_contents_atomic',
 	'sugar_chgrp',
 	'sugar_chmod',
 	'sugar_touch',
