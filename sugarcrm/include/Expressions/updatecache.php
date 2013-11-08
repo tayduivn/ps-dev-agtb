@@ -220,10 +220,7 @@ create_cache_directory("Expressions/functionmap.php");
 
 $fmap = sugar_cached("Expressions/functionmap.php");
 // now write the new contents to functionmap.php
-$fh = fopen($fmap, 'w');
-fwrite($fh, $new_contents);
-fclose($fh);
-
+sugar_file_put_contents($fmap, $new_contents);
 
 // write the functions cache file
 $cache_contents = $contents["javascript"];
@@ -265,7 +262,7 @@ $cache_contents = substr($cache_contents, 0, -1);
 $cache_contents .= "};\n";
 
 create_cache_directory("Expressions/functions_cache_debug.js");
-file_put_contents(sugar_cached("Expressions/functions_cache_debug.js"), $cache_contents);
+sugar_file_put_contents(sugar_cached("Expressions/functions_cache_debug.js"), $cache_contents);
 
 
 require_once("jssource/minify_utils.php");
