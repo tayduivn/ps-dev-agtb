@@ -157,7 +157,7 @@ describe("Forecasts.Layout.Records", function() {
         it('should set default values on the initOptions Context', function() {
             layout.initForecastsModule(initData, {});
 
-            expect(layout.initOptions.context.get('currentForecastCommitDate')).toEqual(undefined);
+            expect(layout.initOptions.context.get('currentForecastCommitDate')).toEqual(null);
             expect(layout.initOptions.context.get('selectedTimePeriod')).toEqual(initData.defaultSelections.timeperiod_id.id);
             expect(layout.initOptions.context.get('selectedRanges')).toEqual(initData.defaultSelections.ranges);
 

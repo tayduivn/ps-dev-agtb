@@ -121,6 +121,12 @@
      * @param boolean
      */
     isCollectionSyncing: false,
+
+    /**
+     * is the commit history being loading
+     * @param boolean
+     */
+    isLoadingCommits: false,
     
     /**
      * Target URL of the nav action
@@ -149,6 +155,9 @@
     _dispose: function() {
         if (!_.isUndefined(this.context.parent) && !_.isNull(this.context.parent)) {
             this.context.parent.off(null, null, this);
+            if (this.context.parent.has('collection')) {
+                this.context.parent.get('collection').off(null, null, this);
+            }
         }
         app.routing.offBefore('route', this.beforeRouteHandler, this);
         $(window).off("beforeunload." + this.worksheetType);
@@ -249,6 +258,17 @@
                     }
                 }, this);
 
+                if (this.context.parent.has('collection')) {
+                    var parentCollection = this.context.parent.get('collection');
+
+                    parentCollection.on('data:sync:start', function() {
+                        this.isLoadingCommits = true;
+                    }, this);
+                    parentCollection.on('data:sync:complete', function() {
+                        this.isLoadingCommits = false;
+                    }, this);
+                }
+
                 this.collection.on('data:sync:start', function() {
                     this.isCollectionSyncing = true;
                 }, this);
@@ -263,7 +283,9 @@
                 this.collection.on('reset', function() {
                     var ctx = this.context.parent || this.context;
                     ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, false);
-                    this.checkForDraftRows(ctx.get('currentForecastCommitDate'));
+                    if (this.isLoadingCommits === false) {
+                        this.checkForDraftRows(ctx.get('currentForecastCommitDate'));
+                    }
                 }, this);
 
                 this.collection.on('change:quota', function(model, changed) {
