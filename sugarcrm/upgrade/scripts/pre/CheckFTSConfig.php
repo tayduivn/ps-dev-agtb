@@ -37,13 +37,25 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
 
     public function run()
     {
-        $ftsConfig = $GLOBALS['sugar_config']['full_text_engine'];
+        global $sugar_config;
+
+        $ftsConfig = isset($sugar_config['full_text_engine']) ? $sugar_config['full_text_engine'] : null;
         // Check that Elastic info is set (only currently supported search engine)
         if (empty($ftsConfig) || empty($ftsConfig['Elastic']) ||
                 empty($ftsConfig['Elastic']['host']) || empty($ftsConfig['Elastic']['port'])) {
             $this->error('Elastic Full Text Search engine needs to be configured on this Sugar instance prior to upgrade.');
             $this->error('Access Full Text Search configuration under Administration > Search.');
             $this->fail();
+        } else {
+            // Test Elastic FTS connection
+            require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+            $searchEngine = SugarSearchEngineFactory::getInstance('Elastic', $ftsConfig['Elastic']);
+            $status = $searchEngine->getServerStatus();
+            if (!$status['valid']) {
+                $this->error('Connection test for Elastic Full Text Search engine failed.  Check your FTS configuration.');
+                $this->error('Access Full Text Search configuration under Administration > Search.');
+                $this->fail();
+            }
         }
     }
 }
