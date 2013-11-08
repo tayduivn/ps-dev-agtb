@@ -811,10 +811,12 @@ if (typeof(ModuleBuilder) == 'undefined') {
 						// Add a double click event that shows what field a combo
 						// field contains
 						fieldElem.ondblclick = function() {
-							var fieldList = document.getElementById('fieldset_' + this.id).innerHTML;
+							// Use jQuery DOM element selection since different
+							// browsers handle content differently. This fixes an
+							// issue where FF was not rendering the popup.
 							YAHOO.SUGAR.MessageBox.show({
-			                    title: this.innerText.replace(" **", "") + " " + SUGAR.language.get("ModuleBuilder", "LBL_COMBO_FIELD_CONTAINS"),
-			                    msg: fieldList,
+			                    title: $('#le_label_' + this.id).text().replace(" **", "") + " " + SUGAR.language.get("ModuleBuilder", "LBL_COMBO_FIELD_CONTAINS"),
+			                    msg: $('#fieldset_' + this.id).html(),
 			                    width: 500
 			                });
 						};
