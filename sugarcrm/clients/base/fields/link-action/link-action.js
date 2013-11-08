@@ -64,6 +64,10 @@
                     showAlerts: true,
                     relate: true,
                     success: function(model) {
+                        //We've just linked a related, however, the list of records from
+                        //loadData will come back in DESC (reverse chronological order with
+                        //our newly linked on top). Hence, we reset pagination here.
+                        self.context.get("collection").resetPagination();
                         self.context.resetLoadFlag();
                         self.context.set('skipFetch', false);
                         self.context.loadData();
