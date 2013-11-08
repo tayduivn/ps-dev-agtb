@@ -182,11 +182,47 @@
     },
 
     /**
+     * Retrieve the location of the left edge of the list viewport.
+     * @return {Number} Position of the left edge.
+     * @private
+     */
+    _getLeftBorderPosition: function() {
+        if (!this._leftBorderPosition) {
+            var scrollPanel = this.$('.flex-list-view-content');
+            this._leftBorderPosition = scrollPanel.find('thead th:first').outerWidth();
+        }
+        return this._leftBorderPosition;
+    },
+
+    /**
+     * Retrieve the location of the right edge of the list viewport.
+     * @return {Number} Position of the right edge.
+     * @private
+     */
+    _getRightBorderPosition: function() {
+        if (!this._rightBorderPosition) {
+            var scrollPanel = this.$('.flex-list-view-content');
+            this._rightBorderPosition = scrollPanel.find('thead th:last').position().left;
+        }
+        return this._rightBorderPosition;
+    },
+
+    /**
      * Set the position of the current list panel.
+     *
+     * If focus item located within the viewport area,
+     * avoid adjusting panel location.
      *
      * @param {Object} location Location of the focused element.
      */
     setPanelPosition: function(location) {
+        var leftBorderPosition = this._getLeftBorderPosition(),
+            rightBorderPosition = this._getRightBorderPosition(),
+            relativeLeft = location.left,
+            relativeRight = location.right;
+        if (relativeRight <= rightBorderPosition && relativeLeft >= leftBorderPosition) {
+            return;
+        }
         this.setScrollAtRightBorder(location.right);
     },
 
@@ -198,8 +234,7 @@
      */
     setScrollAtLeftBorder: function(left) {
         var scrollPanel = this.$('.flex-list-view-content'),
-            actionEl = scrollPanel.find('thead th:first'),
-            leftBorderPosition = actionEl.outerWidth(),
+            leftBorderPosition = this._getLeftBorderPosition(),
             scrollLeft = scrollPanel.scrollLeft();
 
         left += scrollLeft - leftBorderPosition;
@@ -214,8 +249,7 @@
      */
     setScrollAtRightBorder: function(right) {
         var scrollPanel = this.$('.flex-list-view-content'),
-            actionEl = scrollPanel.find('thead th:last'),
-            rightBorderPosition = actionEl.position().left,
+            rightBorderPosition = this._getRightBorderPosition(),
             scrollLeft = scrollPanel.scrollLeft();
 
         right += scrollLeft - rightBorderPosition;
