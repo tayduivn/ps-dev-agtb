@@ -57,6 +57,10 @@
             this.name = 'alert';
         },
 
+        /**
+         * {@inheritDoc}
+         * Render the custom alert view template.
+         */
         render: function(options) {
             if(_.isUndefined(options)) {
                 return this;
