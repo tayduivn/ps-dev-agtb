@@ -52,8 +52,13 @@ class SetValueAction extends AbstractAction{
 				    context = this.context;
 
 				try {
-				    var val = this.evalExpression(this.expr, context);
-				    context.setValue(this.target, val);
+				    var val = this.evalExpression(this.expr, context),
+				        cVal = context.getValue(this.target).evaluate();
+                    // only set the value if the two numbers are different
+                    // get rid of the flash
+                    if (val != cVal) {
+				        context.setValue(this.target, val);
+				    }
 				} catch (e) {
 	                context.setValue(this.target, '');
 			    }

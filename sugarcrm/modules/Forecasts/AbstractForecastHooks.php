@@ -29,11 +29,39 @@ abstract class AbstractForecastHooks
      */
     public static function isForecastSetup()
     {
+        static::loadForecastSettings();
+        return static::$settings['is_setup'] == 1;
+    }
+
+    /**
+     * Get the currently configured forecast closed sales stages
+     *
+     * @return array
+     */
+    public static function getForecastClosedStages()
+    {
+        static::loadForecastSettings();
+
+        // get all possible closed stages
+        $stages = array_merge(
+            (array)static::$settings['sales_stage_won'],
+            (array)static::$settings['sales_stage_lost']
+        );
+
+        return $stages;
+    }
+
+    /**
+     * Utility method to load Forecast Settings
+     *
+     * @param bool $reload      Forecast Reload the settings
+     */
+    protected static function loadForecastSettings($reload = false)
+    {
         /* @var $admin Administration */
-        if (empty(static::$settings)) {
+        if (empty(static::$settings) || $reload === true) {
             $admin = BeanFactory::getBean('Administration');
             static::$settings = $admin->getConfigForModule('Forecasts');
         }
-        return static::$settings['is_setup'] == 1;
     }
 }

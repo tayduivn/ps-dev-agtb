@@ -33,15 +33,6 @@ function perform_save($focus)
         $focus->worst_case = $focus->amount;
     }
 
-    // if sales stage was set to Closed Won set best and worst cases to amount
-    if (isset($settings['is_setup']) && $settings['is_setup'] == 1) {
-        $wonStages = $settings['sales_stage_won'];
-        if (!empty($focus->sales_stage) && in_array($focus->sales_stage, $wonStages)) {
-            $focus->best_case = $focus->amount;
-            $focus->worst_case = $focus->amount;
-        }
-    }
-
     // Bug49495: amount may be a calculated field
     $focus->updateCalculatedFields();
 
