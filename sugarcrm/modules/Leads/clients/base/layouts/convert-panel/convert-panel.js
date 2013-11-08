@@ -425,7 +425,27 @@
      * @param model
      */
     handlePopulateRecords: function(model) {
-        this.populateRecords(model, this.meta.fieldMapping);
+        var fieldMapping = {}
+        if (!_.isEmpty(this.meta.fieldMapping)) {
+            fieldMapping = app.utils.deepCopy(this.meta.fieldMapping);
+        }
+        var sourceFields = app.metadata.getModule(model.attributes._module, 'fields');
+        var targetFields = app.metadata.getModule(this.meta.module, 'fields');
+
+        _.each(model.attributes, function(fieldValue, fieldName) {
+            if (!_.isUndefined(sourceFields[fieldName]) &&
+                !_.isUndefined(targetFields[fieldName]) &&
+                sourceFields[fieldName].type === targetFields[fieldName].type &&
+                (_.isUndefined(sourceFields[fieldName]['duplicate_on_record_copy']) ||
+                    sourceFields[fieldName]['duplicate_on_record_copy'] !== 'no') &&
+                model.has(fieldName) &&
+                model.get(fieldName) !== this.createView.model.get(fieldName) &&
+                _.isUndefined(fieldMapping[fieldName])) {
+                        fieldMapping[fieldName] = fieldName;
+                    }
+        }, this);
+
+        this.populateRecords(model, fieldMapping);
         if(this.meta.duplicateCheckOnStart) {
             this.triggerDuplicateCheck();
         } else if (!this.meta.dependentModules || this.meta.dependentModules.length == 0) {

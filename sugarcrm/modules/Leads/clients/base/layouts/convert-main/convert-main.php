@@ -36,26 +36,6 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
             'duplicateCheckOnStart' => true,
             'fieldMapping' =>
             array(
-                'salutation' => 'salutation',
-                'first_name' => 'first_name',
-                'last_name' => 'last_name',
-                'title' => 'title',
-                'department' => 'department',
-                'description' => 'description',
-                'team_name' => 'team_name',
-                'do_not_call' => 'do_not_call',
-                'phone_home' => 'phone_home',
-                'phone_mobile' => 'phone_mobile',
-                'phone_work' => 'phone_work',
-                'phone_fax' => 'phone_fax',
-                'primary_address_street' => 'primary_address_street',
-                'primary_address_city' => 'primary_address_city',
-                'primary_address_state' => 'primary_address_state',
-                'primary_address_postalcode' => 'primary_address_postalcode',
-                'primary_address_country' => 'primary_address_country',
-                'campaign_id' => 'campaign_id',
-                'campaign_name' => 'campaign_name',
-                'email' => 'email',
             ),
             'hiddenFields' =>
             array(
@@ -75,7 +55,6 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
             'fieldMapping' =>
             array(
                 'name' => 'account_name',
-                'team_name' => 'team_name',
                 'billing_address_street' => 'primary_address_street',
                 'billing_address_city' => 'primary_address_city',
                 'billing_address_state' => 'primary_address_state',
@@ -86,11 +65,7 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
                 'shipping_address_state' => 'primary_address_state',
                 'shipping_address_postalcode' => 'primary_address_postalcode',
                 'shipping_address_country' => 'primary_address_country',
-                'campaign_id' => 'campaign_id',
-                'campaign_name' => 'campaign_name',
-                'email' => 'email',
                 'phone_office' => 'phone_work',
-                'phone_fax' => 'phone_fax',
             ),
         ),
         array(
@@ -106,10 +81,6 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
             array(
                 'name' => 'opportunity_name',
                 'phone_work' => 'phone_office',
-                'team_name' => 'team_name',
-                'campaign_id' => 'campaign_id',
-                'campaign_name' => 'campaign_name',
-                'lead_source' => 'lead_source',
             ),
             'dependentModules' =>
             array(
