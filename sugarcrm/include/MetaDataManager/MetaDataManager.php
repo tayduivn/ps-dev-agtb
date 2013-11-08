@@ -242,6 +242,54 @@ class MetaDataManager
     protected static $cacheHasBeenCleared = false;
     
     /**
+     * White listed properties which shall be copied from server side
+     * configurations to client side configurations.
+     *
+     * @var array
+     * @see getConfigProperties
+     * @see parseConfigProperties
+     */
+    protected static $configProperties = array(
+        'list_max_entries_per_page' => true,
+        'list_max_entries_per_subpanel' => true,
+        'max_record_fetch_size' => true,
+        'mass_actions' => array(
+            'mass_update_chunk_size' => true,
+            'mass_delete_chunk_size' => true,
+        ),
+        'merge_duplicates' => array(
+            'merge_relate_fetch_concurrency' => true,
+            'merge_relate_fetch_timeout' => true,
+            'merge_relate_fetch_limit' => true,
+            'merge_relate_update_concurrency' => true,
+            'merge_relate_update_timeout' => true,
+            'merge_relate_max_attempt' => true,
+        )
+    );
+
+    /**
+     * Map of configuration properties that should assume a different name than
+     * the one provided by parse mechanism.
+     *
+     * <code>
+     *     array(
+     *       'parsedKey1' => 'newKey1',
+     *       'parsedKey2' => 'newKey2',
+     *    )
+     * </code>
+     *
+     * @deprecated This should only be used to handle legacy code, thus should
+     * removed when that code gets cleaned up.
+     *
+     * @var array
+     * @see handleConfigPropertiesExceptions
+     */
+    protected static $configPropertiesExceptions = array(
+        'listMaxEntriesPerPage' => 'maxQueryResult',
+        'listMaxEntriesPerSubpanel' => 'maxSubpanelResult',
+    );
+
+    /**
      * The constructor for the class. Sets the visibility flag, the visibility 
      * string indicator and loads the appropriate metadata section list.
      *
@@ -1471,31 +1519,22 @@ class MetaDataManager
      */
     protected function getConfigs()
     {
-        global $sugar_config;
+        $sugarConfig = $this->getSugarConfig();
+
         $administration = new Administration();
         $administration->retrieveSettings();
-        
-        // These configs are controlled via System Settings in Administration module
-        // Defaults copied from include/utils.php make_sugar_config()
-        $configs = array(
-            'maxQueryResult' => isset($sugar_config['list_max_entries_per_page']) ? $sugar_config['list_max_entries_per_page'] : 20,
-            'maxSubpanelResult' => isset($sugar_config['list_max_entries_per_subpanel']) ? $sugar_config['list_max_entries_per_subpanel'] : 5,
-            'maxRecordFetchSize' => isset($sugar_config['max_record_fetch_size']) ? $sugar_config['max_record_fetch_size'] : 1000,
-            'massUpdateChunkSize' => isset($sugar_config['mass_update_chunk_size']) ? $sugar_config['mass_update_chunk_size'] : 20,
-            'massDeleteChunkSize' => isset($sugar_config['mass_delete_chunk_size']) ? $sugar_config['mass_delete_chunk_size'] : 20,
-            'mergeRelateFetchConcurrency' => isset($sugar_config['merge_relate_fetch_concurrency']) ? $sugar_config['merge_relate_fetch_concurrency'] : 2,
-            'mergeRelateFetchTimeout' => isset($sugar_config['merge_relate_fetch_timeout']) ? $sugar_config['merge_relate_fetch_timeout'] : 90000,
-            'mergeRelateFetchLimit' => isset($sugar_config['merge_relate_fetch_limit']) ? $sugar_config['merge_relate_fetch_limit'] : 20,
-            'mergeRelateUpdateConcurrency' => isset($sugar_config['merge_relate_update_concurrency']) ? $sugar_config['merge_relate_update_concurrency'] : 4,
-            'mergeRelateUpdateTimeout' => isset($sugar_config['merge_relate_update_timeout']) ? $sugar_config['merge_relate_update_timeout'] : 90000,
-            'mergeRelateMaxAttempt' => isset($sugar_config['merge_relate_max_attempt']) ? $sugar_config['merge_relate_max_attempt'] : 3,
-        );
 
+        $properties = $this->getConfigProperties();
+        $properties = $this->parseConfigProperties($sugarConfig, $properties);
+        $configs = $this->handleConfigPropertiesExceptions($properties);
+
+        // FIXME: Clean up properties bellow in order to fit standards
+        // regarding property names
         if (isset($administration->settings['honeypot_on'])) {
             $configs['honeypot_on'] = true;
         }
-        if (isset($GLOBALS['sugar_config']['passwordsetting']['forgotpasswordON'])) {
-            if ($GLOBALS['sugar_config']['passwordsetting']['forgotpasswordON'] === '1' || $GLOBALS['sugar_config']['passwordsetting']['forgotpasswordON'] === true) {
+        if (isset($sugarConfig['passwordsetting']['forgotpasswordON'])) {
+            if ($sugarConfig['passwordsetting']['forgotpasswordON'] === '1' || $sugarConfig['passwordsetting']['forgotpasswordON'] === true) {
                 $configs['forgotpasswordON'] = true;
             } else {
                 $configs['forgotpasswordON'] = false;
@@ -1506,6 +1545,118 @@ class MetaDataManager
             $configs['externalLogin'] = true;
         }
 
+        return $configs;
+    }
+
+    /**
+     * Retrieve server side configurations.
+     *
+     * @return array Server side configurations.
+     */
+    private function getSugarConfig()
+    {
+        global $sugar_config;
+        return $sugar_config;
+    }
+
+    /**
+     * Retrieve white listed properties which shall be copied from server side
+     * configurations to client side configurations.
+     *
+     * @return array Configuration properties.
+     */
+    protected function getConfigProperties()
+    {
+        return static::$configProperties;
+    }
+
+    /**
+     * Retrieve map of configuration properties that should assume a different
+     * name than the one provided by parse mechanism.
+     *
+     * @deprecated
+     *
+     * @return array Configuration properties.
+     */
+    protected function getConfigPropertiesExceptions()
+    {
+        return static::$configPropertiesExceptions;
+    }
+
+    /**
+     * Parse supplied configurations.
+     *
+     * All $configProperties are translated to 'camelCase' and included on
+     * client side configurations if exist on $config.
+     *
+     * @param array $config Server side configurations.
+     * @param array $configProperties White listed properties which shall be
+     *   copied from server side.
+     *
+     * @return array Array of client side configuration properties.
+     */
+    protected function parseConfigProperties(array $config, array $configProperties)
+    {
+        $configs = array();
+        foreach($configProperties as $key => $value) {
+            if (!isset($config[$key])) {
+                continue;
+            }
+
+            $translatedKey = $this->translateConfigProperty($key);
+
+            if (is_array($value)) {
+                $configs[$translatedKey] = $this->parseConfigProperties(
+                    $config[$key],
+                    $value
+                );
+            } else if ($value === true) {
+                $configs[$translatedKey] = $config[$key];
+            }
+        }
+        return $configs;
+    }
+
+    /**
+     * Translate supplied $property from an 'underscore' version to a
+     * 'camelCase' version.
+     *
+     * @param string $property Configuration property name.
+     *
+     * @return string Translated property name.
+     */
+    protected function translateConfigProperty($property)
+    {
+        return lcfirst(
+            preg_replace(
+                '/(^|_)([a-z])/e', 'strtoupper("\\2")',
+                $property
+            )
+        );
+    }
+
+    /**
+     * Handle configuration properties that should assume a different name than
+     * the one provided by parse mechanism.
+     *
+     * @deprecated This should only be used to handle legacy code, thus should
+     * removed when that code gets cleaned up.
+     *
+     * @param array $configs Client side configuration properties.
+     *
+     * @return array Array of client side configuration properties
+     */
+    protected function handleConfigPropertiesExceptions(array $configs)
+    {
+        $exceptions = $this->getConfigPropertiesExceptions();
+        foreach($exceptions as $key => $value) {
+            if (!isset($configs[$key])) {
+                continue;
+            }
+
+            $configs[$value] = $configs[$key];
+            unset($configs[$key]);
+        }
         return $configs;
     }
 

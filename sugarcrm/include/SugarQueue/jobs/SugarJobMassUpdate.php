@@ -60,8 +60,8 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
         //TODO: It will be turned on when job queue, asynchronous processing, activity Stream performance has been handled after 7.0
         Activity::disable();
 
-        if (!empty($GLOBALS['sugar_config']['massupdate_chunk_size'])) {
-            $this->chunkSize = $GLOBALS['sugar_config']['massupdate_chunk_size'];
+        if (!empty($GLOBALS['sugar_config']['mass_actions']['mass_update_chunk_size'])) {
+            $this->chunkSize = $GLOBALS['sugar_config']['mass_actions']['mass_update_chunk_size'];
         }
     }
 
