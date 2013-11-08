@@ -71,7 +71,23 @@
         max_records_to_merge: 5
     },
 
+    /**
+     * {@inheritDoc}
+     * Retrieves metadata from sugarTemplate and then able to override it from
+     * the current module or from core metadata.
+     *
+     * Please define your metadata on:
+     *
+     * - `custom/clients/{platform}/view/massupdate/massupdate.php`
+     * - `{custom/,}modules/{module}/clients/{platform}/view/massupdate/massupdate.php`
+     */
     initialize: function(options) {
+        options.meta = _.extend(
+            {},
+            options.meta,
+            app.metadata.getView(null, options.name),
+            app.metadata.getView(options.module, options.name)
+        );
         this.fieldValues = [{}];
         this.setMetadata(options);
 
