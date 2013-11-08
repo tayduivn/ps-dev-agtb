@@ -863,6 +863,16 @@ $dictionary['Product'] = array(
             'module' => 'Accounts',
             'source' => 'non-db',
         ),
+        'emails' => array(
+            'name' => 'emails',
+            'type' => 'link',
+            'relationship' => 'emails_products_rel', /* reldef in emails */
+            'module' => 'Emails',
+            'bean_name' => 'Email',
+            'source' => 'non-db',
+            'vname' => 'LBL_EMAILS',
+            'studio' => array("formula" => false),
+        ),
         'projects' =>  array(
             'name' => 'projects',
             'type' => 'link',

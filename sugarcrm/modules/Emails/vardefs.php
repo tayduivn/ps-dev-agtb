@@ -422,10 +422,6 @@ $dictionary['Email'] = array(
 			'bean_name'		=> 'Prospect',
 			'source'		=> 'non-db',
 		),
-
-
-//BEGIN SUGARCRM flav=pro ONLY
-
 		'quotes'=> array(
 			'name'			=> 'quotes',
 			'vname'			=> 'LBL_EMAILS_QUOTES_REL',
@@ -435,7 +431,24 @@ $dictionary['Email'] = array(
 			'bean_name'		=> 'Quote',
 			'source'		=> 'non-db',
 		),
-//END SUGARCRM flav=pro ONLY
+        'revenuelineitems'	=> array (
+			'name'			=> 'revenuelineitems',
+			'vname'			=> 'LBL_EMAILS_REVENUELINEITEMS_REL',
+			'type'			=> 'link',
+			'relationship'	=> 'emails_revenuelineitems_rel',
+			'module'		=> 'RevenueLineItems',
+			'bean_name'		=> 'RevenueLineItem',
+			'source'		=> 'non-db',
+		),
+        'products'	=> array (
+			'name'			=> 'products',
+			'vname'			=> 'LBL_EMAILS_PRODUCTS_REL',
+			'type'			=> 'link',
+			'relationship'	=> 'emails_products_rel',
+			'module'		=> 'Products',
+			'bean_name'		=> 'Product',
+			'source'		=> 'non-db',
+		),
 		'tasks'=> array(
 			'name'			=> 'tasks',
 			'vname'			=> 'LBL_EMAILS_TASKS_REL',
@@ -554,6 +567,34 @@ $dictionary['Email'] = array(
             'join_key_rhs'                      => 'bean_id',
             'relationship_role_column'          => 'bean_module',
             'relationship_role_column_value'    => 'Leads',
+        ),
+        'emails_revenuelineitems_rel' => array(
+            'lhs_module'                        => 'Emails',
+            'lhs_table'                         => 'emails',
+            'lhs_key'                           => 'id',
+            'rhs_module'                        => 'RevenueLineItems',
+            'rhs_table'                         => 'revenue_line_items',
+            'rhs_key'                           => 'id',
+            'relationship_type'                 => 'many-to-many',
+            'join_table'                        => 'emails_beans',
+            'join_key_lhs'                      => 'email_id',
+            'join_key_rhs'                      => 'bean_id',
+            'relationship_role_column'          => 'bean_module',
+            'relationship_role_column_value'    => 'RevenueLineItems',
+        ),
+        'emails_products_rel' => array(
+            'lhs_module'                        => 'Emails',
+            'lhs_table'                         => 'emails',
+            'lhs_key'                           => 'id',
+            'rhs_module'                        => 'Products',
+            'rhs_table'                         => 'products',
+            'rhs_key'                           => 'id',
+            'relationship_type'                 => 'many-to-many',
+            'join_table'                        => 'emails_beans',
+            'join_key_lhs'                      => 'email_id',
+            'join_key_rhs'                      => 'bean_id',
+            'relationship_role_column'          => 'bean_module',
+            'relationship_role_column_value'    => 'Products',
         ),
 		// SNIP
 		'emails_meetings_rel' => array(

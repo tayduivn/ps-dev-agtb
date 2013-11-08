@@ -935,6 +935,16 @@ $dictionary['RevenueLineItem'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_PROJECTS',
         ),
+        'emails' => array(
+            'name' => 'emails',
+            'type' => 'link',
+            'relationship' => 'emails_revenuelineitems_rel', /* reldef in emails */
+            'module' => 'Emails',
+            'bean_name' => 'Email',
+            'source' => 'non-db',
+            'vname' => 'LBL_EMAILS',
+            'studio' => array("formula" => false),
+        ),
     ),
     'indices' => array(
         array('name' => 'idx_revenuelineitem', 'type' => 'index', 'fields' => array('name', 'deleted')),
