@@ -29,6 +29,7 @@ class Bug40171Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $this->markTestIncomplete("Tests old subpanel overrides, needs rewritten");
         global $moduleList, $beanList, $beanFiles;
         require('include/modules.php');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -37,6 +38,7 @@ class Bug40171Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        /*
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
 
@@ -47,6 +49,7 @@ class Bug40171Test extends Sugar_PHPUnit_Framework_TestCase
         $moduleInstaller = new ModuleInstaller();
         $moduleInstaller->silent = true; // make sure that the ModuleInstaller->log() function doesn't echo while rebuilding the layoutdefs
         $moduleInstaller->rebuild_layoutdefs();
+        */
     }
 
     public function testSubpanelOverride()

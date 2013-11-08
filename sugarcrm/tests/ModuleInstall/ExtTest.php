@@ -73,7 +73,7 @@ class ExtTest extends Sugar_PHPUnit_Framework_TestCase
         include 'ModuleInstall/extensions.php';
         $params = array();
         foreach($extensions as $name => $ext) {
-            if($name == 'modules') continue;
+            if($name == 'modules' || $name == 'sidecar') continue;
             $params[] = array($name, $ext['section'], $ext['extdir'], $ext['file'], isset($ext['module'])?$ext['module']:'');
         }
         return $params;

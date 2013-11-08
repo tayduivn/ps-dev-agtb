@@ -286,8 +286,7 @@ class SubPanel
             $mc = new MetaDataConverter();
             $layoutPath = "custom/Extension/modules/{$panel->parent_bean->module_dir}/Ext/clients/base/layouts/subpanels";
             $layoutDefsName = "viewdefs['{$panel->parent_bean->module_dir}']['base']['layout']['subpanels']['components'][]";
-            $layoutDefsExtName = "sidecarsubpanelbaselayout";
-            $moduleInstallerMethod = "rebuild_sidecarsubpanelbaselayout";
+            $layoutDefsExtName = "sidecar";
             $filename = "subpanel-for-{$panel->name}";
             $overrideName = 'override_subpanel_list_view';
             if($panel->_instance_properties['subpanel_name'] == 'default') {

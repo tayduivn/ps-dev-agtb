@@ -49,25 +49,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     //END SUGARCRM flav=pro ONLY
         'tabledictionary' => array("section" => '', "extdir" => "TableDictionary", "file" => "tabledictionary.ext.php", "module" => "application"),
 
-        // sidecar subpanel layouts
-        "sidecarsubpanelbaselayout" => array("section"=>'sidecarsubpanelbaselayout', 'extdir' => 'clients/base/layouts/subpanels', 'file' => 'subpanels.ext.php'),
-
-        //BEGIN SUGARCRM flav=ent ONLY
-        "sidecarsubpanelportallayout" => array("section"=>'sidecarsubpanelportallayout', 'extdir' => 'clients/portal/layouts/subpanels', 'file' => 'subpanels.ext.php'),
-        //END SUGARCRM flav=ent ONLY
-
-        //BEGIN SUGARCRM flav=pro ONLY
-        "sidecarsubpanelmobilelayout" => array("section"=>'sidecarsubpanelmobilelayout', 'extdir' => 'clients/mobile/layouts/subpanels', 'file' => 'subpanels.ext.php'),
-
-        "sidecarmenubaseheader" => array("section" => "sidecarmenubaseheader", "extdir" => "clients/base/menus/header", "file" => "header.ext.php"),
-
-        //BEGIN SUGARCRM flav=ent ONLY
-        "sidecarmenuportalheader" => array("section" => "sidecarmenuportalheader", "extdir" => "clients/portal/menus/header", "file" => "header.ext.php"),
-        //END SUGARCRM flav=ent ONLY
-
-        //BEGIN SUGARCRM flav=pro ONLY
-        "sidecarmenumobileheader" => array("section" => "sidecarmenumobileheader", "extdir" => "clients/mobile/menus/header", "file" => "header.ext.php"),
-        //END SUGARCRM flav=pro ONLY
+        "sidecar" => array("section"=>'sidecar', 'extdir' => 'clients/__PH_PLATFORM__/__PH_TYPE__/__PH_SUBTYPE__', 'file' => '__PH_SUBTYPE__.ext.php'),
 );
 if(SugarAutoLoader::existing("custom/application/Ext/Extensions/extensions.ext.php")) {
     include("custom/application/Ext/Extensions/extensions.ext.php");
