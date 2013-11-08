@@ -633,12 +633,13 @@ class ForecastWorksheet extends SugarBean
     /**
      * This method emulates the Forecast Rep Worksheet calculateTotals method.
      *
-     * @param $timeperiod_id
-     * @param $user_id
-     * @param $forecast_by
-     * @return bool
+     * @param string $timeperiod_id
+     * @param string $user_id
+     * @param string|null $forecast_by
+     * @param boolean $useDraftRecords
+     * @return array|bool
      */
-    public function worksheetTotals($timeperiod_id, $user_id, $forecast_by = null)
+    public function worksheetTotals($timeperiod_id, $user_id, $forecast_by = null, $useDraftRecords = false)
     {
         /* @var $tp TimePeriod */
         $tp = BeanFactory::getBean('TimePeriods', $timeperiod_id);
@@ -682,13 +683,15 @@ class ForecastWorksheet extends SugarBean
             'pipeline_opp_count' => 0,
         );
 
+        global $current_user;
+
         $sq = new SugarQuery();
         $sq->select(array('*'));
         $sq->from(BeanFactory::getBean($this->module_name))->where()
             ->equals('assigned_user_id', $user_id)
             ->equals('parent_type', $forecast_by)
             ->equals('deleted', 0)
-            ->equals('draft', 1)
+            ->equals('draft', ($current_user->id == $user_id || $useDraftRecords === true) ? 1 : 0)
             ->queryAnd()
             ->gte('date_closed_timestamp', $tp->start_date_timestamp)
             ->lte('date_closed_timestamp', $tp->end_date_timestamp);
