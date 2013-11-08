@@ -36,6 +36,7 @@ class TemplateEnum extends TemplateText{
     var $default_value = '';
     var $dependency ; // any dependency information
     var $supports_unified_search = true;
+    var $massupdate = 1;
 
     function __construct ()
     {

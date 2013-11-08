@@ -333,7 +333,8 @@ class TemplateField{
 			'name'=>$this->name,
 			'vname'=>$this->vname,
 			'type'=>$this->type,
-			'massupdate'=>$this->massupdate,
+            // This needs to be a boolean value so clients know how to handle it
+			'massupdate'=>$this->convertBooleanValue($this->massupdate),
 			'default'=>$this->default,
             'no_default'=> !empty($this->no_default),
 			'comments'=> (isset($this->comments)) ? $this->comments : '',
@@ -354,6 +355,14 @@ class TemplateField{
             $array['calculated'] = $this->calculated;
             $array['formula'] = html_entity_decode($this->formula);
             $array['enforced'] = !empty($this->enforced) && $this->enforced == true;
+            if ($array['calculated'] && $array['enforced']) {
+                $array['default'] = null;
+                $array['massupdate'] = false;
+                // Need to set it on the object as well, since some child classes 
+                // use that instead of the return of this method
+                $this->default = null;
+                $this->massupdate = false;
+            }
         } else {
             $array['calculated'] = false;
         }

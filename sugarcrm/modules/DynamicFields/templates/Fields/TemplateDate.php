@@ -34,6 +34,7 @@ class TemplateDate extends TemplateRange
 	var $type = 'date';
 	var $len = '';
 	var $dateStrings;
+    var $massupdate = 1;
 
 function __construct() {
 	parent::__construct();

@@ -33,6 +33,7 @@ class TemplateDatetimecombo extends TemplateRange
 {
 	var $type = 'datetimecombo';
 	var $len = '';
+    var $massupdate = 1;
 	var $dateStrings = array(
 		'-none-' => '',
         'today'=>'now',
