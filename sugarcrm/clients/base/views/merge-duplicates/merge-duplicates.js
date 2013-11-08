@@ -1106,6 +1106,10 @@
         if (!link || !link.name) {
             return false;
         }
+        var availableModuleList = app.metadata.getModules();
+        if (_.isEmpty(availableModuleList[link.module])) {
+            return false;
+        }
 
         if (_.contains(this.relatesBlacklist, link.name)) {
             return false;
