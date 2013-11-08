@@ -52,7 +52,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	'type'=>'varchar',
 	'db_concat_fields'=> array(0=>'document_name'),
     'duplicate_on_record_copy' => 'always',
-	),
+    'fields' => array('document_name'),
+  ),
 
 'filename' =>
   array (

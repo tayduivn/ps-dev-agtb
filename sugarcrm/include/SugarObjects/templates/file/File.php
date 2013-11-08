@@ -90,6 +90,14 @@ class File extends Basic
 	    }
 	}
 
+    /**
+     * @see SugarBean::fill_in_additional_list_fields()
+     */
+    public function fill_in_additional_list_fields()
+    {
+        $this->name = $this->document_name;
+    }
+
 	/**
 	 * @see SugarBean::retrieve()
 	 */
