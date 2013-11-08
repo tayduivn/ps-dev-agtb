@@ -132,6 +132,8 @@
                         // The backend mangles special characters, so we must
                         // tell Handlebars that the string is safe.
                         name = new Handlebars.SafeString(name);
+
+                        module = (module === 'Users') ? 'Employees' : module;
                         return tagTemplate({module: module, id: id, name: name});
                     });
                 }
