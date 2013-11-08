@@ -1161,7 +1161,7 @@ $mod_strings = array (
     'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search.',
     //END SUGARCRM flav=com ONLY
     //BEGIN SUGARCRM flav=pro ONLY
-    'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search. If full-text searching is enabled, perform a full system index after enabling modules for the Global Search. To enable module fields for full text searching, use <a href="index.php?module=ModuleBuilder&action=index&type=studio">Studio</a>.',
+    'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search. Perform a full system index after enabling modules for the Global Search. To enable module fields for full text searching, use <a href="index.php?module=ModuleBuilder&action=index&type=studio">Studio</a>.',
     //END SUGARCRM flav=pro ONLY
    'LBL_SELECT_MODULES' => 'Advanced',
    'LBL_SELECT_MODULES_TITLE' => 'Drag and drop to select modules and to change the display order. Perform a search to apply the changes.',
@@ -1221,9 +1221,9 @@ $mod_strings = array (
     'LBL_PDFMANAGER_SETTINGS' => 'PDF Manager',
     'LBL_PDFMANAGER_SETTINGS_DESC' => 'Manage templates for generated PDF files',
 //END SUGARCRM flav=pro ONLY
-    'LBL_FTS_PAGE_DESC' => 'To enable full text searching:<br>
-1) Enter the host and port of the search engine<br>
-2) Click Test to make sure Sugar can connect to the search engine<br>
+    'LBL_FTS_PAGE_DESC' => 'To configure full text searching:<br>
+1) Enter the host and port of the search engine.<br>
+2) Click Test to make sure Sugar can connect to the search engine.<br>
 3) Click Schedule System Index. Make sure that crontab is set up to run cron.php. This will handle indexing as well as the fallback mechanism when the connection to the search engine is interrupted.',
     'LBL_FTS_DISABLED' => 'Full Text Search has been disabled because the system is not able to connect to the search engine.',
     'LBL_FTS_CONNECTION_INVALID' => 'The Full Text Search Settings you have entered are invalid and may slow down system performance.  Please change or clear your settings.',
