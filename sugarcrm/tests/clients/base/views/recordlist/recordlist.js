@@ -1,5 +1,5 @@
 describe("Base.View.RecordList", function () {
-    var view, layout, app, moduleName = 'Cases';
+    var view, layout, app, meta, moduleName = 'Cases';
 
     beforeEach(function () {
         SugarTest.testMetadata.init();
@@ -247,6 +247,65 @@ describe("Base.View.RecordList", function () {
                 expect(unbindSpy).toHaveBeenCalled();
                 expect(routerStub).toHaveBeenCalled();
             });
+        });
+    });
+    describe("filterMeta", function() {
+        var sinonSandbox, alertShowStub, routerStub;
+        beforeEach(function() {
+            sinonSandbox = sinon.sandbox.create();
+            meta = {
+               selection: {
+                   actions: [{
+                       'name': 'calc_field_button',
+                       'type': 'button',
+                       'label': 'LBL_UPDATE_CALC_FIELDS',
+                       'events': { 'click': 'list:updatecalcfields:fire'
+                       },
+                       'acl_action': 'massupdate'
+                   }]
+               }
+           };
+        });
+
+        afterEach(function() {
+            sinonSandbox.restore();
+        });
+
+        it("should leave in the calc_field_button when the user is a developer for the module and the module contains calc fields", function() {
+            sinonSandbox.stub(app.acl, "hasAccess").returns(true);
+            var options = {
+                context: {get: function() {
+                    return {fields: [
+                        {name: "foo", calculated: true, formula: "$name"}
+                    ]}
+                }}
+            };
+            meta = view._filterMeta(meta, options);
+            expect(meta.selection.actions).not.toEqual([]);
+        });
+        it("should remove the calc_field_button when the user is not a developer for the module", function() {
+            sinonSandbox.stub(app.acl, "hasAccess").returns(false);
+            var options = {
+                context: {get: function() {
+                    return {fields: [
+                        {name: "foo", calculated: true, formula: "$name"}
+                    ]}
+                }}
+            };
+            meta = view._filterMeta(meta, options);
+            expect(meta.selection.actions).toEqual([]);
+        });
+        it("should remove the calc_field_button when the module has no calc fields", function() {
+            sinonSandbox.stub(app.acl, "hasAccess").returns(true);
+            var options = {
+                context: {get: function() {
+                    return {fields: [
+                        {name: "foo"}
+                    ]}
+                }}
+            };
+            meta = view._filterMeta(meta, options);
+            expect(meta.selection.actions).toEqual([]);
         });
     });
 });

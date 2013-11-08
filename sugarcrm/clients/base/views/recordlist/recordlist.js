@@ -45,10 +45,10 @@
      */
     initialize: function(options) {
         //Grab the record list of fields to display from the base metadata
-        var recordListMeta = this._initializeMetadata();
+        var recordListMeta = this._initializeMetadata(options.context);
         //Allows sub-views to override and use different view metadata if desired
-        options.meta = _.extend({}, recordListMeta, options.meta || {});
-        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
+        options.meta = this._filterMeta(_.extend({}, recordListMeta, options.meta || {}), options);
+        this._super("initialize", [options]);
 
         //Extend the prototype's events object to setup additional events for this controller
         this.events = _.extend({}, this.events, {
@@ -82,6 +82,28 @@
      */
     _initializeMetadata: function() {
         return app.metadata.getView(null, 'recordlist') || {};
+    },
+
+    /**
+     * Filters the given meta removing non-applicable portions
+     * @param {Object} meta data to be filtered
+     * @return {*}
+     * @private
+     */
+    _filterMeta : function(meta, options){
+        //Don't show the update calc field option if the module has no calculated fields or the user is not a dev for that module
+        var context = options.context,
+            isDeveloper = app.acl.hasAccess("developer", context.get("module")),
+            hasCalcFields = context && context.get("model") && !!_.find(context.get("model").fields, function(def) {
+                return def && def.calculated && def.calculated != "false";
+            });
+        if ((!isDeveloper || !hasCalcFields) && meta.selection && meta.selection.actions) {
+            meta.selection.actions = _.reject(meta.selection.actions, function(action) {
+                return action.name == "calc_field_button";
+            });
+        }
+
+        return meta;
     },
 
     /**
