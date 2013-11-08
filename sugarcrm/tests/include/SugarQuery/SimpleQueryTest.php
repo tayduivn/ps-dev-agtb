@@ -177,6 +177,72 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+    public function testSelectWithAlias()
+    {
+        // create a new contact
+        $contact = BeanFactory::getBean('Contacts');
+        $contact->first_name = 'Test';
+        $contact->last_name = 'McTester';
+        $contact->save();
+        $this->contacts[] = $contact;
+        $id = $contact->id;
+        // don't need the contact bean anymore, get rid of it
+        unset($contact);
+        // get the new contact
+
+        $sq = new SugarQuery();
+        $sq->select(array("first_name", "last_name"));
+        $sq->from(BeanFactory::getBean('Contacts'), array('alias' => 'c'));
+        $sq->where()->equals("id", $id);
+
+        $result = $sq->execute();
+        // only 1 record
+        $this->assertEquals(
+            'Test',
+            $result[0]['first_name'],
+            'The First Name Did Not Match'
+        );
+        $this->assertEquals(
+            'McTester',
+            $result[0]['last_name'],
+            'The Last Name Did Not Match'
+        );
+
+        // delete contact verify I can't get it
+        $contact = BeanFactory::getBean('Contacts', $id);
+        $contact->mark_deleted($id);
+        unset($contact);
+
+        $result = $sq->execute();
+        $this->assertTrue(
+            empty($result),
+            "Result Set was not empty, it contained: " . print_r($result, true)
+        );
+
+        // get deleted items
+        $sq = new SugarQuery();
+        $sq->select(array("first_name", "last_name"));
+        $sq->from(
+            BeanFactory::getBean('Contacts'),
+            array('add_deleted' => false)
+        );
+        $sq->where()->equals("id", $id);
+
+        $result = $sq->execute();
+
+        $this->assertEquals(
+            'Test',
+            $result[0]['first_name'],
+            'The First Name Did Not Match, the deleted record did not return'
+        );
+        $this->assertEquals(
+            'McTester',
+            $result[0]['last_name'],
+            'The Last Name Did Not Match, the deleted record did not return'
+        );
+
+    }
+
     public function testSelectWithJoin()
     {
         // create a new contact

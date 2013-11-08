@@ -44,6 +44,14 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
     }
 
     /**
+     * Never mark a condition field as deleted
+     */
+    public function shouldMarkNonDb()
+    {
+        $this->nonDb = 0;
+    }
+
+    /**
      * @param $field
      * @param $value
      * @param bool $bean

@@ -157,7 +157,7 @@ class SugarQuery
         }
 
         if ($team_security === true) {
-            $bean->addVisibilityQuery($this);
+            $bean->addVisibilityQuery($this, array('table_alias' => $alias));
         }
 
         if ($add_deleted === true) {
@@ -686,6 +686,18 @@ class SugarQuery
         }
 
         return $this->from;
+    }
+
+    /**
+     * Returns the alias of the from bean, or the bean table if no alias exists
+     * @return String
+     */
+    public function getFromAlias()
+    {
+        if (is_array($this->from)) {
+            return $this->from[1];
+        }
+        return $this->from->getTableName();
     }
 
     /**

@@ -81,7 +81,7 @@ class SugarQuery_Builder_Field
 
         if ($query->getFromBean()) {
             $this->setupField($query);
-            $this->shouldMarkDeleted();
+            $this->shouldMarkNonDb();
         }
     }
 
@@ -120,7 +120,8 @@ class SugarQuery_Builder_Field
         }
 
 
-        if ($bean && $bean->getTableName() == $this->table && !empty($bean->field_defs[$this->field])) {
+        if ($bean && ($bean->getTableName() == $this->table || $this->table == $this->query->getFromAlias()) && !empty($bean->field_defs[$this->field])) {
+            $this->table = $this->query->getFromAlias();
             $def = $bean->field_defs[$this->field];
         } else {
             $bean = $this->query->getTableBean($this->table);
@@ -230,7 +231,7 @@ class SugarQuery_Builder_Field
     /**
      * Determines if a field should be marked nonDb and calls markNondb if so
      */
-    public function shouldMarkDeleted()
+    public function shouldMarkNonDb()
     {
         if ((isset($this->def['source']) && $this->def['source'] == 'non-db') && empty($this->def['rname_link'])) {
             $this->markNonDb();
