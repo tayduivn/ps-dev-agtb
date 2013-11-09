@@ -41,6 +41,10 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         if (is_dir($cacheDir)) {
             rmdir_recursive($cacheDir);
         }
+        $baseDir = 'styleguide/themes/clients/' . $this->platformTest;
+        if (is_dir($baseDir)) {
+            rmdir_recursive($baseDir);
+        }
         parent::tearDown();
     }
 
@@ -49,18 +53,18 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetCSSURL()
     {
-        // If our theme doesn't have a variables.less file, it should cache the
+        // If our theme doesn't have a variables.php file, it should cache the
         // default file.
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
         $defaultTheme = new SidecarTheme($this->platformTest, 'default');
         $themePaths = $theme->getPaths();
         $defaultPaths = $defaultTheme->getPaths();
 
-        // Make sure variables.less doesn't exist in the file map.
-        SugarAutoLoader::delFromMap($themePaths['custom'] . 'variables.less');
-        SugarAutoLoader::delFromMap($themePaths['base'] . 'variables.less');
-        SugarAutoLoader::delFromMap($defaultPaths['custom'] . 'variables.less');
-        SugarAutoLoader::delFromMap($defaultPaths['base'] . 'variables.less');
+        // Make sure variables.php doesn't exist in the file map.
+        SugarAutoLoader::delFromMap($themePaths['custom'] . 'variables.php');
+        SugarAutoLoader::delFromMap($themePaths['base'] . 'variables.php');
+        SugarAutoLoader::delFromMap($defaultPaths['custom'] . 'variables.php');
+        SugarAutoLoader::delFromMap($defaultPaths['base'] . 'variables.php');
 
         // Make sure our environment is clean. The FileNotExists assertion works
         // on directories as well.
@@ -76,7 +80,7 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertFileExists($url, 'The CSS (' . $url . ') file should be found');
         }
 
-        // The fake theme doesn't have a variables.less, so it should only set a
+        // The fake theme doesn't have a variables.php, so it should only set a
         // cache key for the default theme.
         $this->assertNull(sugar_cache_retrieve($themePaths['hashKey']));
         $this->assertInternalType('array', sugar_cache_retrieve($defaultPaths['hashKey']));
@@ -213,7 +217,7 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse($theme->isDefined(), 'Should say this theme does not exist');
 
         sugar_mkdir($customPaths, null, true);
-        sugar_file_put_contents($customPaths . 'variables.less', '');
+        sugar_file_put_contents($customPaths . 'variables.php', '');
 
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
         $this->assertTrue($theme->isDefined(), 'Should say this theme exists');
@@ -228,17 +232,48 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
         $paths = $theme->getPaths();
 
-        //Write a sample variables.less to temporary put in /custom/
-        $contentsVariablesLess = '
-@testHex:                 #E61718;
-@testRgba:                 rgba(100, 101, 102);
-@testbgPath:                 "zzzz.ww";
-@testRel:                 @otherColor;
-@textMixin:     mixinChoice;';
+        $platformTestDefault = new SidecarTheme($this->platformTest, 'default');
+        $platformTestDefaultPaths = $platformTestDefault->getPaths();
+
+        //Write a sample variables.php to temporary put in /custom/
+        $platformTestDefaultVariablesLess = '<?php
+        $lessdefs = array(
+            "colors" => array(
+                "BorderColor" => "#aaaaaa",
+                "NavigationBar" => "#bbbbbb",
+                "testColor" => "#cccccc",
+                "testRgba" => "rgba(100, 101, 102)",
+            ),
+            "bgPath" => array(
+                "testbgPath" => "zzzz.ww",
+            ),
+            "rel" => array(
+                "testRel" => "@otherColor",
+            ),
+            "mixins" => array(
+                "textMixin" => "mixinChoice",
+            ),
+        );';
+
+        $platformTestCustomVariablesLess = '<?php
+        $lessdefs = array(
+            "colors" => array(
+                "BorderColor" => "#000000",
+                "NavigationBar" => "#111111",
+                "non_customizable_var" => "#222222",
+            ),
+            "bgPath" => array(
+                "testbgPath" => "other_background.png",
+            ),
+        );';
+
+        //Save the file
+        sugar_mkdir($platformTestDefaultPaths['base'], null, true);
+        sugar_file_put_contents($platformTestDefaultPaths['base'] . 'variables.php', $platformTestDefaultVariablesLess);
 
         //Save the file
         sugar_mkdir($paths['custom'], null, true);
-        sugar_file_put_contents($paths['custom'] . 'variables.less', $contentsVariablesLess);
+        sugar_file_put_contents($paths['custom'] . 'variables.php', $platformTestCustomVariablesLess);
 
         // TEST = Parse the created file and verify the parser is correct.
         $variables = $theme->getThemeVariables();
@@ -248,20 +283,18 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
             'mixins' => array(
                 'textMixin' => 'mixinChoice'
             ),
-            'hex' => array(
-                'testHex' => '#E61718',
-                'BorderColor' => '#E61718',
-                'NavigationBar' => '#000000',
-                'PrimaryButton' => '#177EE5',
-            ),
-            'rgba' => array(
+            'colors' => array(
+                'BorderColor' => '#000000',
+                'NavigationBar' => '#111111',
+                'PrimaryButton' => '#177EE5', //base theme var
+                "testColor" => "#cccccc",
                 'testRgba' => 'rgba(100, 101, 102)'
             ),
             'rel' => array(
                 'testRel' => '@otherColor'
             ),
-            'bg' => array(
-                'testbgPath' => 'zzzz.ww'
+            'bgPath' => array(
+                'testbgPath' => 'other_background.png'
             ),
         );
 
@@ -277,32 +310,24 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
         $paths = $theme->getPaths();
 
-        $this->assertFileNotExists($paths['custom'] . 'variables.less');
+        $this->assertFileNotExists($paths['custom'] . 'variables.php');
 
-        //Write a sample variables.less to temporary put in /custom/
+        //Write a sample variables.php to temporary put in /custom/
         $this->testLoadVariables();
         $theme->setVariable('BorderColor', '#FFFFFF');
 
         $theme->saveThemeVariables();
 
-        $this->assertFileExists($paths['custom'] . 'variables.less', 'metadata file should have been created');
+        $this->assertFileExists($paths['custom'] . 'variables.php', 'metadata file should have been created');
 
         $variables = $theme->getThemeVariables();
 
         // Should result this array
         $expectedArray = array(
-            'mixins' => array(
-            ),
-            'hex' => array(
+            'colors' => array(
                 'BorderColor' => '#FFFFFF',
                 'NavigationBar' => '#000000',
                 'PrimaryButton' => '#177EE5',
-            ),
-            'rgba' => array(
-            ),
-            'rel' => array(
-            ),
-            'bg' => array(
             ),
         );
 
@@ -313,8 +338,8 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $theme->saveThemeVariables(true);
         $variables = $theme->getThemeVariables();
 
-        // TEST variables.less has been removed
-        $this->assertFileNotExists($paths['custom'] . 'variables.less', 'Variables.less has not been removed');
+        // TEST variables.php has been removed
+        $this->assertFileNotExists($paths['custom'] . 'variables.php', 'Variables.less has not been removed');
 
         // TEST Result
         $this->assertNotEquals($expectedArray, $variables, 'It should reset base default theme variables');

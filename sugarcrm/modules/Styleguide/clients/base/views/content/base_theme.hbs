@@ -49,22 +49,65 @@
     </div>
   </div>
 
-  <h2>Theme Variables File</h2>
-  <div class="row-fluid">
-    <div class="span5">
-      <p>To override the default theme colors, a new variables.less file will need to be created.</p>
-      <p>Copy the <code>/sugarcrm/styleguide/themes/clients/base/default/variables.less</code> to <code>/sugarcrm/custom/themes/clients/base/default/variables.less</code> and edit the following three HEX color values.</p>
-    </div>
-    <div class="span7">
+    <h2>Create your own theme</h2>
+
+    <div class="row-fluid">
+        <div class="span5">
+            <p>To override the default theme colors, a new variables.php file will need to be created.</p>
+
+            <p>Copy the <code>/sugarcrm/styleguide/themes/clients/base/default/variables.php</code> to <code>/sugarcrm/custom/themes/clients/base/default/variables.php</code>
+                and edit the following three HEX color values.</p>
+
+            <p>Anytime you make a change, go to <code>Administration > Repair > Quick Repair and Rebuild</code> in order
+                to rebuild css files.</p>
+        </div>
+        <div class="span7">
 <pre class="prettyprint linenums">
-@BorderColor: #1977cb;
-
-@NavigationBar: #d4742f;
-
-@PrimaryButton: #f54d27;
+'BorderColor' => '#1977cb',
+'NavigationBar' => '#d4742f',
+'PrimaryButton' => '#f54d27',
 </pre>
+        </div>
     </div>
-  </div>
+
+    <h2>Add your own CSS</h2>
+
+    <div class="row-fluid">
+        <div class="span5">
+            <p>The application allows you to write custom CSS and have it loaded automatically.</p>
+
+            <p>You need to create a custom.less file in <code>/sugarcrm/custom/themes/custom.less</code>.
+                Then you are free to use any bootstrap variables, as well as the 3 themeable variables.
+                However, you can define your own variables but it is not the right place to override existing variables.</p>
+
+            <p>Anytime you make a change, go to <code>Administration > Repair > Quick Repair and Rebuild</code> in order
+                to rebuild css files.</p>
+        </div>
+        <div class="span7">
+  <pre class="prettyprint linenums">
+  //You can import any less file you want and define your own file structure
+  //@import 'anyotherfile.less
+
+  @myCustomBgColor: lighten(@NavigationBar,10%); //variable defined on a custom variable.
+
+  .myCustomClass {
+      color: @linkColor; //bootstrap variable
+      background-color: @myCustomBgColor;
+  }
+  </pre>
+        </div>
+    </div>
+
+    <h2>Revert customizations</h2>
+
+    <div class="row-fluid">
+        <p>If you are not satisfied by your customizations, just remove <code>/sugarcrm/custom/themes/custom.less</code>.
+        </p>
+
+        <p>If you want to delete your custom theme, remove <code>/sugarcrm/custom/themes/clients/base/default/variables.php</code>
+            and go to <code>Administration > Repair > Quick Repair and Rebuild</code> in order to rebuild css
+            files.</p>
+    </div>
 
 </section>
 
