@@ -104,8 +104,10 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
             )
         );
 
-        $manager = new MetadataManagerMock();
-        $manager->setSugarConfig($sugarConfig);
+        $manager = $this->getMock('MetadataManagerMock', array('getSugarConfig'));
+        $manager->expects($this->any())
+            ->method('getSugarConfig')
+            ->will($this->returnValue($sugarConfig));
 
         $this->assertEquals($expectedConfigs, $manager->getConfigs());
     }
@@ -113,18 +115,6 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
 class MetadataManagerMock extends MetadataManager
 {
-    private $sugarConfig;
-
-    public function setSugarConfig(array $sugarConfig)
-    {
-        $this->sugarConfig = $sugarConfig;
-    }
-
-    public function getSugarConfig()
-    {
-        return $this->sugarConfig;
-    }
-
     public function getConfigs()
     {
         return parent::getConfigs();

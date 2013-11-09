@@ -1553,7 +1553,7 @@ class MetaDataManager
      *
      * @return array Server side configurations.
      */
-    private function getSugarConfig()
+    protected function getSugarConfig()
     {
         global $sugar_config;
         return $sugar_config;
