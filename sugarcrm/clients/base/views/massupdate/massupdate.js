@@ -115,12 +115,15 @@
      * @protected
      */
     _initSettings: function() {
+
+        var configSettings = app.config.massActions && {
+            mass_delete_chunk_size: app.config.massActions.massDeleteChunkSize,
+            mass_update_chunk_size: app.config.massActions.massUpdateChunkSize
+        };
+
         this._settings = _.extend(
             this._defaultSettings,
-            {
-                mass_delete_chunk_size: app.config.massActions.massDeleteChunkSize,
-                mass_update_chunk_size: app.config.massActions.massUpdateChunkSize
-            },
+            configSettings,
             this.meta && this.meta.settings || {}
         );
 
