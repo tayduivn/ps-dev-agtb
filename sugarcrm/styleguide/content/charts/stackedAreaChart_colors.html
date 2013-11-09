@@ -1,0 +1,273 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=320" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Line Chart - Color Options</title>
+  <link rel="stylesheet/less" type="text/css" href="../css/styles.less" />
+  <script src="../js/less-1.3.3.min.js" type="text/javascript"></script>
+</head>
+<body>
+  <div class="nv-demo">
+    <section id="colors">
+
+      <div class="page-header">
+        <h2>Line Chart - Color Options</h2>
+      </div>
+
+      <div class="row-fluid">
+        <div class="span4">
+          <h3>Default Colors <small>(stacked)</small></h3>
+          <div id="chart1" class="nv-chart nv-chart-line">
+            <svg></svg>
+          </div>
+        </div>
+        <div class="span4">
+          <h3>Default Gradient Fill <small>(stream)</small></h3>
+          <div id="chart2" class="nv-chart nv-chart-line">
+            <svg></svg>
+          </div>
+        </div>
+        <div class="span4">
+          <h3>Default Class Names <small>(expand)</small></h3>
+          <div id="chart3" class="nv-chart nv-chart-line">
+            <svg></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="row-fluid">
+        <div class="span4">
+          <h3>Data-Defined Colors <small>(expand)</small></h3>
+          <div id="chart4" class="nv-chart nv-chart-line">
+            <svg></svg>
+          </div>
+        </div>
+        <div class="span4">
+          <h3>Data-Defined Gradient Fill <small>(stream)</small></h3>
+          <div id="chart5" class="nv-chart nv-chart-line">
+            <svg></svg>
+          </div>
+        </div>
+        <div class="span4">
+          <h3>Data-Defined Class Names <small>(stacked)</small></h3>
+          <div id="chart6" class="nv-chart nv-chart-line">
+            <svg></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="row-fluid">
+        <div class="span4">
+          <h3>Graduated Palette Colors <small>(stacked)</small></h3>
+          <div id="chart7" class="nv-chart nv-chart-line">
+            <svg></svg>
+          </div>
+        </div>
+        <div class="span4">
+          <h3>Graduated Palette Gradient Fill <small>(stacked)</small></h3>
+          <div id="chart8" class="nv-chart nv-chart-line">
+            <svg></svg>
+          </div>
+        </div>
+        <div class="span4">
+          <h3>Data-Defined Classes</h3>
+          <!-- <div id="chart9" class="nv-chart nv-chart-line">
+            <svg></svg>
+          </div> -->
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+<script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
+<script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
+<script src="data/line_data.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/scatter.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/stackedArea.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/stackedAreaChart.js"></script>
+
+<script>
+  var line_data_default_JSON = JSON.stringify(line_data_default);
+  var line_data_color_JSON = JSON.stringify(line_data_color);
+
+  nv.addGraph(function() {
+    var chart = nv.models.stackedAreaChart()
+          .x(function(d) { return d[0] })
+          .y(function(d) { return d[1] })
+          .style('stack')
+          .tooltips(false)
+          .colorData( 'default' )
+        ;
+    chart.xAxis
+        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+    chart.yAxis
+        .axisLabel('Expenditures ($)')
+        .tickFormat(d3.format(',.2f'));
+    d3.select('#chart1 svg')
+        .datum(JSON.parse(line_data_default_JSON))
+      .transition().duration(500).call(chart);
+    return chart;
+  });
+  nv.addGraph(function() {
+    var chart = nv.models.stackedAreaChart()
+          .x(function(d) { return d[0] })
+          .y(function(d) { return d[1] })
+          .style('stream')
+          .tooltips(false)
+          .colorData( 'default', {gradient:true} )
+        ;
+    chart.xAxis
+        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+    chart.yAxis
+        .axisLabel('Expenditures ($)')
+        .tickFormat(d3.format(',.2f'));
+    d3.select('#chart2 svg')
+        .datum(JSON.parse(line_data_default_JSON))
+      .transition().duration(500).call(chart);
+    return chart;
+  });
+  nv.addGraph(function() {
+    var chart = nv.models.stackedAreaChart()
+          .x(function(d) { return d[0] })
+          .y(function(d) { return d[1] })
+          .style('expand')
+          .tooltips(false)
+          .colorData( 'class', {step:2} )
+        ;
+    chart.xAxis
+        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+    chart.yAxis
+        .axisLabel('Expenditures ($)')
+        .tickFormat(d3.format(',.2f'));
+    d3.select('#chart3 svg')
+        .datum(JSON.parse(line_data_default_JSON))
+      .transition().duration(500).call(chart);
+    return chart;
+  });
+
+
+  nv.addGraph(function() {
+    var chart = nv.models.stackedAreaChart()
+          .x(function(d) { return d[0] })
+          .y(function(d) { return d[1] })
+          .style('expand')
+          .tooltips(false)
+          .colorData( 'default' )
+        ;
+    chart.xAxis
+        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+    chart.yAxis
+        .axisLabel('Expenditures ($)')
+        .tickFormat(d3.format(',.2f'));
+    d3.select('#chart4 svg')
+        .datum(JSON.parse(line_data_color_JSON))
+      .transition().duration(500).call(chart);
+    return chart;
+  });
+  nv.addGraph(function() {
+    var chart = nv.models.stackedAreaChart()
+          .x(function(d) { return d[0] })
+          .y(function(d) { return d[1] })
+          .style('stream')
+          .tooltips(false)
+          .colorData( 'default', {gradient:true} )
+        ;
+    chart.xAxis
+        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+    chart.yAxis
+        .axisLabel('Expenditures ($)')
+        .tickFormat(d3.format(',.2f'));
+    d3.select('#chart5 svg')
+        .datum(JSON.parse(line_data_color_JSON))
+      .transition().duration(500).call(chart);
+    return chart;
+  });
+  nv.addGraph(function() {
+    var chart = nv.models.stackedAreaChart()
+          .x(function(d) { return d[0] })
+          .y(function(d) { return d[1] })
+          .style('stack')
+          .tooltips(false)
+          .colorData( 'class', {step:2} )
+        ;
+    chart.xAxis
+        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+    chart.yAxis
+        .axisLabel('Expenditures ($)')
+        .tickFormat(d3.format(',.2f'));
+    d3.select('#chart6 svg')
+        .datum(JSON.parse(line_data_color_JSON))
+      .transition().duration(500).call(chart);
+    return chart;
+  });
+
+
+  nv.addGraph(function() {
+    var chart = nv.models.stackedAreaChart()
+          .x(function(d) { return d[0] })
+          .y(function(d) { return d[1] })
+          .tooltips(false)
+          .colorData( 'graduated', {c1:'#12448f', c2:'#deeeff', l:line_data_default.data.length} )
+        ;
+    chart.xAxis
+        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+    chart.yAxis
+        .axisLabel('Expenditures ($)')
+        .tickFormat(d3.format(',.2f'));
+    d3.select('#chart7 svg')
+        .datum(JSON.parse(line_data_default_JSON))
+      .transition().duration(500).call(chart);
+    return chart;
+  });
+  nv.addGraph(function() {
+    var chart = nv.models.stackedAreaChart()
+          .x(function(d) { return d[0] })
+          .y(function(d) { return d[1] })
+          .tooltips(false)
+          .colorData( 'graduated', {c1:'#12448f', c2:'#deeeff', l:line_data_default.data.length, gradient:true} )
+        ;
+    chart.xAxis
+        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+    chart.yAxis
+        .axisLabel('Expenditures ($)')
+        .tickFormat(d3.format(',.2f'));
+    d3.select('#chart8 svg')
+        .datum(JSON.parse(line_data_default_JSON))
+      .transition().duration(500).call(chart);
+    return chart;
+  });
+
+</script>
+</body>
+</html>
