@@ -247,18 +247,14 @@ function make_sugar_config(&$sugar_config)
             'min_cron_interval' => 30, // minimal interval between cron jobs
         ),
         'max_record_fetch_size' => 1000,
-        'mass_actions' => array(
-            'mass_update_chunk_size' => 20,
-            'mass_delete_chunk_size' => 20,
-        ),
-        'merge_duplicates' => array(
-            'merge_relate_fetch_concurrency' => 2,
-            'merge_relate_fetch_timeout' => 90000,
-            'merge_relate_fetch_limit' => 20,
-            'merge_relate_update_concurrency' => 4,
-            'merge_relate_update_timeout' => 90000,
-            'merge_relate_max_attempt' => 3,
-        ),
+        'mass_update_chunk_size' => 20,
+        'mass_delete_chunk_size' => 20,
+        'merge_relate_fetch_concurrency' => 2,
+        'merge_relate_fetch_timeout' => 90000,
+        'merge_relate_fetch_limit' => 20,
+        'merge_relate_update_concurrency' => 4,
+        'merge_relate_update_timeout' => 90000,
+        'merge_relate_max_attempt' => 3,
     );
 }
 
@@ -476,18 +472,14 @@ function get_sugar_config_defaults()
             'min_cron_interval' => 30, // minimal interval between cron jobs
         ),
         'max_record_fetch_size' => 1000,
-        'mass_actions' => array(
-            'mass_update_chunk_size' => 20,
-            'mass_delete_chunk_size' => 20,
-        ),
-        'merge_duplicates' => array(
-            'merge_relate_fetch_concurrency' => 2,
-            'merge_relate_fetch_timeout' => 90000,
-            'merge_relate_fetch_limit' => 20,
-            'merge_relate_update_concurrency' => 4,
-            'merge_relate_update_timeout' => 90000,
-            'merge_relate_max_attempt' => 3,
-        ),
+        'mass_update_chunk_size' => 20,
+        'mass_delete_chunk_size' => 20,
+        'merge_relate_fetch_concurrency' => 2,
+        'merge_relate_fetch_timeout' => 90000,
+        'merge_relate_fetch_limit' => 20,
+        'merge_relate_update_concurrency' => 4,
+        'merge_relate_update_timeout' => 90000,
+        'merge_relate_max_attempt' => 3,
     );
 
     if (empty($locale)) {
