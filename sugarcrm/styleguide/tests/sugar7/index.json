@@ -1,0 +1,22 @@
+[
+  {
+    "label": "login form banner",
+    "selector": ".modal-header.tcenter",
+    "tests": 
+    [
+        [ "border-bottom-color", "#EEEEEE" ]
+      , [ "border-bottom-style", "solid" ]
+      , [ "border-bottom-width", "1px" ]
+      , [ "color", "#58595B" ]
+      , [ "font-family", "\"Helvetica Neue\",Helvetica,Arial,sans-serif" ]
+      , [ "font-size", "12px" ]
+      , [ "border-bottom-style", "solid" ]
+      , [ "line-height", "12px" ]
+      , [ "padding-bottom", "9px" ]
+      , [ "padding-left", "15px" ]
+      , [ "padding-right", "15px" ]
+      , [ "padding-top", "9px" ]
+      , [ "text-align", "center" ]
+    ]
+  }
+]
