@@ -84,49 +84,4 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
             'br_ikea',
         );
     }
-
-    public function testGetConfigs()
-    {
-        $sugarConfig = array(
-            'list_max_entries_per_page' => 1,
-            'max_record_fetch_size' => 2,
-            'mass_actions' => array(
-                'mass_update_chunk_size' => 3,
-                'not_on_white_list' => 4,
-            ),
-        );
-
-        $expectedConfigs = array(
-            'maxQueryResult' => 1,
-            'maxRecordFetchSize' => 2,
-            'massActions' => array(
-                'massUpdateChunkSize' => 3,
-            )
-        );
-
-        $manager = new MetadataManagerMock();
-        $manager->setSugarConfig($sugarConfig);
-
-        $this->assertEquals($expectedConfigs, $manager->getConfigs());
-    }
-}
-
-class MetadataManagerMock extends MetadataManager
-{
-    private $sugarConfig;
-
-    public function setSugarConfig(array $sugarConfig)
-    {
-        $this->sugarConfig = $sugarConfig;
-    }
-
-    public function getSugarConfig()
-    {
-        return $this->sugarConfig;
-    }
-
-    public function getConfigs()
-    {
-        return parent::getConfigs();
-    }
 }

@@ -49,20 +49,7 @@ class SugarUpgradeConfigUpgrade extends UpgradeScript
             unset($this->upgrader->config['disable_team_access_check']);
         }
 
-        $defaults = array(
-            'mass_actions' => array(
-                'mass_update_chunk_size' => 20,
-                'mass_delete_chunk_size' => 20,
-            ),
-            'merge_duplicates' => array(
-                'merge_relate_fetch_concurrency' => 2,
-                'merge_relate_fetch_timeout' => 90000,
-                'merge_relate_fetch_limit' => 20,
-                'merge_relate_update_concurrency' => 4,
-                'merge_relate_update_timeout' => 90000,
-                'merge_relate_max_attempt' => 3,
-            ),
-            'passwordsetting' => array(
+        $passwordsetting_defaults = array(
                 'minpwdlength' => '',
                 'maxpwdlength' => '',
                 'oneupper' => '',
@@ -89,19 +76,14 @@ class SugarUpgradeConfigUpgrade extends UpgradeScript
                 'lockoutexpiration' => '0',
                 'lockoutexpirationtime' => '',
                 'lockoutexpirationtype' => '1',
-                'lockoutexpirationlogin' => '',
-            ),
-        );
+                'lockoutexpirationlogin' => ''
+         );
 
-        foreach ($defaults as $key => $values) {
-            if (isset($this->upgrader->config[$key]) && is_array($this->upgrader->config[$key]) && is_array($values)) {
-                $this->upgrader->config[$key] = array_merge(
-                    $values,
-                    $this->upgrader->config[$key]
-                );
-            } else {
-                $this->upgrader->config[$key] = $values;
-            }
+        if(!isset($this->upgrader->config['passwordsetting'])) {
+            $this->upgrader->config['passwordsetting'] = $passwordsetting_defaults;
+        } else {
+            $this->upgrader->config['passwordsetting'] = array_merge($passwordsetting_defaults, $this->upgrader->config['passwordsetting']);
         }
+
     }
 }
