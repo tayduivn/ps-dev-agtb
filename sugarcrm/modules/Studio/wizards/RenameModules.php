@@ -67,6 +67,14 @@ class RenameModules
     protected $renameDefs = array('module' => array(), 'global' => array());
 
     /**
+     * Modules from the request, used in renaming singular labels and as a cache
+     * for changed modules
+     * 
+     * @var array
+     */
+    protected $requestModules = array();
+
+    /**
      *
      * @param string $options
      * @return void
@@ -258,8 +266,6 @@ class RenameModules
                         // If there was a change, add it to the new array
                         if ($newValue != $oldValue) {
                             $new[$def['name']] = $newValue;
-                            // And add it to globals so its available immediately
-                            $GLOBALS['app_strings'][$def['name']] = $newValue;
                         }
                     }
                 }
@@ -811,6 +817,11 @@ class RenameModules
      */
     protected function getAllModulesFromRequest()
     {
+        // We really only want to get this once
+        if (!empty($this->requestModules)) {
+            return $this->requestModules;
+        }
+
         global $locale;
         $count = 0;
         $allModuleEntries = array();
@@ -865,6 +876,7 @@ class RenameModules
             );
         }
 
+        $this->requestModules = $results;
         return $results;
     }
 
@@ -878,13 +890,11 @@ class RenameModules
     {
         $request = $this->getAllModulesFromRequest();
         $return = array();
-        $index = 0;
-        foreach ($request as $params) {
+        foreach ($request as $module => $params) {
             if ($params['changed']) {
                 unset($params['changed']);
-                $return[$index] = $params;
+                $return[$module] = $params;
             }
-            $index++;
         }
         return $return;
     }
