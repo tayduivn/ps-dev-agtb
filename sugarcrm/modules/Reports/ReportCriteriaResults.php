@@ -197,9 +197,15 @@ if(! empty($_REQUEST['to_pdf'])){
 	return;
 } // if
 if(! empty($_REQUEST['to_csv'])){
-	if($sugar_config['disable_export'] || (!empty($sugar_config['admin_export_only']) && !(is_admin($current_user) || (ACLController::moduleSupportsACL($args['reporter']->module) && ACLAction::getUserAccessLevel($current_user->id,$args['reporter']->module, 'access') == ACL_ALLOW_ENABLED && ACLAction::getUserAccessLevel($current_user->id, $args['reporter']->module, 'admin') == ACL_ALLOW_ADMIN)))){
-		die("Exports Disabled");
-	}
+    if (ACLController::moduleSupportsACL($args['reporter']->module)) {
+        $acl = SugarACL::getUserAccess($args['reporter']->module);
+        $acl = $acl['export'];
+    } else {
+        $acl = true;
+    }
+    if ($sugar_config['disable_export'] || (!empty($sugar_config['admin_export_only']) && !(is_admin($current_user))) || !$acl) {
+        die("Exports Disabled");
+    }
 	template_handle_export($args['reporter']);
 	return;
 } // if
