@@ -21673,65 +21673,6 @@ $sugar_demodata['contract_seed_data'][] = array(
 	'company_signed_date' => '2010-03-15',
 	'customer_signed_date' => '2010-03-16',
 	'description' => 'In competition with Sienar Fleet Systems for this one.',
-); 
-
-$sugar_demodata['project_seed_data']['audit'] = array(
-	'name' => 'Create new plan for the annual audit',
-	'description' => 'The annual audit is coming up next month.',
-	'estimated_start_date' => '2010-11-01',
-	'estimated_end_date' => '2010-12-31',
-	'status' => 'Draft',
-	'priority' => 'medium',
-);
-
-$sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
-	'name' => 'Communicate with internal stakeholders',
-	'date_start' => '2010-11-1',
-	'date_finish' => '2010-11-8',
-	'description' => 'Schedule individual meetings with Will, Max, and Sarah.',
-	'duration' => '6',
-	'duration_unit' => 'Days',
-	'percent_complete' => 100,
-);
-
-$sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
-	'name' => 'Create draft of the plan',
-	'date_start' => '2010-11-5',
-	'date_finish' => '2010-11-20',
-	'description' => 'Start new plan document, including all of the information from the initial discussion meetings.',
-	'duration' => '12',
-	'duration_unit' => 'Days',
-	'percent_complete' => 38,
-);
-
-$sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
-	'name' => 'Perform field studies to collect data',
-	'date_start' => '2010-11-5',
-	'date_finish' => '2010-11-13',
-	'description' => 'Obtain approval from all stakeholders of the plan.',
-	'duration' => '17',
-	'duration_unit' => 'Days',
-	'percent_complete' => 75,
-);
-
-$sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
-	'name' => 'Update draft of the plan',
-	'date_start' => '2010-11-12',
-	'date_finish' => '2010-11-19',
-	'description' => 'Schedule a meeting with the heads of the business units to review the plan.',
-	'duration' => '6',
-	'duration_unit' => 'Days',
-	'percent_complete' => 0,
-);
-
-$sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
-	'name' => 'Gather data from meetings',
-	'date_start' => '2010-11-20',
-	'date_finish' => '2010-11-20',
-	'description' => 'Need to organize the data and create charts to represent the data.',
-	'duration' => '1',
-	'duration_unit' => 'Days',
-	'percent_complete' => 0,
 );
 
 //BEGIN Quotes demo data
