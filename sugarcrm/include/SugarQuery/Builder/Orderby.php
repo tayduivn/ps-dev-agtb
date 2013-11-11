@@ -29,4 +29,8 @@ class SugarQuery_Builder_Orderby
         $this->column = new SugarQuery_Builder_Field_Orderby($column, $this->query, $this->direction);
         return $this;
     }
+
+    public function addRaw($expression) {
+        $this->column = new SugarQuery_Builder_Field_Raw($expression, $this->query);
+    }
 }

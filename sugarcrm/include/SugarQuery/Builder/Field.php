@@ -16,6 +16,7 @@ require_once 'include/SugarQuery/Builder/Field/Condition.php';
 require_once 'include/SugarQuery/Builder/Field/Groupby.php';
 require_once 'include/SugarQuery/Builder/Field/Having.php';
 require_once 'include/SugarQuery/Builder/Field/Orderby.php';
+require_once 'include/SugarQuery/Builder/Field/Raw.php';
 require_once 'include/SugarQuery/Builder/Field/Select.php';
 
 /**
@@ -61,9 +62,19 @@ class SugarQuery_Builder_Field
     public $ftsEnabled = false;
 
     /**
+     * @var string module name
+     */
+    public $moduleName = false;
+
+    /**
      * @var bool is this field a non-db field
      */
     public $nonDb = 0;
+
+    /**
+     * @var bool is this field from a join table [i.e. accounts_contacts]
+     */
+    public $isJoinTable = false;
 
     /**
      * Makin' the magic in the sugar field
@@ -95,12 +106,8 @@ class SugarQuery_Builder_Field
 
         $this->def = $this->getFieldDef();
         $this->jta = $this->getJoin();
-        if (!empty($this->def) && $this->field != 'id_c') {
-            $this->cleanField();
-        }
-
-        if ($this->custom == true) {
-            $this->cleanTable();
+        if ((!empty($this->def) && $this->field != 'id_c') || $this->field == '*') {
+            $this->expandField();
         }
     }
 
@@ -123,10 +130,12 @@ class SugarQuery_Builder_Field
         if ($bean && ($bean->getTableName() == $this->table || $this->table == $this->query->getFromAlias()) && !empty($bean->field_defs[$this->field])) {
             $this->table = $this->query->getFromAlias();
             $def = $bean->field_defs[$this->field];
+            $this->moduleName = $bean->module_name;
         } else {
             $bean = $this->query->getTableBean($this->table);
 
             if (!empty($bean->field_defs[$this->field])) {
+                $this->moduleName = $bean->module_name;
                 $def = $bean->field_defs[$this->field];
             }
         }
@@ -140,17 +149,12 @@ class SugarQuery_Builder_Field
         return $def;
     }
 
-    /**
-     * If the table is custom, this will clean the table vars
-     */
-    public function cleanTable()
+    public function checkCustomField()
     {
-        if ($this->table != $this->bean_table) {
-            $cstm_name = "{$this->table}_cstm";
-        } else {
-            $cstm_name = $this->custom_bean_table;
+        $bean = BeanFactory::getBean($this->moduleName);
+        if (isset($bean->field_defs[$this->field]['source']) && $bean->field_defs[$this->field]['source'] == 'custom_fields') {
+            $this->table = $this->table . '_cstm';
         }
-        $this->table = $cstm_name;
     }
 
     /**
@@ -162,7 +166,7 @@ class SugarQuery_Builder_Field
     {
         $jta = false;
         if(!isset($this->def['source']) || $this->def['source'] == 'db') {
-            return $jta;
+            return false;
         }
         if (isset($this->def['type']) && $this->def['type'] == 'relate'
             || (isset($this->def['source']) && $this->def['source'] == 'non-db'
@@ -193,10 +197,6 @@ class SugarQuery_Builder_Field
                 }
             }
             if (!empty($this->def['link']) && !$this->query->getJoinAlias($this->def['link'])) {
-
-                if (isset($this->def['join_name'])) {
-                    $params['alias'] = $this->def['join_name'];
-                }
 
                 $join = $this->query->join($this->def['link'], $params);
 
@@ -243,7 +243,7 @@ class SugarQuery_Builder_Field
      * it will also add additional fields to the query or modify the table, field variables of the object
      * so that on compilation the field is a correct db field.
      */
-    public function cleanField()
+    public function expandField()
     {
     }
 

@@ -129,11 +129,10 @@ class SugarQuery
         if (!is_array($fields)) {
             $fields = func_get_args();
         }
-        if (empty($this->select)) {
-            $this->select = new SugarQuery_Builder_Select($this, $fields);
-        } else {
-            $this->select->field($fields);
+        if (!is_object($this->select)) {
+            $this->select = new SugarQuery_Builder_Select($this, array());
         }
+        $this->select->field($fields);
         return $this->select;
     }
 
@@ -507,6 +506,14 @@ class SugarQuery
         return $this;
     }
 
+    public function groupByRaw($expression)
+    {
+        $groupBy = new SugarQuery_Builder_Groupby($this);
+        $groupBy->addRaw($expression);
+        $this->group_by[] = $groupBy;
+        return $this;
+    }
+
     /**
      * Add a having statement to this query
      *
@@ -520,6 +527,14 @@ class SugarQuery
         if (!empty($conditions)) {
             $having->add($conditions);
         }
+        $this->having[] = $having;
+        return end($this->having);
+    }
+
+    public function havingRaw($expression)
+    {
+        $having = new SugarQuery_Builder_Andwhere($this);
+        $having->addRaw($expression);
         $this->having[] = $having;
         return end($this->having);
     }
@@ -544,6 +559,15 @@ class SugarQuery
         $orderBy->addField($column);
         $this->order_by[] = $orderBy;
 
+        return $this;
+    }
+
+
+    public function orderByRaw($expression)
+    {
+        $orderBy = new SugarQuery_Builder_Orderby($this);
+        $orderBy->addRaw($expression);
+        $this->order_by[] = $orderBy;
         return $this;
     }
 

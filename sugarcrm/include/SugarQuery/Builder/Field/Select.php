@@ -25,12 +25,41 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
         parent::__construct($field, $query);
     }
 
-    public function cleanField()
+    public function expandField()
     {
-        $this->alias = empty($this->alias) ? $this->def['name'] : $this->alias;
-        if ($this->field == '*') {
+        $this->checkCustomField();
+
+        if (isset($this->def['type']) && $this->def['type'] == 'function') {
+            $this->markNonDb();
             return;
         }
+
+        if (empty($this->alias) && !empty($this->def['name'])) {
+            $this->alias = $this->def['name'];
+        }
+        if ($this->field == '*') {
+            // remove *
+            $this->moduleName = empty($this->moduleName) ? $this->query->getFromBean()->module_name : $this->moduleName;
+            $bean = BeanFactory::getBean($this->moduleName);
+            foreach ($bean->field_defs AS $field => $def) {
+                if (!isset($def['source']) || $def['source'] == 'db' || ($def['source'] == 'custom_fields' && $def['type'] != 'relate')) {
+                    $this->addToSelect("{$this->table}.{$field}");
+                }
+            }
+            $this->markNonDb();
+            return;
+        }
+
+        if ($this->def['type'] == 'fullname') {
+            $nameFields = Localization::getObject()->getNameFormatFields($this->moduleName);
+            foreach ($nameFields as $partOfName) {
+                $alias = !empty($this->alias) ? "{$this->alias}__{$partOfName}" : "{$this->def['name']}__{$partOfName}";
+                $this->addToSelect(array(array("{$this->table}.{$partOfName}", $alias)));
+            }
+            $this->markNonDb();
+            return;
+        }
+
         if (!isset($this->def['source']) || $this->def['source'] == 'db') {
             return;
         }
@@ -44,21 +73,28 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
             $this->query->hasParent($this->field);
             $this->addToSelect('parent_type');
             $this->addToSelect('parent_id');
+            $this->markNonDb();
         }
         if (isset($this->def['custom_type']) && $this->def['custom_type'] == 'teamset') {
             $this->addToSelect('team_set_id');
         }
         // Exists only checks
         if (!empty($this->def['rname_exists'])) {
+            $this->markNonDb();
             $this->addToSelect("IF({$this->jta}.{$this->def['rname']} IS NOT NULL,1,0)");
         }
 
         if (!empty($this->def['rname']) && !empty($this->jta)) {
-            $this->addToSelect(array("{$this->jta}.{$this->def['rname']}", $this->def['name']));
+            $field = array("{$this->jta}.{$this->def['rname']}", $this->def['name']);
+            $this->addToSelect(array($field));
+            $this->markNonDb();
         }
         if (!empty($this->def['rname_link']) && !empty($this->jta)) {
             $this->field = $this->def['rname_link'];
             $this->alias = $this->def['name'];
+        }
+        if (!empty($this->def['source']) && $this->def['source'] == 'custom_fields') {
+            $this->table = strstr($this->table, '_cstm') ? $this->table : $this->table . '_cstm';
         }
     }
 
@@ -66,9 +102,9 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
     {
         if (!is_object($this->query->select)) {
             $this->query->select($field);
-            return true;
+        } else {
+            $this->query->select->field($field);
         }
-        $this->query->select->addField($field);
         return true;
     }
 

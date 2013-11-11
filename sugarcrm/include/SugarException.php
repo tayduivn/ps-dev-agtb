@@ -30,10 +30,9 @@ class SugarException extends Exception
      * @param array $msgArgs optional set of arguments to substitute into error message string
      * @param string|null $moduleName Provide module name if $messageLabel is a module string, leave empty if
      *  $messageLabel is in app strings.
-     * @param int $httpCode
      * @param string $errorLabel
      */
-    function __construct($messageLabel = null, $msgArgs = null, $moduleName = null, $errorLabel = null)
+    public function __construct($messageLabel = null, $msgArgs = null, $moduleName = null, $errorLabel = null)
     {
 
         if (!empty($messageLabel)) {

@@ -128,7 +128,6 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("first_name", "last_name"));
         $sq->from(BeanFactory::getBean('Contacts'));
         $sq->where()->equals("id", $id);
-
         $result = $sq->execute();
         // only 1 record
         $this->assertEquals(
@@ -415,16 +414,16 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
         $expected = array(
             array(
+                'full_name__last_name' => 'Awesome-Sauce',
+                'full_name__first_name' => 'Super',
+                'full_name__salutation' => null,
                 'last_name' => 'Awesome-Sauce',
-                'first_name' => 'Super',
-                'salutation' => null,
-                'title' => null,
             ),
             array(
+                'full_name__last_name' => 'Bad-Sauce',
+                'full_name__first_name' => 'Super',
+                'full_name__salutation' => null,
                 'last_name' => 'Bad-Sauce',
-                'first_name' => 'Super',
-                'salutation' => null,
-                'title' => null,
             ),
         );
 

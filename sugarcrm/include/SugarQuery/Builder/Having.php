@@ -27,4 +27,8 @@ class SugarQuery_Builder_Having
         $this->column = new SugarQuery_Builder_Field_Having($column, $this->query);
         return $this;
     }
+    
+    public function addRaw($expression) {
+        $this->column = new SugarQuery_Builder_Field_Raw($expression, $this->query);
+    }
 }

@@ -27,7 +27,7 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
     }
 
 
-    public function cleanField()
+    public function expandField()
     {
         if(!isset($this->def['source']) || $this->def['source'] == 'db') {
             return;
@@ -41,14 +41,25 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
         }  elseif(!empty($this->def['rname_link']) && !empty($this->def['link'])) {
             $this->field = $this->def['rname_link'];
         }
+
+        if (!empty($this->def['module'])) {
+            $this->moduleName = $this->def['module'];
+        }
+        $this->checkCustomField();
     }
 
-    /**
-     * Never mark a condition field as deleted
-     */
     public function shouldMarkNonDb()
     {
+        if (!empty($this->moduleName)) {
+            $bean = BeanFactory::getBean($this->moduleName);
+            $def = $bean->field_defs[$this->field];
+            if (isset($def['source']) && $def['source'] == 'non-db' && !isset($def['dbType'])) {
+                $this->nonDb = 1;
+                return;
+            }
+        }
         $this->nonDb = 0;
+        return;
     }
 
     /**
@@ -76,11 +87,8 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
                 case 'date':
                 case 'datetime':
                 case 'time':
-                    if ($value == 'NOW()') {
+                    if (strtoupper($value) == 'NOW()') {
                         return $db->now();
-                    }
-                    if ($operator == 'STARTS') {
-                        $value = $value . '%';
                     }
             }
 

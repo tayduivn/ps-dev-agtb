@@ -12,24 +12,16 @@
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-class SugarQuery_Builder_Groupby
+
+/**
+ * SugarQuery_Builder_Field_Orderby
+ * @api
+ */
+
+class SugarQuery_Builder_Field_Raw extends SugarQuery_Builder_Field
 {
-    public $column;
-    public $query;
-
-    public function __construct($query)
+    public function __construct($field, SugarQuery $query)
     {
-        $this->query = $query;
-    }
-
-    public function addField($column, $options = array())
-    {
-        $this->column = new SugarQuery_Builder_Field_Groupby($column, $this->query);
-        return $this;
-    }
-    
-    public function addRaw($expression) {
-        $this->column = new SugarQuery_Builder_Field_Raw($expression, $this->query);
-        return $this;
+        $this->field = $field;
     }
 }

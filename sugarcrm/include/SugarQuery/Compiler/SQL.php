@@ -88,7 +88,10 @@ class SugarQuery_Compiler_SQL
         $offset = $this->sugar_query->offset;
 
         $union = $this->sugar_query->union;
-
+        // if there aren't any selected fields, add them all
+        if (empty($this->sugar_query->select->select)) {
+            $this->sugar_query->select('*');
+        }
         /* order by clauses should be in SELECT, ensure they are there */
         if (!empty($order_by)) {
             $order_fields = array();
@@ -265,6 +268,10 @@ class SugarQuery_Compiler_SQL
             return $field;
         }
 
+        if ($field instanceof SugarQuery_Builder_Field_Raw) {
+            return $field->field;
+        }
+
         if ($field->isNonDb() == 1) {
             return '';
         }
@@ -340,7 +347,7 @@ class SugarQuery_Compiler_SQL
             }
 
             if (!empty($whereObj->raw)) {
-                $sql .= $whereObj->raw;
+                $sql .= $this->compileField($whereObj->raw);
             }
             foreach ($whereObj->conditions as $condition) {
                 if ($condition instanceof SugarQuery_Builder_Where) {
@@ -381,6 +388,10 @@ class SugarQuery_Compiler_SQL
         }
 
         $field = $this->compileField($condition->field);
+
+        if (empty($field)) {
+            throw new SugarQueryException("The field: {$condition->field->field} is not valid");
+        }
 
         if ($condition->isNull) {
             $sql .= "{$field} IS NULL";

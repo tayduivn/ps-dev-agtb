@@ -19,7 +19,7 @@ class SugarQuery_Builder_Select
      * Array of Select fields/statements
      * @var array
      */
-    protected $select = array();
+    public $select = array();
 
     protected $query;
 
@@ -50,10 +50,15 @@ class SugarQuery_Builder_Select
             $columns = func_get_args();
         }
         foreach ($columns as $column) {
-            $this->select[] = new SugarQuery_Builder_Field_Select($column, $this->query);
+            $field = new SugarQuery_Builder_Field_Select($column, $this->query);
+            $key = empty($field->alias) ? "{$field->table}.{$field->field}" : $field->alias;
+            if(!$field->isNonDb()) {
+                $this->select[$key] = $field;
+            }
         }
         return $this;
     }
+
 
     public function addField($column, $options = array())
     {

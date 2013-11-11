@@ -437,7 +437,7 @@ abstract class SugarQuery_Builder_Where
      */
     public function addRaw($sql)
     {
-        $this->raw = $sql;
+        $this->raw = new SugarQuery_Builder_Field_Raw($sql, $this->query);
     }
 
     /**

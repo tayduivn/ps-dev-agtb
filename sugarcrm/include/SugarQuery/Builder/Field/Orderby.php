@@ -29,7 +29,7 @@ class SugarQuery_Builder_Field_Orderby extends SugarQuery_Builder_Field
         parent::__construct($field, $query);
     }
 
-    public function cleanField()
+    public function expandField()
     {
         if (!empty($this->def['sort_on'])) {
             // this is a compound field

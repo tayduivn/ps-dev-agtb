@@ -12,6 +12,9 @@
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
+/**
+ * Literal clause in SQL query
+ */
 class SugarQuery_Builder_Literal
 {
 	public $value;
