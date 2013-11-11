@@ -441,6 +441,10 @@
                 // get the field value
                 var elVal = field.$el.find(field.fieldTag).val();
 
+                if (field.type == 'currency' || field.type == 'int') {
+                    elVal = this._parsePercentage(elVal, (field.type == 'currency') ? 2 : 0);
+                }
+
                 if (field.type == 'currency') {
                     // for currency we want to make sure the value didn't actually change so get the difference
                     // and multiple it by 100 (2 decimals out), if it's not equal to 0, then it changed.
