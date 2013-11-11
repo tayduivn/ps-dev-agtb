@@ -46,6 +46,10 @@
         }, this);
         app.events.on('preview:close', function() {
             this.preview_open = false;
+            if (!_.isUndefined(this._serverData)) {
+                this.convertDataToChartData();
+                this.generateD3Chart();
+            }
         }, this);
         app.events.on('app:toggle:sidebar', function(state) {
             this.state = state;

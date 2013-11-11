@@ -50,6 +50,17 @@
             chart = new loadSugarChartD3(chartId, this.model.get('rawChartData'), [], chartConfig, params, _.bind(function(chart){
                 this.chart = chart;
             }, this));
+
+            $(window).on('resize.' + this.sfId, _.bind(this.chart.update, this));
+
+            app.events.on('app:toggle:sidebar', function(state) {
+                if(state == 'open') {
+                    this.chart.update();
+                }
+            }, this);
+            app.events.on('preview:close', function() {
+                this.chart.update();
+            }, this);
     },
 
     /**
@@ -152,5 +163,12 @@
         this.chartType = chartConfig.chartType;
 
         return chartConfig;
+    },
+
+    _dispose: function() {
+        if (!_.isEmpty(this.chart)) {
+            $(window).off('resize.' + this.sfId);
+        }
+        app.view.Field.prototype._dispose.call(this);
     }
 })

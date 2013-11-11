@@ -90,12 +90,6 @@
             this.updateChart();
         }, this);
         this.settings.on('change:filter_duration', this.changeFilter, this);
-
-        app.events.on('app:toggle:sidebar', function(state) {
-            if(state == 'open') {
-                this.chart.render();
-            }
-        }, this);
     },
 
     /**
@@ -124,6 +118,15 @@
 
             nv.utils.windowResize(this.chart.render);
             nv.utils.resizeOnPrint(this.chart.render);
+
+            app.events.on('app:toggle:sidebar', function(state) {
+                if(state == 'open') {
+                    this.chart.render();
+                }
+            }, this);
+            app.events.on('preview:close', function() {
+                this.chart.render();
+            }, this);
         } else {
             this.$('.nv-chart').toggleClass('hide', true);
             this.$('.block-footer').toggleClass('hide', false);

@@ -66,6 +66,9 @@
                 this.chart.update();
             }
         }, this);
+        app.events.on('preview:close', function() {
+            this.chart.update();
+        }, this);
 
         nv.utils.windowResize(this.chart.update);
         nv.utils.resizeOnPrint(this.chart.update);
