@@ -41,10 +41,13 @@
         <div class="rows-div fluid-div" data-container="merge-container">
             <div class="row-div-cnt">
                 {{#each collection.models}}
-                    <div class="col" data-record-id="{{id}}" >
+                    <div class="col" data-record-id="{{id}}" data-container="merge-record">
+                        <button class="btn btn-invisible icon-remove-sign pull-right"
+                                data-action="delete" rel="tooltip" title="{{str "LBL_MERGE_DUPLICATES_REMOVE_TOOLTIP" ../module}}">
+                        </button>
                         <div class="primary-lbl {{#if readonly}}disabled{{/if}}" data-container="primary-label">
                             {{#eq id ../primaryRecord.id}}
-                                <span>{{str "LBL_COLLECTION_PRIMARY"}}</span>
+                                <span data-container="primary-label-span">{{str "LBL_COLLECTION_PRIMARY"}}</span>
                             {{/eq}}
                         </div>
                         <div class="box">

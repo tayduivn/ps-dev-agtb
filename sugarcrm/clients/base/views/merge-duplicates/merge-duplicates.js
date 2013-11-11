@@ -22,7 +22,8 @@
     extendsFrom: 'ListView',
     events: {
         'click [data-mode=preview]' : 'togglePreview',
-        'click [data-action=copy]' : 'triggerCopy'
+        'click [data-action=copy]' : 'triggerCopy',
+        'click [data-action=delete]' : 'triggerDelete'
     },
 
     /**
@@ -453,7 +454,7 @@
                 }
             });
             var related_fields = mergeField.related_fields || def.related_fields || undefined;
-            if(!_.isUndefined(related_fields) && _.isArray(related_fields)) {
+            if (!_.isUndefined(related_fields) && _.isArray(related_fields)) {
                 _.each(related_fields, function(rField) {
                     fields.push(rField);
                 });
@@ -884,8 +885,12 @@
 
             _.each(others, function(domElement) {
                 var el = $(domElement),
-                    readAccess = app.acl.hasAccessToModel('read', this.collection.get(el.data('record-id')), field.name);
-                el.prop('disabled', !readAccess || field.readonly);
+                    readAccess = app.acl.hasAccessToModel(
+                        'read',
+                        this.collection.get(el.data('record-id')),
+                        field.name
+                    );
+                el.prop('disabled', !readAccess);
             }, this);
         }, this);
     },
@@ -930,6 +935,28 @@
         this.$('[data-record-id=' + this.primaryRecord.id + ']').addClass('primary-edit-mode');
         this.resetRadioSelection(this.primaryRecord.id);
         this.checkCopyRadioButtons();
+        this._disableRemovePrimary();
+
+        if (this.collection.length <= 2) {
+            this.$('[data-action=delete]').css('visibility', 'hidden');
+        }
+    },
+
+    /**
+     * Checks can primary record be removed or not and if not hides remove control.
+     *
+     * Primary record cannot be removed is there is not other model with edit access.
+     *
+     * @protected
+     */
+    _disableRemovePrimary: function() {
+        var disableRemovePrimary = !_.some(this.collection.models, function(model) {
+            return model !== this.primaryRecord && app.acl.hasAccessToModel('edit', model);
+        }, this);
+
+        this.$('[data-record-id=' + this.primaryRecord.get('id') + ']')
+            .find('[data-action=delete]')
+            .css('visibility', (disableRemovePrimary ? 'hidden' : 'visible'));
     },
 
     resetRadioSelection: function(modelId) {
@@ -1072,6 +1099,76 @@
             this.primaryRecord,
             this.primaryRecord.get(fieldName)
         );
+    },
+
+    /**
+     * Event handler for model delete button.
+     *
+     * Shows alert message to confirm model removing.
+     *
+     * @param {Event} evt Mouse click event.
+     */
+    triggerDelete: function(evt) {
+        var recordId = this.$(evt.currentTarget).closest('[data-record-id]').data('recordId'),
+            model = this.collection.get(recordId),
+            self = this;
+
+        if (this.collection.length <= 2 || !recordId || !model) {
+            return;
+        }
+
+        if (model === this.primaryRecord) {
+            var allow = _.some(this.collection.models, function(model) {
+                return model !== this.primaryRecord && app.acl.hasAccessToModel('edit', model);
+            }, this);
+            if (!allow) {
+                return;
+            }
+        }
+
+        app.alert.show('record-delete-confirm', {
+            level: 'confirmation',
+            messages: app.lang.get('LBL_MERGE_DUPLICATES_REMOVE', this.module),
+            onConfirm: function() {
+                self.deleteFromMerge(model);
+            }
+        });
+    },
+
+    /**
+     * Delete model from collection to merge.
+     *
+     * If removed model is primary find first model in
+     * collection an setup it as primary.
+     *
+     * @param {Data.Bean} model Model to remove.
+     */
+    deleteFromMerge: function(model) {
+
+        this.collection.remove(model, {silent: true});
+
+        if (this.context.parent) {
+            this.context.parent.get('mass_collection').remove(model);
+        }
+
+        var selModelEl = '[data-container=merge-record][data-record-id=' + model.get('id') + ']';
+
+        if (model === this.primaryRecord) {
+            var primary = this._findPrimary(this.collection.models),
+                selNewPrimaryEl = '[data-container=merge-record][data-record-id=' + primary.get('id') + ']',
+                primaryEl = this.$(selNewPrimaryEl).find('[data-container=primary-label]'),
+                primaryLabel = this.$(selModelEl).find('[data-container=primary-label-span]');
+
+            primaryEl.append(primaryLabel);
+            this.setPrimaryEditable(primary.get('id'));
+
+        }
+
+        this.$(selModelEl).remove();
+
+        if (this.collection.length <= 2) {
+            this.$('[data-action=delete]').css('visibility', 'hidden');
+        }
     },
 
     /**

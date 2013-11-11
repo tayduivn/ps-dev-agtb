@@ -3995,6 +3995,9 @@ $app_strings = array (
         '{{total}} related records were added.{{/with}}',
     'TPL_MERGE_DUPLICATES_IDENTICAL' =>
         'All related records will be moved to the Primary record.',
+    'LBL_MERGE_DUPLICATES_REMOVE'  =>
+        'Are you sure you want to remove this record from merge?',
+    'LBL_MERGE_DUPLICATES_REMOVE_TOOLTIP'  => 'Remove record from merge',
 
     //for sugar7 errors
     'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
