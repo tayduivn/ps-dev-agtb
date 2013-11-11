@@ -72,6 +72,18 @@ class SugarTestMeetingUtilities
         return $id;
     }
 
+    public static function addMeetingContactRelation($meeting_id, $contact_id) {
+        $result = $GLOBALS['db']->query("SELECT id FROM meetings_contacts WHERE meeting_id='{$meeting_id}' AND contact_id='{$contact_id}'");
+        $result = $GLOBALS['db']->fetchByAssoc($result);
+        if (empty($result)) {
+            $id = create_guid();
+            $GLOBALS['db']->query("INSERT INTO meetings_contacts (id, meeting_id, contact_id) values ('{$id}', '{$meeting_id}', '{$contact_id}')");
+        } else {
+            $id = $result['id'];
+        }
+        return $id;
+    }
+
     public static function deleteMeetingLeadRelation($id) {
         $GLOBALS['db']->query("delete from meetings_leads where id='{$id}'");
     }
