@@ -53,6 +53,8 @@
      */
     _lastCurrencyId: null,
 
+    plugins: ['FieldDuplicate'],
+
     /**
      * {@inheritdoc}
      */
@@ -107,6 +109,20 @@
         // we do not call the parent which re-renders,
         // but instead update the value on the field directly
         this.model.on('change:' + this.name, this._valueChangeHandler, this);
+
+        this.model.on('duplicate:field:' + this.name, function(model) {
+            if (!model || model.get('currency_id') === this.model.get('currency_id')) {
+                return;
+            }
+            this.model.set(
+                this.name,
+                app.currency.convertAmount(
+                    app.currency.unformatAmountLocale(model.get(this.name)),
+                    model.get('currency_id'),
+                    this.model.get('currency_id')
+                )
+            );
+        }, this);
 
         if (this.def.is_base_currency) {
             // do not add change handler to _usdollar fields
@@ -284,6 +300,7 @@
      * @param {String} the mode name.
      */
     setMode: function(name) {
+        this.hideCurrencyDropdown = !!(name === 'list');
         app.view.Field.prototype.setMode.call(this, name);
         this.getCurrencyField().setMode(name);
     },

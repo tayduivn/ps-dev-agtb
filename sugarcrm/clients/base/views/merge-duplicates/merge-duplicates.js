@@ -128,7 +128,7 @@
      *
      * TODO: remove types that have properly implementation for merge interface
      */
-    fieldTypesBlacklist: ['currency', 'email', 'team_list', 'teamset', 'link', 'id', 'password'],
+    fieldTypesBlacklist: ['email', 'team_list', 'teamset', 'link', 'id', 'password'],
 
     /**
      * Links names won't be mergeable.
@@ -191,7 +191,7 @@
         { type: 'text', source: 'db' },
         { type: 'date', source: 'db' },
         { type: 'time', source: 'db' },
-        { type: 'currency', source: 'db' },
+        { type: 'currency', source: 'db', calculated: false },
         { type: 'int', source: 'db' },
         { type: 'long', source: 'db' },
         { type: 'double', source: 'db' },
