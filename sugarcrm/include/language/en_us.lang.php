@@ -3451,6 +3451,9 @@ $app_strings = array (
   'LBL_MERGE_CONNECTORS_BUTTON_KEY' => '[D]',
   'LBL_REMOVE_MODULE_ENTRY' => 'Are you sure you want to disable connector integration for this module?',
 
+    //Elastic
+    'ERR_ELASTIC_TEST_FAILED' => 'Failed to connect to Elastic server',
+
     // fastcgi checks
     'LBL_FASTCGI_LOGGING'      => 'For optimal experience using IIS/FastCGI sapi, set fastcgi.logging to 0 in your php.ini file.',
 
