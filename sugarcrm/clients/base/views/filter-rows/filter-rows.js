@@ -366,7 +366,7 @@
                 key = relate.name;
             }
             $row.find('.filter-field input[type=hidden]').select2('val', key).trigger('change');
-            if (_.isString(value)) {
+            if (_.isString(value) || _.isNumber(value)) {
                 value = {"$equals": value};
             }
             _.each(value, function(value, operator) {

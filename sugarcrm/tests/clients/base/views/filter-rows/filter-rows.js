@@ -324,6 +324,8 @@ describe("BaseFilterRowsView", function() {
                 first_name: {
                 },
                 last_name: {
+                },
+                probability: {
                 }
             };
             addRowStub = sinonSandbox.stub(view, 'addRow', function() {
@@ -334,7 +336,7 @@ describe("BaseFilterRowsView", function() {
             });
             $triggerStub = sinonSandbox.stub($.fn, 'trigger');
         });
-        it('should retrieve the field, the operator and the value from the filter object (1)', function() {
+        it('should retrieve the field, the operator and the value from the filter object (1)', function () {
             view.populateRow({
                 first_name: 'FirstName'
             });
@@ -343,6 +345,14 @@ describe("BaseFilterRowsView", function() {
             expect(view.$('article.filter-body').data('value')).toEqual('FirstName');
         });
         it('should retrieve the field, the operator and the value from the filter object (2)', function() {
+            view.populateRow({
+                probability: 80
+            });
+            expect(select2Stub.firstCall.args).toEqual(['val', 'probability']);
+            expect(select2Stub.secondCall.args).toEqual(['val', '$equals']);
+            expect(view.$('article.filter-body').data('value')).toEqual(80);
+        });
+        it('should retrieve the field, the operator and the value from the filter object (3)', function () {
             view.populateRow({
                 last_name: {
                     '$starts': 'LastName'
