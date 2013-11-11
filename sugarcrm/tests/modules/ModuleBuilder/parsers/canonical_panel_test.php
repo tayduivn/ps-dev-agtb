@@ -7,7 +7,14 @@
  */
 $canonicals = array(
 // canonical panels
-    array(array( 'fields' => array())),
+    array(array(
+        'fields' => array(),
+        'name' => 0,
+        'label' => 0,
+        'columns' => 2,
+        'labelsOnTop' => 1,
+        'placeholders' => 1,
+    )),
 
     array(array(
         'fields' => array(
@@ -29,7 +36,13 @@ $canonicals = array(
             array(
                 'span' => 6
             )
-        ))),
+        ),
+        'name' => 0,
+        'label' => '0',
+        'columns' => 2,
+        'labelsOnTop' => 1,
+        'placeholders' => 1,
+    )),
 
 
     array(array(
@@ -50,8 +63,13 @@ $canonicals = array(
                 'comment' => 'Full text of the note'
             ),
 
-        ))),
-
+        ),
+        'name' => 0,
+        'label' => '0',
+        'columns' => 2,
+        'labelsOnTop' => 1,
+        'placeholders' => 1,
+    )),
     array(array(
         'fields' => array(
             'name',
@@ -63,6 +81,27 @@ $canonicals = array(
             array(
                 'span' => 6
             )
-        ))),
+        ),
+        'name' => 0,
+        'label' => '0',
+        'columns' => 2,
+       'labelsOnTop' => 1,
+        'placeholders' => 1,
+    )),
+    array(array(
+        'fields' => array(
+            array(
+                'span' => 6
+            ),
+            array(
+                'span' => 6
+            )
+        ),
+        'name' => 0,
+        'label' => '0',
+        'columns' => 2,
+        'labelsOnTop' => 1,
+        'placeholders' => 1,
+    )),
 // end
 );

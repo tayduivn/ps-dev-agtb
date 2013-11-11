@@ -38,7 +38,7 @@ var _write_ = function( message ){ if(_debug_){ console.log(message);} }
 
 
 Studio2 = {
-	view: '',
+
 	init: function() {
 		var Dom = YAHOO.util.Dom,
 			DDTarget = YAHOO.util.DDTarget,
@@ -118,10 +118,7 @@ Studio2 = {
 				}
 			}
 		}
-		// Only allow panel drag and drop for non record view
-		if (Studio2.view != 'recordview') {
-			Studio2.activateElement(panels);
-		}
+		Studio2.activateElement(panels);
         Dom.setStyle(panels, "visibility", '');
 
 		// Activate the fields in the availablefields list
