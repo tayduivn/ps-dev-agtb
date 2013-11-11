@@ -278,6 +278,7 @@ class FilterApi extends SugarApi
 
         $q = new SugarQuery();
         $q->from($seed,$queryOptions);
+        $q->distinct(true);
         $fields = array();
         foreach ($options['select'] as $field) {
             // FIXME: convert this to vardefs too?
@@ -297,10 +298,13 @@ class FilterApi extends SugarApi
             // fields that aren't in field defs are removed, since we don't know what to do with them
             if (!empty($seed->field_defs[$field])) {
                 $fields[] = $field;
+                // Oracle doesn't allow DISTINCT on CLOB fields, in that case if we select CLOB field then DISTINCT should be disabled
+                if (!empty($seed->field_defs[$field]['type']) && $seed->field_defs[$field]['type'] == 'text') {
+                    $q->distinct(false);
+                }
             }
         }
         $q->select($fields);
-        $q->distinct(true);
 
         foreach ($options['order_by'] as $orderBy) {
             // ID and date_modified are used to give some order to the system
