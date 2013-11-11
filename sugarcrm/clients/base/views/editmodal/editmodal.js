@@ -37,6 +37,7 @@
                 this.render();
                 this.$('.modal').modal({backdrop: 'static'});
                 this.$('.modal').modal('show');
+                app.$contentEl.attr('aria-hidden', true);
                 $('.modal-backdrop').insertAfter($('.modal'));
                 this.context.get('createModel').on('error:validation', function() {
                     this.resetButton();
@@ -44,5 +45,13 @@
             }, this);
         }
         this.bindDataChange();
+    },
+    cancelButton: function() {
+        this._super('cancelButton');
+        app.$contentEl.removeAttr('aria-hidden');
+    },
+    saveComplete: function() {
+        this._super('saveComplete');
+        app.$contentEl.removeAttr('aria-hidden');
     }
   })
