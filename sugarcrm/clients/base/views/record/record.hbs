@@ -95,7 +95,7 @@
                     {{/notEq}}
                     <div class="tab-pane fade" id="{{name}}">
                 {{else}}
-                    <div class="row-fluid record-panel">
+                    <div class="row-fluid record-panel" data-panelName = "{{name}}">
                         <div class="row-fluid record-panel-header">
                             <h4 class="pull-left">
                                 {{str label ../../../this.module}}
@@ -103,11 +103,11 @@
 
                             <div class="pull-right">
                                 <button class="btn-link btn-invisible record-panel-arrow">
-                                    <i class="icon-chevron-{{#eq panelDefault "collapsed"}}down{{/eq}}{{#notEq panelDefault "collapsed"}}up{{/notEq}}"></i>
+                                    <i class="icon-chevron-{{#eq panelState "collapsed"}}down{{/eq}}{{#notEq panelState "collapsed"}}up{{/notEq}}"></i>
                                 </button>
                             </div>
                         </div>
-                    <div class="row-fluid record-panel-content {{#eq panelDefault "collapsed"}}hide{{/eq}}">
+                    <div class="row-fluid record-panel-content {{#eq panelState "collapsed"}}hide{{/eq}}">
                 {{/if}}
                 {{#each grid}}
                         <div class="row-fluid {{../name}}">
