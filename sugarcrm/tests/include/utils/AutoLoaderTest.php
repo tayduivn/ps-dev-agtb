@@ -28,7 +28,8 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->map = SugarAutoLoader::$filemap;
+        $this->fileMap = SugarAutoLoader::$filemap;
+        $this->namespaceMap = SugarAutoLoader::$namespaceMap;
     }
 
     public function tearDown()
@@ -43,7 +44,8 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
         SugarAutoLoader::$classMap = array();
         SugarAutoLoader::$classMapDirty = true;
         SugarAutoLoader::$memmap = array();
-        SugarAutoLoader::$filemap = $this->map;
+        SugarAutoLoader::$filemap = $this->fileMap;
+        SugarAutoLoader::$namespaceMap = $this->namespaceMap;
         parent::tearDown();
     }
 
@@ -136,5 +138,145 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
         include sugar_cached(SugarAutoLoader::CLASS_CACHE_FILE);
         $this->assertTrue(count($class_map) > 0, "Class map is empty");
         $this->assertArrayHasKey('chicken', $class_map, "Class map was not rebuilt");
+    }
+
+    /**
+     *
+     * Test prefix/directory namespace mapping to filename
+     * @dataProvider providerTestGetFilenameForFQCN
+     */
+    public function testGetFilenameForFQCN($prefix, $dir, $fqcn, $fileName)
+    {
+        SugarAutoLoader::addNamespace($prefix, $dir);
+        $this->assertSame($fileName, SugarAutoLoader::getFilenameForFQCN($fqcn));
+    }
+
+    public function providerTestGetFilenameForFQCN()
+    {
+        return array(
+            array(
+                'Sugarcrm\\lib\\',
+                'include',
+                'Sugarcrm\\lib\\SugarLogger\\SugarLogger',
+                'include/SugarLogger/SugarLogger.php',
+            ),
+          array(
+                'Sugarcrm\\',
+                '',
+                'Sugarcrm\\modules\\Accounts\\Account',
+                'modules/Accounts/Account.php',
+            ),
+            array(
+                'Monolog\\',
+                'vendor/Monolog/src/Monolog',
+                'Monolog\Logger',
+                'vendor/Monolog/src/Monolog/Logger.php',
+            ),
+            array(
+                'Acme\\',
+                'vendor/Acme',
+                'Acme\Coyote\Bad_Ass',
+                'vendor/Acme/Coyote/Bad/Ass.php',
+            ),
+            array(
+                'Acme\\',
+                'vendor/Acme',
+                'Acme\Road_Runner\Smart_Ass',
+                'vendor/Acme/Road_Runner/Smart/Ass.php',
+            ),
+        );
+    }
+
+    /**
+     *
+     * Test actual class loading using namespaces
+     */
+    public function testAutoloadNamespaces()
+    {
+        // create test class/file
+        $fqcn = 'Sugarcrm\\modules\\Accounts\\Bogus';
+        $fileName = 'modules/Accounts/Bogus.php';
+        $content = "<?php\nnamespace Sugarcrm\\modules\\Accounts;\nclass Bogus { }\n";
+        file_put_contents($fileName, $content);
+
+        // rebuid cache to pick up the test file
+        SugarAutoLoader::buildCache();
+
+        // reset classMap and register test namespace
+        SugarAutoLoader::$classMap = array();
+        SugarAutoLoader::addNamespace('Sugarcrm\\modules\\', 'modules');
+
+        // instantiate test class
+        $bogus = new \Sugarcrm\modules\Accounts\Bogus();
+        $this->assertEquals($fileName, SugarAutoLoader::$classMap[$fqcn]);
+        $this->assertInstanceOf('Sugarcrm\\modules\\Accounts\\Bogus', $bogus);
+
+        // cleanup
+        unlink($fileName);
+    }
+
+    /**
+     *
+     * Test addNamespace
+     */
+    public function testAddNamespace()
+    {
+        SugarAutoLoader::$namespaceMap = array();
+
+        // 1st pass - add first level namespace - also test fixups on trailing \ and /
+        SugarAutoLoader::addNamespace('Sugarcrm', '/');
+        $expected = array(
+            'Sugarcrm\\' => '',
+        );
+        $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
+
+        // 2nd pass - add second level namespace
+        SugarAutoLoader::addNamespace('Sugarcrm\\lib\\', 'include');
+        $expected = array(
+            'Sugarcrm\\lib\\' => 'include',
+            'Sugarcrm\\' => '',
+        );
+        $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
+
+        // 3rd pass - add another second level namespace (alphabetic order matters)
+        SugarAutoLoader::addNamespace('Acme\\LooneyTunes\\', 'vendor/Acme');
+        $expected = array(
+            'Acme\\LooneyTunes\\' => 'vendor/Acme',
+            'Sugarcrm\\lib\\' => 'include',
+            'Sugarcrm\\' => '',
+        );
+        $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
+
+        // 4th pass - add third level namespace
+        SugarAutoLoader::addNamespace('Acme\\LooneyTunes\\RoadRunner\\', 'vendor/RoadRunner');
+        $expected = array(
+            'Acme\\LooneyTunes\\RoadRunner\\' => 'vendor/RoadRunner',
+            'Acme\\LooneyTunes\\' => 'vendor/Acme',
+            'Sugarcrm\\lib\\' => 'include',
+            'Sugarcrm\\' => '',
+        );
+        $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
+
+        // 5th pass - add another second level namespace (alphabetic order matters)
+        SugarAutoLoader::addNamespace('Sugarcrm\\modules\\', 'modules');
+        $expected = array(
+            'Acme\\LooneyTunes\\RoadRunner\\' => 'vendor/RoadRunner',
+            'Acme\\LooneyTunes\\' => 'vendor/Acme',
+            'Sugarcrm\\lib\\' => 'include',
+            'Sugarcrm\\modules\\' => 'modules',
+            'Sugarcrm\\' => '',
+        );
+        $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
+
+        // 6th pass - overwrite already existing second level namespace
+        SugarAutoLoader::addNamespace('Sugarcrm\\modules\\', 'modules2');
+        $expected = array(
+            'Acme\\LooneyTunes\\RoadRunner\\' => 'vendor/RoadRunner',
+            'Acme\\LooneyTunes\\' => 'vendor/Acme',
+            'Sugarcrm\\lib\\' => 'include',
+            'Sugarcrm\\modules\\' => 'modules2',
+            'Sugarcrm\\' => '',
+        );
+        $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
     }
 }

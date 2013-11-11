@@ -65,6 +65,24 @@ class SugarAutoLoader
 	    'SugarJob' => 'include/SugarQueue/jobs/',
 	);
 
+    /**
+     * Namespace directory mapping
+     * - Prefix should include trailing \
+     * - Directory should NOT contain trailing /
+     *
+     * Order is important on overlapping prefixes, first match wins !
+     *   'Sugarcrm\\lib\\' => 'include'
+     *   'Sugarcrm\\' => ''
+     *
+     * To add namespaces dynamically it's advised to use self::addNamespace
+     * as this method will ensure a correct order from more to less
+     * specific namespace prefixes.
+     *
+     * @var array nsPrefix => directory
+     */
+    public static $namespaceMap = array(
+    );
+
 	/**
 	 * Class loading directories
 	 * Classes in these dirs are loaded by class name:
@@ -146,6 +164,9 @@ class SugarAutoLoader
 	 */
     public static function autoload($class)
 	{
+        // work around for PHP 5.3.0 - 5.3.2 https://bugs.php.net/50731
+        $class = ltrim($class, '\\');
+
 		$uclass = ucfirst($class);
 		if(!empty(self::$noAutoLoad[$class])){
 			return false;
@@ -160,6 +181,20 @@ class SugarAutoLoader
 			}
 			return false;
 		}
+
+        // try namespaces
+        if (false !== strpos($class, '\\')) {
+            if ($file = self::getFilenameForFQCN($class)) {
+                if ($file = self::requireWithCustom($file)) {
+                    self::$classMap[$class] = $file;
+                    self::$classMapDirty = true;
+                    return true;
+                }
+            }
+            self::$classMap[$class] = false;
+            self::$classMapDirty = true;
+            return false;
+        }
 
 		if(empty(self::$moduleMap)){
 			if(isset($GLOBALS['beanFiles'])){
@@ -253,6 +288,33 @@ class SugarAutoLoader
         return false;
 	}
 
+    /**
+     * PSR-0 autoloader interoperability
+     * https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md
+     *
+     * Return filename for given Fully Qualified Class Name
+     *
+     * @param string $class FQCN without leading backslash
+     * @return mixed(string|boolean)
+     */
+    public static function getFilenameForFQCN($class)
+    {
+        foreach (self::$namespaceMap as $prefix => $path) {
+            if (strpos($class, $prefix) === 0) {
+                $path = empty($path) ? '' : $path . DIRECTORY_SEPARATOR;
+                $suffix = str_replace($prefix, '', $class);
+                if (false !== $pos = strrpos($suffix, '\\')) {
+                    $path .= str_replace('\\', DIRECTORY_SEPARATOR, substr($suffix, 0, $pos)) . DIRECTORY_SEPARATOR;
+                    $path .= str_replace('_', DIRECTORY_SEPARATOR, substr($suffix, $pos + 1)) . '.php';
+                } else {
+                    $path .= str_replace('_', DIRECTORY_SEPARATOR, $suffix) . '.php';
+                }
+                return $path;
+            }
+        }
+        return false;
+    }
+
 	/**
 	 * Load layout class from include/MetaDataManager/layouts
 	 * @param string $class
@@ -275,6 +337,35 @@ class SugarAutoLoader
 	{
 	    self::$dirMap[] = $dir;
 	}
+
+    /**
+     * Add namespace prefix directory mapping
+     * @param string $prefix
+     * @param string $dir
+     */
+    public static function addNamespace($prefix, $dir)
+    {
+        $prefix = rtrim($prefix, '\\') . '\\';  // enforce trailing \
+        $dir = rtrim($dir, '/');                // remove trailing /
+        self::$namespaceMap[$prefix] = $dir;
+
+        // The order of self::$namespace is important because the first match
+        // will win. When registering new namespace dynamically we need to make
+        // sure this array is ordered from more to less specific.
+
+        uksort(self::$namespaceMap, function ($val1, $val2) {
+            $level1 = substr_count($val1, '\\');
+            $level2 = substr_count($val2, '\\');
+            if ($level1 > $level2) {
+                return -1;
+            } elseif ($level1 < $level2) {
+                return 1;
+            } else {
+                // if levels are the same, sort alphabetically for predictable result
+                return strcasecmp($val1, $val2);
+            }
+        });
+    }
 
 	/**
 	 * Add directory for loading classes by prefix
