@@ -84,6 +84,7 @@
                     }
                     this.$('.error').removeClass('error');
                     this.$('.error-tooltip').remove();
+                    this.$('.icon-exclamation-sign').remove();
                 }, this);
             }
         });
