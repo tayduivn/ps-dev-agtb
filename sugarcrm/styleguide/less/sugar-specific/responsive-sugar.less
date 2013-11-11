@@ -355,12 +355,6 @@
     /*z-index: 11;*//* UIUX-1279 */
   }
 
-  .side >.preview-pane .preview-headerbar {
-    top: auto;
-    position: absolute;
-    width: 100%;
-  }
-
   .sidebar-content .dashboard .headerpane {
     position: relative;
     width: 100%;
@@ -388,34 +382,24 @@
 
   .preview-pane {
     position: fixed;
-    top: 55px;
+    top: 48px;
     left: 100%;
     margin-left: 25%;
-    margin-top: -7px;
-    padding-top: 7px;
     .box-shadow(~"-3px 0 4px rgba(0,0,0,0.1)");
     width: 75%;
-    height: ~"-moz-calc(100% - 100px)" !important;
-    height: ~"-webkit-calc(100% -100px)" !important;
-    height: ~"calc(100% - 100px)" !important;
+    height: ~"-moz-calc(100% - 93px)" !important;
+    height: ~"-webkit-calc(100% -93px)" !important;
+    height: ~"calc(100% - 93px)" !important;
     z-index: 1090;
     overflow: scroll;
     background: url('@{textureSecondary}');
     .preview-headerbar {
       .box-shadow(none) !important;
       border-top: none;
-      height: 52px;
-      h1 {
-        margin-top: 11px;
-      }
-      .btn-toolbar {
-        margin-top: 10px;
-      }
+      top: auto;
+      position: absolute;
+      width: 100%;
     }
-  }
-
-  .sidebar-content .preview-pane {
-    display: block !important;
   }
 
   .preview-pane.active {
