@@ -336,31 +336,10 @@ abstract class SidecarAbstractMetaDataUpgrader
                 $defs = $$var;
                 if (isset($this->vardefIndexes[$this->client.$this->viewtype])) {
                     $index = $this->vardefIndexes[$this->client.$this->viewtype];
-                    $legacyDefs = empty($index) ? $defs[$module] : $defs[$module][$index];
-                    $this->legacyViewdefs = $this->cleanupFields($legacyDefs);
-
+                    $this->legacyViewdefs = empty($index) ? $defs[$module] : $defs[$module][$index];
                 }
             }
         }
-    }
-
-    /**
-     * This method removes fields that are not in the field_defs
-     * @param $legacyDefs
-     * @return mixed
-     */
-    public function cleanupFields($legacyDefs)
-    {
-        // instantiate the bean to get the fielddefs
-        $bean = BeanFactory::getBean($this->module);
-        $fieldDefs = $bean->field_defs;
-        foreach ($legacyDefs as $fieldName => $def) {
-            $lowerFieldName = strtolower($fieldName);
-            if (!isset($fieldDefs[$lowerFieldName])) {
-                unset($legacyDefs[$fieldName]);
-            }
-        }
-        return $legacyDefs;
     }
 
     /**
