@@ -138,7 +138,7 @@ $dictionary['Shipper'] = array(
     	'source'=>'non-db',
   ),
 ),
-'acls' => array('SugarACLAdminOnly' => array('adminFor' => 'Products', 'allowUserRead' => true)),
+'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Products', 'allowUserRead' => true)),
 'indices' => array (
        array('name' =>'shipperspk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_shippers', 'type'=>'index', 'fields'=>array('name','deleted')),
