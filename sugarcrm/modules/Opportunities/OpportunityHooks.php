@@ -81,7 +81,7 @@ class OpportunityHooks extends AbstractForecastHooks
                     0,
                     -1,
                     0,
-                    'sales_stage in ("' . join('","', $closed_won) . '")'
+                    "sales_stage in ('" . join("', '", $closed_won) . "')"
                 )
             );
 
@@ -93,7 +93,7 @@ class OpportunityHooks extends AbstractForecastHooks
                     0,
                     -1,
                     0,
-                    'sales_stage in ("' . join('","', $closed_lost) . '")'
+                    "sales_stage in ('" . join("', '", $closed_lost) . "')"
                 )
             );
 
