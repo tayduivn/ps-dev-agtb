@@ -28,6 +28,9 @@ describe("ForecastWorksheets.View.RecordList", function() {
             eval(d);
             app.events.trigger('app:init');
         });
+        
+        SugarTest.loadPlugin('ClickToEdit');
+        SugarTest.loadPlugin('DirtyCollection');
 
         app.user.set({'id': 'test_userid'});
 
@@ -75,6 +78,9 @@ describe("ForecastWorksheets.View.RecordList", function() {
     });
 
     afterEach(function() {
+        delete app.plugins.plugins['field']['ClickToEdit'];
+        delete app.plugins.plugins['view']['CteTabbing'];
+        delete app.plugins.plugins['view']['DirtyCollection'];
         app.user.unset('id');
         view = null;
         app = null;
@@ -557,45 +563,72 @@ describe("ForecastWorksheets.View.RecordList", function() {
             expect(fieldStub).toHaveBeenCalledWith(true);
         });
     });
-
-    describe('exportCallback', function() {
+    
+    describe("when Tab is pressed", function() {
+        beforeEach(function() {
+            e = {
+                which: 9,
+                shiftKey: false,
+                preventDefault: function(){}
+            };
+            view.currentIndex = 0;
+            view.currentCTEList = [
+                $("<div>"),
+                $("<div>"),
+                $("<div>"),
+                $("<div>")
+            ];
+        });
+        
+        describe("when shift is not pressed", function() {
+            beforeEach(function() {
+                view.handleKeyDown(e);
+            });
+            
+            it("should increment the currentIndex", function() {
+                expect(view.currentIndex).toBe(1);
+                
+            });
+        });
+        
+        describe("when shift is pressed", function() {
+            beforeEach(function() {
+                e.shiftKey = true;
+                view.handleKeyDown(e);
+            });
+            it("should should reset the currentIndex to the end", function() {
+                expect(view.currentIndex).toBe(3);
+            });
+        });
+    });
+    
+    describe("when resetCTEFields is called", function() {
         var sandbox = sinon.sandbox.create();
         beforeEach(function() {
-            sandbox.stub(view, 'doExport', function() {
+            
+            view.currentIndex = 1;
+            view.currentCTEList = [
+                $("<div>"),
+                $("<div>"),
+                $("<div>"),
+                $("<div>")
+            ];
+            sandbox.stub(view.$el, "find", function(){
+                return [
+                    $("<div>"),
+                    $("<div>"),
+                    $("<div>")
+                ];
             });
-            sandbox.stub(app.alert, 'show', function() {
-            });
+            view.resetCTEList();
         });
-
+        
         afterEach(function() {
             sandbox.restore();
-            view.canEdit = true;
         });
-
-        it('when is dirty and can edit should show alert', function() {
-            sandbox.stub(view, 'isDirty', function() {
-                return true;
-            });
-
-            view.canEdit = true;
-
-            view.exportCallback();
-
-            expect(view.doExport).not.toHaveBeenCalled();
-            expect(app.alert.show).toHaveBeenCalled();
-        });
-
-        it('when is not dirty and cant edit', function() {
-            sandbox.stub(view, 'isDirty', function() {
-                return false;
-            });
-
-            view.canEdit = false;
-
-            view.exportCallback();
-
-            expect(view.doExport).toHaveBeenCalled();
-            expect(app.alert.show).not.toHaveBeenCalled();
+        
+        it("should set currentIndex to 0", function() {
+            expect(view.currentIndex).toEqual(0);
         });
     });
 });

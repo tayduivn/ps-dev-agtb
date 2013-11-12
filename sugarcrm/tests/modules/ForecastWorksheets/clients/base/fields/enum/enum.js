@@ -18,7 +18,7 @@ describe("ForecastWorksheets.Base.Field.Enum", function () {
     beforeEach(function() {
         app = SugarTest.app;
 
-        SugarTest.loadPlugin('ClickToEdit')
+        SugarTest.loadPlugin('ClickToEdit');
         SugarTest.loadComponent('base', 'field', 'enum');
 
         var fieldDef = {
@@ -94,17 +94,6 @@ describe("ForecastWorksheets.Base.Field.Enum", function () {
 
             expect(field.model.once).not.toHaveBeenCalled();
             expect(field.setMode).toHaveBeenCalled();
-        });
-
-        it('if key is 9, context should trigger field:editable:tabkey', function() {
-            e.which = 9;
-            e.shiftKey = false;
-            sandbox.stub(field.context, 'trigger', function() {
-                return true;
-            });
-            field.handleKeyDown(e, field);
-
-            expect(field.context.trigger).toHaveBeenCalled();
         });
 
         it('field is disposed should not run set mode', function() {
