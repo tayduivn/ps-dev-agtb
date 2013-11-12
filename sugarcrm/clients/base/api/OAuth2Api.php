@@ -135,6 +135,12 @@ class OAuth2Api extends SugarApi
         // Adding the setcookie() here instead of calling $api->setHeader() because
         // manually adding a cookie header will break 3rd party apps that use cookies
         setcookie(RestService::DOWNLOAD_COOKIE.'_'.$platform, $authData['download_token'], time()+$authData['refresh_expires_in'], ini_get('session.cookie_path'), ini_get('session.cookie_domain'), ini_get('session.cookie_secure'), true);
+        
+        // For reauth requests we need to send back the session cookie as well to 
+        // keep the client in sync if there was a session cookie to begin with
+        if (isset($_COOKIE[session_name()]) && !empty($args['grant_type']) && $args['grant_type'] == 'refresh_token' && !empty($args['refresh'])) {
+            $this->killSessionCookie();
+        }
         return $authData;
     }
 
@@ -159,7 +165,7 @@ class OAuth2Api extends SugarApi
         session_regenerate_id(true);
 
         // Whack the cookie that was set in BWC mode
-        setcookie(session_name(), session_id(), time() - 3600, ini_get('session.cookie_path'), ini_get('session.cookie_domain'), ini_get('session.cookie_secure'), ini_get('session.cookie_httponly'));
+        $this->killSessionCookie();
         $GLOBALS['logic_hook']->call_custom_logic('Users', 'after_logout');
 
         return array('success'=>true);
@@ -178,17 +184,7 @@ class OAuth2Api extends SugarApi
         // Send back session_name so the client can use it for other bwc functions, 
         // like studio, module builder, etc when sessions expire outside of the
         // ajax calls
-        $session_name = session_name();
-
-        setcookie(
-            $session_name, 
-            session_id(), 
-            ini_get('session.cookie_lifetime'), 
-            ini_get('session.cookie_path'), 
-            ini_get('session.cookie_domain'), 
-            ini_get('session.cookie_secure'), 
-            ini_get('session.cookie_httponly')
-        );
+        $session_name = $this->sendSessionCookie();
 
         return array('name' => $session_name);
     }
@@ -255,5 +251,47 @@ class OAuth2Api extends SugarApi
         }
 
         return true;
+    }
+
+    /**
+     * Sends the session cookie. This is needed when moving into and out of BWC mode
+     * and the auth token changes.
+     * 
+     * @return string The session name
+     */
+    protected function sendSessionCookie()
+    {
+        // This needs to be sent back
+        $session_name = session_name();
+
+        setcookie(
+            $session_name, 
+            session_id(), 
+            ini_get('session.cookie_lifetime'), 
+            ini_get('session.cookie_path'), 
+            ini_get('session.cookie_domain'), 
+            ini_get('session.cookie_secure'), 
+            ini_get('session.cookie_httponly')
+        );
+
+        return $session_name;
+    }
+    
+    /**
+     * Kills a session cookie. Called from both logout and token on refresh 
+     * requests in which there is an existing session cookie. This will force new
+     * BWC logins so that BWC sessions stay in sync with sidecar sessions.
+     */
+    protected function killSessionCookie()
+    {
+        setcookie(
+            session_name(), 
+            '', 
+            time() - 3600, 
+            ini_get('session.cookie_path'), 
+            ini_get('session.cookie_domain'), 
+            ini_get('session.cookie_secure'), 
+            ini_get('session.cookie_httponly')
+        );
     }
 }
