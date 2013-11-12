@@ -53,6 +53,8 @@
             var options = {
                 limit: app.config.maxSubpanelResult
             };
+            //supanel-list extends indirectly ListView, and `limit` determines # records displayed
+            this.limit = options.limit;
             var collectionOptions = this.context.has('collectionOptions') ? this.context.get('collectionOptions') : {};
             this.context.set('collectionOptions', _.extend(collectionOptions, options));
         }
