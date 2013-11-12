@@ -998,7 +998,8 @@ EOQ;
 		$row = $this->db->fetchByAssoc($result);
 
 		if ($row != null) {
-			$this->reports_to_name = stripslashes($row['first_name'].' '.$row['last_name']);
+            global $locale;
+            $this->reports_to_name = $locale->formatName('Users', $row);
 		} else {
 			$this->reports_to_name = '';
 		}
