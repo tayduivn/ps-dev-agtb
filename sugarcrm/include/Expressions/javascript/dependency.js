@@ -428,6 +428,7 @@ AH.assign = function(variable, value, flash)
         // See if this is a numeric field that needs formatting
         var fieldForm = field.form.attributes.name.value;
         var fieldType = 'text';
+        
         if ( typeof(validate[fieldForm]) == "object" ) {
             for ( var idx in validate[fieldForm] ) {
                 if (validate[fieldForm][idx][0] == field.name) {
@@ -452,6 +453,10 @@ AH.assign = function(variable, value, flash)
             if ( value != '' ) {
                 value = formatNumber(value,num_grp_sep,dec_sep,localPrecision,localPrecision);
             }
+        } else if ( typeof(value) == 'object' 
+                    && value.length > 0 
+                    && fieldType != 'multienum' ) {
+            value = value.join(', ');
         }
 		field.value = value;
 	}

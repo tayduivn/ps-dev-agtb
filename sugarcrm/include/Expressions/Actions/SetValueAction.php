@@ -121,6 +121,9 @@ class SetValueAction extends AbstractAction{
         {
             $target->$field = $result === true || $result === AbstractExpression::$TRUE;
         }
+        else if (is_array($result) && $def['type'] != 'multienum') {
+            $target->$field = implode(', ',$result);
+        }
         else
         {
             $target->$field = $result;
