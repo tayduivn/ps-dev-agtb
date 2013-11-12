@@ -270,4 +270,7 @@ $mod_strings = array (
     'LBL_PORTAL_TOUR_PROFILE_LANGUAGE' => 'Here is where you can set your preferred language.  This will change the language used by Sugar Portal.',
     'LBL_PORTAL_TOUR_PROFILE_RETURN' => 'You can return to your Profile at any time using the User menu.',
     //END SUGARCRM flav=ent ONLY
+
+    //D&B Principal Identification
+    'LBL_DNB_PRINCIPAL_ID' => 'D&B Principal Id',
 );

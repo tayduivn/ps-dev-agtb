@@ -164,6 +164,11 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                 'employees',
                 'ownership',
                 'rating',
+
+                array(
+                    'name' => 'duns_num',
+                    'readonly' => true,
+                ),
                 array(
                     'name' => 'date_entered_by',
                     'readonly' => true,

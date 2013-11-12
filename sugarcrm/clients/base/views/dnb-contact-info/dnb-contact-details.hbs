@@ -1,0 +1,73 @@
+<div id="dnb-contact-details-loading" class="block-footer">
+{{str "LBL_DNB_CONTACT_LOADING"}} {{contactName}}...
+</div>
+<div id="dnb-contact-details">
+	{{#if contactdetail}}
+	<div class="dnb-show-all">
+		<ul class="unstyled listed">
+
+			<li>
+					<div class="dnb-company-label"> {{str "LBL_DNB_CONTACT_NAME"}} </div>
+					<div class="txt importData">
+							{{contactdetail.Organization.PrincipalsAndManagement.CurrentPrincipal.[0].PrincipalName.FullName}}
+					</div>
+			</li>
+
+			<li>
+					<div class="dnb-company-label"> {{str "LBL_DNB_CONTACT_JOBTITLE"}} </div>
+					<div class="txt importData">
+							{{contactdetail.Organization.PrincipalsAndManagement.CurrentPrincipal.[0].JobTitle.[0].JobTitleText.$}}
+					</div>
+			</li>
+
+			{{#if contactdetail.Organization.PrincipalsAndManagement.CurrentPrincipal.[0].Telecommunication.EmailAddress.[0].TelecommunicationAddress}}
+			<li>
+					<div class="dnb-company-label">{{str "LBL_DNB_CONTACT_EMAIL"}}</div>
+					<div class="txt importData">
+							{{contactdetail.Organization.PrincipalsAndManagement.CurrentPrincipal.[0].Telecommunication.EmailAddress.[0].TelecommunicationAddress}}
+					</div>
+			</li>
+			{{/if}}
+
+			{{#if contactdetail.Organization.PrincipalsAndManagement.CurrentPrincipal.[0].Telecommunication.TelephoneNumber.[0].TelecommunicationNumber}}
+			<li>
+					<div class="dnb-company-label">{{str "LBL_DNB_CONTACT_PHONE"}}</div>
+					<div class="txt importData">
+							{{contactdetail.Organization.PrincipalsAndManagement.CurrentPrincipal.[0].Telecommunication.TelephoneNumber.[0].TelecommunicationNumber}}
+					</div>
+			</li>
+			{{/if}}
+
+			{{#if contactdetail.Organization.PrincipalsAndManagement.CurrentPrincipal.[0].CurrentManagementResponsibility.[0].ManagementResponsibilityText.$}}
+			<li>
+					<div class="dnb-company-label">{{str "LBL_DNB_CONTACT_RESP"}}</div>
+					<div class="txt importData">
+							{{contactdetail.Organization.PrincipalsAndManagement.CurrentPrincipal.[0].CurrentManagementResponsibility.[0].ManagementResponsibilityText.$}}
+					</div>
+			</li>
+			{{/if}}
+
+			{{#if contactdetail.Organization.PrincipalsAndManagement.CurrentPrincipal.[0].EmploymentBiography.EmploymentBiographyText}}
+			<li>
+					<div class="dnb-company-label">{{str "LBL_DNB_CONTACT_BIO"}}</div>
+					<div class="txt importData">
+							{{contactdetail.Organization.PrincipalsAndManagement.CurrentPrincipal.[0].Telecommunication.TelephoneNumber.[0].TelecommunicationNumber}}
+					</div>
+			</li>
+			{{/if}}
+
+		</ul>
+	</div>
+	{{else}}
+		<aside class='create-no-data'>
+	        {{#if errmsg}}
+	            <em>{{errmsg}}</em>
+	        {{else}}
+	            <em>{{str "LBL_DNB_NO_DATA"}}</em>
+	        {{/if}}
+	    </aside>
+	{{/if}}
+	<div class="dnb-show-more">
+		    <a class="backToList"> {{str "LBL_DNB_CONTACT_LIST"}} <i class="icon-chevron-down"></i> </a>
+	</div>
+</div>

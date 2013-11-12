@@ -1,0 +1,67 @@
+<div id="dnb-industry-list-loading" class="block-footer">
+{{str "LBL_DNB_IND_INF_LOAD"}}...
+</div>
+<div id="dnb-industry-info">
+	<div class="accordian dnb-show-less" id="dnb_industry_accordian">
+			<div class="accordion-group">
+				<div class="accordion-heading">
+						  <a class="accordion-toggle" data-toggle="collapse" data-parent="#dnb_industry_accordian" href="#industry_tab_100">
+							{{str "LBL_DNB_INF_INF_OVERVIEW"}}
+						  </a>
+				</div>
+				<div id="industry_tab_100" class="accordion-body collapse in">
+					  <div class="accordion-inner">
+								<p>{{OrderProductResponse.OrderProductResponseDetail.Product.IndustryProfile.IndustryProfileDetail.[0].IndustryCode.[0].IndustryExplanationText}}</p>
+					  </div>
+				</div>
+			</div>	
+
+			{{#each OrderProductResponse.OrderProductResponseDetail.Product.IndustryProfile.IndustryProfileDetail.[0].IndustryProfileChapterDetail}}
+			
+				<div class="accordion-group">
+				
+					<div class="accordion-heading">
+						{{#if this.ChapterName}}
+							<a class="accordion-toggle" data-toggle="collapse" data-parent="#dnb_industry_accordian" href="#industry_tab_{{@index}}">
+								{{this.ChapterName}}
+							</a>
+						{{/if}}
+							
+					</div>
+						
+						<div id="industry_tab_{{@index}}" class="accordion-body collapse">
+									  
+							<div class="accordion-inner">
+
+								{{#each  this.ChapterContentDetail}}
+									
+									{{#if this.SubChapterDetail}}
+										{{#each  this.SubChapterDetail}}
+											<h4> {{this.SubChapterName}}</h4> <br/>
+									
+											{{#each  this.SubChapterContentDetail}}
+													<b>{{this.TitleText}}</b> <br/>
+													{{{this.ContentText}}} <br/>
+											{{/each}}
+												
+										{{/each}}
+									{{else}}
+										{{#if this.TitleText}}
+											<b> {{this.TitleText}}</b> <br/>
+										{{/if}}
+										{{{this.ContentText}}} <br/>
+									{{/if}}
+									
+
+								{{/each}}
+
+							</div>		  
+						</div>
+				</div>
+			{{/each}}
+	</div>
+	<div class="dnb-show-more">
+        <a class="showMoreData">{{str "LBL_DNB_SHOW_MORE"}}... <i class="icon-chevron-down"></i></a>
+        <a class="showLessData">{{str "LBL_DNB_SHOW_LESS"}}... <i class="icon-chevron-up"></i></a>
+    </div>		
+</div>

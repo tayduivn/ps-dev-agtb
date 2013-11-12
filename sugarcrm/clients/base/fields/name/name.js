@@ -12,6 +12,9 @@
  */
 ({
     plugins: ['EllipsisInline'],
+    'events': {
+        'keyup input[name=name]': 'handleKeyup'
+    },
 
     _render: function() {
         if (this.view.name === 'record') {
@@ -20,5 +23,15 @@
             this.def.link = true;
         }
         this._super('_render');
-    }
+    },
+
+    handleKeyup: _.throttle(function()
+	{
+		var searchedValue = this.$('input.inherit-width').val();
+
+        if(searchedValue.length >= 3)
+        {
+            this.context.trigger('input:name:keyup',searchedValue);    
+        }	
+	},1000,{leading:false})
 })
