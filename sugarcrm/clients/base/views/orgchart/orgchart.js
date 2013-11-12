@@ -95,7 +95,7 @@
      * @protected
      */
     _buildUserUrl: function(id) {
-        return '#' + app.router.buildRoute('Users', id);
+        return '#' + app.bwc.buildRoute('Employees', id);
     },
 
     /**
@@ -132,20 +132,20 @@
 
                 //jsTree control for selecting root node
                 this.jsTree = this.$('div[data-control="org-jstree"]').jstree({
-                    // generating tree from json data
-                    'json_data': {
-                        'data': this.treeData
-                    },
-                    // plugins used for this tree
-                    'plugins': [ 'json_data', 'ui', 'types' ],
-                    'core': {
-                        'animation': 0
-                    },
-                    'ui': {
-                        // when the tree re-renders, initially select the root node
-                        'initially_select': [ 'jstree_node_' + app.user.get("user_name") ]
-                    }
-                })
+                        // generating tree from json data
+                        'json_data': {
+                            'data': this.treeData
+                        },
+                        // plugins used for this tree
+                        'plugins': [ 'json_data', 'ui', 'types' ],
+                        'core': {
+                            'animation': 0
+                        },
+                        'ui': {
+                            // when the tree re-renders, initially select the root node
+                            'initially_select': [ 'jstree_node_' + app.user.get("user_name") ]
+                        }
+                    })
                     .on('loaded.jstree', function (e) {
                         // do stuff when tree is loaded
                         self.$('div[data-control="org-jstree"]').addClass('jstree-sugar');
@@ -228,7 +228,7 @@
             data[index].metadata.url = ctx._buildUserUrl(entry.metadata.id);
 
             data[index].metadata.img = app.api.buildFileURL({
-                module: "Users",
+                module: "Employees",
                 id: entry.metadata.id,
                 field: "picture"
             });
