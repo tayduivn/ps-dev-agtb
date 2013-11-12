@@ -823,7 +823,7 @@
             if (this.orderBy.field !== 'name') {
                 records = _.sortBy(records, function(item) {
 
-                    if (this.orderBy.direction == "_desc") {
+                    if (this.orderBy.direction == "desc") {
                         return -item[this.orderBy.field];
                     } else {
                         return item[this.orderBy.field];
@@ -832,7 +832,7 @@
             } else {
                 // we have the name
                 records.sort(_.bind(function(a, b) {
-                    if (this.orderBy.direction == '_asc') {
+                    if (this.orderBy.direction == 'asc') {
                         if (a.name.toString() < b.name.toString()) return 1;
                         if (a.name.toString() > b.name.toString()) return -1;
                     } else {

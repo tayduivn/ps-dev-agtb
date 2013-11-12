@@ -416,7 +416,7 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
                     sortedModels = [];
                 });
                 it("currency_field", function() {
-                    view.orderBy = {field: 'best_case', direction: '_desc'};
+                    view.orderBy = {field: 'best_case', direction: 'desc'};
                     view.collectionSuccess(models);
 
                     expect(sortedModels[0].best_case).toEqual(5678);
@@ -425,7 +425,7 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
                     expect(sortedModels[3].best_case).toEqual(0);
                 });
                 it("name_field", function() {
-                    view.orderBy = {field: 'name', direction: '_desc'};
+                    view.orderBy = {field: 'name', direction: 'desc'};
                     view.collectionSuccess(models);
 
                     expect(sortedModels[0].name).toEqual('AS DF');
@@ -441,7 +441,7 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
                     sortedModels = [];
                 });
                 it("currency_field", function() {
-                    view.orderBy = {field: 'best_case', direction: '_asc'};
+                    view.orderBy = {field: 'best_case', direction: 'asc'};
                     view.collectionSuccess(models);
 
                     expect(sortedModels[3].best_case).toEqual(5678);
@@ -450,7 +450,7 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
                     expect(sortedModels[0].best_case).toEqual(0);
                 });
                 it("name_field", function() {
-                    view.orderBy = {field: 'name', direction: '_asc'};
+                    view.orderBy = {field: 'name', direction: 'asc'};
                     view.collectionSuccess(models);
 
                     expect(sortedModels[3].name).toEqual('AS DF');
