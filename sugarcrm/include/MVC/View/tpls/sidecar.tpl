@@ -47,10 +47,11 @@
         <div id="sugarcrm">
             <div id="sidecar">
                 <div id="alerts" class="alert-top">
-                    <div class="alert alert-process">
+                    <div class="loading gate">
                         <strong>{$LBL_LOADING}</strong>
-                        <div class="loading">
-                            <span class="l1"></span><span class="l2"></span><span class="l3"></span>
+                        <i class="l1 icon-circle"></i><i class="l2 icon-circle"></i><i class="l3 icon-circle"></i>
+                        <div class="progress progress-danger">
+                            <div class="bar" style="width: 40%;"></div>
                         </div>
                     </div>
                 </div>
