@@ -363,6 +363,25 @@
             }
         }
 
+        // listen for the before list:orderby to handle if the worksheet is dirty or notW
+        this.before('list:orderby', function(options) {
+            if (this.isDirty()) {
+                app.alert.show('leave_confirmation', {
+                    level: 'confirmation',
+                    messages: app.lang.get('LBL_WARN_UNSAVED_EDITS', 'Forecasts'),
+                    onConfirm: _.bind(function(){
+                        this._setOrderBy(options)
+                    }, this),
+                    templateOptions: {
+                        cancelContLabel: app.lang.get('LBL_CANCEL_BUTTON_LABEL_ORDERBY_CONT', 'Forecasts'),
+                        confirmContLabel: app.lang.get('LBL_CONFIRM_BUTTON_LABEL_ORDERBY_CONT', 'Forecasts')
+                    }
+                });
+                return false;
+            }
+            return true;
+        }, undefined, this);
+
         this.collection.on('reset change', function() {
             this.calculateTotals();
         }, this);
