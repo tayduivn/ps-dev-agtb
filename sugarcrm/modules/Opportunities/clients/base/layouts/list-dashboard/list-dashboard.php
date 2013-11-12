@@ -24,7 +24,7 @@ $viewdefs['Opportunities']['base']['layout']['list-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'forecast-pipeline',
+                                'type' => 'forecast-pipeline',
                                 'label' => 'LBL_DASHLET_PIPLINE_NAME',
                                 'display_type' => 'self',
                             ),

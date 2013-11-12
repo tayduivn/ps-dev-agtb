@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['base']['view']['attachments'] = array(
 	'dashlets' => array(
 		array(
-            'name' => 'LBL_DASHLET_ATTACHMENTS_NAME',
+            'label' => 'LBL_DASHLET_ATTACHMENTS_NAME',
             'description' => 'LBL_DASHLET_ATTACHMENTS_DESCRIPTION',
             'config' => array(
                 'auto_refresh' => '0',

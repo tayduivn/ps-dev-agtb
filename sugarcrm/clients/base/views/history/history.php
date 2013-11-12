@@ -16,7 +16,7 @@
 $viewdefs['base']['view']['history'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_HISTORY_DASHLET',
+            'label' => 'LBL_HISTORY_DASHLET',
             'description' => 'LBL_HISTORY_DASHLET_DESCRIPTION',
             'config' => array(
                 'limit' => '10',

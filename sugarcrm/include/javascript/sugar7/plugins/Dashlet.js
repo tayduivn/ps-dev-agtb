@@ -62,7 +62,6 @@
                         viewName = 'main',
                         buildGrid = false;
                     delete settings.panels;
-                    delete settings.type;
                     delete settings.action;
                     delete settings.dependencies;
                     this.settings = new Dashlet(settings);

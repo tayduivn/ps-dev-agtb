@@ -30,7 +30,7 @@
 $viewdefs['base']['view']['orgchart'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_ORG_CHART',
+            'label' => 'LBL_ORG_CHART',
             'description' => 'LBL_ORG_CHART_DESC',
             'config' => array(
             ),
@@ -44,7 +44,7 @@ $viewdefs['base']['view']['orgchart'] = array(
             )
         ),
         array(
-            'name' => 'LBL_ORG_CHART',
+            'label' => 'LBL_ORG_CHART',
             'description' => 'LBL_ORG_CHART_DESC',
             'config' => array(
             ),

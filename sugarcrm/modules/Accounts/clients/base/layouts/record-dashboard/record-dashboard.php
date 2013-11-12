@@ -25,7 +25,7 @@ $viewdefs['Accounts']['base']['layout']['record-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'opportunity-metrics',
+                                'type' => 'opportunity-metrics',
                                 'label' => 'LBL_DASHLET_OPPORTUNITY_NAME',
                             ),
                             'width' => 12,
@@ -35,7 +35,7 @@ $viewdefs['Accounts']['base']['layout']['record-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'casessummary',
+                                'type' => 'casessummary',
                                 'label' => 'LBL_DASHLET_CASES_SUMMARY_NAME',
                             ),
                             'width' => 12,
@@ -45,7 +45,7 @@ $viewdefs['Accounts']['base']['layout']['record-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'news',
+                                'type' => 'news',
                                 'label' => 'LBL_DASHLET_NEWS_FEED_NAME',
                             ),
                             'width' => 12,
@@ -54,7 +54,7 @@ $viewdefs['Accounts']['base']['layout']['record-dashboard'] = array(
                     array(
                         array(
                             'view' => array(
-                                'name' => 'planned-activities',
+                                'type' => 'planned-activities',
                                 'label' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
                                 'limit' => '10',
                                 'date' => 'today',
@@ -66,7 +66,7 @@ $viewdefs['Accounts']['base']['layout']['record-dashboard'] = array(
                     array(
                         array(
                             'view' => array(
-                                'name' => 'history',
+                                'type' => 'history',
                                 'label' => 'LBL_HISTORY_DASHLET',
                                 'filter' => '7',
                                 'limit' => '10',

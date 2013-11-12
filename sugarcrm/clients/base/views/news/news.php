@@ -16,7 +16,7 @@
 $viewdefs['base']['view']['news'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_DASHLET_NEWS_NAME',
+            'label' => 'LBL_DASHLET_NEWS_NAME',
             'description' => 'LBL_DASHLET_NEWS_DESCRIPTION',
             'config' => array(
                 'limit' => '3',

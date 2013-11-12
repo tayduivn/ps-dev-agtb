@@ -15,12 +15,12 @@ $viewdefs['base']['view']['dashablelist'] = array(
     'template' => 'list',
     'dashlets' => array(
         array(
-            'name'        => 'LBL_DASHLET_LISTVIEW_NAME',
+            'label' => 'LBL_DASHLET_LISTVIEW_NAME',
             'description' => 'LBL_DASHLET_LISTVIEW_DESCRIPTION',
-            'config'      => array(),
+            'config' => array(),
             'preview' => array(
-                'module'          => 'Accounts',
-                'label'           => 'LBL_MODULE_NAME',
+                'module' => 'Accounts',
+                'label' => 'LBL_MODULE_NAME',
                 'display_columns' => array(
                     'name',
                     'phone_office',
@@ -28,7 +28,7 @@ $viewdefs['base']['view']['dashablelist'] = array(
                 ),
                 // my_items is defaulted '1' which may result in no records being found
                 // so make it '0' for preview to nearly guarantee that records will be shown in the sample
-                'my_items'        => '0',
+                'my_items' => '0',
             ),
         ),
     ),

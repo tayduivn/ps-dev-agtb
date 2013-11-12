@@ -16,7 +16,7 @@
 $viewdefs['base']['view']['inactive-tasks'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_INACTIVE_TASKS_DASHLET',
+            'label' => 'LBL_INACTIVE_TASKS_DASHLET',
             'description' => 'LBL_INACTIVE_TASKS_DASHLET_DESCRIPTION',
             'config' => array(
                 'limit' => 10,

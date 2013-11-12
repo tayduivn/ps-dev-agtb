@@ -25,7 +25,7 @@ $viewdefs['RevenueLineItems']['base']['layout']['list-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'bubblechart',
+                                'type' => 'bubblechart',
                                 'label' => 'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME',
                                 'filter_duration' => 0,
                                 'filter_assigned' => 'my',

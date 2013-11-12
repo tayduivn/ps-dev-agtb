@@ -34,7 +34,7 @@ $viewdefs['Bugs']['base']['layout']['list-dashboard'] = array(
                     array(
                         array(
                             'view' => array(
-                                'name' => 'twitter',
+                                'type' => 'twitter',
                                 'label' => 'LBL_TWITTER_NAME',
                                 'twitter' => 'sugarcrm',
                                 'limit' => '5',
