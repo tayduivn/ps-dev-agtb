@@ -338,17 +338,20 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function getServerStatus()
     {
+        global $app_strings, $sugar_config;
         $isValid = false;
         $displayText = "";
         $timeOutValue = $this->_client->getConfig('timeout');
         try {
-            $this->_client->setConfigValue('timeout', 2);
-            $results = $this->_client->getStatus()->getServerStatus();
-            if (!empty($results['ok']) ) {
+            //Default test timeout is 5 seconds
+            $ftsTestTimeout = (isset($sugar_config['fts_test_timeout'])) ? $sugar_config['fts_test_timeout'] : 5;
+            $this->_client->setConfigValue('timeout', $ftsTestTimeout);
+            $results = $this->_client->request('', Elastica_Request::GET)->getData();
+            if (!empty($results['ok'])) {
                 $isValid = true;
-                $displayText = $GLOBALS['app_strings']['LBL_EMAIL_SUCCESS'];
+                $displayText = $app_strings['LBL_EMAIL_SUCCESS'];
             } else {
-                $displayText = $results;
+                $displayText = $app_strings['ERR_ELASTIC_TEST_FAILED'];
             }
         } catch (Exception $e) {
             $this->reportException("Unable to get server status", $e);
