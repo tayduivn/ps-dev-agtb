@@ -298,7 +298,6 @@
         options = options || {};
 
         var checkAccessRoutes = {
-                'list': 'list',
                 'record': 'view',
                 'create': 'create',
                 'vcardImport': 'create'

@@ -195,4 +195,22 @@ describe("Base.View.List", function () {
             lastStateGetStub.restore();
         })
     });
+
+    describe('_render', function () {
+        it('should render "noaccess" template when user has no access', function () {
+            var hasAccessStub = sinon.stub(app.acl, 'hasAccess', function () {
+                return false;
+            });
+            var templateGetStub = sinon.stub(app.template, 'get', function() {
+                return function() {
+                    return '';
+                };
+            });
+            view.render();
+            expect(templateGetStub).toHaveBeenCalled();
+            expect(templateGetStub).toHaveBeenCalledWith('list.noaccess');
+            templateGetStub.restore();
+            hasAccessStub.restore();
+        });
+    });
 });
