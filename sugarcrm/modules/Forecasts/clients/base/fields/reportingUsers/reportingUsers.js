@@ -268,6 +268,8 @@
                     'full_name': userData.full_name,
                     'first_name': userData.first_name,
                     'last_name': userData.last_name,
+                    'reports_to_id': userData.reports_to_id,
+                    'reports_to_name': userData.reports_to_name,
                     'is_manager': (nodeType != 'rep'),
                     'showOpps': showOpps,
                     'reportees': []

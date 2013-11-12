@@ -189,6 +189,8 @@ class CurrentUserApi extends SugarApi
         $user_data['acl'] = $this->getAcls($api->platform);
         $user_data['is_manager'] = User::isManager($current_user->id);
         $user_data['is_top_level_manager'] = false;
+        $user_data['reports_to_id'] = $current_user->reports_to_id;
+        $user_data['reports_to_name'] = $current_user->reports_to_name;
         if($user_data['is_manager']) {
             $user_data['is_top_level_manager'] = User::isTopLevelManager($current_user->id);
         }

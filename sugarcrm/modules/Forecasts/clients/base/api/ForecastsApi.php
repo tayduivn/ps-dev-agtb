@@ -165,6 +165,8 @@ class ForecastsApi extends SugarApi
         $data['full_name'] = $locale->formatName($user);
         $data['first_name'] = $user->first_name;
         $data['last_name'] = $user->last_name;
+        $data['reports_to_id'] = $user->reports_to_id;
+        $data['reports_to_name'] = $user->reports_to_name;
         $data['is_manager'] = User::isManager($user->id);
         return $data;
     }

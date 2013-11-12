@@ -881,6 +881,8 @@
         this.selectedUser.reportees = selectedUser.reportees;
         this.selectedUser.showOpps = selectedUser.showOpps;
         this.selectedUser.user_name = selectedUser.user_name;
+        this.selectedUser.reports_to_id = selectedUser.reports_to_id;
+        this.selectedUser.reports_to_name = selectedUser.reports_to_name;
 
         this.shouldRollup = this.isManagerView();
 
