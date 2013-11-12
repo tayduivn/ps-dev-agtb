@@ -45,6 +45,16 @@ $viewdefs['RevenueLineItems']['base']['layout']['record-dashboard'] = array(
                             'width' => 12,
                         ),
                     ),
+                    array(
+                        array(
+                            'view' =>
+                                array(
+                                    'name' => 'active-tasks',
+                                    'label' => 'LBL_ACTIVE_TASKS_DASHLET',
+                                ),
+                            'width' => 12,
+                        ),
+                    ),
                 ),
                 'width' => 12,
             ),
