@@ -118,7 +118,7 @@
              * @private
              */
             _shouldHideEllipsisTooltip: function(target) {
-                return app.utils.tooltip.has(target) && $(target).data('tooltip').tip().hasClass('in');
+                return app.utils.tooltip.has(target) && $(target).data('bs.tooltip').tip().hasClass('in');
             }
 
         });
