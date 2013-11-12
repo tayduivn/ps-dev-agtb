@@ -49,6 +49,14 @@ class RelateRecordApi extends ModuleApi {
                 'shortHelp' => 'Relates an existing record to this module',
                 'longHelp'  => 'include/api/help/module_record_link_link_name_remote_id_post_help.html',
             ),
+            'createRelatedLinks' => array(
+                'reqType' => 'POST',
+                'path' => array('<module>', '?', 'link'),
+                'pathVars' => array('module', 'record', ''),
+                'method' => 'createRelatedLinks',
+                'shortHelp' => 'Relates existing records to this module.',
+                'longHelp' => 'include/api/help/module_record_link_post_help.html',
+            ),
             'updateRelatedLink' => array(
                 'reqType'   => 'PUT',
                 'path'      => array('<module>','?',     'link','?'        ,'?'),
@@ -215,6 +223,42 @@ class RelateRecordApi extends ModuleApi {
         return $this->formatNearAndFarRecords($api,$args,$primaryBean);
     }
 
+    /**
+     * Relates existing records to related bean.
+     *
+     * @param ServiceBase $api The API class of the request.
+     * @param array $args The arguments array passed in from the API.
+     * @return array Array of formatted fields.
+     * @throws SugarApiExceptionNotFound If bean can't be retrieved.
+     */
+    public function createRelatedLinks($api, $args)
+    {
+        $result = array(
+            'related_records' => array(),
+        );
+
+        $primaryBean = $this->loadBean($api, $args);
+
+        list($linkName) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view', 'view');
+        $relatedModuleName = $primaryBean->$linkName->getRelatedModuleName();
+
+        foreach ($args['ids'] as $id) {
+            $relatedBean = BeanFactory::retrieveBean($relatedModuleName, $id);
+
+            if (!$relatedBean || $relatedBean->deleted) {
+                throw new SugarApiExceptionNotFound('Could not find the related bean');
+            }
+            $primaryBean->$linkName->add(array($relatedBean));
+
+            $result['related_records'][] = $this->formatBean($api, $args, $relatedBean);
+        }
+        //Clean up any hanging related records.
+        SugarRelationship::resaveRelatedBeans();
+
+        $result['record'] = $this->formatBean($api, $args, $primaryBean);
+
+        return $result;
+    }
 
     function updateRelatedLink($api, $args) {
         $api->action = 'save';

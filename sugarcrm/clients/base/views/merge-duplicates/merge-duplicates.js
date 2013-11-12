@@ -173,6 +173,11 @@
     mergeProgressModel: null,
 
     /**
+     * @property {Backbone.Model} mergeRelatedCollection Contains related records to merge.
+     */
+    mergeRelatedCollection: null,
+
+    /**
      * Attribute combos allowed to merge.
      *
      * @property {Array} validArrayAttributes
@@ -1181,6 +1186,8 @@
             isStopped: false
         });
 
+        this.mergeRelatedCollection = this.getMergeRelatedCollection();
+
         if (!alternativeModels || !alternativeModels.length) {
             self.primaryRecord.trigger('mergeduplicates:related:merged');
             return;
@@ -1212,12 +1219,113 @@
             self._mergeRelatedCollection(task.collection, callback);
         }, this._settings.merge_relate_fetch_concurrency);
         queue.drain = function() {
-            self.mergeProgressModel.trigger('massupdate:end');
-            if (!self.mergeProgressModel.get('isStopped')) {
-                self.primaryRecord.trigger('mergeduplicates:related:merged');
-            }
+            var finishMerge = function() {
+                self.mergeProgressModel.trigger('massupdate:end');
+                if (!self.mergeProgressModel.get('isStopped')) {
+                    self.primaryRecord.trigger('mergeduplicates:related:merged');
+                }
+            };
+            // Wait until all related records be merged or finish merge.
+            self.mergeRelatedCollection.queue.running() ?
+                self.mergeRelatedCollection.queue.drain = finishMerge :
+                finishMerge();
         };
         queue.push(tasks, function(err) {});
+    },
+
+    /**
+     * Creates collection against the parent model to merge related records.
+     *
+     * @return {Backbone.Collection} Merge collection.
+     */
+    getMergeRelatedCollection: function() {
+        var constructor = Backbone.Collection.extend({
+            method: 'create',
+            queue: null,
+            view: null,
+
+            /**
+             * @property {String} id Primary record's ID.
+             */
+            id: this.primaryRecord.id,
+
+            /**
+             * @property {String} module Primary record's module name.
+             */
+            module: this.primaryRecord.module,
+
+            /**
+             * @property {Number} attempt Current trial attempt number.
+             */
+            attempt: 0,
+
+            /**
+             * {@inheritDoc}
+             *
+             * Sync added set of records and clear collection.
+             */
+            initialize: function(models, options) {
+                this.view = options.view;
+                this.queue = async.queue(
+                    _.bind(function(task, callback) {
+                        this.sync('update', this, {
+                            chunk: task,
+                            queueSuccess: callback
+                        });
+                    }, this),
+                    this.view._settings.merge_relate_update_concurrency
+                );
+                this.on('add', function(model, options) {
+                    this.queue.push(
+                        {
+                            link_name: model.link.name,
+                            ids: _.pluck(this.models, 'id')
+                        },
+                        function(err) {}
+                    );
+                    this.reset();
+                }, this);
+            },
+
+            /**
+             * {@inheritDoc}
+             *
+             * Overrides default behaviour to use related API and send related
+             * records into chunks.
+             */
+            sync: function(method, model, options) {
+                var apiMethod = options.method || this.method,
+                    url = app.api.buildURL(this.module, method, {link: true, id: this.id}, options.params),
+                    callbacks = {
+                        success: function(data, response) {
+                            model.view.mergeStat.total = model.view.mergeStat.total + options.chunk.ids.length;
+                            options.queueSuccess();
+                            if (_.isFunction(options.success)) {
+                                options.success(model, data, response);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            model.attempt = model.attempt + 1;
+                            model.view.mergeProgressModel.trigger('massupdate:item:attempt', model);
+                            if (model.attempt <= (model.view._settings.merge_relate_max_attempt)) {
+                                app.api.call(apiMethod, url, options.chunk, callbacks);
+                            } else {
+                                model.attempt = 0;
+                                model.view.mergeStat.total_errors = model.view.mergeStat.total_errors + 1;
+                                model.view.mergeProgressModel.trigger('massupdate:item:fail', model);
+                            }
+                        },
+                        complete: function(xhr, status) {
+                            if (_.isFunction(options.complete)) {
+                                options.complete(xhr, status);
+                            }
+                        }
+                    };
+                app.api.call(apiMethod, url, options.chunk, callbacks);
+            }
+        }),
+        collection = new constructor([], {view: this});
+        return collection;
     },
 
     /**
@@ -1309,6 +1417,7 @@
             relate: true,
             limit: this._settings.merge_relate_fetch_limit,
             offset: offset,
+            fields: ['id'],
             apiOptions: {
                 timeout: this._settings.merge_relate_fetch_timeout,
                 skipMetadataHash: true
@@ -1319,27 +1428,13 @@
                     return;
                 }
 
-                var queue, tasks = [];
-                _.each(data.models, function(model) {
-                    tasks.push({
-                        relatedModel: self._createRelatedModel(model, collection.link.name)
-                    });
-                });
-                var queue = async.queue(function(task, callback) {
-                    self._mergeRelatedModel(
-                        task.relatedModel,
-                        collection.link.name,
-                        callback
-                    );
-                }, self._settings.merge_relate_update_concurrency);
-                queue.drain = function() {
-                    if (!_.isUndefined(data.next_offset) && data.next_offset !== -1) {
-                        self._mergeRelatedCollection(collection, callback, data.next_offset);
-                    } else {
-                        onCollectionMerged.call();
-                    }
-                };
-                queue.push(tasks, function(err) {});
+                self.mergeRelatedCollection.add(data.models);
+
+                if (!_.isUndefined(data.next_offset) && data.next_offset !== -1) {
+                    self._mergeRelatedCollection(collection, callback, data.next_offset);
+                } else {
+                    onCollectionMerged.call();
+                }
             },
             error: function() {
                 collection.attempt = collection.attempt + 1;
@@ -1350,74 +1445,6 @@
                     self.mergeStat.total_fetch_errors = self.mergeStat.total_fetch_errors + 1;
                     self.mergeProgressModel.trigger('massupdate:item:fail', collection);
                     onCollectionMerged.call();
-                }
-            }
-        });
-    },
-
-    /**
-     * Creates related bean.
-     * Setup additional parameters for merge process.
-     *
-     * @param {Data.Bean} model Model that should be linked to primary record.
-     * @param {String} link Name of link.
-     * @private
-     */
-    _createRelatedModel: function(model, link) {
-        var self = this,
-            relatedModel = app.data.createRelatedBean(
-                this.primaryRecord,
-                model.get('id'),
-                link
-            );
-
-        return _.extend(relatedModel, {
-            attempt: 0,
-            maxAllowAttempt: this._settings.merge_relate_max_attempt,
-            objectName: app.data.getRelatedModule(
-                self.primaryRecord.module,
-                link
-            )
-        });
-    },
-
-    /**
-     * Merge related bean to primary record.
-     *
-     * @param {Data.Bean} model Model that should be linked to primary record.
-     * @param {String} link Name of link.
-     * @param {Function} callback Function callled on finish.
-     * @private
-     */
-    _mergeRelatedModel: function(model, link, callback) {
-
-        if (this.mergeProgressModel.get('isStopped')) {
-            callback.call();
-            return;
-        }
-
-        var self = this;
-
-        model.save(null, {
-            showAlerts: false,
-            relate: true,
-            apiOptions: {
-                timeout: this._settings.merge_relate_update_timeout,
-                skipMetadataHash: true
-            },
-            success: function() {
-                self.mergeStat.total = self.mergeStat.total + 1;
-                callback.call();
-            },
-            error: function(error) {
-                model.attempt = model.attempt + 1;
-                self.mergeProgressModel.trigger('massupdate:item:attempt', model);
-                if (model.attempt <= model.maxAllowAttempt) {
-                    self._mergeRelatedModel(model, link, callback);
-                } else {
-                    self.mergeStat.total_errors = self.mergeStat.total_errors + 1;
-                    self.mergeProgressModel.trigger('massupdate:item:fail', model);
-                    callback.call();
                 }
             }
         });
