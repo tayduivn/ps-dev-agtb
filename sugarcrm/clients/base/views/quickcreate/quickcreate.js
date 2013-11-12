@@ -25,12 +25,6 @@
         // loadAdditionalComponents fires render before the private metadata is ready, check for this
         if (!(_.isEmpty(app.metadata.getStrings("mod_strings")))) {
             var modules = app.metadata.getModules();
-            // remove any modules for which the user doesn't have create access
-            _.each(modules, function(metadata, name) {
-                if (!app.acl.hasAccess('create', name)) {
-                    delete modules[name];
-                }
-            });
             this.createMenuItems = this._getMenuMeta(modules);
             app.view.View.prototype._renderHtml.call(this);
         }
@@ -46,7 +40,8 @@
     _getMenuMeta: function(modules) {
         var menuItem, returnList = [];
         _.each(modules, function(meta, name) {
-            if (meta && meta.menu && meta.menu.quickcreate) {
+            // remove any modules for which the user doesn't have create access
+            if (meta && meta.menu && meta.menu.quickcreate && app.acl.hasAccess('create', name)) {
                 menuItem = meta.menu.quickcreate.meta;
                 if (menuItem.visible === true) {
                     menuItem.module = name;
