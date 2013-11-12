@@ -369,7 +369,7 @@ class Opportunity extends SugarBean
 
 		if ( !empty($idequals) ) {
 			$query  = "select amount, id from opportunities where (" . $idequals . ") and deleted=0 and opportunities.sales_stage <> '".self::STAGE_CLOSED_WON."' AND opportunities.sales_stage <> '".self::STAGE_CLOSED_LOST."';";
-			$result = $this->db->query($query);
+            $result = $this->db->query($query);
 
             while ($row = $this->db->fetchByAssoc($result)) {
                 $query = sprintf(
@@ -463,8 +463,6 @@ class Opportunity extends SugarBean
     public function save($check_notify = false)
     {
         // Bug 32581 - Make sure the currency_id is set to something
-        global $current_user, $app_list_strings;
-
         if (empty($this->currency_id)) {
             // use user preferences for currency
             $currency = SugarCurrency::getUserLocaleCurrency();
@@ -483,12 +481,9 @@ class Opportunity extends SugarBean
             $this->amount_usdollar = SugarCurrency::convertWithRate($this->amount, $this->base_rate);
         }
 
-        //if probablity isn't set, set it based on the sales stage
-        if (!isset($this->probability) && !empty($this->sales_stage)) {
-            $prob_arr = $app_list_strings['sales_probability_dom'];
-            if (isset($prob_arr[$this->sales_stage])) {
-                $this->probability = $prob_arr[$this->sales_stage];
-            }
+        //if probability is empty, set it based on the sales stage
+        if ($this->probability === '' && !empty($this->sales_stage)) {
+            $this->mapProbabilityFromSalesStage();
         }
 
         //BEGIN SUGARCRM flav=ent ONLY
@@ -640,6 +635,17 @@ class Opportunity extends SugarBean
         return $stages;
     }
 
+    /**
+     * Handling mapping the probability from the sales stage.
+     */
+    protected function mapProbabilityFromSalesStage()
+    {
+        global $app_list_strings;
+        $prob_arr = $app_list_strings['sales_probability_dom'];
+        if (isset($prob_arr[$this->sales_stage])) {
+            $this->probability = $prob_arr[$this->sales_stage];
+        }
+    }
 }
 
 

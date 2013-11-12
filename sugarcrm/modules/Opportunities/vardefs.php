@@ -284,6 +284,7 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_SALES_STAGE',
             'type' => 'enum',
             'options' => 'sales_stage_dom',
+            'default' => 'Prospecting',
             'len' => '255',
             'audited' => true,
             'comment' => 'Indication of progression towards closure',
