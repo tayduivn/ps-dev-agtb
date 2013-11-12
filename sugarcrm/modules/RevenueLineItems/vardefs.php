@@ -928,6 +928,7 @@ $dictionary['RevenueLineItem'] = array(
             'table' => 'accounts',
             'module' => 'Accounts',
             'source' => 'non-db',
+            'massupdate' => false,
         ),
         'projects' =>  array(
             'name' => 'projects',
