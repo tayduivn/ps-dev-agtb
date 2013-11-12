@@ -100,10 +100,15 @@
             .margin({top: 0, right: 10, bottom: 20, left: 50})
             .showTitle(false)
             .tooltips(true)
+            .tooltipQuota(function(key, x, y, e, graph) {
+                // Format the value using currency class and user settings
+                var val = App.currency.formatAmountLocale(e.val);
+                return '<p><b>' + e.key + ': <b>' + val + '</b></p>';
+            })
             .tooltipLine(function(key, x, y, e, graph) {
                 // Format the value using currency class and user settings
                 var val = App.currency.formatAmountLocale(e.point.y);
-                return '<p>' + key + ': <b>' + val + '</b></p>';
+                return '<p><b>' + SUGAR.App.lang.get('LBL_CUMMULATIVE_TOTAL', 'Forecasts') + '</b></p><p>' + key + ': <b>' + val + '</b></p>';
             })
             .tooltipBar(function(key, x, y, e, graph) {
                 // Format the value using currency class and user settings
@@ -407,7 +412,7 @@
         if (adjustLabels === true) {
             this.adjustProbabilityLabels();
         }
-        
+
         if (this.state == 'open' && !this.preview_open
                 && !_.isUndefined(this._serverData)) {
             this.convertDataToChartData();
