@@ -134,9 +134,9 @@ $renamedefs = array(
             array('name' => 'LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN', 'type' => 'singular', 'source' => 'Forecasts'),
         ),
         'ForecastManagerWorksheets' => array(
-            // BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            // BEGIN SUGARCRM flav!=ent ONLY
             array('name' => 'LBL_MY_OPPS_RLI', 'type' => 'plural', 'source' => 'Opportunities'),
-            // END SUGARCRM flav=pro && flav!=ent ONLY
+            // END SUGARCRM flav!=ent ONLY
             // BEGIN SUGARCRM flav=ent ONLY
             array('name' => 'LBL_MY_OPPS_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             // END SUGARCRM flav=ent ONLY
@@ -485,12 +485,12 @@ $renamedefs = array(
         array('name' => 'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP', 'type' => 'plural', 'source' => 'RevenueLineItems'),
         //END SUGARCRM flav=ent ONLY
         // Opportunities
-        //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+        //BEGIN SUGARCRM flav!=ent ONLY
         array('name' => 'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME', 'type' => 'plural', 'source' => 'Opportunities'),
         array('name' => 'LBL_TOP10_OPPORTUNITIES_CHART_DESC', 'type' => 'plural', 'source' => 'Opportunities'),
         array('name' => 'LBL_TOP10_OPPORTUNITIES_MY_OPP', 'type' => 'plural', 'source' => 'Opportunities'),
         array('name' => 'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP', 'type' => 'plural', 'source' => 'Opportunities'),
-        //END SUGARCRM flav=pro && flav!=ent ONLY
+        //END SUGARCRM flav!=ent ONLY
         array('name' => 'LBL_OPPORTUNITIES', 'type' => 'plural', 'source' => 'Opportunities'),
         array('name' => 'LBL_TOUR_SCREEN_2_DESCRIPTION_670', 'type' => 'plural', 'source' => 'Opportunities'),
         array('name' => 'LBL_TOUR_SCREEN_6_DESCRIPTION_670', 'type' => 'plural', 'source' => 'Opportunities'),
