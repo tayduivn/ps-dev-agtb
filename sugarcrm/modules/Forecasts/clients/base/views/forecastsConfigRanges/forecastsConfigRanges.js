@@ -782,7 +782,7 @@
 
         _.each(opts, function(label, key) {
             range = this.fieldRanges[category][key];
-            if(_.isEmpty(label)) {
+            if(_.isEmpty(label.trim())) {
                 range.$('.control-group').addClass('error');
                 hasErrors = true;
             } else {
