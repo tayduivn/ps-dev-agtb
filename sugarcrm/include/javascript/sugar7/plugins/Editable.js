@@ -35,9 +35,9 @@
                     this.editableHandleKeyDown.call(this, evt, evt.data.field);
                 }, this);
 
-                this.editableMouseClicked = _.debounce(_.bind(function(evt) {
+                this.editableMouseClicked = _.bind(function(evt) {
                     this.editableHandleMouseDown.call(this, evt, evt.data.field);
-                }, this), 0);
+                }, this);
 
                 this.on('init', function() {
                     //event register for preventing actions
