@@ -1660,13 +1660,20 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
                 }
 
                 if($aItem->ACLAccess('Delete')) {
-                    $delete = '<a class="listViewTdToolsS1" onclick="return confirm(\''.$this->local_app_strings['NTC_DELETE_CONFIRMATION'].'\')" href="'.'index.php?action=Delete&module='.$aItem->module_dir.'&record='.$fields['ID'].'&return_module='.$aItem->module_dir.'&return_action=index&return_id=">'.$this->local_app_strings['LBL_DELETE_INLINE'].'</a>';
+                    $delete  = "<form border='0' action='index.php' method='post' name='form'>\n";
+                    $delete .= "<input type='hidden' name='module' value='" . $aItem->module_dir . "'>\n";
+                    $delete .= "<input type='hidden' name='action' value='Delete'>\n";
+                    $delete .= "<input type='hidden' name='return_module' value='" . $aItem->module_dir . "'>\n";
+                    $delete .= "<input type='hidden' name='return_action' value='index'>\n";
+                    $delete .= "<input type='hidden' name='return_id' value=''>\n";
+                    $delete .= "<input type='hidden' name='record' value='" . $fields['ID']. "'>\n";
+                    $delete .= "<input class='listViewTdToolsS1 button secondary' name='Delete' onclick='javascript: return confirm(\"" . $this->local_app_strings['NTC_DELETE_CONFIRMATION']. "\")' type='submit' value='" . $this->local_app_strings['LBL_DELETE_INLINE'] . "'>\n";
+                    $delete .= "</form>\n";
                     require_once('include/SugarSmarty/plugins/function.sugar_action_menu.php');
                     $fields['DELETE_BUTTON'] = smarty_function_sugar_action_menu(array(
                         'id' => $aItem->module_dir.'_'.$fields['ID'].'_create_button',
                         'buttons' => array($delete),
                     ), $this);
-
                 }
 
                 $this->xTemplate->assign($html_varName, $fields);
