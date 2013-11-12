@@ -151,16 +151,6 @@ class UsersViewDetail extends ViewDetail {
             $this->dv->view = 'DetailViewGroup';
         }
 
-	    //handle request to reset the homepage
-        if(isset($_REQUEST['reset_homepage'])){
-            $this->bean->resetPreferences('Home');
-            global $current_user;
-            if($this->bean->id == $current_user->id) {
-                $_COOKIE[$current_user->id . '_activePage'] = '0';
-                setcookie($current_user->id . '_activePage','0',3000);
-            }
-        }
-
         return parent::display();
     }
 
