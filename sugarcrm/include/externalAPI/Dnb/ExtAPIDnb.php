@@ -938,6 +938,12 @@ class ExtAPIDnb extends ExternalAPIBase
      */
     private function makeRequest($requestMethod, $url, $urlParams = null, $postData = null)
     {
+        //check if connector is configured
+        if(!$this->isConnectorConfigured())
+        {
+            return array('error' =>'ERROR_DNB_CONFIG');
+        }
+
         //check if token has expired
         $dnbToken = !empty($_SESSION[$this->dnbEnv.'dnbToken']) ? $_SESSION[$this->dnbEnv.'dnbToken'] : null;
         $dnbTokenIssueTime = !empty($_SESSION[$this->dnbEnv.'dnbTokenIssueTime']) ? $_SESSION[$this->dnbEnv.'dnbTokenIssueTime'] : null;
@@ -976,6 +982,18 @@ class ExtAPIDnb extends ExternalAPIBase
         }
 
         return array('success' => TRUE,'responseJSON' => $response);
+    }
+
+    /**
+     * Check if Connector Framework Is Configured
+     * @return bool
+     */
+    private function isConnectorConfigured()
+    {
+        if(empty($this->dnbUsername) || empty($this->dnbPassword) || empty($this->dnbEnv))
+            return false;
+        else
+            return true;
     }
 
     /**

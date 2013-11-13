@@ -3329,6 +3329,8 @@ $app_strings = array (
     'LBL_DASHBOARD_NO_RECORDS' => 'No saved dashboards',
 
     /*DNB General*/
+    'LBL_DNB_ADMIN_CONFIG' => 'Configure D&B Connector',
+    'LBL_DNB_CONFIG' => 'Contact your Administrator To Configure D&B Connector',
     'LBL_DNB_NO_DATA' => 'No Data Available',
     'LBL_DNB_NO_DUNS' => 'No Identifying DUNS',
     'LBL_DNB_NO_INDUSTRY' => 'No Linked Industry Code',
