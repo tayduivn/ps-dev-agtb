@@ -121,7 +121,11 @@ include_once('include/workflow/expression_utils.php');
 			//end if target_field is reminder_time
 			}
 
-
+            // currency_id field should be enum
+            if ($field_type == 'currency_id') {
+                $target_field_array['function'] = 'getCurrencyDropDownList';
+                $field_type = "enum";
+            }
 
 			if($field_type=="enum" || $field_type=="multienum" || $field_type=="radioenum"){
 				$output_array['real_type'] = $field_type;

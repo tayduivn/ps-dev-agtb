@@ -41,7 +41,6 @@ $vardef_meta_array = array (
 		'exclusion' =>	array(
 			'type' => array('id'),
 			'name' => array('parent_type', 'deleted'),
-			'reportable' => array('false'),
 		//end exclusion
 		),
 		'inc_override' => array(
@@ -62,7 +61,6 @@ $vardef_meta_array = array (
 			'type' => array('id', 'link', 'datetime', 'date','datetimecombo'),
 			'custom_type' => array('id', 'link', 'datetime', 'date','datetimecombo'),
 			'name' => array('assigned_user_name', 'parent_type', 'deleted','filename', 'file_mime_type', 'file_url'),
-			'reportable' => array('false'),
 			'source' => array('non-db'),
 		//end exclusion
 		),
@@ -88,7 +86,6 @@ $vardef_meta_array = array (
 			'type' => array('id', 'link'),
 			'custom_type' => array('id', 'link'),
 			'name' => array('assigned_user_name', 'parent_type', 'deleted','filename', 'file_mime_type', 'file_url'),
-			'reportable' => array('false'),
 			'source' => array('non-db'),
 		//end exclusion
 		),
@@ -136,7 +133,6 @@ $vardef_meta_array = array (
 		'exclusion' =>	array(
 			'type' => array('id', 'link', 'datetime', 'time'),
 			'custom_type' => array('id', 'link', 'datetime', 'time'),
-			'reportable' => array('false'),
 			'source' => array('non-db'),
 			'name' => array('created_by', 'parent_type', 'deleted', 'assigned_user_name', 'deleted' ,'filename', 'file_mime_type', 'file_url', 'resource_id'),
 			'auto_increment' => array(true),
@@ -255,7 +251,6 @@ $vardef_meta_array = array (
 		'exclusion' =>	array(
 			'type' => array('id', 'link'),
 			'custom_type' => array('id', 'link'),
-			'reportable' => array('false'),
 			'source' => array('non-db'),
 			'name' => array('created_by', 'parent_type', 'deleted', 'assigned_user_name', 'filename', 'file_mime_type', 'file_url'),
 		//end exclusion
@@ -281,7 +276,6 @@ $vardef_meta_array = array (
 			'type' => array('id', 'link', 'datetime', 'date'),
 			'custom_type' => array('id', 'link', 'datetime', 'date'),
 			'name' => array('assigned_user_name', 'parent_type', 'deleted', 'filename', 'file_mime_type', 'file_url'),
-			'reportable' => array('false'),
 			'source' => array('non-db'),
 		//end exclusion
 		),

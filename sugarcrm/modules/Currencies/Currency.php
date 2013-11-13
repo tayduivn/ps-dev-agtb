@@ -865,4 +865,24 @@ function getCurrencySymbolDropDown($focus, $field='currency_name', $value='', $v
     }
 }
 
+/**
+ * Returns a list of all currencies as array of 'id' => 'name' elements
+ *
+ * @return array
+ */
+function getCurrencyDropDownList()
+{
+    require_once('modules/Currencies/ListCurrency.php');
+
+    $currency = new ListCurrency();
+    $currency->lookupCurrencies();
+
+    $currencyList = array();
+    foreach ($currency->list as $item) {
+        $currencyList[$item->id] = $item->name;
+    }
+
+    return $currencyList;
+}
+
 ?>
