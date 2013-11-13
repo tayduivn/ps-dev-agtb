@@ -34,6 +34,15 @@ class ConvertLayoutMetadataParser extends GridLayoutMetaDataParser
         'duplicateCheckOnStart' => false,
     );
 
+    protected $excludedModules = array(
+        'Activities',
+        'KBDocuments',
+        'Products',
+        'ProductTemplates',
+        'Leads',
+        'Users',
+    );
+
     public function __construct($module)
     {
         $this->FILLER = array(
@@ -315,5 +324,17 @@ class ConvertLayoutMetadataParser extends GridLayoutMetaDataParser
     protected function setConvertDef($convertDef)
     {
         $this->_viewdefs['Leads']['base']['layout']['convert-main'] = $convertDef;
+    }
+
+    /**
+     * Check if module is allowed to be in convert flow
+     *
+     * @param $module
+     * @return bool
+     */
+    public function isModuleAllowedInConvert($module)
+    {
+        //exclude modules that are in BWC or in the exclude list
+        return (!isModuleBWC($module) && !in_array($module, $this->excludedModules));
     }
 }
