@@ -417,7 +417,22 @@ eoq;
         $banned = array('date_modified'=>1, 'date_entered'=>1, 'created_by'=>1, 'modified_user_id'=>1, 'deleted'=>1,'modified_by_name'=>1,);
 
         foreach ($fielddefs as $name => $def) {
-            if(isset($def['type'])){
+            // Calculated fields are NOT massupdatable
+            if (isset($def['calculated'])) { 
+                // If calculated is set and is enforced and is some value of truthy...
+                if (self::isTrue($def['calculated']) && isset($def['enforced']) && self::isTrue($def['enforced'])) {
+                    // Then massupdate has to be false
+                    $def['massupdate'] = false;
+                }
+            } elseif (isset($def['massupdate'])) {
+                // The massupdate value has to be boolean so the client can properly 
+                // handle it. A "0" false renders as a true to the client.
+                if (self::isTrue($def['massupdate'])) {
+                    $def['massupdate'] = true;
+                } else {
+                    $def['massupdate'] = false;
+                }
+            } elseif(isset($def['type'])){
                 if(!isset($banned[$def['name']]) && (!isset($def['massupdate']) || !empty($def['massupdate']))) {
                     switch($def['type']) {
                         case "relate":
@@ -1574,6 +1589,28 @@ EOQ;
     {
         return '';
     }
-}
 
-?>
+    /**
+     * Boolean converter that returns whether the value is boolean true. This is
+     * static because it is consumed from internal static methods.
+     * 
+     * @param mixed $val Value to check boolean on
+     * @return boolean 
+     */
+    protected static function isTrue($val) 
+    {
+        return $val === true || $val === 1 || $val === "true" || $val === "1";
+    }
+
+    /**
+     * Boolean converter that returns whether the value is boolean false. This is
+     * static because it is consumed from internal static methods.
+     * 
+     * @param mixed $val Value to check boolean on
+     * @return boolean 
+     */
+    protected static function isFalse($val) 
+    {
+        return $val === false || $val === 0 || $val === "false" || $val === "0";
+    }
+}

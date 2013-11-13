@@ -248,7 +248,6 @@ if (typeof(ModuleBuilder) == 'undefined') {
             //We need to add ID's to the collapse buttons for automated testing
             Dom.getElementsByClassName("collapse", "div", mp.getUnitByPosition('left').header)[0].id = "collapse_tree";
             Dom.getElementsByClassName("collapse", "div", mp.getUnitByPosition('right').header)[0].id = "collapse_help";
-
 		},
 		//Empty layout manager
 		layoutValidation: {
@@ -474,6 +473,17 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 }
 			}
 		},
+		handleFieldEditToggling: function() {
+            // Handle calculated field check box controlling
+            var calculatedCheckbox = Dom.get('calculated');
+            if (calculatedCheckbox) {
+            	var disableCalcRelateElems = "";
+            	if (calculatedCheckbox.checked) {
+            		disableCalcRelateElems = true;
+            	}
+            	ModuleBuilder.disableCalculatedControlledElems(disableCalcRelateElems);
+            }
+		},
         copyFromView: function(module, layout){
             var url = ModuleBuilder.contentURL;
             ModuleBuilder.getContent(url+"&copyFromEditView=true");
@@ -600,8 +610,9 @@ if (typeof(ModuleBuilder) == 'undefined') {
 						ModuleBuilder.tabPanel.set("activeTab", comp);
 						ModuleBuilder.tabPanel.addTab(comp);
 						//Text if the browser automatically evaluated the content's script tags or not. If not, manually evaluate them.
-						if (!ModuleBuilder.scriptTest)
+						if (!ModuleBuilder.scriptTest) {
 							SUGAR.util.evalScript(ajaxResponse[maj].content);
+						}
 					} else {
 						//Store Center pane changes in browser history
 						YAHOO.util.History.navigate('mbContent', ModuleBuilder.contentURL);
@@ -617,6 +628,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					}
 				}
 				ModuleBuilder.history.update();
+				ModuleBuilder.handleFieldEditToggling();
 			}
 		},
 		checkForErrors: function(o){
@@ -1334,6 +1346,40 @@ if (typeof(ModuleBuilder) == 'undefined') {
             win.show();
             win.center();
         },
+        disableCalculatedControlledElems: function(disable) {
+        	// Get the massupdate chechbox if its available
+        	var massupdate  = Dom.get('massupdate');
+			//Getting the default value field is tricky as it can have multiple different ID's
+			var defaultVal = false;
+			for(var i in {'default':"", 'int_default':"", 'default[]':""}) {
+				if (Dom.get(i)) {
+					defaultVal = Dom.get(i); 
+					break;
+				}
+			}
+			
+			// Turn massupdate off now
+			if (massupdate) {
+				// Uncheck the massupdate checkbox
+				massupdate.checked = false;
+				massupdate.disabled = disable;
+			}
+			
+			// Unset the default value
+			if (defaultVal) {
+				// Handle "unsetting" of default values
+				if (defaultVal.tagName == 'SELECT') {
+					defaultVal.selectedIndex = 0;
+				} else if (defaultVal.tagName == 'INPUT') {
+					if (defaultVal.type == 'checkbox') {
+						defaultVal.checked = false;
+					} else {
+						defaultVal.value = '';
+					}
+				}
+				defaultVal.disabled = disable;
+			}
+        },
         toggleParent: function(enable){
             if (typeof(enable) == 'undefined') {
                 enable = Dom.get('has_parent').checked;
@@ -1362,12 +1408,6 @@ if (typeof(ModuleBuilder) == 'undefined') {
             var reportable = Dom.get('reportable');
             var importable = Dom.get('importable');
             var duplicate  = Dom.get('duplicate_merge');
-			var massupdate  = Dom.get('massupdate');
-			//Getting the default value field is tricky as it can have multiple different ID's
-			var defaultVal = false;
-			for(var i in {'default':"", 'int_default':"", 'default[]':""})
-				if (Dom.get(i)){defaultVal = Dom.get(i); break;}
-
             var disable = enable ? true : "";
             if (reportable) reportable.disabled = disable;
             if(enable)
@@ -1378,9 +1418,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
             }
             if (importable)importable.disabled = disable;
             if (duplicate)duplicate.disabled = disable;
-			if (massupdate)massupdate.disabled = disable;
 			this.toggleDateTimeDefalutEnabled(disable);
-			if (defaultVal) defaultVal.disabled = disable;
+			// This handles both massupdate and default values for calculated 
+			// checkbox checks
+			ModuleBuilder.disableCalculatedControlledElems(disable);
             if(Dom.get("enforced")){
                 Dom.get("enforced").value = enable;
             }

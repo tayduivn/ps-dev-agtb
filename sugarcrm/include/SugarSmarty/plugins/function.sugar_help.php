@@ -102,7 +102,8 @@ function smarty_function_sugar_help($params, &$smarty)
 	//append any additional parameters.
 	$click  = "return SUGAR.util.showHelpTips(this,'$text'";
 
-	if (count( $params) > 1){
+    // Old check was for count, not existence of array indexes
+	if (isset($params['myPos']) && isset($params['atPos'])){
 
 			$click .=",'".$params['myPos']."','".$params['atPos']."'";
 	}

@@ -105,7 +105,8 @@ class TemplateMultiEnum extends TemplateEnum{
 
 	function get_field_def(){
 		$def = parent::get_field_def();
-		if ( !empty ( $this->ext4 ) )
+		// Only allow setting of default value here is not calculate and not enforced
+		if (!$def['calculated'] || !$def['enforced'] || !empty ( $this->ext4 ) )
 		{
 			// turn off error reporting in case we are unpacking a value that hasn't been packed...
 			// this is kludgy, but unserialize doesn't throw exceptions correctly
