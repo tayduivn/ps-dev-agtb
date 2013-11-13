@@ -100,8 +100,8 @@
                 'include/javascript/phpjs/htmlentities.js' => 'include/javascript/sugar_grp1.js',
 				//BEGIN SUGARCRM flav=pro ONLY
 	            //Expression Engine
-                'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_grp1.js',
-	            'include/Expressions/javascript/dependency.js'   => 'include/javascript/sugar_grp1.js',
+                'sidecar/lib/sugarlogic/expressions.js'        => 'include/javascript/sugar_grp1.js',
+	            'include/Expressions/javascript/dependency.js' => 'include/javascript/sugar_grp1.js',
 	            //END SUGARCRM flav=pro ONLY
                 'include/EditView/Panels.js'   => 'include/javascript/sugar_grp1.js',
             ),
@@ -258,8 +258,8 @@
                    'include/javascript/jquery/jquery.dataTables.js' => 'include/javascript/sugar_sidecar.min.js',
                    //BEGIN SUGARCRM flav=pro ONLY
                    //Expression Engine
-                   'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_sidecar.min.js',
-                   'include/Expressions/javascript/sidecarExpressionContext.js'   => 'include/javascript/sugar_sidecar.min.js',
+                   'sidecar/lib/sugarlogic/expressions.js'              => 'include/javascript/sugar_sidecar.min.js',
+                   'sidecar/lib/sugarlogic/sidecarExpressionContext.js' => 'include/javascript/sugar_sidecar.min.js',
                    //END SUGARCRM flav=pro ONLY
 
                     // Plugins for Sugar 7.
