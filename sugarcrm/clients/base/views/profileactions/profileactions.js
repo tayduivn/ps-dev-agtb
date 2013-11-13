@@ -44,11 +44,18 @@
         var result = [];
         _.each(menuMeta,function(item){
             item = this.filterMenuProperties(item);
-            if(!_.isEmpty(item['acl_module'])){
+            if(!_.isEmpty(item['acl_module'])) {
                 if(app.acl.hasAccess(item.acl_action, item.acl_module)) {
                     result.push(item);
                 }
-            }else{
+            } else if(item['acl_action'] === 'admin' && item['label'] === 'LBL_ADMIN') {
+                //Edge case for admin link. We only show the Admin link when
+                //user has the "Admin & Developer" or "Developer" (so developer
+                //in either case; see SP-1827)
+                if (app.acl.hasAccessToAny('developer')) {
+                    result.push(item);
+                }
+            } else {
                 // push the menu item if current user is a admin or
                 // current user has access to admin or current user
                 // is a developer, the last conditon is for
@@ -57,7 +64,7 @@
                 if(app.acl.hasAccess('admin', 'Administration') ||
                     app.acl.hasAccessToAny('admin') ||
                     app.acl.hasAccessToAny('developer') ||
-                    item['acl_action'] !== 'admin'){
+                    item['acl_action'] !== 'admin') {
                     result.push(item);
                 }
             }
