@@ -192,7 +192,7 @@
             else
             {
                var dnbProfileUrl = app.api.buildURL('connector/dnb/profile/' + dunsNo,'',{},{});
-               var resultData = {};
+               var resultData = {'product':null,'errmsg':null};
                app.api.call('READ', dnbProfileUrl, {},{
                         success: function(data) 
                         {
@@ -206,14 +206,14 @@
                             if(self.checkJsonNode(data,resultIDPath) && 
                                 data.OrderProductResponse.TransactionResult.ResultID == 'CM000')
                             {
-                                resultData = data;
-                                self.duns_num = resultData.OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber;
+                                resultData.product = data;
+                                self.duns_num = resultData.product.OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber;
 
-                                if(self.checkJsonNode(resultData,industry_path))
+                                if(self.checkJsonNode(resultData.product,industry_path))
                                 {
-                                    var industryCodeArray = resultData.OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode;
+                                    var industryCodeArray = resultData.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode;
                                     //399 is the industry code type value for US SIC
-                                    resultData.primarySIC = self.getPrimaryIndustry(industryCodeArray,'399'); 
+                                    resultData.product.primarySIC = self.getPrimaryIndustry(industryCodeArray,'399'); 
                                 }
 
                                 self.$('.importDNBData').show();
