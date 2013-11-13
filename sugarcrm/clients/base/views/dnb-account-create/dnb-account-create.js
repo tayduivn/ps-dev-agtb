@@ -268,7 +268,6 @@
 
         // always import the duns_num
         accountsModel.set('duns_num',this.duns_num);
-        accountsModel.save();
 
         // iterate through checkboxes
         // values being overriden stored in updatedData
@@ -344,25 +343,10 @@
     /* Overrite existing data with new data */
     updateAccountsModel: function(updatedData)
     {
-        /*var accountsModel = this.model;
-        for (var i = 0; i < updatedData.length; i++) 
-        {
-            accountsModel.set(updatedData[i].propName,updatedData[i].propVal);
-            accountsModel.save();
-        }*/
-
         var self = this;
-
-        var changedAttributes = {};
-
         _.each(updatedData,function(updatedAttribute){
-            // self.model.set(updatedAttribute.propName,updatedAttribute.propVal);
-            changedAttributes[updatedAttribute.propName] = updatedAttribute.propVal;
+            self.model.set(updatedAttribute.propName,updatedAttribute.propVal);
         });
-
-        self.model.save(changedAttributes);
-        self.context.loadData();
-        
         app.alert.show('dnb-import-success', {level: 'success',title: 'Success:',messages: app.lang.get('LBL_DNB_OVERRIDE_SUCCESS'),autoClose: true});
     },
 
