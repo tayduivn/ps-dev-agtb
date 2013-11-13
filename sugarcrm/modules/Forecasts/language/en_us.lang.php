@@ -107,8 +107,8 @@ $mod_strings = array (
 
     //forecast worksheet direct reports forecast
     'LBL_FDR_USER_NAME'=>'Direct Report',
-    'LBL_FDR_OPPORTUNITIES'=>'Opportunities in forecast:',
-    'LBL_FDR_WEIGH'=>'Weighted Amount of opportunities:',
+    'LBL_FDR_OPPORTUNITIES'=>'Opportunities in Forecast:',
+    'LBL_FDR_WEIGH'=>'Weighted Amount of Opportunities:',
     'LBL_FDR_COMMIT'=>'Committed Amount',
     'LBL_FDR_DATE_COMMIT'=>'Commit Date',
 
@@ -130,7 +130,7 @@ $mod_strings = array (
     'LBL_LOADING_COMMIT_HISTORY' => 'Loading Commit History...',
 
     //list view
-    'LBL_LV_TIMPERIOD'=> 'Time period',
+    'LBL_LV_TIMPERIOD'=> 'Time Period',
     'LBL_LV_TIMPERIOD_START_DATE'=> 'Start Date',
     'LBL_LV_TIMPERIOD_END_DATE'=> 'End Date',
     'LBL_LV_TYPE'=> 'Forecast Type',
@@ -142,18 +142,18 @@ $mod_strings = array (
     'LBL_COMMIT_NOTE' => 'Enter amounts that you would like to commit for the selected Time Period:',
     'LBL_COMMIT_TOOLTIP' => 'To enable Commit: Change a value in the worksheet',
     'LBL_COMMIT_MESSAGE' => 'Do you want to commit these amounts?',
-    'ERR_FORECAST_AMOUNT' => 'Commit Amount is required and must be a number.',
+    'ERR_FORECAST_AMOUNT' => 'Commit amount is required and must be a number.',
 
     // js error strings
     'LBL_FC_START_DATE' => 'Start Date',
     'LBL_FC_USER' => 'Schedule For',
 
-    'LBL_NO_ACTIVE_TIMEPERIOD'=>'No Active time periods for Forecasting.',
+    'LBL_NO_ACTIVE_TIMEPERIOD'=>'No active Time Periods for the Forecasts module.',
     'LBL_FDR_ADJ_AMOUNT'=>'Adjusted Amount',
     'LBL_SAVE_WOKSHEET'=>'Save Worksheet',
     'LBL_RESET_WOKSHEET'=>'Reset Worksheet',
     'LBL_SHOW_CHART'=>'View Chart',
-    'LBL_RESET_CHECK'=>'All worksheet data for the selected time period and logged in user will be removed. Continue?',
+    'LBL_RESET_CHECK'=>'All worksheet data for the selected Time Period and logged in user will be removed. Continue?',
 
     'LB_FS_LIKELY_CASE'=>'Likely Case',
     'LB_FS_WORST_CASE'=>'Worst Case',
@@ -189,17 +189,17 @@ $mod_strings = array (
     'LBL_GRAPH_TITLE'=>'Forecast History',
     'LBL_GRAPH_QUOTA_ALTTEXT'=>'Quota for %s',
     'LBL_GRAPH_COMMIT_ALTTEXT'=>'Committed Amount for %s',
-    'LBL_GRAPH_OPPS_ALTTEXT'=>'Value of opportunities closed in %s',
+    'LBL_GRAPH_OPPS_ALTTEXT'=>'Value of Opportunities closed in %s',
 
     'LBL_GRAPH_QUOTA_LEGEND'=>'Quota',
     'LBL_GRAPH_COMMIT_LEGEND'=>'Committed Forecast',
     'LBL_GRAPH_OPPS_LEGEND'=>'Closed Opportunities',
     'LBL_TP_QUOTA'=>'Quota:',
-    'LBL_CHART_FOOTER'=>'Forecast History<br>Quota vs Forecasted Amount vs Closed Opportunity Value',
+    'LBL_CHART_FOOTER'=>'Forecast History<br>Quota vs Forecast Amount vs Closed Opportunity Value',
     'LBL_TOTAL_VALUE'=>'Totals:',
     'LBL_COPY_AMOUNT'=>'Total amount',
     'LBL_COPY_WEIGH_AMOUNT'=>'Total weighted amount',
-    'LBL_WORKSHEET_AMOUNT'=>'Total estimated Amounts',
+    'LBL_WORKSHEET_AMOUNT'=>'Total estimated amounts',
     'LBL_COPY'=>'Copy Values',
     'LBL_COMMIT_AMOUNT'=>'Sum of Committed values.',
     'LBL_CUMMULATIVE_TOTAL'=>'Cummlative Total',
@@ -218,13 +218,13 @@ $mod_strings = array (
     'LBL_VERSION' => 'Version',
 
     //Labels for forecasting history log and endpoint
-    'LBL_ERROR_NOT_MANAGER' => 'Error: user {0} does not have manager access to request forecasts for {1}',
+    'LBL_ERROR_NOT_MANAGER' => 'Error: user {0} does not have manager access to request Forecasts for {1}',
     'LBL_UP' => 'up',
     'LBL_DOWN' => 'down',
     'LBL_PREVIOUS_COMMIT' => 'Latest Commit:',
 
-    'LBL_COMMITTED_HISTORY_SETUP_FORECAST' => 'Setup forecast',
-    'LBL_COMMITTED_HISTORY_UPDATED_FORECAST' => 'Updated forecast',
+    'LBL_COMMITTED_HISTORY_SETUP_FORECAST' => 'Setup Forecast',
+    'LBL_COMMITTED_HISTORY_UPDATED_FORECAST' => 'Updated Forecast',
     'LBL_COMMITTED_HISTORY_1_SHOWN' => '{{{intro}}} {{{first}}}',
     'LBL_COMMITTED_HISTORY_2_SHOWN' => '{{{intro}}} {{{first}}}, {{{second}}}',
     'LBL_COMMITTED_HISTORY_3_SHOWN' => '{{{intro}}} {{{first}}}, {{{second}}}, and {{{third}}}',
@@ -335,26 +335,26 @@ $mod_strings = array (
 
     'LBL_FORECASTS_CONFIG_TITLE_MESSAGE_TIMEPERIODS' => 'Fiscal year start date:',
 
-    'LBL_FORECASTS_CONFIG_HELP_TIMEPERIODS' => 'Conﬁgure the time period that will be used in the Forecasts module.<br><br>Start by choosing the Start Date of your ﬁscal year. Then choose the type of  time period that you want to forecast over. The date range for the time periods will be automatically calculated based on your selections. The Sub Time Period is the base for the Forecast worksheet.<br><br>The viewable future and past time periods will determine the number of visible sub-periods in the Forecasts module. The users are able to view and edit the forecasting numbers in the visible  sub-periods.',
-    'LBL_FORECASTS_CONFIG_HELP_RANGES' => 'Configure the way you would like to tag the {{forecastByModule}} (for example which {{forecastByModule}} should be included or excluded from the forecasting numbers). You can choose the number of categories and determine the ranges of the probabilities for the categories. The {{forecastByModule}} with certain probabilities will default  to the corresponding category. After the initial tag, the user can manually modify the value. Only the {{forecastByModule}} in the "Included" category will be reported to managers as committed.',
-    'LBL_FORECASTS_CONFIG_HELP_SCENARIOS' => 'Select the columns you would like the user to ﬁll out for their forecasts of each {{forecastByModuleSingular}}. Please note the Likely amount is tied to the amount shown in {{forecastByModule}}; for this reason the Likely column cannot be hidden.',
+    'LBL_FORECASTS_CONFIG_HELP_TIMEPERIODS' => 'Conﬁgure the Time Period that will be used in the Forecasts module.<br><br>Start by choosing the Start Date of your ﬁscal year. Then choose the type of Time Period for the Forecast. The date range for the Time Periods will be automatically calculated based on your selections. The Sub Time Period is the base for the Forecast worksheet.<br><br>The viewable future and past Time Periods will determine the number of visible sub-periods in the Forecasts module. The users are able to view and edit the Forecast numbers in the visible sub-periods.',
+    'LBL_FORECASTS_CONFIG_HELP_RANGES' => 'Configure the way you would like to tag the {{forecastByModule}} (for example which {{forecastByModule}} should be included or excluded from the Forecast numbers). You can choose the number of categories and determine the ranges of the probabilities for the categories. The {{forecastByModule}} with certain probabilities will default to the corresponding category. After the initial tag, the user can manually modify the value. Only the {{forecastByModule}} in the "Included" category will be reported to managers as committed.',
+    'LBL_FORECASTS_CONFIG_HELP_SCENARIOS' => 'Select the columns you would like the user to fill out for their Forecasts of each {{forecastByModuleSingular}}. Please note the Likely amount is tied to the amount shown in {{forecastByModule}}; for this reason the Likely column cannot be hidden.',
     'LBL_FORECASTS_CONFIG_HELP_WORKSHEET_COLUMNS' => 'Select which columns you would like to view in the Forecast module. The list of fields will combine the worksheet and allow the user to choose how to configure its view.',
     'LBL_FORECASTS_CONFIG_HELP_FORECAST_BY' => 'I am a placeholder for Forecast By how-to text!',
-    'LBL_FORECASTS_CONFIG_SETTINGS_SAVED' => 'Forecast config settings have been saved.',
+    'LBL_FORECASTS_CONFIG_SETTINGS_SAVED' => 'Forecasts configuration settings have been saved.',
 
     // timeperiod config
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
     'LBL_FORECASTS_CONFIG_TIMEPERIOD_SETUP_NOTICE' => 'Time Period settings cannot be changed after initial setup.',
-    'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC' => 'Configure the Time Periods used for forecasting.',
+    'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC' => 'Configure the Time Periods used for the Forecasts module.',
     'LBL_FORECASTS_CONFIG_TIMEPERIOD_TYPE' => 'Select the type of year your organization uses for accounting.',
     'LBL_FORECASTS_CONFIG_TIMEPERIOD' => 'Choose the type of Time Period',
-    'LBL_FORECASTS_CONFIG_LEAFPERIOD' => 'Choose the sub period that you want to view your time period over:',
+    'LBL_FORECASTS_CONFIG_LEAFPERIOD' => 'Choose the sub period that you want to view your Time Period over:',
     'LBL_FORECASTS_CONFIG_START_DATE' => 'Choose fiscal year start date',
     'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD' => 'Choose the number of future Time Periods to view in the worksheet.<br><i>This number applies to the base Time Period selected. For example, choosing 2 with Yearly Time Period will show 8 future Quarters</i>',
     'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD' => 'Choose the number of past Time Periods to view in the worksheet.<br><i>This number applies to the base Time Period selected. For example, choosing 2 with Monthly Time Period will show 6 past Months</i>',
 
     // worksheet layout config
-    'LBL_FORECASTS_CONFIG_GENERAL_FORECAST_BY_TEXT' => 'Select how to populate the forecasting worksheet:',
+    'LBL_FORECASTS_CONFIG_GENERAL_FORECAST_BY_TEXT' => 'Select how to populate the Forecast worksheet:',
     'LBL_FORECASTS_CONFIG_GENERAL_FORECAST_BY_OPPORTUNITIES' => 'Opportunities',
     'LBL_FORECASTS_CONFIG_GENERAL_FORECAST_BY_PRODUCT_LINE_ITEMS' => 'Revenue Line Items',
     'LBL_REVENUELINEITEM_NAME' => 'Revenue Line Item Name',
@@ -365,16 +365,16 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_RANGES_SETUP_NOTICE' => 'Range settings cannot be changed after first save draft or commit in the Forecasts module. For an upgraded instance however, Range settings cannot be changed after the initial setup as the Forecasts data is already available through the upgrade.',
     'LBL_FORECASTS_CONFIG_RANGES' => 'Forecast Range Options:',
     'LBL_FORECASTS_CONFIG_RANGES_OPTIONS' => 'Select the way you would like to categorize {{forecastByModule}}.',
-    'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'This option gives a user the ability to specify {{forecastByModule}} that will be included or excluded from a forecast.',
-    'LBL_FORECASTS_CONFIG_SHOW_BUCKETS_RANGES_DESCRIPTION' => 'This option gives a user the ability to categorize their {{forecastByModule}} that are not included in the commit but are upside and have the potential of closing if everything goes well and {{forecastByModule}} that are to be excluded from the forecast.',
-    'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_RANGES_DESCRIPTION' => 'Custom Ranges: This option gives a user the ability to categorize their {{forecastByModule}} to be committed into the forecast into a committed range, excluded range and any others that you setup.',
+    'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'This option gives a user the ability to specify {{forecastByModule}} that will be included or excluded from a Forecast.',
+    'LBL_FORECASTS_CONFIG_SHOW_BUCKETS_RANGES_DESCRIPTION' => 'This option gives a user the ability to categorize their {{forecastByModule}} that are not included in the commit but are upside and have the potential of closing if everything goes well and {{forecastByModule}} that are to be excluded from the Forecast.',
+    'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_RANGES_DESCRIPTION' => 'Custom Ranges: This option gives a user the ability to categorize their {{forecastByModule}} to be committed into the Forecast into a committed range, excluded range and any others that you setup.',
     'LBL_FORECASTS_CONFIG_RANGES_EXCLUDE_INFO' => 'The Exclude Range is from 0% to the minimum of the previous Forecast Range by default.',
 
     'LBL_FORECASTS_CONFIG_RANGES_ENTER_RANGE' => 'Enter range name...',
 
     // scenarios config
     //TODO-sfa refactors the code references for scenarios to be scenarios (SFA-337).
-    'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS' => 'Choose the Scenarios to include on the forecasting worksheet.',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS' => 'Choose the Scenarios to include on the Forecast worksheet.',
     'LBL_FORECASTS_CONFIG_WORKSHEET_LIKELY_INFO' => 'Likely is based on the amount entered in the {{forecastByModule}} module.',
     'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_LIKELY' => 'Likely',
     'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_BEST' => 'Best',
@@ -392,16 +392,16 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_VARIABLES_FORMULA_DESC' => 'Therefore the pipeline formula will be:',
 
     'LBL_FORECASTS_WIZARD_SUCCESS_TITLE' => 'Success:',
-    'LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE' => 'You successfully set up your forecasting module. Please wait while the module loads.',
-    'LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE' => 'The setting has been saved. Please wait while the module reloads.',
+    'LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE' => 'You successfully set up your Forecasts module. Please wait while the module loads.',
+    'LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE' => 'Forecasts configuration settings have been saved. Please wait while the module reloads.',
     // Labels for Success Messages:
-    'LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS' => 'You have saved the forecasting worksheet as draft for the selected time period.',
-    'LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS' => 'You have committed your forecast',
-    'LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS_TO' => 'You have committed your forecast to {{manager}}',
+    'LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS' => 'You have saved the Forecast worksheet as a draft for the selected Time Period.',
+    'LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS' => 'You have committed your Forecast',
+    'LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS_TO' => 'You have committed your Forecast to {{manager}}',
 
     // custom ranges
     'LBL_FORECASTS_CUSTOM_RANGES_DEFAULT_NAME' => 'Custom Range',
-    'LBL_UNAUTH_FORECASTS' => 'Unauthorized access to forecast settings.',
+    'LBL_UNAUTH_FORECASTS' => 'Unauthorized access to Forecast settings.',
     'LBL_FORECASTS_RANGES_BASED_TITLE' => 'Ranges based on probabilities',
     'LBL_FORECASTS_CUSTOM_BASED_TITLE' => 'Custom Ranges based on probabilities',
     'LBL_FORECASTS_CUSTOM_NO_BASED_TITLE' =>'Ranges not based on probabilities',

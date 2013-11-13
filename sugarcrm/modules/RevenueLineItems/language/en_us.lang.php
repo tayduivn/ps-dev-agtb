@@ -162,12 +162,13 @@ $mod_strings = array(
     'LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE' => 'There was an error converting this Revenue Line Item to a Quote',
 
     'LBL_DISCOUNT_AS_PERCENT' => 'Discount in %',
-    'SAVE_RLI_QUOTE_NOTICE' => 'This item has already been converted to quote. Your changes will not be updated in the corresponding quote.',
+    'SAVE_RLI_QUOTE_NOTICE' => 'This item has already been converted to Quote. Your changes will not be updated in the corresponding Quote.',
 
     'LBL_QUOTED' => 'Quoted',
     'LBL_NOT_QUOTED' => 'Not Quoted',
-    'WARNING_DELETED_RECORD_RECOMMIT' => 'This record was included in a <a href="#Forecasts">Forecast</a>. It will be removed and you will need to re-commit your <a href="#Forecasts">Forecast</a>.',
-    'WARNING_DELETED_RECORD_LIST_RECOMMIT' => 'One or more records were included in a <a href="#Forecasts">Forecast</a>. They will be removed and you will need to re-commit your <a href="#Forecasts">Forecast</a>.',
-    'WARNING_MERGE_RLIS_WITH_DIFFERENT_OPPORTUNITIES' => 'One or more of the records you\'ve selected can not be merged together as they belong to different Opportunities'
-
+    'WARNING_DELETED_RECORD_RECOMMIT_1' => 'This record was included in a ',
+    'WARNING_DELETED_RECORD_RECOMMIT_2' => 'It will be removed and you will need to re-commit your ',
+    'WARNING_DELETED_RECORD_LIST_RECOMMIT_1' => 'One or more records were included in a ',
+    'WARNING_DELETED_RECORD_LIST_RECOMMIT_2' => 'They will be removed and you will need to re-commit your ',
+    'WARNING_MERGE_RLIS_WITH_DIFFERENT_OPPORTUNITIES' => 'One or more of the records you\'ve selected can not be merged together as they belong to different Opportunities',
 );
