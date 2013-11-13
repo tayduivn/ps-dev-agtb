@@ -536,6 +536,7 @@ class CurrentUserApi extends SugarApi
         $return['currency_symbol'] = $currency->symbol;
         $return['currency_iso'] = $currency->iso4217;
         $return['currency_rate'] = $currency->conversion_rate;
+        $return['currency_show_preferred'] = $user->getPreference('currency_show_preferred');
         
         // user number formatting prefs
         $return['decimal_precision'] = $locale->getPrecision();

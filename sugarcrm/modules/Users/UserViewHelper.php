@@ -586,6 +586,9 @@ class UserViewHelper {
             $this->ss->assign("CURRENCY", $selectCurrency);
         }
 
+        // convert base currency values to user preferred
+        $this->ss->assign("currency_show_preferred", $locale->getPrecedentPreference('currency_show_preferred', $this->bean));
+
         $currencyList = array();
         foreach($locale->currencies as $id => $val ) {
             $currencyList[$id] = $val['symbol'];

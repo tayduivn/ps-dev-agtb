@@ -268,6 +268,7 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
         else $focus->setPreference('ut', '1', 0, 'global');
         if(isset($_POST['currency'])) $focus->setPreference('currency',$_POST['currency'], 0, 'global');
         if(isset($_POST['default_currency_significant_digits'])) $focus->setPreference('default_currency_significant_digits',$_POST['default_currency_significant_digits'], 0, 'global');
+        $focus->setPreference('currency_show_preferred', isset($_POST['currency_show_preferred']), false, 'global');
         if(isset($_POST['num_grp_sep'])) $focus->setPreference('num_grp_sep', $_POST['num_grp_sep'], 0, 'global');
         if(isset($_POST['dec_sep'])) $focus->setPreference('dec_sep', $_POST['dec_sep'], 0, 'global');
                 if(isset($_POST['fdow'])) $focus->setPreference('fdow', $_POST['fdow'], 0, 'global');

@@ -313,6 +313,16 @@
                             <!-- END: currency -->
                         </tr>
                         <tr>
+                            <td scope="row"><slot></td>
+                            <td scope="row"><slot></td>
+                            <!-- BEGIN: show preferred currency -->
+                            <td width="17%" scope="row"><slot>{$MOD.LBL_CURRENCY_SHOW_PREFERRED}:</slot>&nbsp;{sugar_help text=$MOD.LBL_CURRENCY_SHOW_PREFERRED_TEXT }</td>
+                            <td ><slot>
+                                    <input id="currency_show_preferred" type="checkbox" name="currency_show_preferred" value="YES" {if $currency_show_preferred}checked="checked"{/if}>
+                                </slot></td>
+                            <!-- END: show preferred currency -->
+                        </tr>
+                        <tr>
                             <td scope="row"><slot>{$MOD.LBL_TIME_FORMAT}:</slot>&nbsp;{sugar_help text=$MOD.LBL_TIME_FORMAT_TEXT }</td>
                             <td ><slot><select tabindex='14' name='timeformat'>{$TIMEOPTIONS}</select></slot></td>
                             <!-- BEGIN: currency -->

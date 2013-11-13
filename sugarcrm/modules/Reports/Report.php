@@ -2116,6 +2116,7 @@ return str_replace(' > ','_',
 
     function get_next_row($result_field_name = 'result', $column_field_name = 'display_columns', $skip_non_summary_columns = false, $exporting = false)
     {
+        global $current_user;
         $chart_cells = array();
 
         if ($this->do_export) {
@@ -2233,35 +2234,20 @@ return str_replace(' > ','_',
                 if (isset($display_column['fields'][$field_name])) {
                     $display = $display_column['fields'][$field_name];
                 }
+            }
 
-                global $locale;
-                $params = array();
-                $params['currency_id'] = $locale->getPrecedentPreference('currency');
-                $params['convert'] = true;
-                $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
-
-                // Pre-process the value to be converted if it is in different currency than US Dollar (-99)
-                // Because conversion_rates change and the amount_usdollar column isn't updated accordingly
-                if (strpos($display_column['name'], '_usdoll') !== false && $display_column['type'] == 'currency') {
-                	// Get the fields
-					$fields = $display_column['fields'];
-					// Get truncated field names: amount, currency_id, amount_usdollar
-					$currencyId = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias']) . "_AMOUNT_CURRENCY");
-					$amount = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias']) . "_AMOUNT");
-					$amountUSDollar = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias']) . "_AMOUNT_USDOLLAR");
-					// If currency is set to US Dollar, and the amount and amountUSDollar are equal, skip pre-processing
-					// Otherwise, use the currency and amount to convert to dollar and ignore amount_usdollar
-					if (isset($fields[$currencyId]) && !($fields[$currencyId] == '-99' && $fields[$amount] == $fields[$amountUSDollar])) {
-						// Get currency
-						$currency = BeanFactory::getBean('Currencies', $fields[$currencyId]);
-						// Just convert to dollar, because if the currency isn't found, conversion rate is set to one, and won't change anything
-						$display = $currency->convertToDollar($fields[$amount]);
-					}
+            if ($display_column['type'] == 'currency' && (strpos($display_column['name'], '_usdoll') !== false || !empty($display_column['group_function']))) {
+                // convert base to user preferred if set in user prefs
+                if($current_user->getPreference('currency_show_preferred')) {
+                    $userCurrency = SugarCurrency::getUserLocaleCurrency();
+                    $raw_display = SugarCurrency::convertWithRate($display_column['fields'][$field_name], 1.0, $userCurrency->conversion_rate);
+                    $display = SugarCurrency::formatAmountUserLocale($raw_display, $userCurrency->id);
+                } else {
+                    $raw_display = $display_column['fields'][$field_name];
+                    $display = SugarCurrency::formatAmountUserLocale($raw_display, SugarCurrency::getBaseCurrency()->id);
                 }
-
-                // Call the conversion to prefered currency
-                $display = currency_format_number($display, $params);
-
+            } else {
+                $raw_display = $display;
             }
 
             if (isset($display_column['type']) && $display_column['type'] == 'float') {
@@ -2287,18 +2273,6 @@ return str_replace(' > ','_',
             //  for charts
             if ($column_field_name == 'summary_columns' && $this->do_chart) {
                 //_pp($display);
-                $raw_display = preg_replace('/^\$/', '', $display);
-                /*
-                if ($type == 'currency') {
-                    require_once('modules/Currencies/Currency.php');
-                    global $locale;
-                    $params = array();
-                    $params['currency_id'] = $locale->getPrecedentPreference('currency');
-                    $params['convert'] = true;
-                    $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
-                    $raw_display = currency_format_number($raw_display, $params);
-                }*/
-
                 $cell_arr = array('val' => $raw_display, 'key' => $display_column['column_key']);
                 //_pp($cell_arr);
                 array_push($chart_cells, $cell_arr);
