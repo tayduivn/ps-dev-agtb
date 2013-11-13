@@ -275,6 +275,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'preferred_language',
+                    'type' => 'language',
                     'span' => 12,
                 ),
 	            //BEGIN SUGARCRM flav=ent ONLY

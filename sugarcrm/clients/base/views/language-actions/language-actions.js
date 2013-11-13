@@ -29,29 +29,33 @@
         'click #languageList .dropdown-menu a' : 'setLanguage'
     },
     tagName: "span",
+    /**
+     * @override
+     * @param {Object} options
+     */
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
         app.events.on("app:login:success", this.render, this);
         app.events.on("app:logout", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
-
-        // Format the list of languages for the template
-        var languages = app.lang.getAppListStrings('available_language_dom');
-        this.languageList = [];
-        for (var languageKey in languages) {
-            if (languageKey !== "")
-                this.languageList.push({
-                    key: languageKey,
-                    value: languages[languageKey]
-                })
-        }
     },
+    /**
+     * @override
+     * @private
+     */
     _renderHtml: function() {
         this.isAuthenticated = app.api.isAuthenticated();
         this.currentLang = app.lang.getLanguage() || "en_us";
+        this.languageList = this.formatLanguageList();
         app.view.View.prototype._renderHtml.call(this);
         this.$('[data-toggle="dropdown"]').dropdown();
     },
+    /**
+     * When a user selects a language in the dropdown, set this language.
+     * Note that on login, user's preferred language will be updated to this language
+     *
+     * @param {Event} e
+     */
     setLanguage: function(e) {
         var $li = this.$(e.currentTarget),
             langKey = $li.data("lang-key");
@@ -59,5 +63,22 @@
         app.lang.setLanguage(langKey, function() {
             app.alert.dismiss('language');
         });
+    },
+    /**
+     * Formats the language list for the template
+     *
+     * @returns {Array} of languages
+     */
+    formatLanguageList: function() {
+        // Format the list of languages for the template
+        var list = [],
+            languages = app.lang.getAppListStrings('available_language_dom');
+
+        _.each(languages, function(label, key) {
+            if (key !== '') {
+                list.push({ key: key, value: label });
+            }
+        });
+        return list;
     }
 })

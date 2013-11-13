@@ -111,6 +111,7 @@ $viewdefs['Contacts']['portal']['view']['record'] = array(
                 ),
                 array (
                     'name' => 'preferred_language',
+                    'type' => 'language',
                     'options' => 'available_language_dom',
                 ),
             ),
