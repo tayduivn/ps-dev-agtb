@@ -31,6 +31,11 @@
     originalSuccess: undefined,
 
     /**
+     * Holds a reference to the alert this view triggers
+     */
+    alert: undefined,
+
+    /**
      * {@inheritDoc}
      */
     initialize: function (options) {
@@ -64,7 +69,10 @@
      * @param string module     The module that we are currently on.
      */
     showRLIWarningMessage: function(module) {
-        var alert = app.alert.show('opp-rli-create', {
+        // add a callback to close the alert if users navigate from the page
+        app.routing.before('route', this.dismissAlert, undefined, this);
+
+        this.alert = app.alert.show('opp-rli-create', {
             level: 'warning',
             autoClose: false,
             title: app.lang.get('LBL_ALERT_TITLE_WARNING') + ':',
@@ -74,6 +82,26 @@
                 this.openRLICreate();
             }, this)
         });
+
+        this.alert.getCloseSelector().on('click', _.bind(function() {
+            this.alert.getCloseSelector().off('click');
+            app.routing.offBefore('route', this.dismissAlert, this);
+        }, this));
+    },
+
+    /**
+     * Handle dismissing the RLI create alert
+     */
+    dismissAlert: function(data) {
+        // if we are not navigating to the Opps list view, dismiss the alert
+        if(data && !(data.args && data.args[0] == 'Opportunities' && data.route == 'list')) {
+            this.alert.getCloseSelector().off('click');
+
+            // close RLI warning alert
+            app.alert.dismiss('opp-rli-create');
+            // remove before route event listener
+            app.routing.offBefore('route', this.dismissAlert, this);
+        }
     },
 
     /**
@@ -81,7 +109,7 @@
      */
     openRLICreate: function() {
         // close RLI warning alert
-        app.alert.dismiss('opp-rli-create');
+        this.dismissAlert(true);
 
         var model = this.createLinkModel(this.createdModel || this.model, 'revenuelineitems');
 
@@ -103,8 +131,17 @@
 
             // reload opportunities and RLIs subpanels
             ctx.trigger('subpanel:reload', {links: ['opportunities', 'revenuelineitems']});
-
         }, this));
-    }
+    },
 
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        if(this.alert){
+            this.alert.getCloseSelector().off('click');
+        }
+
+        this._super('_dispose', []);
+    }
 })
