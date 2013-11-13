@@ -418,15 +418,80 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 		return $this->get_start_end_date_filter($layout_def,$begin->asDb(),$end->asDb());
 	}
 
+    /**
+     * Return the between WHERE query for Quarter filter
+     *
+     * Find quarter for given date, modify the start/end with $modifyFilter parameter
+     *
+     * @param $layout_def - Filter layout_def
+     * @param string $modifyFilter - Modification to start/end date, used to select previous/next quarter
+     * @param string $date - Date for which to find the quarter filter, if not set uses current date
+     * @return string - BETWEEN WHERE query for quarter filter
+     */
+    protected function getQuarterFilter($layout_def, $modifyFilter, $date = '')
+    {
+        $timedate = TimeDate::getInstance();
 
-	function queryFilterTP_this_quarter($layout_def)
-	{
-		global $timedate;
-		$begin = $this->now();
-		$begin->setDate($begin->year, floor(($begin->month-1)/3)*3+1, 1)->setTime(0, 0);
-		$end = $begin->get("+3 month")->setTime(23, 59, 59);
-		return $this->get_start_end_date_filter($layout_def,$begin->asDb(),$end->asDb());
-	}
+        $convert = $this->isDateTimeField($layout_def['type']);
+
+        // See if date is set, if not, use current date
+        if (empty($date)) {
+            $begin = $timedate->getNow($convert);
+        } else {
+            $begin = $timedate->fromString($date);
+        }
+
+        $begin->setDate(
+            $begin->year,
+            floor(($begin->month - 1) / 3) * 3 + 1, // Find starting month of quarter
+            1
+        )->setTime(0, 0);
+
+        $end = $begin->get("+3 month");
+
+        // Modify begin/end if filter is set
+        if (!empty($modifyFilter)) {
+            $begin->modify($modifyFilter);
+            $end->modify($modifyFilter);
+        }
+
+        $end = $end->get("-1 day")->setTime(23, 59, 59);
+
+        return $this->get_start_end_date_filter($layout_def, $begin->asDb($convert), $end->asDb($convert));
+    }
+
+    /**
+     * Returns part of query for select
+     *
+     * @param array $layout_def for field
+     * @return string part of select query with last quarter only
+     */
+    public function queryFilterTP_last_quarter($layout_def)
+    {
+        return $this->getQuarterFilter($layout_def, '-3 month');
+    }
+
+    /**
+     * Returns part of query for select
+     *
+     * @param array $layout_def for field
+     * @return string part of select query with this quarter only
+     */
+    public function queryFilterTP_this_quarter($layout_def)
+    {
+        return $this->getQuarterFilter($layout_def, '');
+    }
+
+    /**
+     * Returns part of query for select
+     *
+     * @param array $layout_def for field
+     * @return string part of select query with next quarter only
+     */
+    public function queryFilterTP_next_quarter($layout_def)
+    {
+        return $this->getQuarterFilter($layout_def, '+3 month');
+    }
 
 	function queryFilterTP_last_year($layout_def)
 	{
@@ -570,6 +635,17 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 	}
 
     /**
+     * Checks if it's a date field that contains time too
+     *
+     * @param $type - field type from layout_def
+     * @return bool true if field contains time, false otherwise
+     */
+    protected function isDateTimeField($type)
+    {
+        return in_array($type, array('datetime', 'datetimecombo'));
+    }
+
+    /**
      * Returns the fiscal start date in user TZ if it exists
      * otherwise uses 01-01 of current year
      *
@@ -603,12 +679,16 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
      * @param $column - DB column name
      * @return string - date field normalized in regard to fiscal start date
      */
-    private function getNormalizedDate($column)
+    private function getNormalizedDate($layout_def)
     {
         $fiscalDate = $this->getFiscalStartDate();
 
-        // Need to add tz offset for grouping
-        $column = $this->reporter->db->convert($column, 'add_tz_offset');
+        $column = $this->_get_column_select($layout_def);
+
+        if ($this->isDateTimeField($layout_def['type'])) {
+            // Need to add tz offset for grouping
+            $column = $this->reporter->db->convert($column, 'add_tz_offset');
+        }
 
         if ($fiscalDate->day_of_year > 0) {
             $column = $this->reporter->db->convert(
@@ -629,7 +709,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
      *
      * @param $layout_def - Filter layout_def
      * @param string $modifyStart - Modification to fiscal start date
-     * @param string $modifyEnd - Modification to fiscal start date
+     * @param string $modifyEnd - Modification to fiscal end date
      * @param string $date - Date for which to find fiscal quarter/year, if not set uses current date
      * @return string - BETWEEN WHERE query for Fiscal filter
      */
@@ -640,10 +720,12 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         // Get Fiscal Start Date
         $fiscalDate = $this->getFiscalStartDate();
 
+        $convert = $this->isDateTimeField($layout_def['type']);
+
         // We need to make changes to fiscal date, depending on current date
         // See if date is set, if not, use current date
         if (empty($date)) {
-            $date = $timedate->getNow(true);
+            $date = $timedate->getNow($convert);
         } else {
             $date = $timedate->fromString($date);
         }
@@ -690,12 +772,13 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 
         $column = $this->_get_column_select($layout_def);
 
-        $startTime = $start->asDb(true);
-        $endTime = $end->asDb(true);
+        $startTime = $start->asDb($convert);
+        $endTime = $end->asDb($convert);
 
-        // Return the WHERE statement
-        return "(" . $this->queryDateOp($column, $startTime, ">=", "datetime")
+        $query = "(" . $this->queryDateOp($column, $startTime, ">=", "datetime")
             . " AND " . $this->queryDateOp($column, $endTime, "<", "datetime") . ")\n";
+
+        return $query;
     }
 
     /**
@@ -734,9 +817,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
      */
     public function queryGroupByFiscalQuarter($layout_def)
     {
-        $column = $this->_get_column_select($layout_def);
-
-        $date = $this->getNormalizedDate($column);
+        $date = $this->getNormalizedDate($layout_def);
 
         $query = $this->reporter->db->convert(
             $this->reporter->db->convert(
@@ -790,9 +871,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
      */
     public function queryGroupByFiscalYear($layout_def)
     {
-        $column = $this->_get_column_select($layout_def);
-
-        $date = $this->getNormalizedDate($column);
+        $date = $this->getNormalizedDate($layout_def);
 
         $query = $this->reporter->db->convert($date, "date_format", array('%Y'));
 
@@ -808,8 +887,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
     function querySelectmonth($layout_def)
     {
         $return = $this->_get_column_select($layout_def);
-        if ($layout_def['type'] == 'datetime')
-        {
+        if ($this->isDateTimeField($layout_def['type'])) {
             $return = $this->reporter->db->convert($return, 'add_tz_offset');
         }
         return $this->reporter->db->convert($return, "date_format", array('%Y-%m')) . ' ' . $this->_get_column_alias($layout_def) . "\n";
@@ -824,8 +902,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
     function queryGroupByMonth($layout_def)
     {
         $return = $this->_get_column_select($layout_def);
-        if ($layout_def['type'] == 'datetime')
-        {
+        if ($this->isDateTimeField($layout_def['type'])) {
             $return = $this->reporter->db->convert($return, 'add_tz_offset');
         }
         return $this->reporter->db->convert($return, "date_format", array('%Y-%m')) . "\n";
@@ -840,8 +917,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
     function queryOrderByMonth($layout_def)
     {
         $return = $this->_get_column_select($layout_def);
-        if ($layout_def['type'] == 'datetime')
-        {
+        if ($this->isDateTimeField($layout_def['type'])) {
             $return = $this->reporter->db->convert($return, 'add_tz_offset');
         }
         $orderBy = $this->reporter->db->convert($return, "date_format", array('%Y-%m'));
@@ -876,8 +952,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
     function querySelectday($layout_def)
     {
         $return = $this->_get_column_select($layout_def);
-        if ($layout_def['type'] == 'datetime')
-        {
+        if ($this->isDateTimeField($layout_def['type'])) {
             $return = $this->reporter->db->convert($return, 'add_tz_offset');
         }
         return $this->reporter->db->convert($return, "date_format", array('%Y-%m-%d')) . ' ' . $this->_get_column_alias($layout_def) . "\n";
@@ -892,8 +967,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
     function queryGroupByDay($layout_def)
     {
         $return = $this->_get_column_select($layout_def);
-        if ($layout_def['type'] == 'datetime')
-        {
+        if ($this->isDateTimeField($layout_def['type'])) {
             $return = $this->reporter->db->convert($return, 'add_tz_offset');
         }
         return $this->reporter->db->convert($return, "date_format", array('%Y-%m-%d')) . "\n";
@@ -908,8 +982,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
     function querySelectyear($layout_def)
     {
         $return = $this->_get_column_select($layout_def);
-        if ($layout_def['type'] == 'datetime')
-        {
+        if ($this->isDateTimeField($layout_def['type'])) {
             $return = $this->reporter->db->convert($return, 'add_tz_offset');
         }
         return $this->reporter->db->convert($return, "date_format", array('%Y')) . ' ' . $this->_get_column_alias($layout_def) . "\n";
@@ -924,8 +997,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
     function queryGroupByYear($layout_def)
     {
         $return = $this->_get_column_select($layout_def);
-        if ($layout_def['type'] == 'datetime')
-        {
+        if ($this->isDateTimeField($layout_def['type'])) {
             $return = $this->reporter->db->convert($return, 'add_tz_offset');
         }
         return $this->reporter->db->convert($return, "date_format", array('%Y')) . "\n";
