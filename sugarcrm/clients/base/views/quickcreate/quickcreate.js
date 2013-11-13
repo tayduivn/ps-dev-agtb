@@ -12,20 +12,28 @@
  */
 ({
     plugins: ['Dropdown', 'Tooltip'],
+
+    /**
+     * @param {Object} options
+     * @override
+     * @private
+     */
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
     },
 
+    /**
+     * @override
+     * @private
+     */
     _renderHtml: function() {
         if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') {
             return;
         }
-
         // loadAdditionalComponents fires render before the private metadata is ready, check for this
-        if (!(_.isEmpty(app.metadata.getStrings("mod_strings")))) {
-            var modules = app.metadata.getModules();
-            this.createMenuItems = this._getMenuMeta(modules);
+        if (app.isSynced) {
+            this.createMenuItems = this._getMenuMeta(app.metadata.getModuleNames(false, 'create'));
             app.view.View.prototype._renderHtml.call(this);
         }
     },
@@ -34,15 +42,15 @@
      * Retrieve the quickcreate metadata from each module in the list
      * Uses the visible flag on the metadata to determine if admin has elected to hide the module from the list
      *
-     * @param {Array} modules
+     * @param {Array} module names
      * @return {Array} list of visible menu item metadata
      */
     _getMenuMeta: function(modules) {
-        var menuItem, returnList = [];
-        _.each(modules, function(meta, name) {
-            // remove any modules for which the user doesn't have create access
-            if (meta && meta.menu && meta.menu.quickcreate && app.acl.hasAccess('create', name)) {
-                menuItem = meta.menu.quickcreate.meta;
+        var returnList = [];
+        _.each(modules, function(name) {
+            var meta = app.metadata.getModule(name);
+            if (meta && meta.menu && meta.menu.quickcreate) {
+                var menuItem = _.clone(meta.menu.quickcreate.meta);
                 if (menuItem.visible === true) {
                     menuItem.module = name;
                     menuItem.type = menuItem.type || 'quickcreate';
