@@ -762,6 +762,19 @@ class OracleManager extends DBManager
                 $getUserUTCOffset = $GLOBALS['timedate']->getUserUTCOffset();
                 $operation = $getUserUTCOffset < 0 ? '-' : '+';
                 return $string . ' ' . $operation . ' ' . abs($getUserUTCOffset) . '/1440';
+            // Must implement AVG like this, because Oracle throws
+            // ORA-24347: Warning of a NULL column in an aggregate function
+            // when using count() with an aggregate function that is working on a field that has NULL values
+            case 'avg':
+                $avg = "
+                    decode(
+                        sum(nvl2($string, 1, 0)),
+                        0,
+                        0,
+                        sum(nvl($string, 0)) / sum(nvl2($string, 1, 0))
+                    )
+                ";
+                return $avg;
         }
 
         return $string;
