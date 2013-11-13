@@ -25,9 +25,32 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    plugins: ['Editable'],
+
     events: {
         "click a[name=cancel_button]": "close",
         "click a[name=save_button]":   "save"
+    },
+
+    /**
+     * Store the translated i18n label.
+     * @type {String} Translated dashlet's title label.
+     * @private
+     */
+    _translatedLabel: null,
+
+    /**
+     * {@inheritDoc}
+     * Compare with the previous attributes and translated dashlet's label
+     * in order to warn unsaved changes.
+     *
+     * @return {Boolean} true if the dashlet setting contains changes.
+     */
+    hasUnsavedChanges: function() {
+        var previousAttributes = _.extend(this.model.previousAttributes(), {
+            label: this._translatedLabel
+        });
+        return !_.isEmpty(this.model.changedAttributes(previousAttributes));
     },
 
     save: function() {
@@ -45,13 +68,14 @@
      */
     _renderHtml: function() {
         var label;
-        this.model = this.layout.context.get("model");
+        this.model = this.layout.context.get('model');
         label = app.lang.get(
             this.model.get('label'),
             this.model.get('module') || this.module,
             this.model.attributes
         );
-        this.model.set('label', label);
+        this._translatedLabel = label;
+        this.model.set('label', label, {silent: true});
         app.view.View.prototype._renderHtml.call(this);
     }
 })
