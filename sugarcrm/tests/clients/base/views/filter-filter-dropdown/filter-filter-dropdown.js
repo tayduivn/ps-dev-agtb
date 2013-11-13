@@ -115,8 +115,8 @@ describe("BaseFilterFilterDropdownView", function () {
         it('should return filter list with translated labels', function() {
             sinonSandbox.stub(view.layout, 'canCreateFilter', function() { return false; });
             expected = [
-                { id: 'all_records', text: app.lang.get('ALL_RECORDS')},
-                { id: 'test_id', text: app.lang.get('TEST'), firstUserFilter: true},
+                { id: 'all_records', text: app.lang.get('ALL_RECORDS'),  firstNonUserFilter: true},
+                { id: 'test_id', text: app.lang.get('TEST')},
                 { id: 'test_id_2', text: app.lang.get('TEST_2')}
             ];
             filterList = view.getFilterList();
@@ -128,8 +128,8 @@ describe("BaseFilterFilterDropdownView", function () {
             sinonSandbox.stub(view.layout, 'canCreateFilter', function() { return false; });
             sinonSandbox.stub(view.layout.filters, 'sort');
             expected = [
-                { id: 'all_records', text: app.lang.get('LBL_FILTER_ALL_DUPLICATES')},
-                { id: 'test_id', text: app.lang.get('TEST'), firstUserFilter: true},
+                { id: 'all_records', text: app.lang.get('LBL_FILTER_ALL_DUPLICATES'), firstNonUserFilter: true},
+                { id: 'test_id', text: app.lang.get('TEST')},
                 { id: 'test_id_2', text: app.lang.get('TEST_2')}
             ];
             filterList = view.getFilterList();
@@ -140,8 +140,8 @@ describe("BaseFilterFilterDropdownView", function () {
             sinonSandbox.stub(view.layout, 'canCreateFilter', function() { return true; });
             expected = [
                 { id: 'create', text: app.lang.get('LBL_FILTER_CREATE_NEW')},
-                { id: 'all_records', text: app.lang.get('ALL_RECORDS')},
-                { id: 'test_id', text: app.lang.get('TEST'), firstUserFilter: true},
+                { id: 'all_records', text: app.lang.get('ALL_RECORDS'), firstNonUserFilter: true},
+                { id: 'test_id', text: app.lang.get('TEST')},
                 { id: 'test_id_2', text: app.lang.get('TEST_2')}
             ];
             filterList = view.getFilterList();
@@ -359,7 +359,7 @@ describe("BaseFilterFilterDropdownView", function () {
             expect(view.formatResultCssClass({id: 'create', text: 'Create'}))
                 .toEqual('select2-result-border-bottom');
 
-            expect(view.formatResultCssClass({id: 'test', text: 'TEST', firstUserFilter: true}))
+            expect(view.formatResultCssClass({id: 'test', text: 'TEST', firstNonUserFilter: true}))
                 .toEqual('select2-result-border-top');
         });
     });

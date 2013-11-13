@@ -626,7 +626,7 @@ describe("Base.Layout.Filter", function () {
             expect(layout.filters.models.length).toEqual(2);
             expect(handleFilterRetrieveStub.getCall(0).args).toEqual([modName,defaultName]);
         });
-        it('should sort filters alphabetically per categories', function(){
+        it('should sort filters alphabetically per categories with user filters on top', function(){
             sinonSandbox.stub(app.lang, 'get', function(key) {
                 var dictionnary = {
                     'LBL_MODULE_NAME': 'Leads',
@@ -641,17 +641,17 @@ describe("Base.Layout.Filter", function () {
             layout.filters.add({id: 'assigned_to_me', name: 'LBL_ASSIGNED_TO_ME', editable: false});
 
             // Sort results: `My Favorites`, `My Leads`, `Best Filter`, `First Filter`
-            expect(layout.filters.pluck('id')).toEqual(['assigned_to_me', 'random_id_1']);
+            expect(layout.filters.pluck('id')).toEqual(['random_id_1', 'assigned_to_me']);
 
             layout.filters.add({id: 'random_id_2', name: 'First Filter', editable: true});
 
             // Sort results: `My Favorites`, `Best Filter`, `First Filter`
-            expect(layout.filters.pluck('id')).toEqual(['assigned_to_me', 'random_id_1', 'random_id_2']);
+            expect(layout.filters.pluck('id')).toEqual(["random_id_1", "random_id_2", "assigned_to_me"]);
 
             layout.filters.add({id: 'favorites', name: 'LBL_FAVORITES', editable: false});
 
             // Sort results: `My Favorites`, `My Leads`, `Best Filter`, `First Filter`
-            expect(layout.filters.pluck('id')).toEqual(['favorites', 'assigned_to_me', 'random_id_1', 'random_id_2']);
+            expect(layout.filters.pluck('id')).toEqual(["random_id_1", "random_id_2", "favorites", "assigned_to_me"]);
         });
         it('should get filters from the server', function(){
             var modName = 'TestModule';

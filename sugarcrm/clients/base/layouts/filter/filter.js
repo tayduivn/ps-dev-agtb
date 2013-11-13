@@ -607,10 +607,10 @@
      */
     filterCollectionSorting: function(model1, model2) {
         if (model1.get('editable') === false && model2.get('editable') !== false) {
-            return -1;
+            return +1;
         }
         if (model1.get('editable') !== false && model2.get('editable') === false) {
-            return +1;
+            return -1;
         }
         if (this._getTranslatedFilterName(model1).toLowerCase() < this._getTranslatedFilterName(model2).toLowerCase()) {
             return -1;
