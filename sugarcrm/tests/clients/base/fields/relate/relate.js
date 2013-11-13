@@ -3,6 +3,9 @@ describe("Base.Field.Relate", function () {
     var app, field, fieldDef;
 
     beforeEach(function () {
+        SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate('relate', 'field', 'base', 'overwrite-confirmation');
+        SugarTest.testMetadata.set();
         app = SugarTest.app;
 
         fieldDef = {

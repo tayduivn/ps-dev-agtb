@@ -229,7 +229,7 @@
             // if we have a currency_id, set it first to trigger the currency conversion before setting
             // the values to the model, this prevents double conversion from happening
             if (!_.isUndefined(newData.currency_id)) {
-                this.model.set({currency_id: newData.currency_id})
+                this.model.set({currency_id: newData.currency_id});
                 delete newData.currency_id;
             }
             this.model.set(newData);
@@ -239,47 +239,51 @@
         // load template key for confirmation message from defs or use default
         var messageTplKey = app.lang.get(this.def.populate_confirm_label || 'TPL_OVERWRITE_POPULATED_DATA_CONFIRM'),
             messageTpl = Handlebars.compile(app.lang.get(messageTplKey, this.getSearchModule())),
-            fieldMessageTpl = Handlebars.compile(app.lang.get('TPL_ALERT_OVERWRITE_POPULATED_DATA_FIELD', this.getSearchModule())),
+            fieldMessageTpl = app.template.getField(
+                this.type,
+                'overwrite-confirmation',
+                this.model.module),
             messages = [],
-            alert_view = null;
+            moduleSingular = app.lang.getModuleSingular(this.module),
+            relatedModuleSingular = app.lang.getModuleSingular(this.def.module);
 
-        _.each(newData, function (value, field) {
-            var def = this.model.fields[field];
-            messages.push(fieldMessageTpl({
-                before: this.model.get(field),
-                after: value,
-                field_label: app.lang.get(def.label || def.vname || field, this.module)
-            }));
+        _.each(newData, function(value, field) {
+            var before = this.model.get(field),
+                after = value;
+
+            if (before !== after) {
+                var def = this.model.fields[field];
+                    messages.push(fieldMessageTpl({
+                    before: before,
+                    after: after,
+                    field_label: app.lang.get(def.label || def.vname || field, this.module)
+                }));
+            }
         }, this);
 
         app.alert.show('overwrite_confirmation', {
             level: 'confirmation',
-            messages: messageTpl({values: messages.join(', ')}) + '<br><br>',
-            onConfirm: function () {
+            messages: messageTpl({
+                values: new Handlebars.SafeString(messages.join(', ')),
+                moduleSingularLower: relatedModuleSingular.toLowerCase()
+            }),
+            onConfirm: function() {
                 // if we have a currency_id, set it first to trigger the currency conversion before setting
                 // the values to the model, this prevents double conversion from happening
                 if (!_.isUndefined(newData.currency_id)) {
-                    this.model.set({currency_id: newData.currency_id})
+                    self.model.set({currency_id: newData.currency_id});
                     delete newData.currency_id;
                 }
                 self.model.set(newData);
+            },
+            templateOptions: {
+                cancelContLabel: 'LBL_ALERT_OVERWRITE_POPULATED_DATA_CANCEL',
+                confirmContLabel: app.lang.get('TPL_ALERT_OVERWRITE_POPULATED_DATA_CONFIRM',
+                                  this.module, {
+                                      moduleSingularLower: moduleSingular.toLowerCase()
+                                  })
             }
         });
-
-        // bind events to show/hide tooltip
-        alert_view = app.alert.get('overwrite_confirmation');
-        if (alert_view) {
-            alert_view.$('[rel="tooltip"]').on('mouseenter', function (e) {
-                if (_.isFunction($(this).tooltip)) {
-                    $(this).tooltip({placement: "bottom"}).tooltip("show");
-                }
-            });
-            alert_view.$('[rel="tooltip"]').on('mouseleave', function (e) {
-                if (_.isFunction($(this).tooltip)) {
-                    $(this).tooltip("hide");
-                }
-            })
-        }
     },
     /**
      * {@inheritdoc}

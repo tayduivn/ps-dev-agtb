@@ -35,6 +35,9 @@
              * Initialize tooltips on initialize for layouts.
              */
             onAttach: function() {
+                if (app.utils.isTouchDevice()) {
+                    return;
+                }
                 if ((this instanceof app.view.View) || (this instanceof app.view.Field)) {
                     this.before('render', function() {
                         this.destroyAllPluginTooltips();
@@ -42,6 +45,7 @@
                     this.on('render', function() {
                         this.initializeAllPluginTooltips();
                     }, this);
+                    this.on('dismiss', this.removePluginTooltips, this);
                 } else if (this instanceof app.view.Layout) {
                     this.on('init', function() {
                         this.initializeAllPluginTooltips();
@@ -83,6 +87,10 @@
 
                 //hide tooltip when clicked
                 $tooltips.on('click.tooltip', function() {
+                    var plugin = $(this).data('tooltip');
+                    if (plugin && plugin.options && plugin.options.trigger === 'click') {
+                        return;
+                    }
                     $(this).tooltip('hide');
                 });
             },
