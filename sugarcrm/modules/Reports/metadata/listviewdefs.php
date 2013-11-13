@@ -79,7 +79,7 @@ $listViewDefs['Reports'] = array(
     ),
     'DATE_ENTERED' => array(
         'width' => '14',
-        'orderBy' => 'saved_reports.date_entered',
+        'orderBy' => 'date_entered',
         'sortOrder' => 'desc',
         'label' => 'LBL_DATE_ENTERED',
         'default' => true),
