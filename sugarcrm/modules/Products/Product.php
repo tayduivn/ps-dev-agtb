@@ -492,18 +492,34 @@ class Product extends SugarBean
         $is_owner = false;
         if (!empty($this->contact_name)) {
 
-            if (!empty($this->contact_name_owner)) {
-                global $current_user;
-                $is_owner = $current_user->id == $this->contact_name_owner;
-            }
-        }
-        if (ACLController::checkAccess('Contacts', 'view', $is_owner)) {
-            $array_assign['CONTACT'] = 'a';
-        } else {
-            $array_assign['CONTACT'] = 'span';
-        }
-        $is_owner = false;
-        if (!empty($this->account_name)) {
+		/**
+		 * Convert price related data into users preferred currency
+		 * for display in subpanels
+		 */
+		// See if a user has a preferred currency
+		if ($current_user->getPreference('currency')) {
+			// Retrieve the product currency
+			$currency = new Currency();
+			$currency->retrieve($this->currency_id);
+			// Retrieve the users currency
+			$userCurrency = new Currency();
+			$userCurrency->retrieve($current_user->getPreference('currency'));
+			// If the product currency and the user default currency are different, convert to users currency
+			if ($userCurrency->id != $currency->id) {
+				$this->cost_price = $userCurrency->convertFromDollar($currency->convertToDollar($this->cost_price));
+				$this->discount_price = $userCurrency->convertFromDollar($currency->convertToDollar($this->discount_price));
+				$this->list_price = $userCurrency->convertFromDollar($currency->convertToDollar($this->list_price));
+				$this->deal_calc = $userCurrency->convertFromDollar($currency->convertToDollar($this->deal_calc));
+
+				if (!(isset($this->discount_select) && $this->discount_select)) {
+					$this->discount_amount = $userCurrency->convertFromDollar($currency->convertToDollar($this->discount_amount));
+				}
+
+				$this->currency_symbol = $userCurrency->symbol;
+				$this->currency_name = $userCurrency->name;
+				$this->currency_id = $userCurrency->id;
+			}
+		}
 
             if (!empty($this->account_name_owner)) {
                 global $current_user;

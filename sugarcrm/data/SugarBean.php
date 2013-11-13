@@ -3008,18 +3008,19 @@ class SugarBean
         //END SUGARCRM flav=pro ONLY
 
         $query = "SELECT $query_select FROM $query_from ";
+        $options = array('where_condition' => true);
         //BEGIN SUGARCRM flav=pro ONLY
         if(!$this->disable_row_level_security)
         {
             //$this->table_name != 'users' && $this->table_name != 'teams' && $this->table_name != 'team_memberships' && $this->table_name != 'currencies')
-            $this->addVisibilityFrom($query);
+            $this->addVisibilityFrom($query, $options);
         }
         //END SUGARCRM flav=pro ONLY
 
         $query .= $where;
         //BEGIN SUGARCRM flav=pro ONLY
         if(!$this->disable_row_level_security) {
-            $this->addVisibilityWhere($query);
+            $this->addVisibilityWhere($query, $options);
         }
         //END SUGARCRM flav=pro ONLY
 
@@ -3236,7 +3237,7 @@ class SugarBean
         }
 
         // FIXME: duplicate with create_new_list_query, why?
-        $this->addVisibilityWhere($where);
+        //$this->addVisibilityWhere($where);
         $query = $this->create_new_list_query($order_by, $where,$select_fields,array(), $show_deleted,'',false,null,$singleSelect);
         return $this->process_list_query($query, $row_offset, $limit, $max, $where);
     }
@@ -3347,7 +3348,7 @@ class SugarBean
         }
 
         // FIXME: Duplicate with create_new_list_query - why?
-        $this->addVisibilityWhere($where);
+        //$this->addVisibilityWhere($where);
         $query = $this->create_new_list_query($order_by, $where,array(),array(), $show_deleted, $offset);
 
         return $this->process_detail_query($query, $row_offset, $limit, $max, $where, $offset);
@@ -3795,8 +3796,8 @@ class SugarBean
         $secondarySelectedFields = array();
         $ret_array = array();
         $distinct = '';
-
-        $this->addVisibilityWhere($where);
+        $options = array('where_condition' => true);
+        $this->addVisibilityWhere($where, $options);
 
         if(!empty($params['distinct']))
         {
@@ -3812,7 +3813,7 @@ class SugarBean
         }
         $ret_array['from'] = " FROM $this->table_name ";
         //BEGIN SUGARCRM flav=pro ONLY
-        $this->addVisibilityFrom($ret_array['from']);
+        $this->addVisibilityFrom($ret_array['from'], $options);
         //END SUGARCRM flav=pro ONLY
         $ret_array['from_min'] = $ret_array['from'];
         $ret_array['secondary_from'] = $ret_array['from'] ;
@@ -5757,7 +5758,8 @@ class SugarBean
         if(!empty($join_teams)) {
             $options['join_teams'] = true;
         }
-        return $this->addVisibilityFrom($query, $options);
+        $this->addVisibilityFrom($query, $options);
+        return $query;
     }
 
     /**

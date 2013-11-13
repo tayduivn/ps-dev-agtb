@@ -1097,7 +1097,7 @@ class Report
 
     protected function addSecurity($query, $focus, $alias)
     {
-        $from = ''; $where ='';
+        $from = ''; $where = '';
         /*
          * Here we have a hack because MySQL hates subqueries in joins, see bug #60288 for details
          */
@@ -1105,15 +1105,21 @@ class Report
         $options = $this->visibilityOpts;
         if($as_condition) {
             $options['table_alias'] = $alias;
+            $options['as_condition'] = true;
+        } else {
+            $options['where_condition'] = true;
         }
         $focus->addVisibilityWhere($where, $options);
-        if($as_condition) {
-            $options['as_condition'] = true;
-        }
         $focus->addVisibilityFrom($from, $options);
         if(!empty($from) || !empty($where)) {
-            if($as_condition && strtolower(substr(ltrim($from), 0, 4)) == "and ") {
-                // check that we indeed got condition - it should start with "and "
+            if($as_condition && strtolower(substr(ltrim($from), 0, 5)) != "inner") {
+                // check that we indeed got condition in FROM - it should not start with joins
+                if (!empty($from)) {
+                    $from = 'AND ' . ltrim($from);
+                }
+                if (!empty($where)) {
+                    $where = 'AND ' . ltrim($where);
+                }
                 $query .= "/* from $alias */ $from /* where $alias */ $where";
             } else {
                 // if we didn't ask for condition or did not get one, get back to subquery mode
@@ -1135,21 +1141,9 @@ class Report
         if (isset($filters['Filter_1']))
             Report::filtersIterate($filters['Filter_1'], $where_clause);
         // Bug63958 Go back to using where clause team restrictions instead of INNER JOINS for performance reasons on SugarInternal
-        $as_condition = $this->focus->db->supports("fix:report_as_condition");
         $options = $this->visibilityOpts;
-        if ($as_condition) {
-            $options['as_condition'] = true;
-        }
-        $where_clause = $this->focus->addVisibilityFrom($where_clause, $options);
-//         if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($this->focus->module_dir) && !$this->focus->disable_row_level_security) {
-//             if (!empty($where_clause)) {
-//                 $where_clause .= " AND";
-//             }
-//             $where_clause .= " /* Report WHERE */" . $this->focus->table_name . ".team_set_id IN (SELECT tst.team_set_id FROM
-//                                 team_sets_teams tst INNER JOIN team_memberships team_memberships ON
-//                                 tst.team_id = team_memberships.team_id AND team_memberships.user_id =
-//                                 '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
-//         }
+        $options['where_condition'] = true;
+        $where_clause = $this->focus->addVisibilityWhere($where_clause, $options);
         $this->where = $where_clause;
     }
 
