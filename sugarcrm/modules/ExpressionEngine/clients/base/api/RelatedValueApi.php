@@ -1,5 +1,7 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -23,6 +25,9 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/api/SugarApi.php');
 require_once('modules/ExpressionEngine/formulaHelper.php');
 
+/**
+ * Used to evaluate related expressions on the front end for arbitrary (possibly unsaved) records.
+ */
 class RelatedValueApi extends SugarApi
 {
     /**
@@ -45,57 +50,61 @@ class RelatedValueApi extends SugarApi
         return $parentApi;
     }
 
-     /**
+    /**
      * Used by the dependency manager to pre-load all the related fields required
      * to load an entire view.
      */
-    public function getRelatedValues($api, $args){
-        if (empty($args['module']) || empty($args['fields']))
+    public function getRelatedValues($api, $args)
+    {
+        if (empty($args['module']) || empty($args['fields'])) {
             return;
+        }
         $fields = json_decode(html_entity_decode($args['fields']), true);
         $focus = $this->loadBean($api, $args);
         $ret = array();
-        foreach($fields as $rfDef)
-        {
+        foreach ($fields as $rfDef) {
             $link = $rfDef['link'];
             $type = $rfDef['type'];
-            if (!isset($ret[$link]))
+            if (!isset($ret[$link])) {
                 $ret[$link] = array();
-            if (empty($ret[$link][$type]))
+            }
+            if (empty($ret[$link][$type])) {
                 $ret[$link][$type] = array();
+            }
+            $rField = $rfDef['relate'];
 
-            switch($type){
+            switch ($type) {
                 //The Related function is used for pulling a sing field from a related record
                 case "related":
                     //Default it to a blank value
                     $ret[$link]['related'][$rfDef['relate']] = "";
 
                     //If we have neither a focus id nor a related record id, we can't retrieve anything
-                    if (!empty($id) || !empty($rfDef['relId']))
-                    {
+                    if (!empty($id) || !empty($rfDef['relId'])) {
                         $relBean = null;
-                        if (empty($rfDef['relId']) || empty($rfDef['relModule']))
-                        {
+                        if (empty($rfDef['relId']) || empty($rfDef['relModule'])) {
                             //If the relationship is invalid, just move onto another field
-                            if (!$focus->load_relationship($link))
+                            if (!$focus->load_relationship($link)) {
+                                $ret[$link][$type][$rField] = 0;
                                 break;
+                            }
+
                             $beans = $focus->$link->getBeans(array("enforce_teams" => true));
                             //No related beans means no value
-                            if (empty($beans))
+                            if (empty($beans)) {
+                                $ret[$link][$type][$rField] = 0;
                                 break;
+                            }
                             //Grab the first bean on the list
                             reset($beans);
                             $relBean = current($beans);
-                        } else
-                        {
+                        } else {
                             $relBean = BeanFactory::getBean($rfDef['relModule'], $rfDef['relId']);
                         }
                         //If we found a bean and the current user has access to the related field, grab a value from it
-                        if (!empty($relBean) && ACLField::hasAccess($rfDef['relate'], $relBean->module_dir, $GLOBALS['current_user']->id, true))
-                        {
+                        if (!empty($relBean) && ACLField::hasAccess($rfDef['relate'], $relBean->module_dir, $GLOBALS['current_user']->id, true)) {
                             $validFields = FormulaHelper::cleanFields($relBean->field_defs, false, true, true);
-                            if (isset($validFields[$rfDef['relate']]))
-                            {
+                            if (isset($validFields[$rfDef['relate']])) {
                                 $ret[$link]['relId'] = $relBean->id;
                                 $ret[$link]['related'][$rfDef['relate']] =
                                     FormulaHelper::getFieldValue($relBean, $rfDef['relate']);
@@ -104,11 +113,9 @@ class RelatedValueApi extends SugarApi
                     }
                     break;
                 case "count":
-                    if(!empty($id) && $focus->load_relationship($link))
-                    {
+                    if (!empty($id) && $focus->load_relationship($link)) {
                         $ret[$link][$type] = count($focus->$link->get());
-                    } else
-                    {
+                    } else {
                         $ret[$link][$type] = 0;
                     }
                     break;
@@ -116,53 +123,76 @@ class RelatedValueApi extends SugarApi
                 case "rollupAve":
                 case "rollupMin":
                 case "rollupMax":
-                //If we are going to calculate one rollup, calculate all the rollups since there is so little cost
-                $rField = $rfDef['relate'];
-                if($focus->load_relationship($link))
-                {
-                    $relBeans = $focus->$link->getBeans(array("enforce_teams" => true));
-                    $sum = 0;
-                    $count = 0;
-                    $min = false;
-                    $max = false;
-                    if (!empty($relBeans))
-                    {
-                        //Check if the related record vardef has banned this field from formulas
-                        $relBean = reset($relBeans);
-                        $validFields = FormulaHelper::cleanFields($relBean->field_defs, false, true, true);
-                        if (!isset($validFields[$rField])) {
-                            break;
+                    //If we are going to calculate one rollup, calculate all the rollups since there is so little cost
+                    if ($focus->load_relationship($link)) {
+                        $relBeans = $focus->$link->getBeans(array("enforce_teams" => true));
+                        $sum = 0;
+                        $count = 0;
+                        $min = false;
+                        $max = false;
+                        if (!empty($relBeans)) {
+                            //Check if the related record vardef has banned this field from formulas
+                            $relBean = reset($relBeans);
+                            $validFields = FormulaHelper::cleanFields($relBean->field_defs, false, true, true);
+                            if (!isset($validFields[$rField])) {
+                                $ret[$link][$type][$rField] = 0;
+                                break;
+                            }
                         }
-                    }
-                    foreach($relBeans as $bean)
-                    {
-                        if (isset($bean->$rField) && is_numeric($bean->$rField) &&
-                            //ensure the user can access the fields we are using.
-                            ACLField::hasAccess($rField, $bean->module_dir, $GLOBALS['current_user']->id, true)
-                        ) {
-                            $count++;
-                            $sum += floatval($bean->$rField);
-                            if ($min === false || $bean->$rField < $min)
-                                $min = floatval($bean->$rField);
-                            if ($max === false || $bean->$rField > $max)
-                                $max = floatval($bean->$rField);
+                        foreach ($relBeans as $bean) {
+                            if (isset($bean->$rField) && is_numeric($bean->$rField) &&
+                                //ensure the user can access the fields we are using.
+                                ACLField::hasAccess($rField, $bean->module_dir, $GLOBALS['current_user']->id, true)
+                            ) {
+                                $count++;
+                                $sum += floatval($bean->$rField);
+                                if ($min === false || $bean->$rField < $min) {
+                                    $min = floatval($bean->$rField);
+                                }
+                                if ($max === false || $bean->$rField > $max) {
+                                    $max = floatval($bean->$rField);
+                                }
+                            }
                         }
+                        if ($type == "rollupSum") {
+                            $ret[$link][$type][$rField] = $sum;
+                        }
+                        if ($type == "rollupAve") {
+                            $ret[$link][$type][$rField] = $count == 0 ? 0 : $sum / $count;
+                        }
+                        if ($type == "rollupMin") {
+                            $ret[$link][$type][$rField] = $min;
+                        }
+                        if ($type == "rollupMax") {
+                            $ret[$link][$type][$rField] = $max;
+                        }
+                    } else {
+                        $ret[$link][$type][$rField] = 0;
                     }
-                    if ($type == "rollupSum")
-                        $ret[$link][$type][$rField] = $sum;
-                    if ($type == "rollupAve")
-                        $ret[$link][$type][$rField] = $count == 0 ? 0 : $sum / $count;
-                    if ($type == "rollupMin")
-                        $ret[$link][$type][$rField] = $min;
-                    if ($type == "rollupMax")
-                        $ret[$link][$type][$rField] = $max;
-                } else
-                {
+                    break;
+
+                case "rollupCurrencySum":
                     $ret[$link][$type][$rField] = 0;
-                }
-                break;
+                    if ($focus->load_relationship($link)) {
+                        $toRate = isset($focus->base_rate) ? $focus->base_rate : null;
+                        $relBeans = $focus->$link->getBeans(array("enforce_teams" => true));
+                        $sum = 0;
+                        foreach ($relBeans as $bean) {
+                            if (!empty($bean->$rField) && is_numeric($bean->$rField) &&
+                                //ensure the user can access the fields we are using.
+                                ACLField::hasAccess($rField, $bean->module_dir, $GLOBALS['current_user']->id, true)
+                            ) {
+                                $sum = SugarMath::init($sum)->add(
+                                    SugarCurrency::convertWithRate($bean->$rField, $bean->base_rate, $toRate)
+                                )->result();
+                            }
+                        }
+                        $ret[$link][$type][$rField] = $sum;
+                    }
+                    break;
             }
         }
+
         return $ret;
     }
 }
