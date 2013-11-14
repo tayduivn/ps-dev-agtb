@@ -136,7 +136,7 @@
   &.out {
     padding: 0;
     h4 {
-      border-radius: 4px;
+      .border-radius(4px);
       border-bottom: 0 !important;
     }
     .widget-content,
@@ -274,9 +274,15 @@
   }
   table.dataTable > tbody > tr:last-child td {
     border-bottom-width: 0;
+    &:first-child {
+      .border-bottom-left-radius(3px);
+    }
+    &:last-child {
+      .border-bottom-right-radius(3px);
+    }
   }
   .list-view {
-    border-radius: 0 0 4px 4px;
+    .border-radius(0 0 4px 4px);
   }
 
   .actions {
@@ -410,7 +416,7 @@
     }
   }
   &+.block-footer {
-    border-radius: 0 0 4px 4px;
+    .border-radius(0 0 4px 4px);
     background-color: @white;
     border-top: 1px solid @grayLighter;
     .icon-large {
