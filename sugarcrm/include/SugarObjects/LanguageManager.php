@@ -169,17 +169,15 @@ class LanguageManager
 					'custom/modules/'.$module.'/language/'.$lang.'.lang.php',
 				 );
 
-        if (isset($GLOBALS['beanList'][$module])) {
-            $object = $GLOBALS['beanList'][$module];
-
-            if ($object == 'aCase') {
-                $object = 'Case';
-            }
-
-            if (!empty($GLOBALS["dictionary"][$object]["templates"])) {
-                $templates = $GLOBALS["dictionary"][$object]["templates"];
-                $loaded_mod_strings = LanguageManager::loadTemplateLanguage($module, $templates, $lang, $loaded_mod_strings);
-            }
+        $object = BeanFactory::getObjectName($module);
+        if ($object && !empty($GLOBALS['dictionary'][$object]['templates'])) {
+            $templates = $GLOBALS['dictionary'][$object]['templates'];
+            $loaded_mod_strings = LanguageManager::loadTemplateLanguage(
+                $module,
+                $templates,
+                $lang,
+                $loaded_mod_strings
+            );
         }
 
 		// Add in additional search paths if they were provided.
