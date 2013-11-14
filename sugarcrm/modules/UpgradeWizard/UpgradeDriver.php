@@ -221,6 +221,8 @@ abstract class UpgradeDriver
      */
     public function prewarmCache()
     {
+        //Now that installation is complete, we need to set this to false to have the caches build correctly
+        $GLOBALS['installing'] = false;
         $this->log("Populating metadata cache");
         if(empty($GLOBALS['app_list_strings'])) {
             $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');

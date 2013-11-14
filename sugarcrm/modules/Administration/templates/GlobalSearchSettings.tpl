@@ -259,15 +259,10 @@
 </script>
 <script type="text/javascript">
     {* //BEGIN SUGARCRM flav=pro ONLY *}
-    var shouldHide = '{$scheduleDisableButton}';
     var justRequestedAScheduledIndex = '{$justRequestedAScheduledIndex}';
     {literal}
     $(document).ready(function()
     {
-        if (shouldHide)
-        {
-            $('.shouldToggle').toggle(false);
-        }
         if(justRequestedAScheduledIndex)
             alert(SUGAR.language.get('Administration','LBL_FTS_CONN_SUCCESS_SHORT'));
     });
@@ -420,24 +415,6 @@
 
         }
     };
-
-    $('#fts_type').change(function(e)
-    {
-        var type = $(this).val();
-        if(type == 'Elastic')
-        {
-            $('.shouldToggle').toggle();
-        }
-        else
-        {
-            $('.shouldToggle').toggle(false);   
-        }
-
-        if(type == '')
-        {
-            $('.sched_button').attr('disabled', 'disabled');
-        }
-    });
     {/literal}
     addForm('GlobalSearchSettings');
     addToValidateMoreThan('GlobalSearchSettings', 'fts_port', 'int', true, '{$MOD.LBL_FTS_PORT}', 1);

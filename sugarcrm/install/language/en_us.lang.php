@@ -580,7 +580,8 @@ $mod_strings = array(
     'LBL_FTS_HOST'     => 'Host',
     'LBL_FTS_PORT'     => 'Port',
     'LBL_FTS_TYPE'     => 'Search Engine Type',
-    'LBL_FTS_HELP'      => 'To enable full-text searching, select the search engine type and enter the Host and Port where the search engine is hosted. Sugar includes built-in support for the elasticsearch engine.',
+    'LBL_FTS_HELP'      => 'To enable full-text searching, enter the Host and Port where the search engine is hosted. Sugar includes built-in support for the elasticsearch engine.',
+    'LBL_FTS_REQUIRED'    => 'Elastic Search is required.',
     'LBL_FTS_ERROR'    => 'Unable to connect to Full Text Search server, please verify your settings.',
     // END SUGARCRM flav=pro ONLY
 

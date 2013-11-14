@@ -679,7 +679,13 @@ EOQ;
 	}
 }
 
-
+//On a Silent Install, the step is 9999. When the validation fails, it falls back to the basic installation.
+//However, hitting next adds 1 to the current step (9999) and the script is not able to retrieve the next step.
+if ($next_step === 9999) {
+    //We are going to inverse keys and values, so with the file name we are able to find the next step
+    $steps = array_flip($workflow);
+    $next_step = $steps[$the_file];
+}
 $the_file = clean_string($the_file, 'FILE');
 
 installerHook('pre_installFileRequire', array('the_file' => $the_file));
