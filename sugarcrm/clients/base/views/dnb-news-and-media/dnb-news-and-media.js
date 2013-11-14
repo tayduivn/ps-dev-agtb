@@ -73,7 +73,7 @@
         if(duns_num && duns_num != '')
         {
                var dnbNewInfoURL = app.api.buildURL('connector/dnb/news/' + duns_num,'',{},{});
-               var resultData = {};
+               var resultData = {'product':null,'errmsg':null};
                app.api.call('READ', dnbNewInfoURL, {},{
                     success: function(data) 
                     {

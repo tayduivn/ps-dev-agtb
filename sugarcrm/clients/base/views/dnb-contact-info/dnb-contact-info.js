@@ -203,7 +203,11 @@
         //check if cache has this data already
         var cacheKey = 'dnb:cntdet:' + contactParams.duns_num + ':' + contactParams.contact_id;
 
-        if(app.cache.get(cacheKey)) _.bind(self.renderContactDetails,self,{'contactdetail' : app.cache.get(cacheKey)})();
+        if(app.cache.get(cacheKey))
+        {
+            self.currentContact = app.cache.get(cacheKey);
+            _.bind(self.renderContactDetails,self,{'contactdetail' : app.cache.get(cacheKey)})();  
+        } 
         else
         {
             var dnbContactDetailsURL = app.api.buildURL('connector/dnb/contacts','',{},{});
@@ -301,7 +305,7 @@
         };
 
         var emailIDPath = "Organization.PrincipalsAndManagement.CurrentPrincipal.0.Telecommunication.EmailAddress.0.TelecommunicationAddress";
-        var phonePath = "";
+        var phonePath = "Organization.PrincipalsAndManagement.CurrentPrincipal.0.Telecommunication.TelephoneNumber.0.TelecommunicationNumber";
         var principalIDPath = "Organization.PrincipalsAndManagement.CurrentPrincipal.0.PrincipalIdentificationNumberDetail.PrincipalIdentificationNumber";
         var firstNamePath = "Organization.PrincipalsAndManagement.CurrentPrincipal.0.PrincipalName.FirstName";
         var lastNamePath = "Organization.PrincipalsAndManagement.CurrentPrincipal.0.PrincipalName.LastName";
@@ -311,7 +315,7 @@
         var salutationPath = "Organization.PrincipalsAndManagement.CurrentPrincipal.0.PrincipalName.NamePrefix.NamePrefixText";
 
         //to do handle array
-        var email1,first_name,last_name,full_name,salutation,title,department,salutation,dnb_principal_id;
+        var email1,phone_work,first_name,last_name,full_name,salutation,title,department,salutation,dnb_principal_id;
 
         if(email1 = this.checkJsonNode(this.currentContact,emailIDPath))
         {
@@ -331,6 +335,7 @@
           contactBean.email = new Array(emailObj);
 
         } 
+        if(phone_work = this.checkJsonNode(this.currentContact,phonePath)) contactBean.phone_work = phone_work;
         if(first_name = this.checkJsonNode(this.currentContact,firstNamePath)) contactBean.first_name = first_name;
         if(last_name = this.checkJsonNode(this.currentContact,lastNamePath)) contactBean.last_name = last_name;
         if(full_name = this.checkJsonNode(this.currentContact,fullNamePath)) contactBean.full_name = full_name;

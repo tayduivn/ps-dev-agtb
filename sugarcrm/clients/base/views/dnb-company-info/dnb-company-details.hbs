@@ -2,13 +2,13 @@
 {{str "LBL_DNB_COMPANY_INFO_LOADING"}}
 </div>
 <div id="dnb-company-details">
-	{{#if OrderProductResponse}}
+	{{#if product}}
 		<div class='dnb-show-all'>
 			<table class="table table-striped table-condensed">
 				<tr>
 					<td align="center">
 						<div class='dnb-checkbox-nav'>
-							{{#if dataIndicatorMap.name}}
+							{{#if product.dataIndicatorMap.name}}
 								<input type="checkbox" name="name" id="name" class="dnb_checkbox" />
 							{{else}}
 								<input type="checkbox" name="name" id="name" class="dnb_checkbox" checked/>
@@ -17,9 +17,9 @@
 					
 						<div class="dnb-company-label">{{str "LBL_DNB_NAME"}}</div>
 						<div class="txt importData">
-							{{OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationName.OrganizationPrimaryName.[0].OrganizationName.$}}
+							{{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationName.OrganizationPrimaryName.[0].OrganizationName.$}}
 
-							{{#if dataIndicatorMap.name}}
+							{{#if product.dataIndicatorMap.name}}
                             	<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
                             {{else}}
                             	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
@@ -27,11 +27,11 @@
 						</div>
 					</td>
 				</tr>
-				{{#if OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].StreetAddressLine.[0].LineText}}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].StreetAddressLine.[0].LineText}}
 					<tr>
 						<td align="center">
 							<div class='dnb-checkbox-nav'>
-								{{#if dataIndicatorMap.billing_address_street}}
+								{{#if product.dataIndicatorMap.billing_address_street}}
 									<input type="checkbox" class="dnb_checkbox" id="billing_address_street" name="billing_address_street">
 								{{else}}
 									<input type="checkbox" class="dnb_checkbox" id="billing_address_street" name="billing_address_street" checked>
@@ -41,9 +41,9 @@
 						        {{str "LBL_DNB_CI_STREET"}}
 						    </div>
 						    <div class="txt importData">
-						         {{OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].StreetAddressLine.[0].LineText }} 
+						         {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].StreetAddressLine.[0].LineText }} 
 
-						         {{#if dataIndicatorMap.billing_address_street}}
+						         {{#if product.dataIndicatorMap.billing_address_street}}
 	                            	<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
 	                            {{else}}
 	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
@@ -52,11 +52,11 @@
 						</td>
 					</tr>
 				{{/if}}	
-				{{#if OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].PrimaryTownName }}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].PrimaryTownName }}
 					<tr>
 						<td>
 							<div class='dnb-checkbox-nav'>
-								{{#if dataIndicatorMap.billing_address_city}}
+								{{#if product.dataIndicatorMap.billing_address_city}}
 									<input type="checkbox" class="dnb_checkbox" id="billing_address_city" name="billing_address_city">
 								{{else}}
 									<input type="checkbox" class="dnb_checkbox" id="billing_address_city" name="billing_address_city" checked>
@@ -66,9 +66,9 @@
 							    {{str "LBL_DNB_CI_CITY"}}
 							</div>
 							<div class="txt importData">
-							   {{OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].PrimaryTownName }}
+							   {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].PrimaryTownName }}
 
-							   {{#if dataIndicatorMap.billing_address_city}}
+							   {{#if product.dataIndicatorMap.billing_address_city}}
 	                            	<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
 	                            {{else}}
 	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
@@ -77,11 +77,11 @@
 						</td>
 					</tr>
 				{{/if}}
-				{{#if OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].TerritoryAbbreviatedName }}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].TerritoryAbbreviatedName }}
 					<tr>
 						<td>
 							<div class='dnb-checkbox-nav'>
-								{{#if dataIndicatorMap.billing_address_state}}
+								{{#if product.dataIndicatorMap.billing_address_state}}
 									<input type="checkbox" class="dnb_checkbox" id="billing_address_state" name="billing_address_state">
 								{{else}}
 									<input type="checkbox" class="dnb_checkbox" id="billing_address_state" name="billing_address_state" checked>
@@ -91,9 +91,9 @@
 							    {{str "LBL_DNB_CI_STATE"}}
 							</div>
 							<div class="txt importData">
-							   {{OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].TerritoryAbbreviatedName }}
+							   {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].TerritoryAbbreviatedName }}
 
-							   {{#if dataIndicatorMap.billing_address_state}}
+							   {{#if product.dataIndicatorMap.billing_address_state}}
 	                            	<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
 	                            {{else}}
 	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
@@ -102,11 +102,11 @@
 						</td>
 					</tr>
 				{{/if}}
-				{{#if OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].CountryISOAlpha2Code }}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].CountryISOAlpha2Code }}
 					<tr>
 						<td>
 							<div class='dnb-checkbox-nav'>
-								{{#if dataIndicatorMap.billing_address_country}}
+								{{#if product.dataIndicatorMap.billing_address_country}}
 									<input type="checkbox" class="dnb_checkbox" id="billing_address_country" name="billing_address_country">
 								{{else}}
 									<input type="checkbox" class="dnb_checkbox" id="billing_address_country" name="billing_address_country" checked>
@@ -116,9 +116,9 @@
 							    {{str "LBL_DNB_CI_CTRY"}}
 							</div>
 							<div class="txt importData">
-							  {{OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].CountryISOAlpha2Code }}
+							  {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].CountryISOAlpha2Code }}
 
-							  {{#if dataIndicatorMap.billing_address_country}}
+							  {{#if product.dataIndicatorMap.billing_address_country}}
 	                            	<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
 	                            {{else}}
 	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
@@ -127,11 +127,11 @@
 						</td>
 					</tr>
 				{{/if}}
-				{{#if OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].PostalCode }} 
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].PostalCode }} 
 					<tr>
 						<td>
 							<div class='dnb-checkbox-nav'>
-								{{#if dataIndicatorMap.billing_address_postalcode}}
+								{{#if product.dataIndicatorMap.billing_address_postalcode}}
 									<input type="checkbox" class="dnb_checkbox" id="billing_address_postalcode" name="billing_address_postalcode">
 								{{else}}
 									<input type="checkbox" class="dnb_checkbox" id="billing_address_postalcode" name="billing_address_postalcode" checked>
@@ -141,8 +141,8 @@
 							    {{str "LBL_DNB_CI_POSTAL_CD"}}
 							</div>
 							<div class="txt importData">
-								{{OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].PostalCode }} 
-								{{#if dataIndicatorMap.billing_address_postalcode}}
+								{{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].PostalCode }} 
+								{{#if product.dataIndicatorMap.billing_address_postalcode}}
 	                            	<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
 	                            {{else}}
 	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
@@ -151,11 +151,11 @@
 						</td>
 					</tr>
 				{{/if}}
-				{{#if OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.WebPageAddress.[0].TelecommunicationAddress}}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.WebPageAddress.[0].TelecommunicationAddress}}
 					<tr id="remaining_content">
 						<td align="center">
 							<div class='dnb-checkbox-nav'>
-								{{#if dataIndicatorMap.website}}
+								{{#if product.dataIndicatorMap.website}}
 									<input type="checkbox" name="website" id="website"  class="dnb_checkbox">
 								{{else}}
 									<input type="checkbox" name="website" id="website"  class="dnb_checkbox" checked>
@@ -165,8 +165,8 @@
 								{{str "LBL_DNB_URL"}}
 							</div>
 							<div class="url-txt importData">
-								 {{OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.WebPageAddress.[0].TelecommunicationAddress}}
-								 {{#if dataIndicatorMap.website}}
+								 {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.WebPageAddress.[0].TelecommunicationAddress}}
+								 {{#if product.dataIndicatorMap.website}}
 	                            	<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
 	                            {{else}}
 	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
@@ -175,11 +175,11 @@
 						</td>
 					</tr>
 				{{/if}}
-				{{#if OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.TelephoneNumber.[0].TelecommunicationNumber}}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.TelephoneNumber.[0].TelecommunicationNumber}}
 					<tr>
 						<td align="center">
 							<div class='dnb-checkbox-nav'>
-								{{#if dataIndicatorMap.phone_office}}
+								{{#if product.dataIndicatorMap.phone_office}}
 									<input type="checkbox" name="phone_office" id="phone_office"  class="dnb_checkbox">
 								{{else}}
 									<input type="checkbox" name="phone_office" id="phone_office"  class="dnb_checkbox" checked>
@@ -190,8 +190,8 @@
 								{{str "LBL_DNB_PHONE"}}
 							</div>
 							<div class="txt importData">
-								{{OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.TelephoneNumber.[0].TelecommunicationNumber}}
-								{{#if dataIndicatorMap.phone_office}}
+								{{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.TelephoneNumber.[0].TelecommunicationNumber}}
+								{{#if product.dataIndicatorMap.phone_office}}
 	                            	<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
 	                            {{else}}
 	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
@@ -200,11 +200,11 @@
 						</td>
 					</tr>
 				{{/if}}
-				{{#if OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationDetail.ControlOwnershipTypeText.$}}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationDetail.ControlOwnershipTypeText.$}}
 					<tr>
 						<td align="center">
 							<div class='dnb-checkbox-nav'>
-								{{#if dataIndicatorMap.ownership}}
+								{{#if product.dataIndicatorMap.ownership}}
 									<input type="checkbox" name="ownership" id="ownership" class="dnb_checkbox"/>
 								{{else}}
 									<input type="checkbox" name="ownership" id="ownership" class="dnb_checkbox" checked>
@@ -212,8 +212,8 @@
 							</div>
 							<div class="dnb-company-label">{{str "LBL_DNB_OWNERSHIP_TYPE"}}</div>
 							<div class="txt importData">
-								{{OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationDetail.ControlOwnershipTypeText.$}}
-								{{#if dataIndicatorMap.ownership}}
+								{{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationDetail.ControlOwnershipTypeText.$}}
+								{{#if product.dataIndicatorMap.ownership}}
 	                            	<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
 	                            {{else}}
 	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
@@ -222,11 +222,11 @@
 						</td>
 					</tr>
 				{{/if}}
-				{{#if OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0]}}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0]}}
 					<tr>
 						<td align="center">
 							<div class='dnb-checkbox-nav'>
-								{{#if dataIndicatorMap.annual_revenue}}
+								{{#if product.dataIndicatorMap.annual_revenue}}
 									<input type="checkbox" name="annual_revenue" id="annual_revenue" class="dnb_checkbox"/>
 								{{else}}
 									<input type="checkbox" name="annual_revenue" id="annual_revenue" class="dnb_checkbox" checked>
@@ -234,20 +234,20 @@
 							</div>
 							<div class="dnb-company-label">
 								{{str "LBL_DNB_SALES_REVENUE"}}
-								{{#if OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].SalesRevenueAmount.[0].[@UnitOfSize] }}
+								{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].SalesRevenueAmount.[0].[@UnitOfSize] }}
 									({{str "LBL_DNB_IN"}} 
-									 {{OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].SalesRevenueAmount.[0].[@UnitOfSize]}}
-									{{OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].SalesRevenueAmount.[0].[@CurrencyISOAlpha3Code]}})
+									 {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].SalesRevenueAmount.[0].[@UnitOfSize]}}
+									{{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].SalesRevenueAmount.[0].[@CurrencyISOAlpha3Code]}})
 								{{/if}}
-								{{#if OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].StatementHeaderDetails.FinancialStatementToDate.$}}
+								{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].StatementHeaderDetails.FinancialStatementToDate.$}}
 									<span class="label label-success pull-right" data-placement="right">
-										{{OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].StatementHeaderDetails.FinancialStatementToDate.$}}
+										{{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].StatementHeaderDetails.FinancialStatementToDate.$}}
 									</span>
 								{{/if}}
 							</div>
 							<div class="txt importData">
-								{{OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].SalesRevenueAmount.[0].$}}
-								{{#if dataIndicatorMap.annual_revenue}}
+								{{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].SalesRevenueAmount.[0].$}}
+								{{#if product.dataIndicatorMap.annual_revenue}}
 	                            	<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
 	                            {{else}}
 	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
@@ -256,11 +256,11 @@
 						</td>
 					</tr>
 				{{/if}}
-				{{#if OrderProductResponse.OrderProductResponseDetail.Product.Organization.EmployeeFigures.IndividualEntityEmployeeDetails.TotalEmployeeQuantity}}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.EmployeeFigures.IndividualEntityEmployeeDetails.TotalEmployeeQuantity}}
 					<tr>
 						<td align="center">
 							<div class='dnb-checkbox-nav'>
-								{{#if dataIndicatorMap.employees}}
+								{{#if product.dataIndicatorMap.employees}}
 									<input type="checkbox" name="employees" id="employees" class="dnb_checkbox" />
 								{{else}}
 									<input type="checkbox" name="employees" id="employees" class="dnb_checkbox" checked />
@@ -270,8 +270,8 @@
 								{{str "LBL_DNB_TOTAL_EMPLOYEE_QUANTITY"}}
 							</div>
 							<div class="txt importData">
-								{{OrderProductResponse.OrderProductResponseDetail.Product.Organization.EmployeeFigures.IndividualEntityEmployeeDetails.TotalEmployeeQuantity}}
-								{{#if dataIndicatorMap.employees}}
+								{{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.EmployeeFigures.IndividualEntityEmployeeDetails.TotalEmployeeQuantity}}
+								{{#if product.dataIndicatorMap.employees}}
 	                            	<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
 	                            {{else}}
 	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
@@ -280,11 +280,11 @@
 						</td>
 					</tr>
 				{{/if}}
-				{{#if primarySIC}}
+				{{#if product.primarySIC}}
 					<tr>
 						<td align="center">
 							<div class='dnb-checkbox-nav'>
-								{{#if dataIndicatorMap.sic_code}}
+								{{#if product.dataIndicatorMap.sic_code}}
 									<input type="checkbox" name="sic_code" id="sic_code" class="dnb_checkbox" />
 								{{else}}
 									<input type="checkbox" name="sic_code" id="sic_code" class="dnb_checkbox" checked />
@@ -294,8 +294,8 @@
 								{{str "LBL_DNB_SIC"}}
 							</div>
 							<div class="txt importData">
-								{{primarySIC.IndustryCode.$}}
-								{{#if dataIndicatorMap.sic_code}}
+								{{product.primarySIC.IndustryCode.$}}
+								{{#if product.dataIndicatorMap.sic_code}}
 	                            	<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
 	                            {{else}}
 	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
@@ -306,14 +306,14 @@
 				{{/if}}
 			</table>
 	</div>
-		{{#if isNotLinked}}
-			<div class="dnb-show-more">
-			    <a class="backToList">{{str "LBL_DNB_BACK_TO_SRCH"}} <i class="icon-chevron-down"></i></a>
-			</div>
-		{{/if}}
 	{{else}}
 		<aside>
 			<em>{{errmsg}}</em>
 		</aside>
+	{{/if}}
+	{{#if isNotLinked}}
+		<div class="dnb-show-more">
+		    <a class="backToList">{{str "LBL_DNB_BACK_TO_SRCH"}} <i class="icon-chevron-down"></i></a>
+		</div>
 	{{/if}}
 </div>

@@ -80,12 +80,12 @@
 
         if(app.cache.get(cacheKey))
         {
-            _.bind(self.renderFamilyTreeFromcCache,self,app.cache.get(cacheKey))();
+            _.bind(self.renderFamilyTreeFromcCache,self,app.cache.get(cacheKey).product)();
         }
         else
         {
             var dnbFamilyTreeURL = app.api.buildURL('connector/dnb/familytree/' + duns_num,'',{},{});
-            var resultData = {};
+            var resultData = {'product':null,'errmsg':null};
             app.api.call('READ', dnbFamilyTreeURL, {},{
                 success: function(data) 
                 {
@@ -95,7 +95,7 @@
 
                     if(self.checkNested(data,resultIDPath) && data.OrderProductResponse.TransactionResult.ResultID == 'CM000')
                     {
-                        resultData = data;
+                        resultData.product = data;
                         app.cache.set(cacheKey,resultData);
                     }
                     else if(self.checkNested(data,resultText))
@@ -114,7 +114,7 @@
                      _.extend(self,resultData);
                      self.render();
                      if(!resultData.errmsg)
-                        self.renderFamilyTree(resultData); 
+                        self.renderFamilyTree(resultData.product); 
 
                     self.$('#dnb-family-tree-loading').hide();
                     self.$('#dnb-family-tree-details').show(); 

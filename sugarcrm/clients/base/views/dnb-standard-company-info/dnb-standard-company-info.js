@@ -85,7 +85,7 @@
                 else
                 {
                        var dnbProfileUrl = app.api.buildURL('connector/dnb/firmographic/' + duns_num,'',{},{});
-                       var resultData = {};
+                       var resultData = {'product':null,'errmsg':null};
                        app.api.call('READ', dnbProfileUrl, {},{
                             success: function(data) 
                             {

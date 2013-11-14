@@ -77,7 +77,7 @@
         if(duns_num && duns_num != '')
         {
                 //check if cache has this data already
-                var cacheKey = 'dnb:compstd:' + duns_num;
+                var cacheKey = 'dnb:complite:' + duns_num;
 
                 if(app.cache.get(cacheKey))
                 {
@@ -86,7 +86,7 @@
                 else
                 {
                        var dnbLiteSearchURL = app.api.buildURL('connector/dnb/litefirmographic/' + duns_num,'',{},{});
-                       var resultData = {};
+                       var resultData = {'product':null,'errmsg':null};
                        app.api.call('READ', dnbLiteSearchURL, {},{
                             success: function(data) 
                             {

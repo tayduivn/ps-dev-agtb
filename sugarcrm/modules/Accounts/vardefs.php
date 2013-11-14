@@ -46,7 +46,7 @@ $dictionary['Account'] = array(
             'name' => 'duns_num',
             'vname' => 'LBL_DUNS_NUM',
             'type' => 'varchar',
-            'len' => 9,
+            'len' => 15,
             'comment' => 'DUNS number of the account',
           ),
         'parent_name' => array(

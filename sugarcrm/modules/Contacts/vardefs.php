@@ -92,7 +92,7 @@ $dictionary['Contact'] = array(
             'name' => 'dnb_principal_id',
             'vname' => 'LBL_DNB_PRINCIPAL_ID',
             'type' => 'varchar',
-            'len' => 9,
+            'len' => 30,
             'comment' => 'Unique Id For D&B Contact',
         ),
         // Deprecated, use rname_link instead

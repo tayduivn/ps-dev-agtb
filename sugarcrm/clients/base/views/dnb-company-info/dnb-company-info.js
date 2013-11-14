@@ -78,7 +78,7 @@
         self.render();
         self.$('div#dnb-refresh-loading').show();
         self.$('div#dnb-refresh-details').hide();
-        var resultData = {};
+        var resultData = {'uptodate':null,'errmsg':null};
         app.api.call('READ', dnbRefreshCheck, {},{
                 success: function(data) 
                 {
@@ -255,7 +255,7 @@
                 else
                 {
                    var dnbProfileUrl = app.api.buildURL('connector/dnb/profile/' + duns_num,'',{},{});
-                   var resultData;
+                   var resultData = {'product':null,'errmsg':null};
                    app.api.call('READ', dnbProfileUrl, {},{
                             success: function(data) 
                             {
@@ -267,21 +267,20 @@
                                     if(self.checkJsonNode(data,resultIDPath) && 
                                         data.OrderProductResponse.TransactionResult.ResultID == 'CM000')
                                     {
-                                        resultData = data;
-                                        self.duns_num = resultData.OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber;
+                                        resultData.product = data;
+                                        self.duns_num = resultData.product.OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber;
 
-                                        if(self.checkJsonNode(resultData,industry_path))
+                                        if(self.checkJsonNode(resultData.product,industry_path))
                                         {
-                                            var industryCodeArray = resultData.OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode;
+                                            var industryCodeArray = resultData.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode;
                                             //399 is the industry code type value for US SIC
-                                            resultData.primarySIC = self.getPrimaryIndustry(industryCodeArray,'399'); 
+                                            resultData.product.primarySIC = self.getPrimaryIndustry(industryCodeArray,'399'); 
                                         }
 
                                         if(!_.isUndefined(self.layout.getComponent('dashlet-toolbar').getField('dnb_import')))
                                             self.layout.getComponent('dashlet-toolbar').getField('dnb_import').getFieldElement().show();
 
-                                        if(!self.model.get('duns_num'))
-                                            resultData.isNotLinked = true;
+                                        
 
                                         app.cache.set(cacheKey,resultData);
                                     }
@@ -304,38 +303,42 @@
 
     renderCompanyDetails: function(resultData)
     {
-        var duns_path = "OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber";
-        var industry_path = "OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode";
-
-        if(this.checkJsonNode(resultData,duns_path))
+        if(!this.model.get('duns_num'))
+            resultData.isNotLinked = true;
+        if(resultData.product)
         {
-            this.duns_num = resultData.OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber;
-            app.controller.context.set('dnb_temp_duns_num',this.duns_num);
-        }
-            
+            var duns_path = "OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber";
+            var industry_path = "OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode";
 
-        if(this.checkJsonNode(resultData,industry_path))
-        {
-            var industryCodeArray = resultData.OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode;
-            //399 is the industry code type value for US SIC
-            resultData.primarySIC = this.getPrimaryIndustry(industryCodeArray,'399'); 
-
-            //extracting the primary hoovers industry code and passing it on
-            //to the industry info dashlet
-            //25838 indicates hoovers industry code
-            //if the DisplaySequence == 1
-            //it indicates that the industry code is the primary hoovers industry code
-            var primaryHooversCode = this.getPrimaryIndustry(industryCodeArray,'25838');
-
-            if(primaryHooversCode)
-                app.controller.context.set('dnb_temp_hoovers_ind_code',primaryHooversCode.IndustryCode.$ + '-' + primaryHooversCode['@DNBCodeValue']);
-        }
+            if(this.checkJsonNode(resultData.product,duns_path))
+            {
+                this.duns_num = resultData.product.OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber;
+                app.controller.context.set('dnb_temp_duns_num',this.duns_num);
+            }
                 
 
-         resultData.dataIndicatorMap = this.getDataIndicators();
+            if(this.checkJsonNode(resultData.product,industry_path))
+            {
+                var industryCodeArray = resultData.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode;
+                //399 is the industry code type value for US SIC
+                resultData.product.primarySIC = this.getPrimaryIndustry(industryCodeArray,'399'); 
+
+                //extracting the primary hoovers industry code and passing it on
+                //to the industry info dashlet
+                //25838 indicates hoovers industry code
+                //if the DisplaySequence == 1
+                //it indicates that the industry code is the primary hoovers industry code
+                var primaryHooversCode = this.getPrimaryIndustry(industryCodeArray,'25838');
+
+                if(primaryHooversCode)
+                    app.controller.context.set('dnb_temp_hoovers_ind_code',primaryHooversCode.IndustryCode.$ + '-' + primaryHooversCode['@DNBCodeValue']);
+            }
+            resultData.product.dataIndicatorMap = this.getDataIndicators();
+        }
 
         if (this.disposed)
             return;
+
         _.extend(this, resultData);
         this.render();
         this.$('div#dnb-company-detail-loading').hide();

@@ -84,19 +84,31 @@
         else
         {
             var dnbFinancialsURL = app.api.buildURL('connector/dnb/financial/' + duns_num,'',{},{});
-            var resultData;
+            var resultData = {'product':null,'errmsg':null};
             app.api.call('READ', dnbFinancialsURL, {},{
                 success: function(data) 
                 {
-                    resultData = data;
+                    
                     var resultIDPath = "OrderProductResponse.TransactionResult.ResultID",
                     errMsgPath = "OrderProductResponse.TransactionResult.ResultText";
 
-                    if(self.checkJsonNode(resultData,resultIDPath) && 
-                        resultData.OrderProductResponse.TransactionResult.ResultID == 'CM000')
+                    if(self.checkJsonNode(data,resultIDPath) && 
+                        data.OrderProductResponse.TransactionResult.ResultID == 'CM000')
+                    {
+                        if(self.isDataExists(data))
+                        {
+                            resultData.product = data;
+                        }
+                        else
+                        {
+                            resultData.errmsg = app.lang.get('LBL_DNB_NO_DATA');
+                        }
+                        
                         app.cache.set(cacheKey,resultData);
-                    else if(self.checkJsonNode(resultData,errMsgPath))
-                        resultData.errmsg = resultData.OrderProductResponse.TransactionResult.ResultText;
+                    }
+                        
+                    else if(self.checkJsonNode(data,errMsgPath))
+                        resultData.errmsg = data.OrderProductResponse.TransactionResult.ResultText;
                     else
                         resultData.errmsg =  app.lang.get('LBL_DNB_SVC_ERR');
 
@@ -106,11 +118,29 @@
         }
     },
 
+    /*
+        to prevent a blank dashlet from being displayed
+    */
+    isDataExists: function(financialDetails)
+    {
+        var mktAnalysisPath = "OrderProductResponse.OrderProductResponseDetail.Product.Organization.ThirdPartyAssessment.ThirdPartyAssessment.0.ThirdPartyInformation.OtherInformation";
+        var annlIncPath = "OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview";
+        var stckSymPath = "OrderProductResponse.OrderProductResponseDetail.Product.Organization.RegisteredDetail.StockExchangeDetails";
+
+        if(!this.checkJsonNode(financialDetails,mktAnalysisPath) 
+            && !this.checkJsonNode(financialDetails,annlIncPath)
+            && !this.checkJsonNode(financialDetails,stckSymPath)
+            )
+            return false;
+        else
+            return true;
+    },
+
     renderFinancialDetails: function(financialDetails)
     {
         var dunsPath = "OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber";
-        if(this.checkJsonNode(financialDetails,dunsPath))
-            this.duns_num = financialDetails.OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber;
+        if(this.checkJsonNode(financialDetails.product,dunsPath))
+            this.duns_num = financialDetails.product.OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber;
 
          _.extend(this, financialDetails);
         this.render();
@@ -132,7 +162,7 @@
         this.$(".showMoreData").show();
     },
 
-      /**
+    /**
       Utility function to check if a node exists in a json object
     **/
     checkJsonNode: function(obj,path) 

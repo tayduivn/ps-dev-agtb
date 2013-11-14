@@ -23,6 +23,8 @@
     importFlag: false,
 
     companyList: null,
+
+    keyword: null,
    
     events: 
     {
@@ -66,81 +68,89 @@
     /* event listener for keyup / autocomplete feature */
     dnbSearch: function(searchString)
     {
-        var self = this;
-        self.template = app.template.get(self.name);
-        self.render();
-        self.$('table#dnb_company_list').empty(); //empty results table
-        self.$('div#dnb-search-results').hide(); //hide results div
-        self.$('div#dnb-company-list-loading').show(); //show loading text
-        self.$('.clearDNBResults').attr('disabled','disabled'); //disable clear button
-        self.$('.clearDNBResults').removeClass('enabled');
-        self.$('.clearDNBResults').addClass('disabled');
+        
+        if(!this.keyword || (this.keyword && this.keyword != searchString))
+        {
+            this.keyword = searchString;
+            var self = this;
+            self.template = app.template.get(self.name);
+            self.render();
+            self.$('table#dnb_company_list').empty(); //empty results table
+            self.$('div#dnb-search-results').hide(); //hide results div
+            self.$('div#dnb-company-list-loading').show(); //show loading text
+            self.$('.clearDNBResults').attr('disabled','disabled'); //disable clear button
+            self.$('.clearDNBResults').removeClass('enabled');
+            self.$('.clearDNBResults').addClass('disabled');
 
-        var dnbSearchUrl = app.api.buildURL('connector/dnb/search/' + searchString,'',{},{});
-        self.companyList = null;
-        app.api.call('READ', dnbSearchUrl, {},{
-                success: function(data) 
-                {
-                    if(data.error)
+            var dnbSearchUrl = app.api.buildURL('connector/dnb/search/' + searchString,'',{},{});
+            self.companyList = null;
+            app.api.call('READ', dnbSearchUrl, {},{
+                    success: function(data) 
                     {
-                        self.showAdmin = app.acl.hasAccess('admin', 'Administration');
-                        self.template = app.template.get(self.name + '.dnb-config');
-                        if (!self.disposed) {
-                            app.view.View.prototype._render.call(self);
+                        if(data.error)
+                        {
+                            self.showAdmin = app.acl.hasAccess('admin', 'Administration');
+                            self.template = app.template.get(self.name + '.dnb-config');
+                            if (!self.disposed) {
+                                app.view.View.prototype._render.call(self);
+                            }
                         }
-                    }
-                    else
-                    {
-                         var candidateData = {'companies':null,'errmsg':null};
-                         self.template = app.template.get(self.name);
+                        else
+                        {
+                             var candidateData = {'companies':null,'errmsg':null};
+                             self.template = app.template.get(self.name);
 
-                         try
-                         {
-                            var resultdata = data;
-                            var resultIDPath = "FindCompanyResponse.TransactionResult.ResultID";
-
-                             if(self.checkJsonNode(resultdata,resultIDPath) && 
-                                resultdata.FindCompanyResponse.TransactionResult.ResultID == 'CM000')
+                             try
                              {
-                                candidateData.companies = resultdata.FindCompanyResponse.FindCompanyResponseDetail.FindCandidate; 
-                                 _.each(candidateData.companies,function(companyObj){
-                                    
-                                    if(companyObj.FamilyTreeMemberRole)
-                                    {
-                                        //we are relying on DNBCodeValue
-                                        //higher the code value more the precedence in the family tree role
-                                        //hence we are using the _.max function
-                                        var locationType = _.max(companyObj.FamilyTreeMemberRole, function(memberRole)
-                                        { 
-                                            return memberRole.FamilyTreeMemberRoleText["@DNBCodeValue"]; 
-                                        });
+                                var resultdata = data;
+                                var resultIDPath = "FindCompanyResponse.TransactionResult.ResultID";
 
-                                        if(locationType.FamilyTreeMemberRoleText['$'] != 'Parent')
-                                            companyObj.locationType = locationType.FamilyTreeMemberRoleText['$'];
-                                    }
-                                });
-                                self.companyList = candidateData.companies;
+                                 if(self.checkJsonNode(resultdata,resultIDPath) && 
+                                    resultdata.FindCompanyResponse.TransactionResult.ResultID == 'CM000')
+                                 {
+                                    candidateData.companies = resultdata.FindCompanyResponse.FindCompanyResponseDetail.FindCandidate; 
+                                     _.each(candidateData.companies,function(companyObj){
+                                        
+                                        if(companyObj.FamilyTreeMemberRole)
+                                        {
+                                            //we are relying on DNBCodeValue
+                                            //higher the code value more the precedence in the family tree role
+                                            //hence we are using the _.max function
+                                            var locationType = _.max(companyObj.FamilyTreeMemberRole, function(memberRole)
+                                            { 
+                                                return memberRole.FamilyTreeMemberRoleText["@DNBCodeValue"]; 
+                                            });
+
+                                            if(locationType.FamilyTreeMemberRoleText['$'] != 'Parent')
+                                                companyObj.locationType = locationType.FamilyTreeMemberRoleText['$'];
+                                        }
+                                    });
+                                    self.companyList = candidateData.companies;
+                                 }
+                                 else
+                                 {
+                                    candidateData.errmsg = resultdata.FindCompanyResponse.TransactionResult.ResultText;
+                                 }
                              }
-                             else
+                             catch(e)
                              {
-                                candidateData.errmsg = resultdata.FindCompanyResponse.TransactionResult.ResultText;
+                                 candidateData.errmsg = app.lang.get('LBL_DNB_SVC_ERR');
                              }
-                         }
-                         catch(e)
-                         {
-                             candidateData.errmsg = app.lang.get('LBL_DNB_SVC_ERR');
-                         }
 
-                          _.extend(self, candidateData);
-                          self.render();
-                          self.$('div#dnb-company-list-loading').hide();
-                          self.$('div#dnb-search-results').show();
-                          self.$('.clearDNBResults').removeClass('disabled');
-                          self.$('.clearDNBResults').addClass('enabled');
-                          self.$(".showLessData").hide();
-                    }
-                }   
-        });
+                              _.extend(self, candidateData);
+                              self.render();
+                              self.$('div#dnb-company-list-loading').hide();
+                              self.$('div#dnb-search-results').show();
+                              self.$('.clearDNBResults').removeClass('disabled');
+                              self.$('.clearDNBResults').addClass('enabled');
+                              self.$(".showLessData").hide();
+                        }
+                    }   
+            });
+        }
+        
+
+        
     },
 
 
@@ -196,8 +206,8 @@
                 var duns_path = "OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber";
                 var resultData = app.cache.get(cacheKey);
 
-                if(self.checkJsonNode(resultData,duns_path))
-                    self.duns_num = resultData.OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber;
+                if(self.checkJsonNode(resultData.product,duns_path))
+                    self.duns_num = resultData.product.OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber;
                 _.bind(self.renderCompanyDetails,self,app.cache.get(cacheKey))();
             }
             else
@@ -256,6 +266,10 @@
             }
         _.extend(this, companyDetails);
         this.render();
+        if(companyDetails.errmsg)
+            this.$('.importDNBData').hide();
+        else if(companyDetails.product)
+            this.$('.importDNBData').show();
         this.$('div#dnb-company-detail-loading').hide();
         this.$('div#dnb-company-details').show(); 
     },

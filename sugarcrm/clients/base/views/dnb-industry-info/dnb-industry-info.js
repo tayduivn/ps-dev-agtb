@@ -94,14 +94,27 @@
             else
             {
                 var dnbIndustryURL = app.api.buildURL('connector/dnb/industry','',{},{});
-                var resultData;
+                var resultData = {'product':null,'errmsg':null};
                 app.api.call('create', dnbIndustryURL,{'qdata':sicToHicParams},{
                     success: function(data) 
                     {
-                        resultData = data;
-                        //to do check for valid json
+                        var resultIDPath = "OrderProductResponse.TransactionResult.ResultID",
+                        errMsgPath = "OrderProductResponse.TransactionResult.ResultText";
+
+                        if(self.checkJsonNode(data,resultIDPath) &&
+                            data.OrderProductResponse.TransactionResult.ResultID == 'CM000')
+                        {
+                            resultData.product = data;
+                            app.cache.set(cacheKey,resultData);
+                        }
+                        else if(self.checkJsonNode(data,errMsgPath))
+                        {
+                            resultData.errmsg = data.OrderProductResponse.TransactionResult.ResultText;
+                        }
+                        else
+                            resultData.errmsg = app.lang.get('LBL_DNB_SVC_ERR');
+
                         _.bind(self.renderIndustryInfo,self,resultData)();
-                        app.cache.set(cacheKey,resultData);
                     }
                 });
             }
@@ -135,14 +148,28 @@
             else
             {
                 var dnbIndustryURL = app.api.buildURL('connector/dnb/industry/' + industryCodeValue,'',{},{});
-                var resultData;
+                var resultData = {'product':null,'errmsg':null};
                 app.api.call('READ', dnbIndustryURL, {},{
                     success: function(data) 
                     {
-                        resultData = data;
-                        //to do check for valid json
+                        var resultIDPath = "OrderProductResponse.TransactionResult.ResultID",
+                        errMsgPath = "OrderProductResponse.TransactionResult.ResultText";
+
+                        if(self.checkJsonNode(data,resultIDPath) &&
+                            data.OrderProductResponse.TransactionResult.ResultID == 'CM000')
+                        {
+                            resultData.product = data;
+                            app.cache.set(cacheKey,resultData);
+                        }
+                        else if(self.checkJsonNode(data,errMsgPath))
+                        {
+                            resultData.errmsg = data.OrderProductResponse.TransactionResult.ResultText;
+                        }
+                        else
+                            resultData.errmsg = app.lang.get('LBL_DNB_SVC_ERR');
+
                         _.bind(self.renderIndustryInfo,self,resultData)();
-                        app.cache.set(cacheKey,resultData);
+                        
                     }
                 });
             }
@@ -183,6 +210,24 @@
         this.$(".dnb-show-all").attr("class","dnb-show-less");
         this.$(".showLessData").hide();
         this.$(".showMoreData").show();
+    },
+
+    /**
+      Utility function to check if a node exists in a json object
+    **/
+    checkJsonNode: function(obj,path) 
+    {
+        var args = path.split(".");
+
+        for (var i = 0; i < args.length; i++) 
+        {
+            if (obj == null || !obj.hasOwnProperty(args[i]) ) 
+            {
+                return false;
+            }
+            obj = obj[args[i]];
+        }
+        return true;
     },
 
 })

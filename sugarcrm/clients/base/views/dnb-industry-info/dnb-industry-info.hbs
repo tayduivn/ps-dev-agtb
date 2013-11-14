@@ -2,6 +2,7 @@
 {{str "LBL_DNB_IND_INF_LOAD"}}...
 </div>
 <div id="dnb-industry-info">
+	{{#if product}}
 	<div class="accordian dnb-show-less" id="dnb_industry_accordian">
 			<div class="accordion-group">
 				<div class="accordion-heading">
@@ -11,12 +12,12 @@
 				</div>
 				<div id="industry_tab_100" class="accordion-body collapse in">
 					  <div class="accordion-inner">
-								<p>{{OrderProductResponse.OrderProductResponseDetail.Product.IndustryProfile.IndustryProfileDetail.[0].IndustryCode.[0].IndustryExplanationText}}</p>
+								<p>{{product.OrderProductResponse.OrderProductResponseDetail.Product.IndustryProfile.IndustryProfileDetail.[0].IndustryCode.[0].IndustryExplanationText}}</p>
 					  </div>
 				</div>
 			</div>	
 
-			{{#each OrderProductResponse.OrderProductResponseDetail.Product.IndustryProfile.IndustryProfileDetail.[0].IndustryProfileChapterDetail}}
+			{{#each product.OrderProductResponse.OrderProductResponseDetail.Product.IndustryProfile.IndustryProfileDetail.[0].IndustryProfileChapterDetail}}
 			
 				<div class="accordion-group">
 				
@@ -63,5 +64,10 @@
 	<div class="dnb-show-more">
         <a class="showMoreData">{{str "LBL_DNB_SHOW_MORE"}}... <i class="icon-chevron-down"></i></a>
         <a class="showLessData">{{str "LBL_DNB_SHOW_LESS"}}... <i class="icon-chevron-up"></i></a>
-    </div>		
+    </div>
+    {{else}}
+    	<aside>
+			<em>{{errmsg}}</em>
+		</aside>	
+    {{/if}}	
 </div>
