@@ -104,15 +104,15 @@
             this.layout.filters.sort();
         }
         // This flag is used to determine when we have to add the border top (to separate categories)
-        var firstEditable = false;
+        var firstNonEditable = false;
         this.layout.filters.each(function(model) {
             var opts = {
                 id: model.id,
                 text: this.layout._getTranslatedFilterName(model)
             };
-            if (model.get("editable")!==false && !firstEditable) {
-                opts.firstUserFilter = true;
-                firstEditable = true;
+            if (model.get("editable") === false && !firstNonEditable) {
+                opts.firstNonUserFilter = true;
+                firstNonEditable = true;
             }
             filters.push(opts);
         }, this);
@@ -288,7 +288,7 @@
      */
     formatResultCssClass: function(item) {
         if (item.id === 'create') { return 'select2-result-border-bottom'; }
-        if (item.firstUserFilter) { return 'select2-result-border-top'; }
+        if (item.firstNonUserFilter) { return 'select2-result-border-top'; }
     },
 
     /**
