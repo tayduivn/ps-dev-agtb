@@ -28,6 +28,7 @@ var forecast_data_Rep = {
   "properties": {
     "name": " for Q3 2013",
     "quota": 137540,
+    "targetQuota": 127659,
     "groupData": [
       {
         "group": 0,
