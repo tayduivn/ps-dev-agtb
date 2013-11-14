@@ -413,7 +413,14 @@
             var url = this.getProjectedURL(),
                 cb = {
                     context: this,
-                    success: this.handleNewDataFromServer,
+                    success: _.bind(function(options, data) {
+                        if(options && options.beforeParseData) {
+                            data = options.beforeParseData(data);
+                            data.parsedData = true;
+                        }
+
+                        this.handleNewDataFromServer(data)
+                    }, this, options),
                     complete: options ? options.complete : null
                 };
 

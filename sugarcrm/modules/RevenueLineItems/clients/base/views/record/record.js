@@ -39,6 +39,9 @@
         var changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
         this.model.set(changedAttributes);
         app.view.invokeParent(this, {type: 'view', name: 'record', method: 'cancelClicked'});
+
+        // re-trigger this event for dashlets to listen for
+        this.context.trigger('button:cancel_button:click');
     },
 
     /**

@@ -681,6 +681,7 @@ class ForecastWorksheet extends SugarBean
             'includedClosedWorst' => '0',
             'pipeline_amount' => '0',
             'pipeline_opp_count' => 0,
+            'includedIdsInLikelyTotal' => array()
         );
 
         global $current_user;
@@ -725,6 +726,9 @@ class ForecastWorksheet extends SugarBean
                     $return['amount'] = SugarMath::init($return['amount'], 6)->add($amount_base)->result();
                     $return['best_case'] = SugarMath::init($return['best_case'], 6)->add($best_base)->result();
                     $return['worst_case'] = SugarMath::init($return['worst_case'], 6)->add($worst_base)->result();
+
+                    // add RLI/Opp id to includedIds array
+                    array_push($return['includedIdsInLikelyTotal'], $row['parent_id']);
                 }
                 $return['included_opp_count']++;
                 if ($closed) {

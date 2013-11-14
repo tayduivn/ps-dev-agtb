@@ -202,35 +202,24 @@ describe("Base.View.Forecastdetails-record", function() {
         });
     });
 
-    describe("checkDateAgainstCurrentTP()", function() {
+    describe("isDateInTimePeriod()", function() {
         var date;
         beforeEach(function() {
             date = '2013-07-19';
-        });
-
-        describe("when currentTimeperiod is undefined", function() {
-            beforeEach(function() {
-                view.currentTimeperiod = undefined;
-            });
-
-            it("should return true", function() {
-                result = view.checkDateAgainstCurrentTP(date);
-                expect(result).toBeTruthy();
-            });
         });
 
         describe("when currentTimeperiod is in the current timeperiod", function() {
             beforeEach(function() {
                 // setting tp to way before the date and way after
                 view.currentTimeperiod = {
-                    start_date_timestamp: 1370000000000,
-                    end_date_timestamp:   1380000000000
+                    start_date: '2013-07-01',
+                    end_date:   '2013-07-30'
                 };
             });
 
             it("should return false", function() {
-                result = view.checkDateAgainstCurrentTP(date);
-                expect(result).toBeFalsy();
+                result = view.isDateInTimePeriod(date, view.currentTimeperiod);
+                expect(result).toBeTruthy();
             });
         });
 
@@ -238,14 +227,14 @@ describe("Base.View.Forecastdetails-record", function() {
             beforeEach(function() {
                 // setting tp to way after the date
                 view.currentTimeperiod = {
-                    start_date_timestamp: 2000000000000,
-                    end_date_timestamp:   2000000000000
+                    start_date: '2014-01-01',
+                    end_date:   '2014-03-31'
                 };
             });
 
             it("should return false", function() {
-                result = view.checkDateAgainstCurrentTP(date);
-                expect(result).toBeTruthy();
+                result = view.isDateInTimePeriod(date, view.currentTimeperiod);
+                expect(result).toBeFalsy();
             });
         });
 
@@ -253,14 +242,14 @@ describe("Base.View.Forecastdetails-record", function() {
             beforeEach(function() {
                 // setting tp to way before the date
                 view.currentTimeperiod = {
-                    start_date_timestamp: 1000000000000,
-                    end_date_timestamp:   1000000000000
+                    start_date: '2011-01-01',
+                    end_date:   '2011-03-31'
                 };
             });
 
             it("should return false", function() {
-                result = view.checkDateAgainstCurrentTP(date);
-                expect(result).toBeTruthy();
+                result = view.isDateInTimePeriod(date, view.currentTimeperiod);
+                expect(result).toBeFalsy();
             });
         });
     });

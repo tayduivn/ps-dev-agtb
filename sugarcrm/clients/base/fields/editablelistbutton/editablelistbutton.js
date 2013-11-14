@@ -137,6 +137,10 @@
         this.model.revertAttributes();
         this.view.clearValidationErrors();
         this.view.toggleRow(this.model.id, false);
+
+        // trigger a cancel event across the parent context so listening components
+        // know the changes made in this row are being reverted
+        this.context.parent.trigger('editablelist:cancel', this.model);
     },
     saveClicked: function(evt) {
         if (!$(evt.currentTarget).hasClass('disabled')) {
