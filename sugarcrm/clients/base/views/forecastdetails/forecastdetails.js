@@ -668,7 +668,7 @@
         d.likely_details = this.detailsMsgTpl(this.getDetailsForCase('likely', this.likelyTotal, d.quota_amount, d.closed_amount, fromModel));
         d.best_details = this.detailsMsgTpl(this.getDetailsForCase('best', this.bestTotal, d.quota_amount, d.closed_amount, fromModel));
 
-        if(this.shouldRollup) {
+        if(this.shouldRollup && !_.isEmpty(this.selectedUser.reports_to_id)) {
             d.quota_label = app.lang.get('LBL_QUOTA_ADJUSTED', 'Forecasts');
         } else {
             d.quota_label = app.lang.get('LBL_QUOTA', 'Forecasts');

@@ -209,7 +209,7 @@
                 'properties': {
                     'name': this._serverData.title,
                     'quota': parseFloat(this._serverData.quota),
-                    'quotaLabel': app.lang.get('LBL_QUOTA_ADJUSTED', 'Forecasts'),
+                    'quotaLabel': app.lang.get((this.model.get('show_target_quota')) ? 'LBL_QUOTA_ADJUSTED' : 'LBL_QUOTA', 'Forecasts'),
                     'groupData': records.map(function(record, i) {
                         return {
                             group: i,
