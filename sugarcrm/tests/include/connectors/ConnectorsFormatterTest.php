@@ -172,7 +172,6 @@ EOQ;
                         switch (strtolower($name)) {
                             case "account_name":
                                 $this->assertTrue(!empty($field['displayParams']['enableConnectors']));
-                                $this->assertTrue(in_array('ext_rest_linkedin', $field['displayParams']['connectors']));
                                 $this->assertTrue(in_array('ext_rest_twitter', $field['displayParams']['connectors']));
                                 break;
                         }

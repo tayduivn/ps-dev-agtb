@@ -113,12 +113,6 @@ array (
             'label' => 'LBL_ACCOUNT_NAME',
             'displayParams' => 
             array (
-              'enableConnectors' => true,
-              'module' => 'Contacts',
-              'connectors' => 
-              array (
-                0 => 'ext_rest_linkedin',
-              ),
             ),
           ),
           1 => 

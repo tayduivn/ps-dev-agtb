@@ -57,17 +57,4 @@ public function testMailMergeAvailability()
     $this->expectOutputNotRegex('/system_mailmerge_on/');
     //END SUGARCRM flav=com ONLY
 }
-
-
-public function testImportMapLinkedInPHPFileExists()
-{
-    //BEGIN SUGARCRM flav!=com ONLY
-    $this->assertFileExists('modules/Import/maps/ImportMapLinkedin.php', 'Assert that ImportMapLinkedin.php file exists for non-com flavor');
-    //END SUGARCRM flav!=com ONLY
-
-    //BEGIN SUGARCRM flav=com ONLY
-    $this->assertFileNotExists('modules/Import/maps/ImportMapLinkedin.php', 'Assert that ImportMapLinkedin.php file does not exist for com flavor');
-    //END SUGARCRM flav=com ONLY
-}
-
 }

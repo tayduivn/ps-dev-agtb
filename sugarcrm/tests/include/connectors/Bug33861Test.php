@@ -64,10 +64,6 @@ class Bug33861Test extends Sugar_PHPUnit_Framework_TestCase
         if (file_exists('custom/modules/Connectors/metadata/mergeviewdefs.php')) {
             unlink('custom/modules/Connectors/metadata/mergeviewdefs.php');
         }
-
-        if (file_exists('custom/modules/Connectors/connectors/sources/ext/rest/linkedin/mapping.php')) {
-            unlink('custom/modules/Connectors/connectors/sources/ext/rest/linkedin/mapping.php');
-        }
     }
 
     public function tearDown()
@@ -164,16 +160,6 @@ class Bug33861Test extends Sugar_PHPUnit_Framework_TestCase
               0 => 'Accounts',
             ),
           ),
-          'ext_rest_linkedin' =>
-          array (
-            'id' => 'ext_rest_linkedin',
-            'name' => 'LinkedIn&#169;',
-            'enabled' => true,
-            'directory' => 'modules/Connectors/connectors/sources/ext/rest/linkedin',
-            'modules' =>
-            array (
-            ),
-          ),
         );
 
         $default_modules_sources = array (
@@ -181,17 +167,11 @@ class Bug33861Test extends Sugar_PHPUnit_Framework_TestCase
           array (
             'ext_rest_zoominfoperson' => 'ext_rest_zoominfoperson',
             'ext_rest_zoominfocompany' => 'ext_rest_zoominfocompany',
-            'ext_rest_linkedin' => 'ext_rest_linkedin',
           ),
           'Contacts' =>
           array (
             'ext_rest_zoominfoperson' => 'ext_rest_zoominfoperson',
             'ext_rest_zoominfocompany' => 'ext_rest_zoominfocompany',
-            'ext_rest_linkedin' => 'ext_rest_linkedin',
-          ),
-          'Leads' =>
-          array(
-             'ext_rest_linkedin' => 'ext_rest_linkedin',
           ),
         );
 
