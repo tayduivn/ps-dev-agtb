@@ -41,7 +41,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     public function __construct($params = array())
     {
         $this->_config = $params;
-        $this->_indexName = strtolower($GLOBALS['sugar_config']['unique_key']);
+        if (!empty($GLOBALS['sugar_config']['unique_key'])) {
+            $this->_indexName = strtolower($GLOBALS['sugar_config']['unique_key']);
+        } else {
+            //Fix a notice error during install when we verify the Elastic Search settings
+            $this->_indexName = '';
+        }
 
         //Elastica client uses own auto-load schema similar to ZF.
         SugarAutoLoader::addPrefixDirectory('Elastica', 'vendor/');
@@ -347,9 +352,14 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $ftsTestTimeout = (isset($sugar_config['fts_test_timeout'])) ? $sugar_config['fts_test_timeout'] : 5;
             $this->_client->setConfigValue('timeout', $ftsTestTimeout);
             $results = $this->_client->request('', Elastica_Request::GET)->getData();
-            if (!empty($results['ok'])) {
+            if (!empty($results['ok']) ) {
                 $isValid = true;
-                $displayText = $app_strings['LBL_EMAIL_SUCCESS'];
+                if (!empty($GLOBALS['app_strings'])) {
+                    $displayText = $app_strings['LBL_EMAIL_SUCCESS'];
+                } else {
+                    //Fix a notice error during install when we verify the Elastic Search settings
+                    $displayText = 'Success';
+                }
             } else {
                 $displayText = $app_strings['ERR_ELASTIC_TEST_FAILED'];
             }
