@@ -75,7 +75,7 @@ weekNumbers:false
 <input autocomplete="off" type="text" name="start_range_{$id}" id="start_range_{$id}" value='{$smarty.request.{{$id_range_start}} }' title='{{$vardef.help}}' {{$displayParams.field}} tabindex='{{$tabindex}}' size="11" style="width:100px !important;">
 {{if !$displayParams.hiddeCalendar}}
 {capture assign="other_attributes"}align="absmiddle" border="0" id="start_range_{$id}_trigger"{/capture}
-{sugar_getimage name="jscalendar" ext=".gif" alt="$APP.LBL_ENTER_DATE other_attributes=$other_attributes"}
+{sugar_getimage name="jscalendar" ext=".gif" alt=$APP.LBL_ENTER_DATE|escape:'html' other_attributes=$other_attributes}
 {{/if}}
 {{if $displayParams.showFormats}}
 &nbsp;(<span class="dateFormat">{$USER_DATEFORMAT}</span>)
@@ -99,7 +99,7 @@ weekNumbers:false
 <input autocomplete="off" type="text" name="end_range_{$id}" id="end_range_{$id}" value='{$smarty.request.{{$id_range_end}} }' title='{{$vardef.help}}' {{$displayParams.field}} tabindex='{{$tabindex}}' size="11" style="width:100px !important;" maxlength="10">
 {{if !$displayParams.hiddeCalendar}}
 {capture assign="other_attributes"}align="absmiddle" border="0" id="end_range_{$id}_trigger"{/capture}
-{sugar_getimage name="jscalendar" ext=".gif" alt="$APP.LBL_ENTER_DATE other_attributes=$other_attributes"}
+{sugar_getimage name="jscalendar" ext=".gif" alt=$APP.LBL_ENTER_DATE|escape:'html' other_attributes=$other_attributes}
 {{/if}}
 {{if $displayParams.showFormats}}
 &nbsp;(<span class="dateFormat">{$USER_DATEFORMAT}</span>)
