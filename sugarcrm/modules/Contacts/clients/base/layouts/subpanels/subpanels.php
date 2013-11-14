@@ -127,6 +127,13 @@ $viewdefs['Contacts']['base']['layout']['subpanels'] = array (
     ),
     array (
       'layout' => 'subpanel',
+      'label' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
+      'context' => array (
+        'link' => 'products',
+      ),
+    ),
+    array (
+      'layout' => 'subpanel',
       'label' => 'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE',
       'context' => array (
         'link' => 'campaigns',
