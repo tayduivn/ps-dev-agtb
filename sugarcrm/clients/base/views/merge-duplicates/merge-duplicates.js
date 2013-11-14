@@ -1030,7 +1030,8 @@
 
         this.primaryRecord.trigger(
             'duplicate:field:' + fieldName,
-            model !== this.primaryRecord ? model : null
+            model !== this.primaryRecord ? model : null,
+            model !== this.primaryRecord ? model.get(fieldName) : null
         );
     },
 
@@ -1053,7 +1054,11 @@
                 this.primaryRecord.get(fieldName)
         );
 
-        this.primaryRecord.trigger('duplicate:field:' + fieldName, null);
+        this.primaryRecord.trigger(
+            'duplicate:field:' + fieldName,
+            this.primaryRecord,
+            this.primaryRecord.get(fieldName)
+        );
     },
 
     /**
