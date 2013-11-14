@@ -530,9 +530,27 @@
         var self = this;
         self.inlineEditMode = false;
 
-        var options = {
-            showAlerts: true,
-            success: _.bind(function() {
+        app.file.checkFileFieldsAndProcessUpload(self, {
+                success: function(response) {
+                    if (response.record && response.record.date_modified) {
+                        self.model.set('date_modified', response.record.date_modified);
+                    }
+                    self._saveModel();
+                }
+            }, {
+                deleteIfFails: false
+            }
+        );
+
+        self.$('.record-save-prompt').hide();
+        if (!self.disposed) {
+            self.render();
+        }
+    },
+
+    _saveModel: function() {
+        var options,
+            successCallback = _.bind(function() {
                 // Loop through the visible subpanels and have them sync. This is to update any related
                 // fields to the record that may have been changed on the server on save.
                 _.each(this.context.children, function(child) {
@@ -547,33 +565,35 @@
                 } else if (!this.disposed) {
                     this.render();
                 }
-            }, this),
+            }, this);
+
+        options = {
+            showAlerts: true,
+            success: successCallback,
             error: _.bind(function(error) {
                 if (error.status === 412 && !error.request.metadataRetry) {
                     this.handleMetadataSyncError(error);
-                }
-                else {
+                } else if (error.status === 409) {
+                    app.utils.resolve409Conflict(error, this.model, _.bind(function(model, isDatabaseData) {
+                        if (model) {
+                            if (isDatabaseData) {
+                                successCallback();
+                            } else {
+                                this._saveModel();
+                            }
+                        }
+                    }, this));
+                } else {
                     this.editClicked();
                 }
             }, this),
+            lastModified: this.model.get('date_modified'),
             viewed: true
         };
 
-        options = _.extend({}, options, self.getCustomSaveOptions(options));
+        options = _.extend({}, options, this.getCustomSaveOptions(options));
 
-        app.file.checkFileFieldsAndProcessUpload(self, {
-                success: function() {
-                    self.model.save({}, options);
-                }
-            }, {
-                deleteIfFails: false
-            }
-        );
-
-        self.$('.record-save-prompt').hide();
-        if (!self.disposed) {
-            self.render();
-        }
+        this.model.save({}, options);
     },
 
     handleMetadataSyncError: function(error) {

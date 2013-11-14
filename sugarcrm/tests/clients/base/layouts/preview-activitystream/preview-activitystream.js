@@ -33,6 +33,13 @@ describe("Preview Activity Stream", function() {
             expect(collectionStub.calledOnce).toBe(true);
             collectionStub.restore();
         });
+
+        it('Should not fetch activities when showActivities is set to false', function() {
+            var collectionStub = sinon.stub(layout.collection, 'fetch');
+            layout.fetchActivities(new Backbone.Model(), null, null, null, false);
+            expect(collectionStub.called).toBe(false);
+            collectionStub.restore();
+        });
     });
 
     describe('renderActivities()', function() {

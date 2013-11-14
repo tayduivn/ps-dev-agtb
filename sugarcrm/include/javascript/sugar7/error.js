@@ -127,7 +127,14 @@
     };
 
     /**
-     * 424 Handle validation error 
+     * 409 Handle conflict error.
+     */
+    app.error.handleMethodConflictError = function(error) {
+        app.logger.error('Data conflict detected.');
+    };
+
+    /**
+     * 424 Handle validation error
      */
     app.error.handleValidationErrorOld = app.error.handleValidationError;
     app.error.handleValidationError = function(error) {

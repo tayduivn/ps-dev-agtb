@@ -61,16 +61,50 @@
             this.cancelEdit();
             return;
         }
+
         var self = this,
+            successCallback = function() {
+                self._save();
+            };
+
+        async.forEachSeries(this.view.rowFields[this.model.id], function(view, callback) {
+            app.file.checkFileFieldsAndProcessUpload(view, {
+                success: function(response) {
+                    if (response.record && response.record.date_modified) {
+                        self.model.set('date_modified', response.record.date_modified);
+                    }
+                    callback.call();
+                }
+            }, {deleteIfFails: false }, true);
+        }, successCallback);
+    },
+
+    _save: function() {
+        var self = this,
+            successCallback = function(model) {
+                self.changed = false;
+                self.view.toggleRow(model.id, false);
+                self._refreshListView();
+            },
             options = {
-                success: function(model) {
-                    self.changed = false;
-                    self.view.toggleRow(model.id, false);
-                    self._refreshListView();
+                success: successCallback,
+                error: function(error) {
+                    if (error.status === 409) {
+                        app.utils.resolve409Conflict(error, self.model, function(model, isDatabaseData) {
+                            if (model) {
+                                if (isDatabaseData) {
+                                    successCallback(model);
+                                } else {
+                                    self._save();
+                                }
+                            }
+                        });
+                    }
                 },
                 complete: function() {
                     self.setDisabled(false);
                 },
+                lastModified: self.model.get('date_modified'),
                 //Show alerts for this request
                 showAlerts: {
                     'process': true,
@@ -78,24 +112,12 @@
                         messages: app.lang.get('LBL_RECORD_SAVED', self.module)
                     }
                 },
-                relate: self.model.link ? true : false
+                relate: this.model.link ? true : false
             };
 
-        options = _.extend({}, options, self.getCustomSaveOptions(options));
+        options = _.extend({}, options, this.getCustomSaveOptions(options));
 
-        var callbacks = {
-            success: function() {
-                self.model.save({}, options);
-            }
-        };
-
-        async.forEachSeries(this.view.rowFields[this.model.id], function(view, callback) {
-            app.file.checkFileFieldsAndProcessUpload(view, {
-                success: function() {
-                    callback.call();
-                }
-            }, {deleteIfFails: false }, true);
-        }, callbacks.success);
+        this.model.save({}, options);
     },
 
     getCustomSaveOptions: function(options) {
@@ -117,7 +139,9 @@
         this.view.toggleRow(this.model.id, false);
     },
     saveClicked: function(evt) {
-        this.saveModel();
+        if (!$(evt.currentTarget).hasClass('disabled')) {
+            this.saveModel();
+        }
     },
     cancelClicked: function(evt) {
         this.cancelEdit();

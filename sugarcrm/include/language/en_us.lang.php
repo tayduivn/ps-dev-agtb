@@ -4289,6 +4289,10 @@ $app_strings = array (
     'LBL_CAN_NOT_DISABLE_ALL_LANG' => 'You can not disable all languages.',
 
     'LBL_UPDATE_CALC_FIELDS' => 'Recalculate Values',
+
+    //Optimistic Locking
+    'LBL_YOU' => 'You',
+    'LBL_RESOLVE_CONFLICT' => 'Resolve Conflict for {{name}}',
 );
 
 $app_list_strings['interactions_options'] = array (

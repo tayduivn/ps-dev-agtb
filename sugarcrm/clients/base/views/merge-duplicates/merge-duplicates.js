@@ -372,11 +372,26 @@
             fields = this.getFieldNames().filter(function(field) {
             return app.acl.hasAccessToModel('edit', this.primaryRecord, field);
         }, this);
+
         this.primaryRecord.save({}, {
             fieldsToValidate: fields,
             success: function() {
                 self.primaryRecord.trigger('mergeduplicates:primary:saved');
             },
+            error: function(error) {
+                if (error.status === 409) {
+                    app.utils.resolve409Conflict(error, self.primaryRecord, function(model, isDatabaseData) {
+                        if (model) {
+                            if (isDatabaseData) {
+                                self.resetRadioSelection(model.id);
+                            } else {
+                                self._savePrimary();
+                            }
+                        }
+                    });
+                }
+            },
+            lastModified: this.primaryRecord.get('date_modified'),
             showAlerts: true,
             viewed: true
         });
@@ -905,8 +920,12 @@
         }
         this.$('.primary-edit-mode').removeClass('primary-edit-mode');
         this.$('[data-record-id=' + this.primaryRecord.id + ']').addClass('primary-edit-mode');
-        this.$('[data-record-id=' + this.primaryRecord.id + '] input[type=radio]').attr('checked', true);
+        this.resetRadioSelection(this.primaryRecord.id);
         this.checkCopyRadioButtons();
+    },
+
+    resetRadioSelection: function(modelId) {
+        this.$('[data-record-id=' + modelId + '] input[type=radio]').attr('checked', true);
     },
 
     /**

@@ -286,6 +286,14 @@ class SugarBeanApiHelper
      */
     protected function checkOptimisticLocking($bean, $timestamp)
     {
+        // only perform optimistic locking when the module vardef attribute has been set to true
+        $objectName = BeanFactory::getObjectName($bean->module_name);
+        if (!isset($GLOBALS['dictionary'][$objectName]['optimistic_locking'])
+            || ($GLOBALS['dictionary'][$objectName]['optimistic_locking'] !== true)
+        ) {
+            return true;
+        }
+
         if(empty($timestamp)) {
             // no TS - no conflict
             return true;

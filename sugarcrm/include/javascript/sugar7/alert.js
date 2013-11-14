@@ -111,7 +111,25 @@
      *          }
      *      });
      */
-    var numActiveProcessAlerts = 0;
+    var processAlert = {
+        _count: 0,
+
+        dismiss: function() {
+            this._count--;
+
+            // Dismiss only if it's the last one
+            if (this._count < 1) {
+                this._count = 0;
+                app.alert.dismiss('data:sync:process');
+            }
+        },
+
+        show: function(options) {
+            this._count++;
+            app.alert.show('data:sync:process', options);
+        }
+    } ;
+
     app.events.on('data:sync:start', function(method, model, options) {
 
         options = options || {};
@@ -149,9 +167,8 @@
             _.extend(alertOpts, options.showAlerts.process);
         }
 
-        // Increase the counter so we know have many process alerts are currently being displayed
-        numActiveProcessAlerts++;
-        app.alert.show('data:sync:process', alertOpts);
+        // Show alert
+        processAlert.show(alertOpts);
     });
 
     // Not to be confused with the event fired for data:sync:complete.
@@ -170,13 +187,7 @@
         // As we display alerts we have have to check if there is a process alert to dismiss prior to display the success one
         // (as many requests can be fired at the same time we make sure not to dismiss another process alert!)
         if (options.showAlerts.process !== false) {
-            // Decrease the number of alerts to dismiss
-            numActiveProcessAlerts--;
-            // Dismiss only if it's the last one
-            if (numActiveProcessAlerts < 1) {
-                numActiveProcessAlerts = 0;
-                app.alert.dismiss('data:sync:process');
-            }
+            processAlert.dismiss();
         }
 
         // Error module will display proper message
@@ -208,12 +219,14 @@
     });
 
     app.events.on('data:sync:error', function(method, model, options, error) {
-        //412 errors must be handled by re-sending the update/save after the app finishes the sync.
-        if (!error || error.status != 412) {
+        var suppressErrorMessageFor = [409, 412];
+
+        if (!error || _.indexOf(suppressErrorMessageFor, error.status) === -1) {
             syncCompleteHandler('error', 'ERR_GENERIC_SERVER_ERROR', method, model, options);
         } else {
-            //Hide the saving dialog so that only the "loading" screen is visible
-            app.alert.dismiss("data:sync:process");
+            if (options.showAlerts && options.showAlerts.process !== false) {
+                processAlert.dismiss();
+            }
         }
     });
 
