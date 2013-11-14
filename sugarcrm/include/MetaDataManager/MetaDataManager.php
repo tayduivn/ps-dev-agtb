@@ -2130,12 +2130,16 @@ class MetaDataManager
      * Gets full module list and data for each module and uses that data to
      * populate the modules/full_module_list section of the metadata
      *
+     * Also populates `display_module_list` that contains the list of
+     * displayable modules.
+     *
      * @param array $data Existing metadata
      * @return array
      */
     public function populateModules($data)
     {
         $data['full_module_list'] = $this->getModuleList();
+        $data['display_module_list'] = $GLOBALS['moduleList'];
         $data['modules'] = array();
         foreach($data['full_module_list'] as $key => $module) {
             if ($key == '_hash') {

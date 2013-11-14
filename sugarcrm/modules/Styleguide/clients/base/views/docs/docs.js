@@ -111,14 +111,7 @@
     *******************/
 
     init_labels: function(pageData) {
-        pageData.module_list = [];
-        if (app.metadata.getModuleNames(true, 'read')) {
-            _.each(app.metadata.getModuleNames(true, 'read'), function(val) {
-                if (['Home'].indexOf(val)===-1) {
-                    pageData.module_list.push(val);
-                }
-            });
-        }
+        pageData.module_list = _.without(app.metadata.getModuleNames({visible: true, access: 'read'}), 'Home');
         pageData.module_list.sort();
     },
 

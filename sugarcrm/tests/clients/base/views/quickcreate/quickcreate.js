@@ -1,6 +1,6 @@
 describe("Quick Create Dropdown", function() {
     var viewName = 'quickcreate',
-        app, view, sinonSandbox, o_isSynced, testMeta, testHasCreateAccess;
+        app, view, backupIsSynced, testMeta, testHasCreateAccess;
 
 
     var buildQuickCreateMeta = function(module, visible, order) {
@@ -21,13 +21,12 @@ describe("Quick Create Dropdown", function() {
         SugarTest.testMetadata.set();
         view = SugarTest.createView("base",null, viewName, null, null);
 
-        sinonSandbox = sinon.sandbox.create();
         // Fake user is authenticated
-        sinonSandbox.stub(SugarTest.app.api, 'isAuthenticated', function() {
+        sinon.collection.stub(SugarTest.app.api, 'isAuthenticated', function() {
             return true;
         });
         // Fake app is synced
-        o_isSynced = app.isSynced;
+        backupIsSynced = app.isSynced;
         app.isSynced = true;
 
         // Test metadata
@@ -43,7 +42,7 @@ describe("Quick Create Dropdown", function() {
             Opportunities: true
         };
 
-        sinonSandbox.stub(app.acl, 'hasAccess', function (action, module) {
+        sinon.collection.stub(app.acl, 'hasAccess', function (action, module) {
             // Sugar.App.acl.hasAccess is called with action=quickcreate as a part of rendering the view beyond
             // determining which modules are accessible. So we assume that TRUE should be returned for those calls
             // and to only be more scrupulous when action=create, which is expected per the
@@ -53,23 +52,23 @@ describe("Quick Create Dropdown", function() {
             }
             return testHasCreateAccess[module];
         });
-        sinonSandbox.stub(SugarTest.app.metadata, 'getModuleNames', function(visible, access) {
+        sinon.collection.stub(SugarTest.app.metadata, 'getModuleNames', function(options) {
             var modules = [];
             _.each(testMeta, function(meta, module) {
-                if (app.acl.hasAccess(access, module)) {
+                if (app.acl.hasAccess(options.access, module)) {
                     modules.push(module);
                 }
             });
             return modules;
         });
-        sinonSandbox.stub(SugarTest.app.metadata, 'getModule', function(module) {
+        sinon.collection.stub(SugarTest.app.metadata, 'getModule', function(module) {
             return testMeta[module];
         });
     });
 
     afterEach(function() {
-        app.isSynced = o_isSynced;
-        sinonSandbox.restore();
+        sinon.collection.restore();
+        app.isSynced = backupIsSynced;
         SugarTest.testMetadata.dispose();
         view = null;
     });

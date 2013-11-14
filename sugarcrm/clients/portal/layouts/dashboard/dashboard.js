@@ -31,7 +31,7 @@
         // set the current module to home to get the mega menu to highlight correctly
         app.controller.context.set('module','Home');
         // Figure out the modules that are available to the user. omit home because it doesn't exist
-        this.module_list = _.without(app.metadata.getModuleNames(true, 'list'), 'Home') ;
+        this.module_list = _.without(app.metadata.getModuleNames({visible: true, access: 'list'}), 'Home');
 
         options.meta.components = [];
         // Add components metadata as specified in the module list

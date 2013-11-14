@@ -209,15 +209,8 @@
         if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
 
         // loadAdditionalComponents fires render before the private metadata is ready, check for this
-        if( !(_.isEmpty(app.metadata.getStrings("mod_strings"))) ) {
-            var self = this;
-            this.module_list = {};
-            if (app.metadata.getModuleNames(true, "read")) {
-                _.each(app.metadata.getModuleNames(true, "read"), function(val) {
-                    self.module_list[val] = val;
-                });
-            }
-            this.module_list = this.completeMenuMeta(this.module_list);
+        if (app.isSynced) {
+            this.module_list = this.completeMenuMeta(app.metadata.getModuleNames({visible: true, access: 'read'}));
             app.view.View.prototype._renderHtml.call(this);
             this.resetMenu();
             this.activeModule.set(app.controller.context.get("module"));
@@ -225,14 +218,10 @@
     },
 
     completeMenuMeta: function(module_list) {
-        var actions, meta, returnList = [], self = this, listLength,
-            fullModuleList = app.metadata.getFullModuleList();
-        _.each(module_list, function(value, key) {
-            if (!_.isString(fullModuleList[value])) {
-                return;
-            }
+        var actions, meta, returnList = [], self = this, listLength;
+        _.each(module_list, function(key) {
             actions = {
-                label: app.lang.get('LBL_MODULE_NAME', value),
+                label: app.lang.get('LBL_MODULE_NAME', key),
                 name: key
             };
             meta = app.metadata.getModule(key);
@@ -428,8 +417,8 @@
                             var moduleList = {};
                             moduleList[module] = app.metadata.getFullModuleList()[module];
 
-                            var meta = this._moduleList.completeMenuMeta(moduleList);
-                            if (!_.isUndefined(meta[0])) {
+                            if (!_.isUndefined(moduleList[module])) {
+                                var meta = this._moduleList.completeMenuMeta(moduleList);
                                 meta[0].menuIndex = -1;
                                 var singleMenuTemplate = app.template.get(this._moduleList.name + '.singlemenuPartial');
                                 this._moduleList.$el.find('.dropdown.more').before(singleMenuTemplate(meta[0]));

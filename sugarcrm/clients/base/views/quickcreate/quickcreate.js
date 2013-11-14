@@ -15,8 +15,7 @@
 
     /**
      * @param {Object} options
-     * @override
-     * @private
+     * @inheritDoc
      */
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
@@ -24,7 +23,7 @@
     },
 
     /**
-     * @override
+     * @inheritDoc
      * @private
      */
     _renderHtml: function() {
@@ -33,7 +32,7 @@
         }
         // loadAdditionalComponents fires render before the private metadata is ready, check for this
         if (app.isSynced) {
-            this.createMenuItems = this._getMenuMeta(app.metadata.getModuleNames(false, 'create'));
+            this.createMenuItems = this._getMenuMeta(app.metadata.getModuleNames({visible: false, access: 'create'}));
             app.view.View.prototype._renderHtml.call(this);
         }
     },
@@ -42,7 +41,7 @@
      * Retrieve the quickcreate metadata from each module in the list
      * Uses the visible flag on the metadata to determine if admin has elected to hide the module from the list
      *
-     * @param {Array} module names
+     * @param {Array} module The module names
      * @return {Array} list of visible menu item metadata
      */
     _getMenuMeta: function(modules) {
