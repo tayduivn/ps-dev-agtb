@@ -293,41 +293,6 @@
                 return;
             }
             view.revertBwcModel();
-        },
-
-        /**
-         * Accessor for private metadata converter functions.
-         * @param  {String} type Name of legacy metadata type
-         * @return {Function}
-         */
-        _getLegacyMetadataConverter: function(type) {
-            return metadataConverters[type];
-        },
-
-        /**
-         * Retrieves the legacy metadata from the server, and converts it to
-         * Sidecar metadata. This method should be removed as soon as possible.
-         * @param  {String} module
-         * @param  {String} type
-         * @return {Object}
-         */
-        getLegacyMetadata: function(module, type) {
-            var converter = this._getLegacyMetadataConverter(type),
-                cacheKey = module + '-' + type,
-                bwcModule = app.metadata.getModule(module).isBwcEnabled;
-
-            if (!metadataCache[cacheKey] && converter && bwcModule) {
-                var result,
-                    url = app.api.buildURL('metadata', 'legacy', {}, {module: module, type: type}),
-                    request = app.api.call('read', url, null, {
-                        success: function(data) {
-                            result = converter(data[module]);
-                        }
-                    }, {async: false});
-                metadataCache[cacheKey] = result;
-            }
-
-            return metadataCache[cacheKey];
         }
     };
     app.augment('bwc', Bwc, false);

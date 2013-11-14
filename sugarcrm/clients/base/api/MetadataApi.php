@@ -76,13 +76,6 @@ class MetadataApi extends SugarApi
                 'ignoreMetaHash' => true,
                 'ignoreSystemStatusError' => true,
             ),
-            'getLegacyMetadata' => array(
-                'reqType' => 'GET',
-                'path' =>array('metadata', 'legacy'),
-                'pathVars' => array(''),
-                'method' => 'getLegacyMetadata',
-                'shortHelp' => 'This method will return the metadata for BWC modules',
-            ),
             'getLanguage' => array(
                 'reqType' => 'GET',
                 'path' => array('lang', '?'),
@@ -223,42 +216,6 @@ class MetadataApi extends SugarApi
         $perModuleChunks = array('modules');
 
         return $this->filterResults($args, $data, $typeFilter, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
-    }
-
-    /**
-     * Retrieves legacy (Sugar 6.x) metadata.
-     * @deprecated Will be removed in SugarCRM 7.2 (or whenever all modules are
-     * ported to Sidecar).
-     * @param  ServiceBase $api
-     * @param  array       $args
-     * @return array
-     */
-    public function getLegacyMetadata(ServiceBase $api, array $args)
-    {
-        $this->requireArgs($args, array('type', 'module'));
-
-        $typeVariableMapping = array(
-            // Add as needed (hopefully, we don't rely on BWC even more).
-            'listviewdefs' => 'listViewDefs',
-        );
-
-        if (!isset($typeVariableMapping[$args['type']])) {
-            throw new SugarApiExceptionInvalidParameter('Type "' . $args['module'] . '" is not in in the metadata-type whitelist.');
-        }
-
-        if (!isModuleBWC($args['module'])) {
-            throw new SugarApiExceptionInvalidParameter('Module "' . $args['module'] . '" is not in backwards compatibility.');
-        }
-
-        $file = SugarAutoLoader::loadWithMetafiles($args['module'], $args['type']);
-
-        if (is_null($file)) {
-            throw new SugarApiExceptionNotFound($args['type'] . ' metadata was not found for the ' . $args['module'] . ' module.');
-        }
-
-        require $file;
-
-        return $$typeVariableMapping[$args['type']];
     }
 
     /**
