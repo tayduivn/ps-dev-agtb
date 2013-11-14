@@ -61,6 +61,7 @@
         this.layout.on("hide", this.toggleList, this);
         // Listens to parent of subpanel layout (subpanels)
         this.listenTo(this.layout.layout, 'filter:change', this.renderOnFilterChanged);
+        this.listenTo(this.layout, 'filter:record:linked', this.renderOnFilterChanged);
 
         //event register for preventing actions
         //when user escapes the page without confirming deletion
