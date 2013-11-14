@@ -240,7 +240,9 @@ class SugarFieldTeamset extends SugarFieldBase {
         			$secondaries['secondaries'][]=array('id'=>$id, 'name'=>$name);
         		}
         	} //foreach
-        	$this->view->bean->{$this->view->value_name}=array_merge((array)$this->view->bean->{$this->view->value_name}, $secondaries);
+        	if(!empty($this->view->bean)) {
+        	   $this->view->bean->{$this->view->value_name}=array_merge((array)$this->view->bean->{$this->view->value_name}, $secondaries);
+        	}
 	    }
 
         $this->view->skipModuleQuickSearch = true;
