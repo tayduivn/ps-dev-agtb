@@ -13,10 +13,16 @@
 
 ({
     extendsFrom: 'RecordView',
-//BEGIN SUGARCRM flav=pro && flav!=ent ONLY
 
     /**
-     * @inheritdoc
+     * Holds a reference to the alert this view triggers
+     */
+    alert: undefined,
+
+//BEGIN SUGARCRM flav!=ent ONLY
+
+    /**
+     * Holds a reference to the alert this view triggers
      */
     cancelClicked: function () {
         /**
@@ -34,7 +40,7 @@
         this.model.set(changedAttributes);
         app.view.invokeParent(this, {type: 'view', name: 'record', method: 'cancelClicked'});
     },
-//END SUGARCRM flav=pro && flav=!ent ONLY
+//END SUGARCRM flav=!ent ONLY
 
 //BEGIN SUGARCRM flav=ent ONLY
     /**
@@ -46,7 +52,9 @@
         this.once('init', function() {
             var rlis = this.model.getRelatedCollection('revenuelineitems');
             rlis.once('reset', function(collection) {
-                if (collection.length === 0) {
+                // check if the RLI collection is empty
+                // and make sure there isn't another RLI warning on the page
+                if (collection.length === 0 && $('#createRLI').length === 0) {
                     this.showRLIWarningMessage(this.model.module);
                 }
             }, this);
@@ -80,19 +88,38 @@
      * @param string module     The module that we are currently on.
      */
     showRLIWarningMessage: function(module) {
+        // add a callback to close the alert if users navigate from the page
         app.routing.before('route', this.dismissAlert, undefined, this);
 
-        var alert = app.alert.show('opp-rli-create', {
+        this.alert = app.alert.show('opp-rli-create', {
             level: 'warning',
             autoClose: false,
             title: app.lang.get('LBL_ALERT_TITLE_WARNING') + ':',
             messages: Handlebars.compile(app.lang.get('TPL_RLI_CREATE', 'Opportunities'))()
         });
-        alert.$el.find('a[href]').on('click.open', _.bind(function() {
+
+        this.alert.$('a[href]').on('click.open', _.bind(function() {
             // remove the event handler
-            alert.$el.find('a[href]').off('click.open');
+            this.alert.$('a[href]').off('click.open');
             this.openRLICreate();
         }, this));
+
+        this.alert.getCloseSelector().on('click', _.bind(function() {
+            this.alert.getCloseSelector().off('click');
+            app.routing.offBefore('route', this.dismissAlert, this);
+        }, this));
+    },
+
+    /**
+     * @inheritdocs
+     */
+    _dispose: function() {
+        // make sure if there's an alert we remove added listeners
+        if(this.alert){
+            this.alert.getCloseSelector().off('click');
+            this.alert.$('a[href]').off('click.open');
+        }
+        this._super('_dispose', []);
     },
 
     /**
@@ -124,6 +151,10 @@
         }, _.bind(this.rliCreateClose, this));
     },
 
+    /**
+     * Callback for when the create drawer closes
+     * @param model
+     */
     rliCreateClose: function(model) {
         if (!model) {
             return;
