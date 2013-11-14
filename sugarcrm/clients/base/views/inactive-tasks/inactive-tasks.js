@@ -25,6 +25,20 @@
 
     /**
      * {@inheritDoc}
+     *
+     * @property {Number} _defaultSettings.limit Maximum number of records to
+     *   load per request, defaults to '10'.
+     * @property {String} _defaultSettings.visibility Records visibility
+     *   regarding current user, supported values are 'user' and 'group',
+     *   defaults to 'user'.
+     */
+    _defaultSettings: {
+        limit: 10,
+        visibility: 'user'
+    },
+
+    /**
+     * {@inheritDoc}
      */
     initialize: function(options) {
         options.meta = options.meta || {};

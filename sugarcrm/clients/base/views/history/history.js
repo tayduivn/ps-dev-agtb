@@ -25,6 +25,24 @@
 
     /**
      * {@inheritDoc}
+     *
+     * @property {Number} _defaultSettings.filter Number of past days against
+     *   which retrieved records will be filtered, supported values are '7',
+     *   '30' and '90' days, defaults to '7'.
+     * @property {Number} _defaultSettings.limit Maximum number of records to
+     *   load per request, defaults to '10'.
+     * @property {String} _defaultSettings.visibility Records visibility
+     *   regarding current user, supported values are 'user' and 'group',
+     *   defaults to 'user'.
+     */
+    _defaultSettings: {
+        filter: 7,
+        limit: 10,
+        visibility: 'user'
+    },
+
+    /**
+     * {@inheritDoc}
      */
     initialize: function(options) {
         options.meta = options.meta || {};
