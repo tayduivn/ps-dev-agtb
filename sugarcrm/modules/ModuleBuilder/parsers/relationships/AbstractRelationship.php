@@ -363,6 +363,7 @@ class AbstractRelationship
     protected function getLink2FieldDefinition ($sourceModule , $relationshipName, $right_side = false,  $vname = "")
     {
         $vardef = $this->getRelateFieldDefinition($sourceModule, $relationshipName, $vname);
+        unset($vardef['db_concat_fields']);
 
         $vardef [ 'name' ] = $this->getIDName( $sourceModule ) ; // must match the id_name field value in the relate field definition
 		$vardef ['reportable'] = false;
