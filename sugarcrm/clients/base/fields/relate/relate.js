@@ -106,7 +106,7 @@
                     if (_.isUndefined(id)) {
                         return;
                     }
-                    if (collection) {
+                    if (collection && !_.isEmpty(id)) {
                         // if we have search results use that to set new values
                         var model = collection.get(id);
                         attributes.id = model.id;
