@@ -39,9 +39,12 @@
             .donutRatio(0.4)
             .hole(this.chartCollection.properties.label)
             .showTitle(false)
-            .tooltips(false)
+            .tooltips(true)
             .showLegend(false)
-            .colorData('class');
+            .colorData('class')
+            .tooltipContent( function(key, x, y, e, graph) {
+                return '<p><b>' + key +' '+  parseInt(y, 10) +'</b></p>';
+            });
 
         d3.select('svg#' + this.cid)
             .datum(this.chartCollection)
