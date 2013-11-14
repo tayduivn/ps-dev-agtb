@@ -105,6 +105,6 @@
     },
     _dispose: function() {
         if (app.user) app.user.off(null, null, this);
-        app.view.Component.prototype._dispose.call(this);
+        app.view.View.prototype._dispose.call(this);
     }
 })
