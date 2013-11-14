@@ -36,6 +36,9 @@
 ({
     toggled: false,
     className: 'row-fluid',
+    events: {
+        'click [data-action=create]': 'createClicked'
+    },
     error: {
         //Dashboard is a special case where a 404 here shouldn't break the page,
         //it should just send us back to the default homepage
@@ -123,6 +126,20 @@
     },
 
     /**
+     * Navigate to the create layout when create button is clicked.
+     *
+     * @param {Event} evt Mouse event.
+     */
+    createClicked: function(evt) {
+        if (this.model.dashboardModule === 'Home') {
+            var route = app.router.buildRoute(this.module, null, 'create');
+            app.router.navigate(route, {trigger: true});
+        } else {
+            this.navigateLayout('create');
+        }
+    },
+
+    /**
      * Places only components that include the Dashlet plugin and places them in the "main-pane" div of
      * the dashlet layout.
      * @param component {app.view.Component}
@@ -163,11 +180,15 @@
     },
 
     /**
-     * Build the default dashboard metadata only if dashboards are empty
+     * Build the default dashboard metadata only if dashboards are empty.
      *
      * Default dashboard metadata are stored in the following layout metadata
+     * <pre>
      * listview - list-dashboard
      * recordview - record-dashboard
+     * </pre>
+     * If the default dashboard is not assigned,
+     * the layout will render dashboard-empty template.
      */
     setDefaultDashboard: function() {
         if (this.disposed) {
@@ -206,20 +227,18 @@
                     showAlerts: false
                 };
 
+            params.error = _.bind(function() {
+                var template = app.template.getLayout(this.type + '.dashboard-empty');
+                this.$el.html(template(this));
+            }, this);
+
             if (this.context.parent) {
-                params.success = function (model) {
+                params.success = function(model) {
                     self.navigateLayout(model.id);
                 };
-                params.error = function () {
-                    self.navigateLayout("create");
-                };
             } else {
-                params.success = function (model) {
+                params.success = function(model) {
                     app.navigate(self.context, model);
-                };
-                params.error = function () {
-                    var route = app.router.buildRoute(self.module, null, 'create');
-                    app.router.navigate(route, {trigger: true});
                 };
             }
 
@@ -266,9 +285,9 @@
 
         layout._addComponentsFromDef([
             {
-                layout:{
-                    name:'dashboard',
-                    components:[
+                layout: {
+                    type: 'dashboard',
+                    components: (id === 'list') ? [] : [
                         {
                             view: 'dashboard-headerpane'
                         },

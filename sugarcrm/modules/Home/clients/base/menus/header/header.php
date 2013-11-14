@@ -24,7 +24,7 @@ $module_name = 'Home';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route'=>'#'.$module_name.'/create',
-        'label' =>'LBL_DASHBOARD_Add',
+        'label' =>'LBL_CREATE_DASHBOARD_MENU',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',

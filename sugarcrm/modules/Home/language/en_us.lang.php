@@ -139,6 +139,8 @@ $mod_strings = array (
   'LBL_DASHLET_CONFIGURE_MY_ITEMS_ONLY' => 'Only My Items',
   'LBL_DASHLET_CONFIGURE_TITLE' => 'Title',
   'LBL_DASHLET_CONFIGURE_DISPLAY_ROWS' => 'Display Rows',
+  'LBL_NO_DASHBOARD_CONFIGURED' => 'No dashboard configured.',
+  'LBL_CREATE_DASHBOARD_LINK' => 'Create a dashboard',
 
   'LBL_DASHLET_WEBPAGE_NAME' => 'Web Page',
   'LBL_DASHLET_WEBPAGE_DESC' => 'Web Page',
@@ -148,7 +150,7 @@ $mod_strings = array (
   'LBL_DASHLET_REFRESH' => 'Refresh Sugar Dashlet',
   'LBL_DASHLET_EDIT' => 'Edit Sugar Dashlet',
   'LBL_DASHBOARD_TITLE' => 'Dashboard Title',
-  'LBL_DASHBOARD_Add' => 'Create Dashboard',
+  'LBL_CREATE_DASHBOARD_MENU' => 'Create Dashboard',
   'LBL_DASHBOARD_EDIT' => 'Edit Dashboard',
   'LBL_DASHBOARD_ADD_ROW' => 'Add a Row',
   'LBL_DASHBOARD_ADD_1_COLUMN' => '+ 1 column',
