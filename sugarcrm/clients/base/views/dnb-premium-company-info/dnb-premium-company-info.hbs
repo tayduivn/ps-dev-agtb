@@ -10,7 +10,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_SUMMARY"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{{this.product.SubjectHeader.OrganizationSummaryText}}}
 						</div>
 					</li>
@@ -22,7 +22,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_TOTAL_ENQUIERY_COUNT"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.SubjectHeader.TotalInquiriesCount}}
 						</div>
 					</li>
@@ -40,7 +40,7 @@
 									{{/eq}}
 								{{/if}}
 							</div>
-							<div class='txt importData'>
+							<div class='txt import-data'>
 								{{this.IndustryCodeDescription.0.$}}
 							</div>
 						</li>
@@ -54,7 +54,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_UNREACHABLE_INDICATOR"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Telecommunication.TelephoneNumber.0.UnreachableIndicator}}
 						</div>
 					</li>
@@ -66,7 +66,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_RESIDENTIAL_ADDRESS_INDICATOR"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Location.PrimaryAddress.0.ResidentialAddressIndicator}}
 						</div>
 					</li>
@@ -79,7 +79,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_LAST_UPDATE_DATE"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.SubjectHeader.LastUpdateDate.$}}
 						</div>
 					</li>
@@ -91,7 +91,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_STREET_ADDRESS_LINE_TEXT"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.RegisteredDetail.OrganizationIdentificationNumberDetail.0.RegistrationLocation.PrimaryAddress.0.StreetAddressLine.0.LineText}}
 						</div>
 					</li>
@@ -103,7 +103,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_COUNTRY_OFFICIAL_NAME"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Location.PrimaryAddress0.CountyOfficialName}}
 						</div>
 					</li>
@@ -115,7 +115,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_TERRITORY_OFFICIAL_NAME"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Location.PrimaryAddress.0.TerritoryOfficialName}}
 						</div>
 					</li>
@@ -127,7 +127,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_TERRITORY_ABBREVATIVE_NAME"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Location.PrimaryAddress.0.TerritoryAbbreviatedName}}
 						</div>
 					</li>
@@ -139,7 +139,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_TELECOMMUNICATION_NUMBER"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Telecommunication.TelephoneNumber.0.TelecommunicationNumber}}
 						</div>
 					</li>
@@ -151,19 +151,19 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_INTERNATIONAL_DIALLING_CODE"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Telecommunication.TelephoneNumber.0.InternationalDialingCode}}
 						</div>
 					</li>
 				{{/if}}
-				
+
 				<!-- Incorporation Year-->
 				{{#if product.RegisteredDetail.IncorporationYear}}
 					<li>
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_INCORPORATION_YEAR"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.RegisteredDetail.IncorporationYear}}
 						</div>
 					</li>
@@ -175,7 +175,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_ORGANIZATION_IDENTIFICATION_NUMBER"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.RegisteredDetail.OrganizationIdentificationNumberDetail.0.OrganizationIdentificationNumber}}
 						</div>
 					</li>
@@ -187,7 +187,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_ORGANIZATION_FILLING_NAME"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.RegisteredDetail.OrganizationIdentificationNumberDetail.0.FilingOrganizationName}}
 						</div>
 					</li>
@@ -199,19 +199,19 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_STOCK_EXCHANGE_TICKER_NAME"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.RegisteredDetail.StockExchangeDetails.1.StockExchangeTickerName}}
 						</div>
 					</li>
 				{{/if}}
-				
+
 				<!-- Line of Business Description -->
 				{{#if product.ActivitiesAndOperations.LineOfBusinessDetails.0.LineOfBusinessDescription.$}}
 					<li>
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_LINE_OF_BUSINESS_DESCRIPTION"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.ActivitiesAndOperations.LineOfBusinessDetails.0.LineOfBusinessDescription.$}}
 						</div>
 					</li>
@@ -223,7 +223,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_IMPORT_DETAILS_INDICATOR"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.ActivitiesAndOperations.ImportDetails.ImportIndicator}}
 						</div>
 					</li>
@@ -235,7 +235,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_EXPORT_DETAILS_INDICATOR"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.ActivitiesAndOperations.ExportDetails.ExportIndicator}}
 						</div>
 					</li>
@@ -247,7 +247,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_SUBAGENT_INDICATOR"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.ActivitiesAndOperations.SubjectIsAgentDetails.AgentIndicator}}
 						</div>
 					</li>
@@ -259,7 +259,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_TOTAL_EMPLOYEE_QUANTITY"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.EmployeeFigures.IndividualEntityEmployeeDetails.TotalEmployeeQuantity}}
 						</div>
 					</li>
@@ -277,7 +277,7 @@
 									{{str "LBL_DNB_ASSOCIATE"}}
 								{{/if}}
 							</div>
-							<div class='txt importData'>
+							<div class='txt import-data'>
 								{{this.PrincipalName.FullName}}
 							</div>
 						</li>
@@ -296,7 +296,7 @@
 							{{/if}}
 							<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_SENIOR_PRINCIPAL"}}</span>
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{product.PrincipalsAndManagement.MostSeniorPrincipal.PrincipalName.FullName}}
 						</div>
 					</li>
@@ -309,7 +309,7 @@
 							<div class='dnb-company-label'>
 								{{str "LBL_DNB_RATING"}}
 							</div>
-							<div class='txt importData'>
+							<div class='txt import-data'>
 								{{this.AssessmentTypeValue}}&nbsp;&nbsp;:&nbsp;&nbsp;{{this.AssessmentValue}}
 							</div>
 						</li>
@@ -322,7 +322,7 @@
 						<div class='dnb-company-label'>
 								{{str "LBL_DNB_SOCIO_INDICATOR"}}
 							</div>
-							<div class='txt importData'>
+							<div class='txt import-data'>
 								{{str "LBL_DNB_SMALL_BUSINESS_INDICATOR"}}&nbsp;&nbsp;:&nbsp;&nbsp;{{product.SocioEconomicIdentification.SmallBusinessIndicator}}
 							</div>
 					</li>
@@ -334,7 +334,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_ETHNICITY_TYPE_TEXT"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.SocioEconomicIdentification.OwnershipEthnicity.0.EthnicityTypeText.$}}
 						</div>
 					</li>
@@ -346,7 +346,7 @@
 						<div class='dnb-company-label'>
 								{{str "LBL_DNB_ASSESMENT"}}
 							</div>
-							<div class='txt importData'>
+							<div class='txt import-data'>
 								{{str "LBL_DNB_HISTORY_RATING_TEXT"}}&nbsp;&nbsp;:&nbsp;&nbsp;{{product.Assessment.HistoryRatingText.$}}
 							</div>
 					</li>
@@ -357,19 +357,19 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_TRANSFERRED_FROM_DUNS_NUMBER"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.SubjectHeader.TransferDUNSNumberRegistration.0.TransferredFromDUNSNumber}}
 						</div>
 					</li>
 				{{/if}}
-				
-				
+
+
 				{{#if product.SubjectHeader.DUNSSelfRequestIndicator}}
 					<li>
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_SELF_REQUEST_INDICATOR"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{product.SubjectHeader.DUNSSelfRequestIndicator}}
 						</div>
 					</li>
@@ -379,30 +379,30 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_PRIMARY_TOWN"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Location.PrimaryAddress.0.PrimaryTownName}}
 						</div>
 					</li>
 				{{/if}}
-				
+
 				{{#if product.Location.PrimaryAddress.0.PostalCode}}
 					<li>
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_PRIMARY_ADDRESS_POSTAL_CODE"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Location.PrimaryAddress.0.PostalCode}}
 						</div>
 					</li>
 				{{/if}}
-				
-				
+
+
 				{{#if product.Location.PrimaryAddress.0.UndeliverableIndicator}}
 					<li>
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_UNDELIVERABLE_INDICATOR"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Location.PrimaryAddress.0.UndeliverableIndicator}}
 						</div>
 					</li>
@@ -412,18 +412,18 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_ADDRESS_TENURE_DETAILS"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Location.PrimaryAddress.0.AddressUsageTenureDetail.0.TenureTypeText.$}}
 						</div>
 					</li>
 				{{/if}}
-				
+
 				{{#if product.Location.PrimaryAddress.0.CountryGroupName}}
 					<li>
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_COUNTRY_GROUP_NAME"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Location.PrimaryAddress.0.CountryGroupName}}
 						</div>
 					</li>
@@ -433,7 +433,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_PREMISES_AREA_MEASUREMENT"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Location.PrimaryAddress.0.PremisesDetail.0.PremisesAreaMeasurement}}
 						</div>
 					</li>
@@ -443,7 +443,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_MEASUREMENT_RELIABILITY_TEXT"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Location.PrimaryAddress.0.PremisesDetail.0.PremisesAreaMeasurementReliabilityText.$}}
 						</div>
 					</li>
@@ -453,7 +453,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_MEASUREMENT_UNIT_TEXT"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Location.PrimaryAddress.0.PremisesDetail.0.PremisesAreaMeasurementUnitText.$}}
 						</div>
 					</li>
@@ -463,7 +463,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_LATITUDE_MEASUREMENT"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Location.PrimaryAddress.0.LatitudeMeasurement}}
 						</div>
 					</li>
@@ -473,33 +473,33 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_LONGITUDE_MEASUREMENT"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Location.PrimaryAddress.0.LongitudeMeasurement}}
 						</div>
 					</li>
 				{{/if}}
-				
-				
+
+
 				{{#if product.Telecommunication.WebPageAddress.0.TelecommunicationAddress}}
 					<li>
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_WEBPAGE_ADDRESS"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.Telecommunication.WebPageAddress.0.TelecommunicationAddress}}
 						</div>
 					</li>
 				{{/if}}
 
-				
-				
-				
+
+
+
 				{{#if productName.OrganizationPrimaryName.0.OrganizationName.$}}
 					<li>
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_ORGANIZATION_NAME"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.productName.OrganizationPrimaryName.0.OrganizationName.$}}
 						</div>
 					</li>
@@ -509,7 +509,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_TRADE_STYLE_NAME"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.productName.TradeStyleName.0.OrganizationName.$}}
 						</div>
 					</li>
@@ -519,7 +519,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_FAMILY_TREE_MEMBER_ROLE_TEXT"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.productDetail.FamilyTreeMemberRole.0.FamilyTreeMemberRoleText.$}}
 						</div>
 					</li>
@@ -529,7 +529,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_STAND_ALONE_ORGANIZATION_INDICATOR"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.productDetail.StandaloneOrganizationIndicator}}
 						</div>
 					</li>
@@ -539,7 +539,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_CONTROL_OWNERSHIP_DATE"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.productDetail.ControlOwnershipDate.$}}
 						</div>
 					</li>
@@ -549,7 +549,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_CONTROL_OWNERSHIP_TYPE_TEXT"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.productDetail.ControlOwnershipTypeText.$}}
 						</div>
 					</li>
@@ -559,7 +559,7 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_OPERATING_STATUS_TEXT"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.productDetail.OperatingStatusText.$}}
 						</div>
 					</li>
@@ -569,20 +569,20 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_ORGANIZATION_START_DATE"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.productDetail.OrganizationStartYear}}
 						</div>
 					</li>
 				{{/if}}
-				
-				
-				
+
+
+
 				{{#if product.RegisteredDetail.OrganizationIdentificationNumberDetail.0.RegistrationLocation.PrimaryAddress.0.PrimaryTownName}}
 					<li>
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_PRIMARY_TOWN_NAME"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.RegisteredDetail.OrganizationIdentificationNumberDetail.0.RegistrationLocation.PrimaryAddress.0.PrimaryTownName}}
 						</div>
 					</li>
@@ -592,62 +592,62 @@
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_REGISTRATION_LOCATION_POSTAL_CODE"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.RegisteredDetail.OrganizationIdentificationNumberDetail.0.RegistrationLocation.PrimaryAddress.0.PostalCode}}
 						</div>
 					</li>
 				{{/if}}
-				
+
 				{{#if product.RegisteredDetail.OrganizationIdentificationNumberDetail.0.RegistrationIssuerName}}
 					<li>
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_REGISTRATION_ISSUER_NAME"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.RegisteredDetail.OrganizationIdentificationNumberDetail.0.RegistrationIssuerName}}
 						</div>
 					</li>
 				{{/if}}
-				
-				
+
+
 				{{#if product.RegisteredDetail.StockExchangeDetails.1.StockExchangeName.$}}
 					<li>
 						<div class='dnb-company-label'>
 							{{str "LBL_DNB_STOCK_EXCHANGE_NAME"}}
 						</div>
-						<div class='txt importData'>
+						<div class='txt import-data'>
 							{{this.product.RegisteredDetail.StockExchangeDetails.1.StockExchangeName.$}}
 						</div>
 					</li>
 				{{/if}}
-				
+
 				{{#if product.SocioEconomicIdentification.MinorityOwnedIndicator}}
 					<li>
 						<div class='dnb-company-label'>
 								{{str "LBL_DNB_SOCIO_INDICATOR"}}
 							</div>
-							<div class='txt importData'>
+							<div class='txt import-data'>
 								{{str "LBL_DNB_MINORITY_OWNER_INDICATOR"}}&nbsp;&nbsp;:&nbsp;&nbsp;{{product.SocioEconomicIdentification.MinorityOwnedIndicator}}
 							</div>
 					</li>
 				{{/if}}
-				
+
 				{{#if product.Assessment.CommercialCreditScore}}
 					<li>
 						<div class='dnb-company-label'>
 								{{str "LBL_DNB_HISTORY_RATING_TEXT"}}
 							</div>
-							<div class='txt importData'>
+							<div class='txt import-data'>
 								{{str "LBL_DNB_RISK_CLASS"}}&nbsp;&nbsp;:&nbsp;&nbsp;{{product.Assessment.CommercialCreditScore.0.MarketingRiskClassText.$}}
 							</div>
 					</li>
 				{{/if}}
-				
+
 			</ul>
 		</div>
 		<div class="dnb-show-more">
-	        <a class="showMoreData">{{str "LBL_DNB_SHOW_MORE"}}... <i class="icon-chevron-down"></i></a>
-	        <a class="showLessData">{{str "LBL_DNB_SHOW_LESS"}}... <i class="icon-chevron-up"></i></a>
+	        <a class="showMoreData more">{{str "LBL_DNB_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
+	        <a class="showLessData less">{{str "LBL_DNB_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
 	    </div>
 	{{else}}
 		 <aside class='create-no-data'>
