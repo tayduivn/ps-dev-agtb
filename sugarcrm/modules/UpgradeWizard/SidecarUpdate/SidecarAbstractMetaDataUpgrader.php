@@ -343,6 +343,26 @@ abstract class SidecarAbstractMetaDataUpgrader
     }
 
     /**
+     * Determines if a field exists on the bean
+     * @param $field
+     * @return bool
+     */
+    public function isValidField($field)
+    {
+        $field = strtolower($field);
+        $bean = BeanFactory::getBean($this->module);
+        if (empty($bean)) {
+            // no idea where it came from, let it pass.no reason to remove fields that may be necessary
+            return true;
+        }
+        if (empty($bean->field_defs[$field])) {
+            return false;
+        }
+        return true;
+    }
+
+
+    /**
      * Saves the contents of a file to the specified path
      *
      * @param string $path The path to the file to save

@@ -121,6 +121,10 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 continue;
             }
 
+            if (!$this->isValidField($name)) {
+                continue;
+            }
+
             // Subqueries not supported yet
             if(!empty($searchFields[$name]['operator']) && $searchFields[$name]['operator'] == 'subquery') continue;
 
