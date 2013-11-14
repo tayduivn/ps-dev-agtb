@@ -404,9 +404,7 @@
      * @return {Object}
      */
     _getListMeta: function(module) {
-        var listMeta = app.metadata.getView(module, 'list');
-
-        return listMeta;
+        return app.metadata.getView(module, 'list');
     },
 
     /**
