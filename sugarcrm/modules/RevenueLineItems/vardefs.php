@@ -948,6 +948,24 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_EMAILS',
             'studio' => array("formula" => false),
         ),
+        'calls' => array(
+            'name' => 'calls',
+            'type' => 'link',
+            'relationship' => 'revenuelineitem_calls',
+            'module' => 'Calls',
+            'bean_name' => 'Call',
+            'source' => 'non-db',
+            'vname' => 'LBL_CALLS',
+        ),
+        'meetings' => array(
+            'name' => 'meetings',
+            'type' => 'link',
+            'relationship' => 'revenuelineitem_meetings',
+            'module' => 'Meetings',
+            'bean_name' => 'Meeting',
+            'source' => 'non-db',
+            'vname' => 'LBL_MEETINGS',
+        ),
     ),
     'indices' => array(
         array('name' => 'idx_revenuelineitem', 'type' => 'index', 'fields' => array('name', 'deleted')),
@@ -1027,6 +1045,28 @@ $dictionary['RevenueLineItem'] = array(
             'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'modified_user_id',
             'relationship_type' => 'one-to-many'
+        ),
+        'revenuelineitem_calls' => array(
+            'lhs_module' => 'RevenueLineItems',
+            'lhs_table' => 'revenue_line_items',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Calls',
+            'rhs_table' => 'calls',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'RevenueLineItems'
+        ),
+        'revenuelineitem_meetings' => array(
+            'lhs_module' => 'RevenueLineItems',
+            'lhs_table' => 'revenue_line_items',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Meetings',
+            'rhs_table' => 'meetings',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'RevenueLineItems'
         ),
     ),
     'duplicate_check' => array(

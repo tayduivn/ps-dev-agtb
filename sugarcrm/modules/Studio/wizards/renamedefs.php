@@ -340,6 +340,8 @@ $renamedefs = array(
             array('name' => 'LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE', 'type' => 'singular', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
             array('name' => 'LBL_COMMIT_STAGE_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
+            array('name' => 'LBL_REVENUELINEITEMS', 'type' => 'plural', 'source' => 'Calls'),
+            array('name' => 'LBL_REVENUELINEITEMS', 'type' => 'plural', 'source' => 'Meetings'),
         ),
         'Reports' => array(
             array('name' => 'LNK_NEW_CONTACT', 'type' => 'singular', 'source' => 'Contacts'),
