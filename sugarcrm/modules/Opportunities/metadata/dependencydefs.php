@@ -64,7 +64,7 @@ $dependencies['Opportunities']['best_worst_sales_stage_read_only'] = array(
             'params' => array(
                 'target' => 'best_case',
                 'label' => 'best_case_label', //normally <field>_label
-                'value' => 'isInList($sales_stage, createList("Closed Won"))', //Formula
+                'value' => 'isInList($sales_stage, createList("Closed Won", "Closed Lost"))', //Formula
             ),
         ),
         array(
@@ -73,7 +73,7 @@ $dependencies['Opportunities']['best_worst_sales_stage_read_only'] = array(
             'params' => array(
                 'target' => 'worst_case',
                 'label' => 'worst_case_label', //normally <field>_label
-                'value' => 'isInList($sales_stage, createList("Closed Won"))', //Formula
+                'value' => 'isInList($sales_stage, createList("Closed Won", "Closed Lost"))', //Formula
             ),
         ),
         array(
@@ -82,7 +82,7 @@ $dependencies['Opportunities']['best_worst_sales_stage_read_only'] = array(
             'params' => array(
                 'target' => 'best_case',
                 'label' => 'best_case_label',
-                'value' => 'ifElse(isInList($sales_stage, createList("Closed Won")), $amount, $best_case)',
+                'value' => 'ifElse(isInList($sales_stage, createList("Closed Won", "Closed Lost")), $amount, $best_case)',
             ),
         ),
         array(
@@ -91,7 +91,7 @@ $dependencies['Opportunities']['best_worst_sales_stage_read_only'] = array(
             'params' => array(
                 'target' => 'worst_case',
                 'label' => 'worst_case_label',
-                'value' => 'ifElse(isInList($sales_stage, createList("Closed Won")), $amount, $worst_case)',
+                'value' => 'ifElse(isInList($sales_stage, createList("Closed Won", "Closed Lost")), $amount, $worst_case)',
             ),
         ),
     )
@@ -111,7 +111,7 @@ $dependencies['Opportunities']['likely_case_copy_when_closed'] = array(
             'params' => array(
                 'target' => 'best_case',
                 'label' => 'best_case_label',
-                'value' => 'ifElse(isInList($sales_stage, createList("Closed Won")), $amount, $best_case)',
+                'value' => 'ifElse(isInList($sales_stage, createList("Closed Won", "Closed Lost")), $amount, $best_case)',
             ),
         ),
         array(
@@ -120,7 +120,7 @@ $dependencies['Opportunities']['likely_case_copy_when_closed'] = array(
             'params' => array(
                 'target' => 'worst_case',
                 'label' => 'worst_case_label',
-                'value' => 'ifElse(isInList($sales_stage, createList("Closed Won")), $amount, $worst_case)',
+                'value' => 'ifElse(isInList($sales_stage, createList("Closed Won", "Closed Lost")), $amount, $worst_case)',
             ),
         ),
     )
