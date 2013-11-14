@@ -16,22 +16,23 @@
 	padding-bottom: 5px;
 }
 
-
 div.dnb-checkbox-nav {
 	float:left;
 	width: 20px;
-	margin:10px 5px;
-	padding:0;
+	margin: 10px 5px;
+	padding: 0;
 	overflow: hidden;
 }
 div.dnb-company-label {
 	font-size: @fontSizeSmall;
-    color: darken(@grayLight, 5%);
 	padding-bottom: 2px;
 }
-div.txt {
-	font-size: 12px;
-	color: #454545;
+div.txt.import-data {
+	padding-left: 12px;
+	p {
+		font-size: 12px;
+		padding: 0;
+	}
 }
 div.dnb-company-list {
 	font-size: 12px;
@@ -44,32 +45,27 @@ div.url-txt {
 }
 div.dnb-show-less {
 	height: 215px;
-	overflow: hidden !important;
+	overflow: auto;
+}
+div.dnb-show-all {
+	max-height: 335px;
+	overflow: auto;
+}
+div.dnb-show-more {
+	padding: 6px 0 6px 12px;
+	border-top: 1px solid darken(@grayLighter,10%);
+	width: 100%;
+	.box-sizing(border-box);
+	background-color: @white;
+	border-radius: 0 0 4px 4px;
+}
+div.create-acc {
+	overflow: hidden;
 	margin: auto;
 	padding: 0px;
 }
-div.dnb-show-all {
-	height:auto;
-}
-/*div.dnb-company-details {
-	overflow: scroll;
-	height:300px;
-}*/
-div.dnb-show-more {
-	height:25px;
-	overflow: hidden;
-	padding: 5px 0 0 35px;
-	border: 1px solid #EEEEEE;
-	font-weight: bold;
-	font-size: 12px;
-}
-div.create-acc {
-	overflow:hidden !important;
-	margin:auto;
-	padding:0px;
-}
 aside.create-no-data {
-	margin:25px 0 0 0;
+	margin: 25px 0 0 0;
 	text-align: center;
 	height: 50px;
 }
@@ -92,48 +88,16 @@ a.dnb-companyname {
 }
 a.dnb-top-competitor {
 	font-size: 13px;
-	font-weight:bold;
+	font-weight: bold;
 }
 
-div.accordion-inner {
-	div.dnb-subtitle {
-		margin:10px 0;
-		line-height: 15px;
-		overflow: hidden;
-		padding: 0px;
-		font-weight: bold;
-		color:@gray;
-	}
-	h4 {
-		font-weight: bold;
-		margin:0 0 0 -10px;
-		color: #759EEF;
-	}
-	.dnb-inner-nav {
-		padding: 0px;
-	}
+input[type="checkbox"] .dnb_checkbox {
+	margin: 5px 0 0 0;
 }
 
-
+//this is too general
 div aside {
 	text-align: center;
 	overflow: hidden;
 }
 
-ul.list li {
-	list-style: none;
-	border-top: 1px solid @grayLighter;
-	padding: 10px 0 0 10px;
-	margin: 0;
-}
-
-ul.list li.jstree-leaf {
-	padding: 10px 0 5px 5px;
-}
-.jstree li > a > .jstree-icon {
-	padding: 5px;
-}
-
-input[type="checkbox"] .dnb_checkbox {
-	margin:5px 0 0 0;
-}
