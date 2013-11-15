@@ -1110,11 +1110,10 @@ EOQ;
 
 	function get_list_view_data() {
 
-		global $current_user, $mod_strings;
-        // Bug #48555 Not User Name Format of User's locale.
-        $this->_create_proper_name_field();
+		global $mod_strings;
 
-		$user_fields = $this->get_list_view_array();
+		$user_fields = parent::get_list_view_data();
+
 		if ($this->is_admin)
 			$user_fields['IS_ADMIN_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '',null,null,'.gif',$mod_strings['LBL_CHECKMARK']);
 		elseif (!$this->is_admin) $user_fields['IS_ADMIN'] = '';
@@ -1152,7 +1151,6 @@ EOQ;
 			}
 		}
 		//END SUGARCRM flav=pro ONLY
-		$user_fields['EMAIL1'] = $this->emailAddress->getPrimaryAddress($this);
 
 		return $user_fields;
 	}
