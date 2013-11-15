@@ -26,8 +26,9 @@
  ********************************************************************************/
 ({
     /**
-     * extendsFrom: This needs to be app.view.AlertView since it's extending a Sidecar specific view class.  This is a
-     * special case, as the normal method is for it to be a string.
+     * extendsFrom: This needs to be app.view.AlertView since it's extending
+     * a Sidecar specific view class. This is a special case, as the normal
+     * method is for it to be a string.
      */
         extendsFrom: app.view.AlertView,
 
@@ -50,6 +51,20 @@
             CONFIRMATION: 'confirmation'
         },
 
+    /**
+     * Initialize alert view.
+     *
+     * Supported options are:
+     *  - options.level: Type of alert
+     *  - options.onConfirm: Handler of action Confirm for confirmation alerts
+     *  - options.onCancel: Handler of action Cancel for confirmation alerts
+     *  - options.onLinkClicked: Handler for click actions on a link inside the
+     *    alert
+     *  - options.templateOptions: Augment template context with custom object
+     *
+     * @override
+     * @param {Object} options
+     */
         initialize: function(options) {
             app.plugins.attach(this, 'view');
             this.onConfirm = options.onConfirm;
@@ -71,22 +86,17 @@
             if (_.isUndefined(options)) {
                 return this;
             }
+
             var template = this.getAlertTemplate(options.level, options.messages, options.title, this.templateOptions);
             this.$el.html(template);
             this.$el.after('<br>');
 
-            this.show(options.level);
             this.trigger('render');
         },
 
-        show: function(level) {
-            this.$el.show();
-        },
-
-        close: function() {
-            this.$el.fadeOut().remove();
-        },
-
+        /**
+         * Dismiss the alert when user clicks `cancel`
+         */
         cancel: function() {
             this.trigger('dismiss');
             app.alert.dismiss(this.key);
@@ -112,6 +122,11 @@
             this.cancel();
         },
 
+        /**
+         * Fired when a link is clicked
+         *
+         * @param {Event} event
+         */
         linkClick: function(event) {
             if (_.isFunction(this.onLinkClick)) {
                 this.onLinkClick(event);
@@ -120,10 +135,11 @@
 
         /**
          * Get the HTML string for alert given alert level
-         * @param level
-         * @param messages
-         * @param title (optional)
-         * @param templateOptions (optional) additional custom options passed to template function
+         * @param {String} level
+         * @param {String/Array} messages
+         * @param {String} title(optional)
+         * @param {Object} templateOptions(optional) additional custom options
+         *                 passed to template function
          * @return {String}
          */
         getAlertTemplate: function(level, messages, title, templateOptions) {
@@ -135,7 +151,7 @@
             switch (level) {
                 case this.LEVEL.PROCESS:
                     //Cut ellipsis at the end of the string
-                    title = title.substr(-3)==='...' ? title.substr(0, title.length-3) : title;
+                    title = title.substr(-3) === '...' ? title.substr(0, title.length - 3) : title;
                     template = app.template.getView(this.name + '.process');
                     break;
                 case this.LEVEL.SUCCESS:
@@ -160,7 +176,7 @@
 
         /**
          * Get CSS classes given alert level
-         * @param level
+         * @param {String} level
          * @return {String}
          */
         getAlertClasses: function(level) {
@@ -184,7 +200,7 @@
 
         /**
          * Get the default title given alert level
-         * @param level
+         * @param {String} level
          * @return {String}
          */
         getDefaultTitle: function(level) {
@@ -208,18 +224,18 @@
 
     /**
      * Return translated text, given a string or an array of strings.
-     * @param stringOrArray
-     * @return {*}
+     * @param {String/Array} stringOrArray
+     * @return {String/Array}
      */
     getTranslatedLabels: function(stringOrArray) {
         var result;
 
         if (_.isArray(stringOrArray)) {
             result = _.map(stringOrArray, function(text) {
-                return app.lang.getAppString(text);
+                return new Handlebars.SafeString(app.lang.getAppString(text));
             });
         } else {
-            result = app.lang.getAppString(stringOrArray);
+            result = new Handlebars.SafeString(app.lang.getAppString(stringOrArray));
         }
 
         return result;
@@ -228,10 +244,13 @@
     /**
      * Remove br tags after alerts which are needed to stack alerts vertically.
      */
-    close: function(){
+    close: function() {
         this.$el.next('br').remove();
         this._super('close');
     },
 
-    bindDataChange : function() {}
+    /**
+     * @override
+     */
+    bindDataChange: function() {}
 })
