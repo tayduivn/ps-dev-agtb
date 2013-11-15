@@ -46,18 +46,25 @@ class SugarFieldCurrency extends SugarFieldFloat
     /**
      * @see SugarFieldBase::importSanitize()
      */
-    public function importSanitize(
-        $value,
-        $vardef,
-        $focus,
-        ImportFieldSanitize $settings
-        )
+    public function importSanitize($value, $vardef, $focus, ImportFieldSanitize $settings)
     {
-        $value = str_replace($settings->currency_symbol,"",$value);
-        
-        return $settings->float($value,$vardef,$focus);
-    }
+        require_once('include/SugarCurrency/SugarCurrency.php');
+        /** @var Currency $base_currency */
+        $base_currency = SugarCurrency::getBaseCurrency();
+        $currency_id = $settings->currency_id;
+        if (isset($vardef['convertToBase']) && $vardef['convertToBase']) {
+            // convert amount from base
+            $value = str_replace($base_currency->symbol, '', $value);
+            $value = SugarCurrency::convertAmountFromBase($value, $settings->currency_id);
+        } elseif (isset($vardef['is_base_currency']) && $vardef['is_base_currency']) {
+            $value = str_replace($base_currency->symbol, '', $value);
+            $currency_id = $base_currency->id;
+        } else {
+            $value = str_replace($settings->currency_symbol, '', $value);
+        }
 
+        return SugarCurrency::formatAmount(unformat_number($value), $currency_id, 6, '.', '', false);
+    }
 
     /**
      * Handles export field sanitizing for field type
@@ -76,6 +83,8 @@ class SugarFieldCurrency extends SugarFieldFloat
             // convert amount to base
             $baseRate = isset($row['base_rate']) ? $row['base_rate'] : $focus->base_rate;
             $value = SugarCurrency::convertWithRate($value, $baseRate);
+            $currency_id = '-99';
+        } elseif (isset($vardef['is_base_currency']) && $vardef['is_base_currency']) {
             $currency_id = '-99';
         } else {
             //If the row has a currency_id set, use that instead of the $focus->currency_id value
