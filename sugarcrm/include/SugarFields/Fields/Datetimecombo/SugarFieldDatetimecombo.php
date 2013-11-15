@@ -195,6 +195,9 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
 
         try {
             $date = SugarDateTime::createFromFormat($format, $value, new DateTimeZone($settings->timezone));
+            if ((int) $date->year < 100) {
+                return false;
+            }
         } catch(Exception $e) {
             return false;
         }
