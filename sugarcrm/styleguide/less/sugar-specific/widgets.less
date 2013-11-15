@@ -67,7 +67,7 @@
   font-size: @baseFontSize;
   overflow: auto;
   width: 100%;
-
+  .border-radius(0 0 3px 3px);
 }
 
 .widget {
@@ -266,12 +266,6 @@
     }
   }
 
-  table {
-    font-size: @baseFontSize;
-  }
-  .table {
-    margin-bottom: 0;
-  }
   table.dataTable > tbody > tr:last-child td {
     border-bottom-width: 0;
     &:first-child {
@@ -280,9 +274,6 @@
     &:last-child {
       .border-bottom-right-radius(3px);
     }
-  }
-  .list-view {
-    .border-radius(0 0 4px 4px);
   }
 
   .actions {
