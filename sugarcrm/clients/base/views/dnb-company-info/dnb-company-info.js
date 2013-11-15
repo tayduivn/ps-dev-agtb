@@ -396,11 +396,11 @@
             //if value is set on accounts obj and same as dnb response then mark as dup
             if(!_.isUndefined(accountsModel.get(dataElementName)) && accountsModel.get(dataElementName) != '' &&
                 !_.isUndefined(dnbResponseMap[dataElementName]) && dnbResponseMap[dataElementName] != ''
-                && $.trim(accountsModel.get(dataElementName)) == $.trim(dnbResponseMap[dataElementName]))
+                && $.trim(accountsModel.get(dataElementName).toLowerCase()) == $.trim(dnbResponseMap[dataElementName].toLowerCase()))
                 dataIndicatorMap[dataElementName] = 'dup';
             else if(!_.isUndefined(accountsModel.get(dataElementName)) && accountsModel.get(dataElementName) != '' &&
                 !_.isUndefined(dnbResponseMap[dataElementName]) && dnbResponseMap[dataElementName] != ''
-                && $.trim(accountsModel.get(dataElementName)) != $.trim(dnbResponseMap[dataElementName]))
+                && $.trim(accountsModel.get(dataElementName).toLowerCase()) != $.trim(dnbResponseMap[dataElementName].toLowerCase()))
                 dataIndicatorMap[dataElementName] = 'upd';
             //else value is set on accounts obj and different from dnb response then mark as upd
         });
