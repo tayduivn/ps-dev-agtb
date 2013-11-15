@@ -16,7 +16,7 @@
 $viewdefs['base']['view']['dnb-standard-company-info'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_DNB_STD_COMPANY_INFO',
+            'label' => 'LBL_DNB_STD_COMPANY_INFO',
             'description' => 'LBL_DNB_STD_COMPANY_INFO_DESC',
             'filter' => array(
                 'module' => array(

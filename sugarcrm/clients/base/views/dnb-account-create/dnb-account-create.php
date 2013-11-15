@@ -16,7 +16,7 @@
 $viewdefs['base']['view']['dnb-account-create'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_DNB_ACC_CRT',
+            'label' => 'LBL_DNB_ACC_CRT',
             'description' => 'LBL_DNB_ACC_CRT_DESC',
             'config' => array(
                 'limit' => '3',

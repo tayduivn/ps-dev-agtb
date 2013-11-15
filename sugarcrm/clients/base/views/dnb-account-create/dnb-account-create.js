@@ -37,10 +37,15 @@
         'click .backToList' : 'backToCompanyList'
 	},
 
+    configuredKey: "dnb:account:create:configured",
+
 	initialize:function(options)
 	{
         app.view.View.prototype.initialize.call(this, options);
-        this.context.on('input:name:keyup', this.dnbSearch, this);  
+        this.context.on('input:name:keyup', this.dnbSearch, this);
+
+        // check to see if we are configured
+        this.checkConfig();
 	},
 	
     loadData: function (options) 
@@ -64,10 +69,38 @@
         this.$('div#dnb-search-results').show();
         this.$('.showLessData').hide();
     },
+    /**
+     * Checks if external api is configured
+     */
+    checkConfig: function() {
+        var self = this;
+        var searchString = 'sugarcrm';
+        var dnbSearchUrl = app.api.buildURL('connector/dnb/search/' + searchString,'',{},{});
+            this.hide();
+        app.api.call('READ', dnbSearchUrl, {},{
+            success: function(data)
+            {
+                if (data.error && data.error === 'ERROR_DNB_CONFIG') {
+                   // not configured dont do anything
+                    app.cache.set(self.configuredKey, false);
+                } else  {
+                    app.cache.set(self.configuredKey, true);
+                    if (!self.disposed) {
+                        self.show();
+                        self.render();
+                        return true;
+                    }
+                }
 
+            }
+        });
+    },
     /* event listener for keyup / autocomplete feature */
     dnbSearch: function(searchString)
     {
+        if (!app.cache.get(this.configuredKey)) {
+            return;
+        }
         
         if(!this.keyword || (this.keyword && this.keyword != searchString))
         {
@@ -89,11 +122,6 @@
                     {
                         if(data.error)
                         {
-                            self.showAdmin = app.acl.hasAccess('admin', 'Administration');
-                            self.template = app.template.get(self.name + '.dnb-config');
-                            if (!self.disposed) {
-                                app.view.View.prototype._render.call(self);
-                            }
                         }
                         else
                         {

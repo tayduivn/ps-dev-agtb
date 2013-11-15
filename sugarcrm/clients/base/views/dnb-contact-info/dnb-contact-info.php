@@ -16,7 +16,7 @@
 $viewdefs['base']['view']['dnb-contact-info'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_DNB_CONTACT',
+            'label' => 'LBL_DNB_CONTACT',
             'description' => 'LBL_DNB_CONTACT_DESC',
             'filter' => array(
                 'module' => array(

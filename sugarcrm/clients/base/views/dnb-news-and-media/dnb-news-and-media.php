@@ -16,7 +16,7 @@
 $viewdefs['base']['view']['dnb-news-and-media'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_DNB_NEWS_AND_MEDIA',
+            'label' => 'LBL_DNB_NEWS_AND_MEDIA',
             'description' => 'LBL_DNB_NEWS_AND_MEDIA_DESC',
             'filter' => array(
                 'module' => array(

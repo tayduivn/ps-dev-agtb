@@ -16,7 +16,7 @@
 $viewdefs['base']['view']['dnb-financial-info'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_DNB_FINANCIAL',
+            'label' => 'LBL_DNB_FINANCIAL',
             'description' => 'LBL_DNB_FINANCIAL_DESC',
             'filter' => array(
                 'module' => array(

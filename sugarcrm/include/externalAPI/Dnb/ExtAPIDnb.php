@@ -38,7 +38,8 @@ class ExtAPIDnb extends ExternalAPIBase
     private $dnbApplicationId;
     private $dnbUsername;
     private $dnbPassword;
-    private $dnbEnv; 
+    private $dnbEnv;
+    public $supportedModules = array();
    
     function __construct()
     {
@@ -46,7 +47,15 @@ class ExtAPIDnb extends ExternalAPIBase
         $this->dnbUsername = $this->getConnectorParam('dnb_username');
         $this->dnbPassword = $this->getConnectorParam('dnb_password');
         $this->dnbEnv = $this->getConnectorParam('dnb_env');
-        session_start();
+        // start a session if one hasnt been started
+        try {
+            if(!isset($_SESSION)){
+                session_start();
+            }
+        } catch (Exception $e) {
+            $GLOBALS['log']->debug('Tried to start new session for dnb but was not able to.');
+        }
+
     }
 
      /**

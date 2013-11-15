@@ -3253,10 +3253,10 @@ $app_strings = array (
     'LBL_DASHLET_NEWS_DESCRIPTION' => 'Google News feed for Related Account',
 
     'LBL_DASHLET_OPPORTUNITY_NAME' => 'Opportunity Metrics',
-    'LBL_DASHLET_OPPORTUNITY_DESCRIPTION' => 'Opportunity Metrics for Related Account',
+    'LBL_DASHLET_OPPORTUNITY_DESCRIPTION' => 'Opportunity Metrics for Related Account.  Requires D&B subscription.',
     /*DNB Account Create Dashlet*/
     'LBL_DNB_ACC_CRT' => 'D&B Account Create',
-    'LBL_DNB_ACC_CRT_DESC' => 'Create Accounts Using D&B',
+    'LBL_DNB_ACC_CRT_DESC' => 'Create Accounts Using D&B. Requires D&B subscription.',
     'LBL_DNB_SRCH_RES' => 'D&B: Search Results',
     'LBL_DNB_SRCH_LOAD' => 'Searching D&B',
     'LBL_DNB_COMP_INFO' => 'D&B: Company Information',
@@ -3273,7 +3273,7 @@ $app_strings = array (
 
     /*DNB Company Info Dashlet*/
     'LBL_DASHLET_COMPANY_INFO' => 'D&B: Import and Enrich',
-    'LBL_DASHLET_COMPANY_INFO_DESC' => 'Enrich existing account with D&B Data',
+    'LBL_DASHLET_COMPANY_INFO_DESC' => 'Enrich existing account with D&B Data. Requires D&B subscription.',
     'LBL_DNB_NAME'=>'Name',
     'LBL_DNB_DUNS'=>'DUNS',
     'LBL_DNB_ADDRESS'=>'Address',
@@ -3311,7 +3311,7 @@ $app_strings = array (
     'LBL_DNB_COMPETITORS_DESC'=>'Company Competitors from D&B',
     'LBL_DNB_LOCATION'=>'Location',
     'LBL_DNB_SALES'=>'Sales',
-    'LBL_DNB_COMPETITORS_DESC'=>'Competitor Information From DNB',
+    'LBL_DNB_COMPETITORS_DESC'=>'Competitor Information From DNB. Requires D&B subscription.',
     'LBL_DNB_COMPETITORS_LOADING' => 'Loading Competitors From D&B ...',
     'LBL_DNB_COMPETITORS_TOP' => 'Top Competitor',
     'LBL_DASHLET_NO_RECORDS' => 'No records were found at this time.',
@@ -3353,7 +3353,7 @@ $app_strings = array (
 
     /*DNB Financial Dashlet*/
     'LBL_DNB_FINANCIAL'=>'D&B: Financial Information',
-    'LBL_DNB_FINANCIAL_DESC'=>'Financial Information from D&B',
+    'LBL_DNB_FINANCIAL_DESC'=>'Financial Information from D&B. Requires D&B subscription.',
     'LBL_DNB_FINANCIAL_LOADING' => 'Loading Financials From D&B',
     'LBL_DNB_REC_MARK_ANALYSIS' => 'Recent Market Analysis',
     'LBL_DNB_FIN_STMT' => 'Annual Income Statements',
@@ -3364,19 +3364,19 @@ $app_strings = array (
 
     /*DNB Family Tree Dashlet*/
     'LBL_DNB_FAMILY_TREE'=>'D&B: Family Tree',
-    'LBL_DNB_FAMILY_TREE_DESC'=>'Family Tree from D&B',
+    'LBL_DNB_FAMILY_TREE_DESC'=>'Family Tree from D&B. Requires D&B subscription.',
     'LBL_DNB_FAMILY_TREE_LOADING' => 'Loading Family Tree From D&B',
 
     /*DNB Industry Info Dashlet*/
     'LBL_DNB_INDUSTRY_INFO'=>'D&B: Industry Information',
-    'LBL_DNB_INDUSTRY_INFO_DESC'=>'Industry information from D&B',
+    'LBL_DNB_INDUSTRY_INFO_DESC'=>'Industry information from D&B. Requires D&B subscription.',
     'LBL_DNB_IND_INF_LOAD' => 'Loading Industry Information From D&B',
     'LBL_DNB_INF_INF_OVERVIEW' => 'Overview',
 
     /*DNB Contacts Dashlet*/
     'LBL_DNB_CONTACT' => 'D&B: Contact Information',
     'LBL_DNB_CNTCT_LOADING' => 'Loading Contacts From D&B',
-    'LBL_DNB_CONTACT_DESC' => 'Displays Contacts From D&B',
+    'LBL_DNB_CONTACT_DESC' => 'Displays Contacts From D&B. Requires D&B subscription.',
     'LBL_DNB_CONTACT_LOADING' => 'Loading Contact Details For ',
     'LBL_DNB_CONTACT_NAME' => 'Name',
     'LBL_DNB_CONTACT_JOBTITLE' => 'Job Title',
@@ -3389,7 +3389,7 @@ $app_strings = array (
 
     /* D&B Company Information Lite */
     'LBL_DNB_LITE_COMPANY_INFO' => 'D&B: Company Information - Lite',
-    'LBL_DNB_LITE_COMPANY_INFO_DESC' => 'Lite Company Information From D&B',
+    'LBL_DNB_LITE_COMPANY_INFO_DESC' => 'Lite Company Information From D&B. Requires D&B subscription.',
     'LBL_DNB_ANNUAL_SALES_US_DOLLAR' => 'Annual Sales',
     'LBL_DNB_GEOGRAPHICAL_NAME' => 'Geographical Precision Text',
     'LBL_DNB_METROPOLITAN_STAT_CODE' => 'Metropolitan Statistical Area US Census Code',
@@ -3398,7 +3398,7 @@ $app_strings = array (
     /*DNB Standard Company Info Dashlet*/
     'LBL_DNB_STD_COMPANY_INFO_LOADING' => 'Loading Standard Company Info From D&B ...',
     'LBL_DNB_STD_COMPANY_INFO'=>'D&B: Company Information - Standard',
-    'LBL_DNB_STD_COMPANY_INFO_DESC'=>'Standard Company Information From D&B',
+    'LBL_DNB_STD_COMPANY_INFO_DESC'=>'Standard Company Information From D&B. Requires D&B subscription.',
     'LBL_DNB_DUNS' => 'DUNS',
     'LBL_DNB_TF_DUNS'=>'Transerfered DUNS Number',
     'LBL_DNB_TF_DUNS' => 'Transfered DUNSNumber',
@@ -3443,7 +3443,7 @@ $app_strings = array (
     /*DNB Company Premium Info */
     'LBL_DNB_PREMIUM_COMPANY_INFO_LOADING' => 'Loading Premium Company Info From D&B ...',
     'LBL_DNB_PREMIUM_COMPANY_INFO'  =>  'D&B: Company Information - Premium',
-    'LBL_DNB_PREMIUM_COMPANY_INFO_DESC'  =>  'D&B Premium Company Info Description',
+    'LBL_DNB_PREMIUM_COMPANY_INFO_DESC'  =>  'D&B Premium Company Info Description. Requires D&B subscription.',
     'LBL_DNB_TRANSFERRED_FROM_DUNS_NUMBER' => 'Transferred From DUNS Number',
     'LBL_DNB_TOTAL_ENQUIERY_COUNT' => 'Total Enquiery Count',
     'LBL_DNB_LAST_UPDATE_DATE' => 'Last Update Date',
@@ -3517,7 +3517,7 @@ $app_strings = array (
 
     /*D&B News Dashlet*/
     'LBL_DNB_NEWS_AND_MEDIA' => 'D&B: News',
-    'LBL_DNB_NEWS_AND_MEDIA_DESC' => 'Fetches News From D&B Services',
+    'LBL_DNB_NEWS_AND_MEDIA_DESC' => 'Fetches News From D&B Services. Requires D&B subscription.',
     'LBL_DNB_NEWS_AND_MEDIA_LOADING' => 'Loading News From D&B',
 
 

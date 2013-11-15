@@ -16,7 +16,7 @@
 $viewdefs['base']['view']['dnb-premium-company-info'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_DNB_PREMIUM_COMPANY_INFO',
+            'label' => 'LBL_DNB_PREMIUM_COMPANY_INFO',
             'description' => 'LBL_DNB_PREMIUM_COMPANY_INFO_DESC',
             'filter' => array(
                 'module' => array(

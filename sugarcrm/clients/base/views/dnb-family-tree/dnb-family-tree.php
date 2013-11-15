@@ -16,7 +16,7 @@
 $viewdefs['base']['view']['dnb-family-tree'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_DNB_FAMILY_TREE',
+            'label' => 'LBL_DNB_FAMILY_TREE',
             'description' => 'LBL_DNB_FAMILY_TREE_DESC',
             'filter' => array(
                 'module' => array(

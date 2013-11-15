@@ -251,6 +251,10 @@
                 {
                     var resultData = app.cache.get(cacheKey);
                     _.bind(self.renderCompanyDetails,self,app.cache.get(cacheKey))();
+                    // show import button
+                    if(!_.isUndefined(self.layout.getComponent('dashlet-toolbar').getField('dnb_import')))
+                        self.layout.getComponent('dashlet-toolbar').getField('dnb_import').getFieldElement().show();
+
                 }
                 else
                 {
@@ -279,8 +283,6 @@
 
                                         if(!_.isUndefined(self.layout.getComponent('dashlet-toolbar').getField('dnb_import')))
                                             self.layout.getComponent('dashlet-toolbar').getField('dnb_import').getFieldElement().show();
-
-                                        
 
                                         app.cache.set(cacheKey,resultData);
                                     }

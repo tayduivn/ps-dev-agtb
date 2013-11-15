@@ -16,7 +16,7 @@
 $viewdefs['base']['view']['dnb-competitors'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_DNB_COMPETITORS',
+            'label' => 'LBL_DNB_COMPETITORS',
             'description' => 'LBL_DNB_COMPETITORS_DESC',
             'filter' => array(
                 'module' => array(

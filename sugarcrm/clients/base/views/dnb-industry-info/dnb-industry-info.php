@@ -16,7 +16,7 @@
 $viewdefs['base']['view']['dnb-industry-info'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_DNB_INDUSTRY_INFO',
+            'label' => 'LBL_DNB_INDUSTRY_INFO',
             'description' => 'LBL_DNB_INDUSTRY_INFO_DESC',
             'filter' => array(
                 'module' => array(
