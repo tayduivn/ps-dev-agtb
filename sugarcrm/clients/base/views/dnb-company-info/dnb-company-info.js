@@ -89,7 +89,7 @@
                         try
                         {
                             var lastRefreshDate = app.date.parse(data.GetRefreshByOrganizationsResponse.GetRefreshByOrganizationsResponseDetail.CheckRefreshCandidateDetail[0].LastUpdateDate,'YYYY-mm-dd');
-                            lastRefreshDate.setMonth(lastRefreshDate.getMonth() + 1);
+                            lastRefreshDate.setMonth(lastRefreshDate.getMonth() + 3);
                             var currentDate = new Date();
 
                             //if lastRefreshDate + 30 > currentDate, information is Up To Date
@@ -396,11 +396,11 @@
             //if value is set on accounts obj and same as dnb response then mark as dup
             if(!_.isUndefined(accountsModel.get(dataElementName)) && accountsModel.get(dataElementName) != '' &&
                 !_.isUndefined(dnbResponseMap[dataElementName]) && dnbResponseMap[dataElementName] != ''
-                && $.trim(accountsModel.get(dataElementName).toLowerCase()) == $.trim(dnbResponseMap[dataElementName].toLowerCase()))
+                && $.trim(accountsModel.get(dataElementName)) == $.trim(dnbResponseMap[dataElementName] ))
                 dataIndicatorMap[dataElementName] = 'dup';
             else if(!_.isUndefined(accountsModel.get(dataElementName)) && accountsModel.get(dataElementName) != '' &&
                 !_.isUndefined(dnbResponseMap[dataElementName]) && dnbResponseMap[dataElementName] != ''
-                && $.trim(accountsModel.get(dataElementName).toLowerCase()) != $.trim(dnbResponseMap[dataElementName].toLowerCase()))
+                && $.trim(accountsModel.get(dataElementName) ) != $.trim(dnbResponseMap[dataElementName]))
                 dataIndicatorMap[dataElementName] = 'upd';
             //else value is set on accounts obj and different from dnb response then mark as upd
         });

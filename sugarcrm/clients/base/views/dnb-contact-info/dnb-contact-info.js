@@ -26,7 +26,8 @@
     {
       'click .showMoreData' :'showMoreData',
       'click .showLessData' :'showLessData',
-      'click .dnb-cnt-det'  :'getDNBContactDetails',
+      'click .dnb-cnt-prem'  :'getDNBContactDetails',
+      'click .dnb-cnt-std'  :'getDNBContactDetails',
       'click .backToList'   : 'renderContactsList'
     },
 
@@ -184,7 +185,12 @@
     getDNBContactDetails: function(evt)
     {
         var contact_id =  evt.target.id;
-        var contact_name = evt.target.text;
+        var contact_name = evt.target.text,contact_type;
+
+        if($.inArray('dnb-cnt-prem',evt.target.classList) == -1)
+            contact_type = 'dnb-cnt-prem';
+        else ($.inArray('dnb-cnt-std',evt.target.classList) == -1)
+            contact_type = 'dnb-cnt-std';
 
         var self = this;
         self.template = app.template.get(self.name + '.dnb-contact-details');
@@ -197,11 +203,12 @@
 
         var contactParams = {
             'duns_num' : self.duns_num,
-            'contact_id' : contact_id
+            'contact_id' : contact_id,
+            'contact_type' : contact_type
         };
 
         //check if cache has this data already
-        var cacheKey = 'dnb:cntdet:' + contactParams.duns_num + ':' + contactParams.contact_id;
+        var cacheKey = 'dnb:' + contactParams.contact_type + ':' + contactParams.duns_num + ':' + contactParams.contact_id;
 
         if(app.cache.get(cacheKey))
         {

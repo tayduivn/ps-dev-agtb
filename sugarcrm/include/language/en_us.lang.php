@@ -3348,6 +3348,7 @@ $app_strings = array (
     'LBL_DNB_UPLOAD' => 'Upload',
     'LBL_DNB_MORE_SRCH_RES' => 'Show More D&B Search Results',
     'LBL_DNB_PRIMARY' => 'Primary',
+    'LBL_DNB_PREMIUM' => 'Premium',
 
 
     /*DNB Financial Dashlet*/

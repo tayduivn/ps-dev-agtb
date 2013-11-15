@@ -9,12 +9,15 @@
 				<li>
 					<div class='dnb-company-label'>
 						{{this.JobTitle.[0].JobTitleText.$}}
+						{{#if this.moreDetails}}
+							<span class="label label-success pull-right" data-placement="right">{{str "LBL_DNB_PREMIUM"}}</span>
+						{{/if}}
 					</div>
 					<div class="record-label dnb-company-list">
 						{{#if this.moreDetails}}
-							<a id="{{this.PrincipalIdentificationNumberDetail.[0].PrincipalIdentificationNumber}}" class="dnb-cnt-det"> {{this.ContactName.FullName}} </a>
+							<a id="{{this.PrincipalIdentificationNumberDetail.[0].PrincipalIdentificationNumber}}" class="dnb-cnt-prem"> {{this.ContactName.FullName}} </a>
 						{{else}}
-							{{this.ContactName.FullName}}
+							<a id="{{this.PrincipalIdentificationNumberDetail.[0].PrincipalIdentificationNumber}}" class="dnb-cnt-std"> {{this.ContactName.FullName}} </a>
 						{{/if}}
 						{{#if this.isDupe}}
                             <span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>

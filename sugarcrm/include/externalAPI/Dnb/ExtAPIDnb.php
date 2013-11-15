@@ -30,7 +30,8 @@ class ExtAPIDnb extends ExternalAPIBase
     private $dnbBALURL = "V4.0/organizations";
     private $dnbFindIndustryURL = "V4.0/industries?KeywordText=%s&findindustry=true";
     private $dnbFindContactsURL = "V4.0/organizations?findcontact=true&DUNSNumber-1=%s&SearchModeDescription=Advanced";
-    private $dnbContactDetailsURL = "V3.0/organizations/%s/products/CNTCT_PLUS?PrincipalIdentificationNumber=%s";
+    private $dnbContactDetPremURL = "V3.0/organizations/%s/products/CNTCT_PLUS?PrincipalIdentificationNumber=%s";
+    private $dnbContactDetStdURL = "V3.0/organizations/%s/products/CNTCT?PrincipalIdentificationNumber=%s";
     private $dnbNewsURL = "V3.0/organizations/%s/products/NEWS_MDA";
     private $dnbIndustryConversionURL = "V4.0/industries?IndustryCode-1=%s&ReturnOnlyPremiumIndustryIndicator=true&IndustryCodeTypeCode-1=%s&findindustry=true";
     private $dnbRefreshCheckURL = "V4.0/organizations?refresh=refresh&DunsNumber-1=%s";
@@ -532,9 +533,14 @@ class ExtAPIDnb extends ExternalAPIBase
     {
         $duns_num = $contactParams['duns_num'];
         $contact_id = $contactParams['contact_id'];
+        $contact_type = $contactParams['contact_type'];
+        $cache_key = null;
 
         //dnb contact
-        $cache_key = 'dnb.contact.'.$duns_num.'.'.$contact_id;
+        if($contact_type == 'dnb-cnt-prem')
+            $cache_key = 'dnb.cntprem.'.$duns_num.'.'.$contact_id;
+        else if($contact_type == 'dnb-cnt-std')
+            $cache_key = 'dnb.cntstd.'.$duns_num.'.'.$contact_id;
 
         //check if result exists in cache
         $reply = sugar_cache_retrieve($cache_key);
@@ -542,8 +548,12 @@ class ExtAPIDnb extends ExternalAPIBase
         //obtain results from dnb service if cache does not contain result
         if(empty($reply) || $reply == SugarCache::EXTERNAL_CACHE_NULL_VALUE)
         {
-           $GLOBALS['log']->debug('Cache does not contain dnb.contact.'.$duns_num.'.'.$contact_id);
-           $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv].sprintf($this->dnbContactDetailsURL,$duns_num,$contact_id);
+           $GLOBALS['log']->debug('Cache does not contain'.$cache_key);
+           if($contact_type == 'dnb-cnt-prem')
+                $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv].sprintf($this->dnbContactDetPremURL,$duns_num,$contact_id);
+           else if($contact_type == 'dnb-cnt-std')
+                $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv].sprintf($this->dnbContactDetStdURL,$duns_num,$contact_id);
+
            $reply = $this->makeRequest('GET', $dnbendpoint);
 
             if ( !$reply['success'] ) 
@@ -555,11 +565,11 @@ class ExtAPIDnb extends ExternalAPIBase
             {
                 //cache the result if the dnb service response was a success
                 sugar_cache_put($cache_key, $reply,8640000);
-                $GLOBALS['log']->debug('Cached dnb.contact.'.$duns_num.'.'.$contact_id);
+                $GLOBALS['log']->debug('Cached '.$cache_key);
             }
         }
         else
-            $GLOBALS['log']->debug('Getting cached results for dnb.contact.'.$duns_num);
+            $GLOBALS['log']->debug('Getting cached results '.$cache_key);
 
         return $reply['responseJSON']; 
     }
