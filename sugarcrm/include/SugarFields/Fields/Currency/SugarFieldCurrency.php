@@ -63,7 +63,13 @@ class SugarFieldCurrency extends SugarFieldFloat
             $value = str_replace($settings->currency_symbol, '', $value);
         }
 
-        return SugarCurrency::formatAmount(unformat_number($value), $currency_id, 6, '.', '', false);
+        $value = $settings->float($value, $vardef, $focus);
+
+        if ($value === false) {
+            return false;
+        }
+
+        return SugarCurrency::formatAmount($value, $currency_id, 6, '.', '', false);
     }
 
     /**
