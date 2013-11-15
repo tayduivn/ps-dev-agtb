@@ -46,6 +46,8 @@
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
 <script src="data/multibar_data.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/axis.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/legend.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/multiBar.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/multiBarChart.js"></script>
 
@@ -54,12 +56,13 @@
   nv.addGraph(function() {
 
     var chart = nv.models.multiBarChart()
-          .showTitle(true)
+          .showTitle(false)
           .tooltips(true)
           .showControls(true)
           .colorData( 'graduated', {c1: '#e8e2ca', c2: '#336699', l: multibar_data_default.data.length} )
           //.colorData( 'class' )
           //.colorData( 'default' )
+          .rotateLabels(0)
           .tooltipContent( function(key, x, y, e, graph) {
               return '<p>Stage: <b>' + key + '</b></p>' +
                      '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +

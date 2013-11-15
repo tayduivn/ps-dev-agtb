@@ -1,5 +1,5 @@
 
-nv.models.multiBarHorizontalChart = function () {
+nv.models.multiBarChartAllAxis = function () {
 
   //============================================================
   // Public Variables with Default Settings
@@ -30,19 +30,21 @@ nv.models.multiBarHorizontalChart = function () {
   //------------------------------------------------------------
 
   var multibar = nv.models.multiBar()
-        .vertical(false)
+        .vertical(true)
         .stacked(false)
     , xAxis = nv.models.axis()
-        .orient('left')
+        .orient('bottom')
         .tickSize(0)
         .tickPadding(7)
         .highlightZero(false)
         .showMaxMin(false)
+        .axisLabel('Bottom Axis')
         .tickFormat(function (d) { return d; })
     , yAxis = nv.models.axis()
-        .orient('bottom')
+        .orient('left')
         .tickPadding(4)
         .tickFormat(d3.format(',.1f'))
+        .axisLabel('Left Axis')
     , legend = nv.models.legend()
     , controls = nv.models.legend()
     ;
@@ -55,7 +57,7 @@ nv.models.multiBarHorizontalChart = function () {
               xAxis.tickFormat()(multibar.x()(e.point, e.pointIndex))
       , y = yAxis.tickFormat()(multibar.y()(e.point, e.pointIndex))
       , content = tooltipContent(e.series.key, x, y, e, chart);
-    tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'e' : 'w', null, offsetElement);
+    tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
   };
 
   //============================================================
@@ -125,8 +127,8 @@ nv.models.multiBarHorizontalChart = function () {
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
 
-      var wrap = container.selectAll('g.nv-wrap.nv-multiBarHorizontalChart').data([data]);
-      var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-multiBarHorizontalChart').append('g');
+      var wrap = container.selectAll('g.nv-wrap.nv-multiBarChart').data([data]);
+      var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-multiBarChart').append('g');
       var g = wrap.select('g');
 
       gEnter.append('g').attr('class', 'nv-titleWrap');
@@ -148,6 +150,7 @@ nv.models.multiBarHorizontalChart = function () {
         , legendHeight = 0;
 
       if (showTitle && properties.title) {
+
         g .select('.nv-title').remove();
 
         g .select('.nv-titleWrap')
@@ -165,8 +168,8 @@ nv.models.multiBarHorizontalChart = function () {
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
 
-        g .select('.nv-title')
-            .attr('dy', '.71em');
+        g.select('.nv-title')
+          .attr('dy', '.71em');
       }
 
       var controlsData = [
@@ -175,6 +178,7 @@ nv.models.multiBarHorizontalChart = function () {
       ];
 
       if (showControls) {
+
         controls
           .id('controls_' + chart.id())
           .width(controlWidth(availableWidth))
@@ -192,10 +196,17 @@ nv.models.multiBarHorizontalChart = function () {
       }
 
       if (showLegend) {
+
         legend
           .id('legend_' + chart.id())
           .width(availableWidth - controlWidth(availableWidth))
           .height(availableHeight - titleHeight);
+
+        if (multibar.barColor()) {
+          data.forEach(function (series,i) {
+            series.color = d3.rgb('#ccc').darker(i * 1.5).toString();
+          });
+        }
 
         g .select('.nv-legendWrap')
           .datum(data)
@@ -208,7 +219,7 @@ nv.models.multiBarHorizontalChart = function () {
       //------------------------------------------------------------
       // Recalc inner margins
 
-      innerMargin.top = titleHeight + Math.max(legendHeight,controlsHeight) + 4;
+      innerMargin.top = titleHeight + Math.max(legendHeight,controlsHeight) + 8;
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
       //------------------------------------------------------------
@@ -230,6 +241,8 @@ nv.models.multiBarHorizontalChart = function () {
 
       //------------------------------------------------------------
       // X-Axis
+      xAxis
+        .ticks(innerWidth / 100);
 
       if (groupLabels) {
         xAxis
@@ -241,8 +254,8 @@ nv.models.multiBarHorizontalChart = function () {
       g .select('.nv-x.nv-axis')
           .call(xAxis);
 
-      innerMargin[xAxis.orient()] += xAxis.width();
-      innerWidth = availableWidth - innerMargin.left - innerMargin.right;
+      innerMargin[xAxis.orient()] += xAxis.height();
+      innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
       //------------------------------------------------------------
       // Y-Axis
@@ -250,12 +263,13 @@ nv.models.multiBarHorizontalChart = function () {
       g .select('.nv-y.nv-axis')
           .call(yAxis);
 
-      innerMargin[yAxis.orient()] += yAxis.height();
-      innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
+      innerMargin[yAxis.orient()] += yAxis.width();
+      innerWidth = availableWidth - innerMargin.left - innerMargin.right;
 
       //------------------------------------------------------------
       // Main Chart Components
       // Recall to set final size
+
 
       multibar
         .width(innerWidth)
@@ -263,20 +277,23 @@ nv.models.multiBarHorizontalChart = function () {
 
       barsWrap
         .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
-        .transition().duration(chart.delay())
+        .transition()
           .call(multibar);
 
+      xAxis
+        .ticks(innerWidth / 100);
+
       g .select('.nv-x.nv-axis')
-        .attr('transform', 'translate(' + (xAxis.orient() === 'left' ? innerMargin.left : innerMargin.left + innerWidth) + ',' + innerMargin.top + ')')
+        .attr('transform', 'translate(' + innerMargin.left + ',' + (xAxis.orient() === 'bottom' ? innerHeight + innerMargin.top : innerMargin.top) + ')')
         .transition()
           .call(xAxis);
 
       yAxis
-        .ticks(innerWidth / 50)
-        .tickSize(-innerHeight, 0);
+        .ticks(innerHeight / 36)
+        .tickSize(-innerWidth, 0);
 
       g .select('.nv-y.nv-axis')
-        .attr('transform', 'translate(' + innerMargin.left + ',' + (yAxis.orient() === 'bottom' ? innerHeight + innerMargin.top : innerMargin.top) + ')')
+        .attr('transform', 'translate(' + (yAxis.orient() === 'right' ? innerWidth : 0 + innerMargin.left) + ',' + innerMargin.top + ')')
         .transition()
           .call(yAxis);
 
@@ -372,7 +389,7 @@ nv.models.multiBarHorizontalChart = function () {
   });
   dispatch.on('tooltipMove', function (e) {
     if (tooltip) {
-      nv.tooltip.position(tooltip, e.pos, 'w');
+      nv.tooltip.position(tooltip, e.pos, 's');
     }
   });
 
@@ -415,7 +432,7 @@ nv.models.multiBarHorizontalChart = function () {
     }
 
     var fill = (!params.gradient) ? colors : function (d,i) {
-      var p = {orientation: params.orientation || 'horizontal', position: params.position || 'middle'};
+      var p = {orientation: params.orientation || 'vertical', position: params.position || 'middle'};
       return multibar.gradient(d,i,p);
     };
 

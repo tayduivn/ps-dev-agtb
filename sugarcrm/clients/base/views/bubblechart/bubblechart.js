@@ -66,6 +66,7 @@
             .y(function (d) {
                 return d.y;
             })
+            .margin({top:0})
             .tooltipContent(function (key, x, y, e, graph) {
                 e.point.close_date = d3.time.format('%x')(d3.time.format('%Y-%m-%d').parse(e.point.x));
                 e.point.amount = e.point.currency_symbol + d3.format(',.2d')(e.point.base_amount);

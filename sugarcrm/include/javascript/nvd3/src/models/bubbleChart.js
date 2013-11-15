@@ -5,44 +5,43 @@ nv.models.bubbleChart = function () {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var margin = {top: 70, right: 20, bottom: 30, left: 100}
+  var margin = {top: 10, right: 10, bottom: 10, left: 10}
     , width = null
     , height = null
+    , showTitle = false
+    , showControls = false
+    , showLegend = true
     , getX = function (d) { return d.x; }
     , getY = function (d) { return d.y; }
     , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
-    , clipEdge = false // if true, masks lines within x and y scale
     , xDomain
     , yDomain
+    , x
+    , y
+    , delay = 200
     , groupBy = function (d) { return d.y; }
     , filterBy = function (d) { return d.y; }
+    , clipEdge = false // if true, masks lines within x and y scale
     , seriesLength = 0
-    , showLegend = true
-    , showTitle = false
-    , reduceXTicks = true // if false a tick will show for every data point
     , reduceYTicks = false // if false a tick will show for every data point
-    , rotateLabels = 0
     , tooltip = null
     , tooltips = true
     , tooltipContent = function (key, x, y, e, graph) {
         return '<h3>' + key + '</h3>' +
                '<p>' +  y + ' on ' + x + '</p>';
       }
-    , noData = "No Data Available."
-    , bubbleClick = function (e) {
-        return;
-      }
+    , noData = 'No Data Available.'
+    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove')
+    , bubbleClick = function (e) { return; }
     , format = d3.time.format("%Y-%m-%d")
+    , controlWidth = function (w) { return showControls ? w * 0.3 : 0; }
     ;
-
 
   //============================================================
   // Private Variables
   //------------------------------------------------------------
 
   var scatter = nv.models.scatter()
-    , x = scatter.xScale()
-    , y = scatter.yScale()
     , xAxis = nv.models.axis()
         .orient('bottom')
         .tickPadding(5)
@@ -53,8 +52,7 @@ nv.models.bubbleChart = function () {
         .highlightZero(false)
         .showMaxMin(false)
     , legend = nv.models.legend()
-    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove')
-  ;
+    ;
 
   //============================================================
 
@@ -83,13 +81,12 @@ nv.models.bubbleChart = function () {
   //   nv.tooltip.show([left, top], content, null, null, offsetElement);
   // };
 
-  var showTooltip = function(e, offsetElement, properties) {
-    var left = e.pos[0],
-        top = e.pos[1],
-        x = e.point.x,
-        y = e.point.y,
-        content = tooltipContent(e.series.key, x, y, e, chart);
-
+  var showTooltip = function (e, offsetElement, properties) {
+    var left = e.pos[0]
+      , top = e.pos[1]
+      , x = e.point.x
+      , y = e.point.y
+      , content = tooltipContent(e.series.key, x, y, e, chart);
     tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
   };
 
@@ -104,6 +101,270 @@ nv.models.bubbleChart = function () {
 
       var container = d3.select(this)
         , that = this;
+
+      //------------------------------------------------------------
+      // Display No Data message if there's nothing to show.
+
+      if (!data || !data.length) {
+        var noDataText = container.selectAll('.nv-noData').data([noData]);
+
+        noDataText.enter().append('text')
+          .attr('class', 'nvd3 nv-noData')
+          .attr('dy', '-.7em')
+          .style('text-anchor', 'middle');
+
+        noDataText
+          .attr('x', margin.left + availableWidth / 2)
+          .attr('y', margin.top + availableHeight / 2)
+          .text(function (d) { return d; });
+
+        return chart;
+      } else {
+        container.selectAll('.nv-noData').remove();
+      }
+
+      // Now that group calculations are done,
+      // group the data by filter so that legend filters
+      var filteredData = d3.nest()
+                          .key(filterBy)
+                          .entries(data);
+
+      //add series index to each data point for reference
+      filteredData = filteredData
+        .sort(function (a,b){
+          //sort legend by key
+          return parseInt(a.key, 10) < parseInt(b.key, 10) ? -1 : parseInt(a.key, 10) > parseInt(b.key, 10) ? 1 : 0;
+        })
+        .map(function (d, i) {
+          d.series = i;
+          d.classes = d.values[0].classes;
+          d.color = d.values[0].color;
+          return d;
+        });
+
+      var timeExtent = d3.extent(
+              d3.merge(
+                filteredData.map(function (d) {
+                  return d.values.map(function (d,i) {
+                    return d3.time.format("%Y-%m-%d").parse(d.x);
+                  });
+                })
+              )
+            );
+
+
+    //properties.title = 'Total = $' + d3.format(',.02d')(total);
+    chart.render = function () {
+
+      container.selectAll('.nv-noData').remove();
+
+      var width = width  || parseInt(container.style('width'), 10 || 960)
+        , height = height || parseInt(container.style('height'), 10 || 400);
+
+      var availableWidth = width - margin.left - margin.right
+        , availableHeight = height - margin.top - margin.bottom;
+
+      var innerWidth = availableWidth
+        , innerHeight = availableHeight
+        , innerMargin = {top: 0, right: 0, bottom: 0, left: 0};
+
+      //------------------------------------------------------------
+      // Setup containers and skeleton of chart
+
+      var wrap = container.selectAll('g.nv-wrap.nv-bubbleChart').data([filteredData]);
+      var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-bubbleChart').append('g');
+      var g = wrap.select('g');
+
+      gEnter.append('g').attr('class', 'nv-titleWrap');
+
+      gEnter.append('g').attr('class', 'nv-x nv-axis');
+      gEnter.append('g').attr('class', 'nv-y nv-axis');
+      gEnter.append('g').attr('class', 'nv-bubblesWrap');
+
+      gEnter.append('g').attr('class', 'nv-controlsWrap');
+      gEnter.append('g').attr('class', 'nv-legendWrap');
+
+      wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+
+      //------------------------------------------------------------
+      // Setup Scales
+
+      x = scatter.xScale();
+      y = scatter.yScale();
+      xAxis
+        .scale(x);
+      yAxis
+        .scale(y);
+
+
+      //------------------------------------------------------------
+      // Title & Legend & Controls
+
+      var titleHeight = 0
+        , controlsHeight = 0
+        , legendHeight = 0;
+
+      if (showTitle && properties.title) {
+
+        g .select('.nv-title').remove();
+
+        g .select('.nv-titleWrap')
+          .append('text')
+            .attr('class', 'nv-title')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('text-anchor', 'start')
+            .text(properties.title)
+            .attr('stroke', 'none')
+            .attr('fill', 'black')
+          ;
+
+        titleHeight = parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
+          parseInt(g.select('.nv-title').style('margin-top'), 10) +
+          parseInt(g.select('.nv-title').style('margin-bottom'), 10);
+
+        g .select('.nv-title')
+            .attr('dy', '.71em');
+      }
+
+      if (showLegend) {
+
+        legend
+          .id('legend_' + chart.id())
+          .width(availableWidth - controlWidth(availableWidth))
+          .height(availableHeight - titleHeight)
+          .key(function (d){ return d.key + '%'; });
+
+        g .select('.nv-legendWrap')
+          .datum(filteredData)
+          .attr('transform', 'translate(' + controlWidth(availableWidth) + ',' + titleHeight + ')')
+          .call(legend);
+
+        legendHeight = legend.height();
+      }
+
+      //------------------------------------------------------------
+      // Recalc inner margins
+
+      innerMargin.top = titleHeight + Math.max(legendHeight,controlsHeight) + 20;
+      innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
+
+      //------------------------------------------------------------
+      // Main Chart Component(s)
+
+      var yValues = getGroupTicks(data, innerHeight);
+      innerMargin.left = nv.utils.maxStringSetLength(yValues, container, function (d,i) { return yValues[i].key; });
+      innerWidth = availableWidth - innerMargin.left - innerMargin.right;
+
+      var xD = [
+        d3.time.month.floor(timeExtent[0]),
+        d3.time.day.offset(d3.time.month.ceil(timeExtent[1]),-1)
+      ];
+
+      var yD = d3.extent(
+            d3.merge(
+              filteredData.map(function (d) {
+                return d.values.map(function (d,i) {
+                  return getY(d,i);
+                });
+              })
+            ).concat(forceY)
+          );
+
+      scatter
+        .size(function (d){ return d.y; }) // default size
+        //.sizeDomain([16,256]) //set to speed up calculation, needs to be unset if there is a custom size accessor
+        .sizeRange([256,1024])
+        .singlePoint(true)
+        .xScale(x)
+        .xDomain(xD)
+        .yScale(y)
+        .yDomain(yD)
+        .padData(true)
+        .padDataOuter(0)
+        .width(innerWidth)
+        .height(innerHeight)
+        //.margin(margin)
+        .id(chart.id())
+      ;
+
+      var bubblesWrap = g.select('.nv-bubblesWrap')
+            .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
+            .datum(filteredData.filter(function (d) { return !d.disabled; }));
+
+      bubblesWrap.call(scatter);
+
+      xAxis
+        .ticks(d3.time.months, 1)
+        .tickSize(0)
+        .tickValues(getTimeTicks(filteredData))
+        .showMaxMin(false)
+        .tickFormat(function (d) {
+          return d3.time.format('%b')(new Date(d));
+        });
+
+      g .select('.nv-x.nv-axis')
+          .call(xAxis);
+
+      innerMargin[xAxis.orient()] += xAxis.height();
+      innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
+
+      g .select('.nv-x.nv-axis')
+        .attr('transform', 'translate(' + innerMargin.left + ',' + (innerHeight + innerMargin.top) + ')');
+
+      scatter
+        .width(innerWidth)
+        .height(innerHeight);
+
+      bubblesWrap
+        .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
+        .transition().duration(chart.delay())
+          .call(scatter);
+
+      yAxis
+        .ticks(yValues.length)
+        .tickValues( yValues.map(function (d,i) { return yValues[i].y; }) )
+        .tickSize(-innerWidth, 0)
+        .tickFormat(function (d,i) { return yValues[i].key; });
+
+      g .select('.nv-y.nv-axis')
+        .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
+        .transition()
+          .call(yAxis);
+
+    };
+
+      //============================================================
+      // Event Handling/Dispatching (in chart's scope)
+      //------------------------------------------------------------
+
+      legend.dispatch.on('legendClick', function (d, i) {
+        d.disabled = !d.disabled;
+        if (!data.filter(function (d) { return !d.disabled; }).length) {
+          data.map(function (d) {
+            d.disabled = false;
+            wrap.selectAll('.nv-series').classed('disabled', false);
+            return d;
+          });
+        }
+        container.transition().duration(chart.delay()).call(chart.render);
+      });
+
+      dispatch.on('tooltipShow', function (e) {
+        if (tooltips) {
+          showTooltip(e, that.parentNode);
+        }
+      });
+
+      //============================================================
+
+      chart.render();
+
+      chart.update = function () { chart(selection); };
+      chart.container = this;
+
+    });
 
       // Calculate the x-axis ticks
       function getTimeTicks(data) {
@@ -191,271 +452,8 @@ nv.models.bubbleChart = function () {
         return yValues;
       }
 
-
-      var width = width  || parseInt(container.style('width'), 10)
-        , height = height || parseInt(container.style('height'), 10);
-
-      var availableWidth = (width || 960) - margin.left - margin.right
-        , availableHeight = (height || 400) - margin.top - margin.bottom;
-
-
-      var yValues = getGroupTicks(data, availableHeight);
-      //------------------------------------------------------------
-      // Display noData message if there's nothing to show.
-
-      if (!data || !data.length) {
-        var noDataText = container.selectAll('.nv-noData').data([noData]);
-
-        noDataText.enter().append('text')
-          .attr('class', 'nvd3 nv-noData')
-          .attr('dy', '-.7em')
-          .style('text-anchor', 'middle');
-
-        noDataText
-          .attr('x', margin.left + availableWidth / 2)
-          .attr('y', margin.top + availableHeight / 2)
-          .text(function(d) { return d; });
-
-        return chart;
-      } else {
-        container.selectAll('.nv-noData').remove();
-      }
-
-      // Now that group calculations are done,
-      // group the data by filter so that legend filters
-      var filteredData = d3.nest()
-                          .key(filterBy)
-                          .entries(data);
-
-      //add series index to each data point for reference
-      filteredData = filteredData
-        .sort(function(a,b){
-          //sort legend by key
-          return parseInt(a.key, 10) < parseInt(b.key, 10) ? -1 : parseInt(a.key, 10) > parseInt(b.key, 10) ? 1 : 0;
-        })
-        .map(function (d, i) {
-          d.series = i;
-          d.classes = d.values[0].classes;
-          d.color = d.values[0].color;
-          return d;
-        });
-
-      //properties.title = 'Total = $' + d3.format(',.02d')(total);
-      chart.render = function () {
-
-        container.selectAll('.nv-noData').remove();
-
-        var width = width  || parseInt(container.style('width'), 10)
-          , height = height || parseInt(container.style('height'), 10);
-
-        var availableWidth = (width || 960) - margin.left - margin.right
-          , availableHeight = (height || 400) - margin.top - margin.bottom;
-
-        //------------------------------------------------------------
-        // Setup containers and skeleton of chart
-
-        var wrap = container.selectAll('g.nv-wrap.nv-bubbleChart').data([filteredData]);
-        var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-bubbleChart').append('g');
-        var g = wrap.select('g');
-
-        gEnter.append('g').attr('class', 'nv-x nv-axis');
-        gEnter.append('g').attr('class', 'nv-y nv-axis');
-        gEnter.append('g').attr('class', 'nv-bubblesWrap');
-
-        //------------------------------------------------------------
-        // Title & Legend
-
-        var titleHeight = 0
-          , legendHeight = 0;
-
-        if (showLegend)
-        {
-          gEnter.append('g').attr('class', 'nv-legendWrap');
-
-          legend
-            .width(width*(showTitle?0.7:1)-10)
-            .key(function (d){ return d.key + '%'; });
-
-          g.select('.nv-legendWrap')
-            .datum(filteredData)
-            .call(legend);
-
-          legendHeight = legend.height();
-
-          if ( margin.top < Math.max(legendHeight, titleHeight) ) {
-            margin.top = Math.max(legendHeight, titleHeight);
-            availableHeight = (height || parseInt(container.style('height'),10) || 400) - margin.top - margin.bottom;
-          }
-
-          g.select('.nv-legendWrap')
-              .attr('transform', 'translate(' + ((width * (showTitle ? 0.3:0)) - margin.left + 10) + ',' + (-margin.top) + ')');
-        }
-
-        if (showTitle && properties.title )
-        {
-          gEnter.append('g').attr('class', 'nv-titleWrap');
-
-          g.select('.nv-title').remove();
-
-          g.select('.nv-titleWrap')
-            .append('text')
-              .attr('class', 'nv-title')
-              .attr('x', 0)
-              .attr('y', 0 )
-              .attr('text-anchor', 'start')
-              .text(properties.title)
-              .attr('stroke', 'none')
-              .attr('fill', 'black')
-            ;
-
-          titleHeight = parseInt(g.select('.nv-title').node().getBBox().height, 10) +
-            parseInt(g.select('.nv-title').style('margin-top'), 10) +
-            parseInt(g.select('.nv-title').style('margin-bottom'), 10);
-
-          if (margin.top < Math.max(legendHeight, titleHeight))
-          {
-            margin.top = Math.max(legendHeight, titleHeight);
-            availableHeight = (height || parseInt(container.style('height'), 10) || 400)  - margin.top - margin.bottom;
-          }
-
-          g.select('.nv-titleWrap')
-              .attr('transform', 'translate(0,' + (-margin.top+parseInt(g.select('.nv-title').node().getBBox().height, 10)) + ')');
-        }
-
-
-        //------------------------------------------------------------
-        wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-        //------------------------------------------------------------
-        // Main Chart Component(s)
-
-        var timeExtent = d3.extent(
-                d3.merge(
-                  filteredData.map(function (d) {
-                    return d.values.map(function (d,i) {
-                      return d3.time.format("%Y-%m-%d").parse(d.x);
-                    });
-                  })
-                )
-              );
-        var xD = [
-          d3.time.month.floor(timeExtent[0]),
-          d3.time.day.offset(d3.time.month.ceil(timeExtent[1]),-1)
-        ];
-
-        var yD = d3.extent(
-              d3.merge(
-                filteredData.map(function (d) {
-                  return d.values.map(function (d,i) {
-                    return getY(d,i);
-                  });
-                })
-              ).concat(forceY)
-            );
-
-        scatter
-          .size(function (d){ return d.y; }) // default size
-          //.sizeDomain([16,256]) //set to speed up calculation, needs to be unset if there is a custom size accessor
-          .sizeRange([256,1024])
-          .singlePoint(true)
-          .xScale(x)
-          .xDomain(xD)
-          .yScale(y)
-          .yDomain(yD)
-          .padData(true)
-          .padDataOuter(0)
-          .width(availableWidth)
-          .height(availableHeight)
-          //.margin(margin)
-          .id(chart.id())
-        ;
-
-
-        var bubblesWrap = g.select('.nv-bubblesWrap')
-            .datum(filteredData.filter(function (d) { return !d.disabled; }));
-
-        bubblesWrap.call(scatter);
-
-        // x Axis
-        xAxis
-          .scale(x)
-          .ticks( d3.time.months, 1 )
-          .tickSize(0)
-          .tickValues(getTimeTicks(filteredData))
-          .showMaxMin(false)
-          .tickFormat(function (d) {
-            return d3.time.format('%b')(new Date(d));
-          });
-
-        g.select('.nv-x.nv-axis')
-            .attr('transform', 'translate(0,' + y.range()[0] + ')');
-
-        d3.transition(g.select('.nv-x.nv-axis'))
-            .call(xAxis);
-
-        // y Axis
-        yAxis
-          .scale(y)
-          .ticks(yValues.length)
-          .tickValues( yValues.map(function (d,i) { return yValues[i].y; }) )
-          .tickSize(-availableWidth, 0)
-          .tickFormat(function(d,i) { return yValues[i].key; });
-
-        d3.transition(g.select('.nv-y.nv-axis'))
-            .call(yAxis);
-
-        //------------------------------------------------------------
-      };
-
-      //============================================================
-      // Event Handling/Dispatching (in chart's scope)
-      //------------------------------------------------------------
-
-      legend.dispatch.on('legendClick', function (d,i) {
-
-        d.disabled = !d.disabled;
-
-        if (!data.filter(function(d) { return !d.disabled; }).length) {
-          data.map(function(d) {
-            d.disabled = false;
-            wrap.selectAll('.nv-series').classed('disabled', false);
-            return d;
-          });
-        }
-
-        container.transition().duration(500).call(chart.render);
-      });
-
-      /*
-      legend.dispatch.on('legendMouseover', function(d, i) {
-        d.hover = true;
-        selection.transition().call(chart)
-      });
-
-      legend.dispatch.on('legendMouseout', function(d, i) {
-        d.hover = false;
-        selection.transition().call(chart)
-      });
-      */
-
-      dispatch.on('tooltipShow', function (e) {
-        if (tooltips) {
-          showTooltip(e, that.parentNode);
-        }
-      });
-
-      //============================================================
-
-      chart.render();
-
-      chart.update = function () { chart(selection); };
-      chart.container = this;
-
-    });
-
     return chart;
   }
-
 
   //============================================================
   // Event Handling/Dispatching (out of chart's scope)
@@ -474,12 +472,12 @@ nv.models.bubbleChart = function () {
     }
   });
 
-  scatter.dispatch.on('elementMousemove', function(e) {
+  scatter.dispatch.on('elementMousemove', function (e) {
     dispatch.tooltipMove(e);
   });
-  dispatch.on('tooltipMove', function(e) {
+  dispatch.on('tooltipMove', function (e) {
     if (tooltip) {
-      nv.tooltip.position(tooltip,e.pos);
+      nv.tooltip.position(tooltip, e.pos);
     }
   });
 
@@ -499,7 +497,8 @@ nv.models.bubbleChart = function () {
   chart.xAxis = xAxis;
   chart.yAxis = yAxis;
 
-  d3.rebind(chart, scatter, 'interactive', 'size', 'x', 'y', 'id', 'forceX', 'forceY', 'xScale', 'yScale', 'zScale', 'xDomain', 'yDomain', 'sizeDomain', 'forceSize', 'clipEdge', 'clipVoronoi', 'clipRadius', 'color', 'fill', 'classes', 'gradient');
+  d3.rebind(chart, scatter, 'interactive', 'size', 'x', 'y', 'id', 'delay', 'forceX', 'forceY', 'xScale', 'yScale', 'zScale', 'xDomain', 'yDomain', 'sizeDomain', 'forceSize', 'clipEdge', 'clipVoronoi', 'clipRadius', 'color', 'fill', 'classes', 'gradient');
+  d3.rebind(chart, xAxis, 'rotateLabels', 'reduceXTicks');
 
   chart.colorData = function (_) {
     var colors = function (d,i) { return nv.utils.defaultColor()(d,d.series); },
@@ -508,19 +507,19 @@ nv.models.bubbleChart = function () {
         params = arguments[1] || {};
 
     switch (type) {
-    case 'graduated':
-      var c1 = params.c1
-        , c2 = params.c2
-        , l = params.l;
-      colors = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(d.series/l); };
-      break;
-    case 'class':
-      colors = function () { return 'inherit'; };
-      classes = function (d,i) {
-        var iClass = (d.series*(params.step || 1))%20;
-        return 'nv-group nv-series-' + i + ' ' + (d.classes || 'nv-fill' + (iClass>9?'':'0') + iClass);
-      };
-      break;
+      case 'graduated':
+        var c1 = params.c1
+          , c2 = params.c2
+          , l = params.l;
+        colors = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(d.series/l); };
+        break;
+      case 'class':
+        colors = function () { return 'inherit'; };
+        classes = function (d,i) {
+          var iClass = (d.series*(params.step || 1)) % 20;
+          return 'nv-group nv-series-' + i + ' ' + (d.classes || 'nv-fill' + (iClass>9?'':'0') + iClass);
+        };
+        break;
     }
 
     var fill = (!params.gradient) ? colors : function (d,i) {
@@ -539,7 +538,10 @@ nv.models.bubbleChart = function () {
 
   chart.margin = function (_) {
     if (!arguments.length) { return margin; }
-    margin = _;
+    margin.top    = typeof _.top    != 'undefined' ? _.top    : margin.top;
+    margin.right  = typeof _.right  != 'undefined' ? _.right  : margin.right;
+    margin.bottom = typeof _.bottom != 'undefined' ? _.bottom : margin.bottom;
+    margin.left   = typeof _.left   != 'undefined' ? _.left   : margin.left;
     return chart;
   };
 
@@ -555,19 +557,19 @@ nv.models.bubbleChart = function () {
     return chart;
   };
 
-  chart.showLegend = function (_) {
-    if (!arguments.length) { return showLegend; }
-    showLegend = _;
-    return chart;
-  };
-
   chart.showTitle = function (_) {
     if (!arguments.length) { return showTitle; }
     showTitle = _;
     return chart;
   };
 
-  chart.tooltip = function(_) {
+  chart.showLegend = function (_) {
+    if (!arguments.length) { return showLegend; }
+    showLegend = _;
+    return chart;
+  };
+
+  chart.tooltip = function (_) {
     if (!arguments.length) { return tooltip; }
     tooltip = _;
     return chart;
@@ -579,21 +581,27 @@ nv.models.bubbleChart = function () {
     return chart;
   };
 
+  chart.delay = function(_) {
+    if (!arguments.length) { return delay; }
+    delay = _;
+    return chart;
+  };
+
   chart.tooltipContent = function (_) {
     if (!arguments.length) { return tooltipContent; }
     tooltipContent = _;
     return chart;
   };
 
-  chart.noData = function (_) {
-    if (!arguments.length) { return noData; }
-    noData = _;
-    return chart;
-  };
-
   chart.bubbleClick = function (_) {
     if (!arguments.length) { return bubbleClick; }
     bubbleClick = _;
+    return chart;
+  };
+
+  chart.noData = function (_) {
+    if (!arguments.length) { return noData; }
+    noData = _;
     return chart;
   };
 
@@ -609,13 +617,11 @@ nv.models.bubbleChart = function () {
     return chart;
   };
 
-  chart.colorFill = function(_) {
+  chart.colorFill = function (_) {
     return chart;
   };
 
-
   //============================================================
-
 
   return chart;
 };

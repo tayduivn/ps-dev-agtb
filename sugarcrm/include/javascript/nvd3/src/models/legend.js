@@ -4,154 +4,317 @@ nv.models.legend = function() {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var margin = {top: 5, right: 0, bottom: 5, left: 0}
+  var margin = {top: 10, right: 10, bottom: 10, left: 10}
     , width = 400
     , height = 20
-    , getKey = function(d) { return d.key; }
+    , radius = 5
+    , gutter = 10
+    , lineHeight = 20
+    , align = 'right'
+    , equalColumns = true
+    , strings = {close: 'close', type: 'legend'}
+    , id = Math.floor(Math.random() * 10000) //Create semi-unique ID in case user doesn't select one
+    , getKey = function(d) { return d.key.length > 0 ? d.key : 'undefined'; }
     , color = nv.utils.defaultColor()
     , classes = function (d,i) { return ''; }
-    , align = true
-    , dispatch = d3.dispatch('legendClick', 'legendDblclick', 'legendMouseover', 'legendMouseout')
+    , dispatch = d3.dispatch('legendClick', 'legendMouseover', 'legendMouseout', 'linkClick')
     ;
+
+  // Private Variables
+  //------------------------------------------------------------
+
+  var legendOpen = 0;
 
   //============================================================
 
-
-  function chart(selection) {
+  function legend(selection) {
     selection.each(function(data) {
-      var availableWidth = width - margin.left - margin.right,
-          container = d3.select(this);
-
-
-      //------------------------------------------------------------
-      // Setup containers and skeleton of chart
-
-      var wrap = container.selectAll('g.nv-legend').data([data]);
-      var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-legend').append('g');
-      var g = wrap.select('g');
-
-      wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+      var availableWidth = width - margin.left - margin.right
+        , availableHeight = height - margin.top - margin.bottom
+        , container = d3.select(this)
+        , legendWidth = 0
+        , legendHeight = 0;
 
       //------------------------------------------------------------
+      // Setup containers and skeleton of legend
 
-      //var label = g.append('text').text('Probability:').attr('class','nv-series-label').attr('transform','translate(0,0)');
+      var wrap = container.selectAll('g.nv-chart-legend').data([data]);
+      var wrapEnter = wrap.enter().append('g').attr('class', 'nv-chart-legend');
 
-      var series = g.selectAll('.nv-series')
-          .data(function(d) { return d; });
-      var seriesEnter = series.enter().append('g').attr('class', 'nv-series')
-          .on('mouseover', function(d,i) {
-            dispatch.legendMouseover(d,i);  //TODO: Make consistent with other event objects
-          })
-          .on('mouseout', function(d,i) {
-            dispatch.legendMouseout(d,i);
-          })
-          .on('click', function(d,i) {
-            dispatch.legendClick(d,i);
-          })
-          .on('dblclick', function(d,i) {
-            dispatch.legendDblclick(d,i);
-          });
+      var defs = wrapEnter.append('defs');
+      defs
+        .append('clipPath').attr('id', 'nv-edge-clip-' + id)
+        .append('rect');
+      var clip = wrap.select('#nv-edge-clip-' + id + ' rect');
+
+      wrapEnter
+        .append('rect').attr('class', 'nv-legend-background');
+      var back = container.select('.nv-legend-background');
+
+      wrapEnter
+        .append('text').attr('class', 'nv-legend-link');
+      var link = container.select('.nv-legend-link');
+
+      wrapEnter
+        .append('g').attr('class', 'nv-legend-mask')
+        .append('g').attr('class', 'nv-legend');
+      var mask = container.select('.nv-legend-mask');
+      var g = container.select('g.nv-legend');
+
+      var series = g.selectAll('.nv-series').data(function(d) { return d; });
+      var seriesEnter = series.enter().append('g').attr('class', 'nv-series');
+
+      var zoom = d3.behavior.zoom();
+
+      function zoomLegend(d) {
+        var trans = d3.transform(g.attr("transform")).translate
+          , transX = trans[0]
+          , transY = trans[1] + d3.event.sourceEvent.wheelDelta / 4
+          , upMax = Math.max(transY, back.attr('height') - legendHeight); //should not go beyond diff
+        if (upMax) {
+          g .attr('transform', 'translate(' + transX + ',' + Math.min(upMax, 0) + ')');
+        }
+      }
+
+      clip
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', 0)
+        .attr('height', 0);
+
+      back
+        .attr('x', 0)
+        .attr('y', 0.5)
+        .attr('rx', 2)
+        .attr('ry', 2)
+        .attr('width', 0)
+        .attr('height', 0)
+        .attr('filter', nv.utils.dropShadow('legend_back_' + id, defs, {blur: 2} ))
+        .style('opacity', 0)
+        .style('pointer-events', 'all');
+
+      link
+        .text(legendOpen === 1 ? legend.strings().close : legend.strings().type)
+        .attr('text-anchor', align === 'right' ? 'end' : 'start')
+        .attr('dy', '.32em')
+        .attr('dx', 0)
+        .attr('transform', 'translate(' + (align === 'right' ? width : 0) + ',' + (margin.top + radius) + ')')
+        .style('opacity', 0)
+        .on('click', function(d,i) {
+          dispatch.linkClick(d,i);
+        });
+
+      mask
+        .attr('clip-path', 'url(#nv-edge-clip-' + id + ')');
+
+      seriesEnter
+        .on('mouseover', function(d,i) {
+          dispatch.legendMouseover(d,i);  //TODO: Make consistent with other event objects
+        })
+        .on('mouseout', function(d,i) {
+          dispatch.legendMouseout(d,i);
+        })
+        .on('click', function(d,i) {
+          dispatch.legendClick(d,i);
+        });
       seriesEnter.append('circle')
-          .style('stroke-width', 2)
-          .attr('r', 5);
+        .style('stroke-width', 2)
+        .attr('r', radius);
       seriesEnter.append('text')
-          .attr('text-anchor', 'start')
-          .attr('dy', '.32em')
-          .attr('dx', '8');
+        .style('stroke-width', 0)
+        .style('stroke', 'inherit')
+        .attr('text-anchor', 'start')
+        .attr('dy', '.32em')
+        .attr('dx', '8');
       series.classed('disabled', function(d) { return d.disabled; });
       series.exit().remove();
       series.select('circle')
-          .attr('class', function(d,i) { return this.getAttribute('class') || classes(d,i); })
-          .attr('fill', function(d,i) { return this.getAttribute('fill') || color(d,i); })
-          .attr('stroke', function(d,i) { return this.getAttribute('fill') || color(d,i); });
+        .attr('class', function(d,i) { return this.getAttribute('class') || classes(d,i); })
+        .attr('fill', function(d,i) { return this.getAttribute('fill') || color(d,i); })
+        .attr('stroke', function(d,i) { return this.getAttribute('fill') || color(d,i); });
       series.select('text').text(getKey);
 
+      //------------------------------------------------------------
 
+      //TODO: add ability to add key to legend
+      //var label = g.append('text').text('Probability:').attr('class','nv-series-label').attr('transform','translate(0,0)');
       //TODO: implement fixed-width and max-width options (max-width is especially useful with the align option)
 
-      // NEW ALIGNING CODE, TODO: clean up
-      if (align) {
-        var seriesWidths = [];
+      if (equalColumns) {
+        var keyWidths = []
+          , keyCount = 0
+          , keysPerRow = 0
+          , columnWidths = []
+          , computeWidth = function(prev, cur, index, array) {
+              return prev + cur;
+            };
+
         series.each(function(d,i) {
-          seriesWidths.push(d3.select(this).select('text').node().getComputedTextLength() + 28); // 28 is ~ the width of the circle plus some padding
+          keyWidths.push(d3.select(this).select('text').node().getComputedTextLength() + 2*radius + 3 + gutter); // 28 is ~ the width of the circle plus some padding
         });
 
-        //nv.log('Series Widths: ', JSON.stringify(seriesWidths));
+        keyCount = keyWidths.length;
+        keysPerRow = keyCount;
+        legendWidth = keyWidths.reduce(computeWidth) - gutter;
 
-        var seriesPerRow = 0;
-        var legendWidth = 0;
-        var columnWidths = [];
-
-        while ( legendWidth < availableWidth && seriesPerRow < seriesWidths.length) {
-          columnWidths[seriesPerRow] = seriesWidths[seriesPerRow];
-          legendWidth += seriesWidths[seriesPerRow++];
-        }
-
-
-        while ( legendWidth > availableWidth && seriesPerRow > 1 ) {
+        //keep decreasing the number of keys per row until
+        //legend width is less than the available width
+        while (keysPerRow > 1) {
           columnWidths = [];
-          seriesPerRow--;
 
-          for (k = 0; k < seriesWidths.length; k++) {
-            if (seriesWidths[k] > (columnWidths[k % seriesPerRow] || 0) ) {
-              columnWidths[k % seriesPerRow] = seriesWidths[k];
+          for (var k = 0, iCol = 0; k < keyCount; k += 1) {
+            iCol = k % keysPerRow;
+            if (keyWidths[k] > (columnWidths[iCol] || 0)) {
+              columnWidths[iCol] = keyWidths[k];
             }
           }
 
-          legendWidth = columnWidths.reduce(function(prev, cur, index, array) {
-            return prev + cur;
-          });
-        }
-        //console.log(columnWidths, legendWidth, seriesPerRow);
+          legendWidth = columnWidths.reduce(computeWidth) - gutter;
 
-        var xPositions = [];
-        for (var i = 0, curX = 0; i < seriesPerRow; i++) {
-            xPositions[i] = curX;
+          if (legendWidth < availableWidth) {
+            break;
+          }
+
+          keysPerRow -= 1;
+        }
+
+        if (Math.ceil(keyCount / keysPerRow) < 3) {
+
+          var keyPositions = [];
+          for (var i = 0, curX = radius; i < keysPerRow; i += 1) {
+            keyPositions[i] = curX;
             curX += columnWidths[i];
-        }
+          }
 
-        series
+          height = margin.top + margin.bottom + radius * 2 + ((Math.ceil(keyCount / keysPerRow) - 1) * lineHeight);
+          legendOpen = 0;
+
+          zoom.on('zoom', null);
+
+          clip
+            .attr('x', 0 - margin.left)
+            .attr('y', 0 - lineHeight + radius + 0.5)
+            .attr('width', legendWidth + margin.right + margin.left)
+            .attr('height', height);
+
+          var offSet = 0.5 - margin.left;
+          back
+            .attr('x', align === 'right' ? width - legendWidth + offSet : align === 'center' ? offSet + (width - legendWidth) / 2 : offSet)
+            .attr('width', legendWidth + margin.left + margin.right)
+            .attr('height', height)
+            .style('opacity', 0)
+            .style('display', 'inline');
+
+          //position legend as far right as possible within the total width
+          mask
+            .attr('transform', 'translate(' + (align === 'right' ? width - legendWidth : align === 'center' ? (width - legendWidth) / 2 : 0) + ',' + (margin.top + radius) + ')');
+
+          g
+            .style('opacity', 1)
+            .style('display', 'inline');
+
+          series
             .attr('transform', function(d, i) {
-              return 'translate(' + xPositions[i % seriesPerRow] + ',' + (5 + Math.floor(i / seriesPerRow) * 20) + ')';
+              return 'translate(' + keyPositions[i % keysPerRow] + ',' + (Math.floor(i / keysPerRow) * lineHeight) + ')';
             });
 
-        //position legend as far right as possible within the total width
-        g.attr('transform', 'translate(' + (width - margin.right - legendWidth) + ',' + margin.top + ')');
+        } else {
 
-        height = margin.top + margin.bottom + (Math.ceil(seriesWidths.length / seriesPerRow) * 20);
+          height = lineHeight + radius;
+          legendWidth = d3.max(keyWidths) - gutter;
+          legendHeight = margin.top + margin.bottom + radius * 2 + (keyCount - 1) * lineHeight;
+
+          zoom.on('zoom', zoomLegend);
+
+          clip
+            .attr('x', 0 - margin.left)
+            .attr('y', 0 - lineHeight + radius + 0.5)
+            .attr('width', legendWidth + margin.right + margin.left)
+            .attr('height', Math.min(availableHeight - height, legendHeight));
+
+          back
+            .attr('x', align === 'right' ? availableWidth - legendWidth + 0.5 : 0.5)
+            .attr('y', lineHeight + radius + 0.5)
+            .attr('width', legendWidth + margin.right + margin.left)
+            .attr('height', Math.min(availableHeight - height, legendHeight))
+            .style('opacity', legendOpen * 0.9)
+            .style('display', legendOpen ? 'inline' : 'none')
+            .call(zoom);
+
+          link
+            .style('opacity', 1);
+
+          mask
+            .attr('transform', 'translate(' + (align === 'right' ? width - margin.right - legendWidth : margin.left) + ',' + (margin.top + radius * 2 + lineHeight) + ')');
+
+          g
+            .style('opacity', legendOpen)
+            .style('display', legendOpen ? 'inline' : 'none')
+            .call(zoom);
+
+          series
+            .attr('transform', function(d, i) {
+              return 'translate(' + radius + ',' + (i * lineHeight) + ')';
+            });
+        }
 
       } else {
 
-        var ypos = 5,
-            newxpos = 5,
-            maxwidth = 0,
-            xpos;
+        var xpos
+          , ypos = radius
+          , newxpos = radius;
+
+        legendOpen = 0;
+
         series
-            .attr('transform', function(d, i) {
-              var length = d3.select(this).select('text').node().getComputedTextLength() + 28;
-              xpos = newxpos;
+          .attr('transform', function(d, i) {
+            var length = d3.select(this).select('text').node().getComputedTextLength() + 2*radius + 3 + gutter;
+            xpos = newxpos;
 
-              if (width < margin.left + margin.right + xpos + length) {
-                newxpos = xpos = 5;
-                ypos += 20;
-              }
+            if (availableWidth < xpos + length - gutter) {
+              newxpos = xpos = radius;
+              ypos += lineHeight;
+            }
 
-              newxpos += length;
-              if (newxpos > maxwidth) maxwidth = newxpos;
+            newxpos += length;
+            if (newxpos - gutter > legendWidth) {
+              legendWidth = newxpos - gutter;
+            }
 
-              return 'translate(' + xpos + ',' + ypos + ')';
-            });
+            return 'translate(' + xpos + ',' + ypos + ')';
+          });
+
+        height = margin.top + margin.bottom + ypos + radius;
 
         //position legend as far right as possible within the total width
-        g.attr('transform', 'translate(' + (width - margin.right - maxwidth) + ',' + margin.top + ')');
+        g
+          .attr('transform', 'translate(' + (width - margin.right - legendWidth) + ',' + margin.top + ')');
 
-        height = margin.top + margin.bottom + ypos + 15;
-
+        back
+          .attr('x', availableWidth - legendWidth + 0.5)
+          .attr('width', legendWidth + margin.right + margin.left)
+          .attr('height', margin.top + margin.bottom + radius + ypos);
       }
+
+      dispatch.on('linkClick', function(d) {
+        legendOpen = 1 - legendOpen;
+        back
+          .transition()
+          .duration(200)
+          .style('opacity', legendOpen * 0.9)
+          .style('display', legendOpen ? 'inline' : 'none');
+        g
+          .transition()
+          .duration(200)
+          .style('opacity', legendOpen)
+          .style('display', legendOpen ? 'inline' : 'none');
+        link
+          .text(legendOpen === 1 ? 'close' : 'legend');
+      });
 
     });
 
-    return chart;
+    return legend;
   }
 
 
@@ -159,55 +322,72 @@ nv.models.legend = function() {
   // Expose Public Variables
   //------------------------------------------------------------
 
-  chart.dispatch = dispatch;
+  legend.dispatch = dispatch;
 
-  chart.margin = function(_) {
-    if (!arguments.length) return margin;
-    margin.top    = typeof _.top    != 'undefined' ? _.top    : margin.top;
-    margin.right  = typeof _.right  != 'undefined' ? _.right  : margin.right;
-    margin.bottom = typeof _.bottom != 'undefined' ? _.bottom : margin.bottom;
-    margin.left   = typeof _.left   != 'undefined' ? _.left   : margin.left;
-    return chart;
+  legend.margin = function(_) {
+    if (!arguments.length) { return margin; }
+    margin.top    = typeof _.top    !== 'undefined' ? _.top    : margin.top;
+    margin.right  = typeof _.right  !== 'undefined' ? _.right  : margin.right;
+    margin.bottom = typeof _.bottom !== 'undefined' ? _.bottom : margin.bottom;
+    margin.left   = typeof _.left   !== 'undefined' ? _.left   : margin.left;
+    return legend;
   };
 
-  chart.width = function(_) {
-    if (!arguments.length) return width;
-    width = _;
-    return chart;
+  legend.width = function(_) {
+    if (!arguments.length) { return width; }
+    width = Math.round(_);
+    return legend;
   };
 
-  chart.height = function(_) {
-    if (!arguments.length) return height;
-    height = _;
-    return chart;
+  legend.height = function(_) {
+    if (!arguments.length) { return height; }
+    height = Math.round(_);
+    return legend;
   };
 
-  chart.key = function(_) {
-    if (!arguments.length) return getKey;
+  legend.id = function(_) {
+    if (!arguments.length) { return id; }
+    id = _;
+    return legend;
+  };
+
+  legend.key = function(_) {
+    if (!arguments.length) { return getKey; }
     getKey = _;
-    return chart;
+    return legend;
   };
 
-  chart.color = function(_) {
-    if (!arguments.length) return color;
+  legend.color = function(_) {
+    if (!arguments.length) { return color; }
     color = nv.utils.getColor(_);
-    return chart;
+    return legend;
   };
 
-  chart.classes = function(_) {
-    if (!arguments.length) return classes;
+  legend.classes = function(_) {
+    if (!arguments.length) { return classes; }
     classes = _;
-    return chart;
+    return legend;
   };
 
-  chart.align = function(_) {
-    if (!arguments.length) return align;
+  legend.align = function(_) {
+    if (!arguments.length) { return align; }
     align = _;
-    return chart;
+    return legend;
   };
 
+  legend.equalColumns = function(_) {
+    if (!arguments.length) { return equalColumns; }
+    equalColumns = _;
+    return legend;
+  };
+
+  legend.strings = function(_) {
+    if (!arguments.length) { return strings; }
+    strings = _;
+    return legend;
+  };
   //============================================================
 
 
-  return chart;
+  return legend;
 };

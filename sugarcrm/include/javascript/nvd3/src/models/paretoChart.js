@@ -33,7 +33,7 @@ nv.models.paretoChart = function() {
         //, y //can be accessed via chart.yScale()
         noData = 'No Data Available.';
 
-    var multibar = nv.models.multiBar().stacked(true).clipEdge(false),
+    var multibar = nv.models.multiBar().stacked(true).clipEdge(false).withLine(true),
         //, x = d3.scale.linear(), // needs to be both line and historicalBar x Axis
         x = multibar.xScale(),
         lines = nv.models.line(),

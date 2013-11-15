@@ -5,15 +5,11 @@ nv.models.gaugeChart = function() {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var gauge = nv.models.gauge()
-    , legend = nv.models.legend()
-    ;
-
   var margin = {top: 30, right: 20, bottom: 20, left: 20}
     , width = null
     , height = null
-    , showLegend = true
     , showTitle = false
+    , showLegend = true
     , tooltip = null
     , tooltips = true
     , tooltipContent = function(key, y, e, graph) {
@@ -22,16 +18,17 @@ nv.models.gaugeChart = function() {
       }
     , x //can be accessed via chart.xScale()
     , y //can be accessed via chart.yScale()
-    , noData = "No Data Available."
+    , noData = 'No Data Available.'
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove')
     ;
 
   //============================================================
-
-
-  //============================================================
   // Private Variables
   //------------------------------------------------------------
+
+  var gauge = nv.models.gauge()
+    , legend = nv.models.legend()
+    ;
 
   var showTooltip = function(e, offsetElement) {
     var left = e.pos[0],
@@ -41,8 +38,8 @@ nv.models.gaugeChart = function() {
 
     tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
   };
-  //============================================================
 
+  //============================================================
 
   function chart(selection) {
 
@@ -51,20 +48,18 @@ nv.models.gaugeChart = function() {
       var properties = chartData.properties
         , data = chartData.data;
 
-      var container = d3.select(this),
-          that = this;
+      var container = d3.select(this)
+        , that = this;
 
-      var availableWidth = (width  || parseInt(container.style('width'), 10) || 960)
-                             - margin.left - margin.right,
-          availableHeight = (height || parseInt(container.style('height'), 10) || 400)
-                             - margin.top - margin.bottom;
+      var availableWidth = (width || parseInt(container.style('width'), 10) || 960) - margin.left - margin.right,
+          availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
 
-      chart.update = function() { container.transition().duration(300).call(chart); };
+      chart.update = function() { container.transition().duration(chart.delay()).call(chart); };
       chart.container = this;
 
 
       //------------------------------------------------------------
-      // Display noData message if there's nothing to show.
+      // Display No Data message if there's nothing to show.
 
       if (!data || !data.length) {
         var noDataText = container.selectAll('.nv-noData').data([noData]);
@@ -77,7 +72,7 @@ nv.models.gaugeChart = function() {
         noDataText
           .attr('x', margin.left + availableWidth / 2)
           .attr('y', margin.top + availableHeight / 2)
-          .text(function(d) { return d });
+          .text(function(d) { return d; });
 
         return chart;
       } else {
@@ -94,7 +89,11 @@ nv.models.gaugeChart = function() {
       var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-gaugeChart').append('g');
       var g = wrap.select('g');
 
+      gEnter.append('g').attr('class', 'nv-titleWrap');
+
       gEnter.append('g').attr('class', 'nv-gaugeWrap');
+
+      gEnter.append('g').attr('class', 'nv-legendWrap');
 
       //------------------------------------------------------------
       // Title & Legend
@@ -102,12 +101,13 @@ nv.models.gaugeChart = function() {
       var titleHeight = 0
         , legendHeight = 0;
 
-      if (showLegend)
-      {
-        gEnter.append('g').attr('class', 'nv-legendWrap');
+      if (showLegend) {
 
         legend
+          .id('legend_' + chart.id())
           .width(availableWidth)
+          .height(availableHeight)
+          .align('center')
           .key(gauge.x());
 
         g.select('.nv-legendWrap')
@@ -118,17 +118,14 @@ nv.models.gaugeChart = function() {
 
         if ( margin.top !== legendHeight + titleHeight ) {
           margin.top = legendHeight + titleHeight;
-          availableHeight = (height || parseInt(container.style('height'), 10) || 400)
-                             - margin.top - margin.bottom;
+          availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
         }
 
         g.select('.nv-legendWrap')
             .attr('transform', 'translate(0,' + (-margin.top) +')');
       }
 
-      if (showTitle && properties.title )
-      {
-        gEnter.append('g').attr('class', 'nv-titleWrap');
+      if (showTitle && properties.title ) {
 
         g.select('.nv-title').remove();
 
@@ -136,7 +133,7 @@ nv.models.gaugeChart = function() {
           .append('text')
             .attr('class', 'nv-title')
             .attr('x', 0)
-            .attr('y', 0 )
+            .attr('y', 0)
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -150,12 +147,11 @@ nv.models.gaugeChart = function() {
         if ( margin.top !== titleHeight + legendHeight )
         {
           margin.top = titleHeight + legendHeight;
-          availableHeight = (height || parseInt(container.style('height'), 10) || 400)
-                             - margin.top - margin.bottom;
+          availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
         }
 
         g.select('.nv-titleWrap')
-            .attr('transform', 'translate(0,'+ ( -margin.top+parseInt(g.select('.nv-title').node().getBBox().height, 10) ) +')');
+            .attr('transform', 'translate(0,' + ( -margin.top+parseInt(g.select('.nv-title').node().getBBox().height, 10) ) + ')');
       }
 
       //------------------------------------------------------------
@@ -191,9 +187,6 @@ nv.models.gaugeChart = function() {
         }
       });
 
-      //============================================================
-
-
     });
 
     return chart;
@@ -204,7 +197,7 @@ nv.models.gaugeChart = function() {
   //------------------------------------------------------------
 
   gauge.dispatch.on('elementMouseover.tooltip', function(e) {
-    e.pos = [e.pos[0] +  margin.left, e.pos[1] + margin.top];
+    e.pos = [e.pos[0] + margin.left, e.pos[1] + margin.top];
     dispatch.tooltipShow(e);
   });
 
@@ -212,7 +205,9 @@ nv.models.gaugeChart = function() {
     dispatch.tooltipHide(e);
   });
   dispatch.on('tooltipHide', function() {
-    if (tooltips) nv.tooltip.cleanup();
+    if (tooltips) {
+      nv.tooltip.cleanup();
+    }
   });
 
   gauge.dispatch.on('elementMousemove', function(e) {
@@ -223,8 +218,6 @@ nv.models.gaugeChart = function() {
       nv.tooltip.position(tooltip,e.pos);
     }
   });
-
-  //============================================================
 
 
   //============================================================
@@ -255,7 +248,7 @@ nv.models.gaugeChart = function() {
         colors = function () { return 'inherit'; };
         classes = function (d,i) {
           var iClass = (i*(params.step || 1))%20;
-          return 'nv-group nv-series-'+ i +' '+ ( d.classes || 'nv-fill' + (iClass>9?'':'0') + iClass );
+          return 'nv-group nv-series-' + i + ' ' + (d.classes || 'nv-fill' + (iClass>9?'':'0') + iClass);
         };
         break;
     }
@@ -275,55 +268,55 @@ nv.models.gaugeChart = function() {
   };
 
   chart.margin = function(_) {
-    if (!arguments.length) return margin;
+    if (!arguments.length) { return margin; }
     margin = _;
     return chart;
   };
 
   chart.width = function(_) {
-    if (!arguments.length) return width;
+    if (!arguments.length) { return width; }
     width = _;
     return chart;
   };
 
   chart.height = function(_) {
-    if (!arguments.length) return height;
+    if (!arguments.length) { return height; }
     height = _;
     return chart;
   };
 
-  chart.showLegend = function(_) {
-    if (!arguments.length) return showLegend;
-    showLegend = _;
-    return chart;
-  };
-
   chart.showTitle = function(_) {
-    if (!arguments.length) return showTitle;
+    if (!arguments.length) { return showTitle; }
     showTitle = _;
     return chart;
   };
 
+  chart.showLegend = function(_) {
+    if (!arguments.length) { return showLegend; }
+    showLegend = _;
+    return chart;
+  };
+
   chart.tooltip = function(_) {
-    if (!arguments.length) return tooltip;
+    if (!arguments.length) { return tooltip; }
     tooltip = _;
     return chart;
   };
 
   chart.tooltips = function(_) {
-    if (!arguments.length) return tooltips;
+    if (!arguments.length) { return tooltips; }
     tooltips = _;
     return chart;
   };
 
   chart.tooltipContent = function(_) {
-    if (!arguments.length) return tooltipContent;
+    if (!arguments.length) { return tooltipContent; }
     tooltipContent = _;
     return chart;
   };
 
   chart.noData = function(_) {
-    if (!arguments.length) return noData;
+    if (!arguments.length) { return noData; }
     noData = _;
     return chart;
   };
@@ -332,4 +325,4 @@ nv.models.gaugeChart = function() {
 
 
   return chart;
-}
+};
