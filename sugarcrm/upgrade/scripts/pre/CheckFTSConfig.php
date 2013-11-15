@@ -1,5 +1,7 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -42,7 +44,8 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
         $ftsConfig = isset($sugar_config['full_text_engine']) ? $sugar_config['full_text_engine'] : null;
         // Check that Elastic info is set (only currently supported search engine)
         if (empty($ftsConfig) || empty($ftsConfig['Elastic']) ||
-                empty($ftsConfig['Elastic']['host']) || empty($ftsConfig['Elastic']['port'])) {
+            empty($ftsConfig['Elastic']['host']) || empty($ftsConfig['Elastic']['port'])
+        ) {
             $this->error('Elastic Full Text Search engine needs to be configured on this Sugar instance prior to upgrade.');
             $this->error('Access Full Text Search configuration under Administration > Search.');
             $this->fail();
@@ -50,12 +53,45 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
             // Test Elastic FTS connection
             require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
             $searchEngine = SugarSearchEngineFactory::getInstance('Elastic', $ftsConfig['Elastic']);
-            $status = $searchEngine->getServerStatus();
+            $status = $this->getServerStatusElastic($searchEngine, $ftsConfig['Elastic']);
+
             if (!$status['valid']) {
                 $this->error('Connection test for Elastic Full Text Search engine failed.  Check your FTS configuration.');
                 $this->error('Access Full Text Search configuration under Administration > Search.');
                 $this->fail();
             }
         }
+    }
+
+    /**
+     * The older versions of getServerStatus may be broken, so we need to re-implement this to have it pass
+     *
+     * @return array
+     */
+    protected function getServerStatusElastic($searchEngine, $config)
+    {
+        $this->_client = new Elastica_Client($config);
+        global $app_strings, $sugar_config;
+        $isValid = false;
+        $timeOutValue = $this->_client->getConfig('timeout');
+        try {
+            //Default test timeout is 5 seconds
+            $ftsTestTimeout = (isset($sugar_config['fts_test_timeout'])) ? $sugar_config['fts_test_timeout'] : 5;
+            $this->_client->setConfigValue('timeout', $ftsTestTimeout);
+            $results = $this->_client->request('', Elastica_Request::GET)->getData();
+            if (!empty($results['ok'])) {
+                $isValid = true;
+                $displayText = $app_strings['LBL_EMAIL_SUCCESS'];
+            } else {
+                $displayText = $app_strings['ERR_ELASTIC_TEST_FAILED'];
+            }
+        } catch (Exception $e) {
+            $this->reportException("Unable to get server status", $e);
+            $displayText = $e->getMessage();
+        }
+        //Reset previous timeout value.
+        $this->_client->setConfigValue('timeout', $timeOutValue);
+
+        return array('valid' => $isValid, 'status' => $displayText);
     }
 }
