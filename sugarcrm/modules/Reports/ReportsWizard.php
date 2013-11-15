@@ -243,11 +243,7 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 	$newArray = array();
 	$newArray['filters_def'] = $args['reporter']->report_def['filters_def'];
 	$encodedFilterData = $global_json->encode($newArray);
-	if ($newReport) {
-		saveReportFilters($args['reporter']->saved_report->id, $encodedFilterData);
-	} else {
-		updateReportAccessDate($args['reporter']->saved_report_id, $encodedFilterData);
-	} // else
+    saveReportFilters($args['reporter']->saved_report->id, $encodedFilterData);
 
 	if (isset($_REQUEST['save_and_run_query']) && ($_REQUEST['save_and_run_query'] == 'on')) {
 		header('location:index.php?action=ReportCriteriaResults&module=Reports&page=report&id='.$args['reporter']->saved_report->id);
