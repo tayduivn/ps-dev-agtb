@@ -26,60 +26,6 @@
  ********************************************************************************/
 (function(app) {
     /**
-     * Cache for legacy metadata.
-     * @type {Object}
-     */
-    var metadataCache = {};
-
-    /**
-     * Holds the private legacy metadata converter methods.
-     * @type {Object}
-     */
-    var metadataConverters = {
-        /**
-         * Converts legacy listviewdefs to the Sidecar list metadata.
-         * @param  {Object} meta Module-unwrapped legacy metadata
-         * @return {Object}      Sidecar list metadata
-         */
-        listviewdefs: function(meta) {
-            var obj = {
-                panels: [{
-                    label: 'LBL_PANEL_DEFAULT',
-                    fields: []
-                }]
-            };
-
-            _.each(meta, function(value, key) {
-                var fieldOverrides = {name: key.toLowerCase()};
-                // assume the type comes from the name if no type was defined
-                fieldOverrides.type = value['type'] || fieldOverrides.name;
-                // need to map "team_name" to "teamset" as is seen in sugar7/hacks.js
-                if (fieldOverrides.type === 'team_name') {
-                    fieldOverrides.type = 'teamset';
-                }
-                if (app.config.platform === 'portal') {
-                    fieldOverrides['default'] = true;
-                } else {
-                    // Coerce the value from the defs to a boolean.
-                    fieldOverrides['default'] = !!value['default'];
-                }
-
-                if (_.isUndefined(value.enabled)) {
-                    fieldOverrides.enabled = true;
-                } else {
-                    // Coerce the value from the defs to a boolean.
-                    fieldOverrides.enabled = !!value.enabled;
-                }
-
-                _.extend(value, fieldOverrides);
-                obj.panels[0].fields.push(value);
-            });
-
-            return obj;
-        }
-    };
-
-    /**
      * Backwards compatibility (Bwc) class manages all required methods for BWC
      * modules.
      *
