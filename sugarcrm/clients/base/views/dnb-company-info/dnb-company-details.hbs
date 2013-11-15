@@ -9,7 +9,8 @@
 					<td align="center">
 						<div class='dnb-checkbox-nav'>
 							{{#if product.dataIndicatorMap.name}}
-								<input type="checkbox" name="name" id="name" class="dnb_checkbox" />
+								{{#eq product.dataIndicatorMap.name 'upd'}}<input type='checkbox' name='name' id='name' class='dnb_checkbox' checked/>{{/eq}}	
+								{{#eq product.dataIndicatorMap.name 'dup'}}<input type='checkbox' name='name' id='name' class='dnb_checkbox'/>{{/eq}}
 							{{else}}
 								<input type="checkbox" name="name" id="name" class="dnb_checkbox" checked/>
 							{{/if}}
@@ -34,7 +35,9 @@
 						<td align="center">
 							<div class='dnb-checkbox-nav'>
 								{{#if product.dataIndicatorMap.billing_address_street}}
-									<input type="checkbox" class="dnb_checkbox" id="billing_address_street" name="billing_address_street">
+									{{#eq product.dataIndicatorMap.billing_address_street 'upd'}}<input type='checkbox' name='billing_address_street' id='billing_address_street' class='dnb_checkbox' checked/>{{/eq}}	
+									{{#eq product.dataIndicatorMap.billing_address_street 'dup'}}<input type='checkbox' name='billing_address_street' id='billing_address_street' class='dnb_checkbox'/>{{/eq}}
+
 								{{else}}
 									<input type="checkbox" class="dnb_checkbox" id="billing_address_street" name="billing_address_street" checked>
 								{{/if}}
@@ -61,7 +64,9 @@
 						<td>
 							<div class='dnb-checkbox-nav'>
 								{{#if product.dataIndicatorMap.billing_address_city}}
-									<input type="checkbox" class="dnb_checkbox" id="billing_address_city" name="billing_address_city">
+									{{#eq product.dataIndicatorMap.billing_address_city 'upd'}}<input type='checkbox' name='billing_address_city' id='billing_address_city' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.billing_address_city 'dup'}}<input type='checkbox' name='billing_address_city' id='billing_address_city' class='dnb_checkbox'/>{{/eq}}
+
 								{{else}}
 									<input type="checkbox" class="dnb_checkbox" id="billing_address_city" name="billing_address_city" checked>
 								{{/if}}
@@ -88,7 +93,8 @@
 						<td>
 							<div class='dnb-checkbox-nav'>
 								{{#if product.dataIndicatorMap.billing_address_state}}
-									<input type="checkbox" class="dnb_checkbox" id="billing_address_state" name="billing_address_state">
+									{{#eq product.dataIndicatorMap.billing_address_state 'upd'}}<input type='checkbox' name='billing_address_state' id='billing_address_state' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.billing_address_state 'dup'}}<input type='checkbox' name='billing_address_state' id='billing_address_state' class='dnb_checkbox'/>{{/eq}}
 								{{else}}
 									<input type="checkbox" class="dnb_checkbox" id="billing_address_state" name="billing_address_state" checked>
 								{{/if}}
@@ -115,7 +121,9 @@
 						<td>
 							<div class='dnb-checkbox-nav'>
 								{{#if product.dataIndicatorMap.billing_address_country}}
-									<input type="checkbox" class="dnb_checkbox" id="billing_address_country" name="billing_address_country">
+										{{#eq product.dataIndicatorMap.billing_address_country 'upd'}}<input type='checkbox' name='billing_address_country' id='billing_address_country' class='dnb_checkbox' checked/>{{/eq}}
+										{{#eq product.dataIndicatorMap.billing_address_country 'dup'}}<input type='checkbox' name='billing_address_country' id='billing_address_country' class='dnb_checkbox'/>{{/eq}}
+
 								{{else}}
 									<input type="checkbox" class="dnb_checkbox" id="billing_address_country" name="billing_address_country" checked>
 								{{/if}}
@@ -142,7 +150,9 @@
 						<td>
 							<div class='dnb-checkbox-nav'>
 								{{#if product.dataIndicatorMap.billing_address_postalcode}}
-									<input type="checkbox" class="dnb_checkbox" id="billing_address_postalcode" name="billing_address_postalcode">
+									{{#eq product.dataIndicatorMap.billing_address_postalcode 'upd'}}<input type='checkbox' name='billing_address_postalcode' id='billing_address_postalcode' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.billing_address_postalcode 'dup'}}<input type='checkbox' name='billing_address_postalcode' id='billing_address_postalcode' class='dnb_checkbox'/>{{/eq}}
+
 								{{else}}
 									<input type="checkbox" class="dnb_checkbox" id="billing_address_postalcode" name="billing_address_postalcode" checked>
 								{{/if}}
@@ -168,7 +178,9 @@
 						<td align="center">
 							<div class='dnb-checkbox-nav'>
 								{{#if product.dataIndicatorMap.website}}
-									<input type="checkbox" name="website" id="website"  class="dnb_checkbox">
+									{{#eq product.dataIndicatorMap.website 'upd'}}<input type='checkbox' name='website' id='website' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.website 'dup'}}<input type='checkbox' name='website' id='website' class='dnb_checkbox'/>{{/eq}}
+
 								{{else}}
 									<input type="checkbox" name="website" id="website"  class="dnb_checkbox" checked>
 								{{/if}}
@@ -194,7 +206,9 @@
 						<td align="center">
 							<div class='dnb-checkbox-nav'>
 								{{#if product.dataIndicatorMap.phone_office}}
-									<input type="checkbox" name="phone_office" id="phone_office"  class="dnb_checkbox">
+									{{#eq product.dataIndicatorMap.phone_office 'upd'}}<input type='checkbox' name='phone_office' id='phone_office' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.phone_office 'dup'}}<input type='checkbox' name='phone_office' id='phone_office' class='dnb_checkbox'/>{{/eq}}
+		
 								{{else}}
 									<input type="checkbox" name="phone_office" id="phone_office"  class="dnb_checkbox" checked>
 								{{/if}}
@@ -221,7 +235,9 @@
 						<td align="center">
 							<div class='dnb-checkbox-nav'>
 								{{#if product.dataIndicatorMap.ownership}}
-									<input type="checkbox" name="ownership" id="ownership" class="dnb_checkbox"/>
+									{{#eq product.dataIndicatorMap.ownership 'upd'}}<input type='checkbox' name='ownership' id='ownership' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.ownership 'dup'}}<input type='checkbox' name='ownership' id='ownership' class='dnb_checkbox'/>{{/eq}}
+
 								{{else}}
 									<input type="checkbox" name="ownership" id="ownership" class="dnb_checkbox" checked>
 								{{/if}}
@@ -245,7 +261,9 @@
 						<td align="center">
 							<div class='dnb-checkbox-nav'>
 								{{#if product.dataIndicatorMap.annual_revenue}}
-									<input type="checkbox" name="annual_revenue" id="annual_revenue" class="dnb_checkbox"/>
+									{{#eq product.dataIndicatorMap.annual_revenue 'upd'}}<input type='checkbox' name='annual_revenue' id='annual_revenue' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.annual_revenue 'dup'}}<input type='checkbox' name='annual_revenue' id='annual_revenue' class='dnb_checkbox'/>{{/eq}}
+
 								{{else}}
 									<input type="checkbox" name="annual_revenue" id="annual_revenue" class="dnb_checkbox" checked>
 								{{/if}}
@@ -281,7 +299,9 @@
 						<td align="center">
 							<div class='dnb-checkbox-nav'>
 								{{#if product.dataIndicatorMap.employees}}
-									<input type="checkbox" name="employees" id="employees" class="dnb_checkbox" />
+									{{#eq product.dataIndicatorMap.employees 'upd'}}<input type='checkbox' name='employees' id='employees' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.employees 'dup'}}<input type='checkbox' name='employees' id='employees' class='dnb_checkbox'/>{{/eq}}
+
 								{{else}}
 									<input type="checkbox" name="employees" id="employees" class="dnb_checkbox" checked />
 								{{/if}}
@@ -307,7 +327,9 @@
 						<td align="center">
 							<div class='dnb-checkbox-nav'>
 								{{#if product.dataIndicatorMap.sic_code}}
-									<input type="checkbox" name="sic_code" id="sic_code" class="dnb_checkbox" />
+									{{#eq product.dataIndicatorMap.sic_code 'upd'}}<input type='checkbox' name='sic_code' id='sic_code' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.sic_code 'dup'}}<input type='checkbox' name='sic_code' id='sic_code' class='dnb_checkbox'/>{{/eq}}
+
 								{{else}}
 									<input type="checkbox" name="sic_code" id="sic_code" class="dnb_checkbox" checked />
 								{{/if}}
