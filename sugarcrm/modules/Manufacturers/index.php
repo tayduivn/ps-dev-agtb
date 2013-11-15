@@ -91,6 +91,7 @@ $ListView->setHeaderTitle($header_text.$action_button);
 
 $ListView->show_export_button = false;
 $ListView->show_mass_update = false;
+$ListView->show_delete_button = false;
 $ListView->setQuery("", "", "list_order", "MANUFACTURER");
 $ListView->processListView($focus, "main", "MANUFACTURER");
 
