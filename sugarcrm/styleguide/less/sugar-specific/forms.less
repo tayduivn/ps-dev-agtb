@@ -402,7 +402,7 @@ input[type=radio] {
   }
   .card2 .control-group.single .control-label .control-label-background {
     height: 0;
-    border-radius: 3px;
+    .border-radius(3px);
     border-top: 1px solid lighten(@grayLight,14%);
     border-bottom: 1px solid lighten(@grayLight,14%);
   }
@@ -533,12 +533,8 @@ input[type=radio] {
   display: inline-block;
   border: 3px solid black;
   text-align: left;
-  -webkit-border-bottom-left-radius: 3px;
-    -moz-border-radius-bottomleft: 3px;
-      border-bottom-left-radius: 3px;
-  -webkit-border-bottom-right-radius: 3px;
-    -moz-border-radius-bottomright: 3px;
-      border-bottom-right-radius: 3px;
+  .border-bottom-left-radius(3px);
+  .border-bottom-right-radius(3px);
   .opacity(60);
 }
 
