@@ -43,7 +43,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         }else{
             $_REQUEST['root_directory'] = getcwd();
             require_once('jssource/minify.php');
-        
+            $minifyUtils = new SugarMinifyUtils();
             if($_REQUEST['js_admin_repair'] == 'replace'){
                 //should replace compressed JS with source js
                 $minifyUtils->reverseScripts("$from/jssource/src_files","$from");    
