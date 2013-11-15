@@ -135,6 +135,15 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'default' => "0",
             'comment' => 'Total of closed won items in the forecast',
         ),
+        'manager_saved' =>
+        array(
+            'name' => 'manager_saved',
+            'vname' => 'LBL_MANGER_SAVED',
+            'type' => 'bool',
+            'studio' => false,
+            'default' => false,
+            'comments' => 'Once this is set to true, the rollovers will no longer happen'
+        ),
         'show_history_log' =>
         array(
             'name' => 'show_history_log',
