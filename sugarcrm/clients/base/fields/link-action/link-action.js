@@ -64,9 +64,27 @@
                     showAlerts: true,
                     relate: true,
                     success: function(model) {
+                        //We've just linked a related, however, the list of records from
+                        //loadData will come back in DESC (reverse chronological order with
+                        //our newly linked on top). Hence, we reset pagination here.
+                        self.context.get("collection").resetPagination();
                         self.context.resetLoadFlag();
                         self.context.set('skipFetch', false);
-                        self.context.loadData();
+                        //Reset limit on context so we don't "over fetch" (lose pagination)
+                        var collectionOptions = self.context.has('collectionOptions') ? self.context.get('collectionOptions') : {};
+                        if (collectionOptions.limit) self.context.set('limit', collectionOptions.limit);
+                        self.context.loadData({
+                            success: function() {
+                                self.view.layout.trigger("filter:record:linked");
+                            },
+                            error: function(error) {
+                                app.alert.show('server-error', {
+                                    level: 'error',
+                                    messages: 'ERR_GENERIC_SERVER_ERROR',
+                                    autoClose: false
+                                });
+                            }
+                        });
                     },
                     error: function(error) {
                         app.alert.show('server-error', {
