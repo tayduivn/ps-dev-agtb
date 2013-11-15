@@ -21,14 +21,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 $dictionary['Team'] = array ( 'table' => 'teams'
                                   , 'fields' => array (
-  'id' =>
-  array (
-    'name' => 'id',
-    'vname' => 'LBL_ID',
-    'type' => 'id',
-    'required'=>true,
-    'reportable'=>true,
-  ),
   'name' =>
   array (
     'name' => 'name',
@@ -52,64 +44,12 @@ $dictionary['Team'] = array ( 'table' => 'teams'
 	'type' => 'id',
 	'reportable'=>false,
   ),
-  'date_entered' =>
-  array (
-    'name' => 'date_entered',
-    'vname' => 'LBL_DATE_ENTERED',
-    'type' => 'datetime',
-    'required'=>true,
-  ),
-  'date_modified' =>
-  array (
-    'name' => 'date_modified',
-    'vname' => 'LBL_DATE_MODIFIED',
-    'type' => 'datetime',
-    'required'=>true,
-  ),
-    'modified_user_id' =>
-  array (
-    'name' => 'modified_user_id',
-    'rname' => 'user_name',
-    'id_name' => 'modified_user_id',
-    'vname' => 'LBL_ASSIGNED_TO',
-    'type' => 'assigned_user_name',
-    'table' => 'users',
-    'isnull' => 'false',
-    'dbType' => 'id',
-    'reportable'=>true,
-  ),
-  'created_by' =>
-  array (
-    'name' => 'created_by',
-    'rname' => 'user_name',
-    'id_name' => 'modified_user_id',
-    'vname' => 'LBL_ASSIGNED_TO',
-    'type' => 'assigned_user_name',
-    'table' => 'users',
-    'isnull' => 'false',
-    'dbType' => 'id',
-    'reportable'=>true,
-  ),
   'private' =>
   array (
     'name' => 'private',
     'vname' => 'LBL_PRIVATE',
     'type' => 'bool',
     'default' => '0',
-  ),
-  'description' =>
-  array (
-    'name' => 'description',
-    'vname' => 'LBL_DESCRIPTION',
-    'type' => 'text',
-  ),
-  'deleted' =>
-  array (
-    'name' => 'deleted',
-    'vname' => 'LBL_DELETED',
-    'type' => 'bool',
-    'reportable'=>false,
-    'required'=>false,
   ),
   'users' =>
   array (
@@ -144,12 +84,11 @@ $dictionary['Team'] = array ( 'table' => 'teams'
 ),
 'acls' => array('SugarACLAdminOnly' => array('adminFor' => 'Users', 'allowUserRead' => true)),
 'indices' => array (
-      array('name' =>'teamspk', 'type' =>'primary', 'fields'=>array('id')),
       array('name' =>'idx_team_del', 'type' =>'index', 'fields'=>array('name')),
       array('name' =>'idx_team_del_name', 'type' =>'index', 'fields'=>array('deleted','name'))
        )
 );
-
+VardefManager::createVardef('Teams', 'Team', array('basic', 'assignable'));
 $dictionary['TeamMembership'] = array(
 	'table' => 'team_memberships',
 	'fields' => array(
