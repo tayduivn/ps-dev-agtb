@@ -47,6 +47,11 @@
      */
     initOptions: null,
 
+    /**
+     * Holds the forecast isn't set up message if Forecasts hasn't been set up yet
+     */
+    forecastsNotSetUpMsg: undefined,
+
     events: {
         'click button.btn': 'handleTypeButtonClick'
     },
@@ -83,6 +88,8 @@
         } else {
             // set the no access template
             this.initOptions.meta.template = 'forecast-pareto.no-access';
+            var isAdmin = _.isUndefined(app.user.getAcls()['Forecasts'].admin);
+            this.forecastsNotSetUpMsg = app.utils.getForecastNotSetUpMessage(isAdmin);
         }
 
         app.view.View.prototype.initialize.call(this, this.initOptions);

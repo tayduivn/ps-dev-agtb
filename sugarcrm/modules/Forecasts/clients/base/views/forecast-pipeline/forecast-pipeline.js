@@ -35,6 +35,11 @@
      */
     preview_open: false,
 
+    /**
+     * Holds the forecast isn't set up message if Forecasts hasn't been set up yet
+     */
+    forecastsNotSetUpMsg: undefined,
+
     events: {
         'click button.btn': 'handleTypeButtonClick'
     },
@@ -45,6 +50,10 @@
         // check to make sure that forecast is configured
         this.forecastSetup = app.metadata.getModule('Forecasts', 'config').is_setup;
         this.forecastAdmin = (_.isUndefined(app.user.getAcls()['Forecasts'].admin));
+
+        if(!this.forecastSetup) {
+            this.forecastsNotSetUpMsg = app.utils.getForecastNotSetUpMessage(this.forecastAdmin);
+        }
     },
 
     initDashlet: function(view) {

@@ -147,6 +147,11 @@
     showTargetQuota: false,
 
     /**
+     * Holds the forecast isn't set up message if Forecasts hasn't been set up yet
+     */
+    forecastsNotSetUpMsg: undefined,
+
+    /**
      * {@inheritdoc}
      */
     initialize: function(options) {
@@ -158,6 +163,11 @@
         this.forecastConfig = app.metadata.getModule('Forecasts', 'config');
         this.isForecastSetup = this.forecastConfig.is_setup;
         this.forecastsConfigOK = app.utils.checkForecastConfig();
+        this.isForecastAdmin = _.isUndefined(app.user.getAcls()['Forecasts'].admin);
+
+        if(!this.forecastSetup) {
+            this.forecastsNotSetUpMsg = app.utils.getForecastNotSetUpMessage(this.isForecastAdmin);
+        }
 
         if(this.isForecastSetup && this.forecastsConfigOK) {
             this.serverData = new Backbone.Model();
@@ -195,8 +205,6 @@
 
             // once selectedUser & shouldRollup is set, check if user is a sub-manager
             this.checkShowTargetQuota();
-
-            this.isForecastAdmin = _.isUndefined(app.user.getAcls()['Forecasts'].admin);
 
             // set up the subtemplate
             this.subDetailsTpl = app.template.getView('forecastdetails.sub-details');
@@ -401,7 +409,7 @@
     loadData: function(options) {
         // if in dashlet config, or if Forecasts is not configured properly,
         // do not load data
-        if(this.meta.config || !this.forecastsConfigOK) {
+        if(this.meta.config || !this.forecastsConfigOK || !this.isForecastSetup) {
             return;
         }
 

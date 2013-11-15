@@ -642,6 +642,23 @@
                         modelToSave: model
                     }
                 }, callback);
+            },
+
+            /**
+             * Returns the Forecasts not setup message with link to config if isAdmin is true
+             *
+             * @param {boolean} isAdmin is the user an admin
+             * @returns {string} a translated string with a link to Forecasts config if user is an admin
+             */
+            getForecastNotSetUpMessage: function(isAdmin) {
+                var langKey = (isAdmin) ? 'LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN' : 'LBL_DASHLET_FORECAST_NOT_SETUP',
+                    msg = app.lang.get(langKey, 'Forecasts');
+                if(isAdmin) {
+                    var linkText = app.lang.get('LBL_DASHLET_FORECAST_CONFIG_LINK_TEXT', 'Forecasts');
+                    msg += '  <a href="#Forecasts/config">' + linkText + '</a>';
+                }
+
+                return msg;
             }
         });
     });

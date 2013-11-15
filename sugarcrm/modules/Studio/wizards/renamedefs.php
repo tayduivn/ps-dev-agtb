@@ -131,7 +131,7 @@ $renamedefs = array(
             array('name' => 'LBL_DASHLET_MY_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
             array('name' => 'LBL_DASHLET_MY_TEAMS_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
             array('name' => 'LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN', 'type' => 'plural', 'source' => 'Forecasts'),
-            array('name' => 'LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN', 'type' => 'singular', 'source' => 'Forecasts'),
+            array('name' => 'LBL_DASHLET_FORECAST_CONFIG_LINK_TEXT', 'type' => 'singular', 'source' => 'Forecasts'),
         ),
         'ForecastManagerWorksheets' => array(
             // BEGIN SUGARCRM flav!=ent ONLY
