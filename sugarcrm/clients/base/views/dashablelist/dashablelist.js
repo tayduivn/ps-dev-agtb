@@ -85,7 +85,7 @@
      *
      * @property {Array}
      */
-    moduleBlacklist: ['Home'],
+    moduleBlacklist: ['Home', 'Forecasts'],
 
     /**
      * Cache of the modules a user is allowed to see.
@@ -151,15 +151,16 @@
      * @param {String} intelligent Flag displayed if dashlet is in intelligent mode.
      */
     setLinkedFieldVisibility: function(visible, intelligent) {
-        var field = this.getField('linked_fields');
+        var field = this.getField('linked_fields'),
+            fieldEl = this.$('[data-name=linked_fields]');
         intelligent = intelligent || '1';
         if (!field) {
             return;
         }
         if (visible === '1' && intelligent === '1' && !_.isEmpty(field.items)) {
-            field.show();
+            fieldEl.show();
         } else {
-            field.hide();
+            fieldEl.hide();
         }
     },
 
@@ -182,6 +183,11 @@
             }, this);
             this.settings.on('change:intelligent', function(model, intelligent) {
                 this.setLinkedFieldVisibility('1', intelligent);
+            }, this);
+            this.on('render', function() {
+                if (_.isEmpty(this.settings.get('linked_fields'))) {
+                    this.setLinkedFieldVisibility('0');
+                }
             }, this);
         }
         this._initializeSettings();
