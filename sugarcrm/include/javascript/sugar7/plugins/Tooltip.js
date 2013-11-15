@@ -28,7 +28,18 @@
     app.events.on('app:init', function() {
         app.plugins.register('Tooltip', ['layout', 'view', 'field'], {
             _$pluginTooltips: null, //array of all initialized tooltips
-            _pluginTooltipCssSelector: '[rel=tooltip]', //CSS selector used to find tooltips
+
+            /**
+             * CSS selector used to find tooltips.
+             * To overwrite the css selector,
+             * assign the custom selector on `pluginTooltipCssSelector`.
+             * In order to assign multiple selector,
+             * assign the selector by comma separator.
+             * <pre>
+             *     pluginTooltipCssSelector: 'select1, select2, selectN',
+             * </pre>
+             */
+            _pluginTooltipCssSelector: '[rel=tooltip]',
 
             /**
              * Initialize tooltips on render and destroy tooltip before render for views and fields.
@@ -112,7 +123,8 @@
              * @private
              */
             _getPluginTooltips: function($element) {
-                return $element ? $element.find(this._pluginTooltipCssSelector) : this.$(this._pluginTooltipCssSelector);
+                var selector = this.pluginTooltipCssSelector || this._pluginTooltipCssSelector;
+                return $element ? $element.find(selector) : this.$(selector);
             }
         });
     });
