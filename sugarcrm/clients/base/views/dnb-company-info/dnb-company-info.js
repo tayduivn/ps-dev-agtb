@@ -333,7 +333,7 @@
                 if(primaryHooversCode)
                     app.controller.context.set('dnb_temp_hoovers_ind_code',primaryHooversCode.IndustryCode.$ + '-' + primaryHooversCode['@DNBCodeValue']);
             }
-            resultData.product.dataIndicatorMap = this.getDataIndicators();
+            resultData.product.dataIndicatorMap = this.getDataIndicators(resultData);
         }
 
         if (this.disposed)
@@ -361,18 +361,48 @@
     /**
         returns an object of data elements
         with indicators indicating
-        if the data element exists then add the element to the map
+        if the data element exists 
+        and is duplicate then add 'dup' 
+        else add 'upd'
         else do not add it to the map
     */
-    getDataIndicators: function()
+    getDataIndicators: function(dnbApiResponse)
     {
         var accountsModel = this.model;
         var dataIndicatorMap = {};
 
+        var dnbResponseMap = {};
+
+        var name,billing_address_street,billing_address_city,billing_address_state,
+        billing_address_country,billing_address_postalcode,website,phone_office,
+        ownership,annual_revenue,employees,sic_code;
+
+        if(this.checkJsonNode(dnbApiResponse,'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationName.OrganizationPrimaryName.0.OrganizationName.$'))dnbResponseMap.name = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationName.OrganizationPrimaryName[0].OrganizationName.$;
+        if(this.checkJsonNode(dnbApiResponse,'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.0.StreetAddressLine.0.LineText'))dnbResponseMap.billing_address_street = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress[0].StreetAddressLine[0].LineText ;
+        if(this.checkJsonNode(dnbApiResponse,'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.0.PrimaryTownName'))dnbResponseMap.billing_address_city = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress[0].PrimaryTownName ;
+        if(this.checkJsonNode(dnbApiResponse,'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.0.TerritoryAbbreviatedName'))dnbResponseMap.billing_address_state = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress[0].TerritoryAbbreviatedName;
+        if(this.checkJsonNode(dnbApiResponse,'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.0.CountryISOAlpha2Code'))dnbResponseMap.billing_address_country = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress[0].CountryISOAlpha2Code;
+        if(this.checkJsonNode(dnbApiResponse,'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.0.PostalCode'))dnbResponseMap.billing_address_postalcode = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress[0].PostalCode;
+        if(this.checkJsonNode(dnbApiResponse,'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.WebPageAddress.0.TelecommunicationAddress'))dnbResponseMap.website = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.WebPageAddress[0].TelecommunicationAddress;
+        if(this.checkJsonNode(dnbApiResponse,'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.TelephoneNumber.0.TelecommunicationNumber'))dnbResponseMap.phone_office = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.TelephoneNumber[0].TelecommunicationNumber;
+        if(this.checkJsonNode(dnbApiResponse,'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationDetail.ControlOwnershipTypeText.$'))dnbResponseMap.ownership = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationDetail.ControlOwnershipTypeText.$;
+        if(this.checkJsonNode(dnbApiResponse,'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.0.SalesRevenueAmount.0.$'))dnbResponseMap.annual_revenue = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview[0].SalesRevenueAmount[0].$;
+        if(this.checkJsonNode(dnbApiResponse,'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.EmployeeFigures.IndividualEntityEmployeeDetails.TotalEmployeeQuantity'))dnbResponseMap.employees = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.EmployeeFigures.IndividualEntityEmployeeDetails.TotalEmployeeQuantity;
+        if(this.checkJsonNode(dnbApiResponse,'product.primarySIC.IndustryCode.$'))dnbResponseMap.sic_code = dnbApiResponse.product.primarySIC.IndustryCode.$;
+
+
         _.each(this.dataElements,function(dataElementName){
-            if(!_.isUndefined(accountsModel.get(dataElementName)) 
-                && accountsModel.get(dataElementName) != '' )
-                dataIndicatorMap[dataElementName] = true;
+
+            //if value is set on accounts obj and same as dnb response then mark as dup
+            if(!_.isUndefined(accountsModel.get(dataElementName)) && accountsModel.get(dataElementName) != '' &&
+                !_.isUndefined(dnbResponseMap[dataElementName]) && dnbResponseMap[dataElementName] != ''
+                && $.trim(accountsModel.get(dataElementName)) == $.trim(dnbResponseMap[dataElementName]))
+                dataIndicatorMap[dataElementName] = 'dup';
+            else if(!_.isUndefined(accountsModel.get(dataElementName)) && accountsModel.get(dataElementName) != '' &&
+                !_.isUndefined(dnbResponseMap[dataElementName]) && dnbResponseMap[dataElementName] != ''
+                && $.trim(accountsModel.get(dataElementName)) != $.trim(dnbResponseMap[dataElementName]))
+                dataIndicatorMap[dataElementName] = 'upd';
+            //else value is set on accounts obj and different from dnb response then mark as upd
         });
 
         return dataIndicatorMap;
@@ -524,6 +554,7 @@
         }
         return true;
     },
+
 
     populateCountry : function(selectedCountry)
     {
