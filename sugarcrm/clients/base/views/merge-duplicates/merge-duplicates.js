@@ -597,6 +597,9 @@
     /**
      * Validate field to merge by attributes.
      *
+     * Uses `this.validArrayAttributes` hash to validate attributes.
+     * Also checks if field is calculated and if it is returns `false`.
+     *
      * @param {Object} defs Defs of validated field.
      * @return {Boolean}
      * @private
@@ -605,6 +608,11 @@
         // normalize fields that might not be there
         defs.dbType = defs.dbType || defs.type;
         defs.source = defs.source || 'db';
+        defs.calculated = defs.calculated || false;
+
+        if (defs.calculated !== false) {
+            return false;
+        }
 
         // compare to values in the list of acceptable attributes
         return _.some(this.validArrayAttributes, function(o) {
