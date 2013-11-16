@@ -242,6 +242,39 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+    public function testBadFields()
+    {
+        $sq = new SugarQuery();
+        $sq->select(array("id", "notARealField"));
+        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->where()->equals("noWhere", "nonYaBusiness");
+        $sq->orderBy('yesIAmCertainlyAField');
+        $sql = $sq->compileSql();
+
+        $this->assertNotContains("yesIAmCertainlyAField", $sql);
+        $this->assertNotContains("noWhere", $sql);
+        $this->assertNotContains("notARealField", $sql);
+    }
+
+    public function testUniqueAliases()
+    {
+        $sq = new SugarQuery();
+        $sq->select(array('*', 'date_modified'));
+        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->where()->equals("id","2");
+        $sql = $sq->compileSql();
+        $count = substr_count($sql, 'date_modified');
+        // count the alias as well
+        $this->assertEquals(2, $count);
+
+        $sq = new SugarQuery();
+        $sq->select(array('*', array('id', 'superAwesomeField')));
+        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->where()->equals("id", "2");
+        $sql = $sq->compileSql();
+        $this->assertcontains('id superAwesomeField', $sql);
+    }
+
     /**
      * @ticket 62961
      */
@@ -260,7 +293,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sql = $sq->compileSql();
         // ensure the query looks good
         $this->assertContains("contacts_cstm.bigname_c", $sql);
-        $this->assertContains("_cstm.bigname_c bigname_c", $sql);
+        $this->assertContains("_cstm.bigname_c report_to_bigname", $sql);
         $this->assertContains("LEFT JOIN contacts_cstm ON contacts_cstm.id_c = contacts.id", $sql);
         $this->assertRegExp('/LEFT JOIN contacts_cstm jt(\w+)_cstm ON \(jt\1_cstm.id_c = jt\1\.id\)/', $sql);
     }
@@ -346,7 +379,6 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test bad conditions
-     * @expectedException SugarQueryException
      */
     public function testBadRelateConditions()
     {
@@ -357,7 +389,8 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->from($contact);
         $sq->where()->equals('email_and_name1','Awesome');
         $sql = $sq->compileSql();
-        $this->fail("Exception expected!");
+        // the field should not be there now
+        $this->assertNotContains("email_and_name1 = 'Awesome'", $sql);
 
     }
 

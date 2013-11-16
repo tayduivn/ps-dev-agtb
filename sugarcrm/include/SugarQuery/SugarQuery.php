@@ -585,11 +585,99 @@ class SugarQuery
         return $this;
     }
 
-    protected function rebuildFields() {
+    /**
+     * After a from is changed rebuild all the fields to check the vardefs
+     */
+    protected function rebuildFields()
+    {
         if (!empty($this->select)) {
-            foreach($this->select->select AS $field) {
+            foreach ($this->select->select as $field) {
                 if ($field instanceof SugarQuery_Builder_Field) {
                     $field->setupField($this);
+                }
+            }
+        }
+
+        if (!empty($this->join)) {
+            foreach ($this->join as $joinObj) {
+                if (!empty($joinObj->on['and'])) {
+                    foreach ($joinObj->on['and'] as $whereObj) {
+                        if (empty($whereObj->conditions)) {
+                            continue;
+                        }
+                        foreach ($whereObj->conditions as $conditionObj) {
+                            if ($conditionObj->field instanceof SugarQuery_Builder_Field) {
+                                $conditionObj->field->setupField($this);
+                            }
+                        }
+                    }
+                }
+                if (!empty($joinObj->on['or'])) {
+                    foreach ($joinObj->on['or'] as $whereObj) {
+                        if (empty($whereObj->conditions)) {
+                            continue;
+                        }
+                        foreach ($whereObj->conditions as $conditionObj) {
+                            if ($conditionObj->field instanceof SugarQuery_Builder_Field) {
+                                $conditionObj->field->setupField($this);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!empty($this->where['and'])) {
+            foreach ($this->where['and'] as $whereObj) {
+                if (empty($whereObj->conditions)) {
+                    continue;
+                }
+                foreach ($whereObj->conditions as $conditionObj) {
+                    if ($conditionObj->field instanceof SugarQuery_Builder_Field) {
+                        $conditionObj->field->setupField($this);
+                    }
+                }
+            }
+        }
+
+        if (!empty($this->where['or'])) {
+            foreach ($this->where['or'] as $whereObj) {
+                if (empty($whereObj->conditions)) {
+                    continue;
+                }
+                foreach ($whereObj->conditions as $conditionObj) {
+                    if ($conditionObj->field instanceof SugarQuery_Builder_Field) {
+                        $conditionObj->field->setupField($this);
+                    }
+                }
+            }
+        }
+
+        if (!empty($this->order_by)) {
+            foreach ($this->order_by as $orderObj) {
+                if ($orderObj->column instanceof SugarQuery_Builder_Field) {
+                    $orderObj->column->setupField($this);
+                }
+            }
+        }
+
+        if (!empty($this->group_by)) {
+            foreach ($this->group_by as $groupByObj) {
+                if ($groupByObj->column instanceof SugarQuery_Builder_Field) {
+                    $groupByObj->column->setupField($this);
+                }
+            }
+        }
+
+        if (!empty($this->having)) {
+            foreach ($this->having as $whereObj) {
+                if (empty($whereObj->conditions)) {
+                    continue;
+                }
+                foreach ($whereObj->conditions as $conditionObj) {
+                    if ($conditionObj->field instanceof SugarQuery_Builder_Field) {
+                        $conditionObj->field->setupField($this);
+                    }
                 }
             }
         }
@@ -637,7 +725,7 @@ class SugarQuery
         if ($joined->hasCustomFields()) {
             $table_cstm = $joined->get_custom_table_name();
             $alias_cstm = "{$alias}_cstm";
-            $this->joinTable($table_cstm, array('alias' => $alias_cstm, 'joinType' => "LEFT"))
+            $this->joinTable($table_cstm, array('alias' => $alias_cstm, 'joinType' => "LEFT", "linkingTable" => true))
                 ->on()->equalsField("$alias_cstm.id_c", "{$alias}.id");
         }
 

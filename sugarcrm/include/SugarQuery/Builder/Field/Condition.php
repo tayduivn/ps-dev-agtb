@@ -48,16 +48,28 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
         $this->checkCustomField();
     }
 
+
     public function shouldMarkNonDb()
     {
-        if (!empty($this->moduleName)) {
-            $bean = BeanFactory::getBean($this->moduleName);
-            $def = $bean->field_defs[$this->field];
-            if (isset($def['source']) && $def['source'] == 'non-db' && !isset($def['dbType'])) {
-                $this->nonDb = 1;
-                return;
-            }
+        // if its a linking table let it slide
+        if(!empty($this->query->join[$this->table]->options['linkingTable'])) {
+            $this->nonDb = 0;
+            return;
         }
+        if (empty($this->moduleName)) {
+            $this->nonDb = 1;
+            return;
+        }
+        $bean = BeanFactory::getBean($this->moduleName);
+        $def = !empty($bean->field_defs[$this->field]) ? $bean->field_defs[$this->field] : array();
+        if (isset($def['source']) && $def['source'] == 'non-db' && !isset($def['dbType'])) {
+            $this->nonDb = 1;
+            return;
+        } elseif (empty($def)) {
+            $this->nonDb = 1;
+            return;
+        }
+
         $this->nonDb = 0;
         return;
     }

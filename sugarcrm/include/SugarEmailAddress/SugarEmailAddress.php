@@ -826,7 +826,7 @@ class SugarEmailAddress extends SugarBean
         $q = new SugarQuery();
         $q->from($this);
         $q->select(array('email_address', 'opt_out', 'invalid_email', 'ear.primary_address', 'ear.reply_to_address'));
-        $q->joinTable("email_addr_bean_rel", array('alias'=>"ear", 'joinType'=>"LEFT"))
+        $q->joinTable("email_addr_bean_rel", array('alias'=>"ear", 'joinType'=>"LEFT", "linkingTable" => true))
             ->on()->equalsField('id', 'ear.email_address_id', $this)->equals('ear.deleted', 0);
         $q->where()->equals('deleted', 0)->equals('ear.bean_module', $module);
         $q->orderBy('ear.primary_address', 'DESC');

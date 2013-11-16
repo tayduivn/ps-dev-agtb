@@ -105,6 +105,18 @@ class SugarQuery_Builder_Field
         $this->query = $query;
 
         $this->def = $this->getFieldDef();
+
+        // if its a linking table let it slide
+        if(!empty($this->query->join[$this->table]->options['linkingTable'])) {
+            $this->nonDb = 0;
+            return;
+        }
+
+        if (empty($this->def) && $this->field != '*') {
+            $this->nonDb = 1;
+            return;
+        }
+
         $this->jta = $this->getJoin();
         if ((!empty($this->def) && $this->field != 'id_c') || $this->field == '*') {
             $this->expandField();

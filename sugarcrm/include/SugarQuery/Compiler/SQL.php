@@ -390,7 +390,7 @@ class SugarQuery_Compiler_SQL
         $field = $this->compileField($condition->field);
 
         if (empty($field)) {
-            throw new SugarQueryException("The field: {$condition->field->field} is not valid");
+            return false;
         }
 
         if ($condition->isNull) {
