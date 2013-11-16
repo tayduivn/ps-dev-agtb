@@ -42,23 +42,23 @@
 			</td>
 		</tr>
 	</table>
-
-    <div class='add_table' style='margin-bottom:5px'>
-        <table id="enableWirelessModules" class="enableWirelessModules edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0" width="25%">
-            <tr>
-                <td colspan="2">
-                    <table>
+	
+	<div class='add_table' style='margin-bottom:5px'>
+		<table id="enableWirelessModules" class="enableWirelessModules edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0" width="25%">
+			<tr>
+			    <td colspan="2">
+			        <table>
                     {if $url}
-                        <tr>
-                            <td scope="row" nowrap="nowrap">
-                                {sugar_translate module='Configurator' label='LBL_WIRELESS_SERVER_URL'}:
-                                {sugar_help text=$MOD.LBL_WIRELESS_URL_HELP}
-                            </td>
-                            </td>
-                            <td>
-                                <a href="{$url}" target="_blank">{$url}</a>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td scope="row" nowrap="nowrap">
+                            {sugar_translate module='Configurator' label='LBL_WIRELESS_SERVER_URL'}:
+                            {sugar_help text=$MOD.LBL_WIRELESS_URL_HELP}
+                        </td>
+                        </td>
+                        <td>
+                            <a href="{$url}" target="_blank">{$url}</a>
+                        </td>
+                    </tr>
                     {/if}
                 </td>
             </tr>
@@ -74,6 +74,24 @@
                 </td>
             </tr>
         </table>
+    </div>
+
+    <div  style="border: 1px solid gray; margin: 0 8px;">
+    <table width="100%" border="0" cellspacing="1" cellpadding="0" class="enableWirelessModules edit view" style="margin-bottom: 0;">
+        <tr>
+            <th align="left" scope="row" colspan="2">
+                <h4>{sugar_translate module='Administration' label='LBL_OFFLINE_SETTINGS'}</h4>
+            </th>
+        </tr>
+        <tr>
+            <td scope="row" style="width: 50%">
+                <label for="offline_enabled">{sugar_translate module='Administration' label='LBL_OFFLINE_ENABLED'}</label>
+            </td>
+            <td>
+                <input type='checkbox' id="offline_enabled" {if $config.offlineEnabled}checked{/if} />
+            </td>
+        </tr>
+    </table>
     </div>
 	
 	<table border="0" cellspacing="1" cellpadding="1">
@@ -142,7 +160,8 @@
 			SUGAR.util.paramsToUrl({
 				module: "Administration",
 				action: "updateWirelessEnabledModules",
-				enabled_modules: modules
+				enabled_modules: modules,
+				offlineEnabled: $('#offline_enabled').is(':checked')
 			}) + "to_pdf=1"
         );
 		

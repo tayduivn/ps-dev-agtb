@@ -116,4 +116,17 @@ class MetaDataManagerMobile extends MetaDataManager
         $data['_hash'] = $this->hashChunk($data);
         return $data;
     }
+
+    /**
+     * Retrieve white listed properties which shall be copied from server side
+     * configurations to client side configurations.
+     *
+     * @return array Configuration properties.
+     */
+    protected function getConfigProperties()
+    {
+        $properties = parent::getConfigProperties();
+        $properties['offlineEnabled'] = true;
+        return $properties;
+    }
 }
