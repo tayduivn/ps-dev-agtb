@@ -44,7 +44,7 @@ var ERR_REENTER_PASSWORDS = '{/literal}{$MOD.ERR_REENTER_PASSWORDS}{literal}';
 <style type="text/css">
 <!--
 <!--//BEGIN SUGARCRM flav=pro ONLY -->
-@import url(modules/Users/PasswordRequirementBox.css);
+@import url({sugar_getjspath file='modules/Users/PasswordRequirementBox.css'});
 <!--//END SUGARCRM flav=pro ONLY -->
 .body 
 { 

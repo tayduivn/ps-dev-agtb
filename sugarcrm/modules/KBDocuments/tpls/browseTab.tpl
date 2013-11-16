@@ -23,7 +23,7 @@
 *}
 
 {$SITEURL}
-<script type="text/javascript" language="Javascript" src="modules/KBDocuments/kbdocuments.js"></script>
+<script type="text/javascript" language="Javascript" src="{sugar_getjspath file='modules/KBDocuments/kbdocuments.js'}"></script>
 			<table width="100%" cellpadding="0" cellspacing="0" border="{$BORDER}" class="edit view search kb">
 				<tr>
 					<td width="{$TREE_WIDTH}" valign="top" >

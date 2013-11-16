@@ -30,7 +30,7 @@
 {capture name=alt2 assign=alt_removeButton}{sugar_translate label='LBL_ALT_REMOVE_TEAM_ROW'}{/capture}
 {capture name=alt3 assign=alt_addButton}{sugar_translate label='LBL_ALT_ADD_TEAM_ROW'}{/capture}
 
-<link rel="stylesheet" type="text/css" href="include/javascript/yui/build/container/assets/container.css" />
+<link rel="stylesheet" type="text/css" href="{sugar_getjspath file='include/javascript/yui/build/container/assets/container.css'}" />
 <script type="text/javascript" src='{sugar_getjspath file="include/SugarFields/Fields/Collection/SugarFieldCollection.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="include/SugarFields/Fields/Teamset/Teamset.js"}'></script>
 <script type="text/javascript">

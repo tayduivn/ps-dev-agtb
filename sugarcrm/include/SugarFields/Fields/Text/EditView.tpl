@@ -59,7 +59,7 @@ title='{{$vardef.help}}' tabindex="{{$tabindex}}" {{$displayParams.field}}
 
 <!--//BEGIN SUGARCRM flav=richtext ONLY -->
 {{if empty($displayParams.textonly)}}
-<link rel="stylesheet" type="text/css" href="include/javascript/yui/build/assets/skins/sam/editor.css"/>
+<link rel="stylesheet" type="text/css" href="{sugar_getjspath file='include/javascript/yui/build/assets/skins/sam/editor.css'}"/>
 <script type="text/javascript" language="javascript">
 var {{$idname}}_loader = new YAHOO.util.YUILoader({ldelim}
     require : ["editor", "resize"],

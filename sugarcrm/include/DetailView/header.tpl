@@ -30,7 +30,7 @@
 {{if $preForm}}
 	{{$preForm}}
 {{/if}}
-<script type="text/javascript" src="include/EditView/Panels.js"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/EditView/Panels.js'}"></script>
 <script language="javascript">
 {literal}
 SUGAR.util.doWhen(function(){

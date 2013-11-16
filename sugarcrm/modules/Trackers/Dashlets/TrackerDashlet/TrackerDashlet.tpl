@@ -55,7 +55,9 @@ var reportLoader = new YAHOO.util.YUILoader({
 reportLoader.addModule({
     name: "sugarwidgets",
     type: "js",
-    fullpath: "include/javascript/sugarwidgets/SugarYUIWidgets.js",
+{/literal}
+    fullpath: "{sugar_getjspath file='include/javascript/sugarwidgets/SugarYUIWidgets.js'}",
+{literal}
     varName: "YAHOO.SUGAR",
     requires: ["datatable", "dragdrop", "treeview", "tabview", "button", "autocomplete", "container"]
 });

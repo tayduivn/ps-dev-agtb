@@ -27,7 +27,7 @@
  ********************************************************************************/
 *}
 {if !empty($FIELDS)}
-<link rel="stylesheet" type="text/css" href="modules/ModuleBuilder/tpls/ListEditor.css" />
+<link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/ModuleBuilder/tpls/ListEditor.css'}" />
 <h3>{sugar_translate label='LBL_FIELDS' module='ACLFields'}</h3>
 <input type='hidden' name='flc_module' value='{$FLC_MODULE}'> 
 <table  class='detail view' border='0' cellpadding=0 cellspacing = 1  width='100%'>

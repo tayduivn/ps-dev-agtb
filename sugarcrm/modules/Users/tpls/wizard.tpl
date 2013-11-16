@@ -482,7 +482,9 @@ function startOutBoundEmailSettingsTest()
     loader.addModule({
         name :"sugarwidgets",
         type : "js",
-        fullpath: "include/javascript/sugarwidgets/SugarYUIWidgets.js",
+{/literal}
+        fullpath: "{sugar_getjspath file='include/javascript/sugarwidgets/SugarYUIWidgets.js'}",
+{literal}
         varName: "YAHOO.SUGAR",
         requires: ["datatable", "dragdrop", "treeview", "tabview"]
     });

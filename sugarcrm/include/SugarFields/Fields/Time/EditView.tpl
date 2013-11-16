@@ -44,7 +44,7 @@
 </tr>
 </table>
 <input type="hidden" id="{{$idname}}" name="{{$idname}}" value="{$fields[{{sugarvar key='name' stringFormat=true}}].value}">
-<script type="text/javascript" src="include/SugarFields/Fields/Time/Time.js"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/SugarFields/Fields/Time/Time.js'}"></script>
 <script type="text/javascript">
 
 //cleanup because this happens in a screwy order in a quickcreate, and the standard $(document).ready and YUI functions don't work quite right

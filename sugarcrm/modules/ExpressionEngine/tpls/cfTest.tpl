@@ -63,7 +63,7 @@ if (!Ext.isIE) console.log("done");
 			</td>
 		</tr>
 	</table>
-	<script src="modules/Accounts/Account.js?s=7c74ed735ef6055c5337721c01c06cbe&c=1">
+	<script src="{sugar_getjspath file='modules/Accounts/Account.js'}">
 	</script>
 	<table width="100%" cellspacing="0" cellpadding="0" class='detail view' id='tabFormPagination'>
 		<tr class='pagination'>
@@ -258,7 +258,7 @@ if (!Ext.isIE) console.log("done");
 																													</th>
 																													<tr>
 																														<td valign="top" width='37.5%' class='tabEditViewDF' NOWRAP>
-																															<script type="text/javascript" src='include/SugarFields/Fields/Address/SugarFieldAddress.js?s=7c74ed735ef6055c5337721c01c06cbe&c=1'>
+																															<script type="text/javascript" src="{sugar_getjspath file='include/SugarFields/Fields/Address/SugarFieldAddress.js'}">
 																															</script>
 																															<table border="0" cellspacing="0" cellpadding="0">
 																																<tr>
@@ -315,7 +315,7 @@ if (!Ext.isIE) console.log("done");
 																																var obj = new TestCheckboxReady(checkbox);
 																															</script>
 																															<td valign="top" width='37.5%' class='tabEditViewDF' NOWRAP>
-																																<script type="text/javascript" src='include/SugarFields/Fields/Address/SugarFieldAddress.js?s=7c74ed735ef6055c5337721c01c06cbe&c=1'>
+																																<script type="text/javascript" src="{sugar_getjspath file='include/SugarFields/Fields/Address/SugarFieldAddress.js'}">
 																																</script>
 																																<table border="0" cellspacing="0" cellpadding="0">
 																																	<tr>
@@ -387,7 +387,7 @@ if (!Ext.isIE) console.log("done");
  Email:
 																																			</td>
 																																			<td valign="top" width='37.5%' class='tabEditViewDF' colspan='3' NOWRAP>
-																																				<script type="text/javascript" src='include/SugarEmailAddress/SugarEmailAddress.js?s=7c74ed735ef6055c5337721c01c06cbe&c=1'>
+																																				<script type="text/javascript" src="{sugar_getjspath file='include/SugarEmailAddress/SugarEmailAddress.js'}">
 																																				</script>
 																																				<script type="text/javascript">
 																																					var module = 'Accounts';

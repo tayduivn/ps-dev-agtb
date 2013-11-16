@@ -33,13 +33,13 @@
         <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
         <title>SugarCRM</title>
-        <link rel="icon" href="themes/default/images/sugar_icon.ico">
+        <link rel="icon" href="{sugar_getjspath file='themes/default/images/sugar_icon.ico'}">
         <!-- CSS -->
         {foreach from=$css_url item=url}
-            <link rel="stylesheet" href="{$url}"/>
+            <link rel="stylesheet" href="{sugar_getjspath file=$url}"/>
         {/foreach}
         <!--[if lt IE 10]>
-        <link rel="stylesheet" type="text/css" href="themes/default/css/ie.css">
+        <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='themes/default/css/ie.css'}">
         <![endif]-->
         {sugar_getscript file="include/javascript/modernizr.js"}
     </head>
@@ -67,10 +67,10 @@
         {else}
             {sugar_getscript file="sidecar/minified/sidecar.min.js"}
         {/if}
-        <script src='{$sugarSidecarPath}'></script>
-        <script src='{$SLFunctionsPath}'></script>
-        <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
-        <script src='{$configFile}?hash={$configHash}'></script>
+        <script src='{sugar_getjspath file=$sugarSidecarPath}'></script>
+        <script src='{sugar_getjspath file=$SLFunctionsPath}'></script>
+        <!-- <script src='{sugar_getjspath file='sidecar/minified/sugar.min.js'}'></script> -->
+        <script src='{sugar_getjspath file=$configFile|cat:'?hash=$configHash'}'></script>
         {sugar_getscript file="cache/include/javascript/sugar_grp7.min.js"}
         {literal}
         <script language="javascript">
@@ -98,7 +98,7 @@
         {/literal}
 
         {if !empty($voodooFile)}
-            <script src="{$voodooFile}"></script>
+            <script src="{sugar_getjspath file=$voodooFile}"></script>
         {/if}
     </body>
 </html>

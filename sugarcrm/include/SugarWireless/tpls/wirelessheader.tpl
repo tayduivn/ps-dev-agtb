@@ -31,8 +31,8 @@
 <head>
 <title>{sugar_translate label='LBL_BROWSER_TITLE' module=''}</title>
 <link rel="apple-touch-icon" href="{sugar_getimagepath file='sugar_icon.png'}" />
-<link href="include/SugarWireless/css/wireless.css" type="text/css" rel="stylesheet">
-<link media="only screen and (max-device-width: 480px)" href="include/SugarWireless/css/iphone.css" type= "text/css" rel="stylesheet">
+<link href="{sugar_getjspath file='include/SugarWireless/css/wireless.css'}" type="text/css" rel="stylesheet">
+<link media="only screen and (max-device-width: 480px)" href="{sugar_getjspath file='include/SugarWireless/css/iphone.css'}" type= "text/css" rel="stylesheet">
 <meta name="viewport" content="user-scalable=no, width=device-width">
 <meta name="apple-touch-fullscreen" content="yes" />
 </head>
