@@ -102,7 +102,7 @@ class SupportPortalVisibility extends SugarVisibility
                 } else {
                     if ( $queryType == 'from' ) {
                         $this->bean->load_relationship('accounts');
-                        $queryPart = $this->bean->accounts->getJoin(array('join_table_alias'=>'accounts_pv'))." AND accounts_pv.id IN $accountIn ";
+                        $queryPart = $this->bean->accounts->getJoin(array('join_table_alias'=>'accounts_pv', 'ignore_role'=>true))." AND accounts_pv.id IN $accountIn ";
                     }
                 }
                 break;
@@ -204,7 +204,7 @@ class SupportPortalVisibility extends SugarVisibility
                 if ( $portalEnabled ) {
                     if ( $queryType == 'from' ) {
                         $this->bean->load_relationship($linkName);
-                        $queryPart = $this->bean->$linkName->getJoin(array('right_join_table_alias'=>$table_alias, 'join_table_alias'=>$linkName.'_pv'))." AND {$linkName}_pv.id IN $accountIn ";
+                        $queryPart = $this->bean->$linkName->getJoin(array('right_join_table_alias'=>$table_alias, 'join_table_alias'=>$linkName.'_pv', 'ignore_role'=>true))." AND {$linkName}_pv.id IN $accountIn ";
                     } else if ( $queryType == 'where' ) {
                         $queryPart = $wherePart;
                     }
