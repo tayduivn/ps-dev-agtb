@@ -1,36 +1,22 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 ({
     /**
      * DateTimeCombo Widget
      *
      * Extends from Date widget but adds the time component.
      */
-    extendsFrom:'DateField',
+    extendsFrom: 'DateField',
 
     stripIsoTZ: true,
 
@@ -71,7 +57,7 @@
      * Renders widget, sets up date and time pickers, etc.
      * @param  {String} value
      */
-    _render:function(value) {
+    _render: function(value) {
         var self = this, viewName;
 
         // Set our internal time and date values so hbs picks up
@@ -86,17 +72,17 @@
             }
         });
         if (Modernizr.touch) {
-           this.$("[rel=timepicker]").attr('readonly',true);
+           this.$('[rel=timepicker]').attr('readonly', true);
         }
     },
 
     /**
      * Formats value
      * @param  {String} value The value
-     * @return {String} formatted value
+     * @return {String|Object} formatted value
      */
-    format:function(value) {
-        var jsDate, output, myUser = app.user, d, parts, before24Hours, datetimeParts,
+    format: function(value) {
+        var jsDate, parts, before24Hours, datetimeParts,
             datePart, timePart, dateParts, timeParts;
 
         if (this.stripIsoTZ) {
@@ -113,12 +99,12 @@
         } else if (this.leaveDirty) {
             if (!this.dateValue && !this.timeValue) {
                 try {
-                    datetimeParts = this.$el.text().trim().split(" ");
+                    datetimeParts = this.$el.text().trim().split(' ');
                     if (datetimeParts && datetimeParts.length) {
                         this.dateValue = datetimeParts[0];
                         this.timeValue = datetimeParts.length > 1 ? datetimeParts[1] : '';
                     }
-                } catch(e) {}
+                } catch (e) {}
             }
             return {
                 date: this.dateValue,
@@ -127,7 +113,7 @@
         } else {
             if (this.stripIsoTZ) {
                 // Split date and time parts
-                parts = value.split(" ");
+                parts = value.split(' ');
                 if (parts && parts.length > 1) {
                     datePart = parts[0];
                     timePart = parts[1];
@@ -139,12 +125,12 @@
                     if (!this._verifyDateString(datePart)) {
                         return value;
                     }
-                    jsDate = new Date(dateParts[0], dateParts[1]-1, dateParts[2]);//months are 0-based
+                    jsDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]); //months are 0-based
                     jsDate.setHours(timeParts[0]);
                     jsDate.setMinutes(timeParts[1]);
                     jsDate.setSeconds(timeParts[2]);
                 } else {
-                    app.logger.warn("Issue parsing datetimecombo value: " + value);
+                    app.logger.warn('Issue parsing datetimecombo value: ' + value);
                 }
             } else {
                 // Probably portal - not stripping the time zone information out
@@ -159,7 +145,7 @@
 
         // Save the 24 hour based hours in case we're using ampm to determine if am or pm later
         before24Hours = jsDate.getHours();
-        value  = app.date.format(jsDate, this.usersDatePrefs)+' '+app.date.format(jsDate, this.userTimePrefs);
+        value = app.date.format(jsDate, this.usersDatePrefs) + ' ' + app.date.format(jsDate, this.userTimePrefs);
 
         // round time to the nearest 15th if this is a edit which is consitent with rest of app
         if (this.view.name === 'edit') {
@@ -173,12 +159,12 @@
         };
         this.timeValue = value['time'];
         this.dateValue = value['date'];
-        this.$(".datepicker").datepicker('update', this.dateValue);
+        this.$('.datepicker').datepicker('update', this.dateValue);
 
         return value;
     },
 
-    unformat:function(value) {
+    unformat: function(value) {
         var jsDate;
         if (value) {
             // The are unformatting a value that's like "Y-m-d H:i:s" and preparing push to server
@@ -186,7 +172,7 @@
             if (jsDate) {
                 return this._setServerDateString(jsDate);
             } else {
-                app.logger.error("Issue setting the server date string for value: " + value);
+                app.logger.error('Issue setting the server date string for value: ' + value);
                 return value;
             }
         }
@@ -206,13 +192,13 @@
                 'a': '',
                 'A': ''
             };
-        this.$(".ui-timepicker-input").attr('placeholder', placeholder.replace(/[HhiaA]/g, function(s) {
+        this.$('.ui-timepicker-input').attr('placeholder', placeholder.replace(/[HhiaA]/g, function(s) {
             return placeholderFormatMap[s];
         }));
-        if(_.isFunction(this.setRequiredPlaceholder) && this.def.required){
-            this.setRequiredPlaceholder(this.$(".ui-timepicker-input"));
+        if (_.isFunction(this.setRequiredPlaceholder) && this.def.required) {
+            this.setRequiredPlaceholder(this.$('.ui-timepicker-input'));
         }
-        this.$(".ui-timepicker-input").timepicker({
+        this.$('.ui-timepicker-input').timepicker({
             // TODO: 'lang' is only used on time "durations" (e.g. 3 horas, etc.) We can later pull
             // this from meta, but, this only makes sense if we implement durations. To my mind, this
             // is really a client specific customization for which they can set this themselves.
@@ -226,7 +212,9 @@
         this.$('.ui-timepicker-input').on({
             changeTime: _.bind(this.changeTime, this),
             blur: _.bind(this._handleTimepickerBlur, this),
-            focus: function(){$('.datepicker.dropdown-menu').hide()}
+            focus: function() {
+                $('.datepicker.dropdown-menu').hide();
+            }
         });
 
         // Bind clock icon click to open up the timepicker
@@ -236,23 +224,23 @@
             self.$('.ui-timepicker-input').timepicker('show');
         });
     },
+
     /**
      * Main hook to update model when timepicker selected
      * @param {event} ev The event
      */
     changeTime: function(ev) {
-        var model     = this.model,
+        var model = this.model,
             fieldName = this.name,
-            timeValue = '',
-            hrsMins= {},
-            dateValue = '', timeParts, hour, hours, minutes;
+            hrsMins, dateValue;
 
         // Get hours, minutes, and date peices, then set our model
-        hrsMins    = this._getHoursMinutes($(ev.currentTarget));
-        dateValue  = this._getDatepickerValue();
+        hrsMins = this._getHoursMinutes($(ev.currentTarget));
+        dateValue = this._getDatepickerValue();
         this._setDatepickerValue(dateValue);
         model.set(fieldName, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes), {silent: true});
     },
+
     /**
      * Precondition: timeAsDate must be date and hrsMins must be object literal.
      * No checking done!
@@ -269,16 +257,17 @@
         // If edit view we force time to our 15 minutes blocks
         if (this.view.name === 'edit') {
             timeAsDate = app.date.roundTime(timeAsDate);
-            minutes    = this._forceTwoDigits(timeAsDate.getMinutes().toString());
-            hours      = this._forceTwoDigits(timeAsDate.getHours().toString());
+            minutes = this._forceTwoDigits(timeAsDate.getMinutes().toString());
+            hours = this._forceTwoDigits(timeAsDate.getHours().toString());
 
             // Update timepicker element's value with rounded time
             this._setTimepickerValue($(timepicker), hours, minutes);
-            hrsMins.hours   = hours;
+            hrsMins.hours = hours;
             hrsMins.minutes = minutes;
         }
         return hrsMins;
     },
+
     /**
      * The timepicker plugin doesn't provide blur hook for when the user types in
      * time and then focuses out. Essentially, we update our this.timeValue and model.
@@ -286,23 +275,26 @@
      */
     _handleTimepickerBlur: function(ev) {
         this.model.set(this.name, this._val(ev), {silent: true});
-        this.model.trigger("change");
+        this.model.trigger('change');
     },
+
     _setTimeValue: function() {
         this.timeValue = this.$('.ui-timepicker-input').val();
         this.timeValue = (this.timeValue) ? this.timeValue : '';
     },
+
     /**
      * Returns the current value in the timepicker element.
      * @param {String} $timepickerElement the element.
      * @return {String} timeValue The time value.
      */
     _getTimepickerValue: function($timepickerElement) {
-        var timeValue  = $timepickerElement.val();
+        var timeValue = $timepickerElement.val();
         this.timeValue = timeValue; // so hbs template will pick up on next render
 
         return timeValue;
     },
+
     /**
      * Get the time using a Javascript Date object, relative to today's date.
      * @param {HTMLElement} $timepickerElement the element.
@@ -311,6 +303,7 @@
     _getTimepickerValueAsDate: function($timepickerElement) {
         return this.$($timepickerElement).timepicker('getTime');
     },
+
     /**
      * Sets the timepicker element and plugin to hours and minutes passed in.
      * If neither hours or minutes provided defaults to midnight.
@@ -338,6 +331,7 @@
         $timepickerElement.timepicker('setTime', date);
         this.timeValue = $timepickerElement.val();// so hbs template will pick up on next render
     },
+
     /**
      * If the field def has a display_default property, or, is required, this
      * will set the model with corresponding date time.
@@ -363,7 +357,7 @@
      */
     _getHoursMinutes: function(el) {
         var timeParts, hour, hours, minutes, timeValue, amPm = null;
-        timeValue  = this._getTimepickerValue(el) || '';
+        timeValue = this._getTimepickerValue(el) || '';
         timeParts = timeValue.toLowerCase().match(/(\d+)(?::(\d\d?))?\s*([pa]?)/);
 
         // If timeValue is empty we may get back null for regex. If so, set to default.
@@ -371,26 +365,25 @@
             return this._setIfNoTime(null, null);
         }
 
-        hour = parseInt(timeParts[1]*1, 10);
+        hour = parseInt(timeParts[1] * 1, 10);
 
         // We have am/pm part (ostensibly 12 hour format)
         if (!_.isEmpty(timeParts[3])) {
 
             amPm = (timeParts[3] === 'a') ? 'am' : 'pm';
 
-            if (hour == 12) {
+            if (hour === 12) {
                 // If 12 and am force 12 to 0, otherwise leave alone
-                hours = (timeParts[3] == 'a') ? 0 : hour;
+                hours = (timeParts[3] === 'a') ? 0 : hour;
             } else {
                 // If pm add 12 to hour e.g. 2 becomes 14, etc.
-                hours = (hour + (timeParts[3] == 'p' ? 12 : 0));
+                hours = (hour + (timeParts[3] === 'p' ? 12 : 0));
             }
-        }
-        // Otherwise, we don't have am/pm part (ostensibly 24 hr format)
-        else {
+        } else {
+            // Otherwise, we don't have am/pm part (ostensibly 24 hr format)
             hours = hour;
         }
-        minutes = ( timeParts[2]*1 || 0 );
+        minutes = (timeParts[2] * 1 || 0);
 
         // Convert above to two character strings
         minutes = this._forceTwoDigits(minutes.toString());
@@ -398,6 +391,7 @@
 
         return this._setIfNoTime(hours, minutes, amPm);
     },
+
     /**
      * Helper to set hours and minutes with 12am and 00pm edge cases in mind.
      * @param {String} h hours
@@ -414,31 +408,34 @@
         if (!h && !m) {
             o.amPm = 'am';
         }
-        o.hours   = h ? h : '00'; // may display as 12:00am but internally needs to be 00
+        o.hours = h ? h : '00'; // may display as 12:00am but internally needs to be 00
         o.minutes = m ? m : '00';
         //Convert 12am to 00 and also 00pm to 12
-        o.hours   = o.hours === '12' && o.amPm==='am' ? '00' : o.hours;
-        o.hours   = o.hours === '00' && o.amPm==='pm' ? '12' : o.hours;
+        o.hours = o.hours === '12' && o.amPm === 'am' ? '00' : o.hours;
+        o.hours = o.hours === '00' && o.amPm === 'pm' ? '12' : o.hours;
 
         return o;
     },
+
     val: function() {
         return this._val({currentTarget: this.$('.ui-timepicker-input')});
     },
+
     _val: function(ev) {
         var dateValue, hrsMins, timeAsDate, hours, minutes,
             timepicker = ev.currentTarget;
 
         // First get current hours/minutes, then round to blocks (if edit view)
-        hrsMins    = this._getHoursMinutes($(ev.currentTarget));
+        hrsMins = this._getHoursMinutes($(ev.currentTarget));
         timeAsDate = this._getTimepickerValueAsDate($(timepicker));
-        hrsMins    = this._forceRoundedTime(timepicker, timeAsDate, hrsMins);
+        hrsMins = this._forceRoundedTime(timepicker, timeAsDate, hrsMins);
         this._setTimeValue();
 
         // Get datepicker value and finally set our model
-        dateValue  = this._getDatepickerValue();
+        dateValue = this._getDatepickerValue();
         return this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes);
     },
+
     /**
      * Custom error styling for the datetimecombo field. This field has
      * both a date input and a time input. Essentially, we need to wrap
@@ -446,11 +443,11 @@
      * @param {Object} errors
      * @override BaseField
      */
-    decorateError: function(errors){
-        this.$el.closest('.record-cell').addClass("error");
+    decorateError: function(errors) {
+        this.$el.closest('.record-cell').addClass('error');
         // Selects both the date and timepicker inputs
         var dateInputs = this.$('input');
-        dateInputs.closest("span.edit").addClass('error');
+        dateInputs.closest('span.edit').addClass('error');
         // We already have an input-append as parent, just need to add error klass
         dateInputs.parent().addClass('error');
         _.each(errors, function(errorContext, errorName) {
@@ -460,15 +457,16 @@
             }, this);
         }, this);
     },
+
     _addErrorDecoration: function(inp, errorName, errorContext) {
         inp.next('.error-tooltip').remove();
         inp.after(this.exclamationMarkTemplate([app.error.getErrorString(errorName, errorContext)]));
         var tooltip = inp.next('.error-tooltip');
         if (_.isFunction(tooltip.tooltip)) {
             tooltip.tooltip({
-                container:'body',
-                placement:'top',
-                trigger:'click'
+                container: 'body',
+                placement: 'top',
+                trigger: 'click'
             });
         }
     }
