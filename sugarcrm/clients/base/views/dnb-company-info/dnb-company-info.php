@@ -1,0 +1,48 @@
+<?php
+
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+
+$viewdefs['base']['view']['dnb-company-info'] = array(
+    'dashlets' => array(
+        array(
+            'label' => 'LBL_DASHLET_COMPANY_INFO',
+            'description' => 'LBL_DASHLET_COMPANY_INFO_DESC',
+            'filter' => array(
+                'module' => array(
+                    'Accounts',
+                ),
+                'view' => 'record'
+            ),
+            'config' => array(),
+            'preview' => array(),
+        ),
+    ),
+    'custom_toolbar' => array(
+        'buttons' => array(
+            array(
+                'type' => 'dashletaction',
+                "css_class" => "label dnb-refresh dnb-hide",
+                "label" => "LBL_DNB_RFR",
+                "name" => "data_valid_ind",
+            ),
+            array(
+                'type' => 'dashletaction',
+                "css_class" => "btn btn-primary disabled importDNBData hide",
+                "action" => "importDNBData",
+                "label" => "LBL_DNB_IMPORT",
+                "name" => "dnb_import",
+            ),
+        )
+    )
+);

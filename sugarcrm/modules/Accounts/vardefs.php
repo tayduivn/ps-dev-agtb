@@ -41,6 +41,14 @@ $dictionary['Account'] = array(
             'merge_filter' => 'enabled',
             //END SUGARCRM flav=pro ONLY
         ),
+         'duns_num' =>
+          array (
+            'name' => 'duns_num',
+            'vname' => 'LBL_DUNS_NUM',
+            'type' => 'varchar',
+            'len' => 15,
+            'comment' => 'DUNS number of the account',
+          ),
         'parent_name' => array(
             'name' => 'parent_name',
             'rname' => 'name',
@@ -527,6 +535,7 @@ $dictionary['Account'] = array(
                 array(
                     '$or' => array(
                         array('name' => array('$equals' => '$name')),
+                        array('duns_num' => array('$equals' => '$duns_num')),
                         array(
                             '$and' => array(
                                 array('name' => array('$starts' => '$name')),

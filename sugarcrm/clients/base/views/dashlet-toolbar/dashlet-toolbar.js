@@ -87,5 +87,7 @@
         var $el = this.$('.dashlet-toggle > i'),
             collapsed = $el.is('.icon-chevron-up');
         this.layout.collapse(collapsed);
+        //firing an event to notify dashlet expand / collapse
+        this.layout.trigger('dashlet:collapse',collapsed);
     }
 })

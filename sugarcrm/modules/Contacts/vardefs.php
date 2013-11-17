@@ -86,6 +86,15 @@ $dictionary['Contact'] = array(
             'hideacl' => true,
             'link' => 'accounts',
         ),
+        //d&b principal id num
+        'dnb_principal_id' =>
+          array (
+            'name' => 'dnb_principal_id',
+            'vname' => 'LBL_DNB_PRINCIPAL_ID',
+            'type' => 'varchar',
+            'len' => 30,
+            'comment' => 'Unique Id For D&B Contact',
+        ),
         // Deprecated, use rname_link instead
         'opportunity_role_fields' => array(
             'name' => 'opportunity_role_fields',
@@ -744,6 +753,7 @@ $dictionary['Contact'] = array(
                         array('first_name' => array('$starts' => '$first_name')),
                         array('last_name' => array('$starts' => '$last_name')),
                         array('accounts.id' => array('$equals' => '$account_id')),
+                        array('dnb_principal_id' => array('$equals' => '$dnb_principal_id')),
                     )
                 ),
             ),

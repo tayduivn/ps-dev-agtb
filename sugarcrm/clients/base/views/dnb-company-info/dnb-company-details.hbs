@@ -1,0 +1,365 @@
+<div id="dnb-company-detail-loading" class="block-footer">
+{{str "LBL_DNB_COMPANY_INFO_LOADING"}}
+</div>
+<div id="dnb-company-details">
+	{{#if product}}
+		<div class='dnb-show-all'>
+			<table class="table table-striped table-condensed">
+				<tr>
+					<td align="center">
+						<div class='dnb-checkbox-nav'>
+							{{#if product.dataIndicatorMap.name}}
+								{{#eq product.dataIndicatorMap.name 'upd'}}<input type='checkbox' name='name' id='name' class='dnb_checkbox' checked/>{{/eq}}	
+								{{#eq product.dataIndicatorMap.name 'dup'}}<input type='checkbox' name='name' id='name' class='dnb_checkbox'/>{{/eq}}
+							{{else}}
+								<input type="checkbox" name="name" id="name" class="dnb_checkbox" checked/>
+							{{/if}}
+						</div>
+					
+						<div class="dnb-company-label">{{str "LBL_DNB_NAME"}}</div>
+						<div class="txt importData">
+							{{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationName.OrganizationPrimaryName.[0].OrganizationName.$}}
+
+							{{#if product.dataIndicatorMap.name}}
+								{{#eq product.dataIndicatorMap.name 'dup'}}
+                            		<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
+                            	{{/eq}}
+                            {{else}}
+                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
+                        	{{/if}}
+						</div>
+					</td>
+				</tr>
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].StreetAddressLine.[0].LineText}}
+					<tr>
+						<td align="center">
+							<div class='dnb-checkbox-nav'>
+								{{#if product.dataIndicatorMap.billing_address_street}}
+									{{#eq product.dataIndicatorMap.billing_address_street 'upd'}}<input type='checkbox' name='billing_address_street' id='billing_address_street' class='dnb_checkbox' checked/>{{/eq}}	
+									{{#eq product.dataIndicatorMap.billing_address_street 'dup'}}<input type='checkbox' name='billing_address_street' id='billing_address_street' class='dnb_checkbox'/>{{/eq}}
+
+								{{else}}
+									<input type="checkbox" class="dnb_checkbox" id="billing_address_street" name="billing_address_street" checked>
+								{{/if}}
+							</div>
+						    <div class="dnb-company-label">
+						        {{str "LBL_DNB_CI_STREET"}}
+						    </div>
+						    <div class="txt importData">
+						         {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].StreetAddressLine.[0].LineText }} 
+
+						         {{#if product.dataIndicatorMap.billing_address_street}}
+						         	{{#eq product.dataIndicatorMap.billing_address_street 'dup'}}
+	                            		<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
+	                            	{{/eq}}
+	                            {{else}}
+	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
+	                        	{{/if}}
+						    </div>
+						</td>
+					</tr>
+				{{/if}}	
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].PrimaryTownName }}
+					<tr>
+						<td>
+							<div class='dnb-checkbox-nav'>
+								{{#if product.dataIndicatorMap.billing_address_city}}
+									{{#eq product.dataIndicatorMap.billing_address_city 'upd'}}<input type='checkbox' name='billing_address_city' id='billing_address_city' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.billing_address_city 'dup'}}<input type='checkbox' name='billing_address_city' id='billing_address_city' class='dnb_checkbox'/>{{/eq}}
+
+								{{else}}
+									<input type="checkbox" class="dnb_checkbox" id="billing_address_city" name="billing_address_city" checked>
+								{{/if}}
+							</div>
+							<div class="dnb-company-label">
+							    {{str "LBL_DNB_CI_CITY"}}
+							</div>
+							<div class="txt importData">
+							   {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].PrimaryTownName }}
+
+							   {{#if product.dataIndicatorMap.billing_address_city}}
+	                            	{{#eq product.dataIndicatorMap.billing_address_city 'dup'}}
+	                            		<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
+	                            	{{/eq}}
+	                            {{else}}
+	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
+	                        	{{/if}}
+							</div>
+						</td>
+					</tr>
+				{{/if}}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].TerritoryAbbreviatedName }}
+					<tr>
+						<td>
+							<div class='dnb-checkbox-nav'>
+								{{#if product.dataIndicatorMap.billing_address_state}}
+									{{#eq product.dataIndicatorMap.billing_address_state 'upd'}}<input type='checkbox' name='billing_address_state' id='billing_address_state' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.billing_address_state 'dup'}}<input type='checkbox' name='billing_address_state' id='billing_address_state' class='dnb_checkbox'/>{{/eq}}
+								{{else}}
+									<input type="checkbox" class="dnb_checkbox" id="billing_address_state" name="billing_address_state" checked>
+								{{/if}}
+							</div>
+							<div class="dnb-company-label">
+							    {{str "LBL_DNB_CI_STATE"}}
+							</div>
+							<div class="txt importData">
+							   {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].TerritoryAbbreviatedName }}
+
+							   {{#if product.dataIndicatorMap.billing_address_state}}
+	                            	{{#eq product.dataIndicatorMap.billing_address_state 'dup'}}
+	                            		<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
+	                            	{{/eq}}
+	                            {{else}}
+	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
+	                        	{{/if}}
+							</div>
+						</td>
+					</tr>
+				{{/if}}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].CountryISOAlpha2Code }}
+					<tr>
+						<td>
+							<div class='dnb-checkbox-nav'>
+								{{#if product.dataIndicatorMap.billing_address_country}}
+										{{#eq product.dataIndicatorMap.billing_address_country 'upd'}}<input type='checkbox' name='billing_address_country' id='billing_address_country' class='dnb_checkbox' checked/>{{/eq}}
+										{{#eq product.dataIndicatorMap.billing_address_country 'dup'}}<input type='checkbox' name='billing_address_country' id='billing_address_country' class='dnb_checkbox'/>{{/eq}}
+
+								{{else}}
+									<input type="checkbox" class="dnb_checkbox" id="billing_address_country" name="billing_address_country" checked>
+								{{/if}}
+							</div>
+							<div class="dnb-company-label">
+							    {{str "LBL_DNB_CI_CTRY"}}
+							</div>
+							<div class="txt importData">
+							  {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].CountryISOAlpha2Code }}
+
+							  {{#if product.dataIndicatorMap.billing_address_country}}
+	                            	{{#eq product.dataIndicatorMap.billing_address_country 'dup'}}
+	                            		<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
+	                            	{{/eq}}
+	                            {{else}}
+	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
+	                        	{{/if}}
+							</div>
+						</td>
+					</tr>
+				{{/if}}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].PostalCode }} 
+					<tr>
+						<td>
+							<div class='dnb-checkbox-nav'>
+								{{#if product.dataIndicatorMap.billing_address_postalcode}}
+									{{#eq product.dataIndicatorMap.billing_address_postalcode 'upd'}}<input type='checkbox' name='billing_address_postalcode' id='billing_address_postalcode' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.billing_address_postalcode 'dup'}}<input type='checkbox' name='billing_address_postalcode' id='billing_address_postalcode' class='dnb_checkbox'/>{{/eq}}
+
+								{{else}}
+									<input type="checkbox" class="dnb_checkbox" id="billing_address_postalcode" name="billing_address_postalcode" checked>
+								{{/if}}
+							</div>
+							<div class="dnb-company-label">
+							    {{str "LBL_DNB_CI_POSTAL_CD"}}
+							</div>
+							<div class="txt importData">
+								{{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].PostalCode }} 
+								{{#if product.dataIndicatorMap.billing_address_postalcode}}
+	                            	{{#eq product.dataIndicatorMap.billing_address_postalcode 'dup'}}
+	                            		<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
+	                            	{{/eq}}
+	                            {{else}}
+	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
+	                        	{{/if}}
+							</div>
+						</td>
+					</tr>
+				{{/if}}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.WebPageAddress.[0].TelecommunicationAddress}}
+					<tr id="remaining_content">
+						<td align="center">
+							<div class='dnb-checkbox-nav'>
+								{{#if product.dataIndicatorMap.website}}
+									{{#eq product.dataIndicatorMap.website 'upd'}}<input type='checkbox' name='website' id='website' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.website 'dup'}}<input type='checkbox' name='website' id='website' class='dnb_checkbox'/>{{/eq}}
+
+								{{else}}
+									<input type="checkbox" name="website" id="website"  class="dnb_checkbox" checked>
+								{{/if}}
+							</div>
+							<div class="dnb-company-label">
+								{{str "LBL_DNB_URL"}}
+							</div>
+							<div class="url-txt importData">
+								 {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.WebPageAddress.[0].TelecommunicationAddress}}
+								 {{#if product.dataIndicatorMap.website}}
+	                            	{{#eq product.dataIndicatorMap.website 'dup'}}
+	                            		<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
+	                            	{{/eq}}
+	                            {{else}}
+	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
+	                        	{{/if}}
+							</div>
+						</td>
+					</tr>
+				{{/if}}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.TelephoneNumber.[0].TelecommunicationNumber}}
+					<tr>
+						<td align="center">
+							<div class='dnb-checkbox-nav'>
+								{{#if product.dataIndicatorMap.phone_office}}
+									{{#eq product.dataIndicatorMap.phone_office 'upd'}}<input type='checkbox' name='phone_office' id='phone_office' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.phone_office 'dup'}}<input type='checkbox' name='phone_office' id='phone_office' class='dnb_checkbox'/>{{/eq}}
+		
+								{{else}}
+									<input type="checkbox" name="phone_office" id="phone_office"  class="dnb_checkbox" checked>
+								{{/if}}
+							</div>
+						
+							<div class="dnb-company-label">
+								{{str "LBL_DNB_PHONE"}}
+							</div>
+							<div class="txt importData">
+								{{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.TelephoneNumber.[0].TelecommunicationNumber}}
+								{{#if product.dataIndicatorMap.phone_office}}
+	                            	{{#eq product.dataIndicatorMap.phone_office 'dup'}}
+	                            		<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
+	                            	{{/eq}}
+	                            {{else}}
+	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
+	                        	{{/if}}
+							</div>
+						</td>
+					</tr>
+				{{/if}}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationDetail.ControlOwnershipTypeText.$}}
+					<tr>
+						<td align="center">
+							<div class='dnb-checkbox-nav'>
+								{{#if product.dataIndicatorMap.ownership}}
+									{{#eq product.dataIndicatorMap.ownership 'upd'}}<input type='checkbox' name='ownership' id='ownership' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.ownership 'dup'}}<input type='checkbox' name='ownership' id='ownership' class='dnb_checkbox'/>{{/eq}}
+
+								{{else}}
+									<input type="checkbox" name="ownership" id="ownership" class="dnb_checkbox" checked>
+								{{/if}}
+							</div>
+							<div class="dnb-company-label">{{str "LBL_DNB_OWNERSHIP_TYPE"}}</div>
+							<div class="txt importData">
+								{{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationDetail.ControlOwnershipTypeText.$}}
+								{{#if product.dataIndicatorMap.ownership}}
+	                            	{{#eq product.dataIndicatorMap.ownership 'dup'}}
+	                            		<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
+	                            	{{/eq}}
+	                            {{else}}
+	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
+	                        	{{/if}}
+							</div>
+						</td>
+					</tr>
+				{{/if}}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0]}}
+					<tr>
+						<td align="center">
+							<div class='dnb-checkbox-nav'>
+								{{#if product.dataIndicatorMap.annual_revenue}}
+									{{#eq product.dataIndicatorMap.annual_revenue 'upd'}}<input type='checkbox' name='annual_revenue' id='annual_revenue' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.annual_revenue 'dup'}}<input type='checkbox' name='annual_revenue' id='annual_revenue' class='dnb_checkbox'/>{{/eq}}
+
+								{{else}}
+									<input type="checkbox" name="annual_revenue" id="annual_revenue" class="dnb_checkbox" checked>
+								{{/if}}
+							</div>
+							<div class="dnb-company-label">
+								{{str "LBL_DNB_SALES_REVENUE"}}
+								{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].SalesRevenueAmount.[0].[@UnitOfSize] }}
+									({{str "LBL_DNB_IN"}} 
+									 {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].SalesRevenueAmount.[0].[@UnitOfSize]}}
+									{{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].SalesRevenueAmount.[0].[@CurrencyISOAlpha3Code]}})
+								{{/if}}
+								{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].StatementHeaderDetails.FinancialStatementToDate.$}}
+									<span class="label label-success pull-right" data-placement="right">
+										{{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].StatementHeaderDetails.FinancialStatementToDate.$}}
+									</span>
+								{{/if}}
+							</div>
+							<div class="txt importData">
+								{{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].SalesRevenueAmount.[0].$}}
+								{{#if product.dataIndicatorMap.annual_revenue}}
+	                            	{{#eq product.dataIndicatorMap.annual_revenue 'dup'}}
+	                            		<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
+	                            	{{/eq}}
+	                            {{else}}
+	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
+	                        	{{/if}}
+							</div>
+						</td>
+					</tr>
+				{{/if}}
+				{{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.EmployeeFigures.IndividualEntityEmployeeDetails.TotalEmployeeQuantity}}
+					<tr>
+						<td align="center">
+							<div class='dnb-checkbox-nav'>
+								{{#if product.dataIndicatorMap.employees}}
+									{{#eq product.dataIndicatorMap.employees 'upd'}}<input type='checkbox' name='employees' id='employees' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.employees 'dup'}}<input type='checkbox' name='employees' id='employees' class='dnb_checkbox'/>{{/eq}}
+
+								{{else}}
+									<input type="checkbox" name="employees" id="employees" class="dnb_checkbox" checked />
+								{{/if}}
+							</div>
+							<div class="dnb-company-label">
+								{{str "LBL_DNB_TOTAL_EMPLOYEE_QUANTITY"}}
+							</div>
+							<div class="txt importData">
+								{{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.EmployeeFigures.IndividualEntityEmployeeDetails.TotalEmployeeQuantity}}
+								{{#if product.dataIndicatorMap.employees}}
+	                            	{{#eq product.dataIndicatorMap.employees 'dup'}}
+	                            		<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
+	                            	{{/eq}}
+	                            {{else}}
+	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
+	                        	{{/if}}
+							</div>
+						</td>
+					</tr>
+				{{/if}}
+				{{#if product.primarySIC}}
+					<tr>
+						<td align="center">
+							<div class='dnb-checkbox-nav'>
+								{{#if product.dataIndicatorMap.sic_code}}
+									{{#eq product.dataIndicatorMap.sic_code 'upd'}}<input type='checkbox' name='sic_code' id='sic_code' class='dnb_checkbox' checked/>{{/eq}}
+									{{#eq product.dataIndicatorMap.sic_code 'dup'}}<input type='checkbox' name='sic_code' id='sic_code' class='dnb_checkbox'/>{{/eq}}
+
+								{{else}}
+									<input type="checkbox" name="sic_code" id="sic_code" class="dnb_checkbox" checked />
+								{{/if}}
+							</div>
+							<div class="dnb-company-label">
+								{{str "LBL_DNB_SIC"}}
+							</div>
+							<div class="txt importData">
+								{{product.primarySIC.IndustryCode.$}}
+								{{#if product.dataIndicatorMap.sic_code}}
+	                            	{{#eq product.dataIndicatorMap.sic_code 'dup'}}
+	                            		<span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
+	                            	{{/eq}}
+	                            {{else}}
+	                            	<span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_UPLOAD"}}</span>
+	                        	{{/if}}
+							</div>
+						</td>
+					</tr>
+				{{/if}}
+			</table>
+	</div>
+	{{else}}
+		<aside>
+			<em>{{errmsg}}</em>
+		</aside>
+	{{/if}}
+	{{#if isNotLinked}}
+		<div class="dnb-show-more">
+		    <a class="backToList">{{str "LBL_DNB_BACK_TO_SRCH"}} <i class="icon-chevron-down"></i></a>
+		</div>
+	{{/if}}
+</div>

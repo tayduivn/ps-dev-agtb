@@ -82,7 +82,14 @@
   &:not(.collapsed):not(.empty) {
     min-height: 140px;
   }
-
+  &.collapsed {
+    .widget-header {
+      .border-radius(4px);
+    }
+    h4 {
+      .border-radius(4px 0 0 4px);
+    }
+  }
   h4,
   .dashlet-options {
     font-size: @baseFontSize;
@@ -99,12 +106,13 @@
     }
   }
   .widget-header {
-    .border-radius(3px 3px 0 0);
+    .border-radius(4px 4px 0 0);
     #gradient > .vertical(@grayLighter, darken(@grayLighter, 2%));
   }
   h4 {
     padding: 7px 80px 8px 10px;
     cursor: move;
+    .border-radius(4px 0 0 0);
   }
 
   .dashlet-options {
@@ -189,6 +197,9 @@
       .filetype-thumbnail {
         margin: 3px 12px 12px 0;
       }
+      .label.pull-right {
+        margin-right: 0;
+      }
       .progress,
       .progress .bar {
         height: 12px;
@@ -199,6 +210,12 @@
     }
   }
 
+  //bootstrap override
+  ul.unstyled,
+  ol.unstyled {
+    margin: 0;
+  }
+
   .listed {
     margin: 0;
     padding: 0;
@@ -207,8 +224,9 @@
       position: relative;
       border-bottom: 1px solid @grayLighter;
       margin: 0;
+      //from .unstyled
+      //margin: 10px;
       padding: 14px;
-      font-size: @baseFontSize + 2px;
       &:last-child {
         border-bottom: none;
       }
@@ -242,13 +260,71 @@
           color: @white;
         }
       }
+      .label,
+      .filetype-thumbnail {
+        margin: 3px 12px 12px 0;
+      }
       p {
         padding-left: 54px;
         margin-bottom: 10px;
+        font-size: @baseFontSize + 2px;
       }
       .details {
         padding-left: 54px;
       }
+      .progress,
+      .progress .bar {
+        height: 12px;
+      }
+    }
+    .dropdown-menu li {
+      padding:0;
+      a:hover {
+        color: @dropdownLinkColorHover;
+      }
+    }
+  }
+
+  //DNB dashlet
+  .jstree-sugar ul.list {
+    border-top: none;
+    border-bottom: 1px solid darken(@grayLighter,5%);
+    li {
+      padding: 0;
+      &> a {
+        padding: 12px 0;
+        height: auto;
+      }
+    }
+    li.jstree-leaf {
+      &> a {
+        padding-left: 12px;
+      }
+    }
+  }
+
+  //DNB dashlet
+  .accordion-group {
+    margin-bottom: 0;
+    border: none;
+    border-bottom: 1px solid darken(@grayLighter,5%);
+  }
+  .accordion-inner {
+    div.dnb-subtitle {
+      margin: 10px 0;
+      line-height: 15px;
+      overflow: hidden;
+      padding: 0px;
+      font-weight: bold;
+      color: @gray;
+    }
+    h4 {
+      font-weight: bold;
+      margin: 0 0 0 -10px;
+      color: #759EEF;
+    }
+    .dnb-inner-nav {
+      padding: 0px;
     }
   }
 

@@ -261,6 +261,10 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 'phone_fax',
                 'phone_work',
                 'twitter',
+	        array(
+                    'name' => 'dnb_principal_id',
+                    'readonly' => true,
+                ),
                 array(
                     'name' => 'description',
                     'span' => 12,
