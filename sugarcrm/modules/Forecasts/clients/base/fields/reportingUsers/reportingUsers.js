@@ -271,6 +271,7 @@
                     'reports_to_id': userData.reports_to_id,
                     'reports_to_name': userData.reports_to_name,
                     'is_manager': (nodeType != 'rep'),
+                    'is_top_level_manager': (nodeType != 'rep' && _.isEmpty(userData.reports_to_id)),
                     'showOpps': showOpps,
                     'reportees': []
                 };

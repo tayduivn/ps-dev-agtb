@@ -168,6 +168,7 @@ class ForecastsApi extends SugarApi
         $data['reports_to_id'] = $user->reports_to_id;
         $data['reports_to_name'] = $user->reports_to_name;
         $data['is_manager'] = User::isManager($user->id);
+        $data['is_top_level_manager'] = User::isTopLevelManager($user->id);
         return $data;
     }
 

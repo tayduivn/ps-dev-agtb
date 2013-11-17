@@ -898,6 +898,7 @@
         this.selectedUser.user_name = selectedUser.user_name;
         this.selectedUser.reports_to_id = selectedUser.reports_to_id;
         this.selectedUser.reports_to_name = selectedUser.reports_to_name;
+        this.selectedUser.is_top_level_manager = selectedUser.is_top_level_manager;
 
         this.shouldRollup = this.isManagerView();
 
