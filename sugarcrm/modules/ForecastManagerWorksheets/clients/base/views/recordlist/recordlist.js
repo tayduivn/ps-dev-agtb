@@ -584,6 +584,16 @@
             this.layout.hide();
         }
 
+        // Adjust the label on the quota field if the user doesn't report to any one
+        var quotaLabel = _.isEmpty(this.selectedUser.reports_to_id) ? 'LBL_QUOTA' : 'LBL_QUOTA_ADJUSTED';
+        _.each(this._fields, function(fields) {
+            _.each(fields, function(field) {
+                if(field.name == 'quota') {
+                    field.label = quotaLabel;
+                }
+            });
+        });
+
         // empty out the left columns
         this.leftColumns = [];
 
