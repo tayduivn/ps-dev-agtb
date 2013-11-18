@@ -179,11 +179,8 @@ class RestService extends ServiceBase
 
             // Get the request args early for use in current user api
             $argArray = $this->getRequestArgs($route);
-            if ( !$isLoggedIn 
-                 && !empty($route['allowDownloadCookie']) 
-                 && !empty($_GET['platform']) // Don't default to base for the cookie check
-                 && isset($_COOKIE[self::DOWNLOAD_COOKIE.'_'.$this->platform])) {
-                $isLoggedIn = $this->authenticateUserForDownload($_COOKIE[self::DOWNLOAD_COOKIE.'_'.$this->platform], $this->platform);
+            if ( !$isLoggedIn && !empty($route['allowDownloadCookie'])) {
+                $isLoggedIn = $this->authenticateUserForDownload();
             }
 
             // Make sure the system is ready for them
@@ -594,9 +591,22 @@ class RestService extends ServiceBase
      * @param string $platform the platform for the download 
      * @returns bool Was the login successful
      */
-    protected function authenticateUserForDownload($token, $platform)
+    protected function authenticateUserForDownload()
     {
         $valid = false;
+
+        // Find the token
+        if (!isset($_GET['platform'])) {
+            return false;
+        }
+
+        $platform = $_GET['platform'];
+
+        if (isset($_GET[self::DOWNLOAD_COOKIE])) {
+            $token = $_GET[self::DOWNLOAD_COOKIE];
+        } else if (isset($_COOKIE[self::DOWNLOAD_COOKIE.'_'.$platform])) {
+            $token = $_COOKIE[self::DOWNLOAD_COOKIE.'_'.$platform];
+        }
 
         if (!empty($token)) {
             $oauthServer = SugarOAuth2Server::getOAuth2Server();
