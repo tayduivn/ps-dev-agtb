@@ -865,7 +865,6 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
         }
 		else if (typeof(value) == "string")
 		{
-			value = value.replace(/\n/g, "");
 			if ((/^(\s*)$/).exec(value) != null || value === "")
             {
 				return toConst('""')
