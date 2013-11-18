@@ -409,9 +409,6 @@ class ACLAction  extends SugarBean
     */
     public static function userHasAccess($user_id, $category, $action,$type='module', $is_owner = false){
        global $current_user;
-       if($current_user->isAdminForModule($category)&& !isset(self::$acls[$user_id][$category][$type][$action]['aclaccess'])){
-        return true;
-        }
         //check if we don't have it set in the cache if not lets reload the cache
         if(ACLAction::getUserAccessLevel($user_id, $category, 'access', $type) < ACL_ALLOW_ENABLED) return false;
         if(empty(self::$acls[$user_id][$category][$type][$action])){
