@@ -15,8 +15,6 @@
 /*jslint browser: true, onevar: true, undef: true, bitwise: true, strict: true */
 /*global window : false, clearInterval: false, clearTimeout: false, document: false, setInterval: false, setTimeout: false, jQuery: false, navigator: false, XSLTProcessor: false, DOMParser: false, XMLSerializer: false*/
 
-"use strict";
-
 // top wrapper to prevent multiple inclusion (is this OK?)
 (function () { if(jQuery && jQuery.jstree) { return; }
 	var is_ie6 = false, is_ie7 = false, is_ff2 = false;
@@ -25,6 +23,7 @@
  * jsTree core
  */
 (function ($) {
+	"use strict";
 	// Common functions not related to jsTree 
 	// decided to move them to a `vakata` "namespace"
 	$.vakata = {};
