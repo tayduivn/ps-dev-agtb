@@ -396,7 +396,7 @@
             ctx.off(null, null, this);
         }
         if(this.currentModule == 'Forecasts' && this.quotaCollection) {
-            this.quotaCollection.off();
+            this.quotaCollection.off(null, null, this);
         }
         app.view.View.prototype.unbindData.call(this);
     },
