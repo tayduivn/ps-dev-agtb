@@ -86,6 +86,12 @@
 .page-content {
   margin: 20px;
 }
+.field-examples {
+  .record {
+    margin: 0;
+    padding: 0;
+  }
+}
 #styleguide {
   width: 100%;
   border-right: none;
@@ -112,32 +118,38 @@
 
 /* Accordion table
 -------------------------------------------------- */
-table.accordion .accordion-toggle,
-table.accordion .accordion-body {
+table.accordion {
+
+  h3 {
+    font-size: 16px;
+    line-height: 20px;
+  }
+  .accordion-toggle,
+  .accordion-body {
     padding: 0;
   }
-table.accordion .accordion-body {
+  .accordion-body {
     border-top: none;
     overflow: visible;
   }
-table.accordion .accordion-inner {
+  .accordion-inner {
     border: none;
     overflow: hidden;
-}
-table.accordion .accordion-inner.in {
+    &.in {
       overflow: hidden;
       overflow: visible;
       padding: 12px;
     }
-table.accordion .accordion-heading {
+  }
+  .accordion-heading {
     float: none;
   }
-table.accordion .accordion-heading td,
-table.accordion .accordion-body td {
+  .accordion-heading td,
+  .accordion-body td {
     border-right: none;
     border-left: none;
   }
-
+}
 
 ul.sg-main {
   list-style: none;
@@ -214,6 +226,11 @@ ul.sg-main a {
 .bootstrap-examples .thumbnail {
   margin-bottom: 9px;
   background-color: #fff;
+}
+.example-view {
+  padding: 8px;
+  margin-top: 10px;
+  background-color: #C2CD80;
 }
 
 /* Bootstrap code examples

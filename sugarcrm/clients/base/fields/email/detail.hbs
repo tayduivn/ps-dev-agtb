@@ -27,7 +27,6 @@
  ********************************************************************************/
 }}
 {{#each value}}
-<div class="control-group email">
     {{#if hasAnchor}}
 	    <a title="{{email_address}}{{#notEq flagLabel ''}}, {{flagLabel}}{{/notEq}}" data-placement="bottom" class="ellipsis_inline{{#if ../../useSugarEmailClient}} composeEmail{{/if}}" href="{{#if ../../useSugarEmailClient}}javascript:void(0);{{else}}mailto:{{email_address}}{{/if}}">{{email_address}}</a>
     {{else}}
@@ -37,5 +36,4 @@
 	        <span title="{{email_address}}, {{flagLabel}}" data-placement="bottom" class="ellipsis_inline">{{email_address}}</span>
 	    {{/eq}}
     {{/if}}
-</div>
 {{/each}}

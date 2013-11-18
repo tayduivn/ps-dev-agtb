@@ -29,9 +29,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('data/visibility/OwnerVisibility.php');
 
-/**
- *  Dashboards is used to store dashboard configuration data.
- */
 class Styleguide extends Person
 {
     public $table_name = 'styleguide';
@@ -100,7 +97,9 @@ class Styleguide extends Person
     var $email_addresses_primary;
     var $email_addresses;
     var $picture;
-
+    var $date_start;
+    var $birthdate;
+    var $radio_button_group;
 
     public $list_price;
     public $currency_id;

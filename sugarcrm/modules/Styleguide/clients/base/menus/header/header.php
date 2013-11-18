@@ -37,7 +37,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'icon-columns',
     ),
     array(
-        'route'=>'#'.$module_name.'/layout/list',
+        'route'=>'#'.$module_name.'/view/list',
         'label' =>'Default List View',
         'acl_action'=>'list',
         'acl_module'=>'Accounts',
@@ -57,11 +57,11 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>'Accounts',
         'icon' => 'icon-list-alt',
     ),
-    array(
-        'route'=>'styleguide/tests/global.html',
-        'label' =>'Run Tests',
-        'acl_action'=>'list',
-        'acl_module'=>'Accounts',
-        'icon' => 'icon-heart',
-    ),
+    // array(
+    //     'route'=>'styleguide/tests/global.html',
+    //     'label' =>'Run Tests',
+    //     'acl_action'=>'list',
+    //     'acl_module'=>'Accounts',
+    //     'icon' => 'icon-heart',
+    // ),
 );

@@ -27,82 +27,138 @@
 ({
     className: 'container-fluid',
     section: {},
-    parent_link: '',
     useTable: true,
+    parent_link: '',
     tempfields: [],
-    errorfields: [],
 
     _render: function() {
-        this.section.title = 'Form Elements';
-        this.section.description = 'Basic fields that support detail, record, and edit modes with error addons.';
-
         var self = this,
             fieldTypeReq = this.context.get('field_type'),
-            fieldTypes = (fieldTypeReq === 'all' ? ['text','bool','email','date','currency'] : [fieldTypeReq]),
-            errors = {required:true, 'This is an error message.':{}},
-            errorMeta = {},
+            fieldTypes = (fieldTypeReq === 'all' ? ['text','bool','date','datetimecombo','currency','email'] : [fieldTypeReq]),
+                //'textarea','url','phone','password','full_name'
+            fieldStates = ['detail','edit','error','disabled'],
+            fieldLayouts = ['base','record','list'],
             fieldMeta = {};
 
+            this.section.title = 'Form Elements';
+            this.section.description = 'Basic fields that support detail, record, and edit modes with error addons.';
             this.useTable = (fieldTypeReq === 'all' ? true : false);
             this.parent_link = (fieldTypeReq === 'all' ? 'docs/index.forms' : 'field/all');
             this.tempfields = [];
-            this.errorfields = [];
 
         _.each(fieldTypes, function(fieldType){
 
+            //build meta data for field examples from model fields
             fieldMeta = _.find(self.model.fields, function(field) {
-                if(field.type === 'datetime' && fieldType.indexOf('date') === 0 ) {
+                if (field.type === 'datetime' && fieldType.indexOf('date') === 0) {
                     field.type = fieldType;
                 }
-                return field.type == fieldType;
+                return field.type === fieldType;
             }, self);
 
+            //insert metadata into array for hbs template
             if (fieldMeta) {
+                var metaData = self.meta['template_values'][fieldType];
 
-                if(_.isObject(self.meta['template_values'][fieldType]) && !_.isArray(self.meta['template_values'][fieldType])) {
-                    _.each(self.meta['template_values'][fieldType], function(value, name) {
+                if (_.isObject(metaData) && !_.isArray(metaData)) {
+                    _.each(metaData, function(value, name) {
                         self.model.set(name, value);
                     }, self);
                 } else {
-                    self.model.set(fieldMeta.name, self.meta['template_values'][fieldType]);
+                    self.model.set(fieldMeta.name, metaData);
                 }
-
-                //self.model.trigger('error:validation:' + fieldMeta.name + '_ERROR', errors);
-
-                errorMeta = app.utils.deepCopy(fieldMeta);
-                errorMeta.name = fieldMeta.name + '_ERROR';
-
-                fieldMeta.errorMeta = [];
-                fieldMeta.errorMeta.push(errorMeta);
 
                 self.tempfields.push(fieldMeta);
             }
-
         });
-
-        if (fieldTypeReq !== 'all') {
-            this.title = fieldTypeReq + ' field';
-            var descTpl = app.template.getView('styleguide.' + fieldTypeReq, 'Styleguide');
-            if (descTpl) {
-                this.description = descTpl();
-            }
-        }
 
         app.view.View.prototype._render.call(this);
 
-        _.each(this.fields, function(field){
-            if(field.tplName === 'edit') {
-                field.setMode('edit');
-            }
-            if(field.tplName === 'disabled') {
-                field.setDisabled(true);
-                field.setMode('edit');
-            }
-            if(field.tplName === 'error') {
-                field.setMode('edit');
-                self.model.trigger('error:validation:' + field.name, errors);
-            }
-        }, this);
+        //render example fields into accordion grids
+        //e.g., ['text','bool','date','datetimecombo','currency','email']
+        _.each(fieldTypes, function(fieldType){
 
+            var fieldMeta = _.find(self.tempfields, function(field) {
+                    return field.type === fieldType;
+                }, self);
+
+            //e.g., ['detail','edit','error','disabled']
+            _.each(fieldStates, function(fieldState) {
+
+                //e.g., ['base','record','list']
+                _.each(fieldLayouts, function(fieldLayout) {
+                    var fieldTemplate = fieldState;
+
+                    //set field view template name
+                    if (fieldLayout === 'list') {
+                        if (fieldState === 'edit') {
+                            fieldTemplate = 'list-edit';
+                        } else {
+                            fieldTemplate = 'list';
+                        }
+                    } else if (fieldState === 'error') {
+                        fieldTemplate = 'edit';
+                    }
+
+                    var fieldSettings = {
+                            view: self,
+                            def: {
+                                name: fieldMeta.name,
+                                type: fieldType,
+                                view: fieldTemplate,
+                                default: true,
+                                enabled: fieldState === 'disabled' ? false : true
+                            },
+                            viewName: fieldTemplate,
+                            context: self.context,
+                            module: self.module,
+                            model: self.model,
+                            meta: fieldMeta
+                        };
+
+                    var fieldObject = app.view.createField(fieldSettings),
+                        fieldDivId = '#' + fieldType + '_' + fieldState + '_' + fieldLayout;
+
+                    //pre render field setup
+                    if (fieldState !== 'detail') {
+                        if (fieldObject.extendsFrom !== 'ListeditableField' || fieldLayout !== 'list') {
+                            fieldObject.setMode('edit');
+                        } else {
+                            fieldObject.setMode('list-edit');
+                        }
+                    }
+                    if (fieldState === 'disabled') {
+                        fieldObject.setDisabled(true);
+                    }
+
+                    //render field
+                    self.$(fieldDivId).append(fieldObject.el);
+                    fieldObject.render();
+
+                    //post render field setup
+                    if (fieldType === 'currency' && fieldState === 'edit') {
+                        fieldObject.setMode('edit');
+                    }
+                    if (fieldState === 'error') {
+                        if (fieldType === 'email') {
+                            var errors = {email: ['primary@example.info']};
+                            fieldObject.decorateError(errors);
+                        } else {
+                            fieldObject.setMode('edit');
+                            fieldObject.decorateError('You did a bad, bad thing.');
+                        }
+                    }
+                });
+
+            });
+
+            if (fieldTypeReq !== 'all') {
+                self.title = fieldTypeReq + ' field';
+                var descTpl = app.template.getView('styleguide.' + fieldTypeReq, self.module);
+                if (descTpl) {
+                    self.description = descTpl();
+                }
+            }
+        });
     }
 })

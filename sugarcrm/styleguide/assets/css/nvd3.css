@@ -848,7 +848,7 @@ span.count.label {
 }
 .tooltip {
   position: absolute;
-  z-index: 1050;
+  z-index: 1070;
   display: block;
   visibility: visible;
   padding: 5px;
@@ -919,7 +919,7 @@ span.count.label {
   border-bottom-color: #000;
 }
 .tooltip {
-  z-index: 1050;
+  z-index: 1070;
   text-shadow: none;
   font-weight: normal;
   word-wrap: break-word;

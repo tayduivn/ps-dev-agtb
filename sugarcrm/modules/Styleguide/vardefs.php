@@ -48,12 +48,6 @@ $dictionary['Styleguide'] = array(
             'reportable'=>true,
             'comment' => 'The ID of the Sugar item specified in parent_type',
         ),
-        'description' => array (
-            'name' => 'description',
-            'vname' => 'LBL_NOTE_STATUS',
-            'type' => 'text',
-            'comment' => 'Full text of the note',
-        ),
         'parent_name' => array(
             'name'=> 'parent_name',
             'parent_type'=>'record_type_display' ,
@@ -91,6 +85,12 @@ $dictionary['Styleguide'] = array(
             'comment' => 'File name associated with the note (attachment)',
             'importable' => false,
         ),
+        'description' => array (
+            'name' => 'description',
+            'vname' => 'LBL_NOTE_STATUS',
+            'type' => 'text',
+            'comment' => 'Full text of the note',
+        ),
         'currency_id' => array(
             'name' => 'currency_id',
             'dbType' => 'id',
@@ -109,6 +109,44 @@ $dictionary['Styleguide'] = array(
             'len' => '26,6',
             'audited' => true,
             'comment' => 'List price of product ("List" in Quote)',
+        ),
+        'website' => array (
+            'name' => 'website',
+            'vname' => 'LBL_WEBSITE',
+            'type' => 'url',
+            'dbType' => 'varchar',
+            'len' => 255,
+            'link_target' => '_blank',
+            'comment' => 'URL of website for the company',
+        ),
+        'birthdate' => array(
+            'name' => 'birthdate',
+            'vname' => 'LBL_BIRTHDATE',
+            'type' => 'date',
+            'dbType' => 'datetime',
+            'comment' => 'The birthdate of the contact'
+        ),
+        'secret_password' => array(
+            'name' => 'secret_password',
+            'vname' => 'LBL_PASSWORD',
+            'type' => 'password',
+            'dbType' => 'varchar',
+            'len' => 255,
+            'comment' => 'The password of the contact'
+        ),
+        'date_start' => array (
+            'name' => 'date_start',
+            'vname' => 'LBL_DATE',
+            'type' => 'datetimecombo',
+            'dbType' => 'datetime',
+            'comment' => 'Date of start of meeting',
+        ),
+        'radio_button_group' => array(
+            'name' => 'radio_button_group',
+            'vname' => 'LBL_BUTTON_GROUP',
+            'type' => 'radioenum',
+            'dbType' => 'varchar',
+            'len' => 255,
         ),
     ),
     'indices' => array (

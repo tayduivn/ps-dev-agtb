@@ -91,6 +91,11 @@ class SidecarTheme
         $this->myTheme = $themeName;
         $this->paths = $this->makePaths($client, $themeName);
         $this->compiler = new lessc;
+
+        // Check for a customer less file. If exists, it will be compiled like other files
+        if (file_exists('custom/themes/custom.less')) {
+            array_push($this->lessFilesToCompile, 'custom');
+        }
     }
 
     /**
@@ -104,10 +109,17 @@ class SidecarTheme
     {
         $filesInCache = $this->retrieveCssFilesInCache();
 
+        // Remove the custom css file if the less file does not exist anymore
+        if (isset($filesInCache['custom']) && !isset($this->lessFilesToCompile['custom'])) {
+            unlink($this->returnFileLocations(array('custom', $filesInCache['custom'])));
+            unset($filesInCache['custom']);
+        }
+
         //If we found css files in cache we can return css urls
         if (count($filesInCache) === count($this->lessFilesToCompile)) {
             return $this->returnFileLocations($filesInCache);
         }
+
         //Since we did not find css files in cache we have to compile the theme.
         //First check if the theme has metadata, otherwise compile the default theme instead
         if ($this->myTheme !== 'default' && !$this->isDefined()) {
@@ -177,6 +189,13 @@ class SidecarTheme
     public function compileFile($lessFile, $min = true, $writeFile = true)
     {
         try {
+            //In case we are building customer css file we need to create a temporary compiler.less
+            if ($lessFile === 'custom') {
+                $compilerFile = $this->writeCustomCompiler($lessFile);
+            } else {
+                $compilerFile = $this->getLessFileLocation($lessFile);
+            }
+
             //Load and set variables
             $this->loadVariables();
             if (!isset($this->variables['baseUrl'])) {
@@ -189,7 +208,12 @@ class SidecarTheme
             if ($min) {
                 $this->compiler->setFormatter('compressed');
             }
-            $css = $this->compiler->compileFile($this->getLessFileLocation($lessFile));
+            $css = $this->compiler->compileFile($compilerFile);
+
+            //Delete the temporary compiler.less file
+            if ($lessFile === 'custom') {
+                unlink($compilerFile);
+            }
 
             //If preview return css;
             if (!$writeFile) {
@@ -213,45 +237,38 @@ class SidecarTheme
      */
     public function isDefined()
     {
-        // We compile expected theme by if we found variables.less in the file system (in /custom/themes or /themes)
-        $customThemeVars = $this->paths['custom'] . 'variables.less';
-        $baseThemeVars = $this->paths['base'] . 'variables.less';
+        // We compile expected theme by if we found variables.php in the file system (in /custom/themes or /themes)
+        $customThemeVars = $this->paths['custom'] . 'variables.php';
+        $baseThemeVars = $this->paths['base'] . 'variables.php';
         return SugarAutoLoader::fileExists($customThemeVars) || SugarAutoLoader::fileExists($baseThemeVars);
     }
 
     /**
-     * Parse the variables.less metadata files of the theme
+     * Parse the variables.php metadata files of the theme
      *
      * @return string Array of categorized variables
      */
     public function getThemeVariables()
     {
-        $desiredTheme = $this->paths;
-        $clientDefault = $this->makePaths($this->myClient, 'default');
-        $baseDefault = $this->makePaths('base', 'default');
+        include 'styleguide/themes/clients/base/default/variables.php';
+        $variables = $lessdefs;
 
         // Crazy override from :
-        // - the base/default base theme
         // - the base/default custom theme
+        $variables = $this->loadLessDefs($variables, 'custom/themes/clients/base/default/variables.php');
+
         // - the client/default base theme
         // - the client/default custom theme
+        if ($this->myClient !== 'base') {
+            $variables = $this->loadLessDefs($variables, 'styleguide/themes/clients/' . $this->myClient . '/default/variables.php', false);
+            $variables = $this->loadLessDefs($variables, 'custom/themes/clients/' . $this->myClient . '/default/variables.php');
+        }
+
         // - the client/themeName base theme
         // - the client/themeName custom theme
-        $variables = $this->parseFile($baseDefault['base'] . 'variables.less');
-
-        $files = array(
-            $baseDefault['custom'],
-            $clientDefault['base'],
-            $clientDefault['custom'],
-            $desiredTheme['base'],
-            $desiredTheme['custom']
-        );
-
-        foreach ($files as $file) {
-            $file .= 'variables.less';
-            if (file_exists($file)) {
-                $variables = sugarArrayMerge($variables, $this->parseFile($file));
-            }
+        if ($this->myTheme !== 'default') {
+            $variables = $this->loadLessDefs($variables, 'styleguide/themes/clients/' . $this->myClient . '/' . $this->myTheme . '/variables.php');
+            $variables = $this->loadLessDefs($variables, 'custom/themes/clients/' . $this->myClient . '/' . $this->myTheme . '/variables.php');
         }
         return $variables;
     }
@@ -266,10 +283,11 @@ class SidecarTheme
      */
     public function saveThemeVariables($reset = false)
     {
-        // take the contents from /themes/clients/base/default/variables.less
+        // take the contents from /themes/clients/base/default/variables.php
         $baseDefaultTheme = new SidecarTheme('base', 'default');
         $baseDefaultThemePaths = $baseDefaultTheme->getPaths();
-        $contents = file_get_contents($baseDefaultThemePaths['base'] . 'variables.less');
+
+        include $baseDefaultThemePaths['base'] . 'variables.php';
 
         if (is_dir($this->paths['cache'])) {
             rmdir_recursive($this->paths['cache']);
@@ -283,15 +301,19 @@ class SidecarTheme
         } else {
             //override the base variables with variables passed in arguments
             foreach ($this->variables as $lessVar => $lessValue) {
-                // override the variables
-                $lessValue = html_entity_decode($lessValue);
-                $contents = preg_replace("/@$lessVar:(.*);/", "@$lessVar: $lessValue;", $contents);
+                foreach($lessdefs as $type => $varset) {
+                    if (isset($lessdefs[$type][$lessVar])) {
+                        $lessdefs[$type][$lessVar] = $lessValue;
+                    }
+                }
             }
-            $contents = str_replace('\n', '', $contents);
-
-            // save the theme variables in /themes/clients/$client/$themeName/variables.less
+            // save the theme variables in /themes/clients/$client/$themeName/variables.php
             sugar_mkdir($this->paths['custom'], null, true);
-            sugar_file_put_contents($this->paths['custom'] . 'variables.less', $contents);
+            $write = "<?php\n" .
+                '// created: ' . date('Y-m-d H:i:s') . "\n" .
+                '$lessdefs = ' .
+                var_export_helper($lessdefs) . ';';
+            sugar_file_put_contents($this->paths['custom'] . 'variables.php', $write);
         }
     }
 
@@ -313,6 +335,54 @@ class SidecarTheme
             }
         }
         return $this->variables;
+    }
+
+    /**
+     * Writes a temporary less file sugar importing fixed variables and customer less file.
+     * Like any other css files, custom less variables will be applied to the customer css file.
+     *
+     * @return string File location
+     */
+    public function writeCustomCompiler()
+    {
+        $compilerFile = 'tmp_less_custom_compiler.less';
+        $fp = fopen($compilerFile, 'w');
+
+        //Import fixed variables
+        fwrite($fp, '@import "styleguide/less/fixed_variables.less";');
+        fwrite($fp, "\n");
+
+        //Import potential customer less file
+        fwrite($fp, '@import "custom/themes/custom.less";');
+        fwrite($fp, "\n");
+
+        //Return the array of temporary less files
+        return $compilerFile;
+    }
+
+    /**
+     * Loads less variables from a file and override $variables
+     *
+     * @param array $variables Array that contains variables
+     * @param string $file Extract variables from this file
+     * @return array mixed Merged array
+     */
+    private function loadLessDefs($variables, $file, $intersect_merge = true) {
+        if (file_exists($file)) {
+            include $file;
+            if ($intersect_merge) {
+                foreach($lessdefs as $type => $varset) {
+                    foreach($varset as $key => $value) {
+                        if (isset($variables[$type][$key])) {
+                            $variables[$type][$key] = $value;
+                        }
+                    }
+                }
+            } else {
+                $variables = array_merge_recursive($variables, $lessdefs);
+            }
+        }
+        return $variables;
     }
 
     /**
@@ -391,48 +461,6 @@ class SidecarTheme
             'clients' => 'styleguide/less/clients/',
             'hashKey' => 'theme:' . $client . ':' . $themeName,
         );
-    }
-
-    /**
-     * Does a preg_match_all on a less file to retrieve a type of less variables
-     *
-     * @param string $pattern Pattern to search
-     * @param string $input Input string
-     *
-     * @return array Variables found
-     */
-    private function parseLessVars($pattern, $input)
-    {
-        $output = array();
-        preg_match_all($pattern, $input, $match, PREG_PATTERN_ORDER);
-        foreach ($match[1] as $key => $lessVar) {
-            $output[$lessVar] = $match[3][$key];
-        }
-        return $output;
-    }
-
-    /**
-     * Parse a less file to retrieve all types of less variables
-     * - 'mixins' defs         @varName:      mixinName;
-     * - 'hex' colors          @varName:      #aaaaaa;
-     * - 'rgba' colors         @varName:      rgba(0,0,0,0);
-     * - 'rel' related colors  @varName:      @relatedVar;
-     * - 'bg'  backgrounds     @varNamePath:  "./path/to/img.jpg";
-     *
-     * @param string $file The file to parse
-     *
-     * @return array Variables found by type
-     */
-    private function parseFile($file)
-    {
-        $contents = file_get_contents($file);
-        $output = array();
-        $output['mixins'] = $this->parseLessVars("/@([^:|@]+):(\s+)([^\#|@|\(|\"]*?);/", $contents);
-        $output['hex'] = $this->parseLessVars("/@([^:|@]+):(\s+)(\#.*?);/", $contents);
-        $output['rgba'] = $this->parseLessVars("/@([^:|@]+):(\s+)(rgba\(.*?\));/", $contents);
-        $output['rel'] = $this->parseLessVars("/@([^:|@]+):(\s+)(@.*?);/", $contents);
-        $output['bg'] = $this->parseLessVars("/@([^:|@]+Path):(\s+)\"(.*?)\";/", $contents);
-        return $output;
     }
 
     /**
