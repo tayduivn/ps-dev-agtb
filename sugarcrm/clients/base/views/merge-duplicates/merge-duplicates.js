@@ -877,18 +877,20 @@
         _.each(this.mergeFields, function(field) {
             var model = this.primaryRecord,
                 element = this.$('[data-field-name=' + field.name + '][data-record-id=' + model.id + ']'),
-                elements = this.$('[data-field-name=' + field.name + '][data-record-id!=' + model.id + ']'),
+                others = this.$('[data-field-name=' + field.name + '][data-record-id!=' + model.id + ']'),
                 editAccess = app.acl.hasAccessToModel('edit', model, field.name);
 
-            element.prop('disabled', !editAccess);
-            if (!editAccess) {
-                elements.prop('disabled', true);
+            element.prop('disabled', !editAccess || field.readonly);
+
+            if (!editAccess || field.readonly) {
+                others.prop('disabled', true);
                 return;
             }
-            _.each(elements, function(domElement) {
+
+            _.each(others, function(domElement) {
                 var el = $(domElement),
                     readAccess = app.acl.hasAccessToModel('read', this.collection.get(el.data('record-id')), field.name);
-                el.prop('disabled', !readAccess);
+                el.prop('disabled', !readAccess || field.readonly);
             }, this);
         }, this);
     },
@@ -1078,23 +1080,27 @@
     _setRelatedFields: function(fieldName, model, synced) {
         synced = synced || false;
 
-        var fieldDefs = app.metadata.getModule(this.module).fields,
+        var fieldDefs = this.getFields(),
             defs = fieldDefs[fieldName],
             syncedAttributes = synced ? model.getSyncedAttributes() : {};
 
-        _.each(this.relatedFieldsMap, function(relatedField) {
-            if (_.isUndefined(defs[relatedField]) ||
-                _.isUndefined(fieldDefs[defs[relatedField]].name)
-            ) {
-                return;
-            }
+        // FIXME: populate_list is only available on related fields plus
+        // related_fields is only available on fieldsets, so this logic should
+        // be implemented on field side thus calling a method like
+        // this.fields[fieldName].revertTo(model); here
+        _.each([defs.populate_list, defs.related_fields], function(fields) {
+            _.each(fields, function(relatedField) {
+                if (_.isUndefined(fieldDefs[relatedField])) {
+                    return;
+                }
 
-            this.primaryRecord.set(
-                defs[relatedField],
-                !_.isUndefined(syncedAttributes[defs[relatedField]]) ?
-                    syncedAttributes[defs[relatedField]] :
-                    model.get(defs[relatedField])
-            );
+                this.primaryRecord.set(
+                    relatedField,
+                    !_.isUndefined(syncedAttributes[relatedField]) ?
+                        syncedAttributes[relatedField] :
+                        model.get(relatedField)
+                );
+            }, this);
         }, this);
     },
 
