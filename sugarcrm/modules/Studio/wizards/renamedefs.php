@@ -13,6 +13,7 @@ $renamedefs = array(
             array('name' => 'LBL_FORECAST_TITLE', 'type' => 'singular', 'source' => 'Forecasts'),
             array('name' => 'LBL_FORECAST_DESC', 'type' => 'plural', 'source' => 'Forecasts'),
             array('name' => 'LBL_MANAGE_FORECASTS', 'type' => 'plural', 'source' => 'Forecasts'),
+            array('name' => 'LBL_MANAGE_FORECASTS_TITLE', 'type' => 'plural', 'source' => 'Forecasts'),
         ),
         'Bugs' => array(
             array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'singular', 'source' => 'Bugs'),
