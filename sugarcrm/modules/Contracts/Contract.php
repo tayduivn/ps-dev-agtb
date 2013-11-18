@@ -226,7 +226,7 @@ class Contract extends SugarBean
         $end_date_timestamp = empty($this->end_date) ? 0 : strtotime($timedate->to_db_date($this->end_date, false));
         $this->contract_term = '';
         if (!empty($start_date_timestamp) && !empty($end_date_timestamp)) {
-            $this->contract_term = ($end_date_timestamp - $start_date_timestamp) / constant('SUGARCRM_SECONDS_PER_DAY');
+            $this->contract_term = floor(($end_date_timestamp - $start_date_timestamp) / constant('SUGARCRM_SECONDS_PER_DAY'));
         }
     }
 
