@@ -300,6 +300,7 @@ $renamedefs = array(
             array('name' => 'LBL_REVENUELINEITEM_ID', 'type' => 'singular', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_REVENUELINEITEM', 'type' => 'singular', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
+            array('name' => 'LBL_PRODUCTS_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Contacts'),
         ),
         'ProjectTask' => array(
             array('name' => 'LBL_PARENT_NAME', 'type' => 'singular', 'source' => 'Projects'),
