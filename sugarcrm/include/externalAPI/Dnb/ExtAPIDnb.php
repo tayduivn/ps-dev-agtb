@@ -1007,7 +1007,7 @@ class ExtAPIDnb extends ExternalAPIBase
      * Check if Connector Framework Is Configured
      * @return bool
      */
-    private function isConnectorConfigured()
+    public function isConnectorConfigured()
     {
         if(empty($this->dnbUsername) || empty($this->dnbPassword) || empty($this->dnbEnv))
             return false;

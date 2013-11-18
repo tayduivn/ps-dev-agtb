@@ -89,6 +89,10 @@ class DnbApi extends SugarApi
         $queryType = $args['qtype'];
         $queryParam = $args['qparam'];
 
+        if (!$api->isConnectorConfigured()) {
+            return array('error' =>'ERROR_DNB_CONFIG');
+        }
+
         $result = '';
 
         if($queryType === 'search')
