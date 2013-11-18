@@ -63,10 +63,6 @@ class Audit extends SugarBean
         return $this->name;
     }
 
-    public function create_export_query(&$order_by, &$where)
-    {
-    }
-
     public function fill_in_additional_list_fields()
     {
     }

@@ -332,62 +332,6 @@ class Call extends SugarBean {
 		return $query;
 	}
 
-        function create_export_query(&$order_by, &$where, $relate_link_join='')
-        {
-            $custom_join = $this->getCustomJoin(true, true, $where);
-            $custom_join['join'] .= $relate_link_join;
-			$contact_required = stristr($where, "contacts");
-            if($contact_required)
-            {
-                    $query = "SELECT calls.*, contacts.first_name, contacts.last_name, users.user_name as assigned_user_name ";
-                    //BEGIN SUGARCRM flav=pro ONLY
-                    $query .= ", teams.name AS team_name";
-                    //END SUGARCRM flav=pro ONLY
-                    $query .= $custom_join['select'];
-                    $query .= " FROM contacts, calls, calls_contacts ";
-                    $where_auto = "calls_contacts.contact_id = contacts.id AND calls_contacts.call_id = calls.id AND calls.deleted=0 AND contacts.deleted=0";
-            }
-            else
-            {
-                    $query = 'SELECT calls.*, users.user_name as assigned_user_name ';
-                    //BEGIN SUGARCRM flav=pro ONLY
-                    $query .= ", teams.name AS team_name";
-                    //END SUGARCRM flav=pro ONLY
-                    $query .= $custom_join['select'];
-                    $query .= ' FROM calls ';
-                    $where_auto = "calls.deleted=0";
-            }
-
-//BEGIN SUGARCRM flav=pro ONLY
-				// We need to confirm that the user is a member of the team of the item.
-				$this->add_team_security_where_clause($query);
-//END SUGARCRM flav=pro ONLY
-
-				//BEGIN SUGARCRM flav=pro ONLY
-				$query .= getTeamSetNameJoin('calls');
-				//END SUGARCRM flav=pro ONLY
-			$query .= "  LEFT JOIN users ON calls.assigned_user_id=users.id ";
-
-            $query .= $custom_join['join'];
-
-			if($where != "")
-                    $query .= "where $where AND ".$where_auto;
-            else
-                    $query .= "where ".$where_auto;
-
-        $order_by = $this->process_order_by($order_by);
-        if (empty($order_by)) {
-            $order_by = 'calls.name';
-        }
-        $query .= ' ORDER BY ' . $order_by;
-
-            return $query;
-        }
-
-
-
-
-
 	function fill_in_additional_detail_fields()
 	{
 		global $locale;

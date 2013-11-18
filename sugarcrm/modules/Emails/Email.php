@@ -2279,52 +2279,6 @@ class Email extends SugarBean {
 		parent::fill_in_additional_detail_fields();
 	}
 
-
-
-	function create_export_query(&$order_by, &$where)
-    {
-		$contact_required = stristr($where, "contacts");
-		$custom_join = $this->getCustomJoin(true, true, $where);
-
-		if($contact_required) {
-			$query = "SELECT emails.*, contacts.first_name, contacts.last_name";
-			//BEGIN SUGARCRM flav=pro ONLY
-			$query .= ", teams.name AS team_name";
-			//END SUGARCRM flav=pro ONLY
-            $query .= $custom_join['select'];
-
-			$query .= " FROM contacts, emails, emails_contacts ";
-			$where_auto = "emails_contacts.contact_id = contacts.id AND emails_contacts.email_id = emails.id AND emails.deleted=0 AND contacts.deleted=0";
-		} else {
-			$query = 'SELECT emails.*';
-			//BEGIN SUGARCRM flav=pro ONLY
-			$query .= ", teams.name AS team_name";
-			//END SUGARCRM flav=pro ONLY
-            $query .= $custom_join['select'];
-
-            $query .= ' FROM emails ';
-            $where_auto = "emails.deleted=0";
-		}
-
-		//BEGIN SUGARCRM flav=pro ONLY
-		// We need to confirm that the user is a member of the team of the item.
-		$this->add_team_security_where_clause($query);
-		$query .= getTeamSetNameJoin('emails');
-		//END SUGARCRM flav=pro ONLY
-        $query .= $custom_join['join'];
-
-		if($where != "")
-			$query .= "where $where AND ".$where_auto;
-        else
-			$query .= "where ".$where_auto;
-
-        if($order_by != "")
-			$query .= " ORDER BY $order_by";
-        else
-			$query .= " ORDER BY emails.name";
-        return $query;
-    }
-
 	function get_list_view_data() {
 		global $app_list_strings;
 		global $theme;

@@ -162,39 +162,6 @@ class ProductCategory extends SugarBean
     {
     }
 
-
-    /**
-     * Create the export query.
-     *
-     * @param string $order_by
-     * @param string $where
-     * @return string
-     */
-    public function create_export_query(&$order_by, &$where)
-    {
-        $query = "SELECT
-								$this->table_name.*,
-								parent_categories.name AS parent_category
-								FROM $this->table_name
-								LEFT JOIN $this->table_name parent_categories
-								ON $this->table_name.parent_id=parent_categories.id
-                                ";
-
-        $where_auto = "$this->table_name.deleted=0";
-
-        if ($where != "") {
-            $query .= "where ($where) AND " . $where_auto;
-        } else {
-            $query .= "where " . $where_auto;
-        }
-
-        if (!empty($order_by)) {
-            $query .= " ORDER BY $order_by";
-        }
-
-        return $query;
-    }
-
     /**
      * Fill in additional details for the list view
      */

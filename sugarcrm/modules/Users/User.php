@@ -1236,38 +1236,6 @@ EOQ;
         return $result;
     }
 
-	function create_export_query($order_by, $where) {
-		include('modules/Users/field_arrays.php');
-
-		$cols = '';
-		foreach($fields_array['User']['export_fields'] as $field) {
-			$cols .= (empty($cols)) ? '' : ', ';
-			$cols .= $field;
-		}
-
-		$query = "SELECT {$cols} FROM users ";
-
-		$where_auto = " users.deleted = 0";
-
-		if ($where != "")
-			$query .= " WHERE $where AND ".$where_auto;
-		else
-			$query .= " WHERE ".$where_auto;
-
-		// admin for module user is not be able to export a super-admin
-		global $current_user;
-		if(!$current_user->is_admin){
-			$query .= " AND users.is_admin=0";
-		}
-
-		if ($order_by != "")
-			$query .= " ORDER BY $order_by";
-		else
-			$query .= " ORDER BY users.user_name";
-
-		return $query;
-	}
-
 	/** Returns a list of the associated users
 	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
 	 * All Rights Reserved..

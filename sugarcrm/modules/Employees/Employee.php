@@ -186,31 +186,6 @@ class Employee extends Person {
 	}
 	//END SUGARCRM flav=pro ONLY
 
-	function create_export_query($order_by, $where) {
-		include('modules/Employees/field_arrays.php');
-
-		$cols = '';
-		foreach($fields_array['Employee']['export_fields'] as $field) {
-			$cols .= (empty($cols)) ? '' : ', ';
-			$cols .= $field;
-		}
-		$query = "SELECT {$cols} FROM users ";
-
-		$where_auto = " users.deleted = 0";
-
-		if($where != "")
-			$query .= " WHERE $where AND " . $where_auto;
-		else
-			$query .= " WHERE " . $where_auto;
-
-		if($order_by != "")
-			$query .= " ORDER BY $order_by";
-		else
-			$query .= " ORDER BY users.user_name";
-
-		return $query;
-	}
-
 	function preprocess_fields_on_save(){
 		parent::preprocess_fields_on_save();
 

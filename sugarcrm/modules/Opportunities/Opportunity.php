@@ -237,60 +237,6 @@ class Opportunity extends SugarBean
         return $query;
     }
 
-
-    public function create_export_query(&$order_by, &$where, $relate_link_join = '')
-    {
-        $custom_join = $this->custom_fields->getJOIN(true, true, $where);
-        if ($custom_join) {
-            $custom_join['join'] .= $relate_link_join;
-        }
-        $query = "SELECT
-                                opportunities.*,
-                                accounts.name as account_name,
-                                users.user_name as assigned_user_name ";
-        //BEGIN SUGARCRM flav=pro ONLY
-        $query .= ", teams.name AS team_name ";
-        //END SUGARCRM flav=pro ONLY
-        if ($custom_join) {
-            $query .= $custom_join['select'];
-        }
-        $query .= " FROM opportunities ";
-//BEGIN SUGARCRM flav=pro ONLY
-        // We need to confirm that the user is a member of the team of the item.
-        $this->add_team_security_where_clause($query);
-//END SUGARCRM flav=pro ONLY
-        $query .= "LEFT JOIN users
-                                ON opportunities.assigned_user_id=users.id";
-        //BEGIN SUGARCRM flav=pro ONLY
-        $query .= " LEFT JOIN teams ON opportunities.team_id=teams.id";
-        //END SUGARCRM flav=pro ONLY
-        $query .= " LEFT JOIN $this->rel_account_table
-                                ON opportunities.id=$this->rel_account_table.opportunity_id
-                                LEFT JOIN accounts
-                                ON $this->rel_account_table.account_id=accounts.id ";
-        if ($custom_join) {
-            $query .= $custom_join['join'];
-        }
-        $where_auto = "
-			($this->rel_account_table.deleted is null OR $this->rel_account_table.deleted=0)
-			AND (accounts.deleted is null OR accounts.deleted=0)
-			AND opportunities.deleted=0";
-
-        if ($where != "") {
-            $query .= "where $where AND " . $where_auto;
-        } else {
-            $query .= "where " . $where_auto;
-        }
-
-        if ($order_by != "") {
-            $query .= " ORDER BY opportunities.$order_by";
-        } else {
-            $query .= " ORDER BY opportunities.name";
-        }
-        return $query;
-    }
-
-
     public function fill_in_additional_list_fields()
     {
         if ($this->force_load_details == true) {

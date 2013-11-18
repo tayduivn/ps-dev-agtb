@@ -758,33 +758,6 @@ class Team extends SugarBean
     	}
     }
 
-	function create_export_query($order_by, $where) {
-		include('modules/Teams/field_arrays.php');
-
-		$cols = '';
-		foreach($fields_array['Team']['export_fields'] as $field) {
-			$cols .= (empty($cols)) ? '' : ', ';
-			$cols .= $field;
-		}
-
-		$query = "SELECT {$cols} FROM teams ";
-
-		$where_auto = " teams.deleted = 0";
-
-		if ($where != "")
-			$query .= " WHERE $where AND ".$where_auto;
-		else
-			$query .= " WHERE ".$where_auto;
-
-
-		if ($order_by != "")
-			$query .= " ORDER BY $order_by";
-		else
-			$query .= " ORDER BY teams.name";
-
-		return $query;
-	}
-
 	/**
      * Bug 13271 - Sometimes we just want to know the name of a team for display purposes when the team_id may not be one of the users assigned teams.
      * For example when they have an admin Role for a module we may need to display the teams for other users

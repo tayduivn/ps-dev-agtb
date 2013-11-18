@@ -6777,10 +6777,9 @@ class SugarBean
      *
      * @param string $order_by
      * @param string $where
-     * @param string $relate_link_join Deprecated.
      * @return string SQL query
      */
-    public function create_export_query($order_by, $where, $relate_link_join = '')
+    public function create_export_query($order_by, $where)
 	{
 		return $this->create_new_list_query($order_by, $where, array(), array(), 0, '', false, $this, true, true);
 	}

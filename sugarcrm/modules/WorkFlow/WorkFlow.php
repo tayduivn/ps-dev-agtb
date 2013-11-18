@@ -152,31 +152,6 @@ class WorkFlow extends SugarBean
 		return $this->name;
 	}
 
-	/**
-	 * Returns a list of the associated product_templates
-	 */
-        function create_export_query(&$order_by, &$where)
-        {
-        $custom_join = $this->getCustomJoin(true, true, $where);
-		$query = "SELECT $this->table_name.* ";
-        $query .= $custom_join['select'];
- 		$query .= " FROM $this->table_name ";
-        $query .= $custom_join['join'];
-		$where_auto = "$this->table_name.deleted=0";
-
-                if($where != "")
-                        $query .= "where ($where) AND ".$where_auto;
-                else
-                        $query .= "where ".$where_auto;
-
-                if(!empty($order_by))
-                        $query .= " ORDER BY $order_by";
-
-                return $query;
-        }
-
-
-
 	function save_relationship_changes($is_update)
     {
     }

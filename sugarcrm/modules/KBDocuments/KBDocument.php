@@ -235,30 +235,6 @@ class KBDocument extends SugarBean {
 		return $list_form;
 	}
 
-    function create_export_query(&$order_by, &$where, $relate_link_join='')
-    {
-        $custom_join = $this->getCustomJoin(true, true, $where);
-        $custom_join['join'] .= $relate_link_join;
-		$query = "SELECT
-						kbdocuments.*";
-        $query .=  $custom_join['select'];
-		$query .= " FROM kbdocuments ";
-        $query .=  $custom_join['join'];
-		$where_auto = " kbdocuments.deleted = 0";
-
-		if ($where != "")
-			$query .= " WHERE $where AND ".$where_auto;
-		else
-			$query .= " WHERE ".$where_auto;
-
-		if ($order_by != "")
-			$query .= " ORDER BY $order_by";
-		else
-			$query .= " ORDER BY kbdocuments.kbdocument_name";
-
-		return $query;
-	}
-
     function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean){
         global $current_user;
         $ret_array=array();

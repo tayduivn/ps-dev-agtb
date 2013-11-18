@@ -35,13 +35,10 @@ $focus = BeanFactory::getBean($_REQUEST['module']);
 
 $uids = array();
 if($_REQUEST['select_entire_list'] == '1'){
-	$order_by = '';
-
 	require_once('include/MassUpdate.php');
 	$mass = new MassUpdate();
 	$mass->generateSearchWhere($_REQUEST['module'], $_REQUEST['current_query_by_page']);
-	$ret_array = create_export_query_relate_link_patch($_REQUEST['module'], $mass->searchFields, $mass->where_clauses);
-	$query = $focus->create_export_query($order_by, $ret_array['where'], $ret_array['join']);
+    $query = $focus->create_new_list_query('', $mass->where_clauses, $mass->searchFields);
 	$result = $GLOBALS['db']->query($query,true);
 	$uids = array();
 	while($val = $GLOBALS['db']->fetchByAssoc($result,false))

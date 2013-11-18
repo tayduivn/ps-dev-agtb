@@ -182,27 +182,6 @@ class TimePeriod extends SugarBean
         return $list_form;
     }
 
-    public function create_export_query($order_by, $where)
-    {
-        $query = "SELECT timeperiods.* FROM timeperiods ";
-
-        $where_auto = " timeperiods.deleted = 0";
-
-        if ($where != "") {
-            $query .= " WHERE $where AND " . $where_auto;
-        } else {
-            $query .= " WHERE " . $where_auto;
-        }
-
-        if ($order_by != "") {
-            $query .= " ORDER BY $order_by";
-        } else {
-            $query .= " ORDER BY timeperiods.name";
-        }
-
-        return $query;
-    }
-
     /**
      * sets the start date, based on a db formatted date string passed in.  If null is passed in, now is used.
      * The end date is adjusted as well to hold to the contract of this being a time period

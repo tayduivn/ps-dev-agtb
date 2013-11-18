@@ -160,40 +160,6 @@ class Forecast extends SugarBean
 		return $list_form;
 	}
 
-
-	function create_export_query( $order_by, $where )
-	{
-		$query = "SELECT
-				forecasts.*";
-		$query .= " FROM forecasts ";
-		$where_auto = '1=1';
-		if ( empty($show_deleted) ) {
-			$where_auto = " forecasts.deleted = 0";
-		}
-		else {
-			if ( $show_deleted == 1 ) {
-				$where_auto = " forecasts.deleted = 1";
-			}
-		}
-
-		if ( $where != "" ) {
-			$query .= " WHERE $where AND " . $where_auto;
-		}
-		else {
-			$query .= " WHERE " . $where_auto;
-		}
-
-		if ( $order_by != "" ) {
-			$query .= " ORDER BY $order_by";
-		}
-		else {
-			$query .= " ORDER BY forecasts.date_entered desc";
-		}
-
-		return $query;
-	}
-
-
 	/**
 	 * Return the list query used by the list views and export button.
      * Next generation of create_new_list_query function.

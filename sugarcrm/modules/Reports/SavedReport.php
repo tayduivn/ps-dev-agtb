@@ -400,11 +400,6 @@ class SavedReport extends SugarBean
 		return $this->name;
 	}
 
-	function create_export_query($order_by, $where)
- 	{
-		return $this->create_new_list_query($order_by, $where);
-  	}
-
     /**
     * @see SugarBean::cleanBean
     */
