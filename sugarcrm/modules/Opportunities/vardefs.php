@@ -141,6 +141,9 @@ $dictionary['Opportunity'] = array(
             'enforced' => true,
             'massupdate' => false,
             //END SUGARCRM flav=ent ONLY
+            //BEGIN SUGARCRM flav!=ent ONLY
+            'audited' => true,
+            //END SUGARCRM flav!=ent ONLY
             'validation' => array('type' => 'range', 'min' => 0),
             'related_fields' => array(
                 'currency_id',
@@ -164,7 +167,6 @@ $dictionary['Opportunity'] = array(
             'dbType' => 'currency',
             'disable_num_format' => true,
             'duplicate_merge' => '0',
-            'audited' => true,
             'comment' => 'Formatted amount of the opportunity',
             'studio' => array(
                 'wirelesslistview' => false,
@@ -343,7 +345,9 @@ $dictionary['Opportunity'] = array(
             'enforced' => true,
             'massupdate' => false,
             //END SUGARCRM flav=ent ONLY
+            //BEGIN SUGARCRM flav!=ent ONLY
             'audited' => true,
+            //END SUGARCRM flav!=ent ONLY
             'related_fields' => array(
                 'currency_id',
                 'base_rate'
@@ -365,7 +369,9 @@ $dictionary['Opportunity'] = array(
             'enforced' => true,
             'massupdate' => false,
             //END SUGARCRM flav=ent ONLY
+            //BEGIN SUGARCRM flav!=ent ONLY
             'audited' => true,
+            //END SUGARCRM flav!=ent ONLY
             'related_fields' => array(
                 'currency_id',
                 'base_rate'
