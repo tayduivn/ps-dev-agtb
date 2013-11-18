@@ -109,8 +109,8 @@ $mod_strings = array (
 
     //forecast worksheet direct reports forecast
     'LBL_FDR_USER_NAME'=>'Direct Report',
-    'LBL_FDR_OPPORTUNITIES'=>'Opportunities in forecast:',
-    'LBL_FDR_WEIGH'=>'Weighted Amount of opportunities:',
+    'LBL_FDR_OPPORTUNITIES'=>'Opportunities in Forecast:',
+    'LBL_FDR_WEIGH'=>'Weighted Amount of Opportunities:',
     'LBL_FDR_COMMIT'=>'Committed Amount',
     'LBL_FDR_DATE_COMMIT'=>'Commit Date',
 
@@ -132,7 +132,7 @@ $mod_strings = array (
     'LBL_LOADING_COMMIT_HISTORY' => 'Loading Commit History...',
 
     //list view
-    'LBL_LV_TIMPERIOD'=> 'Time period',
+    'LBL_LV_TIMPERIOD'=> 'Time Period',
     'LBL_LV_TIMPERIOD_START_DATE'=> 'Start Date',
     'LBL_LV_TIMPERIOD_END_DATE'=> 'End Date',
     'LBL_LV_TYPE'=> 'Forecast Type',
@@ -150,12 +150,12 @@ $mod_strings = array (
     'LBL_FC_START_DATE' => 'Start Date',
     'LBL_FC_USER' => 'Schedule For',
 
-    'LBL_NO_ACTIVE_TIMEPERIOD'=>'No Active time periods for Forecasting.',
+    'LBL_NO_ACTIVE_TIMEPERIOD'=>'No active Time Periods for the Forecasts module.',
     'LBL_FDR_ADJ_AMOUNT'=>'Adjusted Amount',
     'LBL_SAVE_WOKSHEET'=>'Save Worksheet',
     'LBL_RESET_WOKSHEET'=>'Reset Worksheet',
     'LBL_SHOW_CHART'=>'View Chart',
-    'LBL_RESET_CHECK'=>'All worksheet data for the selected time period and logged in user will be removed. Continue?',
+    'LBL_RESET_CHECK'=>'All worksheet data for the selected Time Period and logged in user will be removed. Continue?',
 
     'LBL_CURRENCY' => 'Currency',
     'LBL_CURRENCY_ID' => 'Currency ID',

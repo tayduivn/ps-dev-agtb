@@ -94,10 +94,10 @@ describe("RevenueLineItems.Base.Views.RecordList", function() {
             model = null;
         });
         
-        it("should should return WARNING_DELETED_RECORD_RECOMMIT when commit_stage = include", function() {
+        it("should should return WARNING_DELETED_RECORD_RECOMMIT_1 and _2 combined when commit_stage = include", function() {
             model.set("commit_stage", "include");
             message = view.deleteCommitWarning(model);
-            expect(message).toEqual("WARNING_DELETED_RECORD_RECOMMIT");
+            expect(message).toEqual('WARNING_DELETED_RECORD_RECOMMIT_1<a href="#Forecasts">LBL_MODULE_NAME_SINGULAR</a>.  WARNING_DELETED_RECORD_RECOMMIT_2<a href="#Forecasts">LBL_MODULE_NAME_SINGULAR</a>.');
         });
         
         it("should should return NULL when commit_stage != include", function() {

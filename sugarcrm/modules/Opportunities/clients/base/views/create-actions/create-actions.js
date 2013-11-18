@@ -72,11 +72,15 @@
         // add a callback to close the alert if users navigate from the page
         app.routing.before('route', this.dismissAlert, undefined, this);
 
+        var message = app.lang.get('TPL_RLI_CREATE', 'Opportunities')
+            + '  <a href="javascript:void(0);" id="createRLI">'
+            + app.lang.get('TPL_RLI_CREATE_LINK_TEXT', 'Opportunities') + '</a>';
+
         this.alert = app.alert.show('opp-rli-create', {
             level: 'warning',
             autoClose: false,
             title: app.lang.get('LBL_ALERT_TITLE_WARNING') + ':',
-            messages: Handlebars.compile(app.lang.get('TPL_RLI_CREATE', 'Opportunities'))(),
+            messages: message,
             onLinkClick: _.bind(function() {
                 app.alert.dismiss('create-success');
                 this.openRLICreate();
