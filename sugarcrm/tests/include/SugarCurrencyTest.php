@@ -337,5 +337,203 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    public function testSetBaseRateWhenNotSet()
+    {
+        $bean = $this->getMockBuilder('SugarBean')
+            ->setMethods(array('save', 'getFieldDefinition'))
+            ->disableOriginalConstructor()
+            ->getMock();
 
+        $bean->expects($this->exactly(2))
+            ->method('getFieldDefinition')
+            ->will($this->returnValue(true));
+
+        /** @var Currency $currency */
+        $currency = $this->getMockBuilder('Currency')
+            ->setMethods(array('save'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $currency->conversion_rate = '1.1';
+
+        $sc = $this->getMockBuilder('SugarCurrency')
+            ->setMethods(array('getCurrency'))
+            ->getMock();
+
+        $sc->staticExpects($this->once('getCurrency'))
+            ->method('getCurrency')
+            ->will($this->returnValue($currency));
+
+        /** @var SugarBean $bean */
+
+        $bean->currency_id = 'test_1';
+
+        /** @var SugarCurrency $sc */
+        $sc::verifyCurrencyBaseRateSet($bean);
+
+        $this->assertEquals('1.1', $bean->base_rate);
+    }
+
+    public function testBaseRatesChangeToCurrentBaseRate()
+    {
+        $bean = $this->getMockBuilder('SugarBean')
+            ->setMethods(array('save', 'getFieldDefinition'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $bean->expects($this->exactly(2))
+            ->method('getFieldDefinition')
+            ->will($this->returnValue(true));
+
+        /** @var Currency $currency */
+        $currency = $this->getMockBuilder('Currency')
+            ->setMethods(array('save'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $currency->conversion_rate = '1.1';
+
+        /** @var SugarBean $bean */
+        $bean->currency_id = 'test_1';
+        $bean->fetched_row['currency_id'] = 'test_1';
+        $bean->base_rate = '1.2';
+
+        $sc = $this->getMockBuilder('SugarCurrency')
+            ->setMethods(array('getCurrency'))
+            ->getMock();
+
+        $sc->staticExpects($this->once('getCurrency'))
+            ->method('getCurrency')
+            ->will($this->returnValue($currency));
+
+        /** @var SugarCurrency $sc */
+        $sc::verifyCurrencyBaseRateSet($bean);
+
+        $this->assertEquals('1.1', $bean->base_rate);
+    }
+
+    public function testSaveChangesBaseRateIfCurrencyIdChanged()
+    {
+        $bean = $this->getMockBuilder('SugarBean')
+            ->setMethods(array('save', 'getFieldDefinition'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $bean->expects($this->exactly(2))
+            ->method('getFieldDefinition')
+            ->will($this->returnValue(true));
+
+        /** @var Currency $currency */
+        $currency = $this->getMockBuilder('Currency')
+            ->setMethods(array('save'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $currency->conversion_rate = '1.1';
+
+        /** @var SugarBean $bean */
+        $bean->fetched_row['currency_id'] = 'test_2';
+        $bean->currency_id = 'test_1';
+        $bean->base_rate = '1.2';
+
+        $sc = $this->getMockBuilder('SugarCurrency')
+            ->setMethods(array('getCurrency'))
+            ->getMock();
+
+        $sc->staticExpects($this->once('getCurrency'))
+            ->method('getCurrency')
+            ->will($this->returnValue($currency));
+
+        /** @var SugarCurrency $sc */
+
+        $sc::verifyCurrencyBaseRateSet($bean);
+
+        $this->assertEquals('1.1', $bean->base_rate);
+    }
+
+
+    public static function dataProviderBeanMethod()
+    {
+        return array(
+            array('1.1', true),
+            array('1.2', false),
+        );
+    }
+    /**
+     * @dataProvider dataProviderBeanMethod
+     */
+    public function testSaveWithBeanUpdateCurrencyBaseRateMethod($expected, $method_return)
+    {
+        $bean = $this->getMockBuilder('SugarBean')
+            ->setMethods(array('save', 'updateCurrencyBaseRate', 'getFieldDefinition'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $bean->expects($this->exactly(2))
+            ->method('getFieldDefinition')
+            ->will($this->returnValue(true));
+
+        /** @var Currency $currency */
+        $currency = $this->getMockBuilder('Currency')
+            ->setMethods(array('save'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $currency->conversion_rate = '1.1';
+
+        $bean->expects($this->once())
+            ->method('updateCurrencyBaseRate')
+            ->will($this->returnValue($method_return));
+
+        /** @var SugarBean $bean */
+        $bean->fetched_row['currency_id'] = 'test_1';
+        $bean->currency_id = 'test_1';
+        $bean->base_rate = '1.2';
+
+        $sc = $this->getMockBuilder('SugarCurrency')
+            ->setMethods(array('getCurrency'))
+            ->getMock();
+
+        $sc->staticExpects($this->once())
+            ->method('getCurrency')
+            ->will($this->returnValue($currency));
+
+        /** @var SugarCurrency $sc */
+
+        $sc::verifyCurrencyBaseRateSet($bean);
+
+        $this->assertEquals($expected, $bean->base_rate);
+    }
+
+    public static function dataProviderHadCurrencyIdChanged()
+    {
+        return array(
+            array('test_1', 'test_1', false),
+            array('test_1', '', true),
+            array('', 'test_1', true),
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderHadCurrencyIdChanged
+     */
+    public function testHasCurrencyIdChanged($fetched_value, $bean_value, $expected)
+    {
+        $field = $this->getMockBuilder('SugarCurrency')
+            ->setMethods(array('getCurrency'))
+            ->getMock();
+
+        $bean = $this->getMockBuilder('SugarBean')
+            ->setMethods(array('save'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $bean->currency_id = $bean_value;
+        $bean->fetched_row['currency_id'] = $fetched_value;
+
+        $this->assertEquals(
+            $expected,
+            SugarTestReflection::callProtectedMethod($field, 'hasCurrencyIdChanged', array($bean))
+        );
+    }
 }

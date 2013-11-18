@@ -1,75 +1,96 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
-* The contents of this file are subject to the SugarCRM Professional End User
-* License Agreement ("License") which can be viewed at
-* http://www.sugarcrm.com/crm/products/sugar-professional-eula.html
-* By installing or using this file, You have unconditionally agreed to the
-* terms and conditions of the License, and You may not use this file except in
-* compliance with the License.  Under the terms of the license, You shall not,
-* among other things: 1) sublicense, resell, rent, lease, redistribute, assign
-* or otherwise transfer Your rights to the Software, and 2) use the Software
-* for timesharing or service bureau purposes such as hosting the Software for
-* commercial gain and/or for the benefit of a third party.  Use of the Software
-* may be subject to applicable fees and any use of the Software without first
-* paying applicable fees is strictly prohibited.  You do not have the right to
-* remove SugarCRM copyrights from the source code or user interface.
-*
-* All copies of the Covered Code must include on each user interface screen:
-*  (i) the "Powered by SugarCRM" logo and
-*  (ii) the SugarCRM copyright notice
-* in the same form as they appear in the distribution.  See full license for
-* requirements.
-*
-* Your Warranty, Limitations of liability and Indemnity are expressly stated
-* in the License.  Please refer to the License for the specific language
-* governing these rights and limitations under the License.  Portions created
-* by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
-********************************************************************************/
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 
 require_once('modules/DynamicFields/templates/Fields/TemplateCurrencyId.php');
+require_once('modules/DynamicFields/templates/Fields/TemplateCurrencyBaseRate.php');
 require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
 
 class TemplateCurrency extends TemplateRange
 {
-    var $max_size = 25;
-    var $len = 26 ;
-    var $precision = 6;
-    var $type='currency';
+    public $max_size = 25;
+    public $len = 26;
+    public $precision = 6;
+    public $type = 'currency';
 
-    function delete($df){
-    	parent::delete($df);
-    	//currency id
-    	$currency_id = new TemplateCurrencyId();
-    	$currency_id->name = 'currency_id';
-    	$currency_id->delete($df);
+    public function delete($df)
+    {
+        parent::delete($df);
+        //currency id
+        $currency_id = new TemplateCurrencyId();
+        $currency_id->name = 'currency_id';
+        $currency_id->delete($df);
+
+        //base_rate
+        $base_rate = new TemplateCurrencyBaseRate();
+        $base_rate->name = 'base_rate';
+        $base_rate->delete($df);
+        parent::delete($df);
+        //currency id
+        $currency_id = new TemplateCurrencyId();
+        $currency_id->name = 'currency_id';
+        $currency_id->delete($df);
     }
 
-    function save($df){
-    	//the currency field
-		$this->default = unformat_number($this->default);
-		$this->default_value = $this->default;
-    	parent::save($df);
+    public function save($df)
+    {
+        //the currency field
+        $this->default = unformat_number($this->default);
+        $this->default_value = $this->default;
+        $this->related_fields = array(
+            'currency_id',
+            'base_rate'
+        );
+        parent::save($df);
 
-    	//currency id
-    	$currency_id = new TemplateCurrencyId();
-    	$currency_id->name = 'currency_id';
-    	$currency_id->vname = 'LBL_CURRENCY';
-    	$currency_id->label = $currency_id->vname;
-    	$currency_id->save($df);
-    	//$df->addLabel($currency_id->vname);
+        //currency id
+        $currency_id = new TemplateCurrencyId();
+        $currency_id->name = 'currency_id';
+        $currency_id->vname = 'LBL_CURRENCY';
+        $currency_id->label = $currency_id->vname;
+        $currency_id->save($df);
+        //$df->addLabel($currency_id->vname);
+
+        //base_rate
+        $base_rate = new TemplateCurrencyBaseRate();
+        $base_rate->name = 'base_rate';
+        $base_rate->label = 'LBL_CURRENCY_RATE';
+        $base_rate->save($df);
+
+        //the currency field
+        $this->default = unformat_number($this->default);
+        $this->default_value = $this->default;
+        parent::save($df);
+
+        //currency id
+        $currency_id = new TemplateCurrencyId();
+        $currency_id->name = 'currency_id';
+        $currency_id->vname = 'LBL_CURRENCY';
+        $currency_id->label = $currency_id->vname;
+        $currency_id->save($df);
     }
 
-    function get_field_def(){
-    	$def = parent::get_field_def();
-		$def['precision'] = (!empty($this->precision)) ? $this->precision : 6;
-    	return $def;
+    public function get_field_def()
+    {
+        $def = parent::get_field_def();
+        $def['precision'] = (!empty($this->precision)) ? $this->precision : 6;
+        return $def;
     }
 
-	function get_db_type()
-	{
-		$precision = (!empty($this->precision)) ? $this->precision : 6;
-		$len = (!empty($this->len)) ? $this->len:26;
-		return " ".sprintf($GLOBALS['db']->getColumnType("decimal_tpl"), $len, $precision); 
-	}
+    function get_db_type()
+    {
+        $precision = (!empty($this->precision)) ? $this->precision : 6;
+        $len = (!empty($this->len)) ? $this->len : 26;
+        return " " . sprintf($GLOBALS['db']->getColumnType("decimal_tpl"), $len, $precision);
+    }
 }

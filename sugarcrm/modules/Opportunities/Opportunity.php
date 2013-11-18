@@ -460,27 +460,18 @@ class Opportunity extends SugarBean
         return $the_where;
     }
 
+    /**
+     * Bean specific logic for when SugarFieldCurrency_id::save() is called to make sure we can update the base_rate
+     *
+     * @return bool
+     */
+    public function updateCurrencyBaseRate()
+    {
+        return !in_array($this->sales_stage, $this->getClosedStages());
+    }
+
     public function save($check_notify = false)
     {
-        // Bug 32581 - Make sure the currency_id is set to something
-        if (empty($this->currency_id)) {
-            // use user preferences for currency
-            $currency = SugarCurrency::getUserLocaleCurrency();
-            $this->currency_id = $currency->id;
-            $this->base_rate = $currency->conversion_rate;
-        }
-
-        // if stage is not closed won/lost, update base_rate with currency rate
-        if (!in_array($this->sales_stage, $this->getClosedStages()) || !isset($this->base_rate) || $this->isCurrencyIdChanged()) {
-            $currency = SugarCurrency::getCurrencyByID($this->currency_id);
-            $this->base_rate = $currency->conversion_rate;
-        }
-
-        // backward compatibility, set usdollar amount with base_rate
-        if (isset($this->amount) && !empty($this->amount)) {
-            $this->amount_usdollar = SugarCurrency::convertWithRate($this->amount, $this->base_rate);
-        }
-
         //if probability is empty, set it based on the sales stage
         if ($this->probability === '' && !empty($this->sales_stage)) {
             $this->mapProbabilityFromSalesStage();

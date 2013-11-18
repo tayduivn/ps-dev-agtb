@@ -82,9 +82,6 @@ class Sale extends Basic
 
     public function save($check_notify = false)
     {
-        if (!empty($this->amount)) {
-            $this->amount_usdollar = SugarCurrency::convertWithRate($this->amount, $this->base_rate);
-        }
         return parent::save($check_notify);
     }
 

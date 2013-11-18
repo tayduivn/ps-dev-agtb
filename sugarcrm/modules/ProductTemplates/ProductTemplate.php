@@ -494,24 +494,6 @@ class ProductTemplate extends SugarBean {
 }
 
     function save($check_notify = FALSE) {
-
-        $currency = BeanFactory::getBean('Currencies', $this->currency_id);
-        $this->base_rate = $currency->conversion_rate;
-
-        // Bug #52052: Calculated Fields don't get into POST (inputs are disabled)
-        // So if i.e. "discount_price" is Calculated Fields we have find out it's value first
-        $this->updateCalculatedFields();
-
-        //US DOLLAR
-        if (isset($this->discount_price)) {
-            $this->discount_usdollar = SugarCurrency::convertWithRate($this->discount_price, $this->base_rate);
-        }
-        if (isset($this->list_price)) {
-            $this->list_usdollar = SugarCurrency::convertWithRate($this->list_price, $this->base_rate);
-        }
-        if (isset($this->cost_price)) {
-            $this->cost_usdollar = SugarCurrency::convertWithRate($this->cost_price, $this->base_rate);
-        }
         parent::save($check_notify);
     }
 }

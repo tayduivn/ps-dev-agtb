@@ -236,10 +236,6 @@ class Campaign extends SugarBean {
 
     function save($check_notify = FALSE) {
 
-        // set base rate
-        $currency = BeanFactory::getBean('Currencies', $this->currency_id);
-        $this->base_rate = $currency->conversion_rate;
-
         $this->unformat_all_fields();
 
         // Bug53301
