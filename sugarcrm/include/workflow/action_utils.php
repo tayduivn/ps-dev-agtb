@@ -447,10 +447,12 @@ function get_expiry_date($stamp_type, $time_interval, $user_format = false, $is_
 	    $date = $timedate->getNow();
 
 	}
-	if(empty($date)) {
-	    $GLOBALS['log']->fatal("Invalid date [$value] for type $stamp_type");
-	    return '';
-	}
+
+    if (empty($date)) {
+        $GLOBALS['log']->warn("Invalid date [$value] for type $stamp_type");
+        return '';
+    }
+
 	$date->modify("+$time_interval seconds");
     return $timedate->asDbType($date, $stamp_type);
 	//end function get_expiry_date
