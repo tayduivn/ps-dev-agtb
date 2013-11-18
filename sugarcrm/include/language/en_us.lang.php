@@ -4389,6 +4389,7 @@ $app_strings = array (
     //END SUGARCRM flav=pro ONLY
 
     //quickcreate modal dialog
+    'LBL_MESSAGE_BOX_TITLE' => 'Alert',
     'LBL_IGNORE_DUPLICATE_AND_SAVE' => 'Ignore Duplicate and Save',
     'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and Create New',
     'LBL_SAVE_AND_VIEW' => 'Save and View',

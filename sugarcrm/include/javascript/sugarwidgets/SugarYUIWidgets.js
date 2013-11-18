@@ -35,7 +35,7 @@ sw.MessageBox = {
 			width: 240,
 			id:'sugarMsgWindow',
 			close:true,
-			title:"Alert",
+			title:SUGAR.language.get("app_strings", "LBL_MESSAGE_BOX_TITLE"),
 			msg: " ",
 			buttons: [ ]
 		};
