@@ -100,6 +100,16 @@ array (
             'customCode' => '{$fields.body_html.value|from_html}',
           ),
         ),
+        4 =>
+        array (
+            0 => 'header_title',
+            1 => 'header_text',
+        ),
+        5 =>
+        array (
+            0 => 'header_logo_url',
+            1 => 'footer_text',
+        ),
       ),
       'lbl_editview_panel1' =>
       array (
