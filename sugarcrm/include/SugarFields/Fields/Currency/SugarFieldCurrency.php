@@ -116,4 +116,23 @@ class SugarFieldCurrency extends SugarFieldFloat
         }
         return format_number($rawField,$precision,$precision);
     }
+
+    /**
+     * Formats a field for the Sugar API, we need what the base does here since the SugarFieldFloat does the wrong
+     * thing and really currencies are not floats
+     *
+     * @param array     $data
+     * @param SugarBean $bean
+     * @param array     $args
+     * @param string    $fieldName
+     * @param array     $properties
+     */
+    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties)
+    {
+        if (isset($bean->$fieldName)) {
+            $data[$fieldName] = $bean->$fieldName;
+        } else {
+            $data[$fieldName] = '';
+        }
+    }
 }
