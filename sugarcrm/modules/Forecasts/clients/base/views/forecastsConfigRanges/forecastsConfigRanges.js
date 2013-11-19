@@ -167,8 +167,10 @@
             str = '';
 
         // Get the keys into an object
-        _.each(rangeObjs, function(vals) {
-            tmpObj[vals.min] = vals.max;
+        _.each(rangeObjs, function(value, key) {
+            if(key.indexOf('without_probability') === -1) {
+                tmpObj[value.min] = value.max;
+            }
         });
 
         _.each(tmpObj, function(max, min) {
