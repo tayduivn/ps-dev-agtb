@@ -181,8 +181,28 @@
                         }
                     }, field);
 
-                    field.$(field.fieldTag).off('keydown.record', this.editableKeyDowned);
-                    $(document).off('mousedown.record' + field.name, this.editableMouseClicked);
+                    this.turnOffFieldEvents(field);
+                }, this);
+            },
+
+           /**
+             * Turns off key and mouse events for a field; useful before containing view is disposed.
+             *
+             * @param {Object} field A field
+             */
+            turnOffFieldEvents: function(field) {
+                field.$(field.fieldTag).off('keydown.record', this.editableKeyDowned);
+                $(document).off('mousedown.record' + field.name, this.editableMouseClicked);
+            },
+
+           /**
+             * Turns off key and mouse events for all fields in this Editable view.
+             *
+             * @param {Object} fields List of fields for an Editable
+             */
+            turnOffEvents: function(fields) {
+                _.each(fields, function(field) {
+                    this.turnOffFieldEvents(field);
                 }, this);
             },
 
