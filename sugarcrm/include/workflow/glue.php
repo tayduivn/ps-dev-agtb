@@ -96,7 +96,6 @@ class WorkFlowGlue {
     {
         //We need to parse datetime fields as they may come from the DB in a different format from the one in save which
         //would cause a normal string compare to fail
-        $useStrict = true;
         if (!empty($_REQUEST['base_module']))
         {
             global $beanList, $dictionary;
@@ -115,17 +114,12 @@ class WorkFlowGlue {
                                   . " != \$GLOBALS['timedate']->to_display_date_time(\$focus->".$shell_object->field."))) ";
 
 
-                } else if (!empty($vardef['type']) && ($vardef['type'] == 'currency' || $vardef['type'] == 'double' || $vardef['type'] == 'int')) {
-                    $useStrict = false;
                 }
             }
         }
 
-        if ($useStrict) {
-            $sep = $is_equal ? '===' : '!==';
-        } else {
-            $sep = $is_equal ? '==' : '!=';
-        }
+        // Use identical instead of equal
+        $sep = $is_equal ? '===' : '!==';
 
         // Remove check if old value is set. This should trigger when old value was empty, and new value is entered
         return " ( isset(\$focus->".$shell_object->field.") && ( empty(\$focus->fetched_row) || array_key_exists('".$shell_object->field."', \$focus->fetched_row) ) && \$focus->fetched_row['".$shell_object->field."'] " . $sep . " \$focus->".$shell_object->field.") ";
