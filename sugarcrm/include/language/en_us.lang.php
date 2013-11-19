@@ -3000,6 +3000,7 @@ $app_strings = array (
     'LBL_LOGIN_FORM_LABEL' => 'Show log in form',
     // END LOGIN PAGE STRINGS
 
+    'LBL_TABGROUP_HOME' => 'Dashboard',
     'LBL_SYNC' => 'Sync',
     'LBL_TASKS'=>'Tasks',
     'LBL_TEAMS_LINK'=>'Teams',
