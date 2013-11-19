@@ -163,6 +163,12 @@
             var importModule = /import_module=([^&]*)/.exec(contentWindow.location.search);
             if (!_.isNull(importModule) && !_.isEmpty(importModule[1])) {
                 module = importModule[1];
+            } else if (contentWindow.$ &&
+                contentWindow.$('input[name="import_module"]') &&
+                contentWindow.$('input[name="import_module"]').val()) {
+
+                // try and strip import module off the page if its not set on location
+                module = contentWindow.$('input[name="import_module"]').val();
             }
         }
         // update bwc context
