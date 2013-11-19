@@ -348,6 +348,9 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
                     // Set the basic default properties of the field def
                     $panelfield = $this->setDefDefaults($fieldname, $def);
 
+                    // set the related fields
+                    $panelfield = $this->setDefRelatedFields($def, $panelfield);
+
                     // Handle readonly flags
                     $panelfield = $this->setDefReadonly($def, $panelfield);
 

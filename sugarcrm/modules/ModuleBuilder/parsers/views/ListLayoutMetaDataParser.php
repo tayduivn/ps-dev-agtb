@@ -367,6 +367,7 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 	                if (isset ( $this->_fielddefs [ $fieldname ] [ 'type' ]) && $this->_fielddefs [ $fieldname ] [ 'type' ] == 'currency')
 	                {
 	                    $newViewdefs [ $fieldname ] [ 'currency_format' ] = true;
+	                    $newViewdefs [ $fieldname ] [ 'related_fields' ] = array('currency_id', 'base_rate');
 	                }
 
                     if ($this->_fielddefs[$fieldname]['type'] == 'parent') {
@@ -480,7 +481,7 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
             'label' => true, 
             'width' => true, 
             'sortable' => true, 
-            'related_fields' => true, 
+            'related_fields' => true,
             'default' => true, 
             'link' => true, 
             'align' => true, 
@@ -490,7 +491,7 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
             'currency_format' => true, 
             'readonly' => true,
         );
-        
+
         $return = array_intersect_key($def, $requiredProps);
         
         return $return;
