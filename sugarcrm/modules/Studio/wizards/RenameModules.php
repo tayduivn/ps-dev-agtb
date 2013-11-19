@@ -261,10 +261,26 @@ class RenameModules
                 if (isset($def['source']) && $def['source'] == $changedModuleName) {
                     // Only change something that exists to begin with
                     if (isset($app_strings[$def['name']])) {
-                        $oldValue = $app_strings[$def['name']];
-                        $newValue = $this->replaceSingleLabel($oldValue, $renameFields, $def);
+                        // Check to see if this string has already been updated by another module renaming
+                        // before we've saved it to app_strings
+                        $updateStr = true;
+                        if(isset($new[$def['name']])) {
+                            $oldValue = $new[$def['name']];
+                            $pattern = "/\b" . $renameFields[$def['type']] . "\b/i";
+                            if(preg_match($pattern, $oldValue)) {
+                                // this string has already been updated, dont update again
+                                $updateStr = false;
+                            }
+                        } else {
+                            $oldValue = $app_strings[$def['name']];
+                        }
+
+                        if($updateStr) {
+                            $newValue = $this->replaceSingleLabel($oldValue, $renameFields, $def);
+                        }
+
                         // If there was a change, add it to the new array
-                        if ($newValue != $oldValue) {
+                        if ($updateStr && $newValue != $oldValue) {
                             $new[$def['name']] = $newValue;
                         }
                     }
@@ -670,7 +686,7 @@ class RenameModules
             array('name' => 'LNK_###MODULE_SINGULAR###_REPORTS', 'type' => 'singular'),
             array('name' => 'LNK_IMPORT_VCARD', 'type' => 'singular'),
             array('name' => 'LNK_IMPORT_###MODULE_PLURAL###', 'type' => 'plural'),
-            array('name' => 'MSG_SHOW_DUPLICATES', 'type' => 'singular', 'case' => 'both'),
+            array('name' => 'MSG_SHOW_DUPLICATES', 'type' => 'singular'),
             array('name' => 'LBL_SAVE_###MODULE_SINGULAR###', 'type' => 'singular'),
             array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'singular'), //Popup title
             array('name' => 'LBL_SEARCH_FORM_TITLE', 'type' => 'singular'), //Popup title
@@ -684,9 +700,6 @@ class RenameModules
             if (isset($currentModuleStrings[$formattedLanguageKey])) {
                 $oldStringValue = $currentModuleStrings[$formattedLanguageKey];
                 $replacedLabels[$formattedLanguageKey] = $this->replaceSingleLabel($oldStringValue, $replacementLabels, $entry);
-                if (isset($entry['case']) && $entry['case'] == 'both') {
-                    $replacedLabels[$formattedLanguageKey] = $this->replaceSingleLabel($replacedLabels[$formattedLanguageKey], $replacementLabels, $entry, 'strtolower');
-                }
             }
         }
 

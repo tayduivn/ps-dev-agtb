@@ -14,7 +14,7 @@
  */
 
 $mod_strings = array(
-    'ERR_DELETE_RECORD' => 'You must specify a record number to delete the account.',
+    'ERR_DELETE_RECORD' => 'You must specify a record number to delete the Account.',
     'LBL_ACCOUNT_ID' => 'Account ID:',
     'LBL_CASE_ID' => 'Case ID:',
     'LBL_CLOSE' => 'Close:',
@@ -52,7 +52,7 @@ $mod_strings = array(
     'LBL_PHONE' => 'Phone:',
     'LBL_PORTAL_FLAG' => 'Display in Portal?',
     'LBL_EMBED_FLAG' => 'Embed in email?',
-    'LBL_PRODUCT_ID' => 'Product ID:',
+    'LBL_PRODUCT_ID' => 'Quoted Line Item ID:',
     'LBL_QUOTE_ID' => 'Quote ID:',
     'LBL_RELATED_TO' => 'Related To:',
     'LBL_SEARCH_FORM_TITLE' => 'Note Search',
@@ -61,7 +61,6 @@ $mod_strings = array(
     'LNK_IMPORT_NOTES' => 'Import Notes',
     'LNK_NEW_NOTE' => 'Create Note or Attachment',
     'LNK_NOTE_LIST' => 'View Notes',
-    'LNK_IMPORT_NOTES' => 'Import Notes',
     'LBL_MEMBER_OF' => 'Member of:',
     'LBL_LIST_ASSIGNED_TO_NAME' => 'Assigned User',
     //BEGIN SUGARCRM flav=pro ONLY

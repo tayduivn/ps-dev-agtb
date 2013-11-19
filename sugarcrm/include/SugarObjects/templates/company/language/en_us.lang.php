@@ -119,8 +119,8 @@ $mod_strings = array (
 	'LNK_ACCOUNT_LIST' => 'Accounts',
 	'LNK_NEW_ACCOUNT' => 'Create Account',
 
-	'MSG_DUPLICATE' => 'The account record you are about to create might be a duplicate of an account record that already exists. Account records containing similar names are listed below.<br>Click Create Account to continue creating this new account, or select an existing account listed below.',
-	'MSG_SHOW_DUPLICATES' => 'The account record you are about to create might be a duplicate of an account record that already exists. Account records containing similar names are listed below.<br>Click Save to continue creating this new account, or click Cancel to return to the module without creating the account.',
+	'MSG_DUPLICATE' => 'The Account record you are about to create might be a duplicate of an Account record that already exists. Account records containing similar names are listed below.<br>Click Create Account to continue creating this new Account, or select an existing account listed below.',
+	'MSG_SHOW_DUPLICATES' => 'The Account record you are about to create might be a duplicate of an Account record that already exists. Account records containing similar names are listed below.<br>Click Save to continue creating this new Account, or click Cancel to return to the module without creating the Account.',
 
 	'NTC_COPY_BILLING_ADDRESS' => 'Copy billing address to shipping address',
 	'NTC_COPY_BILLING_ADDRESS2' => 'Copy to shipping',

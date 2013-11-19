@@ -288,4 +288,5 @@ $mod_strings = array (
     //Document title
     'TPL_BROWSER_SUGAR7_RECORDS_TITLE' => '{{module}} &raquo; {{appId}}',
     'TPL_BROWSER_SUGAR7_RECORD_TITLE' => '{{#if last_name}}{{#if first_name}}{{first_name}} {{/if}}{{last_name}} &raquo; {{/if}}{{module}} &raquo; {{appId}}',
+    'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
 );

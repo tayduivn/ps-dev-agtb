@@ -123,6 +123,5 @@ $mod_strings = array (
     'LBL_PORTAL_TOUR_RECORDS_RETURN' => 'Clicking here will return you to this view at any time.',
     //END SUGARCRM flav=ent ONLY
 
-
+    'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
   );
-?>

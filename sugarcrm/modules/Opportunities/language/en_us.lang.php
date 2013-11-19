@@ -160,4 +160,5 @@ $mod_strings = array(
     'LBL_PIPELINE_TOTAL_IS' => 'Pipeline Total is ',
 
     'LBL_OPPORTUNITY_ROLE'=>'Opportunity Role',
+    'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
 );

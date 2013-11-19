@@ -2031,9 +2031,9 @@ $app_strings = array (
     'LBL_EMAIL_ACCOUNTS_SMTPUSER_REQD'      => 'SMTP Username is required',
     'LBL_EMAIL_ACCOUNTS_SMTPPASS_REQD'      => 'SMTP Password is required',
     'LBL_EMAIL_ACCOUNTS_TITLE'              => 'Mail Account Management',
-    'LBL_EMAIL_POP3_REMOVE_MESSAGE'     => 'Mail Server Protocol of type POP3 will not be supported in the next release. Only IMAP will be supported.',
-  'LBL_EMAIL_ACCOUNTS_SUBTITLE'           => 'Set up Mail Accounts to view incoming emails from your email accounts.',
-  'LBL_EMAIL_ACCOUNTS_OUTBOUND_SUBTITLE'  => 'Provide SMTP mail server information to use for outgoing email in Mail Accounts.',
+    'LBL_EMAIL_POP3_REMOVE_MESSAGE'         => 'Mail Server Protocol of type POP3 will not be supported in the next release. Only IMAP will be supported.',
+    'LBL_EMAIL_ACCOUNTS_SUBTITLE'           => 'Set up Mail Accounts to view incoming Emails from your Email accounts.',
+    'LBL_EMAIL_ACCOUNTS_OUTBOUND_SUBTITLE'  => 'Provide SMTP mail server information to use for outgoing Email in Mail Accounts.',
     'LBL_EMAIL_ADD'                         => 'Add Address',
 
     'LBL_EMAIL_ADDRESS_BOOK_ADD'            => 'Done',
@@ -2044,7 +2044,7 @@ $app_strings = array (
     'LBL_EMAIL_ADDRESS_BOOK_ADRRESS_TYPE'   => 'To/Cc/Bcc',
     'LBL_EMAIL_ADDRESS_BOOK_ADD_LIST'       => 'New List',
     'LBL_EMAIL_ADDRESS_BOOK_EMAIL_ADDR'     => 'Email Address',
-    'LBL_EMAIL_ADDRESS_BOOK_ERR_NOT_CONTACT'=> 'Only Contact editting is supported at this time.',
+    'LBL_EMAIL_ADDRESS_BOOK_ERR_NOT_CONTACT'=> 'Only Contact editing is supported at this time.',
     'LBL_EMAIL_ADDRESS_BOOK_FILTER'         => 'Filter',
     'LBL_EMAIL_ADDRESS_BOOK_FIRST_NAME'     => 'First Name/Account Name',
     'LBL_EMAIL_ADDRESS_BOOK_LAST_NAME'      => 'Last Name',
@@ -2059,7 +2059,7 @@ $app_strings = array (
     'LBL_EMAIL_REPORTS_TITLE'               => 'Reports',
     'LBL_EMAIL_ADDRESS_BOOK_TITLE_ICON'     => SugarThemeRegistry::current()->getImage('icon_email_addressbook', "", null, null, ".gif", 'Address Book').' Address Book',
     'LBL_EMAIL_ADDRESS_BOOK_TITLE_ICON_SHORT'     => SugarThemeRegistry::current()->getImage('icon_email_addressbook', 'align=absmiddle border=0', 14, 14, ".gif", ''),
-    'LBL_EMAIL_REMOVE_SMTP_WARNING'         => 'Warning! The outbound account you are trying to delete is associated to an existing inbound account.  Are you sure you want to continue?',
+    'LBL_EMAIL_REMOVE_SMTP_WARNING'         => 'Warning! The outbound Account you are trying to delete is associated to an existing inbound Account.  Are you sure you want to continue?',
     'LBL_EMAIL_ADDRESSES'                   => 'Email',
     'LBL_EMAIL_ADDRESS_PRIMARY'             => 'Email Address',
     'LBL_EMAIL_ADDRESSES_TITLE'             => 'Email Addresses',
@@ -2142,7 +2142,7 @@ $app_strings = array (
     'LBL_EMAIL_ERROR_MESSAGE_DELETED'       => 'Message Removed from Server',
     'LBL_EMAIL_ERROR_IMAP_MESSAGE_DELETED'  => 'Either message Removed from Server or moved to a different folder',
     'LBL_EMAIL_ERROR_MAILSERVERCONNECTION'  => 'Connection to the mail server failed. Please contact your Administrator',
-    'LBL_EMAIL_ERROR_MOVE'                  => 'Moving email between servers and/or mail accounts is not supported at this time.',
+    'LBL_EMAIL_ERROR_MOVE'                  => 'Moving Email between servers and/or mail accounts is not supported at this time.',
     'LBL_EMAIL_ERROR_MOVE_TITLE'            => 'Move Error',
     'LBL_EMAIL_ERROR_NAME'                  => 'A name is required.',
     'LBL_EMAIL_ERROR_FROM_ADDRESS'          => 'From Address is required.  Please enter a valid email address.',
@@ -2179,7 +2179,7 @@ $app_strings = array (
 
     'LBL_EMAIL_FORWARD'                     => 'Forward',
     'LBL_EMAIL_DELIMITER'                   => '::;::',
-    'LBL_EMAIL_DOWNLOAD_STATUS'             => 'Downloaded [[count]] of [[total]] emails',
+    'LBL_EMAIL_DOWNLOAD_STATUS'             => 'Downloaded [[count]] of [[total]] Emails',
     'LBL_EMAIL_FOUND'                       => 'Found',
     'LBL_EMAIL_FROM'                        => 'From',
     'LBL_EMAIL_GROUP'                       => 'group',
@@ -2255,7 +2255,7 @@ $app_strings = array (
     'LBL_EMAIL_ONE_MOMENT'                  => 'One moment please...',
     'LBL_EMAIL_OPEN_ALL'                    => 'Open Multiple Messages',
     'LBL_EMAIL_OPTIONS'                     => 'Options',
-    'LBL_EMAIL_QUICK_COMPOSE'       => 'Quick Compose',
+    'LBL_EMAIL_QUICK_COMPOSE'               => 'Quick Compose',
     'LBL_EMAIL_OPT_OUT'                     => 'Opted Out',
     'LBL_EMAIL_OPT_OUT_AND_INVALID'         => 'Opted Out and Invalid',
     'LBL_EMAIL_PAGE_AFTER'                  => 'of {0}',
@@ -2275,7 +2275,7 @@ $app_strings = array (
     'LBL_EMAIL_REBUILDING_FOLDERS'          => 'Rebuilding Folders',
     'LBL_EMAIL_RELATE_TO'                   => 'Relate',
     'LBL_EMAIL_VIEW_RELATIONSHIPS'          => 'View Relationships',
-    'LBL_EMAIL_RECORD'                => 'Email Record',
+    'LBL_EMAIL_RECORD'                      => 'Email Record',
     'LBL_EMAIL_REMOVE'                      => 'Remove',
     'LBL_EMAIL_REPLY'                       => 'Reply',
     'LBL_EMAIL_REPLY_ALL'                   => 'Reply All',
@@ -2358,8 +2358,8 @@ $app_strings = array (
     'LBL_EMAIL_SETTINGS_TOGGLE_ADV'         => 'Show Advanced',
     'LBL_EMAIL_SETTINGS_USER_FOLDERS'       => 'Available User Folders',
     'LBL_EMAIL_ERROR_PREPEND'               => 'Error:',
-  'LBL_EMAIL_INVALID_PERSONAL_OUTBOUND' => 'The outbound mail server selected for the mail account you are using is invalid.  Check the settings or select a different mail server for the mail account.',
-  'LBL_EMAIL_INVALID_SYSTEM_OUTBOUND' => 'An outgoing mail server is not configured to send emails. Please configure an outgoing mail server or select an outgoing mail server for the mail account that you are using in Settings >> Mail Account.',
+    'LBL_EMAIL_INVALID_PERSONAL_OUTBOUND'   => 'The outbound mail server selected for the mail account you are using is invalid.  Check the settings or select a different mail server for the mail account.',
+    'LBL_EMAIL_INVALID_SYSTEM_OUTBOUND'     => 'An outgoing mail server is not configured to send emails. Please configure an outgoing mail server or select an outgoing mail server for the mail account that you are using in Settings >> Mail Account.',
     'LBL_EMAIL_SHOW_READ'                   => 'Show All',
     'LBL_EMAIL_SHOW_UNREAD_ONLY'            => 'Show Unread Only',
     'LBL_EMAIL_SIGNATURES'                  => 'Signatures',
@@ -2761,7 +2761,7 @@ $app_strings = array (
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Opt out Primary Email',
     'LBL_MEETINGS'=>'Meetings',
     'LBL_MEETING'=>'Meeting',
-    'LBL_MEETING_GO_BACK'=>'Go back to the meeting',
+    'LBL_MEETING_GO_BACK'=>'Go back to the Meeting',
     'LBL_MEMBERS'=>'Members',
     'LBL_MEMBER_OF'=>'Member Of',
     'LBL_MODIFIED_BY_USER'=>'Modified by User',
@@ -3159,8 +3159,8 @@ $app_strings = array (
     'MSG_JS_ALERT_MTG_REMINDER_LOC' => 'Location: ',
     'MSG_JS_ALERT_MTG_REMINDER_DESC' => 'Description: ',
     'MSG_JS_ALERT_MTG_REMINDER_START' => 'starting',
-    'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "Click OK to view this call or click Cancel to dismiss this message.",
-    'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "Click OK to view this meeting or click Cancel to dismiss this message.",
+    'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "Click OK to view this Call or click Cancel to dismiss this message.",
+    'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "Click OK to view this Meeting or click Cancel to dismiss this message.",
  	'MSG_LIST_VIEW_NO_RESULTS_BASIC' => "No results found.",
 	'MSG_LIST_VIEW_NO_RESULTS' => "No results found for <item1>",
  	'MSG_LIST_VIEW_NO_RESULTS_SUBMSG' => "Create <item1> as a new <item2>",
@@ -3184,7 +3184,7 @@ $app_strings = array (
 
     'LBL_PLEASE_SELECT' => 'Please Select',
     'LBL_REDIRECT_URL'=>'Redirect URL',
-    'LBL_RELATED_CAMPAIGN' =>'Related campaign',
+    'LBL_RELATED_CAMPAIGN' =>'Related Campaign',
     'LBL_ADD_ALL_LEAD_FIELDS' => 'Add All Fields',
     'LBL_REMOVE_ALL_LEAD_FIELDS' => 'Remove All Fields',
     'LBL_ONLY_IMAGE_ATTACHMENT' => 'Only the following supported image type attachments can be embedded: JPG, PNG.',
@@ -3440,7 +3440,6 @@ $app_strings = array (
     'LBL_DNB_SOCIO_INDICATOR' => 'Socio Economic Indicator',
     'LBL_DNB_ASSESMENT' => 'D&B Assesment',
 
-
     /*DNB Company Premium Info */
     'LBL_DNB_PREMIUM_COMPANY_INFO_LOADING' => 'Loading Premium Company Info From D&B ...',
     'LBL_DNB_PREMIUM_COMPANY_INFO'  =>  'D&B: Company Information - Premium',
@@ -3520,7 +3519,6 @@ $app_strings = array (
     'LBL_DNB_NEWS_AND_MEDIA' => 'D&B: News',
     'LBL_DNB_NEWS_AND_MEDIA_DESC' => 'Fetches News From D&B Services. Requires D&B subscription.',
     'LBL_DNB_NEWS_AND_MEDIA_LOADING' => 'Loading News From D&B',
-
 
     /* Twitter Dashlet */
     'LBL_TWITTER_REPLY' => 'Reply',
@@ -4164,7 +4162,7 @@ $app_strings = array (
     'LBL_MOBILE_DESKTOP' => 'Desktop Version',
     'LBL_MOBILE_DELETE_CONFIRM' => 'Are you sure you want to delete this record?',
     'LBL_MOBILE_UNLINK_CONFIRM' => 'Are you sure you want to unlink this record?',
-    'LBL_MOBILE_LOG_CALL_CONFIRM' => 'Would you like to log your last call?',
+    'LBL_MOBILE_LOG_CALL_CONFIRM' => 'Would you like to log your last Call?',
     'LBL_MOBILE_CHOOSE_RECIPIENT' => 'Choose recepient',
     'LBL_MOBILE_CHOOSE_PHONE' => 'Choose phone number',
     'LBL_MOBILE_CHOOSE_URL' => 'Choose URL',
@@ -4407,14 +4405,14 @@ $app_strings = array (
 
     // history dashlet
     'LBL_HISTORY_DASHLET' => 'History',
-    'LBL_HISTORY_DASHLET_DESCRIPTION' => 'The History dashlet displays meetings held, calls logged, emails received and emails sent.',
+    'LBL_HISTORY_DASHLET_DESCRIPTION' => 'The History dashlet displays Meetings held, Calls logged, Emails received and Emails sent.',
     'LBL_HISTORY_DASHLET_EMAIL_SINGULAR' => 'Email',
     'LBL_HISTORY_DASHLET_EMAIL_PLURAL' => 'Emails',
     'LBL_UNASSIGNED' => 'Unassigned',
 
     // planned activities dashlet
     'LBL_PLANNED_ACTIVITIES_DASHLET' => 'Planned Activities',
-    'LBL_PLANNED_ACTIVITIES_DASHLET_DESCRIPTION' => 'The Planned Activities dashlet displays scheduled meetings and calls.',
+    'LBL_PLANNED_ACTIVITIES_DASHLET_DESCRIPTION' => 'The Planned Activities dashlet displays scheduled Meetings and Calls.',
     'LBL_PLANNED_ACTIVITIES_DASHLET_TODAY_BUTTON_LABEL' => 'Today',
     'LBL_PLANNED_ACTIVITIES_DASHLET_FUTURE_BUTTON_LABEL' => 'Future',
     'LBL_PLANNED_ACTIVITIES_DASHLET_USER_BUTTON_LABEL' => 'My History',
@@ -4424,7 +4422,7 @@ $app_strings = array (
 
     // active tasks dashlet
     'LBL_ACTIVE_TASKS_DASHLET' => 'Active Tasks',
-    'LBL_ACTIVE_TASKS_DASHLET_DESCRIPTION' => 'The Active Tasks dashlet displays due now, upcoming and to do tasks.',
+    'LBL_ACTIVE_TASKS_DASHLET_DESCRIPTION' => 'The Active Tasks dashlet displays due now, upcoming and to do Tasks.',
     'LBL_ACTIVE_TASKS_DASHLET_DUE_NOW' => 'Due Now',
     'LBL_ACTIVE_TASKS_DASHLET_UPCOMING' => 'Upcoming',
     'LBL_ACTIVE_TASKS_DASHLET_TODO' => 'To Do',
@@ -4433,7 +4431,7 @@ $app_strings = array (
 
     // inactive tasks dashlet
     'LBL_INACTIVE_TASKS_DASHLET' => 'Inactive Tasks',
-    'LBL_INACTIVE_TASKS_DASHLET_DESCRIPTION' => 'The Tasks dashlet displays deferred and completed tasks.',
+    'LBL_INACTIVE_TASKS_DASHLET_DESCRIPTION' => 'The Tasks dashlet displays deferred and completed Tasks.',
     'LBL_INACTIVE_TASKS_DASHLET_DEFERRED' => 'Deferred',
     'LBL_INACTIVE_TASKS_DASHLET_COMPLETED' => 'Completed',
     'TPL_INACTIVE_TASKS_DASHLET_TIME_RELATIVE' => 'last modified {{relativetime}} on {{date}} at {{time}}',
@@ -4478,7 +4476,7 @@ $app_strings = array (
 
     //cases summary chart
     'LBL_CASE_SUMMARY_CHART' => 'Case Summary',
-    'LBL_CASE_SUMMARY_CHART_DESC' => 'Shows an overview of related cases.',
+    'LBL_CASE_SUMMARY_CHART_DESC' => 'Shows an overview of related Cases.',
 
     //top 10 opportunities chart
     //BEGIN SUGARCRM flav=ent ONLY
