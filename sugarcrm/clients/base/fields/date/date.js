@@ -114,7 +114,7 @@
         if(_.isFunction(this.setRequiredPlaceholder) && this.def.required){
             this.setRequiredPlaceholder(this.$(".datepicker"));
         }
-        var appendTarget = this.$el.parents('div#drawers').length ? 'div#drawers .main-pane:first' : 'div#content .main-pane:first';
+        var appendTarget = this.$el.parents('div#drawers').length ? 'div#drawers .active .main-pane:first' : 'div#content .main-pane:first';
         /* TODO: Remove all this once satisfied language injection works properly ;)
         var spanishLangExample = {
             days: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
