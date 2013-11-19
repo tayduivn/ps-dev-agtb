@@ -1646,7 +1646,9 @@ SUGAR.kb = function() {
         //Uploading multiple files (attachments) which get saved as documents with KBDcoument
         //This process will allows to upload N number of files
 
-        multiAttachments:function(list_target, elmentsName, site_url, theme_name, isAtt) {
+        multiAttachments:function(list_target, elmentsName, site_url, theme_name, isAtt, upload_maxsize) {
+
+            this.upload_maxsize = upload_maxsize;
             // Where to write the list
             this.list_target = list_target;
             //this.list_target = document.getElementById(list_target);
@@ -1675,7 +1677,13 @@ SUGAR.kb = function() {
                     // What to do when a file is selected
 
                     element.onchange = function() {
-
+                        if (typeof element.files == 'object' && element.files.length > 0) {
+                            if (element.multi_selector.upload_maxsize <= element.files[0].size) {
+                                var error_message = SUGAR.kb.getLocalizedLabels('KBDocuments', 'ERR_FILESIZE') + ' ' + element.multi_selector.upload_maxsize;
+                                alert(error_message);
+                                return;
+                            }
+                        }
                         //AJAX call begins
                         var callback = {
                             upload:function(r) {
@@ -1684,7 +1692,11 @@ SUGAR.kb = function() {
                                 //remove the div if not a file
                                 if (rets['status'] == 'failed') {
                                     thediv.parentNode.removeChild(thediv);
-                                    alert(SUGAR.kb.getLocalizedLabels('KBDocuments', 'LBL_NOT_A_VALID_FILE'));
+                                    var error_message = SUGAR.kb.getLocalizedLabels('KBDocuments', 'LBL_NOT_A_VALID_FILE');
+                                    if (typeof rets['error_message'] != 'undefined' && rets['error_message']) {
+                                        error_message = rets['error_message'];
+                                    }
+                                    alert(error_message);
                                 }
                                 else {
                                     //save the div
