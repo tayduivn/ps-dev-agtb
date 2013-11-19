@@ -68,6 +68,7 @@
                 selectedUser.is_manager = data.is_manager;
                 selectedUser.reports_to_id = data.reports_to_id;
                 selectedUser.reports_to_name = data.reports_to_name;
+                selectedUser.is_top_level_manager = data.is_top_level_manager || (data.is_manager && _.isEmpty(data.reports_to_id));
 
                 var su = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
                 // get the current selected user, if the id's match up set the showOpps to be true)
