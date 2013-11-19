@@ -51,7 +51,7 @@ describe("ForecastWorksheets.Base.Field.Int", function () {
             sandbox.restore();
         });
 
-        it('should return true', function() {
+        it('should return true when adding 1', function() {
             sandbox.stub(field.$el, 'find', function() {
                 return {
                     val: function() {
@@ -62,7 +62,40 @@ describe("ForecastWorksheets.Base.Field.Int", function () {
             expect(field.fieldValueChanged(field)).toBeTruthy();
         });
 
-        it('should return false', function() {
+        it('should return true when subtracting 1', function() {
+            sandbox.stub(field.$el, 'find', function() {
+                return {
+                    val: function() {
+                        return '-1';
+                    }
+                }
+            });
+            expect(field.fieldValueChanged(field)).toBeTruthy();
+        });
+
+        it('should return true when adding a percent', function() {
+            sandbox.stub(field.$el, 'find', function() {
+                return {
+                    val: function() {
+                        return '+1%';
+                    }
+                }
+            });
+            expect(field.fieldValueChanged(field)).toBeTruthy();
+        });
+
+        it('should return true when subtracting a percent', function() {
+            sandbox.stub(field.$el, 'find', function() {
+                return {
+                    val: function() {
+                        return '-1%';
+                    }
+                }
+            });
+            expect(field.fieldValueChanged(field)).toBeTruthy();
+        });
+
+        it('should return false when values are the same', function() {
             sandbox.stub(field.$el, 'find', function() {
                 return {
                     val: function() {
