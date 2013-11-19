@@ -31,7 +31,7 @@ describe("Alert View", function() {
                 }
             });
 
-            expect(view.getTranslatedLabels('FOO')).toBe('bar');
+            expect(view.getTranslatedLabels('FOO').string).toBe('bar');
         });
 
         it("Should return a translated array of strings when an array is given", function() {
@@ -44,7 +44,7 @@ describe("Alert View", function() {
 
             expect(_.isArray(result)).toBe(true);
             _.each(result , function(text) {
-                expect(text).toBe('bar');
+                expect(text.string).toBe('bar');
             });
         });
     });
