@@ -93,7 +93,7 @@ class Importer
         $this->bean = $bean;
 
         // use our own error handler
-        set_error_handler(array('Importer','handleImportErrors'),E_ALL);
+        set_error_handler(array('Importer','handleImportErrors'), E_ALL & ~E_STRICT & ~E_DEPRECATED);
 
          // Increase the max_execution_time since this step can take awhile
         ini_set("max_execution_time", max($sugar_config['import_max_execution_time'],3600));
