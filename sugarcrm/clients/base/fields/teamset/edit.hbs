@@ -40,4 +40,4 @@
         </div>
     </div>
 {{/each}}
-<p class="help-block"></p>
+{{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
