@@ -150,13 +150,20 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 					$type = $module->getType () ;
 					$this->_sourceFilename = $this->getFileName ( $view, $moduleName, MB_CUSTOMMETADATALOCATION ) ;
 
-					// Now we can copy the wireless view from the template
-					$loaded = $this->_loadFromFile ( "include/SugarObjects/templates/$type/clients/$_viewtype/views/".basename ( $this->_sourceFilename, '.php' ) . '/' . basename ( $this->_sourceFilename ) ) ;
+					// Recurse through the various SugarObjects templates to get
+                    // def we can use. At worst, this will end up at basic base
+                    // Note: getDefsFromTemplate() returns an array, of which 'defs'
+                    // is a member. If defs is empty (which it should never be)
+                    // then the remainder of the array contains useful error information.
+					$loaded = $this->getDefsFromTemplate($module, $_viewtype);
+					if (empty($loaded['defs'])) {
+                        $eMessage  = get_class($this);
+                        $eMessage .= ": cannot create $_viewtype view for module $moduleName - definitions for $view are missing.\n";
+                        $eMessage .= "Attempted all types and clients and failed after {$loaded['type']} for {$loaded['client']} in {$loaded['file']}";
+						throw new Exception($eMessage);
+                    }
 
-					if ($loaded === null)
-						throw new Exception( get_class ( $this ) . ": cannot create $_viewtype view for module $moduleName - definitions for $view are missing in the SugarObject template for type $type" ) ;
-
-					$loaded = $this->replaceVariables($loaded, $module);
+					$loaded = $this->replaceVariables($loaded['defs'], $module);
 					$this->_saveToFile ( $this->_sourceFilename, $loaded , false ) ; // write out without the placeholder module_name and object
 					$this->_mergeFielddefs ( $fielddefs , $loaded ) ;
 					break;
@@ -267,6 +274,73 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 		$this->_history = new History ( $this->getFileName ( $view, $moduleName, MB_HISTORYMETADATALOCATION ) ) ;
 
 	}
+    
+    /**
+     * Gets viewdefs from a SugarObjects template when the expected metadata file
+     * is not found.
+     * 
+     * @param string $module The module for this view
+     * @param string $client The client for this view
+     * @return array
+     */
+    protected function getDefsFromTemplate($module, $client = 'base')
+    {
+        // Set the requested client for comparison later
+        $rClient = $client;
+        
+        // Create a path ending to the metadata file
+        $file = basename($this->_sourceFilename, '.php') . '/' . basename($this->_sourceFilename);
+        
+        // Create a stack of types based on the module, making sure to always add
+        // in basic at the end
+        $types[] = $module->getType();
+        if ($types[0] != 'basic') {
+            $types[] = 'basic';
+        }
+        
+        // Create a stack of clients, making sure to always add base at the end
+        $clients[] = $client;
+        if ($client != 'base') {
+            $clients[] = 'base';
+        }
+        
+        // Send back an array of data that is needed for calling code
+        $return = array('defs' => array());
+        // Now loop over types and try to load a file, then loop over clients. The
+        // basics are, if we're looking for mobile person type metadata we should
+        // look in person mobile then basic mobile then person base then basic base
+        foreach ($clients as $client) {
+            foreach ($types as $type) {
+                // Always set the type and client so clients know where this stopped
+                // or where it failed
+                $return['type'] = $type;
+                $return['client'] = $client;
+                
+                // Now try to grab the file
+                $path = "include/SugarObjects/templates/$type/clients/$client/views/$file";
+                $return['file'] = $path;
+                $loaded = $this->_loadFromFile($path);
+                if ($loaded !== null) {
+                    // If the client in the defs is not what we requested, reset it
+                    // This handles cases where a base viewdef was picked up for
+                    // a particular client.
+                    if ($client != $rClient) {
+                        $key = key($loaded);
+                        $loaded[$rClient] = $loaded[$key];
+                        unset($loaded[$key]);
+                    }
+                    
+                    $return['defs'] = $loaded;
+                    // Break out so we can return this array once
+                    break 2;
+                }
+            }
+        }
+        
+        // Send it back... at this point the return should contain a type, client,
+        // file and defs property, even if defs is empty
+        return $return;
+    }
 
 	function getLanguage ()
 	{
