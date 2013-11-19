@@ -96,10 +96,12 @@
 			this.languageDictionary(options.languageDictionary);	
 		}
 		this.weekEnd = this.weekStart === 0 ? 6 : this.weekStart - 1;
+
+        // Removed daysMin and replaced with daysShort since extracting first two characters in many languages
+        // doesn't make any sense, therefore we will use daysShort for now, and daysMin can be localized in the future
 		this.dates = options.languageDictionary || {  // defaults to English
 			days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
 			daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-			daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
 			months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
 			monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 		};
@@ -115,7 +117,7 @@
 		// Precondition: We presume that datesLangDict exists and is an object literal
 		languageDictionary: function(datesLangDict) {
 			var reqPropsIndx,
-				requiredProperties = ['days', 'daysShort', 'daysMin', 'months', 'monthsShort'];
+				requiredProperties = ['days', 'daysShort', 'months', 'monthsShort'];
 
 			// If all required properties are not included in datesLangDict we return false
 			for (reqPropsIndx = 0; reqPropsIndx < requiredProperties.length; reqPropsIndx++) {
@@ -231,7 +233,7 @@
 			var dowCnt = this.weekStart;
 			var html = '<tr>';
 			while (dowCnt < this.weekStart + 7) {
-				html += '<th class="dow">'+this.dates.daysMin[(dowCnt++)%7]+'</th>';
+				html += '<th class="dow">'+this.dates.daysShort[(dowCnt++)%7]+'</th>';
 			}
 			html += '</tr>';
 			this.picker.find('.datepicker-days thead').append(html);

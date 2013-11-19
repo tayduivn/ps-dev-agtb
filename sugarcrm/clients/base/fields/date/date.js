@@ -119,7 +119,6 @@
         var spanishLangExample = {
             days: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
             daysShort: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
-            daysMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"],
             months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
             monthsShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
         };*/
@@ -357,12 +356,6 @@
             }
             pickerMap[pickerMapKey] = calProp;
         }
-
-        // Now add a daysMin property with just two chars per day Su Mo, etc.
-        pickerMap['daysMin'] = _.map(pickerMap.daysShort, function(day) {
-            return (day.length > 1) ? day.substr(0,2) : day;
-        });
-
         return pickerMap;
     },
     /**
