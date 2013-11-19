@@ -39,7 +39,12 @@ class SugarUpgradeRegisterUpgrade extends UpgradeScript
 	    // if error was encountered, script should have died before now
 		$new_upgrade = new UpgradeHistory();
 		$new_upgrade->filename = $this->context['zip'];
-		$new_upgrade->md5sum = md5_file($this->context['zip']);
+		if(file_exists($this->context['zip'])) {
+		  $new_upgrade->md5sum = md5_file($this->context['zip']);
+		} else {
+		    // if file is not there, just md5 the filename
+		  $new_upgrade->md5sum = md5($this->context['zip']);
+		}
 		$new_upgrade->name = pathinfo($this->context['zip'], PATHINFO_FILENAME);
 		$new_upgrade->description = $this->manifest['description'];
 		$new_upgrade->type = 'patch';
