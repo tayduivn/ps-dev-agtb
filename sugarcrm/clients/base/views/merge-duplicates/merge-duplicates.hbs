@@ -64,7 +64,7 @@
             <div class="row-div-cnt">
                 {{#each collection.models}}
                     <div class="col" data-record-id="{{id}}" >
-                        <div class="primary-lbl" data-container="primary-label">
+                        <div class="primary-lbl {{#if readonly}}disabled{{/if}}" data-container="primary-label">
                             {{#eq id ../primaryRecord.id}}
                                 <span>{{str "LBL_COLLECTION_PRIMARY"}}</span>
                             {{/eq}}

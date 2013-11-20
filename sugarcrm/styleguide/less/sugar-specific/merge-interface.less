@@ -84,6 +84,16 @@ h4.merge-interface-header {
         .primary-lbl-placeholder {
           border: 1px dotted black;
           .border-radius(4px);
+          &.ui-sortable-disabled {
+            span {
+              background: transparent;
+            }
+          }
+          &.ui-sortable-disabled:before {
+            content: "\f05e";
+            padding-left: 61px;
+            font-family: 'FontAwesome';
+          }
         }
 		.box {
 			.border-radius(3px);

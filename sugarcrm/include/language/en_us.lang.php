@@ -3952,7 +3952,11 @@ $app_strings = array (
     'TPL_MERGING_RECORDS'  => 'Merging {{mergeCount}} Records',
     'TPL_MERGE_INVALID_NUMBER_RECORDS' =>
         'Invalid number of records passed. The valid range is from {{minRecords}} to {{maxRecords}} records.',
-    'LBL_MERGE_NO_ACCESS' => 'You have no access to perform this action',
+    'LBL_MERGE_NO_ACCESS' =>
+        'You have no access to perform this action. At least one record must be editable.',
+    'LBL_MERGE_NO_ACCESS_TO_A_FEW_RECORDS' =>
+        'One or more selected records cannot be deleted. ' .
+        'Those records have been removed from the list to merge.',
     'LBL_MERGE_UNSAVED_CHANGES'=> 'You are about to change primary record without saving any changes you have made. ' .
         'All changes will be lost. Are you sure you want to continue?',
     'LBL_MERGE_DUPLICATES_TITLE' => 'Merge Related Records',
