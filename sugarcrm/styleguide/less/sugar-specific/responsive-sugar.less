@@ -26,6 +26,11 @@
     min-width: 320px;
   }
 
+  .preview-pane {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+
   footer .pull-right .btn-group a.btn {
     visibility: hidden;
     width: 1.75em;
@@ -251,15 +256,11 @@
   }
 
   .modal {
+    height: 100%;
     width: 100%;
-    top: 47px;
-    bottom: 44px;
+    top: 0;
     left: 0;
     margin: 0;
-    .border-radius(0);
-  }
-  .welcome .modal {
-    top: 0;
   }
 
   .touch .content-overflow-visible { /* UIUX-1236 */
@@ -284,12 +285,7 @@
     overflow-y: visible;
   }
 
-  body:not(.touch) .dashboard {
-    padding-top: 60px;
-  }
-
   .touch .dashboard {
-    /*padding-top: 0 !important;*/
     overflow-x: visible;
     overflow-y: visible;
     -webkit-overflow-scrolling: touch
@@ -359,12 +355,6 @@
     /*z-index: 11;*//* UIUX-1279 */
   }
 
-  .side >.preview-pane .preview-headerbar {
-    top: auto;
-    position: absolute;
-    width: 100%;
-  }
-
   .sidebar-content .dashboard .headerpane {
     position: relative;
     width: 100%;
@@ -388,6 +378,38 @@
 
   .filter-value [rel=datepicker] .add-on .icon-calendar {
     display: none;
+  }
+
+  .preview-pane {
+    position: fixed;
+    top: 48px;
+    left: 100%;
+    margin-left: 25%;
+    .box-shadow(~"-3px 0 4px rgba(0,0,0,0.1)");
+    width: 75%;
+    height: ~"-moz-calc(100% - 93px)" !important;
+    height: ~"-webkit-calc(100% -93px)" !important;
+    height: ~"calc(100% - 93px)" !important;
+    z-index: 1090;
+    overflow: scroll;
+    background: url('@{textureSecondary}');
+    .preview-headerbar {
+      .box-shadow(none) !important;
+      border-top: none;
+      top: auto;
+      position: absolute;
+      width: 100%;
+    }
+  }
+
+  .preview-pane.active {
+    left:0;
+    -webkit-animation:preview-in .3s;
+  }
+
+  @-webkit-keyframes preview-in {
+    0% {left:100%;}
+    100% {left:0px;}
   }
 }
 
