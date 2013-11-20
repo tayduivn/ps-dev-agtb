@@ -336,6 +336,9 @@ END;
         $origData = $parser->getFieldsFromPanels($defaultDefs['panels'], $parser->_fielddefs);
         // Go through existing fields and remove those not in the new data
         foreach($origData as $fname => $fielddef) {
+            if (!$this->isValidField($fname)) {
+                continue;
+            }
             if(is_array($fielddef) && !empty($fielddef['fields'])) {
                 // fieldsets - iterate over each field
                 $setExists = false;

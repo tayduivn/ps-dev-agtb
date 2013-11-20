@@ -317,8 +317,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey("fields", $defs);
         $this->assertArrayHasKey('$owner', $defs['fields']);
         $this->assertArrayHasKey('$favorite',  $defs['fields']);
-        $this->assertArrayHasKey('address_city',  $defs['fields']);
-        $this->assertArrayHasKey('dbFields',  $defs['fields']['address_city']);
+        $this->assertArrayNotHasKey('address_city',  $defs['fields']);
     }
 
     public function _sidecarSearchProvider()
