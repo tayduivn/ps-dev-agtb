@@ -145,7 +145,13 @@ include_once('include/workflow/expression_utils.php');
 								require_once($target_field_array['function']['include']);
 						}
 					}
-					$sorted_fields = $function();
+                    if (isset($target_field_array['function_bean'])) {
+                        $funcBean =  BeanFactory::getBean($target_field_array['function_bean']);
+                        if (method_exists($funcBean, $function)) {
+                            $function = array($funcBean, $function);
+                        }
+                    }
+					$sorted_fields = call_user_func($function);
 				}else{
 					$sorted_fields = $app_list_strings[$target_field_array['options']];
 				}
