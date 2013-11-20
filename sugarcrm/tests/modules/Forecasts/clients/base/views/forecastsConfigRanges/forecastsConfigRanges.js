@@ -501,11 +501,11 @@ describe("Forecasts.View.ForecastsConfigRanges", function() {
                         customType: customType,
                         customIndex: customIndex,
                         $: function() {
-                            return {
-                                on: function() {},
-                                trigger: function() {},
-                                html: function() {}
-                            }
+                            var $el = $('<p/>');
+                            $el.on = $.noop;
+                            $el.trigger = $.noop;
+                            $el.html = $.noop;
+                            return $el;
                         }
                     };
                 }
