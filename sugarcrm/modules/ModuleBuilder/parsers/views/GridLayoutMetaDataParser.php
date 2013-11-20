@@ -45,6 +45,18 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 
 	protected $FILLER ;
 
+    /**
+     * List of fieldset fields. Will be an array once it is set, set initially
+     * to a null to indicated fields haven't been checked yet since not all modules
+     * have fieldsets in their defs and continually traversing fielddefs gets old.
+     * 
+     * This is used by the sidecar grid parser but is defined here since it is set
+     * by a call in the constructor.
+     * 
+     * @var array
+     */
+    protected $fieldsetMemberFields = null;
+
 	/**
      * Constructor
      * @param string $view           The view type, that is, editview, searchview etc
@@ -98,6 +110,18 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         $this->_standardizeFieldLabels( $this->_fielddefs );
         $this->_viewdefs [ 'panels' ] = $this->_convertFromCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ; // put into our internal format
         $this->_originalViewDef = $this->getFieldsFromLayout($this->implementation->getOriginalViewdefs ());
+
+        // Setup the fieldset member fields. Used by sidecar.
+        $this->setFieldsetMemberFields();
+    }
+
+    /**
+     * Sets the fields that are part of fieldsets. Since this is used by sidecar
+     * and not BWC, it is safe to just set this to an array here.
+     */
+    protected function setFieldsetMemberFields()
+    {
+        $this->fieldsetMemberFields = array();
     }
 
     /**
