@@ -38,6 +38,8 @@ class ImportDuplicateCheck
 {
     /**
      * Private reference to the bean we're dealing with
+     *
+     * @var SugarBean
      */
     private $_focus;
 
@@ -69,6 +71,22 @@ class ImportDuplicateCheck
         if($this->_focus->hasCustomFields()){
             $custmIndexes = $this->_focus->db->helper->get_indices($this->_focus->table_name.'_cstm');
             $indexes = array_merge($custmIndexes,$indexes);
+        }
+
+        // remove any that are datetime or time field as we can't dupe check them correctly since we don't export
+        // seconds
+        $fields = $this->_focus->getFieldDefinitions();
+        foreach ($indexes as $key => $index) {
+            foreach ($index['fields'] as $field) {
+                if (isset($fields[$field])
+                    && (
+                        $fields[$field]['type'] == 'datetime'
+                        || $fields[$field]['type'] == 'datetimecombo'
+                        || $fields[$field]['type'] == 'time')) {
+                    unset($indexes[$key]);
+                    break 1;
+                }
+            }
         }
 
         if ( $this->_focus->getFieldDefinition('email1') )
