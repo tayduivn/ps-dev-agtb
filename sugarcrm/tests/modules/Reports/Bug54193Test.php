@@ -105,17 +105,16 @@ class Bug54193Test extends Sugar_PHPUnit_Framework_TestCase
     {
         self::$df->deleteField(self::$field);
 
-        VardefManager::clearVardef();
-        VardefManager::refreshVardefs(self::$module_name, self::$bean_name);
-
         self::$relationships->delete(self::$relationship->getName());
         self::$relationships->save();
-        self::$relationships->build();
 
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         self::$currency->mark_deleted(self::$currency->id);
 
         SugarTestHelper::tearDown();
+
+        // Adding a relationship adds this, and we want to turn it off to not slow down the other tests
+        $GLOBALS['reload_vardefs'] = false;
     }
 
     /**

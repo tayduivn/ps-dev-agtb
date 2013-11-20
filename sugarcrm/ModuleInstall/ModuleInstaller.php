@@ -1639,7 +1639,7 @@ class ModuleInstaller{
 	    $this->rebuildExt("TableDictionary", 'tabledictionary.ext.php');
 	}
 
-	function rebuild_relationships() {
+	function rebuild_relationships($changedModules = array()) {
         if(!$this->silent) echo translate('LBL_MI_REBUILDING') . ' Relationships';
 		$_REQUEST['silent'] = true;
 		global $beanFiles;

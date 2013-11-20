@@ -192,6 +192,7 @@ class AbstractRelationships
         $name = $this->getUniqueName ( $relationship ) ;
         $relationship->setName ( $name ) ;
         $this->relationships [ $name ] = $relationship ;
+        $this->newRelationshipName = $name;
     }
 
     /*

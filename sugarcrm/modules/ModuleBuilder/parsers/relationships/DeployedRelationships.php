@@ -145,6 +145,8 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
      */
     function delete ($rel_name)
     {
+        $this->newRelationshipName = $rel_name;
+
     	//Remove any fields from layouts
         $rel = $this->get($rel_name);
         if (!empty($rel))
@@ -162,6 +164,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
         $mi->rebuild_tabledictionary();
 
         $MBmodStrings = $GLOBALS [ 'mod_strings' ];
+        $GLOBALS['reload_vardefs'] = true;
         $GLOBALS [ 'mod_strings' ] = return_module_language ( '', 'Administration' ) ;
         $rac = new RepairAndClear ( ) ;
         $rac->repairAndClearAll ( array ( 'clearAll', 'rebuildExtensions',  ), array ( $GLOBALS [ 'mod_strings' ] [ 'LBL_ALL_MODULES' ] ), true, false ) ;
@@ -272,6 +275,16 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
      */
     function build ()
     {
+        $modulesToBuild = array();
+        if (!isset($this->relationships[$this->newRelationshipName])) {
+            $GLOBALS['log']->fatal("Could not find a relationship by the name of {$this->newRelationshipName}, you will have to quick repair and rebuild to get the new relationship added.");
+        } else {
+            $newRel = $this->relationships[$this->newRelationshipName];
+            $newRelDef = $newRel->getDefinition();
+            $modulesToBuild[$newRelDef['rhs_module']] = true;
+            $modulesToBuild[$newRelDef['lhs_module']] = true;
+        }
+
         $basepath = "custom/Extension/modules" ;
 
         $this->activitiesToAdd = false ;
@@ -279,6 +292,10 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
         // and mark all as built so that the next time we come through we'll know and won't build again
         foreach ( $this->relationships as $name => $relationship )
         {
+            if ($relationship->readonly() ) {
+                continue;
+            }
+
             $definition = $relationship->getDefinition () ;
             // activities will always appear on the rhs only - lhs will be always be this module in MB
             if (strtolower ( $definition [ 'rhs_module' ] ) == 'activities')
@@ -303,6 +320,10 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
 
         foreach ( $this->relationships as $name => $relationship )
         {
+            if ($relationship->readonly() ) {
+                continue;
+            }
+
             $relationship->setFromStudio();
         	$GLOBALS [ 'mod_strings' ] = $MBModStrings ;
             $installDefs = parent::build ( $basepath, "<basepath>",  array ($name => $relationship ) ) ;
@@ -344,25 +365,38 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
 
         }
 
-        // Run through the module installer to rebuild the relationships once after everything is done.
-        require_once 'ModuleInstall/ModuleInstaller.php' ;
-        $mi = new ModuleInstaller ( ) ;
+        $GLOBALS [ 'mod_strings' ] = $MBModStrings ; // finally, restore the ModuleBuilder mod_strings
+
+        // Anything that runs in-process needs to reload their vardefs
+        $GLOBALS['reload_vardefs'] = true;
+
+        // save out the updated definitions so that we keep track of the change in built status
+        $this->save () ;
+
+        $mi = new ModuleInstaller();
         $mi->silent = true;
-        $mi->rebuild_relationships();
+        $mi->rebuild_relationships($modulesToBuild);
 
         // now clear all caches so that our changes are visible
         require_once ('modules/Administration/QuickRepairAndRebuild.php') ;
         $rac = new RepairAndClear ( ) ;
-        $rac->repairAndClearAll ( array ( 'clearAll' ), array ( $GLOBALS [ 'mod_strings' ] [ 'LBL_ALL_MODULES' ] ), true, false ) ;
-        // Set the module list to an empty array so that repair simply rebuilds 
-        // the base metadata cache
-        $rac->module_list = array();
-        $rac->repairMetadataAPICache();
+        $rac->module_list = $modulesToBuild;
+        $rac->clearJsFiles();
+        $rac->clearVardefs();
+        $rac->clearJsLangFiles();
+        $rac->clearLanguageCache();
+        $rac->rebuildExtensions();
+        $rac->clearVardefs();
 
-        $GLOBALS [ 'mod_strings' ] = $MBModStrings ; // finally, restore the ModuleBuilder mod_strings
-
-        // save out the updated definitions so that we keep track of the change in built status
-        $this->save () ;
+        foreach ($rac->module_list as $moduleName => $ignore) {
+            // Now rebuild the vardefs in memory
+            $bean = BeanFactory::newBean($moduleName);
+            VardefManager::loadVardef($bean->module_dir, $bean->object_name, true, array('bean' => $bean));
+        }
+        
+        unset($GLOBALS['dictionary']);
+        SugarRelationshipFactory::rebuildCache();
+        $rac->repairMetadataAPICache('relationships');
 
         $GLOBALS [ 'log' ]->info ( get_class ( $this ) . "->build(): finished relationship installation" ) ;
 
