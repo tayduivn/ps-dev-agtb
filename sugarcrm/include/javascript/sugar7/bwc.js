@@ -26,60 +26,6 @@
  ********************************************************************************/
 (function(app) {
     /**
-     * Cache for legacy metadata.
-     * @type {Object}
-     */
-    var metadataCache = {};
-
-    /**
-     * Holds the private legacy metadata converter methods.
-     * @type {Object}
-     */
-    var metadataConverters = {
-        /**
-         * Converts legacy listviewdefs to the Sidecar list metadata.
-         * @param  {Object} meta Module-unwrapped legacy metadata
-         * @return {Object}      Sidecar list metadata
-         */
-        listviewdefs: function(meta) {
-            var obj = {
-                panels: [{
-                    label: 'LBL_PANEL_DEFAULT',
-                    fields: []
-                }]
-            };
-
-            _.each(meta, function(value, key) {
-                var fieldOverrides = {name: key.toLowerCase()};
-                // assume the type comes from the name if no type was defined
-                fieldOverrides.type = value['type'] || fieldOverrides.name;
-                // need to map "team_name" to "teamset" as is seen in sugar7/hacks.js
-                if (fieldOverrides.type === 'team_name') {
-                    fieldOverrides.type = 'teamset';
-                }
-                if (app.config.platform === 'portal') {
-                    fieldOverrides['default'] = true;
-                } else {
-                    // Coerce the value from the defs to a boolean.
-                    fieldOverrides['default'] = !!value['default'];
-                }
-
-                if (_.isUndefined(value.enabled)) {
-                    fieldOverrides.enabled = true;
-                } else {
-                    // Coerce the value from the defs to a boolean.
-                    fieldOverrides.enabled = !!value.enabled;
-                }
-
-                _.extend(value, fieldOverrides);
-                obj.panels[0].fields.push(value);
-            });
-
-            return obj;
-        }
-    };
-
-    /**
      * Backwards compatibility (Bwc) class manages all required methods for BWC
      * modules.
      *
@@ -293,41 +239,6 @@
                 return;
             }
             view.revertBwcModel();
-        },
-
-        /**
-         * Accessor for private metadata converter functions.
-         * @param  {String} type Name of legacy metadata type
-         * @return {Function}
-         */
-        _getLegacyMetadataConverter: function(type) {
-            return metadataConverters[type];
-        },
-
-        /**
-         * Retrieves the legacy metadata from the server, and converts it to
-         * Sidecar metadata. This method should be removed as soon as possible.
-         * @param  {String} module
-         * @param  {String} type
-         * @return {Object}
-         */
-        getLegacyMetadata: function(module, type) {
-            var converter = this._getLegacyMetadataConverter(type),
-                cacheKey = module + '-' + type,
-                bwcModule = app.metadata.getModule(module).isBwcEnabled;
-
-            if (!metadataCache[cacheKey] && converter && bwcModule) {
-                var result,
-                    url = app.api.buildURL('metadata', 'legacy', {}, {module: module, type: type}),
-                    request = app.api.call('read', url, null, {
-                        success: function(data) {
-                            result = converter(data[module]);
-                        }
-                    }, {async: false});
-                metadataCache[cacheKey] = result;
-            }
-
-            return metadataCache[cacheKey];
         }
     };
     app.augment('bwc', Bwc, false);

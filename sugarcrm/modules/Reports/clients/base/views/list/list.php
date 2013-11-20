@@ -23,6 +23,7 @@ $viewdefs['Reports']['base']['view']['list'] = array(
                     'name'  => 'name',
                     'label' => 'LBL_REPORT_NAME',
                     'link' => true,
+                    'type' => 'name',
                     'enabled' => true,
                     'default' => true,
                 ),

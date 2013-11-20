@@ -404,20 +404,13 @@
     /**
      * Gets the correct list view metadata.
      *
-     * This function takes into account if the chosen module is in backwards
-     * compatibility mode, and returns the converted metadata.
+     * Returns the correct module list metadata
      *
      * @param  {String} module
      * @return {Object}
      */
     _getListMeta: function(module) {
-        var listMeta;
-        if (app.metadata.getModule(module).isBwcEnabled) {
-            listMeta = app.bwc.getLegacyMetadata(module, 'listviewdefs');
-        } else {
-            listMeta = app.metadata.getView(module, 'list');
-        }
-        return listMeta;
+        return app.metadata.getView(module, 'list');
     },
 
     /**
