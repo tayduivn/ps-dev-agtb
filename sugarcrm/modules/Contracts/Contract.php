@@ -151,6 +151,7 @@ class Contract extends SugarBean
                 $this->base_rate
             );
         }
+        $this->setCalculatedValues(false);
         $return_id = parent::save($check_notify);
         //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($_SESSION["workflow_cron"])
@@ -217,23 +218,29 @@ class Contract extends SugarBean
         }
     }
 
-    function _set_contract_term()
+    /**
+     * Set contract term based on start and end dates
+     *
+     * @param bool $isFromDb Whether the bean is fetched from database
+     */
+    protected function _set_contract_term($isFromDb)
     {
-        global $timedate;
-        $start_date_timestamp = empty($this->start_date) ? 0 : strtotime(
-            $timedate->to_db_date($this->start_date, false)
-        );
-        $end_date_timestamp = empty($this->end_date) ? 0 : strtotime($timedate->to_db_date($this->end_date, false));
+        $start_date_timestamp = $this->dateToTimestamp($this->start_date, $isFromDb);
+        $end_date_timestamp = $this->dateToTimestamp($this->end_date, $isFromDb);
         $this->contract_term = '';
         if (!empty($start_date_timestamp) && !empty($end_date_timestamp)) {
             $this->contract_term = floor(($end_date_timestamp - $start_date_timestamp) / constant('SUGARCRM_SECONDS_PER_DAY'));
         }
     }
 
-    function _set_time_to_expiry()
+    /**
+     * Set contract time to expiry based on end date
+     *
+     * @param bool $isFromDb Whether the bean is fetched from database
+     */
+    protected function _set_time_to_expiry($isFromDb)
     {
-        global $timedate;
-        $end_date_timestamp = empty($this->end_date) ? 0 : strtotime($timedate->to_db_date($this->end_date, false));
+        $end_date_timestamp = $this->dateToTimestamp($this->end_date, $isFromDb);
         $now = time();
         $this->time_to_expiry = '';
         if (!empty($end_date_timestamp)) {
@@ -241,13 +248,34 @@ class Contract extends SugarBean
         }
     }
 
+    /**
+     * Convert date to timestamp
+     *
+     * @param string $date   Date string representation
+     * @param bool $isFromDb Whether the bean is fetched from database
+     *
+     * @return int
+     */
+    protected function dateToTimestamp($date, $isFromDb)
+    {
+        global $timedate;
+
+        if (!$date) {
+            return 0;
+        }
+
+        if ($isFromDb) {
+            $date = $timedate->to_db_date($date, false);
+        }
+        $timestamp = strtotime($date);
+
+        return $timestamp;
+    }
+
     function fill_in_additional_detail_fields()
     {
         parent::fill_in_additional_detail_fields();
-        $this->_set_related_account_info();
-        $this->_set_related_opportunity_info();
-        $this->_set_contract_term();
-        $this->_set_time_to_expiry();
+        $this->setCalculatedValues(true);
 
         $types = get_bean_select_array(true, 'ContractType', 'name', 'deleted=0', 'list_order');
         $this->type_options = get_select_options_with_id($types, $this->type);
@@ -264,6 +292,19 @@ class Contract extends SugarBean
         } else {
             $this->currency_name = $currency->getDefaultISO4217() . ' ' . $currency->getDefaultCurrencySymbol();
         }
+    }
+
+    /**
+     * Set the non-generic calculated value
+     *
+     * @param bool $isFromDb Whether the bean is fetched from database
+     */
+    protected function setCalculatedValues($isFromDb)
+    {
+        $this->_set_related_account_info();
+        $this->_set_related_opportunity_info();
+        $this->_set_contract_term($isFromDb);
+        $this->_set_time_to_expiry($isFromDb);
     }
 
     function list_view_parse_additional_sections(& $list_form, $xTemplateSection)
