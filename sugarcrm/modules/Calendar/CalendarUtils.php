@@ -383,6 +383,8 @@ class CalendarUtils
 		$arr = array();
 		$i = 0;
 		
+        Activity::disable();
+
 		$clone = clone $bean;
 		foreach ($timeArray as $date_start) {
 			$clone->id = "";
@@ -425,6 +427,8 @@ class CalendarUtils
 			}
 		}
 		
+        Activity::enable();
+
 		if ($users_filled) {
 			$db->query($qu_users);
 		}
