@@ -69,11 +69,10 @@ class ViewMappingProperties extends ViewList
 	
 	    		$labels = array();
 			    $duplicate_labels = array();
-                $allowedTypes = array('name','varchar','fullname');
 	    		foreach($field_defs as $id=>$def) {
 	    			
 	    			//We are filtering out some fields here
-	    			if(!(in_array($def['type'], $allowedTypes)) || (isset($def['dbType']) && $def['dbType'] == 'id')) {
+	    			if($def['type'] == 'relate' || $def['type'] == 'link' || (isset($def['dbType']) && $def['dbType'] == 'id')) {
 	    			   continue;
 	    			}
 	    			   
