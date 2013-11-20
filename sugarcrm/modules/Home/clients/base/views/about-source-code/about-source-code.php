@@ -231,5 +231,75 @@ $viewdefs['Home']['base']['view']['about-source-code'] = array(
             'url' => 'https://github.com/facebook/xhprof',
             'description' => 'A function-level hierarchical profiler for PHP.',
         ),
+        array(
+            'name' => 'xmlseclibs',
+            'url' => 'http://code.google.com/p/xmlseclibs/',
+            'description' => 'A library written in PHP for working with XML Encryption and Signatures.',
+        ),
+        array(
+            'name' => 'Web Input Completion Kit',
+            'url' => 'http://wick.sourceforge.net/',
+            'description' => 'Framework to facilitate textual input in form UI elements assisted by local and remote data sources.',
+        ),
+        array(
+            'name' => 'WebFX PNG Behavior',
+            'url' => 'http://webfx.eae.net/dhtml/pngbehavior/pngbehavior.html',
+            'description' => 'Adds support for the PNG format available to Internet Explorer.',
+        ),
+        array(
+            'name' => 'HTML_Safe',
+            'url' => 'http://pear.php.net/package/HTML_Safe/',
+            'description' => 'Parser which strips down all potentially dangerous content within HTML.',
+        ),
+        array(
+            'name' => 'oauth2-php',
+            'url' => 'http://github.com/quizlet/oauth2-php',
+            'description' => 'A server implementation of OAuth 2.0 in PHP.',
+        ),
+        array(
+            'name' => 'Adobe Fonts',
+            'url' => 'http://partners.adobe.com/public/developer/font/index.html',
+            'description' => 'Fonts from the Adobe Type Library.',
+        ),
+        array(
+            'name' => 'elementReady',
+            'url' => 'http://thunderguy.com/semicolon/2007/08/14/elementready-jquery-plugin/',
+            'description' => 'A jQuery plugin to call a function when an element is available, even before the DOM is ready.',
+        ),
+        array(
+            'name' => 'hoverIntent',
+            'url' => 'http://cherne.net/brian/resources/jquery.hoverIntent.html',
+            'description' => 'A jQuery plugin that attempts to determine the user intent by the mouse movement.',
+        ),
+        array(
+            'name' => 'slimScroll',
+            'url' => 'http://rocha.la/jQuery-slimScroll',
+            'description' => 'A jQuery plugin that transforms any div into a scrollable area with a nice scrollbar.',
+        ),
+        array(
+            'name' => 'tiptip',
+            'url' => 'http://code.drewwilson.com/entry/tiptip-jquery-plugin',
+            'description' => 'A Intelligent ToolTip jQuery plugin.',
+        ),
+        array(
+            'name' => 'showLoading',
+            'url' => 'http://www.contextllc.com',
+            'description' => 'A jQuery plugin is designed to show a loading graphic over a specific area of the screen while an ajax request is running.',
+        ),
+        array(
+            'name' => 'superFish',
+            'url' => 'http://users.tpg.com.au/j_birch/plugins/superfish/changelog.txt',
+            'description' => 'A jQuery plugin that adds usability enhancements to multi-level drop-down menus.',
+        ),
+        array(
+            'name' => 'datatable',
+            'url' => 'http://datatables.net/',
+            'description' => 'A jQuery plugin that adds advanced interaction controls to any HTML table.',
+        ),
+        array(
+            'name' => 'jeditable',
+            'url' => 'http://www.appelsiini.net/projects/jeditable',
+            'description' => 'A jQuery plugin which allow edit the content of different html elements.',
+        ),
     ),
 );
