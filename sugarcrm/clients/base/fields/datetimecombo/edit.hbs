@@ -31,4 +31,5 @@
     <span class="add-on"><i class="icon-calendar"></i></span>
     <input type="text" class="ui-timepicker-input" value="{{timeValue}}" rel="timepicker" autocomplete="off">
     <span class="add-on"><i class="icon-time"></i></span>
+    {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
 </div>
