@@ -19,17 +19,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Lead.php 53116 2009-12-10 01:24:37Z mitani $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
 require_once('include/SugarObjects/templates/person/Person.php');
 
-// Lead is used to store profile information for people who may become customers.
+/**
+ *  Lead is used to store profile information for people who may become customers.
+ */
 class Lead extends Person {
 	var $field_name_map;
 	// Stored fields
@@ -120,7 +115,7 @@ class Lead extends Person {
 	var $emailAddress;
 
 	var $importable = true;
-    
+
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('assigned_user_name', 'task_id', 'note_id', 'meeting_id', 'call_id', 'email_id');
 	var $relationship_fields = Array('email_id'=>'emails','call_id'=>'calls','meeting_id'=>'meetings','task_id'=>'tasks',);
@@ -139,12 +134,12 @@ class Lead extends Person {
 	public function __construct() {
 		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
-		global $current_user;	
+		global $current_user;
 		if(!empty($current_user)) {
 			$this->team_id = $current_user->default_team;	//default_team is a team id
 		} else {
 			$this->team_id = 1; // make the item globally accessible
-		}		
+		}
 		//END SUGARCRM flav=pro ONLY
 	}
 
@@ -159,9 +154,11 @@ class Lead extends Person {
 
 			if(!empty($result)){
 				$row = $this->db->fetchByAssoc($result);
-				$this->account_name = $row['name'];
-				$this->account_name_owner = $row['account_name_owner'];
-				$this->account_name_mod = 'Accounts';
+				if(!empty($row)) {
+    				$this->account_name = $row['name'];
+    				$this->account_name_owner = $row['account_name_owner'];
+    				$this->account_name_mod = 'Accounts';
+				}
 			}
 
 	}}
@@ -176,29 +173,34 @@ class Lead extends Person {
 
 			if(!empty($result)){
 				$row = $this->db->fetchByAssoc($result);
-				$this->opportunity_name = $row['name'];
-				$this->opportunity_name_owner = $row['opportunity_name_owner'];
-				$this->opportunity_name_mod = 'Opportunities';
+				if(!empty($row)) {
+    				$this->opportunity_name = $row['name'];
+    				$this->opportunity_name_owner = $row['opportunity_name_owner'];
+    				$this->opportunity_name_mod = 'Opportunities';
+				}
 			}
 
-	}}
+	   }
+	}
+
 	function get_contact()
 	{
 		global $locale;
 		if(isset($this->contact_id) && !empty($this->contact_id)){
 			$query = "SELECT first_name, last_name, assigned_user_id contact_name_owner FROM contacts WHERE id='{$this->contact_id}'";
 
-	        //requireSingleResult has beeen deprecated.
-			//$result = $this->db->requireSingleResult($query);
 			$result = $this->db->limitQuery($query,0,1,true, "Want only a single row");
 			if(!empty($result)){
 				$row= $this->db->fetchByAssoc($result);
-                $this->contact_name = $locale->formatName('Contacts', $row);
-				$this->contact_name_owner = $row['contact_name_owner'];
-				$this->contact_name_mod = 'Contacts';
+				if(!empty($row)) {
+                    $this->contact_name = $locale->formatName('Contacts', $row);
+    				$this->contact_name_owner = $row['contact_name_owner'];
+    				$this->contact_name_mod = 'Contacts';
+				}
 			}
 
-	}}
+	   }
+	}
 
 	function create_list_query($order_by, $where, $show_deleted=0)
 	{
@@ -210,7 +212,7 @@ class Lead extends Person {
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name team_name";
 			//END SUGARCRM flav=pro ONLY
-        $query .= $custom_join['select'];
+            $query .= $custom_join['select'];
             $query .= " FROM leads ";
 
 //BEGIN SUGARCRM flav=pro ONLY
@@ -244,15 +246,15 @@ class Lead extends Person {
 	}
 
 	function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false, $parentbean = null, $singleSelect = false){
-		
+
 		$ret_array = parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, true, $parentbean, $singleSelect);
 		if(strpos($ret_array['select'],"leads.account_name") == false && strpos($ret_array['select'],"leads.*") == false)
 			$ret_array['select'] .= " ,leads.account_name";
     	if ( !$return_array )
             return  $ret_array['select'] . $ret_array['from'] . $ret_array['where']. $ret_array['order_by'];
         return $ret_array;
-	}	
-	
+	}
+
     function create_export_query(&$order_by, &$where, $relate_link_join='')
     {
         $custom_join = $this->getCustomJoin(true, true, $where);
@@ -278,8 +280,8 @@ class Lead extends Person {
 				//join email address table too.
 				$query .=  ' LEFT JOIN  email_addr_bean_rel on leads.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module=\'Leads\' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 ';
 				$query .=  ' LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id ' ;
-						
-            
+
+
         $query .= $custom_join['join'];
 
                         $where_auto = " leads.deleted=0 ";
@@ -315,9 +317,6 @@ class Lead extends Person {
 
 	function fill_in_additional_detail_fields()
 	{
-		//Fill in the assigned_user_name
-		//if(!empty($this->status))
-		//$this->status = translate('lead_status_dom', '', $this->status);
 	    parent::fill_in_additional_detail_fields();
 	    $this->_create_proper_name_field();
 		$this->get_contact();
@@ -325,24 +324,28 @@ class Lead extends Person {
 		$this->get_account();
 
 		if(!empty($this->campaign_id)){
-			
+
 			$camp = BeanFactory::getBean('Campaigns');
 			$where = "campaigns.id='$this->campaign_id'";
 			$campaign_list = $camp->get_full_list("campaigns.name", $where, true);
 			if(!empty($campaign_list))
-				$this->campaign_name = $campaign_list[0]->name;	
+				$this->campaign_name = $campaign_list[0]->name;
 		}
 	}
 
-	function get_list_view_data(){
-
+	function get_list_view_data()
+	{
 		$temp_array = parent::get_list_view_data();
-
-		$temp_array['ACC_NAME_FROM_ACCOUNTS'] = empty($temp_array['ACC_NAME_FROM_ACCOUNTS']) ? ($temp_array['ACCOUNT_NAME']) : ($temp_array['ACC_NAME_FROM_ACCOUNTS']);
-
-		return $temp_array;		
+		if(!empty($temp_array['ACC_NAME_FROM_ACCOUNTS'])) {
+		    $temp_array['ACC_NAME_FROM_ACCOUNTS'] = $temp_array['ACC_NAME_FROM_ACCOUNTS'];
+		} elseif(!empty($temp_array['ACCOUNT_NAME'])) {
+		    $temp_array['ACC_NAME_FROM_ACCOUNTS'] = $temp_array['ACCOUNT_NAME'];
+		} else {
+		    $temp_array['ACC_NAME_FROM_ACCOUNTS'] = '';
+		}
+		return $temp_array;
 	}
-	
+
     /**
      * Returns an array of fields that are of type link.
      *
@@ -383,7 +386,7 @@ class Lead extends Person {
 	array_push($where_clauses, "leads.account_name like '$the_query_string%'");
 	array_push($where_clauses, "leads.first_name like '$the_query_string%'");
 	array_push($where_clauses, "ea.email_address like '$the_query_string%'");
-	
+
 	if (is_numeric($the_query_string)) {
 		array_push($where_clauses, "leads.phone_home like '%$the_query_string%'");
 		array_push($where_clauses, "leads.phone_mobile like '%$the_query_string%'");
@@ -542,10 +545,10 @@ class Lead extends Person {
 		return $value;
 	}
 	function get_unlinked_email_query($type=array()) {
-		
+
 		return get_unlinked_email_query($type, $this);
 	}
-    
+
     /**
      * Returns query to find the related calls created pre-5.1
      *
@@ -555,11 +558,11 @@ class Lead extends Person {
     {
         $return_array['select']='SELECT calls.id ';
         $return_array['from']='FROM calls ';
-        $return_array['where']=" WHERE calls.parent_id = '$this->id' 
+        $return_array['where']=" WHERE calls.parent_id = '$this->id'
             AND calls.parent_type = 'Leads' AND calls.id NOT IN ( SELECT call_id FROM calls_leads ) ";
         $return_array['join'] = "";
         $return_array['join_tables'][0] = '';
-        
+
         return $return_array;
     }
 
@@ -587,11 +590,11 @@ class Lead extends Person {
     {
         $return_array['select']='SELECT meetings.id ';
         $return_array['from']='FROM meetings ';
-        $return_array['where']=" WHERE meetings.parent_id = '$this->id' 
+        $return_array['where']=" WHERE meetings.parent_id = '$this->id'
             AND meetings.parent_type = 'Leads' AND meetings.id NOT IN ( SELECT meeting_id FROM meetings_leads ) ";
         $return_array['join'] = "";
         $return_array['join_tables'][0] = '';
-        
+
         return $return_array;
     }
 
@@ -605,6 +608,6 @@ class Lead extends Person {
         require_once('modules/Leads/LeadsVarDefHandler.php');
         $this->vardef_handler = new LeadsVarDefHandler($this, $meta_array_type);
     }
-    //END SUGARCRM flav=pro ONLY    
+    //END SUGARCRM flav=pro ONLY
 }
 
