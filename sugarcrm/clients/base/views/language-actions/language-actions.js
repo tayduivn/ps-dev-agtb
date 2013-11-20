@@ -73,13 +73,6 @@
         this.$('.dropdown-menu').height(menuHeight);
     },
     /**
-     * @inheritdoc
-     */
-    _dispose: function() {
-        $(window).off('resize');
-        app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: '_dispose'});
-    },
-    /**
      * Formats the language list for the template
      *
      * @returns {Array} of languages
@@ -95,5 +88,12 @@
             }
         });
         return list;
+    },
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        $(window).off('resize');
+        app.view.View.prototype._dispose.call(this);
     }
 })
