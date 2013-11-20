@@ -86,7 +86,9 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
 
     public function getWidgetId($buttonSuffix = true)
     {
-    	$widgetID = parent::getWidgetId() . '_'.preg_replace('[ ]', '', strtolower($this->form_value));
+        $isUTF8 = mb_detect_encoding($this->form_value) == 'UTF-8';
+        $formValue = $isUTF8 ? mb_strtolower($this->form_value, 'UTF-8') : strtolower($this->form_value);
+    	$widgetID = parent::getWidgetId() . '_'.preg_replace('[ ]', '', $formValue);
     	if($buttonSuffix){
     		$widgetID .= '_button';
     	}
