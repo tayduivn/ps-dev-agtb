@@ -81,6 +81,7 @@
         }
         var firstField = _.first(this.fields);
         firstField.$el.on('click.' + this.cid, _.bind(this.switchButton, this));
+        app.accessibility.run(firstField.$el, 'click');
     },
     switchButton: function(evt) {
         var sfId = parseInt(this.$(evt.currentTarget).attr('sfuuid'), 10),

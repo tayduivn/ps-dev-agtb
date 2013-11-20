@@ -93,6 +93,7 @@
                     }
                     $(this).tooltip('hide');
                 });
+                app.accessibility.run($tooltips, 'click');
             },
 
             /**

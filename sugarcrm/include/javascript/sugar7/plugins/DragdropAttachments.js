@@ -83,9 +83,11 @@
                             container = $("<div class='activitystream-pending-attachment' id='" + unique + "'></div>");
 
                             // TODO: Review creation of inline HTML
-                            $('<a class="close">&times;</a>').on('click',function(e) {
+                            var $close = $('<a class="close">&times;</a>');
+                            $close.on('click',function(e) {
                                 container.trigger('close');
                             }).appendTo(container);
+                            app.accessibility.run($close, 'click');
 
                             container.append(file.name + " (" + size + " " + sizes[size_index] + ")");
 

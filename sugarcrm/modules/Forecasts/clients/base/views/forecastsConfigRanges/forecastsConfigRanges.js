@@ -571,7 +571,8 @@
      * @param {jQuery.Event} event click
      */
     addCustomRange: function(event) {
-        var category = $(event.currentTarget).data('category'),
+        var self = this,
+            category = $(event.currentTarget).data('category'),
             customType = $(event.currentTarget).data('type'),
             categoryRange = category + '_ranges',
             categoryOptions = category + '_options',
@@ -646,7 +647,11 @@
         this.model.set(categoryOptions, bucketDomOptions);
 
         // adding event listener to new custom range
-        rangeField.$(':checkbox').on('click', _.bind(this.updateCustomRangeIncludeInTotal, this));
+        rangeField.$(':checkbox').each(function() {
+            var $el = $(this);
+            $el.on('click', _.bind(self.updateCustomRangeIncludeInTotal, self));
+            app.accessibility.run($el, 'click');
+        });
 
         if(customType == 'custom') {
             // use call to set context back to the view for connecting the sliders
@@ -847,27 +852,28 @@
     updateCustomRangesCheckboxes: function() {
         var els = this.$('#plhCustomDefault :checkbox, #plhCustom :checkbox'),
             len = els.length,
-            el,
+            $el,
             fieldKey,
             i;
 
         for(i = 0; i < len; i++) {
-            el = els[i];
-            fieldKey = $(el).data('key');
+            $el = $(els[i]);
+            fieldKey = $el.data('key');
 
             //disable the checkbox
-            $(el).attr('disabled', true);
+            $el.attr('disabled', true);
             // remove any click event listeners
-            $(el).off('click');
+            $el.off('click');
 
             // looking specifically for checkboxes that are not the 'include' checkbox but that are
             // the last included commit stage range or the first non-included commit stage range
             if(fieldKey !== 'include'
                 && (i == this.includedCommitStages.length - 1 || i == this.includedCommitStages.length)) {
                 // enable the checkbox
-                $(el).attr('disabled', false);
+                $el.attr('disabled', false);
                 // add new click event listener
-                $(el).on('click', _.bind(this.updateCustomRangeIncludeInTotal, this));
+                $el.on('click', _.bind(this.updateCustomRangeIncludeInTotal, this));
+                app.accessibility.run($el, 'click');
             }
         }
     },
