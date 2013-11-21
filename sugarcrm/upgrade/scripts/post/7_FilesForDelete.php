@@ -128,6 +128,25 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'clients/mobile/api/CurrentUserMobileApi.php',
             'clients/mobile/api/MetadataMobileApi.php',
             'clients/portal/api/MetadataPortalApi.php',
+            // NOMAD-1179 mobile search definitions
+            'modules/Accounts/clients/mobile/views/search/search.php',
+            'modules/Bugs/clients/mobile/views/search/search.php',
+            'modules/Calls/clients/mobile/views/search/search.php',
+            'modules/Cases/clients/mobile/views/search/search.php',
+            'modules/Contacts/clients/mobile/views/search/search.php',
+            'modules/Employees/clients/mobile/views/search/search.php',
+            'modules/Leads/clients/mobile/views/search/search.php',
+            'modules/Meetings/clients/mobile/views/search/search.php',
+            'modules/Opportunities/clients/mobile/views/search/search.php',
+            'modules/ProductTemplates/clients/mobile/views/search/search.php',
+            'modules/Tasks/clients/mobile/views/search/search.php',
+            'modules/Users/clients/mobile/views/search/search.php',
+            'include/SugarObjects/templates/basic/clients/mobile/views/search/search.php',
+            'include/SugarObjects/templates/company/clients/mobile/views/search/search.php',
+            'include/SugarObjects/templates/file/clients/mobile/views/search/search.php',
+            'include/SugarObjects/templates/issue/clients/mobile/views/search/search.php',
+            'include/SugarObjects/templates/person/clients/mobile/views/search/search.php',
+            'include/SugarObjects/templates/sale/clients/mobile/views/search/search.php',
         );
         $this->fileToDelete($files);
     }

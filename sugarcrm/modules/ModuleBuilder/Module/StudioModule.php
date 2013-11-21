@@ -413,14 +413,6 @@ class StudioModule
             'help' => "viewBtn".MB_WIRELESSLISTVIEW,
             'size' => '48',
         );
-        $layouts[translate('LBL_WIRELESSSEARCH')] = array(
-            'name' => translate('LBL_WIRELESSSEARCH'),
-            'type' => MB_WIRELESSBASICSEARCH,
-            'action' => "module=ModuleBuilder&action=editLayout&view=".MB_WIRELESSBASICSEARCH."&view_module={$this->module}",
-            'imageTitle' => 'BasicSearch',
-            'help' => "searchBtn",
-            'size' => '48',
-        );
 
         return $layouts ;
     }

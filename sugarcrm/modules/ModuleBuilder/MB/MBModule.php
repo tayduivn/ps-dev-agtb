@@ -642,14 +642,6 @@ class MBModule
             'help' => "viewBtn".MB_WIRELESSLISTVIEW , 
             'size' => '48' 
         ) ;
-        $nodes [ translate('LBL_WIRELESSSEARCH') ] = array ( 
-            'name' => translate('LBL_WIRELESSSEARCH') , 
-            'type' => MB_WIRELESSBASICSEARCH,
-            'action' => "module=ModuleBuilder&MB=true&action=editLayout&view=".MB_WIRELESSBASICSEARCH."&view_module={$this->name}&view_package={$this->package}" , 
-            'imageTitle' => 'BasicSearch' , 
-            'help' => "searchBtn" , 
-            'size' => '48' 
-        ) ;
     	return $nodes ;
     }
 //END SUGARCRM flav=pro ONLY
