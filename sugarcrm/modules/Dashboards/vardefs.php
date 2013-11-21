@@ -51,10 +51,10 @@ $dictionary['Dashboard'] = array(
       'merge_filter' => 'disabled',
       'calculated' => false,
       ),
-    'view' =>
+    'view_name' =>
     array (
       'required' => false,
-      'name' => 'view',
+      'name' => 'view_name',
       'vname' => 'LBL_VIEW',
       'type' => 'varchar',
       'dbType' => 'varchar',
@@ -94,7 +94,7 @@ $dictionary['Dashboard'] = array(
     ),
   ),
   'indices' => array (
-    array ('name' => 'user_module_view', 'type' => 'index', 'fields' => array('assigned_user_id','dashboard_module', 'view')),
+    array ('name' => 'user_module_view', 'type' => 'index', 'fields' => array('assigned_user_id','dashboard_module', 'view_name')),
   ),
   'relationships' => 
   array (
