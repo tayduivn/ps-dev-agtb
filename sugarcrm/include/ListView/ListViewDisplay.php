@@ -616,6 +616,12 @@ EOF;
                 $this->displayColumns[$columnName]['orderBy'] = $seedDef['sort_on'];
             }
 
+            // bug50645 Blank value for URL custom field in DetailView and subpanel
+            // we need to replace the "default" attribute value with the value set in field definition
+            if ($this->displayColumns[$columnName]['default'] == true && isset($seedDef['default'])) {
+                $this->displayColumns[$columnName]['default'] = $seedDef['default'];
+            }
+
             if (isset($seedDef)) {
                 // Merge the two arrays together, making sure the seedDef doesn't override anything explicitly set in the displayColumns array.
                 $this->displayColumns[$columnName] = $this->displayColumns[$columnName] + $seedDef;
