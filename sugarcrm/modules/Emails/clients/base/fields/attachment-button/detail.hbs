@@ -25,6 +25,9 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+}}{{!
+This is a <label> because IE does not allow you to upload an attachment that was
+chosen programatically as a result of a .click() call from a button, but is
+OK with clicking on a label for that file input element.
 }}
-<input type="hidden" class="attachments select2 select2-choices-pills-close" value="">
-<input type="file" name="{{fileInputName}}" class="fileinput hidden" id="{{cid}}">
+<label class="btn" for="{{fileInputId}}">{{#if def.icon}}<i class="{{def.icon}}"></i>{{/if}}{{str label}}</label>
