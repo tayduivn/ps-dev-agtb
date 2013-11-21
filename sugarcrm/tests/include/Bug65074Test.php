@@ -38,7 +38,7 @@ function testFuncArgs($args)
     return $args;
 }
 
-class testBean
+class testBeanParam
 {
     public function testFuncBean()
     {
@@ -96,7 +96,7 @@ EOQ;
         return array(
                 array(null, 'testFuncString', array(), 'func string'),
                 array(null, 'testFuncArgs', array('func args'), 'func args'),
-                array(new testBean(), 'testFuncBean', array(), 'func bean'),
+                array(new testBeanParam(), 'testFuncBean', array(), 'func bean'),
                 array('', array('name'=>'testFuncInclude', 'include'=>$this->customIncludeDir . '/' . $this->customIncludeFile), array(), 'func include')
         );
     }
