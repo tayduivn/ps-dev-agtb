@@ -61,7 +61,7 @@ class SugarApplication
             if (parent.location == window.location) {
                 window.location = "' . $sugar_config['site_url'] . '/#bwc/' . $this->getLoginRedirect() . '";
             } else {
-                parent.SUGAR.App.bwc.login("' . $this->getLoginRedirect() . '");
+                window.top.SUGAR.App.bwc.login("' . $this->getLoginRedirect() . '");
             }
             </script>';
             return;
