@@ -1846,10 +1846,12 @@ return str_replace(' > ','_',
 
         if ($query_name == 'summary_query') {
             if (!empty($this->summary_order_by_arr)) {
+                $this->summary_order_by_arr = array_unique($this->summary_order_by_arr);
                 $query .= " ORDER BY " . implode(',', $this->summary_order_by_arr);
             }
         } else if ($query_name == 'query') {
             if (!empty($this->order_by_arr)) {
+                $this->order_by_arr = array_unique($this->order_by_arr);
                 $query .= " ORDER BY " . implode(',', $this->order_by_arr);
             }
         }
