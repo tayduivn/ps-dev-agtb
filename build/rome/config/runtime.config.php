@@ -30,3 +30,9 @@ $config['base_dir'] = '../../';
 $config['clean'] = true;
 
 $config['svn_path'] = 'http://svn1.sjc.sugarcrm.pvt/sugarcrm/branches/Pineapple';
+
+// Mobile version config
+$config['nomad_repo_uri'] = 'git@github.com:sugarcrm/nomad.git';
+$config['mobile_branch'] = 'master';
+$config['mobile_scheme'] = 'qa';
+$config['mobile_src_dir'] = null; // defaults to Rome build dir
