@@ -278,7 +278,13 @@ class Contact extends Person {
 
 
 		$ret_array['where'] = $where_query;
-        $ret_array['order_by'] = $this->process_order_by($order_by);
+		$ret_array['order_by'] = '';
+ 
+         	//process order by and add if it's not empty
+         	$order_by = $this->process_order_by($order_by);
+         	if (!empty($order_by)) {
+        	     $ret_array['order_by'] = ' ORDER BY ' . $order_by;
+ 	        }
 
 		if($return_array)
     	{
