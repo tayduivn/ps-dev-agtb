@@ -35,22 +35,28 @@ class ModuleBuilder
 {
     var $packages = array ( ) ;
 
-    function getPackageList ()
+    function getPackageList()
     {
-        static $list = array ( ) ;
-        if (! empty ( $list ) || ! file_exists ( MB_PACKAGE_PATH ))
-            return $list ;
-        $d = dir ( MB_PACKAGE_PATH ) ;
-        while ( $e = $d->read () )
-        {
-            if (file_exists ( MB_PACKAGE_PATH . '/' . $e . '/manifest.php' ))
-            {
-                $list [] = $e ;
+        static $list = array();
+        if (!empty($list) || !file_exists(MB_PACKAGE_PATH)) {
+            return $list;
+        }
+        
+        // Get directories within the module builder package path
+        $dirs = glob(MB_PACKAGE_PATH . '/*', GLOB_ONLYDIR);
+        
+        // And check to see if there is a manifest.php in it
+        foreach ($dirs as $dir) {
+            $path = "$dir/manifest.php";
+            if (file_exists($path)) {
+                $list[] = basename($dir);
             }
         }
-        sort ( $list ) ; // order important as generate_nodes_array in Tree.php later loops over this by foreach to generate the package list
-        return $list ;
-    
+        
+        // Order is important as generate_nodes_array in Tree.php later loops 
+        // over this by foreach to generate the package list
+        sort($list);
+        return $list;
     }
 
     /**
