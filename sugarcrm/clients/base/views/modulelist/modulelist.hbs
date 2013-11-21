@@ -31,15 +31,15 @@
         {{#eq name 'Home'}}
         <li class="dropdown home" data-module="Home">
             <div class="btn-group" title="{{str "LBL_TABGROUP_HOME"}}">
-                <a class="cube btn btn-invisible btn-link" href="#Home" data-route="#Home"></a>
+                <a class="cube btn btn-invisible btn-link" href="#Home" data-route="#Home" track="click:cube"></a>
             {{#if menu}}
-                <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle"><b class="icon-caret-down"></b></a>
+                <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle" track="click:cube-dropdown"><b class="icon-caret-down"></b></a>
                 <div class="dropdown-menu scroll">
                     <ul role="menu">
                         {{#each menu}}
-                            <li><a tabindex="-1" href="{{route}}" data-route="{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
+                            <li><a tabindex="-1" href="{{route}}" data-route="{{route}}" track="click:{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
                         {{/each}}
-                        <div class="dashboardContainer "></div>
+                        <div class="dashboardContainer" track="click:dashboardContainer"></div>
                     </ul>
                 </div>
             {{/if}}
@@ -50,13 +50,13 @@
         <li class="dropdown" data-module="{{name}}" data-menuindex="{{menuIndex}}">
             <a  class="moreLink hide" href="#{{name}}" data-route="#{{name}}">{{label}}</a>
             <div class="btn-group">
-                <a  class="btn btn-invisible btn-link routeLink" href="#{{name}}" data-route="#{{name}}">{{label}}</a>
+                <a  class="btn btn-invisible btn-link routeLink" href="#{{name}}" data-route="#{{name}}" track="click:{{name}}">{{label}}</a>
                 {{#if menu}}
-                    <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle"><i class="icon-caret-down"></i></a>
+                    <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle" track="click:{{name}}-dropdown"><i class="icon-caret-down"></i></a>
                     <div class="dropdown-menu scroll">
                         <ul role="menu">
                             {{#each menu}}
-                                <li><a class="actionLink" tabindex="-1" href="{{#if event}}javascript:void(0);{{else}}{{route}}{{/if}}" data-navbar-menu-item="{{this.label}}" data-{{#if event}}event="{{event}}"{{else}}route="{{route}}"{{/if}}>{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
+                                <li><a class="actionLink" tabindex="-1" href="{{#if event}}javascript:void(0);{{else}}{{route}}{{/if}}" data-navbar-menu-item="{{this.label}}" data-{{#if event}}event="{{event}}"{{else}}route="{{route}}"{{/if}} track="click:{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
                             {{/each}}
                             <div class="recentContainer hide"></div>
                             <div class="favoritesContainer hide"></div>
@@ -69,7 +69,7 @@
     {{/each}}
     <li class="dropdown more">
         <div class="btn-group">
-            <a href="javascript:void(0)" role="button" data-toggle="dropdown" class="btn btn-invisible btn-link dropdown-toggle" id="moreDrop"><b title="{{str "LBL_LINK_MORE"}}" class="icon-chevron-down"></b></a>
+            <a href="javascript:void(0)" role="button" data-toggle="dropdown" class="btn btn-invisible btn-link dropdown-toggle" id="moreDrop" track="click:navbar-moreDrop"><b title="{{str "LBL_LINK_MORE"}}" class="icon-chevron-down"></b></a>
             <div class="dropdown-menu scroll"role="menu">
             <ul class="more-drop-container">
             </ul>
