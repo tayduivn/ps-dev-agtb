@@ -119,16 +119,13 @@
      * Called from {@link app.plugins._onFieldDuplicate}.
      */
     onFieldDuplicate: function() {
-        if (this.disposed) {
+        if (this.disposed ||
+            this.view.name !== 'merge-duplicates' ||
+            this.options.viewName !== 'edit'
+        ) {
             return;
         }
-
-        if (this.view.name === 'merge-duplicates' &&
-            this.options.viewName &&
-            this.options.viewName === 'edit'
-        ) {
-            this.render();
-        }
+        this.render();
     },
 
     _render: function() {
