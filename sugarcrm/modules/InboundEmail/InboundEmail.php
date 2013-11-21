@@ -2896,6 +2896,15 @@ class InboundEmail extends SugarBean {
 			} // if
 			if($contactIds = $this->getRelatedId($contactAddr, 'contacts')) {
 				if(!empty($contactIds) && $c->load_relationship('contacts')) {
+                    if (!$accountIds && count($contactIds) == 1) {
+                        $contact = BeanFactory::getBean('Contacts', $contactIds[0]);
+                        if ($contact->load_relationship('accounts')) {
+                            $acct = $contact->accounts->get();
+                            if ($c->load_relationship('accounts') && !empty($acct[0])) {
+                                $c->accounts->add($acct[0]);
+                            }
+                        }
+                    }
 					$c->contacts->add($contactIds);
 				} // if
 			} // if
