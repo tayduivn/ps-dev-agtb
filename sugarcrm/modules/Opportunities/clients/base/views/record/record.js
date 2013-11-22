@@ -88,9 +88,6 @@
      * @param string module     The module that we are currently on.
      */
     showRLIWarningMessage: function(module) {
-        var self = this,
-            $close;
-        
         // add a callback to close the alert if users navigate from the page
         app.routing.before('route', this.dismissAlert, undefined, this);
 
