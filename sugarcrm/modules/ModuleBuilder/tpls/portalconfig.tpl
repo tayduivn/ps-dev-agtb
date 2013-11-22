@@ -79,7 +79,7 @@
         </tr>
         <tr>
             <td colspan='2' nowrap>
-                <input type='button' class='button' id='gobutton' value='Save'>
+                <input type='button' class='button' id='gobutton' value='{$mod.LBL_SAVE}'>
             </td>
         </tr>
 
