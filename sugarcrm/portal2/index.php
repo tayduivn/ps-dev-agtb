@@ -65,6 +65,7 @@ ensureCache($minifyUtils, $rootDir);
 
         <!-- Portal specific JS -->
         <script src="portal.js"></script>
+        <script src="portal-ui.js"></script>
         <script src="config.js"></script>
     </head>
     <body>

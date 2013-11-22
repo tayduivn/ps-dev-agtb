@@ -1,4 +1,3 @@
-{{!--
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -11,7 +10,15 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
---}}
-{{#each this.dashletConfig.view_panel}}
-    {{field ../this model=../this.settings}}
-{{/each}}
+({
+    /**
+     * Attachment button is a label that is styled like a button and will trigger a given file input field
+     *
+     * @extends View.Fields.ButtonField
+     */
+    extendsFrom: 'ButtonField',
+    initialize: function(options) {
+        this._super('initialize',[options]);
+        this.fileInputId = this.context.get('attachment_field_email_attachment');
+    }
+})

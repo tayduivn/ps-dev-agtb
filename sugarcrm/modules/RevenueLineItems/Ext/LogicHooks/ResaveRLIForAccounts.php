@@ -1,4 +1,4 @@
-{{!--
+<?php
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -11,7 +11,15 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
---}}
-{{#each this.dashletConfig.view_panel}}
-    {{field ../this model=../this.settings}}
-{{/each}}
+
+/**
+ * Resave RLI bean after the account_link relationship is removed. This will cause the RLI to pick up
+ * the account from it's associated Opportunity through sugarlogic
+ */
+$hook_array['after_relationship_delete'][] = array(
+    1,
+    'afterRelationshipDelete',
+    'modules/RevenueLineItems/RevenueLineItemHooks.php',
+    'RevenueLineItemHooks',
+    'afterRelationshipDelete',
+);

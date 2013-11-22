@@ -265,6 +265,7 @@ $xtpl->parse("main.ext_source");
 
 $xtpl->assign("THEME", $theme);
 $xtpl->assign("SITE_URL",$sugar_config['site_url']);
+$xtpl->assign("UPLOAD_MAXSIZE",$sugar_config['upload_maxsize']);
 $xtpl->assign("ATTACHMENTS",$mod_strings['LBL_ATTACHMENTS']);
 $xtpl->assign("EMBEDDED_IMAGES",$mod_strings['LBL_EMBEDED_IMAGES']);
 

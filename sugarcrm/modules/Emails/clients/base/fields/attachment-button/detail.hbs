@@ -25,6 +25,9 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+}}{{!
+This is a <label> because IE does not allow you to upload an attachment that was
+chosen programatically as a result of a .click() call from a button, but is
+OK with clicking on a label for that file input element.
 }}
-<input type="password" name="{{name}}" value="{{value}}"{{#if def.placeholder}} placeholder="{{str def.placeholder this.model.module}}"{{/if}}>
-{{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
+<label class="btn" for="{{fileInputId}}">{{#if def.icon}}<i class="{{def.icon}}"></i>{{/if}}{{str label}}</label>

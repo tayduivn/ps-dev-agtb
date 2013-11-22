@@ -3000,6 +3000,7 @@ $app_strings = array (
     'LBL_LOGIN_FORM_LABEL' => 'Show log in form',
     // END LOGIN PAGE STRINGS
 
+    'LBL_TABGROUP_HOME' => 'Dashboard',
     'LBL_SYNC' => 'Sync',
     'LBL_TASKS'=>'Tasks',
     'LBL_TEAMS_LINK'=>'Teams',
@@ -4003,7 +4004,7 @@ $app_strings = array (
     'LNK_TOUR' => 'Tour',
     'LBL_FEEDBACK' => 'Feedback',
     'LBL_SUPPORT' => 'Support',
-    'LBL_LANGUAGE' => 'Language',
+    'LBL_LANGUAGE' => 'Language/Sprache/Idioma',
     'LBL_PREFERRED_LANGUAGE' => 'Preferred Language:',
     'LBL_LOADING_LANGUAGE' => 'Loading language pack',
     'LBL_UPLOADING' => 'Uploading',

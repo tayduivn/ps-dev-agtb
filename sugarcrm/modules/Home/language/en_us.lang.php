@@ -144,6 +144,8 @@ $mod_strings = array (
 
   'LBL_DASHLET_WEBPAGE_NAME' => 'Web Page',
   'LBL_DASHLET_WEBPAGE_DESC' => 'Web Page',
+  'LBL_DASHLET_WEBPAGE_URL' => 'URL',
+  'LBL_DASHLET_WEBPAGE_URL_HELP' => 'Some sites may not load correctly due to insecure content or policies.',
 
   'LBL_DASHLET_ADD' => 'Add a Dashlet',
   'LBL_DASHLET_DELETE' => 'Delete Sugar Dashlet',

@@ -35,7 +35,7 @@
              * Handler for `duplicate:field` event triggered on model. Setup id of
              * model from which field should be duplicated.
              *
-             * @param {Data.Bean} model Model from which field should be duplicated.
+             * @param {Data.Bean/null} model Model from which field should be duplicated.
              * @private
              */
             _onFieldDuplicate: function(model) {
