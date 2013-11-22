@@ -71,6 +71,7 @@
     },
     cancelClicked: function(evt) {
         this.changed = false;
+        this.model.unset('updated');
         this.clearValidationErrors();
         this.setButtonStates('view');
         this.handleCancel();
@@ -84,6 +85,9 @@
      * @link {app.plugins.view.editable}
      */
     hasUnsavedChanges: function() {
+        if (this.model.get('updated')) {
+            return true;
+        }
         if (this.model.isNew()) {
             return this.model.hasChanged();
         }
@@ -139,6 +143,7 @@
                     }
                 },
                 success: function() {
+                    self.model.unset('updated');
                     if(self.context.get("create")) {
                         if(self.context.parent) {
                             self.layout.navigateLayout(self.model.id);

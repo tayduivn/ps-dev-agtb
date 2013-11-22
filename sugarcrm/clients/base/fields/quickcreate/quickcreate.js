@@ -56,7 +56,7 @@
         if (this.createHasChanges) {
             app.alert.show('send_confirmation', {
                 level: 'confirmation',
-                messages: 'LBL_WARN_UNSAVED_EDITS',
+                messages: 'LBL_WARN_UNSAVED_CHANGES',
                 onConfirm: _.bind(function() {
                     app.drawer.reset(false);
                     this.createRelatedRecord(module);
