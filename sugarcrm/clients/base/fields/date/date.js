@@ -475,8 +475,7 @@
     decorateError: function (errors) {
         var ftag = this.fieldTag || '',
             $ftag = this.$(ftag),
-            errorMessages = [],
-            $tooltip;
+            errorMessages = [];
 
         // Add error styling
         this.$el.closest('.record-cell').addClass('error');
@@ -489,11 +488,7 @@
         });
         $ftag.wrap('<div class="input-append error ' + ftag + '">');
         $ftag.after(this.exclamationMarkTemplate(errorMessages)+'<span class="add-on"><i class="icon-calendar"></i></span>');
-        $tooltip = this.$('.error-tooltip');
-        if (_.isFunction($tooltip.tooltip)) {
-            var tooltipOpts = { container: 'body', placement: 'top', trigger: 'click' };
-            $tooltip.tooltip(tooltipOpts);
-        }
+        this.createErrorTooltips(this.$('.error-tooltip'));
     },
     /**
      * Remove error decoration from field if it exists.

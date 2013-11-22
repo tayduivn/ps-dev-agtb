@@ -229,14 +229,7 @@
             $input.wrap('<div class="input-append error '+this.fieldTag+'">');
         $input.next('.error-tooltip').remove();
         $input.after(this.exclamationMarkTemplate([app.error.getErrorString(errorName, errorContext)]));
-        var $tooltip = $input.next('.error-tooltip');
-        if (_.isFunction($tooltip.tooltip)) {
-            $tooltip.tooltip({
-                container:'body',
-                placement:'top',
-                trigger:'click'
-            });
-        }
+        this.createErrorTooltips($input.next('.error-tooltip'));
     },
     /**
      * Binds DOM changes to set field value on model.

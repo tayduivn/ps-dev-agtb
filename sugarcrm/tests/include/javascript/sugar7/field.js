@@ -226,4 +226,24 @@ describe('Sugar7 field extensions', function () {
             expect(field._getFallbackTemplate('noaccess')).toEqual('noaccess');
         });
     });
+
+    describe('Error tooltips', function() {
+        it('Should create error tooltips', function() {
+            var tooltip = $('<div rel="tooltip"></div>'),
+                field = SugarTest.createField('base', 'name', 'base', 'edit');
+
+            field.createErrorTooltips(tooltip);
+
+            expect(app.utils.tooltip.has(tooltip)).toBe(true);
+        });
+        it('Should destroy error tooltips', function() {
+            var tooltip = $('<div rel="tooltip"></div>'),
+                field = SugarTest.createField('base', 'name', 'base', 'edit');
+
+            field.createErrorTooltips(tooltip);
+            field.destroyAllErrorTooltips();
+
+            expect(app.utils.tooltip.has(tooltip)).toBe(false);
+        });
+    });
 });

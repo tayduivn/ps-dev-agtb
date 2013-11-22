@@ -465,13 +465,6 @@
     _addErrorDecoration: function(inp, errorName, errorContext) {
         inp.next('.error-tooltip').remove();
         inp.after(this.exclamationMarkTemplate([app.error.getErrorString(errorName, errorContext)]));
-        var tooltip = inp.next('.error-tooltip');
-        if (_.isFunction(tooltip.tooltip)) {
-            tooltip.tooltip({
-                container: 'body',
-                placement: 'top',
-                trigger: 'click'
-            });
-        }
+        this.createErrorTooltips(inp.next('.error-tooltip'));
     }
 })
