@@ -80,9 +80,9 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
         }
 
         if($this->client == 'portal' && !$this->sidecar) {
-            // old portal views have prefixes
-            $filename = "portal.".array_pop($files);
-            array_push($files, $filename);
+            // old portal view paths originate from porta/ and will look like
+            // portal/modules/MODULE/metadata/detailviewdefs.php
+            array_unshift($files, 'portal');
         }
         return join("/", $files);
     }
