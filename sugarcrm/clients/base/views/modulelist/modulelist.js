@@ -12,9 +12,6 @@
  */
 ({
     className: 'module-list',
-    recentRowTemplate: Handlebars.compile(
-        '{{#each models}}<li><a tabindex="-1" class="recentLink actionLink" href="#{{buildRoute model=this}}" data-route="#{{buildRoute model=this}}"><i class="icon-time active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
-    ),
     plugins: ['Dropdown'],
     events: {
         'click [data-toggle=dropdown]': 'getRecentlyViewedAndFavoriteRecords',
@@ -159,7 +156,9 @@
                     });
                     var collection = app.data.createBeanCollection(module, beans);
                     self.$('[data-module=' + module + '] .recentAnchor').show();
-                    self.$('[data-module=' + module + '] .recentContainer').show().html(self.recentRowTemplate(collection));
+                    var recentsTemplate = app.template.getView('modulelist.recents', module) ||
+                        app.template.getView('modulelist.recents');
+                    self.$('[data-module=' + module + '] .recentContainer').show().html(recentsTemplate(collection));
                 }
 
             }});
@@ -197,7 +196,8 @@
                         model.set('name', app.lang.get(model.get('name'), dashCollection.module || null));
                     }
                 });
-                self.$('[data-module=Home] .dashboardContainer').html(self.recentRowTemplate(dashCollection));
+                var recentsTemplate = app.template.getView('modulelist.recents');
+                self.$('[data-module=Home] .dashboardContainer').html(recentsTemplate(dashCollection));
             }
         });
     },
