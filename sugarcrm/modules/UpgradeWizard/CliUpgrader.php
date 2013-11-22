@@ -163,6 +163,17 @@ eoq2;
         if(isset($context['script_mask'])) {
             $context['script_mask'] = $this->parseScriptMask($context['script_mask']);
         }
+        if(!empty($context['log'])) {
+            touch($context['log']);
+            if(!file_exists($context['log'])) {
+                $this->argError("Can not create log file: {$this->context['log']}");
+                // does not return
+            }
+            $context['log'] = realpath($context['log']);
+            if(empty($context['log'])) {
+                $this->argError("Error resolving logfile name");
+            }
+        }
         return $context;
     }
 
