@@ -50,7 +50,8 @@ $viewdefs['Home']['base']['view']['webpage'] = array(
             array(
                 'type' => 'iframe',
                 'name' => 'url',
-                'label' => "URL",
+                'label' => 'LBL_DASHLET_WEBPAGE_URL',
+                'help' => 'LBL_DASHLET_WEBPAGE_URL_HELP',
             ),
             array(
                 'name' => 'limit',
@@ -64,7 +65,7 @@ $viewdefs['Home']['base']['view']['webpage'] = array(
         array(
             'type' => 'iframe',
             'name' => 'url',
-            'label' => "URL",
+            'label' => 'LBL_DASHLET_WEBPAGE_URL',
             'width' => '100%',
 
         ),

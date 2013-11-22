@@ -26,6 +26,7 @@ $viewdefs['Styleguide']['base']['view']['record'] = array(
                     'width' => 42,
                     'height' => 42,
                     'dismiss_label' => true,
+                    'help' => 'Click to edit it.',
                 ),
                 array(
                     'name' => 'full_name',
@@ -60,11 +61,13 @@ $viewdefs['Styleguide']['base']['view']['record'] = array(
                     'name' => 'title',
                     'label' => 'Base',
                     'type' => 'text',
+                    'help' => 'This is an example help for a normal text box with some extensive information.',
                 ),
                 array(
                     'name' => 'do_not_call',
                     'label' => 'Boolean',
                     'type' => 'bool',
+                    'help' => "Don't check this one.",
                 ),
                 array(
                     'name' => 'parent_name',
@@ -79,18 +82,21 @@ $viewdefs['Styleguide']['base']['view']['record'] = array(
                     'id' => 'ASSIGNED_USER_ID',
                     'default' => true,
                     'sortable' => false,
+                    'help' => 'This is the user that will be responsible for this record.',
                 ),
                 array(
                     'name' => 'email',
                     'label' => 'Email',
                     'type' => 'email',
                     'sortable' => false,
+                    'help' => 'Emails can also have a big help description to further enhance the user experience.',
                 ),
                 array(
                     'name' => 'team_name',
                     'label' => 'Teamset',
                     'type' => 'teamset',
                     'module' => 'Teams',
+                    'help' => 'Teams are what we need them to be.',
                 ),
             ),
         ),
@@ -194,6 +200,7 @@ $viewdefs['Styleguide']['base']['view']['record'] = array(
                     'name' => 'file',
                     'label' => 'File',
                     'type' => 'file',
+                    'help' => "This file won't be saved in the application because it is just a dummy example.",
                 ),
                 array(
                     'name' => 'list_price',
@@ -209,6 +216,7 @@ $viewdefs['Styleguide']['base']['view']['record'] = array(
                     'name' => 'phone_home',
                     'label' => 'Phone',
                     'type' => 'phone',
+                    'help' => "Don't call to this number.",
                 ),
                 array(
                     'name' => 'description',
@@ -231,12 +239,13 @@ $viewdefs['Styleguide']['base']['view']['record'] = array(
                     'name' => 'password',
                     'label' => 'Password',
                     'type' => 'password',
+                    'help' => 'Your password will be saved securely!',
                 ),
                 array(
                     'name' => 'empty_text',
                     'label' => 'Label',
                     'type' => 'label',
-                    'default_value' => 'Static text string.'
+                    'default_value' => 'Static text string.',
                 ),
                 array(
                     'name' => 'date_modified_by',

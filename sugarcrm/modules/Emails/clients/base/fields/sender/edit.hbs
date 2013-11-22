@@ -27,4 +27,4 @@
  ********************************************************************************/
 }}
 <input type="hidden" name="{{name}}" class="select2 inherit-width" value="{{value}}" data-id="{{getFieldValue this.model this.def.id_name}}">
-<p class="help-block"></p>
+{{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
