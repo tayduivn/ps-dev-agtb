@@ -187,7 +187,12 @@ class TeamSetManager {
     	$teams = array();
 	    foreach($teams_arr as $team){
 	    	$display_name = Team::getDisplayName($team['name'], $team['name_2']);
-			$teams[] =  array('id' => $team['id'], 'display_name' => $display_name, 'name' => $team['name'], 'name_2' => $team['name_2']);
+            $teams[] = array(
+                'id' => (string)$team['id'],
+                'display_name' => $display_name,
+                'name' => $team['name'],
+                'name_2' => $team['name_2'],
+            );
 		}
 		return $teams;
 	}

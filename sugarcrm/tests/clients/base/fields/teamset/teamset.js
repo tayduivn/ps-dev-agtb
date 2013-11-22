@@ -1,9 +1,23 @@
-describe("Base.Field.Teamset", function () {
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2013 SugarCRM Inc. All rights reserved.
+ */
+describe('Base.Field.Teamset', function() {
 
     var app, field, sinonSandbox, oRouter, buildRouteStub;
 
     beforeEach(function () {
         app = SugarTest.app;
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.set();
         var fieldDef = {
             "name": "team_name",
             "rname": "name",
@@ -106,6 +120,8 @@ describe("Base.Field.Teamset", function () {
         field.render();
         var expected = (field.model.get(field.def.name)).length + 1;
         field.addTeam();
+        // A team object shouldn't appear in model unless a team is specified.
+        field.setValue({id: 'test', value: 'test'});
         var actual = (field.model.get(field.def.name)).length;
         expect(expected).toEqual(actual);
 

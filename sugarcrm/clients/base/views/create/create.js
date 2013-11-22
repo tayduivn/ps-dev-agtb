@@ -121,7 +121,8 @@
         numDiffKeys = _.difference(changed, defaults).length;
         if (numDiffKeys === 0) {
             //same keys so additionally check if any differing values
-            changedAndDefaultsHashesDiffer = _.difference(_.values(changed), _.values(defaults)).length > 0;
+            intersection = _.pick(this.model.getDefaultAttributes(), changed);
+            changedAndDefaultsHashesDiffer = !_.isEqual(intersection, this.model.changedAttributes());
         }
         return this.model.isNew() && modelHasChanged && changedAndDefaultsHashesDiffer;
     },
