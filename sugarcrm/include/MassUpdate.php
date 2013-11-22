@@ -1425,7 +1425,6 @@ EOQ;
         }
         else{
             $this->use_old_search = false;
-            require_once('include/SearchForm/SearchForm2.php');
 
             $searchFields = $this->getSearchFields($module);
             $searchdefs = $this->getSearchDefs($module);
@@ -1435,7 +1434,7 @@ EOQ;
                return;
             }
 
-            $searchForm = new SearchForm($seed, $module);
+            $searchForm = $this->getSearchForm($seed, $module);
             $searchForm->setup($searchdefs, $searchFields, 'SearchFormGeneric.tpl');
         }
 	/* bug 31271: using false to not add all bean fields since some beans - like SavedReports
@@ -1590,6 +1589,23 @@ EOQ;
         return '';
     }
 
+    /**
+     * Get search form - module specific, custom or default
+     * @param SugarBean $bean
+     * @param string $module
+     * @return SearchForm
+     */
+    protected function getSearchForm($bean, $module)
+    {
+        if (SugarAutoLoader::requireWithCustom("modules/$module/{$module}SearchForm.php")) {
+            $searchFormClass = SugarAutoLoader::customClass("{$module}SearchForm");
+        } else {
+            SugarAutoLoader::requireWithCustom('include/SearchForm/SearchForm2.php');
+            $searchFormClass = SugarAutoLoader::customClass('SearchForm');
+        }
+        return new $searchFormClass($bean, $module);
+    }
+    
     /**
      * Boolean converter that returns whether the value is boolean true. This is
      * static because it is consumed from internal static methods.
