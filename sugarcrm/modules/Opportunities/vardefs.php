@@ -447,6 +447,7 @@ $dictionary['Opportunity'] = array(
                 )
             ),
             'vname' => 'LBL_CONTACTS',
+            'hide_history_contacts_emails' => true,
         ),
         'contact_role' => array(
             'name' => 'contact_role',

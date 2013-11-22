@@ -182,4 +182,52 @@ class ConfiguratorController extends SugarController
         }
         $this->view = 'edit';
     }
+
+    /**
+     * Define correct view for action
+     */
+    function action_historyContactsEmails()
+    {
+        $this->view = 'historyContactsEmails';
+    }
+
+    /**
+     * Generates custom field_defs for selected fields
+     */
+    function action_historyContactsEmailsSave()
+    {
+        if (!empty($_POST['modules']) && is_array($_POST['modules'])) {
+
+            $modules = array();
+            foreach ($_POST['modules'] as $moduleName => $enabled) {
+                $bean = BeanFactory::getBean($moduleName);
+
+                if (!($bean instanceof SugarBean)) {
+                    continue;
+                }
+                if (empty($bean->field_defs)) {
+                    continue;
+                }
+
+                // these are the specific modules we care about
+                if (!in_array($moduleName, array('Opportunities','Accounts','Cases'))) {
+                    continue;
+                }
+
+                $bean->load_relationships();
+                foreach ($bean->get_linked_fields() as $fieldName => $fieldDef) {
+                    if ($bean->$fieldName->getRelatedModuleName() == 'Contacts') {
+                        $modules[$moduleName] = !$enabled;
+                        break;
+                    }
+                }
+            }
+
+            $configurator = new Configurator();
+            $configurator->config['hide_history_contacts_emails'] = $modules;
+            $configurator->handleOverride();
+        }
+
+        SugarApplication::redirect('index.php?module=Administration&action=index');
+    }
 }

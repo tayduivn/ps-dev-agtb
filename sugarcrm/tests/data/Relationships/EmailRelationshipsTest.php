@@ -30,6 +30,7 @@ class EmailRelationshipsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestCaseUtilities::removeAllCreatedCases();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestHelper::tearDown();
         if (!empty($this->macro)) {
             $GLOBALS['sugar_config']['inbound_email_case_subject_macro'] = $this->macro;
@@ -165,4 +166,43 @@ class EmailRelationshipsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($email3->name, $beans[$email3->id]->name, "Email 3 subject wrong");
         $this->assertEquals($email5->name, $beans[$email5->id]->name, "Email 5 subject wrong");
     }
+
+    public function testOpportunityLinkByContact()
+    {
+        $acct = SugarTestAccountUtilities::createAccount();
+        $opp = SugarTestOpportunityUtilities::createOpportunity('', $acct);
+        $opp->retrieve($opp->id);
+        $cont = SugarTestContactUtilities::createContact('',
+            array("email" => "testcontact@test.com"));
+        $opp->load_relationship("contacts");
+        $opp->contacts->add($cont);
+        // test direct link
+        $email1 = SugarTestEmailUtilities::createEmail('',
+            array("parent_id" => $opp->id, "parent_type" => 'Opportunities',
+                'from_addr' => "unit@test.com", "name" => "Test email 1")
+        );
+        // test link direct by contact
+        $email2 = SugarTestEmailUtilities::createEmail('',
+            array("parent_id" => $cont->id, "parent_type" => 'Contacts',
+                'from_addr' => "unit@test.com", "name" => "Test email 2")
+        );
+        // test link by contact email
+        $email3 = SugarTestEmailUtilities::createEmail('',
+            array('from_addr' => "unit@test.com",
+                "to_addrs" => "unit@test.com,testcontact@test.com", "name" => "Test email 4")
+        );
+
+        $newopp = $opp->getCleanCopy();
+        $newopp->retrieve($opp->id);
+        $newopp->load_relationship('archived_emails');
+
+        $beans = $newopp->archived_emails->getBeans();
+
+        $this->assertCount(1, $beans);
+        $this->assertArrayHasKey($email1->id, $beans, "Email 1 missing");
+        $this->assertArrayNotHasKey($email2->id, $beans, "Email 2 should not be there");
+        $this->assertArrayNotHasKey($email3->id, $beans, "Email 3 should not be there");
+
+    }
+
 }
