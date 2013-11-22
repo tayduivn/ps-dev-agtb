@@ -194,10 +194,10 @@ class SugarQuery
      */
     public function whereRaw($sql)
     {
-        $where = new SugarQuery_Builder_Andwhere();
+        $where = new SugarQuery_Builder_Andwhere($this);
         $where->addRaw($sql);
         if (!isset($this->where['and'])) {
-            $this->where['and'] = new SugarQuery_Builder_Andwhere(array(), $this);
+            $this->where['and'] = new SugarQuery_Builder_Andwhere($this);
         }
         $this->where['and']->add($where);
         return $this->where['and'];
