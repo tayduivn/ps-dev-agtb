@@ -332,8 +332,7 @@
      * @param errors
      */
     handleValidationError: function(errors) {
-        var errorMessages = [],
-            $tooltip;
+        var errorMessages = [];
 
         if (this.action === 'detail') {
             this.setMode('edit');
@@ -351,11 +350,7 @@
             errorMessages.push(app.error.getErrorString(errorName, errorContext));
         });
         this.$('.image_field').append(this.exclamationMarkTemplate(errorMessages));
-        $tooltip = this.$('.error-tooltip');
-        if (_.isFunction($tooltip.tooltip)) {
-            var tooltipOpts = { container: 'body', placement: 'right', trigger: 'click' };
-            $tooltip.tooltip(tooltipOpts);
-        }
+        this.createErrorTooltips(this.$('.error-tooltip'));
     },
 
     /**
