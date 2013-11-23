@@ -115,7 +115,7 @@ class SugarUpgradeScanModules extends UpgradeScript
         if(empty($this->beanFiles[$bean])) {
             return false;
         }
-        $mbFiles = array("Dashlets", "Menu.php", "language", "metadata", "vardefs.php", "clients");
+        $mbFiles = array("Dashlets", "Menu.php", "language", "metadata", "vardefs.php", "clients", "workflow");
         $mbFiles[] = basename($this->beanFiles[$bean]);
         $mbFiles[] = pathinfo($this->beanFiles[$bean], PATHINFO_FILENAME)."_sugar.php";
 

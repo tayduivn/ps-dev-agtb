@@ -37,6 +37,8 @@ END;
         file_put_contents('modules/scantestHooks/scantestHooks.php', "<?php echo 'Hello world!'; ");
 
         mkdir_recursive('custom/modules/scantestHooks/Ext/LogicHooks');
+        mkdir_recursive('custom/modules/scantestHooks/workflow');
+
         file_put_contents('custom/modules/scantestHooks/scantestHooks2.php', "<?php echo 'Hello world!'; ");
         $hook_array['before_save'][] = array(1, 'Custom Logic', 'modules/scantestHooks/scantestHooks.php', 'test', 'test');
         write_array_to_file('hook_array', $hook_array, 'custom/modules/scantestHooks/logic_hooks.php');
