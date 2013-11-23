@@ -73,6 +73,7 @@
         </testsuite>
         <testsuite name="Sugar Core Test Suite">
             <directory>./data/</directory>
+            <directory>./upgrade/</directory>
             <directory>./install/</directory>
             <directory>./jssource/</directory>
             <directory>./ModuleInstall/</directory>
