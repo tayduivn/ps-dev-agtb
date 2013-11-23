@@ -40,12 +40,6 @@
                 template: SUGAR.App.template
             });
         }
-        /**
-         * Fix placeholder on global search on IE and old browsers
-         */
-        if($.fn.placeholder){
-            this.$("input[placeholder]").placeholder();
-        }
     };
 
     /**

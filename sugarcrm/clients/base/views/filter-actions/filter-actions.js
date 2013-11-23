@@ -77,7 +77,11 @@
      * @param name
      */
     setFilterName: function(name) {
-        this.$("input").val(name);
+        var input = this.$("input").val(name);
+        //Call placeholder() because IE9 does not support placeholders.
+        if (_.isFunction(input.placeholder)) {
+            input.placeholder();
+        }
         // We have this.layout.editingFilter if we're setting the name.
         this.toggleDelete(!name);
     },

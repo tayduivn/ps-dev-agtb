@@ -101,7 +101,11 @@
         } else {
             label = app.lang.get('LBL_BASIC_QUICK_SEARCH');
         }
-        this.$el.attr('placeholder', label);
+        var input = this.$el.attr('placeholder', label);
+        //Call placeholder() because IE9 does not support placeholders.
+        if (_.isFunction(input.placeholder)) {
+            input.placeholder();
+        }
     },
 
     /**
@@ -116,7 +120,11 @@
      */
     clearInput: function() {
         this.toggleInput();
-        this.$el.val('');
+        var input = this.$el.val('');
+        //Call placeholder() because IE9 does not support placeholders.
+        if (_.isFunction(input.placeholder)) {
+            input.placeholder();
+        }
         this.currentSearch = '';
         this.layout.trigger('filter:apply');
     }
