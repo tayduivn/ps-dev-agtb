@@ -2279,7 +2279,7 @@ class SugarBean
             $xtpl = $this->set_notification_body($xtpl, $this);
         } else {
             //Default uses OBJECT key for both subject and body (see en_us.notify_template.html)
-            $singularModuleLabel = $GLOBALS['app_list_strings']['moduleListSingular'][$this->getObjectName()];
+            $singularModuleLabel = $GLOBALS['app_list_strings']['moduleListSingular'][$this->module_name];
             $xtpl->assign("OBJECT", $singularModuleLabel);
         }
 
