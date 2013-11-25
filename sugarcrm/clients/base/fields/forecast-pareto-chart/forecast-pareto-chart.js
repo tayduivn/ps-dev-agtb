@@ -106,25 +106,25 @@
             .tooltips(true)
             .tooltipQuota(function(key, x, y, e, graph) {
                 // Format the value using currency class and user settings
-                var val = App.currency.formatAmountLocale(e.val);
+                var val = app.currency.formatAmountLocale(e.val);
                 return '<p><b>' + e.key + ': <b>' + val + '</b></p>';
             })
             .tooltipLine(function(key, x, y, e, graph) {
                 // Format the value using currency class and user settings
-                var val = App.currency.formatAmountLocale(e.point.y);
-                return '<p><b>' + SUGAR.App.lang.get('LBL_CUMMULATIVE_TOTAL', 'Forecasts') + '</b></p><p>' + key + ': <b>' + val + '</b></p>';
+                var val = app.currency.formatAmountLocale(e.point.y);
+                return '<p><b>' + app.lang.get('LBL_CUMMULATIVE_TOTAL', 'Forecasts') + '</b></p><p>' + key + ': <b>' + val + '</b></p>';
             })
             .tooltipBar(_.bind(function(key, x, y, e, graph) {
                 // Format the value using currency class and user settings
-                var val = App.currency.formatAmountLocale(e.value),
-                    lbl = SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts');
+                var val = app.currency.formatAmountLocale(e.value),
+                    lbl = app.lang.get('LBL_SALES_STAGE', 'Forecasts');
                 if(this.model.get('group_by') == 'probability') {
-                    lbl = SUGAR.App.lang.get('LBL_OW_PROBABILITY', 'Forecasts') + ' (%)';
+                    lbl = app.lang.get('LBL_OW_PROBABILITY', 'Forecasts') + ' (%)';
                 }
 
                 return '<p>' + lbl + ': <b>' + key + '</b></p>' +
-                    '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + val + '</b></p>' +
-                    '<p>' + SUGAR.App.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>';
+                    '<p>' + app.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + val + '</b></p>' +
+                    '<p>' + app.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>';
             }, this))
             .showControls(false)
             .colorData('default')
@@ -185,7 +185,7 @@
                 .selectAll('.nv-y.nv-axis .tick')
                 .select('text')
                 .text(function(d) {
-                    return App.user.get('preferences').currency_symbol + d3.format(',.2s')(d);
+                    return app.user.getPreference('currency_symbol') + d3.format(',.2s')(d);
                 });
 
             nv.utils.windowResize(this.paretoChart.update);
