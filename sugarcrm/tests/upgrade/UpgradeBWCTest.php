@@ -7,7 +7,6 @@ class UpgradeBWCTest extends UpgradeTestCase
     public function setUp()
     {
         parent::setUp();
-        SugarTestHelper::setUp('files');
         SugarTestHelper::saveFile('custom/Extension/application/Ext/Include/scantest.php');
         $data = <<<'END'
 <?php
@@ -24,11 +23,12 @@ $beanList['scantestHooks'] = 'scantestHooks';
 $beanFiles['scantestHooks'] = 'modules/scantestHooks/scantestHooks.php';
 $moduleList[] = 'scantestHooks';
 END;
-        file_put_contents('custom/Extension/application/Ext/Include/scantest.php', $data);
         sugar_mkdir('modules/scantest');
         sugar_mkdir('modules/scantestMB');
         sugar_mkdir('modules/scantestExt');
         sugar_mkdir('modules/scantestHooks');
+        mkdir_recursive('custom/Extension/application/Ext/Include/');
+        file_put_contents('custom/Extension/application/Ext/Include/scantest.php', $data);
 
         file_put_contents('modules/scantest/scantest.php', "<?php echo 'Hello world!'; ");
         file_put_contents('modules/scantest/scantest2.php', "<?php echo 'Hello world!'; ");
@@ -77,6 +77,7 @@ END;
      */
     public function testScanModules()
     {
+        $this->upgrader->setVersions("6.7.3", 'ent', '7.1.5', 'ent');
         $script = $this->upgrader->getScript("post", "6_ScanModules");
         $script->run();
 

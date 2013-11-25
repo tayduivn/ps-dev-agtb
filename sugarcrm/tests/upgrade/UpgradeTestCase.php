@@ -44,7 +44,7 @@ abstract class UpgradeTestCase extends Sugar_PHPUnit_Framework_TestCase
 	public function setUp()
 	{
 	    $this->upgrader = new TestUpgrader(self::$admin);
-        SugarTestHelper::setUp("files");
+	    SugarTestHelper::setUp("files");
 	}
 
 	public function tearDown()
