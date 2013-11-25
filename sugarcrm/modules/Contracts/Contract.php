@@ -143,14 +143,6 @@ class Contract extends SugarBean
         if ($this->total_contract_value_usdollar == '') {
             $this->total_contract_value_usdollar = 0;
         }
-        $currency = BeanFactory::getBean('Currencies', $this->currency_id);
-        $this->base_rate = $currency->conversion_rate;
-        if (!empty($this->total_contract_value)) {
-            $this->total_contract_value_usdollar = SugarCurrency::convertWithRate(
-                $this->total_contract_value,
-                $this->base_rate
-            );
-        }
         $this->setCalculatedValues(false);
         $return_id = parent::save($check_notify);
         //BEGIN SUGARCRM flav=pro ONLY

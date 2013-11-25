@@ -1782,6 +1782,11 @@ class SugarBean
         }
         //END SUGARCRM flav=pro ONLY
 
+        // if this bean has a currency_id and base_rate, verify that base_rate is set to the correct amount
+        if (isset($this->field_defs['currency_id']) && isset($this->field_defs['base_rate'])) {
+            SugarCurrency::verifyCurrencyBaseRateSet($this);
+        }
+
         require_once("data/BeanFactory.php");
         BeanFactory::registerBean($this->module_name, $this);
 

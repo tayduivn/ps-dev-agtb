@@ -96,12 +96,11 @@ class TemplateField{
         // Bug 58560 - Add a group index here so it gets written to the custom vardefs
         // for cases such as address fields
         'group' => 'group',
-	//BEGIN SUGARCRM flav=pro ONLY
 		'calculated' => 'calculated',
         'formula' => 'formula',
         'enforced' => 'enforced',
         'dependency' => 'dependency',
-	//END SUGARCRM flav=pro ONLY
+        'related_fields' => 'related_fields',
 	);
     // Bug #48826
     // fields to decode from post request
