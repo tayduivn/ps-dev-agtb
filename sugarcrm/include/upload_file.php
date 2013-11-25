@@ -166,7 +166,7 @@ class UploadFile
 	 * @param string $new_id ID of new (copied) note
 	 * @param string $filename Filename of file (deprecated)
 	 */
-	public static function duplicate_file($old_id, $new_id, $file_name)
+	public static function duplicate_file($old_id, $new_id, $file_name = '')
 	{
 		global $sugar_config;
 

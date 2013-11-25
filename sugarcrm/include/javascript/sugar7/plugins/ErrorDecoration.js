@@ -52,15 +52,17 @@
             },
             showTooltip:function (e) {
                 _.defer(function () {
-                    var $addon = this.$(e.currentTarget).next('.add-on');
-                    if ($addon && _.isFunction($addon.tooltip)) {
+                    var $addon = this.$(e.currentTarget).nextAll('.add-on').first();
+                    if (app.utils.tooltip.has($addon)) {
                         $addon.tooltip('show');
                     }
                 }, this);
             },
             hideTooltip:function (e) {
-                var $addon = this.$(e.currentTarget).next('.add-on');
-                if ($addon && _.isFunction($addon.tooltip)) $addon.tooltip('hide');
+                var $addon = this.$(e.currentTarget).nextAll('.add-on').first();
+                if (app.utils.tooltip.has($addon))  {
+                    $addon.tooltip('hide');
+                }
             },
 
             /**

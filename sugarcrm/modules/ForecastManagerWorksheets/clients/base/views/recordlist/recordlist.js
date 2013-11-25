@@ -307,7 +307,7 @@
                 this.context.parent.on('forecasts:worksheet:is_dirty', function(worksheetType, is_dirty) {
                     if (this.worksheetType == worksheetType) {
                         if (is_dirty) {
-                            this.setNavigationMessage(true, 'LBL_WARN_UNSAVED_EDITS', 'LBL_WARN_UNSAVED_EDITS');
+                            this.setNavigationMessage(true, 'LBL_WARN_UNSAVED_CHANGES', 'LBL_WARN_UNSAVED_CHANGES');
                         } else {
                             // worksheet is not dirty,
                             this.cleanUpDirtyModels();
@@ -404,7 +404,7 @@
             if (this.isDirty()) {
                 app.alert.show('leave_confirmation', {
                     level: 'confirmation',
-                    messages: app.lang.get('LBL_WARN_UNSAVED_EDITS', 'Forecasts'),
+                    messages: app.lang.get('LBL_WARN_UNSAVED_CHANGES', 'Forecasts'),
                     onConfirm: _.bind(function(){
                         this._setOrderBy(options)
                     }, this),

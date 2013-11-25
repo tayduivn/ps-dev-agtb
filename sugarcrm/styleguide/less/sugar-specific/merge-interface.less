@@ -96,8 +96,8 @@ h4.merge-interface-header {
           }
         }
 		.box {
-			.border-radius(3px);
-	    .box-shadow(0 0 1px #aaaaaa);
+			border-radius: 3px;
+		    .box-shadow(0 0 1px #aaaaaa);
 			.merge-edit {
 				display: none;
 			}
@@ -248,6 +248,30 @@ h4.merge-interface-header {
           margin-left: 0;
           &.input-append {
             white-space: normal;
+          }
+        }
+      }
+      &.merge-row-field-currency {
+        height: 70px;
+        .controls label {
+          height: 75px;
+        }
+        .controls label > span > div {
+          width: 90%;
+          margin-left: 0;
+          .span4, span8 {
+            width: 99%;
+          }
+          .converted {
+            display: block;
+            position: relative;
+          }
+          .original{
+            display: inline;
+            position: relative;
+          }
+          input {
+            width: 86px;
           }
         }
       }

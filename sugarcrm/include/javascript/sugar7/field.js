@@ -182,10 +182,7 @@
              */
             _render: function () {
                 // Tooltips are appended to body and when the field rerenders we lose control of shown tooltips.
-                var $tooltip = this.$('.error-tooltip');
-                if (_.isFunction($tooltip.tooltip)) {
-                    $tooltip.tooltip('destroy');
-                }
+                this.destroyAllErrorTooltips();
 
                 var isErrorState = this.$('.add-on.error-tooltip').length > 0;
 
@@ -382,12 +379,9 @@
                     });
                 }
                 $ftag.wrap('<div class="input-append error ' + ftag + '">');
-                $tooltip = this.exclamationMarkTemplate(errorMessages);
+                $tooltip = $(this.exclamationMarkTemplate(errorMessages));
                 $ftag.after($tooltip);
-                if (_.isFunction($tooltip.tooltip)) {
-                    var tooltipOpts = {placement: 'top', trigger: 'click' };
-                    $tooltip.tooltip(tooltipOpts);
-                }
+                this.createErrorTooltips($tooltip);
                 // Select2 sometimes has hidden fields, this prevents errors for said fields from showing on screen
                 $ftag.each(function() {
                     if($(this).hasClass("select2-offscreen")) {
@@ -395,6 +389,32 @@
                     }
                 });
 
+            },
+
+            /**
+             * Create error tooltips.
+             * @param {jQuery} $element
+             */
+            createErrorTooltips: function($element) {
+                this._errorTooltips = this._errorTooltips || [];
+                this._errorTooltips.push(app.utils.tooltip.initialize($element));
+            },
+
+            /**
+             * Destroy all error tooltips.
+             */
+            destroyAllErrorTooltips: function() {
+                app.utils.tooltip.destroy(this._errorTooltips);
+                this._errorTooltips = null;
+            },
+
+            /**
+             * Destroy all error tooltips before disposing the field.
+             * @private
+             */
+            _dispose: function() {
+                this.destroyAllErrorTooltips();
+                _fieldProto._dispose.call(this);
             },
 
             /**

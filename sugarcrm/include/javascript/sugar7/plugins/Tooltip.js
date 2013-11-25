@@ -82,18 +82,20 @@
              */
             addPluginTooltips: function($element) {
                 var $tooltips = this._getPluginTooltips($element);
-                this._$pluginTooltips  = this._$pluginTooltips || [];
-                this._$pluginTooltips.push(app.utils.tooltip.initialize($tooltips));
+                if ($tooltips.length > 0) {
+                    this._$pluginTooltips  = this._$pluginTooltips || [];
+                    this._$pluginTooltips.push(app.utils.tooltip.initialize($tooltips));
 
-                //hide tooltip when clicked
-                $tooltips.on('click.tooltip', function() {
-                    var plugin = $(this).data('tooltip');
-                    if (plugin && plugin.options && plugin.options.trigger === 'click') {
-                        return;
-                    }
-                    $(this).tooltip('hide');
-                });
-                app.accessibility.run($tooltips, 'click');
+                    //hide tooltip when clicked
+                    $tooltips.on('click.tooltip', function() {
+                        var plugin = $(this).data('tooltip');
+                        if (plugin && plugin.options && plugin.options.trigger === 'click') {
+                            return;
+                        }
+                        $(this).tooltip('hide');
+                    });
+                    app.accessibility.run($tooltips, 'click');
+                }
             },
 
             /**
@@ -101,7 +103,12 @@
              * @param {jQuery} $element (optional)
              */
             removePluginTooltips: function($element) {
-                var $tooltips = this._getPluginTooltips($element);
+                var $tooltips;
+                if ($element) {
+                    $tooltips = this._getPluginTooltips($element);
+                } else {
+                    $tooltips = this._$pluginTooltips;
+                }
                 app.utils.tooltip.destroy($tooltips);
             },
 

@@ -139,7 +139,10 @@ function {$id}_range_change(val)
      document.getElementById("{$id}_range_div").style.display = '';
      document.getElementById("{$id}_between_range_div").style.display = 'none';
   {rdelim} else {ldelim}
-     document.getElementById("range_{$id}").value = '[' + val + ']';    
+     if (val != '') {ldelim}
+        val = '[' + val + ']';
+     {rdelim}
+     document.getElementById("range_{$id}").value = val;
      document.getElementById("start_range_{$id}").value = '';
      document.getElementById("end_range_{$id}").value = ''; 
      document.getElementById("{$id}_range_div").style.display = 'none';

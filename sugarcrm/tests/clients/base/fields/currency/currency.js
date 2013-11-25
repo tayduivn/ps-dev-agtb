@@ -473,8 +473,9 @@ describe('Base.Fields.Currency', function() {
         });
 
         it('should call setCurrencyValue', function() {
+            var model = {get: $.noop};
             field.action = 'edit';
-            field._valueChangeHandler({}, '123');
+            field._valueChangeHandler(model, '123');
             expect(field.render).not.toHaveBeenCalled();
             expect(field.setCurrencyValue).toHaveBeenCalled();
         });
