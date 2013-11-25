@@ -12,8 +12,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $mod_strings = array (
-	'ERR_DELETE_RECORD' => 'A record number must be specified to delete the meeting.',
-
+	'ERR_DELETE_RECORD' => 'A record number must be specified to delete the Meeting.',
 	'LBL_ACCEPT_THIS'=>'Accept?',
 	'LBL_ADD_BUTTON'=> 'Add',
 	'LBL_ADD_INVITEE' => 'Add Invitees',
@@ -101,7 +100,7 @@ $mod_strings = array (
 	'LNK_NEW_MEETING'=>'Schedule Meeting',
 	'LNK_IMPORT_MEETINGS' => 'Import Meetings',
 
-	'NTC_REMOVE_INVITEE' => 'Are you sure you want to remove this invitee from the meeting?',
+	'NTC_REMOVE_INVITEE' => 'Are you sure you want to remove this invitee from the Meeting?',
     'LBL_CREATED_USER' => 'Created User',
     'LBL_MODIFIED_USER' => 'Modified User',
     'NOTICE_DURATION_TIME' => 'Duration time must be greater than 0',
@@ -113,13 +112,13 @@ $mod_strings = array (
     'LBL_ACCEPT_LINK' => 'Accept Link',
     // You are not invited to the meeting messages
     'LBL_EXTNOT_HEADER' => 'Error: Not Invited',
-    'LBL_EXTNOT_MAIN' => 'You are not able to join this meeting because you are not an Invitee.',
+    'LBL_EXTNOT_MAIN' => 'You are not able to join this Meeting because you are not an Invitee.',
     'LBL_EXTNOT_RECORD_LINK' => 'View Meeting',
     'LBL_EXTNOT_GO_BACK' => 'Go back to the previous record',
 
     //cannot start messages
     'LBL_EXTNOSTART_HEADER' => 'Error: Cannot Start Meeting',
-    'LBL_EXTNOSTART_MAIN' => 'You cannot start this meeting because you are not an Administrator or the owner of the meeting.',
+    'LBL_EXTNOSTART_MAIN' => 'You cannot start this Meeting because you are not an Administrator or the owner of the Meeting.',
 
   //For export labels
     'LBL_EXPORT_JOIN_URL' => 'Join Url',
@@ -155,7 +154,7 @@ $mod_strings = array (
     'LBL_REPEAT_DOW' => 'On',
     'LBL_REPEAT_UNTIL' => 'Repeat Until',
     'LBL_REPEAT_COUNT' => 'Number of recurrences',
-    'LBL_RECURRING_LIMIT_ERROR' => 'This recurring meeting cannot be scheduled because it exceeds the maximum allowed recurrence of $limit.',
+    'LBL_RECURRING_LIMIT_ERROR' => 'This recurring Meeting cannot be scheduled because it exceeds the maximum allowed recurrence of $limit.',
     'LBL_EDIT_ALL_RECURRENCES' => 'Edit All Recurrences',
     'LBL_REMOVE_ALL_RECURRENCES' => 'Delete All Recurrences',
     'LBL_DATE_END_ERROR' => 'End date is before start date',
@@ -164,7 +163,7 @@ $mod_strings = array (
     'LBL_CONFIRM_REMOVE_ALL_RECURRENCES' => 'Are you sure you want to remove all recurring records?',
     'LBL_RECURRENCE' => 'Recurrence',
     
-    'LBL_SYNCED_RECURRING_MSG' => 'This meeting originated in another system and was synced to Sugar. To make changes, go to the original meeting within the other system. Changes made in the other system can be synced to this record.',
+    'LBL_SYNCED_RECURRING_MSG' => 'This Meeting originated in another system and was synced to Sugar. To make changes, go to the original Meeting within the other system. Changes made in the other system can be synced to this record.',
     'LBL_RELATED_TO' => 'Related to:',
     'LBL_CREATE_MODULE' => 'Schedule Meeting',
     'LBL_RELATED_RECORD_DEFAULT_NAME' => 'Meeting with {{{this}}}',
