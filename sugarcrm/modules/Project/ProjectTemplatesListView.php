@@ -161,7 +161,7 @@ for ($i = 0; $i < count($lv->data['data']); $i++) {
     $lv->data['data'][$i]['OFFSET'] = $i + 1;
 }
 
-$lv->ss->assign('act','pte');
+$lv->ss->assign('act','ProjectTemplatesEditView');
 
 $savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
 echo get_form_header($current_module_strings['LBL_LIST_FORM_TITLE'] . $savedSearchName, '', false);
