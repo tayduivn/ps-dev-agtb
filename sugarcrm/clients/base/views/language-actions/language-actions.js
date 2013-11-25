@@ -69,7 +69,8 @@
     adjustMenuHeight: function(){
         var footerHeight = $("footer").height(),
             viewportHeight = $(window).height(),
-            menuHeight = viewportHeight - footerHeight;
+            currentMenuHeight = this.$('.dropdown-menu').height(),
+            menuHeight = (currentMenuHeight > viewportHeight) ? viewportHeight - footerHeight : currentMenuHeight;
         this.$('.dropdown-menu').height(menuHeight);
     },
     /**
