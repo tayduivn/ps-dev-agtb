@@ -375,23 +375,17 @@
 .select2-addon {
   .input-append {
     width: 50%;
-    width: ~"-moz-calc(100% - 100px)";
-    width: ~"-webkit-calc(100% - 100px)";
-    width: ~"calc(100% - 100px)";
+    .calc(width, 100% - 100px);
     float: left;
     input[type="text"] {
       width: 95%;
-      width: ~"-moz-calc(100% - 14px)";
-      width: ~"-webkit-calc(100% - 14px)";
-      width: ~"calc(100% - 14px)";
+      .calc(width, 100% - 14px);
       .border-radius(0 2px 2px 0);
     }
   }
   > input[type="text"] {
     width: 50%;
-    width: ~"-moz-calc(100% - 114px)";
-    width: ~"-webkit-calc(100% - 114px)";
-    width: ~"calc(100% - 114px)";
+    .calc(width, 100% - 114px);
     float: left;
     .border-radius(0 2px 2px 0);
   }

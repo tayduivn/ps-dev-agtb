@@ -174,9 +174,7 @@
       .record-cell:first-child {
         display: table-cell;
         position: relative;
-        padding-left: ~"-moz-calc(1.5% + 6px)";
-        padding-left: ~"-webkit-calc(1.5% + 6px)";
-        padding-left: ~"calc(1.5% + 6px)";
+        .calc(padding-left, 1.5% + 6px);
         padding-top: 14px;
         padding-right: 0;
       }
@@ -200,9 +198,6 @@
         div.dropdown {
           line-height: 24px;
           padding-right: 24px;
-          /*max-width: ~"-moz-calc(100% - 78px)";
-          max-width: ~"-webkit-calc(100% - 78px)";
-          max-width: ~"calc(100% - 78px)";*/
           &> a {
             font-size: @fontSizeHeader;
             color: inherit;
@@ -242,12 +237,7 @@
         min-width: auto;
       }
       .btn-toolbar {
-        /*position: absolute;
-        right: 0;
-        top: 0;*/
-        padding-right: ~"-moz-calc(1.5% + 8px)";
-        padding-right: ~"-webkit-calc(1.5% + 8px)";
-        padding-right: ~"calc(1.5% + 8px)";
+        .calc(padding-right, 1.5% + 8px);
       }
     }
     &.edit {

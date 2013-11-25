@@ -124,6 +124,12 @@
       border-top-left-radius: @tl-radius;
 }
 
+.calc(@prop, @val) {
+      @prop: -moz-calc(@val);
+      @prop: -webkit-calc(@val);
+      @prop: calc(@val);
+}
+
 .outline(@val) {
   outline: @val;
 }
@@ -156,9 +162,7 @@
   position: absolute;
   bottom: -5px;
   width: 100%;
-  width: ~"-moz-calc(100% + 1px)";
-  width: ~"-webkit-calc(100% + 1px)";
-  width: ~"calc(100% + 1px)";
+  .calc(width, 100% + 1px);
   height: 5px;
   left: 0;
   top: auto;

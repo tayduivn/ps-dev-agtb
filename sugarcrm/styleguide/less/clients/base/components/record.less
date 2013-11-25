@@ -247,9 +247,7 @@
     &[data-type="enum"] .normal > span
     .select2-container.select2-container-multi.select2-choices-pills-close {
       position: relative;
-      width: ~"-moz-calc(100% + 16px)" !important;
-      width: ~"-webkit-calc(100% + 16px)" !important;
-      width: ~"calc(100% + 16px)" !important;
+      .calc(width, 100% + 16px) !important;
     }
 
     &[data-type="parent"] {
@@ -297,9 +295,7 @@
     &[data-type="datetimecombo"] {
       input[type="text"] {
         width: 40%;
-        width: ~"-moz-calc(100% / 2 - 12px)";
-        width: ~"-webkit-calc(100% / 2 - 12px)";
-        width: ~"calc(100% / 2 - 12px)";
+        .calc(width, 100% / 2 - 12px);
       }
       .input-append.date {
         .ui-timepicker-input,
@@ -448,17 +444,13 @@
     .input-append {
       input[type="text"] {
         width: 95%;
-        width: ~"-moz-calc(100% - 14px)";
-        width: ~"-webkit-calc(100% - 14px)";
-        width: ~"calc(100% - 14px)";
+        .calc(width, 100% - 14px);
         margin-left: 0;
       }
     }
     > input[type="text"] {
       width: 50%;
-      width: ~"-moz-calc(100% - 114px)";
-      width: ~"-webkit-calc(100% - 114px)";
-      width: ~"calc(100% - 114px)";
+      .calc(width, 100% - 114px);
       margin-left: 0;
     }
     .select2-container {

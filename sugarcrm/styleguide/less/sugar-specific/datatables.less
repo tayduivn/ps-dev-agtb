@@ -94,9 +94,7 @@ table.dataTable {
         &[data-type="datetimecombo"] {
           input[type="text"] {
             width: 40%;
-            width: ~"-moz-calc(100% / 2 - 4px)";
-            width: ~"-webkit-calc(100% / 2 - 4px)";
-            width: ~"calc(100% / 2 - 4px)";
+            .calc(width, 100% / 2 - 4px);
           }
         }
         &> *:not(.overflow-visible) {
@@ -396,9 +394,7 @@ table.dataTable {
   .select2-addon {
     input[type="text"] {
       width: 95%;
-      width: ~"-moz-calc(100% - 100px)";
-      width: ~"-webkit-calc(100% - 100px)";
-      width: ~"calc(100% - 100px)";
+      .calc(width, 100% - 100px);
     }
   }
   input[type=radio],
