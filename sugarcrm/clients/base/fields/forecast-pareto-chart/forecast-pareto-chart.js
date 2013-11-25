@@ -114,13 +114,18 @@
                 var val = App.currency.formatAmountLocale(e.point.y);
                 return '<p><b>' + SUGAR.App.lang.get('LBL_CUMMULATIVE_TOTAL', 'Forecasts') + '</b></p><p>' + key + ': <b>' + val + '</b></p>';
             })
-            .tooltipBar(function(key, x, y, e, graph) {
+            .tooltipBar(_.bind(function(key, x, y, e, graph) {
                 // Format the value using currency class and user settings
-                var val = App.currency.formatAmountLocale(e.value);
-                return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + key + '</b></p>' +
+                var val = App.currency.formatAmountLocale(e.value),
+                    lbl = SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts');
+                if(this.model.get('group_by') == 'probability') {
+                    lbl = SUGAR.App.lang.get('LBL_OW_PROBABILITY', 'Forecasts') + ' (%)';
+                }
+
+                return '<p>' + lbl + ': <b>' + key + '</b></p>' +
                     '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + val + '</b></p>' +
                     '<p>' + SUGAR.App.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>';
-            })
+            }, this))
             .showControls(false)
             .colorData('default')
             .colorFill('default')
