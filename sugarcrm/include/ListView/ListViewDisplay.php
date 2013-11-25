@@ -618,7 +618,7 @@ EOF;
 
             // bug50645 Blank value for URL custom field in DetailView and subpanel
             // we need to replace the "default" attribute value with the value set in field definition
-            if ($this->displayColumns[$columnName]['default'] == true && isset($seedDef['default'])) {
+            if ($this->displayColumns[$columnName]['default'] && isset($seedDef['default'])) {
                 $this->displayColumns[$columnName]['default'] = $seedDef['default'];
             }
 

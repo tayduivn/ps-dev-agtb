@@ -613,6 +613,61 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
 				"<input type='hidden' name='foobar' value='0'>\n".
                 "<input type='hidden' name='show_plus' value=''>\n",$output);        
     }
+
+    /**
+     * bug 50645 Blank value for URL custom field in DetailView and subpanel
+     * @dataProvider testDefaultSeedDefValuesProvider
+     */
+    public function testDefaultSeedDefValues($expected, $displayColumns, $fieldDefs)
+    {
+        $this->_lvd->displayColumns = $displayColumns;
+        $this->_lvd->lvd->seed->field_defs = $fieldDefs;
+        $this->_lvd->fillDisplayColumnsWithVardefs();
+        foreach ($this->_lvd->displayColumns as $columnName => $def) {
+            $seedName = strtolower($columnName);
+            $seedDef = $this->_lvd->lvd->seed->field_defs[$seedName];
+            $this->assertEquals($expected, $seedDef['default'] === $def['default']);
+        }
+    }
+
+    public function testDefaultSeedDefValuesProvider()
+    {
+        return array(
+            array(
+                true,
+                array(array(
+                    'default' => true,
+                    'label'   => 'LBL_TEST_TEST_KEY'
+                )),
+                array(array(
+                    'default' => 'test/url/pattern/{id}',
+                    'label'   => 'LBL_TEST_TEST_KEY'
+                ))
+            ),
+            array(
+                false,
+                array(array(
+                    'default' => false,
+                    'label'   => 'LBL_TEST_TEST_KEY'
+                )),
+                array(array(
+                    'default' => 'test/url/pattern/{id}',
+                    'label'   => 'LBL_TEST_TEST_KEY'
+                ))
+            ),
+            array(
+                false,
+                array(array(
+                    'default' => false,
+                    'label'   => 'LBL_TEST_TEST_KEY'
+                )),
+                array(array(
+                    'default' => null,
+                    'label'   => 'LBL_TEST_TEST_KEY'
+                ))
+            ),
+        );
+    }
 }
 
 class ListViewDisplayMock extends ListViewDisplay
