@@ -148,6 +148,11 @@ h4.merge-interface-header {
     input[type=radio] {
       width: 16px
     }
+    input[type=checkbox] {
+      width: 14px;
+      margin-left: -3px;
+      display: inline-block;
+    }
     textarea {
       display: inline;
     }
@@ -275,6 +280,17 @@ h4.merge-interface-header {
           }
         }
       }
+      &.merge-row-field-teamset {
+        height: auto;
+        padding-bottom: 2px;
+        .controls label {
+          height: auto;
+        }
+        button {
+          left: 61px;
+          position: relative;
+        }
+      }
 	}
 }
 
@@ -292,3 +308,13 @@ h4.merge-interface-header {
     }
     overflow: hidden;
 }
+
+@iterations: 50;
+.loopingClass (@index) when (@index > 0) {
+  (~".merge-row-field-height@{index}") {
+    height: (@index *(@mergeFieldHeight + 5)) !important;
+  }
+  .loopingClass(@index - 1);
+}
+.loopingClass (0) {}
+.loopingClass (@iterations);

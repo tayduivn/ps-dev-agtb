@@ -28,7 +28,7 @@
                     {{#if hide}}
                         <div class="extra hide">
                             {{#each fields}}
-                                <div class="merge-row merge-row-field-{{type}}">
+                                <div class="merge-row merge-row-field-{{type}} {{#if maxHeight}}merge-row-field-height{{maxHeight}}{{/if}}">
                                     <label class="ellipsis_inline"
                                            title="{{str label ../../../module}}"
                                            data-placement="right">
@@ -39,7 +39,7 @@
                         </div>
                     {{else}}
                         {{#each fields}}
-                            <div class="merge-row merge-row-field-{{type}}">
+                            <div class="merge-row merge-row-field-{{type}} {{#if maxHeight}}merge-row-field-height{{maxHeight}}{{/if}}">
                                 <label class="ellipsis_inline"
                                        title="{{str label ../../../module}}"
                                        data-placement="right">
@@ -74,28 +74,36 @@
                                 {{#if hide}}
                                     <div class="extra hide">
                                         {{#each fields}}
-                                            <div class="merge-row control-group merge-row-field-{{type}}">
+                                            <div class="merge-row control-group merge-row-field-{{type}} {{#if maxHeight}}merge-row-field-height{{maxHeight}}{{/if}}">
                                                 <div class="controls">
-                                                    <input type="radio" name="copy_{{name}}" class="copy"
-                                                           data-action="copy"
-                                                           data-field-name="{{name}}"
-                                                           data-record-id="{{../../../id}}" />
-                                                    {{! FIXME see SC-2065}}
-                                                    <label for="">{{field ../../../../this model=../../../this}}</label>
+                                                    {{#unless noRadioBox}}
+                                                        <input type="radio" name="copy_{{name}}" class="copy"
+                                                               data-action="copy"
+                                                               data-field-name="{{name}}"
+                                                               data-record-id="{{../../../../id}}" />
+                                                        {{! FIXME see SC-2065}}
+                                                        <label for="">{{field ../../../../../this model=../../../../this}}</label>
+                                                    {{else}}
+                                                        {{field ../../../../../this model=../../../../this}}
+                                                    {{/unless}}
                                                 </div>
                                             </div>
                                         {{/each}}
                                     </div>
                                 {{else}}
                                     {{#each fields}}
-                                        <div class="merge-row control-group merge-row-field-{{type}}">
+                                        <div class="merge-row control-group merge-row-field-{{type}} {{#if maxHeight}}merge-row-field-height{{maxHeight}}{{/if}}">
                                             <div class="controls">
-                                                <input type="radio" name="copy_{{name}}" class="copy"
-                                                       data-action="copy"
-                                                       data-field-name="{{name}}"
-                                                       data-record-id="{{../../../id}}" />
-                                                {{! FIXME see SC-2065}}
-                                                <label for="">{{field ../../../../this model=../../../this}}</label>
+                                                {{#unless noRadioBox}}
+                                                    <input type="radio" name="copy_{{name}}" class="copy"
+                                                           data-action="copy"
+                                                           data-field-name="{{name}}"
+                                                           data-record-id="{{../../../../id}}" />
+                                                    {{! FIXME see SC-2065}}
+                                                    <label for="">{{field ../../../../../this model=../../../../this}}</label>
+                                                {{else}}
+                                                    {{field ../../../../../this model=../../../../this}}
+                                                {{/unless}}
                                             </div>
                                         </div>
                                     {{/each}}

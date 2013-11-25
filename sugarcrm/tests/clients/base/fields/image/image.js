@@ -19,6 +19,9 @@ describe("image field", function() {
         app.view.reset();
         Handlebars.templates = {};
         model = null;
+        if (field.view) {
+            field.view.dispose();
+        }
         field = null;
     });
 
@@ -73,7 +76,7 @@ describe("image field", function() {
 
         it("should only bind data change when not in edit or create", function() {
             var stub = sinon.stub(app.view.Field.prototype, 'bindDataChange');
-            field.view = {};
+            field.view = new app.view.View({});
             field.view.name = 'edit';
             field.bindDataChange();
             expect(stub).not.toHaveBeenCalled();
