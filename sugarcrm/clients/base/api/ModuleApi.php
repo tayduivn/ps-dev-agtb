@@ -193,11 +193,11 @@ class ModuleApi extends SugarApi {
     }
 
     public function updateRecord($api, $args) {
-        $api->action = 'save';
+        $api->action = 'view';
         $this->requireArgs($args,array('module','record'));
 
         $bean = $this->loadBean($api, $args, 'save');
-
+        $api->action = 'save';
         $this->updateBean($bean, $api, $args);
 
         return $this->getLoadedAndFormattedBean($api, $args, $bean);
