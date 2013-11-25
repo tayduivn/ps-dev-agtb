@@ -13,6 +13,7 @@
  */
 $dictionary['Product'] = array(
     'table' => 'products',
+    'optimistic_locking' => true,
     'audited' => true,
     'activity_enabled' => true,
     'unified_search' => true,

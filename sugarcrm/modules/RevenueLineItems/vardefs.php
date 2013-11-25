@@ -13,6 +13,7 @@
  */
 $dictionary['RevenueLineItem'] = array(
     'table' => 'revenue_line_items',
+    'optimistic_locking' => true,
     'audited' => true,
     'activity_enabled' => true,
     //BEGIN SUGARCRM flav=ent ONLY
