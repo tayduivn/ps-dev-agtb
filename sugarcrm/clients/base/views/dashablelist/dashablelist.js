@@ -68,6 +68,11 @@
     plugins: ['Dashlet'],
 
     /**
+     * We want to load field `list` templates
+     */
+    fallbackFieldTemplate: 'list',
+
+    /**
      * The default settings for a list view dashlet.
      *
      * @property {Object}
