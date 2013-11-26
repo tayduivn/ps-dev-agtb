@@ -91,7 +91,7 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
                     'enabled' => true,
                 ),
                 array(
-                    'name' => 'EXP_DATE',
+                    'name' => 'exp_date',
                     'width' => '10',
                     'label' => 'LBL_LIST_EXP_DATE',
                     'default' => true,
