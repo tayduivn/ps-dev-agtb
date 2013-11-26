@@ -12,20 +12,24 @@
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-class SugarQuery_Builder_Andwhere extends SugarQuery_Builder_Where
+class SugarQuery_Builder_Groupby
 {
-    /**
-     * @var array(SugarQuery_Builder_Condition)
-     */
-    public $conditions = array();
-    /**
-     * @var bool|string
-     */
-    public $raw = false;
+    public $column;
+    public $query;
 
-    /**
-     * @var bool|SugarQuery
-     */
-    public $query = false;
+    public function __construct($query)
+    {
+        $this->query = $query;
+    }
 
+    public function addField($column, $options = array())
+    {
+        $this->column = new SugarQuery_Builder_Field_Groupby($column, $this->query);
+        return $this;
+    }
+    
+    public function addRaw($expression) {
+        $this->column = new SugarQuery_Builder_Field_Raw($expression, $this->query);
+        return $this;
+    }
 }

@@ -593,19 +593,19 @@ class M2MRelationship extends SugarRelationship
 
         $targetTable = $linkIsLHS ? $this->def['rhs_table'] : $this->def['lhs_table'];
         $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
-
-        $join_type= isset($options['joinType']) ? $options['joinType'] : 'INNER';        
+        $targetModule = $linkIsLHS ? $this->def['rhs_module'] : $this->def['lhs_module'];
+        $join_type= isset($options['joinType']) ? $options['joinType'] : 'INNER';
 
         $joinTable_alias = $sugar_query->getJoinTableAlias($joinTable);
         $targetTable_alias = !empty($options['joinTableAlias']) ? $options['joinTableAlias'] : $targetTable;
 
-        $relTableJoin = $sugar_query->joinTable($joinTable, array('alias'=>$joinTable_alias, 'joinType' => $join_type))
-                    ->on()->equalsField("{$startingTable}.{$startingKey}","{$joinTable_alias}.{$startingJoinKey}")
-                    ->equals("{$joinTable_alias}.deleted","0");
-        
-        $targetTableJoin = $sugar_query->joinTable($targetTable, array('alias' => $targetTable_alias, 'joinType' => $join_type))
-                    ->on()->equalsField("{$targetTable_alias}.{$targetKey}", "{$joinTable_alias}.{$joinKey}")
-                    ->equals("{$targetTable_alias}.deleted","0");
+        $relTableJoin = $sugar_query->joinTable($joinTable, array('alias'=>$joinTable_alias, 'joinType' => $join_type, 'linkingTable' => true,))
+            ->on()->equalsField("{$startingTable}.{$startingKey}","{$joinTable_alias}.{$startingJoinKey}")
+            ->equals("{$joinTable_alias}.deleted","0");
+
+        $targetTableJoin = $sugar_query->joinTable($targetTable, array('alias' => $targetTable_alias, 'joinType' => $join_type, 'bean' => BeanFactory::newBean($targetModule)))
+            ->on()->equalsField("{$targetTable_alias}.{$targetKey}", "{$joinTable_alias}.{$joinKey}")
+            ->equals("{$targetTable_alias}.deleted","0");
 
         $sugar_query->join[$targetTable_alias]->relationshipTableAlias = $joinTable_alias;
 
@@ -624,7 +624,7 @@ class M2MRelationship extends SugarRelationship
             if (!empty($bean) && $bean->hasCustomFields()) {
                 $table_cstm = $bean->get_custom_table_name();
                 $alias_cstm = "{$targetTable_alias}_cstm";
-                $sugar_query->joinTable($table_cstm, array('alias' => $alias_cstm, 'joinType' => "LEFT"))
+                $sugar_query->joinTable($table_cstm, array('alias' => $alias_cstm, 'joinType' => "LEFT", 'linkingTable' => true))
                     ->on()->equalsField("$alias_cstm.id_c", "{$targetTable_alias}.id");
             }
         }

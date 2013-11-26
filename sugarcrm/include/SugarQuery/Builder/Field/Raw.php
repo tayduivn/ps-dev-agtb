@@ -12,20 +12,16 @@
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-class SugarQuery_Builder_Andwhere extends SugarQuery_Builder_Where
+
+/**
+ * SugarQuery_Builder_Field_Orderby
+ * @api
+ */
+
+class SugarQuery_Builder_Field_Raw extends SugarQuery_Builder_Field
 {
-    /**
-     * @var array(SugarQuery_Builder_Condition)
-     */
-    public $conditions = array();
-    /**
-     * @var bool|string
-     */
-    public $raw = false;
-
-    /**
-     * @var bool|SugarQuery
-     */
-    public $query = false;
-
+    public function __construct($field, SugarQuery $query)
+    {
+        $this->field = $field;
+    }
 }
