@@ -367,7 +367,7 @@ for($i=0; $i<1000; $i++)
 	$contact->save();
     $contacts[] = $contact->id;
 	// Create a linking table entry to assign an account to the contact.
-	$contact->set_relationship('accounts_contacts', array('contact_id'=>$contact->id ,'account_id'=> $account_id), false);
+	$contact->set_relationship('accounts_contacts', array('contact_id'=>$contact->id ,'account_id'=> $account_id, 'primary_account' => 1), false);
 
 	//Create new tasks
 	$task = new Task();
