@@ -1,4 +1,4 @@
-<?
+<?php
 $md5_string = array (
   './modules/Audit/Audit.php' => '9dbe5e1dc54c79d501b3735db21d99c8',
   './modules/Connectors/Connector.js' => '1b4ddc43b8af36e2a0cdc2b6202e414a',

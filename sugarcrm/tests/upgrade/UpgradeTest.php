@@ -52,8 +52,9 @@ END;
         $dbMock->expects($this->any())->method("getScriptName")->will($this->returnValue($db));
         $this->upgrader->setDb($dbMock);
 
-        $dir = $this->upgrader->getTempDir()."/scripts";
+        $dir = $this->upgrader->context['new_source_dir']."/upgrade/scripts/sql";
         $this->upgrader->ensureDir($dir);
+        SugarTestHelper::saveFile("$dir/$script");
         touch("$dir/$script");
 
         $this->upgrader->setVersions($from, $flav_from, $to, $flav_to);
@@ -86,9 +87,9 @@ END;
     public function dataRunSQL()
     {
         return array(
-            array("6.6.2", "ent", "7.0.0", "ent", "mysql", "662_to_700_mysql.sql"),
-            array("6.6.2", "ent", "7.0.0", "ent", "foo", "662_to_700_foo.sql"),
-            array("7.0.0", "pro", "7.0.0", "ent", "oracle", "700_pro_to_ent_oracle.sql"),
+            array("6.6.2", "ent", "7.0.0", "ent", "mysql", "66_to_70_mysql.sql"),
+            array("6.6.2", "ent", "7.0.0", "ent", "foo", "66_to_70_foo.sql"),
+            array("7.0.0", "pro", "7.0.0", "ent", "oracle", "70_pro_to_ent_oracle.sql"),
         );
     }
 
