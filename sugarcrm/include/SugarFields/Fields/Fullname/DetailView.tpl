@@ -31,17 +31,11 @@
 {else}
 {assign var="value" value={{sugarvar key='value' string=true}} }
 {/if}
-<form name="vcard" action="index.php" style="display: inline;">
 <span id='{{sugarvar key='name'}}'>{{sugarvar key='value'}}</span>
 &nbsp;&nbsp;
-<input type="hidden" name="action" value="vCard" />
-<input type="hidden" name="record" value="{$fields.id.value}" />
-<input type="hidden" name="module" value="{$module}" />
-<input type="hidden" name="to_pdf" value="true" />
 <span class="id-ff">
-<button type="submit" name="vCardButton" id="btn_vCardButton" value="{$APP.LBL_VCARD}" title="{$APP.LBL_VCARD}" class="button">{sugar_getimage alt=$app_strings.LBL_ID_FF_VCARD name="id-ff-vcard" ext=".png" other_attributes=''}</button>
+    <a id="btn_vCardButton" title="{$APP.LBL_VCARD}" class="button" href="index.php?module={$module}&action=vCard&record={$fields.id.value}&to_pdf=true">{sugar_getimage alt=$app_strings.LBL_ID_FF_VCARD name="id-ff-vcard" ext=".png"}</a>
 </span>
-</form>
 {{if !empty($displayParams.enableConnectors)}}
 {if !empty($value)}
 {{sugarvar_connector view='DetailView'}}
