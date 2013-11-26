@@ -5402,7 +5402,7 @@ class SugarBean
                             // like rel_{this_field_name}_{name_format_field} in the bean
                             foreach ($name_format_fields as $name_field) {
                                 $related_name_fields[$name_field] = $fields[$name_field]
-                                    = $this->getRelateAlias($field, $name_field);
+                                    = $this->getRelateAlias($name, $name_field);
                             }
                         } else {
                             $fields[$rname] = $name;
