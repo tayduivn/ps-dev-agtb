@@ -52,7 +52,7 @@ class SugarUpgradeRunSQL extends UpgradeScript
             $script = "{$vfrom}_to_{$vto}";
         }
         $script .= "_" . $this->db->getScriptName() . ".sql";
-        $filename = $this->context['new_source_dir'] . "/upgrade/scripts/sql" . $script;
+        $filename = $this->context['new_source_dir'] . "/upgrade/scripts/sql/" . $script;
         $this->log("Checking script name: $script ($filename)");
         if (file_exists($filename)) {
             $this->log("Running script $filename");
