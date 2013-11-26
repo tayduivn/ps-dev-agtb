@@ -41,6 +41,8 @@ class PanelVisibilityAction extends AbstractAction{
  */
 SUGAR.forms.PanelVisibilityAction = function(target, expr)
 {
+    //If we are running in sidecar, this action will not function
+    if(SUGAR.App) return;
     this.target = target;
     this.expr   = 'cond(' + expr + ', "", "none")';
 }
@@ -84,6 +86,9 @@ SUGAR.util.extend(SUGAR.forms.PanelVisibilityAction, SUGAR.forms.AbstractAction,
      */
     exec: function(context)
     {
+        //If we are running in sidecar, this action will not function
+        if(SUGAR.App) return;
+
         if (typeof(context) == 'undefined')
             context = this.context;
         try {

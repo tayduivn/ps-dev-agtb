@@ -42,6 +42,8 @@ class AssignToUserAction extends AbstractAction{
 	static function getJavascriptClass() {
 		return  "
 		SUGAR.forms.AssignToUserAction = function(valExpr) {
+			//If we are running in sidecar, this action will not function
+			if(SUGAR.App) return;
 			this.expr = valExpr;
 			this.target = 'assigned_user_name';
 			this.dataSource = new YAHOO.util.DataSource('index.php?', {
@@ -58,6 +60,9 @@ class AssignToUserAction extends AbstractAction{
 		SUGAR.util.extend(SUGAR.forms.AssignToUserAction, SUGAR.forms.AbstractAction, {
 			exec : function(context)
 			{
+				//If we are running in sidecar, this action will not function
+                if(SUGAR.App) return;
+
 				if (typeof(context) == 'undefined')
                     context = this.context;
 				var userName = this.evalExpression(this.expr, context);
