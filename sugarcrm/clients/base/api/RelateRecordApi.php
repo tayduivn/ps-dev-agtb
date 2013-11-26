@@ -199,6 +199,10 @@ class RelateRecordApi extends ModuleApi {
         SugarRelationship::resaveRelatedBeans();
 
         $args['remote_id'] = $relatedBean->id;
+
+        // This forces a re-retrieval of the bean from the database
+        BeanFactory::unregisterBean($relatedBean->module_dir, $relatedBean->id);
+
         return $this->formatNearAndFarRecords($api,$args,$primaryBean);
     }
 
@@ -219,6 +223,9 @@ class RelateRecordApi extends ModuleApi {
 
         //Clean up any hanging related records.
         SugarRelationship::resaveRelatedBeans();
+
+        // This forces a re-retrieval of the bean from the database
+        BeanFactory::unregisterBean($relatedBean->module_dir, $relatedBean->id);
 
         return $this->formatNearAndFarRecords($api,$args,$primaryBean);
     }
@@ -279,6 +286,9 @@ class RelateRecordApi extends ModuleApi {
         
         //Clean up any hanging related records.
         SugarRelationship::resaveRelatedBeans();
+
+        // This forces a re-retrieval of the bean from the database
+        BeanFactory::unregisterBean($relatedBean->module_dir, $relatedBean->id);
 
         return $this->formatNearAndFarRecords($api,$args,$primaryBean);
     }

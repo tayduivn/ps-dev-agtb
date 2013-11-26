@@ -294,6 +294,38 @@ class BeanFactory {
     }
 
     /**
+     * @static
+     * This function un-registers a bean with the bean factory so that the next
+     * load will force a retrieval from the database
+     * @param String $module
+     * @param bool|String $id
+     * @return bool true if the bean unregistered successfully.
+     */
+    public static function unregisterBean($module, $id=false)
+    {
+        global $beanList;
+        if (empty($beanList[$module])) {
+            return true;
+        }
+
+        if (!isset(self::$loadedBeans[$module])) {
+            return true;
+        }
+
+        if (empty($id)) {
+            return false;
+        }
+
+        if (isset(self::$loadedBeans[$module][$id])) {
+            unset(self::$loadedBeans[$module][$id]);
+            self::$total--;
+            return true;
+        }
+        
+        return false;
+    }
+
+    /**
      * Override module's class with custom class
      *
      * For use mainly in unit tests
