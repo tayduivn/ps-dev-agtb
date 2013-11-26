@@ -213,7 +213,7 @@
             this.module_list = this.completeMenuMeta(app.metadata.getModuleNames({visible: true, access: 'read'}));
             app.view.View.prototype._renderHtml.call(this);
             this.resetMenu();
-            this.activeModule.set(app.controller.context.get("module"));
+            this.activeModule.set(app.controller.context.get('module'));
         }
     },
 

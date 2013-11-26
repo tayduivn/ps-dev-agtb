@@ -81,22 +81,30 @@ class MetaDataManagerPortal extends MetaDataManager
     }
 
     /**
+     * Gets list of modules that are displayed in the navigation bar and which
+     * subpanels are displayed system-wide
+     *
+     * @return array The list of module names for portal
+     */
+    public function getDisplayModuleList()
+    {
+        $controller = new TabController();
+        $modules = $controller->getPortalTabs();
+        return $modules;
+    }
+
+    /**
      * Gets the module list for the current user
-     * 
+     * Returns the same module list as `getDisplayModuleList`.
+     *
+     * In the future, there may be a UI to allow user to configure visible
+     * modules in his `Profile` section.
+     *
      * @return array The list of modules for portal
      */
-    public function getUserModuleList() {
-        // Use SugarPortalBrowser to get the portal modules that would appear
-        // in Studio
-        $pb = new SugarPortalBrowser();
-        $pb->loadModules();
-        
-        // Now that the portal modules are loaded, cross check them with the 
-        // visible tabs array for the current user
-        $controller = new TabController();
-        $ret = array_keys(array_intersect_key($controller->get_user_tabs($this->getCurrentUser()), $pb->modules));
-        return $this->addHomeToModuleList($ret);
-        
+    public function getUserModuleList()
+    {
+        return $this->getDisplayModuleList();
     }
 
     /**

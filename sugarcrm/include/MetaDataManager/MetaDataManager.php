@@ -33,6 +33,7 @@ require_once 'include/SugarFields/SugarFieldHandler.php';
 require_once 'include/SugarObjects/LanguageManager.php';
 require_once 'modules/ActivityStream/Activities/ActivityQueueManager.php';
 require_once 'include/SubPanel/SubPanelDefinitions.php';
+require_once 'modules/MySettings/TabController.php';
 
 SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataHacks.php');
 /**
@@ -55,6 +56,7 @@ class MetaDataManager
      */
     const MM_MODULES        = 'modules';
     const MM_FULLMODULELIST = 'full_module_list';
+    const MM_DISPLAYMODULELIST = 'display_module_list';
     const MM_FIELDS         = 'fields';
     const MM_LABELS         = 'labels';
     const MM_VIEWS          = 'views';
@@ -146,6 +148,7 @@ class MetaDataManager
     protected $sectionMap = array(
         self::MM_MODULES        => false,
         self::MM_FULLMODULELIST => 'getModuleList',
+        self::MM_DISPLAYMODULELIST => 'getDisplayModuleList',
         self::MM_FIELDS         => 'getSugarFields',
         self::MM_LABELS         => 'getStringUrls',
         self::MM_VIEWS          => 'getSugarViews',
@@ -2130,16 +2133,13 @@ class MetaDataManager
      * Gets full module list and data for each module and uses that data to
      * populate the modules/full_module_list section of the metadata
      *
-     * Also populates `display_module_list` that contains the list of
-     * displayable modules.
-     *
      * @param array $data Existing metadata
      * @return array
      */
     public function populateModules($data)
     {
         $data['full_module_list'] = $this->getModuleList();
-        $data['display_module_list'] = $GLOBALS['moduleList'];
+        $data['display_module_list'] = $this->getDisplayModuleList();
         $data['modules'] = array();
         foreach($data['full_module_list'] as $key => $module) {
             if ($key == '_hash') {
@@ -2168,6 +2168,19 @@ class MetaDataManager
 
         $moduleList['_hash'] = $this->hashChunk($moduleList);
         return $moduleList;
+    }
+
+    /**
+     * Gets list of modules that are displayed in the navigation bar and which
+     * subpanels are displayed system-wide
+     *
+     * @return array The list of module names
+     */
+    public function getDisplayModuleList()
+    {
+        $controller = new TabController();
+        $modules = array_keys($controller->get_system_tabs());
+        return $modules;
     }
 
     /**
@@ -2676,6 +2689,7 @@ class MetaDataManager
         return array(
             self::MM_MODULES,
             self::MM_FULLMODULELIST,
+            self::MM_DISPLAYMODULELIST,
             self::MM_HIDDENSUBPANELS,
             self::MM_CURRENCIES,
             self::MM_MODULETABMAP,
@@ -2705,7 +2719,8 @@ class MetaDataManager
 
     /**
      * Gets display module list per user defined tabs
-     * @return array
+     *
+     * @return array The list of module names
      */
     public function getUserModuleList() {
         // Loading a standard module list
@@ -2817,6 +2832,7 @@ class MetaDataManager
             }
         }
         $data['full_module_list']['_hash'] = $this->hashChunk($data['full_module_list']);
+        $data['display_module_list']['_hash'] = $this->hashChunk($data['display_module_list']);
         return $data;
     }
 
