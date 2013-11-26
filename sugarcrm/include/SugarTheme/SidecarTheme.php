@@ -539,8 +539,10 @@ class SidecarTheme
     {
         $urls = array();
         sugar_cache_put($this->paths['hashKey'], $filesArray);
-        foreach ($filesArray as $lessFile => $fileHash) {
-            $urls[$lessFile] = $this->getCssFileLocation($lessFile, $fileHash);
+        if (!empty($filesArray)) {
+            foreach ($this->lessFilesToCompile as $lessFile) {
+                $urls[$lessFile] = $this->getCssFileLocation($lessFile, $filesArray[$lessFile]);
+            }
         }
         return $urls;
     }
