@@ -21,7 +21,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-include('include/externalAPI/Twitter/ExtAPITwitter.php');
+require_once('include/externalAPI/Twitter/ExtAPITwitter.php');
 // A simple example class
 class TwitterApi extends SugarApi
 {
