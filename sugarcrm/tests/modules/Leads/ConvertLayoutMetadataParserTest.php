@@ -251,6 +251,19 @@ class ConvertLayoutMetadataParserTest extends Sugar_PHPUnit_Framework_TestCase
         $expectedDef = array_merge(array('module' => 'Bar'), $defaultSettings);
         $this->assertEquals($expectedDef, $actualDef, 'Default settings should be returned');
     }
+
+    /**
+     * @covers ConvertLayoutMetadataParser::getDefaultDefForModule
+     */
+    public function testGetDefaultDefForModules_ForModuleNotInOriginalAndDupeCheckEnabled_ReturnsDefaultWithDupeOnStart()
+    {
+        $this->parser->mockDupeCheckEnabledFlag = true;
+        $actualDef = $this->parser->getDefaultDefForModule('Bar');
+        $defaultSettings = $this->parser->getDefaultModuleDefSettings();
+        $defaultSettings['duplicateCheckOnStart'] = true;
+        $expectedDef = array_merge(array('module' => 'Bar'), $defaultSettings);
+        $this->assertEquals($expectedDef, $actualDef, 'Default settings should be returned');
+    }
 }
 
 class TestConvertLayoutMetadataParser extends ConvertLayoutMetadataParser
@@ -260,6 +273,7 @@ class TestConvertLayoutMetadataParser extends ConvertLayoutMetadataParser
         'module' => 'Foo',
         'required' => 'ohyeah',
     );
+    public $mockDupeCheckEnabledFlag = false;
 
     protected function loadViewDefs()
     {
@@ -306,6 +320,11 @@ class TestConvertLayoutMetadataParser extends ConvertLayoutMetadataParser
     public function getDefaultModuleDefSettings()
     {
         return $this->defaultModuleDefSettings;
+    }
+
+    protected function isDupeCheckEnabledForModule($module)
+    {
+        return $this->mockDupeCheckEnabledFlag;
     }
 }
 

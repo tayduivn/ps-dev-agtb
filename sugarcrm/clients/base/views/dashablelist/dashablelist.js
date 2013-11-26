@@ -68,6 +68,11 @@
     plugins: ['Dashlet'],
 
     /**
+     * We want to load field `list` templates
+     */
+    fallbackFieldTemplate: 'list',
+
+    /**
      * The default settings for a list view dashlet.
      *
      * @property {Object}
@@ -177,7 +182,9 @@
             // keep the display_columns and label fields in sync with the selected module when configuring a dashlet
             this.settings.on('change:module', function(model, moduleName) {
                 var label = (model.get('my_items') == '1') ? 'TPL_DASHLET_MY_MODULE' : 'LBL_MODULE_NAME';
-                model.set('label', app.lang.get(label, moduleName, {module: moduleName}));
+                model.set('label', app.lang.get(label, moduleName, {
+                    module: app.lang.getAppListStrings('moduleList')[moduleName]
+                }));
                 this._updateDisplayColumns();
                 this.updateLinkedFields(moduleName);
             }, this);
@@ -222,8 +229,9 @@
      * @returns {String}
      */
     getLabel: function() {
-        var module = this.settings.get('module') || this.context.get('module');
-        return app.lang.get(this.settings.get('label'), module, {module: module});
+        var module = this.settings.get('module') || this.context.get('module'),
+            moduleName = app.lang.getAppListStrings('moduleList')[module];
+        return app.lang.get(this.settings.get('label'), module, {module: moduleName});
     },
 
     /**

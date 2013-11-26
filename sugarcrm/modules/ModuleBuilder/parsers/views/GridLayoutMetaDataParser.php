@@ -950,6 +950,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
             'tabindex' => true,
             'hideLabel' => true,
             'readonly' => true,
+            'related_fields' => true,
         );
 		$ret = array_intersect_key($def, $requiredProps);
         if (!empty($def['vname']) && empty($def['label']))

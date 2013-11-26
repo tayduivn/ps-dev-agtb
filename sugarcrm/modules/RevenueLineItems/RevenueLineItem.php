@@ -143,25 +143,13 @@ class RevenueLineItem extends SugarBean
     }
 
     /**
-     * To check whether currency_id field is changed during save.
-     * @return bool true if currency_id is changed, false otherwise
+     * Bean specific logic for when SugarFieldCurrency_id::save() is called to make sure we can update the base_rate
+     *
+     * @return bool
      */
-    protected function isCurrencyIdChanged() {
-        // if both are defined, compare
-        if (isset($this->currency_id) && isset($this->fetched_row['currency_id'])) {
-            if ($this->currency_id != $this->fetched_row['currency_id']) {
-                return true;
-            }
-        }
-        // one is not defined, the other one is not empty, means changed
-        if (!isset($this->currency_id) && !empty($this->fetched_row['currency_id'])) {
-            return true;
-        }
-        if (!isset($this->fetched_row['currency_id']) && !empty($this->currency_id)) {
-            return true;
-        }
-
-        return false;
+    public function updateCurrencyBaseRate()
+    {
+        return !in_array($this->sales_stage, $this->getClosedStages());
     }
 
     /**
@@ -187,36 +175,6 @@ class RevenueLineItem extends SugarBean
         
         if ($this->quantity == '') {
             $this->quantity = 1;
-        }
-
-        // if stage is not closed won/lost, update base_rate with currency rate
-        if (!in_array($this->sales_stage, $this->getClosedStages()) || !isset($this->base_rate) || $this->isCurrencyIdChanged()) {
-            $currency = SugarCurrency::getCurrencyByID($this->currency_id);
-            $this->base_rate = $currency->conversion_rate;
-        }
-
-        //US DOLLAR
-        if (isset($this->discount_price) && (!empty($this->discount_price) || $this->discount_price == '0')) {
-            $this->discount_usdollar = $currency->convertToDollar($this->discount_price);
-        }
-        if (isset($this->list_price) && (!empty($this->list_price) || $this->list_price == '0')) {
-            $this->list_usdollar = $currency->convertToDollar($this->list_price);
-        }
-        if (isset($this->cost_price) && (!empty($this->cost_price) || $this->cost_price == '0')) {
-            $this->cost_usdollar = $currency->convertToDollar($this->cost_price);
-        }
-        if (isset($this->book_value) && (!empty($this->book_value) || $this->book_value == '0')) {
-            $this->book_value_usdollar = $currency->convertToDollar($this->book_value);
-        }
-        if (isset($this->deal_calc) && (!empty($this->deal_calc) || $this->deal_calc == '0')) {
-            $this->deal_calc_usdollar = $currency->convertToDollar($this->deal_calc);
-        }
-        if (isset($this->discount_amount) && (!empty($this->discount_amount) || $this->discount_amount == '0')) {
-            if (isset($this->discount_select) && $this->discount_select) {
-                $this->discount_amount_usdollar = $this->discount_amount;
-            } else {
-                $this->discount_amount_usdollar = $currency->convertToDollar($this->discount_amount);
-            }
         }
 
         if ($this->probability === '') {

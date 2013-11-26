@@ -73,6 +73,8 @@ $mod_strings = array (
     'LBL_CONVERT_FINDING_DUPLICATES' => 'Searching for duplicates...',
     'LBL_CONVERT_IGNORE_DUPLICATES' => 'Ignore and create new',
     'LBL_CONVERT_BACK_TO_DUPLICATES' => 'Back to duplicates',
+    'LBL_CONVERT_SWITCH_TO_CREATE' => 'Create New',
+    'LBL_CONVERT_SWITCH_TO_SEARCH' => 'Search',
     'LBL_CONVERT_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found',
     'LBL_CONVERT_CREATE_NEW' => 'New {{moduleName}}',
     'LBL_CONVERT_ASSOCIATE_MODULE' => 'Associate {{moduleName}}',
@@ -288,4 +290,5 @@ $mod_strings = array (
     //Document title
     'TPL_BROWSER_SUGAR7_RECORDS_TITLE' => '{{module}} &raquo; {{appId}}',
     'TPL_BROWSER_SUGAR7_RECORD_TITLE' => '{{#if last_name}}{{#if first_name}}{{first_name}} {{/if}}{{last_name}} &raquo; {{/if}}{{module}} &raquo; {{appId}}',
+    'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
 );

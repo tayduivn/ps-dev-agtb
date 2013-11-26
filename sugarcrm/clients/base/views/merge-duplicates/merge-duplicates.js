@@ -128,7 +128,7 @@
      *
      * TODO: remove types that have properly implementation for merge interface
      */
-    fieldTypesBlacklist: ['email', 'team_list', 'teamset', 'link', 'id', 'password'],
+    fieldTypesBlacklist: ['email', 'team_list', 'link', 'id', 'password'],
 
     /**
      * Links names won't be mergeable.
@@ -201,7 +201,8 @@
         { dbType: 'double', source: 'db' },
         { type: 'relate' },
         { type: 'parent' },
-        { type: 'image' }
+        { type: 'image' },
+        { type: 'teamset' }
     ],
 
     /**
@@ -210,6 +211,12 @@
      * @property {Array} flattenFieldTypes
      */
     flattenFieldTypes: ['fieldset', 'fullname'],
+
+    /**
+     * Variable to store generated values for some types of fields (e.g. teamset).
+     * @property {Object} generatedValues
+     */
+    generatedValues: null,
 
     /**
      * {@inheritDoc}
@@ -359,6 +366,7 @@
 
     /**
      * Saves primary record and triggers `mergeduplicates:primary:saved` event on success.
+     * Before saving triggers also `duplicate:unformat:field` event.
      *
      * @private
      */
@@ -367,6 +375,8 @@
             fields = this.getFieldNames().filter(function(field) {
             return app.acl.hasAccessToModel('edit', this.primaryRecord, field);
         }, this);
+
+        this.primaryRecord.trigger('duplicate:unformat:field');
 
         this.primaryRecord.save({}, {
             fieldsToValidate: fields,
@@ -471,7 +481,26 @@
             visibleFields = [],
             alternatives = collection.without(primaryRecord);
 
+        this.generatedValues = {
+            teamsets: []
+        };
+
         _.each(fields, function(field) {
+
+            if (field.type === 'teamset') {
+                this.generatedValues.teamsets[field.name] = _.chain(collection.models)
+                    .map(function(model) {
+                        return model.get(field.name);
+                    })
+                    .flatten()
+                    .uniq(false, function(item) {
+                        return item.id;
+                    })
+                    .value();
+                field.maxHeight = this.generatedValues.teamsets[field.name].length;
+                field.noRadioBox = true;
+            }
+
             if (this._isSimilar(field, primaryRecord, alternatives)) {
                 hiddenFields.push(field);
             } else {
@@ -903,6 +932,7 @@
      * the collection, with all fields in it. If id parameter is provided
      * switch primary record to new model before and revert old primary record
      * to standard record. If new model is same as primary no action is taken.
+     * Triggers `duplicate:format:field` before toggle fields.
      *
      * @param {String} [id] The record representing the new primary model.
      */
@@ -922,6 +952,8 @@
         if (oldPrimaryRecord && oldPrimaryRecord !== this.primaryRecord) {
             this.toggleFields(this.rowFields[oldPrimaryRecord.id], false);
         }
+
+        this.primaryRecord.trigger('duplicate:format:field');
 
         this.toggleFields(this.rowFields[this.primaryRecord.id], true);
         this.updatePrimaryTitle(app.utils.getRecordName(this.primaryRecord));
@@ -983,11 +1015,16 @@
     /**
      * Event handler for radio box controls.
      *
+     * Before copy value from model or restore value
+     * triggers `before duplicate:field` event.
+     *
      * @param {Event} evt Mouse click event.
      */
     triggerCopy: function(evt) {
-        var recordId = this.$(evt.currentTarget).data('record-id'),
-            fieldName = this.$(evt.currentTarget).data('field-name'),
+        var currentTarget = this.$(evt.currentTarget),
+            recordId = currentTarget.data('record-id'),
+            recordItemId = currentTarget.data('record-item-id'),
+            fieldName = currentTarget.data('field-name'),
             fieldDefs = app.metadata.getModule(this.module).fields,
             model;
 
@@ -1007,6 +1044,14 @@
 
         if (!app.acl.hasAccessToModel('edit', this.primaryRecord, fieldName) ||
             !app.acl.hasAccessToModel('read', model, fieldName)) {
+            return;
+        }
+
+        var data = _.extend({}, currentTarget.data(), {
+            checked: currentTarget.prop('type') === 'checkbox' ?
+                currentTarget.prop('checked') : true
+        });
+        if (this.triggerBefore('duplicate:field', {model: model, data: data}) === false) {
             return;
         }
 

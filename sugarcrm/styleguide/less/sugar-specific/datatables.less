@@ -451,7 +451,6 @@ FLEXLIST GENERIC */
         min-width: 55px;
         text-align: center;
         overflow-x: visible;
-
       }
     }
     & > thead > tr > th {
@@ -549,7 +548,7 @@ FLEXLIST GENERIC */
           padding-left: 20px;
           max-width: 116px;
         }
-        &:nth-last-child(2) {
+        &:nth-last-of-type(2) {
           padding-right: 143px;
         }
         &:last-child {
@@ -574,7 +573,7 @@ FLEXLIST GENERIC */
         &:nth-child(2) {
           padding-left: 67px;
         }
-        &:nth-last-child(2) {
+        &:nth-last-of-type(2) {
           padding-right: 53px;
         }
         &:last-child {
@@ -597,7 +596,7 @@ FLEXLIST GENERIC */
         &:nth-child(2) {
           padding-left: 53px;
         }
-        &:nth-last-child(2) {
+        &:nth-last-of-type(2) {
           padding-right: 53px;
         }
         &:last-child {
@@ -642,7 +641,7 @@ FLEXLIST GENERIC */
         span.list {
           padding-right: 8px;
           width: 100%;
-          box-sizing: border-box;
+          .box-sizing(border-box);
           .ellipsis_inline, .currency-field {
             padding-left: 14px;
           }
@@ -660,30 +659,12 @@ FLEXLIST GENERIC */
           padding-right: 1px;
         }
       }
-      &:nth-last-child(2) {
-        padding-right: 71px;
-      }
-    }
-    & > tfoot > tr > td {
-      &:last-child {
-        border-top: none;
-        position: absolute;
-      }
-      &:nth-last-child(2) {
-        padding-right: 87px;
-      }
     }
   }
 
   /*FORECASTS MANAGER WORKSHEET*/
   &.forecast-manager-worksheet table.dataTable {
     border-top: 1px solid darken(@grayLighter,10%);
-    & > thead > tr > th {
-      padding: 8px;
-    }
-    & > tfoot > tr > td {
-      padding: 8px 16px 8px 8px;
-    }
     & > tbody > tr > td {
       padding: 4px 8px;
       span.detail:hover,
@@ -710,17 +691,9 @@ FLEXLIST GENERIC */
           }
         }
       }
-      &:nth-last-child(2) {
-        padding-right: 71px;
-      }
     }
     & > tfoot > tr > td {
-      &:last-child {
-        border-top: none;
-      }
-      &:nth-last-child(2) {
-        padding-right: 87px;
-      }
+      padding: 8px 16px 8px 8px;
     }
     & > tbody > tr[name$="_commit_history"] > td:first-child:last-child {
       padding: 0;
@@ -799,17 +772,18 @@ FLEXLIST GENERIC */
     /*.flex-list.right-actions to fix the last column*/
     &.right-actions.scroll-width table.dataTable {
       & > thead > tr > th,
-      & > tbody > tr > td {
+      & > tbody > tr > td,
+      & > tfoot > tr > td {
         &:last-child {
           position: absolute;
           right: 0;
           vertical-align: top;
         }
-        &:nth-last-child(2) {
+        &:nth-last-of-type(2) {
           padding-right: 79px;
         }
       }
-      & > thead > tr > th:nth-last-child(2) {
+      & > thead > tr > th:nth-last-of-type(2) {
         border-right: none;
       }
       & > thead > tr > th:last-child {
@@ -828,15 +802,31 @@ FLEXLIST GENERIC */
     }
 
     /*forecast worksheets*/
+    &.right-actions.scroll-width.forecast-manager-worksheet table.dataTable,
     &.right-actions.scroll-width.forecast-worksheet table.dataTable {
-      & > thead > tr > th,
-      & > tbody > tr > td,
-      & > tfoot > tr > td {
-        &:nth-last-child(2) {
+      & > thead > tr > th {
+        &:nth-last-of-type(2) {
           max-width: 100%;
+          padding-right: 79px;
+        }
+      }
+      & > tbody > tr > td {
+        &:nth-last-of-type(2) {
+          max-width: 100%;
+          padding-right: 71px;
+        }
+      }
+      & > tfoot > tr > td {
+        &:nth-last-of-type(2) {
+          max-width: 100%;
+          padding-right: 79px;
+        }
+        &:last-child {
+          border: none;
         }
       }
     }
+
     &.right-actions.scroll-width.forecast-manager-worksheet table.dataTable {
       & > tbody > tr[name$="_commit_history"] > td:first-child:last-child {
         position: relative;

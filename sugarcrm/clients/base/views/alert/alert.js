@@ -36,11 +36,12 @@
 
     plugins: ['Tooltip'],
 
-    events: {
-        'click [data-action=cancel]': 'cancelClicked',
-        'click [data-action=confirm]': 'confirmClicked',
-        'click a': 'linkClick'
-    },
+        events: {
+            'click [data-action=cancel]': 'cancelClicked',
+            'click [data-action=confirm]': 'confirmClicked',
+            'click a[class!=close]': 'linkClick',
+            'click a.close': 'closeClicked'
+        },
 
     LEVEL: {
         PROCESS: 'process',
@@ -60,6 +61,7 @@
      *  - options.onCancel: Handler of action Cancel for confirmation alerts
      *  - options.onLinkClicked: Handler for click actions on a link inside the
      *    alert
+     *  - options.onClose: Handler for the close event on the (x)
      *  - options.templateOptions: Augment template context with custom object
      *
      * @override
@@ -70,6 +72,7 @@
         this.onConfirm = options.onConfirm;
         this.onCancel = options.onCancel;
         this.onLinkClick = options.onLinkClick;
+        this.onClose = options.onClose;
         this.alertLevel = options.level;
         this.templateOptions = options.templateOptions;
         this.name = 'alert';
@@ -133,6 +136,16 @@
         }
     },
 
+    /**
+     * Fired when the close (x) is clicked
+     * @param event
+     */
+    closeClicked: function(event) {
+        if (_.isFunction(this.onClose)) {
+            this.onClose();
+        }
+        app.alert.dismiss(this.key);
+    },
     /**
      * Get the HTML string for alert given alert level
      * @param {String} level

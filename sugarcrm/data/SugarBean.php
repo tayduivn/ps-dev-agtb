@@ -1782,6 +1782,11 @@ class SugarBean
         }
         //END SUGARCRM flav=pro ONLY
 
+        // if this bean has a currency_id and base_rate, verify that base_rate is set to the correct amount
+        if (isset($this->field_defs['currency_id']) && isset($this->field_defs['base_rate'])) {
+            SugarCurrency::verifyCurrencyBaseRateSet($this);
+        }
+
         require_once("data/BeanFactory.php");
         BeanFactory::registerBean($this->module_name, $this);
 
@@ -2274,7 +2279,7 @@ class SugarBean
             $xtpl = $this->set_notification_body($xtpl, $this);
         } else {
             //Default uses OBJECT key for both subject and body (see en_us.notify_template.html)
-            $singularModuleLabel = $GLOBALS['app_list_strings']['moduleListSingular'][$this->getObjectName()];
+            $singularModuleLabel = $GLOBALS['app_list_strings']['moduleListSingular'][$this->module_name];
             $xtpl->assign("OBJECT", $singularModuleLabel);
         }
 

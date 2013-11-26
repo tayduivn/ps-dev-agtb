@@ -84,13 +84,11 @@
             onLinkClick: _.bind(function() {
                 app.alert.dismiss('create-success');
                 this.openRLICreate();
+            }, this),
+            onClose: _.bind(function() {
+                app.routing.offBefore('route', this.dismissAlert, this);
             }, this)
         });
-
-        this.alert.getCloseSelector().on('click', _.bind(function() {
-            this.alert.getCloseSelector().off('click');
-            app.routing.offBefore('route', this.dismissAlert, this);
-        }, this));
     },
 
     /**
@@ -99,10 +97,8 @@
     dismissAlert: function(data) {
         // if we are not navigating to the Opps list view, dismiss the alert
         if(data && !(data.args && data.args[0] == 'Opportunities' && data.route == 'list')) {
-            this.alert.getCloseSelector().off('click');
-
-            // close RLI warning alert
             app.alert.dismiss('opp-rli-create');
+            // close RLI warning alert
             // remove before route event listener
             app.routing.offBefore('route', this.dismissAlert, this);
         }

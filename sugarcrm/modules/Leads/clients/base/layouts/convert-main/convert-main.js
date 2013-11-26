@@ -143,7 +143,9 @@
         //copy lead data down to each module when we get the lead data
         this.context.get('leadsModel').fetch({
             success: _.bind(function(model) {
-                this.context.trigger("lead:convert:populate", model);
+                if (this.context) {
+                    this.context.trigger("lead:convert:populate", model);
+                }
             }, this)
         });
     },

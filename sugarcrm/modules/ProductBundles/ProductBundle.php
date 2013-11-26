@@ -386,27 +386,7 @@ class ProductBundle extends SugarBean {
 
 function save($check_notify = FALSE)
 {
-    $currency = BeanFactory::getBean('Currencies', $this->currency_id);
-    $this->base_rate = $currency->conversion_rate;
-    //US DOLLAR
-    if (!empty($this->tax)) {
-        $this->tax_usdollar = SugarCurrency::convertWithRate($this->tax, $this->base_rate);
-    }
-    if (isset($this->shipping) && !empty($this->shipping)) {
-        $this->shipping_usdollar = SugarCurrency::convertWithRate($this->shipping, $this->base_rate);
-    }
-    if (isset($this->total) && !empty($this->total)) {
-        $this->total_usdollar = SugarCurrency::convertWithRate($this->total, $this->base_rate);
-    }
-    if (isset($this->subtotal) && !empty($this->subtotal)) {
-        $this->subtotal_usdollar = SugarCurrency::convertWithRate($this->subtotal, $this->base_rate);
-    }
-    if (isset($this->deal_tot) && !empty($this->deal_tot)) {
-        $this->deal_tot_usdollar = SugarCurrency::convertWithRate($this->deal_tot, $this->base_rate);
-    }
-    if (isset($this->new_sub) && !empty($this->new_sub)) {
-        $this->new_sub_usdollar = SugarCurrency::convertWithRate($this->new_sub, $this->base_rate);
-    }
+
     $this->id = parent::save($check_notify);
 
     return $this->id;

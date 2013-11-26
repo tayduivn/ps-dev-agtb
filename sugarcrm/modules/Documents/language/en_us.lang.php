@@ -138,16 +138,15 @@ $mod_strings = array (
     'ERR_DOC_EXP_DATE'=> 'Expiration Date',
     'ERR_FILENAME'=> 'File Name',
     'ERR_DOC_VERSION'=> 'Document Version',
-    'ERR_DELETE_CONFIRM'=> 'Do you want to delete this document revision?',
-    'ERR_DELETE_LATEST_VERSION'=> 'You are not allowed to delete the latest revision of a document.',
+    'ERR_DELETE_CONFIRM'=> 'Do you want to delete this Document revision?',
+    'ERR_DELETE_LATEST_VERSION'=> 'You are not allowed to delete the latest revision of a Document.',
     'LNK_NEW_MAIL_MERGE' => 'Mail Merge',
     'LBL_MAIL_MERGE_DOCUMENT' => 'Mail Merge Template:',
-    'ERR_MISSING_FILE' => 'This document is missing a file, most likely due to  an error during upload.  Please retry uploading the file or contact your administrator.',
+    'ERR_MISSING_FILE' => 'This Document is missing a file, most likely due to an error during upload.  Please retry uploading the file or contact your administrator.',
 
     'LBL_TREE_TITLE' => 'Documents',
     //sub-panel vardefs.
     'LBL_LIST_DOCUMENT_NAME'=>'Name',
-    'LBL_CONTRACT_NAME'=>'Contract Name:',
     'LBL_LIST_IS_TEMPLATE'=>'Template?',
     'LBL_LIST_TEMPLATE_TYPE'=>'Document Type',
     'LBL_LIST_SELECTED_REVISION'=>'Selected Revision',
@@ -179,6 +178,3 @@ $mod_strings = array (
     'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
     'LBL_RLI_SUBPANEL_TITLE' => 'Revenue Line Items',
 );
-
-
-?>
