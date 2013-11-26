@@ -62,6 +62,17 @@ class SubscriptionsApi extends SugarApi
         if (!empty($bean)) {
             if ($bean->ACLAccess('view')) {
                 return Subscription::subscribeUserToRecord($api->user, $bean);
+            } else {
+                $moduleName = null;
+                if (isset($args['module'])) {
+                    $failed_module_strings = return_module_language($GLOBALS['current_language'], $args['module']);
+                    $moduleName = $failed_module_strings['LBL_MODULE_NAME'];
+                }
+                $args = null;
+                if (!empty($moduleName)) {
+                    $args = array('moduleName' => $moduleName);
+                }
+                throw new SugarApiExceptionNotAuthorized('EXCEPTION_SUBSCRIBE_MODULE_NOT_AUTHORIZED', $args);
             }
         }
         return false;
@@ -75,6 +86,17 @@ class SubscriptionsApi extends SugarApi
         if (!empty($bean)) {
             if ($bean->ACLAccess('view')) {
                 return Subscription::unsubscribeUserFromRecord($api->user, $bean);
+            } else {
+                $moduleName = null;
+                if (isset($args['module'])) {
+                    $failed_module_strings = return_module_language($GLOBALS['current_language'], $args['module']);
+                    $moduleName = $failed_module_strings['LBL_MODULE_NAME'];
+                }
+                $args = null;
+                if (!empty($moduleName)) {
+                    $args = array('moduleName' => $moduleName);
+                }
+                throw new SugarApiExceptionNotAuthorized('EXCEPTION_SUBSCRIBE_MODULE_NOT_AUTHORIZED', $args);
             }
         }
         return false;

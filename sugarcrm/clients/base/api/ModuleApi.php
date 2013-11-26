@@ -232,6 +232,21 @@ class ModuleApi extends SugarApi {
     public function setFavorite($api, $args) {
         $this->requireArgs($args, array('module', 'record'));
         $bean = $this->loadBean($api, $args, 'view');
+
+        if (!$bean->ACLAccess('view')) {
+            // No create access so we construct an error message and throw the exception
+            $moduleName = null;
+            if (isset($args['module'])) {
+                $failed_module_strings = return_module_language($GLOBALS['current_language'], $args['module']);
+                $moduleName = $failed_module_strings['LBL_MODULE_NAME'];
+            }
+            $args = null;
+            if (!empty($moduleName)) {
+                $args = array('moduleName' => $moduleName);
+            }
+            throw new SugarApiExceptionNotAuthorized('EXCEPTION_FAVORITE_MODULE_NOT_AUTHORIZED', $args);
+        }
+
         $this->toggleFavorites($bean, true);
         $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
@@ -241,6 +256,21 @@ class ModuleApi extends SugarApi {
     public function unsetFavorite($api, $args) {
         $this->requireArgs($args, array('module', 'record'));
         $bean = $this->loadBean($api, $args, 'view');
+
+        if (!$bean->ACLAccess('view')) {
+            // No create access so we construct an error message and throw the exception
+            $moduleName = null;
+            if (isset($args['module'])) {
+                $failed_module_strings = return_module_language($GLOBALS['current_language'], $args['module']);
+                $moduleName = $failed_module_strings['LBL_MODULE_NAME'];
+            }
+            $args = null;
+            if (!empty($moduleName)) {
+                $args = array('moduleName' => $moduleName);
+            }
+            throw new SugarApiExceptionNotAuthorized('EXCEPTION_FAVORITE_MODULE_NOT_AUTHORIZED', $args);
+        }
+
         $this->toggleFavorites($bean, false);
         $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
