@@ -540,6 +540,7 @@ class SugarQuery_Compiler_SQL
     protected function compileSelect(SugarQuery_Builder_Select $selectObj)
     {
         $return = array();
+        $addedFields = array();
 
         if ($selectObj->getCountQuery() === true) {
             return 'count(0) AS record_count';
@@ -571,6 +572,28 @@ class SugarQuery_Compiler_SQL
                         continue;
                     }
                     $alias = $resolvedField[1];
+
+                    if (strpos($resolvedField[0],'.') !== false) {
+                        list($resolvedFieldTable, $resolvedFieldName) = explode('.', $resolvedField[0]);
+                    } else {
+                        $resolvedFieldTable = $this->from_bean->getTableName();
+                        $resolvedFieldName = $resolvedField[0];
+                    }
+                    if (!empty($alias) && array_key_exists($alias, $addedFields)) {
+                        continue;
+                    } elseif (array_key_exists($resolvedFieldTable . '.*', $addedFields)) {
+                        continue;
+                    } elseif (array_key_exists($resolvedFieldName, $addedFields)) {
+                        continue;
+                    }
+                    if (empty($alias) && $resolvedFieldName == '*') {
+                        $addedFields[$resolvedFieldTable . '.' . $resolvedFieldName] = true;
+                    } elseif (empty($alias)) {
+                        $addedFields[$resolvedFieldName] = true;
+                    } else {
+                        $addedFields[$alias] = true;
+                    }
+
                     if (empty($alias)) {
                         $s_alias = "";
                     } else {

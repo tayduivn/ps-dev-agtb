@@ -115,11 +115,11 @@ class SugarQuery
     /**
      * Build the select object
      *
-     * @param bool $fields
+     * @param array $fields
      *
      * @return null|SugarQuery_Builder_Select
      */
-    public function select($fields = false)
+    public function select($fields = array())
     {
         if (empty($this->select)) {
             $this->select = new SugarQuery_Builder_Select($this, $fields);
