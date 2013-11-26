@@ -88,6 +88,14 @@
     },
 
     /**
+     * Sets the Dashlet layout Title
+     * @param title
+     */
+    setTitle: function(title) {
+        this.layout.$('h4.dashlet-title').html(title);
+    },
+
+    /**
      * Loop though the parent context children context to find the worksheet, if they exist
      */
     findWorksheetContexts: function() {
@@ -328,6 +336,10 @@
         if (meta.config) {
             return;
         }
+
+        this.values.on('change:title', function(model, title) {
+            this.setTitle(title);
+        }, this);
 
         this.on('render', function() {
             var f = this.getField('paretoChart'),

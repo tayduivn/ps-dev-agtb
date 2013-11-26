@@ -15,8 +15,8 @@
 $viewdefs['base']['view']['forecast-pareto'] = array(
     'dashlets' => array(
         array(
-            'label' => 'LBL_DASHLET_FORECASTS_CHART',
-            'description' => 'LBL_DASHLET_FORECASTS_DESC',
+            'label' => 'LBL_DASHLET_FORECASTS_CHART_NAME',
+            'description' => 'LBL_DASHLET_FORECASTS_CHART_DESC',
             'config' => array(),
             'preview' => array(),
             'filter' => array(

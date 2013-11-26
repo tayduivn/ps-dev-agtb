@@ -1013,8 +1013,6 @@ $renamedefs = array(
         array('name' => 'LBL_HISTORY_DASHLET_EMAIL_PLURAL', 'type' => 'plural', 'source' => 'Emails'),
 
         // Forecasts
-        array('name' => 'LBL_DASHLET_FORECAST_NAME', 'type' => 'singular', 'source' => 'Forecasts'),
-        array('name' => 'LBL_DASHLET_FORECAST_PARETO_CHART_NAME', 'type' => 'singular', 'source' => 'Forecasts'),
         array('name' => 'LBL_TOUR_SCREEN_2_DESCRIPTION_670', 'type' => 'singular', 'source' => 'Forecasts'),
         array('name' => 'LBL_TOUR_SCREEN_2_DESCRIPTION_670', 'type' => 'plural', 'source' => 'TimePeriods'),
         array('name' => 'LBL_TOUR_SCREEN_2_DESCRIPTION_670', 'type' => 'plural', 'source' => 'Opportunities'),
@@ -1029,8 +1027,10 @@ $renamedefs = array(
         array('name' => 'LBL_TOUR_FORECASTS_TIMEPERIODS', 'type' => 'singular', 'source' => 'Forecasts'),
         array('name' => 'LBL_TOUR_FORECASTS_PROGRESS', 'type' => 'singular', 'source' => 'Quotas'),
         array('name' => 'LBL_TOUR_FORECASTS_CHART', 'type' => 'singular', 'source' => 'Forecasts'),
-        array('name' => 'LBL_DASHLET_FORECASTS_CHART', 'type' => 'singular', 'source' => 'Forecasts'),
-        array('name' => 'LBL_DASHLET_FORECASTS_DESC', 'type' => 'singular', 'source' => 'Forecasts'),
+        array('name' => 'LBL_DASHLET_FORECAST_NAME', 'type' => 'singular', 'source' => 'Forecasts'),
+        array('name' => 'LBL_DASHLET_FORECASTS_CHART_NAME', 'type' => 'singular', 'source' => 'Forecasts'),
+        array('name' => 'LBL_DASHLET_FORECASTS_FOR_CHART_NAME', 'type' => 'singular', 'source' => 'Forecasts'),
+        array('name' => 'LBL_DASHLET_FORECASTS_CHART_DESC', 'type' => 'singular', 'source' => 'Forecasts'),
         array('name' => 'LBL_DASHLET_FORECASTS_DETAILS_DESC', 'type' => 'singular', 'source' => 'Forecasts'),
         array('name' => 'LBL_FORECAST_WORKSHEETS', 'type' => 'singular', 'source' => 'Forecasts'),
         array('name' => 'LBL_FORECAST_WORKSHEET', 'type' => 'singular', 'source' => 'Forecasts'),

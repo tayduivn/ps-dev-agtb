@@ -3330,8 +3330,6 @@ $app_strings = array (
     'LBL_DASHLET_PIPLINE_NAME' => 'Pipeline',
 
     'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME' => 'Recent Tweets - @{{twitter}}',
-    'LBL_DASHLET_FORECAST_NAME' => 'In Forecast',
-    'LBL_DASHLET_FORECAST_PARETO_CHART_NAME' => 'Forecast Pareto Chart',
 
     'LBL_DASHBOARD_NO_RECORDS' => 'No saved dashboards',
 
@@ -4521,11 +4519,13 @@ $app_strings = array (
     'LBL_DASHLET_REFRESH' => 'Refresh',
     'LBL_DASHLET_MOVE' => 'Move',
     'LBL_DASHLET_CLOSE' => 'Close',
-    'LBL_DASHLET_FORECASTS_CHART' => 'Forecast',
-    'LBL_DASHLET_FORECASTS_DESC' => 'Forecast Pareto Chart',
+
+    'LBL_DASHLET_FORECAST_NAME' => 'In Forecast',
+    'LBL_DASHLET_FORECASTS_CHART_NAME' => 'Forecast Chart',
+    'LBL_DASHLET_FORECASTS_FOR_CHART_NAME' => 'Forecast for',
+    'LBL_DASHLET_FORECASTS_CHART_DESC' => 'Displays the Forecast Chart for a specific Time Period',
     'LBL_DASHLET_FORECASTS_GROUPBY' => 'Group By',
     'LBL_DASHLET_FORECASTS_DATASET' => 'Dataset',
-
     'LBL_DASHLET_FORECASTS_DETAILS' => 'Forecasts Details',
     'LBL_DASHLET_FORECASTS_DETAILS_DESC' => 'Displays current Forecast details.',
 

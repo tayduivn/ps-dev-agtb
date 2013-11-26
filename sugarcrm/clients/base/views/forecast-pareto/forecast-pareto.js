@@ -91,6 +91,13 @@
     /**
      * @inheritdoc
      */
+    getLabel: function() {
+        return app.lang.get('LBL_DASHLET_FORECASTS_FOR_CHART_NAME');
+    },
+
+    /**
+     * @inheritdoc
+     */
     initDashlet: function() {
         if (!this.isManager && this.meta.config) {
             // FIXME: Dashlet's config page is rendered from meta.panels directly.
@@ -144,7 +151,7 @@
             // if we have a timestamp, use it, otherwise just default to the current time period
             defaultOptions.timeperiod_id = this.model.get('date_closed_timestamp');
         }
-
+        this.setTitle(this.getLabel() + ' ' + defaultOptions.timeperiod_label);
         this.settings.set(defaultOptions);
     },
 
@@ -260,6 +267,11 @@
                     }, dashletToolbar);
                 }
             }, this);
+
+            this.values.on('change:title', function(model, title) {
+                this.setTitle(title);
+            }, this);
+
             this.settings.on('change:display_manager', this.toggleRepOptionsVisibility, this);
             this.settings.on('change:selectedTimePeriod', function(context, timeperiod) {
                 this.settings.set({timeperiod_id: timeperiod});
@@ -270,6 +282,14 @@
                 this.listenModel.on('change', this.handleDataChange, this);
             }
         }
+    },
+
+    /**
+     * Sets the Dashlet layout Title
+     * @param title
+     */
+    setTitle: function(title) {
+        this.layout.$('h4.dashlet-title').html(title);
     },
 
     findModelToListen: function() {
