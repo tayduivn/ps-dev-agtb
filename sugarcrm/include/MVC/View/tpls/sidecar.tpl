@@ -50,9 +50,6 @@
                     <div class="loading gate">
                         <strong>{$LBL_LOADING}</strong>
                         <i class="l1 icon-circle"></i><i class="l2 icon-circle"></i><i class="l3 icon-circle"></i>
-                        <div class="progress progress-danger">
-                            <div class="bar" style="width: 40%;"></div>
-                        </div>
                     </div>
                 </div>
                 <div id="header"></div>
@@ -89,6 +86,10 @@
                 App = SUGAR.App.init({
                     el: "#sidecar",
                     callback: function(app){
+                        app.progress.set(0.6);
+                        app.once("app:view:change", function(){
+                            app.progress.done();
+                        });
                         $('#alerts').empty();
                         app.start();
                     }

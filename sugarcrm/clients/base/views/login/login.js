@@ -76,6 +76,9 @@
      * @param options
      */
     initialize: function(options) {
+        if(app.progress) {
+            app.progress.hide();
+        }
         // Declare a Bean so we can process field validation
         this._declareModel(options.meta);
 

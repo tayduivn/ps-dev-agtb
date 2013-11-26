@@ -108,13 +108,15 @@
         app.events.on('preview:close', function() {
             this.preview_open = false;
             if (this.chartLoaded) {
-                this.chart.update();
+                if(this.chart && this.chart.update)
+                    this.chart.update();
             }
         }, this);
         app.events.on('app:toggle:sidebar', function(state) {
             this.state = state;
             if (this.chartLoaded && this.state == 'open' && !this.preview_open) {
-                this.chart.update();
+                if(this.chart && this.chart.update)
+                    this.chart.update();
             }
         }, this);
     },

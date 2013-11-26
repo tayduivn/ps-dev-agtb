@@ -2,8 +2,28 @@
   top: -38px;
   position: absolute;
   padding-top: 13px;
+  width: 280px;
   margin-left: -140px;
 }
+
+#nprogress {
+  position: fixed;
+  top: 38px;
+  height: 0;
+  width: 100%;
+  z-index: 1040;
+  &> div {
+    text-align: center;
+    display: inline-block;
+  }
+}
+
+#nprogress > .gate {
+  position: absolute;
+  width: 100%;
+}
+
+
 
 .loading {
   display: inline-block;
@@ -13,9 +33,9 @@
 }
 
 .loading .progress {
+  width: 100%;
   height: 4px;
-  margin-top: 13px;
-  width: 280px;
+  margin-top: 6px;
   .bar {
     height: 4px;
     background: @BorderColor;
@@ -53,3 +73,37 @@
 @-moz-keyframes move{0%{opacity:1;}100%{opacity:0.1;}}
 @-webkit-keyframes move{0%{opacity:1;}100%{opacity:0.1;}}
 @keyframes move{0%{opacity:1;}100%{opacity:0.1;}}
+
+
+/**
+  * Start of nprogress.css from https://github.com/rstacruz/nprogress
+  * MIT License
+  * https://github.com/rstacruz/nprogress/blob/master/License.md
+  * Modified to match Sugar7 Color scheme
+  */
+
+/* Make clicks pass-through */
+#nprogress {
+  pointer-events: none;
+}
+
+#nprogress .bar {
+  background: @BorderColor;
+  width: 100%;
+  margin-left: -100%;
+}
+
+/* Fancy blur effect */
+#nprogress .peg {
+  display: block;
+  position: absolute;
+  right: 0px;
+  width: 100px;
+  height: 100%;
+  box-shadow: 0 0 10px @BorderColor, 0 0 5px @BorderColor;
+  opacity: 1.0;
+
+  -webkit-transform: rotate(3deg) translate(0px, -4px);
+      -ms-transform: rotate(3deg) translate(0px, -4px);
+          transform: rotate(3deg) translate(0px, -4px);
+}
