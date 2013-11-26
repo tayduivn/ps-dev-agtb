@@ -261,3 +261,6 @@ $dictionary['Activity'] = array(
 );
 
 VardefManager::createVardef('ActivityStream/Activities', 'Activity', array('basic'));
+
+//Need to override the relationship because lhs_module is populed with ActivityStream/Activities instead of module name Activities
+$dictionary['Activity']['relationships']['activity_activities']['lhs_module'] = 'Activities';
