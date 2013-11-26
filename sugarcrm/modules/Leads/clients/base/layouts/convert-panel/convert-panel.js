@@ -58,6 +58,7 @@
             complete: false,
             dupeSelected: false
         };
+        this.toggledOffDupes = false;
 
         app.view.invokeParent(this, {type: 'layout', name: 'toggle', method: 'initialize', args: [options]});
 
@@ -133,12 +134,13 @@
     addDupeCheckComponent: function() {
         var leadsModel = this.context.get('leadsModel'),
             context = this.context.getChildContext({
-            'module': this.meta.module,
-            'forceNew': true,
-            'skipFetch': true,
-            'dupelisttype': 'dupecheck-list-select',
-            'collection': this.createDuplicateCollection(leadsModel, this.meta.module)
-        });
+                'module': this.meta.module,
+                'forceNew': true,
+                'skipFetch': true,
+                'dupelisttype': 'dupecheck-list-select',
+                'collection': this.createDuplicateCollection(leadsModel, this.meta.module),
+                'layoutName': 'records'
+            });
         context.prepare();
 
         this.duplicateView = app.view.createLayout({
@@ -192,8 +194,9 @@
         this.currentState.dupeCount = this.duplicateView.collection.length;
         if (this.currentState.dupeCount !== 0) {
             this.showComponent(this.TOGGLE_DUPECHECK);
-        } else {
+        } else if (!this.toggledOffDupes) {
             this.showComponent(this.TOGGLE_CREATE);
+            this.toggledOffDupes = true; //flag so we only toggle once
         }
         this.trigger('lead:convert-dupecheck:complete', this.currentState.dupeCount);
     },
@@ -425,7 +428,14 @@
      * @param model
      */
     handlePopulateRecords: function(model) {
-        var fieldMapping = {}
+        var fieldMapping = {};
+
+        // if copyData is not set or false, no need to run duplicate check, bail out
+        if (!this.meta.copyData) {
+            this.dupeCheckComplete();
+            return;
+        }
+
         if (!_.isEmpty(this.meta.fieldMapping)) {
             fieldMapping = app.utils.deepCopy(this.meta.fieldMapping);
         }

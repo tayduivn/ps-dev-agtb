@@ -114,7 +114,7 @@
         var intersection, numDiffKeys,
             modelHasChanged = this.model.hasChanged(),
             changedAndDefaultsHashesDiffer = true,
-            changed = _.keys(this.model.changedAttributes()),
+            changed = _.keys(this.model.changedAttributes() || {}),
             defaults = _.keys(this.model.getDefaultAttributes());
 
         //If exact same keys and values changedAndDefaultsDiffer will be falsy
