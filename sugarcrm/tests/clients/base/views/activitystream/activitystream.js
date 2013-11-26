@@ -1,10 +1,13 @@
 describe("Activity Stream View", function() {
-    var view, viewName = 'activitystream',
+    var app,
+        view,
+        viewName = 'activitystream',
         createRelatedCollectionStub,
         processAvatarsStub,
         getPreviewDataStub;
 
     beforeEach(function() {
+        app = SugarTest.app;
         createRelatedCollectionStub = sinon.stub(SugarTest.app.data, 'createRelatedCollection', function() {
             return new Backbone.Collection();
         });
@@ -389,6 +392,66 @@ describe("Activity Stream View", function() {
 
             langStub.restore();
             preferenceStub.restore();
+        });
+    });
+
+    describe('getAvatarUrlForUser', function() {
+        var cacheBefore, user, userId, fetchUserPictureStub;
+
+        beforeEach(function() {
+            cacheBefore = app.cache;
+            app.cache = {
+                get: function(key) {
+                    return this[key];
+                },
+                set: function(key, value) {
+                    this[key] = value;
+                }
+            }
+
+            userId = '123';
+            user = new Backbone.Model({created_by: userId});
+
+            fetchUserPictureStub = sinon.stub(view, 'fetchUserPicture');
+        });
+
+        afterEach(function() {
+            app.cache = cacheBefore;
+            fetchUserPictureStub.restore();
+        });
+
+        it('Should return picture url if user has a picture', function() {
+            var result;
+            view.setUserPictureStatus(userId, true);
+            result = view.getAvatarUrlForUser(user, 'activities');
+            expect(result).toContain(userId + '/file/picture');
+            expect(fetchUserPictureStub.callCount).toEqual(0);
+        });
+
+        it('Should return empty string if user has no picture', function() {
+            var result;
+            view.setUserPictureStatus(userId, false);
+            result = view.getAvatarUrlForUser(user, 'activities');
+            expect(result).toEqual('');
+            expect(fetchUserPictureStub.callCount).toEqual(0);
+        });
+
+        it('Should return empty string if picture check has not been performed yet', function() {
+            var result;
+            view.setUserPictureStatus(userId, undefined);
+            result = view.getAvatarUrlForUser(user, 'activities');
+            expect(result).toEqual('');
+            expect(fetchUserPictureStub.callCount).toEqual(1);
+        });
+
+        it('Should return empty string picture check result is expired', function() {
+            var result;
+            view.expiryTime = -(view.expiryTime); //force expire in the past
+            view.setUserPictureStatus(userId, true);
+            result = view.getAvatarUrlForUser(user, 'activities');
+            expect(result).toEqual('');
+            expect(fetchUserPictureStub.callCount).toEqual(1);
+            view.expiryTime = -(view.expiryTime); //return expiry time positive
         });
     });
 });
