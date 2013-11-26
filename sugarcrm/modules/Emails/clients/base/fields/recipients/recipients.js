@@ -24,7 +24,7 @@
 
     fieldTag: 'input.select2',
 
-    tooltips: [], //initialized tooltips
+    plugins: ['Tooltip'],
 
     /**
      * @override
@@ -50,7 +50,7 @@
             // put the formatted recipients in the DOM
             this.getFieldElement().select2('data', recipients);
             // rebuild the tooltips
-            this._initializeTooltips();
+            this.initializeAllPluginTooltips();
         }, this);
         /**
          * Sets up event handlers that allow external forces to manipulate the contents of the collection, while
@@ -144,7 +144,9 @@
                 formatSearching:     _.bind(this.formatSearching, this),
                 formatInputTooShort: _.bind(this.formatInputTooShort, this),
                 selectOnBlur:        true
-            });
+            }).on('select2-removed', _.bind(function() {
+                    this.initializeAllPluginTooltips();
+                }, this));
 
             if (!!this.def.disabled) {
                 $recipientsField.select2('disable');
@@ -219,7 +221,15 @@
      * @return {String}
      */
     formatSelection: function(recipient) {
-        return recipient.name ? recipient.name : recipient.email;
+        var value = recipient.name || recipient.email,
+            template = app.template.getField(this.type, 'select2-selection', this.module);
+        if (template) {
+            return template({
+                name: value,
+                email: recipient.email
+            });
+        }
+        return value;
     },
 
     /**
@@ -316,7 +326,6 @@
                     });
                 }
                 self.model.get(self.name).reset(value);
-                self._initializeTooltips();
             })
             .on("select2-selecting", _.bind(this._handleEventOnSelected, this));
     },
@@ -356,7 +365,6 @@
      * Destroy all select2 and tooltip plugins
      */
     unbindDom: function() {
-        this._destroyTooltips();
         this.getFieldElement().select2('destroy');
         app.view.Field.prototype.unbindDom.call(this);
     },
@@ -409,33 +417,6 @@
      */
     getFieldElement: function() {
         return this.$(this.fieldTag);
-    },
-
-    /**
-     * Tooltip should show when hovering over the recipient pill
-     * @private
-     */
-    _initializeTooltips: function() {
-        var self = this;
-        this._destroyTooltips();
-        this.$('.select2-search-choice').each(function() {
-            $(this).tooltip({
-                container: 'body',
-                title: $(this).data('select2Data').email
-            });
-            self.tooltips.push($(this).data('tooltip'));
-        });
-    },
-
-    /**
-     * Destroy all tooltips
-     * @private
-     */
-    _destroyTooltips: function() {
-        _.each(this.tooltips, function(tooltip) {
-            tooltip.destroy();
-        });
-        this.tooltips = [];
     },
 
     /**
