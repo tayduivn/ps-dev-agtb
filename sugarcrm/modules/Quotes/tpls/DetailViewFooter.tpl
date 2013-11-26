@@ -92,7 +92,7 @@
 			<td valign="top" style="text-align: right;">{sugar_currency_format var=$DISCOUNT_PRICE currency_id=$CURRENCY_ID}</td>
 			{if $line_item->discount_amount != "0.00" && $product_bundle->deal_tot!= ""}
 			     {if $line_item->discount_select}
-			         <td valign="top" style="text-align: right;">{sugar_currency_format var=$DISCOUNT_AMOUNT currency_symbol=''}%</td>
+			         <td valign="top" style="text-align: right;">{sugar_number_format var=$DISCOUNT_AMOUNT}%</td>
 			     {else}
 			         <td valign="top" style="text-align: right;">{sugar_currency_format var=$DISCOUNT_AMOUNT currency_id=$CURRENCY_ID}</td>
 			     {/if}
