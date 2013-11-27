@@ -288,19 +288,27 @@
             },
 
             /**
-             * Add Required placeholder for input, select kinds of fields
-             * @param element (Optional) element to attach placeholder
+             * Sets the required placeholder on field tag.
+             *
+             * If no element is provided, sets it on the first existing
+             * `this.fieldTag`.
+             * The required placeholder text is defined by `LBL_REQUIRED_FIELD`
+             * label.
+             * If an existing placeholder exists, prefixes with
+             * `(LBL_REQUIRED_FIELD) ` and leaves the rest untouched.
+             *
+             * @param {HTMLElement} [elem] Element to attach the placeholder
+             *   which defaults to first `this.fieldTag` available in this
+             *   field.
              */
-            setRequiredPlaceholder: function (element) {
-                var el = element || this.$(this.fieldTag).first();
-                var old = el.attr("placeholder");
-                var requiredPlaceholder = app.lang.get("LBL_REQUIRED_FIELD", this.module);
-                var newPlaceholder = requiredPlaceholder;
-                if (old) {
-                    // If there is an existing placeholder then add required label after it
-                    newPlaceholder = old + " (" + requiredPlaceholder + ")";
-                }
-                el.attr("placeholder", newPlaceholder).addClass("required");
+            setRequiredPlaceholder: function(el) {
+                var label = app.lang.get('LBL_REQUIRED_FIELD', this.module),
+                    placeholder;
+
+                el = el || this.$(this.fieldTag).first();
+                placeholder = el.prop('placeholder');
+                placeholder = (placeholder) ? '(' + label + ') ' + placeholder : label;
+                el.prop('placeholder', placeholder.trim()).addClass('required');
             },
 
             /**
