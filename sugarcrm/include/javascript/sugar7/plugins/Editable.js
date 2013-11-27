@@ -191,7 +191,11 @@
              * @param {Object} field A field
              */
             turnOffFieldEvents: function(field) {
-                field.$(field.fieldTag).off('keydown.record', this.editableKeyDowned);
+                if (_.isFunction(field.unbindKeyDown)) {
+                    field.unbindKeyDown(this.editableKeyDowned);
+                } else {
+                    field.$(field.fieldTag).off('keydown.record', this.editableKeyDowned);
+                }
                 $(document).off('mousedown.record' + field.name, this.editableMouseClicked);
             },
 
@@ -248,7 +252,11 @@
                         $(document).on('mousedown.record' + field.name, {field: field}, this.editableMouseClicked);
                     }
                 } else {
-                    field.$(field.fieldTag).off('keydown.record');
+                    if (_.isFunction(field.unbindKeyDown)) {
+                        field.unbindKeyDown();
+                    } else {
+                        field.$(field.fieldTag).off('keydown.record');
+                    }
                     $(document).off('mousedown.record' + field.name);
                 }
             },
