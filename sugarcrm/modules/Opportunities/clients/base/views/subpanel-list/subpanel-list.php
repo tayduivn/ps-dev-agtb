@@ -39,12 +39,22 @@ $viewdefs['Opportunities']['base']['view']['subpanel-list'] = array(
           'name' => 'account_name',
           'sortable' => false,
         ),
-        array(
-          'name' => 'sales_stage',
-          'label' => 'LBL_LIST_SALES_STAGE',
-          'enabled' => true,
-          'default' => true,
+//BEGIN SUGARCRM flav!=ent ONLY
+          array(
+              'name' => 'sales_stage',
+              'label' => 'LBL_LIST_SALES_STAGE',
+              'enabled' => true,
+              'default' => true,
+          ),
+//END SUGARCRM flav!=ent ONLY
+//BEGIN SUGARCRM flav=ent ONLY
+          array(
+              'name' => 'sales_status',
+              'label' => 'LBL_SALES_STATUS',
+              'enabled' => true,
+              'default' => true,
         ),
+//END SUGARCRM flav=ent ONLY
         array(
           'name' => 'date_closed',
           'label' => 'LBL_LIST_DATE_CLOSED',
