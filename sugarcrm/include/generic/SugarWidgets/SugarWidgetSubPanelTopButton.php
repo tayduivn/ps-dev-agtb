@@ -142,6 +142,8 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
             $parentId = $defines['focus']->id;
             $relationship_name = $this->get_subpanel_relationship_name($defines);
             $form = 'form' . $relationship_name;
+            $panelDefs = $defines['subpanel_definition'];
+            $link = '';
 
             //Normalize Activities which should result in Create Tasks
             if ($module == "Activities") {
@@ -149,15 +151,31 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
                 $label = $app_strings['LBL_CREATE_TASK'];
             }
 
+            if ($panelDefs->isCollection()) {
+                foreach ($panelDefs->sub_subpanels as $panel) {
+                    if ($panel->get_module_name() == $module) {
+                        $link = $panel->get_data_source_name();
+                        break;
+                    }
+                }
+            } else {
+                $link = $panelDefs->get_data_source_name();
+            }
+
             if ($this->enableActionMenu) {
                 $button = '<form data-legacy-subpanel-create="1" action="index.php" method="post" name="form" id="' . $form . "\">\n".
-                    "<a href='#' onClick=\"javascript:subp_nav_sidecar('" .$module. "','" .$parentId. "','c');\"".
+                    "<a href='#' onClick=\"javascript:subp_nav_sidecar(
+                        '" . $module . "','" . $parentId . "','c', '" . $link . "'
+                    );\"".
                     " class='create_from_bwc_to_sidecar' id=\"$id\">". $label .'</a>';
             } else {
                 $button = '<form data-legacy-subpanel-create="1" action="index.php" method="post" name="form" id="' . $form . "\">\n".
-                    "<input type='button' onClick=\"javascript:subp_nav_sidecar('" .$module. "','" .$parentId. "','c');\"".
+                    "<input type='button' onClick=\"javascript:subp_nav_sidecar(
+                        '" . $module . "','" . $parentId . "','c', '" . $link . "'
+                    );\"".
                     " class='create_from_bwc_to_sidecar' id=\"$id\" value=\"$label\">";
             }
+
             return $button;
         }
         return false;

@@ -88,56 +88,24 @@ function subp_nav(m,i,a,t,r){
 * m = module
 * i = record id; when action is 'c' it's the related's parent id
 * a = action (create/detail/edit abbreviated by single character e.g. 'c')
+* link = relationship link name.
 * */
-function subp_nav_sidecar(m,i,a) {
-    var app = window.parent.SUGAR.App, url;
+function subp_nav_sidecar(m, i, a, link) {
+    var app = parent.SUGAR.App,
+        view = app.controller.layout.getComponent('bwc'),
+        url;
     if (!app.metadata.getModule(m).isBwcEnabled) {
 
         //action is create
         if (a === 'c') {
-            //Hack: We create parent model with parent id so we can
-            //add it as a link for our related model
-            var parentModuleName = get_module_name();
-            var parentModel = app.data.createBean(parentModuleName, {
-                id: i,
-                module: m
-            });
-
-            //Create related bean and relate it to the parent model
-            var link = m.toLowerCase();
-            var model = app.data.createRelatedBean(parentModel, null, link);
-
-            //Open drawer to create page
-            app.drawer.open({
-                layout: 'create-actions',
-                context: {
-                    create: true,
-                    model: model,
-                    module: m
-                }
-            }, function (context, newModel) {
-                //Following subpanel modules need mapping back to legacy 6.x
-                var map = {
-                  'notes': 'history',
-                  'tasks': 'activities'
-                }
-                m = m.toLowerCase();
-                m = _.has(map, m) ? map[m] : m;
-
-                if (newModel && newModel.id) {
-                    //reload the subpanel so we see our new record
-                    showSubPanel(m, null, true);
-                }
-            });
+            view.createRelatedRecord(m, link);
             return false;
         }
-
         //action is not create
         //TODO:`edit` is ignored today (see SP-1618) but we'll want to add action later e.g.:
         //a = a === 'd' ? '' : 'edit';
         a = '';
-        url = "index.php?module="+m+"&action="+a+"&record="+i;
-        url = app.view.views.BaseBwcView.prototype.convertToSidecarUrl(url);
+        url = view.convertToSidecarUrl('index.php?module=' + m + '&action=' + a + '&record=' + i);
         app.router.navigate(url, {trigger: true});
         return false;
     }
