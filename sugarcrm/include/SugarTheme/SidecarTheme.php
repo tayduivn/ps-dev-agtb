@@ -429,14 +429,14 @@ class SidecarTheme
      */
     private function getUserTheme()
     {
-        if (!empty($_COOKIE['sugar_user_theme'])) {
-            return $_COOKIE['sugar_user_theme'];
-        } elseif (!empty($_SESSION['authenticated_user_theme'])) {
-            return $_SESSION['authenticated_user_theme'];
-        } else {
-            global $sugar_config;
-            return $sugar_config['default_theme'];
-        }
+        // THIS IS A FIX FOR 7.1.5
+        // We no longer have multiple themes support.
+
+        // We removed the feature for the user to choose his preferred theme.
+        // In the future, we'll add this ability back. Meanwhile, there will be
+        // only one theme possible per platform, known as the `default` theme.
+
+        return 'default';
     }
 
     /**

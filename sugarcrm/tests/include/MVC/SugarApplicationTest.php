@@ -139,8 +139,11 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->_app->loadDisplaySettings();
 
-        $this->assertEquals($GLOBALS['theme'],
-            $_SESSION['authenticated_user_theme']);
+        $this->assertEquals(
+            $GLOBALS['theme'],
+            'RacerX',
+            'Multiple themes are no longer supported. It should always load RacerX'
+        );
 
         $this->_removeUser();
     }

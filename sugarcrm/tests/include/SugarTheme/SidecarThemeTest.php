@@ -159,12 +159,16 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $paths = $theme->getPaths();
 
         $userTheme = SugarTestReflection::callProtectedMethod($theme, 'getUserTheme');
-        $this->assertEquals($preferredTheme, $userTheme, 'It should pick the theme name stored in session');
+        $this->assertEquals(
+            'default',
+            $userTheme,
+            'Multiple themes are no longer supported. It should return default'
+        );
 
         $this->assertEquals(
+            'styleguide/themes/clients/' . $this->platformTest . '/default/',
             $paths['base'],
-            'styleguide/themes/clients/' . $this->platformTest . '/' . $preferredTheme . '/',
-            'It should have retrieve the theme name stored in session'
+            'Multiple themes are no longer supported. It should always load default theme'
         );
 
         // Reset session var
