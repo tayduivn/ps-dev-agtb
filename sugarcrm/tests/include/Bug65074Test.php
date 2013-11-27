@@ -69,21 +69,15 @@ EOQ;
             sugar_mkdir($this->customIncludeDir, 0777, true);
         }
 
-        file_put_contents($this->customIncludeDir . '/' . $this->customIncludeFile, $customIncludeFileContent);
-
-        // add to loader map
-        SugarAutoLoader::addToMap($this->customIncludeDir . '/' . $this->customIncludeFile, true);
+        SugarAutoLoader::put($this->customIncludeDir . '/' . $this->customIncludeFile, $customIncludeFileContent, true);
     }
 
     public function tearDown()
     {
         // remove the custom include file
         if (file_exists($this->customIncludeDir . '/' . $this->customIncludeFile)) {
-            unlink($this->customIncludeDir . '/' . $this->customIncludeFile);
+            SugarAutoLoader::unlink($this->customIncludeDir . '/' . $this->customIncludeFile, true);
         }
-
-        // delete from loader map
-        SugarAutoLoader::delFromMap($this->customIncludeDir . '/' . $this->customIncludeFile, true);
 
         SugarTestHelper::tearDown();
     }
