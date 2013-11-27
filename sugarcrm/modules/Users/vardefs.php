@@ -949,6 +949,8 @@ $dictionary['User'] = array(
 			'fields' => array('team_set_id')
 		),
 	//END SUGARCRM flav=pro ONLY
+        array('name' => 'idx_user_title', 'type' => 'index', 'fields' => array('title')),
+        array('name' => 'idx_user_department', 'type' => 'index', 'fields' => array('department')),
     ) ,
 	'relationships' => array (
   		'user_direct_reports' => array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id', 'rhs_module'=> 'Users', 'rhs_table'=> 'users', 'rhs_key' => 'reports_to_id', 'relationship_type'=>'one-to-many'),

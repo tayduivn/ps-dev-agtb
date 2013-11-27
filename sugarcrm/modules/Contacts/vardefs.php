@@ -647,6 +647,8 @@ $dictionary['Contact'] = array(
             'type' => 'index',
             'fields' => array('assigned_user_id'),
         ),
+        array('name' => 'idx_contact_title', 'type' => 'index', 'fields' => array('title')),
+        array('name' => 'idx_contact_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
     ),
     'relationships' => array(
         'contact_direct_reports' => array(

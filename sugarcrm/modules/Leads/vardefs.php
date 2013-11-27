@@ -607,8 +607,10 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'activity_enable
         array('name' =>'idx_reports_to', 'type'=>'index', 'fields'=>array('reports_to_id')),
         array('name' =>'idx_lead_phone_work', 'type'=>'index', 'fields'=>array('phone_work')),
        array('name' =>'idx_leads_id_del', 'type'=>'index', 'fields'=>array('id','deleted',)),
+        array('name' => 'idx_lead_date_entered', 'type' => 'index', 'fields' => array('date_entered'))
 
-                                             )
+
+    )
 , 'relationships' => array (
 	'lead_direct_reports' => array('lhs_module'=> 'Leads', 'lhs_table'=> 'leads', 'lhs_key' => 'id',
 							  'rhs_module'=> 'Leads', 'rhs_table'=> 'leads', 'rhs_key' => 'reports_to_id',

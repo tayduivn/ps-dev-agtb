@@ -131,6 +131,7 @@ $dictionary['Holiday'] = array(
     array('name' =>'holidayspk', 'type' =>'primary', 'fields'=>array('id')),
     array('name' =>'idx_holiday_id_del', 'type' =>'index', 'fields'=>array('id', 'deleted')),
     array('name' =>'idx_holiday_id_rel', 'type' =>'index', 'fields'=>array('related_module_id', 'related_module')),
+    array('name' => 'idx_holiday_holiday_date', 'type' => 'index', 'fields' => array('holiday_date')),
   )
 );
 

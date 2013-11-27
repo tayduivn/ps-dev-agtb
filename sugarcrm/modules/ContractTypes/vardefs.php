@@ -97,6 +97,7 @@ $dictionary['ContractType'] = array('table' => 'contract_types',
 'acls' => array('SugarACLAdminOnly' => true),
 'indices' => array (
       array('name' =>'contract_types_pk', 'type' =>'primary', 'fields'=>array('id')),
+      array('name' => 'idx_contracttype_name', 'type' => 'index', 'fields' => array('name')),
  )
 );
 ?>

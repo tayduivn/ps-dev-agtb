@@ -183,6 +183,7 @@ $dictionary['EAPM'] = array(
                 'type' => 'index',
                 'fields'=> array('assigned_user_id', 'application', 'validated'),
         ),
+        array('name' => 'idx_eapm_name', 'type' => 'index', 'fields' => array('name')),
 ),
 	'optimistic_locking'=>true,
 );

@@ -914,7 +914,9 @@ $dictionary['Product'] = array(
         'name' => 'idx_prod_user_dc_timestamp',
         'type' => 'index',
         'fields' => array('id', 'assigned_user_id', 'date_closed_timestamp')
-    )
+    ),
+        array('name' => 'idx_product_quantity', 'type' => 'index', 'fields' => array('quantity')),
+
     ),
     'relationships' => array(
         'product_notes' => array(
