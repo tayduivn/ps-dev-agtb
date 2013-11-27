@@ -30,7 +30,7 @@ class AdministrationController extends SugarController
         require_once('modules/MySettings/TabController.php');
 
 
-        global $current_user, $app_strings;
+        global $current_user, $app_strings, $modInvisList;
 
         if (!is_admin($current_user)) {
             sugar_die($app_strings['ERR_NOT_ADMIN']);
@@ -49,6 +49,10 @@ class AdministrationController extends SugarController
         if (isset($_REQUEST['disabled_tabs'])) {
             $disabledTabs = json_decode(html_entity_decode($_REQUEST['disabled_tabs'], ENT_QUOTES));
             $disabledTabsKeyArray = TabController::get_key_array($disabledTabs);
+            //Never show Project subpanels if Project module is hidden
+            if (!in_array('project', $disabledTabsKeyArray) && in_array('Project', $modInvisList)) {
+                $disabledTabsKeyArray[] = 'project';
+            }
             SubPanelDefinitions::set_hidden_subpanels($disabledTabsKeyArray);
         }
         
