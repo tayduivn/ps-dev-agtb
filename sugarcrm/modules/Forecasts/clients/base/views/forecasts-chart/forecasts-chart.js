@@ -64,7 +64,6 @@
 
     /**
      * Specific code to run after a dashlet Init Code has ran
-     *
      */
     initDashlet: function() {
         var fieldOptions,
@@ -85,14 +84,6 @@
             app.acl.hasAccess('view', 'ForecastWorksheets', app.user.get('id'), 'best_case')) {
             this.dashletConfig.dataset.options['best'] = fieldOptions['best'];
         }
-    },
-
-    /**
-     * Sets the Dashlet layout Title
-     * @param title
-     */
-    setTitle: function(title) {
-        this.layout.$('h4.dashlet-title').html(title);
     },
 
     /**
@@ -338,7 +329,7 @@
         }
 
         this.values.on('change:title', function(model, title) {
-            this.setTitle(title);
+            this.layout.setTitle(title);
         }, this);
 
         this.on('render', function() {

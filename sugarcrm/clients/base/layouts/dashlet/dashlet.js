@@ -366,6 +366,21 @@
             this.hide();
         }
     },
+
+    /**
+     * Sets the Dashlet layout Title
+     * @param title
+     */
+    setTitle: function(title) {
+        var $titleEl = this.$('h4.dashlet-title');
+        if($titleEl.length) {
+            $titleEl.html(title);
+        }
+    },
+
+    /**
+     * @inheritdoc
+     */
     _dispose: function() {
         this.model.off("setMode", null, this);
         this.off("render");

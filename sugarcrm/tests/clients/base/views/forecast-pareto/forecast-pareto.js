@@ -109,6 +109,8 @@ describe('Base.Views.ForecastPareto', function() {
         sandbox.stub(app.api, 'call', function() {
         });
 
+        layout.setTitle = function() {};
+
         view = SugarTest.createView('base', 'Forecasts', 'forecast-pareto', meta, context, false, layout, true);
         view.forecastInitCallback(initCallback);
     });

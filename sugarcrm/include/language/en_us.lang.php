@@ -4521,9 +4521,9 @@ $app_strings = array (
     'LBL_DASHLET_CLOSE' => 'Close',
 
     'LBL_DASHLET_FORECAST_NAME' => 'In Forecast',
-    'LBL_DASHLET_FORECASTS_CHART_NAME' => 'Forecast Chart',
+    'LBL_DASHLET_FORECASTS_CHART_NAME' => 'Forecast Bar Chart',
     'LBL_DASHLET_FORECASTS_FOR_CHART_NAME' => 'Forecast for',
-    'LBL_DASHLET_FORECASTS_CHART_DESC' => 'Displays the Forecast Chart for a specific Time Period',
+    'LBL_DASHLET_FORECASTS_CHART_DESC' => 'Displays the Forecast Bar Chart for a specific Time Period',
     'LBL_DASHLET_FORECASTS_GROUPBY' => 'Group By',
     'LBL_DASHLET_FORECASTS_DATASET' => 'Dataset',
     'LBL_DASHLET_FORECASTS_DETAILS' => 'Forecasts Details',
