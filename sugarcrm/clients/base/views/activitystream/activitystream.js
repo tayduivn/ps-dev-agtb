@@ -437,61 +437,111 @@
      */
     getAvatarUrlForUser: function (model, activityType){
         var createdBy = model.get('created_by'),
-            isCached, pictureUrl;
+            hasPicture = this.checkUserHasPicture(model, activityType);
 
-        isCached = this.fetchAndCacheAvatar(model, activityType);
+        return hasPicture ? this.buildAvatarUrl(createdBy) : '';
+    },
 
-        pictureUrl = isCached ? app.api.buildFileURL({
-            module: 'Users',
-            id: createdBy,
-            field: 'picture'
-        }) : '';
+    /**
+     * Checks cache to see if user has a picture, calls API if needed
+     *
+     * @param model The User
+     * @param activityType
+     * @returns {boolean} whether user has a picture
+     */
+    checkUserHasPicture: function (model, activityType) {
+        var createdBy = model.get('created_by'),
+            hasPicture;
 
-        return pictureUrl;
+        // If processing the current user's avatar, no need to fetch
+        if (createdBy === app.user.get('id')) {
+            hasPicture = !_.isEmpty(app.user.get('picture'));
+        } else {
+            // Check cache
+            hasPicture = this.getUserPictureStatus(createdBy);
+        }
+
+        // If not current user or cached, call api to check if user has a picture
+        if (_.isUndefined(hasPicture)) {
+            this.fetchUserPicture(model, activityType);
+            hasPicture = false; // Use placeholder until api call finishes
+        }
+
+        return hasPicture;
     },
 
     /**
      * Retrieves a user and caches the results of whether the user has a profile picture.
-     * Replaces the default icon of the comment box with an image tag of the profile picture.
+     * Replaces the default icon with an image tag of the profile picture.
+     *
      * @param model
      * @param activityType
-     * @returns {boolean}
      */
-    fetchAndCacheAvatar: function (model, activityType) {
+    fetchUserPicture: function(model, activityType) {
         var self = this,
             createdBy = model.get('created_by'),
-            cached = app.cache.get(this.cacheNamePrefix + createdBy),
-            cachedTTL = app.cache.get(this.cacheNamePrefix + createdBy + self.expiryTime),
-            isCached = true;
+            user = app.data.createBean('Users', {id: createdBy});
 
-        if ((_.isUndefined(cached) || cachedTTL < $.now())) {
-            var user = app.data.createBean('Users', {id: createdBy});
-            user.fetch({
-                fields: ["picture"],
-                success: function () {
-                    app.cache.set(self.cacheNamePrefix + createdBy, !_.isEmpty(user.get('picture')));
-                    app.cache.set(self.cacheNamePrefix + createdBy + self.cacheNameExpire, $.now() + self.expiryTime);
+        user.fetch({
+            fields: ["picture"],
+            success: function () {
+                var pictureUrl = self.buildAvatarUrl(createdBy),
+                    hasPicture = !_.isEmpty(user.get('picture'));
 
-                    var pictureUrl = app.api.buildFileURL({
-                        module: 'Users',
-                        id: createdBy,
-                        field: 'picture'
-                    });
+                self.setUserPictureStatus(createdBy, hasPicture);
 
-                    //Replace the activity image with the users profile picture
+                // If picture exists, replace the activity image with the user's profile picture
+                if (hasPicture) {
                     self.$('#avatar-' + activityType + '-' + model.get('id')).html("<img src='" + pictureUrl + "' alt='" + model.get('created_by_name') + "'>");
-
-                },
-                error: function () {
-                    app.cache.set(self.cacheNamePrefix + createdBy, false);
-                    app.cache.set(self.cacheNamePrefix + createdBy + self.cacheNameExpire, $.now() + self.expiryTime);
                 }
-            });
+            },
+            error: function () {
+                // Problem retrieving picture, use placeholder
+                self.setUserPictureStatus(createdBy, false);
+            }
+        });
+    },
 
-            isCached = false;
-        }
+    /**
+     * Retrieve from the app cache whether user has a picture
+     * Respects cache TTL, returns undefined if expired
+     *
+     * @param userId
+     * @returns {boolean|undefined} whether user has picture or undefined if cache not set or expired
+     * @private
+     */
+    getUserPictureStatus: function(userId) {
+        var hasPicture = app.cache.get(this.cacheNamePrefix + userId),
+            cachedTTL = app.cache.get(this.cacheNamePrefix + userId + this.cacheNameExpire);
 
-        return isCached;
+        return (cachedTTL < $.now()) ? undefined : hasPicture;
+    },
+
+    /**
+     * Cache whether the user has a picture or not
+     *
+     * @param userId
+     * @param hasPicture
+     * @private
+     */
+    setUserPictureStatus: function(userId, hasPicture) {
+        app.cache.set(this.cacheNamePrefix + userId, hasPicture);
+        app.cache.set(this.cacheNamePrefix + userId + this.cacheNameExpire, $.now() + this.expiryTime);
+    },
+
+    /**
+     * Build the file url for the given user's avatar
+     *
+     * @param userId
+     * @returns {String} The avatar url
+     * @private
+     */
+    buildAvatarUrl: function(userId) {
+        return app.api.buildFileURL({
+            module: 'Users',
+            id: userId,
+            field: 'picture'
+        });
     },
 
     toggleReplyBar: function() {
