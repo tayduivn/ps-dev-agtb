@@ -94,6 +94,7 @@ $dictionary['ProductType'] = array(
     'len' => '50',
     'comment' => 'Product type name',
     'importable' => 'required',
+    'required' => true,
   ),
   'description' =>
   array (
@@ -110,6 +111,7 @@ $dictionary['ProductType'] = array(
     'len' => '4',
     'comment' => 'Order within list',
     'importable' => 'required',
+    'required' => true,
   ),
 ),
 'acls' => array('SugarACLAdminOnly' => array('adminFor' => 'Products', 'allowUserRead' => true)),
