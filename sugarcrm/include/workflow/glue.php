@@ -605,6 +605,7 @@ include_once("include/workflow/alert_utils.php");
 ');
         fwrite($fp, "\n?>");
         fclose($fp);
+        SugarAutoLoader::addToMap($file);
     //end function write_alert_meta_file
     }
 
