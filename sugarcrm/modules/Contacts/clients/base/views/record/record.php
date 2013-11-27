@@ -277,12 +277,12 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                     'name' => 'campaign_name',
                     'span' => 12,
                 ),
+                //BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'preferred_language',
                     'type' => 'language',
                     'span' => 12,
                 ),
-	            //BEGIN SUGARCRM flav=ent ONLY
                 'portal_name',
                 'portal_active',
                 array(
