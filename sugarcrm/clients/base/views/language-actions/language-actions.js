@@ -38,7 +38,7 @@
         app.events.on("app:login:success", this.render, this);
         app.events.on("app:logout", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
-        $(window).on('resize', _.bind(this.adjustMenuHeight,this));
+        $(window).on('resize', _.debounce(_.bind(this.adjustMenuHeight, this), 100));
     },
     /**
      * @override
