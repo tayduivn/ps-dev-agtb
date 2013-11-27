@@ -126,7 +126,7 @@ class SugarFieldImage extends SugarFieldBase {
         // case when we should copy one file to another using merge-duplicate view
         // $params[$field . '_duplicateBeanId'] contains id of bean from
         // which we should copy file.
-        if (!empty($params[$field . '_duplicateBeanId'])) {
+        if (!empty($params[$field]) && !empty($params[$field . '_duplicateBeanId'])) {
             $bean->$field = create_guid();
             $upload_file->duplicate_file($params[$field], $bean->$field);
         }
