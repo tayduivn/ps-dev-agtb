@@ -122,7 +122,7 @@
 
                     // If the date value in our datebox is invalid, leave it alone and return. It will
                     // get handled upstream by sidecar (which uniformly handles field validation errors).
-                    if (!this._verifyDateString(datePart)) {
+                    if (this.view.name === 'edit' && !this._verifyDateString(datePart)) {
                         return value;
                     }
                     jsDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]); //months are 0-based
@@ -134,7 +134,7 @@
                 }
             } else {
                 // Probably portal - not stripping the time zone information out
-                if (!this._verifyDateString(value)) {
+                if (this.view.name === 'edit' && !this._verifyDateString(value)) {
                     return value;
                 }
                 // In case ISO 8601 get it back to js native date which date.format understands
