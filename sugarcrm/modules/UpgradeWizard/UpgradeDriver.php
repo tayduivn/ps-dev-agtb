@@ -293,6 +293,9 @@ abstract class UpgradeDriver
      */
     public function log($msg)
     {
+        if(empty($this->context['log'])) {
+            return;
+        }
         if(empty($this->fp)) {
             $this->fp = @fopen($this->context['log'], 'a+');
         }

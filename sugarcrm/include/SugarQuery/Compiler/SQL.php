@@ -1,5 +1,4 @@
 <?php
-
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -15,16 +14,6 @@
 
 require_once 'include/SugarQuery/SugarQuery.php';
 
-/**
- * This is the base object for compiling SugarQueries
- * TODO:
- * Move all bean/vardef functionality out of here and into sugarquery
- * This will allow compilers to be strictly object->desired output without
- * using beans or anything.
- *
- * This can be accomplished by expanding Sugar query to almost do a preCompile
- * and check fields and verify prefixes before it even pushes to the compiler
- */
 class SugarQuery_Compiler_SQL
 {
     /**
@@ -99,12 +88,18 @@ class SugarQuery_Compiler_SQL
         $offset = $this->sugar_query->offset;
 
         $union = $this->sugar_query->union;
-
+        // if there aren't any selected fields, add them all
+        if (empty($this->sugar_query->select->select)) {
+            $this->sugar_query->select('*');
+        }
         /* order by clauses should be in SELECT, ensure they are there */
         if (!empty($order_by)) {
             $order_fields = array();
             foreach ($order_by as $order) {
-                $order_fields[] = $order[0];
+                $field = $this->compileField($order->column);
+                if (!empty($field)) {
+                    $order_fields[] = $field;
+                }
             }
             if (!empty($order_fields)) {
                 $this->sugar_query->select->field($order_fields);
@@ -186,10 +181,11 @@ class SugarQuery_Compiler_SQL
     protected function compileGroupBy($groupBy)
     {
         $return = array();
-        foreach($groupBy AS $field) {
-            $return[] = $this->canonicalizeFieldName($field);
+        foreach ($groupBy AS $groupBy) {
+            $return[] = $this->compileField($groupBy->column);
         }
-        return implode(',', $return);
+
+        return implode(', ', $return);
     }
 
     /**
@@ -201,12 +197,7 @@ class SugarQuery_Compiler_SQL
      */
     protected function compileHaving($having)
     {
-        $return = array();
-        foreach ($having as $have) {
-            $return[] = $have[0] . $have[1] . (isset($have[2])) ? $have[2] : '';
-        }
-
-        return implode(' ', $return);
+        return $this->compileWhere($having);
     }
 
     /**
@@ -218,51 +209,22 @@ class SugarQuery_Compiler_SQL
      */
     protected function compileOrderBy($orderBy)
     {
-        $orderBy[] = array('id', 'DESC');
         $return = array();
+        // order by ID
+        $orderId = new SugarQuery_Builder_Orderby($this->sugar_query);
+        $orderId->addField('id');
+        $orderBy[] = $orderId;
+
         foreach ($orderBy as $order) {
-            list($field, $direction) = $order;
-
-            $defs = $this->getFieldVardef($field);
-
-            // before we make any condition checks we need to see if this is a
-            // derived field so that we can order by the correct field name and not
-            // the derived field name
-
-            if (!empty($defs['sort_on'])) {
-                if (strstr($field, '.')) {
-                    list($table, $tfield) = explode(".", $field);
-                    $field = "$table.{$defs['sort_on']}";
-                } else {
-                    $field = $defs['sort_on'];
-                }
-                $defs = $this->getFieldVardef($field);
+            if ($order->column->isNonDb() == 1) {
+                continue;
             }
-
-            try {
-                $field = $this->conditionField($field);
-                $defs = $this->getFieldVardef($field);
-            } catch(SugarApiExceptionInvalidParameter $ex) {
-                // if we can't resolve it, ignore it
+            $field = trim($this->compileField($order->column));
+            if (empty($field)) {
                 continue;
             }
 
-            if (empty($defs)) {
-                $GLOBALS['log']->error(
-                    "Could not find definition for field $field, skipping ORDER BY"
-                );
-                continue;
-            }
-
-            if (!empty($defs['source']) && $defs['source'] === 'non-db') {
-                $GLOBALS['log']->error(
-                        "Could not sort on non-db field $field, skipping ORDER BY"
-                    );
-                continue;
-            }
-            if (strcasecmp($direction, "ASC") !== 0) {
-                $direction = "DESC";
-            }
+            $direction = trim($order->direction);
 
             if (!isset($return[$field])) {
                 $return[$field] = "{$field} {$direction}";
@@ -272,263 +234,6 @@ class SugarQuery_Compiler_SQL
         return implode(',', $return);
     }
 
-    /**
-     * Bring field name to canonical form of table_name.field_name
-     *
-     * @param string $field
-     *
-     * @return string
-     */
-    protected function canonicalizeFieldName($field)
-    {
-        /**
-         * We need to figure out if the field is prefixed with an alias.
-         * If it is and the alias is not the from beans table,
-         * we must load the relationship that the alias is referencing so that
-         * we can determine if they are using the correct alias and change it
-         * around if necessary
-         * An exception must be made for link tables because there could be
-         * multiple joins to different link tables and these aliases are
-         * taken care of automatically when M2M relationships are joined.
-         */
-        $bean = $this->from_bean;
-        if (strstr($field, '.')) {
-            list($table_name, $field) = explode('.', $field);
-            if ($table_name != $bean->getTableName()) {
-                $bean = $this->sugar_query->getTableBean($table_name);
-                if (empty($bean)) {
-                    return "{$table_name}.{$field}";
-                }
-            }
-        } else {
-            $table_name = $bean->getTableName();
-        }
-
-        return "{$table_name}.{$field}";
-    }
-
-    /**
-     * Get vardef for the field in the query
-     *
-     * @param string $field
-     *
-     * @return array|null
-     */
-    protected function getFieldVardef($field)
-    {
-        $bean = $this->from_bean;
-        if (strstr($field, '.')) {
-            list($table_name, $field) = explode('.', $field);
-            $beanTable = $bean->getTableName();
-            if ($table_name != $beanTable && $table_name != $beanTable."_cstm") {
-                $bean = $this->sugar_query->getTableBean($table_name);
-            }
-        }
-
-        if (!empty($bean) && !empty($bean->field_defs[$field])) {
-            return $bean->field_defs[$field];
-        }
-        return null;
-    }
-
-    /**
-     * @param $field
-     *
-     * @return string
-     */
-    protected function resolveField($field, $alias = null)
-    {
-        $fields = array();
-
-        $bean = $this->from_bean;
-        if ($field == '*') {
-            // Not really a good idea, but let's support it for now
-            return array($field, null);
-        }
-
-        /**
-         * We need to figure out if the field is prefixed with an alias.
-         * If it is and the alias is not the from beans table,
-         * we must load the relationship that the alias is referencing so that
-         * we can determine if they are using the correct alias
-         * and change it around if necessary
-         * An exception must be made for link tables because there could be
-         * multiple joins to different link tables and these aliases are
-         * taken care of automatically when M2M relationships are joined.
-         */
-        if (strstr($field, '.')) {
-            list($table_name, $field) = explode('.', $field);
-            if ($table_name != $bean->getTableName()) {
-                $bean = $this->sugar_query->getTableBean($table_name);
-                if (empty($bean)) {
-                    return array("{$table_name}.{$field}", $alias);
-                }
-            }
-            if ($field == "*") {
-                // don't do anything with * for now
-                return array("{$table_name}.{$field}", null);
-            }
-        } else {
-            $table_name = $bean->getTableName();
-        }
-
-        if (!isset($bean->field_defs[$field])) {
-            if ($field == 'id_c') {
-                // id_c will never appear in any vardefs, but exists all the same
-                return array("{$table_name}.id_c", $alias);
-            }
-            // If it's not a field, it could be another custom condition.
-            $GLOBALS['log']->warning("SQLQuery_Compiler_SQL.resolveField, field {$field} does not exist in field_defs");
-            return array("{$field}", $alias);
-        } else {
-            $data = $bean->field_defs[$field];
-        }
-
-        if (!isset($data['source']) || $data['source'] == 'db') {
-            return array("{$table_name}.{$field}", $alias);
-        }
-
-        if (isset($data['source']) && $data['source'] == 'custom_fields') {
-            if($table_name != $bean->getTableName()) {
-                $cstm_name = "{$table_name}_cstm";
-            } else {
-                $cstm_name = $bean->get_custom_table_name();
-            }
-            return array("{$cstm_name}.{$field}", $alias);
-        }
-
-        if ($data['type'] == 'parent') {
-            // special hack to handle parent rels
-            $this->sugar_query->hasParent($field);
-            return array(
-                $this->resolveField('parent_type'),
-                $this->resolveField('parent_id')
-            );
-        }
-
-        if ($data['type'] == 'relate' 
-            || (isset($data['source']) && $data['source'] == 'non-db'
-                // For some reason the full_name field has 'link' => true
-                && isset($data['link']) && $data['link'] !== true)
-        ) {
-            $this->jtcount++;
-            $params = array(
-                'joinType' => 'LEFT',
-            );
-
-            if (!empty($data['id_name']) && $data['id_name'] != $field 
-                && !in_array($data['id_name'], $this->sugar_query->select->select)
-            ) {
-                $id_field = $this->resolveField(
-                    $data['id_name'],
-                    $data['id_name']
-                );
-                if (!empty($id_field)) {
-                    if(is_array($id_field[0])) {
-                        $fields += $id_field;
-                    } else {
-                        $fields[] = $id_field;
-                    }
-                }
-            }
-
-            // this is a relate field
-            if (!isset($data['link'])) {
-                if (!isset($data['id_name']) || !isset($data['module'])) {
-                    $GLOBALS['log']->error("SQLQuery_Compiler_SQL.resolveField, relate field exists with no link and no id_name: {$field}");
-                    return false;
-                }
-
-                // we may need to put on our detective hat and see if we can
-                // hunt down a relationship
-                $farBean = BeanFactory::newBean($data['module']);
-
-                if (empty($id_field)) {
-                    $id_field = $this->resolveField($data['id_name'],$data['id_name']);
-                }
-                $idAlias = $id_field[1];
-                
-                if (empty($idAlias)) {
-                    $GLOBALS['log']->error("SQLQuery_Compiler_SQL.resolveField, bwc relate field exists but can't find id_name: {$field}");
-                    return false;
-                }
-
-                $jta = $this->sugar_query->getJoinTableAlias($data['name']);
-                $this->sugar_query->joinRaw(
-                    " LEFT JOIN {$farBean->table_name} {$jta} ON {$idAlias} = {$jta}.id ",
-                    array('alias'=>$jta)
-                );
-                $rFieldDefs = $farBean->field_defs[$data['rname']];
-                if (!empty($rFieldDefs['fields'])) {
-                    // this is a compound field
-                    $sub_fields = array();
-                    foreach ($rFieldDefs['fields'] as $field) {
-                        $sub_fields[] = array("$jta.$field", $alias ? "{$alias}__{$field}" : "{$data['name']}__{$field}");
-                    }
-                    return $sub_fields;
-                }
-
-                return array("$jta.{$data['rname']}",$field);
-                
-            }
-            $bean->load_relationship($data['link']);
-            if (empty($bean->$data['link'])) {
-                // failed to load link - bail out
-                $GLOBALS['log']->error("SQLQuery_Compiler_SQL.resolveField, could not load link {$data['link']} for field {$field}");
-                return false;
-            }
-            if (isset($data['join_name'])) {
-                $params['alias'] = $data['join_name'];
-            }
-
-            $join = $this->sugar_query->join($data['link'], $params);
-            $jalias = $join->joinName();
-
-            // Role column fields
-            if (!empty($data['rname_link'])) {
-                $relTableAlias = !empty($join->relationshipTableAlias) ? $join->relationshipTableAlias : $jalias;
-                return array("{$relTableAlias}.{$data['rname_link']}", $field);
-            }
-            
-            // Exists only checks
-            if (!empty($data['rname_exists'])) {
-                return array("IF({$jalias}.{$data['rname']} IS NOT NULL,1,0)", $field);
-            }
-
-            $fields = $this->resolveField("$jalias.{$data['rname']}", $field);
-            if (!empty($fields)) {
-                if (!is_array($fields[0])) {
-                    $fields = array($fields);
-                }
-            }
-            if (isset($data['custom_type']) && $data['custom_type'] == 'teamset') {
-                $fields[] = $this->resolveField('team_set_id', 'team_set_id');
-            }
-            return $fields;
-        }
-
-        if (!empty($data['fields'])) {
-            // this is a compound field
-            $sub_fields = array();
-            foreach ($data['fields'] as $field) {
-                $sub_fields[] = array(
-                    "{$table_name}.{$field}",
-                    !empty($alias) ? "{$alias}__{$field}" : $field
-                );
-            }
-            if (!empty($data['id_name'])) {
-                $sub_fields[] = array(
-                    "{$table_name}.id",
-                    !empty($alias) ? "{$alias}__{$data['id_name']}" : $data['id_name']
-                );
-            }
-
-            return $sub_fields;
-        }
-
-        $GLOBALS['log']->error("SQLQuery_Compiler_SQL.resolveField: Don't know what to do with {$field}, has properties: ".var_export($data,true));
-        return false;
-    }
 
     /**
      * Create a select statement
@@ -547,65 +252,33 @@ class SugarQuery_Compiler_SQL
         }
 
         foreach ($selectObj->select as $field) {
-            $alias = null;
-            $s_alias = '';
-            if (is_array($field)) {
-                list($field, $alias) = $field;
-                $s_alias = " AS {$alias}";
+            if ($field->isNonDb() == 1) {
+                continue;
             }
-
-            if ($field instanceof SugarQuery) {
-                $return[] = '(' . $field->compileSql() . ')' . $s_alias;
-            } else {
-                $resolvedFields = $this->resolveField($field, $alias);
-                if (empty($resolvedFields)) {
-                    // FIXME: can be dangerous to put $field here
-                    $return[] = "NULL $s_alias /* $field */";
-                    continue;
-                }
-                if (!is_array($resolvedFields[0])) {
-                    $resolvedFields = array($resolvedFields);
-                }
-
-                foreach ($resolvedFields as $resolvedField) {
-                    if (empty($resolvedField)) {
-                        continue;
-                    }
-                    $alias = $resolvedField[1];
-
-                    if (strpos($resolvedField[0],'.') !== false) {
-                        list($resolvedFieldTable, $resolvedFieldName) = explode('.', $resolvedField[0]);
-                    } else {
-                        $resolvedFieldTable = $this->from_bean->getTableName();
-                        $resolvedFieldName = $resolvedField[0];
-                    }
-                    if (!empty($alias) && array_key_exists($alias, $addedFields)) {
-                        continue;
-                    } elseif (array_key_exists($resolvedFieldTable . '.*', $addedFields)) {
-                        continue;
-                    } elseif (array_key_exists($resolvedFieldName, $addedFields)) {
-                        continue;
-                    }
-                    if (empty($alias) && $resolvedFieldName == '*') {
-                        $addedFields[$resolvedFieldTable . '.' . $resolvedFieldName] = true;
-                    } elseif (empty($alias)) {
-                        $addedFields[$resolvedFieldName] = true;
-                    } else {
-                        $addedFields[$alias] = true;
-                    }
-
-                    if (empty($alias)) {
-                        $s_alias = "";
-                    } else {
-                        $s_alias = " AS $alias";
-                    }
-                    $return[] = $resolvedField[0] . $s_alias;
-                }
-            }
+            $compiledField = $this->compileField($field);
+            $return[$compiledField] = $compiledField;
         }
 
         return implode(", ", $return);
 
+    }
+
+    protected function compileField($field)
+    {
+        if (!is_object($field)) {
+            return $field;
+        }
+
+        if ($field instanceof SugarQuery_Builder_Field_Raw) {
+            return $field->field;
+        }
+
+        if ($field->isNonDb() == 1) {
+            return '';
+        }
+        $sql = "{$field->table}.{$field->field}";
+        $sql .= !empty($field->alias) ? " {$field->alias}" : "";
+        return  $sql;
     }
 
     /**
@@ -649,8 +322,7 @@ class SugarQuery_Compiler_SQL
             $this->primary_custom_table = $this->from_alias . '_c';
         } else {
             $this->primary_table = $this->from_bean->getTableName();
-            $this->primary_custom_table = $this->from_bean->get_custom_table_name(
-            );
+            $this->primary_custom_table = $this->from_bean->get_custom_table_name();
         }
 
         $return = $from_clause;
@@ -676,7 +348,7 @@ class SugarQuery_Compiler_SQL
             }
 
             if (!empty($whereObj->raw)) {
-                $sql .= $whereObj->raw;
+                $sql .= $this->compileField($whereObj->raw);
             }
             foreach ($whereObj->conditions as $condition) {
                 if ($condition instanceof SugarQuery_Builder_Where) {
@@ -699,45 +371,6 @@ class SugarQuery_Compiler_SQL
 
 
     /**
-     * Resolve field for condition
-     *
-     * Uses resolveField to resolve the field and then choose suitable form for query conditions.
-     * Unlike SELECT it can use only one field, so will throw on multi-field relations.
-     *
-     * @see resolveField()
-     *
-     * @param string $cond_field
-     * @throws SugarApiExceptionInvalidParameter
-     * @return string
-     */
-    protected function conditionField($cond_field)
-    {
-        $resField = $this->resolveField($cond_field);
-        if(empty($resField)) {
-            throw new SugarApiExceptionInvalidParameter("Can not use invalid field $cond_field in condition.");
-        } else {
-            if(is_array($resField[0]) && count($resField) > 1) {
-                // try to locate our field
-                foreach($resField as $fields) {
-                    if(!empty($fields[1]) && $fields[1] == $cond_field) {
-                        $field = $fields[0];
-                    }
-                }
-                if(empty($field)) {
-                    $GLOBALS['log']->error("Failed to resolve $cond_field against: ".var_export($resField, true));
-                    throw new SugarApiExceptionInvalidParameter("Can not use composite field $cond_field in condition");
-                }
-            }
-            if(is_array($resField[0])) {
-                $field = $resField[0][0];
-            } else {
-                $field = $resField[0];
-            }
-        }
-        return $field;
-    }
-
-    /**
      * Compile a condition into SQL
      *
      * @param SugarQuery_Builder_Condition $condition
@@ -755,10 +388,10 @@ class SugarQuery_Compiler_SQL
             $sql .= $operator;
         }
 
-        $field = $this->conditionField($condition->field);
-        if ($field === false) {
-            $GLOBALS['log']->error("Failed to contdition field: ".var_export($condition->field, true));
-            throw new SugarApiExceptionInvalidParameter("Can not find {$field} in metadata");
+        $field = $this->compileField($condition->field);
+
+        if (empty($field)) {
+            return false;
         }
 
         if ($condition->isNull) {
@@ -770,15 +403,10 @@ class SugarQuery_Compiler_SQL
                 case 'IN':
                     $valArray = array();
                     if ($condition->values instanceof SugarQuery) {
-                        $sql .= "{$field} IN (" . $condition->values->compileSql(
-                        ) . ")";
+                        $sql .= "{$field} IN (" . $condition->values->compileSql() . ")";
                     } else {
                         foreach ($condition->values as $val) {
-                            $valArray[] = $this->quoteValue(
-                                $condition->field,
-                                $val,
-                                $condition->bean
-                            );
+                            $valArray[] = $condition->field->quoteValue($val, $condition->operator);
                         }
                         $sql .= "{$field} IN (" . implode(',', $valArray) . ")";
                     }
@@ -789,22 +417,14 @@ class SugarQuery_Compiler_SQL
                         $sql .= "{$field} NOT IN (" . $condition->values->compileSql() . ")";
                     } else {
                         foreach ($condition->values as $val) {
-                            $valArray[] = $this->quoteValue($condition->field, $val, $condition->bean);
+                            $valArray[] = $condition->field->quoteValue($val, $condition->operator);
                         }
                         $sql .= "{$field} NOT IN (" . implode(',', $valArray) . ")";
                     }
                     break;
                 case 'BETWEEN':
-                    $value['min'] = $this->quoteValue(
-                        $condition->field,
-                        $condition->values['min'],
-                        $condition->bean
-                    );
-                    $value['max'] = $this->quoteValue(
-                        $condition->field,
-                        $condition->values['max'],
-                        $condition->bean
-                    );
+                    $value['min'] = $condition->field->quoteValue($condition->values['min'], $condition->operator);
+                    $value['max'] = $condition->field->quoteValue($condition->values['max'], $condition->operator);
                     $sql .= "{$field} BETWEEN {$value['min']} AND {$value['max']}";
                     break;
                 case 'STARTS':
@@ -821,30 +441,20 @@ class SugarQuery_Compiler_SQL
 
                     if (is_array($condition->values)) {
                         foreach ($condition->values as $value) {
-                            $val = $this->quoteValue(
-                                $condition->field,
-                                $value,
-                                $condition->bean,
-                                $condition->operator
-                            );
+                            $val = $condition->field->quoteValue($value, $condition->operator);
                             $sql .= "{$field} {$comparitor} {$val} {$chainWith} ";
                         }
                         $sql .= rtrim($sql, "$chainWith ");
                     } else {
-                        $value = $this->quoteValue(
-                            $condition->field,
-                            $condition->values,
-                            $condition->bean,
-                            $condition->operator
-                        );
+                        $value = $condition->field->quoteValue($condition->values, $condition->operator);
                         $sql .= "{$field} {$comparitor} {$value}";
                     }
                     break;
                 case 'EQUALFIELD':
-                    $sql .= "{$field} = ".$this->conditionField($condition->values);
+                    $sql .= "{$field} = " . $this->compileField(new SugarQuery_Builder_Field_Condition($condition->values, $this->sugar_query));
                     break;
                 case 'NOTEQUALFIELD':
-                    $sql .= "{$field} != ". $this->conditionField($condition->values);
+                    $sql .= "{$field} != " . $this->compileField(new SugarQuery_Builder_Field_Condition($condition->values, $this->sugar_query));
                     break;
                 case '=':
                 case '!=':
@@ -854,90 +464,15 @@ class SugarQuery_Compiler_SQL
                 case '<=':
                 default:
                     if ($condition->values instanceof SugarQuery) {
-                        $sql .= "{$field} {$condition->operator} (" . $condition->values->compileSql(
-                        ) . ")";
+                        $sql .= "{$field} {$condition->operator} (" . $condition->values->compileSql() . ")";
                     } else {
-                        $value = $this->quoteValue(
-                            $condition->field,
-                            $condition->values,
-                            $condition->bean
-                        );
+                        $value = $condition->field->quoteValue($condition->values, $condition->operator);
                         $sql .= "{$field} {$condition->operator} {$value}";
                     }
                     break;
             }
         }
         return $sql;
-    }
-
-    /**
-     * @param $field
-     * @param $value
-     * @param bool $bean
-     * @param bool $operator
-     *
-     * @return string
-     */
-    protected function quoteValue($field, $value, $bean = false, $operator = false)
-    {
-        if ($value instanceof SugarQuery_Builder_Literal) {
-            return (string) $value;
-        }
-
-        if ($bean === false) {
-            $bean = $this->from_bean;
-        }
-
-        /**
-         * We need to check the field to determine if it is coming from the from bean or a link.
-         * If it is coming from a link we need to load the bean on the other side of the relationship
-         * so that we get the type of the field we are trying to quote.
-         */
-        if (stristr($field, '.')) {
-            list($table, $field) = explode('.', $field);
-            if ($table != $bean->getTableName()) {
-                $bean = $this->sugar_query->getTableBean($table);
-                if (empty($bean)) {
-                    // quote the value by default
-                    return $this->db->quoted($value);
-                }
-            }
-        }
-
-
-        if (isset($bean->field_defs[$field])) {
-            $dbtype = $this->db->getFieldType($bean->field_defs[$field]);
-
-            if (empty($value)) {
-                return $this->db->emptyValue($dbtype);
-            }
-
-            switch ($dbtype) {
-                case 'date':
-                case 'datetime':
-                case 'time':
-                    if ($value == 'NOW()') {
-                        return $this->db->now();
-                    }
-                    if ($operator == 'STARTS') {
-                        $value = $value . '%';
-                    }
-            }
-
-            if ($this->db->getTypeClass($dbtype) == 'string') {
-                if ($operator == 'STARTS') {
-                    $value = $value . '%';
-                }
-                if ($operator == 'CONTAINS' || $operator == 'DOES NOT CONTAIN') {
-                    $value = '%' . $value . '%';
-                }
-                if ($operator == 'ENDS') {
-                    $value = '%' . $value;
-                }
-            }
-            return $this->db->quoteType($dbtype, $value);
-        }
-        return $this->db->quoted($value);
     }
 
     /**
@@ -973,8 +508,8 @@ class SugarQuery_Compiler_SQL
             $sql .= ' ' . $table;
 
             if (isset($j->options['alias']) && strtolower(
-                $j->options['alias']
-            ) != strtolower($table)
+                    $j->options['alias']
+                ) != strtolower($table)
             ) {
                 $sql .= ' ' . $j->options['alias'];
             }

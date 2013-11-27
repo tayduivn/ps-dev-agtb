@@ -4,8 +4,10 @@ describe("BaseLanguageField", function() {
 
     beforeEach(function() {
         delete Handlebars.templates;
+        Handlebars.templates = {};
         app = SugarTest.app;
         SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate('enum', 'field', 'base', 'edit');
         SugarTest.loadComponent('base', 'field', 'enum');
         SugarTest.loadComponent('base', 'field', 'language');
         SugarTest.testMetadata.set();

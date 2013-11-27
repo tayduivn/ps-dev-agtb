@@ -33,8 +33,8 @@
 <input type='hidden' name='return_record' value='{$RETURN.record}'>
 <input type='hidden' name='return_action' value='{$RETURN.action}'>
 <input type='hidden' name='return_module' value='{$RETURN.module}'>
-<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button" onclick="this.form.action.value='Save';aclviewer.save('ACLEditView');return false;" type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}" > &nbsp;
-<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}"   class='button' accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" type='button' name='save' value="{$APP.LBL_CANCEL_BUTTON_LABEL}" class='button' onclick='aclviewer.view("{$ROLE.id}", "All");'>
+<input id="ACLROLE_SAVE_BUTTON" title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button" onclick="this.form.action.value='Save';aclviewer.save('ACLEditView');return false;" type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}" > &nbsp;
+<input id="ACLROLE_CANCEL_BUTTON" title="{$APP.LBL_CANCEL_BUTTON_TITLE}" class='button' accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" type='button' name='save' value="{$APP.LBL_CANCEL_BUTTON_LABEL}" class='button' onclick='aclviewer.view("{$ROLE.id}", "All");'>
 <br>
 <TABLE width='100%' class='detail view' border='0' cellpadding=0 cellspacing = 1  >
 {if !empty($CATEGORIES[$CATEGORY_NAME])}

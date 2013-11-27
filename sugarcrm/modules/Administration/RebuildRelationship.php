@@ -26,25 +26,28 @@ include ('include/modules.php') ;
 
 global $db, $mod_strings ;
 $log = & $GLOBALS [ 'log' ] ;
+if (!empty($changedModules)) {
+    $modulesChanged = array_keys($changedModules);
+    $module1 = $modulesChanged[0];
+    $module2 = !empty($modulesChanged[1]) ? $modulesChanged[1] : $modulesChanged[0];
+    $query = "DELETE FROM relationships WHERE (rhs_module = '{$module1}' AND lhs_module = '{$module2}') OR (rhs_module = '{$module2}' AND lhs_module = '{$module2}')";
+} else {
+    $query = "DELETE FROM relationships" ;
+}
 
-$query = "DELETE FROM relationships" ;
 $db->query ( $query ) ;
 
 //clear cache before proceeding..
 VardefManager::clearVardef () ;
 
+$changedModules = empty($changedModules) ? $GLOBALS['beanList'] : $changedModules;
+
 // loop through all of the modules and create entries in the Relationships table (the relationships metadata) for every standard relationship, that is, relationships defined in the /modules/<module>/vardefs.php
 // SugarBean::createRelationshipMeta just takes the relationship definition in a file and inserts it as is into the Relationships table
 // It does not override or recreate existing relationships
-foreach ( $GLOBALS['beanFiles'] as $bean => $file )
+foreach ( $changedModules as $bean => $value )
 {
-    if (strlen ( $file ) > 0 && file_exists ( $file ))
-    {
-        if (! class_exists ( $bean ))
-        {
-            require ($file) ;
-        }
-        $focus = BeanFactory::newBeanByName($bean);
+        $focus = BeanFactory::newBean($bean);
         if ( $focus instanceOf SugarBean ) {
             // Add defensive coding around required args for relationship meta
             $objName = $focus->getObjectName();
@@ -53,43 +56,14 @@ foreach ( $GLOBALS['beanFiles'] as $bean => $file )
                 $GLOBALS['log']->info("Either the object name or the table name for bean " . get_class($focus) . " is empty. Object Name is: $objName. Table name is $tblName.");
                 continue;
             }
-            
             $empty = array() ;
             if (empty ( $_REQUEST [ 'silent' ] ))
                 echo $mod_strings [ 'LBL_REBUILD_REL_PROC_META' ] . $tblName . "..." ;
-            SugarBean::createRelationshipMeta($objName, $db, $tblName, $empty, $focus->module_dir ) ;
+            SugarBean::createRelationshipMeta($objName, $db, $tblName, $empty, $focus->module_dir);
+            SugarBean::createRelationshipMeta($objName, $db, $tblName, $empty, $focus->module_dir, true);
             if (empty ( $_REQUEST [ 'silent' ] ))
                 echo $mod_strings [ 'LBL_DONE' ] . '<br>' ;
         }
-    }
-}
-
-// do the same for custom relationships (true in the last parameter to SugarBean::createRelationshipMeta) - that is, relationships defined in the custom/modules/<modulename>/Ext/vardefs/ area
-foreach ( $GLOBALS['beanFiles'] as $bean => $file )
-{
-	//skip this file if it does not exist
-	if(!file_exists($file)) continue;
-
-	if (! class_exists ( $bean ))
-    {
-        require ($file) ;
-    }
-    $focus = BeanFactory::newBeanByName($bean);
-    if ( $focus instanceOf SugarBean ) {
-        $objName = $focus->getObjectName();
-        $tblName = $focus->table_name;
-        if (empty($tblName) || empty($objName)) {
-            $GLOBALS['log']->info("Custom Relationships: Either the object name or the table name for bean " . get_class($focus) . " is empty. Object Name is: $objName. Table name is $tblName.");
-            continue;
-        }
-        
-        $empty = array() ;
-        if (empty ( $_REQUEST [ 'silent' ] ))
-            echo $mod_strings [ 'LBL_REBUILD_REL_PROC_C_META' ] . $tblName . "..." ;
-        SugarBean::createRelationshipMeta($objName, $db, $tblName, $empty, $focus->module_dir, true ) ;
-        if (empty ( $_REQUEST [ 'silent' ] ))
-            echo $mod_strings [ 'LBL_DONE' ] . '<br>' ;
-    }
 }
 
 // finally, whip through the list of relationships defined in TableDictionary.php, that is all the relationships in the metadata directory, and install those

@@ -7,15 +7,15 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @param SugarBean $bean
      * @param array $fields
-     * @param string $expected
      *
      * @dataProvider getData
      */
-    public function testCompileSelect($bean, $fields, $expected)
+    public function testCompileSelect($bean, $fields)
     {
         $compiler = new SugarQuery_Compiler_SQL($GLOBALS['db']);
         $query = new SugarQuery();
-        $select = new SugarQuery_Builder_Select($query, $fields);
+        $query->from(new Contact());
+        $query->select($fields);
         $rc = new ReflectionObject($compiler);
 
         $compileFrom = $rc->getMethod('compileFrom');
@@ -28,9 +28,16 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
 
         $compileSelect = $rc->getMethod('compileSelect');
         $compileSelect->setAccessible(true);
-        $actual = $compileSelect->invokeArgs($compiler, array($select));
-
-        $this->assertEquals($expected, $actual);
+        $result = $compileSelect->invokeArgs($compiler, array($query->select));
+        $result = explode(',', $result);
+        $actual = array();
+        foreach ($result as $field) {
+            $field = explode(' ', trim($field));
+            $field = end($field);
+            $this->assertNotContains($field, $actual);
+            $actual[] = $field;
+        }
+        $this->assertNotEmpty($actual);
     }
 
     public static function getData()
@@ -40,8 +47,9 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
             array(
                 new Contact(),
                 array(
-                    'contacts.*',
+                    array('contacts.id', 'id'),
                     'contacts.id',
+                    'contacts.*',
                 ),
                 'contacts.*',
             ),
@@ -56,7 +64,6 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
                     'contacts.title',
                     'full_name',
                 ),
-                'contacts.first_name, contacts.last_name, contacts.salutation, contacts.title',
             ),
             // we should be able select the same field with different aliases
             array(
@@ -65,7 +72,6 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
                     array('first_name', 'a1'),
                     'first_name',
                 ),
-                'contacts.first_name AS a1, contacts.first_name',
             ),
             // account.id should be ignored because we already selected id from contact, maybe we need to log error here
             array(
@@ -74,7 +80,6 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
                     'contacts.id',
                     array('accounts.id', 'id'),
                 ),
-                'contacts.id',
             ),
         );
     }

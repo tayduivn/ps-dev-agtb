@@ -45,7 +45,9 @@
             return false;
         }
 
-        if (params.model.get('id') !== this.model.get('id')) {
+        if (this.name !== params.data.fieldName ||
+            params.model.get('id') !== this.model.get('id')
+        ) {
             return true;
         }
 

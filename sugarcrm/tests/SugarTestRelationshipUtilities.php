@@ -98,7 +98,6 @@ class SugarTestRelationshipUtilities
             $relationships->delete($rel['relationship_name']);
 
             $relationships->save();
-            $relationships->build();
             LanguageManager::clearLanguageCache($rel['lhs_module']);
             require_once("data/Relationships/RelationshipFactory.php");
             SugarRelationshipFactory::deleteCache();

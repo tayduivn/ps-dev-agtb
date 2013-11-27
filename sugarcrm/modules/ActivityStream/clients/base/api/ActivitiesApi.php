@@ -293,7 +293,7 @@ class ActivitiesApi extends FilterApi
         $query->joinTable('users', array('joinType' => 'INNER'))
             ->on()->equalsField('activities.created_by', 'users.id');
 
-        $join = $query->joinTable('activities_users', array('joinType' => 'INNER', 'linkName' => 'activities_users'))
+        $join = $query->joinTable('activities_users', array('joinType' => 'INNER', 'linkName' => 'activities_users', "linkingTable" => true))
             ->on()->equalsField("activities_users.activity_id", 'activities.id')
             ->equals("activities_users.deleted", 0);
 

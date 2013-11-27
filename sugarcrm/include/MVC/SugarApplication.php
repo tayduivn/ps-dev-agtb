@@ -104,8 +104,11 @@ class SugarApplication
         // Double check the server's unique key is in the session.  Make sure this is not an attempt to hijack a session
         $user_unique_key = (isset($_SESSION['unique_key'])) ? $_SESSION['unique_key'] : '';
         $server_unique_key = (isset($sugar_config['unique_key'])) ? $sugar_config['unique_key'] : '';
-        $allowed_actions = (!empty($this->controller->allowed_actions)) ? $this->controller->allowed_actions
-            : $allowed_actions = array('Authenticate', 'Login', 'LoggedOut');
+        if(!empty($this->controller->allowed_actions)) {
+            $allowed_actions =  $this->controller->allowed_actions;
+        } else {
+            $allowed_actions = array('Authenticate', 'Login', 'LoggedOut');
+        }
 
         if (($user_unique_key != $server_unique_key) && (!in_array($this->controller->action, $allowed_actions))
             && (!isset($_SESSION['login_error']))
@@ -122,7 +125,7 @@ class SugarApplication
                     $this->controller->module = 'home';
                 } elseif (isset($_REQUEST['massupdate']) || isset($_GET['massupdate']) || isset($_POST['massupdate'])) {
                     $this->controller->action = 'index';
-                } elseif ($this->isModifyAction()) {
+                } elseif (!in_array($this->controller->action, $this->whiteListActions) && $this->isModifyAction()) {
                     $this->controller->action = 'index';
                 }
             }

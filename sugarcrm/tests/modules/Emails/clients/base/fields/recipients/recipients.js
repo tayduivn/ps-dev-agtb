@@ -3,13 +3,14 @@ describe("Emails.fields.recipients", function() {
         field,
         context,
         model,
-        dataProvider,
-        tooltipStub;
+        dataProvider;
 
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        SugarTest.loadHandlebarsTemplate("recipients", "field", "base", "edit", "Emails");
+        SugarTest.loadHandlebarsTemplate('recipients', 'field', 'base', 'edit', 'Emails');
+        SugarTest.loadHandlebarsTemplate('recipients', 'field', 'base', 'select2-selection', 'Emails');
+        SugarTest.loadPlugin('Tooltip');
         SugarTest.testMetadata.set();
 
         context = app.context.getContext({
@@ -17,18 +18,16 @@ describe("Emails.fields.recipients", function() {
         });
         context.prepare();
         model = context.get('model');
-        field = SugarTest.createField("base", "recipients", "recipients", "edit", undefined, context.get('module'), model, context, true);
-
-        tooltipStub = sinon.stub(field, '_initializeTooltips');
+        field = SugarTest.createField('base', 'recipients', 'recipients', 'edit', undefined, context.get('module'), model, context, true);
     });
 
     afterEach(function() {
         field.dispose();
-        tooltipStub.restore();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
+        delete app.plugins.plugins['field']['Tooltip'];
     });
 
     describe('manipulating the value of the field', function() {
@@ -228,16 +227,24 @@ describe("Emails.fields.recipients", function() {
         describe('format the selected recipients', function() {
             it("Should return the recipient's name when it exists.", function() {
                 var recipient = {email: "will@example.com", name: "Will Westin"},
-                    actual    = field.formatSelection(recipient);
+                    actual    = $(field.formatSelection(recipient)).text();
 
                 expect(actual).toEqual(recipient.name);
             });
 
             it("Should return the recipient's email address when name doesn't exist.", function() {
                 var recipient = {email: "will@example.com"},
-                    actual    = field.formatSelection(recipient);
+                    actual    = $(field.formatSelection(recipient)).text();
 
                 expect(actual).toEqual(recipient.email);
+            });
+            it("Should return the selection by wrapping the tooltip elements", function() {
+                var recipient = {email: "will@example.com"},
+                    actualPlugin = $(field.formatSelection(recipient)).attr('rel'),
+                    actualTitle = $(field.formatSelection(recipient)).data('title');
+
+                expect(actualPlugin).toBe('tooltip');
+                expect(actualTitle).toBe(recipient.email);
             });
         });
 
