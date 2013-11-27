@@ -418,7 +418,6 @@ class MetaDataManager
      */
     public function getSubpanelDefs($moduleName)
     {
-        require_once 'include/SubPanel/SubPanelDefinitions.php';
         $parent_bean = BeanFactory::getBean($moduleName);
         //Hack to allow the SubPanelDefinitions class to check the correct module dir
         if (!$parent_bean) {
