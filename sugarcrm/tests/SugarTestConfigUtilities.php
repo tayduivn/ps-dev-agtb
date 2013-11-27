@@ -65,7 +65,7 @@ class SugarTestConfigUtilities
         }
         // delete everything in the table
         $db = DBManagerFactory::getInstance();
-        $db->query('truncate config;');
+        $db->query('TRUNCATE TABLE config');
         foreach (self::$orgConfig as $config) {
             if (is_array($config['value'])) {
                 $config['value'] = json_encode($config['value']);
