@@ -315,7 +315,9 @@ END;
                 $legacyParser = ParserFactory::getParser($lViewtype, $this->module);
             }
             foreach($legacyParser->getFieldsFromPanels($data['panels']) as $fieldname => $fielddef) {
-                if(empty($fieldname) || isset($customFields[$fieldname])) {
+                // we need to ignore all currency_id fields that are on the viewdefs getting migrated to the record view
+                // as currency_id is now set with the currency field.
+                if (empty($fieldname) || isset($customFields[$fieldname]) || $fieldname == 'currency_id') {
                     continue;
                 }
                 $customFields[$fieldname] = array('data' => $fielddef, 'source' => $lViewtype);
