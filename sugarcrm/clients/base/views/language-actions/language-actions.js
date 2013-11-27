@@ -70,8 +70,8 @@
         var footerHeight = $("footer").height(),
             viewportHeight = $(window).height(),
             currentMenuHeight = this.$('.dropdown-menu').height(),
-            menuHeight = (currentMenuHeight > viewportHeight) ? viewportHeight - footerHeight : currentMenuHeight;
-        this.$('.dropdown-menu').height(menuHeight);
+            menuHeight = viewportHeight - footerHeight;
+        this.$('.dropdown-menu').css('max-height',menuHeight);
     },
     /**
      * Formats the language list for the template
