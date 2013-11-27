@@ -174,7 +174,9 @@
       .record-cell:first-child {
         display: table-cell;
         position: relative;
-        .calc(padding-left, 1.5% + 6px);
+        padding-left: ~"-moz-calc(1.5% + 6px)";
+        padding-left: ~"-webkit-calc(1.5% + 6px)";
+        padding-left: ~"calc(1.5% + 6px)";
         padding-top: 14px;
         padding-right: 0;
       }

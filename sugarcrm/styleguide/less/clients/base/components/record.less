@@ -247,7 +247,7 @@
     &[data-type="enum"] .normal > span
     .select2-container.select2-container-multi.select2-choices-pills-close {
       position: relative;
-      .calc(width, 100% + 16px) !important;
+      .calcWidth(~"100% + 16px") !important;
     }
 
     &[data-type="parent"] {
@@ -295,7 +295,7 @@
     &[data-type="datetimecombo"] {
       input[type="text"] {
         width: 40%;
-        .calc(width, 100% / 2 - 12px);
+        .calcWidth(~"100% / 2 - 12px");
       }
       .input-append.date {
         .ui-timepicker-input,
@@ -444,13 +444,13 @@
     .input-append {
       input[type="text"] {
         width: 95%;
-        .calc(width, 100% - 14px);
+        .calcWidth(~"100% - 14px");
         margin-left: 0;
       }
     }
     > input[type="text"] {
       width: 50%;
-      .calc(width, 100% - 114px);
+      .calcWidth(~"100% - 114px");
       margin-left: 0;
     }
     .select2-container {
