@@ -585,6 +585,8 @@ $dictionary['ProductTemplate'] = array(
 'indices' => array (
 	array('name' =>'procuct_templatespk', 'type' =>'primary', 'fields'=>array('id')),
 	array('name' =>'idx_product_template', 'type'=>'index', 'fields'=>array('name','deleted')),
+    array('name' => 'idx_producttemplate_status', 'type' => 'index', 'fields' => array('status')),
+    array('name' => 'idx_producttemplate_qty_in_stock', 'type' => 'index', 'fields' => array('qty_in_stock')),
     )
 );
 ?>

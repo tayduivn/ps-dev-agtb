@@ -211,6 +211,8 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
 'indices' => array (
        array('name' =>'save_reportspk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_rep_owner_module_name', 'type'=>'index', 'fields'=>array('assigned_user_id','name','deleted')),
+       array('name' => 'idx_savedreport_module', 'type' => 'index', 'fields' => array('module')),
+       array('name' => 'idx_savedreport_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
 ),
 'relationships'=>array(
     /*

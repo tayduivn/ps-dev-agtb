@@ -298,7 +298,7 @@ array (
 'indices' => array (
        array('name' =>'dataset_k', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_dataset', 'type'=>'index', 'fields'=>array('name','deleted')),
-                                                      )
+                                                    )
                             );
 
 VardefManager::createVardef('DataSets','DataSet', array(

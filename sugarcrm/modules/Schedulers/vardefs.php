@@ -142,7 +142,9 @@ $dictionary['Scheduler'] = array('table' => 'schedulers',
 			'deleted'
 			)
 		),
-	),
+        array('name' => 'idx_scheduler_job_interval', 'type' => 'index', 'fields' => array('job_interval')),
+        array('name' => 'idx_scheduler_status', 'type' => 'index', 'fields' => array('status')),
+    ),
 	'relationships' => array (
 		'schedulers_created_by_rel' => array (
 			'lhs_module'		=> 'Users',

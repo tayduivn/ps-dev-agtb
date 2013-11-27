@@ -454,6 +454,9 @@ $dictionary['Document'] = array('table' => 'documents',
     ),
     'indices' => array(
         array('name' => 'idx_doc_cat', 'type' => 'index', 'fields' => array('category_id', 'subcategory_id')),
+        array('name' => 'idx_document_doc_type', 'type' => 'index', 'fields' => array('doc_type')),
+        array('name' => 'idx_document_exp_date', 'type' => 'index', 'fields' => array('exp_date')),
+        array('name' => 'idx_document_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
     ),
     'relationships' => array(
         'related_documents' => array('lhs_module' => 'Documents', 'lhs_table' => 'documents', 'lhs_key' => 'id',
