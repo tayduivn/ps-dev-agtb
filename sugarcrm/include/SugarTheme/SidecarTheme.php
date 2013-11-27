@@ -110,8 +110,8 @@ class SidecarTheme
         $filesInCache = $this->retrieveCssFilesInCache();
 
         // Remove the custom css file if the less file does not exist anymore
-        if (isset($filesInCache['custom']) && !isset($this->lessFilesToCompile['custom'])) {
-            unlink($this->returnFileLocations(array('custom', $filesInCache['custom'])));
+        if (isset($filesInCache['custom']) && !in_array('custom', $this->lessFilesToCompile)) {
+            unlink($this->getCssFileLocation('custom', $filesInCache['custom']));
             unset($filesInCache['custom']);
         }
 
@@ -539,8 +539,10 @@ class SidecarTheme
     {
         $urls = array();
         sugar_cache_put($this->paths['hashKey'], $filesArray);
-        foreach ($this->lessFilesToCompile as $lessFile) {
-            $urls[$lessFile] = $this->getCssFileLocation($lessFile, $filesArray[$lessFile]);
+        if (!empty($filesArray)) {
+            foreach ($this->lessFilesToCompile as $lessFile) {
+                $urls[$lessFile] = $this->getCssFileLocation($lessFile, $filesArray[$lessFile]);
+            }
         }
         return $urls;
     }

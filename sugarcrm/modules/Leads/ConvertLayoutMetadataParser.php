@@ -101,7 +101,7 @@ class ConvertLayoutMetadataParser extends GridLayoutMetaDataParser
      * @param $data
      * @return array result of merging the new data with existing data
      */
-    public function mergeConvertDefs($data)
+    public function mergeConvertDefs($data, $includeDefaults = false)
     {
         $includedModules = array();
         foreach ($data as $newDef) {
@@ -116,7 +116,11 @@ class ConvertLayoutMetadataParser extends GridLayoutMetaDataParser
             if (empty($newDef['module'])) {
                 continue;
             }
-            $existingDef = $this->getDefForModule($newDef['module']);
+            if ($includeDefaults) {
+                $existingDef = $this->getDefaultDefForModule($newDef['module']);
+            } else {
+                $existingDef = $this->getDefForModule($newDef['module']);
+            }
             if ($existingDef) {
                 foreach ($existingDef as $key => $item) {
                     if (!isset($newDef[$key])) {
@@ -273,13 +277,45 @@ class ConvertLayoutMetadataParser extends GridLayoutMetaDataParser
         return $moduleDef;
     }
 
+    /**
+     * Retrieve the default definition for a module
+     * If exists in original convert def, use that, otherwise, use the default def
+     *
+     * @param $module
+     * @return array
+     */
     public function getDefaultDefForModule($module)
     {
         $originalViewDef = $this->getOriginalViewDefs();
         $originalConvertDef = $this->getConvertDef($originalViewDef);
         $defaultModuleDef = array_merge(array('module' => $module), $this->defaultModuleDefSettings);
+
+        // if duplicate check is enabled for a module that is not already in the original viewdef
+        // set the module to run duplicate check on start
+        if ($this->isDupeCheckEnabledForModule($module)) {
+            $defaultModuleDef['duplicateCheckOnStart'] = true;
+        }
+
         $moduleDef = $this->getDefForModule($module, $originalConvertDef);
         return $moduleDef ? $moduleDef : $defaultModuleDef;
+    }
+
+    /**
+     * Check the vardef to determine if duplicate check is enabled for this module
+     *
+     * @param $module
+     * @return bool
+     */
+    protected function isDupeCheckEnabledForModule($module)
+    {
+        global $beanList, $dictionary;
+
+        $beanName = (isset($beanList[$module])) ? $beanList[$module] : '';
+        return (isset($dictionary[$beanName]) &&
+            isset($dictionary[$beanName]['duplicate_check']) &&
+            isset($dictionary[$beanName]['duplicate_check']['enabled']) &&
+            ($dictionary[$beanName]['duplicate_check']['enabled'] === true)
+        );
     }
 
     /**

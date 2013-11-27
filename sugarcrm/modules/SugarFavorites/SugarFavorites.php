@@ -235,9 +235,13 @@ class SugarFavorites extends Basic
             $bean = $sugar_query->getTableBean($alias);
         }
 
+        if (empty($bean)) {
+            return false;
+        }
+
         $sfAlias = "sf_" . $bean->getTableName();
 
-        $sugar_query->joinTable(self::getTableName(), array('alias'=>$sfAlias, 'joinType'=>$joinType))
+        $sugar_query->joinTable(self::getTableName(), array('alias'=>$sfAlias, 'joinType'=>$joinType, 'linkingTable' => true))
                     ->on()->equals("{$sfAlias}.module", $bean->module_name, $this)
                         ->equalsField("{$sfAlias}.record_id","{$alias}.id", $this)
                     ->equals("{$sfAlias}.assigned_user_id", $user_id, $this)

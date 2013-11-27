@@ -311,6 +311,7 @@ class RestFilterTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testFollowerFilter()
     {
+        $GLOBALS['db']->query("DELETE FROM subscriptions WHERE created_by = '{$GLOBALS['current_user']->id}'");
 
         Subscription::subscribeUserToRecord($GLOBALS['current_user'], self::$accounts[1]);
 

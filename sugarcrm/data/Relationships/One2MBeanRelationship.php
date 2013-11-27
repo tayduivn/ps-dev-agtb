@@ -329,18 +329,18 @@ class One2MBeanRelationship extends One2MRelationship
         $startingTable = $linkIsLHS ? $this->def['lhs_table'] : $this->def['rhs_table'];
         $startingKey = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_key'];
         $targetTable = $linkIsLHS ? $this->def['rhs_table'] : $this->def['lhs_table'];
+        $targetModule = $linkIsLHS ? $this->def['rhs_module'] : $this->def['lhs_module'];
 
         $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
         $join_type = isset($options['joinType']) ? $options['joinType'] : 'INNER';
 
-        $joinParams = array('joinType' => $join_type);
+        $joinParams = array('joinType' => $join_type, 'bean' => BeanFactory::newBean($targetModule));
         $jta = $targetTable;
         if (!empty($options['joinTableAlias'])) {
             $jta = $joinParams['alias'] = $options['joinTableAlias'];
         }
 
         $joinTable = $sugar_query->joinTable($targetTable, $joinParams);
-
         $joinTable->on()->equalsField(
             "{$startingTable}.{$startingKey}",
             "{$jta}.{$targetKey}")

@@ -88,9 +88,6 @@
      * @param string module     The module that we are currently on.
      */
     showRLIWarningMessage: function(module) {
-        var self = this,
-            $close;
-        
         // add a callback to close the alert if users navigate from the page
         app.routing.before('route', this.dismissAlert, undefined, this);
 
@@ -102,37 +99,14 @@
             level: 'warning',
             autoClose: false,
             title: app.lang.get('LBL_ALERT_TITLE_WARNING') + ':',
-            messages: message
+            messages: message,
+            onLinkClick: _.bind(function() {
+                this.openRLICreate();
+            }, this),
+            onClose: _.bind(function() {
+                app.routing.offBefore('route', this.dismissAlert, this);
+            }, this)
         });
-
-        this.alert.$('a[href]').each(function() {
-            var $el = $(this);
-            $el.on('click.open', function() {
-                // remove the event handler
-                $el.off('click.open');
-                self.openRLICreate();
-            });
-            app.accessibility.run($el, 'click');
-        });
-
-        $close = this.alert.getCloseSelector();
-        $close.on('click', _.bind(function() {
-            $close.off('click');
-            app.routing.offBefore('route', this.dismissAlert, this);
-        }, this));
-        app.accessibility.run($close, 'click');
-    },
-
-    /**
-     * @inheritdocs
-     */
-    _dispose: function() {
-        // make sure if there's an alert we remove added listeners
-        if(this.alert){
-            this.alert.getCloseSelector().off('click');
-            this.alert.$('a[href]').off('click.open');
-        }
-        this._super('_dispose', []);
     },
 
     /**

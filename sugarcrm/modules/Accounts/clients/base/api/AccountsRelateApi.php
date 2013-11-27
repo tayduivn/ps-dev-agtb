@@ -116,14 +116,14 @@ class AccountsRelateApi extends RelateApi
 
         self::addFilters($args['filter'], $q->where(), $q);
 
-        $q->joinTable('accounts')
+        $q->joinTable('accounts', array('linkingTable' => true))
             ->on()
             ->equals('accounts.id', $record->id)
             ->equals('accounts.deleted', 0);
 
         // FIXME: there should be the ability to specify from which related module
         // the child items should be loaded
-        $q->joinTable('accounts_contacts', array('alias' => 'ac', 'joinType' => 'LEFT'))
+        $q->joinTable('accounts_contacts', array('alias' => 'ac', 'joinType' => 'LEFT', 'linkingTable' => true))
             ->on()
             ->equalsField('ac.account_id', 'accounts.id')
             ->equals('ac.deleted', 0);
@@ -144,7 +144,7 @@ class AccountsRelateApi extends RelateApi
             $childRhsColumn = $childRelationshipAlias . '.call_id';
         }
 
-        $q->joinTable($childRelationshipTable, array('alias' => $childRelationshipAlias, 'joinType' => 'LEFT'))
+        $q->joinTable($childRelationshipTable, array('alias' => $childRelationshipAlias, 'joinType' => 'LEFT', 'linkingTable' => true))
             ->on()
             ->equalsField($childRhsColumn, $childLhsColumn)
             ->equals($childRelationshipAlias . '.deleted', 0);

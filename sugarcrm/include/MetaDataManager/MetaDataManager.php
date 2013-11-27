@@ -32,6 +32,7 @@ require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 require_once 'include/SugarFields/SugarFieldHandler.php';
 require_once 'include/SugarObjects/LanguageManager.php';
 require_once 'modules/ActivityStream/Activities/ActivityQueueManager.php';
+require_once 'include/SubPanel/SubPanelDefinitions.php';
 
 SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataHacks.php');
 /**
@@ -417,7 +418,6 @@ class MetaDataManager
      */
     public function getSubpanelDefs($moduleName)
     {
-        require_once 'include/SubPanel/SubPanelDefinitions.php';
         $parent_bean = BeanFactory::getBean($moduleName);
         //Hack to allow the SubPanelDefinitions class to check the correct module dir
         if (!$parent_bean) {
@@ -536,7 +536,6 @@ class MetaDataManager
         $data['views'] = $this->getModuleViews($moduleName);
         $data['layouts'] = $this->getModuleLayouts($moduleName);
         $data['fieldTemplates'] = $this->getModuleFields($moduleName);
-        $data['subpanels'] = $this->getSubpanelDefs($moduleName);
         $data['menu'] = $this->getModuleMenu($moduleName);
         $data['config'] = $this->getModuleConfig($moduleName);
         $data['filters'] = $this->getModuleFilters($moduleName);

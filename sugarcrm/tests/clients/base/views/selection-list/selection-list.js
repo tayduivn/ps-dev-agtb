@@ -5,6 +5,7 @@ describe("Base.View.SelectionList", function () {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'list');
+        SugarTest.loadHandlebarsTemplate('flex-list', 'view', 'base', 'flex-list');
         SugarTest.loadComponent('base', 'view', 'flex-list');
         SugarTest.loadComponent('base', 'view', 'selection-list');
         SugarTest.testMetadata.addViewDefinition('list', {
@@ -87,6 +88,7 @@ describe("Base.View.SelectionList", function () {
             htmlAfter = 'unwrapped<a href="" class="rowaction">wrapped</a>';
 
         view.$el = $('<div>' + htmlBefore + '</div>');
+        view.template = function() { return view.$el.html(); }
         view.render();
         expect(view.$el.html()).toEqual(htmlAfter);
     });
