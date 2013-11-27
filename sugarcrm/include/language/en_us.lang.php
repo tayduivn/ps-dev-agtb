@@ -3964,8 +3964,8 @@ $app_strings = array (
     'LBL_MERGE_NO_ACCESS_TO_A_FEW_RECORDS' =>
         'One or more selected records cannot be deleted. ' .
         'Those records have been removed from the list to merge.',
-    'LBL_MERGE_UNSAVED_CHANGES'=> 'You are about to change primary record without saving any changes you have made. ' .
-        'All changes will be lost. Are you sure you want to continue?',
+    'LBL_MERGE_UNSAVED_CHANGES'=>
+        'All changes will be discarded when you switch to a new primary record. Are you sure you want to switch?',
     'LBL_MERGE_DUPLICATES_TITLE' => 'Merge Related Records',
     'TPL_MERGE_DUPLICATES_PROGRESS_STATUS' => 'Merged: {{percent}}%.',
     'TPL_MERGE_DUPLICATES_FAIL_TO_ATTEMPT' =>
@@ -3975,12 +3975,12 @@ $app_strings = array (
     'LBL_MERGE_DUPLICATES_WARNING_CLOSE' =>
         'Merge Related Records incomplete. Some records remain unmerged.',
     'LBL_MERGE_DUPLICATES_FAIL_PROCESS' =>
-        'Merge Related Records incomplete. Some records remain unmerged. Do you want to continue?',
+        'Some related records did not merge properly. Cancel to abort. Confirm to continue merge.',
     'TPL_MERGE_DUPLICATES_STAT' =>
         '{{#with stat}}{{records}} records were merged successfully. ' .
         '{{total}} related records were added.{{/with}}',
     'TPL_MERGE_DUPLICATES_IDENTICAL' =>
-        'Records are identical. All related records will be moved to the Primary record.',
+        'All related records will be moved to the Primary record.',
 
     //for sugar7 errors
     'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
