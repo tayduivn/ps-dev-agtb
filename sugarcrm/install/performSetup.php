@@ -466,7 +466,7 @@ enableInsideViewConnector();
         installLog('running full indexer');
         require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
         $indexer = new SugarSearchEngineFullIndexer();
-        $results = $indexer->performFullSystemIndex();
+        $results = $indexer->performFullSystemIndex(array(), true, true);
     }
 
     $endTime = microtime(true);

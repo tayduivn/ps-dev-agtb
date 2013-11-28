@@ -81,10 +81,12 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
      * Initiate the FTS indexer.  Once initiated, all work will be done by the FTS consumers which will be invoked
      * by the job queue system.
      *
-     * @param array $modules
+     * @param array $modules Modules to index
+     * @param bool $deleteExistingData Remove existing index
+     * @param bool $runNow Run indexing jobs immediately instead of placing them in job queue
      * @return bool
      */
-    public function initiateFTSIndexer($modules = array(), $deleteExistingData = TRUE)
+    public function initiateFTSIndexer($modules = array(), $deleteExistingData = TRUE, $runNow = false)
     {
         $startTime = microtime(true);
         $GLOBALS['log']->info("Populating Full System Index Queue at $startTime");
@@ -115,7 +117,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         $totalCount = 0;
         foreach($allModules as $module)
         {
-            $totalCount += $this->populateIndexQueueForModule($module);
+            $totalCount += $this->populateIndexQueueForModule($module, $runNow);
         }
 
         $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
@@ -132,8 +134,9 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
      * Populate the index queue with all records from a particular module
      *
      * @param $module
+     * @param bool $runNow Run job immediately instead of placing it in queue
      */
-    public function populateIndexQueueForModule($module)
+    public function populateIndexQueueForModule($module, $runNow = false)
     {
         $GLOBALS['log']->info("Going to populate index queue for module {$module} ");
         $db = DBManagerFactory::getInstance('fts');
@@ -147,7 +150,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         $query = "INSERT INTO {$tableName} (bean_id,bean_module) SELECT id, '{$beanName}' FROM {$obj->table_name}";
         $db->query($query, true, "Error populating index queue for fts");
         //For each module we populate the fts queue with, create a consumer to digest the beans as well.
-        $this->createJobQueueConsumerForModule($module);
+        $this->createJobQueueConsumerForModule($module, $runNow);
         return 1;
     }
 
@@ -155,9 +158,10 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
      * Create a job queue FTS consumer for a specific module
      *
      * @param $module
+     * @param bool $runNow Run job immediately instead of placing in job queue
      * @return String Id of newly created job
      */
-    public function createJobQueueConsumerForModule($module)
+    public function createJobQueueConsumerForModule($module, $runNow = false)
     {
         $GLOBALS['log']->info("Creating FTS Job queue consumer for: {$module} ");
         $job = BeanFactory::getBean('SchedulersJobs');
@@ -165,16 +169,24 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         $job->name = "FTSConsumer {$module}";
         $job->target = "class::SugarSearchEngineFullIndexer";
         $job->assigned_user_id =1;
-        $queue = new SugarJobQueue();
-        $queue->submitJob($job);
+        if ($runNow) {
+            $job->runJob();
+        } else {
+            $queue = new SugarJobQueue();
+            $queue->submitJob($job);
+            return $job->id;
+        }
 
-        return $job->id;
     }
 
     /**
      * Index the entire system. This should only be called from a worker process as this is a time intensive process and
      * does not take advantage of the job queue system.  Currently this call is only used when populating demo data and should be used
      * sparingly.
+     * @param array $modules List of modules to index
+     * @param bool $clearExistingData TRUE if we want to purge existing index data
+     * @param bool $runNow TRUE if indexing job should be run immediately instead of being placed into queue
+     * @return bool
      */
     public function performFullSystemIndex($modules = array(), $clearExistingData = TRUE)
     {
@@ -184,13 +196,10 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
             $GLOBALS['log']->info("No FTS engine enabled, not doing anything");
             return false;
         }
-        if(!$this->initiateFTSIndexer($modules, $clearExistingData)) {
+        if(!$this->initiateFTSIndexer($modules, $clearExistingData, true)) {
             $GLOBALS['log']->info("FTS index was not initiated");
             return false;
         }
-        require_once 'include/SugarQueue/SugarCronJobs.php';
-        $jobq = new SugarCronJobs();
-        $jobq->runCycle();
         return true;
     }
 
