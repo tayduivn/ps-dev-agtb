@@ -83,11 +83,15 @@ class FileApi extends SugarApi {
     /**
      * Saves a file to a module field using the PUT method
      *
-     * @param ServiceBase $api The service base
-     * @param array $args Arguments array built by the service base
+     * @param ServiceBase $api  The service base
+     * @param array       $args Arguments array built by the service base
+     * @param string      $stream
+     *
+     * @throws SugarApiExceptionMissingParameter
      * @return array
      */
-    public function saveFilePut($api, $args) {
+    public function saveFilePut($api, $args, $stream = 'php://input')
+    {
         // Mime type, set to null for grabbing it later if not sent
         $filetype = isset($_SERVER['HTTP_CONTENT_TYPE']) ? $_SERVER['HTTP_CONTENT_TYPE'] : null;
 
@@ -103,7 +107,7 @@ class FileApi extends SugarApi {
 
         // Now read the raw body to capture what is being sent by PUT requests
         // Using a file handle to save on memory consumption with file_get_contents
-        $inputHandle  = fopen('php://input', 'r');
+        $inputHandle  = fopen($stream, 'r');
         $outputHandle = fopen($tempfile, 'w');
 
         // Write it out
