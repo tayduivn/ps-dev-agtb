@@ -210,7 +210,10 @@ $dictionary['EmailTemplate'] = array(
 			'name' => 'idx_email_template_name',
 			'type'=>'index',
 			'fields'=>array('name')
-		)
+		),
+        array('name' => 'idx_emailtemplate_type', 'type' => 'index', 'fields' => array('type')),
+        array('name' => 'idx_emailtemplate_date_modified', 'type' => 'index', 'fields' => array('date_modified')),
+        array('name' => 'idx_emailtemplate_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
 	),
 	'relationships' => array(
 	'emailtemplates_assigned_user' =>

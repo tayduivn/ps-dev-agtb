@@ -551,6 +551,9 @@ $dictionary['KBDocument'] = array(
    'relationship_type'=>'one-to-many','relationship_role_column'=>'parent_type',
 	'relationship_role_column_value'=>'Emails'),
    ),
+    'indices' => array (
+        array('name' => 'idx_kbdocument_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
+    ),
 );
 
 VardefManager::createVardef('KBDocuments','KBDocument', array(

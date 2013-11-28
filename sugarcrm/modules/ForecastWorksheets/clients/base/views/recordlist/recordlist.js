@@ -572,7 +572,6 @@
 
             // figure out if any of the row actions need to be disabled
             this.setRowActionButtonStates();
-            this.adjustCurrencyColumnWidths();
         } else {
             if (this.layout.isVisible()) {
                 this.layout.hide();
@@ -1015,65 +1014,6 @@
         app.events.on('preview:close', function() {
             this.previewVisible = false;
             this.previewModel = undefined;
-        }, this);
-    },
-
-    /**
-     * set dynamic widths on currency columns showing original currency
-     */
-    adjustCurrencyColumnWidths: function() {
-        // empty collection, don't worry about this
-        if (this.collection.length == 0) {
-            return;
-        }
-
-        _.each(this._fields.visible, function(field) {
-            // only adjust the currency fields
-            if (field.type === 'currency') {
-                var tdSelector = 'td[data-field-name^="' + field.name + '"]',
-                    maxWidth = 0,
-                    maxLabelWidth = 0,
-                    fields = this.$el.find(tdSelector + ' div.currency-field');
-
-                // find the max widths from the fields
-                _.each(fields, function(field) {
-                    var original = 0,
-                        converted = 0;
-
-                    if ($(field).has('label.original').length) {
-                        // this is a currency that is not in base, so get the widths of the converted value
-                        // and the original value
-                        original = $(field).find('label.original').width();
-                        converted = $(field).find('.converted').width();
-
-                        // this only needs to run here
-                        if (original > maxLabelWidth) {
-                            maxLabelWidth = original;
-                        }
-                    } else {
-                        // this is a currency in base, just get the width of the div
-                        converted = $(field).width();
-                    }
-
-                    // we always need to run this
-                    if (converted > maxWidth) {
-                        maxWidth = converted;
-                    }
-                });
-
-                maxWidth = maxWidth+5; // Added 5 to the calculated amount so that FF plays nice.
-
-                // adjust the fields for the correct values
-                this.$el.find(tdSelector + ' .converted').width(maxWidth);
-                this.$el.find(tdSelector + ' label.original').width(maxLabelWidth);
-
-                // combine all the widths and add 20 for some extra padding
-                var finalTDWidth = maxWidth + maxLabelWidth + 20;
-                this.$el.find('th[data-fieldname^="' + field.name + '"]')
-                    .width(finalTDWidth)
-                    .css('maxWidth', finalTDWidth + 'px')
-                    .css('minWidth', finalTDWidth + 'px');
-            }
         }, this);
     }
 })

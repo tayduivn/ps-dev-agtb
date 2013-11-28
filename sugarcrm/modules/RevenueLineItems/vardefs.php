@@ -13,6 +13,7 @@
  */
 $dictionary['RevenueLineItem'] = array(
     'table' => 'revenue_line_items',
+    'optimistic_locking' => true,
     'audited' => true,
     'activity_enabled' => true,
     //BEGIN SUGARCRM flav=ent ONLY
@@ -973,7 +974,11 @@ $dictionary['RevenueLineItem'] = array(
             'name' => 'idx_rli_user_dc_timestamp',
             'type' => 'index',
             'fields' => array('id', 'assigned_user_id', 'date_closed_timestamp')
-        )
+        ),
+        array('name' => 'idx_revenuelineitem_sales_stage', 'type' => 'index', 'fields' => array('sales_stage')),
+        array('name' => 'idx_revenuelineitem_probability', 'type' => 'index', 'fields' => array('probability')),
+        array('name' => 'idx_revenuelineitem_commit_stage', 'type' => 'index', 'fields' => array('commit_stage')),
+        array('name' => 'idx_revenuelineitem_quantity', 'type' => 'index', 'fields' => array('quantity')),
     ),
     'relationships' => array(
         'revenuelineitem_notes' => array(

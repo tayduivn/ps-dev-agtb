@@ -21,8 +21,6 @@
     plugins: ['Editable', 'ErrorDecoration', 'Tooltip', 'EllipsisInline', 'MergeDuplicates'],
     extendsFrom: 'ListView',
     events: {
-        'click [data-action=more]' : 'toggleMoreLess',
-        'click [data-action=less]' : 'toggleMoreLess',
         'click [data-mode=preview]' : 'togglePreview',
         'click [data-action=copy]' : 'triggerCopy'
     },
@@ -463,32 +461,18 @@
     /**
      * Create metadata for panels.
      *
-     * Create a two panel viewdews metadata (visible, hidden) given list of fields and the collection
-     * The algorithm for determining field placement:
-     * 1. all fields should be base fields. fieldsets should be broken. no non-editable fields.
-     * 2. if a field is "similar" among all alternatives, it is placed in a hidden panel
-     * 3. if a field is "different" among all alternatives (i.e. there exists two alternatives such
-     * that the field value is not equal), it is placed in a visible panel.
-     *
      * @param {Array} fields The list of fields for the module.
-     * @param {Data.BeanCollection} collection The collection of records to merge.
-     * @param {Data.Bean} primaryRecord The primary record.
      * @return {Object} The metadata for the view template.
      * @private
      */
-    _generateMetadata: function(fields, collection, primaryRecord) {
-        var hiddenFields = [],
-            visibleFields = [],
-            alternatives = collection.without(primaryRecord);
-
+    _generateMetadata: function(fields) {
         this.generatedValues = {
             teamsets: []
         };
 
         _.each(fields, function(field) {
-
             if (field.type === 'teamset') {
-                this.generatedValues.teamsets[field.name] = _.chain(collection.models)
+                this.generatedValues.teamsets[field.name] = _.chain(this.collection.models)
                     .map(function(model) {
                         return model.get(field.name);
                     })
@@ -500,23 +484,13 @@
                 field.maxHeight = this.generatedValues.teamsets[field.name].length;
                 field.noRadioBox = true;
             }
-
-            if (this._isSimilar(field, primaryRecord, alternatives)) {
-                hiddenFields.push(field);
-            } else {
-                visibleFields.push(field);
-            }
         }, this);
 
         return {
             type: 'list',
             panels: [
                 {
-                    fields: visibleFields
-                },
-                {
-                    hide: true,
-                    fields: hiddenFields
+                    fields: fields
                 }
             ]
         };
@@ -740,18 +714,6 @@
     },
 
     /**
-     * Shows or hides additional fields.
-     *
-     * @param {Event} evt
-     */
-    toggleMoreLess: function(evt) {
-        this.toggled = !this.toggled;
-        this.$('[data-action=less]').toggleClass('hide', !this.toggled);
-        this.$('[data-action=more]').toggleClass('hide', this.toggled);
-        this.$('.col .extra').toggleClass('hide', !this.toggled);
-    },
-
-    /**
      * Updates the view's title.
      *
      * @param {String} title
@@ -768,7 +730,7 @@
      * Setup drag-n-drop functionality.
      */
     _renderHtml: function() {
-        this.meta = this._generateMetadata(this.mergeFields, this.collection, this.primaryRecord);
+        this.meta = this._generateMetadata(this.mergeFields);
 
         app.view.invokeParent(this, {
             type: 'view',
@@ -785,10 +747,6 @@
         }, this);
         this.setPrimaryEditable(this.primaryRecord.id);
         this.setDraggable();
-        if (this.toggled) {
-            this.toggleMoreLess();
-        }
-
         this._showAlertIfIdentical();
     },
 
@@ -806,21 +764,20 @@
         }
 
         var self = this,
-            visibleFields = _.first(this.meta.panels);
+            alternatives = this.collection.without(this.primaryRecord),
+            fields = _.first(this.meta.panels).fields || [],
+            notIdentical = false;
 
-        if (_.isEmpty(visibleFields.fields)) {
+        notIdentical = _.any(fields, function(field) {
+            return !this._isSimilar(field, this.primaryRecord, alternatives);
+        }, this);
+
+        if (!notIdentical) {
             app.alert.show('merge_confirmation_identical', {
                 level: 'confirmation',
                 messages: app.lang.get('TPL_MERGE_DUPLICATES_IDENTICAL', this.module),
                 onConfirm: function() {
                     self.layout.trigger('mergeduplicates:save:fire');
-                },
-                onLinkClick: function(event) {
-                    if ($(event.currentTarget).hasClass('cancel')) {
-                        if (!self.toggled) {
-                            self.toggleMoreLess();
-                        }
-                    }
                 }
             });
         }

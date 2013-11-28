@@ -109,6 +109,7 @@ $dictionary['Role'] = array('table' => 'roles'
 'indices' => array (
        array('name' =>'rolespk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_role_id_del', 'type' =>'index', 'fields'=>array('id', 'deleted')),
+       array('name' => 'idx_role_name', 'type' => 'index', 'fields' => array('name'))
                                                    )
 
                             );

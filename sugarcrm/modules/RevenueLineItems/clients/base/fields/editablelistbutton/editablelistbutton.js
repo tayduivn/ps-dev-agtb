@@ -38,9 +38,10 @@
                     });
                 }
 
-                // reload opportunities subpanel
-                this.context.parent.trigger('subpanel:reload', {links: ['opportunities']});
-
+                if(this.context.parent) {
+                    // reload opportunities subpanel
+                    this.context.parent.trigger('subpanel:reload', {links: ['opportunities']});
+                }
             }, this)
         };
     }

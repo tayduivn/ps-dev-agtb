@@ -54,13 +54,17 @@ class ImportDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
         
         $idc     = new ImportDuplicateCheck($focus);
         $indexes = $idc->getDuplicateCheckIndexes();
-        
-        foreach ($focus->getIndices() as $key => $index) {
-            if ($key != 'id' && $key != 'date_modified') {
-                $this->assertTrue(isset($indexes[$index['name']]), "{$index['name']} should be in the list");
-            }
+        foreach ($focus->getIndices() AS $key => $index) {
+            $moduleIndexes[$index['name']] = true;
         }
-        
+        foreach ($indexes AS $name => $fields) {
+            if (stristr($name, 'special')) {
+                continue;
+            }
+            $this->assertArrayHasKey($name, $moduleIndexes, "Couldn't find index by: {$name}");    
+        }
+
+
         $this->assertTrue(isset($indexes['special_idx_email1']));
         $this->assertTrue(isset($indexes['special_idx_email2']));
     }
@@ -71,17 +75,21 @@ class ImportDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
         
         $idc     = new ImportDuplicateCheck($focus);
         $indexes = $idc->getDuplicateCheckIndexes();
-        
-        foreach ($focus->getIndices() as $key => $index) {
-            if ($key != 'id' && $key != 'date_modified' && !in_array('date_start', $index['fields'])) {
-                $this->assertTrue(isset($indexes[$index['name']]), "{$index['name']} should be in the list");
-            }
+        foreach ($focus->getIndices() AS $key => $index) {
+            $moduleIndexes[$index['name']] = true;
         }
-        
+        foreach ($indexes AS $name => $fields) {
+            if (stristr($name, 'special')) {
+                continue;
+            }
+            $this->assertArrayHasKey($name, $moduleIndexes, "Couldn't find index by: {$name}");    
+        }
+
         $this->assertFalse(isset($indexes['special_idx_email1']));
         $this->assertFalse(isset($indexes['special_idx_email2']));
     }
-    
+
+
     public function testIsADuplicateRecord()
     {
         $last_name = 'FooBar'.date("YmdHis");

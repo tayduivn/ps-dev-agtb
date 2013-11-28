@@ -85,7 +85,6 @@ class ContactsApi extends ListApi
                 foreach($userData['rows'] as $userId => $user) {
                     if(empty($data[$userId])) {
                         $userBean = BeanFactory::getBean('Users', $userId);
-                        _ppl($userId);
                         if($userBean) {
                             $data[$userId] = array_merge($this->formatBean($api, $args, $userBean), $relationships);
                             $data[$userId][$relationship]++;

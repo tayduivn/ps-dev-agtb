@@ -34,6 +34,7 @@ class ValueOfExpression extends NumericExpression {
 		if (is_string($val))
 		{
 			$val = str_replace(",", "", $val);
+            $val = empty($val) ? 0 : $val;
 			if (!is_numeric($val))
 			   throw new Exception("Error: '$val' is not a number");
 			if (strpos($val, ".") !== false) {

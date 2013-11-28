@@ -193,7 +193,9 @@ $dictionary['WorkFlow'] = array('table' => 'workflow'
   , 'indices' => array (
        array('name' =>'workflow_k', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_workflow', 'type'=>'index', 'fields'=>array('name','deleted')),
-                                                      )
+       array('name' => 'idx_workflow_type', 'type' => 'index', 'fields' => array('type')),
+       array('name' => 'idx_workflow_base_module', 'type' => 'index', 'fields' => array('base_module')),
+    )
 
 , 'relationships' => array (
 		'workflow_triggers' => array('lhs_module'=> 'WorkFlow', 'lhs_table'=> 'workflow', 'lhs_key' => 'id',

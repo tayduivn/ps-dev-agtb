@@ -192,6 +192,8 @@ $dictionary['ProspectList'] = array(
             'type'   => 'index',
             'fields' => array('name'),
         ),
+        array('name' => 'idx_prospect_list_list_type', 'type' => 'index', 'fields' => array('list_type')),
+        array('name' => 'idx_prospect_list_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
     ),
     'relationships'    => array(
         'prospectlists_assigned_user' => array(

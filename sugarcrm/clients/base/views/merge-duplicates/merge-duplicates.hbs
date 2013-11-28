@@ -25,38 +25,16 @@
         <div class="label-div">
             <div class="col pull-left">
                 {{#each meta.panels}}
-                    {{#if hide}}
-                        <div class="extra hide">
-                            {{#each fields}}
-                                <div class="merge-row merge-row-field-{{type}} {{#if maxHeight}}merge-row-field-height{{maxHeight}}{{/if}}">
-                                    <label class="ellipsis_inline"
-                                           title="{{str label ../../../module}}"
-                                           data-placement="right">
-                                        {{str label ../../../module}}
-                                    </label>
-                                </div>
-                            {{/each}}
+                    {{#each fields}}
+                        <div class="merge-row merge-row-field-{{type}} {{#if maxHeight}}merge-row-field-height{{maxHeight}}{{/if}}">
+                            <label class="ellipsis_inline"
+                                   title="{{str label ../../module}}"
+                                   data-placement="right">
+                                {{str label ../../module}}
+                            </label>
                         </div>
-                    {{else}}
-                        {{#each fields}}
-                            <div class="merge-row merge-row-field-{{type}} {{#if maxHeight}}merge-row-field-height{{maxHeight}}{{/if}}">
-                                <label class="ellipsis_inline"
-                                       title="{{str label ../../../module}}"
-                                       data-placement="right">
-                                    {{str label ../../../module}}
-                                </label>
-                            </div>
-                        {{/each}}
-                    {{/if}}
+                    {{/each}}
                 {{/each}}
-                <div>
-                    <button data-action="more" class="more show_extra btn btn-link btn-invisible">
-                        {{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i>
-                    </button>
-                    <button data-action="less" class="less show_extra btn btn-link btn-invisible hide">
-                        {{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i>
-                    </button>
-                </div>
             </div>
         </div>
 
@@ -71,43 +49,22 @@
                         </div>
                         <div class="box">
                             {{#each ../meta.panels}}
-                                {{#if hide}}
-                                    <div class="extra hide">
-                                        {{#each fields}}
-                                            <div class="merge-row control-group merge-row-field-{{type}} {{#if maxHeight}}merge-row-field-height{{maxHeight}}{{/if}}">
-                                                <div class="controls">
-                                                    {{#unless noRadioBox}}
-                                                        <input type="radio" name="copy_{{name}}" class="copy"
-                                                               data-action="copy"
-                                                               data-field-name="{{name}}"
-                                                               data-record-id="{{../../../../id}}" />
-                                                        {{! FIXME see SC-2065}}
-                                                        <label for="">{{field ../../../../../this model=../../../../this}}</label>
-                                                    {{else}}
-                                                        {{field ../../../../../this model=../../../../this}}
-                                                    {{/unless}}
-                                                </div>
-                                            </div>
-                                        {{/each}}
-                                    </div>
-                                {{else}}
-                                    {{#each fields}}
-                                        <div class="merge-row control-group merge-row-field-{{type}} {{#if maxHeight}}merge-row-field-height{{maxHeight}}{{/if}}">
-                                            <div class="controls">
-                                                {{#unless noRadioBox}}
-                                                    <input type="radio" name="copy_{{name}}" class="copy"
-                                                           data-action="copy"
-                                                           data-field-name="{{name}}"
-                                                           data-record-id="{{../../../../id}}" />
-                                                    {{! FIXME see SC-2065}}
-                                                    <label for="">{{field ../../../../../this model=../../../../this}}</label>
-                                                {{else}}
-                                                    {{field ../../../../../this model=../../../../this}}
-                                                {{/unless}}
-                                            </div>
+                                {{#each fields}}
+                                    <div class="merge-row control-group merge-row-field-{{type}} {{#if maxHeight}}merge-row-field-height{{maxHeight}}{{/if}}">
+                                        <div class="controls">
+                                            {{#unless noRadioBox}}
+                                                <input type="radio" name="copy_{{name}}" class="copy"
+                                                       data-action="copy"
+                                                       data-field-name="{{name}}"
+                                                       data-record-id="{{../../../id}}" />
+                                                {{! FIXME see SC-2065}}
+                                                <label for="">{{field ../../../../this model=../../../this}}</label>
+                                            {{else}}
+                                                {{field ../../../../this model=../../../this}}
+                                            {{/unless}}
                                         </div>
-                                    {{/each}}
-                                {{/if}}
+                                    </div>
+                                {{/each}}
                             {{/each}}
                         </div>
                     </div>

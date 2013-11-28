@@ -34,9 +34,37 @@
             }
         }, this);
     },
-    bindKeyDown: function (callback) {
-        this.$('input').on("keydown.record", {field: this}, callback);
+
+    /**
+     * Bind the additional keydown handler on select2
+     * search element (affected by version 3.4.3).
+     *
+     * Invoked from {@link app.plugins.Editable}.
+     * @param {Function} callback Callback function for keydown.
+     */
+    bindKeyDown: function(callback) {
+        this.$(this.fieldTag).on('keydown.record', {field: this}, callback);
+        var plugin = this.$(this.fieldTag).data('select2');
+        if (plugin) {
+            plugin.focusser.on('keydown.record', {field: this}, callback);
+            plugin.search.on('keydown.record', {field: this}, callback);
+        }
     },
+
+    /**
+     * Unbind the additional keydown handler.
+     *
+     * Invoked from {@link app.plugins.Editable}.
+     * @param {Function} callback Callback function for keydown.
+     */
+    unbindKeyDown: function(callback) {
+        this.$(this.fieldTag).off('keydown.record', callback);
+        var plugin = this.$(this.fieldTag).data('select2');
+        if (plugin) {
+            plugin.search.off('keydown.record', callback);
+        }
+    },
+
     focus: function () {
         if(this.action !== 'disabled') {
             this.$(this.fieldTag).select2('open');
