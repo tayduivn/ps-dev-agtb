@@ -175,7 +175,7 @@ if(!isset($_SESSION['reassignRecords']['assignedModuleListCache'])){
         $beanListDupDisp[$m] = isset($app_list_strings['moduleList'][$m]) ? $app_list_strings['moduleList'][$m] : $p;
 	}
 
-    asort($beanListDup, SORT_STRING);
+        asort($beanListDupDisp, SORT_STRING);
 
 	$_SESSION['reassignRecords']['assignedModuleListCache'] = $beanListDup;
 	$_SESSION['reassignRecords']['assignedModuleListCacheDisp'] = $beanListDupDisp;
@@ -189,7 +189,11 @@ if(!empty($_SESSION['reassignRecords']['modules'])) {
     }
 }
 
-echo get_select_options_with_id_separate_key($_SESSION['reassignRecords']['assignedModuleListCacheDisp'], $_SESSION['reassignRecords']['assignedModuleListCache'], $selected);
+    echo get_select_options_with_id_separate_key(
+        $_SESSION['reassignRecords']['assignedModuleListCacheDisp'],
+        $_SESSION['reassignRecords']['assignedModuleListCacheDisp'],
+        $selected
+    );
 ?>
 </select>
 <BR>
