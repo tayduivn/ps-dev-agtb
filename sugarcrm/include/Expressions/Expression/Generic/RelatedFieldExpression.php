@@ -49,12 +49,12 @@ class RelatedFieldExpression extends GenericExpression
                     if ($bean->field_defs[$relfield]['type'] == "date")
                     {
                         $ret = $timedate->fromDbDate($bean->$relfield);
-                        if (!$ret)
-                            $ret = $timedate->fromUserDate($bean->$relfield);
                         if (!$ret) {
-                            return $ret;
+                            $ret = $timedate->fromUserDate($bean->$relfield);
                         }
-                        $ret->isDate = true;
+                        if ($ret) {
+                            $ret->isDate = true;
+                        }
                         return $ret;
                     }
                     if ($bean->field_defs[$relfield]['type'] == "datetime")
