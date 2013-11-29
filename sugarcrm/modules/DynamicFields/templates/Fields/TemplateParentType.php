@@ -35,6 +35,8 @@ class TemplateParentType extends TemplateText{
 		$def = parent::get_field_def();
 		$def['dbType'] = 'varchar';
 		$def['studio'] = 'hidden';
+        // FIXME this is to match default flex relates vardefs. We need to document the rules.
+        $def['group'] = 'parent_name';
 		return $def;	
 	}
 
