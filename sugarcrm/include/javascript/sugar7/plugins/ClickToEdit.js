@@ -198,14 +198,14 @@
 
                         // for the date field, this is handled when the date field gets removed below
                         if (this.type != 'date') {
-                            this.setMode('detail');
+                            this.setMode('list');
                         }
                     }
                 }, this);
                 this.context.on('field:editable:error', function(cid) {
                     if (!_.isEqual(cid, this.cid) && this.options.viewName == 'edit') {
                         // some other field is open with an error, close this
-                        this.setMode('detail');
+                        this.setMode('list');
                     }
                 }, this);
                 this.on('render', function() {
@@ -384,7 +384,7 @@
 
                     if (this.type === "enum") {
                         this.model.once('change:' + this.name, function() {
-                            this.setMode('detail');
+                            this.setMode('list');
                         }, this);
                     }
 
@@ -439,7 +439,7 @@
                     return;
                 }
 
-                this.setMode('detail');
+                this.setMode('list');
             },
 
             /**
@@ -459,14 +459,14 @@
                         // it will format the value correctly
                         this.leaveDirty = false;
                     }
-                    this.setMode('detail');
+                    this.setMode('list');
                 } else if (e.which == 13) {
                     if (this.fieldValueChanged(field)) {
                         this.model.once('change:' + field.name, function() {
-                            this.setMode('detail');
+                            this.setMode('list');
                         }, this);
                     } else {
-                        this.setMode('detail');
+                        this.setMode('list');
                     }
                 }
             },
@@ -504,7 +504,7 @@
              * @param name
              */
             setMode: function(name) {
-                if (name === "detail") {
+                if (name === "list") {
                     // remove handlers
                     this.$(this.fieldTag).off("keydown.record" + this.cid);
                     $(document).off("mousedown.record" + this.cid);
@@ -682,8 +682,8 @@
 
                     // find the date picker and hide it
                     $('.datepicker').datepicker().hide();
-                    // trigger the onBlur function to set the field back to detail view and render
-                    this.setMode('detail');
+                    // trigger the onBlur function to set the field back to list view and render
+                    this.setMode('list');
                 } else {
                     var hb = Handlebars.compile("{{str key module context}}"),
                         args = {field_name: app.lang.get(this.def.label, this.module)};
