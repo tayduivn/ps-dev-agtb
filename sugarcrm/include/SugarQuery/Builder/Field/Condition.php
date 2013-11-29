@@ -88,10 +88,10 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
         if ($value instanceof SugarQuery_Builder_Literal) {
             return (string)$value;
         }
-        if (isset($this->def)) {
+        if (!empty($this->def)) {
             $dbtype = $db->getFieldType($this->def);
 
-            if (empty($value)) {
+            if (!strcmp($value, '')) {
                 return $db->emptyValue($dbtype);
             }
 

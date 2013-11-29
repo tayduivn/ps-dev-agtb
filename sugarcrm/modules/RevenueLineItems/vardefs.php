@@ -799,6 +799,7 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_OPPORTUNITY_ID',
             'required' => true,
             'reportable' => false,
+            'isnull' => 'true',
             'comment' => 'The opportunity id for the line item entry'
         ),
         'opportunity_name' => array(
