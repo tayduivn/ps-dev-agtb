@@ -68,11 +68,11 @@ class ForecastManagerWorksheetsApiHelper extends SugarBeanApiHelper
                     // find the differences via the audit table
                     // we use a direct query since SugarQuery can't do the audit tables...
                     $sql = sprintf(
-                        "SELECT field_name, before_value_string, after_value_string FROM %s_audit
-                        WHERE parent_id = '%s' AND date_created >= '%s'",
-                        $bean->table_name,
-                        $db->quote($bean->id),
-                        $db->quote($committed_date)
+                        "SELECT field_name, before_value_string, after_value_string FROM %s
+                        WHERE parent_id = %s AND date_created >= " . $db->convert('%s', 'datetime'),
+                        $bean->get_audit_table_name(),
+                        $db->quoted($bean->id),
+                        $db->quoted($committed_date)
                     );
 
                     $results = $db->query($sql);
