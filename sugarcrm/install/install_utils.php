@@ -1024,7 +1024,7 @@ function handleWebConfig()
     $prefix = $setup_site_log_dir.empty($setup_site_log_dir)?'':'/';
 
 
-    $config_array = array(
+    $redirect_config_array = array(
     array('1'=> $prefix.str_replace('.','\\.',$setup_site_log_file).'\\.*' ,'2'=>'log_file_restricted.html'),
     array('1'=> $prefix.'install.log' ,'2'=>'log_file_restricted.html'),
     array('1'=> $prefix.'upgradeWizard.log' ,'2'=>'log_file_restricted.html'),
@@ -1043,8 +1043,49 @@ function handleWebConfig()
     array('1'=>'emailmandelivery.php' ,'2'=>'index.php'),
     array('1'=>'cron.php' ,'2'=>'index.php'),
     array('1'=> $sugar_config['upload_dir'].'.*' ,'2'=>'index.php'),
+    array('1' => '^portal$', '2' => 'portal/'),
     );
 
+    $rewrite_config_array = array(
+        array(
+            '1' => 'rest/(.*)$',
+            '2' => 'api/rest.php?__sugar_url={R:1}',
+        ),
+        array(
+            '1' => '^cache/api/metadata/lang_(.._..)_(.*)_public\.json',
+            '2' => 'api/rest.php/v10/lang/public/{R:1}?platform={R:2}',
+            'rule_params' => array(
+                'stopProcessing' => 'false',
+            ),
+            'action_params' => array(
+                'appendQueryString' => 'false',
+            ),
+        ),
+        array(
+            '1' => '^cache/api/metadata/lang_(.._..)_(.*)\.json',
+            '2' => 'api/rest/v10/lang/{R:1}?platform={R:2}',
+            'rule_params' => array(
+                'stopProcessing' => 'false',
+            ),
+            'action_params' => array(
+                'appendQueryString' => 'false',
+            ),
+        ),
+        array(
+            '1' => '^cache/Expressions/functions_cache(_debug)?.js$',
+            '2' => 'api/rest/v10/ExpressionEngine/functions?debug={R:1}',
+            'rule_params' => array(
+                'stopProcessing' => 'false',
+            ),
+            'action_params' => array(
+                'appendQueryString' => 'false',
+            ),
+        ),
+        array(
+            '1' => '^portal/(.*)$',
+            '2' => 'portal2/{R:1}',
+        ),
+    );
 
     $xmldoc = new XMLWriter();
     $xmldoc->openURI('web.config');
@@ -1055,17 +1096,53 @@ function handleWebConfig()
         $xmldoc->startElement('system.webServer');
             $xmldoc->startElement('rewrite');
                 $xmldoc->startElement('rules');
-                for ($i = 0; $i < count($config_array); $i++) {
+                for ($i = 0; $i < count($redirect_config_array); $i++) {
                     $xmldoc->startElement('rule');
                         $xmldoc->writeAttribute('name', "redirect$i");
                         $xmldoc->writeAttribute('stopProcessing', 'true');
                         $xmldoc->startElement('match');
-                            $xmldoc->writeAttribute('url', $config_array[$i]['1']);
+                            $xmldoc->writeAttribute('url', $redirect_config_array[$i]['1']);
                         $xmldoc->endElement();
                         $xmldoc->startElement('action');
                             $xmldoc->writeAttribute('type', 'Redirect');
-                            $xmldoc->writeAttribute('url', $config_array[$i]['2']);
+                            $xmldoc->writeAttribute('url', $redirect_config_array[$i]['2']);
                             $xmldoc->writeAttribute('redirectType', 'Found');
+                        $xmldoc->endElement();
+                    $xmldoc->endElement();
+                }
+                for ($i = 0; $i < count($rewrite_config_array); $i++) {
+                    $xmldoc->startElement('rule');
+                        $xmldoc->writeAttribute('name', "rewrite$i");
+                        $xmldoc->writeAttribute('patternSyntax', 'ECMAScript');
+                        if(!empty($rewrite_config_array[$i]['rule_params'])) {
+                            foreach($rewrite_config_array[$i]['rule_params'] as $ruleAttrName => $ruleAttrValue) {
+                                $xmldoc->writeAttribute($ruleAttrName, $ruleAttrValue);
+                            }
+                        }
+                        $xmldoc->startElement('match');
+                            $xmldoc->writeAttribute('url', $rewrite_config_array[$i]['1']);
+                            $xmldoc->writeAttribute('ignoreCase', 'true');
+                        $xmldoc->endElement();
+                        $xmldoc->startElement('conditions');
+                            $xmldoc->startElement('add');
+                                $xmldoc->writeAttribute('input', '{REQUEST_FILENAME}');
+                                $xmldoc->writeAttribute('matchType', 'IsFile');
+                                $xmldoc->writeAttribute('negate', 'true');
+                            $xmldoc->endElement();
+                            $xmldoc->startElement('add');
+                                $xmldoc->writeAttribute('input', '{REQUEST_FILENAME}');
+                                $xmldoc->writeAttribute('matchType', 'IsDirectory');
+                                $xmldoc->writeAttribute('negate', 'true');
+                            $xmldoc->endElement();
+                        $xmldoc->endElement();
+                        $xmldoc->startElement('action');
+                            $xmldoc->writeAttribute('type', 'Rewrite');
+                            $xmldoc->writeAttribute('url', $rewrite_config_array[$i]['2']);
+                            if(!empty($rewrite_config_array[$i]['action_params'])) {
+                                foreach($rewrite_config_array[$i]['action_params'] as $actionAttrName => $actionAttrValue) {
+                                    $xmldoc->writeAttribute($actionAttrName, $actionAttrValue);
+                                }
+                            }
                         $xmldoc->endElement();
                     $xmldoc->endElement();
                 }
