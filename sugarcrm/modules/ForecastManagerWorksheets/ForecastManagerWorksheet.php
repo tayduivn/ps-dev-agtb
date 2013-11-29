@@ -459,11 +459,11 @@ class ForecastManagerWorksheet extends SugarBean
                     // find the differences via the audit table
                     // we use a direct query since SugarQuery can't do the audit tables...
                     $sql = sprintf(
-                        "SELECT field_name, before_value_string, after_value_string FROM %s_audit
-                        WHERE parent_id = '%s' AND date_created >= '%s'",
-                        $this->table_name,
-                        $this->db->quote($this->id),
-                        $this->db->quote($this->fetched_row['date_modified'])
+                        "SELECT field_name, before_value_string, after_value_string FROM %s
+                        WHERE parent_id = %s AND date_created >= " . $this->db->convert('%s', 'datetime'),
+                        $this->get_audit_table_name(),
+                        $this->db->quoted($this->id),
+                        $this->db->quoted($this->fetched_row['date_modified'])
                     );
 
                     $results = $this->db->query($sql);
