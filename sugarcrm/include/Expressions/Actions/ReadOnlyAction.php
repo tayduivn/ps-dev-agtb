@@ -49,25 +49,33 @@ class ReadOnlyAction extends AbstractAction{
 			/**
 			 * Triggers the style dependencies.
 			 */
-			exec: function(context)
-			{
+			exec: function(context) {
 				if (typeof(context) == 'undefined') context = this.context;
 				var val = this.evalExpression(this.expr, context),
-					set = val == SUGAR.expressions.Expression.TRUE;
+					readOnly = val == SUGAR.expressions.Expression.TRUE;
 				
 				if (context.view) {
-					context.setFieldDisabled(this.target, set);
-					context.view.setFieldMeta(this.target, {'readonly':set});
-				}
-				else {
-					var el = SUGAR.forms.AssignmentHandler.getElement(this.target);
-					if (!el)
-						return;
+                    //We may get triggered before the view has rendered with the full field list.
+                    //If that occurs wait for the next render to apply.
+                    if (_.isEmpty(context.view.fields)) {
+                        context.view.once('render', function(){this.exec(context);}, this);
+                        return;
+                    }
 
-					this.setReadOnly(el, set);
-						this.setDateField(el, set);
-				}
+                    context.setFieldDisabled(this.target, readOnly);
+                } else {
+                    this.bwcExec(context, readOnly);
+                }
 
+			},
+
+			bwcExec: function(context, readonly) {
+			    var el = SUGAR.forms.AssignmentHandler.getElement(this.target);
+                if (!el) {
+                    return;
+                }
+				this.setReadOnly(el, set);
+				this.setDateField(el, set);
 			},
 
 			setReadOnly: function(el, set)

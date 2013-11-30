@@ -187,10 +187,11 @@
         }
 
         _.each(fields, function(fieldFilterDef, fieldName) {
+            var fieldMetaData = app.utils.deepCopy(fieldMeta[fieldName]);
             if (_.isEmpty(fieldFilterDef)) {
-                fields[fieldName] = fieldMeta[fieldName] || {};
+                fields[fieldName] = fieldMetaData || {};
             } else {
-                fields[fieldName] = _.extend({name: fieldName}, fieldFilterDef, fieldMeta[fieldName]);
+                fields[fieldName] = _.extend({name: fieldName}, fieldFilterDef, fieldMetaData);
             }
             delete fields[fieldName]['readonly'];
         });
