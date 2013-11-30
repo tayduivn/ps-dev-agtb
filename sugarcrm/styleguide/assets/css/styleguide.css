@@ -151,6 +151,9 @@ table.accordion .accordion-body td {
   border-right: none;
   border-left: none;
 }
+table.accordion table.dataTable {
+  width: auto;
+}
 ul.sg-main {
   list-style: none;
 }
