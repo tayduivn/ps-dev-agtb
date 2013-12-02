@@ -70,7 +70,7 @@ class SugarUpgradeOpportunityUpdateRollupFields extends UpgradeScript
         $results = $this->db->query($sql);
 
         $sql = "UPDATE opportunities SET
-                    amount='%f',best_case='%f',worst_case='%f',date_closed='%s',date_closed_timestamp='%s',
+                    amount=(%f*base_rate),best_case=(%f*base_rate),worst_case=(%f*base_rate),date_closed='%s',date_closed_timestamp='%s',
                     sales_status='%s',total_revenue_line_items='%d',closed_revenue_line_items='%d' WHERE id = '%s'";
         while ($row = $this->db->fetchRow($results)) {
             $this->db->query(
