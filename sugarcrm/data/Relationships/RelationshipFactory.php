@@ -208,7 +208,7 @@ class SugarRelationshipFactory {
         $rebuildApiCache = false;
         $mm = MetaDataManager::getManager();
         if (file_exists($mm->getMetadataCacheFileName())) {
-            $rebuildApiCache = !empty($this->relationships) && array_diff($this->relationships, $relationships) !== array();
+            $rebuildApiCache = !empty($this->relationships) && array_diff_key($this->relationships, $relationships) !== array();
         }
 
         $this->relationships = $relationships;
