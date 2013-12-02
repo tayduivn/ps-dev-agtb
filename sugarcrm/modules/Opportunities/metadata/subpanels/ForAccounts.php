@@ -54,7 +54,7 @@ $subpanel_layout = array(
 		),
 		'date_closed'=>array(
 			'name' => 'date_closed',
-			'vname' => 'LBL_LIST_DATE_CLOSED',
+			'vname' => 'LBL_DATE_CLOSED',
 			'width' => '15%',
 		),
 		'amount_usdollar'=>array(
