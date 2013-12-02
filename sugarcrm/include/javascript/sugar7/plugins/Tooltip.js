@@ -99,11 +99,10 @@
 
                     //hide tooltip when clicked
                     $tooltips.on('click.tooltip', function() {
-                        var plugin = $(this).data('tooltip');
-                        if (plugin && plugin.options && plugin.options.trigger === 'click') {
-                            return;
+                        var tooltip = $(this).data('bs.tooltip');
+                        if (tooltip && tooltip.options && tooltip.options.trigger.indexOf('click') === -1) {
+                            tooltip.hide();
                         }
-                        $(this).tooltip('hide');
                     });
                     app.accessibility.run($tooltips, 'click');
                 }
@@ -120,12 +119,15 @@
                 } else {
                     $tooltips = this._$pluginTooltips;
                 }
-                _.each($tooltips, function(tooltip) {
-                    if ($(tooltip).data('bs.tooltip') && $(tooltip).data('bs.tooltip').$tip) {
-                        $(tooltip).data('bs.tooltip').$tip.remove();
-                    }
-                }, this);
-                app.utils.tooltip.destroy($tooltips);
+
+                if ($tooltips && $tooltips.length > 0) {
+                    _.each($tooltips, function(tooltip) {
+                        if ($(tooltip).data('bs.tooltip') && $(tooltip).data('bs.tooltip').$tip) {
+                            $(tooltip).data('bs.tooltip').$tip.remove();
+                        }
+                    }, this);
+                    app.utils.tooltip.destroy($tooltips);
+                }
             },
 
             /**
