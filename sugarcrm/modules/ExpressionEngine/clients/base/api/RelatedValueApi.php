@@ -65,13 +65,17 @@ class RelatedValueApi extends SugarApi
         foreach ($fields as $rfDef) {
             $link = $rfDef['link'];
             $type = $rfDef['type'];
+            $rField = '';
             if (!isset($ret[$link])) {
                 $ret[$link] = array();
             }
             if (empty($ret[$link][$type])) {
                 $ret[$link][$type] = array();
             }
-            $rField = $rfDef['relate'];
+            // count formulas don't have a relate attribute
+            if (isset($rfDef['relate'])) {
+                $rField = $rfDef['relate'];
+            }
 
             switch ($type) {
                 //The Related function is used for pulling a sing field from a related record
