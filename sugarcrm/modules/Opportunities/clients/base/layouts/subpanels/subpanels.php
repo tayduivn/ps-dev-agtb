@@ -94,6 +94,13 @@ $viewdefs['Opportunities']['base']['layout']['subpanels'] = array(
         ),
         array(
             'layout' => 'subpanel',
+            'label' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'products',
+            ),
+        ),
+        array(
+            'layout' => 'subpanel',
             'label' => 'LBL_INVITEE',
             'override_subpanel_list_view' => 'subpanel-for-opportunities',
             'context' => array(
