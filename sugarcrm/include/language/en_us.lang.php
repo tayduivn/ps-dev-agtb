@@ -4263,7 +4263,6 @@ $app_strings = array (
     'LBL_PORTAL_SIGNUP_COMPANY' => 'Company',
     'LBL_PORTAL_SIGNUP_JOBTITLE' => 'Job title (optional)',
     'LNK_PORTAL_LOGIN_FORGOTPASSWORD' => 'Forgot password?',
-    'LBL_PORTAL_LOGIN_FORGOTPASSWORD_TITLE' => 'Forgot Your Password?',
     'LBL_PORTAL_LOGIN_FORGOTPASSWORD' => 'You need to contact your Sugar Admin to reset your password.',
     'LBL_PORTAL_LOGIN_USERNAME' => 'Username',
     'LBL_PORTAL_LOGIN_PASSWORD' => 'Password',

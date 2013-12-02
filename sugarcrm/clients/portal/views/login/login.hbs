@@ -37,12 +37,12 @@
                     <div class="control-group">{{field ../../this model=../../model}}</div>
                 {{/each}}
                 <p class="help-block">
-                    <a class="btn btn-link btn-invisible"
-                     rel="popoverTop"
-                     data-trigger="hover"
-                     data-delay="{ show: 500, hide: 100 }"
-                     data-content="{{str "LBL_PORTAL_LOGIN_FORGOTPASSWORD"}}"
-                     title="{{str "LBL_PORTAL_LOGIN_FORGOTPASSWORD_TITLE"}}">{{str "LNK_PORTAL_LOGIN_FORGOTPASSWORD"}}</a>
+                    <a id="forgot-password" class="btn btn-link btn-invisible"
+                     rel="tooltip"
+                     data-trigger="click"
+                     title="{{str "LBL_PORTAL_LOGIN_FORGOTPASSWORD"}}">
+                        <span class="dotted">{{str "LNK_PORTAL_LOGIN_FORGOTPASSWORD"}}</span>
+                    </a>
                 </p>
             {{/each}}
             <div class="login-footer">
