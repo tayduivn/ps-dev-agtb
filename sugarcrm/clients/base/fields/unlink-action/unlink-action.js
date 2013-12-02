@@ -40,7 +40,6 @@
      */
     initialize: function(options) {
         options.def.event =  options.def.event || 'list:unlinkrow:fire';  // default event
-        options.def.acl_action =  options.def.acl_action || 'delete';  // default ACL
         app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args:[options]});
         this.type = 'rowaction';
     },
