@@ -125,7 +125,7 @@ $app_list_strings[\'project_priority_options\'] = array(
     \'Medium\' => \'Medium\',
     \'Low\' => \'Low\',
 );
-$app_list_strings[\'project_priority_defaul=t\'] = \'Medium\';
+$app_list_strings[\'project_priority_default\'] = \'Medium\';
 
 $app_strings[\'LBL_PROJECT_MINUS\'] = \'Remove\';
 $app_strings[\'LBL_PROJECT_PLUS\'] = \'Add\';
@@ -135,7 +135,7 @@ $app_strings[\'LBL_PROJECT_PLUS\'] = \'Add\';
                 sugar_mkdir($path . '/Language/', null, true);
             }
             
-            sugar_file_put_contents($path . '/Language/' . $file_name, $lang_file_contents);
+            sugar_file_put_contents($path . '/Language/en_us-' . $file_name, $lang_file_contents);
         }
     }
 }
