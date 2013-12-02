@@ -1,6 +1,6 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -18,17 +18,23 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * in the same form as they appear in the distribution.  See full license for requirements.
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2011 SugarCRM, Inc.; All Rights Reserved.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$config = array (
-  'name' => 'GoToMeeting&#169;',
-  'eapm' => array(
-    'enabled' => true,
-    'only' => true,
-  ),
-  'order' => 13,
-    'properties' => array(
-        'oauth_consumer_key' => '',
-    ),
+$connector_strings = array(
+    'LBL_LICENSING_INFO' =>
+'<table border="0" cellspacing="1"><tr><td valign="top" width="35%" class="dataLabel">
+Obtain API Key from Citrix Online GoToMeeting by registering a new application.<br>
+&nbsp;<br>
+Steps to register your instance:<br>
+&nbsp;<br>
+<ol>
+<li>Log in to your Citrix Online developer account: https://developer.citrixonline.com/</li>
+<li>Click on Apply for Developer Key</li>
+<li>In Product API select GoToMeeting, and enter your instance URL in Application URL</li>
+<li>You will see a column called API Key under Your Applications</li>
+<li>Copy it below.</li>
+</ol>
+</td></tr></table>',
+    'oauth_consumer_key' => 'API Key',
 );
