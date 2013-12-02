@@ -62,16 +62,20 @@
             .call(this.chart);
 
         app.events.on('app:toggle:sidebar', function(state) {
-            if(state == 'open') {
+            if(state == 'open' && this.chart.update) {
                 this.chart.update();
             }
         }, this);
         app.events.on('preview:close', function() {
-            this.chart.update();
+            if(this.chart && this.chart.update) {
+                this.chart.update();
+            }
         }, this);
 
-        nv.utils.windowResize(this.chart.update);
-        nv.utils.resizeOnPrint(this.chart.update);
+        if(this.chart && this.chart.update) {
+            nv.utils.windowResize(this.chart.update);
+            nv.utils.resizeOnPrint(this.chart.update);
+        }
     },
 
     /* Process data loaded from REST endpoint so that d3 chart can consume
