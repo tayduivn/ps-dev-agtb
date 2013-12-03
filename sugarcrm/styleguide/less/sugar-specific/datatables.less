@@ -875,36 +875,42 @@ FLEXLIST GENERIC */
   cursor: pointer;
   padding-right: 18px;
   span {
-    margin-right: 9px;
     position: relative;
+    margin-right: 16px;
   }
   span:after {
     color: @grayLight;
     font-family: FontAwesome;
     -webkit-font-smoothing: antialiased;
-    font-size: 11px;
+    font-size: 14px;
     line-height: 6px;
     white-space: pre;
     position: absolute;
     top: 7px;
-    right: 0;
+    right: 1px;
     float: right;
     content: "\f0d8\A\f0d7";
+    font-weight: normal;
   }
 }
-.sorting_asc,
-.sorting_desc {
-  span:after {
+th.sorting_asc,
+th.sorting_desc {
+  background-color: @grayLighter !important;
+  span {
     font-weight: bold;
     color: @gray;
+  }
+  span:after {
+    color: @gray;
+    font-weight: normal;
   }
 }
 .sorting_asc span:after {
   content: "\f0d8";
 }
 .sorting_desc span:after {
+  top: 13px;
   content: "\f0d7";
-  top: 12px;
 }
 .sorting_desc_disabled,
 .sorting_asc_disabled {
