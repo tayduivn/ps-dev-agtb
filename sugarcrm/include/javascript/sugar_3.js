@@ -1188,14 +1188,12 @@ function validate_form(formname, startsWith){
 				if(typeof form[validate[formname][i][nameIndex]]  != 'undefined' && typeof form[validate[formname][i][nameIndex]].value != 'undefined'){
 					var bail = false;
 
-					//BEGIN SUGARCRM flav=pro ONLY
 					//If a field is hidden, skip validation.
 					var field = form[validate[formname][i][nameIndex]];
 					if (isFieldHidden(field, validate[formname][i][typeIndex]) || field.disabled)
 					{
 						continue;
 					}
-					//END SUGARCRM flav=pro ONLY
 
                     //If a field is not required and it is blank or is binarydependant, skip validation.
                     //Example of binary dependant fields would be the hour/min/meridian dropdowns in a date time combo widget, which require further processing than a blank check
