@@ -456,8 +456,26 @@ class MetaDataConverter
                 )
             );
         }
+        if (substr_count($pathInfo['filename'], '_') > 1 && stristr($pathInfo['filename'], 'subpanel')) {
+            $parts = explode('_', $pathInfo['filename']);
+            $subpanelFileName = '';
+            foreach ($parts as $part) {
+                if ($part == 'subpanel') {
+                    break;
+                }
+                $subpanelFileName .= ucwords($part);
+            }
+            $focus = BeanFactory::newBeanByName($subpanelFileName);
+            if ($focus) {
+                $subpanelFileName = "For{$focus->module_dir}";
+            } else {
+                $subpanelFileName = "For{$subpanelFileName}";
+            }
+        } else {
+            $subpanelFileName = $pathInfo['filename'];
+        }
 
-        $newSubpanelName = $this->fromLegacySubpanelName($pathInfo['filename']);
+        $newSubpanelName = $this->fromLegacySubpanelName($subpanelFileName);
 
         $newPath = str_replace(
             "metadata/subpanels/{$pathInfo['filename']}.php",
