@@ -1140,7 +1140,7 @@ SUGAR.kb = function() {
 				
 				// Limits the height of tags tree so that the dialog never
 				// exceeds the window height and centers the dialog
-				YUI().use('node', function (Y) {
+				YUI({comboBase:'index.php?entryPoint=getYUIComboFile&'}).use('node', function (Y) {
 					var viewPortHeight = parseInt(YAHOO.util.Dom.getViewportHeight(), 10);
 					var tree = Y.one('#tagstree');
 					var dialogTitleBar = Y.one('.yui-module .hd');
