@@ -32,9 +32,10 @@ $viewdefs['Bugs']['base']['view']['list'] = array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(
-                    'name'=>  'bug_number',
+                    'name' => 'bug_number',
                     'enabled' => true,
-                    'default'=>true,
+                    'default' => true,
+                    'readonly' => true,
                 ),
                 array(
                     'name'=>  'name',
