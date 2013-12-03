@@ -28,6 +28,7 @@ END;
         sugar_mkdir('modules/scantestExt');
         sugar_mkdir('modules/scantestHooks');
         mkdir_recursive('custom/Extension/application/Ext/Include/');
+        mkdir_recursive("modules/scantestHooks/views");
         file_put_contents('custom/Extension/application/Ext/Include/scantest.php', $data);
 
         file_put_contents('modules/scantest/scantest.php', "<?php echo 'Hello world!'; ");
@@ -35,6 +36,7 @@ END;
         file_put_contents('modules/scantestMB/scantestMB.php', "<?php echo 'Hello world!'; ");
         file_put_contents('modules/scantestExt/scantestExt.php', "<?php echo 'Hello world!'; ");
         file_put_contents('modules/scantestHooks/scantestHooks.php', "<?php echo 'Hello world!'; ");
+        copy(dirname(__FILE__)."/view_edit.php", "modules/scantestHooks/views/view.edit.php");
 
         mkdir_recursive('custom/modules/scantestHooks/Ext/LogicHooks');
         mkdir_recursive('custom/modules/scantestHooks/workflow');

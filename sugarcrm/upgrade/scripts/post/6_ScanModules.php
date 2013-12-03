@@ -100,6 +100,38 @@ class SugarUpgradeScanModules extends UpgradeScript
     }
 
     /**
+     * Check if views dir was created by file template
+     * @param string $view_dir
+     * @return boolean
+     */
+    protected function checkViewsDir($view_dir)
+    {
+        foreach(glob("$view_dir/*") as $file) {
+            // for now we allow only view.edit.php
+            if(basename($file) != 'view.edit.php') {
+                $this->log("Unknown file $view_dir/$file");
+                return false;
+            }
+            $data = file_get_contents($file);
+            // start with first {
+            $data= substr($data, strpos($data, '{'));
+            // drop function names
+            $data = preg_replace('/function\s[<>_\w]+/', '', $data);
+            // drop whitespace
+            $data = preg_replace('/\s+/', '', $data);
+            /* File data is:
+             * {(){parent::ViewEdit();}(){if(isset($this->bean->id)){$this->ss->assign("FILE_OR_HIDDEN","hidden");if(empty($_REQUEST['isDuplicate'])||$_REQUEST['isDuplicate']=='false'){$this->ss->assign("DISABLED","disabled");}}else{$this->ss->assign("FILE_OR_HIDDEN","file");}parent::display();}}?>
+             * md5 is: c8251f6b50e3e814135c936f6b5292eb
+             */
+            if(md5($data) !== 'c8251f6b50e3e814135c936f6b5292eb') {
+                $this->log("Bad md5 for $file");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Is this a pure ModuleBuilder module?
      * @param string $module_dir
      * @return boolean
@@ -133,6 +165,15 @@ class SugarUpgradeScanModules extends UpgradeScript
             if(isset($hook_files[$file])) {
                 // logic hook files are OK
                 continue;
+            }
+            if(basename($file) == "views") {
+                // check views separately because of file template that has view.edit.php
+                if(!$this->checkViewsDir("$module_dir/views")) {
+                    $this->log("Unknown file views present - $module_name is not MB module");
+                    return false;
+                } else {
+                    continue;
+                }
             }
             if(!isset($mbFiles[basename($file)])) {
                 // unknown file, not MB module
