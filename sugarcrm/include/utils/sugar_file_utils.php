@@ -188,7 +188,7 @@ function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_inclu
             SugarAutoLoader::addToMap($filename);
         }
         
-        return sugar_chmod($filename, 0655);
+        return sugar_chmod($filename);
     }
 
     return false;
@@ -278,11 +278,9 @@ function sugar_touch($filename, $time=null, $atime=null) {
  * @return boolean   Returns TRUE on success or FALSE on failure.
  */
 function sugar_chmod($filename, $mode=null) {
-    if ( !is_int($mode) )
-        $mode = (int) $mode;
 	if(!is_windows()){
-		if(!isset($mode)){
-			$mode = get_mode('file_mode', $mode);
+        if ($mode === null) {
+            $mode = get_mode('file_mode');
 		}
         if(isset($mode) && $mode > 0){
 		   return @chmod($filename, $mode);
