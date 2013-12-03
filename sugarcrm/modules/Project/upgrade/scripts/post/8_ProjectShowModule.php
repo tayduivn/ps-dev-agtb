@@ -48,6 +48,7 @@ foreach($modInvisList as $key => $mod) {
 
             // write out the language file
             $lang_file_contents = '
+<?php
 // WARNING: The contents of this file are auto-generated.
 
 $app_list_strings[\'moduleList\'][\'Project\'] = \'Projects\';
@@ -125,7 +126,6 @@ $app_list_strings[\'project_priority_options\'] = array(
     \'Medium\' => \'Medium\',
     \'Low\' => \'Low\',
 );
-$app_list_strings[\'project_priority_default\'] = \'Medium\';
 
 $app_strings[\'LBL_PROJECT_MINUS\'] = \'Remove\';
 $app_strings[\'LBL_PROJECT_PLUS\'] = \'Add\';
@@ -134,7 +134,7 @@ $app_strings[\'LBL_PROJECT_PLUS\'] = \'Add\';
             if (!sugar_is_dir($path. '/Language/')) {
                 sugar_mkdir($path . '/Language/', null, true);
             }
-            
+
             sugar_file_put_contents($path . '/Language/en_us-' . $file_name, $lang_file_contents);
         }
     }
