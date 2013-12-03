@@ -4036,7 +4036,8 @@ class SugarBean
     					if(empty($ret_array['secondary_select']))
     					{
     						$ret_array['secondary_select'] = " SELECT $this->table_name.id ref_id  ";
-                            if(!empty($rel_mod) && $join_primary)
+                            // TODO: The SC-2127 has been created to separate SugaBean and export feature.
+                            if(!empty($rel_mod) && $join_primary && !$ifListForExport)
                             {
                                 if(isset($rel_mod->field_defs['assigned_user_id']))
                                 {
@@ -4125,7 +4126,8 @@ class SugarBean
                         {
                             $ret_array['from'] .= ' ' . $join['join']. ' AND ' . $params['join_table_alias'].'.deleted=0';
                             $rel_mod = BeanFactory::getBean($rel_module);
-                            if(!empty($rel_mod))
+                            // TODO: The SC-2127 has been created to separate SugaBean and export feature.
+                            if(!empty($rel_mod) && !$ifListForExport)
                             {
                                 if(isset($value['target_record_key']) && !empty($filter))
                                 {
