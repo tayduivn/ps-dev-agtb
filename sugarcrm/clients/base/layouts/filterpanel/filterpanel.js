@@ -42,9 +42,11 @@
             this.currentLink = link;
         }, this);
 
-        this.on("filter:create:open", function(model) {
-            this.$(".filter-options").show();
-        }, this);
+        this.on('filter:create:open', _.debounce(function(model) {
+            // This debounce method should be in accordance with filter-rows::openForm,
+            // so components show up at the same time
+            this.$('.filter-options').show();
+        }, 100, true), this);
 
         this.on("filter:create:close", function(reinitialize, id) {
             if (reinitialize && !id) {
