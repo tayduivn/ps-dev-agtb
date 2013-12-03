@@ -7582,7 +7582,12 @@ nv.models.paretoChart = function() {
         reduceXTicks = false, // if false a tick will show for every data point
         reduceYTicks = false, // if false a tick will show for every data point
         rotateLabels = 0,
-        //, rotateLabels = -15
+        yAxisTickFormat = function (d) {
+            return '$' + d3.format(',.2s')(d);
+        },
+        quotaTickFormat = function (d) {
+            return '$' + d3.format(',.3s')(d);
+        },
         tooltip = null,
         tooltips = true,
         tooltipBar = function(key, x, y, e, graph) {
@@ -7594,19 +7599,23 @@ nv.models.paretoChart = function() {
             return '<p><p>' + key + ': <b>' + y + '</b></p>';
         },
         tooltipQuota = function(key, x, y, e, graph) {
-            return '<p>' + key + ': <b>$' + y + '</b></p>';
+            return '<p>' + e.key + ': <b>$' + y + '</b></p>';
         },
-        //, x //can be accessed via chart.xScale()
-        //, y //can be accessed via chart.yScale()
         noData = 'No Data Available.';
 
     var multibar = nv.models.multiBar().stacked(true).clipEdge(false).withLine(true),
         //, x = d3.scale.linear(), // needs to be both line and historicalBar x Axis
         x = multibar.xScale(),
-        lines = nv.models.line(),
         y = multibar.yScale(),
-        xAxis = nv.models.axis().scale(x).orient('bottom').tickPadding(10),
-        yAxis = nv.models.axis().scale(y).orient('left').tickPadding(10).showMaxMin(false),
+        lines = nv.models.line(),
+        xAxis = nv.models.axis().scale(x)
+                    .orient('bottom')
+                    .tickPadding(10),
+        yAxis = nv.models.axis().scale(y)
+                    .orient('left')
+                    .tickPadding(10)
+                    .showMaxMin(false)
+                    .tickFormat(yAxisTickFormat),
         barLegend = nv.models.paretoLegend(),
         lineLegend = nv.models.paretoLegend(),
         controls = nv.models.legend(),
@@ -7733,7 +7742,7 @@ nv.models.paretoChart = function() {
                 dataGroup = properties.groupData,
                 quotaValue = properties.quota || 0,
                 quotaLabel = properties.quotaLabel || '',
-                targetQuotaValue = properties.targetQuota || 0
+                targetQuotaValue = properties.targetQuota || 0,
                 targetQuotaLabel = properties.targetQuotaLabel || '';
 
             //TODO: try to remove x scale computation from this layer
@@ -7768,7 +7777,7 @@ nv.models.paretoChart = function() {
 
             var lx = x.domain(d3.merge(seriesX)).rangeBands([0, availableWidth - margin.left - margin.right], 0.3),
                 ly = Math.max(d3.max(d3.merge(seriesY)), quotaValue, targetQuotaValue || 0),
-                forceY = Math.round((ly + ly * 0.1) * 0.1) * 10,
+                forceY = Math.round((ly + ly * 0.025) * 0.1) * 10,
                 lOffset = lx(1) + lx.rangeBand() / (multibar.stacked() || dataLines.length === 1 ? 2 : 4);
 
             //------------------------------------------------------------
@@ -8174,10 +8183,7 @@ nv.models.paretoChart = function() {
 
             yAxis
                 .ticks(availableHeight / 100)
-                .tickSize(-availableWidth, 0)
-                .tickFormat(function(d) {
-                    return '$' + d3.format(',.2s')(d);
-                });
+                .tickSize(-availableWidth, 0);
 
             g.select('.nv-y.nv-axis').transition()
                 .style('opacity', dataBars.length ? 1 : 0)
@@ -8187,7 +8193,7 @@ nv.models.paretoChart = function() {
             g.selectAll('text.nv-quotaValue').remove();
             g.select('.nv-y.nv-axis').append('text')
                 .attr('class', 'nv-quotaValue')
-                .text('$' + d3.format(',.2s')(quotaValue))
+                .text(chart.quotaTickFormat()(quotaValue))
                 .attr('dy', '.36em')
                 .attr('dx', '0')
                 .attr('text-anchor', 'end')
@@ -8198,7 +8204,7 @@ nv.models.paretoChart = function() {
                 g.selectAll('text.nv-targetQuotaValue').remove();
                 g.select('.nv-y.nv-axis').append('text')
                     .attr('class', 'nv-targetQuotaValue')
-                    .text('$' + d3.format(',.2s')(targetQuotaValue))
+                    .text(chart.quotaTickFormat()(targetQuotaValue))
                     .attr('dy', '.36em')
                     .attr('dx', '0')
                     .attr('text-anchor', 'end')
@@ -8533,12 +8539,30 @@ nv.models.paretoChart = function() {
     };
 
     chart.tooltip = function(_) {
-        if (!arguments.length) return tooltip;
+        if (!arguments.length) {
+            return tooltip;
+        }
         tooltip = _;
         return chart;
     };
 
     chart.colorFill = function(_) {
+        return chart;
+    };
+
+    yAxis.tickFormat = function (_) {
+        if (!arguments.length) {
+            return yAxisTickFormat;
+        }
+        yAxisTickFormat = _;
+        return yAxis;
+    };
+
+    chart.quotaTickFormat = function (_) {
+        if (!arguments.length) {
+            return quotaTickFormat;
+        }
+        quotaTickFormat = _;
         return chart;
     };
 
