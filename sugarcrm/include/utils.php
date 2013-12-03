@@ -5609,3 +5609,13 @@ function getFunctionValue($bean, $function, $args = array())
 
     return call_user_func_array($function, $args);
 }
+
+/**
+ * Evaluates if a value is isTruthy
+ * @param mixed $value
+ * @return bool
+ */
+function isTruthy($value)
+{
+    return ($value === true || $value === 'true' || $value === 1 || $value === '1' || $value === 'on' || $value === 'yes') ? true : false;
+}
