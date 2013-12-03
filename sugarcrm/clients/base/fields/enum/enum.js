@@ -47,7 +47,7 @@
      */
     bindKeyDown: function(callback) {
         var $el = this.$(this.fieldTag);
-        if($el) {
+        if ($el) {
             $el.on('keydown.record', {field: this}, callback);
             var plugin = $el.data('select2');
             if (plugin) {
@@ -64,9 +64,9 @@
      * @param {Function} callback Callback function for keydown.
      */
     unbindKeyDown: function(callback) {
-        if(this.$el) {
+        if (this.$el) {
             var $el = this.$(this.fieldTag);
-            if($el) {
+            if ($el) {
                 $el.off('keydown.record', callback);
                 var plugin = $el.data('select2');
                 if (plugin) {
