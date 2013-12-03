@@ -58,6 +58,10 @@ SUGAR.util.extend(SUGAR.forms.StyleAction, SUGAR.forms.AbstractAction, {
      */
     exec: function(context)
     {
+
+        //If we are running in sidecar, this action will not function
+        if(SUGAR.App) return;
+
         if (typeof(context) == 'undefined')
             context = this.context;
         try {
