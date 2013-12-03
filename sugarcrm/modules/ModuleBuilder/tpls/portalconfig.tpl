@@ -25,7 +25,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-//FILE SUGARCRM flav=pro ONLY
+//FILE SUGARCRM flav=ent ONLY
 *}
 <link rel="stylesheet" href="{sugar_getjspath file='include/javascript/select2/select2.css'}"/>
 <script language='javascript' src="{sugar_getjspath file='include/javascript/select2/select2.js'}"></script>
