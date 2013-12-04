@@ -85,7 +85,9 @@ function refreshJobs() {
  */
 function pollMonitoredInboxes() {
 
+    //BEGIN SUGARCRM flav=pro ONLY
     $_bck_up = array('team_id' => $GLOBALS['current_user']->team_id, 'team_set_id' => $GLOBALS['current_user']->team_set_id);
+    //END SUGARCRM flav=pro ONLY
 	$GLOBALS['log']->info('----->Scheduler fired job of type pollMonitoredInboxes()');
 	global $dictionary;
 	global $app_strings;
@@ -101,8 +103,10 @@ function pollMonitoredInboxes() {
 	while($a = $ie->db->fetchByAssoc($r)) {
 		$GLOBALS['log']->debug('In while loop of Inbound Emails');
 		$ieX = BeanFactory::getBean('InboundEmail', $a['id']);
+        //BEGIN SUGARCRM flav=pro ONLY
         $GLOBALS['current_user']->team_id = $ieX->team_id;
         $GLOBALS['current_user']->team_set_id = $ieX->team_set_id;
+        //END SUGARCRM flav=pro ONLY
 		$mailboxes = $ieX->mailboxarray;
 		foreach($mailboxes as $mbox) {
 			$ieX->mailbox = $mbox;
@@ -286,8 +290,10 @@ function pollMonitoredInboxes() {
 		imap_expunge($ieX->conn);
 		imap_close($ieX->conn, CL_EXPUNGE);
 	} // while
+    //BEGIN SUGARCRM flav=pro ONLY
     $GLOBALS['current_user']->team_id = $_bck_up['team_id'];
     $GLOBALS['current_user']->team_set_id = $_bck_up['team_set_id'];
+    //END SUGARCRM flav=pro ONLY
 	return true;
 }
 
