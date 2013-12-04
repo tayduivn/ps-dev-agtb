@@ -91,7 +91,7 @@ $dictionary['Project'] = array(
 			'reportable'=>true,
 			'comment' => 'User who last modified record'
 		),
-		'modified_by_name' => 
+		'modified_by_name' =>
 	  array (
 	    'name' => 'modified_by_name',
 	    'vname' => 'LBL_MODIFIED_NAME',
@@ -103,8 +103,8 @@ $dictionary['Project'] = array(
 	    'id_name' => 'modified_user_id',
 	    'module'=>'Users',
 	    'link'=>'modified_user_link',
-	    'duplicate_merge'=>'disabled' 
-	  ),  
+	    'duplicate_merge'=>'disabled'
+	  ),
 		'created_by' => array(
 			'name' => 'created_by',
 			'rname' => 'user_name',
@@ -116,7 +116,7 @@ $dictionary['Project'] = array(
 			'dbType' => 'id',
 			'comment' => 'User who created record',
 		),
-		'created_by_name' => 
+		'created_by_name' =>
 	  array (
 	    'name' => 'created_by_name',
 		'vname' => 'LBL_CREATED',
@@ -231,7 +231,7 @@ $dictionary['Project'] = array(
     		'ignore_role'=>true,
 				'vname'=>'LBL_ACCOUNTS',
   		),
-//BEGIN SUGARCRM flav=pro ONLY      
+//BEGIN SUGARCRM flav=pro ONLY
 		'quotes' =>
   		array (
   			'name' => 'quotes',
@@ -352,7 +352,7 @@ $dictionary['Project'] = array(
         	'table' => 'users',
         	'module' => 'Users',
         	'dbType' => 'varchar',
-        	'link'=>'users',
+        	'link'=>'assigned_user_link',
         	'len' => '255',
         	'source'=>'non-db',
         	),
