@@ -94,6 +94,9 @@ Relationship::delete_cache () ;
 //////////////////////////////////////////////////////////////////////////////
 // Remove the "Rebuild Relationships" red text message on admin logins
 
+// Refresh relationships metadata section cache
+MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_RELATIONSHIPS));
+
 
 if (empty ( $_REQUEST [ 'silent' ] ))
     echo $mod_strings [ 'LBL_REBUILD_REL_UPD_WARNING' ] ;
