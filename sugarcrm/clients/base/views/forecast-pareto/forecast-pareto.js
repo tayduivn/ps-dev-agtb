@@ -154,6 +154,9 @@
      * @override
      */
     loadData: function(options) {
+        if (options && _.isFunction(options.complete)) {
+            options.complete();
+        }
     },
 
     _render: function() {

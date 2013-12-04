@@ -310,6 +310,9 @@
             field.once('chart:pareto:rendered', this.parseCollectionForData, this);
             field.renderChart(options);
         }
+        if (options && _.isFunction(options.complete)) {
+            options.complete();
+        }
     },
 
     /**

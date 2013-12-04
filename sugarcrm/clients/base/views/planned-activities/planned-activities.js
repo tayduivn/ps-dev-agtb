@@ -286,7 +286,7 @@
      * On load of new data, make sure we reload invitations related data, if
      * it is defined for the current tab.
      */
-    loadData: function() {
+    loadData: function(options) {
         if (this.disposed || this.meta.config) {
             return;
         }
@@ -295,7 +295,7 @@
         if (tab.invitations) {
             tab.invitations.dataFetched = false;
         }
-        this._super('loadData');
+        this._super('loadData', [options]);
     },
 
     /**
