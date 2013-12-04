@@ -161,7 +161,7 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
     ),
     array (
       'layout' => 'subpanel',
-      'label' => 'LBL_PROJECT_SUBPANEL_TITLE',
+      'label' => 'LBL_PROJECTS_SUBPANEL_TITLE',
       'context' => array (
           'link' => 'project',
       ),
