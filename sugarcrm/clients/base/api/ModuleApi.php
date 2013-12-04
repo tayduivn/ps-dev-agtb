@@ -160,10 +160,15 @@ class ModuleApi extends SugarApi {
 
         if (!empty($args['id'])) {
             // Check if record already exists
-            if (BeanFactory::getBean($args['module'],$args['id'], array('strict_retrieve'=>true))) {
-                throw new SugarApiExceptionInvalidParameter('Record already exists: '.$args['id'].' in module: '.$args['module']);
+            if (BeanFactory::getBean(
+                $args['module'],
+                $args['id'],
+                array('strict_retrieve' => true, 'disable_row_level_security' => true)
+            )) {
+                throw new SugarApiExceptionInvalidParameter(
+                    'Record already exists: ' . $args['id'] . ' in module: ' . $args['module']
+                );
             }
-
             // Don't create a new id if passed in
             $bean->new_with_id = true;
         }
