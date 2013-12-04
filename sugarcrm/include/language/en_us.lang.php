@@ -2494,6 +2494,8 @@ $app_strings = array (
     'EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to create {moduleName}. Contact your administrator if you need access.',
     'EXCEPTION_CHANGE_MODULE_CONFIG_NOT_AUTHORIZED' => 'Current User not authorized to change {moduleName} configuration settings',
     'EXCEPTION_ACCESS_MODULE_CONFIG_NOT_AUTHORIZED' => 'Current User not authorized to change {moduleName} configuration settings',
+    'EXCEPTION_FAVORITE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to favorite {moduleName}. Contact your administrator if you need access.',
+    'EXCEPTION_SUBSCRIBE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to subscribe to {moduleName}. Contact your administrator if you need access.',
 
     // Default SugarApiException error messages
     'EXCEPTION_UNKNOWN_EXCEPTION'       => 'Your request failed due to an unknown exception.',
