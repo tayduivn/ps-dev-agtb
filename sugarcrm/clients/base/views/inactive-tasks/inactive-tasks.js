@@ -55,7 +55,29 @@
      * @param {String} params.module Module name.
      */
     createRecord: function(event, params) {
-        this.createRelatedRecord(params.module, params.link);
+        if (this.module !== 'Home') {
+            this.createRelatedRecord(params.module, params.link);
+        } else {
+            var self = this;
+            app.drawer.open({
+                layout: 'create-actions',
+                context: {
+                    create: true,
+                    module: params.module
+                }
+            }, function(context, model) {
+                if (!model) {
+                    return;
+                }
+                self.context.resetLoadFlag();
+                self.context.set('skipFetch', false);
+                if (_.isFunction(self.loadData)) {
+                    self.loadData();
+                } else {
+                    self.context.loadData();
+                }
+            });
+        }
     },
 
     /**
