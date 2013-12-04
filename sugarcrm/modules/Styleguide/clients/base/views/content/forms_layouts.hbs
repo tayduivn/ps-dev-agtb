@@ -422,32 +422,3 @@
     </div>
   </div>
 </div>
-
-<script>
-  $("select.select2").each(function(){
-    var $this = $(this)
-      , ctor = getSelect2Constructor($this);
-    $this.select2( ctor );
-  });
-
-  $("table td [rel=tooltip]").tooltip({
-    container:'body',
-    placement:'top',
-    html:'true'
-  });
-
-  $('.error input, .error textarea').on('focus', function(){
-      $(this).next().tooltip('show');
-  });
-
-  $('.error input, .error textarea').on('blur', function(){
-      $(this).next().tooltip('hide');
-  });
-
-  $('.add-on')
-      .tooltip('destroy')  // I cannot find where _this_ tooltip gets initialised with 'hover', so i detroy it first, -f1vlad
-      .tooltip({
-          trigger: 'click',
-          container: 'body'
-  });
-</script>

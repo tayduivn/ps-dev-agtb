@@ -165,12 +165,12 @@
   <h3>Anchor element</h3>
   <p>Add the <code>.disabled</code> class to <code>&lt;a&gt;</code> buttons.</p>
   <p class="bs-docs-example">
-    <a href="#" class="btn btn-large btn-primary disabled">Primary link</a>
-    <a href="#" class="btn btn-large disabled">Link</a>
+    <a class="btn btn-large btn-primary disabled">Primary link</a>
+    <a class="btn btn-large disabled">Link</a>
   </p>
 <pre class="prettyprint linenums">
-&lt;a href="#" class="btn btn-large btn-primary disabled"&gt;Primary link&lt;/a&gt;
-&lt;a href="#" class="btn btn-large disabled"&gt;Link&lt;/a&gt;
+&lt;a class="btn btn-large btn-primary disabled"&gt;Primary link&lt;/a&gt;
+&lt;a class="btn btn-large disabled"&gt;Link&lt;/a&gt;
 </pre>
   <p>
     <span class="label label-info">Heads up!</span>
@@ -192,24 +192,24 @@
   <p>Sometimes you want the same size, position and spacing options of a button without the background styling. This can be accomplished with the <code>.btn-invisible</code> class. This is often used for stand alone icons like the favorite star.</p>
 
   <p class="bs-docs-example">
-    <a href="#" class="btn"><i class="icon-favorite"></i></a>
-    <a href="#" class="btn btn-invisible"><i class="icon-favorite"></i></a>
+    <a class="btn"><i class="icon-favorite"></i></a>
+    <a class="btn btn-invisible"><i class="icon-favorite"></i></a>
   </p>
 <pre class="prettyprint linenums">
-    &lt;a href="#" class="btn"&gt;&lt;i class="icon-favorite"&gt;&lt;/i&gt;&lt;/a&gt;
-    &lt;a href="#" class="btn btn-invisible"&gt;&lt;i class="icon-favorite"&gt;&lt;/i&gt;&lt;/a&gt;
+    &lt;a class="btn"&gt;&lt;i class="icon-favorite"&gt;&lt;/i&gt;&lt;/a&gt;
+    &lt;a class="btn btn-invisible"&gt;&lt;i class="icon-favorite"&gt;&lt;/i&gt;&lt;/a&gt;
 </pre>
 
   <h2>Link style button</h2>
   <p>Sometimes you want the same size, position and spacing options of a button but have the button look like a link. This can be accomplished with the <code>.btn-invisible .btn-link</code> classes. This is often used to properly space a series of primary buttons and deemphasized secondary actions.</p>
 
   <p class="bs-docs-example">
-    <a href="#" class="btn">Cancel</a>
-    <a href="#" class="btn btn-invisible btn-link">Cancel</a>
+    <a class="btn">Cancel</a>
+    <a class="btn btn-invisible btn-link">Cancel</a>
   </p>
 <pre class="prettyprint linenums">
-    &lt;a href="#" class="btn"&gt;Cancel&lt;/a&gt;
-    &lt;a href="#" class="btn btn-invisible btn-link"&gt;Cancel&lt;/a&gt;
+    &lt;a class="btn"&gt;Cancel&lt;/a&gt;
+    &lt;a class="btn btn-invisible btn-link"&gt;Cancel&lt;/a&gt;
 </pre>
         </section>
 
@@ -234,23 +234,23 @@
       <tr>
         <td>Normal</td>
         <td><code>.btn</code></td>
-        <td><a class="btn" href="#">Button</a><a class="btn" href="#"><i class="icon-ambulance"></i></a></td>
-        <td><a class="btn disabled" href="#">Button</a><a class="btn disabled" href="#"><i class="icon-ambulance"></i></a></td>
-        <td><a class="btn active" href="#">Button</a><a class="btn active" href="#"><i class="icon-ambulance"></i></a></td>
+        <td><a class="btn">Button</a><a class="btn"><i class="icon-ambulance"></i></a></td>
+        <td><a class="btn disabled">Button</a><a class="btn disabled"><i class="icon-ambulance"></i></a></td>
+        <td><a class="btn active">Button</a><a class="btn active"><i class="icon-ambulance"></i></a></td>
       </tr>
       <tr>
         <td>Invisible</td>
         <td><code>.btn .btn-invisible</code></td>
-        <td><a class="btn btn-invisible" href="#">Button</a><a class="btn btn-invisible" href="#"><i class="icon-ambulance"></i></a></td>
-        <td><a class="btn btn-invisible disabled" href="#">Button</a><a class="btn btn-invisible disabled" href="#"><i class="icon-ambulance"></i></a></td>
-        <td><a class="btn btn-invisible active" href="#">Button</a><a class="btn btn-invisible active" href="#"><i class="icon-ambulance"></i></a></td>
+        <td><a class="btn btn-invisible">Button</a><a class="btn btn-invisible"><i class="icon-ambulance"></i></a></td>
+        <td><a class="btn btn-invisible disabled">Button</a><a class="btn btn-invisible disabled"><i class="icon-ambulance"></i></a></td>
+        <td><a class="btn btn-invisible active">Button</a><a class="btn btn-invisible active"><i class="icon-ambulance"></i></a></td>
       </tr>
       <tr>
         <td>Link</td>
         <td><code>.btn .btn-invisible .btn-link</code></td>
-        <td><a class="btn btn-invisible btn-link" href="#">Button</a><a class="btn btn-invisible btn-link" href="#"><i class="icon-ambulance"></i></a></td>
-        <td><a class="btn btn-invisible btn-link disabled" href="#">Button</a><a class="btn btn-invisible btn-link disabled" href="#"><i class="icon-ambulance"></i></a></td>
-        <td><a class="btn btn-invisible btn-link active" href="#">Button</a><a class="btn btn-invisible btn-link active" href="#"><i class="icon-ambulance"></i></a></td>
+        <td><a class="btn btn-invisible btn-link">Button</a><a class="btn btn-invisible btn-link"><i class="icon-ambulance"></i></a></td>
+        <td><a class="btn btn-invisible btn-link disabled">Button</a><a class="btn btn-invisible btn-link disabled"><i class="icon-ambulance"></i></a></td>
+        <td><a class="btn btn-invisible btn-link active">Button</a><a class="btn btn-invisible btn-link active"><i class="icon-ambulance"></i></a></td>
       </tr>
     </tbody>
   </table>
@@ -273,25 +273,25 @@
       <p>You can also combine sets of <code>&lt;div class="btn-group"&gt;</code> into a <code>&lt;div class="btn-toolbar"&gt;</code> for more complex projects.</p>
       <div class="btn-toolbar" style="margin-top: 18px;">
         <div class="btn-group">
-          <a class="btn" href="#">Left</a>
-          <a class="btn" href="#">Middle</a>
-          <a class="btn" href="#">Right</a>
+          <a class="btn">Left</a>
+          <a class="btn">Middle</a>
+          <a class="btn">Right</a>
         </div>
       </div>
       <div class="btn-toolbar">
         <div class="btn-group">
-          <a class="btn" href="#">1</a>
-          <a class="btn" href="#">2</a>
-          <a class="btn" href="#">3</a>
-          <a class="btn" href="#">4</a>
+          <a class="btn">1</a>
+          <a class="btn">2</a>
+          <a class="btn">3</a>
+          <a class="btn">4</a>
         </div>
         <div class="btn-group">
-          <a class="btn" href="#">5</a>
-          <a class="btn" href="#">6</a>
-          <a class="btn" href="#">7</a>
+          <a class="btn">5</a>
+          <a class="btn">6</a>
+          <a class="btn">7</a>
         </div>
         <div class="btn-group">
-          <a class="btn" href="#">8</a>
+          <a class="btn">8</a>
         </div>
       </div>
     </div>
@@ -300,9 +300,9 @@
       <p>Here's how the HTML looks for a standard button group built with anchor tag buttons:</p>
 <pre class="prettyprint linenums">
 &lt;div class="btn-group"&gt;
-  &lt;a class="btn" href="#"&gt;1&lt;/a&gt;
-  &lt;a class="btn" href="#"&gt;2&lt;/a&gt;
-  &lt;a class="btn" href="#"&gt;3&lt;/a&gt;
+  &lt;a class="btn"&gt;1&lt;/a&gt;
+  &lt;a class="btn"&gt;2&lt;/a&gt;
+  &lt;a class="btn"&gt;3&lt;/a&gt;
 &lt;/div&gt;
 </pre>
       <p>And with a toolbar for multiple groups:</p>
@@ -340,55 +340,55 @@
       <p>Use any button to trigger a dropdown menu by placing it within a <code>.btn-group</code> and providing the proper menu markup.</p>
       <div class="btn-toolbar" style="margin-top: 18px;">
         <div class="btn-group">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Action <i class="icon-caret-down"></i></a>
+          <a class="btn dropdown-toggle" data-toggle="dropdown">Action <i class="icon-caret-down"></i></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
+            <li><a>Action</a></li>
+            <li><a>Another action</a></li>
+            <li><a>Something else here</a></li>
             <li class="divider"></li>
-            <li><a href="#">Separated link</a></li>
+            <li><a>Separated link</a></li>
           </ul>
         </div><!-- /btn-group -->
         <div class="btn-group">
-          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">Action <i class="icon-caret-down"></i></a>
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Action <i class="icon-caret-down"></i></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
+            <li><a>Action</a></li>
+            <li><a>Another action</a></li>
+            <li><a>Something else here</a></li>
             <li class="divider"></li>
-            <li><a href="#">Separated link</a></li>
+            <li><a>Separated link</a></li>
           </ul>
         </div><!-- /btn-group -->
         <div class="btn-group">
-          <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" href="#">Danger <i class="icon-caret-down"></i></a>
+          <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Danger <i class="icon-caret-down"></i></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
+            <li><a>Action</a></li>
+            <li><a>Another action</a></li>
+            <li><a>Something else here</a></li>
             <li class="divider"></li>
-            <li><a href="#">Separated link</a></li>
+            <li><a>Separated link</a></li>
           </ul>
         </div><!-- /btn-group -->
       </div>
       <div class="btn-toolbar">
         <div class="btn-group">
-          <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">Success <i class="icon-caret-down"></i></a>
+          <a class="btn btn-success dropdown-toggle" data-toggle="dropdown">Success <i class="icon-caret-down"></i></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
+            <li><a>Action</a></li>
+            <li><a>Another action</a></li>
+            <li><a>Something else here</a></li>
             <li class="divider"></li>
-            <li><a href="#">Separated link</a></li>
+            <li><a>Separated link</a></li>
           </ul>
         </div><!-- /btn-group -->
         <div class="btn-group">
-          <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">Info <i class="icon-caret-down"></i></a>
+          <a class="btn btn-info dropdown-toggle" data-toggle="dropdown">Info <i class="icon-caret-down"></i></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
+            <li><a>Action</a></li>
+            <li><a>Another action</a></li>
+            <li><a>Something else here</a></li>
             <li class="divider"></li>
-            <li><a href="#">Separated link</a></li>
+            <li><a>Separated link</a></li>
           </ul>
         </div><!-- /btn-group -->
       </div>
@@ -398,7 +398,7 @@
       <p>Similar to a button group, our markup uses regular button markup, but with a handful of additions to refine the style and support the dropdown jQuery plugin.</p>
 <pre class="prettyprint linenums">
 &lt;div class="btn-group"&gt;
-  &lt;a class="btn dropdown-toggle" data-toggle="dropdown" href="#"&gt;
+  &lt;a class="btn dropdown-toggle" data-toggle="dropdown"&gt;
     Action
     &lt;i class="icon-caret-down"&gt;&lt;/i&gt;
   &lt;/a&gt;
@@ -416,60 +416,60 @@
       <p>Building on the button group styles and markup, we can easily create a split button. Split buttons feature a standard action on the left and a dropdown toggle on the right with contextual links.</p>
       <div class="btn-toolbar" style="margin-top: 18px;">
         <div class="btn-group">
-          <a class="btn" href="#">Action</a>
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-caret-down"></i></a>
+          <a class="btn">Action</a>
+          <a class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-caret-down"></i></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
+            <li><a>Action</a></li>
+            <li><a>Another action</a></li>
+            <li><a>Something else here</a></li>
             <li class="divider"></li>
-            <li><a href="#">Separated link</a></li>
+            <li><a>Separated link</a></li>
           </ul>
         </div><!-- /btn-group -->
         <div class="btn-group">
-          <a class="btn btn-primary" href="#">Action</a>
-          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-caret-down"></i></a>
+          <a class="btn btn-primary">Action</a>
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="icon-caret-down"></i></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
+            <li><a>Action</a></li>
+            <li><a>Another action</a></li>
+            <li><a>Something else here</a></li>
             <li class="divider"></li>
-            <li><a href="#">Separated link</a></li>
+            <li><a>Separated link</a></li>
           </ul>
         </div><!-- /btn-group -->
         <div class="btn-group">
-          <a class="btn btn-danger" href="#">Danger</a>
-          <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-caret-down"></i></a>
+          <a class="btn btn-danger">Danger</a>
+          <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown"><i class="icon-caret-down"></i></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
+            <li><a>Action</a></li>
+            <li><a>Another action</a></li>
+            <li><a>Something else here</a></li>
             <li class="divider"></li>
-            <li><a href="#">Separated link</a></li>
+            <li><a>Separated link</a></li>
           </ul>
         </div><!-- /btn-group -->
       </div>
       <div class="btn-toolbar">
         <div class="btn-group">
-          <a class="btn btn-success" href="#">Success</a>
-          <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-caret-down"></i></a>
+          <a class="btn btn-success">Success</a>
+          <a class="btn btn-success dropdown-toggle" data-toggle="dropdown"><i class="icon-caret-down"></i></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
+            <li><a>Action</a></li>
+            <li><a>Another action</a></li>
+            <li><a>Something else here</a></li>
             <li class="divider"></li>
-            <li><a href="#">Separated link</a></li>
+            <li><a>Separated link</a></li>
           </ul>
         </div><!-- /btn-group -->
         <div class="btn-group">
-          <a class="btn btn-info" href="#">Info</a>
-          <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-caret-down"></i></a>
+          <a class="btn btn-info">Info</a>
+          <a class="btn btn-info dropdown-toggle" data-toggle="dropdown"><i class="icon-caret-down"></i></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
+            <li><a>Action</a></li>
+            <li><a>Another action</a></li>
+            <li><a>Something else here</a></li>
             <li class="divider"></li>
-            <li><a href="#">Separated link</a></li>
+            <li><a>Separated link</a></li>
           </ul>
         </div><!-- /btn-group -->
       </div>
@@ -479,8 +479,8 @@
       <p>We expand on the normal button dropdowns to provide a second button action that operates as a separate dropdown trigger.</p>
 <pre class="prettyprint linenums">
 &lt;div class="btn-group"&gt;
-  &lt;a class="btn" href="#"&gt;Action&lt;/a&gt;
-  &lt;a class="btn dropdown-toggle" data-toggle="dropdown" href="#"&gt;
+  &lt;a class="btn"&gt;Action&lt;/a&gt;
+  &lt;a class="btn dropdown-toggle" data-toggle="dropdown"&gt;
     &lt;i class="icon-caret-down"&gt;&lt;/i&gt;
   &lt;/a&gt;
   &lt;ul class="dropdown-menu"&gt;

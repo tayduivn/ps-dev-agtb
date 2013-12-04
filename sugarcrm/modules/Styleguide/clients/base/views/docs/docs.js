@@ -33,6 +33,9 @@
     parent_link: '',
     file: '',
     keys: [],
+    content_init: null,
+    content_render: null,
+    content_dispose: null,
 
     initialize: function(options) {
         var self = this,
@@ -58,7 +61,6 @@
                 } else {
                     // master index call
                     this.section = this.pageData[keys[0]];
-                    //this.index_search = true;
                 }
                 this.section_page = true;
                 this.file = 'index';
@@ -67,6 +69,24 @@
                 this.section = this.pageData[keys[0]];
                 this.page = this.section.pages[keys[1]];
                 this.parent_link = '_' + keys[0];
+                if (this.page.js) {
+                    $.ajax({
+                        url: 'modules/Styleguide/clients/base/views/content/' + this.file + '.js',
+                        async: false,
+                        context: self
+                    })
+                    .done(function() {
+                        if (typeof _init_content !== 'undefined') {
+                            this.content_init = _init_content;
+                        }
+                        if (typeof _render_content !== 'undefined') {
+                            this.content_render = _render_content;
+                        }
+                        if (typeof _dispose_content !== 'undefined') {
+                            this.content_dispose = _dispose_content;
+                        }
+                    });
+                }
             } else {
                 // general page call
                 this.section = this.pageData[keys[0]];
@@ -74,18 +94,43 @@
         }
 
         // intitialize data needed for content page handlebars template
-        var initFn = this['init_'+keys[1]];
-        if (initFn) {
-            initFn(this.pageData);
+        if (this.content_init) {
+            this.content_init(this, app);
         }
     },
 
+    getSelect2Constructor: function($select) {
+        var _ctor = {};
+        _ctor.minimumResultsForSearch = 7;
+        _ctor.dropdownCss = {};
+        _ctor.dropdownCssClass = '';
+        _ctor.containerCss = {};
+        _ctor.containerCssClass = '';
+
+        if ( $select.hasClass('narrow') ) {
+            _ctor.dropdownCss.width = 'auto';
+            _ctor.dropdownCssClass = 'select2-narrow ';
+            _ctor.containerCss.width = '75px';
+            _ctor.containerCssClass = 'select2-narrow';
+            _ctor.width = 'off';
+        }
+
+        if ( $select.hasClass('inherit-width') ) {
+            _ctor.dropdownCssClass = 'select2-inherit-width ';
+            _ctor.containerCss.width = '100%';
+            _ctor.containerCssClass = 'select2-inherit-width';
+            _ctor.width = 'off';
+        }
+
+        return _ctor;
+    },
+
     _render: function() {
-        var self = this,
-            $find;
+        var self = this;
 
         // load handlebars content into variable
         var pageContent = app.template.getView('content.' + this.file, this.module);
+
         if (pageContent) {
             this.content = pageContent(self);
         }
@@ -97,359 +142,16 @@
             // build index pages
             this.render_index(this.keys[1]);
         } else {
-            // call post render functions for content page
-            var renderFn = this['render_' + this.keys[1]];
-            if (renderFn) {
-                renderFn(self);
+            if (this.content_render) {
+                this.content_render(self, app);
             }
             // prettify code blocks
             window.prettyPrint && prettyPrint();
         }
     },
 
-    /* INIT
+    /* RENDER index page
     *******************/
-
-    init_labels: function(pageData) {
-        pageData.module_list = _.without(app.metadata.getModuleNames({filter: 'display_tab', access: 'read'}), 'Home');
-        pageData.module_list.sort();
-    },
-
-    /* RENDER
-    *******************/
-
-    // forms jstree
-    render_jstree: function(view) {
-        view.$('#people').jstree({
-            "json_data" : {
-                "data" : [
-                    {
-                        "data" : "Sabra Khan",
-                        "state" : "open",
-                        "metadata" : { id : 1 },
-                        "children" : [
-                            {"data" : "Mark Gibson","metadata" : { id : 2 }},
-                            {"data" : "James Joplin","metadata" : { id : 3 }},
-                            {"data" : "Terrence Li","metadata" : { id : 4 }},
-                            {"data" : "Amy McCray",
-                                "metadata" : { id : 5 },
-                                "children" : [
-                                    {"data" : "Troy McClure","metadata" : {id : 6}},
-                                    {"data" : "James Kirk","metadata" : {id : 7}}
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            },
-            // "themes" : { "theme" : "default", "dots" : false },
-            "plugins" : [ "json_data", "ui", "types" ]
-        })
-        .bind('loaded.jstree', function () {
-            // do stuff when tree is loaded
-            view.$('#people').addClass('jstree-sugar');
-            view.$('#people > ul').addClass('list');
-            view.$('#people > ul > li > a').addClass('jstree-clicked');
-        })
-        .bind('select_node.jstree', function (e, data) {
-            data.inst.toggle_node(data.rslt.obj);
-        });
-    },
-
-    // forms editable
-    render_editable: function(view) {
-        view.$('.url-editable-trigger').on('click.styleguide',function(){
-          var uefield = $(this).next();
-          uefield
-            .html(uefield.text())
-            .editable(
-              function(value, settings) {
-                  var nvprep = '<a href="'+value+'">',
-                      nvapp = '</a>',
-                      value = nvprep.concat(value);
-                 return(value);
-              },
-              {onblur:'submit'}
-            )
-            .trigger('click.styleguide');
-        });
-
-        view.$('.text-editable-trigger').on('click.styleguide',function(){
-          var uefield = $(this).next();
-          uefield
-            .html(uefield.text())
-            .editable()
-            .trigger('click.styleguide');
-        });
-
-        view.$('.urleditable-field > a').each(function(){
-          if(isEllipsis($(this))===true) {
-            $(this).attr({'data-original-title':$(this).text(),'rel':'tooltip','class':'longUrl'});
-          }
-        });
-
-        function isEllipsis(e) { // check if ellipsis is present on el, add tooltip if so
-          return (e[0].offsetWidth < e[0].scrollWidth);
-        }
-
-        view.$('.longUrl[rel=tooltip]').tooltip({placement:'top'});
-    },
-
-    // forms switch
-    render_switch: function(view) {
-        view.$('#mySwitch').on('switch-change', function (e, data) {
-            var $el = $(data.el),
-                value = data.value;
-        });
-    },
-
-    // forms datetime
-    render_datetime: function(view) {
-
-        // sugar7 date field
-        //TODO: figure out how to set the date value when calling createField
-        view.model.start_date = '2000-01-01T22:47:00+00:00';
-        var fieldSettingsDate = {
-            view: view,
-            def: {
-                name: 'start_date',
-                type: 'date',
-                view: 'edit',
-                enabled: true
-            },
-            viewName: 'edit',
-            context: view.context,
-            module: view.module,
-            model: view.model,
-            meta: app.metadata.getField('date')
-        },
-        dateField = app.view.createField(fieldSettingsDate);
-        view.$('#sugar7_date').append(dateField.el);
-        dateField.render();
-
-        // sugar7 datetimecombo field
-        view.model.start_datetime = '2000-01-01T22:47:00+00:00';
-        var fieldSettingsCombo = {
-            view: view,
-            def: {
-                name: 'start_datetime',
-                type: 'datetimecombo',
-                view: 'edit',
-                enabled: true
-            },
-            viewName: 'edit',
-            context: view.context,
-            module: view.module,
-            model: view.model,
-            meta: app.metadata.getField('datetimecombo')
-        },
-        datetimecomboField = app.view.createField(fieldSettingsCombo);
-        view.$('#sugar7_datetimecombo').append(datetimecomboField.el);
-        datetimecomboField.render();
-
-        // static examples
-        view.$('#dp1').datepicker();
-        view.$('#tp1').timepicker();
-
-        view.$('#dp2').datepicker({format:'mm-dd-yyyy'});
-        view.$('#tp2').timepicker({timeFormat:'H.i.s'});
-
-        view.$('#dp3').datepicker();
-
-        var startDate = new Date(2012,1,20);
-        var endDate = new Date(2012,1,25);
-
-        view.$('#dp4').datepicker()
-          .on('changeDate', function(ev){
-            if (ev.date.valueOf() > endDate.valueOf()){
-              view.$('#alert').show().find('strong').text('The start date can not be greater then the end date');
-            } else {
-              view.$('#alert').hide();
-              startDate = new Date(ev.date);
-              view.$('#startDate').text(view.$('#dp4').data('date'));
-            }
-            view.$('#dp4').datepicker('hide');
-          });
-
-        view.$('#dp5').datepicker()
-          .on('changeDate', function(ev){
-            if (ev.date.valueOf() < startDate.valueOf()){
-              view.$('#alert').show().find('strong').text('The end date can not be less then the start date');
-            } else {
-              view.$('#alert').hide();
-              endDate = new Date(ev.date);
-              view.$('#endDate').text(view.$('#dp5').data('date'));
-            }
-            view.$('#dp5').datepicker('hide');
-          });
-
-
-        view.$('#tp3').timepicker({'scrollDefaultNow': true});
-
-        view.$('#tp4').timepicker();
-        view.$('#tp4_button').on('click', function (){
-          view.$('#tp4').timepicker('setTime', new Date());
-        });
-
-        view.$('#tp5').timepicker({
-          'minTime': '2:00pm',
-          'maxTime': '6:00pm',
-          'showDuration': true
-        });
-
-        view.$('#tp6').timepicker();
-        view.$('#tp6').on('changeTime', function() {
-          view.$('#tp6_legend').text('You selected: ' + $(this).val());
-        });
-
-        view.$('#tp7').timepicker({ 'step': 5 });
-    },
-
-    // layouts modals
-    render_modals: function(view) {
-        view.$('[rel=popover]').popover();
-
-        view.$('.modal').tooltip({
-          selector: '[rel=tooltip]'
-        });
-        view.$('#dp1').datepicker({
-          format: 'mm-dd-yyyy'
-        });
-        view.$('#dp3').datepicker();
-        view.$('#tp1').timepicker();
-    },
-
-    // components dropdowns
-    render_tooltips: function(view) {
-        $('body').tooltip({
-            selector: '[rel=tooltip]'
-        });
-    },
-
-    // components dropdowns
-    render_dropdowns: function(view) {
-        view.$('#mm001demo *').on('click.styleguide', function(){ /* make this menu frozen in its state */
-            return false;
-        });
-
-        view.$('*').on('click.styleguide', function(){
-            /* not sure how to override default menu behaviour, catching any click, becuase any click removes class `open` from li.open div.btn-group */
-            setTimeout(function(){
-                view.$('#mm001demo').find('li.open .btn-group').addClass('open');
-            },0.1);
-        });
-    },
-
-    // components popovers
-    render_popovers: function(view) {
-        view.$('[rel=popover]').popover();
-        view.$('[rel=popoverHover]').popover({trigger: 'hover'});
-        view.$('[rel=popoverTop]').popover({placement: 'top'});
-        view.$('[rel=popoverBottom]').popover({placement: 'bottom'});
-    },
-
-    // components alerts
-    render_alerts: function(view) {
-        // keybinding ESC
-        $(document).keyup( function(e) {
-            if(e.keyCode === 27) {
-              view.$('.alert-top .timeten').hide();
-              view.$('.alert-confirm').modal('hide');
-            }
-        });
-
-        // timeout the alerts
-        setTimeout( function (){ view.$('.timeten').fadeOut().remove(); }, 9000);
-
-        view.$('.alert-confirm')
-            .on('show.styleguide', function() {
-                var modal = $(this);
-                modal.find('a.close').off('click').on('click', function(e) {modal.modal('hide'); });
-                modal.find('a.leave').off('click').on('click', function(e) {modal.modal('hide'); /*trigger leave action*/});
-                modal.find('a.return').off('click').on('click', function(e) {modal.modal('hide'); /*trigger return action*/});
-            }).modal({'backdrop':'static','show':false});
-
-        view.$('a').on('click.styleguide', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            view.$('.alert-confirm').modal('show');
-            view.$('.alert-confirm a.leave').attr('href',e.target.href);
-        });
-    },
-
-    // layouts drawer
-    render_drawer: function(view) {
-        view.$('#sg_open_drawer').on('click.styleguide', function(){
-            app.drawer.open({
-                layout: 'create',
-                context: {
-                    create: true,
-                    model: app.data.createBean(this.module)
-                }
-            });
-        });
-    },
-
-    // layouts tabs
-    render_tabs: function(view) {
-        view.$('#nav-tabs-pills')
-            .find('ul.nav-tabs > li > a, ul.nav-list > li > a, ul.nav-pills > li > a')
-            .on('click.styleguide', function(e){
-                e.preventDefault();
-                e.stopPropagation();
-                $(this).tab('show');
-            });
-    },
-
-    // forms inputs
-    render_inputs: function(view) {
-        view.$('.error input, .error textarea').on('focus.styleguide', function(){
-            $(this).next().tooltip('show');
-        });
-        view.$('.error input, .error textarea').on('blur.styleguide', function(){
-            $(this).next().tooltip('hide');
-        });
-        view.$('.add-on').tooltip({
-            trigger: 'click',
-            container: 'body'
-        });
-    },
-
-    // forms range
-    render_range: function(view) {
-        var fieldSettings = {
-            view: view,
-            def: {
-                name: 'include',
-                type: 'range',
-                view: 'edit',
-                sliderType: 'connected',
-                minRange: 0,
-                maxRange: 100,
-                'default': true,
-                enabled: true
-            },
-            viewName: 'edit',
-            context: view.context,
-            module: view.module,
-            model: view.model,
-            meta: app.metadata.getField('range')
-        },
-        rangeField = app.view.createField(fieldSettings);
-
-        view.$('#test_slider').append(rangeField.el);
-
-        rangeField.render();
-
-        rangeField.sliderDoneDelegate = function(minField, maxField) {
-            return function(value) {
-                minField.val(value.min);
-                maxField.val(value.max);
-            };
-        }(view.$('#test_slider_min'), view.$('#test_slider_max'));
-    },
-
-    // build index pages
     render_index: function(section) {
 
         var self = this,
@@ -543,5 +245,12 @@
               filterList($('.filterinput'), $('#index-content'));
             });
         }(jQuery));
+    },
+
+    _dispose: function() {
+        if (this.content_dispose) {
+            this.content_dispose(this);
+        }
+        app.view.View.prototype._dispose.call(this);
     }
 })
