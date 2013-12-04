@@ -48,6 +48,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
         parent::tearDownAfterClass();
+        SugarTestHelper::tearDown();
     }
 
     public function testGetRelatedNameReturnsEmpty()
