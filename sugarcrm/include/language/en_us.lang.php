@@ -3233,6 +3233,7 @@ $app_strings = array (
     'LBL_ADDING_DASHLET' => 'Adding Sugar Dashlet ...',
     'LBL_ADDED_DASHLET' => 'Sugar Dashlet Added',
     'LBL_REMOVE_DASHLET_CONFIRM' => 'Are you sure you want to remove the Sugar Dashlet?',
+    'LBL_REMOVE_DASHLET_ROW_CONFIRM' => 'Are you sure you want to remove the row?',
     'LBL_REMOVING_DASHLET' => 'Removing Sugar Dashlet ...',
     'LBL_REMOVED_DASHLET' => 'Sugar Dashlet Removed',
 
