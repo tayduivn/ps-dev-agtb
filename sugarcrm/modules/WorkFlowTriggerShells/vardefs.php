@@ -172,8 +172,9 @@ $dictionary['WorkFlowTriggerShell'] = array('table' => 'workflow_triggershells'
     'bean_name'=>'Expression',
     'source'=>'non-db',
   ), 
-)
-                                                      , 'indices' => array (
+),
+'acls' => array('SugarACLAdminOnly' => true),
+'indices' => array (
        array('name' =>'triggershell_k', 'type' =>'primary', 'fields'=>array('id')),
 
                                                       )
@@ -195,4 +196,3 @@ $dictionary['WorkFlowTriggerShell'] = array('table' => 'workflow_triggershells'
   )                                                      
                                                      
  );
-?>
