@@ -462,6 +462,7 @@ $mod_strings = array (
     'LBL_MISSING_TEAMS'=> 'We have noticed discrepancies between your reports to structure and your team structure. If you would like to repair this, please check the option below.',
     //ModuleInstaller
     'LBL_MI_REBUILDING' => 'Rebuilding',
+    'LBL_MI_REBUILDING_CLIENT_METADATA' => 'metadata for clients...',
     'LBL_MI_SECTION' => 'Section...',
     'LBL_MI_IN_EXT' => 'Installing %s extension',
     'LBL_MI_UN_EXT' => 'Uninstalling %s extension',

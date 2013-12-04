@@ -453,8 +453,12 @@ class ModuleInstaller{
      */
 	public function rebuildExt($ext, $filename)
 	{
+        if (stristr($ext, '__PH_SUBTYPE__')) {
+            $this->log(translate('LBL_MI_REBUILDING') . " " . translate('LBL_MI_REBUILDING_CLIENT_METADATA'));
+        } else {
             $this->log(translate('LBL_MI_REBUILDING') . " $ext...");
-			$this->merge_files("Ext/$ext/", $filename);
+        }
+        $this->merge_files("Ext/$ext/", $filename);
 	}
 
 	/**
