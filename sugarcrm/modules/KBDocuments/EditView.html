@@ -221,9 +221,9 @@
  </table>
 
 <script type="text/javascript">
-	var multi_selector = new SUGAR.kb.multiAttachments(document.getElementById('upload_div'),'kbdoc_attachment',"{SITE_URL}","{THEME}",true);
+	var multi_selector = new SUGAR.kb.multiAttachments(document.getElementById('upload_div'),'kbdoc_attachment',"{SITE_URL}","{THEME}",true,"{UPLOAD_MAXSIZE}");
 	multi_selector.addElement( document.getElementById('my_file'));
-	var image_selector = new SUGAR.kb.multiAttachments(document.getElementById('embed_div'),'image_embed',"{SITE_URL}","{THEME}",false);
+	var image_selector = new SUGAR.kb.multiAttachments(document.getElementById('embed_div'),'image_embed',"{SITE_URL}","{THEME}",false,"{UPLOAD_MAXSIZE}");
 	image_selector.addElement( document.getElementById('my_image'));
 </script>
 </form>

@@ -28,4 +28,4 @@
 }}
         <textarea rows="{{def.rows}}" cols="{{def.cols}}" name="{{name}}"
                   class="input-xlarge wide tleft">{{value}}</textarea>
-        <p class="help-block"></p>
+        {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}

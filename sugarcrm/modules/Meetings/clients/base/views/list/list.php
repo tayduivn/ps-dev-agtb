@@ -32,26 +32,6 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(
-                    'name' => 'set_complete',
-                    'width' => '1%',
-                    'label' => 'LBL_LIST_CLOSE',
-                    'link' => true,
-                    'sortable' => false,
-                    'default' => true,
-                    'enabled' => true,
-                    'related_fields' => array('status',),
-                ),
-                //BEGIN SUGARCRM flav!=com ONLY
-                array(
-                    'name' => 'join_meeting',
-                    'label' => 'LBL_LIST_JOIN_MEETING',
-                    'link' => true,
-                    'sortable' => false,
-                    'default' => false,
-                    'enabled' => true,
-                ),
-                //END SUGARCRM flav!=com ONLY
-                array(
                     'name' => 'name',
                     'label' => 'LBL_LIST_SUBJECT',
                     'link' => true,
@@ -118,7 +98,7 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'readonly' => true,
-                ),  
+                ),
             ),
         ),
     ),

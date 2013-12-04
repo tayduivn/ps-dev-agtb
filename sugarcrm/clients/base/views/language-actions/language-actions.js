@@ -38,6 +38,7 @@
         app.events.on("app:login:success", this.render, this);
         app.events.on("app:logout", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
+        $(window).on('resize', _.debounce(_.bind(this.adjustMenuHeight, this), 100));
     },
     /**
      * @override
@@ -49,6 +50,7 @@
         this.languageList = this.formatLanguageList();
         app.view.View.prototype._renderHtml.call(this);
         this.$('[data-toggle="dropdown"]').dropdown();
+        this.adjustMenuHeight();
     },
     /**
      * When a user selects a language in the dropdown, set this language.
@@ -63,6 +65,13 @@
         app.lang.setLanguage(langKey, function() {
             app.alert.dismiss('language');
         });
+    },
+    adjustMenuHeight: function(){
+        var footerHeight = $("footer").height(),
+            viewportHeight = $(window).height(),
+            currentMenuHeight = this.$('.dropdown-menu').height(),
+            menuHeight = viewportHeight - footerHeight;
+        this.$('.dropdown-menu').css('max-height',menuHeight);
     },
     /**
      * Formats the language list for the template
@@ -80,5 +89,12 @@
             }
         });
         return list;
+    },
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        $(window).off('resize');
+        app.view.View.prototype._dispose.call(this);
     }
 })

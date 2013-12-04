@@ -43,12 +43,15 @@ class TestUpgrader extends UpgradeDriver
 
     public function __construct($admin)
     {
-        $context = array(
+        $this->context = array(
             "admin" => $admin->user_name,
             "log" => "cache/upgrade.log",
             "source_dir" => realpath(dirname(__FILE__)."/../../"),
+            'new_source_dir' => realpath(dirname(__FILE__)."/../../"),
+            "zip" => "UNITTEST",
         );
-        parent::__construct($context);
+        parent::__construct();
+        $this->init();
     }
 
     public function cleanState()

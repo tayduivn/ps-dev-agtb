@@ -92,6 +92,14 @@ if(!empty($config['base_dir'])){
 		$path = $config['base_dir'];
 		$rome->build("$path");
 	}
+
+    // this is placed here because after sidecar build this is not executed...
+    if (!empty($config['mobile'])) {
+        echo "\nBuilding Mobile\n\n";
+        require_once('Mobile.php');
+        $mobile = new Mobile($rome, $config['nomad_repo_uri'], $config['mobile_branch'], $config['ver'], $config['builds'], $config['mobile_scheme'], $config['mobile_src_dir']);
+    }
+
 	if(!empty($config['latin'])){
 		echo "\nImporting Languages\n\n";
 		require_once('Latin.php');
@@ -252,6 +260,20 @@ Build options:
 	Add language files to the build.
 
 	php build.php --ver=6.1.0 --flav=ent --latin=1
+--mobile
+    Build mobile version under {BUILD_PATH}/sugarcrm/mobile
+
+--mobile_scheme
+    Mobile build scheme (qa, prod, dev)
+    php build.php --mobile --mobile_scheme qa
+
+--mobile_branch
+    Nomad repository branch
+    php build.php --mobile --mobile_branch v1_3
+
+--mobile_src_dir
+    Directory where to clone Nomad repository. Defaults to Sugar build path
+    php build.php --mobile --mobile_src_dir /Volumes/WORK/SugarCRM/releases
 
 See also: https://github.com/sugarcrm/Mango/wiki/SugarCRM-Build-System
 

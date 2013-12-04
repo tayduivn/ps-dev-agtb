@@ -488,6 +488,7 @@ class RepairAndClear
     public function repairMetadataAPICache($section = '') {
         // Refresh metadata for selected modules only if there selected modules
         if (is_array($this->module_list) && !empty($this->module_list) && !in_array(translate('LBL_ALL_MODULES'), $this->module_list)) {
+            MetaDataFiles::clearModuleClientCache($this->module_list);
             MetaDataManager::refreshModulesCache($this->module_list);
         } 
 

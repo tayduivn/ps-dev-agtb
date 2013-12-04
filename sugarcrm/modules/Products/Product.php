@@ -319,9 +319,6 @@ class Product extends SugarBean
             $this->setAccountIdForOpportunity($this->opportunity_id);
         }
 
-        /* @var $currency Currency */
-        $currency = BeanFactory::getBean('Currencies', $this->currency_id);
-
         $this->populateFromTemplate();
 
         // RPS - begin - decimals cant be null in sql server
@@ -352,34 +349,6 @@ class Product extends SugarBean
         }
 
         $this->calculateDiscountPrice();
-
-        // always set the base rate to what the conversion_rate is in the currency
-        $this->base_rate = $currency->conversion_rate;
-
-        //US DOLLAR
-        $varsToConvert = array(
-            'discount_price' => 'discount_usdollar',
-            'list_price' => 'list_usdollar',
-            'cost_price' => 'cost_usdollar',
-            'book_value' => 'book_value_usdollar',
-            'deal_calc' => 'deal_calc_usdollar',
-        );
-        
-        foreach ( $varsToConvert as $fromVar => $toVar ) {
-            if (!empty($this->$fromVar)) {
-                $this->$toVar = $currency->convertToDollar($this->$fromVar);
-            } else {
-                $this->$toVar = 0.00;
-            }
-        }
-        if (isset($this->discount_amount) && (!empty($this->discount_amount) || $this->discount_amount == '0')) {
-            if (isset($this->discount_select) && $this->discount_select) {
-                $this->discount_amount_usdollar = $this->discount_amount;
-            } else {
-                $this->discount_amount_usdollar = $currency->convertToDollar($this->discount_amount);
-            }
-        }
-
 
         $this->convertDateClosedToTimestamp();
         $this->mapFieldsFromOpportunity();

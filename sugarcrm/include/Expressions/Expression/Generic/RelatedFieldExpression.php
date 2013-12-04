@@ -51,6 +51,9 @@ class RelatedFieldExpression extends GenericExpression
                         $ret = $timedate->fromDbDate($bean->$relfield);
                         if (!$ret)
                             $ret = $timedate->fromUserDate($bean->$relfield);
+                        if (!$ret) {
+                            return $ret;
+                        }
                         $ret->isDate = true;
                         return $ret;
                     }

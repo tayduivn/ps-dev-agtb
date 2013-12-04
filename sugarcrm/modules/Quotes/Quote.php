@@ -459,36 +459,6 @@ class Quote extends SugarBean {
 
 	function save($check_notify = FALSE) {
 
-        if(empty($this->currency_id)) {
-            // use user preferences for currency
-            $currency = SugarCurrency::getUserLocaleCurrency();
-            $this->currency_id = $currency->id;
-        } else {
-            $currency = SugarCurrency::getCurrencyByID($this->currency_id);
-        }
-        $this->base_rate = $currency->conversion_rate;
-
-        // These amounts are the converted amounts to the base currency,
-        // which will be deprecated once base_rate is used for calculations
-		if(!empty($this->shipping)){
-			$this->shipping_usdollar = SugarCurrency::convertAmountToBase($this->shipping, $this->currency_id);
-		}
-		if(!empty($this->tax)){
-			$this->tax_usdollar = SugarCurrency::convertAmountToBase($this->tax, $this->currency_id);
-		}
-		if(!empty($this->total)){
-			$this->total_usdollar = SugarCurrency::convertAmountToBase($this->total, $this->currency_id);
-		}
-		if(!empty($this->subtotal)){
-			$this->subtotal_usdollar = SugarCurrency::convertAmountToBase($this->subtotal, $this->currency_id);
-		}
-	      if(!empty($this->new_sub)){
-            $this->new_sub_usdollar = SugarCurrency::convertAmountToBase($this->new_sub, $this->currency_id);
-        }
-	        if(!empty($this->deal_tot)){
-            $this->deal_tot_usdollar = SugarCurrency::convertAmountToBase($this->deal_tot, $this->currency_id);
-        }
-
         //BEGIN SUGARCRM flav=pro ONLY
 		if(!isset($this->system_id) || empty($this->system_id)) {
 

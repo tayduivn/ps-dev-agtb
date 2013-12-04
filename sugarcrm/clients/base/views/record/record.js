@@ -567,6 +567,9 @@
                 }
             }, this);
 
+        //Call editable to turn off key and mouse events before fields are disposed (SP-1873)
+        this.turnOffEvents(this.fields);
+
         options = {
             showAlerts: true,
             success: successCallback,

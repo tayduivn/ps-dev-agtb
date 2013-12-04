@@ -91,8 +91,6 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                             return App.user.get('preferences').currency_symbol + d3.format(",.2s")(d);
                         });
 
-                    nv.utils.windowResize(paretoChart.update);
-
                     that.chartObject = paretoChart;
 
                     SUGAR.chartsD3.setChartObject(paretoChart);
@@ -138,8 +136,6 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .transition().duration(500)
                         .call(barChart);
 
-                    nv.utils.windowResize(barChart.update);
-
                     that.chartObject = barChart;
 
                     SUGAR.chartsD3.setChartObject(barChart);
@@ -181,8 +177,6 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .transition().duration(500)
                         .call(lineChart);
 
-                    nv.utils.windowResize(lineChart.update);
-
                     that.chartObject = lineChart;
 
                     SUGAR.chartsD3.setChartObject(lineChart);
@@ -208,8 +202,6 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .datum(json)
                         .transition().duration(500)
                         .call(pieChart);
-
-                    nv.utils.windowResize(pieChart.update);
 
                     that.chartObject = pieChart;
 
@@ -241,8 +233,6 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .datum(json)
                         .transition().duration(500)
                         .call(funnelChart);
-
-                    nv.utils.windowResize(funnelChart.update);
 
                     that.chartObject = funnelChart;
 

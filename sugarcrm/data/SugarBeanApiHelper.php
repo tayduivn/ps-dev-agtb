@@ -249,18 +249,27 @@ class SugarBeanApiHelper
             $context['owner_override'] = true;
         }
 
+        //BEGIN SUGARCRM flav=pro ONLY
+        // check ACLs first
         foreach ($bean->field_defs as $fieldName => $properties) {
             if ( !isset($submittedData[$fieldName]) ) {
                 // They aren't trying to modify this field
                 continue;
             }
-
-            //BEGIN SUGARCRM flav=pro ONLY
             if ( !$bean->ACLFieldAccess($fieldName,'save', $context) ) {
                 // No write access to this field, but they tried to edit it
                 throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$submittedData['module']);
             }
-            //END SUGARCRM flav=pro ONLY
+
+        }
+        //END SUGARCRM flav=pro ONLY
+
+        // now update the fields
+        foreach ($bean->field_defs as $fieldName => $properties) {
+            if ( !isset($submittedData[$fieldName]) ) {
+                // They aren't trying to modify this field
+                continue;
+            }
 
             $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
             $field = $sfh->getSugarField($type);

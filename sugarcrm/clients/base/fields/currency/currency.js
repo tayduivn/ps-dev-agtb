@@ -53,6 +53,8 @@
      */
     _lastCurrencyId: null,
 
+    plugins: ['FieldDuplicate'],
+
     /**
      * {@inheritdoc}
      */
@@ -108,6 +110,8 @@
         // but instead update the value on the field directly
         this.model.on('change:' + this.name, this._valueChangeHandler, this);
 
+        this.model.on('duplicate:field:' + this.name, this._valueChangeHandler, this);
+
         if (this.def.is_base_currency) {
             // do not add change handler to _usdollar fields
             return;
@@ -156,20 +160,32 @@
     },
 
     /**
-     * Handler for when the the value changes on the model, if the action is not edit, then
-     * re-render the field, otherwise just update the value via jQuery
+     * Handler for when the value changes on the model.
      *
-     * @param {Object} model
-     * @param {string} value
+     * If action does not match edit, field is re-rendered, otherwise the field
+     * value is updated, plus, if the currency of the given model is different
+     * from the one we have, the supplied amount is also converted to the new
+     * currency.
+     *
+     * @param {Data.Bean} model Model.
+     * @param {String} value Amount.
      * @private
      */
-    _valueChangeHandler: function(model, value)
-    {
+    _valueChangeHandler: function(model, value) {
         if (this.action != 'edit') {
             this.render();
-        } else {
-            this.setCurrencyValue(value);
+            return;
         }
+
+        if (model.get('currency_id') !== this.model.get('currency_id')) {
+            value = app.currency.convertAmount(
+                value,
+                model.get('currency_id'),
+                this.model.get('currency_id')
+            );
+        }
+
+        this.setCurrencyValue(value);
     },
 
     /**
@@ -284,6 +300,7 @@
      * @param {String} the mode name.
      */
     setMode: function(name) {
+        this.hideCurrencyDropdown = !!(name === 'list');
         app.view.Field.prototype.setMode.call(this, name);
         this.getCurrencyField().setMode(name);
     },

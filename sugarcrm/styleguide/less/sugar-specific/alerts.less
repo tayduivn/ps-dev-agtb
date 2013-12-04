@@ -80,3 +80,84 @@
 .alert.modal {
   display: none;
 }
+
+
+
+// Confirmation Alerts
+// ------------------------
+
+// Disable whole screen
+.alert-page-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1059;
+}
+
+// Alert itself
+.alert-confirmation {
+  width: auto;
+  height: auto;
+  position: fixed;
+  top: 36px;
+  left: 0;
+  right: 0;
+  z-index: 1080;
+
+  > div {
+    display: inline-block;
+  }
+
+  .alert {
+    padding: 0;
+    min-width: 280px;
+
+    .alert-messages {
+      padding: 15px;
+    }
+
+    // Alert title
+    strong {
+      padding: 15px 15px 5px;
+
+      // Alert messages
+      + .alert-messages {
+        padding: 0px 15px 15px;
+      }
+    }
+
+    strong, .alert-messages {
+      text-align: center;
+      display: block;
+      padding: 5px 15px;
+    }
+
+    //Alert buttons
+    .row-fluid {
+      border-top: 1px solid #EDC959;
+
+      .alert-btn-cancel {
+        border-right: 1px solid #EDC959;
+      }
+      .alert-btn-confirm {
+        font-weight: bold;
+      }
+
+      .alert-btn-cancel, .alert-btn-confirm {
+        text-align: center;
+        display: inline-block !important;
+        padding: 5px 15px;
+        color: inherit;
+        margin: 0;
+        width: 50%;
+
+        &:hover {
+          background-color: #F1EDD7;
+          text-decoration: none;
+        }
+      }
+    }
+  }
+}

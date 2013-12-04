@@ -422,33 +422,15 @@ class EditView
                 }
 
 	       	 	if(isset($this->fieldDefs[$name]['function'])) {
-	       	 		$function = $this->fieldDefs[$name]['function'];
-	       			if(is_array($function) && isset($function['name'])){
-	       				$function = $this->fieldDefs[$name]['function']['name'];
-	       			}else{
-	       				$function = $this->fieldDefs[$name]['function'];
-	       			}
-
-                    if(isset($this->fieldDefs[$name]['function']['include']) && SugarAutoLoader::fileExists($this->fieldDefs[$name]['function']['include']))
-                    {
-                  		require_once($this->fieldDefs[$name]['function']['include']);
-                  	}
-
-                    if (isset($this->fieldDefs[$name]['function_bean'])) {
-                        $funcBean =  BeanFactory::getBean($this->fieldDefs[$name]['function_bean']);
-                        if (method_exists($funcBean, $function)) {
-                            $function = array($funcBean, $function);
-                        }
-                    }
+                    $functionBean = isset($this->fieldDefs[$name]['function_bean']) ? $this->fieldDefs[$name]['function_bean'] : null;
+                    $function = $this->fieldDefs[$name]['function'];
+                    $functionArgs = array($this->focus, $name, $value, $this->view);
+                    $value = getFunctionValue($functionBean, $function, $functionArgs);
 
 	       	 		if(!empty($this->fieldDefs[$name]['function']['returns']) && $this->fieldDefs[$name]['function']['returns'] == 'html'){
-						if(!empty($this->fieldDefs[$name]['function']['include'])){
-								require_once($this->fieldDefs[$name]['function']['include']);
-						}
-						$value = call_user_func($function, $this->focus, $name, $value, $this->view);
 						$valueFormatted = true;
 					}else{
-						$this->fieldDefs[$name]['options'] = call_user_func($function, $this->focus, $name, $value, $this->view);
+						$this->fieldDefs[$name]['options'] = $value;
 					}
 	       	 	}
 

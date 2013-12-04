@@ -36,7 +36,7 @@ require_once('modules/Import/ImportDuplicateCheck.php');
 class Importer
 {
     /**
-     * @var ImportFieldSanitizer
+     * @var ImportFieldSanitize
      */
     protected $ifs;
 
@@ -70,6 +70,18 @@ class Importer
      */
     protected $sugarToExternalSourceFieldMap = array();
 
+    /**
+     * Cache the currency symbol so we don't have to create the beans
+     *
+     * @var array
+     */
+    protected $cachedCurrencySymbols = array();
+
+    /**
+     * Where is the currency_id in the import fields
+     * @var bool
+     */
+    protected $currencyFieldPosition = false;
 
     public function __construct($importSource, $bean)
     {
@@ -81,7 +93,7 @@ class Importer
         $this->bean = $bean;
 
         // use our own error handler
-        set_error_handler(array('Importer','handleImportErrors'),E_ALL);
+        set_error_handler(array('Importer','handleImportErrors'), E_ALL & ~E_STRICT & ~E_DEPRECATED);
 
          // Increase the max_execution_time since this step can take awhile
         ini_set("max_execution_time", max($sugar_config['import_max_execution_time'],3600));
@@ -104,6 +116,10 @@ class Importer
     {
         $aflag = Activity::isEnabled();
         Activity::disable();
+
+        // do we have a currency_id field
+        $this->currencyFieldPosition = array_search('currency_id', $this->importColumns);
+
         foreach($this->importSource as $row)
         {
             $this->importRow($row);
@@ -134,6 +150,19 @@ class Importer
         $this->ifs->createdBeans = array();
         $this->importSource->resetRowErrorCounter();
         $do_save = true;
+
+        // set the currency for the row, if it has a currency_id in the row
+        if ($this->currencyFieldPosition !== false && !empty($row[$this->currencyFieldPosition])) {
+            $currency_id = $row[$this->currencyFieldPosition];
+            if (!isset($this->cachedCurrencySymbols[$currency_id])) {
+                /** @var Currency $currency */
+                $currency = BeanFactory::getBean('Currencies', $currency_id);
+                $this->cachedCurrencySymbols[$currency_id] = $currency->symbol;
+                unset($currency);
+            }
+            $this->ifs->currency_symbol = $this->cachedCurrencySymbols[$currency_id];
+            $this->ifs->currency_id = $currency_id;
+        }
 
         for ( $fieldNum = 0; $fieldNum < $_REQUEST['columncount']; $fieldNum++ )
         {

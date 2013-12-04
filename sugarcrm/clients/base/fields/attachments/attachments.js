@@ -34,18 +34,21 @@
      * {@inheritdoc}
      */
     initialize: function(options) {
-        var launchUploadEvent = options.def.uploadEvent || 'attachment:upload';
-
         this.events = _.extend({}, this.events, options.def.events, {
             'change .fileinput': 'uploadFile'
         });
         app.view.Field.prototype.initialize.call(this, options);
 
         this.context.on('attachment:add', this.addAttachment, this);
-        this.context.on(launchUploadEvent, this.launchFilePicker, this);
         this.context.on('attachment:upload:remove', this.removeUploadedAttachment, this);
         this.context.on('attachments:remove-by-tag', this.removeAttachmentsByTag, this);
         this.context.on('attachments:remove-by-id', this.removeAttachmentsById, this);
+
+        // Put id on the context so <label>s can be created elsewhere to trigger this file input
+        // This is required to work around an IE issue (only files picked directly or
+        // from click on label can be uploaded - not programatically)
+        this.fileInputName = 'email_attachment';
+        this.context.set('attachment_field_' + this.fileInputName, this.cid);
 
         this.clearUserAttachmentCache();
     },
@@ -203,13 +206,6 @@
     },
 
     /**
-     * Launches the browse window where the user can choose a file to upload
-     */
-    launchFilePicker: function() {
-        this.$(this.fileInputSelector).click();
-    },
-
-    /**
      * Refresh select2 from model
      */
     refreshFromModel: function() {
@@ -310,7 +306,7 @@
             showProgress: true
         });
 
-        var myURL = app.api.buildURL('Mail/attachment', null, null, {platform:app.config.platform});
+        var myURL = app.api.buildURL('Mail/attachment', null, null, {format:'sugar-html-json'});
         app.api.call('create', myURL, null,{
                 success: _.bind(function (result) {
                     if (this.disposed === true) return; //if field is already disposed, bail out
@@ -328,7 +324,7 @@
                     this.context.trigger('attachment:add', result);
 
                     //clear out the file input so we can detect the next change, even if it is the same file
-                    $fileInput.val(null);
+                    this.clearFileInputVal($fileInput);
                 }, this),
 
                 error: _.bind(function(e) {
@@ -353,13 +349,31 @@
     },
 
     /**
+     * Clear the value of the file input element
+     * This is a bit of a hack, but is required for cross-browser (read IE isn't playing nice)
+     * FIXME: When we drop IE10 support, change to: $fileInput.val(null);
+     *
+     * @param $fileInput
+     */
+    clearFileInputVal: function($fileInput) {
+        $fileInput = $fileInput || this.$(this.fileInputSelector);
+        if (!_.isUndefined($fileInput)) {
+            $fileInput.wrap('<form>').closest('form').get(0).reset();
+            $fileInput.unwrap();
+        }
+    },
+
+    /**
      * When upload fails, display an error alert and remove the placeholder pill
      * @param fileId
      */
     handleUploadError: function(fileId) {
-        var errorMessage = app.lang.getAppString('LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED');
         this.context.trigger('attachments:remove-by-id', fileId);
-        app.alert.show('upload_error', errorMessage);
+        app.alert.show('upload_error', {
+            level: 'error',
+            messages: 'LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED',
+            autoClose: false
+        });
     },
 
     /**

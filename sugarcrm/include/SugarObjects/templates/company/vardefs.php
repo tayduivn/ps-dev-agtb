@@ -372,10 +372,12 @@ $vardefs= array (
         'name'    => 'getEmailAddressWidget',
         'returns' => 'html'),
     'source'  => 'non-db',
+    'link' => 'email_addresses_primary',
+    'rname' => 'email_address',
     'group'=>'email1',
     'merge_filter' => 'enabled',
     'studio' => array('editview' => true, 'editField' => true, 'searchview' => false, 'popupsearch' => false), // bug 46859
-    'full_text_search' => array('index' => 'not_analyzed'), //bug 54567
+    'full_text_search' => array('boost' => 3, 'analyzer' => 'whitespace'), //bug 54567
     'duplicate_on_record_copy' => 'always',
 ),
 

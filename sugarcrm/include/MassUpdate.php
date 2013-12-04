@@ -622,7 +622,7 @@ eoq;
 							}else if(!empty($field['options'])) {
 								$even = !$even; $newhtml .= $this->addStatus($displayname,  $field["name"], translate($field["options"])); break;
 							}else if(!empty($field['function'])){
-								$functionValue = $this->getFunctionValue($this->sugarbean, $field);
+								$functionValue = getFunctionValue(isset($field['function_bean']) ? $field['function_bean'] : null, $field['function'], array($this->sugarbean, $field['name'], '', 'MassUpdate'));
 								$even = !$even; $newhtml .= $this->addStatus($displayname,  $field["name"], $functionValue); break;
 							}
 							break;
@@ -726,23 +726,6 @@ EOJS;
 				$html .= $app_strings['LBL_NO_MASS_UPDATE_FIELDS_AVAILABLE'] . "</div>";
 			}
 			return $html;
-		}
-	}
-
-	function getFunctionValue($focus, $vardef){
-		$function = $vardef['function'];
-	    if(is_array($function) && isset($function['name'])){
-	    	$function = $vardef['function']['name'];
-	    }else{
-	       	$function = $vardef['function'];
-	    }
-		if(!empty($vardef['function']['returns']) && $vardef['function']['returns'] == 'html'){
-			if(!empty($vardef['function']['include'])){
-				require_once($vardef['function']['include']);
-			}
-			return call_user_func($function, $focus, $vardef['name'], '', 'MassUpdate');
-		}else{
-			return call_user_func($function, $focus, $vardef['name'], '', 'MassUpdate');
 		}
 	}
 

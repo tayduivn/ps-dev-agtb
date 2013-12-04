@@ -28,7 +28,8 @@
 }}
 <div class="input-append date datetime" rel="datepicker">
     <input type="text" class="datepicker" value="{{dateValue}}" rel="datepicker">
-    <span class="add-on"><i class="icon-calendar"></i></span>
+    <span class="add-on date"><i class="icon-calendar"></i></span>
     <input type="text" class="ui-timepicker-input" value="{{timeValue}}" rel="timepicker" autocomplete="off">
-    <span class="add-on"><i class="icon-time"></i></span>
+    <span class="add-on time"><i class="icon-time"></i></span>
+    {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
 </div>

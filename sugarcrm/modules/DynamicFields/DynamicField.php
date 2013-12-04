@@ -888,7 +888,7 @@ class DynamicField {
         {
             return $cached_results[$name];
         }
-        $exclusions = array('parent_type', 'parent_id', 'currency_id', 'parent_name');
+        $exclusions = array('parent_type', 'parent_id', 'currency_id', 'parent_name', 'base_rate');
         // Remove any non-db friendly characters
         $return_value = preg_replace("/[^\w]+/","_",$name);
         if($_C == true && !in_array($return_value, $exclusions) && substr($return_value, -2) != '_c'){

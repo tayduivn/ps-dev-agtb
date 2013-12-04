@@ -1,0 +1,38 @@
+{{!
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+}}
+{{#each value}}
+    <div class="merge-row control-group">
+        <div class="controls">
+            {{#if id}}
+                <input type="checkbox" name="copy_{{../../name}}_{{@index}}"
+                       class="copy"
+                       data-action="copy"
+                       data-field-name="{{../../name}}"
+                       data-record-id="{{../../model.attributes.id}}"
+                       data-record-item-id="{{id}}" {{#if checked}}checked="checked"{{/if}} />
+                <label>{{name}}</label>
+                {{#if checked}}
+                    <button type="button"
+                            class="btn third {{#if primary}}active{{/if}}" name="primary"
+                            data-index="{{@index}}" rel="tooltip"
+                            data-placement="right"
+                            data-original-title="{{str "LBL_TEAM_PRIMARY"}}">
+                        <i class="icon-star"></i>
+                    </button>
+                {{/if}}
+            {{/if}}
+        </div>
+    </div>
+{{/each}}

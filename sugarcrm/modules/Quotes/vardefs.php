@@ -854,6 +854,9 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
         array('name' =>'quote_num', 'type'=>'unique', 'fields'=>array('quote_num', 'system_id')),
         //END SUGARCRM flav=pro ONLY
         array('name' =>'idx_qte_name', 'type'=>'index', 'fields'=>array('name')),
+        array('name' => 'idx_quote_quote_stage', 'type' => 'index', 'fields' => array('quote_stage')),
+        array('name' => 'idx_quote_date_quote_expected_closed', 'type' => 'index', 'fields' => array('date_quote_expected_closed')),
+        array('name' => 'idx_quote_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
     )
 , 'relationships' => array (
         'quote_tasks' => array('lhs_module'=> 'Quotes', 'lhs_table'=> 'quotes', 'lhs_key' => 'id',

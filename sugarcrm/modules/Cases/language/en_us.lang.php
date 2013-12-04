@@ -28,8 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $mod_strings = array (
-	'ERR_DELETE_RECORD'					=> 'You must specify a record number to delete the account.',
-
+	'ERR_DELETE_RECORD'					=> 'You must specify a record number to delete the Account.',
 	'LBL_ACCOUNT_ID'					=> 'Account ID',
 	'LBL_ACCOUNT_NAME'					=> 'Account Name:',
 	'LBL_ACCOUNTS_SUBPANEL_TITLE'		=> 'Accounts',
@@ -79,12 +78,12 @@ $mod_strings = array (
     'LNK_NEW_CASE'						=> 'Create Case',
     'LNK_CREATE'                        => 'Create Case',
     'LNK_CREATE_WHEN_EMPTY'             => 'Create a Case now.',
-	'NTC_REMOVE_FROM_BUG_CONFIRMATION'	=> 'Are you sure you want to remove this case from the bug?',
-	'NTC_REMOVE_INVITEE'				=> 'Are you sure you want to remove this contact from the case?',
+	'NTC_REMOVE_FROM_BUG_CONFIRMATION'	=> 'Are you sure you want to remove this Case from the Bug?',
+	'NTC_REMOVE_INVITEE'				=> 'Are you sure you want to remove this Contact from the Case?',
 	'LBL_LIST_DATE_CREATED'			=> 'Date Created',
 	'LBL_ASSIGNED_TO_NAME' => 'Assigned to',
-	'LBL_TYPE'=>'Type',
-	'LBL_WORK_LOG'=>'Work Log',
+	'LBL_TYPE' => 'Type',
+	'LBL_WORK_LOG' => 'Work Log',
 	'LNK_IMPORT_CASES' => 'Import Cases',
 	//BEGIN SUGARCRM flav=pro ONLY
 	'LNK_CASE_REPORTS' => 'View Case Reports',
@@ -134,6 +133,5 @@ $mod_strings = array (
     'LBL_PORTAL_TOUR_RECORDS_RETURN' => 'Clicking here will return you to this view at any time.',
     //END SUGARCRM flav=ent ONLY
 
+    'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
 );
-
-?>

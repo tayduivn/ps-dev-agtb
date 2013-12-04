@@ -114,12 +114,11 @@
         if(_.isFunction(this.setRequiredPlaceholder) && this.def.required){
             this.setRequiredPlaceholder(this.$(".datepicker"));
         }
-        var appendTarget = this.$el.parents('div#drawers').length ? 'div#drawers .main-pane:first' : 'div#content .main-pane:first';
+        var appendTarget = this.$el.parents('div#drawers').length ? 'div#drawers .active .main-pane:first' : 'div#content .main-pane:first';
         /* TODO: Remove all this once satisfied language injection works properly ;)
         var spanishLangExample = {
             days: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
             daysShort: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
-            daysMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"],
             months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
             monthsShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
         };*/
@@ -357,12 +356,6 @@
             }
             pickerMap[pickerMapKey] = calProp;
         }
-
-        // Now add a daysMin property with just two chars per day Su Mo, etc.
-        pickerMap['daysMin'] = _.map(pickerMap.daysShort, function(day) {
-            return (day.length > 1) ? day.substr(0,2) : day;
-        });
-
         return pickerMap;
     },
     /**
@@ -482,8 +475,7 @@
     decorateError: function (errors) {
         var ftag = this.fieldTag || '',
             $ftag = this.$(ftag),
-            errorMessages = [],
-            $tooltip;
+            errorMessages = [];
 
         // Add error styling
         this.$el.closest('.record-cell').addClass('error');
@@ -496,11 +488,7 @@
         });
         $ftag.wrap('<div class="input-append error ' + ftag + '">');
         $ftag.after(this.exclamationMarkTemplate(errorMessages)+'<span class="add-on"><i class="icon-calendar"></i></span>');
-        $tooltip = this.$('.error-tooltip');
-        if (_.isFunction($tooltip.tooltip)) {
-            var tooltipOpts = { container: 'body', placement: 'top', trigger: 'click' };
-            $tooltip.tooltip(tooltipOpts);
-        }
+        this.createErrorTooltips(this.$('.error-tooltip'));
     },
     /**
      * Remove error decoration from field if it exists.

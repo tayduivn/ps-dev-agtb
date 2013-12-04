@@ -14,6 +14,7 @@ describe("Leads.Base.Layout.ConvertPanel", function() {
         layout = SugarTest.createLayout('base', 'Leads', 'convert-panel', {
             moduleNumber: 1,
             module: 'Contacts',
+            copyData: true,
             required: true,
             enableDuplicateCheck: true,
             duplicateCheckOnStart: true,
@@ -59,6 +60,14 @@ describe("Leads.Base.Layout.ConvertPanel", function() {
         layout.dupeCheckComplete();
         expect(layout.currentToggle).toEqual(layout.TOGGLE_CREATE);
         expect(layout.currentState.dupeCount).toEqual(0);
+    });
+
+    it("should not show create subview when dupe check complete, no dupes found, but already toggled previously", function() {
+        layout.duplicateView.collection.length = 0;
+        layout.dupeCheckComplete();
+        layout.showComponent(layout.TOGGLE_DUPECHECK);
+        layout.dupeCheckComplete();
+        expect(layout.currentToggle).toEqual(layout.TOGGLE_DUPECHECK);
     });
 
     it("should remove fields from metadata that are marked as to be hidden in the convert metadata", function() {
@@ -265,6 +274,28 @@ describe("Leads.Base.Layout.ConvertPanel", function() {
         expect(createModel.get('east')).toEqual('Lead Value for NORTH');
         expect(createModel.get('west')).toEqual('Contact Value for WEST');
         expect(dupeViewContextTriggerStub.callCount).toBe(1);
+        getModuleStub.restore();
+    });
+
+    it("should not populate create model with lead fields when copyData meta attribute is false", function() {
+        var leadModel = new Backbone.Model({
+                north:'Lead Value for NORTH',
+                _module:'Leads'
+            }),
+            createModel = new Backbone.Model({
+                north:'Contact Value for NORTH'
+            });
+        layout.createView.model = createModel;
+        layout.meta.duplicateCheckOnStart = true;
+        layout.meta.copyData = false;
+
+        var getModuleStub = sinon.stub(app.metadata, 'getModule');
+        getModuleStub.withArgs('Leads', 'fields').returns({north:'north'});
+        getModuleStub.withArgs('Contacts', 'fields').returns({north:'north'});
+
+        layout.handlePopulateRecords(leadModel);
+        expect(createModel.get('north')).toEqual('Contact Value for NORTH');
+        expect(dupeViewContextTriggerStub.callCount).toBe(0);
         getModuleStub.restore();
     });
 

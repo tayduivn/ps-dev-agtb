@@ -36,6 +36,12 @@
         _.extend(app.view.Field.prototype, {
 
             /**
+             * Hides help information (`def.help`) on edit views if set to
+             * `true`. This is metadata driven.
+             */
+            hideHelp: false,
+
+            /**
              * Template for the exclamation mark icon added when decorating errors
              */
             exclamationMarkTemplate: Handlebars.compile(
@@ -176,12 +182,11 @@
              */
             _render: function () {
                 // Tooltips are appended to body and when the field rerenders we lose control of shown tooltips.
-                var $tooltip = this.$('.error-tooltip');
-                if (_.isFunction($tooltip.tooltip)) {
-                    $tooltip.tooltip('destroy');
-                }
+                this.destroyAllErrorTooltips();
 
                 var isErrorState = this.$('.add-on.error-tooltip').length > 0;
+
+                this._processHelp();
 
                 _fieldProto._render.call(this);
 
@@ -204,6 +209,29 @@
                     if (this.action === 'edit' || -1 !== _.indexOf(['edit', 'list-edit'], this.tplName)) {
                         this.decorateHelper();
                     }
+                }
+            },
+
+            /**
+             * Help information block visibility is metadata driven
+             * (`hide_help`).
+             *
+             * By default (if no metadata is defined) we show help block on
+             * edit templates except on list views (will be hidden).
+             * Currently there is no templates using this help block on detail
+             * templates, but we make sure we only affect the edit view.
+             *
+             * @protected
+             */
+            _processHelp: function() {
+
+                if (!_.isUndefined(this.meta && this.meta['hide_help'])) {
+                    this.hideHelp = !!this.meta['hide_help'];
+                    return;
+                }
+
+                if (this.view.action === 'list' && this.action === 'edit') {
+                    this.hideHelp = true;
                 }
             },
 
@@ -351,12 +379,9 @@
                     });
                 }
                 $ftag.wrap('<div class="input-append error ' + ftag + '">');
-                $tooltip = this.exclamationMarkTemplate(errorMessages);
+                $tooltip = $(this.exclamationMarkTemplate(errorMessages));
                 $ftag.after($tooltip);
-                if (_.isFunction($tooltip.tooltip)) {
-                    var tooltipOpts = {placement: 'top', trigger: 'click' };
-                    $tooltip.tooltip(tooltipOpts);
-                }
+                this.createErrorTooltips($tooltip);
                 // Select2 sometimes has hidden fields, this prevents errors for said fields from showing on screen
                 $ftag.each(function() {
                     if($(this).hasClass("select2-offscreen")) {
@@ -364,6 +389,32 @@
                     }
                 });
 
+            },
+
+            /**
+             * Create error tooltips.
+             * @param {jQuery} $element
+             */
+            createErrorTooltips: function($element) {
+                this._errorTooltips = this._errorTooltips || [];
+                this._errorTooltips.push(app.utils.tooltip.initialize($element));
+            },
+
+            /**
+             * Destroy all error tooltips.
+             */
+            destroyAllErrorTooltips: function() {
+                app.utils.tooltip.destroy(this._errorTooltips);
+                this._errorTooltips = null;
+            },
+
+            /**
+             * Destroy all error tooltips before disposing the field.
+             * @private
+             */
+            _dispose: function() {
+                this.destroyAllErrorTooltips();
+                _fieldProto._dispose.call(this);
             },
 
             /**

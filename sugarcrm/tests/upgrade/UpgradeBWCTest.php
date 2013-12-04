@@ -7,7 +7,6 @@ class UpgradeBWCTest extends UpgradeTestCase
     public function setUp()
     {
         parent::setUp();
-        SugarTestHelper::setUp('files');
         SugarTestHelper::saveFile('custom/Extension/application/Ext/Include/scantest.php');
         $data = <<<'END'
 <?php
@@ -20,19 +19,38 @@ $moduleList[] = 'scantestMB';
 $beanList['scantestExt'] = 'scantestExt';
 $beanFiles['scantestExt'] = 'modules/scantestExt/scantestExt.php';
 $moduleList[] = 'scantestExt';
+$beanList['scantestHooks'] = 'scantestHooks';
+$beanFiles['scantestHooks'] = 'modules/scantestHooks/scantestHooks.php';
+$moduleList[] = 'scantestHooks';
 END;
-        file_put_contents('custom/Extension/application/Ext/Include/scantest.php', $data);
         sugar_mkdir('modules/scantest');
         sugar_mkdir('modules/scantestMB');
         sugar_mkdir('modules/scantestExt');
+        sugar_mkdir('modules/scantestHooks');
+        mkdir_recursive('custom/Extension/application/Ext/Include/');
+        mkdir_recursive("modules/scantestHooks/views");
+        file_put_contents('custom/Extension/application/Ext/Include/scantest.php', $data);
 
         file_put_contents('modules/scantest/scantest.php', "<?php echo 'Hello world!'; ");
         file_put_contents('modules/scantest/scantest2.php', "<?php echo 'Hello world!'; ");
         file_put_contents('modules/scantestMB/scantestMB.php', "<?php echo 'Hello world!'; ");
         file_put_contents('modules/scantestExt/scantestExt.php', "<?php echo 'Hello world!'; ");
+        file_put_contents('modules/scantestHooks/scantestHooks.php', "<?php echo 'Hello world!'; ");
+        copy(dirname(__FILE__)."/view_edit.php", "modules/scantestHooks/views/view.edit.php");
 
-        mkdir_recursive('custom/modules/scantestExt/Ext/Layoutdefs');
-        file_put_contents('custom/modules/scantestExt/Ext/Layoutdefs/scantestExt.php', "<?php echo 'Hello world!'; ");
+        mkdir_recursive('custom/modules/scantestHooks/Ext/LogicHooks');
+        mkdir_recursive('custom/modules/scantestHooks/workflow');
+
+        file_put_contents('custom/modules/scantestHooks/scantestHooks2.php', "<?php echo 'Hello world!'; ");
+        $hook_array['before_save'][] = array(1, 'Custom Logic', 'modules/scantestHooks/scantestHooks.php', 'test', 'test');
+        write_array_to_file('hook_array', $hook_array, 'custom/modules/scantestHooks/logic_hooks.php');
+
+        $hook_array['after_save'][] = array(1, 'Custom Logic', 'custom/modules/scantestHooks/scantestHooks2.php', 'test', 'test');
+        write_array_to_file('hook_array', $hook_array, 'custom/modules/scantestHooks/Ext/LogicHooks/logichooks.ext.php');
+
+
+        mkdir_recursive('custom/modules/scantestExt/Ext/ActionViewMap');
+        file_put_contents('custom/modules/scantestExt/Ext/ActionViewMap/scantestExt.php', "<?php echo 'Hello world!'; ");
         $this->mi = new ModuleInstaller();
         $this->mi->silent = true;
 
@@ -50,7 +68,9 @@ END;
         rmdir_recursive("modules/scantest");
         rmdir_recursive("modules/scantestMB");
         rmdir_recursive("modules/scantestExt");
-        rmdir_recursive('custom/modules/scantestExt/');
+        rmdir_recursive('modules/scantestHooks');
+        rmdir_recursive('custom/modules/scantestExt');
+        rmdir_recursive('custom/modules/scantestHooks');
         $this->mi->rebuild_modules();
     }
 
@@ -59,6 +79,7 @@ END;
      */
     public function testScanModules()
     {
+        $this->upgrader->setVersions("6.7.3", 'ent', '7.1.5', 'ent');
         $script = $this->upgrader->getScript("post", "6_ScanModules");
         $script->run();
 

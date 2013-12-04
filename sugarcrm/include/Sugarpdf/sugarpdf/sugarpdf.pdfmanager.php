@@ -35,10 +35,19 @@ require_once 'include/Sugarpdf/sugarpdf/sugarpdf.smarty.php';
 class SugarpdfPdfmanager extends SugarpdfSmarty
 {
     protected $pdfFilename;
+    protected $footerText = null;
 
     public function preDisplay()
     {
         parent::preDisplay();
+
+        // settings for disable smarty php tags
+        $this->ss->security_settings['PHP_TAGS'] = false;
+        $this->ss->security = true;
+
+        // header/footer settings
+        $this->setPrintHeader(false);
+        $this->setPrintFooter(true); // always print page number at least
 
         if (!empty($_REQUEST['pdf_template_id'])) {
 
@@ -57,6 +66,15 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                 $this->SetSubject($pdfTemplate->subject);
                 $this->SetKeywords($pdfTemplate->keywords);
                 $this->templateLocation = $this->buildTemplateFile($pdfTemplate, $previewMode);
+
+                if (!empty($pdfTemplate->header_logo_url) && !empty($pdfTemplate->header_title) && !empty($pdfTemplate->header_text)) {
+                    $this->setHeaderData($pdfTemplate->header_logo_url, PDF_HEADER_LOGO_WIDTH, $pdfTemplate->header_title, $pdfTemplate->header_text);
+                    $this->setPrintHeader(true);
+                }
+                if (!empty($pdfTemplate->footer_text)) {
+                    $this->footerText = $pdfTemplate->footer_text;
+                }
+
 
                 $filenameParts = array();
                 if (!empty($this->bean) && !empty($this->bean->name)) {
@@ -78,9 +96,6 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
         } else {
             $fields = array();
         }
-
-        // to show footer (page number)
-        $this->print_footer = true;
 
         if ($this->module == 'Quotes' && $previewMode === FALSE) {
             global $locale;
@@ -382,5 +397,92 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
         }
 
         parent::Output($name, 'D');
+    }
+
+    /**
+     * PDF manager specific Header function
+     */
+    public function Header() {
+  			$ormargins = $this->getOriginalMargins();
+  			$headerfont = $this->getHeaderFont();
+  			$headerdata = $this->getHeaderData();
+  			if (($headerdata['logo']) AND ($headerdata['logo'] != K_BLANK_IMAGE)) {
+                $this->Image($headerdata['logo'], $this->GetX(), $this->getHeaderMargin(), $headerdata['logo_width'], 12);
+  				$imgy = $this->getImageRBY();
+  			} else {
+  				$imgy = $this->GetY();
+  			}
+  			$cell_height = round(($this->getCellHeightRatio() * $headerfont[2]) / $this->getScaleFactor(), 2);
+  			// set starting margin for text data cell
+  			if ($this->getRTL()) {
+  				$header_x = $ormargins['right'] + ($headerdata['logo_width'] * 1.1);
+  			} else {
+  				$header_x = $ormargins['left'] + ($headerdata['logo_width'] * 1.1);
+  			}
+  			$this->SetTextColor(0, 0, 0);
+  			// header title
+  			$this->SetFont($headerfont[0], 'B', $headerfont[2] + 1);
+  			$this->SetX($header_x);
+  			$this->Cell(0, $cell_height, $headerdata['title'], 0, 1, '', 0, '', 0);
+  			// header string
+  			$this->SetFont($headerfont[0], $headerfont[1], $headerfont[2]);
+  			$this->SetX($header_x);
+  			$this->MultiCell(0, $cell_height, $headerdata['string'], 0, '', 0, 1, '', '', true, 0, false);
+  			// print an ending header line
+  			$this->SetLineStyle(array('width' => 0.85 / $this->getScaleFactor(), 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)));
+  			$this->SetY((2.835 / $this->getScaleFactor()) + max($imgy, $this->GetY()));
+  			if ($this->getRTL()) {
+  				$this->SetX($ormargins['right']);
+  			} else {
+  				$this->SetX($ormargins['left']);
+  			}
+  			$this->Cell(0, 0, '', 'T', 0, 'C');
+  		}
+
+    /**
+     * PDF manager specific Footer function
+     */
+    public function Footer() {
+        $cur_y = $this->GetY();
+        $ormargins = $this->getOriginalMargins();
+        $this->SetTextColor(0, 0, 0);
+        //set style for cell border
+        $line_width = 0.85 / $this->getScaleFactor();
+        $this->SetLineStyle(array('width' => $line_width, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)));
+        //print document barcode
+        $barcode = $this->getBarcode();
+        if (!empty($barcode)) {
+            $this->Ln($line_width);
+            $barcode_width = round(($this->getPageWidth() - $ormargins['left'] - $ormargins['right'])/3);
+            $this->write1DBarcode($barcode, 'C128B', $this->GetX(), $cur_y + $line_width, $barcode_width, (($this->getFooterMargin() / 3) - $line_width), 0.3, '', '');
+        }
+        if (empty($this->pagegroups)) {
+            $pagenumtxt = $this->l['w_page'].' '.$this->getAliasNumPage().' / '.$this->getAliasNbPages();
+        } else {
+            $pagenumtxt = $this->l['w_page'].' '.$this->getPageNumGroupAlias().' / '.$this->getPageGroupAlias();
+        }
+        $this->SetY($cur_y);
+
+        if ($this->getRTL()) {
+            $this->SetX($ormargins['right']);
+            if ($this->footerText) {
+                // footer text and page number
+                $this->Cell(0, 0, $this->footerText, 'T', 0, 'R');
+                $this->Cell(0, 0, $pagenumtxt, 0, 0, 'L');
+            } else {
+                // page number only
+                $this->Cell(0, 0, $pagenumtxt, 'T', 0, 'L');
+            }
+        } else {
+            $this->SetX($ormargins['left']);
+            if ($this->footerText) {
+                // footer text and page number
+                $this->Cell(0, 0, $this->footerText, 'T', 0, 'L');
+                $this->Cell(0, 0, $pagenumtxt, 0, 0, 'R');
+            } else {
+                // page number only
+                $this->Cell(0, 0, $pagenumtxt, 'T', 0, 'R');
+            }
+        }
     }
 }

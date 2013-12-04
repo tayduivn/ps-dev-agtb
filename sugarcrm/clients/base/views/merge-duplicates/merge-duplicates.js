@@ -18,11 +18,9 @@
  * @extends View.Views.BaseListView
  */
 ({
-    plugins: ['Editable', 'ErrorDecoration', 'Tooltip', 'EllipsisInline'],
+    plugins: ['Editable', 'ErrorDecoration', 'Tooltip', 'EllipsisInline', 'MergeDuplicates'],
     extendsFrom: 'ListView',
     events: {
-        'click [data-action=more]' : 'toggleMoreLess',
-        'click [data-action=less]' : 'toggleMoreLess',
         'click [data-mode=preview]' : 'togglePreview',
         'click [data-action=copy]' : 'triggerCopy'
     },
@@ -128,7 +126,7 @@
      *
      * TODO: remove types that have properly implementation for merge interface
      */
-    fieldTypesBlacklist: ['currency', 'email', 'team_list', 'teamset', 'link', 'id', 'password'],
+    fieldTypesBlacklist: ['email', 'team_list', 'link', 'id', 'password'],
 
     /**
      * Links names won't be mergeable.
@@ -191,7 +189,7 @@
         { type: 'text', source: 'db' },
         { type: 'date', source: 'db' },
         { type: 'time', source: 'db' },
-        { type: 'currency', source: 'db' },
+        { type: 'currency', source: 'db', calculated: false },
         { type: 'int', source: 'db' },
         { type: 'long', source: 'db' },
         { type: 'double', source: 'db' },
@@ -201,7 +199,8 @@
         { dbType: 'double', source: 'db' },
         { type: 'relate' },
         { type: 'parent' },
-        { type: 'image' }
+        { type: 'image' },
+        { type: 'teamset' }
     ],
 
     /**
@@ -210,6 +209,12 @@
      * @property {Array} flattenFieldTypes
      */
     flattenFieldTypes: ['fieldset', 'fullname'],
+
+    /**
+     * Variable to store generated values for some types of fields (e.g. teamset).
+     * @property {Object} generatedValues
+     */
+    generatedValues: null,
 
     /**
      * {@inheritDoc}
@@ -265,15 +270,29 @@
      * @private
      */
     _prepareRecords: function() {
-        var records = this.checkAccessToModels(this.context.get('selectedDuplicates')),
-            primary;
+        var records = this._validateModelsForMerge(this.context.get('selectedDuplicates'));
 
-        primary = (this.context.has('primaryRecord')) ?
-            _.findWhere(records, {id: this.context.get('primaryRecord').id}) :
-            _.first(records);
+        this.setPrimaryRecord(this._findPrimary(records));
+        return records;
+    },
 
-        this.setPrimaryRecord(primary);
-        return [primary].concat(_.without(records, primary));
+    /**
+     * Find primary model from models chosen for merge.
+     *
+     * If primary model has no access to edit it finds first model that can
+     * be edited and sets it as primary.
+     *
+     * @param {Data.Bean[]} models Set of models to merge.
+     * @return {Data.Bean} Primary model
+     * @protected
+     */
+    _findPrimary: function(models) {
+        var primary = this.context.has('primaryRecord') &&
+            _.findWhere(models, {id: this.context.get('primaryRecord').id});
+
+        return primary || _.find(models, function(model) {
+            return app.acl.hasAccessToModel('edit', model);
+        });
     },
 
     /**
@@ -318,25 +337,6 @@
     },
 
     /**
-     * Check access for models selected for merge.
-     *
-     * @param {Data.Bean[]} models Models to check access for merge.
-     * @return {Data.Bean[]} Models with access.
-     */
-    checkAccessToModels: function(models) {
-        var result = [];
-        _.each(models, function(model) {
-            var hasAccess = _.every(['view', 'edit', 'delete'], function(acl) {
-                return app.acl.hasAccessToModel(acl, model);
-            });
-            if (hasAccess) {
-                result.push(model);
-            }
-        }, this);
-        return result;
-    },
-
-    /**
      * Handler for save merged records event.
      *
      * Shows confirmation message and calls
@@ -364,6 +364,7 @@
 
     /**
      * Saves primary record and triggers `mergeduplicates:primary:saved` event on success.
+     * Before saving triggers also `duplicate:unformat:field` event.
      *
      * @private
      */
@@ -372,6 +373,8 @@
             fields = this.getFieldNames().filter(function(field) {
             return app.acl.hasAccessToModel('edit', this.primaryRecord, field);
         }, this);
+
+        this.primaryRecord.trigger('duplicate:unformat:field');
 
         this.primaryRecord.save({}, {
             fieldsToValidate: fields,
@@ -458,29 +461,28 @@
     /**
      * Create metadata for panels.
      *
-     * Create a two panel viewdews metadata (visible, hidden) given list of fields and the collection
-     * The algorithm for determining field placement:
-     * 1. all fields should be base fields. fieldsets should be broken. no non-editable fields.
-     * 2. if a field is "similar" among all alternatives, it is placed in a hidden panel
-     * 3. if a field is "different" among all alternatives (i.e. there exists two alternatives such
-     * that the field value is not equal), it is placed in a visible panel.
-     *
      * @param {Array} fields The list of fields for the module.
-     * @param {Data.BeanCollection} collection The collection of records to merge.
-     * @param {Data.Bean} primaryRecord The primary record.
      * @return {Object} The metadata for the view template.
      * @private
      */
-    _generateMetadata: function(fields, collection, primaryRecord) {
-        var hiddenFields = [],
-            visibleFields = [],
-            alternatives = collection.without(primaryRecord);
+    _generateMetadata: function(fields) {
+        this.generatedValues = {
+            teamsets: []
+        };
 
         _.each(fields, function(field) {
-            if (this._isSimilar(field, primaryRecord, alternatives)) {
-                hiddenFields.push(field);
-            } else {
-                visibleFields.push(field);
+            if (field.type === 'teamset') {
+                this.generatedValues.teamsets[field.name] = _.chain(this.collection.models)
+                    .map(function(model) {
+                        return model.get(field.name);
+                    })
+                    .flatten()
+                    .uniq(false, function(item) {
+                        return item.id;
+                    })
+                    .value();
+                field.maxHeight = this.generatedValues.teamsets[field.name].length;
+                field.noRadioBox = true;
             }
         }, this);
 
@@ -488,11 +490,7 @@
             type: 'list',
             panels: [
                 {
-                    fields: visibleFields
-                },
-                {
-                    hide: true,
-                    fields: hiddenFields
+                    fields: fields
                 }
             ]
         };
@@ -716,18 +714,6 @@
     },
 
     /**
-     * Shows or hides additional fields.
-     *
-     * @param {Event} evt
-     */
-    toggleMoreLess: function(evt) {
-        this.toggled = !this.toggled;
-        this.$('[data-action=less]').toggleClass('hide', !this.toggled);
-        this.$('[data-action=more]').toggleClass('hide', this.toggled);
-        this.$('.col .extra').toggleClass('hide', !this.toggled);
-    },
-
-    /**
      * Updates the view's title.
      *
      * @param {String} title
@@ -744,7 +730,7 @@
      * Setup drag-n-drop functionality.
      */
     _renderHtml: function() {
-        this.meta = this._generateMetadata(this.mergeFields, this.collection, this.primaryRecord);
+        this.meta = this._generateMetadata(this.mergeFields);
 
         app.view.invokeParent(this, {
             type: 'view',
@@ -761,10 +747,6 @@
         }, this);
         this.setPrimaryEditable(this.primaryRecord.id);
         this.setDraggable();
-        if (this.toggled) {
-            this.toggleMoreLess();
-        }
-
         this._showAlertIfIdentical();
     },
 
@@ -782,21 +764,20 @@
         }
 
         var self = this,
-            visibleFields = _.first(this.meta.panels);
+            alternatives = this.collection.without(this.primaryRecord),
+            fields = _.first(this.meta.panels).fields || [],
+            notIdentical = false;
 
-        if (_.isEmpty(visibleFields.fields)) {
+        notIdentical = _.any(fields, function(field) {
+            return !this._isSimilar(field, this.primaryRecord, alternatives);
+        }, this);
+
+        if (!notIdentical) {
             app.alert.show('merge_confirmation_identical', {
                 level: 'confirmation',
                 messages: app.lang.get('TPL_MERGE_DUPLICATES_IDENTICAL', this.module),
                 onConfirm: function() {
                     self.layout.trigger('mergeduplicates:save:fire');
-                },
-                onLinkClick: function(event) {
-                    if ($(event.currentTarget).hasClass('cancel')) {
-                        if (!self.toggled) {
-                            self.toggleMoreLess();
-                        }
-                    }
                 }
             });
         }
@@ -820,6 +801,10 @@
             },
             stop: _.bind(self._onStopSorting, self)
         });
+
+        mergeContainer.find('[data-container=primary-label].disabled').sortable(
+            'option', 'disabled', true
+        );
     },
 
     /**
@@ -841,6 +826,7 @@
             self.$('[data-container=primary-label]').sortable('cancel');
             return;
         }
+
         if (self.primaryRecord && self.primaryRecord.id !== droppedTo.data('record-id')) {
             var changedAttributes = self.primaryRecord.changedAttributes(
                 self.primaryRecord.getSyncedAttributes()
@@ -877,18 +863,20 @@
         _.each(this.mergeFields, function(field) {
             var model = this.primaryRecord,
                 element = this.$('[data-field-name=' + field.name + '][data-record-id=' + model.id + ']'),
-                elements = this.$('[data-field-name=' + field.name + '][data-record-id!=' + model.id + ']'),
+                others = this.$('[data-field-name=' + field.name + '][data-record-id!=' + model.id + ']'),
                 editAccess = app.acl.hasAccessToModel('edit', model, field.name);
 
-            element.prop('disabled', !editAccess);
-            if (!editAccess) {
-                elements.prop('disabled', true);
+            element.prop('disabled', !editAccess || field.readonly);
+
+            if (!editAccess || field.readonly) {
+                others.prop('disabled', true);
                 return;
             }
-            _.each(elements, function(domElement) {
+
+            _.each(others, function(domElement) {
                 var el = $(domElement),
                     readAccess = app.acl.hasAccessToModel('read', this.collection.get(el.data('record-id')), field.name);
-                el.prop('disabled', !readAccess);
+                el.prop('disabled', !readAccess || field.readonly);
             }, this);
         }, this);
     },
@@ -901,6 +889,7 @@
      * the collection, with all fields in it. If id parameter is provided
      * switch primary record to new model before and revert old primary record
      * to standard record. If new model is same as primary no action is taken.
+     * Triggers `duplicate:format:field` before toggle fields.
      *
      * @param {String} [id] The record representing the new primary model.
      */
@@ -920,6 +909,8 @@
         if (oldPrimaryRecord && oldPrimaryRecord !== this.primaryRecord) {
             this.toggleFields(this.rowFields[oldPrimaryRecord.id], false);
         }
+
+        this.primaryRecord.trigger('duplicate:format:field');
 
         this.toggleFields(this.rowFields[this.primaryRecord.id], true);
         this.updatePrimaryTitle(app.utils.getRecordName(this.primaryRecord));
@@ -981,11 +972,16 @@
     /**
      * Event handler for radio box controls.
      *
+     * Before copy value from model or restore value
+     * triggers `before duplicate:field` event.
+     *
      * @param {Event} evt Mouse click event.
      */
     triggerCopy: function(evt) {
-        var recordId = this.$(evt.currentTarget).data('record-id'),
-            fieldName = this.$(evt.currentTarget).data('field-name'),
+        var currentTarget = this.$(evt.currentTarget),
+            recordId = currentTarget.data('record-id'),
+            recordItemId = currentTarget.data('record-item-id'),
+            fieldName = currentTarget.data('field-name'),
             fieldDefs = app.metadata.getModule(this.module).fields,
             model;
 
@@ -1005,6 +1001,14 @@
 
         if (!app.acl.hasAccessToModel('edit', this.primaryRecord, fieldName) ||
             !app.acl.hasAccessToModel('read', model, fieldName)) {
+            return;
+        }
+
+        var data = _.extend({}, currentTarget.data(), {
+            checked: currentTarget.prop('type') === 'checkbox' ?
+                currentTarget.prop('checked') : true
+        });
+        if (this.triggerBefore('duplicate:field', {model: model, data: data}) === false) {
             return;
         }
 
@@ -1030,7 +1034,8 @@
 
         this.primaryRecord.trigger(
             'duplicate:field:' + fieldName,
-            model !== this.primaryRecord ? model : null
+            model !== this.primaryRecord ? model : null,
+            model !== this.primaryRecord ? model.get(fieldName) : null
         );
     },
 
@@ -1053,7 +1058,11 @@
                 this.primaryRecord.get(fieldName)
         );
 
-        this.primaryRecord.trigger('duplicate:field:' + fieldName, null);
+        this.primaryRecord.trigger(
+            'duplicate:field:' + fieldName,
+            this.primaryRecord,
+            this.primaryRecord.get(fieldName)
+        );
     },
 
     /**
@@ -1073,23 +1082,27 @@
     _setRelatedFields: function(fieldName, model, synced) {
         synced = synced || false;
 
-        var fieldDefs = app.metadata.getModule(this.module).fields,
+        var fieldDefs = this.getFields(),
             defs = fieldDefs[fieldName],
             syncedAttributes = synced ? model.getSyncedAttributes() : {};
 
-        _.each(this.relatedFieldsMap, function(relatedField) {
-            if (_.isUndefined(defs[relatedField]) ||
-                _.isUndefined(fieldDefs[defs[relatedField]].name)
-            ) {
-                return;
-            }
+        // FIXME: populate_list is only available on related fields plus
+        // related_fields is only available on fieldsets, so this logic should
+        // be implemented on field side thus calling a method like
+        // this.fields[fieldName].revertTo(model); here
+        _.each([defs.populate_list, defs.related_fields], function(fields) {
+            _.each(fields, function(relatedField) {
+                if (_.isUndefined(fieldDefs[relatedField])) {
+                    return;
+                }
 
-            this.primaryRecord.set(
-                defs[relatedField],
-                !_.isUndefined(syncedAttributes[defs[relatedField]]) ?
-                    syncedAttributes[defs[relatedField]] :
-                    model.get(defs[relatedField])
-            );
+                this.primaryRecord.set(
+                    relatedField,
+                    !_.isUndefined(syncedAttributes[relatedField]) ?
+                        syncedAttributes[relatedField] :
+                        model.get(relatedField)
+                );
+            }, this);
         }, this);
     },
 
@@ -1527,7 +1540,10 @@
         }
         this.collection.on('reset', function(coll) {
             if (coll.length) {
-                this.setPrimaryRecord(coll.at(0));
+                _.each(coll.models, function(model) {
+                    model.readonly = !app.acl.hasAccessToModel('edit', model);
+                }, this);
+                this.setPrimaryRecord(this._findPrimary(coll.models));
             }
             if (this.disposed) {
                 return;

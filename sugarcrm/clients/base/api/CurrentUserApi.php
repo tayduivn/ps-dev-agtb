@@ -172,14 +172,15 @@ class CurrentUserApi extends SugarApi
         $current_user = $this->getUserBean();
 
         // Get the basics
-        $user_data = $this->getBasicUserInfo($api->platform);
+        $category = isset($args['category']) ? $args['category'] : 'global';
+        $user_data = $this->getBasicUserInfo($api->platform, $category);
 
         // Fill in the rest
         $user_data['type'] = self::TYPE_USER;
         if ($current_user->isAdmin()) {
             $user_data['type'] = self::TYPE_ADMIN;
         }
-        $user_data['show_wizard'] = $this->shouldShowWizard();
+        $user_data['show_wizard'] = $this->shouldShowWizard($category);
         $user_data['id'] = $current_user->id;
         $current_user->_create_proper_name_field();
         $user_data['full_name'] = $current_user->full_name;
@@ -226,10 +227,10 @@ class CurrentUserApi extends SugarApi
      * Used when building $user_data['show_wizard']
      * @return bool TRUE if client should run wizard
      */
-    public function shouldShowWizard()
+    public function shouldShowWizard($category = 'global')
     {
         $current_user = $this->getUserBean();
-        $isInstanceConfigured = $current_user->getPreference('ut');
+        $isInstanceConfigured = $current_user->getPreference('ut', $category);
         return !filter_var($isInstanceConfigured, FILTER_VALIDATE_BOOLEAN);
     }
 
@@ -451,15 +452,31 @@ class CurrentUserApi extends SugarApi
         return $this->userPrefMeta;
     }
 
-    
-    protected function getUserPref($user, $pref, $metaName) 
+    /**
+     * Gets a single preference for a user by name
+     * 
+     * @param User $user Current User object
+     * @param string $pref The name of the pref to get
+     * @param string $metaName The metadata property name, usually the same as $pref
+     * @param string $category The category for the preference
+     * @return array 
+     */
+    protected function getUserPref($user, $pref, $metaName, $category = 'global') 
     {
         $method = 'getUserPref' . ucfirst($pref);
         if (method_exists($this, $method)) {
-            return $this->$method($user);
+            return $this->$method($user, $category);
         }
-        
-        return array($metaName => $user->getPreference($pref));
+
+        // Get the val so we can check for null
+        $val = $user->getPreference($pref, $category);
+
+        // Set nulls to empty string
+        if (is_null($val)) {
+            $val = '';
+        }
+
+        return array($metaName => $val);
     }
 
     /**
@@ -482,10 +499,10 @@ class CurrentUserApi extends SugarApi
      * @param User $user The current user
      * @return string
      */
-    protected function getUserPrefTimezone($user)
+    protected function getUserPrefTimezone($user, $category = 'global')
     {
         // Grab the user's timezone preference if it's set
-        $val = $user->getPreference('timezone');
+        $val = $user->getPreference('timezone', $category);
 
         $timeDate = TimeDate::getInstance();
 
@@ -507,12 +524,12 @@ class CurrentUserApi extends SugarApi
         return array('timezone' => $val, 'tz_offset' => $offset, 'tz_offset_sec' => $offsetSec);
     }
     
-    protected function getUserPrefCurrency($user)
+    protected function getUserPrefCurrency($user, $category = 'global')
     {
         global $locale;
         
         $currency = BeanFactory::getBean('Currencies');
-        $currency_id = $user->getPreference('currency');
+        $currency_id = $user->getPreference('currency', $category);
         $currency->retrieve($currency_id);
         $return['currency_id'] = $currency->id;
         $return['currency_name'] = $currency->name;
@@ -528,17 +545,34 @@ class CurrentUserApi extends SugarApi
         return $return;
     }
     
+    /**
+     * Helper function that gets a default signature user pref
+     * 
+     * @param User $user Current User
+     * @return Array
+     */
     protected function getUserPrefSignature_default($user) 
     {
         // email signature preferences
         return array('signature_default' => $user->getDefaultSignature());
     }
     
-    protected function getUserPrefSignature_prepend($user)
+    /**
+     * Helper function to get a signature prepend setting
+     * 
+     * @param User $user Current User
+     * @return Array
+     */
+    protected function getUserPrefSignature_prepend($user, $category = 'global')
     {
-        return array('signature_prepend' => $user->getPreference('signature_prepend') ? 'true' : 'false');
+        return array('signature_prepend' => $user->getPreference('signature_prepend', $category) ? 'true' : 'false');
     }
     
+    /**
+     * Helper function to get the email link type user pref
+     * @param User $user Current User object
+     * @return array
+     */
     protected function getUserPrefEmail_link_type($user)
     {
         $useSugarEmailClient = ($user->getEmailClientPreference() === 'sugar');
@@ -552,6 +586,12 @@ class CurrentUserApi extends SugarApi
         return array('use_sugar_email_client' => ($useSugarEmailClient) ? 'true' : 'false');
     }
     
+    /**
+     * Utility function to get the users preferred language
+     * 
+     * @param User $user Current User object
+     * @return Array
+     */
     protected function getUserPrefLanguage($user)
     {
         // use their current auth language if it exists
@@ -575,7 +615,7 @@ class CurrentUserApi extends SugarApi
      * @param string $platform The platform for this request
      * @return array
      */
-    protected function getBasicUserInfo($platform)
+    protected function getBasicUserInfo($platform, $category = 'global')
     {
         global $current_user;
         
@@ -584,14 +624,10 @@ class CurrentUserApi extends SugarApi
         $user_data['preferences'] = array();
         foreach ($this->userPrefMeta as $pref => $metaName) {
             // Twitterate this, since long lines are the devil
-            $val = $this->getUserPref($current_user, $pref, $metaName);
+            $val = $this->getUserPref($current_user, $pref, $metaName, $category);
             $user_data['preferences'] = array_merge($user_data['preferences'], $val);
         }
         
-        // Handle timezones specially, the fallback is important
-        $timezone = $this->getUserPrefTimezone($current_user);
-        $user_data['preferences'] = array_merge($user_data['preferences'], $timezone);
-
         // Handle language on its own for now
         $lang = $this->getUserPrefLanguage($current_user);
         $user_data['preferences'] = array_merge($user_data['preferences'], $lang);
@@ -662,6 +698,12 @@ class CurrentUserApi extends SugarApi
     {
         $current_user = $this->getUserBean();
 
+        // For filtering results back
+        $pref_filter = array();
+        if (isset($args['pref_filter'])) {
+            $pref_filter = explode(',', $args['pref_filter']);
+        }
+
         $category = 'global';
         if (isset($args['category'])) {
             $category = $args['category'];
@@ -671,8 +713,31 @@ class CurrentUserApi extends SugarApi
         $prefs = (isset($current_user->user_preferences[$category])) ?
                         $current_user->user_preferences[$category] :
                         array();
+        
+        // Handle filtration of requested preferences
+        return $this->filterResults($prefs, $pref_filter);
+    }
+    
+    /**
+     * Filters results from a preferences request against a list of prefs
+     * 
+     * @param array $prefs Preferences collection for a user
+     * @param array $prefFilter Filter definition to filter against
+     * @return Array
+     */
+    protected function filterResults($prefs, $prefFilter) 
+    {
+        if (empty($prefFilter) || !is_array($prefFilter)) {
+            return $prefs;
+        }
 
-        return $prefs;
+        $return = array();
+        foreach ($prefFilter as $key) {
+            if (isset($prefs[$key])) {
+                $return[$key] = $prefs[$key];
+            }
+        }
+        return $return;
     }
     /**
      * Update multiple user preferences at once
@@ -713,6 +778,8 @@ class CurrentUserApi extends SugarApi
      */
     public function userPreference($api, $args)
     {
+        // Get the pref so we can find out if it needs special handling
+        $pref = $args['preference_name'];
         $current_user = $this->getUserBean();
 
         $category = 'global';
@@ -721,9 +788,20 @@ class CurrentUserApi extends SugarApi
         }
         $this->forceUserPreferenceReload($current_user);
 
-        $pref = $current_user->getPreference($args['preference_name'], $category);
+        // Handle special cases if there are any
+        $prefKey = array_search($pref, $this->userPrefMeta);
+        $alias   = $prefKey ? $prefKey : $pref;
+        $data = $this->getUserPref($current_user, $alias, $pref, $category);
 
-        return (!is_null($pref)) ? $pref : "";
+        // If the value of the user pref is not an array, or is an array but does
+        // not contain an index with the same name as our pref, send the response 
+        // back an array keyed on the pref. This turns prefs like "m/d/Y" or ""
+        // into {"datef": "m/d/Y"} on the client.
+        if (!is_array($data) || !isset($data[$pref])) {
+            return array($pref => $data);
+        }
+
+        return $data;
     }
 
     /**
@@ -756,7 +834,7 @@ class CurrentUserApi extends SugarApi
      *
      * @param  RestService $api
      * @param  array       $args
-     * @return mixed
+     * @return array
      */
     public function userPreferenceDelete($api, $args)
     {
@@ -772,7 +850,7 @@ class CurrentUserApi extends SugarApi
         $current_user->setPreference($preferenceName, null, 0, $category);
         $current_user->save();
 
-        return $preferenceName;
+        return array($preferenceName => "");
     }
 
     /**

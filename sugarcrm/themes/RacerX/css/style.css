@@ -6604,6 +6604,11 @@ ul.clickMenu {
 }
 ul.clickMenu form, div.action_buttons form, div.action_buttons input {float:left;}
 
+div.action_buttons > form {
+    display: inline;
+    float: none;
+}
+
 /** bug 55940 - prevent wrapping of action buttons in button mode in the detail view header **/
 .actionsContainer div.action_buttons input {
     float:none;

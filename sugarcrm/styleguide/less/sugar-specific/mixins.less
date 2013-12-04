@@ -124,6 +124,12 @@
       border-top-left-radius: @tl-radius;
 }
 
+.calcWidth(@val) {
+  width: ~"-moz-calc(@{val})";
+  width: ~"-webkit-calc(@{val})";
+  width: ~"calc(@{val})";
+}
+
 .outline(@val) {
   outline: @val;
 }
@@ -156,9 +162,7 @@
   position: absolute;
   bottom: -5px;
   width: 100%;
-  width: ~"-moz-calc(100% + 1px)";
-  width: ~"-webkit-calc(100% + 1px)";
-  width: ~"calc(100% + 1px)";
+  .calcWidth(~"100% + 1px");
   height: 5px;
   left: 0;
   top: auto;

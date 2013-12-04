@@ -35,7 +35,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class SugarWidgetSubPanelTopCreateNoteButton extends SugarWidgetSubPanelTopButtonQuickCreate
 {
-	function &_get_form($defines, $additionalFormFields = null)
+	function &_get_form($defines, $additionalFormFields = null, &$sidecar)
 	{
 		global $app_strings;
 		global $currentModule;
@@ -141,8 +141,10 @@ class SugarWidgetSubPanelTopCreateNoteButton extends SugarWidgetSubPanelTopButto
         //SP-1630: Clicking Create from BWC subpanels for sidecar should open sidecar create view
         $sidecarButton = $this->_get_form_sidecar($defines);
         if ($sidecarButton) {
+            $sidecar = true;
             return $sidecarButton;
         }
+        $sidecar = false;
 		return $button;
 	}
 

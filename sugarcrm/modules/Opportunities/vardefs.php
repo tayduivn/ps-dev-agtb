@@ -53,7 +53,7 @@ $dictionary['Opportunity'] = array(
             'type' => 'relate',
             'table' => 'accounts',
             'join_name' => 'accounts',
-            'isnull' => 'true',
+            'isnull' => true,
             'module' => 'Accounts',
             'dbType' => 'varchar',
             'link' => 'accounts',
@@ -84,7 +84,7 @@ $dictionary['Opportunity'] = array(
             'type' => 'id',
             'dbType' => 'id',
             'table' => 'campaigns',
-            'isnull' => 'true',
+            'isnull' => true,
             'module' => 'Campaigns',
             //'dbType' => 'char',
             'reportable' => false,
@@ -98,7 +98,7 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_CAMPAIGN',
             'type' => 'relate',
             'link' => 'campaign_opportunities',
-            'isnull' => 'true',
+            'isnull' => true,
             'table' => 'campaigns',
             'module' => 'Campaigns',
             'source' => 'non-db',
@@ -141,6 +141,9 @@ $dictionary['Opportunity'] = array(
             'enforced' => true,
             'massupdate' => false,
             //END SUGARCRM flav=ent ONLY
+            //BEGIN SUGARCRM flav!=ent ONLY
+            'audited' => true,
+            //END SUGARCRM flav!=ent ONLY
             'validation' => array('type' => 'range', 'min' => 0),
             'related_fields' => array(
                 'currency_id',
@@ -164,7 +167,6 @@ $dictionary['Opportunity'] = array(
             'dbType' => 'currency',
             'disable_num_format' => true,
             'duplicate_merge' => '0',
-            'audited' => true,
             'comment' => 'Formatted amount of the opportunity',
             'studio' => array(
                 'wirelesslistview' => false,
@@ -234,9 +236,9 @@ $dictionary['Opportunity'] = array(
             'name' => 'date_closed',
             'vname' => 'LBL_DATE_CLOSED',
             'type' => 'date',
-            'audited' => true,
             'comment' => 'Expected or actual date the oppportunity will close',
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            'audited' => true,
             'importable' => 'required',
             'required' => true,
             //END SUGARCRM flav=pro && flav!=ent ONLY
@@ -244,7 +246,7 @@ $dictionary['Opportunity'] = array(
             'options' => 'date_range_search_dom',
             //BEGIN SUGARCRM flav=ent ONLY
             'readonly' => true,
-            'importable' => 'true',
+            'importable' => true,
             'massupdate' => false,
             'calculated' => true,
             'formula' => 'maxRelatedDate($revenuelineitems, "date_closed")',
@@ -286,11 +288,11 @@ $dictionary['Opportunity'] = array(
             'options' => 'sales_stage_dom',
             'default' => 'Prospecting',
             'len' => '255',
-            'audited' => true,
             'comment' => 'Indication of progression towards closure',
             'merge_filter' => 'enabled',
             'importable' => 'required',
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            'audited' => true,
             'required' => true,
             //END SUGARCRM flav=pro && flav!=ent ONLY
             //BEGIN SUGARCRM flav=ent ONLY
@@ -305,13 +307,13 @@ $dictionary['Opportunity'] = array(
             'type' => 'enum',
             'options' => 'sales_status_dom',
             'len' => '255',
-            'audited' => true,
             'readonly' => true,
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'studio' => false,
             'reportable' => false,
             //END SUGARCRM flav=pro && flav!=ent ONLY
             //BEGIN SUGARCRM flav=ent ONLY
+            'audited' => true,
             'massupdate' => false,
             //END SUGARCRM flav=ent ONLY
         ),
@@ -320,14 +322,15 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_PROBABILITY',
             'type' => 'int',
             'dbType' => 'double',
+            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'audited' => true,
+            //END SUGARCRM flav=pro && flav!=ent ONLY
             'comment' => 'The probability of closure',
             'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
             'merge_filter' => 'enabled',
             'formula' => 'getDropdownValue("sales_probability_dom",$sales_stage)',
             'calculated' => true,
         ),
-        //BEGIN SUGARCRM flav=PRO ONLY
         'best_case' => array(
             'name' => 'best_case',
             'vname' => 'LBL_BEST',
@@ -342,7 +345,9 @@ $dictionary['Opportunity'] = array(
             'enforced' => true,
             'massupdate' => false,
             //END SUGARCRM flav=ent ONLY
+            //BEGIN SUGARCRM flav!=ent ONLY
             'audited' => true,
+            //END SUGARCRM flav!=ent ONLY
             'related_fields' => array(
                 'currency_id',
                 'base_rate'
@@ -364,7 +369,9 @@ $dictionary['Opportunity'] = array(
             'enforced' => true,
             'massupdate' => false,
             //END SUGARCRM flav=ent ONLY
+            //BEGIN SUGARCRM flav!=ent ONLY
             'audited' => true,
+            //END SUGARCRM flav!=ent ONLY
             'related_fields' => array(
                 'currency_id',
                 'base_rate'
@@ -386,7 +393,6 @@ $dictionary['Opportunity'] = array(
             'reportable' => false
             //END SUGARCRM flav=ent ONLY
         ),
-        //END SUGARCRM flav=PRO ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         'total_revenue_line_items' => array(
             'name' => 'total_revenue_line_items',
@@ -496,7 +502,6 @@ $dictionary['Opportunity'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
         ),
-//BEGIN SUGARCRM flav=pro ONLY
         'quotes' => array(
             'name' => 'quotes',
             'type' => 'link',
@@ -504,7 +509,6 @@ $dictionary['Opportunity'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_QUOTES',
         ),
-        //END SUGARCRM flav=pro ONLY
 
         'project' => array(
             'name' => 'project',
@@ -548,7 +552,6 @@ $dictionary['Opportunity'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_CURRENCIES',
         ),
-        //BEGIN SUGARCRM flav=pro ONLY
         'contracts' => array(
             'name' => 'contracts',
             'type' => 'link',
@@ -580,7 +583,6 @@ $dictionary['Opportunity'] = array(
             'relationship' => 'opportunities_products',
             'source' => 'non-db',
         ),
-//END SUGARCRM flav=pro ONLY
     ),
     'indices' => array(
         array(
@@ -597,7 +599,12 @@ $dictionary['Opportunity'] = array(
             'name' => 'idx_opp_id_deleted',
             'type' => 'index',
             'fields' => array('id', 'deleted'),
-        )
+        ),
+        array('name' => 'idx_opportunity_sales_status', 'type' => 'index', 'fields' => array('sales_status')),
+        array('name' => 'idx_opportunity_opportunity_type', 'type' => 'index', 'fields' => array('opportunity_type')),
+        array('name' => 'idx_opportunity_lead_source', 'type' => 'index', 'fields' => array('lead_source')),
+        array('name' => 'idx_opportunity_next_step', 'type' => 'index', 'fields' => array('next_step')),
+        array('name' => 'idx_opportunity_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
     ),
     'relationships' => array(
         'opportunity_calls' => array(
@@ -610,8 +617,7 @@ $dictionary['Opportunity'] = array(
             'relationship_type' => 'one-to-many',
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Opportunities'
-        )
-    ,
+        ),
         'opportunity_meetings' => array(
             'lhs_module' => 'Opportunities',
             'lhs_table' => 'opportunities',
@@ -622,8 +628,7 @@ $dictionary['Opportunity'] = array(
             'relationship_type' => 'one-to-many',
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Opportunities'
-        )
-    ,
+        ),
         'opportunity_tasks' => array(
             'lhs_module' => 'Opportunities',
             'lhs_table' => 'opportunities',
@@ -634,8 +639,7 @@ $dictionary['Opportunity'] = array(
             'relationship_type' => 'one-to-many',
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Opportunities'
-        )
-    ,
+        ),
         'opportunity_notes' => array(
             'lhs_module' => 'Opportunities',
             'lhs_table' => 'opportunities',
@@ -646,8 +650,7 @@ $dictionary['Opportunity'] = array(
             'relationship_type' => 'one-to-many',
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Opportunities'
-        )
-    ,
+        ),
         'opportunity_emails' => array(
             'lhs_module' => 'Opportunities',
             'lhs_table' => 'opportunities',
@@ -658,8 +661,7 @@ $dictionary['Opportunity'] = array(
             'relationship_type' => 'one-to-many',
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Opportunities'
-        )
-    ,
+        ),
         'opportunity_leads' => array(
             'lhs_module' => 'Opportunities',
             'lhs_table' => 'opportunities',
@@ -668,8 +670,7 @@ $dictionary['Opportunity'] = array(
             'rhs_table' => 'leads',
             'rhs_key' => 'opportunity_id',
             'relationship_type' => 'one-to-many'
-        )
-    ,
+        ),
         'opportunity_currencies' => array(
             'lhs_module' => 'Opportunities',
             'lhs_table' => 'opportunities',
@@ -678,8 +679,7 @@ $dictionary['Opportunity'] = array(
             'rhs_table' => 'currencies',
             'rhs_key' => 'id',
             'relationship_type' => 'one-to-many'
-        )
-    ,
+        ),
         'opportunities_assigned_user' => array(
             'lhs_module' => 'Users',
             'lhs_table' => 'users',
@@ -688,9 +688,7 @@ $dictionary['Opportunity'] = array(
             'rhs_table' => 'opportunities',
             'rhs_key' => 'assigned_user_id',
             'relationship_type' => 'one-to-many'
-        )
-
-    ,
+        ),
         'opportunities_modified_user' => array(
             'lhs_module' => 'Users',
             'lhs_table' => 'users',
@@ -718,7 +716,6 @@ $dictionary['Opportunity'] = array(
             'rhs_key' => 'campaign_id',
             'relationship_type' => 'one-to-many'
         ),
-        //BEGIN SUGARCRM flav=pro ONLY
         'opportunities_revenuelineitems' => array(
             'lhs_module' => 'Opportunities',
             'lhs_table' => 'opportunities',
@@ -728,7 +725,6 @@ $dictionary['Opportunity'] = array(
             'rhs_key' => 'opportunity_id',
             'relationship_type' => 'one-to-many'
         ),
-        //END SUGARCRM flav=pro ONLY
     ),
     'duplicate_check' => array(
         'enabled' => true,
@@ -757,9 +753,6 @@ VardefManager::createVardef(
     array(
         'default',
         'assignable',
-//BEGIN SUGARCRM flav=pro ONLY
         'team_security',
-//END SUGARCRM flav=pro ONLY
     )
 );
-?>

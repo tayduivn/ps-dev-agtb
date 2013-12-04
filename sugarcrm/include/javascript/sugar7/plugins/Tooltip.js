@@ -28,7 +28,18 @@
     app.events.on('app:init', function() {
         app.plugins.register('Tooltip', ['layout', 'view', 'field'], {
             _$pluginTooltips: null, //array of all initialized tooltips
-            _pluginTooltipCssSelector: '[rel=tooltip]', //CSS selector used to find tooltips
+
+            /**
+             * CSS selector used to find tooltips.
+             * To overwrite the css selector,
+             * assign the custom selector on `pluginTooltipCssSelector`.
+             * In order to assign multiple selector,
+             * assign the selector by comma separator.
+             * <pre>
+             *     pluginTooltipCssSelector: 'select1, select2, selectN',
+             * </pre>
+             */
+            _pluginTooltipCssSelector: '[rel=tooltip]',
 
             /**
              * Initialize tooltips on render and destroy tooltip before render for views and fields.
@@ -82,17 +93,19 @@
              */
             addPluginTooltips: function($element) {
                 var $tooltips = this._getPluginTooltips($element);
-                this._$pluginTooltips  = this._$pluginTooltips || [];
-                this._$pluginTooltips.push(app.utils.tooltip.initialize($tooltips));
+                if ($tooltips.length > 0) {
+                    this._$pluginTooltips  = this._$pluginTooltips || [];
+                    this._$pluginTooltips.push(app.utils.tooltip.initialize($tooltips));
 
-                //hide tooltip when clicked
-                $tooltips.on('click.tooltip', function() {
-                    var plugin = $(this).data('tooltip');
-                    if (plugin && plugin.options && plugin.options.trigger === 'click') {
-                        return;
-                    }
-                    $(this).tooltip('hide');
-                });
+                    //hide tooltip when clicked
+                    $tooltips.on('click.tooltip', function() {
+                        var tooltip = $(this).data('bs.tooltip');
+                        if (tooltip && tooltip.options && tooltip.options.trigger.indexOf('click') === -1) {
+                            tooltip.hide();
+                        }
+                    });
+                    app.accessibility.run($tooltips, 'click');
+                }
             },
 
             /**
@@ -100,8 +113,21 @@
              * @param {jQuery} $element (optional)
              */
             removePluginTooltips: function($element) {
-                var $tooltips = this._getPluginTooltips($element);
-                app.utils.tooltip.destroy($tooltips);
+                var $tooltips;
+                if ($element) {
+                    $tooltips = this._getPluginTooltips($element);
+                } else {
+                    $tooltips = this._$pluginTooltips;
+                }
+
+                if ($tooltips && $tooltips.length > 0) {
+                    _.each($tooltips, function(tooltip) {
+                        if ($(tooltip).data('bs.tooltip') && $(tooltip).data('bs.tooltip').$tip) {
+                            $(tooltip).data('bs.tooltip').$tip.remove();
+                        }
+                    }, this);
+                    app.utils.tooltip.destroy($tooltips);
+                }
             },
 
             /**
@@ -111,7 +137,8 @@
              * @private
              */
             _getPluginTooltips: function($element) {
-                return $element ? $element.find(this._pluginTooltipCssSelector) : this.$(this._pluginTooltipCssSelector);
+                var selector = this.pluginTooltipCssSelector || this._pluginTooltipCssSelector;
+                return $element ? $element.find(selector) : this.$(selector);
             }
         });
     });

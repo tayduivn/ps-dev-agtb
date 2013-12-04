@@ -108,7 +108,9 @@ class SugarFieldDatetimeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testFixForFilter($date, $op, $fixedDate)
     {
         $field = SugarFieldHandler::getSugarField('datetime');
-        $field->fixForFilter($date, 'date_entered', BeanFactory::getBean('Accounts'), new SugarQuery, new SugarQuery_Builder_AndWhere, $op);
+        $q = new SugarQuery();
+        $w = new SugarQuery_Builder_AndWhere($q);
+        $field->fixForFilter($date, 'date_entered', BeanFactory::getBean('Accounts'), $q, $w, $op);
         $this->assertEquals($fixedDate, $date);
     }
 }

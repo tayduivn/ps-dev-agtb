@@ -394,25 +394,16 @@ describe('View.BaseDashablelistView', function() {
         });
 
         describe('get correct list view metadata (_getListMeta)', function() {
-            var legacyStub, sidecarStub, metadataStub;
+            var sidecarStub, metadataStub;
 
             beforeEach(function() {
-                legacyStub = sinon.collection.stub(app.bwc, 'getLegacyMetadata');
                 sidecarStub = sinon.collection.stub(app.metadata, 'getView');
                 metadataStub = sinon.collection.stub(app.metadata, 'getModule');
-            });
-
-            it('uses legacy metadata when a module is in backwards compatibility mode', function() {
-                metadataStub.returns({isBwcEnabled: true});
-                view._getListMeta('foo');
-                expect(legacyStub).toHaveBeenCalledOnce();
-                expect(sidecarStub).not.toHaveBeenCalled();
             });
 
             it('uses Sidecar metadata when a module is not in backwards compatibility mode', function() {
                 metadataStub.returns({isBwcEnabled: false});
                 view._getListMeta('foo');
-                expect(legacyStub).not.toHaveBeenCalled();
                 expect(sidecarStub).toHaveBeenCalledOnce();
             });
         });

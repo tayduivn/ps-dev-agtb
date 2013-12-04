@@ -195,7 +195,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                    "INNER JOIN opportunities o " .
                    "on o.id = p.opportunity_id " .
                    "WHERE p.opportunity_id IS NOT NULL " .
-                   "AND p.quote_id IS NULL";
+                   "AND (p.quote_id IS NULL OR p.quote_id = '')";
             $this->db->query($sql);
             $this->log('Done migrating 6.7 Products with Opportunities and without Quotes.');
             
@@ -282,7 +282,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
         $this->log('Removing Products that were moved.');
         $sql = "DELETE FROM products " .
                "WHERE opportunity_id IS NOT NULL " .
-               "AND quote_id IS NULL";
+               "AND (quote_id IS NULL OR quote_id = '')";
         $this->db->query($sql);
         $this->log('Done removing Products that were moved.');
         

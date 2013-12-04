@@ -88,7 +88,7 @@ class SidecarLeadConvertMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         }
 
         //...and then merge them with default defs and apply cross module business logic
-        $moduleList = $this->getMetadataParser()->mergeConvertDefs($moduleList);
+        $moduleList = $this->getMetadataParser()->mergeConvertDefs($moduleList, true);
 
         $this->sidecarViewdefs = array('modules' => $moduleList);
 

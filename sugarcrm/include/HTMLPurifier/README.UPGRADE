@@ -1,0 +1,7 @@
+If you going to upgrade HTMLPurifier.standalone.php file please note that you should save changes from Bug #61818.
+
+Code is marked by comments like
+
+// CODE HAS TO BE MOVED WITH UPGRADE START
+code which should be moved
+// CODE HAS TO BE MOVED WITH UPGRADE END

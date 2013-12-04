@@ -51,33 +51,15 @@
     },
 
     /**
-     * {@inheritDoc}
-     *
-     * Override field templates for merge-duplicate view.
-     */
-    _loadTemplate: function() {
-        this._super('_loadTemplate');
-        if (this.view.name === 'merge-duplicates') {
-            this.template = app.template.getField(this.type,
-                'detail',
-                this.module, this.tplName
-            ) || app.template.empty;
-            this.tplName = 'list';
-        }
-    },
-
-    /**
      * Handler to refresh field state.
      *
      * Called from {@link app.plugins._onFieldDuplicate}
      */
     onFieldDuplicate: function() {
-        if (this.disposed) {
+        if (this.disposed || this.view.name !== 'merge-duplicates') {
             return;
         }
-        if (this.view.name === 'merge-duplicates') {
-            this.render();
-        }
+        this.render();
     },
 
     /**
@@ -350,8 +332,7 @@
      * @param errors
      */
     handleValidationError: function(errors) {
-        var errorMessages = [],
-            $tooltip;
+        var errorMessages = [];
 
         if (this.action === 'detail') {
             this.setMode('edit');
@@ -369,11 +350,7 @@
             errorMessages.push(app.error.getErrorString(errorName, errorContext));
         });
         this.$('.image_field').append(this.exclamationMarkTemplate(errorMessages));
-        $tooltip = this.$('.error-tooltip');
-        if (_.isFunction($tooltip.tooltip)) {
-            var tooltipOpts = { container: 'body', placement: 'right', trigger: 'click' };
-            $tooltip.tooltip(tooltipOpts);
-        }
+        this.createErrorTooltips(this.$('.error-tooltip'));
     },
 
     /**

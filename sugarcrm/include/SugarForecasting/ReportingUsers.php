@@ -168,6 +168,8 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
                 'reports_to_id' => $user->reports_to_id,
                 'reports_to_name' => $user->reports_to_name,
                 'title' => $user->title,
+                'is_manager' => User::isManager($user->id),
+                'is_top_level_manager' => User::isTopLevelManager($user->id),
             ),
             'state' => $state,
             'attr' => array(

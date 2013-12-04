@@ -29,6 +29,9 @@ class SidecarListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         $this->logUpgradeStatus('Converting ' . $this->client . ' list view defs for ' . $this->module);
         $newdefs = array();
         foreach ($this->legacyViewdefs as $field => $def) {
+            if (!$this->isValidField($field)) {
+                continue;
+            }
             $defs = array();
             $defs['name'] = strtolower($field);
             unset($def['name']); // Prevents old defs from overriding the new

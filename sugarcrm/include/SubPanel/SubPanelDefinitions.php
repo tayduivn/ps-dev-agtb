@@ -551,8 +551,17 @@ class aSubPanel
     protected function set_panel_definition(array $definition)
     {
         //BEGIN SUGARCRM flav=pro ONLY
-        if (isset($definition['list_fields'])
-            && is_array($definition['list_fields'])) {
+        // Check if there is a list_field defs, done in two line to make lines
+        // more readable
+        $hasListFields = isset($definition['list_fields'])
+                         && is_array($definition['list_fields']);
+
+        // Check if there is a bean, also done in two lines for readability
+        $hasBean = isset($this->template_instance)
+                   && $this->template_instance instanceof SugarBean;
+
+        // Now call expand_list_fields if we have what we need
+        if ($hasListFields && $hasBean) {
             $definition['list_fields'] = $this->expand_list_fields(
                 $this->template_instance,
                 $definition['list_fields']

@@ -87,6 +87,7 @@ class TeamSecurity extends SugarVisibility
                 return;
             }
             $join = $sugarQuery->join[$table_alias];
+            $join->query = $sugarQuery;
             $add_join = '';
             $this->addVisibilityFrom($add_join, $options);
             if(!empty($add_join)) {

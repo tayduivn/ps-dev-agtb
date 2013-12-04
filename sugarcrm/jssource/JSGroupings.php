@@ -246,7 +246,6 @@
                    'include/javascript/nvd3/nv.d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/sugar7/error.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/sugar7/touch.js' => 'include/javascript/sugar_sidecar.min.js',
-                   'portal2/views/alert-view.js'    => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/select2/select2.js' => 'include/javascript/sugar_sidecar.min.js',
                    //To fix some issues on select2 plugin.
                    'include/javascript/sugar7/plugins/Select2.js'  => 'include/javascript/sugar_sidecar.min.js',
@@ -255,7 +254,6 @@
                    'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.effects.custombounce.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.nouislider.js' => 'include/javascript/sugar_sidecar.min.js',
-                   'include/javascript/jquery/jquery.dataTables.js' => 'include/javascript/sugar_sidecar.min.js',
                    //BEGIN SUGARCRM flav=pro ONLY
                    //Expression Engine
                    'sidecar/lib/sugarlogic/expressions.js'              => 'include/javascript/sugar_sidecar.min.js',

@@ -428,6 +428,10 @@ $dictionary['Project'] = array(
 			'type' =>'primary',
 			'fields'=>array('id')
 		),
+        array('name' => 'idx_project_name', 'type' => 'index', 'fields' => array('name')),
+        array('name' => 'idx_project_estimated_start_date', 'type' => 'index', 'fields' => array('estimated_start_date')),
+        array('name' => 'idx_project_estimated_end_date', 'type' => 'index', 'fields' => array('estimated_end_date')),
+        array('name' => 'idx_project_status', 'type' => 'index', 'fields' => array('status')),
 	),
 	'relationships' => array(
 		'projects_notes' => array(

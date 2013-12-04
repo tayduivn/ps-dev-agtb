@@ -141,6 +141,9 @@ END;
                     $displayParams = array('colspan' => $maxcols);
                     // Either a string field name or an instruction
                     if (is_string($row[0])) {
+                        if (!$this->isValidField($row[0])) {
+                            continue;
+                        }
                         if ($maxcols == 1) {
                             $fields[] = $row[0];
                         } else {
@@ -152,6 +155,9 @@ END;
                             if (isset($row[0]['field'])) {
                                 // Old style field now maps to name
                                 $field = $row[0]['field'];
+                                if (!$this->isValidField($field)) {
+                                    continue;
+                                }
                                 unset($row[0]['field']);
                                 $fields[] = array_merge(
                                     array('name' => $field),
@@ -168,8 +174,14 @@ END;
                     // We actually have the necessary col count
                     foreach ($row as $field) {
                         if (is_string($field)) {
+                            if (!$this->isValidField($field)) {
+                                continue;
+                            }
                             $fields[] = $field;
                         } elseif (isset($field['field'])) {
+                            if (!$this->isValidField($field['field'])) {
+                                continue;
+                            }
                             $fields[] = $field['field'];
                         }
                     }

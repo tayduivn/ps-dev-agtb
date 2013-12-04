@@ -48,8 +48,8 @@ $mod_strings = array (
 	'LBL_UTILS'    => 'Utils',
 	// END Dashlet Categories
 
-	'ACCOUNT_REMOVE_PROJECT_CONFIRM' => 'Are you sure you want to remove this account from the project?',
-	'ERR_DELETE_RECORD' => 'You must specify a record number in order to delete the account.',
+	'ACCOUNT_REMOVE_PROJECT_CONFIRM' => 'Are you sure you want to remove this Account from the project?',
+	'ERR_DELETE_RECORD' => 'You must specify a record number in order to delete the Account.',
 	'LBL_ACCOUNT_INFORMATION' => 'Overview',
 	'LBL_ACCOUNT_NAME' => 'Account Name:',
 	'LBL_ACCOUNT' => 'Account:',
@@ -125,7 +125,7 @@ $mod_strings = array (
 	'LBL_PHONE_OFFICE' => 'Office Phone:',
 	'LBL_PHONE' => 'Phone:',
 	'LBL_POSTAL_CODE' => 'Postal Code:',
-	'LBL_PRODUCTS_TITLE'=>'Products',
+	'LBL_PRODUCTS_TITLE'=>'Quoted Line Items',
 	'LBL_PROJECTS_SUBPANEL_TITLE' => 'Projects',
 	'LBL_PUSH_BILLING' => 'Push Billing',
 	'LBL_PUSH_CONTACTS_BUTTON_LABEL' => 'Copy to Contacts',
@@ -160,8 +160,8 @@ $mod_strings = array (
 	'LNK_ACCOUNT_LIST' => 'View Accounts',
 	'LNK_NEW_ACCOUNT' => 'Create Account',
 	'LNK_IMPORT_ACCOUNTS' => 'Import Accounts',
-	'MSG_DUPLICATE' => 'The account record you are about to create might be a duplicate of an account record that already exists. Account records containing similar names are listed below.<br>Click Create Account to continue creating this new account, or select an existing account listed below.',
-	'MSG_SHOW_DUPLICATES' => 'The account record you are about to create might be a duplicate of an account record that already exists. Account records containing similar names are listed below.<br>Click Save to continue creating this new account, or click Cancel to return to the module without creating the account.',
+	'MSG_DUPLICATE' => 'The Account record you are about to create might be a duplicate of an Account record that already exists. Account records containing similar names are listed below.<br>Click Create Account to continue creating this new Account, or select an existing Account listed below.',
+	'MSG_SHOW_DUPLICATES' => 'The Account record you are about to create might be a duplicate of an Account record that already exists. Account records containing similar names are listed below.<br>Click Save to continue creating this new Account, or click Cancel to return to the module without creating the Account.',
 	'NTC_COPY_BILLING_ADDRESS' => 'Copy billing address to shipping address',
 	'NTC_COPY_BILLING_ADDRESS2' => 'Copy to shipping',
 	'NTC_COPY_SHIPPING_ADDRESS' => 'Copy shipping address to billing address',
@@ -184,5 +184,7 @@ $mod_strings = array (
     'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
     'LBL_FILENAME' => 'Attachment',
     'LBL_REVENUELINEITEMS' => 'Revenue Line Items',
-     'LBL_DUNS_NUM' => 'DUNS:',
+    'LBL_DUNS_NUM' => 'DUNS:',
+
+    'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
 );

@@ -107,6 +107,9 @@
         }, this);
         app.events.on('preview:close', function() {
             this.preview_open = false;
+            if (this.chartLoaded) {
+                this.chart.update();
+            }
         }, this);
         app.events.on('app:toggle:sidebar', function(state) {
             this.state = state;

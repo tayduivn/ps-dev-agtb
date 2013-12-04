@@ -73,7 +73,6 @@ $viewdefs['Notes']['base']['view']['record'] = array(
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'acl_module' => $module,
                     'acl_action' => 'create',
                 ),
                 array(

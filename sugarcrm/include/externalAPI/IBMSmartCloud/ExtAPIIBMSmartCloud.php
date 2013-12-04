@@ -130,7 +130,7 @@ class ExtAPIIBMSmartCloud extends OAuthPluginBase implements WebMeeting,WebDocum
         $reply = parent::quickCheckLogin();
         $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Parent Reply: '.print_r($reply,true));
         if ( $reply['success'] ) {
-            $reply = $this->makeRequest('/shindig-server/social/rest/people/@me/@self');
+            $reply = $this->makeRequest('/lotuslive-shindig-server/social/rest/people/@me/@self');
             $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): LL Reply: '.print_r($reply,true));
             if ( $reply['success'] == true ) {
                 if ( !empty($reply['responseJSON']['entry']['objectId']) ) {
@@ -174,7 +174,7 @@ class ExtAPIIBMSmartCloud extends OAuthPluginBase implements WebMeeting,WebDocum
                 return $reply;
             }
             // get user details
-            $reply = $this->makeRequest('/shindig-server/social/rest/people/@me/@self');
+            $reply = $this->makeRequest('/lotuslive-shindig-server/social/rest/people/@me/@self');
             if ( $reply['success'] == true ) {
                 $this->api_data['subscriberId'] = $reply['responseJSON']['entry']['objectId'];
             } else {

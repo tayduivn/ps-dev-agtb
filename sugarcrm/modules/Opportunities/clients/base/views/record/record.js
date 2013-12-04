@@ -99,31 +99,14 @@
             level: 'warning',
             autoClose: false,
             title: app.lang.get('LBL_ALERT_TITLE_WARNING') + ':',
-            messages: message
+            messages: message,
+            onLinkClick: _.bind(function() {
+                this.openRLICreate();
+            }, this),
+            onClose: _.bind(function() {
+                app.routing.offBefore('route', this.dismissAlert, this);
+            }, this)
         });
-
-        this.alert.$('a[href]').on('click.open', _.bind(function() {
-            // remove the event handler
-            this.alert.$('a[href]').off('click.open');
-            this.openRLICreate();
-        }, this));
-
-        this.alert.getCloseSelector().on('click', _.bind(function() {
-            this.alert.getCloseSelector().off('click');
-            app.routing.offBefore('route', this.dismissAlert, this);
-        }, this));
-    },
-
-    /**
-     * @inheritdocs
-     */
-    _dispose: function() {
-        // make sure if there's an alert we remove added listeners
-        if(this.alert){
-            this.alert.getCloseSelector().off('click');
-            this.alert.$('a[href]').off('click.open');
-        }
-        this._super('_dispose', []);
     },
 
     /**

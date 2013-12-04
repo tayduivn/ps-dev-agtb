@@ -218,6 +218,17 @@ describe("datetimecombo field", function() {
             minutes = forceTwoDigits(jsDate.getMinutes() + '');
             expect(field.format(unformatedValue).time).toEqual(hours + ':' + minutes);
             expect(field.format(unformatedValue).time).not.toEqual(hours + ':' + '00');
+            stubVerifyDateString.restore();
+        });
+        it("should only verify date strings via datepicker plugin if on edit view", function() {
+            var stubVerifyDateString = sinon.stub(field, '_verifyDateString', function() { return true; });
+            field.format('0123-01-01 16:56:00');
+            expect(stubVerifyDateString).not.toHaveBeenCalled();
+            stubVerifyDateString.reset();
+            field.view.name= 'edit';
+            field.format('0123-01-01 16:56:00');
+            expect(stubVerifyDateString).toHaveBeenCalled();
+            stubVerifyDateString.restore();
         });
     });
 

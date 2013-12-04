@@ -178,12 +178,8 @@
 
     &[data-type="textarea"] {
       .normal > span {
-        margin-bottom: 10px;
         width: 100%;
         word-wrap: break-word;
-      }
-      textarea {
-        margin-top: -5px;
       }
     }
     &[data-type="email"] {
@@ -251,9 +247,7 @@
     &[data-type="enum"] .normal > span
     .select2-container.select2-container-multi.select2-choices-pills-close {
       position: relative;
-      width: ~"-moz-calc(100% + 16px)" !important;
-      width: ~"-webkit-calc(100% + 16px)" !important;
-      width: ~"calc(100% + 16px)" !important;
+      .calcWidth(~"100% + 16px") !important;
     }
 
     &[data-type="parent"] {
@@ -301,9 +295,7 @@
     &[data-type="datetimecombo"] {
       input[type="text"] {
         width: 40%;
-        width: ~"-moz-calc(100% / 2 - 12px)";
-        width: ~"-webkit-calc(100% / 2 - 12px)";
-        width: ~"calc(100% / 2 - 12px)";
+        .calcWidth(~"100% / 2 - 12px");
       }
       .input-append.date {
         .ui-timepicker-input,
@@ -374,7 +366,7 @@
       input[type="text"] {
         margin-top: -1px;
       }
-      .address.edit > .edit:nth-last-child(2) > input {
+      .address.edit > .edit:nth-last-of-type(2) > input {
         .border-bottom-left-radius(3px);
         .border-bottom-right-radius(3px);
       }
@@ -452,17 +444,13 @@
     .input-append {
       input[type="text"] {
         width: 95%;
-        width: ~"-moz-calc(100% - 14px)";
-        width: ~"-webkit-calc(100% - 14px)";
-        width: ~"calc(100% - 14px)";
+        .calcWidth(~"100% - 14px");
         margin-left: 0;
       }
     }
     > input[type="text"] {
       width: 50%;
-      width: ~"-moz-calc(100% - 114px)";
-      width: ~"-webkit-calc(100% - 114px)";
-      width: ~"calc(100% - 114px)";
+      .calcWidth(~"100% - 114px");
       margin-left: 0;
     }
     .select2-container {
@@ -586,5 +574,30 @@
       display: inline !important;
       overflow: visible;
     }
+  }
+}
+
+/* Record Subpanel Header Styling */
+
+.record-panel {
+  .record-panel-header {
+    background: #f5f5f5;
+    display: block !important;
+    padding: 5px 5px 5px 15px;
+    width: auto !important;
+    border-top: 1px solid rgba(220,220,220,1);
+    box-shadow: inset 0px 1px 0px 0px white;
+    border-bottom: 1px solid #cfcfcf;
+    cursor: pointer;
+    &:hover {
+      background: #fafafa;
+    }
+  }
+  .pull-right {
+    margin: 5px 5px 0px 0px;
+  }
+  .record-panel-content {
+    width: auto !important;
+    padding: 20px 20px 10px 5px;
   }
 }

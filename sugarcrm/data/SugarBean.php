@@ -1782,6 +1782,11 @@ class SugarBean
         }
         //END SUGARCRM flav=pro ONLY
 
+        // if this bean has a currency_id and base_rate, verify that base_rate is set to the correct amount
+        if (isset($this->field_defs['currency_id']) && isset($this->field_defs['base_rate'])) {
+            SugarCurrency::verifyCurrencyBaseRateSet($this);
+        }
+
         require_once("data/BeanFactory.php");
         BeanFactory::registerBean($this->module_name, $this);
 
@@ -2274,7 +2279,7 @@ class SugarBean
             $xtpl = $this->set_notification_body($xtpl, $this);
         } else {
             //Default uses OBJECT key for both subject and body (see en_us.notify_template.html)
-            $singularModuleLabel = $GLOBALS['app_list_strings']['moduleListSingular'][$this->getObjectName()];
+            $singularModuleLabel = $GLOBALS['app_list_strings']['moduleListSingular'][$this->module_name];
             $xtpl->assign("OBJECT", $singularModuleLabel);
         }
 
@@ -4031,7 +4036,8 @@ class SugarBean
     					if(empty($ret_array['secondary_select']))
     					{
     						$ret_array['secondary_select'] = " SELECT $this->table_name.id ref_id  ";
-                            if(!empty($rel_mod) && $join_primary)
+                            // TODO: The SC-2127 has been created to separate SugaBean and export feature.
+                            if(!empty($rel_mod) && $join_primary && !$ifListForExport)
                             {
                                 if(isset($rel_mod->field_defs['assigned_user_id']))
                                 {
@@ -4120,7 +4126,8 @@ class SugarBean
                         {
                             $ret_array['from'] .= ' ' . $join['join']. ' AND ' . $params['join_table_alias'].'.deleted=0';
                             $rel_mod = BeanFactory::getBean($rel_module);
-                            if(!empty($rel_mod))
+                            // TODO: The SC-2127 has been created to separate SugaBean and export feature.
+                            if(!empty($rel_mod) && !$ifListForExport)
                             {
                                 if(isset($value['target_record_key']) && !empty($filter))
                                 {

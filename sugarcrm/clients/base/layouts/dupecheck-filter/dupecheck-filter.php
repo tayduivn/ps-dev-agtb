@@ -23,4 +23,7 @@ $viewdefs['base']['layout']['dupecheck-filter'] = array(
     ),
     'type' => 'dupecheck-filter',
     'span' => 12,
+    'last_state' => array(
+        'id' => 'dupecheck-filter',
+    ),
 );

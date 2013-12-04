@@ -78,6 +78,60 @@ class SugarUpgradeScanModules extends UpgradeScript
     }
 
     /**
+     * Extract hook filenames from logic hook file and put them into hook files list
+     * @param string $hookfile
+     * @param array &$hook_files
+     */
+    protected function extractHooks($hookfile, &$hook_files)
+    {
+        $hook_array = array();
+        if(!is_readable($hookfile)) {
+            return;
+        }
+        include $hookfile;
+        if(empty($hook_array)) {
+            return;
+        }
+        foreach($hook_array as $hooks) {
+            foreach($hooks as $hook) {
+                $hook_files[$hook[2]] = true;
+            }
+        }
+    }
+
+    /**
+     * Check if views dir was created by file template
+     * @param string $view_dir
+     * @return boolean
+     */
+    protected function checkViewsDir($view_dir)
+    {
+        foreach(glob("$view_dir/*") as $file) {
+            // for now we allow only view.edit.php
+            if(basename($file) != 'view.edit.php') {
+                $this->log("Unknown file $view_dir/$file");
+                return false;
+            }
+            $data = file_get_contents($file);
+            // start with first {
+            $data= substr($data, strpos($data, '{'));
+            // drop function names
+            $data = preg_replace('/function\s[<>_\w]+/', '', $data);
+            // drop whitespace
+            $data = preg_replace('/\s+/', '', $data);
+            /* File data is:
+             * {(){parent::ViewEdit();}(){if(isset($this->bean->id)){$this->ss->assign("FILE_OR_HIDDEN","hidden");if(empty($_REQUEST['isDuplicate'])||$_REQUEST['isDuplicate']=='false'){$this->ss->assign("DISABLED","disabled");}}else{$this->ss->assign("FILE_OR_HIDDEN","file");}parent::display();}}?>
+             * md5 is: c8251f6b50e3e814135c936f6b5292eb
+             */
+            if(md5($data) !== 'c8251f6b50e3e814135c936f6b5292eb') {
+                $this->log("Bad md5 for $file");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Is this a pure ModuleBuilder module?
      * @param string $module_dir
      * @return boolean
@@ -93,16 +147,34 @@ class SugarUpgradeScanModules extends UpgradeScript
         if(empty($this->beanFiles[$bean])) {
             return false;
         }
-        $mbFiles = array("Dashlets", "Menu.php", "language", "metadata", "vardefs.php", "clients");
+        $mbFiles = array("Dashlets", "Menu.php", "language", "metadata", "vardefs.php", "clients", "workflow");
         $mbFiles[] = basename($this->beanFiles[$bean]);
         $mbFiles[] = pathinfo($this->beanFiles[$bean], PATHINFO_FILENAME)."_sugar.php";
 
         // to make checks faster
         $mbFiles = array_flip($mbFiles);
+
+        $hook_files = array();
+        $this->extractHooks("custom/$module_dir/logic_hooks.php", $hook_files);
+        $this->extractHooks("custom/$module_dir/Ext/LogicHooks/logichooks.ext.php", $hook_files);
+
         // For now, the check is just checking if we have any files
         // in the directory that we do not recognize. If we do, we
         // put the module in BC.
         foreach(glob("$module_dir/*") as $file) {
+            if(isset($hook_files[$file])) {
+                // logic hook files are OK
+                continue;
+            }
+            if(basename($file) == "views") {
+                // check views separately because of file template that has view.edit.php
+                if(!$this->checkViewsDir("$module_dir/views")) {
+                    $this->log("Unknown file views present - $module_name is not MB module");
+                    return false;
+                } else {
+                    continue;
+                }
+            }
             if(!isset($mbFiles[basename($file)])) {
                 // unknown file, not MB module
                 $this->log("Unknown file $file - $module_name is not MB module");
@@ -115,6 +187,10 @@ class SugarUpgradeScanModules extends UpgradeScript
 
         // now check custom/ for unknown files
         foreach(glob("custom/$module_dir/*") as $file) {
+            if(isset($hook_files[$file])) {
+                // logic hook files are OK
+                continue;
+            }
             if(!isset($mbFiles[basename($file)])) {
                 // unknown file, not MB module
                 $this->log("Unknown file $file - $module_name is not MB module");

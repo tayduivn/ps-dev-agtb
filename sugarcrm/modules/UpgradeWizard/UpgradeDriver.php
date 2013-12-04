@@ -293,6 +293,9 @@ abstract class UpgradeDriver
      */
     public function log($msg)
     {
+        if(empty($this->context['log'])) {
+            return;
+        }
         if(empty($this->fp)) {
             $this->fp = @fopen($this->context['log'], 'a+');
         }
@@ -987,6 +990,7 @@ abstract class UpgradeDriver
             $sugar_version, $sugar_flavor, $sugar_build, $sugar_db_version, $sugar_timestamp, $db, $locale, $installing, $bwcModules, $app_list_strings;
         $installing = true;
         include('include/entryPoint.php');
+        $installing = false;
         $GLOBALS['current_language'] = $this->config['default_language'];
         if(empty($GLOBALS['current_language'])) {
             $GLOBALS['current_language'] = 'en_us';

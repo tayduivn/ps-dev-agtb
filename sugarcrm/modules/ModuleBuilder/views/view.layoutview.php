@@ -73,7 +73,7 @@ class ViewLayoutView extends SugarView
         global $mod_strings ;
         $parser = ParserFactory::getParser($this->editLayout,$this->editModule,$this->package);
         $history = $parser->getHistory () ;
-        $smarty = new Sugar_Smarty ( ) ;
+        $smarty = $this->getSmarty();
         //Add in the module we are viewing to our current mod strings
 		if (! $this->fromModuleBuilder) {
 			global $current_language;
@@ -294,11 +294,26 @@ class ViewLayoutView extends SugarView
 		    $smarty->assign('current_mod_strings', $module->getModStrings());
 		}
 
-        $ajax->addSection ( 'center', $translatedViewType, $smarty->fetch ( 'modules/ModuleBuilder/tpls/layoutView.tpl' ) ) ;
+        $ajax->addSection(
+            'center',
+            $translatedViewType,
+            $smarty->fetch(SugarAutoLoader::existingCustomOne('modules/ModuleBuilder/tpls/layoutView.tpl'))
+        );
         if ($preview) {
         	echo $smarty->fetch ( 'modules/ModuleBuilder/tpls/Preview/layoutView.tpl' );
 		} else {
 			echo $ajax->getJavascript () ;
     	}
+    }
+
+    /**
+     * @return Sugar_Smarty
+     */
+    protected function getSmarty()
+    {
+        if (is_null($this->ss)) {
+            $this->ss = new Sugar_Smarty();
+        }
+        return $this->ss;
     }
 }

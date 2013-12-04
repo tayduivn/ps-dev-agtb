@@ -39,6 +39,7 @@ $dictionary['Styleguide'] = array(
             'len'=> '255',
             'studio' => array('wirelesslistview'=>false),
             'comment' => 'Sugar module the Note is associated with',
+            'help' => 'Sugar module the Note is associated with.',
         ),
         'parent_id' => array(
             'name'=>'parent_id',
@@ -47,6 +48,7 @@ $dictionary['Styleguide'] = array(
             'required'=>false,
             'reportable'=>true,
             'comment' => 'The ID of the Sugar item specified in parent_type',
+            'help' => 'The ID of the Sugar item specified in parent_type.',
         ),
         'parent_name' => array(
             'name'=> 'parent_name',
@@ -57,6 +59,7 @@ $dictionary['Styleguide'] = array(
             'source'=>'non-db',
             'options'=> 'record_type_display_notes',
             'studio' => true,
+            'help' => 'The name of the Sugar item specified in parent_type.',
         ),
         'file_mime_type' => array (
             'name' => 'file_mime_type',
@@ -64,6 +67,7 @@ $dictionary['Styleguide'] = array(
             'type' => 'varchar',
             'len' => '100',
             'comment' => 'Attachment MIME type',
+            'help' => 'Attachment MIME type.',
             'importable' => false,
         ),
         'file_url'=> array(
@@ -73,6 +77,7 @@ $dictionary['Styleguide'] = array(
             'source'=>'non-db',
             'reportable'=>false,
             'comment' => 'Path to file (can be URL)',
+            'help' => 'Path to file (can be URL).',
             'importable' => false,
         ),
         'filename' => array (
@@ -83,6 +88,7 @@ $dictionary['Styleguide'] = array(
             'len' => '255',
             'reportable'=>true,
             'comment' => 'File name associated with the note (attachment)',
+            'help' => 'File name associated with the note (attachment).',
             'importable' => false,
         ),
         'description' => array (
@@ -90,6 +96,7 @@ $dictionary['Styleguide'] = array(
             'vname' => 'LBL_NOTE_STATUS',
             'type' => 'text',
             'comment' => 'Full text of the note',
+            'help' => 'Full text of the note.',
         ),
         'currency_id' => array(
             'name' => 'currency_id',
@@ -109,6 +116,7 @@ $dictionary['Styleguide'] = array(
             'len' => '26,6',
             'audited' => true,
             'comment' => 'List price of product ("List" in Quote)',
+            'help' => 'List price of product ("List" in Quote).',
         ),
         'website' => array (
             'name' => 'website',
@@ -118,13 +126,15 @@ $dictionary['Styleguide'] = array(
             'len' => 255,
             'link_target' => '_blank',
             'comment' => 'URL of website for the company',
+            'help' => 'URL of website for the company.',
         ),
         'birthdate' => array(
             'name' => 'birthdate',
             'vname' => 'LBL_BIRTHDATE',
             'type' => 'date',
             'dbType' => 'datetime',
-            'comment' => 'The birthdate of the contact'
+            'comment' => 'The birthdate of the contact',
+            'help' => 'The birthdate of the contact. Also, more information can be provided.',
         ),
         'secret_password' => array(
             'name' => 'secret_password',
@@ -132,7 +142,8 @@ $dictionary['Styleguide'] = array(
             'type' => 'password',
             'dbType' => 'varchar',
             'len' => 255,
-            'comment' => 'The password of the contact'
+            'comment' => 'The password of the contact',
+            'help' => 'The password of the contact.',
         ),
         'date_start' => array (
             'name' => 'date_start',
@@ -140,6 +151,7 @@ $dictionary['Styleguide'] = array(
             'type' => 'datetimecombo',
             'dbType' => 'datetime',
             'comment' => 'Date of start of meeting',
+            'help' => 'Date of start of meeting.',
         ),
         'radio_button_group' => array(
             'name' => 'radio_button_group',
@@ -147,13 +159,12 @@ $dictionary['Styleguide'] = array(
             'type' => 'radioenum',
             'dbType' => 'varchar',
             'len' => 255,
+            'help' => 'Radio button help example.',
         ),
     ),
     'indices' => array (
-
     ),
     'relationships' => array (
-
     ),
     'acls' => array(
         'SugarACLAdminOnly' => true,

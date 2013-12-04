@@ -26,9 +26,14 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<div class="alert {{alertClass}} alert-block">
-    {{#if title}}<strong>{{title}}</strong>{{/if}}
-    {{#each messages}}{{{this}}}{{/each}}
-    <a class="btn-link cancel" data-action="cancel">{{str 'LBL_CANCEL_BUTTON_LABEL'}}</a> {{#if cancelContLabel}}{{str cancelContLabel}}{{else}}{{str 'LBL_CANCEL_BUTTON_LABEL_CONT'}}{{/if}}
-    <a class="btn-link confirm" data-action="confirm">{{str 'LBL_CONFIRM_BUTTON_LABEL'}}</a> {{#if confirmContLabel}}{{str confirmContLabel}}{{else}}{{str 'LBL_CONFIRM_BUTTON_LABEL_CONT'}}{{/if}}
+<div class="alert-page-overlay"></div>
+<div class="alert-confirmation">
+    <div class="alert {{alertClass}} alert-block">
+        {{#if title}}<strong>{{title}}</strong>{{/if}}
+        <div class="alert-messages">{{#each messages}}{{this}}{{/each}}</div>
+        <div class="row-fluid">
+            <a class="span6 alert-btn-cancel" data-action="cancel">{{str 'LBL_CANCEL_BUTTON_LABEL'}}</a>
+            <a class="span6 alert-btn-confirm" data-action="confirm">{{str 'LBL_CONFIRM_BUTTON_LABEL'}}</a>
+        </div>
+    </div>
 </div>

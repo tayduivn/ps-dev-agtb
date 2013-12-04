@@ -221,7 +221,9 @@
                 onClose();
             })
         });
-        alert.getCloseSelector().on('click', onClose);
+        var $close = alert.getCloseSelector();
+        $close.on('click', onClose);
+        app.accessibility.run($close, 'click');
     },
 
     /**

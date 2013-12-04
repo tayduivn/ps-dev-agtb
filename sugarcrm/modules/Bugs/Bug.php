@@ -95,18 +95,20 @@ class Bug extends SugarBean {
         self::__construct();
     }
 
-	public function __construct() {
-		parent::__construct();
+    public function __construct()
+    {
+        parent::__construct();
 
 
-		$this->setupCustomFields('Bugs');
+        $this->setupCustomFields('Bugs');
 
-		foreach ($this->field_defs as $field)
-                {
-                        $this->field_name_map[$field['name']] = $field;
-                }
-
-	}
+        foreach ($this->field_defs as $field) {
+            if (!isset($field['name'])) {
+                continue;
+            }
+            $this->field_name_map[$field['name']] = $field;
+        }
+    }
 
 	var $new_schema = true;
 
@@ -382,4 +384,4 @@ function getReleaseDropDown(){
 	}
 	return $releases;
 }
-?>
+

@@ -23,7 +23,10 @@ describe("Forecasts.View.ForecastsConfigRanges", function() {
     var app, view, layout, context, testStub, cfgModel;
 
     beforeEach(function() {
+        Handlebars.templates = {};
         app = SugarTest.app;
+        SugarTest.testMetadata.init();
+
         cfgModel = new Backbone.Model();
         cfgModel.set({
             is_setup: 1,
@@ -73,9 +76,11 @@ describe("Forecasts.View.ForecastsConfigRanges", function() {
                         }
                     }
                 }]
-            },
-            layout = SugarTest.createLayout("base", 'Forecasts', "config-main", null, context, true);
-
+            };
+        SugarTest.loadHandlebarsTemplate('forecastsConfigRanges', 'view', 'base', null, 'Forecasts');
+        SugarTest.loadComponent('base', 'view', 'forecastsConfigRanges', 'Forecasts');
+        SugarTest.testMetadata.set();
+        layout = SugarTest.createLayout("base", 'Forecasts', "config-main", null, context, true);
         view = SugarTest.createView('base', 'Forecasts', 'forecastsConfigRanges', meta, context, true, layout, true);
     });
 
@@ -217,8 +222,8 @@ describe("Forecasts.View.ForecastsConfigRanges", function() {
                 return {
                     trigger: function() {},
                     html: function() {}
-                }
-            }
+                };
+            };
             view.toggleTitleTpl = app.template.getView('forecastsConfigHelpers.toggleTitle', 'Forecasts');
 
             view._render();
@@ -258,6 +263,15 @@ describe("Forecasts.View.ForecastsConfigRanges", function() {
                         }
                     }
                 }
+            };
+            view.$ = function() {
+                return {
+                    children: function() {
+                        return [];
+                    },
+                    html: function() {},
+                    toggleClass: function() {}
+                };
             };
         });
 
@@ -501,11 +515,11 @@ describe("Forecasts.View.ForecastsConfigRanges", function() {
                         customType: customType,
                         customIndex: customIndex,
                         $: function() {
-                            return {
-                                on: function() {},
-                                trigger: function() {},
-                                html: function() {}
-                            }
+                            var $el = $('<p/>');
+                            $el.on = $.noop;
+                            $el.trigger = $.noop;
+                            $el.html = $.noop;
+                            return $el;
                         }
                     };
                 }
@@ -522,10 +536,15 @@ describe("Forecasts.View.ForecastsConfigRanges", function() {
                     return {
                         noUiSlider: function() {},
                         hide: function() {}
-                    }
+                    };
                 }
             };
-
+            view.$ = function() {
+                return {
+                    html: function() {},
+                    hide: function() {}
+                };
+            };
             view.model.set({
                 show_custom_buckets_ranges: ranges,
                 show_custom_buckets_options: options
@@ -581,6 +600,15 @@ describe("Forecasts.View.ForecastsConfigRanges", function() {
                 expect(bucketRanges[name].min).toBe(0);
                 expect(bucketRanges[name].in_included_total).toBe(false);
             });
+        });
+
+        it('adds accessibility for events', function() {
+            var stubAccessibilityRun = sinon.stub(app.accessibility, 'run'),
+                target = '<a class="btn addCustomRange" href="javascript:void(0);" '
+                    + 'data-type="custom_without_probability" data-category="show_custom_buckets">';
+            view.addCustomRange({currentTarget: target});
+            expect(app.accessibility.run).toHaveBeenCalled();
+            stubAccessibilityRun.restore();
         });
     });
 
@@ -722,6 +750,12 @@ describe("Forecasts.View.ForecastsConfigRanges", function() {
                         }
                     }
                 }
+            };
+            view.$ = function() {
+                return {
+                    html: function() {},
+                    show: function() {}
+                };
             };
             view.model.set({
                 show_custom_buckets_ranges: ranges,

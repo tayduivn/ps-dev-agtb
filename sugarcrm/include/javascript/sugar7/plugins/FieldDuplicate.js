@@ -35,7 +35,7 @@
              * Handler for `duplicate:field` event triggered on model. Setup id of
              * model from which field should be duplicated.
              *
-             * @param {Data.Bean} model Model from which field should be duplicated.
+             * @param {Data.Bean/null} model Model from which field should be duplicated.
              * @private
              */
             _onFieldDuplicate: function(model) {
@@ -47,6 +47,59 @@
 
                 if (_.isFunction(this.onFieldDuplicate)) {
                     this.onFieldDuplicate.call(this, model);
+                }
+            },
+
+            /**
+             * Handler for `before duplicate:field` event triggered on model.
+             *
+             * Event `duplicate:field` is triggered in method
+             * {@link View.Views.BaseMergeDuplicatesView#triggerCopy}.
+             *
+             * Calls `beforeFieldDuplicate` method if it is implemented in field.
+             *
+             * @params {Object} params Params to pass to method call.
+             * @param {Data.Bean} params.model Model from which value should be duplicated.
+             * @param {Object} params.data Data attributes of DOM element (radio or checkbox).
+             * @return {Boolean} 'true' to continue or `false` to stop.
+             * @private
+             */
+            _beforeFieldDuplicate: function(params) {
+                if (_.isFunction(this.beforeFieldDuplicate)) {
+                    return this.beforeFieldDuplicate.call(this, params);
+                }
+                return true;
+            },
+
+            /**
+             * Handler for `duplicate:format:field` event triggered on model.
+             *
+             * Event `duplicate:format:field` is triggered in method
+             * {@link View.Views.BaseMergeDuplicatesView#setPrimaryEditable}.
+             *
+             * Calls `formatFieldForDuplicate` method if it is implemented in field.
+             *
+             * @private
+             */
+            _formatFieldForDuplicate: function() {
+                if (_.isFunction(this.formatFieldForDuplicate)) {
+                    this.formatFieldForDuplicate.call(this);
+                }
+            },
+
+            /**
+             * Handler for `duplicate:unformat:field` event triggered on model.
+             *
+             * Event `duplicate:unformat:field` is triggered in method
+             * {@link View.Views.BaseMergeDuplicatesView#_savePrimary}.
+             *
+             * Calls `unformatFieldForDuplicate` method if it is implemented in field.
+             *
+             * @private
+             */
+            _unformatFieldForDuplicate: function() {
+                if (_.isFunction(this.unformatFieldForDuplicate)) {
+                    this.unformatFieldForDuplicate.call(this);
                 }
             },
 
@@ -73,8 +126,24 @@
                                 options.params[this.name + '_duplicateBeanId'] = this._duplicateBeanId;
                             }
                         }, this);
+                        this.model.on('duplicate:format:field', this._formatFieldForDuplicate, this);
+                        this.model.on('duplicate:unformat:field', this._unformatFieldForDuplicate, this);
+                    }
+                    if (this.view) {
+                        this.view.before('duplicate:field', this._beforeFieldDuplicate, {}, this);
                     }
                 });
+            },
+
+            /**
+             * {@inheritDoc}
+             *
+             * Clean up associated event handlers.
+             */
+            onDetach: function(component, plugin) {
+                if (this.view) {
+                    this.view.offBefore('duplicate:field');
+                }
             }
         });
     });

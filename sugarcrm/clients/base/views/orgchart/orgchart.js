@@ -131,7 +131,8 @@
             if (!_.isEmpty(this.treeData)) {
 
                 //jsTree control for selecting root node
-                this.jsTree = this.$('div[data-control="org-jstree"]').jstree({
+                var $jsTree = this.$('div[data-control="org-jstree"]');
+                this.jsTree = $jsTree.jstree({
                         // generating tree from json data
                         'json_data': {
                             'data': this.treeData
@@ -163,6 +164,7 @@
                         self.$('div[data-control="org-jstree-dropdown"] .jstree-label').text(data.inst.get_text());
                         data.inst.toggle_node(data.rslt.obj);
                     });
+                app.accessibility.run($jsTree, 'click');
 
 
                 d3.select('svg#' + this.cid)

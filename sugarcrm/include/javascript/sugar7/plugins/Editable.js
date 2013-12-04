@@ -116,7 +116,7 @@
 
                     app.alert.show('leave_confirmation', {
                         level: 'confirmation',
-                        messages: app.lang.get(customMessage || 'LBL_WARN_UNSAVED_EDITS', this.module),
+                        messages: app.lang.get(customMessage || 'LBL_WARN_UNSAVED_CHANGES', this.module),
                         onConfirm: onConfirm,
                         templateOptions: {
                             cancelContLabel: 'LBL_CANCEL_BUTTON_LABEL_UNSAVED_CONT',
@@ -137,7 +137,7 @@
                     return false;
                 }
                 if (_.isFunction(this.hasUnsavedChanges) && this.hasUnsavedChanges()) {
-                    return app.lang.get('LBL_WARN_UNSAVED_EDITS', this.module);
+                    return app.lang.get('LBL_WARN_UNSAVED_CHANGES', this.module);
                 }
                 return;
             },
@@ -181,8 +181,32 @@
                         }
                     }, field);
 
+                    this.turnOffFieldEvents(field);
+                }, this);
+            },
+
+           /**
+             * Turns off key and mouse events for a field; useful before containing view is disposed.
+             *
+             * @param {Object} field A field
+             */
+            turnOffFieldEvents: function(field) {
+                if (_.isFunction(field.unbindKeyDown)) {
+                    field.unbindKeyDown(this.editableKeyDowned);
+                } else {
                     field.$(field.fieldTag).off('keydown.record', this.editableKeyDowned);
-                    $(document).off('mousedown.record' + field.name, this.editableMouseClicked);
+                }
+                $(document).off('mousedown.record' + field.name, this.editableMouseClicked);
+            },
+
+           /**
+             * Turns off key and mouse events for all fields in this Editable view.
+             *
+             * @param {Object} fields List of fields for an Editable
+             */
+            turnOffEvents: function(fields) {
+                _.each(fields, function(field) {
+                    this.turnOffFieldEvents(field);
                 }, this);
             },
 
@@ -228,7 +252,11 @@
                         $(document).on('mousedown.record' + field.name, {field: field}, this.editableMouseClicked);
                     }
                 } else {
-                    field.$(field.fieldTag).off('keydown.record');
+                    if (_.isFunction(field.unbindKeyDown)) {
+                        field.unbindKeyDown();
+                    } else {
+                        field.$(field.fieldTag).off('keydown.record');
+                    }
                     $(document).off('mousedown.record' + field.name);
                 }
             },

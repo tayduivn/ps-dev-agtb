@@ -5579,3 +5579,43 @@ function getRequiredDropdownListItemsByDDL($name) {
     $items = getRequiredDropdownListItems();
     return isset($items[$name]) ? $items[$name] : array();
 }
+
+/**
+ * Evaluates a function defined in vardefs.
+ * @param mixed $bean
+ * @param mixed $function
+ * @param array $args
+ * @return mixed
+ */
+function getFunctionValue($bean, $function, $args = array())
+{
+    if (is_string($bean) && !empty($bean)) {
+        $bean = BeanFactory::getBean($bean);
+    }
+
+    if (is_array($function)) {
+        if (!empty($function['include'])) {
+            require_once($function['include']);
+        }
+        
+        if (!empty($function['name'])) {
+            $function = $function['name'];
+        }
+    }
+    
+    if (!empty($bean)) {
+        $function = array($bean, $function);
+    }
+
+    return call_user_func_array($function, $args);
+}
+
+/**
+ * Evaluates if a value is isTruthy
+ * @param mixed $value
+ * @return bool
+ */
+function isTruthy($value)
+{
+    return ($value === true || $value === 'true' || $value === 1 || $value === '1' || $value === 'on' || $value === 'yes') ? true : false;
+}

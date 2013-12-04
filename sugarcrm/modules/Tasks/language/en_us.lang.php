@@ -72,7 +72,7 @@ $mod_strings = array (
   'LBL_LIST_STATUS' => 'Status',
   'LBL_DATE_DUE_FLAG' => 'No Due Date',
   'LBL_DATE_START_FLAG' => 'No Start Date',
-  'ERR_DELETE_RECORD' => 'You must specify a record number to delete the contact.',
+  'ERR_DELETE_RECORD' => 'You must specify a record number to delete the Contact.',
   'ERR_INVALID_HOUR' => 'Please enter an hour between 0 and 24',
   'LBL_DEFAULT_PRIORITY' => 'Medium',
   'LBL_LIST_MY_TASKS' => 'My Open Tasks',
@@ -89,7 +89,6 @@ $mod_strings = array (
   'LBL_CONTACT_PHONE' => 'Contact Phone:',
   'LBL_PARENT_NAME' => 'Parent Type:',
   'LBL_ACTIVITIES_REPORTS' => 'Activities Report',
-  'LBL_TASK_INFORMATION' => 'Task Overview',
   'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
   'LBL_TASK_INFORMATION' => 'Overview',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Notes',
@@ -104,7 +103,5 @@ $mod_strings = array (
   'LBL_TASK_CLOSE_SUCCESS' => 'Task closed successfully.',
   'LBL_ASSIGNED_USER' => 'Assigned to',
 
+    'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
 );
-
-
-?>

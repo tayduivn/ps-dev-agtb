@@ -166,7 +166,7 @@ class UploadFile
 	 * @param string $new_id ID of new (copied) note
 	 * @param string $filename Filename of file (deprecated)
 	 */
-	public static function duplicate_file($old_id, $new_id, $file_name)
+	public static function duplicate_file($old_id, $new_id, $file_name = '')
 	{
 		global $sugar_config;
 
@@ -230,13 +230,13 @@ class UploadFile
                 if($_FILES[$this->field_name]['error'] == UPLOAD_ERR_INI_SIZE) {
                     //log the error, the string produced will read something like:
                     //ERROR: There was an error during upload. Error code: 1 - UPLOAD_ERR_INI_SIZE - The uploaded file exceeds the upload_max_filesize directive in php.ini. upload_maxsize is 16
-                    $errMess = string_format($GLOBALS['app_strings']['UPLOAD_ERROR_TEXT_SIZEINFO'],array($_FILES['filename_file']['error'], self::$filesError[$_FILES['filename_file']['error']],$sugar_config['upload_maxsize']));
-                    $this->setError('fatal', $errMess, $_FILES['filename_file']['error']);
+                    $errMess = string_format($GLOBALS['app_strings']['UPLOAD_ERROR_TEXT_SIZEINFO'],array($_FILES[$this->field_name]['error'], self::$filesError[$_FILES[$this->field_name]['error']],$sugar_config['upload_maxsize']));
+                    $this->setError('fatal', $errMess, $_FILES[$this->field_name]['error']);
                 }else{
                     //log the error, the string produced will read something like:
                     //ERROR: There was an error during upload. Error code: 3 - UPLOAD_ERR_PARTIAL - The uploaded file was only partially uploaded.
-                    $errMess = string_format($GLOBALS['app_strings']['UPLOAD_ERROR_TEXT'],array($_FILES['filename_file']['error'], self::$filesError[$_FILES['filename_file']['error']]));
-                    $this->setError('fatal', $errMess, $_FILES['filename_file']['error']);
+                    $errMess = string_format($GLOBALS['app_strings']['UPLOAD_ERROR_TEXT'],array($_FILES[$this->field_name]['error'], self::$filesError[$_FILES[$this->field_name]['error']]));
+                    $this->setError('fatal', $errMess, $_FILES[$this->field_name]['error']);
                 }
 		    }
 		    return false;

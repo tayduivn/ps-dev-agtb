@@ -480,6 +480,10 @@
                 // get the field value
                 var elVal = field.$el.find(field.fieldTag).val();
 
+                if (field.type == 'currency' || field.type == 'int') {
+                    elVal = this._parsePercentage(elVal, (field.type == 'currency') ? undefined : 0);
+                }
+
                 if (field.type == 'currency') {
                     // for currency we want to make sure the value didn't actually change so get the difference
                     // and multiple it by 100 (2 decimals out), if it's not equal to 0, then it changed.
@@ -544,7 +548,7 @@
                         return newValue;
                     }
                 } else if (field.type === 'currency') {
-                    newValue = this._parsePercentage(newValue, 2);
+                    newValue = this._parsePercentage(newValue);
                     if (this._verifyCurrencyValue(newValue)) {
                         return newValue;
                     }
@@ -627,7 +631,7 @@
              * Check the value to see if it's a percentage, if it is, then adjust the value
              *
              * @param {String} value        The value we are parsing.
-             * @param {Integer} decimals        How far to round to.
+             * @param {Integer} (decimals)        How far to round to.
              * @return {*}
              */
             _parsePercentage: function(value, decimals) {

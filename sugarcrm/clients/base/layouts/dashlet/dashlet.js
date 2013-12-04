@@ -229,6 +229,7 @@
         }
         this.meta.components = [component];
         this._addComponentsFromDef(this.meta.components);
+        this.model.set('updated', true);
         this.loadData();
         this.render();
     },
@@ -251,6 +252,8 @@
                 //Show alerts for this request
                 showAlerts: true
             });
+        } else {
+            this.model.set('updated', true);
         }
         this.meta.empty = true;
         //clear previous dashlet

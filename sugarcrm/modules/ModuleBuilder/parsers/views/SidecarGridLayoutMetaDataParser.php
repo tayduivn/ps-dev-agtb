@@ -69,6 +69,34 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     );
 
     /**
+     * Sets the fields that are part of fieldsets. This is used when setting 
+     * available fields.
+     */
+    protected function setFieldsetMemberFields()
+    {
+        // Look through the original viewdef to look for fieldsets. This is done
+        // because the original defs will be OOTB and contain those fields that
+        // might be fielddefs.
+        foreach ($this->_originalViewDef as $field => $def) {
+            // Check if the defs indicated a fieldset
+            $array = is_array($def);
+            $fieldset = $array && isset($def['type']) && $def['type'] == 'fieldset';
+
+            // Get the fields if this is a fieldset
+            $fields = $array && !empty($def['fields']) && is_array($def['fields']) ? $def['fields'] : array();
+            if ($fieldset && $fields) {
+                foreach ($fields as $f) {
+                    // Some combo fields, like date_entered_by, use a join string
+                    // in the view def that doesn't have a name property
+                    if (isset($f['name'])) {
+                        $this->fieldsetMemberFields[$f['name']] = $field;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * @return array array of tab definitions
      */
     public function getTabDefs(){
@@ -693,15 +721,11 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         if ($remove) {
             // Only remove a field once.
             if (empty($this->fieldsRemovedFromAvailability[$remove])) {
-                // Remove the field first
-                unset($availableFields[$remove]);
-
-                // Mark this field as having been removed. This prevents endless
-                // recursion when a combination field is named after an actual
-                // field in the view defs
-                $this->fieldsRemovedFromAvailability[$remove] = true;
+                $this->removeFieldFromAvailableFields($availableFields, $remove);
 
                 // Now see if this field is a combination field in the original defs
+                // This removes combination field components when a combo field is
+                // on the layout
                 if (isset($this->_originalViewDef[$remove])
                     && is_array($this->_originalViewDef[$remove])
                     && isset($this->_originalViewDef[$remove]['fields'])
@@ -711,8 +735,33 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                         $this->unsetAvailableField($availableFields, $f);
                     }
                 }
+
+                // Now see if this field is inside of a combination field and 
+                // remove the combination field if it is. This removes the combo
+                // field if a component of the combo field is on the layout.
+                if (!empty($this->fieldsetMemberFields[$remove])) {
+                    $this->removeFieldFromAvailableFields($availableFields, $this->fieldsetMemberFields[$remove]);
+                }
             }
         }
+    }
+
+    /**
+     * Removes a field from the available field array. This is a helper method 
+     * now since this is handled in more than one place.
+     * 
+     * @param array $availableFields Array of available fields
+     * @param string $field Name of the field to remove
+     */
+    protected function removeFieldFromAvailableFields(&$availableFields, $field)
+    {
+        // Remove the field first
+        unset($availableFields[$field]);
+
+        // Mark this field as having been removed. This prevents endless
+        // recursion when a combination field is named after an actual
+        // field in the view defs
+        $this->fieldsRemovedFromAvailability[$field] = true;
     }
 
     /**

@@ -456,23 +456,23 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_ifs->dec_sep = '.';
 
-        $this->assertEquals($this->_ifs->currency('100',array()),100);
-        $this->assertEquals($this->_ifs->currency('123.23',array()),123.23);
+        $this->assertEquals($this->_ifs->float('100',array()),100);
+        $this->assertEquals($this->_ifs->float('123.23',array()),123.23);
 
         $this->_ifs->dec_sep = ',';
 
-        $this->assertEquals($this->_ifs->currency('123,23',array()),123.23);
+        $this->assertEquals($this->_ifs->float('123,23',array()),123.23);
 
         $this->_ifs->num_grp_sep = ',';
 
-        $this->assertEquals($this->_ifs->currency('1,123.23',array()),1123.23);
+        $this->assertEquals($this->_ifs->float('1,123.23',array()),1123.23);
     }
 
     public function testInvalidFloat()
     {
         $this->_ifs->dec_sep = '.';
 
-        $this->assertNotEquals($this->_ifs->currency('123,23',array()),123.23);
+        $this->assertNotEquals($this->_ifs->float('123,23',array()),123.23);
     }
 
     public function testValidFullname()

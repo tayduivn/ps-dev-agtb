@@ -183,9 +183,10 @@ class SugarCurrency
      *
      * @access public
      * @param  string $currencyId
-     * @return object  currency object
+     * @return Currency  currency object
      */
-    public static function getCurrencyByID( $currencyId = null ) {
+    public static function getCurrencyByID($currencyId = null)
+    {
         return self::_getCurrency($currencyId);
     }
 
@@ -223,18 +224,87 @@ class SugarCurrency
      *
      * @access public
      * @param  object $user Optional the user object
-     * @return object  currency object
+     * @return Currency  currency object
      */
-    public static function getUserLocaleCurrency( $user = null ) {
-
-        if(empty($user))
-        {
-           global $current_user;
-           $user = $current_user;
+    public static function getUserLocaleCurrency($user = null)
+    {
+        if (empty($user)) {
+            global $current_user;
+            $user = $current_user;
         }
 
         $currencyId = empty($user) ? '-99' : $user->getPreference('currency');
         return self::_getCurrency($currencyId);
     }
 
+    /**
+     * Verify that the currency_base_rate is set and updated as it should when the bean is saving
+     *
+     * @see SugarBean::save()
+     * @param SugarBean $bean
+     */
+    public static function verifyCurrencyBaseRateSet(SugarBean $bean)
+    {
+        if ($bean->getFieldDefinition('currency_id')
+            && $bean->getFieldDefinition('base_rate')
+            && !empty($bean->currency_id)
+        ) {
+            $currency = static::getCurrency($bean);
+
+            // check if the bean has the updateCurrencyBaseRate method as an additional check
+            $beanCurrencyCheck = true;
+            if (method_exists($bean, 'updateCurrencyBaseRate')) {
+                $beanCurrencyCheck = call_user_func(array($bean, 'updateCurrencyBaseRate'));
+            }
+
+            if ($beanCurrencyCheck || !isset($bean->base_rate) || static::hasCurrencyIdChanged($bean)) {
+                $bean->base_rate = $currency->conversion_rate;
+            }
+        }
+
+    }
+
+    /**
+     * Get the Currency object for the bean, if one is not set, set it to the users preferd currency
+     *
+     * @param SugarBean $bean
+     * @return Currency
+     */
+    protected static function getCurrency(SugarBean $bean)
+    {
+        if (empty($bean->currency_id)) {
+            // use user preferences for currency
+            $currency = static::getUserLocaleCurrency();
+            $bean->currency_id = $currency->id;
+        } else {
+            $currency = static::getCurrencyByID($bean->currency_id);
+        }
+
+        return $currency;
+    }
+
+    /**
+     * To check whether currency_id field is changed during save.
+     *
+     * @param SugarBean $bean
+     * @return bool true if currency_id is changed, false otherwise
+     */
+    protected static function hasCurrencyIdChanged($bean)
+    {
+        // if both are defined, compare
+        if (isset($bean->currency_id) && isset($bean->fetched_row['currency_id'])) {
+            if ($bean->currency_id != $bean->fetched_row['currency_id']) {
+                return true;
+            }
+        }
+        // one is not defined, the other one is not empty, means changed
+        if (!isset($bean->currency_id) && !empty($bean->fetched_row['currency_id'])) {
+            return true;
+        }
+        if (!isset($bean->fetched_row['currency_id']) && !empty($bean->currency_id)) {
+            return true;
+        }
+
+        return false;
+    }
 }

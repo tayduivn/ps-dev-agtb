@@ -196,7 +196,6 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     public function testSelectFavorites() {
         $this->cases = array();
         for ( $i = 0 ; $i < 40 ; $i++ ) {
@@ -242,7 +241,39 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
     }
-    //END SUGARCRM flav=pro ONLY
+
+    public function testBadFields()
+    {
+        $sq = new SugarQuery();
+        $sq->select(array("id", "notARealField"));
+        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->where()->equals("noWhere", "nonYaBusiness");
+        $sq->orderBy('yesIAmCertainlyAField');
+        $sql = $sq->compileSql();
+
+        $this->assertNotContains("yesIAmCertainlyAField", $sql);
+        $this->assertNotContains("noWhere", $sql);
+        $this->assertNotContains("notARealField", $sql);
+    }
+
+    public function testUniqueAliases()
+    {
+        $sq = new SugarQuery();
+        $sq->select(array('*', 'date_modified'));
+        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->where()->equals("id","2");
+        $sql = $sq->compileSql();
+        $count = substr_count($sql, 'date_modified');
+        // count the alias as well
+        $this->assertEquals(2, $count);
+
+        $sq = new SugarQuery();
+        $sq->select(array('*', array('id', 'superAwesomeField')));
+        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->where()->equals("id", "2");
+        $sql = $sq->compileSql();
+        $this->assertcontains('id superAwesomeField', $sql);
+    }
 
     /**
      * @ticket 62961
@@ -262,7 +293,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sql = $sq->compileSql();
         // ensure the query looks good
         $this->assertContains("contacts_cstm.bigname_c", $sql);
-        $this->assertContains("_cstm.bigname_c AS report_to_bigname", $sql);
+        $this->assertContains("_cstm.bigname_c report_to_bigname", $sql);
         $this->assertContains("LEFT JOIN contacts_cstm ON contacts_cstm.id_c = contacts.id", $sql);
         $this->assertRegExp('/LEFT JOIN contacts_cstm jt(\w+)_cstm ON \(jt\1_cstm.id_c = jt\1\.id\)/', $sql);
     }
@@ -291,7 +322,9 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name", "account_name"));
         $sq->from($contact);
         $sq->where()->equals('account_name','Awesome');
-        $this->assertRegExp('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/',$sq->compileSql());
+        $sql = $sq->compileSql();
+        $this->assertRegExp('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/',$sql);
+        $this->assertNotContains('contacts.account_name', $sql);
 
         // without related in name
         $sq = new SugarQuery();
@@ -339,12 +372,13 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name", 'report_to_bigname'));
         $sq->from($contact);
         $sq->where()->notEqualsField('bigname_c','report_to_bigname');
-        $this->assertRegExp('/WHERE.*contacts_cstm.bigname_c\s*!=\s*jt\w+_cstm.bigname_c/',$sq->compileSql());
+        $sql = $sq->compileSql();
+        $this->assertRegExp('/WHERE.*contacts_cstm.bigname_c\s*!=\s*jt\w+_cstm.bigname_c/',$sql);
+        $this->assertContains("SELECT  contacts.id id, contacts.last_name last_name, jt0_reports_to_link_cstm.bigname_c report_to_bigname", $sql);
     }
 
     /**
      * Test bad conditions
-     * @expectedException SugarApiExceptionInvalidParameter
      */
     public function testBadRelateConditions()
     {
@@ -355,7 +389,8 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->from($contact);
         $sq->where()->equals('email_and_name1','Awesome');
         $sql = $sq->compileSql();
-        $this->fail("Exception expected!");
+        // the field should not be there now
+        $this->assertNotContains("email_and_name1 = 'Awesome'", $sql);
 
     }
 
@@ -385,7 +420,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->orderBy("report_to_bigname");
-        $this->assertRegExp('/ORDER BY jt\w+.bigname_c DESC/',$sq->compileSql());
+        $this->assertRegExp('/ORDER BY jt\w+.last_name DESC/',$sq->compileSql());
 
         // skip bad one
         $sq = new SugarQuery();
@@ -395,6 +430,35 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertRegExp('/ORDER BY jt\w+.name asc/',$sq->compileSql());
     }
 
+    public function testOrderByRaw()
+    {
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name"));
+        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->orderByRaw("last_name+1 DESC");
+        $sql = $sq->compileSql();
+        $this->assertContains("ORDER BY last_name+1 DESC", $sql);
+    }
+
+    public function testGroupByRaw()
+    {
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name"));
+        $sq->from(BeanFactory::getBean("Contacts"));
+        $sq->groupByRaw("last_name is awesome");
+        $sql = $sq->compileSql();
+        $this->assertContains("GROUP BY last_name is awesome", $sql);
+    }
+
+    public function testHavingRaw()
+    {
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name"));
+        $sq->from(BeanFactory::getBean("Contacts"));
+        $sq->havingRaw("last_name > 55");
+        $sql = $sq->compileSql();
+        $this->assertContains("HAVING last_name > 55", $sql);
+    }
 }
 
 class Contact_Mock_Bug62961 extends Contact
@@ -403,7 +467,7 @@ class Contact_Mock_Bug62961 extends Contact
     {
         parent::__construct();
         $this->field_defs['bigname_c'] =
-        array (
+            array (
                 'calculated' => 'true',
                 'formula' => 'strToUpper($last_name)',
                 'enforced' => 'true',
@@ -426,9 +490,9 @@ class Contact_Mock_Bug62961 extends Contact
                 'size' => '20',
                 'custom_module' => 'Contacts',
                 'sort_on' => 'last_name',
-        );
+            );
         $this->field_defs['report_to_bigname'] =
-        array(
+            array(
                 'name' => 'report_to_bigname',
                 'rname' => 'bigname_c',
                 'id_name' => 'reports_to_id',
@@ -442,7 +506,7 @@ class Contact_Mock_Bug62961 extends Contact
                 'len' => 'id',
                 'reportable' => false,
                 'source' => 'non-db',
-        );
+            );
 
     }
 

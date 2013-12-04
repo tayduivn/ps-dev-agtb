@@ -216,8 +216,12 @@
             offset: offset,
             num: massCollection.length
         }));
-        allSelected.find('[data-action=clear]').on('click', function(evt) {
-            massCollection.reset();
+        allSelected.find('[data-action=clear]').each(function() {
+            var $el = $(this);
+            $el.on('click', function(evt) {
+                massCollection.reset();
+            });
+            app.accessibility.run($el, 'click');
         });
         this.view.layout.trigger('list:alert:show', allSelected);
     },
@@ -237,8 +241,12 @@
             var alert = $(self._selectedOffsetTpl({
                 num: massCollection.length
             }));
-            alert.find('[data-action=clear]').on('click', function() {
-                massCollection.reset();
+            alert.find('[data-action=clear]').each(function() {
+                var $el = $(this);
+                $el.on('click', function() {
+                    massCollection.reset();
+                });
+                app.accessibility.run($el, 'click');
             });
             return alert;
         };
@@ -251,10 +259,14 @@
                 num: massCollection.length,
                 link: self._selectAllLinkTpl
             }));
-            alert.find('[data-action=select-all]').on('click', function() {
-                massCollection.entire = true;
-                self.getTotalRecords();
-                $(this).off('click');
+            alert.find('[data-action=select-all]').each(function() {
+                var $el = $(this);
+                $el.on('click', function() {
+                    massCollection.entire = true;
+                    self.getTotalRecords();
+                    $(this).off('click');
+                });
+                app.accessibility.run($el, 'click');
             });
             return alert;
         };

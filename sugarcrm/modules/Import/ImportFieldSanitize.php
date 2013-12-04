@@ -44,6 +44,7 @@ class ImportFieldSanitize
     public $timeformat;
     public $timezone;
     public $currency_symbol;
+    public $currency_id;
     public $default_currency_significant_digits;
     public $num_grp_sep;
     public $dec_sep;

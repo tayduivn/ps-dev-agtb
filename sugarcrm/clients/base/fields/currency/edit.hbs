@@ -34,3 +34,4 @@
         <input type="text" name="{{name}}" value="{{value}}">
     </div>
 {{/if}}
+{{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
