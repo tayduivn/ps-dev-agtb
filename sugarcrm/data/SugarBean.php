@@ -1788,7 +1788,7 @@ class SugarBean
         }
 
         require_once("data/BeanFactory.php");
-        BeanFactory::registerBean($this->module_name, $this);
+        BeanFactory::registerBean($this);
 
         if (!static::inOperation('saving_related') && static::enterOperation('updating_relationships')) {
             // let subclasses save related field changes

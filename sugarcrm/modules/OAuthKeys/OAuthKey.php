@@ -67,7 +67,7 @@ class OAuthKey extends Basic
 	    $k = new self();
 	    if($k->getByKey($key,$oauth_type)) {
 	        self::$keys_cache[$key] = $k;
-	        BeanFactory::registerBean("OAuthKeys", $k);
+	        BeanFactory::registerBean($k);
 	        return $k;
 	    }
 	    return false;

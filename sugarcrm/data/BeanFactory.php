@@ -110,7 +110,7 @@ class BeanFactory {
                         return null;
                     }
                 } else if ($can_cache) {
-                    self::registerBean($module, $bean, $id);
+                    self::registerBean($bean);
                 }
             } else {
                 self::$hits++;
@@ -225,14 +225,29 @@ class BeanFactory {
      * @static
      * This function registers a bean with the bean factory so that it can be access from accross the code without doing
      * multiple retrieves. Beans should be registered as soon as they have an id.
-     * @param String $module
      * @param SugarBean $bean
-     * @param bool|String $id
      * @return bool true if the bean registered successfully.
      */
-    public static function registerBean($module, $bean, $id=false)
+    public static function registerBean($bean)
     {
         global $beanList;
+
+        if (func_num_args() > 1) {
+            // Classic calling style, no longer used internally.
+            $module = func_get_arg(0);
+            $bean = func_get_arg(1);
+            if (func_num_args() > 2) {
+                $id = func_get_arg(2);
+            }
+        } else {
+            $module = $bean->module_name;
+            if (empty($bean->id)) {
+                $bean->id = create_guid();
+                $bean->new_with_id = true;
+            }
+            $id = $bean->id;
+        }
+
         if (empty($beanList[$module]))  return false;
 
         if (!isset(self::$loadedBeans[$module]))
@@ -297,13 +312,14 @@ class BeanFactory {
      * @static
      * This function un-registers a bean with the bean factory so that the next
      * load will force a retrieval from the database
-     * @param String $module
-     * @param bool|String $id
+     * @param SugarBean $bean
      * @return bool true if the bean unregistered successfully.
      */
-    public static function unregisterBean($module, $id=false)
+    public static function unregisterBean($bean)
     {
         global $beanList;
+        $module = $bean->module_name;
+
         if (empty($beanList[$module])) {
             return true;
         }
@@ -312,12 +328,12 @@ class BeanFactory {
             return true;
         }
 
-        if (empty($id)) {
+        if (empty($bean->id)) {
             return false;
         }
 
-        if (isset(self::$loadedBeans[$module][$id])) {
-            unset(self::$loadedBeans[$module][$id]);
+        if (isset(self::$loadedBeans[$module][$bean->id])) {
+            unset(self::$loadedBeans[$module][$bean->id]);
             self::$total--;
             return true;
         }
