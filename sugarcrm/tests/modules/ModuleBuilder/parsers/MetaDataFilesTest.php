@@ -57,6 +57,104 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         SugarAutoLoader::saveMap();
     }
 
+    public $fileFullPaths = array(
+        'Accountsmobilelistviewbase'   => 'modules/Accounts/clients/mobile/views/list/list.php',
+        'Accountsmobilelistviewcustom' => 'custom/modules/Accounts/clients/mobile/views/list/list.php',
+        'Bugsportalrecordviewworking'    => 'custom/working/modules/Bugs/clients/portal/views/record/record.php',
+        'Bugsmobilesearchviewbase'     => 'modules/Bugs/clients/mobile/views/search/search.php',
+        'Casesportalrecordviewhistory' => 'custom/history/modules/Cases/clients/portal/views/record/record.php',
+        'Callsbasesearchviewbase'      => 'modules/Calls/clients/base/views/search/search.php',
+    );
+
+    public $deployedFileNames = array(
+        'Accountslistviewbase' => 'modules/Accounts/metadata/listviewdefs.php',
+        'Leadswirelesseditviewcustommobile' => 'custom/modules/Leads/clients/mobile/views/edit/edit.php',
+        'Notesportalrecordviewworkingportal' => 'custom/working/modules/Notes/clients/portal/views/record/record.php',
+        'Quotesadvanced_searchhistory' => 'custom/history/modules/Quotes/metadata/searchdefs.php',
+        'Meetingsbasic_searchbase'  => 'modules/Meetings/metadata/searchdefs.php',
+        'Bugswireless_advanced_searchbasemobile' => 'modules/Bugs/clients/mobile/views/search/search.php',
+    );
+
+    public $undeployedFileNames = array(
+        'Accountslistviewbase' => 'custom/modulebuilder/packages/LZWYZ/modules/Accounts/metadata/listviewdefs.php',
+        'Leadswirelesseditviewcustommobile' => 'custom/modulebuilder/packages/LZWYZ/modules/Leads/clients/mobile/views/edit/edit.php',
+        'Notesportalrecordviewworkingportal' => 'custom/modulebuilder/packages/LZWYZ/modules/Notes/clients/portal/views/record/record.php',
+        'Quotesadvanced_searchhistory' => 'custom/working/modulebuilder/packages/LZWYZ/modules/Quotes/metadata/searchdefs.php',
+    );
+
+    /**
+     * @dataProvider MetaDataFileFullPathProvider
+     * @param string $module
+     * @param string $viewtype
+     * @param string $location
+     * @param string $client
+     * @param string $component
+     */
+    public function testMetaDataFileFullPath($module, $viewtype, $location, $client, $component) {
+        $filepath = MetaDataFiles::getModuleFileName($module, $viewtype, $location, $client, $component);
+        $known = $this->fileFullPaths[$module.$client.$viewtype.$component.$location];
+
+        $this->assertEquals($known, $filepath, 'Filepath mismatch: ' . $filepath . ' <-> ' . $known);
+    }
+
+    /**
+     * @dataProvider DeployedFileNameProvider
+     * @param string $view
+     * @param string $module
+     * @param string $location
+     * @param string $client
+     */
+    public function testDeployedFileName($view, $module, $location, $client) {
+        $name = MetaDataFiles::getDeployedFileName($view, $module, $location, $client);
+        $known = $this->deployedFileNames[$module.$view.$location.$client];
+        $this->assertEquals($known, $name, 'Filename mismatch: ' . $name . ' <-> ' . $known);
+    }
+
+    /**
+     * @dataProvider UndeployedFileNameProvider
+     * @param string $view
+     * @param string $module
+     * @param string $package
+     * @param string $location
+     * @param string $client
+     */
+    public function testUndeployedFileName($view, $module, $package, $location, $client) {
+        $name = MetaDataFiles::getUndeployedFileName($view, $module, $package, $location, $client);
+        $known = $this->undeployedFileNames[$module.$view.$location.$client];
+        $this->assertEquals($known, $name, 'Filename mismatch: ' . $name . ' <-> ' . $known);
+    }
+
+    public function MetaDataFileFullPathProvider() {
+        return array(
+            array('Accounts', 'list', MB_BASEMETADATALOCATION, MB_WIRELESS, 'view'),
+            array('Accounts', 'list', MB_CUSTOMMETADATALOCATION, MB_WIRELESS, 'view'),
+            array('Bugs', 'record', MB_WORKINGMETADATALOCATION, MB_PORTAL, 'view'),
+            array('Bugs', 'search', MB_BASEMETADATALOCATION, MB_WIRELESS, 'view'),
+            array('Cases', 'record', MB_HISTORYMETADATALOCATION, MB_PORTAL, 'view'),
+            array('Calls', 'search', MB_BASEMETADATALOCATION, 'base', 'view'),
+        );
+    }
+
+    public function DeployedFileNameProvider() {
+        return array(
+            array(MB_LISTVIEW, 'Accounts', MB_BASEMETADATALOCATION, ''),
+            array(MB_WIRELESSEDITVIEW, 'Leads', MB_CUSTOMMETADATALOCATION, MB_WIRELESS),
+            array(MB_PORTALRECORDVIEW, 'Notes', MB_WORKINGMETADATALOCATION, MB_PORTAL),
+            array(MB_ADVANCEDSEARCH, 'Quotes', MB_HISTORYMETADATALOCATION, ''),
+            array(MB_BASICSEARCH, 'Meetings', MB_BASEMETADATALOCATION, ''),
+            array(MB_WIRELESSADVANCEDSEARCH, 'Bugs', MB_BASEMETADATALOCATION, MB_WIRELESS),
+        );
+    }
+
+    public function UndeployedFileNameProvider() {
+        return array(
+            array(MB_LISTVIEW, 'Accounts', 'LZWYZ', MB_BASEMETADATALOCATION, ''),
+            array(MB_WIRELESSEDITVIEW, 'Leads', 'LZWYZ', MB_CUSTOMMETADATALOCATION, MB_WIRELESS),
+            array(MB_PORTALRECORDVIEW, 'Notes', 'LZWYZ', MB_WORKINGMETADATALOCATION, MB_PORTAL),
+            array(MB_ADVANCEDSEARCH, 'Quotes', 'LZWYZ', MB_HISTORYMETADATALOCATION, ''),
+        );
+    }
+
     public function testLoadingFieldTemplate()
     {
         $this->markTestIncomplete("This test does not properly ensure that the clients/base/fields/fo directory is created");
