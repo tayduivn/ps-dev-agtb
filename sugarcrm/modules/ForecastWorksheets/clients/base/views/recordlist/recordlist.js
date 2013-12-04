@@ -910,14 +910,11 @@
         this.collection.each(function(model) {
             var won = _.include(sales_stage_won_setting, model.get('sales_stage')),
                 lost = _.include(sales_stage_lost_setting, model.get('sales_stage')),
-                amount = parseFloat(model.get('likely_case')),
                 commit_stage = model.get('commit_stage'),
-                best = parseFloat(model.get('best_case')),
-                base_rate = parseFloat(model.get('base_rate')),
-                worst = parseFloat(model.get('worst_case')),
-                worst_base = app.currency.convertWithRate(worst, base_rate),
-                amount_base = app.currency.convertWithRate(amount, base_rate),
-                best_base = app.currency.convertWithRate(best, base_rate),
+                base_rate = model.get('base_rate'),
+                worst_base = app.currency.convertWithRate(model.get('worst_case'), base_rate),
+                amount_base = app.currency.convertWithRate(model.get('likely_case'), base_rate),
+                best_base = app.currency.convertWithRate(model.get('best_case'), base_rate),
                 includedInForecast = _.include(commit_stages_in_included_total, commit_stage);
 
             if (won && includedInForecast) {
@@ -936,9 +933,9 @@
             }
 
             if (includedInForecast) {
-                includedAmount += amount_base;
-                includedBest += best_base;
-                includedWorst += worst_base;
+                includedAmount = app.math.add(includedAmount, amount_base);
+                includedBest = app.math.add(includedBest, best_base);
+                includedWorst = app.math.add(includedWorst, worst_base);
                 includedCount++;
 
                 // since we're already looping through the collection of models and we have
@@ -948,9 +945,9 @@
                 model.unset('includedInForecast');
             }
 
-            overallAmount += amount_base;
-            overallBest += best_base;
-            overallWorst += worst_base;
+            overallAmount = app.math.add(overallAmount, amount_base);
+            overallBest = app.math.add(overallBest, best_base);
+            overallWorst = app.math.add(overallWorst, worst_base);
         }, this);
 
         return {

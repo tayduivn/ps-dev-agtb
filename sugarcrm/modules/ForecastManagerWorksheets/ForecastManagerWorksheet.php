@@ -767,8 +767,9 @@ class ForecastManagerWorksheet extends SugarBean
 
         require_once('include/SugarQuery/SugarQuery.php');
         $sq = new SugarQuery();
-        $sq->select(array('*'));
-        $sq->from(BeanFactory::getBean($this->module_name))->where()
+        $bean_obj = BeanFactory::getBean($this->module_name);
+        $sq->select(array($bean_obj->getTableName().'.*'));
+        $sq->from($bean_obj)->where()
             ->equals('timeperiod_id', $tp->id)
             ->equals('assigned_user_id', $userId)
             ->equals('draft', ($current_user->id == $userId || $useDraftRecords === true) ? 1 : 0)

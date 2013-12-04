@@ -687,8 +687,9 @@ class ForecastWorksheet extends SugarBean
         global $current_user;
 
         $sq = new SugarQuery();
-        $sq->select(array('*'));
-        $sq->from(BeanFactory::getBean($this->module_name))->where()
+        $bean_obj = BeanFactory::getBean($this->module_name);
+        $sq->select(array($bean_obj->getTableName().'.*'));
+        $sq->from($bean_obj)->where()
             ->equals('assigned_user_id', $user_id)
             ->equals('parent_type', $forecast_by)
             ->equals('deleted', 0)
