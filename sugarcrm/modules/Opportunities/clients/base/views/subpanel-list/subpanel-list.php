@@ -47,7 +47,7 @@ $viewdefs['Opportunities']['base']['view']['subpanel-list'] = array(
         ),
         array(
           'name' => 'date_closed',
-          'label' => 'LBL_LIST_DATE_CLOSED',
+          'label' => 'LBL_DATE_CLOSED',
           'enabled' => true,
           'default' => true,
         ),
