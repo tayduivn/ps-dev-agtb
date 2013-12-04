@@ -11,6 +11,7 @@
  *
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
+
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarGridMetaDataUpgrader.php';
 require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 
@@ -289,6 +290,39 @@ END;
     }
 
     /**
+     * Search for changes to tabdefs, returns true if any are found
+     */
+    protected function checkForTabdefsChanges()
+    {
+        if (empty($this->legacyViewdefs['detailview']['templateMeta']['tabDefs'])) {
+            //In the event that tabDefs doesn't exist, we should default to the old behavior
+            return false;
+        }
+
+        // This is the default tabDefs for 6.7x
+        $legacyDefaultTabDefs = array (
+            'LBL_ACCOUNT_INFORMATION' => array (
+                'newTab' => false,
+                'panelDefault' => 'expanded',
+            ),
+            'LBL_PANEL_ADVANCED' => array (
+                'newTab' => false,
+                'panelDefault' => 'expanded',
+            ),
+            'LBL_PANEL_ASSIGNMENT' => array (
+                'newTab' => false,
+                'panelDefault' => 'expanded',
+            ),
+        );
+
+        if ($legacyDefaultTabDefs != $this->legacyViewdefs['detailview']['templateMeta']['tabDefs']) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Converts the legacy Grid metadata to Sidecar style
      */
     public function convertLegacyViewDefsToSidecar()
@@ -298,119 +332,145 @@ END;
         }
         $this->logUpgradeStatus('Converting ' . $this->client . ' ' . $this->viewtype . ' view defs for ' . $this->module);
 
-        $defaultDefs = $this->loadDefaultMetadata();
-
         $parser = ParserFactory::getParser($this->viewtype, $this->module, null, null, $this->client);
-
-        // Go through merge views, add fields added to detail view to base panel
-        // and fields added to edit view not in detail view ot hidden panel
-        $customFields = array();
-        foreach($this->legacyViewdefs as $lViewtype => $data) {
-            if(empty($data['panels'])) {
-                continue;
-            }
+        $newdefs = array();
+        if ($this->checkForTabdefsChanges())
+        {
             if($this->sidecar) {
-                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, null, null, $this->client);
+                $legacyParser = ParserFactory::getParser('detailview', $this->module, null, null, $this->client);
             } else {
-                $legacyParser = ParserFactory::getParser($lViewtype, $this->module);
+                $legacyParser = ParserFactory::getParser('detailview', $this->module);
             }
-            foreach($legacyParser->getFieldsFromPanels($data['panels']) as $fieldname => $fielddef) {
-                // we need to ignore all currency_id fields that are on the viewdefs getting migrated to the record view
-                // as currency_id is now set with the currency field.
-                if (empty($fieldname) || isset($customFields[$fieldname]) || $fieldname == 'currency_id') {
+
+            $olddefs = $this->legacyViewdefs['detailview'];
+            $tempdefs = $legacyParser->convertFromCanonicalForm($olddefs['panels'], $parser->_fielddefs);
+            $newdefs['panels'] = $parser->convertToCanonicalForm($tempdefs, $parser->_fielddefs);
+
+            // pull out the tab definitions from the originals, put them into the Canonical Form
+            if (isset($olddefs['templateMeta']['tabDefs'])) {
+                foreach($olddefs['templateMeta']['tabDefs'] as $tabName => $tabContent) {
+                    foreach($newdefs['panels'] as &$newdefPanel) {
+                        if (!empty($newdefPanel['label']) && $newdefPanel['label'] == $tabName) {
+                            $newdefPanel['newTab'] = $tabContent['newTab'];
+                            $newdefPanel['panelDefault'] = $tabContent['panelDefault'];
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            $defaultDefs = $this->loadDefaultMetadata();
+
+            // Go through merge views, add fields added to detail view to base panel
+            // and fields added to edit view not in detail view ot hidden panel
+            $customFields = array();
+            foreach($this->legacyViewdefs as $lViewtype => $data) {
+                if(empty($data['panels'])) {
                     continue;
                 }
-                $customFields[$fieldname] = array('data' => $fielddef, 'source' => $lViewtype);
-            }
-        }
-
-        // Hack: we've moved email1 to email
-        if(isset($customFields['email1'])) {
-            $customFields['email'] = $customFields['email1'];
-            unset($customFields['email1']);
-        }
-
-        $origFields = array();
-        // replace viewdefs with defaults, since parser's viewdefs can be already customized by other parts
-        // of the upgrade
-        $parser->_viewdefs['panels'] = $parser->convertFromCanonicalForm($defaultDefs['panels'], $parser->_fielddefs);
-        // get field list
-        $origData = $parser->getFieldsFromPanels($defaultDefs['panels'], $parser->_fielddefs);
-        // Go through existing fields and remove those not in the new data
-        foreach($origData as $fname => $fielddef) {
-            if (!$this->isValidField($fname)) {
-                continue;
-            }
-            if(is_array($fielddef) && !empty($fielddef['fields'])) {
-                // fieldsets - iterate over each field
-                $setExists = false;
-                if(!empty($customFields[$fielddef['name']])) {
-                    $setExists = true;
+                if($this->sidecar) {
+                    $legacyParser = ParserFactory::getParser($lViewtype, $this->module, null, null, $this->client);
                 } else {
-                    foreach($fielddef['fields'] as $setfielddef) {
-                        if(!is_array($setfielddef)) {
-                            $setfname = $setfielddef;
-                        } else {
-                            // skip werid nameless ones
-                            if(empty($setfielddef['name'])) continue;
-                            $setfname = $setfielddef['name'];
-                        }
-                        // if we have one field - we take all set
-                        if(isset($customFields[$setfname])) {
-                            $setExists = true;
-                            break;
+                    $legacyParser = ParserFactory::getParser($lViewtype, $this->module);
+                }
+                foreach($legacyParser->getFieldsFromPanels($data['panels']) as $fieldname => $fielddef) {
+                    // we need to ignore all currency_id fields that are on the viewdefs getting migrated to the record view
+                    // as currency_id is now set with the currency field.
+                    if (empty($fieldname) || isset($customFields[$fieldname]) || $fieldname == 'currency_id') {
+                        continue;
+                    }
+                    $customFields[$fieldname] = array('data' => $fielddef, 'source' => $lViewtype);
+                }
+            }
+
+            // Hack: we've moved email1 to email
+            if(isset($customFields['email1'])) {
+                $customFields['email'] = $customFields['email1'];
+                unset($customFields['email1']);
+            }
+
+            $origFields = array();
+            // replace viewdefs with defaults, since parser's viewdefs can be already customized by other parts
+            // of the upgrade
+            $parser->_viewdefs['panels'] = $parser->convertFromCanonicalForm($defaultDefs['panels'], $parser->_fielddefs);
+            // get field list
+            $origData = $parser->getFieldsFromPanels($defaultDefs['panels'], $parser->_fielddefs);
+            // Go through existing fields and remove those not in the new data
+            foreach($origData as $fname => $fielddef) {
+                if (!$this->isValidField($fname)) {
+                    continue;
+                }
+                if(is_array($fielddef) && !empty($fielddef['fields'])) {
+                    // fieldsets - iterate over each field
+                    $setExists = false;
+                    if(!empty($customFields[$fielddef['name']])) {
+                        $setExists = true;
+                    } else {
+                        foreach($fielddef['fields'] as $setfielddef) {
+                            if(!is_array($setfielddef)) {
+                                $setfname = $setfielddef;
+                            } else {
+                                // skip weird nameless ones
+                                if(empty($setfielddef['name'])) continue;
+                                $setfname = $setfielddef['name'];
+                            }
+                            // if we have one field - we take all set
+                            if(isset($customFields[$setfname])) {
+                                $setExists = true;
+                                break;
+                            }
                         }
                     }
-                }
-                if($setExists) {
-                    $origFields[$fielddef['name']] = $fielddef;
-                    // if fields exist, we take all the set as existing fields
-                    foreach($fielddef['fields'] as $setfielddef) {
-                        if(!is_array($setfielddef)) {
-                            $setfname = $setfielddef;
-                        } else {
-                            // skip werid nameless ones
-                            if(empty($setfielddef['name'])) continue;
-                            $setfname = $setfielddef['name'];
+                    if($setExists) {
+                        $origFields[$fielddef['name']] = $fielddef;
+                        // if fields exist, we take all the set as existing fields
+                        foreach($fielddef['fields'] as $setfielddef) {
+                            if(!is_array($setfielddef)) {
+                                $setfname = $setfielddef;
+                            } else {
+                                // skip werid nameless ones
+                                if(empty($setfielddef['name'])) continue;
+                                $setfname = $setfielddef['name'];
+                            }
+                            $origFields[$setfname] = $fielddef;
                         }
-                        $origFields[$setfname] = $fielddef;
+                    } else {
+                        // else we delete the set
+                        $parser->removeField($fname);
                     }
                 } else {
-                    // else we delete the set
-                    $parser->removeField($fname);
+                    // if it's a regular field, check against existing field in new data
+                    if(!isset($customFields[$fname])) {
+                        // not there - remove it
+                        $parser->removeField($fname);
+                    } else {
+                        // otherwise - keep as existing
+                        $origFields[$fname] = $fielddef;
+                    }
                 }
-            } else {
-                // if it's a regular field, check against existing field in new data
-                if(!isset($customFields[$fname])) {
-                    // not there - remove it
-                    $parser->removeField($fname);
+            }
+
+            // now go through new fields and add those not in original data
+            foreach($customFields as $fieldname => $data) {
+                if(isset($origFields[$fieldname])) {
+                    // TODO: merge the data such as label, readonly, etc.
+                    continue;
                 } else {
-                    // otherwise - keep as existing
-                    $origFields[$fname] = $fielddef;
+                    $fielddata = $this->convertFieldData($fieldname, $data['data']);
+                    // FIXME: hack since addField cuts field defs
+                    if(!empty($this->knownFields[$fieldname]) && empty($parser->_originalViewDef[$fielddata['name']])) {
+                        $parser->_originalViewDef[$fielddata['name']] = $fielddata;
+                    }
+                    $parser->addField($fielddata, $this->getPanelName($parser->_viewdefs['panels'], $data['source']));
                 }
             }
+
+            $newdefs = $parser->_viewdefs;
+            $newdefs['panels'] = $parser->convertToCanonicalForm($parser->_viewdefs['panels'] ,$parser->_fielddefs);
         }
-
-        // now go through new fields and add those not in original data
-        foreach($customFields as $fieldname => $data) {
-            if(isset($origFields[$fieldname])) {
-                // TODO: merge the data such as label, readonly, etc.
-                continue;
-            } else {
-                $fielddata = $this->convertFieldData($fieldname, $data['data']);
-                // FIXME: hack since addField cuts field defs
-                if(!empty($this->knownFields[$fieldname]) && empty($parser->_originalViewDef[$fielddata['name']])) {
-                    $parser->_originalViewDef[$fielddata['name']] = $fielddata;
-                }
-                $parser->addField($fielddata, $this->getPanelName($parser->_viewdefs['panels'], $data['source']));
-            }
-        }
-
-        $newdefs = $parser->_viewdefs;
-        $newdefs['panels'] = $parser->convertToCanonicalForm($parser->_viewdefs['panels'] ,$parser->_fielddefs);
-
         $this->sidecarViewdefs[$this->module][$this->client]['view'][MetaDataFiles::getName($this->viewtype)] = $newdefs;
-   }
+    }
 
    /**
     * Get panel name where new field should be placed
