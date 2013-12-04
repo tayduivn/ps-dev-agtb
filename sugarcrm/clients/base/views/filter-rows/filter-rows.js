@@ -103,9 +103,11 @@
 
     /**
      * Handler for filter:create:open event
-     * @param filterModel
+     * @param {Bean} filterModel
      */
-    openForm: function(filterModel) {
+    openForm: _.debounce(function(filterModel) {
+        // This debounce method should be in accordance with filterpanel `filter:create:open` event handler,
+        // so components show up at the same time
         if (_.isEmpty(filterModel.get('filter_definition'))) {
             this.render();
             var $row = this.addRow(),
@@ -118,7 +120,7 @@
         }
         // After populating the form, save the current edit state
         this.saveFilterEditState();
-    },
+    }, 100, true),
 
     /**
      * Save the filter
