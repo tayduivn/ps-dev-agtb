@@ -21,7 +21,6 @@
  */
 ({
     extendsFrom: 'TabbedDashletView',
-    plugins: ['LinkedModel', 'Dashlet', 'Timeago'],
 
     /**
      * {@inheritDoc}
@@ -43,6 +42,10 @@
     initialize: function(options) {
         options.meta = options.meta || {};
         options.meta.template = 'tabbed-dashlet';
+
+        this.plugins = _.union(this.plugins, [
+            'LinkedModel'
+        ]);
 
         this._super('initialize', [options]);
     },
@@ -69,7 +72,7 @@
         if (this.meta.config) {
             this._super('_renderHtml');
             return;
-        };
+        }
 
         _.each(this.collection.models, function(model) {
             var pictureUrl = app.api.buildFileURL({

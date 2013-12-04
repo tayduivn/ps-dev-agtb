@@ -23,14 +23,16 @@ describe("Planned Activities", function () {
     });
 
     afterEach(function() {
-        view.dispose();
         SugarTest.testMetadata.dispose();
         app.view.reset();
         sinon.collection.restore();
     });
 
-    it("should instantiate an invitation collection if invitation_actions is set", function() {
-        view = SugarTest.createView('base', moduleName, 'planned-activities');
+    it('should instantiate an invitation collection if invitation_actions is set', function() {
+        var meta = _.extend(app.metadata.getView(moduleName, 'planned-activities'), {
+            'last_state': 'ignore'
+        };
+        view = SugarTest.createView('base', moduleName, 'planned-activities'), meta);
 
         // stub out our test method
         view._createInvitationsCollection = sinon.collection.stub();
@@ -38,19 +40,21 @@ describe("Planned Activities", function () {
         // mock out the parent call on _initTabs
         view.dashletConfig = {
             tabs: view.meta.tabs
-        }
+        };
 
         view._initTabs();
         expect(view._createInvitationsCollection.called).toBeTruthy();
+        view.dispose();
     });
 
-    it("should not instantiate an invitation collection if invitation_actions is not set", function() {
+    it('should not instantiate an invitation collection if invitation_actions is not set', function() {
         var meta = {
             'tabs' : [
                 {
                     'module': 'Meetings'
                 }
-            ]
+            ],
+            'last_state': 'ignore'
         };
         view = SugarTest.createView('base', moduleName, 'planned-activities', meta);
 
@@ -64,6 +68,7 @@ describe("Planned Activities", function () {
 
         view._initTabs();
         expect(view._createInvitationsCollection.called).toBeFalsy();
+        view.dispose();
     });
 });
 

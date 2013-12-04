@@ -18,7 +18,9 @@ $viewdefs['base']['view']['bubblechart'] = array(
         array(
             'label' => 'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME',
             'description' => 'LBL_TOP10_OPPORTUNITIES_CHART_DESC',
-            'config' => array(),
+            'config' => array(
+                'filter_duration' => '0',
+            ),
             'preview' => array(),
             'filter' => array(
                 'module' => array(
@@ -51,10 +53,10 @@ $viewdefs['base']['view']['bubblechart'] = array(
                     'enum_width' => 'auto',
                 ),
                 array(
-                    'name' => 'filter_assigned',
+                    'name' => 'visibility',
                     'label' => 'LBL_TOP10_OPPORTUNITIES_DEFAULT_DATASET',
                     'type' => 'enum',
-                    'options' => 'top10_opportunities_filter_assigned_options',
+                    'options' => 'top10_opportunities_visibility_options',
                     'enum_width' => 'auto',
                 ),
             ),
