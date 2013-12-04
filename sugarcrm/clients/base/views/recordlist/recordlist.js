@@ -469,6 +469,9 @@
         if (this.meta.favorite) {
             fields = _.union(fields, ['my_favorite']);
         }
+        if (this.meta.following) {
+            fields = _.union(fields, ['following']);
+        }
         return fields;
     }
 })

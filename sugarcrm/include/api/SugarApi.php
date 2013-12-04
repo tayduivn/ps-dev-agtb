@@ -47,8 +47,13 @@ abstract class SugarApi {
      */
     protected function formatBean(ServiceBase $api, $args, SugarBean $bean) {
 
-        if ( !empty($args['fields']) ) {
-            $fieldList = explode(',',$args['fields']);
+        if ( !empty($args['fields']) && !is_array($args['fields']) ) {
+            $args['fields'] = explode(',',$args['fields']);
+        }
+        
+        if (!empty($args['fields'])) {
+            $fieldList = $args['fields'];
+
             if ( ! in_array('date_modified',$fieldList ) ) {
                 $fieldList[] = 'date_modified';
             }
@@ -76,9 +81,13 @@ abstract class SugarApi {
             $this->trackAction($bean);
         }
 
-        // Support returning whether the current user is following the record.
-        $sub = Subscription::checkSubscription($api->user, $bean);
-        $data['following'] = !empty($sub);
+        if (empty($args['fields']) || in_array('following', $args['fields'])) {
+            // Support returning whether the current user is following the record.
+            if (!isset($bean->following)) {
+                $bean->following = !empty(Subscription::checkSubscription($api->user, $bean));
+            }
+            $data['following'] = $bean->following;
+        }
 
         if (!empty($bean->module_name)) {
             $data['_module'] = $bean->module_name;
@@ -89,17 +98,29 @@ abstract class SugarApi {
 
     protected function formatBeans(ServiceBase $api, $args, $beans)
     {
+        if (!empty($args['fields']) && !is_array($args['fields'])) {
+            $args['fields'] = explode(',',$args['fields']);
+        }
+
         $ret = array();
+        if (empty($args['fields']) || in_array('following',$args['fields'])) {
+            // Get subscriptions for the list of beans
+            $beanArray = array();
+            foreach ($beans as $bean) {
+                $beanArray[] = array('id'=>$bean->id);
+            }
+            $subscriptions = Subscription::checkSubscriptionList($api->user, $beanArray);
+            
+            foreach ($beans as $bean) {
+                $bean->following = !empty($subscriptions[$bean->id]);
+            }
+        }
+
         foreach ($beans as $bean) {
             if (!is_subclass_of($bean, 'SugarBean')) {
                 continue;
             }
             $ret[] = $this->formatBean($api, $args, $bean);
-        }
-
-        $subscriptions = Subscription::checkSubscriptionList($api->user, $ret);
-        foreach ($ret as &$record) {
-            $record['following'] = !empty($subscriptions[$record['id']]);
         }
 
         return $ret;
