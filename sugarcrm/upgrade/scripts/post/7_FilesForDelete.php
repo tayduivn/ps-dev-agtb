@@ -147,6 +147,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'include/SugarObjects/templates/issue/clients/mobile/views/search/search.php',
             'include/SugarObjects/templates/person/clients/mobile/views/search/search.php',
             'include/SugarObjects/templates/sale/clients/mobile/views/search/search.php',
+            // NOMAD-1384 remove mobile views from modules which are not supported by mobile app
+            'modules/Bugs/clients/mobile/',
         );
         $this->fileToDelete($files);
     }
