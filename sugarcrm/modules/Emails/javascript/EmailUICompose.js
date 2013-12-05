@@ -1880,7 +1880,7 @@ SE.composeLayout = {
         //If the outbound account has an error message associate with it, alert the user and refuse to continue.
         var obAccountID = document.getElementById('addressFrom' + idx).value;
 
-        if( typeof(SUGAR.email2.composeLayout.outboundAccountErrors[obAccountID]) != 'undefined' )
+        if( typeof(SUGAR.email2.composeLayout.outboundAccountErrors[obAccountID]) != 'undefined' && !isDraft )
         {
             SUGAR.showMessageBox(app_strings.LBL_EMAIL_ERROR_DESC, SUGAR.email2.composeLayout.outboundAccountErrors[obAccountID], 'alert');
             return false;
