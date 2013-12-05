@@ -46,11 +46,14 @@
      * @param {Function} callback Callback function for keydown.
      */
     bindKeyDown: function(callback) {
-        this.$(this.fieldTag).on('keydown.record', {field: this}, callback);
-        var plugin = this.$(this.fieldTag).data('select2');
-        if (plugin) {
-            plugin.focusser.on('keydown.record', {field: this}, callback);
-            plugin.search.on('keydown.record', {field: this}, callback);
+        var $el = this.$(this.fieldTag);
+        if ($el) {
+            $el.on('keydown.record', {field: this}, callback);
+            var plugin = $el.data('select2');
+            if (plugin) {
+                plugin.focusser.on('keydown.record', {field: this}, callback);
+                plugin.search.on('keydown.record', {field: this}, callback);
+            }
         }
     },
 
@@ -61,10 +64,15 @@
      * @param {Function} callback Callback function for keydown.
      */
     unbindKeyDown: function(callback) {
-        this.$(this.fieldTag).off('keydown.record', callback);
-        var plugin = this.$(this.fieldTag).data('select2');
-        if (plugin) {
-            plugin.search.off('keydown.record', callback);
+        if (this.$el) {
+            var $el = this.$(this.fieldTag);
+            if ($el) {
+                $el.off('keydown.record', callback);
+                var plugin = $el.data('select2');
+                if (plugin) {
+                    plugin.search.off('keydown.record', callback);
+                }
+            }
         }
     },
 
@@ -444,5 +452,13 @@
         var _key = 'request:' + this.module + ':' + this.name;
         this.context.unset(_key);
         app.view.Field.prototype.unbindData.call(this);
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        this.unbindKeyDown();
+        this._super('_dispose');
     }
 })
