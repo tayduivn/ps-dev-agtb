@@ -4855,6 +4855,7 @@ function create_export_query_relate_link_patch($module, $searchFields, $where)
         return $ret_array;
     }
     $seed = BeanFactory::getBean($module);
+    $joins = array();
     foreach ($seed->field_defs as $name=>$field) {
 
         if ( $field['type'] == 'relate' && isset($field['link']) && !empty($searchFields[$name]['value']) ) {
@@ -4877,6 +4878,7 @@ function create_export_query_relate_link_patch($module, $searchFields, $where)
                 $params['join_table_link_alias'] = 'join_link_'.$field['name'];
             }
             $join = $seed->$field['link']->getJoin($params, true);
+            $joins[] = $join['join'];
             $join_table_alias = 'join_'.$field['name'];
             if (isset($field['db_concat_fields'])) {
                 $db_field = db_concat($join_table_alias, $field['db_concat_fields']);
@@ -4886,7 +4888,7 @@ function create_export_query_relate_link_patch($module, $searchFields, $where)
             }
         }
     }
-    $ret_array = array('where'=>$where, 'join'=> isset($join['join']) ? $join['join'] : '');
+    $ret_array = array('where'=>$where, 'join'=> implode(' ', $joins));
 
     return $ret_array;
 }
