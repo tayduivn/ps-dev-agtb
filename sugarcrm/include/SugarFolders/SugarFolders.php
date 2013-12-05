@@ -33,10 +33,8 @@ class SugarFolder {
 	var $date_modified;
 	var $deleted;
 	var $folder_type;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
 	var $team_set_id;
-	//END SUGARCRM flav=pro ONLY
 
 	var $db;
 	var $new_with_id = false;
@@ -62,6 +60,73 @@ class SugarFolder {
 
 	// private attributes
 	var $_depth;
+
+    /**
+     * Basic field metadata format.
+     * The metadata follows the basic SugarBean metadata format.
+     * Attention: This metadata does not accept the full metadata
+     * vardefs for dbTypes.
+     *
+     * @var array
+     */
+    private $fields = array(
+        'id' => array(
+            'name' => 'id',
+            'type' => 'id',
+        ),
+        'name' => array(
+            'name' => 'name',
+            'type' => 'varchar',
+        ),
+        'folder_type' => array(
+            'name' => 'folder_type',
+            'type' => 'varchar',
+        ),
+        'parent_folder' => array(
+            'name' => 'parent_folder',
+            'type' => 'link',
+        ),
+        'has_child' => array(
+            'name' => 'has_child',
+            'type' => 'tinyint',
+        ),
+        'is_group' => array(
+            'name' => 'is_group',
+            'type' => 'tinyint',
+        ),
+        'is_dynamic' => array(
+            'name' => 'is_dynamic',
+            'type' => 'tinyint',
+        ),
+        'dynamic_query' => array(
+            'name' => 'dynamic_query',
+            'type' => 'text',
+        ),
+        'assign_to_id' => array(
+            'name' => 'assign_to_id',
+            'type' => 'link',
+        ),
+        'team_set_id' => array(
+            'name' => 'team_set_id',
+            'type' => 'link',
+        ),
+        'team_id' => array(
+            'name' => 'team_id',
+            'type' => 'link',
+        ),
+        'created_by' => array(
+            'name' => 'created_by',
+            'type' => 'link',
+        ),
+        'modified_by' => array(
+            'name' => 'modified_by',
+            'type' => 'link',
+        ),
+        'deleted' => array(
+            'name' => 'deleted',
+            'type' => 'tinyint',
+        ),
+    );
 
 	/**
 	 * Sole constructor
@@ -508,7 +573,7 @@ ENDQ;
 		$return = array();
 
 		$found = array();
-		while($a = $this->db->fetchByAssoc($r)) {
+		while($a = $this->db->fetchByAssoc($r, false)) {
 			if ((($a['folder_type'] == $myEmailTypeString) ||
 				($a['folder_type'] == $myDraftsTypeString) ||
 				($a['folder_type'] == $mySentEmailTypeString)) &&
@@ -574,7 +639,7 @@ ENDQ;
 				$qGetChildren = $this->core.$this->coreWhere."AND parent_folder = '{$a['id']}'";
 				$rGetChildren = $this->db->query($qGetChildren);
 
-				while($aGetChildren = $this->db->fetchByAssoc($rGetChildren)) {
+				while($aGetChildren = $this->db->fetchByAssoc($rGetChildren, false)) {
 					if($a['is_group']) {
 						$this->_depth = 1;
 						$grp = $this->getFoldersChildForSettings($aGetChildren, $grp, $subscriptions);
@@ -693,8 +758,8 @@ ENDQ;
 				$qGetChildren = $this->core.$this->coreWhere."AND parent_folder = '{$a['id']}'";
 				$rGetChildren = $this->db->query($qGetChildren);
 
-				while($aGetChildren = $this->db->fetchByAssoc($rGetChildren)) {
-					if(in_array($aGetChildren['id'], $subscriptions)) {
+				while ($aGetChildren = $this->db->fetchByAssoc($rGetChildren, false)) {
+                    if (in_array($aGetChildren['id'], $subscriptions)) {
 						$folderNode->add_node($this->buildTreeNodeFolders($aGetChildren, $nodePath, $folderStates, $subscriptions));
 					}
 				}
@@ -783,7 +848,7 @@ ENDQ;
 			$qGetChildren = $this->core.$this->coreWhere."AND parent_folder = '{$a['id']}' ".$this->coreOrderBy;
 			$rGetChildren = $this->db->query($qGetChildren);
 
-			while($aGetChildren = $this->db->fetchByAssoc($rGetChildren)) {
+			while ($aGetChildren = $this->db->fetchByAssoc($rGetChildren, false)) {
 				$folderNode->add_node($this->buildTreeNodeFolders($aGetChildren, $nodePath, $folderStates, $subscriptions));
 			}
 		}
@@ -866,15 +931,105 @@ ENDQ;
 		//_pp($q3);_pp($qRel);_pp($qSub);
 	}
 
+    /**
+     * Outputs a correct string for the sql statement according to value.
+     *
+     * @param mixed $val Query value.
+     * @return Safe query string
+     */
+    public function massageValue($val, $fieldDef)
+    {
+        switch($fieldDef['type']) {
+            case 'varchar':
+                $val = $this->db->decodeHTML($val);
+                break;
+            case 'uint':
+            case 'tinyint':
+            case 'int':
+                return intval($val);
+        }
+        if (empty($val)) {
+            return 'NULL';
+        }
+        return $this->db->quoted($val);
+    }
+
+    /**
+     * Return the default mapping values.
+     *
+     * @return array Mapping key-value pairs.
+     */
+    protected function getFieldMapping()
+    {
+        global $current_user;
+        return array(
+            'created_by' => $current_user->id,
+            'modified_by' => $current_user->id,
+            'dynamic_query' => $this->dynamic_query,
+            'deleted' => 0,
+        );
+    }
+
+    /**
+     * Return the safe field value for query.
+     *
+     * @param string $field Name of field.
+     * @param array $fieldMapping Key-value pair for mapping default values.
+     * @return string Safe field value.
+     */
+    protected function getFieldValue($field, $fieldMapping) {
+        if (isset($this->$field)) {
+            return $this->massageValue($this->$field, $this->fields[$field]);
+        } elseif (isset($fieldMapping[$field])) {
+            return $this->massageValue($fieldMapping[$field], $this->fields[$field]);
+        }
+        return "NULL";
+    }
+
+    /**
+     * Generate insert SQL query command for SugarFolders.
+     *
+     * @param array $fieldNames Database field sets.
+     * @param array $fieldMapping Key-value pair for mapping default values.
+     * @return string Generated SQL query.
+     */
+    protected function getInsertQuery($fieldNames, $fieldMapping = array())
+    {
+        $values = array();
+        foreach ($fieldNames as $field) {
+            $values[] = $this->getFieldValue($field, $fieldMapping);
+        }
+        return "INSERT INTO folders (".implode(",", $fieldNames).") VALUES(".implode(",", $values).");";
+    }
+
+    /**
+     * Generate update SQL query command for SugarFolders.
+     *
+     * @param array $fieldNames Database field sets.
+     * @param array $fieldMapping Key-value pair for mapping default values.
+     * @return string Generated SQL query.
+     */
+    protected function getUpdateQuery($fieldNames, $fieldMapping = array())
+    {
+        $columns = array();
+        $where = "where id = '{$this->id}'";
+        function filter($field) {
+            return $field !== "id";
+        }
+        foreach (array_filter($fieldNames, "filter") as $field) {
+            $columns[] = "{$field}=" . $this->getFieldValue($field, $fieldMapping);
+        }
+
+        return "UPDATE folders
+					SET ".implode(",", $columns)."
+					$where";
+    }
 
 	/**
 	 * Saves folder
 	 * @return bool
 	 */
 	function save($addSubscriptions = TRUE) {
-		global $current_user;
-
-		$this->dynamic_query = $this->db->quote($this->dynamic_query);
 
 		if((empty($this->id) && $this->new_with_id == false) || (!empty($this->id) && $this->new_with_id == true))
 		{
@@ -885,21 +1040,7 @@ ENDQ;
 			    $this->id = $guid;
 		    }
 
-			$q = "INSERT INTO folders(id, name, folder_type, parent_folder, has_child, is_group, is_dynamic, dynamic_query, assign_to_id, ".
-				//BEGIN SUGARCRM flav=pro ONLY
-				"team_set_id,".
-				"team_id,".
-				//END SUGARCRM flav=pro ONLY
-				"created_by, modified_by, deleted)".
-
-				" VALUES('{$this->id}', '{$this->name}', '{$this->folder_type}', '{$this->parent_folder}', {$this->has_child}, {$this->is_group}, {$this->is_dynamic}, '{$this->dynamic_query}', '{$this->assign_to_id}', " .
-				//BEGIN SUGARCRM flav=pro ONLY
-
-				"'{$this->team_set_id}', " .
-				"'{$this->team_id}', " .
-				//END SUGARCRM flav=pro ONLY
-				"'{$current_user->id}', '{$current_user->id}', 0)";
-
+            $q = $this->getInsertQuery(array_keys($this->fields), $this->getFieldMapping());
 
 			if($addSubscriptions)
 			{
@@ -912,12 +1053,7 @@ ENDQ;
 			$r3 = $this->db->query($q3);
 		}
 		else {
-			$q = "UPDATE folders SET name = '{$this->name}', parent_folder = '{$this->parent_folder}', dynamic_query = '{$this->dynamic_query}', assign_to_id = '{$this->assign_to_id}', " .
-				//BEGIN SUGARCRM flav=pro ONLY
-				"team_set_id = '{$this->team_set_id}', " .
-				"team_id = '{$this->team_id}', " .
-				//END SUGARCRM flav=pro ONLY
-				"modified_by = '{$current_user->id}' WHERE id = '{$this->id}'";
+            $q = $this->getUpdateQuery(array_keys($this->fields), $this->getFieldMapping());
 		}
 
 		$this->db->query($q, true);
@@ -997,12 +1133,15 @@ ENDQ;
 		$this->team_id = $team_id;
 		$this->team_set_id = $team_set_id;
 		//END SUGARCRM flav=pro ONLY
-		$q2 = "UPDATE folders SET name = '{$this->name}', parent_folder = '{$this->parent_folder}', 			dynamic_query = '{$this->dynamic_query}', " .
-			//BEGIN SUGARCRM flav=pro ONLY
-			"team_set_id = '{$this->team_set_id}', " .
-			"team_id = '{$this->team_id}', " .
-			//END SUGARCRM flav=pro ONLY
-			"modified_by = '{$current_user->id}' WHERE id = '{$this->id}'";
+
+        $q2 = $this->getUpdateQuery(array(
+                'dynamic_query',
+                'parent_folder',
+                'team_set_id',
+                'team_id',
+                'modified_by'
+            ), $this->getFieldMapping());
+
 		$r2 = $this->db->query($q2);
 		if (!empty($this->parent_folder)) {
 			$q3 = "UPDATE folders SET has_child = 1 WHERE id = '{$this->parent_folder}'";
@@ -1015,7 +1154,7 @@ ENDQ;
 	function findAllChildren($folderId, &$childrenArray) {
 		$q = "SELECT * FROM folders WHERE id = '{$folderId}'";
 		$r = $this->db->query($q);
-		$a = $this->db->fetchByAssoc($r);
+		$a = $this->db->fetchByAssoc($r, false);
 
 		if($a['has_child'] == 1) {
 			$q2 = "SELECT id FROM folders WHERE deleted = 0 AND parent_folder = '{$folderId}'";
