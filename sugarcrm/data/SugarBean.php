@@ -4071,7 +4071,8 @@ class SugarBean
                         foreach($used_join_key as $used_key) {
                             if($used_key == $join['rel_key']) $count_used++;
                         }
-                        if($count_used <= 1) {//27416, the $ret_array['secondary_select'] should always generate, regardless the dbtype
+                        if ($count_used <= 1 && !isset($fields[$join['rel_key']])) {
+                            //27416, the $ret_array['secondary_select'] should always generate, regardless the dbtype
                             // add rel_key only if it was not aready added
                             if(!$singleSelect)
                             {
@@ -4118,7 +4119,9 @@ class SugarBean
                         }
                         if(isset($data['additionalFields'])){
                             foreach($data['additionalFields'] as $k=>$v){
-                                $ret_array['select'] .= ' , ' . $params['join_table_alias'] . '.' . $k . ' ' . $v;
+                                if (!isset($fields[$v])) {
+                                    $ret_array['select'] .= ' , ' . $params['join_table_alias'] . '.' . $k . ' ' . $v;
+                                }
                             }
                         }
                         if(!$table_joined)
