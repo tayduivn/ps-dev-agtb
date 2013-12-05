@@ -142,7 +142,7 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
                 $label = $app_strings['LBL_CREATE_TASK'];
             }
 
-            if ($GLOBALS['sugar_config']['enable_action_menu'] === true) {
+            if (isset($GLOBALS['sugar_config']['enable_action_menu']) && $GLOBALS['sugar_config']['enable_action_menu'] === true) {
                 $button = '<form data-legacy-subpanel-create="1" action="index.php" method="post" name="form" id="' . $form . "\">\n".
                     "<a href='#' onClick=\"javascript:subp_nav_sidecar('" .$module. "','" .$parentId. "','c');\"".
                     " class='create_from_bwc_to_sidecar' id=\"$id\">". $label .'</a>';
@@ -351,7 +351,7 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
         } else {
             $sidecar = null;
             $button = $this->_get_form($defines, $additionalFormFields, $sidecar);
-            if ($sidecar != true && $GLOBALS['sugar_config']['enable_action_menu'] === true) {
+            if ($sidecar != true && isset($GLOBALS['sugar_config']['enable_action_menu']) && $GLOBALS['sugar_config']['enable_action_menu'] === true) {
                 $button .= "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='$this->form_value' />\n";
             }
             $button .= "</form>";
