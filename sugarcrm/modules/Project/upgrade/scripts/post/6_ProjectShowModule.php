@@ -25,8 +25,8 @@ class SugarUpgradeProjectShowModule extends UpgradeScript
 
         $path = 'custom/Extension/application/Ext';
         $file_name = 'project_unhide.php';
-        if ($this->db->tableExists("project") && $this->db->fetchOne("SELECT id FROM project")
-            && !SugarAutoLoader::fileExists($path . '/Include/' . $file_name)) {
+        $projectModuleEnabled = ($this->db->tableExists("project") && $this->db->fetchOne("SELECT id FROM project"));
+        if ($projectModuleEnabled && !SugarAutoLoader::fileExists($path . '/Include/' . $file_name)) {
 
             if (!sugar_is_dir($path. '/Include/')) {
                 sugar_mkdir($path . '/Include/', null, true);
@@ -145,6 +145,22 @@ $app_strings[\'LBL_PROJECT_PLUS\'] = \'Add\';
             }
 
             sugar_file_put_contents($path . '/Language/en_us-' . $file_name, $lang_file_contents);
+        } elseif ($projectModuleEnabled == false
+            && SugarAutoLoader::existing('custom/modules/unified_search_modules_display.php')) {
+            // we need to clean out the unified search cache
+            $unified_search_modules_display = array();
+            include('custom/modules/unified_search_modules_display.php');
+
+
+            unset($unified_search_modules_display['Project']);
+            unset($unified_search_modules_display['ProjectTask']);
+
+            write_array_to_file(
+                "unified_search_modules_display",
+                $unified_search_modules_display,
+                'custom/modules/unified_search_modules_display.php'
+            );
+            SugarCache::cleanFile('custom/modules/unified_search_modules_display.php');
         }
     }
 }
