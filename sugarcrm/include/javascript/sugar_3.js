@@ -998,7 +998,7 @@ function add_error_style(formname, input, txt, flash) {
     nomatchTxt = SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD');
     matchTxt = txt.replace(requiredTxt,'').replace(invalidTxt,'').replace(nomatchTxt,'');
 
-    YUI().use('node', function (Y) {
+    YUI({comboBase:'index.php?entryPoint=getYUIComboFile&'}).use('node', function (Y) {
         Y.one(inputHandle).get('parentNode').get('children').each(function(node, index, nodeList){
             if(node.hasClass('validation-message') && node.get('text').search(matchTxt)){
                 raiseFlag = true;
@@ -3245,7 +3245,7 @@ SUGAR.util = function () {
 
 	        var objRegex = /<\s*script([^>]*)>((.|\s|\v|\0)*?)<\s*\/script\s*>/igm;
 
-            YUI().use("io-base", "get", function(Y) {
+            YUI({comboBase:'index.php?entryPoint=getYUIComboFile&'}).use("io-base", "get", function(Y) {
                 var lastIndex = -1;
                 var result =  objRegex.exec(text);
                 while(result && result.index > lastIndex){
