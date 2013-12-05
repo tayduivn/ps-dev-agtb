@@ -32,7 +32,7 @@ describe("Planned Activities", function () {
         var meta = _.extend(app.metadata.getView(moduleName, 'planned-activities'), {
             'last_state': 'ignore'
         };
-        view = SugarTest.createView('base', moduleName, 'planned-activities'), meta);
+        view = SugarTest.createView('base', moduleName, 'planned-activities', meta);
 
         // stub out our test method
         view._createInvitationsCollection = sinon.collection.stub();

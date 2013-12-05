@@ -271,7 +271,7 @@
                 }
             }, this);
 
-            this.values.on('change:title', function(model, title) {
+            this.settings.on('change:title', function(model, title) {
                 this.layout.setTitle(title);
             }, this);
 
