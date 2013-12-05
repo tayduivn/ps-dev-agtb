@@ -37,9 +37,12 @@ class SugarUpgradeProjectShowModule extends UpgradeScript
 // WARNING: The contents of this file are auto-generated.
 
 $moduleList[] = \'Project\';
-foreach($modInvisList as $key => $mod) {
-    if($mod == \'Project\' || $mod == \'ProjectTask\') {
-        unset($modInvisList[$key]);
+
+if (isset($modInvisList) && is_array($modInvisList)) {
+    foreach($modInvisList as $key => $mod) {
+        if($mod == \'Project\' || $mod == \'ProjectTask\') {
+            unset($modInvisList[$key]);
+        }
     }
 }
 ';
