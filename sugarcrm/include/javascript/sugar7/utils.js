@@ -35,10 +35,19 @@
                  * @returns {jQuery}
                  */
                 initialize: function($elements, options) {
-                    return $elements.tooltip(_.extend({}, {
-                        container: 'body',
-                        trigger: 'hover' //show tooltip on hover only (not on focus)
-                    }, options));
+                    var self = this;
+                    $elements.each(function() {
+                        var data, $element;
+                        if (!self.has(this)) {
+                            $element = $(this);
+                            data = $element.data();
+                            $element.tooltip(_.extend({
+                                container: 'body',
+                                trigger: 'hover' //show tooltip on hover only (not on focus)
+                            }, data, options));
+                        }
+                    });
+                    return $elements;
                 },
 
                 /**
@@ -61,7 +70,16 @@
                  * @returns {boolean}
                  */
                 has: function(element) {
-                    return !_.isUndefined($(element).data('bs.tooltip'));
+                    return !_.isUndefined(this.get(element));
+                },
+
+                /**
+                 * Get the tooltip plugin for this given element.
+                 * @param {DOM} element
+                 * @returns {tooltip}
+                 */
+                get: function(element) {
+                    return $(element).data('bs.tooltip');
                 }
             },
 
