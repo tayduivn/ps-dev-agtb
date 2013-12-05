@@ -115,8 +115,8 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
                         'best' => $app_strings['LBL_BEST'],
                         'worst' => $app_strings['LBL_WORST'],
                         'likely_adjusted' => $app_strings['LBL_LIKELY_ADJUSTED'],
-                        'best_adjusted' => $app_strings['LBL_LIKELY_ADJUSTED'],
-                        'worst_adjusted' => $app_strings['LBL_LIKELY_ADJUSTED']
+                        'best_adjusted' => $app_strings['LBL_BEST_ADJUSTED'],
+                        'worst_adjusted' => $app_strings['LBL_WORST_ADJUSTED']
                     )
                 ),
             'data' => $values
