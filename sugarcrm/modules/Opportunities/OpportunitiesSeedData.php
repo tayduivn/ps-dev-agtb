@@ -107,6 +107,15 @@ class OpportunitiesSeedData {
                 $base_rate = '1.0';
             }
 
+            //BEGIN SUGARCRM flav=ent ONLY
+            $opp->base_rate = '1.0';
+            $opp->currency_id = '-99';
+            //END SUGARCRM flav=ent ONLY
+            //BEGIN SUGARCRM flav!=ent ONLY
+            $opp->base_rate = $base_rate;
+            $opp->currency_id = $currency_id;
+            //END SUGARCRM flav!=ent ONLY
+
             $opp->name = $account->name;
             $opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
             $opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
