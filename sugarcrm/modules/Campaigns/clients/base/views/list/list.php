@@ -50,10 +50,10 @@ $viewdefs['Campaigns']['base']['view']['list'] = array(
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name'    => 'team_name',
-                    'width'   => '15',
-                    'label'   => 'LBL_LIST_TEAM',
-                    'default' => false,
+                    'label'   => 'LBL_TEAM',
+                    'default' => true,
                     'enabled' => true,
+                    'width'   => '2',
                 ),
                 //END SUGARCRM flav=pro ONLY
                 array(
