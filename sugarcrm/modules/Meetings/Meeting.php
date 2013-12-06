@@ -100,17 +100,6 @@ class Meeting extends SugarBean {
 
 	public $send_invites = false;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function Meeting()
-    {
-        self::__construct();
-    }
-
 	/**
 	 * sole constructor
 	 */
@@ -317,7 +306,7 @@ class Meeting extends SugarBean {
 		return "$this->name";
 	}
 
-    function create_export_query(&$order_by, &$where, $relate_link_join='')
+    public function create_export_query($order_by, $where, $relate_link_join = '')
     {
         $custom_join = $this->getCustomJoin(true, true, $where);
         $custom_join['join'] .= $relate_link_join;
@@ -824,7 +813,7 @@ class Meeting extends SugarBean {
 	}
 
 
-	function save_relationship_changes($is_update) {
+	function save_relationship_changes($is_update, $exclude = array()) {
 		$exclude = array();
 	    if(empty($this->in_workflow)) {
            if(empty($this->in_import)){//if a meeting is being imported then contact_id  should not be excluded

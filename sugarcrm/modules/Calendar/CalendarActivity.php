@@ -36,17 +36,6 @@ class CalendarActivity {
 	var $start_time;
 	var $end_time;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function CalendarActivity($args)
-    {
-        self::__construct($args);
-    }
-
 	public function __construct($args){
 		// if we've passed in an array, then this is a free/busy slot
 		// and does not have a sugarbean associated to it
@@ -109,8 +98,15 @@ class CalendarActivity {
 	 * @param string $view view; not used for now, left for compatibility
 	 * @return string
 	 */
-	function get_occurs_within_where_clause($table_name, $rel_table, $start_ts_obj, $end_ts_obj, $field_name='date_start', $view){
-		global $timedate;
+    public static function get_occurs_within_where_clause(
+        $table_name,
+        $rel_table,
+        $start_ts_obj,
+        $end_ts_obj,
+        $field_name = 'date_start',
+        $view
+    ) {
+        global $timedate;
 
 		$start = clone $start_ts_obj;
 		$end = clone $end_ts_obj;
@@ -128,7 +124,14 @@ class CalendarActivity {
 		return $where;
 	}
 
-	function get_freebusy_activities($user_focus, $start_date_time, $end_date_time){
+    /**
+     * @param SugarBean $user_focus
+     * @param $start_date_time Not used.
+     * @param $end_date_time Not used.
+     * @return array
+     */
+    public static function get_freebusy_activities($user_focus, $start_date_time, $end_date_time)
+    {
 		$act_list = array();
 		$vcal_focus = BeanFactory::getBean('vCals');
 		$vcal_str = $vcal_focus->get_vcal_freebusy($user_focus);
@@ -155,7 +158,14 @@ class CalendarActivity {
 	 * @param boolean $show_calls
 	 * @return array
 	 */
- 	function get_activities($user_id, $show_tasks, $view_start_time, $view_end_time, $view, $show_calls = true){
+    public static function get_activities(
+        $user_id,
+        $show_tasks,
+        $view_start_time,
+        $view_end_time,
+        $view,
+        $show_calls = true
+    ) {
 		global $current_user;
 		$act_list = array();
 		$seen_ids = array();

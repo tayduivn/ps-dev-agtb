@@ -44,19 +44,6 @@ class Person extends Basic
      */
     public $email_addresses;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this
-     * method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     *
-     */
-    public function Person()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
         parent::__construct();

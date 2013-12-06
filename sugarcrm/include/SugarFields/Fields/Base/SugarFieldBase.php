@@ -113,7 +113,8 @@ class SugarFieldBase {
      * @param string    $fieldName
      * @param array     $properties
      */
-    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
+    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties)
+    {
         if (isset($bean->$fieldName)) {
             $data[$fieldName] = $bean->$fieldName;
         } else {
@@ -248,7 +249,18 @@ class SugarFieldBase {
         return $this->formatField($inputField,$vardef);
     }
 
-    function displayFromFunc( $displayType, $parentFieldArray, $vardef, $displayParams, $tabindex = 0 ) {
+    /**
+     * Calls defined function to display the field.
+     *
+     * @param string $displayType View name.
+     * @param array $parentFieldArray Name of the variable in the parent template
+     * @param array $vardef Field definition.
+     * @param array $displayParams Parameters for display.
+     * @param int $tabindex
+     * @return string
+     */
+    public function displayFromFunc($displayType, $parentFieldArray, $vardef, $displayParams, $tabindex = 0)
+    {
 
         if ( ! is_array($vardef['function']) ) {
             $funcName = $vardef['function'];
