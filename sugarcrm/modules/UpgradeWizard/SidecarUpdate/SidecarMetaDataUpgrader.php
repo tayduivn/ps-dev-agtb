@@ -422,29 +422,54 @@ class SidecarMetaDataUpgrader
         $modules = $GLOBALS['moduleList'];
 
         $DCActions = array();
-        $actions_path = "include/DashletContainer/Containers/DCActions.php";
-        if(file_exists($actions_path)) {
+        $actions_path = 'include/DashletContainer/Containers/DCActions.php';
+        if (file_exists($actions_path)) {
             include $actions_path;
         }
-        if(file_exists("custom/$actions_path")) {
-            include "custom/$actions_path";
+        if (file_exists('custom/' . $actions_path)) {
+            include 'custom/' . $actions_path;
         }
 
         $availableModules = $DCActions;
 
         $disabled = array_diff($modules, $DCActions);
 
+        $position = 0;
         foreach ($DCActions as $module) {
-            $file = $this->getUpgradeFileParams("modules/$module/clients/base/menus/quickcreate/quickcreate.php", $module, "base", "custom", null, true, false, true);
-            if(empty($file)) continue;
+            $sidecarMetadataPath = 'modules/' . $module . '/clients/base/menus/quickcreate/quickcreate.php';
+            $quickcreatedefsPath = 'modules/' . $module . '/metadata/quickcreatedefs.php';
+            if (!file_exists('custom/' . $sidecarMetadataPath) && !file_exists($sidecarMetadataPath) &&
+                !file_exists('custom/' . $quickcreatedefsPath) && !file_exists($quickcreatedefsPath)) {
+                continue;
+            }
+            $file = $this->getUpgradeFileParams(
+                'modules/' . $module . '/clients/base/menus/quickcreate/quickcreate.php',
+                $module, 'base', 'custom', null, true, false, true
+            );
+            if (empty($file)) {
+                continue;
+            }
             $file['isDCEnabled'] = true;
+            $file['order'] = $position++;
             $this->files[] = $file;
         }
 
         foreach ($disabled as $module) {
-            $file = $this->getUpgradeFileParams("modules/$module/clients/base/menus/quickcreate/quickcreate.php", $module, "base", "custom", null, true, false, true);
-            if(empty($file)) continue;
+            $sidecarMetadataPath = 'modules/' . $module . '/clients/base/menus/quickcreate/quickcreate.php';
+            $quickcreatedefsPath = 'modules/' . $module . '/metadata/quickcreatedefs.php';
+            if (!file_exists('custom/' . $sidecarMetadataPath) && !file_exists($sidecarMetadataPath) &&
+                !file_exists('custom/' . $quickcreatedefsPath) && !file_exists($quickcreatedefsPath)) {
+                continue;
+            }
+            $file = $this->getUpgradeFileParams(
+                'modules/' . $module . '/clients/base/menus/quickcreate/quickcreate.php',
+                $module, 'base', 'custom', null, true, false, true
+            );
+            if (empty($file)) {
+                continue;
+            }
             $file['isDCEnabled'] = false;
+            $file['order'] = $position++;
             $this->files[] = $file;
         }
     }
