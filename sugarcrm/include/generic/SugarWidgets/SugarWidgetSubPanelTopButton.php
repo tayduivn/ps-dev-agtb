@@ -35,12 +35,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class SugarWidgetSubPanelTopButton extends SugarWidget
 {
-    var $module;
-	var $title;
-	var $access_key;
-	var $form_value;
-	var $additional_form_fields;
-	var $acl;
+    public $module;
+    public $title;
+    public $access_key;
+    public $form_value;
+    public $additional_form_fields;
+    public $acl;
+    public $enableActionMenu;
 
 //TODO rename defines to layout defs and make it a member variable instead of passing it multiple layers with extra copying.
 
@@ -82,6 +83,12 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
 			if(!empty($form_value))
 				$this->form_value = translate($form_value, $module);
 		}
+
+        if (isset($GLOBALS['sugar_config']['enable_action_menu']) && $GLOBALS['sugar_config']['enable_action_menu']===false) {
+            $this->enableActionMenu = false;
+        } else {
+            $this->enableActionMenu = true;
+        }
 	}
 
     public function getWidgetId($buttonSuffix = true)
@@ -142,7 +149,7 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
                 $label = $app_strings['LBL_CREATE_TASK'];
             }
 
-            if (isset($GLOBALS['sugar_config']['enable_action_menu']) && $GLOBALS['sugar_config']['enable_action_menu'] === true) {
+            if ($this->enableActionMenu) {
                 $button = '<form data-legacy-subpanel-create="1" action="index.php" method="post" name="form" id="' . $form . "\">\n".
                     "<a href='#' onClick=\"javascript:subp_nav_sidecar('" .$module. "','" .$parentId. "','c');\"".
                     " class='create_from_bwc_to_sidecar' id=\"$id\">". $label .'</a>';
@@ -351,7 +358,7 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
         } else {
             $sidecar = null;
             $button = $this->_get_form($defines, $additionalFormFields, $sidecar);
-            if ($sidecar != true && isset($GLOBALS['sugar_config']['enable_action_menu']) && $GLOBALS['sugar_config']['enable_action_menu'] === true) {
+            if ($sidecar != true && $this->enableActionMenu) {
                 $button .= "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='$this->form_value' />\n";
             }
             $button .= "</form>";

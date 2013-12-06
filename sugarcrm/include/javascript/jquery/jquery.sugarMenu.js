@@ -95,6 +95,7 @@
                         //see SubPanelTiles.js#subp_nav_sidecar and SugarWidgetSubPanelTopButton.php
                         if (!(parent.get(0).nodeName.toLowerCase() === 'form' && parent.data('legacy-subpanel-create'))) {
                             parent.prepend(newItemA);
+                            jNode.css('display', 'none');
                         }
                     }
 
@@ -146,7 +147,6 @@
                             }).addClass("void");
                         menuNode.append(_menu);
                     });
-                    jNode.css("display", "none");
 				});
 
 
