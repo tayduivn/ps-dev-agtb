@@ -35,6 +35,7 @@
                 switch ($subGroup) {
                     case 'bootstrap':
                         return array(
+                            'include/javascript/twitterbootstrap/transition.js'  => $target,
                             'include/javascript/twitterbootstrap/bootstrap-button.js'  => $target,
                             'include/javascript/twitterbootstrap/bootstrap-tooltip.js' => $target,
                             'include/javascript/twitterbootstrap/bootstrap-dropdown.js'=>  $target,
