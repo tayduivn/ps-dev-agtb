@@ -660,7 +660,7 @@
                 signatureCloseTagForRegex = '(<br\ class=[\'"]signature\-end[\'"].*?\/?>)',
                 signatureOpenTagMatches   = emailBody.match(new RegExp(signatureOpenTagForRegex, "gi")),
                 signatureCloseTagMatches  = emailBody.match(new RegExp(signatureCloseTagForRegex, "gi")),
-                regex                     = new RegExp(signatureOpenTagForRegex + ".*?" + signatureCloseTagForRegex, "gi");
+                regex                     = new RegExp(signatureOpenTagForRegex + "[\\s\\S]*?" + signatureCloseTagForRegex, "g");
 
             if (signatureOpenTagMatches && !signatureCloseTagMatches) {
                 // there is a signature, but no close tag; so the signature runs from open tag until EOF
