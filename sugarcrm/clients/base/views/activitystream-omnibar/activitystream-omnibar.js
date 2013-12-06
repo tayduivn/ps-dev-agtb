@@ -13,9 +13,9 @@
 ({
     events: {
         'click .addPost': 'addPost',
-        'keyup .sayit': '_handleContentChange',
-        'change div[data-placeholder]': '_handleContentChange',
-        'input div[data-placeholder]': '_handleContentChange'
+        'keyup .sayit': '_handleContentChange', //type text
+        'change .sayit': '_handleContentChange', //drag text in
+        'paste .sayit': '_handleContentPaste' //for IE - right click, paste
     },
 
     className: "omnibar",
@@ -176,5 +176,16 @@
             el.removeAttribute('data-hide-placeholder');
         }
         this.toggleSubmitButton();
+    },
+
+    /**
+     * Wrapper around _handleContentChange to defer until paste event completes
+     * Paste event needed for IE (right click, paste)
+     *
+     * @param e
+     * @private
+     */
+    _handleContentPaste: function(e) {
+        _.defer(_.bind(this._handleContentChange, this), e);
     }
 })
