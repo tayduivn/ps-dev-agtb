@@ -32,6 +32,11 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
         $product->quantity = $quantity;
         $product->discount_amount = $discount;
         $product->discount_select = $discount_select;
+        $product->fetched_row = array();
+
+        foreach($product->getFieldDefinitions() as $field) {
+            $product->fetched_row[$field['name']] = $product->$field['name'];
+        }
 
         SugarTestReflection::callProtectedMethod($product, 'calculateDiscountPrice');
 
