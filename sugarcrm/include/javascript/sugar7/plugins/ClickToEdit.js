@@ -125,7 +125,7 @@
                         return true;
                     }
                 }, this);
-            },
+            }
         });
 
         app.plugins.register('ClickToEdit', ['field'], {
@@ -179,7 +179,7 @@
             onDetach: function() {
                 $(document).off('mousedown.record' + this.cid);
                 // remove any lingering tooltip
-                this.$el.find("[rel=tooltip]").tooltip('destroy');
+                app.utils.tooltip.destroy(this.$('[rel=tooltip]'));
             },
 
             /**
@@ -219,6 +219,15 @@
                     this.$el.addClass('isEditable');
                     this.$el.wrapInner('<div class="' + cteClass + '" data-cid="' + this.cid + '" />');
                 }, this);
+                if (this.context.parent) {
+                    // Clears errors when navigating from the manager's forecast worksheet to the manager's RLI so that
+                    // the error tooltip is not displaying when forecast worksheet is hidden.
+                    this.context.parent.on('change:selectedUser', function() {
+                        if (this.isErrorState) {
+                            this.clearErrorDecoration();
+                        }
+                    }, this);
+                }
             },
 
             /**
@@ -298,17 +307,22 @@
              * Show an error message if not already display
              */
             showErrors: function() {
+                var $errorTooltips;
                 if (this.isErrorState === false) {
                     this.isErrorState = true;
                     this.$el.addClass('error');
                     this.$el.find('.error-tooltip').addClass('add-on local').removeClass('hide').css('display', 'inline-block');
                     this.$el.find('input').addClass('local-error');
                     // we want to show the tooltip message, but hide the add-on (exclamation)
-                    this.$el.find("[rel=tooltip]")
-                        .tooltip('destroy')
-                        .tooltip({container: 'body', placement: 'top', title: this.errorMessage})
-                        .tooltip('show')
-                        .hide();
+                    $errorTooltips = this.$('[rel=tooltip]');
+                    app.utils.tooltip.initialize($errorTooltips, {
+                        title: this.errorMessage,
+                        trigger: 'manual'
+                    });
+                    $errorTooltips.each(function() {
+                        app.utils.tooltip.show(this);
+                    });
+                    $errorTooltips.hide();
                 }
             },
 
@@ -316,7 +330,7 @@
              * Clear the Error
              */
             clearErrorDecoration: function() {
-                this.$el.find("[rel=tooltip]").tooltip('hide').tooltip('destroy');
+                app.utils.tooltip.destroy(this.$('[rel=tooltip]'));
                 this.isErrorState = false;
                 this.errorMessage = '';
             },

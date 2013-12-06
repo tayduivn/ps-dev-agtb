@@ -29,7 +29,7 @@ describe('Tooltip Plugin', function() {
         it('should create tooltips that has rel attribute value of tooltip', function() {
             field.initializeAllPluginTooltips();
 
-            expect(field._$pluginTooltips[0].length).toBe(1);
+            expect(field._$pluginTooltips.length).toBe(1);
             expect(tooltipInitializeSpy.calledOnce).toBe(true);
         });
     });
@@ -47,11 +47,13 @@ describe('Tooltip Plugin', function() {
     describe('addPluginTooltips', function() {
         it('should add tooltips given a specific element', function() {
             field.initializeAllPluginTooltips();
+
+            expect(field._$pluginTooltips.length).toBe(1);
+
             field.$el.append('<span id="more"><a rel="tooltip" title="bar">tooltip</a></span>');
             field.addPluginTooltips(field.$('#more'));
 
             expect(field._$pluginTooltips.length).toBe(2);
-            expect(field._$pluginTooltips[1].length).toBe(1);
             expect(tooltipInitializeSpy.calledTwice).toBe(true);
         });
     });
@@ -63,7 +65,7 @@ describe('Tooltip Plugin', function() {
 
             field.removePluginTooltips(field.$('#more'));
 
-            expect(field._$pluginTooltips[0].length).toBe(2);
+            expect(field._$pluginTooltips.length).toBe(2);
             expect(tooltipDestroySpy.calledOnce).toBe(true);
         });
     });

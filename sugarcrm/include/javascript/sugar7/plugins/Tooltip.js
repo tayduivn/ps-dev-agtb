@@ -27,7 +27,7 @@
 (function(app) {
     app.events.on('app:init', function() {
         app.plugins.register('Tooltip', ['layout', 'view', 'field'], {
-            _$pluginTooltips: null, //array of all initialized tooltips
+            _$pluginTooltips: null, //jQuery set of all initialized tooltips
 
             /**
              * CSS selector used to find tooltips.
@@ -94,14 +94,13 @@
             addPluginTooltips: function($element) {
                 var $tooltips = this._getPluginTooltips($element);
                 if ($tooltips.length > 0) {
-                    this._$pluginTooltips  = this._$pluginTooltips || [];
-                    this._$pluginTooltips.push(app.utils.tooltip.initialize($tooltips));
+                    this._$pluginTooltips = (this._$pluginTooltips || $()).add(app.utils.tooltip.initialize($tooltips));
 
                     //hide tooltip when clicked
                     $tooltips.on('click.tooltip', function() {
-                        var tooltip = $(this).data('bs.tooltip');
+                        var tooltip = app.utils.tooltip.get(this);
                         if (tooltip && tooltip.options && tooltip.options.trigger.indexOf('click') === -1) {
-                            tooltip.hide();
+                            app.utils.tooltip.hide(this);
                         }
                     });
                     app.accessibility.run($tooltips, 'click');
@@ -121,11 +120,6 @@
                 }
 
                 if ($tooltips && $tooltips.length > 0) {
-                    _.each($tooltips, function(tooltip) {
-                        if ($(tooltip).data('bs.tooltip') && $(tooltip).data('bs.tooltip').$tip) {
-                            $(tooltip).data('bs.tooltip').$tip.remove();
-                        }
-                    }, this);
                     app.utils.tooltip.destroy($tooltips);
                 }
             },
