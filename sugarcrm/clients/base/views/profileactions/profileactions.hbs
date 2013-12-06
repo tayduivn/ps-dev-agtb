@@ -29,7 +29,7 @@
 <ul class="nav megamenu" id="userList">
     <li class="dropdown" id="userActions">
         <div class="btn-group">
-            <a data-toggle="dropdown" href="javascript:void(0)" role="button" class="btn btn-invisible btn-link dropdown-toggle" rel="tooltip" data-placement="bottom" title="{{userName}}">
+            <a data-toggle="dropdown" href="javascript:void(0)" role="button" class="btn btn-invisible btn-link dropdown-toggle" rel="tooltip" data-placement="bottom" title="{{userName}}" track="click:userActions">
                 {{#if pictureUrl}}
                     <img src="{{pictureUrl}}" alt="{{userName}}" class="avatar">
                 {{else}}
@@ -40,7 +40,7 @@
             <div class="dropdown-menu scroll pull-right">
                 <ul role="menu">
                     {{#each menulist}}
-                        {{#if css_class}}<li class="{{css_class}}">{{else}}<li>{{/if}}<a href="{{route}}">
+                        {{#if css_class}}<li class="{{css_class}}">{{else}}<li>{{/if}}<a href="{{route}}" track="click:userAction-{{label}}">
                             {{#if img_url}}<img src="{{img_url}}" alt="{{../../userName}}" class="avatar">{{else}}<i class="{{icon}}"></i>{{/if}}{{str label}}</a>
                         </li>
                     {{/each}}

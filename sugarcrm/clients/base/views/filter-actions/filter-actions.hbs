@@ -32,10 +32,10 @@
     </div>
     <div class="span6">
         <div class="pull-right">
-            <a class="btn btn-link btn-invisible reset_button">{{str "LBL_RESET"}}</a>
-            <a class="btn btn-link btn-invisible filter-close">{{str "LBL_CANCEL_BUTTON_LABEL"}}</a>
-            <a class="btn btn-link btn-invisible delete_button hide">{{str "LBL_DELETE"}}</a>
-            <a class="btn btn-primary disabled save_button">{{str "LBL_SAVE_BUTTON_LABEL"}}</a>
+            <a class="btn btn-link btn-invisible reset_button" track="click:filter-reset">{{str "LBL_RESET"}}</a>
+            <a class="btn btn-link btn-invisible filter-close" track="click:filter-close">{{str "LBL_CANCEL_BUTTON_LABEL"}}</a>
+            <a class="btn btn-link btn-invisible delete_button hide" track="click:filter-delete">{{str "LBL_DELETE"}}</a>
+            <a class="btn btn-primary disabled save_button" track="click:filter-save">{{str "LBL_SAVE_BUTTON_LABEL"}}</a>
         </div>
     </div>
 </div>

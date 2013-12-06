@@ -94,6 +94,9 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 'mass_update_chunk_size' => 3,
                 'not_on_white_list' => 4,
             ),
+            'analytics' => array(
+                'enabled' => true,
+            )
         );
 
         $expectedConfigs = array(
@@ -101,6 +104,9 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
             'maxRecordFetchSize' => 2,
             'massActions' => array(
                 'massUpdateChunkSize' => 3,
+            ),
+            'analytics' => array(
+                'enabled' => true,
             )
         );
 

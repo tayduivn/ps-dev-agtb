@@ -366,6 +366,17 @@
                 }
             }
         }
+        var args = options.args || [];
+        var subroute;
+        if (args[0]) {
+            var qpos = args[0].indexOf('?');
+            subroute = qpos > -1 ? args[0].substring(0, args[0].indexOf('?')) : args[0];
+        }
+        var viewId = options.route + (subroute ? '/' + subroute : '');
+
+        app.analytics.currentViewId = viewId;
+        app.analytics.trackPageView(app.analytics.currentViewId);
+
         return true;
     });
 
