@@ -71,11 +71,14 @@
         if (this.isForecastSetup && this.forecastsConfigOK) {
             this.initOptions.meta.template = undefined;
 
-            // we only want to call this if forecast is setup and configured
-            app.api.call('GET', app.api.buildURL('Forecasts/init'), null, {
-                success: _.bind(this.forecastInitCallback, this),
-                complete: this.initOptions ? this.initOptions.complete : null
-            });
+            if (!options.meta.config) {
+                // we only want to call this if forecast is setup and configured
+                // and this is not the dashlet config screen
+                app.api.call('GET', app.api.buildURL('Forecasts/init'), null, {
+                    success: _.bind(this.forecastInitCallback, this),
+                    complete: this.initOptions ? this.initOptions.complete : null
+                });
+            }
 
             this.displayTimeperiodPivot = (options.context.get('module') === 'Home');
         } else {
@@ -86,6 +89,13 @@
         }
 
         app.view.View.prototype.initialize.call(this, this.initOptions);
+    },
+
+    /**
+     * @inheritdoc
+     */
+    getLabel: function() {
+        return app.lang.get('LBL_DASHLET_FORECASTS_FOR_CHART_NAME');
     },
 
     /**
@@ -144,7 +154,7 @@
             // if we have a timestamp, use it, otherwise just default to the current time period
             defaultOptions.timeperiod_id = this.model.get('date_closed_timestamp');
         }
-
+        this.layout.setTitle(this.getLabel() + ' ' + defaultOptions.timeperiod_label);
         this.settings.set(defaultOptions);
     },
 
@@ -260,6 +270,11 @@
                     }, dashletToolbar);
                 }
             }, this);
+
+            this.settings.on('change:title', function(model, title) {
+                this.layout.setTitle(title);
+            }, this);
+
             this.settings.on('change:display_manager', this.toggleRepOptionsVisibility, this);
             this.settings.on('change:selectedTimePeriod', function(context, timeperiod) {
                 this.settings.set({timeperiod_id: timeperiod});

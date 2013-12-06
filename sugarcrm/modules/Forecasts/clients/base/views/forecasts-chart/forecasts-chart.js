@@ -64,7 +64,6 @@
 
     /**
      * Specific code to run after a dashlet Init Code has ran
-     *
      */
     initDashlet: function() {
         var fieldOptions,
@@ -328,6 +327,10 @@
         if (meta.config) {
             return;
         }
+
+        this.values.on('change:title', function(model, title) {
+            this.layout.setTitle(title);
+        }, this);
 
         this.on('render', function() {
             var f = this.getField('paretoChart'),
