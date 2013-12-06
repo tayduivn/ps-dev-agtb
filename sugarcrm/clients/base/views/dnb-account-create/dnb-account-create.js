@@ -356,7 +356,7 @@
             //show a detailed warning message about the single data element being imported
             if(updatedData.length == 1)
             {
-                warningMessage = warningMessage + app.lang.get(accountsModel.fields[updatedData[0].propName].vname,'Accounts')  + ': ' + accountsModel.get(updatedData[0].propName) 
+                warningMessage += app.lang.get(accountsModel.fields[updatedData[0].propName].vname,'Accounts')  + ': ' + accountsModel.get(updatedData[0].propName)
                                   + app.lang.get('LBL_DNB_WITH') + updatedData[0].propVal + ' ?';                                      
             }
             //list all the data elements being imported
@@ -364,19 +364,21 @@
             {
                 for (var i = 0; i < updatedData.length; i++) 
                 {
-                    warningMessage = warningMessage + (i == 0 ? '' : ', ') + app.lang.get(accountsModel.fields[updatedData[i].propName].vname,'Accounts');
+                    warningMessage += (i == 0 ? '' : ', ') + app.lang.get(accountsModel.fields[updatedData[i].propName].vname,'Accounts');
                    
                 }
+                warningMessage += ' ?';
             }
             //give a brief message about the data elements being imported
             else
             {
                 for (var i = 0; i < 2; i++) 
                 {
-                    warningMessage = warningMessage + (i == 0 ? '' : ', ') + app.lang.get(accountsModel.fields[updatedData[i].propName].vname,'Accounts');
+                    warningMessage += (i == 0 ? '' : ', ') + app.lang.get(accountsModel.fields[updatedData[i].propName].vname,'Accounts');
                     
                 }
-                warningMessage = warningMessage + app.lang.get('LBL_DNB_AND') + (updatedData.length - 2) + app.lang.get('LBL_DNB_OTHER_FIELDS');
+                warningMessage += app.lang.get('LBL_DNB_AND') + (updatedData.length - 2) + app.lang.get('LBL_DNB_OTHER_FIELDS');
+                warningMessage += ' ?';
             }
 
             

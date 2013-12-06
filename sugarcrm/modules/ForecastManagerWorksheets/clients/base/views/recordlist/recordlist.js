@@ -413,14 +413,10 @@
             if (this.isDirty()) {
                 app.alert.show('leave_confirmation', {
                     level: 'confirmation',
-                    messages: app.lang.get('LBL_WARN_UNSAVED_CHANGES', 'Forecasts'),
-                    onConfirm: _.bind(function(){
-                        this._setOrderBy(options)
-                    }, this),
-                    templateOptions: {
-                        cancelContLabel: app.lang.get('LBL_CANCEL_BUTTON_LABEL_ORDERBY_CONT', 'Forecasts'),
-                        confirmContLabel: app.lang.get('LBL_CONFIRM_BUTTON_LABEL_ORDERBY_CONT', 'Forecasts')
-                    }
+                    messages: app.lang.get('LBL_WARN_UNSAVED_CHANGES_CONFIRM_SORT', 'Forecasts'),
+                    onConfirm: _.bind(function() {
+                        this._setOrderBy(options);
+                    }, this)
                 });
                 return false;
             }
@@ -485,14 +481,10 @@
                 
                 app.alert.show('leave_confirmation', {
                     level: 'confirmation',
-                    messages: app.lang.get(this.navigationMessage, 'Forecasts').split("<br>"),
-                    onConfirm: _.bind(function(){
+                    messages: app.lang.get(this.navigationMessage, 'Forecasts').split('<br>'),
+                    onConfirm: _.bind(function() {
                         callback.call(this);
-                    }, this),
-                    templateOptions: {
-                        cancelContLabel: 'LBL_CANCEL_BUTTON_LABEL_UNSAVED_CONT',
-                        confirmContLabel: 'LBL_CONFIRM_BUTTON_LABEL_UNSAVED_CONT'
-                    }
+                    }, this)
                 });
                 return false;
             }
@@ -545,11 +537,7 @@
                 messages: app.lang.get('LBL_WORKSHEET_EXPORT_CONFIRM', 'Forecasts'),
                 onConfirm: _.bind(function() {
                     this.doExport();
-                }, this),
-                templateOptions: {
-                    cancelContLabel: app.lang.get('LBL_WORKSHEET_EXPORT_CANCEL_LABEL', 'Forecasts'),
-                    confirmContLabel: app.lang.get('LBL_WORKSHEET_EXPORT_CONFIRM_LABEL', 'Forecasts')
-                }
+                }, this)
             });
         } else {
             this.doExport();

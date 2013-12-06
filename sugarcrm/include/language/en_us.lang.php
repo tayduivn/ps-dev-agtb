@@ -2760,8 +2760,8 @@ $app_strings = array (
     'LBL_MASS_UPDATE_SUCCESS' => 'All records were updated successfully.',
     'TPL_MASS_ADD_TO_LIST_SUCCESS' => 'Selected records were added to the <a href="{{listUrl}}">{{listName}}</a> target list.',
     'TPL_MASS_ADD_TO_LIST_QUEUED' => 'Your request to add selected records to the <a href="{{listUrl}}">{{listName}}</a> target list has been scheduled.',
-    'LBL_MASS_UPDATE_EMPTY_VALUES' => 'The following attributes have empty values: ',
-    'LBL_MASS_UPDATE_EMPTY_CONFIRM' => 'Existing values will be replaced with empty values. Do you want to continue?',
+    'LBL_MASS_UPDATE_EMPTY_VALUES' => 'The update will remove the following values: ',
+    'LBL_MASS_UPDATE_EMPTY_CONFIRM' => 'Cancel to keep existing values. Confirm to remove the values.',
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Opt out Primary Email',
     'LBL_MEETINGS'=>'Meetings',
     'LBL_MEETING'=>'Meeting',
@@ -3102,7 +3102,7 @@ $app_strings = array (
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users exceeds the maximum number of licenses allowed.",
     'WARN_ONLY_ADMINS'=> "Only admins may log in.",
     'WARN_UNSAVED_CHANGES'=> "You are about to leave this record without saving any changes you may have made to the record. Are you sure you want to navigate away from this record?",
-    'LBL_WARN_UNSAVED_CHANGES' => 'You have unsaved changes. Leave page and discard changes?',
+    'LBL_WARN_UNSAVED_CHANGES' => 'You have unsaved changes. Are you sure you want to leave page and discard changes?',
     'ERROR_NO_RECORD' => 'Error retrieving record.  This record may be deleted or you may not be authorized to view it.',
     'ERROR_TYPE_NOT_VALID' => 'Error. This type is not valid.',
     'ERROR_MAX_FIELD_LENGTH' => 'Error. The max length of this field is {{this}}.',
@@ -3950,7 +3950,7 @@ $app_strings = array (
 
     //Merge Duplicates
     'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
-    'LBL_MERGE_DUPLICATES_PROCEED' => 'Do you want to proceed?',
+    'LBL_MERGE_DUPLICATES_PROCEED' => 'Do you want to proceed? Cancel to abort. Confim to delete records.',
     'LBL_MERGE_DUPLICATES_CONFIRM' => 'This action will delete following record(s):',
     'LBL_MERGE'  => 'Merge',
     'TPL_MERGING_RECORDS'  => 'Merging {{mergeCount}} Records',
@@ -4027,7 +4027,7 @@ $app_strings = array (
     'PrimaryButton' => 'Primary Button',
     'LBL_SAVE_AND_DEPLOY_BTN' => 'Save & Deploy',
     'LBL_RESET_THEME_LNK' => 'Restore Default Theme',
-    'LBL_RESET_THEME_MODAL_INFO' => 'You are about to erase your custom theme with the default theme.',
+    'LBL_RESET_THEME_MODAL_INFO' => 'Are you sure you want to discard your theme customizations and replace with default theme?',
     'LBL_RESET_THEME_PROCESS' => 'Restoring default theme...',
     'LBL_SAVE_THEME_PROCESS' => 'Saving theme...',
 
@@ -4422,7 +4422,7 @@ $app_strings = array (
     'LBL_PLANNED_ACTIVITIES_DASHLET_USER_BUTTON_LABEL' => 'My History',
     'LBL_PLANNED_ACTIVITIES_DASHLET_GROUP_BUTTON_LABEL' => 'Team History',
     'LBL_PLANNED_ACTIVITIES_DASHLET_HELD_ACTIVITY' => 'Held',
-    'LBL_PLANNED_ACTIVITIES_DASHLET_CONFIRM_CLOSE' => 'Are you sure you want to close the {0} as held?',
+    'LBL_PLANNED_ACTIVITIES_DASHLET_CONFIRM_CLOSE' => 'Are you sure you want to mark {0} as closed?',
 
     // active tasks dashlet
     'LBL_ACTIVE_TASKS_DASHLET' => 'Active Tasks',
@@ -4460,10 +4460,8 @@ $app_strings = array (
     'LBL_ALERT_BROWSER_SUPPORT' => 'The following browser versions are recommended: <ul><li>Internet Explorer 9</li><li>Firefox 22</li><li>Safari 6</li><li>Chrome 27</li></ul>',
 
     //opportunity chart
-    'TPL_OVERWRITE_POPULATED_DATA_CONFIRM' => 'The selected record has related values: {{values}}.',
-    'TPL_OVERWRITE_POPULATED_DATA_CONFIRM_WITH_MODULE_SINGULAR' => 'The selected {{moduleSingularLower}} has related values: {{values}}.',
-    'TPL_ALERT_OVERWRITE_POPULATED_DATA_CONFIRM' => 'to copy the new values to the {{moduleSingularLower}}.',
-    'LBL_ALERT_OVERWRITE_POPULATED_DATA_CANCEL' => 'to keep the current values.',
+    'TPL_OVERWRITE_POPULATED_DATA_CONFIRM' => 'The selected record will overwrite the following values: {{values}}. Cancel to keep existing values. Confirm to overwrite with new values.',
+    'TPL_OVERWRITE_POPULATED_DATA_CONFIRM_WITH_MODULE_SINGULAR' => 'The selected {{moduleSingularLower}} has related values: {{values}}. Cancel to keep existing values. Confirm to overwrite with new values.',
     'LBL_OVERWRITE_POPULATED_DATA_FROM' => 'From:',
     'LBL_OVERWRITE_POPULATED_DATA_TO' => 'To:',
 

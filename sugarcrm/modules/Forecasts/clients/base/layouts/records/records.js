@@ -153,17 +153,13 @@
                 if(this.isDirty){
                     app.alert.show('leave_confirmation', {
                         level: 'confirmation',
-                        messages: app.lang.get(this.navigationMessage, 'Forecasts').split("<br>"),
-                        onConfirm: _.bind(function(){
+                        messages: app.lang.get(this.navigationMessage, 'Forecasts').split('<br>'),
+                        onConfirm: _.bind(function() {
                             app.utils.getSelectedUsersReportees(selectedUser, context);
                         }, this),
-                        onCancel: _.bind(function(){
-                            this.context.trigger("forecasts:user:canceled");
-                        }, this),
-                        templateOptions: {
-                            cancelContLabel: 'LBL_CANCEL_BUTTON_LABEL_UNSAVED_CONT',
-                            confirmContLabel: 'LBL_CONFIRM_BUTTON_LABEL_UNSAVED_CONT'
-                        }
+                        onCancel: _.bind(function() {
+                            this.context.trigger('forecasts:user:canceled');
+                        }, this)
                     });
                 } else {
                     app.utils.getSelectedUsersReportees(selectedUser, context);
@@ -175,17 +171,13 @@
                 if(this.isDirty){
                     app.alert.show('leave_confirmation', {
                         level: 'confirmation',
-                        messages: app.lang.get(this.navigationMessage, 'Forecasts').split("<br>"),
-                        onConfirm: _.bind(function(){
-                            this.context.set("selectedTimePeriod", model.get("selectedTimePeriod"));
+                        messages: app.lang.get(this.navigationMessage, 'Forecasts').split('<br>'),
+                        onConfirm: _.bind(function() {
+                            this.context.set('selectedTimePeriod', model.get('selectedTimePeriod'));
                         }, this),
-                        onCancel: _.bind(function(){
-                            this.context.trigger("forecasts:timeperiod:canceled");
-                        }, this),
-                        templateOptions: {
-                            cancelContLabel: 'LBL_CANCEL_BUTTON_LABEL_UNSAVED_CONT',
-                            confirmContLabel: 'LBL_CONFIRM_BUTTON_LABEL_UNSAVED_CONT'
-                        }
+                        onCancel: _.bind(function() {
+                            this.context.trigger('forecasts:timeperiod:canceled');
+                        }, this)
                     });
                 } else {
                     this.context.set("selectedTimePeriod", model.get("selectedTimePeriod"));

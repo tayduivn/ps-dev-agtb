@@ -466,6 +466,7 @@
                 {
                     warningMessage = warningMessage + (i == 0 ? '' : ', ') + app.lang.get(accountsModel.fields[updatedData[i].propName].vname,'Accounts');
                 }
+                warningMessage += ' ?';
             }
             //give a brief message about the data elements being imported
             else
@@ -475,6 +476,7 @@
                     warningMessage = warningMessage + (i == 0 ? '' : ', ') + app.lang.get(accountsModel.fields[updatedData[i].propName].vname,'Accounts');
                 }
                 warningMessage = warningMessage + app.lang.get('LBL_DNB_AND') + (updatedData.length - 2) + app.lang.get('LBL_DNB_OTHER_FIELDS');
+                warningMessage += ' ?';
             }
 
             
