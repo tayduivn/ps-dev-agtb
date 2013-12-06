@@ -45,11 +45,14 @@ class SugarUpgradeForecastsListViewSetup extends UpgradeScript
         // setup the forecast columns based on the config
         require_once('include/api/RestService.php');
         require_once('modules/Forecasts/clients/base/api/ForecastsConfigApi.php');
+        require_once('modules/Forecasts/ForecastsDefaults.php');
         $api = new RestService();
         $api->user = $this->context['admin'];
         $api->platform = 'base';
         $client = new ForecastsConfigApi();
-        $client->setWorksheetColumns($api, $forecast_config['worksheet_columns'], $forecast_config['forecast_by']);
+        // get the worksheet columns for Ent, because we wouldn't have
+        // made it this far if it were pro
+        $client->setWorksheetColumns($api, ForecastsDefaults::getWorksheetColumns('ent'), $forecast_config['forecast_by']);
 
         unset($api, $client);
     }
