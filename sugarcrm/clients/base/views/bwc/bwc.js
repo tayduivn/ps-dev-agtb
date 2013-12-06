@@ -353,8 +353,15 @@
      * @private
      */
     _rewriteNewWindowLinks: function(frame) {
-        var baseUrl = app.config.siteUrl || window.location.origin + window.location.pathname,
+        var ieOrigin,
+            baseUrl,
             $links = frame.$('a[target="_blank"]').not('[href^="http"]').not('[href*="entryPoint=download"]');
+
+        // for IE 10 & below, which does not have window.location.origin
+        if (!window.location.origin) {
+            ieOrigin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+        }
+        baseUrl = app.config.siteUrl || (window.location.origin || ieOrigin) + window.location.pathname;
 
         $links.each(function(i, elem) {
             var $elem = $(elem);
