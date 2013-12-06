@@ -343,10 +343,6 @@ class SugarQuery
      */
     public function joinSubpanel($bean, $link_name, $options = array())
     {
-        if (!empty($this->links[$link_name])) {
-            return $this->links[$link_name];
-        }
-
         //Force a unique join table alias for self referencing relationships and multiple joins against the same table
         $alias = !empty($options['joinTableAlias']) ? $options['joinTableAlias'] : $this->getJoinTableAlias(
             $bean->table_name
