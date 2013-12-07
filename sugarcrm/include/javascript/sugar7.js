@@ -460,4 +460,25 @@
         }
         return true;
     });
+
+
+    app.augment("progress", _.extend({
+        init: function() {
+            console.log("init Called");
+            NProgress.configure({
+                positionUsing: "margin-left",
+                template: '<div class="loading gate">' +
+                    '    <div class="progress progress-danger">' +
+                    '        <div role="bar" class="bar"></div>' +
+                    '    </div>' +
+                    '</div>'
+            });
+            NProgress.start();
+            NProgress.set(0.25);
+        },
+        hide: function() {
+            $("#nprogress").hide();
+        }}, NProgress),
+        false
+    );
 })(SUGAR.App);

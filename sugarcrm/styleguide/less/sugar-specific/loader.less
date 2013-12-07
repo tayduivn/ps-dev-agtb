@@ -1,48 +1,109 @@
-.loading {
-    display: inline;
+.alert-top > .gate {
+  top: -38px;
+  position: absolute;
+  padding-top: 13px;
+  width: 280px;
+  margin-left: -140px;
 }
 
-.loading span {
-    background-color: #000000;
-    border-width: 1px;
-    border-style: solid;
-    border-color: #efefef #efefef #eee #eee;
+#nprogress {
+  position: fixed;
+  top: 38px;
+  height: 0;
+  width: 100%;
+  z-index: 1040;
+  &> div {
+    text-align: center;
     display: inline-block;
-    width: 2px;
-    height: 2px;
-    margin-right: 1px;
-    opacity: 0.2;
-    margin-top: 0.3em;
-    .scale(0.7);
-    -moz-animation: move 1s infinite linear;
-    -webkit-animation: move 1s infinite linear;
-    animation: move 1s infinite linear;
+  }
+}
+
+#nprogress > .gate {
+  position: absolute;
+  width: 100%;
+}
+
+
+
+.loading {
+  display: inline-block;
+  margin: 0 auto;
+  text-align: center;
+  color: @grayLight;
+}
+
+.loading .progress {
+  width: 100%;
+  height: 4px;
+  margin-top: 6px;
+  .bar {
+    height: 4px;
+    background: @BorderColor;
+  }
+}
+
+.loading i {
+  color: @grayLight;
+  display: inline-block;
+  font-size: 4px;
+  margin: 0 2px;
+  -moz-animation: move 1s infinite linear;
+  -webkit-animation: move 1s infinite linear;
+  animation: move 1s infinite linear;
 }
 
 .loading .l1 {
-    -moz-animation-delay: .1s;
-    -webkit-animation-delay: .1s;
+  -moz-animation-delay: .1s;
+  -webkit-animation-delay: .1s;
+  animation-delay: .1s;
 }
 
 .loading .l2 {
-    -moz-animation-delay: .2s;
-    -webkit-animation-delay: .2s;
+  -moz-animation-delay: .2s;
+  -webkit-animation-delay: .2s;
+  animation-delay: .2s;
 }
 
 .loading .l3 {
-    -moz-animation-delay: .3s;
-    -webkit-animation-delay: .3s;
+  -moz-animation-delay: .3s;
+  -webkit-animation-delay: .3s;
+  animation-delay: .3s;
 }
 
-.loading.wide {
-  padding: 0 0 0 20px;
+@-moz-keyframes move{0%{opacity:1;}100%{opacity:0.1;}}
+@-webkit-keyframes move{0%{opacity:1;}100%{opacity:0.1;}}
+@keyframes move{0%{opacity:1;}100%{opacity:0.1;}}
+
+
+/**
+  * Start of nprogress.css from https://github.com/rstacruz/nprogress
+  * MIT License
+  * https://github.com/rstacruz/nprogress/blob/master/License.md
+  * Modified to match Sugar7 Color scheme
+  */
+
+/* Make clicks pass-through */
+#nprogress {
+  pointer-events: none;
 }
 
-@-moz-keyframes move{
-    0%{-moz-transform: scale(1.2);opacity:1;}
-    100%{-moz-transform: scale(0.5);opacity:0.1;}
+#nprogress .bar {
+  background: @BorderColor;
+  width: 100%;
+  margin-left: -100%;
 }
-@-webkit-keyframes move{
-    0%{-webkit-transform: scale(1.2);opacity:1;}
-    100%{-webkit-transform: scale(0.5);opacity:0.1;}
+
+/* Fancy blur effect */
+#nprogress .peg {
+  display: block;
+  position: absolute;
+  right: 0px;
+  width: 100px;
+  height: 100%;
+  box-shadow: 0 0 10px @BorderColor, 0 0 5px @BorderColor;
+  opacity: 1.0;
+
+  -webkit-transform: rotate(3deg) translate(0px, -4px);
+      -ms-transform: rotate(3deg) translate(0px, -4px);
+          transform: rotate(3deg) translate(0px, -4px);
 }
