@@ -137,10 +137,28 @@
         this.render();
         this.setMode(this.model.mode);
     },
+
+    /**
+     * Remove a row.
+     *
+     * @param {Event} evt Mouse event.
+     */
     removeClicked: function(evt) {
-        var index = ($(evt.currentTarget).parents(".row-fluid:first").data("index")()).split('').pop();
-        this.removeRow(index);
+        var cell = $(evt.currentTarget).closest('.row-fluid');
+            index = (cell.data('index')()).split('').pop();
+        if (!cell.find('[data-dashlet]').length) {
+            this.removeRow(index);
+            return;
+        }
+        app.alert.show('delete_confirmation', {
+            level: 'confirmation',
+            messages: app.lang.get('LBL_REMOVE_DASHLET_ROW_CONFIRM', this.module),
+            onConfirm: _.bind(function() {
+                this.removeRow(index);
+            }, this)
+        });
     },
+
     removeRow: function(index) {
         var metadata = this.model.get("metadata"),
             position = this.index.split(''),
