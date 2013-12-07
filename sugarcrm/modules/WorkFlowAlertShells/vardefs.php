@@ -151,9 +151,9 @@ $dictionary['WorkFlowAlertShell'] = array('table' => 'workflow_alertshells'
     'options' => 'wflow_type_dom',
     'source'=>'non-db',
   ),
-  
-)
-  , 'indices' => array (
+),
+'acls' => array('SugarACLAdminOnly' => true),
+'indices' => array (
        array('name' =>'workflowalertshell_k', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_workflowalertshell', 'type'=>'index', 'fields'=>array('name','deleted')),
                                                       )
@@ -166,4 +166,3 @@ $dictionary['WorkFlowAlertShell'] = array('table' => 'workflow_alertshells'
   
                                                       
                             );
-?>

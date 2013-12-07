@@ -188,9 +188,9 @@ $dictionary['WorkFlow'] = array('table' => 'workflow'
     'bean_name'=>'WorkFlowActionShell',
     'source'=>'non-db',
   ),
-  
-)
-  , 'indices' => array (
+),
+'acls' => array('SugarACLAdminOnly' => true),  
+'indices' => array (
        array('name' =>'workflow_k', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_workflow', 'type'=>'index', 'fields'=>array('name','deleted')),
        array('name' => 'idx_workflow_type', 'type' => 'index', 'fields' => array('type')),
@@ -216,4 +216,3 @@ $dictionary['WorkFlow'] = array('table' => 'workflow'
   
                                                       
                             );
-?>

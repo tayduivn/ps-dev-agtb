@@ -214,8 +214,9 @@ $dictionary['WorkFlowAlert'] = array('table' => 'workflow_alerts'
     'bean_name'=>'Expression',
     'source'=>'non-db',
   ),    
-)
-  , 'indices' => array (
+),
+'acls' => array('SugarACLAdminOnly' => true),
+'indices' => array (
        array('name' =>'workflowalerts_k', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_workflowalerts', 'type'=>'index', 'fields'=>array('deleted')),
                                                       )
@@ -238,4 +239,3 @@ $dictionary['WorkFlowAlert'] = array('table' => 'workflow_alerts'
 	),
                                                       
                             );
-?>

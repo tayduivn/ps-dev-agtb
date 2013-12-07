@@ -134,10 +134,11 @@ $dictionary['WorkFlowAction'] = array('table' => 'workflow_actions'
     'type' => 'varchar',
     'len' => '50',
   ),    
-)
-                                                      , 'indices' => array (
+),
+'acls' => array('SugarACLAdminOnly' => true),
+
+'indices' => array (
        array('name' =>'action_k', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_action', 'type'=>'index', 'fields'=>array('deleted')),
                                                       )
  );
-?>

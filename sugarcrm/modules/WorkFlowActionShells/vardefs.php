@@ -164,8 +164,9 @@ $dictionary['WorkFlowActionShell'] = array('table' => 'workflow_actionshells'
     'options' => 'wflow_type_dom',
     'source'=>'non-db',
   ),
-)
-                                                      , 'indices' => array (
+),
+'acls' => array('SugarACLAdminOnly' => true),
+'indices' => array (
        array('name' =>'actionshell_k', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_actionshell', 'type'=>'index', 'fields'=>array('deleted')),
                                                       )
@@ -182,4 +183,3 @@ $dictionary['WorkFlowActionShell'] = array('table' => 'workflow_actionshells'
 							  'relationship_role_column_value'=>'rel1_action_fil', 'relationship_type'=>'one-to-many')							  							  	
   )                                                      
  );
-?>
