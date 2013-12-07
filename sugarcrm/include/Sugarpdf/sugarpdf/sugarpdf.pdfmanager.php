@@ -52,7 +52,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
         if (!empty($_REQUEST['pdf_template_id'])) {
 
             $pdfTemplate = BeanFactory::newBean('PdfManager');
-            if ($pdfTemplate->retrieve($_REQUEST['pdf_template_id']) !== null) {
+            if ($pdfTemplate->retrieve($_REQUEST['pdf_template_id'], false) !== null) {
 
                 $previewMode = FALSE;
                 if (!empty($_REQUEST['pdf_preview']) && $_REQUEST['pdf_preview'] == 1) {
