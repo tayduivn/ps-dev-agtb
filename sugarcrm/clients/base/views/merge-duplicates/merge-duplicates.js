@@ -839,12 +839,9 @@
                         self.primaryRecord.revertAttributes();
                         self.setPrimaryEditable(droppedTo.data('record-id'));
                     },
-                    onLinkClick: function(event) {
-                        if ($(event.currentTarget).hasClass('cancel')) {
-                            self.$('[data-record-id=' + self.primaryRecord.get('id') + '] ' +
-                                    '[data-container=primary-label]')
-                                .sortable('cancel');
-                        }
+                    onCancel: function() {
+                        self.$('[data-record-id=' + self.primaryRecord.get('id') + '] ' +
+                            '[data-container=primary-label]').sortable('cancel');
                     }
                 });
                 return;
