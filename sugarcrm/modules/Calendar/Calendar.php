@@ -69,17 +69,6 @@ class Calendar {
      */
     private $print = false;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function Calendar()
-    {
-        self::__construct();
-    }
-
 	/**
 	 * constructor
 	 * @param string $view 

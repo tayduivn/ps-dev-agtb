@@ -125,7 +125,8 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
         return TimeDate::getInstance()->to_display_date_time($inputField, true, true, $user);
     }
 
-    public function save(&$bean, &$inputData, &$field, &$def, $prefix = '') {
+    public function save($bean, $inputData, $field, $def, $prefix = '')
+    {
         global $timedate;
         if ( !isset($inputData[$prefix.$field]) ) {
             //$bean->$field = '';
