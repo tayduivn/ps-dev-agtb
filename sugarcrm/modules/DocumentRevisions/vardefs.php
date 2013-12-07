@@ -203,5 +203,7 @@ $dictionary['DocumentRevision'] = array(
         array('name' => 'documentrevisionspk', 'type' => 'primary', 'fields' => array('id')),
         array('name' => 'documentrevision_mimetype', 'type' => 'index', 'fields' => array('file_mime_type')),
     ),
+    'acls' => array('SugarACLParentModule' => array('parentModule' => 'Documents')),
+    'visibility' => array('ParentModuleVisibility' => array('parentLink' => 'documents')),
 );
 ?>
