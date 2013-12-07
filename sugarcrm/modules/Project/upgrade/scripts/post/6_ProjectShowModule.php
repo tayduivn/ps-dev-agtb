@@ -17,7 +17,7 @@
  */
 class SugarUpgradeProjectShowModule extends UpgradeScript
 {
-    public $order = 8501;
+    public $order = 6999;
     public $type = self::UPGRADE_CORE;
 
     public function run()
@@ -43,6 +43,15 @@ foreach($modInvisList as $key => $mod) {
     }
 }
 ';
+
+            // enable the project module in the upgrade instance
+            global $moduleList, $modInvisList;
+            $moduleList[] = 'Project';
+            foreach ($modInvisList as $key => $mod) {
+                if ($mod == 'Project' || $mod == 'ProjectTask') {
+                    unset($modInvisList[$key]);
+                }
+            }
 
             sugar_file_put_contents($path . '/Include/' . $file_name, $file_contents);
 

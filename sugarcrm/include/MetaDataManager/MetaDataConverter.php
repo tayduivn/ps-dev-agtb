@@ -457,7 +457,42 @@ class MetaDataConverter
             );
         }
 
-        $newSubpanelName = $this->fromLegacySubpanelName($pathInfo['filename']);
+        $subpanelFileName = $pathInfo['filename'];
+        if (substr_count($pathInfo['filename'], '_') > 1 && stristr($pathInfo['filename'], 'subpanel')) {
+            $parts = explode('_subpanel_', $pathInfo['filename']);
+            $beanNameParts = explode('_', $parts[0]);
+            $subPanelBeanName = '';
+            foreach ($beanNameParts as $part) {
+                $subPanelBeanName .= ucwords($part);
+            }
+
+            // case is not the actually object name, it's aCase
+            if ($subPanelBeanName == 'Case') {
+                $subPanelBeanName = 'aCase';
+            }
+
+            $focus = BeanFactory::newBeanByName($subPanelBeanName);
+            if ($focus) {
+                $field = $focus->getFieldDefinition($parts[1]);
+                if ($field && $field['type'] == 'link') {
+                    // since we have a valid link, we need to test the relationship to see if it's custom relationship
+                    $relationships = new DeployedRelationships($focus->module_name);
+                    $relationship = $relationships->get($parts[1]);
+                    $relDef = array();
+                    if ($relationship) {
+                        $relDef = $relationship->getDefinition();
+                    }
+                    if (isset($relDef['is_custom']) && $relDef['is_custom']
+                        && isset($relDef['from_studio']) && $relDef['from_studio']) {
+                        $subpanelFileName = "For{$relDef['name']}";
+                    } else {
+                        $subpanelFileName = "For{$focus->module_name}";
+                    }
+                }
+            }
+        }
+
+        $newSubpanelName = $this->fromLegacySubpanelName($subpanelFileName);
 
         $newPath = str_replace(
             "metadata/subpanels/{$pathInfo['filename']}.php",
@@ -485,9 +520,44 @@ class MetaDataConverter
         }
 
         foreach ($layoutdef as $key => $value) {
+            if (substr_count($value, '_') > 1 && stristr($value, 'subpanel')) {
+                $parts = explode('_subpanel_', $value);
+                $beanNameParts = explode('_', $parts[0]);
+                $subPanelBeanName = '';
+                foreach ($beanNameParts as $part) {
+                    $subPanelBeanName .= ucwords($part);
+                }
+
+                // case is not the actually object name, it's aCase
+                if ($subPanelBeanName == 'Case') {
+                    $subPanelBeanName = 'aCase';
+                }
+
+                $focus = BeanFactory::newBeanByName($subPanelBeanName);
+                if ($focus) {
+                    $field = $focus->getFieldDefinition($parts[1]);
+                    if ($field && $field['type'] == 'link') {
+                        // since we have a valid link, we need to test the relationship to see if it's custom relationship
+                        $relationships = new DeployedRelationships($focus->module_name);
+                        $relationship = $relationships->get($parts[1]);
+                        $relDef = array();
+                        if ($relationship) {
+                            $relDef = $relationship->getDefinition();
+                        }
+                        if (isset($relDef['is_custom']) && $relDef['is_custom']
+                            && isset($relDef['from_studio']) && $relDef['from_studio']) {
+                            $subpanelFileName = "For{$relDef['name']}";
+                        } else {
+                            $subpanelFileName = "For{$focus->module_name}";
+                        }
+                    }
+                }
+            } else {
+                $subpanelFileName = $value;
+            }
             if ($key == 'override_subpanel_name') {
                 $viewdefs['override_subpanel_list_view'] = array(
-                    'view' => $this->fromLegacySubpanelName($value),
+                    'view' => $this->fromLegacySubpanelName($subpanelFileName),
                     'link' => $layoutdef['get_subpanel_data'],
                 );
             }
