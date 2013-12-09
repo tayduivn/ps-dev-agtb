@@ -81,13 +81,6 @@ $viewdefs['Contacts']['mobile']['layout']['subpanels'] = array(
         ),
         array(
             'layout' => "subpanel",
-            'label' => 'LBL_BUGS_SUBPANEL_TITLE',
-            'context' => array(
-                'link' => 'bugs',
-            ),
-        ),
-        array(
-            'layout' => "subpanel",
             'label' => 'LBL_DIRECT_REPORTS_SUBPANEL_TITLE',
             'context' => array(
                 'link' => 'direct_reports',

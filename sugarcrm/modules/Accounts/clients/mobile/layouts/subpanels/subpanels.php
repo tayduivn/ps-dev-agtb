@@ -95,13 +95,6 @@ $viewdefs['Accounts']['mobile']['layout']['subpanels'] = array(
         ),
         array(
             'layout' => 'subpanel',
-            'label' => 'LBL_BUGS_SUBPANEL_TITLE',
-            'context' => array(
-                'link' => 'bugs',
-            ),
-        ),
-        array(
-            'layout' => 'subpanel',
             'label' => 'LBL_RLI_SUBPANEL_TITLE',
             'context' => array(
                 'link' => 'revenuelineitems',
@@ -131,13 +124,6 @@ $viewdefs['Accounts']['mobile']['layout']['subpanels'] = array(
                 'link' => 'quotes',
             ),
             'linkable' => false,
-        ),
-        array(
-            'layout' => 'subpanel',
-            'label' => 'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE',
-            'context' => array(
-                'link' => 'campaigns',
-            ),
         ),
     ),
 );
