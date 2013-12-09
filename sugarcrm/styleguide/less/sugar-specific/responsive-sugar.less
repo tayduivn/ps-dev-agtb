@@ -279,8 +279,6 @@
 
   .dashboard {
     position: relative;
-    top: auto;
-    bottom: auto;
     overflow-x: visible;
     overflow-y: visible;
   }
@@ -340,9 +338,29 @@
     border-right: none;
     width: 100%;
     .box-shadow(~"inset 0 4px 16px -4px rgba(0, 0, 0, .2)");
+    .dashboard {
+      top: auto;
+      bottom: auto;
+      .headerpane {
+        position: relative;
+        width: 100%;
+        top: auto;
+        z-index: 1;
+      }
+    }
     .dashlet-cell.row-fluid > li {
       width: 100%;
     }
+    .side-pane.active {
+      .block.thumbnail {
+        margin: 0;
+        width: 94%;
+      }
+    }
+  }
+
+  .touch .side.sidebar-content .dashboard {
+    padding-top: 0;
   }
 
   .headerpane .drawerTrig {
@@ -350,36 +368,15 @@
   }
 
   .drawer.inactive {
-      .preview-pane {
-          position: relative;
-      }
+    .preview-pane {
+      position: relative;
+    }
   }
 
-  .row-fluid .main-pane.span8 .headerpane {
+  .main-pane.span8 .headerpane {
     width: 100%;
     border-right: none;
     /*z-index: 11;*//* UIUX-1279 */
-  }
-
-  .sidebar-content .dashboard .headerpane {
-    position: relative;
-    width: 100%;
-    top: auto;
-    z-index: 1;
-  }
-
-  .row-fluid .side.sidebar-content.span4 {
-    .side-pane.active {
-      .block.thumbnail {
-        margin: 0;
-        width: 94%;
-      }
-    }
-    .widget-control {
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
   }
 
   .filter-value [rel=datepicker] .add-on .icon-calendar {
