@@ -498,27 +498,15 @@ class SugarApplication
     {
         global $theme;
 
-        // load the user's default theme
-        $theme = $GLOBALS['current_user']->getPreference('user_theme');
+        // THIS IS A FIX FOR 7.1.5
+        // We no longer have multiple themes support.
 
-        if (is_null($theme)) {
-            $theme = $GLOBALS['sugar_config']['default_theme'];
-            if (!empty($_SESSION['authenticated_user_theme'])) {
-                $theme = $_SESSION['authenticated_user_theme'];
-            } else {
-                if (!empty($_COOKIE['sugar_user_theme'])) {
-                    $theme = $_COOKIE['sugar_user_theme'];
-                }
-            }
-
-            if (isset($_SESSION['authenticated_user_theme']) && $_SESSION['authenticated_user_theme'] != '') {
-                $_SESSION['theme_changed'] = false;
-            }
-        }
-
-        if (!is_null($theme) && !headers_sent()) {
-            setcookie('sugar_user_theme', $theme, time() + 31536000); // expires in a year
-        }
+        // We removed the ability for the user to choose his preferred theme.
+        // In the future, we'll add this feature back, in the new Sidecar Themes
+        // format.
+        // Backward compatibilty modules look and feel must be in accordance to
+        // Sidecar modules, thus there is only one possible theme: `RacerX`
+        $theme = 'RacerX';
 
         SugarThemeRegistry::set($theme);
         require_once('include/utils/layout_utils.php');
