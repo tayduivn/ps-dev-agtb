@@ -1830,6 +1830,10 @@ class ModuleInstaller{
 
     function install_modules()
     {
+    	// Some processes later in the installation run need the newest members of
+    	// these arrays when it comes up
+    	global $beanList, $beanFiles, $moduleList;
+    	
 	    $this->installed_modules = array();
 		$this->tab_modules = array();
         if(isset($this->installdefs['beans'])){
@@ -1840,9 +1844,20 @@ class ModuleInstaller{
 					$class = $bean['class'];
 					$path = $bean['path'];
 
+					// Handle the autoloader add first
+					SugarAutoLoader::$moduleMap[$class] = $path;
+
+					// Handle the globals. This will ultimately be rerun after
+					// several other tasks, but some of the relationship installation
+					// needs this next
+					$beanList[$module] = $class;
+					$beanFiles[$class] = $path;
+
 					$str .= "\$beanList['$module'] = '$class';\n";
 					$str .= "\$beanFiles['$class'] = '$path';\n";
 					if($bean['tab']){
+						// Add this module to the moduleList array
+						$moduleList[] = $module;
 						$str .= "\$moduleList[] = '$module';\n";
 						$this->install_user_prefs($module, empty($bean['hide_by_default']));
 						$this->tab_modules[] = $module;
