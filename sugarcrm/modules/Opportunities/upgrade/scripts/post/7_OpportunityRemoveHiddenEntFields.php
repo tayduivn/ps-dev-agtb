@@ -36,7 +36,7 @@ class SugarUpgradeOpportunityRemoveHiddenEntFields extends UpgradeScript
      */
     public function run()
     {
-        if (version_compare($this->from_version, '7.0.0', '<') && $this->fromFlavor('ent')) {
+        if (version_compare($this->from_version, '7.0.0', '<') && $this->toFlavor('ent')) {
             $fields = array(
                 'sales_stage',
                 'probability',
@@ -46,6 +46,12 @@ class SugarUpgradeOpportunityRemoveHiddenEntFields extends UpgradeScript
             require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
             $this->log('Processing Opportunity RecordView');
             $recordViewDefsParser = ParserFactory::getParser(MB_RECORDVIEW, 'Opportunities', null, null, 'base');
+            if ($this->removeFields($recordViewDefsParser, $fields)) {
+                $recordViewDefsParser->handleSave(false);
+            }
+
+            $this->log('Processing Opportunity ListView');
+            $recordViewDefsParser = ParserFactory::getParser(MB_LISTVIEW, 'Opportunities', null, null, 'base');
             if ($this->removeFields($recordViewDefsParser, $fields)) {
                 $recordViewDefsParser->handleSave(false);
             }
