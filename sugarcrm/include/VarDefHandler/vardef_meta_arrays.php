@@ -23,6 +23,7 @@ $vardef_meta_array = array(
         'exclusion' => array(
             'type' => array('id'),
             'name' => array('parent_type', 'deleted'),
+            'workflow' => array(false),
             //end exclusion
         ),
         'inc_override' => array(
@@ -42,6 +43,7 @@ $vardef_meta_array = array(
             'custom_type' => array('id', 'link', 'datetime', 'date', 'datetimecombo'),
             'name' => array('assigned_user_name', 'parent_type', 'deleted', 'filename', 'file_mime_type', 'file_url'),
             'source' => array('non-db'),
+            'workflow' => array(false),
             //end exclusion
         ),
         'inc_override' => array(
@@ -65,6 +67,7 @@ $vardef_meta_array = array(
             'custom_type' => array('id', 'link'),
             'name' => array('assigned_user_name', 'parent_type', 'deleted', 'filename', 'file_mime_type', 'file_url'),
             'source' => array('non-db'),
+            'workflow' => array(false),
             //end exclusion
         ),
         'inc_override' => array(
@@ -127,7 +130,7 @@ $vardef_meta_array = array(
                 'file_url',
                 'resource_id'
             ),
-            'workflow' => array('false'),
+            'workflow' => array(false),
             'auto_increment' => array(true),
             'calculated' => array(true),
             //end exclusion
@@ -274,6 +277,7 @@ $vardef_meta_array = array(
             'type' => array('id', 'link'),
             'custom_type' => array('id', 'link'),
             'source' => array('non-db'),
+            'workflow' => array(false),
             'name' => array(
                 'created_by',
                 'parent_type',
@@ -317,6 +321,7 @@ $vardef_meta_array = array(
             'custom_type' => array('id', 'link', 'datetime', 'date'),
             'name' => array('assigned_user_name', 'parent_type', 'deleted', 'filename', 'file_mime_type', 'file_url'),
             'source' => array('non-db'),
+            'workflow' => array(false),
             //end exclusion
         ),
         'inc_override' => array(
