@@ -57,6 +57,7 @@ class SugarQuery_Builder_Field_Orderby extends SugarQuery_Builder_Field
             }
             $this->markNonDb();
         }
+        $this->checkCustomField();
     }
 
 }
