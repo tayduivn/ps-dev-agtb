@@ -53,9 +53,9 @@ private function TrackerManager() {
  * monitors may be disabled via the Admin settings interface
  *
  */
-private function setup() {
-	if(!empty($this->metadata) && empty($GLOBALS['installing'])) {
-        
+private function setup($skip_setup = false) {
+	if(!empty($this->metadata) && empty($GLOBALS['installing']) && empty($skip_setup)) {
+
 		$admin = Administration::getSettings('tracker');
 		foreach($this->metadata as $key=>$entry) {
 		   if(isset($entry['bean'])) {
@@ -88,11 +88,11 @@ public function getMonitorId() {
  * Singleton method to return static instance of TrackerManager
  * @returns static TrackerManager instance
  */
-static function getInstance(){
+static function getInstance($skip_setup = false){
     if (!isset(self::$instance)) {
         self::$instance = new TrackerManager();
 		//Set global variable for tracker monitor instances that are disabled
-        self::$instance->setup();
+        self::$instance->setup($skip_setup);
     } // if
     return self::$instance;
 }

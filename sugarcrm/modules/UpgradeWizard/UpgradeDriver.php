@@ -1023,7 +1023,7 @@ abstract class UpgradeDriver
         	$this->log("DB timeout set to $now_timeout");
         }
         // stop trackers
-		$trackerManager = TrackerManager::getInstance();
+		$trackerManager = TrackerManager::getInstance(true);
         $trackerManager->pause();
         $trackerManager->unsetMonitors();
         $this->sugar_initialized = true;
