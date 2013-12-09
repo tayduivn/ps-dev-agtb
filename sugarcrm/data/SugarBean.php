@@ -3042,10 +3042,9 @@ class SugarBean
 // save related fields values for audit
          foreach ($this->get_related_fields() as $rel_field_name)
          {
-             if (! empty($this->$rel_field_name['name']))
-             {
-                 $this->fetched_rel_row[$rel_field_name['name']] = $this->$rel_field_name['name'];
-             }
+             $name = $rel_field_name['name'];
+             $value = isset($this->$name) ? $this->$name : null;
+             $this->fetched_rel_row[$name] = $value;
          }
         //make a copy of fields in the relationship_fields array. These field values will be used to
         //clear relationship.
