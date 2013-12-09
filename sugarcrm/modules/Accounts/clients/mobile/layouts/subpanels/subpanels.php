@@ -110,6 +110,13 @@ $viewdefs['Accounts']['mobile']['layout']['subpanels'] = array(
             'creatable' => false,
             'unlinkable' => false,
         ),
+        array (
+            'layout' => 'subpanel',
+            'label' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
+            'context' => array (
+                'link' => 'products',
+            ),
+        ),
         array(
             'layout' => 'subpanel',
             'label' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
