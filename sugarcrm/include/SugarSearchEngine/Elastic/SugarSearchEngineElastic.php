@@ -349,7 +349,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             //Default test timeout is 5 seconds
             $ftsTestTimeout = (isset($sugar_config['fts_test_timeout'])) ? $sugar_config['fts_test_timeout'] : 5;
             $this->_client->setConfigValue('timeout', $ftsTestTimeout);
-            $results = $this->_client->request('', Elastica_Request::GET)->getData();
+            $results = $this->_client->request('', \Elastica\Request::GET)->getData();
             if (!empty($results['ok']) ) {
                 $isValid = true;
                 if (!empty($GLOBALS['app_strings'])) {
@@ -759,7 +759,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      * Add facets on elastic query object
      * @param \Elastica\Query $query
      * @param array $options
-     * @param Elastica_Filter_Bool $mainFilter
+     * @param \Elastica\Filter\Bool $mainFilter
      */
     protected function addFacets(\Elastica\Query $query, $options = array(), $mainFilter = null)
     {
