@@ -92,9 +92,15 @@ table.dataTable {
           }
         }
         &[data-type="datetimecombo"] {
-          input[type="text"] {
+          input[type="text"].datepicker {
+            min-width: 0;
+            width: 50%;
+            .calcWidth(~"55% - 2px");
+          }
+          input[type="text"].ui-timepicker-input {
+            min-width: 0;
             width: 40%;
-            .calcWidth(~"100% / 2 - 4px");
+            .calcWidth(~"45% - 2px");
           }
         }
         &> *:not(.overflow-visible) {
@@ -223,7 +229,9 @@ table.dataTable {
           position: absolute;
           top: -15px;
         }
-
+        .icon-favorite {
+          display: none;
+        }
         &[data-type="fullname"] {
           min-width: 288px;
           max-width: 288px !important;
@@ -253,13 +261,19 @@ table.dataTable {
         &[data-type="datetimecombo"] {
           min-width: 180px;
           max-width: 180px !important;
-          .ui-timepicker-input {
-            width: 80px;
-          }
         }
         &[data-type="currency"] {
-          min-width: 128px;
-          max-width: 128px !important;
+          min-width: 168px;
+          max-width: 168px !important;
+          .select2-addon {
+            .edit {
+              width: 85px;
+            }
+            input[type="text"] {
+              width: 95%;
+              .calcWidth(~"100% - 100px");
+            }
+          }
         }
         &[data-type="parent"] {
           min-width: 200px;
@@ -293,7 +307,6 @@ table.dataTable {
             overflow: hidden;
           }
         }
-
         input[type="text"] {
           width: 100%;
           min-width: 82px;
@@ -301,31 +314,9 @@ table.dataTable {
         &> *:not(.overflow-visible) {
           overflow: visible;
         }
-
         .input-append.date {
           margin-bottom: 0;
           font-size: @baseFontSize;
-          .add-on {
-            background-color: @white;
-            top: 6px;
-            padding: 1px 4px;
-            margin-left: -30px;
-          }
-          td {
-            background-color: @white;
-          }
-          input.datepicker {
-            width: 100px;
-          }
-          // reset datepicker since it is table inside table
-          span.year.active:hover,
-          span.year.active,
-          span.month.active:hover,
-          span.month.active,
-          td.active,
-          td.active:hover {
-            background-color: @gray;
-          }
         }
       }
     }
