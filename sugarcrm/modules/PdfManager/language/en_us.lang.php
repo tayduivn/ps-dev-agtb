@@ -123,7 +123,6 @@ $mod_strings = array (
   'LBL_TPL_INVOICE' => 'Invoice',
   'LBL_HEADER_TITLE' => 'Header Title',
   'LBL_HEADER_TEXT' => 'Header Text',
-  'LBL_HEADER_LOGO_URL' => 'Header Logo URL',
   'LBL_FOOTER_TEXT' => 'Footer Text',
 
 );

@@ -67,8 +67,8 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                 $this->SetKeywords($pdfTemplate->keywords);
                 $this->templateLocation = $this->buildTemplateFile($pdfTemplate, $previewMode);
 
-                if (!empty($pdfTemplate->header_logo_url) && !empty($pdfTemplate->header_title) && !empty($pdfTemplate->header_text)) {
-                    $this->setHeaderData($pdfTemplate->header_logo_url, PDF_HEADER_LOGO_WIDTH, $pdfTemplate->header_title, $pdfTemplate->header_text);
+                if (!empty($pdfTemplate->header_title) && !empty($pdfTemplate->header_text)) {
+                    $this->setHeaderData('', 0, $pdfTemplate->header_title, $pdfTemplate->header_text);
                     $this->setPrintHeader(true);
                 }
                 if (!empty($pdfTemplate->footer_text)) {
