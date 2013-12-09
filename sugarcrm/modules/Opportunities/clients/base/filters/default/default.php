@@ -42,7 +42,9 @@ $viewdefs['Opportunities']['base']['filter']['default'] = array(
         'best_case' => array(),
         'worst_case' => array(),
         'next_step' => array(),
+        //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
         'probability' => array(),
+        //END SUGARCRM flav=pro && flav!=ent ONLY
         'lead_source' => array(),
         'opportunity_type' => array(),
         'sales_stage' => array(),
