@@ -312,13 +312,19 @@ class BeanFactory {
      * @static
      * This function un-registers a bean with the bean factory so that the next
      * load will force a retrieval from the database
-     * @param SugarBean $bean
+     * @param SugarBean|string $module
+     * @param string $id Id of the bean to unregister
      * @return bool true if the bean unregistered successfully.
      */
-    public static function unregisterBean($bean)
+    public static function unregisterBean($module, $id = null)
     {
         global $beanList;
-        $module = $bean->module_name;
+        
+        // If the module passed is a bean get what we need from it
+        if ($module instanceof SugarBean) {
+            $id = $module->id;
+            $module = $module->module_name;
+        }
 
         if (empty($beanList[$module])) {
             return true;
@@ -328,12 +334,12 @@ class BeanFactory {
             return true;
         }
 
-        if (empty($bean->id)) {
+        if (empty($id)) {
             return false;
         }
 
-        if (isset(self::$loadedBeans[$module][$bean->id])) {
-            unset(self::$loadedBeans[$module][$bean->id]);
+        if (isset(self::$loadedBeans[$module][$id])) {
+            unset(self::$loadedBeans[$module][$id]);
             self::$total--;
             return true;
         }
