@@ -565,5 +565,12 @@
     getFieldMetaForView: function(meta) {
         meta = _.isObject(meta) ? meta : {};
         return !_.isUndefined(meta.panels) ? _.flatten(_.pluck(meta.panels, 'fields')) : [];
-    }
+    },
+
+    /**
+     * ListView sort will close previews, but this is not needed for dashablelists
+     * In fact, closing preview causes problem when previewing this list dashlet
+     * from dashlet-select
+     */
+    sort: $.noop
 })
