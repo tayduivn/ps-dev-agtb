@@ -17,7 +17,7 @@ require_once("clients/base/api/FilterApi.php");
 /**
  * @group ApiTests
  */
-class RestFilterTest extends Sugar_PHPUnit_Framework_TestCase
+class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public static $notes, $opps, $accounts, $meetings;
 
