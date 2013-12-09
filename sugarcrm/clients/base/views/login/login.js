@@ -163,6 +163,7 @@
                         error: function() {
                             app.$contentEl.show();
                             app.logger.debug("login failed!");
+                            app.alert.dismiss('login');
                         },
                         success: function() {
                             app.logger.debug("logged in successfully!");
