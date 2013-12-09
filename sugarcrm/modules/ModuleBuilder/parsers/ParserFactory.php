@@ -168,15 +168,10 @@ class ParserFactory
                         return new SidecarListLayoutMetaDataParser (MB_SIDECARLISTVIEW, $moduleName, $packageName, 'base' ) ;
                     }
                 } else {
-                    if (isModuleBWC($moduleName)) {
-                        require_once 'modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php';
-                        return new SubpanelMetaDataParser($subpanelName, $moduleName, $packageName);
-                    } else {
-                        require_once 'modules/ModuleBuilder/parsers/views/SidecarSubpanelLayoutMetaDataParser.php' ;
-                        // $client can be empty for all other Parsers, however SidecarSubpanelLayout needs it set, therefore if its blank its base
-                        $client = empty($client) ? 'base' : $client;
-                        return new SidecarSubpanelLayoutMetaDataParser($subpanelName, $moduleName, $packageName, $client);
-                    }
+                    require_once 'modules/ModuleBuilder/parsers/views/SidecarSubpanelLayoutMetaDataParser.php' ;
+                    // $client can be empty for all other Parsers, however SidecarSubpanelLayout needs it set, therefore if its blank its base
+                    $client = empty($client) ? 'base' : $client;
+                    return new SidecarSubpanelLayoutMetaDataParser($subpanelName, $moduleName, $packageName, $client);
                 }
             case MB_DASHLET :
             case MB_DASHLETSEARCH :

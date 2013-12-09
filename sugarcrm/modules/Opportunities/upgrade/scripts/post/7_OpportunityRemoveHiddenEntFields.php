@@ -70,7 +70,12 @@ class SugarUpgradeOpportunityRemoveHiddenEntFields extends UpgradeScript
 
             foreach ($modules as $module) {
                 $this->log('Processing Opportunity SubPanel for ' . $module . ' module');
-                $pf = ParserFactory::getParser(MB_LISTVIEW, $module, null, 'opportunities');
+                if (isModuleBWC($module)) {
+                    require_once 'modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php';
+                    $pf = new SubpanelMetaDataParser('opportunities', $module);
+                } else {
+                    $pf = ParserFactory::getParser(MB_LISTVIEW, $module, null, 'opportunities');
+                }
                 if ($this->removeFields($pf, $fields)) {
                     $pf->handleSave(false);
                 }
