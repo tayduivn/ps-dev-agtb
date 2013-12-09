@@ -88,6 +88,7 @@ $viewdefs['Accounts']['mobile']['layout']['subpanels'] = array(
         array(
             'layout' => 'subpanel',
             'label' => 'LBL_CASES_SUBPANEL_TITLE',
+            'linkable' => false,
             'context' => array(
                 'link' => 'cases',
             ),
