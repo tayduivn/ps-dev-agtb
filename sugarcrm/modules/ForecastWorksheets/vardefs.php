@@ -85,6 +85,9 @@ $dictionary['ForecastWorksheet'] = array(
             ),
             'rname' => 'name',
             'link' => 'opportunity',
+            'formula' => 'related($opportunity, "name")',
+            'enforced' => true,
+            'calculated' => true,
         ),
         'account_name' =>
         array(
@@ -101,7 +104,10 @@ $dictionary['ForecastWorksheet'] = array(
                 'account_id',
             ),
             'rname' => 'name',
-            'link' => 'accounts',
+            'link' => 'account',
+            'formula' => 'related($account, "name")',
+            'enforced' => true,
+            'calculated' => true,
         ),
         'account_id' =>
         array(
@@ -130,7 +136,11 @@ $dictionary['ForecastWorksheet'] = array(
             'sortable' => true,
             'related_fields' => array(
                 'campaign_id',
-            )
+            ),
+            'link' => 'campaign',
+            'formula' => 'related($campaign, "name")',
+            'enforced' => true,
+            'calculated' => true,
         ),
         'product_template_id' => array(
             'name' => 'product_template_id',
@@ -151,7 +161,11 @@ $dictionary['ForecastWorksheet'] = array(
             'sortable' => true,
             'related_fields' => array(
                 'product_template_id',
-            )
+            ),
+            'link' => 'template',
+            'formula' => 'related($template, "name")',
+            'enforced' => true,
+            'calculated' => true,
         ),
         'category_id' =>  array(
             'name' => 'category_id',
@@ -172,7 +186,11 @@ $dictionary['ForecastWorksheet'] = array(
             'sortable' => true,
             'related_fields' => array(
                 'category_id'
-            )
+            ),
+            'link' => 'category',
+            'formula' => 'related($category, "name")',
+            'enforced' => true,
+            'calculated' => true,
         ),
         'sales_status' => array(
             'name' => 'sales_status',
@@ -274,6 +292,10 @@ $dictionary['ForecastWorksheet'] = array(
             'function' => array('name' => 'getCurrencyNameDropDown', 'returns' => 'html'),
             'studio' => false,
             'duplicate_merge' => 'disabled',
+            'link' => 'currency',
+            'formula' => 'related($currency, "name")',
+            'enforced' => true,
+            'calculated' => true,
         ),
         'currency_symbol' =>
         array(
@@ -467,9 +489,9 @@ $dictionary['ForecastWorksheet'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_OPPORTUNITY',
         ),
-        'accounts' =>
+        'account' =>
         array(
-            'name' => 'accounts',
+            'name' => 'account',
             'type' => 'link',
             'relationship' => 'forecastworksheets_accounts',
             'source' => 'non-db',
@@ -482,7 +504,39 @@ $dictionary['ForecastWorksheet'] = array(
             'relationship' => 'products_worksheets',
             'source' => 'non-db',
             'vname' => 'LBL_PRODUCT',
-        )
+        ),
+        'campaign' =>
+        array(
+            'name' => 'campaign',
+            'type' => 'link',
+            'relationship' => 'forecastworksheets_campaigns',
+            'source' => 'non-db',
+            'vname' => 'LBL_CAMPAIGN',
+        ),
+        'template' =>
+        array(
+            'name' => 'template',
+            'type' => 'link',
+            'relationship' => 'forecastworksheets_templates',
+            'source' => 'non-db',
+            'vname' => 'LBL_PRODUCT',
+        ),
+        'category' =>
+        array(
+            'name' => 'category',
+            'type' => 'link',
+            'relationship' => 'forecastworksheets_categories',
+            'source' => 'non-db',
+            'vname' => 'LBL_CATEGORY',
+        ),
+        'currency' =>
+        array(
+            'name' => 'currency',
+            'type' => 'link',
+            'relationship' => 'forecastworksheets_currencies',
+            'source' => 'non-db',
+            'vname' => 'LBL_CURRENCY_NAME',
+        ),
     ),
     'indices' => array(
         array('name' => 'idx_worksheets_parent', 'type' => 'index', 'fields' => array('parent_id', 'parent_type')),
@@ -516,6 +570,42 @@ $dictionary['ForecastWorksheet'] = array(
             'rhs_module' => 'ForecastWorksheets',
             'rhs_table' => 'forecast_worksheets',
             'rhs_key' => 'opportunity_id',
+            'relationship_type' => 'one-to-many'
+        ),
+        'forecastworksheets_campaigns' =>  array(
+            'lhs_module' => 'Campaigns',
+            'lhs_table' => 'campaigns',
+            'lhs_key' => 'id',
+            'rhs_module' => 'ForecastWorksheets',
+            'rhs_table' => 'forecast_worksheets',
+            'rhs_key' => 'campaign_id',
+            'relationship_type' => 'one-to-many'
+        ),
+        'forecastworksheets_templates' =>  array(
+            'lhs_module' => 'ProductTemplates',
+            'lhs_table' => 'product_templates',
+            'lhs_key' => 'id',
+            'rhs_module' => 'ForecastWorksheets',
+            'rhs_table' => 'forecast_worksheets',
+            'rhs_key' => 'product_template_id',
+            'relationship_type' => 'one-to-many'
+        ),
+        'forecastworksheets_categories' =>  array(
+            'lhs_module' => 'ProductCategories',
+            'lhs_table' => 'product_categories',
+            'lhs_key' => 'id',
+            'rhs_module' => 'ForecastWorksheets',
+            'rhs_table' => 'forecast_worksheets',
+            'rhs_key' => 'category_id',
+            'relationship_type' => 'one-to-many'
+        ),
+        'forecastworksheets_currencies' =>  array(
+            'lhs_module' => 'Currencies',
+            'lhs_table' => 'currencies',
+            'lhs_key' => 'id',
+            'rhs_module' => 'ForecastWorksheets',
+            'rhs_table' => 'forecast_worksheets',
+            'rhs_key' => 'currency_id',
             'relationship_type' => 'one-to-many'
         ),
     )
