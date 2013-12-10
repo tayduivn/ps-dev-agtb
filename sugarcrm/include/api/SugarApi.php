@@ -84,7 +84,10 @@ abstract class SugarApi {
         if (empty($args['fields']) || in_array('following', $args['fields'])) {
             // Support returning whether the current user is following the record.
             if (!isset($bean->following)) {
-                $bean->following = !empty(Subscription::checkSubscription($api->user, $bean));
+                // To support PHP <5.5 we have to read this value into a variable
+                // before checking empty on it.
+                $subCheck = Subscription::checkSubscription($api->user, $bean);
+                $bean->following = !empty($subCheck);
             }
             $data['following'] = $bean->following;
         }
