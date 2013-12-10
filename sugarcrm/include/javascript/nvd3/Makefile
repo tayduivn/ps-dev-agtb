@@ -16,7 +16,6 @@ JS_FILES = \
 	src/models/lineWithFocusChart.js \
 	src/models/multiBar.js \
 	src/models/multiBarChart.js \
-	src/models/multiBarHorizontal.js \
 	src/models/multiBarHorizontalChart.js \
 	src/models/paretoLegend.js \
 	src/models/paretoChart.js \

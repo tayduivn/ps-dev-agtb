@@ -145,11 +145,11 @@ body.full-screen .nv-chart {
   font-size: 11px;
 }
 .nvd3 .nv-bars .negative rect {
-  zfill: brown;
+  fill: brown;
   cursor: pointer;
 }
 .nvd3 .nv-bars rect {
-  zfill: steelblue;
+  fill: steelblue;
   cursor: pointer;
   fill-opacity: .75;
   -webkit-transition: fill-opacity 250ms linear;
@@ -492,6 +492,8 @@ body.full-screen .nv-chart {
   padding: 5px;
   margin: 5px;
   border: 2px solid #ddd;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
   border-radius: 4px;
   background-color: #E9EFEF;
   box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
@@ -839,10 +841,14 @@ span.count.label {
   height: 4px;
 }
 .btn-slider .noUiSliderEnds:before {
+  -webkit-border-radius: 2px 0 0 2px;
+  -moz-border-radius: 2px 0 0 2px;
   border-radius: 2px 0 0 2px;
   left: -6px;
 }
 .btn-slider .noUiSliderEnds:after {
+  -webkit-border-radius: 0 2px 2px 0;
+  -moz-border-radius: 0 2px 2px 0;
   border-radius: 0 2px 2px 0;
   right: -6px;
 }

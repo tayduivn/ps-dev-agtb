@@ -112,7 +112,10 @@ nv.models.pieChart = function() {
         gEnter.append('g').attr('class', 'nv-legendWrap');
 
         legend
+          .id('legend_' + chart.id())
           .width(availableWidth)
+          .height(availableHeight)
+          .align('center')
           .key(pie.x());
 
         wrap.select('.nv-legendWrap')

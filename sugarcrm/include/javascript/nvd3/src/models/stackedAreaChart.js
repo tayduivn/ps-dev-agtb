@@ -1,99 +1,94 @@
 
-nv.models.stackedAreaChart = function() {
+nv.models.stackedAreaChart = function () {
 
   //============================================================
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var stacked = nv.models.stackedArea()
-    , xAxis = nv.models.axis()
-    , yAxis = nv.models.axis()
-    , legend = nv.models.legend()
-    , controls = nv.models.legend()
-    ;
-
-  var margin = {top: 30, right: 25, bottom: 50, left: 60}
+  var margin = {top: 10, right: 20, bottom: 10, left: 10}
     , width = null
     , height = null
+    , showTitle = false
     , showControls = false
     , showLegend = true
-    , showTitle = false
     , tooltip = null
     , tooltips = true
-    , tooltipContent = function(key, x, y, e, graph) {
+    , tooltipContent = function (key, x, y, e, graph) {
         return '<h3>' + key + '</h3>' +
                '<p>' +  y + ' on ' + x + '</p>';
       }
-    , x //can be accessed via chart.xScale()
-    , y //can be accessed via chart.yScale()
+    , x
+    , y
     , yAxisTickFormat = d3.format(',.2f')
-    , state = { style: stacked.style() }
+    , state = {style: 'stack'}
     , noData = 'No Data Available.'
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState')
+    , controlWidth = function (w) { return showControls ? w * 0.3 : 0; }
     ;
-
-  xAxis
-    .orient('bottom')
-    .tickPadding(7)
-    ;
-  yAxis
-    .orient('left')
-    ;
-  stacked.scatter
-    .pointActive(function(d) {
-      //console.log(stacked.y()(d), !!Math.round(stacked.y()(d) * 100));
-      return !!Math.round(stacked.y()(d) * 100);
-    })
-    ;
-
-  //============================================================
-
 
   //============================================================
   // Private Variables
   //------------------------------------------------------------
 
-    //, legend.height(30)
-    //, controls.height(30)
+  var stacked = nv.models.stackedArea()
+    , xAxis = nv.models.axis()
+        .orient('bottom')
+        .tickPadding(7)
+        .highlightZero(false)
+        .showMaxMin(false)
+        .tickFormat(function (d) { return d; })
+    , yAxis = nv.models.axis()
+        .orient('left')
+        .tickPadding(4)
+        .tickFormat(stacked.offset() === 'expand' ? d3.format('%') : yAxisTickFormat)
+    , legend = nv.models.legend()
+    , controls = nv.models.legend()
+    ;
 
-  var showTooltip = function(e, offsetElement) {
-    var left = e.pos[0] + ( offsetElement.offsetLeft || 0 ),
-        top = e.pos[1] + ( offsetElement.offsetTop || 0),
-        x = xAxis.tickFormat()(stacked.x()(e.point, e.pointIndex)),
-        y = yAxis.tickFormat()(stacked.y()(e.point, e.pointIndex)),
-        content = tooltipContent(e.series.key, x, y, e, chart);
+  stacked.scatter
+    .pointActive(function (d) {
+      //console.log(stacked.y()(d), !!Math.round(stacked.y()(d) * 100));
+      return !!Math.round(stacked.y()(d) * 100);
+    });
 
+  var showTooltip = function (e, offsetElement) {
+    var left = e.pos[0] + ( offsetElement.offsetLeft || 0 )
+      , top = e.pos[1] + ( offsetElement.offsetTop || 0)
+      , x = xAxis.tickFormat()(stacked.x()(e.point, e.pointIndex))
+      , y = yAxis.tickFormat()(stacked.y()(e.point, e.pointIndex))
+      , content = tooltipContent(e.series.key, x, y, e, chart);
     tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
   };
 
   //============================================================
 
-
   function chart(selection) {
-    selection.each(function(chartData) {
+
+    selection.each(function (chartData) {
 
       var properties = chartData.properties
         , data = chartData.data;
 
-      var container = d3.select(this),
-          that = this;
+      var container = d3.select(this)
+        , that = this;
 
-      var availableWidth = (width  || parseInt(container.style('width'), 10) || 960)
-                             - margin.left - margin.right,
-          availableHeight = (height || parseInt(container.style('height'), 10) || 400)
-                             - margin.top - margin.bottom;
+      var availableWidth = (width || parseInt(container.style('width'), 10) || 960) - margin.left - margin.right
+        , availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
 
-      chart.update = function() { container.transition().duration(300).call(chart); };
+      var innerWidth = availableWidth
+        , innerHeight = availableHeight
+        , innerMargin = {top: 0, right: 0, bottom: 0, left: 0};
+
+      chart.update = function () { container.transition().duration(chart.delay()).call(chart); };
       chart.container = this;
 
       //set state.disabled
-      state.disabled = data.map(function(d) { return !!d.disabled });
-
+      state.disabled = data.map(function (d) { return !!d.disabled; });
 
       //------------------------------------------------------------
       // Display No Data message if there's nothing to show.
 
-      if (!data || !data.length || !data.filter(function(d) { return d.values.length }).length) {
+      if (!data || !data.length || !data.filter(function (d) { return d.values.length; }).length) {
         var noDataText = container.selectAll('.nv-noData').data([noData]);
 
         noDataText.enter().append('text')
@@ -104,7 +99,7 @@ nv.models.stackedAreaChart = function() {
         noDataText
           .attr('x', margin.left + availableWidth / 2)
           .attr('y', margin.top + availableHeight / 2)
-          .text(function(d) { return d });
+          .text(function (d) { return d; });
 
         return chart;
       } else {
@@ -112,13 +107,14 @@ nv.models.stackedAreaChart = function() {
       }
 
       //------------------------------------------------------------
-
-
-      //------------------------------------------------------------
       // Setup Scales
 
       x = stacked.xScale();
       y = stacked.yScale();
+      xAxis
+        .scale(x);
+      yAxis
+        .scale(y);
 
       //------------------------------------------------------------
 
@@ -130,184 +126,194 @@ nv.models.stackedAreaChart = function() {
       var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-stackedAreaChart').append('g');
       var g = wrap.select('g');
 
+      gEnter.append('g').attr('class', 'nv-titleWrap');
+
       gEnter.append('g').attr('class', 'nv-x nv-axis');
       gEnter.append('g').attr('class', 'nv-y nv-axis');
       gEnter.append('g').attr('class', 'nv-stackedWrap');
 
-      //------------------------------------------------------------
+      gEnter.append('g').attr('class', 'nv-controlsWrap');
+      gEnter.append('g').attr('class', 'nv-legendWrap');
 
+      wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
       //------------------------------------------------------------
-      // Title & Legend
+      // Title & Legend & Controls
 
       var titleHeight = 0
+        , controlsHeight = 0
         , legendHeight = 0;
 
-      if (showLegend) {
-        gEnter.append('g').attr('class', 'nv-legendWrap');
-
-        legend.width(availableWidth*(showControls?0.7:1));
-
-        g.select('.nv-legendWrap')
-           .datum(data)
-           .call(legend);
-
-        legendHeight = legend.height();
-
-        if (margin.top !== legendHeight + titleHeight) {
-          margin.top = legendHeight + titleHeight;
-          availableHeight = (height || parseInt(container.style('height'), 10) || 400)
-                             - margin.top - margin.bottom;
-        }
-
-        g.select('.nv-legendWrap')
-            .attr('transform', 'translate(' + (availableWidth*(showControls?0.3:0)) + ',' + (-margin.top) + ')');
-      }
-
       if (showTitle && properties.title) {
-        gEnter.append('g').attr('class', 'nv-titleWrap');
+        g .select('.nv-title').remove();
 
-        g.select('.nv-title').remove();
-
-        g.select('.nv-titleWrap')
+        g .select('.nv-titleWrap')
           .append('text')
             .attr('class', 'nv-title')
             .attr('x', 0)
-            .attr('y', 0 )
+            .attr('y', 0)
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
             .attr('fill', 'black')
           ;
 
-        titleHeight = parseInt(g.select('.nv-title').node().getBBox().height, 10) +
+        titleHeight = parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
 
-        if ( margin.top !== titleHeight + legendHeight )
-        {
-          margin.top = titleHeight + legendHeight;
-          availableHeight = (height || parseInt(container.style('height'), 10) || 400)
-                             - margin.top - margin.bottom;
-        }
-
-        g.select('.nv-titleWrap')
-            .attr('transform', 'translate(0,' + ( -margin.top+parseInt(g.select('.nv-title').node().getBBox().height, 10) ) +')');
+        g .select('.nv-title')
+            .attr('dy', '.71em');
       }
 
-      //------------------------------------------------------------
-
-
-      //------------------------------------------------------------
-      // Controls
+      var controlsData = [
+        { key: 'Stacked', disabled: stacked.offset() !== 'zero' },
+        { key: 'Stream', disabled: stacked.offset() !== 'wiggle' },
+        { key: 'Expanded', disabled: stacked.offset() !== 'expand' }
+      ];
 
       if (showControls) {
-        var controlsData = [
-          { key: 'Stacked', disabled: stacked.offset() != 'zero' },
-          { key: 'Stream', disabled: stacked.offset() != 'wiggle' },
-          { key: 'Expanded', disabled: stacked.offset() != 'expand' }
-        ];
-
-        gEnter.append('g').attr('class', 'nv-controlsWrap');
-
         controls
-          .width(availableWidth*0.3)
+          .id('controls_' + chart.id())
+          .width(controlWidth(availableWidth))
+          .height(availableHeight - titleHeight)
+          .align('left')
+          .strings({close: 'close', type: 'controls'})
           .color(['#444']);
 
-        g.select('.nv-controlsWrap')
-            .datum(controlsData)
-            .attr('transform', 'translate(0,' + (-margin.top+titleHeight) + ')')
-            .call(controls);
+        g .select('.nv-controlsWrap')
+          .datum(controlsData)
+          .attr('transform', 'translate(0,' + titleHeight + ')')
+          .call(controls);
+
+        controlsHeight = controls.height();
+      }
+
+      if (showLegend) {
+        legend
+          .id('legend_' + chart.id())
+          .width(availableWidth - controlWidth(availableWidth))
+          .height(availableHeight - titleHeight);
+
+        g .select('.nv-legendWrap')
+          .datum(data)
+          .attr('transform', 'translate(' + controlWidth(availableWidth) + ',' + titleHeight + ')')
+          .call(legend);
+
+        legendHeight = legend.height();
       }
 
       //------------------------------------------------------------
+      // Recalc inner margins
 
-
-      wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
+      innerMargin.top = titleHeight + Math.max(legendHeight,controlsHeight) + 4;
+      innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
       //------------------------------------------------------------
       // Main Chart Component(s)
 
-      stacked
-        .width(availableWidth)
-        .height(availableHeight);
-
       var stackedWrap = g.select('.nv-stackedWrap')
-          .datum(data);
+            .datum(data);
 
-      stackedWrap.transition().call(stacked);
+      stacked
+        .width(innerWidth)
+        .height(innerHeight);
 
-      //------------------------------------------------------------
-
+      stackedWrap
+          .call(stacked);
 
       //------------------------------------------------------------
       // Setup Axes
 
-      xAxis
-        .scale(x)
-        .ticks( availableWidth / 100 )
-        .tickSize(-availableHeight, 0);
+      //------------------------------------------------------------
+      // X-Axis
 
-      g.select('.nv-x.nv-axis')
-          .attr('transform', 'translate(0,' + availableHeight + ')');
-      g.select('.nv-x.nv-axis').transition()
+      g .select('.nv-x.nv-axis')
+          .call(xAxis);
+
+      //innerMargin.right = xAxis.maxTextWidth() / 2;
+      innerMargin[xAxis.orient()] += xAxis.height();
+      innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
+
+      //------------------------------------------------------------
+      // Y-Axis
+
+      g .select('.nv-y.nv-axis')
+          .call(yAxis);
+
+      innerMargin[yAxis.orient()] += yAxis.width();
+      innerWidth = availableWidth - innerMargin.left - innerMargin.right;
+
+      //------------------------------------------------------------
+      // Main Chart Components
+      // Recall to set final size
+
+      stacked
+        .width(innerWidth)
+        .height(innerHeight);
+
+      stackedWrap
+        .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
+        .transition().duration(chart.delay())
+          .call(stacked);
+
+      xAxis
+        .ticks(innerWidth / 100)
+        .tickSize(-innerHeight, 0);
+
+      g .select('.nv-x.nv-axis')
+        .attr('transform', 'translate(' + innerMargin.left + ',' + (xAxis.orient() === 'bottom' ? innerHeight + innerMargin.top : innerMargin.top) + ')')
+        .transition()
           .call(xAxis);
 
       yAxis
-        .scale(y)
-        .ticks(stacked.offset() == 'wiggle' ? 0 : availableHeight / 36)
-        .tickSize(-availableWidth, 0)
-        .setTickFormat(stacked.offset() == 'expand' ? d3.format('%') : yAxisTickFormat);
+        .ticks(stacked.offset() === 'wiggle' ? 0 : innerHeight / 36)
+        .tickSize(-innerWidth, 0);
 
-      g.select('.nv-y.nv-axis').transition()
+      g .select('.nv-y.nv-axis')
+        .attr('transform', 'translate(' + (yAxis.orient() === 'left' ? innerMargin.left : innerMargin.left + innerWidth) + ',' + innerMargin.top + ')')
+        .transition()
           .call(yAxis);
-
-      //------------------------------------------------------------
-
 
       //============================================================
       // Event Handling/Dispatching (in chart's scope)
       //------------------------------------------------------------
 
-      stacked.dispatch.on('areaClick.toggle', function(e) {
-        if (data.filter(function(d) { return !d.disabled; }).length === 1)
-          data = data.map(function(d) {
+      stacked.dispatch.on('areaClick.toggle', function (e) {
+        if (data.filter(function (d) { return !d.disabled; }).length === 1) {
+          data = data.map(function (d) {
             d.disabled = false;
             return d;
           });
-        else
-          data = data.map(function(d,i) {
-            d.disabled = (i != e.seriesIndex);
-            return d;
-          });
-
-        state.disabled = data.map(function(d) { return !!d.disabled; });
-        dispatch.stateChange(state);
-
-        container.transition().duration(300).call(chart);
-      });
-
-      legend.dispatch.on('legendClick', function(d,i) {
-        d.disabled = !d.disabled;
-
-        if (!data.filter(function(d) { return !d.disabled; }).length) {
-          data.map(function(d) {
-            d.disabled = false;
+        } else {
+          data = data.map(function (d,i) {
+            d.disabled = (i !== e.seriesIndex);
             return d;
           });
         }
 
-        state.disabled = data.map(function(d) { return !!d.disabled });
+        state.disabled = data.map(function (d) { return !!d.disabled; });
         dispatch.stateChange(state);
 
-        container.transition().duration(300).call(chart);
+        container.transition().duration(chart.delay()).call(chart);
       });
 
-      controls.dispatch.on('legendClick', function(d,i) {
-        if (!d.disabled) return;
+      legend.dispatch.on('legendClick', function (d, i) {
+        d.disabled = !d.disabled;
+        if (!data.filter(function (d) { return !d.disabled; }).length) {
+          data.map(function (d) {
+            d.disabled = false;
+            return d;
+          });
+        }
+        state.disabled = data.map(function (d) { return !!d.disabled; });
+        dispatch.stateChange(state);
+        container.transition().duration(chart.delay()).call(chart);
+      });
 
-        controlsData = controlsData.map(function(s) {
+      controls.dispatch.on('legendClick', function (d, i) {
+        if (!d.disabled) { return; }
+        controlsData = controlsData.map(function (s) {
           s.disabled = true;
           return s;
         });
@@ -328,23 +334,21 @@ nv.models.stackedAreaChart = function() {
         state.style = stacked.style();
         dispatch.stateChange(state);
 
-        container.transition().duration(300).call(chart);
+        container.transition().duration(chart.delay()).call(chart);
       });
 
-      dispatch.on('tooltipShow', function(e) {
+      dispatch.on('tooltipShow', function (e) {
         if (tooltips) {
           showTooltip(e, that.parentNode);
         }
       });
 
       // Update chart from a state object passed to event handler
-      dispatch.on('changeState', function(e) {
-
+      dispatch.on('changeState', function (e) {
         if (typeof e.disabled !== 'undefined') {
-          data.forEach(function(series,i) {
+          data.forEach(function (series,i) {
             series.disabled = e.disabled[i];
           });
-
           state.disabled = e.disabled;
         }
 
@@ -352,58 +356,53 @@ nv.models.stackedAreaChart = function() {
           stacked.style(e.style);
         }
 
-        container.call(chart);
+        container.transition().duration(chart.delay()).call(chart);
       });
 
     });
 
-
     return chart;
   }
-
 
   //============================================================
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  stacked.dispatch.on('tooltipShow', function(e) {
+  stacked.dispatch.on('areaMouseover.tooltip', function (e) {
+    dispatch.tooltipShow(e);
+  });
+
+  stacked.dispatch.on('tooltipShow', function (e) {
     //disable tooltips when value ~= 0
     //// TODO: consider removing points from voronoi that have 0 value instead of this hack
     // if (!Math.round(stacked.y()(e.point) * 100)) {  // 100 will not be good for very small numbers... will have to think about making this valu dynamic, based on data range
-    //   setTimeout(function() { d3.selectAll('.point.hover').classed('hover', false); }, 0);
+    //   setTimeout(function () { d3.selectAll('.point.hover').classed('hover', false); }, 0);
     //   return false;
     // }
     dispatch.tooltipShow(e);
   });
 
-  stacked.dispatch.on('tooltipHide', function(e) {
+  stacked.dispatch.on('tooltipHide', function (e) {
     dispatch.tooltipHide(e);
-  });
-
-  stacked.dispatch.on('areaMouseover.tooltip', function (e) {
-    dispatch.tooltipShow(e);
   });
 
   stacked.dispatch.on('areaMouseout.tooltip', function (e) {
     dispatch.tooltipHide(e);
   });
-
-  dispatch.on('tooltipHide', function() {
+  dispatch.on('tooltipHide', function () {
     if (tooltips) {
       nv.tooltip.cleanup();
     }
   });
 
-  stacked.dispatch.on('areaMousemove.tooltip', function(e) {
+  stacked.dispatch.on('areaMousemove.tooltip', function (e) {
     dispatch.tooltipMove(e);
   });
-  dispatch.on('tooltipMove', function(e) {
+  dispatch.on('tooltipMove', function (e) {
     if (tooltip) {
-      nv.tooltip.position(tooltip,e.pos);
+      nv.tooltip.position(tooltip, e.pos);
     }
   });
-
-  //============================================================
 
 
   //============================================================
@@ -418,7 +417,8 @@ nv.models.stackedAreaChart = function() {
   chart.xAxis = xAxis;
   chart.yAxis = yAxis;
 
-  d3.rebind(chart, stacked, 'x', 'y', 'size', 'xScale', 'yScale', 'xDomain', 'yDomain', 'sizeDomain', 'interactive', 'offset', 'order', 'style', 'clipEdge', 'forceX', 'forceY', 'forceSize', 'color', 'fill', 'classes', 'gradient');
+  d3.rebind(chart, stacked, 'x', 'y', 'id', 'size', 'xScale', 'yScale', 'xDomain', 'yDomain', 'sizeDomain', 'interactive', 'offset', 'order', 'style', 'clipEdge', 'delay', 'forceX', 'forceY', 'forceSize', 'color', 'fill', 'classes', 'gradient');
+  d3.rebind(chart, xAxis, 'rotateLabels', 'reduceXTicks');
 
   chart.colorData = function (_) {
     var colors = function (d,i) { return nv.utils.defaultColor()(d,i); },
@@ -436,8 +436,8 @@ nv.models.stackedAreaChart = function() {
       case 'class':
         colors = function () { return 'inherit'; };
         classes = function (d,i) {
-          var iClass = (i*(params.step || 1))%20;
-          return 'nv-area nv-area-'+ i +' '+ ( d.classes || 'nv-fill'+ (iClass>9?'':'0') + iClass +' nv-stroke'+ i  );
+          var iClass = (i*(params.step || 1)) % 20;
+          return 'nv-area nv-area-' + i + ' ' + (d.classes || 'nv-fill' + (iClass>9?'':'0') + iClass + ' nv-stroke' + i);
         };
         break;
     }
@@ -457,8 +457,8 @@ nv.models.stackedAreaChart = function() {
     return chart;
   };
 
-  chart.margin = function(_) {
-    if (!arguments.length) return margin;
+  chart.margin = function (_) {
+    if (!arguments.length) { return margin; }
     margin.top    = typeof _.top    != 'undefined' ? _.top    : margin.top;
     margin.right  = typeof _.right  != 'undefined' ? _.right  : margin.right;
     margin.bottom = typeof _.bottom != 'undefined' ? _.bottom : margin.bottom;
@@ -466,68 +466,67 @@ nv.models.stackedAreaChart = function() {
     return chart;
   };
 
-  chart.width = function(_) {
-    if (!arguments.length) return width;
+  chart.width = function (_) {
+    if (!arguments.length) { return width; }
     width = _;
     return chart;
   };
 
-  chart.height = function(_) {
-    if (!arguments.length) return height;
+  chart.height = function (_) {
+    if (!arguments.length) { return height; }
     height = _;
     return chart;
   };
 
-  chart.showControls = function(_) {
-    if (!arguments.length) return showControls;
-    showControls = _;
-    return chart;
-  };
-
-  chart.showLegend = function(_) {
-    if (!arguments.length) return showLegend;
-    showLegend = _;
-    return chart;
-  };
-
-  chart.showTitle = function(_) {
-    if (!arguments.length) return showTitle;
+  chart.showTitle = function (_) {
+    if (!arguments.length) { return showTitle; }
     showTitle = _;
     return chart;
   };
 
-  chart.tooltip = function(_) {
-    if (!arguments.length) return tooltip;
+  chart.showControls = function (_) {
+    if (!arguments.length) { return showControls; }
+    showControls = _;
+    return chart;
+  };
+
+  chart.showLegend = function (_) {
+    if (!arguments.length) { return showLegend; }
+    showLegend = _;
+    return chart;
+  };
+
+  chart.tooltip = function (_) {
+    if (!arguments.length) { return tooltip; }
     tooltip = _;
     return chart;
   };
 
-  chart.tooltips = function(_) {
-    if (!arguments.length) return tooltips;
+  chart.tooltips = function (_) {
+    if (!arguments.length) { return tooltips; }
     tooltips = _;
     return chart;
   };
 
-  chart.tooltipContent = function(_) {
-    if (!arguments.length) return tooltipContent;
+  chart.tooltipContent = function (_) {
+    if (!arguments.length) { return tooltipContent; }
     tooltipContent = _;
     return chart;
   };
 
-  chart.state = function(_) {
-    if (!arguments.length) return state;
+  chart.state = function (_) {
+    if (!arguments.length) { return state; }
     state = _;
     return chart;
   };
 
-  chart.noData = function(_) {
-    if (!arguments.length) return noData;
+  chart.noData = function (_) {
+    if (!arguments.length) { return noData; }
     noData = _;
     return chart;
   };
 
-  yAxis.setTickFormat = yAxis.tickFormat;
-  yAxis.tickFormat = function(_) {
+  yAxis.tickFormat = function (_) {
     if (!arguments.length) return yAxisTickFormat;
     yAxisTickFormat = _;
     return yAxis;
@@ -536,4 +535,4 @@ nv.models.stackedAreaChart = function() {
   //============================================================
 
   return chart;
-}
+};

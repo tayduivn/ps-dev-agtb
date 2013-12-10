@@ -46,7 +46,9 @@
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
 <script src="data/horizbar_data.js"></script>
-<script src="../../../include/javascript/nvd3/src/models/multiBarHorizontal.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/axis.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/legend.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/multiBar.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/multiBarHorizontalChart.js"></script>
 
 <script>
@@ -54,7 +56,6 @@
     var chart = nv.models.multiBarHorizontalChart()
           .x(function(d) { return d.label })
           .y(function(d) { return d.value })
-          .margin({top: 30, right: 20, bottom: 50, left: 150})
           .showValues(true)
           .showTitle(true)
           .tooltips(true)
@@ -73,7 +74,7 @@
 
     d3.select('#chart1 svg')
         .datum(opportunities_data)
-      .transition().duration(500)
+      .transition().duration(100)
         .call(chart);
 
     nv.utils.windowResize(chart.update);

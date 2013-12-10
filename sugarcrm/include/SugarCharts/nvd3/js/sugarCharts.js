@@ -55,7 +55,7 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                     var marginBottom = (chartConfig["orientation"] == 'vertical' && data.values.length > 8) ? 20*4 : 20;
 
                     var paretoChart = nv.models.paretoChart()
-                        .margin({top: 0, right: 0, bottom: 20, left: 45})
+                        .margin({top: 0, right: 10, bottom: 10, left: 10})
                         .showTitle(false)
                         .tooltips(true)
                         .tooltipLine(function(key, x, y, e, graph) {
@@ -105,14 +105,12 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                 if (SUGAR.chartsD3.isDataEmpty(data)) {
                     var json = SUGAR.chartsD3.translateDataToD3(data,params,chartConfig);
 
-                    var marginBottom = (chartConfig["orientation"] === 'vertical' && data.values.length > 8) ? 20*3 : 20;
-                    var marginLeft = (chartConfig["orientation"] === 'vertical') ? 45 : 20;
                     var rotateLabels = (chartConfig["orientation"] === 'vertical' && data.values.length > 8) ? 20 : 0;
 
                     var barChart = (chartConfig["orientation"] === 'vertical') ? nv.models.multiBarChart() : nv.models.multiBarHorizontalChart();
 
                     barChart
-                        .margin({top: 0, right: 20, bottom: marginBottom, left: marginLeft})
+                        .margin({top: 0, right: 10, bottom: 10, left: 10})
                         .showTitle(true)
                         .tooltips(true)
                         .tooltipContent( function(key, x, y, e, graph) {
@@ -155,7 +153,7 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .x(function(d) { return d[0]; })
                         .y(function(d) { return d[1]; })
                         .size(function() { return 123; })
-                        .margin({top: 0, right: 20, bottom: 30, left: 45})
+                        .margin({top: 0, right: 10, bottom: 10, left: 10})
                         .tooltipContent( function(key, x, y, e, graph) {
                             return '<h3>' + key + '</h3>' +
                                 '<p>' +  y + '</p>';
@@ -191,7 +189,7 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                     var json = SUGAR.chartsD3.translateDataToD3(data,params,chartConfig);
 
                     var pieChart = nv.models.pieChart()
-                        .margin({top: 0, right: 0, bottom: 20, left: 45})
+                        .margin({top: 0, right: 10, bottom: 10, left: 10})
                         .showTitle(true)
                         .tooltips(true)
                         .colorData('default')
@@ -217,7 +215,7 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                     var json = SUGAR.chartsD3.translateDataToD3(data,params,chartConfig);
 
                     var funnelChart = nv.models.funnelChart()
-                        .margin({top: 0, right: 0, bottom: 20, left: 45})
+                        .margin({top: 0, right: 10, bottom: 10, left: 10})
                         .showTitle(true)
                         .tooltips(true)
                         .fmtValueLabel(function(d) { return d.y; })

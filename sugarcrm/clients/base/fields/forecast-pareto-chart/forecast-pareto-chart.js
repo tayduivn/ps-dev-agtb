@@ -131,6 +131,16 @@
             .colorFill('default')
             .id(this.chartId);
 
+        this.paretoChart.yAxis.tickFormat(function(d) {
+            var val = app.user.getPreference('currency_symbol') + d3.format(',.2s')(d);
+            return val;
+        });
+
+        this.paretoChart.quotaTickFormat(function(d) {
+            var val = app.user.getPreference('currency_symbol') + d3.format(',.3s')(d);
+            return val;
+        });
+
         // just on the off chance that no options param is passed in
         options = options || {};
         options.success = _.bind(function(data) {
@@ -184,12 +194,7 @@
                 .append('svg')
                 .datum(this.d3Data)
                 .transition().duration(500)
-                .call(this.paretoChart)
-                .selectAll('.nv-y.nv-axis .tick')
-                .select('text')
-                .text(function(d) {
-                    return app.user.getPreference('currency_symbol') + d3.format(',.2s')(d);
-                });
+                .call(this.paretoChart);
 
             nv.utils.windowResize(this.paretoChart.update);
             nv.utils.resizeOnPrint(this.paretoChart.update);
@@ -261,7 +266,7 @@
                         series: seriesIdx,
                         x: recIdx + 1,
                         y: parseFloat(rec[ds])
-                    }
+                    };
                 });
 
                 // fix the vals
@@ -337,7 +342,7 @@
 
             if (!_.isEmpty(td)) {
                 var barVal = this._serverData['x-axis'].map(function(axis, i) {
-                        return { series: seriesIdx, x: i + 1, y: 0, y0: 0 }
+                        return { series: seriesIdx, x: i + 1, y: 0, y0: 0 };
                     }),
                     axis = this._serverData['x-axis'];
 

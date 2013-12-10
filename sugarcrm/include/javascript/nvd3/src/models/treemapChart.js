@@ -112,7 +112,10 @@ nv.models.treemapChart = function() {
       if (showLegend) {
         gEnter.append('g').attr('class', 'nv-legendWrap');
 
-        legend.width(availableWidth + margin.left);
+        legend
+          .id('legend_' + chart.id())
+          .width(availableWidth + margin.left)
+          .height(availableHeight);
 
         g.select('.nv-legendWrap')
           .datum(data)
