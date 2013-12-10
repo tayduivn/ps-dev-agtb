@@ -60,9 +60,37 @@ class SidecarQuickcreateMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 // going to need them
                 return true;
             }
+
+            // Labels for Quickcreate Menu are of type
+            // `LBL_NEW_{MODULE_NAME_SINGULAR}`
+
+            // Some modules like `Project` are already singular
+            // For other modules, we need to remove the `s` char from the
+            // module name. Note that this is obviously not ideal
+
+            // We are first verifying that this label exists. Custom modules
+            // won't have this label, they will have `LNK_NEW_RECORD` instead.
+            // In case this doesn't even exist, we fall back to the module name
+            // singular
+            $moduleNameSingular = $this->module;
+            if (substr($moduleNameSingular, -1) === 's') {
+                $moduleNameSingular = substr($this->module, 0, -1);
+            }
+            $quickcreateLabel = 'LNK_NEW_' . strtoupper($moduleNameSingular);
+            $testLabelExists = translate($quickcreateLabel, $this->module);
+            if ($quickcreateLabel === $testLabelExists) {
+                //if strings are the same, it means label does not exist
+                $quickcreateLabel = 'LNK_NEW_RECORD';
+                $testLabelExists = translate($quickcreateLabel, $this->module);
+                if ($quickcreateLabel === $testLabelExists) {
+                    //if strings are the same, it means label does not exist
+                    $quickcreateLabel = 'LBL_MODULE_NAME_SINGULAR';
+                }
+            }
             $viewdefs[$this->module]['base']['menu']['quickcreate'] = array(
                 'layout' => 'create',
-                'label' => translate($this->module),
+                'label' => $quickcreateLabel,
+                'icon' => 'icon-plus',
             );
         }
 

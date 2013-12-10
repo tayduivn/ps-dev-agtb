@@ -15,6 +15,7 @@
 $module_name = 'Project';
 $viewdefs[$module_name]['base']['menu']['quickcreate'] = array(
     'layout' => 'create',
-    'label' => 'LNK_NEW_PROSPECT',
-    'visible' => false
+    'label' => 'LNK_NEW_PROJECT',
+    'visible' => false,
+    'icon' => 'icon-plus',
 );

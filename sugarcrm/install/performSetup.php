@@ -671,6 +671,7 @@ MetaDataManager::setupMetadata(array('base'), array('en_us'));
 // Restore the activity stream behaviour.
 Activity::enable();
 
+installerHook('post_performSetup');
 $out =<<<EOQ
 <br><p><b>{$mod_strings['LBL_PERFORM_OUTRO_1']} {$setup_sugar_version} {$mod_strings['LBL_PERFORM_OUTRO_2']}</b></p>
 

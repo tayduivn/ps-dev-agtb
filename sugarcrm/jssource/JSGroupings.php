@@ -254,6 +254,8 @@
                    'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.effects.custombounce.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.nouislider.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/nprogress/nprogress.js' => 'include/javascript/sugar_sidecar.min.js',
+
                    //BEGIN SUGARCRM flav=pro ONLY
                    //Expression Engine
                    'sidecar/lib/sugarlogic/expressions.js'              => 'include/javascript/sugar_sidecar.min.js',
@@ -291,6 +293,7 @@
                     'include/javascript/sugar7/plugins/File.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/FieldDuplicate.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/LinkedModel.js' => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/ToggleVisibility.js' => 'include/javascript/sugar_sidecar.min.js',
                     // Support Portal features for Sugar7
                     //BEGIN SUGARCRM flav=ent ONLY
                     'modules/Contacts/clients/base/lib/bean.js' => 'include/javascript/sugar_sidecar.min.js',

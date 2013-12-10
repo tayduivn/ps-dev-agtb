@@ -88,6 +88,12 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
         if ($value instanceof SugarQuery_Builder_Literal) {
             return (string)$value;
         }
+
+        if ($this->field == 'deleted' && empty($this->def)) {
+            return (int) isTruthy($value);
+        }
+
+        if (isset($this->def)) {
         if (!empty($this->def)) {
             $dbtype = $db->getFieldType($this->def);
 

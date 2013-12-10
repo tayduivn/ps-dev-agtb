@@ -142,9 +142,15 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
                 $label = $app_strings['LBL_CREATE_TASK'];
             }
 
-            $button = '<form data-legacy-subpanel-create="1" action="index.php" method="post" name="form" id="' . $form . "\">\n".
-                "<a href='#' onClick=\"javascript:subp_nav_sidecar('" .$module. "','" .$parentId. "','c');\"".
-                " class='create_from_bwc_to_sidecar' id=\"$id\">". $label .'</a>';
+            if (isset($GLOBALS['sugar_config']['enable_action_menu']) && $GLOBALS['sugar_config']['enable_action_menu'] === true) {
+                $button = '<form data-legacy-subpanel-create="1" action="index.php" method="post" name="form" id="' . $form . "\">\n".
+                    "<a href='#' onClick=\"javascript:subp_nav_sidecar('" .$module. "','" .$parentId. "','c');\"".
+                    " class='create_from_bwc_to_sidecar' id=\"$id\">". $label .'</a>';
+            } else {
+                $button = '<form data-legacy-subpanel-create="1" action="index.php" method="post" name="form" id="' . $form . "\">\n".
+                    "<input type='button' onClick=\"javascript:subp_nav_sidecar('" .$module. "','" .$parentId. "','c');\"".
+                    " class='create_from_bwc_to_sidecar' id=\"$id\" value=\"$label\">";
+            }
             return $button;
         }
         return false;
@@ -343,8 +349,12 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
             $megaLink = $this->_get_form($defines, $additionalFormFields,true);
             $button = "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='$this->form_value' onclick='javascript:document.location=\"index.php?".$megaLink."\"; return false;'/>";
         } else {
-            $button = $this->_get_form($defines, $additionalFormFields);
-            $button .= "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='$this->form_value' />\n</form>";
+            $sidecar = null;
+            $button = $this->_get_form($defines, $additionalFormFields, $sidecar);
+            if ($sidecar != true && isset($GLOBALS['sugar_config']['enable_action_menu']) && $GLOBALS['sugar_config']['enable_action_menu'] === true) {
+                $button .= "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='$this->form_value' />\n";
+            }
+            $button .= "</form>";
         }
 
         if ($nonbutton) {

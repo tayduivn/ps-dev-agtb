@@ -57,13 +57,13 @@
 <script src="{sugar_getjspath file='include/javascript/jquery/markitup/sets/default/set.js'}"></script>
 
 {* //BEGIN SUGARCRM flav=ent ONLY *}
-<script src='{sugar_getjspath file='sidecar/minified/sidecar.min.js'}'></script>
+<script src="{sugar_getjspath file='sidecar/minified/sidecar.min.js'}"></script>
 <script language="javascript">
     jQuery.noConflict();
 </script>
-<script src='{sugar_getjspath file=include/javascript/sugarAuthStore.js'}'></script>
-<script src='{sugar_getjspath file=include/javascript/twitterbootstrap/bootstrap-colorpicker.js'}'></script>
-<script src='{sugar_getjspath file=include/javascript/select2-release-3.3.2/select2.js'}'></script>
+<script src="{sugar_getjspath file='include/javascript/sugarAuthStore.js'}"></script>
+<script src="{sugar_getjspath file='include/javascript/twitterbootstrap/bootstrap-colorpicker.js'}"></script>
+<script src="{sugar_getjspath file='include/javascript/select2/select2.js'}"></script>
 {* //END SUGARCRM flav=ent ONLY *}
 
-<link rel="stylesheet" type="text/css" href="{sugar_getjspath file="modules/ModuleBuilder/tpls/MB.css"}" />
+<link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/ModuleBuilder/tpls/MB.css'}" />

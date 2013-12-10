@@ -33,7 +33,7 @@
     {{else}}
         {{#if dropdown_buttons}}
         <div class="btn-group">
-            <a data-toggle="dropdown" rel="tooltip" title="{{str "LBL_DASHLET_CONFIGURE"}}" class="dropdown-toggle btn btn-invisible" data-placement="bottom"><i data-action="loading" class="icon-cog"></i></a>
+            <a data-toggle="dropdown" rel="tooltip" title="{{str "LBL_DASHLET_CONFIGURE"}}" class="dropdown-toggle btn btn-invisible" data-placement="bottom"><i data-action="loading" class="icon-cog" track="click:dashletToolbarCog"></i></a>
             <ul class="dropdown-menu left">
                 <div>
                     {{#each dropdown_buttons}}
@@ -46,4 +46,4 @@
     {{/if}}
 {{/each}}
 </div>
-<h4 data-toggle="widget">{{meta.label}}</h4>
+<h4 data-toggle="widget" class="dashlet-title">{{meta.label}}</h4>

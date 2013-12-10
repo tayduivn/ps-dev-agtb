@@ -34,7 +34,7 @@ class ACLController
      * @param string $type ACL type, usually module but can be different for DCE and Trackers
      * @return bool
      */
-    public function checkAccess($category, $action, $is_owner=false, $type='module')
+    public static function checkAccess($category, $action, $is_owner = false, $type = 'module')
     {
         return SugarACL::checkAccess($category, $action, $is_owner?array("owner_override" => true):array());
     }
@@ -70,7 +70,7 @@ class ACLController
 	 * @param string $value
 	 * @param string $type
 	 */
-	public function requireOwner($category, $value, $type='module')
+    public static function requireOwner($category, $value, $type = 'module')
 	{
 			global $current_user;
 			if(is_admin($current_user))return false;

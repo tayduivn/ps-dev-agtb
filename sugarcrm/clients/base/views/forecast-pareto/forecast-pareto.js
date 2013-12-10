@@ -17,8 +17,6 @@
 ({
     plugins: ['Dashlet', 'Tooltip'],
 
-    values: new Backbone.Model(),
-
     className: 'forecasts-chart-wrapper',
 
     /**
@@ -52,16 +50,12 @@
      */
     forecastsNotSetUpMsg: undefined,
 
-    events: {
-        'click button.btn': 'handleTypeButtonClick'
-    },
-
     /**
      * {@inheritdoc}
      */
     initialize: function(options) {
-        this.values.clear({silent: true});
         this.isManager = app.user.get('is_manager');
+        this._initPlugins();
 
         // if the user is a manager, check if they're toplevel or not
         if(this.isManager) {
@@ -77,13 +71,15 @@
         if (this.isForecastSetup && this.forecastsConfigOK) {
             this.initOptions.meta.template = undefined;
 
-            // we only want to call this if forecast is setup and configured
-            app.api.call('GET', app.api.buildURL('Forecasts/init'), null, {
-                success: _.bind(this.forecastInitCallback, this),
-                complete: this.initOptions ? this.initOptions.complete : null
-            });
+            if (!options.meta.config) {
+                // we only want to call this if forecast is setup and configured
+                // and this is not the dashlet config screen
+                app.api.call('GET', app.api.buildURL('Forecasts/init'), null, {
+                    success: _.bind(this.forecastInitCallback, this),
+                    complete: this.initOptions ? this.initOptions.complete : null
+                });
+            }
 
-            this.values.module = 'Forecasts';
             this.displayTimeperiodPivot = (options.context.get('module') === 'Home');
         } else {
             // set the no access template
@@ -98,7 +94,25 @@
     /**
      * @inheritdoc
      */
+    getLabel: function() {
+        return app.lang.get('LBL_DASHLET_FORECASTS_FOR_CHART_NAME');
+    },
+
+    /**
+     * @inheritdoc
+     */
     initDashlet: function() {
+        if (!this.isManager && this.meta.config) {
+            // FIXME: Dashlet's config page is rendered from meta.panels directly.
+            // See the "dashletconfiguration-edit.hbs" file.
+            this.meta.panels = _.chain(this.meta.panels).filter(function(panel) {
+                panel.fields = _.without(panel.fields, _.findWhere(panel.fields, {name: 'visibility'}));
+                return panel;
+            }).value();
+        }
+        if (this.isForecastSetup && this.forecastsConfigOK) {
+            this.settings.module = 'Forecasts';
+        }
         var fieldOptions = app.lang.getAppListStrings(this.dashletConfig.dataset.options),
             cfg = app.metadata.getModule('Forecasts', 'config');
         this.dashletConfig.dataset.options = {};
@@ -124,8 +138,8 @@
     forecastInitCallback: function(initData) {
         var defaultOptions = {
             user_id: app.user.get('id'),
-            // !! used here to ensure this is true/false, and not 1/0 as it comes from server to ensure passage for ===
-            display_manager: !!this.isManager, // default to 'self' view for reps, and 'team' view for managers
+            // Default to 'user' view for reps, and 'group' view for managers.
+            display_manager: this.isDisplayManager(),
             show_target_quota: (this.isManager && !this.isTopLevelManager),
             selectedTimePeriod: initData.defaultSelections.timeperiod_id.id,
             timeperiod_id: initData.defaultSelections.timeperiod_id.id,
@@ -140,8 +154,8 @@
             // if we have a timestamp, use it, otherwise just default to the current time period
             defaultOptions.timeperiod_id = this.model.get('date_closed_timestamp');
         }
-
-        this.values.set(defaultOptions);
+        this.layout.setTitle(this.getLabel() + ' ' + defaultOptions.timeperiod_label);
+        this.settings.set(defaultOptions);
     },
 
     /**
@@ -150,9 +164,13 @@
      * @override
      */
     loadData: function(options) {
+        if (options && _.isFunction(options.complete)) {
+            options.complete();
+        }
     },
 
     _render: function() {
+        this.settings.set('display_manager', this.isDisplayManager());
         app.view.invokeParent(this, {type: 'view', name: 'parent', method: '_render'});
 
         var chartField = this.getField('paretoChart');
@@ -177,7 +195,7 @@
      */
     toggleRepOptionsVisibility: function() {
         var mgrToggleOffset;
-        if (this.values.get('display_manager') === true) {
+        if (this.settings.get('display_manager') === true) {
             mgrToggleOffset = 6;
             this.$el.find('div.groupByOptions').addClass('hide');
         } else {
@@ -204,17 +222,24 @@
     },
 
     /**
-     * Handle when the type button is clicked
-     * @param e
+     * {@inheritDoc}
+     *
+     * Additional logic on switch visibility event.
      */
-    handleTypeButtonClick: function(e) {
-        var $el = $(e.currentTarget),
-            displayType = $el.data('type');
-
-        this.values.set({
-            display_manager: (displayType == 'team'),
-            show_target_quota: (displayType == 'team' && !this.isTopLevelManager)
+    visibilitySwitcher: function(event) {
+        this.settings.set({
+            display_manager: this.isDisplayManager(),
+            show_target_quota: (this.isDisplayManager() && !this.isTopLevelManager)
         });
+    },
+
+    /**
+     * Calculates "display_manager" option according to visibility.
+     *
+     * @return {Boolean}
+     */
+    isDisplayManager: function() {
+        return this.isManager ? (this.getVisibility() === 'group') : false;
     },
 
     /**
@@ -248,9 +273,14 @@
                     }, dashletToolbar);
                 }
             }, this);
-            this.values.on('change:display_manager', this.toggleRepOptionsVisibility, this);
-            this.values.on('change:selectedTimePeriod', function(context, timeperiod) {
-                this.values.set({timeperiod_id: timeperiod});
+
+            this.settings.on('change:title', function(model, title) {
+                this.layout.setTitle(title);
+            }, this);
+
+            this.settings.on('change:display_manager', this.toggleRepOptionsVisibility, this);
+            this.settings.on('change:selectedTimePeriod', function(context, timeperiod) {
+                this.settings.set({timeperiod_id: timeperiod});
             }, this);
 
             if (!this.displayTimeperiodPivot) {
@@ -266,7 +296,7 @@
         if (this.forecastConfig.forecast_by == 'RevenueLineItems' && this.context.get('module') == 'Opportunities') {
             // we need to watch for when the date changes time periods on the opportunity to re-render the chart
             this.model.on('change:date_closed_timestamp', function(model, changed) {
-                this.values.set('timeperiod_id', changed);
+                this.settings.set('timeperiod_id', changed);
             }, this);
             // since we are forecasting by RLI but on the Opp Module, we need to find the subpanel for RLI to watch
             // for the changes there
@@ -308,7 +338,7 @@
             return;
         }
 
-        if (this.values.get('display_manager') === false && assigned_user == app.user.get('id')) {
+        if (this.settings.get('display_manager') === false && assigned_user == app.user.get('id')) {
             // we can update this chart
             // get what we are currently filtered by
             // find the item in the serverData
@@ -349,7 +379,7 @@
                     field.once('chart:pareto:rendered', function() {
                         this[0].addRowToChart(this[1]);
                     }, [this, model]);
-                    this.values.set('timeperiod_id', model.get('date_closed_timestamp'));
+                    this.settings.set('timeperiod_id', model.get('date_closed_timestamp'));
                     return;
                 }
             }
@@ -408,7 +438,7 @@
      */
     addRowToChart: function(model) {
         model = model || this.model;
-        if (model.get('assigned_user_id') == app.user.get('id') && !this.values.get('display_manager')) {
+        if (model.get('assigned_user_id') == app.user.get('id') && !this.settings.get('display_manager')) {
             var field = this.getField('paretoChart'),
                 serverData = field.getServerData(),
             // make sure it doesn't exist in the serverdata
@@ -476,7 +506,22 @@
         }
         if (this.listenModel) this.listenModel.off(null, null, this);
         if (this.context) this.context.off(null, null, this);
-        if (this.values) this.values.off(null, null, this);
         app.view.View.prototype.unbindData.call(this);
+    },
+
+    /**
+     * Initialize plugins.
+     * Only manager can toggle visibility.
+     *
+     * @return {View.Views.BaseForecastPareto} Instance of this view.
+     * @protected
+     */
+    _initPlugins: function() {
+        if (this.isManager) {
+            this.plugins = _.union(this.plugins, [
+                'ToggleVisibility'
+            ]);
+        }
+        return this;
     }
 })

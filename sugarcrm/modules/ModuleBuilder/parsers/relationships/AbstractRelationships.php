@@ -386,61 +386,63 @@ class AbstractRelationships
      * @param array $labelDefinitions       Array of System label => Display label pairs
      * @return null Nothing to be added to the installdefs for an undeployed module
      */
-    protected function saveLabels ($basepath , $installDefPrefix , $relationshipName , $labelDefinitions)
+    protected function saveLabels($basepath, $installDefPrefix, $relationshipName, $labelDefinitions)
     {
         global $sugar_config;
 
-       	mkdir_recursive ( "$basepath/language" ) ;
+        mkdir_recursive("$basepath/language");
 
-       	$headerString = "<?php\n//THIS FILE IS AUTO GENERATED, DO NOT MODIFY\n" ;
-        $installDefs = array ( ) ;
-        foreach ( $labelDefinitions as $definition )
-        {
-        	$mod_strings = array();
-        	$app_list_strings = array();
+        $headerString = "<?php\n//THIS FILE IS AUTO GENERATED, DO NOT MODIFY\n" ;
+        $installDefs = array();
 
-        	$out = $headerString;
-
-        	$filename = "{$basepath}/language/{$definition['module']}.php" ;
-
-	    	if (file_exists ( $filename ))
-	    		include ($filename);
-
-
-            //Check for app strings
-            $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . "->saveLabels(): saving the following to {$filename}"
-                                      . print_r ( $definition, true ) ) ;
-            if ($definition['module'] == 'application') {
-            	$app_list_strings[$definition [ 'system_label' ]] = $definition [ 'display_label' ];
-            	foreach ($app_list_strings as $key => $val)
-            		$out .= override_value_to_string_recursive2('app_list_strings', $key, $val);
-            } else {
-            	$mod_strings[ $definition [ 'system_label' ]] = $definition [ 'display_label' ];
-            	foreach ($mod_strings as $key => $val)
-            		$out .= override_value_to_string_recursive2('mod_strings', $key, $val);
-            }
-
-            $fh = fopen ( $filename, 'w' ) ;
-            fputs ( $fh, $out, strlen ( $out ) ) ;
-            fclose ( $fh ) ;
-
-
-            foreach($sugar_config['languages'] as $lk => $lv)
-            {
-            	$installDefs [ $definition [ 'module' ] . "_$lk" ] = array (
-            		'from' => "{$installDefPrefix}/relationships/language/{$definition [ 'module' ]}.php" ,
-            		'to_module' => $definition [ 'module' ] ,
-            		'language' => $lk
-            	) ;
-            }
-
-            /* do not use the following write_array_to_file method to write the label file -
-             * module installer appends each of the label files together (as it does for all files)
-			 * into a combined label file and so the last $mod_strings is the only one received by the application */
-        	// write_array_to_file ( 'mod_strings', array ( $definition [ 'system_label' ] => $definition [ 'display_label' ] ), $filename, "a" ) ;
+        $moduleLabels = array();
+        foreach ($labelDefinitions as $definition) {
+            $moduleLabels[$definition['module']][$definition['system_label']] = $definition['display_label'];
         }
 
-        return $installDefs ;
+        foreach ($moduleLabels as $module => $labels) {
+            $out = $headerString;
+
+            $filename = "{$basepath}/language/{$module}.php" ;
+
+            $mod_strings = array();
+            $app_list_strings = array();
+
+            if (file_exists($filename)) {
+                include($filename);
+            }
+
+            if ($module == 'application') {
+                $varName = 'app_list_strings';
+                $languageStrings = $app_list_strings;
+            } else {
+                $varName = 'mod_strings';
+                $languageStrings = $mod_strings;
+            }
+
+            //Check for app strings
+            $GLOBALS['log']->debug(
+                get_class($this) . "->saveLabels(): saving the following to {$filename}" . print_r($labels, true)
+            );
+
+            $languageStrings = array_merge($languageStrings, $labels);
+
+            foreach ($languageStrings as $key => $value) {
+                $out .= override_value_to_string_recursive2($varName, $key, $value);
+            }
+
+            sugar_file_put_contents($filename, $out);
+
+            foreach ($sugar_config['languages'] as $lk => $lv) {
+                $installDefs[$module . "_$lk"] = array(
+                    'from' => "{$installDefPrefix}/relationships/language/{$module}.php",
+                    'to_module' => $module,
+                    'language' => $lk
+                );
+            }
+        }
+
+        return $installDefs;
     }
 
     /*

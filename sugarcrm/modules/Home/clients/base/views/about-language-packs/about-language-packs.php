@@ -22,8 +22,8 @@ $viewdefs['Home']['base']['view']['about-language-packs'] = array(
         ),
         array(
             'language' => 'Bulgarian',
-            'name' => 'CreaSoft Ltd',
-            'url' => 'http://www.creasoft.biz',
+            'name' => 'Bizlink',
+            'url' => 'http://www.bizlink-solutions.eu',
         ),
         array(
             'language' => 'Catalan (Spanish)',

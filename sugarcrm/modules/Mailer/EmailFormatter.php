@@ -132,7 +132,7 @@ class EmailFormatter
         // replace any embeded images using the secure entryPoint for src url
         $converted = $this->convertInlineImageToEmbeddedImage(
             $body,
-            "(?:{$siteUrl})?/?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=",
+            "(?:{$siteUrl})?/?index.php[?]entryPoint=download&(?:amp;)?[^\"]*?id=",
             "upload://",
             true
         );
@@ -159,8 +159,9 @@ class EmailFormatter
         $embeddedImages = array();
         $i              = 0;
         $foundImages    = array();
+        $src = "[\"']({$regex})([^&\"']+).*?[\"']";
 
-        preg_match_all("#<img[^>]*[\s]+src[^=]*=[\s]*[\"']($regex)(.+?)[\"']#si", $body, $foundImages);
+        preg_match_all("#<img[^>]*[\s]+src[^=]*=[\s]*{$src}#si", $body, $foundImages);
 
         foreach ($foundImages[2] as $image) {
             $filename     = urldecode($image);
@@ -206,7 +207,7 @@ class EmailFormatter
         }
 
         // replace references to cache with cid tag
-        $body = preg_replace("|\"{$regex}|i", '"cid:', $body);
+        $body = preg_replace("|{$src}|i", '"cid:$2"', $body);
 
         // remove bad img line from outbound email
         $body = preg_replace('#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim', "", $body);

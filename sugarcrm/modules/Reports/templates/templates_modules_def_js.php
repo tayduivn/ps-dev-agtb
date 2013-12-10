@@ -240,13 +240,7 @@ field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"].opt
 					var option_arr_<?php echo $module_name; ?> = new Array();
 
 <?php
-			        $options_array = array();
-                    if (!empty($field_def['function_bean'])) {
-                        $fbean = BeanFactory::getBean($field_def['function_bean']);
-                        $options_array = $fbean->$field_def['function']();
-                    } else {
-                        $options_array = $field_def['function']();
-                    }
+                    $options_array = getFunctionValue(!empty($field_def['function_bean']) ? $field_def['function_bean'] : null, $field_def['function']);
 
 			        foreach($options_array as $option_value=>$option_text)
 			        {

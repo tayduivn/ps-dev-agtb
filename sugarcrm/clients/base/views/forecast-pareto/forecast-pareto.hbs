@@ -18,30 +18,34 @@
         {{#if displayTimeperiodPivot}}
         <div class="span3">
             {{#each dashletConfig.timeperiod}}
-                {{field ../this model=../this.values template="edit"}}
+                {{field ../this model=../this.settings template="edit"}}
             {{/each}}
         </div>
         {{/if}}
         <div class="span3 groupByOptions">
             {{#with dashletConfig.group_by}}
-                {{field ../this model=../this.values}}
+                {{field ../this model=../this.settings}}
             {{/with}}
         </div>
         <div class="span3">
             {{#with dashletConfig.dataset}}
-                {{field ../this model=../this.values}}
+                {{field ../this model=../this.settings}}
             {{/with}}
         </div>
         {{#if isManager}}
         <div id="{{cid}}-mgr-toggle" class="span3">
             <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
-                <button class="btn" rel="tooltip" data-type="self" title="{{{str "LBL_DASHLET_MY_FORECAST" 'Forecasts'}}}" data-placement="bottom"><i class="icon-user"></i></button>
-                <button class="btn active" rel="tooltip" data-type="team" title="{{{str "LBL_DASHLET_MY_TEAMS_FORECAST" 'Forecasts'}}}" data-placement="bottom"><i class="icon-group"></i></button>
+                <button class="btn {{#eq settings.attributes.visibility "user"}}active{{/eq}}" rel="tooltip" value="user" data-action="visibility-switcher" title="{{{str "LBL_DASHLET_MY_FORECAST" 'Forecasts'}}}" data-placement="bottom">
+                    <i class="icon-user" track="click:viewMyUserForecastPareTo">></i>
+                </button>
+                <button class="btn {{#eq settings.attributes.visibility "group"}}active{{/eq}}" rel="tooltip" value="group" data-action="visibility-switcher" title="{{{str "LBL_DASHLET_MY_TEAMS_FORECAST" 'Forecasts'}}}" data-placement="bottom">
+                    <i class="icon-group" track="click:viewMyTeamsForecastPareTo"></i>
+                </button>
             </div>
         </div>
         {{/if}}
     </div>
 </div>
 {{#with dashletConfig.chart}}
-    {{field ../this model=../this.values template=detail}}
+    {{field ../this model=../this.settings template=detail}}
 {{/with}}

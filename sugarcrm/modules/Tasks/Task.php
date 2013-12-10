@@ -71,18 +71,6 @@ class Task extends SugarBean {
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('assigned_user_name', 'assigned_user_id', 'contact_name', 'contact_phone', 'contact_email', 'parent_name');
 
-
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function Task()
-    {
-        self::__construct();
-    }
-
 	public function __construct() {
 		parent::__construct();
 	}
@@ -102,7 +90,7 @@ class Task extends SugarBean {
 		return "$this->name";
 	}
 
-    function create_export_query(&$order_by, &$where, $relate_link_join='')
+    public function create_export_query($order_by, $where, $relate_link_join = '')
     {
         $custom_join = $this->getCustomJoin(true, true, $where);
         $custom_join['join'] .= $relate_link_join;

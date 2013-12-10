@@ -109,6 +109,8 @@ describe('Base.Views.ForecastPareto', function() {
         sandbox.stub(app.api, 'call', function() {
         });
 
+        layout.setTitle = function() {};
+
         view = SugarTest.createView('base', 'Forecasts', 'forecast-pareto', meta, context, false, layout, true);
         view.forecastInitCallback(initCallback);
     });
@@ -324,10 +326,10 @@ describe('Base.Views.ForecastPareto', function() {
         });
 
         it('should not run when display_manager is true', function() {
-            view.values.set({'display_manager': true}, {silent: false});
+            view.settings.set({'display_manager': true}, {silent: false});
             view.handleDataChange(model);
             expect(getFieldStub).not.toHaveBeenCalled();
-            view.values.set({'display_manager': false}, {silent: false});
+            view.settings.set({'display_manager': false}, {silent: false});
         });
 
         it('should update sales_stage', function() {
@@ -366,10 +368,10 @@ describe('Base.Views.ForecastPareto', function() {
             expect(serverData.data[0].worst).toEqual(60);
         });
 
-        it('should update view.values when timeperiod not found', function() {
+        it('should update view.settings when timeperiod not found', function() {
             field.once = function() {};
             onceSpy = sandbox.spy(field, 'once');
-            viewStub = sandbox.stub(view.values, 'set', function() {});
+            viewStub = sandbox.stub(view.settings, 'set', function() {});
             model.set('date_closed_timestamp', 250);
             view.handleDataChange(model);
             expect(onceSpy).toHaveBeenCalled();

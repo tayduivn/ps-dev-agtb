@@ -3042,10 +3042,9 @@ class SugarBean
 // save related fields values for audit
          foreach ($this->get_related_fields() as $rel_field_name)
          {
-             if (! empty($this->$rel_field_name['name']))
-             {
-                 $this->fetched_rel_row[$rel_field_name['name']] = $this->$rel_field_name['name'];
-             }
+             $name = $rel_field_name['name'];
+             $value = isset($this->$name) ? $this->$name : null;
+             $this->fetched_rel_row[$name] = $value;
          }
         //make a copy of fields in the relationship_fields array. These field values will be used to
         //clear relationship.
@@ -4036,7 +4035,8 @@ class SugarBean
     					if(empty($ret_array['secondary_select']))
     					{
     						$ret_array['secondary_select'] = " SELECT $this->table_name.id ref_id  ";
-                            if(!empty($rel_mod) && $join_primary)
+                            // TODO: The SC-2127 has been created to separate SugaBean and export feature.
+                            if(!empty($rel_mod) && $join_primary && !$ifListForExport)
                             {
                                 if(isset($rel_mod->field_defs['assigned_user_id']))
                                 {
@@ -4128,7 +4128,8 @@ class SugarBean
                         {
                             $ret_array['from'] .= ' ' . $join['join']. ' AND ' . $params['join_table_alias'].'.deleted=0';
                             $rel_mod = BeanFactory::getBean($rel_module);
-                            if(!empty($rel_mod))
+                            // TODO: The SC-2127 has been created to separate SugaBean and export feature.
+                            if(!empty($rel_mod) && !$ifListForExport)
                             {
                                 if(isset($value['target_record_key']) && !empty($filter))
                                 {
@@ -6740,9 +6741,10 @@ class SugarBean
      *
      * @param string $order_by
      * @param string $where
+     * @param string $relate_link_join Deprecated.
      * @return string SQL query
      */
-	public function create_export_query($order_by, $where)
+    public function create_export_query($order_by, $where, $relate_link_join = '')
 	{
 		return $this->create_new_list_query($order_by, $where, array(), array(), 0, '', false, $this, true, true);
 	}

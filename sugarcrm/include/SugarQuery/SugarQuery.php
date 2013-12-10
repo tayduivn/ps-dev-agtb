@@ -235,7 +235,9 @@ class SugarQuery
      */
     public function joinTable($table, $options = array())
     {
-
+        if (!isset($options['linkingTable']) && !isset($options['bean'])) {
+            $options['linkingTable'] = true;
+        }
         $join = new SugarQuery_Builder_Join($table, $options);
         $join->query = $this;
         if (isset($options['alias'])) {
@@ -341,10 +343,6 @@ class SugarQuery
      */
     public function joinSubpanel($bean, $link_name, $options = array())
     {
-        if (!empty($this->links[$link_name])) {
-            return $this->links[$link_name];
-        }
-
         //Force a unique join table alias for self referencing relationships and multiple joins against the same table
         $alias = !empty($options['joinTableAlias']) ? $options['joinTableAlias'] : $this->getJoinTableAlias(
             $bean->table_name

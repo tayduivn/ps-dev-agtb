@@ -45,7 +45,7 @@ $viewdefs['Opportunities']['base']['view']['subpanel-for-accounts'] = array(
 //END SUGARCRM flav=ent ONLY
           array(
           'name' => 'date_closed',
-          'label' => 'LBL_LIST_DATE_CLOSED',
+          'label' => 'LBL_DATE_CLOSED',
           'enabled' => true,
           'default' => true,
         ),

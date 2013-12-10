@@ -35,11 +35,6 @@ class TemplateCurrency extends TemplateRange
         $base_rate = new TemplateCurrencyBaseRate();
         $base_rate->name = 'base_rate';
         $base_rate->delete($df);
-        parent::delete($df);
-        //currency id
-        $currency_id = new TemplateCurrencyId();
-        $currency_id->name = 'currency_id';
-        $currency_id->delete($df);
     }
 
     public function save($df)
@@ -67,23 +62,13 @@ class TemplateCurrency extends TemplateRange
         $base_rate->label = 'LBL_CURRENCY_RATE';
         $base_rate->save($df);
 
-        //the currency field
-        $this->default = unformat_number($this->default);
-        $this->default_value = $this->default;
-        parent::save($df);
-
-        //currency id
-        $currency_id = new TemplateCurrencyId();
-        $currency_id->name = 'currency_id';
-        $currency_id->vname = 'LBL_CURRENCY';
-        $currency_id->label = $currency_id->vname;
-        $currency_id->save($df);
     }
 
     public function get_field_def()
     {
         $def = parent::get_field_def();
         $def['precision'] = (!empty($this->precision)) ? $this->precision : 6;
+        $def['related_fields'] = array('currency_id', 'base_rate');
         return $def;
     }
 

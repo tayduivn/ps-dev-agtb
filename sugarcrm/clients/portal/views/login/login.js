@@ -25,6 +25,7 @@
  * by SugarCRM are Copyright (C) 20042012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    plugins: ['ErrorDecoration', 'Tooltip'],
     fallbackFieldTemplate: "edit",
     /**
      * Login form view.
@@ -38,6 +39,22 @@
         'keypress': 'handleKeypress'
     },
     /**
+     * Hide "forgot password" tooltip when clicking anywhere outside the link.
+     * @param options
+     */
+    initialize: function(options) {
+        var self = this;
+
+        this._super('initialize', [options]);
+
+        $(document).on('click.login', function(event) {
+            var $forgotPassword = self.$('#forgot-password');
+            if (!$.contains($forgotPassword.get(0), event.target)) {
+                $forgotPassword.tooltip('hide');
+            }
+        });
+    },
+    /**
      * Sign Up button
      */
     signup : function() {
@@ -49,5 +66,13 @@
      */
     postLogin: function(){
         app.$contentEl.show();
+    },
+    /**
+     * Remove event handler for hiding "forgot password" tooltip.
+     * @private
+     */
+    _dispose: function() {
+        $(document).off('click.login');
+        this._super('_dispose');
     }
 })

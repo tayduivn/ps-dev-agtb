@@ -64,21 +64,25 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'name' => $_module_name .'_type',
                     'width' => '15',
                     'label' => 'LBL_TYPE',
+                    'default' => false,
                 ),
                 array(
                     'name' => 'lead_source',
                     'width' => '15',
                     'label' => 'LBL_LEAD_SOURCE',
+                    'default' => false,
                 ),
                 array(
                     'name' => 'next_step',
                     'width' => '10',
                     'label' => 'LBL_NEXT_STEP',
+                    'default' => false,
                 ),
                 array(
                     'name' => 'probability',
                     'width' => '10',
                     'label' => 'LBL_PROBABILITY',
+                    'default' => false,
                 ),
                 array(
                     'name' => 'date_closed',
@@ -92,12 +96,14 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'width' => '10',
                     'label' => 'LBL_DATE_ENTERED',
                     'readonly' => true,
+                    'default' => false,
                 ),
                 array(
                     'name' => 'created_by_name',
                     'width' => '10',
                     'label' => 'LBL_CREATED',
                     'readonly' => true,
+                    'default' => false,
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
@@ -120,6 +126,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'width' => '5',
                     'label' => 'LBL_MODIFIED',
                     'readonly' => true,
+                    'default' => false,
                 ),
             ),
         ),

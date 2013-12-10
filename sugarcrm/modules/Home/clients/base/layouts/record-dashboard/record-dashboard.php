@@ -65,7 +65,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                             array(
                                 'type' => 'forecast-pipeline',
                                 'label' => 'LBL_DASHLET_PIPLINE_NAME',
-                                'display_type' => 'self',
+                                'visibility' => 'user',
                             ),
                             'context' =>
                             array(
@@ -81,7 +81,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                                 'type' => 'bubblechart',
                                 'label' => 'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME',
                                 'filter_duration' => 0,
-                                'filter_assigned' => 'my',
+                                'visibility' => 'user',
                             ),
                             'width' => 12,
                         ),

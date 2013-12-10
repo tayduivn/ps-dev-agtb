@@ -21,7 +21,6 @@
  */
 ({
     extendsFrom: 'TabbedDashletView',
-    plugins: ['LinkedModel', 'Dashlet', 'Timeago'],
 
     /**
      * {@inheritDoc}
@@ -44,6 +43,10 @@
         options.meta = options.meta || {};
         options.meta.template = 'tabbed-dashlet';
 
+        this.plugins = _.union(this.plugins, [
+            'LinkedModel'
+        ]);
+
         this._super('initialize', [options]);
     },
 
@@ -55,7 +58,29 @@
      * @param {String} params.module Module name.
      */
     createRecord: function(event, params) {
-        this.createRelatedRecord(params.module, params.link);
+        if (this.module !== 'Home') {
+            this.createRelatedRecord(params.module, params.link);
+        } else {
+            var self = this;
+            app.drawer.open({
+                layout: 'create-actions',
+                context: {
+                    create: true,
+                    module: params.module
+                }
+            }, function(context, model) {
+                if (!model) {
+                    return;
+                }
+                self.context.resetLoadFlag();
+                self.context.set('skipFetch', false);
+                if (_.isFunction(self.loadData)) {
+                    self.loadData();
+                } else {
+                    self.context.loadData();
+                }
+            });
+        }
     },
 
     /**
@@ -69,7 +94,7 @@
         if (this.meta.config) {
             this._super('_renderHtml');
             return;
-        };
+        }
 
         _.each(this.collection.models, function(model) {
             var pictureUrl = app.api.buildFileURL({

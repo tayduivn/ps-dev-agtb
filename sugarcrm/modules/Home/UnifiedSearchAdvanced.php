@@ -619,6 +619,7 @@ class UnifiedSearchAdvanced {
 	    	throw new Exception($msg);
 	    }
 
+        SugarCache::cleanFile('custom/modules/unified_search_modules_display.php');
 	    return true;
 	}
 }

@@ -1487,6 +1487,7 @@ class MetaDataManager
         if(isset($system_config->settings['system_skypeout_on']) && $system_config->settings['system_skypeout_on'] == 1){
             $data['system_skypeout_on'] = true;
         }
+
         //BEGIN SUGARCRM flav=pro ONLY
         $fts_enabled = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         if (!empty($fts_enabled) && $fts_enabled != 'SugarSearchEngine') {
@@ -1542,6 +1543,12 @@ class MetaDataManager
         $auth = AuthenticationController::getInstance();
         if($auth->isExternal()) {
             $configs['externalLogin'] = true;
+        }
+
+        if (isset($sugarConfig['analytics'])) {
+            $configs['analytics'] = $sugarConfig['analytics'];
+        } else {
+            $configs['analytics'] = array('enabled' => false);
         }
 
         return $configs;

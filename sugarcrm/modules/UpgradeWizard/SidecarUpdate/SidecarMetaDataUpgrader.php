@@ -491,8 +491,8 @@ class SidecarMetaDataUpgrader
     {
         // Only allow portal upgrade files for pre-6.6 instances
         $isPortal  = $client == 'portal';
-        $skipFiles = !empty($this->upgrade) 
-                     && $this->upgrade instanceof UpgradeScript 
+        $skipFiles = !empty($this->upgrade)
+                     && $this->upgrade instanceof UpgradeScript
                      && version_compare($this->upgrade->from_version, '6.6.0', '>=');
         if ($isPortal && $skipFiles) {
             $this->logUpgradeStatus("Skipping setUpgradeFiles for portal because the Sugar instance version is newer than 6.5 - version: {$this->upgrade->from_version}");

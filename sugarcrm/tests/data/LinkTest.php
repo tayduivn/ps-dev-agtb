@@ -57,9 +57,9 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
      */
 	public function testManytoMany()
 	{
-        $module = "Accounts";
         global $beanList, $beanFiles;
         require('include/modules.php');
+        $module = "Accounts";
 
         $account = BeanFactory::newBean($module);
         $account->name = "LinkTestAccount";

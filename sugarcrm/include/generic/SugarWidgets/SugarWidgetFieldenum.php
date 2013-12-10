@@ -120,14 +120,19 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 			if(isset($field_def['options'])){
 				$cell = translate($field_def['options'], $field_def['module'], $value);
 			}else if(isset($field_def['type']) && $field_def['type'] == 'enum' && isset($field_def['function'])){
-	            global $beanFiles;
-	            if(empty($beanFiles)) {
-	                include('include/modules.php');
-	            }
-	            $bean_name = get_singular_bean_name($field_def['module']);
-	            require_once($beanFiles[$bean_name]);
-	            $list = $field_def['function']();
-	            $cell = $list[$value];
+                if (isset($field_def['function_bean'])) {
+                    $bean = BeanFactory::getBean($field_def['function_bean']);
+                    $list = $bean->$field_def['function']();
+                } else {
+                    global $beanFiles;
+                    if (empty($beanFiles)) {
+                        include('include/modules.php');
+                    }
+                    $bean_name = get_singular_bean_name($field_def['module']);
+                    require_once($beanFiles[$bean_name]);
+                    $list = $field_def['function']();
+                }
+                $cell = $list[$value];
 	        }
 		if (is_array($cell)) {
 

@@ -75,8 +75,8 @@ class ProductsPipelineChartApi extends SugarApi
         }
 
         // check the type param
-        if (!isset($args['type']) || ($args['type'] != 'self' && $args['type'] != 'team')) {
-            $args['type'] = 'self';
+        if (!isset($args['type']) || ($args['type'] != 'user' && $args['type'] != 'group')) {
+            $args['type'] = 'user';
         }
 
         // pull the forecast settings
@@ -96,7 +96,7 @@ class ProductsPipelineChartApi extends SugarApi
             ->lte('date_closed_timestamp', $tp->end_date_timestamp);
 
         // determine the type we need to fetch
-        if($args['type'] == 'self') {
+        if($args['type'] == 'user') {
             // we are only looking at our pipeline
             $sq->where()->equals('assigned_user_id', $api->user->id);
         } else {

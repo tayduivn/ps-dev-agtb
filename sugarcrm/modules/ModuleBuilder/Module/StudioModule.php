@@ -32,6 +32,19 @@ require_once 'modules/ModuleBuilder/parsers/constants.php';
 
 class StudioModule
 {
+    /**
+     * modules which are not supported by mobile app
+     * @var array
+     */
+    static $mobileNotSupportedModules = array(
+        'Bugs', // Bug Tracker
+        'Campaigns',
+        'Contracts',
+        'KBDocuments', // Knowledge Base
+        'ProductTemplates', // Product Catalog
+        'Prospects', // Targets
+    );
+
     public $name;
     private $popups = array();
     public $module;
@@ -268,12 +281,14 @@ class StudioModule
             ), 
         );
         //BEGIN SUGARCRM flav=pro ONLY
-        $sources[translate('LBL_WIRELESSLAYOUTS')] = array(
-            'children' => 'getWirelessLayouts', 
-            'action' => "module=ModuleBuilder&action=wizard&view=wirelesslayouts&view_module={$this->module}",
-            'imageTitle' => 'MobileLayouts',
-            'help' => 'wirelesslayoutsBtn',
-        );
+        if (self::isMobileLayoutsSupported($this->module)) {
+            $sources[translate('LBL_WIRELESSLAYOUTS')] = array(
+                'children' => 'getWirelessLayouts',
+                'action' => "module=ModuleBuilder&action=wizard&view=wirelesslayouts&view_module={$this->module}",
+                'imageTitle' => 'MobileLayouts',
+                'help' => 'wirelesslayoutsBtn',
+            );
+        }
         //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         $sources[translate('LBL_PORTAL_LAYOUTS')] = array(
@@ -411,14 +426,6 @@ class StudioModule
             'action' => "module=ModuleBuilder&action=editLayout&view=".MB_WIRELESSLISTVIEW."&view_module={$this->module}",
             'imageTitle' => 'ListView',
             'help' => "viewBtn".MB_WIRELESSLISTVIEW,
-            'size' => '48',
-        );
-        $layouts[translate('LBL_WIRELESSSEARCH')] = array(
-            'name' => translate('LBL_WIRELESSSEARCH'),
-            'type' => MB_WIRELESSBASICSEARCH,
-            'action' => "module=ModuleBuilder&action=editLayout&view=".MB_WIRELESSBASICSEARCH."&view_module={$this->module}",
-            'imageTitle' => 'BasicSearch',
-            'help' => "searchBtn",
             'size' => '48',
         );
 
@@ -740,4 +747,8 @@ class StudioModule
         );
     }
     //END SUGARCRM flav=ent ONLY
+
+    public static function isMobileLayoutsSupported ($module) {
+        return !in_array($module, self::$mobileNotSupportedModules);
+    }
 }

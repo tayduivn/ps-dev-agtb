@@ -194,7 +194,7 @@ $dictionary['ProductCategory'] = array(
             'massupdate' => false,
             'source' => 'non-db',
             'len' => 36,
-            'link' => 'member_categories',
+            'link' => 'categories',
             'unified_search' => true,
             'importable' => 'true',
         ),
@@ -217,10 +217,10 @@ $dictionary['ProductCategory'] = array(
         'member_categories' => array(
             'lhs_module' => 'ProductCategories',
             'lhs_table' => 'product_categories',
-            'lhs_key' => 'id',
+            'lhs_key' => 'parent_id',
             'rhs_module' => 'ProductCategories',
             'rhs_table' => 'product_categories',
-            'rhs_key' => 'parent_id',
+            'rhs_key' => 'id',
             'relationship_type' => 'one-to-many'
         )
     )

@@ -28,13 +28,12 @@
 }}
 <a class="btn{{#if def.primary}} btn-primary{{/if}}"
    href="{{#if fullRoute}}#{{fullRoute}}{{else}}{{#if def.route}}#{{buildRoute context=context model=model action=def.route.action}}{{else}}javascript:void(0);{{/if}}{{/if}}"
-
+   track="click:{{name}}"
    {{#if def.tooltip}}
       rel="tooltip"
       data-placement="bottom"
       title="{{str def.tooltip module}}"
    {{/if}}
-
    name="{{name}}">
 {{#if def.icon}}<i class="{{def.icon}}"></i> {{/if}}{{label}}</a>
 

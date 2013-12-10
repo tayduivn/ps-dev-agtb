@@ -2485,6 +2485,7 @@ $app_strings = array (
     'ERR_NO_DB' => 'Could not connect to the database. Please refer to sugarcrm.log for details.',
     'ERR_DB_FAIL' => 'Database failure. Please refer to sugarcrm.log for details.',
     'ERR_EXTERNAL_API_403' => 'Permission Denied. File type is not supported.',
+    'ERR_EXTERNAL_API_NO_OAUTH_TOKEN' => 'OAuth Access Token is missing.',
     'ERR_DB_VERSION' => 'Sugar CRM {0} Files May Only Be Used With A Sugar CRM {1} Database.',
     'ERR_DB_QUERY' => '{0}: query failed: {1}',
     'ERR_UW_RETIRED' => 'Upgrade Wizard is not available in this version.',
@@ -2493,6 +2494,8 @@ $app_strings = array (
     'EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to create {moduleName}. Contact your administrator if you need access.',
     'EXCEPTION_CHANGE_MODULE_CONFIG_NOT_AUTHORIZED' => 'Current User not authorized to change {moduleName} configuration settings',
     'EXCEPTION_ACCESS_MODULE_CONFIG_NOT_AUTHORIZED' => 'Current User not authorized to change {moduleName} configuration settings',
+    'EXCEPTION_FAVORITE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to favorite {moduleName}. Contact your administrator if you need access.',
+    'EXCEPTION_SUBSCRIBE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to subscribe to {moduleName}. Contact your administrator if you need access.',
 
     // Default SugarApiException error messages
     'EXCEPTION_UNKNOWN_EXCEPTION'       => 'Your request failed due to an unknown exception.',
@@ -3167,6 +3170,7 @@ $app_strings = array (
 	'MSG_LIST_VIEW_NO_RESULTS' => "No results found for <item1>",
  	'MSG_LIST_VIEW_NO_RESULTS_SUBMSG' => "Create <item1> as a new <item2>",
 	'MSG_EMPTY_LIST_VIEW_NO_RESULTS' => "You currently have no records saved. <item2> or <item3> one now.",
+	'MSG_EMPTY_LIST_VIEW_NO_RESULTS_NO_IMPORT' => "You currently have no records saved. <item2> one now.",
 
     'LBL_CLICK_HERE' => "Click here",
     // contextMenu strings
@@ -3229,6 +3233,7 @@ $app_strings = array (
     'LBL_ADDING_DASHLET' => 'Adding Sugar Dashlet ...',
     'LBL_ADDED_DASHLET' => 'Sugar Dashlet Added',
     'LBL_REMOVE_DASHLET_CONFIRM' => 'Are you sure you want to remove the Sugar Dashlet?',
+    'LBL_REMOVE_DASHLET_ROW_CONFIRM' => 'Are you sure you want to remove the row?',
     'LBL_REMOVING_DASHLET' => 'Removing Sugar Dashlet ...',
     'LBL_REMOVED_DASHLET' => 'Sugar Dashlet Removed',
 
@@ -3326,8 +3331,6 @@ $app_strings = array (
     'LBL_DASHLET_PIPLINE_NAME' => 'Pipeline',
 
     'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME' => 'Recent Tweets - @{{twitter}}',
-    'LBL_DASHLET_FORECAST_NAME' => 'In Forecast',
-    'LBL_DASHLET_FORECAST_PARETO_CHART_NAME' => 'Forecast Pareto Chart',
 
     'LBL_DASHBOARD_NO_RECORDS' => 'No saved dashboards',
 
@@ -4004,7 +4007,7 @@ $app_strings = array (
     'LNK_TOUR' => 'Tour',
     'LBL_FEEDBACK' => 'Feedback',
     'LBL_SUPPORT' => 'Support',
-    'LBL_LANGUAGE' => 'Language/Sprache/Idioma',
+    'LBL_LANGUAGE' => 'Language / Sprache / Idioma',
     'LBL_PREFERRED_LANGUAGE' => 'Preferred Language:',
     'LBL_LOADING_LANGUAGE' => 'Loading language pack',
     'LBL_UPLOADING' => 'Uploading',
@@ -4262,7 +4265,6 @@ $app_strings = array (
     'LBL_PORTAL_SIGNUP_COMPANY' => 'Company',
     'LBL_PORTAL_SIGNUP_JOBTITLE' => 'Job title (optional)',
     'LNK_PORTAL_LOGIN_FORGOTPASSWORD' => 'Forgot password?',
-    'LBL_PORTAL_LOGIN_FORGOTPASSWORD_TITLE' => 'Forgot Your Password?',
     'LBL_PORTAL_LOGIN_FORGOTPASSWORD' => 'You need to contact your Sugar Admin to reset your password.',
     'LBL_PORTAL_LOGIN_USERNAME' => 'Username',
     'LBL_PORTAL_LOGIN_PASSWORD' => 'Password',
@@ -4518,11 +4520,13 @@ $app_strings = array (
     'LBL_DASHLET_REFRESH' => 'Refresh',
     'LBL_DASHLET_MOVE' => 'Move',
     'LBL_DASHLET_CLOSE' => 'Close',
-    'LBL_DASHLET_FORECASTS_CHART' => 'Forecast',
-    'LBL_DASHLET_FORECASTS_DESC' => 'Forecast Pareto Chart',
+
+    'LBL_DASHLET_FORECAST_NAME' => 'In Forecast',
+    'LBL_DASHLET_FORECASTS_CHART_NAME' => 'Forecast Bar Chart',
+    'LBL_DASHLET_FORECASTS_FOR_CHART_NAME' => 'Forecast for',
+    'LBL_DASHLET_FORECASTS_CHART_DESC' => 'Displays the Forecast Bar Chart for a specific Time Period',
     'LBL_DASHLET_FORECASTS_GROUPBY' => 'Group By',
     'LBL_DASHLET_FORECASTS_DATASET' => 'Dataset',
-
     'LBL_DASHLET_FORECASTS_DETAILS' => 'Forecasts Details',
     'LBL_DASHLET_FORECASTS_DETAILS_DESC' => 'Displays current Forecast details.',
 
@@ -4628,15 +4632,23 @@ $app_list_strings['top10_opportunities_duration_options'] = array (
     12 => 'This Year',
 );
 // see sugarcrm/clients/base/views/bubblechart/bubblechart.php
-$app_list_strings['top10_opportunities_filter_assigned_options'] = array (
+$app_list_strings['top10_opportunities_visibility_options'] = array (
     //BEGIN SUGARCRM flav=ent ONLY
-    'my' => 'My Revenue Line Items',
+    'user' => 'My Revenue Line Items',
     'group' => 'Group Revenue Line Items',
     //END SUGARCRM flav=ent ONLY
     //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-    'my' => 'My Opportunities',
+    'user' => 'My Opportunities',
     'group' => 'Group Opportunities',
     //END SUGARCRM flav=pro && flav!=ent ONLY
+);
+$app_list_strings['forecast_pipeline_visibility_options'] = array (
+    'user' => 'My Pipeline',
+    'group' => 'My Team\'s Pipeline',
+);
+$app_list_strings['forecast_pareto_visibility_options'] = array (
+    'user' => 'My Forecast',
+    'group' => 'My Team\'s Forecast',
 );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

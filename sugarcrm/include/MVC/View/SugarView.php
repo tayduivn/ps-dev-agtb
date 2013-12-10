@@ -58,6 +58,13 @@ class SugarView
     protected $base_menu;
 
     /**
+     * The string which will be shown in the browser's title
+     *
+     * @var string
+     */
+    protected $browserTitle;
+
+    /**
      * Constructor which will peform the setup.
      */
     public function SugarView(
@@ -1376,6 +1383,10 @@ EOHTML;
     {
         global $app_strings;
 
+        if ($this->browserTitle !== null) {
+            return $this->browserTitle;
+        }
+
         $browserTitle = $app_strings['LBL_BROWSER_TITLE'];
         if ( $this->module == 'Users' && ($this->action == 'SetTimezone' || $this->action == 'Login') )
             return $browserTitle;
@@ -1384,6 +1395,18 @@ EOHTML;
             $browserTitle = strip_tags($value) . ' &raquo; ' . $browserTitle;
 
         return $browserTitle;
+    }
+
+    /**
+     * Sets the string which will be shown in the browser's title
+     *
+     * @param string $browserTitle Browser title
+     *
+     * @return string
+     */
+    public function setBrowserTitle($browserTitle)
+    {
+        $this->browserTitle = $browserTitle;
     }
 
     /**

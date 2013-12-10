@@ -37,9 +37,9 @@ $credits = array(
 
         'bg_BG' => array(
             'name' => 'Bulgarian Language Pack',
-            'author' => 'CreaSoft Ltd',
-            'description' => 'Bulgarian Language Pack by CreaSoft',
-            'website' => 'www.creasoft.biz',
+            'author' => 'Bizlink',
+            'description' => 'Bulgarian Language Pack by Bizlink',
+            'website' => 'www.bizlink-solutions.eu/',
         ),
 
         'ca_ES' => array(

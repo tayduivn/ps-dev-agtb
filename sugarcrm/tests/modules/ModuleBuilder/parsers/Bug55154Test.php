@@ -172,24 +172,7 @@ class Bug55154Test extends Sugar_PHPUnit_Framework_TestCase {
         $fields = $parser->getAvailableFields();
         $this->assertArrayNotHasKey($this->testField, $fields, "$this->testField should not be in the available fields list");
     }
-    
-    /**
-     * Does not test additional fields as OOTB instances do not have an additional
-     * fields list. Should that change in the future, add the following:
-     * <code>
-     * $fields = $parser->getAdditionalFields();
-     * $this->assertArrayNotHasKey($this->testField, $fields, "$this->testField should not be in the additional fields list");
-     * </code> 
-     */
-    public function testMobileSearchView()
-    {
-        // SearchViewMetaDataParser
-        $parser = ParserFactory::getParser(MB_WIRELESSBASICSEARCH, $this->testModule, null, null, MB_WIRELESS);
-        
-        // Currently included fields
-        $fields = $parser->getDefaultFields();
-        $this->assertArrayNotHasKey($this->testField, $fields, "$this->testField should not be in the default mobile search fields list");
-    }
+
     //END SUGARCRM flav=pro ONLY
     
     //BEGIN SUGARCRM flav=ent ONLY

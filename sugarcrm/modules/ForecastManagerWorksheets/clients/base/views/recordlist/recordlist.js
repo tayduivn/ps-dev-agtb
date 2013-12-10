@@ -138,6 +138,9 @@
      */
     currentURL: '',
 
+    /**
+     * @inheritdoc
+     */
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
@@ -152,6 +155,9 @@
         this.currentURL = Backbone.history.getFragment();
     },
 
+    /**
+     * @inheritdoc
+     */
     _dispose: function() {
         if (!_.isUndefined(this.context.parent) && !_.isNull(this.context.parent)) {
             this.context.parent.off(null, null, this);
@@ -164,6 +170,9 @@
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: '_dispose'});
     },
 
+    /**
+     * @inheritdoc
+     */
     bindDataChange: function() {
         // these are handlers that we only want to run when the parent module is forecasts
         if (!_.isUndefined(this.context.parent) && !_.isUndefined(this.context.parent.get('model'))) {
@@ -433,6 +442,10 @@
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'bindDataChange'});
     },
 
+    /**
+     * Handles the before route event so we can show nav messages
+     * @returns {*}
+     */
     beforeRouteHandler: function() {
         return this.showNavigationMessage('router');
     },

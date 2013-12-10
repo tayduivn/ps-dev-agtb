@@ -40,7 +40,7 @@ $viewdefs['Forecasts']['base']['layout']['list-dashboard'] = array(
                             'view' =>
                             array(
                                 'type' => 'forecasts-chart',
-                                'label' => 'LBL_DASHLET_FORECAST_NAME',
+                                'label' => 'LBL_DASHLET_FORECASTS_CHART_NAME',
                             ),
                             'context' =>
                             array(

@@ -26,279 +26,308 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-require_once('include/externalAPI/Base/ExternalAPIBase.php');
+require_once('include/externalAPI/Base/OAuthPluginBase.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
 
-class ExtAPIGoToMeeting extends ExternalAPIBase implements WebMeeting {
-
-    private $login_key;
-
+/**
+ * Class ExtAPIGoToMeeting
+ */
+class ExtAPIGoToMeeting extends OAuthPluginBase implements WebMeeting
+{
     protected $dateFormat = 'Y-m-d\TH:i:s';
-    protected $account_url = 'www.gotomeeting.com/axis/services/G2M_Organizers';
+    protected $url = 'https://api.citrixonline.com/';
 
     public $supportedModules = array('Meetings');
     public $supportMeetingPassword = true;
-    public $authMethod = 'password';
+    public $authMethod = 'oauth';
     public $connector = "ext_eapm_gotomeeting";
+
+    protected $oauthAuth = 'oauth/authorize';
+    protected $oauthAccess = 'oauth/access_token';
+    protected $meetingsAPI = '/G2M/rest/meetings';
 
     public $canInvite = false;
     public $sendsInvites = false;
     public $needsUrl = false;
 
-    function __construct() {
-        require('include/externalAPI/GoToMeeting/GoToXML.php');
-        $this->login_xml = $login_xml;
-        $this->schedule_xml = $schedule_xml;
-        $this->host_xml = $host_xml;
-        $this->logoff_xml = $logoff_xml;
-        $this->edit_xml = $edit_xml;
-    }
-
-    public function loadEAPM($eapmBean) {
-        parent::loadEAPM($eapmBean);
-    }
-
-    public function checkLogin($eapmBean = null)
+    public function __construct()
     {
-        parent::checkLogin($eapmBean);
-
-        $reply = $this->login();
-        if ( $reply['success'] ) {
-            $this->logoff();
-        }
-
-        return $reply;
+        $this->oauthAuth = $this->url . $this->oauthAuth;
+        $this->oauthAccess = $this->url . $this->oauthAccess;
+        $this->meetingsAPI = $this->url . $this->meetingsAPI;
     }
 
-    function login() {
-        $doc = new SimpleXMLElement($this->login_xml);
-        $namespaces = $doc->getDocNamespaces();
-        $body = $doc->children($namespaces['soap']);
-        $impl = $body[0]->children($namespaces['impl']);
-        $child = $impl[0];
-        $child->id = $this->account_name;
-        $child->password = $this->account_password;
+    /**
+     * Makes a REST API request
+     *
+     * @param $url - URL
+     * @param string $method - HTTP Method
+     * @param array $data - raw POST data
+     * @return Zend_Http_Response
+     */
+    public function makeRequest($url, $method = 'GET', $data = '')
+    {
+        try {
+            $client = new Zend_Http_Client($url);
 
-        $response = $this->postMessage($doc);
-        if ( $response['success'] ) {
-            $xp = new DOMXPath($response['responseXML']);
-            $this->login_key = $xp->query('/soapenv:Envelope/soapenv:Body')->item(0)->nodeValue;
-            $GLOBALS['log']->debug("LOGIN KEY: ".print_r($this->login_key,true));
+            $headers = array(
+                    'Accept: application/json',
+                    'Content-type: application/json'
+            );
+            if (!empty($this->eapmBean->oauth_token)) {
+                $headers[] = 'Authorization: OAuth oauth_token=' . $this->eapmBean->oauth_token;
+            }
+            $client->setHeaders($headers);
+
+            if (!empty($data)) {
+                $client->setRawData($data);
+            }
+
+            return $client->request($method);
+        } catch (Exception $e) {
+            $GLOBALS['log']->error($e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * OAuth Login
+     *
+     * @return bool Success or failure
+     */
+    public function oauthLogin()
+    {
+        global $sugar_config;
+
+        $apiKey = $this->getConnector()->getProperty('oauth_consumer_key');
+
+        if (!isset($_REQUEST['code'])) {
+            $callback = $sugar_config['site_url'] . '/index.php?module=EAPM&action=oauth&record=' . $this->eapmBean->id;
+            $callback = $this->formatCallbackURL($callback);
+
+            $queryData = array(
+                'client_id' => $apiKey,
+                'redirect_uri' => $callback
+            );
+
+            SugarApplication::redirect($this->getOauthAuthURL() . '?' . http_build_query($queryData));
         } else {
-            $this->login_key = '';
+            $code = $_REQUEST['code'];
+
+            $queryData = array(
+                'grant_type' => 'authorization_code',
+                'code' => $code,
+                'client_id' => $apiKey
+            );
+
+            $accReq = $this->getOauthAccessURL() . '?' .  http_build_query($queryData);
+
+            $rawResponse = $this->makeRequest($accReq);
+
+            if ($rawResponse && $rawResponse->isSuccessful()) {
+                $response = json_decode($rawResponse->getBody(), true);
+
+                if (!empty($response['access_token'])) {
+                    $this->eapmBean->oauth_token = $response['access_token'];
+                    $this->eapmBean->validated = 1;
+                    $this->eapmBean->save();
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
+    /**
+     * Try to schedule a meeting using the API (both create/update)
+     *
+     * @param $bean - The bean to be saved on external account
+     * @return array - returns 'success' and an error message if any
+     */
+    public function scheduleMeeting($bean)
+    {
+        if (!$this->eapmBean->validated || empty($this->eapmBean->oauth_token)) {
+            return array(
+                'success' => false,
+                'errorMessage' => $GLOBALS['app_strings']['ERR_EXTERNAL_API_NO_OAUTH_TOKEN']
+            );
         }
 
-        return $response;
+        if (empty($bean->external_id)) {
+            $return = $this->createMeeting($bean);
+        } else {
+            $return = $this->updateMeeting($bean);
+        }
+
+        return $return;
     }
 
-    public function logOff() {
-        $doc = new SimpleXMLElement($this->logoff_xml);
-        $namespaces = $doc->getDocNamespaces();
-        $body = $doc->children($namespaces['soap']);
-        $impl = $body[0]->children($namespaces['impl']);
-        $child = $impl[0];
-        $child->connectionId = $this->login_key;
+    /**
+     * Create the meeting
+     *
+     * @param $bean - The bean to be saved
+     * @return array - returns 'success' and an error message if any
+     */
+    private function createMeeting($bean)
+    {
+        $method = 'POST';
 
-        return $this->postMessage($doc);
-    }
+        $data = $this->buildData($bean);
 
-    function scheduleMeeting($bean) {
-        // $name, $startDate, $duration, $password) {
-        if (empty($this->login_key)) {
-            $response = $this->login();
-            if (empty($this->login_key) ) {
-                // Login failed, send the error message back to the parent
-                return $response;
+        $rawResponse = $this->makeRequest($this->meetingsAPI, $method, json_encode($data));
+
+        if ($rawResponse->isSuccessful()) {
+            $response = json_decode($rawResponse->getBody(), true);
+
+            if (!empty($response[0])) {
+                $response = $response[0];
+
+                if (!empty($response['meetingid']) &&
+                    !empty($response['joinURL']) &&
+                    !empty($response['uniqueMeetingId'])) {
+                    $bean->join_url = $response['joinURL'];
+                    $bean->external_id = $response['meetingid'] . '-' . $response['uniqueMeetingId'];
+                    $bean->host_url = $this->getHostMeetingLink($response['meetingid']);
+                    $bean->creator = $this->account_name;
+
+                    return array('success' => true);
+                }
             }
         }
 
-        if (!empty($bean->external_id) ) {
-            return $this->editMeeting($bean);
-        }
+        $return = array('success' => false, 'errorMessage' => $rawResponse->getBody());
 
-        $doc = new SimpleXMLElement($this->schedule_xml);
-        $namespaces = $doc->getDocNamespaces();
-        $body = $doc->children($namespaces['soap']);
-        $impl = $body[0]->children($namespaces['impl']);
-        $createMeeting = $impl[0];
-        $createMeeting->connectionId = $this->login_key;
-        $createMeeting->meetingParameters->subject = $bean->name;
-        // FIXME: Use TimeDate
-        $startDate = date($this->dateFormat, strtotime($bean->date_start));
-        $createMeeting->meetingParameters->startTime = $startDate;
+        return $return;
+    }
 
-        /* From the GoToMeeting API docs:
-         *
-         * 'Note: If passwordRequired is set to True then a password will be
-         * requested of the organizer when starting the meeting. The password is
-         * selected by the organizer and communicated to the attendees before the
-         * meeting is started. The organizer must properly enter the password
-         * communicated, otherwise the authentication will be different and the
-         * attendees will not be able to join the meeting until the proper password
-         * is provided by the organizer.'
-         *
-         * Since the password is chosen at the start of the meeting, the value
-         * passed here can't be used.
-         * If a non-empty string is passed, the meeting will be created with
-         * the password option on.
-         */
-        if (!empty($bean->password)) {
-            $createMeeting->meetingParameters->passwordRequired = 'true';
-        } else {
-            $createMeeting->meetingParameters->passwordRequired = 'false';
-        }
+    /**
+     * Update the meeting
+     *
+     * @param $bean - The bean to be updated
+     * @return array - returns 'success' and an error message if any
+     */
+    private function updateMeeting($bean)
+    {
+        $method = 'PUT';
 
-        $reply = $this->postMessage($doc);
-        if ($reply['success']) {
+        // External ID = meetingId - uniqueMeetingId
+        $ids = explode('-', $bean->external_id);
 
-            $xp = new DOMXPath($reply['responseXML']);
-            // $xp->registerNamespace('soapenv','http://schemas.xmlsoap.org/soap/envelope/');
+        $url = $this->meetingsAPI . '/' . $ids[0];
 
-            $bean->join_url = $xp->query('//multiRef[name="joinURL"]/value')->item(0)->nodeValue;
+        $data = $this->buildData($bean);
 
-            $uniqueMeetingId = $xp->query('//multiRef[name="uniqueMeetingId"]/value')->item(0)->nodeValue;
-                       
-            $meetingIdHref = $xp->query('//multiRef/meetingId')->item(0)->getAttribute('href');
-            $meetingId = $xp->query('//multiRef[@id="'.substr($meetingIdHref, 1).'"]')->item(0)->nodeValue;            
-            
-            $bean->external_id = $meetingId.'-'.$uniqueMeetingId;
+        $rawResponse = $this->makeRequest($url, $method, json_encode($data));
 
-            $hostReply = $this->hostMeeting(array($meetingId,$uniqueMeetingId));
-            if ( $hostReply['success'] == FALSE ) {
-                // Trying to host failed, send the error message back to the user.
-                return $hostReply;
-            }
-            $xp = new DOMXPath($hostReply['responseXML']);
-            $bean->host_url = $xp->query('//startMeetingReturn')->item(0)->nodeValue;
-
-            $bean->creator = $this->account_name;
+        if ($rawResponse->isSuccessful()) {
+            $return = array('success' => true);
         } else {
             $bean->join_url = '';
             $bean->host_url = '';
             $bean->external_id = '';
             $bean->creator = '';
+            
+            $return = array('success' => false, 'errorMessage' => $rawResponse->getBody());
         }
 
-        return $reply;
+        return $return;
     }
 
-    function editMeeting($bean) {
-        if (!isset($this->login_key)) {
-            $this->login();
-        }
+    /**
+     * Return an array of all the data needed for the external api
+     *
+     * @param $bean - The bean to be saved
+     * @return array - of data needed for external api create/update
+     */
+    private function buildData($bean)
+    {
+        global $timedate;
 
-        $doc = new SimpleXMLElement($this->edit_xml);
-        $namespaces = $doc->getDocNamespaces();
-        $body = $doc->children($namespaces['soap']);
-        $impl = $body[0]->children($namespaces['impl']);
-        $updateMeeting = $impl[0];
+        $data = array();
+        $data['subject'] = $bean->name;
+        $data['conferencecallinfo'] = 'Hybrid';
+        $data['timezonekey'] = '';
+        $data['meetingtype'] = 'Scheduled';
 
-        $updateMeeting->connectionId = $this->login_key;
-        $meeting_keys = explode('-',$bean->external_id);
-        $updateMeeting->meetingId = $meeting_keys[0];
-        $updateMeeting->uniqueMeetingId = $meeting_keys[1];
+        $dateStart = $timedate->fromDb($bean->date_start);
+        $dateEnd = $timedate->fromDb($bean->date_end);
+        $data['starttime'] = $dateStart->format($this->dateFormat);
+        $data['endtime'] = $dateEnd->format($this->dateFormat);
 
-        $updateMeeting->meetingParameters->subject = $bean->name;
-
-        // FIXME: Use TimeDate
-        $startDate = date($this->dateFormat, strtotime($bean->date_start));
-        $updateMeeting->meetingParameters->startTime = $startDate;
         if (!empty($bean->password)) {
-            $updateMeeting->meetingParameters->passwordRequired = 'true';
+            $data['passwordrequired'] = 'true';
         } else {
-            $updateMeeting->meetingParameters->passwordRequired = 'false';
+            $data['passwordrequired'] = 'false';
         }
 
-        return $this->postMessage($doc);
+        return $data;
     }
 
-    function unscheduleMeeting($bean){
-    }
+    /**
+     * Get the link for hosting the meeting
+     *
+     * @param $meetingId - The meeting id
+     * @return string - Link
+     */
+    private function getHostMeetingLink($meetingId)
+    {
+        $url = $this->meetingsAPI . '/' . $meetingId . '/start';
+        $rawResponse = $this->makeRequest($url);
 
-    function joinMeeting($bean, $attendeeName){
-    }
-
-    function hostMeeting($meeting_keys){
-        if (!isset($this->login_key)) {
-            $this->login();
-        }
-
-        $doc = new SimpleXMLElement($this->host_xml);
-        $namespaces = $doc->getDocNamespaces();
-        $body = $doc->children($namespaces['soap']);
-        $impl = $body[0]->children($namespaces['impl']);
-        $startMeeting = $impl[0];
-        $startMeeting->connectionId = $this->login_key;
-        $startMeeting->meetingId = $meeting_keys[0];
-        $startMeeting->uniqueMeetingId = $meeting_keys[1];
-
-        return $this->postMessage($doc);
-    }
-
-    function inviteAttendee($bean, $attendee, $sendInvites = false){
-    }
-
-    function uninviteAttendee($bean, $attendee){
-    }
-
-    function listMyMeetings(){
-    }
-
-    function getMeetingDetails($bean){
-    }
-
-    private function postMessage($doc) {
-        $host = substr($this->account_url, 0, strpos($this->account_url, "/"));
-        $uri = strstr($this->account_url, "/");
-        $xml = $doc->asXML();
-
-        $content_length = strlen($xml);
-        $headers = array(
-            "POST $uri HTTP/1.1",
-            "Host: $host",
-            "User-Agent: SugarCRM",
-            "Content-Type: text/xml; charset=utf-8",
-            "Content-Length: ".$content_length,
-            'SOAPAction: ""'
-            );
-
-        $response = $this->postData('https://' . $this->account_url, $xml, $headers);
-
-        $reply = array();
-        $reply['success'] = FALSE;
-        $reply['errorMessage'] = '';
-
-        if ( empty($response) ) {
-            // FIXME: Translate
-            $reply['errorMessage'] = translate('LBL_ERR_NO_RESPONSE', 'EAPM');
-        } else {
-            $responseXML = new DOMDocument();
-            $responseXML->preserveWhiteSpace = false;
-            $responseXML->strictErrorChecking = false;
-            $responseXML->loadXML($response);
-            if ( !is_object($responseXML) ) {
-                $GLOBALS['log']->error("XML ERRORS:\n".print_r(libxml_get_errors(),true));
-                // Looks like the XML processing didn't go so well.
-                $reply['success'] = FALSE;
-                // FIXME: Translate
-                $reply['errorMessage'] = translate('LBL_ERR_NO_RESPONSE', 'EAPM');
-            } else {
-                $reply['responseXML'] = $responseXML;
-                $xp = new DOMXPath($responseXML);
-                $bodyElem = $xp->query('/soapenv:Envelope/soapenv:Body/soapenv:Fault');
-                if ( !is_object($bodyElem) || $bodyElem->length == 0 ) {
-                    $reply['success'] = TRUE;
-                    $reply['errorMessage'] = '';
-                } else {
-                    $reply['success'] = FALSE;
-                    // $reply['errorMessage'] = (string)$responseXML->header->response->reason;
-                    $reply['errorMessage'] = (string)$xp->query('/soapenv:Envelope/soapenv:Body/soapenv:Fault/faultstring')->item(0)->nodeValue;
-                }
-
+        if ($rawResponse && $rawResponse->isSuccessful()) {
+            $response = json_decode($rawResponse->getBody(), true);
+            if (!empty($response['hostURL'])) {
+                return $response['hostURL'];
             }
         }
 
-        $GLOBALS['log']->debug("Parsed Reply:\n".print_r($reply,true));
-        return $reply;
+        return '';
+    }
+
+    /**
+     * Removes the meeting from external account
+     *
+     * @param $bean - The bean to be unscheduled
+     * @return bool - Success of failure
+     */
+    public function unscheduleMeeting($bean)
+    {
+        // External ID = meetingId - uniqueMeetingId
+        $ids = explode($bean->external_id, '-');
+
+        $url = $this->meetingsAPI . '/' . $ids[0];
+        $method = 'DELETE';
+
+        $rawResponse = $this->makeRequest($url, $method);
+
+        if ($rawResponse && $rawResponse->isSuccessful()) {
+            $return = array('success' => true);
+        } else {
+            $return = array('success' => false);
+        }
+
+        return $return;
+    }
+
+    public function joinMeeting($bean, $attendeeName)
+    {
+    }
+
+    public function inviteAttendee($bean, $attendee, $sendInvites = false)
+    {
+    }
+
+    public function uninviteAttendee($bean, $attendee)
+    {
+    }
+
+    public function listMyMeetings()
+    {
+    }
+
+    public function getMeetingDetails($bean)
+    {
     }
 }

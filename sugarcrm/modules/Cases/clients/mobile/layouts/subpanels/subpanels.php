@@ -70,19 +70,5 @@ $viewdefs['Cases']['mobile']['layout']['subpanels'] = array(
                 'link' => 'contacts',
             ),
         ),
-        array(
-            'layout' => 'subpanel',
-            'label' => 'LBL_BUGS_SUBPANEL_TITLE',
-            'context' => array(
-                'link' => 'bugs',
-            ),
-        ),
-        array(
-            'layout' => 'subpanel',
-            'label' => 'LBL_PROJECTS_SUBPANEL_TITLE',
-            'context' => array(
-                'link' => 'project',
-            ),
-        ),
     ),
 );

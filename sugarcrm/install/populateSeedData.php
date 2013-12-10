@@ -146,8 +146,18 @@ $timeperiods = TimePeriodsSeedData::populateSeedData();
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	ACCOUNTS
+
+// Make a copy of the company name list we can destroy in
+// the name of de-duplication during account population.
+$accounts_companies_list = $sugar_demodata['company_name_array'];
+
 for($i = 0; $i < $number_companies; $i++) {
-	$account_name = $sugar_demodata['company_name_array'][mt_rand(0,$company_name_count-1)];
+	// De-populate a copy of the company name list
+	// as each name is used to prevent duplication.
+	$account_num = array_rand($accounts_companies_list);
+	$account_name = $accounts_companies_list[$account_num];
+	unset($accounts_companies_list[$account_num], $account_num);
+
 	// Create new accounts.
 	$account = new Account();
 	$account->name = $account_name;
@@ -300,6 +310,8 @@ for($i = 0; $i < $number_companies; $i++) {
     $call->set_accept_status($seed_user,'accept');
 }
 
+unset($accounts_companies_list);
+
 $titles = $sugar_demodata['titles'];
 $account_max = count($account_ids) - 1;
 $first_name_max = $first_name_count - 1;
@@ -367,7 +379,7 @@ for($i=0; $i<1000; $i++)
 	$contact->save();
     $contacts[] = $contact->id;
 	// Create a linking table entry to assign an account to the contact.
-	$contact->set_relationship('accounts_contacts', array('contact_id'=>$contact->id ,'account_id'=> $account_id), false);
+	$contact->set_relationship('accounts_contacts', array('contact_id'=>$contact->id ,'account_id'=> $account_id, 'primary_account' => 1), false);
 
 	//Create new tasks
 	$task = new Task();

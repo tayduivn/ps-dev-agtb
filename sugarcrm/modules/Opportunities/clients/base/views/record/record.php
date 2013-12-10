@@ -30,7 +30,6 @@ $fields = array(
     ),
     array(
         'name' => 'sales_stage',
-        'required' => true,
     ),
     'probability',
     array(
@@ -42,7 +41,6 @@ $fields = array(
             'currency_id',
             'base_rate',
         ),
-        'required' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
@@ -138,7 +136,6 @@ $fields = array(
     ),
     array(
         'name' => 'date_closed',
-        'readonly' => true,
         'related_fields' => array(
             'date_closed_timestamp'
         )
@@ -153,7 +150,6 @@ $fields = array(
             'currency_id',
             'base_rate',
         ),
-        'readonly' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
@@ -166,7 +162,6 @@ $fields = array(
             'currency_id',
             'base_rate',
         ),
-        'readonly' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
@@ -179,7 +174,6 @@ $fields = array(
             'currency_id',
             'base_rate',
         ),
-        'readonly' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),

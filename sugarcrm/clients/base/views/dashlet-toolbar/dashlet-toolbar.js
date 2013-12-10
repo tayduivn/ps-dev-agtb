@@ -58,9 +58,22 @@
         }
         this.layout.reloadDashlet(options);
     },
+
+    /**
+     * Remove a dashlet.
+     *
+     * @param {Event} evt Mouse event.
+     */
     removeClicked: function(evt) {
-        this.layout.removeDashlet();
+        app.alert.show('delete_confirmation', {
+            level: 'confirmation',
+            messages: app.lang.get('LBL_REMOVE_DASHLET_CONFIRM', this.module),
+            onConfirm: _.bind(function() {
+                this.layout.removeDashlet();
+            }, this)
+        });
     },
+
     editClicked: function(evt) {
         this.layout.editDashlet();
     },

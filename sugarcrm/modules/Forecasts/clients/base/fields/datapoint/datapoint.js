@@ -36,11 +36,6 @@
     total: 0,
 
     /**
-     * What was the number from the last commit
-     */
-    last_commit: undefined,
-
-    /**
      * Can we actually display this field and have the data binding on it
      */
     hasAccess: true,
@@ -96,7 +91,8 @@
      * Check to see if the worksheet needs commit
      */
     checkIfNeedsCommit: function(){
-        if (this.total != this.initial_total){
+        // if the initial_total is an empty string (default value) don't run this
+        if (!_.isEqual(this.initial_total, '') && !_.isEqual(+this.total, +this.initial_total)) {
             this.context.trigger('forecasts:worksheet:needs_commit', null);
         }
     },
@@ -179,7 +175,6 @@
         }
 
         this.context.on('change:selectedUser change:selectedTimePeriod', function() {
-            this.last_commit = undefined;
             this.initial_total = 0;
             this.total = 0;
             this.arrow = '';
@@ -191,10 +186,8 @@
             // get the first line
             var model = _.first(this.collection.models)
             if (!_.isUndefined(model)) {
-                this.last_commit = app.math.round(model.get(this.total_field), 2);
-                this.initial_total = app.math.round(model.get(this.total_field), 2);
+                this.initial_total = model.get(this.total_field);
             } else {
-                this.last_commit = undefined;
                 this.initial_total = 0;
                 this.total = 0;
                 this.arrow = '';

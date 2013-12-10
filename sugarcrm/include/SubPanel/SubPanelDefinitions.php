@@ -597,6 +597,12 @@ class aSubPanel
                 // is calculated after the data is retrieved from database
                 $fields[$name]['sortable'] = false;
             }
+
+            // get currency symbol if this is a currency field
+            if (isset($bean->field_defs[$name]['type']) && $bean->field_defs[$name]['type'] == 'currency' && !empty($bean->field_defs['currency_id'])) {
+                $expanded['currency_id'] = $bean->field_defs['currency_id'];
+                $fields[$name]['sortable'] = false;
+            }
         }
 
         // ignore dependencies that already present in the list

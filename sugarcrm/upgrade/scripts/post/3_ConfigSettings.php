@@ -80,12 +80,18 @@ class SugarUpgradeConfigSettings extends UpgradeScript
 	                'default_limit' => 1000,
 	        );
 	    }
-	    if(!isset($this->upgrader->config['default_theme'])) {
-	        $this->upgrader->config['default_theme'] = 'Sugar';
-	    }
 
-	    if(!isset($this->upgrader->config['default_max_tabs'])) {
-	        $this->upgrader->config['default_max_tabs'] = '7';
-	    }
+        // We no longer have multiple themes support.
+
+        // We removed the ability for the user to choose his preferred theme.
+        // In the future, we'll add this feature back, in the new Sidecar Themes
+        // format.
+        // Backward compatibilty modules look and feel must be in accordance to
+        // Sidecar modules, thus there is only one possible theme: `RacerX`
+        $this->upgrader->config['default_theme'] = 'RacerX';
+
+        if (!isset($this->upgrader->config['default_max_tabs'])) {
+            $this->upgrader->config['default_max_tabs'] = '7';
+        }
     }
 }

@@ -61,7 +61,7 @@ abstract class DateExpression extends AbstractExpression
             }
             return $resdate;
         }
-        throw new Exception("attempt to convert invalid value to date: $date");
+        throw new Exception("attempt to convert invalid non-string value to date");
     }
 
     /**

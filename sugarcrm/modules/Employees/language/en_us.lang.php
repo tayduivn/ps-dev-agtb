@@ -158,6 +158,7 @@ $mod_strings = array (
   'LBL_DATE_MODIFIED' => 'Date Modified',
   'LBL_DATE_ENTERED' => 'Date Entered',
   'LBL_DELETED' => 'Deleted',
+  'LBL_EMAIL_ADDRESS'=>'Email Address',
 );
 
 

@@ -40,6 +40,8 @@ class SugarUpgradePortalConfig extends UpgradeScript
         if(!$this->toFlavor('ent')) return;
 
         global $mod_strings;
+        // Update portal config value
+        $this->setPortalConfig();
         //Set portal log level to `ERROR`
         $fieldKey = 'logLevel';
         $fieldValue = 'ERROR';
@@ -53,5 +55,23 @@ class SugarUpgradePortalConfig extends UpgradeScript
 
         require_once 'ModuleInstall/ModuleInstaller.php';
         $this->putFile('portal2/config.js', ModuleInstaller::getJSConfig(ModuleInstaller::getPortalConfig()));
+    }
+
+    /**
+     * Upgrade portal configure values from 6.7.3 to latest
+     */
+    public function setPortalConfig(){
+
+        $admin = Administration::getSettings();
+        $portalConfig = $admin->getConfigForModule('portal','support', true);
+
+        if(array_search('Home',$portalConfig['displayModules']) !== false){
+            return;
+        }
+        // If Home does not exist we push Home in front of the array
+        array_unshift($portalConfig['displayModules'],'Home');
+        if(!$admin->saveSetting('portal', 'displayModules', json_encode($portalConfig['displayModules']), 'support')){
+            $this->logUpgradeStatus("Error upgrading portal config var displayModules, orig: {$portalConfig['displayModules']} , json:".json_encode($portalConfig['displayModules']));
+        }
     }
 }

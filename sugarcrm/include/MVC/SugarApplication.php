@@ -45,13 +45,17 @@ class SugarApplication
         }
         insert_charset_header();
         $this->setupPrint();
+
         $this->controller = ControllerFactory::getController($module);
+
         // make sidecar view load faster
         // TODO the rest of the code will be removed as soon as we migrate all modules to sidecar
         if ($this->controller->action === 'sidecar' ||
             ($this->controller->action === 'index' && $this->controller->module === 'Home' && empty($_REQUEST['entryPoint'])) ||
             empty($_REQUEST)
         ) {
+            // check for not authorised users
+            $this->checkMobileRedirect();
             $this->controller->action = 'sidecar';
             $this->controller->execute();
             return;
@@ -71,6 +75,8 @@ class SugarApplication
             || $this->controller->checkEntryPointRequiresAuth($_REQUEST['entryPoint'])
         ) {
             $this->startSession();
+             // check for authorised users
+            $this->checkMobileRedirect();
             $this->loadUser();
             $this->ACLFilter();
             $this->preProcess();
@@ -93,6 +99,74 @@ class SugarApplication
         $this->setupResourceManagement($module);
         $this->controller->execute();
         sugar_cleanup();
+    }
+
+    public function checkMobileRedirect () {
+        // do nothing if mobile version is not enabled in config
+        if (!$this->isMobileEnabled()) return false;
+
+        if (isset($_REQUEST['mobile'])) {
+            if ($_REQUEST['mobile'] == '0') {
+                if (isset($_SESSION['isMobile'])) unset($_SESSION['isMobile']);
+            }
+            else {
+                // redirect to mobile version
+                $this->redirectToMobileApp();
+            }
+        }
+        elseif ($this->checkForNomadSupport()) {
+            $this->redirectToMobileApp();
+        }
+    }
+
+    public function redirectToMobileApp(){
+        $redirect_url = $this->getMobileUrl();
+        header("Location: $redirect_url");
+    }
+
+    public function getMobileUrl(){
+        return 'mobile/#'; // todo: use configuration param
+    }
+
+    /**
+     * Defines whether mobile application is installed and available
+     *
+     * @return bool
+     */
+    public function isMobileEnabled(){
+        return true; // todo: use configuration param
+    }
+
+    /**
+     * Checks whether device is in list of compatible devices of Nomad (mobile js app)
+     *
+     * @return bool
+     */
+    public function checkForNomadSupport(){
+
+        if (empty($_SERVER['HTTP_USER_AGENT'])) return false;
+
+        $ua = strtolower($_SERVER['HTTP_USER_AGENT']);
+
+        
+        $isIosDevice = preg_match("/(iphone|ipod)/i", $ua);
+        if ($isIosDevice) {
+            // detect iOS version
+            preg_match("/OS (\d+)_\d+(_\d+)?\s+/i", $ua, $osVersionMatches);
+            return $osVersionMatches ? $osVersionMatches[1] >= 5 : false;  // check iOS version >= 5
+        }
+        
+        // check for Chrome in Android
+        $isAndroid = preg_match('/Android/i', $ua);
+        if ($isAndroid) {
+            // detect chrome mobile     https://developers.google.com/chrome/mobile/docs/user-agent
+            // we don't check for screen resolution because chrome for tablets has another UA signature
+            // so it's ehough to detect Chrome Mobile for phones
+            $isChromeForMobilePhones = preg_match('/Chrome\/([.0-9])* Mobile/i', $ua); // only for mobile devices, not tablets
+            return $isChromeForMobilePhones;
+        }
+
+        return false;
     }
 
     /**
@@ -424,27 +498,15 @@ class SugarApplication
     {
         global $theme;
 
-        // load the user's default theme
-        $theme = $GLOBALS['current_user']->getPreference('user_theme');
+        // THIS IS A FIX FOR 7.1.5
+        // We no longer have multiple themes support.
 
-        if (is_null($theme)) {
-            $theme = $GLOBALS['sugar_config']['default_theme'];
-            if (!empty($_SESSION['authenticated_user_theme'])) {
-                $theme = $_SESSION['authenticated_user_theme'];
-            } else {
-                if (!empty($_COOKIE['sugar_user_theme'])) {
-                    $theme = $_COOKIE['sugar_user_theme'];
-                }
-            }
-
-            if (isset($_SESSION['authenticated_user_theme']) && $_SESSION['authenticated_user_theme'] != '') {
-                $_SESSION['theme_changed'] = false;
-            }
-        }
-
-        if (!is_null($theme) && !headers_sent()) {
-            setcookie('sugar_user_theme', $theme, time() + 31536000); // expires in a year
-        }
+        // We removed the ability for the user to choose his preferred theme.
+        // In the future, we'll add this feature back, in the new Sidecar Themes
+        // format.
+        // Backward compatibilty modules look and feel must be in accordance to
+        // Sidecar modules, thus there is only one possible theme: `RacerX`
+        $theme = 'RacerX';
 
         SugarThemeRegistry::set($theme);
         require_once('include/utils/layout_utils.php');

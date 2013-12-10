@@ -47,11 +47,9 @@
         <div id="sugarcrm">
             <div id="sidecar">
                 <div id="alerts" class="alert-top">
-                    <div class="alert alert-process">
+                    <div class="loading gate">
                         <strong>{$LBL_LOADING}</strong>
-                        <div class="loading">
-                            <span class="l1"></span><span class="l2"></span><span class="l3"></span>
-                        </div>
+                        <i class="l1 icon-circle"></i><i class="l2 icon-circle"></i><i class="l3 icon-circle"></i>
                     </div>
                 </div>
                 <div id="header"></div>
@@ -88,6 +86,10 @@
                 App = SUGAR.App.init({
                     el: "#sidecar",
                     callback: function(app){
+                        app.progress.set(0.6);
+                        app.once("app:view:change", function(){
+                            app.progress.done();
+                        });
                         $('#alerts').empty();
                         app.start();
                     }

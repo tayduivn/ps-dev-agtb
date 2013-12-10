@@ -46,17 +46,6 @@ class vCal extends SugarBean {
 
 	const UTC_FORMAT = 'Ymd\THi00\Z';
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function vCal()
-    {
-        self::__construct();
-    }
-
 	public function __construct()
 	{
 
@@ -203,14 +192,14 @@ class vCal extends SugarBean {
 
 	// static function:
         // cache vcals
-        function cache_sugar_vcal(&$user_focus)
+        public static function cache_sugar_vcal(&$user_focus)
         {
             vCal::cache_sugar_vcal_freebusy($user_focus);
         }
 
 	// static function:
         // caches vcal for Activities in Sugar database
-        function cache_sugar_vcal_freebusy(&$user_focus)
+        public static function cache_sugar_vcal_freebusy(&$user_focus)
         {
             $focus = BeanFactory::getBean('vCals');
             // set freebusy members and save

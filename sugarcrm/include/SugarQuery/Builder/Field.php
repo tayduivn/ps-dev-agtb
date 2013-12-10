@@ -213,6 +213,8 @@ class SugarQuery_Builder_Field
                 $join = $this->query->join($this->def['link'], $params);
 
                 $jta = $join->joinName();
+            } elseif(!empty($this->def['link']) && $this->query->getJoinAlias($this->def['link'])) {
+                $jta = $this->query->getJoinAlias($this->def['link']);
             }
 
             if (!empty($this->def['rname_link'])) {

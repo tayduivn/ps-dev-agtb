@@ -1140,7 +1140,7 @@ SUGAR.kb = function() {
 				
 				// Limits the height of tags tree so that the dialog never
 				// exceeds the window height and centers the dialog
-				YUI().use('node', function (Y) {
+				YUI({comboBase:'index.php?entryPoint=getYUIComboFile&'}).use('node', function (Y) {
 					var viewPortHeight = parseInt(YAHOO.util.Dom.getViewportHeight(), 10);
 					var tree = Y.one('#tagstree');
 					var dialogTitleBar = Y.one('.yui-module .hd');
@@ -1679,6 +1679,11 @@ SUGAR.kb = function() {
                     element.onchange = function() {
                         if (typeof element.files == 'object' && element.files.length > 0) {
                             if (element.multi_selector.upload_maxsize <= element.files[0].size) {
+                                var elementClone = element.cloneNode(false);
+                                elementClone.onchange = element.onchange;
+                                elementClone.multi_selector = element.multi_selector;
+                                element.parentNode.replaceChild(elementClone, element);
+                                element = elementClone;
                                 var error_message = SUGAR.kb.getLocalizedLabels('KBDocuments', 'ERR_FILESIZE') + ' ' + element.multi_selector.upload_maxsize;
                                 alert(error_message);
                                 return;

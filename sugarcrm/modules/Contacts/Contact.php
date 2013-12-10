@@ -146,18 +146,6 @@ class Contact extends Person {
         'contacts_users_id' => 'user_sync',
     );
 
-
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function Contact()
-    {
-        self::__construct();
-    }
-
 	public function __construct() {
 		parent::__construct();
 	}
@@ -195,7 +183,18 @@ class Contact extends Person {
 		return $array_assign;
 	}
 
-	function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false)
+    public function create_new_list_query(
+        $order_by,
+        $where,
+        $filter = array(),
+        $params = array(),
+        $show_deleted = 0,
+        $join_type = '',
+        $return_array = false,
+        $parentbean = null,
+        $singleSelect = false,
+        $ifListForExport = false
+    )
 	{
 		//if this is from "contact address popup" action, then process popup list query
 		if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'ContactAddressPopup'){
@@ -208,7 +207,18 @@ class Contact extends Person {
 				//and perhaps a performance issue, so just remove it
 				$order_by = '';
 			}
-			return parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect);
+            return parent::create_new_list_query(
+                $order_by,
+                $where,
+                $filter,
+                $params,
+                $show_deleted,
+                $join_type,
+                $return_array,
+                $parentbean,
+                $singleSelect,
+                $ifListForExport
+            );
 		}
 
 
@@ -296,9 +306,7 @@ class Contact extends Person {
 	}
 
 
-
-
-        function create_export_query(&$order_by, &$where, $relate_link_join='')
+        public function create_export_query($order_by, $where, $relate_link_join = '')
         {
             $custom_join = $this->getCustomJoin(true, true, $where);
             $custom_join['join'] .= $relate_link_join;
@@ -504,8 +512,8 @@ class Contact extends Person {
 		return empty($result)?null:$result;
 	}
 
-	function save_relationship_changes($is_update) {
-
+    public function save_relationship_changes($is_update, $exclude = array())
+    {
 		//if account_id was replaced unlink the previous account_id.
 		//this rel_fields_before_value is populated by sugarbean during the retrieve call.
 		if (!empty($this->account_id) and !empty($this->rel_fields_before_value['account_id']) and

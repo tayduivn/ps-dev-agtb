@@ -27,7 +27,6 @@
  */
 ({
     extendsFrom: 'TabbedDashletView',
-    plugins: ['LinkedModel', 'Dashlet', 'Timeago'],
 
     /**
      * {@inheritDoc}
@@ -50,13 +49,17 @@
         options.meta = options.meta || {};
         options.meta.template = 'tabbed-dashlet';
 
+        this.plugins = _.union(this.plugins, [
+            'LinkedModel'
+        ]);
+
         this._super('initialize', [options]);
     },
 
     /**
      * {@inheritDoc}
      */
-    _initEvents: function(){
+    _initEvents: function() {
         this._super('_initEvents');
         this.on('active-tasks:close-task:fire', this.closeTask, this);
         return this;
@@ -161,7 +164,7 @@
         if (this.meta.config) {
             this._super('_renderHtml');
             return;
-        };
+        }
 
         var tab = this.tabs[this.settings.get('activeTab')];
 

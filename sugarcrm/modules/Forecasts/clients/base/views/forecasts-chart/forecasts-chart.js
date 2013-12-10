@@ -64,7 +64,6 @@
 
     /**
      * Specific code to run after a dashlet Init Code has ran
-     *
      */
     initDashlet: function() {
         var fieldOptions,
@@ -195,12 +194,12 @@
                 };
 
                 if (!_.isUndefined(this.dashletConfig.dataset.options['best'])) {
-                    i.best = app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate'));
-                    i.best_adjusted = app.currency.convertWithRate(item.get('likely_case_adjusted'), item.get('base_rate'));
+                    i.best = app.currency.convertWithRate(item.get('best_case'), item.get('base_rate'));
+                    i.best_adjusted = app.currency.convertWithRate(item.get('best_case_adjusted'), item.get('base_rate'));
                 }
                 if (!_.isUndefined(this.dashletConfig.dataset.options['worst'])) {
-                    i.worst = app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate'));
-                    i.worst_adjusted = app.currency.convertWithRate(item.get('likely_case_adjusted'), item.get('base_rate'));
+                    i.worst = app.currency.convertWithRate(item.get('worst_case'), item.get('base_rate'));
+                    i.worst_adjusted = app.currency.convertWithRate(item.get('worst_case_adjusted'), item.get('base_rate'));
                 }
 
                 return i;
@@ -310,6 +309,9 @@
             field.once('chart:pareto:rendered', this.parseCollectionForData, this);
             field.renderChart(options);
         }
+        if (options && _.isFunction(options.complete)) {
+            options.complete();
+        }
     },
 
     /**
@@ -328,6 +330,10 @@
         if (meta.config) {
             return;
         }
+
+        this.values.on('change:title', function(model, title) {
+            this.layout.setTitle(title);
+        }, this);
 
         this.on('render', function() {
             var f = this.getField('paretoChart'),

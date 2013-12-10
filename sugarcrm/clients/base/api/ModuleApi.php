@@ -118,24 +118,7 @@ class ModuleApi extends SugarApi {
                 throw new SugarApiExceptionError('html dropdowns are not supported');
             }
 
-            $funcName = $vardef['function'];
-            $includeFile = '';
-            if ( isset($vardef['function_include']) ) {
-                $includeFile = $vardef['function']['include'];
-            }
-
-            if(!empty($includeFile)) {
-                require_once($includeFile);
-            }
-
-            $func = $funcName;
-            if (isset($vardef['function_bean'])) {
-                $funcBean =  BeanFactory::getBean($vardef['function_bean']);
-                if (method_exists($funcBean, $funcName)) {
-                    $func = array($funcBean, $funcName);
-                }
-            }
-            $value = call_user_func($func);
+            $value = getFunctionValue(isset($vardef['function_bean']) ? $vardef['function_bean'] : null, $vardef['function']);
             $cache_age = 60;
         }
         else {
@@ -232,6 +215,21 @@ class ModuleApi extends SugarApi {
     public function setFavorite($api, $args) {
         $this->requireArgs($args, array('module', 'record'));
         $bean = $this->loadBean($api, $args, 'view');
+
+        if (!$bean->ACLAccess('view')) {
+            // No create access so we construct an error message and throw the exception
+            $moduleName = null;
+            if (isset($args['module'])) {
+                $failed_module_strings = return_module_language($GLOBALS['current_language'], $args['module']);
+                $moduleName = $failed_module_strings['LBL_MODULE_NAME'];
+            }
+            $args = null;
+            if (!empty($moduleName)) {
+                $args = array('moduleName' => $moduleName);
+            }
+            throw new SugarApiExceptionNotAuthorized('EXCEPTION_FAVORITE_MODULE_NOT_AUTHORIZED', $args);
+        }
+
         $this->toggleFavorites($bean, true);
         $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
@@ -241,6 +239,21 @@ class ModuleApi extends SugarApi {
     public function unsetFavorite($api, $args) {
         $this->requireArgs($args, array('module', 'record'));
         $bean = $this->loadBean($api, $args, 'view');
+
+        if (!$bean->ACLAccess('view')) {
+            // No create access so we construct an error message and throw the exception
+            $moduleName = null;
+            if (isset($args['module'])) {
+                $failed_module_strings = return_module_language($GLOBALS['current_language'], $args['module']);
+                $moduleName = $failed_module_strings['LBL_MODULE_NAME'];
+            }
+            $args = null;
+            if (!empty($moduleName)) {
+                $args = array('moduleName' => $moduleName);
+            }
+            throw new SugarApiExceptionNotAuthorized('EXCEPTION_FAVORITE_MODULE_NOT_AUTHORIZED', $args);
+        }
+
         $this->toggleFavorites($bean, false);
         $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);

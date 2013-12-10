@@ -115,7 +115,7 @@ $fields = array(
     array(
         'name' => 'date_closed',
         'width' => 10,
-        'label' => 'LBL_LIST_DATE_CLOSED',
+        'label' => 'LBL_DATE_CLOSED',
         'enabled' => true,
         'default' => true,
     ),
@@ -238,7 +238,7 @@ $fields = array(
     array (
         'name' => 'date_closed',
         'width' => 10,
-        'label' => 'LBL_LIST_DATE_CLOSED',
+        'label' => 'LBL_DATE_CLOSED',
         'enabled' => true,
         'default' => true,
         'readonly' => true

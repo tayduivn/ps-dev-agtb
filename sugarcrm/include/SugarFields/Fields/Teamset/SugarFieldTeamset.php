@@ -512,7 +512,8 @@ class SugarFieldTeamset extends SugarFieldBase {
 	 * @param string $field
 	 * @param unknown_type $properties
 	 */
-   public function save(&$bean, $params, $field, $properties, $prefix = ''){
+    public function save($bean, $params, $field, $properties, $prefix = '')
+    {
     	$save = false;
         $value_name = $field . "_values";
 
@@ -627,7 +628,8 @@ class SugarFieldTeamset extends SugarFieldBase {
      * @param string    $fieldName
      * @param array     $properties
      */
-    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties) {
+    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties)
+    {
         require_once('modules/Teams/TeamSetManager.php');
         $teamList = TeamSetManager::getUnformattedTeamsFromSet($bean->team_set_id);
         if ( ! is_array($teamList) ) {
