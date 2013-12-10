@@ -32,11 +32,13 @@ class SugarTestCallUtilities
 
     public static function createCall() 
     {
+        global $current_user;
         $time = mt_rand();
     	$name = 'Call';
     	$call = new Call();
         $call->name = $name . $time;
         $call->date_start = TimeDate::getInstance()->getNow()->asDb();
+        $call->assigned_user_id = $current_user->id;
         $call->save();
         self::$_createdCalls[] = $call;
         return $call;
