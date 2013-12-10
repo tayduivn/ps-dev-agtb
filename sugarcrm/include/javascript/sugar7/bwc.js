@@ -216,18 +216,29 @@
          * @param {String} name The record name that we are sharing.
          */
         shareRecord: function(module, id, name) {
-            var shareField = app.view.createField({
-                def: {
-                    type: 'shareaction'
-                },
-                module: module,
-                model: app.data.createBean(module, {
-                    id: id,
-                    name: name
-                }),
-                view: app.view.createView({})
-            });
-            shareField.share();
+            var tempMailTo,
+                shareField = app.view.createField({
+                    def: {
+                        type: 'shareaction'
+                    },
+                    module: module,
+                    model: app.data.createBean(module, {
+                        id: id,
+                        name: name
+                    }),
+                    view: app.view.createView({})
+                });
+            if (shareField.def.href) {
+                // Yes, this is a hack, but strategically placed in BWC so it will go away.
+                // If you have a better solution, please fix this.
+                // Note: doing window.location.href = 'mailto:'; window.close(); has timing problems.
+                // Also, reworking Smarty sugar_button function code has its own set of challenges.
+                tempMailTo = $('<a href="' + shareField.def.href + '"></a>').appendTo('body');
+                tempMailTo.get(0).click();
+                tempMailTo.remove();
+            } else {
+                shareField.share();
+            }
         },
 
         /**
