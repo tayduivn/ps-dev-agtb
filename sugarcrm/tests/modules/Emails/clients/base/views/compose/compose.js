@@ -646,7 +646,9 @@ describe("Emails.Views.Compose", function() {
         });
 
         describe("insert a signature", function() {
-            var htmlBody = "my message body is rockin'";
+            var htmlBody = "my message body is rockin'",
+                signatureTagBegin ='<br class=\"signature-begin\" />',
+                signatureTagEnd ='<br class=\"signature-end\" />';
 
             dataProvider = [
                 {
@@ -654,21 +656,28 @@ describe("Emails.Views.Compose", function() {
                     body:           htmlBody,
                     signature:      {signature_html: "<b>Sincerely, John</b>"},
                     expectedReturn: true,
-                    expectedBody:   htmlBody + "<br class=\"signature-begin\" /><b>Sincerely, John</b><br class=\"signature-end\" />"
+                    expectedBody:   htmlBody + signatureTagBegin + "<b>Sincerely, John</b>" + signatureTagEnd
                 },
                 {
                     message:        "should insert a signature that runs from open tag until EOF when there is no close tag",
-                    body:           htmlBody + "<br class=\"signature-begin\" /><b>Sincerely, John</b>" + htmlBody,
+                    body:           htmlBody + signatureTagBegin + "<b>Sincerely, John</b>" + htmlBody,
                     signature:      {signature_html: "<i>Regards, Jim</i>"},
                     expectedReturn: true,
-                    expectedBody:   htmlBody + "<br class=\"signature-begin\" /><i>Regards, Jim</i><br class=\"signature-end\" />"
+                    expectedBody:   htmlBody + signatureTagBegin + "<i>Regards, Jim</i>" + signatureTagEnd
                 },
                 {
                     message:        "should insert a signature that runs from BOF until close tag when there is no open tag",
                     body:           htmlBody + "<b>Sincerely, John</b><br class=\"signature-end\" />" + htmlBody,
                     signature:      {signature_html: "<i>Regards, Jim</i>"},
                     expectedReturn: true,
-                    expectedBody:   "<br class=\"signature-begin\" /><i>Regards, Jim</i><br class=\"signature-end\" />" + htmlBody
+                    expectedBody:   signatureTagBegin + "<i>Regards, Jim</i>" + signatureTagEnd + htmlBody
+                },
+                {
+                    message:        "should insert a signature that contains any whitespace and non-white space characters",
+                    body:           htmlBody,
+                    signature:      {signature_html: "<b>Sincerely, John</b>\r\n<b>how are you doing</b>\r\n\t\f"},
+                    expectedReturn: true,
+                    expectedBody:   htmlBody +  signatureTagBegin + "<b>Sincerely, John</b>\r\n<b>how are you doing</b>\r\n\t\f" + signatureTagEnd
                 },
                 {
                     message:        "should not insert a signature because signature is not an object",
@@ -680,7 +689,7 @@ describe("Emails.Views.Compose", function() {
                 {
                     message:        "should not insert a signature because the signature_html attribute does not exist",
                     body:           htmlBody,
-                    signature:      {sig_html: "<b>Sincerely, John</b>"},
+                    signature:      {html: "<b>Sincerely, John</b>"},
                     expectedReturn: false,
                     expectedBody:   htmlBody
                 }
