@@ -239,6 +239,9 @@ describe('Forecasts.Base.Views.ForecastsChart', function() {
                     },
                     setServerData: function(data) {
                         view.serverData = data;
+                    },
+                    hasServerData: function() {
+                        return true;
                     }
                 }
             });
