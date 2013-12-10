@@ -118,6 +118,11 @@ class SugarQuery
     public $fields = array();
 
     /**
+     * @var bool True when the custom table for the current bean has already been added to the query
+     */
+    public $customJoined = false;
+
+    /**
      * Build the select object
      *
      * @param bool $fields
@@ -822,5 +827,27 @@ class SugarQuery
         }
 
         return null;
+    }
+
+    /**
+     * Joins the custom table to the current query (if possible)
+     * @param SugarBean $bean
+     * @param string $alias
+     */
+    public function joinCustomTable($bean, $alias = "") {
+        if ($bean->hasCustomFields() && !$this->customJoined) {
+            $table = $bean->getTableName();
+            $table_cstm = $bean->get_custom_table_name();
+            if (!empty($table_cstm)) {
+                // TODO: CLEAN THIS UP
+                if (!empty($alias)) {
+                    $sql = "LEFT JOIN {$table_cstm} {$alias}_c ON {$alias}_c.id_c = {$alias}.id";
+                } else {
+                    $sql = "LEFT JOIN {$table_cstm} ON {$table_cstm}.id_c = {$table}.id";
+                }
+                // can do a join here because we haven't got to the joins yet in the compile sequence.
+                $this->joinRaw($sql);
+            }
+        }
     }
 }
