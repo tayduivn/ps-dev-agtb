@@ -439,13 +439,11 @@ class RestService extends ServiceBase
 
         // For edge cases when an HTML response is needed as a wrapper to JSON
         if (isset($_REQUEST['format']) && $_REQUEST['format'] == 'sugar-html-json') {
-            if (!isset($_REQUEST['platform']) || (isset($_REQUEST['platform']) && $_REQUEST['platform'] == 'portal')) {
-                $this->response->setContent($this->getHXRReturnArray($message, $httpError));
-                $this->response->setType(RestResponse::JSON_HTML, true);
-                $this->response->setStatus(200);
+            $this->response->setContent($this->getHXRReturnArray($message, $httpError));
+            $this->response->setType(RestResponse::JSON_HTML, true);
+            $this->response->setStatus(200);
 
-                return;
-            }
+            return;
         }
 
         // Send proper headers
@@ -677,7 +675,8 @@ class RestService extends ServiceBase
      */
     protected function setResponseType($args)
     {
-        if (isset($args['format']) && $args['format'] == 'sugar-html-json' && (!isset($args['platform']) || $args['platform'] == 'portal')) {
+        //Removed platform checking; we should honor special format requests for all platforms
+        if (isset($args['format']) && $args['format'] == 'sugar-html-json') {
             $this->response->setType(RestResponse::JSON_HTML);
         } else {
             $this->response->setType(RestResponse::JSON);
