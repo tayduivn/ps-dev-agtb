@@ -12,8 +12,6 @@
  */
 
 ({
-    plugins: ['Dashlet'],
-
     duns_num: '',
 
     //used to detect if import was clicked for the first time when company info was loaded
