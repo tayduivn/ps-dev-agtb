@@ -438,8 +438,6 @@ eoq;
                         case "relate":
                             if(isset($def['id_name'])) {
                                 $def['massupdate'] = true;
-                            } else if($name == 'team_name') {
-
                             }
                             break;
                         case "contact_id":
@@ -471,13 +469,8 @@ eoq;
                         $fielddefs[$def['id_name']]['massupdate'] = false;
                     }
                 }
-                //BEGIN SUGARCRM flav=pro ONLY
-                elseif ($name == "team_name") {
-                    $def['massupdate'] = true;
-                }
-                //END SUGARCRM flav=pro ONLY
-                $fielddefs[$name] = $def;
             }
+            $fielddefs[$name] = $def;
         }
 
         if($moduleName == 'Contacts') {
