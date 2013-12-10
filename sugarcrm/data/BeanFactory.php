@@ -253,9 +253,12 @@ class BeanFactory {
         if (!isset(self::$loadedBeans[$module]))
             self::$loadedBeans[$module] = array();
 
-        //Do not double register a bean
-        if (!empty($id) && isset(self::$loadedBeans[$module][$id]))
+        // Reregister the bean, but stop processing after this point
+        // This is needed for beans that change mid-request
+        if (!empty($id) && isset(self::$loadedBeans[$module][$id])) {
+            self::$loadedBeans[$module][$id] = $bean;
             return true;
+        }
 
         $index = "i" . (self::$total % self::$maxLoaded);
         //We should only hold a limited number of beans in memory at a time.
