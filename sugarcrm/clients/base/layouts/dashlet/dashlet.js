@@ -183,7 +183,10 @@
             this.model.save(null, {
                 silent: true,
                 //Show alerts for this request
-                showAlerts: true
+                showAlerts: true,
+                success: _.bind(function() {
+                    this.model.unset('updated');
+                }, this)
             });
         }
         return component;
