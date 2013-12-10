@@ -58,12 +58,5 @@ $viewdefs['Leads']['mobile']['layout']['subpanels'] = array(
                 'link' => 'notes',
             ),
         ),
-        array(
-            'layout' => 'subpanel',
-            'label' => 'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE',
-            'context' => array(
-                'link' => 'campaigns',
-            ),
-        ),
     ),
 );

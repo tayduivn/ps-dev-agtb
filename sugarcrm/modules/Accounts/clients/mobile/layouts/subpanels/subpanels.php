@@ -88,15 +88,9 @@ $viewdefs['Accounts']['mobile']['layout']['subpanels'] = array(
         array(
             'layout' => 'subpanel',
             'label' => 'LBL_CASES_SUBPANEL_TITLE',
+            'linkable' => false,
             'context' => array(
                 'link' => 'cases',
-            ),
-        ),
-        array(
-            'layout' => 'subpanel',
-            'label' => 'LBL_BUGS_SUBPANEL_TITLE',
-            'context' => array(
-                'link' => 'bugs',
             ),
         ),
         array(
@@ -108,6 +102,13 @@ $viewdefs['Accounts']['mobile']['layout']['subpanels'] = array(
             'linkable' => false,
             'creatable' => false,
             'unlinkable' => false,
+        ),
+        array (
+            'layout' => 'subpanel',
+            'label' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
+            'context' => array (
+                'link' => 'products',
+            ),
         ),
         array(
             'layout' => 'subpanel',
@@ -123,13 +124,6 @@ $viewdefs['Accounts']['mobile']['layout']['subpanels'] = array(
                 'link' => 'quotes',
             ),
             'linkable' => false,
-        ),
-        array(
-            'layout' => 'subpanel',
-            'label' => 'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE',
-            'context' => array(
-                'link' => 'campaigns',
-            ),
         ),
     ),
 );
