@@ -50,4 +50,15 @@ class ParserTest extends Sugar_PHPUnit_Framework_TestCase
         	$this->assertTrue(false, "Parser threw exception: {$e->getMessage()}");
         }
     }
+
+    public function testSingleArgument()
+    {
+        $expr = 'enum("test")';
+        $result = Parser::evaluate($expr)->evaluate();
+        $this->assertEquals(array("test"), $result);
+
+        $expr = 'concat("test")';
+        $result = Parser::evaluate($expr)->evaluate();
+        $this->assertEquals("test", $result);
+    }
 }
