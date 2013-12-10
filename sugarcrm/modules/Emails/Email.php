@@ -748,20 +748,8 @@ class Email extends SugarBean {
                             $fileLocation = $this->et->userCacheDir . "/{$fileGUID}";
                             $filename = substr($noteId, 36, strlen($noteId)); // strip GUID	for PHPMailer class to name outbound file
 
-                            //If we are saving an email we were going to forward we need to save the attachments as well.
-                            if ((($this->type == 'draft') && !empty($this->id))
-                                || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)
-                            ) {
-                                $mimeType = $this->email2GetMime($fileLocation);
-                                $this->saveTempNoteAttachments($filename, $fileLocation, $mimeType);
-                            } // if
-
-                            $note                             = new Note();
-                            $note->retrieve($fileGUID);
-                            //$note->x_file_name   = empty($note->filename) ? $note->name : $note->filename;
-                            //$note->x_file_path   = "upload/{$note->id}";
-                            //$note->x_file_exists = (bool) (!empty($note->id) && (file_exists($note->x_file_path)));
-                            //$note->x_mime_type   = $note->file_mime_type;
+                            $mimeType = $this->email2GetMime($fileLocation);
+                            $note = $this->saveTempNoteAttachments($filename, $fileLocation, $mimeType);
 
                             $attachment = AttachmentPeer::attachmentFromSugarBean($note);
                             //print_r($attachment);
@@ -1094,6 +1082,7 @@ class Email extends SugarBean {
     	    $GLOBALS['log']->fatal("EMAIL 2.0: could not copy SugarDocument revision file $fileLocation => $noteFile");
 	    }
 	    $tmpNote->save();
+        return $tmpNote;
 	}
 	/**
 	 * Handles normalization of Email Addressess
