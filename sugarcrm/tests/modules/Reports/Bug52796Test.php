@@ -39,25 +39,31 @@ class Bug52796Test extends Sugar_PHPUnit_Framework_TestCase
 	private $reportInstance;
 	private $saved = array();
 
-	public function setUp()
-	{
+    protected function setUp()
+    {
         // Change default currency to check conversion
-		global $sugar_config, $beanList, $beanFiles;
-        require('include/modules.php');
-		$this->saved['currency'] = $sugar_config['currency'];
-		$currency = new Currency();
-		$sugar_config['currency'] = $currency->retrieveIDBySymbol('€');
-	}
+        global $sugar_config;
+        parent::setUp();
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
+        $currency = SugarTestCurrencyUtilities::createCurrency('CC', 'C', 'CCC', 0.732);
+        $this->saved['currency'] = $sugar_config['currency'];
+        $sugar_config['currency'] = $currency->id;
 
-	public function tearDown()
+    }
+
+    protected function tearDown()
 	{
 		// Set back the default currency value
 		global $sugar_config;
 		$sugar_config['currency'] = $this->saved['currency'];
 		$this->reportInstance = null;
 		$this->saved = null;
-        unset($GLOBALS['beanFiles']);
-        unset($GLOBALS['beanList']);
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
+        SugarTestHelper::tearDown();
+        parent::tearDown();
 	}
 
 	/**
@@ -65,8 +71,14 @@ class Bug52796Test extends Sugar_PHPUnit_Framework_TestCase
 	 * This method tests if conversion from dollar to another currency (Euro for tests) works after change of base_rate
 	 */
 	function testReportCurrencyConversion()
-	{	
-		
+    {
+        $id = create_guid();
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity($id);
+        $opportunity->revenuelineitems->add($rli);
+        $rli->opportunity_id = $id;
+        $rli->save();
+
 		// Initialize an opportunities report with 3 columns
 		$this->reportInstance = new Report();
 		$this->reportInstance->clear_results();
@@ -154,13 +166,15 @@ class Bug52796Test extends Sugar_PHPUnit_Framework_TestCase
 			  'rep_rel_name' => 'amount_usdollar_0',
 			)
 		);
-		
+
+        $db = DBManagerFactory::getInstance();
+
 		// Report select fields
 		$this->reportInstance->select_fields = array(
-			0 => 'IFNULL(opportunities.id,\'\') primaryid',
-			1 => 'IFNULL(opportunities.name,\'\') opportunities_name',
+            0 => $db->convert('opportunities.id', 'ifnull') . ' primaryid',
+            1 => $db->convert('opportunities.name', 'ifnull') . ' opportunities_name',
 			2 => 'opportunities.amount opportunities_amount ',
-			3 => 'IFNULL( opportunities.currency_id,\'\') OPPORTUNITIES_AMOUNT_C9AC638',
+            3 => $db->convert('opportunities.currency_id', 'ifnull') . ' OPPORTUNITIES_AMOUNT_C9AC638',
 			4 => 'opportunities.amount_usdollar OPPORTUNITIES_AMOUNT_UBC8F31',
 		);
 		// Create and execute report query
@@ -169,11 +183,11 @@ class Bug52796Test extends Sugar_PHPUnit_Framework_TestCase
 
 		// Change the Euro currency conversion_rate
 		$currency = new Currency();
-		$currency->retrieve($currency->retrieveIDBySymbol('€'));
+        $currency->retrieve($currency->retrieveIDBySymbol('C'));
 		$oldConversionRate = $currency->conversion_rate;
-		$currency->conversion_rate = 0.5;
+        $currency->conversion_rate = 0.0123;
 		$currency->save();
-		
+
 		// Loop through all results, and check if after conversion_rate change, the amounts are calculated properly
 		while ($row = $this->reportInstance->get_next_row('result', 'display_columns')) {
 			// Extract the amount in dollars from the first row and strip commas
@@ -185,7 +199,10 @@ class Bug52796Test extends Sugar_PHPUnit_Framework_TestCase
 			$euros = str_replace(",", "", $matches[0]);
 			
 			$actual = $euros;
-			$expected = $dollars * $currency->conversion_rate;
+            /**
+             * used `format_number` because `Localization::getLocaleFormattedNumber` doesn't work.
+             */
+            $expected = format_number($dollars * $currency->conversion_rate);
 			$this->assertEquals($expected, $actual, "Reports are not processing the amount_usdollar field using latest conversion_rates.");
 		}
 		
