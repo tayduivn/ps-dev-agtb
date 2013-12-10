@@ -21,7 +21,7 @@ class SugarUpgradeForecastsChangeForecastBy extends UpgradeScript
     public function run()
     {
         //Only run this on ent upgrades
-        if (!$this->toFlavor("ent")) {
+        if (!$this->toFlavor("pro")) {
             return;
         }
         
