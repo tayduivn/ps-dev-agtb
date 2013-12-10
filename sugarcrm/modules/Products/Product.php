@@ -404,6 +404,10 @@ class Product extends SugarBean
                         $row = $this->db->fetchByAssoc($result);
                     }
                     $total_usdollar += $new_sub_usdollar + $tax_usdollar + $shipping_usdollar;
+
+                    /** @var $currency Currency */
+                    $currency = BeanFactory::getBean('Currencies');
+
                     $total = $currency->convertFromDollar($total_usdollar);
                     $subtotal = $currency->convertFromDollar($subtotal_usdollar);
                     $new_sub = $currency->convertFromDollar($new_sub_usdollar);
