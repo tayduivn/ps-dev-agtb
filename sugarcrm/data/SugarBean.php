@@ -4800,14 +4800,21 @@ class SugarBean
             	//C.L. Bug 43535 - Use the $index value to set the $rows_found value here
                 $rows_found = isset($index) ? $index : $row_offset + count($list);
 
-                if(count($list) >= $limit)
-                {
-                    array_pop($list);
-                }
-                if(!$toEnd)
-                {
+                if (!$toEnd) {
                     $next_offset--;
                     $previous_offset++;
+
+                    // While processing pagination each request asks for the
+                    // number of records per page plus one, in order to know if
+                    // there are more records to show besides the ones we're
+                    // currently seeing.
+                    //
+                    // Based on that and 'cause we're not trying to reach the
+                    // last record ($toEnd), we should discard the last fetched
+                    // record.
+                    if (count($list) >= $limit) {
+                        array_pop($list);
+                    }
                 }
             }
         }
