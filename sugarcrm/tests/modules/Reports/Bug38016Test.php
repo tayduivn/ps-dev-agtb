@@ -32,6 +32,7 @@ class Bug38016Test extends Sugar_PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $this->markTestIncomplete('Marking this skipped until Report module to be fixed.See RS-221/RS-107');
         $beanList = array();
         $beanFiles = array();
         require 'include/modules.php';
