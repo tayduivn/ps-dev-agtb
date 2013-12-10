@@ -177,7 +177,7 @@ class SugarJobQueue
         $try = $this->jobTries;
         while($try--) {
             // TODO: tranaction start?
-            $id = $this->db->getOne("SELECT id FROM {$this->job_queue_table} WHERE execute_time <= $now AND status = '$queued' ORDER BY date_entered ASC");
+            $id = $this->db->getOne("SELECT id FROM {$this->job_queue_table} WHERE execute_time <= $now AND status = '$queued' AND deleted = 0 ORDER BY date_entered ASC");
             if(empty($id)) {
                 return null;
             }
