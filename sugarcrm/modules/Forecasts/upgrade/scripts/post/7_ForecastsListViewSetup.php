@@ -28,8 +28,8 @@ class SugarUpgradeForecastsListViewSetup extends UpgradeScript
 
     public function run()
     {
-
-        if (!$this->toFlavor('pro')) {
+        // if we are going to the same flavor, we can ignore this for now
+        if ($this->from_flavor == $this->to_flavor) {
             return;
         }
 
@@ -37,9 +37,17 @@ class SugarUpgradeForecastsListViewSetup extends UpgradeScript
         $admin = BeanFactory::getBean('Administration');
         $config = $admin->getConfigForModule('Forecasts');
 
-        $this->setupForecastListViewMetaData($config);
+        // figure out the columns that we need to store
+        $columns = $this->setupForecastListViewMetaData($config);
+
+        // save the updated worksheet_columns to the forecast config
+        $admin->saveSetting('Forecasts', 'worksheet_columns', json_encode($columns), 'base');
     }
 
+    /**
+     * @param array $forecast_config        The Current Forecast Config
+     * @return array                        The new columns that were set
+     */
     protected function setupForecastListViewMetaData($forecast_config)
     {
         // setup the forecast columns based on the config
@@ -50,10 +58,27 @@ class SugarUpgradeForecastsListViewSetup extends UpgradeScript
         $api->user = $this->context['admin'];
         $api->platform = 'base';
         $client = new ForecastsConfigApi();
-        // get the worksheet columns for Ent, because we wouldn't have
-        // made it this far if it were pro
-        $client->setWorksheetColumns($api, ForecastsDefaults::getWorksheetColumns('ent'), $forecast_config['forecast_by']);
+
+        // get the to_flavor default columns
+        $newFlavorColumns = ForecastsDefaults::getWorksheetColumns($this->to_flavor);
+        // get the from_flavor default columns
+        $prevFlavorColumns = ForecastsDefaults::getWorksheetColumns($this->from_flavor);
+        // get the current columns from the forecast_config
+        $currentColumns = $forecast_config['worksheet_columns'];
+        // find any additional columns that may have been added columns from previous defaults
+        $additional_columns = array_diff($currentColumns, $prevFlavorColumns);
+        // find any of the default columns that have been removed from the previous defaults
+        $remove_columns = array_diff($prevFlavorColumns, $currentColumns);
+
+        // merge the new columns with any additional columns that may have been added, and then remove any of the
+        // default columns that may have been removed
+        $columns = array_diff(array_merge($newFlavorColumns, $additional_columns), $remove_columns);
+
+        // save the columns to the worksheet list viewdefs
+        $client->setWorksheetColumns($api, $columns, $forecast_config['forecast_by']);
 
         unset($api, $client);
+
+        return $columns;
     }
 }
