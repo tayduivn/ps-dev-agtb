@@ -249,6 +249,9 @@
                 delete team.remove_button;
                 delete team.add_button;
             });
+            if (!value[this._currentIndex]) {
+                value[this._currentIndex] = {};
+            }
             value[value.length - 1].add_button = true;
             // number of valid teams
             var numTeams = _.filter(value, function (team) {
@@ -264,7 +267,6 @@
         return value;
     },
     addTeam: function () {
-        this.value.push({});
         this._currentIndex++;
         this._updateAndTriggerChange(this.value);
     },
@@ -336,6 +338,11 @@
     _updateAndTriggerChange: function (value) {
         // SP-1437: No Warning message when update with Team field only
         // http://stackoverflow.com/questions/17221680/backbone-model-changedattributes-not-showing-all-changes
+        _.each(value, function(team) {
+            // "add_button" and "remove_button" are JS elements, don't track them.
+            delete team.add_button;
+            delete team.remove_button;
+        });
         this.model.unset(this.name, {silent: true}).set(this.name, value);//force changedAttributes
         this.model.trigger("change");
     },
