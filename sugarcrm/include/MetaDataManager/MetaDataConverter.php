@@ -255,6 +255,14 @@ class MetaDataConverter
                 if (empty($details['type']) && !empty($newDefs['type']) && $newDefs['type'] != 'varchar') {
                     $details['type'] = $newDefs['type'];
                 }
+                // special handling for teamsets, since they have changed from 6
+                if(!empty($newDefs['custom_type']) && $newDefs['custom_type'] == 'teamset') {
+                    $details['sortable'] = false;
+                    $details['link'] = false;
+                    unset($details['type']);
+                    unset($details['target_module']);
+                    unset($details['target_record_key']);
+                }
             }
 
             $viewdefs['panels'][0]['fields'][] = $this->fromLegacySubpanelField($details);
