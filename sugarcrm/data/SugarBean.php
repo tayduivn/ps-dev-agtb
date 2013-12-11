@@ -7043,7 +7043,7 @@ class SugarBean
 	 */
 	public static function leaveOperation($opname, $flag = true)
 	{
-	    if (empty($flag) && empty(self::$opStatus[$opname])) {
+	    if (empty($flag) || empty(self::$opStatus[$opname])) {
 	        return false;
 	    }
 	    $GLOBALS['log']->info("Left operation status: $opname");

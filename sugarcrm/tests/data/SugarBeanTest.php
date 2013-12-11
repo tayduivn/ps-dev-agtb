@@ -365,6 +365,25 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertFalse($mockAccount->checkUserAccess($user, get_class($bf)));
     }
+
+    /**
+     * This test will make sure that when you enter an operation that the one that actually entered the operation
+     * actually is the one to leave it.
+     */
+    public function testEnterLeaveOperationMultipleTimes()
+    {
+        $ret1 = SugarBean::enterOperation('unit_test');
+        $this->assertTrue($ret1);
+
+        $ret2 = SugarBean::enterOperation('unit_test');
+        $this->assertFalse($ret2);
+
+        $this->assertFalse(SugarBean::leaveOperation('unit_test', $ret2));
+
+        $this->assertTrue(SugarBean::leaveOperation('unit_test', $ret1));
+
+        SugarBean::resetOperations();
+    }
 }
 
 // Using Mssql here because mysql needs real connection for quoting
