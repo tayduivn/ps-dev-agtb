@@ -53,16 +53,12 @@
             showTooltip:function (e) {
                 _.defer(function () {
                     var $addon = this.$(e.currentTarget).nextAll('.add-on').first();
-                    if (app.utils.tooltip.has($addon)) {
-                        $addon.tooltip('show');
-                    }
+                    app.utils.tooltip.show($addon);
                 }, this);
             },
             hideTooltip:function (e) {
                 var $addon = this.$(e.currentTarget).nextAll('.add-on').first();
-                if (app.utils.tooltip.has($addon))  {
-                    $addon.tooltip('hide');
-                }
+                app.utils.tooltip.hide($addon);
             },
 
             /**

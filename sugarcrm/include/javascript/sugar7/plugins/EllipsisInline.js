@@ -85,7 +85,7 @@
             _showEllipsisTooltip: function(event) {
                 var target = event.currentTarget;
                 if (this._shouldShowEllipsisTooltip(target)) {
-                    $(target).tooltip('show');
+                    app.utils.tooltip.show(target);
                 }
             },
 
@@ -97,7 +97,7 @@
             _hideEllipsisTooltip: function(event) {
                 var target = event.currentTarget;
                 if (this._shouldHideEllipsisTooltip(target)) {
-                    $(target).tooltip('hide');
+                    app.utils.tooltip.hide(target);
                 }
             },
 
@@ -118,7 +118,8 @@
              * @private
              */
             _shouldHideEllipsisTooltip: function(target) {
-                return app.utils.tooltip.has(target) && $(target).data('bs.tooltip').tip().hasClass('in');
+                var plugin = app.utils.tooltip.get(target);
+                return plugin && plugin.tip().hasClass('in');
             }
 
         });

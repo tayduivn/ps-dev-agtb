@@ -48,9 +48,10 @@
         this._super('initialize', [options]);
 
         $(document).on('click.login', function(event) {
-            var $forgotPassword = self.$('#forgot-password');
-            if (!$.contains($forgotPassword.get(0), event.target)) {
-                $forgotPassword.tooltip('hide');
+            var $forgotPassword = self.$('#forgot-password'),
+                forgotPassword = $forgotPassword.get(0);
+            if (!$.contains(forgotPassword, event.target)) {
+                app.utils.tooltip.hide(forgotPassword);
             }
         });
     },

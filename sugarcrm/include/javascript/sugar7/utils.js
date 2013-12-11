@@ -57,10 +57,37 @@
                 destroy: function($tooltips) {
                     if ($tooltips) {
                         _.each($tooltips, function(tooltip) {
+                            var plugin;
                             if (this.has(tooltip)) {
-                                $(tooltip).tooltip('destroy');
+                                plugin = this.get(tooltip);
+                                plugin.leave(plugin); //need to call leave() first because of a bug in tooltip v3
+                                plugin.destroy();
                             }
                         }, this);
+                    }
+                },
+
+                /**
+                 * Show tooltip.
+                 * @param {DOM} element
+                 */
+                show: function(element) {
+                    var plugin;
+                    if (this.has(element)) {
+                        plugin = this.get(element);
+                        plugin.enter(plugin); //need to use enter() instead of show() because of a bug in tooltip v3
+                    }
+                },
+
+                /**
+                 * Hide tooltip.
+                 * @param {DOM} element
+                 */
+                hide: function(element) {
+                    var plugin;
+                    if (this.has(element)) {
+                        plugin = this.get(element);
+                        plugin.leave(plugin); //need to use leave() instead of hide() because of a bug in tooltip v3
                     }
                 },
 
