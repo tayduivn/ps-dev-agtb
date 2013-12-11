@@ -68,13 +68,23 @@ class ACLField  extends ACLAction
             $availableFields = array();
             foreach($fieldDefs as $field=>$def){
 
-                if((!empty($def['source'])&& $def['source']== 'custom_fields') ||!empty($def['group']) || (empty($def['hideacl']) &&!empty($def['type']) && !in_array($field, $exclude) &&
-                    ((empty($def['source'])
-                    && $def['type'] != 'id'
-                    && (empty($def['dbType']) || ($def['dbType'] != 'id' ))
-                    ) || !empty($def['link']) || $def['type'] == 'relate')
-                ))
-                    {
+                // FIXME this condition needs some refactoring to make any sense at all
+                // we also need to document the rules because currently studio fields
+                // should follow the same rules as our vardefs...
+                if ((
+                        !empty($def['source']) && $def['source'] == 'custom_fields') &&
+                        $def['type'] != 'id' && (empty($def['dbType']) || ($def['dbType'] != 'id')
+                    ) || !empty($def['group']) ||
+                    (
+                        empty($def['hideacl']) && !empty($def['type']) && !in_array($field, $exclude) &&
+                        (
+                            (
+                                empty($def['source']) && $def['type'] != 'id' &&
+                                (empty($def['dbType']) || ($def['dbType'] != 'id'))
+                            ) || !empty($def['link']) || $def['type'] == 'relate'
+                        )
+                    )
+                ) {
                         if(empty($def['vname']))$def['vname'] = '';
                         $fkey = (!empty($def['group']))? $def['group']: $field;
                         $label = (!empty($fieldDefs[$fkey]['vname']))?$fieldDefs[$fkey]['vname']:$def['vname'];
@@ -107,7 +117,7 @@ class ACLField  extends ACLAction
      * @param string $role_id
      */
     function getFields($module,$user_id='',$role_id=''){
-        static $userFields = array();
+
         $fields = ACLField::getAvailableFields($module, false);
         if(!empty($role_id)){
             $query = "SELECT  af.id, af.name, af.category, af.role_id, af.aclaccess FROM acl_fields af ";
