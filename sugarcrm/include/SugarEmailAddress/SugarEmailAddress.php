@@ -119,6 +119,14 @@ class SugarEmailAddress extends SugarBean
             $bean->fetched_row['email1'] = $bean->email1;
         }
 
+        // In order for saves to work properly, the email property needs to be set
+        // from the emailAddresses addresses array so it maintains state between
+        // saves. But we should only write to $bean->email if it is on the bean
+        // and empty.
+        if (isset($bean->email) && empty($bean->email)) {
+            $bean->email = $this->addresses;
+        }
+
         return;
     }
 
