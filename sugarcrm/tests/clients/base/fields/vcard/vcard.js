@@ -1,58 +1,48 @@
 describe('vcard field', function() {
-    var app, field;
+    var app, field, model, callStub;
 
     beforeEach(function() {
         app = SugarTest.app;
+        field = SugarTest.createField('base', 'vcard', 'vcard', 'vcard', {});
+        model = field.model;
 
-        SugarTest.testMetadata.init();
-        SugarTest.loadComponent('base', 'field', 'button');
-        SugarTest.loadComponent('base', 'field', 'rowaction');
-        SugarTest.testMetadata.set();
-        field = SugarTest.createField("base", 'vcard', "vcard", "vcard");
+        callStub = sinon.stub(SugarTest.app.api, 'fileDownload');
     });
 
     afterEach(function() {
-        SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
-        field.model = null;
+        model = null;
         field = null;
+
+        callStub.restore();
     });
 
-    it('should download the vcard of current record and log an error if uri is empty', function () {
-        var error, buildURLStub, callStub;
+    it('should download the vcard of current record', function() {
+        field.model.set('id', '123456789');
+        field.model.set('module', 'Leads');
 
-        sinon.stub(field, '_loadTemplate', function() {
-            this.template = function() {
-                return '<a class="btn" href="javascript:void(0);"></a>';
-            };
-        });
+        field.rowActionSelect();
+
+        expect(callStub.called).toBeTruthy();
+    });
+
+    it('should log an error if uri is empty and not download vcard', function() {
+        var error, buildURLStub;
 
         error = sinon.spy(SugarTest.app.logger, 'error');
-        buildURLStub = sinon.stub(SugarTest.app.api, 'buildURL', function () {
+        buildURLStub = sinon.stub(SugarTest.app.api, 'buildURL', function() {
             return '';
-        });
-
-        callStub = sinon.stub(SugarTest.app.api, 'call', function (method, url, data, callbacks, options) {
-            expect(callbacks.success).toBeDefined();
-            expect(typeof callbacks.success === 'function').toBeTruthy();
-            expect(callbacks.error).toBeDefined();
-            expect(typeof callbacks.error === 'function').toBeTruthy();
-
-            callbacks.success.apply(this);
-
-            return null;
         });
 
         field.rowActionSelect();
 
         expect(buildURLStub.called).toBeTruthy();
-        expect(callStub.called).toBeTruthy();
-        expect(error.calledOnce).toBeTruthy();
+        expect(callStub.called).toBeFalsy();
+        expect(error.called).toBeTruthy();
 
         error.restore();
         buildURLStub.restore();
-        callStub.restore();
     });
 });
