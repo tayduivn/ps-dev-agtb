@@ -78,4 +78,79 @@ class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $invalidBean = BeanFactory::retrieveBean($module, $uniqueID);
         $this->assertFalse(isset($invalidBean->id));
     }
+
+    public function testRegisterBean()
+    {
+        // Create a new record
+        $module = 'Accounts';
+        $account = BeanFactory::newBean($module);
+        $account->name = 'BeanFactoryTest';
+        $account->save();
+        $this->createdBeans[] = $account;
+
+        // Test that it is registered
+        $registered = BeanFactoryTestMock::isRegistered($account);
+        $this->assertTrue($registered, "Newly created Account bean is not registered");
+
+        // Change the record and get it again
+        $account->name = 'BeanFactoryTestHASCHANGED';
+        $account->save();
+
+        // Test that the changes took
+        $new = BeanFactory::getBean($module, $account->id);
+        $this->assertEquals($account->name, $new->name);
+    }
+    
+    public function testRegisterBeanLegacyStyle()
+    {
+        // Create a new record
+        $module = 'Accounts';
+        $account = BeanFactory::newBean($module);
+        $account->name = 'BeanFactoryTest';
+        $account->save();
+        $this->createdBeans[] = $account;
+
+        // Unregister it so we can test registration
+        BeanFactory::unregisterBean($account);
+        $unregistered = BeanFactoryTestMock::isRegistered($account);
+        $this->assertFalse($unregistered, "New bean is still registered in the factory");
+        
+        // Test registration old style way
+        $registered = BeanFactory::registerBean($module, $account, $account->id);
+        $this->assertTrue($registered, "Legacy style registration of the bean failed");
+        
+        // Double ensure it worked
+        $registered = BeanFactoryTestMock::isRegistered($account);
+        $this->assertTrue($registered, "Legacy style registration did not actually register the bean");
+    }
+
+    public function testUnregisterBean()
+    {
+        // Create the bean and save to register
+        $module = 'Accounts';
+        $account = BeanFactory::newBean($module);
+        $account->name = 'BeanFactoryTest';
+        $account->save();
+        $this->createdBeans[] = $account;
+
+        // Test that unregister is true for a bean
+        $unregistered = BeanFactory::unregisterBean($account);
+        $this->assertTrue($unregistered, "Unregister with a bean failed");
+
+        // Test that the bean is no longer in the registry
+        $unregistered = BeanFactoryTestMock::isRegistered($account);
+        $this->assertFalse($unregistered, "New bean is still registered in the factory");
+    }
+}
+
+class BeanFactoryTestMock extends BeanFactory
+{
+    public static function isRegistered($bean)
+    {
+        if (!empty($bean->module_name) && !empty($bean->id)) {
+            return isset(self::$loadedBeans[$bean->module_name][$bean->id]);
+        }
+
+        return false;
+    }
 }
