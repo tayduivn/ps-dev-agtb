@@ -561,6 +561,9 @@ class MetaDataManager
             $data['favoritesEnabled'] = $favoritesEnabled;
         }
         //END SUGARCRM flav=pro ONLY
+        // Currently no way to disable following
+        // But this flag is here in case we add that feature in the future
+        $data['followingEnabled'] = true;
 
         $data["_hash"] = $this->hashChunk($data);
 
