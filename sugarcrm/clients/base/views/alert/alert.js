@@ -109,20 +109,20 @@
      * Executes assigned handlers when user clicks `cancel`.
      */
     cancelClicked: function() {
+        this.cancel();
         if (_.isFunction(this.onCancel)) {
             this.onCancel();
         }
-        this.cancel();
     },
 
     /**
      * Executes assigned handlers when user clicks `confirm`.
      */
     confirmClicked: function() {
+        this.cancel();
         if (_.isFunction(this.onConfirm)) {
             this.onConfirm();
         }
-        this.cancel();
     },
 
     /**

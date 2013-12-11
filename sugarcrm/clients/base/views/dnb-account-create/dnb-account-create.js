@@ -350,43 +350,51 @@
         }
 
         //update existing data
-        if(updatedData.length > 0)
-        {
-            var warningMessage = app.lang.get('LBL_DNB_DATA_OVERRIDE');
+        if (updatedData.length > 0) {
+
+            var confirmationMsgKey,
+                confirmationMsgData;
+
             //show a detailed warning message about the single data element being imported
-            if(updatedData.length == 1)
-            {
-                warningMessage = warningMessage + app.lang.get(accountsModel.fields[updatedData[0].propName].vname,'Accounts')  + ': ' + accountsModel.get(updatedData[0].propName) 
-                                  + app.lang.get('LBL_DNB_WITH') + updatedData[0].propVal + ' ?';                                      
+            if (updatedData.length === 1) {
+                var fieldName = app.lang.get(accountsModel.fields[updatedData[0].propName].vname, 'Accounts');
+                confirmationMsgKey = 'LBL_DNB_DATA_OVERRIDE_SINGLE_FIELD';
+                confirmationMsgData = {
+                    fieldName: fieldName.toLowerCase(),
+                    value: updatedData[0].propVal
+                };
             }
-            //list all the data elements being imported
-            else if(updatedData.length <= 3)
-            {
-                for (var i = 0; i < updatedData.length; i++) 
-                {
-                    warningMessage = warningMessage + (i == 0 ? '' : ', ') + app.lang.get(accountsModel.fields[updatedData[i].propName].vname,'Accounts');
-                   
+            else {
+                var fieldList = [
+                    app.lang.get(accountsModel.fields[updatedData[0].propName].vname, 'Accounts').toLowerCase(),
+                    app.lang.get(accountsModel.fields[updatedData[1].propName].vname, 'Accounts').toLowerCase()
+                ];
+
+                if (updatedData.length === 2) {
+                    //list the two fields being imported
+                    confirmationMsgKey = 'LBL_DNB_DATA_OVERRIDE_TWO_FIELDS';
+                    confirmationMsgData = {
+                        fields: fieldList.join(' ' + app.lang.get('LBL_DNB_AND') + ' ')
+                    };
+                } else {
+                    //list the two first fields and append ` and other(s) field(s)`
+                    confirmationMsgKey = 'LBL_DNB_DATA_OVERRIDE_MULTIPLE_FIELDS';
+                    confirmationMsgData = {
+                        fields: fieldList.join(', ')
+                    };
                 }
-            }
-            //give a brief message about the data elements being imported
-            else
-            {
-                for (var i = 0; i < 2; i++) 
-                {
-                    warningMessage = warningMessage + (i == 0 ? '' : ', ') + app.lang.get(accountsModel.fields[updatedData[i].propName].vname,'Accounts');
-                    
-                }
-                warningMessage = warningMessage + app.lang.get('LBL_DNB_AND') + (updatedData.length - 2) + app.lang.get('LBL_DNB_OTHER_FIELDS');
             }
 
-            
-             app.alert.show('dnb-import-warning', 
-                        {
-                          level: 'confirmation',
-                          title: 'Warning',
-                          messages: warningMessage,
-                          onConfirm: _.bind(this.updateAccountsModel,this,updatedData)
-                        });
+            var confirmationMsgTpl = Handlebars.compile(app.lang.get(confirmationMsgKey));
+
+            app.alert.show('dnb-import-warning',
+                {
+                    level: 'confirmation',
+                    title: 'LBL_WARNING',
+                    messages: confirmationMsgTpl(confirmationMsgData),
+                    onConfirm: _.bind(this.updateAccountsModel, this, updatedData)
+                }
+            );
         }
 
         //setting the import flag to true after the first import is complete

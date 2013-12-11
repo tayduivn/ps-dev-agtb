@@ -117,11 +117,7 @@
                     app.alert.show('leave_confirmation', {
                         level: 'confirmation',
                         messages: app.lang.get(customMessage || 'LBL_WARN_UNSAVED_CHANGES', this.module),
-                        onConfirm: onConfirm,
-                        templateOptions: {
-                            cancelContLabel: 'LBL_CANCEL_BUTTON_LABEL_UNSAVED_CONT',
-                            confirmContLabel: 'LBL_CONFIRM_BUTTON_LABEL_UNSAVED_CONT'
-                        }
+                        onConfirm: onConfirm
                     });
                     return false;
                 }
