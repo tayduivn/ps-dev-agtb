@@ -309,7 +309,13 @@ function verify_data(form)
 			}
 		}
 	}
-	
+    if (window.parent.SUGAR && window.parent.SUGAR.App) {
+        var field = document.getElementById('picture');
+        var filename = field.value;
+        if (!filename || filename && !filename.length) {
+            window.parent.SUGAR.App.events.trigger("bwc:avatar:removed");
+        }
+    }
 	return true;
 }
     
