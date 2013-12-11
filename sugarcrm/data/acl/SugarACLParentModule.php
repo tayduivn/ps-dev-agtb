@@ -1,5 +1,7 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -23,7 +25,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * This class is used to enforce ACLs on modules that are restricted to admins only.
  */
-class SugarACLParentModule extends SugarACLStatic
+class SugarACLParentModule extends SugarACLStrategy
 {
     protected $parentModule = '';
 
@@ -36,15 +38,17 @@ class SugarACLParentModule extends SugarACLStatic
 
     /**
      * Only allow access to users with the user admin setting
+     *
      * @param string $module
      * @param string $view
-     * @param array $context
+     * @param array  $context
+     *
      * @return bool|void
      */
     public function checkAccess($module, $view, $context)
     {
         //Can't check fields since we are not mapping to the same module
-        if($view == "field") {
+        if ($view == "field") {
             return true;
         }
         if (!empty($this->parentModule)) {
@@ -52,7 +56,28 @@ class SugarACLParentModule extends SugarACLStatic
             //We also can't check owner at this level since we don't have the bean so owner_override must be true
             return SugarACL::checkAccess($this->parentModule, $view, array('owner_override' => true));
         }
+
         return true;
+    }
+
+    /**
+     * Get user access for the list of actions
+     *
+     * @param string $module
+     * @param array  $access_list List of actions
+     *
+     * @returns array - List of access levels. Access levels not returned are assumed to be "all allowed".
+     */
+    public function getUserAccess($module, $access_list, $context)
+    {
+        if (!empty($this->parentModule)) {
+            //Don't pass the context since the bean won't match the module.
+            //We also can't check owner at this level since we don't have the bean so owner_override must be true
+            return SugarACL::getUserAccess($this->parentModule, $access_list, $context);
+        }
+
+        return true;
+
     }
 
 }
