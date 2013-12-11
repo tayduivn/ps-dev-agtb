@@ -3249,7 +3249,7 @@ protected function checkQuery($sql, $object_name = false)
 	 */
 	public function isNumericType($type)
 	{
-	    if(isset($this->type_class[$type]) && ($this->type_class[$type] == 'int' || $this->type_class[$type] == 'float' || $this->type_class[$type] == 'bool')) {
+	    if(isset($this->type_class[$type]) && ($this->type_class[$type] == 'int' || $this->type_class[$type] == 'float')) {
 	        return true;
 	    }
 		return false;

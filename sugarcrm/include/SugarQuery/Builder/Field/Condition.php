@@ -96,7 +96,7 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
         if (!empty($this->def)) {
             $dbtype = $db->getFieldType($this->def);
 
-            if (!strcmp($value, '') || $value === 0) {
+            if (!strcmp($value, '')) {
                 return $db->emptyValue($dbtype);
             }
 

@@ -104,7 +104,7 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
                 0,
                 -1,
                 0,
-                "sales_stage in ('" . join("', '", $closed_won) . "')",
+                'sales_stage in ("' . join('","', $closed_won) . '")',
                 $won_count
             ),
             array(
@@ -114,7 +114,7 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
                 0,
                 -1,
                 0,
-                "sales_stage in ('" . join("', '", $closed_lost) . "')",
+                'sales_stage in ("' . join('","', $closed_lost) . '")',
                 $lost_count
             ),
             array(
