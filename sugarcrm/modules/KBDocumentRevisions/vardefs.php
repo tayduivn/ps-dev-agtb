@@ -213,7 +213,7 @@ $dictionary['KBDocumentRevision'] = array(
             'fields' => array('document_revision_id', 'kbdocument_id', 'deleted')
         ),
     ),
-    'acls' => array('SugarACLParentModule' => array('parentModule' => 'KBDocuments')),
+    'acls' => array('SugarACLParentModule' => array('parentModule' => 'KBDocuments', 'parentLink' => 'documents')),
     'visibility' => array('ParentModuleVisibility' => array('parentLink' => 'documents')),
 );
 ?>
