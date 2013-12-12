@@ -61,4 +61,44 @@ class SidecarSubpanelLayoutMetaDataParser extends SidecarListLayoutMetaDataParse
         // this has to be done late in the process or at least well after the 
         // extensions for a subpanel are built.
     }
+
+    /*
+     * Removes a field from the SubPanel Layout
+     *
+     * @param  string  $fieldName Name of the field to remove
+     * @return boolean True if the field was removed; false otherwise
+     */
+    public function removeField($fieldName)
+    {
+        $return = false;
+        // Start with out current viewdefs
+        if (isset($this->_viewdefs['panels'])) {
+            // The current panels, should be the same as $this->_paneldefs
+            $panels = $this->_viewdefs['panels'];
+
+            if (!empty($panels) && is_array($panels)) {
+                foreach ($panels as $panelIndex => $def) {
+                    if (isset($def['fields']) && is_array($def['fields'])) {
+                        $newFields = array();
+                        foreach ($def['fields'] as $fieldIndex => $field) {
+                            if (!empty($field['name']) && $field['name'] == $fieldName) {
+                                $return = true;
+                                continue;
+                            }
+
+                            $newFields[] = $field;
+                        }
+
+                        // Reset the panel defs for now
+                        $this->_paneldefs[$panelIndex]['fields'] = $newFields;
+
+                        // Now handle the change in the viewdefs for saving
+                        $this->_viewdefs['panels'][$panelIndex]['fields'] = $newFields;
+                    }
+                }
+            }
+        }
+
+        return $return;
+    }
 }

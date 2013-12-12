@@ -63,6 +63,9 @@ $dictionary['Opportunity'] = array(
             'required' => true,
             'importable' => 'required',
             'required' => true,
+            'related_field' => array(
+                'account_id'
+            )
         ),
         'account_id' => array(
             'name' => 'account_id',
