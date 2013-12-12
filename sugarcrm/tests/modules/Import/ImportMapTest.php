@@ -106,10 +106,13 @@ class ImportMapTest extends Sugar_PHPUnit_Framework_TestCase
         $mapping = array(
             'field1' => 'value1',
             'field2' => 'value2',
-            );
+            'D&B Principal Id' => 'db_principal_id',
+        );
         
         $this->_importMap->setMapping($mapping);
-        $this->_addMapping();
+        $enclosure = $this->_importMap->enclosure;
+        // Save to a DB with the same enclosure.
+        $this->_addMapping('Test mapping.', $enclosure);
         $id = $this->_importMap->id;
         
         $importMapRetrieve = new ImportMap();
@@ -123,10 +126,13 @@ class ImportMapTest extends Sugar_PHPUnit_Framework_TestCase
         $mapping = array(
             'field1' => 'value1',
             'field2' => 'value2',
-            );
+            'D&B Principal Id' => 'db_principal_id',
+        );
         
         $this->_importMap->setDefaultValues($mapping);
-        $this->_addMapping();
+        $enclosure = $this->_importMap->enclosure;
+        // Save to a DB with the same enclosure.
+        $this->_addMapping('Test mapping.', $enclosure);
         $id = $this->_importMap->id;
         
         $importMapRetrieve = new ImportMap();
