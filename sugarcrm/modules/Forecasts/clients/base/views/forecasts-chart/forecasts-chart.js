@@ -272,7 +272,7 @@
         var fieldsChanged = _.keys(model.changed),
             changed = model.changed,
             field = this.getField('paretoChart');
-        if(field) {
+        if(field && field.hasServerData()) {
             var serverData = field.getServerData();
 
             if (_.contains(fieldsChanged, 'quota')) {
