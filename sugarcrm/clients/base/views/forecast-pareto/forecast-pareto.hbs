@@ -33,13 +33,13 @@
             {{/with}}
         </div>
         {{#if isManager}}
-        <div id="{{cid}}-mgr-toggle" class="span3">
-            <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
-                <button class="btn {{#eq settings.attributes.visibility "user"}}active{{/eq}}" rel="tooltip" value="user" data-action="visibility-switcher" title="{{{str "LBL_DASHLET_MY_FORECAST" 'Forecasts'}}}" data-placement="bottom">
-                    <i class="icon-user" track="click:viewMyUserForecastPareTo">></i>
+        <div id="{{cid}}-mgr-toggle" class="pull-right">
+            <div class="btn-group dashlet-group" data-toggle="buttons-radio">
+                <button track="click:viewMyUserForecastPareTo" class="btn {{#eq settings.attributes.visibility "user"}}active{{/eq}}" rel="tooltip" value="user" data-action="visibility-switcher" title="{{{str "LBL_DASHLET_MY_FORECAST" 'Forecasts'}}}" data-placement="bottom">
+                    <i class="icon-user"></i>
                 </button>
-                <button class="btn {{#eq settings.attributes.visibility "group"}}active{{/eq}}" rel="tooltip" value="group" data-action="visibility-switcher" title="{{{str "LBL_DASHLET_MY_TEAMS_FORECAST" 'Forecasts'}}}" data-placement="bottom">
-                    <i class="icon-group" track="click:viewMyTeamsForecastPareTo"></i>
+                <button track="click:viewMyTeamsForecastPareTo" class="btn {{#eq settings.attributes.visibility "group"}}active{{/eq}}" rel="tooltip" value="group" data-action="visibility-switcher" title="{{{str "LBL_DASHLET_MY_TEAMS_FORECAST" 'Forecasts'}}}" data-placement="bottom">
+                    <i class="icon-group"></i>
                 </button>
             </div>
         </div>
