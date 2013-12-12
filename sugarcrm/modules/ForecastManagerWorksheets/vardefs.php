@@ -20,6 +20,7 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'name' => 'quota',
             'vname' => 'LBL_QUOTA',
             'type' => 'currency',
+            'is_base_currency' => true
         ),
         'best_case' =>
         array(
@@ -27,12 +28,14 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'vname' => 'LBL_BEST',
             'type' => 'currency',
             'audited' => true,
+            'is_base_currency' => true
         ),
         'best_case_adjusted' =>
         array(
             'name' => 'best_case_adjusted',
             'vname' => 'LBL_BEST_ADJUSTED',
             'type' => 'currency',
+            'is_base_currency' => true
         ),
         'likely_case' =>
         array(
@@ -40,12 +43,14 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'vname' => 'LBL_LIKELY',
             'type' => 'currency',
             'audited' => true,
+            'is_base_currency' => true
         ),
         'likely_case_adjusted' =>
         array(
             'name' => 'likely_case_adjusted',
             'vname' => 'LBL_LIKELY_ADJUSTED',
             'type' => 'currency',
+            'is_base_currency' => true
         ),
         'worst_case' =>
         array(
@@ -53,12 +58,14 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'vname' => 'LBL_WORST',
             'type' => 'currency',
             'audited' => true,
+            'is_base_currency' => true
         ),
         'worst_case_adjusted' =>
         array(
             'name' => 'worst_case_adjusted',
             'vname' => 'LBL_WORST_ADJUSTED',
             'type' => 'currency',
+            'is_base_currency' => true
         ),
         'currency_id' =>
         array(

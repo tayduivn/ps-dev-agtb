@@ -81,6 +81,7 @@
      * Default values for the blank rows
      */
     defaultValues: {
+        id: '',         // set id to empty so it fails the isNew() check as we don't want this to override the currency
         quota: 0,
         best_case: 0,
         best_case_adjusted: 0,
