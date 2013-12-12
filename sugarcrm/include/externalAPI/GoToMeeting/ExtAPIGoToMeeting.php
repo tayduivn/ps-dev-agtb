@@ -38,7 +38,7 @@ class ExtAPIGoToMeeting extends OAuthPluginBase implements WebMeeting
     protected $url = 'https://api.citrixonline.com/';
 
     public $supportedModules = array('Meetings');
-    public $supportMeetingPassword = true;
+    public $supportMeetingPassword = false;
     public $authMethod = 'oauth';
     public $connector = "ext_eapm_gotomeeting";
 
