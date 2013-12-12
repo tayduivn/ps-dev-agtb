@@ -116,18 +116,6 @@ class AccountsRelateApi extends RelateApi
 
         self::addFilters($args['filter'], $q->where(), $q);
 
-        $q->joinTable('accounts', array('linkingTable' => true))
-            ->on()
-            ->equals('accounts.id', $record->id)
-            ->equals('accounts.deleted', 0);
-
-        // FIXME: there should be the ability to specify from which related module
-        // the child items should be loaded
-        $q->joinTable('accounts_contacts', array('alias' => 'ac', 'joinType' => 'LEFT', 'linkingTable' => true))
-            ->on()
-            ->equalsField('ac.account_id', 'accounts.id')
-            ->equals('ac.deleted', 0);
-
         // FIXME: this informations should be dynamically retrieved
         if ($linkModuleName === 'Meetings') {
             $childModuleTable = 'meetings';
@@ -149,10 +137,25 @@ class AccountsRelateApi extends RelateApi
             ->equalsField($childRhsColumn, $childLhsColumn)
             ->equals($childRelationshipAlias . '.deleted', 0);
 
+        // FIXME: there should be the ability to specify from which related module
+        // the child items should be loaded
+        $q->joinTable('accounts_contacts', array('alias' => 'ac', 'joinType' => 'LEFT', 'linkingTable' => true))
+            ->on()
+            ->equalsField('ac.contact_id', $childRelationshipAlias . '.contact_id')
+            ->equals('ac.deleted', 0);
+
+        $q->joinTable('accounts', array('alias' => 'a', 'joinType' => 'LEFT', 'linkingTable' => true))
+            ->on()
+            ->equalsField('a.id', 'ac.account_id')
+            ->equals('a.deleted', 0);
+
         $where = $q->where()->queryOr();
-        $where->queryAnd()->equals($childModuleTable . '.parent_type', 'Contacts')->equalsField($childModuleTable . '.parent_id', 'ac.contact_id');
-        $where->queryAnd()->equals($childModuleTable . '.parent_type', 'Contacts')->equalsField($childModuleTable . '.parent_id', $childRelationshipAlias . '.contact_id');
-        $where->queryAnd()->equals($childModuleTable . '.parent_type', 'Accounts')->equalsField($childModuleTable . '.parent_id', 'accounts.id');
+        $where->queryAnd()
+            ->equals($childModuleTable . '.parent_type', 'Contacts')
+            ->equals('ac.account_id', $record->id);
+        $where->queryAnd()
+            ->equals($childModuleTable . '.parent_type', 'Accounts')
+            ->equals($childModuleTable . '.parent_id', $record->id);
 
         return $this->runQuery($api, $args, $q, $options, $linkSeed);
     }
