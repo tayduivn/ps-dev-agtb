@@ -119,7 +119,7 @@
      * Format name parts to current user locale.
      */
     format: function(name) {
-        return app.utils.formatNameModel(this.context.get("module"), this.model.attributes);
+        return app.utils.formatNameModel(this.model.module, this.model.attributes);
     },
 
     /**
