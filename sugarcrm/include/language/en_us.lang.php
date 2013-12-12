@@ -62,7 +62,7 @@ $app_list_strings = array (
     'Activities' => 'Activities',
     'Comments' => 'Comments',
     'Subscriptions' => 'Subscriptions',
-    'Bugs' => 'Bug Tracker',
+    'Bugs' => 'Bugs',
     'Feeds' => 'RSS',
     'iFrames'=>'My Sites',
     'TimePeriods'=>'Time Periods',
@@ -596,7 +596,7 @@ $app_list_strings = array (
     'Quotes' => 'Quote',
     //END SUGARCRM flav=pro ONLY
 
-    'Bugs' => 'Bug Tracker',
+    'Bugs' => 'Bugs',
     'Cases' => 'Case',
     'Leads' => 'Lead',
 
