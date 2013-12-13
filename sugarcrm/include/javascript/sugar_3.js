@@ -1143,11 +1143,17 @@ function isFieldTypeExceptFromEmptyCheck(fieldType)
     return results;
 }
 //BEGIN SUGARCRM flav=pro ONLY
-function isFieldHidden(field)
+function isFieldHidden(field, type)
 {
     var Dom = YAHOO.util.Dom;
 	var td = Dom.getAncestorByTagName(field, 'TD');
-	return Dom.hasClass(td, 'vis_action_hidden');
+
+    // For 'datetime' field type html representation differ from others ( td.vis_action_hidden > table > td > input[name])
+    if (type == 'date' && !Dom.hasClass(td, 'vis_action_hidden')) {
+        td = Dom.getAncestorByTagName(td, 'TD');
+    }
+
+	return Dom.hasClass(td, 'vis_action_hidden') || field.type == 'hidden';
 }
 //END SUGARCRM flav=pro ONLY
 function validate_form(formname, startsWith){
@@ -1182,6 +1188,13 @@ function validate_form(formname, startsWith){
 				if(typeof form[validate[formname][i][nameIndex]]  != 'undefined' && typeof form[validate[formname][i][nameIndex]].value != 'undefined'){
 					var bail = false;
 
+					//If a field is hidden, skip validation.
+					var field = form[validate[formname][i][nameIndex]];
+					if (isFieldHidden(field, validate[formname][i][typeIndex]) || field.disabled)
+					{
+						continue;
+					}
+
                     //If a field is not required and it is blank or is binarydependant, skip validation.
                     //Example of binary dependant fields would be the hour/min/meridian dropdowns in a date time combo widget, which require further processing than a blank check
                     if(!validate[formname][i][requiredIndex] && trim(form[validate[formname][i][nameIndex]].value) == '' && (typeof(validate[formname][i][jstypeIndex]) != 'undefined' && validate[formname][i][jstypeIndex]  != 'binarydep'))
@@ -1191,9 +1204,6 @@ function validate_form(formname, startsWith){
 
 					if(validate[formname][i][requiredIndex]
 						&& !isFieldTypeExceptFromEmptyCheck(validate[formname][i][typeIndex])
-						//BEGIN SUGARCRM flav=pro ONLY
-						&& !isFieldHidden(form[validate[formname][i][nameIndex]])
-						//END SUGARCRM flav=pro ONLY
 					){
 						if(typeof form[validate[formname][i][nameIndex]] == 'undefined' || trim(form[validate[formname][i][nameIndex]].value) == ""){
 							add_error_style(formname, validate[formname][i][nameIndex], requiredTxt +' ' + validate[formname][i][msgIndex]);
