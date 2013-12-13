@@ -683,8 +683,14 @@ function buildInstall($path){
             }
             $scanlisting = scandir($path);
             $dirlisting = array();
+
+            global $modInvisList;
+
             foreach ($scanlisting as $value){
                 if(is_dir($path . $value) == true && $value != '.' && $value != '..') {
+                    if (($value == "Project" || $value == "ProjectTask") && in_array($value, $modInvisList)) {
+                        continue;
+                    }
                     $dirlisting[] = $value;
                 }
             }
