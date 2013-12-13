@@ -83,8 +83,9 @@
 
         if (this.tplName === 'edit') {
 
-            var inList = this.view.name === 'recordlist'?true:false;
-            var cssClasses = (inList?'select2-narrow':'') + (this.type === 'parent'?' select2-parent':'');
+            var inList = (this.view.name === 'recordlist'),
+                cssClasses = (inList ? 'select2-narrow' : '') + (this.type === 'parent' ? ' select2-parent' : ''),
+                relatedModuleField = this.def.rname;
 
             this.$(this.fieldTag).select2({
                 width: inList?'off':'100%',
@@ -119,13 +120,13 @@
                         plugin.searchmore = $('<ul class="select2-results">').append($content);
                         plugin.dropdown.append(plugin.searchmore);
                     }
-                }).on("searchmore", function () {
-                    $(this).select2("close");
+                }).on('searchmore', function() {
+                    $(this).select2('close');
                     app.drawer.open({
                         layout: 'selection-list',
                         context: {
                             module: self.getSearchModule(),
-                            fields: _.union(['id', 'name'], _.keys(self.def.populate_list || {}))
+                            fields: _.union(['id', relatedModuleField], _.keys(self.def.populate_list || {}))
                         }
                     }, _.bind(self.setValue, self));
                 }).on("change", function (e) {
@@ -238,10 +239,10 @@
         if (!model) {
             return;
         }
-        var silent = model.silent || false;
-        var values = {};
+        var silent = model.silent || false,
+            values = {};
         values[this.def.id_name] = model.id;
-        values[this.def.name] = model.value;
+        values[this.def.name] = model[this.def.rname] || model.value;
         this.model.set(values, {silent: silent});
 
         var newData = {},
@@ -345,7 +346,8 @@
             self = this, searchCollection, filterDef,
             searchModule = this.getSearchModule(),
             params = {},
-            limit = self.def.limit || 5;
+            limit = self.def.limit || 5,
+            relatedModuleField = this.def.rname;
 
         searchCollection = query.context || app.data.createBeanCollection(searchModule);
 
@@ -361,7 +363,7 @@
             update: true,
             remove: _.isUndefined(params.offset),
             fields: _.union([
-                'id', 'name'
+                'id', relatedModuleField
             ], _.keys(this.def.populate_list || {})),
             context: self,
             params: params,
@@ -383,7 +385,7 @@
                     }
                     fetch.results.push({
                         id: model.id,
-                        text: model.get('name')
+                        text: model.get(relatedModuleField) + ''
                     });
                 });
                 query.callback(fetch);

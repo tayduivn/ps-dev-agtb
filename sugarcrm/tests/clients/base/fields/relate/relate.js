@@ -66,6 +66,30 @@ describe("Base.Field.Relate", function () {
         });
     });
 
+    describe('custom rname', function() {
+
+        beforeEach(function() {
+            fieldDef.rname = 'account_type';
+            field = SugarTest.createField('base', 'account_name', 'relate', 'edit', fieldDef);
+            field.module = 'Accounts';
+            field.model = new Backbone.Model({account_id: '1234', account_name: 'bob'});
+        });
+
+        it('should set the displaying name by rname property value', function() {
+            var expectedId = '0987',
+                expectedName = 'blahblah',
+                unexpectedName = 'oh~no';
+
+            field.setValue({id: expectedId, value: unexpectedName, account_type: expectedName});
+            var actualId = field.model.get(field.def.id_name),
+               actualName = field.model.get(field.def.name);
+
+            expect(actualId).toEqual(expectedId);
+            expect(actualName).toEqual(expectedName);
+            expect(actualName).not.toEqual(unexpectedName);
+        });
+    });
+
     describe("Populate related fields", function () {
 
         it("should warn the wrong metadata fields that populates unmatched fields", function () {
