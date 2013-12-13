@@ -534,6 +534,14 @@ $dictionary['ProductTemplate'] = array(
         'bean_name' => 'Manufacturer',
         'source' => 'non-db',
     ),
+    'forecastworksheet' =>
+    array(
+        'name' => 'forecastworksheet',
+        'type' => 'link',
+        'relationship' => 'forecastworksheets_templates',
+        'source' => 'non-db',
+        'vname' => 'LBL_FORECAST_WORKSHEET',
+    ),
 
 )
 ,

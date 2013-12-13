@@ -117,6 +117,14 @@ $dictionary['Currency'] = array('table' => 'currencies',
     'required' => true,
   	'comment' => 'User ID who created record'
   ),
+    'forecastworksheet' =>
+    array(
+        'name' => 'forecastworksheet',
+        'type' => 'link',
+        'relationship' => 'forecastworksheets_currencies',
+        'source' => 'non-db',
+        'vname' => 'LBL_FORECAST_WORKSHEET',
+    ),
 ),
 'acls' => array('SugarACLAdminOnly' => array('allowUserRead' => true)),
 'indices' => array (

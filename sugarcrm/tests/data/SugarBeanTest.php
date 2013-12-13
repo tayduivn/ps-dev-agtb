@@ -99,7 +99,7 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
         $bean = new SugarBean();
 
-        $query = 'select id FROM ' . $account->table_name . ' where id = "' . $account->id . '";';
+        $query = "select id FROM " . $account->table_name . " where id = '" . $account->id . "'";
         $return = array_shift($bean->build_related_list($query, BeanFactory::getBean('Accounts')));
 
         $this->assertEquals($account->id, $return->id);
