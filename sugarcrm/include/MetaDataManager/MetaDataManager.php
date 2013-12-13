@@ -265,7 +265,10 @@ class MetaDataManager
             'merge_relate_update_concurrency' => true,
             'merge_relate_update_timeout' => true,
             'merge_relate_max_attempt' => true,
-        )
+        ),
+        'default_decimal_seperator' => true,
+        'default_number_grouping_seperator' => true,
+        'default_currency_significant_digits' => true,
     );
 
     /**
@@ -288,6 +291,8 @@ class MetaDataManager
     protected static $configPropertiesExceptions = array(
         'listMaxEntriesPerPage' => 'maxQueryResult',
         'listMaxEntriesPerSubpanel' => 'maxSubpanelResult',
+        'defaultDecimalSeperator' => 'defaultDecimalSeparator',
+        'defaultNumberGroupingSeperator' => 'defaultNumberGroupingSeparator'
     );
 
     /**

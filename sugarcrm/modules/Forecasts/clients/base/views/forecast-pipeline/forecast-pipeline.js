@@ -78,14 +78,14 @@
                 complete: view.options ? view.options.complete : null
             });
         }
-
+        var currencySymbol = SUGAR.App.currency.getCurrencySymbol(SUGAR.App.currency.getBaseCurrencyId());
         this.chart = nv.models.funnelChart()
             .showTitle(false)
             .tooltips(true)
             .margin({top:0})
             .tooltipContent( function(key, x, y, e, graph) {
                 return '<p>Stage: <b>' + key + '</b></p>' +
-                    '<p>Amount: <b>$' +  parseInt(y, 10) + 'K</b></p>' +
+                    '<p>Amount: <b>' + currencySymbol +  parseInt(y, 10) + 'K</b></p>' +
                     '<p>Percent: <b>' +  x + '%</b></p>';
             })
             .colorData('class', {step:2})

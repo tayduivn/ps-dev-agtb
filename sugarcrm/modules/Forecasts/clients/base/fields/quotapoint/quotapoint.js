@@ -91,7 +91,7 @@
             this.context.on('forecasts:worksheet:totals', function(totals) {
                 var quota = 0.00;
                 if(_.has(totals, 'quota')) {
-                    quota = app.currency.convertFromBase(totals.quota, this.userCurrencyID);
+                    quota =totals.quota;
                 } else {
                     quota = this.quotaAmount;
                 }
@@ -109,7 +109,7 @@
                 _.each(collection.models, function(model) {
                     quota = app.math.add(quota, model.get('quota'));
                 }, this);
-                this.quotaAmount = app.currency.convertFromBase(quota, this.userCurrencyID);
+                this.quotaAmount = quota;
                 this.render();
             }
         } else if(this.hasListenerAdded) {
@@ -151,7 +151,7 @@
      * @param quotaData
      */
     handleQuotaData: function(quotaData) {
-        this.quotaAmount = app.currency.convertFromBase(quotaData.amount, this.userCurrencyID);
+        this.quotaAmount = quotaData.amount;
 
         // Check to see if we need to add an event listener to the context for the worksheet totals
         this.toggleTotalsListeners(quotaData.is_top_level_manager);

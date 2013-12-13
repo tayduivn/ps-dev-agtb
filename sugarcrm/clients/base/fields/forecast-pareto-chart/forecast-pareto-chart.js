@@ -131,16 +131,6 @@
             .colorFill('default')
             .id(this.chartId);
 
-        this.paretoChart.yAxis.tickFormat(function(d) {
-            var val = app.user.getPreference('currency_symbol') + d3.format(',.2s')(d);
-            return val;
-        });
-
-        this.paretoChart.quotaTickFormat(function(d) {
-            var val = app.user.getPreference('currency_symbol') + d3.format(',.3s')(d);
-            return val;
-        });
-
         // just on the off chance that no options param is passed in
         options = options || {};
         options.success = _.bind(function(data) {
