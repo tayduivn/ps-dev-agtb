@@ -2823,6 +2823,7 @@ $app_strings = array (
     'LBL_PROJECT_TASKS'=>'Project Tasks',
     'LBL_PRODUCT_TEMPLATES' => 'Product Templates',
     'LBL_PROJECTS'=>'Projects',
+    'LBL_PROSPECTS' => 'Targets',
     'LBL_QUOTE_TO_OPPORTUNITY_KEY' => 'O',
     'LBL_QUOTE_TO_OPPORTUNITY_LABEL' => 'Create Opportunity from Quote',
     'LBL_QUOTE_TO_OPPORTUNITY_TITLE' => 'Create Opportunity from Quote',
