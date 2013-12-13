@@ -80,10 +80,11 @@
 
 
                     if(accesskey !== undefined) {
-                        if($('#'+accesskey_el.attr('id')).length === 0) {
-                            accesskey_el.attr("accesskey", accesskey).click(function() {
+                        if ($('#' + accesskey_el.attr('id')).length === 0) {
+                            accesskey_el.attr('accesskey', accesskey).click(function() {
                                 jNode.click();
-                            }).appendTo("#content");
+                            }).appendTo('#content');
+                            jNode.css('display', 'none');
                         }
                         jNode.attr("accesskey", '');
                     }
