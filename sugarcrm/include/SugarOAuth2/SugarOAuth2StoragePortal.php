@@ -278,7 +278,7 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
 
             return array('user_id'=>$contact->id);
         } else {
-            throw new SugarApiExceptionNeedLogin();
+            throw new SugarApiExceptionNeedLogin(translate('ERR_INVALID_PASSWORD', 'Users'));
         }
     }
 
