@@ -53,6 +53,7 @@ $db = getInstallDbInstance();
 ////	BEGIN PAGE OUTPUT
 
 $langHeader = get_language_header();
+$versionToken = getVersionedPath(null);
 
 $out =<<<EOQ
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -66,8 +67,8 @@ $out =<<<EOQ
     <script type="text/javascript" src="install/installCommon.js"></script>
     <script type="text/javascript" src="install/dbConfig.js"></script>
     <link REL="SHORTCUT ICON" HREF="include/images/sugar_icon.ico">
-    <script src="cache/include/javascript/sugar_grp1_yui.js?s={$sugar_version}&c={$js_custom_version}"></script>
-    <script src="cache/include/javascript/sugar_grp1_jquery.js?s={$sugar_version}&c={$js_custom_version}"></script>
+    <script src="cache/include/javascript/sugar_grp1_yui.js?v={$versionToken}"></script>
+    <script src="cache/include/javascript/sugar_grp1_jquery.js?v={$versionToken}"></script>
     <script type="text/javascript">
     <!--
     if ( YAHOO.env.ua )
