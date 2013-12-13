@@ -120,7 +120,6 @@
         this.render();
         this.$('div#dnb-lite-company-detail-loading').hide();
         this.$('div#dnb-lite-company-details').show(); 
-        self.$('.create-no-data').hide();
         this.$(".showLessData").hide();
     },
 
