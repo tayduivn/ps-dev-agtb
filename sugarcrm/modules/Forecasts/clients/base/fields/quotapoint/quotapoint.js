@@ -91,7 +91,7 @@
             this.context.on('forecasts:worksheet:totals', function(totals) {
                 var quota = 0.00;
                 if(_.has(totals, 'quota')) {
-                    quota =totals.quota;
+                    quota = totals.quota;
                 } else {
                     quota = this.quotaAmount;
                 }

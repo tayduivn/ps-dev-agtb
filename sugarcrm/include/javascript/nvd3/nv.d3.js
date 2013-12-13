@@ -7582,12 +7582,11 @@ nv.models.paretoChart = function() {
         reduceXTicks = false, // if false a tick will show for every data point
         reduceYTicks = false, // if false a tick will show for every data point
         rotateLabels = 0,
-        currencySymbol = SUGAR.App.currency.getCurrencySymbol(SUGAR.App.currency.getBaseCurrencyId()),
         yAxisTickFormat = function (d) {
-            return currencySymbol + d3.format(',.2s')(d);
+            return d3.format(',.2s')(d);
         },
         quotaTickFormat = function (d) {
-            return currencySymbol + d3.format(',.3s')(d);
+            return d3.format(',.3s')(d);
         },
         tooltip = null,
         tooltips = true,
@@ -7600,7 +7599,7 @@ nv.models.paretoChart = function() {
             return '<p><p>' + key + ': <b>' + y + '</b></p>';
         },
         tooltipQuota = function(key, x, y, e, graph) {
-            return '<p>' + e.key + ': <b>' + currencySymbol + y + '</b></p>';
+            return '<p>' + e.key + ': <b>' + y + '</b></p>';
         },
         noData = 'No Data Available.';
 
@@ -8184,7 +8183,8 @@ nv.models.paretoChart = function() {
 
             yAxis
                 .ticks(availableHeight / 100)
-                .tickSize(-availableWidth, 0);
+                .tickSize(-availableWidth, 0)
+                .tickFormat(yAxisTickFormat);
 
             g.select('.nv-y.nv-axis').transition()
                 .style('opacity', dataBars.length ? 1 : 0)
@@ -8551,12 +8551,12 @@ nv.models.paretoChart = function() {
         return chart;
     };
 
-    yAxis.tickFormat = function (_) {
+    chart.yAxisTickFormat = function (_) {
         if (!arguments.length) {
             return yAxisTickFormat;
         }
         yAxisTickFormat = _;
-        return yAxis;
+        return chart;
     };
 
     chart.quotaTickFormat = function (_) {
