@@ -616,7 +616,8 @@ nv.models.paretoChart = function() {
 
             yAxis
                 .ticks(availableHeight / 100)
-                .tickSize(-availableWidth, 0);
+                .tickSize(-availableWidth, 0)
+                .tickFormat(yAxisTickFormat);
 
             g.select('.nv-y.nv-axis').transition()
                 .style('opacity', dataBars.length ? 1 : 0)
@@ -983,12 +984,12 @@ nv.models.paretoChart = function() {
         return chart;
     };
 
-    yAxis.tickFormat = function (_) {
+    chart.yAxisTickFormat = function (_) {
         if (!arguments.length) {
             return yAxisTickFormat;
         }
         yAxisTickFormat = _;
-        return yAxis;
+        return chart;
     };
 
     chart.quotaTickFormat = function (_) {
