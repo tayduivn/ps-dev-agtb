@@ -110,11 +110,12 @@
              * a create drawer UI.
              *
              * @param {String} module Module name.
+             * @param {String} link Link name.
              */
             openCreateDrawer: function(module, link) {
                 var proto = Object.getPrototypeOf(this);
                 if (_.isFunction(proto.openCreateDrawer)) {
-                    return proto.openCreateDrawer.call(this, module);
+                    return proto.openCreateDrawer.call(this, module, link);
                 }
                 link = link || this.context.get('link');
                 var context = this.context.parent || this.context;

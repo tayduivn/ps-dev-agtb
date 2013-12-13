@@ -20,7 +20,7 @@
     idRegex: new RegExp('record=([^&]*)'),
     actionRegex: new RegExp('action=([^&]*)'),
 
-    plugins: ['Editable'],
+    plugins: ['Editable', 'LinkedModel'],
 
     /**
      * Enabled actions for warning unsaved changes.
@@ -116,6 +116,7 @@
         this.$el.load(function() {
             self._setModule(this.contentWindow);
             self._setBwcModel(this.contentWindow);
+            self._setModel();
 
             //In order to update current location once bwc link is clicked.
             var url = '#bwc/index.php' + this.contentWindow.location.search;
@@ -209,6 +210,48 @@
         this.resetBwcModel(attributes);
     },
 
+    /**
+     * Populates the context model with API data.
+     * this.model is a link for this.context.model.
+     *
+     * @private
+     */
+    _setModel: function() {
+        var id = this.idRegex.exec(this._currentUrl);
+        if (!_.isArray(id)) {
+            return;
+        }
+        this.model.set('id', id[1]);
+        this.model.fetch();
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Opens the appropriate sidecar create layout in a drawer.
+     *
+     * @param {String} module Module name.
+     * @param {String} link Link name.
+     */
+    openCreateDrawer: function(module, link) {
+        var parentModel = this.context.get('model'),
+            model = this.createLinkModel(parentModel, link),
+            self = this;
+        app.drawer.open({
+            layout: 'create-actions',
+            context: {
+                create: true,
+                module: model.module,
+                model: model
+            }
+        }, function(context, model) {
+            if (!model) {
+                return;
+            }
+            // Reload the BWC to update subpanels.
+            self.$el.get(0).contentWindow.location.reload(true);
+        });
+    },
     /**
      * Update current window location once bwc link is clicked.
      *
