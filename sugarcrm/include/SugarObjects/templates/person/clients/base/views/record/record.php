@@ -126,7 +126,7 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                 'department',
                 'do_not_call',
                 array(
-                    'name' => 'fieldset_address',
+                    'name' => 'primary_address',
                     'type' => 'fieldset',
                     'css_class' => 'address',
                     'label' => 'LBL_PRIMARY_ADDRESS',
@@ -159,7 +159,7 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     ),
                 ),
                 array(
-                    'name' => 'fieldset_alt_address',
+                    'name' => 'alt_address',
                     'type' => 'fieldset',
                     'css_class' => 'address',
                     'label' => 'LBL_ALT_ADDRESS',

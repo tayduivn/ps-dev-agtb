@@ -69,7 +69,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => 'fieldset_address',
+                    'name' => 'billing_address',
                     'type' => 'fieldset',
                     'css_class' => 'address',
                     'label' => 'LBL_BILLING_ADDRESS',
@@ -102,7 +102,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                     ),
                 ),
                 array(
-                    'name' => 'fieldset_shipping_address',
+                    'name' => 'shipping_address',
                     'type' => 'fieldset',
                     'css_class' => 'address',
                     'label' => 'LBL_SHIPPING_ADDRESS',

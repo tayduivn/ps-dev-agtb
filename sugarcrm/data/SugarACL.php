@@ -275,7 +275,7 @@ class SugarACL
                 $field = str_replace($options['suffix'], '', $field);
             }
             if(!empty($options['add_acl'])) {
-                $check_fields[$key] = strtolower($field);
+                $check_fields[$key] = $check_fields[$field] = strtolower($field);
             } else {
                 if(!empty($list[$key])) {
                     $check_fields[$key] = strtolower($field);
