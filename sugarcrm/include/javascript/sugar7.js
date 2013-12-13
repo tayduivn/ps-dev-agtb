@@ -448,12 +448,25 @@
         if (o && _.isArray(o.args) && o.args[0]) {
             var module = o.args[0],
                 id = o.args[1],
+                action = id ? 'DetailView':'index',
                 meta = app.metadata.getModule(module);
             if (meta && meta.isBwcEnabled) {
-                var redirect = "bwc/index.php?module=" + module + "&action=index";
-                if (o.route == "record" && id) {
-                    redirect += "&action=DetailView&record=" + id;
+                var sidecarAction = o.args[2] || o.route;
+                var bwcAction = app.bwc.getAction(sidecarAction);
+
+                // if the route contains a valid bwc action thats not the original route
+                // route to that action if its not a valid route but we have an id route to
+                // detailview
+                if (bwcAction !== sidecarAction) {
+                    action = bwcAction;
                 }
+                
+                var redirect = "bwc/index.php?module=" + module + "&action=" + action;
+
+                if (id) {
+                    redirect += "&record=" + id;
+                }
+
                 app.router.navigate(redirect , {trigger: true, replace: true });
                 return false;
             }
