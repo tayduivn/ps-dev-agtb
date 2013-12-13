@@ -27,11 +27,18 @@ class SidecarMenuMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
     public function setLegacyViewdefs()
     {
         global $current_language;
-        $GLOBALS['mod_strings'] = return_module_language($current_language, $this->module);
 
+        $GLOBALS['mod_strings'] = return_module_language($current_language, $this->module);
         SugarACL::setACL($this->module, array(new SidecarMenuMetaDataUpgraderACL()));
         $module_menu = null;
         include $this->fullpath;
+
+        if($this->basename === 'globalControlLinks'){
+            if(isset($global_control_links)){
+                $module_menu = $global_control_links;
+                $this->deleteOld = false;
+            }
+        }
 
         SugarACL::resetACLs($this->module);
         $this->legacyViewdefs = $module_menu;
@@ -42,10 +49,13 @@ class SidecarMenuMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         if(empty($this->legacyViewdefs)) {
             return true;
         }
-
-        $this->isExt = (substr($this->fullpath, 0, 16) == 'custom/Extension');
-
-        $newMenu = $this->metaDataConverter->fromLegacyMenu($this->module, $this->legacyViewdefs, $this->isExt);
+        // Upgrading globalcontrollinks to profileaction metadata
+        if($this->basename === 'globalControlLinks'){
+            $newMenu = $this->metaDataConverter->fromLegacyProfileActions($this->legacyViewdefs);
+        }else{
+            $this->isExt = (substr($this->fullpath, 0, 16) == 'custom/Extension');
+            $newMenu = $this->metaDataConverter->fromLegacyMenu($this->module, $this->legacyViewdefs, $this->isExt);
+        }
         if(empty($newMenu['data'])) {
             return true;
         }
@@ -69,6 +79,8 @@ class SidecarMenuMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 $content .= "\${$this->menuName}[] = ".var_export($menuItem, true).";\n";
             }
             return sugar_file_put_contents($newExtLocation . "/" . $this->filename, $content);
+        } elseif($this->basename === 'globalControlLinks'){
+            return $this->handleSaveArray($this->menuName, "custom/clients/base/views/profileactions/profileactions.php");
         } else {
             return $this->handleSaveArray($this->menuName, "custom/modules/{$this->module}/clients/base/menus/header/header.php");
         }

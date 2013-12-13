@@ -459,6 +459,14 @@ class SidecarMetaDataUpgrader
             }
         }
         $this->getExtensionFiles("menus");
+
+        // Upgrading globalControlLinks for profileactions
+        if(file_exists("include/globalControlLinks.php")){
+            $file['fullpath'] = 'include/globalControlLinks.php';
+            $file['viewtype'] = 'menu';
+            $file['basename'] = 'globalControlLinks';
+            $this->files[] = $file;
+        }
     }
 
     /**

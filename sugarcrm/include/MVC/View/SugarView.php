@@ -369,7 +369,9 @@ class SugarView
         }
         $ss->assign("COMPANY_LOGO_URL",getJSPath($companyLogoURL)."&logo_md5=".$ss->get_template_vars("COMPANY_LOGO_MD5"));
 
-        // get the global links
+        // get the global links (Currently not used, since we hardcoded the metadata for profileactions
+        // and upon upgrade, we convert global link in metadataconverter to create custom metadata
+        // for profileactions, Thus, code below can be removed in the future)
         $gcls = array();
         $global_control_links = array();
         require("include/globalControlLinks.php");
@@ -388,11 +390,11 @@ class SugarView
                         "LABEL" => key($attributevalue),
                         "URL"   => current($attributevalue),
                         "SUBMENU" => array(),
-                        );
-                   if(substr($gcls[$key]["URL"], 0, 11) == "javascript:") {
-                       $gcls[$key]["ONCLICK"] = substr($gcls[$key]["URL"],11);
-                       $gcls[$key]["URL"] = "javascript:void(0)";
-                   }
+                    );
+                    if(substr($gcls[$key]["URL"], 0, 11) == "javascript:") {
+                        $gcls[$key]["ONCLICK"] = substr($gcls[$key]["URL"],11);
+                        $gcls[$key]["URL"] = "javascript:void(0)";
+                    }
                 }
                 // and now the sublinks
                 if ( $linkattribute == 'submenu' && is_array($attributevalue) ) {
@@ -401,10 +403,10 @@ class SugarView
                             "LABEL" => key($submenulinkinfo),
                             "URL"   => current($submenulinkinfo),
                         );
-                       if(substr($gcls[$key]['SUBMENU'][$submenulinkkey]["URL"], 0, 11) == "javascript:") {
-                           $gcls[$key]['SUBMENU'][$submenulinkkey]["ONCLICK"] = substr($gcls[$key]['SUBMENU'][$submenulinkkey]["URL"],11);
-                           $gcls[$key]['SUBMENU'][$submenulinkkey]["URL"] = "javascript:void(0)";
-                       }
+                    if(substr($gcls[$key]['SUBMENU'][$submenulinkkey]["URL"], 0, 11) == "javascript:") {
+                        $gcls[$key]['SUBMENU'][$submenulinkkey]["ONCLICK"] = substr($gcls[$key]['SUBMENU'][$submenulinkkey]["URL"],11);
+                        $gcls[$key]['SUBMENU'][$submenulinkkey]["URL"] = "javascript:void(0)";
+                    }
                 }
             }
         }
