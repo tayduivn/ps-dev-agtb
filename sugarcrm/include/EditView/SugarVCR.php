@@ -25,8 +25,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
- define('VCREND', '50');
- define('VCRSTART', '10');
+
  /**
   * @api
   */
@@ -118,12 +117,12 @@
             $ss->assign('total', '');
             $ss->assign('plus', '');
 
-            if (!empty($_SESSION[$module . 'total']))
+            if (!empty($_SESSION[$module.'total']))
             {
-                $ss->assign('total', $_SESSION[$module . 'total']);
+                $ss->assign('total', $_SESSION[$module.'total']);
                 if (
                     !empty($GLOBALS['sugar_config']['disable_count_query'])
-                    && (($_SESSION[$module. 'total']-1) % $GLOBALS['sugar_config']['list_max_entries_per_page'] == 0)
+                    && (($_SESSION[$module.'total']-1) % $GLOBALS['sugar_config']['list_max_entries_per_page'] == 0)
                 )
                 {
                     $ss->assign('plus', '+');
@@ -137,11 +136,12 @@
 
  	function record($module, $offset){
  		$GLOBALS['log']->debug('SUGARVCR is recording more records');
- 		$start = max(0, $offset - VCRSTART);
+        $page_length = $GLOBALS['sugar_config']['list_max_entries_per_page'] + 1;
+ 		$start = max(0, $offset - $page_length);
  		$index = $start;
 	    $db = DBManagerFactory::getInstance();
 
- 		$result = $db->limitQuery(SugarVCR::retrieve($module),$start,($offset+VCREND),false);
+ 		$result = $db->limitQuery(SugarVCR::retrieve($module), $start, ($offset + $page_length), false);
  		$index++;
 
  		$ids = array();
@@ -149,6 +149,10 @@
  			$ids[$index] = $row['id'];
  			$index++;
  		}
+        //get last index of ids
+        end($ids);
+        $_SESSION[$module.'total'] = key($ids);
+        reset($ids);
  		//now that we have the array of ids, store this in the session
  		$_SESSION[$module.'QUERY_ARRAY'] = $ids;
  		return $ids;
