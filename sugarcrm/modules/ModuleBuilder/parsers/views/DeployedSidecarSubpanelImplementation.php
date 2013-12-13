@@ -145,13 +145,10 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         $layoutFiles = array(
             "modules/{$this->loadedModule}/clients/" . $this->getViewClient() . "/layouts/subpanels/subpanels.php",
         );
-        $layoutExtensionName = array(
-            "sidecarsubpanel" . $this->getViewClient() . "layout",
-        );
+        $layoutExtensionName = array("sidecar");
 
         if ($this->getViewClient() !== 'base') {
             $layoutFiles[] = "modules/{$this->loadedModule}/clients/base/layouts/subpanels/subpanels.php";
-            $layoutExtensionName[] = "sidecarsubpanelbaselayout";
         }
         foreach ($layoutFiles as $file) {
             @include $file;
