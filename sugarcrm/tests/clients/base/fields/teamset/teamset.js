@@ -326,4 +326,114 @@ describe('Base.Field.Teamset', function() {
             expect(field.tplName).toEqual("list");
         });
     });
+
+    describe('formatFieldForDuplicate', function() {
+        var _team = function(id, primary) {
+            return {
+                id: id,
+                name: id,
+                primary: primary
+            };
+        };
+        var model1, model2;
+        beforeEach(function() {
+            field.view.generatedValues = {};
+            field.view.generatedValues.teamsets = {};
+            field.view.generatedValues.teamsets = {
+                team_name: [
+                    _team('East', false),
+                    _team('West', true),
+                    _team('Global', false)
+                ]
+            };
+
+            model1 = new Backbone.Model({
+                team_name: [
+                    _team('East', false),
+                    _team('West', true)
+                ]
+            });
+
+            model2 = new Backbone.Model({
+                team_name: [
+                    _team('Global', false),
+                    _team('East', true)
+                ]
+            });
+            field.view.collection = new Backbone.Collection();
+            field.view.collection.add(model1);
+            field.view.collection.add(model2);
+            field.view.primaryRecord = model1;
+        });
+        it('should fill team names with the right check property for each model', function() {
+            var teams;
+            field.formatFieldForDuplicate();
+            expect(field.view.collection.models).not.toBeEmpty();
+
+            teams = field.view.collection.models[0].get('team_name');
+            expect(teams.length).toBe(3);
+            expect(teams[0].id).toEqual('East');
+            expect(teams[0].checked).toBeTruthy();
+            expect(teams[1].id).toEqual('West');
+            expect(teams[1].checked).toBeTruthy();
+            expect(teams[2].id).toEqual('Global');
+            expect(teams[2].checked).toBeFalsy();
+
+            teams = field.view.collection.models[1].get('team_name');
+            expect(teams.length).toBe(3);
+            expect(teams[0].id).toEqual('East');
+            expect(teams[0].checked).toBeFalsy();
+            expect(teams[1].id).toBeUndefined();
+            expect(teams[1].checked).toBeFalsy();
+            expect(teams[2].id).toEqual('Global');
+            expect(teams[2].checked).toBeFalsy();
+        });
+    });
+
+    describe('unformatFieldForDuplicate', function() {
+        var _team = function(id, primary, checked) {
+            return {
+                id: id,
+                name: id,
+                primary: primary,
+                checked: checked
+            };
+        };
+
+        var primaryRecord;
+        beforeEach(function() {
+            field.view.generatedValues = {};
+            field.view.generatedValues.teamsets = {};
+            field.view.generatedValues.teamsets = {
+                team_name: [
+                    _team('East', false),
+                    _team('West', true),
+                    _team('Global', false)
+                ]
+            };
+
+            primaryRecord = new Backbone.Model({
+                team_name: [
+                    _team('East', false, false),
+                    _team('West', true, true),
+                    _team('Global', false, true)
+                ]
+            });
+
+            field.view.collection = new Backbone.Collection();
+            field.view.collection.add(primaryRecord);
+            field.view.primaryRecord = primaryRecord;
+        });
+        it('should remove the non checked teams from the primary record', function() {
+            var teams;
+            field.unformatFieldForDuplicate();
+
+            teams = field.view.collection.models[0].get('team_name');
+            expect(teams.length).toBe(2);
+            expect(teams[0].id).toEqual('West');
+            expect(teams[0].checked).toBeTruthy();
+            expect(teams[1].id).toEqual('Global');
+            expect(teams[1].checked).toBeTruthy();
+        });
+    });
 });
