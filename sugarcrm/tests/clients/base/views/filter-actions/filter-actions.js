@@ -27,7 +27,7 @@ describe("Filter Actions View", function () {
     });
     it('should call toggleRowState on filter:create:rowsValid', function() {
        var stub = sinon.stub(view,'toggleRowState', function(){});
-        view.initialize(view.options);
+       view.initialize(view.options);
        parentLayout.trigger('filter:create:rowsValid');
        expect(stub).toHaveBeenCalled();
     });
