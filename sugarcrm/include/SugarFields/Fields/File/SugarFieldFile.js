@@ -196,8 +196,13 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
             var sff = SUGAR.field.file; //Scope is set to element.
             var fileEl = document.getElementById(obj.fileEl);
             var fileName = fileEl.value;
-            
             var isValid = sff.isFileExtensionValid(fileName);
+            // If the errorpannel already exist with length 1, we remove it
+            // before it overlaps with the old one
+            var popupExist = $(".container-close").length;
+            if (popupExist) {
+                $(".yui-panel-container.yui-dialog.yui-simple-dialog.yui-overlay-hidden").remove();
+            }
             if( !isValid && fileName != '' ){
                 var errorPannel = new YAHOO.widget.SimpleDialog('sugarMsgWindow', {
         			width: '240px',visible: true, fixedcenter: true,constraintoviewport: true,
