@@ -77,7 +77,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 *
 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
 * All Rights Reserved.
-* Contributor(s): ______________________________________..
 ********************************************************************************/
 
 /**
@@ -966,7 +965,7 @@ protected function checkQuery($sql, $object_name = false)
             //Should match the conditions in DBManager::oneColumnSQLRep for DB required fields, type='id' fields will sometimes
             //come into this function as 'type' = 'char', 'dbType' = 'id' without required set in $value. Assume they are correct and leave them alone.
             else if (($name == 'id' || $value['type'] == 'id' || (isset($value['dbType']) && $value['dbType'] == 'id'))
-                && (!isset($value['required']) && isset($compareFieldDefs[$name]['required'])))
+                && (!isset($value['required']) && isset($compareFieldDefs[$name]['required'])) || (!empty($value['auto_increment']) && isset($compareFieldDefs[$name]['required'])))
             {
                 $value['required'] = $compareFieldDefs[$name]['required'];
             }
@@ -1694,7 +1693,7 @@ protected function checkQuery($sql, $object_name = false)
 
 	/**
 	 * This function increments the global $sql_queries variable
-	 * 
+	 *
 	 * @param string $sql The query that was just run
 	 */
 	public function countQuery($sql = '')
