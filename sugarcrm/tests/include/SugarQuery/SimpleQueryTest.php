@@ -57,56 +57,29 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         if (!empty($this->contacts)) {
             $contactList = array();
             foreach ($this->contacts as $contact) {
-                $contactList[] = $contact->id;
+                $contactList[] = $this->db->quoted($contact->id);
             }
             $this->db->query(
-                "DELETE FROM contacts WHERE id IN ('" . implode(
-                    "','",
-                    $contactList
-                ) . "')"
-            );
-            $this->db->query(
-                "DELETE FROM contacts_cstm WHERE id_c IN ('" . implode(
-                    "','",
-                    $contactList
-                ) . "')"
+                "DELETE FROM contacts WHERE id IN (" . implode(',', $contactList) . ")"
             );
         }
         if (!empty($this->accounts)) {
             $accountList = array();
             foreach ($this->accounts as $account) {
-                $accountList[] = $account->id;
+                $accountList[] = $this->db->quoted($account->id);
             }
             $this->db->query(
-                "DELETE FROM accounts WHERE id IN ('" . implode(
-                    "','",
-                    $accountList
-                ) . "')"
-            );
-            $this->db->query(
-                "DELETE FROM accounts_cstm WHERE id_c IN ('" . implode(
-                    "','",
-                    $accountList
-                ) . "')"
+                "DELETE FROM accounts WHERE id IN (" . implode(",", $accountList) . ")"
             );
         }
 
         if (!empty($this->notes)) {
             $notesList = array();
             foreach ($this->notes as $note) {
-                $notesList[] = $note->id;
+                $notesList[] = $this->db->quoted($note->id);
             }
             $this->db->query(
-                "DELETE FROM notes WHERE id IN ('" . implode(
-                    "','",
-                    $notesList
-                ) . "')"
-            );
-            $this->db->query(
-                "DELETE FROM notes_cstm WHERE id_c IN ('" . implode(
-                    "','",
-                    $notesList
-                ) . "')"
+                "DELETE FROM notes WHERE id IN (" . implode(",", $notesList) . ")"
             );
         }
     }
