@@ -68,7 +68,7 @@
                         });
                     }
                 },
-                {deleteIfFails: true, htmlJsonFormat: false}
+                {deleteIfFails: true, htmlJsonFormat: true}
             );
         }
     }
