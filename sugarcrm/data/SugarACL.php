@@ -44,7 +44,7 @@ class SugarACL
      * @param array $context
      * @return SugarBean
      */
-    protected static function loadBean($module, $context = array())
+    public static function loadBean($module, $context = array())
     {
         if(isset($context['bean']) && $context['bean'] instanceof SugarBean && $context['bean']->module_dir == $module) {
             $bean = $context['bean'];
