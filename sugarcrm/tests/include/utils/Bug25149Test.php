@@ -30,13 +30,32 @@ require_once 'modules/Products/Product.php';
  */
 class Bug25149Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @inheritdoc
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('current_user');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function tearDown()
+    {
+        SugarTestHelper::tearDown();
+        parent::tearDown();
+    }
+
     public function testExportAllProductFields()
     {
         $product = new Product();
 
-        $order_by = array();
         $where = '';
-        $query = $product->create_export_query($order_by, $where);
+        $query = $product->create_export_query('id', $where);
 
         $db = DBManagerFactory::getInstance();
         $result = $db->limitQuery($query, 1, 1, true, '');
