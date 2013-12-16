@@ -140,13 +140,6 @@
             },
 
             /**
-             * Are we on IE 9 or 10?
-             */
-            isIe9Or10: $.browser.msie &&
-                ($.browser.version === '9.0' ||
-                    ($.browser.version === '10.0' && !!navigator.userAgent.match(/Trident\/6\./))),
-
-            /**
              * Can the field be edited
              */
             _canEdit: false,
@@ -300,15 +293,13 @@
                         el.select();
                     }
                 });
-                // Focus doesn't always change when tabbing through inputs on IE9 & IE10 (Bug54717)
-                // This prevents change events from being fired appropriately on IE9 & IE10
-                if(this.isIe9Or10 && el.is("input")){
-                    _.defer(function(el){
-                        el.on("input", function() {
-                            // Set focus on input element receiving user input
-                            el.focus();
-                        });
-                    }, el);
+                // Focus doesn't always change when tabbing through inputs on IE9 (Bug54717)
+                // This prevents change events from being fired appropriately on IE9
+                if ($.browser.msie && el.is("input")) {
+                    el.on("input", function() {
+                        // Set focus on input element receiving user input
+                        el.focus().select();
+                    });
                 }
             },
 
