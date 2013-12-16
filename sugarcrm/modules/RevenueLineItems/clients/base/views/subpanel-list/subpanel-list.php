@@ -23,6 +23,10 @@ $fields = array(
         'default' => true
     ),
     array(
+        'name' => 'opportunity_name',
+        'sortable' => false
+    ),
+    array(
         'name' => 'account_name',
         'sortable' => false
     ),
@@ -35,6 +39,7 @@ $fields = array(
             'currency_id',
             'base_rate',
         ),
+        'showTransactionalAmount' => true,
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
@@ -47,6 +52,7 @@ $fields = array(
             'currency_id',
             'base_rate',
         ),
+        'showTransactionalAmount' => true,
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
@@ -59,6 +65,7 @@ $fields = array(
             'currency_id',
             'base_rate',
         ),
+        'showTransactionalAmount' => true,
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
@@ -107,6 +114,7 @@ $fields = array(
             'currency_id',
             'base_rate',
         ),
+        'showTransactionalAmount' => true,
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
@@ -119,6 +127,7 @@ $fields = array(
             'currency_id',
             'base_rate',
         ),
+        'showTransactionalAmount' => true,
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
@@ -131,6 +140,7 @@ $fields = array(
             'currency_id',
             'base_rate',
         ),
+        'showTransactionalAmount' => true,
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
@@ -141,6 +151,7 @@ $fields = array(
         'related_fields' => array('quote_id'),
         // this is a hack to get the quote_id field loaded
         'readonly' => true,
+        'bwcLink' => true,
     ),
     array(
         'name' => 'assigned_user_name',
@@ -161,16 +172,6 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-list'] = array(
     'selection' => array (
         'type' => 'multi',
         'actions' => array (
-            array (
-                'name' => 'quote_button',
-                'type' => 'button',
-                'label' => 'LBL_GENERATE_QUOTE',
-                'primary' => true,
-                'events' => array (
-                    'click' => 'list:massquote:fire',
-                ),
-                'acl_action' => 'massquote',
-            ),
             array(
                 'name' => 'delete_button',
                 'type' => 'button',
