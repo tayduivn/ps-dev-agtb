@@ -2602,6 +2602,7 @@ private function dir_file_count($path){
                 "server_info",
                 "config",
                 "_override_values",
+                "logo_url",
             ),
         );
         return $sidecarConfig;
