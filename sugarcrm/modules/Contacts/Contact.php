@@ -443,7 +443,7 @@ class Contact extends Person {
 
 		if($filter_fields && !empty($filter_fields['sync_contact'])){
 			$this->load_relationship('user_sync');
-			$temp_array['SYNC_CONTACT'] = $this->user_sync->_relationship->relationship_exists($this, $GLOBALS['current_user']->id) ? 1 : 0;
+			$temp_array['SYNC_CONTACT'] = $this->user_sync->_relationship->relationship_exists($this, $GLOBALS['current_user']) ? 1 : 0;
 		}
 
 		return $temp_array;
