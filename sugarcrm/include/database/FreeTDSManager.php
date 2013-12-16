@@ -31,6 +31,8 @@ class FreeTDSManager extends MssqlManager
     public $variant = 'freetds';
     public $label = 'LBL_MSSQL2';
 
+    public $priority = 10;
+
     protected $capabilities = array(
         "affected_rows" => true,
         'fulltext' => true,
