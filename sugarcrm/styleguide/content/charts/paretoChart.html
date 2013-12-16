@@ -92,7 +92,9 @@
             .showControls(false)
             .stacked(true)
             .clipEdge(false)
-            .colorData( 'default' );
+            .colorData( 'default' )
+            .yAxisTickFormat(function(d){ return '@' + d3.format(',.2s')(d); })
+            .quotaTickFormat(function(d){ return '@' + d3.format(',.3s')(d); });
 
       d3.select(this.el)
         .datum( chartData )

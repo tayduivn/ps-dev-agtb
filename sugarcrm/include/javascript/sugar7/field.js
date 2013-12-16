@@ -210,6 +210,13 @@
                         this.decorateHelper();
                     }
                 }
+
+                /**
+                 * Fix placeholder on global search on IE and old browsers
+                 */
+                if($.fn.placeholder){
+                    this.$("input[placeholder]").placeholder();
+                }
             },
 
             /**
@@ -225,7 +232,7 @@
              */
             _processHelp: function() {
 
-                if (!_.isUndefined(this.meta && this.meta['hide_help'])) {
+                if (this.meta && !_.isUndefined(this.meta['hide_help'])) {
                     this.hideHelp = !!this.meta['hide_help'];
                     return;
                 }

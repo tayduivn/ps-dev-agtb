@@ -5,7 +5,7 @@ nv.models.line = function() {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var  scatter = nv.models.scatter()
+  var scatter = nv.models.scatter()
     ;
 
   var margin = {top: 0, right: 0, bottom: 0, left: 0}
@@ -18,6 +18,7 @@ nv.models.line = function() {
     , clipEdge = false // if true, masks lines within x and y scale
     , x //can be accessed via chart.xScale()
     , y //can be accessed via chart.yScale()
+    , delay = 200
     , interpolate = "linear" // controls the line interpolation
     , color = nv.utils.defaultColor()
     , fill = color
@@ -155,8 +156,8 @@ nv.models.line = function() {
             return d3.svg.area()
                 .interpolate(interpolate)
                 .defined(defined)
-                .x(function(d,i) { return x0(getX(d,i)); })
-                .y0(function(d,i) { return y0(getY(d,i)); })
+                .x(function(d,i) { return x(getX(d,i)); })
+                .y0(function(d,i) { return y(getY(d,i)); })
                 .y1(function(d,i) { return y0( y.domain()[0] <= 0 ? y.domain()[1] >= 0 ? 0 : y.domain()[1] : y.domain()[0] ); })
                 //.y1(function(d,i) { return y0(0) }) //assuming 0 is within y domain.. may need to tweak this
                 .apply(this, [d.values]);
@@ -179,8 +180,8 @@ nv.models.line = function() {
             d3.svg.line()
               .interpolate(interpolate)
               .defined(defined)
-              .x(function(d,i) { return x(getX(d,i)); })
-              .y(function(d,i) { return y(getY(d,i)); })
+              .x(function(d,i) { return x0(getX(d,i)); })
+              .y(function(d,i) { return y0(getY(d,i)); })
           );
       d3.transition(linePaths)
           .attr('d',
@@ -212,31 +213,31 @@ nv.models.line = function() {
   d3.rebind(chart, scatter, 'id', 'interactive', 'size', 'xScale', 'yScale', 'zScale', 'xDomain', 'yDomain', 'sizeDomain', 'forceX', 'forceY', 'forceSize', 'clipVoronoi', 'clipRadius', 'padData');
 
   chart.color = function(_) {
-    if (!arguments.length) return color;
+    if (!arguments.length) { return color; }
     color = _;
     scatter.color(color);
     return chart;
   };
   chart.fill = function(_) {
-    if (!arguments.length) return fill;
+    if (!arguments.length) { return fill; }
     fill = _;
     scatter.fill(fill);
     return chart;
   };
   chart.classes = function(_) {
-    if (!arguments.length) return classes;
+    if (!arguments.length) { return classes; }
     classes = _;
     scatter.classes(classes);
     return chart;
   };
   chart.gradient = function(_) {
-    if (!arguments.length) return gradient;
+    if (!arguments.length) { return gradient; }
     gradient = _;
     return chart;
   };
 
   chart.margin = function(_) {
-    if (!arguments.length) return margin;
+    if (!arguments.length) { return margin; }
     margin.top    = typeof _.top    != 'undefined' ? _.top    : margin.top;
     margin.right  = typeof _.right  != 'undefined' ? _.right  : margin.right;
     margin.bottom = typeof _.bottom != 'undefined' ? _.bottom : margin.bottom;
@@ -245,51 +246,57 @@ nv.models.line = function() {
   };
 
   chart.width = function(_) {
-    if (!arguments.length) return width;
+    if (!arguments.length) { return width; }
     width = _;
     return chart;
   };
 
   chart.height = function(_) {
-    if (!arguments.length) return height;
+    if (!arguments.length) { return height; }
     height = _;
     return chart;
   };
 
   chart.x = function(_) {
-    if (!arguments.length) return getX;
+    if (!arguments.length) { return getX; }
     getX = _;
     scatter.x(_);
     return chart;
   };
 
   chart.y = function(_) {
-    if (!arguments.length) return getY;
+    if (!arguments.length) { return getY; }
     getY = _;
     scatter.y(_);
     return chart;
   };
 
+  chart.delay = function(_) {
+    if (!arguments.length) { return delay; }
+    delay = _;
+    return chart;
+  };
+
   chart.clipEdge = function(_) {
-    if (!arguments.length) return clipEdge;
+    if (!arguments.length) { return clipEdge; }
     clipEdge = _;
     return chart;
   };
 
   chart.interpolate = function(_) {
-    if (!arguments.length) return interpolate;
+    if (!arguments.length) { return interpolate; }
     interpolate = _;
     return chart;
   };
 
   chart.defined = function(_) {
-    if (!arguments.length) return defined;
+    if (!arguments.length) { return defined; }
     defined = _;
     return chart;
   };
 
   chart.isArea = function(_) {
-    if (!arguments.length) return isArea;
+    if (!arguments.length) { return isArea; }
     isArea = d3.functor(_);
     return chart;
   };

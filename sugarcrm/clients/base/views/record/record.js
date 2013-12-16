@@ -1059,8 +1059,16 @@
                  return field.type === 'favorite';
              });
         });
+        var follow = _.find(this.meta.panels, function(panel) {
+             return _.find(panel.fields, function(field) {
+                 return field.type === 'follow';
+             });
+        });
         if (favorite) {
             fields = _.union(fields, ['my_favorite']);
+        }
+        if (follow) {
+            fields = _.union(fields, ['following']);
         }
         return fields;
     },

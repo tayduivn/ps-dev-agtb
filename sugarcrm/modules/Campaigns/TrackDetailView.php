@@ -81,11 +81,10 @@ if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
     $smarty->assign("START_DATE", $focus->start_date);
     $smarty->assign("END_DATE", $focus->end_date);
 
-    $smarty->assign("BUDGET", $focus->budget);
-    $smarty->assign("ACTUAL_COST", $focus->actual_cost);
-    $smarty->assign("EXPECTED_COST", $focus->expected_cost);
-    $smarty->assign("EXPECTED_REVENUE", $focus->expected_revenue);
-
+    $smarty->assign("BUDGET", SugarCurrency::formatAmountUserLocale($focus->budget, $focus->currency_id));
+    $smarty->assign("ACTUAL_COST", SugarCurrency::formatAmountUserLocale($focus->actual_cost, $focus->currency_id));
+    $smarty->assign("EXPECTED_COST", SugarCurrency::formatAmountUserLocale($focus->expected_cost, $focus->currency_id));
+    $smarty->assign("EXPECTED_REVENUE", SugarCurrency::formatAmountUserLocale($focus->expected_revenue, $focus->currency_id));
 
     $smarty->assign("OBJECTIVE", nl2br($focus->objective));
     $smarty->assign("CONTENT", nl2br($focus->content));
@@ -264,4 +263,3 @@ if (!empty($alltabs)) {
     }
 }
 echo $subpanel->display();
-?>

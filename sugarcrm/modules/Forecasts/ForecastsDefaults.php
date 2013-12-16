@@ -151,32 +151,55 @@ class ForecastsDefaults
             'show_forecasts_commit_warnings' => 1,
             // default enabled worksheet columns
             //BEGIN SUGARCRM flav=ent ONLY
-            'worksheet_columns' => array(
-                'commit_stage',
-                'parent_name',  // parent_name is the name of the RLI and the link back to it
-                'opportunity_name',
-                'account_name',
-                'date_closed',
-                'product_template_name',
-                'sales_stage',
-                'probability',
-                'likely_case',
-                'best_case',
-            ),
+            'worksheet_columns' => self::getWorksheetColumns('ent'),
             //END SUGARCRM flav=ent ONLY
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-            'worksheet_columns' => array(
-                'commit_stage',
-                'parent_name', // parent_name is the name of the Opportunity and the link back to it
-                'account_name',
-                'date_closed',
-                'sales_stage',
-                'probability',
-                'likely_case',
-                'best_case',
-            ),
+            'worksheet_columns' =>self::getWorksheetColumns('pro'),
             //END SUGARCRM  flav=pro && flav!=ent ONLY
         );
+    }
+
+    /**
+     * Given a flavor, returns the proper worksheet columns in an array
+     *
+     * @param $flav ent/ult/pro/corp
+     * @return array of fields and column names for the worksheet to use
+     */
+    public static function getWorksheetColumns($flav) {
+        $cols = array();
+        switch($flav) {
+            case 'ent':
+            case 'ult':
+                $cols = array(
+                    'commit_stage',
+                    'parent_name',  // parent_name is the name of the RLI and the link back to it
+                    'opportunity_name',
+                    'account_name',
+                    'date_closed',
+                    'product_template_name',
+                    'sales_stage',
+                    'probability',
+                    'likely_case',
+                    'best_case',
+                );
+                break;
+
+            case 'pro':
+            case 'corp':
+                $cols = array(
+                    'commit_stage',
+                    'parent_name', // parent_name is the name of the Opportunity and the link back to it
+                    'account_name',
+                    'date_closed',
+                    'sales_stage',
+                    'probability',
+                    'likely_case',
+                    'best_case',
+                );
+                break;
+        }
+
+        return $cols;
     }
 
     /**

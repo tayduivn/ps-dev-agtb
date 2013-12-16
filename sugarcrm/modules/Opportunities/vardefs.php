@@ -63,6 +63,9 @@ $dictionary['Opportunity'] = array(
             'required' => true,
             'importable' => 'required',
             'required' => true,
+            'related_field' => array(
+                'account_id'
+            )
         ),
         'account_id' => array(
             'name' => 'account_id',
@@ -262,6 +265,7 @@ $dictionary['Opportunity'] = array(
             'type' => 'int',
             'studio' => false,
             'reportable' => false,
+            'workflow' => false,
             'massupdate' => false,
             'enforced' => true,
             'calculated' => true,
@@ -299,6 +303,7 @@ $dictionary['Opportunity'] = array(
             'studio' => false,
             'massupdate' => false,
             'reportable' => false,
+            'workflow' => false,
             //END SUGARCRM flav=ent ONLY
         ),
         'sales_status' => array(
@@ -308,10 +313,11 @@ $dictionary['Opportunity'] = array(
             'options' => 'sales_status_dom',
             'len' => '255',
             'readonly' => true,
-            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            //BEGIN SUGARCRM flav!=ent ONLY
             'studio' => false,
             'reportable' => false,
-            //END SUGARCRM flav=pro && flav!=ent ONLY
+            'workflow' => false,
+            //END SUGARCRM flav!=ent ONLY
             //BEGIN SUGARCRM flav=ent ONLY
             'audited' => true,
             'massupdate' => false,
@@ -322,9 +328,9 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_PROBABILITY',
             'type' => 'int',
             'dbType' => 'double',
-            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            //BEGIN SUGARCRM flav!=ent ONLY
             'audited' => true,
-            //END SUGARCRM flav=pro && flav!=ent ONLY
+            //END SUGARCRM flav!=ent ONLY
             'comment' => 'The probability of closure',
             'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
             'merge_filter' => 'enabled',
@@ -390,7 +396,8 @@ $dictionary['Opportunity'] = array(
             //BEGIN SUGARCRM flav=ent ONLY
             'massupdate' => false,
             'studio' => false,
-            'reportable' => false
+            'reportable' => false,
+            'workflow' => false
             //END SUGARCRM flav=ent ONLY
         ),
         //BEGIN SUGARCRM flav=ent ONLY

@@ -473,12 +473,19 @@
      */
     populateRecords:function (model, fieldMapping) {
         var hasChanged = false;
+
         _.each(fieldMapping, function (sourceField, targetField) {
             if (model.has(sourceField) && model.get(sourceField) !== this.createView.model.get(targetField)) {
                 this.createView.model.set(targetField, model.get(sourceField));
                 hasChanged = true;
             }
         }, this);
+
+        //mark the model as copied so that the currency field doesn't set currency_id to user's default value
+        if (hasChanged) {
+            this.createView.model.isCopied = true;
+        }
+
         return hasChanged;
     },
 

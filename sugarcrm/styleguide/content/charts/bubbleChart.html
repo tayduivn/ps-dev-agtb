@@ -47,6 +47,7 @@
 
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/legend.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/scatter.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/bubbleChart.js"></script>
 
@@ -107,7 +108,7 @@
                      '<p>Probability: <b>' +  e.point.probability + '%</b></p>' +
                      '<p>Account: <b>' +  e.point.account_name + '</b></p>';
           })
-          .showTitle(false)
+          .showTitle(true)
           .tooltips(true)
           .showLegend(true)
           .colorData( 'class', {step:2} )

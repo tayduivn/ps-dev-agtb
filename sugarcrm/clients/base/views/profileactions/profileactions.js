@@ -16,7 +16,8 @@
         app.view.View.prototype.initialize.call(this, options);
         app.events.on("app:sync:complete", this.render, this);
         app.events.on("app:sync:complete", this.setCurrentUserData, this);
-        app.events.on("bwc:profile:entered", this.setCurrentUserData, this);
+        app.events.on("bwc:profile:entered", this.bwcProfileEntered, this);
+        app.events.on("bwc:avatar:removed", this.bwcAvatarRemoved, this);
         app.user.on("change:picture", this.setCurrentUserData, this);
         app.user.on("change:full_name", this.setCurrentUserData, this);
     },
@@ -84,6 +85,20 @@
             singleItem['route'] = '#bwc/index.php?module=Users&action=DetailView&record=' + this.userId;
         }
         return singleItem;
+    },
+    //TODO: Remove once bwc is completely pruned out of the product
+    bwcProfileEntered: function() {
+        //Refetch latest user data (since bwc updated avatar); reset
+        var self = this;
+        app.user.load(function() {
+            self.setCurrentUserData();
+        });
+    },
+    //This will get called when avatar is removed from bwc User profile edit (SP-1949)
+    //TODO: Remove once bwc is completely pruned out of the product
+    bwcAvatarRemoved: function() {
+        app.user.set("picture", '');//so `this.pictureUrl` is falsy and default avatar kicks in on .hbs template
+        this.setCurrentUserData();
     },
     /**
      * Sets the current user's information like full name, user name, avatar, etc.

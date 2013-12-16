@@ -199,7 +199,7 @@ $timedate = TimeDate::getInstance();
 $GLOBALS['sugar_version'] = $sugar_version;
 $GLOBALS['sugar_flavor'] = $sugar_flavor;
 $GLOBALS['timedate'] = $timedate;
-$GLOBALS['js_version_key'] = md5($GLOBALS['sugar_config']['unique_key'].$GLOBALS['sugar_version'].$GLOBALS['sugar_flavor']);
+$GLOBALS['js_version_key'] = get_js_version_key();
 
 $db = DBManagerFactory::getInstance();
 $db->resetQueryCount();

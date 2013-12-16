@@ -165,7 +165,7 @@ class OpportunitiesSeedData {
     
             // stop obsessive saving
             SugarBean::enterOperation('saving_related');
-            BeanFactory::registerBean('Opportunities', $opp);
+            BeanFactory::registerBean($opp);
 
             while($rlis_created < $rlis_to_create) {
                 //BEGIN SUGARCRM flav=pro && flav!=ent ONLY

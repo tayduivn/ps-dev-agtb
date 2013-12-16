@@ -265,14 +265,13 @@
         }
 
         // load template key for confirmation message from defs or use default
-        var messageTplKey = app.lang.get(this.def.populate_confirm_label || 'TPL_OVERWRITE_POPULATED_DATA_CONFIRM'),
+        var messageTplKey = this.def.populate_confirm_label || 'TPL_OVERWRITE_POPULATED_DATA_CONFIRM',
             messageTpl = Handlebars.compile(app.lang.get(messageTplKey, this.getSearchModule())),
             fieldMessageTpl = app.template.getField(
                 this.type,
                 'overwrite-confirmation',
                 this.model.module),
             messages = [],
-            moduleSingular = app.lang.getModuleSingular(this.module),
             relatedModuleSingular = app.lang.getModuleSingular(this.def.module);
 
         _.each(newData, function(value, field) {
@@ -303,13 +302,6 @@
                     delete newData.currency_id;
                 }
                 self.model.set(newData);
-            },
-            templateOptions: {
-                cancelContLabel: 'LBL_ALERT_OVERWRITE_POPULATED_DATA_CANCEL',
-                confirmContLabel: app.lang.get('TPL_ALERT_OVERWRITE_POPULATED_DATA_CONFIRM',
-                                  this.module, {
-                                      moduleSingularLower: moduleSingular.toLowerCase()
-                                  })
             }
         });
     },

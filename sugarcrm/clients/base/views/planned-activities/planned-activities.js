@@ -53,6 +53,34 @@
 
     /**
      * {@inheritDoc}
+     *
+     * Store current date state in settings.
+     */
+    initDashlet: function() {
+        // FIXME: this should be replaced with this._super('initDashlet');
+        // which is currently throwing an error with the following message:
+        // "Attempt to call different parent method from child method".
+        app.view.invokeParent(this, {
+            type: 'view',
+            name: 'history',
+            method: 'initDashlet',
+            platform: 'base'
+        });
+        if (!this.meta.last_state) {
+            this.meta.last_state = {
+                id: this.dashModel.get('id') + ':' + this.name,
+                defaults: {}
+            };
+        }
+        this.settings.on('change:date', function(model, value) {
+            var specificDateKey = app.user.lastState.key('date', this);
+            app.user.lastState.set(specificDateKey, value);
+        }, this);
+        this.settings.set('date', this.getDate());
+    },
+
+    /**
+     * {@inheritDoc}
      */
     _initEvents: function() {
         this.events = _.extend(this.events, {
@@ -258,7 +286,7 @@
                 future: {$gt: today}
             };
 
-        filter[tab.filter_applied_to] = defaultFilters[this.settings.get('date')];
+        filter[tab.filter_applied_to] = defaultFilters[this.getDate()];
 
         filters.push(filter);
 
@@ -272,12 +300,26 @@
      */
     dateSwitcher: function(event) {
         var date = this.$(event.currentTarget).val();
-        if (date === this.settings.get('date')) {
+        if (date === this.getDate()) {
             return;
         }
 
         this.settings.set('date', date);
         this.layout.loadData();
+    },
+
+    /**
+     * Get current date state.
+     * Returns default value if can't find in last state or settings.
+     *
+     * @return {String} Date state.
+     */
+    getDate: function() {
+        var date = app.user.lastState.get(
+            app.user.lastState.key('date', this),
+            this
+        );
+        return date || this.settings.get('date') || this._defaultSettings.date;
     },
 
     /**

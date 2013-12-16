@@ -99,7 +99,7 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
         $bean = new SugarBean();
 
-        $query = 'select id FROM ' . $account->table_name . ' where id = "' . $account->id . '";';
+        $query = "select id FROM " . $account->table_name . " where id = '" . $account->id . "'";
         $return = array_shift($bean->build_related_list($query, BeanFactory::getBean('Accounts')));
 
         $this->assertEquals($account->id, $return->id);
@@ -364,6 +364,25 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
             ->will($this->returnValue($mockAccount));
 
         $this->assertFalse($mockAccount->checkUserAccess($user, get_class($bf)));
+    }
+
+    /**
+     * This test will make sure that when you enter an operation that the one that actually entered the operation
+     * actually is the one to leave it.
+     */
+    public function testEnterLeaveOperationMultipleTimes()
+    {
+        $ret1 = SugarBean::enterOperation('unit_test');
+        $this->assertTrue($ret1);
+
+        $ret2 = SugarBean::enterOperation('unit_test');
+        $this->assertFalse($ret2);
+
+        $this->assertFalse(SugarBean::leaveOperation('unit_test', $ret2));
+
+        $this->assertTrue(SugarBean::leaveOperation('unit_test', $ret1));
+
+        SugarBean::resetOperations();
     }
 }
 

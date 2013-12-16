@@ -105,6 +105,10 @@
 
 <script type='text/javascript'>	
      function remove_upload_imagefile(field_name) {ldelim}
+            //We're removing avatar so let Sidecar know to clear user.picture
+            if (window.parent.SUGAR && window.parent.SUGAR.App) {
+                window.parent.SUGAR.App.events.trigger("bwc:avatar:removed");
+            }
             var field=document.getElementById('remove_imagefile_' + field_name);
             field.value=1;            
             

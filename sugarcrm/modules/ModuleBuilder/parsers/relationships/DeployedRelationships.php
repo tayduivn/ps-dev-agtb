@@ -371,7 +371,8 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
         $GLOBALS['reload_vardefs'] = true;
 
         // save out the updated definitions so that we keep track of the change in built status
-        $this->save () ;
+        // sending false so we don't rebuild relationshsips for a third time.
+        $this->save(false);
 
         $mi = new ModuleInstaller();
         $mi->silent = true;
@@ -396,7 +397,9 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
         
         unset($GLOBALS['dictionary']);
         SugarRelationshipFactory::rebuildCache();
-        $rac->repairMetadataAPICache('relationships');
+        MetaDataManager::refreshLanguagesCache(array($GLOBALS['current_language']));
+        MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_RELATIONSHIPS));
+        MetaDataManager::refreshModulesCache(array_keys($modulesToBuild));
 
         $GLOBALS [ 'log' ]->info ( get_class ( $this ) . "->build(): finished relationship installation" ) ;
 

@@ -76,10 +76,6 @@ svg .title {
   pointer-events: none;
 }
 
-.dashboard .thumbnail.widget:not(.collapsed) .saved-reports-chart .nv-chart {
-  max-height: 348px;
-}
-
 /**********
 * Styleguide
 */
@@ -142,7 +138,20 @@ body.full-screen {
   fill-opacity: 0;
 }
 
+.nv-legend-background {
+  fill: rgba(255, 255, 255, 0.9);
+  stroke: rgba(161, 160, 160, 0.75);
+  stroke-width: 1px;
+}
 
+.nv-legend-link {
+  cursor: pointer;
+  fill: @linkColor;
+  &:hover {
+    fill: @linkColorHover;
+    text-decoration: underline;
+  }
+}
 /**********
 *  Axes
 */
@@ -176,10 +185,13 @@ body.full-screen {
 }
 
 .nvd3 .nv-x.nv-axis text {
-  transform: rotate(90);
   font-size: @chartTextSize;
 }
 
+.nvd3 .nv-axislabel {
+  font-weight: 900;
+  font-style: italic;
+}
 
 /**********
 *  Bars
@@ -236,7 +248,9 @@ body.full-screen {
   fill-opacity: 1;
 }
 
+.nvd3 .calc-text-strings,
 .nvd3 .nv-discretebar .nv-groups text,
+.nvd3 .nv-multibar .nv-groups text,
 .nvd3 .nv-multibarHorizontal .nv-groups text {
   font-weight: bold;
   fill: rgba(0,0,0,1);

@@ -278,6 +278,14 @@ $dictionary['Campaign'] = array (
             'link_class' => 'ProspectLink',
             'link_file' => 'modules/Campaigns/ProspectLink.php'
         ),
+        'forecastworksheet' =>
+        array(
+            'name' => 'forecastworksheet',
+            'type' => 'link',
+            'relationship' => 'forecastworksheets_campaigns',
+            'source' => 'non-db',
+            'vname' => 'LBL_FORECAST_WORKSHEET',
+        ),
 
         
     ),

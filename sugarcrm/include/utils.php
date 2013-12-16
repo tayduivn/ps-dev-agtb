@@ -2433,7 +2433,11 @@ function getWebPath($relative_path)
 function getVersionedPath($path, $additional_attrs='')
 {
     if(empty($GLOBALS['sugar_config']['js_custom_version'])) $GLOBALS['sugar_config']['js_custom_version'] = 1;
-    $js_version_key = isset($GLOBALS['js_version_key'])?$GLOBALS['js_version_key']:'';
+
+    if (!isset($GLOBALS['js_version_key'])) {
+        $GLOBALS['js_version_key'] = get_js_version_key();
+    }
+
     if (inDeveloperMode() && file_exists($path)) {
         $dev = md5(filemtime($path));
     } else {
@@ -2443,7 +2447,7 @@ function getVersionedPath($path, $additional_attrs='')
         $additional_attrs = join("|",$additional_attrs);
     }
     // cutting 2 last chars here because since md5 is 32 chars, it's always ==
-    $str = substr(base64_encode(md5("$js_version_key|{$GLOBALS['sugar_config']['js_custom_version']}|$dev|$additional_attrs", true)), 0, -2);
+    $str = substr(base64_encode(md5("{$GLOBALS['js_version_key']}|{$GLOBALS['sugar_config']['js_custom_version']}|$dev|$additional_attrs", true)), 0, -2);
     // remove / - it confuses some parsers
     $str = strtr($str, '/+', '-_');
     if(empty($path)) return $str;
@@ -5578,6 +5582,20 @@ function getRequiredDropdownListItems()
 function getRequiredDropdownListItemsByDDL($name) {
     $items = getRequiredDropdownListItems();
     return isset($items[$name]) ? $items[$name] : array();
+}
+
+/**
+ * Generates version key for web assets
+ *
+ * @return string
+ */
+function get_js_version_key()
+{
+    return md5(
+        $GLOBALS['sugar_config']['unique_key']
+        . $GLOBALS['sugar_version']
+        . $GLOBALS['sugar_flavor']
+    );
 }
 
 /**

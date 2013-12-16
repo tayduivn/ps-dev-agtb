@@ -46,15 +46,16 @@
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
 <script src="data/funnel_data.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/legend.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/funnel.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/funnelChart.js"></script>
 
 <script>
   nv.addGraph(function() {
     var chart = nv.models.funnelChart()
-          .showTitle(false)
+          .showTitle(true)
           .tooltips(true)
-          .delay(0)
+          .delay(500)
           .fmtValueLabel(function(d) { return '$' + d.value + 'K' })
           //.colorData( 'graduated', {c1: '#12448f', c2: '#deeeff', l: funnel_data.data.length} )
           .colorData( 'class', {step:2})

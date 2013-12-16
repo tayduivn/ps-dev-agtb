@@ -91,4 +91,23 @@ describe("Alert View", function() {
             expect($('<div></div>').append(result).find('strong').text()).toBe('Deleting');
         });
     });
+
+
+    it('should cancel alert before calling onCancel and onConfirm', function() {
+        var calledLast,
+            cancelStub;
+        view.onCancel = function() { calledLast = 'onCancel'; };
+        view.onConfirm = function() { calledLast = 'onConfirm'; };
+        cancelStub = sinon.collection.stub(view, 'cancel', function() { calledLast = 'cancel'; });
+
+        //Test onCancel
+        view.cancelClicked();
+        expect(cancelStub).toHaveBeenCalledOnce();
+        expect(calledLast).toEqual('onCancel');
+        //Test onConfirm
+        view.confirmClicked();
+        expect(cancelStub).toHaveBeenCalledTwice();
+        expect(calledLast).toEqual('onConfirm');
+
+    });
 });

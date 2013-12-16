@@ -80,10 +80,11 @@
 
 
                     if(accesskey !== undefined) {
-                        if($('#'+accesskey_el.attr('id')).length === 0) {
-                            accesskey_el.attr("accesskey", accesskey).click(function() {
+                        if ($('#' + accesskey_el.attr('id')).length === 0) {
+                            accesskey_el.attr('accesskey', accesskey).click(function() {
                                 jNode.click();
-                            }).appendTo("#content");
+                            }).appendTo('#content');
+                            jNode.css('display', 'none');
                         }
                         jNode.attr("accesskey", '');
                     }
@@ -95,6 +96,7 @@
                         //see SubPanelTiles.js#subp_nav_sidecar and SugarWidgetSubPanelTopButton.php
                         if (!(parent.get(0).nodeName.toLowerCase() === 'form' && parent.data('legacy-subpanel-create'))) {
                             parent.prepend(newItemA);
+                            jNode.css('display', 'none');
                         }
                     }
 
@@ -146,7 +148,6 @@
                             }).addClass("void");
                         menuNode.append(_menu);
                     });
-                    jNode.css("display", "none");
 				});
 
 

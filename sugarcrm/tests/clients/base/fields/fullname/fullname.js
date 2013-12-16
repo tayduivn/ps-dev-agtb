@@ -46,6 +46,7 @@ describe('Base.Field.Fullname', function() {
             last_name: nameParts.last_name,
             salutation: nameParts.salutation
         });
+        model.module = 'Contacts';
         view.collection.add(model);
     });
 

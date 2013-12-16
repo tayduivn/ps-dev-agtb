@@ -138,7 +138,7 @@
                 this.model.set(
                     this.name,
                     app.currency.convertAmount(
-                        app.currency.unformatAmountLocale(val),
+                        val,
                         this._lastCurrencyId,
                         currencyId
                     ),

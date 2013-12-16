@@ -126,7 +126,12 @@ class SugarFieldExpression extends GenericExpression
             throw new Exception("Relationship $fieldName was not set");
         }
 
-        if (isset($this->context->$fieldName->beans)) {
+        if (SugarBean::inOperation('delete')) {
+            // if we are in a delete operation, always re-fetch the relationships beans
+            // as one of the could have changed and we want the freshest set from the db
+            $this->context->$fieldName->beans = null;
+            $this->context->$fieldName->resetLoaded();
+        } elseif (isset($this->context->$fieldName->beans)) {
             return $this->context->$fieldName->beans;
         }
 

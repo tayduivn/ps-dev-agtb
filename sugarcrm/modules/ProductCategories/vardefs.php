@@ -204,6 +204,14 @@ $dictionary['ProductCategory'] = array(
             'type' => 'varchar',
             'source' => 'non-db'
         ),
+        'forecastworksheet' =>
+        array(
+            'name' => 'forecastworksheet',
+            'type' => 'link',
+            'relationship' => 'forecastworksheets_categories',
+            'source' => 'non-db',
+            'vname' => 'LBL_FORECAST_WORKSHEET',
+        ),
 
         //END SUGARCRM flav=pro ONLY
     ),

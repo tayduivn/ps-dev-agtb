@@ -30,7 +30,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 require_once 'data/Link2.php';
-
 /**
  * Assists in backporting 6.6 Metadata formats to legacy style in order to
  * maintain backward compatibility with old clients consuming the V3 and V4 apis.
@@ -56,6 +55,7 @@ class MetaDataConverter
         'Import' => 'import',
         'Reports' => 'list',
         'DetailView' => 'view',
+        'Administration' => 'admin',
     );
 
     /**
@@ -254,6 +254,14 @@ class MetaDataConverter
                 }
                 if (empty($details['type']) && !empty($newDefs['type']) && $newDefs['type'] != 'varchar') {
                     $details['type'] = $newDefs['type'];
+                }
+                // special handling for teamsets, since they have changed from 6
+                if(!empty($newDefs['custom_type']) && $newDefs['custom_type'] == 'teamset') {
+                    $details['sortable'] = false;
+                    $details['link'] = false;
+                    unset($details['type']);
+                    unset($details['target_module']);
+                    unset($details['target_record_key']);
                 }
             }
 
@@ -651,5 +659,138 @@ class MetaDataConverter
         }
 
         return $route;
+    }
+
+    /**
+     * Converts the old profileactions metadata to the new sidecar metadata
+     *
+     * @param array $global_control_links globalcontrollink format
+     * @return array new sidecar profileactions view metadata
+     */
+    public function fromLegacyProfileActions(array $global_control_links)
+    {
+        $menu = $this->processFromGlobalControlLinkFormat($global_control_links);
+        global $app_strings;
+        include("clients/base/views/profileactions/profileactions.php");
+        $baseMeta = $viewdefs['base']['view']['profileactions'];
+        $arrayName = "viewdefs['base']['view']['profileactions']";
+
+        $dataItems = array();
+        if(!empty($menu)){
+            // Convert custom items to sidecar format
+            foreach ($menu as $option) {
+                foreach($baseMeta as $baseOption){
+                    if($option['LABEL'] === $app_strings[$baseOption["label"]]){
+                        $dataItems[] = $baseOption;
+                        continue 2;
+                    }
+                }
+                $data = $this->convertCustomMenu($option);
+                // Handles submenu conversions and performs several
+                // checks to push the converted item and items if
+                // they are not empty
+                if(!empty($option['SUBMENU'])){
+                    $submenuData = array();
+                    foreach($option['SUBMENU'] as $submenu){
+                        $converted = $this->convertCustomMenu($submenu);
+                        if(!empty($converted)){
+                            $submenuData[] = $converted;
+                        }
+                    }
+                    if(!empty($submenuData)){
+                        $data['submenu'] = $submenuData;
+                    }
+                }
+                if(!empty($data)){
+                    $dataItems[] = $data;
+                }
+
+            }
+        }
+        return array('name' => $arrayName, 'data' => $dataItems);
+    }
+    /**
+     * Process the global_control_links format and extract labels, urls
+     * and submenu links from globalcontrollinks
+     *
+     * @param array $global_control_links globalcontrollink format
+     * @return array of items contain label, url and submenu
+     */
+    public function processFromGlobalControlLinkFormat($global_control_links){
+        $gcls = array();
+        foreach($global_control_links as $key => $value) {
+            foreach ($value as $linkattribute => $attributevalue) {
+                // get the main link info
+                if ( $linkattribute == 'linkinfo' ) {
+                    $gcls[$key] = array(
+                        "LABEL" => key($attributevalue),
+                        "URL"   => current($attributevalue),
+                        "SUBMENU" => array(),
+                    );
+                    if(substr($gcls[$key]["URL"], 0, 11) == "javascript:") {
+                        $gcls[$key]["OPENWINDOW"] = true;
+                        $url = explode("'",$gcls[$key]["URL"]);
+                        $gcls[$key]["URL"] = $url[1];
+                    }
+                }
+                // and now the sublinks
+                if ( $linkattribute == 'submenu' && is_array($attributevalue) ) {
+                    foreach ($attributevalue as $submenulinkkey => $submenulinkinfo)
+                        $gcls[$key]['SUBMENU'][$submenulinkkey] = array(
+                            "LABEL" => key($submenulinkinfo),
+                            "URL"   => current($submenulinkinfo),
+                        );
+                    if(substr($gcls[$key]['SUBMENU'][$submenulinkkey]["URL"], 0, 11) == "javascript:") {
+                        $gcls[$key]['SUBMENU'][$submenulinkkey]["OPENWINDOW"] = true;
+                        $url = explode("'",$gcls[$key]['SUBMENU'][$submenulinkkey]["URL"]);
+                        $gcls[$key]['SUBMENU'][$submenulinkkey]["URL"] = $url[1];
+                    }
+                }
+            }
+        }
+        return $gcls;
+    }
+    /**
+     * Convert a single item array into sidecar meta format
+     *
+     * @param array $option
+     * @return array sidecar profileactions item meta
+     */
+    public function convertCustomMenu($option){
+        $data = array();
+        $data['label'] = $option['LABEL'];
+        $url = parse_url($option['URL']);
+        if(isset($url['query'])){
+            parse_str($url['query'], $menuOptions);
+            if (isset($this->aclActionList[$menuOptions['module']])) {
+                $data['acl_action'] = trim($this->aclActionList[$menuOptions['module']]);
+            } elseif (isset($this->aclActionList[$menuOptions['action']])) {
+                $data['acl_action'] = trim($this->aclActionList[$menuOptions['action']]);
+            }
+            $data['route'] = $this->buildMenuRoute($menuOptions, $option['URL']);
+        }
+        // This condition cover cases that Routes are:
+        // External link (eg. https://www.google.com, Host is 'www.google.com' Scheme is 'https'),
+        // Sidecar list view (eg. #Accounts, #Contacts, Fragment is 'Accounts', 'Contacts')
+        // Opening new window link (eg.javascript:void(0), Scheme is 'javascript')
+        elseif(isset($url['host']) || isset($url['fragment']) || isset($url['scheme'])){
+            $data['route'] = $option['URL'];
+            $data['acl_action'] = '';
+        }
+        // This condition is for urls that does not met any above conditions, which might be
+        // a path to our internal php file (eg.client/base/views/attachments/attachments.php
+        // In this case only 'Path' will be in the parsed url) Since we don't want user to access
+        // our internal files, so we return nothing and not push this item to the menu list
+        else{
+            $GLOBALS['log']->error("Invalid URL $url");
+            return;
+        }
+        if(isset($option['OPENWINDOW'])){
+            $data['openwindow'] = $option['OPENWINDOW'];
+        }
+        if(isset($option['ICON'])){
+            $data['icon'] = $this->$option['ICON'];
+        }
+        return $data;
     }
 }

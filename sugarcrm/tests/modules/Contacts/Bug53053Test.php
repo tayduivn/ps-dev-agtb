@@ -102,7 +102,7 @@ class Bug53053Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotNull($contact->portal_password);
 
         // test case set an existing records password
-        $_POST[$this->prefix . 'id'] = $this->contact_id;
+        $_POST[$this->prefix . 'record'] = $this->contact_id;
         $bean = $formBase->handleSave($this->prefix, false);
         $oldPass = $bean->portal_password;
         $contact = BeanFactory::getBean('Contacts', $bean->id);
@@ -117,6 +117,8 @@ class Bug53053Test extends Sugar_PHPUnit_Framework_TestCase
 
         // test case don't update password
         $_POST[$this->prefix . 'portal_password'] = 'value_setvalue_setvalue_set';
+        // Set the record into the request so we continue to work on the right bean
+        $_REQUEST[$this->prefix . 'record'] = $bean->id;
         $bean = $formBase->handleSave($this->prefix, false);
         $contact = BeanFactory::getBean('Contacts', $bean->id);
         $this->assertEquals($contact->portal_password, $oldPass);

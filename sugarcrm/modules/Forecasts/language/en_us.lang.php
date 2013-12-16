@@ -254,9 +254,7 @@ $mod_strings = array (
     'LBL_EDITABLE_INVALID' => 'Invalid Value for {0}',
     'LBL_EDITABLE_INVALID_RANGE' => 'Value must be between {0} and {1}',
     'LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD' => 'You have unsaved changes in your Worksheet.',
-    'LBL_WORKSHEET_EXPORT_CONFIRM' => 'Only saved or committed data can be exported.',
-    'LBL_WORKSHEET_EXPORT_CONFIRM_LABEL' => 'to continue exporting.',
-    'LBL_WORKSHEET_EXPORT_CANCEL_LABEL' => 'to return to the worksheet.',
+    'LBL_WORKSHEET_EXPORT_CONFIRM' => 'Only saved or committed data will be exported. Cancel to abort. Confirm to export saved data.',
     'LBL_WORKSHEET_ID' => 'Worksheet ID',
 
     // Labels for Chart Options
@@ -442,6 +440,5 @@ $mod_strings = array (
     'LBL_DASHLET_MY_FORECAST' => 'My Forecast',
     'LBL_DASHLET_MY_TEAMS_FORECAST' => "My Team's Forecast",
 
-    'LBL_CANCEL_BUTTON_LABEL_ORDERBY_CONT' => 'to not sort the worksheet.',
-    'LBL_CONFIRM_BUTTON_LABEL_ORDERBY_CONT' => 'to sort the worksheet and discard changes.'
+    'LBL_WARN_UNSAVED_CHANGES_CONFIRM_SORT' => 'You have unsaved changes. Are you sure you want to sort the worksheet and discard changes?',
 );

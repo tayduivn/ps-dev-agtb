@@ -1788,7 +1788,7 @@ class SugarBean
         }
 
         require_once("data/BeanFactory.php");
-        BeanFactory::registerBean($this->module_name, $this);
+        BeanFactory::registerBean($this);
 
         if (!static::inOperation('saving_related') && static::enterOperation('updating_relationships')) {
             // let subclasses save related field changes
@@ -4499,16 +4499,26 @@ class SugarBean
 
                 $index++;
             }
-        if(!empty($sugar_config['disable_count_query']) && !empty($limit))
-        {
-
+        if (!empty($sugar_config['disable_count_query']) && !empty($limit)) {
             $rows_found = $row_offset + count($list);
 
-            unset($list[$limit - 1]);
-            if(!$toEnd)
-            {
+            if (!$toEnd) {
                 $next_offset--;
                 $previous_offset++;
+
+                // FIXME: process_union_list_query() has pretty similar code
+                // both this functions should be refactored in order to reuse
+                // existing code.
+                //
+                // While processing pagination each request asks for the
+                // number of records per page plus one, in order to know if
+                // there are more records to show besides the ones we're
+                // currently seeing.
+                //
+                // Based on that and 'cause we're not trying to reach the
+                // last record ($toEnd), we should discard the last fetched
+                // record.
+                unset($list[$limit - 1]);
             }
         } else if(!isset($rows_found)){
             $rows_found = $row_offset + count($list);
@@ -4803,14 +4813,21 @@ class SugarBean
             	//C.L. Bug 43535 - Use the $index value to set the $rows_found value here
                 $rows_found = isset($index) ? $index : $row_offset + count($list);
 
-                if(count($list) >= $limit)
-                {
-                    array_pop($list);
-                }
-                if(!$toEnd)
-                {
+                if (!$toEnd) {
                     $next_offset--;
                     $previous_offset++;
+
+                    // While processing pagination each request asks for the
+                    // number of records per page plus one, in order to know if
+                    // there are more records to show besides the ones we're
+                    // currently seeing.
+                    //
+                    // Based on that and 'cause we're not trying to reach the
+                    // last record ($toEnd), we should discard the last fetched
+                    // record.
+                    if (count($list) >= $limit) {
+                        array_pop($list);
+                    }
                 }
             }
         }
@@ -7039,7 +7056,7 @@ class SugarBean
 	 */
 	public static function leaveOperation($opname, $flag = true)
 	{
-	    if (empty($flag) && empty(self::$opStatus[$opname])) {
+	    if (empty($flag) || empty(self::$opStatus[$opname])) {
 	        return false;
 	    }
 	    $GLOBALS['log']->info("Left operation status: $opname");

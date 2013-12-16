@@ -115,7 +115,7 @@ class EAPMController extends SugarController
 
             // To prevent the normal handler from issuing a header call and destroying our neat little javascript we'll
             // end right here.
-            sugar_die('');
+            sugar_cleanup(true);
         } else {
             return;
         }
