@@ -72,7 +72,7 @@ class FreeTDSManager extends MssqlManager
 	        'decimal_tpl' => 'decimal(%d, %d)',
     );
 
-    public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
+    public function query($sql, $dieOnError = false, $msg = '', $suppress = true, $keepResult = false)
     {
 		global $app_strings;
         if(is_array($sql)) {
@@ -95,5 +95,37 @@ class FreeTDSManager extends MssqlManager
     public function appendN($sql)
     {
         return $this->_appendN($sql);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function checkConnection()
+    {
+        $this->last_error = '';
+        if (!isset($this->database) || !is_resource($this->database)) {
+            $this->database = null;
+            $this->connect();
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function checkError($msg = '', $dieOnError = false)
+    {
+        $result = parent::checkError($msg, $dieOnError);
+        if ($result) {
+            $this->disconnect();
+        }
+        return $result;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getGuidSQL()
+    {
+        return 'convert(varchar(36), NEWID())';
     }
 }

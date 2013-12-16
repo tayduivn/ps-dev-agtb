@@ -296,8 +296,6 @@ class MssqlManager extends DBManager
 				$GLOBALS['log']->fatal($sqlmsg . ": " . $sql );
 				if($dieOnError)
 					sugar_die('SQL Error : ' . $sqlmsg);
-				else
-					echo 'SQL Error : ' . $sqlmsg;
 			}
         }
 
@@ -1013,7 +1011,9 @@ class MssqlManager extends DBManager
 	 */
 	public function fetchRow($result)
 	{
-		if (empty($result))	return false;
+        if (empty($result) || !is_resource($result)) {
+            return false;
+        }
 
         $row = mssql_fetch_assoc($result);
         //MSSQL returns a space " " when a varchar column is empty ("") and not null.
@@ -1463,6 +1463,10 @@ EOSQL;
             if ( stristr($row['TYPE_NAME'],'identity') ) {
                 $columns[$column_name]['auto_increment'] = '1';
                 $columns[$column_name]['type']=str_replace(' identity','',strtolower($row['TYPE_NAME']));
+            }
+            if (strtolower($row['TYPE_NAME']) == 'ntext') {
+                $columns[$column_name]['type'] = 'nvarchar';
+                $columns[$column_name]['len'] = 'max';
             }
 
             if (!empty($row['IS_NULLABLE']) && $row['IS_NULLABLE'] == 'NO' && (empty($row['KEY']) || !stristr($row['KEY'],'PRI')))

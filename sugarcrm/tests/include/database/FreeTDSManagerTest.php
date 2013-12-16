@@ -41,11 +41,18 @@ class FreeTDSManagerTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testAppendnAddsNCorrectly()
     {
-       $sql = $this->_db->appendN('SELECT name FROM accounts where name = ' . $this->_db->quoted('Test'));
-       $this->assertEquals($sql, 'SELECT name FROM accounts where name = N' . $this->_db->quoted('Test'), 'Assert N was added.');
+        $sql = $this->_db->appendN('SELECT name FROM accounts where name = ' . $this->_db->quoted('Test'));
+        $this->assertEquals(
+            'SELECT name FROM accounts where name = N' . $this->_db->quoted('Test'),
+            $sql,
+            'Assert N was added.'
+        );
         
-	   $sql = $this->_db->appendN('SELECT name FROM accounts where name = ' . $this->_db->quoted('O\'Rielly'));
-       $this->assertEquals($sql, 'SELECT name FROM accounts where name = N' . $this->_db->quoted('O\'Rielly'), 'Assert N was added.');
+        $sql = $this->_db->appendN('SELECT name FROM accounts where name = ' . $this->_db->quoted('O\'Rielly'));
+        $this->assertEquals(
+            'SELECT name FROM accounts where name = N' . $this->_db->quoted('O\'Rielly'),
+            $sql,
+            'Assert N was added.'
+        );
     }
-    
 }
