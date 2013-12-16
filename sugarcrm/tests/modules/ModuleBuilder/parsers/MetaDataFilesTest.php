@@ -41,6 +41,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->createdFiles = array();
+        $this->createdDirs = array();
         SugarTestHelper::setUp('app_list_strings');
     }
 
