@@ -536,9 +536,6 @@ FLEXLIST GENERIC */
           padding-left: 20px;
           max-width: 116px;
         }
-        &:nth-last-of-type(2) {
-          padding-right: 143px;
-        }
         &:last-child {
           width: 123px;
           min-width: 123px;
@@ -547,7 +544,10 @@ FLEXLIST GENERIC */
         }
       }
       .morecol .dropdown {
-        width: 140px;
+        width: 123px;
+        &.open {
+          width: 141px;
+        }
       }
     }
     /*convert lead dup check*/
@@ -558,51 +558,47 @@ FLEXLIST GENERIC */
           width: 43px;
           min-width: 43px;
         }
-        &:nth-child(2) {
-          padding-left: 67px;
-        }
-        &:nth-last-of-type(2) {
-          padding-right: 53px;
-        }
         &:last-child {
-          width: 29px;
-          min-width: 29px;
+          width: 28px;
+          min-width: 28px;
         }
       }
       .morecol .dropdown {
-        width: 45px;
+        width: 28px;
+        &.open {
+          width: 46px;
+        }
       }
     }
-    /*lead record view find duplicates*/
+    /*record view find duplicates*/
     &.duplicates-multiselect {
       thead > tr > th,
       tbody > tr > td {
         &:first-child {
-          width: 29px;
-          min-width: 29px;
-        }
-        &:nth-child(2) {
-          padding-left: 53px;
-        }
-        &:nth-last-of-type(2) {
-          padding-right: 53px;
+          width: 28px;
+          min-width: 28px;
         }
         &:last-child {
-          width: 29px;
-          min-width: 29px;
-        }
-        .morecol .dropdown {
-          width: 45px;
+          width: 28px;
+          min-width: 28px;
         }
       }
-      thead > tr > th:first-child {
-        //hack fix for messed up button group
-        .btn.checkall {
-          .border-radius(3px);
+      thead > tr > th {
+        &:first-child {
+          //hack fix for messed up button group
+          .btn.checkall {
+            .border-radius(3px);
+          }
+          .btn-group span,
+          .dropdown-menu {
+            display: none;
+          }
         }
-        .btn-group span,
-        .dropdown-menu {
-          display: none;
+      }
+      .morecol .dropdown {
+        width: 28px;
+        &.open {
+          width: 46px;
         }
       }
     }
@@ -789,6 +785,40 @@ FLEXLIST GENERIC */
       }
     }
 
+    /*create record dup check*/
+    &.scroll-width table.dataTable.duplicates-selectedit {
+      thead > tr > th,
+      tbody > tr > td {
+        &:nth-last-of-type(2) {
+          padding-right: 143px;
+        }
+      }
+    }
+    /*convert lead dup check*/
+    &.scroll-width table.dataTable.duplicates-singleselect {
+      thead > tr > th,
+      tbody > tr > td {
+        &:nth-child(2) {
+          padding-left: 67px;
+        }
+        &:nth-last-of-type(2) {
+          padding-right: 53px;
+        }
+      }
+    }
+    /*record view find duplicates*/
+    &.scroll-width table.dataTable.duplicates-multiselect {
+      thead > tr > th,
+      tbody > tr > td {
+        &:nth-child(2) {
+          padding-left: 53px;
+        }
+        &:nth-last-of-type(2) {
+          padding-right: 53px;
+        }
+      }
+    }
+
     /*forecast worksheets*/
     &.right-actions.scroll-width.forecast-manager-worksheet table.dataTable,
     &.right-actions.scroll-width.forecast-worksheet table.dataTable {
@@ -926,10 +956,11 @@ table.dataTable th:active {
     margin: 0;
   }
   .dropdown {
+    width: 55px;
     &.open {
       position: absolute;
       right: 0;
-      width: 72px;
+      width: 71px;
       .btn {
         .box-shadow(none);
         background-color: darken(@grayLighter, 5%);
