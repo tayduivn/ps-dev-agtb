@@ -5575,11 +5575,18 @@ function getRequiredDropdownListItemsByDDL($name) {
  */
 function get_js_version_key()
 {
-    return md5(
-        $GLOBALS['sugar_config']['unique_key']
-        . $GLOBALS['sugar_version']
-        . $GLOBALS['sugar_flavor']
-    );
+    $string = '';
+    if (isset($GLOBALS['sugar_config']['unique_key'])) {
+        $string .= $GLOBALS['sugar_config']['unique_key'];
+    }
+    if (isset($GLOBALS['sugar_version'])) {
+        $string .= $GLOBALS['sugar_version'];
+    }
+    if (isset($GLOBALS['sugar_flavor'])) {
+        $string .= $GLOBALS['sugar_flavor'];
+    }
+
+    return md5($string);
 }
 
 /**
