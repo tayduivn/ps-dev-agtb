@@ -62,8 +62,8 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         // Grab the new metadata for this module. For undeployed modules we
         // need to get the metadata from the SugarObject type.
         // If there are defs for this module, grab them
+        $this->defsfile = 'modules/' . $this->module . '/clients/' . $client . '/views/' . $viewname . '/' . $viewname . '.php';
         if (in_array($this->module, $GLOBALS['moduleList'])) {
-            $this->defsfile = 'modules/' . $this->module . '/clients/' . $client . '/views/' . $viewname . '/' . $viewname . '.php';
             if (file_exists($this->defsfile)) {
                 require $this->defsfile;
                 if (isset($viewdefs[$this->module][$client]['view'][$viewname])) {
