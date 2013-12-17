@@ -353,15 +353,17 @@ class SchedulersJobsTest extends Sugar_PHPUnit_Framework_TestCase
     public function testJobURL()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $this->assertFileExists('robots.txt');
         $job = $this->createJob(array("name" => "Test Url", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "url::".$GLOBALS['sugar_config']['site_url']."/"));
+            "target" => "url::".$GLOBALS['sugar_config']['site_url']."/robots.txt"));
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
         // Bad URL
+        $this->assertFileNotExists('blahblahblah.txt');
         $job = $this->createJob(array("name" => "Test Url 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "url::".$GLOBALS['sugar_config']['site_url']."/blahblahblah"));
+            "target" => "url::".$GLOBALS['sugar_config']['site_url']."/blahblahblah.txt"));
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
