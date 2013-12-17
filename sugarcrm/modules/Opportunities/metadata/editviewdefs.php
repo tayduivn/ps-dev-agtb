@@ -41,31 +41,37 @@ $viewdefs['Opportunities']['EditView'] = array(
       array('name'=>'name'),
       'account_name',
     ),
+    //BEGIN SUGARCRM flav!=ent ONLY
     array(
     	array('name'=>'currency_id','label'=>'LBL_CURRENCY'),
     	array('name'=>'date_closed'),
     ),
+    //END SUGARCRM flav!=ent ONLY
     array (
+    //BEGIN SUGARCRM flav!=ent ONLY
       array( 'name'=>'amount'),
+    //END SUGARCRM flav!=ent ONLY
       'opportunity_type',
+          //BEGIN SUGARCRM flav!=ent ONLY
     ),
-
-    //BEGIN SUGARCRM flav=pro ONLY
-    array(
-        'best_case',
-        'worst_case',
-    ),
-    //END SUGARCRM flav=pro ONLY
-
+      array(
+          'best_case',
+          'worst_case',
+      ),
     array (
       'sales_stage',
+        //END SUGARCRM flav!=ent ONLY
       'lead_source',
     ),
-    array (      
+    array (
+    //BEGIN SUGARCRM flav!=ent ONLY
 		'probability',
+    //END SUGARCRM flav!=ent ONLY
       	'campaign_name',
+    //BEGIN SUGARCRM flav!=ent ONLY
     ),
     array (
+    //END SUGARCRM flav!=ent ONLY
       	'next_step',
     ),
     array (
