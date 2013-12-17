@@ -74,7 +74,13 @@ class BeanVisibility
     public function addStrategy($strategy, $data = null)
     {
         $this->strategies[] = new $strategy($this->bean, $data);
-        $this->loadedStrategies[$strategy] = true;        
+        /*
+         *  because PHP will allow $strategy to be an object and instantiate a new version of 
+         *  itself in the above line we need to check if it is an object before we save it to the 
+         *  loadedStrategies array
+         */
+        $strategyName = is_object($strategy) ? get_class($strategy) : $strategy;
+        $this->loadedStrategies[$strategyName] = true;
     }
 
     /**
