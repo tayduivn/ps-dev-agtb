@@ -54,6 +54,18 @@ class Relationship extends SugarBean {
 	 */
 	public static $relCacheInternal = array();
 
+    /**
+     * This is a deprecated method, please start using __construct() as this
+     * method will be removed in a future version.
+     *
+     * @deprecated since 7.0.0. Use __construct() instead.
+     */
+    public function Relationship()
+    {
+        $GLOBALS['log']->deprecated('Calls to Relationship::Relationship() are deprecated.');
+        self::__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 	}
