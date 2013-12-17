@@ -170,7 +170,12 @@ class SugarQuery_Builder_Field
             $bean = BeanFactory::getBean($this->moduleName);
         }
         if (!empty($bean)) {
-            $def = $bean->field_defs[$this->field];
+            // Initialize def for now, in case $this->field isn't in field_defs
+            $def = array();
+            if (isset($bean->field_defs[$this->field])) {
+                $def = $bean->field_defs[$this->field];
+            }
+
             if ((isset($def['source']) && $def['source'] == 'custom_fields') || $this->field == 'id_c') {
                 $this->custom = true;
                 $this->custom_bean_table = $bean->get_custom_table_name();
