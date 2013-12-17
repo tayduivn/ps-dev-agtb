@@ -5149,34 +5149,18 @@ function order_beans($beans, $field_name)
 
 /**
  * Return search like string
+ *
  * This function takes a user input string and returns a string that contains wild card(s) that can be used in db query.
  * @param string $str  string to be searched
  * @param string $like_char  Database like character, usually '%'
  * @return string Returns a string to be searched in db query
+ * @deprecated as of 7.1.5 use DBManagerFactory::getInstance()->sqlLikeString()
  */
 function sql_like_string($str, $like_char, $wildcard = '%', $appendWildcard = true)
 {
-    // override default wildcard character
-    if (isset($GLOBALS['sugar_config']['search_wildcard_char']) &&
-        strlen($GLOBALS['sugar_config']['search_wildcard_char']) == 1) {
-        $wildcard = $GLOBALS['sugar_config']['search_wildcard_char'];
-    }
-
-    // add wildcard at the beginning of the search string
-    if(isset($GLOBALS['sugar_config']['search_wildcard_infront']) &&
-        $GLOBALS['sugar_config']['search_wildcard_infront'] == true) {
-        if(substr($str,0,1) <> $wildcard)
-            $str = $wildcard.$str;
-    }
-
-    // add wildcard at the end of search string (default)
-    if ($appendWildcard) {
-        if (substr($str,-1) <> $wildcard) {
-            $str .= $wildcard;
-        }
-    }
-
-    return str_replace($wildcard, $like_char, $str);
+    $GLOBALS['log']->deprecated('sql_like_string() is deprecated as of 7.1.5, use DBManager::getInstance()->sqlLikeString() instead');
+    $db = DBManagerFactory::getInstance();
+    return $db->sqlLikeString($str, $like_char);
 }
 
 /**

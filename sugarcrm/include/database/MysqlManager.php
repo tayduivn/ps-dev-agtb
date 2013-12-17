@@ -436,6 +436,20 @@ class MysqlManager extends DBManager
 		return false;
 	}
 
+    /**
+     * {@inheritdoc}
+     */
+    public static function sqlLikeString($str, $wildcard = "%", $appendWildcard = true)
+    {
+        $str = parent::sqlLikeString($str, $wildcard, $appendWildcard);
+
+        // We need to double any backslashes that may exist in $str, for a MySQL LIKE clause.
+        // See here: http://dev.mysql.com/doc/refman/5.6/en/string-comparison-functions.html
+        // Note: This replaces one backslash with two, not two with four ;)
+        $str = str_replace("\\", "\\\\", $str);
+        return $str;
+    }
+
 	/**
 	 * @see DBManager::quote()
 	 */

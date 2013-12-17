@@ -1111,7 +1111,8 @@ require_once('include/EditView/EditView2.php');
                                          }
 
                                          //field is not last name or this is not from global unified search, so do normal where clause
-                                         $where .=  $db_field . " like ".$this->seed->db->quoted(sql_like_string($field_value, $like_char));
+                                         $like_string = $this->seed->db->sqlLikeString($field_value, $like_char);
+                                         $where .=  $db_field . " like ".$this->seed->db->quoted($like_string);
                                      }
                                  }
                                  break;

@@ -2480,6 +2480,63 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('NULL', $return);
     }
 
+    public function searchStringProvider()
+    {
+        return array(
+            array(
+                'wildcard' => '%',
+                'inFront' => false,
+                'search' => 'test*test2',
+                'expected' => 'test*test2%'
+            ),
+            array(
+                'wildcard' => '*',
+                'inFront' => false,
+                'search' => 'test*test2',
+                'expected' => 'test%test2%'
+            ),
+            array(
+                'wildcard' => '%',
+                'inFront' => true,
+                'search' => 'test*test2',
+                'expected' => '%test*test2%'
+            ),
+            array(
+                'wildcard' => '*',
+                'inFront' => true,
+                'search' => 'test*test2',
+                'expected' => '%test%test2%'
+            ),
+            array(
+                'wildcard' => '',
+                'inFront' => true,
+                'search' => 'test*test2',
+                'expected' => '%test*test2%'
+            ),
+        );
+    }
 
+    /**
+     * Unit test for DBManager::sqlLikeString().
+     *
+     * @dataProvider searchStringProvider
+     * @param $wildcard string The sugar config wildcard character.
+     * @param $inFront bool The sugar config to prepend the search string with a wildcard.
+     * @param $search string The search query string.
+     * @param $expected string The expected return value upon calling DBManager::sqlLikeString().
+     */
+    public function testSqlLikeString($wildcard, $inFront, $search, $expected)
+    {
+        $defaultConfigWildcard = $GLOBALS['sugar_config']['search_wildcard_char'];
+        $defaultWildcardInFront = $GLOBALS['sugar_config']['search_wildcard_infront'];
 
+        $GLOBALS['sugar_config']['search_wildcard_char'] = $wildcard;
+        $GLOBALS['sugar_config']['search_wildcard_infront'] = $inFront;
+
+        $str = $this->_db->sqlLikeString($search);
+        $this->assertEquals($expected, $str);
+
+        $GLOBALS['sugar_config']['search_wildcard_char'] = $defaultConfigWildcard;
+        $GLOBALS['sugar_config']['search_wildcard_infront'] = $defaultWildcardInFront;
+    }
 }
