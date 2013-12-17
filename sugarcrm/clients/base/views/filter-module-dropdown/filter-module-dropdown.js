@@ -200,7 +200,7 @@
         var hiddenSubpanels = _.map(app.metadata.getHiddenSubpanels(), function(subpanel) { return subpanel.toLowerCase(); });
         var pruned = _.reduce(subpanels, function(obj, value, key) {
             var relatedModule = app.data.getRelatedModule(this.module, value);
-            if (!_.contains(hiddenSubpanels, relatedModule.toLowerCase())) {
+            if (relatedModule && !_.contains(hiddenSubpanels, relatedModule.toLowerCase())) {
                 obj[key] = value;
             }
             return obj;
