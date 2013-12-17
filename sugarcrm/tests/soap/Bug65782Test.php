@@ -81,7 +81,7 @@ class Bug65782Test extends SOAPTestCase
             'query'         => 'contacts.id=' . $GLOBALS['db']->quoted($this->contact->id),
             'order_by'      => '',
             'offset'        => 0,
-            'select_fields' => array(),
+            'select_fields' => array('id'),
             'max_results'   => 20,
             'deleted'       => -1,
         );
