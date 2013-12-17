@@ -29,18 +29,4 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'acl_module' => $moduleName,
         'icon' => 'icon-reorder',
     ),
-    array(
-        'route' => '#bwc/index.php?module=TeamNotices&action=EditView',
-        'label' => 'LNK_NEW_TEAM_NOTICE',
-        'acl_action' => 'create',
-        'acl_module' => 'TeamNotices',
-        'icon' => 'icon-plus',
-    ),
-    array(
-        'route' => '#bwc/index.php?module=TeamNotices&action=index',
-        'label' => 'LNK_LIST_TEAMNOTICE',
-        'acl_action' => '',
-        'acl_module' => '',
-        'icon' => 'icon-reorder',
-    ),
 );
