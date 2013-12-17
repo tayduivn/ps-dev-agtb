@@ -852,7 +852,7 @@
     },
     setDisabled: function() {
         var massUpdate = this.context.get('mass_collection');
-        if (massUpdate.length == 0) {
+        if (massUpdate.length == 0 || massUpdate.fetched === false) {
             this.$('.btn[name=update_button]').addClass('disabled');
         } else {
             this.$('.btn[name=update_button]').removeClass('disabled');

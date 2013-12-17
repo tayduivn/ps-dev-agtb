@@ -22,7 +22,7 @@
     },
     plugins: ['Tooltip'],
     fields: null, //action button fields
-    actionDropDownTag: ".dropdown-toggle",
+    actionDropDownTag: '[data-toggle=dropdown]',
     fieldTag: "input[name=check]",
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
@@ -171,6 +171,7 @@
             autoClose: false
         });
 
+        massCollection.fetched = false;
         massCollection.trigger('massupdate:estimate');
 
         app.api.call('read', url, null, {
@@ -198,6 +199,7 @@
         }
         massCollection.add(collection, {silent: true});
         massCollection.entire = false;
+        massCollection.fetched = true;
         massCollection.trigger('massupdate:estimate');
     },
 
@@ -337,6 +339,9 @@
                 caret += '<select data-toggle="dropdownmenu" class="hide dropdown-menu-select"></select>';
             }
             self.actionPlaceHolder = new Handlebars.SafeString(caret + actionMenu);
+
+            var massCollection = this.context.get('mass_collection');
+            massCollection.on('massupdate:estimate', this.onTotalEstimate, this);
         }
         return app.view.Field.prototype.getPlaceholder.call(this);
     },
@@ -379,6 +384,25 @@
             selectEl.html(html);
         }
     },
+
+    /**
+     * Update the dropdown usability while the total count is estimating.
+     */
+    onTotalEstimate: function() {
+        var collection = this.context.get('mass_collection');
+        this.setDropdownDisabled(!collection.fetched);
+    },
+
+    /**
+     * Disable the dropdown action.
+     *
+     * @param {Boolean} true or undefined to disable the edit mode
+     * otherwise, it will restore back to the previous mode.
+     */
+    setDropdownDisabled: function(disable) {
+        this.$(this.actionDropDownTag).toggleClass('disabled', disable);
+    },
+
     unbindData: function() {
         var collection = this.context.get('mass_collection');
         if (collection) {
