@@ -122,6 +122,11 @@
     intelligent: null,
 
     /**
+     * Flag indicates if a module is available for display.
+     */
+    moduleIsAvailable: true,
+
+    /**
      * {@inheritDoc}
      *
      * Append lastStateID on metadata in order to active user cache.
@@ -134,6 +139,7 @@
         });
         this.checkIntelligence();
         this._super('initialize', [options]);
+        this._noAccessTemplate = app.template.get(this.name + '.noaccess');
     },
 
     /**
@@ -215,10 +221,17 @@
             this.context.set('collection', this.collection);
         }
 
+        this.before('render', function() {
+            if (!this.moduleIsAvailable) {
+                this.$el.html(this._noAccessTemplate());
+                return false;
+            }
+        });
+
         // the pivot point for the various dashlet paths
         if (this.meta.config) {
             this._configureDashlet();
-        } else {
+        } else if (this.moduleIsAvailable) {
             this._displayDashlet();
         }
     },
@@ -278,20 +291,24 @@
      * Sets the default module when a module isn't defined in the dashlet's
      * view definition.
      *
-     * If the module was defined but it is not in the list of available
-     * modules, then the first available module will be used.
-     *
+     * If the module was defined but it is not in the list of available modules
+     * in config mode, then the view's module will be used.
      * @private
      */
     _setDefaultModule: function() {
         var availableModules = _.keys(this._getAvailableModules()),
-            definedModule = this.settings.get('module'),
-            module = definedModule || this.context.get('module');
-        if (!_.contains(availableModules, module)) {
-            module = _.first(availableModules);
-        }
-        if (definedModule !== module) {
+            module = this.settings.get('module') || this.context.get('module');
+
+        if (_.contains(availableModules, module)) {
             this.settings.set('module', module);
+        } else if (this.meta.config) {
+            module = this.context.parent.get('module');
+            if (_.contains(this.moduleBlacklist, module)) {
+                module = _.first(availableModules);
+            }
+            this.settings.set('module', module);
+        } else {
+            this.moduleIsAvailable = false;
         }
     },
 
@@ -398,7 +415,9 @@
     _getAvailableModules: function() {
         if (_.isEmpty(this._availableModules) || !_.isObject(this._availableModules)) {
             this._availableModules = {};
-            var allowedModules = _.difference(app.metadata.getModuleNames({filter: 'visible'}), this.moduleBlacklist);
+            var allowedModules = _.difference(
+                app.metadata.getModuleNames({filter: 'visible', access: 'read'}), this.moduleBlacklist
+            );
             _.each(allowedModules, function(module) {
                 var hasListView = !_.isEmpty(this.getFieldMetaForView(app.metadata.getView(module, 'list')));
                 if (hasListView) {
