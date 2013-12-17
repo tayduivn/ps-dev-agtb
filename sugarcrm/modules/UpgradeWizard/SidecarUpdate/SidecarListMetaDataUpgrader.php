@@ -20,6 +20,14 @@ require_once 'modules/ModuleBuilder/parsers/views/AbstractMetaDataParser.php';
 class SidecarListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
 {
     /**
+     * Should we delete pre-upgrade files?
+     * Not deleting listviews since we may need them for popups in subpanels driven by BWC module.
+     * See BR-1044
+     * @var bool
+     */
+    public $deleteOld = false;
+
+    /**
      * The actual legacy defs converter. For list it is simply taking the old
      * def array, looping over it, lowercasing the field names, adding that to
      * each iteration and saving that into a 'fields' array inside of the panels

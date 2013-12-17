@@ -45,7 +45,7 @@ chdir(dirname(__FILE__) . '/..');
 
 // this is needed so modules.php properly registers the modules globals, otherwise they
 // end up defined in wrong scope
-global $beanFiles, $beanList, $objectList, $moduleList, $modInvisList, $bwcModules;
+global $beanFiles, $beanList, $objectList, $moduleList, $modInvisList, $bwcModules, $sugar_version, $sugar_flavor;
 require_once 'include/entryPoint.php';
 require_once 'include/utils/layout_utils.php';
 
