@@ -7,6 +7,8 @@ describe('Base.Fields.Currency', function() {
     var metadata;
 
     beforeEach(function() {
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.set();
         moduleName = 'Opportunities';
         metadata = {
             fields: {
@@ -64,11 +66,6 @@ describe('Base.Fields.Currency', function() {
             return (model.isCopied === true);
         };
 
-        sinon.stub(app.metadata, 'getCurrency', function() {
-            return {
-                'conversion_rate': '0.900'
-            }
-        });
         sinon.stub(_, 'defer', function() {});
     });
 
@@ -79,10 +76,10 @@ describe('Base.Fields.Currency', function() {
         Handlebars.templates = {};
         model = null;
 
-        app.metadata.getCurrency.restore();
-
         moduleName = null;
         metadata = null;
+
+        SugarTest.testMetadata.dispose();
     });
 
     describe('EditView', function() {
@@ -164,7 +161,18 @@ describe('Base.Fields.Currency', function() {
         var field;
 
         beforeEach(function() {
+
+            sinon.stub(app.metadata, 'getCurrency', function() {
+                return {
+                    'conversion_rate': '0.900'
+                }
+            });
+
             app.user.setPreference('currency_id', 'abc123');
+        });
+
+        afterEach(function() {
+            app.metadata.getCurrency.restore();
         });
 
         it('should make new record default to user preferred currency if record not copied', function() {
@@ -457,11 +465,17 @@ describe('Base.Fields.Currency', function() {
             field.action = 'detail'
             sinon.stub(field, 'render', function() {});
             sinon.stub(field, 'setCurrencyValue', function() {});
+            sinon.stub(app.metadata, 'getCurrency', function() {
+                return {
+                    'conversion_rate': '0.900'
+                }
+            });
         });
 
         afterEach(function() {
             field.render.restore();
             field.setCurrencyValue.restore();
+            app.metadata.getCurrency.restore();
             field = null;
         });
 

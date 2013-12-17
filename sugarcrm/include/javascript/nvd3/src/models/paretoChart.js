@@ -16,10 +16,10 @@ nv.models.paretoChart = function() {
         reduceYTicks = false, // if false a tick will show for every data point
         rotateLabels = 0,
         yAxisTickFormat = function (d) {
-            return '$' + d3.format(',.2s')(d);
+            return d3.format(',.2s')(d);
         },
         quotaTickFormat = function (d) {
-            return '$' + d3.format(',.3s')(d);
+            return d3.format(',.3s')(d);
         },
         tooltip = null,
         tooltips = true,
@@ -32,7 +32,7 @@ nv.models.paretoChart = function() {
             return '<p><p>' + key + ': <b>' + y + '</b></p>';
         },
         tooltipQuota = function(key, x, y, e, graph) {
-            return '<p>' + e.key + ': <b>$' + y + '</b></p>';
+            return '<p>' + e.key + ': <b>' + y + '</b></p>';
         },
         noData = 'No Data Available.';
 

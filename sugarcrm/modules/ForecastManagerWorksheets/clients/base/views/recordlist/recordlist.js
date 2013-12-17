@@ -81,6 +81,7 @@
      * Default values for the blank rows
      */
     defaultValues: {
+        id: '',         // set id to empty so it fails the isNew() check as we don't want this to override the currency
         quota: 0,
         best_case: 0,
         best_case_adjusted: 0,
@@ -1026,6 +1027,9 @@
      */
     _worksheetSaveHelper: function(saveObj, ctx) {
         saveObj.model.set({
+            id: saveObj.model.get('id') || null,        // we have to set the id back to null if ID is not set
+                                                        // so when the xhr runs it knows it's a new model and will use
+                                                        // POST vs PUT
             current_user: saveObj.userId || this.selectedUser.id,
             timeperiod_id: saveObj.timeperiod || this.selectedTimeperiod,
             draft_save_type: this.draftSaveType
