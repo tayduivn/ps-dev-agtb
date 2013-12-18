@@ -169,6 +169,11 @@ abstract class ServiceBase {
         if (ob_get_level() > 0 && ob_get_length() > 0) {
             // Looks like something errored out first
             $errorOutput = ob_get_clean();
+            if(trim($errorOutput) == '') {
+                // whitespace only, we may let it slide on account of 6.x having broken templates with whitespace
+                // See BR-1038
+                return;
+            }
             $GLOBALS['log']->error("A PHP error occurred:\n".$errorOutput);
             $e = new SugarApiExceptionError();
             $e->errorLabel = $errorType;
