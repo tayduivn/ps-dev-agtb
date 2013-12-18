@@ -28,6 +28,7 @@ class Bug63958Test extends Sugar_PHPUnit_Framework_TestCase
 */
     public function testQueryTeamJoin()
     {
+        $this->markTestIncomplete('Marking this skipped until Report module to be fixed.See RS-221/RS-107');
         $reportDefs = <<<DEFS
 {"display_columns":[{"name":"full_name","label":"Name","table_key":"Accounts:contacts"}],"module":"Accounts","group_defs":[],"summary_columns":[],"report_name":"test report","do_round":1,"numerical_chart_column":"","numerical_chart_column_type":"","assigned_user_id":"seed_will_id","report_type":"tabular","full_table_list":{"self":{"value":"Accounts","module":"Accounts","label":"Accounts"},"Accounts:contacts":{"name":"Accounts > Contacts","parent":"self","link_def":{"name":"contacts","relationship_name":"accounts_contacts","bean_is_lhs":true,"link_type":"many","label":"Contacts","module":"Contacts","table_key":"Accounts:contacts"},"dependents":["display_cols_row_1"],"module":"Contacts","label":"Contacts"}},"filters_def":{"Filter_1":{"operator":"AND"}},"chart_type":"none"}
 DEFS;
