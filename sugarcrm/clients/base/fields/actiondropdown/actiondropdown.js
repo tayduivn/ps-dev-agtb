@@ -36,6 +36,8 @@
     extendsFrom: 'FieldsetField',
     fields: null,
     dropdownFields: null,
+    actionDropDownTag: '[data-toggle=dropdown]',
+    selectDropdownTag: '[data-toggle=dropdownmenu]',
     events: {
         'click [data-toggle=dropdown]' : 'renderDropdown',
         'change [data-toggle=dropdownmenu]' : 'dropdownSelected',
@@ -133,7 +135,7 @@
             caret = '<a track="click:actiondropdown" class="' + caretCss + '" data-toggle="dropdown" href="javascript:void(0);" data-placement="bottom" rel="tooltip" title="'+app.lang.get('LBL_LISTVIEW_ACTIONS')+'">' +
                 '<span class="' + caretIcon + '"></span>' +
                 '</a>',
-            dropdown = '<ul class="dropdown-menu">';
+            dropdown = '<ul data-menu="dropdown" class="dropdown-menu">';
         if (app.utils.isTouchDevice()) {
             caret += '<select data-toggle="dropdownmenu" class="hide dropdown-menu-select"></select>';
         }
@@ -216,7 +218,7 @@
             //Using document fragment to reduce calculating dom tree
             visibleEl = document.createDocumentFragment(),
             hiddenEl = document.createDocumentFragment(),
-            selectEl = this.$('.dropdown-menu-select'),
+            selectEl = this.$(this.selectDropdownTag),
             html = '<option></option>';
         _.each(this.fields, function(field, idx) {
             var cssClass = _.unique(field.def.css_class ? field.def.css_class.split(' ') : []),
@@ -265,18 +267,18 @@
         }, this);
 
         if (index <= 1) {
-            this.$('.dropdown-toggle').hide();
+            this.$(this.actionDropDownTag).hide();
             selectEl.addClass('hide');
             this.$el.removeClass('btn-group');
         } else {
-            this.$('.dropdown-toggle').show();
+            this.$(this.actionDropDownTag).show();
             selectEl.removeClass('hide');
             this.$el.addClass('btn-group');
         }
         //remove all previous built dropdown tree
-        this.$('.dropdown-menu').children('li').remove();
+        this.$('[data-menu=dropdown]').children('li').remove();
         //and then set the dropdown list with new button list set
-        this.$('.dropdown-menu').append(visibleEl);
+        this.$('[data-menu=dropdown]').append(visibleEl);
         this.$el.append(hiddenEl);
 
         if (app.utils.isTouchDevice()) {
@@ -294,9 +296,9 @@
         app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: 'setDisabled', args: [disable]});
         disable = _.isUndefined(disable) ? true : disable;
         if (disable) {
-            this.$('.dropdown-toggle').addClass('disabled');
+            this.$(this.actionDropDownTag).addClass('disabled');
         } else {
-            this.$('.dropdown-toggle').removeClass('disabled');
+            this.$(this.actionDropDownTag).removeClass('disabled');
         }
     },
 
