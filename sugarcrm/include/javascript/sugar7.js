@@ -386,24 +386,24 @@
             'records': 'TPL_BROWSER_SUGAR7_RECORDS_TITLE',
             'record': 'TPL_BROWSER_SUGAR7_RECORD_TITLE',
             'about': 'TPL_BROWSER_SUGAR7_ABOUT_TITLE'
-        },
-        getTitle = function(model) {
-            var context = app.controller.context,
-                module = context.get("module"),
-                template = Handlebars.compile(app.lang.get(titles[context.get("layout")], module) || ''),
-                moduleString = app.lang.getAppListStrings('moduleList');
-
-            //pass current translated module name and current page's model data
-            return template(_.extend({
-                module: moduleString[module],
-                appId: app.config.appId
-            }, model ? model.attributes : {}));
-        },
-        //set current document title with template format
-        setTitle = function(model) {
-            var title = getTitle(model);
-            document.title = title || document.title;
         };
+    var getTitle = function(model) {
+        var context = app.controller.context,
+            module = context.get('module'),
+            template = Handlebars.compile(app.lang.get(titles[context.get('layout')], module) || ''),
+            moduleString = app.lang.getAppListStrings('moduleList');
+
+        //pass current translated module name and current page's model data
+        return template(_.extend({
+            module: moduleString[module],
+            appId: app.config.appId
+        }, model ? model.attributes : {}));
+    };
+    //set current document title with template format
+    var setTitle = function(model) {
+        var title = getTitle(model);
+        document.title = title || document.title;
+    };
     //store previous view's model
     var prevModel;
 
