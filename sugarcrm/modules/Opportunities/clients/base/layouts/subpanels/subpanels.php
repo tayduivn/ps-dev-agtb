@@ -60,6 +60,7 @@ $viewdefs['Opportunities']['base']['layout']['subpanels'] = array(
         array(
             'layout' => 'subpanel-with-massupdate',
             'label' => 'LBL_RLI_SUBPANEL_TITLE',
+            'override_subpanel_list_view' => 'subpanel-for-opportunities',
             'context' => array(
                 'link' => 'revenuelineitems',
             ),
