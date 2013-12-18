@@ -18,13 +18,13 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
         $query->select($fields);
         $rc = new ReflectionObject($compiler);
 
-        $compileFrom = $rc->getMethod('compileFrom');
-        $compileFrom->setAccessible(true);
-        $compileFrom->invokeArgs($compiler, array($bean));
-
         $sugarQuery = $rc->getProperty('sugar_query');
         $sugarQuery->setAccessible(true);
         $sugarQuery->setValue($compiler, new SugarQuery());
+
+        $compileFrom = $rc->getMethod('compileFrom');
+        $compileFrom->setAccessible(true);
+        $compileFrom->invokeArgs($compiler, array($bean));
 
         $compileSelect = $rc->getMethod('compileSelect');
         $compileSelect->setAccessible(true);
