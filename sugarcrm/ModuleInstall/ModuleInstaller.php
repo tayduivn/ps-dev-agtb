@@ -209,10 +209,11 @@ class ModuleInstaller{
                 // Get the newest app_list_strings
                 $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
 
-                // Rebuild the metadata api cache for the base platform. This 
-                // will more than likely cause a rebuild lag on other clients
-                // but seems a reasonable trade off when deploying a new package.
-                MetaDataManager::refreshCache(array('base'), true);
+                // This is one of those processes that requires the metadata cache
+                // to be nuked entirely, primarily because vardefs cannot change
+                // reliably in memory. So wipe out the cache and let the next 
+                // request do the dirty work of rebuilding it.
+                MetaDataManager::clearAPICache();
 
 				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 		}else{
@@ -1631,6 +1632,12 @@ class ModuleInstaller{
 	            //clear the unified_search_module.php file
 	            require_once('modules/Home/UnifiedSearchAdvanced.php');
 	            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
+
+                // This is one of those processes that requires the metadata cache
+                // to be nuked entirely, primarily because vardefs cannot change
+                // reliably in memory. So wipe out the cache and let the next 
+                // request do the dirty work of rebuilding it.
+                MetaDataManager::clearAPICache();
 
 				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 				if(!$this->silent){
