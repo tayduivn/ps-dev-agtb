@@ -103,8 +103,13 @@ class ParserDropDown extends ModuleBuilderParser
                     }
                 }
             } else {
-                //Now synch up the keys in other langauges to ensure that removed/added Drop down values work properly under all langs.
-                $this->synchDropDown($dropdown_name, $dropdown, $selected_lang, $dir);
+                if (empty($params['skip_sync'])) {
+                    // Now synch up the keys in other languages to ensure that removed/added
+                    // Drop down values work properly under all langs.
+                    // If skip_sync, we don't want to sync ALL languages
+                    $this->synchDropDown($dropdown_name, $dropdown, $selected_lang, $dir);
+                }
+
                 $contents = $this->getNewCustomContents($dropdown_name, $dropdown, $selected_lang);
             }
             if (!empty($dir) && !is_dir($dir)) {
@@ -115,8 +120,8 @@ class ParserDropDown extends ModuleBuilderParser
         sugar_cache_reset();
         clearAllJsAndJsLangFilesWithoutOutput();
 
-        // Clear out the api metadata languages cache for all languages
-        MetaDataManager::refreshLanguagesCache(array_keys(get_languages()));
+        // Clear out the api metadata languages cache for selected language
+        MetaDataManager::refreshLanguagesCache($selected_lang);
     }
 
     /**
