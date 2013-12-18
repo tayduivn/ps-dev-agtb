@@ -104,10 +104,7 @@ class SugarQuery_Builder_Field
         // if its a linking table let it slide
         if (!empty($this->query->join[$this->table]->options['linkingTable'])){
             $this->nonDb = 0;
-            return;
-        }
-
-        if (empty($this->def) && $this->field != '*') {
+        } elseif (empty($this->def) && $this->field != '*') {
             $this->nonDb = 1;
             return;
         }
