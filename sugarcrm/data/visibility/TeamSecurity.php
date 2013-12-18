@@ -53,7 +53,7 @@ class TeamSecurity extends SugarVisibility
             } else {
                 $table_alias = $this->bean->table_name;
             }
-
+            $team_table_alias = DBManagerFactory::getInstance()->getValidDBName($team_table_alias, 'alias');
             if ((empty($current_user) || !$current_user->isAdminForModule($this->module_dir)) && $this->module_dir != 'WorkFlow') {
                 if($this->getOption('as_condition')) {
                     $query .= " AND {$table_alias}.team_set_id IN (select tst.team_set_id from team_sets_teams tst

@@ -734,7 +734,12 @@ class FilterApi extends SugarApi
     {
         global $current_user;
         $fromAlias = $q->getFromAlias();
-        $q->joinRaw("JOIN subscriptions AS subs ON subs.deleted = 0 AND subs.parent_type = '{$q->getFromBean()->module_dir}' AND subs.created_by = '{$current_user->id}'", array('alias' => 'subs'));
+        $q->joinRaw(
+            "JOIN subscriptions subs ON subs.deleted = 0
+                AND subs.parent_type = '{$q->getFromBean()->module_dir}'
+                AND subs.created_by = '{$current_user->id}'",
+            array('alias' => 'subs')
+        );
         $q->where()->addRaw("subs.parent_id = {$fromAlias}.id");
     }
 
