@@ -38,7 +38,7 @@ class ExtAPIGoToMeeting extends OAuthPluginBase implements WebMeeting
     protected $url = 'https://api.citrixonline.com/';
 
     public $supportedModules = array('Meetings');
-    public $supportMeetingPassword = true;
+    public $supportMeetingPassword = false;
     public $authMethod = 'oauth';
     public $connector = "ext_eapm_gotomeeting";
 
@@ -190,6 +190,8 @@ class ExtAPIGoToMeeting extends OAuthPluginBase implements WebMeeting
                     $bean->join_url = $response['joinURL'];
                     $bean->external_id = $response['meetingid'] . '-' . $response['uniqueMeetingId'];
                     $bean->host_url = $this->getHostMeetingLink($response['meetingid']);
+                    //Allow host URL to use parent frame's protocol so that we aren't trying to embed an HTTP iframe in an HTTPS page
+                    $bean->host_url = preg_replace('/http[s]?:/', '', $bean->host_url);
                     $bean->creator = $this->account_name;
 
                     return array('success' => true);

@@ -362,8 +362,8 @@ class ModuleInstaller{
 	 */
 	public function installExt($section, $extname, $module = '')
 	{
-        if(isset($this->installdefs[$section])){
-			$this->log(sprintf(translate("LBL_MI_IN_EXT"), $section));
+        if(isset($this->installdefs[$section])) {
+            $this->log(sprintf(translate("LBL_MI_IN_EXT"), $section));
 			foreach($this->installdefs[$section] as $item){
 			    if(isset($item['from'])) {
 				    $from = str_replace('<basepath>', $this->base_dir, $item['from']);
@@ -378,12 +378,15 @@ class ModuleInstaller{
                     continue;
                 }
 				$GLOBALS['log']->debug("Installing section $section from $from for " .$item['to_module'] );
-                if($item['to_module'] == 'application') {
+                if (stristr($extname, '__PH_SUBTYPE__')) {
+                    $path = $this->getClientExtPath($item['to_module'], $from);
+                }
+                elseif($item['to_module'] == 'application') {
                     $path = "custom/Extension/application/Ext/$extname";
                 } else {
 				    $path = "custom/Extension/modules/{$item['to_module']}/Ext/$extname";
                 }
-				if(!file_exists($path)){
+                if(!file_exists($path)){
 					mkdir_recursive($path, true);
 				}
 				if(isset($item["name"])) {
@@ -399,6 +402,29 @@ class ModuleInstaller{
 			}
 		}
 	}
+
+    /**
+     * Used to copy over extension files for the clients directory. We have to assume that the structure in the zip
+     * matches the structure of the desination location.
+     *
+     * Ex: SugarModules/clients/base/views/viewname/my_viewname_extension.php
+     *
+     * @param String $module module we are copying into
+     * @param String $from Path of file we are copying
+     *
+     * @return string
+     */
+    public function getClientExtPath($module, $from)
+    {
+        $path = "custom/Extension/modules/{$module}/Ext/";
+        if ($module == 'application') {
+            $path = "custom/Extension/application/Ext/";
+        }
+
+        $start = strpos($from, "/clients/");
+        $path .= substr($from, $start + 1);
+        return dirname($path);
+    }
 
 	/**
 	 * Uninstall file(s) into Ext/ part
@@ -420,10 +446,12 @@ class ModuleInstaller{
 				    $item['to_module'] = $module;
 				}
 				$GLOBALS['log']->debug("Uninstalling section $section from $from for " .$item['to_module'] );
-                if($item['to_module'] == 'application') {
+                if (stristr($extname, '__PH_SUBTYPE__')) {
+                    $path = $this->getClientExtPath($item['to_module'], $from);
+                }elseif($item['to_module'] == 'application') {
                     $path = "custom/Extension/application/Ext/$extname";
                 } else {
-				    $path = "custom/Extension/modules/{$item['to_module']}/Ext/$extname";
+                    $path = "custom/Extension/modules/{$item['to_module']}/Ext/$extname";
                 }
 				if(isset($item["name"])) {
 				    $target = $item["name"];

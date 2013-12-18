@@ -42,22 +42,6 @@ class SugarWidgetSubPanelTopButtonQuickCreate extends SugarWidgetSubPanelTopButt
 		global $app_strings;
 		global $currentModule;
 
-		// Create the additional form fields with real values if they were not passed in
-		if(empty($additionalFormFields) && $this->additional_form_fields)
-		{
-			foreach($this->additional_form_fields as $key=>$value)
-			{
-				if(!empty($defines['focus']->$value))
-				{
-					$additionalFormFields[$key] = $defines['focus']->$value;
-				}
-				else
-				{
-					$additionalFormFields[$key] = '';
-				}
-			}
-		}
-
 		if(!empty($this->module))
 		{
 			$defines['child_module_name'] = $this->module;
@@ -68,6 +52,29 @@ class SugarWidgetSubPanelTopButtonQuickCreate extends SugarWidgetSubPanelTopButt
 		}
 
 		$defines['parent_bean_name'] = get_class( $defines['focus']);
+
+        //SP-1630: Clicking Create from BWC subpanels for sidecar should open sidecar create view
+        // Doing this early so as not to spend cycles on code that will go unused
+        $sidecarButton = $this->_get_form_sidecar($defines);
+        if ($sidecarButton) {
+            return $sidecarButton;
+        }
+
+        // Create the additional form fields with real values if they were not passed in
+        if(empty($additionalFormFields) && $this->additional_form_fields)
+        {
+            foreach($this->additional_form_fields as $key=>$value)
+            {
+                if(!empty($defines['focus']->$value))
+                {
+                    $additionalFormFields[$key] = $defines['focus']->$value;
+                }
+                else
+                {
+                    $additionalFormFields[$key] = '';
+                }
+            }
+        }
 
 		$relationship_name = $this->get_subpanel_relationship_name($defines);
 
@@ -163,12 +170,6 @@ class SugarWidgetSubPanelTopButtonQuickCreate extends SugarWidgetSubPanelTopButt
 				$button .= '<input type="hidden" name="' . $key . '" value=\'' . $value . '\' />' . "\n";
 			}
 		}
-
-        //SP-1630: Clicking Create from BWC subpanels for sidecar should open sidecar create view
-        $sidecarButton = $this->_get_form_sidecar($defines);
-        if ($sidecarButton) {
-            return $sidecarButton;
-        }
 
 		return $button;
 	}

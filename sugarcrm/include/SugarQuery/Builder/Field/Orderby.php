@@ -35,7 +35,13 @@ class SugarQuery_Builder_Field_Orderby extends SugarQuery_Builder_Field
             // this is a compound field
             $this->def['sort_on'] = !is_array($this->def['sort_on']) ? array($this->def['sort_on']) : $this->def['sort_on'];
             foreach ($this->def['sort_on'] as $field) {
-                $this->query->orderBy("{$this->table}.{$field}", $this->direction);
+                $table = $this->table;
+                //Custom fields may use standard or custom fields for sort on.
+                //Let that SugarQuery_Builder_Field figure out if it's custom or not.
+                if (!empty($this->custom) && !empty($this->standardTable)) {
+                    $table = $this->standardTable;
+                }
+                $this->query->orderBy("{$table}.{$field}", $this->direction);
             }
             $this->markNonDb();
         }

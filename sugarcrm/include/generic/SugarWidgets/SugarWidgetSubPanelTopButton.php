@@ -42,6 +42,13 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
     public $additional_form_fields;
     public $acl;
     public $enableActionMenu;
+    
+    /**
+     * Flag that determines if the requested subpanel should open a sidecar quick
+     * create form or a BWC one. This is set in {@see _get_form_sidecar()}.
+     * @var boolean
+     */
+    public $sidecar;
 
 //TODO rename defines to layout defs and make it a member variable instead of passing it multiple layers with extra copying.
 
@@ -176,6 +183,8 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
                     " class='create_from_bwc_to_sidecar' id=\"$id\" value=\"$label\">";
             }
 
+            // Set the sidecar flag so that calling codes knows what to do
+            $this->sidecar = true;
             return $button;
         }
         return false;
@@ -325,6 +334,12 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
 
             return $returnLink;
         } else {
+            //SP-1630: Clicking Create from BWC subpanels for sidecar should open sidecar create view
+            $sidecarButton = $this->_get_form_sidecar($defines);
+            if ($sidecarButton) {
+                return $sidecarButton;
+            }
+
             $form = 'form' . $relationship_name;
             $button = '<form action="index.php" method="post" name="form" id="' . $form . "\">\n";
 
@@ -337,12 +352,6 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
                 if($key != 'action') {
                     $button .= "<input type='hidden' name='" . $key . "' value='" . $value . "' />\n";
                 }
-            }
-
-            //SP-1630: Clicking Create from BWC subpanels for sidecar should open sidecar create view
-            $sidecarButton = $this->_get_form_sidecar($defines);
-            if ($sidecarButton) {
-                return $sidecarButton;
             }
 
             return $button;
@@ -374,9 +383,10 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
             $megaLink = $this->_get_form($defines, $additionalFormFields,true);
             $button = "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='$this->form_value' onclick='javascript:document.location=\"index.php?".$megaLink."\"; return false;'/>";
         } else {
-            $sidecar = null;
-            $button = $this->_get_form($defines, $additionalFormFields, $sidecar);
-            if ($sidecar != true && $this->enableActionMenu) {
+            $button = $this->_get_form($defines, $additionalFormFields);
+
+            // $this->sidecar is set in _get_form_sidecar()
+            if ($this->sidecar !== true && $this->enableActionMenu) {
                 $button .= "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='$this->form_value' />\n";
             }
             $button .= "</form>";

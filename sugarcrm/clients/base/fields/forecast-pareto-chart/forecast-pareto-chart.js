@@ -106,12 +106,12 @@
             .tooltips(true)
             .tooltipQuota(function(key, x, y, e, graph) {
                 // Format the value using currency class and user settings
-                var val = app.currency.formatAmountLocale(e.val);
+                var val = app.currency.formatAmountLocale(e.val, app.currency.getBaseCurrencyId());
                 return '<p><b>' + e.key + ': <b>' + val + '</b></p>';
             })
             .tooltipLine(function(key, x, y, e, graph) {
                 // Format the value using currency class and user settings
-                var val = app.currency.formatAmountLocale(e.point.y);
+                var val = app.currency.formatAmountLocale(e.point.y, app.currency.getBaseCurrencyId());
                 return '<p><b>' + app.lang.get('LBL_CUMMULATIVE_TOTAL', 'Forecasts') + '</b></p><p>' + key + ': <b>' + val + '</b></p>';
             })
             .tooltipBar(_.bind(function(key, x, y, e, graph) {
@@ -129,17 +129,13 @@
             .showControls(false)
             .colorData('default')
             .colorFill('default')
+            .yAxisTickFormat(function(d) {
+                return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + d3.format(',.2s')(d)
+            })
+            .quotaTickFormat(function(d) {
+                return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + d3.format(',.3s')(d)
+            })
             .id(this.chartId);
-
-        this.paretoChart.yAxis.tickFormat(function(d) {
-            var val = app.user.getPreference('currency_symbol') + d3.format(',.2s')(d);
-            return val;
-        });
-
-        this.paretoChart.quotaTickFormat(function(d) {
-            var val = app.user.getPreference('currency_symbol') + d3.format(',.3s')(d);
-            return val;
-        });
 
         // just on the off chance that no options param is passed in
         options = options || {};

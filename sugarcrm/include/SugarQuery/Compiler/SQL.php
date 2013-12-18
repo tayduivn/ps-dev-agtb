@@ -289,6 +289,7 @@ class SugarQuery_Compiler_SQL
      */
     protected function compileFrom($bean)
     {
+        $alias = "";
         $return = array();
         if (is_array($bean)) {
             list($bean, $alias) = $bean;
@@ -303,19 +304,8 @@ class SugarQuery_Compiler_SQL
             $from_clause .= " {$alias}";
         }
 
-        if ($bean->hasCustomFields()) {
-            $table_cstm = $bean->get_custom_table_name();
-            if (!empty($table_cstm)) {
-                // TODO: CLEAN THIS UP
-                if (!empty($alias)) {
-                    $sql = "LEFT JOIN {$table_cstm} {$alias}_c ON {$alias}_c.id_c = {$alias}.id";
-                } else {
-                    $sql = "LEFT JOIN {$table_cstm} ON {$table_cstm}.id_c = {$table}.id";
-                }
-                // can do a join here because we haven't got to the joins yet in the compile sequence.
-                $this->sugar_query->joinRaw($sql);
-            }
-        }
+        //SugarQuery will determine if we actually need to add the table or not.
+        $this->sugar_query->joinCustomTable($bean, $alias);
 
         if (!empty($this->from_alias)) {
             $this->primary_table = $this->from_alias;

@@ -35,29 +35,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class SugarWidgetSubPanelTopCreateNoteButton extends SugarWidgetSubPanelTopButtonQuickCreate
 {
-	function &_get_form($defines, $additionalFormFields = null, &$sidecar)
+	function &_get_form($defines, $additionalFormFields = null)
 	{
 		global $app_strings;
 		global $currentModule;
 
 		$this->module="Notes";
 		$this->subpanelDiv = "history";
-
-		// Create the additional form fields with real values if they were not passed in
-		if(empty($additionalFormFields) && $this->additional_form_fields)
-		{
-			foreach($this->additional_form_fields as $key=>$value)
-			{
-				if(!empty($defines['focus']->$value))
-				{
-					$additionalFormFields[$key] = $defines['focus']->$value;
-				}
-				else
-				{
-					$additionalFormFields[$key] = '';
-				}
-			}
-		}
 
 		if(!empty($this->module))
 		{
@@ -74,6 +58,28 @@ class SugarWidgetSubPanelTopCreateNoteButton extends SugarWidgetSubPanelTopButto
 		}
 
 		$defines['parent_bean_name'] = get_class( $defines['focus']);
+
+        //SP-1630: Clicking Create from BWC subpanels for sidecar should open sidecar create view
+        $sidecarButton = $this->_get_form_sidecar($defines);
+        if ($sidecarButton) {
+            return $sidecarButton;
+        }
+
+		// Create the additional form fields with real values if they were not passed in
+		if(empty($additionalFormFields) && $this->additional_form_fields)
+		{
+			foreach($this->additional_form_fields as $key=>$value)
+			{
+				if(!empty($defines['focus']->$value))
+				{
+					$additionalFormFields[$key] = $defines['focus']->$value;
+				}
+				else
+				{
+					$additionalFormFields[$key] = '';
+				}
+			}
+		}
 
 		$form = 'form' . $defines['child_module_name'];
 		$button = '<form onsubmit="return SUGAR.subpanelUtils.sendAndRetrieve(this.id, \'subpanel_' . strtolower($defines['subpanelDiv']) . '\', \'' . addslashes($app_strings['LBL_LOADING']) . '\');" action="index.php" method="post" name="form" id="form' . $form . "\">\n";
@@ -138,13 +144,6 @@ class SugarWidgetSubPanelTopCreateNoteButton extends SugarWidgetSubPanelTopButto
 			}
 		}
 
-        //SP-1630: Clicking Create from BWC subpanels for sidecar should open sidecar create view
-        $sidecarButton = $this->_get_form_sidecar($defines);
-        if ($sidecarButton) {
-            $sidecar = true;
-            return $sidecarButton;
-        }
-        $sidecar = false;
 		return $button;
 	}
 

@@ -183,7 +183,7 @@
   //action buttons
 
   .btn-toolbar {
-    padding: 15px 10px 0 0;
+    padding: 15px 8px 0 0;
     margin: 0;
     white-space: nowrap;
     display: table-cell;
@@ -193,20 +193,17 @@
         display: none;
       }
     }
-  }
-
-  .btn-group-previous-next {
-    padding-right: 8px;
-    padding-left: 0;
-    .btn {
-      [class^="icon-"] {
-        font-size: @baseFontSize;
+    .btn-group-previous-next {
+      padding-left: 0;
+      .btn {
+        [class^="icon-"] {
+          font-size: @baseFontSize;
+        }
       }
     }
   }
 
   .btn-link.drawerTrig {
-    margin: 0 0 0 8px;
     color: @grayLight;
     &:hover {
       text-decoration: none;
@@ -223,14 +220,15 @@
       left: 0;
       top: 0;
     }
-    [class*="icon-"]{
-      line-height: 16px;
+    [class^="icon-"]{
       font-size: @fontSizeHeader;
-      vertical-align: top;
       font-weight: 500;
     }
+    .icon-double-angle-right {
+      margin: 0 -1px 0 1px;
+    }
     .icon-double-angle-left {
-      margin: 0 2px 0 -2px;
+      margin: 0 1px 0 -1px;
     }
   }
 }

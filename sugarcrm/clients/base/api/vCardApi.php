@@ -1,5 +1,7 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -17,12 +19,14 @@ require_once('include/vCard.php');
 /*
  * vCard API implementation
  */
-class vCardApi extends SugarApi {
+class vCardApi extends SugarApi
+{
 
     /**
      * This function registers the vCard api
      */
-    public function registerApiRest() {
+    public function registerApiRest()
+    {
         return array(
             'vCardSave' => array(
                 'reqType' => 'GET',
@@ -30,13 +34,14 @@ class vCardApi extends SugarApi {
                 'pathVars' => array(''),
                 'method' => 'vCardSave',
                 'rawReply' => true,
+                'allowDownloadCookie' => true,
                 'shortHelp' => 'An API to download a contact as a vCard.',
                 'longHelp' => 'include/api/help/vcarddownload_get_help.html',
             ),
             'vCardDownload' => array(
                 'reqType' => 'GET',
-                'path' => array('<module>','?', 'vcard'),
-                'pathVars' => array('module','record', ''),
+                'path' => array('<module>', '?', 'vcard'),
+                'pathVars' => array('module', 'record', ''),
                 'method' => 'vCardDownload',
                 'rawReply' => true,
                 'allowDownloadCookie' => true,
@@ -57,13 +62,15 @@ class vCardApi extends SugarApi {
 
     /**
      * vCardSave
+     *
      * @param $api  ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
      * @param $args array The arguments array passed in from the API
+     *
      * @return String
      */
     public function vCardSave($api, $args)
     {
-        $this->requireArgs($args, array('id','module'));
+        $this->requireArgs($args, array('id', 'module'));
         $args['record'] = $args['id'];
 
         return $this->getVcardForRecord($api, $args);
@@ -79,15 +86,17 @@ class vCardApi extends SugarApi {
      */
     public function vCardDownload($api, $args)
     {
-        $this->requireArgs($args, array('record','module'));
+        $this->requireArgs($args, array('record', 'module'));
 
         return $this->getVcardForRecord($api, $args);
     }
 
     /**
      * vCardImport
+     *
      * @param $api  ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
      * @param $args array The arguments array passed in from the API
+     *
      * @return String
      */
     public function vCardImport($api, $args)
@@ -115,6 +124,7 @@ class vCardApi extends SugarApi {
                 }
 
                 $results = array($first_key => $recordId);
+
                 return $results;
             }
         } else {
@@ -124,7 +134,9 @@ class vCardApi extends SugarApi {
 
     /**
      * This function is a wrapper for checking if the file was uploaded so that the php built in function can be mocked
+     *
      * @param string FileName
+     *
      * @return boolean
      */
     protected function isUploadedFile($fileName)

@@ -146,6 +146,18 @@ class Contact extends Person {
         'contacts_users_id' => 'user_sync',
     );
 
+    /**
+     * This is a deprecated method, please start using __construct() as this
+     * method will be removed in a future version.
+     *
+     * @deprecated since 7.0.0. Use __construct() instead.
+     */
+    public function Contact()
+    {
+        $GLOBALS['log']->deprecated('Calls to Contact::Contact() are deprecated.');
+        self::__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 	}
@@ -443,7 +455,7 @@ class Contact extends Person {
 
 		if($filter_fields && !empty($filter_fields['sync_contact'])){
 			$this->load_relationship('user_sync');
-			$temp_array['SYNC_CONTACT'] = $this->user_sync->_relationship->relationship_exists($this, $GLOBALS['current_user']->id) ? 1 : 0;
+			$temp_array['SYNC_CONTACT'] = $this->user_sync->_relationship->relationship_exists($this, $GLOBALS['current_user']) ? 1 : 0;
 		}
 
 		return $temp_array;

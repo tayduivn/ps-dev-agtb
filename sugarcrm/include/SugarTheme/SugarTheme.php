@@ -1130,7 +1130,7 @@ class SugarThemeRegistry
         )
     {
         // make sure the we know the sugar version
-        global $sugar_version;
+        global $sugar_version, $sugar_db_version, $sugar_flavor, $sugar_build, $sugar_timestamp;
         if (empty($sugar_version))
         {
             include('sugar_version.php');

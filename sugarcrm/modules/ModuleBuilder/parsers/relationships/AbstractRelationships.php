@@ -48,13 +48,13 @@ class AbstractRelationships
         'Labels' => 'language',
         'RelationshipMetaData' => 'relationships',
         'SubpanelDefinitions' => 'layoutdefs',
-        'SidecarSubpanelDefinitions' => 'sidecarsubpanelbaselayout',
+        'SidecarSubpanelDefinitions' => 'sidecar',
         'Vardefs' => 'vardefs',
         'FieldsToLayouts' => 'layoutfields',
         'ClientFiles' => 'clientfiles',
         //BEGIN SUGARCRM flav=pro ONLY
         'WirelessSubpanelDefinitions' => 'wireless_subpanels',
-        'SidecarMobileSubpanelDefinitions' => 'sidecarsubpanelmobilelayout',
+        'SidecarMobileSubpanelDefinitions' => 'sidecar',
         //END SUGARCRM flav=pro ONLY
     );
     static $activities = array ( 'calls' => 'Calls' , 'meetings' => 'Meetings' , 'notes' => 'Notes' , 'tasks' => 'Tasks' , 'emails' => 'Emails' ) ;

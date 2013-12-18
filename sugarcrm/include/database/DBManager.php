@@ -77,7 +77,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 *
 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
 * All Rights Reserved.
-* Contributor(s): ______________________________________..
 ********************************************************************************/
 
 /**
@@ -966,7 +965,7 @@ protected function checkQuery($sql, $object_name = false)
             //Should match the conditions in DBManager::oneColumnSQLRep for DB required fields, type='id' fields will sometimes
             //come into this function as 'type' = 'char', 'dbType' = 'id' without required set in $value. Assume they are correct and leave them alone.
             else if (($name == 'id' || $value['type'] == 'id' || (isset($value['dbType']) && $value['dbType'] == 'id'))
-                && (!isset($value['required']) && isset($compareFieldDefs[$name]['required'])))
+                && (!isset($value['required']) && isset($compareFieldDefs[$name]['required'])) || (!empty($value['auto_increment']) && isset($compareFieldDefs[$name]['required'])))
             {
                 $value['required'] = $compareFieldDefs[$name]['required'];
             }
@@ -1682,6 +1681,45 @@ protected function checkQuery($sql, $object_name = false)
 		return self::$queryCount;
 	}
 
+    /**
+     * This function takes a user input string and returns a string that contains wild card(s)
+     * that can be used in the db query.
+     *
+     * @param string $str String to be searched.
+     * @param string $wildcard (optional) Wildcard character, defaults to '%'.
+     * @param bool $appendWildcard (optional) Appends the wildcard to the end of $str,
+     *   defaults to true.
+     * @return string Returns a string to be searched in db query.
+     */
+    public static function sqlLikeString($str, $wildcard = '%', $appendWildcard = true)
+    {
+        // If we have a valid wildcard character in config, use it, or use $wildcard by default.
+        // The config wildcard exists because there may be a case where a Sugar user would want
+        // to use a non-standard character (e.g. '@') as a wildcard character for search.
+        if (!empty($GLOBALS['sugar_config']['search_wildcard_char']) &&
+            is_string($GLOBALS['sugar_config']['search_wildcard_char']) &&
+            strlen($GLOBALS['sugar_config']['search_wildcard_char']) === 1
+        ) {
+            $likeChar = $GLOBALS['sugar_config']['search_wildcard_char'];
+        } else {
+            $likeChar = $wildcard;
+        }
+
+        // Add wildcard at the beginning of the search string.
+        if (!empty($GLOBALS['sugar_config']['search_wildcard_infront']) &&
+            substr(ltrim($str), 0, 1) !== $wildcard) {
+            $str = $likeChar . $str;
+        }
+
+        // Add wildcard at the end of search string (default).
+        if ($appendWildcard && substr(rtrim($str), -1) !== $wildcard) {
+            $str .= $likeChar;
+        }
+
+        // Replace all instances of $likeChar with $wildcard.
+        $str = str_replace($likeChar, $wildcard, $str);
+        return $str;
+    }
 
 	/**
 	 * Resets the queryCount value to 0
@@ -1694,7 +1732,7 @@ protected function checkQuery($sql, $object_name = false)
 
 	/**
 	 * This function increments the global $sql_queries variable
-	 * 
+	 *
 	 * @param string $sql The query that was just run
 	 */
 	public function countQuery($sql = '')

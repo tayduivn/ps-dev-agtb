@@ -58,7 +58,7 @@
     setViewContent: function(){
         var value = this.value || this.def.default_value;
         var field = this._getFieldElement();
-        if(field && !_.isEmpty(field.get(0).contentDocument)) {
+        if(field && field.get(0) && !_.isEmpty(field.get(0).contentDocument)) {
             if(field.contents().find('body').length > 0){
                 field.contents().find('body').html(value);
             }

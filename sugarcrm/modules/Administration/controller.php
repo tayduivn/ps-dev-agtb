@@ -258,9 +258,9 @@ class AdministrationController extends SugarController
                  $this->cfg->handleOverride();
              }
 
-             // Refresh the server info section of the metadata
-             MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_SERVERINFO));
-             
+             // Refresh the server info & module list sections of the metadata
+             MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_SERVERINFO, MetaDataManager::MM_MODULES));
+
              if(!$ftsConnectionValid)
                  echo $GLOBALS['mod_strings']['LBL_FTS_CONNECTION_INVALID'];
              else

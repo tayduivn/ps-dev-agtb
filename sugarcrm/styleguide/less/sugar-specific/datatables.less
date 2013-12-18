@@ -10,7 +10,6 @@ table.dataTable {
   th {
     line-height: 26px;
     min-width: 20px;
-    //max-width: 100px;
     font-weight: normal;
     font-size: @fontSizeSmall;
     color: @tableHeader;
@@ -43,7 +42,7 @@ table.dataTable {
       position: relative;
       top: -1px;
     }
-    .toggle-all {
+    input[type=checkbox].toggle-all {
       margin: 0;
     }
     &.nosort.select-all {
@@ -404,8 +403,10 @@ table.dataTable {
     }
   }
   .icon-favorite {
-    margin-left: 14px;
     vertical-align: middle;
+  }
+  .list + .list .icon-favorite {
+    margin-left: 13px;
   }
   //nutmeg ?legacy?
   .icon-star {
@@ -443,7 +444,7 @@ FLEXLIST GENERIC */
     & > thead > tr > th {
       &:first-child {
         height: 28px;
-        padding: 7px 8px;
+        padding: 7px 8px 7px 10px;
         background: @white;
         vertical-align: top;
         line-height: 18px;
@@ -453,7 +454,7 @@ FLEXLIST GENERIC */
         .btn-group {
           position: absolute;
           margin-top: -9px;
-          left: 8px;
+          left: 9px;
         }
         .btn.checkall {
           padding: 4px 7px;
@@ -462,7 +463,7 @@ FLEXLIST GENERIC */
     }
     & > tbody > tr > td {
       &:first-child {
-        padding: 6px 8px;
+        padding: 6px 9px;
         height: 22px;
         margin: 2px 0;
         z-index: 10;
@@ -535,9 +536,6 @@ FLEXLIST GENERIC */
           padding-left: 20px;
           max-width: 116px;
         }
-        &:nth-last-of-type(2) {
-          padding-right: 143px;
-        }
         &:last-child {
           width: 123px;
           min-width: 123px;
@@ -546,7 +544,10 @@ FLEXLIST GENERIC */
         }
       }
       .morecol .dropdown {
-        width: 140px;
+        width: 123px;
+        &.open {
+          width: 141px;
+        }
       }
     }
     /*convert lead dup check*/
@@ -557,51 +558,47 @@ FLEXLIST GENERIC */
           width: 43px;
           min-width: 43px;
         }
-        &:nth-child(2) {
-          padding-left: 67px;
-        }
-        &:nth-last-of-type(2) {
-          padding-right: 53px;
-        }
         &:last-child {
-          width: 29px;
-          min-width: 29px;
+          width: 28px;
+          min-width: 28px;
         }
       }
       .morecol .dropdown {
-        width: 45px;
+        width: 28px;
+        &.open {
+          width: 46px;
+        }
       }
     }
-    /*lead record view find duplicates*/
+    /*record view find duplicates*/
     &.duplicates-multiselect {
       thead > tr > th,
       tbody > tr > td {
         &:first-child {
-          width: 29px;
-          min-width: 29px;
-        }
-        &:nth-child(2) {
-          padding-left: 53px;
-        }
-        &:nth-last-of-type(2) {
-          padding-right: 53px;
+          width: 28px;
+          min-width: 28px;
         }
         &:last-child {
-          width: 29px;
-          min-width: 29px;
-        }
-        .morecol .dropdown {
-          width: 45px;
+          width: 28px;
+          min-width: 28px;
         }
       }
-      thead > tr > th:first-child {
-        //hack fix for messed up button group
-        .btn.checkall {
-          .border-radius(3px);
+      thead > tr > th {
+        &:first-child {
+          //hack fix for messed up button group
+          .btn.checkall {
+            .border-radius(3px);
+          }
+          .btn-group span,
+          .dropdown-menu {
+            display: none;
+          }
         }
-        .btn-group span,
-        .dropdown-menu {
-          display: none;
+      }
+      .morecol .dropdown {
+        width: 28px;
+        &.open {
+          width: 46px;
         }
       }
     }
@@ -737,7 +734,7 @@ FLEXLIST GENERIC */
         }
         //8 + 55 + 8 + 1 + 8 = 80
         &:nth-child(2) {
-          padding-left: 79px;
+          padding-left: 81px;
         }
       }
       & > thead > tr > th:first-child {
@@ -784,6 +781,40 @@ FLEXLIST GENERIC */
         border: none;
         &:before {
           .left-shadow;
+        }
+      }
+    }
+
+    /*create record dup check*/
+    &.scroll-width table.dataTable.duplicates-selectedit {
+      thead > tr > th,
+      tbody > tr > td {
+        &:nth-last-of-type(2) {
+          padding-right: 143px;
+        }
+      }
+    }
+    /*convert lead dup check*/
+    &.scroll-width table.dataTable.duplicates-singleselect {
+      thead > tr > th,
+      tbody > tr > td {
+        &:nth-child(2) {
+          padding-left: 67px;
+        }
+        &:nth-last-of-type(2) {
+          padding-right: 53px;
+        }
+      }
+    }
+    /*record view find duplicates*/
+    &.scroll-width table.dataTable.duplicates-multiselect {
+      thead > tr > th,
+      tbody > tr > td {
+        &:nth-child(2) {
+          padding-left: 53px;
+        }
+        &:nth-last-of-type(2) {
+          padding-right: 53px;
         }
       }
     }
@@ -925,10 +956,11 @@ table.dataTable th:active {
     margin: 0;
   }
   .dropdown {
+    width: 55px;
     &.open {
       position: absolute;
       right: 0;
-      width: 72px;
+      width: 71px;
       .btn {
         .box-shadow(none);
         background-color: darken(@grayLighter, 5%);
