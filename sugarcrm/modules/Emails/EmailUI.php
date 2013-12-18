@@ -1754,7 +1754,9 @@ EOQ;
 		$exUids = explode($app_strings['LBL_EMAIL_DELIMITER'], $uids);
 
 		if(strpos($folder, 'sugar::') !== false) {
-			// dealing with a sugar email object, uids are GUIDs
+            // Collect message IDs for deleting mails from server
+            $messageUIDs = array();
+            // dealing with a sugar email object, uids are GUIDs
 			foreach($exUids as $id) {
 				$email = BeanFactory::getBean('Emails', $id);
 
@@ -1778,6 +1780,9 @@ EOQ;
 					break;
 
 					case "deleted":
+                        if (!empty($email->message_uid)) {
+                            $messageUIDs[] = $email->message_uid;
+                        }
 						$email->delete();
 					break;
 
@@ -1810,7 +1815,7 @@ EOQ;
                     if (!empty($ieX->id) && !$ieX->is_personal) {
                         // function retrieve_by_string_fields doesn't decrypt email_password -> call retrieve to do it
                         $ieX->retrieve($ieX->id);
-                        $ieX->deleteMessageOnMailServer($uids);
+                        $ieX->deleteMessageOnMailServer(implode($app_strings['LBL_EMAIL_DELIMITER'], $messageUIDs));
                     }
                     break;
 
