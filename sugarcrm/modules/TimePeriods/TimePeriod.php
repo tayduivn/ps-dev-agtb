@@ -554,7 +554,7 @@ class TimePeriod extends SugarBean
     {
         $sql = "SELECT id FROM timeperiods
                 WHERE deleted = 0
-                    AND (start_date_timestamp is null OR end_date_timestamp is null);";
+                    AND (start_date_timestamp is null OR end_date_timestamp is null)";
         $result = $this->db->query($sql);
 
         $updated = 0;
