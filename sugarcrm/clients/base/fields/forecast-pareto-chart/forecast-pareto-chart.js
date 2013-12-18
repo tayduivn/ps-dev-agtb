@@ -362,7 +362,7 @@
                     series: seriesIdx,
                     type: 'bar',
                     values: barVal,
-                    valuesOrig: barVal
+                    valuesOrig: app.utils.deepCopy(barVal)
                 });
 
                 // increase the series
@@ -379,7 +379,7 @@
             });
 
             line.values = lineVals;
-            line.valuesOrig = lineVals;
+            line.valuesOrig = app.utils.deepCopy(lineVals);
 
             barData.push(line);
             chartData.data = barData;
