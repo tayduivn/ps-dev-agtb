@@ -90,12 +90,18 @@
                             success: function(data) 
                             {
                                 var resultIDPath = "OrderProductResponse.TransactionResult.ResultID";
-                                var productPath = "OrderProductResponse.OrderProductResponseDetail.Product";
+                                var industry_path = "OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode";
                                 if(self.checkJsonNode(data,resultIDPath) 
-                                    && data.OrderProductResponse.TransactionResult.ResultID == 'CM000'
-                                    && self.checkJsonNode(data,productPath))
+                                    && data.OrderProductResponse.TransactionResult.ResultID == 'CM000')
                                 {
-                                    resultData.product = data.OrderProductResponse.OrderProductResponseDetail.Product;
+                                    resultData.product = data;
+
+				    if(self.checkJsonNode(resultData.product,industry_path)){
+                                        var industryCodeArray = resultData.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode;
+                                        //399 is the industry code type value for US SIC
+                                        resultData.product.primarySIC = self.getPrimaryIndustry(industryCodeArray,'399'); 
+                                    }	
+
                                     app.cache.set(cacheKey,resultData);
                                 }
                                 else
@@ -134,8 +140,11 @@
     },
 
     /**
-      Utility function to check if a node exists in a json object
-    **/
+     * Check if a particular json path is valid 
+     * @param object -- JSON object
+     * @param path -- string
+     * @return bool
+    */
     checkJsonNode: function(obj,path) 
     {
         var args = path.split(".");
@@ -149,5 +158,20 @@
             obj = obj[args[i]];
         }
         return true;
-    }
+    },
+
+
+    /**
+     * Gets the primary industry code from the array of industry codes
+     * @param industryArray
+     * @param industryCode
+     * @return object
+     */
+    getPrimaryIndustry: function(industryArray,industryCode)
+    {
+        return _.find(industryArray,function(industryObj){
+
+            return industryObj["@DNBCodeValue"] == industryCode && industryObj['DisplaySequence'] == '1';
+        });
+    },
 })
