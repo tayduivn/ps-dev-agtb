@@ -44,6 +44,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         //BEGIN SUGARCRM flav=pro ONLY
@@ -70,9 +71,15 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCaseFieldEqualsAmountWhenCaseFieldEmpty($case)
     {
-        $opp = SugarTestOpportunityUtilities::createOpportunity();
-
-        $this->assertEquals($opp->$case, $opp->amount);
+        $id = create_guid();
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity($id);
+        $opportunity->revenuelineitems->add($rli);
+        $rli->$case = '';
+        $rli->opportunity_id = $id;
+        $rli->save();
+        $opportunity->save();
+        $this->assertEquals($opportunity->$case, $opportunity->amount);
     }
 
 
@@ -82,11 +89,17 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCaseFieldEqualsZeroWhenCaseFieldSetToZero($case)
     {
-        $opp = SugarTestOpportunityUtilities::createOpportunity();
-        $opp->$case = 0;
-        $opp->sales_stage = "Prospecting";
-        $opp->save();
-        $this->assertEquals(0, $opp->$case);
+        $id = create_guid();
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity($id);
+        $opportunity->revenuelineitems->add($rli);
+        $opportunity->sales_stage = "Prospecting";
+        $rli->$case = $rli->likely_case = 0;
+        $rli->opportunity_id = $id;
+        $rli->save();
+        $opportunity->$case = 0;
+        $opportunity->save();
+        $this->assertEquals(0, $opportunity->$case);
     }
 
     //END SUGARCRM flav=pro ONLY
