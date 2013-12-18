@@ -1375,21 +1375,21 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				// Uncheck the massupdate checkbox
 				massupdate.checked = false;
 				massupdate.disabled = disable;
-			}
-			
-			// Unset the default value
-			if (defaultVal) {
-				// Handle "unsetting" of default values
-				if (defaultVal.tagName == 'SELECT') {
-					defaultVal.selectedIndex = 0;
-				} else if (defaultVal.tagName == 'INPUT') {
-					if (defaultVal.type == 'checkbox') {
-						defaultVal.checked = false;
-					} else {
-						defaultVal.value = '';
+
+				// Unset the default value
+				if (defaultVal) {
+					// Handle "unsetting" of default values
+					if (defaultVal.tagName == 'SELECT') {
+						defaultVal.selectedIndex = 0;
+					} else if (defaultVal.tagName == 'INPUT') {
+						if (defaultVal.type == 'checkbox') {
+							defaultVal.checked = false;
+						} else {
+							defaultVal.value = '';
+						}
 					}
+					defaultVal.disabled = disable;
 				}
-				defaultVal.disabled = disable;
 			}
         },
         toggleParent: function(enable){
