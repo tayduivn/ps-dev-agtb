@@ -90,7 +90,6 @@
           background: none;
           .box-shadow(none);
           .dropdownMinWidth();
-          .border-radius(4px);
           &> ul {
             background: @white;
             border: 1px solid rgba(0,0,0,.2);;
@@ -118,6 +117,34 @@
               text-indent: -26px;
               color: @grayLight;
               vertical-align: middle;
+            }
+          }
+          li a.menuItem {
+            display: inline-block;
+            padding-right: 32px;
+          }
+          li button.dropdown-submenu {
+            display: inline-block;
+            padding: 8px;
+            line-height: 12px;
+            text-indent: 0;
+            position: absolute;
+            right: 0;
+            .icon-caret-down {
+              color: @grayLight;
+              text-indent: 0;
+              top: 0;
+            }
+            &:hover,
+            &.open {
+              background: none;
+              .icon-caret-down {
+                color: @gray;
+              }
+            }
+            &.with-scroll {
+              width: 40px;
+              margin-right: -5px;
             }
           }
           .recentContainer {

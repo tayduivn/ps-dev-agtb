@@ -157,17 +157,22 @@
 }*/
 
 .dropdown-inset {
-  max-height: 118px;
+  display: none;
+  max-height: none;
   background-color: @grayLighter;
   background-image: none;
   outline: 0;
   .box-shadow(~"inset 0px 3px 1px rgba(0,0,0,.2)");
   position: relative;
   margin: 0;
-  padding-right: 0 !important;
+  padding-right: 0;
+  padding-top: 3px;
   a {
     border-bottom: 1px solid darken(@grayLighter, 10%);
     color: @gray;
+  }
+  li:first-child a {
+    .border-radius(0);
   }
   li:last-child a {
     border-bottom: 1px solid darken(@grayLight, 10%);
@@ -176,6 +181,7 @@
   li > a {
     padding: 9px 20px;
     color: @gray;
+    margin-right: 0;
   }
 
 }
