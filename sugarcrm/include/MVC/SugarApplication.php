@@ -103,7 +103,9 @@ class SugarApplication
 
     public function checkMobileRedirect () {
         // do nothing if mobile version is not enabled in config
-        if (!$this->isMobileEnabled()) return false;
+        if (!$this->isMobileRedirectEnabled()) {
+            return false;
+        }
 
         if (isset($_REQUEST['mobile'])) {
             if ($_REQUEST['mobile'] == '0') {
@@ -133,8 +135,10 @@ class SugarApplication
      *
      * @return bool
      */
-    public function isMobileEnabled(){
-        return true; // todo: use configuration param
+    public function isMobileRedirectEnabled()
+    {
+        global $sugar_config;
+        return !empty($sugar_config['enable_mobile_redirect']);
     }
 
     /**
