@@ -48,6 +48,12 @@ class BeanVisibility
     protected $bean;
 
     /**
+     * Loaded Strategies
+     * @var array
+     */
+    protected $loadedStrategies = array();
+
+    /**
      * @param SugarBean $bean
      * @param array $metadata
      */
@@ -56,7 +62,7 @@ class BeanVisibility
         $this->bean = $bean;
         foreach($metadata as $visclass => $data) {
             if($data === false) continue;
-            $this->strategies[] = new $visclass($bean, $data);
+            $this->addStrategy($visclass, $data);
         }
     }
 
@@ -68,6 +74,13 @@ class BeanVisibility
     public function addStrategy($strategy, $data = null)
     {
         $this->strategies[] = new $strategy($this->bean, $data);
+        /*
+         *  because PHP will allow $strategy to be an object and instantiate a new version of 
+         *  itself in the above line we need to check if it is an object before we save it to the 
+         *  loadedStrategies array
+         */
+        $strategyName = is_object($strategy) ? get_class($strategy) : $strategy;
+        $this->loadedStrategies[$strategyName] = true;
     }
 
     /**
@@ -110,5 +123,15 @@ class BeanVisibility
             $strategy->setOptions($options)->addVisibilityWhereQuery($query);
         }
         return $query;
-    }    
+    }
+    /**
+     * Check if the Strategy has been loaded
+     * @param string $name
+     * @return boolean
+     */
+    public function isLoaded($name)
+    {
+        return isset($this->loadedStrategies[$name]);
+    }
 }
+

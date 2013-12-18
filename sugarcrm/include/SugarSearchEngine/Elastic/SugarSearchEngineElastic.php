@@ -582,8 +582,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         } else {
 
             // team filter
-            $teamFilter = $this->constructTeamFilter();
-            $moduleFilter->addFilter($teamFilter);
+            if ($seed->loadVisibility()->isLoaded('TeamSecurity')) {
+                $teamFilter = $this->constructTeamFilter();
+                $moduleFilter->addFilter($teamFilter);
+            }
 
             // type term filter
             $typeTermFilter = $this->getTypeTermFilter($module);
