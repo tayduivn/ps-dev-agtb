@@ -180,7 +180,7 @@ $dictionary['Activity'] = array(
         'calls' => array(
             'name' => 'calls',
             'type' => 'link',
-            'relationship' => 'calls_activities',
+            'relationship' => 'call_activities',
             'source' => 'non-db',
             'vname' => 'LBL_CALLS',
         ),
