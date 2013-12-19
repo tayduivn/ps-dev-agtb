@@ -249,6 +249,7 @@ class Configurator {
         SugarAutoLoader::addToMap($logo);
         sugar_cache_clear('company_logo_attributes');
         SugarThemeRegistry::clearAllCaches();
+        MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_LOGOURL));
 	}
 	/**
 	 * @params : none
