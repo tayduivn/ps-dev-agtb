@@ -500,16 +500,20 @@
      * Checks if the field is the same among all models.
      *
      * Compares field value from primary model with values from other models.
-     * @param {Object} field The field to compare.
      * @param {Data.Bean} primary The model choosed as primary.
      * @param {Data.Bean[]} models The array of models to compare with.
      * @return {Boolean} Is field value the same among all models.
      * @private
      */
-    _isSimilar: function(field, primary, models) {
+    _isSimilar: function(primary, models) {
         return _.every(models, function(model) {
-            return (primary.get(field.name) === model.get(field.name));
-        });
+            var modelFields = this.rowFields[model.id],
+                primaryFields = this.rowFields[primary.id];
+
+            return _.every(modelFields, function(field, index) {
+                return field.equals(primaryFields[index]);
+            }, this);
+        }, this);
     },
 
     /**
@@ -755,24 +759,14 @@
      * @protected
      */
     _showAlertIfIdentical: function() {
-        if (!this.meta || !this.meta.panels) {
-            return;
-        }
-
         if (!this.collection.length) {
             return;
         }
 
         var self = this,
-            alternatives = this.collection.without(this.primaryRecord),
-            fields = _.first(this.meta.panels).fields || [],
-            notIdentical = false;
+            alternatives = this.collection.without(this.primaryRecord);
 
-        notIdentical = _.any(fields, function(field) {
-            return !this._isSimilar(field, this.primaryRecord, alternatives);
-        }, this);
-
-        if (!notIdentical) {
+        if (this._isSimilar(this.primaryRecord, alternatives)) {
             app.alert.show('merge_confirmation_identical', {
                 level: 'confirmation',
                 messages: app.lang.get('TPL_MERGE_DUPLICATES_IDENTICAL', this.module),

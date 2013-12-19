@@ -266,6 +266,26 @@
         }
         return value;
     },
+
+    /**
+     * Validates for equality on id and primary properties
+     * since other attributes are used for rendering.
+     *
+     * @override
+     */
+    equals: function(other) {
+        var validateMap = function(item) {
+            return {
+                id: item.id,
+                primary: item.primary
+            };
+        };
+        return _.isEqual(
+            _.map(this.getFormattedValue(), validateMap),
+            _.map(other.getFormattedValue(), validateMap)
+        );
+    },
+
     addTeam: function () {
         this._currentIndex++;
         this._updateAndTriggerChange(this.value);
