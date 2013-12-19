@@ -41,6 +41,34 @@ class SugarQuery_Builder_Field_ConditionTest extends Sugar_PHPUnit_Framework_Tes
                 array(
                     'type' => 'int',
                 ),
+                0,
+                '0',
+            ),
+            array(
+                array(
+                    'type' => 'int',
+                ),
+                '0',
+                '0',
+            ),
+            array(
+                array(
+                    'type' => 'bool',
+                ),
+                '',
+                '0',
+            ),
+            array(
+                array(
+                    'type' => 'bool',
+                ),
+                0,
+                '0',
+            ),
+            array(
+                array(
+                    'type' => 'bool',
+                ),
                 '0',
                 '0',
             ),
