@@ -491,6 +491,7 @@ switch( $mode ){
         foreach( $md5_matches as $md5_match ){
             $md5_match->delete();
         }
+        $shouldClearCache = true;
         break;
     case "Disable":
         $file_action = "disabled";
@@ -504,6 +505,7 @@ switch( $mode ){
              $md5_match->enabled = 0;
             $md5_match->save();
         }
+        $shouldClearCache = true;
         break;
     case "Enable":
         $file_action = "enabled";
@@ -517,7 +519,13 @@ switch( $mode ){
             $md5_match->enabled = 1;
             $md5_match->save();
         }
+        $shouldClearCache = true;
         break;
+}
+
+// present list to user
+if ($shouldClearCache) {
+    MetaDataManager::clearAPICache();
 }
 
 // present list to user
