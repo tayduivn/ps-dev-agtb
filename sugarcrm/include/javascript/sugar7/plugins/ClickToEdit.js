@@ -281,14 +281,14 @@
                 var self = this;
                 var el = this.$el.find(this.fieldTag);
                 el.on("change", function() {
-                    var value = self.validateField(self, self.unformat(el.val()));
+                    var value = self.validateField(self, el.val());
                     if (value !== false) {
                         // field is valid, save it
                         if(self.isErrorState) {
                             self.clearErrorDecoration();
                         }
                         // save to model
-                        self.model.set(self.name, value);
+                        self.model.set(self.name, self.unformat(value));
                     } else {
                         // invalid display error
                         var hb = Handlebars.compile("{{str key module context}}"),
@@ -598,15 +598,37 @@
                 value = value.toString().trim();
 
                 // matches a valid positive decimal number
-                    reg = new RegExp("^\\d+(\\.\\d+)?$");
+                var config = app.metadata.getConfig(),
+                    d_separator = app.user.getPreference('decimal_separator') || config.defaultDecimalSeparator || '.',
+                    ug_separator = app.user.getPreference('number_grouping_separator'),
+                    g_separator = !_.isUndefined(ug_separator) ? ug_separator : config.defaultNumberGroupingSeparator || ',',
+                    regex = new RegExp("(^[\\d" + this._escapeRegexCharacter(g_separator) + "]+)?(" + this._escapeRegexCharacter(d_separator) + "\\d+)?$"),
+                    parts = value.match(regex);
 
                 // always make sure that we have a string here, since match only works on strings
-                if (value.length == 0 || _.isNull(value.match(reg))) {
+                if (value.length == 0 || _.isNull(parts)  || _.isEmpty(parts[0])) {
                     return false;
                 }
 
                 // the value passed all validation, return true
                 return true;
+            },
+
+            /**
+             * Utility Method to only escape the values that need to be escaped for a RegularExpression
+             * @param {String} character
+             * @returns {String}
+             * @private
+             */
+            _escapeRegexCharacter: function(character) {
+                var needs_escape = ['.', '\\', '+', '*', '?', '[', '^', ']', '$',
+                    '(', ')', '{', '}', '=', '!', '<', '>', '|', ':', '-'];
+
+                if(_.indexOf(needs_escape, character) != -1) {
+                    character = '\\' + character;
+                }
+
+                return character;
             },
 
             /**
@@ -659,15 +681,22 @@
              */
             _parsePercentage: function(value, decimals) {
                 var orig = this.model.get(this.name),
-                    parts = value.toString().match(/^([+-])(\d+(\.\d+)?)(\%?)$/);
+                    config = app.metadata.getConfig(),
+                    d_separator = app.user.getPreference('decimal_separator') || config.defaultDecimalSeparator || '.',
+                    ug_separator = app.user.getPreference('number_grouping_separator'),
+                    g_separator = (!_.isUndefined(ug_separator)) ? ug_separator : config.defaultNumberGroupingSeparator || ',',
+                    regex = new RegExp("^([+-])([\\d" +  this._escapeRegexCharacter(g_separator) + "]+(" + this._escapeRegexCharacter(d_separator) + "\\d+)?)(\\%?)$"),
+                    parts = value.toString().match(regex);
+
                 if (parts) {
                     // use original number to apply calculations
+                    var amount = this.unformat(parts[2]);
                     if (parts[4] == '%') {
                         // percentage calculation
-                        value = app.math.mul(app.math.div(parts[2], 100), orig);
+                        value = app.math.mul(app.math.div(amount, 100), orig);
                     } else {
                         // add/sub calculation
-                        value = parts[2];
+                        value = amount;
                     }
                     if (parts[1] == '+') {
                         value = app.math.add(orig, value);
@@ -676,7 +705,7 @@
                     }
                     value = app.math.round(value, decimals);
                 }
-                return value.toString();
+                return this.format(value.toString());
             },
 
             /**

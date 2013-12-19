@@ -9,6 +9,8 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
     beforeEach(function() {
         SugarTest.loadPlugin('ClickToEdit');
         SugarTest.loadComponent('base', 'field', 'currency');
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.set();
         moduleName = 'ForecastWorksheets';
         metadata = {
             fields: {
@@ -66,11 +68,6 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
             return (model.isCopied === true);
         };
 
-        sinon.stub(app.metadata, 'getCurrency', function() {
-            return {
-                'conversion_rate': '0.900'
-            }
-        });
         sinon.stub(_, 'defer', function() {
         });
     });
@@ -84,10 +81,9 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
         Handlebars.templates = {};
         model = null;
 
-        app.metadata.getCurrency.restore();
-
         moduleName = null;
         metadata = null;
+        SugarTest.testMetadata.dispose();
     });
 
     describe('ClickToEdit Plugin', function() {
@@ -193,5 +189,215 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
             });
         });
 
+        describe('_verifyCurrencyValue', function() {
+            beforeEach(function() {
+                field.value = '1.000000';
+            });
+            afterEach(function() {
+                field.value = undefined;
+                app.user.setPreference('number_grouping_separator', ',');
+                app.user.setPreference('decimal_separator', '.')
+            });
+
+            describe('when using users preferences', function() {
+                it('should return true when format matches users format', function() {
+                    app.user.setPreference('number_grouping_separator', 'A');
+                    app.user.setPreference('decimal_separator', 'z');
+                    expect(field._verifyCurrencyValue('1A0000z00')).toBeTruthy();
+                });
+
+                it('should return true when number starts with decimal separator', function() {
+                    app.user.setPreference('number_grouping_separator', 'A');
+                    app.user.setPreference('decimal_separator', 'z');
+                    expect(field._verifyCurrencyValue('z05')).toBeTruthy();
+                });
+
+                it('should return false when format does not match users format', function() {
+                    app.user.setPreference('number_grouping_separator', 'A');
+                    app.user.setPreference('decimal_separator', 'z');
+                    expect(field._verifyCurrencyValue('1,0000x00')).toBeFalsy();
+                });
+
+                it('should return false when number starts with an invalid decimal separator', function() {
+                    app.user.setPreference('number_grouping_separator', 'A');
+                    app.user.setPreference('decimal_separator', 'z');
+                    expect(field._verifyCurrencyValue('.05')).toBeFalsy();
+                });
+            });
+
+            describe('should fall back to system defaults when users are undefined', function() {
+                var sandbox = sinon.sandbox.create();
+                beforeEach(function() {
+                    app.user.setPreference('number_grouping_separator', undefined);
+                    app.user.setPreference('decimal_separator', undefined);
+                    sandbox.stub(app.metadata, 'getConfig', function() {
+                        return {
+                            'defaultDecimalSeparator': 'd',
+                            'defaultNumberGroupingSeparator': 'g'
+                        }
+                    });
+                });
+
+                afterEach(function() {
+                    sandbox.restore();
+                    app.user.setPreference('number_grouping_separator', ',');
+                    app.user.setPreference('decimal_separator', '.')
+                });
+
+                it('and return false when they do not match', function() {
+                    expect(field._verifyCurrencyValue('1,0000x00')).toBeFalsy();
+                });
+
+                it('and return true when they do match the system defaults', function() {
+                    expect(field._verifyCurrencyValue('d05')).toBeTruthy();
+                    expect(field._verifyCurrencyValue('122g212d05')).toBeTruthy();
+                });
+            });
+
+            describe('should fall back to hardcoded values when no user prefs and no system defaults', function() {
+                var sandbox = sinon.sandbox.create();
+                beforeEach(function() {
+                    app.user.setPreference('number_grouping_separator', undefined);
+                    app.user.setPreference('decimal_separator', undefined);
+                    sandbox.stub(app.metadata, 'getConfig', function() {
+                        return {}
+                    });
+                });
+
+                afterEach(function() {
+                    sandbox.restore();
+                    app.user.setPreference('number_grouping_separator', ',');
+                    app.user.setPreference('decimal_separator', '.')
+                });
+
+                it('and return false when they do not match', function() {
+                    expect(field._verifyCurrencyValue('1,0000x00')).toBeFalsy();
+                });
+
+                it('and return true when they do match the system defaults', function() {
+                    expect(field._verifyCurrencyValue('.05')).toBeTruthy();
+                    expect(field._verifyCurrencyValue('122,212.05')).toBeTruthy();
+                });
+            });
+        });
+
+        describe('_parsePercentage', function() {
+            var sandbox = sinon.sandbox.create();
+            beforeEach(function() {
+                sandbox.stub(field.model, 'get', function() {
+                    return '1.000000'
+                });
+                field.value = '1.000000';
+            });
+            afterEach(function() {
+                sandbox.restore();
+                field.value = undefined;
+                app.user.setPreference('number_grouping_separator', ',');
+                app.user.setPreference('decimal_separator', '.')
+            });
+
+            describe('should use users preferences', function() {
+                it('should increase field value by +50.8%', function() {
+                    app.user.setPreference('number_grouping_separator', 'A');
+                    app.user.setPreference('decimal_separator', ',');
+                    expect(field._parsePercentage('+50,8%')).toEqual('$1,51');
+                });
+
+                it('should increase field value by +50.8', function() {
+                    app.user.setPreference('number_grouping_separator', 'A');
+                    app.user.setPreference('decimal_separator', ',');
+                    expect(field._parsePercentage('+50,8')).toEqual('$51,80');
+                });
+
+                it('should decrease field value by -50.8%', function() {
+                    app.user.setPreference('number_grouping_separator', 'A');
+                    app.user.setPreference('decimal_separator', ',');
+                    expect(field._parsePercentage('-50,8%')).toEqual('$0,49');
+                });
+
+                it('should decrease field value by -50.8', function() {
+                    app.user.setPreference('number_grouping_separator', 'A');
+                    app.user.setPreference('decimal_separator', ',');
+                    expect(field._parsePercentage('-50,8')).toEqual('$-49,80');
+                });
+            });
+
+            describe('should fall back to system defaults when users are undefined', function() {
+                var sandbox = sinon.sandbox.create();
+                beforeEach(function() {
+                    app.user.setPreference('number_grouping_separator', undefined);
+                    app.user.setPreference('decimal_separator', undefined);
+                    sandbox.stub(app.metadata, 'getConfig', function() {
+                        return {
+                            'defaultDecimalSeparator': 'd',
+                            'defaultNumberGroupingSeparator': 'g'
+                        }
+                    });
+                    sandbox.stub(field, 'format', function(amount, currencyId) {
+                        return app.currency.formatAmount(amount, currencyId, undefined, 'g', 'd');
+                    });
+
+                    sandbox.stub(field, 'unformat', function(amount) {
+                        return app.utils.unformatNumberString(amount, 'g', 'd');
+                    });
+                });
+
+                afterEach(function() {
+                    sandbox.restore();
+                    app.user.setPreference('number_grouping_separator', ',');
+                    app.user.setPreference('decimal_separator', '.')
+                });
+
+                it('should increase field value by +50.8%', function() {
+                    debugger;
+                    expect(field._parsePercentage('+50d8%')).toEqual('$1d51');
+                });
+
+                it('should increase field value by +50.8', function() {
+                    expect(field._parsePercentage('+50d8')).toEqual('$51d80');
+                });
+
+                it('should decrease field value by -50.8%', function() {
+                    expect(field._parsePercentage('-50d8%')).toEqual('$0d49');
+                });
+
+                it('should decrease field value by -50.8', function() {
+                    expect(field._parsePercentage('-50d8')).toEqual('$-49d80');
+                });
+            });
+
+            describe('should fall back to hardcoded values when no user prefs and no system defaults', function() {
+                var sandbox = sinon.sandbox.create();
+                beforeEach(function() {
+                    app.user.setPreference('number_grouping_separator', undefined);
+                    app.user.setPreference('decimal_separator', undefined);
+                    sandbox.stub(app.metadata, 'getConfig', function() {
+                        return {}
+                    });
+                });
+
+                afterEach(function() {
+                    sandbox.restore();
+                    app.user.setPreference('number_grouping_separator', ',');
+                    app.user.setPreference('decimal_separator', '.')
+                });
+
+                it('should increase field value by +50.8%', function() {
+                    expect(field._parsePercentage('+50.8%')).toEqual('$1.51');
+                });
+
+                it('should increase field value by +50.8', function() {
+                    expect(field._parsePercentage('+50.8')).toEqual('$51.80');
+                });
+
+                it('should decrease field value by -50.8%', function() {
+                    expect(field._parsePercentage('-50.8%')).toEqual('$0.49');
+                });
+
+                it('should decrease field value by -50.8', function() {
+                    expect(field._parsePercentage('-50.8')).toEqual('$-49.80');
+                });
+            });
+        });
     });
 });
