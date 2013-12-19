@@ -2198,7 +2198,7 @@ function clean_string($str, $filter = "STANDARD", $dieOnBadData = true)
 
 function clean_special_arguments()
 {
-    if (isset($_SERVER['PHP_SELF'])) {
+    if (isset($_SERVER['PHP_SELF']) && 'cli' !== PHP_SAPI) {
         if (!empty($_SERVER['PHP_SELF'])) clean_string($_SERVER['PHP_SELF'], 'SAFED_GET');
     }
     if (!empty($_REQUEST) && !empty($_REQUEST['login_theme'])) clean_string($_REQUEST['login_theme'], "STANDARD");
@@ -3239,6 +3239,13 @@ function sugar_cleanup($exit = false)
         set_include_path($root_path . PATH_SEPARATOR . get_include_path());
     }
     chdir($root_path);
+
+    // if cleanup runs before autoloader was loaded then init autoloader.
+    if(!class_exists('SugarAutoLoader')) {
+        require_once('include/utils/autoloader.php');
+        SugarAutoLoader::init();
+    }
+
     global $sugar_config;
     require_once 'include/utils/LogicHook.php';
     LogicHook::initialize();
