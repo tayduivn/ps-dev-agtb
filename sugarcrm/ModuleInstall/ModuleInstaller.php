@@ -616,7 +616,7 @@ class ModuleInstaller{
                 }
                 $user->retrieve($userId);
                 $prefs = $user->getPreference('globalSearch', 'search');
-                if (array_key_exists($beanDefs['module'], $prefs) == false)
+                if (!is_array($prefs) || !array_key_exists($beanDefs['module'], $prefs))
                 {
                     continue;
                 }
@@ -1408,16 +1408,16 @@ class ModuleInstaller{
                         unlink($file);
                     }
                 }
-                
+
                 // Need to remove stale dashlets for the Activities relationship
                 if (isset($rel_data['relationships'][$rel_name]) && file_exists('modules/'.$mod)) {
                     // Not our relationship
                     $ourRel = $rel_data['relationships'][$rel_name];
-                    
+
                     $globPath = 'modules/'.$mod.'/clients/base/views/*';
                     foreach (glob($globPath, GLOB_NOSORT | GLOB_ONLYDIR) as $viewPath) {
                         $platform = 'base';
-                        
+
                         $view = basename($viewPath);
                         if ($view != 'history' && $view != 'attachments' && $view != 'planned-activities') {
                             continue;
@@ -1430,13 +1430,13 @@ class ModuleInstaller{
                         if (! isset($viewdefs[$ourRel['lhs_module']][$platform]['view'][$view]['tabs'][0]['link'])) {
                             continue;
                         }
-                        
+
                         foreach ($viewdefs[$ourRel['lhs_module']][$platform]['view'][$view]['tabs'] as $viewTab) {
                             if ($viewTab['link'] == $rel_name) {
                                 rmdir_recursive(dirname($viewPath));
                             }
                         }
-                        
+
                     }
                 }
 			}
@@ -2125,7 +2125,7 @@ private function dir_file_count($path){
                 } else {
                     $views = array(MB_RECORDVIEW);
                 }
-                
+
                 foreach($views as $view) {
                     $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": adding $fieldName to $view layout for module $deployedModuleName" ) ;
                     $parser = ParserFactory::getParser($view, $deployedModuleName);
@@ -2153,7 +2153,7 @@ private function dir_file_count($path){
                 } else {
                     $views = array(MB_RECORDVIEW);
                 }
-                
+
                 foreach($views as $view) {
                     $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": adding $fieldName to $view layout for module $deployedModuleName" ) ;
                     $parser = ParserFactory::getParser($view, $deployedModuleName);
@@ -2718,11 +2718,11 @@ private function dir_file_count($path){
 
     public function install_client_files()
     {
-        if (!isset($this->installdefs['clientfiles']) 
+        if (!isset($this->installdefs['clientfiles'])
             || !is_array($this->installdefs['clientfiles'])) {
             return;
         }
-        
+
         // clientfiles contains five identical lists of files for each of the
         // activities relationships, this condenses them so we only copy once.
         $copyList = array();
