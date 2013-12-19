@@ -125,6 +125,12 @@ class OpportunitiesPipelineChartApi extends SugarApi
                 $data[$row['sales_stage']] = array('count' => 0, 'total' => '0');
             }
 
+            // if customers have made amount not required, it saves to the DB as NULL
+            // make sure we set it to 0 for the math ahead
+            if (empty($row['amount'])) {
+                $row['amount'] = 0;
+            }
+
             // convert to the base currency
             $base_amount = SugarCurrency::convertAmountToBase($row['amount'], $row['base_rate']);
 
