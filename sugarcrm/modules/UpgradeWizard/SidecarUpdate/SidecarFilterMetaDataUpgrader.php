@@ -32,6 +32,13 @@ require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php';
 
 class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
 {
+    /**
+     * Should we delete pre-upgrade files?
+     * Not deleting searchviews since we may need them for popups in subpanels driven by BWC module.
+     * See BR-1044
+     * @var bool
+     */
+    public $deleteOld = false;
 
     /**
      * Load search fields defs from SearchFields.php

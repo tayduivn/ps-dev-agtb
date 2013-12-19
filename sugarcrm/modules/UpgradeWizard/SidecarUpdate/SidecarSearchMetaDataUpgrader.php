@@ -32,10 +32,18 @@ require_once 'SidecarAbstractMetaDataUpgrader.php';
 class SidecarSearchMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
 {
     /**
+     * Should we delete pre-upgrade files?
+     * Not deleting searchviews since we may need them for popups in subpanels driven by BWC module.
+     * See BR-1044
+     * @var bool
+     */
+    public $deleteOld = false;
+
+    /**
      * Handles the actual upgrading for search metadata. This process is much
-     * simpler in that no manipulation of defs is necessary. We simply move the 
+     * simpler in that no manipulation of defs is necessary. We simply move the
      * file contents into place in the new structure.
-     * 
+     *
      * @return bool
      */
     public function upgrade() {
@@ -43,18 +51,18 @@ class SidecarSearchMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             // Save the new file and report it
             return $this->handleSave();
         }
-        
+
         return false;
     }
-    
+
     /**
      * Does nothing for search since search is simply a file move.
      */
     public function convertLegacyViewDefsToSidecar() {}
-    
+
     /**
      * Simply gets the current file contents
-     * 
+     *
      * @return string
      */
     public function getNewFileContents() {
