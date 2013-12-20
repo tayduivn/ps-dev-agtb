@@ -26,12 +26,9 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<div class="btn-group">
-    <a id="mobile" title="{{str "LBL_MOBILE"}}" class="btn btn-invisible" href="{{mobileUrl}}"><i class="icon-mobile-phone"></i> {{str "LNK_MOBILE"}}</a>
-    {{#if isAuthenticated}}
-        <a id="tour" title="{{str "LBL_TOUR"}}" class="btn btn-invisible"><i class="icon-road"></i> {{str "LNK_TOUR"}}</a>
-        <a id="feedback" class="btn btn-invisible"><i class="icon-comment"></i> {{str "LBL_FEEDBACK"}}</a>
-        <a id="help" class="btn btn-invisible"><i class="icon-exclamation-sign"></i> {{str "LBL_HELP"}}</a>
-        <a id="support" class="btn btn-invisible"><i class="icon-question-sign"></i> {{str "LBL_SUPPORT"}}</a>
-    {{/if}}
-</div>
+{{#if isAuthenticated}}
+    <a id="tour" title="{{str "LBL_TOUR"}}" class="btn btn-invisible"><i class="icon-road"></i> {{str "LNK_TOUR"}}</a>
+    <a id="feedback" class="btn btn-invisible"><i class="icon-comment"></i> {{str "LBL_FEEDBACK"}}</a>
+    <a id="help" class="btn btn-invisible"><i class="icon-exclamation-sign"></i> {{str "LBL_HELP"}}</a>
+    <a id="support" class="btn btn-invisible"><i class="icon-question-sign"></i> {{str "LBL_SUPPORT"}}</a>
+{{/if}}
