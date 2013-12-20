@@ -29,7 +29,26 @@ describe("BaseFilterModuleDropdownView", function () {
         view.render();
         expect(view.$el.css('display')).toEqual('none');
     });
+    it('should prune modules with bad relationships', function () {
+        var input = {
+            'panel1':'test1',
+            'panel2' : 'test2'
+        };
+        var relatedStub = sinon.stub(app.data, 'getRelatedModule', function(module, link) {
+            if (link === 'test1') {
+                return 'cases';
+            } else {
+                return false;
+            }
+        });
 
+        var result = view._pruneHiddenModules(input);
+        var expected = {
+            'panel1' : 'test1'
+        };
+        expect(result).toEqual(expected)
+        relatedStub.restore();
+    });
     describe('handleChange callback of filter:change:module', function() {
         var layoutStub;
 
