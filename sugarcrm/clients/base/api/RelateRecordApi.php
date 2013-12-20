@@ -306,6 +306,10 @@ class RelateRecordApi extends ModuleApi {
 
         $primaryBean->$linkName->delete($primaryBean->id,$relatedBean);
 
+        // Get a fresh copy of the related bean so that the newly deleted relationship
+        // shows as deleted. See BR-1055
+        $relatedBean = BeanFactory::getBean($relatedBean->module_name, $relatedBean->id, array('use_cache' => false));
+
         //Because the relationship is now deleted, we need to pass the $relatedBean data into formatNearAndFarRecords
         return $this->formatNearAndFarRecords($api,$args,$primaryBean, $this->formatBean($api, $args, $relatedBean));
     }
