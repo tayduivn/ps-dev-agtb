@@ -47,6 +47,17 @@ class MetaDataManagerPortal extends MetaDataManager
     }
 
     /**
+     * Gets the full module list of Portal.
+     * Returns the same module list as `getModules`.
+     *
+     * @return array List of Portal module names
+     */
+    public function getFullModuleList()
+    {
+        return $this->getModules();
+    }
+
+    /**
      * Gets configs
      * 
      * @return array
@@ -81,21 +92,19 @@ class MetaDataManagerPortal extends MetaDataManager
     }
 
     /**
-     * Gets list of modules that are displayed in the navigation bar and which
-     * subpanels are displayed system-wide
+     * Gets list of modules that are displayed in the navigation bar
      *
-     * @return array The list of module names for portal
+     * @return array The list of module names
      */
-    public function getDisplayModuleList()
+    public function getTabList()
     {
         $controller = new TabController();
-        $modules = $controller->getPortalTabs();
-        return $modules;
+        return $controller->getPortalTabs();
     }
 
     /**
      * Gets the module list for the current user
-     * Returns the same module list as `getDisplayModuleList`.
+     * Returns the same module list as `getTabList`.
      *
      * In the future, there may be a UI to allow user to configure visible
      * modules in his `Profile` section.
@@ -104,7 +113,7 @@ class MetaDataManagerPortal extends MetaDataManager
      */
     public function getUserModuleList()
     {
-        return $this->getDisplayModuleList();
+        return $this->getTabList();
     }
 
     /**

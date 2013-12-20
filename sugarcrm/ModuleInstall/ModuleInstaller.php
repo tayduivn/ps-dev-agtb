@@ -2600,7 +2600,7 @@ private function dir_file_count($path){
             'metadataTypes' => array(
                 "currencies",
                 "full_module_list",
-                "display_module_list",
+                "modules_info",
                 "hidden_subpanels",
                 "jssource",
                 "labels",
