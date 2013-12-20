@@ -78,10 +78,12 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
         if (isset($this->def['custom_type']) && $this->def['custom_type'] == 'teamset') {
             $this->addToSelect('team_set_id');
         }
+
         // Exists only checks
         if (!empty($this->def['rname_exists'])) {
             $this->markNonDb();
-            $this->addToSelect("IF({$this->jta}.{$this->def['rname']} IS NOT NULL,1,0)");
+            $this->addToSelect(array("IF({$this->jta}.{$this->def['rname']} IS NOT NULL,1,0)", $this->field));
+            return;
         }
 
         if (!empty($this->def['rname']) && !empty($this->jta)) {
