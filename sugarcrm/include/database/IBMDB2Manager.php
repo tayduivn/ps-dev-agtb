@@ -661,7 +661,7 @@ public function convert($string, $type, array $additional_parameters = array())
 					$additional_parameters[0] .= "*7";
 					// break missing intentionally
 				case 'day':
-					return "($string + $additional_parameters[0])";
+					return "($string + $additional_parameters[0] DAYS)";
 				case 'year':
 					return "ADD_MONTHS($string, {$additional_parameters[0]}*12)";
 			}
