@@ -82,9 +82,11 @@
              * @private
              */
             _formatFieldForDuplicate: function() {
-                if (_.isFunction(this.formatFieldForDuplicate)) {
+                if (!this.disposed && _.isFunction(this.formatFieldForDuplicate)) {
                     this.formatFieldForDuplicate.call(this);
+                    this.render();
                 }
+
             },
 
             /**
