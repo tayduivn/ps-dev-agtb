@@ -74,6 +74,11 @@ class CustomQuery extends SugarBean {
 	var $additional_column_fields = Array();
 
     /**
+     * @var DBManager
+     */
+    protected $db_slave;
+
+    /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
      *
      * @see __construct
@@ -86,7 +91,6 @@ class CustomQuery extends SugarBean {
 
 	public function __construct() {
 		parent::__construct();
-        $this->db_slave = DBManagerFactory::getInstance('reports');
 		$this->disable_row_level_security =false;
 
 	}
@@ -100,14 +104,14 @@ class CustomQuery extends SugarBean {
 	function get_custom_queries($add_blank=false)
 	{
 		$query = "SELECT id, name FROM $this->table_name where deleted=0 order by list_order asc";
-		$result = $this->db_slave->query($query, false);
+        $result = $this->getSlaveDb()->query($query, false);
 		$GLOBALS['log']->debug("get_custom_queries: result is ".print_r($result,true));
 
 		$list = array();
 		if ($add_blank) {
 			$list['']='';
 		}
-		while (($row = $this->db_slave->fetchByAssoc($result)) != null) {
+        while (($row = $this->getSlaveDb()->fetchByAssoc($result)) != null) {
 		//while ($row = $this->db->fetchByAssoc($result)) {
 			$list[$row['id']] = $row['name'];
 			$GLOBALS['log']->debug("row id is:".$row['id']);
@@ -216,7 +220,7 @@ class CustomQuery extends SugarBean {
 		//This checks for either a bad query or checks for a wrong type of query.  Will only pass if
 		//it is a select statement.
 		$decoded_query = html_entity_decode($this->custom_query, ENT_QUOTES);
-        $result = $this->db_slave->validateQuery($decoded_query);
+        $result = $this->getSlaveDb()->validateQuery($decoded_query);
 
         if(!$result){
 
@@ -231,12 +235,12 @@ class CustomQuery extends SugarBean {
 				if($check_valid==true){
 					$blankdup_check = false;
 
-					$result =$this->db_slave->query($decoded_query, false);
+                    $result =$this->getSlaveDb()->query($decoded_query, false);
 					$GLOBALS['log']->debug("get_custom_queries: result is ".print_r($result,true));
 
 						if(!empty($result)) {
 							//get the column array
-							$fields_array = $this->db_slave->getFieldsArray($result, true);
+                            $fields_array = $this->getSlaveDb()->getFieldsArray($result, true);
 							foreach($fields_array as $key => $column){
 
 								//check for blank
@@ -269,12 +273,12 @@ class CustomQuery extends SugarBean {
 				$valid['result'] = "Valid";
 				return $valid;
 			}
-			$result =$this->db_slave->query($decoded_query, false);
+            $result =$this->getSlaveDb()->query($decoded_query, false);
 			$GLOBALS['log']->debug("get_custom_queries: result is ".print_r($result,true));
 
 			//if(($row = $this->db->fetchByAssoc($result)) != null) {
 			if(!empty($result)){
-				$this->column_array = $this->db_slave->getFieldsArray($result, true);
+                $this->column_array = $this->getSlaveDb()->getFieldsArray($result, true);
 				$this->column_quantity = count($this->column_array);
 				$this->data_set = $result;
 			} else {
@@ -311,12 +315,11 @@ class CustomQuery extends SugarBean {
 					AND custom_layout='Enabled'
 					AND deleted=0
 					";
-		$result = $this->db_slave->query($query,true,"Error selecting related datasets: ");
+        $result = $this->getSlaveDb()->query($query, true, "Error selecting related datasets: ");
 		$GLOBALS['log']->debug("selecting related datasets: result is ".print_r($result,true));
 		//if($this->db->getRowCount($result) > 0){
 		//data sets exists with this query and custom layout enabled
-			while (($row = $this->db_slave->fetchByAssoc($result)) != null) {
-			//while ($row = $this->db->fetchByAssoc($result)) {
+        while (($row = $this->getSlaveDb()->fetchByAssoc($result)) != null) {
 
 				$dataset_object = BeanFactory::getBean('DataSets', $row['id']);
 				$dataset_object->disable_custom_layout();
@@ -373,7 +376,7 @@ class CustomQuery extends SugarBean {
 	*/
 	function build_generic_where_clause ($the_query_string) {
 		$where_clauses = Array();
-		$the_query_string = $this->db_slave->quote($the_query_string);
+        $the_query_string = $this->getSlaveDb()->quote($the_query_string);
 		array_push($where_clauses, "name like '$the_query_string%'");
 
 		$the_where = "";
@@ -388,8 +391,7 @@ class CustomQuery extends SugarBean {
 	}
 
 	function get_column_array(){
-
-		$column_array = $this->db_slave->getFieldsArray($this->data_set, true);
+        $column_array = $this->getSlaveDb()->getFieldsArray($this->data_set, true);
 		if(!empty($column_array)){
 			foreach($column_array as $key => $value){
 				if(empty($value)) $column_name[$key] = "&nbsp;";
@@ -468,9 +470,9 @@ in use by a data set, especially if the data set has the custom layout enabled.
 						AND custom_layout = 'Enabled'
 						AND deleted='0'
 						";
-			$result = $this->db_slave->query($query, true, "error check custom binding: $query");
+            $result = $this->getSlaveDb()->query($query, true, "error check custom binding: $query");
 			$GLOBALS['log']->debug("check custom binding: result is ".print_r($result, true));
-			if(($row = $this->db_slave->fetchByAssoc($result)) != null) {
+            if (($row = $this->getSlaveDb()->fetchByAssoc($result)) != null) {
 			//if($this->db->getRowCount($result) > 0){
 				//data sets exists with this query and custom layout enabled
 				$check_bind=true;
@@ -495,13 +497,11 @@ in use by a data set, especially if the data set has the custom layout enabled.
 					AND data_sets.custom_layout='Enabled'
 					AND data_sets.deleted = '0'
 					";
-
-		$result = $this->db_slave->query($query, true, "Error running query removing layout for column");
+        $result = $this->getSlaveDb()->query($query, true, "Error running query removing layout for column");
 		$GLOBALS['log']->debug("check custom binding remove layout: result is ".print_r($result,true));
 		//if($this->db->getRowCount($result) > 0){
 		//data sets exists with this query and custom layout enabled
-			while (($row = $this->db_slave->fetchByAssoc($result)) != null) {
-			//while ($row = $this->db->fetchByAssoc($result)) {
+        while (($row = $this->getSlaveDb()->fetchByAssoc($result)) != null) {
 
 			//First re-order the list_order_x
 				$layout_object = new DataSet_Layout();
@@ -542,12 +542,11 @@ in use by a data set, especially if the data set has the custom layout enabled.
 					AND data_sets.deleted = '0'
 					";
 
-		$result = $this->db_slave->query($query, true, "Error running query modify layout for column");
+        $result = $this->getSlaveDb()->query($query, true, "Error running query modify layout for column");
 		$GLOBALS['log']->debug("check custom binding modify layout: result is ".print_r($result, true));
 		//if($this->db->getRowCount($result) > 0){
 		//data sets exists with this query and custom layout enabled
-			while (($row = $this->db_slave->fetchByAssoc($result)) != null) {
-			//while ($row = $this->db->fetchByAssoc($result)) {
+        while (($row = $this->getSlaveDb()->fetchByAssoc($result)) != null) {
 				$dataset_object = new DataSet_Layout();
 				$dataset_object->retrieve($row['id']);
 				$dataset_object->parent_value = $new_column_name;
@@ -570,12 +569,11 @@ in use by a data set, especially if the data set has the custom layout enabled.
 					AND data_sets.deleted = '0'
 					";
 
-		$result = $this->db_slave->query($query, true, "Error finding where query exists");
+        $result = $this->getSlaveDb()->query($query, true, "Error finding where query exists");
 		$GLOBALS['log']->debug("check custom binding add columns to layout: result is ".print_r($result, true));
 		//if($this->db->getRowCount($result) > 0){
 		//data sets exists with this query and custom layout enabled
-			while (($row = $this->db_slave->fetchByAssoc($result)) != null) {
-			//while ($row = $this->db->fetchByAssoc($result)) {
+        while (($row = $this->getSlaveDb()->fetchByAssoc($result)) != null) {
 				//Get new position
 				$layout_object = new DataSet_Layout();
 				$controller = new Controller();
@@ -591,6 +589,18 @@ in use by a data set, especially if the data set has the custom layout enabled.
 	//end function add_column_to_layouts
 	}
 
+    /**
+     * Instantiates and returns slave database connection
+     *
+     * @return DBManager
+     */
+    protected function getSlaveDb()
+    {
+        if (!$this->db_slave) {
+            $this->db_slave = DBManagerFactory::getInstance('reports');
+        }
+        $this->db_slave;
+    }
 
 /*
 	End function group dealing with changes to custom query
