@@ -609,7 +609,7 @@
     /**
      * Performs mass export on selected records
      */
-    massExport: function(evt) {
+    massExport: function() {
         this.hideAll();
         var massExport = this.context.get("mass_collection");
 
@@ -852,7 +852,7 @@
     },
     setDisabled: function() {
         var massUpdate = this.context.get('mass_collection');
-        if (massUpdate.length == 0 || massUpdate.fetched === false) {
+        if (massUpdate.isEmpty() || massUpdate.fetched === false) {
             this.$('.btn[name=update_button]').addClass('disabled');
         } else {
             this.$('.btn[name=update_button]').removeClass('disabled');

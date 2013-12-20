@@ -36,8 +36,18 @@
     extendsFrom: 'FieldsetField',
     fields: null,
     dropdownFields: null,
+
+    /**
+     * Dom element selector for dropdown action.
+     * @property
+     */
     actionDropDownTag: '[data-toggle=dropdown]',
+
+    /**
+     * Dom element selector for mobile dropdown selector.
+     */
     selectDropdownTag: '[data-toggle=dropdownmenu]',
+
     events: {
         'click [data-toggle=dropdown]' : 'renderDropdown',
         'change [data-toggle=dropdownmenu]' : 'dropdownSelected',

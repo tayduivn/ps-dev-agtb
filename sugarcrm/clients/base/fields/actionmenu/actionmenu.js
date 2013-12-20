@@ -396,8 +396,8 @@
     /**
      * Disable the dropdown action.
      *
-     * @param {Boolean} true or undefined to disable the edit mode
-     * otherwise, it will restore back to the previous mode.
+     * @param {Boolean} disable(optional) True to disable the dropdown action.
+     *  Otherwise, it enables the action. The default option is true.
      */
     setDropdownDisabled: function(disable) {
         this.$(this.actionDropDownTag).toggleClass('disabled', disable);
