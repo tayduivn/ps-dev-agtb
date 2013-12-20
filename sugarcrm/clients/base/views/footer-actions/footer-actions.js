@@ -56,7 +56,6 @@
         this.delegateEvents();
     },
     initialize: function(options) {
-
         app.view.View.prototype.initialize.call(this, options);
         app.events.on('app:view:change', this.handleViewChange, this);
         var self = this;
@@ -69,6 +68,7 @@
     },
     _renderHtml: function() {
         this.isAuthenticated = app.api.isAuthenticated();
+        this.mobileUrl = Backbone.history.location.pathname + 'mobile';
         app.view.View.prototype._renderHtml.call(this);
     },
     feedback: function() {
