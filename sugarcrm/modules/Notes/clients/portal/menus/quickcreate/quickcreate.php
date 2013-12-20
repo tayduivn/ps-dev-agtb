@@ -10,14 +10,16 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2013 SugarCRM Inc. All rights reserved.
  */
 
-$module_name = 'Cases';
+$module_name = 'Notes';
 $viewdefs[$module_name]['portal']['menu']['quickcreate'] = array(
+    //Disabled in Portal by default
+    'visible' => false,
+    //Included in case quick create for Notes becomes enabled later
     'layout' => 'create',
-    'label' => 'LNK_NEW_CASE',
-    'visible' => true,
+    'label' => 'LNK_NEW_NOTE',
+    'order' => 9,
     'icon' => 'icon-plus',
-    'order' => 0,
 );
