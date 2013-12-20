@@ -59,6 +59,12 @@ class SugarQuery_Builder_Select
         return $this;
     }
 
+    public function fieldRaw($columns)
+    {
+        $field = new SugarQuery_Builder_Field_Raw($columns, $this->query);
+        $this->select[md5($columns)] = $field;
+        return $this;
+    }    
 
     public function addField($column, $options = array())
     {
