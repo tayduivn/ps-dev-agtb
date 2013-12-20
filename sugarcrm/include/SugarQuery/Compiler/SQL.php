@@ -477,38 +477,75 @@ class SugarQuery_Compiler_SQL
         $return = array();
 
         // check if any elements are relationships
-        foreach ($join as $j) {
+        foreach ($join as $name => $j) {
+            // Take raw as is and move on
             if (!empty($j->raw)) {
                 $return[] = $j->raw;
+                $built[$name] = true;
                 continue;
             }
-            if (isset($j->options['joinType'])) {
-                $sql = strtoupper($j->options['joinType']) . ' JOIN';
-            } else {
-                $sql = 'JOIN';
+
+            // If this join has already been compiled, skip it. This happens in
+            // cases of join table aliases that need to be declared before they
+            // are referenced in a query. See BR-1057
+            if (isset($built[$name])) {
+                continue;
             }
 
-            $table = $j->table;
-
-            if ($table instanceof SugarQuery) {
-                $table = "(" . $table->compileSql() . ")";
-            }
-            // Quote the table name that is being joined
-            $sql .= ' ' . $table;
-
-            if (isset($j->options['alias']) && strtolower(
-                    $j->options['alias']
-                ) != strtolower($table)
-            ) {
-                $sql .= ' ' . $j->options['alias'];
+            // If there is a relationship table alias, we need to build the join
+            // part before the join alias is referenced or there will be sadness
+            // in SQLland
+            $buildAlias = isset($j->relationshipTableAlias) && isset($join[$j->relationshipTableAlias]);
+            if ($buildAlias && !isset($built[$j->relationshipTableAlias])) {
+                $return[] = $this->getJoinSQLString($join[$j->relationshipTableAlias]);
+                $built[$j->relationshipTableAlias] = true;
             }
 
-            $sql .= ' ON ';
-            $sql .= '(' . $this->compileWhere($j->on) . ')';
-
-            $return[] = $sql;
+            $return[] = $this->getJoinSQLString($j);
+            $built[$name] = true;
         }
 
         return implode("\n ", $return);
+    }
+
+    /**
+     * Gets a join SQL string
+     * 
+     * @param  SugarQuery_Builder_Join $join A join object
+     * @return string A join SQL part
+     */
+    protected function getJoinSQLString(SugarQuery_Builder_Join $join)
+    {
+        // Raw sql can just be returned
+        if (!empty($join->raw)) {
+            return $join->raw;
+        }
+
+        // Build out the return SQL now
+        if (isset($join->options['joinType'])) {
+            $sql = strtoupper($join->options['joinType']) . ' JOIN';
+        } else {
+            $sql = 'JOIN';
+        }
+
+        $table = $join->table;
+
+        if ($table instanceof SugarQuery) {
+            $table = "(" . $table->compileSql() . ")";
+        }
+        // Quote the table name that is being joined
+        $sql .= ' ' . $table;
+
+        if (isset($join->options['alias']) && strtolower(
+                $join->options['alias']
+            ) != strtolower($table)
+        ) {
+            $sql .= ' ' . $join->options['alias'];
+        }
+
+        $sql .= ' ON ';
+        $sql .= '(' . $this->compileWhere($join->on) . ')';
+        
+        return $sql;
     }
 }
