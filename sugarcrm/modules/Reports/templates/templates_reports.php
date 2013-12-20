@@ -450,6 +450,7 @@ EOD
         $smarty->assign("fiscalStartDate", $config['timeperiod_start_date']);
     }
 
+    $smarty->assign('ENTROPY', mt_rand());
     echo $smarty->fetch("modules/Reports/templates/_reportCriteriaWithResult.tpl");
 
 	reportResults($reporter, $args);
@@ -838,6 +839,7 @@ function template_reports_report(&$reporter,&$args) {
         $smarty->assign("fiscalStartDate", $config['timeperiod_start_date']);
     }
 
+    $smarty->assign('ENTROPY', mt_rand());
 	echo $smarty->fetch("modules/Reports/templates/_template_reports_report.tpl");
 
 ob_start();
