@@ -285,7 +285,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				}   
 				if (!ModuleBuilder.history.popup_window) {
 					ModuleBuilder.history.popup_window = new YAHOO.SUGAR.AsyncPanel('histWindow', {
-						width: 300,
+						width: "400px",
 						draggable: true,
 						close: true,
 						constraintoviewport: true,
