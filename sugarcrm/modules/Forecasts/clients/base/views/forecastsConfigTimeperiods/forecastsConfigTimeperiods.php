@@ -47,7 +47,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_START_DATE',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit'
+                    'view' => 'detail'
                 ),
                 array(
                     'name' => 'timeperiod_shown_forward',

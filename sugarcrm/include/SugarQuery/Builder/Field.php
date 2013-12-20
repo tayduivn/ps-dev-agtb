@@ -72,11 +72,6 @@ class SugarQuery_Builder_Field
     public $nonDb = 0;
 
     /**
-     * @var bool is this field from a join table [i.e. accounts_contacts]
-     */
-    public $isJoinTable = false;
-
-    /**
      * Makin' the magic in the sugar field
      * @param $field
      * @param SugarQuery $query
@@ -107,12 +102,9 @@ class SugarQuery_Builder_Field
         $this->def = $this->getFieldDef();
 
         // if its a linking table let it slide
-        if (!empty($this->query->join[$this->table]->options['linkingTable']) && !empty($this->isJoinTable)){
+        if (!empty($this->query->join[$this->table]->options['linkingTable'])){
             $this->nonDb = 0;
-            return;
-        }
-
-        if (empty($this->def) && $this->field != '*') {
+        } elseif (empty($this->def) && $this->field != '*') {
             $this->nonDb = 1;
             return;
         }

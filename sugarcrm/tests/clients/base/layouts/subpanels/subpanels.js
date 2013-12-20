@@ -26,7 +26,13 @@ describe("Subpanels layout", function() {
                 return {0: "bugs", 1: "contacts"};
             });
             relationshipStub = sinonSandbox.stub(app.data, "getRelatedModule", function(module, linkName){
-                return linkName;  //return linkName as module name for test
+                // test1 is a fictional bad link that doesnt return
+                if (linkName === 'test1') {
+                    return false;
+                } else {
+                    //return linkName as module name for test
+                    return linkName
+                }
             });
             layoutPrototypeStub = sinonSandbox.stub(app.view.Layout.prototype, "_addComponentsFromDef", $.noop());
         });
@@ -62,12 +68,36 @@ describe("Subpanels layout", function() {
             returnedComponents = layout._pruneHiddenComponents(hiddenComponent);
             expect(returnedComponents).toEqual([]);
         });
+        it('should prune subapenls for relationships that dont exist', function(){
+            var inputComponents = [
+                {
+                    'context': {
+                        'link': 'test1'
+                    }
+                },
+                {
+                    'context': {
+                        'link': 'test2'
+                    }
+                }
+            ];
+            var output = [
+                {
+                    'context': {
+                        'link': 'test2'
+                    }
+                }
+            ];
 
+            var result = layout._pruneHiddenComponents(inputComponents);
+
+            expect(result).toEqual(output);
+        });
         it('Should prune subpanels for which user has no access to', function() {
             layout.model = {
                 fields: {
                     'good': { module: 'GoodLink'},
-                    'bad': { module: 'BadLink'},
+                    'bad': { module: 'BadLink'}
                 }
             }
             layout.aclToCheck = 'view';

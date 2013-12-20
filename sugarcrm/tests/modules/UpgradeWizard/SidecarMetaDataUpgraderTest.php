@@ -117,10 +117,12 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         $builder = self::getBuilder();
         $legacyFiles = $builder->getFilesToMake('legacy');
         $sidecarfiles = $builder->getFilesToMake('sidecar');
-        // don't expect removal if file is the same
-        $legacyFiles = array_diff($legacyFiles, $sidecarfiles);
+        // don't expect removal if file is the same and drop listdefs and searchdefs since we're not deleting them
+        $legacyFiles = array_filter(array_diff($legacyFiles, $sidecarfiles),
+            function($name) { return strpos($name, "listviewdefs.") === false &&  strpos($name, "search") === false; });
         // Upgrader can remove additional files, so drop those that aren't in our file list
-        $removed = array_intersect($removals, $legacyFiles);
+        $removed = array_filter(array_intersect($removals, $legacyFiles));
+
         sort($removed);
         sort($legacyFiles);
         $this->assertEquals($legacyFiles, $removed,

@@ -209,10 +209,11 @@ class ModuleInstaller{
                 // Get the newest app_list_strings
                 $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
 
-                // Rebuild the metadata api cache for the base platform. This 
-                // will more than likely cause a rebuild lag on other clients
-                // but seems a reasonable trade off when deploying a new package.
-                MetaDataManager::refreshCache(array('base'), true);
+                // This is one of those processes that requires the metadata cache
+                // to be nuked entirely, primarily because vardefs cannot change
+                // reliably in memory. So wipe out the cache and let the next 
+                // request do the dirty work of rebuilding it.
+                MetaDataManager::clearAPICache();
 
 				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 		}else{
@@ -615,7 +616,7 @@ class ModuleInstaller{
                 }
                 $user->retrieve($userId);
                 $prefs = $user->getPreference('globalSearch', 'search');
-                if (array_key_exists($beanDefs['module'], $prefs) == false)
+                if (!is_array($prefs) || !array_key_exists($beanDefs['module'], $prefs))
                 {
                     continue;
                 }
@@ -1407,16 +1408,16 @@ class ModuleInstaller{
                         unlink($file);
                     }
                 }
-                
+
                 // Need to remove stale dashlets for the Activities relationship
                 if (isset($rel_data['relationships'][$rel_name]) && file_exists('modules/'.$mod)) {
                     // Not our relationship
                     $ourRel = $rel_data['relationships'][$rel_name];
-                    
+
                     $globPath = 'modules/'.$mod.'/clients/base/views/*';
                     foreach (glob($globPath, GLOB_NOSORT | GLOB_ONLYDIR) as $viewPath) {
                         $platform = 'base';
-                        
+
                         $view = basename($viewPath);
                         if ($view != 'history' && $view != 'attachments' && $view != 'planned-activities') {
                             continue;
@@ -1429,13 +1430,13 @@ class ModuleInstaller{
                         if (! isset($viewdefs[$ourRel['lhs_module']][$platform]['view'][$view]['tabs'][0]['link'])) {
                             continue;
                         }
-                        
+
                         foreach ($viewdefs[$ourRel['lhs_module']][$platform]['view'][$view]['tabs'] as $viewTab) {
                             if ($viewTab['link'] == $rel_name) {
                                 rmdir_recursive(dirname($viewPath));
                             }
                         }
-                        
+
                     }
                 }
 			}
@@ -1631,6 +1632,12 @@ class ModuleInstaller{
 	            //clear the unified_search_module.php file
 	            require_once('modules/Home/UnifiedSearchAdvanced.php');
 	            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
+
+                // This is one of those processes that requires the metadata cache
+                // to be nuked entirely, primarily because vardefs cannot change
+                // reliably in memory. So wipe out the cache and let the next 
+                // request do the dirty work of rebuilding it.
+                MetaDataManager::clearAPICache();
 
 				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 				if(!$this->silent){
@@ -2118,7 +2125,7 @@ private function dir_file_count($path){
                 } else {
                     $views = array(MB_RECORDVIEW);
                 }
-                
+
                 foreach($views as $view) {
                     $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": adding $fieldName to $view layout for module $deployedModuleName" ) ;
                     $parser = ParserFactory::getParser($view, $deployedModuleName);
@@ -2146,7 +2153,7 @@ private function dir_file_count($path){
                 } else {
                     $views = array(MB_RECORDVIEW);
                 }
-                
+
                 foreach($views as $view) {
                     $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": adding $fieldName to $view layout for module $deployedModuleName" ) ;
                     $parser = ParserFactory::getParser($view, $deployedModuleName);
@@ -2602,6 +2609,7 @@ private function dir_file_count($path){
                 "server_info",
                 "config",
                 "_override_values",
+                "logo_url",
             ),
         );
         return $sidecarConfig;
@@ -2710,11 +2718,11 @@ private function dir_file_count($path){
 
     public function install_client_files()
     {
-        if (!isset($this->installdefs['clientfiles']) 
+        if (!isset($this->installdefs['clientfiles'])
             || !is_array($this->installdefs['clientfiles'])) {
             return;
         }
-        
+
         // clientfiles contains five identical lists of files for each of the
         // activities relationships, this condenses them so we only copy once.
         $copyList = array();

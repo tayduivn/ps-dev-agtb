@@ -33,10 +33,26 @@
     toggleTitleTpl: {},
 
     /**
+     * Local var for if Forecasts config has been set up or not
+     */
+    forecastIsSetup: undefined,
+
+    /**
      * {@inheritdoc}
      */
     initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
+        /**
+         * This is needed to make sure that this view is read only when forecasts module has been set up.
+         */
+        this.forecastIsSetup = app.metadata.getModule('Forecasts', 'config').is_setup;
+        if(!this.forecastIsSetup) {
+            _.each(_.first(options.meta.panels).fields, function(field) {
+                if(field.name == 'timeperiod_start_date') {
+                    field.click_to_edit = true;
+                }
+            }, this);
+        }
+        this._super('initialize', [options]);
         this.titleViewNameTitle = app.lang.get('LBL_FORECASTS_CONFIG_TITLE_TIMEPERIODS', 'Forecasts');
         this.titleMessage = app.lang.get('LBL_FORECASTS_CONFIG_TITLE_MESSAGE_TIMEPERIODS', 'Forecasts');
         this.toggleTitleTpl = app.template.getView('forecastsConfigHelpers.toggleTitle', 'Forecasts');
@@ -88,19 +104,17 @@
      * @private
      */
     _renderField: function(field) {
-
         field = this._setUpTimeperiodConfigField(field);
 
-        // TODO-sfa this will get removed when the timeperiod mapping functionality is added (SFA-214)
-        /**
-         * This is needed to make sure that this view is read only when forecasts module has been set up.
-         */
-        if(this.model.get('is_setup')) {
-            // if forecasts has been setup, this is read only!
+        // check for all fields, if forecast is setup, set to detail/readonly mode
+        if(this.forecastIsSetup) {
             field.options.def.view = 'detail';
+        } else if(field.name == 'timeperiod_start_date') {
+            // if this is the timeperiod_start_date field and Forecasts is not setup
+            field.options.def.click_to_edit = true;
         }
-        app.view.View.prototype._renderField.call(this, field);
 
+        app.view.View.prototype._renderField.call(this, field);
     },
 
     /**

@@ -39,6 +39,7 @@ describe('Base.Field.Teamset', function() {
         sinonSandbox = sinon.sandbox.create();
         SugarTest.loadComponent("base", "field", "relate");
         var model = new Backbone.Model({
+            id: 'blahblahid',
             team_name: [{id: 'test-id', name: 'blahblah', primary: false}],
             setDefaultAttribute: sinon.stub(),
             removeDefaultAttribute: sinon.stub()
@@ -280,7 +281,39 @@ describe('Base.Field.Teamset', function() {
         field._updateAndTriggerChange(teamsetValue);
         expect(field.model.hasChanged()).toBeTruthy();
     });
-    describe("_loadTemplate", function(){
+
+    it('should be able to compare for the equality', function() {
+        var teamsetValue = [
+                {'id': 'East', 'primary': true},
+                {'id': 'West', 'stuff': 'ignore'}
+            ],
+            equalTeamsetValue = [
+                {'id': 'East', 'primary': true, 'additional': 'blah'},
+                {'id': 'West'}
+            ],
+            getFormatStub = sinonSandbox.stub(app.view.Field.prototype, 'getFormattedValue', function() {
+                return this.format(this.model.get(this.name));
+            }),
+            otherFielddef = {
+                'name': 'other_team_name',
+                'type': 'teamset'
+            },
+            otherField = app.view.createField({
+                def: otherFielddef,
+                view: field.view,
+                context: field.context,
+                model: field.model,
+                module: field.model.module,
+                platform: 'base'
+            });
+
+        field.model.set(field.name, teamsetValue, {silent: true});
+        expect(field.equals(otherField)).toBe(false);
+        otherField.model.set(otherField.name, equalTeamsetValue, {silent: true});
+        expect(field.equals(otherField)).toBe(true);
+    });
+
+    describe('_loadTemplate', function(){
         it("should load list template when doing inline editing (See SP-1197)", function(){
             field.view.action = "list";
             field.action = "edit";

@@ -386,7 +386,7 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
             $button = $this->_get_form($defines, $additionalFormFields);
 
             // $this->sidecar is set in _get_form_sidecar()
-            if ($this->sidecar !== true && $this->enableActionMenu) {
+            if ($this->sidecar !== true) {
                 $button .= "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='$this->form_value' />\n";
             }
             $button .= "</form>";

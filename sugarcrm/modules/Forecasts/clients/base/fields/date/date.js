@@ -1,5 +1,3 @@
-<?php
-
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -13,20 +11,16 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-$moduleName = 'Teams';
-$viewdefs[$moduleName]['base']['menu']['header'] = array(
-    array(
-        'route' => "#bwc/index.php?module=$moduleName&action=EditView&return_module=$moduleName&return_action=index",
-        'label' => 'LNK_NEW_TEAM',
-        'acl_action' => 'create',
-        'acl_module' => $moduleName,
-        'icon' => 'icon-plus',
-    ),
-    array(
-        'route' => "#$moduleName",
-        'label' => 'LNK_LIST_TEAM',
-        'acl_action' => 'list',
-        'acl_module' => $moduleName,
-        'icon' => 'icon-reorder',
-    ),
-);
+({
+    extendsFrom: 'DateField',
+
+    initialize: function(options) {
+        // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
+        // registration across ExtendedComponents
+        if(options.def.click_to_edit) {
+            this.plugins = _.clone(this.plugins) || [];
+            this.plugins.push('ClickToEdit');
+        }
+        this._super('initialize', [options]);
+    }
+})

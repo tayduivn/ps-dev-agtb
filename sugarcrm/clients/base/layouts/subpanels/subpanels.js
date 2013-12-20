@@ -80,8 +80,11 @@
         var visibleSubpanels = _.filter(components, function(component){
             var relatedModule = app.data.getRelatedModule(this.module, component.context.link);
             return _.isEmpty(_.find(hiddenSubpanels, function(hiddenPanel){
-                //hidden subpanels seem to come back in lower case, so we do a case insenstiive compare of module names
-                return hiddenPanel.toLowerCase() === relatedModule.toLowerCase();
+                if (relatedModule !== false) {
+                    //hidden subpanels seem to come back in lower case, so we do a case insenstiive compare of module names
+                    return hiddenPanel.toLowerCase() === relatedModule.toLowerCase();
+                }
+                return true;
             }));
         }, this);
         return visibleSubpanels;

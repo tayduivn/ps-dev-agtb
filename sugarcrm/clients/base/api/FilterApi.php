@@ -424,7 +424,13 @@ class FilterApi extends SugarApi
                 if (!empty($args['deleted'])) {
                     $getBeanOptions['deleted'] = false;
                 }
-                $bean = BeanFactory::getBean($options['module'], $row['id'],$getBeanOptions);
+                
+                // The Admin module doesn't have an id
+                if (!empty($row['id'])) {
+                    $bean = BeanFactory::getBean($options['module'], $row['id'],$getBeanOptions);
+                } else {
+                    $bean = BeanFactory::getBean($options['module'], null,$getBeanOptions);
+                }
 
                 // If we are filtering on a link and there is link data we need to populate the bean manually
                 if (!empty($options['linkDataFields']) && is_array($options['linkDataFields'])) {
