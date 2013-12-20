@@ -47,6 +47,9 @@ class SugarFieldFloat extends SugarFieldInt
         if ( $formattedField === '' || $formattedField === NULL ) {
             return '';
         }
+        if (is_array($formattedField)) {
+            $formattedField = array_shift($formattedField);
+        }
         return (float)unformat_number($formattedField);
     }
 
