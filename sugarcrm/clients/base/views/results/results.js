@@ -90,7 +90,7 @@
      */
     fireSearchRequest: function (cb, offset) {
         var self = this, options;
-        var mlist = app.metadata.getModuleNames({visible: true}); // visible
+        var mlist = app.metadata.getModuleNames({filter: 'visible'}); // visible
         options = {
             //Show alerts for this request
             showAlerts: true,

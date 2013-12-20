@@ -111,7 +111,7 @@
     *******************/
 
     init_labels: function(pageData) {
-        pageData.module_list = _.without(app.metadata.getModuleNames({visible: true, access: 'read'}), 'Home');
+        pageData.module_list = _.without(app.metadata.getModuleNames({filter: 'display_tab', access: 'read'}), 'Home');
         pageData.module_list.sort();
     },
 

@@ -250,7 +250,7 @@
      */
     _addModuleViews: function() {
         var components = [];
-        _.each(app.metadata.getModuleNames(), function(module) {
+        _.each(app.metadata.getModuleNames({filter: 'visible'}), function(module) {
             _.each(app.metadata.getView(module), function(view, name) {
                 var dashlets = this._getDashlets('view', name, module, view.meta);
                 if (!_.isEmpty(dashlets)) {
