@@ -108,7 +108,8 @@ class ForecastsConfigApi extends ConfigModuleApi
                     $_SESSION['authenticated_user_language'] : $GLOBALS['current_language'],
                 'dropdown_name' => 'commit_stage_custom_dom',
                 'view_package' => 'studio',
-                'list_value' => $json->encode($args['show_custom_buckets_options'])
+                'list_value' => $json->encode($args['show_custom_buckets_options']),
+                'skip_sync' => true,
             );
             $_REQUEST['view_package'] = 'studio';
             require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
