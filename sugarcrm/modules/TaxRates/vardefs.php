@@ -119,7 +119,7 @@ $dictionary['TaxRate'] = array(
     'required' => true,
   ),
 ),
-'acls' => array('SugarACLAdminOnly' => array('adminFor' => 'Quotes', 'allowUserRead' => true)),
+'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Quotes', 'allowUserRead' => true)),
 'indices' => array (
        array('name' =>'taxratespk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_taxrates', 'type'=>'index', 'fields'=>array('name','deleted')),
