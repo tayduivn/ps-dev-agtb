@@ -515,9 +515,10 @@ $dictionary['KBDocument'] = array(
     'reportable'=>false,
   ),
 ),
- 'indices' => array (
-       array('name' =>'kbdocumentspk', 'type' =>'primary', 'fields'=>array('id')),
-       ),
+    'indices' => array(
+        array('name' => 'kbdocumentspk', 'type' => 'primary', 'fields' => array('id')),
+        array('name' => 'idx_kbdocument_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
+    ),
  'relationships' => array (
     'kbdocument_revisions' => array('lhs_module'=> 'KBDocuments', 'lhs_table'=> 'kbdocuments', 'lhs_key' => 'id',
                               'rhs_module'=> 'KBDocumentRevisions', 'rhs_table'=> 'kbdocument_revisions', 'rhs_key' => 'kbdocument_id',
@@ -551,9 +552,6 @@ $dictionary['KBDocument'] = array(
    'relationship_type'=>'one-to-many','relationship_role_column'=>'parent_type',
 	'relationship_role_column_value'=>'Emails'),
    ),
-    'indices' => array (
-        array('name' => 'idx_kbdocument_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
-    ),
 );
 
 VardefManager::createVardef('KBDocuments','KBDocument', array(
