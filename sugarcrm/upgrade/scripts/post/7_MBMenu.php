@@ -82,19 +82,37 @@ END;
 
     public function run()
     {
-        if(empty($this->upgrader->state['MBModules'])) return;
+        if (empty($this->upgrader->state['MBModules'])) {
+            return;
+        }
 
-        foreach($this->upgrader->state['MBModules'] as $moduleName) {
-            if(!file_exists("modules/$moduleName")) continue;
-            if(!file_exists("modules/$moduleName/clients/base/menus/header/header.php") && !file_exists("custom/modules/$moduleName/clients/base/menus/header/header.php")) {
+        foreach ($this->upgrader->state['MBModules'] as $moduleName) {
+            if (!file_exists("modules/$moduleName")) {
+                continue;
+            }
+            if (!file_exists("modules/$moduleName/clients/base/menus/header/header.php")
+                && !file_exists("custom/modules/$moduleName/clients/base/menus/header/header.php")
+            ) {
                 $this->addMenu($moduleName);
             }
         }
 
         // Do it also for bwcModules since some of them may not have Menu.php and we need it
         foreach ($GLOBALS['bwcModules'] as $moduleName) {
-            if(!file_exists("modules/$moduleName")) continue;
-            if(!file_exists("modules/$moduleName/clients/base/menus/header/header.php") && !file_exists("custom/modules/$moduleName/clients/base/menus/header/header.php")) {
+            if (!file_exists("modules/$moduleName")) {
+                continue;
+            }
+            if (!file_exists("modules/$moduleName/clients/base/menus/header/header.php")
+                && !file_exists("custom/modules/$moduleName/clients/base/menus/header/header.php")
+            ) {
+                //Check if this module explcitly doesn't have a menu. In that case don't add one now.
+                if (file_exists("modules/$moduleName/Menu.php")) {
+                    $module_menu = array();
+                    include "modules/$moduleName/Menu.php";
+                    if (empty($module_menu)) {
+                        continue;
+                    }
+                }
                 $this->addMenu($moduleName);
             }
         }
