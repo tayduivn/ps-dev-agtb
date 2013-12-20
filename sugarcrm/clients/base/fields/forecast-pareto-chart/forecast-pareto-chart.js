@@ -142,7 +142,7 @@
         options.success = _.bind(function(data) {
             if(this.model) {
                 this.model.set({
-                    title: app.lang.get('LBL_MODULE_NAME_SINGULAR', 'Forecasts') + data.title
+                    title: data.title
                 });
                 this._serverData = data;
                 this.convertDataToChartData();
