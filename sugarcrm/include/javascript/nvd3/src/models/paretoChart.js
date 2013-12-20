@@ -171,12 +171,37 @@ nv.models.paretoChart = function() {
                 }),
                 dataLines = data.filter(function(d) {
                     return !d.disabled && d.type === 'line';
+                }).map(function(lineData) {
+                    if (!multibar.stacked()) {
+                        lineData.values = lineData.valuesOrig.map(function(d, i) {
+                            return {'series': d.series, 'x': (d.x + d.series * 0.25 - i * 0.25), 'y': d.y};
+                        });
+                    } else {
+                        lineData.values.map(function(d) {
+                            d.y = 0;
+                        });
+                        dataBars
+                            .map(function(d, i) {
+                                d.values.map(function(d, i) {
+                                    lineData.values[i].y += d.y;
+                                });
+                            });
+                        lineData.values.map(function(d, i) {
+                            if (i > 0) {
+                                d.y += lineData.values[i - 1].y;
+                            }
+                        });
+                    }
+                    return lineData;
                 }),
                 dataGroup = properties.groupData,
                 quotaValue = properties.quota || 0,
                 quotaLabel = properties.quotaLabel || '',
                 targetQuotaValue = properties.targetQuota || 0,
                 targetQuotaLabel = properties.targetQuotaLabel || '';
+
+            dataBars = dataBars.length ? dataBars : [{values: []}];
+            dataLines = dataLines.length ? dataLines : [{values: []}];
 
             //TODO: try to remove x scale computation from this layer
             // var series1 = data.filter(
@@ -200,9 +225,7 @@ nv.models.paretoChart = function() {
                     });
                 });
 
-            var seriesY = data.filter(function(d) {
-                    return !d.disabled;
-                }).map(function(d) {
+            var seriesY = data.map(function(d) {
                     return d.valuesOrig.map(function(d, i) {
                         return getY(d, i);
                     });
@@ -210,6 +233,7 @@ nv.models.paretoChart = function() {
 
             var lx = x.domain(d3.merge(seriesX)).rangeBands([0, availableWidth - margin.left - margin.right], 0.3),
                 ly = Math.max(d3.max(d3.merge(seriesY)), quotaValue, targetQuotaValue || 0),
+                //increase max y value so that there is some chance of getting a top yAxis tick
                 forceY = Math.round((ly + ly * 0.025) * 0.1) * 10,
                 lOffset = lx(1) + lx.rangeBand() / (multibar.stacked() || dataLines.length === 1 ? 2 : 4);
 
@@ -409,10 +433,7 @@ nv.models.paretoChart = function() {
                 .forceY([0, forceY])
                 .id(chart.id());
 
-            var barsWrap = g.select('.nv-barsWrap')
-                .datum(dataBars.length ? dataBars : [
-                    {values: []}
-                ]);
+            var barsWrap = g.select('.nv-barsWrap').datum(dataBars);
 
             barsWrap.call(multibar);
 
@@ -499,35 +520,7 @@ nv.models.paretoChart = function() {
                 .forceY([0, forceY])
                 .id(chart.id());
 
-            var linesWrap1 = g.select('.nv-linesWrap1')
-                .datum(
-                    dataLines.length ? dataLines.map(function(d) {
-                        if (!multibar.stacked()) {
-                            d.values = d.valuesOrig.map(function(v, i) {
-                                return {'series': v.series, 'x': (v.x + v.series * 0.25 - i * 0.25), 'y': v.y};
-                            });
-                        } else {
-                            d.values.map(function(v) {
-                                v.y = 0;
-                            });
-                            dataBars
-                                .map(function(v, i) {
-                                    v.values.map(function(v, i) {
-                                        d.values[i].y += v.y;
-                                    });
-                                });
-                            d.values.map(function(v, i) {
-                                if (i > 0) {
-                                    v.y += d.values[i - 1].y;
-                                }
-                            });
-                        }
-                        return d;
-                    }) : [
-                        {values: []}
-                    ]
-                );
-
+            var linesWrap1 = g.select('.nv-linesWrap1').datum(dataLines);
             var linesWrap2 = g.select('.nv-linesWrap2').datum(dataLines);
             linesWrap1.call(lines);
             linesWrap2.call(lines);
