@@ -36,6 +36,7 @@ $checked = (isset($_SESSION['setup_license_accept']) && !empty($_SESSION['setup_
 require_once("install/install_utils.php");
 $license_file = getLicenseContents("LICENSE.txt");
 $langHeader = get_language_header();
+$versionToken = getVersionedPath(null);
 $out =<<<EOQ
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html {$langHeader}>
@@ -45,7 +46,7 @@ $out =<<<EOQ
    <title>{$mod_strings['LBL_WIZARD_TITLE']} {$mod_strings['LBL_LICENSE_ACCEPTANCE']}</title>
    <link REL="SHORTCUT ICON" HREF="include/images/sugar_icon.ico">
    <link rel="stylesheet" href="install/install.css" type="text/css">
-   <script src="cache/include/javascript/sugar_grp1_yui.js?s={$sugar_version}&c={$js_custom_version}"></script>
+   <script src="cache/include/javascript/sugar_grp1_yui.js?v={$versionToken}"></script>
    <script type="text/javascript">
     <!--
     if ( YAHOO.env.ua )
