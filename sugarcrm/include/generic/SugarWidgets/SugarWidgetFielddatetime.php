@@ -106,21 +106,36 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 
 	function queryFilterBefore($layout_def)
 	{
+        $column = $this->_get_column_select($layout_def);
+        if ($this->isDateTimeField($layout_def['type'])) {
+            $column = $this->reporter->db->convert($column, 'add_tz_offset');
+        }
+
         $begin = $this->expandDate($layout_def['input_name0']);
-        return $this->queryDateOp($this->_get_column_select($layout_def), $begin, '<', "datetime");
+        return $this->queryDateOp($column, $begin, '<', "datetime");
 	}
 
 	function queryFilterAfter($layout_def)
 	{
+        $column = $this->_get_column_select($layout_def);
+        if ($this->isDateTimeField($layout_def['type'])) {
+            $column = $this->reporter->db->convert($column, 'add_tz_offset');
+        }
+
         $begin = $this->expandDate($layout_def['input_name0'], true);
-        return $this->queryDateOp($this->_get_column_select($layout_def), $begin, '>', "datetime");
+        return $this->queryDateOp($column, $begin, '>', "datetime");
 	}
 
 	function queryFilterBetween_Dates($layout_def)
 	{
+        $column = $this->_get_column_select($layout_def);
+        if ($this->isDateTimeField($layout_def['type'])) {
+            $column = $this->reporter->db->convert($column, 'add_tz_offset');
+        }
+
         $begin = $this->expandDate($layout_def['input_name0']);
      	$end = $this->expandDate($layout_def['input_name1'], true);
-        $column = $this->_get_column_select($layout_def);
+
 	    return "(".$this->queryDateOp($column, $begin, ">=", "datetime")." AND ".
             $this->queryDateOp($column, $end, "<=", "datetime").")\n";
 	}
