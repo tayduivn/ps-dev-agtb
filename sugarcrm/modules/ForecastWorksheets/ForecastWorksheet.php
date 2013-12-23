@@ -681,6 +681,7 @@ class ForecastWorksheet extends SugarBean
             'includedClosedWorst' => '0',
             'pipeline_amount' => '0',
             'pipeline_opp_count' => 0,
+            'closed_amount' => '0',
             'includedIdsInLikelyTotal' => array()
         );
 
