@@ -614,7 +614,7 @@
                     button.getFieldElement().toggleClass('disabled', !enable);
                     break;
                 case 'actiondropdown':
-                    button.$('a.dropdown-toggle').toggleClass('disabled', !enable);
+                    button.$(button.actionDropDownTag).toggleClass('disabled', !enable);
                     break;
             }
         });

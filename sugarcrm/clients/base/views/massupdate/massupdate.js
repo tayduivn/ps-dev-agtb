@@ -480,9 +480,7 @@
                 getAttributes: function(attributes, action) {
                     return {
                         massupdate_params: _.extend({
-                            'uid': (this.entire) ? null : this.getAvailableList(action),
-                            'entire': this.entire,
-                            'filter': (this.entire) ? this.filterDef : null
+                            'uid': this.getAvailableList(action)
                         }, attributes)
                     };
                 },
@@ -608,22 +606,19 @@
         this.save(true);
     },
 
-    massExport: function(evt) {
+    /**
+     * Performs mass export on selected records
+     */
+    massExport: function() {
         this.hideAll();
         var massExport = this.context.get("mass_collection");
-        var exportOptions;
 
         if (massExport) {
             app.alert.show('massexport_loading', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
 
-            // we need to get our filter cleaned up.
-            exportOptions = app.data.parseOptionsForSync("read", massExport).params;
-
             app.api.exportRecords({
                     module: this.module,
-                    uid: (massExport.entire) ? null : massExport.pluck('id'),
-                    entire: massExport.entire,
-                    filter: (massExport.entire) ? exportOptions.filter : null
+                    uid: massExport.pluck('id')
                 },
                 this.$el,
                 {
@@ -857,7 +852,7 @@
     },
     setDisabled: function() {
         var massUpdate = this.context.get('mass_collection');
-        if (massUpdate.length == 0 || massUpdate.entire == true) {
+        if (massUpdate.isEmpty() || massUpdate.fetched === false) {
             this.$('.btn[name=update_button]').addClass('disabled');
         } else {
             this.$('.btn[name=update_button]').removeClass('disabled');

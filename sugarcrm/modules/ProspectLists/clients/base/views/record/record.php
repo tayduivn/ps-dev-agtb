@@ -67,6 +67,13 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
                     'acl_action' => 'view',
                 ),
                 array(
+                    'type' => 'rowaction',
+                    'event' => 'button:export_button:click',
+                    'name' => 'export_button',
+                    'label' => 'LBL_EXPORT',
+                    'acl_action' => 'export',
+                ),
+                array(
                     'type' => 'divider',
                 ),
                 array(
