@@ -535,10 +535,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			ModuleBuilder.asyncRequest(url, successCall);
 		},
 		updateContent: function(o){
-            ModuleBuilder.toggleButtons();
 			ModuleBuilder.callInProgress = false;
 			//Check if a save action was called and now we need to move-on
 			if (ModuleBuilder.state.saving) {
+            ModuleBuilder.toggleButtons();
 				ModuleBuilder.state.loadOnSaveComplete();
 				return;
 			}
