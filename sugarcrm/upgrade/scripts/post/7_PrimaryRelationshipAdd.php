@@ -29,7 +29,7 @@
 /**
  * Fix up primary flagged relationships if there are more than one "primary" record
  */
-class PrimaryRelationshipAdd extends UpgradeScript
+class SugarUpgradePrimaryRelationshipAdd extends UpgradeScript
 {
     public $order = 7000;
     public $type = self::UPGRADE_DB;

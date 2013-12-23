@@ -379,6 +379,11 @@
         this.primaryRecord.save({}, {
             fieldsToValidate: fields,
             success: function() {
+                // Trigger format fields again, because they can come different
+                // from the server (e.g: only teams checked will be in the
+                // response, and we still want to display unchecked teams on the
+                // view)
+                self.primaryRecord.trigger('duplicate:format:field');
                 self.primaryRecord.trigger('mergeduplicates:primary:saved');
             },
             error: function(error) {
@@ -479,6 +484,9 @@
                     .flatten()
                     .uniq(false, function(item) {
                         return item.id;
+                    })
+                    .filter(function(item) {
+                        return !_.isUndefined(item.id);
                     })
                     .value();
                 field.maxHeight = this.generatedValues.teamsets[field.name].length;

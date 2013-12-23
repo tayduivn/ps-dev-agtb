@@ -114,7 +114,7 @@ $dictionary['ProductType'] = array(
     'required' => true,
   ),
 ),
-'acls' => array('SugarACLAdminOnly' => array('adminFor' => 'Products', 'allowUserRead' => true)),
+'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Products', 'allowUserRead' => true)),
 'indices' => array (
        array('name' =>'product_typespk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_producttypes', 'type'=>'index', 'fields'=>array('name','deleted')),

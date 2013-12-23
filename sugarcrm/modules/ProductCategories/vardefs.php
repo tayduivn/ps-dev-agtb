@@ -215,7 +215,7 @@ $dictionary['ProductCategory'] = array(
 
         //END SUGARCRM flav=pro ONLY
     ),
-    'acls' => array('SugarACLAdminOnly' => array('adminFor' => 'Products', 'allowUserRead' => true)),
+    'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Products', 'allowUserRead' => true)),
     'indices' =>
     array(
         array('name' => 'product_categoriespk', 'type' => 'primary', 'fields' => array('id')),

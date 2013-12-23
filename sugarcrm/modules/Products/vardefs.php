@@ -375,6 +375,9 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
+            'formula' => 'divide($discount_price, $base_rate)',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'list_usdollar' =>  array(
             'name' => 'list_usdollar',

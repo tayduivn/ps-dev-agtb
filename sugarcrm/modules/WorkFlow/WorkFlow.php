@@ -807,9 +807,11 @@ $alert_file_contents = "";
                 }
                 $eval_dump .= "'" . $row['target_field'] . "'));\n";
                 $eval_dump .= "\$dataChanged = \$GLOBALS['db']->getDataChanges(\$focus, \$checkFields);\n";
-                $eval_dump .= "if ((empty(\$focus->fetched_row) || !empty(\$dataChanged)) && (";
-                $eval_dump .= implode(' && ', $additionalEval);
-                $eval_dump .= ")) {\n";
+                $eval_dump .= "if ( (empty(\$focus->fetched_row) || !empty(\$dataChanged))";
+                if (!empty($additionalEval)) {
+                    $eval_dump .= ' && (' . implode(' && ', $additionalEval) . ')';
+                }
+                $eval_dump .= " ) {\n";
                 // Need to add the $timeArray and $workflow_id here for check_for_schedule() call
                 $eval_dump .= $timeArray;
                 $eval_dump .= "\$workflow_id = '" . $row['id'] . "'; \n\n";

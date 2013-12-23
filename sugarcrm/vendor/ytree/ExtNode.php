@@ -52,9 +52,9 @@ class ExtNode {
 	var $expanded=false;  //show node expanded during initial load.
 	 
 	function ExtNode($id,$label,$show_expanded=true) {
-		$this->_label=$label;
-		$this->id = $id;	
-		$this->_properties['text']=$label;
+		$this->_label = $label;
+		$this->id = $id;
+		$this->_properties['text'] = htmlspecialchars_decode($label, ENT_QUOTES);
 		$this->uid=microtime();
 		$this->set_property('id',$id);
         $this->expanded = $show_expanded;
@@ -104,4 +104,3 @@ class ExtNode {
 		return $ret;		
  	}
 }
-?>

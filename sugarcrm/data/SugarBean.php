@@ -1047,7 +1047,7 @@ class SugarBean
         if ( !is_array($this->field_defs) )
             return;
         foreach($this->field_defs as $field=>$value){
-            if((isset($value['default']) || !empty($value['display_default'])) && ($force || empty($this->$field))){
+            if ((isset($value['default']) || !empty($value['display_default'])) && ($force || !isset($this->$field))) {
                 $type = $value['type'];
 
                 switch($type){

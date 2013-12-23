@@ -332,7 +332,7 @@
         }
 
         this.values.on('change:title', function(model, title) {
-            this.layout.setTitle(title);
+            this.layout.setTitle(app.lang.get(this.meta.label) + title);
         }, this);
 
         this.on('render', function() {

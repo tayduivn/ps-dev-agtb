@@ -633,6 +633,11 @@ class RestService extends ServiceBase
             $GLOBALS['logic_hook']->call_custom_logic('', 'after_load_user');
         }
 
+        if ($GLOBALS['current_user']->status == 'Inactive'
+            || $GLOBALS['current_user']->deleted == true) {
+            $valid = false;
+        }
+
         if ($valid) {
             //BEGIN SUGARCRM flav=pro ONLY
             SugarApplication::trackLogin();

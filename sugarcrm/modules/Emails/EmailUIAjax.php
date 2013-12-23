@@ -1361,7 +1361,7 @@ eoq;
 
     case "getIeAccount":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: getIeAccount");
-        $ie->retrieve($_REQUEST['ieId']);
+        $ie->retrieve($_REQUEST['ieId'], false);
         if($ie->group_id == $current_user->id) {
             $ret = array();
 

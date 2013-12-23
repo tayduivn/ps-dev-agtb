@@ -111,22 +111,8 @@ class UndeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementa
      */
     public function getFieldDefs()
     {
-        $results = array();
-        if (!isset($this->_viewdefs['panels'])) {
-            return $results;
-        }
-        foreach ($this->_viewdefs['panels'] as $panel) {
-            if (!isset($panel['fields'])) {
-                continue;
-            }
-            foreach ($panel['fields'] as $field) {
-                if (!isset($this->module->field_defs[$field['name']])) {
-                    continue;
-                }
-                $results[$field['name']] = $this->module->field_defs[$field['name']];
-            }
-        }
-        return $results;
+        $vardef = $this->module->getVardefs();
+        return $vardef['fields'];
     }
 
     /**

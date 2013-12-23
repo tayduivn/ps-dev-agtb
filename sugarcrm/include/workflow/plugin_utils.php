@@ -353,7 +353,10 @@ class SugarWorkflowPluginList
 		foreach(SugarAutoLoader::getDirFiles("custom/workflow/plugins", true) as $file) {
 		    foreach(SugarAutoLoader::existing("$file/component_list.php") as $comp_file) {
 		        include $comp_file;
-                //triggers
+                	//bug 62487  - Corrects the array key that is used in custom/workflow/plugins/plugin_list.php, which makes is compatible with SugarCRM 6.5.x
+                	$file = basename($file);
+
+                	//triggers
 				if(!empty($component_list['trigger'])){
 					foreach($component_list['trigger'] as $hook => $hook_array){
 						$component_arrays['trigger'][$hook][$file] = $hook_array;

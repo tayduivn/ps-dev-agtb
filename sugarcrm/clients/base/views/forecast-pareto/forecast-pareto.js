@@ -95,7 +95,7 @@
      * @inheritdoc
      */
     getLabel: function() {
-        return app.lang.get('LBL_DASHLET_FORECASTS_FOR_CHART_NAME');
+        return app.lang.get(this.meta.label);
     },
 
     /**
@@ -275,7 +275,7 @@
             }, this);
 
             this.settings.on('change:title', function(model, title) {
-                this.layout.setTitle(title);
+                this.layout.setTitle(this.getLabel() + title);
             }, this);
 
             this.settings.on('change:display_manager', this.toggleRepOptionsVisibility, this);

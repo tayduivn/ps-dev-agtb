@@ -149,6 +149,7 @@ if(isset($validation_errors)) {
 $disabled = "";
 $result = "";
 $langHeader = get_language_header();
+$versionToken = getVersionedPath(null);
 $out =<<<EOQ
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html {$langHeader}>
@@ -160,10 +161,10 @@ $out =<<<EOQ
    <link REL="SHORTCUT ICON" HREF="include/images/sugar_icon.ico">
    <link rel="stylesheet" href="install/install.css" type="text/css">
    <script type="text/javascript" src="install/installCommon.js"></script>
-   <link rel="stylesheet" type="text/css" media="all" href="jscalendar/calendar-win2k-cold-1.css?s={$sugar_version}&c={$js_custom_version}">
+   <link rel="stylesheet" type="text/css" media="all" href="jscalendar/calendar-win2k-cold-1.css?v={$versionToken}">
    <script>jscal_today = 1161698116000; if(typeof app_strings == "undefined") app_strings = new Array();</script>
-   <script type="text/javascript" src="cache/include/javascript/sugar_grp1.js?s={$sugar_version}&c={$js_custom_version}"></script>
-   <script type="text/javascript" src="cache/include/javascript/sugar_grp1_yui.js?s={$sugar_version}&c={$js_custom_version}"></script>
+   <script type="text/javascript" src="cache/include/javascript/sugar_grp1.js?v={$versionToken}"></script>
+   <script type="text/javascript" src="cache/include/javascript/sugar_grp1_yui.js?v={$versionToken}"></script>
    <script type="text/javascript">
     <!--
     if ( YAHOO.env.ua )

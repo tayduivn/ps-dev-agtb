@@ -18,5 +18,6 @@ $viewdefs[$module_name]['portal']['menu']['quickcreate'] = array(
     'layout' => 'create',
     'label' => 'LNK_NEW_BUG',
     'visible' => true,
+    'icon' => 'icon-plus',
     'order' => 1,
 );

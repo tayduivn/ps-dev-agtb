@@ -108,7 +108,7 @@ $dictionary['Release'] = array(
     'importable' => 'required',
   ),
 ),
-'acls' => array('SugarACLAdminOnly' => array('adminFor' => 'Bugs', 'allowUserRead' => true)),
+'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Bugs', 'allowUserRead' => true)),
 'indices' => array (
        array('name' =>'releasespk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_releases', 'type'=>'index', 'fields'=>array('name','deleted')),

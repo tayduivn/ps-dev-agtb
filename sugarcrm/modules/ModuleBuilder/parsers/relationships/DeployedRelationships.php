@@ -162,6 +162,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
     	// now clear all caches so that our changes are visible
     	Relationship::delete_cache();
         $mi->rebuild_tabledictionary();
+        MetaDataManager::clearAPICache();
 
         $MBmodStrings = $GLOBALS [ 'mod_strings' ];
         $GLOBALS['reload_vardefs'] = true;

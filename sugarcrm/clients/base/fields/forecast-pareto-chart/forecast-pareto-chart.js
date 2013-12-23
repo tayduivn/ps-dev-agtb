@@ -142,7 +142,7 @@
         options.success = _.bind(function(data) {
             if(this.model) {
                 this.model.set({
-                    title: app.lang.get('LBL_MODULE_NAME_SINGULAR', 'Forecasts') + data.title
+                    title: data.title
                 });
                 this._serverData = data;
                 this.convertDataToChartData();
@@ -362,7 +362,7 @@
                     series: seriesIdx,
                     type: 'bar',
                     values: barVal,
-                    valuesOrig: barVal
+                    valuesOrig: app.utils.deepCopy(barVal)
                 });
 
                 // increase the series
@@ -379,7 +379,7 @@
             });
 
             line.values = lineVals;
-            line.valuesOrig = lineVals;
+            line.valuesOrig = app.utils.deepCopy(lineVals);
 
             barData.push(line);
             chartData.data = barData;

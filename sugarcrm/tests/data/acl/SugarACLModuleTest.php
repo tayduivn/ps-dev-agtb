@@ -62,7 +62,7 @@ class SugarACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
             array('module'=>'ACLActions',       'view'=>'admin','edit'=>'admin','delete'=>'admin','acl_module'=>'Users'),
             array('module'=>'ACLFields',        'view'=>'admin','edit'=>'admin','delete'=>'admin','acl_module'=>'Users'),
             array('module'=>'ACLRoles',         'view'=>'admin','edit'=>'admin','delete'=>'admin','acl_module'=>'Users'),
-            array('module'=>'ContractTypes',    'view'=>'admin','edit'=>'admin','delete'=>'admin'),
+            array('module'=>'ContractTypes',    'view'=>'admin','edit'=>'admin','delete'=>'admin','acl_module'=>'Contracts'),
             array('module'=>'Currencies',       'view'=>'any'  ,'edit'=>'admin','delete'=>'admin'),
             //BEGIN SUGARCRM flav=ent ONLY
             array('module'=>'CustomQueries',    'view'=>'any'  ,'edit'=>'admin','delete'=>'admin'),

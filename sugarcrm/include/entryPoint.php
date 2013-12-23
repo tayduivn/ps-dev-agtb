@@ -192,14 +192,14 @@ if(!empty($sugar_config['session_dir'])) {
 	session_save_path($sugar_config['session_dir']);
 }
 
+$GLOBALS['sugar_version'] = $sugar_version;
+$GLOBALS['sugar_flavor'] = $sugar_flavor;
+$GLOBALS['js_version_key'] = get_js_version_key();
+
 SugarApplication::preLoadLanguages();
 
 $timedate = TimeDate::getInstance();
-
-$GLOBALS['sugar_version'] = $sugar_version;
-$GLOBALS['sugar_flavor'] = $sugar_flavor;
 $GLOBALS['timedate'] = $timedate;
-$GLOBALS['js_version_key'] = get_js_version_key();
 
 $db = DBManagerFactory::getInstance();
 $db->resetQueryCount();

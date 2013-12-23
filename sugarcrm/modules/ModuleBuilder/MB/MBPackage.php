@@ -37,6 +37,19 @@ class MBPackage{
     var $author = '';
     var $key = '';
     var $readme='';
+
+    /**
+     * Flavor compatibility map
+     *
+     * @var array
+     */
+    protected static $compatibilityMap = array(
+        'PRO'  => array('PRO', 'CORP', 'ENT', 'ULT'),
+        'CORP' => array('PRO', 'CORP', 'ENT', 'ULT'),
+        'ENT'  => array('ENT', 'ULT'),
+        'ULT'  => array('ENT', 'ULT'),
+    );
+
     function MBPackage($name){
         $this->name = $name;
         $this->load();
@@ -109,17 +122,25 @@ class MBPackage{
     }
 
 function getManifest($version_specific = false, $for_export = false){
+    global $sugar_flavor;
+
     //If we are exporting the package, we must ensure a different install key
     $pre = $for_export ? MB_EXPORTPREPEND : "";
     $date = TimeDate::getInstance()->nowDb();
     $time = time();
     $this->description = to_html($this->description);
     $is_uninstallable = ($this->is_uninstallable ? true : false);
-    if($GLOBALS['sugar_flavor'] == 'CE') {
-        $flavors = array('CE','PRO','ENT');
+
+    if (isset($sugar_flavor)) {
+        if (self::$compatibilityMap[$sugar_flavor]) {
+            $flavors = self::$compatibilityMap[$sugar_flavor];
+        } else {
+            $flavors = array($sugar_flavor);
+        }
     } else {
-        $flavors = array($GLOBALS['sugar_flavor']);
+        $flavors = array();
     }
+
     $version = (!empty($version_specific))?$GLOBALS['sugar_version']:'';
 
     // Build an array and use var_export to build this file
