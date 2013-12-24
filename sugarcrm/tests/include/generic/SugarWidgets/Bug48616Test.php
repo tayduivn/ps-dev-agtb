@@ -24,6 +24,7 @@
 
 require_once "include/generic/LayoutManager.php";
 require_once "include/generic/SugarWidgets/SugarWidgetFielddatetime.php";
+require_once "modules/Reports/Report.php";
 
 class Bug48616Test extends PHPUnit_Framework_TestCase
 {
@@ -31,39 +32,69 @@ class Bug48616Test extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->sugarWidgetField = new SugarWidgetFieldDateTime48616Mock(new LayoutManager());
-        global $current_user, $timedate;
-        $timedate = TimeDate::getInstance();
-        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
+
+        $layoutManager = new LayoutManager();
+        $layoutManager->setAttribute('reporter', new Report());
+        $this->sugarWidgetField = new SugarWidgetFieldDateTime($layoutManager);
     }
 
     public function tearDown()
     {
+        SugarTestHelper::tearDown();
+
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
     public function testQueryFilterBefore()
     {
-        $layout_def =  array ('name' => 'donotinvoiceuntil_c', 'table_key' => 'self', 'qualifier_name' => 'before', 'input_name0' => 'Today', 'input_name1' => '01:00am', 'input_name2' => 'on', 'table_alias' => 'pordr_purchaseorders_cstm', 'column_key' => 'self:donotinvoiceuntil_c', 'type' => 'datetimecombo');
-        $filter = $this->sugarWidgetField->queryFilterBefore($layout_def);
-        if($GLOBALS['db']->getScriptName() == 'mysql')
-        {
-            $this->assertRegExp("/pordr_purchaseorders_cstm\.donotinvoiceuntil_c < \'\d{4}\-\d{1,2}-\d{1,2} \d{2}:\d{2}:\d{2}\'/", $filter);
-        }
-        /*
-        else if($GLOBALS['db']->getScriptName() == 'db2') {
+        $layout_def =  array (
+            'name' => 'donotinvoiceuntil_c',
+            'table_key' => 'self',
+            'qualifier_name' => 'before',
+            'input_name0' => 'Today',
+            'input_name1' => '01:00am',
+            'input_name2' => 'on',
+            'table_alias' => 'pordr_purchaseorders_cstm',
+            'column_key' => 'self:donotinvoiceuntil_c',
+            'type' => 'datetimecombo'
+        );
 
+        $filter = $this->sugarWidgetField->queryFilterBefore($layout_def);
+
+        if ($GLOBALS['db']->getScriptName() == 'mysql') {
+            $this->assertRegExp(
+                "/pordr_purchaseorders_cstm\.donotinvoiceuntil_c [\+|-] INTERVAL \d+ MINUTE <" .
+                " \'\d{4}\-\d{1,2}-\d{1,2} \d{2}:\d{2}:\d{2}\'/",
+                $filter
+            );
         }
-        */
     }
 
     public function testQueryFilterAfter()
     {
-        $layout_def =  array ('name' => 'donotinvoiceuntil_c', 'table_key' => 'self', 'qualifier_name' => 'after', 'input_name0' => 'Today', 'input_name1' => '01:00am', 'input_name2' => 'on', 'table_alias' => 'pordr_purchaseorders_cstm', 'column_key' => 'self:donotinvoiceuntil_c', 'type' => 'datetimecombo');
+        $layout_def = array(
+            'name' => 'donotinvoiceuntil_c',
+            'table_key' => 'self',
+            'qualifier_name' => 'after',
+            'input_name0' => 'Today',
+            'input_name1' => '01:00am',
+            'input_name2' => 'on',
+            'table_alias' => 'pordr_purchaseorders_cstm',
+            'column_key' => 'self:donotinvoiceuntil_c',
+            'type' => 'datetimecombo'
+        );
+
         $filter = $this->sugarWidgetField->queryFilterAfter($layout_def);
-        if($GLOBALS['db']->getScriptName() == 'mysql')
-        {
-            $this->assertRegExp("/pordr_purchaseorders_cstm\.donotinvoiceuntil_c > \'\d{4}\-\d{1,2}-\d{1,2} \d{2}:\d{2}:\d{2}\'/", $filter);
+
+        if ($GLOBALS['db']->getScriptName() == 'mysql') {
+            $this->assertRegExp(
+                "/pordr_purchaseorders_cstm\.donotinvoiceuntil_c [\+|-] INTERVAL \d+ MINUTE >" .
+                " \'\d{4}\-\d{1,2}-\d{1,2} \d{2}:\d{2}:\d{2}\'/",
+                $filter
+            );
         }
     }
 
@@ -84,20 +115,4 @@ class Bug48616Test extends PHPUnit_Framework_TestCase
         }
         */
     }
-
-
 }
-
-class SugarWidgetFieldDateTime48616Mock extends SugarWidgetFieldDateTime
-{
-    protected function queryDateOp($arg1, $arg2, $op, $type)
-    {
-        global $timedate;
-        if($arg2 instanceof DateTime) {
-            $arg2 = $timedate->asDbType($arg2, $type);
-        }
-        return "$arg1 $op ".$GLOBALS['db']->convert($GLOBALS['db']->quoted($arg2), $type)."\n";
-    }
-}
-
-?>
