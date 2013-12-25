@@ -329,6 +329,9 @@ class SqlsrvManager extends MssqlManager
      */
     public function getConstraintSql($indices, $table)
     {
+        if (!$this->isFieldArray($indices)) {
+            $indices = array($indices);
+        }
         if ( $this->doesTableHaveAClusteredIndexDefined($table) ) {
             return parent::getConstraintSql($indices, $table);
         }
