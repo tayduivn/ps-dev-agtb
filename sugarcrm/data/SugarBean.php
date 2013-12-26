@@ -4445,32 +4445,7 @@ class SugarBean
                 //at the end have a list of all the same objects
                 $temp = $this->getCleanCopy();
 
-                foreach($this->field_defs as $field=>$value)
-                {
-                    if (isset($row[$field]))
-                    {
-                        $temp->$field = $row[$field];
-                        $owner_field = $field . '_owner';
-                        if(isset($row[$owner_field]))
-                        {
-                            $temp->$owner_field = $row[$owner_field];
-                        }
-
-                        $GLOBALS['log']->debug("$temp->object_name({$row['id']}): ".$field." = ".$temp->$field);
-                    }else if (isset($row[$this->table_name .'.'.$field]))
-                    {
-                        $temp->$field = $row[$this->table_name .'.'.$field];
-                    }
-                    else
-                    {
-                        $temp->$field = "";
-                    }
-                }
-
-                $temp->check_date_relationships_load();
-                $temp->fill_in_additional_list_fields();
-                if($temp->hasCustomFields()) $temp->custom_fields->fill_relationships();
-                $temp->call_custom_logic("process_record");
+                $temp->loadFromRow($row, true);
 
                 // fix defect #44206. implement the same logic as sugar_currency_format
                 // Smarty modifier does.
