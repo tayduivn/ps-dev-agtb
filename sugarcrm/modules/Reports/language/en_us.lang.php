@@ -452,8 +452,6 @@ $mod_strings = array (
     'DEFAULT_REPORT_TITLE_41' => 'Active User Sessions (Last 7 Days)',
     'DEFAULT_REPORT_TITLE_42' => 'User Sessions Summary (Last 7 Days)',
 
-
-    //BEGIN SUGARCRM flav=pro || flav=ent ONLY
     'DEFAULT_REPORT_TITLE_43' => 'Customer Account Owners',
   	'DEFAULT_REPORT_TITLE_44' => 'My New Customer Accounts',
   	'DEFAULT_REPORT_TITLE_45' => 'Opportunities By Sales Stage',
@@ -469,7 +467,6 @@ $mod_strings = array (
     'DEFAULT_REPORT_TITLE_57' => 'Opportunities Sales Stage For Past, Current, Next Timeperiod By Month',
     'DEFAULT_REPORT_TITLE_58' => 'Last/Current/Next Quarter Forecast',
     'DEFAULT_REPORT_TITLE_59' => 'Opportunities By Sales Stage For Reportees in Current Period',
-    //END SUGARCRM flav=pro || flav=ent ONLY
 
     //'LBL_CHART_ON_DASHLET' => 'Do not Display Chart on Dashlet',
     'LBL_ASSIGNED_TO_NAME'=>'Assigned To:',
