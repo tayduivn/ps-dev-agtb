@@ -153,36 +153,38 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
 
     public function providerTestGetFilenameForFQCN()
     {
+        $ds = DIRECTORY_SEPARATOR;
+
         return array(
             array(
                 'Sugarcrm\\lib\\',
                 'include',
                 'Sugarcrm\\lib\\SugarLogger\\SugarLogger',
-                'include/SugarLogger/SugarLogger.php',
+                'include' . $ds . 'SugarLogger' . $ds . 'SugarLogger.php',
             ),
           array(
                 'Sugarcrm\\',
                 '',
                 'Sugarcrm\\modules\\Accounts\\Account',
-                'modules/Accounts/Account.php',
+                'modules' . $ds . 'Accounts' . $ds . 'Account.php',
             ),
             array(
                 'Monolog\\',
-                'vendor/Monolog/src/Monolog',
+                'vendor' . $ds . 'Monolog' . $ds . 'src' . $ds . 'Monolog',
                 'Monolog\Logger',
-                'vendor/Monolog/src/Monolog/Logger.php',
+                'vendor' . $ds . 'Monolog' . $ds . 'src' . $ds . 'Monolog' . $ds . 'Logger.php',
             ),
             array(
                 'Acme\\',
-                'vendor/Acme',
+                'vendor' . $ds . 'Acme',
                 'Acme\Coyote\Bad_Ass',
-                'vendor/Acme/Coyote/Bad/Ass.php',
+                'vendor' . $ds . 'Acme' . $ds . 'Coyote' . $ds . 'Bad' . $ds . 'Ass.php',
             ),
             array(
                 'Acme\\',
-                'vendor/Acme',
+                'vendor' . $ds . 'Acme',
                 'Acme\Road_Runner\Smart_Ass',
-                'vendor/Acme/Road_Runner/Smart/Ass.php',
+                'vendor' . $ds . 'Acme' . $ds . 'Road_Runner' . $ds . 'Smart' . $ds . 'Ass.php',
             ),
         );
     }
@@ -194,8 +196,9 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
     public function testAutoloadNamespaces()
     {
         // create test class/file
+        $ds = DIRECTORY_SEPARATOR;
         $fqcn = 'Sugarcrm\\modules\\Accounts\\Bogus';
-        $fileName = 'modules/Accounts/Bogus.php';
+        $fileName = 'modules' . $ds . 'Accounts' . $ds . 'Bogus.php';
         $content = "<?php\nnamespace Sugarcrm\\modules\\Accounts;\nclass Bogus { }\n";
         file_put_contents($fileName, $content);
 
