@@ -59,16 +59,23 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
 
         for ($x = 100; $x <= 300; $x++) {
             // create a new contact
-            $opp = BeanFactory::newBean('Opportunities');
-            $opp->name = "SugarQuery Unit Test {$x}";
-            $opp->probability = $x;
-            $opp->date_modified = date('Y-m-d');
-            $opp->date_closed = date('Y-m-d');
-            $opp->save();
-            self::$opportunities[] = $opp;
+            $id = create_guid();
+            $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+            $opportunity = SugarTestOpportunityUtilities::createOpportunity($id);
+            $opportunity->revenuelineitems->add($rli);
+            $opportunity->name = "SugarQuery Unit Test {$x}";
+            $opportunity->probability = $x;
+            $opportunity->date_modified = $opportunity->date_entered = date('Y-m-d');
+            $opportunity->date_closed = $rli->date_closed = date('Y-m-d');
+
+            $rli->opportunity_id = $id;
+
+            $rli->save();
+            $opportunity->save();
+            self::$opportunities[] = $opportunity;
         }
 
-        unset($opp);
+        unset($opportunity);
     }
 
     static public function tearDownAfterClass()
