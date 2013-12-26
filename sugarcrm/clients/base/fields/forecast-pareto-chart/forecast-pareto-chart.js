@@ -189,7 +189,6 @@
             d3.select('#' + this.chartId)
                 .append('svg')
                 .datum(this.d3Data)
-                .transition().duration(500)
                 .call(this.paretoChart);
 
             nv.utils.windowResize(this.paretoChart.update);
