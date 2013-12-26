@@ -159,14 +159,14 @@ class Bug64815Test extends Sugar_PHPUnit_Framework_TestCase
         $row = $this->db->fetchByAssoc($result);
         $this->assertEquals(
             $timeDate->asDb($timeDate->getNow()),
-            $row['date_expired'],
+            $this->db->fromConvert($row['date_expired'], 'datetime'),
             'Workflow schedule should get updated for primary trigger'
         );
 
 
         // Change an attribute that has no triggers attached to it, and check that the workflow is not updated
         $timeDate->setNow($timeDate->getNow()->modify("+1 second"));
-        $dateExpiredOld = $row['date_expired'];
+        $dateExpiredOld = $this->db->fromConvert($row['date_expired'], 'datetime');
         $bean = $bean->retrieve($bean->id);
         $bean->name = "New Name";
         $bean->save();
@@ -179,7 +179,7 @@ class Bug64815Test extends Sugar_PHPUnit_Framework_TestCase
         $row = $this->db->fetchByAssoc($result);
         $this->assertEquals(
             $dateExpiredOld,
-            $row['date_expired'],
+            $this->db->fromConvert($row['date_expired'], 'datetime'),
             'Workflow schedule should not get updated'
         );
 
@@ -196,7 +196,7 @@ class Bug64815Test extends Sugar_PHPUnit_Framework_TestCase
         $row = $this->db->fetchByAssoc($result);
         $this->assertEquals(
             $dateExpiredOld,
-            $row['date_expired'],
+            $this->db->fromConvert($row['date_expired'], 'datetime'),
             'Workflow schedule should not get updated when secondary trigger not equal to the expected value'
         );
     }
