@@ -258,6 +258,7 @@ class FilterApi extends SugarApi
         $api->action = 'list';
 
         $q->select->selectReset()->setCountQuery();
+        $q->order_by = null;
         $q->limit = null;
 
         return reset($q->execute());
