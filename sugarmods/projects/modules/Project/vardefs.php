@@ -402,7 +402,17 @@ $dictionary['Project'] = array(
 			'vname'=>'LBL_PROJECT_HOLIDAYS',
 			'module'=>'Holidays',
 			'bean_name'=>'Holiday',
-  		),    		     		
+  		),
+        'activities' => array(
+            'name' => 'activities',
+            'type' => 'link',
+            'relationship' => 'projects_activities',
+            'vname' => 'LBL_ACTIVITIES',
+            'link_type' => 'many',
+            'module' => 'Activities',
+            'bean_name' => 'Activity',
+            'source' => 'non-db',
+        ),
 	),
 	'indices' => array(
 		array('name' =>'projects_primary_key_index',
