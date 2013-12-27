@@ -52,9 +52,22 @@ class SchedulersJobsTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
-    protected function createJob($data)
+    protected function createJob(array $data)
     {
         $job = new TestSchedulersJob();
+        $this->prepareJob($job, $data);
+        return $job;
+    }
+
+    protected function createJobMock(array $data, array $methodsToBeMocked = array())
+    {
+        $jobMock = $this->getMock('TestSchedulersJob', $methodsToBeMocked);
+        $this->prepareJob($jobMock, $data);
+        return $jobMock;
+    }
+
+    protected function prepareJob(SchedulersJob $job, array $data)
+    {
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         foreach($data as $key => $val) {
             $job->$key = $val;
@@ -62,7 +75,6 @@ class SchedulersJobsTest extends Sugar_PHPUnit_Framework_TestCase
         $job->execute_time = empty($job->execute_time) ? TimeDate::getInstance()->getNow()->asDb() : $job->execute_time;
         $job->save();
         $this->jobs[] = $job->id;
-        return $job;
     }
 
     public function testJobCreate()
@@ -350,18 +362,24 @@ class SchedulersJobsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse($res === true, "Bad result from runJobId");
     }
 
-    public function testJobURL()
+    public function testJobURLSuccess()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $job = $this->createJob(array("name" => "Test Url", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "url::".$GLOBALS['sugar_config']['site_url']."/"));
+        $job = $this->createJobMock(array("name" => "Test Url", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "url::www.example.com"), array('fireUrl'));
+        $job->expects($this->any())->method('fireUrl')->will($this->returnValue(true));
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-        // Bad URL
-        $job = $this->createJob(array("name" => "Test Url 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "url::".$GLOBALS['sugar_config']['site_url']."/blahblahblah"));
+    }
+
+    public function testJobURLFailure()
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $job = $this->createJobMock(array("name" => "Test Url 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "url::www.example.com"), array('fireUrl'));
+        $job->expects($this->any())->method('fireUrl')->will($this->returnValue(false));
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
