@@ -24,10 +24,12 @@ class RS81Test extends Sugar_PHPUnit_Framework_TestCase
         $this->service = SugarTestRestUtilities::getRestServiceMock();
 
         $this->api = new MeetingsApi();
+        SugarTestMeetingUtilities::createMeeting();
     }
 
     public function tearDown()
     {
+        SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestHelper::tearDown();
     }
 
