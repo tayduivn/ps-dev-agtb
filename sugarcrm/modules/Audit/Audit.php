@@ -178,7 +178,7 @@ class Audit extends SugarBean
             }
 
             // convert the date
-            $dateCreated = $timedate->fromDbType($row['date_created'], "datetime");
+            $dateCreated = $timedate->fromDbType($db->fromConvert($row['date_created'], 'datetime'), "datetime");
             $row['date_created'] = $timedate->asIso($dateCreated);
 
             $row['before'] = $row['after'] = null;
