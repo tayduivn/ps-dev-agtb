@@ -194,7 +194,7 @@ class json_config {
 		$module_arr['fields'] = array();
 
 		foreach($all_fields as $field) {
-			if(isset($focus->$field) && !is_object($focus->$field)) {
+            if (isset($focus->$field) && is_scalar($focus->$field)) {
 				$focus->$field =  from_html($focus->$field);
 				$focus->$field =  preg_replace("/\r\n/","<BR>",$focus->$field);
 				$focus->$field =  preg_replace("/\n/","<BR>",$focus->$field);
