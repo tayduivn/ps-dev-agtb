@@ -150,14 +150,15 @@ class ActivitiesApi extends FilterApi
         }
         $timedate = TimeDate::getInstance();
 
+        $db = DBManagerFactory::getInstance();
         // Emulate going through SugarBean, without the extra DB hits.
         foreach ($response['records'] as &$record) {
             $record['comment_count'] = (int)$record['comment_count'];
             $record['data'] = json_decode($record['data'], true);
             $record['last_comment'] = json_decode($record['last_comment'], true);
-            $date_modified = $timedate->fromDbType($record['date_modified'], 'datetime');
+            $date_modified = $timedate->fromDbType($db->fromConvert($record['date_modified'], 'datetime'), 'datetime');
             $record['date_modified'] = $timedate->asIso($date_modified);
-            $date_entered = $timedate->fromDbType($record['date_entered'], 'datetime');
+            $date_entered = $timedate->fromDbType($db->fromConvert($record['date_entered'], 'datetime'), 'datetime');
             $record['date_entered'] = $timedate->asIso($date_entered);
 
             if ($record['activity_type'] == 'update') {
