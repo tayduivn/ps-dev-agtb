@@ -1016,32 +1016,32 @@ function return_app_list_strings_language($language)
     $app_list_strings_array = array();
 
     //Merge language files together
-       foreach ($langs as $key => $lang) {
+    foreach ($langs as $key => $lang) {
 
         $app_list_strings_state = $app_list_strings;
-           foreach(SugarAutoLoader::existing(
-               "include/language/$lang.lang.php",
-               "include/language/$lang.lang.override.php",
-               "include/language/$lang.lang.php.override"
-           ) as $file) {
-               include $file;
-               $GLOBALS['log']->info("Found language file: $file");
-           }
+            foreach(SugarAutoLoader::existing(
+                "include/language/$lang.lang.php",
+                "include/language/$lang.lang.override.php",
+                "include/language/$lang.lang.php.override"
+            ) as $file) {
+                include $file;
+                $GLOBALS['log']->info("Found language file: $file");
+            }
 
-       $app_list_strings_array[$lang] = $app_list_strings;
-       //Return to previous state unless we are on first iteration and do an intersect merge
-       if ($key > 0) {
-           $app_list_strings = $app_list_strings_state;
-           //In case a custom file doesn't exist for the expected language, we want the custom lists from the default language
-           //(if there are key additions/deletions) but we want strings in our expected language (as much as possible).
-           $app_list_strings = sugarArrayIntersectMerge($app_list_strings, $app_list_strings_array[$lang]);
-       }
-       foreach(SugarAutoLoader::existing(
-           "custom/application/Ext/Language/$lang.lang.ext.php"
-       ) as $file) {
-           $app_list_strings = _mergeCustomAppListStrings($file , $app_list_strings);
-           $GLOBALS['log']->info("Found extended language file: $file");
-       }
+        $app_list_strings_array[$lang] = $app_list_strings;
+        //Return to previous state unless we are on first iteration and do an intersect merge
+        if ($key > 0) {
+            $app_list_strings = $app_list_strings_state;
+            //In case a custom file doesn't exist for the expected language, we want the custom lists from the default language
+            //(if there are key additions/deletions) but we want strings in our expected language (as much as possible).
+            $app_list_strings = sugarArrayIntersectMerge($app_list_strings, $app_list_strings_array[$lang]);
+        }
+        foreach(SugarAutoLoader::existing(
+            "custom/application/Ext/Language/$lang.lang.ext.php"
+        ) as $file) {
+            $app_list_strings = _mergeCustomAppListStrings($file , $app_list_strings);
+            $GLOBALS['log']->info("Found extended language file: $file");
+        }
         foreach(SugarAutoLoader::existing(
             "custom/include/language/$lang.lang.php"
         ) as $file) {

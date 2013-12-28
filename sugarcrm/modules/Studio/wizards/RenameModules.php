@@ -49,6 +49,13 @@ class RenameModules
     private $changedModules;
 
     /**
+     * A string that contains the module currently being worked on
+     *
+     * @var string
+     */
+    private $changedModule;
+
+    /**
      * An array containing the modules which have had their module strings modified as part of the
      * renaming process.
      *
@@ -276,6 +283,7 @@ class RenameModules
                         }
 
                         if($updateStr) {
+                            $this->changedModule = $changedModuleName;
                             $newValue = $this->replaceSingleLabel($oldValue, $renameFields, $def);
                         }
 
@@ -317,7 +325,7 @@ class RenameModules
         }
         
         // Get the current strings to see what might need to be changed
-        $all_app_strings = return_application_language($language);
+        $all_app_strings = return_application_language($this->selectedLanguage);
         
         // Flag that will tell us if there is a need to write
         $cached = false;
@@ -650,6 +658,7 @@ class RenameModules
             //If the static of dynamic key exists it should be replaced.
             if (isset($currentModuleStrings[$formattedLanguageKey])) {
                 $oldStringValue = $currentModuleStrings[$formattedLanguageKey];
+                $this->changedModule = $moduleName;
                 $newStringValue = $this->replaceSingleLabel($oldStringValue, $replacementLabels, $entry);
                 if ($oldStringValue != $newStringValue) {
                     $replacedLabels[$formattedLanguageKey] = $newStringValue;
@@ -699,6 +708,7 @@ class RenameModules
             //If the static of dynamic key exists it should be replaced.
             if (isset($currentModuleStrings[$formattedLanguageKey])) {
                 $oldStringValue = $currentModuleStrings[$formattedLanguageKey];
+                $this->changedModule = $moduleName;
                 $replacedLabels[$formattedLanguageKey] = $this->replaceSingleLabel($oldStringValue, $replacementLabels, $entry);
             }
         }
@@ -723,6 +733,26 @@ class RenameModules
     }
 
     /**
+     * Returns true if a given label in the default mod_strings for a module contains
+     * a given substring.
+     *
+     * @param string $key
+     * @param string $substring
+     *
+     * @return boolean
+     */
+    private function checkDefaultsForSubstring($key, $substring) {
+        // Check for the label in the static defaults file in case we need it later
+        if ($this->changedModule &&
+            file_exists('modules/'.$this->changedModule.'/language/'.$this->selectedLanguage.'.lang.php'))
+        {
+            include('modules/'.$this->changedModule.'/language/'.$this->selectedLanguage.'.lang.php');
+            return (strpos($mod_strings[$key], $substring) !== false);
+        }
+        return false;
+    }
+
+    /**
      * Replace a label with a new value based on metadata which specifies the label as either singular or plural.
      *
      * @param  string $oldStringValue
@@ -735,29 +765,39 @@ class RenameModules
         $replaceKey = 'prev_' . $replacementMetaData['type'];
         $search = $replacementLabels[$replaceKey];
         $replace = $replacementLabels[$replacementMetaData['type']];
-        
+
         if (!empty($modifier)) {
             $search = call_user_func($modifier, $search);
             $replace = call_user_func($modifier, $replace);
         }
-        
-        // Handle resetting routes in strings, since some modules like Forecasting
-        // include links in their strings.
-        $oldStringValue = str_replace("#{$search}/", "____TEMP_ROUTER_HOLDER____", $oldStringValue);
-        
-        // Bug 47957
-        // If nothing was replaced - try to replace original string
-        $replaceCount = 0;
-        $result = str_replace($search, $replace, $oldStringValue, $replaceCount);
-        if (!$replaceCount){
-            $replaceKey = 'key_' . $replacementMetaData['type'];
-            $search = $replacementLabels[$replaceKey];
+
+        // Get the mod_strings key from metadata
+        $modKey = $this->formatModuleLanguageKey($replacementMetaData['name'], $replacementLabels);
+
+        // If oldStringValue is already updated, don't re-update it.
+        // Also handle the corner case where we actually DO want a repeat in the string.
+        if ((strpos($oldStringValue, $replace) === false) || $this->checkDefaultsForSubstring($modKey, $replace))
+        {
+            // Handle resetting routes in strings, since some modules like Forecasting
+            // include links in their strings.
+            $oldStringValue = str_replace("#{$search}/", "____TEMP_ROUTER_HOLDER____", $oldStringValue);
+
+            // Bug 47957
+            // If nothing was replaced - try to replace original string
+            $replaceCount = 0;
             $result = str_replace($search, $replace, $oldStringValue, $replaceCount);
+            if (!$replaceCount){
+                $replaceKey = 'key_' . $replacementMetaData['type'];
+                $search = $replacementLabels[$replaceKey];
+                $result = str_replace($search, $replace, $oldStringValue, $replaceCount);
+            }
+
+            // Add the route back in if it was found
+            $result = str_replace("____TEMP_ROUTER_HOLDER____", "#{$search}/", $result);
+
+            return $result;
         }
-        
-        // Add the route back in if it was found
-        $result = str_replace("____TEMP_ROUTER_HOLDER____", "#{$search}/", $result);
-        return $result;
+        return $oldStringValue;
     }
 
 
