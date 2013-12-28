@@ -30,36 +30,131 @@ require_once 'include/MetaDataManager/MetaDataConverter.php';
 
 class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    protected $defs = array(
+        'detail' => array(
+            'templateMeta' => array(
+                'maxColumns' => '1',
+                'widths' => array(
+                    array('label' => '10', 'field' => '30'),
+                ),
+            ),
+            'panels' => array(
+                array(
+                    'label' => 'LBL_PANEL_DEFAULT',
+                    'fields' => array(
+                        'bug_number',
+                        array(
+                            'name'=>'name',
+                            'displayParams'=>array(
+                                'required'=>true,
+                                'wireless_edit_only'=>true,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        'edit' => array(
+            'templateMeta' => array(
+                'maxColumns' => '1',
+                'widths' => array(
+                    array('label' => '10', 'field' => '30'),
+                ),
+            ),
+            'panels' => array(
+                array(
+                    'label' => 'LBL_PANEL_DEFAULT',
+                    'fields' => array(
+                        array(
+                            'name'=>'name',
+                            'displayParams'=>array(
+                                'required'=>true,
+                                'wireless_edit_only'=>true,
+                            ),
+                        ),
+                        'phone_office',
+                        array(
+                            'name'=>'website',
+                            'displayParams'=>array(
+                                'type'=>'link',
+                            ),
+                        ),
+                        'email',
+                    ),
+                ),
+            ),
+        ),
+        'list' => array(
+            'panels' => array(
+                array(
+                    'label' => 'LBL_PANEL_DEFAULT',
+                    'fields' => array(
+                        array(
+                            'name' => 'name',
+                            'label' => 'LBL_NAME',
+                            'default' => true,
+                            'enabled' => true,
+                            'link' => true,
+                            'width' => '10%',
+                        ),
+                        array(
+                            'name' => 'bug_number',
+                            'enabled' => true,
+                            'width' => '10%',
+                            'default' => true,
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        'search' => array(
+            'templateMeta' => array(
+                'maxColumns' => '1',
+                'widths' => array('label' => '10', 'field' => '30'),
+            ),
+            'layout' => array(
+                'basic_search' => array(
+                    'name',
+                ),
+            ),
+        ),
+    );
+
+    /**
+     * @inheritdoc
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('current_user');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function tearDown()
+    {
+        SugarTestHelper::tearDown();
+        parent::tearDown();
+    }
+
     public function testConvertWirelessListToLegacy() {
-        $file = 'modules/Bugs/clients/mobile/views/list/list.php';
-        require $file;
-        
-        $this->assertInternalType('array', $viewdefs['Bugs']['mobile']['view']['list'], 'Expected view def structure not found');
-        
-        $converted = MetaDataConverter::toLegacy('list', $viewdefs['Bugs']['mobile']['view']['list']);
+        $converted = MetaDataConverter::toLegacy('list', $this->defs['list']);
         $this->assertArrayHasKey('BUG_NUMBER', $converted, 'BUG_NUMBER missing from the conversion');
         $this->assertArrayHasKey('NAME', $converted, 'NAME missing from the conversion');
     }
     
     public function testConvertWirelessDetailToLegacy() {
-        $file = 'modules/Bugs/clients/mobile/views/detail/detail.php';
-        require $file;
-        
-        $this->assertInternalType('array', $viewdefs['Bugs']['mobile']['view']['detail'], 'Expected view def structure not found');
-        
-        $converted = MetaDataConverter::toLegacy('detail', $viewdefs['Bugs']['mobile']['view']['detail']);
+        $converted = MetaDataConverter::toLegacy('detail', $this->defs['detail']);
         $this->assertNotEmpty($converted['panels'][0][0], 'First string field name is missing');
         $this->assertEquals('bug_number', $converted['panels'][0][0], 'First field name is not as expected');
     }
     
     public function testNoConversionForNonConvertableViewType() {
-        $file = 'modules/Bugs/clients/mobile/views/search/search.php';
-        require $file;
-        
-        $this->assertArrayHasKey('layout', $searchdefs['Bugs'], 'No layout found where layout was expected');
-        
-        $converted = MetaDataConverter::toLegacy('search', $searchdefs);
-        $this->assertEquals($converted, $searchdefs, 'Viewdefs converted unexpectedly');
+        $converted = MetaDataConverter::toLegacy('search', $this->defs['search']);
+        $this->assertEquals($converted, $this->defs['search'], 'Viewdefs converted unexpectedly');
     }
     
     public function testConvertFieldsets() {
