@@ -82,6 +82,8 @@ END;
 
     public function run()
     {
+        global $mod_strings;
+
         if (empty($this->upgrader->state['MBModules'])) {
             return;
         }
@@ -107,8 +109,12 @@ END;
             ) {
                 //Check if this module explcitly doesn't have a menu. In that case don't add one now.
                 if (file_exists("modules/$moduleName/Menu.php")) {
+                    //Need to make sure the mod_strings match the requested module or Menus may fail
+                    $curr_mod_strings = $mod_strings;
+                    $mod_strings = return_module_language("en_us", $moduleName);
                     $module_menu = array();
                     include "modules/$moduleName/Menu.php";
+                    $mod_strings = $curr_mod_strings;
                     if (empty($module_menu)) {
                         continue;
                     }
