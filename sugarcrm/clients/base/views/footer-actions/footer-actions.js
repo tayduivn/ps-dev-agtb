@@ -68,7 +68,6 @@
     },
     _renderHtml: function() {
         this.isAuthenticated = app.api.isAuthenticated();
-        this.mobileUrl = Backbone.history.location.pathname + 'mobile';
         app.view.View.prototype._renderHtml.call(this);
     },
     feedback: function() {
