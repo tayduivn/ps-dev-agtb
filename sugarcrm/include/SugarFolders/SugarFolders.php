@@ -1013,16 +1013,22 @@ ENDQ;
     {
         $columns = array();
         $where = "where id = '{$this->id}'";
-        function filter($field) {
-            return $field !== "id";
-        }
-        foreach (array_filter($fieldNames, "filter") as $field) {
+
+        foreach (array_filter($fieldNames, array($this, 'isNotId')) as $field) {
             $columns[] = "{$field}=" . $this->getFieldValue($field, $fieldMapping);
         }
 
-        return "UPDATE folders
-					SET ".implode(",", $columns)."
-					$where";
+        return "UPDATE folders SET ".implode(",", $columns)." $where";
+    }
+
+    /**
+     * Return true if field is not id
+     *
+     * @param $field
+     * @return bool
+     */
+    private function isNotId($field) {
+        return $field !== "id";
     }
 
 	/**
