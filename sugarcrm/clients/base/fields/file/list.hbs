@@ -13,12 +13,14 @@
  */
 }}
 {{#if value}}
-    {{#with value}}
-        {{#notEq mimeType 'image'}}
-            <a class="ellipsis_inline" data-placement="bottom" title="{{name}}" href="javascript:void(0);" data-url="{{url}}" data-action="download">{{name}}</a>
-        {{/notEq}}
-        {{#eq mimeType 'image'}}
-            <a class="ellipsis_inline" data-placement="bottom" title="{{name}}" href="{{url}}" target="_blank">{{name}}</a>
-        {{/eq}}
-    {{/with}}
+    {{#if value.[0]}}
+        {{#with value.[0]}}
+            {{#notEq mimeType 'image'}}
+                <a class="ellipsis_inline" data-placement="bottom" title="{{name}}" href="javascript:void(0);" data-url="{{url}}" data-action="download">{{name}}</a>
+            {{/notEq}}
+            {{#eq mimeType 'image'}}
+                <a class="ellipsis_inline" data-placement="bottom" title="{{name}}" href="{{url}}" target="_blank">{{name}}</a>
+            {{/eq}}
+        {{/with}}
+    {{/if}}
 {{/if}}
