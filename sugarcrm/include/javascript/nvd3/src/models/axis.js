@@ -86,7 +86,7 @@ nv.models.axis = function() {
         , maxTickHeight = 0;
       var tickText = g.selectAll('g.tick').select('text');
       tickText.each(function(d,i){
-        var bbox = this.getBBox()
+        var bbox = this.getBoundingClientRect()
           , size = {w: parseInt(bbox.width, 10), h: parseInt(bbox.height / 1.15, 10)};
         if (size.w > maxTickWidth) {
           maxTickWidth = size.w;

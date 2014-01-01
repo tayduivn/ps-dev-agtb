@@ -716,7 +716,7 @@ nv.models.axis = function() {
         , maxTickHeight = 0;
       var tickText = g.selectAll('g.tick').select('text');
       tickText.each(function(d,i){
-        var bbox = this.getBBox()
+        var bbox = this.getBoundingClientRect()
           , size = {w: parseInt(bbox.width, 10), h: parseInt(bbox.height / 1.15, 10)};
         if (size.w > maxTickWidth) {
           maxTickWidth = size.w;
@@ -7954,12 +7954,12 @@ nv.models.paretoChart = function() {
                     .attr('fill', 'black')
                 ;
 
-                titleHeight = parseInt(g.select('.nv-title').node().getBBox().height, 10) +
+                titleHeight = parseInt(g.select('.nv-title').node().getBoundingClientRect().height, 10) +
                     parseInt(g.select('.nv-title').style('margin-top'), 10) +
                     parseInt(g.select('.nv-title').style('margin-bottom'), 10);
 
                 g.select('.nv-titleWrap')
-                    .attr('transform', 'translate(0,' + (-margin.top + parseInt(g.select('.nv-title').node().getBBox().height, 10)) + ')');
+                    .attr('transform', 'translate(0,' + (-margin.top + parseInt(g.select('.nv-title').node().getBoundingClientRect().height, 10)) + ')');
             }
 
             //------------------------------------------------------------
@@ -8128,7 +8128,7 @@ nv.models.paretoChart = function() {
                     dy = 0.71,
                     maxWidth = x.rangeBand();
 
-                if (this.getBBox().width > maxWidth) {
+                if (this.getBoundingClientRect().width > maxWidth) {
                     this.textContent = '';
 
                     do {
@@ -8147,7 +8147,7 @@ nv.models.paretoChart = function() {
                         while (i < l) {
                             textString = textSpan.text();
                             textSpan.text(textString + ' ' + textArray[i]);
-                            if (this.getBBox().width <= maxWidth) {
+                            if (this.getBoundingClientRect().width <= maxWidth) {
                                 i += 1;
                             }
                             else {
@@ -8197,7 +8197,7 @@ nv.models.paretoChart = function() {
                     .attr('text-anchor', 'end')
                     .attr('transform', 'translate(-10,' + y(quotaValue) + ')')
                     .style('font-weight', 'bold');
-                var tickTextHeight = Math.round(parseInt(g.select('text.nv-quotaValue').node().getBBox().height, 10) / 1.15);
+                var tickTextHeight = Math.round(parseInt(g.select('text.nv-quotaValue').node().getBoundingClientRect().height, 10) / 1.15);
                 //check if tick lines overlap quota values, if so, hide the values that overlap
                 g.select('.nv-y.nv-axis').selectAll('g.tick')
                     .each(function(d, i) {
@@ -8227,7 +8227,7 @@ nv.models.paretoChart = function() {
                     .attr('text-anchor', 'end')
                     .attr('transform', 'translate(-10,' + y(targetQuotaValue) + ')')
                     .style('font-weight', 'bold');
-                var tickTextHeight = Math.round(parseInt(g.select('text.nv-targetQuotaValue').node().getBBox().height, 10) / 1.15);
+                var tickTextHeight = Math.round(parseInt(g.select('text.nv-targetQuotaValue').node().getBoundingClientRect().height, 10) / 1.15);
                 //check if tick lines overlap quota values, if so, hide the values that overlap
                 g.select('.nv-y.nv-axis').selectAll('g.tick')
                     .each(function(d, i) {
