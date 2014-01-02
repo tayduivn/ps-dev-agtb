@@ -123,7 +123,7 @@ $viewdefs['base']['view']['inactive-tasks'] = array(
             'record_date' => 'date_modified',
             'row_actions' => array(
                 array(
-                    'type' => 'rowaction',
+                    'type' => 'unlink-action',
                     'icon' => 'icon-unlink',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
@@ -144,7 +144,7 @@ $viewdefs['base']['view']['inactive-tasks'] = array(
             'record_date' => 'date_modified',
             'row_actions' => array(
                 array(
-                    'type' => 'rowaction',
+                    'type' => 'unlink-action',
                     'icon' => 'icon-unlink',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',

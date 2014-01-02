@@ -43,19 +43,28 @@
         app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args:[options]});
         this.type = 'rowaction';
     },
+
     /**
-     * We cannot unlink one-to-many relationships where the relationship is a required field.
-     * Returns false if relationship is required otherwise calls parent for additional ACL checks
-     * @return {Boolean} true if allow access, false otherwise
-     * @override
+     * {@inheritDoc}
+     *
+     * If parent module matches `Homepage` then `false` is returned.
+     *
+     * Plus, we cannot unlink one-to-many relationships when the relationship
+     * is a required field - if that's the case `false` is returned as well.
+     *
+     * @return {Boolean} `true` if access is allowed, `false` otherwise.
      */
     hasAccess: function() {
-        var link = this.context.get("link");
-        var parentModule = this.context.get("parentModule");
-        var required = app.utils.isRequiredLink(parentModule, link);
-        if(required){
+        var parentModule = this.context.get('parentModule');
+        if (parentModule === 'Home') {
             return false;
         }
-        return app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'hasAccess'});
+
+        var link = this.context.get('link');
+        if (link && app.utils.isRequiredLink(parentModule, link)) {
+            return false;
+        }
+
+        return this._super('hasAccess');
     }
 })

@@ -5,6 +5,8 @@ describe('View.Fields.UnlinkAction', function() {
     beforeEach(function() {
         app = SugarTest.app;
 
+        SugarTest.loadComponent('base', 'view', 'tabbed-dashlet');
+        SugarTest.loadComponent('base', 'view', 'planned-activities');
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
         SugarTest.loadComponent('base', 'field', 'unlink-action');
@@ -42,7 +44,17 @@ describe('View.Fields.UnlinkAction', function() {
         aclStub.restore();
     });
 
+    it('should hide action if parentModule matches Home', function() {
+        field.context.set('parentModule', 'Home');
+
+        field.render();
+        expect(field.isHidden).toBeTruthy();
+    });
+
     it('should hide action if any related field is required', function() {
+        field.context.set('parentModule', moduleName);
+        field.context.set('link', true);
+
         field.model = app.data.createBean(moduleName);
         relatedFields = [{required: true}];
         field.render();
@@ -56,5 +68,4 @@ describe('View.Fields.UnlinkAction', function() {
         field.render();
         expect(field.isHidden).toBeFalsy();
     });
-
 });
