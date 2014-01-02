@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,58 +26,60 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once 'clients/base/api/FilterApi.php';
 
-class SugarTestProductTemplatesUtilities
+/**
+ * Tests RevenueLineItemsApiTest.
+ */
+class RS21Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    protected static $createdProductTemplates = array();
+	/**
+     * @var SugarApi
+     */
+    protected $api;
 
     /**
-     * @param string $id
-     * @param array $fields         A key value pair to set field values on the created product template
-     * @return ProductTemplate
+     * @var array
      */
-    public static function createProductTemplate($id = '', $fields = array())
+    protected $user;
+
+
+    protected function setUp()
     {
-        $time = mt_rand();
-        $name = 'SugarProductTemplate';
-        /* @var $product_template ProductTemplate */
-        $product_template = BeanFactory::getBean('ProductTemplates');
-        $product_template->name = $name . $time;
-        if (!empty($id)) {
-            $product_template->new_with_id = true;
-            $product_template->id = $id;
-        }
-        foreach ($fields as $key => $value) {
-            $product_template->$key = $value;
-        }
-        $product_template->save();
-        self::$createdProductTemplates[] = $product_template->id;
-        return $product_template;
+        parent::setUp();
+
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+
+        $this->user = SugarTestHelper::setUp('current_user', array(true, false));
+        $this->api = new FilterApi();
     }
 
-    public static function setCreatedProductTemplate($ids)
+
+    protected function tearDown()
     {
-        if (!is_array($ids)) {
-            $ids = array($ids);
-        }
-        foreach ($ids as $id) {
-            self::$createdProductTemplates[] = $id;
-        }
+        SugarTestHelper::tearDown();
+        parent::tearDown();
     }
 
-    public static function removeAllCreatedProductTemplate()
+    public function testFilterList()
     {
-        $db = DBManagerFactory::getInstance();
-        $conditions = implode(',', array_map(array($db, 'quoted'), self::getCreatedProductTemplateIds()));
-        if (!empty($conditions)) {
-            $db->query('DELETE FROM product_templates WHERE id IN (' . $conditions . ')');
-        }
+        $result = $this->api->filterList(
+            SugarTestRestUtilities::getRestServiceMock($this->user),
+            array(
+            	'module' => 'RevenueLineItems',
+            	'fields' => 'name,opportunity_name,account_name,sales_stage,
+            	probability,date_closed,commit_stage,
+            	product_template_name,category_name,quantity,likely_case,
+            	best_case,worst_case,quote_name,assigned_user_name,currency_id,base_rate,quote_id,
+            	opportunity_id,account_id,product_template_id,category_id,assigned_user_id,my_favorite,following',
+            	'max_num' => '20',
+            	'order_by' => 'name:desc',
+        	)
+        );
 
-        self::$createdProductTemplates = array();
-    }
-
-    public static function getCreatedProductTemplateIds()
-    {
-        return self::$createdProductTemplates;
+        $this->assertArrayHasKey('records', $result);
+        
     }
 }
