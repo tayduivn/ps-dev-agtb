@@ -1387,13 +1387,13 @@ class MetaDataManager
             $platforms = self::getPlatformsWithCaches();
         }
 
-        // This only needs to be done for private visibility since modules are not
-        // in public metadata
         $method = 'rebuild' . ucfirst(strtolower($part)) . 'Cache';
         foreach ((array) $platforms as $platform) {
-            $mm = self::getManager($platform, false, true);
-            if (method_exists($mm, $method)) {
-                $mm->$method($args);
+            foreach (array(true, false) as $public) {
+                $mm = MetaDataManager::getManager($platform, $public, true);
+                if (method_exists($mm, $method)) {
+                    $mm->$method($args);
+                }
             }
         }
     }
