@@ -10,7 +10,7 @@ describe('View.Fields.UnlinkAction', function() {
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
         SugarTest.loadComponent('base', 'field', 'unlink-action');
-        field = SugarTest.createField("base", "unlink-action", "unlink-action", "edit", {
+        field = SugarTest.createField('base', 'unlink-action', 'unlink-action', 'edit', {
             'type':'rowaction',
             'css_class':'btn',
             'tooltip':'Unlink',
@@ -20,7 +20,7 @@ describe('View.Fields.UnlinkAction', function() {
         }, moduleName);
 
         sandbox = sinon.sandbox.create();
-        sandbox.stub(app.data, "getRelateFields", function(){
+        sandbox.stub(app.data, 'getRelateFields', function(){
             return relatedFields;
         });
         relatedFields = [{required: false}];
@@ -36,7 +36,7 @@ describe('View.Fields.UnlinkAction', function() {
 
     it('should hide action if the user does not have access', function() {
         field.model = app.data.createBean(moduleName);
-        var aclStub = sinon.stub(app.acl, "hasAccessToModel", function() {
+        var aclStub = sinon.stub(app.acl, 'hasAccessToModel', function() {
             return false;
         });
         field.render();
