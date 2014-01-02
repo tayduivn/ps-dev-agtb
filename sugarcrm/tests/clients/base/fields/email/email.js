@@ -6,10 +6,11 @@ describe("Email field", function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('email', 'field', 'base', 'edit');
+        SugarTest.loadHandlebarsTemplate('email', 'field', 'base', 'edit-email-field');
         SugarTest.loadHandlebarsTemplate('email', 'field', 'base', 'detail');
         SugarTest.loadComponent('base', 'field', 'listeditable');
         SugarTest.testMetadata.set();
-        field = SugarTest.createField("base","email", "email", "edit");
+
         mock_addr =  [
             {
                 email_address: "test1@test.com",
@@ -21,13 +22,17 @@ describe("Email field", function() {
                 opt_out: true
             }
         ];
+
+        field = SugarTest.createField("base","email", "email", "edit", undefined, undefined, new Backbone.Model({
+            email: app.utils.deepCopy(mock_addr)
+        }));
         model = field.model;
-        model.set({email:_.clone(mock_addr)});
 
         if ($.fn.tooltip) {
             oldjQueryFn = $.fn.tooltip;
         }
         $.fn.tooltip = function(){};
+        field.addPluginTooltips = field.removePluginTooltips = function(){};
 
         field.render();
     });
@@ -35,6 +40,7 @@ describe("Email field", function() {
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
+        SugarTest.testMetadata.dispose();
         Handlebars.templates = {};
         field = null;
         if (oldjQueryFn) {
@@ -43,83 +49,239 @@ describe("Email field", function() {
         }
     });
 
-    describe("adding an email address", function() {
-        it("should add email addresses on the model", function() {
-            field.$('.newEmail').val("test3@test.com");
-            field.$('.newEmail').trigger('change');
-            var emails = model.get('email');
-            expect(emails[2]).toBeDefined();
-            expect(emails[2].email_address).toEqual("test3@test.com");
+    describe("initial rendering", function() {
+        it("should display two email addresses and a field to add a new address", function() {
+            expect(field.$('.existingAddress').length).toBe(2);
+            expect(field.$('.newEmail').length).toBe(1);
         });
-        it("should add an e-mail address automatically when newEmail input changes", function(){
-            field.$('.newEmail').val("newEmail@test.com");
-            field.$('.newEmail').change();
-            expect(model.get('email')[2].email_address).toEqual("newEmail@test.com");
+        it("should set first email as the primary address", function() {
+            expect(field.$('[data-emailproperty=primary_address]').eq(0).hasClass('active')).toBe(true);
+        });
+    });
+
+    describe("adding an email address", function() {
+        it("should add email addresses on the model when there is change on the input", function() {
+            var emails;
+
+            field.$('.newEmail')
+                .val("test3@test.com")
+                .trigger('change');
+
+            emails = model.get('email');
+            expect(emails[2]).toBeDefined();
+            expect(emails[2].email_address).toBe("test3@test.com");
+        });
+        it("should add email addresses when add email button is clicked", function() {
+            var emails;
+
+            field.$('.newEmail').val("test3@test.com");
+            field.$('.addEmail').click();
+
+            emails = model.get('email');
+            expect(emails[2]).toBeDefined();
+            expect(emails[2].email_address).toBe("test3@test.com");
+        });
+        it("should clear out the new email field", function(){
+            var newEmailField = field.$('.newEmail')
+                .val("test3@test.com")
+                .change();
+
+            expect(newEmailField.val()).toBe('');
         });
         it("should not allow duplicates", function(){
-            field._addNewAddress('test2@test.com');
-            expect(model.get('email').length).toEqual(2);
+            field.$('.newEmail')
+                .val('test2@test.com')
+                .trigger('change');
+
+            expect(model.get('email').length).toBe(2);
+        });
+        it("should make the email address primary if it is the only address", function(){
+            var emails;
+
+            model.clear();
+            field.render();
+            field.$('.newEmail')
+                .val('foo@test.com')
+                .trigger('change');
+
+            emails = model.get('email');
+            expect(emails.length).toBe(1);
+            expect(emails[0].primary_address).toBe(true);
+            expect(field.$('[data-emailproperty=primary_address]').hasClass('active')).toBe(true);
+        });
+        it("should not make the email address primary if there are existing email addresses", function(){
+            var emails;
+
+            field.$('.newEmail')
+                .val('foo@test.com')
+                .trigger('change');
+
+            emails = model.get('email');
+            expect(emails.length).toBe(3);
+            expect(emails[2].primary_address).toBe(false);
+            expect(field.$('[data-emailproperty=primary_address]').eq(2).hasClass('active')).toBe(false);
+        });
+        it("should default opt_out and invalid_email to false or undefined", function(){
+            var emails;
+
+            field.$('.newEmail')
+                .val('foo@test.com')
+                .trigger('change');
+
+            emails = model.get('email');
+            expect(emails.length).toBe(3);
+            expect(emails[2].opt_out).toBeFalsy();
+            expect(emails[2].invalid_email).toBeFalsy();
+            expect(field.$('[data-emailproperty=opt_out]').eq(2).hasClass('active')).toBe(false);
+            expect(field.$('[data-emailproperty=invalid_email]').eq(2).hasClass('active')).toBe(false);
         });
     });
 
     describe("updating an email address", function() {
         it("should update email addresses on the model", function() {
-            field.$('input:first').val("testChanged@test.com");
-            field.$('input:first').trigger('change');
-            var emails = model.get('email');
-            expect(emails[0].email_address).toEqual("testChanged@test.com");
+            var emails;
+
+            field.$('input')
+                .first()
+                .val("testChanged@test.com")
+                .trigger('change');
+
+            emails = model.get('email');
+            expect(emails[0].email_address).toBe("testChanged@test.com");
         });
-        it("should update email address properties on the model", function() {
-            var emails = model.get('email');
-            expect(emails[0].opt_out).toBeUndefined();
-            field.$('[data-emailproperty=opt_out]:first').trigger('click');
+        it("should delete empty email address field", function(){
+            var emails;
+
+            field.$('.existingAddress')
+                .first()
+                .val('')
+                .trigger('change');
 
             emails = model.get('email');
-            expect(emails[0].opt_out).toBeTruthy();
-            field.$('[data-emailproperty=opt_out]:first').trigger('click');
-
-            emails = model.get('email');
-            expect(emails[0].opt_out).toBeFalsy();
+            expect(emails.length).toBe(1);
+            expect(emails[0].email_address).toBe('test2@test.com');
         });
-        it("should make sure one and only one email is set as primary", function() {
-            var emails = model.get('email');
-            emails[0].primary_address = true;
-            emails[1].primary_address = false;
-            expect(emails[0].primary_address).toBeTruthy();
-            expect(emails[1].primary_address).toBeFalsy();
+        it("should make the first email address primary if primary email address is emptied", function(){
+            var emails;
 
-            //Should cancel the click on primary_address button
-            field.$('[data-emailproperty=primary_address]:first').trigger('click');
-            emails = model.get('email');
-            expect(emails[0].primary_address).toBeTruthy();
-            expect(emails[1].primary_address).toBeFalsy();
+            field.$('.existingAddress')
+                .first()
+                .val('')
+                .trigger('change');
 
-            //Should unset the first email as the primary email
-            field.$('[data-emailproperty=primary_address]:last').trigger('click');
             emails = model.get('email');
-            expect(emails[0].primary_address).toBeFalsy();
-            expect(emails[1].primary_address).toBeTruthy();
+            expect(emails.length).toBe(1);
+            expect(emails[0].primary_address).toBe(true);
         });
     });
 
     describe("removing an email address", function() {
-        it("should select another primary e-mail address if the primary is deleted", function(){
-            var emails = model.get('email');
-            expect(emails.length).toEqual(2);
-            expect(emails[0].primary_address).toBeTruthy();
-            expect(emails[1].primary_address).toBeFalsy();
-
-            field.$('.removeEmail:first-child').trigger('click');
-            emails = model.get('email');
-            expect(emails.length).toEqual(1);
-            expect(emails[0].primary_address).toBeTruthy();
-        });
         it("should delete email addresses on the model", function() {
             var emails = model.get('email');
-            expect(emails.length).toEqual(2);
-            field.$('.removeEmail:first').trigger('click');
+            expect(emails.length).toBe(2);
+
+            field.$('.removeEmail')
+                .first()
+                .trigger('click');
+
             emails = model.get('email');
-            expect(emails.length).toEqual(1);
+            expect(emails.length).toBe(1);
+            expect(emails[0].email_address).toBe('test2@test.com')
+        });
+        it("should select another primary e-mail address if the primary is deleted", function(){
+            var emails = model.get('email');
+            expect(emails.length).toBe(2);
+            expect(emails[0].primary_address).toBe(true);
+            expect(emails[1].primary_address).toBe(false);
+
+            field.$('.removeEmail')
+                .first()
+                .trigger('click');
+
+            emails = model.get('email');
+            expect(emails.length).toBe(1);
+            expect(emails[0].primary_address).toBe(true);
+            expect(field.$('[data-emailproperty=primary_address]').hasClass('active')).toBe(true);
+        });
+    });
+
+    describe("updating email properties", function() {
+        it("should update opt_out when opt out button is toggled", function() {
+            expect(model.get('email')[0].opt_out).toBeUndefined();
+
+            field.$('[data-emailproperty=opt_out]')
+                .first()
+                .trigger('click');
+
+            expect(model.get('email')[0].opt_out).toBe(true);
+
+            field.$('[data-emailproperty=opt_out]')
+                .first()
+                .trigger('click');
+
+            expect(model.get('email')[0].opt_out).toBe(false);
+        });
+        it("should update invalid_email when invalid button is toggled", function() {
+            expect(model.get('email')[0].invalid_email).toBeUndefined();
+
+            field.$('[data-emailproperty=invalid_email]')
+                .first()
+                .trigger('click');
+
+            expect(model.get('email')[0].invalid_email).toBe(true);
+
+            field.$('[data-emailproperty=invalid_email]')
+                .first()
+                .trigger('click');
+
+            expect(model.get('email')[0].invalid_email).toBe(false);
+        });
+        it("should update primary_address only when non-primary email address is clicked", function() {
+            expect(model.get('email')[0].primary_address).toBe(true);
+
+            field.$('[data-emailproperty=primary_address]')
+                .first()
+                .trigger('click');
+
+            expect(model.get('email')[0].primary_address).toBe(true);
+
+            field.$('[data-emailproperty=primary_address]')
+                .last()
+                .trigger('click');
+
+            expect(model.get('email')[0].primary_address).toBe(false);
+            expect(model.get('email')[1].primary_address).toBe(true);
+        });
+    });
+
+    describe("changing the model", function() {
+        it("should update the view with the updated values in detail mode", function() {
+            var newValue = app.utils.deepCopy(mock_addr);
+            newValue[0].email_address = 'foo@test.com';
+            newValue[1].opt_out = false;
+
+            field.setMode('detail');
+
+            expect(field.$('a').text()).toBe('test1@test.com');
+            expect(field.$('span').text()).toBe('test2@test.com');
+
+            field.model.set('email', newValue);
+
+            expect(field.$('a').eq(0).text()).toBe('foo@test.com');
+            expect(field.$('a').eq(1).text()).toBe('test2@test.com');
+        });
+        it("should not render the view with the updated values in edit mode", function() {
+            var newValue = app.utils.deepCopy(mock_addr);
+            newValue[0].email_address = 'foo@test.com';
+            newValue[1].opt_out = false;
+
+            expect(field.$('input').eq(0).val()).toBe('test1@test.com');
+            expect(field.$('[data-emailproperty=opt_out]').eq(1).hasClass('active')).toBe(true);
+
+            field.model.set('email', newValue);
+
+            expect(field.$('input').eq(0).val()).toBe('test1@test.com');
+            expect(field.$('[data-emailproperty=opt_out]').eq(1).hasClass('active')).toBe(true);
         });
     });
 
@@ -241,42 +403,13 @@ describe("Email field", function() {
                     email_address:   "foo@bar.com",
                     primary_address: true,
                     hasAnchor:       true,
-                    _wasNotArray:    true,
-                    flagLabel: "LBL_EMAIL_PRIMARY",
-                    flagClass: "primary"
+                    flagLabel: "LBL_EMAIL_PRIMARY"
                 },
                 actual;
 
             actual = field.format(expected.email_address);
             expect(actual.length).toBe(1);
             expect(actual[0]).toEqual(expected);
-        });
-
-        it("should remove the hasAnchor property from the email address", function() {
-            var emails = [{
-                    email_address: "foo@bar.com",
-                    opt_out:       false,
-                    invalid_email: false,
-                    hasAnchor:     true
-                }],
-                actual;
-
-            actual = field.unformat(emails);
-            expect(actual[0].hasAnchor).toBeUndefined();
-        });
-
-        it("should reset the email address to a string when _wasNotArray is true", function() {
-            var expected = "foo@bar.com",
-                emails   = [{
-                    email_address:   expected,
-                    primary_address: true,
-                    hasAnchor:       false,
-                    _wasNotArray:    true
-                }],
-                actual;
-
-            actual = field.unformat(emails);
-            expect(actual).toBe(expected);
         });
 
         it("should still work when model value is not already set on edit in list view (SP-604)", function() {
