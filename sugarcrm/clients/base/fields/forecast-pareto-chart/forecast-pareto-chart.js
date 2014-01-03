@@ -189,10 +189,9 @@
             d3.select('#' + this.chartId)
                 .append('svg')
                 .datum(this.d3Data)
-                .transition().duration(500)
                 .call(this.paretoChart);
 
-            nv.utils.windowResize(this.paretoChart.update);
+            $(window).on('resize.' + this.sfId, _.bind(this.paretoChart.update, this));
             nv.utils.resizeOnPrint(this.paretoChart.update);
         } else {
             this.$('.nv-chart').toggleClass('hide', true);
@@ -443,5 +442,13 @@
         })).sort();
 
         this._serverData.labels.probability = _.object(probabilities, probabilities);
+    },
+
+    _dispose: function() {
+        if (!_.isEmpty(this.chart)) {
+            $(window).off('resize.' + this.sfId);
+        }
+        app.view.Field.prototype._dispose.call(this);
     }
+
 })
