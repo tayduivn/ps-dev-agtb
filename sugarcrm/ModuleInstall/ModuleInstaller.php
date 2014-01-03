@@ -1707,7 +1707,7 @@ class ModuleInstaller{
 	 * Rebuilds the extension files found in custom/Extension
 	 * @param boolean $silent
 	 */
-	function rebuild_all($silent=false){
+	function rebuild_all($silent=false, $modules = array()){
 		if(defined('TEMPLATE_URL'))SugarTemplateUtilities::disableCache();
 		$this->silent=$silent;
 		global $sugar_config;
@@ -1718,7 +1718,7 @@ class ModuleInstaller{
 		$this->rebuild_languages($sugar_config['languages']);
 		$this->rebuild_extensions();
 		$this->rebuild_dashletcontainers();
-		$this->rebuild_relationships();
+		$this->rebuild_relationships($modules);
 		$this->rebuild_tabledictionary();
 		$this->reset_opcodes();
 		sugar_cache_reset();

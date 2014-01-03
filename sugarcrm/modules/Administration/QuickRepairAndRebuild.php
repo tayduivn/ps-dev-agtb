@@ -78,7 +78,11 @@ class RepairAndClear
                     $this->repairDatabaseSelectModules();
                 break;
             case 'rebuildExtensions':
-                $this->rebuildExtensions();
+                if(in_array($mod_strings['LBL_ALL_MODULES'], $this->module_list)) {
+                    $this->rebuildExtensions();
+                } else {
+                    $this->rebuildExtensions($this->module_list);
+                }
                 break;
             case 'clearTpls':
                 $this->clearTpls();
@@ -243,14 +247,14 @@ class RepairAndClear
 		}
 	}
 
-	public function rebuildExtensions()
+	public function rebuildExtensions($modules = array())
 	{
 		global $mod_strings;
 		if($this->show_output) echo $mod_strings['LBL_QR_REBUILDEXT'];
 		global $current_user;
 		
 		$mi = new ModuleInstaller();
-		$mi->rebuild_all(!$this->show_output);
+		$mi->rebuild_all(!$this->show_output, $modules);
 
 		// Remove the "Rebuild Extensions" red text message on admin logins
 
