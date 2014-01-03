@@ -22,6 +22,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('clients/base/api/ModuleApi.php');
 
+/**
+ * Class ForecastScheduleApi
+ * This has been deprecated and will be removed in a future release
+ * @deprecated
+ */
 class ForecastScheduleApi extends ModuleApi {
 
     /**
@@ -37,16 +42,16 @@ class ForecastScheduleApi extends ModuleApi {
                 'path' => array('ForecastSchedule'),
                 'pathVars' => array('',''),
                 'method' => 'forecastSchedule',
-                'shortHelp' => 'Returns a collection of ForecastSchedule models',
-                'longHelp' => 'include/api/html/modules/ForecastSchedule/ForecaseScheduleApi.html#forecastSchedule',
+                'shortHelp' => 'Deprecated - Returns a collection of ForecastSchedule models',
+                'longHelp' => 'modules/ForecastSchedule/clients/base/api/help/ForecastScheduleApi.html',
             ),
             'forecastScheduleSave' => array(
                 'reqType' => 'PUT',
                 'path' => array('ForecastSchedule','?'),
                 'pathVars' => array('module','record'),
                 'method' => 'forecastScheduleSave',
-                'shortHelp' => 'Updates a ForecastSchedule model',
-                'longHelp' => 'include/api/html/modules/ForecastSchedule/ForecastScheduleApi.html#forecastScheduleSave',
+                'shortHelp' => 'Deprecated - Updates a ForecastSchedule model',
+                'longHelp' => 'modules/ForecastSchedule/clients/base/api/help/ForecastScheduleApi.html',
             )
         );
         return $parentApi;
@@ -61,9 +66,11 @@ class ForecastScheduleApi extends ModuleApi {
      * @param $args array The arguments array passed in from the API
      * @return Array of ForecastSchedule data entries
      * @throws SugarApiExceptionNotAuthorized
+     * @deprecated
      */
     public function forecastSchedule($api, $args)
     {
+        $GLOBALS['log']->deprecated('The ForecastSchedule Module has been deprecated.  ForecastSchedule should not be used as it will be removed in an upcoming version');
         // Load up a seed bean
         require_once('modules/ForecastSchedule/ForecastSchedule.php');
         $seed = BeanFactory::getBean('ForecastSchedule');
@@ -116,9 +123,11 @@ class ForecastScheduleApi extends ModuleApi {
      * @param $args array The arguments array passed in from the API
      * @return String id of the ForecastSchedule entry updated
      * @throws SugarApiExceptionNotAuthorized
+     * @deprecated
      */
     public function forecastScheduleSave($api, $args)
     {
+        $GLOBALS['log']->deprecated('The ForecastSchedule Module has been deprecated.  ForecastSchedule should not be used as it will be removed in an upcoming version');
         require_once('modules/ForecastSchedule/ForecastSchedule.php');
         require_once('include/SugarFields/SugarFieldHandler.php');
         $seed = BeanFactory::getBean('ForecastSchedule');
@@ -155,5 +164,4 @@ class ForecastScheduleApi extends ModuleApi {
         $seed->save();
         return $seed->id;
     }
-
 }
