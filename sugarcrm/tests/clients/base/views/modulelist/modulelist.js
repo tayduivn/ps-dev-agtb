@@ -2,7 +2,8 @@ describe("Module List", function() {
     var moduleName = 'Cases',
         viewName = 'modulelist',
         app,
-        view;
+        view,
+        backupIsSynced;
 
     var $newLink = function(module, route) {
         return $('<a href="#' + module + '" data-route="' + (route ? '#' + module : '') + '">' + module + '</a>');
@@ -19,18 +20,22 @@ describe("Module List", function() {
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.set();
 
+        // Fake app is synced
+        backupIsSynced = app.isSynced;
+        app.isSynced = true;
+
         view = SugarTest.createView("base", moduleName, "modulelist", null, null);
     });
 
     afterEach(function() {
+        app.isSynced = backupIsSynced;
+        Handlebars.templates = {};
         SugarTest.testMetadata.dispose();
     });
 
     describe('Render', function() {
         var isAuthenticatedStub, getModuleNamesStub, modStrings;
-        afterEach(function() {
-            this.getModuleListStub.restore();
-        });
+
         beforeEach(function() {
 
             isAuthenticatedStub = sinon.stub(SugarTest.app.api, 'isAuthenticated', function() {
@@ -51,29 +56,12 @@ describe("Module List", function() {
                     Prospects: 'Prospects',
                     Reports: 'Reports',
                     Tasks: 'Tasks'
-                }
-            });
-            this.getModuleListStub = sinon.stub(SugarTest.app.metadata, 'getFullModuleList', function() {
-                return {
-                    Accounts: 'Accounts',
-                    Bugs: 'Bugs',
-                    Calendar: 'Calendar',
-                    Calls: 'Calls',
-                    Campaigns: 'Campaigns',
-                    Cases: 'Cases',
-                    Contacts: 'Contacts',
-                    Forecasts: 'Forecasts',
-                    Home: 'Home',
-                    Opportunities: 'Opportunities',
-                    Prospects: 'Prospects',
-                    Reports: 'Reports',
-                    Tasks: 'Tasks'
-                }
+                };
             });
             modStrings = sinon.stub(SugarTest.app.metadata, 'getStrings', function() {
                 return {
                     Accounts: {}
-                }
+                };
             });
 
         });
@@ -87,20 +75,9 @@ describe("Module List", function() {
 
         it("Should display all the modules in the module list metadata", function() {
             var modules = SugarTest.app.metadata.getModuleNames();
-
             view.render();
-
             _.each(modules, function(module, key) {
                 expect(view.$el.find("[data-module='" + module+"']").length).not.toBe(0);
-            });
-        });
-
-        it("Should not complete meta on modules missing from the module list", function() {
-            var modulesList = SugarTest.app.metadata.getModuleNames();
-            modulesList.test = 'test';
-            var output = view.completeMenuMeta(modulesList);
-            _.each(output, function(module, key) {
-                expect(module.name).not.toEqual('test');
             });
         });
 
@@ -417,7 +394,7 @@ describe("Module List", function() {
     });
 
     describe('activeModule.set', function() {
-        var resetStub, getFullModuleListStub, getModuleTabMapStub, completeMenuMetaStub;
+        var resetStub, getFullModuleListStub, getModuleTabMapStub, completeMenuMetaStub, templateStub;
         beforeEach(function() {
             view.$el.append($('<ul id="module_list"></ul>'));
             // Add Accounts tab
@@ -438,15 +415,15 @@ describe("Module List", function() {
                     'CustomQueries': 'ReportMaker'
                 };
             });
-            completeMenuMetaStub = sinon.stub(view.activeModule._moduleList, 'completeMenuMeta', function() {
-                return [];
-            });
+            completeMenuMetaStub = sinon.spy(view.activeModule._moduleList, 'completeMenuMeta');
+            templateStub = sinon.stub(app.template, 'get', function() { return function() {}; });
         });
         afterEach(function() {
             resetStub.restore();
             getFullModuleListStub.restore();
             getModuleTabMapStub.restore();
             completeMenuMetaStub.restore();
+            templateStub.restore();
         });
         it('should select Contacts tab because it exists', function() {
             view.activeModule.set('Contacts');
@@ -463,6 +440,7 @@ describe("Module List", function() {
             expect(getModuleTabMapStub).toHaveBeenCalled();
             expect(completeMenuMetaStub).toHaveBeenCalled();
             expect(completeMenuMetaStub).toHaveBeenCalledWith({ReportMaker: 'ReportMaker'});
+            expect(templateStub).toHaveBeenCalled();
         });
         it('should not create ReportMaker because updateNav = false (property from the metadata)', function() {
             var _oLayout = app.controller.layout;
@@ -472,6 +450,7 @@ describe("Module List", function() {
             view.activeModule.set('ReportMaker');
             expect(getModuleTabMapStub).toHaveBeenCalled();
             expect(completeMenuMetaStub).not.toHaveBeenCalled();
+            expect(templateStub).not.toHaveBeenCalled();
             app.controller.layout = _oLayout;
         });
         it('should create ReportMaker tab even because it is mapped module though the tab does not exist', function() {
@@ -479,6 +458,7 @@ describe("Module List", function() {
             expect(getModuleTabMapStub).toHaveBeenCalled();
             expect(completeMenuMetaStub).toHaveBeenCalled();
             expect(completeMenuMetaStub).toHaveBeenCalledWith({ReportMaker: 'ReportMaker'});
+            expect(templateStub).toHaveBeenCalled();
         });
     });
 });

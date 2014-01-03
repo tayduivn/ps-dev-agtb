@@ -35,6 +35,8 @@ class PortalConfigParserTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        global $app_list_strings;
+        $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
         SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
     }
 

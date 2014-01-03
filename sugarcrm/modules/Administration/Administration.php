@@ -100,11 +100,27 @@ class Administration extends SugarBean {
             return null;
         }
 
-        while($row = $this->db->fetchByAssoc($result)) {
-            if($row['category']."_".$row['name'] == 'ldap_admin_password' || $row['category']."_".$row['name'] == 'proxy_password')
-                $this->settings[$row['category']."_".$row['name']] = $this->decrypt_after_retrieve($row['value']);
-            else
-                $this->settings[$row['category']."_".$row['name']] = $row['value'];
+        while ($row = $this->db->fetchByAssoc($result)) {
+            $key = $row['category'] . '_' . $row['name'];
+            // There can be settings that have the same `category`, the same
+            // `name` but a different platform. We are going to prevent the
+            // settings from non `base` platforms (ie `mobile` or `portal`) from
+            // overriding `base` settings.
+
+            // TODO: deprecate this method for a method that can select settings
+            // per platform
+            if (empty($row['platform'])) {
+                $row['platform'] = 'base';
+            }
+            if (isset($this->settings[$key]) && $row['platform'] !== 'base') {
+                // Don't hold this setting because it's already set
+                continue;
+            }
+            if ($key == 'ldap_admin_password' || $key == 'proxy_password') {
+                $this->settings[$key] = $this->decrypt_after_retrieve($row['value']);
+            } else {
+                $this->settings[$key] = $row['value'];
+            }
         }
         $this->settings[$category] = true;
 
@@ -151,6 +167,8 @@ class Administration extends SugarBean {
     }
 
     /**
+     * Save a setting
+     *
      * @param string $category      Category for the config value
      * @param string $key           Key for the config value
      * @param string $value         Value of the config param

@@ -57,6 +57,7 @@ function get_system_tabs(){
 			$trimmed_tabs = trim($tabs);
 			//make sure serialized string is not empty
 			if (!empty($trimmed_tabs)){
+                // TODO: decode JSON rather than base64
 				$tabs = base64_decode($tabs);
 				$tabs = unserialize($tabs);
 				//Ensure modules saved in the prefences exist.
@@ -79,6 +80,36 @@ function get_system_tabs(){
 
 	return $system_tabs_result;
 }
+
+    /**
+     * Retrieve the list of tabs for `Portal`
+     */
+    public static function getPortalTabs()
+    {
+        $modules = array();
+        $administration = BeanFactory::getBean('Administration');
+        // TODO: Refactor this to use the method provided to select `portal`
+        // settings.
+        $q = "SELECT value FROM config WHERE category='MySettings' AND name = 'tab' AND platform = 'portal'";
+        $row = $administration->db->query($q);
+        $MySettings_tab = $administration->db->fetchByAssoc($row, false);
+        if (!empty($MySettings_tab['value'])) {
+            $modules = json_decode($MySettings_tab['value']);
+        }
+        return $modules;
+    }
+
+    /**
+     * Retrieve the list of tabs for `Portal`
+     *
+     * @param array $modules The list of modules names
+     */
+    public static function setPortalTabs($modules)
+    {
+        $administration = BeanFactory::getBean('Administration');
+        $administration->saveSetting('MySettings', 'tab', json_encode($modules), 'portal');
+    }
+
 
 function get_tabs_system(){
 	global $moduleList;
@@ -106,6 +137,7 @@ function get_tabs_system(){
 function set_system_tabs($tabs){
 
 	$administration = BeanFactory::getBean('Administration');
+    // TODO: encode in JSON rather than base64
 	$serialized = base64_encode(serialize($tabs));
 	$administration->saveSetting('MySettings', 'tab', $serialized);
     self::$isCacheValid = false;

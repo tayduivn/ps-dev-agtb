@@ -89,8 +89,8 @@
      * Uses MixedBeanCollection to fetch search results.
      */
     fireSearchRequest: function (cb, offset) {
-        var mlist = null, self = this, options;
-        mlist = app.metadata.getModuleNames(true); // visible
+        var self = this, options;
+        var mlist = app.metadata.getModuleNames({filter: 'visible'}); // visible
         options = {
             //Show alerts for this request
             showAlerts: true,

@@ -42,9 +42,14 @@ class MetaDataManagerMobile extends MetaDataManager
         'subpanels',
     );
 
+    /**
+     * Find all modules enabled in Mobile
+     *
+     * @return array List of Mobile module names
+     */
     protected function getModules() {
         // Get the current user module list
-        $modules = $this->getUserModuleList();
+        $modules = $this->getTabList();
         
         // add in Users [Bug59548] since it is forcefully removed for the 
         // CurrentUserApi
@@ -56,20 +61,32 @@ class MetaDataManagerMobile extends MetaDataManager
     }
 
     /**
+     * Gets the full module list of Mobile.
+     * Returns the same module list as `getModules`.
+     *
+     * @return array List of Mobile module names
+     */
+    public function getFullModuleList()
+    {
+        return $this->getModules();
+    }
+
+    /**
      * Gets the list of mobile modules. Used by getModules and the CurrentUserApi
      * to get the module list for a user.
      * 
-     * @return array
+     * @return array The list of modules for mobile
      */
-    public function getUserModuleList() {
+    public function getTabList()
+    {
         // replicate the essential part of the behavior of the private loadMapping() method in SugarController
-        foreach(SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file){
+        foreach (SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
             require $file;
         }
 
         // Forcibly remove the Users module
         // So if they have added it, remove it here
-        if ( isset($wireless_module_registry['Users']) ) {
+        if (isset($wireless_module_registry['Users'])) {
             unset($wireless_module_registry['Users']);
         }
 
@@ -77,6 +94,42 @@ class MetaDataManagerMobile extends MetaDataManager
         return isset($wireless_module_registry) && is_array($wireless_module_registry) ?
             array_keys($wireless_module_registry) :
             array();
+    }
+
+    public function getQuickcreateList() {
+        // replicate the essential part of the behavior of the private loadMapping() method in SugarController
+        foreach (SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
+            require $file;
+        }
+
+        // Forcibly remove the Users module
+        // So if they have added it, remove it here
+        if (isset($wireless_module_registry['Users'])) {
+            unset($wireless_module_registry['Users']);
+        }
+
+        $quickcreateList = array();
+
+        foreach($wireless_module_registry as $module => $moduleData) {
+            if (empty($moduleData['disable_create'])) {
+                $quickcreateList[] = $module;
+            }
+        }
+        return $quickcreateList;
+    }
+
+    /**
+     * Gets the module list for the current user.
+     * Returns the same module list as `getTabList`.
+     *
+     * In the future, there will be a UI to allow user to configure visible
+     * modules in his `Profile` section.
+     *
+     * @return array The list of modules for mobile
+     */
+    public function getUserModuleList()
+    {
+        return $this->getTabList();
     }
 
     /**

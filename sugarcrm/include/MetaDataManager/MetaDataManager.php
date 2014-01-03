@@ -33,6 +33,7 @@ require_once 'include/SugarFields/SugarFieldHandler.php';
 require_once 'include/SugarObjects/LanguageManager.php';
 require_once 'modules/ActivityStream/Activities/ActivityQueueManager.php';
 require_once 'include/SubPanel/SubPanelDefinitions.php';
+require_once 'modules/MySettings/TabController.php';
 
 SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataHacks.php');
 /**
@@ -55,6 +56,7 @@ class MetaDataManager
      */
     const MM_MODULES        = 'modules';
     const MM_FULLMODULELIST = 'full_module_list';
+    const MM_MODULESINFO    = 'modules_info';
     const MM_FIELDS         = 'fields';
     const MM_LABELS         = 'labels';
     const MM_VIEWS          = 'views';
@@ -146,6 +148,7 @@ class MetaDataManager
     protected $sectionMap = array(
         self::MM_MODULES        => false,
         self::MM_FULLMODULELIST => 'getModuleList',
+        self::MM_MODULESINFO     => 'getModulesInfo',
         self::MM_FIELDS         => 'getSugarFields',
         self::MM_LABELS         => 'getStringUrls',
         self::MM_VIEWS          => 'getSugarViews',
@@ -294,6 +297,13 @@ class MetaDataManager
         'defaultDecimalSeperator' => 'defaultDecimalSeparator',
         'defaultNumberGroupingSeperator' => 'defaultNumberGroupingSeparator'
     );
+
+    /**
+     * Stores the loaded metadata
+     *
+     * @var array
+     */
+    protected $data = array();
 
     /**
      * The constructor for the class. Sets the visibility flag, the visibility
@@ -514,6 +524,31 @@ class MetaDataManager
     public function getModuleFilters($moduleName)
     {
         return $this->getModuleClientData('filter', $moduleName);
+    }
+
+    /**
+     * Gets metadata for all modules
+     *
+     * @return array An array of hashes containing the modules and their
+     * metadata.
+     */
+    public function getModulesData()
+    {
+        if (!isset($this->data['full_module_list'])) {
+            $this->data['full_module_list'] = $this->getModuleList();
+        }
+        $moduleList = $this->data['full_module_list'];
+        $modules = array();
+        foreach ($moduleList as $key => $module) {
+            if ($key == '_hash') {
+                continue;
+            }
+
+            $bean = BeanFactory::newBean($module);
+            $modules[$module] = $this->getModuleData($module);
+            $this->relateFields($data, $module, $bean);
+        }
+        return $modules;
     }
 
     /**
@@ -1834,7 +1869,7 @@ class MetaDataManager
     protected function loadMetadata($args = array())
     {
         // Start collecting data
-        $data = array();
+        $this->data = array();
 
         foreach ($this->sections as $section) {
             // Overrides are handled at the end because they are "special"
@@ -1844,17 +1879,17 @@ class MetaDataManager
                 continue;
             }
 
-            $data = $this->loadSectionMetadata($section, $data);
+            $this->data = $this->loadSectionMetadata($section, $this->data);
         }
 
         // Handle overrides
-        $data['_override_values'] = $this->getOverrides($data, $args);
+        $this->data['_override_values'] = $this->getOverrides($this->data, $args);
 
         // Handle hashing
-        $data["_hash"] = $this->hashChunk($data);
+        $this->data["_hash"] = $this->hashChunk($this->data);
 
         // Send it back
-        return $data;
+        return $this->data;
     }
 
     /**
@@ -2136,16 +2171,8 @@ class MetaDataManager
     public function populateModules($data)
     {
         $data['full_module_list'] = $this->getModuleList();
-        $data['modules'] = array();
-        foreach($data['full_module_list'] as $key => $module) {
-            if ($key == '_hash') {
-                continue;
-            }
-
-            $bean = BeanFactory::newBean($module);
-            $data['modules'][$module] = $this->getModuleData($module);
-            $this->relateFields($data, $module, $bean);
-        }
+        $data['modules'] = $this->getModulesData();
+        $data['modules_info'] = $this->getModulesInfo();
         return $data;
     }
 
@@ -2164,6 +2191,101 @@ class MetaDataManager
 
         $moduleList['_hash'] = $this->hashChunk($moduleList);
         return $moduleList;
+    }
+
+    /**
+     * Gets every single module of the application and the properties for every
+     * of these modules
+     *
+     * @return array An array with all the modules and their properties
+     */
+    public function getModulesInfo()
+    {
+        global $moduleList;
+
+        $fullModuleList = $this->getFullModuleList();
+
+        $modulesInfo = array();
+
+        $visibleList = array_flip($moduleList);
+        $tabs = array_flip($this->getTabList());
+        $subpanels = array_flip($this->getSubpanelList());
+        $quickcreate = array_flip($this->getQuickCreateList());
+
+        foreach ($fullModuleList as $module) {
+            $modulesInfo[$module] = array();
+            $modulesInfo[$module]['enabled'] = true;
+            $modulesInfo[$module]['visible'] = isset($visibleList[$module]);
+            $modulesInfo[$module]['display_tab'] = isset($tabs[$module]);
+            $modulesInfo[$module]['show_subpanels'] = isset($subpanels[strtolower($module)]);
+            $modulesInfo[$module]['quick_create'] = isset($quickcreate[$module]);
+        }
+        return $modulesInfo;
+    }
+
+    /**
+     * Gets the full module list of this application. This list contains every
+     * single module, not the restricted list returned by `getModuleList`.
+     *
+     * @return array An array of module names
+     */
+    public function getFullModuleList()
+    {
+        global $moduleList, $modInvisList;
+
+        $fullModuleList = array_merge($moduleList, $modInvisList);
+        return $fullModuleList;
+    }
+
+    /**
+     * Get tabs for the navigation bar of this application
+     *
+     * @return array An array of module names
+     */
+    public function getTabList()
+    {
+        $controller = new TabController();
+        return array_keys($controller->get_system_tabs());
+    }
+
+    /**
+     * Gets the list of modules displayable as subpanels
+     *
+     * @return array An array of module names
+     */
+    public function getSubpanelList()
+    {
+        return SubPanelDefinitions::get_all_subpanels();
+    }
+
+    /**
+     * Gets the list of modules enabled in the quickcreate dropdown.
+     *
+     * @return array An array of module names
+     */
+    public function getQuickcreateList()
+    {
+        if (!isset($this->data['modules'])) {
+            $this->data['modules'] = $this->getModulesData();
+        }
+        $modulesData = $this->data['modules'];
+
+        $quickcreateModules = array();
+
+        foreach ($modulesData as $key => $module) {
+            if ($key == '_hash') {
+                continue;
+            }
+            if (isset($modulesData[$key]) &&
+                isset($modulesData[$key]['menu']) &&
+                isset($modulesData[$key]['menu']['quickcreate']) &&
+                isset($modulesData[$key]['menu']['quickcreate']['meta']) &&
+                !empty($modulesData[$key]['menu']['quickcreate']['meta']['visible'])
+            ) {
+                $quickcreateModules[] = $key;
+            }
+        }
+        return $quickcreateModules;
     }
 
     /**
@@ -2672,6 +2794,7 @@ class MetaDataManager
         return array(
             self::MM_MODULES,
             self::MM_FULLMODULELIST,
+            self::MM_MODULESINFO,
             self::MM_HIDDENSUBPANELS,
             self::MM_CURRENCIES,
             self::MM_MODULETABMAP,
@@ -2701,7 +2824,8 @@ class MetaDataManager
 
     /**
      * Gets display module list per user defined tabs
-     * @return array
+     *
+     * @return array The list of module names
      */
     public function getUserModuleList() {
         // Loading a standard module list
@@ -2813,6 +2937,7 @@ class MetaDataManager
             }
         }
         $data['full_module_list']['_hash'] = $this->hashChunk($data['full_module_list']);
+        $data['modules_info']['_hash'] = $this->hashChunk($data['modules_info']);
         return $data;
     }
 
