@@ -56,6 +56,12 @@ class RevenueLineItemsPipelineChartApi extends SugarApi
      */
     public function pipeline(ServiceBase $api, $args)
     {
+        // Check for permissions on both Revenue line times and accounts.
+        /** @var RevenueLineItem $seed */
+        $seed = BeanFactory::newBean($args['module']);
+        if (!$seed->ACLAccess('view')) {
+            throw new SugarApiExceptionNotAuthorized();
+        }
         // we have no timeperiod defined, so lets just pull the current one
         if (empty($args['timeperiod_id'])) {
             $args['timeperiod_id'] = TimePeriod::getCurrentId();
@@ -86,7 +92,7 @@ class RevenueLineItemsPipelineChartApi extends SugarApi
         // build out the query
         $sq = new SugarQuery();
         $sq->select(array('sales_stage', 'likely_case', 'base_rate'));
-        $sq->from(BeanFactory::getBean($args['module']))
+        $sq->from($seed)
             ->where()
             ->gte('date_closed_timestamp', $tp->start_date_timestamp)
             ->lte('date_closed_timestamp', $tp->end_date_timestamp);

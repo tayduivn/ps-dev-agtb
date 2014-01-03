@@ -144,8 +144,8 @@
     },
 
     /**
-     * Filter out records that don'w meet date criteria
-     * and convert into format convienient for d3
+     * Filter out records that don't meet date criteria
+     * and convert into format convenient for d3
      */
     evaluateResult: function(data) {
         var statusOptions = 'sales_stage_dom',
@@ -219,6 +219,10 @@
                 self.evaluateResult(data);
                 self.trigger('data-changed');
             },
+            error: _.bind(function() {
+                this.$('.nv-chart').toggleClass('hide', true);
+                this.$('.block-footer').toggleClass('hide', false);
+            }, this),
             complete: options ? options.complete : null
         });
     },
