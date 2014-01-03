@@ -524,7 +524,7 @@ EOSQL;
      */
     public function getDbInfo()
     {
-        $info = array_merge(sqlsrv_client_info(), sqlsrv_server_info());
+        $info = array_merge(sqlsrv_client_info($this->database), sqlsrv_server_info($this->database));
         return $info;
     }
 
