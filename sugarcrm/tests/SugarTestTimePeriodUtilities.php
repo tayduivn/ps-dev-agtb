@@ -92,6 +92,10 @@ class SugarTestTimePeriodUtilities
         }
         $timeperiod->type = 'Quarter';
         $timeperiod->save();
+
+        $db = DBManagerFactory::getInstance();
+        $db->commit();
+
         self::$_createdTimePeriods[] = $timeperiod;
         return $timeperiod;
     }

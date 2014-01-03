@@ -30,17 +30,20 @@ class ForecastsModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
         SugarTestHelper::setUp("current_user");
+
+        SugarTestForecastUtilities::setTimePeriod(SugarTestTimePeriodUtilities::createTimePeriod());
     }
 
     public function setUp()
     {
-        // load up the unifiedSearchApi for good times ahead
         $this->api = new ForecastsModuleApi();
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
     }
 
     public static function tearDownAfterClass()
     {
+        SugarTestForecastUtilities::setTimePeriod(null);
+        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestHelper::tearDown();
     }
 
@@ -51,9 +54,8 @@ class ForecastsModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function createRecordDataProvider()
     {
-        $timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
         $expectedSalesRep = array(
-            'timeperiod_id' => $timeperiod->id,
+            'timeperiod_id' => 0,
             'amount' => 0,
             'best_case' => 0,
             'worst_case' => 0,
@@ -98,7 +100,7 @@ class ForecastsModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'forecast_type' => 'Direct',
                     'commit_type' => 'sales_rep',
-                    'timeperiod_id' => $timeperiod->id,
+                    'timeperiod_id' => 0,
                 ),
                 $expectedSalesRep
             ),
@@ -106,7 +108,7 @@ class ForecastsModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'forecast_type' => 'direct',
                     'commit_type' => 'sales_rep',
-                    'timeperiod_id' => $timeperiod->id,
+                    'timeperiod_id' => 0,
                 ),
                 $expectedSalesRep
             ),
@@ -114,7 +116,7 @@ class ForecastsModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'forecast_type' => 'Rollup',
                     'commit_type' => 'sales_rep',
-                    'timeperiod_id' => $timeperiod->id,
+                    'timeperiod_id' => 0,
                 ),
                 $expectedSalesRep
             ),
@@ -122,7 +124,7 @@ class ForecastsModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'forecast_type' => 'rollup',
                     'commit_type' => 'sales_rep',
-                    'timeperiod_id' => $timeperiod->id,
+                    'timeperiod_id' => 0,
                 ),
                 $expectedSalesRep
             ),
@@ -130,7 +132,7 @@ class ForecastsModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'forecast_type' => 'Direct',
                     'commit_type' => 'manager',
-                    'timeperiod_id' => $timeperiod->id,
+                    'timeperiod_id' => 0,
                 ),
                 $expectedManager
             ),
@@ -138,7 +140,7 @@ class ForecastsModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'forecast_type' => 'direct',
                     'commit_type' => 'manager',
-                    'timeperiod_id' => $timeperiod->id,
+                    'timeperiod_id' => 0,
                 ),
                 $expectedManager
             ),
@@ -146,7 +148,7 @@ class ForecastsModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'forecast_type' => 'Rollup',
                     'commit_type' => 'manager',
-                    'timeperiod_id' => $timeperiod->id,
+                    'timeperiod_id' => 0,
                 ),
                 $expectedManager
             ),
@@ -154,7 +156,7 @@ class ForecastsModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'forecast_type' => 'rollup',
                     'commit_type' => 'manager',
-                    'timeperiod_id' => $timeperiod->id,
+                    'timeperiod_id' => 0,
                 ),
                 $expectedManager
             ),
@@ -168,6 +170,13 @@ class ForecastsModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateRecord($args, $expected)
     {
+        $timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
+        if (array_key_exists('timeperiod_id', $expected)) {
+            $expected['timeperiod_id'] = $timeperiod->id;
+        }
+        if (array_key_exists('timeperiod_id', $args)) {
+            $args['timeperiod_id'] = $timeperiod->id;
+        }
         $result = $this->api->createRecord($this->serviceMock, $args);
 
         $this->assertNotEmpty($result);
