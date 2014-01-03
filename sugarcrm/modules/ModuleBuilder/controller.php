@@ -471,7 +471,9 @@ class ModuleBuilderController extends SugarController
                     $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->dependency));
                 if (!empty($field->formula))
                     $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->formula));
-                $repair->repairAndClearAll(array('clearAll'), array(translate('LBL_ALL_MODULES')), true, false);
+
+
+                $repair->repairAndClearAll(array('clearVardefs', 'clearTpls', 'rebuildExtensions'), array_values($relatedMods), true, false);
                 foreach ($relatedMods as $mName => $oName) {
                     VardefManager::loadVardef($mName, $oName, true);
                 }
