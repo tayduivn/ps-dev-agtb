@@ -116,6 +116,8 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         // copy the object so we can set some needed values
         $mgr_rollup_data = $worksheet_totals;
         $mgr_rollup_data['forecast_type'] = $args['forecast_type'];
+        // pass same timeperiod as the other data to the manager's rollup
+        $mgr_rollup_data['timeperiod_id'] = $args['timeperiod_id'];
 
         $mgr_worksheet->reporteeForecastRollUp($current_user, $mgr_rollup_data);
 
