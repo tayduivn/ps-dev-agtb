@@ -307,6 +307,17 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+    function testGetUpdateQuery_WithIDField_FiltersOutIDFieldInSet()
+    {
+        $result = SugarTestReflection::callProtectedMethod(
+            $this->folder,
+            'getUpdateQuery',
+            array(array('id','foo','bar'))
+        );
+        $expected = "UPDATE folders SET foo=NULL,bar=NULL where id = ''";
+        $this->assertEquals($expected, $result, "Should filter ID from SET clause");
+    }
+
 
     function _createEmailObject($additionalParams = array() )
     {

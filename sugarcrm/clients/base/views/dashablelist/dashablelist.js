@@ -513,6 +513,9 @@
             var column = _.extend({name: name, sortable: true}, field || {});
             columns.push(column);
         }, this);
+        //Its possible that a column is on the dashlet and not on the main list view.
+        //We need to fix up the columns in that case.
+        columns = app.metadata._patchFields(this.module, app.metadata.getModule(this.module), columns);
         return columns;
     },
 

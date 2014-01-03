@@ -295,6 +295,12 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    public function testFormatNotNumber()
+    {
+        $formatted = SugarCurrency::formatAmount('not-a-number', -99);
+        $this->assertEquals('not-a-number', $formatted);
+    }
+
     /**
      * test affects of changing base currency type
      *

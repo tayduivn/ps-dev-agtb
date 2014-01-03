@@ -599,7 +599,7 @@ in use by a data set, especially if the data set has the custom layout enabled.
         if (!$this->db_slave) {
             $this->db_slave = DBManagerFactory::getInstance('reports');
         }
-        $this->db_slave;
+        return $this->db_slave;
     }
 
 /*

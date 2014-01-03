@@ -66,8 +66,11 @@
     },
 
     focus: function () {
+        var self = this;
         if(this.action !== 'disabled') {
-            this.$(this.fieldTag).select2('open');
+            //Need to defer to ensure that all the related elements have finished
+            //rendering before attempting to open the dropdown.
+            _.defer(function(){self.$(self.fieldTag).select2('open')});
         }
     },
     /**

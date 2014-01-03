@@ -456,8 +456,17 @@ array (
 	'link'=>'users',
 	'len' => '255',
 	'source'=>'non-db',
-	), 
- 
+	),
+        'activities' => array(
+            'name' => 'activities',
+            'type' => 'link',
+            'relationship' => 'project_tasks_activities',
+            'vname' => 'LBL_ACTIVITIES',
+            'link_type' => 'many',
+            'module' => 'Activities',
+            'bean_name' => 'Activity',
+            'source' => 'non-db',
+        ),
 	),
 	'indices' => array(
 		array(

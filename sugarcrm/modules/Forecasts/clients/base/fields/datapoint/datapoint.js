@@ -175,7 +175,7 @@
         }
 
         this.context.on('change:selectedUser change:selectedTimePeriod', function() {
-            this.initial_total = 0;
+            this.initial_total = '';
             this.total = 0;
             this.arrow = '';
         }, this);
@@ -188,7 +188,7 @@
             if (!_.isUndefined(model)) {
                 this.initial_total = model.get(this.total_field);
             } else {
-                this.initial_total = 0;
+                this.initial_total = '';
                 this.total = 0;
                 this.arrow = '';
             }

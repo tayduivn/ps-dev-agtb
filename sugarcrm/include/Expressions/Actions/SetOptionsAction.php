@@ -63,6 +63,10 @@ class SetOptionsAction extends AbstractAction{
 				if (context.view)
 				{
 					var field = context.view.getField(this.target);
+					//Cannot continue if the field does not exist on this view
+					if (!field) {
+					    return;
+					}
 					if (_.isString(labels))
 						field.items = _.pick(App.lang.getAppListStrings(labels), keys);
 					else

@@ -27,22 +27,42 @@ class SidecarQuickcreateMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
      */
     public $isDCEnabled = true;
 
+    /**
+     * @var int Index of this item in the list.
+     */
+    public $order = 0;
+
     public function upgradeCheck()
     {
         $viewdefs = array();
+
+        if ($this->filename === 'quickcreatedefs.php') {
+            // old quickcreate defs file, rejecting it.
+            return false;
+        }
+
         if (file_exists("custom/{$this->fullpath}")) {
             include "custom/{$this->fullpath}";
         } elseif (file_exists($this->fullpath)) {
             include $this->fullpath;
         }
 
-        if(!empty($viewdefs[$this->module]['base']['menu']['quickcreate'])
-                && !empty($viewdefs[$this->module]['base']['menu']['quickcreate']['layout'])
-                && isset($viewdefs[$this->module]['base']['menu']['quickcreate']['visible'])
-                && $viewdefs[$this->module]['base']['menu']['quickcreate']['visible'] == $this->isDCEnabled) {
-                // don't need to upgrade this, it's ok
-                return false;
+        $hasVisibleProperty = !empty($viewdefs[$this->module]['base']['menu']['quickcreate']) &&
+            !empty($viewdefs[$this->module]['base']['menu']['quickcreate']['layout']) &&
+            isset($viewdefs[$this->module]['base']['menu']['quickcreate']['visible']);
+
+        $qcVisibleMatch = $hasVisibleProperty &&
+            $viewdefs[$this->module]['base']['menu']['quickcreate']['visible'] == $this->isDCEnabled;
+
+        $qcOrderMatch = $hasVisibleProperty &&
+            isset($viewdefs[$this->module]['base']['menu']['quickcreate']['order']) &&
+            $viewdefs[$this->module]['base']['menu']['quickcreate']['order'] === $this->order;
+
+        if ($qcVisibleMatch && $qcOrderMatch) {
+            // no upgrade needed
+            return false;
         }
+
         return true;
     }
 
@@ -55,11 +75,6 @@ class SidecarQuickcreateMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         } elseif (file_exists($this->fullpath)) {
             include $this->fullpath;
         } else {
-            if (!$this->isDCEnabled) {
-                // no need to write out a file for a module that doesn't currently have quickcreate defs and isn't
-                // going to need them
-                return true;
-            }
 
             // Labels for Quickcreate Menu are of type
             // `LBL_NEW_{MODULE_NAME_SINGULAR}`
@@ -95,6 +110,7 @@ class SidecarQuickcreateMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         }
 
         $viewdefs[$this->module]['base']['menu']['quickcreate']['visible'] = $this->isDCEnabled;
+        $viewdefs[$this->module]['base']['menu']['quickcreate']['order'] = $this->order;
 
         $this->legacyViewdefs = $viewdefs;
     }

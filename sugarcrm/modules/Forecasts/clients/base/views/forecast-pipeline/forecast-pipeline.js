@@ -147,7 +147,7 @@
             this.$("svg#" + this.cid).children().remove();
         }
 
-        if (this.results.data.length > 0) {
+        if (this.results.data && this.results.data.length > 0) {
             this.$('.nv-chart').toggleClass('hide', false);
             this.$('.block-footer').toggleClass('hide', true);
 
@@ -188,6 +188,10 @@
                 success: _.bind(function(o) {
                     this.results = {};
                     this.results = o;
+                    this.renderChart();
+                }, this),
+                error: _.bind(function(o) {
+                    this.results = {};
                     this.renderChart();
                 }, this),
                 complete: options ? options.complete : null

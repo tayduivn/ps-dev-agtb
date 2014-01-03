@@ -40,10 +40,8 @@
         app.api.exportRecords(
             {
                 module: this.module,
-                uid: this.model.id,
-                entire: false,
-                members: true,
-                filter: null
+                uid: [this.model.id],
+                members: true
             },
             this.$el,
             {

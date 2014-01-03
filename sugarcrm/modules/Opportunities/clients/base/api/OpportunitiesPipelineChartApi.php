@@ -60,6 +60,14 @@ class OpportunitiesPipelineChartApi extends SugarApi
 
     public function pipeline(ServiceBase $api, $args)
     {
+
+        // Check for permissions on both Revenue line times and accounts.
+        /* @var $seed Opportunity */
+        $seed = BeanFactory::newBean($args['module']);
+        if (!$seed->ACLAccess('view')) {
+            throw new SugarApiExceptionNotAuthorized();
+        }
+
         // we have no timeperiod defined, so lets just pull the current one
         if (empty($args['timeperiod_id'])) {
             $args['timeperiod_id'] = TimePeriod::getCurrentId();
@@ -90,13 +98,13 @@ class OpportunitiesPipelineChartApi extends SugarApi
         // build out the query
         $sq = new SugarQuery();
         $sq->select(array('sales_stage', 'amount', 'base_rate'));
-        $sq->from(BeanFactory::getBean($args['module']))
+        $sq->from($seed)
             ->where()
             ->gte('date_closed_timestamp', $tp->start_date_timestamp)
             ->lte('date_closed_timestamp', $tp->end_date_timestamp);
 
         // determine the type we need to fetch
-        if($args['type'] == 'user') {
+        if ($args['type'] == 'user') {
             // we are only looking at our pipeline
             $sq->where()->equals('assigned_user_id', $api->user->id);
         } else {

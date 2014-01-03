@@ -114,13 +114,13 @@
         app.view.View.prototype._renderHtml.call(this);
 
         this.$el.load(function() {
-            self._setModule(this.contentWindow);
-            self._setBwcModel(this.contentWindow);
-            self._setModel();
-
             //In order to update current location once bwc link is clicked.
             var url = '#bwc/index.php' + this.contentWindow.location.search;
             self._setCurrentUrl(url);
+
+            self._setModule(this.contentWindow);
+            self._setBwcModel(this.contentWindow);
+            self._setModel();
 
             if (this.contentWindow.$ === undefined) {
                 // no jQuery available, graceful fallback

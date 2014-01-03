@@ -135,11 +135,19 @@ class SugarCurrency
         $showSymbol = true,
         $symbolSeparator = ''
     ) {
-        $currency = self::_getCurrency($currencyId);
+        if (!is_numeric($amount)) {
+            $GLOBALS['log']->warn('Trying to format a non-numeric amount: ' . $amount);
+            return $amount;
+        }
 
-        return $showSymbol
-            ? $currency->symbol . $symbolSeparator . number_format($amount, $decimalPrecision, $decimalSeparator, $numberGroupingSeparator)
-            : number_format($amount, $decimalPrecision, $decimalSeparator, $numberGroupingSeparator);
+        $formatted = number_format($amount, $decimalPrecision, $decimalSeparator, $numberGroupingSeparator);
+
+        if ($showSymbol) {
+            $currency = self::_getCurrency($currencyId);
+            $formatted = $currency->symbol . $symbolSeparator . $formatted;
+        }
+
+        return $formatted;
     }
 
     /**
