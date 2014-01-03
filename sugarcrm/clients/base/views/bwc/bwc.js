@@ -120,7 +120,6 @@
 
             self._setModule(this.contentWindow);
             self._setBwcModel(this.contentWindow);
-            self._setModel();
 
             if (this.contentWindow.$ === undefined) {
                 // no jQuery available, graceful fallback
