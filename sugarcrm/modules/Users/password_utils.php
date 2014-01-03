@@ -77,15 +77,6 @@ function canSendPassword() {
 }
 
 /**
- * Updates password has expired if number of login attempts is set
- * @return Boolean indicating if password is expired or not
- */
-function updatePasswordExpired($username)
-{
-    return hasPasswordExpired($username, true);
-}
-
-/**
  * Check if password has expired.
  * @return Boolean indicating if password is expired or not
  */
@@ -110,12 +101,16 @@ function hasPasswordExpired($username, $updateNumberLogins = false)
 		    switch($res[$type.'expiration']) {
 	        case '1':
 		    	global $timedate;
-		    	if ($usr->pwd_last_changed == '') {
-		    		$usr->pwd_last_changed= $timedate->nowDb();
-                    //Suppress date_modified so a new _hash isn't generated
-                    $usr->update_date_modified = false;
-		    		$usr->save();
-		    	}
+                    if ($usr->pwd_last_changed == '') {
+                        $usr->pwd_last_changed= $timedate->nowDb();
+                        //Suppress date_modified so a new _hash isn't generated
+                        $usr->update_date_modified = false;
+                        $usr->save();
+
+                        $pass_changed_timestamp = $timedate->fromDb($usr->pwd_last_changed);
+                    } else {
+                        $pass_changed_timestamp = $timedate->fromUser($usr->pwd_last_changed, $usr);
+                    }
                 // SP-1790: Creating user with default password expiration settings results in password expired page on first login
                 // Below, we calc $expireday essentially doing type*time; that requires that expirationtype factor is 1 or
                 // greater, however, expirationtype defaults to following values: 0/day, 7/week, 30/month
@@ -123,7 +118,7 @@ function hasPasswordExpired($username, $updateNumberLogins = false)
                 $expiretype = $res[$type.'expirationtype'];
                 $expiretype = (!isset($expiretype) || $expiretype == '0') ? '1' : $expiretype;
                 $expireday = $expiretype * $res[$type.'expirationtime'];
-                $expiretime = $timedate->fromUser($usr->pwd_last_changed)->get("+{$expireday} days")->ts;
+                    $expiretime = $pass_changed_timestamp->get("+{$expireday} days")->ts;
 
                 if ($timedate->getNow()->ts < $expiretime) {
                     return false;

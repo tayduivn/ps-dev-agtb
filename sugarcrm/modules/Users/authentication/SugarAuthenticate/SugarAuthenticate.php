@@ -127,7 +127,7 @@ class SugarAuthenticate{
 		//END SUGARCRM flav=pro ONLY
 		if ($this->userAuthenticate->loadUserOnLogin($username, $password, $fallback, $PARAMS)) {
 			require_once('modules/Users/password_utils.php');
-			if(hasPasswordExpired($username)) {
+            if (hasPasswordExpired($username, true)) {
 				$_SESSION['hasExpiredPassword'] = '1';
 			}
 			// now that user is authenticated, reset loginfailed

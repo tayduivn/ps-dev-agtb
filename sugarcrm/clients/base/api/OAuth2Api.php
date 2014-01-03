@@ -92,7 +92,6 @@ class OAuth2Api extends SugarApi
             if (!empty($GLOBALS['current_user'])) {
                 //Update password expired since user's essentially logged in at this point
                 require_once('modules/Users/password_utils.php');
-                updatePasswordExpired($GLOBALS['current_user']->user_name);
 
                 $GLOBALS['current_user']->call_custom_logic('after_login');
             }
