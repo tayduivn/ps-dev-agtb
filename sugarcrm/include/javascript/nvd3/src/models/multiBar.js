@@ -181,11 +181,10 @@ nv.models.multiBar = function () {
       groups.enter().append('g')
           .style('stroke-opacity', 1e-6)
           .style('fill-opacity', 1e-6);
-      d3.transition(groups.exit())
+      groups.exit()
           .style('stroke-opacity', 1e-6)
           .style('fill-opacity', 1e-6)
         .selectAll('g.nv-bar')
-        .delay(function (d,i) { return i * delay/ data[0].values.length; })
           .attr('y', function (d) { return stacked ? y0(d.y0) : y0(0); })
           .attr(limY, 0)
           .remove();
@@ -193,10 +192,9 @@ nv.models.multiBar = function () {
         .attr('class', function (d,i) { return this.getAttribute('class') || classes(d,i); })
         .classed('hover', function (d) { return d.hover; })
         .attr('fill', function (d,i){ return this.getAttribute('fill') || fill(d,i); })
-        .attr('stroke', function (d,i){ return this.getAttribute('fill') || fill(d,i); });
-      d3.transition(groups)
-          .style('stroke-opacity', 1)
-          .style('fill-opacity', 1);
+        .attr('stroke', function (d,i){ return this.getAttribute('fill') || fill(d,i); })
+        .style('stroke-opacity', 1)
+        .style('fill-opacity', 1);
 
 
       var bars = groups.selectAll('g.nv-bar')
@@ -280,24 +278,24 @@ nv.models.multiBar = function () {
 
       if (showValues && !stacked) {
         bars.select('text')
-            .attr('text-anchor', function (d,i) { return getY(d,i) < 0 ? 'end' : 'start'; })
-            .attr('x', function (d,i) {
-              if (!vertical) {
-                return getY(d,i) < 0 ? -4 : y(getY(d,i)) - y(0) + 4;
-              } else {
-                return getY(d,i) < 0 ? y(0) - y(getY(d,i)) - 4 : 4;
-              }
-            })
-            .attr('y', x.rangeBand() / data.length / 2)
-            .attr('dy', '.45em')
-            .attr('transform', 'rotate(' + (vertical ? -90 : 0) + ' 0,0)')
-            .text(function (d,i) { return valueFormat(getY(d,i)); });
+          .attr('text-anchor', function (d,i) { return getY(d,i) < 0 ? 'end' : 'start'; })
+          .attr('x', function (d,i) {
+            if (!vertical) {
+              return getY(d,i) < 0 ? -4 : y(getY(d,i)) - y(0) + 4;
+            } else {
+              return getY(d,i) < 0 ? y(0) - y(getY(d,i)) - 4 : 4;
+            }
+          })
+          .attr('y', x.rangeBand() / data.length / 2)
+          .attr('dy', '.45em')
+          .attr('transform', 'rotate(' + (vertical ? -90 : 0) + ' 0,0)')
+          .text(function (d,i) { return valueFormat(getY(d,i)); });
       } else {
         bars.selectAll('text').text('');
       }
 
       bars
-          .attr('class', function (d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'; });
+        .attr('class', function (d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'; });
 
       if (barColor) {
         if (!disabled) {
@@ -318,28 +316,24 @@ nv.models.multiBar = function () {
 
 
       if (stacked) {
-        d3.transition(bars)
-            .delay(function (d,i) { return i * delay / data[0].values.length; })
-            .attr('transform', function (d,i) {
-              var trans = {
-                x: x(getX(d,i)),
-                y: y(d.y1)
-              };
-              return 'translate(' + trans[xVal] + ',' + trans[yVal] + ')';
+        bars
+          .attr('transform', function (d,i) {
+            var trans = {
+              x: x(getX(d,i)),
+              y: y(d.y1)
+            };
+            return 'translate(' + trans[xVal] + ',' + trans[yVal] + ')';
+          })
+          .select('rect')
+            .attr('x', function (d,i) {
+              return getY(d,i) < 0 ? 0 : 1;
             })
-            .each('end', function () {
-              d3.select(this).select('rect')
-                .attr('x', function (d,i) {
-                  return getY(d,i) < 0 ? 0 : 1;
-                })
-                .attr(limX, function (d,i) {
-                  return Math.max(Math.abs(y(getY(d,i) + d.y0) - y(d.y0)) - 1, 0);
-                })
-                .attr(limY, x.rangeBand());
-            });
+            .attr(limX, function (d,i) {
+              return Math.max(Math.abs(y(getY(d,i) + d.y0) - y(d.y0)) - 1, 0);
+            })
+            .attr(limY, x.rangeBand());
       } else {
-        d3.transition(bars)
-          .delay(function (d,i) { return i * delay / data[0].values.length; })
+        bars
           .attr('transform', function (d,i) {
             var trans = {
               x: d.series * x.rangeBand() / data.length + x(getX(d,i)),
@@ -347,16 +341,14 @@ nv.models.multiBar = function () {
             };
             return 'translate(' + trans[xVal] + ',' + trans[yVal] + ')';
           })
-          .each('end', function () {
-            d3.select(this).select('rect')
-              .attr('x', function (d,i) {
-                return getY(d,i) < 0 ? 0 : 2;
-              })
-              .attr(limX, function (d,i) {
-                return Math.max(Math.abs(y(getY(d,i)) - y(0)) - 2, 0) || 0;
-              })
-              .attr(limY, x.rangeBand() / data.length );
-          });
+          .select('rect')
+            .attr('x', function (d,i) {
+              return getY(d,i) < 0 ? 0 : 2;
+            })
+            .attr(limX, function (d,i) {
+              return Math.max(Math.abs(y(getY(d,i)) - y(0)) - 2, 0) || 0;
+            })
+            .attr(limY, x.rangeBand() / data.length );
       }
 
       //store old scales for use in transitions on update

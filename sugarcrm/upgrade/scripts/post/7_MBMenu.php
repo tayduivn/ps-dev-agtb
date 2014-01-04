@@ -82,19 +82,43 @@ END;
 
     public function run()
     {
-        if(empty($this->upgrader->state['MBModules'])) return;
+        global $mod_strings;
 
-        foreach($this->upgrader->state['MBModules'] as $moduleName) {
-            if(!file_exists("modules/$moduleName")) continue;
-            if(!file_exists("modules/$moduleName/clients/base/menus/header/header.php") && !file_exists("custom/modules/$moduleName/clients/base/menus/header/header.php")) {
+        if (empty($this->upgrader->state['MBModules'])) {
+            return;
+        }
+
+        foreach ($this->upgrader->state['MBModules'] as $moduleName) {
+            if (!file_exists("modules/$moduleName")) {
+                continue;
+            }
+            if (!file_exists("modules/$moduleName/clients/base/menus/header/header.php")
+                && !file_exists("custom/modules/$moduleName/clients/base/menus/header/header.php")
+            ) {
                 $this->addMenu($moduleName);
             }
         }
 
         // Do it also for bwcModules since some of them may not have Menu.php and we need it
         foreach ($GLOBALS['bwcModules'] as $moduleName) {
-            if(!file_exists("modules/$moduleName")) continue;
-            if(!file_exists("modules/$moduleName/clients/base/menus/header/header.php") && !file_exists("custom/modules/$moduleName/clients/base/menus/header/header.php")) {
+            if (!file_exists("modules/$moduleName")) {
+                continue;
+            }
+            if (!file_exists("modules/$moduleName/clients/base/menus/header/header.php")
+                && !file_exists("custom/modules/$moduleName/clients/base/menus/header/header.php")
+            ) {
+                //Check if this module explcitly doesn't have a menu. In that case don't add one now.
+                if (file_exists("modules/$moduleName/Menu.php")) {
+                    //Need to make sure the mod_strings match the requested module or Menus may fail
+                    $curr_mod_strings = $mod_strings;
+                    $mod_strings = return_module_language("en_us", $moduleName);
+                    $module_menu = array();
+                    include "modules/$moduleName/Menu.php";
+                    $mod_strings = $curr_mod_strings;
+                    if (empty($module_menu)) {
+                        continue;
+                    }
+                }
                 $this->addMenu($moduleName);
             }
         }

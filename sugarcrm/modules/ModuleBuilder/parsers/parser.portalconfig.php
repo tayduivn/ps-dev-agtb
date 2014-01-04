@@ -28,7 +28,10 @@ if (!defined('sugarEntry') || !sugarEntry)
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-require_once ('modules/ModuleBuilder/parsers/ModuleBuilderParser.php');
+require_once 'modules/ModuleBuilder/parsers/ModuleBuilderParser.php';
+require_once 'modules/Administration/Administration.php';
+require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
+require_once 'modules/MySettings/TabController.php';
 
 class ParserModifyPortalConfig extends ModuleBuilderParser
 {
@@ -45,6 +48,14 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
      */
     function handleSave()
     {
+        // Initialize `MySettings_tab` (setting containing the list of module
+        // tabs) if not set.
+        $tabController = new TabController();
+        $tabs = $tabController->getPortalTabs();
+        if (empty($tabs)) {
+            $tabController->setPortalTabs($this->getAllPortalTabs());
+        }
+
         $portalFields = array('appStatus', 'defaultUser', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'maxSearchQueryResult');
         $portalConfig = array(
             'platform' => 'portal',
@@ -53,12 +64,6 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             'logWriter' => 'ConsoleWriter',
             'logFormatter' => 'SimpleFormatter',
             'metadataTypes' => array(),
-            'displayModules' => array(
-                'Home',
-                'Bugs',
-                'Cases',
-                'KBDocuments'
-            ),
             'serverTimeout' => 30,
             'defaultModule' => 'Cases',
             'orderByDefaults' => array(
@@ -101,6 +106,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         $GLOBALS['log']->info("Updating portal config");
         foreach ($portalConfig as $fieldKey => $fieldValue) {
 
+            // TODO: category should be `support`, platform should be `portal`
             if(!$GLOBALS ['system_config']->saveSetting('portal', $fieldKey, json_encode($fieldValue), 'support')){
                 $GLOBALS['log']->fatal("Error saving portal config var $fieldKey, orig: $fieldValue , json:".json_encode($fieldValue));
             }
@@ -261,6 +267,27 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         return $role;
     }
 
+    /**
+     * Retrieves all the `portal` modules that have list metadata, thus that can
+     * be displayed in Portal `navbar`. This method is only called to initialize
+     * the `MySettings_tab` setting. You can override this list by modifying
+     * this setting directly.
+     *
+     * @return array The list of modules that can be tabs in Portal
+     */
+    protected function getAllPortalTabs()
+    {
+        $tabs = array('Home');
+
+        $browser = new SugarPortalBrowser();
+        $browser->loadModules();
+        foreach ($browser->modules as $moduleName => $SugarPortalModule) {
+            if (!empty($SugarPortalModule->views['list.php'])) {
+                $tabs[] = $moduleName;
+            }
+        }
+        return $tabs;
+    }
 }
 
 ?>

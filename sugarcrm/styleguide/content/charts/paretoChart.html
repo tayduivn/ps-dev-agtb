@@ -49,6 +49,7 @@
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
 <script src="data/pareto_data.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/axis.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/scatter.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/line.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/multiBar.js"></script>
@@ -93,13 +94,14 @@
             .stacked(true)
             .clipEdge(false)
             .colorData( 'default' )
-            .yAxisTickFormat(function(d){ return '@' + d3.format(',.2s')(d); })
-            .quotaTickFormat(function(d){ return '@' + d3.format(',.3s')(d); });
+            .yAxisTickFormat(function(d){ return '$' + d3.format(',.2s')(d); })
+            .quotaTickFormat(function(d){ return '$' + d3.format(',.3s')(d); });
 
       d3.select(this.el)
-        .datum( chartData )
-        .transition().duration(500).call(this.chart);
+        .datum(chartData)
+        .call(this.chart);
 
+      nv.utils.resizeOnPrint(this.chart.update);
       nv.utils.windowResize(this.chart.update);
 
       return this;

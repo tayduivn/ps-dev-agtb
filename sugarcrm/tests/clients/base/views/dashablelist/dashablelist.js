@@ -223,8 +223,9 @@ describe('View.BaseDashablelistView', function() {
             beforeEach(function() {
                 sinon.collection.stub(app.lang, 'get').returnsArg(1);
                 stubGetFieldMetaForView = sinon.collection.stub(view, 'getFieldMetaForView');
-                stubAppUserGet = sinon.collection.stub(app.user, 'get');
-                stubAppUserGet.withArgs('module_list').returns(_.extend({Leads: 'Leads'}, view._availableModules));
+                stubAppUserGet = sinon.collection.stub(app.metadata, 'getModuleNames', function() {
+                    return ['Accounts', 'Contacts', 'Leads'];
+                });
             });
 
             it('should cache and return the approved modules', function() {

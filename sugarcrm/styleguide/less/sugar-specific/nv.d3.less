@@ -11,8 +11,8 @@ svg {
   user-select: none;
   /* Trying to get SVG to act like a greedy block in all browsers */
   display: block;
-  width:100%;
-  height:100%;
+  width: 100%;
+  height: 100%;
   max-height: 500px;
 }
 
@@ -82,19 +82,20 @@ svg .title {
 
 .nv-demo {
   padding: 20px;
+  width: 100%;
+  height: 100%;
+  .box-sizing(border-box);
 }
 
 body.full-screen {
+  height: 100%;
   .nv-chart {
     min-width: 100px;
     min-height: 100px;
+    max-height: none;
     border: 1px solid black;
-    position: absolute;
-    left: 20px;
-    right: 20px;
-    top: 20px;
-    bottom: 20px;
-    height: auto;
+    height: 100%;
+    width: 100%;
   }
 }
 
@@ -132,6 +133,9 @@ body.full-screen {
 .nvd3 .nv-legend .nv-series {
   cursor: pointer;
   font-size: @chartTextSize;
+  line {
+    fill: none;
+  }
 }
 
 .nvd3 .nv-legend .disabled circle {
@@ -334,14 +338,13 @@ body.full-screen {
 .nvd3.nv-scatter .nv-groups .nv-point.hover,
 .nvd3 .nv-groups .nv-point.hover {
   stroke-width: 20px;
-  fill-opacity: .5 !important;
   stroke-opacity: .5 !important;
 }
 
 .nvd3 .nv-point-paths path {
-  stroke: #aaa;
+  stroke: transparent;
   stroke-opacity: 0;
-  fill: #eee;
+  fill: transparent;
   fill-opacity: 0;
 }
 
@@ -525,11 +528,16 @@ body.full-screen {
   .nv-quotaWrap line {
     opacity: .8;
     stroke: #444;
-    stroke-width: 3px;
+    stroke-width: 4px;
+    fill: none;
     /*stroke-dasharray: '20, 5'; dashed lines must be defined in JS*/
   }
-  .nv-quotaWrap line.nv-targetQuotaLine {
+  .nv-quotaWrap line.nv-quotaLineTarget {
     stroke: #777;
+  }
+  .nv-quotaWrap line.nv-quotaLineBackground {
+    opacity: 0;
+    stroke-width: 12px;
   }
   .nv-y.nv-axis .domain {
     display: none;

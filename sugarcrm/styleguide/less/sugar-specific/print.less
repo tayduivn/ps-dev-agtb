@@ -1,5 +1,7 @@
 @media print {
-    /* Your styles here */
+    @page {
+      margin: .5in;
+    }
     body {
       padding: 0;
       font-family: "Arial";
@@ -24,6 +26,7 @@
     .preview-headerbar {
       position: relative !important;
       top: auto !important;
+      margin-top: 0;
     }
     #content,
     .main-pane,
@@ -35,6 +38,12 @@
       width: 100%;
       bottom: auto !important;
       overflow: visible;
+      background: none;
+      float: none;
+    }
+    .sidebar-content .dashboard .headerpane {
+      width: 100%;
+      background: none;
     }
     .main-pane.span8,
     .span8 .headerpane {
@@ -48,9 +57,17 @@
     .main-pane.span12,
     .main-pane.dashboard {
       padding-top: 0 !important;
+      margin-top: 0;
+    }
+    .dashboard {
+      position: relative;
+      background: none;
+      top: auto;
+      bottom: auto;
     }
     .side.sidebar-content {
       page-break-before: always;
+      .box-shadow(none);
     }
     .label.label-module {
       border: 2px solid @gray;
@@ -68,6 +85,7 @@
       border-bottom: 2px solid #DCDCDC;
       margin-left: 0;
       margin-right: 0;
+      page-break-after: always;
     }
     .flex-list-view.left-actions table.dataTable > thead > tr > th:first-child,
     .flex-list-view.left-actions table.dataTable > tbody > tr > td:first-child,
@@ -81,7 +99,14 @@
     .flex-list-view.right-actions table.dataTable > tbody > tr > td:nth-last-of-type(2) {
       padding: 4px 8px !important;
     }
-
+    .no-touch .flex-list-view .flex-list-view-content {
+      overflow-x: visible;
+    }
+    .sorting_asc span:after,
+    .sorting_desc span:after,
+    .sorting span:after {
+      content: "";
+    }
     #content > .row-fluid > .dashboard { /* specific selector to avoid applying it to .side-pane dashboard */
       .dashlets.row-fluid > li {
         width: 100%;
@@ -119,16 +144,24 @@
           margin-left: -328px;
         }
       }
-      .nv-chart {
-        position: relative;
-        width: 640px;
-        max-height: 370px;
-        svg {
-          width: 100%;
-          position: relative;
-          //max-height: 350px;
+
+    }
+    body.full-screen {
+      .nv-demo {
+        padding: 0;
+        .nv-chart {
+          height: 10.5in;
+          width: 8in;
         }
       }
+    }
+    .nv-chart {
+      width: 640px;
+      max-height: 370px;
+    }
+    .nv-point-clips circle,
+    .nv-quotaLineBackground {
+      display: none;
     }
     .dashboard .thumbnail.widget:not(.collapsed) .widget-content,
     .dashboard .thumbnail.widget:not(.collapsed) .block,

@@ -282,7 +282,7 @@ class FontManager{
      */
     public function deleteFont(){
         global $current_user;
-        if(!is_admin($current_user)){
+        if(!$current_user->isDeveloperForAnyModule()){
             sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
         }
         $this->loadFontFile();
@@ -397,7 +397,7 @@ class FontManager{
      */
     public function clearCachedFile(){
         global $current_user;
-        if(!is_admin($current_user)){
+        if(!$current_user->isDeveloperForAnyModule()){
             sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
         }
          if(file_exists($cachedfile = sugar_cached("Sugarpdf/cachedFontList.php"))) {

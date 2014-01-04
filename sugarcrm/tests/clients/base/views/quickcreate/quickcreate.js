@@ -1,6 +1,17 @@
 describe("Quick Create Dropdown", function() {
     var viewName = 'quickcreate',
-        app, view, isAuthenticatedStub, getModulesStub, getStringsStub, testMeta;
+        app, view, backupIsSynced, testMeta, testHasCreateAccess;
+
+
+    var buildQuickCreateMeta = function(module, visible, order) {
+        return {menu:{quickcreate:{meta:{module:module,visible:visible,order:order}}}};
+    };
+
+    var findModuleInMenuItems = function(menuItems, module) {
+        return !!_.find(menuItems, function(menuItem) {
+            return menuItem.module === module;
+        });
+    };
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -9,55 +20,75 @@ describe("Quick Create Dropdown", function() {
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.set();
         view = SugarTest.createView("base",null, viewName, null, null);
-        isAuthenticatedStub = sinon.stub(SugarTest.app.api, 'isAuthenticated', function() {
+
+        // Fake user is authenticated
+        sinon.collection.stub(SugarTest.app.api, 'isAuthenticated', function() {
             return true;
         });
-        getStringsStub = sinon.stub(SugarTest.app.metadata, 'getStrings', function() {
-            return {
-                Accounts: {}
-            };
-        });
+        // Fake app is synced
+        backupIsSynced = app.isSynced;
+        app.isSynced = true;
+
+        // Test metadata
         testMeta = {
             Accounts: buildQuickCreateMeta('Accounts', true, 0),
             Contacts: buildQuickCreateMeta('Contacts', true, 1),
             Opportunities: buildQuickCreateMeta('Opportunities', true, 2)
         };
-        getModulesStub = sinon.stub(SugarTest.app.metadata, 'getModules');
-        getModulesStub.returns(testMeta);
+        // Acls for the modules in the metadata
+        testHasCreateAccess = {
+            Accounts: true,
+            Contacts: true,
+            Opportunities: true
+        };
+
+        sinon.collection.stub(app.acl, 'hasAccess', function (action, module) {
+            // Sugar.App.acl.hasAccess is called with action=quickcreate as a part of rendering the view beyond
+            // determining which modules are accessible. So we assume that TRUE should be returned for those calls
+            // and to only be more scrupulous when action=create, which is expected per the
+            // BaseQuickcreateView#_renderHtml call.
+            if (action !== 'create') {
+                return true;
+            }
+            return testHasCreateAccess[module];
+        });
+        sinon.collection.stub(SugarTest.app.metadata, 'getModuleNames', function(options) {
+            var modules = [];
+            _.each(testMeta, function(meta, module) {
+                if (app.acl.hasAccess(options.access, module)) {
+                    modules.push(module);
+                }
+            });
+            return modules;
+        });
+        sinon.collection.stub(SugarTest.app.metadata, 'getModule', function(module) {
+            return testMeta[module];
+        });
     });
 
-    var buildQuickCreateMeta = function(module, visible, order) {
-        return {menu:{quickcreate:{meta:{module:module,visible:visible,order:order}}}};
-    };
-
     afterEach(function() {
+        sinon.collection.restore();
+        app.isSynced = backupIsSynced;
         SugarTest.testMetadata.dispose();
-        isAuthenticatedStub.restore();
-        getModulesStub.restore();
-        getStringsStub.restore();
         view = null;
     });
 
-    var filterMenuItemsByModule = function(menuItems, module) {
-        return _.filter(menuItems, function(menuItem) {
-            return menuItem.module === module;
-        });
-    };
-
     it("Should build create actions for all modules", function() {
-        var expectedModules = _.keys(SugarTest.app.metadata.getModules());
         view.render();
 
-        _.each(expectedModules, function(module) {
-            expect(filterMenuItemsByModule(view.createMenuItems, module).length).not.toBe(0);
-        });
+        expect(findModuleInMenuItems(view.createMenuItems, 'Accounts')).toBeTruthy();
+        expect(findModuleInMenuItems(view.createMenuItems, 'Contacts')).toBeTruthy();
+        expect(findModuleInMenuItems(view.createMenuItems, 'Opportunities')).toBeTruthy();
     });
 
     it("Should not build create actions even if visible meta attribute not specified", function() {
+        //Remove visible attribute for Accounts
         delete testMeta.Accounts.menu.quickcreate.meta.visible;
         view.render();
 
-        expect(filterMenuItemsByModule(view.createMenuItems, 'Accounts').length).toBe(0);
+        expect(findModuleInMenuItems(view.createMenuItems, 'Accounts')).toBeFalsy();
+        expect(findModuleInMenuItems(view.createMenuItems, 'Contacts')).toBeTruthy();
+        expect(findModuleInMenuItems(view.createMenuItems, 'Opportunities')).toBeTruthy();
     });
 
     it("Should not build modules that don't have quickcreate meta", function() {
@@ -66,59 +97,37 @@ describe("Quick Create Dropdown", function() {
         view.render();
 
         _.each(expectedModules, function(module) {
-            expect(filterMenuItemsByModule(view.createMenuItems, module).length).not.toBe(0);
+            expect(findModuleInMenuItems(view.createMenuItems, module)).toBeTruthy();
         });
-        expect(filterMenuItemsByModule(view.createMenuItems, 'Foo').length).toBe(0);
+        expect(findModuleInMenuItems(view.createMenuItems, 'Foo')).toBeFalsy();
     });
 
     it("Should not build create action for modules user does not have create access to", function() {
-        var expectedModules = ['Contacts', 'Opportunities'],
-            hasAccessStub = sinon.stub(SugarTest.app.acl, 'hasAccess', function(action, module) {
-                // Sugar.App.acl.hasAccess is called with action=quickcreate as a part of rendering the view beyond
-                // determining which modules are accessible. So we assume that TRUE should be returned for those calls
-                // and to only be more scrupulous when action=create, which is expected per the
-                // BaseQuickcreateView#_renderHtml call.
-                if (action !== 'create') {
-                    return true;
-                }
-                return (expectedModules.indexOf(module) > -1);
-            });
+        // Remove create ACLs for Accounts
+        testHasCreateAccess['Accounts'] = false;
         view.render();
 
-        _.each(expectedModules, function(module) {
-            expect(filterMenuItemsByModule(view.createMenuItems, module).length).not.toBe(0);
-        });
-        expect(filterMenuItemsByModule(view.createMenuItems, 'Accounts').length).toBe(0);
-        hasAccessStub.restore();
+        expect(findModuleInMenuItems(view.createMenuItems, 'Accounts')).toBeFalsy();
+        expect(findModuleInMenuItems(view.createMenuItems, 'Contacts')).toBeTruthy();
+        expect(findModuleInMenuItems(view.createMenuItems, 'Opportunities')).toBeTruthy();
     });
 
     it("Should not build create actions that are hidden", function() {
-        var expectedModules = ['Accounts', 'Opportunities'];
+        //Hide Contacts item
         testMeta.Contacts.menu.quickcreate.meta.visible = false;
         view.render();
 
-        _.each(expectedModules, function(module) {
-            expect(filterMenuItemsByModule(view.createMenuItems, module).length).not.toBe(0);
-        });
-        expect(filterMenuItemsByModule(view.createMenuItems, 'Contacts').length).toBe(0);
+        expect(findModuleInMenuItems(view.createMenuItems, 'Accounts')).toBeTruthy();
+        expect(findModuleInMenuItems(view.createMenuItems, 'Contacts')).toBeFalsy();
+        expect(findModuleInMenuItems(view.createMenuItems, 'Opportunities')).toBeTruthy();
     });
 
     it("Should build create actions based on order attribute", function() {
         view.render();
 
-        _.each(view.createMenuItems, function(menuItem, index) {
-            switch (index) {
-                case 0:
-                    expect(menuItem.module).toBe('Accounts');
-                    break;
-                case 1:
-                    expect(menuItem.module).toBe('Contacts');
-                    break;
-                case 2:
-                    expect(menuItem.module).toBe('Opportunities');
-                    break;
-            }
-        });
+        expect(view.createMenuItems[0].module).toBe('Accounts');
+        expect(view.createMenuItems[1].module).toBe('Contacts');
+        expect(view.createMenuItems[2].module).toBe('Opportunities');
     });
 
     it("Should change the order of create actions if it has been changed from default", function() {
@@ -127,18 +136,8 @@ describe("Quick Create Dropdown", function() {
         testMeta.Opportunities.menu.quickcreate.meta.order = 1;
         view.render();
 
-        _.each(view.createMenuItems, function(menuItem, index) {
-            switch (index) {
-                case 0:
-                    expect(menuItem.module).toBe('Contacts');
-                    break;
-                case 1:
-                    expect(menuItem.module).toBe('Opportunities');
-                    break;
-                case 2:
-                    expect(menuItem.module).toBe('Accounts');
-                    break;
-            }
-        });
+        expect(view.createMenuItems[0].module).toBe('Contacts');
+        expect(view.createMenuItems[1].module).toBe('Opportunities');
+        expect(view.createMenuItems[2].module).toBe('Accounts');
     });
 });
