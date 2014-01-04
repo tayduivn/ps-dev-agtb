@@ -1,4 +1,4 @@
-.widget-container {
+.dashlet-container {
   padding: 5px;
   .empty {
     padding: 16px 0;
@@ -32,7 +32,7 @@
     }
   }
   &.active {
-    .widget.empty {
+    .dashlet.empty {
       background: lighten(@grayLight,8%);
       border-color: @white;
       p,
@@ -40,7 +40,7 @@
         color: @white;
       }
     }
-    .widget:not(.empty) {
+    .dashlet:not(.empty) {
       opacity: .5;
       .swappable-dashlet {
         display: block;
@@ -57,14 +57,14 @@
   }
 }
 
-.widget-content {
+.dashlet-content {
   font-size: @baseFontSize;
   overflow: auto;
   width: 100%;
   .border-radius(0 0 3px 3px);
 }
 
-.widget {
+.dashlet {
   border: 0;
   padding: 0;
   .box-shadow(@shadowWidget);
@@ -77,7 +77,7 @@
     min-height: 140px;
   }
   &.collapsed {
-    .widget-header {
+    .dashlet-header {
       .border-radius(4px);
     }
     h4 {
@@ -99,7 +99,7 @@
       color: lighten(@gray, 20%);
     }
   }
-  .widget-header {
+  .dashlet-header {
     .border-radius(4px 4px 0 0);
     #gradient > .vertical(@grayLighter, darken(@grayLighter, 2%));
   }
@@ -141,7 +141,7 @@
       .border-radius(4px);
       border-bottom: 0 !important;
     }
-    .widget-content,
+    .dashlet-content,
     .dashlet-options {
       display: none;
     }
@@ -365,7 +365,7 @@
     bottom: 45px;
     z-index: 1000;
     margin: 0 !important;
-    .widget-content {
+    .dashlet-content {
       position: absolute;
       top: 60px;
       left: 0;
@@ -382,7 +382,7 @@
     .nvd3 .nv-x.nv-axis text {
       font-size: 12px;
     }
-    a[data-toggle="widget"] {
+    a[data-toggle="dashlet"] {
       display: none;
     }
     h4.headerpane {
@@ -393,7 +393,7 @@
     .btn-toolbar {
       margin: 16px 20px 0 8px;
     }
-    &.with-options .widget-content {
+    &.with-options .dashlet-content {
       top: 108px;
     }
     .dashlet-options {

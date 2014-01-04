@@ -2858,7 +2858,7 @@ $app_strings = array (
     'LBL_REMINDERS_NONE_FOUND' => 'No reminders found.',
     'LBL_REMINDERS_FINISHED' => 'Finished!',
 
-    // Strings for Opportunity Metrics widget
+    // Strings for Opportunity Metrics dashlet
     'LBL_OPPORTUNITY_METRICS' => 'Opportunity Metrics',
 
     'LBL_RELATED' => 'Related',

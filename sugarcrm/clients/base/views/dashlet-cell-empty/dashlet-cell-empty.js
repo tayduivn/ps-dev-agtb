@@ -26,7 +26,7 @@
  ********************************************************************************/
 ({
     events: {
-        'click .widget.empty' : 'addClicked'
+        'click .dashlet.empty' : 'addClicked'
     },
     originalTemplate: null,
     initialize: function(options) {

@@ -58,9 +58,9 @@
  * @trigger "modal:close" Close popup modal and release layout for popup
  *
  * How to Use:
- * in the view widget
+ * in the view dashlet
  *     this.layout.trigger([event name], ...)
- * in the field widget
+ * in the field dashlet
  *     this.view.layout.trigger([event name], ...)
  */
 ({
