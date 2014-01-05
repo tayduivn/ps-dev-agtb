@@ -6107,6 +6107,12 @@ class SugarBean
         }
     }
 
+    /**
+     * Test to see if this bean implements the given interface
+     *
+     * @param string $interface Interface name
+     * @return bool TRUE if bean implements the interface
+     **/
     function bean_implements($interface)
     {
         return false;
