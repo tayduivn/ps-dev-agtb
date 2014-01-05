@@ -66,8 +66,10 @@ require_once 'modules/DynamicFields/templates/Fields/TemplateRange.php';
 // Used in action_get_app_list_strings
 require_once 'include/JSON.php';
 
+//BEGIN SUGARCRM flav=ent ONLY
 // Used in action_portalconfigsave
 require_once 'modules/ModuleBuilder/parsers/parser.portalconfig.php';
+//END SUGARCRM flav=ent ONLY
 
 // Used in metadata API cache clear
 require_once 'include/MetaDataManager/MetaDataManager.php';
