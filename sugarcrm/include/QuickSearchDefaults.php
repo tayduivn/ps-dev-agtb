@@ -44,18 +44,16 @@ class QuickSearchDefaults
      */
     static public function getQuickSearchDefaults(array $lookup = array())
     {
-       $lookup['custom/include/QuickSearchDefaults.php'] = 'QuickSearchDefaultsCustom';
-       $files = array_reverse(array_keys($lookup));
-       array_push($files, 'custom/include/QuickSearchDefaults.php');
+        $lookup['custom/include/QuickSearchDefaults.php'] = 'QuickSearchDefaultsCustom';
 
-       $file = SugarAutoLoader::existing($files);
-       if($file && !empty($lookup[$file])) {
-           $klass = $lookup[$file];
-           require_once $file;
-           return new $klass();
-       }
+        foreach ($lookup as $file => $klass) {
+            if (SugarAutoLoader::fileExists($file)) {
+                require_once($file);
+                return new $klass();
+            }
+        }
 
-       return new QuickSearchDefaults();
+        return new QuickSearchDefaults();
     }
 
 	function setFormName($name = 'EditView') {
