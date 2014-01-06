@@ -33,9 +33,9 @@
             args_filter = [],
             options = {};
 
-
         args_filter.push({"user_id": this.model.get('user_id')});
         args_filter.push({"forecast_type": forecastType});
+        args_filter.push({"timeperiod_id": this.view.selectedTimeperiod});
 
         var url = {"url": app.api.buildURL('Forecasts', 'filter'), "filters": {"filter": args_filter}};
 

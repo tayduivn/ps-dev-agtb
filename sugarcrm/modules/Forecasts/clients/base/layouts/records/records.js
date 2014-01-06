@@ -120,13 +120,19 @@
                 }
                 this.model.set(update);
             }, this);
-            // since the selected timeperiod changes on the model, update the timeperiod
-            this.model.on('change:selectedTimePeriod', function(model, changed) {
-                this.context.set('selectedTimePeriod', changed);
-            }, this);
+
             // if the model changes, run a fetch
             this.model.on('change', function() {
-                // clear this out this someone on the model change, this will be set once the collection resets
+                // clear this out as something on the model changed,
+                // this will be set once the collection resets
+                // set the value to null since it can be undefined
+                this.context.set({'currentForecastCommitDate' : null}, {silent: true});
+                this.collection.fetch();
+            }, this);
+
+            this.context.on('change:selectedTimePeriod', function() {
+                // clear this out if the timeperiod changed on the context,
+                // this will be set once the collection resets
                 // set the value to null since it can be undefined
                 this.context.set({'currentForecastCommitDate' : null}, {silent: true});
                 this.collection.fetch();
@@ -299,8 +305,8 @@
 
         var args_filter = [],
             filter = null;
-        if (this.model.has('selectedTimePeriod')) {
-            args_filter.push({"timeperiod_id": this.model.get('selectedTimePeriod')});
+        if (this.context.has('selectedTimePeriod')) {
+            args_filter.push({"timeperiod_id": this.context.get('selectedTimePeriod')});
         }
         if (this.model.has('selectedUserId')) {
             args_filter.push({"user_id": this.model.get('selectedUserId')});
@@ -344,7 +350,7 @@
 
         // we need a commit_type so we know what to do on the back end.
         forecastData.commit_type = worksheet_type;
-        forecastData.timeperiod_id = forecast_totals.timeperiod_id || this.model.get('selectedTimePeriod');
+        forecastData.timeperiod_id = forecast_totals.timeperiod_id || this.context.get('selectedTimePeriod');
         forecastData.forecast_type = forecastType;
 
         forecast.save(forecastData, { success: _.bind(function(model, response) {
