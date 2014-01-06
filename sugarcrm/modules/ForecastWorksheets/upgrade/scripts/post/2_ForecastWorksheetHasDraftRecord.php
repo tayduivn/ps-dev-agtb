@@ -21,7 +21,7 @@ class SugarUpgradeForecastWorksheetHasDraftRecord extends UpgradeScript
     public function run()
     {
         // are we coming from 6.7 but before 7.0
-        if (!version_compare($this->from_version, '6.7.0', '>=') &&
+        if (!version_compare($this->from_version, '6.7.0', '>=') ||
             !version_compare($this->from_version, '7.0', '<')) {
             return;
         }
