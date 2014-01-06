@@ -602,7 +602,9 @@
                     d_separator = app.user.getPreference('decimal_separator') || config.defaultDecimalSeparator || '.',
                     ug_separator = app.user.getPreference('number_grouping_separator'),
                     g_separator = !_.isUndefined(ug_separator) ? ug_separator : config.defaultNumberGroupingSeparator || ',',
-                    regex = new RegExp("(^[\\d" + this._escapeRegexCharacter(g_separator) + "]+)?(" + this._escapeRegexCharacter(d_separator) + "\\d+)?$"),
+                    currency = app.user.getPreference('currency_id') || app.currency.getBaseCurrencyId(),
+                    currency_symbol = app.currency.getCurrencySymbol(currency),
+                    regex = new RegExp("^(" + this._escapeRegexCharacter(currency_symbol) + ")?(([\\d]{1,3}(?:" +  this._escapeRegexCharacter(g_separator) + "?[\\d]{3})*)?((?:" + this._escapeRegexCharacter(d_separator) + "[\\d]+)))"),
                     parts = value.match(regex);
 
                 // always make sure that we have a string here, since match only works on strings
@@ -685,13 +687,16 @@
                     d_separator = app.user.getPreference('decimal_separator') || config.defaultDecimalSeparator || '.',
                     ug_separator = app.user.getPreference('number_grouping_separator'),
                     g_separator = (!_.isUndefined(ug_separator)) ? ug_separator : config.defaultNumberGroupingSeparator || ',',
-                    regex = new RegExp("^([+-])([\\d" +  this._escapeRegexCharacter(g_separator) + "]+(" + this._escapeRegexCharacter(d_separator) + "\\d+)?)(\\%?)$"),
+                    regex = new RegExp("^([+-])(([\\d]{1,3}(?:" +  this._escapeRegexCharacter(g_separator) + "?[\\d]{3})*)?((?:" + this._escapeRegexCharacter(d_separator) + "[\\d]+))?)(\\%?)"),
                     parts = value.toString().match(regex);
 
-                if (parts) {
+                // if we have parts and the addition is not zero (0), if it happens to be zero it's from an input
+                // like this +0,5 when you have , as your grouping and . as your decimal
+                // there is a test that covers this use case in the ForecastWorksheet/currency field test
+                if (parts && parts[2] != "0") {
                     // use original number to apply calculations
                     var amount = this.unformat(parts[2]);
-                    if (parts[4] == '%') {
+                    if (parts[5] == '%') {
                         // percentage calculation
                         value = app.math.mul(app.math.div(amount, 100), orig);
                     } else {

@@ -192,35 +192,29 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
         describe('_verifyCurrencyValue', function() {
             beforeEach(function() {
                 field.value = '1.000000';
+                app.user.setPreference('number_grouping_separator', 'A');
+                app.user.setPreference('decimal_separator', 'z');
             });
             afterEach(function() {
                 field.value = undefined;
                 app.user.setPreference('number_grouping_separator', ',');
-                app.user.setPreference('decimal_separator', '.')
+                app.user.setPreference('decimal_separator', '.');
             });
 
             describe('when using users preferences', function() {
                 it('should return true when format matches users format', function() {
-                    app.user.setPreference('number_grouping_separator', 'A');
-                    app.user.setPreference('decimal_separator', 'z');
-                    expect(field._verifyCurrencyValue('1A0000z00')).toBeTruthy();
+                    expect(field._verifyCurrencyValue('1A000z00')).toBeTruthy();
                 });
 
                 it('should return true when number starts with decimal separator', function() {
-                    app.user.setPreference('number_grouping_separator', 'A');
-                    app.user.setPreference('decimal_separator', 'z');
                     expect(field._verifyCurrencyValue('z05')).toBeTruthy();
                 });
 
                 it('should return false when format does not match users format', function() {
-                    app.user.setPreference('number_grouping_separator', 'A');
-                    app.user.setPreference('decimal_separator', 'z');
-                    expect(field._verifyCurrencyValue('1,0000x00')).toBeFalsy();
+                    expect(field._verifyCurrencyValue('1,000x00')).toBeFalsy();
                 });
 
                 it('should return false when number starts with an invalid decimal separator', function() {
-                    app.user.setPreference('number_grouping_separator', 'A');
-                    app.user.setPreference('decimal_separator', 'z');
                     expect(field._verifyCurrencyValue('.05')).toBeFalsy();
                 });
             });
@@ -293,32 +287,50 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
                 sandbox.restore();
                 field.value = undefined;
                 app.user.setPreference('number_grouping_separator', ',');
-                app.user.setPreference('decimal_separator', '.')
+                app.user.setPreference('decimal_separator', '.');
             });
 
             describe('should use users preferences', function() {
-                it('should increase field value by +50.8%', function() {
+                beforeEach(function() {
                     app.user.setPreference('number_grouping_separator', 'A');
                     app.user.setPreference('decimal_separator', ',');
+                });
+
+                afterEach(function() {
+                    app.user.setPreference('number_grouping_separator', ',');
+                    app.user.setPreference('decimal_separator', '.');
+                });
+
+                it('should increase field value by +50.8%', function() {
                     expect(field._parsePercentage('+50,8%')).toEqual('$1,51');
                 });
 
                 it('should increase field value by +50.8', function() {
-                    app.user.setPreference('number_grouping_separator', 'A');
-                    app.user.setPreference('decimal_separator', ',');
                     expect(field._parsePercentage('+50,8')).toEqual('$51,80');
                 });
 
                 it('should decrease field value by -50.8%', function() {
-                    app.user.setPreference('number_grouping_separator', 'A');
-                    app.user.setPreference('decimal_separator', ',');
                     expect(field._parsePercentage('-50,8%')).toEqual('$0,49');
                 });
 
                 it('should decrease field value by -50.8', function() {
-                    app.user.setPreference('number_grouping_separator', 'A');
-                    app.user.setPreference('decimal_separator', ',');
                     expect(field._parsePercentage('-50,8')).toEqual('$-49,80');
+                });
+
+                it('should increase field value by +.5', function() {
+                    expect(field._parsePercentage('+,5')).toEqual('$1,50');
+                });
+
+                it('should decrease field value by -.5', function() {
+                    expect(field._parsePercentage('-,5')).toEqual('$0,50');
+                });
+
+                it('should increase field value by +.5%', function() {
+                    expect(field._parsePercentage('+,5%')).toEqual('$1,00');
+                });
+
+                it('should decrease field value by -.5%', function() {
+                    expect(field._parsePercentage('-,5%')).toEqual('$0,99');
                 });
             });
 
@@ -349,7 +361,6 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
                 });
 
                 it('should increase field value by +50.8%', function() {
-                    debugger;
                     expect(field._parsePercentage('+50d8%')).toEqual('$1d51');
                 });
 
@@ -363,6 +374,22 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
 
                 it('should decrease field value by -50.8', function() {
                     expect(field._parsePercentage('-50d8')).toEqual('$-49d80');
+                });
+
+                it('should increase field value by +.5', function() {
+                    expect(field._parsePercentage('+d5')).toEqual('$1d50');
+                });
+
+                it('should decrease field value by -.5', function() {
+                    expect(field._parsePercentage('-d5')).toEqual('$0d50');
+                });
+
+                it('should increase field value by +.5%', function() {
+                    expect(field._parsePercentage('+d5%')).toEqual('$1d00');
+                });
+
+                it('should decrease field value by -.5%', function() {
+                    expect(field._parsePercentage('-d5%')).toEqual('$0d99');
                 });
             });
 
@@ -386,17 +413,86 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
                     expect(field._parsePercentage('+50.8%')).toEqual('$1.51');
                 });
 
-                it('should increase field value by +50.8', function() {
-                    expect(field._parsePercentage('+50.8')).toEqual('$51.80');
-                });
-
                 it('should decrease field value by -50.8%', function() {
                     expect(field._parsePercentage('-50.8%')).toEqual('$0.49');
+                });
+
+                it('should increase field value by +.5%', function() {
+                    expect(field._parsePercentage('+.5%')).toEqual('$1.00');
+                });
+
+                it('should decrease field value by -.5%', function() {
+                    expect(field._parsePercentage('-.5%')).toEqual('$0.99');
+                });
+
+                it('should increase field value by +50.8', function() {
+                    expect(field._parsePercentage('+50.8')).toEqual('$51.80');
                 });
 
                 it('should decrease field value by -50.8', function() {
                     expect(field._parsePercentage('-50.8')).toEqual('$-49.80');
                 });
+
+                it('should increase field value by +.5', function() {
+                    expect(field._parsePercentage('+.5')).toEqual('$1.50');
+                });
+
+                it('should decrease field value by -.5', function() {
+                    expect(field._parsePercentage('-.5')).toEqual('$0.50');
+                });
+            });
+        });
+
+        describe('validateField', function() {
+            var sandbox = sinon.sandbox.create();
+            beforeEach(function() {
+                sandbox.stub(field.model, 'get', function() {
+                    return '1.000000'
+                });
+                field.value = '1.000000';
+                app.user.setPreference('number_grouping_separator', undefined);
+                app.user.setPreference('decimal_separator', undefined);
+                sandbox.stub(app.metadata, 'getConfig', function() {
+                    return {}
+                });
+            });
+
+            afterEach(function() {
+                sandbox.restore();
+                app.user.setPreference('number_grouping_separator', ',');
+                app.user.setPreference('decimal_separator', '.')
+            });
+
+            it('should return false for +0,5', function() {
+                expect(field.validateField(field, '+0,5')).toBeFalsy();
+            });
+
+            it('should return false for +,5', function() {
+                expect(field.validateField(field, '+,5')).toBeFalsy();
+            });
+
+            it('should return false for -0,5', function() {
+                expect(field.validateField(field, '-0,5')).toBeFalsy();
+            });
+
+            it('should return false for -,5', function() {
+                expect(field.validateField(field, '-,5')).toBeFalsy();
+            });
+
+            it('should return 1.50 for +0.5', function() {
+                expect(field.validateField(field, '+0.5')).toEqual("$1.50");
+            });
+
+            it('should return 0.50 for -0.5', function() {
+                expect(field.validateField(field, '-0.5')).toEqual("$0.50");
+            });
+
+            it('should return 1.50 for +.5', function() {
+                expect(field.validateField(field, '+.5')).toEqual("$1.50");
+            });
+
+            it('should return 0.50 for -.5', function() {
+                expect(field.validateField(field, '-.5')).toEqual("$0.50");
             });
         });
     });
