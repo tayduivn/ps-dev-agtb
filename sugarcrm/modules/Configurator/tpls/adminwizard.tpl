@@ -120,8 +120,11 @@ function disableReturnSubmission(e) {
             </tr>
             <tr>
                 <td scope="row" width='12%' nowrap>{$MOD.CURRENT_LOGO}&nbsp;{sugar_help text=$MOD.CURRENT_LOGO_HELP}</td>
-                <td width='35%' >
-                    <img id="company_logo_image" alt='{$MOD.LBL_LOGO}' src='{$company_logo}' />
+                <td width="35%">
+                    <div class="company_logo_image_container">
+                        <img id="company_logo_image" src="{$company_logo}"
+                             alt="{$MOD.LBL_LOGO}"/>
+                    </div>
                 </td>
             </tr>
             </table>

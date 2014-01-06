@@ -167,7 +167,11 @@ class ConfiguratorController extends SugarController
         if (file_exists($cachedfile = sugar_cached('modules/Contacts/EditView.tpl')))
            unlink($cachedfile);
 
-        SugarApplication::redirect('index.php?module=Administration&action=index');
+        echo '<script type="text/javascript">';
+        echo 'parent && parent.SUGAR && parent.SUGAR.App && parent.SUGAR.App.sync();';
+        echo 'window.location.href = "index.php?module=Administration&action=index";';
+        echo '</script>';
+        exit();
     }
 
     function action_detail()
