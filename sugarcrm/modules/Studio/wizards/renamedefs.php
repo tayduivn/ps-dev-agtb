@@ -609,6 +609,7 @@ $renamedefs = array(
             array('name' => 'LBL_OPPORTUNITY_ID', 'type' => 'singular', 'source' => 'Opportunities'),
             array('name' => 'LBL_PRODUCT_ID', 'type' => 'singular', 'source' => 'Products'),
             array('name' => 'LBL_QUOTE_ID', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'LBL_REVENUELINEITEMS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
         ),
         'Opportunities' => array(
             array('name' => 'LBL_MODULE_TITLE', 'type' => 'plural', 'source' => 'Opportunities'),
