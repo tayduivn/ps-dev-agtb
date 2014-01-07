@@ -17,6 +17,7 @@ describe("Module List", function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'favorites');
+        SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'recents');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.set();
 
