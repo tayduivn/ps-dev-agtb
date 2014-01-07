@@ -48,6 +48,16 @@
      * @private
      */
     _currentIndex: 0,
+
+    /**
+     * @param {Object} options
+     * @override
+     */
+    initialize: function(options) {
+        app.view.Layout.prototype.initialize.call(this, options);
+        $(window).on('keypress.' + this.cid, _.bind(this.handleKeypress, this));
+    },
+
     /**
      * Place only initial wizard page at first
      * @param component Wizard page component
@@ -174,5 +184,28 @@
         if (callbacks && callbacks.complete) {
             callbacks.complete();
         }
+    },
+
+    /**
+     * Process next on key 'Enter'
+     * @param e
+     */
+    handleKeypress: function(e) {
+        var wizardPage = this._components[this._currentIndex];
+        if (e.keyCode === 13) {
+            document.activeElement.blur();
+            if (wizardPage.isPageComplete()) {
+                wizardPage.next();
+            }
+        }
+    },
+
+    /**
+     * @private
+     * @override
+     */
+    _dispose: function() {
+        $(window).off('keypress.' + this.cid, _.bind(this.handleKeypress, this));
+        app.view.Layout.prototype._dispose.call(this);
     }
 })
