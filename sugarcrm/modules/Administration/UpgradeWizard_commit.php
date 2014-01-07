@@ -479,6 +479,7 @@ switch( $mode ){
         		}
         	}
         }
+        $shouldClearCache = false;
     break;
     case "Uninstall":
         $file_action = "removed";
