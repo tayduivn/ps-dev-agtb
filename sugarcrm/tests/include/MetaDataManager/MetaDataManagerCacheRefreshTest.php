@@ -166,6 +166,7 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testQuickRepairRefreshesCache($public)
     {
+        $this->markTestSkipped("This test is on hold until Quick Repair goes back to refreshing cache instead of nuking it.");
         $visibility = $public ? "Public" : "Private";
         
         // Get the metadata manager for use in this test
