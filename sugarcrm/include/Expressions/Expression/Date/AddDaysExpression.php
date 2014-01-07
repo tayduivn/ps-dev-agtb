@@ -59,6 +59,12 @@ class AddDaysExpression extends DateExpression
 		    var d = new Date(date);
 		    d.setDate(d.getDate() + days);
 
+            // if we're calling this from Sidecar, we need to pass back the date
+            // as a string, not a Date object otherwise it won't validate properly
+            if (this.context.view) {
+                d = App.date.format(d, 'Y-m-d');
+            }
+
 		    return d;
 EOQ;
 	}
@@ -87,5 +93,3 @@ EOQ;
 	function toString() {
 	}
 }
-
-?>
