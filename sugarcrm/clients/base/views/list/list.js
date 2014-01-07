@@ -326,6 +326,7 @@
             this.collection.on("reset", this.render, this);
         }
     },
+
     _dispose: function() {
         this._fields = null;
         app.view.View.prototype._dispose.call(this);

@@ -29,7 +29,7 @@
 	{
 		var searchedValue = this.$('input.inherit-width').val();
 
-        if(searchedValue.length >= 3)
+        if(searchedValue && searchedValue.length >= 3)
         {
             this.context.trigger('input:name:keyup',searchedValue);    
         }	
