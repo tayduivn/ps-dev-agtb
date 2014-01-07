@@ -219,17 +219,16 @@ describe("date field", function() {
     });
 
     describe("basedatepicker datepicker related", function() {
-        var jqFn, expectedValValue, datepickerStub;
+        var jqFn, expectedValValue, datepickerStub, valStub;
 
         // Essentially, the following stubs out this.$('doesnt_matter').<val & datepicker>
         beforeEach(function(){
             datepickerStub = sinon.stub();
 
+            valStub = sinon.stub().returns('arbitrary_value');
             jqFn = sinon.stub(field, '$', function() {
                 return {
-                    'val': function() {
-                        return 'arbitrary_value';
-                    },
+                    'val': valStub,
                     'attr': function() {},
                     'datepicker': datepickerStub
                 };
@@ -249,6 +248,19 @@ describe("date field", function() {
             field._presetDateValues();
             expect(field.dateValue).toEqual(expectedValValue);
             expect(field.timeValue).toBeFalsy();
+        });
+
+        it('should reset date picker because model attribute is empty', function() {
+            field.type = 'date';
+            valStub.reset();
+
+            expect(field.model.get(field.name)).toBeUndefined();
+            field._presetDateValues();
+            expect(valStub).toHaveBeenCalledWith('');
+            valStub.reset();
+
+            field.model.set(field.name, expectedValValue);
+            expect(valStub).not.toHaveBeenCalledWith('');
         });
 
         it('should update model when datepicker selected for datetimecombo', function() {

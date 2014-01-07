@@ -293,6 +293,13 @@ describe("BaseFilterRowsView", function() {
             expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', true]);
             expect(triggerStub.secondCall).toBeNull();
         });
+        it('should return false if $dateBetween operator has an empty value', function() {
+            $rows.push($('<div>').data({ name: 'abc', operator: '$dateBetween', value: ['', '12-12-12']}));
+            $rows.push($('<div>').data({ name: '123', value: '123'}));
+            view.validateRows($rows);
+            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', false]);
+            expect(triggerStub.secondCall).toBeNull();
+        });
     });
 
     describe('populateFilter', function() {
@@ -489,7 +496,8 @@ describe("BaseFilterRowsView", function() {
                     options: 'status_dom',
                     isMultiSelect: true,
                     searchBarThreshold: 9999,
-                    required: false
+                    required: false,
+                    readonly: false
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
             });
@@ -502,7 +510,8 @@ describe("BaseFilterRowsView", function() {
                     type: 'enum',
                     options: 'boolean_dom',
                     searchBarThreshold: 9999,
-                    required: false
+                    required: false,
+                    readonly: false
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
             });
@@ -515,7 +524,8 @@ describe("BaseFilterRowsView", function() {
                     name: 'case_number',
                     type: 'int',
                     auto_increment: false,
-                    required: false
+                    required: false,
+                    readonly: false
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
             });
@@ -530,7 +540,8 @@ describe("BaseFilterRowsView", function() {
                     type: 'varchar',
                     auto_increment: false,
                     len: 200,
-                    required: false
+                    required: false,
+                    readonly: false
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
                 expect($row.data('value')).toEqual('1,20,35');
@@ -544,13 +555,15 @@ describe("BaseFilterRowsView", function() {
                     type: 'int',
                     name: 'case_number_min',
                     auto_increment: false,
-                    required: false
+                    required: false,
+                    readonly: false
                 });
                 expect(createFieldSpy.lastCall.args[1]).toEqual({
                     type: 'int',
                     name: 'case_number_max',
                     auto_increment: false,
-                    required: false
+                    required: false,
+                    readonly: false
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
                 expect(_.size($valueField.find('input'))).toEqual(2);
@@ -572,7 +585,8 @@ describe("BaseFilterRowsView", function() {
                         name: 'team_name',
                         type: 'relate',
                         id_name: 'team_id',
-                        required: false
+                        required: false,
+                        readonly: false
                     });
                     expect(_.isEmpty($valueField.html())).toBeFalsy();
                     expect(fetchStub).toHaveBeenCalled();
@@ -584,7 +598,8 @@ describe("BaseFilterRowsView", function() {
                         name: 'team_name',
                         type: 'relate',
                         id_name: 'team_id',
-                        required: false
+                        required: false,
+                        readonly: false
                     });
                     expect(_.isEmpty($valueField.html())).toBeFalsy();
                     expect(fetchStub).not.toHaveBeenCalled();
@@ -821,6 +836,17 @@ describe("BaseFilterRowsView", function() {
             var stubs = [sinonSandbox.stub(model1, 'clear'), sinonSandbox.stub(model2, 'clear')];
             $('<article>').addClass('filter-body').data('valueField', {model: model1 }).appendTo(view.$el);
             $('<article>').addClass('filter-body').data('valueField', {model: model2 }).appendTo(view.$el);
+            view.resetFilterValues();
+            expect(stubs[0]).toHaveBeenCalled();
+            expect(stubs[1]).toHaveBeenCalled();
+        });
+        it('should call clear on each field model if valueField is an array', function() {
+            var model1 = new Backbone.Model();
+            var model2 = new Backbone.Model();
+            var stubs = [sinonSandbox.stub(model1, 'clear'), sinonSandbox.stub(model2, 'clear')];
+            $('<article>').addClass('filter-body')
+                .data('valueField', [{model: model1 }, {model: model2 }])
+                .appendTo(view.$el);
             view.resetFilterValues();
             expect(stubs[0]).toHaveBeenCalled();
             expect(stubs[1]).toHaveBeenCalled();
