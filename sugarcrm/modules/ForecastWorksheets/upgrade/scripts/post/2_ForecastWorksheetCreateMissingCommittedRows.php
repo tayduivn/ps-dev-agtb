@@ -27,19 +27,18 @@ class SugarUpgradeForecastWorksheetCreateMissingCommittedRows extends UpgradeScr
         }
 
         $this->log('Creating Missing Committed Rows For RLIs');
-        $sql = "INSERT INTO forecast_worksheets " .
-               "SELECT w.id, " .
+        $sql = "SELECT '' as id, " .
                       "rli.name, " .
                       "w.date_modified as date_entered, " .
                       "w.date_modified, " .
                       "w.modified_user_id, " .
-                      "w.modified_user_id, " .
+                      "w.modified_user_id as created_by, " .
                       "null as description, " .
                       "w.deleted, " .
                       "w.user_id as assigned_user_id, " .
                       "rli.team_id, " .
                       "rli.team_set_id, " .
-                      "w.related_id as parent_id, " .
+                      "rli.id as parent_id, " .
                       "'RevenueLineItems' as parent_type, " .
                       "rli.likely_case, " .
                       "rli.best_case, " .
@@ -73,8 +72,10 @@ class SugarUpgradeForecastWorksheetCreateMissingCommittedRows extends UpgradeScr
                       "rli.quantity, " .
                       "rli.total_amount " .
                "FROM worksheet w " .
+               "INNER JOIN products p " .
+                    "ON p.id = w.related_id " .
                "INNER JOIN revenue_line_items rli " .
-                    "ON rli.id = w.related_id " .
+                    "ON rli.id = p.revenuelineitem_id " .
                "INNER JOIN opportunities o " .
                     "ON o.id = rli.opportunity_id " .
                "INNER JOIN accounts a " .
@@ -89,19 +90,18 @@ class SugarUpgradeForecastWorksheetCreateMissingCommittedRows extends UpgradeScr
                     "AND w.forecast_type = 'Direct' " .
                     "AND w.related_forecast_type = 'Product'";
 
-        $result = $this->db->query($sql);
-        
-        $this->log('Added ' . $this->db->getAffectedRowCount($result) . ' Records');
-        $this->log('Creating Missing Committed Rows For RLIs');
+        $results = $this->db->query($sql);
+        $this->insertRows($results);
+
+        $this->log('Done Creating Missing Committed Rows For RLIs');
         
         $this->log('Creating Missing Committed Rows For Opportunities');
-        $sql = "INSERT INTO forecast_worksheets " .
-               "SELECT o.id, " .
+        $sql = "SELECT o.id, " .
                       "o.name, " .
                       "w.date_modified as date_entered, " .
                       "w.date_modified, " .
                       "w.modified_user_id, " .
-                      "w.modified_user_id, " .
+                      "w.modified_user_id as created_by, " .
                       "null as description, " .
                       "w.deleted, " .
                       "w.user_id as assigned_user_id, " .
@@ -141,8 +141,10 @@ class SugarUpgradeForecastWorksheetCreateMissingCommittedRows extends UpgradeScr
                       "null as quantity, " .
                       "null as total_amount " .
                "FROM worksheet w " .
+               "INNER JOIN products p " .
+                    "ON p.id = w.related_id " .
                "INNER JOIN revenue_line_items rli " .
-               "ON rli.id = w.related_id " .
+                    "ON rli.id = p.revenuelineitem_id " .
                "INNER JOIN opportunities o " .
                "ON o.id = rli.opportunity_id " .
                "INNER JOIN accounts a " .
@@ -153,9 +155,28 @@ class SugarUpgradeForecastWorksheetCreateMissingCommittedRows extends UpgradeScr
                      "AND w.forecast_type = 'Direct' " .
                      "AND w.related_forecast_type = 'Product'";
         
-        $result = $this->db->query($sql);
-        
-        $this->log('Added ' . $this->db->getAffectedRowCount($result) . ' Records');
-        $this->log('Creating Missing Committed Rows For Opportunities');
+        $results = $this->db->query($sql);
+        $this->insertRows($results);
+
+        $this->log('Done Creating Missing Committed Rows For Opportunities');
+    }
+
+    /**
+     * Process all the results and insert them back into the db
+     *
+     * @param resource $results
+     */
+    protected function insertRows($results)
+    {
+        $insertSQL = 'INSERT INTO forecast_worksheets ';
+
+        while ($row = $this->db->fetchByAssoc($results)) {
+            $row['id'] = create_guid();
+            foreach ($row as $key => $value) {
+                $row[$key] = $this->db->quoted($value);
+            }
+
+            $this->db->query($insertSQL . '(' . join(',', array_keys($row)) . ') VALUES (' . join(',', $row) . ');');
+        };
     }
 }

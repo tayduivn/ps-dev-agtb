@@ -15,7 +15,7 @@
 
 class SugarUpgradeForecastWorksheetHasDraftRecord extends UpgradeScript
 {
-    public $order = 2180;
+    public $order = 2210;
     public $type = self::UPGRADE_DB;
 
     public function run()
@@ -33,8 +33,7 @@ class SugarUpgradeForecastWorksheetHasDraftRecord extends UpgradeScript
 
         $this->log('Creating Forecast Worksheet Draft Records');
 
-        $sql = "INSERT INTO forecast_worksheets " .
-               "SELECT fw.parent_id, " .
+        $sql = "SELECT '' as id, " .
                       "fw.name, " .
                       "fw.date_entered, " .
                       "fw.date_modified, " .
@@ -87,9 +86,19 @@ class SugarUpgradeForecastWorksheetHasDraftRecord extends UpgradeScript
                   "AND fw.draft = 0 " .
                   "AND fw2.id IS NULL";
 
-        $result = $this->db->query($sql);
-        
-        $this->log('Added ' . $this->db->getAffectedRowCount($result) . ' Draft Records');
+        $results = $this->db->query($sql);
+
+        $insertSQL = 'INSERT INTO forecast_worksheets VALUES';
+
+        while ($row = $this->db->fetchByAssoc($results)) {
+            $row['id'] = create_guid();
+            foreach ($row as $key => $value) {
+                $row[$key] = $this->db->quoted($value);
+            }
+
+            $this->db->query($insertSQL . ' (' . join(',', $row) . ');');
+        }
+
         $this->log('Done Creating Forecast Worksheet Draft Records');
     }
 }
