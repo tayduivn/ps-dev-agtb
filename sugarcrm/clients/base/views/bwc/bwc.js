@@ -120,6 +120,7 @@
 
             self._setModule(this.contentWindow);
             self._setBwcModel(this.contentWindow);
+            self._setModel(this.contentWindow);
 
             if (this.contentWindow.$ === undefined) {
                 // no jQuery available, graceful fallback
@@ -213,9 +214,17 @@
      * Populates the context model with API data.
      * this.model is a link for this.context.model.
      *
+     * @param {HTMLElement} contentWindow iframe window.
      * @private
      */
-    _setModel: function() {
+    _setModel: function(contentWindow) {
+        var action = this.actionRegex.exec(contentWindow.location.search);
+        action = (_.isArray(action)) ? action[1].toLowerCase() : null;
+
+        if (action !== 'detailview') {
+            return;
+        }
+
         var id = this.idRegex.exec(this._currentUrl);
         if (!_.isArray(id)) {
             return;
