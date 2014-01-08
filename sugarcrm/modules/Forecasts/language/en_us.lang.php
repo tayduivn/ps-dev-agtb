@@ -202,7 +202,7 @@ $mod_strings = array (
     'LBL_WORKSHEET_AMOUNT'=>'Total estimated amounts',
     'LBL_COPY'=>'Copy Values',
     'LBL_COMMIT_AMOUNT'=>'Sum of Committed values.',
-    'LBL_CUMMULATIVE_TOTAL'=>'Cummlative Total',
+    'LBL_CUMULATIVE_TOTAL'=>'Cumulative Total',
     'LBL_COPY_FROM'=>'Copy value from:',
 
     'LBL_CHART_TITLE'=>'Quota vs. Committed vs. Actual',
