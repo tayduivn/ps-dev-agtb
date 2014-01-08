@@ -10,7 +10,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 
 $viewdefs['base']['view']['notifications'] = array(
@@ -18,14 +18,20 @@ $viewdefs['base']['view']['notifications'] = array(
     // (Calls and Meetings) because this is temporary code.
     'remindersFilterDef' => array(
         'reminder_time' => array(
-            '$gte' => 0
+            '$gte' => 0,
         ),
         'status' => array(
-            '$equals' => 'Planned'
+            '$equals' => 'Planned',
         ),
         'accept_status_users' => array(
-            '$not_equals' => 'decline'
-        )
+            '$not_equals' => 'decline',
+        ),
     ),
     'remindersLimit' => 100,
+    'fields' => array(
+        'severity' => array(
+            'name' => 'severity',
+            'type' => 'severity',
+        ),
+    ),
 );

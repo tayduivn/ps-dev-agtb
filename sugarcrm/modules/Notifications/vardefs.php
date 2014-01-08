@@ -10,7 +10,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 
 $dictionary['Notifications'] = array(
@@ -22,7 +22,7 @@ $dictionary['Notifications'] = array(
             'name' => 'is_read',
             'vname' => 'LBL_IS_READ',
             'type' => 'bool',
-            'massupdate' => 0,
+            'massupdate' => true,
             'comments' => '',
             'help' => '',
             'importable' => 'false',
@@ -38,7 +38,9 @@ $dictionary['Notifications'] = array(
             'options' => 'notifications_severity_list',
             'required' => true,
             'type' => 'enum',
+            'massupdate' => false,
             'vname' => 'LBL_SEVERITY',
+            'readonly' => true,
         ),
     ),
     'relationships' => array(),
@@ -47,3 +49,9 @@ $dictionary['Notifications'] = array(
 
 require_once 'include/SugarObjects/VardefManager.php';
 VardefManager::createVardef('Notifications', 'Notifications', array('basic', 'assignable'));
+
+$dictionary['Notifications']['fields']['assigned_user_name']['massupdate'] = false;
+$dictionary['Notifications']['fields']['assigned_user_name']['readonly'] = true;
+$dictionary['Notifications']['fields']['description']['readonly'] = true;
+$dictionary['Notifications']['fields']['name']['readonly'] = true;
+

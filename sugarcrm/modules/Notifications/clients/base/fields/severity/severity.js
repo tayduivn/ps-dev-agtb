@@ -8,12 +8,11 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
 ({
     /**
-     * Level Widget.
+     * Severity Widget.
      *
      * Extends from EnumField widget adding style property according to specific
      * severity.
@@ -37,16 +36,14 @@
     },
 
     /**
-     * Defines style property based on field value.
+     * {@inheritDoc}
      *
-     * {@inheritdoc}
+     * Defines style property based on field value.
      */
     _render: function () {
-        this._super('_render');
-
         var severity = this.model.get(this.name);
-        var severityCss = this._styleMapping[severity] || this._styleMapping.default;
+        this.severityCss = this._styleMapping[severity] || this._styleMapping.default;
 
-        this.getFieldElement().addClass(severityCss);
+        this._super('_render');
     }
 })
