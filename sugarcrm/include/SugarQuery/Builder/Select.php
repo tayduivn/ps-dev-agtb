@@ -59,6 +59,23 @@ class SugarQuery_Builder_Select
         return $this;
     }
 
+    /**
+     * Adds a raw piece of SQL to the select
+     * @param string $columns The raw SQL to execute
+     * @param string $alias What to alias the sql as (optional)
+     * @return object this
+     */
+    public function fieldRaw($columns, $alias = '')
+    {
+        $field = new SugarQuery_Builder_Field_Raw($columns, $this->query);
+        if (!empty($alias)) {
+            $field->alias = $alias;
+        } else {
+            $alias = md5($columns);
+        }
+        $this->select[$alias] = $field;
+        return $this;
+    }
 
     public function addField($column, $options = array())
     {

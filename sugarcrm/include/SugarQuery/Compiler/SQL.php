@@ -270,7 +270,11 @@ class SugarQuery_Compiler_SQL
         }
 
         if ($field instanceof SugarQuery_Builder_Field_Raw) {
-            return $field->field;
+            if (!empty($field->alias)) {
+                return "{$field->field} {$field->alias}";
+            } else {
+                return $field->field;
+            }
         }
 
         if ($field->isNonDb() == 1) {

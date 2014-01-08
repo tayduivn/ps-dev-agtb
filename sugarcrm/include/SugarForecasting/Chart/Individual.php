@@ -77,6 +77,13 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
 
         if (!empty($this->dataArray)) {
             foreach ($this->dataArray as $data) {
+
+                // If users have made likely/best/worst not required,
+                // set the value to 0 for upcoming currency math
+                if (empty($data['likely_case'])) {
+                    $data['likely_case'] = 0;
+                }
+
                 $v = array(
                     'id' => $data['id'],
                     'record_id' => $data['parent_id'],
@@ -88,9 +95,18 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
                 );
 
                 if ($config['show_worksheet_best'] && $bestAccess) {
+                    if (empty($data['best_case'])) {
+                        $data['best_case'] = 0;
+                    }
+
                     $v['best'] = SugarCurrency::convertWithRate($data['best_case'], $data['base_rate']);
                 }
+
                 if ($config['show_worksheet_worst'] && $worstAccess) {
+                    if (empty($data['worst_case'])) {
+                        $data['worst_case'] = 0;
+                    }
+
                     $v['worst'] = SugarCurrency::convertWithRate($data['worst_case'], $data['base_rate']);
                 }
 

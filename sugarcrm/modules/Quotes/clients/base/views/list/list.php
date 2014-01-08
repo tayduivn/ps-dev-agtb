@@ -19,6 +19,12 @@ $viewdefs['Quotes']['base']['view']['list'] = array(
             'fields' =>
             array(
                 array(
+                    'label'   => 'LBL_LIST_QUOTE_NUM',
+                    'enabled' => true,
+                    'default' => true,
+                    'name'    => 'quote_num',
+                ),
+                array(
                     'label'   => 'LBL_LIST_QUOTE_NAME',
                     'enabled' => true,
                     'default' => true,
@@ -26,12 +32,12 @@ $viewdefs['Quotes']['base']['view']['list'] = array(
                     'link'    => true,
                 ),
                 array(
-                    'target_record_key' => 'account_id',
+                    'target_record_key' => 'billing_account_id',
                     'target_module'     => 'Accounts',
                     'label'             => 'LBL_LIST_ACCOUNT_NAME',
                     'enabled'           => true,
                     'default'           => true,
-                    'name'              => 'account_name',
+                    'name'              => 'billing_account_name',
                     'sortable'          => false,
                 ),
                 array(

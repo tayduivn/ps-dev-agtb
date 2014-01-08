@@ -486,7 +486,8 @@ class SidecarMetaDataUpgrader
         $this->getExtensionFiles("menus");
 
         // Upgrading globalControlLinks for profileactions
-        if(file_exists("include/globalControlLinks.php")){
+        if(file_exists('custom/application/Ext/GlobalLinks/links.ext.php') ||
+           file_exists('custom/include/globalControlLinks.php')){
             $file['fullpath'] = 'include/globalControlLinks.php';
             $file['viewtype'] = 'menu';
             $file['basename'] = 'globalControlLinks';

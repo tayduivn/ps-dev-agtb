@@ -251,11 +251,11 @@ describe("Forecasts.Layout.Records", function() {
 
         it('should have timeperiod_id defined in the filters', function(){
             layout.model.unset('selectedUserId');
-            layout.model.set('selectedTimePeriod', 'jasmin_test');
+            layout.context.set('selectedTimePeriod', 'jasmin_test');
             layout.sync('read', layout.collection, {});
             expect(_.isObject(filters)).toBeTruthy();
             expect(_.isUndefined(filters['filter'][0])).toBeFalsy();
-            expect(filters['filter'][0]['timeperiod_id']).toEqual(layout.model.get('selectedTimePeriod'));
+            expect(filters['filter'][0]['timeperiod_id']).toEqual(layout.context.get('selectedTimePeriod'));
         });
     });
 });

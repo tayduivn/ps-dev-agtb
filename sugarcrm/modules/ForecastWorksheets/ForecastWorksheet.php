@@ -701,6 +701,18 @@ class ForecastWorksheet extends SugarBean
         $results = $sq->execute();
 
         foreach ($results as $row) {
+            // if customers have made likely_case, best_case, or worst_case not required,
+            // it saves to the DB as NULL, make sure we set it to 0 for the math ahead
+            if (empty($row['likely_case'])) {
+                $row['likely_case'] = 0;
+            }
+            if (empty($row['best_case'])) {
+                $row['best_case'] = 0;
+            }
+            if (empty($row['worst_case'])) {
+                $row['worst_case'] = 0;
+            }
+            
             $worst_base = SugarCurrency::convertWithRate($row['worst_case'], $row['base_rate']);
             $amount_base = SugarCurrency::convertWithRate($row['likely_case'], $row['base_rate']);
             $best_base = SugarCurrency::convertWithRate($row['best_case'], $row['base_rate']);
