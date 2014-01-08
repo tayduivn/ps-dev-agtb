@@ -628,6 +628,9 @@ class Importer
         $firstrow    = unserialize(base64_decode($_REQUEST['firstrow']));
         $mappingValsArr = $this->importColumns;
         $mapping_file = BeanFactory::getBean('Import_1');
+        $mapping_file->delimiter = $_REQUEST['custom_delimiter'];
+        $mapping_file->enclosure = html_entity_decode($_REQUEST['custom_enclosure'], ENT_QUOTES);
+
         if ( isset($_REQUEST['has_header']) && $_REQUEST['has_header'] == 'on')
         {
             $header_to_field = array ();

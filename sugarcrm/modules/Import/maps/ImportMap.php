@@ -91,75 +91,43 @@ class ImportMap extends SugarBean
     }
 
     /**
-     * Returns an array with the field mappings
+     * Returns an array with the field mappings.
      *
-     * @return array
+     * @return array Converted $content.
      */
     public function getMapping()
     {
-        $mapping_arr = array();
-        if ( !empty($this->content) )
-        {
-            $pairs = explode("&",$this->content);
-            foreach ($pairs as $pair){
-                list($name,$value) = explode("=",$pair);
-                $mapping_arr[trim($name)] = $value;
-            }
-        }
-
-        return $mapping_arr;
+        return !empty($this->content) ? $this->convertFromCsv($this->content) : array();
     }
 
     /**
-     * Sets $content with the mapping given
+     * Sets $content with the mapping given.
      *
-     * @param string $mapping_arr
+     * @param array $mapping
      */
-    public function setMapping(
-        $mapping_arr
-        )
+    public function setMapping(array $mapping)
     {
-        $output = array ();
-        foreach ($mapping_arr as $key => $item) {
-            $output[] = "$key=$item";
-        }
-        $this->content = implode("&", $output);
+        $this->content = $this->convertToCsv($mapping);
     }
 
     /**
-     * Returns an array with the default field values
+     * Returns an array with the default field values.
      *
-     * @return array
+     * @return array Converted $default_values.
      */
     public function getDefaultValues()
     {
-        $defa_arr = array();
-        if ( !empty($this->default_values) )
-        {
-            $pairs = explode("&",$this->default_values);
-            foreach ($pairs as $pair){
-                list($name,$value) = explode("=",$pair);
-                $defa_arr[trim($name)] = $value;
-            }
-        }
-
-        return $defa_arr;
+        return !empty($this->default_values) ? $this->convertFromCsv($this->default_values) : array();
     }
 
     /**
-     * Sets $default_values with the default values given
+     * Sets $default_values with the default values given.
      *
-     * @param string $defa_arr
+     * @param array $defaultValues
      */
-    public function setDefaultValues(
-        $defa_arr
-        )
+    public function setDefaultValues(array $defaultValues)
     {
-        $output = array ();
-        foreach ($defa_arr as $key => $item) {
-            $output[] = "$key=$item";
-        }
-        $this->default_values = implode("&", $output);
+        $this->default_values = $this->convertToCsv($defaultValues);
     }
 
     /**
@@ -400,6 +368,43 @@ class ImportMap extends SugarBean
         return $preference_values;
     }
 
+    /**
+     * Converts the given data to CSV format.
+     *
+     * @param array $mapping Array with data.
+     * @return string CSV formatted string.
+     */
+    protected function convertToCsv(array $mapping)
+    {
+        $output = array ();
+        foreach ($mapping as $key => $item) {
+            $output[] = "$key=$item";
+        }
+
+        $stream = fopen('data://text/plain,', 'w+');
+        fputcsv($stream, $output, $this->delimiter, $this->enclosure);
+        rewind($stream);
+        $source = stream_get_contents($stream);
+        fclose($stream);
+        return $source;
+    }
+
+    /**
+     * Converts the given CSV string to array.
+     *
+     * @param string $csvString CSV formatted string.
+     * @return array Converted set.
+     */
+    protected function convertFromCsv($csvString)
+    {
+        $mapping = array();
+        $pairs = str_getcsv($csvString, $this->delimiter, $this->enclosure);
+        foreach ($pairs as $pair) {
+            list($name, $value) = explode('=', $pair);
+            $mapping[trim($name)] = $value;
+        }
+        return $mapping;
+    }
 }
 
 
