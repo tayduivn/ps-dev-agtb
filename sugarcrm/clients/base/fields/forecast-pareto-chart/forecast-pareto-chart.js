@@ -101,7 +101,7 @@
 
         this.chartId = this.cid + '_chart';
         this.paretoChart = nv.models.paretoChart()
-            .margin({top: 0, right: 10, bottom: 20, left: 50})
+            .margin({top: 0, right: 10, bottom: 30, left: 50})
             .showTitle(false)
             .tooltips(true)
             .tooltipQuota(function(key, x, y, e, graph) {
