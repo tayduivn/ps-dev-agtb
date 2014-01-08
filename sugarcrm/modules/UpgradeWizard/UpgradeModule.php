@@ -86,7 +86,7 @@ if(!empty($fail)) {
     SugarAutoLoader::buildCache();
     // Sets up the metadata cache for the base platform only after forcefully
     // destoying the cache. Also sets up current language metadata files
-    MetaDataManager::clearAPICacheOnShutdown();
+    MetaDataManager::clearAPICache(true, true);
     MetaDataManager::setupMetadata(array('base'), array($GLOBALS['current_language']));
     exit(0);
 }

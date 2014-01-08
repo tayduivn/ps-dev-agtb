@@ -1310,6 +1310,9 @@ class MetaDataManager
             $platforms = self::getPlatformList();
         }
 
+        // Make sure the LanguageManager created modules cache is clear
+        LanguageManager::resetCreatedModules();
+
         foreach ((array) $platforms as $platform) {
             foreach (array(true, false) as $public) {
                 $mm = self::getManager($platform, $public, true);
@@ -1390,6 +1393,10 @@ class MetaDataManager
             $platforms = self::getPlatformsWithCaches();
         }
 
+        // Make sure the LanguageManager created modules cache is clear
+        LanguageManager::resetCreatedModules();
+
+        // Handle refreshing based on the cache part
         $method = 'rebuild' . ucfirst(strtolower($part)) . 'Cache';
         foreach ((array) $platforms as $platform) {
             foreach (array(true, false) as $public) {

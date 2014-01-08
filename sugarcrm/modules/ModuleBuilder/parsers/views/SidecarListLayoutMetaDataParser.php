@@ -605,7 +605,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
             // Installing and trying to refresh the modules cache is bad juju
             if (!empty($GLOBALS['installing'])) {
                 // Use the clear NOW method so that if there is a cache it is wiped
-                MetaDataManager::clearAPICacheOnShutdown();
+                MetaDataManager::clearAPICache(true, true);
             } else {
                 MetaDataManager::refreshModulesCache(array($this->_moduleName));
             }

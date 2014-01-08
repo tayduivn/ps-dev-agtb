@@ -209,11 +209,11 @@ class ModuleInstaller{
                 // Get the newest app_list_strings
                 $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
 
-                // This is one of those processes that requires the metadata cache
-                // to be nuked entirely, primarily because vardefs cannot change
-                // reliably in memory. So wipe out the cache and let the next 
-                // request do the dirty work of rebuilding it.
-                MetaDataManager::clearAPICache();
+                // Destroy all metadata caches and rebuild the base metadata. This
+                // will cause a small amount of lag on subsequent requests for other
+                // clients.
+                MetaDataManager::clearAPICache(true, true);
+                MetaDataManager::setupMetadata();
 
 				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 		}else{
@@ -1633,11 +1633,11 @@ class ModuleInstaller{
 	            require_once('modules/Home/UnifiedSearchAdvanced.php');
 	            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
 
-                // This is one of those processes that requires the metadata cache
-                // to be nuked entirely, primarily because vardefs cannot change
-                // reliably in memory. So wipe out the cache and let the next 
-                // request do the dirty work of rebuilding it.
-                MetaDataManager::clearAPICache();
+                // Destroy all metadata caches and rebuild the base metadata. This
+                // will cause a small amount of lag on subsequent requests for other
+                // clients.
+                MetaDataManager::clearAPICache(true, true);
+                MetaDataManager::setupMetadata();
 
 				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 				if(!$this->silent){
