@@ -56,7 +56,6 @@
         this.delegateEvents();
     },
     initialize: function(options) {
-
         app.view.View.prototype.initialize.call(this, options);
         app.events.on('app:view:change', this.handleViewChange, this);
         var self = this;
