@@ -561,10 +561,13 @@
     },
 
     /**
-     * Clear out duplicate list
+     * If initialized (depends on this.enableDuplicateCheck flag) hides the
+     * duplicate list.
      */
     hideDuplicates: function () {
-        this.dupecheckList.hide();
+        if (this.dupecheckList) {
+            this.dupecheckList.hide();
+        }
     },
 
     /**
