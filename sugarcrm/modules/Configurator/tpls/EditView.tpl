@@ -32,9 +32,13 @@
 *}
 {literal}
 <style>
-    #company_logo_image {
+    .company_logo_image_container {
         height: 24px;
         width: 180px;
+    }
+    #company_logo_image {
+        max-height: 100%;
+        max-width: 100%;
     }
 </style>
 {/literal}
@@ -109,8 +113,11 @@
         <td  scope="row" width='12%' nowrap>
         {$MOD.CURRENT_LOGO}&nbsp;{sugar_help text=$MOD.CURRENT_LOGO_HELP}
         </td>
-        <td width='35%' >
-            <img id="company_logo_image" src='{$company_logo}' alt="{$mod_strings.LBL_LOGO}" onload="init_logo()">
+        <td width="35%">
+            <div class="company_logo_image_container">
+                <img id="company_logo_image" src="{$company_logo}"
+                     alt="{$mod_strings.LBL_LOGO}" onload="init_logo()">
+            </div>
         </td>
         //BEGIN SUGARCRM flav!=com ONLY
         <td  scope="row"> {$MOD.SHOW_DOWNLOADS_TAB}: &nbsp;{sugar_help text=$MOD.SHOW_DOWNLOADS_TAB_HELP} </td>
@@ -431,6 +438,5 @@ function toggleDisplay_2(div_string){
         YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
     }
 }
-
 </script>
 {/literal}
