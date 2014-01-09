@@ -500,10 +500,15 @@ class RepairAndClear
         if (!empty($section)) {
             MetaDataManager::refreshSectionCache($section);
         } else {
-            // Otherwise refresh the entire thing if the section is not a false,
-            // but only for the base platform
+            // Otherwise if the section is not a false nuke all caches
             if ($section !== false) {
-                MetaDataManager::refreshCache(array('base'));
+                // @TODO: When this goes back to the following code:
+                // MetaDataManager::clearAPICache(true, true);
+                // MetaDataManager::setupMetadata();
+                // 
+                // Make sure to unskip the following unit test:
+                // tests/include/MetaDataManager/MetaDataManagerCacheRefreshTest.php->testQuickRepairRefreshesCache()
+                MetaDataManager::clearAPICache();
             }
         }
     }
