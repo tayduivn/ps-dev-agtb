@@ -84,6 +84,8 @@
 
         this.collection = new Backbone.Collection();
 
+        this.context.set('parentModule', this.module);
+
         this._initMaxHeightTarget();
         this._initEvents();
         this._initTabs();

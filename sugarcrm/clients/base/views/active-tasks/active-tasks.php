@@ -133,7 +133,7 @@ $viewdefs['base']['view']['active-tasks'] = array(
                     'acl_action' => 'edit',
                 ),
                 array(
-                    'type' => 'rowaction',
+                    'type' => 'unlink-action',
                     'icon' => 'icon-unlink',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
@@ -168,7 +168,7 @@ $viewdefs['base']['view']['active-tasks'] = array(
                     'acl_action' => 'edit',
                 ),
                 array(
-                    'type' => 'rowaction',
+                    'type' => 'unlink-action',
                     'icon' => 'icon-unlink',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
@@ -198,7 +198,7 @@ $viewdefs['base']['view']['active-tasks'] = array(
                     'acl_action' => 'edit',
                 ),
                 array(
-                    'type' => 'rowaction',
+                    'type' => 'unlink-action',
                     'icon' => 'icon-unlink',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
