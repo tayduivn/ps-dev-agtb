@@ -104,10 +104,9 @@ class ViewPopup extends SugarView{
         }
 
 		if(!empty($listViewDefs) && !empty($searchdefs)){
-			require_once('include/Popups/PopupSmarty.php');
 			$displayColumns = array();
 			$filter_fields = array();
-			$popup = new PopupSmarty($this->bean, $this->module);
+            $popup = $this->getPopupSmarty($this->bean, $this->module);
 			//BEGIN SUGARCRM flav=pro ONLY
 			$this->bean->ACLFilterFieldList($listViewDefs[$this->module], array("owner_override" => true));
 			//END SUGARCRM flav=pro ONLY
@@ -191,4 +190,18 @@ class ViewPopup extends SugarView{
 			echo $popup->process_page();
 		}
 	}
+
+    /**
+     * Get popup object
+     *
+     * @param SugarBean $bean
+     * @param string    $module
+     *
+     * @return PopupSmarty
+     */
+    protected function getPopupSmarty($bean, $module)
+    {
+        require_once 'include/Popups/PopupSmarty.php';
+        return new PopupSmarty($bean, $module);
+    }
 }
