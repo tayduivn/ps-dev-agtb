@@ -40,7 +40,6 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
             // no closed won, closed lost and total
             array($count_to_array(0), $count_to_array(0), $count_to_array(0), Opportunity::STATUS_IN_PROGRESS),
         );
-
     }
 
     /**
@@ -52,10 +51,6 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
         /* @var $hookMock OpportunityHooks */
         $hookMock = $this->getMockClass('OpportunityHooks', array('isForecastSetup'));
-
-        $hookMock::staticExpects($this->any())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(true));
 
         $hookMock::setSalesStatus($oppMock, 'before_save', array());
 
@@ -76,10 +71,6 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
         /* @var $hookMock OpportunityHooks */
         $hookMock = $this->getMockClass('OpportunityHooks', array('isForecastSetup'));
-
-        $hookMock::staticExpects($this->any())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(true));
 
         $closed_won = array('won');
         $closed_lost = array('lost');
@@ -151,10 +142,6 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
         /* @var $hookMock OpportunityHooks */
         $hookMock = $this->getMockClass('OpportunityHooks', array('isForecastSetup'));
-
-        $hookMock::staticExpects($this->any())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(true));
 
         $closed_won = array('won');
         $closed_lost = array('lost');
