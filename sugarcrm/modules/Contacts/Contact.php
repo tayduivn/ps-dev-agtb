@@ -120,6 +120,11 @@ class Contact extends Person {
 	var $rel_quotes_table = "quotes_contacts";
 //END SUGARCRM flav=pro ONLY
 
+    //Marketo
+    var $mkto_sync;
+    var $mkto_id;
+    var $mkto_lead_score;
+
 	var $object_name = "Contact";
 	var $module_dir = 'Contacts';
 	var $emailAddress;

@@ -107,7 +107,12 @@ class Lead extends Person {
 	var $team_name;
 	//END SUGARCRM flav=pro ONLY
 
-	var $table_name = "leads";
+    //Marketo
+    var $mkto_sync;
+    var $mkto_id;
+    var $mkto_lead_score;
+
+    var $table_name = "leads";
 	var $object_name = "Lead";
 	var $object_names = "Leads";
 	var $module_dir = "Leads";

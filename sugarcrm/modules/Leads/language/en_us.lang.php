@@ -296,4 +296,9 @@ Step through each module by modifying fields then confirming the new record’s 
 If Sugar detects an existing record that matches your {{module_name}}\'s information, you have the option to choose a duplicate and confirm the selection with the Associate button or to click "Ignore and create new" and proceed normally.
 
 After confirming each required and desired module, click the Save and Convert button at the top to finalize the conversion.',
+
+    //Marketo
+    'LBL_MKTO_SYNC' => 'Sync to Marketo&reg;',
+    'LBL_MKTO_ID' => 'Marketo Lead ID',
+    'LBL_MKTO_LEAD_SCORE' => 'Lead Score',
 );
