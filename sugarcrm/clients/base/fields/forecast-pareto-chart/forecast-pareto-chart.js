@@ -101,7 +101,7 @@
 
         this.chartId = this.cid + '_chart';
         this.paretoChart = nv.models.paretoChart()
-            .margin({top: 0, right: 10, bottom: 20, left: 50})
+            .margin({top: 0, right: 10, bottom: 30, left: 50})
             .showTitle(false)
             .tooltips(true)
             .tooltipQuota(function(key, x, y, e, graph) {
@@ -112,7 +112,7 @@
             .tooltipLine(function(key, x, y, e, graph) {
                 // Format the value using currency class and user settings
                 var val = app.currency.formatAmountLocale(e.point.y, app.currency.getBaseCurrencyId());
-                return '<p><b>' + app.lang.get('LBL_CUMMULATIVE_TOTAL', 'Forecasts') + '</b></p><p>' + key + ': <b>' + val + '</b></p>';
+                return '<p><b>' + app.lang.get('LBL_CUMULATIVE_TOTAL', 'Forecasts') + '</b></p><p>' + key + ': <b>' + val + '</b></p>';
             })
             .tooltipBar(_.bind(function(key, x, y, e, graph) {
                 // Format the value using currency class and user settings

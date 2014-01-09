@@ -1025,16 +1025,19 @@ class MetaDataManager
     /**
      * Registers the API metadata cache to be cleared at shutdown
      *
-     * @param bool $deleteModuleClientCache Should we also delete the client file cache of the modules
+     * @param bool $deleteModuleClientCache Should we also delete the client file 
+     *             cache of the modules
+     * @param bool $clearNow Tells this method to clear the cache now instead of
+     *             at shutdown
      * @static
      */
-    public static function clearAPICache( $deleteModuleClientCache = true )
+    public static function clearAPICache($deleteModuleClientCache = true, $clearNow = false)
     {
         // True/false stack for handling both client cache cases
         $key = $deleteModuleClientCache ? 1 : 0;
 
         // If we are in unit tests we need to fire this off right away
-        if (defined('SUGAR_PHPUNIT_RUNNER') && SUGAR_PHPUNIT_RUNNER === true) {
+        if ($clearNow || (defined('SUGAR_PHPUNIT_RUNNER') && SUGAR_PHPUNIT_RUNNER === true)) {
             self::clearAPICacheOnShutdown($deleteModuleClientCache);
         } elseif (($key === 0 && empty(self::$clearCacheOnShutdown)) || !isset(self::$clearCacheOnShutdown[$key])) {
             // Will only clear cache if
@@ -1387,13 +1390,13 @@ class MetaDataManager
             $platforms = self::getPlatformsWithCaches();
         }
 
-        // This only needs to be done for private visibility since modules are not
-        // in public metadata
         $method = 'rebuild' . ucfirst(strtolower($part)) . 'Cache';
         foreach ((array) $platforms as $platform) {
-            $mm = self::getManager($platform, false, true);
-            if (method_exists($mm, $method)) {
-                $mm->$method($args);
+            foreach (array(true, false) as $public) {
+                $mm = MetaDataManager::getManager($platform, $public, true);
+                if (method_exists($mm, $method)) {
+                    $mm->$method($args);
+                }
             }
         }
     }
