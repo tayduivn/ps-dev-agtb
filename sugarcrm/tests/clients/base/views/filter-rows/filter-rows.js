@@ -73,7 +73,6 @@ describe("BaseFilterRowsView", function() {
             view.saveFilter();
             expect(triggerStub).toHaveBeenCalledWith('filter:add', view.layout.editingFilter);
             expect(triggerStub).toHaveBeenCalledWith('filter:create:rowsValid', false);
-            expect(triggerStub).toHaveBeenCalledWith('filter:create:close');
         });
     });
 
