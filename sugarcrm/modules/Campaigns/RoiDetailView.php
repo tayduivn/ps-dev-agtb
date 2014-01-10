@@ -118,8 +118,14 @@ $campaign_id = $focus->id;
                             ROUND((SUM(opp.amount) - SUM(camp.actual_cost))/(SUM(camp.actual_cost)), 2)*100 as ROI";	           
             $opp_query1 .= " from opportunities opp";
             $opp_query1 .= " right join campaigns camp on camp.id = opp.campaign_id";
-            $opp_query1 .= " where opp.sales_stage = '".Opportunity::STAGE_CLOSED_WON."' and camp.id='$campaign_id'";
-            $opp_query1 .= " and opp.deleted=0";                                  
+            //BEGIN SUGARCRM flav=ent ONLY
+            $opp_query1 .= " where opp.sales_status = '".Opportunity::STAGE_CLOSED_WON;
+            //END SUGARCRM flav=ent ONLY
+            //BEGIN SUGARCRM flav!=ent ONLY
+            $opp_query1 .= " where opp.sales_stage = '".Opportunity::STAGE_CLOSED_WON;
+            //END SUGARCRM flav!=ent ONLY
+            $opp_query1 .= "' and camp.id='$campaign_id'";
+            $opp_query1 .= " and opp.deleted=0";
             $opp_query1 .= " group by camp.name";
             $opp_result1=$focus->db->query($opp_query1);              
             $opp_data1=$focus->db->fetchByAssoc($opp_result1);
