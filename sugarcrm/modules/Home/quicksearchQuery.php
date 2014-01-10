@@ -42,6 +42,6 @@ if(isset($_REQUEST['query']) && !empty($_REQUEST['query'])){
 }
 
 $method = !empty($data['method']) ? $data['method'] : 'query';
-if(method_exists($quicksearchQuery, $method)) {
+if (is_callable(array($quicksearchQuery, $method))) {
    echo $quicksearchQuery->$method($data);
 }
