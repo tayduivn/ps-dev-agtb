@@ -260,7 +260,7 @@ class KBDocument extends SugarBean {
         $this->addVisibilityWhere($where, array('where_condition' => true));
         $favorites = (!empty($params['favorites']))?$params['favorites']: 0;
         if(!empty($favorites)){
-            $ret_array['select'] .= " , sfav.id is_favorite ";
+            $ret_array['select'] .= " , sfav.id my_favorite ";
             if($favorites == 2){
                 $ret_array['from'] .= " INNER JOIN ";
             }else{

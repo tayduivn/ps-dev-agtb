@@ -4249,7 +4249,7 @@ class SugarBean
 
         //BEGIN SUGARCRM flav=pro ONLY
         if(!empty($favorites)){
-            $ret_array['select'] .= " , sfav.id is_favorite ";
+            $ret_array['select'] .= " , sfav.id my_favorite ";
             if($favorites == 2){
                 $ret_array['from'] .= " INNER JOIN ";
             }else{
