@@ -294,6 +294,18 @@
     },
 
     /**
+     * {@inheritDoc}
+     */
+    tabSwitcher: function(event) {
+        var tab = this.tabs[this.settings.get('activeTab')];
+        if (tab.invitations) {
+            tab.invitations.dataFetched = false;
+        }
+
+        this._super('tabSwitcher', [event]);
+    },
+
+    /**
      * Event handler for date switcher.
      *
      * @param {Event} event Click event.
