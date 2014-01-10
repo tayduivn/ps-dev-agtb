@@ -37,6 +37,10 @@ class SugarTestRestUtilities
     {
         $mock = new SugarTestRestServiceMock();
         $mock->user = ($user == null) ? $GLOBALS['current_user'] : $user;
+
+        // Api helpers must be reset after a new service was created.
+        ApiHelper::$moduleHelpers = array();
+
         return $mock;
     }
 }

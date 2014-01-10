@@ -16,10 +16,17 @@ require_once('modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticate.php
 
 class SamlAuthTest extends  Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * Custom file with settings for SAMLAuthenticate
+     *
+     * @var string
+     */
+    public $customSAMLSettings = 'custom/modules/Users/authentication/SAMLAuthenticate/settings.php';
+
     public function startUp()
     {
         SugarTestHelper::setUp('files');
-        SugarTestHelper::saveFile('custom/modules/Users/authentication/SAMLAuthenticate/settings.php');
+        SugarTestHelper::saveFile($this->customSAMLSettings);
     }
 
     public function tearDown()
@@ -30,6 +37,12 @@ class SamlAuthTest extends  Sugar_PHPUnit_Framework_TestCase
     public function testSettingsConfig()
     {
         global $sugar_config;
+
+        if(SugarAutoLoader::fileExists($this->customSAMLSettings)) {
+            // if custom file settings exists then remove it.
+            SugarAutoLoader::unlink($this->customSAMLSettings);
+        }
+
         $sugar_config['SAML_loginurl'] = 'loginURL';
         $sugar_config['SAML_X509Cert'] = 'TestCert';
         $sugar_config['SAML_issuer'] = 'testIssuer';
@@ -51,7 +64,7 @@ class SamlAuthTest extends  Sugar_PHPUnit_Framework_TestCase
 \$settings->name_identifier_format = "testID";
 \$settings->saml_settings['check']['user_name'] = '//root';
 EOQ;
-       SugarAutoLoader::put('custom/modules/Users/authentication/SAMLAuthenticate/settings.php', $contents);
+       SugarAutoLoader::put($this->customSAMLSettings, $contents);
        $settings = SAMLAuthenticate::loadSettings();
        $this->assertEquals('www.sugarcrm.com', $settings->idpSingleSignOnUrl);
        $this->assertEquals('TestCert', $settings->idpPublicCertificate);
@@ -74,7 +87,7 @@ EOQ;
 \$settings->issuer = "php-saml";
 \$settings->name_identifier_format = "testID";
 EOQ;
-        SugarAutoLoader::put('custom/modules/Users/authentication/SAMLAuthenticate/settings.php', $contents);
+        SugarAutoLoader::put($this->customSAMLSettings, $contents);
         $settings = SAMLAuthenticate::loadSettings();
         $this->assertObjectNotHasAttribute('useXML', $settings);
         $this->assertEquals('testIssuer', $settings->spIssuer);
