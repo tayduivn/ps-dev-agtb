@@ -352,7 +352,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                   'vname' => 'LBL_DELETED',
                   'type' => 'bool',
                   'reportable'=>false,
-                  'comment' => 'Record deletion indicator'
+                  'comment' => 'Record deletion indicator',
+                  'default' => false
                 ),
             'roles' =>
                 array (
@@ -367,7 +368,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     'name' => 'reverse',
                     'vname' => 'LBL_REVERSE',
                     'type' => 'bool',
-                    'default' => 0
+                    'default' => false
                 ),
   		 	'deleted2' =>
                 array (
@@ -375,7 +376,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     'vname' => 'LBL_DELETED2',
                     'type' => 'bool',
                     'reportable'=>false,
-                    'default' => '0'
+                    'default' => false
                 ),
             'primary_address_country' =>
                 array (
@@ -465,7 +466,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $this->_db->dropTableName($tableName);
         }
 		$this->createTableParams($tableName, $params, array());
-
         $repair = $this->_db->repairTableParams($tableName, $params, array(), false);
 
         $this->assertEmpty($repair, "Unexpected repairs: " . $repair);
