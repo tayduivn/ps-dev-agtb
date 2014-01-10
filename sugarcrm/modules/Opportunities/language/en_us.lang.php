@@ -30,6 +30,7 @@ $mod_strings = array(
     'LBL_LIST_DATE_CLOSED' => 'Expected Close Date',
     'LBL_LIST_SALES_STAGE' => 'Sales Stage',
     'LBL_LIST_AMOUNT_USDOLLAR' => 'Corporate Amount',
+    'LBL_LIST_AMOUNT' => 'Likely',
     'LBL_ACCOUNT_ID' => 'Account ID',
     'LBL_CURRENCY_RATE' => 'Currency Rate',
     'LBL_CURRENCY_ID' => 'Currency ID',
