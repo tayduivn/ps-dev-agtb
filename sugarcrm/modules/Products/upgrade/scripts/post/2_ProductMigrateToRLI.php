@@ -32,19 +32,13 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
             return;
         }
 
-        // we need to ignore CE
-        if (!$this->fromFlavor('pro')) {
-            return;
-        }
-
         $this->log('Migrating Products to Revenue Line Items.');
-        
+
         // Only run this sql if coming from 6.5.. all Products are the result of Quotes, so we
         // need to copy over Products that are quoted and associated to an Opportunity
         if (version_compare($this->from_version, '6.7.0', "<")) {
             $this->log('Migrating 6.5 Products assigned to Quotes that have Opportunities.');
-            $sql = "INSERT INTO revenue_line_items " .
-                   "SELECT  p.id, " .
+            $sql = "SELECT  p.id, " .
                            "p.name, " .
                            "p.date_entered, " .
                            "p.date_modified, " .
@@ -117,15 +111,17 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                    "ON qo.quote_id = q.id " .
                    "INNER JOIN opportunities o " .
                    "ON o.id = qo.opportunity_id";
-            $this->db->query($sql);
+
+            $results = $this->db->query($sql);
+            $this->insertRows($results);
+
             $this->log('Done migrating 6.5 Products assigned to Quotes that have Opportunities.');
         }
 
         //Now we need to do some migration on the 6.7 data, which is a bit more like what we need in 7.
         if (version_compare($this->from_version, '6.7.0', ">=")) {
             $this->log('Migrating 6.7 Products with Opportunities and without Quotes.');
-            $sql = "INSERT INTO revenue_line_items " .
-                   "SELECT  p.id, " .
+            $sql = "SELECT  p.id, " .
                            "p.name, " .
                            "p.date_entered, " .
                            "p.date_modified, " .
@@ -196,12 +192,13 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                    "on o.id = p.opportunity_id " .
                    "WHERE p.opportunity_id IS NOT NULL " .
                    "AND (p.quote_id IS NULL OR p.quote_id = '')";
-            $this->db->query($sql);
+            $results = $this->db->query($sql);
+            $this->insertRows($results);
+
             $this->log('Done migrating 6.7 Products with Opportunities and without Quotes.');
-            
+
             $this->log('Migrating 6.7 Products assigned to Quotes that have Opportunities.');
-            $sql = "INSERT INTO revenue_line_items " .
-                   "SELECT  p.id, " .
+            $sql = "SELECT  p.id, " .
                            "p.name, " .
                            "p.date_entered, " .
                            "p.date_modified, " .
@@ -274,18 +271,56 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                    "ON qo.quote_id = q.id " .
                    "INNER JOIN opportunities o " .
                    "ON o.id = qo.opportunity_id";
-            $this->db->query($sql);
+            $results = $this->db->query($sql);
+            $this->insertRows($results);
             $this->log('Done migrating 6.7 Products assigned to Quotes that have Opportunities.');
         }
-        
-        //clean up products that we've just moved over (non quoted)
-        $this->log('Removing Products that were moved.');
-        $sql = "DELETE FROM products " .
-               "WHERE opportunity_id IS NOT NULL " .
-               "AND (quote_id IS NULL OR quote_id = '')";
-        $this->db->query($sql);
-        $this->log('Done removing Products that were moved.');
-        
+
         $this->log('Done migrating Products to Revenue Line Items.');
+    }
+
+    /**
+     * Process all the results and insert them back into the db
+     *
+     * @param resource $results
+     */
+    protected function insertRows($results)
+    {
+        $insertSQL = 'INSERT INTO revenue_line_items VALUES';
+        $productToRliMapping = array();
+
+        while ($row = $this->db->fetchByAssoc($results)) {
+            $productToRliMapping[$row['id']] = create_guid();
+            $row['id'] = $productToRliMapping[$row['id']];
+            foreach ($row as $key => $value) {
+                $row[$key] = $this->db->quoted($value);
+            }
+
+            $this->db->query($insertSQL . ' (' . join(',', $row) . ');');
+        }
+
+        $this->relateProductToRevenueLineItem($productToRliMapping);
+    }
+
+    /**
+     * Link the RLI to the Product that it was created from
+     *
+     * @param array $mapping
+     */
+    protected function relateProductToRevenueLineItem($mapping)
+    {
+        foreach ($mapping as $key => $value) {
+            // set the link in the db
+            $this->db->query(
+                "UPDATE products SET revenuelineitem_id = " . $this->db->quoted($value) . " " .
+                "WHERE id = " . $this->db->quoted($key)
+            );
+            // update the forecast worksheet record if one exists for it
+            $this->db->query(
+                "UPDATE forecast_worksheets SET parent_type = 'RevenueLineItems',
+                 parent_id = " . $this->db->quoted($value) . " " .
+                "WHERE parent_id = " . $this->db->quoted($key)
+            );
+        }
     }
 }

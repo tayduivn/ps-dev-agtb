@@ -484,6 +484,12 @@ class Opportunity extends SugarBean
         }
         //END SUGARCRM flav=ent ONLY
 
+        // verify that base_rate is set to the correct amount, moved in from SugarBean
+        // as we need this to run before perform_save (which does calculations with base_rate)
+        if (isset($this->field_defs['currency_id']) && isset($this->field_defs['base_rate'])) {
+            SugarCurrency::verifyCurrencyBaseRateSet($this);
+        }
+
         SugarAutoLoader::requireWithCustom('modules/Opportunities/SaveOverload.php');
         perform_save($this);
 

@@ -92,6 +92,7 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'name' => 'draft',
             'vname' => 'LBL_DRAFT',
             'type' => 'bool',
+            'default' => false,
         ),
         'is_manager' =>
         array(

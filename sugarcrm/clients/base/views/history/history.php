@@ -121,7 +121,7 @@ $viewdefs['base']['view']['history'] = array(
             'record_date' => 'date_start',
             'row_actions' => array(
                 array(
-                    'type' => 'rowaction',
+                    'type' => 'unlink-action',
                     'icon' => 'icon-unlink',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
@@ -146,7 +146,7 @@ $viewdefs['base']['view']['history'] = array(
             'order_by' => 'date_entered:desc',
             'row_actions' => array(
                 array(
-                    'type' => 'rowaction',
+                    'type' => 'unlink-action',
                     'icon' => 'icon-unlink',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
@@ -167,7 +167,7 @@ $viewdefs['base']['view']['history'] = array(
             'record_date' => 'date_start',
             'row_actions' => array(
                 array(
-                    'type' => 'rowaction',
+                    'type' => 'unlink-action',
                     'icon' => 'icon-unlink',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',

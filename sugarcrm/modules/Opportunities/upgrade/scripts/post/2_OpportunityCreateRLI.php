@@ -30,32 +30,7 @@ class SugarUpgradeOpportunityCreateRLI extends UpgradeScript
         }
 
         $this->log("Creating missing RLIs for orphaned Opportunities");
-        $sql = "INSERT INTO revenue_line_items " .
-                "(id, " .
-                 "opportunity_id, " .
-                 "name, " .
-                 "worst_case, " .
-                 "likely_case, " .
-                 "best_case, " .
-                 "cost_price, " .
-                 "quantity, " .
-                 "currency_id, " .
-                 "base_rate, " .
-                 "probability, " .
-                 "date_closed, " .
-                 "date_closed_timestamp, " .
-                 "assigned_user_id, " .
-                 "account_id, " .
-                 "commit_stage, " .
-                 "sales_stage, " .
-                 "deleted, " .
-                 "date_entered, " .
-                 "date_modified, " .
-                 "modified_user_id, " .
-                 "created_by, " .
-                 "team_id, " .
-                 "team_set_id) " .
-                "SELECT o.id, " .
+        $sql = "SELECT '' as id, " .
                        "o.id, " .
                        "o.name, " .
                        "o.worst_case, " .
@@ -80,7 +55,7 @@ class SugarUpgradeOpportunityCreateRLI extends UpgradeScript
                        "o.team_id, " .
                        "o.team_set_id " .
                 "FROM opportunities as o " .
-                "LEFT JOIN accounts_opportunities as ac " . 
+                "LEFT JOIN accounts_opportunities as ac " .
                 "ON ac.opportunity_id = o.id " .
                 "LEFT JOIN revenue_line_items rli " .
                 "ON o.id = rli.opportunity_id " .
@@ -88,8 +63,51 @@ class SugarUpgradeOpportunityCreateRLI extends UpgradeScript
 
         $this->log('Running SQL: ' . $sql);
         $r = $this->db->query($sql);
-        $this->log('RLI\'s Created: ' . $this->db->getAffectedRowCount($r));
+        $this->insertRows($r);
 
         $this->log("Done creating missing RLIs for orphaned Opportunities");
+    }
+
+    /**
+     * Process all the results and insert them back into the db
+     *
+     * @param resource $results
+     */
+    protected function insertRows($results)
+    {
+        $insertSQL = "INSERT INTO revenue_line_items " .
+                "(id, " .
+                 "opportunity_id, " .
+                 "name, " .
+                 "worst_case, " .
+                 "likely_case, " .
+                 "best_case, " .
+                 "cost_price, " .
+                 "quantity, " .
+                 "currency_id, " .
+                 "base_rate, " .
+                 "probability, " .
+                 "date_closed, " .
+                 "date_closed_timestamp, " .
+                 "assigned_user_id, " .
+                 "account_id, " .
+                 "commit_stage, " .
+                 "sales_stage, " .
+                 "deleted, " .
+                 "date_entered, " .
+                 "date_modified, " .
+                 "modified_user_id, " .
+                 "created_by, " .
+                 "team_id, " .
+                 "team_set_id) VALUES";
+
+        while ($row = $this->db->fetchByAssoc($results)) {
+            $row['id'] = create_guid();
+            foreach ($row as $key => $value) {
+                $row[$key] = $this->db->quoted($value);
+            }
+
+            $this->db->query($insertSQL . ' (' . join(',', $row) . ');');
+        };
     }
 }
