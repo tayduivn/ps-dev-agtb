@@ -475,72 +475,95 @@ class MBModule
         }
     }
 
-    function createClasses ($path)
+    /**
+     * Generate module classes:
+     * - <MODULE_NAME>_sugar.php Bean controller that shouldn't be customized
+     * - <MODULE_NAME>.php Bean controller where to put customizations
+     * - vardefs.php Bean vardefs
+     * - studio.php This file adds support for Studio
+     *
+     * @param string $path Path to the custom module.
+     */
+    function createClasses($path)
     {
-        $class = array ( ) ;
-        $class [ 'name' ] = $this->key_name ;
-        $class [ 'table_name' ] = strtolower ( $class [ 'name' ] ) ;
-        $class [ 'extends' ] = 'Basic' ;
-        $class [ 'requires' ] [] = MB_TEMPLATES . '/basic/Basic.php' ;
-        $class [ 'requires' ] = array ( ) ;
+        $class = array();
+        $class['name'] = $this->key_name;
+        $class['table_name'] = strtolower($class['name']);
+        $class['extends'] = 'Basic';
+        $class['requires'] = array();
+
         //BEGIN SUGARCRM flav=pro ONLY
-        $class [ 'team_security' ] = ! empty ( $this->config [ 'team_security' ] ) ;
+        $class['team_security'] = !empty($this->config['team_security']);
         //END SUGARCRM flav=pro ONLY
-        $class [ 'audited' ] = (! empty ( $this->config [ 'audit' ] )) ? 'true' : 'false' ;
-        $class['activity_enabled'] = (!empty($this->config['activity_enabled'])) ? 'true' : 'false';
-        $class [ 'acl' ] = ! empty ( $this->config [ 'acl' ] ) ;
-        $class [ 'templates' ] = "'basic'" ;
-        foreach ( $this->iTemplate as $template )
-        {
-            if (! empty ( $this->config [ $template ] ))
-            {
-                $class [ 'templates' ] .= ",'$template'" ;
+
+        if (empty($this->config['audit'])) {
+            $class['audited'] = 'false';
+        } else {
+            $class['audited'] = 'true';
+        }
+
+        if (empty($this->config['activity_enabled'])) {
+            $class['activity_enabled'] = 'false';
+        } else {
+            $class['activity_enabled'] = 'true';
+        }
+
+        if (empty($this->config['acl'])) {
+            $class['acl'] = 'false';
+        } else {
+            $class['acl'] = 'true';
+        }
+
+        $class['templates'] = "'basic'";
+        foreach ($this->iTemplate as $template) {
+            if (!empty($this->config[$template])) {
+                $class['templates'] .= ",'$template'";
             }
         }
-        foreach ( $this->config [ 'templates' ] as $template => $a )
-        {
-            if ($template == 'basic')
-                continue ;
-            $class [ 'templates' ] .= ",'$template'" ;
-            $class [ 'extends' ] = ucFirst ( $template ) ;
-            $class [ 'requires' ] [] = MB_TEMPLATES . '/' . $template . '/' . ucfirst ( $template ) . '.php' ;
+        foreach ($this->config['templates'] as $template => $a) {
+            if ($template == 'basic') {
+                continue;
+            }
+            $class['templates'] .= ",'$template'";
+            $class['extends'] = ucFirst($template);
+            $class['requires'][] = MB_TEMPLATES . '/' . $template . '/' . ucfirst($template) . '.php';
         }
-        $class [ 'importable' ] = $this->config [ 'importable' ] ;
-        $this->mbvardefs->updateVardefs () ;
-        $class [ 'fields' ] = $this->mbvardefs->vardefs [ 'fields' ] ;
-        $class [ 'fields_string' ] = var_export_helper ( $this->mbvardefs->vardef [ 'fields' ] ) ;
-        $relationship = array ( ) ;
-        $class [ 'relationships' ] = var_export_helper ( $this->mbvardefs->vardef [ 'relationships' ] ) ;
-        $smarty = new Sugar_Smarty ( ) ;
-        $smarty->left_delimiter = '{{' ;
-        $smarty->right_delimiter = '}}' ;
-        $smarty->assign ( 'class', $class ) ;
-        //write sugar generated class
-        $fp = sugar_fopen ( $path . '/' . $class [ 'name' ] . '_sugar.php', 'w' ) ;
-        fwrite ( $fp, $smarty->fetch ( 'modules/ModuleBuilder/tpls/MBModule/Class.tpl' ) ) ;
-        fclose ( $fp ) ;
-        //write vardefs
-        $fp = sugar_fopen ( $path . '/vardefs.php', 'w' ) ;
-        fwrite ( $fp, $smarty->fetch ( 'modules/ModuleBuilder/tpls/MBModule/vardef.tpl' ) ) ;
-        fclose ( $fp ) ;
+        $class['importable'] = $this->config['importable'];
+        $this->mbvardefs->updateVardefs();
+        $class['fields'] = $this->mbvardefs->vardefs['fields'];
+        $class['fields_string'] = var_export_helper($this->mbvardefs->vardef['fields']);
+        $relationship = array();
+        $class['relationships'] = var_export_helper($this->mbvardefs->vardef['relationships']);
+        $smarty = new Sugar_Smarty ();
+        $smarty->left_delimiter = '{{';
+        $smarty->right_delimiter = '}}';
+        $smarty->assign('class', $class);
 
-        if (! file_exists ( $path . '/' . $class [ 'name' ] . '.php' ))
-        {
-            $fp = sugar_fopen ( $path . '/' . $class [ 'name' ] . '.php', 'w' ) ;
-            fwrite ( $fp, $smarty->fetch ( 'modules/ModuleBuilder/tpls/MBModule/DeveloperClass.tpl' ) ) ;
-            fclose ( $fp ) ;
+        //Generate <MODULE_NAME>_sugar.php
+        $fp = sugar_fopen($path . '/' . $class['name'] . '_sugar.php', 'w');
+        fwrite($fp, $smarty->fetch('modules/ModuleBuilder/tpls/MBModule/Class.tpl'));
+        fclose($fp);
+        //Generate vardefs.php
+        $fp = sugar_fopen($path . '/vardefs.php', 'w');
+        fwrite($fp, $smarty->fetch('modules/ModuleBuilder/tpls/MBModule/vardef.tpl'));
+        fclose($fp);
+
+        //Generate <MODULE_NAME>.php
+        if (!file_exists($path . '/' . $class['name'] . '.php')) {
+            $fp = sugar_fopen($path . '/' . $class['name'] . '.php', 'w');
+            fwrite($fp, $smarty->fetch('modules/ModuleBuilder/tpls/MBModule/DeveloperClass.tpl'));
+            fclose($fp);
         }
-        if (! file_exists ( $path . '/metadata' ))
-            mkdir_recursive ( $path . '/metadata' ) ;
-        if (! empty ( $this->config [ 'studio' ] ))
-        {
-            $fp = sugar_fopen ( $path . '/metadata/studio.php', 'w' ) ;
-            fwrite ( $fp, $smarty->fetch ( 'modules/ModuleBuilder/tpls/MBModule/Studio.tpl' ) ) ;
-            fclose ( $fp ) ;
-        } else
-        {
-            if (file_exists ( $path . '/metadata/studio.php' ))
-                unlink ( $path . '/metadata/studio.php' ) ;
+        if (!file_exists($path . '/metadata')) {
+            mkdir_recursive($path . '/metadata');
+        }
+        //Generate studio.php
+        if (!empty($this->config['studio'])) {
+            $fp = sugar_fopen($path . '/metadata/studio.php', 'w');
+            fwrite($fp, $smarty->fetch('modules/ModuleBuilder/tpls/MBModule/Studio.tpl'));
+            fclose($fp);
+        } else if (file_exists($path . '/metadata/studio.php')) {
+            unlink($path . '/metadata/studio.php');
         }
     }
 
