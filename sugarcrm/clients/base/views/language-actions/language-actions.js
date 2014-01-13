@@ -67,11 +67,16 @@
         });
     },
     adjustMenuHeight: function(){
-        var footerHeight = $("footer").height(),
-            viewportHeight = $(window).height(),
-            currentMenuHeight = this.$('.dropdown-menu').height(),
-            menuHeight = viewportHeight - footerHeight;
-        this.$('.dropdown-menu').css('max-height',menuHeight);
+        if (this.$('#languageList').length === 0) {
+            return;
+        }
+        var linkButton = this.$('#languageList'),
+            dropupMenu = this.$('#languageList .dropdown-menu.bottom-up'),
+            linkBottomPosition = parseInt($('footer').height() - linkButton.height() - linkButton.position().top, 10),
+            dropupOffset = parseInt(dropupMenu.css('bottom'), 10),
+            borderTop = parseInt(dropupMenu.css('border-top-width'), 10),
+            menuHeight = Math.round($(window).height() - borderTop - dropupOffset - linkBottomPosition);
+        dropupMenu.css('max-height', menuHeight);
     },
     /**
      * Formats the language list for the template
