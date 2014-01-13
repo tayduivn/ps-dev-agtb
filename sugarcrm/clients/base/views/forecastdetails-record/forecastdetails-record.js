@@ -140,7 +140,7 @@
      * {@inheritdoc}
      */
     bindDataChange: function() {
-        if(this.meta.config) {
+        if (this.meta.config || !this.isForecastSetup) {
             return;
         }
 

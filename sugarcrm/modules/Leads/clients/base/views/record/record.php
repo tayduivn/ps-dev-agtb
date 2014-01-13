@@ -78,13 +78,13 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'type' => 'manage-subscription',
                     'name' => 'manage_subscription_button',
                     'label' => 'LBL_MANAGE_SUBSCRIPTIONS',
-                    'acl_action' => 'edit',
+                    'acl_action' => 'view',
                 ),
                 array(
                     'type'       => 'vcard',
                     'name'       => 'vcard_button',
                     'label'      => 'LBL_VCARD_DOWNLOAD',
-                    'acl_action' => 'edit',
+                    'acl_action' => 'view',
                 ),
                 array(
                     'type' => 'divider',
