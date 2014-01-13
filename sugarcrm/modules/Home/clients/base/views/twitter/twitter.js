@@ -79,9 +79,10 @@
             self = this;
 
         this.screen_name = this.settings.get('twitter') || false;
-        //workaround because home module acutally pulls a dashboard instead of an
+        //workaround because home module actually pulls a dashboard instead of an
         //empty home model
-        if (_.isNull(this.context.parent)) {
+        if (this.context &&
+            this.context.get('module') === 'Home') {
             twitter = this.settings.get('twitter');
         }
 
