@@ -267,7 +267,7 @@ class JsChart extends SugarChart {
         //    like a stacked bar chart, this applies when a stacked chart has been converted in templates_chart.php to a bar chart due to it
         //    having nothing but single value columns
         $xml = new SimpleXMLElement($xmlstr);
-        if (count($xml->data->group[0]->subgroups->group) > 0) {
+        if (count($xml->data->group[0]->subgroups->group) > 1) {
             return $this->buildLabelsBarChartStacked($xmlstr);
         }
 
