@@ -750,16 +750,6 @@ $dictionary['Product'] = array(
                 'account_name' => 'account_name'
             ),
         ),
-        'product_type' => array(
-            'name' => 'product_type',
-            'vname' => 'LBL_TYPE',
-            'type' => 'enum',
-            'options' => 'opportunity_type_dom',
-            'len' => '255',
-            'audited' => true,
-            'comment' => 'Type of product ( from opportunities opportunity_type ex: Existing, New)',
-            'merge_filter' => 'enabled',
-        ),
         'opportunities' =>  array(
             'name' => 'opportunities',
             'type' => 'link',
