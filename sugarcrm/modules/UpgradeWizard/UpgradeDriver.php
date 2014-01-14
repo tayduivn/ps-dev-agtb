@@ -1280,7 +1280,7 @@ abstract class UpgradeDriver
     	$scripts = $this->getScripts($this->context['new_source_dir'], $stage);
     	$this->to_version = $this->manifest['version'];
     	if(!empty($this->manifest['flavor'])) {
-    	    $this->to_flavor = $this->manifest['flavor'];
+    	    $this->to_flavor = strtolower($this->manifest['flavor']);
     	} else {
     	    $this->to_flavor = $this->from_flavor;
     	}
