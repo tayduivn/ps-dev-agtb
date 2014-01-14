@@ -151,6 +151,7 @@ class SugarTestTimePeriodUtilities
     {
         $timeperiod_ids = self::getCreatedTimePeriodIds();
         $GLOBALS['db']->query('DELETE FROM timeperiods WHERE id IN (\'' . implode("', '", $timeperiod_ids) . '\')');
+        SugarTestForecastUtilities::setTimePeriod(null);
     }
 
     /**
