@@ -100,14 +100,4 @@ describe("Base.View.SelectionList", function () {
         expect(hasPreview).toBe(true);
     });
 
-    it('should set default to true for the first four fields', function(){
-        _.each(view.meta.panels[0].fields, function(field, index) {
-            if (index < 4) {
-                expect(field.default).toBe(true);
-            } else {
-                expect(field.default).toBe(false);
-            }
-        });
-    });
-
 });

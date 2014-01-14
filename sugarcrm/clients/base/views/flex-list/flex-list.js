@@ -21,7 +21,6 @@
     className: 'flex-list-view',
     // Model being previewed (if any)
     _previewed: null,
-    displayFirstNColumns: null,
 
     plugins: ['Tooltip'],
 
@@ -140,10 +139,6 @@
 
         _.each(this.meta.panels, function (panel) {
             _.each(panel.fields, function (fieldMeta, i) {
-                if (_.isNumber(this.displayFirstNColumns)) {
-                    fieldMeta['default'] = (i < this.displayFirstNColumns);
-                    panel.fields[i] = fieldMeta;
-                }
                 var fieldVisible = (fieldMeta['default'] !== false);
                 if (fieldVisible) {
                     catalog['default'].push(fieldMeta);
