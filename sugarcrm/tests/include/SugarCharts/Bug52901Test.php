@@ -207,7 +207,8 @@ class Bug52901Test extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 array('Foo', 'Bar'),
                 array('type'),
-                array(),
+                // SFA-1466 needs subgroups
+                array('Bar', 'Foo'),
             ),
         );
 
