@@ -1,31 +1,17 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
+
 /**
  * Create portal config if does not exist
  */
@@ -33,45 +19,14 @@ class SugarUpgradePortalConfig extends UpgradeScript
 {
     public $order = 3000;
     public $type = self::UPGRADE_CUSTOM;
-    public $version = "7.1.5";
 
     public function run()
     {
-        if(!$this->toFlavor('ent')) return;
-
-        global $mod_strings;
-        // Update portal config value
-        $this->setPortalConfig();
-        //Set portal log level to `ERROR`
-        $fieldKey = 'logLevel';
-        $fieldValue = 'ERROR';
-        $admin = new Administration();
-        if(!$admin->saveSetting('portal', $fieldKey, json_encode($fieldValue), 'support')){
-            $this->fail(sprintf($this->mod_strings['ERROR_UW_PORTAL_CONFIG_DB'], 'portal', $fieldKey, $fieldValue));
+        if (!$this->toFlavor('ent')) {
+            return;
         }
-
-        // Remove # of fields displayed in detail view (not used anymore in 7.0)
-        $this->db->query("DELETE FROM config WHERE category='portal' and platform='support' and name='fieldsToDisplay'");
 
         require_once 'ModuleInstall/ModuleInstaller.php';
         $this->putFile('portal2/config.js', ModuleInstaller::getJSConfig(ModuleInstaller::getPortalConfig()));
-    }
-
-    /**
-     * Upgrade portal configure values from 6.7.3 to latest
-     */
-    public function setPortalConfig(){
-
-        $admin = Administration::getSettings();
-        $portalConfig = $admin->getConfigForModule('portal','support', true);
-
-        if(array_search('Home',$portalConfig['displayModules']) !== false){
-            return;
-        }
-        // If Home does not exist we push Home in front of the array
-        array_unshift($portalConfig['displayModules'],'Home');
-        if(!$admin->saveSetting('portal', 'displayModules', json_encode($portalConfig['displayModules']), 'support')){
-            $this->logUpgradeStatus("Error upgrading portal config var displayModules, orig: {$portalConfig['displayModules']} , json:".json_encode($portalConfig['displayModules']));
-        }
     }
 }

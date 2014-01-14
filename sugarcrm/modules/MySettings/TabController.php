@@ -20,6 +20,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
+
 class TabController{
 
 var $required_modules = array('Home');
@@ -95,6 +97,9 @@ function get_system_tabs(){
         $MySettings_tab = $administration->db->fetchByAssoc($row, false);
         if (!empty($MySettings_tab['value'])) {
             $modules = json_decode($MySettings_tab['value']);
+        } else {
+            $modules = self::getAllPortalTabs();
+            self::setPortalTabs($modules);
         }
         return $modules;
     }
@@ -310,5 +315,29 @@ function restore_system_tabs(){
 
 }
 
+
+    /**
+     * Gets the default list of `Portal` tabs.
+     *
+     * Retrieves all the `portal` modules that have list metadata, thus that can
+     * be displayed in Portal `navbar`. This method is only called to initialize
+     * the `MySettings_tab` setting. You can override this list by modifying
+     * this setting directly.
+     *
+     * @return array The list of modules that can be tabs in Portal.
+     */
+    public static function getAllPortalTabs()
+    {
+        $tabs = array('Home');
+
+        $browser = new SugarPortalBrowser();
+        $browser->loadModules();
+        foreach ($browser->modules as $moduleName => $sugarPortalModule) {
+            if (!empty($sugarPortalModule->views['list.php'])) {
+                $tabs[] = $moduleName;
+            }
+        }
+        return $tabs;
+    }
 
 }
