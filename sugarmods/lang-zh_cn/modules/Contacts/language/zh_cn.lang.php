@@ -164,7 +164,7 @@ $mod_strings = array (
 	'LBL_SELECT_CHECKED_BUTTON_LABEL' => '选择打勾的联系人',
 	'LBL_SELECT_CHECKED_BUTTON_TITLE' => '选择打勾的联系人',
 	'LBL_STATE' => '省份:',
-	'LBL_SYNC_CONTACT' => '同步Outlook&reg;:',
+	'LBL_SYNC_CONTACT' => '同步Mail Client:',
     'LBL_PROSPECT_LIST' => '目标列表',
 
 	'LBL_TEAM_ID' => '团队编号:',
