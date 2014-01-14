@@ -283,8 +283,10 @@
     },
 
     _setTimeValue: function() {
-        this.timeValue = this.$('.ui-timepicker-input').val();
-        this.timeValue = (this.timeValue) ? this.timeValue : '';
+        if (_.isEmpty(this.model.get(this.name))) {
+            this.$('.ui-timepicker-input').val('');
+        }
+        this.timeValue = this.$('.ui-timepicker-input').val() || '';
     },
 
     /**
