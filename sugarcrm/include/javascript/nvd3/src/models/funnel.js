@@ -109,7 +109,7 @@ nv.models.funnel = function() {
       data = data.map(function(series, i) {
         series.values = series.values.map(function(point) {
             point.height = 0;
-            if(funnelTotal != 0) {
+            if(funnelTotal > 0) {
                 point.height = heightTrapezoid(funnelArea * point.value / funnelTotal, funnelBase);
             }
           if (point.height < funnelMinHeight) {

@@ -38,7 +38,7 @@ nv.models.funnelChart = function () {
     var showTooltip = function (e, offsetElement, properties) {
         var xVal = 0;
         // defense against the dark divide-by-zero arts
-        if(properties.total != 0) {
+        if(properties.total > 0) {
             xVal = (e.point.value * 100 / properties.total).toFixed(1);
         }
 

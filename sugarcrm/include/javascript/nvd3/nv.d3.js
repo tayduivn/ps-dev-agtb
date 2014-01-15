@@ -2868,7 +2868,7 @@ nv.models.funnel = function() {
       data = data.map(function(series, i) {
         series.values = series.values.map(function(point) {
             point.height = 0;
-            if(funnelTotal != 0) {
+            if(funnelTotal > 0) {
                 point.height = heightTrapezoid(funnelArea * point.value / funnelTotal, funnelBase);
             }
           if (point.height < funnelMinHeight) {
@@ -3303,7 +3303,7 @@ nv.models.funnelChart = function () {
     var showTooltip = function (e, offsetElement, properties) {
         var xVal = 0;
         // defense against the dark divide-by-zero arts
-        if(properties.total != 0) {
+        if(properties.total > 0) {
             xVal = (e.point.value * 100 / properties.total).toFixed(1);
         }
 
