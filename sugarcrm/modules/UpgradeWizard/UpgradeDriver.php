@@ -18,7 +18,7 @@
  */
 abstract class UpgradeDriver
 {
-    const STATE_FILE = "upgrade_state";
+    const STATE_FILE = "upgrade_state.php";
 
     /**
      * If upgrade is successful
@@ -135,12 +135,18 @@ abstract class UpgradeDriver
     public static $build = '999';
 
     /**
+     * DB driver
+     * @var DBManager
+     */
+    public $db;
+
+    /**
      * Copy data files
      */
     protected function commit()
     {
     	$this->manifest = $this->dataInclude("{$this->context['temp_dir']}/manifest.php", 'manifest');
-        if(empty($this->manifest['copy_files']['from_dir'])) {
+        if(empty($this->manifest) || empty($this->manifest['copy_files']['from_dir'])) {
             return false;
         }
         $zip_from_dir = $this->context['temp_dir']."/".$this->manifest['copy_files']['from_dir'];
@@ -281,7 +287,7 @@ abstract class UpgradeDriver
     {
         $this->log("ERROR: $msg");
         if($setError) {
-            $this->error = $msg;
+            $this->error = ($this->error? $this->error."\n".$msg:$msg);
         }
         $this->fail();
         return false;
@@ -577,7 +583,7 @@ abstract class UpgradeDriver
             return $this->error("config.php is not writable!", true);
         }
 
-        if(!is_writable("config_override.php")) {
+        if(file_exists('config_override.php') && !is_writable("config_override.php")) {
             return $this->error("config_override.php is not writable!", true);
         }
         return true;
@@ -653,6 +659,16 @@ abstract class UpgradeDriver
         return true;
     }
 
+    protected function preflightDuplicateUpgrade()
+    {
+        $md5 = md5_file($this->context['zip']);
+        $dup = $this->db->getOne("SELECT id FROM upgrade_history WHERE md5sum='$md5'");
+        if(!empty($dup)) {
+            return $this->error("This package (md5: $md5) was already installed", true);
+        }
+        return true;
+    }
+
     /**
      * List of preflight check functions
      * @var array
@@ -670,6 +686,7 @@ abstract class UpgradeDriver
             "WriteSugar" => true, // check if Sugar directory is writable
             "WriteCustom" => true, // check if Sugar custom directory is writable
             "DB" => true, // check DB permissions
+            "DuplicateUpgrade" => true, // check if we already seen this upgrade
     );
 
     /**
@@ -751,11 +768,17 @@ abstract class UpgradeDriver
             return false;
         }
 
+        // load manifest
+        if(!file_exists($this->context['temp_dir']."/manifest.php")) {
+            $this->cleanDir($this->context['temp_dir']);
+            return $this->error("Package does not contain manifest.php", true);
+        }
         // validate manifest
         list($this->from_version, $this->from_flavor) = $this->loadVersion();
         $res = $this->validateManifest();
         if($res !== true) {
-            return $this->error($res);
+            $this->cleanDir($this->context['temp_dir']);
+            return $this->error($res, true);
         }
         $this->log("**** Upgrade checks passed");
         return true;
@@ -767,6 +790,9 @@ abstract class UpgradeDriver
      */
     public function checkDataFile($file)
     {
+        if(!file_exists($file)) {
+            return $this->error("Manifest does not exist", true);
+        }
         $tokens = @token_get_all(file_get_contents($file));
         $checkFunction = false;
         foreach($tokens as $index=>$token) {
@@ -971,6 +997,18 @@ abstract class UpgradeDriver
     }
 
     /**
+     * Retrieve current user
+     * @return User
+     */
+    protected function getUser()
+    {
+        $user = BeanFactory::getBean('Users');
+        $user_id = $this->db->getOne("select id from users where user_name = " . $this->db->quoted($this->context['admin']), false);
+        $user->retrieve($user_id);
+        return $user;
+    }
+
+    /**
      * Initialize Sugar environment
      */
     protected function initSugar()
@@ -1012,9 +1050,7 @@ abstract class UpgradeDriver
         }
 
         // Load user
-        $GLOBALS['current_user'] = new User();
-        $user_id = $this->db->getOne("select id from users where user_name = " . $this->db->quoted($this->context['admin']), false);
-        $GLOBALS['current_user']->retrieve($user_id);
+        $GLOBALS['current_user'] = $this->getUser();
         // Prepare DB
         if($this->config['dbconfig']['db_type'] == 'mysql'){
         	//Change the db wait_timeout for this session
@@ -1274,10 +1310,14 @@ abstract class UpgradeDriver
     protected function runScripts($stage)
     {
     	$this->manifest = $this->getManifest();
+    	if (empty($this->manifest)) {
+            return false;
+    	}
     	if(!empty($this->manifest['copy_files']['from_dir'])) {
     	    $this->context['new_source_dir'] = $this->context['temp_dir']."/".$this->manifest['copy_files']['from_dir'];
     	}
     	$scripts = $this->getScripts($this->context['new_source_dir'], $stage);
+    	$this->state['script_count'][$stage] = count($scripts);
     	$this->to_version = $this->manifest['version'];
     	if(!empty($this->manifest['flavor'])) {
     	    $this->to_flavor = $this->manifest['flavor'];
@@ -1286,12 +1326,12 @@ abstract class UpgradeDriver
     	}
 
     	foreach($scripts as $name => $script) {
-    	    if(!empty($this->state['scripts'][$name]) && $this->state['scripts'][$name] == 'done') {
+    	    if(!empty($this->state['scripts'][$stage][$name]) && $this->state['scripts'][$stage][$name] == 'done') {
     	        $this->log("Skipping script $name - already done");
     	        continue;
     	    }
     	    $this->log("Starting script $name");
-    	    $this->state['scripts'][$name] = 'started';
+    	    $this->state['scripts'][$stage][$name] = 'started';
     	    $this->saveState();
     	    $this->runScript($script);
     	    $this->log("Finished script $name");
@@ -1299,11 +1339,11 @@ abstract class UpgradeDriver
     	    chdir($this->context['source_dir']);
     		if(!$this->success) {
         	    // script called $this->fail
-    		    $this->state['scripts'][$name] = 'failed';
+    		    $this->state['scripts'][$stage][$name] = 'failed';
     		    $this->saveState();
     		    return false;
     		} else {
-    		    $this->state['scripts'][$name] = 'done';
+    		    $this->state['scripts'][$stage][$name] = 'done';
     		    $this->saveState();
     		}
     	}
