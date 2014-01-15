@@ -39,6 +39,7 @@
         Handlebars.registerHelper('moduleIconLabel', function(module) {
             var name = app.lang.getAppListStrings('moduleIconList')[module] ||
                     app.lang.getAppListStrings('moduleListSingular')[module] ||
+                    app.lang.getAppListStrings('moduleList')[module] ||
                     module,
                 space = name.indexOf(" ");
 
