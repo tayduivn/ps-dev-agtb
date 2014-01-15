@@ -79,7 +79,7 @@ table.dataTable {
         &[data-type="currency"] {
           text-align: right;
           min-width: 132px;
-          max-width: 200px !important;
+          max-width: 100% !important;
           .list {
             .box-sizing(border-box);
             width: 100%;
@@ -127,25 +127,6 @@ table.dataTable {
           width: 32px;
           height: 32px;
           margin-bottom: 2px;
-        }
-      }
-    }
-    & > tr.included {
-      & > td {
-        font-weight: bold;
-        &.commit_stage_field {
-          & > span:before {
-            width: 6px;
-            background-color: @blue;
-            position: absolute;
-            height: 29px;
-            left: 3px;
-            content: "";
-            top: -6px;
-          }
-          & > span:hover:before {
-            display: none;
-          }
         }
       }
     }
@@ -609,6 +590,45 @@ FLEXLIST GENERIC */
   }
 
   /*FORECASTS SALES REP WORKSHEET*/
+  &.forecast-worksheet table.dataTable,
+  &.forecast-manager-worksheet table.dataTable {
+    & > tbody > tr > td {
+      &[data-type="currency"] {
+        min-width: 115px !important;
+        max-width: 115px !important;
+        .box-sizing(border-box);
+      }
+      &.editableColumn {
+        padding: 0 2px;
+        min-width: 92px;
+        .box-sizing(border-box);
+
+        span.list,
+        span.edit {
+          width: 100%;
+          .box-sizing(border-box);
+        }
+        span.list {
+          padding: 4px 8px 4px 14px;
+        }
+        span.isEditable.edit {
+          padding: 4px 1px 4px 7px;
+        }
+        span.isEditable:hover {
+          overflow: visible;
+          .edit-icon {
+            position: absolute;
+            left: -2px;
+            top: 7px;
+          }
+        }
+        .clickToEdit.active span.edit {
+          display: inline-block;
+        }
+      }
+    }
+  }
+
   &.forecast-worksheet table.dataTable {
     & > thead > tr > th,
     & > tbody > tr > td,
@@ -619,32 +639,32 @@ FLEXLIST GENERIC */
     }
     & > tbody > tr > td {
       &.editableColumn {
-        padding: 0 2px;
-        min-width: 92px;
-        max-width: 100%;
-        &:first-child {
+        &.commit_stage_field:first-child {
           max-width: 80px;
-        }
-        span.detail,
-        span.list {
-          padding-right: 8px;
-          width: 100%;
-          .box-sizing(border-box);
-          .ellipsis_inline, .currency-field {
-            padding-left: 14px;
+          padding-left: 6px;
+          & > span.list {
+            padding-left: 10px;
+          }
+          & > span.edit {
+            padding-left: 1px;
           }
         }
-        span.detail:hover,
-        span.list:hover {
-          overflow: visible;
-          .edit-icon {
-            position: absolute;
-            left: -2px;
-            top: 3px;
-          }
+      }
+    }
+    & > tbody > tr.included > td {
+      font-weight: bold;
+      &.commit_stage_field {
+        & > span.list:before {
+          width: 6px;
+          background-color: @blue;
+          position: absolute;
+          height: 30px;
+          left: -1px;
+          content: "";
+          top: -2px;
         }
-        .clickToEdit.active {
-          padding-right: 1px;
+        & > span:hover:before {
+          display: none;
         }
       }
     }
@@ -653,36 +673,6 @@ FLEXLIST GENERIC */
   /*FORECASTS MANAGER WORKSHEET*/
   &.forecast-manager-worksheet table.dataTable {
     border-top: 1px solid darken(@grayLighter,10%);
-    & > tbody > tr > td {
-      padding: 4px 8px;
-      span.detail:hover,
-      span.list:hover {
-        overflow: visible;
-        .edit-icon {
-          position: absolute;
-          left: -2px;
-          top: 6px;
-        }
-      }
-      &.tright .list {
-        padding: 0 8px;
-      }
-      .isEditable {
-        padding: 3px 8px 3px 3px;
-        &.active {
-          padding: 0 1px;
-        }
-        .clickToEdit {
-          padding-left: 8px;
-          &.active{
-            padding: 0;
-          }
-        }
-      }
-    }
-    & > tfoot > tr > td {
-      padding: 8px 16px 8px 8px;
-    }
     & > tbody > tr[name$="_commit_history"] > td:first-child:last-child {
       padding: 0;
       width: 100%;
@@ -826,26 +816,20 @@ FLEXLIST GENERIC */
     /*forecast worksheets*/
     &.right-actions.scroll-width.forecast-manager-worksheet table.dataTable,
     &.right-actions.scroll-width.forecast-worksheet table.dataTable {
-      & > thead > tr > th {
-        &:nth-last-of-type(2) {
-          max-width: 100%;
-          padding-right: 79px;
-        }
-      }
-      & > tbody > tr > td {
-        &:nth-last-of-type(2) {
-          max-width: 100%;
-          padding-right: 71px;
-        }
-      }
+      & > thead > tr > th,
+      & > tbody > tr > td,
       & > tfoot > tr > td {
         &:nth-last-of-type(2) {
           max-width: 100%;
-          padding-right: 79px;
+          padding-right: 81px;
+          min-width: 96px;
         }
-        &:last-child {
-          border: none;
-        }
+      }
+      & > tbody > tr > td.editableColumn:nth-last-of-type(2) {
+        padding-right: 75px;
+      }
+      & > tfoot > tr > td:last-child {
+        border: none;
       }
     }
 

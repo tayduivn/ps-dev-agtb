@@ -128,12 +128,12 @@
      * @param boolean
      */
     isLoadingCommits: false,
-    
+
     /**
      * Target URL of the nav action
      */
     targetURL: '',
-    
+
     /**
      * Current URL of the module
      */
@@ -224,7 +224,7 @@
                         this.saveWorksheet(false);
                     }
                 }, this);
-                
+
                 /**
                  * trigger an event if dirty
                  */
@@ -446,7 +446,7 @@
     beforeRouteHandler: function() {
         return this.showNavigationMessage('router');
     },
-    
+
     /**
      * default navigation callback for alert message
      */
@@ -476,10 +476,10 @@
                 }
 
                 this.targetURL = Backbone.history.getFragment();
-                
+
                 //Replace the url hash back to the current staying page
                 app.router.navigate(this._currentUrl, {trigger: false, replace: true});
-                
+
                 app.alert.show('leave_confirmation', {
                     level: 'confirmation',
                     messages: app.lang.get(this.navigationMessage, 'Forecasts').split('<br>'),
@@ -623,7 +623,6 @@
             this.setCommitLogButtonStates();
 
             var outerwidth = this.$el.find('span.isEditable').outerWidth();
-            this.$el.find('span.isEditable').parent("td").css("min-width", "105px");
 
         } else {
             if (this.layout.isVisible()) {
@@ -676,7 +675,7 @@
         // Set the flag for use in other places around this controller to suppress stuff if we can't edit
         this.canEdit = (this.selectedUser.id == app.user.get('id'));
         this.cleanUpDirtyModels();
-        
+
         if (doFetch) {
             this.refreshData();
         } else {
