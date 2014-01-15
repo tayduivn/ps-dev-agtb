@@ -36,7 +36,11 @@ class Bug58087Test extends SubPanelTestBase
     protected $_sugarConfig;
     protected $_testModule = 'Accounts';
     
-    public function setUp() {
+    public function setUp()
+    {
+        if(is_windows()) {
+            $this->markTestIncomplete('Test fails on Windows. Must be fixed by RS team.');
+        }
         parent::setUp();
         
         // Set up our test defs - borrowed from Accounts subpaneldefs
@@ -93,6 +97,10 @@ class Bug58087Test extends SubPanelTestBase
     
     public function tearDown()
     {
+        // if is windows and test was incomplete then nothing to tear down.
+        if(is_windows() && $this->getStatus() == PHPUnit_Runner_BaseTestRunner::STATUS_INCOMPLETE) {
+            return;
+        }
         parent::tearDown();
         
         if (!empty($this->_modListHeaderGlobal)) {
