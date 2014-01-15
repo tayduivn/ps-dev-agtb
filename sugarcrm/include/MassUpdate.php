@@ -179,8 +179,7 @@ eoq;
 				 	))){
 				 		if(strcmp($value, '2') == 0)$_POST[$post] = 0;
 				 		if(!empty($this->sugarbean->field_defs[$post]['dbType']) && strcmp($this->sugarbean->field_defs[$post]['dbType'], 'varchar') == 0 ){
-				 			if(strcmp($value, '1') == 0 )$_POST[$post] = 'on';
-				 			if(strcmp($value, '2') == 0)$_POST[$post] = 'off';
+                            $_POST[$post] = strcmp($value, '1') == 0 ? 'on' : 'off';
 				 		}
     			}
 
