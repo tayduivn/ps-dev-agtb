@@ -31,6 +31,11 @@ describe("Handlebar.Helpers", function() {
                             TestMultiModule: 'Multiple Names'
                         }
                     break;
+                    case 'moduleList':
+                        return {
+                            TestCustomModule : 'Custom'
+                        }
+                    break;
                 }
             })
         });
@@ -50,6 +55,12 @@ describe("Handlebar.Helpers", function() {
         it("should fill in the icon with the first letter of the first two words for modules with multiple word names",
             function() {
                 expect(Handlebars.helpers.moduleIconLabel('TestMultiModule')).toEqual('MN');
+            }
+        );
+
+        it("should fill in the icon with the letters of the module in the module list, if it is not in the singular lists",
+            function() {
+                expect(Handlebars.helpers.moduleIconLabel('TestCustomModule')).toEqual('Cu');
             }
         );
 
