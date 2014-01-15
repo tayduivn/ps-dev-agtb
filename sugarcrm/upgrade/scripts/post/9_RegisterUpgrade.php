@@ -45,6 +45,12 @@ class SugarUpgradeRegisterUpgrade extends UpgradeScript
 		    // if file is not there, just md5 the filename
 		  $new_upgrade->md5sum = md5($this->context['zip']);
 		}
+        $dup = $this->db->getOne("SELECT id FROM upgrade_history WHERE md5sum='{$new_upgrade->md5sum}'");
+        if($dup) {
+            $this->error("Duplicate install for package, md5: {$new_upgrade->md5sum}");
+            // Not failing it - by now there's no point, we're at the end anyway
+            return;
+        }
 		$new_upgrade->name = pathinfo($this->context['zip'], PATHINFO_FILENAME);
 		$new_upgrade->description = $this->manifest['description'];
 		$new_upgrade->type = 'patch';
