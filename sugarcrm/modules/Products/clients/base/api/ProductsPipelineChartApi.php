@@ -159,6 +159,9 @@ class ProductsPipelineChartApi extends SugarApi
                     array(
                         'series' => $series++,
                         'label' => SugarCurrency::formatAmount($value, $currency->id, 0),
+                        // sending value by itself as 'y' gets manipulated by scale on the frontend
+                        // this way we maintain the actual value's integrity
+                        'value' => intval($value),
                         'x' => 0,
                         'y' => intval($value),                  // this needs to be an integer
                         'y0' => intval($previous_value)         // this needs to be an integer

@@ -95,7 +95,10 @@ nv.models.funnel = function() {
       data = data.map(function(series, i) {
         series.values = series.values.map(function(point) {
           point.series = i;
-          point.value = point.value || point.y;
+            // if value is undefined, not a legitimate 0 value, use point.y
+            if(typeof point.value == "undefined") {
+                point.value = point.y;
+            }
           funnelTotal += point.value;
           return point;
         });
@@ -105,7 +108,10 @@ nv.models.funnel = function() {
       //add percent of total for each data point for reference
       data = data.map(function(series, i) {
         series.values = series.values.map(function(point) {
-          point.height = heightTrapezoid(funnelArea * point.value / funnelTotal, funnelBase);
+            point.height = 0;
+            if(funnelTotal != 0) {
+                point.height = heightTrapezoid(funnelArea * point.value / funnelTotal, funnelBase);
+            }
           if (point.height < funnelMinHeight) {
             funnelShift += point.height - funnelMinHeight;
             point.height = funnelMinHeight;

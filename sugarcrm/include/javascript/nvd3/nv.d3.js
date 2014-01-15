@@ -2854,7 +2854,10 @@ nv.models.funnel = function() {
       data = data.map(function(series, i) {
         series.values = series.values.map(function(point) {
           point.series = i;
-          point.value = point.value || point.y;
+            // if value is undefined, not a legitimate 0 value, use point.y
+            if(typeof point.value == "undefined") {
+                point.value = point.y;
+            }
           funnelTotal += point.value;
           return point;
         });
@@ -2864,7 +2867,10 @@ nv.models.funnel = function() {
       //add percent of total for each data point for reference
       data = data.map(function(series, i) {
         series.values = series.values.map(function(point) {
-          point.height = heightTrapezoid(funnelArea * point.value / funnelTotal, funnelBase);
+            point.height = 0;
+            if(funnelTotal != 0) {
+                point.height = heightTrapezoid(funnelArea * point.value / funnelTotal, funnelBase);
+            }
           if (point.height < funnelMinHeight) {
             funnelShift += point.height - funnelMinHeight;
             point.height = funnelMinHeight;
@@ -3294,14 +3300,20 @@ nv.models.funnelChart = function () {
     , legend = nv.models.legend()
     ;
 
-  var showTooltip = function (e, offsetElement, properties) {
-    var left = e.pos[0]
-      , top = e.pos[1]
-      , x = (e.point.value * 100 / properties.total).toFixed(1)
-      , y = e.point.value
-      , content = tooltipContent(e.series.key, x, y, e, chart);
-    tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
-  };
+    var showTooltip = function (e, offsetElement, properties) {
+        var xVal = 0;
+        // defense against the dark divide-by-zero arts
+        if(properties.total != 0) {
+            xVal = (e.point.value * 100 / properties.total).toFixed(1);
+        }
+
+        var left = e.pos[0]
+            , top = e.pos[1]
+            , x = xVal
+            , y = e.point.value
+            , content = tooltipContent(e.series.key, x, y, e, chart);
+        tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
+    };
 
   //============================================================
 
