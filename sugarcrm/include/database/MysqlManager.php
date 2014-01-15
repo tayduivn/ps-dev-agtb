@@ -326,7 +326,7 @@ class MysqlManager extends DBManager
 				$columns[$name]['auto_increment'] = '1';
 			if ($row['Null'] == 'NO' && !stristr($row['Key'],'PRI'))
 				$columns[$name]['required'] = 'true';
-			if (isset($row['Default']) )
+			if (!empty($row['Default']) )
 				$columns[$name]['default'] = $row['Default'];
 		}
 		return $columns;
