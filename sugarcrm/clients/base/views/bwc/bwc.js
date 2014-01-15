@@ -105,6 +105,7 @@
      * <li>rewrite links for sidecar modules</li>
      * <li>rewrite links that go for new windows</li>
      * <li>memorize the form input elements in order to warn unsaved changes</li>
+     * <li>update the context model to mach our current bwc module (if exists)</li>
      *
      * @private
      */
@@ -212,7 +213,7 @@
 
     /**
      * Populates the context model with API data.
-     * this.model is a link for this.context.model.
+     * `this.model` is a link for `this.context.model`.
      *
      * @param {HTMLElement} contentWindow iframe window.
      * @private
@@ -229,7 +230,9 @@
         if (!_.isArray(id)) {
             return;
         }
+
         this.model.set('id', id[1]);
+        this.model.module = this.context.get('module');
         this.model.fetch();
     },
 
