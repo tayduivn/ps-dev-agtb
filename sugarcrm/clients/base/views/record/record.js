@@ -139,7 +139,6 @@
         });
 
         // check whether the changed attributes are among the editable fields
-        editableFieldNames = _.intersection(editableFieldNames, _.keys(this.model.changedAttributes()));
         unsavedFields = _.intersection(_.keys(changedAttributes), editableFieldNames);
 
         return !_.isEmpty(unsavedFields);
