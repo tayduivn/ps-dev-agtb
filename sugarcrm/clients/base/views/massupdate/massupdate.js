@@ -171,6 +171,28 @@
                         cloneField.type = 'enum';
                         cloneField.options = 'checkbox_dom';
                     }
+                    // FIXME this needs proper fixing due to metadata fields (SC-2294)
+                    if (cloneField.type === 'multienum') {
+                        cloneField.type = 'enum';
+                        cloneField.css_class = 'span9';
+                        cloneField = {
+                            type: 'fieldset',
+                            // FIXME this shouldn't need to be the same name as the field,
+                            // but if it isn't it will throw an alert of empty value
+                            name: cloneField.name,
+                            label: cloneField.label,
+                            css_class: 'row-fluid',
+                            fields: [
+                                cloneField,
+                                {
+                                    'name' : cloneField.name + '_type',
+                                    'type' : 'bool',
+                                    'text' : 'LBL_SELECT_APPEND_VALUES',
+                                    'css_class' : 'span3'
+                                }
+                            ]
+                        };
+                    }
                     massFields.push(cloneField);
                 }
             });
