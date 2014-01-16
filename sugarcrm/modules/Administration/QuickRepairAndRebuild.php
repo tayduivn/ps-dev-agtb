@@ -500,15 +500,11 @@ class RepairAndClear
         if (!empty($section)) {
             MetaDataManager::refreshSectionCache($section);
         } else {
-            // Otherwise if the section is not a false nuke all caches
+            // Otherwise if the section is not a false nuke all caches and rebuild
+            // the base metadata cache
             if ($section !== false) {
-                // @TODO: When this goes back to the following code:
-                // MetaDataManager::clearAPICache(true, true);
-                // MetaDataManager::setupMetadata();
-                // 
-                // Make sure to unskip the following unit test:
-                // tests/include/MetaDataManager/MetaDataManagerCacheRefreshTest.php->testQuickRepairRefreshesCache()
-                MetaDataManager::clearAPICache();
+                MetaDataManager::clearAPICache(true, true);
+                MetaDataManager::setupMetadata();
             }
         }
     }
