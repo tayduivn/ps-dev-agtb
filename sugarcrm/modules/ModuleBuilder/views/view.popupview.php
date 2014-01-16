@@ -37,7 +37,7 @@ class ViewPopupview extends ViewListView
     public function __construct()
     {
         $this->editModule = $_REQUEST [ 'view_module' ] ;
-        $this->editLayout = $_REQUEST [ 'view' ] ;
+        $this->editLayout = $_REQUEST [ 'view' ];
         $this->editPackage = (isset ( $_REQUEST [ 'view_package' ] ) && ! empty ( $_REQUEST [ 'view_package' ] )) ? $_REQUEST [ 'view_package' ] : null ;
 
         $this->fromModuleBuilder = isset ( $_REQUEST [ 'MB' ] ) || (isset($_REQUEST['view_package']) && $_REQUEST['view_package'] && $_REQUEST['view_package'] != 'studio') ;
@@ -109,7 +109,7 @@ class ViewPopupview extends ViewListView
             $ViewLabel = ($this->editLayout == MB_POPUPLIST) ? 'LBL_POPUPLISTVIEW' : 'LBL_POPUPSEARCH';
             $ajax->addCrumb ( translate ($ViewLabel, 'ModuleBuilder' ), '' ) ;
         }else{
-            $ajax->addCrumb ( translate($this->editModule), 'ModuleBuilder.getContent("module=ModuleBuilder&action=module&view_module=' . $this->editModule . '")' ) ;
+            $ajax->addCrumb ( translate($this->editModule), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view_module=' . $this->editModule . '")' ) ;
             $ajax->addCrumb ( translate('LBL_LAYOUTS', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&layouts=1&view_module=' . $this->editModule . '")');
             $ajax->addCrumb ( translate('LBL_POPUP', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view=popup&view_module=' . $this->editModule . '")' );
             $ViewLabel = ($this->editLayout == MB_POPUPLIST) ? 'LBL_POPUPLISTVIEW' : 'LBL_POPUPSEARCH';

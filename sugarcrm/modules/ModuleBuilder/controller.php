@@ -188,6 +188,7 @@ class ModuleBuilderController extends SugarController
                     break;
                 case MB_POPUPLIST :
                 case MB_POPUPSEARCH :
+                case MB_SIDECARPOPUPVIEW :
                     $this->view = 'popupview';
                     break;
                 default :
@@ -912,6 +913,10 @@ class ModuleBuilderController extends SugarController
         $this->view = 'popupview';
         $packageName = (isset ($_REQUEST ['view_package']) && (strtolower($_REQUEST['view_package']) != 'studio')) ? $_REQUEST ['view_package'] : null;
         $parser = ParserFactory::getParser($_REQUEST ['view'], $_REQUEST ['view_module'], $packageName);
+        $parser->handleSave();
+
+        // Save popupdefs too because it's used on BWC pages (related fields).
+        $parser = ParserFactory::getParser(MB_POPUPLIST, $_REQUEST['view_module'], $packageName);
         $parser->handleSave();
         if (empty($packageName)) {
             include_once 'modules/Administration/QuickRepairAndRebuild.php';

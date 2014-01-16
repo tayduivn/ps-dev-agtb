@@ -119,6 +119,7 @@ class MetaDataFiles
         MB_DETAILVIEW             => 'detailviewdefs' ,
         MB_QUICKCREATE            => 'quickcreatedefs',
         MB_RECORDVIEW             => 'record',
+        MB_SIDECARPOPUPVIEW       => 'selection-list',
         //BEGIN SUGARCRM flav=pro ONLY
         MB_WIRELESSEDITVIEW       => 'edit' ,
         MB_WIRELESSDETAILVIEW     => 'detail' ,

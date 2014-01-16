@@ -49,6 +49,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
      */
     protected $allowedViews = array(
         MB_SIDECARLISTVIEW,
+        MB_SIDECARPOPUPVIEW,
         //BEGIN SUGARCRM flav=pro ONLY
         MB_WIRELESSLISTVIEW,
         //END SUGARCRM flav=pro ONLY
@@ -535,7 +536,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
      *
      * @param array $fieldDefs
      */
-    protected function setPanelFields($fieldDefs = array())
+    public function setPanelFields($fieldDefs = array())
     {
         $panelDefsPath = $this->implementation->getPanelDefsPath();
         $stack = & $this->_viewdefs;
