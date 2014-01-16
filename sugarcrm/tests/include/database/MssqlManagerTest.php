@@ -218,4 +218,17 @@ class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($this->_db->connect($configOptions));
     }
 
+    /**
+     * Test sql for truncate table in SqlServer(s).
+     */
+    public function testTruncateTableSQL()
+    {
+        if(!$GLOBALS['db'] instanceof MssqlManager) {
+            $this->markTestSkipped('Only applies to SQL Server legacy driver.');
+        }
+
+        $sql = $GLOBALS['db']->truncateTableSQL('TEST_TABLE');
+
+        $this->assertEquals('TRUNCATE TABLE TEST_TABLE', $sql);
+    }
 }

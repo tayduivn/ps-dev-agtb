@@ -2104,4 +2104,15 @@ EOQ;
     {
       	return 'NEWID()';
     }
+
+    /**
+     * Truncate table
+     *
+     * @param  $name
+     * @return string
+     */
+    public function truncateTableSQL($name)
+    {
+        return "TRUNCATE TABLE $name";
+    }
 }
