@@ -27,13 +27,17 @@
  ********************************************************************************/
 }}
 {{#each value}}
-{{#if primary_address}}
-{{#if ../hasAnchor}}
-    <div class="ellipsis_inline" title="{{../email_address}}" data-placement="bottom">
-        <a {{#if ../../../useSugarEmailClient}}class="composeEmail" {{/if}}href="{{#if ../../../useSugarEmailClient}}javascript:void(0);{{else}}mailto:{{../../email_address}}{{/if}}">{{../email_address}}</a>
-    </div>
-{{else}}
-    <del title="{{../email_address}}, {{../flagLabel}}" data-placement="bottom" class="ellipsis_inline">{{../email_address}}</del>
-{{/if}}
-{{/if}}
+    {{#if primary_address}}
+        {{#if hasAnchor}}
+            <div class="ellipsis_inline" rel="tooltip" title="{{email_address}}" data-placement="bottom">
+                <a {{#if ../../../useSugarEmailClient}}class="composeEmail" {{/if}}href="{{#if ../../../useSugarEmailClient}}javascript:void(0);{{else}}mailto:{{email_address}}{{/if}}">{{email_address}}</a>
+            </div>
+        {{else}}
+            {{#if invalid_email}}
+                <del rel="tooltip" title="{{email_address}} ({{flagLabel}})" data-placement="bottom" class="ellipsis_inline">{{email_address}}</del>
+            {{else}}
+                <span rel="tooltip" title="{{email_address}}{{#notEq flagLabel ''}} ({{flagLabel}}){{/notEq}}" data-placement="bottom" class="ellipsis_inline">{{email_address}}</span>
+            {{/if}}
+        {{/if}}
+    {{/if}}
 {{/each}}

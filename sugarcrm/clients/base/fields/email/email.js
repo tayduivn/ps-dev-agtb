@@ -1,29 +1,15 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 ({
     extendsFrom: 'ListeditableField',
     useSugarEmailClient: false,
@@ -40,11 +26,17 @@
         opt_out: {lbl: "LBL_EMAIL_OPT_OUT", cl: "opted-out"},
         invalid_email: {lbl: "LBL_EMAIL_INVALID", cl: "invalid"}
     },
-    plugins: ['EllipsisInline', 'Tooltip'],
+    plugins: ['Tooltip'],
+
+    /**
+     * @inheritdoc
+     * @param options
+     */
     initialize: function(options) {
         options     = options || {};
         options.def = options.def || {};
 
+        // By default, emails should be links.
         if (_.isUndefined(options.def.link)) {
             options.def.link = true;
         }
@@ -54,39 +46,159 @@
         // determine if the app should send email according to the use_sugar_email_client user preference
         this.useSugarEmailClient = (app.user.getPreference("use_sugar_email_client") === "true");
     },
+
     /**
-     * Event handlers
+     * When data changes, re-render the field only if it is not on edit (see MAR-1617).
+     * @inheritdoc
+     */
+    bindDataChange: function() {
+        this.model.on('change:' + this.name, function() {
+            if (this.action !== 'edit') {
+                this.render();
+            }
+        }, this);
+    },
+
+    /**
+     * In edit mode, render email input fields using the edit-email-field template.
+     * @inheritdoc
+     * @private
+     */
+    _render: function() {
+        var emailsHtml = '';
+
+        app.view.Field.prototype._render.call(this);
+
+        if (this.tplName === 'edit') {
+            // Add email input fields for edit
+            _.each(this.value, function(email) {
+                emailsHtml += this._buildEmailFieldHtml(email);
+            }, this);
+            this.$el.prepend(emailsHtml);
+        }
+    },
+
+    /**
+     * Get HTML for email input field.
+     * @param {Object} email
+     * @returns {Object}
+     * @private
+     */
+    _buildEmailFieldHtml: function(email) {
+        var editEmailFieldTemplate = app.template.getField('email', 'edit-email-field'),
+            emails = this.model.get(this.name),
+            index = _.indexOf(emails, email);
+
+        return editEmailFieldTemplate({
+            max_length: this.def.len,
+            index: index === -1 ? emails.length-1 : index,
+            email_address: email.email_address,
+            primary_address: email.primary_address,
+            opt_out: email.opt_out,
+            invalid_email: email.invalid_email
+        });
+    },
+
+    /**
+     * Event handler to add a new address field.
+     * @param {Event} evt
      */
     addNewAddress: function(evt){
         if (!evt) return;
-        //This event can either be triggered by the newEmail input or the newEmail button
-        var email = this.$(evt.currentTarget).val() || this.$('.newEmail').val();
 
-        if (email !== "") {
-            this._addNewAddress(email);
+        var email = this.$(evt.currentTarget).val() || this.$('.newEmail').val(),
+            currentValue,
+            emailFieldHtml,
+            $newEmailField;
+
+        email = $.trim(email);
+
+        if ((email !== '') && (this._addNewAddressToModel(email))) {
+            // build the new email field
+            currentValue = this.model.get(this.name);
+            emailFieldHtml = this._buildEmailFieldHtml({
+                email_address: email,
+                primary_address: currentValue && (currentValue.length === 1),
+                opt_out: false,
+                invalid_email: false
+            });
+
+            // append the new field before the new email input
+            $newEmailField = this._getNewEmailField()
+                .closest('.email')
+                .before(emailFieldHtml);
+
+            // add tooltips
+            this.addPluginTooltips($newEmailField.prev());
         }
+
+        this._clearNewAddressField();
     },
+
+    /**
+     * Event handler to update an email address.
+     * @param {Event} evt
+     */
     updateExistingAddress: function(evt) {
         if (!evt) return;
 
-        var $inputs = this.$('input'),
+        var $inputs = this.$('.existingAddress'),
             $input = this.$(evt.currentTarget),
             index = $inputs.index($input),
-            newEmail = $input.val();
-        if (newEmail === "") {
-            this._removeExistingAddress(index);
+            newEmail = $input.val(),
+            primaryRemoved;
+
+        newEmail = $.trim(newEmail);
+
+        if (newEmail === '') {
+            // remove email if email is empty
+            primaryRemoved = this._removeExistingAddressInModel(index);
+
+            $input
+                .closest('.email')
+                .remove();
+
+            if (primaryRemoved) {
+                this.$('[data-emailproperty=primary_address]')
+                    .first()
+                    .addClass('active');
+            }
         } else {
-            this._updateExistingAddress(index, newEmail);
+            this._updateExistingAddressInModel(index, newEmail);
         }
     },
+
+    /**
+     * Event handler to remove an email address.
+     * @param {Event} evt
+     */
     removeExistingAddress: function(evt) {
         if (!evt) return;
 
         var $deleteButtons = this.$('.removeEmail'),
             $deleteButton = this.$(evt.currentTarget),
-            index = $deleteButtons.index($deleteButton);
-        this._removeExistingAddress(index);
+            index = $deleteButtons.index($deleteButton),
+            primaryRemoved,
+            $removeThisField;
+
+        primaryRemoved = this._removeExistingAddressInModel(index);
+
+        $removeThisField = $deleteButton.closest('.email');
+        this.removePluginTooltips($removeThisField); // remove tooltips
+        $removeThisField.remove();
+
+        if (primaryRemoved) {
+            // If primary has been removed, the first email address is the primary address.
+            this.$('[data-emailproperty=primary_address]')
+                .first()
+                .addClass('active');
+        }
     },
+
+    /**
+     * Event handler to toggle email address properties.
+     * @param {Event} evt
+     */
     toggleExistingAddressProperty: function(evt) {
         if (!evt) return;
 
@@ -94,100 +206,128 @@
             property = $property.data('emailproperty'),
             $properties = this.$('[data-emailproperty='+property+']'),
             index = $properties.index($property);
-        this._toggleExistingAddressProperty(index, property);
+
+        if (property === 'primary_address') {
+            $properties.removeClass('active');
+        }
+
+        this._toggleExistingAddressPropertyInModel(index, property);
     },
+
     /**
-     * Manipulations of the emails object
+     * Add the new email address to the model.
+     * @param {String} email
+     * @returns {Boolean} Returns true when a new email is added.  Returns false if duplicate is found,
+     *          and was not added to the model.
+     * @private
      */
-    _addNewAddress: function(email) {
-        var dupeAddress;
-        var existingAddresses = _.clone(this.model.get(this.name)) || [];
-        var oldAddresses = this.model.get(this.name) || [];
-        dupeAddress = _.find(oldAddresses, function(address){
-            if (address.email_address == email) {
-                return true;
-            }
-        });
+    _addNewAddressToModel: function(email) {
+        var existingAddresses = this.model.get(this.name) ? app.utils.deepCopy(this.model.get(this.name)) : [],
+            dupeAddress = _.find(existingAddresses, function(address){
+                return (address.email_address === email);
+            }),
+            success = false;
 
-        if (dupeAddress) {
-            this.render();
-            return false;
+        if (_.isUndefined(dupeAddress)) {
+            existingAddresses.push({
+                email_address: email,
+                primary_address: (existingAddresses.length === 0)
+            });
+            this.model.set(this.name, existingAddresses);
+            success = true;
         }
 
-        var newObj = {email_address:email};
-        //If no address exists, set this one as the primary
-        if (existingAddresses.length < 1) {
-            newObj.primary_address = true;
-        }
-        existingAddresses.push(newObj);
-
-        this.updateModel(existingAddresses);
+        return success;
     },
-    _updateExistingAddress: function(index, newEmail) {
-        var existingAddresses = _.clone(this.model.get(this.name));
+
+    /**
+     * Update email address in the model.
+     * @param {Number} index
+     * @param {String} newEmail
+     * @private
+     */
+    _updateExistingAddressInModel: function(index, newEmail) {
+        var existingAddresses = app.utils.deepCopy(this.model.get(this.name));
         //Simply update the email address
         existingAddresses[index].email_address = newEmail;
-        this.updateModel(existingAddresses);
+        this.model.set(this.name, existingAddresses);
     },
-    _toggleExistingAddressProperty: function(index, property) {
-        var existingAddresses = _.clone(this.model.get(this.name));
+
+    /**
+     * Toggle email address properties: primary, opt-out, and invalid.
+     * @param {Number} index
+     * @param {String} property
+     * @private
+     */
+    _toggleExistingAddressPropertyInModel: function(index, property) {
+        var existingAddresses = app.utils.deepCopy(this.model.get(this.name));
+
         //If property is primary_address, we want to make sure one and only one primary email is set
         //As a consequence we reset all the primary_address properties to 0 then we toggle property for this index.
         if (property === 'primary_address') {
             existingAddresses[index][property] = false;
-            _.find(existingAddresses, function(email, i) {
+            _.each(existingAddresses, function(email, i) {
                 if (email[property]) {
                     existingAddresses[i][property] = false;
                 }
             });
         }
+
         // Toggle property for this email
         if (existingAddresses[index][property]) {
             existingAddresses[index][property] = false;
         } else {
             existingAddresses[index][property] = true;
         }
-        this.updateModel(existingAddresses);
+
+        this.model.set(this.name, existingAddresses);
     },
-    _removeExistingAddress: function(index) {
-        var existingAddresses = _.clone(this.model.get(this.name)),
-            wasPrimary = existingAddresses[index]['primary_address'];
+
+    /**
+     * Remove email address from the model.
+     * @param {Number} index
+     * @returns {Boolean} Returns true if the removed address was the primary address.
+     * @private
+     */
+    _removeExistingAddressInModel: function(index) {
+        var existingAddresses = app.utils.deepCopy(this.model.get(this.name)),
+            primaryAddressRemoved = !!existingAddresses[index]['primary_address'];
 
         //Reject this index from existing addresses
         existingAddresses = _.reject(existingAddresses, function (emailInfo, i) { return i == index; });
 
         // If a removed address was the primary email, we still need at least one address to be set as the primary email
-        if (wasPrimary) {
+        if (primaryAddressRemoved) {
             //Let's pick the first one
             var address = _.first(existingAddresses);
             if (address) {
                 address.primary_address = true;
             }
         }
-        this.updateModel(existingAddresses);
+
+        this.model.set(this.name, existingAddresses);
+        return primaryAddressRemoved;
     },
+
     /**
-     * Updates model and triggers appropriate change events;
-     * @param value
+     * Clear out the new email address field.
+     * @private
      */
-    updateModel: function(value) {
-        this.model.set(this.name, value);
-        this.model.trigger('change');
-        this.model.trigger('change:'+this.name);
+    _clearNewAddressField: function() {
+        this._getNewEmailField()
+            .val('')
+            .focus();
     },
+
     /**
-     * Mass updates a property for all email addresses
-     * @param {Array} emails emails array off a model
-     * @param {String} propName
-     * @param {Mixed} value
-     * @return {Array}
+     * Get the new email address input field.
+     * @returns {jQuery}
+     * @private
      */
-    massUpdateProperty: function(emails, propName, value) {
-        _.each(emails, function (emailInfo, index) {
-            emails[index][propName] = value;
-        });
-        return emails;
+    _getNewEmailField: function() {
+        return this.$('.newEmail');
     },
+
     /**
      * Custom error styling for the e-mail field
      * @param {Object} errors
@@ -223,6 +363,7 @@
             }
         }, this);
     },
+
     _addErrorDecoration: function($input, errorName, errorContext) {
         var isWrapped = $input.parent().hasClass('input-append');
         if (!isWrapped)
@@ -231,6 +372,7 @@
         $input.after(this.exclamationMarkTemplate([app.error.getErrorString(errorName, errorContext)]));
         this.createErrorTooltips($input.next('.error-tooltip'));
     },
+
     /**
      * Binds DOM changes to set field value on model.
      * @param {Backbone.Model} model model this field is bound to.
@@ -243,7 +385,7 @@
     },
 
     /**
-     * To API representation
+     * To display representation
      * @param {String|Array} value single email address or set of email addresses
      */
     format: function(value) {
@@ -260,16 +402,21 @@
             value = [{
                 email_address:value,
                 primary_address:true,
-                hasAnchor:true,
-                _wasNotArray:true
+                hasAnchor:true
             }];
         }
 
         value = this.addFlagLabels(value);
         return value;
     },
+
+    /**
+     * Build label that gets displayed in tooltips.
+     * @param {Object} value
+     * @returns {Object}
+     */
     addFlagLabels: function(value) {
-        var flagStr = "", flagClassStr = "", flagArray, flagClass;
+        var flagStr = "", flagArray;
         _.each(value, function(emailObj) {
             flagStr = "";
             flagArray = _.map(emailObj, function (flagValue, key) {
@@ -281,27 +428,16 @@
             if (flagArray.length > 0) {
                 flagStr = flagArray.join(", ");
             }
-            flagClassStr = "";
-            flagClass = _.map(emailObj, function (flagValue, key) {
-                if (!_.isUndefined(this._flag2Deco[key]) && this._flag2Deco[key].cl && flagValue) {
-                    return app.lang.get(this._flag2Deco[key].cl);
-                }
-            }, this);
-            flagClass = _.without(flagClass, undefined);
-            if (flagClass.length > 0) {
-                flagClassStr = flagClass.join(", ");
-            }
             emailObj.flagLabel = flagStr;
-            emailObj.flagClass = flagClassStr;
         }, this);
         return value;
     },
+
     /**
-     * To display representation
+     * To API representation
      * @param {String|Array} value single email address or set of email addresses
      */
     unformat: function(value) {
-        var originalNonArrayValue = null;
         if(this.view.action === 'list') {
             var emails = this.model.get(this.name),
                 changed = false;
@@ -321,58 +457,31 @@
             if (emails.length == 0) {
                 emails.push({
                     email_address:   value,
-                    primary_address: true,
-                    hasAnchor:       false,
-                    _wasNotArray:    true
+                    primary_address: true
                 });
                 changed = true;
             }
 
             if(changed) {
-                this.updateModel(emails);
+                emails = app.utils.deepCopy(emails);
             }
             return emails;
         }
-
-        _.each(value, function(email, index) {
-            if (email._wasNotArray) {
-                // copy the original string representation
-                originalNonArrayValue = email.email_address;
-            } else {
-                // Remove handlebars cruft from e-mails so we only send valid fields back on save
-                value[index] = _.pick(email, 'email_address', 'primary_address', 'opt_out', 'invalid_email');
-            }
-        }, this);
-
-        if (!_.isNull(originalNonArrayValue)) {
-            // reformat the value back to the original string representation
-            value = originalNonArrayValue;
-        }
-
-        return value;
     },
-    focus: function() {
-        // this should be zero but lets make sure
-        if (this.focusIndex < 0) {
-            this.focusIndex = 0;
-        }
 
-        if (this.focusIndex >= this.$inputs.length) {
-            // done focusing our inputs return false
-            this.focusIndex = -1;
-            return false;
-        } else {
-            // focus the next item in our list of inputs
-            this.$inputs[this.focusIndex].focus();
-            this.focusIndex++;
-            return true;
+    /**
+     * Apply focus on the new email input field.
+     */
+    focus: function () {
+        if(this.action !== 'disabled') {
+            this._getNewEmailField().focus();
         }
     },
-    _render: function() {
-        app.view.Field.prototype._render.call(this);
-        this.$inputs = this.$('input');
-        this.focusIndex = 0;
-    },
+
+    /**
+     * Event handler to open up Quick Compose drawer with the selected email address.
+     * @param {Event} evt
+     */
     composeEmail: function(evt) {
         evt.stopPropagation();
         evt.preventDefault();
