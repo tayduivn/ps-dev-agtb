@@ -59,11 +59,10 @@
           .colorData( 'class', {step:2})
           //.colorData( 'default' )
           .tooltipContent( function(key, x, y, e, graph) {
-              return '<p>Stage: <b>' + key + '</b></p>' +
-                     '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
-                     '<p>Percent: <b>' +  x + '%</b></p>'
-            })
-        ;
+            return '<p>Stage: <b>' + key + '</b></p>' +
+                   '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
+                   '<p>Percent: <b>' +  x + '%</b></p>'
+          });
 
     nv.utils.windowResize(chart.update);
 
