@@ -136,6 +136,13 @@ $dictionary['RevenueLineItem'] = array(
             'dbType' => 'varchar',
             'len' => '255',
         ),
+        'manufacturer_link' => array(
+            'name' => 'manufacturer_link',
+            'type' => 'link',
+            'relationship' => 'revenuelineitems_manufacturers',
+            'source' => 'non-db',
+            'vname' => 'LBL_MANUFACTURER',
+        ),
         'category_id' => array(
             'name' => 'category_id',
             'vname' => 'LBL_CATEGORY',
@@ -1072,6 +1079,15 @@ $dictionary['RevenueLineItem'] = array(
             'relationship_type' => 'one-to-many',
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'RevenueLineItems'
+        ),
+        'revenuelineitems_manufacturers' => array(
+            'lhs_module' => 'Manufacturers',
+            'lhs_table' => 'manufacturers',
+            'lhs_key' => 'id',
+            'rhs_module' => 'RevenueLineItems',
+            'rhs_table' => 'revenue_line_items',
+            'rhs_key' => 'manufacturer_id',
+            'relationship_type' => 'one-to-many',
         ),
     ),
     'duplicate_check' => array(
