@@ -185,7 +185,7 @@
                             fields: [
                                 cloneField,
                                 {
-                                    'name' : cloneField.name + '_type',
+                                    'name' : cloneField.name + '_replace',
                                     'type' : 'bool',
                                     'text' : 'LBL_SELECT_APPEND_VALUES',
                                     'css_class' : 'span3'
