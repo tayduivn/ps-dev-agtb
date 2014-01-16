@@ -40,20 +40,18 @@
     },
 
     /**
-     * If no value, Set the application default language as default value
-     *
-     * @returns {Field} this
-     * @override
-     * @private
+     * {@inheritDoc}
+     * If no value, set the application default language as default value.
+     * If edit mode, set the application default language on the model.
      */
-    _render: function() {
-        if (_.isUndefined(this.model.get(this.name))) {
-            this.model.set(this.name, app.lang.defaultLanguage);
+    format: function(value) {
+        if (!this.items[value]) {
+            value = app.lang.defaultLanguage;
         }
-        this._super('_render');
-        if (!this.items[this.model.get(this.name)]) {
-            this.model.set(this.name, app.lang.defaultLanguage);
+        if (this.action === 'edit') {
+            value = value || app.lang.defaultLanguage;
+            this.model.set(this.name, value, {silent: true});
         }
-        return this;
+        return value;
     }
 })
