@@ -68,14 +68,24 @@
         this.hideAll();
         var massQuote = this.context.get("mass_collection"),
             options = {},
-            callbacks = {};
+            callbacks = {},
+            errors = {
+                'LBL_CONVERT_INVALID_RLI_PRODUCT_PLURAL': [],
+                'LBL_CONVERT_INVALID_RLI_ALREADYQUOTED_PLURAL': []
+            };
 
         // find any blockers
         var invalidItems = massQuote.filter(function(model) {
             // if product template is empty, but category is not, this RLI can not be converted to a quote
             if (_.isEmpty(model.get('product_template_id')) && !_.isEmpty(model.get('category_id'))) {
+
+                errors['LBL_CONVERT_INVALID_RLI_PRODUCT_PLURAL'].push(model);
+
                 return true;
             } else if (!_.isEmpty(model.get('quote_id'))) {
+
+                errors['LBL_CONVERT_INVALID_RLI_ALREADYQUOTED_PLURAL'].push(model);
+
                 return true;
             }
 
@@ -84,22 +94,29 @@
         }, this);
 
         if (!_.isEmpty(invalidItems)) {
-            var messages = [app.lang.get("LBL_CONVERT_INVALID_RLI", this.module)],
-                messageTpl = app.template.getView('massupdate.invalid_link', this.module);;
+            var messageTpl = app.template.getView('massupdate.invalid_link', this.module);
 
-            _.each(invalidItems, function(item) {
-                messages.push(messageTpl(item.attributes));
-            });
+            _.each(errors, function(val, key) {
+                if(val.length != 0) {
+                    var messages = [];
 
-            app.alert.show('invalid_items', {
-                level: 'warning',
-                autoClose: false,
-                title: app.lang.get("LBL_ALERT_TITLE_WARNING", this.module) + ":",
-                messages: messages,
-                onLinkClick: function() {
-                    app.alert.dismiss('invalid_items');
+                    messages.push(app.lang.get(key, this.module) + '<br>');
+
+                    _.each(val, function(item) {
+                        messages.push(messageTpl(item.attributes));
+                    });
+
+                    app.alert.show(('invalid_items_' + key), {
+                        level: 'error',
+                        autoClose: false,
+                        title: app.lang.get("LBL_ALERT_TITLE_ERROR", this.module) + ':',
+                        messages: messages,
+                        onLinkClick: function() {
+                            app.alert.dismiss('invalid_items_' + key);
+                        }
+                    });
                 }
-            });
+            }, this);
 
             return;
         }
