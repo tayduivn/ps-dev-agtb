@@ -5346,7 +5346,8 @@ eoq;
 						} // if
 
 						if ($fromSugarFolder->is_dynamic && !$toSugarFolder->is_dynamic && !$toSugarFolder->is_group) {
-							$email->assigned_user_id = "";
+							// moving email from dynamic folder.  Clean up old relationships and add new one
+               						$fromSugarFolder->deleteEmailFromAllFolder($id);
 							$toSugarFolder->addBean($email);
 						} // if
 						if (!$toSugarFolder->checkEmailExistForFolder($id)) {
