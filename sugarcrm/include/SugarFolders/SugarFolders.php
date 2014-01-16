@@ -360,7 +360,7 @@ ENDQ;
 								   $this->addTeamSecurityClause() .
 		//END SUGARCRM flav=pro ONLY
 								   " JOIN emails_text on emails.id = emails_text.email_id
-                                   WHERE (type = '{$type}' OR status = '{$status}') AND assigned_user_id = '{$current_user->id}' AND emails.deleted=0";
+                                   WHERE (type = '{$type}' OR status = '{$status}') AND assigned_user_id = '{$current_user->id}' AND emails.deleted=0 " . $this->addNonDynamicChildFoldersClause();
 		return $q . $ret;
 	} // fn
 
@@ -1190,4 +1190,30 @@ ENDQ;
 
 		return false;
 	}
+
+
+    /**
+     * Generates clause for excluding emails that are placed into non-dynamic child folders of a dynamic one
+     * @return string SQL 'NOT IN' clause
+     */
+    protected function addNonDynamicChildFoldersClause()
+    {
+        $allChildFolders = array();
+        $folders = array();
+        $this->findAllChildren($this->id, $allChildFolders);
+        foreach ($allChildFolders as $value) {
+            $folders[] = $this->db->quoted($value);
+        }
+        $foldersToExcludeString = implode($folders, ', ');
+
+        $clause = <<<SQL
+ AND emails.id NOT IN (
+ SELECT DISTINCT(folders_rel.polymorphic_id) FROM folders_rel
+  WHERE folders_rel.polymorphic_module = 'Emails' AND folders_rel.folder_id IN ({$foldersToExcludeString})
+  AND folders_rel.deleted = 0
+ )
+SQL;
+        return $clause;
+    }
+
 } // end class def
