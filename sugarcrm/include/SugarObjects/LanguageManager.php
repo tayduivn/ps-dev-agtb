@@ -32,6 +32,7 @@
  */
 class LanguageManager
 {
+    protected static $createdModules = array();
 
 	/**
 	 * Called from VardefManager to allow for caching a lang file for a module
@@ -48,14 +49,23 @@ class LanguageManager
 		$lang = $current_language;
         if(empty($lang))
             $lang = $GLOBALS['sugar_config']['default_language'];
-		static $createdModules = array();
-		if(empty($createdModules[$module]) && ($refresh || !file_exists(sugar_cached('modules/').$module.'/language/'.$lang.'.lang.php'))){
+		
+		if(empty(self::$createdModules[$module]) && ($refresh || !file_exists(sugar_cached('modules/').$module.'/language/'.$lang.'.lang.php'))){
 			$loaded_mod_strings = array();
 			$loaded_mod_strings = LanguageManager::loadTemplateLanguage($module , $templates, $lang , $loaded_mod_strings);
-			$createdModules[$module] = true;
+			self::$createdModules[$module] = true;
 			LanguageManager::refreshLanguage($module,$lang, $loaded_mod_strings);
 		}
 	}
+    
+    /**
+     * Resets the created modules array so that in-memory vardef rebuilds can
+     * successfully pull of the refresh of metadata
+     */
+    public static function resetCreatedModules()
+    {
+        self::$createdModules = array();
+    }
 
 	/**
 	 * Load the module  tempalte lauguage files
