@@ -96,12 +96,11 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             }
         }
 
-        //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
+        // Check if this is the first commit, then save has_commits true to the config table
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
         if (!isset($settings['has_commits']) || !$settings['has_commits']) {
             $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
-            MetaDataManager::refreshModulesCache(array('Administration', 'Forecasts'));
         }
 
         $seed->setWorksheetArgs($this->args);
