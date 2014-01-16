@@ -227,9 +227,9 @@ abstract class source{
 	public function getOriginalMapping() {
  		$mapping = array();
  		$dir = str_replace('_','/',get_class($this));
-		foreach(SugarAutoLoader::existingCustom("modules/Connectors/connectors/sources/{$dir}/mapping.php") as $file) {
-		    require $file;
-		}
+        foreach(SugarAutoLoader::existing("modules/Connectors/connectors/sources/{$dir}/mapping.php") as $file) {
+            require $file;
+        }
 		return $mapping;
  	}
 
