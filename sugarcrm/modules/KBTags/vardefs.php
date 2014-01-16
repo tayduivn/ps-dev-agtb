@@ -26,7 +26,7 @@ $dictionary['KBTag'] = array('table' => 'kbtags'
   array (
     'name' => 'id',
     'vname' => 'LBL_TAG_NAME',
-    'type' => 'varchar',
+    'type' => 'id',
     'len' => '36',
     'required'=>true,
     'reportable'=>false,
@@ -35,7 +35,7 @@ $dictionary['KBTag'] = array('table' => 'kbtags'
   array (
     'name' => 'parent_tag_id',
     'vname' => 'LBL_PARENT_TAG_ID',
-    'type' => 'varchar',
+    'type' => 'id',
     'len' => '36',
     'required'=>false,
     'reportable'=>false,

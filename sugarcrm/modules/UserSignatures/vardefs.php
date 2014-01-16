@@ -51,7 +51,7 @@ $dictionary['UserSignature'] = array(
         'user_id'        => array(
             'name'  => 'user_id',
             'vname' => 'LBL_USER_ID',
-            'type'  => 'varchar',
+            'type'  => 'id',
             'len'   => 36,
         ),
         'name'           => array(

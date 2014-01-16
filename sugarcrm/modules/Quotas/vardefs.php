@@ -174,7 +174,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
   	array (
     	'name' => 'created_by',
     	'vname' => 'LBL_CREATED_BY',
-    	'type' => 'varchar',
+    	'type' => 'id',
     	'len' => '36',
         'reportable'=>false,
   	),

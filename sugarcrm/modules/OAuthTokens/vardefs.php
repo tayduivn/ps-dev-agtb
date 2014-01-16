@@ -88,7 +88,7 @@ $dictionary['OAuthToken'] = array(
       'download_token' =>
       array (
             'name' => 'download_token',
-            'type' => 'varchar',
+            'type' => 'id',
             'len' => 36,
             'comment' => 'A token used to download images and files.',
       ),

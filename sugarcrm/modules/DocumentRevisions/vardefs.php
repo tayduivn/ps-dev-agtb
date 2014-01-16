@@ -173,7 +173,7 @@ $dictionary['DocumentRevision'] = array(
         'latest_revision_id' => array(
             'name' => 'latest_revision_id',
             'vname' => 'LBL_REVISION',
-            'type' => 'varchar',
+            'type' => 'id',
             'len' => '36',
             'source' => 'non-db',
         ),
