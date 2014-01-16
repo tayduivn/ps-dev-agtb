@@ -143,6 +143,14 @@ $dictionary['DocumentRevision'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_REVISIONS',
         ),
+        'latest_document_revision_link' =>
+        array(
+            'name' => 'latest_document_revision_link',
+            'type' => 'link',
+            'relationship' => 'latest_document_revision',
+            'source' => 'non-db',
+            'vname' => 'LBL_LATEST_REVISION',
+        ),
 
         'created_by_link' => array(
             'name' => 'created_by_link',
