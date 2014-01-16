@@ -301,8 +301,16 @@
         if (tab.invitations) {
             tab.invitations.dataFetched = false;
         }
-
-        this._super('tabSwitcher', [event]);
+        // FIXME: this should be replaced with this._super('tabSwitcher'); which
+        // is currently throwing an error with the following message: "Attempt
+        // to call different parent method from child method"
+        app.view.invokeParent(this, {
+            type: 'view',
+            name: 'history',
+            method: 'tabSwitcher',
+            platform: 'base',
+            args: [event]
+        });
     },
 
     /**
