@@ -740,8 +740,17 @@ $dictionary['Opportunity'] = array(
                 array(
                     '$and' => array(
                         array('name' => array('$starts' => '$name')),
+
+                        //BEGIN SUGARCRM flav=ent ONLY
                         array('sales_status' => array('$not_equals' => 'Closed Lost')),
                         array('sales_status' => array('$not_equals' => 'Closed Won')),
+                        //END SUGARCRM flav=ent ONLY
+
+                        //BEGIN SUGARCRM flav!=ent ONLY
+                        array('sales_stage' => array('$not_equals' => 'Closed Lost')),
+                        array('sales_stage' => array('$not_equals' => 'Closed Won')),
+                        //END SUGARCRM flav!=ent ONLY
+
                         array('accounts.id' => array('$equals' => '$account_id')),
                     )
                 ),
