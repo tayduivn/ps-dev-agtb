@@ -4,8 +4,6 @@
   color: @white;
   display: inline-block;
   cursor: default;
-}
-.label {
   padding: 1px 4px 2px;
   .border-radius(@borderRadiusSmall);
 }
@@ -18,41 +16,59 @@ a > .label,
   text-decoration: none;
   cursor: pointer;
 }
+
 .label-module {
-  height: 38px;
-  width: 38px;
+  height: @sizeDefault;
+  width: @sizeDefault;
+  font-size: 11px;
+  line-height: 11px;
+  padding: 3px 0 0 3px;
+
+  margin: 0;
+  font-weight: 400;
+  border: none;
+  .border-radius(@baseBorderRadius);
+  .box-sizing(border-box);
+}
+.label-module-lg {
+  height: @sizeLarge;
+  width: @sizeLarge;
   font-weight: 300;
   font-size: 16px;
   line-height: 16px;
-  padding: 4px 0 0 4px;
-  margin: 0;
-  border: none;
-  .border-radius(@baseBorderRadius);
+  padding: 4px 0 0 5px;
 }
-.label-module-sm {
-  height: 22px;
-  width: 22px;
-  font-weight: 400;
+.label-module-md {
+  height: @sizeMedium;
+  width: @sizeMedium;
+  font-size: 13px;
+  line-height: 13px;
+  padding: 3px 0 0 4px;
+}
+.label-module-btn {
+  height: @sizeButton;
+  width: @sizeButton;
   font-size: 11px;
   line-height: 11px;
-  margin: 0;
-  border: none;
+  padding: 3px 0 0 4px;
+}
+.label-module-sm {
+  height: @sizeSmall;
+  width: @sizeSmall;
+  font-size: 10px;
+  line-height: 10px;
   padding: 2px 0 0 2px;
-  .border-radius(@borderRadiusSmall);
 }
 .label-module-mini {
-  height: 14px;
-  width: 15px;
-  font-weight: 400;
+  height: @sizeMini;
+  width: @sizeMini;
   font-size: 8px;
   line-height: 8px;
-  margin: 0;
-  border: none;
-  padding: 2px 0 0 1px;
-  .border-radius(@borderRadiusSmall);
+  padding: 3px 0 0 2px;
 }
+
 .dropdown-menu .label-module-mini {
-  margin: 0 10px 0 0;
+  margin-right: 4px;
 }
 .disabled .label-Users, .inactive [class*=" label-"] {
   background-color: darken(@grayLighter, 15%);
@@ -107,6 +123,8 @@ a > .label,
 }
 
 /* Disabled: no box-shadow*/
-.disabled .label-module.label, .disabled .label-module-sm.label, .disabled .label-module-mini.label {
+.disabled .label-module.label,
+.disabled .label-module-sm.label,
+.disabled .label-module-mini.label {
   .box-shadow(none);
 }

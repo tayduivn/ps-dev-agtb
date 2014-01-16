@@ -71,13 +71,14 @@
         app.view.Field.prototype._render.call(this);
 
         //Define default sizes
-        if (this.tplName === 'list') {
-            this.width = this.height = this.$el.parent().innerHeight() || 42;
+        if (this.view && this.view.meta && this.view.meta.type === 'list') {
+            this.width = this.height = this.$el.parent().height() || 42;
             this.def.width = this.def.height = undefined;
         } else {
             this.width = parseInt(this.def.width || this.def.height, 10) || 50;
             this.height = parseInt(this.def.height, 10) || this.width;
         }
+
         //Resize widget before the image is loaded
         this.resizeWidth(this.width);
         this.resizeHeight(this.height);
