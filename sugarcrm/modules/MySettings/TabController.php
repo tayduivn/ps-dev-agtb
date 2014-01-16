@@ -20,8 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
-
 class TabController{
 
 var $required_modules = array('Home');
@@ -83,6 +81,7 @@ function get_system_tabs(){
 	return $system_tabs_result;
 }
 
+//BEGIN SUGARCRM flav=ent ONLY
     /**
      * Retrieve the list of tabs for `Portal`
      */
@@ -114,6 +113,7 @@ function get_system_tabs(){
         $administration = BeanFactory::getBean('Administration');
         $administration->saveSetting('MySettings', 'tab', json_encode($modules), 'portal');
     }
+//END SUGARCRM flav=ent ONLY
 
 
 function get_tabs_system(){
@@ -316,6 +316,7 @@ function restore_system_tabs(){
 }
 
 
+//BEGIN SUGARCRM flav=ent ONLY
     /**
      * Gets the default list of `Portal` tabs.
      *
@@ -328,6 +329,8 @@ function restore_system_tabs(){
      */
     public static function getAllPortalTabs()
     {
+        require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
+        
         $tabs = array('Home');
 
         $browser = new SugarPortalBrowser();
@@ -339,5 +342,5 @@ function restore_system_tabs(){
         }
         return $tabs;
     }
-
+//END SUGARCRM flav=ent ONLY
 }
