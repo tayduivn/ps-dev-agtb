@@ -29,6 +29,8 @@
 
 $viewdefs['Cases']['base']['filter']['default'] = array(
     'default_filter' => 'all_records',
+    'quicksearch_field' => array('name', 'case_number'),
+    'quicksearch_priority' => 2,
     'fields' => array(
         'name' => array(),
         'account_name' => array(
