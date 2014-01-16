@@ -159,7 +159,7 @@ class SugarFieldMultienum extends SugarFieldEnum
 
     public function apiMassUpdate(SugarBean $bean, array $params, $fieldName, $properties) {
         // Check if we are replacing, if so, just use the normal save
-        if (isset($params[$fieldName.'_type']) && $params[$fieldName.'_type'] == 'replace') {
+        if (!isset($params[$fieldName.'_type']) || $params[$fieldName.'_type'] !== '1') {
             return $this->apiSave($bean, $params, $fieldName, $properties);
         }
 
