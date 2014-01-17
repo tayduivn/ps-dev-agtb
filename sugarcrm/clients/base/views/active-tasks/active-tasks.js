@@ -92,9 +92,6 @@
      * allow one to define relative dates for date filters.
      */
     _initTabs: function() {
-        // FIXME: this should be replaced with this._super('_initTabs'); which
-        // is currently throwing an error with the following message: "Attempt
-        // to call different parent method from child method"
         this._super("_initTabs");
 
         // FIXME: since there's no way to do this metadata driven (at the

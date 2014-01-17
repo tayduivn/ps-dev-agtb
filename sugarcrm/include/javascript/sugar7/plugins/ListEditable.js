@@ -8,7 +8,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
  */
 (function(app) {
     app.events.on('app:init', function() {
@@ -20,7 +20,7 @@
             _loadTemplate: function() {
                 //Invoke the original method first
                 Object.getPrototypeOf(this)._loadTemplate.call(this);
-                if (this.view.action === 'list' && _.indexOf(['edit', 'disabled'], this.tplName) >= 0) {
+                if (this.view.action === 'list' && _.contains(['edit', 'disabled'], this.tplName)) {
                     var tplName = 'list-' + this.tplName;
                     this.template = app.template.getField(this.type, tplName, this.module, this.tplName) ||
                         app.template.empty;

@@ -57,9 +57,6 @@
      * Store current date state in settings.
      */
     initDashlet: function() {
-        // FIXME: this should be replaced with this._super('initDashlet');
-        // which is currently throwing an error with the following message:
-        // "Attempt to call different parent method from child method".
         this._super('initDashlet');
         if (!this.meta.last_state) {
             this.meta.last_state = {

@@ -47,7 +47,7 @@ describe("Contacts Record View", function() {
             };
             return fakeInfo;
         });
-        view = SugarTest.createView("base", moduleName, viewName, null, null);
+        view = SugarTest.createView("base", moduleName, viewName, null, null, true);
     });
 
     afterEach(function() {

@@ -33,9 +33,6 @@
         this.collection = new app.BeanCollection();
         if(!this.meta.config) {
             this.collection.on("reset", this.render, this);
-        } else {
-            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            this._super("_buildGridsFromPanelsMetadata", [this]);
         }
     },
     _mapping: {
