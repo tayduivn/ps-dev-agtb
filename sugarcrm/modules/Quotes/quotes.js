@@ -973,7 +973,7 @@ function QuotesEditManager(Y){
         var quantName = 'quantity_' + this.count;
         item_list_MSI["quantity[" + this.count + "]"] = textEl;
         Y.one(textEl).on('change', function(){
-            if (isInteger(quotesManager.lookup_item(quantName, document).value)){ 
+            if (isFloat(quotesManager.lookup_item(quantName, document).value)) {
                 quotesManager.calculate(document);
             } else {
                 alert (quotesManager.invalidAmount); 

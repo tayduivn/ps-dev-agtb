@@ -225,7 +225,7 @@ class QuotesViewEdit extends ViewEdit
 								$encoded_name = js_escape(br2nl($line_item->name));
 
 
-								$add_row[] = "quotesManager.addRow('$line_item->id','" . format_number($line_item->quantity, 0, 0) . "','$line_item->product_template_id','$encoded_name'"
+								$add_row[] = "quotesManager.addRow('$line_item->id','" . format_number($line_item->quantity, $significantDigits, $significantDigits) . "','$line_item->product_template_id','$encoded_name'"
 											. ", '".format_number($line_item->cost_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'"
 											. ", '".format_number($line_item->list_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) ."'"
 											. ", '".format_number($line_item->discount_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'"
