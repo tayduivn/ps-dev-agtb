@@ -57,9 +57,14 @@ class RevenueLineItemsGlobeChartApi extends SugarApi
         }
 
         $query = new SugarQuery();
-        $account_link = $query->join('account_link');
-        $query->select(array("$account_link.billing_address_country", "$account_link.billing_address_state", 'likely_case', 'base_rate'));
         $query->from($seed);
+        $account_link = $query->join('account_link');
+        $query->select(array(
+            $account_link->joinName() . '.billing_address_country',
+            $account_link->joinName() . '.billing_address_state',
+            'likely_case', 
+            'base_rate'
+        ));
         $query->where()->equals('sales_stage', 'Closed Won');
 
         // TODO: When we can sum on the database side through SugarQuery, we can
