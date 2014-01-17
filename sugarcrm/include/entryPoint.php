@@ -156,7 +156,7 @@ require_once('modules/Users/authentication/AuthenticationController.php');
 require_once('include/utils/LogicHook.php');
 require_once('include/MVC/SugarModule.php');
 require_once('include/SugarCache/SugarCache.php');
-require('modules/Currencies/Currency.php');
+require_once('modules/Currencies/Currency.php');
 require_once('include/MVC/SugarApplication.php');
 require_once 'data/SugarACL.php';
 
