@@ -43,7 +43,7 @@ $dictionary["documents_opportunities"] = array (
     0 => 
     array (
       'name' => 'id',
-      'type' => 'varchar',
+      'type' => 'id',
       'len' => 36,
     ),
     1 => 
@@ -62,13 +62,13 @@ $dictionary["documents_opportunities"] = array (
     3 => 
     array (
       'name' => 'document_id',
-      'type' => 'varchar',
+      'type' => 'id',
       'len' => 36,
     ),
     4 => 
     array (
       'name' => 'opportunity_id',
-      'type' => 'varchar',
+      'type' => 'id',
       'len' => 36,
     ),
   ),

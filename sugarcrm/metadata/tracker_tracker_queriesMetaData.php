@@ -24,8 +24,8 @@ $dictionary['tracker_tracker_queries'] = array (
 'table' => 'tracker_tracker_queries', 
 'fields' => array (
       'id'=>array('name' => 'id', 'vname' => 'LBL_ID', 'type' => 'int', 'len' => '11', 'isnull' => 'false', 'auto_increment' => true, 'reportable'=>false),      
-      'monitor_id'=>array('name' =>'monitor_id', 'type' =>'varchar', 'len'=>'36'),
-      'query_id'=>array('name' =>'query_id', 'type' =>'varchar', 'len'=>'36'),
+      'monitor_id'=>array('name' =>'monitor_id', 'type' =>'id', 'len'=>'36'),
+      'query_id'=>array('name' =>'query_id', 'type' =>'id', 'len'=>'36'),
       'date_modified'=>array ('name' => 'date_modified','type' => 'datetime')
 ),
 'indices' => array (

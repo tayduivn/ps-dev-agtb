@@ -43,7 +43,7 @@ $dictionary["documents_products"] = array (
     0 => 
     array (
       'name' => 'id',
-      'type' => 'varchar',
+      'type' => 'id',
       'len' => 36,
     ),
     1 => 
@@ -62,13 +62,13 @@ $dictionary["documents_products"] = array (
     3 => 
     array (
       'name' => 'document_id',
-      'type' => 'varchar',
+      'type' => 'id',
       'len' => 36,
     ),
     4 => 
     array (
       'name' => 'product_id',
-      'type' => 'varchar',
+      'type' => 'id',
       'len' => 36,
     ),
   ),

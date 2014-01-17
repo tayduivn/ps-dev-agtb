@@ -24,7 +24,7 @@ $dictionary['products_category_tree'] =
         array('table' => 'category_tree',
                 'fields' => array(
                     array('name' => 'self_id',
-                          'type' => 'varchar',
+                          'type' => 'id',
                           'len' => '36'
                     ),
                     array('name' => 'node_id',
