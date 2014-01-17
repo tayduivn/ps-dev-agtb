@@ -38,7 +38,7 @@
         this.options.def.events = _.extend({}, this.options.def.events, {
             'click .rowaction': 'rowActionSelect'
         });
-        app.view.invokeParent(this, {type: 'field', name: 'button', method: 'initialize', args:[options]});
+        this._super("initialize", [options]);
     },
     /**
      * Triggers event provided at this.def.event on the view's context object by default.

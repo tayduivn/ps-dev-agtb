@@ -156,7 +156,7 @@
         // registration across ExtendedComponents
         this.plugins = _.clone(this.plugins);
         this.plugins.push('CteTabbing', 'DirtyCollection');
-        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
         // we need to get the flex-list template from the ForecastWorksheets module so it can use the filteredCollection
         // for display
         this.template = app.template.getView('flex-list', this.module);
@@ -178,7 +178,7 @@
         }
         app.routing.offBefore('route', this.beforeRouteHandler, this);
         $(window).off("beforeunload." + this.worksheetType);
-        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: '_dispose'});
+        this._super("_dispose");
     },
 
     bindDataChange: function() {
@@ -396,7 +396,7 @@
         }, this);
 
         // call the parent
-        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'bindDataChange'});
+        this._super("bindDataChange");
     },
 
     beforeRouteHandler: function() {
@@ -416,7 +416,7 @@
      */
     unbindData: function() {
         app.events.off(null, null, this);
-        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'unbindData'});
+        this._super("unbindData");
     },
 
     /**

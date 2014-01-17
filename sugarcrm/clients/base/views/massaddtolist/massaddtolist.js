@@ -39,7 +39,7 @@
         var additionalEvents = {};
         additionalEvents['click .btn[name=create_button]'] = 'createAndSelectNewList';
         this.events = _.extend({}, this.events, additionalEvents);
-        app.view.invokeParent(this, {type: 'view', name: 'massupdate', method: 'initialize', args:[options]});
+        this._super("initialize", [options]);
     },
 
     /**
@@ -76,7 +76,7 @@
      * Hide the view if we were not able to find the appropriate list field and somehow render is triggered
      */
     _render: function() {
-        var result = app.view.invokeParent(this, {type: 'view', name: 'massupdate', method: '_render'});
+        var result = this._super("_render");
 
         if(_.isUndefined(this.addToListField)) {
             this.hide();

@@ -35,7 +35,7 @@
             this.collection.on("reset", this.render, this);
         } else {
             // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            app.view.invokeParent(this, {type: 'view', name: 'record', method: '_buildGridsFromPanelsMetadata', args: [this.meta.panels]});
+            this._super("_buildGridsFromPanelsMetadata", [this]);
         }
     },
     _mapping: {

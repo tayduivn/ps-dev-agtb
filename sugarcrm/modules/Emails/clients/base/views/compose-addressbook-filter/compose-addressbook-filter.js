@@ -99,7 +99,7 @@
             $filter.off();
             $filter.select2('destroy');
         }
-        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'unbind'});
+        this._super("unbind");
     },
     /**
      * Performs a search once the user has entered a term.

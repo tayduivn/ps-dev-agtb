@@ -31,7 +31,7 @@
     typeFieldTag: 'select.select2[name=parent_type]',
     _render: function() {
         var result, self = this;
-        app.view.invokeParent(this, {type: 'field', name: 'relate', method: '_render'});
+        this._super("_render");
         if(this.tplName === 'edit') {
             this.checkAcl('access', this.model.get('parent_type'));
 
@@ -128,7 +128,7 @@
     },
     unbindDom: function() {
         this.$(this.typeFieldTag).select2('destroy');
-        app.view.invokeParent(this, {type: 'field', name: 'relate', method: 'unbindDom'});
+        this._super("unbindDom");
     },
 
     /**

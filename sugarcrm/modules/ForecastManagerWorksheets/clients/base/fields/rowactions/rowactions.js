@@ -24,7 +24,7 @@
      * {@inheritDoc}
      */
     initialize: function(options) {
-        app.view.invokeParent(this, {type: 'field', name: 'rowactions', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
         this.setPlaceholder = _.throttle(this.customSetPlaceholder, 100);
     },
 

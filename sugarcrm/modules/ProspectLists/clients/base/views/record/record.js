@@ -29,7 +29,7 @@
 
     delegateButtonEvents: function() {
         this.context.on('button:export_button:click', this.exportListMembers, this);
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'delegateButtonEvents'});
+        this._super("delegateButtonEvents");
     },
 
     /**

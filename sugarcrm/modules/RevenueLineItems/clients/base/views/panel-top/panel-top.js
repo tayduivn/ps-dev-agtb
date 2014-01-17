@@ -31,7 +31,7 @@
      * {@inheritdoc}
      */
     initialize: function(options){
-        app.view.invokeParent(this, {type: 'view', name: 'panel-top', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
         if (this.parentModule == "Accounts") {
             this.meta.buttons = _.filter(this.meta.buttons, function(item){
                 if (item.type != "actiondropdown") {
@@ -48,6 +48,6 @@
         // close RLI warning alert
         app.alert.dismiss('opp-rli-create');
 
-        app.view.invokeParent(this, {type: 'view', name: 'panel-top', method: 'createRelatedClicked', args: [event]});
+        this._super("createRelatedClicked", [event]);
     }
 })

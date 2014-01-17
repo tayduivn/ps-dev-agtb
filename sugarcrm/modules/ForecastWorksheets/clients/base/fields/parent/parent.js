@@ -22,6 +22,6 @@
             // override the template to use the delete one
             this.options.viewName = 'deleted';
         }
-        app.view.invokeParent(this, {type: 'field', name: 'parent', method: '_render'});
+        this._super("_render");
     }
 })

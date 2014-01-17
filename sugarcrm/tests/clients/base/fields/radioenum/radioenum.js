@@ -29,7 +29,6 @@ describe("radioenum field", function() {
 
         //Because this controller depends on enum and listeditable controllers
         fields.enumField = SugarTest.createField("base", "test_enum", "enum", "edit", {options: "bugs_type_dom"});
-        fields.listeditable = SugarTest.createField("base", "test_enum", "listeditable", "edit");
     });
 
     afterEach(function() {
@@ -53,9 +52,6 @@ describe("radioenum field", function() {
     it("format a list of radio buttons and have one selected on edit template", function() {
         var field = fields.radioenum = SugarTest.createField("base", fieldName, fieldType, "edit", {options: "bugs_type_dom"});
 
-        //Fake extendsFrom listeditable
-        field._loadTemplate = fields.listeditable._loadTemplate;
-
         original = 'Defect';
         expected = ' ' + 'DefectValue';
         field.model.set(fieldName, original);
@@ -66,9 +62,6 @@ describe("radioenum field", function() {
 
     it("use enum controller to have option selected in Select2 widget on list edit template", function() {
         var field = fields.radioenum = SugarTest.createField("base", fieldName, fieldType, "edit", {options: "bugs_type_dom"});
-
-        //Fake extendsFrom listeditable
-        field._loadTemplate = fields.listeditable._loadTemplate;
 
         field.view.action = 'list';
 

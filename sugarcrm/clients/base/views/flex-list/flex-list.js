@@ -26,7 +26,7 @@
     plugins: ['Tooltip'],
 
     initialize: function (options) {
-        app.view.invokeParent(this, {type: 'view', name: 'list', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
         this.template = app.template.getView('flex-list');
         this.events = _.clone(this.events);
 
@@ -293,7 +293,7 @@
     },
     unbind: function() {
         $(window).off("resize.flexlist-" + this.cid);
-        app.view.invokeParent(this, {type: 'view', name: 'list', method: 'unbind'});
+        this._super("unbind");
     },
 
     bindResize: function() {

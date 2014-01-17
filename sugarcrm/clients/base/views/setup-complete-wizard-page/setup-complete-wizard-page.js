@@ -46,7 +46,7 @@
             "click a.thumbnail": "linkClicked",
             "click [name=start_sugar_button]:not(.disabled)": "next"
         });
-        app.view.invokeParent(this, {type: 'view', name: 'wizard-page', method: 'initialize', args:[options]});
+        this._super("initialize", [options]);
         this.wizardName = this.context.get("wizardName") || "user";
     },
     /**

@@ -44,7 +44,7 @@
                 opts.meta.last_state.id = opts.def.override_subpanel_list_view;
             }
         }
-        app.view.invokeParent(this, {type: 'layout', name: 'panel', method: 'initialize', args:[opts]});
+        this._super("initialize", [opts]);
 
         // binding so subpanels can trigger other subpanels to reload by link name
         // example: ctx.trigger('subpanel:reload', {links: ['opportunities','revenuelineitems']});

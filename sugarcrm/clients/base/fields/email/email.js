@@ -11,7 +11,6 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 ({
-    extendsFrom: 'ListeditableField',
     useSugarEmailClient: false,
     events: {
         'change .existingAddress': 'updateExistingAddress',
@@ -26,7 +25,7 @@
         opt_out: {lbl: "LBL_EMAIL_OPT_OUT", cl: "opted-out"},
         invalid_email: {lbl: "LBL_EMAIL_INVALID", cl: "invalid"}
     },
-    plugins: ['Tooltip'],
+    plugins: ['Tooltip', 'ListEditable'],
 
     /**
      * @inheritdoc
@@ -41,7 +40,7 @@
             options.def.link = true;
         }
 
-        app.view.Field.prototype.initialize.call(this, options);
+        this._super("initialize", [options]);
 
         // determine if the app should send email according to the use_sugar_email_client user preference
         this.useSugarEmailClient = (app.user.getPreference("use_sugar_email_client") === "true");
@@ -67,7 +66,7 @@
     _render: function() {
         var emailsHtml = '';
 
-        app.view.Field.prototype._render.call(this);
+        this._super("_render");
 
         if (this.tplName === 'edit') {
             // Add email input fields for edit
@@ -380,7 +379,7 @@
      */
     bindDomChange: function() {
         if(this.tplName === 'list-edit') {
-            app.view.Field.prototype.bindDomChange.call(this);
+            this._super("bindDomChange");
         }
     },
 

@@ -27,7 +27,7 @@
      * {@inheritDoc}
      */
     initialize: function(options) {
-        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
         this.type = 'rowaction';
     },
 
@@ -59,7 +59,7 @@
      * @private
      */
     _render: function() {
-        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: '_render'});
+        this._super("_render");
         this.setDisabled(this.disableButton);
     },
 

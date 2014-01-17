@@ -126,7 +126,7 @@
      * {@inheritDoc}
      */
     render: function() {
-        app.view.invokeParent(this, {type: 'view', name: 'view', method: 'render'});
+        this._super("render");
         if(this.chart && !_.isEmpty(this.results)) {
             this.renderChart();
         }

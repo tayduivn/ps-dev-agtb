@@ -15,7 +15,7 @@
     extendsFrom : 'RecordlistView',
 
     initialize: function(options) {
-        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args:[options]});
+        this._super("initialize", [options]);
         this.layout.on("list:record:deleted", function(deletedModel){
             this.deleteCommitWarning(deletedModel);
         }, this);
@@ -55,11 +55,7 @@
      * @returns {{default: Array, available: Array, visible: Array, options: Array}}
      */
     parseFields : function() {
-        var catalog = app.view.invokeParent(this, {
-            type: 'view',
-            name: 'recordlist',
-            method: 'parseFields'
-        });
+        var catalog = this._super("parseFields");
         _.each(catalog, function (group, i) {
             catalog[i] = _.filter(group, function (fieldMeta) {
                 var leave = true;

@@ -28,7 +28,7 @@
     extendsFrom: 'RowactionField',
 
     initialize: function(options) {
-        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
         this.type = 'rowaction';
     },
 

@@ -84,7 +84,7 @@
                 }
 
                 if (module.models.length > 0) {
-                    app.view.invokeParent(this, {type: 'view', name: 'massupdate', method: 'warnDelete'});
+                    this._super("warnDelete");
                 }
                 return message;
             }

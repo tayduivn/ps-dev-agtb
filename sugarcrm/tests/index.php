@@ -6,7 +6,7 @@
     <script type="text/javascript" src="../sidecar/lib/backbone/backbone.js"></script>
     <script type="text/javascript" src="../sidecar/lib/handlebars/handlebars.js"></script>
     <script type="text/javascript" src="../sidecar/lib/sugarapi/sugarapi.js"></script>
-    <script type="text/javascript" src="../sidecar/minified/sidecar.min.js"></script>
+    <script type="text/javascript" src="../sidecar/minified/sidecar.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/hbs-helpers.js"></script>
     <script type="text/javascript" src="../include/javascript/modernizr.js"></script>
     <script type="text/javascript" src="../include/javascript/nprogress/nprogress.js"></script>
@@ -23,6 +23,7 @@
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/GridBuilder.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/ListDisableSort.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/Editable.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/ListEditable.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/ToggleMoreLess.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/ListRemoveLinks.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/File.js"></script>

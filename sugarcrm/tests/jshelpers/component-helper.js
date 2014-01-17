@@ -38,10 +38,28 @@
     };
 
     test.createField = function(client, name, type, viewName, fieldDef, module, model, context, loadFromModule) {
-        if (loadFromModule) {
-            test.loadComponent(client, "field", type, module);
-        } else {
-            test.loadComponent(client, "field", type);
+        var loadJsFile = true;
+        //Handle a params object instead of a huge list of params
+        if (_.isObject(client)) {
+            name = client.name;
+            type = client.type;
+            viewName = client.viewName;
+            viewName = client.viewName;
+            fieldDef = client.fieldDef;
+            module = client.module;
+            model = client.model;
+            context = client.context;
+            loadFromModule = client.loadFromModule;
+            loadJsFile = client.loadJsFile || loadJsFile;
+            client = client.client || "base";
+        }
+
+        if(loadJsFile) {
+            if (loadFromModule) {
+                test.loadComponent(client, "field", type, module);
+            } else {
+                test.loadComponent(client, "field", type);
+            }
         }
 
         var view = new app.view.View({ name: viewName, context: context });

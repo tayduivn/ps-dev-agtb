@@ -66,7 +66,7 @@
     showNoData: false,
 
     initialize: function(options) {
-        app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
         this.dropdownFields = [];
 
         //Throttle the setPlaceholder function per instance of this field.
@@ -190,7 +190,7 @@
     },
 
     _render: function() {
-        app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: '_render'});
+        this._super("_render");
         this.setPlaceholder();
         this._updateCaret();
     },
@@ -303,7 +303,7 @@
         }
     },
     setDisabled: function(disable) {
-        app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: 'setDisabled', args: [disable]});
+        this._super("setDisabled", [disable]);
         disable = _.isUndefined(disable) ? true : disable;
         if (disable) {
             this.$(this.actionDropDownTag).addClass('disabled');
@@ -318,7 +318,7 @@
             field.off('show hide', this.setPlaceholder, this);
         }, this);
         this.dropdownFields = null;
-        app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: '_dispose'});
+        this._super("_dispose");
     },
 
     /**

@@ -121,7 +121,7 @@
 
                     //pre render field setup
                     if (fieldState !== 'detail') {
-                        if (fieldObject.extendsFrom !== 'ListeditableField' || fieldLayout !== 'list') {
+                        if (!fieldObject.plugins || !_.contains(fieldObject.plugins, "ListEditable") || fieldLayout !== 'list') {
                             fieldObject.setMode('edit');
                         } else {
                             fieldObject.setMode('list-edit');

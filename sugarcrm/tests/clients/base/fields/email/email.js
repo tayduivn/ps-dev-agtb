@@ -8,7 +8,6 @@ describe("Email field", function() {
         SugarTest.loadHandlebarsTemplate('email', 'field', 'base', 'edit');
         SugarTest.loadHandlebarsTemplate('email', 'field', 'base', 'edit-email-field');
         SugarTest.loadHandlebarsTemplate('email', 'field', 'base', 'detail');
-        SugarTest.loadComponent('base', 'field', 'listeditable');
         SugarTest.testMetadata.set();
 
         mock_addr =  [

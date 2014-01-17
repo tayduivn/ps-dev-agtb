@@ -38,7 +38,7 @@
      * Wait for the mass_collection to be set up so we can add listener
      */
     bindDataChange: function() {
-        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'bindDataChange'});
+        this._super("bindDataChange");
         this.on('mergeduplicates:complete', this.mergeComplete, this);
         this.context.on('change:mass_collection', this.addMassCollectionListener, this);
     },

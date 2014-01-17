@@ -67,7 +67,7 @@
             'click a[name="share"][data-event="true"]': 'share'
         });
 
-        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
         this._initShareTemplates();
 
         // FIXME this preference shouldn't be a string

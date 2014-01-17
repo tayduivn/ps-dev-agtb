@@ -29,6 +29,6 @@
 
     initialize: function(options) {
         app.bwc.login(false);
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', platform: 'portal', args:[options]});
+        this._super("initialize", [options]);
     }
 })

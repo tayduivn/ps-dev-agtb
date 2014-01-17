@@ -22,7 +22,7 @@
      */
     initialize: function(options) {
         this.tpModel = new Backbone.Model();
-        app.view.invokeParent(this, {type: 'view', name: 'view', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
         this.resetSelection(this.context.get("selectedTimePeriod"));
     },
     
