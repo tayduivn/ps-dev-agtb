@@ -77,7 +77,8 @@ $dictionary['Opportunity'] = array(
             'source' => 'non-db',
             'audited' => true,
             'dbType' => 'id',
-            'module' => 'Accounts'
+            'module' => 'Accounts',
+            'massupdate' => false,
         ),
         'campaign_id' => array(
             'name' => 'campaign_id',

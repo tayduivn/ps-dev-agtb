@@ -42,7 +42,7 @@ $dictionary['Tracker'] = array(
         'user_id'=>array(
             'name' => 'user_id',
             'vname' => 'LBL_USER_ID',
-			'type' => 'varchar',
+			'type' => 'id',
             'len' => '36',
             'isnull' => 'false',
         ),
@@ -56,7 +56,7 @@ $dictionary['Tracker'] = array(
         'item_id'=>array(
             'name' => 'item_id',
             'vname' => 'LBL_ITEM_ID',
-            'type' => 'varchar',
+            'type' => 'id',
             'len' => '36',
             'isnull' => 'false',
         ),
@@ -71,7 +71,7 @@ $dictionary['Tracker'] = array(
 		'team_id'=>array(
 			'name' => 'team_id',
 			'vname' => 'LBL_TEAM_ID',
-			'type' => 'varchar',
+			'type' => 'id',
 			'len' => '36',
 		),
 		//END SUGARCRM flav=pro ONLY

@@ -33,7 +33,7 @@ $dictionary['KBDocument'] = array(
   array (
     'name' => 'id',
     'vname' => 'LBL_ID',
-    'type' => 'varchar',
+    'type' => 'id',
     'len' => '36',
     'required'=>true,
     'reportable'=>true,
@@ -188,7 +188,7 @@ $dictionary['KBDocument'] = array(
   array (
     'name' => 'kbdocument_revision_id',
     'vname' => 'LBL_LATEST_REVISION',
-    'type' => 'varchar',
+    'type' => 'id',
     'len' => '36',
     'reportable'=>false,
   ),
@@ -300,7 +300,7 @@ $dictionary['KBDocument'] = array(
     'vname' => 'LBL_RELATED_DOCUMENT_ID',
     'reportable'=>false,
     'dbType' => 'id',
-    'type' => 'varchar',
+    'type' => 'id',
     'len' => '36',
   ),
   'related_doc_rev_id' =>
@@ -309,7 +309,7 @@ $dictionary['KBDocument'] = array(
     'vname' => 'LBL_RELATED_DOCUMENT_REVISION_ID',
     'reportable'=>false,
     'dbType' => 'id',
-    'type' => 'varchar',
+    'type' => 'id',
     'len' => '36',
   ),
   'is_template' =>

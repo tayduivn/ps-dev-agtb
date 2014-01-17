@@ -158,7 +158,7 @@ $dictionary['ProductCategory'] = array(
         array(
             'name' => 'assigned_user_id',
             'vname' => 'LBL_ASSIGNED_USER_NAME',
-            'type' => 'varchar',
+            'type' => 'id',
             'len' => '36',
             'comment' => 'The id of the user who owns the product category',
             'reportable' => true

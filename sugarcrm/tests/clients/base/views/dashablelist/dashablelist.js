@@ -34,6 +34,8 @@ describe('View.BaseDashablelistView', function() {
             module: moduleName,
             layout: layoutName
         });
+        context.parent = new Backbone.Model();
+        context.parent.set('module', moduleName);
         context.prepare();
 
         layout = app.view.createLayout({
@@ -41,8 +43,9 @@ describe('View.BaseDashablelistView', function() {
             context: context
         });
 
-        view = SugarTest.createView('base', moduleName, viewName, null, null, null, layout);
+        view = SugarTest.createView('base', moduleName, viewName, null, context, null, layout);
         view._availableModules = {Accounts: 'Accounts', Contacts: 'Contacts'};
+        view.moduleIsAvailable = true;
     });
 
     afterEach(function() {
@@ -125,16 +128,10 @@ describe('View.BaseDashablelistView', function() {
         });
 
         describe('setting default options', function() {
-            var firstAvailableModule;
-
-            beforeEach(function() {
-                firstAvailableModule = _.first(_.keys(view._availableModules));
-            });
-
             it('should default all undefined settings', function() {
                 sinon.collection.stub(app.lang, 'get').returnsArg(1);
                 view._initializeSettings();
-                expect(view.settings.get('module')).toBe(firstAvailableModule);
+                expect(view.settings.get('module')).toBe(moduleName);
                 expect(view.settings.get('label')).toBe('LBL_MODULE_NAME');
                 expect(view.settings.get('limit')).toBe(5);
                 expect(view.settings.get('intelligent')).toBe('0');
@@ -149,11 +146,32 @@ describe('View.BaseDashablelistView', function() {
                 expect(view.settings.get('module')).toBe(module);
             });
 
-            it('should change the module setting to the first available module when the module is unapproved',
+            it('should set the moduleIsAvailable to false when the module is unapproved',
                function() {
                    view.settings.set('module', 'Leads');
                    view._setDefaultModule();
-                   expect(view.settings.get('module')).toBe(firstAvailableModule);
+                   expect(view.moduleIsAvailable).toBeFalsy();
+               }
+            );
+
+            it('should use the view\'s module when the module is unapproved in config mode',
+               function() {
+                   view.meta.config = true;
+                   view.settings.set('module', 'Leads');
+                   view._setDefaultModule();
+                   expect(view.settings.get('module')).toEqual(moduleName);
+               }
+            );
+
+            it('should use the first available module when view\'s module is unapproved and' +
+                'a parent module is in a black list in config mode',
+               function() {
+                   view.meta.config = true;
+                   view.settings.set('module', 'Leads');
+                   view.context.parent.set('module', 'Home');
+                   view.moduleBlacklist.push('Home');
+                   view._setDefaultModule();
+                   expect(view.settings.get('module')).toEqual(_.first(_.keys(view._getAvailableModules())));
                }
             );
 
@@ -164,16 +182,6 @@ describe('View.BaseDashablelistView', function() {
                 view._setDefaultModule();
                 expect(view.settings.get('module')).toBe(module);
             });
-
-            it('should use the first available module when the module setting is undefined and no module is found on ' +
-               'the context',
-               function() {
-                   view.context.unset('module', {silent: true});
-                   view.settings.unset('module', {silent: true});
-                   view._setDefaultModule();
-                   expect(view.settings.get('module')).toBe(firstAvailableModule);
-               }
-            );
         });
     });
 

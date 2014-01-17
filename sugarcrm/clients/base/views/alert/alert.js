@@ -81,6 +81,8 @@
     /**
      * {@inheritDoc}
      * Render the custom alert view template.
+     *
+     * Binds `Esc` and `Return` keys for confirmation alerts.
      */
     render: function(options) {
         if (!this.triggerBefore('render')) {
@@ -93,6 +95,10 @@
         var template = this.getAlertTemplate(options.level, options.messages, options.title, this.templateOptions);
         this.$el.html(template);
         this.$el.after('<br>');
+
+        if (options.level === 'confirmation') {
+            this.bindCancelAndReturn();
+        }
 
         this.trigger('render');
     },
@@ -138,7 +144,7 @@
 
     /**
      * Fired when the close (x) is clicked
-     * @param event
+     * @param {Event} event
      */
     closeClicked: function(event) {
         if (_.isFunction(this.onClose)) {
@@ -258,8 +264,34 @@
      * Remove br tags after alerts which are needed to stack alerts vertically.
      */
     close: function() {
+        this.unbindCancelAndReturn();
         this.$el.next('br').remove();
         this._super('close');
+    },
+
+    /**
+     * Used by confirmation alerts so pressing `Esc` will Cancel, pressing
+     * `Return` will Confirm
+     */
+    bindCancelAndReturn: function() {
+        $(document).on('keydown.' + this.cid, _.bind(function(event) {
+            var keyReturn = 13, keyEsc = 27;
+            if (_.indexOf([keyReturn, keyEsc], event.which) > -1) {
+                event.preventDefault();
+                if (event.which === keyReturn) {
+                    this.$('[data-action=confirm]').click();
+                } else {
+                    this.$('[data-action=cancel]').click();
+                }
+            }
+        }, this));
+    },
+
+    /**
+     * Unbind keydown event
+     */
+    unbindCancelAndReturn: function() {
+        $(document).off('keydown.' + this.cid);
     },
 
     /**

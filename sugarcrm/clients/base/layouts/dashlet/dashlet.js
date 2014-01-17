@@ -74,6 +74,10 @@
                         type: 'dashlet-toolbar',
                         label: label,
                         toolbar: toolbar
+                    },
+                    context: {
+                        module: 'Home',
+                        skipFetch: true
                     }
                 });
             }
@@ -155,10 +159,6 @@
             this.$("[data-dashlet=toolbar]").append(comp.el);
         } else {
             //main dashlet component
-
-            if(comp.triggerBefore("render") === false) {
-                this.setInvisible();
-            }
             this.$("[data-dashlet=widget]").append(comp.el);
         }
     },

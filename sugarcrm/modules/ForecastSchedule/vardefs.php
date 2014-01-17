@@ -80,7 +80,7 @@ $dictionary['ForecastSchedule'] = array('table' => 'forecast_schedule',
   array (
     'name' => 'created_by',
     'vname' => 'LBL_FS_CREATED_BY',
-    'type' => 'varchar',
+    'type' => 'id',
     'len' => '36',
     'comment' => 'User name who created record',
   ),

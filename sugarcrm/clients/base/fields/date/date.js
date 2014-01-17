@@ -97,8 +97,10 @@
      * Set our internal time and date values so hbs picks up
      */
     _presetDateValues: function() {
-        this.dateValue = this.$('.datepicker').val();
-        this.dateValue = (this.dateValue) ? this.dateValue : '';
+        if (_.isEmpty(this.model.get(this.name))) {
+            this.$('.datepicker').val('');
+        }
+        this.dateValue = this.$('.datepicker').val() || '';
 
         // Only if object has a _setTimeValue
         if (!_.isUndefined(this._setTimeValue) && _.isFunction(this._setTimeValue)) {

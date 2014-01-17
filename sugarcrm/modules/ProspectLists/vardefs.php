@@ -169,7 +169,7 @@ $dictionary['ProspectList'] = array(
         'marketing_id'     => array(
             'name'   => 'marketing_id',
             'vname'  => 'LBL_MARKETING_ID',
-            'type'   => 'varchar',
+            'type'   => 'id',
             'len'    => '36',
             'source' => 'non-db',
         ),

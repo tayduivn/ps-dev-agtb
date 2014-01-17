@@ -1320,7 +1320,7 @@ abstract class UpgradeDriver
     	$this->state['script_count'][$stage] = count($scripts);
     	$this->to_version = $this->manifest['version'];
     	if(!empty($this->manifest['flavor'])) {
-    	    $this->to_flavor = $this->manifest['flavor'];
+    	    $this->to_flavor = strtolower($this->manifest['flavor']);
     	} else {
     	    $this->to_flavor = $this->from_flavor;
     	}
@@ -1358,7 +1358,7 @@ abstract class UpgradeDriver
      */
     protected function isFlavor($is, $flav)
     {
-        switch($flav) {
+        switch(strtolower($flav)) {
             case 'pro':
                 if($is == 'pro') {
                     return true;
@@ -1387,7 +1387,7 @@ abstract class UpgradeDriver
      */
     public function toFlavor($flav)
     {
-        return $this->isFlavor($this->to_flavor, $flav);
+        return $this->isFlavor(strtolower($this->to_flavor), strtolower($flav));
     }
 
     /**
@@ -1397,7 +1397,7 @@ abstract class UpgradeDriver
      */
     public function fromFlavor($flav)
     {
-        return $this->isFlavor($this->from_flavor, $flav);
+        return $this->isFlavor(strtolower($this->from_flavor), strtolower($flav));
     }
 
     /**

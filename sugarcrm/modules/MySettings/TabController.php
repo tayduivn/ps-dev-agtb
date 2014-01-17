@@ -81,6 +81,7 @@ function get_system_tabs(){
 	return $system_tabs_result;
 }
 
+//BEGIN SUGARCRM flav=ent ONLY
     /**
      * Retrieve the list of tabs for `Portal`
      */
@@ -95,6 +96,9 @@ function get_system_tabs(){
         $MySettings_tab = $administration->db->fetchByAssoc($row, false);
         if (!empty($MySettings_tab['value'])) {
             $modules = json_decode($MySettings_tab['value']);
+        } else {
+            $modules = self::getAllPortalTabs();
+            self::setPortalTabs($modules);
         }
         return $modules;
     }
@@ -109,6 +113,7 @@ function get_system_tabs(){
         $administration = BeanFactory::getBean('Administration');
         $administration->saveSetting('MySettings', 'tab', json_encode($modules), 'portal');
     }
+//END SUGARCRM flav=ent ONLY
 
 
 function get_tabs_system(){
@@ -311,4 +316,31 @@ function restore_system_tabs(){
 }
 
 
+//BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Gets the default list of `Portal` tabs.
+     *
+     * Retrieves all the `portal` modules that have list metadata, thus that can
+     * be displayed in Portal `navbar`. This method is only called to initialize
+     * the `MySettings_tab` setting. You can override this list by modifying
+     * this setting directly.
+     *
+     * @return array The list of modules that can be tabs in Portal.
+     */
+    public static function getAllPortalTabs()
+    {
+        require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
+        
+        $tabs = array('Home');
+
+        $browser = new SugarPortalBrowser();
+        $browser->loadModules();
+        foreach ($browser->modules as $moduleName => $sugarPortalModule) {
+            if (!empty($sugarPortalModule->views['list.php'])) {
+                $tabs[] = $moduleName;
+            }
+        }
+        return $tabs;
+    }
+//END SUGARCRM flav=ent ONLY
 }

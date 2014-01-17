@@ -32,7 +32,6 @@ if (!defined('sugarEntry') || !sugarEntry)
 
 require_once 'modules/ModuleBuilder/parsers/ModuleBuilderParser.php';
 require_once 'modules/Administration/Administration.php';
-require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
 require_once 'modules/MySettings/TabController.php';
 
 class ParserModifyPortalConfig extends ModuleBuilderParser
@@ -54,9 +53,6 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         // tabs) if not set.
         $tabController = new TabController();
         $tabs = $tabController->getPortalTabs();
-        if (empty($tabs)) {
-            $tabController->setPortalTabs($this->getAllPortalTabs());
-        }
 
         $portalFields = array('appStatus', 'defaultUser', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'maxSearchQueryResult');
         $portalConfig = array(
@@ -268,28 +264,4 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         }
         return $role;
     }
-
-    /**
-     * Retrieves all the `portal` modules that have list metadata, thus that can
-     * be displayed in Portal `navbar`. This method is only called to initialize
-     * the `MySettings_tab` setting. You can override this list by modifying
-     * this setting directly.
-     *
-     * @return array The list of modules that can be tabs in Portal
-     */
-    protected function getAllPortalTabs()
-    {
-        $tabs = array('Home');
-
-        $browser = new SugarPortalBrowser();
-        $browser->loadModules();
-        foreach ($browser->modules as $moduleName => $SugarPortalModule) {
-            if (!empty($SugarPortalModule->views['list.php'])) {
-                $tabs[] = $moduleName;
-            }
-        }
-        return $tabs;
-    }
 }
-
-?>

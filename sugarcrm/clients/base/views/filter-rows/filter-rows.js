@@ -202,7 +202,7 @@
     },
 
     /**
-     * Utility function to instanciate an enum field
+     * Utility function to instanciate any field of this form
      *
      * @param {Model} model
      * @param {Object} def
@@ -315,7 +315,7 @@
                     return _.isNumber(data.value[0]) && _.isNumber(data.value[1]);
                 }
                 if (data.operator === "$dateBetween") {
-                    return !_.isUndefined(data.value[0]) && !_.isUndefined(data.value[1]);
+                    return !_.isEmpty(data.value[0]) && !_.isEmpty(data.value[1]);
                 }
             } else {
                 return false;
@@ -517,6 +517,7 @@
                 break;
         }
         fieldDef.required = false;
+        fieldDef.readonly = false;
 
         // Create new model with the value set
         var model = app.data.createBean(moduleName);
@@ -636,12 +637,12 @@
             valueForFilter = [];
             _.each(field, function(field) {
                 var value = !field.disposed && field.model.has(field.name) ? field.model.get(field.name) : '';
-                value = $row.data('isDate') ? app.date.stripIsoTimeDelimterAndTZ(value) : value;
+                value = $row.data('isDate') ? (app.date.stripIsoTimeDelimterAndTZ(value) || '') : value;
                 valueForFilter.push(value);
             });
         } else {
             var value = !field.disposed && field.model.has(name) ? field.model.get(name) : '';
-            valueForFilter = $row.data('isDate') ? app.date.stripIsoTimeDelimterAndTZ(value) : value;
+            valueForFilter = $row.data('isDate') ? (app.date.stripIsoTimeDelimterAndTZ(value) || '') : value;
         }
         $row.data("value", valueForFilter); // Update filter value once we've calculated final value
     },
@@ -761,9 +762,18 @@
         var $rows = this.$('article.filter-body');
         _.each($rows, function(row) {
             var $row = $(row);
-            if ($row.data('valueField')) {
-                $row.data('valueField').model.clear();
+            var valueField = $row.data('valueField');
+
+            if (!valueField || valueField.disposed) {
+                return;
             }
+            if (!_.isArray(valueField)) {
+                valueField.model.clear();
+                return;
+            }
+            _.each(valueField, function(field) {
+                field.model.clear();
+            });
         });
     },
 

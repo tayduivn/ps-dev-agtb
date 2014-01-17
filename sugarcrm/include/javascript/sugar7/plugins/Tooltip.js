@@ -98,9 +98,15 @@
 
                     //hide tooltip when clicked
                     $tooltips.on('click.tooltip', function() {
-                        var tooltip = app.utils.tooltip.get(this);
+                        var element = this,
+                            tooltip = app.utils.tooltip.get(element);
+
                         if (tooltip && tooltip.options && tooltip.options.trigger.indexOf('click') === -1) {
-                            app.utils.tooltip.hide(this);
+                            // Need to defer because if not, the drawer does not open. The drawer is sensitive to
+                            // DOM changes while it is being opened.  Revisit once the drawer is refactored.
+                            _.defer(function() {
+                                app.utils.tooltip.hide(element);
+                            });
                         }
                     });
                     app.accessibility.run($tooltips, 'click');

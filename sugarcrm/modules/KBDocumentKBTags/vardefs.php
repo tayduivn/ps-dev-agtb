@@ -26,7 +26,7 @@ $dictionary['KBDocumentKBTag'] = array('table' => 'kbdocuments_kbtags'
   array (
     'name' => 'id',
     'vname' => 'LBL_KBDOCUMENTS_KBTAGS_ID',
-    'type' => 'varchar',
+    'type' => 'id',
     'len' => '36',
     'required'=>true,
     'reportable'=>false,
@@ -35,7 +35,7 @@ $dictionary['KBDocumentKBTag'] = array('table' => 'kbdocuments_kbtags'
   array (
     'name' => 'kbdocument_id',
     'vname' => 'LBL_KBDOCUMENT_ID',
-    'type' => 'varchar',
+    'type' => 'id',
     'len' => '36',
     'required'=>false,
     'reportable'=>false,
@@ -44,7 +44,7 @@ $dictionary['KBDocumentKBTag'] = array('table' => 'kbdocuments_kbtags'
   array (
     'name' => 'kbtag_id',
     'vname' => 'LBL_TAG_ID',
-    'type' => 'varchar',
+    'type' => 'id',
     'len' => '36',
     'required'=>false,
     'reportable'=>false,

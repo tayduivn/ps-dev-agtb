@@ -21,9 +21,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 $dictionary['meetings_leads'] = array ( 'table' => 'meetings_leads'
                                   , 'fields' => array (
-       array('name' =>'id', 'type' =>'varchar', 'len'=>'36')
-      , array('name' =>'meeting_id', 'type' =>'varchar', 'len'=>'36', )
-      , array('name' =>'lead_id', 'type' =>'varchar', 'len'=>'36', )
+       array('name' =>'id', 'type' =>'id', 'len'=>'36')
+      , array('name' =>'meeting_id', 'type' =>'id', 'len'=>'36', )
+      , array('name' =>'lead_id', 'type' =>'id', 'len'=>'36', )
       , array('name' =>'required', 'type' =>'varchar', 'len'=>'1', 'default'=>'1')
       , array('name' =>'accept_status', 'type' =>'varchar', 'len'=>'25', 'default'=>'none')
       , array ('name' => 'date_modified','type' => 'datetime')
