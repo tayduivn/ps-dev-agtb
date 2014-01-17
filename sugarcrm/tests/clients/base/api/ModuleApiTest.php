@@ -62,6 +62,11 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         // delete the bunch of accounts crated
         $GLOBALS['db']->query("DELETE FROM accounts WHERE assigned_user_id = '{$GLOBALS['current_user']->id}'");
+
+        SugarTestAccountUtilities::deleteM2MRelationships('contacts');
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestContactUtilities::removeAllCreatedContacts();
+
         SugarACL::resetACLs();
         parent::tearDown();
     }
@@ -144,6 +149,100 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $account->retrieve($result['id']);
         $this->assertAttributeNotEmpty('id',$account);
         $this->assertEquals("Test Account", $account->name);
+    }
+
+    public function testprocessAfterCreateOperations_afterSaveOperationSpecified_copiesRelationships()
+    {
+        $accountBean = SugarTestAccountUtilities::createAccount();
+        $contactBean = SugarTestContactUtilities::createContact();
+
+        $accountBean->load_relationship('contacts');
+        $accountBean->contacts->add($contactBean);
+
+        $newAccountBean = SugarTestAccountUtilities::createAccount();
+
+        $GLOBALS['dictionary']['Account']['after_create'] = array(
+            'copy_rel_from' => array(
+                'contacts',
+            )
+        );
+
+        $moduleApi = new ModuleApiTestMock();
+        $moduleApi->processAfterCreateOperationsMock(
+            array(
+                 'module' => 'Accounts',
+                 'after_create' => array(
+                     'copy_rel_from' => $accountBean->id
+                 )
+            ),
+            $newAccountBean
+        );
+
+        unset($GLOBALS['dictionary']['Account']['after_create']);
+
+        $newAccountBean->load_relationship('contacts');
+        $newAccountBean->contacts->getBeans();
+
+        $this->assertEquals(1, count($newAccountBean->contacts->beans));
+    }
+
+    public function testprocessAfterCreateOperations_copyRelFromVarDefNotSpecified_doesNotCopyRelationships()
+    {
+        $accountBean = SugarTestAccountUtilities::createAccount();
+        $contactBean = SugarTestContactUtilities::createContact();
+
+        $accountBean->load_relationship('contacts');
+        $accountBean->contacts->add($contactBean);
+
+        $newAccountBean = SugarTestAccountUtilities::createAccount();
+
+        $moduleApi = new ModuleApiTestMock();
+        $moduleApi->processAfterCreateOperationsMock(
+            array(
+                 'module' => 'Accounts',
+                 'after_create' => array(
+                     'copy_rel_from' => $accountBean->id
+                 )
+            ),
+            $newAccountBean
+        );
+
+        $newAccountBean->load_relationship('contacts');
+        $newAccountBean->contacts->getBeans();
+
+        $this->assertEquals(0, count($newAccountBean->contacts->beans));
+    }
+
+    public function testprocessAfterCreateOperations_copyRelFromUrlParameterNotSpecified_doesNotCopyRelationships()
+    {
+        $accountBean = SugarTestAccountUtilities::createAccount();
+        $contactBean = SugarTestContactUtilities::createContact();
+
+        $accountBean->load_relationship('contacts');
+        $accountBean->contacts->add($contactBean);
+
+        $newAccountBean = SugarTestAccountUtilities::createAccount();
+
+        $GLOBALS['dictionary']['Account']['after_create'] = array(
+            'copy_rel_from' => array(
+                'contacts',
+            )
+        );
+
+        $moduleApi = new ModuleApiTestMock();
+        $moduleApi->processAfterCreateOperationsMock(
+            array(
+                 'module' => 'Accounts',
+            ),
+            $newAccountBean
+        );
+
+        unset($GLOBALS['dictionary']['Account']['after_create']);
+
+        $newAccountBean->load_relationship('contacts');
+        $newAccountBean->contacts->getBeans();
+
+        $this->assertEquals(0, count($newAccountBean->contacts->beans));
     }
 
     public function testUpdate()
@@ -229,5 +328,13 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($result);
         $this->assertArrayHasKey("id", $result);
         $this->assertArrayNotHasKey("name", $result);
+    }
+}
+
+class ModuleApiTestMock extends ModuleApi
+{
+    public function processAfterCreateOperationsMock($args, SugarBean $bean)
+    {
+        $this->processAfterCreateOperations($args, $bean);
     }
 }

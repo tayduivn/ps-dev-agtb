@@ -404,9 +404,25 @@
             },
             lastSaveAction: this.context.lastSaveAction
         };
+        this.applyAfterCreateOptions(options);
 
         options = _.extend({}, options, self.getCustomSaveOptions(options));
         self.model.save(null, options);
+    },
+
+    /**
+     * Apply after_create parameters to the URL to specify operations to execute after creating a record.
+     * @param options
+     */
+    applyAfterCreateOptions: function(options) {
+        var copiedFromModelId = this.context.get('copiedFromModelId');
+
+        if (copiedFromModelId && this.model.isCopy()) {
+            options.params = options.params || {};
+            options.params.after_create = {
+                copy_rel_from: copiedFromModelId
+            };
+        }
     },
 
     /**

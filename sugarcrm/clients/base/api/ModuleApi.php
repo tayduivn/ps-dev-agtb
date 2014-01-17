@@ -177,6 +177,8 @@ class ModuleApi extends SugarApi {
 
         $args['record'] = $id;
 
+        $this->processAfterCreateOperations($args, $bean);
+
         return $this->getLoadedAndFormattedBean($api, $args, $bean);
     }
 
@@ -303,5 +305,40 @@ class ModuleApi extends SugarApi {
         }
         
         return $data;
+    }
+
+    /**
+     * Process all after create operations:
+     * copy_rel_from - Copies relationships from a specified record. The relationship that should be copied is specified
+     *                 in the vardef.
+     *
+     * @param $args
+     * @param SugarBean $bean
+     */
+    protected function processAfterCreateOperations($args, SugarBean $bean) {
+        $this->requireArgs($args, array('module'));
+
+        global $dictionary;
+        $afterCreateKey = 'after_create';
+        $copyRelationshipsFromKey = 'copy_rel_from';
+        $module = $args['module'];
+        $objectName = BeanFactory::getObjectName($module);
+
+        if (array_key_exists($afterCreateKey, $args)
+            && array_key_exists($copyRelationshipsFromKey, $args[$afterCreateKey])
+            && array_key_exists($afterCreateKey, $dictionary[$objectName])
+            && array_key_exists($copyRelationshipsFromKey, $dictionary[$objectName][$afterCreateKey])
+        ) {
+            $relationshipsToCopy = $dictionary[$objectName][$afterCreateKey][$copyRelationshipsFromKey];
+            $beanCopiedFrom = BeanFactory::getBean($module, $args[$afterCreateKey][$copyRelationshipsFromKey]);
+
+            foreach ($relationshipsToCopy as $linkName) {
+                $bean->load_relationship($linkName);
+                $beanCopiedFrom->load_relationship($linkName);
+
+                $beanCopiedFrom->$linkName->getBeans();
+                $bean->$linkName->add($beanCopiedFrom->$linkName->beans);
+            }
+        }
     }
 }
