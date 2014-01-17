@@ -174,6 +174,11 @@ class OpportunitiesApi extends ListApi
             // If the current record is the only one of the current industry, load *all* the accounts.
             $beanList = $seed->get_full_list();
         }
+
+        if (!is_array($beanList)) {
+            $beanList = array();
+        }
+
         foreach($beanList as $bean) {
             if($bean->id == $account->id) {
                 continue;
