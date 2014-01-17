@@ -50,7 +50,9 @@ class tracker_queries_monitor extends Monitor implements Trackable {
      * 
      */
     public function save($flush=true) {
-
+        if (empty($this->date_modified)) {
+            $this->date_modified = $GLOBALS['timedate']->nowDb();
+        }
         $this->cached_data[] = $this->toArray();
 
     	if($flush && empty($GLOBALS['tracker_' . $this->table_name]) && !empty($this->cached_data)) {
