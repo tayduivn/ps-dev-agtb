@@ -473,17 +473,13 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 }
 			}
 		},
-		handleFieldEditToggling: function() {
+        handleFieldEditToggling: function() {
             // Handle calculated field check box controlling
             var calculatedCheckbox = Dom.get('calculated');
-            if (calculatedCheckbox) {
-            	var disableCalcRelateElems = "";
-            	if (calculatedCheckbox.checked) {
-            		disableCalcRelateElems = true;
-            	}
-            	ModuleBuilder.disableCalculatedControlledElems(disableCalcRelateElems);
+            if (calculatedCheckbox && calculatedCheckbox.checked) {
+                ModuleBuilder.disableCalculatedControlledElems(true);
             }
-		},
+        },
         copyFromView: function(module, layout){
             var url = ModuleBuilder.contentURL;
             ModuleBuilder.getContent(url+"&copyFromEditView=true");

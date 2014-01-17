@@ -34,53 +34,51 @@
                     status = null,
                     module = this.getMassUpdateModel(this.module);
 
-                if (app.metadata.getModule("Forecasts", "config").is_setup == 1) {
-                    sales_stage_won = app.metadata.getModule("Forecasts", "config").sales_stage_won;
-                    sales_stage_lost = app.metadata.getModule("Forecasts", "config").sales_stage_lost;
+                sales_stage_won = app.metadata.getModule("Forecasts", "config").sales_stage_won;
+                sales_stage_lost = app.metadata.getModule("Forecasts", "config").sales_stage_lost;
 
-                    closedModels = _.filter(module.models, function(model) {
-                        status = null;
-                        //BEGIN SUGARCRM flav=ent ONLY
-                        //ENT allows sales_status, so we need to check to see if this module has it and use it
-                        status = model.get("sales_status");
-                        
-                        //grab the closed RLI count (when on opps)
-                        closed_RLI_count = model.get("closed_revenue_line_items");
-                        if (_.isNull(closed_RLI_count)) {
-                            closed_RLI_count = 0;
-                        }
-                        
-                        //END SUGARCRM flav=ent ONLY
-                        if (_.isEmpty(status)) {
-                            status = model.get("sales_stage");
-                        }
-                        
-                        if (_.contains(sales_stage_won, status) || _.contains(sales_stage_lost, status)) {
-                            message = app.lang.getAppString("WARNING_NO_DELETE_SELECTED");
-                            return true;
-                        }
+                closedModels = _.filter(module.models, function(model) {
+                    status = null;
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    //ENT allows sales_status, so we need to check to see if this module has it and use it
+                    status = model.get("sales_status");
 
-                        if (closed_RLI_count > 0) {
-                            message = app.lang.get("WARNING_NO_DELETE_CLOSED_SELECTED", "Opportunities");
-                            return true;
-                        }
-
-                        return false;
-                    });
-
-                    if (closedModels.length > 0) {
-                       module.remove(closedModels);
-                       this.context.set('mass_collection', module);
-                        //uncheck items
-                        _.each(closedModels, function(item){
-                            var id = item.module + "_" + item.id;
-                            $("[name='" + id + "'] input").attr("checked", false);
-                        });
-                        app.alert.show('delete_warning', {
-                            level: 'warning',
-                            messages: message
-                        });
+                    //grab the closed RLI count (when on opps)
+                    closed_RLI_count = model.get("closed_revenue_line_items");
+                    if (_.isNull(closed_RLI_count)) {
+                        closed_RLI_count = 0;
                     }
+
+                    //END SUGARCRM flav=ent ONLY
+                    if (_.isEmpty(status)) {
+                        status = model.get("sales_stage");
+                    }
+
+                    if (_.contains(sales_stage_won, status) || _.contains(sales_stage_lost, status)) {
+                        message = app.lang.getAppString("WARNING_NO_DELETE_SELECTED");
+                        return true;
+                    }
+
+                    if (closed_RLI_count > 0) {
+                        message = app.lang.get("WARNING_NO_DELETE_CLOSED_SELECTED", "Opportunities");
+                        return true;
+                    }
+
+                    return false;
+                });
+
+                if (closedModels.length > 0) {
+                   module.remove(closedModels);
+                   this.context.set('mass_collection', module);
+                    //uncheck items
+                    _.each(closedModels, function(item){
+                        var id = item.module + "_" + item.id;
+                        $("[name='" + id + "'] input").attr("checked", false);
+                    });
+                    app.alert.show('delete_warning', {
+                        level: 'warning',
+                        messages: message
+                    });
                 }
 
                 if (module.models.length > 0) {

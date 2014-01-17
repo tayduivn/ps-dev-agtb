@@ -28,7 +28,8 @@ class SugarUpgradeRevenueLineItemMakeVisible extends UpgradeScript
         $this->log('Adding Revenue Line Items to Tabs');
         $sql = "SELECT value FROM config " .
                "WHERE category = 'MySettings' " .
-                    "AND name = 'Tab'";
+                    "AND name = 'Tab' " .
+                    "AND (platform = 'base' OR platform IS NULL);";
         $results = $this->db->query($sql);
         
         while ($row = $this->db->fetchRow($results)) {
@@ -38,7 +39,8 @@ class SugarUpgradeRevenueLineItemMakeVisible extends UpgradeScript
                 $sql = "UPDATE config " .
                        "SET value = '" . base64_encode(serialize($tabArray)) . "' " .
                        "WHERE category = 'MySettings' " .
-                            "AND name = 'Tab'";
+                            "AND name = 'Tab' " .
+                            "AND (platform = 'base' OR platform IS NULL);";
                 $this->db->query($sql);
             }
         }

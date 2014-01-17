@@ -31,16 +31,16 @@ describe("datetimecombo field", function() {
     });
 
     describe("datetimecombo core", function() {
-        var datepickerStub, jqFn, expectedValValue;
+        var datepickerStub, jqFn, expectedValValue, valStub;
 
         // Essentially, the following stubs out this.$('doesnt_matter').<val & datepicker>
         beforeEach(function(){
             datepickerStub = sinon.stub();
+
+            valStub = sinon.stub().returns('arbitrary_value');
             jqFn = sinon.stub(field, '$', function() {
                 return {
-                    'val': function() {
-                        return 'arbitrary_value';
-                    },
+                    'val': valStub,
                     'datepicker': datepickerStub
                 };
             });
@@ -57,6 +57,20 @@ describe("datetimecombo field", function() {
             expect(field.dateValue).toEqual(expectedValValue);
             expect(field.timeValue).toEqual(expectedValValue);
         });
+
+        it('should reset date and time pickers because model attribute is empty', function() {
+            valStub.reset();
+
+            expect(field.model.get(field.name)).toBeUndefined();
+            field._presetDateValues();
+            expect(valStub.firstCall.args[0]).toEqual('');
+            expect(valStub.thirdCall.args[0]).toEqual('');
+            valStub.reset();
+
+            field.model.set(field.name, expectedValValue, {silent: true});
+            expect(valStub).not.toHaveBeenCalledWith('');
+        });
+
         it("should parse datetime from field if leaveDirty and this.dateValue not set", function() {
             var stub, returnedValue;
             field.leaveDirty = true;

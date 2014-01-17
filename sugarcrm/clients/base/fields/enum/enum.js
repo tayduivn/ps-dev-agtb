@@ -51,7 +51,9 @@
             $el.on('keydown.record', {field: this}, callback);
             var plugin = $el.data('select2');
             if (plugin) {
-                plugin.focusser.on('keydown.record', {field: this}, callback);
+                if (plugin.focusser) {
+                    plugin.focusser.on('keydown.record', {field: this}, callback);
+                }
                 plugin.search.on('keydown.record', {field: this}, callback);
             }
         }

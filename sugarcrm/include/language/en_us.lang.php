@@ -2894,6 +2894,7 @@ $app_strings = array (
     'LBL_SELECT_TEAMS_LABEL' => 'Add Team(s)',
     'LBL_SELECT_TEAMS_TITLE' => 'Add Teams(s)',
     'LBL_SELECT_APPEND_TEAMS' => 'Append Team(s)',
+    'LBL_SELECT_APPEND_VALUES' => 'Append value(s)',
     'LBL_BROWSE_DOCUMENTS_BUTTON_KEY' => 'B',
     'LBL_BROWSE_DOCUMENTS_BUTTON_LABEL' => 'Browse Documents',
     'LBL_BROWSE_DOCUMENTS_BUTTON_TITLE' => 'Browse Documents',
@@ -3257,6 +3258,8 @@ $app_strings = array (
 
     'LBL_DASHLET_LISTVIEW_NAME' => 'List View',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Lists records from a particular module according to criteria you define.',
+    'LBL_DASHLET_MODULE_UNAVAILABLE' => 'Data not available. You do not have permission to access this module.' .
+        " \nPlease update or remove this dashlet.",
     'TPL_DASHLET_MY_MODULE' => 'My {{module}}',
 
     'LBL_DASHLET_NEWS_NAME' => 'News',

@@ -52,6 +52,8 @@ class TemplateEnum extends TemplateText{
     function populateFromPost ()
     {
     	parent::populateFromPost();
+        // Handle empty massupdate checkboxes
+        $this->massupdate = !empty($_REQUEST['massupdate']);
         if (!empty($this->visibility_grid) && is_string($this->visibility_grid))
         {
             $this->visibility_grid = json_decode(html_entity_decode($this->visibility_grid), true);

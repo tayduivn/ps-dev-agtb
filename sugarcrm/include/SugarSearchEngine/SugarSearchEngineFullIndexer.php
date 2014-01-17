@@ -324,20 +324,6 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
             $this->schedulerJob->postponeJob('FTS failed to index', self::POSTPONE_JOB_TIME);
             return true;
         }
-        $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
-
-        $messagePacket = unserialize(from_html($this->schedulerJob->message));
-        if($messagePacket === FALSE)
-            $messagePacket = array('count' => 0, 'time' => 0);
-
-        $messagePacket['count'] += $count;
-        $messagePacket['time'] += $totalTime;
-
-        //Keep track of how many we've done
-        $this->schedulerJob->message = serialize($messagePacket);
-
-        $avgRecs = ($count != 0 && $totalTime != 0) ? number_format(round(($count / $totalTime), 2), 2) : 0;
-        $GLOBALS['log']->info("FTS Consumer {$this->schedulerJob->name} processed {$count} record(s) in $totalTime (s), records per sec: $avgRecs");
 
         //If no items were processed we've exhausted the list and can therefore succeed job.
         if( $count == 0)
@@ -352,14 +338,11 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
 
         if(self::isFTSIndexScheduleCompleted())
         {
-            $stats = self::getStatistics();
             // indexing completed, set flag to 1
             $settings = Administration::getSettings('proxy');
             if (empty($settings->settings['info_fts_index_done'])) {
                 $settings->saveSetting('info', 'fts_index_done', 1);
             }
-
-            $GLOBALS['log']->info("FTS Indexing completed with the following statistics: " . var_export($stats, TRUE));
         }
 
         return TRUE;

@@ -1161,49 +1161,24 @@ protected function checkQuery($sql, $object_name = false)
      * @return bool   true if they match, false if they don't
      */
 	public function compareVarDefs($fielddef1, $fielddef2, $ignoreName = false)
-    {
-        //Check original defs for changes
-        foreach($fielddef1 as $key => $value) {
-            if ($key == 'name' && ( strtolower($fielddef1[$key]) == strtolower($fielddef2[$key]) || $ignoreName)) {
-                continue;
-            }
-                
-            if (isset($fielddef2[$key]) && $fielddef1[$key] == $fielddef2[$key]) {
-                continue;
-            }
-           
-            //Ignore len if its not set in the vardef
-            if ($key == 'len' && empty($fielddef2[$key])) {
-                continue;
-            }
-                
+	{
+		foreach ( $fielddef1 as $key => $value ) {
+			if ( $key == 'name' && ( strtolower($fielddef1[$key]) == strtolower($fielddef2[$key]) || $ignoreName) )
+				continue;
+			if ( isset($fielddef2[$key]) && $fielddef1[$key] == $fielddef2[$key] )
+				continue;
+			//Ignore len if its not set in the vardef
+			if ($key == 'len' && empty($fielddef2[$key]))
+				continue;
             // if the length in db is greather than the vardef, ignore it
             if ($key == 'len' && ($fielddef1[$key] >= $fielddef2[$key])) {
                 continue;
             }
-            
-            return false;
-        }
-        
-        //Check new defs for default additions. We must cast to bool here
-        //becuase of the inconsistency of 'default' => 0/1 vs 'default' => true/false in the vardefs
-        //A mismatch will cause the field to be rebuilt every time.
-        if (isset($fielddef2['default'])) {
-            if(!isset($fielddef1['default'])) {
-                return false;
-            }
-            
-            if($fielddef2['type'] == 'bool') {
-                if(isTruthy($fielddef1['default']) != isTruthy($fielddef2['default'])) {
-                    return false;
-                }
-            } else if($fielddef1['default'] != $fielddef2['default']) {
-                return false;
-            }
-        }
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
 	/**
 	 * Compare a field in two tables
@@ -2744,17 +2719,16 @@ protected function checkQuery($sql, $object_name = false)
         $default = '';
 
         // Bug #52610 We should have ability don't add DEFAULT part to query for boolean fields
-        if (!empty($fieldDef['no_default'])) {
+        if (!empty($fieldDef['no_default']))
+        {
             // nothing to do
-        } elseif (isset($fieldDef['default']) && $type != 'bool' && strlen($fieldDef['default']) > 0) {
+        }
+        elseif (isset($fieldDef['default']) && strlen($fieldDef['default']) > 0)
+        {
             $default = " DEFAULT ".$this->quoted($fieldDef['default']);
-        } elseif (isset($fieldDef['default']) && $type == 'bool') {
-            if(isTruthy($fieldDef['default'])) {
-                $default = " DEFAULT 1";
-            } else {
-                $default = " DEFAULT 0";
-            }            
-        } elseif (!isset($default) && $type == 'bool') {
+        }
+        elseif (!isset($default) && $type == 'bool')
+        {
             $default = " DEFAULT 0 ";
         }
 
