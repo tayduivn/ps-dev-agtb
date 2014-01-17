@@ -50,7 +50,8 @@
     hasUnsavedChanges: function() {
         var bwcWindow = this.$el.get(0).contentWindow;
         //if bwcModel is empty, then it should return false (since it's not in enabled actions)
-        if (_.isEmpty(this.bwcModel.attributes)) {
+        // or we couldnt find a edit view to compare or the view doesn't want to be compared
+        if (_.isEmpty(this.bwcModel.attributes) || _.isUndefined(bwcWindow.EditView) || $(bwcWindow.EditView).data('disablebwchaschanged')) {
             return false;
         }
         var newAttributes = this.serializeObject(bwcWindow.EditView);

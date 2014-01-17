@@ -79,8 +79,7 @@ var resources = new Array();
 <table width="100%" cellpadding="0" cellspacing="0" border="0" >
 <tr>
 <td>
-
-<form name="EditView" id="EditView" method="post" action="index.php">
+<form name="EditView" id="EditView" method="post" action="index.php" data-disablebwchaschanged="true">
 <input type="hidden" name="module" value="Project" />
 <input type="hidden" name="record" value="{$ID}" />
 <input type="hidden" name="team_id" value="{$TEAM}" />
