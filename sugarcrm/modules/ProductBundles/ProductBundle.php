@@ -227,12 +227,14 @@ class ProductBundle extends SugarBean {
 	{
 		$query = "delete from $this->rel_products where (bundle_id='$bundle_id') and deleted=0";
 		$this->db->query($query,true,"Error clearing product bundle to product relationship: ");
+        return true;
 	}
 
 	function clear_product_productbundle_relationship($product_id)
 	{
 		$query = "delete from $this->rel_products where (product_id='$product_id') and deleted=0";
 		$this->db->query($query,true,"Error clearing product to product bundle relationship: ");
+        return true;
 	}
 
 	function retrieve_productbundle_from_product($product_id){
@@ -262,6 +264,7 @@ class ProductBundle extends SugarBean {
 		$query = "insert into $this->rel_products (id,product_index,product_id,bundle_id, date_modified) VALUES ('".create_guid()."','$product_index', '$product_id', '$bundle_id', ".db_convert("'".TimeDate::getInstance()->nowDb()."'", 'datetime').")";
 		$this->db->query($query,true,"Error setting product to product bundle relationship: "."<BR>$query");
 		$GLOBALS['log']->debug("Setting product to product bundle relationship for $product_id and $bundle_id");
+        return true;
 	}
 
     function set_product_bundle_note_relationship($note_index, $note_id, $bundle_id='')
@@ -274,6 +277,7 @@ class ProductBundle extends SugarBean {
 
     	$this->db->query($query, true, "Error setting note to product to product bundle relationship: "."<BR>$query");
     	$GLOBALS['log']->debug("Setting note to product to product bundle relationship for bundle_id: $bundle_id, note_index: $note_index, and note_id: $note_id");
+        return true;
     }
 
     function clear_product_bundle_note_relationship($bundle_id='')
@@ -281,17 +285,20 @@ class ProductBundle extends SugarBean {
     	$query = "DELETE FROM $this->rel_notes WHERE (bundle_id='$bundle_id') AND deleted=0";
 
     	$this->db->query($query, true, "Error clearing note to product to product bundle relationship");
+        return true;
     }
 	function clear_productbundle_quote_relationship($bundle_id)
 	{
 		$query = "delete from $this->rel_quotes where (bundle_id='$bundle_id') and deleted=0";
 		$this->db->query($query,true,"Error clearing product bundle to quote relationship: ");
+        return true;
 	}
 
 	function clear_quote_productbundle_relationship($quote_id)
 	{
 		$query = "delete from $this->rel_quotes where (quote_id='$quote_id') and deleted=0";
 		$this->db->query($query,true,"Error clearing quote to product bundle relationship: ");
+        return true;
 	}
 
     function set_productbundle_quote_relationship($quote_id, $bundle_id, $bundle_index = '0')
@@ -302,6 +309,7 @@ class ProductBundle extends SugarBean {
 		$query = "insert into $this->rel_quotes (id,quote_id,bundle_id,bundle_index, date_modified) values (" . $this->db->quoted(create_guid()) . ", " . $this->db->quoted($quote_id) . ", " . $this->db->quoted($bundle_id) . ", " . $this->db->quoted($bundle_index) . ", " . $this->db->convert($this->db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ")";
         $this->db->query($query,true,"Error setting quote to product bundle relationship: "."<BR>$query");
 		$GLOBALS['log']->debug("Setting quote to product bundle relationship for $quote_id and $bundle_id");
+        return true;
 	}
 
 
