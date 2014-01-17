@@ -727,7 +727,8 @@ $dictionary['Product'] = array(
             'name' => 'opportunity_id',
             'type' => 'id',
             'vname' => 'LBL_OPPORTUNITY_ID',
-            'required' => true,
+            'required' => false,
+            'isnull' => true,
             'reportable' => false,
             'comment' => 'The opportunity id for the line item entry'
         ),
