@@ -121,7 +121,7 @@ class MassUpdateApi extends SugarApi {
         }
 
         if(isset($mu_params['team_name'])) {
-            if(isset($mu_params['team_name_type']) && $mu_params['team_name_type'] == "1") {
+            if(isset($mu_params['team_name_type']) && $mu_params['team_name_type'] === '1') {
                 $mu_params['team_name_type'] = "add";
             } else {
                 $mu_params['team_name_type'] = "replace";

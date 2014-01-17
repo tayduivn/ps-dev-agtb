@@ -686,7 +686,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 
     public function apiMassUpdate(SugarBean $bean, array $params, $fieldName, $properties) {
         // Check if we are replacing, if so, just use the normal save
-        if (!isset($params[$fieldName.'_type']) || $params[$fieldName.'_type'] !== '1') {
+        if (isset($params[$fieldName.'_type']) && $params[$fieldName.'_type'] === 'replace') {
             return $this->apiSave($bean, $params, $fieldName, $properties);
         }
 
