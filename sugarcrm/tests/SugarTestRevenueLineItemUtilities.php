@@ -71,10 +71,14 @@ class SugarTestRevenueLineItemUtilities
     public static function removeAllCreatedRevenueLineItems() 
     {
         $db = DBManagerFactory::getInstance();
-        $rli_ids = self::getCreatedRevenueLineItemIds();
-        $db->query("DELETE FROM revenue_line_items WHERE id IN ('" . implode("', '", $rli_ids) . "')");
-        $db->query("DELETE FROM revenue_line_items_audit WHERE parent_id IN ('" . implode("', '", $rli_ids) . "')");
-        $db->query("DELETE FROM forecast_worksheets WHERE parent_type = 'RevenueLineItems' and parent_id IN ('" . implode("', '", $rli_ids) . "')");
+        $conditions = implode(',', array_map(array($db, 'quoted'), self::getCreatedRevenueLineItemIds()));
+        if (!empty($conditions)) {
+            $db->query('DELETE FROM revenue_line_items WHERE id IN (' . $conditions . ')');
+            $db->query('DELETE FROM revenue_line_items_audit WHERE parent_id IN (' . $conditions . ')');
+            $db->query('DELETE FROM forecast_worksheets WHERE parent_type = ' . $db->quoted('RevenueLineItems') . ' and parent_id IN (' . $conditions . ')');    
+        }
+
+        self::$_createdRlis = array();
     }
         
     public static function getCreatedRevenueLineItemIds() 
