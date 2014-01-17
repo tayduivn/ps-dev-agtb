@@ -456,8 +456,19 @@ hr.soften {
   width: 100%;
 }
 
-#languageList ul li {
-  letter-spacing: normal;
+
+#languageList {
+  .dropdown-menu {
+    overflow-x: hidden;
+    overflow-y: auto;
+    top: auto;
+    right: 0;
+    bottom: 34px;
+    left: auto;
+  }
+  ul li {
+    letter-spacing: normal;
+  }
 }
 
 html:not(.touch) footer #mobile {

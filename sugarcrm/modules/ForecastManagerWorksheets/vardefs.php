@@ -92,7 +92,7 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'name' => 'draft',
             'vname' => 'LBL_DRAFT',
             'type' => 'bool',
-            'default' => false,
+            'default' => 0,
         ),
         'is_manager' =>
         array(
@@ -149,7 +149,7 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'vname' => 'LBL_MANGER_SAVED',
             'type' => 'bool',
             'studio' => false,
-            'default' => false,
+            'default' => 0,
             'comments' => 'Once this is set to true, the rollovers will no longer happen'
         ),
         'show_history_log' =>

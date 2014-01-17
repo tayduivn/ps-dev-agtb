@@ -89,5 +89,11 @@ function get_field_def(){
 		}
 		return $def;
 	}
+    
+    function populateFromPost(){
+        parent::populateFromPost();
+        // Handle empty massupdate checkboxes
+        $this->massupdate = !empty($_REQUEST['massupdate']);
+    }
 }
 ?>

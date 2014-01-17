@@ -64,6 +64,7 @@ class CurrentUserApi extends SugarApi
                 'method' => 'updateCurrentUser',
                 'shortHelp' => 'Updates current user',
                 'longHelp' => 'include/api/help/me_put_help.html',
+                'ignoreMetaHash' => true,
             ),
             'updatePassword' =>  array(
                 'reqType' => 'PUT',

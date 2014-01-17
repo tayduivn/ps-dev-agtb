@@ -186,8 +186,8 @@ class LanguageManager
 		$lang_paths = array(
 					'modules/'.$module.'/language/'.$lang.'.lang.php',
 					'modules/'.$module.'/language/'.$lang.'.lang.override.php',
-					'custom/modules/'.$module.'/Ext/Language/'.$lang.'.lang.ext.php',
 					'custom/modules/'.$module.'/language/'.$lang.'.lang.php',
+					'custom/modules/'.$module.'/Ext/Language/'.$lang.'.lang.ext.php',
 				 );
 
         $object = BeanFactory::getObjectName($module);

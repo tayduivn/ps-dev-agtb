@@ -124,6 +124,8 @@ class TemplateDatetimecombo extends TemplateRange
 	
     function populateFromPost(){
     	parent::populateFromPost();
+        // Handle empty massupdate checkboxes
+        $this->massupdate = !empty($_REQUEST['massupdate']);
     	if(!empty($_REQUEST['defaultDate']) && !empty($_REQUEST['defaultTime'])){
     		$_REQUEST['default'] = $_REQUEST['defaultDate'].'&'.$_REQUEST['defaultTime'];
 
