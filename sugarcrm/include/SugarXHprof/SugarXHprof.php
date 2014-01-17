@@ -43,9 +43,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * 'start' method registers 'end' method as shutdown function because of it call of 'end' method is unnecessary if you want profile all calls
  * Also 'start' method is called automatically in entryPoint.php file
  *
- * Names of generated files are prefix.microtime.module.action for modules and prefix.microtime.'entryPoint'.entryPoint for entry points
- * If you want to see reports you should install https://github.com/facebook/xhprof to some directory and run it as http://your.domain/path2xhprof/xhprof_html/?run=prefix.microtime&source=module.action
- * For 507bf986e44d9.1350302086.9285.Leads.listview.xhprof file url will be look like http://your.domain/path2xhprof/xhprof_html/?run=507bf986e44d9.1350302086.9285&source=Leads.listview
+ * Names of generated files are:
+ * --> prefix.microtime-module-action (for modules)
+ * --> prefix.microtime-'entryPoint'-entryPoint (for entry points)
+ *
+ * If you want to see reports you should install https://github.com/facebook/xhprof to some directory and run it as
+ * http://your.domain/path2xhprof/xhprof_html/?run=prefix&source=microtime-module-action
+ *
+ * For 507bf986e44d9.1350302086-9285-Leads-listview.xhprof file url will be look like
+ * http://your.domain/path2xhprof/xhprof_html/?run=507bf986e44d9&source=1350302086-9285-Leads-listview
  *
  * If you want to customize SugarXHprof you should create file in custom/include/SugarXHprof/ folder and name file as name of your custom class
  * Change $sugar_config['xhprof_config']['manager'] to be name of your custom class
@@ -301,7 +307,7 @@ class SugarXHprof
         }
 
         $data = xhprof_disable();
-        $namespace = microtime(1) . self::detectAction();
+        $namespace = str_replace('.', '-', microtime(1) . self::detectAction());
 
         require_once 'include/SugarXHprof/xhprof_lib/utils/xhprof_runs.php';
         $xhprof_runs = new XHProfRuns_Default(self::$log_to);
