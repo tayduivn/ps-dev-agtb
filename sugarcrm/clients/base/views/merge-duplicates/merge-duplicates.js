@@ -466,6 +466,9 @@
     /**
      * Create metadata for panels.
      *
+     * The fields are sorted by difference of values, showing first the ones
+     * that are different among all records and then the ones that are equal.
+     *
      * @param {Array} fields The list of fields for the module.
      * @return {Object} The metadata for the view template.
      * @private
@@ -492,6 +495,13 @@
                 field.maxHeight = this.generatedValues.teamsets[field.name].length;
                 field.noRadioBox = true;
             }
+        }, this);
+
+        var models = this.collection.without(this.primaryRecord);
+        fields = _.sortBy(fields, function(field) {
+            return _.every(models, function(model) {
+                return _.isEqual(this.primaryRecord.get(field.name), model.get(field.name));
+            }, this);
         }, this);
 
         return {
