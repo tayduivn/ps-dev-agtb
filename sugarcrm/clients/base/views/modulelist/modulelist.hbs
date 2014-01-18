@@ -31,7 +31,9 @@
         {{#eq name 'Home'}}
         <li class="dropdown home" data-module="Home">
             <div class="btn-group" title="{{str "LBL_TABGROUP_HOME"}}">
-                <a class="cube btn btn-invisible btn-link" href="#Home" data-route="#Home" track="click:cube"></a>
+                <a class="cube btn btn-invisible btn-link" href="#Home" data-route="#Home" track="click:cube">
+                    <img src="{{../../imgUrl}}/logo.svg">
+                </a>
             {{#if menu}}
                 <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle" track="click:cube-dropdown"><b class="icon-caret-down"></b></a>
                 <div class="dropdown-menu scroll">

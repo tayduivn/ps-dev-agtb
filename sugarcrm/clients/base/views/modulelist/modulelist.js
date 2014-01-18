@@ -207,7 +207,6 @@
      */
     _renderHtml: function() {
         if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
-
         // loadAdditionalComponents fires render before the private metadata is ready, check for this
         if (app.isSynced) {
             this.module_list = this.completeMenuMeta(app.metadata.getModuleNames({filter: 'display_tab', access: 'read'}));
@@ -215,6 +214,7 @@
             this.resetMenu();
             this.activeModule.set(app.controller.context.get('module'));
         }
+        this.imgUrl = (app.config.siteUrl || window.location.pathname).replace('index.php','') + 'styleguide/assets/img';
     },
 
     completeMenuMeta: function(module_list) {
