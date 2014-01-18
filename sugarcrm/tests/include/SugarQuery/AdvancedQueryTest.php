@@ -459,6 +459,20 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sql = $sq->compileSql();
         $this->assertContains("HAVING last_name > 55", $sql);
     }
+    
+    public function testChildJoins()
+    {
+        $sq = new SugarQuery();
+        $sq->select(array("id","last_name"));
+        $sq->from(BeanFactory::getBean('Contacts'));
+        $accounts = $sq->join('accounts');
+        $opportunities = $accounts->join('opportunities');
+        $opportunities->join('contacts');
+        $sql = $sq->compileSql();
+        $this->assertRegExp('/INNER JOIN contacts jt(\w+) ON /', $sql);
+        $this->assertRegExp('/INNER JOIN opportunities jt(\w+) ON /', $sql);
+    }
+
 }
 
 class Contact_Mock_Bug62961 extends Contact

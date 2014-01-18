@@ -289,12 +289,13 @@ class SugarQuery
      */
     public function join($link_name, $options = array())
     {
+        $relatedJoin = empty($options['relatedJoin']) ? false : $options['relatedJoin'];
         if (!isset($options['alias'])) {
-            $options['alias'] = $this->getJoinTableAlias($link_name);
+            $options['alias'] = $this->getJoinTableAlias($link_name, $relatedJoin);
         }
 
-        if (!empty($this->links[$link_name])) {
-            return $this->links[$link_name];
+        if (!empty($this->links[$options['alias']])) {
+            return $this->links[$options['alias']];
         }
 
         // FIXME: it's really not good we have a special case here
@@ -307,7 +308,8 @@ class SugarQuery
         }
         $this->join[$options['alias']]->addLinkName($link_name);
         $this->links[$link_name] = $this->join[$options['alias']];
-        $this->joinLinkToKey[$link_name] = $options['alias'];
+        $link_name_key = $relatedJoin ? $relatedJoin . '_' . $link_name : $link_name;
+        $this->joinLinkToKey[$link_name_key] = $options['alias'];
 
         return $this->join[$options['alias']];
     }
@@ -321,8 +323,10 @@ class SugarQuery
      *
      * @return string
      */
-    public function getJoinTableAlias($table_name = "")
+    public function getJoinTableAlias($table_name = "", $relatedJoin = false)
     {
+        $table_name = $relatedJoin ? $relatedJoin . '_' . $table_name : $table_name;
+
         if (isset($this->joinLinkToKey[$table_name])) {
             return $this->joinLinkToKey[$table_name];
         } elseif (isset($this->joinTableToKey[$table_name])) {
@@ -698,7 +702,8 @@ class SugarQuery
         $team_security = (!empty($options['team_security'])) ? $options['team_security'] : true;
         $ignoreRole = (!empty($options['ignoreRole'])) ? $options['ignoreRole'] : false;
 
-        $bean = $this->from;
+        $bean = !empty($options['relatedJoin']) ? $this->join[$options['relatedJoin']]->bean : $this->from;
+
         if (is_array($bean)) {
             list($bean, $alias) = $bean;
         }

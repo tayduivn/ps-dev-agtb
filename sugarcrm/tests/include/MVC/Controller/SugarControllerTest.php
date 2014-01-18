@@ -348,6 +348,9 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_OutputTestCase
         $controller->execute();
         // this is just to suppress output... remove when this is a proper test
         $this->expectOutputRegex('/<html/');
+        while(ob_get_level() > 1) {
+            ob_end_flush();
+        }
     }
 
 }

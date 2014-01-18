@@ -53,6 +53,8 @@ class SugarQuery_Builder_Join {
      */
     public $bean = false;
 
+    public $relatedJoin = false;
+
     /**
      * Create the JOIN Object
      * @param string $table
@@ -64,6 +66,8 @@ class SugarQuery_Builder_Join {
         $this->table = $table;
         $this->bean = !empty($options['bean']) ? $options['bean'] : false;
         unset($options['bean']);
+        $this->relatedJoin = !empty($options['relatedJoin']) ? $options['relatedJoin'] : false;
+        unset($options['relatedJoin']);
         $this->options = $options;
     }
 
@@ -133,6 +137,11 @@ class SugarQuery_Builder_Join {
         return $this->table;
     }
 
+    public function join($link, $options = array())
+    {
+        $options['relatedJoin'] = $this->options['alias'];
+        return $this->query->join($link, $options);
+    }
 
     public function __get($name)
     {
