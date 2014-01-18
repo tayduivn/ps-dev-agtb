@@ -466,6 +466,9 @@
     /**
      * Create metadata for panels.
      *
+     * Team sets will have a special metadata setup to match the height in all
+     * records shown (match height).
+     *
      * The fields are sorted by difference of values, showing first the ones
      * that are different among all records and then the ones that are equal.
      *
@@ -480,19 +483,16 @@
 
         _.each(fields, function(field) {
             if (field.type === 'teamset') {
-                this.generatedValues.teamsets[field.name] = _.chain(this.collection.models)
-                    .map(function(model) {
-                        return model.get(field.name);
-                    })
-                    .flatten()
-                    .uniq(false, function(item) {
-                        return item.id;
-                    })
-                    .filter(function(item) {
-                        return !_.isUndefined(item.id);
-                    })
-                    .value();
-                field.maxHeight = this.generatedValues.teamsets[field.name].length;
+
+                var teams = {};
+                this.collection.each(function(model) {
+                    _.each(model.get(field.name), function(team) {
+                        teams[team.id] = team;
+                    });
+                });
+
+                this.generatedValues.teamsets[field.name] = _.values(teams);
+                field.maxHeight = _.size(teams);
                 field.noRadioBox = true;
             }
         }, this);
@@ -518,7 +518,7 @@
      * Checks if all values are the same among all models.
      *
      * Compares the field value from primary model with values from other
-     * models and returns `false` if it found 1 field that isn't equal across
+     * models and returns `false` if it finds 1 field that isn't equal across
      * all models.
      *
      * @param {Data.Bean} primary The model chosen as primary.
