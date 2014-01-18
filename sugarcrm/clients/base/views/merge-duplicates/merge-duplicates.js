@@ -515,12 +515,16 @@
     },
 
     /**
-     * Checks if the field is the same among all models.
+     * Checks if all values are the same among all models.
      *
-     * Compares field value from primary model with values from other models.
-     * @param {Data.Bean} primary The model choosed as primary.
+     * Compares the field value from primary model with values from other
+     * models and returns `false` if it found 1 field that isn't equal across
+     * all models.
+     *
+     * @param {Data.Bean} primary The model chosen as primary.
      * @param {Data.Bean[]} models The array of models to compare with.
      * @return {Boolean} Is field value the same among all models.
+     *
      * @private
      */
     _isSimilar: function(primary, models) {
