@@ -148,8 +148,10 @@ function complexLayoutInit() {
             });
 
             se.leftTabs = new YAHOO.widget.TabView("lefttabs");
+            var foldersImg = '<img src="index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=icon_email_folder.gif" align=absmiddle border=0 alt="'+app_strings.LBL_EMAIL_FOLDERS+'">';
+
             var folderTab = new YAHOO.widget.Tab({ 
-				label: app_strings.LBL_EMAIL_FOLDERS_SHORT,
+				label: foldersImg,
 				scroll : true,
 				content : "<div id='emailtree'/>",
 				id : "tree",
@@ -157,14 +159,15 @@ function complexLayoutInit() {
 			});
             folderTab.on("activeChange", function(o){ 
             	if (o.newValue) {
-            		se.complexLayout.getUnitByPosition("left").set("header", app_strings.LBL_EMAIL_FOLDERS);
+            		se.complexLayout.getUnitByPosition("left").set("header", foldersImg+" "+app_strings.LBL_EMAIL_FOLDERS);
             	}
             });
             se.leftTabs.addTab(folderTab);
             
             var tabContent = SUGAR.util.getAndRemove("searchTab");
+            var searchImg = '<img src="index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=Search.gif" align=absmiddle border=0 alt="'+app_strings.LBL_SEARCH+'">';
             var searchTab = new YAHOO.widget.Tab({ 
-				label: app_strings.LBL_EMAIL_SEARCH_SHORT,
+				label: searchImg,
 				scroll : true,
 				content : tabContent.innerHTML,
 				id : tabContent.id
@@ -172,7 +175,7 @@ function complexLayoutInit() {
             searchTab.on("activeChange", function(o){ 
             	if (o.newValue) 
             	{
-            		se.complexLayout.getUnitByPosition("left").set("header", app_strings.LBL_EMAIL_SEARCH);
+            		se.complexLayout.getUnitByPosition("left").set("header", searchImg);
             	   //Setup the calendars if needed
 	               Calendar.setup ({inputField : "searchDateFrom", ifFormat : calFormat, showsTime : false, button : "searchDateFrom_trigger", singleClick : true, step : 1, weekNumbers:false});
 	               Calendar.setup ({inputField : "searchDateTo", ifFormat : calFormat, showsTime : false, button : "searchDateTo_trigger", singleClick : true, step : 1, weekNumbers:false});
