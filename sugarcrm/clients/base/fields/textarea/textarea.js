@@ -44,10 +44,12 @@
         //Attempt to pick up css class from defs but fallback
         this.def.css_class = this.def.css_class || 'textarea-text';
 
-        //Figure out if we need to display the show more link
-        var value = this.model.get(this.name);
+        //Figure out if we need to display the show more link. Also handle value
+        //to make sure we can actually get a length from it.
+        var value = this.model.get(this.name),
+            hasLength = !_.isUndefined(value) && !_.isNull(value);
 
-        if ((!_.isUndefined(value)) && (value.length > this.maxDisplayLength)) {
+        if (hasLength && (value.length > this.maxDisplayLength)) {
             this.isTooLong = true;
         } else {
             this.isTooLong = false;
