@@ -67,8 +67,14 @@
 
         //open the drawer
         this._animateOpenDrawer(_.bind(function(){
-            //called after animation finished
-            app.trigger("app:view:change", layout.options.name, layout.context.attributes);
+            // Forecasts config route uses the drawer but if user
+            // does not have access, initialize is never called so the
+            // context on the layout never gets set. Adding check to make
+            // sure there actually is a context to use on the layout
+            if (layout.context) {
+                //called after animation finished
+                app.trigger("app:view:change", layout.options.name, layout.context.attributes);
+            }
         }, this));
 
         //load and render new layout in drawer
