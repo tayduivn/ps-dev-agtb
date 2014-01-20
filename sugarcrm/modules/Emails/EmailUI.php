@@ -1754,7 +1754,9 @@ EOQ;
 		$exUids = explode($app_strings['LBL_EMAIL_DELIMITER'], $uids);
 
 		if(strpos($folder, 'sugar::') !== false) {
-			// dealing with a sugar email object, uids are GUIDs
+            // Collect message IDs for deleting mails from server
+            $messageUIDs = array();
+            // dealing with a sugar email object, uids are GUIDs
 			foreach($exUids as $id) {
 				$email = BeanFactory::getBean('Emails', $id);
 
@@ -1778,29 +1780,10 @@ EOQ;
 					break;
 
 					case "deleted":
-						$email->delete();
-                        // Bug #45395 : Deleted emails from a group inbox does not move the emails to the Trash folder for Google Apps
-                        if ( !empty($email->message_uid) )
-                        {
-                            $ieX = BeanFactory::getBean('InboundEmail');
-                            $ieX->retrieve_by_string_fields(array('groupfolder_id' => $ieId, 'deleted' => 0));
-                            if ( !empty($ieX->id) && !$ieX->is_personal )
-                            {
-                                // function retrieve_by_string_fields don't decrypt email_password -> call retrieve to do it
-                                $ieX->retrieve($ieX->id);
-                                if ($ieX->isPop3Protocol())
-                                {
-                                    $msgNo = $ieX->getCorrectMessageNoForPop3($email->message_uid);
-                                    $ieX->connectMailserver();
-                                    $ieX->deleteMessageOnMailServerForPop3($msgNo);
-                                }
-                                else
-                                {
-                                    $ieX->deleteMessageOnMailServer($email->message_uid);
-                                }
-                                $ieX->deleteMessageFromCache($email->message_uid);
-                            }
+                        if (!empty($email->message_uid)) {
+                            $messageUIDs[] = $email->message_uid;
                         }
+						$email->delete();
 					break;
 
 					case "flagged":
@@ -1823,6 +1806,22 @@ EOQ;
                 }
                 // BUG FIX END
 			}
+
+            // Do only Mail server call, since we have an array of UIDs
+            switch ($type) {
+                case "deleted":
+                    $ieX = new InboundEmail();
+                    $ieX->retrieve_by_string_fields(array('groupfolder_id' => $ieId, 'deleted' => 0));
+                    if (!empty($ieX->id) && !$ieX->is_personal) {
+                        // function retrieve_by_string_fields doesn't decrypt email_password -> call retrieve to do it
+                        $ieX->retrieve($ieX->id);
+                        $ieX->deleteMessageOnMailServer(implode($app_strings['LBL_EMAIL_DELIMITER'], $messageUIDs));
+                    }
+                    break;
+
+                default:
+                    break;
+            }
 		} else {
 			/* dealing with IMAP email, uids are IMAP uids */
 			global $ie; // provided by EmailUIAjax.php
