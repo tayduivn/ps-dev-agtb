@@ -140,6 +140,9 @@ function process_action_update_rel($focus, $action_array){
 		$rel_list = process_rel_type("rel_module_type", "rel_filter", $rel_list, $action_array);
 
 		foreach($rel_list as $rel_object){
+            if (empty($rel_object->id)) {
+                continue;
+            }
             $check_notify = false;
             $old_owner = $rel_object->assigned_user_id;
 			foreach($action_array['basic'] as $field => $new_value){
