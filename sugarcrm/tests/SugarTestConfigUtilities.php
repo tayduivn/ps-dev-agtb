@@ -74,5 +74,6 @@ class SugarTestConfigUtilities
             self::$admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
         }
         self::$orgConfig = array();
+        self::$admin = null;
     }
 }

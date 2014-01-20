@@ -134,6 +134,7 @@ class SugarTestACLUtilities
             $role->mark_relationships_deleted($role->id);
             $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id = '{$role->id}'");
         }
+        self::$_createdRoles = array();
         BeanFactory::getBean('ACLFields')->clearACLCache();
     }
 }
