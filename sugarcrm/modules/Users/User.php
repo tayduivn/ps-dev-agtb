@@ -575,11 +575,7 @@ class User extends Person {
 
 		// set some default preferences when creating a new user
 		if ( $setNewUserPreferences ) {
-		//BEGIN SUGARCRM flav=sales ONLY
-		    // set default reminder time to 30 minutes
-		    $this->setPreference('reminder_time', 1800);
-		    $this->setPreference('mailmerge_on', 'on');
-		//END SUGARCRM flav=sales ONLY
+            $this->setPreference('reminder_time', 1800);
 	        if(!$this->getPreference('calendar_publish_key')) {
 		        $this->setPreference('calendar_publish_key', create_guid());
 	        }
