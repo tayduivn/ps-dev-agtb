@@ -161,8 +161,10 @@
 .sidebar-content {
   .dashboard {
     .headerpane {
-      width: 34%;
+      .calcWidth(~"34.042553198% + 1px");
+      border-left: 1px solid darken(@grayLighter,10%);
       background: url(@textureSecondary);
+      right: 0;
       /* middle div is unnecessary, filipe said it cannot
          be removed from template, doing this for now */
       .record-cell {
@@ -236,7 +238,9 @@
         }
       }
       .btn-toolbar {
-        .calc(padding-right, 1.5% + 8px);
+        padding-right: ~"-moz-calc(1.5% + 8px)";
+        padding-right: ~"-webkit-calc(1.5% + 8px)";
+        padding-right: ~"calc(1.5% + 8px)";
       }
     }
     &.edit {
