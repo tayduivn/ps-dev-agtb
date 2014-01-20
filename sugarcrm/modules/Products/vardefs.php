@@ -95,6 +95,7 @@ $dictionary['Product'] = array(
             'name' => 'contact_id',
             'type' => 'id',
             'vname' => 'LBL_CONTACT_ID',
+            'group'=>'contact_name',
             'required' => false,
             'reportable' => false,
             'audited' => true,
@@ -114,18 +115,21 @@ $dictionary['Product'] = array(
                 'base_rate'
             ),
         ),
-        'contact_name' =>  array(
+        'contact_name' => array (
             'name' => 'contact_name',
-            'rname' => 'last_name',
-            'id_name' => 'contact_id',
-            'vname' => 'LBL_CONTACT_NAME',
-            'type' => 'relate',
-            'link' => 'contact_link',
-            'table' => 'contacts', // for bug 20184, replace 'join_name'=>'contacts',
-            'isnull' => 'true',
-            'module' => 'Contacts',
+            'rname'=>'name',
+            'db_concat_fields'=> array(0=>'first_name', 1=>'last_name'),
             'source' => 'non-db',
-            'db_concat_fields' => array(0 => 'first_name', 1 => 'last_name'),
+            'len' => '510',
+            'group'=>'contact_name',
+            'vname' => 'LBL_CONTACT_NAME',
+            'reportable'=>false,
+            'id_name' => 'contact_id',
+            'join_name' => 'contacts',
+            'type' => 'relate',
+            'module' => 'Contacts',
+            'link'=>'contact_link',
+            'table'=>'contacts',
         ),
         'type_id' =>  array(
             'name' => 'type_id',
@@ -843,8 +847,6 @@ $dictionary['Product'] = array(
             'module' => 'Contacts',
             'bean_name' => 'Contact',
             'source' => 'non-db',
-            'link_file' => 'modules/Products/AccountLink.php',
-            'link_class' => 'AccountLink',
             'duplicate_merge' => 'disabled',
         ), //bug 20184, add contact_link field
         'account_name' =>  array(
