@@ -53,7 +53,7 @@ class SugarDropDownExpression extends EnumExpression
 				arr = App.lang.getAppListKeys(dd);
 			}
 			else {
-				arr = SUGAR.language.get('app_list_strings', dd);
+				arr = SUGAR.language.get('app_list_keys', dd);
 			}
 			return arr == "undefined" ? [] : arr;
 EOQ;
