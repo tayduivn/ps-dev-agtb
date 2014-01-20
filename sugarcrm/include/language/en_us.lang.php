@@ -202,6 +202,11 @@ $app_list_strings = array (
     '2'=>'No',
   ),
 
+    'checkbox_massupdate_dom' => array(
+        0 => 'No',
+        1 => 'Yes',
+    ),
+
   'optout_dom' => array(
       '' => '-none-',
       'false' => 'No',
