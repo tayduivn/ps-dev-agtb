@@ -134,6 +134,14 @@
         });
 
         if(reportsField) {
+            // set the initial saved_report_id to the first report in the list
+            // if there are reports to show
+            if(reports) {
+                this.settings.set({
+                    saved_report_id: _.first(reports).id
+                });
+            }
+
             // set field options and render
             reportsField.items = this.reportOptions;
             reportsField._render();

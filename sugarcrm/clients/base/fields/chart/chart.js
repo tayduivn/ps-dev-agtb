@@ -23,15 +23,15 @@
     bindDataChange: function() {
         this.model.on('change:rawChartData', function() {
             if(this.model.get('rawChartData').values.length > 0) {
-                this.$el.find('.nv-chart').toggleClass('hide', false);
-                this.$el.find('.block-footer').toggleClass('hide', true);
+                this.$('.nv-chart').toggleClass('hide', false);
+                this.$('.block-footer').toggleClass('hide', true);
 
                 this.generateD3Chart();
 
-                this.$el.find('.nv-chart').attr('class', 'nv-chart nv-' + this.chartType);
+                this.$('.nv-chart').attr('class', 'nv-chart nv-' + this.chartType);
             } else {
-                this.$el.find('.nv-chart').toggleClass('hide', true);
-                this.$el.find('.block-footer').toggleClass('hide', false);
+                this.$('.nv-chart').toggleClass('hide', true);
+                this.$('.block-footer').toggleClass('hide', false);
             }
 
         }, this);
