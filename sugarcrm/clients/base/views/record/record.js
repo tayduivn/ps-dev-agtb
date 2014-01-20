@@ -752,17 +752,17 @@
      */
     handleFieldError: function(field) {
         var tabLink,
-            fieldTab   = field.$el.parents('.tab-pane'),
-            fieldPanel = field.$el.parents('.record-panel-content');
+            fieldTab   = field.$el.closest('.tab-pane'),
+            fieldPanel = field.$el.closest('.record-panel-content');
 
         if (field.view.meta && field.view.meta.useTabsAndPanels) {
             // If field's panel is a tab, switch to the tab that contains the field with the error
-            if (fieldTab) {
+            if (fieldTab.length > 0) {
                 tabLink = this.$('[href="#'+fieldTab.attr('id')+'"].[data-toggle="tab"]');
                 tabLink.tab('show');
                 // Put a ! next to the tab if one doesn't already exist
-                if (tabLink.find('.icon-exclamation-sign').length == 0) {
-                    tabLink.append(' <i class="icon-exclamation-sign" style="color: #b60000"> </i>');
+                if (tabLink.find('.icon-exclamation-sign').length === 0) {
+                    tabLink.append(' <i class="icon-exclamation-sign tab-warning"></i>');
                 }
             }
 
@@ -770,9 +770,7 @@
             if (fieldPanel && fieldPanel.is(':hidden')) {
                 fieldPanel.toggle();
                 var fieldPanelArrow = fieldPanel.prev().find('i');
-                if (fieldPanelArrow) {
-                    fieldPanelArrow.toggleClass('icon-chevron-up icon-chevron-down');
-                }
+                fieldPanelArrow.toggleClass('icon-chevron-up icon-chevron-down');
             }
         }
     },
