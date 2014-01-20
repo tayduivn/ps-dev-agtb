@@ -434,10 +434,11 @@ $dictionary['RevenueLineItem'] = array(
         'quantity' => array(
             'name' => 'quantity',
             'vname' => 'LBL_QUANTITY',
-            'type' => 'int',
-            'len' => 5,
+            'type' => 'decimal',
+            'len' => 7,
+            'precision' => 2,
             'comment' => 'Quantity in use',
-            'default' => 1
+            'default' => 1.0
         ),
         'support_name' => array(
             'name' => 'support_name',

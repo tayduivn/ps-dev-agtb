@@ -454,10 +454,11 @@ $dictionary['Product'] = array(
         'quantity' =>  array(
             'name' => 'quantity',
             'vname' => 'LBL_QUANTITY',
-            'type' => 'int',
-            'len' => 5,
+            'type' => 'decimal',
+            'len' => '7',
+            'precision' => '2',
             'comment' => 'Quantity in use',
-            'default' => 1
+            'default' => 1.0
         ),
         'support_name' =>  array(
             'name' => 'support_name',
@@ -750,16 +751,6 @@ $dictionary['Product'] = array(
                 'account_id' => 'account_id',
                 'account_name' => 'account_name'
             ),
-        ),
-        'product_type' => array(
-            'name' => 'product_type',
-            'vname' => 'LBL_TYPE',
-            'type' => 'enum',
-            'options' => 'opportunity_type_dom',
-            'len' => '255',
-            'audited' => true,
-            'comment' => 'Type of product ( from opportunities opportunity_type ex: Existing, New)',
-            'merge_filter' => 'enabled',
         ),
         'opportunities' =>  array(
             'name' => 'opportunities',

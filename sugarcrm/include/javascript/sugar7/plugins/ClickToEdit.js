@@ -608,7 +608,10 @@
                     parts = value.match(regex);
 
                 // always make sure that we have a string here, since match only works on strings
-                if (value.length == 0 || _.isNull(parts)  || _.isEmpty(parts[0])) {
+                // make sure that value has a length, that the patch parts are not null, that parts[0] is not empty
+                // and that the parts[0] is equal to what was passed in. in some cases it wont match and we should not
+                // allow that value to be used
+                if (value.length == 0 || _.isNull(parts)  || _.isEmpty(parts[0]) || parts[0] != value) {
                     return false;
                 }
 

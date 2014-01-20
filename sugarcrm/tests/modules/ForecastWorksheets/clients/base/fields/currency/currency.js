@@ -494,6 +494,22 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
             it('should return 0.50 for -.5', function() {
                 expect(field.validateField(field, '-.5')).toEqual("$0.50");
             });
+
+            it('should return false for 1000.00+100', function() {
+                expect(field.validateField(field, '1000.00+100')).toBeFalsy();
+            });
+
+            it('should return false for 1000.00-100', function() {
+                expect(field.validateField(field, '1000.00-100')).toBeFalsy();
+            });
+
+            it('should return false for 1000.00+asdfasdfa', function() {
+                expect(field.validateField(field, '1000.00+asdfasdfa')).toBeFalsy();
+            });
+
+            it('should return false for 1000.00asdfasdfa', function() {
+                expect(field.validateField(field, '1000.00asdfasdfa')).toBeFalsy();
+            });
         });
     });
 });
