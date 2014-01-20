@@ -414,6 +414,11 @@ FLEXLIST GENERIC */
     max-width: none;
   }
 
+  //override of bootstrap to fix safari
+  table.dataTable {
+    max-width: none;
+  }
+
   /*LEFT ACTIONS ONLY*/
   &.left-actions table.dataTable {
     & > thead > tr > th,
@@ -595,7 +600,6 @@ FLEXLIST GENERIC */
     & > tbody > tr > td {
       &[data-type="currency"] {
         min-width: 115px !important;
-        max-width: 115px !important;
         .box-sizing(border-box);
       }
       &.editableColumn {

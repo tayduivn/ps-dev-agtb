@@ -149,6 +149,7 @@
         this.plugins.push('CteTabbing');
         this.plugins.push('DirtyCollection');
         this._super("initialize", [options]);
+        this.template = app.template.getView('flex-list', this.module);
         this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
         this.selectedTimeperiod = this.context.get('selectedTimePeriod') || this.context.parent.get('selectedTimePeriod') || '';
         this.context.set('skipFetch', (this.selectedUser.is_manager && this.selectedUser.showOpps));    // skip the initial fetch, this will be handled by the changing of the selectedUser
