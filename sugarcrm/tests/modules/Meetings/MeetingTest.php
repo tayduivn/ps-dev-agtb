@@ -146,4 +146,20 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($this->contact->id, $a['contact_id'], "Contact wasn't set as an invitee");
 
     }
+
+    public function testLoadFromRow()
+    {
+        /** @var Meeting $meeting */
+        $meeting = BeanFactory::getBean('Meetings');
+        $this->assertEmpty($meeting->reminder_checked);
+        $this->assertEmpty($meeting->email_reminder_checked);
+
+        $meeting->loadFromRow(array(
+            'reminder_time' => 30,
+            'email_reminder_time' => 30,
+        ));
+
+        $this->assertTrue($meeting->reminder_checked);
+        $this->assertTrue($meeting->email_reminder_checked);
+    }
 }
