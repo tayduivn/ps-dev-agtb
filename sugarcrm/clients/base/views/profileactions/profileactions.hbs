@@ -40,7 +40,7 @@
             <div class="dropdown-menu scroll pull-right">
                 <ul role="menu">
                     {{#each menulist}}
-                        {{#if css_class}}<li class="{{css_class}}">{{else}}<li>{{/if}}<a href="{{route}}" track="click:userAction-{{label}}">
+                        {{#if css_class}}<li class="{{css_class}}">{{else}}<li>{{/if}}<a href="{{route}}" {{#if openwindow}}target="_blank"{{/if}} track="click:userAction-{{label}}">
                             {{#if img_url}}<img src="{{img_url}}" alt="{{../../userName}}" class="avatar">{{else}}<i class="{{icon}}"></i>{{/if}}{{str label}}</a>
                         </li>
                     {{/each}}
