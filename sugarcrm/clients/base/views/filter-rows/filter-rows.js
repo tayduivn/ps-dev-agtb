@@ -34,8 +34,8 @@
      */
 
     events: {
-        'click a.addme': 'addRow',
-        'click a.removeme': 'removeRow',
+        'click [data-action=add]': 'addRow',
+        'click [data-action=remove]': 'removeRow',
         'change .filter-field input[type=hidden]': 'handleFieldSelected',
         'change .filter-operator input[type=hidden]': 'handleOperatorSelected'
     },
