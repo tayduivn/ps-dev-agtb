@@ -44,6 +44,10 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
 
         if (!empty($this->def['module'])) {
             $this->moduleName = $this->def['module'];
+            $bean = BeanFactory::newBean($this->moduleName);
+            if (isset($bean->field_defs[$this->field])) {
+                $this->def = $bean->field_defs[$this->field];
+            }
         }
         $this->checkCustomField();
     }
@@ -60,12 +64,10 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
             $this->nonDb = 1;
             return;
         }
-        $bean = BeanFactory::getBean($this->moduleName);
-        $def = !empty($bean->field_defs[$this->field]) ? $bean->field_defs[$this->field] : array();
-        if (isset($def['source']) && $def['source'] == 'non-db' && !isset($def['dbType'])) {
+        if (isset($this->def['source']) && $this->def['source'] == 'non-db' && !isset($this->def['dbType'])) {
             $this->nonDb = 1;
             return;
-        } elseif (empty($def)) {
+        } elseif (empty($this->def)) {
             $this->nonDb = 1;
             return;
         }
