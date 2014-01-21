@@ -1691,7 +1691,7 @@ protected function checkQuery($sql, $object_name = false)
      *   defaults to true.
      * @return string Returns a string to be searched in db query.
      */
-    public static function sqlLikeString($str, $wildcard = '%', $appendWildcard = true)
+    public function sqlLikeString($str, $wildcard = '%', $appendWildcard = true)
     {
         // If we have a valid wildcard character in config, use it, or use $wildcard by default.
         // The config wildcard exists because there may be a case where a Sugar user would want

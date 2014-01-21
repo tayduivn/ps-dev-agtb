@@ -231,4 +231,11 @@ class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals('TRUNCATE TABLE TEST_TABLE', $sql);
     }
+
+    public function testSqlLikeString()
+    {
+        $str = '[[A-Z]';
+        $likestr = $this->_db->sqlLikeString($str, '%', false);
+        $this->assertEquals('[[][[]A-Z]', $likestr);
+    }
 }

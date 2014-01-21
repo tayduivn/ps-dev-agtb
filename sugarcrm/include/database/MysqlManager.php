@@ -439,7 +439,7 @@ class MysqlManager extends DBManager
     /**
      * {@inheritdoc}
      */
-    public static function sqlLikeString($str, $wildcard = "%", $appendWildcard = true)
+    public function sqlLikeString($str, $wildcard = "%", $appendWildcard = true)
     {
         $str = parent::sqlLikeString($str, $wildcard, $appendWildcard);
 

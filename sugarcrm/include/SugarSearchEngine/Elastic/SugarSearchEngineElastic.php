@@ -696,7 +696,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         if (!empty($options['append_wildcard']) && $this->canAppendWildcard($queryString)) {
             $appendWildcard = true;
         }
-        $queryString = DBManager::sqlLikeString($queryString, self::WILDCARD_CHAR, $appendWildcard);
+        $queryString = DBManagerFactory::getInstance()->sqlLikeString(
+            $queryString,
+            self::WILDCARD_CHAR,
+            $appendWildcard
+        );
 
         $this->logger->info("Going to search with query $queryString");
         $results = null;
