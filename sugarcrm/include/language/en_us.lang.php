@@ -574,6 +574,9 @@ $app_list_strings = array (
     'Products' => 'Quoted Line Item',
     'Contracts' => 'Contract',
     //END SUGARCRM flav=pro ONLY
+    //BEGIN SUGARCRM flav=ent ONLY
+    'RevenueLineItems' => 'Revenue Line Item',
+    //END SUGARCRM flav=ent ONLY
     'Emails' => 'Email',
 
     'Bugs' => 'Bug',
