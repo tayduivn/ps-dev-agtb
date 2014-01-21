@@ -81,7 +81,7 @@ class ViewAdminwizard extends SugarView
         $this->ss->assign('getNameJs', $locale->getNameJs());
         $this->ss->assign('NAMEFORMATS', $locale->getUsableLocaleNameOptions($sugar_config['name_formats']));
         $this->ss->assign('JAVASCRIPT',get_set_focus_js(). get_configsettings_js());
-        $this->ss->assign('company_logo', SugarThemeRegistry::current()->getImageURL('company_logo.png'));
+        $this->ss->assign('company_logo', SugarThemeRegistry::current()->getImageURL('company_logo.png', true, true));
         $this->ss->assign('mail_smtptype', $focus->settings['mail_smtptype']);
         $this->ss->assign('mail_smtpserver', $focus->settings['mail_smtpserver']);
         $this->ss->assign('mail_smtpport', $focus->settings['mail_smtpport']);

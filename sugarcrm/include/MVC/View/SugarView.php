@@ -328,7 +328,7 @@ class SugarView
         }
 
         // handle resizing of the company logo correctly on the fly
-        $companyLogoURL = $themeObject->getImageURL('company_logo.png');
+        $companyLogoURL = $themeObject->getImageURL('company_logo.png', true, true);
         $companyLogoURL_arr = explode('?', $companyLogoURL);
         $companyLogoURL = $companyLogoURL_arr[0];
 
@@ -832,7 +832,7 @@ EOHTML;
 
           //END SUGARCRM lic=sub ONLY
 		// handle resizing of the company logo correctly on the fly
-        $companyLogoURL = $themeObject->getImageURL('company_logo.png');
+        $companyLogoURL = $themeObject->getImageURL('company_logo.png', true, true);
         $companyLogoURL_arr = explode('?', $companyLogoURL);
         $companyLogoURL = $companyLogoURL_arr[0];
 

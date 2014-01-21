@@ -128,7 +128,7 @@ class MetaDataManagerPortal extends MetaDataManager
             return $config['logoURL'];
         } else {
             $themeObject = SugarThemeRegistry::current();
-            return $sugar_config['site_url'] . '/' . $themeObject->getImageURL('company_logo.png');
+            return $sugar_config['site_url'] . '/' . $themeObject->getImageURL('company_logo.png', true, true);
         }
     }
 
