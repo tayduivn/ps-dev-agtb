@@ -95,9 +95,38 @@ var link_defs_<?php echo $module_name; ?> = new Object();
 			$relationships[$linked_field['relationship']] = $module->$field->relationship;
 		}
 
-		if(! empty($linked_field['vname']))
-		{
-			$linked_field['label'] =translate($linked_field['vname']);
+        $vname = '';
+        // To figure out the label, we will start with the least specific and move in from there
+        if (!empty($linked_field['vname'])) {
+            $vname = $linked_field['vname'];
+        }
+        
+        // In order to get the correct label, we have to track down and see if there is a name field and use that for the label.
+        foreach ($module->field_defs as $idx => $fieldDef) {
+            if (!isset($fieldDef['link'])) {
+                continue;
+            }
+            if ($fieldDef['link'] != $linked_field['name']) {
+                continue;
+            }
+            if ($fieldDef['type'] == 'relate' 
+                && $fieldDef['rname'] == 'name'
+                && !empty($fieldDef['vname'])) {
+                // This is the name field for the link field
+                $vname = $fieldDef['vname'];
+                break;
+            }
+        }
+        if (!empty($vname)) {
+			$linked_field['label'] = translate($vname);
+            // Try the label from this side of the module
+            if ($linked_field['label'] == $vname) {
+                $linked_field['label'] = translate($vname, $module->module_dir);
+            }
+            // How about from the other side
+            if ($linked_field['label'] == $vname) {
+                $linked_field['label'] = translate($vname, $module->$field->getRelatedModuleName());
+            }
 		} else {
 			$linked_field['label'] =$linked_field['name'];
 		}
