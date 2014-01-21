@@ -98,22 +98,12 @@ class FileApi extends SugarApi {
             $filename = isset($_SERVER['HTTP_FILENAME']) ? $_SERVER['HTTP_FILENAME'] : create_guid();
         }
 
+        // Legacy support for base64 encoded file data
+        $encoded = $this->isFileEncoded($api, $args);
+
         // Create a temp name for our file to begin mocking the $_FILES array
-        $tempfile = tempnam(sys_get_temp_dir(), 'API');
-
-        // Now read the raw body to capture what is being sent by PUT requests
-        // Using a file handle to save on memory consumption with file_get_contents
-        $inputHandle  = fopen('php://input', 'r');
-        $outputHandle = fopen($tempfile, 'w');
-
-        // Write it out
-        while ($data = fread($inputHandle, 1024)) {
-            fwrite($outputHandle, $data);
-        }
-
-        // Close the handles
-        fclose($inputHandle);
-        fclose($outputHandle);
+        $tempfile = $this->getTempFileName();
+        $this->createTempFileFromInput($tempfile, 'php://input', $encoded);
 
         // Now validate our file
         $filesize = filesize($tempfile);
@@ -516,5 +506,102 @@ class FileApi extends SugarApi {
         }
 
         return $info;
+    }
+
+    /**
+     * Inspects the request to determine if there is a need to decode the file
+     * data on PUT requests. This supports legacy SOAP API style file transfers.
+     * 
+     * @param ServiceBase $api A Service object
+     * @param array $args The request arguments
+     * @return boolean
+     */
+    protected function isFileEncoded($api, $args) 
+    {
+        if ($api->getRequest()->hasHeader('X_CONTENT_TRANSFER_ENCODING')) {
+            return $api->getRequest()->getHeader('X_CONTENT_TRANSFER_ENCODING') === 'base64';
+        }
+
+        if (isset($args['content_transfer_encoding'])) {
+            return $args['content_transfer_encoding'] === 'base64';
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets a file handle resource
+     * 
+     * @param string $path The path to read/write file data from/to
+     * @param string $mode The mode to open the handle in, defaults to 'r'
+     * @return Resource A file handle resource
+     */
+    protected function getFileHandle($path, $mode = 'r')
+    {
+        return fopen($path, $mode);
+    }
+
+    /**
+     * Closes a file handle that was fetched with {@see getFileHandle}.
+     * 
+     * @param Resource $handle A file handle resource
+     * @return Boolean
+     */
+    protected function closeFileHandle($handle)
+    {
+        return fclose($handle);
+    }
+
+    /**
+     * Writes data from an input file handle to an output file handle. If the
+     * encoded argument is true, will also base64_decode the data as it is 
+     * reading.
+     * 
+     * @param Resource $inputHandle The input file data resource
+     * @param Resource $outputHandle The output file data resource
+     * @param boolean $encoded Tells this method whether to base64 decode the input
+     */
+    protected function writeFileData($inputHandle, $outputHandle, $encoded = false)
+    {
+        // Write it out
+        while ($data = fread($inputHandle, 1024)) {
+            // Decode if we are handling encoded file contents
+            if ($encoded) {
+                $data = base64_decode($data);
+            }
+
+            fwrite($outputHandle, $data);
+        }
+    }
+
+    /**
+     * Creates a temporary file from an input source
+     * 
+     * @param string $tempfile Path to the temporary file that will be created
+     * @param string $input Path to the file that is being copied to the temp file
+     * @param boolean $encoded Base64 encoding indicator
+     */
+    protected function createTempFileFromInput($tempfile, $input, $encoded = false)
+    {
+        // Now read the raw body to capture what is being sent by PUT requests
+        // Using a file handle to save on memory consumption with file_get_contents
+        $inputHandle  = $this->getFileHandle($input);
+        $outputHandle = $this->getFileHandle($tempfile, 'w');
+
+        $this->writeFileData($inputHandle, $outputHandle, $encoded);
+
+        // Close the handles
+        $this->closeFileHandle($inputHandle);
+        $this->closeFileHandle($outputHandle);
+    }
+    
+    /**
+     * Gets a temporary file name. Used in PUT requests to create a temporary file.
+     * 
+     * @return string A temp file name with full path
+     */
+    public function getTempFileName()
+    {
+        return tempnam(sys_get_temp_dir(), 'API');
     }
 }
