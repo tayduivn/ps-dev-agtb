@@ -2115,4 +2115,13 @@ EOQ;
     {
         return "TRUNCATE TABLE $name";
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sqlLikeString($str, $wildcard = '%', $appendWildcard = true)
+    {
+        $str = str_replace(array('['), array('[[]'), $str);
+        return parent::sqlLikeString($str, $wildcard, $appendWildcard);
+    }
 }

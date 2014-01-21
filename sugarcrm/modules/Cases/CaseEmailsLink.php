@@ -34,6 +34,7 @@ class CaseEmailsLink extends ArchivedEmailsBeanLink
             } else {
                 $table_name = 'emails';
             }
+            $where = DBManagerFactory::getInstance()->sqlLikeString($where, '%', false);
             $join .= " AND (email_ids.source = 'direct' OR {$table_name}.name LIKE '%$where%')";
         }
         return $join;
