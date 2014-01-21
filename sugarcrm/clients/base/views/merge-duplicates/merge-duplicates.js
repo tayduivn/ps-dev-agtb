@@ -1148,20 +1148,23 @@
      *
      * Returns false in cases:
      * 1. link name isn't defined
-     * 2. link is in global black list
-     * 3. link is in black list for current module
-     * 4. merge is disabled in link defs
+     * 2. link module doesn't exist in our metadata
+     * 3. link is in global black list
+     * 4. link is in black list for current module
+     * 5. merge is disabled in link defs
      *
      * @param {Object} link Defenition of link field.
      * @return {boolean} Is link valid for merge related.
+     *
      * @protected
      */
     _isValidRelateLink: function(link) {
         if (!link || !link.name) {
             return false;
         }
-        var availableModuleList = app.metadata.getModules();
-        if (_.isEmpty(availableModuleList[link.module])) {
+
+        var module = app.data.getRelatedModule(this.module, link.name);
+        if (_.isEmpty(app.metadata.getModule(module))) {
             return false;
         }
 
