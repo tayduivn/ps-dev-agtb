@@ -12,7 +12,7 @@ class SugarFieldLink extends SugarFieldBase {
 	        $params = array(
 	            'use_curly' => true,
 	            'subject' => $bean->field_defs[$fieldName]['default'],
-	            'fields' => $bean->fetched_row,
+                'fields' => (array) $bean,
 	            );
 			$nothing = '';
 	        $data[$fieldName] = smarty_function_sugar_replace_vars($params, $nothing);
