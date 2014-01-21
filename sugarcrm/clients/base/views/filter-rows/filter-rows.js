@@ -146,8 +146,6 @@
                 }
             }
         });
-
-        this.layout.trigger('filter:create:close');
     },
 
     /**
