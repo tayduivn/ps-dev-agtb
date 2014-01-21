@@ -25,25 +25,34 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    extendsFrom:"PanelLayout",
+    extendsFrom: 'PanelLayout',
 
     /**
      * @override
      */
     initialize: function(opts) {
-        opts.type = "panel";
+        opts.type = 'panel';
         //Check for the override_subpanel_list_view from the parent layout metadata and replace the list view if found.
         if (opts.meta && opts.def && opts.def.override_subpanel_list_view) {
-            _.each(opts.meta.components, function(def){
-                if (def.view && def.view == "subpanel-list") {
+            _.each(opts.meta.components, function(def) {
+                if (def.view && def.view == 'subpanel-list') {
                     def.view = opts.def.override_subpanel_list_view;
                 }
             });
             // override last_state.id with "override_subpanel_list_view" for unique state name.
-            if(opts.meta.last_state.id) {
+            if (opts.meta.last_state.id) {
                 opts.meta.last_state.id = opts.def.override_subpanel_list_view;
             }
         }
+
+        if (opts.meta && opts.def && opts.def.override_paneltop_view) {
+            _.each(opts.meta.components, function(def) {
+                if (def.view && def.view == 'panel-top') {
+                    def.view = opts.def.override_paneltop_view;
+                }
+            });
+        }
+
         this._super("initialize", [opts]);
 
         // binding so subpanels can trigger other subpanels to reload by link name

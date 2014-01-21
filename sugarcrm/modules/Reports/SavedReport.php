@@ -446,6 +446,28 @@ class SavedReport extends SugarBean
         }
     }
 
+    /**
+     * Runs the query from the saved report and returns the records
+     *
+     * @return array Array of records from result of report query
+     */
+    public function runReportQuery()
+    {
+        require_once('modules/Reports/SubpanelFromReports.php');
+        $records = array();
+        $report = new SubpanelFromReports($this);
+        if(!empty($report)){
+            $report->run_query();
+            $sql = $report->query_list[0];
+
+            $results = $report->db->query($sql);
+
+            while ($row = $report->db->fetchByAssoc($results)) {
+                $records[] = $row;
+            }
+        }
+        return $records;
+    }
 }
 
   // returns the available modules for the specific user
