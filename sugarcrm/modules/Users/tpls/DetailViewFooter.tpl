@@ -157,6 +157,11 @@
                     <td><slot>{$MOD.LBL_CURRENCY_TEXT}&nbsp;</slot></td>
                 </tr>
                 <tr>
+                    <td width="15%" scope="row"><slot>{$MOD.LBL_CURRENCY_SHOW_PREFERRED|strip_semicolon}:</slot></td>
+                    <td><slot>{if $currency_show_preferred}Yes{else}No{/if}&nbsp;</slot></td>
+                    <td><slot>{$MOD.LBL_CURRENCY_SHOW_PREFERRED_TEXT}&nbsp;</slot></td>
+                </tr>
+                <tr>
                     <td width="15%" scope="row"><slot>{$MOD.LBL_CURRENCY_SIG_DIGITS|strip_semicolon}:</slot></td>
                     <td><slot>{$CURRENCY_SIG_DIGITS}&nbsp;</slot></td>
                     <td><slot>{$MOD.LBL_CURRENCY_SIG_DIGITS_DESC}&nbsp;</slot></td>

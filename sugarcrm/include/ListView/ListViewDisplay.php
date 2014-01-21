@@ -195,11 +195,15 @@ class ListViewDisplay {
 
                $filter_fields[strtolower($columnName)] = true;
 
-            if(isset($this->seed->field_defs[strtolower($columnName)]['type']) &&
-               strtolower($this->seed->field_defs[strtolower($columnName)]['type']) == 'currency' &&
-               isset($this->seed->field_defs['currency_id'])) {
-                    $filter_fields['currency_id'] = true;
-            }
+                if(isset($this->seed->field_defs[strtolower($columnName)]['type']) &&
+                    strtolower($this->seed->field_defs[strtolower($columnName)]['type']) == 'currency') {
+                    if (isset($this->seed->field_defs['currency_id'])) {
+                        $filter_fields['currency_id'] = true;
+                    }
+                    if (isset($this->seed->field_defs['base_rate'])) {
+                        $filter_fields['base_rate'] = true;
+                    }
+                }
 
                if(!empty($def['related_fields'])) {
                     foreach($def['related_fields'] as $field) {

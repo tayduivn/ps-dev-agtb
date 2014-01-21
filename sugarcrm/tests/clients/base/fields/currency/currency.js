@@ -283,6 +283,12 @@ describe('Base.Fields.Currency', function() {
 
             var convertWithRate = sinon.spy(app.currency, 'convertWithRate');
 
+            model = app.data.createBean(moduleName, {
+                amount: 900.00,
+                currency_id: '12a29c87-a685-dbd1-497f-50abfe93aae6',
+                base_rate: 0.9
+            });
+            field.model = model;
             field.def.convertToBase = true;
             field.format(123456789.98);
             expect(convertWithRate.calledOnce).toBeTruthy();

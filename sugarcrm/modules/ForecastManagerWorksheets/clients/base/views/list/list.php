@@ -52,6 +52,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'convertToBase' => true,
+                    'skip_preferred_conversion' => true,
                     'related_fields' => array(
                         'base_rate',
                         'currency_id'
@@ -67,6 +68,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'convertToBase' => true,
+                    'skip_preferred_conversion' => true,
                     'related_fields' => array(
                         'base_rate',
                         'currency_id'
@@ -81,6 +83,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'convertToBase' => true,
+                    'skip_preferred_conversion' => true,
                     'related_fields' => array(
                         'base_rate',
                         'currency_id'
@@ -96,6 +99,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'convertToBase' => true,
+                    'skip_preferred_conversion' => true,
                     'related_fields' => array(
                         'base_rate',
                         'currency_id'
@@ -110,6 +114,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'convertToBase' => true,
+                    'skip_preferred_conversion' => true,
                     'related_fields' => array(
                         'base_rate',
                         'currency_id'
@@ -125,6 +130,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'convertToBase' => true,
+                    'skip_preferred_conversion' => true,
                     'related_fields' => array(
                         'base_rate',
                         'currency_id'
@@ -139,6 +145,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'convertToBase' => true,
+                    'skip_preferred_conversion' => true,
                     'related_fields' => array(
                         'base_rate',
                         'currency_id'
