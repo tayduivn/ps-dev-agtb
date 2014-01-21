@@ -169,7 +169,7 @@
                     }
                     if(cloneField.type === 'bool') {
                         cloneField.type = 'enum';
-                        cloneField.options = 'checkbox_dom';
+                        cloneField.options = 'checkbox_massupdate_dom';
                     }
                     // FIXME this needs proper fixing due to metadata fields (SC-2294)
                     if (cloneField.type === 'multienum') {

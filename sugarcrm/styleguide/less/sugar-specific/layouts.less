@@ -25,7 +25,6 @@
   bottom: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  border-right: 1px solid darken(@grayLighter, 10%);
   padding-top: 0 !important;
   .list-view {
     overflow-y: auto;
@@ -41,15 +40,16 @@
 
 .main-pane.span12 {
   width: 100%;
-  border-right: none;
 }
 
 .main-pane.span8 {
-  width: 66%;
+  .calcWidth(~"65.957446802% + 0px");
+  left: 0;
 }
 
 .side.sidebar-content {
-  width: 34%;
+  .calcWidth(~"34.042553198% + 1px");
+  border-left: 1px solid darken(@grayLighter,10%);
   position: absolute;
   top: 0;
   bottom: 0;

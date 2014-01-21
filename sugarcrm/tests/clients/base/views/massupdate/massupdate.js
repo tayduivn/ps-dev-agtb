@@ -65,7 +65,7 @@ describe("Base.View.Massupdate", function() {
 
         expect(enumField).toBeDefined();
         expect(enumField.type).toEqual('enum');
-        expect(enumField.options).toEqual('checkbox_dom');
+        expect(enumField.options).toEqual('checkbox_massupdate_dom');
         expect(enumField.label).toEqual('Test Boolean');
 
         //Make sure the view did not override module metadata

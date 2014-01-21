@@ -371,7 +371,6 @@ class UserPreference extends SugarBean
             $query .= " AND category = '" . $category . "'";
         $this->db->query($query);
 
-
         if($category) {
             unset($_SESSION[$user->user_name."_PREFERENCES"][$category]);
         }
@@ -390,6 +389,7 @@ class UserPreference extends SugarBean
             $this->setPreference('dashlets', $home_dashlets, 'home');
             $this->setPreference('ut', $ut);
             $this->setPreference('timezone', $timezone);
+            $this->setPreference('reminder_time', 1800);
             $this->savePreferencesToDB();
         }
     }

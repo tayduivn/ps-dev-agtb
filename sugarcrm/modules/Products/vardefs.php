@@ -720,7 +720,6 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_QUOTE_NAME',
             'source' => 'non-db',
             'comment' => 'Quote Name',
-            'required' => true,
             'importable' => 'required'
         ),
 //BEGIN SUGARCRM flav=pro ONLY

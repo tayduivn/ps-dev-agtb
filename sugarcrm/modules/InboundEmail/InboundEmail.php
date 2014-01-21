@@ -5274,11 +5274,12 @@ eoq;
 					imap_expunge($this->conn); // hard deletes moved messages
 
 					// update cache on fromFolder
-					$newOverviews = $this->getOverviewsFromCacheFile($uids, $fromFolder, true);
+                    $overviews = $this->getOverviewsFromCacheFile($exUids, $fromFolder, true);
 					$this->deleteCachedMessages($uids, $fromFolder);
 
 					// update cache on toFolder
-					$this->checkEmailOneMailbox($toFolder, true, true);
+                    $this->setCacheValue($toFolder, $overviews, array(), array());
+
 				    if (isset($oldMailbox)) {
                         $this->mailbox = $oldMailbox;
                     }
@@ -5757,9 +5758,17 @@ eoq;
 		foreach($exUids as $uid) {
 			// local cache
 			if ($this->isPop3Protocol()) {
-				$q = "DELETE FROM email_cache WHERE message_id = '{$uid}' AND ie_id = '{$this->id}'";
+                $q = "DELETE FROM email_cache
+				        WHERE message_id = '" . $this->db->quote($uid) . "'
+				        AND ie_id = '" . $this->db->quote($this->id) . "'
+				        AND mbox = '" . $this->db->quote($this->mailbox) . "'
+				        ";
 			} else {
-				$q = "DELETE FROM email_cache WHERE imap_uid = {$uid} AND ie_id = '{$this->id}'";
+                $q = "DELETE FROM email_cache
+				        WHERE imap_uid = '" . $this->db->quote($uid) . "'
+				        AND ie_id = '" . $this->db->quote($this->id) . "'
+				        AND mbox = '" . $this->db->quote($this->mailbox) . "'
+				        ";
 			}
 			$r = $this->db->query($q);
 			if ($this->isPop3Protocol()) {

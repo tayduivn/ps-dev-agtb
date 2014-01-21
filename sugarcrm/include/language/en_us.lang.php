@@ -202,6 +202,11 @@ $app_list_strings = array (
     '2'=>'No',
   ),
 
+    'checkbox_massupdate_dom' => array(
+        0 => 'No',
+        1 => 'Yes',
+    ),
+
   'optout_dom' => array(
       '' => '-none-',
       'false' => 'No',
@@ -2610,6 +2615,8 @@ $app_strings = array (
     'LBL_CREATE_NEW_TARGET_LIST' => 'Create new target list',
     'LBL_CURRENT_USER_FILTER' => 'My Items:',
     'LBL_CURRENCY'=>'Currency:',
+    'LBL_CURRENCY_NAME'=>'Currency Name',
+    'LBL_CURRENCY_SYMBOL'=>'Currency Symbol',
     'LBL_CURRENCY_RATE' => 'Base Rate:',
     'LBL_DOCUMENTS'=>'Documents',
     'LBL_DATE_ENTERED' => 'Date Created:',

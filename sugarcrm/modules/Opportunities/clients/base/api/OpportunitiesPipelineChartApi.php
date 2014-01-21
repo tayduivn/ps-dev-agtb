@@ -97,7 +97,7 @@ class OpportunitiesPipelineChartApi extends SugarApi
 
         // build out the query
         $sq = new SugarQuery();
-        $sq->select(array('sales_stage', 'amount', 'base_rate'));
+        $sq->select(array('id', 'sales_stage', 'amount', 'base_rate'));
         $sq->from($seed)
             ->where()
             ->gte('date_closed_timestamp', $tp->start_date_timestamp)
