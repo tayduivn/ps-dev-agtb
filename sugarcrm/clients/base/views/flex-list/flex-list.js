@@ -24,6 +24,21 @@
 
     plugins: ['Tooltip'],
 
+    /**
+     * @property {String} The last state key that contains the full list of
+     * fields displayable in list views of this module.
+     */
+    allListViewsFieldListKey: null,
+
+    /**
+     * @property {String} The last state key that contains the visible state of
+     * the fields and their position in the table.
+     */
+    thisListViewFieldListKey: null,
+
+    /**
+     * {@inheritDoc}
+     */
     initialize: function (options) {
         this._super("initialize", [options]);
         this.template = app.template.getView('flex-list');
@@ -35,7 +50,8 @@
         this.rightColumns = [];
         this.addActions();
 
-        this.visibleFieldsLastStateKey = app.user.lastState.key('visible-fields', this);
+        this.allListViewsFieldListKey = app.user.lastState.buildKey('field-list', 'list-views', this.module);
+        this.thisListViewFieldListKey = app.user.lastState.key('visible-fields', this);
 
         //Store default and available(+visible) field names
         this._fields = this.parseFields();
@@ -53,6 +69,9 @@
                 'shown.bs.dropdown .flex-list-view .actions': 'delegateDropdown'
             });
         }
+
+        this.on('list:reorder:columns', this.reorderCatalog, this);
+        this.on('list:save:laststate', this.saveCurrentState, this);
     },
 
     // fn to turn off all event listeners and reenable tooltips
@@ -117,36 +136,90 @@
             }, this);
         }
     },
-    /**
-     * Parse fields to identificate default and available(+visible) fields
-     * @return {Object} field names classed by default / available / visible
-     */
-    parseFields: function () {
-        var catalog = {
-            'default': [], //Fields visible by default
-            'available': [], //Fields hidden by default
-            'visible': [], //Fields user wants to see,
-            'options': []
-        };
-        var visibleFieldsLastState = false;
 
-        if(this.visibleFieldsLastStateKey) {
-            visibleFieldsLastState = app.user.lastState.get(this.visibleFieldsLastStateKey);
-            if(!_.isArray(visibleFieldsLastState) || visibleFieldsLastState.length === 0) {
-                visibleFieldsLastState = false;
+    /**
+     * Parse fields to identify which fields are visible and which fields are
+     * hidden.
+     *
+     * In practice, it creates a catalog that lists the fields that are visible
+     * or hidden by default (metadata configuration), the fields that are
+     * actually visible (user configuration if exists, otherwise  default
+     * metadata configuration) and all the fields (no matter their visible
+     * state) used to populate the ellipsis dropdown.
+     *
+     * By default the catalog is sorted by the order defined in the metadata. If
+     * user configuration is found, the catalog is sorted per user preference.
+     *
+     * @return {Object} The catalog object.
+     */
+    parseFields: function() {
+        var catalog = this._createCatalog();
+
+        this.thisListViewFieldList = this._getFieldsLastState();
+
+        if (this.thisListViewFieldList !== false) {
+            catalog = this._toggleFields(catalog, this.thisListViewFieldList);
+            catalog = this.reorderCatalog(catalog, this.thisListViewFieldList.position);
+        }
+        return catalog;
+    },
+
+    /**
+     * Retrieves the user configuration from the local storage.
+     * The local storage value changed in 7.2. In an entry is found in the local
+     * storage and is at the wrong format, the value is converted to the new
+     * format.
+     *
+     * @return {Object/Boolean} FALSE if nothing found in the local storage, or
+     *                          the value found has an unexpected format.
+     *                          Otherwise it returns an object whom keys are
+     *                          field names, and values are an object containing
+     *                          the position and the visible state.
+     * @private
+     */
+    _getFieldsLastState: function() {
+        var data = false;
+        if (this.thisListViewFieldListKey) {
+            data = app.user.lastState.get(this.thisListViewFieldListKey);
+            if (!_.isArray(data) || _.isEmpty(data)) {
+                data = false;
+            } else if (_.isString(data[0])) {
+                // Old format detected.
+                data = this._convertFromOldFormat(data);
+            } else {
+                data = this._decodeCacheData(data);
             }
         }
+        return data;
+    },
 
-        _.each(this.meta.panels, function (panel) {
-            _.each(panel.fields, function (fieldMeta, i) {
+    /**
+     * Create an object that contains 4 keys. Each key is associated to an array
+     * that contains the field metadata.
+     * List of keys:
+     * - `default`      lists fields visible by default,
+     * - `available`    lists fields hidden by default,
+     * - `visible`      lists fields user wants to see,
+     * - `options`      lists all the fields, with a `selected` attribute that
+     *                  indicates their visible state (used to populate the
+     *                  ellipsis dropdown).
+     *
+     * @return {Object} The catalog object.
+     * @private
+     */
+    _createCatalog: function() {
+        var catalog = {
+            'default': [],
+            'available': [],
+            'visible': [],
+            'options': []
+        };
+
+        _.each(this.meta.panels, function(panel) {
+            _.each(panel.fields, function(fieldMeta, i) {
                 var fieldVisible = (fieldMeta['default'] !== false);
                 if (fieldVisible) {
                     catalog['default'].push(fieldMeta);
-                }
-                if(visibleFieldsLastState !== false) {
-                    fieldVisible = (_.indexOf(visibleFieldsLastState, fieldMeta.name) !== -1);
-                }
-                if(fieldVisible) {
                     catalog.visible.push(fieldMeta);
                 } else {
                     catalog.available.push(fieldMeta);
@@ -156,8 +229,283 @@
                 }, fieldMeta));
             }, this);
         }, this);
+
         return catalog;
     },
+
+    /**
+     * Take the existing catalog and toggle field visibility based on the last
+     * state found in local storage.
+     * If for some reason, the field is not found at all in the local storage
+     * data, it fallbacks to the default visible state of that field (defined
+     * in the metadata).
+     *
+     * @param {Object}  catalog The catalog of fields.
+     * @param {Array}   fields  The decoded local storage data that contains
+     *                          fields wanted visible and fields wanted hidden.
+     * @return {Object} The catalog with visible state of fields based on user
+     *                  preference.
+     * @private
+     */
+    _toggleFields: function(catalog, fields) {
+        catalog.visible = [];
+        catalog.available = [];
+        _.each(catalog.options, function(fieldMeta) {
+            if (_.contains(fields.visible, fieldMeta.name) ||
+                (!_.contains(fields.hidden, fieldMeta.name) && fieldMeta.selected)) {
+                catalog.visible.push(_.omit(fieldMeta, 'selected'));
+                fieldMeta.selected = true;
+            } else {
+                catalog.available.push(_.omit(fieldMeta, 'selected'));
+                fieldMeta.selected = false;
+            }
+        }, this);
+        return catalog;
+    },
+
+    /**
+     * Sort the catalog of fields per the list of field names passed as
+     * argument.
+     *
+     * @param {Object}  catalog Field definitions listed in 4 categories:
+     *                 `default` / `available` / `visible` / `options`.
+     * @param {Array}   order Array of field names used to sort the catalog.
+     * @return {Object} catalog The catalog of fields entirely sorted.
+     */
+    reorderCatalog: function(catalog, order) {
+        var catalogVisible = [];
+        var catalogAvailable = [];
+        var catalogOptions = [];
+        order = _.union(order, _.pluck(catalog.options, 'name'));
+
+        _.each(order, function(fieldName) {
+            var fieldMeta = _.find(catalog.options, function(fieldMeta) {
+                return fieldMeta.name === fieldName;
+            });
+            if (!fieldMeta) {
+                return;
+            }
+            if (fieldMeta.selected) {
+                catalogVisible.push(_.omit(fieldMeta, 'selected'));
+            } else {
+                catalogAvailable.push(_.omit(fieldMeta, 'selected'));
+            }
+            catalogOptions.push(fieldMeta);
+        });
+        catalog.visible = catalogVisible;
+        catalog.available = catalogAvailable;
+        catalog.options = catalogOptions;
+        return catalog;
+    },
+
+    /**
+     * Takes the minimized value stored into local storage and decode it to make
+     * it more readable and more manipulable.
+     *
+     * @example
+     *      If field storage entry is:
+     * <pre><code>
+     *      [
+     *          'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'
+     *      ]
+     * </code></pre>
+     *      And encoded data is:
+     * <pre><code>
+     *      [
+     *          0, [1,5], [1,2], 0, [0,1], [1,3], 0, [1,4]
+     *      ]
+     * </code></pre>
+     *      The decoded data will be:
+     * <pre><code>
+     *      {
+     *          visible: ['B', 'C', 'F', 'H'],
+     *          hidden: ['E'],
+     *          visible: ['E', 'C', 'B', 'F', 'H']
+     *      }
+     * </code></pre>
+     *      `visible` contains the list of visible fields,
+     *      `hidden` contains the list of hidden fields,
+     *      `position` is the order of fields,
+     *      indexes whom value is `0` are skipped (fields not displayable).
+     *
+     * @param {Array} encodedData The minimized data.
+     * @return {Object} The decoded data.
+     * @private
+     */
+    _decodeCacheData: function(encodedData) {
+        var decodedData = {
+            visible: [],
+            hidden: [],
+            position: []
+        };
+
+        var fieldList = this._appendFieldsToAllListViewsFieldList();
+        _.each(encodedData, function(fieldArray, i) {
+            if (!_.isArray(fieldArray)) {
+                return false;
+            }
+            var name = fieldList[i];
+            if (fieldArray[0]) {
+                decodedData.visible.push(name);
+            } else {
+                decodedData.hidden.push(name);
+            }
+            decodedData.position[fieldArray[1]] = name;
+        });
+        decodedData.position = _.difference(decodedData.position, [undefined]);
+        return decodedData;
+    },
+
+    /**
+     * Takes the decoded local storage data and minimize it to save local
+     * storage size.
+     *
+     * @example
+     *      If field storage entry is:
+     * <pre><code>
+     *      [
+     *          'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'
+     *      ]
+     * </code></pre>
+     *      And decoded data is:
+     * <pre><code>
+     *      {
+     *          visible: ['B', 'C', 'F', 'H'],
+     *          hidden: ['E'],
+     *          visible: ['E', 'C', 'B', 'F', 'H']
+     *      }
+     * </code></pre>
+     *      The encoded data will be:
+     * <pre><code>
+     *      [
+     *          0, [1,5], [1,2], 0, [0,1], [1,3], 0, [1,4]
+     *      ]
+     * </code></pre>
+     *      `0` means the field is not displayable. (i.e: `A`, `D`, `G`),
+     *      the first item is the visible state: `1` visible, `0` hidden,
+     *      the second item of the array is the position of the field.
+     *
+     * @param {Object} decodedData The decoded data.
+     * @return {Array} The minimized data.
+     * @private
+     */
+    _encodeCacheData: function(decodedData) {
+        var encodedData = [];
+
+        var fieldList = this._appendFieldsToAllListViewsFieldList();
+        _.each(fieldList, function(fieldName) {
+            var value = 0;
+            if (_.contains(decodedData.position, fieldName)) {
+                value = [
+                    _.contains(decodedData.visible, fieldName) ? 1 : 0,
+                    _.indexOf(decodedData.position, fieldName) + 1
+                ];
+            }
+            encodedData.push(value);
+        });
+        return encodedData;
+    },
+
+    /**
+     * Append the list of fields defined in the metadata that are missing in the
+     * field storage cache entry.
+     *
+     * @return {Array} The list of all the fields that are displayable in
+     *                  list views of this module.
+     * @private
+     */
+    _appendFieldsToAllListViewsFieldList: function() {
+        this.allListViewsFieldList = app.user.lastState.get(this.allListViewsFieldListKey) || [];
+
+        _.each(this.meta.panels, function(panel) {
+            _.each(panel.fields, function(fieldMeta, i) {
+                this.allListViewsFieldList.push(fieldMeta.name);
+            }, this);
+        }, this);
+        this.allListViewsFieldList = _.uniq(this.allListViewsFieldList);
+        app.user.lastState.set(this.allListViewsFieldListKey, this.allListViewsFieldList);
+        return this.allListViewsFieldList;
+    },
+
+    /**
+     * Converts the old localStorage data for fields visibility to the new
+     * decoded format.
+     *
+     * @example Only visible fields used to be stored. Example of data stored:
+     * <pre><code>
+     *      [
+     *          'B', 'C', 'F', 'H'
+     *      ]
+     * </code></pre>
+     *      If the list of fields defined in the metadata was:
+     * <pre><code>
+     *      [
+     *          'E', 'C', 'B', 'F', 'H'
+     *      ]
+     * </code></pre>
+     *      The decoded data would be:
+     * <pre><code>
+     *      {
+     *          visible: ['B', 'C', 'F', 'H'],
+     *          hidden: ['E'],
+     *          visible: ['E', 'C', 'B', 'F', 'H']
+     *      }
+     * </code></pre>
+     *
+     * @return {Array} The data converted to the new decoded format.
+     * @see _encodeCacheData
+     * @private
+     */
+    _convertFromOldFormat: function(visibleFieldList) {
+        var thisViewFieldList = _.reduce(_.map(this.meta.panels, function(panel) {
+            return _.pluck(panel.fields, 'name');
+        }), function(memo, field) {
+            return memo.concat(field);
+        }, []);
+
+        var decoded = {
+            visible: [],
+            hidden: [],
+            position: []
+        };
+        _.each(thisViewFieldList, function(fieldName, i) {
+            if (_.contains(visibleFieldList, fieldName)) {
+                decoded.visible.push(fieldName);
+            } else {
+                decoded.hidden.push(fieldName);
+            }
+            decoded.position.push(fieldName);
+        });
+        app.user.lastState.set(this.thisListViewFieldListKey, this._encodeCacheData(decoded));
+        return decoded;
+    },
+
+    /**
+     * Save to local storage the current order of fields, and their visible
+     * state.
+     *
+     * @example Example of value stored in the local storage:
+     * <pre><code>
+     *      [
+     *          ['A', 'B', 'D', 'C'],
+     *          [0, 1, 0, 1]
+     *      ]
+     * </code></pre>
+     * Means the current order is `ABDC`, and only `B` and `C` are visible
+     * fields.
+     */
+    saveCurrentState: function() {
+        if (!this.thisListViewFieldListKey) {
+            return;
+        }
+        var decoded = {
+            visible: _.pluck(this._fields.visible, 'name'),
+            hidden: _.pluck(this._fields.available, 'name'),
+            position: _.pluck(this._fields.options, 'name')
+        };
+        app.user.lastState.set(this.thisListViewFieldListKey, this._encodeCacheData(decoded));
+    },
+
     /**
      * Add actions to left and right columns
      */

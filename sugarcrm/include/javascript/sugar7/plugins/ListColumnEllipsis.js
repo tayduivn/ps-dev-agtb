@@ -46,7 +46,7 @@
                 this._fields.available = [];
                 var changedColumn = {};
                 // Search _fields.options for match on column and toggle it's selected property
-                _.each(this._fields.options, function (fieldMeta) {
+                _.each(this._fields.options, function(fieldMeta) {
                     if (fieldMeta.name === column) {
                         fieldMeta.selected = !fieldMeta.selected;
                         changedColumn = fieldMeta;
@@ -58,12 +58,15 @@
                         this._fields.available.push(fieldMeta);
                     }
                 }, this);
-                if(this.visibleFieldsLastStateKey) {
-                    app.user.lastState.set(this.visibleFieldsLastStateKey, _.pluck(this._fields.visible, 'name'));
-                }
+
+                // Trigger an event to let the view know to save/update current
+                // state
+                this.trigger('list:save:laststate');
+
                 // trigger an event to let the view that this is mixed-into that a column has been toggled
                 this.trigger('list:toggle:column', column, changedColumn.selected, changedColumn);
             },
+
             /**
              * Determines if only one column is visible, and if the `column` being toggled is the last visible one.
              * @param {String} column The column's `name`

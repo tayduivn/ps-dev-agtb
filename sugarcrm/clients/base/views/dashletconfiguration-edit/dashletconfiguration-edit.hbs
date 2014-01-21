@@ -42,7 +42,7 @@
                                             {{/unless}}
                                         {{/if}}
                                         {{#if name}}
-                                            <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
+                                            <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}"{{#if name}} data-fieldname="{{name}}"{{/if}} data-index="{{index}}">
                                                 {{field ../../../../../../this model=../../../../../../settings template=../../../../../../action}}
                                             </span>
                                         {{/if}}
@@ -74,7 +74,7 @@
                                             {{/if}}
                                             <div class="controls span{{span}} record-cell {{cell_css_class}}" data-type="{{type}}" data-name="{{name}}">
                                                 {{#if name}}
-                                                    <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
+                                                    <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}"{{#if name}} data-fieldname="{{name}}"{{/if}} data-index="{{index}}">
                                                         {{field ../../../../../../this model=../../../../../../settings template=../../../../../../action}}
                                                     </span>
                                                 {{/if}}

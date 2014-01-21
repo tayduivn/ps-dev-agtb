@@ -17,6 +17,7 @@
     <script type="text/javascript" src="../include/javascript/sugar7/utils.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/language.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/help.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/underscore-mixins.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/Dropdown.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/ErrorDecoration.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/QuickSearchFilter.js"></script>

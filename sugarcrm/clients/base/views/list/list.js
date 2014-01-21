@@ -220,10 +220,16 @@
     },
 
     /**
-     * Sets order by on collection and view
-     * @param {Object} event jquery event object
+     * Sets order by on collection and view.
+     *
+     * The event is canceled if an element being dragged is found.
+     *
+     * @param {Event} event jQuery event object.
      */
-    setOrderBy:function (event) {
+    setOrderBy: function(event) {
+        if ($(event.currentTarget).find('ui-draggable-dragging').length) {
+            return;
+        }
         var collection, options, eventTarget, orderBy;
         var self = this;
 
