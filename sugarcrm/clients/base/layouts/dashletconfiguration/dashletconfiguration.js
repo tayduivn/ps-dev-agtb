@@ -34,9 +34,25 @@
                 return childComponent.layout && childComponent.layout.name === 'main-pane';
             }, this);
         }, this);
-        if(main_panel){
+
+        if (main_panel) {
             main_panel.layout.components = _.union(main_panel.layout.components, options.meta.components);
+            var isDashableList = _.find(options.meta.components, function(comp) {
+                if(comp.view) {
+                    return comp.view.type === 'dashablelist';
+                }
+            });
+
+            // If we are in a dashlet config and are configuring a dashlet of type dashable list,
+            // append the filter layout component to the metadata.
+            if (isDashableList) {
+                var filterPanelLayoutDef = app.metadata.getView(null, 'dashablelist');
+                if (filterPanelLayoutDef && filterPanelLayoutDef.filter_panel) {
+                    main_panel.layout.components.push(filterPanelLayoutDef.filter_panel);
+                }
+            }
         }
+
         options.meta = meta;
         app.view.Layout.prototype.initialize.call(this, options);
     }
