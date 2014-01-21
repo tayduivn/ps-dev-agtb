@@ -447,10 +447,14 @@ abstract class UpgradeDriver
      * Load version file from path
      * @return array
      */
-    protected function loadVersion()
+    protected function loadVersion($dir = "")
     {
         if(!defined('sugarEntry')) define('sugarEntry', true);
-        include "sugar_version.php";
+        if($dir) {
+            include "$dir/sugar_version.php";
+        } else {
+            include "sugar_version.php";
+        }
         $sugar_flavor = strtolower($sugar_flavor);
         return array($sugar_version, $sugar_flavor);
     }
@@ -1321,6 +1325,9 @@ abstract class UpgradeDriver
     	$this->to_version = $this->manifest['version'];
     	if(!empty($this->manifest['flavor'])) {
     	    $this->to_flavor = strtolower($this->manifest['flavor']);
+    	} else if(!empty($this->context['new_source_dir'])) {
+    	    list($to_version, $to_flavor) = $this->loadVersion($this->context['new_source_dir']);
+    	    $this->to_flavor = $to_flavor;
     	} else {
     	    $this->to_flavor = $this->from_flavor;
     	}
