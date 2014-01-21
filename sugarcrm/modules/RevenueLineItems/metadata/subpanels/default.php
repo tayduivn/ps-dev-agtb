@@ -28,7 +28,6 @@ $subpanel_layout = array(
             'vname' => 'LBL_LIST_NAME',
             'widget_class' => 'SubPanelDetailViewLink',
             'width' => '10%',
-            'sort_by' => 'products.name',
             'default' => true,
         ),
         'sales_stage' =>
