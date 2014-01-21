@@ -38,6 +38,7 @@ $viewdefs['base']['view']['history'] = array(
                     'Leads',
                     'Opportunities',
                     'Prospects',
+                    'RevenueLineItems',
                 ),
                 'view' => 'record',
             ),
