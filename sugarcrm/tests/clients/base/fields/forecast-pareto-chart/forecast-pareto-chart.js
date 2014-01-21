@@ -358,6 +358,21 @@ describe('Base.Fields.ForecastParetoChart', function() {
             expect(field.d3Data.data[1].values[2].y).toEqual(200);
         });
 
+        it('should not contain any NaNs', function() {
+            field._serverData.data = [{
+                'id': 'test_row_1',
+                'sales_stage': 'test_1',
+                'likely': NaN,
+                'best': NaN,
+                'worst': NaN,
+                'forecast': 'include',
+                'probability': 10,
+                'date_closed_timestamp': 100
+            }];
+
+            field.convertRepDataToChartData('forecast');
+            expect(field.d3Data.data[1].values[0].y).toEqual(0);
+        });
     });
 
     describe('buildChartUrl', function() {

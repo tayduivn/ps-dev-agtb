@@ -296,6 +296,19 @@
      * @param {string} type     What we are dispaying
      */
     convertRepDataToChartData: function(type) {
+        // clear any NaNs
+        _.each(this._serverData.data, function(point) {
+            if (_.has(point, 'likely') && isNaN(point.likely)) {
+                point.likely = 0;
+            }
+            if (_.has(point, 'best') && isNaN(point.best)) {
+                point.best = 0;
+            }
+            if (_.has(point, 'worst') && isNaN(point.worst)) {
+                point.worst = 0;
+            }
+        });
+
         var dataset = this.model.get('dataset'),
             ranges = this.model.get('ranges'),
             seriesIdx = 0,
