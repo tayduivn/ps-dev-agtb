@@ -690,25 +690,30 @@
                     d_separator = app.user.getPreference('decimal_separator') || config.defaultDecimalSeparator || '.',
                     ug_separator = app.user.getPreference('number_grouping_separator'),
                     g_separator = (!_.isUndefined(ug_separator)) ? ug_separator : config.defaultNumberGroupingSeparator || ',',
-                    regex = new RegExp("^([+-])(([\\d]{1,3}(?:" +  this._escapeRegexCharacter(g_separator) + "?[\\d]{3})*)?((?:" + this._escapeRegexCharacter(d_separator) + "[\\d]+))?)(\\%?)"),
-                    parts = value.toString().match(regex);
+                    regex = new RegExp("^([+-])(([\\d]{1,3}(?:" +  this._escapeRegexCharacter(g_separator) + "[\\d]{3})*|(?:[\\d]))*((?:" + this._escapeRegexCharacter(d_separator) + "[\\d]+))?)(\\%)?"),
+                    parts = value.toString().match(regex),
+                    is_percent = (parts && parts[5] == "%"),
+                    do_addition = (parts && parts[1] == "+"),
+                    do_subtraction = (parts && parts[1] == "-");
 
                 // if we have parts and the addition is not zero (0), if it happens to be zero it's from an input
                 // like this +0,5 when you have , as your grouping and . as your decimal
                 // there is a test that covers this use case in the ForecastWorksheet/currency field test
-                if (parts && parts[2] != "0") {
+                // we also want to make sure that parts[0] is equal to the value that was passed in,
+                // if it's not the same, we need to ignore this as it didn't match the full string
+                if (parts && parts[0] == value && parts[2] != "0") {
                     // use original number to apply calculations
                     var amount = this.unformat(parts[2]);
-                    if (parts[5] == '%') {
+                    if (is_percent) {
                         // percentage calculation
                         value = app.math.mul(app.math.div(amount, 100), orig);
                     } else {
                         // add/sub calculation
                         value = amount;
                     }
-                    if (parts[1] == '+') {
+                    if (do_addition) {
                         value = app.math.add(orig, value);
-                    } else if (parts[1] == '-') {
+                    } else if (do_subtraction) {
                         value = app.math.sub(orig, value);
                     }
                     value = app.math.round(value, decimals);

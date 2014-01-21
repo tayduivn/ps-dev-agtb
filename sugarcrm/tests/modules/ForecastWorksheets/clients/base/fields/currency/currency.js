@@ -332,6 +332,22 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
                 it('should decrease field value by -.5%', function() {
                     expect(field._parsePercentage('-,5%')).toEqual('$0,99');
                 });
+
+                it('should increase field value by +1000', function() {
+                    expect(field._parsePercentage('+1000')).toEqual('$1A001,00');
+                });
+
+                it('should decrease field value by -1000', function() {
+                    expect(field._parsePercentage('-1000')).toEqual('$-999,00');
+                });
+
+                it('should increase field value by +1A000', function() {
+                    expect(field._parsePercentage('+1A000')).toEqual('$1A001,00');
+                });
+
+                it('should decrease field value by -1A000', function() {
+                    expect(field._parsePercentage('-1A000')).toEqual('$-999,00');
+                });
             });
 
             describe('should fall back to system defaults when users are undefined', function() {
@@ -391,6 +407,22 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
                 it('should decrease field value by -.5%', function() {
                     expect(field._parsePercentage('-d5%')).toEqual('$0d99');
                 });
+
+                it('should increase field value by +1000', function() {
+                    expect(field._parsePercentage('+1000')).toEqual('$1g001d00');
+                });
+
+                it('should decrease field value by -1000', function() {
+                    expect(field._parsePercentage('-1000')).toEqual('$-999d00');
+                });
+
+                it('should increase field value by +1,000', function() {
+                    expect(field._parsePercentage('+1g000')).toEqual('$1g001d00');
+                });
+
+                it('should decrease field value by -1,000', function() {
+                    expect(field._parsePercentage('-1g000')).toEqual('$-999d00');
+                });
             });
 
             describe('should fall back to hardcoded values when no user prefs and no system defaults', function() {
@@ -439,6 +471,22 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
 
                 it('should decrease field value by -.5', function() {
                     expect(field._parsePercentage('-.5')).toEqual('$0.50');
+                });
+
+                it('should increase field value by +1000', function() {
+                    expect(field._parsePercentage('+1000')).toEqual('$1,001.00');
+                });
+
+                it('should decrease field value by -1000', function() {
+                    expect(field._parsePercentage('-1000')).toEqual('$-999.00');
+                });
+
+                it('should increase field value by +1,000', function() {
+                    expect(field._parsePercentage('+1,000')).toEqual('$1,001.00');
+                });
+
+                it('should decrease field value by -1,000', function() {
+                    expect(field._parsePercentage('-1,000')).toEqual('$-999.00');
                 });
             });
         });
@@ -509,6 +557,18 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
 
             it('should return false for 1000.00asdfasdfa', function() {
                 expect(field.validateField(field, '1000.00asdfasdfa')).toBeFalsy();
+            });
+
+            it('should increase field value by +1000', function() {
+                expect(field.validateField(field, '+1000')).toEqual('$1,001.00');
+            });
+
+            it('should return false for -1000 as negative numbers are not supported', function() {
+                expect(field.validateField(field, '-1000')).toBeFalsy();
+            });
+
+            it('should return false for +1,000,00.00', function() {
+                expect(field.validateField(field, '+1,000,00.00')).toBeFalsy();
             });
         });
     });
