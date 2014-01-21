@@ -91,9 +91,6 @@ EOQ;
         $str .= <<<EOQ
                 </td>    
                 <td align="center">
-                    <table border="0" cellspacing=0 cellpadding="0" align="center">
-                        <tr>
-                            <td id="{$this->args['left_name']}_td" align="center">
                             <select id="{$this->args['left_name']}" name="{$this->args['left_name']}[]" size=
 EOQ;
         $str .=  '"' . (empty($this->args['left_size']) ? '10' : $this->args['left_size']) . '" multiple="multiple" ' . (isset($this->args['disable']) ?  "DISABLED" : '') . 'style="width: 150px;">';
@@ -101,10 +98,7 @@ EOQ;
         foreach($this->args['values_array'][0] as $key=>$value) {
             $str .= "<option value='{$key}'>{$value}</option>";
         }
-        $str .= "</select></td>
-            </tr>
-            </table>
-            </td>";
+        $str .= "</select></td>";
         if ($this->display_hide_tabs == true) {
             $str .= '<td valign="top" style="padding-right: 2px; padding-left: 2px;" align="center">';
             if(!isset($this->args['disable'])) { 
