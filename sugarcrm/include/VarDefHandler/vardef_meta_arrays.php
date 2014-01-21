@@ -171,6 +171,8 @@ $vardef_meta_array = array(
                 'email_addresses_primary',
                 'email_addresses',
                 'archived_emails',
+                'reportees',
+                'tasks_parent',
             ),
             'module' => array(
                 'Forecasts',
