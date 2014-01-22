@@ -265,6 +265,7 @@
 
                     // Plugins for Sugar 7.
                     'include/javascript/sugar7/plugins/Dashlet.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/Connector.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Tooltip.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Audit.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/FindDuplicates.js'  => 'include/javascript/sugar_sidecar.min.js',

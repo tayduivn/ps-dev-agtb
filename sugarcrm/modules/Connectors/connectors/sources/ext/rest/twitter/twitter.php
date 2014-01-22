@@ -60,10 +60,14 @@ class ext_rest_twitter extends ext_rest {
                 'consumerKey' => $properties['oauth_consumer_key'],
                 'consumerSecret' => $properties['oauth_consumer_secret']
             );
-
-            $consumer = new Zend_Oauth_Consumer($config);
-            $consumer->getRequestToken();
-            return true;
+            try {
+                $consumer = new Zend_Oauth_Consumer($config);
+                $consumer->getRequestToken();
+                return true;
+            } catch (Exception $e) {
+                $GLOBALS['log']->error("Error getting request token for twitter:".$e->getMessage());
+                return false;
+            }
         }
         
         return false;

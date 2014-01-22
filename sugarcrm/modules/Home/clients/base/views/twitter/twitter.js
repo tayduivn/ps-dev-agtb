@@ -25,20 +25,21 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    plugins: ['Dashlet', 'Timeago'],
+    plugins: ['Dashlet', 'Timeago', 'Connector'],
     limit : 20,
     events: {
         'click .connect-twitter': 'onConnectTwitterClick'
     },
+
     initDashlet: function() {
         // if config view overide with module specific
         if (this.meta.config) {
             this.dashletConfig = app.metadata.getView(app.controller.context.get('module'), this.name) || this.dashletConfig;
         }
 
-        var limit = this.settings.get("limit") || this.limit;
-            this.settings.set("limit", limit);
-        this.cacheKey = "twitter.dashlet.current_user_cache";
+        var limit = this.settings.get('limit') || this.limit;
+            this.settings.set('limit', limit);
+        this.cacheKey = 'twitter.dashlet.current_user_cache';
         var currentUserCache = app.cache.get(this.cacheKey);
         if (currentUserCache && currentUserCache.current_twitter_user_name) {
             self.current_twitter_user_name = currentUserCache.current_twitter_user_name;
@@ -47,6 +48,7 @@
             self.current_twitter_user_pic = currentUserCache.current_twitter_user_pic;
         }
     },
+
     onConnectTwitterClick: function(event) {
         if ( !_.isUndefined(event.currentTarget) ) {
             event.preventDefault();
@@ -56,45 +58,76 @@
             });
         }
     },
+
     _render: function () {
         if (this.tweets || this.meta.config) {
             app.view.View.prototype._render.call(this);
         }
     },
+
     bindDataChange: function(){
         if(this.model) {
-            this.model.on("change", this.loadData, this);
+            this.model.on('change', this.loadData, this);
         }
     },
-    loadData: function (options) {
-        if (this.disposed || this.meta.config) {
-            return;
-        }
+
+    /**
+     * Gets twitter name from one of various fields depending on context
+     * @returns {string} twitter name
+     */
+    getTwitterName: function() {
         var twitter =
                 this.model.get('twitter') ||
                 this.model.get('name') ||
                 this.model.get('account_name') ||
-                this.model.get('full_name'),
-            limit = parseInt(this.settings.get("limit"), 10) || this.limit,
-            self = this;
-
-        this.screen_name = this.settings.get('twitter') || false;
+                this.model.get('full_name');
         //workaround because home module actually pulls a dashboard instead of an
         //empty home model
         if (this.context &&
             this.context.get('module') === 'Home') {
             twitter = this.settings.get('twitter');
         }
+        twitter = twitter.replace(/ /g, '');
+        this.twitter = twitter;
+        return twitter;
+    },
 
-        if (!twitter || this.viewName === 'config') {
+    /**
+     * Load twitter data
+     *
+     * @param {object} options
+     * @returns {boolean} Returns false if twitter name could not be established
+     */
+    loadData: function(options) {
+        if (this.disposed || this.meta.config) {
+            return;
+        }
+
+        this.screen_name = this.settings.get('twitter') || false;
+        this.tried = false;
+
+        if (!this.getTwitterName() || this.viewName === 'config') {
             return false;
         }
 
-        twitter = twitter.replace(/ /g, "");
+        this.connectorCriteria = ['eapm_bean', 'test_passed'];
+        this.checkConnector('ext_rest_twitter',
+            _.bind(this.loadDataWithValidConnector, this),
+            _.bind(this.handleLoadError, this),
+            this.connectorCriteria);
+    },
 
-        this.twitter = twitter;
-        var currentUserUrl = app.api.buildURL('connector/twitter/currentUser');
-        if (!self.current_twitter_user_name) {
+    /**
+     * With a valid connector, load twitter data
+     *
+     * @param {object} connector - connector will have been validated already
+     */
+    loadDataWithValidConnector: function(connector) {
+        var limit = parseInt(this.settings.get('limit'), 10) || this.limit,
+            self = this;
+
+        var currentUserUrl = app.api.buildURL('connector/twitter/currentUser','','',{connectorHash:connector.connectorHash});
+        if (!this.current_twitter_user_name) {
             app.api.call('READ', currentUserUrl, {},{
                 success: function(data) {
                     app.cache.set(self.cacheKey, {
@@ -109,20 +142,20 @@
                 }
             });
         }
-        var url = app.api.buildURL('connector/twitter','',{id:twitter},{count:limit});
+
+        var url = app.api.buildURL('connector/twitter','',{id:this.twitter},{count:limit,connectorHash:connector.connectorHash});
         app.api.call('READ', url, {},{
-            success:function (data) {
+            success: function (data) {
                 if (self.disposed) {
                     return;
                 }
-
                 var tweets = [];
                 if (data.success !== false) {
                     _.each(data, function (tweet) {
                         var time = new Date(tweet.created_at.replace(/^\w+ (\w+) (\d+) ([\d:]+) \+0000 (\d+)$/,
-                                "$1 $2 $4 $3 UTC")),
-                            date = app.date.format(time, "Y/m/d H:i:s"),
-                            // retweeted tweets are sometimes truncated so use the original as source text
+                                '$1 $2 $4 $3 UTC')),
+                            date = app.date.format(time, 'Y/m/d H:i:s'),
+                        // retweeted tweets are sometimes truncated so use the original as source text
                             text = tweet.retweeted_status ? 'RT @'+tweet.retweeted_status.user.screen_name+': '+tweet.retweeted_status.text : tweet.text,
                             sourceUrl = tweet.source,
                             id = tweet.id_str,
@@ -134,7 +167,6 @@
                             rightNow = new Date(),
                             diff = (rightNow.getTime() - time.getTime())/(1000*60*60*24),
                             timeLabel= diff > 1 ? 'LBL_TIME_RELATIVE_TWITTER_LONG' : 'LBL_TIME_RELATIVE_TWITTER_SHORT';
-
 
                         // Search for links and turn them into hrefs
                         for (j = 0; j < tokenText.length; j++) {
@@ -154,34 +186,59 @@
                     self.render();
                 }
             },
-            error: function(xhr,status,error){
-                self.showGeneric = true;
-                self.errorLBL = app.lang.get('ERROR_UNABLE_TO_RETRIEVE_DATA');
-                self.template = app.template.get(self.name + '.twitter-need-configure.Home');
-                if (xhr.status === 404) {
-                    self.showGeneric = true;
-                    self.errorLBL = app.lang.get('LBL_ERROR_CANNOT_FIND_TWITTER') + self.twitter;
-                } else if (xhr.status === 424) {
-                    app.cache.cut(self.key);
-                    self.needConnect = false;
-                    self.showGeneric = false;
-                    if (xhr.code && xhr.code === 'ERROR_NEED_AUTHORIZE') {
-                        self.needConnect = true;
-                    } else if (xhr.code && xhr.code === 'ERROR_NEED_OAUTH') {
-                        self.needOAuth = true;
-                    }
-                    self.showAdmin = app.acl.hasAccess('admin', 'Administration');
+            error: function(data) {
+                if (self.tried === false) {
+                    self.tried = true;
+                    // twitter get returned error, so re-get connectors
+                    var name = 'ext_rest_twitter';
+                    var funcWrapper = function () {
+                        self.checkConnector(name,
+                            _.bind(self.loadDataWithValidConnector, self),
+                            _.bind(self.handleLoadError, self),
+                            self.connectorCriteria);
+                    };
+                    self.getConnectors(name, funcWrapper);
                 }
-                if (!self.disposed) {
-                    app.view.View.prototype._render.call(self);
-                }
-            },
-            complete: (options) ? options.complete : null
+            }
         });
     },
+
+    /**
+     * Error handler for if connector validation errors at some point
+     *
+     * @param {object} connector
+     */
+    handleLoadError: function(connector) {
+        if (this.disposed) {
+            return;
+        }
+        this.showGeneric = true;
+        this.errorLBL = app.lang.get('ERROR_UNABLE_TO_RETRIEVE_DATA');
+        this.template = app.template.get(this.name + '.twitter-need-configure.Home');
+        if (connector === null) {
+            //Connector doesn't exist
+            this.errorLBL = app.lang.get('LBL_ERROR_CANNOT_FIND_TWITTER') + self.twitter;
+        }
+        else if (!connector.test_passed && connector.testing_enabled) {
+            //OAuth failed
+            this.needOAuth = true;
+            this.needConnect = false;
+            this.showGeneric = false;
+            this.showAdmin = app.acl.hasAccess('admin', 'Administration');
+        }
+        else if (!connector.eapm_bean) {
+            //Not connected
+            this.needOAuth = false;
+            this.needConnect = true;
+            this.showGeneric = false;
+            this.showAdmin = app.acl.hasAccess('admin', 'Administration');
+        }
+        app.view.View.prototype._render.call(this);
+    },
+
     _dispose: function() {
         if (this.model) {
-            this.model.off("change", this.loadData, this);
+            this.model.off('change', this.loadData, this);
         }
 
         app.view.View.prototype._dispose.call(this);
