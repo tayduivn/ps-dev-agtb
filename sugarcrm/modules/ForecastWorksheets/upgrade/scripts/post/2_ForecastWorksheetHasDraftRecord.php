@@ -90,10 +90,13 @@ class SugarUpgradeForecastWorksheetHasDraftRecord extends UpgradeScript
 
         $insertSQL = 'INSERT INTO forecast_worksheets VALUES';
 
+        /* @var $fw ForecastWorksheet */
+        $fw = BeanFactory::getBean('ForecastWorksheets');
+
         while ($row = $this->db->fetchByAssoc($results)) {
             $row['id'] = create_guid();
             foreach ($row as $key => $value) {
-                $row[$key] = $this->db->quoted($value);
+                $row[$key] = $this->db->massageValue($value, $fw->getFieldDefinition($key));
             }
 
             $this->db->query($insertSQL . ' (' . join(',', $row) . ');');

@@ -51,7 +51,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            "p.team_set_id, " .
                            "p.product_template_id, " .
                            "p.account_id, " .
-                           "p.discount_price * p.quantity, " . //calculate total_amount
+                           "(p.discount_price * p.quantity) as total_amount, " . //calculate total_amount
                            "p.type_id, " .
                            "p.quote_id, " .
                            "p.manufacturer_id, " .
@@ -62,7 +62,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            "p.cost_price, " .
                            "p.discount_price, " .
                            "p.discount_amount, " .
-                           "null, " . //discount_rate_percent
+                           "null as discount_rate_percent, " . //discount_rate_percent
                            "p.discount_amount_usdollar, " .
                            "p.discount_select, " .
                            "p.deal_calc, " .
@@ -72,7 +72,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            "p.discount_usdollar, " .
                            "p.list_usdollar, " .
                            "p.currency_id, " .
-                           "p.discount_usdollar / p.discount_price, " . //base_rate
+                           "(p.discount_usdollar / p.discount_price) as base_rate, " . //base_rate
                            "p.status, " .
                            "p.tax_class, " .
                            "p.website, " .
@@ -95,9 +95,9 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            "o.amount, " . //likely_case
                            "o.amount, " . //worst_case
                            "o.date_closed, " .
-                           "0, " . //date_closed_timestamp -- needs to be updated later
+                           "0 as date_closed_timestamp, " . //date_closed_timestamp -- needs to be updated later
                            "o.next_step, " .
-                           "null, " . //commit_stage
+                           "null as commit_stage, " . //commit_stage
                            "o.sales_stage, " .
                            "o.probability, " .
                            "o.lead_source, " .
@@ -134,7 +134,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            "p.team_set_id, " .
                            "p.product_template_id, " .
                            "p.account_id, " .
-                           "p.discount_price * p.quantity, " . //calculate total amount
+                           "(p.discount_price * p.quantity) as total_amount, " . //calculate total amount
                            "p.type_id, " .
                            "p.quote_id, " .
                            "p.manufacturer_id, " .
@@ -145,7 +145,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            "p.cost_price, " .
                            "p.discount_price, " .
                            "p.discount_amount, " .
-                           "null, " . //discount_rate_percent
+                           "null as discount_rate_percent, " . //discount_rate_percent
                            "p.discount_amount_usdollar, " .
                            "p.discount_select, " .
                            "p.deal_calc, " .
@@ -211,7 +211,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            "p.team_set_id, " .
                            "p.product_template_id, " .
                            "p.account_id, " .
-                           "p.discount_price * p.quantity, " . //calculate total_amount
+                           "(p.discount_price * p.quantity) as total_amount, " . //calculate total_amount
                            "p.type_id, " .
                            "p.quote_id, " .
                            "p.manufacturer_id, " .
@@ -222,7 +222,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            "p.cost_price, " .
                            "p.discount_price, " .
                            "p.discount_amount, " .
-                           "null, " . //discount_rate_percent
+                           "null as discount_rate_percent, " . //discount_rate_percent
                            "p.discount_amount_usdollar, " .
                            "p.discount_select, " .
                            "p.deal_calc, " .
@@ -289,11 +289,14 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
         $insertSQL = 'INSERT INTO revenue_line_items VALUES';
         $productToRliMapping = array();
 
+        /* @var $rli RevenueLineItem */
+        $rli = BeanFactory::getBean('RevenueLineItems');
+
         while ($row = $this->db->fetchByAssoc($results)) {
             $productToRliMapping[$row['id']] = create_guid();
             $row['id'] = $productToRliMapping[$row['id']];
             foreach ($row as $key => $value) {
-                $row[$key] = $this->db->quoted($value);
+                $row[$key] = $this->db->massageValue($value, $rli->getFieldDefinition($key));
             }
 
             $this->db->query($insertSQL . ' (' . join(',', $row) . ');');
