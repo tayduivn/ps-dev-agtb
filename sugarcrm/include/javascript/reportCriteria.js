@@ -143,6 +143,7 @@ function getSelectedLinkDefs(module) {
 		var selected = false;
 		var relationship = rel_defs[linked_field['relationship_name']];
 		var rel_type = get_rel_type(linked_field,relationship);
+        linked_field.table_name = full_table_list[links[i]].name;
 
 		new_links[links[i]] = linked_field;
 	}
@@ -378,9 +379,10 @@ function addModuleSelectFilter(cell,filter, row) {
 
 		var option_info = new Object();
 		option_info['value'] = i;
-		var label = linked_field['label'];
+		var label = linked_field['name'];
 		if ( i != 'self' ) {
 			label = full_table_list[full_table_list[i].parent].label + ' &gt; '+ label;
+            label = linked_field.table_name;
 		}
 		option_info['text'] = label;
 		option_info['selected'] = selected;
