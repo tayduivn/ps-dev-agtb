@@ -249,7 +249,8 @@ class ViewConfigureshortcutbar extends SugarView
     protected function sortEnabledModules($modules)
     {
         $sortComparison = function ($a, $b) {
-            return ($a['order'] - $b['order']);
+            $order = $a['order'] - $b['order'];
+            return ($order == 0) ? ($a['label'] > $b['label']) : $order;
         };
         uasort($modules, $sortComparison);
 
