@@ -130,7 +130,7 @@ $viewdefs['Notes']['base']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_body',
-            'label' => 'LBL_PANEL_BODY',
+            'label' => 'LBL_RECORD_BODY',
             'columns' => 2,
             'labels' => true,
             'labelsOnTop' => true,
@@ -154,7 +154,7 @@ $viewdefs['Notes']['base']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_hidden',
-            'label' => 'LBL_PANEL_ADVANCED',
+            'label' => 'LBL_RECORD_SHOWMORE',
             'hide' => true,
             'columns' => 2,
             'labelsOnTop' => true,
