@@ -566,6 +566,49 @@ describe("Create View", function() {
             expect(ajaxSpy.getCall(0).args[0].url).toContain('?viewed=1');
         });
 
+        it("Should append after_create url parameters if the model is copied and and the copied model ID is set", function() {
+            var saveSpy = sinon.stub(view.model, 'save'),
+                getCustomSaveOptionsStub = sinon.stub(view, 'getCustomSaveOptions');
+
+            view.context.set('copiedFromModelId', '123');
+            view.model.isCopied = true;
+            view.saveModel(function(){}, function(){});
+
+            expect(saveSpy.calledOnce).toBe(true);
+            expect(saveSpy.args[0][1].params.after_create.copy_rel_from).toBe('123');
+
+            saveSpy.restore();
+            getCustomSaveOptionsStub.restore();
+        });
+
+        it("Should not append after_create url parameters if the model is not copied", function() {
+            var saveSpy = sinon.stub(view.model, 'save'),
+                getCustomSaveOptionsStub = sinon.stub(view, 'getCustomSaveOptions');
+
+            view.context.set('copiedFromModelId', '123');
+            view.saveModel(function(){}, function(){});
+
+            expect(saveSpy.calledOnce).toBe(true);
+            expect(saveSpy.args[0][1].params).toBeUndefined();
+
+            saveSpy.restore();
+            getCustomSaveOptionsStub.restore();
+        });
+
+        it("Should not append after_create url parameters if the copied model ID is not set", function() {
+            var saveSpy = sinon.stub(view.model, 'save'),
+                getCustomSaveOptionsStub = sinon.stub(view, 'getCustomSaveOptions');
+
+            view.model.isCopied = true;
+            view.saveModel(function(){}, function(){});
+
+            expect(saveSpy.calledOnce).toBe(true);
+            expect(saveSpy.args[0][1].params).toBeUndefined();
+
+            saveSpy.restore();
+            getCustomSaveOptionsStub.restore();
+        });
+
         it("Should build correct success message if model is returned from the API", function() {
             var moduleName = 'Contacts',
                 labelSpy = sinonSandbox.spy(app.lang, 'get'),
