@@ -235,7 +235,7 @@ class Importer
                 $do_save = false;
             }
 
-            // Handle the special case "Sync to Outlook"
+            // Handle the special case 'Sync to Mail Client'
             if ( $focus->object_name == "Contact" && $field == 'sync_contact' )
             {
                 /**
