@@ -65,12 +65,10 @@
         app.view.invokeParent(this, {type: 'field', name: 'date', method: '_render', platform: 'base'});
 
         viewName = self._getViewName();
-        $(function() {
-            if (self._isEditView(viewName)) {
-                // Note: The Datepicker should be setup in parent DateField
-                self._setupTimepicker();
-            }
-        });
+        if (self._isEditView(viewName)) {
+            // Note: The Datepicker should be setup in parent DateField
+            self._setupTimepicker();
+        }
         if (Modernizr.touch) {
            this.$('[rel=timepicker]').attr('readonly', true);
         }
