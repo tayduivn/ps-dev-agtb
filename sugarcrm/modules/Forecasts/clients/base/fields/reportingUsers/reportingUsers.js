@@ -181,8 +181,8 @@
                     //childEntry to an Array.  This is crucial so that the beginning _.each loop runs correctly.
                     _.each(entry.children, function(childEntry, index2) {
                         entry.children[index2] = ctx._recursiveReplaceHTMLChars([childEntry]);
-                        if (childEntry.attr.rel == "my_opportunities") {
-                            childEntry.data = app.utils.formatString(app.lang.get('LBL_MY_OPPS_RLI', 'Forecasts'), [childEntry.data]);
+                        if (childEntry.attr.rel == 'my_opportunities' && childEntry.metadata.id == app.user.get('id')) {
+                            childEntry.data = app.utils.formatString(app.lang.get('LBL_MY_MANAGER_LINE', 'Forecasts'), [childEntry.data]);
                         }
                     }, this);
                 }

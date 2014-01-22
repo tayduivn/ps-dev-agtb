@@ -32,9 +32,9 @@
 
     format: function(value) {
         var su = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
-        if (value == su.full_name) {
+        if (value == su.full_name && su.id == app.user.get('id')) {
             var hb = Handlebars.compile("{{str key module context}}");
-            value = hb({'key': 'LBL_MY_OPPS_RLI', 'module': this.module, 'context': su});
+            value = hb({'key': 'LBL_MY_MANAGER_LINE', 'module': this.module, 'context': su});
         }
 
         return value;
