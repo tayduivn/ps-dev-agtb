@@ -412,6 +412,50 @@ class Currency extends SugarBean
         $this->retrieve($currency_id);
         return $this;
     }
+
+    /**
+     * Return a list of currency names with their record ids as the keys
+     *
+     * This is used for the currency_name vardefs via the API
+     *
+     * @return array
+     */
+    public static function getCurrencies()
+    {
+        require_once('modules/Currencies/ListCurrency.php');
+
+        $currency = new ListCurrency();
+        $currency->lookupCurrencies();
+
+        $currencyList = array();
+        foreach ($currency->list as $item) {
+            $currencyList[$item->id] = $item->name;
+        }
+
+        return $currencyList;
+    }
+
+    /**
+     * Return a list of currency ids with their associated symbols attached
+     *
+     * This is used for the currency_symbol vardefs via the API
+     *
+     * @return array
+     */
+    public static function getCurrencySymbols()
+    {
+        require_once('modules/Currencies/ListCurrency.php');
+
+        $currency = new ListCurrency();
+        $currency->lookupCurrencies();
+
+        $currencyList = array();
+        foreach ($currency->list as $item) {
+            $currencyList[$item->id] = $item->symbol;
+        }
+
+        return $currencyList;
+    }
 } // end currency class
 
 /**
@@ -782,6 +826,8 @@ function getCurrencyDropDown($focus, $field='currency_id', $value='', $view='Det
 }
 
 /**
+ * @deprecated
+ * @see Currency::getCurrencies
  * @param object $focus
  * @param string $field
  * @param string $value
@@ -821,6 +867,8 @@ function getCurrencyNameDropDown($focus, $field='currency_name', $value='', $vie
 }
 
 /**
+ * @deprecated
+ * @see Currency::getCurrencySymbols
  * @param object $focus
  * @param string $field
  * @param string $value
@@ -861,22 +909,11 @@ function getCurrencySymbolDropDown($focus, $field='currency_name', $value='', $v
 
 /**
  * Returns a list of all currencies as array of 'id' => 'name' elements
- *
+ * @deprecated
+ * @see Currency::getCurrencies
  * @return array
  */
 function getCurrencyDropDownList()
 {
-    require_once('modules/Currencies/ListCurrency.php');
-
-    $currency = new ListCurrency();
-    $currency->lookupCurrencies();
-
-    $currencyList = array();
-    foreach ($currency->list as $item) {
-        $currencyList[$item->id] = $item->name;
-    }
-
-    return $currencyList;
+    return Currency::getCurrencies();
 }
-
-?>

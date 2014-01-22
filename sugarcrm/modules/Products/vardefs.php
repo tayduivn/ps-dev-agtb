@@ -684,7 +684,8 @@ $dictionary['Product'] = array(
             'table' => 'currencies',
             'module' => 'Currencies',
             'source' => 'non-db',
-            'function' => array('name' => 'getCurrencyNameDropDown', 'returns' => 'html'),
+            'function' => 'getCurrencies',
+            'function_bean' => 'Currencies',
             'studio' => false,
             'duplicate_merge' => 'disabled',
             'massupdate' => false
@@ -700,7 +701,8 @@ $dictionary['Product'] = array(
             'table' => 'currencies',
             'module' => 'Currencies',
             'source' => 'non-db',
-            'function' => array('name' => 'getCurrencySymbolDropDown', 'returns' => 'html'),
+            'function' => 'getCurrencySymbols',
+            'function_bean' => 'Currencies',
             'studio' => false,
             'duplicate_merge' => 'disabled',
             'massupdate' => false
