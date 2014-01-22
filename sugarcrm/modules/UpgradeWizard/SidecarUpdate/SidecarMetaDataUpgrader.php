@@ -402,7 +402,7 @@ class SidecarMetaDataUpgrader
 
         $this->logUpgradeStatus('Mobile/portal metadata upgrade process complete.');
 
-        foreach ($GLOBALS['moduleList'] as $module) {
+        foreach ($this->getModulesList() as $module) {
             // if this is not a BWC module remove the old subpaneldefs layout
             if(!isModuleBWC($module)) {
                 self::$filesForRemoval[] = "modules/{$module}/metadata/subpaneldefs.php";
@@ -415,11 +415,23 @@ class SidecarMetaDataUpgrader
 
 
     /**
+     * Get all modules we're going to process
+     * @return array
+     */
+    protected function getModulesList()
+    {
+        if($this->module) {
+            return array($this->module => $this->module);
+        }
+        return $GLOBALS['moduleList'];
+    }
+
+    /**
      * Add quickcreate files to the list
      */
     protected function setQuickCreateFiles()
     {
-        $modules = $GLOBALS['moduleList'];
+        $modules = $this->getModulesList();
 
         $DCActions = array();
         $actions_path = 'include/DashletContainer/Containers/DCActions.php';
@@ -436,6 +448,9 @@ class SidecarMetaDataUpgrader
 
         $position = 0;
         foreach ($DCActions as $module) {
+            if($this->module && $this->module != $module) {
+                continue;
+            }
             $sidecarMetadataPath = 'modules/' . $module . '/clients/base/menus/quickcreate/quickcreate.php';
             $quickcreatedefsPath = 'modules/' . $module . '/metadata/quickcreatedefs.php';
             if (!file_exists('custom/' . $sidecarMetadataPath) && !file_exists($sidecarMetadataPath) &&
@@ -455,6 +470,9 @@ class SidecarMetaDataUpgrader
         }
 
         foreach ($disabled as $module) {
+            if($this->module && $this->module != $module) {
+                continue;
+            }
             $sidecarMetadataPath = 'modules/' . $module . '/clients/base/menus/quickcreate/quickcreate.php';
             $quickcreatedefsPath = 'modules/' . $module . '/metadata/quickcreatedefs.php';
             if (!file_exists('custom/' . $sidecarMetadataPath) && !file_exists($sidecarMetadataPath) &&
@@ -476,7 +494,7 @@ class SidecarMetaDataUpgrader
 
     protected function setMenuFiles()
     {
-        foreach ($GLOBALS['moduleList'] as $module) {
+        foreach ($this->getModulesList() as $module) {
             if(file_exists("custom/modules/{$module}/Menu.php")) {
                 $file = $this->getUpgradeFileParams("custom/modules/{$module}/Menu.php", $module, "base", "custom", null, true, false, true);
                 if(empty($file)) continue;
@@ -573,8 +591,13 @@ class SidecarMetaDataUpgrader
     {
         $this->logUpgradeStatus("Getting subpanel upgrade files ...");
         $paths = $this->legacyFilePaths['base'];
+        if($this->module) {
+            $glob = $this->module;
+        } else {
+            $glob = "*";
+        }
         foreach ($paths as $type => $path) {
-            $dirs = glob($path . 'modules/*', GLOB_ONLYDIR);
+            $dirs = glob($path . "modules/$glob", GLOB_ONLYDIR);
             if (!empty($dirs)) {
                 foreach ($dirs as $dirpath) {
                     $module = basename($dirpath);
@@ -601,7 +624,12 @@ class SidecarMetaDataUpgrader
             return;
         }
         $extdefs = $this->extensions[$extename];
-        $dirs = glob("custom/Extension/modules/*/Ext/{$extdefs['extdir']}", GLOB_ONLYDIR);
+        if($this->module) {
+            $glob = $this->module;
+        } else {
+            $glob = "*";
+        }
+        $dirs = glob("custom/Extension/modules/$glob/Ext/{$extdefs['extdir']}", GLOB_ONLYDIR);
         if(empty($dirs)) {
             return;
         }
@@ -799,7 +827,7 @@ class SidecarMetaDataUpgrader
     {
         // In addition to all of the files we already worked on, we need to include
         // the OOTB wireless metadata files that fit the bill.
-        $moduledirs = glob('modules/*', GLOB_ONLYDIR);
+        $moduledirs = glob("modules/{$this->module}*", GLOB_ONLYDIR);
         foreach ($moduledirs as $moduledir) {
             $files = glob("$moduledir/metadata/*.php");
             foreach ($files as $filepath) {
