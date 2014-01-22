@@ -113,9 +113,47 @@ class BeanFactory {
                     self::registerBean($bean);
                 }
             } else {
+                $bean = self::$loadedBeans[$module][$id];
+
+                // check if cached bean is deleted
+                if ($deleted && !empty($bean->deleted)) { 
+                    if(empty($params['strict_retrieve'])) {
+                        return SugarBean::_createBean($beanClass);;
+                    } else {
+                        return null;
+                    }
+                }
+
+                //BEGIN SUGARCRM flav=pro ONLY
+                // cached bean was retrieved with team security disabled
+                if (empty($params['disable_row_level_security']) && !empty($bean->disable_row_level_security)) {
+                    $newBean = SugarBean::_createBean($beanClass);;
+                    
+                    if (isset($params['disable_row_level_security'])) { // false
+                        $newBean->disable_row_level_security = false;
+                    }
+
+                    if (empty($newBean->disable_row_level_security)) {
+                        // retireve with team security enabled
+                        $result = $newBean->retrieve($id, $encode, $deleted);
+                        if (empty($result)) {
+                            if(empty($params['strict_retrieve'])) {
+                                return $bean;
+                            } else {
+                                return null;
+                            }
+                        }
+                        else {
+                            // save new bean in cache
+                            self::$loadedBeans[$module][$id] = $newBean;
+                            return $newBean;
+                        }
+                    }
+                }
+                //END SUGARCRM flav=pro ONLY
+
                 self::$hits++;
                 self::$touched[$module][$id]++;
-                $bean = self::$loadedBeans[$module][$id];
             }
         } else {
             $bean = SugarBean::_createBean($beanClass);
