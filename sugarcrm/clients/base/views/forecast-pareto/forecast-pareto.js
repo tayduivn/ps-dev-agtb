@@ -154,9 +154,7 @@
             // if we have a timestamp, use it, otherwise just default to the current time period
             defaultOptions.timeperiod_id = this.model.get('date_closed_timestamp');
         }
-        if (this.layout.$el) {
-            this.layout.setTitle(this.getLabel() + ' ' + defaultOptions.timeperiod_label);
-        }
+        this.layout.setTitle(this.getLabel() + ' ' + defaultOptions.timeperiod_label);
         this.settings.set(defaultOptions);
     },
 
