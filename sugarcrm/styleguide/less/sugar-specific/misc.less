@@ -185,14 +185,31 @@ hr.soften {
 }
 
 .logo {
-  background: url('@{baseUrl}/img/sugar-red-logo.png') 0 0 no-repeat;
-  background-repeat: no-repeat;
-  background-size: contain;
-  display: block;
-  margin: 14px 0 0 10px;
-  text-indent: -7000px;
-  width: 180px;
+  margin-left: 10px;
   height: 24px;
+  img {
+    height: inherit;
+    vertical-align: middle;
+  }
+  #sugarcrm-logo {
+    .sc-left,
+    .sc-right,
+    .sc-top {
+      fill: #ccc;
+      stroke-width: 0;
+    }
+    .sc-top {
+      fill: #D1232A;
+    }
+    .sc-right,
+    .sc-light {
+      fill: #C8C7C1;
+    }
+    .sc-left,
+    .sc-dark {
+      fill: #2F2F2C;
+    }
+  }
 }
 
 .divleft {
