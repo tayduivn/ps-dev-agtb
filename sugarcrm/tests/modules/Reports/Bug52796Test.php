@@ -45,7 +45,8 @@ class Bug52796Test extends Sugar_PHPUnit_Framework_TestCase
         global $sugar_config;
         parent::setUp();
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user');
+        $user = SugarTestHelper::setUp('current_user');
+        $user->setPreference('currency_show_preferred', true);
         $currency = SugarTestCurrencyUtilities::createCurrency('CC', 'C', 'CCC', 0.732);
         $this->saved['currency'] = $sugar_config['currency'];
         $sugar_config['currency'] = $currency->id;
