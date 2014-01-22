@@ -37,6 +37,11 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
         if (empty($this->alias) && !empty($this->def['name'])) {
             $this->alias = $this->def['name'];
         }
+        
+        if (!empty($this->alias)) {
+            $this->alias = $GLOBALS['db']->getValidDBName($this->alias);
+        }
+
         if ($this->field == '*') {
             // remove *
             $this->moduleName = empty($this->moduleName) ? $this->query->getFromBean()->module_name : $this->moduleName;

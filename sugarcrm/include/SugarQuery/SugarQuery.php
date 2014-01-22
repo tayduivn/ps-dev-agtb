@@ -152,7 +152,8 @@ class SugarQuery
      */
     public function from(SugarBean $bean, $options = array())
     {
-        $alias = (isset($options['alias'])) ? $options['alias'] : false;
+        global $db;
+        $alias = (isset($options['alias'])) ? $db->getValidDBName($options['alias']) : false;
         $team_security = (isset($options['team_security'])) ? $options['team_security'] : true;
         $add_deleted = (isset($options['add_deleted'])) ? $options['add_deleted'] : true;
         $this->from = $bean;

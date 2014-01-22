@@ -1288,6 +1288,9 @@ class ModuleInstaller{
 		}
 		include($file);
 		$rel_dictionary = $dictionary;
+
+		array_walk($rel_dictionary, array("ModuleInstaller", "cleanUpRelationship"));
+
 		foreach ($rel_dictionary as $rel_name => $rel_data)
    	    {
    	        $table = ''; // table is actually optional
@@ -1310,6 +1313,30 @@ class ModuleInstaller{
                 $GLOBALS['log']->debug( 'done<br>');
         }
 	}
+
+
+    /**
+     * Clean up the relationship definition for dbs with max string lengths
+     *
+     * @param array $item
+     * @param char $key
+     *
+     */
+	public static function cleanUpRelationship(&$item, &$key)
+	{
+		global $db;
+		if(isset($item['table'])) {
+			$item['table'] = $db->getValidDBName($item['table']);
+		}
+		$key = $db->getValidDBName($key);
+		foreach($item['fields'] as &$field) {
+			$field['name'] = $db->getValidDBName($field['name']);
+		}
+		foreach($item['indices'] as &$index) {
+			$index['name'] = $db->getValidDBName($index['name']);
+		}
+	}
+
 
 	function install_layoutfields() {
 		 if (!empty ( $this->installdefs [ 'layoutfields' ] ))
