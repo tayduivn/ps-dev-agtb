@@ -289,6 +289,20 @@
             {
                 name: "record",
                 route: ":module/:id/:action"
+            },
+            {
+                name: "record_layout",
+                route: ":module/:id/layout/:view",
+                callback: function(module, id, view) {
+                   app.router.record(module, id, null, view);
+               }
+            },
+            {
+                name: "record_layout_action",
+                route: ":module/:id/layout/:view/:action",
+                callback: function(module, id, layout, action) {
+                    app.router.record(module, id, action, layout);
+                }
             }
         ];
 
