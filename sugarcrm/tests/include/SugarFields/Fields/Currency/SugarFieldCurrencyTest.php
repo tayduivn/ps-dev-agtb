@@ -25,7 +25,7 @@ require_once('include/SugarFields/SugarFieldHandler.php');
 
 class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    static $currency, $currency2;
+    static $currency, $currency2, $currency3;
 
     /**
      *
@@ -38,6 +38,7 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
         self::$currency = SugarTestCurrencyUtilities::createCurrency('foo', 'f', 'f', .5);
         self::$currency2 = SugarTestCurrencyUtilities::createCurrency('Singapore', '$', 'SGD', 1.246171, 'currency-sgd');
+        self::$currency3 = SugarTestCurrencyUtilities::createCurrency('Bitcoin', '฿', 'XBT', 0.001057, 'currency-btc');
     }
 
     /**
@@ -48,6 +49,54 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::tearDown();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
+    }
+
+    /**
+     *
+     * @group currency
+     * @access public
+     */
+    public function testGetListViewSmarty()
+    {
+        global $current_user;
+
+        $field = SugarFieldHandler::getSugarField('currency');
+
+        $parentFieldArray = array (
+            'CURRENCY_ID' => '-99',
+            'BASE_RATE' => '1.000000',
+            'TOTAL' => '4200.000000',
+            'TOTAL_USDOLLAR' => '4200.000000',
+        );
+        $vardef = array (
+            'type' => 'currency',
+            'name' => 'TOTAL',
+            'vname' => 'LBL_TOTAL',
+            );
+        $displayParams = array('labelSpan' => null, 'fieldSpan' => null);
+        $col = null;
+
+        // format base currency
+        $value = $field->getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col);
+        $this->assertEquals('$4,200.00', $value);
+
+        // format foo currency
+        $parentFieldArray['CURRENCY_ID'] = self::$currency->id;
+        $parentFieldArray['BASE_RATE'] = self::$currency->conversion_rate;
+        $value = $field->getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col);
+        $this->assertEquals(self::$currency->symbol . '4,200.00', $value);
+
+        // format as usdollar field (is base currency)
+        $vardef['is_base_currency'] = true;
+        $value = $field->getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col);
+        $this->assertEquals('$4,200.00', $value);
+
+        // show base value in user preferred currency
+        $current_user->setPreference('currency_show_preferred', true);
+        $current_user->setPreference('currency', self::$currency3->id);
+        $value = $field->getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col);
+        $this->assertEquals(self::$currency3->symbol . '4.44', $value);
+
     }
 
     /**

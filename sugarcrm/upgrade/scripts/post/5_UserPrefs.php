@@ -111,6 +111,11 @@ class SugarUpgradeUserPrefs extends UpgradeScript
             	$changed = true;
             }
 
+            // versions of 6.7.4 and earlier show user preferred by default
+            if (version_compare($this->from_version, '6.7.5', '<')) {
+                $current_user->setPreference('currency_show_preferred', true, 0, 'global');
+            }
+
             if($this->toFlavor('pro')) {
 	          //Set the user theme to be 'Sugar' theme since this is run for CE flavor conversions
 	          $userTheme = $current_user->getPreference('user_theme', 'global');

@@ -229,6 +229,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
             'vname' => 'LBL_SUBTOTAL_USDOLLAR',
             'dbType' => 'decimal',
             'type' => 'currency',
+            'is_base_currency' => true,
             'len' => '26,6',
             'audited'=>true,
             'studio' => array(
@@ -266,6 +267,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
             'group'=>'shipping',
             'dbType' => 'decimal',
             'type' => 'currency',
+            'is_base_currency' => true,
             'len' => '26,6',
             'studio' => array(
                 'wirelesseditview' => false,
@@ -309,6 +311,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
             'vname' => 'LBL_DEAL_TOT_USDOLLAR',
             'dbType' => 'decimal',
             'type' => 'decimal',
+            'is_base_currency' => true,
             'len' => '26,2',
             'studio' => array(
                 'wirelesseditview' => false,
@@ -340,6 +343,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
             'vname' => 'LBL_NEW_SUB',
             'dbType' => 'decimal',
             'type' => 'currency',
+            'is_base_currency' => true,
             'len' => '26,6',
             'studio' => array(
                 'wirelesseditview' => false,
@@ -376,6 +380,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
             'dbType' => 'decimal',
             'group'=>'tax',
             'type' => 'currency',
+            'is_base_currency' => true,
             'len' => '26,6',
             'audited'=>true,
             'studio' => array(
@@ -409,6 +414,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
             'dbType' => 'decimal',
             'group'=>'total',
             'type' => 'currency',
+            'is_base_currency' => true,
             'len' => '26,6',
             'audited'=>true,
             'enable_range_search' => true,

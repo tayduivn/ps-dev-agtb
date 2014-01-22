@@ -219,7 +219,8 @@ $dictionary['ForecastWorksheet'] = array(
                 'best_case',
                 'worst_case'
             ),
-            'convertToBase' => true
+            'convertToBase' => true,
+            'skip_preferred_conversion' => true
         ),
         'best_case' =>
         array(
@@ -237,7 +238,8 @@ $dictionary['ForecastWorksheet'] = array(
                 'base_rate',
                 'currency_id'
             ),
-            'convertToBase' => true
+            'convertToBase' => true,
+            'skip_preferred_conversion' => true
         ),
         'worst_case' =>
         array(
@@ -255,7 +257,8 @@ $dictionary['ForecastWorksheet'] = array(
                 'base_rate',
                 'currency_id'
             ),
-            'convertToBase' => true
+            'convertToBase' => true,
+            'skip_preferred_conversion' => true
         ),
         'base_rate' =>
         array(

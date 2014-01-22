@@ -25,21 +25,51 @@ require_once('include/SugarFields/Fields/Float/SugarFieldFloat.php');
 class SugarFieldCurrency extends SugarFieldFloat 
 {
     function getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col) {
+        global $current_user;
         $tabindex = 1;
-    	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
-        
-        $this->ss->left_delimiter = '{';
-        $this->ss->right_delimiter = '}';
-        $this->ss->assign('col',strtoupper($vardef['name']));        
-	    if(is_object($parentFieldArray) ){
-            if(!empty($parentFieldArray->currency_id)) {
-                $this->ss->assign('currency_id',$parentFieldArray->currency_id);
+        $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
+
+        $baseCurrency = SugarCurrency::getBaseCurrency();
+        $amount = $parentFieldArray[strtoupper($vardef['name'])];
+        $currencyId = !empty($parentFieldArray['CURRENCY_ID']) ?
+            $parentFieldArray['CURRENCY_ID']
+            : $baseCurrency->id;
+        $currencySymbol = !empty($parentFieldArray['CURRENCY_SYMBOL']) ?
+            $parentFieldArray['CURRENCY_SYMBOL']
+            : SugarCurrency::getCurrencyByID($currencyId)->symbol;
+
+        if (empty($currencyId) || !empty($vardef['is_base_currency'])) {
+            // this is a base USDOLLAR field
+            if ($current_user->getPreference('currency_show_preferred')) {
+                // display base amount in user preferred currency
+                $userCurrency = SugarCurrency::getUserLocaleCurrency();
+                if ($currencyId !== $userCurrency->id) {
+                    // currencies differ, convert the amount
+                    $currencyId = $userCurrency->id;
+                    $currencySymbol = $userCurrency->symbol;
+                    $amount = SugarCurrency::convertWithRate($amount, 1.0, $userCurrency->conversion_rate);
+                } else {
+                    // transactional and preferred currency type are the same,
+                    // convert value back to transactional amount
+                    if (!empty($parentFieldArray['BASE_RATE']) && $parentFieldArray['BASE_RATE'] <> 1) {
+                        $amount = SugarCurrency::convertWithRate($amount, 1.0, $parentFieldArray['BASE_RATE']);
+                    } else {
+                        // no base rate found, fall back to base
+                        $currencyId = $baseCurrency->id;
+                        $currencySymbol = $baseCurrency->symbol;
+                    }
+                }
+            } else {
+                // display in base currency
+                $currencyId = $baseCurrency->id;
+                $currencySymbol = $baseCurrency->symbol;
             }
-	    } else if (!empty($parentFieldArray['CURRENCY_ID'])) {
-	    	$this->ss->assign('currency_id',$parentFieldArray['CURRENCY_ID']);
-	    } else if (!empty($parentFieldArray['currency_id'])) {
-	    	$this->ss->assign('currency_id',$parentFieldArray['currency_id']);
-	    }
+        }
+
+        $this->ss->assign('currency_id', $currencyId);
+        $this->ss->assign('currency_symbol', $currencySymbol);
+        $this->ss->assign('amount', $amount);
+
         return $this->fetch($this->findTemplate('ListView'));
     }
     
@@ -115,6 +145,18 @@ class SugarFieldCurrency extends SugarFieldFloat
             return '';
         }
         return format_number($rawField,$precision,$precision);
+    }
+
+    /**
+     * @param $formattedField
+     * @param $vardef
+     * @return null|string
+     */
+    public function unformatField($formattedField, $vardef){
+        if ( $formattedField === '' || $formattedField === NULL ) {
+            return null;
+        }
+        return (string)unformat_number($formattedField);
     }
 
     /**
