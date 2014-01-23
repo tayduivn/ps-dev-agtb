@@ -72,7 +72,7 @@ describe("BaseFilterRowsView", function() {
             });
             view.saveFilter();
             expect(triggerStub).toHaveBeenCalledWith('filter:add', view.layout.editingFilter);
-            expect(triggerStub).toHaveBeenCalledWith('filter:create:rowsValid', false);
+            expect(triggerStub).toHaveBeenCalledWith('filter:toggle:savestate', false);
         });
     });
 
@@ -220,12 +220,6 @@ describe("BaseFilterRowsView", function() {
                 {'field': 'valueField', 'value': 'value'}
             ]);
         });
-        it('should validate rows', function() {
-            sinonSandbox.stub(view, '_disposeFields');
-            var validateStub = sinonSandbox.stub(view, 'validateRows');
-            view.removeRow({currentTarget: $event});
-            expect(validateStub).toHaveBeenCalled();
-        });
     });
 
     describe('validateRows', function() {
@@ -240,64 +234,56 @@ describe("BaseFilterRowsView", function() {
         it('should return true if all rows have a value set', function() {
             $rows.push($('<div>').data({ name: 'abc', value: 'ABC'}));
             $rows.push($('<div>').data({ name: '123', value: '123'}));
-            view.validateRows($rows);
-            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', true]);
-            expect(triggerStub.secondCall).toBeNull();
+            var isValid = view.validateRows($rows);
+            expect(isValid).toBe(true);
         });
         it('should return false if a row has a value not set', function() {
             $rows.push($('<div>').data({ name: 'abc', value: 'ABC'}));
             $rows.push($('<div>').data({ name: '123'}));
-            view.validateRows($rows);
-            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', false]);
+            var isValid = view.validateRows($rows);
+            expect(isValid).toBe(false);
         });
         it('should return true if uses date range instead of value', function() {
             $rows.push($('<div>').data({ name: 'abc', isDateRange: true}));
             $rows.push($('<div>').data({ name: '123', value: '123'}));
             view.validateRows($rows);
-            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', true]);
-            expect(triggerStub.secondCall).toBeNull();
         });
         it('should return true if predefined filter instead of value', function() {
             $rows.push($('<div>').data({ name: '$favorite', isPredefinedFilter: true}));
             $rows.push($('<div>').data({ name: '123', value: '123'}));
             view.validateRows($rows);
-            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', true]);
-            expect(triggerStub.secondCall).toBeNull();
         });
         it('should return false if $dateBetween operator does not have 2 values', function() {
             $rows.push($('<div>').data({ name: 'abc', operator: '$dateBetween', value: ['12-12-12']}));
             $rows.push($('<div>').data({ name: '123', value: '123'}));
-            view.validateRows($rows);
-            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', false]);
-            expect(triggerStub.secondCall).toBeNull();
+            var isValid = view.validateRows($rows);
+            expect(isValid).toBe(false);
         });
         it('should return true if $dateBetween operator has 2 values', function() {
             $rows.push($('<div>').data({ name: 'abc', operator: '$dateBetween', value: ['12-12-12', '12-13-12']}));
             $rows.push($('<div>').data({ name: '123', value: '123'}));
-            view.validateRows($rows);
-            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', true]);
-            expect(triggerStub.secondCall).toBeNull();
+            var isValid = view.validateRows($rows);
+            expect(isValid).toBe(true);
         });
         it('should return false if $between operator does not have 2 values', function() {
             $rows.push($('<div>').data({ name: 'abc', operator: '$between', value: [11]}));
             $rows.push($('<div>').data({ name: '123', value: '123'}));
-            view.validateRows($rows);
-            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', false]);
-            expect(triggerStub.secondCall).toBeNull();
+            var isValid = view.validateRows($rows);
+            expect(isValid).toBe(false);
         });
         it('should return true if $between operator has 2 values', function() {
             $rows.push($('<div>').data({ name: 'abc', operator: '$between', value: [11, 22]}));
             $rows.push($('<div>').data({ name: '123', value: '123'}));
             view.validateRows($rows);
-            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', true]);
-            expect(triggerStub.secondCall).toBeNull();
+            var isValid = view.validateRows($rows);
+            expect(isValid).toBe(true);
         });
         it('should return false if $dateBetween operator has an empty value', function() {
             $rows.push($('<div>').data({ name: 'abc', operator: '$dateBetween', value: ['', '12-12-12']}));
             $rows.push($('<div>').data({ name: '123', value: '123'}));
             view.validateRows($rows);
-            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', false]);
-            expect(triggerStub.secondCall).toBeNull();
+            var isValid = view.validateRows($rows);
+            expect(isValid).toBe(false);
         });
     });
 
@@ -725,6 +711,75 @@ describe("BaseFilterRowsView", function() {
             };
             expect(filter).toEqual(expected);
         });
+
+        it('should build empty filter definition if the displaying column is invalid', function() {
+            $row = $('<div>').data({
+                name: 'address_street'
+            });
+            filter = view.buildRowFilterDef($row);
+            expect(filter).toBeUndefined();
+
+            var validate = view.validateRow($row);
+            expect(validate).toBe(false);
+        });
+
+        describe('build an ad-hoc filter definition', function() {
+            it('should have empty operator and value', function() {
+                $row = $('<div>').data({
+                    name: 'address_street'
+                });
+                var validate = view.validateRow($row);
+                expect(validate).toBe(false);
+
+                filter = view.buildRowFilterDef($row, true);
+                //build ad-hoc filter
+                expected = {
+                    '$or': [
+                        {
+                            primary_address_street: {
+                                'undefined': ''
+                            }
+                        },
+                        {
+                            alt_address_street: {
+                                'undefined': ''
+                            }
+                        }
+
+                    ]
+                };
+                expect(filter).toEqual(expected);
+            });
+
+            it('should have empty value when value is not unassigned', function() {
+                $row = $('<div>').data({
+                    name: 'address_street',
+                    operator: '$starts'
+                });
+                var validate = view.validateRow($row);
+                expect(validate).toBe(false);
+
+                filter = view.buildRowFilterDef($row, true);
+                //build ad-hoc filter
+                expected = {
+                    '$or': [
+                        {
+                            primary_address_street: {
+                                '$starts': ''
+                            }
+                        },
+                        {
+                            alt_address_street: {
+                                '$starts': ''
+                            }
+                        }
+
+                    ]
+                };
+                expect(filter).toEqual(expected);
+            });
+        });
+
         it('should split values if operator is $in and value is a string', function() {
             $row = $('<div>').data({
                 name: 'case_number',
@@ -810,16 +865,22 @@ describe("BaseFilterRowsView", function() {
                 'filter_definition': [
                     {'$favorites': ''}
                 ],
+                'filter_template': [
+                    {'$favorites': ''}
+                ],
                 'name': 'AwesomeName'
             };
             expect(saveFilterEditStateStub).toHaveBeenCalledWith(expectedFilter);
         });
         it('should get the filter def passed in params', function() {
-            view.saveFilterEditState([{'my_filter': {'is': 'cool'}}]);
+            view.saveFilterEditState([{'my_filter': {'is': 'cool'}}], [{'my_filter': {'is': 'cool'}}]);
             expect(buildFilterDefStub).not.toHaveBeenCalled();
             expect(saveFilterEditStateStub).toHaveBeenCalled();
             var expectedFilter = {
                 'filter_definition': [
+                    {'my_filter': {'is': 'cool'}}
+                ],
+                'filter_template': [
                     {'my_filter': {'is': 'cool'}}
                 ],
                 'name': 'AwesomeName'

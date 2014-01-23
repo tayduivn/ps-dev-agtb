@@ -283,10 +283,18 @@
             if (!filter.id ||
                 (this.filters.get(filter.id) && !_.isEqual(editState, this.filters.get(filter.id).toJSON()))) {
                 // Validate so `Save` button is available
-                this.layout.trigger("filter:create:validate");
+                this.layout.trigger('filter:toggle:savestate', true);
             }
         } else {
             filter = this.filters.get(id) || this.emptyFilter;
+        }
+
+        if (filter && filter.get('filter_template') &&
+            JSON.stringify(filter.get('filter_definition')) !== JSON.stringify(filter.get('filter_template'))
+        ) {
+            this.trigger('filter:create:open', filter);
+        } else if (!editState) {
+            this.trigger('filter:create:close');
         }
         var ctxList = this.getRelevantContextList();
         var clear = false;

@@ -25,10 +25,10 @@ describe("Filter Actions View", function () {
         expect(viewSetFilterStub).toHaveBeenCalled();
         expect(viewSetFilterStub.getCall(0).args).toEqual([name]);
     });
-    it('should call toggleRowState on filter:create:rowsValid', function() {
+    it('should call toggleRowState on filter:toggle:savestate', function() {
        var stub = sinon.stub(view,'toggleRowState', function(){});
        view.initialize(view.options);
-       parentLayout.trigger('filter:create:rowsValid');
+       parentLayout.trigger('filter:toggle:savestate');
        expect(stub).toHaveBeenCalled();
     });
     it('should call setFilterName on filter:set:name', function() {
@@ -67,7 +67,7 @@ describe("Filter Actions View", function () {
         it('should trigger validate', function() {
             view.filterNameChanged();
             expect(layoutTriggerStub).toHaveBeenCalled();
-            expect(layoutTriggerStub).toHaveBeenCalledWith('filter:create:validate');
+            expect(layoutTriggerStub).toHaveBeenCalledWith('filter:toggle:savestate');
         });
         it('should save edit state when filter definition is valid', function() {
             view.rowState = true;

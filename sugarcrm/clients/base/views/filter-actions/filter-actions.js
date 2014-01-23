@@ -59,7 +59,7 @@
             this.setFilterName(name);
         }, this);
 
-        this.listenTo(this.layout, "filter:create:rowsValid", this.toggleRowState);
+        this.listenTo(this.layout, "filter:toggle:savestate", this.toggleRowState);
         this.listenTo(this.layout, "filter:set:name", this.setFilterName);
     },
 
@@ -93,7 +93,7 @@
         if (this.disposed) {
             return;
         }
-        this.layout.trigger('filter:create:validate');
+        this.layout.trigger('filter:toggle:savestate', true);
         if (this.rowState && this.layout.getComponent('filter-rows')) {
             this.layout.getComponent('filter-rows').saveFilterEditState();
         }
