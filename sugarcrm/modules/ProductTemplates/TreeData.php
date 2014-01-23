@@ -59,7 +59,11 @@ function get_categories_and_products($parent_id) {
     }
 
     $result=$GLOBALS['db']->query($query);
-    while (($row=$GLOBALS['db']->fetchByAssoc($result))!= null) {
+
+    // fetchByAssoc has been changed in version 7 and it does encoding of the string data.
+    // for the treeview we do not encoding as it messes up the display of the folder labels,
+    // hence we pass false as an additional parameter
+    while (($row=$GLOBALS['db']->fetchByAssoc($result, false))!= null) {
         $node = new Node($row['id'], $row['name']); 
         $node->set_property("href", $href_string);
         $node->set_property("type", $row['type']);
