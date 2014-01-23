@@ -428,6 +428,10 @@ table.dataTable {
 /* ---------
 FLEXLIST GENERIC */
 .flex-list-view {
+  //override of bootstrap to fix safari
+  table.dataTable {
+    max-width: none;
+  }
 
   /*LEFT ACTIONS ONLY*/
   &.left-actions table.dataTable {
@@ -760,7 +764,7 @@ FLEXLIST GENERIC */
       & > tfoot > tr > td {
         &:last-child {
           position: absolute;
-          right: 1px;
+          right: 0;
           vertical-align: top;
         }
         &:nth-last-of-type(2) {
