@@ -39,7 +39,10 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
         }
         
         if (!empty($this->alias)) {
-            $this->alias = $GLOBALS['db']->getValidDBName($this->alias);
+            $newAlias = $GLOBALS['db']->getValidDBName($this->alias);
+            if (strtolower($this->alias) != $newAlias) {
+                throw new SugarQueryException("Alias is more than the max allowed length for an alias");
+            }
         }
 
         if ($this->field == '*') {

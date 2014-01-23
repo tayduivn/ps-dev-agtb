@@ -272,7 +272,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->from(BeanFactory::getBean('Contacts'));
         $sq->where()->equals("id", "2");
         $sql = $sq->compileSql();
-        $this->assertcontains('id superawesomefield', $sql);
+        $this->assertcontains('id superAwesomeField', $sql);
     }
 
     /**
