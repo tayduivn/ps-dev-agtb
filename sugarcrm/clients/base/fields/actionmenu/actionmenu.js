@@ -17,8 +17,7 @@
 ({
     events: {
         'click .checkall': 'checkAll',
-        'click input[name="check"]': 'check',
-        'change [data-toggle=dropdownmenu]' : 'dropdownSelected'
+        'click input[name="check"]': 'check'
     },
     plugins: ['Tooltip'],
     fields: null, //action button fields
@@ -51,16 +50,6 @@
             checkbox.attr("checked", !checkbox.is(":checked"));
             this.toggleSelect(checkbox.is(':checked'));
         }
-    },
-    dropdownSelected: function(evt) {
-        var $el = this.$(evt.currentTarget),
-            selectedIndex = $el.val();
-        if (!selectedIndex) {
-            return;
-        }
-        this.fields[selectedIndex].getFieldElement().trigger("click");
-        $el.blur();
-        evt.currentTarget.selectedIndex = 0;
     },
     toggleSelect: function (check) {
         var massCollection = this.context.get('mass_collection');
@@ -128,7 +117,6 @@
             massCollection.on("add", function (model) {
                 if (massCollection.length > 0) {
                     self.$(self.actionDropDownTag).removeClass("disabled");
-                    self.$(".dropdown-menu-select").removeClass("hide");
                 }
                 if (massCollection.length === self.collection.length) {
                     self.$(self.fieldTag).attr("checked", true);
@@ -138,7 +126,6 @@
             massCollection.on("remove reset", function (model) {
                 if (massCollection.length === 0) {
                     self.$(self.actionDropDownTag).addClass("disabled");
-                    self.$(".dropdown-menu-select").addClass("hide");
                 }
                 self.$(self.fieldTag).attr("checked", false);
                 self.toggleSelectAll();
@@ -334,11 +321,8 @@
 
             });
             actionMenu += "</ul>";
-            var caret = '';
-            if (app.utils.isTouchDevice()) {
-                caret += '<select data-toggle="dropdownmenu" class="hide dropdown-menu-select"></select>';
-            }
-            self.actionPlaceHolder = new Handlebars.SafeString(caret + actionMenu);
+
+            self.actionPlaceHolder = new Handlebars.SafeString(actionMenu);
 
             var massCollection = this.context.get('mass_collection');
             massCollection.on('massupdate:estimate', this.onTotalEstimate, this);
@@ -352,11 +336,9 @@
         }
     },
     setPlaceholder: function () {
-        var index = 0,
-            selectEl = this.$(".dropdown-menu-select"),
-            html = '<option></option>';
+        var index = 0;
 
-        _.each(this.fields, function (field, idx) {
+        _.each(this.fields, function (field) {
             var fieldPlaceholder = this.$("span[sfuuid='" + field.sfId + "']");
             if (!field.isVisible()) {
                 fieldPlaceholder.toggleClass('hide', true);
@@ -364,7 +346,6 @@
             } else {
                 fieldPlaceholder.toggleClass('hide', false);
                 this.$(".dropdown-menu").append($('<li>').append(fieldPlaceholder));
-                html += '<option value=' + idx + '>' + field.label + '</option>';
                 index++;
             }
         }, this);
@@ -380,9 +361,6 @@
                 $(el).remove();
             }
         });
-        if (app.utils.isTouchDevice()) {
-            selectEl.html(html);
-        }
     },
 
     /**
