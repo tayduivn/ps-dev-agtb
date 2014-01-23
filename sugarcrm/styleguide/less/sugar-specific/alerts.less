@@ -16,7 +16,17 @@
 
 // Adjust close link position
 .alert .close {
-  right: -10px;
+  right: -12px;
+  top: -1px;
+  font-size: 14px;
+  font-weight: normal;
+  .opacity(100);
+  &:hover {
+    .opacity(100);
+    .icon-remove {
+      color: lighten(@gray, 5%);
+    }
+  }
 }
 
 // Alternate styles

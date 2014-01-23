@@ -25,6 +25,9 @@ $dictionary['Manufacturer'] = array(
   'favorites' => false,
 //END SUGARCRM flav=pro ONLY
   'comment' => 'Manufacturers',
+  'unified_search' => true,
+  'full_text_search' => true,
+  'unified_search_default_enabled' => true,
   'fields' => array (
   'id' =>
   array (
@@ -95,6 +98,8 @@ $dictionary['Manufacturer'] = array(
     'required'=>true,
     'comment' => 'Manufacturer name',
     'importable' => 'required',
+    'unified_search' => true,
+    'full_text_search' => array('boost' => 3),
   ),
   'list_order' =>
   array (

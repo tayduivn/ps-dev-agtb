@@ -55,7 +55,7 @@ set_error_handler('scriptErrorHandler', E_ALL & ~E_STRICT & ~E_DEPRECATED);
 $smdUpgrader->upgrade();
 $fail = $smdUpgrader->getFailures();
 if(!empty($fail)) {
-    echo "***FAILURE***\n".join("\n", $fail)."\n";
+    echo "***FAILURE***\n".var_export($fail, true)."\n";
     exit(1);
 } else {
     if(count($smdUpgrader->getFilesForUpgrade()) > 0) {

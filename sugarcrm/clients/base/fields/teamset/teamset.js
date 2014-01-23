@@ -184,6 +184,10 @@
 
         this.template = template || this.template;
     },
+
+    /**
+     * {@inheritDoc}
+     */
     _render: function () {
         var self = this;
         this._super('_render');
@@ -201,6 +205,7 @@
             });
         }
     },
+
     /**
      * Called to update value when a selection is made from options view dialog
      * @param model New value for teamset

@@ -27,7 +27,7 @@
  ********************************************************************************/
 }}
 <div class="alert {{alertClass}} alert-block">
-    <a class="close">x</a>
+    <button class="close" data-action="close"><i class="icon-remove"></i></button>
     {{#if title}}<strong>{{title}}</strong>{{/if}}
     {{#each messages}}{{{this}}}{{/each}}
 </div>

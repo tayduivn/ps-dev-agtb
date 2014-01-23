@@ -80,4 +80,10 @@ class SugarTestAccountUtilities
         }
         return $account_ids;
     }
+
+    public static function deleteM2MRelationships($linkName)
+    {
+        $account_ids = self::getCreatedAccountIds();
+        $GLOBALS['db']->query('DELETE FROM accounts_' . $linkName . ' WHERE account_id IN (\'' . implode("', '", $account_ids) . '\')');
+    }
 }

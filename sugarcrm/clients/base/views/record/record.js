@@ -401,7 +401,8 @@
             layout: 'create-actions',
             context: {
                 create: true,
-                model: prefill
+                model: prefill,
+                copiedFromModelId: this.model.get('id')
             }
         }, function(context, newModel) {
             if (newModel && newModel.id) {

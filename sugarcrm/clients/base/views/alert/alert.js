@@ -39,8 +39,8 @@
         events: {
             'click [data-action=cancel]': 'cancelClicked',
             'click [data-action=confirm]': 'confirmClicked',
-            'click a[class!=close]': 'linkClick',
-            'click a.close': 'closeClicked'
+            'click [data-action=close]': 'closeClicked',
+            'click a': 'linkClick'
         },
 
     LEVEL: {
