@@ -517,11 +517,9 @@ class SugarTestHelper
             self::$initVars['GLOBALS'][$globVar] = $GLOBALS[$globVar];
         }
 
-        //ensure current user exists
-        /*if (!isset($GLOBALS['current_user'])) {
-            $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        }*/
-        self::$initVars['GLOBALS']['current_user'] = $GLOBALS['current_user'];
+        if (isset($GLOBALS['current_user'])) {
+            self::$initVars['GLOBALS']['current_user'] = $GLOBALS['current_user'];
+        }
 
         // backup of SugarThemeRegistry
         self::$systemVars['SugarThemeRegistry'] = SugarThemeRegistry::current();
