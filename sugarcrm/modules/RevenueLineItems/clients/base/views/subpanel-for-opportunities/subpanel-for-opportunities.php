@@ -100,7 +100,6 @@ $fields = array(
     'quantity',
     array(
         'name' => 'likely_case',
-        'required' => true,
         'type' => 'currency',
         'related_fields' => array(
             'currency_id',
@@ -113,7 +112,6 @@ $fields = array(
     ),
     array(
         'name' => 'best_case',
-        'required' => true,
         'type' => 'currency',
         'related_fields' => array(
             'currency_id',
@@ -126,7 +124,6 @@ $fields = array(
     ),
     array(
         'name' => 'worst_case',
-        'required' => true,
         'type' => 'currency',
         'related_fields' => array(
             'currency_id',
