@@ -158,11 +158,7 @@ $dictionary['Product'] = array(
             'type' => 'id',
             'required' => false,
             'reportable' => false,
-            'function' => array(
-                'name' => 'getManufacturers',
-                'returns' => 'html',
-                'include' => 'modules/ProductTemplates/ProductTemplate.php'
-            ),
+            'massupdate' => false,
             'comment' => 'Manufacturer of product'
         ),
         'manufacturer_name' =>
@@ -173,13 +169,17 @@ $dictionary['Product'] = array(
             'type' => 'relate',
             'vname' =>'LBL_MANUFACTURER_NAME',
             'join_name' => 'manufacturers',
-            'link' => 'manufacturer_link',
+            'link' => 'manufacturers',
             'table' => 'manufacturers',
             'isnull' => 'true',
             'source'=>'non-db',
             'module' => 'Manufacturers',
             'dbType' => 'varchar',
             'len' => '255',
+            'massupdate' => false,
+            'related_fields' => array(
+                'manufacturer_id'
+            )
         ),
         'category_id' =>  array(
             'name' => 'category_id',
@@ -908,6 +908,16 @@ $dictionary['Product'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_MEETINGS',
         ),
+        'manufacturers' => array (
+            'name' => 'manufacturers',
+            'type' => 'link',
+            'relationship' => 'product_manufacturers',
+            'vname' => 'LBL_MANUFACTURERS',
+            'link_type' => 'one',
+            'module' => 'Manufacturers',
+            'bean_name' => 'Manufacturer',
+            'source' => 'non-db',
+        ),
     ),
     'indices' => array(  array('name' => 'idx_products', 'type' => 'index', 'fields' => array('name', 'deleted')),  array(
         'name' => 'idx_prod_user_dc_timestamp',
@@ -1033,6 +1043,15 @@ $dictionary['Product'] = array(
             'relationship_type' => 'one-to-many',
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Products'
+        ),
+        'product_manufacturers' => array(
+            'rhs_module' => 'Manufacturers',
+            'rhs_table' => 'manufacturers',
+            'rhs_key' => 'id',
+            'lhs_module' => 'Products',
+            'lhs_table' => 'products',
+            'lhs_key' => 'manufacturer_id',
+            'relationship_type' => 'one-to-many'
         ),
     ),
 

@@ -113,11 +113,7 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'id',
             'required' => false,
             'reportable' => false,
-            'function' => array(
-                'name' => 'getManufacturers',
-                'returns' => 'html',
-                'include' => 'modules/ProductTemplates/ProductTemplate.php'
-            ),
+            'massupdate' => false,
             'comment' => 'Manufacturer of product'
         ),
         'manufacturer_name' =>
@@ -128,13 +124,17 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'relate',
             'vname' =>'LBL_MANUFACTURER_NAME',
             'join_name' => 'manufacturers',
-            'link' => 'manufacturer_link',
+            'link' => 'manufacturers',
             'table' => 'manufacturers',
             'isnull' => 'true',
             'source'=>'non-db',
             'module' => 'Manufacturers',
             'dbType' => 'varchar',
             'len' => '255',
+            'massupdate' => false,
+            'related_fields' => array(
+                'manufacturer_id'
+            )
         ),
         'manufacturer_link' => array(
             'name' => 'manufacturer_link',
@@ -984,6 +984,16 @@ $dictionary['RevenueLineItem'] = array(
             'bean_name' => 'Meeting',
             'source' => 'non-db',
             'vname' => 'LBL_MEETINGS',
+        ),
+        'manufacturers' => array (
+            'name' => 'manufacturers',
+            'type' => 'link',
+            'relationship' => 'product_templates_manufacturers',
+            'vname' => 'LBL_MANUFACTURERS',
+            'link_type' => 'one',
+            'module' => 'Manufacturers',
+            'bean_name' => 'Manufacturer',
+            'source' => 'non-db',
         ),
     ),
     'indices' => array(
