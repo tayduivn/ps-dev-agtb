@@ -999,7 +999,7 @@ ENDQ;
         foreach ($fieldNames as $field) {
             $values[] = $this->getFieldValue($field, $fieldMapping);
         }
-        return "INSERT INTO folders (".implode(",", $fieldNames).") VALUES(".implode(",", $values).");";
+        return "INSERT INTO folders (".implode(",", $fieldNames).") VALUES(".implode(",", $values).")";
     }
 
     /**
