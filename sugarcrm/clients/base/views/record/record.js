@@ -34,7 +34,8 @@
         'click a[name=cancel_button]': 'cancelClicked',
         'click [data-action=scroll]': 'paginateRecord',
         'click .record-panel-header': 'togglePanel',
-        'click .tab a': 'setActiveTab'
+        'click #recordTab > .tab > a': 'setActiveTab',
+        'click .dropdown-menu a': 'triggerNavTab'
     },
 
     /**
@@ -93,6 +94,8 @@
 
         this.adjustHeaderpane = _.bind(_.debounce(this.adjustHeaderpane, 50), this);
         $(window).on('resize.' + this.cid, this.adjustHeaderpane);
+
+        $(window).on('resize.' + this.cid, this.overflowTabs);
     },
 
     /**
@@ -219,6 +222,7 @@
         }
 
         this.handleActiveTab();
+        this.overflowTabs();
     },
 
     /**
@@ -271,7 +275,14 @@
      */
     handleActiveTab: function() {
         var activeTabHref = app.user.lastState.get(app.user.lastState.key('activeTab', this));
-        var activeTab = this.$('ul a[href="'+activeTabHref+'"]');
+
+        // Set to first tab by default
+        if (!activeTabHref) {
+            activeTabHref = this.$('#recordTab > .tab:first-child > a').attr('href');
+            app.user.lastState.set(app.user.lastState.key('activeTab', this), activeTabHref);
+        }
+
+        var activeTab = this.$('#recordTab > .tab > a[href="'+activeTabHref+'"]');
         if (activeTabHref && activeTab) {
             activeTab.tab('show');
         } else if (this.meta.useTabsAndPanels && this.checkFirstPanel()) {
@@ -1076,7 +1087,7 @@
 
     /**
      * Hide or show panel based on click to the panel header
-     * @param e - event
+     * @param {Event} e
      */
     togglePanel: function(e) {
         var $panelHeader = this.$(e.currentTarget);
@@ -1108,4 +1119,54 @@
         }
         return false;
     },
+
+    /**
+     * Moves overflowing tabs into a dropdown
+     */
+    overflowTabs: function() {
+        var $tabs = this.$('#recordTab > .tab:not(.dropdown)'),
+            $dropdownList = this.$('#recordTab .dropdown'),
+            $dropdownTabs = this.$('#recordTab .dropdown-menu li'),
+            navWidth = this.$('#recordTab').width(),
+            activeTabHref = app.user.lastState.get(app.user.lastState.key('activeTab', this)),
+            $activeTab = this.$('#recordTab > .tab > a[href="'+activeTabHref+'"]').parent(),
+            // Calculate available width for items in navbar
+            // Includes the activetab to ensure it is displayed
+            width = $activeTab.outerWidth() + $dropdownList.outerWidth();
+
+        $tabs.each(_.bind(function (index, elem) {
+            var $tab = $(elem),
+                overflow;
+
+            // Always include the active tab
+            if ($tab.hasClass('active')) {
+                overflow = false;
+            }
+            else {
+                width += $tab.outerWidth();
+                // Check if the tab fits in the navbar
+                overflow = width >= navWidth;
+            }
+
+            // Toggle tabs in the navbar
+            $tab.toggleClass('hidden', overflow);
+            // Toggle items in the dropdown
+            this.$($dropdownTabs[index]).toggleClass('hidden', !overflow);
+        }, this));
+        // Toggle the dropdown arrow
+        $dropdownList.toggleClass('hidden', !$tabs.is(':hidden'));
+    },
+
+    /**
+     * Takes a tab dropdown link and triggers the corresponding tab
+     * @param {Event} e
+     */
+    triggerNavTab: function(e) {
+        var tabTarget = e.currentTarget.hash,
+            activeTab = this.$('#recordTab > .tab > a[href="'+tabTarget+'"]');
+
+        e.preventDefault();
+        activeTab.trigger('click');
+        this.overflowTabs();
+    }
 })
