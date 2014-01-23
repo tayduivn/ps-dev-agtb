@@ -205,7 +205,7 @@
      * @param model
      */
     addFilter: function(model){
-        this.filters.add(model);
+        this.filters.add(model, { merge: true });
         app.user.lastState.set(app.user.lastState.key("saved-" + this.layout.currentModule, this), this.filters.toJSON());
         this.setLastFilter(this.layout.currentModule, this.layoutType, model.get("id"));
         this.clearFilterEditState();
