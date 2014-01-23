@@ -8,7 +8,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 ({
     className: 'module-list',
@@ -207,7 +207,6 @@
      */
     _renderHtml: function() {
         if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
-
         // loadAdditionalComponents fires render before the private metadata is ready, check for this
         if (app.isSynced) {
             this.module_list = this.completeMenuMeta(app.metadata.getModuleNames({filter: 'display_tab', access: 'read'}));
