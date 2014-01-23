@@ -1,29 +1,15 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
 ({
     /**
      * View that displays a list of models pulled from the context's collection.
@@ -31,107 +17,128 @@
      * @alias SUGAR.App.layout.ListViewBottom
      * @extends View.View
      */
-    // We listen to event and keep track if search filter is toggled open/close
-    filterOpened: false,
     events: {
         'click [data-action="show-more"]': 'showMoreRecords'
     },
 
-    initialize: function(opts) {
-        opts.meta = _.extend({}, {showMoreLabel: "LBL_SHOW_MORE_MODULE"}, opts.meta || {});
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        this._initPagination();
+    },
 
-        app.view.View.prototype.initialize.call(this, opts);
+    /**
+     * Initialize pagination component in order to react the show more link.
+     * @private
+     */
+    _initPagination: function() {
+        this.paginationComponent = _.find(this.layout._components, function(component) {
+            return _.contains(component.plugins, 'Pagination');
+        }, this);
+    },
 
-        this.showMoreLabel = app.lang.get(this.options.meta.showMoreLabel, this.module, {
-            module: app.lang.get('LBL_MODULE_NAME', this.module).toLowerCase()
+    /**
+     * Retrieving the next page records by pagination plugin.
+     *
+     * Please see the {@link app.plugins.Pagination#getNextPagination}
+     * for detail.
+     */
+    showMoreRecords: function() {
+        if (!this.paginationComponent) {
+            return;
+        }
+
+        this.paginateFetched = false;
+        this.render();
+
+        var options = {};
+        options.success = _.bind(function() {
+            this.layout.trigger('list:paginate:success');
+            this.paginateFetched = true;
+            this.render();
+        }, this);
+
+        this.paginationComponent.getNextPagination(options);
+    },
+
+    /**
+     * Assign proper label for 'show more' link.
+     * Label should be "More <module name>...".
+     */
+    setShowMoreLabel: function() {
+        var model = this.collection.at(0),
+            module = model ? model.module : this.context.get('module');
+        this.showMoreLabel = app.lang.get('TPL_SHOW_MORE_MODULE', module, {
+            module: app.lang.get('LBL_MODULE_NAME', module).toLowerCase(),
+            count: this.collection.length,
+            offset: this.collection.next_offset >= 0
         });
     },
 
-    _renderHtml: function() {
-        // Dashboard layout injects shared context with limit: 5.
-        // Otherwise, we don't set so fetches will use max query in config.
-        if(this.context.get('limit')){
-            this.limit = this.context.get('limit');
+    /**
+     * Reset previous collection handlers and
+     * bind the listeners for new collection.
+     */
+    onCollectionChange: function() {
+        var prevCollection = this.context.previous('collection');
+        if (prevCollection) {
+            prevCollection.off(null, null, this);
         }
-
-        app.view.View.prototype._renderHtml.call(this);
-
-        // We listen for if the search filters are opened or not. If so, when 
-        // user clicks show more button, we treat this as a search, otherwise,
-        // normal show more for list view.
-        this.layout.off("list:filter:toggled", null, this);
-        this.layout.on("list:filter:toggled", this.filterToggled, this);
-    },
-    filterToggled: function(isOpened) {
-        this.context.set('filterOpened', isOpened);
-    },
-    showMoreRecords: function(evt) {
-        var self = this, options;
-        // Mark current models as old, in order to animate the new one
-        _.each(this.collection.models, function(model) {
-            model.old = true;
-        });
-
-        // save current screen position
-        var screenPosition = $('html').offset().top;
-
-        // If in "search mode" (the search filter is toggled open) set q:term param
-        options = this.context.get('filterOpened') ? self.getSearchOptions() : {};
-
-        //Show alerts for this request
-        options.showAlerts = true;
-
-        // Indicates records will be added to those already loaded in to view
-        options.add = true;
-
-        options.success = function() {
-            self.layout.trigger("list:paginate:success");
-            if(!self.disposed){
-                self.render();
-                // retrieve old screen position
-                window.scrollTo(0, -1*screenPosition);
-
-                // Animation for new records
-                self.layout.$('tr.new').animate({
-                    opacity:1
-                }, 500, function () {
-                    $(this).removeAttr('style class');
-                });
-            }
-        };
-        if(this.limit){
-            options.limit = this.limit;
-        }
-        // Override default collection options if they exist
-        options = _.extend({}, this.context.get('collectionOptions'), options);
-        this.collection.paginate(options);
-    },
-    getSearchOptions: function() {
-        var collection, options, previousTerms, term = '';
-        collection = this.context.get('collection');
-
-        // If we've made a previous search for this module grab from cache
-        if(app.cache.has('previousTerms')) {
-            previousTerms = app.cache.get('previousTerms');
-            if(previousTerms) {
-                term = previousTerms[this.module];
-            }
-        }
-        // build search-specific options and return
-        options = {
-            params: {
-                q: term
-            },
-            fields: collection.fields ? collection.fields : this.collection
-        };
-        return options;
+        this.collection = this.context.get('collection');
+        this.collection.on('add remove reset', this.render, this);
+        this.render();
     },
 
+    /**
+     * {@inheritDoc}
+     *
+     * Bind listeners for collection updates.
+     * The pagination link synchronizes its visibility with the collection's
+     * status.
+     */
     bindDataChange: function() {
-        if(this.collection) {
-            this.collection.on("reset sync", function() {
-                this.render();
-            }, this);
+        this.context.on('change:collection', this.onCollectionChange, this);
+        this.collection.on('add remove reset', this.render, this);
+        this.before('render', function() {
+            this.dataFetched = this.paginateFetched !== false && this.collection.dataFetched;
+            var nextOffset = this.collection.next_offset || -1;
+            if (this.collection.dataFetched && nextOffset === -1) {
+                this._invisible = true;
+                this.hide();
+                return false;
+            }
+            this._invisible = false;
+            this.show();
+            this.setShowMoreLabel();
+        }, null, this);
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Avoid to be shown if the view is invisible status.
+     * Add dashlet placeholder's class in order to handle the custom css style.
+     */
+    show: function() {
+        if (this._invisible) {
+            return;
         }
+        this._super('show');
+        if (!this.paginationComponent) {
+            return;
+        }
+        this.paginationComponent.layout.$el.addClass('pagination');
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Remove pagination custom CSS class on dashlet placeholder.
+     */
+    hide: function() {
+        this._super('hide');
+        if (!this.paginationComponent) {
+            return;
+        }
+        this.paginationComponent.layout.$el.removeClass('pagination');
     }
 })

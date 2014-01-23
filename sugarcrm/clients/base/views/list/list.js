@@ -27,6 +27,8 @@
 ({
     className: 'list-view',
 
+    plugins: ['Pagination'],
+
     /**
      * View that displays a list of models pulled from the context's collection.
      * @class View.Views.ListView
@@ -39,7 +41,6 @@
 
     defaultLayoutEvents: {
         "list:search:fire": "fireSearch",
-        "list:paginate:success": "paginateSuccess",
         "list:filter:toggled": "filterToggled",
         "list:alert:show": "showAlert",
         "list:alert:hide": "hideAlert",
@@ -84,6 +85,7 @@
         // Dashboard layout injects shared context with limit: 5.
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.has('limit') ? this.context.get('limit') : null;
+        this.metaFields = this.meta.panels ? _.first(this.meta.panels).fields : [];
     },
 
     /**
@@ -156,12 +158,6 @@
                 this.context.on(event, this[callback], this);
             }, this);
         }
-    },
-
-    paginateSuccess: function() {
-        //When fetching more records, we need to update the preview collection
-        app.events.trigger("preview:collection:change", this.collection);
-        if(!this.disposed) this.render();
     },
 
     sort: function() {

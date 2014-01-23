@@ -1,4 +1,11 @@
 .dashboard {
+  .pagination {
+    .thumbnail.dashlet:not(.collapsed) {
+      .dashlet-content{
+        max-height: 426px;
+      }
+    }
+  }
   .thumbnail.dashlet:not(.collapsed) {
     max-height: 500px;
 
@@ -7,6 +14,7 @@
     .block {
       max-height: 466px;
     }
+
     .dashlet-options+.block {
       height: 417px;
     }
@@ -32,6 +40,14 @@
 
 
 .sidebar-content {
+  .pagination {
+    .thumbnail.dashlet:not(.collapsed) {
+      //max-height - pagination(40px)
+      .dashlet-content{
+        max-height: 326px;
+      }
+    }
+  }
   .thumbnail.dashlet:not(.collapsed) {
     max-height: 400px;
     //400(max)-33(menubar)-1(bottom-border)

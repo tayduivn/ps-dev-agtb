@@ -65,7 +65,7 @@
     /**
      * The plugins used by this view.
      */
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'Pagination'],
 
     /**
      * We want to load field `list` templates
@@ -234,6 +234,16 @@
         } else if (this.moduleIsAvailable) {
             this._displayDashlet();
         }
+        this.metaFields = this.meta.panels && _.first(this.meta.panels).fields || [];
+    },
+
+    /**
+     * Fetch the next pagination records.
+     */
+    showMoreRecords: function() {
+        //Show alerts for this request
+        // Override default collection options if they exist
+        this.getNextPagination(this.context.get('collectionOptions'));
     },
 
     /**

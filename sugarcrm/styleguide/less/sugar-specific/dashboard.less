@@ -123,6 +123,24 @@
       &:last-child {
         padding-right: 5px;
       }
+
+      .dashlet-content + .block-footer {
+        text-align: left;
+        font-weight: normal;
+        .border-radius(0 0 3px 3px);
+      }
+
+      .block-footer {
+        > .loading {
+          > i {
+            width: 4px;
+          }
+        }
+        > button {
+          margin: 0px;
+          padding: 0px;
+        }
+      }
     }
   }
   /* reset grid */
