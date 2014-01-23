@@ -26,6 +26,11 @@ require_once('include/SugarFields/Fields/Link/SugarFieldLink.php');
 
 class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /** @var Note */
+    private $note;
+    /** @var Lead */
+    private $lead;
+
 	public function setUp()
     {
         SugarTestHelper::setUp('current_user');
@@ -33,14 +38,20 @@ class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
         $this->note->field_defs['testurl_c']['gen'] = 1;
         $this->note->field_defs['testurl_c']['default'] = 'http://test/{assigned_user_id}';
         $this->note->assigned_user_id = $GLOBALS['current_user']->id;
-        $this->note->fetched_row['assigned_user_id'] = $this->note->assigned_user_id;
         $this->note->testurl_c1 = "www.sugarcrm.com";
         $this->note->field_defs['testurl_c1']['type']='url';
+
+        $this->lead = BeanFactory::newBean('Leads');
+        $this->lead->field_defs['test_c'] = array(
+            'gen' => 1,
+            'default' => 'http://test/{name}',
+        );
 	}
 
     public function tearDown()
     {
         SugarTestHelper::tearDown();
+        unset($this->lead->field_defs['test_c']);
         unset($this->note->field_defs['testurl_c']);
         unset($this->note);
     }
@@ -63,5 +74,16 @@ class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
         $data = array();
         $sf->apiFormatField($data, $this->note, array(), 'testurl_c1',array());
         $this->assertEquals('www.sugarcrm.com', $data['testurl_c1']);
+    }
+
+    public function testNonDbField()
+    {
+        $this->lead->name = 'John Doe';
+
+        /** @var SugarFieldLink $sf */
+        $sf = SugarFieldHandler::getSugarField('link');
+        $data = array();
+        $sf->apiFormatField($data, $this->lead, array(), 'test_c', array());
+        $this->assertEquals('http://test/John Doe', $data['test_c']);
     }
 }
