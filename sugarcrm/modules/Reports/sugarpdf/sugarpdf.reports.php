@@ -25,6 +25,19 @@ require_once('include/Sugarpdf/Sugarpdf.php');
 
 class ReportsSugarpdfReports extends Sugarpdf
 {
+
+    /**
+     * Maximal Width for header logo
+     * @var integer
+     */
+    private $logoMaxWidth = 348;
+
+    /**
+     * Maximal Height for header logo
+     * @var integer
+     */
+    private $logoMaxHeight = 60;
+
     /**
      * Options array for the writeCellTable method of reports.
      * @var Array
@@ -52,6 +65,51 @@ class ReportsSugarpdfReports extends Sugarpdf
             $this->SetHeaderData(PDF_SMALL_HEADER_LOGO, PDF_SMALL_HEADER_LOGO_WIDTH, $this->bean->name, $timedate->getNow(true));
         }
         $cols = count($this->bean->report_def['display_columns']);
+    }
+
+    /**
+     * Custom header for Reports
+     * @return void
+     */
+    public function Header()
+    {
+        $headerfont = $this->getHeaderFont();
+        $headerdata = $this->getHeaderData();
+
+        if (($headerdata['logo']) AND ($headerdata['logo'] != K_BLANK_IMAGE))
+        {
+            $logo = K_PATH_CUSTOM_IMAGES.$headerdata['logo'];
+            $imsize = @getimagesize($logo);
+            if ($imsize === FALSE)
+            {
+                // encode spaces on filename
+                $logo = str_replace(' ', '%20', $logo);
+                $imsize = @getimagesize($logo);
+                if ($imsize === FALSE) {
+                    $logo = K_PATH_IMAGES.$headerdata['logo'];
+                    $imsize = @getimagesize($logo);
+                }
+            }
+            //resize image
+            if ( $imsize )
+            {
+                $this->Image($logo, $this->GetX(), $this->getHeaderMargin(), $this->logoMaxWidth, $this->logoMaxHeight, '', '', '', true);
+            }
+
+        }
+        // This table split the header in 3 parts of equal width. The last part (on the right) contain the header text.
+        $table[0]["logo"]="";
+        $table[0]["blank"]="";
+        $table[0]["data"]="<div><font face=\"".$headerfont[0]."\" size=\"".($headerfont[2]+1)."\"><b>".$headerdata['title']."</b></font></div>".$headerdata['string'];
+        $options = array(
+            "isheader"=>false,
+        );
+
+        $this->SetTextColor(0, 0, 0);
+        // header string
+        $this->SetFont($headerfont[0], $headerfont[1], $headerfont[2]);
+        // Start overwrite
+        $this->writeHTMLTable($table, false, $options);
     }
 }
 
