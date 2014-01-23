@@ -377,21 +377,6 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'activity_enable
             'link' => 'meetings',
             'rname_link' => 'accept_status',
         ),
-		//bug 42902
-		'email'=> array(
-			'name' => 'email',
-			'type' => 'email',
-			'query_type' => 'default',
-			'source' => 'non-db',
-			'operator' => 'subquery',
-			'subquery' => 'SELECT eabr.bean_id FROM email_addr_bean_rel eabr JOIN email_addresses ea ON (ea.id = eabr.email_address_id) WHERE eabr.deleted=0 AND ea.email_address LIKE',
-			'db_field' => array(
-				'id',
-			),
-			'vname' =>'LBL_ANY_EMAIL',
-			'studio' => array('visible'=>false, 'searchview'=>true),
-            'len' => 100
-		),
   'webtolead_email1' =>
   array (
     'name' => 'webtolead_email1',
@@ -548,25 +533,6 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'activity_enable
         'relationship' => '',
         'hideacl' => true,
     ),
-  'email_addresses' =>
-   array (
-		'name' => 'email_addresses',
-        'type' => 'link',
-		'relationship' => 'leads_email_addresses',
-        'source' => 'non-db',
-		'vname' => 'LBL_EMAIL_ADDRESSES',
-		'reportable'=>false,
-	    'rel_fields' => array('primary_address' => array('type'=>'bool')),
-	),
-	'email_addresses_primary' =>
-	array (
-		'name' => 'email_addresses_primary',
-        'type' => 'link',
-		'relationship' => 'leads_email_addresses_primary',
-        'source' => 'non-db',
-		'vname' => 'LBL_EMAIL_ADDRESS_PRIMARY',
-		'duplicate_merge'=> 'disabled',
-	),
 	'campaigns' =>
 		array (
   			'name' => 'campaigns',
