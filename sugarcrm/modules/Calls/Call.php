@@ -907,4 +907,23 @@ class Call extends SugarBean {
             }
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function loadFromRow($arr, $convert = false)
+    {
+        $fields = array(
+            'reminder_time' => 'reminder_checked',
+            'email_reminder_time' => 'email_reminder_checked',
+        );
+
+        foreach ($fields as $value => $flag) {
+            if (isset($arr[$value]) && !isset($arr[$flag])) {
+                $arr[$flag] = $arr[$value] > -1;
+            }
+        }
+
+        parent::loadFromRow($arr, $convert);
+    }
 }
