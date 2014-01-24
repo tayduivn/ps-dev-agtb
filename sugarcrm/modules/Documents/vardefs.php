@@ -174,6 +174,15 @@ $dictionary['Document'] = array('table' => 'documents',
             'vname' => 'LBL_REVISIONS',
         ),
 
+        'latest_document_revision_link' =>
+        array(
+            'name' => 'latest_document_revision_link',
+            'type' => 'link',
+            'relationship' => 'latest_document_revision',
+            'source' => 'non-db',
+            'vname' => 'LBL_LATEST_REVISION',
+        ),
+
         'revision' =>
         array(
             'name' => 'revision',
@@ -217,7 +226,7 @@ $dictionary['Document'] = array('table' => 'documents',
             'name' => 'last_rev_create_date',
             'type' => 'relate',
             'table' => 'document_revisions',
-            'link' => 'revisions',
+            'link' => 'latest_document_revision_link',
             'join_name' => 'document_revisions',
             'vname' => 'LBL_LAST_REV_CREATE_DATE',
             'rname' => 'date_entered',
@@ -465,6 +474,11 @@ $dictionary['Document'] = array('table' => 'documents',
     ,  'document_revisions' => array('lhs_module' => 'Documents', 'lhs_table' => 'documents', 'lhs_key' => 'id',
             'rhs_module' => 'DocumentRevisions', 'rhs_table' => 'document_revisions', 'rhs_key' => 'document_id',
             'relationship_type' => 'one-to-many')
+    ,  'latest_document_revision' => array(
+            'lhs_module' => 'Documents', 'lhs_table' => 'documents', 'lhs_key' => 'document_revision_id',
+            'rhs_module' => 'DocumentRevisions', 'rhs_table' => 'document_revisions', 'rhs_key' => 'id',
+            'relationship_type' => 'one-to-one'
+        )
 
     , 'documents_modified_user' =>
         array('lhs_module' => 'Users', 'lhs_table' => 'users', 'lhs_key' => 'id',
