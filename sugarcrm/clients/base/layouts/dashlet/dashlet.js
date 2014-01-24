@@ -375,9 +375,12 @@
      * @param title
      */
     setTitle: function(title) {
-        var $titleEl = this.$('h4.dashlet-title');
-        if($titleEl.length) {
-            $titleEl.html(title);
+        // make sure we've got an $el before using it
+        if (this.$el) {
+            var $titleEl = this.$('h4.dashlet-title');
+            if($titleEl.length) {
+                $titleEl.html(title);
+            }
         }
     },
 
