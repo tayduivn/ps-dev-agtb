@@ -23,6 +23,6 @@
             return value;
         }
 
-        return app.view.invokeParent(this, {type: 'field', name: 'datetimecombo', method: 'render', platform: 'base'});
+        return this._super("render");
     }
 })

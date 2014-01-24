@@ -33,7 +33,7 @@
     },
 
     initialize: function(options) {
-        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
         this.context.on('lead:convert-save:toggle', this.toggleSaveButton, this);
     },
 
@@ -44,7 +44,7 @@
         var leadsModel = this.context.get('leadsModel');
         var name = !_.isUndefined(leadsModel.get('name')) ? leadsModel.get('name') : leadsModel.get('first_name') + ' ' + leadsModel.get('last_name');
         this.title = app.lang.get("LBL_CONVERTLEAD", this.module) + ': ' + name;
-        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: '_renderHtml'});
+        this._super("_renderHtml");
     },
 
     /**

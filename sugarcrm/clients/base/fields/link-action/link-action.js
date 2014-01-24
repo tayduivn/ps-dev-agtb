@@ -107,7 +107,7 @@
      * @override
      */
     isDisabled: function() {
-        if (app.view.invokeParent(this, {type: 'field', name: 'sticky-rowaction', method: 'isDisabled'})) {
+        if (this._super("isDisabled")) {
             return true;
         }
         var link = this.context.get("link");

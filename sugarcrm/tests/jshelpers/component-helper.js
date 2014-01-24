@@ -37,11 +37,45 @@
         });
     };
 
+    /**
+     * Used to create a field object of a given type. Can load the relevent controller automatically from source. 
+     * 
+     * @param {Object} options Object containing the list of options to pass to this function
+     * 
+     * - client {String} optional name of client to load the controller from
+     * - name {String}
+     * - type {String}
+     * - viewName {String}
+     * - fieldDef {Object}
+     * - module {String} optional
+     * - model {Backbone.Model} optional
+     * - context {app.Context} optional
+     * - loadFromModule {boolean} optional when true will attempt to load source file from the Module directory.
+     * - loadJsFile {boolean optional defaults to true. When true will attempt to load the controller from source file.
+     * @return {app.view.Field}
+     */
     test.createField = function(client, name, type, viewName, fieldDef, module, model, context, loadFromModule) {
-        if (loadFromModule) {
-            test.loadComponent(client, "field", type, module);
-        } else {
-            test.loadComponent(client, "field", type);
+        var loadJsFile = true;
+        //Handle a params object instead of a huge list of params
+        if (_.isObject(client)) {
+            name = client.name;
+            type = client.type;
+            viewName = client.viewName;
+            fieldDef = client.fieldDef;
+            module = client.module;
+            model = client.model;
+            context = client.context;
+            loadFromModule = client.loadFromModule;
+            loadJsFile = !_.isUndefined(client.loadJsFile) ? client.loadJsFile : loadJsFile;
+            client = client.client || "base";
+        }
+
+        if(loadJsFile) {
+            if (loadFromModule) {
+                test.loadComponent(client, "field", type, module);
+            } else {
+                test.loadComponent(client, "field", type);
+            }
         }
 
         var view = new app.view.View({ name: viewName, context: context });

@@ -29,7 +29,7 @@
 
     delegateButtonEvents: function() {
         this.context.on('button:convert_to_quote:click', this.convertToQuote, this);
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'delegateButtonEvents'});
+        this._super("delegateButtonEvents");
     }
 
 })

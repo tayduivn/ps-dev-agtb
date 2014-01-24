@@ -60,7 +60,7 @@
         };
         this.toggledOffDupes = false;
 
-        app.view.invokeParent(this, {type: 'layout', name: 'toggle', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
 
         this.addSubComponents();
 
@@ -545,6 +545,6 @@
     _dispose: function() {
         this.duplicateView.context.off(null, null, this);
         this.duplicateView.collection.off(null, null, this);
-        app.view.invokeParent(this, {type: 'layout', name: 'toggle', method: '_dispose'});
+        this._super("_dispose");
     }
 })

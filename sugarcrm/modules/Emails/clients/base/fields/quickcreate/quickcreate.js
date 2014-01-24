@@ -36,6 +36,6 @@
             options.def.href = null;
         }
 
-        app.view.invokeParent(this, {type: 'field', name: 'quickcreate', method: 'initialize', args:[options]});
+        this._super("initialize", [options]);
     }
 })

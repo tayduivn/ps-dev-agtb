@@ -25,7 +25,7 @@
     extendsFrom: 'RowactionField',
 
     initialize: function(options) {
-        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args:[options]});
+        this._super("initialize", [options]);
         this.format();
     },
     bindDataChange: function() {
@@ -70,7 +70,7 @@
     },
     unbindDom: function() {
         this.$("[data-hover=true]").off();
-        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'unbindDom'});
+        this._super("unbindDom");
     },
     _render: function () {
         var module, mouseoverText, mouseoverClass, self = this;
@@ -79,7 +79,7 @@
         if (!module.activityStreamEnabled) {
             this.hide();
         } else {
-            app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: '_render'});
+            this._super("_render");
 
             if (this.tplName !== "detail") {
                 return;

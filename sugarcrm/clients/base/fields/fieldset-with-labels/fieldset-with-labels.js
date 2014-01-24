@@ -90,6 +90,6 @@
      */
     setMode: function(name) {
         this.tplName = name;
-        app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: 'setMode', args:[name]});
+        this._super("setMode", [name]);
     }
 })

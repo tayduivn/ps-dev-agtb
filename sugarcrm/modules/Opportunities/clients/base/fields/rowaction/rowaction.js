@@ -19,7 +19,7 @@
     initialize: function(options) {
         this.plugins = _.clone(this.plugins) || [];
         this.plugins.push('DisableDelete');
-        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
 
         //Redraw dropdown on change
         this.model.on("change:closed_revenue_line_items", function(){

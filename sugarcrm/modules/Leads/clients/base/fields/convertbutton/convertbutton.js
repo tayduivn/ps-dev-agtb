@@ -28,7 +28,7 @@
     extendsFrom: 'RowactionField',
 
     initialize: function (options) {
-        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method:'initialize', args:[options]});
+        this._super("initialize", [options]);
         this.type = 'rowaction';
     },
 
@@ -41,7 +41,7 @@
         if (this.model.get('converted') || missingRequiredAccess) {
             this.hide();
         } else {
-            app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: '_render'});
+            this._super("_render");
         }
     },
 

@@ -45,7 +45,7 @@
             options.meta = app.metadata.getView(options.context.parent.get("module"), options.name);
             options.template = app.template.getView(options.name);
         }
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args:[options]});
+        this._super("initialize", [options]);
         this.model.on("change change:layout change:metadata", function() {
             if (this.inlineEditMode) {
                 this.changed = true;

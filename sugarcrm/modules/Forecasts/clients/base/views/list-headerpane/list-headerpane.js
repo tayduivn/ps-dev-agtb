@@ -16,7 +16,7 @@
      */
     extendsFrom: 'HeaderpaneView',
     initialize: function(options) {
-        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
 
         this.on('render', function() {
             this.getField('save_draft_button').setDisabled();
@@ -62,13 +62,13 @@
             this.getField('commit_button').setDisabled(false);
         }, this);
 
-        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'bindDataChange'});
+        this._super("bindDataChange");
     },
 
     _renderHtml: function() {
         var user = this.context.get('selectedUser') || app.user.toJSON();
         this.title = this.title || user.full_name;
 
-        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: '_renderHtml'});
+        this._super("_renderHtml");
     }
 })

@@ -38,7 +38,7 @@
 
     initialize: function(options) {
         _.bindAll(this);
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args:[options]});
+        this._super("initialize", [options]);
         this.events = _.extend({}, this.events, {
             'click .cc-option': 'showSenderOptionField',
             'click .bcc-option': 'showSenderOptionField',
@@ -60,7 +60,7 @@
     _render: function () {
         var toAddressesField;
 
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: '_render'});
+        this._super("_render");
         if (this.createMode) {
             this.setTitle(app.lang.get('LBL_COMPOSEEMAIL', this.module));
         }
@@ -770,7 +770,7 @@
         if (app.drawer) {
             app.drawer.off(null, null, this);
         }
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: '_dispose'});
+        this._super("_dispose");
     },
 
     /**

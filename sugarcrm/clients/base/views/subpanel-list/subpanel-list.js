@@ -47,7 +47,7 @@
      * @param {Object} options
      */
     initialize: function(options) {
-        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
         // Setup max limit on collection's fetch options for this subpanel's context
         if (app.config.maxSubpanelResult) {
             var options = {

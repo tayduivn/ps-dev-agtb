@@ -30,7 +30,7 @@
 
     addActions:function () {
         if (this.actionsAdded) return;
-        app.view.invokeParent(this, {type: 'view', name: 'dupecheck-list', method: 'addActions'});
+        this._super("addActions");
 
         var firstRightColumn = this.rightColumns[0];
         if (firstRightColumn && _.isArray(firstRightColumn.fields)) {

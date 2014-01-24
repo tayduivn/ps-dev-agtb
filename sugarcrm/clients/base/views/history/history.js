@@ -96,12 +96,7 @@
             model.set('picture_url', pictureUrl);
         }, this);
 
-        app.view.invokeParent(this, {
-            type: 'view',
-            name: 'tabbed-dashlet',
-            method: '_renderHtml',
-            platform: 'base'
-        });
+        this._super("_renderHtml");
     },
 
     /**
@@ -110,11 +105,6 @@
     _dispose: function() {
         this.$('.select2').select2('destroy');
 
-        app.view.invokeParent(this, {
-            type: 'view',
-            name: 'tabbed-dashlet',
-            method: '_dispose',
-            platform: 'base'
-        });
+        this._super("_dispose");
     }
 })

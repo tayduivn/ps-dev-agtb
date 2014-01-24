@@ -176,7 +176,7 @@
      * stream and pagination.
      */
     addPreviewEvents: function () {
-        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'addPreviewEvents'});
+        this._super("addPreviewEvents");
 
         this.context.off('list:preview:fire', null, this);
         this.context.on('list:preview:fire', function (model) {
@@ -189,7 +189,7 @@
      * Add Preview button on the actions column on the right.
      */
     addActions: function() {
-        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'addActions'});
+        this._super("addActions");
 
         this.rightColumns.push({
             type: 'rowaction',

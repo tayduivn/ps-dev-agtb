@@ -21,7 +21,7 @@
      */
     _render: function() {
         var template;
-        app.view.invokeParent(this, {type: 'field', name: 'image', method: '_render'});
+        this._super("_render");
         if (this.action !== 'edit' || this.view.name === 'merge-duplicates') {
             if (_.isEmpty(this.value)) {
                 // replace the image field with the module icon when there is no avatar to display
@@ -50,7 +50,7 @@
      */
     _loadTemplate: function() {
         this.type = 'image';
-        app.view.invokeParent(this, {type: 'field', name: 'image', method: '_loadTemplate'});
+        this._super("_loadTemplate");
         this.type = this.def.type;
     }
 })

@@ -19,7 +19,7 @@
      * Fetch and render activities when 'preview:render' event has been fired.
      */
     initialize: function(options) {
-        app.view.invokeParent(this, {type: 'layout', name: 'activitystream', method: 'initialize', args:[options]});
+        this._super("initialize", [options]);
         app.events.on("preview:render", this.fetchActivities, this);
         app.events.on('preview:open', function() {
             this._previewOpened = true;

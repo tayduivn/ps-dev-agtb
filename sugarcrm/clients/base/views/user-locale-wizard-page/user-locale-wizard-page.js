@@ -42,7 +42,7 @@
     initialize: function(options) {
         var self = this;
         options.template = app.template.getView("wizard-page");
-        app.view.invokeParent(self, {type: 'view', name: 'user-wizard-page', method: 'initialize', args:[options]});
+        this._super("initialize", [options]);
         // Preset the user prefs for formats
         if (this.model) {
             this.model.set(this.TIME_ZONE_KEY, (app.user.getPreference(this.TIME_ZONE_KEY) || ''));
@@ -57,7 +57,7 @@
         this._prepareFields(function() {
             if (!self.disposed) {
                 self.fieldsToValidate = self._fieldsToValidate(self.meta);
-                app.view.invokeParent(self, {type: 'view', name: 'user-wizard-page', method: '_render'});
+                self._super("_render");
             }
         });
     },

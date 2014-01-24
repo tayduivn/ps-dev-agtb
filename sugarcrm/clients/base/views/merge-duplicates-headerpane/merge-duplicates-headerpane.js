@@ -32,12 +32,7 @@
      * and defines the title based on the number of selected records.
      */
     initialize: function(options) {
-        app.view.invokeParent(this, {
-            type: 'view',
-            name: 'headerpane',
-            method: 'initialize',
-            args: [options]
-        });
+        this._super("initialize", [options]);
         var records = options.context.get('selectedDuplicates');
         this.title = app.lang.get('TPL_MERGING_RECORDS', this.module, {mergeCount: records.length});
     },

@@ -17,7 +17,7 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
         this._parsePanelFields(this.meta.panels);
     },
 
@@ -38,7 +38,7 @@
          */
         var changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
         this.model.set(changedAttributes);
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'cancelClicked'});
+        this._super("cancelClicked");
 
         // re-trigger this event for dashlets to listen for
         this.context.trigger('button:cancel_button:click');
@@ -73,7 +73,7 @@
     },
 
     initButtons: function() {
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initButtons'});
+        this._super("initButtons");
 
         // if the model has a quote_id and it's not empty, disable the convert_to_quote_button
         if (this.model.has('quote_id') && !_.isEmpty(this.model.get('quote_id'))
@@ -88,7 +88,7 @@
     bindDataChange: function() {
         this.model.on('duplicate:before', this._handleDuplicateBefore, this);
 
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'bindDataChange'});
+        this._super("bindDataChange");
     },
 
     /**
@@ -104,7 +104,7 @@
 
     delegateButtonEvents: function() {
         this.context.on('button:convert_to_quote:click', this.convertToQuote, this);
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'delegateButtonEvents'});
+        this._super("delegateButtonEvents");
     },
 
     /**

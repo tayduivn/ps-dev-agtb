@@ -27,7 +27,7 @@
      */
     closePreview: function() {
         this.originalModel = undefined;
-        app.view.invokeParent(this, {type: 'view', name: 'preview', method: 'closePreview'});
+        this._super("closePreview");
     },
 
     /**

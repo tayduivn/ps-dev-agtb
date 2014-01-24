@@ -34,13 +34,9 @@
      * @param options
      */
     initialize: function(options) {
-        app.view.invokeParent(this, {type: 'view', name: 'create', method: 'initialize', args: [options]});
-        app.view.invokeParent(this, {
-            type: 'view',
-            name: 'record',
-            module: 'Contacts',
-            method: 'removePortalFieldsIfPortalNotActive',
-            args: []
-        });
+        //Plugin is registered by the Contact record view
+        this.plugins = _.union(this.plugins || [], ["ContactsPortalMetadataFilter"]);
+        this._super("initialize", [options]);
+        this.removePortalFieldsIfPortalNotActive(this.meta);
     }
 })

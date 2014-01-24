@@ -27,7 +27,7 @@
         options.meta = options.meta || {};
         options.meta.selection = {type: 'single', label: 'LBL_LINK_SELECT'};
 
-        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
+        this._super("initialize", [options]);
 
         this.initializeEvents();
     },
@@ -93,7 +93,7 @@
      * Add Preview button on the actions column on the right.
      */
     addActions: function() {
-        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'addActions'});
+        this._super("addActions");
         if (this.meta.showPreview !== false) {
             this.rightColumns.push({
                 type: 'rowaction',

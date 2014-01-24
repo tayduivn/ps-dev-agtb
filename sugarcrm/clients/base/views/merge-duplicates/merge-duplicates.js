@@ -758,11 +758,7 @@
     _renderHtml: function() {
         this.meta = this._generateMetadata(this.mergeFields);
 
-        app.view.invokeParent(this, {
-            type: 'view',
-            name: 'list',
-            method: '_renderHtml'
-        });
+        this._super("_renderHtml");
 
         this.rowFields = {};
         _.each(this.fields, function(field) {

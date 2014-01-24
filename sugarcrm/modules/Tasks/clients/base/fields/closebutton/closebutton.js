@@ -31,7 +31,7 @@
     },
     extendsFrom: 'RowactionField',
     initialize: function (options) {
-        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method:'initialize', args:[options]});
+        this._super("initialize", [options]);
         this.type = 'rowaction';
     },
     closeClicked: function () {
@@ -46,7 +46,7 @@
      * @returns {Boolean} true if it has aclAccess and status is not closed
      */
     hasAccess: function() {
-        var acl = app.view.invokeParent(this, {type: 'field', name: 'button', method:'hasAccess'});
+        var acl = this._super("hasAccess");
         return acl && this.model.get('status') !== 'Completed';
     },
     _close: function (createNew) {

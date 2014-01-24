@@ -25,36 +25,51 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 //FILE SUGARCRM flav=ent ONLY
-({
+(function() {
     /**
-     * Gets the portal status from metadata to know if we render portal specific fields.
-     * @override
-     * @param options
+     * ListEditable plugin is for fields that use a list-edit template instead of the standard edit
+     * during inline editing on list views
      */
-    initialize: function(options) {
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args: [options]});
-        this.removePortalFieldsIfPortalNotActive();
-    },
-    /**
-     * Check if portal is active. If not, will remove the portal fields from the metadata
-     * THIS METHOD IS CALLED BY create-action.js AND preview.js
-     */
-    removePortalFieldsIfPortalNotActive: function() {
-        //Portal specific fields to hide if portal is disabled
-        var portalFields = ['portal_name', 'portal_active', 'portal_password'];
-
-        var serverInfo = app.metadata.getServerInfo();
-        if (!serverInfo.portal_active) {
-            _.each(this.meta && this.meta.panels, function(panel) {
-                //Remove portal fields from panel
-                panel.fields = _.reject(panel.fields, function(field) {
-                    if (_.isString(field)) {
-                        return _.indexOf(portalFields, field) > -1;
-                    } else {
-                        return _.indexOf(portalFields, field.name) > -1;
-                    }
+    app.plugins.register('ContactsPortalMetadataFilter', ['view'], {
+        /**
+         * Check if portal is active. If not, will remove the portal fields from the metadata
+         * @param {Object} meta metadata to filter.
+         */
+        removePortalFieldsIfPortalNotActive: function(meta) {
+            if (!_.isObject(meta)) {
+                return;
+            }
+            //Portal specific fields to hide if portal is disabled
+            var portalFields = ['portal_name', 'portal_active', 'portal_password'];
+            var serverInfo = app.metadata.getServerInfo();
+            if (!serverInfo.portal_active) {
+                _.each(meta.panels, function(panel) {
+                    panel.fields = _.reject(panel.fields, function(field) {
+                        var name = _.isObject(field) ? field.name : field;
+                        return _.contains(portalFields, name);
+                    });
                 });
-            });
+            }
+        }
+    });
+
+
+    /***
+     * @class App.view.views.BaseContactsRecordView
+     * @extends App.view.views.BaseRecordView
+     */
+    return {
+        extendsFrom: "RecordView",
+        /**
+         * Gets the portal status from metadata to know if we render portal specific fields.
+         * @override
+         * @param options
+         */
+        initialize: function(options) {
+            this.plugins = _.union(this.plugins || [], ["ContactsPortalMetadataFilter"]);
+            this._super("initialize", [options]);
+            this.removePortalFieldsIfPortalNotActive(this.meta);
         }
     }
-})
+})()
+

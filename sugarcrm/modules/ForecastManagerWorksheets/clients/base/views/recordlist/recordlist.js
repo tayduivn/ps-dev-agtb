@@ -148,7 +148,7 @@
         this.plugins = _.clone(this.plugins);
         this.plugins.push('CteTabbing');
         this.plugins.push('DirtyCollection');
-        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
         this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
         this.selectedTimeperiod = this.context.get('selectedTimePeriod') || this.context.parent.get('selectedTimePeriod') || '';
         this.context.set('skipFetch', (this.selectedUser.is_manager && this.selectedUser.showOpps));    // skip the initial fetch, this will be handled by the changing of the selectedUser
@@ -168,7 +168,7 @@
         }
         app.routing.offBefore('route', this.beforeRouteHandler, this);
         $(window).off("beforeunload." + this.worksheetType);
-        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: '_dispose'});
+        this._super("_dispose");
     },
 
     /**
@@ -436,7 +436,7 @@
         }, this);
 
         // call the parent
-        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'bindDataChange'});
+        this._super("bindDataChange");
     },
 
     /**
@@ -947,11 +947,7 @@
      * @returns {{default: Array, available: Array, visible: Array, options: Array}}
      */
     parseFields: function() {
-        var catalog = app.view.invokeParent(this, {
-            type: 'view',
-            name: 'recordlist',
-            method: 'parseFields'
-        });
+        var catalog = this._super("parseFields");
         _.each(catalog, function(group, i) {
             catalog[i] = _.filter(group, function(fieldMeta) {
                 return app.utils.getColumnVisFromKeyMap(fieldMeta.name, 'forecastsWorksheetManager');

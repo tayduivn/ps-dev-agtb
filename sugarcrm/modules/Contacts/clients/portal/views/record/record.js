@@ -37,11 +37,7 @@
      * @override
      */
     bindDataChange: function(){
-        app.view.invokeParent(this, {
-            type: 'view',
-            name: 'record',
-            platform: 'base',
-            method: 'bindDataChange'});
+        this._super("bindDataChange");
         this.context.on("button:save_button:click", this._setPreferredLanguage, this);
     },
     /**

@@ -171,7 +171,7 @@
 
     _render: function() {
         this.settings.set('display_manager', this.isDisplayManager());
-        app.view.invokeParent(this, {type: 'view', name: 'parent', method: '_render'});
+        this._super("_render");
 
         var chartField = this.getField('paretoChart');
         if (!_.isUndefined(chartField)) {

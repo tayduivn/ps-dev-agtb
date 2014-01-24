@@ -46,7 +46,7 @@
      * <pre><code>
      * _render:function(value) {
      *     this.doSpecialPreParentInitialization();
-     *     app.view.invokeParent(this, {type: 'field', name: 'date', method: '_render', platform: 'base'});
+     *     this._super("_render");
      *     // as it's easy to forget and do app.view.views (notice views not fields at end!)
      *     this.doSomethingElseAfterParentInitialization();
      * },
