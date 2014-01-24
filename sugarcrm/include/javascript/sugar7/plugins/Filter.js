@@ -1,4 +1,3 @@
-{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -25,16 +24,40 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<article class="filter-body">
-    <div class="row-fluid">
-        <div class="filter-error hide span6 text-error">{{str "LBL_FILTER_FIELD_INVALID"}}</div>
-        <div class="filter-field controls span3"></div>
-        <div class="filter-operator hide controls span3"></div>
-        <div class="filter-value hide controls span4"></div>
-        <div class="filter-actions span2">
-            <a class="removeme btn btn-invisible btn-dark"><i class="icon-minus"></i></a>
-            <a class="addme btn btn-invisible btn-dark"><i class="icon-plus"></i></a>
-        </div>
-    </div>
-</article>
+(function(app) {
+    app.events.on('app:init', function() {
+        app.plugins.register('Filter', ['layout', 'view'], {
+            /**
+             * Get filterable fields from the module metadata
+             * @param {String} moduleName
+             * @returns {Object}
+             * @private
+             */
+            _getFilterableFields: function(moduleName) {
+                var moduleMeta = app.metadata.getModule(moduleName),
+                    fieldMeta = moduleMeta &&  moduleMeta.fields,
+                    fields = {};
+                if (moduleMeta && moduleMeta.filters) {
+                    _.each(moduleMeta.filters, function(templateMeta) {
+                        if (templateMeta.meta && templateMeta.meta.fields) {
+                            // Only add fields that are also in moduleMeta.fields
+                            fields = _.extend(fields, _.pick(templateMeta.meta.fields, _.keys(fieldMeta)));
+                        }
+                    });
+                }
+
+                _.each(fields, function(fieldFilterDef, fieldName) {
+                    var fieldMetaData = app.utils.deepCopy(fieldMeta[fieldName]);
+                    if (_.isEmpty(fieldFilterDef)) {
+                        fields[fieldName] = fieldMetaData || {};
+                    } else {
+                        fields[fieldName] = _.extend({name: fieldName}, fieldFilterDef, fieldMetaData);
+                    }
+                    delete fields[fieldName]['readonly'];
+                });
+
+                return fields;
+            }
+        });
+    });
+})(SUGAR.App);
