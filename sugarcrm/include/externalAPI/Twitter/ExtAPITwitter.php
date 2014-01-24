@@ -48,7 +48,7 @@ class ExtAPITwitter extends OAuthPluginBase implements WebFeed {
     {
         $td = $GLOBALS['timedate'];
 
-        $twitter_json_url = 'http://api.twitter.com/1.1/statuses/user_timeline.json';
+        $twitter_json_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
         $reply = $this->makeRequest('GET', $twitter_json_url,array('count'=>$maxEntries));
 
         if ( !$reply['success'] ) {
@@ -71,7 +71,7 @@ class ExtAPITwitter extends OAuthPluginBase implements WebFeed {
             if ( !empty($message['text']) ) 
             {
             	$message['text'] = SugarFeed::parseMessage($message['text']); 
-            	$fake_record['NAME'] .= ' '.preg_replace('/\@(\w+)/', "<a target='_blank' href='http://twitter.com/\$1'>@\$1</a>", $message['text']);
+            	$fake_record['NAME'] .= ' '.preg_replace('/\@(\w+)/', "<a target='_blank' href='https://twitter.com/\$1'>@\$1</a>", $message['text']);
             }
             $fake_record['NAME'] .= '<br><div class="byLineBox"><span class="byLineLeft">'.SugarFeed::getTimeLapse($fake_record['DATE_ENTERED']).'&nbsp;</span><div class="byLineRight">&nbsp;</div></div>';
             $fake_record['IMAGE_URL'] = $message['user']['profile_image_url'];
@@ -94,7 +94,7 @@ class ExtAPITwitter extends OAuthPluginBase implements WebFeed {
     {
         $td = $GLOBALS['timedate'];
 
-        $twitter_json_url = 'http://api.twitter.com/1.1/statuses/user_timeline.json';
+        $twitter_json_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
         $reply = $this->makeRequest('GET', $twitter_json_url,array(
                 'count'=>$maxEntries,
                 'screen_name'=>$twitterHandle,
@@ -118,7 +118,7 @@ class ExtAPITwitter extends OAuthPluginBase implements WebFeed {
     public function getCurrentUserInfo()
     {
 
-        $twitter_json_url = 'http://api.twitter.com/1.1/account/verify_credentials.json';
+        $twitter_json_url = 'https://api.twitter.com/1.1/account/verify_credentials.json';
         $reply = $this->makeRequest('GET', $twitter_json_url,array());
 
         if ( !$reply['success'] ) {
