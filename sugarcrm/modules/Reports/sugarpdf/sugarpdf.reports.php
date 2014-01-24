@@ -36,7 +36,7 @@ class ReportsSugarpdfReports extends Sugarpdf
      * Maximal Height for header logo
      * @var integer
      */
-    private $logoMaxHeight = 60;
+    private $logoMaxHeight = 55;
 
     /**
      * Options array for the writeCellTable method of reports.
@@ -96,6 +96,8 @@ class ReportsSugarpdfReports extends Sugarpdf
                 $this->Image($logo, $this->GetX(), $this->getHeaderMargin(), $this->logoMaxWidth, $this->logoMaxHeight, '', '', '', true);
             }
 
+            $imgy = $this->getImageRBY();
+
         }
         // This table split the header in 3 parts of equal width. The last part (on the right) contain the header text.
         $table[0]["logo"]="";
@@ -110,6 +112,12 @@ class ReportsSugarpdfReports extends Sugarpdf
         $this->SetFont($headerfont[0], $headerfont[1], $headerfont[2]);
         // Start overwrite
         $this->writeHTMLTable($table, false, $options);
+
+        // print an ending header line
+        $this->SetLineStyle(array('width' => 0.85 / $this->getScaleFactor(), 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)));
+        $this->SetY((2.835 / $this->getScaleFactor()) + max($imgy, $this->GetY()));
+        $this->SetX($ormargins['left']);
+        $this->Cell(0, 0, '', 'T', 0, 'C');
     }
 }
 
