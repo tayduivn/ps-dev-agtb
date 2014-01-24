@@ -37,6 +37,13 @@ $viewdefs['base']['view']['massaddtolist'] = array(
             'css_class' => 'btn-link btn-invisible',
         ),
         array(
+            'type' => 'button',
+            'value' => 'cancel',
+            'css_class' => 'btn-link btn-invisible cancel_button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
+            'primary' => false,
+        ),
+        array(
             'name' => 'update_button',
             'type' => 'button',
             'label' => 'LBL_UPDATE',
@@ -44,13 +51,6 @@ $viewdefs['base']['view']['massaddtolist'] = array(
             'acl_module' => 'ProspectLists',
             'css_class' => 'btn-primary',
             'primary' => true,
-        ),
-        array(
-            'type' => 'button',
-            'value' => 'cancel',
-            'css_class' => 'btn-invisible cancel_button',
-            'icon' => 'icon-remove',
-            'primary' => false,
         ),
     ),
 );

@@ -1,207 +1,201 @@
-// search filter widget
-.form-search-related {
-  // outer wrapper
-  .control-group {
-    padding: 5px 8px 5px 9px;
-    margin-bottom: 0;
+// search filter inputs
+.filter-view {
+  border: 1px solid @inputBorder;
+  position: relative;
+  margin-left: 0;
+  background-color: @white;
+  margin-bottom: 0;
+  overflow: hidden;
+  height: 26px;
+  .box-shadow(~"inset 0 1px 1px rgba(0,0,0,0.075)");
+  .border-radius(@baseBorderRadius);
+  .user-select(none);
+  //not working for input focus
+  &:focus {
+    border-color: rgba(82,168,236,0.8);
+    .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)");
   }
+  // non-select2 filter pills
+  div.choice-related,
+  div.choice-filter {
+    .border-radius(0 10px 10px 0);
+    padding: 4px 6px 4px 4px;
+    display: inline-block;
+    height: 12px;
+    white-space: nowrap;
+    margin-top: 3px;
+    margin-left: -6px;
+    font-size: @fontSizeSmall;
+    font-weight: bold;
+    line-height: 12px;
+    vertical-align: top;
 
-  // search filter inputs
-  .filter-view {
-    border: 1px solid @inputBorder;
-    position: relative;
-    margin-left: 0;
-    background-color: @white;
-    margin-bottom: 0;
-    overflow: hidden;
-    height: 26px;
-    .box-shadow(~"inset 0 1px 1px rgba(0,0,0,0.075)");
-    .border-radius(@baseBorderRadius);
-    .user-select(none);
-
-    // non-select2 filter pills
-    div.choice-related,
-    div.choice-filter {
-      .border-radius(0 10px 10px 0);
-      padding: 4px 6px 4px 4px;
-      display: inline-block;
-      height: 12px;
-      white-space: nowrap;
-      margin-top: 3px;
-      margin-left: -6px;
-      font-size: @fontSizeSmall;
-      font-weight: bold;
-      line-height: 12px;
+    .choice-filter-label {
       vertical-align: top;
-
-      .choice-filter-label {
-        vertical-align: top;
-      }
-      .choice-filter-close {
-        margin-left: 2px;
-        margin-right: -2px;
-        i {
-          color: #b7d7f8;
-          font-size: 14px;
-          line-height: 12px;
-          &:hover {
-            color: #4398ec;
-            cursor: pointer;
-          }
-        }
-      }
     }
-    div.choice-related {
-      background: darken(@grayLighter, 5%);
-      color: @gray;
-      cursor: text;
-    }
-    div.choice-filter {
-      background: @dropdownLinkBackgroundHover;
-      color: @dropdownLinkColorHover;
-    }
-    // select2 filter pills
-    .select2-container {
-      &.related-filter {
-        vertical-align: top;
-      }
-      &.select2-container-disabled .select2-choice .select2-arrow {
-        background: none;
-        .icon-caret-down {
-          display: none;
-        }
-      }
-      .select2-choices {
-        padding: 1px 4px 2px 0;
-        border: none;
-        background-image: none;
-        background-color: transparent;
-        .box-shadow(none);
-        .select2-input {
-          .box-sizing(border-box);
-          height: 24px;
-          font-size: @baseFontSize;
-        }
-      }
-      .select2-search-choice,
-      .select2-choice {
-        padding: 0 0 0 4px;
-        font-size: @fontSizeSmall;
-        background: none;
-        border: none;
-        .border-radius(0);
-        .box-shadow(none);
-        span {
-          display: inline-block;
-          margin-right: 0;
-        }
-        .select2-arrow {
-          display: none;
-        }
-        span.select2-chosen {
-          .border-radius(10px 0 0 10px);
-          color: @gray;
-          padding: 4px 4px 4px 6px;
-          margin-right: 5px;
-          margin-top: 3px;
-          line-height: 12px;
-          height: 12px;
-          background: @grayLighter;
-          i[class^="icon-"] {
-            margin-left: 4px;
-          }
-          &:hover {
-            .box-shadow(~"inset 0 -16px 8px rgba(0,0,0,.1) !important");
-          }
-        }
-        span.select2-choice-related,
-        a.select2-choice-related,
-        span.select2-choice-filter,
-        a.select2-choice-filter {
-          .border-radius(0 10px 10px 0);
-          padding: 4px 6px 4px 4px;
-          display: inline-block;
-          line-height: 12px;
-        }
-        span.select2-choice-related,
-        a.select2-choice-related {
-          background: #c0f0ca;
-          color: #407648;
-          cursor: text;
-        }
-        span.select2-choice-filter,
-        a.select2-choice-filter {
-          background: @dropdownLinkBackgroundHover;
-          color: @dropdownLinkColorHover;
-        }
-        a:hover {
-          text-decoration: none;
-        }
-        .filter-disabled a {
-          background: @grayLighter;
-          color: @gray;
+    .choice-filter-close {
+      margin-left: 2px;
+      margin-right: -2px;
+      i {
+        color: #b7d7f8;
+        font-size: 14px;
+        line-height: 12px;
+        &:hover {
+          color: #4398ec;
           cursor: pointer;
-          &:hover {
-            color: @gray;
-          }
-        }
-        &.select2-locked {
-          padding-right: 0px !important;
-        }
-      }
-      &.select2-container-multi.select2-choices-pills-close .select2-search-choice {
-        div {
-          display: inline-block;
-          span.select2-choice-type {
-            margin-right: 2px;
-            margin-top: 0;
-          }
-        }
-        a.select2-choice-filter {
-          padding-right: 20px;
-        }
-        span.select2-choice-type {
-          .border-radius(10px 0 0 10px);
-          color: @gray;
-          padding: 4px 4px 4px 6px;
-          margin-right: 5px;
-          margin-top: 3px;
-          line-height: 12px;
-          height: 12px;
-          background: @grayLighter;
-          &:hover {
-            .box-shadow(~"inset 0 -16px 8px rgba(0,0,0,.1) !important");
-          }
-        }
-      }
-      &.select2-container-disabled {
-        .select2-choices {
-          padding-right: 0px;
         }
       }
     }
-
-    // search input field
-    .search-name {
-      position: absolute;
-      left: auto;
-      width: 100%;
-      .box-sizing(border-box);
-      height: 22px;
-      border: 0;
-      padding: 4px 8px;
-      top: 2px;
-      box-shadow: none;
-      &.hide {
+  }
+  div.choice-related {
+    background: darken(@grayLighter, 5%);
+    color: @gray;
+    cursor: text;
+  }
+  div.choice-filter {
+    background: @dropdownLinkBackgroundHover;
+    color: @dropdownLinkColorHover;
+  }
+  // select2 filter pills
+  .select2-container {
+    &.related-filter {
+      vertical-align: top;
+    }
+    &.select2-container-disabled .select2-choice .select2-arrow {
+      background: none;
+      .icon-caret-down {
         display: none;
       }
     }
-    .search-name:focus {
+    .select2-choices {
+      padding: 1px 4px 2px 0;
+      border: none;
+      background-image: none;
+      background-color: transparent;
+      .box-shadow(none);
+      .select2-input {
+        .box-sizing(border-box);
+        height: 24px;
+        font-size: @baseFontSize;
+      }
+    }
+    .select2-search-choice,
+    .select2-choice {
+      padding: 0 0 0 4px;
+      font-size: @fontSizeSmall;
+      background: none;
+      border: none;
+      .border-radius(0);
+      .box-shadow(none);
+      span {
+        display: inline-block;
+        margin-right: 0;
+      }
+      .select2-arrow {
+        display: none;
+      }
+      span.select2-chosen {
+        .border-radius(10px 0 0 10px);
+        color: @gray;
+        padding: 4px 4px 4px 6px;
+        margin-right: 5px;
+        margin-top: 3px;
+        line-height: 12px;
+        height: 12px;
+        background: @grayLighter;
+        i[class^="icon-"] {
+          margin-left: 4px;
+        }
+        &:hover {
+          .box-shadow(~"inset 0 -16px 8px rgba(0,0,0,.1) !important");
+        }
+      }
+      span.select2-choice-related,
+      a.select2-choice-related,
+      span.select2-choice-filter,
+      a.select2-choice-filter {
+        .border-radius(0 10px 10px 0);
+        padding: 4px 6px 4px 4px;
+        display: inline-block;
+        line-height: 12px;
+      }
+      span.select2-choice-related,
+      a.select2-choice-related {
+        background: #c0f0ca;
+        color: #407648;
+        cursor: text;
+      }
+      span.select2-choice-filter,
+      a.select2-choice-filter {
+        background: @dropdownLinkBackgroundHover;
+        color: @dropdownLinkColorHover;
+      }
+      a:hover {
+        text-decoration: none;
+      }
+      .filter-disabled a {
+        background: @grayLighter;
+        color: @gray;
+        cursor: pointer;
+        &:hover {
+          color: @gray;
+        }
+      }
+      &.select2-locked {
+        padding-right: 0px !important;
+      }
+    }
+    &.select2-container-multi.select2-choices-pills-close .select2-search-choice {
+      div {
+        display: inline-block;
+        span.select2-choice-type {
+          margin-right: 2px;
+          margin-top: 0;
+        }
+      }
+      a.select2-choice-filter {
+        padding-right: 20px;
+      }
+      span.select2-choice-type {
+        .border-radius(10px 0 0 10px);
+        color: @gray;
+        padding: 4px 4px 4px 6px;
+        margin-right: 5px;
+        margin-top: 3px;
+        line-height: 12px;
+        height: 12px;
+        background: @grayLighter;
+        &:hover {
+          .box-shadow(~"inset 0 -16px 8px rgba(0,0,0,.1) !important");
+        }
+      }
+    }
+    &.select2-container-disabled {
+      .select2-choices {
+        padding-right: 0px;
+      }
+    }
+  }
+  // search input field
+  .search-name {
+    position: absolute;
+    left: auto;
+    width: 100%;
+    .box-sizing(border-box);
+    height: 22px;
+    border: 0;
+    padding: 4px 8px;
+    top: 2px;
+    box-shadow: none;
+    &:focus {
       border: 0;
       .box-shadow(none);
     }
+    &.hide {
+      display: none;
+    }
   }
-
+  // clear search text
   .add-on.icon-remove {
     position: absolute;
     right: 0;
@@ -212,65 +206,83 @@
       cursor: pointer;
     }
   }
-
-  //not working for input focus
-  .filter-view:focus {
-    border-color: rgba(82,168,236,0.8);
-    .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)");
-  }
 }
 
-// inset forms - specific
-.form-search-related,
-.form-search  {
-  margin: -1px 0 0 0;
+// search filter widget
+.form-search-related {
+  margin: 0;
   background: @grayLighter;
   border-top: 1px solid darken(@grayLighter,10%);
-  border-bottom: 1px solid darken(@grayLighter,10%);
-  .mu.extend,
-  .inset-form.extend {
-    margin-top:-1px;
-    article.filter-header,
-    .inset-form-header {
-      padding-left: 20px;
-      .controls {
-        padding-top: 7px;
-      }
-    }
-    .controls {
-      padding-top: 2px;
-    }
+  border-bottom: 1px solid darken(@grayLighter, 10%);
+  .filter-header {
+    border-bottom: none;
   }
+  // outer wrapper
+  .control-group {
+    padding: 5px 8px 5px 9px;
+    margin-bottom: 0;
+  }
+  // toggle view
   .controls.btn-group-fit .btn-group {
     right: 0;
   }
+  .extend {
+    margin-top: -1px;
+  }
 }
 
-.form-search-related {
-  article.filter-header {
-    input[type="text"] {
-      padding-left: 9px;
+.form-search  {
+  margin: -1px 0 0;
+  background: @grayLighter;
+  .extend {
+    .filter-header {
+      // mass update title
+      .controls {
+        padding: 7px 0 0 10px;
+      }
     }
   }
 }
 
-// inset forms - general
+.massupdate {
+  .control-group:last-child {
+    margin-bottom: 0;
+  }
+}
+
 .extend {
   .box-shadow(~"inset 0 4px 8px -4px rgba(0, 0, 0, 0.5)");
+
+  .filter-header {
+    input[type="text"] {
+      padding-left: 9px;
+    }
+    .btn-primary {
+      min-width: 41px;
+    }
+    .btn-link + .btn-link {
+      margin-left: 1px;
+    }
+  }
+
   .filter-body {
+    .row-fluid {
+      position: relative;
+      padding-right: 64px;
+      box-sizing: border-box;
+      &.massupdate {
+        padding: 0;
+        position: static;
+      }
+    }
     .controls {
-      line-height: 16px;
       .filter-rows .input-append .add-on:first-child {
         margin-left: 0;
         min-width: 70px;
         text-align: right;
       }
-      .filter-rows .input-append input.inherit-width {
-        width: 80%;
-        .calcWidth(~"100% - 80px");
-      }
     }
-    input[type=checkbox] {
+    input[type="checkbox"] {
       margin-bottom: inherit;
       vertical-align: baseline;
     }
@@ -287,14 +299,8 @@
     padding-top: 9px;
     border-top: none;
   }
-  &> article:last-child {
-    .box-shadow(~"inset 0 -2px 6px -6px rgba(0, 0, 0, 0.5)");
-  }
 
   // containing divs for create filter
-  .filter-field,
-  .filter-operator {
-  }
   .filter-value {
     position: relative;
     div.date {
@@ -305,20 +311,11 @@
         padding: 4px 3%;
       }
     }
-    .row-fluid {
-      span {
-        &> label {
-          padding-top: 6px;
-        }
-      }
-    }
   }
   .filter-actions {
-    position: relative;
-    float: right;
-  }
-  .filter-close {
-    margin-left: 8px;
+    position: absolute;
+    right: 0;
+    letter-spacing: -0.25em;
   }
 
   // inset form select2 controls
@@ -392,62 +389,25 @@
     }
   }
 
-  // datetime picker
-  .input-append {
-    margin-bottom: 0;
-    vertical-align: middle;
-  }
-
-  // not used?
-  .toolbar-btns {
-    width: 150px;
-    position: absolute;
-    right: 3px;
-    top: 6px;
-    a.btn {
-      &>i {
-        color:lighten(@gray,20%) !important;
-      }
-      &.active > i {
-        color:darken(@gray,20%) !important;
-      }
-    }
-  }
-
-  // inset form row controls
-  // mass update controls are named .add and .remove
-  .addme,
-  .removeme,
-  .updateme {
-    position: absolute;
-    background-color: darken(@grayLighter, 5%);
-  }
-  .addme,
-  .updateme {
-    right: 0;
-  }
-  .removeme {
-    right: 36px;
-  }
-
-  //adding this for mass update teamset
+  // adding this for mass update teamset
   label {
     padding-left: 16px;
     text-indent: -16px;
     line-height: 16px;
-    margin-bottom: 0;
+    margin: -3px 0 0;
   }
 }
-.search-filter-dropdown.select2-drop.select2-drop-active {
-  .box-shadow(0px 0px 1px 0px @gray);//uiux-1172, using box-shadow over border because of artifacts
-  .border-radius(2px);
-}
+
 
 // dropdown menu for filter pills
 .search-filter-dropdown {
   border: 0px none;
   width: auto;
   margin-top: 5px;
+  &.select2-drop.select2-drop-active {
+    .box-shadow(0px 0px 1px 0px @gray);//uiux-1172, using box-shadow over border because of artifacts
+    .border-radius(2px);
+  }
   .result-selected {
     display: block;
     font-weight: bold;

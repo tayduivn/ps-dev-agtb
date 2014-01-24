@@ -29,7 +29,7 @@
     {{#each fieldValues}}
     <article class="filter-body clearfix">
         <div class="row-fluid">
-            <div class="controls filter-field span3">
+            <div class="filter-field controls span4">
                 <select class="select2 mu_attribute inherit-width" data-index="{{@index}}">
                     {{#if name}}
                     <option value="{{name}}" selected>{{str label ../../this.model.module}}</option>
@@ -41,15 +41,15 @@
                     {{/each}}
                 </select>
             </div>
-            <div class="controls filter-value span7">
+            <div class="filter-value controls span8">
                 <span name="fieldPlaceHolder" index="{{@index}}">
                 </span>
             </div>
-            <div class="controls filter-actions span2">
-                <button data-action="add" class="btn btn-invisible btn-dark {{#eq ../fieldOptions.length 0}}disabled{{/eq}}"><i class="icon-plus"></i></button>
+            <div class="filter-actions btn-group">
                 {{#notEq ../fieldValues.length 1}}
-                    <button data-action="remove" class="btn btn-invisible btn-dark" data-index="{{@index}}"><i class="icon-minus"></i></button>
+                <button data-action="remove" class="btn btn-invisible btn-dark" data-index="{{@index}}"><i class="icon-minus"></i></button>
                 {{/notEq}}
+                <button data-action="add" class="btn btn-invisible btn-dark {{#eq ../fieldOptions.length 0}}disabled{{/eq}}"><i class="icon-plus"></i></button>
             </div>
         </div>
     </article>
