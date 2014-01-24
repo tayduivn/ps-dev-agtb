@@ -124,7 +124,6 @@ class BeanFactory {
                     }
                 }
 
-                //BEGIN SUGARCRM flav=pro ONLY
                 // cached bean was retrieved with team security disabled
                 if (empty($params['disable_row_level_security']) && !empty($bean->disable_row_level_security)) {
                     $newBean = SugarBean::_createBean($beanClass);;
@@ -150,7 +149,6 @@ class BeanFactory {
                         }
                     }
                 }
-                //END SUGARCRM flav=pro ONLY
 
                 self::$hits++;
                 self::$touched[$module][$id]++;

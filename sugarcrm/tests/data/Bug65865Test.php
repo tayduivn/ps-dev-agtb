@@ -43,7 +43,6 @@ class Bug65865Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNull(BeanFactory::getBean('Accounts', $account->id,  array('strict_retrieve' => true)));
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     public function testGetBeanDisableRowLevelSecurity()
     {
         $account = SugarTestAccountUtilities::createAccount();
@@ -59,5 +58,4 @@ class Bug65865Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotNull(BeanFactory::getBean('Accounts', $account->id, array('disable_row_level_security' => true, 'strict_retrieve' => true)));
         $this->assertNull(BeanFactory::getBean('Accounts', $account->id,  array('strict_retrieve' => true)));
     }
-    //END SUGARCRM flav=pro ONLY
 }
