@@ -19,7 +19,6 @@
 $fields = array(
     array(
         'name' => 'product_template_name',
-        'required' => true,
     ),
     array(
         'name' => 'spacer', // we need this for when forecasts is not setup and we also need to remove the spacer
@@ -169,7 +168,6 @@ $fieldsHidden = array(
 $fields = array(
     array(
         'name' => 'opportunity_name',
-        'required' => true
     ),
     array(
         'name' => 'account_name',
@@ -183,7 +181,6 @@ $fields = array(
     ),
     array(
         'name' => 'date_closed',
-        'required' => true,
         'related_fields' => array(
             'date_closed_timestamp'
         )
@@ -238,7 +235,6 @@ $fields = array(
     ),
     array(
         'name' => 'likely_case',
-        'required' => true,
         'type' => 'currency',
         'related_fields' => array(
             'likely_case',
@@ -486,7 +482,6 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'name',
-                    'required' => true,
                     'label' => 'LBL_MODULE_NAME_SINGULAR'
                 ),
                 array(
