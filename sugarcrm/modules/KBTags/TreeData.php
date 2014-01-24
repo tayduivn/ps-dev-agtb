@@ -101,7 +101,9 @@ function get_node_data($params,$get_array=false) {
             	    $root_node->set_property("href",$href_string);   	
             	 }
             }            
-            $tag_name = from_html($tag_name);                    
+            // No need to process the tag_name for special characters
+            // as the fetchByAssoc() function handles the special characters already.
+            //$tag_name = from_html($tag_name);
             $parent_tag_node = new Node($tag_id, $tag_name);                        
             $parent_tag_node->set_property("href",$href_string);                                                                                                                            
              $parent_tag_node->dynamic_load = true;
