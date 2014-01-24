@@ -103,9 +103,8 @@ class SugarFileUtilsTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testSugarChmod()
     {
-    	return true;
         $this->assertTrue(sugar_chmod($this->_filename));
-        $this->assertEquals($this->_getTestFilePermissions(),decoct(get_mode()));
+        $this->assertEquals($this->_getTestFilePermissions(), decoct(get_mode('file_mode')));
     }
     
     public function testSugarChmodWithMode()
@@ -119,7 +118,9 @@ class SugarFileUtilsTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSugarChmodNoDefaultMode()
     {
         $GLOBALS['sugar_config']['default_permissions']['file_mode'] = null;
-        $this->assertFalse(sugar_chmod($this->_filename));
+
+        $this->assertTrue(sugar_chmod($this->_filename));
+        $this->assertEquals($this->_getTestFilePermissions(), decoct(get_mode('file_mode')));
     }
     
     public function testSugarChmodDefaultModeNotAnInteger()

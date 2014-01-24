@@ -280,7 +280,7 @@ function sugar_touch($filename, $time=null, $atime=null) {
 function sugar_chmod($filename, $mode=null) {
 	if(!is_windows()){
         if ($mode === null) {
-            $mode = get_mode('file_mode');
+            $mode = get_mode('file_mode', 0660);
 		}
         if(isset($mode) && $mode > 0){
 		   return @chmod($filename, $mode);
