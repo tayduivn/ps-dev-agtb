@@ -156,7 +156,7 @@ class SugarQuery
         $alias = (isset($options['alias'])) ? $options['alias'] : false;
 
         if (!empty($alias)) {
-            $newAlias = $GLOBALS['db']->getValidDBName($alias);
+            $newAlias = $GLOBALS['db']->getValidDBName($alias, false, 'alias');
             if (strtolower($alias) != $newAlias) {
                 throw new SugarQueryException("From alias is more than the max allowed length for an alias");
             }

@@ -1326,14 +1326,14 @@ class ModuleInstaller{
     {
         global $db;
         if (isset($item['table'])) {
-            $item['table'] = $db->getValidDBName($item['table']);
+            $item['table'] = $db->getValidDBName($item['table'], false, 'table');
         }
         $key = $db->getValidDBName($key);
         foreach ($item['fields'] as &$field) {
             $field['name'] = $db->getValidDBName($field['name']);
         }
         foreach ($item['indices'] as &$index) {
-            $index['name'] = $db->getValidDBName($index['name']);
+            $index['name'] = $db->getValidDBName($index['name'], false, 'index');
         }
     }
 
