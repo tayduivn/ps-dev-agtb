@@ -171,4 +171,6 @@ $mod_strings = array (
     'LBL_REMINDER_TITLE' => 'Meeting:',
 
     'LBL_REVENUELINEITEMS' => 'Revenue Line Items',
+
+    'LBL_MEETING_CLOSE_SUCCESS' => 'Meeting closed successfully.',
 );
