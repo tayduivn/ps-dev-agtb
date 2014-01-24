@@ -76,6 +76,7 @@
         this.model.on('duplicate:before', this.setupDuplicateFields, this);
         this.on('editable:keydown', this.handleKeyDown, this);
         this.on('editable:mousedown', this.handleMouseDown, this);
+        this.on('field:error', this.handleFieldError, this);
 
         //event register for preventing actions
         // when user escapes the page without confirming deleting
@@ -755,6 +756,35 @@
     handleMouseDown: function() {
         this.toggleViewButtons(false);
         this.adjustHeaderpaneFields();
+    },
+
+    /**
+     * Handles a field validation error for record views.
+     * @param field
+     */
+    handleFieldError: function(field) {
+        var tabLink,
+            fieldTab   = field.$el.closest('.tab-pane'),
+            fieldPanel = field.$el.closest('.record-panel-content');
+
+        if (field.view.meta && field.view.meta.useTabsAndPanels) {
+            // If field's panel is a tab, switch to the tab that contains the field with the error
+            if (fieldTab.length > 0) {
+                tabLink = this.$('[href="#'+fieldTab.attr('id')+'"].[data-toggle="tab"]');
+                tabLink.tab('show');
+                // Put a ! next to the tab if one doesn't already exist
+                if (tabLink.find('.icon-exclamation-sign').length === 0) {
+                    tabLink.append(' <i class="icon-exclamation-sign tab-warning"></i>');
+                }
+            }
+
+            // If field's panel is a panel that is closed, open it and change arrow
+            if (fieldPanel && fieldPanel.is(':hidden')) {
+                fieldPanel.toggle();
+                var fieldPanelArrow = fieldPanel.prev().find('i');
+                fieldPanelArrow.toggleClass('icon-chevron-up icon-chevron-down');
+            }
+        }
     },
 
     /**
