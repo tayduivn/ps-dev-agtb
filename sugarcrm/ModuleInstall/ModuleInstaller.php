@@ -1322,20 +1322,20 @@ class ModuleInstaller{
      * @param char $key
      *
      */
-	public static function cleanUpRelationship(&$item, &$key)
-	{
-		global $db;
-		if(isset($item['table'])) {
-			$item['table'] = $db->getValidDBName($item['table']);
-		}
-		$key = $db->getValidDBName($key);
-		foreach($item['fields'] as &$field) {
-			$field['name'] = $db->getValidDBName($field['name']);
-		}
-		foreach($item['indices'] as &$index) {
-			$index['name'] = $db->getValidDBName($index['name']);
-		}
-	}
+    public static function cleanUpRelationship(&$item, &$key)
+    {
+        global $db;
+        if (isset($item['table'])) {
+            $item['table'] = $db->getValidDBName($item['table']);
+        }
+        $key = $db->getValidDBName($key);
+        foreach ($item['fields'] as &$field) {
+            $field['name'] = $db->getValidDBName($field['name']);
+        }
+        foreach ($item['indices'] as &$index) {
+            $index['name'] = $db->getValidDBName($index['name']);
+        }
+    }
 
 
 	function install_layoutfields() {
