@@ -48,19 +48,20 @@ class SugarWidgetFieldCurrency extends SugarWidgetFieldInt
 
     function & displayList($layout_def)
         {
-            global $locale;
-            $symbol = $locale->getPrecedentPreference('default_currency_symbol');
-            $currency_id = $locale->getPrecedentPreference('currency');
+            global $current_user;
 
-            // If it's not grouped, or if it's grouped around a system currency column, look up the currency symbol so we can display it next to the amount
-            if ( empty($layout_def['group_function']) || $this->isSystemCurrency($layout_def) ) {
-                $c = $this->getCurrency($layout_def);
-                if(!empty($c['currency_id']) && !empty($c['currency_symbol']))
-                {
-                    $symbol = $c['currency_symbol'];
-                    $currency_id = $c['currency_id'];
-                }
+            if (empty($layout_def['group_function'])) {
+                $currency = $this->getCurrency($layout_def);
+                $symbol = $currency['currency_symbol'];
+                $currency_id = $currency['currency_id'];
+            } else {
+                $currency = $current_user->getPreference('currency_show_preferred')
+                    ? SugarCurrency::getUserLocaleCurrency()
+                    : SugarCurrency::getBaseCurrency();
+                $currency_id = $currency->id;
+                $symbol = $currency->symbol;
             }
+
             $layout_def['currency_symbol'] = $symbol;
             $layout_def['currency_id'] = $currency_id;
             $display = $this->displayListPlain($layout_def);
