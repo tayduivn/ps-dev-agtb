@@ -628,6 +628,8 @@ class MysqlManager extends DBManager
                 return $string . ' ' . $operation . ' INTERVAL ' . abs($getUserUTCOffset) . ' MINUTE';
             case 'avg':
                 return "avg($string)";
+            case 'substr':
+                return "substr($string, " . implode(', ', $additional_parameters) . ')';
 		}
 
 		return $string;
