@@ -77,6 +77,13 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
 
     	$mod = BeanFactory::getBean($module_name, $module_id);
 
+        if (empty($mod->id)) {
+            $error->set_error('no_records');
+            self::$helperObject->setFaultObject($error);
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
+            return;
+        }
+
         if (!self::$helperObject->checkQuery($error, $related_module_query, $order_by)) {
     		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
         	return;

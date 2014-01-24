@@ -704,6 +704,10 @@ function validate_user($user_name, $password){
 	        return false;
 	    } // if
 	    $mod = BeanFactory::getBean($module_name, $module_id);
+        if (empty($mod->id)) {
+            $GLOBALS['log']->info('End: SoapHelperWebServices->new_handle_set_relationship');
+            return false;
+        }
 		if(!$mod->ACLAccess('DetailView')){
 			$GLOBALS['log']->info('End: SoapHelperWebServices->new_handle_set_relationship');
 			return false;
