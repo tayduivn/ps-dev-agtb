@@ -394,11 +394,8 @@ class Bug45716Helper {
             'table' => 'currencies',
             'module' => 'Opportunities',
             'source' => 'non-db',
-            'function' => 
-            array (
-                'name' => 'getCurrencyNameDropDown',
-                'returns' => 'html',
-                ),
+            'function' => 'getCurrencies',
+            'function_bean' => 'Currencies',
             'studio' => 'false',
             'duplicate_merge' => 'disabled',
             'real_table' => 'opportunities',
@@ -414,11 +411,8 @@ class Bug45716Helper {
             'table' => 'currencies',
             'module' => 'Opportunities',
             'source' => 'non-db',
-            'function' => 
-            array (
-                'name' => 'getCurrencySymbolDropDown',
-                'returns' => 'html',
-                ),
+            'function' => 'getCurrencySymbols',
+            'function_bean' => 'Currencies',
             'studio' => 'false',
             'duplicate_merge' => 'disabled',
             'real_table' => 'opportunities',
