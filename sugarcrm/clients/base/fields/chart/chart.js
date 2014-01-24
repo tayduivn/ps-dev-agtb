@@ -21,8 +21,10 @@
      * @{inheritDoc}
      */
     bindDataChange: function() {
-        this.model.on('change:rawChartData', function() {
-            if(this.model.get('rawChartData').values.length > 0) {
+        this.model.on('change:rawChartData', function(model, newChartData) {
+            // make sure this.model.get('rawChartData') is not null by checking that
+            // the newChartData (data set for the model's rawChartData) is not null
+            if(newChartData && this.model.get('rawChartData').values.length > 0) {
                 this.$('.nv-chart').toggleClass('hide', false);
                 this.$('.block-footer').toggleClass('hide', true);
 
