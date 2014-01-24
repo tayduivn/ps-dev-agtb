@@ -70,7 +70,7 @@
         if (_.isFunction(input.placeholder)) {
             input.placeholder();
         }
-        // We have this.layout.editingFilter if we're setting the name.
+        // We have this.context.editingFilter if we're setting the name.
         this.toggleDelete(!_.isEmpty(name));
     },
 
@@ -83,7 +83,11 @@
         if (this.disposed) {
             return;
         }
+
+        var name = this.getFilterName();
+        this.context.editingFilter.set('name', name);
         this.layout.trigger('filter:toggle:savestate', true);
+
         if (this.layout.getComponent('filter-rows')) {
             this.layout.getComponent('filter-rows').saveFilterEditState();
         }
@@ -113,13 +117,13 @@
      * Trigger `filter:create:close` to close the filter create panel.
      */
     triggerClose: function() {
-        var id = this.layout.editingFilter.get('id');
+        var id = this.context.editingFilter.get('id');
 
         //Check the current filter definition
         var filterDef = this.layout.getComponent('filter-rows').buildFilterDef(true);
         //Apply the previous filter definition if something has changed meanwhile
-        if (!_.isEqual(this.layout.editingFilter.get('filter_definition'), filterDef)) {
-            this.layout.trigger('filter:apply', null, this.layout.editingFilter.get('filter_definition'));
+        if (!_.isEqual(this.context.editingFilter.get('filter_definition'), filterDef)) {
+            this.layout.trigger('filter:apply', null, this.context.editingFilter.get('filter_definition'));
         }
         this.layout.getComponent('filter').trigger('filter:create:close', true, id);
     },
@@ -135,7 +139,7 @@
      * Trigger `filter:create:save` to save the created filter.
      */
     triggerSave: function() {
-        var filterName = this.getFilterName();
+        var filterName = this.context.editingFilter.get('name') || this.getFilterName();
         this.layout.trigger('filter:create:save', filterName);
     },
 

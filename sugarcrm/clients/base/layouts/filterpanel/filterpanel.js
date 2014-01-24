@@ -12,8 +12,6 @@
  */
 ({
     extendsFrom: 'TogglepanelLayout',
-    // This is set to the filter that's currently being edited.
-    editingFilter: null,
 
     /**
      * @override
@@ -51,6 +49,8 @@
         }, this);
 
         this._super("initialize", [opts]);
+        this.context.editingFilter = null;
+
         // Needed to initialize this.currentModule.
         var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey);
         this.trigger('filterpanel:change:module', (moduleMeta.activityStreamEnabled && lastViewed === 'activitystream') ? 'Activities' : this.module);

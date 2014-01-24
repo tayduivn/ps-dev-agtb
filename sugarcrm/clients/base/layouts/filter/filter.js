@@ -29,6 +29,27 @@
      * Layout for filtering a collection.
      * Composed of a module dropdown(optional), a filter dropdown and an input
      *
+     * Certain options can be set on the context that wraps the filterpanel layout:
+     *     - `applyFilter`: this will determine whether or not to apply the filter while
+     *       completing filter rows. This is used mainly because getRelevantContextList
+     *       may return the global context and will filter its collection automatically,
+     *       and sometimes this is not desired (e.g. a drawer layout with a filterpanel embedded).
+     *     - `saveLastFilter`: this will determine whether or not to save properties pertaining
+     *       to filters in localstorage. This is needed for certain views that have filterpanels,
+     *       do not require stickiness and do not want to affect already-stored values in localstorage.
+     *       (e.g. the filterpanel layout in dashboardconfiguration shouldn't affect the stickiness of
+     *       filters on record/list views, so it should be set to false).
+     *
+     * Usage example:
+     *
+     * <pre><code>
+     * var filterOptions = {
+     *     'applyFilter': false,
+     *     'saveLastFilter': false
+     * };
+     * this.context.set(filterOptions);
+     * </code></pre>
+     *
      * @class BaseFilterLayout
      * @extends Layout
      */
@@ -92,12 +113,12 @@
                 this.clearLastFilter(this.layout.currentModule, this.layoutType);
                 this.layout.trigger("filter:reinitialize");
             }
-            this.layout.editingFilter = null;
+            this.context.editingFilter = null;
             this.layout.trigger('filter:create:close');
         }, this);
 
         this.on('filter:create:open', function(filterModel) {
-            this.layout.editingFilter = filterModel;
+            this.context.editingFilter = filterModel;
             this.layout.trigger('filter:create:open', filterModel);
         }, this);
 
@@ -117,7 +138,7 @@
         this.layout.on('filterpanel:toggle:button', this.toggleFilterButton, this);
 
         //When a filter is saved, update the cache and set the filter to be the currently used filter
-        this.layout.on('filter:add', this.addFilter, this);
+        this.context.on('filter:add', this.addFilter, this);
 
         // When a filter is deleted, update the cache and set the default filter
         // to be the currently used filter.
@@ -146,8 +167,10 @@
      * @returns {*}
      */
     setLastFilter: function(filterModule, layoutName, value) {
-        var key = app.user.lastState.key("last-" + filterModule + "-" + layoutName, this);
-        return app.user.lastState.set(key, value);
+        if (this.context.get('saveLastFilter') !== false) {
+            var key = app.user.lastState.key("last-" + filterModule + "-" + layoutName, this);
+            return app.user.lastState.set(key, value);
+        }
     },
     /**
      * gets last filter from cache
@@ -157,8 +180,12 @@
      * @returns {*}
      */
     getLastFilter: function(filterModule, layoutName) {
-        var key = app.user.lastState.key("last-" + filterModule + "-" + layoutName, this);
-        return app.user.lastState.get(key);
+        if (this.context.get('saveLastFilter') !== false) {
+            var key = app.user.lastState.key("last-" + filterModule + "-" + layoutName, this),
+            value = app.user.lastState.get(key);
+            this.context.set('currentFilterId', value);
+            return value;
+        }
     },
     /**
      * clears last filter from cache
@@ -168,8 +195,10 @@
      * @returns {*}
      */
     clearLastFilter:function(filterModule, layoutName) {
-        var key = app.user.lastState.key("last-" + filterModule + "-" + layoutName, this);
-        return app.user.lastState.remove(key);
+        if (this.context.get('saveLastFilter') !== false) {
+            var key = app.user.lastState.key("last-" + filterModule + "-" + layoutName, this);
+            return app.user.lastState.remove(key);
+        }
     },
 
     /**
@@ -178,8 +207,10 @@
      * @param {Object} filter
      */
     retrieveFilterEditState: function() {
-        var key = app.user.lastState.key("edit-" + this.layout.currentModule + "-" + this.layoutType, this);
-        return app.user.lastState.get(key);
+        if (this.context.get('saveLastFilter') !== false) {
+            var key = app.user.lastState.key("edit-" + this.layout.currentModule + "-" + this.layoutType, this);
+            return app.user.lastState.get(key);
+        }
     },
 
     /**
@@ -188,16 +219,20 @@
      * @param {Object} filter
      */
     saveFilterEditState: function(filter) {
-        var key = app.user.lastState.key("edit-" + this.layout.currentModule + "-" + this.layoutType, this);
-        app.user.lastState.set(key, filter);
+        if (this.context.get('saveLastFilter') !== false) {
+            var key = app.user.lastState.key("edit-" + this.layout.currentModule + "-" + this.layoutType, this);
+            app.user.lastState.set(key, filter);
+        }
     },
 
     /**
      * Removes the edit state from the cache
      */
     clearFilterEditState: function() {
-        var key = app.user.lastState.key("edit-" + this.layout.currentModule + "-" + this.layoutType, this);
-        app.user.lastState.remove(key);
+        if (this.context.get('saveLastFilter') !== false) {
+            var key = app.user.lastState.key("edit-" + this.layout.currentModule + "-" + this.layoutType, this);
+            app.user.lastState.remove(key);
+        }
     },
 
     /**
@@ -205,9 +240,11 @@
      * @param model
      */
     addFilter: function(model){
+        var id = model.get('id');
         this.filters.add(model, { merge: true });
         app.user.lastState.set(app.user.lastState.key("saved-" + this.layout.currentModule, this), this.filters.toJSON());
-        this.setLastFilter(this.layout.currentModule, this.layoutType, model.get("id"));
+        this.setLastFilter(this.layout.currentModule, this.layoutType, id);
+        this.context.set('currentFilterId', id);
         this.clearFilterEditState();
         this.layout.trigger('filter:reinitialize');
     },
@@ -272,6 +309,7 @@
         if (id  && !preventCache) {
             this.setLastFilter(this.layout.currentModule, this.layoutType, id);
         }
+
         var filter, editState = this.retrieveFilterEditState();
         // Figure out if we have an edit state. This would mean user was editing the filter so we want him to retrieve
         // the filter form in the state he left it.
@@ -289,6 +327,8 @@
             filter = this.filters.get(id) || this.emptyFilter;
         }
 
+        this.context.set('currentFilterId', filter.get('id'));
+
         if (filter && filter.get('filter_template') &&
             JSON.stringify(filter.get('filter_definition')) !== JSON.stringify(filter.get('filter_template'))
         ) {
@@ -296,6 +336,7 @@
         } else if (!editState) {
             this.trigger('filter:create:close');
         }
+
         var ctxList = this.getRelevantContextList();
         var clear = false;
         //Determine if we need to clear the collections
@@ -324,6 +365,13 @@
      * @param {Object} dynamicFilterDef(optional)
      */
     applyFilter: function(query, dynamicFilterDef) {
+        // TODO: getRelevantContextList needs to be refactored to handle filterpanels in drawer layouts,
+        // as it will return the global context instead of filtering a list view within the drawer context.
+        // As a result, this flag is needed to prevent filtering on the global context.
+        if (this.context.get('applyFilter') === false) {
+            return;
+        }
+
         //If the quicksearch field is not empty, append a remove icon so the user can clear the search easily
         this._toggleClearQuickSearchIcon(!_.isEmpty(query));
         // reset the selected on filter apply
@@ -430,10 +478,10 @@
      * @param {String} moduleName
      * @param {String} linkName
      */
-    initializeFilterState: function(moduleName, linkName) {
+    initializeFilterState: function(moduleName, linkName, lastFilter) {
         moduleName = moduleName || this.module;
-        var lastFilter = this.getLastFilter(moduleName, this.layoutType),
-            filterData;
+        lastFilter = lastFilter || this.getLastFilter(moduleName, this.layoutType);
+        var filterData;
         if (!(this.filters.get(lastFilter)))
             lastFilter = null;
         if (this.layoutType === 'record' && !this.showingActivities) {
@@ -536,11 +584,12 @@
 
         if (!lastFilter || (!this.filters.get(lastFilter) && lastFilter !== 'create')) {
             this.clearLastFilter(moduleName, this.layoutType);
-            this.setLastFilter(moduleName, this.layoutType, _.first(possibleFilters) || 'all_records');
+            lastFilter = _.first(possibleFilters) || 'all_records';
+            this.setLastFilter(moduleName, this.layoutType, lastFilter);
         }
         this.layout.trigger('filterpanel:change:module', moduleName);
         this.trigger('filter:render:filter');
-        this.trigger('filter:change:filter', this.getLastFilter(moduleName, this.layoutType), true);
+        this.trigger('filter:change:filter', lastFilter, true);
     },
 
     /**

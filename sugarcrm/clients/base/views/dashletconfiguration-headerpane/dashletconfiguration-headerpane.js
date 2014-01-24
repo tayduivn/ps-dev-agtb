@@ -54,7 +54,7 @@
     },
 
     save: function() {
-        app.drawer.close(this.model);
+        this.context.trigger('dashletconfig:save', this.model);
     },
 
     close: function() {

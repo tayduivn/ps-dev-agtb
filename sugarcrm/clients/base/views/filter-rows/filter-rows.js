@@ -70,7 +70,7 @@
         this.listenTo(this.layout, "filterpanel:change:module", this.handleFilterChange);
         this.listenTo(this.layout, "filter:create:open", this.openForm);
         this.listenTo(this.layout, "filter:create:close", this.render);
-        this.listenTo(this.layout, "filter:create:save", this.saveFilter);
+        this.listenTo(this.context, "filter:create:save", this.saveFilter);
         this.listenTo(this.layout, "filter:create:delete", this.confirmDelete);
     },
 
@@ -137,9 +137,9 @@
             },
             message = app.lang.get('TPL_FILTER_SAVE', this.moduleName, {name: name});
 
-        this.layout.editingFilter.save(obj, {
+        this.context.editingFilter.save(obj, {
             success: function(model) {
-                self.layout.trigger('filter:add', model);
+                self.context.trigger('filter:add', model);
                 self.layout.trigger('filter:toggle:savestate', false);
             },
             showAlerts: {
@@ -171,7 +171,7 @@
             name = this.layout.editingFilter.get('name'),
             message = app.lang.get('TPL_DELETE_FILTER_SUCCESS', this.moduleName, {name: name});
 
-        this.layout.editingFilter.destroy({
+        this.context.editingFilter.destroy({
             success: function(model) {
                 self.layout.trigger('filter:remove', model);
             },
@@ -349,9 +349,9 @@
      * Rerender the view with selected filter
      */
     populateFilter: function() {
-        var name = this.layout.editingFilter.get('name'),
-            filterDef = this.layout.editingFilter.get('filter_template') ||
-                this.layout.editingFilter.get('filter_definition');
+        var name = this.context.editingFilter.get('name'),
+            filterDef = this.context.editingFilter.get('filter_template') ||
+                this.context.editingFilter.get('filter_definition');
 
         this.render();
         this.layout.trigger('filter:set:name', name);
@@ -687,7 +687,10 @@
             return;
         }
         this.layout.trigger('filter:toggle:savestate', true);
-        this.layout.trigger('filter:apply', null, filterDef);
+        // Needed in order to prevent filtering a global context collection (see filter.js:applyFilter()).
+        if (this.context.get('applyFilter') !== false) {
+            this.layout.trigger('filter:apply', null, filterDef);
+        }
     }, 400),
 
     /**
@@ -699,14 +702,14 @@
      *   the {@link #builtFilderDef} with all rows.
      */
     saveFilterEditState: function(filterDef, templateDef) {
-        if (!this.layout.editingFilter) {
+        if (!this.context.editingFilter) {
             return;
         }
-        this.layout.editingFilter.set({
+        this.context.editingFilter.set({
             'filter_definition': filterDef || this.buildFilterDef(true),
             'filter_template': templateDef || this.buildFilterDef()
         });
-        var filter = this.layout.editingFilter.toJSON();
+        var filter = this.context.editingFilter.toJSON();
 
         // Make sure the filter-actions view is rendered, otherwise it will override the name with an empty name.
         if (this.layout.getComponent('filter-actions') &&

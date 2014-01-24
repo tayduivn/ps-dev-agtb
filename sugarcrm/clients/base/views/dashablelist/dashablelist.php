@@ -59,6 +59,10 @@ $viewdefs['base']['view']['dashablelist'] = array(
                         'view' => 'filter-rows',
                         'targetEl' => '.filter-options'
                     ),
+                    array(
+                        'view' => 'filter-actions',
+                        "targetEl" => '.filter-options'
+                    ),
                 ),
             ),
         ),

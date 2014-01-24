@@ -191,6 +191,14 @@
                 model.set('label', app.lang.get(label, moduleName, {
                     module: app.lang.getAppListStrings('moduleList')[moduleName]
                 }));
+
+                var filterPanelLayout = this.layout.getComponent('filterpanel'),
+                    filterLayout = filterPanelLayout ? filterPanelLayout.getComponent('filter') : null;
+
+                if (filterLayout) {
+                    filterLayout.trigger("filter:get", moduleName);
+                }
+
                 this._updateDisplayColumns();
                 this.updateLinkedFields(moduleName);
             }, this);
@@ -563,7 +571,7 @@
 
     /**
      * Cancels the automatic refresh of the dashlet.
-     * 
+     *
      * @private
      */
     _stopAutoRefresh: function() {
@@ -587,7 +595,7 @@
 
     /**
      * Gets the fields metadata from a particular view's metadata.
-     * 
+     *
      * @param {Object} meta The view's metadata.
      * @return {Object[]} The fields metadata or an empty array.
      */
