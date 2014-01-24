@@ -4199,9 +4199,13 @@ class SugarBean
             {
                 $ret_array['select'] .= ", $this->table_name.assigned_user_id ";
             }
-            else if(isset($this->field_defs['created_by']) &&  empty($selectedFields[$this->table_name.'.created_by']))
-            {
+            if (isset($this->field_defs['created_by']) &&  empty($selectedFields[$this->table_name.'.created_by'])) {
                 $ret_array['select'] .= ", $this->table_name.created_by ";
+            }
+
+            if (isset($this->field_defs['modified_user_id']) &&
+                empty($selectedFields[$this->table_name.'.modified_user_id'])) {
+                $ret_array['select'] .= ", $this->table_name.modified_user_id ";
             }
             if(isset($this->field_defs['system_id']) && empty($selectedFields[$this->table_name.'.system_id']))
             {
