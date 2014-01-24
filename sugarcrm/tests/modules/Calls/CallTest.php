@@ -164,4 +164,20 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($this->contact->id, $a['contact_id'], "Contact wasn't set as an invitee");
 
     }
+
+    public function testLoadFromRow()
+    {
+        /** @var Call $call */
+        $call = BeanFactory::getBean('Calls');
+        $this->assertEmpty($call->reminder_checked);
+        $this->assertEmpty($call->email_reminder_checked);
+
+        $call->loadFromRow(array(
+            'reminder_time' => 30,
+            'email_reminder_time' => 30,
+        ));
+
+        $this->assertTrue($call->reminder_checked);
+        $this->assertTrue($call->email_reminder_checked);
+    }
 }

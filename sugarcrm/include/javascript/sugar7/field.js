@@ -63,6 +63,12 @@
                     if (!field._shouldRenderRequiredPlaceholder()) {
                         field.decorateRequired();
                     }
+
+                    // handle view specific validation error considerations
+                    if (field.view && field.view.trigger) {
+                        field.view.trigger('field:error', field);
+                    }
+
                     field.decorateError(errors);
                 }, this);
 
@@ -403,7 +409,6 @@
                         $(this).parent("div.input-append.error").addClass("select2-offscreen");
                     }
                 });
-
             },
 
             /**

@@ -189,7 +189,12 @@ class MBLanguage{
                 }
                 // if we aren't duplicating or the key has changed let's add it
                 if (!$duplicate || $okey != $key) {
-                    $appFile .= override_value_to_string_recursive2('app_list_strings', $key, $array);
+                    if (isset($this->appListStrings[$lang][$key])) {
+                        $arr = $this->appListStrings[$lang][$key];
+                    } else {
+                        $arr = $array;
+                    }
+                    $appFile .= override_value_to_string_recursive2('app_list_strings', $key, $arr);
                 }
             }
             sugar_file_put_contents_atomic($app_save_path . '/' . $lang, $appFile);

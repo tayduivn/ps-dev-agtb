@@ -468,11 +468,7 @@ class RenameModules
         global $beanList;
 
         foreach($beanList as $moduleName => $beanName) {
-            if (class_exists($beanName)) {
-                $this->renameModuleRelatedLinks($moduleName, $beanName);
-            } else {
-                $GLOBALS['log']->fatal("Class $beanName does not exist, unable to rename.");
-            }
+            $this->renameModuleRelatedLinks($moduleName, $beanName);
         }
 
         return $this;

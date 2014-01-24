@@ -78,12 +78,26 @@
                     {{#each meta.panels}}
                         {{#unless header}}
                             {{#if newTab}}
-                                <li class="tab {{name}}"><a href="#{{name}}"
-                                                            data-toggle="tab">{{str label ../../../this.module}}</a>
+                                <li class="tab {{name}}">
+                                    <a href="#{{name}}" data-toggle="tab">{{str label ../../../this.module}}</a>
                                 </li>
                             {{/if}}
                         {{/unless}}
                     {{/each}}
+                    <li class="tab dropdown more hidden">
+                        <a class="dropdown-toggle" data-toggle="dropdown"><b class="icon-chevron-down"></b></a>
+                        <ul class="dropdown-menu scroll pull-right" role="menu">
+                            {{#each meta.panels}}
+                                {{#unless header}}
+                                    {{#if newTab}}
+                                        <li class="{{name}}">
+                                            <a href="#{{name}}">{{str label ../../../this.module}}</a>
+                                        </li>
+                                    {{/if}}
+                                {{/unless}}
+                            {{/each}}
+                        </ul>
+                    </li>
                 </ul>
             <div id="tabContent" class="tab-content">
         {{/if}}

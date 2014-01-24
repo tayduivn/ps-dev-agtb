@@ -77,6 +77,10 @@ foreach ($reportsToEmail as $scheduleInfo) {
     $GLOBALS["log"]->debug("-----> Generating Reporter");
     $reporter = new Report(html_entity_decode($savedReport->content));
 
+    $reporter->is_saved_report = true;
+    $reporter->saved_report = &$savedReport;
+    $reporter->saved_report_id = $savedReport->id;
+    
     $mod_strings = return_module_language($current_language, 'Reports');
 
     // prevent invalid report from being processed

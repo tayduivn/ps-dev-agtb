@@ -80,6 +80,11 @@
   }
 }
 
+.nav-tabs > li > a > .tab-warning,
+.nav-tabs > li > a:not(.disabled):hover > .tab-warning {
+  color: @errorText;
+}
+
 // Active state, and it's :hover to override normal :hover
 .nav-tabs > .active > a,
 .nav-tabs > .active > a:hover {

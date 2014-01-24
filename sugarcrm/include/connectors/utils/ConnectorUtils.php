@@ -806,17 +806,30 @@ class ConnectorUtils
         $language = ''
         )
     {
-        $lang = empty($language) ? $GLOBALS['current_language'] : $language;
-        $lang .= '.lang.php';
+        global $locale;
         $dir = str_replace('_', '/', $source_id);
-        $strings = SugarAutoLoader::existingCustomOne("modules/Connectors/connectors/sources/{$dir}/language/{$lang}");
-        if(!empty($strings)) {
-            require $strings;
-            return !empty($connector_strings) ? $connector_strings : array();
-        } else {
-            $GLOBALS['log']->error("Unable to locate language string file for source {$source_id}");
-            return array();
+        $strings = array();
+
+        $defaultLanguage = $GLOBALS['sugar_config']['default_language'] . '.lang.php';
+        $files = array("modules/Connectors/connectors/sources/{$dir}/language/{$defaultLanguage}");
+
+        if ($language != $defaultLanguage) {
+            $currentLanguage = (empty($language) ? $locale->getAuthenticatedUserLanguage() : $language) . '.lang.php';
+            $files[] = "modules/Connectors/connectors/sources/{$dir}/language/{$currentLanguage}";
         }
+
+        foreach (SugarAutoLoader::existingCustom($files) as $file) {
+            require $file;
+            if (isset($connector_strings) && is_array($connector_strings)) {
+                $strings = sugarLangArrayMerge($strings, $connector_strings);
+            }
+        }
+
+        if (empty($strings)) {
+            $GLOBALS['log']->error("Unable to locate language strings for source {$source_id}");
+        }
+
+        return $strings;
     }
 
      /**
