@@ -183,6 +183,7 @@ class LanguageManager
         $additional_search_paths = null
     ) {
 		// Some of the vardefs do not correctly define dictionary as global.  Declare it first.
+		// DO NOT CHANGE THE ORDER OF THESE FILES. EVER.
 		$lang_paths = array(
 					'modules/'.$module.'/language/'.$lang.'.lang.php',
 					'modules/'.$module.'/language/'.$lang.'.lang.override.php',

@@ -56,32 +56,42 @@ class ParserLabel extends ModuleBuilderParser
                 $labels [ strtoupper(substr ( $key, 6 )) ] = SugarCleaner::cleanHtml(from_html($value),false);
             }
         }
-        if (!empty($this->packageName)) //we are in Module builder
-        {
+
+        // Are we are in Module builder?
+        if (!empty($this->packageName)) {
             return self::addLabels ( $language, $labels, $this->moduleName, "custom/modulebuilder/packages/{$this->packageName}/modules/{$this->moduleName}/language" ) ;
-        } else
-        {
-            $addLabelsResult = true;
-            $addExtLabelsResult = true;
-            $extLabels = array();
-            $extFile = "custom/modules/".$this->moduleName."/Ext/Language/".$language.".lang.ext.php";
-            if (is_file($extFile)) {
-                include($extFile);
-                foreach ($labels as $key=>$value) {
-                    if (isset($mod_strings[$key])) {
-                        $extLabels[$key] = $value;
-                        unset($labels[$key]);
-                    }
-                }
-            }
+        } else {
+            // Default the return value
+            $result = false;
             if (!empty($labels)) {
-                $addLabelsResult =  self::addLabels($language, $labels, $this->moduleName);
+                $result =  self::addLabels($language, $labels, $this->moduleName);
             }
-            if (!empty($extLabels)) {
-                $addExtLabelsResult =  self::addLabels($language, $extLabels, $this->moduleName, null, true);
-            }
-            return $addLabelsResult && $addExtLabelsResult;
+
+            return $result;
         }
+    }
+
+    /**
+     * Gets custom strings for this module. If $ext is true, will look in the
+     * extension language file. Otherwise will look in the custom lang file.
+     * 
+     * @param string $language The language to get the strings for
+     * @param boolean $ext Whether to use the extension file
+     * @return array
+     */
+    protected function getCustomModStrings($language, $ext = false)
+    {
+        if ($ext) {
+            $file = "custom/modules/".$this->moduleName."/Ext/Language/".$language.".lang.ext.php";
+        } else {
+            $file = "custom/modules/".$this->moduleName."/language/".$language.".lang.php";
+        }
+
+        if (is_file($file)) {
+            include $file;
+        }
+
+        return isset($mod_strings) ? $mod_strings : array();
     }
 
     /*
@@ -167,7 +177,6 @@ class ParserLabel extends ModuleBuilderParser
      */
     static function addLabels ($language , $labels , $moduleName , $basepath = null, $forRelationshipLabel = false)
     {
-
         $GLOBALS [ 'log' ]->debug ( "ParserLabel->addLabels($language, \$labels, $moduleName, $basepath );" ) ;
         $GLOBALS [ 'log' ]->debug ( "\$labels:" . print_r ( $labels, true ) ) ;
 
@@ -188,7 +197,7 @@ class ParserLabel extends ModuleBuilderParser
         $filename = "$basepath/$language.lang.php" ;
         if($forRelationshipLabel){
             $filename = "$basepath/$language.lang.ext.php" ;
-     	}
+        }
         $dir_exists = is_dir ( $basepath ) ;
 
         $mod_strings = array ( ) ;
@@ -198,38 +207,76 @@ class ParserLabel extends ModuleBuilderParser
             if (file_exists ( $filename )) {
                 // obtain $mod_strings
                 include ($filename) ;
-            } else if ($forRelationshipLabel) {
-                $fh = fopen ($filename, 'a');
-                fclose($fh);
             }
-            
+
             foreach ( $labels as $key => $value ) {
                 if (! isset ( $mod_strings [ $key ] ) || strcmp ( $value, $mod_strings [ $key ] ) != 0) {
-                        $mod_strings [$key] = to_html(strip_tags(from_html($value))); // must match encoding used in view.labels.php
-                        $changed = true ;
+                    $mod_strings [$key] = to_html(strip_tags(from_html($value))); // must match encoding used in view.labels.php
+                    $changed = true ;
                 }
             }
-            
         } else {
             $changed = true;
         }
-        
+
         if ($changed) {
             $GLOBALS [ 'log' ]->debug ( "ParserLabel->addLabels: writing new mod_strings to $filename" ) ;
-	            $GLOBALS [ 'log' ]->debug ( "ParserLabel->addLabels: mod_strings=".print_r($mod_strings,true) ) ;
+            $GLOBALS [ 'log' ]->debug ( "ParserLabel->addLabels: mod_strings=".print_r($mod_strings,true) ) ;
             if (! write_array_to_file ( "mod_strings", $mod_strings, $filename )) {
                 $GLOBALS [ 'log' ]->fatal ( "Could not write $filename" ) ;
-	            } else {
-	                // if we have a cache to worry about, then clear it now
-                    if ($deployedModule) {
-                        SugarCache::cleanOpcodes();
-    	                $GLOBALS [ 'log' ]->debug ( "PaserLabel->addLabels: clearing language cache" ) ;
-    	                $cache_key = "module_language." . $language . $moduleName ;
-    	                sugar_cache_clear ( $cache_key ) ;
-    	                LanguageManager::clearLanguageCache ( $moduleName, $language ) ;
-                        MetaDataManager::refreshLanguagesCache($language);
+            } else {
+                // The write was successful, remove this string from other
+                // files to make sure this new string trumps all
+                
+                // We need to scrub the following paths for existing mod_strings
+                // Yes, custom/modules is built by module installer, but there
+                // are times in the request that this build hasn't happened
+                // yet. This handles that case.
+                $paths = array(
+                    "custom/Extension/modules/{$moduleName}/Ext/Language",
+                    "custom/modules/{$moduleName}/Ext/Language",
+                );
+
+                $exts = array();
+                foreach ($paths as $path) {
+                    $exts = array_merge($exts, glob("$path/{$language}.*.php"));
+                }
+
+                foreach ($exts as $ext) {
+                    // This will determine whether we need to rewrite the ext file
+                    $changed = false;
+                    require $ext;
+                    foreach ($labels as $key => $value) {
+                        if (isset($mod_strings[$key]) && $mod_strings[$key] != $value) {
+                            // Remove this string from the ext and resave the ext
+                            unset($mod_strings[$key]);
+                            $changed = true;
+                        }
+                    }
+
+                    if ($changed) {
+                        $write  = "<?php\n// WARNING: The contents of this file are auto-generated.\n";
+                        // We can't use var_export here since multiple files
+                        // can be structured differently. This is dirty, yes,
+                        // but necessary.
+                        foreach ($mod_strings as $k => $v) {
+                            $write .= "\$mod_strings['$k'] = " . var_export($v, 1) . ";\n";
+                        }
+
+                        SugarAutoLoader::put($ext, $write, true);
                     }
                 }
+
+                // if we have a cache to worry about, then clear it now
+                if ($deployedModule) {
+                    SugarCache::cleanOpcodes();
+                    $GLOBALS [ 'log' ]->debug ( "PaserLabel->addLabels: clearing language cache" ) ;
+                    $cache_key = "module_language." . $language . $moduleName ;
+                    sugar_cache_clear ( $cache_key ) ;
+                    LanguageManager::clearLanguageCache ( $moduleName, $language ) ;
+                    MetaDataManager::refreshLanguagesCache($language);
+                }
+            }
         }
 
         return true ;
