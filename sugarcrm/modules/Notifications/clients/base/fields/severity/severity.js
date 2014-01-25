@@ -27,12 +27,12 @@
      * @protected
      */
     _styleMapping: {
-        'default': 'label',
-        alert: 'label label-important',
-        information: 'label label-info',
-        other: 'label label-inverse',
-        success: 'label label-success',
-        warning: 'label label-warning'
+        'default': '',
+        alert: 'label-important ',
+        information: 'label-info ',
+        other: 'label-inverse ',
+        success: 'label-success ',
+        warning: 'label-warning '
     },
 
     /**
@@ -43,7 +43,7 @@
     _render: function () {
         var severity = this.model.get(this.name);
         this.severityCss = this._styleMapping[severity] || this._styleMapping.default;
-
+        this.severityCss += 'label ellipsis_inline';
         this._super('_render');
     }
 })
