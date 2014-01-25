@@ -2294,7 +2294,7 @@ class SugarBean
         }
 
         $port		= ($parsedSiteUrl['port'] != 80) ? ":".$parsedSiteUrl['port'] : '';
-        $path		= !empty($parsedSiteUrl['path']) ? $parsedSiteUrl['path'] : "";
+        $path       = isset($parsedSiteUrl['path']) ? rtrim($parsedSiteUrl['path'], '/') : '';
         $cleanUrl	= "{$parsedSiteUrl['scheme']}://{$host}{$port}{$path}";
 
         if (isModuleBWC($this->module_name)) {

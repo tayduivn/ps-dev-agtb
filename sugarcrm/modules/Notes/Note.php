@@ -281,6 +281,22 @@ class Note extends SugarBean {
 		return $note_fields;
 	}
 
+    /**
+     * Assigns message variables to email template
+     *
+     * @param XTemplate $xtpl Email template
+     * @param Note      $note Source note
+     *
+     * @return XTemplate
+     */
+    public function set_notification_body(XTemplate $xtpl, Note $note)
+    {
+        $xtpl->assign('NOTE_SUBJECT', $note->name);
+        $xtpl->assign('NOTE_DESCRIPTION', $note->description);
+
+        return $xtpl;
+    }
+
 	function listviewACLHelper() {
 		$array_assign = parent::listviewACLHelper();
 		$is_owner = false;
