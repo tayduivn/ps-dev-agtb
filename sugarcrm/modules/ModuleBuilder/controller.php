@@ -454,13 +454,10 @@ class ModuleBuilderController extends SugarController
                 include_once 'modules/Administration/QuickRepairAndRebuild.php';
                 global $mod_strings;
                 $mod_strings['LBL_ALL_MODULES'] = 'all_modules';
-                $mi = new ModuleInstaller();
-                $mi->silent = true;
-                $mi->rebuild_extensions();
                 $repair = new RepairAndClear();
                 $class_name = $GLOBALS ['beanList'] [$module];
 
-                $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($class_name), true, false);
+                $repair->repairAndClearAll(array('clearVardefs', 'clearTpls'), array($class_name), true, false);
                 if ($module == 'Users') {
                     $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array('Employee'), true, false);
                 }
