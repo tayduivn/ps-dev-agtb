@@ -51,7 +51,7 @@ class Bug39598Test extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->tmpDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'bug39598';
-        mkdir($this->tmpDir);
+        sugar_mkdir($this->tmpDir);
         $this->tmpFile = tempnam($this->tmpDir, 'bug39598');
         //rename file to 'relationships.php'
         rename($this->tmpFile, $this->tmpDir . DIRECTORY_SEPARATOR . 'relationships.php');
