@@ -844,13 +844,14 @@ EOHTML;
      * to looking in the base theme.
      * @param  string $imageName image file name
      * @param  bool   $addJSPath call getJSPath() with the results to add some unique image tracking support
+     * @param  bool   $timeModified append the time modified to the image url to force update on browser cache
      * @return string path to image
      */
-    public function getImageURL($imageName, $addJSPath = true)
+    public function getImageURL($imageName, $addJSPath = true, $timeModified = false)
     {
         if ( isset($this->_imageCache[$imageName]) ) {
             if ( $addJSPath )
-                return getJSPath($this->_imageCache[$imageName]);
+                return getJSPath($this->_imageCache[$imageName], '', $timeModified);
             else
                 return $this->_imageCache[$imageName];
         }
@@ -873,7 +874,7 @@ EOHTML;
         $this->_imageCache[$imageName] = $imagePath;
 
         if ( $addJSPath )
-            return getJSPath($imagePath);
+            return getJSPath($imagePath, '', $timeModified);
 
         return $imagePath;
     }
