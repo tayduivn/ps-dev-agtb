@@ -191,6 +191,7 @@
             var module = this.moduleRegex.exec(contentWindow.location.search);
             module = (_.isArray(module)) ? module[1] : null;
             if (_.contains(['Reports', 'ModuleBuilder'], module)) {
+                $('.bwc-frame').css('height', '');
                 return;
             }
             $('.bwc-frame').css('height', contentWindow.$('#main').height());
