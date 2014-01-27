@@ -132,14 +132,21 @@
                 component.on('attachments:process', function() {
                     var self = this,
                         attachments = this.getAttachments(),
-                        callback = _.after(_.size(attachments), this.clearAttachments);
+                        callback = _.after(_.size(attachments), this.clearAttachments),
+                        parentId = self.context.parent.get("model").id,
+                        parentType = self.context.parent.get("model").module,
+                        additionalNoteAttr = this._mapNoteParentAttributes(parentId, parentType);
 
                     component.trigger('attachments:start');
 
                     _.each(attachments, function(file) {
                         var note = app.data.createBean('Notes');
-                        note.set('name', file.name);
+                        note.set(_.extend({
+                            'name': file.name,
+                            'assigned_user_id': app.user.id
+                        }, additionalNoteAttr));
                         async.waterfall([
+                            //save the note
                             function(callback) {
                                 note.save(null, {
                                     success: function(noteModel) {
@@ -147,6 +154,7 @@
                                     }
                                 });
                             },
+                            //then upload the file attached to the note
                             function(note, callback) {
                                 var data = new FormData(),
                                 url = app.api.buildFileURL({
@@ -167,10 +175,9 @@
                                     callback(null);
                                 });
                             },
+                            //then create the 'attach' type activity
                             function(callback) {
-                                var parentId = self.context.parent.get("model").id,
-                                    parentType = self.context.parent.get("model").module,
-                                    activity = app.data.createBean('Activities'),
+                                var activity = app.data.createBean('Activities'),
                                     payload = {
                                         activity_type: "attach",
                                         parent_id: parentId || null,
@@ -202,6 +209,25 @@
                         });
                     });
                 });
+            },
+
+            /**
+             * Map parentId and parentType into note attributes
+             * Do nothing if parentId or parentType are empty
+             *
+             * @param parentId id of the parent (null if no parent)
+             * @param parentType module of the parent record
+             * @private
+             */
+            _mapNoteParentAttributes: function(parentId, parentType) {
+                if (parentId && parentType) {
+                    return {
+                        'parent_id': parentId,
+                        'parent_type': parentType
+                    };
+                } else {
+                    return {};
+                }
             }
         });
     });
