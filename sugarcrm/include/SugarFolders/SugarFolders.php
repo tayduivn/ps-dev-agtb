@@ -1211,14 +1211,16 @@ ENDQ;
             $folders[] = $this->db->quoted($value);
         }
         $foldersToExcludeString = implode($folders, ', ');
-
-        $clause = <<<SQL
+        $clause = '';
+        if (!empty($foldersToExcludeString)) {
+            $clause = <<<SQL
  AND emails.id NOT IN (
  SELECT DISTINCT(folders_rel.polymorphic_id) FROM folders_rel
   WHERE folders_rel.polymorphic_module = 'Emails' AND folders_rel.folder_id IN ({$foldersToExcludeString})
   AND folders_rel.deleted = 0
  )
 SQL;
+        }
         return $clause;
     }
 
