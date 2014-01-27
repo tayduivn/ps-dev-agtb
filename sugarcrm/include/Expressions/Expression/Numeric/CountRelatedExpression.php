@@ -49,13 +49,7 @@ class CountRelatedExpression extends NumericExpression
 
 			if (typeof(linkField) == "string" && linkField != "")
 			{
-                return SUGAR.forms.AssignmentHandler.getRelatedField(linkField, 'count');
-			}
-			else if (typeof(rel) == "object") {
-			    //Assume we have a Link object that we can delve into.
-			    //This is mostly used for n level dives through relationships.
-			    //This should probably be avoided on edit views due to performance issues.
-
+                return this.context.getRelatedField(linkField, 'count');
 			}
 
 			return "";
