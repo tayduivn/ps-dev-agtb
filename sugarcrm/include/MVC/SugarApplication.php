@@ -613,7 +613,7 @@ class SugarApplication
             'index', 'ListView', 'DetailView', 'EditView', 'oauth', 'authorize', 'Authenticate', 'Login',
             'SupportPortal',
             'LogView',
-            "SugarpdfSettings",
+            "SugarpdfSettings", "saveftsmodules"
         );
 
     /**
