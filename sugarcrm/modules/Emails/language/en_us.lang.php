@@ -93,6 +93,7 @@ $mod_strings = array (
 	'LBL_EDIT_ALT_TEXT'			=> 'Edit Plain Text',
 	'LBL_SEND_IN_PLAIN_TEXT'	=> 'Send in Plain Text',
 	'LBL_EDIT_MY_SETTINGS'		=> 'Edit My Settings',
+	'LBL_EMAIL_ARCHIVING'		=> 'Archiving email',
 	'LBL_EMAIL_ATTACHMENT'		=> 'Email Attachment',
 	'LBL_EMAIL_EDITOR_OPTION'	=> 'Send HTML Email',
 	'LBL_EMAIL_SELECTOR_SELECT' => 'Select',

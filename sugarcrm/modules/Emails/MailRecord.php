@@ -40,6 +40,7 @@ class MailRecord
     public $mockEmailBean=null;  // For Testing Purposes Only
 
     public $mailConfig;
+    public $fromAddress;
     public $toAddresses;
     public $ccAddresses;
     public $bccAddresses;
@@ -49,6 +50,7 @@ class MailRecord
     public $subject;
     public $html_body;
     public $text_body;
+    public $date_sent;
 
     function __construct() {}
 
@@ -72,6 +74,63 @@ class MailRecord
         return $this->toEmailBean("ready");
     }
 
+    /**
+     * Archive this mail record.
+     *
+     * @param $parentId
+     * @param $parentType
+     * @return array
+     * @throws MailerException
+     */
+    public function archive($parentId, $parentType)
+    {
+        if (!empty($this->mockEmailBean)) {
+            $email = $this->mockEmailBean; // Testing purposes only
+        } else {
+            $email = new Email();
+        }
+
+        $to  = $this->addRecipients($this->toAddresses);
+        $cc  = $this->addRecipients($this->ccAddresses);
+        $bcc = $this->addRecipients($this->bccAddresses);
+
+        $email->name = $this->subject;
+        $email->status = $email->type = 'archived';
+        $email->to_addrs = $email->to_addrs_names = $to;
+        $email->cc_addrs = $email->cc_addrs_names = $cc;
+        $email->bcc_addrs = $email->bcc_addrs_names = $bcc;
+        $email->from_addr = $email->from_addr_name = $this->fromAddress;
+        $email->description = $this->text_body;
+        $email->description_html = $this->html_body;
+        $email->parent_id = $parentId;
+        $email->parent_type = $parentType;
+        $email->date_sent = $this->date_sent;
+
+        $attachments = $this->splitAttachments($this->attachments);
+
+        $request  = $this->setupSendRequest($email->status, $email->from_addr, $to, $cc, $bcc, $attachments);
+        $_REQUEST = array_merge($_REQUEST, $request);
+
+        $errorData  = null;
+
+        try {
+            $email->save();
+            $response = $this->toApiResponse($email->status, $email);
+            return $response;
+
+        } catch (Exception $e) {
+            if (!($e instanceof MailerException)) {
+                $e = new MailerException($e->getMessage());
+            }
+            if (empty($errorData)) {
+                $GLOBALS["log"]->error("Message: ".$e->getLogMessage());
+            } else {
+                $GLOBALS["log"]->error("Message: ".$e->getLogMessage()."  Data: ".$errorData);
+            }
+
+            throw $e;
+        }
+    }
     /**
      * Prepares and executes the email request according to the expectations of the status.
      *
@@ -340,6 +399,16 @@ class MailRecord
             "text_body"        => $this->text_body,
             "status"           => ($status == 'ready') ? 'sent' : $status,
         );
+
+        if (!empty($this->date_sent)) {
+            $timedate = TimeDate::getInstance();
+            $date = $timedate->fromDb($this->date_sent);
+            $response['date_sent'] = $timedate->asIso($date);
+        }
+
+        if (!empty($this->fromAddress)) {
+            $response['from_address'] = $this->fromAddress;
+        }
 
         return $response;
     }

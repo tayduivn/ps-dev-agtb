@@ -32,6 +32,7 @@ class MailApi extends ModuleApi
 {
     /*-- API Argument Constants --*/
     const EMAIL_CONFIG  = "email_config";
+    const FROM_ADDRESS  = "from_address";
     const TO_ADDRESSES  = "to_addresses";
     const CC_ADDRESSES  = "cc_addresses";
     const BCC_ADDRESSES = "bcc_addresses";
@@ -42,6 +43,7 @@ class MailApi extends ModuleApi
     const HTML_BODY     = "html_body";
     const TEXT_BODY     = "text_body";
     const STATUS        = "status";
+    const DATE_SENT     = "date_sent";
 
     /*-- API Fields with default values --*/
     public static $fields = array(
@@ -93,6 +95,14 @@ class MailApi extends ModuleApi
 //                'shortHelp' => 'Update Mail Item',
 //                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_record_put_help.html',
 //            ),
+            'archiveMail'      => array(
+                'reqType'   => 'POST',
+                'path'      => array('Mail', 'archive'),
+                'pathVars'  => array(''),
+                'method'    => 'archiveMail',
+                'shortHelp' => 'Archive Mail Item',
+//                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_post_help.html',
+            ),
             'recipientLookup' => array(
                 'reqType'   => 'POST',
                 'path'      => array('Mail', 'recipients', 'lookup'),
@@ -181,6 +191,20 @@ class MailApi extends ModuleApi
         }
 
         return $this->handleMail($api, $args);
+    }
+
+    /**
+     * Archive email.
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function archiveMail($api, $args)
+    {
+        $mailRecord = new MailRecord();
+        $mailRecord = $this->initMailRecord($args);
+        return $mailRecord->archive($args['parent_id'], $args['parent_type']);
     }
 
     /**
@@ -495,7 +519,6 @@ class MailApi extends ModuleApi
     protected function initMailRecord($args)
     {
         $mailRecord               = new MailRecord();
-        $mailRecord->mailConfig   = $args[self::EMAIL_CONFIG];
         $mailRecord->toAddresses  = $args[self::TO_ADDRESSES];
         $mailRecord->ccAddresses  = $args[self::CC_ADDRESSES];
         $mailRecord->bccAddresses = $args[self::BCC_ADDRESSES];
@@ -504,7 +527,23 @@ class MailApi extends ModuleApi
         $mailRecord->related      = $args[self::RELATED];
         $mailRecord->subject      = $args[self::SUBJECT];
         $mailRecord->html_body    = $args[self::HTML_BODY];
-        $mailRecord->text_body    = $args[self::TEXT_BODY];
+
+        if (isset($args[self::TEXT_BODY])) {
+            $mailRecord->text_body = $args[self::TEXT_BODY];
+        }
+
+        if (isset($args[self::EMAIL_CONFIG])) {
+            $mailRecord->mailConfig = $args[self::EMAIL_CONFIG];
+        }
+
+        if (isset($args[self::FROM_ADDRESS])) {
+            $mailRecord->fromAddress = $args[self::FROM_ADDRESS];
+        }
+
+        if (isset($args[self::DATE_SENT])) {
+            $date = TimeDate::getInstance()->fromIso($args[self::DATE_SENT]);
+            $mailRecord->date_sent = $date->asDb();
+        }
 
         return $mailRecord;
     }

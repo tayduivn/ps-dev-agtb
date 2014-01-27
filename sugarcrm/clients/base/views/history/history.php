@@ -47,6 +47,24 @@ $viewdefs['base']['view']['history'] = array(
     'custom_toolbar' => array(
         'buttons' => array(
             array(
+                'type' => 'actiondropdown',
+                'no_default_action' => true,
+                'icon' => 'icon-plus',
+                'buttons' => array(
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'archiveEmail',
+                        'params' => array(
+                            'link' => 'emails',
+                            'module' => 'Emails',
+                        ),
+                        'label' => 'LBL_ARCHIVE_EMAIL',
+                        'acl_action' => 'create',
+                        'acl_module' => 'Emails',
+                    ),
+                ),
+            ),
+            array(
                 'dropdown_buttons' => array(
                     array(
                         'type' => 'dashletaction',
