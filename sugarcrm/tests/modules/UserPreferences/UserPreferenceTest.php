@@ -25,61 +25,81 @@ require_once 'modules/Users/User.php';
 
 class UserPreferenceTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    protected $_user = null;
+    /**
+     * @var User
+     */
+    protected static $user;
 
-    public function setUp()
+    public static function setUpBeforeClass()
     {
-        $this->markTestIncomplete('Mark this test as skipped for now');
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        parent::setUpBeforeClass();
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        self::$user = SugarTestHelper::setUp('current_user', array(true, false));
+    }
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestHelper::tearDown();
+        parent::tearDownAfterClass();
+    }
+
+    protected function setUp()
+    {
+        global $current_user;
+        $current_user = self::$user;
     }
 
     public function tearDown()
     {
-        unset($_SESSION[$GLOBALS['current_user']->user_name . '_PREFERENCES']);
-        unset($GLOBALS['current_user']);
-        unset($_SESSION[$this->_user->user_name . '_PREFERENCES']);
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-    }
-
-    public function testSettingAUserPreferenceNotSetInSession()
-    {
-        $this->_user->setPreference('test_pref', 'dog');
-
-        $this->assertEquals('dog', $this->_user->getPreference('test_pref'));
-        $this->assertFalse(isset($_SESSION[$this->_user->user_name . '_PREFERENCES']['global']['test_pref']));
+        $_SESSION = array();
     }
 
     public function testSettingAUserPreferenceInSession()
     {
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_user->setPreference('test_pref', 'dog');
+        self::$user->setPreference('test_pref', 'dog');
 
-        $this->assertEquals('dog', $this->_user->getPreference('test_pref'));
-        $this->assertEquals('dog', $_SESSION[$this->_user->user_name . '_PREFERENCES']['global']['test_pref']);
+        $this->assertEquals('dog', self::$user->getPreference('test_pref'));
+        $this->assertEquals('dog', $_SESSION[self::$user->user_name . '_PREFERENCES']['global']['test_pref']);
     }
 
-    public function testisCurrentUserReturnsFalseWhenCurrentUserIsNotSet()
+    public function testGetUserDateTimePreferences()
     {
-        unset($GLOBALS['current_user']);
-        $obj = new TestUserPreference($this->_user);
-
-        $this->assertFalse($obj->isCurrentUser());
+        $res = self::$user->getUserDateTimePreferences();
+        $this->assertArrayHasKey('date', $res);
+        $this->assertArrayHasKey('time', $res);
+        $this->assertArrayHasKey('userGmt', $res);
+        $this->assertArrayHasKey('userGmtOffset', $res);
     }
 
-    public function testisCurrentUserReturnsFalseWhenUserIsNotSet()
+    public function testUpdateAllUserPrefs()
     {
-        $obj = new TestUserPreference(null);
-
-        $this->assertFalse($obj->isCurrentUser());
+        global $current_user;
+        $current_user = SugarTestUserUtilities::createAnonymousUser(true, 1);
+        $bean = new UserPreference();
+        $result = $bean->updateAllUserPrefs('test_pref', 'Value');
+        $this->assertEmpty($result);
     }
-}
 
-
-class TestUserPreference extends UserPreference
-{
-    public function isCurrentUser()
+    public function testPreferenceLifeTime()
     {
-        return parent::isCurrentUser();
+        $bean = new UserPreference(self::$user);
+        $bean->setPreference('test_pref', 'Value2');
+        $this->assertEquals('Value2', self::$user->getPreference('test_pref'));
+        $bean->removePreference('test_pref');
+        $this->assertEmpty(self::$user->getPreference('test_pref'));
+    }
+
+    /**
+     * @depends testSettingAUserPreferenceInSession
+     */
+    public function testResetPreferences()
+    {
+        self::$user->setPreference('reminder_time', 25);
+        self::$user->setPreference('test_pref', 'Value3');
+        self::$user->resetPreferences();
+        $this->assertEquals(1800, self::$user->getPreference('reminder_time'));
+        $this->assertEmpty(self::$user->getPreference('test_pref'));
     }
 }
