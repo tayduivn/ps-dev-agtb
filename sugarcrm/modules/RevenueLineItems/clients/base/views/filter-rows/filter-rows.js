@@ -18,8 +18,7 @@
      * {@inheritDoc}
      */
     getFilterableFields: function(moduleName) {
-        var fields = app.view.invokeParent(this, {type: 'view', name: 'filter-rows', method: 'getFilterableFields', args: [moduleName]})
-
+        var fields = this._super("getFilterableFields", [moduleName]);
         if (app.metadata.getModule("Forecasts", "config").is_setup != 1) {
             delete fields['commit_stage'];
         } else {

@@ -1289,8 +1289,10 @@ class Email extends SugarBean {
 
 		$q  = "UPDATE emails SET deleted = 1 WHERE id = '{$id}'";
 		$qt = "UPDATE emails_text SET deleted = 1 WHERE email_id = '{$id}'";
-		$r  = $this->db->query($q);
+		$qf = "UPDATE folders_rel SET deleted = 1 WHERE polymorphic_id = '{$id}' AND polymorphic_module = 'Emails'";
+      	$r  = $this->db->query($q);
 		$rt = $this->db->query($qt);
+		$rf = $this->db->query($qf);
 	}
 
 	/**

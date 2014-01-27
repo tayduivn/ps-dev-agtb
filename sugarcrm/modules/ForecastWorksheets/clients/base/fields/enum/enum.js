@@ -19,6 +19,6 @@
         // registration across ExtendedComponents
         this.plugins = _.clone(this.plugins) || [];
         this.plugins.push('ClickToEdit');
-        app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
     }
 })

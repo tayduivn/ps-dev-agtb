@@ -51,7 +51,7 @@
      * {@inheritDoc}
      */
     initialize: function(options) {
-        app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
 
         // get timeperiods list
         this.tpCollection = app.data.createBeanCollection("TimePeriods");
@@ -68,7 +68,7 @@
      * Add a change event handler for initializing all the plugin tooltips again
      */
     bindDataChange: function() {
-        app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'bindDataChange'});
+        this._super("bindDataChange");
         if (this.model) {
             // when the value changes on the model, we need to initialize the Tooltips again
             this.model.on('change:' + this.name, function() {
@@ -105,7 +105,7 @@
      * {@inheritDoc}
      */
     _render: function() {
-        app.view.invokeParent(this, {type: 'field', name: 'enum', method: '_render'});
+        this._super("_render");
         if (this.tplName == 'noaccess') {
             return this;
         }
@@ -141,8 +141,7 @@
      * {@inheritDoc}
      */
     getSelect2Options: function(optionsKeys) {
-        var options = app.view.invokeParent(this, {type: 'field', name: 'enum',
-            method: 'getSelect2Options', args: [optionsKeys]});
+        var options = this._super("getSelect2Options", [optionsKeys]);
 
         // this is to format the results
         options.formatResult = _.bind(this.formatOption, this);

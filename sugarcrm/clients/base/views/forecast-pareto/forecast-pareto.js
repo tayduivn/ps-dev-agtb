@@ -149,7 +149,7 @@
             ranges: _.keys(app.lang.getAppListStrings(this.forecastConfig.buckets_dom))
         };
 
-        if (!this.displayTimeperiodPivot && this.model.has('date_closed_timestamp')
+        if (this.model && !this.displayTimeperiodPivot && this.model.has('date_closed_timestamp')
             && this.model.get('date_closed_timestamp' != 0)) {
             // if we have a timestamp, use it, otherwise just default to the current time period
             defaultOptions.timeperiod_id = this.model.get('date_closed_timestamp');
@@ -171,7 +171,7 @@
 
     _render: function() {
         this.settings.set('display_manager', this.isDisplayManager());
-        app.view.invokeParent(this, {type: 'view', name: 'parent', method: '_render'});
+        this._super("_render");
 
         var chartField = this.getField('paretoChart');
         if (!_.isUndefined(chartField)) {

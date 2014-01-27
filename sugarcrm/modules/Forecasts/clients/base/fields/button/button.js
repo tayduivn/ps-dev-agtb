@@ -26,7 +26,7 @@
             var su = (this.context.get('selectedUser')) || app.user.toJSON();
             return (su.id === app.user.get('id'))
         } else {
-            return app.view.invokeParent(this, {type: 'field', name: 'button', method: 'hasAccess'});
+            return this._super("hasAccess");
         }
     }
 })

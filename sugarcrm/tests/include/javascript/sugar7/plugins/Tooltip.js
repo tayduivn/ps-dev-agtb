@@ -1,7 +1,9 @@
 describe('Tooltip Plugin', function() {
-    var field, tooltipInitializeSpy, tooltipDestroySpy;
+    var field, tooltipInitializeSpy, tooltipDestroySpy, origFieldPlugins;
 
     beforeEach(function() {
+        origFieldPlugins = SugarTest.app.plugins.plugins.field;
+        SugarTest.app.plugins.plugins.field = {};
         field = new Backbone.View();
         field.$el.append('<a rel="tooltip" title="foo">foo</a>');
         field.plugins = ['Tooltip'];
@@ -10,6 +12,7 @@ describe('Tooltip Plugin', function() {
 
         tooltipInitializeSpy = sinon.spy(SugarTest.app.utils.tooltip, 'initialize');
         tooltipDestroySpy = sinon.spy(SugarTest.app.utils.tooltip, 'destroy');
+
     });
 
     afterEach(function() {
@@ -17,6 +20,7 @@ describe('Tooltip Plugin', function() {
         SugarTest.app.plugins.plugins.field = {};
         tooltipInitializeSpy.restore();
         tooltipDestroySpy.restore();
+        SugarTest.app.plugins.plugins.field = origFieldPlugins;
     });
 
     describe('Bootstrap Tooltip plugin', function() {

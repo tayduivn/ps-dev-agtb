@@ -2294,7 +2294,7 @@ class SugarBean
         }
 
         $port		= ($parsedSiteUrl['port'] != 80) ? ":".$parsedSiteUrl['port'] : '';
-        $path		= !empty($parsedSiteUrl['path']) ? $parsedSiteUrl['path'] : "";
+        $path       = isset($parsedSiteUrl['path']) ? rtrim($parsedSiteUrl['path'], '/') : '';
         $cleanUrl	= "{$parsedSiteUrl['scheme']}://{$host}{$port}{$path}";
 
         if (isModuleBWC($this->module_name)) {
@@ -4202,9 +4202,13 @@ class SugarBean
             {
                 $ret_array['select'] .= ", $this->table_name.assigned_user_id ";
             }
-            else if(isset($this->field_defs['created_by']) &&  empty($selectedFields[$this->table_name.'.created_by']))
-            {
+            if (isset($this->field_defs['created_by']) &&  empty($selectedFields[$this->table_name.'.created_by'])) {
                 $ret_array['select'] .= ", $this->table_name.created_by ";
+            }
+
+            if (isset($this->field_defs['modified_user_id']) &&
+                empty($selectedFields[$this->table_name.'.modified_user_id'])) {
+                $ret_array['select'] .= ", $this->table_name.modified_user_id ";
             }
             if(isset($this->field_defs['system_id']) && empty($selectedFields[$this->table_name.'.system_id']))
             {

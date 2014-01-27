@@ -39,7 +39,7 @@
      * @override
      */
     initialize: function(options) {
-        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args:[options]});
+        this._super("initialize", [options]);
         this.type = 'rowaction';  //TODO Hack that loads rowaction templates.  I hope to remove this when SP-966 is fixed.
     },
     /**
@@ -54,7 +54,7 @@
             //Remove event listeners on this action since it is disabled
             this.undelegateEvents();
         }
-        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: '_render'});
+        this._super("_render");
     },
     /**
      * Essentially the replacement of 'hasAccess' method for implementors of StickyRowactionField.
@@ -64,7 +64,7 @@
      * @return {boolean}
      */
     isDisabled: function(){
-        return !app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'hasAccess'});
+        return !this._super("hasAccess");
     },
     /**
      * Forces StickyRowaction to be rendered and visible in Actiondropdowns.

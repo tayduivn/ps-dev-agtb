@@ -19,7 +19,7 @@
     initialize: function(options) {
         this.plugins = _.clone(this.plugins) || [];
         this.plugins.push('DisableMassdelete');
-        app.view.invokeParent(this, {type: 'view', name: 'massupdate', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
     },
 
     /**
@@ -28,7 +28,7 @@
     delegateListFireEvents: function() {
         this.layout.on("list:massquote:fire", this.massQuote, this);
         this.layout.on("list:records:deleted", this.deleteCommitWarning, this);
-        app.view.invokeParent(this, {type: 'view', name: 'massupdate', method: 'delegateListFireEvents'});
+        this._super("delegateListFireEvents");
     },
     
     /**

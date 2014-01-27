@@ -74,7 +74,7 @@
         $(window).trigger('resize');
     },
     _dispose: function () {
-        app.view.invokeParent(this, {type: 'field', name: 'button', method: '_dispose'});
+        this._super("_dispose");
         app.controller.context.off(null, null, this);//remove all events for context `this`
     }
 })

@@ -31,7 +31,7 @@
     events:              {},
 
     initialize: function(options) {
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
         this.model.isNotEmpty = true;
     },
 

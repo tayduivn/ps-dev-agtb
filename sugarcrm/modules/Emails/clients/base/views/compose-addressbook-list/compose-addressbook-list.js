@@ -26,7 +26,7 @@
         if (massCollection) {
             massCollection.off(null, null, this);
         }
-        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'unbindData'});
+        this._super("unbindData");
     },
     /**
      * Override to inject field names into the request when fetching data for the list.
@@ -46,7 +46,7 @@
      * @private
      */
     _render: function() {
-        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: '_render'});
+        this._super("_render");
         var massCollection              = this.context.get('mass_collection'),
             selectedRecipientsFieldName = 'compose_addressbook_selected_recipients';
         if (massCollection) {
@@ -97,6 +97,6 @@
         if (field.name == '_module') {
             field.model.set(field.name, app.lang.get('LBL_MODULE_NAME', field.model.get(field.name)));
         }
-        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: '_renderField', args: [field]});
+        this._super("_renderField", [field]);
     }
 })

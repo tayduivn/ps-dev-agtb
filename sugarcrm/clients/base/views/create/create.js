@@ -50,7 +50,7 @@
             SELECT: 'select',
             DUPLICATE: 'duplicate'
         });
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args:[options]});
+        this._super("initialize", [options]);
         this.model.off("change", null, this);
 
         //keep track of what post-save action was chosen in case user chooses to ignore dupes
@@ -136,7 +136,7 @@
     },
 
     _render: function () {
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: '_render'});
+        this._super("_render");
 
         this.setButtonStates(this.STATE.CREATE);
 
@@ -591,7 +591,7 @@
      * @param state
      */
     setButtonStates: function (state) {
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'setButtonStates', args:[state]});
+        this._super("setButtonStates", [state]);
         var $saveButtonEl = this.buttons[this.saveButtonName];
         if ($saveButtonEl) {
             switch (state) {

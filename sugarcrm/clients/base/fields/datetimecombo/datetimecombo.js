@@ -62,15 +62,13 @@
 
         // Set our internal time and date values so hbs picks up
         self._presetDateValues();
-        app.view.invokeParent(this, {type: 'field', name: 'date', method: '_render', platform: 'base'});
+        this._super("_render");
 
         viewName = self._getViewName();
-        $(function() {
-            if (self._isEditView(viewName)) {
-                // Note: The Datepicker should be setup in parent DateField
-                self._setupTimepicker();
-            }
-        });
+        if (self._isEditView(viewName)) {
+            // Note: The Datepicker should be setup in parent DateField
+            self._setupTimepicker();
+        }
         if (Modernizr.touch) {
            this.$('[rel=timepicker]').attr('readonly', true);
         }

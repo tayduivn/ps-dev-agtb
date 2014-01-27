@@ -26,15 +26,50 @@
  ********************************************************************************/
 ({
     className: "row-fluid",
+
+    // "Hide" state
+    HIDE_KEY: 'hide',
+
     initialize: function(opts) {
         app.view.Layout.prototype.initialize.call(this, opts);
         this.processDef();
         this.context.on("toggleSidebar", this.toggleSide, this);
         this.context.on("openSidebar", this.openSide, this);
+
+        this.meta.last_state = { id: "default" };
+
+        this.hideLastStateKey = app.user.lastState.key(this.HIDE_KEY, this);
+
+        var hideLastState = app.user.lastState.get(this.hideLastStateKey);
+
+        //Update the panel to be open or closed depending on how user left it last
+        if(!_.isUndefined(hideLastState)) {
+            this._toggleVisibility();
+            app.controller.context.on("sidebarRendered", function() {
+                if ($('.side').css('visibility') == 'hidden') {
+                    app.controller.context.trigger("toggleSidebarArrows");
+                }
+            }, this);
+        }
     },
     toggleSide: function() {
+        var hideLastState = app.user.lastState.get(this.hideLastStateKey);
+
+        if(_.isUndefined(hideLastState)) {
+            app.user.lastState.set(this.hideLastStateKey, "hide");
+        } else {
+            app.user.lastState.remove(this.hideLastStateKey);
+        }
+
+        this._toggleVisibility();
+    },
+    _toggleVisibility: function() {
         this.$('.main-pane').toggleClass('span12').toggleClass('span8');
-        this.$('.side').toggle();
+
+        this.$('.side').css('visibility', function(i, visibility) {
+            return (visibility === 'hidden') ? 'visible' : 'hidden';
+        });
+
         app.controller.context.trigger("toggleSidebarArrows");
     },
     openSide: function() {

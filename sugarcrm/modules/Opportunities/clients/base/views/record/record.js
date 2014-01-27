@@ -38,7 +38,7 @@
          */
         var changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
         this.model.set(changedAttributes);
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'cancelClicked'});
+        this._super("cancelClicked");
     },
 //END SUGARCRM flav=!ent ONLY
 
@@ -60,7 +60,7 @@
             }, this);
             rlis.fetch({ relate: true });
         }, this);
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args: [options]});
+        this._super("initialize", [options]);
     },
 
     /**
@@ -80,7 +80,7 @@
          */
         var changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
         this.model.set(changedAttributes);
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'cancelClicked'});
+        this._super("cancelClicked");
     },
 
     /**

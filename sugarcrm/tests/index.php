@@ -23,6 +23,7 @@
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/GridBuilder.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/ListDisableSort.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/Editable.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/ListEditable.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/ToggleMoreLess.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/ListRemoveLinks.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/File.js"></script>

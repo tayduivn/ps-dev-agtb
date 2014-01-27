@@ -44,7 +44,7 @@
 
     _renderHtml: function() {
         var classesToAdd = 'duplicates highlight';
-        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: '_renderHtml'});
+        this._super("_renderHtml");
         if (this.additionalTableClasses) {
             classesToAdd = classesToAdd + ' ' + this.additionalTableClasses;
         }

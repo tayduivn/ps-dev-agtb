@@ -64,7 +64,7 @@
             }
         }, this);
 
-        app.view.invokeParent(this, {type: 'layout', name: 'togglepanel', method: 'initialize', args: [opts]});
+        this._super("initialize", [opts]);
         // Needed to initialize this.currentModule.
         var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey);
         this.trigger('filterpanel:change:module', (moduleMeta.activityStreamEnabled && lastViewed === 'activitystream') ? 'Activities' : this.module);

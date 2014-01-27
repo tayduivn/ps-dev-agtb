@@ -24,14 +24,14 @@
             additionalEvents['click .btn[name=create_button]'] = 'createAndSelect';
             this.events = _.extend({}, this.events, additionalEvents);
         }
-        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'initialize', args:[options]});
+        this._super("initialize", [options]);
     },
 
     _renderHtml: function() {
         var titleTemplate = Handlebars.compile(app.lang.getAppString("LBL_SEARCH_AND_SELECT")),
             moduleName = app.lang.get("LBL_MODULE_NAME", this.module);
         this.title = titleTemplate({module: moduleName});
-        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: '_renderHtml'});
+        this._super("_renderHtml");
 
         this.layout.on('selection:closedrawer:fire', function() {
             app.drawer.close();

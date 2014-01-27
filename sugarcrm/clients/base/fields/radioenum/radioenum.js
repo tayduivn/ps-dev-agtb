@@ -27,26 +27,25 @@
 ({
     // On list-edit template,
     // we want the radio buttons to be replaced by a select so each method must call the EnumField method instead.
-    extendsFrom: 'ListeditableField',
+    extendsFrom: 'EnumField',
+    plugins: ["ListEditable"],
+    fieldTag: "input",
+
     _render: function(){
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'loadEnumOptions', args: [false,
-            function() {
-                if(!this.disposed){
+        this.loadEnumOptions(false, function() {
+                if (!this.disposed) {
                     this.render();
                 }
-            }]
-        });
+            }
+        );
         app.view.Field.prototype._render.call(this);
         if(this.tplName === 'list-edit') {
-            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            app.view.invokeParent(this, {type: 'field', name: 'enum', method: '_render'});
+            this._super("_render");
         }
     },
     bindDomChange: function() {
         if (this.tplName === 'list-edit') {
-            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'bindDomChange'});
+            this._super("bindDomChange");
         } else {
             if (!(this.model instanceof Backbone.Model)) return;
             var self = this;
@@ -58,55 +57,21 @@
     },
     format: function(value) {
         if (this.tplName === 'list-edit') {
-            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            return app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'format', args: [value]});
+            return this._super("format", [value]);
         } else {
             return app.view.Field.prototype.format.call(this, value);
         }
     },
     unformat: function(value) {
         if (this.tplName === 'list-edit') {
-            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            return app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'unformat', args: [value]});
+            return this._super("unformat", [value]);
         } else {
             return app.view.Field.prototype.unformat.call(this, value);
         }
     },
-    _loadTemplate: function() {
-        app.view.invokeParent(this, {type: 'field', name: 'listeditable', method: '_loadTemplate'});
-    },
-    /**
-     * Load select2 options for radioenum list-edit mode
-     * @param {Array} optionKeys Collection of option keys
-     * @returns {*}
-     */
-    getSelect2Options: function(optionKeys){
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        return app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'getSelect2Options', args: [optionKeys]});
-    },
-    /**
-     * Select2 function, needed to support radioenum list-edit mode
-     * @param {Object} query Select2 query object
-     * @returns {*} Select2 query results
-     * @private
-     */
-    _query: function(query){
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        return app.view.invokeParent(this, {type: 'field', name: 'enum', method: '_query', args: [query]});
-    },
-    /**
-     * Select2 function, needed to support radioenum list-edit mode
-     * @param {Selector} $ele Select2 element selector
-     * @param {Function} callback Select2 callback
-     * @private
-     */
-    _initSelection: function($ele, callback){
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invokeParent(this, {type: 'field', name: 'enum', method: '_initSelection', args: [$ele, callback]});
-    },
     decorateError: function(errors) {
         if (this.tplName === 'list-edit') {
-            return app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'decorateError', args: [errors]});
+            return this._super("decorateError", [errors]);
         } else {
 
             var errorMessages = [],
@@ -129,8 +94,7 @@
     },
     clearErrorDecoration: function() {
         if (this.tplName === 'list-edit') {
-            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            return app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'clearErrorDecoration'});
+            return this._super("clearErrorDecoration");
         } else {
             var ftag = this.fieldTag || '';
             // Remove previous exclamation then add back.
@@ -139,9 +103,5 @@
             this.$el.removeClass("error");
             this.$el.closest('.record-cell').removeClass("error");
         }
-    },
-    unbindDom: function() {
-        this.$(this.fieldTag).select2('destroy');
-        app.view.Field.prototype.unbindDom.call(this);
     }
 })

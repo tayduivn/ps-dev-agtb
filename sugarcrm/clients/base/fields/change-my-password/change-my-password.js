@@ -29,12 +29,7 @@
      * @param options
      */
     initialize: function(options) {
-        app.view.invokeParent(this, {
-            type: 'field',
-            name: 'change-password',
-            method: 'initialize',
-            args: [options]
-        });
+        this._super("initialize", [options]);
         /**
          * Manually adds the validation error label to errorName2Keys
          * @type {string}

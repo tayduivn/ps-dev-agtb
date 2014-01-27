@@ -23,7 +23,7 @@
     },
     plugins: ['QuickSearchFilter', 'EllipsisInline', 'Tooltip', 'FieldDuplicate'],
     initialize: function (options) {
-        app.view.invokeParent(this, {type: 'field', name: 'relate', method: 'initialize', args:[options]});
+        this._super("initialize", [options]);
         this._currentIndex = 0;
         this.model.on("change:team_name_type", this.appendTeam, this);
     },
@@ -158,7 +158,7 @@
      * @private
      */
     _loadTemplate: function() {
-        app.view.invokeParent(this, {type: 'field', name: 'relate', method: '_loadTemplate'});
+        this._super("_loadTemplate");
 
         var template = app.template.getField(
             this.type,

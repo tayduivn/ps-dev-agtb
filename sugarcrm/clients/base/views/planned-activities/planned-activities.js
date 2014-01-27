@@ -57,15 +57,7 @@
      * Store current date state in settings.
      */
     initDashlet: function() {
-        // FIXME: this should be replaced with this._super('initDashlet');
-        // which is currently throwing an error with the following message:
-        // "Attempt to call different parent method from child method".
-        app.view.invokeParent(this, {
-            type: 'view',
-            name: 'history',
-            method: 'initDashlet',
-            platform: 'base'
-        });
+        this._super('initDashlet');
         if (!this.meta.last_state) {
             this.meta.last_state = {
                 id: this.dashModel.get('id') + ':' + this.name,
@@ -214,15 +206,7 @@
      * @protected
      */
     _initTabs: function() {
-        // FIXME: this should be replaced with this._super('_initTabs'); which
-        // is currently throwing an error with the following message: "Attempt
-        // to call different parent method from child method"
-        app.view.invokeParent(this, {
-            type: 'view',
-            name: 'tabbed-dashlet',
-            method: '_initTabs',
-            platform: 'base'
-        });
+        this._super("_initTabs");
 
         _.each(this.tabs, function(tab) {
             if (!tab.invitation_actions) {
@@ -418,7 +402,7 @@
      */
     _renderHtml: function() {
         if (this.meta.config) {
-            app.view.View.prototype._renderHtml.call(this);
+            this._super("_renderHtml");
             return;
         }
 

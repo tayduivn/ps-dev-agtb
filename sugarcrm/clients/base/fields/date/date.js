@@ -46,7 +46,7 @@
      * <pre><code>
      * _render:function(value) {
      *     this.doSpecialPreParentInitialization();
-     *     app.view.invokeParent(this, {type: 'field', name: 'date', method: '_render', platform: 'base'});
+     *     this._super("_render");
      *     // as it's easy to forget and do app.view.views (notice views not fields at end!)
      *     this.doSomethingElseAfterParentInitialization();
      * },
@@ -389,11 +389,9 @@
 
         viewName = self._getViewName();
 
-        $(function() {
-            if (self._isEditView(viewName)) {
-                self._setupDatepicker();
-            }
-        });
+        if (self._isEditView(viewName)) {
+            self._setupDatepicker();
+        }
         if (app.utils.isTouchDevice()) {
            this.$("[rel=datepicker]").attr('readonly',true);
         }
@@ -506,5 +504,19 @@
         this.$el.removeClass("error");
         this.$el.closest("span.edit").removeClass('error');
         this.$el.closest('.record-cell').removeClass("error");
+    },
+
+    /**
+     * @inheritDoc
+     *
+     * When data changes, re-render the field only if it is not on edit
+     * (see MAR-1617).
+     */
+    bindDataChange: function() {
+        this.model.on('change:' + this.name, function() {
+            if (this.action !== 'edit') {
+                this.render();
+            }
+        }, this);
     }
 })

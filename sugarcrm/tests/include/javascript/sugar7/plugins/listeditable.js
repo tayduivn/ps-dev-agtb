@@ -1,4 +1,4 @@
-describe("Base.Field.Listeditable", function() {
+describe("ListEditable Plugin", function() {
     var app, field, Address;
 
     beforeEach(function() {
@@ -17,6 +17,9 @@ describe("Base.Field.Listeditable", function() {
     });
 
     it('should have custom templates for list-edit and list-disabled', function() {
+        app.view.declareComponent("field", "testListEditField", null, {
+            plugins: ["ListEditable"]
+        }, true, "base");
         var def = {
             'events' : {
                 'click .btn' : 'function() { this.callback = "stuff excuted"; }',
@@ -24,7 +27,12 @@ describe("Base.Field.Listeditable", function() {
             }
         };
 
-        field = SugarTest.createField("base","listeditable", "listeditable", "edit", def);
+        field = SugarTest.createField({
+            loadJsFile: false,
+            type: "testListEditField",
+            viewName: "edit",
+            fieldDef: def
+        });
 
         expect(field.view.action).not.toBe('list');
         field._loadTemplate();

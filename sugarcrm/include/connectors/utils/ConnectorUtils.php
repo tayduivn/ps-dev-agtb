@@ -918,7 +918,18 @@ class ConnectorUtils
         }
 
         //Remove the source from the connectors.php file
-        self::getConnectors(true);
+        $connectorsFile = 'custom/modules/Connectors/metadata/connectors.php';
+        if (file_exists($connectorsFile)) {
+            require($connectorsFile);
+            if (isset($connectors[$source])) {
+                unset($connectors[$source]);
+                if (!write_array_to_file('connectors', $connectors, $connectorsFile)) {
+                   //Log error and return empty array
+                   $GLOBALS['log']->fatal("Cannot write connectors to file");
+                   return false;
+                }
+            }
+        }
 
         //Update the display_config.php file to remove this source
         $modules_sources = array();
