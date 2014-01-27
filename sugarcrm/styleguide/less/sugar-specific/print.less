@@ -110,7 +110,7 @@
     #content > .row-fluid > .dashboard { /* specific selector to avoid applying it to .side-pane dashboard */
       .dashlets.row-fluid > li {
         width: 100%;
-        .widget-container {
+        .dashlet-container {
           width: 100%;
         }
         &:first-child {
@@ -134,9 +134,9 @@
     }
     .dashboard .row-fluid.sortable .well.well-invisible {
       display: block !important;
-      .widget-container {
+      .dashlet-container {
         padding: 20px 0 0;
-        .widget {
+        .dashlet {
           border: 1px solid @grayLight;
           position: relative;
           width: 656px;
@@ -163,9 +163,9 @@
     .nv-quotaLineBackground {
       display: none;
     }
-    .dashboard .thumbnail.widget:not(.collapsed) .widget-content,
-    .dashboard .thumbnail.widget:not(.collapsed) .block,
-    .dashboard .thumbnail.widget:not(.collapsed) {
+    .dashboard .thumbnail.dashlet:not(.collapsed) .dashlet-content,
+    .dashboard .thumbnail.dashlet:not(.collapsed) .block,
+    .dashboard .thumbnail.dashlet:not(.collapsed) {
       max-height: none !important;
     }
     footer {

@@ -299,7 +299,7 @@
     },
 
     /**
-     * Builds widget url
+     * Builds dashlet url
      *
      * @return {*} url to call
      */
@@ -336,7 +336,7 @@
             if(this.currentModule == 'Forecasts') {
                 this.updateDetailsForSelectedTimePeriod(model.get('selectedTimePeriod'));
             }
-            // reload widget data when the selectedTimePeriod changes
+            // reload dashlet data when the selectedTimePeriod changes
             this.loadData({});
         }, this);
 
@@ -362,7 +362,7 @@
 
             ctx.on('change:selectedUser', function(model) {
                 this.updateDetailsForSelectedUser(model.get('selectedUser'));
-                // reload widget data when the selectedUser changes
+                // reload dashlet data when the selectedUser changes
                 this.loadData({});
             }, this);
 
@@ -510,7 +510,7 @@
     },
 
     /**
-     * Used to re-render only the projected data inside the widget so render doesnt
+     * Used to re-render only the projected data inside the dashlet so render doesnt
      * get called and dispose the select2 timeperiod field, which would then go
      * re-fetch its data at least once every render
      */
@@ -887,7 +887,7 @@
      */
     updateDetailsForSelectedUser: function (selectedUser) {
         // don't directly set model selectedUser so we can handle selectedUser param in case it comes in as
-        // just an id or something from somewhere else, so we can set it the right way for this widget
+        // just an id or something from somewhere else, so we can set it the right way for this dashlet
         this.selectedUser.last_name = selectedUser.last_name;
         this.selectedUser.first_name = selectedUser.first_name;
         this.selectedUser.full_name = selectedUser.full_name;

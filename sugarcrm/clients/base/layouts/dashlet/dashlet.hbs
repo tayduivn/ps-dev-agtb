@@ -26,12 +26,12 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<div class="thumbnail widget" data-action="droppable">
+<div class="thumbnail dashlet" data-action="droppable">
     {{#if meta.preview}}
-        <h4 data-toggle="widget" class="dashlet-title">{{meta.label}}</h4>
+        <h4 data-toggle="dashlet" class="dashlet-title">{{meta.label}}</h4>
     {{else}}
         <div data-dashlet="toolbar"></div>
     {{/if}}
-    <div data-dashlet="widget" class="widget-content"></div>
+    <div data-dashlet="dashlet" class="dashlet-content"></div>
     <div class="swappable-dashlet icon-download-alt"></div>
 </div>
