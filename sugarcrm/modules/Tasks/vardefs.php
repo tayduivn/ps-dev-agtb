@@ -212,6 +212,14 @@ $dictionary['Task'] = array('table' => 'tasks',
     'source'=>'non-db',
     'vname'=>'LBL_OPPORTUNITY',
   ),
+  'revenuelineitems' =>
+  array (
+    'name' => 'revenuelineitems',
+    'type' => 'link',
+    'relationship' => 'revenuelineitem_tasks',
+    'source'=>'non-db',
+    'vname'=>'LBL_REVENUELINEITEMS',
+  ),
   'cases' =>
   array (
     'name' => 'cases',

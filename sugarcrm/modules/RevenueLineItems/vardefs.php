@@ -737,6 +737,13 @@ $dictionary['RevenueLineItem'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_NOTES',
         ),
+        'tasks' => array(
+            'name' => 'tasks',
+            'type' => 'link',
+            'relationship' => 'revenuelineitem_tasks',
+            'source' => 'non-db',
+            'vname' => 'LBL_NOTES',
+        ),
         'documents' => array(
             'name' => 'documents',
             'type' => 'link',
@@ -984,6 +991,17 @@ $dictionary['RevenueLineItem'] = array(
         array('name' => 'idx_revenuelineitem_quantity', 'type' => 'index', 'fields' => array('quantity')),
     ),
     'relationships' => array(
+        'revenuelineitem_tasks' => array(
+            'lhs_module' => 'RevenueLineItems',
+            'lhs_table' => 'revenue_line_items',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Tasks',
+            'rhs_table' => 'tasks',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'RevenueLineItems'
+        ),
         'revenuelineitem_notes' => array(
             'lhs_module' => 'RevenueLineItems',
             'lhs_table' => 'revenue_line_items',
