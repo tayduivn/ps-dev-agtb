@@ -75,8 +75,17 @@ class AccountsApi extends ListApi
             return;
         }
 
+        // BEGIN SUGARCRM flav!=ent ONLY
+        // in pro versions, we need sales_stage
+        $status_field = 'sales_stage';
+        // END SUGARCRM flav!=ent ONLY
+        // BEGIN SUGARCRM flav=ent ONLY
+        // in ent versions, we need sales_status
+        $status_field = 'sales_status';
+        // END SUGARCRM flav=ent ONLY
+
         $query = new SugarQuery();
-        $query->select(array('sales_status', 'amount_usdollar'));
+        $query->select(array($status_field, 'amount_usdollar'));
         $query->from($linkSeed);
         // making this more generic so we can use this on contacts also as soon
         // as we move it to a proper module
@@ -101,8 +110,8 @@ class AccountsApi extends ListApi
                 'Closed Lost' => 'lost',
                 'Closed Won' => 'won',
             );
-            if (array_key_exists($row['sales_status'], $map)) {
-                $status = $map[$row['sales_status']];
+            if (array_key_exists($row[$status_field], $map)) {
+                $status = $map[$row[$status_field]];
             } else {
                 $status = 'active';
             }
