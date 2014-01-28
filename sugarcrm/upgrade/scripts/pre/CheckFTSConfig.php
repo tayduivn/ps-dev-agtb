@@ -46,9 +46,9 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
         if (empty($ftsConfig) || empty($ftsConfig['Elastic']) ||
             empty($ftsConfig['Elastic']['host']) || empty($ftsConfig['Elastic']['port'])
         ) {
+            // error implies fail
             $this->error('Elastic Full Text Search engine needs to be configured on this Sugar instance prior to upgrade.');
             $this->error('Access Full Text Search configuration under Administration > Search.');
-            $this->fail();
         } else {
             // Test Elastic FTS connection
             require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
@@ -58,7 +58,6 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
             if (!$status['valid']) {
                 $this->error('Connection test for Elastic Full Text Search engine failed.  Check your FTS configuration.');
                 $this->error('Access Full Text Search configuration under Administration > Search.');
-                $this->fail();
             }
         }
     }
@@ -86,8 +85,8 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
                 $displayText = $app_strings['ERR_ELASTIC_TEST_FAILED'];
             }
         } catch (Exception $e) {
-            $this->reportException("Unable to get server status", $e);
             $displayText = $e->getMessage();
+            $this->error("Unable to get server status: $displayText");
         }
         //Reset previous timeout value.
         $this->_client->setConfigValue('timeout', $timeOutValue);
