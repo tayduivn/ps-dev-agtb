@@ -228,6 +228,33 @@
         } else {
             var _initDashboard = this._getInitialDashboardMetadata();
 
+            if(_initDashboard && !_.isEmpty(_initDashboard.metadata)) {
+                // Drill-down to the dashlet level to check permissions for that module.
+                _.each(_initDashboard.metadata['components'], function(component, component_key) {
+                    _.each(component['rows'], function(row, row_key) {
+                        // Loop the cells checking access, rebuilding the cell array to only contain permitted dashlets.
+                        _initDashboard.metadata['components'][component_key]['rows'][row_key] = _.filter(row, function(cell){
+                            var module = (cell.context && cell.context.module) ? cell.context.module : this.module;
+
+                            if(!app.acl.hasAccess('access', module)) {
+                                return false;
+                            }
+
+                            return true;
+                        });
+                    }, this);
+
+                    // Now that we've processed all the rows in this component, rebuild the array to only have rows with dashlets.
+                    _initDashboard.metadata['components'][component_key]['rows'] = _.filter(_initDashboard.metadata['components'][component_key]['rows'], function(row){
+                        if(row.length > 0) {
+                            return true;
+                        }
+
+                        return false;
+                    });
+                }, this);
+            }
+            
             _.each(_initDashboard, function(dash) {
                 var model = this._getNewDashboardObject('model', this.context);
                 model.set(dash);
