@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
@@ -41,8 +40,8 @@ class Bug44507Test extends Sugar_PHPUnit_Framework_TestCase
     {
     	if($GLOBALS['db']->variant != 'mysql' || !function_exists('mysqli_connect'))
     	{
+            $this->skipped = true;
     		$this->markTestSkipped('Skipping Test Bug44507');
-    		$this->skipped = true;
     		return;
     	}
 
@@ -136,5 +135,3 @@ class Bug44507SqlManager extends MysqliManager
     	return $this->expectedSql;
     }
 }
-
-?>

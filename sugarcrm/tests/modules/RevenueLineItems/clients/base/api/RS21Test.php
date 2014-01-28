@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,50 +26,60 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'clients/portal/api/MetadataPortalApi.php';
+require_once 'clients/base/api/FilterApi.php';
 
 /**
- * @group ApiTests
+ * Tests RevenueLineItemsApiTest.
  */
-class MetadataPortalApiTest extends Sugar_PHPUnit_Framework_TestCase
+class RS21Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    public $metadataApi;
+	/**
+     * @var SugarApi
+     */
+    protected $api;
 
-    public function setUp()
+    /**
+     * @var array
+     */
+    protected $user;
+
+
+    protected function setUp()
     {
+        parent::setUp();
 
-        SugarTestHelper::setUp("app_strings");
-        SugarTestHelper::setUp("app_list_strings");
-        SugarTestHelper::setUp("beanFiles");
-        SugarTestHelper::setUp("beanList");
-        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
 
-        $this->metadataApi= new MetadataPortalApi();
+        $this->user = SugarTestHelper::setUp('current_user', array(true, false));
+        $this->api = new FilterApi();
     }
 
-    public function tearDown()
+
+    protected function tearDown()
     {
-
         SugarTestHelper::tearDown();
-
         parent::tearDown();
     }
 
-    /**
-     * Tests finding Portal modules
-     */
-    public function testFindPortalModules()
+    public function testFilterList()
     {
-        $result = $this->metadataApi->findPortalModules();
-        $this->assertTrue(in_array("Notes", $result), "Notes should be included in Portal metadata");
-        $this->assertTrue(in_array("Home", $result), "Home should be included in Portal metadata");
-        $this->assertTrue(in_array("Contacts", $result));
-        $this->assertTrue(in_array("Cases", $result));
-        $this->assertTrue(in_array("Bugs", $result));
-        $this->assertTrue(in_array("KBDocuments", $result));
-        $this->assertFalse(
-            in_array("Accounts", $result),
-            "Portal metadata should not contain non-portal modules like Accounts"
+        $result = $this->api->filterList(
+            SugarTestRestUtilities::getRestServiceMock($this->user),
+            array(
+            	'module' => 'RevenueLineItems',
+            	'fields' => 'name,opportunity_name,account_name,sales_stage,
+            	probability,date_closed,commit_stage,
+            	product_template_name,category_name,quantity,likely_case,
+            	best_case,worst_case,quote_name,assigned_user_name,currency_id,base_rate,quote_id,
+            	opportunity_id,account_id,product_template_id,category_id,assigned_user_id,my_favorite,following',
+            	'max_num' => '20',
+            	'order_by' => 'name:desc',
+        	)
         );
+
+        $this->assertArrayHasKey('records', $result);
+        
     }
 }

@@ -51,7 +51,7 @@ class SugarQuery_Builder_Select
         }
         foreach ($columns as $column) {
             $field = new SugarQuery_Builder_Field_Select($column, $this->query);
-            $key = empty($field->alias) ? "{$field->table}.{$field->field}" : $field->alias;
+            $key = empty($field->alias) ? $field->field : $field->alias;
             if(!$field->isNonDb()) {
                 $this->select[$key] = $field;
             }

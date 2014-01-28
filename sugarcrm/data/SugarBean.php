@@ -755,7 +755,7 @@ class SugarBean
      */
     function get_audit_table_name()
     {
-        return $this->getTableName().'_audit';
+        return $GLOBALS['db']->getValidDBName($this->getTableName().'_audit', true, 'table');
     }
     /**
      * Return true if activity is enabled for this object
@@ -4071,7 +4071,8 @@ class SugarBean
                         foreach($used_join_key as $used_key) {
                             if($used_key == $join['rel_key']) $count_used++;
                         }
-                        if($count_used <= 1) {//27416, the $ret_array['secondary_select'] should always generate, regardless the dbtype
+                        if ($count_used <= 1 && !isset($fields[$join['rel_key']])) {
+                            //27416, the $ret_array['secondary_select'] should always generate, regardless the dbtype
                             // add rel_key only if it was not aready added
                             if(!$singleSelect)
                             {
@@ -4118,7 +4119,9 @@ class SugarBean
                         }
                         if(isset($data['additionalFields'])){
                             foreach($data['additionalFields'] as $k=>$v){
-                                $ret_array['select'] .= ' , ' . $params['join_table_alias'] . '.' . $k . ' ' . $v;
+                                if (!isset($fields[$v])) {
+                                    $ret_array['select'] .= ' , ' . $params['join_table_alias'] . '.' . $k . ' ' . $v;
+                                }
                             }
                         }
                         if(!$table_joined)
@@ -4446,32 +4449,7 @@ class SugarBean
                 //at the end have a list of all the same objects
                 $temp = $this->getCleanCopy();
 
-                foreach($this->field_defs as $field=>$value)
-                {
-                    if (isset($row[$field]))
-                    {
-                        $temp->$field = $row[$field];
-                        $owner_field = $field . '_owner';
-                        if(isset($row[$owner_field]))
-                        {
-                            $temp->$owner_field = $row[$owner_field];
-                        }
-
-                        $GLOBALS['log']->debug("$temp->object_name({$row['id']}): ".$field." = ".$temp->$field);
-                    }else if (isset($row[$this->table_name .'.'.$field]))
-                    {
-                        $temp->$field = $row[$this->table_name .'.'.$field];
-                    }
-                    else
-                    {
-                        $temp->$field = "";
-                    }
-                }
-
-                $temp->check_date_relationships_load();
-                $temp->fill_in_additional_list_fields();
-                if($temp->hasCustomFields()) $temp->custom_fields->fill_relationships();
-                $temp->call_custom_logic("process_record");
+                $temp->loadFromRow($row, true);
 
                 // fix defect #44206. implement the same logic as sugar_currency_format
                 // Smarty modifier does.

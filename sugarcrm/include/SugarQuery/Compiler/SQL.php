@@ -245,6 +245,7 @@ class SugarQuery_Compiler_SQL
     protected function compileSelect(SugarQuery_Builder_Select $selectObj)
     {
         $return = array();
+        $addedFields = array();
 
         if ($selectObj->getCountQuery() === true) {
             return 'count(0) AS record_count';

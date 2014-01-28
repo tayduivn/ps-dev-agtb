@@ -155,6 +155,9 @@ class DBManagerFactory
                 self::$instances[$instanceName]->connect($config, true);
                 self::$instances[$instanceName]->count_id = $count;
                 self::$instances[$instanceName]->references = 0;
+                if (empty($instanceName) && empty($GLOBALS['db'])) {
+                    $GLOBALS['db'] = self::$instances[$instanceName];
+                }
 //BEGIN SUGARCRM flav=ent ONLY
             }
 //END SUGARCRM flav=ent ONLY
@@ -174,6 +177,8 @@ class DBManagerFactory
             $instance->disconnect();
         }
         self::$instances = array();
+        BeanFactory::clearCache();
+        $GLOBALS['db'] = null;
     }
 
 

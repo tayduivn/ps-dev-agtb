@@ -83,11 +83,15 @@ class FileApi extends SugarApi {
     /**
      * Saves a file to a module field using the PUT method
      *
-     * @param ServiceBase $api The service base
-     * @param array $args Arguments array built by the service base
+     * @param ServiceBase $api  The service base
+     * @param array       $args Arguments array built by the service base
+     * @param string      $stream
+     *
+     * @throws SugarApiExceptionMissingParameter
      * @return array
      */
-    public function saveFilePut($api, $args) {
+    public function saveFilePut($api, $args, $stream = 'php://input')
+    {
         // Mime type, set to null for grabbing it later if not sent
         $filetype = isset($_SERVER['HTTP_CONTENT_TYPE']) ? $_SERVER['HTTP_CONTENT_TYPE'] : null;
 
@@ -103,7 +107,7 @@ class FileApi extends SugarApi {
 
         // Create a temp name for our file to begin mocking the $_FILES array
         $tempfile = $this->getTempFileName();
-        $this->createTempFileFromInput($tempfile, 'php://input', $encoded);
+        $this->createTempFileFromInput($tempfile, $stream, $encoded);
 
         // Now validate our file
         $filesize = filesize($tempfile);

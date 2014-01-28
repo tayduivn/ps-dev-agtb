@@ -400,7 +400,7 @@ class TimePeriod extends SugarBean
         if ($date instanceOf SugarDateTime) {
             $date = $date->asDbDate(false);
         }
-        $timestamp = $db->quoted(strtotime($date));
+        $timestamp = strtotime($date);
         $retVal = false;
 
         if (empty($type)) {
@@ -408,14 +408,17 @@ class TimePeriod extends SugarBean
             $config = $admin->getConfigForModule("Forecasts", "base");
             $type = $config["timeperiod_leaf_interval"];
         }
-        $type = $db->quoted($type);
+
+        $sq = new SugarQuery();
+        $sq->select(array('id'));
+        $sq->from(BeanFactory::getBean('TimePeriods'))->where()
+            ->equals('type', $type)
+            ->lte('start_date_timestamp', $timestamp)
+            ->gte('end_date_timestamp', $timestamp);
+        $query = $sq->compileSql();
 
         $timeperiod_id = $db->getOne(
-            "SELECT id FROM timeperiods " .
-            "WHERE start_date_timestamp <= {$timestamp} " .
-            "AND end_date_timestamp >= {$timestamp} " .
-            "AND type = {$type} " .
-            "AND deleted = 0",
+            $query,
             false,
             string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($db->quote($date)))
         );
@@ -554,7 +557,7 @@ class TimePeriod extends SugarBean
     {
         $sql = "SELECT id FROM timeperiods
                 WHERE deleted = 0
-                    AND (start_date_timestamp is null OR end_date_timestamp is null);";
+                    AND (start_date_timestamp is null OR end_date_timestamp is null)";
         $result = $this->db->query($sql);
 
         $updated = 0;

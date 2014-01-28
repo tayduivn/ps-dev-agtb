@@ -36,6 +36,9 @@ class ShadowTest extends RestTestBase
 
         public function testFileMime()
         {
+            if(!mime_is_detectable()) {
+                $this->markTestSkipped('Requires functions to detect mime type');
+            }
             $filename = sugar_cached("test.txt");
             SugarTestHelper::saveFile($filename);
             file_put_contents($filename, "This is a text of a test. And this is a test of a text.");

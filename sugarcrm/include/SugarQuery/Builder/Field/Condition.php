@@ -95,10 +95,10 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
             return (int) isTruthy($value);
         }
 
-        if (isset($this->def)) {
+        if (!empty($this->def)) {
             $dbtype = $db->getFieldType($this->def);
 
-            if (empty($value)) {
+            if (!strcmp($value, '') || $value === 0) {
                 return $db->emptyValue($dbtype);
             }
 

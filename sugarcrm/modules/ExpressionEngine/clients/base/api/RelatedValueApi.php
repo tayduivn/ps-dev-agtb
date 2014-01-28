@@ -61,6 +61,7 @@ class RelatedValueApi extends SugarApi
         }
         $fields = json_decode(html_entity_decode($args['fields']), true);
         $focus = $this->loadBean($api, $args);
+        $id = $focus->id;
         $ret = array();
         foreach ($fields as $rfDef) {
             $link = $rfDef['link'];

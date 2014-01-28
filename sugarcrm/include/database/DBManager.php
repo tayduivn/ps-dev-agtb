@@ -1691,7 +1691,7 @@ protected function checkQuery($sql, $object_name = false)
      *   defaults to true.
      * @return string Returns a string to be searched in db query.
      */
-    public static function sqlLikeString($str, $wildcard = '%', $appendWildcard = true)
+    public function sqlLikeString($str, $wildcard = '%', $appendWildcard = true)
     {
         // If we have a valid wildcard character in config, use it, or use $wildcard by default.
         // The config wildcard exists because there may be a case where a Sugar user would want
@@ -3287,7 +3287,7 @@ protected function checkQuery($sql, $object_name = false)
 	 */
 	public function isNumericType($type)
 	{
-	    if(isset($this->type_class[$type]) && ($this->type_class[$type] == 'int' || $this->type_class[$type] == 'float')) {
+	    if(isset($this->type_class[$type]) && ($this->type_class[$type] == 'int' || $this->type_class[$type] == 'float' || $this->type_class[$type] == 'bool')) {
 	        return true;
 	    }
 		return false;

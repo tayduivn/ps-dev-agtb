@@ -98,7 +98,7 @@ class FileTempApi extends FileApi {
         //END SUGARCRM flav=pro ONLY
 
         $filepath = UploadStream::path("upload://tmp/") . $args['temp_id'];
-        if (file_exists($filepath)) {
+        if (is_file($filepath)) {
             $filedata = getimagesize($filepath);
 
             $info = array(
@@ -110,7 +110,9 @@ class FileTempApi extends FileApi {
             $dl->outputFile(false, $info);
             register_shutdown_function(
                 function () use($filepath) {
-                    unlink($filepath);
+                    if (is_file($filepath)) {
+                        unlink($filepath);
+                    }
                 }
             );
         } else {

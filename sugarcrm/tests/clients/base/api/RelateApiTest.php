@@ -40,6 +40,8 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
     public $accounts = array();
     public $contacts = array();
     public $roles = array();
+
+    /** @var  RelateApi */
     public $relateApi;
 
     public function setUp() {
@@ -102,6 +104,27 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertEquals($result['records'][0]['id'], $this->contacts[0]->id, "ID Does not match");
     }
 
+    /**
+     * Test asserts result of filterRelatedCount
+     */
+    public function testRelateCountViewNone() {
+        $modules = array('Contacts');
+        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'edit', 'list', 'export'));
+
+        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
+            $GLOBALS['current_user']->load_relationship('aclroles');
+            $GLOBALS['current_user']->aclroles->add($role);
+            $GLOBALS['current_user']->save();
+        }
+
+        $id = $GLOBALS['current_user']->id;
+        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
+
+        $reply = $this->relateApi->filterRelatedCount(new RelateApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id, 'link_name' => 'contacts'));
+        $this->assertArrayHasKey('record_count', $reply);
+        $this->assertEquals(1, $reply['record_count']);
+    }
+
     protected function createRole($name, $allowedModules, $allowedActions, $ownerActions = array()) {
         $role = new ACLRole();
         $role->name = $name;
@@ -158,6 +181,21 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertEquals($contact_id, $reply['records'][0]['id']);
     }
 
+    /**
+     * Test asserts result of filterRelatedCount
+     */
+    public function testCountFilteringOnARelationship()
+    {
+        $account_id = $this->accounts[0]->id;
+        $serviceMock = new RelateApiServiceMockUp();
+        $reply = $this->relateApi->filterRelatedCount($serviceMock,
+            array('module' => 'Accounts', 'record' => $account_id,
+                  'link_name' => 'contacts',
+                  'filter' => array(array('first_name' => array('$starts' => "RelateApi"))),
+                  'fields' => 'id,name', 'order_by' => 'name:ASC'));
+        $this->assertArrayHasKey('record_count', $reply);
+        $this->assertEquals(1, $reply['record_count']);
+    }
 }
 
 class RelateApiServiceMockUp extends RestService

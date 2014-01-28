@@ -453,8 +453,7 @@ class MetaDataConverter
     public function fromLegacySubpanelPath($fileName, $client = 'base')
     {
         $pathInfo = pathinfo($fileName);
-
-        $dirParts = explode(DIRECTORY_SEPARATOR, $pathInfo['dirname']);
+        $dirParts = preg_split('/[\/\\\]+/', $pathInfo['dirname'], -1, PREG_SPLIT_NO_EMPTY);
 
         if (count($dirParts) < 3) {
             throw new \InvalidArgumentException(

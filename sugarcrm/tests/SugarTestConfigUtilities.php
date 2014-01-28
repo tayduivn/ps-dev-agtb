@@ -65,7 +65,8 @@ class SugarTestConfigUtilities
         }
         // delete everything in the table
         $db = DBManagerFactory::getInstance();
-        $db->query('truncate config;');
+        $db->commit(); // DB requires truncate table to be the first operation in a transaction
+        $db->query($db->truncateTableSQL('config'));
         foreach (self::$orgConfig as $config) {
             if (is_array($config['value'])) {
                 $config['value'] = json_encode($config['value']);
@@ -73,5 +74,6 @@ class SugarTestConfigUtilities
             self::$admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
         }
         self::$orgConfig = array();
+        self::$admin = null;
     }
 }

@@ -33,6 +33,9 @@ class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('dictionary');
         SugarTestHelper::setUp('current_user');
         $this->note = BeanFactory::newBean('Notes');
         $this->note->field_defs['testurl_c']['gen'] = 1;
@@ -54,6 +57,10 @@ class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
         unset($this->lead->field_defs['test_c']);
         unset($this->note->field_defs['testurl_c']);
         unset($this->note);
+        $GLOBALS['reload_vardefs'] = true;
+        new Note();
+        new Lead();
+        $GLOBALS['reload_vardefs'] = null;
     }
     
      /**

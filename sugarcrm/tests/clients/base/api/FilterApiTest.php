@@ -17,7 +17,7 @@ require_once("clients/base/api/FilterApi.php");
 /**
  * @group ApiTests
  */
-class RestFilterTest extends Sugar_PHPUnit_Framework_TestCase
+class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public static $notes, $opps, $accounts, $meetings;
 
@@ -61,9 +61,8 @@ class RestFilterTest extends Sugar_PHPUnit_Framework_TestCase
             }
 
             // create some meetings
-            $meeting = BeanFactory::newBean('Meetings');
-            $meeting->id = 'UNIT-TEST-' . create_guid_section(10);
-            $meeting->new_with_id = true;
+
+            $meeting = SugarTestMeetingUtilities::createMeeting('UNIT-TEST-' . create_guid_section(10));
             $meeting->name = 'Test Meeting';
             $day = 10 + $i;
             $meeting->date_start = gmdate('Y-m-d H:i:s', gmmktime(1, 0, 0, 8, $day, 2013));

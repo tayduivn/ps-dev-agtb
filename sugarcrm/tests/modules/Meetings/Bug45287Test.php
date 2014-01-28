@@ -60,6 +60,7 @@ class Bug45287Test extends Sugar_PHPUnit_Framework_TestCase
         {
           $this->meetingsArr[$cnt] = new Meeting();
           $this->meetingsArr[$cnt]->name = 'Bug45287 Meeting ' . ($cnt + 1);
+            $this->meetingsArr[$cnt]->assigned_user_id = $current_user->id;
           $this->meetingsArr[$cnt]->date_start = $this->timedate->to_display_date_time(gmdate("Y-m-d H:i:s", mktime(10+$cnt, 30, 00, 7, $d, 2011)));
           $this->meetingsArr[$cnt]->save();
           $d++;

@@ -27,7 +27,7 @@ class DashboardListApi extends FilterApi
     protected static $mandatory_fields = array(
         'id',
         'name',
-        'view'
+        'view_name'
     );
 
     /**
@@ -76,10 +76,10 @@ class DashboardListApi extends FilterApi
 
         $args['module'] = 'Dashboards';
 
-        if (!empty($args['view'])) {
-            $args['filter'][]['view'] = $args['view'];
+        if (!empty($args['view_name'])) {
+            $args['filter'][]['view_name'] = $args['view_name'];
         }
-        $args['fields'] = 'id,name,view';
+        $args['fields'] = 'id,name,view_name';
 
         $ret = $this->filterList($api, $args);
         

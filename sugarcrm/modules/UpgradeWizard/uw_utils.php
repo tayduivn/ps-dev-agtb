@@ -4505,7 +4505,7 @@ function updateOpportunitiesForForecasting($perJob = 100)
     /* @var $db DBManager */
     $db = DBManagerFactory::getInstance();
     // get all the opps to break into groups of 100 and go newest to oldest
-    $sql = "select id from opportunities where deleted = 0 ORDER By date_closed DESC;";
+    $sql = "select id from opportunities where deleted = 0 ORDER By date_closed DESC";
     $results = $db->query($sql);
 
     $jobs = array();

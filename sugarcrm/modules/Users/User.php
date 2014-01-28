@@ -2214,7 +2214,7 @@ EOQ;
             $_fields = ", u." . $_fields;
         }
 
-        $query = "SELECT u.id, count(u2.id) as total{$_fields} FROM users u " .
+        $query = "SELECT u.id, sum(CASE WHEN u2.id IS NULL THEN 0 ELSE 1 END) as total{$_fields} FROM users u " .
             "LEFT JOIN users u2 " .
             "ON u.id = u2.reports_to_id AND u2.status = 'Active' ";
         if (!$include_deleted) {

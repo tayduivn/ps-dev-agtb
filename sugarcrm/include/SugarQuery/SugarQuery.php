@@ -125,11 +125,11 @@ class SugarQuery
     /**
      * Build the select object
      *
-     * @param bool $fields
+     * @param array $fields
      *
      * @return null|SugarQuery_Builder_Select
      */
-    public function select($fields = false)
+    public function select($fields = array())
     {
         if (!is_array($fields)) {
             $fields = func_get_args();

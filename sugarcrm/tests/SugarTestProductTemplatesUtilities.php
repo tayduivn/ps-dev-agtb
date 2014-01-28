@@ -69,12 +69,12 @@ class SugarTestProductTemplatesUtilities
     public static function removeAllCreatedProductTemplate()
     {
         $db = DBManagerFactory::getInstance();
-        $db->query(
-            'DELETE FROM product_categories WHERE id IN ("' . implode(
-                "', '",
-                self::getCreatedProductTemplateIds()
-            ) . '")'
-        );
+        $conditions = implode(',', array_map(array($db, 'quoted'), self::getCreatedProductTemplateIds()));
+        if (!empty($conditions)) {
+            $db->query('DELETE FROM product_templates WHERE id IN (' . $conditions . ')');
+        }
+
+        self::$createdProductTemplates = array();
     }
 
     public static function getCreatedProductTemplateIds()

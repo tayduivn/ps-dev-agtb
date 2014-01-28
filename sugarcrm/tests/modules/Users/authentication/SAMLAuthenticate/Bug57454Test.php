@@ -30,6 +30,13 @@ require_once('modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticate.php
 */
 class Bug57454Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * Custom file with settings for SAMLAuthenticate
+     *
+     * @var string
+     */
+    public $customSAMLSettings = 'custom/modules/Users/authentication/SAMLAuthenticate/settings.php';
+
     public function setUp()
     {
         if(!function_exists('gzinflate')) {
@@ -41,8 +48,24 @@ class Bug57454Test extends Sugar_PHPUnit_Framework_TestCase
         parent::setUp();
     }
 
+    public function startUp()
+    {
+        SugarTestHelper::setUp('files');
+        SugarTestHelper::saveFile($this->customSAMLSettings);
+    }
+
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
+    }
+
     public function testSAMLEncoding()
     {
+        if(SugarAutoLoader::fileExists($this->customSAMLSettings)) {
+            // if custom file settings exists then remove it.
+            SugarAutoLoader::unlink($this->customSAMLSettings);
+        }
+
         $auth = new SAMLAuthenticate();
         $url = $auth->getLoginUrl();
         $query = parse_url($url, PHP_URL_QUERY);

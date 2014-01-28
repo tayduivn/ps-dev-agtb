@@ -38,6 +38,7 @@ class ImportMapTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = '1';
         $this->_importMap = new ImportMap();
+        $this->_importMap->enclosure = '"';
     }
     
     public function tearDown() 

@@ -427,7 +427,11 @@ abstract class SugarQuery_Builder_Where
             "Y-m-d H:i:s",
             mktime(23, 59, 59, $rightDate['month'], $rightDate['day'], $rightDate['year'])
         );
-        $this->gte($field, $value[0]);
+        $leftDate = date(
+            "Y-m-d H:i:s",
+            mktime(0, 0, 0, $leftDate['month'], $leftDate['day'], $leftDate['year'])
+        );
+        $this->gte($field, $leftDate);
         $this->lte($field, $rightDate);
         return $this;
     }

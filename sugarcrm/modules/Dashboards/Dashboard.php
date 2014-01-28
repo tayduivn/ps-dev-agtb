@@ -60,8 +60,8 @@ class Dashboard extends Basic
     {
         $order = !empty($options['order_by']) ? $options['order_by'] : 'date_entered desc';
         $from = "assigned_user_id = '".$this->db->quote($user->id)."' and dashboard_module ='".$this->db->quote($options['dashboard_module'])."'";
-        if (!empty($options['view'])) {
-            $from .= " and view ='".$this->db->quote($options['view'])."'";
+        if (!empty($options['view_name'])) {
+            $from .= " and view_name =" . $this->db->quoted($options['view_name']);
         }
         $offset = !empty($options['offset']) ? (int)$options['offset'] : 0;
         $limit = !empty($options['limit']) ? (int)$options['limit'] : -1;

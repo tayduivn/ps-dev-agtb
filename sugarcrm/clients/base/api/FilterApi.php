@@ -258,6 +258,7 @@ class FilterApi extends SugarApi
         $api->action = 'list';
 
         $q->select->selectReset()->setCountQuery();
+        $q->order_by = null;
         $q->limit = null;
 
         return reset($q->execute());
@@ -278,6 +279,7 @@ class FilterApi extends SugarApi
 
         $q = new SugarQuery();
         $q->from($seed,$queryOptions);
+        $q->distinct(true);
         $fields = array();
         foreach ($options['select'] as $field) {
             // FIXME: convert this to vardefs too?
@@ -297,10 +299,13 @@ class FilterApi extends SugarApi
             // fields that aren't in field defs are removed, since we don't know what to do with them
             if (!empty($seed->field_defs[$field])) {
                 $fields[] = $field;
+                // Oracle doesn't allow DISTINCT on CLOB fields, in that case if we select CLOB field then DISTINCT should be disabled
+                if (!empty($seed->field_defs[$field]['type']) && $seed->field_defs[$field]['type'] == 'text') {
+                    $q->distinct(false);
+                }
             }
         }
         $q->select($fields);
-        $q->distinct(true);
 
         foreach ($options['order_by'] as $orderBy) {
             // ID and date_modified are used to give some order to the system
@@ -729,7 +734,12 @@ class FilterApi extends SugarApi
     {
         global $current_user;
         $fromAlias = $q->getFromAlias();
-        $q->joinRaw("JOIN subscriptions AS subs ON subs.deleted = 0 AND subs.parent_type = '{$q->getFromBean()->module_dir}' AND subs.created_by = '{$current_user->id}'", array('alias' => 'subs'));
+        $q->joinRaw(
+            "JOIN subscriptions subs ON subs.deleted = 0
+                AND subs.parent_type = '{$q->getFromBean()->module_dir}'
+                AND subs.created_by = '{$current_user->id}'",
+            array('alias' => 'subs')
+        );
         $q->where()->addRaw("subs.parent_id = {$fromAlias}.id");
     }
 
@@ -810,11 +820,12 @@ class FilterApi extends SugarApi
         $where->queryAnd()->gte("tracker.date_modified", $td->asDb());
 
         // Now, if they want tracker records, so let's order it by the tracker date_modified
-        // clear order by
+        foreach ($q->select()->select as $v) {
+            $q->groupBy($v->table . '.' . $v->field);
+        }
         $q->order_by = array();
-        $q->orderBy('tracker.date_modified', 'DESC');
+        $q->orderByRaw('MAX(tracker.date_modified)', 'DESC');
         // need this to eliminate dupe id's in case you visit the same record many-a-time
-        $q->groupBy('id');
         $q->distinct(false);
     }
 }

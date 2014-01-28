@@ -236,19 +236,25 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
 
         //Test a custom where
         $result = $accountsLink->getBeans(array(
-            "where" => array(
-                'lhs_field' => 'source',
-                'operator' => '=',
-                'rhs_value' => 'external'
-            )
-        ));
+                "where" => array(
+                    'lhs_field' => 'source',
+                    'operator' => '=',
+                    'rhs_value' => 'external'
+                )
+            ));
         $this->assertEquals(1, sizeof($result));
         $this->assertEquals($bug3->id, $result[$bug3->id]->id);
 
         //Test offset/pagination
-        $allIds = array_keys($accountsLink->getBeans());
+        $allIds = array_keys($accountsLink->getBeans(array(
+                    'orderby' => 'id',
+                )));
         $this->assertEquals(3, sizeof($allIds));
-        $result = $accountsLink->getBeans(array("limit" => 1, "offset" => 1));
+        $result = $accountsLink->getBeans(array(
+                "limit" => 1,
+                "offset" => 1,
+                'orderby' => 'id',
+            ));
         $this->assertEquals(1, sizeof($result));
         $this->assertArrayHasKey($allIds[1], $result);
 
@@ -300,7 +306,6 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     public function testGetBeansWithOrderBy(){
-        $this->markTestIncomplete("getBeans doesn't support order_by");
         $module = "Accounts";
         require('include/modules.php');
 
@@ -310,19 +315,19 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         $this->createdBeans[] = $account;
 
         $bug = BeanFactory::newBean("Bugs");
-        $bug->name = "LinkTestBug";
+        $bug->name = "LinkTestBug Z";
         $bug->description = "z";
         $bug->save();
         $this->createdBeans[] = $bug;
 
         $bug2 = BeanFactory::newBean("Bugs");
-        $bug2->name = "LinkTestBug1";
-        $bug->description = "x";
+        $bug2->name = "LinkTestBug Y";
+        $bug->description = "y";
         $bug2->save();
         $this->createdBeans[] = $bug2;
 
         $bug3 = BeanFactory::newBean("Bugs");
-        $bug3->name = "LinkTestBug3";
+        $bug3->name = "LinkTestBug X";
         $bug3->source = "external";
         $bug->description = "x";
         $bug3->save();
@@ -334,23 +339,22 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         $accountsLink->add($bug3);
 
         $result = $accountsLink->getBeans(array(
-            "order_by" => "name"
-        ));
+                "orderby" => "name"
+            ));
         $expected = array(
-            $bug->id => $bug,
-            $bug2->id => $bug2,
             $bug3->id => $bug3,
+            $bug2->id => $bug2,
+            $bug->id => $bug,
         );
 
         $this->assertEquals(array_keys($expected), array_keys($result));
         foreach($expected as $key => $val) {
             $this->assertEquals($expected[$key]->id, $result[$key]->id, "Wrong data in key $key");
         }
-        $this->markTestIncomplete("getBeans doesn't support order_by");
         //test order DESC and ASC
         $result = $accountsLink->getBeans(array(
-            "order_by" => "description"
-        ));
+                "orderby" => "name"
+            ));
         $expected = array(
             $bug3->id => $bug3,
             $bug2->id => $bug2,
@@ -363,8 +367,8 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $result = $accountsLink->getBeans(array(
-            "order_by" => "description DESC"
-        ));
+                "orderby" => "name DESC"
+            ));
         $expected = array(
             $bug->id => $bug,
             $bug2->id => $bug2,
@@ -375,7 +379,6 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         foreach($expected as $key => $val) {
             $this->assertEquals($expected[$key]->id, $result[$key]->id, "Wrong data in key $key");
         }
-
     }
 
     public function testLink2WithRelationshipFields()

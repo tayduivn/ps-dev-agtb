@@ -329,6 +329,9 @@ class SqlsrvManager extends MssqlManager
      */
     public function getConstraintSql($indices, $table)
     {
+        if (!$this->isFieldArray($indices)) {
+            $indices = array($indices);
+        }
         if ( $this->doesTableHaveAClusteredIndexDefined($table) ) {
             return parent::getConstraintSql($indices, $table);
         }
@@ -465,15 +468,6 @@ EOSQL;
         return $sql;
     }
 
-    /**
-     * Truncate table
-     * @param  $name
-     * @return string
-     */
-    public function truncateTableSQL($name)
-    {
-        return "TRUNCATE TABLE $name";
-    }
 
 	/**
 	 * (non-PHPdoc)
@@ -521,7 +515,7 @@ EOSQL;
      */
     public function getDbInfo()
     {
-        $info = array_merge(sqlsrv_client_info(), sqlsrv_server_info());
+        $info = array_merge(sqlsrv_client_info($this->database), sqlsrv_server_info($this->database));
         return $info;
     }
 

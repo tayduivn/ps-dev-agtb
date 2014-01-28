@@ -197,6 +197,16 @@ class BeanFactory {
     }
 
     /**
+     * Totally remove all cached beans
+     */
+    public static function clearCache()
+    {
+        self::$loadedBeans = array();
+        self::$total = 0;
+        self::$hits = 0;
+    }
+
+    /**
      * Create new empty bean
      * @param string $module
      * @return SugarBean

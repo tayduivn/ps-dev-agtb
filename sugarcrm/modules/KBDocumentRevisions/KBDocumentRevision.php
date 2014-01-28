@@ -235,12 +235,12 @@ class KBDocumentRevision extends SugarBean {
 	function fill_document_name_revision($doc_id) {
 
 		//find the document name and current version.
-		$query = "SELECT documents.document_name, revision FROM documents, document_revisions where documents.id = '$doc_id'";
-		$query .= " AND document_revisions.id = documents.document_revision_id";
+		$query = "SELECT kbdocuments.kbdocument_name, revision FROM kbdocuments, kbdocument_revisions where kbdocuments.id = '$doc_id'";
+		$query .= " AND kbdocuments.id = kbdocument_revisions.kbdocument_id";
 		$result = $this->db->query($query,true,"Error fetching document details...:");
 		$row = $this->db->fetchByAssoc($result);
 		if ($row != null) {
-			$this->name = $row['document_name'];
+			$this->name = $row['kbdocument_name'];
 			$this->latest_revision = $row['revision'];	
 		}	
 	}
@@ -278,7 +278,7 @@ class KBDocumentRevision extends SugarBean {
 		if (empty($doc_id)) return $return_array;
 		
 		$db = DBManagerFactory::getInstance();				
-		$query="select id, revision from document_revisions where document_id='$doc_id' and deleted=0";
+		$query="select id, revision from kbdocument_revisions where kbdocument_id='$doc_id' and deleted=0";
 		$result=$db->query($query);
 		if (!empty($result)) {
 			while (($row=$db->fetchByAssoc($result)) != null) {
@@ -293,7 +293,7 @@ class KBDocumentRevision extends SugarBean {
 		if (empty($kbdocrev_id)) return $return_array;
 		
 		$db = DBManagerFactory::getInstance();				
-		$query="select id from documents where kbdocument_revision_id='$kbdocrev_id' and deleted=0";
+		$query="select id from kbdocuments where kbdocument_revision_id='$kbdocrev_id' and deleted=0";
 		$result=$db->query($query);
 		if (!empty($result)) {
 			while (($row=$db->fetchByAssoc($result)) != null) {
@@ -307,9 +307,13 @@ class KBDocumentRevision extends SugarBean {
 		$return_array= Array();
 		if (empty($kbdocrev_id)) return $return_array;
 		
-		$db = DBManagerFactory::getInstance();				
-		$query="select id from document_revisions where kbdocument_revision_id='$kbdocrev_id' and deleted=0";
+		$db = DBManagerFactory::getInstance();
+
+		$query = 'select document_revisions.id from document_revisions, kbdocument_revisions'; 
+		$query .= ' where document_revisions.id=kbdocument_revisions.document_revision_id AND document_revisions.id = ' . $db->quoted($kbdocrev_id);
+		$query .= ' and kbdocument_revisions.deleted = 0 and document_revisions.deleted = 0';
 		$result=$db->query($query);
+
 		if (!empty($result)) {
 			while (($row=$db->fetchByAssoc($result)) != null) {
 				$return_array[$row['id']]=$row['id'];

@@ -64,8 +64,13 @@ class SugarTestProductCategoryUtilities
 
     public static function removeAllCreatedProductCategories() 
     {
-        $product_category_ids = self::getCreatedProductCategoryIds();
-        $GLOBALS['db']->query('DELETE FROM product_categories WHERE id IN (\'' . implode("', '", $product_category_ids) . '\')');
+        $db = DBManagerFactory::getInstance();
+        $conditions = implode(',', array_map(array($db, 'quoted'), self::getCreatedProductCategoryIds()));
+        if (!empty($conditions)) {
+            $db->query('DELETE FROM product_categories WHERE id IN (' . $conditions . ')');
+        }
+
+        self::$_createdProductCategories = array();
     }
 
     public static function getCreatedProductCategoryIds() 

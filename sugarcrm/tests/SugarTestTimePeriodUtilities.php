@@ -92,6 +92,10 @@ class SugarTestTimePeriodUtilities
         }
         $timeperiod->type = 'Quarter';
         $timeperiod->save();
+
+        $db = DBManagerFactory::getInstance();
+        $db->commit();
+
         self::$_createdTimePeriods[] = $timeperiod;
         return $timeperiod;
     }
@@ -147,6 +151,7 @@ class SugarTestTimePeriodUtilities
     {
         $timeperiod_ids = self::getCreatedTimePeriodIds();
         $GLOBALS['db']->query('DELETE FROM timeperiods WHERE id IN (\'' . implode("', '", $timeperiod_ids) . '\')');
+        SugarTestForecastUtilities::setTimePeriod(null);
     }
 
     /**

@@ -31,6 +31,7 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->name = 'Test Meeting';
+        $meeting->assigned_user_id = $current_user->id;
         $meeting->save();
         $this->meeting = $meeting;
 
@@ -84,9 +85,11 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testEmailReminder()
     {
+        global $current_user;
         $meeting = new Meeting();
         $meeting->email_reminder_time = "20";
         $meeting->name = 'Test Email Reminder';
+        $meeting->assigned_user_id = $current_user->id;
         $meeting->status = "Planned";
         $meeting->date_start = $GLOBALS['timedate']->nowDb();
         $meeting->save();
@@ -133,10 +136,11 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testMeetingContactIdSet()
     {
-        global $db;
+        global $db, $current_user;
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->name = 'Super Awesome Meeting Town USA';
         $meeting->contact_id = $this->contact->id;
+        $meeting->assigned_user_id = $current_user->id;
         $meeting->date_start = date('Y-m-d H:i:s');
         $meeting->save();
 

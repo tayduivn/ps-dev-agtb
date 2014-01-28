@@ -71,16 +71,20 @@ class SugarForecasting_Filter_TimePeriodFilter extends SugarForecasting_Abstract
         }
 
         $db = DBManagerFactory::getInstance();
-        $query = sprintf("SELECT id, name FROM timeperiods WHERE parent_id is not null AND deleted = 0 AND start_date >= %s AND start_date <= %s AND type != '' ORDER BY start_date ASC",
-            $db->convert($db->quoted($startDate->asDbDate()), 'date'),
-            $db->convert($db->quoted($endDate->asDbDate()), 'date')
-        );
+        $sq = new SugarQuery();
+        $sq->from(BeanFactory::getBean('TimePeriods'));
+        $sq->select(array('id', 'name'));
+        $sq->where()
+            ->notNull('parent_id')
+            ->gte('start_date', $startDate->asDbDate())
+            ->lte('start_date', $endDate->asDbDate())
+            ->addRaw("coalesce({$db->convert('type', 'length')},0) > 0");
+        $sq->orderBy('start_date', 'ASC');
 
-        $result = $db->query($query);
-        if(!empty($result)) {
-            while(($row = $db->fetchByAssoc($result))) {
-               $timePeriods[$row['id']] = $row['name'];
-            }
+        $beans = $sq->execute();
+
+        foreach ($beans as $row) {
+            $timePeriods[$row['id']] = $row['name'];
         }
 
         return $timePeriods;

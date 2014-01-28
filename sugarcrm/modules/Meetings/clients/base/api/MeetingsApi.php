@@ -64,10 +64,16 @@ class MeetingsApi extends UnifiedSearchApi {
         // determine the correct serach engine, don't pass any configs and fallback to the default search engine if the determiend one is down
         $searchEngine = SugarSearchEngineFactory::getInstance($this->determineSugarSearchEngine($api, $args, $options), array(), false);
         if ( $searchEngine instanceOf SugarSearchEngine) {
-            $options['custom_where'] = "meetings.date_start >= NOW()";
+            $options['custom_where'] = "meetings.date_start >= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted(TimeDate::getInstance()->nowDb()), 'datetime');
             $orderBy = 'date_start ASC, id DESC';
             $orderByData['date_start'] = false;
             $orderByData['id'] = false;
+            if (!in_array('date_start', $options['selectFields'])) {
+                $options['selectFields'][] = 'date_start';
+            }
+            if (!in_array('id', $options['selectFields'])) {
+                $options['selectFields'][] = 'id';
+            }
             $options['orderByArray'] = $orderByData;
             $options['orderBy'] = $orderBy;
             $options['resortResults'] = true;
@@ -98,8 +104,7 @@ class MeetingsApi extends UnifiedSearchApi {
 
 
         $meeting = BeanFactory::newBean('Meetings');
-        $meetingList = $meeting->get_list('date_start',"date_start > '".db_convert($start_time->asDb(),'datetime')."' AND date_start < '".db_convert($end_time->asDb(),'datetime')."'");
-
+        $meetingList = $meeting->get_list('date_start', "date_start > " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($start_time->asDb()), 'datetime') . " AND date_start < " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($end_time->asDb()), 'datetime'));
 
         // Setup the breaks for the various time periods
         $datetime = new SugarDateTime();

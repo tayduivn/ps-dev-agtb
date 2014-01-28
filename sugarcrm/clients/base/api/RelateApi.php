@@ -144,6 +144,7 @@ class RelateApi extends FilterApi {
 
         $q->select->selectReset()->setCountQuery();
         $q->limit = null;
+        $q->order_by = null;
 
         return reset($q->execute());
     }

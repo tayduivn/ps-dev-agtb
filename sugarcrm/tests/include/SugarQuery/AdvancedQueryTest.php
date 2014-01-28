@@ -56,42 +56,59 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         BeanFactory::setBeanClass('Contacts');
 
         if ( !empty($this->contacts) ) {
+            $bean = BeanFactory::getBean('Contacts');
             $contactList = array();
             foreach ( $this->contacts as $contact ) {
-                $contactList[] = $contact->id;
+                $contactList[] = $this->_db->quoted($contact->id);
             }
 
-            $this->_db->query("DELETE FROM contacts WHERE id IN ('".implode("','",$contactList)."')");
-            $this->_db->query("DELETE FROM contacts_cstm WHERE id_c IN ('".implode("','",$contactList)."')");
+            $this->_db->query("DELETE FROM {$bean->getTableName()} WHERE id IN (" . implode(",", $contactList). ")");
+            if ($bean->hasCustomFields()) {
+                $this->_db->query(
+                    "DELETE FROM {$bean->get_custom_table_name()} WHERE id_c IN (" . implode(",", $contactList) . ")"
+                );
+            }
         }
         if ( !empty($this->accounts) ) {
             $accountList = array();
             foreach ( $this->accounts as $account ) {
-                $accountList[] = $account->id;
+                $accountList[] = $this->_db->quoted($account->id);
             }
-
-            $this->_db->query("DELETE FROM accounts WHERE id IN ('".implode("','",$accountList)."')");
-            $this->_db->query("DELETE FROM accounts_cstm WHERE id_c IN ('".implode("','",$accountList)."')");
+            $bean = BeanFactory::getBean('Accounts');
+            $this->_db->query("DELETE FROM {$bean->getTableName()} WHERE id IN (" . implode(",", $accountList) . ")");
+            if ($bean->hasCustomFields()) {
+                $this->_db->query(
+                    "DELETE FROM {$bean->get_custom_table_name()} WHERE id_c IN (" . implode(",", $accountList) . ")"
+                );
+            }
         }
 
         if ( !empty($this->cases) ) {
             $casesList = array();
             foreach ( $this->cases as $case ) {
-                $casesList[] = $case->id;
+                $casesList[] = $this->_db->quoted($case->id);
             }
-
-            $this->_db->query("DELETE FROM cases WHERE id IN ('".implode("','",$casesList)."')");
-            $this->_db->query("DELETE FROM cases_cstm WHERE id_c IN ('".implode("','",$casesList)."')");
+            $bean = BeanFactory::getBean('Cases');
+            $this->_db->query("DELETE FROM {$bean->getTableName()} WHERE id IN (" . implode(",", $casesList) . ")");
+            if ($bean->hasCustomFields()) {
+                $this->_db->query(
+                    "DELETE FROM {$bean->get_custom_table_name()} WHERE id_c IN (" . implode(",", $casesList) . ")"
+                );
+            }
         }
 
         if ( !empty($this->notes) ) {
             $notesList = array();
             foreach ( $this->notes as $note) {
-                $notesList[] = $note->id;
+                $notesList[] = $this->_db->quoted($note->id);
             }
-
-            $this->_db->query("DELETE FROM notes WHERE id IN ('".implode("','",$notesList)."')");
-            $this->_db->query("DELETE FROM notes_cstm WHERE id_c IN ('".implode("','",$notesList)."')");
+            $bean = BeanFactory::getBean('Notes');
+            $this->_db->query("DELETE FROM {$bean->getTableName()} WHERE id IN (" . implode(",", $notesList) . ")");
+            if ($bean->hasCustomFields()) {
+                $this->_db->query(
+                    "DELETE FROM {$bean->get_custom_table_name()} WHERE id_c IN (" . implode(",", $notesList) . ")"
+                );
+            }
         }
 
 

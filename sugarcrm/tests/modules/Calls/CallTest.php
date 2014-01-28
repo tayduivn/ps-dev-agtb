@@ -61,10 +61,12 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCallStatus()
     {
+        global $current_user;
          $call = new Call();
          $this->callid = $call->id = create_guid();
          $call->new_with_id = 1;
          $call->status = 'Test';
+        $call->assigned_user_id = $current_user->id;
          $call->date_start = TimeDate::getInstance()->getNow()->asDb();
          $call->save();
          // then retrieve
@@ -78,10 +80,12 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCallEmptyStatus()
     {
+        global $current_user;
          $call = new Call();
          $this->callid = $call->id = create_guid();
          $call->new_with_id = 1;
          $call->date_start = TimeDate::getInstance()->getNow()->asDb();
+        $call->assigned_user_id = $current_user->id;
          $call->save();
          // then retrieve
          $call = new Call();
@@ -95,6 +99,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCallEmptyStatusLang()
     {
+        global $current_user;
         $langpack = new SugarTestLangPackCreator();
         $langpack->setModString('LBL_DEFAULT_STATUS','FAILED!','Calls');
         $langpack->save();
@@ -104,6 +109,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
          $this->callid = $call->id = create_guid();
          $call->new_with_id = 1;
          $call->date_start = TimeDate::getInstance()->getNow()->asDb();
+        $call->assigned_user_id = $current_user->id;
          $call->save();
          // then retrieve
          $call = new Call();
@@ -144,11 +150,12 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCallContactIdSet()
     {
-        global $db;
+        global $db, $current_user;
         $call = BeanFactory::newBean('Calls');
         $call->name = 'Super Awesome Call Ville USA';
         $call->contact_id = $this->contact->id;
         $call->date_start = date('Y-m-d H:i:s');
+        $call->assigned_user_id = $current_user->id;
         $call->save();
 
         $q = "SELECT mu.contact_id FROM calls_contacts mu WHERE mu.call_id = '{$call->id}'";

@@ -37,7 +37,7 @@ class OwnerVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown() 
     {
-        $GLOBALS['db']->query("DELETE FROM dashboards WHERE 1");
+        $GLOBALS['db']->query("DELETE FROM dashboards WHERE 1=1");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset( $GLOBALS['current_user']);
     }
