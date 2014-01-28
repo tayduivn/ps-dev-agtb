@@ -72,16 +72,18 @@ class RS189Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testDelete()
     {
-        $account = SugarTestAccountUtilities::createAccount();
+        $id = create_guid();
+        $account = SugarTestAccountUtilities::createAccount($id);
         $result = $this->api->massDelete(
             self::$rest,
             array(
-                'massupdate_params' => array('uid' => array($account->id)),
+                'massupdate_params' => array('uid' => array($id)),
                 'module' => 'Accounts'
             )
         );
         $this->assertEquals(array('status' => 'done'), $result);
-        $account = BeanFactory::getBean('Accounts', $account->id);
+        $account = BeanFactory::getBean('Accounts');
+        $account->retrieve($id, true, false);
         $this->assertEquals(1, $account->deleted);
     }
 
