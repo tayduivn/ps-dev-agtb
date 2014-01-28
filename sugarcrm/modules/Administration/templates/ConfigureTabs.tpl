@@ -205,6 +205,18 @@
 
     // ping sidecar everytime this page is loaded to check for out of data user data and metadata
     var app = parent.SUGAR.App;
-    app.sync();
+    app.api.call('read', app.api.buildURL('ping'), {}, {
+        error: function(response) {
+            // if we get a 412 back, then we need to sync the metadata and listen for the sync:complete
+            // event to disable the tour for this module
+            if (response.status == 412) {
+                app.events.once('app:sync:complete', function() {
+                    // make sure we disable the tour on the footer
+                    app.additionalComponents.footer.getComponent('footer-actions').handleViewChange(app.layout, 'Administration');
+                }, app);
+                app.sync();
+            }
+        }
+    });
 {/literal}
 </script>
