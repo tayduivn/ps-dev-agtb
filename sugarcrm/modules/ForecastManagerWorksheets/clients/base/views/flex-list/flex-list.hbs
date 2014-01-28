@@ -25,7 +25,7 @@
         </th>
         {{/each}}
         {{#each ../_fields.visible}}
-            <th {{#if this.width}}width="{{this.width}}" {{/if}}class="{{#isSortable ../../module this}}sorting{{#eq ../../../orderBy.field name}}_{{../../../../orderBy.direction}}{{/eq}} orderBy{{name}}{{/isSortable}}"
+            <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../orderBy.field name}}_{{../../../../orderBy.direction}}{{/eq}} orderBy{{name}}{{/isSortable}}"
                 data-fieldname="{{name}}" data-orderby="{{orderBy}}">
                 <span>
                     {{str label ../../module}}
@@ -36,11 +36,11 @@
             {{#if isColumnDropdown}}
             <th class="nosort morecol">
                 <div class="dropdown">
-                    <button class="btn btn-invisible" data-toggle="dropdown" data-action="fields-toggle"><i class="icon-ellipsis-horizontal"></i></button>
-                    <ul class="dropdown-menu left carettop">
+                    <button class="btn btn-invisible" data-toggle="dropdown" rel="tooltip" title="{{str "LBL_COLUMNS"}}" data-placement="bottom" data-action="fields-toggle" track="click:morecol"><i class="icon-ellipsis-horizontal"></i></button>
+                    <ul class="dropdown-menu left">
                     {{#each ../../../_fields.options}}
                         <li>
-                            <button{{#if selected}} class="active"{{/if}} data-field-toggle="{{name}}">
+                            <button{{#if selected}} class="active"{{/if}} data-field-toggle="{{name}}" track="click:{{name}}">
                                 {{#if selected}}<i class="icon icon-ok"></i> {{/if}}{{str label ../../../../module}}
                             </button>
                         </li>
@@ -62,17 +62,15 @@
     </tr>
     </thead>
     <tbody>
-    {{#each ../filteredCollection.models}}
-    <tr name="{{module}}_{{attributes.id}}" data-forecast="{{attributes.commit_stage}}"
-        class="single{{#if attributes.includedInForecast}} included{{/if}}">
-
+    {{#each ../collection.models}}
+    <tr name="{{module}}_{{attributes.id}}" class="single">
         {{#each ../../leftColumns}}
         <td>
              {{field ../../../this model=../this template=../../../this.viewName}}
         </td>
         {{/each}}
         {{#each ../../_fields.visible}}
-            <td class="{{name}}_field {{#if this.align}} {{this.align}}{{/if}}{{#if click_to_edit}} editableColumn{{/if}}" data-field-name="{{name}}" data-type="{{type}}">
+            <td{{#if this.align}} class="{{this.align}}{{#if click_to_edit}} editableColumn{{/if}}" {{/if}}{{#if this.maxWidth}} style="max-width:{{this.maxWidth}}"{{/if}} data-type="{{type}}">
               {{field ../../../this model=../this template=../../../this.viewName}}
             </td>
         {{/each}}
