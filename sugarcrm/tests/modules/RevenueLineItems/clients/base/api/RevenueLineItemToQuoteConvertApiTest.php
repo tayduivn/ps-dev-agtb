@@ -22,50 +22,43 @@ class RevenueLineItemToQuoteConvertApiTests extends Sugar_PHPUnit_Framework_Test
     protected static $opp;
 
     /**
-     * @var Product
+     * @var RevenueLineItem
      */
-    protected static $product;
-/*
+    protected static $revenueLineItem;
+
     public static function setUpBeforeClass()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         parent::setUpBeforeClass();
         self::$opp = SugarTestOpportunityUtilities::createOpportunity();
 
-        //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-        self::$product = array_shift(self::$opp->getProducts());
-        //END SUGARCRM flav=pro && flav!=ent ONLY
-        //BEGIN SUGARCRM flav=ent ONLY
-        self::$product = SugarTestProductUtilities::createProduct();
-        self::$product->opportunity_id = self::$opp->id;
-        self::$product->save();
-        //END SUGARCRM flav=ent ONLY
+        self::$revenueLineItem = new RevenueLineItem();
+        self::$revenueLineItem->opportunity_id = self::$opp->id;
+        self::$revenueLineItem->save();
     }
 
     public static function tearDownAfterClass()
     {
+        self::$revenueLineItem->mark_deleted(self::$revenueLineItem->id);
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
-        SugarTestProductBundleUtilities::removeAllCreatedProductBundles();
         SugarTestQuoteUtilities::removeAllCreatedQuotes();
+        SugarTestHelper::tearDown();
         parent::tearDownAfterClass();
-    }
-*/
-    public function setUp()
-    {
-        $this->markTestIncomplete('This test is trying to get a property of a non-object.');
     }
 
     /**
-     * @group products
+     * @group RevenueLineItems
      * @group quotes
      */
-    public function testCreateQuoteFromProductApi()
+    public function testCreateQuoteFromRevenueLineItemApi()
     {
         /* @var $restService RestService */
         $restService = SugarTestRestUtilities::getRestServiceMock();
 
-        $api = new ProductToQuoteConvertApi();
-        $return = $api->convertToQuote($restService, array('module' => 'Products', 'record' => self::$product->id));
+        $api = new RevenueLineItemToQuoteConvertApi();
+        $return = $api->convertToQuote($restService, array('module' => 'RevenueLineItem', 'record' => self::$revenueLineItem->id));
 
         $this->assertNotEmpty($return['id']);
 
@@ -77,25 +70,24 @@ class RevenueLineItemToQuoteConvertApiTests extends Sugar_PHPUnit_Framework_Test
 
         $this->assertEquals(self::$opp->id, $quote->opportunity_id);
 
-        // get the product bundle to make sure it contains the product id
-        $bundle = array_shift($quote->get_product_bundles());
-        $product = array_shift($bundle->get_products());
+        $quote->load_relationship('revenuelineitems');
+        $revenueLineItem = $quote->revenuelineitems->getBeans();
+        $this->assertNotEmpty($revenueLineItem);
+        $revenueLineItem = reset($revenueLineItem);
 
-        SugarTestProductBundleUtilities::setCreatedProductBundle(array($bundle->id));
+        $this->assertEquals(self::$revenueLineItem->id, $revenueLineItem->id);
 
-        $this->assertEquals(self::$product->id, $product->id);
-
-        return $product;
+        return $revenueLineItem;
     }
 
     /**
-     * @param $product
-     * @group products
+     * @param $revenueLineItem
+     * @group RevenueLineItems
      * @group quotes
-     * @depends testCreateQuoteFromProductApi
+     * @depends testCreateQuoteFromRevenueLineItemApi
      */
-    public function testProductStatusIsQuotes($product)
+    public function testRevenueLineItemStatusIsQuotes($revenueLineItem)
     {
-        $this->assertEquals(Product::STATUS_QUOTED, $product->status);
+        $this->assertEquals(RevenueLineItem::STATUS_QUOTED, $revenueLineItem->status);
     }
 }
