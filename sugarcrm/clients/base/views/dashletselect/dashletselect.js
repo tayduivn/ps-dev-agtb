@@ -157,25 +157,35 @@
      */
     getFilteredList: function(dashlets) {
         var parentModule = app.controller.context.get('module'),
-            parentView = app.controller.context.get('layout');
+            parentView = app.controller.context.get('layout'),
+            parentDashboard = this.model.get('dashboard_type') || this.context.get('dashboard_type') || 'dashboard';
 
         return _.chain(dashlets)
             .filter(function(dashlet) {
                 var filter = dashlet.filter;
                 if (_.isUndefined(filter)) {
-                    //if filter is undefined, then the dashlet will be in the list
-                    return true;
+                    // if filter is undefined
+                    return (parentDashboard === 'dashboard');
                 }
-                var filterModules = filter.module || [parentView],
-                    filterViews = filter.view || [parentView];
+
+                var filterModules = filter.module || [parentModule],
+                    filterViews = filter.view || [parentView],
+                    filterDashboard = filter.dashboard || ['dashboard'];
+
                 if (_.isString(filterModules)) {
                     filterModules = [filterModules];
                 }
                 if (_.isString(filterViews)) {
                     filterViews = [filterViews];
                 }
+                if (_.isString(filterDashboard)) {
+                    filterDashboard = [filterDashboard];
+                }
+
                 //if the filter is matched, then it returns true
-                return _.contains(filterModules, parentModule) && _.contains(filterViews, parentView);
+                return _.contains(filterModules, parentModule)
+                    && _.contains(filterViews, parentView)
+                    && _.contains(filterDashboard, parentDashboard);
             })
             .value();
     },

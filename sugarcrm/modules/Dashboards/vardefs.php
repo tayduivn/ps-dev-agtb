@@ -92,6 +92,13 @@ $dictionary['Dashboard'] = array(
       'merge_filter' => 'disabled',
       'calculated' => false,
     ),
+      'dashboard_type' => array(
+          'name' => 'dashboard_type',
+          'vname' => 'LBL_DASHBOARD_TYPE',
+          'type' => 'varchar',
+          'len' => '100',
+          'comment' => 'The type of dashboard: dashboard, help-dashboard, etc',
+      ),
   ),
   'indices' => array (
     array ('name' => 'user_module_view', 'type' => 'index', 'fields' => array('assigned_user_id','dashboard_module', 'view_name')),
