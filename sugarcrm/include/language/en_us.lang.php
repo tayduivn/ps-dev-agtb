@@ -574,6 +574,9 @@ $app_list_strings = array (
     'Products' => 'Quoted Line Item',
     'Contracts' => 'Contract',
     //END SUGARCRM flav=pro ONLY
+    //BEGIN SUGARCRM flav=ent ONLY
+    'RevenueLineItems' => 'Revenue Line Item',
+    //END SUGARCRM flav=ent ONLY
     'Emails' => 'Email',
 
     'Bugs' => 'Bug',
@@ -2858,7 +2861,7 @@ $app_strings = array (
     'LBL_REMINDERS_NONE_FOUND' => 'No reminders found.',
     'LBL_REMINDERS_FINISHED' => 'Finished!',
 
-    // Strings for Opportunity Metrics widget
+    // Strings for Opportunity Metrics dashlet
     'LBL_OPPORTUNITY_METRICS' => 'Opportunity Metrics',
 
     'LBL_RELATED' => 'Related',

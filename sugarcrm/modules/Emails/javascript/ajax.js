@@ -709,13 +709,12 @@ AjaxObject.detailView = {
         		this.body.style.overflow = "auto";
             }, SED.quickCreateDialog);
 
-            SED.quickCreateDialog.hideEvent.subscribe(function(){
-				var qsFields = YAHOO.util.Dom.getElementsByClassName('.sqsEnabled', null, this.body);
-				/*for(var qsField in qsFields){
-					if (typeof QSFieldsArray[qsFields[qsField].id] != 'undefined')
-					Ext.getCmp('combobox_'+qsFields[qsField].id).destroy();
-				}*/
-			});
+            // dialog contents may override current drag-n-drop mode
+            // so restore it when the dialog is hidden (bug #49330)
+            var mode = YAHOO.util.DDM.mode;
+            SED.quickCreateDialog.hideEvent.subscribe(function() {
+                YAHOO.util.DDM.mode = mode;
+            });
             SED.quickCreateDialog.setHeader(app_strings.LBL_EMAIL_QUICK_CREATE);
 		} // end lazy load
 		if (ret.html) {
@@ -898,6 +897,13 @@ AjaxObject.detailView = {
         		this.body.style.height = (viewHeight - 75 > contH ? (contH + 10) : (viewHeight - 75)) + "px";
         		this.center();
             }, SED.quickCreateDialog);
+
+            // dialog contents may override current drag-n-drop mode
+            // so restore it when the dialog is hidden (bug #49330)
+            var mode = YAHOO.util.DDM.mode;
+            SED.quickCreateDialog.hideEvent.subscribe(function() {
+                YAHOO.util.DDM.mode = mode;
+            });
 		}
 		SED.quickCreateDialog.setHeader(app_strings.LBL_EMAIL_RECORD);
 		SED.quickCreateDialog.setBody(ret.html);

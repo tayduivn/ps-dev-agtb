@@ -137,6 +137,8 @@
                     if (_.isUndefined(id)) {
                         return;
                     }
+                    //Update the source element or else reverting back to the original value will not trigger a change event.
+                    plugin.opts.element.data("id", id);
                     if (collection && !_.isEmpty(id)) {
                         // if we have search results use that to set new values
                         var model = collection.get(id);

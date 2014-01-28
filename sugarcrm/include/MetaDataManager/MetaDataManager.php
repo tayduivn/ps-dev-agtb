@@ -1931,7 +1931,7 @@ class MetaDataManager
      */
     public function getLogoUrl()
     {
-        return SugarThemeRegistry::current()->getImageURL('company_logo.png');
+        return SugarThemeRegistry::current()->getImageURL('company_logo.png', true, true);
     }
 
     /**

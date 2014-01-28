@@ -82,7 +82,7 @@
      */
     applyDragAndDrop: function() {
         var self = this;
-        this.$('.widget:not(.empty)').draggable({
+        this.$('.dashlet:not(.empty)').draggable({
             revert: 'invalid',
             handle: 'h4',
             scroll: true,
@@ -94,7 +94,7 @@
             },
             stop: function() {
                 self.model.trigger("setMode", self.model._previousMode);
-                self.$(".widget.ui-draggable").attr("style", "");
+                self.$(".dashlet.ui-draggable").attr("style", "");
             },
             helper: function() {
                 var $clone = $(this).clone();
@@ -107,15 +107,15 @@
             }
         });
 
-        this.$('.widget-container').droppable({
+        this.$('.dashlet-container').droppable({
             activeClass: 'ui-droppable-active',
             hoverClass: 'active',
             tolerance: 'pointer',
             accept: function($el) {
-                return !$el.hasClass("sortable") && self.$(this).find('.widget[data-action=droppable]').length === 1;
+                return !$el.hasClass("sortable") && self.$(this).find('.dashlet[data-action=droppable]').length === 1;
             },
             drop: function(event, ui) {
-                var sourceIndex = ui.draggable.parents(".widget-container:first").data('index')(),
+                var sourceIndex = ui.draggable.parents(".dashlet-container:first").data('index')(),
                     targetIndex = self.$(this).data('index')();
                 self.switchComponent(targetIndex, sourceIndex);
             }
@@ -225,8 +225,8 @@
 
     },
     _dispose: function() {
-        this.$('.widget').draggable('destroy');
-        this.$('.widget-container').droppable('destroy');
+        this.$('.dashlet').draggable('destroy');
+        this.$('.dashlet-container').droppable('destroy');
         app.view.Layout.prototype._dispose.call(this);
     }
 })

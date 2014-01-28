@@ -18,6 +18,7 @@
      */
     extendsFrom: 'FlexListView',
     plugins: [
+        'SugarLogic',
         'ListColumnEllipsis',
         'ErrorDecoration',
         'Editable',

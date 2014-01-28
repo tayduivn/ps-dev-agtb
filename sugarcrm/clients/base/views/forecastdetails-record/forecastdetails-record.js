@@ -98,7 +98,7 @@
     },
 
     /**
-     * Builds widget url
+     * Builds dashlet url
      * @override
      * @return {String} url to call
      */

@@ -30,6 +30,13 @@ require_once("include/Expressions/Actions/ActionFactory.php");
 class DependencyManager
 {
     static $default_trigger = "true";
+    static $editable_views = array(
+        "RecordView",
+        "EditView",
+        "CreateView",
+        "RecordlistView",
+        "Create-actionsView",
+    );
 
     /**
      * Returns a new Dependency that will power the provided calculated field.
@@ -304,8 +311,7 @@ class DependencyManager
 
         $type = 'view';
 
-        if ($view == "RecordView" || $view == "EditView" || $view == "CreateView" ||
-            $view == "Create-actionsView" || strpos($view, "QuickCreate") !== false) {
+        if (in_array($view, self::$editable_views) || strpos($view, "QuickCreate") !== false) {
             $type = 'edit';
         }
 
@@ -475,5 +481,15 @@ class DependencyManager
 
         //Otherwise this link looks ok
         return true;
+    }
+
+    /**
+     * Used to mark a view as editable for the purpose of SugarLogic Dependencies
+     * Should be called before metadata is built. (getDependenciesForView is called)
+     * @param String $view name of view to register as editable when building dependency metadata
+     */
+    public static function registerEditableView(String $view)
+    {
+        self::$editable_views[] = $view;
     }
 }

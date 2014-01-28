@@ -53,7 +53,7 @@ class VisibilityAction extends AbstractAction{
 			if (!SUGAR.forms.SetVisibilityAction.initialized)
 			{
 				var head = document.getElementsByTagName('head')[0];
-				var cssdef = '.vis_action_hidden * { visibility:hidden}'
+				var cssdef = 'span.vis_action_hidden, .vis_action_hidden * { visibility:hidden}'
 				var newStyle = document.createElement('style');
 				newStyle.setAttribute('type', 'text/css');
 				if (newStyle.styleSheet)

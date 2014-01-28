@@ -929,13 +929,13 @@ AddType     application/javascript  .js
     RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^cache/api/metadata/lang_(.._..)_(.*)_public\.json$ api/rest.php/v10/lang/public/$1?platform=$2 [L,QSA]
+    RewriteRule ^cache/api/metadata/lang_(.._..)_(.*)_public\.json$ rest/v10/lang/public/$1?platform=$2 [N,QSA]
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^cache/api/metadata/lang_(.._..)_([^_]*)\.json$ api/rest.php/v10/lang/$1?platform=$2 [L,QSA]
+    RewriteRule ^cache/api/metadata/lang_(.._..)_([^_]*)\.json$ rest/v10/lang/$1?platform=$2 [N,QSA]
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^cache/Expressions/functions_cache(_debug)?.js$ api/rest.php/v10/ExpressionEngine/functions?debug=$1 [L,QSA]
+    RewriteRule ^cache/Expressions/functions_cache(_debug)?.js$ rest/v10/ExpressionEngine/functions?debug=$1 [N,QSA]
 //BEGIN SUGARCRM flav=ent ONLY
     RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
     RewriteRule ^portal$ portal/? [R=301,L]

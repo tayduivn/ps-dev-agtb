@@ -29,7 +29,7 @@
     tagName: 'ul',
     className: 'dashlet-cell rows row-fluid',
     _placeComponent: function(comp, def) {
-        var span = 'widget-container span' + (def.width || 12),
+        var span = 'dashlet-container span' + (def.width || 12),
             self = this;
         this.$el.append($("<li>", {'class': span}).data("index", function() {
             var index = def.layout.index.split('').pop();

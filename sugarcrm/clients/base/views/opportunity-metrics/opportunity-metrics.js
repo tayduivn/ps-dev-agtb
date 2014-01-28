@@ -13,7 +13,7 @@
 
 ({
     plugins: ['Dashlet'],
-    className: 'opportunity-metrics-widget',
+    className: 'opportunity-metrics-dashlet',
 
     metricsCollection: {},
     chartCollection: {},

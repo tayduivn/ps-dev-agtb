@@ -48,7 +48,7 @@
                 toolbar = {},
                 pattern = /^(LBL|TPL|NTC|MSG)_(_|[a-zA-Z0-9])*$/,
                 label = this.meta.label;
-            //try to get the dashlet widget metadata
+            //try to get the dashlet dashlet metadata
             if(dashletDef.view) {
                 toolbar = dashletDef.view['custom_toolbar'] || {};
                 dashletMeta = app.metadata.getView(dashletDef.view.module, dashletDef.view.name || dashletDef.view.type);
@@ -153,13 +153,13 @@
         } else if(this.meta.preview) {
             //preview mode
             this.$el.addClass("preview-data");
-            this.$("[data-dashlet=widget]").append(comp.el);
+            this.$("[data-dashlet=dashlet]").append(comp.el);
         } else if(def.view && !_.isUndefined(def.view.toolbar)) {
             //toolbar view
             this.$("[data-dashlet=toolbar]").append(comp.el);
         } else {
             //main dashlet component
-            this.$("[data-dashlet=widget]").append(comp.el);
+            this.$("[data-dashlet=dashlet]").append(comp.el);
         }
     },
     /**
@@ -344,7 +344,7 @@
         });
     },
     /**
-     * Fold/Unfold the widget
+     * Fold/Unfold the dashlet
      *
      * @param {Boolean} true if it needs to be collapsed
      */
@@ -352,7 +352,7 @@
         this.$(".dashlet-toggle > i").toggleClass("icon-chevron-down", collapsed);
         this.$(".dashlet-toggle > i").toggleClass("icon-chevron-up", !collapsed);
         this.$(".thumbnail").toggleClass("collapsed", collapsed);
-        this.$("[data-dashlet=widget]").toggleClass("hide", collapsed);
+        this.$("[data-dashlet=dashlet]").toggleClass("hide", collapsed);
     },
     /**
      * Displays current invisible dashlet when current mode is on edit/drag

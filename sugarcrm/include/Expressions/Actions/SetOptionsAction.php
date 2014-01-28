@@ -62,7 +62,7 @@ class SetOptionsAction extends AbstractAction{
 
 				if (context.view)
 				{
-					var field = context.view.getField(this.target);
+					var field = context.getField(this.target);
 					//Cannot continue if the field does not exist on this view
 					if (!field) {
 					    return;
@@ -79,7 +79,7 @@ class SetOptionsAction extends AbstractAction{
 					var visAction = new SUGAR.forms.SetVisibilityAction(this.target, (empty ? 'false' : 'true'), '');
 					visAction.setContext(context);
 					visAction.exec();
-					if (!_.contains(keys, field.value)) {
+					if (!_.contains(keys, field.model.get(this.target))) {
 						context.setValue(this.target, empty ? '' : keys[0]);
 					}
 				}

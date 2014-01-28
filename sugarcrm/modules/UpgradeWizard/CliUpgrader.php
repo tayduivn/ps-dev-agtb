@@ -284,6 +284,21 @@ eoq2;
     }
 
     /**
+     * Get stage code depending on its order
+     * @param string $stage
+     * @return int
+     */
+    protected function getStageCode($stage)
+    {
+        foreach($this->stages as $k => $s) {
+            if($s === $stage) {
+                return $k+1;
+            }
+        }
+        return 99;
+    }
+
+    /**
      * Execution starts here
      */
     public static function start()
@@ -306,7 +321,7 @@ eoq2;
                 if(!empty($upgrader->error)) {
                     echo "ERROR: {$upgrader->error}\n";
                 }
-                exit(1);
+                exit($upgrader->getStageCode($stage));
             }
         } else {
             // whole loop
@@ -323,7 +338,7 @@ eoq2;
                     if($stage) {
                         echo "***************         Step \"{$stage}\" FAILED!\n";
                     }
-                    exit(1);
+                    exit($upgrader->getStageCode($stage));
                 }
                 if($stage) {
                     echo "***************         Step \"{$stage}\" OK\n";

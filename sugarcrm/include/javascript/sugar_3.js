@@ -1,33 +1,15 @@
-/**
- * Javascript file for Sugar
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * LICENSE: The contents of this file are subject to the SugarCRM Professional
- * End User License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You
- * may not use this file except in compliance with the License.  Under the
- * terms of the license, You shall not, among other things: 1) sublicense,
- * resell, rent, lease, redistribute, assign or otherwise transfer Your
- * rights to the Software, and 2) use the Software for timesharing or service
- * bureau purposes such as hosting the Software for commercial gain and/or for
- * the benefit of a third party.  Use of the Software may be subject to
- * applicable fees and any use of the Software without first paying applicable
- * fees is strictly prohibited.  You do not have the right to remove SugarCRM
- * copyrights from the source code or user interface.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
+ * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
  */
-
-// $Id: sugar_3.js 57264 2010-07-02 18:45:27Z kjing $
 
 /**
  * Namespace for Sugar Objects
@@ -998,13 +980,12 @@ function add_error_style(formname, input, txt, flash) {
     nomatchTxt = SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD');
     matchTxt = txt.replace(requiredTxt,'').replace(invalidTxt,'').replace(nomatchTxt,'');
 
-    YUI({comboBase:'index.php?entryPoint=getYUIComboFile&'}).use('node', function (Y) {
-        Y.one(inputHandle).get('parentNode').get('children').each(function(node, index, nodeList){
-            if(node.hasClass('validation-message') && node.get('text').search(matchTxt)){
+        $(inputHandle).parent().children().each(function() {
+            var $el = $(this);
+            if($el.hasClass('required validation-message') && $el.text().indexOf(matchTxt) > 0) {
                 raiseFlag = true;
             }
         });
-    });
 
     if(!raiseFlag) {
         errorTextNode = document.createElement('div');

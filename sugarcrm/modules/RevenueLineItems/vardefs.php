@@ -136,6 +136,13 @@ $dictionary['RevenueLineItem'] = array(
             'dbType' => 'varchar',
             'len' => '255',
         ),
+        'manufacturer_link' => array(
+            'name' => 'manufacturer_link',
+            'type' => 'link',
+            'relationship' => 'revenuelineitems_manufacturers',
+            'source' => 'non-db',
+            'vname' => 'LBL_MANUFACTURER',
+        ),
         'category_id' => array(
             'name' => 'category_id',
             'vname' => 'LBL_CATEGORY',
@@ -737,6 +744,13 @@ $dictionary['RevenueLineItem'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_NOTES',
         ),
+        'tasks' => array(
+            'name' => 'tasks',
+            'type' => 'link',
+            'relationship' => 'revenuelineitem_tasks',
+            'source' => 'non-db',
+            'vname' => 'LBL_NOTES',
+        ),
         'documents' => array(
             'name' => 'documents',
             'type' => 'link',
@@ -985,6 +999,17 @@ $dictionary['RevenueLineItem'] = array(
         array('name' => 'idx_revenuelineitem_quantity', 'type' => 'index', 'fields' => array('quantity')),
     ),
     'relationships' => array(
+        'revenuelineitem_tasks' => array(
+            'lhs_module' => 'RevenueLineItems',
+            'lhs_table' => 'revenue_line_items',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Tasks',
+            'rhs_table' => 'tasks',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'RevenueLineItems'
+        ),
         'revenuelineitem_notes' => array(
             'lhs_module' => 'RevenueLineItems',
             'lhs_table' => 'revenue_line_items',
@@ -1076,6 +1101,15 @@ $dictionary['RevenueLineItem'] = array(
             'relationship_type' => 'one-to-many',
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'RevenueLineItems'
+        ),
+        'revenuelineitems_manufacturers' => array(
+            'lhs_module' => 'Manufacturers',
+            'lhs_table' => 'manufacturers',
+            'lhs_key' => 'id',
+            'rhs_module' => 'RevenueLineItems',
+            'rhs_table' => 'revenue_line_items',
+            'rhs_key' => 'manufacturer_id',
+            'relationship_type' => 'one-to-many',
         ),
     ),
     'duplicate_check' => array(

@@ -296,12 +296,6 @@ $renamedefs = array(
             array('name' => 'LBL_ERROR_NOT_MANAGER', 'type' => 'plural', 'source' => 'Forecasts'),
             array('name' => 'LBL_COMMITTED_HISTORY_SETUP_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
             array('name' => 'LBL_COMMITTED_HISTORY_UPDATED_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
-            // BEGIN SUGARCRM flav!=ent ONLY
-            array('name' => 'LBL_MY_OPPS_RLI', 'type' => 'plural', 'source' => 'Opportunities'),
-            // END SUGARCRM flav!=ent ONLY
-            // BEGIN SUGARCRM flav=ent ONLY
-            array('name' => 'LBL_MY_OPPS_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-            // END SUGARCRM flav=ent ONLY
             array('name' => 'LBL_EXPECTED_OPPORTUNITIES', 'type' => 'plural', 'source' => 'Opportunities'),
             array('name' => 'LBL_DISTANCE_ABOVE_LIKELY_FROM_QUOTA', 'type' => 'singular', 'source' => 'Quotas'),
             array('name' => 'LBL_DISTANCE_LEFT_LIKELY_TO_QUOTA', 'type' => 'singular', 'source' => 'Quotas'),
@@ -433,12 +427,6 @@ $renamedefs = array(
             array('name' => 'LBL_QUOTA_ADJUSTED', 'type' => 'singular', 'source' => 'Quotas'),
             array('name' => 'LBL_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
             array('name' => 'LBL_QUOTA_ID', 'type' => 'singular', 'source' => 'Quotas'),
-            // BEGIN SUGARCRM flav!=ent ONLY
-            array('name' => 'LBL_MY_OPPS_RLI', 'type' => 'plural', 'source' => 'Opportunities'),
-            // END SUGARCRM flav!=ent ONLY
-            // BEGIN SUGARCRM flav=ent ONLY
-            array('name' => 'LBL_MY_OPPS_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-            // END SUGARCRM flav=ent ONLY
         ),
         'ForecastWorksheets' => array(
             array('name' => 'LBL_MODULE_NAME', 'type' => 'singular', 'source' => 'Forecasts'),

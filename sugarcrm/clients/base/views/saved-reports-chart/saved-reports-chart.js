@@ -134,6 +134,15 @@
         });
 
         if(reportsField) {
+            // set the initial saved_report_id to the first report in the list
+            // if there are reports to show and we have not already saved this
+            // dashlet yet with a report ID
+            if(reports && !this.settings.has('saved_report_id')) {
+                this.settings.set({
+                    saved_report_id: _.first(reports).id
+                });
+            }
+
             // set field options and render
             reportsField.items = this.reportOptions;
             reportsField._render();

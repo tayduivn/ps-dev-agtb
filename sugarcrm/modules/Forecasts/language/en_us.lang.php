@@ -241,12 +241,8 @@ $mod_strings = array (
     //Labels for jsTree implementation
     'LBL_TREE_PARENT' => 'Parent',
 
-    // BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-    'LBL_MY_OPPS_RLI' => 'Opportunities ({0})',
-    // END SUGARCRM flav=pro && flav!=ent ONLY
-    // BEGIN SUGARCRM flav=ent ONLY
-    'LBL_MY_OPPS_RLI' => 'Revenue Line Items ({0})',
-    // END SUGARCRM flav=ent ONLY
+    // Label for Current User Rep Worksheet Line
+    'LBL_MY_MANAGER_LINE' => '{0} (me)',
 
     //Labels for worksheet items
     'LBL_EXPECTED_OPPORTUNITIES' => 'Expected Opportunities',

@@ -2431,7 +2431,7 @@ function getWebPath($relative_path)
     return $relative_path;
 }
 
-function getVersionedPath($path, $additional_attrs='')
+function getVersionedPath($path, $additional_attrs='', $time_modified=false)
 {
     if(empty($GLOBALS['sugar_config']['js_custom_version'])) $GLOBALS['sugar_config']['js_custom_version'] = 1;
 
@@ -2439,7 +2439,7 @@ function getVersionedPath($path, $additional_attrs='')
         $GLOBALS['js_version_key'] = get_js_version_key();
     }
 
-    if (inDeveloperMode() && file_exists($path)) {
+    if ((inDeveloperMode() || $time_modified) && file_exists($path)) {
         $dev = md5(filemtime($path));
     } else {
         $dev = '';
@@ -2461,11 +2461,11 @@ function getVersionedScript($path, $additional_attrs='')
     return '<script type="text/javascript" src="'.getVersionedPath($path, $additional_attrs).'"></script>';
 }
 
-function getJSPath($relative_path, $additional_attrs='')
+function getJSPath($relative_path, $additional_attrs='', $time_modified=false)
 {
     if(defined('TEMPLATE_URL'))$relative_path = SugarTemplateUtilities::getWebPath($relative_path);
 
-    return getVersionedPath($relative_path).(!empty($additional_attrs)?"&$additional_attrs":"");
+    return getVersionedPath($relative_path, '', $time_modified).(!empty($additional_attrs)?"&$additional_attrs":"");
 }
 
 function getSWFPath($relative_path, $additional_params='')

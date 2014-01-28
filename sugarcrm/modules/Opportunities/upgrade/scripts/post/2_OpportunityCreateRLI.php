@@ -31,15 +31,15 @@ class SugarUpgradeOpportunityCreateRLI extends UpgradeScript
 
         $this->log("Creating missing RLIs for orphaned Opportunities");
         $sql = "SELECT '' as id, " .
-                       "o.id, " .
+                       "o.id as opportunity_id, " .
                        "o.name, " .
                        "o.worst_case, " .
                        "o.amount, " .
                        "o.best_case, " .
                        "o.amount, " .
-                       "1, " .
+                       "1 as quantity, " .
                        "o.currency_id, " .
-                       "o.amount_usdollar/o.amount, " .
+                       "o.amount_usdollar/o.amount as base_rate, " .
                        "o.probability, " .
                        "o.date_closed, " .
                        "o.date_closed_timestamp, " .
@@ -101,10 +101,13 @@ class SugarUpgradeOpportunityCreateRLI extends UpgradeScript
                  "team_id, " .
                  "team_set_id) VALUES";
 
+        /* @var $rli RevenueLineItem */
+        $rli = BeanFactory::getBean('RevenueLineItems');
+
         while ($row = $this->db->fetchByAssoc($results)) {
             $row['id'] = create_guid();
             foreach ($row as $key => $value) {
-                $row[$key] = $this->db->quoted($value);
+                $row[$key] = $this->db->massageValue($value, $rli->getFieldDefinition($key));
             }
 
             $this->db->query($insertSQL . ' (' . join(',', $row) . ');');
