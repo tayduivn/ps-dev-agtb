@@ -79,6 +79,13 @@ class SidecarMetaDataFileBuilder
             'legacypath'  => 'custom/portal/modules/Bugs/metadata/searchformdefs.php',
             'sidecarpath' => 'custom/modules/Bugs/clients/portal/views/search/search.php',
         ),
+        // tabs/panels
+        array(
+            'module'      => 'Opportunities', 'view' => 'record', 'type' => 'base',
+            'testpath'    => 'tests/modules/UpgradeWizard/metadata/Oppdetail.php',
+            'legacypath'  => 'custom/modules/Opportunities/metadata/detailviewdefs.php',
+            'sidecarpath' => 'custom/modules/Opportunities/clients/base/views/record/record.php',
+        ),
         // portal record view
         array(
                 'module'      => 'Cases', 'view' => 'record', 'type' => 'portal',

@@ -154,6 +154,16 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
     }
     // END SUGARCRM flav=ent ONLY
 
+    public function testUpgraderPreservedTabsPanels()
+    {
+        $filename = 'custom/modules/Opportunities/clients/base/views/record/record.php';
+        $exists = file_exists($filename);
+        $this->assertTrue($exists, 'Opportunities metadata did not convert');
+
+        require $filename;
+        $this->assertEquals(count($viewdefs['Opportunities']['base']['view']['record']['panels']), 4);
+    }
+
     public function _sidecarFilesInPlaceProvider()
     {
         $builder = self::getBuilder();
