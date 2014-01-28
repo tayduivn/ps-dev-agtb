@@ -1500,6 +1500,8 @@ class SugarBean
             }
         }
 
+        // Filter fields to those only that we have write access to
+        $this->ACLFilterFieldList($importableFields, array(), array('min_access' => SugarACL::ACL_READ_WRITE));
         return $importableFields;
     }
 

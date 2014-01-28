@@ -21,6 +21,7 @@
  ********************************************************************************/
 
 require_once('data/SugarBean.php');
+require_once('data/SugarACL.php');
 
 class ImportableFieldsTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -32,7 +33,9 @@ class ImportableFieldsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp("current_user");
 
         $this->myBean = new SugarBean();
-        
+
+        $this->myBean->module_dir = "myBean";
+
         $this->myBean->field_defs = array( 
             'id' => array('name' => 'id', 'vname' => 'LBL_ID', 'type' => 'id', 'required' => true, ),
             'name' => array('name' => 'name', 'vname' => 'LBL_NAME', 'type' => 'varchar', 'len' => '255', 'importable' => 'required', ),
@@ -92,5 +95,39 @@ class ImportableFieldsTest extends Sugar_PHPUnit_Framework_TestCase
             $fields,
             array_keys($this->myBean->get_import_required_fields())
             );
+    }
+
+    public function testImportableFieldsACL() {
+        $fields = array(
+            'id',
+            'name',
+            'int_field',
+            'float_field',
+            'datetime_field',
+            'link_field2',
+            'link_field3',
+        );
+
+        $aclmyBean = new TestSugarACLStaticPAT249();
+        $aclmyBean->return_value = array('date_field' => false); // no access to this field
+        SugarACL::resetACLs();
+        SugarACL::$acls[$this->myBean->module_dir] = array($aclmyBean);
+
+        $this->assertEquals(
+            $fields,
+            array_keys($this->myBean->get_importable_fields())
+        );
+
+        SugarACL::resetACLs();
+    }
+}
+
+class TestSugarACLStaticPAT249 extends SugarACLStatic
+{
+    public $return_value = null;
+
+    public function checkFieldList($module, $field_list, $action, $context)
+    {
+        return $this->return_value;
     }
 }
