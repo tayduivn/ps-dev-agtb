@@ -245,11 +245,8 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
             }
         }
 
-        if (isset($_POST['no_opps'])) {
-            $focus->setPreference('no_opps',$_POST['no_opps'], 0, 'global');
-        } else {
-            $focus->setPreference('no_opps','off', 0, 'global');
-        }
+        // Always set this preference to 'off' as we are not using it any more
+        $focus->setPreference('no_opps','off', 0, 'global');
 
         if (isset($_POST['reminder_checked']) && $_POST['reminder_checked'] == '1' && isset($_POST['reminder_checked'])) {
             $focus->setPreference('reminder_time', $_POST['reminder_time'], 0, 'global');

@@ -249,12 +249,6 @@
                             <slot><input tabindex='12' name='mailmerge_on' class="checkbox" type="checkbox" {$MAILMERGE_ON}></slot>
                             </td>
                         </tr>
-                        <!--//BEGIN SUGARCRM flav=pro ONLY -->
-                        <tr>
-                            <td scope="row" valign="top"><slot>{$MOD.LBL_OWN_OPPS}:</slot>&nbsp;{sugar_help text=$MOD.LBL_OWN_OPPS_DESC }</td>
-                            <td ><slot><input tabindex='12' type="checkbox" name="no_opps" {$NO_OPPS}></slot></td>
-                        </tr>
-                        <!-- BEGIN: pro -->
                         <tr>
                             {if !empty($SHOW_TEAM_SELECTION)}
                             <td width="20%" scope="row"><slot>{$MOD.LBL_DEFAULT_TEAM}:</slot>&nbsp;{sugar_help text=$MOD.LBL_DEFAULT_TEAM_TEXT }</td>
@@ -263,8 +257,6 @@
                             <td scope="row"></td>
                             <td></td>
                         </tr>
-                        <!-- END: pro -->
-                        <!--//END SUGARCRM flav=pro ONLY -->
                         <!--{if !empty($EXTERNAL_AUTH_CLASS) && !empty($IS_ADMIN)}-->
                             <tr>
                                 {capture name=SMARTY_LBL_EXTERNAL_AUTH_ONLY}&nbsp;{$MOD.LBL_EXTERNAL_AUTH_ONLY} {$EXTERNAL_AUTH_CLASS_1}{/capture}
