@@ -109,6 +109,7 @@
     },
 
     archiveEmail: function(event, params) {
+        var self = this;
         app.drawer.open({
             layout: 'archive-email',
             context: {
@@ -117,6 +118,10 @@
                 prepopulate: {
                     related: this.model
                 }
+            }
+        }, function(model) {
+            if (model) {
+                self.context.trigger('panel-top:refresh', 'emails');
             }
         });
     }

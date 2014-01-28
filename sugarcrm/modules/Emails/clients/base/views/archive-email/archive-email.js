@@ -34,26 +34,51 @@
     },
 
     /**
+     * Archive email if validation passes.
+     */
+    archive: function(event) {
+        this.setMainButtonsDisabled(true);
+        this.model.doValidate(this.getFieldsToValidate(), _.bind(function(isValid) {
+            if (isValid) {
+                this.archiveEmail();
+            } else {
+                this.setMainButtonsDisabled(false);
+            }
+        }, this));
+    },
+
+    /**
+     * Get fields that needs to be validated.
+     * @returns {object}
+     */
+    getFieldsToValidate: function() {
+        var fields = {};
+        _.each(this.fields, function(field) {
+            fields[field.name] = field.def;
+        });
+        return fields;
+    },
+
+    /**
      * Call archive api.
      */
-    archive: function() {
+    archiveEmail: function() {
         var archiveUrl = app.api.buildURL('Mail/archive'),
             alertKey = 'mail_archive',
             archiveEmailModel = this.initializeSendEmailModel();
 
-        this.setMainButtonsDisabled(true);
         app.alert.show(alertKey, {level: 'process', title: app.lang.get('LBL_EMAIL_ARCHIVING', this.module)});
 
         app.api.call('create', archiveUrl, archiveEmailModel, {
-            success: function() {
+            success: _.bind(function() {
                 app.alert.dismiss(alertKey);
                 app.alert.show(alertKey, {
                     autoClose: true,
                     level: 'success',
                     messages: app.lang.get('LBL_EMAIL_ARCHIVED', this.module)
                 });
-                app.drawer.close();
-            },
+                app.drawer.close(this.model);
+            }, this),
             error: function(error) {
                 var msg = {autoClose: false, level: 'error'};
                 if (error && _.isString(error.message)) {
@@ -72,7 +97,7 @@
 
     /**
      * Get model that will be used to archive the email.
-     * @returns {*}
+     * @returns {Backbone.Model}
      */
     initializeSendEmailModel: function() {
         var model = this._super('initializeSendEmailModel');
