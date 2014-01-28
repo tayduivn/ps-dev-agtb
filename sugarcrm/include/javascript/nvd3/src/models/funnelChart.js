@@ -35,14 +35,20 @@ nv.models.funnelChart = function () {
     , legend = nv.models.legend()
     ;
 
-  var showTooltip = function (e, offsetElement, properties) {
-    var left = e.pos[0]
-      , top = e.pos[1]
-      , x = (e.point.value * 100 / properties.total).toFixed(1)
-      , y = e.point.value
-      , content = tooltipContent(e.series.key, x, y, e, chart);
-    tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
-  };
+    var showTooltip = function (e, offsetElement, properties) {
+        var xVal = 0;
+        // defense against the dark divide-by-zero arts
+        if(properties.total > 0) {
+            xVal = (e.point.value * 100 / properties.total).toFixed(1);
+        }
+
+        var left = e.pos[0]
+            , top = e.pos[1]
+            , x = xVal
+            , y = e.point.value
+            , content = tooltipContent(e.series.key, x, y, e, chart);
+        tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
+    };
 
   //============================================================
 

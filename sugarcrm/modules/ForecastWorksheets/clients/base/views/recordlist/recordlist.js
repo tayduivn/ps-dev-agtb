@@ -900,9 +900,10 @@
                 lost = _.include(sales_stage_lost_setting, model.get('sales_stage')),
                 commit_stage = model.get('commit_stage'),
                 base_rate = model.get('base_rate'),
-                worst_base = app.currency.convertWithRate(model.get('worst_case'), base_rate),
-                amount_base = app.currency.convertWithRate(model.get('likely_case'), base_rate),
-                best_base = app.currency.convertWithRate(model.get('best_case'), base_rate),
+                // added || 0 in case these converted out to NaN so they dont make charts blow up
+                worst_base = app.currency.convertWithRate(model.get('worst_case'), base_rate) || 0,
+                amount_base = app.currency.convertWithRate(model.get('likely_case'), base_rate) || 0,
+                best_base = app.currency.convertWithRate(model.get('best_case'), base_rate) || 0,
                 includedInForecast = _.include(commit_stages_in_included_total, commit_stage);
 
             if (won && includedInForecast) {
