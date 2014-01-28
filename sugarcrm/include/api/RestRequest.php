@@ -325,4 +325,30 @@ class RestRequest
         if(empty($this->server['REQUEST_URI'])) return '';
         return $this->server['REQUEST_URI'];
     }
+
+    /**
+     * Gets a header value from the request
+     * 
+     * @param string $header The header to get the value of
+     * @return string|null The string value of the header or null if not set
+     */
+    public function getHeader($header)
+    {
+        if ($this->hasHeader($header)) {
+            return $this->request_headers[$header];
+        }
+
+        return null;
+    }
+
+    /**
+     * Checks to see if a header is set in the request
+     * 
+     * @param string $header The header to check existence of
+     * @return boolean
+     */
+    public function hasHeader($header)
+    {
+        return isset($this->request_headers[$header]);
+    }
 }

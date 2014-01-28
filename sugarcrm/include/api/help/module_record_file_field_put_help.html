@@ -28,7 +28,13 @@
 -->
 <h2>Overview</h2>
 <span class="lead">
-    This endpoint takes a file or image and saves it to a record that already contains an attachment in the specified field. The PUT method is very similar to the POST method but differs slightly in how the request is constructed. PUT requests should send the file data as the body of the request. Optionally, a filename query parameter can be sent with the request to assign a name.
+    This endpoint takes a file or image and saves it to a record that already contains an attachment in the specified field. The PUT method is very similar to the POST method but differs slightly in how the request is constructed. PUT requests should send the file data as the body of the request. Optionally, a filename query parameter can be sent with the request to assign a name. Additionally, the PUT 
+    method can accept base64 encoded file data which will be decoded by the endpoint
+    if the content_transfer_encoding parameter is set to 'base64'.<br /><br />
+    <strong>NOTE:</strong> In lieu of the content_transfer_encoding parameter, a
+    request header of X-Content-Transfer-Encoding can also be sent with a value
+    of 'base64'. In the event both the content transfer encoding header and request
+    parameter are sent, the header will be used.
 </span>
 
 
@@ -52,6 +58,22 @@
         </td>
         <td>
             Filename to save the document as
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>
+            content_transfer_encoding
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            When set to 'base64', indicates the file contents are base64 encoded
+            and will result in the file contents being base64 decoded before being
+            saved
         </td>
         <td>
             False
