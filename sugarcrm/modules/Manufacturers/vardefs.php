@@ -121,7 +121,13 @@ $dictionary['Manufacturer'] = array(
     'comment' => 'Manufacturer status',
     'importable' => 'required',
   ),
-
+    'revenue_line_items' => array(
+      'name' => 'revenue_line_items',
+      'type' => 'link',
+      'relationship' => 'revenuelineitems_manufacturers',
+      'source' => 'non-db',
+      'vname' => 'LBL_REVENUELINEITEMS',
+    ),
 ),
 'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Products', 'allowUserRead' => true)),
 'indices' => array (
