@@ -484,10 +484,7 @@
      */
     _renderHtml: function() {
         if (this.meta.config) {
-            // FIXME: this should be replaced with this._super('_renderHtml'); which
-            // is currently throwing an error with the following message: "Attempt
-            // to call different parent method from child method"
-            app.view.View.prototype._renderHtml.call(this);
+            this._super('_renderHtml');
             return;
         }
 
@@ -504,10 +501,8 @@
         this.recordsHtml = recordsTpl(this);
 
         this.row_actions = tab.row_actions;
-        // FIXME: this should be replaced with this._super('_renderHtml'); which
-        // is currently throwing an error with the following message: "Attempt
-        // to call different parent method from child method"
-        app.view.View.prototype._renderHtml.call(this);
+
+        this._super('_renderHtml');
     },
 
     /**
