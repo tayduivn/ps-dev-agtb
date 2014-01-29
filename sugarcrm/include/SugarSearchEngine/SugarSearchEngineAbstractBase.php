@@ -45,11 +45,17 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
      */
     public $logger;
 
+    /**
+     *
+     * Ctor
+     */
     public function __construct()
     {
-        $this->max_bulk_doc_threshold = SugarConfig::getInstance()->get('search_engine.max_bulk_doc_threshold', $this->max_bulk_doc_threshold);
+        $this->max_bulk_doc_threshold = SugarConfig::getInstance()
+            ->get('search_engine.max_bulk_doc_threshold', $this->max_bulk_doc_threshold);
         $this->logger = $GLOBALS['log'];
     }
+
     /**
      * Determine if a module is FTS enabled.
      *
@@ -59,7 +65,6 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
     protected function isModuleFtsEnabled($module)
     {
         return SugarSearchEngineMetadataHelper::isModuleFtsEnabled($module);
-
     }
 
     /**
@@ -114,20 +119,58 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
         $db = DBManagerFactory::getInstance('fts');
         $db->resetQueryCount();
 
-        foreach ($records as $rec)
-        {
+        foreach ($records as $rec) {
             if (!is_array($rec) || empty($rec['bean_id']) || empty($rec['bean_module'])) {
                 $this->logger->error('Error populating fts_queue. Empty bean_id or bean_module.');
                 continue;
             }
-            $query = "INSERT INTO fts_queue (bean_id,bean_module) values ('{$rec['bean_id']}', '{$rec['bean_module']}')";
-            $db->query($query, true, "Error populating index queue for fts");
+
+            // support multiple values for 'processed'
+            $rec['processed'] = empty($rec['processed']) ? 0 : $rec['processed'];
+
+            $query = sprintf(
+                "SELECT id, processed FROM fts_queue WHERE bean_id = %s AND bean_module = %s",
+                $db->quoted($rec['bean_id']),
+                $db->quoted(BeanFactory::getBeanName($rec['bean_module']))
+            );
+
+            $res = $db->query($query, true, "Error get records from queue for fts");
+            if ($item = $db->fetchRow($res)) {
+                if ($item['processed'] != $rec['processed'] && $item['processed'] != 0) {
+                    $query = sprintf(
+                        "UPDATE fts_queue SET processed = %s, date_modified = current timestamp WHERE id = %s",
+                        $db->quoted($rec['processed']),
+                        $db->quoted($item['id'])
+                    );
+                    $db->query($query, true, "Error update record in queue for fts");
+                }
+            } else {
+                $beanName = BeanFactory::getBeanName($rec['bean_module']);
+                if (empty($beanName)) {
+                    $GLOBALS['log']->error("Full indexer: Failed to get bean name for module: {$rec['bean_module']}");
+                    continue;
+                }
+                $query = sprintf(
+                    "INSERT INTO fts_queue (id, bean_id, bean_module, processed, date_created)
+                        values (%s, %s, %s, %s, %s)",
+                    $db->quoted(create_guid()),
+                    $db->quoted($rec['bean_id']),
+                    $db->quoted($beanName),
+                    $db->quoted($rec['processed']),
+                    $db->now()
+                );
+                $db->query($query, true, "Error populating index queue for fts");
+            }
         }
 
-        // create a cron job consumer to digest the beans
-        require_once('include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php');
-        $indexer = new SugarSearchEngineSyncIndexer();
-        $indexer->createJobQueueConsumer();
+        /*
+         * The full indexer jobs should already be present when a full reindex
+         * has been scheduled earler on. Those are presistent jobs and will
+         * remain in the job queue to process new reocrds from the fts_queue.
+         *
+         * If a full indexer job is manually removed, scheduling again a full
+         * reindex will trigger restoration of the full indexer jobs where needed.
+         */
     }
 
     /**
@@ -135,7 +178,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
      *
      * @return Boolean
      */
-    static public function isSearchEngineDown()
+    public static function isSearchEngineDown()
     {
         $settings = Administration::getSettings();
         if (!empty($settings->settings['info_fts_down'])) {
@@ -149,7 +192,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
      *
      * @param Boolean $isDown
      */
-    static public function markSearchEngineStatus($isDown = true)
+    public static function markSearchEngineStatus($isDown = true)
     {
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting('info', 'fts_down', $isDown? 1: 0);
@@ -180,5 +223,28 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
         }
 
         return $value;
+    }
+
+    /**
+     * @param SugarBean $bean
+     */
+    public function delete(SugarBean $bean)
+    {
+        $this->deleteFromQueue($bean);
+    }
+
+    /**
+     * Delete record from fts_queue table
+     *
+     * @param SugarBean $bean
+     */
+    protected function deleteFromQueue($bean)
+    {
+        $query = sprintf(
+            "DELETE FROM fts_queue WHERE bean_id = %s AND bean_module = %s",
+            $bean->db->quoted($bean->id),
+            $bean->db->quoted($bean->object_name)
+        );
+        $bean->db->query($query);
     }
 }

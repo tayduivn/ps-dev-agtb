@@ -37,6 +37,10 @@ require_once('modules/SchedulersJobs/SchedulersJob.php');
  */
 abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
 {
+    /**
+     * The name of the queue table
+     */
+    const QUEUE_TABLE = 'fts_queue';
 
     /**
      * @var SchedulersJob
@@ -47,12 +51,6 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
      * @var \SugarSearchEngineAbstractBase
      */
     protected $SSEngine;
-
-
-    /**
-     * The name of the queue table
-     */
-    const QUEUE_TABLE = 'fts_queue';
 
     /**
      * @var The max number of beans we process before starting to bulk insert so we dont hit memory issues.
@@ -137,12 +135,18 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
                 $fieldsFilter[] = $value['name'];
             }
         }
-
         $ftsQuery->select($fieldsFilter);
 
-        $join = $ftsQuery->joinTable($queueTableName)->on();
-        $join->equalsField($queueTableName . '.bean_id', 'id');
-        $join->equals($queueTableName . '.processed', 0);
+        // join fts_queue table
+        $ftsQuery->joinTable($queueTableName)->on()
+            ->equalsField($queueTableName . '.bean_id', 'id');
+
+        // additional fts_queue fields
+        $ftsQueueFields = array(
+            array($queueTableName . '.id', 'fts_id'),
+            array($queueTableName . '.processed', 'fts_processed'),
+        );
+        $ftsQuery->select($ftsQueueFields);
 
         return $ftsQuery->compileSql();
     }
@@ -152,6 +156,7 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
      * Subclasses should implement their own logic.
      *
      * @param $data
+     * @return bool
      */
     public function run($data)
     {
@@ -159,43 +164,37 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
     }
 
     /**
-     * Given a set of bean ids processed from the queue table, mark them as being processed.  We will
-     * throttle the update query as there is a limit on the size of records that can be passed to an in clause yet
-     * we don't want to update them individually for performance reasons.
-     *
-     * @param $beanIDs array of bean ids to delete
+     * Handle removal of processed queue entries
+     * @param array $ftsIDs
      */
-    protected function markBeansProcessed($beanIDs)
+    protected function delFtsProcessed(array $ftsIDs)
     {
         $count = 0;
         $deleteIDs = array();
-        foreach ($beanIDs as $beanID)
-        {
-            $deleteIDs[] = $beanID;
+        foreach ($ftsIDs as $ftsID) {
+            $deleteIDs[] = $ftsID;
             $count++;
-            if($count != 0 && $count % $this->max_bulk_delete_threshold == 0)
-            {
-                $this->setBeanIDsProcessed($deleteIDs);
+            if ($count != 0 && $count % $this->max_bulk_delete_threshold == 0) {
+                $this->delFtsIDs($deleteIDs);
                 $deleteIDs = array();
             }
         }
 
-        if( count($deleteIDs) > 0)
-            $this->setBeanIDsProcessed($deleteIDs);
+        if (count($deleteIDs) > 0) {
+            $this->delFtsIDs($deleteIDs);
+        }
     }
 
     /**
-     * Internal function to mark records within queue table as processed.
-     *
-     * @param $deleteIDs
+     * Remove list of ids from fts_queue table
+     * @param array $deleteIDs
      */
-    private function setBeanIDsProcessed($deleteIDs)
+    private function delFtsIDs($deleteIDs)
     {
         $tableName = self::QUEUE_TABLE;
         $inClause = implode("','", $deleteIDs);
-        $query = "UPDATE $tableName SET processed = 1 WHERE bean_id in ('{$inClause}')";
-        $GLOBALS['log']->debug("MARK BEAN QUERY IS: $query");
+        $query = "DELETE FROM $tableName WHERE id in ('{$inClause}')";
+        $GLOBALS['log']->debug("DELETE BEAN QUERY IS: $query");
         $this->db->query($query);
     }
-
 }

@@ -169,7 +169,7 @@ class AdministrationController extends SugarController
         $port = !empty($_REQUEST['port']) ? $_REQUEST['port'] : '';
         $clearData = !empty($_REQUEST['clearData']) ? true : false;
         $modules = !empty($_REQUEST['modules']) ? explode(",", $_REQUEST['modules']) : array();
-        $scheduleIndex = !empty($_REQUEST['sched']) ? TRUE : FALSE;
+        $scheduleIndex = !empty($_REQUEST['sched']) ? true : false;
 
         // merge current config with new parameters
         $ftsConfig = $this->mergeFtsConfig($type, array('host' => $host, 'port' => $port));
@@ -179,13 +179,14 @@ class AdministrationController extends SugarController
         $this->cfg->saveConfig();
         $this->cfg->config['full_text_engine'] = array($type => $ftsConfig);
         $this->cfg->handleOverride();
-        $scheduled = FALSE;
+        $scheduled = false;
         if($scheduleIndex)
         {
-            require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
-            $indexer = new SugarSearchEngineFullIndexer();
+            SugarAutoLoader::requireWithCustom('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
+            $indexerClass = SugarAutoLoader::customClass('SugarSearchEngineFullIndexer');
+            $indexer = new $indexerClass();
             $indexer->initiateFTSIndexer($modules, $clearData);
-            $scheduled = TRUE;
+            $scheduled = true;
         }
         echo json_encode(array('success' => $scheduled));
     }

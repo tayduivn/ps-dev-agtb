@@ -25,7 +25,6 @@
 
 require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
-require_once('include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php');
 
 // TODO: this one needs to be redone using new boost functionality
 // skipping test for now

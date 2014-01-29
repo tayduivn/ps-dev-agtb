@@ -48,7 +48,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      * @see $sugar_config['search_engine']['force_async_index']
      * @var boolean
      */
-    protected $forceAsyncIndex;
+    protected $forceAsyncIndex = false;
 
     /**
      *
@@ -152,13 +152,20 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function indexBean($bean, $batch = true)
     {
-        if (!$this->isModuleFtsEnabled($bean->module_dir) ) {
+        if (!$this->isModuleFtsEnabled($bean->module_dir)) {
             return;
         }
 
         if (!$batch) {
             if (self::isSearchEngineDown() || $this->forceAsyncIndex) {
-                $this->addRecordsToQueue(array(array('bean_id'=>$bean->id, 'bean_module'=>get_class($bean))));
+                $this->addRecordsToQueue(
+                    array(
+                        array(
+                            'bean_id' => $bean->id,
+                            'bean_module' => $bean->module_dir,
+                        )
+                    )
+                );
                 return;
             }
             $this->indexSingleBean($bean);

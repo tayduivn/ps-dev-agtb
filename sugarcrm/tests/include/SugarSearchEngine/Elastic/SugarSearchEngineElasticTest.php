@@ -47,11 +47,11 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
         if (empty($this->_db)) {
             $this->_db = DBManagerFactory::getInstance();
         }
-        
+
         $this->account = SugarTestAccountUtilities::createAccount();
         $this->contact = SugarTestContactUtilities::createContact();
     }
-    
+
     public function tearDown()
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
@@ -91,9 +91,9 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
         $document = $stub->createIndexDocument($this->bean);
         $data = $document->getData();
         $this->assertEquals($this->bean->assigned_user_id, $data['doc_owner']);
-        
+
     }
-    
+
     public function searchProvider()
     {
         return array(
@@ -102,7 +102,7 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
             array(array('moduleFilter' => array('Contacts'), 'addSearchBoosts' => true)),
         );
     }
-    
+
     /**
      * @dataProvider searchProvider
      */
@@ -125,8 +125,8 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
         $msg = "search() returned NULL, expected SugarSeachEngineElasticResultSet";
         $this->assertNotNull($searchResult, $msg);
     }
-    
-    
+
+
     public function searchFieldOptionsProvider()
     {
         return array(
@@ -135,8 +135,8 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
             array(array('moduleFilter' => array('Administration'), 'addSearchBoosts' => true), true),
         );
     }
-    
-    /** 
+
+    /**
      * @dataProvider searchFieldOptionsProvider
      */
     public function testGetSearchFields($options, $emptyListExpected)
@@ -148,8 +148,8 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
         $emptyState = $emptyListExpected ? 'empty' : 'populated';
         $this->assertEquals($emptyFieldsList, $emptyListExpected, "Expected $emptyState field list for $moduleName.");
     }
-    
-    
+
+
     public function testGetSearchFieldsBoost()
     {
         $stub = new SugarSearchEngineElasticTestStub();
@@ -187,8 +187,8 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
         $ret = SugarSearchEngineFactory::getInstance('Elastic')->isTypeFtsEnabled($type);
         $this->assertEquals($searchable, $ret, 'field type incorrect searchable definition');
     }
-    
-    
+
+
     /**
      * testForceAsyncIndex()
      *
@@ -203,19 +203,22 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
 
         $stub = new SugarSearchEngineElasticTestStub();
         $stub->setForceAsyncIndex(true);
-        
-        // find out how many times this account bean is in fts_queue already.
-        $ftsQueueQuery = "select count(bean_id) as total from fts_queue where bean_id = '{$this->bean->id}'";
-        $ftsCountBefore = $this->_db->getOne($ftsQueueQuery);
-        
+
+        // be sure our queue is empty
+        $this->_db->query("DELETE FROM fts_queue");
+
         // index the bean.
         $stub->indexBean($this->bean, false);
-        
-        // re-check for presence of bean in fts_queue. Should be incremeted by 1.
-        $ftsCountAfter = $this->_db->getOne($ftsQueueQuery);
-        
-        $msg = "Expected Account bean id {$this->bean->id} to be added to fts_queue table";
-        $this->assertEquals($ftsCountBefore, ($ftsCountAfter - 1), $msg);
+
+        // check for presence of bean in fts_queue
+        $sql = sprintf(
+            "SELECT COUNT(id) FROM fts_queue WHERE bean_id = %s",
+            $this->_db->quoted($this->bean->id)
+        );
+        $count = $this->_db->getOne($sql);
+
+        $msg = "Expected bean id {$this->bean->id} to be added to fts_queue table";
+        $this->assertEquals(1, $count, $msg);
     }
 
     public function constructMainFilterDataProvider()
