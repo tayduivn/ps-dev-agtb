@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-global $app_list_strings;// $modInvisList
+global $app_list_strings, $modInvisList;
 
 $sugar_smarty = new Sugar_Smarty();
 
@@ -55,6 +55,10 @@ if(!empty($_REQUEST['record'])){
 	
 }else{
 	$categories = ACLRole::getRoleActions('');
+}
+if (in_array('Project', $modInvisList)) {
+    unset($categories['Project']);
+    unset($categories['ProjectTask']);
 }
 $sugar_smarty->assign('ROLE', $role->toArray());
 $tdwidth = 10;
