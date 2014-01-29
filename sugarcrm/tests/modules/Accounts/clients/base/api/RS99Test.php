@@ -1,5 +1,5 @@
 <?php
-
+//FILE SUGARCRM flav=ent ONLY
 require_once 'modules/Accounts/clients/base/api/AccountsApi.php';
 
 /**

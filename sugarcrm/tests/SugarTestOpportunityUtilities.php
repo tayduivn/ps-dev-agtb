@@ -96,6 +96,7 @@ class SugarTestOpportunityUtilities
         $db->commit();
 
         self::$_createdOpportunities[] = $opportunity;
+        $opportunity->load_relationship('revenuelineitems');
         return $opportunity;
     }
 
