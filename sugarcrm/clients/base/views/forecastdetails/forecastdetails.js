@@ -217,6 +217,13 @@
     },
 
     /**
+     * {@inheritdoc}
+     */
+    initDashlet: function() {
+        this.settings.module = 'Forecasts';
+    },
+
+    /**
      * Checks config show_worksheet_ settings for likely/best/worst and sets the spanCSS
      */
     checkSpanCSS: function() {
@@ -330,6 +337,13 @@
         if (this.currentModule == 'Forecasts') {
             ctx = this.context.parent || this.context;
             this.showTimeperiod = false;
+        } else if (this.currentModule == 'Home') {
+            // listen to the TimePeriod field's model changes to set the dashlet
+            this.settings.on('change:selectedTimePeriod', function(model) {
+                this.updateDetailsForSelectedTimePeriod(model.get('selectedTimePeriod'));
+                // reload dashlet data when the selectedTimePeriod changes
+                this.loadData({});
+            }, this);
         }
 
         ctx.on('change:selectedTimePeriod', function(model) {
@@ -387,18 +401,26 @@
      */
     unbindData: function() {
         var ctx;
-        if(this.currentModule && this.currentModule == 'Forecasts') {
-            ctx = this.context.parent || this.context;
-        } else {
-            ctx = this.model;
+        if (this.currentModule) {
+            if(this.currentModule == 'Forecasts') {
+                ctx = this.context.parent || this.context;
+                if(this.quotaCollection) {
+                    this.quotaCollection.off(null, null, this);
+                }
+            } else {
+                ctx = this.model;
+            }
+
+            if(ctx) {
+                ctx.off(null, null, this);
+            }
+
+            if (this.currentModule == 'Home') {
+                this.settings.off(null, null, this);
+            }
         }
-        if(ctx) {
-            ctx.off(null, null, this);
-        }
-        if(this.currentModule == 'Forecasts' && this.quotaCollection) {
-            this.quotaCollection.off(null, null, this);
-        }
-        app.view.View.prototype.unbindData.call(this);
+
+        this._super('unbindData');
     },
 
     /**
@@ -449,6 +471,7 @@
                 if(this.model) {
                     this.initDataLoaded = true;
                     this.model.set({selectedTimePeriod: o.id}, {silent: true});
+                    this.settings.set({selectedTimePeriod: o.id}, {silent: true});
                     this.loadData();
                 }
             }, this),
@@ -505,7 +528,7 @@
      * {@inheritdoc}
      */
     _render: function() {
-        app.view.View.prototype._render.call(this);
+        this._super('_render');
         this.renderSubDetails();
     },
 
