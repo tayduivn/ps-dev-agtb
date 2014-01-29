@@ -12,50 +12,82 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  ********************************************************************************/
 }}
-<div id="dnb-contact-list-loading" class="block-footer">
-    {{str "LBL_DNB_CNTCT_LOADING"}} ...
-</div>
-<div id="dnb-contact-list">
-    {{#if contacts}}
-        <div class="dnb-show-less">
-            <ul class="unstyled listed">
-                {{#each contacts}}
-                    <li>
-                        <div class='dnb-company-label'>
-                            {{this.JobTitle.[0].JobTitleText.$}}
-                            {{#if this.moreDetails}}
-                                <span class="label label-success pull-right" data-placement="right">{{str "LBL_DNB_PREMIUM"}}</span>
-                            {{/if}}
-                        </div>
-                        <div class="record-label dnb-company-list">
-                            {{#if this.moreDetails}}
-                                <a id="{{this.PrincipalIdentificationNumberDetail.[0].PrincipalIdentificationNumber}}" class="dnb-cnt-prem">
-                                    {{this.ContactName.FullName}}
+<div id="dnb-cntct-srch">
+    <table class="table dnb-cntct-srch-frm">
+        <tr>
+            <td>
+                <div class="dnb-company-label">{{str "LBL_DNB_CONTACT_FNAME"}}</div>
+                <input type="text" id="dnb-fname" class="input-large" value="{{cntctSrchParams.fname}}">
+            </td>
+            <td>
+                <div class="dnb-company-label">{{str "LBL_DNB_CONTACT_LNAME"}}</div>
+                <input type="text" id="dnb-lname" class="input-large" value="{{cntctSrchParams.lname}}">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="dnb-company-label">{{str "LBL_DNB_CONTACT_JOBTITLE"}}</div>
+                <input type="text" id="dnb-job" class="input-large" value="{{cntctSrchParams.jobTitle}}">
+            </td>
+            <td class="btns">
+                <a href="javascript:void(0);" class="btn btn-primary disabled" id="dnb-cntct-srch-btn">
+                    {{str "LBL_DNB_SRCH"}}
+                </a>
+                &nbsp;&nbsp;
+                <a href="javascript:void(0);" class="btn" id="dnb-srch-clear">
+                    {{str "LBL_DNB_CLEAR"}}
+                </a>
+            </td>
+        </tr>
+    </table>
+    <br/>
+    <div id="dnb-contact-list-loading" class="block-footer">
+        {{str "LBL_DNB_CNTCT_LOADING"}} ...
+    </div>
+    <div id="dnb-contact-list">
+        {{#if dnbContactsList.product}}
+            <div class="dnb-show-less">
+                <ul class="unstyled listed dnb-result-list">
+                    {{#each dnbContactsList.product}}
+                        <li>
+                            <div class='dnb-company-label'>
+                                {{#if this.jobTitle}}
+                                    {{this.jobTitle}}
+                                {{else}}
+                                    {{str "LBL_DNB_ASSOCIATE"}}
+                                {{/if}}
+                                {{#eq this.contactType 'dnb-cnt-prem'}}
+                                    <span class="label label-success pull-right" data-placement="right">
+                                        {{str "LBL_DNB_PREMIUM"}}
+                                    </span>
+                                {{/eq}}
+                            </div>
+                            <div class="dnb-company-label dnb-company-list">
+                                <a id="{{this.principalId}}" class="{{this.contactType}}">
+                                    {{this.fullName}}
                                 </a>
-                            {{else}}
-                                <a id="{{this.PrincipalIdentificationNumberDetail.[0].PrincipalIdentificationNumber}}" class="dnb-cnt-std">
-                                    {{this.ContactName.FullName}}
-                                </a>
-                            {{/if}}
-                            {{#if this.isDupe}}
-                                <span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
-                            {{/if}}
-                        </div>
-                    </li>
-                {{/each}}
-            </ul>
-        </div>
-        <div class="dnb-show-more">
-            <a class="showMoreData more">{{str "LBL_DNB_CONTACT_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
-            <a class="showLessData less">{{str "LBL_DNB_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
-        </div>
-    {{else}}
-        <aside class='create-no-data'>
-            {{#if errmsg}}
-                <em>{{errmsg}}</em>
-            {{else}}
-                <em>{{str "LBL_DNB_NO_DATA"}}</em>
-            {{/if}}
-        </aside>
-    {{/if}}
+                                {{#if this.isDupe}}
+                                    <span class="label label-important pull-right" data-placement="right">
+                                        {{str "LBL_DNB_DUPLICATE"}}
+                                    </span>
+                                {{/if}}
+                            </div>
+                        </li>
+                    {{/each}}
+                </ul>
+            </div>
+            <div class="dnb-show-more">
+                <a class="showMoreData">{{str "LBL_DNB_CONTACT_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
+                <a class="showLessData">{{str "LBL_DNB_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
+            </div>
+        {{else}}
+            <aside class='create-no-data'>
+                {{#if dnbContactsList.errmsg}}
+                    <em>{{dnbContactsList.errmsg}}</em>
+                {{else}}
+                    <em>{{str "LBL_DNB_NO_DATA"}}</em>
+                {{/if}}
+            </aside>
+        {{/if}}
+    </div>
 </div>

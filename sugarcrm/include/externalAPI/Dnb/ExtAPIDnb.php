@@ -387,6 +387,47 @@ class ExtAPIDnb extends ExternalAPIBase
     }
 
     /**
+     * Finds Contacts For a Given DUNS Number based on contact name and job title
+     * @param $contactParams array can have the following keys
+     * duns -- DUNS Number -- required
+     * namekw -- Contact Name Key Word -- optional
+     * jobkw -- Job Title Key Word -- optional
+     * either the namekw or the jobkw must be provided
+     * @return array
+     */
+    public function dnbFindContactsPost($contactParams) {
+        $contactQueryString = http_build_query($contactParams);
+        //dnb contacts list
+        $cache_key = 'dnb.contactsearch.' . $contactQueryString;
+        if (!empty($contactParams['KeywordContactText'])) {
+            $contactParams['KeywordContactScopeText'] = 'Title';
+        }
+        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbContactsBALURL . '&' . http_build_query($contactParams);
+        //check if result exists in cache
+        $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
+        // get existing contacts
+        $dnbContactIdArray = array();
+        $path = "FindContactResponse.FindContactResponseDetail.FindCandidate";
+        if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
+            //get the list of contacts from DNB
+            $dnbContactsList = $this->getObjectValue($reply['responseJSON'], $path);
+            //get the list of dnb principal ids from the above list of contacts
+            $dnbPrincipalIdPath = 'PrincipalIdentificationNumberDetail.0.PrincipalIdentificationNumber';
+            $dnbPrincIdArray = $this->underscorePluck($dnbContactsList, $dnbPrincipalIdPath);
+            //get the list of principal ids existing in sugar that match with the above list of principal ids
+            $existingPrincIdArray = json_decode($this->getExistingRecords('dnb_principal_id', 'Contacts', $dnbPrincIdArray), true);
+            if (count($existingPrincIdArray) > 0) {
+                //identify the contacts common in the api response and in the sugar db and mark the dupe
+                $modifiedContactsList = $this->getCommonRecords($dnbContactsList, $existingPrincIdArray, $dnbPrincipalIdPath, 'dnb_principal_id');
+                if ($modifiedCompaniesList && count($modifiedCompaniesList) > 0) {
+                    $reply['responseJSON']['FindContactResponse']['FindContactResponseDetail']['FindCandidate'] = $modifiedContactsList;
+                }
+            }
+        }
+        return $reply['responseJSON'];
+    }
+
+    /**
      * Gets Converts the given Industry Code and Industry Type Code to Hoovers Industry Code (HIC)
      * @param $indMapParams object
      * $indMapParams must contain two keys
