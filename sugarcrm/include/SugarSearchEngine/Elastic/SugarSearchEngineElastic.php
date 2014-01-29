@@ -23,6 +23,7 @@ require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 require_once('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticResultSet.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineHighlighter.php');
+require_once('include/SugarSearchEngine/Elastic/Facets/FacetHandler.php');
 SugarAutoLoader::requireWithCustom('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticMapping.php');
 
 /**
@@ -67,6 +68,13 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     protected $mapper;
 
+    /**
+     *
+     * Facet handler
+     * @var FacetHandler
+     */
+    protected $facetHandler;
+
     public function __construct($params = array())
     {
         $this->_config = $params;
@@ -88,6 +96,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         // Elastic mapping
         $mappingClass = SugarAutoLoader::customClass('SugarSearchEngineElasticMapping');
         $this->mapper = new $mappingClass($this);
+
+        // Facet handler
+        $this->facetHandler = new FacetHandler();
 
         parent::__construct();
     }
@@ -762,10 +773,13 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      * Add facets on elastic query object
      * @param \Elastica\Query $query
      * @param array $options
-     * @param \Elastica\Filter\Bool $mainFilter
+     * @param \Elastica\Filter\AbstractFilter $mainFilter
      */
-    protected function addFacets(\Elastica\Query $query, $options = array(), $mainFilter = null)
-    {
+    protected function addFacets(
+        \Elastica\Query $query,
+        $options = array(),
+        \Elastica\Filter\AbstractFilter $mainFilter = null
+    ) {
         // module facet (note: would be less confusing to give another name instead of _type)
         if (!empty($options['apply_module_facet'])) {
             $typeFacet = new \Elastica\Facet\Terms('_type');
@@ -776,6 +790,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             }
             $query->addFacet($typeFacet);
         }
+
+        // handle secondary facets
+        $this->facetHandler->addFacets($query, $options, $mainFilter);
     }
 
     /**
