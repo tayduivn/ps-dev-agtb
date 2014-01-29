@@ -39,6 +39,7 @@ $viewdefs['Emails']['base']['view']['subpanel-for-queues'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'date_modified',
+          'readonly' => true
         ),
       ),
     ),

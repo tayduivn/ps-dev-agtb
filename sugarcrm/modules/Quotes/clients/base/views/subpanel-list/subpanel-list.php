@@ -40,6 +40,7 @@ $viewdefs['Quotes']['base']['view']['subpanel-list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'name' => 'total_usdollar',
+                    'readonly' => true
                 ),
                 array(
                     'name' => 'date_quote_expected_closed',
@@ -59,4 +60,25 @@ $viewdefs['Quotes']['base']['view']['subpanel-list'] = array(
             ),
         ),
     ),
+    // Disable inline edit for now because of INT-197
+    'rowactions' => array(
+        'actions' => array(
+            array(
+                'type' => 'rowaction',
+                'name' => 'edit_button',
+                'icon' => 'icon-pencil',
+                'label' => 'LBL_EDIT_BUTTON',
+                'acl_action' => 'edit',
+                'allow_bwc' => true,
+                'route' => array(
+                    'action' => 'edit'
+                )
+            ),
+            array(
+                'type' => 'unlink-action',
+                'icon' => 'icon-trash',
+                'label' => 'LBL_UNLINK_BUTTON',
+            ),
+        )
+    )
 );

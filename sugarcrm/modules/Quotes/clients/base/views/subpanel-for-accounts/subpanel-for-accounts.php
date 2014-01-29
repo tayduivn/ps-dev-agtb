@@ -32,6 +32,7 @@ $viewdefs['Quotes']['base']['view']['subpanel-for-accounts'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'total_usdollar',
+          'readonly' => true
         ),
         array(
           'name' => 'date_quote_expected_closed',

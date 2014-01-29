@@ -37,12 +37,14 @@ $viewdefs['Emails']['base']['view']['subpanel-for-contacts'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'date_entered',
+          'readonly' => true
         ),
         array(
           'label' => 'LBL_DATE_MODIFIED',
           'enabled' => true,
           'default' => true,
           'name' => 'date_modified',
+          'readonly' => true
         ),
         array(
           'name' => 'assigned_user_name',
