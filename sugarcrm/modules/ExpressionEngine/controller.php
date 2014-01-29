@@ -127,16 +127,40 @@ class ExpressionEngineController extends SugarController
      * Used by the dependency manager to pre-load all the related fields required
      * to load an entire view.
      */
-    function action_getRelatedValues(){
+    public function action_getRelatedValues()
+    {
+        /** @var LoggerManager */
+        global $log;
+
+        $ret = array();
+
         if (empty($_REQUEST['tmodule']) || empty($_REQUEST['fields']))
             return;
+
         $fields = json_decode(html_entity_decode($_REQUEST['fields']), true);
+        if (!is_array($fields)) {
+            $log->fatal('"fields" is not a valid JSON string');
+            $this->display($ret);
+            return;
+        }
+
         $module = $_REQUEST['tmodule'];
         $id = empty($_REQUEST['record_id']) ? null : $_REQUEST['record_id'];
-        $focus = BeanFactory::getBean($module, $id);
-        $ret = array();
+        $focus = BeanFactory::retrieveBean($module, $id);
+
+        if (!$focus) {
+            $log->fatal('Unable to load bean');
+            $this->display($ret);
+            return;
+        }
+
         foreach($fields as $rfDef)
         {
+            if (!isset($rfDef['link'], $rfDef['type'])) {
+                $log->fatal('At least one of "link" and "type" attributes is not specified');
+                continue;
+            }
+
             $link = $rfDef['link'];
             $type = $rfDef['type'];
             if (!isset($ret[$link]))
@@ -147,6 +171,11 @@ class ExpressionEngineController extends SugarController
             switch($type){
                 //The Related function is used for pulling a sing field from a related record
                 case "related":
+                    if (!isset($rfDef['relate'])) {
+                        $log->fatal('"relate" attribute of related expression is not specified');
+                        break;
+                    }
+
                     //Default it to a blank value
                     $ret[$link]['related'][$rfDef['relate']] = "";
 
@@ -197,6 +226,11 @@ class ExpressionEngineController extends SugarController
                 case "rollupMin":
                 case "rollupMax":
                 //If we are going to calculate one rollup, calculate all the rollups since there is so little cost
+                if (!isset($rfDef['relate'])) {
+                    $log->fatal('"relate" attribute of rollup expression is not specified');
+                    break;
+                }
+
                 $rField = $rfDef['relate'];
                 if(!empty($id) && $focus->load_relationship($link))
                 {
@@ -244,8 +278,18 @@ class ExpressionEngineController extends SugarController
                 break;
             }
         }
-        echo json_encode($ret);
-        $this->view = "";
+
+        $this->display($ret);
+    }
+
+    /**
+     * Displays result and disables further rendering
+     *
+     * @param mixed $result
+     */
+    protected function display($result)
+    {
+        $this->view = '';
+        echo json_encode($result);
     }
 }
-?>
