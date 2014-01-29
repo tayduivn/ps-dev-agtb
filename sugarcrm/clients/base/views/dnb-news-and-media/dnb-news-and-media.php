@@ -29,6 +29,25 @@ $viewdefs['base']['view']['dnb-news-and-media'] = array(
     'custom_toolbar' => array(
         'buttons' => array(
             array(
+                'dropdown_buttons' => array(
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'editClicked',
+                        'label' => 'LBL_DASHLET_CONFIG_EDIT_LABEL',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'refreshClicked',
+                        'label' => 'LBL_DASHLET_REFRESH_LABEL',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'removeClicked',
+                        'label' => 'LBL_DASHLET_REMOVE_LABEL',
+                    ),
+                )
+            ),
+            array(
                 "type" => "dashletaction",
                 "css_class" => "dashlet-toggle btn btn-invisible minify",
                 "icon" => "icon-chevron-down",
