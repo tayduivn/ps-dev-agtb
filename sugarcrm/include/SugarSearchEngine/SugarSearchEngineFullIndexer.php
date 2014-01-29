@@ -99,7 +99,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         }
 
         //Create the index on the server side
-        $this->SSEngine->createIndex($deleteExistingData);
+        $this->SSEngine->createIndex($deleteExistingData, $modules);
 
         //Clear the existing queue
         $this->clearFTSIndexQueue();

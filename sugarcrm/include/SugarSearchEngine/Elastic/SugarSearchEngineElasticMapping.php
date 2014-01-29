@@ -161,18 +161,19 @@ class SugarSearchEngineElasticMapping
 
         if (is_array($properties) && count($properties) > 0)
         {
-            $index = new \Elastica\Index($this->sse->getClient(), $this->sse->getIndexName());
-            $type = new \Elastica\Type($index, $module);
-            $mapping = new \Elastica\Type\Mapping($type, $properties);
-            $mapping->setProperties($properties);
-            try
-            {
-                $mapping->send();
-            }
-            catch (\Elastica\Exception\ResponseException $e)
-            {
-                $GLOBALS['log']->fatal("elastic response exception when creating mapping, message= " . $e->getMessage());
-                return false;
+            $indexList = $this->sse->getAllIndexes($module);
+            foreach ($indexList as $indexName) {
+                $index = new \Elastica\Index($this->sse->getClient(), $indexName);
+                $GLOBALS['log']->debug("elastic field mapping module=$module, index=$indexName");
+                $type = new \Elastica\Type($index, $module);
+                $mapping = new \Elastica\Type\Mapping($type, $properties);
+                $mapping->setProperties($properties);
+                try {
+                    $mapping->send();
+                } catch (\Elastica\Exception\ResponseException $e) {
+                    $GLOBALS['log']->fatal("Elastic exception when creating mapping, message= " . $e->getMessage());
+                    return false;
+                }
             }
         }
 
@@ -225,7 +226,7 @@ class SugarSearchEngineElasticMapping
 
         return $properties;
     }
-    
+
     /**
      *
      * This function creates a full mapping for all modules.

@@ -24,6 +24,7 @@ require_once('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticResultSe
 require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineHighlighter.php');
 require_once('include/SugarSearchEngine/Elastic/Facets/FacetHandler.php');
+require_once('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticIndexStrategyFactory.php');
 SugarAutoLoader::requireWithCustom('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticMapping.php');
 
 /**
@@ -33,7 +34,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 {
     private $_config = array();
     private $_client = null;
-    private $_indexName = "";
 
     const DEFAULT_INDEX_TYPE = 'SugarBean';
     const WILDCARD_CHAR = '*';
@@ -75,23 +75,39 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     protected $facetHandler;
 
+    /**
+     *
+     * Index strategy for reading and writing per module
+     * Defaults to using unique_key if not set
+     *
+     * @see $sugar_config['search_engine']['index_strategy_settings']
+     * @see $sugar_config['search_engine']['unique_key']
+     * @var string
+     */
+    protected $indexStrategySettings;
+
+    /**
+     *
+     * Index strategy object
+     *
+     * @var SugarSearchEngineIndexStrategy
+     */
+    protected $indexStrategy;
+
     public function __construct($params = array())
     {
+        // Setup Elastica Client object
         $this->_config = $params;
-        if (!empty($GLOBALS['sugar_config']['unique_key'])) {
-            $this->_indexName = strtolower($GLOBALS['sugar_config']['unique_key']);
-        } else {
-            //Fix a notice error during install when we verify the Elastic Search settings
-            $this->_indexName = '';
-        }
-        $this->forceAsyncIndex = SugarConfig::getInstance()->get('search_engine.force_async_index', false);
-
-        //Elastica client uses own auto-load schema similar to ZF.
-        SugarAutoLoader::addPrefixDirectory('Elastica', 'vendor/');
         if (empty($this->_config['timeout'])) {
             $this->_config['timeout'] = 15;
         }
         $this->setClient(new \Elastica\Client($this->_config));
+
+        // Setup index strategy
+        $this->indexStrategy = SugarSearchEngineElasticIndexStrategyFactory::getinstance();
+
+        // Asynchronous indexing through fts_queue table
+        $this->forceAsyncIndex = SugarConfig::getInstance()->get('search_engine.force_async_index', false);
 
         // Elastic mapping
         $mappingClass = SugarAutoLoader::customClass('SugarSearchEngineElasticMapping');
@@ -247,7 +263,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     {
         $this->logger->info("Preforming single bean index");
         try {
-            $index = new \Elastica\Index($this->_client, $this->_indexName);
+            $indexName = $this->getWriteIndexForBean($bean);
+            $this->logger->debug("Writing bean {$bean->id} to index $indexName");
+
+            $index = new \Elastica\Index($this->_client, $indexName);
             $type = new \Elastica\Type($index, $this->getIndexType($bean));
             $doc = $this->createIndexDocument($bean);
             if ($doc != null) {
@@ -277,8 +296,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
 
         try {
-            $this->logger->info("Going to delete {$bean->id}");
-            $index = new \Elastica\Index($this->_client, $this->_indexName);
+            $indexName = $this->getWriteIndexForBean($bean);
+            $this->logger->debug("Going to delete {$bean->id} on index $indexName");
+
+            $index = new \Elastica\Index($this->_client, $indexName);
             $type = new \Elastica\Type($index, $this->getIndexType($bean));
             $type->deleteById($bean->id);
         } catch (Exception $e) {
@@ -300,12 +321,14 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
 
         try {
-            $index = new \Elastica\Index($this->_client, $this->_indexName);
             $batchedDocs = array();
             $x = 0;
             foreach ($docs as $singleDoc) {
+                $indexName = $this->getWriteIndexForElasticaDocument($singleDoc);
+                $singleDoc->setIndex($indexName);
+
                 if ($x != 0 && $x % $this->max_bulk_doc_threshold == 0) {
-                    $index->addDocuments($batchedDocs);
+                    $this->_client->addDocuments($batchedDocs);
                     $batchedDocs = array();
                 } else {
                     $batchedDocs[] = $singleDoc;
@@ -316,7 +339,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
             //Commit the stragglers
             if (count($batchedDocs) > 0) {
-                $index->addDocuments($batchedDocs);
+                $this->_client->addDocuments($batchedDocs);
             }
         } catch (Exception $e) {
             $this->reportException("Error performing bulk update operation", $e);
@@ -718,9 +741,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 }
             }
             $s = new \Elastica\Search($this->_client);
-            //Only search across our index.
-            $index = new \Elastica\Index($this->_client, $this->_indexName);
-            $s->addIndex($index);
 
             $finalTypes = array();
             if (!empty($options['moduleFilter'])) {
@@ -735,6 +755,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 }
             }
 
+            $s->addIndices($this->getReadIndices($finalTypes));
 
             // main filter
             $mainFilter = $this->constructMainFilter($finalTypes, $options);
@@ -799,29 +820,21 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      * Create the index and mapping.
      *
      * @param boolean $recreate OPTIONAL Deletes index first if already exists (default = false)
+     * @param array   $modules  OPTIONAL list of modules to create an index for
      *
      */
-    public function createIndex($recreate = false)
+    public function createIndex($recreate = false, $modules = array())
     {
         if (self::isSearchEngineDown()) {
             return;
         }
 
         try {
-            // create an elastic index
-            $index = new \Elastica\Index($this->_client, $this->_indexName);
-            $index->create(array(), $recreate);
-
-             // create field mappings
-            $this->mapper->setFullMapping();
+            $this->indexStrategy->createIndex($this->_client, $modules, $this->mapper, $this->_config, $recreate);
         } catch (Exception $e) {
-            // ignore the IndexAlreadyExistsException exception
-            if (strpos($e->getMessage(), 'IndexAlreadyExistsException') === false) {
-                $this->reportException("Unable to create index", $e);
-                $this->checkException($e);
-            }
+            $this->reportException("Unable to create index", $e);
+            $this->checkException($e);
         }
-
     }
 
     /**
@@ -854,15 +867,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     }
 
     /**
-     * Get the name of the index
-     * @return string
-     */
-    public function getIndexName()
-    {
-        return $this->_indexName;
-    }
-
-    /**
      * this defines the field types that can be enabled for full text search
      * @var array
      */
@@ -881,4 +885,65 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         return in_array($type, self::$ftsEnabledFieldTypes);
     }
 
+    /**
+     * @param array $modules
+     * @return mixed
+     */
+    protected function getReadIndices($modules = array())
+    {
+        return $this->indexStrategy->getReadIndices($this->_client, $modules);
+    }
+
+    /**
+     * Get the name of the index for reading
+     *
+     * @param arary $module array of module names for reading (optional)
+     * @return string
+     */
+    public function getReadIndexName($moduleNames = array())
+    {
+        return $this->indexStrategy->getReadIndexName($moduleNames);
+    }
+
+    /**
+     * Get the name of the index for writing
+     *
+     * @param string $module name of the module for writing (optional)
+     * @return string
+     */
+    public function getWriteIndexName($params = array())
+    {
+        return $this->indexStrategy->getWriteIndexName($params);
+    }
+
+    /**
+     * Get the name of the index for writing
+     *
+     * @param string $module name of the module for writing (optional)
+     * @return string
+     */
+    public function getAllIndexes($moduleName = '')
+    {
+        return $this->indexStrategy->getAllIndexes($moduleName);
+    }
+
+    /**
+     * Returns the Elastic module index name for a bean
+     * @param SugarBean $bean
+     * @returns string module name
+     */
+    public function getWriteIndexForBean($bean)
+    {
+        return $this->indexStrategy->getWriteIndexName(array('context' => $bean));
+    }
+
+    /**
+     * Returns the Elastic module index name for an elastic document ready to be indexed
+     * @param Elastica_Document $doc
+     * @returns string module name
+     */
+    public function getWriteIndexForElasticaDocument($doc)
+    {
+        return $this->indexStrategy->getWriteIndexName(array('context' => $doc));
+    }
 }
