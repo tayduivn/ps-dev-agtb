@@ -59,6 +59,7 @@ $viewdefs['Notifications']['base']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'is_read',
+                    'type' => 'read',
                     'default' => true,
                     'enabled' => true,
                 ),

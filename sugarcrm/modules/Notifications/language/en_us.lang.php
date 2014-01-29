@@ -50,4 +50,6 @@ $mod_strings = array(
     'LBL_LIST_RELATED_TO' => 'Related to',
     'LBL_PARENT_TYPE' => 'Parent Type',
     'LBL_PARENT_ID' => 'Parent ID',
+    'LBL_READ' => 'Read',
+    'LBL_UNREAD' => 'Unread',
 );

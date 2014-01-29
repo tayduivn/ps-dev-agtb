@@ -79,6 +79,10 @@
         limit: 4
     },
 
+    events: {
+        'click [data-action=is-read-handler]': 'isReadHandler'
+    },
+
     /**
      * {@inheritDoc}
      */
@@ -101,6 +105,9 @@
         this._initCollection();
         this._initReminders();
         this.startPulling();
+
+        this.collection.on('change:is_read', this.render, this);
+
         return this;
     },
 
@@ -137,10 +144,15 @@
             fields: [
                 'date_entered',
                 'id',
+                'is_read',
                 'name',
                 'severity'
             ]
         };
+
+        this.collection.filterDef = [{
+            is_read: {$equals: false}
+        }];
 
         this.collection.sync = _.wrap(
             this.collection.sync,
@@ -374,6 +386,29 @@
      */
     isOpen: function() {
         return this.$('[data-name=notifications-list-button]').hasClass('open');
+    },
+
+    /**
+     * Event handler for notifications.
+     *
+     * Whenever the user clicks a notification, its `is_read` property is
+     * defined as read.
+     *
+     * We're doing this instead of a plain save in order to
+     * prevent the case where an error could occur before the notification get
+     * rendered, thus making it as read when the user didn't actually see it.
+     *
+     * @param {Event} event Click event.
+     */
+    isReadHandler: function(event) {
+        var element = $(event.currentTarget),
+            id = element.data('id'),
+            notification = this.collection.get(id),
+            isRead = notification.get('is_read');
+
+        if (!isRead) {
+            notification.set({is_read: true});
+        }
     },
 
     /**

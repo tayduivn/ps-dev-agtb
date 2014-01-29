@@ -58,6 +58,7 @@ describe('Notifications', function() {
                 fields: [
                     'date_entered',
                     'id',
+                    'is_read',
                     'name',
                     'severity'
                 ]
@@ -115,6 +116,7 @@ describe('Notifications', function() {
                 fields: [
                     'date_entered',
                     'id',
+                    'is_read',
                     'name',
                     'severity'
                 ]

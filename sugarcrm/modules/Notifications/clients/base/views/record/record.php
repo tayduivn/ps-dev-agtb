@@ -40,6 +40,12 @@ $viewdefs['Notifications']['base']['view']['record'] = array(
                 array(
                     'name' => 'name',
                 ),
+                array(
+                    'name' => 'is_read',
+                    'type' => 'read',
+                    'dismiss_label' => true,
+                    'mark_as_read' => true,
+                ),
             ),
         ),
         array(
@@ -54,13 +60,10 @@ $viewdefs['Notifications']['base']['view']['record'] = array(
                     'span' => 12,
                 ),
                 array(
-                    'name' => 'is_read',
+                    'name' => 'parent_name',
                 ),
                 array(
                     'name' => 'assigned_user_name',
-                ),
-                array(
-                    'name' => 'parent_name',
                 ),
             ),
         ),

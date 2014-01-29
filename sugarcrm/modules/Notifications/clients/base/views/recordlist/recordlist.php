@@ -40,13 +40,6 @@ $viewdefs['Notifications']['base']['view']['recordlist'] = array(
                 'icon' => 'icon-eye-open',
                 'acl_action' => 'view',
             ),
-            array(
-                'type' => 'rowaction',
-                'name' => 'edit_button',
-                'label' => 'LBL_EDIT_BUTTON',
-                'event' => 'list:editrow:fire',
-                'acl_action' => 'edit',
-            ),
         ),
     ),
     'last_state' => array(

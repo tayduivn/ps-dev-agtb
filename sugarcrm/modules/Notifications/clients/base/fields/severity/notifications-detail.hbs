@@ -14,5 +14,7 @@
 }}
 {{! FIXME: replace this by the hbs plugin provided by SC-1170}}
 {{#eachOptions items}}
-    {{#eq this.key ../value}}<span class="label {{../../severityCss}} ellipsis_inline">{{this.value}}</span>{{/eq}}
+    {{#eq this.key ../value}}
+        <span class="label{{#unless ../../this.model.attributes.is_read}} {{../../../severityCss}}{{/unless}}">{{this.value}}</span>
+    {{/eq}}
 {{/eachOptions}}

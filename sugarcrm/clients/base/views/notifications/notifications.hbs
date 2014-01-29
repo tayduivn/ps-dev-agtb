@@ -26,8 +26,10 @@
             <div class="dropdown-menu scroll pull-right">
                 <ul role="menu">
                     {{#each this.collection.models}}
-                        <li><a class="row-fluid"
-                               href="#{{buildRoute model=this action="detail"}}"><span
+                        <li{{#if this.attributes.is_read}} class="read"{{/if}}><a class="row-fluid"
+                               href="#{{buildRoute model=this action="detail"}}"
+                               data-id="{{this.attributes.id}}"
+                               data-action="is-read-handler"><span
                                 class="span8 ellipsis_inline"
                                 title="{{this.attributes.name}}"
                                 data-placement="bottom">

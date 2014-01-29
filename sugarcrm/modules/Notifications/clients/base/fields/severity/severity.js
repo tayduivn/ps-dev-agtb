@@ -28,11 +28,54 @@
      */
     _styleMapping: {
         'default': '',
-        alert: 'label-important ',
-        information: 'label-info ',
-        other: 'label-inverse ',
-        success: 'label-success ',
-        warning: 'label-warning '
+        alert: 'label-important',
+        information: 'label-info',
+        other: 'label-inverse',
+        success: 'label-success',
+        warning: 'label-warning'
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Listen to changes on `is_read` field only if view name matches
+     * notifications.
+     */
+    bindDataChange: function() {
+        this._super('bindDataChange');
+
+        if (this.model && this.view.name === 'notifications') {
+            this.model.on('change:is_read', this.render, this);
+        }
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Inject additional logic to load templates based on different view names
+     * according to the following:
+     *
+     * - `fields/severity/<view-name>-<tpl-name>.hbs`
+     * - `fields/severity/<view-template-name>-<tpl-name>.hbs`
+     */
+    _loadTemplate: function() {
+        this._super('_loadTemplate');
+
+        var template = app.template.getField(
+            this.type,
+            this.view.name + '-' + this.tplName,
+            this.model.module
+        );
+
+        if (!template && this.view.meta && this.view.meta.template) {
+            template = app.template.getField(
+                this.type,
+                this.view.meta.template + '-' + this.tplName,
+                this.model.module
+            );
+        }
+
+        this.template = template || this.template;
     },
 
     /**
@@ -43,7 +86,6 @@
     _render: function () {
         var severity = this.model.get(this.name);
         this.severityCss = this._styleMapping[severity] || this._styleMapping.default;
-        this.severityCss += 'label ellipsis_inline';
         this._super('_render');
     }
 })
