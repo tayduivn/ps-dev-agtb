@@ -22,7 +22,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['Notes']['portal']['view']['record'] = array(
     'panels' => array(
         array(
-            'label' => 'Details',
+            'name' => 'panel_body',
+            'label' => 'LBL_RECORD_BODY',
             'fields' => array(
                 array(
                     'name'          => 'picture',

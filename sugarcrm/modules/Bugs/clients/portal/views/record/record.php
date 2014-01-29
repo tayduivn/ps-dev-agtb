@@ -39,7 +39,7 @@ $viewdefs['Bugs']['portal']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_body',
-            'label' => 'LBL_PANEL_BODY',
+            'label' => 'LBL_RECORD_BODY',
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
