@@ -29,7 +29,7 @@
 <ul class="nav megamenu" id="userList">
     <li class="dropdown" id="userActions">
         <div class="btn-group">
-            <a data-toggle="dropdown" href="javascript:void(0)" role="button" class="btn btn-invisible btn-link dropdown-toggle" rel="tooltip" data-placement="bottom" title="{{userName}}" track="click:userActions">
+            <a id="userTab" data-toggle="dropdown" href="javascript:void(0)" role="button" class="btn btn-invisible btn-link dropdown-toggle" rel="tooltip" data-placement="bottom" title="{{userName}}" track="click:userActions">
                 {{#if pictureUrl}}
                     <img src="{{pictureUrl}}" alt="{{userName}}" class="avatar">
                 {{else}}
@@ -38,10 +38,26 @@
                 <i class="icon-caret-down"></i>
             </a>
             <div class="dropdown-menu scroll pull-right">
-                <ul role="menu">
+                <ul role="menu" id="fullmenu">
                     {{#each menulist}}
-                        {{#if css_class}}<li class="{{css_class}}">{{else}}<li>{{/if}}<a href="{{route}}" {{#if openwindow}}target="_blank"{{/if}} track="click:userAction-{{label}}">
-                            {{#if img_url}}<img src="{{img_url}}" alt="{{../../userName}}" class="avatar">{{else}}<i class="{{icon}}"></i>{{/if}}{{str label}}</a>
+                        {{#if css_class}}<li class="{{css_class}}">{{else}}<li>{{/if}}<a href="{{route}}" {{#unless submenu}}{{#if openwindow}}target="_blank"{{/if}}{{/unless}} track="click:userAction-{{label}}">
+                            {{#if img_url}}<img src="{{img_url}}" alt="{{../../userName}}" class="avatar">{{else}}{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{/if}}{{str label}}</a>
+                            {{#if submenu}}
+                            <button href="javascript:void(0)" data-action="link" class="btn btn-invisible dropdown-submenu">
+                                <i class="icon-caret-down"></i>
+                            </button>
+                            {{/if}}
+                            {{#if submenu.length}}
+                                <ul class="dropdown-inset">
+                                    {{#each submenu}}
+                                        <li {{#if css_class}}class="{{css_class}}"{{/if}}>
+                                        <a href="{{route}}" {{#if openwindow}}target="_blank"{{/if}}>
+                                            {{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label}}
+                                        </a>
+                                    </li>
+                                    {{/each}}
+                                </ul>
+                            {{/if}}
                         </li>
                     {{/each}}
                 </ul>
