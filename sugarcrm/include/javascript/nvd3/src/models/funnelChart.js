@@ -45,7 +45,7 @@ nv.models.funnelChart = function () {
         var left = e.pos[0]
             , top = e.pos[1]
             , x = xVal
-            , y = e.point.value
+            , y = e.point.label
             , content = tooltipContent(e.series.key, x, y, e, chart);
         tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
     };
