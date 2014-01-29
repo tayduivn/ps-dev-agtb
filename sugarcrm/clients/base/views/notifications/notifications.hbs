@@ -29,16 +29,14 @@
                         <li{{#if this.attributes.is_read}} class="read"{{/if}}><a class="row-fluid"
                                href="#{{buildRoute model=this action="detail"}}"
                                data-id="{{this.attributes.id}}"
-                               data-action="is-read-handler">
-                                <span
+                               data-action="is-read-handler"><span
                                 class="span8 ellipsis_inline"
                                 title="{{this.attributes.name}}"
                                 data-placement="bottom">
-                                    {{#with ../this.meta.fields.severity}}
-                                        {{field ../../this model=../this template="detail"}}
-                                    {{/with}}
-                                    <span class="title">{{this.attributes.name}}</span>
-                               </span>
+                            {{#with ../this.meta.fields.severity}}
+                                {{field ../../this model=../this template="detail"}}
+                            {{/with}}
+                            {{this.attributes.name}}</span>
                             <time class="span4 pull-right">{{timeago this.attributes.date_entered "{{relativetime}}"}}</time>
                         </a></li>
                     {{/each}}
