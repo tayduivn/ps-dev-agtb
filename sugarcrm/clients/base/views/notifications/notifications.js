@@ -134,7 +134,12 @@
             },
             limit: this.limit,
             myItems: true,
-            fields: ['date_entered', 'id', 'name', 'severity']
+            fields: [
+                'date_entered',
+                'id',
+                'name',
+                'severity'
+            ]
         };
 
         this.collection.sync = _.wrap(

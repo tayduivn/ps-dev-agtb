@@ -55,7 +55,12 @@ describe('Notifications', function() {
                 },
                 limit: view.limit,
                 myItems: true,
-                fields: ['date_entered', 'id', 'name', 'severity']
+                fields: [
+                    'date_entered',
+                    'id',
+                    'name',
+                    'severity'
+                ]
             });
         });
     });
@@ -107,7 +112,12 @@ describe('Notifications', function() {
                 },
                 limit: view.limit,
                 myItems: true,
-                fields: ['date_entered', 'id', 'name', 'severity']
+                fields: [
+                    'date_entered',
+                    'id',
+                    'name',
+                    'severity'
+                ]
             });
         });
     });

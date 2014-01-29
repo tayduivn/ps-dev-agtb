@@ -59,6 +59,9 @@ $viewdefs['Notifications']['base']['view']['record'] = array(
                 array(
                     'name' => 'assigned_user_name',
                 ),
+                array(
+                    'name' => 'parent_name',
+                ),
             ),
         ),
         array(

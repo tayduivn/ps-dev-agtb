@@ -47,4 +47,7 @@ $mod_strings = array(
     'LBL_IS_READ' => 'Status',
     'LBL_SEVERITY' => 'Severity',
     'LBL_SHOW_NOTIFICATIONS' => 'View Notifications',
+    'LBL_LIST_RELATED_TO' => 'Related to',
+    'LBL_PARENT_TYPE' => 'Parent Type',
+    'LBL_PARENT_ID' => 'Parent ID',
 );

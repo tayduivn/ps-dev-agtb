@@ -32,6 +32,15 @@ $viewdefs['Notifications']['base']['view']['list'] = array(
                     'enabled' => true,
                     'link' => true,
                 ),
+                array(
+                    'name' => 'parent_name',
+                    'label' => 'LBL_LIST_RELATED_TO',
+                    'id' => 'PARENT_ID',
+                    'link' => true,
+                    'default' => true,
+                    'enabled' => true,
+                    'sortable' => false,
+                ),
                 array (
                     'name' => 'assigned_user_name',
                     'sortable' => false,
