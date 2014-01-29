@@ -22,9 +22,9 @@ class MailRecord
 {
     static private $statuses = array(
         // Initial Status -  "Create" or "Update"
-        "draft",     // draft
+        "draft", // draft
         "scheduled", // scheduled for future date time
-        "ready",     // ready to be sent
+        "ready", // ready to be sent
 
         // Intermediate 'In-Progess' Status
         "sending", // transient status
@@ -37,7 +37,7 @@ class MailRecord
     const ATTACHMENT_TYPE_DOCUMENT = 'document';
     const ATTACHMENT_TYPE_TEMPLATE = 'template';
 
-    public $mockEmailBean=null;  // For Testing Purposes Only
+    public $mockEmailBean = null; // For Testing Purposes Only
 
     public $mailConfig;
     public $fromAddress;
@@ -51,8 +51,11 @@ class MailRecord
     public $html_body;
     public $text_body;
     public $date_sent;
+    public $assigned_user_id;
 
-    function __construct() {}
+    function __construct()
+    {
+    }
 
     /**
      * Saves the email as a draft.
@@ -77,21 +80,20 @@ class MailRecord
     /**
      * Archive this mail record.
      *
-     * @param $parentId
-     * @param $parentType
      * @return array
      * @throws MailerException
      */
-    public function archive($parentId, $parentType)
+    public function archive()
     {
+        global $current_user;
         if (!empty($this->mockEmailBean)) {
             $email = $this->mockEmailBean; // Testing purposes only
         } else {
             $email = new Email();
         }
 
-        $to  = $this->addRecipients($this->toAddresses);
-        $cc  = $this->addRecipients($this->ccAddresses);
+        $to = $this->addRecipients($this->toAddresses);
+        $cc = $this->addRecipients($this->ccAddresses);
         $bcc = $this->addRecipients($this->bccAddresses);
 
         $email->name = $this->subject;
@@ -102,16 +104,23 @@ class MailRecord
         $email->from_addr = $email->from_addr_name = $this->fromAddress;
         $email->description = $this->text_body;
         $email->description_html = $this->html_body;
-        $email->parent_id = $parentId;
-        $email->parent_type = $parentType;
         $email->date_sent = $this->date_sent;
+        if (is_array($this->related) && !empty($this->related["type"]) && !empty($this->related["id"])) {
+            $email->parent_type = $this->related["type"];
+            $email->parent_id = $this->related["id"];
+        }
+        if (empty($this->assigned_user_id)) {
+            $email->assigned_user_id = $current_user->id;
+        } else {
+            $email->assigned_user_id = $this->assigned_user_id;
+        }
 
         $attachments = $this->splitAttachments($this->attachments);
 
-        $request  = $this->setupSendRequest($email->status, $email->from_addr, $to, $cc, $bcc, $attachments);
+        $request = $this->setupSendRequest($email->status, $email->from_addr, $to, $cc, $bcc, $attachments);
         $_REQUEST = array_merge($_REQUEST, $request);
 
-        $errorData  = null;
+        $errorData = null;
 
         try {
             $email->save();
@@ -123,14 +132,15 @@ class MailRecord
                 $e = new MailerException($e->getMessage());
             }
             if (empty($errorData)) {
-                $GLOBALS["log"]->error("Message: ".$e->getLogMessage());
+                $GLOBALS["log"]->error("Message: " . $e->getLogMessage());
             } else {
-                $GLOBALS["log"]->error("Message: ".$e->getLogMessage()."  Data: ".$errorData);
+                $GLOBALS["log"]->error("Message: " . $e->getLogMessage() . "  Data: " . $errorData);
             }
 
             throw $e;
         }
     }
+
     /**
      * Prepares and executes the email request according to the expectations of the status.
      *
@@ -153,21 +163,21 @@ class MailRecord
             $fromAccount = $this->mailConfig;
         }
 
-        $to  = $this->addRecipients($this->toAddresses);
-        $cc  = $this->addRecipients($this->ccAddresses);
+        $to = $this->addRecipients($this->toAddresses);
+        $cc = $this->addRecipients($this->ccAddresses);
         $bcc = $this->addRecipients($this->bccAddresses);
 
         $attachments = $this->splitAttachments($this->attachments);
 
-        $request  = $this->setupSendRequest($status, $fromAccount, $to, $cc, $bcc, $attachments);
+        $request = $this->setupSendRequest($status, $fromAccount, $to, $cc, $bcc, $attachments);
         $_REQUEST = array_merge($_REQUEST, $request);
 
-        $errorData  = null;
+        $errorData = null;
 
         try {
             $this->startCapturingOutput();
             $email->email2Send($request);
-            $errorData  = $this->endCapturingOutput();
+            $errorData = $this->endCapturingOutput();
 
             if (strlen($errorData) > 0) {
                 throw new MailerException('Email2Send returning unexpected output: ' . $errorData);
@@ -184,9 +194,9 @@ class MailRecord
                 $e = new MailerException($e->getMessage());
             }
             if (empty($errorData)) {
-                $GLOBALS["log"]->error("Message: ".$e->getLogMessage());
+                $GLOBALS["log"]->error("Message: " . $e->getLogMessage());
             } else {
-                $GLOBALS["log"]->error("Message: ".$e->getLogMessage()."  Data: ".$errorData);
+                $GLOBALS["log"]->error("Message: " . $e->getLogMessage() . "  Data: " . $errorData);
             }
 
             throw $e;
@@ -213,18 +223,18 @@ class MailRecord
         $attachments = array()
     ) {
         $request = array(
-            "fromAccount"     => $from,
-            "sendSubject"     => $this->subject,
-            "sendTo"          => $to,
-            "sendCc"          => $cc,
-            "sendBcc"         => $bcc,
-            "saveToSugar"     => "1",
+            "fromAccount" => $from,
+            "sendSubject" => $this->subject,
+            "sendTo" => $to,
+            "sendCc" => $cc,
+            "sendBcc" => $bcc,
+            "saveToSugar" => "1",
             "sendDescription" => "", // defaulted to an empty string
         );
 
         if (!empty($this->html_body)) {
             $request["sendDescription"] = urldecode($this->html_body);
-            $request["setEditor"]       = "1";
+            $request["setEditor"] = "1";
         } elseif (!empty($this->text_body)) {
             $request["sendDescription"] = urldecode($this->text_body);
         }
@@ -241,12 +251,12 @@ class MailRecord
 
         if (is_array($this->related) && !empty($this->related["type"]) && !empty($this->related["id"])) {
             $request["parent_type"] = $this->related["type"];
-            $request["parent_id"]   = $this->related["id"];
+            $request["parent_id"] = $this->related["id"];
         }
 
         if (is_array($this->teams) && !empty($this->teams["primary"])) {
             $request["primaryteam"] = $this->teams["primary"];
-            $teamIds                = array($this->teams["primary"]);
+            $teamIds = array($this->teams["primary"]);
 
             if (isset($this->teams["other"]) && is_array(($this->teams["other"]))) {
                 foreach ($this->teams["other"] as $teamId) {
@@ -302,7 +312,7 @@ class MailRecord
 
                 if ($identity) {
                     $formattedRecipient = array();
-                    $name               = $identity->getName();
+                    $name = $identity->getName();
 
                     if (!empty($name)) {
                         $formattedRecipient[] = $name;
@@ -359,7 +369,7 @@ class MailRecord
 
         if (is_array($data) && !empty($data['email'])) {
             $email = $data['email'];
-            $name  = null;
+            $name = null;
 
             if (isset($data['name'])) {
                 $name = $data['name'];
@@ -381,23 +391,23 @@ class MailRecord
     protected function toApiResponse($status, $email)
     {
         $response = array(
-            "id"               => $email->id,
-            "date_entered"     => $email->date_entered,
-            "date_modified"    => $email->date_modified,
+            "id" => $email->id,
+            "date_entered" => $email->date_entered,
+            "date_modified" => $email->date_modified,
             "assigned_user_id" => $email->assigned_user_id,
             "modified_user_id" => $email->modified_user_id,
-            "created_by"       => $email->created_by,
-            "deleted"          => $email->deleted,
-            "to_addresses"     => $this->toAddresses,
-            "cc_addresses"     => $this->ccAddresses,
-            "bcc_addresses"    => $this->bccAddresses,
-            "attachments"      => $this->attachments,
-            "teams"            => $this->teams,
-            "related"          => $this->related,
-            "subject"          => $this->subject,
-            "html_body"        => $this->html_body,
-            "text_body"        => $this->text_body,
-            "status"           => ($status == 'ready') ? 'sent' : $status,
+            "created_by" => $email->created_by,
+            "deleted" => $email->deleted,
+            "to_addresses" => $this->toAddresses,
+            "cc_addresses" => $this->ccAddresses,
+            "bcc_addresses" => $this->bccAddresses,
+            "attachments" => $this->attachments,
+            "teams" => $this->teams,
+            "related" => $this->related,
+            "subject" => $this->subject,
+            "html_body" => $this->html_body,
+            "text_body" => $this->text_body,
+            "status" => ($status == 'ready') ? 'sent' : $status,
         );
 
         if (!empty($this->date_sent)) {
