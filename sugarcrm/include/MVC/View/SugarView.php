@@ -26,7 +26,6 @@ class SugarView
      */
     var $bean = null;
     /**
-     * @var Sugar_Smarty
      * Sugar_Smarty. This is useful if you have a view and a subview you can
      * share the same smarty object.
      */

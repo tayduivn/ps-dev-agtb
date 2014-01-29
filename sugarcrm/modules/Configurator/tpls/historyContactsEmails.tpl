@@ -35,13 +35,13 @@
             <td colspan="4" width="95%">
                 <table id="sugarfeed_modulelist" cellspacing=3 border=0>
                     {foreach name=feedModuleList from=$modules item=entry}
-                        {if ($smarty.foreach.feedModuleList.index % 3)==0}<tr>{/if}
+                        {if ($smarty.foreach.feedModuleList.index % 2)==0}<tr>{/if}
                         <td scope="row" align="right">{$entry.label}:</td>
                         <td>
                             <input type="hidden" name="modules[{$entry.module}]" value="0">
                             <input type="checkbox" id="modules[{$entry.module}]" name="modules[{$entry.module}]" value="1" {if $entry.enabled==1}CHECKED{/if}>
                         </td>
-                        {if ($i % 3)==1}</tr>{/if}
+                        {if ($i % 2)==1}</tr>{/if}
                     {/foreach}
                 </table>
             </td></tr>

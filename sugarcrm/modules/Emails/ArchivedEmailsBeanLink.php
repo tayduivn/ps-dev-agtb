@@ -46,9 +46,19 @@ class ArchivedEmailsBeanLink extends ArchivedEmailsLink
         }
         $rel_join = str_replace("{$this->focus->table_name}.id", $bean_id, $rel_join);
 
-        $showEmailsOfRelatedContacts = empty($this->focus->field_defs[$relation]['hide_history_contacts_emails']);
         if (!empty($GLOBALS['sugar_config']['hide_history_contacts_emails']) && isset($GLOBALS['sugar_config']['hide_history_contacts_emails'][$this->focus->module_name])) {
-            $showEmailsOfRelatedContacts = empty($GLOBALS['sugar_config']['hide_history_contacts_emails'][$this->focus->module_name]);
+            $hideHistoryContactsEmails = !empty($GLOBALS['sugar_config']['hide_history_contacts_emails'][$this->focus->module_name]);
+        }
+
+        if(!isset($hideHistoryContactsEmails)) {
+            // not set from admin tool, check for default value in viewdefs:
+            // Emails/client/base/views/subpanel-for-{module}/subpanel-for-{module}.php
+            $mm = MetadataManager::getManager();
+            $views = $mm->getModuleViews('Emails');
+            $module = strtolower($this->focus->module_name);
+            $hideHistoryContactsEmails = isset($views["subpanel-for-{$module}"])
+                && isset($views["subpanel-for-{$module}"]['meta'])
+                && !empty($views["subpanel-for-{$module}"]['meta']['hide_history_contacts_emails']);
         }
 
         $query = "INNER JOIN (\n".
@@ -62,7 +72,7 @@ class ArchivedEmailsBeanLink extends ArchivedEmailsLink
                 ON eabr.bean_id = $bean_id AND eabr.bean_module = '{$this->focus->module_dir}' AND
                 eabr.email_address_id = eear.email_address_id and eabr.deleted=0 where eear.deleted=0\n";
 
-        if ($showEmailsOfRelatedContacts) {
+        if (!$hideHistoryContactsEmails) {
             // Assigned to contacts
             $query .= " UNION ".
                 "select DISTINCT eb.email_id, 'contact' source FROM emails_beans eb
