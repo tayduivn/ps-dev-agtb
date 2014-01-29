@@ -17,6 +17,9 @@
 	  width: 400px;
 	  ul {
 		li {
+          &.read {
+            background: lighten(@gray, 56%);
+          }
 		  a {
 			text-indent: inherit;
 			padding-top: 10px;
@@ -33,6 +36,10 @@
 				padding-right: 14px;
 				padding-top: 1px;
 			}
+		  }
+  		  .icon-reorder {
+			line-height: 20px;
+			text-indent: 0 !important;
 		  }
 		}
 	  }
