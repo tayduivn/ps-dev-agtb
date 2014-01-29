@@ -165,7 +165,7 @@
         this.forecastsConfigOK = app.utils.checkForecastConfig();
         this.isForecastAdmin = _.isUndefined(app.user.getAcls()['Forecasts'].admin);
 
-        if(!this.forecastSetup) {
+        if(!this.isForecastSetup) {
             this.forecastsNotSetUpMsg = app.utils.getForecastNotSetUpMessage(this.isForecastAdmin);
         }
 
