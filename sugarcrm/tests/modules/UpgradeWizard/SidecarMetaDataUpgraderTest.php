@@ -152,7 +152,6 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($viewdefs['Cases']['portal']['view']['record']['buttons'],
             'The buttons array from the new metadata was not captured');
     }
-    // END SUGARCRM flav=ent ONLY
 
     public function testUpgraderPreservedTabsPanels()
     {
@@ -163,7 +162,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         require $filename;
         $this->assertEquals(count($viewdefs['Opportunities']['base']['view']['record']['panels']), 4);
     }
-
+    // END SUGARCRM flav=ent ONLY
     public function _sidecarFilesInPlaceProvider()
     {
         $builder = self::getBuilder();
