@@ -54,6 +54,9 @@
         'topcompetitorindicator': {
             'json_path': 'TopCompetitorIndicator',
             'case_fmt': false
+        },
+        'isDupe': {
+            'json_path': 'isDupe'
         }
     },
 

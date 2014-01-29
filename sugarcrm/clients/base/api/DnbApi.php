@@ -93,8 +93,6 @@ class DnbApi extends SugarApi
             $result = $extDnbApi->dnbIndustryInfo($queryParam);
         } else if ($queryType ==='financial') {
             $result = $extDnbApi->dnbFinancialInfo($queryParam);
-        } else if ($queryType ==='familytree') {
-            $result = $extDnbApi->dnbFamilyTree($queryParam);
         } else if ($queryType ==='firmographic') {
             $result = $extDnbApi->dnbStandardProfile($queryParam);
         } else if ($queryType ==='premfirmographic') {
