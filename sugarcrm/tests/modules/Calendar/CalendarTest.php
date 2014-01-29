@@ -80,9 +80,10 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->meeting_id = uniqid();
 
         $db = $GLOBALS['db'];
-        $db->query("INSERT INTO meetings (id,date_start,assigned_user_id) VALUES(".
+        $db->query("INSERT INTO meetings (id,date_start,date_end,assigned_user_id) VALUES(".
                                             $db->quoted($this->meeting_id) . ", " .
                                             $db->convert($db->quoted("2012-01-02 00:00:00"), 'datetime') . ", " .
+                                            $db->convert($db->quoted("2012-01-02 01:00:00"), 'datetime') . ", " .
                                             $db->quoted($GLOBALS['current_user']->id) .")");
 
 		$db->query("INSERT INTO meetings_users (id,meeting_id,user_id) VALUES (".
