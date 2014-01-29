@@ -127,10 +127,14 @@ class CalendarActivity {
 		$start_day = $GLOBALS['db']->convert("'{$start->asDb()}'",'datetime');
 		$end_day = $GLOBALS['db']->convert("'{$end->asDb()}'",'datetime');
 
-		$where = "($field_date >= $start_day AND $field_date < $end_day";
-		if($rel_table != ''){
-			$where .= " AND $rel_table.accept_status != 'decline'";
-		}
+        //Of the calendar activities, tasks do not span dates, so just filter by field date
+        if(strpos($table_name,'task')!==false){
+            $where = "($field_date >= $start_day AND $field_date < $end_day";
+        }else{
+            //meetings & calls render across date ranges, so make sure table.date_start is less than view end day AND...
+            //... table.date_end is greater than view start date
+            $where = "({$table_name}.date_start < $end_day AND {$table_name}.date_end > $start_day";
+        }
 
 		$where .= ")";
 		return $where;
