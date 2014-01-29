@@ -113,8 +113,11 @@
      */
     populateRelated: function(relatedModel) {
         var setParent = _.bind(function(model) {
-            model.value = model.get('name');
-            this.getField('parent_name').setValue(model);
+            var parentNameField = this.getField('parent_name');
+            if (model.module && parentNameField.isAvailableParentType(model.module)) {
+                model.value = model.get('name');
+                parentNameField.setValue(model);
+            }
         }, this);
 
         if (!_.isEmpty(relatedModel.get('id')) && !_.isEmpty(relatedModel.get('name'))) {

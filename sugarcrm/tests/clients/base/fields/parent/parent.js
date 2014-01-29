@@ -75,4 +75,17 @@ describe("Base.Field.Parent", function() {
         _relatedModuleSpy.restore();
         _relateIdSpy.restore();
     });
+
+    describe('isAvailableParentType', function () {
+        it('should return true if the specified module is an option on the field', function () {
+            field.typeFieldTag = 'select';
+            field.$el.html('<select><option value="Accounts">Account</option></select>');
+            expect(field.isAvailableParentType('Accounts')).toBe(true);
+        });
+        it('should return false if the specified module is not an option on the field', function () {
+            field.typeFieldTag = 'select';
+            field.$el.html('<select><option value="Accounts">Account</option></select>');
+            expect(field.isAvailableParentType('Contacts')).toBe(false);
+        });
+    });
 });

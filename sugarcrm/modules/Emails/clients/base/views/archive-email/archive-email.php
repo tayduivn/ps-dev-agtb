@@ -191,6 +191,11 @@ $viewdefs['Emails']['base']['view']['archive-email'] = array(
                     'options' => 'parent_type_display',
                     'span'    => 12,
                 ),
+                array(
+                    'name' => 'assigned_user_name',
+                    'type' => 'relate',
+                    'span' => 12,
+                ),
             ),
         ),
     ),

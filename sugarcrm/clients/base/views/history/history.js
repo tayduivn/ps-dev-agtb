@@ -121,6 +121,7 @@
             }
         }, function(model) {
             if (model) {
+                self.layout.reloadDashlet();
                 self.context.trigger('panel-top:refresh', 'emails');
             }
         });
