@@ -3349,7 +3349,9 @@ $app_strings = array (
 
     /*DNB Competitors Dashlet*/
     'LBL_DNB_COMPETITORS'=>'D&B: Competitors',
-    'LBL_DNB_COMPETITORS_DESC'=>'Company Competitors from D&B',
+    'LBL_DNB_COMPETITORS_LONG_DESC' => 'Find competitors to the current account in order expand your prospects.  
+                                        A top competitor designation is assigned by D&B based on analysis of the company and industry in which it operates. 
+                                        Public companies frequently identify top competitors in their public filings, which is also taken into consideration. Requires D&B subscription.',
     'LBL_DNB_LOCATION'=>'Location',
     'LBL_DNB_SALES'=>'Sales',
     'LBL_DNB_COMPETITORS_DESC'=>'Competitor Information From DNB. Requires D&B subscription.',
@@ -3413,6 +3415,7 @@ $app_strings = array (
     /*DNB Financial Dashlet*/
     'LBL_DNB_FINANCIAL'=>'D&B: Financial Information',
     'LBL_DNB_FINANCIAL_DESC'=>'Financial Information from D&B. Requires D&B subscription.',
+    'LBL_DNB_FINANCIAL_LONG_DESC' => 'Assess a company’s financial strength with data such as sales volumes, net worth, assets and liabilities. Requires D&B subscription.',
     'LBL_DNB_FINANCIAL_LOADING' => 'Loading Financials From D&B',
     'LBL_DNB_REC_MARK_ANALYSIS' => 'Recent Market Analysis',
     'LBL_DNB_FIN_STMT' => 'Annual Income Statements',
@@ -3429,6 +3432,7 @@ $app_strings = array (
     /*DNB Industry Info Dashlet*/
     'LBL_DNB_INDUSTRY_INFO'=>'D&B: Industry Information',
     'LBL_DNB_INDUSTRY_INFO_DESC'=>'Industry information from D&B. Requires D&B subscription.',
+    'LBL_DNB_INDUSTRY_INFO_LONG_DESC'=>'Stay up-to-date on key trends and opportunities within 900 industry segments. Each industry profile contains analysis, statistics, and forecasts to help you engage prospects, coach clients, and deepen customer relationships.',
     'LBL_DNB_IND_INF_LOAD' => 'Loading Industry Information From D&B',
     'LBL_DNB_INF_INF_OVERVIEW' => 'Overview',
 
@@ -3436,6 +3440,7 @@ $app_strings = array (
     'LBL_DNB_CONTACT' => 'D&B: Contact Information',
     'LBL_DNB_CNTCT_LOADING' => 'Loading Contacts From D&B',
     'LBL_DNB_CONTACT_DESC' => 'Displays Contacts From D&B. Requires D&B subscription.',
+    'LBL_DNB_CONTACT_LONG_DESC' => 'D&B Contacts gives you access to over 100M contacts. Search by First Name, Last Name and Job Title',
     'LBL_DNB_CONTACT_LOADING' => 'Loading Contact Details For ',
     'LBL_DNB_CONTACT_NAME' => 'Name',
     'LBL_DNB_CONTACT_JOBTITLE' => 'Job Title',
@@ -3630,7 +3635,7 @@ $app_strings = array (
     'LBL_DNB_ANNUAL_SALES_US_DOLLAR' => 'Annual Sales',
     'LBL_DNB_GEOGRAPHICAL_NAME' => 'Geographical Precision Text',
     'LBL_DNB_METROPOLITAN_STAT_CODE' => 'Metropolitan Statistical Area US Census Code',
-    'LBL_DNB_LITE_COMPANY_INFO_LOADING' => 'Loading Company Info Lite D&B...',
+    'LBL_DNB_LITE_COMPANY_INFO_LOADING' => 'Loading Company Info Basic D&B...',
 
     /*DNB Standard Company Info Dashlet*/
     'LBL_DNB_STD_COMPANY_INFO_LOADING' => 'Loading Standard Company Info From D&B ...',

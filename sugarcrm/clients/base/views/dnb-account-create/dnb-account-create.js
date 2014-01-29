@@ -174,4 +174,4 @@
         var dnbCheckBoxes = this.$('.dnb_checkbox:checked');
         this.$('.importDNBData').toggleClass('disabled', dnbCheckBoxes.length === 0);
     }
-});
+})

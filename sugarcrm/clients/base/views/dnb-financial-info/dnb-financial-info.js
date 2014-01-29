@@ -232,4 +232,4 @@
         }
         return frmtFinancials;
     }
-});
+})

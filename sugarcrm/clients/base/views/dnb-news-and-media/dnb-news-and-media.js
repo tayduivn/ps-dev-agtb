@@ -85,13 +85,11 @@
         app.events.on('dnbcompinfo:duns_selected', this.collapseDashlet, this);
     },
 
-    /**
-     * Collapses the dashlet
-     */
-    collapseDashlet: function() {
-        if (this.layout.collapse) {
-            this.layout.collapse(true);
-        }
+    loadData: function(options) {
+       if(this.model.get("duns_num")){
+            this.duns_num = this.model.get("duns_num");       
+       }
+          
     },
 
     loadData: function(options) {
