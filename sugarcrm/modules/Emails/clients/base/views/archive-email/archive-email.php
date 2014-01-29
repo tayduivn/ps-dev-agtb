@@ -45,7 +45,6 @@ $viewdefs['Emails']['base']['view']['archive-email'] = array(
                     'type'           => 'datetimecombo',
                     'label'          => 'LBL_DATE_SENT',
                     'span'           => 12,
-                    'cell_css_class' => 'controls-one btn-fit',
                     'required'       => true,
                 ),
                 array(
@@ -53,7 +52,6 @@ $viewdefs['Emails']['base']['view']['archive-email'] = array(
                     'type'           => 'text',
                     'label'          => 'LBL_FROM',
                     'span'           => 12,
-                    'cell_css_class' => 'controls-one btn-fit',
                     'required'       => true,
                 ),
                 array(

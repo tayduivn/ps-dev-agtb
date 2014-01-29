@@ -50,9 +50,11 @@
       textarea,
       .uneditable-input,
       .select2-container {
-        margin-left: 0 !important;
+        margin-left: 0;
+        margin-top: 0;
         z-index: 1;
         min-height: 28px;
+        box-sizing: border-box;
       }
       //for email compose
       .compose-sender-options {
@@ -68,6 +70,21 @@
       }
       &[data-type="parent"] .edit {
         margin-right: -7px;
+      }
+
+      &[data-type="datetimecombo"] input[type="text"] {
+        &.datepicker {
+          width: 50%;
+          .calcWidth(~"55% - 2px");
+        }
+        &.ui-timepicker-input {
+          width: 40%;
+          .calcWidth(~"45% - 3px");
+        }
+      }
+      .input-append input[type="text"] + .add-on,
+      .input-append textarea + .add-on {
+        margin-top: 0;
       }
     }
     .record-edit-link-wrapper {
