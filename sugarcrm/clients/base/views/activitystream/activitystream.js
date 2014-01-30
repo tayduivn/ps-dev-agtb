@@ -51,6 +51,8 @@
     // It is the JavaScript regular expression version of the one in LinkEmbed.php
     urlRegExp: /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))/ig,
 
+    _attachImageSelector: 'img[data-note-id]',
+
     initialize: function(options) {
         this.opts = {params: {}};
         this.readonly = !!options.readonly;
@@ -112,7 +114,8 @@
 
                     data.embeds = [{
                         type: "image",
-                        src: url
+                        src: url,
+                        noteId: data.noteId
                     }];
                 } else {
                     url = app.api.buildFileURL(urlAttributes);
@@ -317,6 +320,27 @@
             this.toggleReplyBar();
             this.$(".reply").html(replyVal);
         }
+
+        this._addBrokenImageHandler();
+    },
+
+    /**
+     * Add a listener for when activity has a broken image for attach type posts
+     * Remove the broken image and remove link to broken image
+     *
+     * @private
+     */
+    _addBrokenImageHandler: function() {
+        this.$(this._attachImageSelector).error(_.bind(function(event) {
+            var $brokenImg = $(event.currentTarget),
+                linkSelector = 'a[data-note-id="' + $brokenImg.data('note-id') + '"]';
+
+            //first remove the link to the image which will also be broken
+            //FIXME: this is hacky, but temporary until we fix how attachment posts are displayed in MAR-780
+            this.$(linkSelector).contents().unwrap();
+            //then remove the broken image
+            $brokenImg.closest('div[class="embed"]').remove();
+        }, this));
     },
 
     /**
@@ -648,6 +672,7 @@
 
     _dispose: function() {
         $(window).off('resize.' + this.cid);
+        this.$(this._attachImageSelector).off('error');
         app.view.View.prototype._dispose.call(this);
         this.commentsCollection = null;
         this.opts = null;

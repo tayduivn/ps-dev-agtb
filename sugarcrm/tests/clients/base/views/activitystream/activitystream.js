@@ -454,4 +454,24 @@ describe("Activity Stream View", function() {
             view.expiryTime = -(view.expiryTime); //return expiry time positive
         });
     });
+
+    describe('_addBrokenImageHandler', function() {
+        it('Should remove broken image and unwrap link to broken image on error', function() {
+            var attachActivityHtml = '<a href="" data-note-id="123">Broken Image Link</a>' +
+                '<div class="embed"><div><img src="" data-note-id="123"/></div></div>';
+            view.$el.append(attachActivityHtml);
+            view._addBrokenImageHandler();
+
+            //expect link and image to be in the dom
+            expect(view.$('a[data-note-id]').length).toBe(1);
+            expect(view.$(view._attachImageSelector).length).toBe(1);
+
+            //image is broken
+            view.$(view._attachImageSelector).trigger('error');
+
+            //expect link and image to be removed from the dom
+            expect(view.$('a[data-note-id]').length).toBe(0);
+            expect(view.$(view._attachImageSelector).length).toBe(0);
+        });
+    });
 });
