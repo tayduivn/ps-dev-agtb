@@ -25,17 +25,6 @@ require_once('include/MVC/View/views/view.detail.php');
 
 class DocumentsViewDetail extends ViewDetail 
 {
- 	/**
-	 * @see SugarView::_getModuleTitleParams()
-	 */
-	protected function _getModuleTitleParams($browserTitle = false)
-	{
-    	$params = array();
-    	$params[] = $this->_getModuleTitleListParam($browserTitle);
-    	$params[] = $this->bean->document_name;
-    	
-		return $params;
-    }
 
     public function display()
  	{
