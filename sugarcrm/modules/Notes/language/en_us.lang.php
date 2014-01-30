@@ -86,4 +86,15 @@ $mod_strings = array(
     'LBL_DATE_MODIFIED' => 'Date Modified',
     'LBL_DELETED' => 'Deleted',
     'LBL_REVENUELINEITEMS' => 'Revenue Line Items',
+
+    // Help Text
+    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module consists of individual {{plural_module_name}} that contain text or an attachment pertinent to the related record.
+
+To create a {{module_name}}:
+1. Provide values for the fields as desired.
+ * Fields marked "Required" must be completed prior to saving.
+ * Click "Show More" to expose additional fields if necessary.
+2. Click "Save" to finalize the new record and return to the {{plural_module_name}} list view.
+ * Choose "Save and view" to open the new {{module_name}} in record view.
+ * Choose "Save and create new" to immediately create another new {{module_name}}.',
 );

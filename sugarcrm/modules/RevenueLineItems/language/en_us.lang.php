@@ -173,4 +173,15 @@ $mod_strings = array(
     'WARNING_DELETED_RECORD_LIST_RECOMMIT_1' => 'One or more records were included in a ',
     'WARNING_DELETED_RECORD_LIST_RECOMMIT_2' => 'They will be removed and you will need to re-commit your ',
     'WARNING_MERGE_RLIS_WITH_DIFFERENT_OPPORTUNITIES' => 'One or more of the records you\'ve selected can not be merged together as they belong to different Opportunities',
+
+    // Help Text
+    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module consists of all product line items from current and past {{opportunities_module}} and are automatically created from the {{opportunities_module}} module. They may be used in the {{forecasts_module}} module to understand sales trends and achieve sales quotas.
+
+To create a {{module_name}}:
+1. Provide values for the fields as desired.
+ * Fields marked "Required" must be completed prior to saving.
+ * Click "Show More" to expose additional fields if necessary.
+2. Click "Save" to finalize the new record and return to the {{plural_module_name}} list view.
+ * Choose "Save and view" to open the new {{module_name}} in record view.
+ * Choose "Save and create new" to immediately create another new {{module_name}}.',
 );

@@ -197,6 +197,31 @@
         return layout;
     };
 
+    test.loadFile = function(path, file, ext, parseData, dataType) {
+        dataType = dataType || 'text';
+
+        var fileContent = null;
+
+        $.ajax({
+            async:    false, // must be synchronous to guarantee that a test doesn't run before the fixture is loaded
+            cache:    false,
+            dataType: dataType,
+            url:      path + "/" + file + "." + ext,
+            success:  function(data) {
+                fileContent = parseData(data);
+            },
+            failure:  function() {
+                console.log('Failed to load file: ' + file);
+            }
+        });
+
+        return fileContent;
+    };
+
+    test.loadFixture = function(file, fixturePath) {
+        return test.loadFile(fixturePath || "./fixtures", file, "json", function(data) { return data; }, "json");
+    };
+
     test.testMetadata = {
         _data: null,
 
@@ -205,6 +230,13 @@
             this._data.layouts = this._data.layouts || {};
             this._data.views = this._data.views || {};
             this._data.fields = this._data.fields || {};
+
+            // Lang strings are now retrieved in a separate GET, so we need to augment
+            // our metadata fake with them here before calling setting metadata.set.
+            if (!this.labelsFixture && this._data.labels) {
+                this.labelsFixture = SugarTest.loadFixture('labels');
+                this._data = $.extend(this._data, this.labelsFixture);
+            }
         },
 
         addTemplate: function(name, type, template, templateName, module) {
@@ -274,6 +306,7 @@
         dispose: function() {
             this.revert();
             this._data = null;
+            this.labelsFixture = null;
         },
 
         isInitialized: function() {

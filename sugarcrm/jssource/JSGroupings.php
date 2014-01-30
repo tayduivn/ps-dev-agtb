@@ -326,6 +326,7 @@
                 'include/javascript/sugar7/hacks.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/alert.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/language.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/help.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/hbs-helpers.js' => 'include/javascript/sugar_grp7.min.js',
             )
         );

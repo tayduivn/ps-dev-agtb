@@ -162,4 +162,15 @@ $mod_strings = array(
 
     'LBL_OPPORTUNITY_ROLE'=>'Opportunity Role',
     'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
+
+    // Help Text
+    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module allows you to track individual sales from start to finish and can be used in the {{forecasts_module}} module to understand sales trends and achieve sales quotas.
+
+To create a {{module_name}}:
+1. Provide values for the fields as desired.
+ * Fields marked "Required" must be completed prior to saving.
+ * Click "Show More" to expose additional fields if necessary.
+2. Click "Save" to finalize the new record and return to the {{plural_module_name}} list view.
+ * Choose "Save and view" to open the new {{module_name}} in record view.
+ * Choose "Save and create new" to immediately create another new {{module_name}}.',
 );

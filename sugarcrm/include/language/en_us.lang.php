@@ -4578,6 +4578,40 @@ $app_strings = array (
     //Optimistic Locking
     'LBL_YOU' => 'You',
     'LBL_RESOLVE_CONFLICT' => 'Resolve Conflict for {{name}}',
+
+    // Generic Help Strings
+    'LBL_HELP_MORE_INFO' => 'For more information, refer to the {{plural_module_name}} documentation.',
+    'LBL_HELP_NO_HELP' => 'No Data Available',
+
+    // list view (AKA Records)
+    // these are disable for now as we don't have the generics to use
+    //'LBL_HELP_RECORDS_TITLE' => 'Records View',
+    //'LBL_HELP_RECORDS' => 'Displays records for {{plural_module_name}}',
+
+    // record view (AKA Detail View)
+    // these are disable for now as we don't have the generics to use
+    //'LBL_HELP_RECORD_TITLE' => 'Record View',
+    //'LBL_HELP_RECORD' => 'Record View for {{module_name}}',
+
+    // create view
+    'LBL_HELP_CREATE_TITLE' => '{{module_name}} Creation',
+    'LBL_HELP_CREATE' => 'To create {{plural_module_name}}:
+1. Provide values for the fields as desired.
+ * Fields marked "Required" must be completed prior to saving.
+ * Click "Show More" to expose additional fields if necessary.
+2. Click "Save" to finalize the new record and return to the {{plural_module_name}} list view.
+ * Choose "Save and view" to open the new {{module_name}} in record view.
+ * Choose "Save and create new" to immediately create another new {{module_name}}.',
+
+    // duplicate view
+    'LBL_HELP_DUPLICATE_TITLE' => 'Potential Duplicate Detected',
+    'LBL_HELP_DUPLICATE' => 'Sugar has detected that the record you are trying to create may already exist.
+
+To modify an existing record rather than creating a new one, click "Select and edit" to the right of the desired record. Any blank fields on the existing record will be filled in with the values you have just entered. Click "Save" to make these changes to the existing record.
+
+If, instead, you wish to use the values you have just entered instead of the values on the existing record, click "Reset to original". The values you entered will then be applied to the existing record, and you may now provide any additional changes and click "Save" to finalize modifications to the existing record.
+
+To create a new record using the values you have entered, click "Ignore Duplicate and Save" at the top right of the screen.',
 );
 
 $app_list_strings['interactions_options'] = array (
