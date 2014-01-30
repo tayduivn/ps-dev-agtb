@@ -167,7 +167,7 @@
                 $el.select2('disable');
             }
             //Setup selected value in Select2 widget
-            if(this.value){
+            if(!_.isUndefined(this.value)){
                 // To make pills load properly when autoselecting a string val
                 // from a list val needs to be an array
                 if (!_.isArray(this.value)) {
