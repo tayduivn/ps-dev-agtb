@@ -364,25 +364,49 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 		return $this->queryDay($layout_def, $this->now()->get("+1 day"));
 	}
 
+    function queryFilterTP_last_n_days($layout_def)
+    {
+        $days = $layout_def['input_name0'] - 1;
+
+        $begin = $this->now()->get("-$days days")->get_day_begin();
+        $end = $this->now()->get_day_end();
+
+        return $this->get_start_end_date_filter($layout_def, $begin->asDb(), $end->asDb());
+    }
+
+    function queryFilterTP_next_n_days($layout_def)
+    {
+        $days = $layout_def['input_name0'] - 1;
+
+        $begin = $this->now()->get_day_begin();
+        $end = $this->now()->get("+$days days")->get_day_end();
+
+        return $this->get_start_end_date_filter($layout_def, $begin->asDb(), $end->asDb());
+    }
+
 	function queryFilterTP_last_7_days($layout_def)
-	{
-		global $timedate;
+    {
+        $layout_def['input_name0'] = 7;
+        return $this->queryFilterTP_last_n_days($layout_def);
+    }
 
-		$begin = $this->now()->get("-6 days")->get_day_begin();
-		$end = $this->now()->get_day_end();
+    function queryFilterTP_next_7_days($layout_def)
+    {
+        $layout_def['input_name0'] = 7;
+        return $this->queryFilterTP_next_n_days($layout_def);
+    }
 
-		return $this->get_start_end_date_filter($layout_def,$begin->asDb(),$end->asDb());
-	}
+    function queryFilterTP_last_30_days($layout_def)
+    {
+        $layout_def['input_name0'] = 30;
+        return $this->queryFilterTP_last_n_days($layout_def);
+    }
 
-	function queryFilterTP_next_7_days($layout_def)
-	{
-		global $timedate;
-
-		$begin = $this->now()->get_day_begin();
-		$end = $this->now()->get("+6 days")->get_day_end();
-
-		return $this->get_start_end_date_filter($layout_def,$begin->asDb(),$end->asDb());
-	}
+    function queryFilterTP_next_30_days($layout_def)
+    {
+        $layout_def['input_name0'] = 30;
+        return $this->queryFilterTP_next_n_days($layout_def);
+    }
 
     /**
      * Create query from the beginning to the end of certain month
@@ -415,22 +439,6 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 		global $timedate;
 		$month = $this->now();
 		return $this->queryMonth($layout_def, $month->setDate($month->year, $month->month+1, 1));
-	}
-
-	function queryFilterTP_last_30_days($layout_def)
-	{
-		global $timedate;
-		$begin = $this->now()->get("-29 days")->get_day_begin();
-		$end = $this->now()->get_day_end();
-		return $this->get_start_end_date_filter($layout_def,$begin->asDb(),$end->asDb());
-	}
-
-	function queryFilterTP_next_30_days($layout_def)
-	{
-		global $timedate;
-		$begin = $this->now()->get_day_begin();
-		$end = $this->now()->get("+29 days")->get_day_end();
-		return $this->get_start_end_date_filter($layout_def,$begin->asDb(),$end->asDb());
 	}
 
     /**

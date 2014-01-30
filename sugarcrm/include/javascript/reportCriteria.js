@@ -593,10 +593,13 @@ function addFilterInput(cell,filter) {
 	} 
 	else if (qualifier_name == 'between_dates') {
 		addFilterInputDateBetween(row,filter);
-	} 
+	}
 	else if (qualifier_name == 'between_datetimes') {
 		addFilterInputDatetimesBetween(row,filter);
-	} 
+    }
+    else if (qualifier_name.indexOf("_n_days") != -1) {
+        addFilterInputText(row, filter);
+    }
 	else if (qualifier_name == 'empty' || qualifier_name == 'not_empty') {
 	    addFilterNoInput(row,filter);
  	}
