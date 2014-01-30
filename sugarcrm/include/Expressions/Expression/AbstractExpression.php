@@ -61,7 +61,7 @@ abstract class AbstractExpression
 	 */
 	function AbstractExpression($params=null) {
 		// if the array contains only one value, then set params equal to that value
-		if ( is_array($params) && sizeof($params) == 1 ) {
+		if ($this->getParamCount() == 1 && is_array($params) && sizeof($params) == 1) {
 			$this->params = $params[0];
 		}
 
@@ -241,5 +241,3 @@ abstract class AbstractExpression
 		return AbstractExpression::$INFINITY;
 	}
 }
-
-?>
