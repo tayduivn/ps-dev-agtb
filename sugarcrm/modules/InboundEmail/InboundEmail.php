@@ -4023,8 +4023,11 @@ class InboundEmail extends SugarBean {
         // The workaround is to mark a message as read before making trying to read the header of the msg in question
         // This forces this message not be read again, and we can continue processing remaining msgs.
 
-        // UNCOMMENT THIS IF YOU HAVE THIS PROBLEM!  See notes on Bug # 45477
-        // $this->markEmails($uid, "read");
+        // place  $sugar_config['mark_emails_seen'] = true;  into  config_override.php  to enable the workaround
+
+        if (!empty($sugar_config['mark_emails_seen'])) {
+            $this->markEmails($uid, "read");
+        }
 
 		$header = imap_headerinfo($this->conn, $msgNo);
 		$fullHeader = imap_fetchheader($this->conn, $msgNo); // raw headers
