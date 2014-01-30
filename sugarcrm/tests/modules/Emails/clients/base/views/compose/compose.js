@@ -215,11 +215,15 @@ describe("Emails.Views.Compose", function() {
             };
             relatedModel = new Backbone.Model(inputValues);
             fetchedModel = new Backbone.Model(fetchedValues);
+            relatedModel.module = fetchedModel.module = 'foo';
             fetchStub = sinon.stub(relatedModel, 'fetch', function (params) {
                 params.success(fetchedModel);
             });
             getFieldStub = sinon.stub(view, 'getField', function () {
                 return {
+                    isAvailableParentType: function() {
+                        return true;
+                    },
                     setValue: function(model) {
                         parentId = model.id;
                         parentValue = model.value;
