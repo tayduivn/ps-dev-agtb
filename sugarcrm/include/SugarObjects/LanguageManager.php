@@ -168,6 +168,26 @@ class LanguageManager
 		}
 	}
 
+    /**
+     * Gets the list of file paths to load for languages for a module in the order
+     * that they should be loaded.
+     * 
+     * DO NOT EVER CHANGE THE ORDER OF THESE FILES. EVER. SERIOUSLY, DON'T DO IT.
+     * 
+     * @param string $module The name of the module to get the paths for
+     * @param string $lang The language to get the files for
+     * @return array
+     */
+    public static function getModuleLanguageFilePaths($module, $lang)
+    {
+        return array(
+            'modules/'.$module.'/language/'.$lang.'.lang.php',
+            'modules/'.$module.'/language/'.$lang.'.lang.override.php',
+            'custom/modules/'.$module.'/language/'.$lang.'.lang.php',
+            'custom/modules/'.$module.'/Ext/Language/'.$lang.'.lang.ext.php',
+        );
+    }
+
 	/**
 	 * Given a module, search all of the specified locations, and any others as specified
 	 * in order to refresh the cache file
@@ -183,13 +203,7 @@ class LanguageManager
         $additional_search_paths = null
     ) {
 		// Some of the vardefs do not correctly define dictionary as global.  Declare it first.
-		$lang_paths = array(
-					'modules/'.$module.'/language/'.$lang.'.lang.php',
-					'modules/'.$module.'/language/'.$lang.'.lang.override.php',
-					'custom/modules/'.$module.'/language/'.$lang.'.lang.php',
-					'custom/modules/'.$module.'/Ext/Language/'.$lang.'.lang.ext.php',
-				 );
-
+		$lang_paths = self::getModuleLanguageFilePaths($module, $lang);
         $object = BeanFactory::getObjectName($module);
         if ($object && !empty($GLOBALS['dictionary'][$object]['templates'])) {
             $templates = $GLOBALS['dictionary'][$object]['templates'];

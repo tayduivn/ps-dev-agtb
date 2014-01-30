@@ -370,6 +370,11 @@ class ModuleBuilderController extends SugarController
     {
         $parser = new ParserLabel ($_REQUEST['view_module'], isset ($_REQUEST ['view_package']) ? $_REQUEST ['view_package'] : null);
         $parser->handleSave($_REQUEST, $_REQUEST ['selected_lang']);
+
+        // Clear the language cache to make sure the view picks up the latest
+        $cache_key = LanguageManager::getLanguageCacheKey($_REQUEST['view_module'], $_REQUEST['selected_lang']);
+        sugar_cache_clear($cache_key);
+
         if (isset ($_REQUEST ['view_package'])) { //MODULE BUILDER
             $this->view = 'modulelabels';
         } else { //STUDIO
@@ -382,23 +387,19 @@ class ModuleBuilderController extends SugarController
         if (!empty ($_REQUEST ['view_module']) && !empty($_REQUEST ['labelValue'])) {
             $_REQUEST ["label_" . $_REQUEST ['label']] = $_REQUEST ['labelValue'];
 
-            require_once 'modules/ModuleBuilder/parsers/parser.label.php';
-            $parser = new ParserLabel ($_REQUEST['view_module'], isset ($_REQUEST ['view_package']) ? $_REQUEST ['view_package'] : null);
-            $parser->handleSave($_REQUEST, $GLOBALS ['current_language']);
-
-            // Mark the metadata cache clear as done because it is done in the
-            // language cache clear in $parser->handleSave(). This needs to be
-            // set here so that it isn't called again in methods that call this
-            // method.
-            $this->metadataApiCacheCleared;
-
-
+            // Since the following loop will change aspects of the $_REQUEST 
+            // array read it into a copy to preserve state on $_REQUEST
             $req = $_REQUEST;
             foreach (ModuleBuilder::getModuleAliases($_REQUEST['view_module']) as $key)
             {
                 $req['view_module'] = $key;
                 $parser = new ParserLabel($req['view_module'], isset($req['view_package']) ? $req['view_package'] : null);
                 $parser->handleSave($req, $GLOBALS['current_language']);
+                
+                // Clear the language cache to make sure the view picks up the latest
+                $cache_key = LanguageManager::getLanguageCacheKey($req['view_module'], $GLOBALS['current_language']);
+                sugar_cache_clear($cache_key);
+
             }
         }
         $this->view = 'modulefields';
@@ -453,13 +454,10 @@ class ModuleBuilderController extends SugarController
                 include_once 'modules/Administration/QuickRepairAndRebuild.php';
                 global $mod_strings;
                 $mod_strings['LBL_ALL_MODULES'] = 'all_modules';
-                $mi = new ModuleInstaller();
-                $mi->silent = true;
-                $mi->rebuild_extensions();
                 $repair = new RepairAndClear();
                 $class_name = $GLOBALS ['beanList'] [$module];
 
-                $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($class_name), true, false);
+                $repair->repairAndClearAll(array('clearVardefs', 'clearTpls'), array($class_name), true, false);
                 if ($module == 'Users') {
                     $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array('Employee'), true, false);
                 }

@@ -30,24 +30,39 @@ require_once('modules/ModuleBuilder/parsers/parser.label.php');
 
 class Bug45645Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    protected $custLangFile;
+    protected $lang = 'en_us';
+    protected $testModule = 'Opportunities';
+    protected $testLabel = 'LBL_ACCOUNT_NAME';
+    protected $oldLabel;
+    protected $newLabel;
+    
+    protected function setup()
+    {
+        $this->custLangFile = "custom/modules/{$this->testModule}/Ext/Language/en_us.lang.ext.php";
+    }
+    
+    protected function tearDown()
+    {
+        // Set things back to what they were
+        $params = array($this->testLabel => $this->oldLabel);
+        ParserLabel::addLabels($this->lang, $params, $this->testModule);
+    }
 
     public function testLabelSaving()
     {
-        $lang = 'en_us';
-        $test_module = 'Opportunities';
-        $test_label = 'LBL_ACCOUNT_NAME';
-
-        $mod_strings = return_module_language($lang, $test_module);
-        $old_label = $mod_strings[$test_label];
-        $new_label = 'test ' . $old_label;
+        $mod_strings = return_module_language($this->lang, $this->testModule);
+        $this->oldLabel = $mod_strings[$this->testLabel];
+        $this->newLabel = 'test ' . $this->oldLabel;
 
         // save the new label to the language file
-        ParserLabel::addLabels($lang, array($test_label=>$new_label), $test_module);
+        $params = array($this->testLabel => $this->newLabel);
+        ParserLabel::addLabels($this->lang, $params, $this->testModule);
 
         // read the language file to get the new value
-        include("custom/modules/$test_module/language/en_us.lang.php");
-
-        $this->assertEquals($new_label, $mod_strings[$test_label], 'Label not changed.');
+        $this->assertFileExists($this->custLangFile, "Label extension file does not exist");
+        include $this->custLangFile;
+        $this->assertEquals($this->newLabel, $mod_strings[$this->testLabel], 'Label not changed.');
     }
 }
 

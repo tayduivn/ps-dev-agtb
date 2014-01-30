@@ -61,7 +61,7 @@ class Bug49772Test extends Sugar_PHPUnit_Framework_TestCase
         ParserLabel::addLabels($this->_lang, array($this->_test_label => $new_label), $this->_test_module);
 
         // read the language file to get the new value
-        include("custom/modules/{$this->_test_module}/language/{$this->_lang}.lang.php");
+        include "custom/modules/{$this->_test_module}/Ext/Language/{$this->_lang}.lang.ext.php";
 
         $this->assertEquals($new_label, $mod_strings[$this->_test_label]);
         $this->assertNotEquals($pref . ' ' . $this->_old_label, $mod_strings[$this->_test_label]);

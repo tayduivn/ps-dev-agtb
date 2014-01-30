@@ -4,7 +4,7 @@ require_once 'tests/upgrade/UpgradeTestCase.php';
 class UpgradeRenameModuleTest extends UpgradeTestCase
 {
     protected $globalFilename = 'custom/include/language/en_us.lang.php';
-    protected $moduleFilename = 'custom/modules/Contacts/language/en_us.lang.php';
+    protected $moduleFilename = 'custom/modules/Contacts/Ext/Language/en_us.lang.ext.php';
     protected $alsBackup;
     protected $modBackup;
 

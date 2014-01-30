@@ -1803,22 +1803,36 @@ class ModuleInstaller{
             if (is_dir($path)) {
                 $dir = dir($path);
                 $shouldSave = true;
-                $override = array();
+                $override = $files = array();
                 while (false !== ($entry = $dir->read())) {
-                    if ($entry != '.' && $entry != '..' && is_file($path.'/'.$entry)
-                      && (empty($filter) || substr_count($entry, $filter) > 0)
-                      && strtolower(substr($entry, -4)) == ".php") {
+                    if ($entry == '.' || $entry == '..') {
+                        continue;
+                    }
+                    $fullpath = SugarAutoLoader::normalizeFilePath("$path/$entry");
+                    $filterCheck = empty($filter) || substr_count($entry, $filter) > 0;
+                    $isPHPFile = strtolower(substr($entry, -4)) == ".php";
+                    if (is_file($fullpath) && $filterCheck && $isPHPFile) {
                         if (substr($entry, 0, 9) == '_override') {
-                            $override[] = $entry;
+                            $override[] = $fullpath;
                         } else {
-                            $file = file_get_contents($path . '/' . $entry);
-                            $GLOBALS['log']->debug(__METHOD__ . ": found {$path}{$entry}");
-                            $extension .= "\n". str_replace($php_tags, '', $file);
+                            // Logic here it to take the newest touched file and
+                            // read it last. This allows for customizations from 
+                            // any source and the most recent change to win out.
+                            $files[$fullpath] = filemtime($fullpath);
                         }
                     }
                 }
+
+                // Sort the files array then read them for their contents
+                asort($files, SORT_NUMERIC);
+                foreach ($files as $filepath => $mtime) {
+                    $file = file_get_contents($filepath);
+                    $GLOBALS['log']->debug(__METHOD__ . ": found {$path}{$entry}");
+                    $extension .= "\n//Merged from $filepath\n". str_replace($php_tags, '', $file);
+                }
+
                 foreach ($override as $entry) {
-                    $file = file_get_contents($path . '/' . $entry);
+                    $file = file_get_contents($entry);
                     $extension .= "\n". str_replace($php_tags, '', $file);
                 }
             }
