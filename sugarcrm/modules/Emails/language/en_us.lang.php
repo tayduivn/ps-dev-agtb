@@ -200,7 +200,6 @@ $mod_strings = array (
 	'LBL_LIST_FORM_SENT_TITLE'	=> 'Sent Emails',
 	'LBL_LIST_FORM_TITLE'		=> 'Email List',
 	'LBL_LIST_FROM_ADDR'		=> 'From',
-	'LBL_LIST_RELATED_TO'		=> 'Recipient Type',
 	'LBL_LIST_SUBJECT'			=> 'Subject',
 	'LBL_LIST_TIME'				=> 'Time Sent',
 	'LBL_LIST_TO_ADDR'			=> 'To',
