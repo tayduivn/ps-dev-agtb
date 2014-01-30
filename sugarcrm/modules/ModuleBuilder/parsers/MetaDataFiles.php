@@ -599,9 +599,14 @@ class MetaDataFiles
      * @param  string $component Layout or view
      * @return string
      */
-    public static function getSugarExtensionFileDir($module, $client = '', $component = self::COMPONENTVIEW)
+    public static function getSugarExtensionFileDir($module = '', $client = 'base', $component = self::COMPONENTVIEW)
     {
-        $dirname = "custom/modules/{$module}/Ext/clients/{$client}/{$component}s/";
+        if (empty($module)) {
+            $dirname = "custom/application/Ext/clients/{$client}/{$component}s/";
+        } else {
+            $dirname = "custom/modules/{$module}/Ext/clients/{$client}/{$component}s/";
+        }
+
         return $dirname;
     }
 
@@ -851,6 +856,7 @@ class MetaDataFiles
                 // No templates for the non-module stuff
                 $checkPaths['custom/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
                 $checkPaths['clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
+                $checkPaths[self::getSugarExtensionFileDir('', $platform, $type)] = array('platform' => $platform, 'template' => false);
             }
         } else {
             foreach ($platforms as $platform) {
@@ -934,6 +940,14 @@ class MetaDataFiles
                     if ( isset($results[$fileInfo['subPath']]['meta']) && !strstr($fileInfo['path'], '.ext')) {
                         continue;
                     }
+                    //Viewdefs must be maintained between files to allow for extension files that append to out of box meta.
+                    if (!empty($results[$fileInfo['subPath']]['meta'])) {
+                        if (empty($module)) {
+                            $viewdefs[$fileInfo['platform']][$type][$fileInfo['subPath']] = $results[$fileInfo['subPath']]['meta'];
+                        } else {
+                            $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']] = $results[$fileInfo['subPath']]['meta'];
+                        }
+                    }
                     if ($fileInfo['template']) {
                         // This is a template file, not a real one.
                         require $fileInfo['path'];
@@ -968,10 +982,9 @@ class MetaDataFiles
                             if ( !isset($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
                                 $GLOBALS['log']->error('No viewdefs for module: '.$module.' viewdefs @ '.$fileInfo['path']);
                             } else {
-                                if(isset($results[$fileInfo['subPath']]['meta'])) {
-                                    if($fileInfo['subPath'] == 'subpanels') {
-                                        $results[$fileInfo['subPath']]['meta'] = self::mergeSubpanels($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']], $results[$fileInfo['subPath']]['meta']);
-                                    }
+                                if(isset($results[$fileInfo['subPath']]['meta']) && $fileInfo['subPath'] == 'subpanels') {
+                                    $results[$fileInfo['subPath']]['meta'] = self::mergeSubpanels($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']], $results[$fileInfo['subPath']]['meta']);
+
                                 } else {
                                     // For custom modules or if there is no subpanel
                                     // layout defined and edits are made, we
