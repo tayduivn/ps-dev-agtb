@@ -854,6 +854,14 @@
                 if (_.isString(field)) {
                     panel.fields[index] = field = {name: field};
                 }
+
+                var keys = _.keys(field);
+
+                // Make filler fields readonly
+                if (keys.length === 1 && keys[0] === 'span')  {
+                    field.readonly = true;
+                }
+
                 // disable the pencil icon if the user doesn't have ACLs
                 if (field.type === 'fieldset') {
                     if (field.readonly || _.every(field.fields, function(field) {
