@@ -136,13 +136,6 @@ $dictionary['RevenueLineItem'] = array(
                 'manufacturer_id'
             )
         ),
-        'manufacturer_link' => array(
-            'name' => 'manufacturer_link',
-            'type' => 'link',
-            'relationship' => 'revenuelineitems_manufacturers',
-            'source' => 'non-db',
-            'vname' => 'LBL_MANUFACTURER',
-        ),
         'category_id' => array(
             'name' => 'category_id',
             'vname' => 'LBL_CATEGORY',
@@ -988,7 +981,7 @@ $dictionary['RevenueLineItem'] = array(
         'manufacturers' => array (
             'name' => 'manufacturers',
             'type' => 'link',
-            'relationship' => 'product_templates_manufacturers',
+            'relationship' => 'revenuelineitems_manufacturers',
             'vname' => 'LBL_MANUFACTURERS',
             'link_type' => 'one',
             'module' => 'Manufacturers',
