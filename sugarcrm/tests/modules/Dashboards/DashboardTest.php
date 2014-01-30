@@ -1,26 +1,17 @@
 <?php
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You may
- * not use this file except in compliance with the License. Under the terms of the
- * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
- * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
- * use the Software for timesharing or service bureau purposes such as hosting the
- * Software for commercial gain and/or for the benefit of a third party.  Use of
- * the Software may be subject to applicable fees and any use of the Software
- * without first paying applicable fees is strictly prohibited.  You do not have
- * the right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.  Your Warranty, Limitations of liability and Indemnity are
- * expressly stated in the License.  Please refer to the License for the specific
- * language governing these rights and limitations under the License.
- * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
- * All Rights Reserved.
- ********************************************************************************/
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
+
 require_once 'modules/Dashboards/Dashboard.php';
 
 class DashboardTest extends Sugar_PHPUnit_Framework_TestCase
@@ -48,11 +39,39 @@ class DashboardTest extends Sugar_PHPUnit_Framework_TestCase
          $dashboard->new_with_id = 1;
          $dashboard->name = 'Test';
          $dashboard->dashboard_module = 'Home';
-         $dashboard->view = 'list';
+         $dashboard->view_name = 'list';
          $dashboard->save();
          $dashboard = new dashboard();
-         $options = array('dashboard_module'=>'Home', 'view'=>'list');
+         $options = array('dashboard_module'=>'Home', 'view_name'=>'list');
          $dashboards = $dashboard->getDashboardsForUser($GLOBALS['current_user'], $options);
          $this->assertEquals(1, count($dashboards['records']));
+    }
+
+    /**
+     * Checking legacy behavior of 'view'
+     *
+     * 1. Creating dashboard with 'view_name'
+     * 2. Retrieving dashboard for user with 'view'
+     * 3. Asserting that 'view' and 'view_name' equal to original 'view_name'
+     */
+    public function testgetDashboardsForUser()
+    {
+        $expected = new Dashboard();
+        $expected->name = create_guid();
+        $expected->assigned_user_id = $GLOBALS['current_user'];
+        $expected->dashboard_module = 'Accounts';
+        $expected->view_name = 'records';
+        $expected->save();
+        $this->dashboardId = $expected->id;
+
+        $actual = $expected->getDashboardsForUser($GLOBALS['current_user'], array(
+                'dashboard_module' => 'Accounts',
+                'view' => 'records',
+            ));
+        $this->assertNotEmpty($actual);
+        $actual = reset($actual['records']);
+        $this->assertEquals($expected->id, $actual->id);
+        $this->assertEquals($expected->view_name, $actual->view);
+        $this->assertEquals($expected->view_name, $actual->view_name);
     }
 }
