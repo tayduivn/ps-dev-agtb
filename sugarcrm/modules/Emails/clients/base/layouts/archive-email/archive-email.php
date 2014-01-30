@@ -14,18 +14,13 @@
  */
 
 $viewdefs['Emails']['base']['layout']['archive-email'] = array(
-    'components' =>
-    array(
+    'components' => array(
         array(
-            'layout' =>
-            array(
-                'components' =>
-                array(
+            'layout' => array(
+                'components' => array(
                     array(
-                        'layout' =>
-                        array(
-                            'components' =>
-                            array(
+                        'layout' => array(
+                            'components' => array(
                                 array(
                                     'view' => 'archive-email',
                                 ),
@@ -36,10 +31,8 @@ $viewdefs['Emails']['base']['layout']['archive-email'] = array(
                         ),
                     ),
                     array(
-                        'layout' =>
-                        array(
-                            'components' =>
-                            array(),
+                        'layout' => array(
+                            'components' => array(),
                             'type' => 'simple',
                             'name' => 'side-pane',
                             'span' => 4,

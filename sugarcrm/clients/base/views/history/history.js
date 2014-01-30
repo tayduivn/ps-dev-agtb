@@ -108,6 +108,11 @@
         this._super("_dispose");
     },
 
+    /**
+     * Open up a drawer to archive email.
+     * @param event
+     * @param params
+     */
     archiveEmail: function(event, params) {
         var self = this;
         app.drawer.open({

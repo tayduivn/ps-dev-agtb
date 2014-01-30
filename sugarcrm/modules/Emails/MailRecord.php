@@ -53,10 +53,6 @@ class MailRecord
     public $date_sent;
     public $assigned_user_id;
 
-    function __construct()
-    {
-    }
-
     /**
      * Saves the email as a draft.
      *
@@ -126,7 +122,6 @@ class MailRecord
             $email->save();
             $response = $this->toApiResponse($email->status, $email);
             return $response;
-
         } catch (Exception $e) {
             if (!($e instanceof MailerException)) {
                 $e = new MailerException($e->getMessage());

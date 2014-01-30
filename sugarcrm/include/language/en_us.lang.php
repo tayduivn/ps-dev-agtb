@@ -4438,7 +4438,7 @@ $app_strings = array (
     'LBL_HISTORY_DASHLET_EMAIL_PLURAL' => 'Emails',
     'LBL_UNASSIGNED' => 'Unassigned',
     'LBL_ARCHIVE_EMAIL' => 'Archive Email',
-    'LBL_EMAIL_ARCHIVED' => 'Email archived.',
+    'LBL_EMAIL_ARCHIVED' => 'Email archived',
 
     // planned activities dashlet
     'LBL_PLANNED_ACTIVITIES_DASHLET' => 'Planned Activities',

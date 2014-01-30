@@ -106,7 +106,7 @@ class MailApi extends ModuleApi
                 'pathVars' => array(''),
                 'method' => 'archiveMail',
                 'shortHelp' => 'Archive Mail Item',
-//                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_post_help.html',
+                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_archive_help.html',
             ),
             'recipientLookup' => array(
                 'reqType' => 'POST',
