@@ -36,6 +36,7 @@ $viewdefs['base']['view']['active-tasks'] = array(
                     'Leads',
                     'Opportunities',
                     'Prospects',
+                    'RevenueLineItems',
                 ),
                 'view' => 'record',
             ),
