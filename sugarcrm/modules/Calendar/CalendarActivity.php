@@ -136,6 +136,10 @@ class CalendarActivity {
             $where = "({$table_name}.date_start < $end_day AND {$table_name}.date_end > $start_day";
         }
 
+		if($rel_table != ''){
+			$where .= " AND $rel_table.accept_status != 'decline'";
+		}
+
 		$where .= ")";
 		return $where;
 	}
