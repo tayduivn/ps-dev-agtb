@@ -134,6 +134,19 @@ class vCal extends SugarBean {
 		// loop thru each activity, get start/end time in UTC, and return FREEBUSY strings
 		foreach($acts_arr as $act)
 		{
+            if(empty($act->start_time) || empty($act->end_time)){
+                //create error message
+                $errMSG = "ERROR in Vcal::create_sugar_freebusy.  Calendar Activity was not created because of missing start or end time";
+                if(!empty($act->sugar_bean->id)){
+                    $errMSG .= ", id is ".$act->sugar_bean->id;
+                }
+                if(!empty($act->sugar_bean->name)){
+                    $errMSG .= ", name is: ".$act->sugar_bean->name;
+                }
+                //log message and continue
+                $GLOBALS['log']->fatal($errMSG);
+                continue;
+            }
 			$startTimeUTC = $act->start_time->format(self::UTC_FORMAT);
 			$endTimeUTC = $act->end_time->format(self::UTC_FORMAT);
 
