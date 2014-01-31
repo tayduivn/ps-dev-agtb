@@ -157,6 +157,13 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     ),
                 ),
                 array(
+                    'type' => 'favorite',
+                ),
+                array(
+                    'type' => 'follow',
+                    'readonly' => true,
+                ),
+                array(
                     'name' => 'badge',
                     'type' => 'badge',
                     'readonly' => true,
@@ -168,13 +175,6 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                         'opportunity_id',
                         'opportunity_name'
                     ),
-                ),
-                array(
-                    'type' => 'favorite',
-                ),
-                array(
-                    'type' => 'follow',
-                    'readonly' => true,
                 ),
             ),
         ),
