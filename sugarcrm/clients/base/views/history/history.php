@@ -180,4 +180,8 @@ $viewdefs['base']['view']['history'] = array(
             'include_child_items' => true,
         ),
     ),
+    'visibility_labels' => array(
+        'user' => 'LBL_HISTORY_DASHLET_USER_BUTTON_LABEL',
+        'group' => 'LBL_HISTORY_DASHLET_GROUP_BUTTON_LABEL',
+    ),
 );

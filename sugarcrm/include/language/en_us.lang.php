@@ -4433,6 +4433,8 @@ $app_strings = array (
     'LBL_HISTORY_DASHLET_DESCRIPTION' => 'The History dashlet displays Meetings held, Calls logged, Emails received and Emails sent.',
     'LBL_HISTORY_DASHLET_EMAIL_SINGULAR' => 'Email',
     'LBL_HISTORY_DASHLET_EMAIL_PLURAL' => 'Emails',
+    'LBL_HISTORY_DASHLET_USER_BUTTON_LABEL' => 'My History',
+    'LBL_HISTORY_DASHLET_GROUP_BUTTON_LABEL' => 'Team History',
     'LBL_UNASSIGNED' => 'Unassigned',
 
     // planned activities dashlet
@@ -4440,8 +4442,8 @@ $app_strings = array (
     'LBL_PLANNED_ACTIVITIES_DASHLET_DESCRIPTION' => 'The Planned Activities dashlet displays scheduled Meetings and Calls.',
     'LBL_PLANNED_ACTIVITIES_DASHLET_TODAY_BUTTON_LABEL' => 'Today',
     'LBL_PLANNED_ACTIVITIES_DASHLET_FUTURE_BUTTON_LABEL' => 'Future',
-    'LBL_PLANNED_ACTIVITIES_DASHLET_USER_BUTTON_LABEL' => 'My History',
-    'LBL_PLANNED_ACTIVITIES_DASHLET_GROUP_BUTTON_LABEL' => 'Team History',
+    'LBL_PLANNED_ACTIVITIES_DASHLET_USER_BUTTON_LABEL' => 'My Activities',
+    'LBL_PLANNED_ACTIVITIES_DASHLET_GROUP_BUTTON_LABEL' => 'Team Activities',
     'LBL_PLANNED_ACTIVITIES_DASHLET_HELD_ACTIVITY' => 'Held',
     'LBL_PLANNED_ACTIVITIES_DASHLET_CONFIRM_CLOSE' => 'Are you sure you want to mark {0} as closed?',
 
@@ -4453,6 +4455,8 @@ $app_strings = array (
     'LBL_ACTIVE_TASKS_DASHLET_TODO' => 'To Do',
     'LBL_ACTIVE_TASKS_DASHLET_COMPLETE_TASK' => 'Completed',
     'LBL_ACTIVE_TASKS_DASHLET_CONFIRM_CLOSE' => 'Are you sure you want to close the {0} as completed?',
+    'LBL_ACTIVE_TASKS_DASHLET_USER_BUTTON_LABEL' => 'My Tasks',
+    'LBL_ACTIVE_TASKS_DASHLET_GROUP_BUTTON_LABEL' => 'Team Tasks',
 
     // inactive tasks dashlet
     'LBL_INACTIVE_TASKS_DASHLET' => 'Inactive Tasks',
@@ -4460,6 +4464,8 @@ $app_strings = array (
     'LBL_INACTIVE_TASKS_DASHLET_DEFERRED' => 'Deferred',
     'LBL_INACTIVE_TASKS_DASHLET_COMPLETED' => 'Completed',
     'TPL_INACTIVE_TASKS_DASHLET_TIME_RELATIVE' => 'last modified {{relativetime}} on {{date}} at {{time}}',
+    'LBL_INACTIVE_TASKS_DASHLET_USER_BUTTON_LABEL' => 'My Tasks',
+    'LBL_INACTIVE_TASKS_DASHLET_GROUP_BUTTON_LABEL' => 'Team Tasks',
 
     // interactions chart dashlet
     'LBL_EMAIL_SENT' => 'sent',

@@ -210,4 +210,8 @@ $viewdefs['base']['view']['active-tasks'] = array(
             ),
         ),
     ),
+    'visibility_labels' => array(
+        'user' => 'LBL_ACTIVE_TASKS_DASHLET_USER_BUTTON_LABEL',
+        'group' => 'LBL_ACTIVE_TASKS_DASHLET_GROUP_BUTTON_LABEL',
+    ),
 );
