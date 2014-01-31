@@ -55,6 +55,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             MailApi::DATE_SENT    => "2014-12-25T18:30:00",
             MailApi::FROM_ADDRESS => "John Doe <x@y.z>",
             MailApi::TO_ADDRESSES => array(array("email" => "a@b.c")),
+            MailApi::SUBJECT => 'foo',
         );
 
         $mailRecordMock = $this->getMock("MailRecord", array("archive"));
@@ -642,6 +643,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
                     MailApi::FROM_ADDRESS => 'John Doe <john@doe.com>',
                     MailApi::DATE_SENT => '2014-12-25T18:30:00',
                     MailApi::TO_ADDRESSES => array(array("email" => "a@b.c")),
+                    MailApi::SUBJECT => 'foo',
                 ),
                 false,
             ),
@@ -672,6 +674,16 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
                 array(MailApi::TO_ADDRESSES, 'email'),
+            ),
+            38 => array(
+                array(
+                    MailApi::STATUS => 'archive',
+                    MailApi::FROM_ADDRESS => 'John Doe <john@doe.com>',
+                    MailApi::DATE_SENT => '2014-12-25T18:30:00',
+                    MailApi::TO_ADDRESSES => array(array("email" => "a@b.c")),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_VALUE',
+                array(MailApi::SUBJECT),
             ),
         );
     }

@@ -490,6 +490,13 @@ class MailApi extends ModuleApi
             $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FORMAT', array(self::SUBJECT));
         }
 
+        if ($args[self::STATUS] === "archive") {
+            $subject = empty($args[self::SUBJECT]) ? '' : trim($args[self::SUBJECT]);
+            if (empty($subject)) {
+                $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_VALUE', array(self::SUBJECT));
+            }
+        }
+
         /*--- Validate html_body ---*/
         if (isset($args[self::HTML_BODY]) && !is_string($args[self::HTML_BODY])) {
             $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FORMAT', array(self::HTML_BODY));
