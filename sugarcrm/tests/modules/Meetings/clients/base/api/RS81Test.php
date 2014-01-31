@@ -34,22 +34,25 @@ class RS81Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test asserts behavior of globalSearch method without wildcard search
+     * Test asserts behavior of filterList method without wildcard search
      */
     public function testGlobalSearchWithoutQ()
     {
-        $actual = $this->api->globalSearch($this->service, array());
+        $actual = $this->api->filterList($this->service, array(
+            'module' => 'Meetings',
+        ));
         $this->assertArrayHasKey('records', $actual);
     }
 
     /**
-     * Test asserts behavior of globalSearch method with wildcard search
+     * Test asserts behavior of filterList method with wildcard search
      */
     public function testGlobalSearchWithQ()
     {
-        $actual = $this->api->globalSearch($this->service, array(
-                'q' => 'anything',
-            ));
+        $actual = $this->api->filterList($this->service, array(
+            'module' => 'Meetings',
+            'q' => 'anything',
+        ));
         $this->assertArrayHasKey('records', $actual);
     }
 
