@@ -33,6 +33,9 @@ class TemplateURL extends TemplateText{
 
 	public function __construct()
 	{
+		// Handles setting the 'gen' flag on OOTB URL fields
+		$this->vardef_map['ext3'] = 'gen';
+		$this->vardef_map['gen'] = 'ext3';
 		$this->vardef_map['ext4'] = 'link_target';
 		$this->vardef_map['link_target'] = 'ext4';
 	}
