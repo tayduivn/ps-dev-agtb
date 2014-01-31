@@ -123,10 +123,11 @@
              * Takes the list of visible fields, move the item, and verify if
              * the order has changed.
              *
-             * @param {jQuery.Element} $draggedItem The element being dragged.
-             * @param {jQuery.Element} $droppedInItem The placeholder where the
-             *                         element is dropped.
-             * @return {boolean} TRUE if order has changed, FALSE otherwise.
+             * @param {Integer} draggedIndex The index of the element being
+             * dragged.
+             * @param {Integer} droppedInIndex The index of the placeholder
+             * where the element is dropped.
+             * @return {boolean} `true` if order has changed, `false` otherwise.
              * @private
              */
             _hasOrderChanged: function(draggedIndex, droppedInIndex) {
@@ -153,7 +154,7 @@
                     draggedIndex,
                     droppedInIndex;
 
-                globalOrder = _.pluck(this._fields.options, 'name');
+                globalOrder = _.pluck(this._fields.all, 'name');
                 draggedIndex = _.indexOf(globalOrder, $draggedItem.closest('th').data('fieldname'));
                 droppedInIndex = _.indexOf(globalOrder, $droppedInItem.closest('th').data('fieldname'));
 

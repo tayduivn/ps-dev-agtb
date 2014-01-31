@@ -80,9 +80,7 @@
      * @private
      */
     _buildFieldDefinitions: function(modelToSave, modelInDb) {
-        var visibleColumns = [],
-            availableColumns = [],
-            fieldsThatDiffer,
+        var fieldsThatDiffer,
             fieldDefinition,
             modifiedByColumnDef = {
                 name: '_modified_by',
@@ -109,18 +107,14 @@
             field.sortable = false; //set all columns to not sort
             if (field.name === 'date_modified') {
                 field.selected = false;
-                availableColumns.push(field);
             } else {
                 field.selected = true;
-                visibleColumns.push(field);
             }
         });
 
         this._fields = {
-            'default': fieldDefinition, //all available fields shown to the user
-            'available': availableColumns, //hidden by default
-            'visible': visibleColumns, //visible by default
-            'options': fieldDefinition
+            'visible': _.where(fieldDefinition, { selected: true }),
+            'all': fieldDefinition
         };
     },
 

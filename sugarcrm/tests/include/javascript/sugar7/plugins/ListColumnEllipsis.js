@@ -27,14 +27,14 @@ describe("List Column Ellipsis Plugin", function() {
     });
     it("Should set fields toggling selected from true to false", function() {
         var opts = [{name: 'no'}, {name: 'no'}, {name: 'yes', selected: true}, {name: 'no'}];
-        plugin._fields.options = opts;
+        plugin._fields.all = opts;
         plugin._toggleColumn('yes');
         expect(opts[2].selected).toEqual(false);
         expect(plugin._fields.visible.length).toBeFalsy();
     });
     it("Should set fields toggling selected from false to true", function() {
         var opts = [{name: 'no'}, {name: 'yes', selected: false}, {name: 'no'}];
-        plugin._fields.options = opts;
+        plugin._fields.all = opts;
         plugin._toggleColumn('yes');
         expect(opts[1].selected).toEqual(true);
         expect(plugin._fields.visible.length).toEqual(1);

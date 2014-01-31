@@ -147,9 +147,7 @@ describe('Resolve Conflicts List View', function() {
             view._buildFieldDefinitions(clientModel, databaseModel);
 
             expect(view._fields.visible.length).toBe(3);
-            expect(view._fields.available.length).toBe(0);
-            expect(view._fields.default.length).toBe(3);
-            expect(view._fields.options.length).toBe(3);
+            expect(view._fields.all.length).toBe(3);
 
             getFieldViewDefinitionStub.restore();
         });
@@ -168,8 +166,7 @@ describe('Resolve Conflicts List View', function() {
             view._buildFieldDefinitions(clientModel, databaseModel);
 
             expect(view._fields.visible[0].name).toBe('_modified_by');
-            expect(view._fields.default[0].name).toBe('_modified_by');
-            expect(view._fields.options[0].name).toBe('_modified_by');
+            expect(view._fields.all[0].name).toBe('_modified_by');
 
             getFieldViewDefinitionStub.restore();
         });
@@ -228,11 +225,8 @@ describe('Resolve Conflicts List View', function() {
             view._buildFieldDefinitions(clientModel, databaseModel);
 
             expect(view._fields.visible.length).toBe(3);
-            expect(view._fields.available.length).toBe(1);
-            expect(view._fields.default.length).toBe(4);
-            expect(view._fields.options.length).toBe(4);
+            expect(view._fields.all.length).toBe(4);
 
-            expect(view._fields.available[0].selected).toBe(false);
             expect(view._fields.visible[0].selected).toBe(true);
             expect(view._fields.visible[1].selected).toBe(true);
             expect(view._fields.visible[2].selected).toBe(true);

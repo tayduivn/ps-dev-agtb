@@ -169,34 +169,6 @@
         app.events.trigger("preview:close");
     },
 
-    /**
-     * Parse fields to identificate default and available(+visible) fields
-     * @param {Object} view metadata
-     * @return {Object} view metadata
-     */
-    parseFields: function(viewMeta){
-        this._fields = {
-            "default": [], //Fields visible by default
-            "available": {
-                "visible": [], //Fields user wants to see
-                "all": [] //Fields hidden by default
-            }
-        };
-        // TODO: load field prefs and store names in this._fields.available.visible
-        // no prefs so use viewMeta as default and assign hidden fields
-        _.each(viewMeta.panels, function(panel){
-            _.each(panel.fields, function(fieldMeta, i) {
-                if (fieldMeta["default"] === false) {
-                    this._fields["available"].all.push(fieldMeta.name);
-                } else {
-                    this._fields["default"].push(fieldMeta.name);
-                }
-            }, this);
-        }, this);
-        return viewMeta;
-
-    },
-
     showAlert: function(message) {
         this.$(".alert .container").html(message);
         this.$(".alert").removeClass("hide");

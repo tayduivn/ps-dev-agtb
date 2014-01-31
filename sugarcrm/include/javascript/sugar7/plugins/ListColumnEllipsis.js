@@ -36,28 +36,21 @@
                 this._reopenFieldsDropdown(event);
             },
             /**
-             * Sets `this._fields.available` and `this._fields.visible` properties, and toggles selected field
-             * @param {String} column The column's `name`
+             * Toggle selected field.
+             *
+             * @param {String} column The column name.
              * @protected
              */
             _toggleColumn: function(column) {
-                // Clear out _fields
-                this._fields.visible = [];
-                this._fields.available = [];
                 var changedColumn = {};
                 // Search _fields.options for match on column and toggle it's selected property
-                _.each(this._fields.options, function(fieldMeta) {
+                _.each(this._fields.all, function(fieldMeta) {
                     if (fieldMeta.name === column) {
                         fieldMeta.selected = !fieldMeta.selected;
                         changedColumn = fieldMeta;
                     }
-                    // If column was found and toggled selected push to `visible` else `available`
-                    if (fieldMeta.selected) {
-                        this._fields.visible.push(fieldMeta);
-                    } else {
-                        this._fields.available.push(fieldMeta);
-                    }
                 }, this);
+                this._fields.visible = _.where(this._fields.all, { selected: true });
 
                 // Trigger an event to let the view know to save/update current
                 // state

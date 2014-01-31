@@ -159,43 +159,60 @@ describe("Base.View.FlexList", function () {
     });
 
 
+    describe('parseFields', function() {
 
-    describe('default fields and available fields', function() {
-
-        beforeEach(function () {
+        beforeEach(function() {
             view.meta.panels = [
                 {
                     fields: [
-                        {
-                            'name': 'test1',
-                            'default': false
-                        },
-                        {
-                            'name': 'test2',
-                            'default': false
-                        }
+                        { 'name': 'test1', 'default': false },
+                        { 'name': 'test2', 'default': false }
                     ]
                 },
                 {
                     fields: [
-                        {
-                            'name': 'test3',
-                            'default': true
-                        },
-                        {
-                            'name': 'test4',
-                            'default': false
-                        }
+                        { 'name': 'test3', 'default': true },
+                        { 'name': 'test4', 'default': false }
                     ]
                 }
             ];
         });
 
-        it('should generate user last state key for visible fields', function() {
-            expect(view.thisListViewFieldListKey).not.toBeEmpty();
+        it('use default fields as visible when user last state empty', function() {
+            view._fields = view.parseFields();
+
+            expect(view._fields.visible).toEqual([
+                {
+                    'name': 'test3',
+                    'default': true,
+                    'selected': true
+                }
+            ]);
+            expect(view._fields.all).toEqual([
+                {
+                    'name': 'test1',
+                    'default': false,
+                    'selected': false
+                },
+                {
+                    'name': 'test2',
+                    'default': false,
+                    'selected': false
+                },
+                {
+                    'name': 'test3',
+                    'default': true,
+                    'selected': true
+                },
+                {
+                    'name': 'test4',
+                    'default': false,
+                    'selected': false
+                }
+            ]);
         });
 
-        it('should retrieve the last state of fields when parse fields', function() {
+        it('should retrieve the last state of fields stored into cache', function() {
             var lastStateGetStub = sinon.collection.stub(app.user.lastState, 'get', function(key) {
                 return ['test2'];
             });
@@ -205,72 +222,8 @@ describe("Base.View.FlexList", function () {
             expect(view._fields.visible).toEqual([
                 {
                     'name': 'test2',
-                    'default': false
-                }
-            ]);
-        });
-
-        it('should parse fields and separate default fields from available fields', function() {
-            view._fields = view.parseFields();
-
-            expect(view._fields['default']).toEqual([
-                {
-                    'name': 'test3',
-                    'default': true
-                }
-            ]);
-            expect(view._fields.available).toEqual([
-                {
-                    'name': 'test1',
-                    'default': false
-                },
-                {
-                    'name': 'test2',
-                    'default': false
-                },
-                {
-                    'name': 'test4',
-                    'default': false
-                }
-            ]);
-            expect(view._fields.visible).toEqual([
-                {
-                    'name': 'test3',
-                    'default': true
-                }
-            ]);
-            expect(view._fields.options).toEqual([
-                {
-                    'name': 'test1',
                     'default': false,
-                    'selected' : false
-                },
-                {
-                    'name': 'test2',
-                    'default': false,
-                    'selected' : false
-                },
-                {
-                    'name': 'test3',
-                    'default': true,
-                    'selected' : true
-                },
-                {
-                    'name': 'test4',
-                    'default': false,
-                    'selected' : false
-                }
-            ]);
-
-
-        });
-        it('should parse fields and use default fields as visible when user last state empty', function() {
-            sinon.collection.stub(app.user.lastState, 'get');
-            view._fields = view.parseFields();
-            expect(view._fields.visible).toEqual([
-                {
-                    'name': 'test3',
-                    'default': true
+                    'selected': true
                 }
             ]);
         });
@@ -285,12 +238,7 @@ describe("Base.View.FlexList", function () {
                     { 'name': 'visible2' },
                     { 'name': 'visible3' }
                 ],
-                'available': [
-                    { 'name': 'available1' },
-                    { 'name': 'available2' },
-                    { 'name': 'available3' }
-                ],
-                'options': [
+                'all': [
                     { 'name': 'visible1', 'selected': true },
                     { 'name': 'visible2', 'selected': true },
                     { 'name': 'visible3', 'selected': true },
@@ -310,9 +258,8 @@ describe("Base.View.FlexList", function () {
                 'available2'
             ];
             var sortedCatalog = view.reorderCatalog(catalog, order1);
-            expect(_.pluck(sortedCatalog.options, 'name')).toEqual(order1);
+            expect(_.pluck(sortedCatalog.all, 'name')).toEqual(order1);
             expect(_.pluck(sortedCatalog.visible, 'name')).toEqual(['visible1', 'visible3', 'visible2']);
-            expect(_.pluck(sortedCatalog.available, 'name')).toEqual(['available1', 'available3', 'available2']);
         });
         it('should sort the catalog based on order2', function() {
             var order2 = [
@@ -324,9 +271,8 @@ describe("Base.View.FlexList", function () {
                 'visible1'
             ];
             var sortedCatalog = view.reorderCatalog(catalog, order2);
-            expect(_.pluck(sortedCatalog.options, 'name')).toEqual(order2);
+            expect(_.pluck(sortedCatalog.all, 'name')).toEqual(order2);
             expect(_.pluck(sortedCatalog.visible, 'name')).toEqual(['visible3', 'visible2', 'visible1']);
-            expect(_.pluck(sortedCatalog.available, 'name')).toEqual(['available3', 'available2', 'available1']);
         });
     });
 
@@ -338,12 +284,7 @@ describe("Base.View.FlexList", function () {
                     { 'name': 'visible2' },
                     { 'name': 'visible3' }
                 ],
-                'available': [
-                    { 'name': 'available1' },
-                    { 'name': 'available2' },
-                    { 'name': 'available3' }
-                ],
-                'options': [
+                'all': [
                     { 'name': 'visible1', 'selected': true },
                     { 'name': 'visible3', 'selected': true },
                     { 'name': 'available1', 'selected': false },
