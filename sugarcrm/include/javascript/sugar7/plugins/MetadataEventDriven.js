@@ -33,10 +33,10 @@
              */
             triggerMetadataEvent: function(domEvent, metadataEvent) {
                 if (this.view.context) {
-                    this.view.context.trigger(metadataEvent);
+                    this.view.context.trigger(metadataEvent, this.model);
                 }
                 if (this.view.layout) {
-                    this.view.layout.trigger(metadataEvent);
+                    this.view.layout.trigger(metadataEvent, this.model);
                 }
             }
         });
