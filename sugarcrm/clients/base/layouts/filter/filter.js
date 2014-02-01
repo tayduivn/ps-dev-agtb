@@ -1,51 +1,44 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
 ({
     /**
      * Layout for filtering a collection.
      * Composed of a module dropdown(optional), a filter dropdown and an input
      *
-     * Certain options can be set on the context that wraps the filterpanel layout:
-     *     - `applyFilter`: this will determine whether or not to apply the filter while
-     *       completing filter rows. This is used mainly because getRelevantContextList
-     *       may return the global context and will filter its collection automatically,
-     *       and sometimes this is not desired (e.g. a drawer layout with a filterpanel embedded).
-     *     - `saveLastFilter`: this will determine whether or not to save properties pertaining
-     *       to filters in localstorage. This is needed for certain views that have filterpanels,
-     *       do not require stickiness and do not want to affect already-stored values in localstorage.
-     *       (e.g. the filterpanel layout in dashboardconfiguration shouldn't affect the stickiness of
-     *       filters on record/list views, so it should be set to false).
+     * Certain options can be set on the filterpanel context:
+     *     - `applyFilter`: this will determine whether or not to apply the
+     *       filter while completing filter rows. This is used mainly because
+     *       getRelevantContextList may return the global context and will
+     *       filter its collection automatically, and sometimes this is not
+     *       desired (e.g. a drawer layout with a filterpanel embedded).
+     *     - `saveLastFilter`: this will determine whether or not to save
+     *       properties pertaining to filters in localstorage. This is needed
+     *       for certain views that have filterpanels, do not require
+     *       stickiness and do not want to affect already-stored values in
+     *       localstorage (e.g. the filterpanel layout in dashboardconfiguration
+     *       shouldn't affect the stickiness of filters on record/list views,
+     *       so it should be set to false).
+     *     - `hideFilterActions`: this will determine whether or not the
+     *       `delete`, `reset`, and `cancel` action buttons will be rendered on
+     *       the `filter-actions` view.
      *
      * Usage example:
      *
      * <pre><code>
      * var filterOptions = {
      *     'applyFilter': false,
-     *     'saveLastFilter': false
+     *     'saveLastFilter': false,
+     *     'hideFilterActions': true
      * };
      * this.context.set(filterOptions);
      * </code></pre>
@@ -152,9 +145,10 @@
      * handles filter removal
      * @param model
      */
-    removeFilter: function(model){
+    removeFilter: function(model) {
         this.filters.remove(model);
         this.clearFilterEditState();
+        this.clearLastFilter(this.layout.currentModule, this.layoutType);
         app.user.lastState.set(app.user.lastState.key("saved-" + this.layout.currentModule, this), this.filters.toJSON());
         this.layout.trigger('filter:reinitialize');
     },
@@ -482,8 +476,6 @@
         moduleName = moduleName || this.module;
         lastFilter = lastFilter || this.getLastFilter(moduleName, this.layoutType);
         var filterData;
-        if (!(this.filters.get(lastFilter)))
-            lastFilter = null;
         if (this.layoutType === 'record' && !this.showingActivities) {
             linkName = app.user.lastState.get(app.user.lastState.key("subpanels-last", this)) || linkName;
             filterData = {

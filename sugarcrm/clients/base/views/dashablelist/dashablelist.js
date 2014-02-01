@@ -8,7 +8,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
  * Dashablelist is a dashlet representation of a module list view. Users can
@@ -192,13 +192,7 @@
                     module: app.lang.getAppListStrings('moduleList')[moduleName]
                 }));
 
-                var filterPanelLayout = this.layout.getComponent('filterpanel'),
-                    filterLayout = filterPanelLayout ? filterPanelLayout.getComponent('filter') : null;
-
-                if (filterLayout) {
-                    filterLayout.trigger("filter:get", moduleName);
-                }
-
+                this._reinitializeFilterPanel(moduleName, null, 'all_records');
                 this._updateDisplayColumns();
                 this.updateLinkedFields(moduleName);
             }, this);
@@ -210,6 +204,11 @@
                     this.setLinkedFieldVisibility('0');
                 }
             }, this);
+            this.listenTo(this.layout, 'render', function() {
+                if (this.meta.config) {
+                    this._reinitializeFilterPanel(this.context.get('module'), null, this.settings.get('filterId'));
+                }
+            });
         }
         this._initializeSettings();
 
@@ -240,7 +239,25 @@
         if (this.meta.config) {
             this._configureDashlet();
         } else if (this.moduleIsAvailable) {
-            this._displayDashlet();
+            var filterId = this.settings.get('filterId');
+            if (filterId) {
+                var filterDef = this._getFilterDefFromMeta(filterId);
+                if (filterDef) {
+                    this._displayDashlet(filterDef);
+                } else {
+                    this._fetchCustomFilter(filterId, {
+                        success: _.bind(function(data) {
+                            var filterDef = data.filter_definition;
+                            this._displayDashlet(filterDef);
+                        }, this),
+                        error: _.bind(function(err) {
+                            this._displayDashlet();
+                        }, this)
+                    });
+                }
+            } else {
+                this._displayDashlet();
+            }
         }
         this.metaFields = this.meta.panels && _.first(this.meta.panels).fields || [];
     },
@@ -263,6 +280,24 @@
         var module = this.settings.get('module') || this.context.get('module'),
             moduleName = app.lang.getAppListStrings('moduleList')[module];
         return app.lang.get(this.settings.get('label'), module, {module: moduleName});
+    },
+
+    /**
+     * Trigger's a reinitialization event on the filterpanel, and sets the
+     * current module, link module, and filter ID on the filter layout.
+     *
+     * @param {String} module The current module.
+     * @param {String} link The link module.
+     * @param {String} filterId The filter ID to set on the filterpanel.
+     * @private
+     */
+    _reinitializeFilterPanel: function(module, link, filterId) {
+        var filterPanelLayout = this.layout.getComponent('filterpanel'),
+            filterLayout = filterPanelLayout ? filterPanelLayout.getComponent('filter') : null;
+
+        if (filterLayout) {
+            filterLayout.trigger('filter:get', module, link, filterId);
+        }
     },
 
     /**
@@ -422,6 +457,62 @@
     },
 
     /**
+     * Acquires pre-defined filters that may exist in metadata, for a given
+     * module.
+     *
+     * @param {String} module The module to fetch predefined filters from.
+     * @return {Array} An array of pre-defined filter objects.
+     * @private
+     */
+    _getPreDefinedFilters: function(module) {
+        var moduleMeta = app.utils.deepCopy(app.metadata.getModule(module));
+
+        if (_.isObject(moduleMeta)) {
+            return _.compact(_.flatten(_.pluck(_.compact(_.pluck(moduleMeta.filters, 'meta')), 'filters')));
+        }
+    },
+
+    /**
+     * Fetches the appropriate filter definition from the module metadata,
+     * for a given filter ID.
+     *
+     * @param {String} id The ID of the filter.
+     * @return {Array} The filter definition array.
+     * @private
+     */
+    _getFilterDefFromMeta: function(id) {
+        var module = this.settings.get('module');
+
+        if (id) {
+            var filtersFromMeta = this._getPreDefinedFilters(module),
+                filter = _.find(filtersFromMeta, function(filter) {
+                    return filter.id === id;
+                }, this);
+
+            if (filter) {
+                return filter.filter_definition;
+            }
+        }
+    },
+
+    /**
+     * Fetches a Filters bean record from the server using the supplied ID.
+     *
+     * @param {String} id The ID of the filter to fetch.
+     * @param {Function} callbacks Callback functions to execute after fetch.
+     * @private
+     */
+    _fetchCustomFilter: function(id, callbacks) {
+        var self = this,
+            module = this.settings.get('module'),
+            url = app.api.buildURL('Filters', 'read', {id: id});
+
+        if (id && callbacks) {
+            app.api.call('read', url, null, callbacks);
+        }
+    },
+
+    /**
      * Gets all of the modules the current user can see.
      *
      * This is used for populating the module select and list view columns
@@ -485,12 +576,17 @@
     /**
      * Perform any necessary setup before displaying the dashlet.
      *
+     * @param {Array} filterDef The filter definition array.
      * @private
      */
-    _displayDashlet: function() {
+    _displayDashlet: function(filterDef) {
         this.context.set('skipFetch', false);
         this.context.set('limit', this.settings.get('limit'));
-        this._intializeFilter();
+
+        if (filterDef) {
+            this._applyFilterDef(filterDef);
+            this.context.reloadData({'recursive': false});
+        }
         // get the columns that are to be displayed and update the panel metadata
         var columns = this._getColumnsForDisplay();
         this.meta.panels = [{fields: columns}];
@@ -498,25 +594,16 @@
     },
 
     /**
-     * Sets the filter definition on the collection for retrieving the records
+     * Sets the filter definition on the context collection to retrieve records
      * for the list view.
      *
-     * A filter will be added if the dashlet is configured to only return
-     * records assigned to the user or favorited by the user. The filters will
-     * be collapsed with an `$and` clause if both filter options are on. Custom
-     * filters are not supported.
-     *
+     * @param {Array} filterDef The filter definition array.
      * @private
      */
-    _intializeFilter: function() {
-        var filter = [];
-        if (this.settings.get('my_items') === '1') {
-            filter.push({'$owner': ''});
+    _applyFilterDef: function(filterDef) {
+        if (filterDef) {
+            this.context.get('collection').filterDef = filterDef;
         }
-        if (this.settings.get('favorites') === '1') {
-            filter.push({'$favorite': ''});
-        }
-        this.context.get('collection').filterDef = (filter.length > 1) ? {'$and': filter} : filter;
     },
 
     /**

@@ -8,7 +8,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright (C) 2004-2013 SugarCRM Inc. All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 ({
     /**
@@ -80,7 +80,7 @@
      * @param {Event} event The `change` event.
      */
     filterNameChanged: _.debounce(function(event) {
-        if (this.disposed) {
+        if (this.disposed || !this.context.editingFilter) {
             return;
         }
 
@@ -91,7 +91,7 @@
         if (this.layout.getComponent('filter-rows')) {
             this.layout.getComponent('filter-rows').saveFilterEditState();
         }
-    }, 400),
+    }, 200),
 
     /**
      * Toggle delete button.

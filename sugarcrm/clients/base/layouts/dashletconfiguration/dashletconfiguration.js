@@ -69,12 +69,15 @@
      *
      * @param {Bean} model The dashlet model.
      */
-    saveDashlet: function() {
+    saveDashlet: _.debounce(function() {
         if (this.isDashableList) {
             if (this.context.editingFilter) {
                 // We are editing/creating a new filter
-                var name = this.context.editingFilter.get('name');
-                this.context.trigger('filter:create:save', name);
+                if (!this.context.editingFilter.get('name')) {
+                    this.context.editingFilter.set('name', app.lang.get('LBL_DASHLET') +
+                        ': ' + this.model.get('label'));
+                }
+                this.context.trigger('filter:create:save');
             } else {
                 // We are saving a dashlet with a predefined filter
                 var filterId = this.context.get('currentFilterId'),
@@ -84,7 +87,7 @@
         } else {
             app.drawer.close(this.model);
         }
-    },
+    }, 200),
 
     /**
      * This function is invoked by the `filter:add` event. It saves the
@@ -93,9 +96,20 @@
      * @param {Bean} filterModel The saved filter model.
      */
     updateDashletFilterAndSave: function(filterModel) {
-        // We need to save the filter ID on the dashlet model before saving the dashlet.
+        // We need to save the filter ID on the dashlet model before saving
+        // the dashlet.
         var id = filterModel.id || filterModel.get('id');
         this.model.set('filterId', id);
         app.drawer.close(this.model);
+
+        // We need to refresh the controller context in this case, because
+        // of the limitations in the filter architecture. The main reason
+        // why we do this is because the filter collection is not shared
+        // amongst views and therefore changes to this collection on different
+        // contexts (list views and dashlets) need to be kept in sync.
+        //
+        // TODO: This will break the dashboard edit page.
+        app.controller.context.reloadData({'recursive': false});
+        app.controller.layout.render();
     }
 })
