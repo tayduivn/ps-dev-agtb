@@ -20,14 +20,14 @@ class RS64Test extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        $user = SugarTestHelper::setUp('current_user', array(true, true));
 
         $this->account = SugarTestAccountUtilities::createAccount();
         $this->account->load_relationship('contacts');
 
         $this->contact = SugarTestContactUtilities::createContact();
         $this->contact->account_id = $this->account->id;
-        $this->contact->assigned_user_id = 1;
+        $this->contact->assigned_user_id = $user->id;
         $this->contact->team_id = 1;
         $this->contact->team_set_id = 1;
         $this->contact->save();
@@ -60,7 +60,7 @@ class RS64Test extends Sugar_PHPUnit_Framework_TestCase
         $data = $api->createRecord($service, array(
                 'module' => 'Bugs',
                 'name' => 'Test Bug',
-                'assigned_user_id' => $GLOBALS['current_user']->id,
+                'assigned_user_id' => 1,
                 'team_id' => 2,
                 'team_set_id' => 2,
             ));
