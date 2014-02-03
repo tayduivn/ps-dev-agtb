@@ -85,7 +85,7 @@
             .margin({top:0})
             .tooltipContent( function(key, x, y, e, graph) {
                 return '<p>Stage: <b>' + key + '</b></p>' +
-                    '<p>Amount: <b>' + currencySymbol +  parseInt(y, 10) + 'K</b></p>' +
+                    '<p>Amount: <b>' + y + '</b></p>' +
                     '<p>Percent: <b>' +  x + '%</b></p>';
             })
             .colorData('class', {step:2})
