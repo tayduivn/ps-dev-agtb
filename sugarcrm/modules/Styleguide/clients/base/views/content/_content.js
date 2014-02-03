@@ -1,4 +1,0 @@
-({
-    _noop: function() {
-    }
-})

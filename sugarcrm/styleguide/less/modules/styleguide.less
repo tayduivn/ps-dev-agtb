@@ -104,14 +104,10 @@
   .page-header {
     padding-bottom: 0;
     margin: 0 0 14px;
-    h1 {
-      padding-bottom: 0;
-      margin-top: 0;
-      font-size: 26px;
-    }
-    small {
-      font-size: 18px;
-    }
+  }
+  .page-header h1 {
+    padding-bottom: 0;
+    margin-top: 0;
   }
   .headerpane .select2-container .select2-choice {
     min-width: 200px;
@@ -120,19 +116,8 @@
   }
 }
 
-.subnav .btn-toolbar label {
-  display: inline-block;
-  margin-right: 8px;
-}
-
 /* Accordion table
 -------------------------------------------------- */
-table.accordion td.accordion-heading .accordion-toggle,
-table.accordion td.accordion-body {
-    padding: 0;
-}
-
-
 table.accordion {
 
   h3 {
@@ -320,7 +305,6 @@ ol.linenums li {
   text-shadow: 0 1px 0 #fff;
 }
 
-
 /* Font Awesome icons
 -------------------------------------------------- */
 .the-icons {
@@ -344,61 +328,7 @@ ol.linenums li {
   color: #555;
   padding: 5px 4px 3px;
 }
-.chart-icon-container {
-  display: inline-block;
-  margin-right: 12px;
-  padding: 12px;
-}
-.filetype-thumbnails span.filetype-thumbnail {
-  margin: 0 12px 12px 0;
-  float: left;
-}
-.sugar-cube svg {
-  width: 80px;
-  height: 80px;
-  display: inline-block;
-}
-.sugar-cube.sc-small svg {
-  width: 20px;
-  height: 20px;
-}
-.sugar-cube.sc-large svg {
-  width: 512px;
-  height: 512px;
-}
 
-.sugar-cube .sc-left,
-.sugar-cube .sc-right,
-.sugar-cube .sc-top {
-  fill:#ccc;
-  stroke-width:0;
-  /*stroke-linecap:butt;
-  stroke:#000;
-  stroke-linejoin:miter;
-  stroke-opacity:1*/
-}
-.sugar-cube .sc-top {
-  fill: #E41E26;
-}
-.sugar-cube .sc-right {
-  fill: #CECCCB;
-}
-.sugar-cube .sc-left {
-  fill: #343433;
-}
-
-.sugar-cube.sc-white path  {
-  fill: #fff;
-}
-.sugar-cube.sc-white path.sc-top {
-  opacity: 1;
-}
-.sugar-cube.sc-white path.sc-right {
-  opacity: 0.8;
-}
-.sugar-cube.sc-white path.sc-left {
-  opacity: 0.6;
-}
 .PrimaryButton {
   background-color: @PrimaryButton;
 }
@@ -407,17 +337,4 @@ ol.linenums li {
 }
 .BorderColor {
   background-color: @BorderColor;
-}
-
-
-/* Responsive
--------------------------------------------------- */
-
-@media (max-width: 768px) {
-
-  .container,
-  .container-fluid {
-    width: auto;
-    padding: 20px;
-  }
 }

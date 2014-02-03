@@ -28,7 +28,31 @@
 }}
 <!-- Form inputs
 ================================================== -->
-<script src="styleguide/content/charts/js/chart-utils.js"></script>
+<script src="styleguide/content/js/chart-utils.js"></script>
+<script>
+  function getSelect2Constructor($select) {
+    var _ctor = {};
+    _ctor.minimumResultsForSearch = 7;
+    _ctor.dropdownCss = {};
+    _ctor.dropdownCssClass = '';
+    _ctor.containerCss = {};
+    _ctor.containerCssClass = '';
+    if ( $select.hasClass('narrow') ) {
+      _ctor.dropdownCss.width = 'auto';
+      _ctor.dropdownCssClass = 'select2-narrow ';
+      _ctor.containerCss.width = '75px';
+      _ctor.containerCssClass = 'select2-narrow';
+      _ctor.width = 'off';
+    }
+    if ( $select.hasClass('inherit-width') ) {
+      _ctor.dropdownCssClass = 'select2-inherit-width ';
+      _ctor.containerCss.width = '100%';
+      _ctor.containerCssClass = 'select2-inherit-width';
+      _ctor.width = 'off';
+    }
+    return _ctor;
+  }
+</script>
 
 <section id="select2">
   <div class="page-header">
@@ -51,6 +75,9 @@
         <option value="Medium">Medium</option>
         <option disabled value="Low">Low</option>
       </select>
+      <script>
+        $('select[name="priority"]').select2({minimumResultsForSearch:7});
+      </script>
     </div>
   </div>
 
@@ -88,16 +115,19 @@
         <option value="Medium">Medium</option>
         <option disabled value="Low">Low</option>
       </select>
-      <a class="btn btn-primary" onclick="$('#priority').select2('val','High');return false;">Set Value</a>
-      <a class="btn btn-primary" onclick="alert($('#priority').select2('val'));return false">Get Value</a>
+      <a href="#" class="btn btn-primary" onclick="$('#priority').select2('val','High');return false;">Set Value</a>
+      <a href="#" class="btn btn-primary" onclick="alert($('#priority').select2('val'));return false">Get Value</a>
+      <script>
+        $('#priority').select2({minimumResultsForSearch:7, width:'200px'});
+      </script>
     </div>
   </div>
 
   <div class="row-fluid">
     <div class="span6">
 <pre class="prettyprint linenums" style="margin-bottom: 9px;">
-&lt;a class="btn btn-primary" onclick="alert($('#priority').select2('val,'High')"&gt;Set Value&lt;/a&gt;
-&lt;a class="btn btn-primary" onclick="alert($('#priority').select2('val'))"&gt;Get Value&lt;/a&gt;
+&lt;a href="#" class="btn btn-primary" onclick="alert($('#priority').select2('val,'High')"&gt;Set Value&lt;/a&gt;
+&lt;a href="#" class="btn btn-primary" onclick="alert($('#priority').select2('val'))"&gt;Get Value&lt;/a&gt;
 &lt;script&gt;
   $('#priority').select2({width:'200px'});
 &lt;/script&gt;
@@ -115,6 +145,26 @@
     <div class="span12 padded">
       <h3>Loading results from json</h3>
      <input type="hidden" class="bigdrop" id="e6" style="width:600px"/></p>
+      <script>
+      $("#e6").select2({
+          placeholder: "Search for a movie",
+          minimumInputLength: 1,
+          ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+              url: "styleguide/content/select2.json",
+              dataType: 'json',
+              data: function (term, page) {
+                return {q:term}
+              },
+              results: function (data, page) { // parse the results into the format expected by Select2.
+                  // since we are using custom formatting functions we do not need to alter remote JSON data
+
+                  return {results: data.movies};
+              }
+          },
+          formatResult: function(m) {return m.title;},
+          formatSelection: function(m) {return m.title;},
+      });
+      </script>
     </div>
   </div>
   <hr>
@@ -131,6 +181,11 @@
         <option value="Medium">Medium</option>
         <option disabled value="Low">Low</option>
       </select>
+      <script>
+        var $this = $('#priority2')
+          , ctor = getSelect2Constructor($this);
+        $this.select2( ctor );
+      </script>
     </div>
   </div>
 
@@ -161,6 +216,17 @@
           <option value="WA">Washington</option>
           <option value="CA">California</option>
         </select>
+        <script>
+          function formatStateSelection (state) {
+            return state.id;
+          }
+
+          var $this = $('#state')
+            , ctor = getSelect2Constructor($this);
+          ctor.formatSelection = formatStateSelection;
+
+          $this.select2( ctor );
+        </script>
       </div>
 
 <pre class="prettyprint linenums" style="margin-bottom: 9px;">
@@ -278,6 +344,9 @@
 <option value="WI">Wisconsin</option>
 <option value="WY">Wyoming</option>
       </select>
+      <script>
+        $('#states3').select2({width:'200px', minimumResultsForSearch:7, allowClear:true});
+      </script>
     </div>
   </div>
 
@@ -304,6 +373,13 @@
     <div class="span12 padded">
       <h3>Select with Hidden Input</h3>
       <input type="hidden" id="s2_hidden" class="select2 inherit-width">
+      <script>
+        var $this = $('#s2_hidden')
+          , ctor = getSelect2Constructor($this);
+        ctor.data = [{id:0,text:'enhancement'},{id:1,text:'bug'},{id:2,text:'duplicate'},{id:3,text:'invalid'},{id:4,text:'wontfix'}];
+        ctor.placeholder = "Select a issue type...";
+        $this.select2( ctor );
+      </script>
     </div>
   </div>
 
@@ -385,6 +461,9 @@
         <option value="WI">Wisconsin</option>
         <option value="WY">Wyoming</option>
       </select>
+      <script>
+        $('#states4').select2({width:'200px', minimumResultsForSearch:1000, dropdownCssClass: 'select2-drop-bootstrap'});
+      </script>
     </div>
   </div>
 
@@ -411,15 +490,27 @@
       <h3>Use images in Dropdowns</h3>
       <select name="chart_type" class="select2 narrow" data-placeholder="Choose a chart type...">
         <option></option>
-        <option value="donut">Donut</option>
-        <option value="funnel">Funnel</option>
-        <option value="horizontal">Horizontal</option>
-        <option value="line">Line</option>
-        <option value="pareto">Pareto</option>
-        <option value="pie">Pie</option>
-        <option value="stack">Stack</option>
-        <option value="vertical">Vertical</option>
+        <option value="Donut">Donut</option>
+        <option value="Funnel">Funnel</option>
+        <option value="Horizontal">Horizontal</option>
+        <option value="Line">Line</option>
+        <option value="Pareto">Pareto</option>
+        <option value="Pie">Pie</option>
+        <option value="Stack">Stack</option>
+        <option value="Vertical">Vertical</option>
       </select>
+      <script>
+        var $this = $('select[name="chart_type"]')
+          , ctor = getSelect2Constructor($this);
+        ctor.dropdownCssClass = 'chart-results select2-narrow';
+        ctor.width = 'off';
+        ctor.minimumResultsForSearch = 9;
+        ctor.formatResult = select2ChartResult;
+        ctor.formatSelection = select2ChartSelection;
+        ctor.escapeMarkup = function(m) { return m; };
+
+        $this.select2(ctor);
+      </script>
     </div>
   </div>
 
@@ -457,6 +548,19 @@
         <option value="Op">Opportunities</option>
         <option value="Co">Contacts</option>
       </select>
+      <script>
+        var $this = $('select[name="label_module"]')
+          , ctor = getSelect2Constructor($this);
+        ctor.width = 'off';
+        ctor.minimumResultsForSearch = 9;
+        ctor.formatSelection = function(item) {
+            return '<span class="label label-module label-module-mini label-' + item.text + '">' + item.id + '</span>';
+          };
+        ctor.escapeMarkup = function(m) { return m; };
+        ctor.width = '55px';
+
+        $this.select2(ctor);
+      </script>
     </div>
   </div>
 
@@ -501,6 +605,9 @@
           <span class="error-tooltip  add-on local" rel="tooltip" data-original-title="Error: This field is required"><i class="icon-exclamation-sign"></i></span>
         </div>
       </div>
+      <script>
+        $('#priority3').select2({width:'200px', minimumResultsForSearch:7, dropdownCssClass: 'select2-drop-error'});
+      </script>
     </div>
   </div>
 
@@ -552,6 +659,9 @@
         </select>
         <p class="help-block"></p></span>
       </div>
+      <script>
+        $('#multi1').select2({width:'100%'});
+      </script>
 
       <div class="control-group error padded">
         <label style="display:block">Label</label>
@@ -564,6 +674,9 @@
             <span class="error-tooltip  add-on local" rel="tooltip" data-original-title="Error: This field is required"><i class="icon-exclamation-sign"></i></span>
         </div>
       </div>
+      <script>
+        $('#multi2').select2({width:'300px'});
+      </script>
     </div>
 
     <div class="span6">
@@ -606,6 +719,14 @@
         <option value="WI">Wisconsin</option>
         <option value="WY">Wyoming</option>
       </select>
+      <script>
+        $('#states5').select2({
+          width:'100%',
+          minimumResultsForSearch:7,
+          closeOnSelect: false,
+          containerCssClass: 'select2-choices-pills-close'
+        });
+      </script>
     </div>
   </div>
 
@@ -662,6 +783,17 @@
         <option value="MS">Mississippi</option>
 
       </select>
+      <script>
+        $('#states4').select2({
+          width:'100%',
+          minimumResultsForSearch:7,
+          containerCssClass: 'select2-choices-pills',
+          formatSelection: function(item) {
+            return '<span>Choice</span><a href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a>';
+          },
+          escapeMarkup: function(m) { return m; }
+        });
+      </script>
     </div>
   </div>
 
@@ -687,3 +819,17 @@
   </div>
 
 </section>
+
+
+<script>
+  {{! $("select.select2").each(function(){
+    var $this = $(this)
+      , ctor = getSelect2Constructor($this);
+    //$this.select2( ctor );
+  }); }}
+
+  $('.error .select .error-tooltip').tooltip({
+            trigger: 'click',
+            container: 'body'
+  });
+</script>
