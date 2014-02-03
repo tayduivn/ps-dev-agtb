@@ -39,7 +39,7 @@ class SugarSearchEngineFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     public function testFactoryMethod($engineName, $expectedClass)
     {
         $instance = SugarSearchEngineFactory::getInstance($engineName);
-        $this->assertEquals($expectedClass, get_class($instance));
+        $this->assertContains($expectedClass, get_class($instance));
     }
 
     /**
