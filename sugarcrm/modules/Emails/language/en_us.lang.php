@@ -1,31 +1,16 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-/*********************************************************************************
- * $Id: en_us.lang.php 55754 2010-04-02 01:37:10Z jmertic $
- * Description:  Defines the English language pack for the base application.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
+ */
 
 $mod_strings = array (
 	'LBL_FW'					=> 'FW:',
@@ -437,5 +422,11 @@ $mod_strings = array (
     'LBL_MAILAPI_INVALID_ARGUMENT_VALUE'  => '{0} argument - invalid or missing',
     'LBL_MAILAPI_INVALID_ARGUMENT_FORMAT' => '{0} argument - invalid format',
     'LBL_MAILAPI_INVALID_ARGUMENT_FIELD'  => '{0} argument - invalid or missing field: {1}',
+
+    // Help Message
+    'LBL_HELP_COMPOSE_TITLE' => 'Compose an Email',
+    'LBL_HELP_COMPOSE' => 'Compose an email by providing a subject and email body. Click "Send" to send the email or choose "Save draft" from the actions menu to save the email for later editing from your drafts folder within the Emails module.
+
+You may apply a predefined template using the Template button or include one of your signatures using the Signature button. Use the Upload New button to add an attachment to the email.',
 );
 

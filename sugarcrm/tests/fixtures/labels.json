@@ -18,6 +18,15 @@
           "NTC_COPY_PRIMARY_ADDRESS": "Copy primary address to alternate address",
           "LBL_CREATE": "Create a {{name}}",
           "_hash": "65155e04133282acf37a51305a6ca9e6"
+        },
+        "Accounts": {
+            "LBL_HELP_RECORD_TITLE": "Accounts Help Record Title",
+            "LBL_HELP_RECORD": "Accounts Help Record Body",
+            "LBL_HELP_RECORDS_TITLE": "{{plural_module_name}} Help Records Title",
+            "LBL_HELP_RECORDS": "{{module_name}} Help Records Body",
+            "LBL_HELP_CREATE_TITLE": "My {{revenuelineitem_module}}",
+            "LBL_HELP_CREATE": "My {{revenuelineitems_module}}",
+            "_hash": "65155e56846282acf37a51305a6ca9e6"
         }
     },
     "app_list_strings": {
@@ -115,10 +124,14 @@
             "pieWedgeName": "sections"
         },
         "moduleListSingular": {
-            "Contacts": "Kontact"
+            "Accounts": "Account",
+            "Contacts": "Kontact",
+            "RevenueLineItems": "Revenue Line Item"
         },
         "moduleList": {
-            "Contacts": "Kontacts"
+            "Accounts": "Accounts",
+            "Contacts": "Kontacts",
+            "RevenueLineItems": "Revenue Line Items"
         }
     },
     "app_strings": {
@@ -143,6 +156,8 @@
         "ERR_AJAX_LOAD_FAILURE": "There was an error processing your request, please try again at a later time.",
         "ERR_AJAX_LOAD_FOOTER": "If this error persists, please have your administrator disable Ajax for this module",
         "ERR_BLANK_PAGE_NAME": "Please enter a page name.",
-        "LBL_CREATE": "Create {{name}}"
+        "LBL_CREATE": "Create {{name}}",
+        "LBL_HELP_RECORD_TITLE": "Default Help Record Title",
+        "LBL_HELP_RECORD": "Default Help Record Body"
     }
 }
