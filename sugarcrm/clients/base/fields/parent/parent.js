@@ -120,6 +120,17 @@
             }
         }
     },
+    /**
+     * Is this module available as an option to be set as parent type?
+     * @param module {string}
+     * @returns {boolean}
+     */
+    isAvailableParentType: function(module) {
+        var moduleFound = _.find(this.$(this.typeFieldTag).find('option'), function(dom) {
+            return $(dom).val() === module;
+        });
+        return !!moduleFound;
+    },
     getSearchModule: function() {
         return this.model.get('parent_type') || this.$(this.typeFieldTag).val();
     },

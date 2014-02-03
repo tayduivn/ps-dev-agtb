@@ -48,6 +48,27 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
+    public function testArchiveMail_StatusIsArchive_CallsMailRecordArchive()
+    {
+        $args = array(
+            MailApi::STATUS       => "archive",
+            MailApi::DATE_SENT    => "2014-12-25T18:30:00",
+            MailApi::FROM_ADDRESS => "John Doe <x@y.z>",
+            MailApi::TO_ADDRESSES => array(array("email" => "a@b.c")),
+            MailApi::SUBJECT => 'foo',
+        );
+
+        $mailRecordMock = $this->getMock("MailRecord", array("archive"));
+        $mailRecordMock->expects($this->once())
+            ->method("archive");
+
+        $this->mailApi->expects($this->any())
+            ->method("initMailRecord")
+            ->will($this->returnValue($mailRecordMock));
+
+        $this->mailApi->archiveMail($this->api, $args);
+    }
+
     public function testCreateMail_StatusIsSaveAsDraft_CallsMailRecordSaveAsDraft()
     {
         $args = array(
@@ -614,6 +635,55 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(MailApi::TEXT_BODY => false),
                 'LBL_MAILAPI_INVALID_ARGUMENT_FORMAT',
                 array(MailApi::TEXT_BODY),
+            ),
+            /* 'Archive' has some specific requirements */
+            34 => array(
+                array(
+                    MailApi::STATUS => 'archive',
+                    MailApi::FROM_ADDRESS => 'John Doe <john@doe.com>',
+                    MailApi::DATE_SENT => '2014-12-25T18:30:00',
+                    MailApi::TO_ADDRESSES => array(array("email" => "a@b.c")),
+                    MailApi::SUBJECT => 'foo',
+                ),
+                false,
+            ),
+            35 => array(
+                array(
+                    MailApi::STATUS => 'archive',
+                    MailApi::DATE_SENT => '2014-12-25T18:30:00',
+                    MailApi::TO_ADDRESSES => array(array("email" => "a@b.c")),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_VALUE',
+                array(MailApi::FROM_ADDRESS),
+            ),
+            36 => array(
+                array(
+                    MailApi::STATUS => 'archive',
+                    MailApi::FROM_ADDRESS => 'John Doe <john@doe.com>',
+                    MailApi::TO_ADDRESSES => array(array("email" => "a@b.c")),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_VALUE',
+                array(MailApi::DATE_SENT),
+            ),
+            37 => array(
+                array(
+                    MailApi::STATUS => 'archive',
+                    MailApi::FROM_ADDRESS => 'John Doe <john@doe.com>',
+                    MailApi::DATE_SENT => '2014-12-25T18:30:00',
+                    MailApi::TO_ADDRESSES => array(array('name' => 'John')),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::TO_ADDRESSES, 'email'),
+            ),
+            38 => array(
+                array(
+                    MailApi::STATUS => 'archive',
+                    MailApi::FROM_ADDRESS => 'John Doe <john@doe.com>',
+                    MailApi::DATE_SENT => '2014-12-25T18:30:00',
+                    MailApi::TO_ADDRESSES => array(array("email" => "a@b.c")),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_VALUE',
+                array(MailApi::SUBJECT),
             ),
         );
     }

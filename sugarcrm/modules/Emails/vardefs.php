@@ -54,6 +54,7 @@ $dictionary['Email'] = array(
         ),
         'assigned_user_name' => array(
             'name' => 'assigned_user_name',
+            'id_name' => 'assigned_user_id',
             'vname' => 'LBL_ASSIGNED_TO',
             'link'=>'assigned_user_link' ,
             'rname' => 'full_name',
@@ -61,6 +62,7 @@ $dictionary['Email'] = array(
             'reportable' => false,
             'source' => 'non-db',
             'table' => 'users',
+            'module' => 'Users',
         ),
         'modified_user_id' => array(
             'name' => 'modified_user_id',

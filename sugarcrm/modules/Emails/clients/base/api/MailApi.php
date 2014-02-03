@@ -31,37 +31,44 @@ require_once('modules/Emails/EmailUI.php');
 class MailApi extends ModuleApi
 {
     /*-- API Argument Constants --*/
-    const EMAIL_CONFIG  = "email_config";
-    const TO_ADDRESSES  = "to_addresses";
-    const CC_ADDRESSES  = "cc_addresses";
+    const EMAIL_CONFIG = "email_config";
+    const FROM_ADDRESS = "from_address";
+    const TO_ADDRESSES = "to_addresses";
+    const CC_ADDRESSES = "cc_addresses";
     const BCC_ADDRESSES = "bcc_addresses";
-    const ATTACHMENTS   = "attachments";
-    const TEAMS         = "teams";
-    const RELATED       = "related";
-    const SUBJECT       = "subject";
-    const HTML_BODY     = "html_body";
-    const TEXT_BODY     = "text_body";
-    const STATUS        = "status";
+    const ATTACHMENTS = "attachments";
+    const TEAMS = "teams";
+    const RELATED = "related";
+    const SUBJECT = "subject";
+    const HTML_BODY = "html_body";
+    const TEXT_BODY = "text_body";
+    const STATUS = "status";
+    const DATE_SENT = "date_sent";
+    const ASSIGNED_USER_ID = "assigned_user_id";
 
     /*-- API Fields with default values --*/
     public static $fields = array(
-        self::EMAIL_CONFIG  => '',
-        self::TO_ADDRESSES  => array(),
-        self::CC_ADDRESSES  => array(),
+        self::EMAIL_CONFIG => '',
+        self::FROM_ADDRESS => '',
+        self::TO_ADDRESSES => array(),
+        self::CC_ADDRESSES => array(),
         self::BCC_ADDRESSES => array(),
-        self::ATTACHMENTS   => array(),
-        self::TEAMS         => array(),
-        self::RELATED       => array(),
-        self::SUBJECT       => '',
-        self::HTML_BODY     => '',
-        self::TEXT_BODY     => '',
-        self::STATUS        => '',
+        self::ATTACHMENTS => array(),
+        self::TEAMS => array(),
+        self::RELATED => array(),
+        self::SUBJECT => '',
+        self::HTML_BODY => '',
+        self::TEXT_BODY => '',
+        self::STATUS => '',
+        self::DATE_SENT => '',
+        self::ASSIGNED_USER_ID => '',
     );
 
     /*-- Supported API Status values --*/
     static private $apiStatusValues = array(
-        "draft",     // draft
-        "ready",     // ready to be sent
+        "draft", // draft
+        "ready", // ready to be sent
+        "archive" // archived
     );
 
     /*-- Supported API Attachment Type values --*/
@@ -76,13 +83,13 @@ class MailApi extends ModuleApi
     public function registerApiRest()
     {
         $api = array(
-            'createMail'      => array(
-                'reqType'   => 'POST',
-                'path'      => array('Mail'),
-                'pathVars'  => array(''),
-                'method'    => 'createMail',
+            'createMail' => array(
+                'reqType' => 'POST',
+                'path' => array('Mail'),
+                'pathVars' => array(''),
+                'method' => 'createMail',
                 'shortHelp' => 'Create Mail Item',
-                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_post_help.html',
+                'longHelp' => 'modules/Emails/clients/base/api/help/mail_post_help.html',
             ),
             //TODO: Implement updateMail fully
 //            'updateMail'      => array(
@@ -93,29 +100,37 @@ class MailApi extends ModuleApi
 //                'shortHelp' => 'Update Mail Item',
 //                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_record_put_help.html',
 //            ),
+            'archiveMail' => array(
+                'reqType' => 'POST',
+                'path' => array('Mail', 'archive'),
+                'pathVars' => array(''),
+                'method' => 'archiveMail',
+                'shortHelp' => 'Archive Mail Item',
+                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_archive_help.html',
+            ),
             'recipientLookup' => array(
-                'reqType'   => 'POST',
-                'path'      => array('Mail', 'recipients', 'lookup'),
-                'pathVars'  => array(''),
-                'method'    => 'recipientLookup',
+                'reqType' => 'POST',
+                'path' => array('Mail', 'recipients', 'lookup'),
+                'pathVars' => array(''),
+                'method' => 'recipientLookup',
                 'shortHelp' => 'Lookup Email Recipient Info',
-                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_recipients_lookup_post_help.html',
+                'longHelp' => 'modules/Emails/clients/base/api/help/mail_recipients_lookup_post_help.html',
             ),
-            'listRecipients'  => array(
-                'reqType'   => 'GET',
-                'path'      => array('Mail', 'recipients', 'find'),
-                'pathVars'  => array(''),
-                'method'    => 'findRecipients',
+            'listRecipients' => array(
+                'reqType' => 'GET',
+                'path' => array('Mail', 'recipients', 'find'),
+                'pathVars' => array(''),
+                'method' => 'findRecipients',
                 'shortHelp' => 'Search For Email Recipients',
-                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_recipients_find_get_help.html',
+                'longHelp' => 'modules/Emails/clients/base/api/help/mail_recipients_find_get_help.html',
             ),
-            'validateEmailAddresses'  => array(
-                'reqType'   => 'POST',
-                'path'      => array('Mail', 'address', 'validate'),
-                'pathVars'  => array(''),
-                'method'    => 'validateEmailAddresses',
+            'validateEmailAddresses' => array(
+                'reqType' => 'POST',
+                'path' => array('Mail', 'address', 'validate'),
+                'pathVars' => array(''),
+                'method' => 'validateEmailAddresses',
                 'shortHelp' => 'Validate One Or More Email Address',
-                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_address_validate_post_help.html',
+                'longHelp' => 'modules/Emails/clients/base/api/help/mail_address_validate_post_help.html',
             ),
             'saveAttachment' => array(
                 'reqType' => 'POST',
@@ -184,6 +199,22 @@ class MailApi extends ModuleApi
     }
 
     /**
+     * Archive email.
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function archiveMail($api, $args)
+    {
+        // Perform Front End argument validation per the Mail API architecture
+        // Non-compliant arguments will result in an Invalid Parameter Exception Thrown
+        $this->validateArguments($args);
+        $mailRecord = $this->initMailRecord($args);
+        return $mailRecord->archive();
+    }
+
+    /**
      * @param $api
      * @param $args
      * @return array
@@ -198,9 +229,9 @@ class MailApi extends ModuleApi
 
         try {
             if ($args[self::STATUS] == "ready") {
-                $response = $mailRecord->send();          // send immediately
+                $response = $mailRecord->send(); // send immediately
             } else {
-                $response = $mailRecord->saveAsDraft();   // save as draft
+                $response = $mailRecord->saveAsDraft(); // save as draft
             }
         } catch (MailerException $e) {
             $eMessage = $e->getUserFriendlyMessage();
@@ -251,11 +282,12 @@ class MailApi extends ModuleApi
      * @param $args
      * @return array
      */
-    public function findRecipients($api, $args) {
+    public function findRecipients($api, $args)
+    {
         ini_set("max_execution_time", 300);
-        $term    = (isset($args["q"])) ? trim($args["q"]) : "";
-        $offset  = 0;
-        $limit   = (!empty($args["max_num"])) ? (int)$args["max_num"] : 20;
+        $term = (isset($args["q"])) ? trim($args["q"]) : "";
+        $offset = 0;
+        $limit = (!empty($args["max_num"])) ? (int)$args["max_num"] : 20;
         $orderBy = array();
 
         if (!empty($args["offset"])) {
@@ -267,14 +299,14 @@ class MailApi extends ModuleApi
         }
 
         $modules = array(
-            "users"     => "users",
-            "accounts"  => "accounts",
-            "contacts"  => "contacts",
-            "leads"     => "leads",
+            "users" => "users",
+            "accounts" => "accounts",
+            "contacts" => "contacts",
+            "leads" => "leads",
             "prospects" => "prospects",
-            "all"       => "LBL_DROPDOWN_LIST_ALL",
+            "all" => "LBL_DROPDOWN_LIST_ALL",
         );
-        $module  = $modules["all"];
+        $module = $modules["all"];
 
         if (!empty($args["module_list"])) {
             $moduleList = strtolower($args["module_list"]);
@@ -288,7 +320,7 @@ class MailApi extends ModuleApi
             $orderBys = explode(",", $args["order_by"]);
 
             foreach ($orderBys as $sortBy) {
-                $column    = $sortBy;
+                $column = $sortBy;
                 $direction = "ASC";
 
                 if (strpos($sortBy, ":")) {
@@ -309,14 +341,14 @@ class MailApi extends ModuleApi
             }
         }
 
-        $records    = array();
+        $records = array();
         $nextOffset = -1;
 
         if ($offset !== "end") {
             $emailRecipientsService = $this->getEmailRecipientsService();
-            $totalRecords           = $emailRecipientsService->findCount($term, $module);
-            $records                = $emailRecipientsService->find($term, $module, $orderBy, $limit, $offset);
-            $trueOffset             = $offset + $limit;
+            $totalRecords = $emailRecipientsService->findCount($term, $module);
+            $records = $emailRecipientsService->find($term, $module, $orderBy, $limit, $offset);
+            $trueOffset = $offset + $limit;
 
             if ($trueOffset < $totalRecords) {
                 $nextOffset = $trueOffset;
@@ -325,7 +357,7 @@ class MailApi extends ModuleApi
 
         return array(
             "next_offset" => $nextOffset,
-            "records"     => $records,
+            "records" => $records,
         );
     }
 
@@ -345,12 +377,42 @@ class MailApi extends ModuleApi
         }
 
         /*--- Validate Mail Configuration ---*/
-        if ($args[self::STATUS] !== "draft" && empty($args[self::EMAIL_CONFIG])) {
+        if ($args[self::STATUS] === "ready" && empty($args[self::EMAIL_CONFIG])) {
             $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_VALUE', array(self::EMAIL_CONFIG));
         }
 
+        /*--- Validate FROM_ADDRESS if 'archive' ---*/
+        if ($args[self::STATUS] === "archive") {
+            if (empty($args[self::FROM_ADDRESS]) || !is_string($args[self::FROM_ADDRESS])) {
+                $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_VALUE', array(self::FROM_ADDRESS));
+            }
+            $fromAddress = empty($args[self::FROM_ADDRESS]) ? '' : trim($args[self::FROM_ADDRESS]);
+            if (empty($fromAddress)) {
+                $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_VALUE', array(self::FROM_ADDRESS));
+            }
+        }
+
+        /*--- Validate DATE_SENT if 'archive' ---*/
+        if ($args[self::STATUS] === "archive") {
+            if (empty($args[self::DATE_SENT]) || !is_string($args[self::DATE_SENT])) {
+                $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_VALUE', array(self::DATE_SENT));
+            }
+            $dateSent = empty($args[self::DATE_SENT]) ? '' : trim($args[self::DATE_SENT]);
+            if (empty($dateSent)) {
+                $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_VALUE', array(self::DATE_SENT));
+            }
+        }
+
+        /*--- Validate ASSIGNED_USER_ID if 'archive' - Argument is Optional - so can be empty string ---*/
+        if ($args[self::STATUS] === "archive") {
+            if (isset($args[self::ASSIGNED_USER_ID]) && !is_string($args[self::ASSIGNED_USER_ID])) {
+                $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FORMAT', array(self::ASSIGNED_USER_ID));
+            }
+        }
+
         /*--- Validate TO Recipients ---*/
-        $this->validateRecipients($args, self::TO_ADDRESSES);
+        $isRequired = $args[self::STATUS] === "archive" ? true : false;
+        $this->validateRecipients($args, self::TO_ADDRESSES, $isRequired);
 
         /*--- Validate CC Recipients ---*/
         $this->validateRecipients($args, self::CC_ADDRESSES);
@@ -386,7 +448,10 @@ class MailApi extends ModuleApi
                 $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FORMAT', array(self::TEAMS));
             }
             /* Primary is REQUIRED if Teams supplied */
-            if (!isset($args[self::TEAMS]["primary"]) || !is_string($args[self::TEAMS]["primary"]) || empty($args[self::TEAMS]["primary"])) {
+            if (!isset($args[self::TEAMS]["primary"]) || !is_string(
+                $args[self::TEAMS]["primary"]
+            ) || empty($args[self::TEAMS]["primary"])
+            ) {
                 $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FIELD', array(self::TEAMS, 'primary'));
             }
             if (isset($args[self::TEAMS]["others"])) {
@@ -425,6 +490,13 @@ class MailApi extends ModuleApi
             $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FORMAT', array(self::SUBJECT));
         }
 
+        if ($args[self::STATUS] === "archive") {
+            $subject = empty($args[self::SUBJECT]) ? '' : trim($args[self::SUBJECT]);
+            if (empty($subject)) {
+                $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_VALUE', array(self::SUBJECT));
+            }
+        }
+
         /*--- Validate html_body ---*/
         if (isset($args[self::HTML_BODY]) && !is_string($args[self::HTML_BODY])) {
             $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FORMAT', array(self::HTML_BODY));
@@ -446,7 +518,8 @@ class MailApi extends ModuleApi
         if (($args[self::STATUS] !== "draft") &&
             empty($args[self::TO_ADDRESSES]) &&
             empty($args[self::CC_ADDRESSES]) &&
-            empty($args[self::BCC_ADDRESSES])) {
+            empty($args[self::BCC_ADDRESSES])
+        ) {
             $this->invalidParameter('LBL_MAILAPI_NO_RECIPIENTS');
         }
 
@@ -458,7 +531,9 @@ class MailApi extends ModuleApi
      * @param $args - array
      * @param $argName - string
      */
-     protected function validateRecipients($args, $argName) {
+    protected function validateRecipients($args, $argName, $isRequired = false)
+    {
+        $recipientCount = 0;
         if (isset($args[$argName])) {
             if (!is_array($args[$argName])) {
                 $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FORMAT', array($argName));
@@ -473,7 +548,11 @@ class MailApi extends ModuleApi
                 if (!is_string($recipient['email'])) {
                     $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FIELD', array($argName, "email"));
                 }
+                $recipientCount++;
             }
+        }
+        if ($isRequired && $recipientCount == 0) {
+            $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_VALUE', array($argName));
         }
     }
 
@@ -483,7 +562,8 @@ class MailApi extends ModuleApi
      * @param $message - string
      * @param $msgArgs - array
      */
-    protected function invalidParameter($message, $msgArgs=null) {
+    protected function invalidParameter($message, $msgArgs = null)
+    {
         throw new SugarApiExceptionInvalidParameter($message, $msgArgs, 'Emails');
     }
 
@@ -494,17 +574,23 @@ class MailApi extends ModuleApi
      */
     protected function initMailRecord($args)
     {
-        $mailRecord               = new MailRecord();
-        $mailRecord->mailConfig   = $args[self::EMAIL_CONFIG];
-        $mailRecord->toAddresses  = $args[self::TO_ADDRESSES];
-        $mailRecord->ccAddresses  = $args[self::CC_ADDRESSES];
+        $mailRecord = new MailRecord();
+        $mailRecord->toAddresses = $args[self::TO_ADDRESSES];
+        $mailRecord->ccAddresses = $args[self::CC_ADDRESSES];
         $mailRecord->bccAddresses = $args[self::BCC_ADDRESSES];
-        $mailRecord->attachments  = $args[self::ATTACHMENTS];
-        $mailRecord->teams        = $args[self::TEAMS];
-        $mailRecord->related      = $args[self::RELATED];
-        $mailRecord->subject      = $args[self::SUBJECT];
-        $mailRecord->html_body    = $args[self::HTML_BODY];
-        $mailRecord->text_body    = $args[self::TEXT_BODY];
+        $mailRecord->attachments = $args[self::ATTACHMENTS];
+        $mailRecord->teams = $args[self::TEAMS];
+        $mailRecord->related = $args[self::RELATED];
+        $mailRecord->subject = $args[self::SUBJECT];
+        $mailRecord->html_body = $args[self::HTML_BODY];
+        $mailRecord->text_body = $args[self::TEXT_BODY];
+        $mailRecord->fromAddress = $args[self::FROM_ADDRESS];
+        $mailRecord->assigned_user_id = $args[self::ASSIGNED_USER_ID];
+
+        if (isset($args[self::DATE_SENT])) {
+            $date = TimeDate::getInstance()->fromIso($args[self::DATE_SENT]);
+            $mailRecord->date_sent = $date->asDb();
+        }
 
         return $mailRecord;
     }
@@ -521,8 +607,8 @@ class MailApi extends ModuleApi
     {
         unset($args["__sugar_url"]);
         $validatedEmailAddresses = array();
-        $emailRecipientsService  = $this->getEmailRecipientsService();
-        $emailAddresses          = $args;
+        $emailRecipientsService = $this->getEmailRecipientsService();
+        $emailAddresses = $args;
 
         foreach ($emailAddresses as $emailAddress) {
             $validatedEmailAddresses[$emailAddress] = $emailRecipientsService->isValidEmailAddress($emailAddress);

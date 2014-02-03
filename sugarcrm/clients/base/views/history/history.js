@@ -106,5 +106,29 @@
         this.$('.select2').select2('destroy');
 
         this._super("_dispose");
+    },
+
+    /**
+     * Open up a drawer to archive email.
+     * @param event
+     * @param params
+     */
+    archiveEmail: function(event, params) {
+        var self = this;
+        app.drawer.open({
+            layout: 'archive-email',
+            context: {
+                create: true,
+                module: 'Emails',
+                prepopulate: {
+                    related: this.model
+                }
+            }
+        }, function(model) {
+            if (model) {
+                self.layout.reloadDashlet();
+                self.context.trigger('panel-top:refresh', 'emails');
+            }
+        });
     }
 })
