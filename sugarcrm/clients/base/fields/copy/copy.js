@@ -80,7 +80,7 @@
 
     sync: function(enable) {
 
-        enable = _.isUndefined(enable) || enable;
+        enable = this.hasAccess() && (_.isUndefined(enable) || enable);
 
         if (this._inSync === enable) {
             return;
