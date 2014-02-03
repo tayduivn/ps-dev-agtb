@@ -162,7 +162,7 @@ class ThemeApi extends SugarApi
      */
     public function updateCustomTheme(ServiceBase $api, array $args)
     {
-        if (!is_admin($GLOBALS['current_user'])) {
+        if (!$api->user->isAdmin()) {
             throw new SugarApiExceptionNotAuthorized();
         }
 
@@ -193,7 +193,7 @@ class ThemeApi extends SugarApi
         foreach ($urls as $key => $url) {
             $urls[$key] = $GLOBALS['sugar_config']['site_url'] . '/' . $url;
         }
-        $GLOBALS ['system_config']->saveSetting($args['platform'], 'css', json_encode($urls));
+        $GLOBALS ['system_config']->saveSetting($platform, 'css', json_encode($urls));
 
         return $urls;
     }
