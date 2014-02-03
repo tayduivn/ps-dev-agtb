@@ -699,7 +699,7 @@ class SugarQuery
     {
         $alias = (!empty($options['alias'])) ? $options['alias'] : $join;
         $joinType = (!empty($options['joinType'])) ? $options['joinType'] : 'INNER';
-        $team_security = (!empty($options['team_security'])) ? $options['team_security'] : true;
+        $team_security = (isset($options['team_security'])) ? $options['team_security'] : true;
         $ignoreRole = (!empty($options['ignoreRole'])) ? $options['ignoreRole'] : false;
 
         $bean = !empty($options['relatedJoin']) ? $this->join[$options['relatedJoin']]->bean : $this->from;
