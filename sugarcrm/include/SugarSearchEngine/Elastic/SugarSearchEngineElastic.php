@@ -373,9 +373,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     /**
      * This function returns an array of fields that can be passed to search engine.
      * @param Array $options
+     * @param boolean $prefixed Add module name prefix (i.e. Contacts.first_name)
      * @return Array array of fields
      */
-    protected function getSearchFields($options)
+    protected function getSearchFields($options, $prefixed = true)
     {
         $fields = array();
 
@@ -401,7 +402,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 }
 
                 // base field name
-                $fieldName = $module . '.' . $fieldName;
+                if ($prefixed) {
+                    $fieldName = $module . '.' . $fieldName;
+                }
 
                 // To enable a field for user search we require a boost value. There may be other fields
                 // we index into Elastic but which should not be user searchable. We use the boost value
@@ -737,7 +740,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $query->setParam('from', $offset);
 
             // set query highlight
-            $fields = $this->getSearchFields($options);
+            $fields = $this->getSearchFields($options, false);
             $highlighArray = $this->constructHighlightArray($fields, $options);
             $query->setHighlight($highlighArray);
 
