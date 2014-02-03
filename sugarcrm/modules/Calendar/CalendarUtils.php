@@ -351,11 +351,8 @@ class CalendarUtils
 		$qu = "SELECT * FROM {$bean->rel_contacts_table} WHERE deleted = 0 AND {$lower_name}_id = '{$id}'";
 		$re = $db->query($qu);
 		$contacts_rel_arr = array();
-		$exclude_contacts = empty($bean->contacts_arr) ? array() : array_flip($bean->contacts_arr);
 		while($ro = $db->fetchByAssoc($re)) {
-			if (!isset($exclude_contacts[$ro['contact_id']])) {
-				$contacts_rel_arr[] = $ro['contact_id'];
-			}
+			$contacts_rel_arr[] = $ro['contact_id'];
 		}
 		$qu_contacts = "
 				INSERT INTO {$bean->rel_contacts_table}
@@ -367,11 +364,8 @@ class CalendarUtils
 		$qu = "SELECT * FROM {$bean->rel_leads_table} WHERE deleted = 0 AND {$lower_name}_id = '{$id}'";
 		$re = $db->query($qu);
 		$leads_rel_arr = array();
-		$exclude_leads = empty($bean->leads_arr) ? array() : array_flip($bean->leads_arr);
 		while($ro = $db->fetchByAssoc($re)) {
-			if (!isset($exclude_leads[$ro['lead_id']])) {
-				$leads_rel_arr[] = $ro['lead_id'];
-			}
+			$leads_rel_arr[] = $ro['lead_id'];
 		}
 		$qu_leads = "
 				INSERT INTO {$bean->rel_leads_table}
