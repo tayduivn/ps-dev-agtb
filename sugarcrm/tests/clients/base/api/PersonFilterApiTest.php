@@ -56,6 +56,7 @@ class PersonFilterApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $args = array('module_list' => 'Users',);
         $list = $this->personFilterApi->globalSearch(new PersonFilterApiMockUp(), $args);
         $list = $list['records'];
+        $expected = array();
         foreach($list AS $record) {
             $expected[] = $record['id'];
         }
@@ -71,6 +72,7 @@ class PersonFilterApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $args = array('module_list' => 'Employees',);
         $list = $this->personFilterApi->globalSearch(new PersonFilterApiMockUp(), $args);
         $list = $list['records'];
+        $expected = array();
         foreach($list AS $record) {
             $expected[] = $record['id'];
         }
@@ -85,6 +87,7 @@ class PersonFilterApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $args = array('module_list' => 'Employees',);
         $list = $this->personFilterApi->globalSearch(new PersonFilterApiMockUp(), $args);
         $list = $list['records'];
+        $expected = array();
         foreach($list AS $record) {
             $expected[] = $record['id'];
         }
