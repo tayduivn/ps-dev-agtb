@@ -94,14 +94,12 @@ class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCa
         $ftsFieldsByModule = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
         $this->assertContains('Contacts', array_keys($ftsFieldsByModule));
         $this->assertContains('first_name', array_keys($ftsFieldsByModule['Contacts']));
-        $this->assertArrayHasKey('name', $ftsFieldsByModule['Accounts']['name'], 'name key not found');
     }
 
 
     public function isModuleEnabledProvider()
     {
         return array(
-            array('Accounts', true),
             array('Contacts', true),
             array('BadModule', false),
             array('Notifications', false),
