@@ -268,12 +268,14 @@
      * @return {Number} Unformatted value.
      */
     unformat: function(value) {
-
+        var unformattedValue;
         if (this.tplName === 'edit') {
-            return app.utils.unformatNumberStringLocale(value);
+            unformattedValue = app.utils.unformatNumberStringLocale(value);
+        } else {
+            unformattedValue = app.currency.unformatAmountLocale(value);
         }
-
-        return app.currency.unformatAmountLocale(value);
+        // if unformat failed, return original value
+        return _.isFinite(unformattedValue) ? unformattedValue : value;
     },
 
     /**

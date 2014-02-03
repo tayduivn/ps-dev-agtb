@@ -56,6 +56,8 @@ describe('Base.Fields.Currency', function() {
 
         app.data.declareModel(moduleName, metadata);
         app.user.setPreference('currency_id', '-99');
+        app.user.setPreference('decimal_separator', '.');
+        app.user.setPreference('number_grouping_separator', ',');
 
         model = app.data.createBean(moduleName, {
             amount: 123456789.12,
@@ -125,6 +127,43 @@ describe('Base.Fields.Currency', function() {
 
             unformatNumberStringLocale.restore();
         });
+
+        using('valid values',
+            [['5,000.23', '5000.23'], ['1,345,567.235', '1345567.235'], ['.33', '.33']],
+            function(value, result) {
+                it('should unformat valid value', function() {
+                    expect(field.unformat(value)).toEqual(result);
+                });
+            });
+
+        using('invalid values',
+            [['abc,123.45', 'abc,123.45'], ['12,45.45.', '12,45.45.'], ['12,345.3a', '12,345.3a']],
+            function(value, result) {
+                it('should not unformat an invalid value', function() {
+                    expect(field.unformat(value)).toEqual(result);
+                });
+            });
+
+        using('valid values',
+            [['5.000,23', '5000.23'], ['1.345.567,235', '1345567.235'], [',33', '.33']],
+            function(value, result) {
+                it('should unformat valid value with ., swapped', function() {
+                    app.user.setPreference('decimal_separator', ',');
+                    app.user.setPreference('number_grouping_separator', '.');
+                    expect(field.unformat(value)).toEqual(result);
+                });
+            });
+
+        using('invalid values',
+            [['abc.123,45', 'abc.123,45'], ['12.45,45,', '12.45,45,'], ['12.345,3a', '12.345,3a']],
+            function(value, result) {
+                it('should not unformat an invalid value with ., swapped', function() {
+                    app.user.setPreference('decimal_separator', ',');
+                    app.user.setPreference('number_grouping_separator', '.');
+                    expect(field.unformat(value)).toEqual(result);
+                });
+            });
+
 
         it("should render with currencies selector", function() {
 
