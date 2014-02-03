@@ -43,11 +43,11 @@ class SugarTestWebLogicHookUtilities
 
     public static function removeAllCreatedWebLogicHook()
     {
-    	$hook_ids = self::getCreatedWebLogicHookIds();
-        foreach (self::$_createdWebLogicHooks as $hook) {
-            $hook->mark_deleted($hook->id);
+        $db = DBManagerFactory::getInstance();
+        $conditions = implode(',', array_map(array($db, 'quoted'), self::getCreatedWebLogicHookIds()));
+        if (!empty($conditions)) {
+            $db->query('DELETE FROM weblogichooks WHERE id IN (' . $conditions . ')');
         }
-        $GLOBALS['db']->query('DELETE FROM web_logic_hooks WHERE id IN (\'' . implode("', '", $hook_ids) . '\')');
         WebLogicHookMock::$dispatchOptions = null;
     }
 
