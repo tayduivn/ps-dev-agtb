@@ -441,8 +441,10 @@
      * {@inheritDoc}
      */
     _dispose: function() {
-        this.bwcModel.off();
-        this.bwcModel = null;
+        if (this.bwcModel) {
+            this.bwcModel.off();
+            this.bwcModel = null;
+        }
         app.view.View.prototype._dispose.call(this);
     }
 })

@@ -28,6 +28,9 @@
                             <li><a tabindex="-1" href="{{route}}" data-route="{{route}}" track="click:{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
                         {{/each}}
                         <div class="dashboardContainer" track="click:dashboardContainer"></div>
+                        {{#if ../../../dashboardBwcLink}}
+                            <li><a tabindex="-1" href="#{{../../../../dashboardBwcLink}}"><i class="icon-time"></i>{{str 'LBL_DASHBOARD_BWC'}}</a></li>
+                        {{/if}}
                     </ul>
                 </div>
             {{/if}}

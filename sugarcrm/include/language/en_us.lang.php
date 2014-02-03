@@ -3258,6 +3258,7 @@ $app_strings = array (
     'LBL_REMOVED_DASHLET' => 'Sugar Dashlet Removed',
 
     /* Sugar7 Dashboard */
+    'LBL_DASHBOARD_BWC' => 'Legacy Dashboard',
     'LBL_DEFAULT_DASHBOARD_TITLE' => 'My Dashboard',
     'LBL_COLLAPSE_ALL' => 'Collapse All',
     'LBL_EXPAND_ALL' => 'Expand All',
