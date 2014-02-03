@@ -101,7 +101,7 @@ class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFTSPopulateFullQueue()
     {
-        $this->indexer->initiateFTSIndexer();
+        $this->indexer->initiateFTSIndexer(array('Accounts'));
         $accountID = $this->account->id;
         $actualID = $this->recordExistInQueue($accountID);
         $this->assertEquals($accountID, $actualID);
