@@ -78,12 +78,12 @@ describe("ForecastWorksheets.View.RecordList", function() {
     });
 
     afterEach(function() {
+        view.dispose();
+        layout.dispose();
         delete app.plugins.plugins['field']['ClickToEdit'];
         delete app.plugins.plugins['view']['CteTabbing'];
         delete app.plugins.plugins['view']['DirtyCollection'];
         app.user.unset('id');
-        view = null;
-        app = null;
     });
 
     it("should have default recordlist plugins defined", function() {
