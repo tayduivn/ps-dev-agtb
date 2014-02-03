@@ -126,7 +126,7 @@ class TeamSecurity extends SugarVisibility
            return;
        }
 
-       if($this->getOption('as_condition')) {
+       if($this->useCondition()) {
            $table_alias = $this->getOption('table_alias');
            if(empty($sugarQuery->join[$table_alias])) {
                return;
@@ -134,11 +134,8 @@ class TeamSecurity extends SugarVisibility
            $join = $sugarQuery->join[$table_alias];
            $join->query = $sugarQuery;
            $add_join = '';
-           $this->addVisibilityFrom($add_join, $options);
+           $this->addVisibility($add_join);
            if(!empty($add_join)) {
-               if(substr($add_join, 0, 5) == " AND ") {
-                   $add_join = substr($add_join, 5);
-               }
                $join->on()->queryAnd()->addRaw($add_join);
            }
        } else {
@@ -148,7 +145,27 @@ class TeamSecurity extends SugarVisibility
                $sugarQuery->joinRaw($join);
            }
        }
+
        return $sugarQuery;
    }
+
+   /**
+    * Add Visibility to a SugarQuery Object
+    * @param SugarQuery $sugarQuery
+    * @param array $options
+    * @return string|SugarQuery
+    */
+   public function addVisibilityWhereQuery(SugarQuery $sugarQuery, $options = array())
+   {
+       if(!$this->getOption('where_condition')) {
+           return;
+       }
+       $cond = '';
+       $this->addVisibility($cond);
+       if(!empty($cond)) {
+          $sugarQuery->whereRaw($cond);
+       }
+   }
+
 
 }
