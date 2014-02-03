@@ -147,6 +147,8 @@ mySugarLoader.addModule({
 	requires: []
 });
 mySugarLoader.insert();
+var app = window.parent.SUGAR.App;
+app.user.lastState.set('Home:last-visit:Home.', '#bwc/index.php?module=Home&action=bwc_dashboard');
 {/literal}
 </script>
 
@@ -347,23 +349,3 @@ mySugarLoader.insert();
 				
 	
 </div>
-
-{* //BEGIN SUGARCRM flav=pro ONLY*}
-{if $view_tour}
-{literal}
-<script type="text/javascript">
-$(document).ready(function() {
-SUGAR.tour.init({
-    id: 'tour',
-    modals: modals,
-    modalUrl: "index.php?module=Home&action=tour&to_pdf=1",
-    prefUrl: "index.php?module=Users&action=UpdateTourStatus&to_pdf=true&viewed=true",
-    className: 'whatsnew',
-    onTourFinish: function() {}
-    });
-});
-</script>
-{/literal}
-
-{/if}
-{* //END SUGARCRM flav=pro ONLY*}
