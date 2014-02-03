@@ -28,6 +28,7 @@
  ********************************************************************************/
 
 require_once 'include/SugarSearchEngine/Elastic/SugarSearchEngineElastic.php';
+require_once 'include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php';
 
 class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -35,12 +36,14 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         SugarTestHelper::setUp('app_list_strings');
-        // create a Bean..doesn't need to be saved
-        $this->bean = BeanFactory::newBean('Accounts');
-        $this->bean->id = create_guid();
-        $this->bean->name = 'Test';
-        $this->bean->assigned_user_id = create_guid();
-        
+        // create a bean for a module which is fts enabled
+        $modules = SugarSearchEngineMetadataHelper::getSystemEnabledFTSModules();
+        if ($modules) {
+            $this->bean = BeanFactory::newBean(array_shift($modules));
+            $this->bean->id = create_guid();
+            $this->bean->assigned_user_id = create_guid();
+        }
+
         if (empty($this->_db)) {
             $this->_db = DBManagerFactory::getInstance();
         }
@@ -194,27 +197,24 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testForceAsyncIndex()
     {
+        if (empty($this->bean)) {
+            $this->markTestIncomplete("No FTS enabled modules available");
+        }
+
         $stub = new SugarSearchEngineElasticTestStub();
         $stub->setForceAsyncIndex(true);
-        /*
-        // get an account bean to test with.
-        $accountIDQuery = 'select id from accounts limit 1';
-        $account = $this->_db->getOne($accountIDQuery);
-        $accountBean = BeanFactory::getBean('Accounts', $account['id']);
         
-        */
         // find out how many times this account bean is in fts_queue already.
-        $ftsQueueQuery = "select count(bean_id) as total from fts_queue where bean_id = '{$this->account->id}'";
-        //print("query: $ftsQueueQuery");
+        $ftsQueueQuery = "select count(bean_id) as total from fts_queue where bean_id = '{$this->bean->id}'";
         $ftsCountBefore = $this->_db->getOne($ftsQueueQuery);
         
         // index the bean.
-        $stub->indexBean($this->account, false);
+        $stub->indexBean($this->bean, false);
         
         // re-check for presence of bean in fts_queue. Should be incremeted by 1.
         $ftsCountAfter = $this->_db->getOne($ftsQueueQuery);
         
-        $msg = "Expected Account bean id {$this->account->id} to be added to fts_queue table";
+        $msg = "Expected Account bean id {$this->bean->id} to be added to fts_queue table";
         $this->assertEquals($ftsCountBefore, ($ftsCountAfter - 1), $msg);
     }
 
