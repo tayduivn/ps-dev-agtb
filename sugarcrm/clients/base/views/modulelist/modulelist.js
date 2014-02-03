@@ -64,9 +64,7 @@
 
         // not using `hide_dashboard_bwc` form, because we shouldn't give this
         // feature by default - need confirmation from PMs.
-        if (_.isUndefined(this.meta && this.meta['show_dashboard_bwc']) ||
-            this.meta['show_dashboard_bwc'] === true
-        ) {
+        if (app.config.enableLegacyDashboards && app.config.enableLegacyDashboards === true) {
             this.dashboardBwcLink = app.bwc.buildRoute('Home', null, 'bwc_dashboard');
         }
     },
