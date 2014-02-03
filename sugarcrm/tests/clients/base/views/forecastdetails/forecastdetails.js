@@ -279,6 +279,7 @@ describe("Base.View.Forecastdetails", function() {
                 show_worksheet_worst: false
             };
             view.model = new Backbone.Model();
+            view.settings = new Backbone.Model();
             calcStub = sinon.stub(view, 'calculateData', function() {});
         });
 
@@ -721,7 +722,7 @@ describe("Base.View.Forecastdetails", function() {
 
             it("should return correct amount", function() {
                 result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
-                expect(result.amount).toBe('$1,000.00');
+                expect(result.amount).toBe(app.currency.formatAmountLocale(1000));
             });
 
             it("should return correct shortOrExceed", function() {
@@ -736,7 +737,7 @@ describe("Base.View.Forecastdetails", function() {
 
             it("should return correct openPipeline", function() {
                 result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
-                expect(result.openPipeline).toBe('($900.00)');
+                expect(result.openPipeline).toBe('(' + app.currency.formatAmountLocale(900.00) +')');
             });
 
         });
@@ -751,7 +752,7 @@ describe("Base.View.Forecastdetails", function() {
 
             it("should return correct amount", function() {
                 result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
-                expect(result.amount).toBe('$1,100.00');
+                expect(result.amount).toBe(app.currency.formatAmountLocale(1100));
             });
 
             it("should return correct shortOrExceed", function() {
@@ -766,7 +767,7 @@ describe("Base.View.Forecastdetails", function() {
 
             it("should return correct openPipeline", function() {
                 result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
-                expect(result.openPipeline).toBe('($200.00)');
+                expect(result.openPipeline).toBe('(' + app.currency.formatAmountLocale(200) + ')');
             });
         });
     });

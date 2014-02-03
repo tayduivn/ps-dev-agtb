@@ -51,9 +51,13 @@ $viewdefs['base']['view']['forecastdetails'] = array(
     ),
     'timeperiod' => array(
         array(
+            'module' => 'Forecasts',
             'name' => 'selectedTimePeriod',
             'label' => 'TimePeriod',
             'type' => 'timeperiod',
+            'default' => true,
+            'enabled' => true,
+            'view' => 'edit',
         ),
-    )
+    ),
 );
