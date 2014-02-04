@@ -75,9 +75,9 @@
      * @private
      */
     _sortByOrder: function(moduleList) {
-        var sorted = _.sortBy(moduleList, function(menuItem) {
-            return menuItem.order;
+        return moduleList.sort(function(a, b) {
+            var order = a['order'] - b['order'];
+            return (order == 0) ? (a['label'] > b['label']) : order;
         });
-        return sorted;
     }
 })
