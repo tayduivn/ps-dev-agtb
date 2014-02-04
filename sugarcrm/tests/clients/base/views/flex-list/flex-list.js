@@ -185,6 +185,7 @@ describe("Base.View.FlexList", function () {
                 {
                     'name': 'test3',
                     'default': true,
+                    'position': 3,
                     'selected': true
                 }
             ]);
@@ -192,21 +193,25 @@ describe("Base.View.FlexList", function () {
                 {
                     'name': 'test1',
                     'default': false,
+                    'position': 1,
                     'selected': false
                 },
                 {
                     'name': 'test2',
                     'default': false,
+                    'position': 2,
                     'selected': false
                 },
                 {
                     'name': 'test3',
                     'default': true,
+                    'position': 3,
                     'selected': true
                 },
                 {
                     'name': 'test4',
                     'default': false,
+                    'position': 4,
                     'selected': false
                 }
             ]);
@@ -223,6 +228,7 @@ describe("Base.View.FlexList", function () {
                 {
                     'name': 'test2',
                     'default': false,
+                    'position': 2,
                     'selected': true
                 }
             ]);
@@ -233,6 +239,14 @@ describe("Base.View.FlexList", function () {
         var catalog, order1, order2;
         beforeEach(function() {
             catalog = {
+                '_byId': {
+                    'visible1': { 'name': 'visible1', 'selected': true },
+                    'visible2': { 'name': 'visible2', 'selected': true },
+                    'visible3': { 'name': 'visible3', 'selected': true },
+                    'available1': { 'name': 'available1', 'selected': false },
+                    'available2': { 'name': 'available2', 'selected': false },
+                    'available3': { 'name': 'available3', 'selected': false }
+                },
                 'visible': [
                     { 'name': 'visible1' },
                     { 'name': 'visible2' },

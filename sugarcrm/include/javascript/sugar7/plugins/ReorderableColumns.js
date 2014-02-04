@@ -10,7 +10,6 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
 (function(app) {
     app.events.on('app:init', function() {
 

@@ -8,11 +8,10 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
 (function (app) {
-    app.events.on("app:init", function () {
+    app.events.on('app:init', function () {
         app.plugins.register('ListColumnEllipsis', ['view'], {
 
             events: {
@@ -44,12 +43,11 @@
             _toggleColumn: function(column) {
                 var changedColumn = {};
                 // Search _fields.options for match on column and toggle it's selected property
-                _.each(this._fields.all, function(fieldMeta) {
-                    if (fieldMeta.name === column) {
-                        fieldMeta.selected = !fieldMeta.selected;
-                        changedColumn = fieldMeta;
-                    }
-                }, this);
+                var f = this._fields._byId[column];
+                if (f) {
+                    f.selected = !f.selected;
+                    changedColumn = f;
+                }
                 this._fields.visible = _.where(this._fields.all, { selected: true });
 
                 // Trigger an event to let the view know to save/update current
@@ -67,15 +65,12 @@
              * @protected
              */
             isLastColumnVisible: function(column) {
-                var isLastColumnVisible = false;
                 if (this._fields.visible.length === 1) {
                     // See if we're trying to toggle the last checked column
-                    isLastColumnVisible = _.find(this._fields.visible, function(fmeta) {
-                        // Column selected is the last visible one
-                        return fmeta.name === column;
-                    });
+                    var f = this._fields._byId[column];
+                    return f && f.selected;
                 }
-                return isLastColumnVisible ? true : false;//so we don't return object
+                return false;//so we don't return object
             },
             /**
              * Reopens fields dropdown and stopPropagation to keep fields dropdown opened

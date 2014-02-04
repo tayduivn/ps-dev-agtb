@@ -208,20 +208,22 @@
      * @private
      */
     _createCatalog: function() {
-        var catalog = {
-            'visible': [],
-            'all': []
-        };
+        var i = 0, catalog = {};
+        catalog._byId = {};
+        catalog.visible = [];
+        catalog.all = [];
 
         _.each(this.meta.panels, function(panel) {
-            _.each(panel.fields, function(fieldMeta, i) {
+            _.each(panel.fields, function(fieldMeta, j) {
+                i++;
                 var isVisible = (fieldMeta['default'] !== false);
-                catalog.all.push(_.extend({
-                    selected: isVisible
-                }, fieldMeta));
+                catalog._byId[fieldMeta.name] = _.extend({
+                    selected: isVisible,
+                    position: i
+                }, fieldMeta);
             }, this);
         }, this);
-
+        catalog.all = _.toArray(catalog._byId);
         catalog.visible = _.where(catalog.all, { selected: true });
         return catalog;
     },
@@ -242,22 +244,22 @@
      * @private
      */
     _toggleFields: function(catalog, fields) {
+        if (_.isEmpty(fields.visible) && _.isEmpty(fields.hidden)) {
+            return catalog;
+        }
         _.each(fields.visible, function(fieldName) {
-            var f = _.find(catalog.all, function(fieldMeta) {
-               return fieldMeta.name === fieldName;
-            });
+            var f = catalog._byId[fieldName];
             if (f) {
                 f.selected = true;
             }
         }, this);
         _.each(fields.hidden, function(fieldName) {
-            var f = _.find(catalog.all, function(fieldMeta) {
-               return fieldMeta.name === fieldName;
-            });
+            var f = catalog._byId[fieldName];
             if (f) {
                 f.selected = false;
             }
         }, this);
+        catalog.all = _.sortBy(_.toArray(catalog._byId), function(f) { return f.position; });
         catalog.visible = _.where(catalog.all, { selected: true });
         return catalog;
     },
@@ -273,18 +275,14 @@
      */
     reorderCatalog: function(catalog, order) {
         order = _.union(order, _.pluck(catalog.all, 'name'));
-        var catalogAll = [];
 
-        _.each(order, function(fieldName) {
-            var fieldMeta = _.find(catalog.all, function(fieldMeta) {
-                return fieldMeta.name === fieldName;
-            });
-            if (!fieldMeta) {
-                return;
+        _.each(order, function(fieldName, i) {
+            var f = catalog._byId[fieldName];
+            if (f) {
+                f.position = ++i;
             }
-            catalogAll.push(fieldMeta);
         });
-        catalog.all = catalogAll;
+        catalog.all = _.sortBy(_.toArray(catalog._byId), function(f) { return f.position; });
         catalog.visible = _.where(catalog.all, { selected: true });
         return catalog;
     },
