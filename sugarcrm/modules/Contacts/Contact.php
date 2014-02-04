@@ -265,7 +265,7 @@ class Contact extends Person {
                 FROM contacts ";
 //BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.
-		$this->add_team_security_where_clause($query);
+ 		$this->addVisibilityFrom($from_query, array('where_condition' => true));
 //END SUGARCRM flav=pro ONLY
 
 		$from_query .=		"LEFT JOIN users
@@ -291,17 +291,19 @@ class Contact extends Person {
 				$where_auto = " $this->table_name.deleted=1 ";
 		}
 
-
 		if($where != ""){
 			$where_query = "where ($where) AND ".$where_auto;
 		}else{
 			$where_query = "where ".$where_auto;
 		}
 
+		$this->addVisibilityWhere($where_query, array('where_condition' => true));
+		$acc = BeanFactory::getBean('Accounts');
+		$acc->addVisibilityWhere($where_query, array('where_condition' => true, 'table_alias' => 'accounts'));
 
 		$ret_array['where'] = $where_query;
 		$ret_array['order_by'] = '';
- 
+
          	//process order by and add if it's not empty
          	$order_by = $this->process_order_by($order_by);
          	if (!empty($order_by)) {

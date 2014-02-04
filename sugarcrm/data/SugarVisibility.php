@@ -121,13 +121,16 @@ abstract class SugarVisibility
         return $this;
     }
 
-    /**
-     *  Override to implement visibility related attribute updates before the bean is indexed
+    /** Override to implement visibility related attribute updates before the bean is indexed
+     * @param string $engine search engine name
+     * @return array
+     * Called before the bean is indexed so that any calculated attributes can updated.
+     * Since the team security id is updated directly, there is no need to implement anything custom
      */
     public function beforeSseIndexing()
     {
     }
-    
+
     public function addSseVisibilityFilter($engine, $filter)
     {
     	return $filter;

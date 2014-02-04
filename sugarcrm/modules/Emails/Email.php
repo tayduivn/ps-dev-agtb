@@ -2147,7 +2147,7 @@ class Email extends SugarBean {
     	}
 		//BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.
-		$this->add_team_security_where_clause($query);
+		$this->addVisibilityFrom($query, array('where_condition' => true));
     	$query .= " LEFT JOIN teams ON emails.team_id=teams.id";
     	//END SUGARCRM flav=pro ONLY
 
@@ -2164,6 +2164,8 @@ class Email extends SugarBean {
 		}else if($show_deleted == 1){
 			$where_auto = " emails.deleted=1 \n";
 		}
+
+		$this->addVisibilityWhere($where_auto, array('where_condition' => true));
 
         if($where != "")
 			$query .= "WHERE $where AND ".$where_auto;

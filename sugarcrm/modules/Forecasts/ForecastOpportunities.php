@@ -156,12 +156,16 @@ class ForecastOpportunities extends SugarBean {
         if (strpos($order_by, 'date_entered') !== false) {
             $order_by = str_replace('date_entered', 'opportunities.date_entered', $order_by);
         }
+        $opp = BeanFactory::getBean('Opportunities');
         $ret_array=array();
         $ret_array['select'] = "SELECT  opportunities.id, opportunities.name ,opportunities.assigned_user_id opportunity_owner, opportunities.amount_usdollar as revenue,  ((opportunities.amount_usdollar * opportunities.probability)/100) as weighted_value, opportunities.probability,opportunities.description, opportunities.next_step,opportunities.opportunity_type";
         $ret_array['select'] .=" ,worksheet.id worksheet_id, opportunities.best_case,opportunities.worst_case ";
         $ret_array['from'] = " FROM opportunities  ";
+        $opp->addVisibilityFrom($ret_array['from'], array('where_condition' => true));
         $ret_array['where']  = " INNER JOIN timeperiods on 1=1 LEFT JOIN worksheet on opportunities.id = worksheet.related_id and worksheet.user_id='{$this->fo_user_id}' and worksheet.timeperiod_id='{$this->fo_timeperiod_id}' and worksheet.forecast_type='{$this->fo_forecast_type}'";
+        $opp->addVisibilityFrom($where, array('where_condition' => true));
         $ret_array['where'] .= ' WHERE '. $where;
+
         $ret_array['order_by'] = !empty($order_by) ? ' ORDER BY '. $order_by : ' ORDER BY opportunities.name ';
         return $ret_array;
     }
@@ -186,20 +190,20 @@ class ForecastOpportunities extends SugarBean {
         $query1 .= " AND opportunities.probability >= 70";
         $query1 .= " AND timeperiods.id = '$this->current_timeperiod_id'";
         $query1 .= " AND opportunities.sales_stage != '".Opportunity::STAGE_CLOSED_LOST."'";
-        
+
         $query2 = "SELECT sum(o.amount * o.base_rate) as amount, count(*) as rows FROM opportunities o " .
                   "INNER JOIN timeperiods t " .
-                  "ON t.id = '{$this->current_timeperiod_id}' " .  
+                  "ON t.id = '{$this->current_timeperiod_id}' " .
                   "WHERE o.sales_stage in ('" . Opportunity::STAGE_CLOSED_WON ."', '" . Opportunity::STAGE_CLOSED_LOST . "') " .
                   "AND o.assigned_user_id = '{$this->current_user_id}' " .
                   "AND o.date_closed >= t.start_date " .
                   "AND o.date_closed <= t.end_date ";
-        
+
         $result1 = $this->db->query($query1,true,"Error filling in opportunity details: ");
         $row1 = $this->db->fetchByAssoc($result1);
         $result2 = $this->db->query($query2,true,"Error getting close lost/won count: ");
         $row2 = $this->db->fetchByAssoc($result2);
-        
+
         if ($row1 == null) {
             $abc['OPPORTUNITYCOUNT'] = 0;
             $abc['WEIGHTEDVALUE'] = 0;
@@ -236,7 +240,7 @@ class ForecastOpportunities extends SugarBean {
             $abc['WEIGHTEDVALUE'] = $this->currency->symbol. format_number($abc['WEIGHTEDVALUE'],0,0);
             $abc['TOTAL_AMOUNT'] =  $this->currency->symbol. format_number($abc['TOTAL_AMOUNT'],0,0);
         }
-        
+
         if ($row2 == null) {
             $abc['CLOSED_OPP_COUNT'] = 0;
             $abc['CLOSED_AMOUNT'] = 0;

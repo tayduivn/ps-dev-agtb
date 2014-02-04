@@ -104,10 +104,14 @@ class EmailMan extends SugarBean{
 
                 $where_auto = " $this->table_name.deleted=0";
 
+		$this->addVisibilityFrom($query['from'], array('where_condition' => true));
+
         if($where != "")
 			$query['where'] = "WHERE $where AND ".$where_auto;
 		else
 			$query['where'] = "WHERE ".$where_auto;
+
+		$this->addVisibilityWhere($query['where'], array('where_condition' => true));
 
     	if(isset($params['group_by'])) {
             $query['group_by'] .= " GROUP BY {$params['group_by']}";
