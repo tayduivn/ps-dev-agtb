@@ -11,69 +11,18 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 ({
-    events: {
-        'click [name="record-close"]': 'closeClicked'
-    },
+    extendsFrom: 'ClosebuttonField',
 
-    extendsFrom: 'RowactionField',
+    closedStatus: 'Held', //status indicating that the it is closed or complete
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
-    initialize: function(options) {
-        this._super('initialize', [options]);
-        this.type = 'rowaction';
-        this.closedStatus = 'Held';
-    },
-
-    closeClicked: function() {
-        this._close();
-    },
-
-    /**
-     * Override so we can have a custom hasAccess for closed status.
-     *
-     * @return {Boolean} true if it has aclAccess and status is not closed.
-     */
-    hasAccess: function() {
-        return this._super('hasAccess') && this.model.get('status') !== this.closedStatus;
-    },
-
-    /**
-     * Close a call.
-     *
-     * @private
-     */
-    _close: function() {
-        var self = this;
-
-        this.model.set('status', this.closedStatus);
-        this.model.save({}, {
-            success: function() {
-                app.alert.show(
-                    'close_call_success',
-                    {level: 'success', autoClose: true, title: app.lang.get('LBL_CALL_CLOSE_SUCCESS', self.module)}
-                );
-            },
-            error: function(error) {
-                app.alert.show(
-                    'close_call_error',
-                    {level: 'error', autoClose: true, title: app.lang.getAppString('ERR_AJAX_LOAD')}
-                );
-                app.logger.error('Failed to close a call. ' + error);
-
-                // we didn't save, revert!
-                self.model.revertAttributes();
-            }
+    showSuccessMessage: function() {
+        app.alert.show('close_call_success', {
+            level: 'success',
+            autoClose: true,
+            title: app.lang.get('LBL_CALL_CLOSE_SUCCESS', this.module)
         });
-    },
-
-    /**
-     * {@inheritDoc}
-     */
-    bindDataChange: function() {
-        if (this.model) {
-            this.model.on('change:status', this.render, this);
-        }
     }
 })
