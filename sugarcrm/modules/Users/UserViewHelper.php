@@ -722,6 +722,7 @@ class UserViewHelper {
             $mail_smtppass = "";
             $mail_smtpdisplay = $systemOutboundEmail->mail_smtpdisplay;
             $mail_smtpauth_req=true;
+            $mail_haspass  = empty($systemOutboundEmail->mail_smtppass)?0:1;
 
             if( !$systemOutboundEmail->isAllowUserAccessToSystemDefaultOutbound() ) {
                 $mail_smtpauth_req = $systemOutboundEmail->mail_smtpauth_req;
@@ -729,6 +730,7 @@ class UserViewHelper {
                 if($userOverrideOE != null) {
                     $mail_smtpuser = $userOverrideOE->mail_smtpuser;
                     $mail_smtppass = $userOverrideOE->mail_smtppass;
+                    $mail_haspass  = empty($userOverrideOE->mail_smtppass)?0:1;
                 }
 
 
@@ -743,7 +745,7 @@ class UserViewHelper {
             $this->ss->assign("mail_smtpserver", $mail_smtpserver);
             $this->ss->assign("mail_smtpuser", $mail_smtpuser);
             $this->ss->assign("mail_smtppass", "");
-            $this->ss->assign("mail_haspass", empty($systemOutboundEmail->mail_smtppass)?0:1);
+            $this->ss->assign("mail_haspass", $mail_haspass);
             $this->ss->assign("mail_smtpauth_req", $mail_smtpauth_req);
             $this->ss->assign('MAIL_SMTPPORT',$mail_smtpport);
             $this->ss->assign('MAIL_SMTPSSL',$mail_smtpssl);

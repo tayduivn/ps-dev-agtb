@@ -481,6 +481,12 @@ $(document).ready(function() {
     	checkKey($(this).val());
     });
     checkKey($('#calendar_publish_key').val());
+
+    if(window.addEventListener){
+        window.addEventListener("load", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); }, false);
+    }else{
+        window.attachEvent("onload", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); });
+    }
 });
 {/literal}
 </script>
