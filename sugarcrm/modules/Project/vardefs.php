@@ -139,7 +139,7 @@ $dictionary['Project'] = array(
 			'type' => 'name',
 			'len' => 50,
 			'unified_search' => true,
-			'full_text_search' => array('boost' => 3),
+            'full_text_search' => array('enabled' => true, 'boost' => 3),
 			'comment' => 'Project name',
 			'importable' => 'required',
             'required' => true,
