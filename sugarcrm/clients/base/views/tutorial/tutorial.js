@@ -60,9 +60,42 @@
         }
         e.preventDefault();
     },
-    remove: function () {
+
+    /**
+     * removes the tour
+     */
+    remove: function() {
         $(window).off('resize', this.resizeCallback);
         $(document).off('keyup', this.keyupCallback);
         app.view.TutorialView.prototype.remove.call(this);
+        var prefs = app.cache.get('tutorialPrefs') || {};
+        if (prefs.showTooltip) {
+            this.showTooltip();
+            this.removeTooltip(3000);
+        }
+    },
+
+    /**
+     * shows tooltip on tour button
+     */
+    showTooltip: function() {
+        $('#tour')
+            .tooltip({
+                container: 'body',
+                trigger: 'manual'
+            })
+            .tooltip('show');
+    },
+
+    /**
+     * removes tooltip from tour button
+     * @param {int} delayTime milliseconds.
+     */
+    removeTooltip: function(delayTime) {
+        if (!delayTime) {
+            $('#tour').tooltip('hide');
+        } else {
+            _.delay(function() { $('#tour').tooltip('hide'); }, delayTime);
+        }
     }
 })
