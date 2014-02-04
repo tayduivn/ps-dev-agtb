@@ -19,11 +19,11 @@ interface FacetInterface
     /**
      *
      * Returns an Elastica Filter object
-     * $param  string $fieldName
+     * @param  string $fieldName
      * @param  array  $values
      * @return \Elastica\Filter\AbstractFilter
      */
-    public function getFilter($fieldName, $values);
+    public function getFilter($fieldName, array $values);
 
     /**
      *
@@ -33,5 +33,5 @@ interface FacetInterface
      * @param  array  $data
      * @return array
      */
-    public function parseData($facetId, $facetDefs, $facetData);
+    public function parseData($facetId, array $facetDefs, array $facetData);
 }

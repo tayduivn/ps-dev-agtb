@@ -26,7 +26,7 @@ class FacetTerms extends FacetAbstract
      *
      * @see FacetInterface::getFacet
      */
-    public function getFacet($fieldName, $mainFilter)
+    public function getFacet($fieldName, \Elastica\Filter\AbstractFilter $mainFilter)
     {
         $rawFieldName = $this->getRawFieldName($fieldName);
         $mainFilter = $this->prepareMainFilter($mainFilter, $rawFieldName);
@@ -42,7 +42,7 @@ class FacetTerms extends FacetAbstract
      *
      * @see FacetInterface::getFilter
      */
-    public function getFilter($fieldName, $values)
+    public function getFilter($fieldName, array $values)
     {
         // we use the raw field for the filter
         $rawFieldName = $this->getRawFieldName($fieldName);
@@ -59,7 +59,7 @@ class FacetTerms extends FacetAbstract
      *
      * @see FacetInterface::parseData()
      */
-    public function parseData($facetId, $facetDefs, $facetData)
+    public function parseData($facetId, array $facetDefs, array $facetData)
     {
         // only return if there actual results available
         if ($facetData['total'] > 0) {

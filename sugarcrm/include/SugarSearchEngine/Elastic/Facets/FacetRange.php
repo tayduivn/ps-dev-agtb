@@ -33,7 +33,7 @@ class FacetRange extends FacetAbstract
     /**
      * @see FacetInterface::getFacet
      */
-    public function getFacet($fieldName, $mainFilter)
+    public function getFacet($fieldName, \Elastica\Filter\AbstractFilter $mainFilter)
     {
         $mainFilter = $this->prepareMainFilter($mainFilter, $fieldName);
         $facet = new \Elastica\Facet\Range($fieldName);
@@ -46,7 +46,7 @@ class FacetRange extends FacetAbstract
     /**
      * @see FacetInterface::getFilter
      */
-    public function getFilter($fieldName, $values)
+    public function getFilter($fieldName, array $values)
     {
         // combine selected filters in an or clause
         $filter = new \Elastica\Filter\Bool();
@@ -65,7 +65,7 @@ class FacetRange extends FacetAbstract
      *
      * @see FacetInterface::parseData()
      */
-    public function parseData($facetId, $facetDefs, $facetData)
+    public function parseData($facetId, array $facetDefs, array $facetData)
     {
         if (empty($facetData['ranges'])) {
             return false;

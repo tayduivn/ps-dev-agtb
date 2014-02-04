@@ -26,7 +26,7 @@ abstract class FacetFilter extends FacetAbstract
      *
      * @see FacetInterface::getFacet
      */
-    public function getFacet($fieldName, $mainFilter)
+    public function getFacet($fieldName, \Elastica\Filter\AbstractFilter $mainFilter)
     {
         // encapsulate mainFilter and the facet filter
         $master = new \Elastica\Filter\Bool();
@@ -43,7 +43,7 @@ abstract class FacetFilter extends FacetAbstract
      *
      * @see FacetInterface::getFilter
      */
-    public function getFilter($fieldName, $values)
+    public function getFilter($fieldName, array $values)
     {
         return $this->getBoolFilter();
     }
@@ -52,7 +52,7 @@ abstract class FacetFilter extends FacetAbstract
      *
      * @see FacetInterface::parseData()
      */
-    public function parseData($facetId, $facetDefs, $facetData)
+    public function parseData($facetId, array $facetDefs, array $facetData)
     {
         if (isset($facetData['count'])) {
             $parsed = array(
