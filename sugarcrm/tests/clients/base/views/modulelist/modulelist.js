@@ -134,7 +134,7 @@ describe("Module List", function() {
                 view.getRecentlyViewedAndFavoriteRecords(evt);
                 expect(stubs.populateDashboards).toHaveBeenCalled();
                 expect(stubs.populateFavorites).not.toHaveBeenCalled();
-                expect(stubs.populateRecents).toHaveBeenCalled();
+                expect(stubs.populateRecents).not.toHaveBeenCalled();
 
             });
             it('should populate recents only because favorites are disabled', function() {
@@ -259,7 +259,7 @@ describe("Module List", function() {
             view.render();
 
             SugarTest.seedFakeServer();
-            SugarTest.server.respondWith("GET", /.*\/recent.*/,
+            SugarTest.server.respondWith("GET", /.*\/Accounts.*/,
                 [200, {  "Content-Type": "application/json"},
                     JSON.stringify( {
                             records: [
