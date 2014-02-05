@@ -222,8 +222,8 @@ class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 
         // get the count of beans of this module.
         $countBean_SQL = "select count(id) as total from {$this->account->table_name} where deleted = 0";
-        $beanRow = $this->_db->getOne($countBean_SQL);
-
+        $beanCount = $this->_db->getOne($countBean_SQL);
+        
         // queue the module
         $populateResult = $this->indexer->populateIndexQueueForModule($module);
 
@@ -239,9 +239,9 @@ class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
         $diff = $ftsRowAfter - $ftsRowBefore;
 
         // assert that difference is equal to count of beans for this module.
-        $msg = "Expected populateIndexQueueForModule('$module') to add {$beanRow['total']} ";
+        $msg = "Expected populateIndexQueueForModule('$module') to add {$beanCount} ";
         $msg .= "entries to fts_queue, but added $diff.";
-        $this->assertEquals($beanRow['total'], $diff, $msg);
+        $this->assertEquals($beanCount, $diff, $msg);
     }
 
 }
