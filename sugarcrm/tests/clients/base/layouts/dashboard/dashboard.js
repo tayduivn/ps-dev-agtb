@@ -55,7 +55,7 @@ describe("Base.Layout.Dashboard", function(){
             model.set("foo", "Blah");
             expectedApiUrl = "Dashboards";
             model.save();
-            expect(syncStuff).toHaveBeenCalledWith("create", expectedApiUrl, {view: "", foo: "Blah"});
+            expect(syncStuff).toHaveBeenCalledWith("create", expectedApiUrl, {view_name: "", foo: "Blah"});
             syncStuff.restore();
 
             syncStuff = sinon.stub(app.api, 'records');
@@ -104,7 +104,7 @@ describe("Base.Layout.Dashboard", function(){
             model.set("foo", "Blah");
             expectedApiUrl = "Dashboards/" + parentModule;
             model.save();
-            expect(syncStub).toHaveBeenCalledWith("create", expectedApiUrl, {view: "records", foo: "Blah"});
+            expect(syncStub).toHaveBeenCalledWith("create", expectedApiUrl, {view_name: "records", foo: "Blah"});
             syncStub.restore();
 
             syncStub = sinon.stub(app.api, 'records');
@@ -121,7 +121,7 @@ describe("Base.Layout.Dashboard", function(){
             syncStub = sinon.stub(app.api, 'records');
             layout.navigateLayout('new-fake-id-value');
             expectedApiUrl = "Dashboards";
-            expect(syncStub).toHaveBeenCalledWith("read", expectedApiUrl, {view: 'records', id: 'new-fake-id-value'});
+            expect(syncStub).toHaveBeenCalledWith("read", expectedApiUrl, {view_name: 'records', id: 'new-fake-id-value'});
 
             syncStub.restore();
         });

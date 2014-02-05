@@ -61,7 +61,7 @@
                 var callbacks = app.data.getSyncCallbacks(method, model, options),
                     path = (this.dashboardModule === 'Home' || model.id) ? this.apiModule : this.apiModule + '/' + this.dashboardModule;
                 if (method === 'read') {
-                    options.params.view = view;
+                    options.params.view_name = view;
                 }
                 app.api.records(method, path, model.attributes, options.params, callbacks);
             },
@@ -84,7 +84,7 @@
             context.set("create", true);
         }
         var model = new Dashboard();
-        model.set("view", view);
+        model.set("view_name", view);
         if (context.get("modelId")) {
             model.set("id", context.get("modelId"), {silent: true});
         }
@@ -261,7 +261,7 @@
             return this._lastStateKey;
         }
         var model = this.context.get('model'),
-            view = model.get('view'),
+            view = model.get('view_name'),
             module = model.dashboardModule,
             key = module + '.' + view;
         this._lastStateKey = app.user.lastState.key(key, this);
