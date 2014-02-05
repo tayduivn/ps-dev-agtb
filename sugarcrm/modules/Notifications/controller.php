@@ -32,8 +32,7 @@ class NotificationsController extends SugarController
     var $action_remap = array ( ) ;
 
     /**
-     * DEPRECATED 
-     *
+     * @deprecated Since 7.2 will be removed on 7.5
      */
     function action_checkNewNotifications()
     {

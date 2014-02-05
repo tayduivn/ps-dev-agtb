@@ -60,12 +60,13 @@ class Notifications extends Basic
     }
 
     /**
-     * TODO
+     * @deprecated Since 7.2 will be removed on 7.5
      *
      * Should replace send notification portion in SugarBean.
      */
     public function sendNotification()
     {
+        $GLOBALS['log']->deprecated('Notifications.php: sendNotification() is deprecated');
         //Determine how the user wants to receive notifications from the system (email|sms|in system)
 
         //Factory pattern returns array of classes cooresponding to different options for user
@@ -75,17 +76,21 @@ class Notifications extends Basic
     }
 
     /**
-     * TODO
+     * @deprecated Since 7.2 will be removed on 7.5
      *
      * @param unknown_type $user
      */
     public function clearUnreadNotificationCacheForUser($user)
     {
-
+        $GLOBALS['log']->deprecated('Notifications.php: clearUnreadNotificationCacheForUser() is deprecated');
     }
 
+    /**
+     * @deprecated Since 7.2 will be removed on 7.5
+     */
     public function retrieveUnreadCountFromDateEnteredFilter($date_entered)
     {
+        $GLOBALS['log']->deprecated('Notifications.php: retrieveUnreadCountFromDateEnteredFilter() is deprecated');
         global $current_user;
         $query = "SELECT count(*) as cnt FROM {$this->table_name} where is_read='0' AND deleted='0' AND assigned_user_id='{$current_user->id}' AND
 	               date_entered >  '$date_entered' ";
@@ -96,8 +101,12 @@ class Notifications extends Basic
         return $result;
     }
 
+    /**
+     * @deprecated Since 7.2 will be removed on 7.5
+     */
     public function getUnreadNotificationCountForUser($user = null)
     {
+        $GLOBALS['log']->deprecated('Notifications.php: getUnreadNotificationCountForUser() is deprecated');
         /** TO DO - ADD A CACHE MECHANISM HERE **/
 
         if ($user == null) {
@@ -112,8 +121,13 @@ class Notifications extends Basic
         return $result;
     }
 
+    /**
+     * @deprecated Since 7.2 will be removed on 7.5
+     */
     public function getSystemNotificationsCount()
     {
+        $GLOBALS['log']->deprecated('Notifications.php: getSystemNotificationsCount() is deprecated');
+
         $sv = new SugarView();
         $GLOBALS['system_notification_buffer'] = array();
         $GLOBALS['buffer_system_notifications'] = true;
