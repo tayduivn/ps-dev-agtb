@@ -1,3 +1,20 @@
+
+// search filter widget
+.search-filter {
+  // outer wrapper
+  .control-group {
+    padding: 5px 8px 5px 9px;
+    margin-bottom: 0;
+    background: @grayLighter;
+    border-top: 1px solid darken(@grayLighter,10%);
+    border-bottom: 1px solid darken(@grayLighter, 10%);
+  }
+  // toggle view
+  .controls.btn-group-fit .btn-group {
+    right: 0;
+  }
+}
+
 // search filter inputs
 .filter-view {
   border: 1px solid @inputBorder;
@@ -208,54 +225,16 @@
   }
 }
 
-// search filter widget
-.form-search-related {
-  margin: 0;
-  background: @grayLighter;
-  border-top: 1px solid darken(@grayLighter,10%);
-  border-bottom: 1px solid darken(@grayLighter, 10%);
-  .filter-header {
-    border-bottom: none;
-  }
-  // outer wrapper
-  .control-group {
-    padding: 5px 8px 5px 9px;
-    margin-bottom: 0;
-  }
-  // toggle view
-  .controls.btn-group-fit .btn-group {
-    right: 0;
-  }
-  .extend {
-    margin-top: -1px;
-  }
-}
-
-.form-search  {
-  margin: -1px 0 0;
-  background: @grayLighter;
-  .extend {
-    .filter-header {
-      // mass update title
-      .controls {
-        padding: 7px 0 0 10px;
-      }
-    }
-  }
-}
-
-.massupdate {
-  .control-group:last-child {
-    margin-bottom: 0;
-  }
-}
-
 .extend {
   .box-shadow(~"inset 0 4px 8px -4px rgba(0, 0, 0, 0.5)");
+  margin: -1px 0 0;
+  background: @grayLighter;
 
   .filter-header {
-    input[type="text"] {
-      padding-left: 9px;
+    padding: 9px 8px 7px 9px;
+    border-bottom: 1px solid darken(@grayLighter, 5%);
+    .controls {
+      padding: 7px 0 0 10px;
     }
     .btn-primary {
       min-width: 41px;
@@ -266,6 +245,9 @@
   }
 
   .filter-body {
+    padding: 7px 8px 7px 9px;
+    border-top: 1px solid lighten(@grayLighter, 5%);
+    border-bottom: 1px solid darken(@grayLighter, 5%);
     .row-fluid {
       position: relative;
       padding-right: 64px;
@@ -286,18 +268,6 @@
       margin-bottom: inherit;
       vertical-align: baseline;
     }
-  }
-
-  // inset form rows
-  article {
-    background-color: transparent;
-    border-top: 1px solid lighten(@grayLighter, 5%);
-    border-bottom: 1px solid darken(@grayLighter, 5%);
-    padding: 7px 8px 7px 9px;
-  }
-  article:first-child {
-    padding-top: 9px;
-    border-top: none;
   }
 
   // containing divs for create filter
@@ -395,6 +365,26 @@
     text-indent: -16px;
     line-height: 16px;
     margin: -3px 0 0;
+  }
+}
+
+// create search filter .extend
+.filter-options {
+  .filter-definition-container:first-child {
+    .filter-body {
+      padding: 9px 8px 7px 9px;
+      border-top: none;
+    }
+  }
+  .filter-header {
+    border-top: 1px solid lighten(@grayLighter, 5%);
+    padding: 7px 8px 7px 9px;
+    .controls {
+      padding: 0;
+    }
+    input[type="text"] {
+      padding-left: 9px;
+    }
   }
 }
 

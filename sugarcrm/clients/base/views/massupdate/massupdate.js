@@ -23,6 +23,7 @@
     defaultOption: null,
     fieldPlaceHolderTag: '[name=fieldPlaceHolder]',
     massUpdateViewName: 'massupdate-progress',
+    className: 'extend',
 
     /**
      * Default settings used when none are supplied through metadata.
