@@ -88,13 +88,24 @@ $mod_strings = array(
     'LBL_REVENUELINEITEMS' => 'Revenue Line Items',
 
     // Help Text
-    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module consists of individual {{plural_module_name}} that contain text or an attachment pertinent to the related record.
+    // List View Help Text
+    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module consists of individual {{plural_module_name}} that contain text or an attachment pertinent to the related record. {{module_name}} records can be related to one record in most modules via the flex relate field and can also be related to a single {{contact_module}}. {{plural_module_name}} can hold generic text about a record or even an attachment related to the record. There are various ways you can create {{plural_module_name}} in Sugar such as via the {{plural_module_name}} module, importing {{plural_module_name}}, via History subpanels, etc. Once the {{module_name}} record is created, you can view and edit information pertaining to the {{module_name}} via the {{plural_module_name}} record view. Each {{module_name}} record may then relate to other Sugar records such as {{accounts_module}}, {{contacts_module}}, {{opportunities_module}}, and many others.',
 
-To create a {{module_name}}:
+    // Record View Help Text
+    'LBL_HELP_RECORD' => 'The {{plural_module_name}} module consists of individual {{plural_module_name}} that contain text or an attachment pertinent to the related record.
+
+- Edit this record\'s fields by clicking an individual field or the Edit button.
+- View or modify links to other records in the subpanels by toggling the bottom left pane to "Data View".
+- Make and view user comments and record change history in the {{activitystream_module}} by toggling the bottom left pane to "Activity Stream".
+- Follow or favorite this record using the icons to the right of the record name.
+- Additional actions are available in the dropdown Actions menu to the right of the Edit button.',
+
+    // Create View Help Text
+    'LBL_HELP_CREATE' => 'To create a {{module_name}}:
 1. Provide values for the fields as desired.
- * Fields marked "Required" must be completed prior to saving.
- * Click "Show More" to expose additional fields if necessary.
-2. Click "Save" to finalize the new record and return to the {{plural_module_name}} list view.
- * Choose "Save and view" to open the new {{module_name}} in record view.
- * Choose "Save and create new" to immediately create another new {{module_name}}.',
+ - Fields marked "Required" must be completed prior to saving.
+ - Click "Show More" to expose additional fields if necessary.
+2. Click "Save" to finalize the new record and return to the previous page.
+ - Choose "Save and view" to open the new {{module_name}} in record view.
+ - Choose "Save and create new" to immediately create another new {{module_name}}.',
 );

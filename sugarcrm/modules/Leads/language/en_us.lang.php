@@ -277,23 +277,38 @@ $mod_strings = array (
     'TPL_BROWSER_SUGAR7_RECORD_TITLE' => '{{#if last_name}}{{#if first_name}}{{first_name}} {{/if}}{{last_name}} &raquo; {{/if}}{{module}} &raquo; {{appId}}',
     'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
 
+    'LBL_HELP_CONVERT_TITLE' => 'Convert a {{module_name}}',
+
     // Help Text
-    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module consists of individual prospects who may be interested in a product or service your organization provides. Once the {{module_name}} is qualified as a sales opportunity, it can be converted into a {{contact_module}}, {{account_module}}, {{opportunity_module}}, or other record.
+    // List View Help Text
+    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module consists of individual prospects who may be interested in a product or service your organization provides. Once the {{module_name}} is qualified as a sales {{opportunity_module}}, {{plural_module_name}} can be converted into {{contacts_module}}, {{opportunities_module}}, and {{accounts_module}}. There are various ways you can create {{plural_module_name}} in Sugar such as via the {{plural_module_name}} module, duplication, importing {{plural_module_name}}, etc. Once the {{module_name}} record is created, you can view and edit information pertaining to the {{module_name}} via the {{plural_module_name}} record view.',
+
+    // Record View Help Text
+    'LBL_HELP_RECORD' => 'The {{plural_module_name}} module consists of individual prospects who may be interested in a product or service your organization provides.
+
+- Edit this record\'s fields by clicking an individual field or the Edit button.
+- View or modify links to other records in the subpanels by toggling the bottom left pane to "Data View".
+- Make and view user comments and record change history in the {{activitystream_module}} by toggling the bottom left pane to "Activity Stream".
+- Follow or favorite this record using the icons to the right of the record name.
+- Additional actions are available in the dropdown Actions menu to the right of the Edit button.',
+
+    // Create View Help Text
+    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module consists of individual prospects who may be interested in a product or service your organization provides. Once the {{module_name}} is qualified as a sales {{opportunity_module}}, it can be converted into a {{contact_module}}, {{account_module}}, {{opportunity_module}}, or other record.
 
 To create a {{module_name}}:
 1. Provide values for the fields as desired.
- * Fields marked "Required" must be completed prior to saving.
- * Click "Show More" to expose additional fields if necessary.
-2. Click "Save" to finalize the new record and return to the {{plural_module_name}} list view.
- * Choose "Save and view" to open the new {{module_name}} in record view.
- * Choose "Save and create new" to immediately create another new {{module_name}}.',
+ - Fields marked "Required" must be completed prior to saving.
+ - Click "Show More" to expose additional fields if necessary.
+2. Click "Save" to finalize the new record and return to the previous page.
+ - Choose "Save and view" to open the new {{module_name}} in record view.
+ - Choose "Save and create new" to immediately create another new {{module_name}}.',
 
-    'LBL_HELP_CONVERT_TITLE' => 'Convert a {{module_name}}',
-    'LBL_HELP_CONVERT' => 'Sugar enables you to convert {{plural_module_name}} into {{contact_module}} once the {{module_name}} meets your qualification criteria.
+    // Convert View Help Text
+    'LBL_HELP_CONVERT' => 'Sugar enables you to convert {{plural_module_name}} into {{contacts_module}}, {{accounts_module}}, and other modules once the {{module_name}} meets your qualification criteria.
 
 Step through each module by modifying fields then confirming the new record’s values by clicking each Associate button.
 
-If Sugar detects an existing record that matches your {{module_name}}\'s information, you have the option to choose a duplicate and confirm the selection with the Associate button or to click "Ignore and create new" and proceed normally.
+If Sugar detects an existing record that matches your {{module_name}}’s information, you have the option to choose a duplicate and confirm the selection with the Associate button or to click "Ignore and create new" and proceed normally.
 
 After confirming each required and desired module, click the Save and Convert button at the top to finalize the conversion.',
 
