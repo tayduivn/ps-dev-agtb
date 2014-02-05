@@ -12,8 +12,7 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 }}
-<form class="form-search {{#unless visible}}hide{{/unless}}">
-<div class="mu extend">
+<div class="extend">
     <article class="filter-header">
         <div class="row-fluid">
             <div class="controls span6">
@@ -21,7 +20,7 @@
             </div>
             <div class="pull-right">
                 {{#each meta.buttons}}
-                {{field ../this}}
+                    {{field ../this}}
                 {{/each}}
             </div>
         </div>
@@ -56,10 +55,9 @@
     {{/each}}
     <div id="fieldPlaceHolders" class="hide">
         {{#each meta.panels}}
-        {{#each fields}}
-        {{field ../../this template="edit"}}
-        {{/each}}
+            {{#each fields}}
+                {{field ../../this template="edit"}}
+            {{/each}}
         {{/each}}
     </div>
 </div>
-</form>
