@@ -171,17 +171,27 @@ class ActivitiesRelationship extends OneToManyRelationship
      */
     function buildRelationshipMetaData ()
     {
-        $relationshipName = $this->definition [ 'relationship_name' ];
+        $relationshipName = $this->definition['relationship_name'];
         $relMetadata = array ( ) ;
-        $relMetadata [ 'lhs_module' ] = $this->definition [ 'lhs_module' ] ;
-        $relMetadata [ 'lhs_table' ] = $this->getTablename($this->definition [ 'lhs_module' ]) ;
-        $relMetadata [ 'lhs_key' ] = 'id' ;
-        $relMetadata [ 'rhs_module' ] = $this->definition [ 'rhs_module' ] ;
-        $relMetadata [ 'rhs_table' ] = $this->getTablename($this->definition [ 'rhs_module' ]) ;
-        $relMetadata ['rhs_key'] = 'parent_id';
-        $relMetadata ['relationship_type'] = 'one-to-many';
-        $relMetadata ['relationship_role_column'] = 'parent_type';
-        $relMetadata ['relationship_role_column_value'] = $this->definition [ 'lhs_module' ] ;
+        $relMetadata['lhs_module'] = $this->definition['lhs_module'] ;
+        $relMetadata['lhs_table'] = $this->getTablename($this->definition['lhs_module']) ;
+        $relMetadata['lhs_key'] = 'id' ;
+        $relMetadata['rhs_module'] = $this->definition['rhs_module'] ;
+        $relMetadata['rhs_table'] = $this->getTablename($this->definition['rhs_module']) ;
+        $relMetadata['relationship_role_column_value'] = $this->definition['lhs_module'] ;
+            
+        if ( $this->definition['rhs_module'] != 'Emails' ) {
+            $relMetadata['rhs_key'] = 'parent_id';
+            $relMetadata['relationship_type'] = 'one-to-many';
+            $relMetadata['relationship_role_column'] = 'parent_type';
+        } else {
+            $relMetadata['rhs_key'] = 'id';
+            $relMetadata['relationship_type'] = 'many-to-many';
+            $relMetadata['join_table'] = 'emails_beans';
+            $relMetadata['join_key_rhs'] = 'email_id';
+            $relMetadata['join_key_lhs'] = 'bean_id';
+            $relMetadata['relationship_role_column'] = 'bean_module';
+        }
 
     	return array( $this->lhs_module => array(
     		'relationships' => array ($relationshipName => $relMetadata),
@@ -316,6 +326,45 @@ class ActivitiesRelationship extends OneToManyRelationship
 \$viewdefs['{$this->lhs_module}']['base']['view']['inactive-tasks'] = \$coreDefs;\n";
 
         return array($this->lhs_module => $files);
+    }
+
+    public function buildSidecarSubpanelDefinitions()
+    {
+        $baseRelName = substr($this->relationship_name, 0, strrpos($this->relationship_name, '_'));
+        $label = 'LBL_'.strtoupper($this->rhs_module).'_SUBPANEL_TITLE';
+        $linkName = $baseRelName.'_'.strtolower($this->rhs_module);
+        switch ($this->rhs_module) {
+            case 'Calls':
+                $order = 110;
+                break;
+            case 'Meetings':
+                $order = 120;
+                break;
+            case 'Notes':
+                $order = 130;
+                break;
+            case 'Tasks':
+                $order = 140;
+                break;
+            case 'Emails':
+                $order = 150;
+                break;
+            default:
+                $order = 160;
+                $GLOBALS['log']->error("Unexpected activity relationship for module {$this->rhs_module}");
+        }
+
+        $subpanels[$this->lhs_module][] = array(
+            'order' => $order,
+            'module' => $this->rhs_module,
+            'subpanel_name' => 'default',
+            'sort_order' => 'desc',
+            'sort_by' => 'date_modified',
+            'title_key' => $label,
+            'get_subpanel_data' => $linkName,
+        );
+
+        return $subpanels;
     }
 
     public function buildClientFiles()

@@ -64,6 +64,14 @@ $dictionary['Relationship'] =
     			'required'=>true,
     			'len' => 64
   			),
+  			'lhs_vname' =>
+  			array (
+    			'name' => 'lhs_vname',
+    			'vname' => 'LBL_LHS_VNAME',
+    			'type' => 'varchar',
+    			'required'=>false,
+    			'len' => 64
+  			),
   			'rhs_module' =>
   			array (
     			'name' => 'rhs_module',
@@ -86,6 +94,14 @@ $dictionary['Relationship'] =
     			'vname' => 'LBL_RHS_KEY',
     			'type' => 'varchar',
     			'required'=>true,
+    			'len' => 64
+  			),
+  			'rhs_vname' =>
+  			array (
+    			'name' => 'rhs_vname',
+    			'vname' => 'LBL_RHS_VNAME',
+    			'type' => 'varchar',
+    			'required'=>false,
     			'len' => 64
   			),
   			'join_table' =>

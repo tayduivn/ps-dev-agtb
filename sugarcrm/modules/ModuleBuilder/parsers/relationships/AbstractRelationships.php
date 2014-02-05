@@ -567,6 +567,11 @@ class AbstractRelationships
                 if (!empty($definition['collection_list'])) {
                     continue;
                 }
+                
+                if ($definition['subpanel_name'] === 'Default') {
+                    // There is a typo somewhere in the bowels of the Activities relationship code
+                    $definition['subpanel_name'] = 'default';
+                }
 
                 if ($definition['subpanel_name'] !== 'default') {
                     require_once('include/MetaDataManager/MetaDataConverter.php');
@@ -588,7 +593,11 @@ class AbstractRelationships
                         'link' => $definition['get_subpanel_data'],
                     ),
                 );
-                write_array_to_file($varName, $layoutDefs, $fileName);
+                $previous_contents = '';
+                if (file_exists($fileName)) {
+                    $previous_contents = file_get_contents($fileName)."\n\n";
+                }
+                write_array_to_file($varName, $layoutDefs, $fileName, 'w', $previous_contents);
 
                 if (!empty($override_array)) {
                     write_array_to_file(
