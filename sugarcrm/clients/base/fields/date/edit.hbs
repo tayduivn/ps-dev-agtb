@@ -27,7 +27,7 @@
  ********************************************************************************/
 }}
 <div class="input-append date" rel="datepicker">
-    <input type="text" class="datepicker" value="{{dateValue}}" rel="datepicker">
+    <input type="text" class="datepicker" value="{{dateValue}}" rel="datepicker"{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}>
     <span class="add-on"><i class="icon-calendar"></i></span>
     {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
 </div>

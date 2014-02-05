@@ -27,7 +27,7 @@
  ********************************************************************************/
 }}
 {{#if def.text}}
-    <label><input type="checkbox" class="checkbox"{{#if value}} checked{{/if}}> {{str def.text this.module}}</label>
+    <label><input type="checkbox" class="checkbox"{{#if value}} checked{{/if}}{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}> {{str def.text this.module}}</label>
 {{else}}
-    <input type="checkbox" class="checkbox"{{#if value}} checked{{/if}}>
+    <input type="checkbox" class="checkbox"{{#if value}} checked{{/if}}{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}>
 {{/if}}
