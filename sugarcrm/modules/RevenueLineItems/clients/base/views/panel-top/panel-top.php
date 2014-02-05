@@ -23,7 +23,6 @@ $viewdefs['RevenueLineItems']['base']['view']['panel-top'] = array(
         array(
             'type' => 'actiondropdown',
             'name' => 'panel_dropdown',
-            'css_class' => 'pull-right',
             'buttons' => array(
                 array(
                     'type' => 'sticky-rowaction',

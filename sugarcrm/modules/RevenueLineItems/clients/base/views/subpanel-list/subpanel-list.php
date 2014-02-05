@@ -182,7 +182,6 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-list'] = array(
         ),
     ),
     'rowactions' => array(
-        'css_class' => 'pull-right',
         'actions' => array(
             array(
                 'type' => 'rowaction',

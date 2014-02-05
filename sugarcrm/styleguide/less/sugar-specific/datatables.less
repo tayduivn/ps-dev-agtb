@@ -13,9 +13,11 @@ table.dataTable {
     font-size: @fontSizeSmall;
     color: @tableHeader;
     border-right: 1px solid darken(@grayLighter,5%);
-    .rtl(@direction,ltr);
     background-color: @white;
-
+    .rtl(@direction,ltr);
+    &:last-child {
+      border-right: none;
+    }
     > * {
       display: inline-block;
       width: 100%;
@@ -25,9 +27,7 @@ table.dataTable {
       vertical-align: middle;
       text-overflow: ellipsis;
     }
-    &:last-child {
-      border-right: 0;
-    }
+
     a {
       text-decoration: none;
     }
@@ -59,81 +59,116 @@ table.dataTable {
   }
 
   /* ---------
-  TABLE BODY */
-  & > tbody {
-    & > tr {
-      & > td {
-        height: 28px;
-        padding: 4px 8px;
+  TABLE BODY CELL (specific) */
+  td {
+    height: 28px;
+    padding: 4px 8px;
+    white-space: nowrap;
+    word-break: break-word;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    max-width: 82px;
+    border-top: 1px solid darken(@grayLighter, 5%);
+    border-bottom: 1px solid darken(@grayLighter, 5%);
+    background-color: @white;
+    .rtl(@direction,ltr);
+    &:last-child {
+      border-right: 0;
+    }
+    > *:not(.overflow-visible) {
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      width: 100%;
+      display: inline-block;
+      white-space: nowrap;
+      word-break: break-word;
+      position: relative;
+      vertical-align: middle;
+    }
 
-        white-space: nowrap;
-        word-break: break-word;
-        vertical-align: middle;
-        text-overflow: ellipsis;
-        max-width: 82px;
-        border-top: 1px solid darken(@grayLighter, 5%);
-        border-bottom: 1px solid darken(@grayLighter, 5%);
-        background-color: @white;
-        .rtl(@direction,ltr);
-        &[data-type="currency"] {
-          text-align: right;
-          min-width: 132px;
-          max-width: 100% !important;
-          .list {
-            .box-sizing(border-box);
-            width: 100%;
-          }
-        }
-        &[data-type="bool"] {
-          .input-append.error .add-on {
-            //margin-left: -2px;
-          }
-        }
-        &[data-type="datetimecombo"] {
-          input[type="text"].datepicker {
-            min-width: 0;
-            width: 50%;
-            .calcWidth(~"55% - 2px");
-          }
-          input[type="text"].ui-timepicker-input {
-            min-width: 0;
-            width: 40%;
-            .calcWidth(~"45% - 2px");
-          }
-        }
-        &> *:not(.overflow-visible) {
-          overflow-x: hidden;
-          text-overflow: ellipsis;
-          max-width: 100%;
+    &[data-type="currency"] {
+      text-align: right;
+      min-width: 132px;
+      max-width: 100% !important;
+      .list {
+        .box-sizing(border-box);
+        width: 100%;
+      }
+    }
+    &[data-type="bool"] {
+      .input-append.error .add-on {
+        //margin-left: -2px;
+      }
+    }
+    &[data-type="datetimecombo"] {
+      input[type="text"].datepicker {
+        min-width: 0;
+        width: 50%;
+        .calcWidth(~"55% - 2px");
+      }
+      input[type="text"].ui-timepicker-input {
+        min-width: 0;
+        width: 40%;
+        .calcWidth(~"45% - 2px");
+      }
+    }
+
+    .label-module {
+      width: 32px;
+      height: 32px;
+      margin-bottom: 2px;
+    }
+    .btn-toolbar {
+      margin: -5px 0 -10px;
+    }
+    span.longtext {
+      display: inline-block;
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    input[type="text"] {
+      min-height: 28px;
+      width: 100%;
+      .box-sizing(border-box);
+      padding: 4px 6px;
+    }
+    .select2-addon {
+      input[type="text"] {
+        width: 95%;
+        .calcWidth(~"100% - 100px");
+      }
+      .input-append {
+        input[type="text"] {
           width: 100%;
-          display: inline-block;
-          white-space: nowrap;
-          word-break: break-word;
-          position: relative;
-          vertical-align: middle;
-        }
-        &:first-child {
-          overflow-x: visible;
-          span {
-            overflow: visible;
-          }
-        }
-        &:last-child {
-          overflow-x: visible;
-          border-right: 0;
-        }
-        .label-module {
-          width: 32px;
-          height: 32px;
-          margin-bottom: 2px;
         }
       }
+    }
+    input[type=radio],
+    input[type=checkbox] {
+      border: 0;
+    }
+    .icon-favorite {
+      vertical-align: middle;
+    }
+    .list + .list .icon-favorite {
+      margin-left: 13px;
+    }
+    // email and merge (change)
+    .icon-star {
+      margin: 0 16px;
+      color: @grayLight;
+    }
+    .active .icon-star {
+      color: @orange;
     }
   }
 
   /* ---------
   TABLE FOOTER */
-  & > tfoot {
+  tfoot {
     th {
       white-space: normal;
       word-break: break-word;
@@ -183,11 +218,11 @@ table.dataTable {
     }
     //inline editing
     &.tr-inline-edit {
-      &> td {
+      td {
         overflow: visible;
         background: #e5f1fc;
         padding: 4px;
-        &> span {
+        > span {
           width: 100%;
         }
         &:first-child {
@@ -290,7 +325,7 @@ table.dataTable {
           width: 100%;
           min-width: 82px;
         }
-        &> *:not(.overflow-visible) {
+        > *:not(.overflow-visible) {
           overflow: visible;
         }
         .input-append.date {
@@ -302,44 +337,13 @@ table.dataTable {
     //alert messages
     &.alert.alert-warning {
       height: 35px;
-      &> td {
-        &> div {
+      > td {
+        > div {
           position: absolute;
           text-align: center;
           width: 100%;
         }
       }
-    }
-  }
-
-  /* ---------
-  TABLE CELL (specific) */
-  td {
-    .actions {
-      display: inline-block;
-      white-space: nowrap;
-      a:hover:not(.disabled) {
-        color: @grayDark;
-      }
-      &.open a .icon-eye-open {
-        color: @gray !important;
-      }
-      .dropdown-menu {
-        text-align: left;
-      }
-    }
-    .btn-toolbar {
-      margin: -5px 0 -10px;
-    }
-    span.longtext {
-      display: inline-block;
-      width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    &>span.dropdown {
-      width: auto;
-      overflow: visible;
     }
   }
 
@@ -355,22 +359,6 @@ table.dataTable {
       width: auto;
     }
   }
-  input[type="text"] {
-    min-height: 28px;
-    width: 100%;
-    .box-sizing(border-box);
-    padding: 4px 6px;
-  }
-  .select2-addon {
-    input[type="text"] {
-      width: 95%;
-      .calcWidth(~"100% - 100px");
-    }
-  }
-  input[type=radio],
-  input[type=checkbox] {
-    border: 0;
-  }
   td.number,
   tfoot th.number {
     text-align: right;
@@ -382,47 +370,39 @@ table.dataTable {
       }
     }
   }
-  .icon-favorite {
-    vertical-align: middle;
-  }
-  .list + .list .icon-favorite {
-    margin-left: 13px;
-  }
-  //nutmeg ?legacy?
-  .icon-star {
-    margin: 0 16px;
-    color: @grayLight;
-  }
-  .active .icon-star {
-    color: @orange;
-  }
-  .select2-addon {
-    .input-append {
-      input[type="text"] {
-        width: 100%;
-      }
-    }
-  }
+
 }
 
 /* ---------
 FLEXLIST GENERIC */
 .flex-list-view {
-  //override of bootstrap to fix safari
-  table.dataTable {
-    max-width: none;
+  position: relative;
+
+  .flex-list-view-content {
+    overflow-x: auto;
+    width: 100%;
+    margin-bottom: -1px;
+
+    //-webkit-transform: translate3d(0, 0, 0);
+    /*-webkit-overflow-scrolling: touch;
+    > * {
+        -webkit-transform: translateZ(0px);
+    }
+    > * {
+        -webkit-transform: translate3d(0,0,0);
+    }*/
   }
 
   //override of bootstrap to fix safari
   table.dataTable {
     max-width: none;
+    position: static;
   }
 
   /*LEFT ACTIONS ONLY*/
   &.left-actions table.dataTable {
-    & > thead > tr > th,
-    & > tbody > tr > td,
-    & > tfoot > tr > td {
+    th,
+    td {
       &:first-child {
         width: 55px;
         min-width: 55px;
@@ -430,72 +410,164 @@ FLEXLIST GENERIC */
         overflow-x: visible;
       }
     }
-    & > thead > tr > th {
-      &:first-child {
+    th:first-child {
+      padding: 7px 8px;
+
+      > span {
+        position: absolute;
+        overflow: visible;
+        z-index: 999;
+        width: 55px;
         height: 28px;
-        padding: 7px 8px 7px 10px;
-        background: @white;
-        vertical-align: top;
-        line-height: 18px;
-        span {
-          overflow-x: visible;
-        }
-        .btn-group {
-          position: absolute;
-          margin-top: -9px;
-          left: 9px;
-        }
-        .btn.checkall {
-          padding: 4px 7px;
-        }
+        top: 0;
+        left: 0;
+        padding: 7px 8px;
+        border-right: 1px solid #E8E8E8;
+        border-bottom: 1px solid #E8E8E8;
+        background-color: inherit;
+      }
+      .btn.checkall {
+        padding: 4px 7px;
       }
     }
-    &.duplicates-singleselect {
-      thead > tr > th:first-child {
-        line-height: 26px;
-      }
-    }
-    & > tbody > tr > td {
-      &:first-child {
-        padding: 6px 9px;
-        height: 22px;
-        margin: 2px 0;
+    td:first-child {
+      > span {
+        position: absolute;
+        left: 0;
+        background-color: inherit;
+
+        width: 71px;
+        height: 36px;
+        border-bottom: 1px solid #E8E8E8;
+        display: inline-block;
+        overflow: visible;
+
+        margin-top: -18px;
         z-index: 10;
+
+        > span.list {
+          position: relative;
+          top: 8px;
+          left: 0;
+
+          background-color: inherit;
+          display: inline-block;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+
+  /*ADD SHADOW TO LEFT ACTION COLUMN*/
+  &.left-actions.scroll-width table.dataTable {
+    th:first-child {
+      > span:after {
+        .right-shadow;
+        height: 43px;
+      }
+    }
+    td:first-child {
+      > span {
+        border-right: 1px solid #E8E8E8;
+      }
+      > span:after {
+        .right-shadow;
       }
     }
   }
 
   /*RIGHT ACTIONS ONLY*/
   &.right-actions table.dataTable {
-    & > thead > tr > th,
-    & > tbody > tr > td,
-    & > tfoot > tr > td {
+    th,
+    td {
       &:last-child {
         width: 55px;
+        height: 28px;
         min-width: 55px;
         text-align: center;
         overflow-x: visible;
       }
     }
-    & > thead > tr > th {
-      &:last-child {
+    th:last-child {
+      padding: 7px 8px;
+      &:nth-last-of-type(2) {
+        border-right: none;
+      }
+      .dropdown,
+      > span {
+        position: absolute;
+        overflow: visible;
+        z-index: 999;
+        width: 54px;
         height: 28px;
+        top: 1px;
+        right: 1px;
         padding: 7px 8px;
-        background: @white;
-        vertical-align: top;
-        line-height: 18px;
-        > .dropdown {
-          overflow: visible;
-        }
+        border-left: 1px solid #E8E8E8;
+        border-bottom: 1px solid #E8E8E8;
+        background-color: inherit;
       }
     }
-    & > tbody > tr > td {
-      &:last-child {
-        padding: 3px 8px;
-        height: 28px;
-        margin: 2px 0;
-        .list .btn.rowaction {
-          margin-left: 0;
+    td:last-child {
+      > .list {
+        position: absolute;
+        right: 0;
+        background-color: inherit;
+        &.open {
+          z-index: 99999;
+        }
+        > .list:first-child {
+          position: absolute;
+          width: 55px;
+          top: -18px;
+          right: 0;
+
+          padding: 4px 8px;
+          border-bottom: 1px solid #E8E8E8;
+
+          background-color: inherit;
+          display: inline-block;
+          white-space: nowrap;
+        }
+      }
+
+      // row action buttons
+      .actions {
+        a:hover:not(.disabled) {
+          color: @grayDark;
+        }
+        &.open {
+          .icon-eye-open {
+            color: @gray !important;
+          }
+        }
+        .dropdown-menu {
+          text-align: left;
+        }
+      }
+
+      .list .btn.rowaction {
+        margin-left: 0;
+      }
+    }
+  }
+
+  /*ADD SHADOW TO RIGHT ACTION COLUMN*/
+  &.right-actions.scroll-width table.dataTable {
+    th:last-child {
+      .dropdown:before,
+      > span:before {
+        .left-shadow;
+        height: 43px;
+      }
+    }
+    td:last-child {
+      > .list {
+        > .list:first-child {
+          border-left: 1px solid #E8E8E8;
+          &:before {
+            .left-shadow;
+          }
         }
       }
     }
@@ -503,29 +575,24 @@ FLEXLIST GENERIC */
 
   /*DUPLICATES*/
   table.dataTable.duplicates {
-    thead > tr > th,
-    thead > tr > th:first-child,
-    thead > tr > th:last-child {
+    th {
       background-color: lighten(@yellow_duplicate, 5%);
     }
-    tbody > tr:nth-child(odd) > td {
+    tr:nth-child(odd) > td {
       background-color: @yellow_duplicate;
     }
-    tbody > tr:nth-child(even) > td {
+    tr:nth-child(even) > td {
       background-color: lighten(@yellow_duplicate, 5%);
     }
-    tbody > tr > td:last-child .list {
+    td:last-child .list {
       overflow: visible;
-      display: inline-block;
     }
-    tbody > tr:last-child > td {
-      border-bottom-width: 0;
-    }
+
     /*create record dup check*/
     &.duplicates-selectedit {
       border-bottom: 1px solid darken(@grayLighter,5%);
-      thead > tr > th,
-      tbody > tr > td {
+      th,
+      td {
         &:first-child {
           padding-left: 20px;
           max-width: 116px;
@@ -537,17 +604,26 @@ FLEXLIST GENERIC */
           padding-left: 4px;
         }
       }
+      td {
+        &:last-child {
+          > .list {
+            > .list {
+              width: 123px;
+            }
+          }
+        }
+      }
+      /*tr:last-child > td {
+        border-bottom-width: 0;
+      }*/
       .morecol .dropdown {
         width: 123px;
-        &.open {
-          width: 141px;
-        }
       }
     }
     /*convert lead dup check*/
     &.duplicates-singleselect {
-      thead > tr > th,
-      tbody > tr > td {
+      th,
+      td {
         &:first-child {
           width: 43px;
           min-width: 43px;
@@ -557,17 +633,38 @@ FLEXLIST GENERIC */
           min-width: 28px;
         }
       }
+      th:first-child {
+        line-height: 26px;
+        // no .list class
+        > span {
+          width: 43px;
+        }
+      }
+      td:first-child {
+        > .list {
+          width: 59px;
+          padding: 8px 0;
+          height: 20px;
+        }
+      }
+      td:last-child {
+        > .list {
+          > .list {
+            width: 28px;
+          }
+        }
+      }
+      tr:last-child > td {
+        border-bottom-width: 0;
+      }
       .morecol .dropdown {
         width: 28px;
-        &.open {
-          width: 46px;
-        }
       }
     }
     /*record view find duplicates*/
     &.duplicates-multiselect {
-      thead > tr > th,
-      tbody > tr > td {
+      th,
+      td {
         &:first-child {
           width: 28px;
           min-width: 28px;
@@ -577,8 +674,11 @@ FLEXLIST GENERIC */
           min-width: 28px;
         }
       }
-      thead > tr > th {
+      th {
         &:first-child {
+          > span {
+            width: 28px;
+          }
           //hack fix for messed up button group
           .btn.checkall {
             .border-radius(3px);
@@ -589,19 +689,30 @@ FLEXLIST GENERIC */
           }
         }
       }
+      td {
+        &:first-child {
+          > span {
+            width: 44px;
+          }
+        }
+        &:last-child {
+          .overflow-visible.list {
+            > .actions.list {
+              width: 28px;
+            }
+          }
+        }
+      }
       .morecol .dropdown {
         width: 28px;
-        &.open {
-          width: 46px;
-        }
       }
     }
   }
 
-  /*FORECASTS SALES REP WORKSHEET*/
+  /*FORECASTS WORKSHEETS*/
   &.forecast-worksheet table.dataTable,
   &.forecast-manager-worksheet table.dataTable {
-    & > tbody > tr > td {
+    td {
       &[data-type="currency"] {
         min-width: 115px !important;
         .box-sizing(border-box);
@@ -610,7 +721,6 @@ FLEXLIST GENERIC */
         padding: 0 2px;
         min-width: 92px;
         .box-sizing(border-box);
-
         span.list,
         span.edit {
           width: 100%;
@@ -637,32 +747,32 @@ FLEXLIST GENERIC */
     }
   }
 
+  /*FORECASTS SALES REP WORKSHEET*/
   &.forecast-worksheet table.dataTable {
-    & > thead > tr > th,
-    & > tbody > tr > td,
-    & > tfoot > tr > td {
+    th,
+    td {
       &:first-child {
         padding-left: 14px;
       }
     }
-    & > tbody > tr > td {
+    td {
       &.editableColumn {
         &.commit_stage_field:first-child {
           max-width: 80px;
           padding-left: 6px;
-          & > span.list {
+          > span.list {
             padding-left: 10px;
           }
-          & > span.edit {
+          > span.edit {
             padding-left: 1px;
           }
         }
       }
     }
-    & > tbody > tr.included > td {
+    tr.included td {
       font-weight: bold;
       &.commit_stage_field {
-        & > span.list:before {
+        > span.list:before {
           width: 6px;
           background-color: @blue;
           position: absolute;
@@ -671,7 +781,7 @@ FLEXLIST GENERIC */
           content: "";
           top: -2px;
         }
-        & > span:hover:before {
+        > span:hover:before {
           display: none;
         }
       }
@@ -681,7 +791,7 @@ FLEXLIST GENERIC */
   /*FORECASTS MANAGER WORKSHEET*/
   &.forecast-manager-worksheet table.dataTable {
     border-top: 1px solid darken(@grayLighter,10%);
-    & > tbody > tr[name$="_commit_history"] > td:first-child:last-child {
+    tr[name$="_commit_history"] td:first-child:last-child {
       padding: 0;
       width: 100%;
       max-width: 100%;
@@ -711,169 +821,14 @@ FLEXLIST GENERIC */
 
 }
 
-/**
- * The flex list allows you to add left actions and right actions to the traditional list view.
- * The code below aims to fix the first action column and the last action column
- */
-.no-touch {
-  .flex-list-view {
-    .flex-list-view-content {
-      overflow-x: auto;
-      width: 100%;
-    }
-    table.dataTable {
-      position: static;
-    }
-
-    /*.flex-list.left-actions to fix the first column*/
-    &.left-actions.scroll-width table.dataTable {
-      & > thead > tr > th,
-      & > tbody > tr > td {
-        &:first-child {
-          position: absolute;
-          left: 0;
-          vertical-align: top;
-        }
-        //8 + 55 + 8 + 1 + 8 = 80
-        &:nth-child(2) {
-          padding-left: 81px;
-        }
-      }
-      & > thead > tr > th:first-child {
-        border-right: none;
-        z-index: 11;
-        &:after {
-          .right-shadow;
-          top: -1px;
-        }
-      }
-      & > tbody > tr > td:first-child {
-        border: none;
-        &:after {
-          .right-shadow;
-        }
-      }
-    }
-
-    /*.flex-list.right-actions to fix the last column*/
-    &.right-actions.scroll-width table.dataTable {
-      & > thead > tr > th,
-      & > tbody > tr > td,
-      & > tfoot > tr > td {
-        &:last-child {
-          position: absolute;
-          right: 0;
-          vertical-align: top;
-        }
-        &:nth-last-of-type(2) {
-          padding-right: 79px;
-        }
-      }
-      & > thead > tr > th:nth-last-of-type(2) {
-        border-right: none;
-      }
-      & > thead > tr > th:last-child {
-        border-left: none;
-        &:before {
-          .left-shadow;
-          top: -1px;
-        }
-      }
-      & > tbody > tr > td:last-child {
-        border: none;
-        &:before {
-          .left-shadow;
-        }
-      }
-    }
-
-    /*create record dup check*/
-    &.scroll-width table.dataTable.duplicates-selectedit {
-      thead > tr > th,
-      tbody > tr > td {
-        &:nth-last-of-type(2) {
-          padding-right: 143px;
-        }
-      }
-    }
-    /*convert lead dup check*/
-    &.scroll-width table.dataTable.duplicates-singleselect {
-      thead > tr > th,
-      tbody > tr > td {
-        &:nth-child(2) {
-          padding-left: 67px;
-        }
-        &:nth-last-of-type(2) {
-          padding-right: 53px;
-        }
-      }
-    }
-    /*record view find duplicates*/
-    &.scroll-width table.dataTable.duplicates-multiselect {
-      thead > tr > th,
-      tbody > tr > td {
-        &:nth-child(2) {
-          padding-left: 53px;
-        }
-        &:nth-last-of-type(2) {
-          padding-right: 53px;
-        }
-      }
-    }
-
-    /*forecast worksheets*/
-    &.right-actions.scroll-width.forecast-manager-worksheet table.dataTable,
-    &.right-actions.scroll-width.forecast-worksheet table.dataTable {
-      & > thead > tr > th,
-      & > tbody > tr > td,
-      & > tfoot > tr > td {
-        &:nth-last-of-type(2) {
-          max-width: 100%;
-          padding-right: 81px;
-          min-width: 96px;
-        }
-      }
-      & > tbody > tr > td.editableColumn:nth-last-of-type(2) {
-        padding-right: 75px;
-      }
-      & > tfoot > tr > td:last-child {
-        border: none;
-      }
-    }
-
-    &.right-actions.scroll-width.forecast-manager-worksheet table.dataTable {
-      & > tbody > tr[name$="_commit_history"] > td:first-child:last-child {
-        position: relative;
-      }
-    }
-
-    &:not(.scroll-width) table.dataTable > tbody > tr > td {
-      &:last-child {
-        .overflow-visible.list {
-          position: absolute;
-          right: 8px;
-          > .list {
-            position: absolute;
-            top: -14px;
-            right: 0;
-          }
-          > .actions.list {
-            right: 0;
-          }
-        }
-      }
-    }
-  }
-}
-
-.touch {
+/*.touch {
   .flex-list-view {
     overflow: scroll;
   }
   table.dataTable {
     position: relative;
   }
-}
+}*/
 
 .subpanel .flex-list-view table.dataTable {
   border-bottom: 0;

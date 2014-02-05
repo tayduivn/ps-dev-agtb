@@ -97,7 +97,6 @@ $viewdefs['Leads']['base']['view']['recordlist'] = array(
         ),
     ),
     'rowactions' => array(
-        'css_class' => 'pull-right',
         'actions' => array(
             array(
                 'type' => 'rowaction',

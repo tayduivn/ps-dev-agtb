@@ -50,55 +50,49 @@
         //add an event delegate for right action dropdown buttons onclick events
         if (this.rightColumns.length) {
             this.events = _.extend({}, this.events, {
-                'click.right-actions .actions [data-toggle=dropdown]': 'delegateDropdown'
+                'hidden.bs.dropdown .flex-list-view .actions': 'resetDropdownDelegate',
+                'shown.bs.dropdown .flex-list-view .actions': 'delegateDropdown'
             });
         }
     },
 
+    // fn to turn off all event listeners and reenable tooltips
+    resetAllDelegates: function() {
+        $(this).parents('.main-pane').off('scroll.right-actions');
+        this.$('.flex-list-view .actions').trigger('resetDropdownDelegate.right-actions');
+    },
+
+    // fn to turn off event listeners and reenable tooltips
+    resetDropdownDelegate: function(e) {
+        var $b = this.$(e.currentTarget).first();
+        $b.parent('.list').removeClass('open');
+        $b.off('resetDropdownDelegate.right-actions');
+    },
+
     delegateDropdown: function(e) {
-        var $button = this.$(e.currentTarget).first(), // the dropdown button
-            $buttonGroup = $button.parents('.btn-group'), // the button group
-            menuHeight,
-            windowHeight;
+        var $buttonGroup = this.$(e.currentTarget).first(), // the button group
+            windowHeight = $(window).height() - 65; // height of window less padding
 
         // fn to detect menu colliding with window bottom
-        var needsDropupClass = function(b) {
-                menuHeight = $button.height() + $button.next('ul').height(); // height of menu and group
-                windowHeight = $(window).height() - 65; // height of window less padding
+        var needsDropupClass = function($b) {
+                var menuHeight = $b.height() + $b.children('ul').first().height();
                 return (
-                     windowHeight < b.offset().top + menuHeight
+                     windowHeight < $b.offset().top + menuHeight
                 );
             };
 
-        // fn to turn off event listeners and reenable tooltips
-        var resetDropdownDelegate = function() {
-                $(this).parents('.main-pane').off('scroll.right-actions');
-                $(this).off('resetDropdownDelegate.right-actions');
-            };
-
-        // reset any existing delegates
-        this.$('.actions [data-toggle=dropdown]')
-            .trigger('resetDropdownDelegate.right-actions');
-
-        // don't process already open dropdowns
-        if (!$buttonGroup.hasClass('open')) {
-            $buttonGroup.toggleClass('dropup', needsDropupClass($button)); // detect window bottom collision
-            $button.on('resetDropdownDelegate.right-actions', resetDropdownDelegate); // listen for delegate reset
-            // add a listener to scrolling container
-            $button.parents('.main-pane')
-                .on('scroll.right-actions', _.bind(_.debounce(function() {
-                    // if the dropdown is closed...
-                    if (!$buttonGroup.hasClass('open')) {
-                        // reset delegate
-                        // $('.actions [data-toggle=dropdown]')
-                        //     .trigger('resetDropdownDelegate.right-actions');
-                        $button.off('resetDropdownDelegate.right-actions');
-                        return;
-                    }
-                    // detect window bottom collision on scroll
-                    $buttonGroup.toggleClass('dropup', needsDropupClass($button));
-                }, 30), this));
-        }
+        // add open class to parent list to elevate absolute z-index for iOS
+        $buttonGroup.parent('.list').addClass('open');
+        // detect window bottom collision
+        $buttonGroup.toggleClass('dropup', needsDropupClass($buttonGroup));
+        // listen for delegate reset
+        $buttonGroup.on('resetDropdownDelegate.right-actions', this.resetDropdownDelegate);
+        // add a listener to scrolling container
+        $buttonGroup.parents('.main-pane')
+            .on('scroll.right-actions', _.bind(_.debounce(function() {
+                // detect window bottom collision on scroll
+                $buttonGroup.toggleClass('dropup', needsDropupClass($buttonGroup));
+            }, 30), this));
     },
 
     addPreviewEvents: function () {
@@ -106,7 +100,6 @@
         this.context.on("list:preview:fire", function (model) {
             app.events.trigger("preview:render", model, this.collection, true);
         }, this);
-
 
         //When switching to next/previous record from the preview panel, we need to update the highlighted row
         app.events.on("list:preview:decorate", this.decorateRow, this);
@@ -315,9 +308,8 @@
     },
 
     _dispose: function() {
-        // remove all right action dropdown delegate handlers
-        this.$('.actions [data-toggle=dropdown]')
-            .trigger('resetDropdownDelegate.right-actions');
+        // remove all right action dropdown delegates
+        this.resetAllDelegates();
         this._super('_dispose');
     }
 })

@@ -50,7 +50,6 @@
 
     events: {
         'click [data-toggle=dropdown]' : 'renderDropdown',
-        'change [data-toggle=dropdownmenu]' : 'dropdownSelected',
         //SC-1993: Dropdown is hidden in touch device by dropdownmenu element,
         // so ontouch dropdownmenu should follow the handler for onclick dropdown
         //SC-2007: on iOS7, touchstart won't trigger occasionally when select drawer is open.
@@ -114,19 +113,6 @@
         this.fields.splice(0, 0, selectedField);
         this.setPlaceholder();
     },
-    dropdownSelected: function(evt) {
-        if (this.isDisabled()) {
-            return;
-        }
-        var $el = this.$(evt.currentTarget),
-            selectedIndex = $el.val();
-        if (!selectedIndex) {
-            return;
-        }
-        this.fields[selectedIndex].getFieldElement().trigger('click');
-        $el.blur();
-        this.setPlaceholder();
-    },
     getPlaceholder: function() {
         // Covers the use case where you have an actiondropdown field on listview right column,
         // and ListColumnEllipsis plugin is disabled.
@@ -146,9 +132,7 @@
                 '<span class="' + caretIcon + '"></span>' +
                 '</a>',
             dropdown = '<ul data-menu="dropdown" class="dropdown-menu">';
-        if (app.utils.isTouchDevice()) {
-            caret += '<select data-toggle="dropdownmenu" class="hide dropdown-menu-select"></select>';
-        }
+
         //Since zero-index points to the default action placeholder,
         //assigning the beginning index to one will skip the default action placeholder
         var index = this.def['no_default_action'] ? 1 : 0;
@@ -227,10 +211,8 @@
         var index = this.def['no_default_action'] ? 1 : 0,
             //Using document fragment to reduce calculating dom tree
             visibleEl = document.createDocumentFragment(),
-            hiddenEl = document.createDocumentFragment(),
-            selectEl = this.$(this.selectDropdownTag),
-            html = '<option></option>';
-        _.each(this.fields, function(field, idx) {
+            hiddenEl = document.createDocumentFragment();
+        _.each(this.fields, function(field) {
             var cssClass = _.unique(field.def.css_class ? field.def.css_class.split(' ') : []),
                 fieldPlaceholder = this.$('span[sfuuid="' + field.sfId + '"]');
             if (field.type === 'divider') {
@@ -262,8 +244,6 @@
                     var dropdownEl = document.createElement('li');
                     dropdownEl.appendChild(fieldPlaceholder.get(0));
                     visibleEl.appendChild(dropdownEl);
-
-                    html += '<option value=' + idx + '>' + field.label + '</option>';
                 }
                 index++;
             } else {
@@ -278,11 +258,9 @@
 
         if (index <= 1) {
             this.$(this.actionDropDownTag).hide();
-            selectEl.addClass('hide');
             this.$el.removeClass('btn-group');
         } else {
             this.$(this.actionDropDownTag).show();
-            selectEl.removeClass('hide');
             this.$el.addClass('btn-group');
         }
         //remove all previous built dropdown tree
@@ -290,10 +268,6 @@
         //and then set the dropdown list with new button list set
         this.$('[data-menu=dropdown]').append(visibleEl);
         this.$el.append(hiddenEl);
-
-        if (app.utils.isTouchDevice()) {
-            selectEl.html(html);
-        }
 
         //if the first button is hidden due to the acl,
         //it will build all other dropdown button and set it use dropdown button set
