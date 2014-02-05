@@ -12,14 +12,14 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 }}
-<article class="filter-body">
+<div class="filter-body" data-filter="row">
     <div class="row-fluid">
-        <div class="filter-field controls span4"></div>
-        <div class="filter-operator hide controls span4"></div>
-        <div class="filter-value hide controls span4"></div>
+        <div class="controls span4" data-filter="field"></div>
+        <div class="hide controls span4" data-filter="operator"></div>
+        <div class="hide controls span4" data-filter="value"></div>
         <div class="filter-actions btn-group">
             <button data-action="remove" class="btn btn-invisible btn-dark"><i class="icon-minus"></i></button>
             <button data-action="add" class="btn btn-invisible btn-dark"><i class="icon-plus"></i></button>
         </div>
     </div>
-</article>
+</div>

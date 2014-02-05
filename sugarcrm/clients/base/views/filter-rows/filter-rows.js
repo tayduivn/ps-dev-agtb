@@ -36,8 +36,8 @@
     events: {
         'click [data-action=add]': 'addRow',
         'click [data-action=remove]': 'removeRow',
-        'change .filter-field input[type=hidden]': 'handleFieldSelected',
-        'change .filter-operator input[type=hidden]': 'handleOperatorSelected'
+        'change [data-filter=field] input[type=hidden]': 'handleFieldSelected',
+        'change [data-filter=operator] input[type=hidden]': 'handleOperatorSelected'
     },
 
     className: 'filter-definition-container',
@@ -222,16 +222,18 @@
     },
 
     /**
-     * Add a row
-     * @param {Event} e
-     * @returns {Object}
+     * Add a row to the next element of the event target that triggered it or
+     * in the end of the list.
+     *
+     * @param {Event} [e] The event that triggered the row.
+     * @return {Element} The new row element appendend.
      */
     addRow: function(e) {
         var $row, model, field, $fieldValue, $fieldContainer;
 
         if (e) {
             // Triggered by clicking the plus sign. Add the row to that point.
-            $row = this.$(e.currentTarget).parents('.filter-body');
+            $row = this.$(e.currentTarget).closest('[data-filter=row]');
             $row.after(this.formRowTemplate());
             $row = $row.next();
         } else {
@@ -244,7 +246,7 @@
             options: this.filterFields
         });
 
-        $fieldValue = $row.find('.filter-field');
+        $fieldValue = $row.find('[data-filter=field]');
         $fieldContainer = $(field.getPlaceholder().string);
         $fieldContainer.appendTo($fieldValue);
 
@@ -263,7 +265,7 @@
      * @param {Event} e
      */
     removeRow: function(e) {
-        var $row = this.$(e.currentTarget).parents('article.filter-body'),
+        var $row = this.$(e.currentTarget).closest('[data-filter=row]'),
             fieldOpts = [
                 {'field': 'nameField', 'value': 'name'},
                 {'field': 'operatorField', 'value': 'operator'},
@@ -273,7 +275,7 @@
         this._disposeFields($row, fieldOpts);
         $row.remove();
         this.validateRows();
-        if (this.$('article.filter-body').length === 0) {
+        if (this.$('[data-filter=row]').length === 0) {
             this.addRow();
         }
     },
@@ -284,7 +286,7 @@
      */
     validateRows: function() {
         var isValid = true,
-            $rows = this.$('article.filter-body');
+            $rows = this.$('[data-filter=row]');
 
         _.each($rows, function(row) {
             if (!isValid) return false;
@@ -366,13 +368,13 @@
                 var relate = _.find(this.fieldList, function(field) { return field.id_name === key; });
                 key = relate.name;
             }
-            $row.find('.filter-field input[type=hidden]').select2('val', key).trigger('change');
+            $row.find('[data-filter=field] input[type=hidden]').select2('val', key).trigger('change');
             if (_.isString(value) || _.isNumber(value)) {
                 value = {"$equals": value};
             }
             _.each(value, function(value, operator) {
                 $row.data('value', value);
-                $row.find('.filter-operator input[type=hidden]')
+                $row.find('[data-filter=operator] input[type=hidden]')
                     .select2('val', operator === '$dateRange' ? value : operator)
                     .trigger('change');
             });
@@ -385,8 +387,8 @@
      */
     handleFieldSelected: function(e) {
         var $el = this.$(e.currentTarget),
-            $row = $el.parents('.filter-body'),
-            $fieldWrapper = $row.find('.filter-operator'),
+            $row = $el.parents('[data-filter=row]'),
+            $fieldWrapper = $row.find('[data-filter=operator]'),
             data = $row.data(),
             fieldName = $el.val(),
             fieldOpts = [
@@ -415,7 +417,7 @@
             types = _.keys(this.filterOperatorMap[fieldType]);
 
         $fieldWrapper.removeClass('hide').empty();
-        $row.find('.filter-value').addClass('hide').empty();
+        $row.find('[data-filter=value]').addClass('hide').empty();
 
         // If the user is editing a filter, clear the operator.
         //$row.find('.field-operator select').select2('val', '');
@@ -447,7 +449,7 @@
      */
     handleOperatorSelected: function(e) {
         var $el = this.$(e.currentTarget),
-            $row = $el.parents('.filter-body'),
+            $row = $el.parents('[data-filter=row]'),
             data = $row.data(),
             operation = $el.val(),
             fieldOpts = [
@@ -467,7 +469,7 @@
             fields = app.metadata._patchFields(moduleName, module, app.utils.deepCopy(this.fieldList));
 
         // More patch for some field types
-        var fieldName = $row.find('.filter-field input[type=hidden]').select2('val'),
+        var fieldName = $row.find('[data-filter=field] input[type=hidden]').select2('val'),
             fieldType = this.fieldTypeMap[this.fieldList[fieldName].type] || this.fieldList[fieldName].type,
             fieldDef = fields[fieldName];
 
@@ -520,7 +522,7 @@
         // Create new model with the value set
         var model = app.data.createBean(moduleName);
 
-        var $fieldValue = $row.find('.filter-value');
+        var $fieldValue = $row.find('[data-filter=value]');
         $fieldValue.removeClass('hide').empty();
 
         //fire the change event as soon as the user start typing
@@ -688,7 +690,7 @@
      * @returns {Array} Filter definition
      */
     buildFilterDef: function() {
-        var $rows = this.$('article.filter-body'),
+        var $rows = this.$('[data-filter=row]'),
             filter = [];
 
         _.each($rows, function(row) {
@@ -757,7 +759,7 @@
      * Reset filter values on filter form. Called after a click on `Reset` button
      */
     resetFilterValues: function() {
-        var $rows = this.$('article.filter-body');
+        var $rows = this.$('[data-filter=row]');
         _.each($rows, function(row) {
             var $row = $(row);
             var valueField = $row.data('valueField');

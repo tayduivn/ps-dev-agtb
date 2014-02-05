@@ -190,25 +190,25 @@ describe("BaseFilterRowsView", function() {
         beforeEach(function() {
             $event = $('<div>');
             sinonSandbox.stub(view, 'addRow', function() {
-                $('<article>').addClass('filter-body').appendTo(view.$el);
+                $('<div data-filter="row">').appendTo(view.$el);
             });
-            $('<article>').addClass('filter-body').appendTo(view.$el);
-            $('<article>').addClass('filter-body').appendTo(view.$el);
-            $('<article>').addClass('filter-body').appendTo(view.$el);
+            $('<div data-filter="row">').appendTo(view.$el);
+            $('<div data-filter="row">').appendTo(view.$el);
+            $('<div data-filter="row">').appendTo(view.$el);
         });
         it('should remove the row from the view', function() {
-            $event.appendTo(view.$('article.filter-body:last'));
+            $event.appendTo(view.$('[data-filter=row]:last'));
             view.removeRow({currentTarget: $event});
-            expect(_.size(view.$('article.filter-body'))).toEqual(2);
+            expect(_.size(view.$('[data-filter=row]'))).toEqual(2);
 
-            $event.appendTo(view.$('article.filter-body:last'));
+            $event.appendTo(view.$('[data-filter=row]:last'));
             view.removeRow({currentTarget: $event});
-            expect(_.size(view.$('article.filter-body'))).toEqual(1);
+            expect(_.size(view.$('[data-filter=row]'))).toEqual(1);
 
             //it should add another row when the form becomes empty
-            $event.appendTo(view.$('article.filter-body:last'));
+            $event.appendTo(view.$('[data-filter=row]:last'));
             view.removeRow({currentTarget: $event});
-            expect(_.size(view.$('article.filter-body'))).toEqual(1);
+            expect(_.size(view.$('[data-filter=row]'))).toEqual(1);
         });
         it('should dispose fields', function() {
             var disposeStub = sinonSandbox.stub(view, '_disposeFields');
@@ -335,7 +335,7 @@ describe("BaseFilterRowsView", function() {
                 }
             };
             addRowStub = sinonSandbox.stub(view, 'addRow', function() {
-                return $('<article>').addClass('filter-body').appendTo(view.$el);
+                return $('<div data-filter="row">').appendTo(view.$el);
             });
             select2Stub = sinonSandbox.stub($.fn, 'select2', function(sel) {
                 return $(sel);
@@ -348,7 +348,7 @@ describe("BaseFilterRowsView", function() {
             });
             expect(select2Stub.firstCall.args).toEqual(['val', 'first_name']);
             expect(select2Stub.secondCall.args).toEqual(['val', '$equals']);
-            expect(view.$('article.filter-body').data('value')).toEqual('FirstName');
+            expect(view.$('[data-filter=row]').data('value')).toEqual('FirstName');
         });
         it('should retrieve the field, the operator and the value from the filter object (2)', function() {
             view.populateRow({
@@ -356,7 +356,7 @@ describe("BaseFilterRowsView", function() {
             });
             expect(select2Stub.firstCall.args).toEqual(['val', 'probability']);
             expect(select2Stub.secondCall.args).toEqual(['val', '$equals']);
-            expect(view.$('article.filter-body').data('value')).toEqual(80);
+            expect(view.$('[data-filter=row]').data('value')).toEqual(80);
         });
         it('should retrieve the field, the operator and the value from the filter object (3)', function () {
             view.populateRow({
@@ -366,7 +366,7 @@ describe("BaseFilterRowsView", function() {
             });
             expect(select2Stub.firstCall.args).toEqual(['val', 'last_name']);
             expect(select2Stub.secondCall.args).toEqual(['val', '$starts']);
-            expect(view.$('article.filter-body').data('value')).toEqual('LastName');
+            expect(view.$('[data-filter=row]').data('value')).toEqual('LastName');
         });
         it('should retrieve the field, the operator and the value from the filter object (3)', function() {
             view.fieldList = {
@@ -382,7 +382,7 @@ describe("BaseFilterRowsView", function() {
             });
             expect(select2Stub.firstCall.args).toEqual(['val', 'address_state']);
             expect(select2Stub.secondCall.args).toEqual(['val', '$equals']);
-            expect(view.$('article.filter-body').data('value')).toEqual('12');
+            expect(view.$('[data-filter=row]').data('value')).toEqual('12');
         });
     });
 
@@ -401,9 +401,9 @@ describe("BaseFilterRowsView", function() {
                 '$in': 'is',
                 '$not_in': 'is not'
             }};
-            $row = $('<div>').addClass('filter-body').appendTo(view.$el);
-            $filterField = $('<div>').addClass('filter-field').val('test').appendTo($row);
-            $operatorField = $('<div>').addClass('filter-operator').appendTo($row);
+            $row = $('<div data-filter="row">').appendTo(view.$el);
+            $filterField = $('<div data-filter="field">').val('test').appendTo($row);
+            $operatorField = $('<div data-filter="operator">').appendTo($row);
         });
         it('should create an enum field for operators', function() {
             var createFieldSpy = sinonSandbox.spy(view, 'createField');
@@ -473,11 +473,11 @@ describe("BaseFilterRowsView", function() {
                 '$not_in': 'is not'
             }};
             view.moduleName = 'Cases';
-            $row = $('<div>').addClass('filter-body').appendTo(view.$el);
+            $row = $('<div data-filter="row">').appendTo(view.$el);
             $filterField = $('<input type="hidden">');
-            $('<div>').addClass('filter-field').html($filterField).appendTo($row);
-            $operatorField = $('<div>').addClass('filter-operator').val('$in').appendTo($row);
-            $valueField = $('<div>').addClass('filter-value').appendTo($row);
+            $('<div data-filter="field">').html($filterField).appendTo($row);
+            $operatorField = $('<div data-filter="operator">').val('$in').appendTo($row);
+            $valueField = $('<div data-filter="value">').appendTo($row);
         });
         describe('creating fields for filter value', function() {
             var createFieldSpy;
@@ -652,7 +652,7 @@ describe("BaseFilterRowsView", function() {
             $row.data('valueField').model.set('case_number', 200);
             var triggerStub = sinonSandbox.stub(view.layout, 'trigger');
             view.lastFilterDef = undefined;
-            $operatorField.parent('.filter-body').find('.filter-value input').trigger('keyup');
+            $operatorField.closest('[data-filter="row"]').find('[data-filter=value] input').trigger('keyup');
             expect(triggerStub).toHaveBeenCalled();
             expect(triggerStub).toHaveBeenCalledWith('filter:apply');
         });
@@ -833,8 +833,8 @@ describe("BaseFilterRowsView", function() {
             var model1 = new Backbone.Model();
             var model2 = new Backbone.Model();
             var stubs = [sinonSandbox.stub(model1, 'clear'), sinonSandbox.stub(model2, 'clear')];
-            $('<article>').addClass('filter-body').data('valueField', {model: model1 }).appendTo(view.$el);
-            $('<article>').addClass('filter-body').data('valueField', {model: model2 }).appendTo(view.$el);
+            $('<div data-filter="row">').data('valueField', {model: model1 }).appendTo(view.$el);
+            $('<div data-filter="row">').data('valueField', {model: model2 }).appendTo(view.$el);
             view.resetFilterValues();
             expect(stubs[0]).toHaveBeenCalled();
             expect(stubs[1]).toHaveBeenCalled();
@@ -843,7 +843,7 @@ describe("BaseFilterRowsView", function() {
             var model1 = new Backbone.Model();
             var model2 = new Backbone.Model();
             var stubs = [sinonSandbox.stub(model1, 'clear'), sinonSandbox.stub(model2, 'clear')];
-            $('<article>').addClass('filter-body')
+            $('<div data-filter="row">')
                 .data('valueField', [{model: model1 }, {model: model2 }])
                 .appendTo(view.$el);
             view.resetFilterValues();
