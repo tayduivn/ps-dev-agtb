@@ -27,27 +27,27 @@
  ********************************************************************************/
 }}
 <form class="form-search {{#unless visible}}hide{{/unless}}">
-<div class="mu extend">
-    <article class="filter-header">
-        <div class="row-fluid">
-            <div class="controls span4">
-                <strong>{{str "LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL"}}</strong>
+    <div class="mu extend">
+        <article class="filter-header">
+            <div class="row-fluid">
+                <div class="controls span4">
+                    <strong>{{str "LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL"}}</strong>
+                </div>
+                <div class="pull-right">
+                    {{#each meta.buttons}}
+                        {{field ../this}}
+                    {{/each}}
+                </div>
             </div>
-            <div class="pull-right">
-                {{#each meta.buttons}}
-                {{field ../this}}
-                {{/each}}
+        </article>
+        <article class="filter-body clearfix">
+            <div class="row-fluid">
+                <div class="controls filter-value span7">
+                    {{#with this.addToListField}}
+                        {{field ../this template="edit"}}
+                    {{/with}}
+                </div>
             </div>
-        </div>
-    </article>
-    <article class="filter-body clearfix">
-        <div class="row-fluid">
-            <div class="controls filter-value span7">
-                {{#with this.addToListField}}
-                    {{field ../this template="edit"}}
-                {{/with}}
-            </div>
-        </div>
-    </article>
-</div>
+        </article>
+    </div>
 </form>

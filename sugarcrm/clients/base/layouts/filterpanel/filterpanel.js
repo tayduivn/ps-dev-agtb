@@ -42,17 +42,17 @@
             this.currentLink = link;
         }, this);
 
-        this.on('filter:create:open', _.debounce(function(model) {
+        this.on('filter:create:open', _.debounce(function() {
             // This debounce method should be in accordance with filter-rows::openForm,
             // so components show up at the same time
             this.$('.filter-options').removeClass('hide');
         }, 100, true), this);
 
-        this.on("filter:create:close", function(reinitialize, id) {
+        this.on('filter:create:close', function(reinitialize, id) {
             if (reinitialize && !id) {
-                this.trigger("filter:reinitialize");
+                this.trigger('filter:reinitialize');
             }
-            this.$(".filter-options").addClass('hide');
+            this.$('.filter-options').addClass('hide');
         }, this);
 
         // This is required, for example, if we've disabled the subapanels panel so that app doesn't attempt to render later
