@@ -386,12 +386,15 @@ function getExportContentFromResult(
     $populate=false
 ) {
 
-    global $current_user, $locale;
+    global $current_user, $locale, $app_strings;
     $sampleRecordNum = 5;
     $delimiter = getDelimiter();
     $timedate = TimeDate::getInstance();
     $db = DBManagerFactory::getInstance();
     $fields_array = $db->getFieldsArray($result,true);
+
+    // check if ID field is contained in query result
+    $is_id_exported = in_array('id', $fields_array);
 
     //set up the order on the header row
     $fields_array = get_field_order_mapping($focus->module_dir, $fields_array);
@@ -421,15 +424,14 @@ function getExportContentFromResult(
         $content = '';
     }
 
-    // setup the "header" line with proper delimiters
-    $content .= "\"".implode("\"".getDelimiter()."\"", array_values($field_labels))."\"\r\n";
-
     $pre_id = '';
 
     if($populate){
         //this is a sample request with no data, so create fake datarows
          $content .= returnFakeDataRow($focus,$fields_array,$sampleRecordNum);
     }else{
+        $records = array();
+
         //process retrieved record
         //BEGIN SUGARCRM flav=pro ONLY
         $isAdminUser = is_admin($current_user);
@@ -452,8 +454,7 @@ function getExportContentFromResult(
 
             if($members)
             {
-                if(isset($val['id']) && $pre_id == $val['id'])
-                {
+                if ($is_id_exported && $pre_id == $val['id']) {
                      continue;
                 }
 
@@ -466,7 +467,7 @@ function getExportContentFromResult(
                 unset($val['ear_deleted']);
                 unset($val['primary_address']);
             }
-            $pre_id = isset($val['id']) ? $val['id'] : '';
+            $pre_id = $is_id_exported ? $val['id'] : '';
 
             require_once('include/SugarFields/SugarFieldHandler.php');
 
@@ -496,11 +497,43 @@ function getExportContentFromResult(
                 }
 
                 //END SUGARCRM flav=pro ONLY
-                array_push($new_arr, preg_replace("/\"/","\"\"", $value));
+
+                // Keep as $key => $value for post-processing
+                $new_arr[$key] = str_replace('"', '""', $value);
             } //foreach
 
-            $line = implode("\"". $delimiter ."\"", $new_arr);
-            $line = "\"" .$line;
+            // Use Bean ID as key for records if it exists
+            if ($is_id_exported) {
+                $records[$pre_id] = $new_arr;
+            } else {
+                $records[] = $new_arr;
+            }
+        }
+
+        // Check if we're going to export non-primary emails
+        if ($is_id_exported && $focus->hasEmails()) {
+            // Add header column
+            $field_labels['email_addresses_non_primary'] = translateForExport('email_addresses_non_primary', $focus);
+
+            // $records keys are bean ids
+            $keys = array_keys($records);
+
+            $email_data = getNonPrimaryEmailsData($focus, $keys);
+            foreach ($records as $bean_id => $record) {
+                if (isset($email_data[$bean_id])) {
+                    $records[$bean_id] = array_merge($record, $email_data[$bean_id]);
+                }
+            }
+            unset($record);
+        }
+
+        // Setup the "header" row with proper delimiters
+        $content .= "\"" . implode("\"" . getDelimiter() . "\"", array_values($field_labels)) . "\"\r\n";
+
+        // Write the export data
+        foreach ($records as $record) {
+            $line = implode("\"" . $delimiter . "\"", $record);
+            $line = "\"" . $line;
             $line .= "\"\r\n";
             $content .= $line;
         }
@@ -509,6 +542,94 @@ function getExportContentFromResult(
     return $content;
 }
 
+/**
+ * Returns non-primary emails for the given beans
+ *
+ * @param SugarBean $bean Bean instance
+ * @param array     $ids  Bean IDs
+ *
+ * @return array
+ */
+function getNonPrimaryEmailsData(SugarBean $bean, array $ids)
+{
+    // Split the ids array into chunks of size 100
+    $chunks = array_chunk($ids, 100);
+
+    // Attributes of non non-primary email that are about to be grouped later
+    $non_primary_emails = array();
+
+    foreach ($chunks as $chunk) {
+        // Pick all the non-primary mails for the chunk
+        $query = getNonPrimaryEmailsExportQuery($bean, $chunk);
+        $data = $query->execute();
+
+        foreach ($data as $row) {
+            $non_primary_emails[$row['bean_id']][] = array(
+                $row['email_address'],
+                $row['invalid_email'] ? '1' : '0',
+                $row['opt_out'] ? '1' : '0',
+            );
+        }
+    }
+
+    $result = array();
+    foreach ($non_primary_emails as $bean_id => $emails) {
+        $result[$bean_id]['email_addresses_non_primary'] = serializeNonPrimaryEmails($emails);
+    }
+
+    return $result;
+}
+
+/**
+ * Generates query for fetching non-primary emails for the given beans
+ *
+ * @param SugarBean $bean Bean instance
+ * @param array     $ids  Bean IDs
+ *
+ * @return SugarQuery
+ */
+function getNonPrimaryEmailsExportQuery(SugarBean $bean, array $ids)
+{
+    $query = new SugarQuery();
+    $query->select(array(
+        'eabr.bean_id',
+        'email_address',
+        'invalid_email',
+        'opt_out',
+    ));
+    $query->from(BeanFactory::newBean('EmailAddresses'), 'ea');
+    $query->joinTable('email_addr_bean_rel', array(
+        'joinType' => 'LEFT',
+        'alias' => 'eabr',
+        'linkingTable' => true,
+    ))->on()->equalsField('eabr.email_address_id', 'id');
+    $query->where()
+        ->in('eabr.bean_id', $ids)
+        ->equals('eabr.bean_module', $bean->module_dir)
+        ->notEquals('eabr.primary_address', 1)
+        ->notEquals('eabr.deleted', 1);
+    $query->orderBy('eabr.bean_id', 'ASC')
+        ->orderBy('eabr.reply_to_address', 'ASC')
+        ->orderBy('email_address', 'ASC');
+
+    return $query;
+}
+
+/**
+ * Serializes non-primary email addresses of a single bean
+ *
+ * @param array $emails
+ *
+ * @return string
+ */
+function serializeNonPrimaryEmails(array $emails)
+{
+    $email_strings = array();
+    foreach ($emails as $attrs) {
+        $email_strings[] = implode(',', $attrs);
+    }
+    return implode(';', $email_strings);
+}
 
 function generateSearchWhere($module, $query)
 {//this function is similar with function prepareSearchForm() in view.list.php
