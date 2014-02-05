@@ -4040,7 +4040,7 @@ class SugarBean
 					//if rname is set to 'name', and bean files exist, then check if field should be a concatenated name
 					$rel_mod = $this->getRelatedBean($data['link']);
 					$rel_module = $rel_mod->module_name;
-					if($data['rname'] && !empty($rel_mod)) {
+					if(isset($data['rname']) && $data['rname'] === 'name' && !empty($rel_mod)) {
 						//if bean has first and last name fields, then name should be concatenated
 						if(isset($rel_mod->field_name_map['first_name']) && isset($rel_mod->field_name_map['last_name'])){
 								$data['db_concat_fields'] = array(0=>'first_name', 1=>'last_name');
