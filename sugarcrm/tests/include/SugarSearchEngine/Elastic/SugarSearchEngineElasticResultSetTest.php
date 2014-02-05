@@ -27,11 +27,12 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+use Elastica\Query;
+use Elastica\Response;
+use Elastica\ResultSet;
+use Elastica\Result;
 
 require_once 'include/SugarSearchEngine/Elastic/SugarSearchEngineElasticResultSet.php';
-require_once 'vendor/Elastica/ResultSet.php';
-require_once 'vendor/Elastica/Result.php';
-require_once 'vendor/Elastica/Response.php';
 
 class SugarSearchEngineElasticResultSetTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -41,9 +42,10 @@ class SugarSearchEngineElasticResultSetTest extends Sugar_PHPUnit_Framework_Test
 
     public function setUp()
     {
-        $response = new Elastica_Response($this->_responseString);
-        $elasticResultSet = new Elastica_ResultSet($response);
-        $this->_sugarElsaticResultSet = new SugarSeachEngineElasticResultSet($elasticResultSet);
+        $response = new Response($this->_responseString);
+        $query = new Query();
+        $resultSet = new ResultSet($response, $query);
+        $this->_sugarElsaticResultSet = new SugarSeachEngineElasticResultSet($resultSet);
     }
 
     public function testElasticResultSetTotalHits()

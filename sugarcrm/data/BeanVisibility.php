@@ -133,5 +133,30 @@ class BeanVisibility
     {
         return isset($this->loadedStrategies[$name]);
     }
+
+    /**
+     * Called before the bean is indexed so that any calculated attributes can updated.
+     * Propagates to all registered strategies.
+     */
+    public function beforeSseIndexing()
+    {
+    	foreach($this->strategies as $strategy) {
+    		$strategy->beforeSseIndexing();
+    	}
+    }
+
+    /**
+     * Get SugarSearchEngine visibility filter
+     * @param string $engine search engine name
+     * @return mixed
+     */        
+    public function addSseVisibilityFilter($engine, $filter)
+    {
+    	foreach($this->strategies as $strategy) {
+    		$filter = $strategy->addSseVisibilityFilter($engine, $filter);
+    	}
+    	return $filter;
+    } 
+
 }
 

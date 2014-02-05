@@ -457,9 +457,9 @@ class ModuleBuilderController extends SugarController
                 $repair = new RepairAndClear();
                 $class_name = $GLOBALS ['beanList'] [$module];
 
-                $repair->repairAndClearAll(array('clearVardefs', 'clearTpls'), array($class_name), true, false);
+                $repair->repairAndClearAll(array('clearVardefs', 'clearTpls', 'clearSearchCache'), array($class_name), true, false);
                 if ($module == 'Users') {
-                    $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array('Employee'), true, false);
+                    $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls', 'clearSearchCache'), array('Employee'), true, false);
                 }
                 //Ensure the vardefs are up to date for this module before we rebuild the cache now.
                 VardefManager::loadVardef($module, $obj, true);
@@ -538,7 +538,7 @@ class ModuleBuilderController extends SugarController
         $mi->rebuild_extensions();
 
         $repair = new RepairAndClear();
-        $repair->repairAndClearAll(array('clearVardefs', 'clearTpls'), array($class_name), true, false);
+        $repair->repairAndClearAll(array('clearVardefs', 'clearTpls', 'clearSearchCache'), array($class_name), true, false);
         //#28707 ,clear all the js files in cache
         $repair->module_list = array();
         $repair->clearJsFiles();

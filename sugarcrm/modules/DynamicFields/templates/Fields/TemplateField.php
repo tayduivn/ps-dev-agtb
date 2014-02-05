@@ -543,6 +543,11 @@ class TemplateField{
 
 		}
 		//END SUGARCRM flav=pro ONLY
+
+        if(!empty($this->full_text_search))
+        {
+            $this->full_text_search['enabled'] = ($this->full_text_search['boost'] != 0);
+        }
 	}
 
 	function get_additional_defs(){

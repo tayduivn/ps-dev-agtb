@@ -304,7 +304,7 @@ abstract class SugarApi {
             $searchEngine = SugarSearchEngineFactory::getInstance(SugarSearchEngineFactory::getFTSEngineNameFromConfig());
 
             if($searchEngine instanceof SugarSearchEngineAbstractBase) {
-                $searchEngine->indexSingleBean($bean);
+                $searchEngine->indexBean($bean, false);
             }
         }
 

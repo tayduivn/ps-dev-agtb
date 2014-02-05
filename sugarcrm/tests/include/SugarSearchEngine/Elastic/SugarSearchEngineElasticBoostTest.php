@@ -25,7 +25,10 @@
 
 require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
-require_once('include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php');
+
+// TODO: this one needs to be redone using new boost functionality
+// skipping test for now
+
 class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase {
     public function setUp()
     {
@@ -85,6 +88,10 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
 
         if($this->search_engine_name != 'Elastic') {
             $this->markTestSkipped('Marking this skipped. Elastic Search is not installed.');
+        } else {
+            // XXX TODO: Replace this test with a real unit test that doesn't involve half the systems infrastructure to test a specific feature.
+            // Last but not least this should be a data driven test that test combinations of field types, boost values and analyzers so that we hit all corner cases.
+            $this->markTestSkipped('Due to the fact that various field and analyzer types cannot be index at creation time, it is decided to only (and always) use boost values on queries. Hence this test needs to be completely revisided.');
         }
         $lead = new Lead();
         $lead->name = 'test' . create_guid();
@@ -163,7 +170,6 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
 
         // check the first one only.
         $this->assertEquals($lead_name_id, $new_results[0]->getId(),  "The First Result wasn't the Lead with the Name");
-
 
         // set description as high boost and name as low boost
 

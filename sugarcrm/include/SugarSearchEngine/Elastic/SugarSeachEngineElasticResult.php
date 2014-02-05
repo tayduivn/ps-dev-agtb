@@ -30,11 +30,14 @@ require_once("include/SugarSearchEngine/SugarSearchEngineHighlighter.php");
 class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
 {
     /**
-     * @var \Elastica_Result
+     * @var \Elastica\Result
      */
     private $elasticaResult;
 
-    public function __construct(Elastica_Result $result)
+    /**
+     * @param \Elastica\Result $result
+     */
+    public function __construct(\Elastica\Result $result)
     {
         $this->elasticaResult = $result;
         //No need to lazy load, will always want to load the bean to fill in the details
@@ -98,5 +101,14 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
         }
 
         return $ret;
+    }
+
+    /**
+     * Return _source
+     * @return array
+     */
+    public function getSource()
+    {
+        return $this->elasticaResult->getSource();
     }
 }

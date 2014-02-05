@@ -37,6 +37,10 @@ require_once('modules/SchedulersJobs/SchedulersJob.php');
  */
 abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
 {
+    /**
+     * The name of the queue table
+     */
+    const QUEUE_TABLE = 'fts_queue';
 
     /**
      * @var SchedulersJob
@@ -49,29 +53,24 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
     protected $SSEngine;
 
     /**
-     * The max number of beans we process before starting to bulk insert so we dont hit memory issues.
+     * @var The max number of beans we process before starting to bulk insert so we dont hit memory issues.
      */
-    const MAX_BULK_THRESHOLD = 5000;
+    protected $max_bulk_threshold = 5000;
 
     /**
-     * The max number of beans we process before starting to bulk insert so we dont hit memory issues.
+     * @var The max number of beans we process before starting to bulk insert so we dont hit memory issues.
      */
-    const MAX_BULK_QUERY_THRESHOLD = 15000;
+    protected $max_bulk_query_threshold = 15000;
 
     /**
-     * The max number of beans we delete at a time
+     * @var The max number of beans we delete at a time
      */
-    const MAX_BULK_DELETE_THRESHOLD = 3000;
+    protected $max_bulk_delete_threshold = 3000;
 
     /**
-     * Number of time to postpone a job by so it's not executed twice during the same request.
+     * @var Number of time to postpone a job by so it's not executed twice during the same request.
      */
-    const POSTPONE_JOB_TIME = 20;
-
-    /**
-     * The name of the queue table
-     */
-    const QUEUE_TABLE = 'fts_queue';
+    protected $postpone_job_time = 20;
 
     /**
      * @var DBManager
@@ -88,19 +87,20 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
      */
     public function __construct(SugarSearchEngineAbstractBase $engine = null)
     {
-        if($engine != null)
+        if ($engine != null) {
             $this->SSEngine = $engine;
-        else
+        } else {
             $this->SSEngine = SugarSearchEngineFactory::getInstance();
+        }
 
         $this->db = DBManagerFactory::getInstance('fts');
-
         $this->table_name = self::QUEUE_TABLE;
-    }
 
-    public function __get($name)
-    {
-        return $this->$name;
+        $config = SugarConfig::getInstance();
+        $this->max_bulk_threshold = $config->get('search_engine.max_bulk_threshold', $this->max_bulk_threshold);
+        $this->max_bulk_query_threshold = $config->get('search_engine.max_bulk_query_threshold', $this->max_bulk_query_threshold);
+        $this->max_bulk_delete_threshold = $config->get('search_engine.max_bulk_delete_threshold', $this->max_bulk_delete_threshold);
+        $this->postpone_job_time = $config->get('search_engine.postpone_job_time', $this->postpone_job_time);
     }
 
     /**
@@ -113,56 +113,42 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
         $this->schedulerJob = $job;
     }
 
-
-    /**
-     * Generate the query necessary to retrieve FTS enabled fields for a bean.
-     *
-     * @param $module
-     * @param $fieldDefinitions
-     * @return string
-     */
-    protected function generateFTSQuery($module, $fieldDefinitions)
+    protected function generateFTSQuery($module, $fieldDefs)
     {
-        $queuTableName = self::QUEUE_TABLE;
-        $bean = BeanFactory::getBean($module, null);
-        $id = isset($fieldDefinitions['email1']) ? $bean->table_name.'.id' : 'id';
+        $queueTableName = self::QUEUE_TABLE;
+        $bean = BeanFactory::getBean($module);
+        $ftsQuery = new SugarQuery();
+        $ftsQuery->from($bean);
 
-        $selectFields = array($id);
-        if (isset($bean->field_defs['team_id'])) {
-            $selectFields += array('team_id', 'team_set_id');
-        }
-
-        $ownerField = $bean->getOwnerField(true);
-        if (!empty($ownerField))
-        {
-            $selectFields[] = $ownerField;
-        }
-
-        foreach($fieldDefinitions as $value)
-        {
-            if(isset($value['name'])) {
-                if ($value['name'] == 'email1')
-                    continue;
-                $selectFields[] = $value['name'];
+        // add fts enabled fields to the filter
+        $fieldsFilter = array('id');
+        foreach ($fieldDefs as $value) {
+            // skip nondb fields
+            if (!empty($value['source']) && $value['source'] == 'non-db') {
+                continue;
+            }
+            // filter email1 field and add the join.
+            if ($value['name'] == 'email1') {
+                $ftsQuery->join('email_addresses_primary', array('alias' => 'email1'));
+                $fieldsFilter[] = 'email1.email_address';
+            } else {
+                $fieldsFilter[] = $value['name'];
             }
         }
+        $ftsQuery->select($fieldsFilter);
 
-        $ret_array['select'] = " SELECT " . implode(",", $selectFields);
-        $ret_array['from'] = " FROM {$bean->table_name} ";
-        $custom_join = $bean->getCustomJoin();
-        $ret_array['select'] .= $custom_join['select'];
+        // join fts_queue table
+        $ftsQuery->joinTable($queueTableName)->on()
+            ->equalsField($queueTableName . '.bean_id', 'id');
 
-        $ret_array['from'] .= $custom_join['join'];
+        // additional fts_queue fields
+        $ftsQueueFields = array(
+            array($queueTableName . '.id', 'fts_id'),
+            array($queueTableName . '.processed', 'fts_processed'),
+        );
+        $ftsQuery->select($ftsQueueFields);
 
-        $ret_array['from'] .= " INNER JOIN {$queuTableName} on {$queuTableName}.bean_id = {$bean->table_name}.id AND {$queuTableName}.processed = 0 ";
-        $ret_array['where'] = "WHERE {$bean->table_name}.deleted = 0";
-
-        if(isset($fieldDefinitions['email1'])) {
-            $ret_array['select'].= ", email_addresses.email_address email1";
-            $ret_array['from'].= " LEFT JOIN email_addr_bean_rel on {$bean->table_name}.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='{$module}' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 LEFT JOIN email_addresses on email_addresses.id=email_addr_bean_rel.email_address_id ";
-        }
-
-        return  $ret_array['select'] . $ret_array['from'] . $ret_array['where'];
+        return $ftsQuery->compileSql();
     }
 
     /**
@@ -170,6 +156,7 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
      * Subclasses should implement their own logic.
      *
      * @param $data
+     * @return bool
      */
     public function run($data)
     {
@@ -177,43 +164,37 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
     }
 
     /**
-     * Given a set of bean ids processed from the queue table, mark them as being processed.  We will
-     * throttle the update query as there is a limit on the size of records that can be passed to an in clause yet
-     * we don't want to update them individually for performance reasons.
-     *
-     * @param $beanIDs array of bean ids to delete
+     * Handle removal of processed queue entries
+     * @param array $ftsIDs
      */
-    protected function markBeansProcessed($beanIDs)
+    protected function delFtsProcessed(array $ftsIDs)
     {
         $count = 0;
         $deleteIDs = array();
-        foreach ($beanIDs as $beanID)
-        {
-            $deleteIDs[] = $beanID;
+        foreach ($ftsIDs as $ftsID) {
+            $deleteIDs[] = $ftsID;
             $count++;
-            if($count != 0 && $count % self::MAX_BULK_DELETE_THRESHOLD == 0)
-            {
-                $this->setBeanIDsProcessed($deleteIDs);
+            if ($count != 0 && $count % $this->max_bulk_delete_threshold == 0) {
+                $this->delFtsIDs($deleteIDs);
                 $deleteIDs = array();
             }
         }
 
-        if( count($deleteIDs) > 0)
-            $this->setBeanIDsProcessed($deleteIDs);
+        if (count($deleteIDs) > 0) {
+            $this->delFtsIDs($deleteIDs);
+        }
     }
 
     /**
-     * Internal function to mark records within queue table as processed.
-     *
-     * @param $deleteIDs
+     * Remove list of ids from fts_queue table
+     * @param array $deleteIDs
      */
-    private function setBeanIDsProcessed($deleteIDs)
+    private function delFtsIDs($deleteIDs)
     {
         $tableName = self::QUEUE_TABLE;
         $inClause = implode("','", $deleteIDs);
-        $query = "UPDATE $tableName SET processed = 1 WHERE bean_id in ('{$inClause}')";
-        $GLOBALS['log']->debug("MARK BEAN QUERY IS: $query");
+        $query = "DELETE FROM $tableName WHERE id in ('{$inClause}')";
+        $GLOBALS['log']->debug("DELETE BEAN QUERY IS: $query");
         $this->db->query($query);
     }
-
 }

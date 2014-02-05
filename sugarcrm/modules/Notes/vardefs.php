@@ -42,7 +42,7 @@ $dictionary['Note'] = array(
     'type' => 'name',
     'len' => '255',
 	'unified_search' => true,
-	'full_text_search' => array('boost' => 3),
+	'full_text_search' => array('enabled' => true, 'boost' => 3),
     'comment' => 'Name of the note',
     'importable' => 'required',
     'required' => true,

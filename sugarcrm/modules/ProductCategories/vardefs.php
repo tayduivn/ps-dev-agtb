@@ -134,7 +134,7 @@ $dictionary['ProductCategory'] = array(
             'comment' => 'Name of the product category',
             'importable' => 'required',
             'unified_search' => true,
-            'full_text_search' => array('boost' => 3),
+            'full_text_search' => array('enabled' => true, 'boost' => 3),
             'required' => true,
         ),
         'list_order' =>

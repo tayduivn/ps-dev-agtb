@@ -305,14 +305,11 @@ class ViewModulefield extends SugarView
 
         //BEGIN SUGARCRM flav=pro ONLY
         $ftsEngineType = getFTSEngineType();
-        require_once('include/SugarSearchEngine/SugarSearchEngineMappingHelper.php');
-        if (!empty($ftsEngineType) &&
-            // don't show boost for fields that are not_analyzed
-            (empty($vardef['full_text_search']['index']) || $vardef['full_text_search']['index'] != 'not_analyzed') &&
-            SugarSearchEngineMappingHelper::isTypeFtsEnabled($vardef['type']) &&
+        $usa = new UnifiedSearchAdvanced();
+        if(SugarSearchEngineFactory::getInstance()->isTypeFtsEnabled($vardef['type']) &&
             //Show FTS for all modules under module builder and only check OOB modules for shoudlShowModule
             ((!empty($_REQUEST['view_package']) && $_REQUEST['view_package'] != 'studio')
-                || SugarSearchEngineMappingHelper::shouldShowModule($moduleName)
+                || $usa->shouldShowModule($moduleName)
             )
         ) {
             $ftsBoostOptions = getFTSBoostOptions($ftsEngineType.'_boost_options');

@@ -120,4 +120,17 @@ abstract class SugarVisibility
         $this->options = $options;
         return $this;
     }
+
+    /**
+     *  Override to implement visibility related attribute updates before the bean is indexed
+     */
+    public function beforeSseIndexing()
+    {
+    }
+    
+    public function addSseVisibilityFilter($engine, $filter)
+    {
+    	return $filter;
+    }
+
 }

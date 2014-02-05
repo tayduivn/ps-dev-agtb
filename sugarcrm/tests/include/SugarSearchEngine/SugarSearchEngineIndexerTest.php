@@ -30,7 +30,6 @@
 
 require_once 'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php';
 
-
 class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
@@ -54,6 +53,7 @@ class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        SugarTestHelper::setUp('app_list_strings');
         if(empty($GLOBALS['db']) || !($GLOBALS['db'] instanceOf DBManager))
         {
             $GLOBALS['db'] = DBManagerFactory::getInstance();
@@ -64,10 +64,10 @@ class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM contacts");
 
         $beanList = array();
-		$beanFiles = array();
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
 
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->account = SugarTestAccountUtilities::createAccount();
@@ -88,9 +88,9 @@ class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db'] = DBManagerFactory::getInstance();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
-        $this->_db->query("DELETE FROM {$this->indexer->table_name}");
+        $GLOBALS['db']->query("DELETE FROM {$this->indexer->table_name}");
         $jobQueue = BeanFactory::getBean('SchedulersJobs', null);
-        $this->_db->query("DELETE FROM {$jobQueue->table_name} WHERE name like 'FTSConsumer%' ");
+        $GLOBALS['db']->query("DELETE FROM {$jobQueue->table_name} WHERE name like 'FTSConsumer%' ");
 
         unset($GLOBALS['current_user']);
     }
@@ -101,7 +101,7 @@ class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFTSPopulateFullQueue()
     {
-        $this->indexer->initiateFTSIndexer();
+        $this->indexer->initiateFTSIndexer(array('Accounts'));
         $accountID = $this->account->id;
         $actualID = $this->recordExistInQueue($accountID);
         $this->assertEquals($accountID, $actualID);
@@ -149,21 +149,6 @@ class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Ensure consumers are cleared out
-     */
-    public function testRemoveExistinFTSConsumers()
-    {
-        $this->indexer->initiateFTSIndexer(array('Accounts'));
-        $this->indexer->removeExistingFTSConsumersStub();
-
-        $jobBean = BeanFactory::getBean('SchedulersJobs');
-        $query = "SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSConsumer%' AND deleted = 0";
-        $recordExists = $this->_db->getOne($query);
-        $this->assertFalse($recordExists, "Unable to clean fts consumers");
-    }
-
-
-    /**
      * Ensure a record is not added to the queue
      *
      */
@@ -208,48 +193,6 @@ class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
         $indexer->run('Accounts');
     }
 
-    public function testIsFTSIndexScheduleCompleted()
-    {
-        $this->markTestIncomplete();
-        $this->assertFalse($this->indexer->isFTSIndexScheduleCompleted());
-        $this->indexer->performFullSystemIndex();
-        $this->assertTrue($this->indexer->isFTSIndexScheduleCompleted());
-    }
-
-    public function testGetStatistics()
-    {
-        $this->markTestIncomplete('Marking this skipped.');
-        $this->indexer->performFullSystemIndex();
-        $stats = $this->indexer->getStatistics();
-        $this->assertEquals(1, $stats['Accounts']['count'], "Failed to retrieve account statistic");
-        $this->assertEquals(1, $stats['Contacts']['count'], "Failed to retrieve contact statistic");
-        $this->assertArrayHasKey('count', $stats);
-        $this->assertArrayHasKey('time', $stats);
-    }
-
-    public function markBeansProvider()
-    {
-        return array(
-            array(range(0,2999), 1),
-            array(range(0,3002), 2),
-            array(range(0,1), 1),
-            array(array(), 0),
-            array(range(0,101), 1)
-        );
-    }
-    /**
-    * @dataProvider markBeansProvider
-    */
-    public function testMarkBeansProcessed($ids, $expected)
-    {
-        $DBManagerClass = get_class($GLOBALS['db']);
-        $db = $this->getMock($DBManagerClass);
-        $db->expects($this->exactly($expected))->method('query');
-        $indexer = new TestSugarSearchEngineFullIndexer();
-        $indexer->setDB($db);
-        $indexer->markBeansProcessedStub($ids);
-    }
-
     /**
      * Helper function to see if a record is in the queue
      *
@@ -261,6 +204,46 @@ class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
         $query = "SELECT bean_id FROM {$this->indexer->table_name} WHERE bean_id='$record_id'";
         return $this->_db->getOne($query);
     }
+
+
+    /**
+     * testPopulateIndexQueueForModule()
+     *
+     * Tests to see if the correct number of records are added to fts_queue table.
+     */
+    public function testPopulateIndexQueueForModule()
+    {
+        // select a module
+        $module = 'Accounts';
+        $beanName = BeanFactory::getBeanName($module);
+        // get the number of records for this bean type currently in fts_queue.
+        $countFTS_SQL = "select count(bean_module) as total from fts_queue where bean_module = '$beanName'";
+        $ftsRowBefore = $this->_db->getOne($countFTS_SQL);
+
+        // get the count of beans of this module.
+        $countBean_SQL = "select count(id) as total from {$this->account->table_name} where deleted = 0";
+        $beanCount = $this->_db->getOne($countBean_SQL);
+        
+        // queue the module
+        $populateResult = $this->indexer->populateIndexQueueForModule($module);
+
+        // assert that the populateIndexQueueForModule() call returns 1
+        $msg = "Expected populateIndexQueueForModule('$module') to return 1, but returned ";
+        $msg .= var_export($populateResult, true);
+        $this->assertEquals($populateResult, 1, $msg);
+
+        // get a new count of records in fts_queue for this module.
+        $ftsRowAfter = $this->_db->getOne($countFTS_SQL);
+
+        // subtract the old total from the new total.
+        $diff = $ftsRowAfter - $ftsRowBefore;
+
+        // assert that difference is equal to count of beans for this module.
+        $msg = "Expected populateIndexQueueForModule('$module') to add {$beanCount} ";
+        $msg .= "entries to fts_queue, but added $diff.";
+        $this->assertEquals($beanCount, $diff, $msg);
+    }
+
 }
 
 
@@ -269,6 +252,8 @@ class TestSugarSearchEngineFullIndexer extends SugarSearchEngineFullIndexer
     const POSTPONE_JOB_TIME = 0;
 
     private $shouldIndexViaBean;
+
+    public $table_name;
 
     public function markBeansProcessedStub($ids)
     {
@@ -297,11 +282,6 @@ class TestSugarSearchEngineFullIndexer extends SugarSearchEngineFullIndexer
         // support TRUNCATE TABLE command
         //$this->clearFTSIndexQueue();
         $GLOBALS['db']->query('DELETE FROM fts_queue');
-    }
-
-    public function removeExistingFTSConsumersStub()
-    {
-        $this->removeExistingFTSConsumers();
     }
 
     public function setShouldIndexViaBean($should)

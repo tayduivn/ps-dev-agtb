@@ -31,14 +31,14 @@ class SugarSeachEngineElasticResultSet implements SugarSearchEngineResultSet
 {
 
     /**
-     * @var \Elastica_ResultSet
+     * @var \Elastica\ResultSet
      */
     private $elasticaResultSet;
 
     /**
-     * @param Elastica_ResultSet $rs
+     * @param \Elastica\ResultSet $rs
      */
-    public function __construct(Elastica_ResultSet $rs)
+    public function __construct(\Elastica\ResultSet $rs)
     {
         $this->elasticaResultSet = $rs;
     }

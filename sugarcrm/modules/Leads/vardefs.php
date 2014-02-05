@@ -168,7 +168,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'activity_enable
 	'type' => 'varchar',
 	'len' => '255',
 	'unified_search' => true,
-	'full_text_search' => array('boost' => 3),
+	'full_text_search' => array('enabled' => true, 'boost' => 3),
 	'comment' => 'Account name for lead',
   ),
 
@@ -191,7 +191,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'activity_enable
     'type' => 'text',
     'group'=>'account_name',
     'unified_search' => true,
-    'full_text_search' => array('boost' => 1),
+    'full_text_search' => array('enabled' => true, 'boost' => 1),
     'comment' => 'Description of lead account'
   ),
   'contact_id' =>

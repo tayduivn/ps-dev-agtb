@@ -14,7 +14,6 @@ $class_map = array(
     'Sugar_Smarty' => 'include/SugarSmarty/Sugar_Smarty.php',
     'HTMLPurifier_Bootstrap' => 'vendor/HTMLPurifier/HTMLPurifier.standalone.php',
     'SugarSearchEngineFullIndexer'=>'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php',
-    'SugarSearchEngineSyncIndexer'=>'include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php',
     'SugarCurrency'=>'include/SugarCurrency/SugarCurrency.php',
     'SugarRelationshipFactory' => 'data/Relationships/RelationshipFactory.php',
     'DBManagerFactory' => 'include/database/DBManagerFactory.php',

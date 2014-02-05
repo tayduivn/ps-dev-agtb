@@ -429,6 +429,9 @@ class RepairAndClear
         if(file_exists($src_file)) {
             unlink( "$src_file" );
         }
+
+        // clear sugar_cache backend for SugarSearchEngine
+        SugarSearchEngineMetadataHelper::clearCache();
     }
     public function clearExternalAPICache()
 	{

@@ -35,4 +35,13 @@ class OwnedByMe
         global $current_user;
         $query .= " INNER JOIN (SELECT id FROM {$this->bean->table_name} WHERE {$this->bean->table_name}.assigned_user_id='{$current_user->id}') mememe ON mememe.id={$this->bean->table_name}.id";
     }
+
+    public function addSseVisibilityFilter($engine, $filter)
+    {
+        if($engine instanceof SugarSearchEngineElastic) {
+            $filter->addMust($engine->getOwnerTermFilter());
+        }
+        return $filter;
+    }
+
 }

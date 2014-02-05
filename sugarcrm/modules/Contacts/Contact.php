@@ -206,15 +206,14 @@ class Contact extends Person {
         $parentbean = null,
         $singleSelect = false,
         $ifListForExport = false
-    )
-	{
+    ) {
 		//if this is from "contact address popup" action, then process popup list query
-		if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'ContactAddressPopup'){
+		if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'ContactAddressPopup') {
 			return $this->address_popup_create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect);
 
-		}else{
+		} else {
 			//any other action goes to parent function in sugarbean
-			if(strpos($order_by,'sync_contact') !== false){
+			if (strpos($order_by,'sync_contact') !== false) {
 				//we have found that the user is ordering by the sync_contact field, it would be troublesome to sort by this field
 				//and perhaps a performance issue, so just remove it
 				$order_by = '';
@@ -232,11 +231,7 @@ class Contact extends Person {
                 $ifListForExport
             );
 		}
-
-
 	}
-
-
 
 	function address_popup_create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false)
 	{

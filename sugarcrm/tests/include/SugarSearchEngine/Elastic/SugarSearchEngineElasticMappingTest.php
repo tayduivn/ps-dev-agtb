@@ -33,33 +33,143 @@ require_once 'include/SugarSearchEngine/Elastic/SugarSearchEngineElasticMapping.
 
 class SugarSearchEngineElasticMappingTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    static $stub; // Using static as we are not sharing state for the unit tests
 
-    public function setUp()
+    public static function setUpBeforeClass()
     {
+        self::$stub = new SugarSearchEngineElasticMappingTestStub();
     }
 
-    public function testConstructMappingProperties()
+    public function mappingTypeProvider()
     {
-        $fieldDefs = array (
-            'field1' => array (
-                'name'=>'first_name',
-                'full_text_search' => array (
-                    'boost' => 3,
-                    'type' => 'string',
-                ),
+        return array(
+            array(
+                array('type'=>'datetimecombo'),
+                array('type'=>'date'),
+                "testing basic datetimecombo mapping",
+            ),
+            array(
+                array('type'=>'datetime'),
+                array('type'=>'date'),
+                "testing basic datetime mapping",
+            ),
+            array(
+                array('type'=>'id'),
+                array('type'=>'string',
+                      'index'=>'not_analyzed'),
+                "testing basic id mapping",
+            ),
+            array(
+                array('type'=>'enum'),
+                array('type'=>'string',
+                      'index'=>'not_analyzed'),
+                "testing enum mapping",
+            ),
+            array(
+                array('type'=>'email'),
+                array('type'=>'string',
+                      'index'=>'not_analyzed'),
+                "testing email mapping",
+            ),
+            array(
+                array('type'=>'url'),
+                array('type'=>'string',
+                      'index'=>'not_analyzed'),
+                "testing url mapping",
+            ),
+            array(
+                array('type'=>'name'),
+                array('type'=>'string',
+                      'analyzer'=>'standard'),
+                "testing name mapping",
+            ),
+            array(
+                array('type'=>'phone'),
+                array('type'=>'string',
+                      'analyzer'=>'standard'),
+                "testing phone mapping",
+            ),
+            array(
+                array('type'=>'varchar'),
+                array('type'=>'string',
+                      'analyzer'=>'standard'),
+                "testing varchar mapping",
+            ),
+            array(
+                array('type'=>'fullname'),
+                array('type'=>'string',
+                      'analyzer'=>'standard'),
+                "testing fullname mapping",
+            ),
+            array(
+                array('type'=>'double'),
+                array('type'=>'double'),
+                "testing basic double mapping",
+            ),
+            array(
+                array('type'=>'currency'),
+                array('type'=>'double'),
+                "testing currency mapping",
+            ),
+            array(
+                array('type'=>'int'),
+                array('type'=>'integer'),
+                "testing int mapping",
+            ),
+            array(
+                array('type'=>'boolean'),
+                array('type'=>'boolean'),
+                "testing basic boolean mapping",
+            ),
+            array(
+                array('type'=>'bool'),
+                array('type'=>'boolean'),
+                "testing bool mapping",
+            ),
+            array(
+                array('type'=>'relate',
+                      'name'=>'unit_test'),
+                array('type'=>'multi_field',
+                      'fields'=> array(
+                         'length' => 2,
+                         'type' => 'string',
+                      )),
+                "testing relate mapping",
             ),
         );
-        $expected = array(
-            'first_name' => array (
-                'boost' => 3,
-                'type' => 'string',
-            ),
-        );
-        $stub = new SugarSearchEngineElasticMappingTestStub();
-        $result = $stub->constructMappingProperties($fieldDefs);
+    }
 
-        $this->assertArrayHasKey('first_name', $result);
-        $this->assertEquals($expected['first_name'], $result['first_name'], 'result is different from expected array');
+    /**
+     * @dataProvider mappingTypeProvider
+     */
+    public function testGetFtsTypeFromDef($fieldDef, $expectedType, $message)
+    {
+        $newType = self::$stub->getFtsTypeFromDef($fieldDef);
+        foreach($expectedType as $key => $val)
+        {
+            $this->assertArrayHasKey($key, $newType, "Mapped type is missing $key for $message");
+            if($key == 'fields')
+                $this->assertFields($val, $newType[$key], $message);
+            else
+                $this->assertEquals($val, $newType[$key], "$key did not match for $message");
+        }
+    }
+
+    /**
+     * Provisional method for asserting multi-field mappings
+     * This need to be revisited once we have more than 1 multi-field type in our mappings
+     * @param $val
+     * @param $mappedType
+     * @param $message
+     */
+    private function assertFields($val, $mappedType, $message)
+    {
+        $this->assertEquals($val['length'], count($mappedType), "Number of multi-fields did not match for $message");
+        foreach($mappedType as $name => $map)
+        {
+            if($name == 'type')
+                $this->assertEquals($map, $mappedType['type'], "One of the fields type did not match for $message");
+        }
     }
 }
 
@@ -71,9 +181,9 @@ class SugarSearchEngineElasticMappingTestStub extends SugarSearchEngineElasticMa
     {
     }
 
-    // to test protected function
-    public function constructMappingProperties($fieldDefs)
+    public function getFtsTypeFromDef($fieldDef)
     {
-        return parent::constructMappingProperties($fieldDefs);
+        return parent::getFtsTypeFromDef($fieldDef);
     }
+
 }

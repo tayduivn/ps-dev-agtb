@@ -27,11 +27,11 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+use Elastica\Response;
+use Elastica\ResultSet;
+use Elastica\Query;
 
 require_once 'include/SugarSearchEngine/Elastic/SugarSeachEngineElasticResult.php';
-require_once 'vendor/Elastica/ResultSet.php';
-require_once 'vendor/Elastica/Result.php';
-require_once 'vendor/Elastica/Response.php';
 
 class SugarSearchEngineElasticResultTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -41,10 +41,12 @@ class SugarSearchEngineElasticResultTest extends Sugar_PHPUnit_Framework_TestCas
 
     public function setUp()
     {
+        SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        $response = new Elastica_Response($this->_responseString);
-        $elasticResultSet = new Elastica_ResultSet($response);
+        $response = new Response($this->_responseString);
+        $query = new Query();
+        $elasticResultSet = new ResultSet($response, $query);
         $results = $elasticResultSet->getResults();
         $this->_elasticResult = new SugarSeachEngineElasticResult($results[0]);
     }
@@ -73,4 +75,12 @@ class SugarSearchEngineElasticResultTest extends Sugar_PHPUnit_Framework_TestCas
         $this->assertEquals('<span class="highlight">test</span>2 account', $text['name']['text'], 'Incorrect highlighted text');
 
     }
+
+    public function testGetSource()
+    {
+        $source = $this->_elasticResult->getSource();
+        $msg = 'Expected getSource() to return an array, returned ' . var_export($source, true);
+        $this->assertTrue(is_array($source), $msg);
+    }
+
 }

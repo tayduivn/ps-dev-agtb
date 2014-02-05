@@ -76,7 +76,7 @@ class SugarSearchEngineFactory
      * @static
      * @param string $name
      * @param array $config
-     * @return bool
+     * @return mixed (bool|SugarSearchEngineInterface)
      */
     protected static function setupEngine($name = '', $config = array())
     {
@@ -91,49 +91,23 @@ class SugarSearchEngineFactory
             $config = $GLOBALS['sugar_config']['full_text_engine'][$name];
         }
 
-        $defaultTemplateLocation = "include/SugarSearchEngine/%sSugarSearchEngine%s.php";
-
-        $searchEngineLocations = array(
-            sprintf($defaultTemplateLocation, $name.'/', $name),
-            sprintf($defaultTemplateLocation, '','')
+        $paths = array(
+            "include/SugarSearchEngine/{$name}/SugarSearchEngine{$name}.php" => $name,
+            // fallback to base engine if unknown engine name
+            "include/SugarSearchEngine/SugarSearchEngine.php" => '',
         );
 
-        foreach($searchEngineLocations as $engineLocation)
-        {
-            $engineInstance = self::loadSearchEngineFromLocation($engineLocation, $config);
-            if($engineInstance !== FALSE)
-            {
-                $GLOBALS['log']->debug("Found Sugar Search Engine: " . get_class($engineInstance));
-                return $engineInstance;
+        // object loader using custom override
+        foreach ($paths as $path => $baseClass) {
+            if (SugarAutoLoader::requireWithCustom($path, true)) {
+                $engineClass = SugarAutoLoader::customClass("SugarSearchEngine{$baseClass}");
+                $engineInstance = new $engineClass($config);
+                if ($engineInstance instanceof SugarSearchEngineInterface) {
+                    $GLOBALS['log']->info("Found Sugar Search Engine: " . get_class($engineInstance));
+                    return $engineInstance;
+                }
             }
         }
-    }
-
-    /**
-     * @static
-     * @param $filePath
-     * @return bool
-     */
-    protected static function loadSearchEngineFromLocation($filePath, $config)
-    {
-        if( SugarAutoLoader::requireWithCustom($filePath) )
-        {
-            $engineClass = basename($filePath, ".php");
-            $engineInstance = new $engineClass($config);
-
-            if ($engineInstance instanceof SugarSearchEngineInterface )
-            {
-                return $engineInstance;
-            }
-            else
-            {
-                return FALSE;
-            }
-        }
-        else
-        {
-            return FALSE;
-        }
+        return false;
     }
 }
-

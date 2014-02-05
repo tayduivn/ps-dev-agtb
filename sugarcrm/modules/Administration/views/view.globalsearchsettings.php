@@ -70,19 +70,12 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         $sugar_smarty->assign('enabled_modules', json_encode($modules['enabled']));
         $sugar_smarty->assign('disabled_modules', json_encode($modules['disabled']));
         //BEGIN SUGARCRM flav=pro ONLY
-        //FTS Options
-        $schedulerID = SugarSearchEngineFullIndexer::isFTSIndexScheduled();
 
         $defaultEngine = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         $config = $GLOBALS['sugar_config']['full_text_engine'][$defaultEngine];
-
-        $justRequestedAScheduledIndex = !empty($_REQUEST['sched']) ? TRUE : FALSE;
-
-        $schedulerID = SugarSearchEngineFullIndexer::isFTSIndexScheduled();
-        $schedulerCompleted = SugarSearchEngineFullIndexer::isFTSIndexScheduleCompleted($schedulerID);
-        $hide_fts_config = isset( $GLOBALS['sugar_config']['hide_full_text_engine_config'] ) ? $GLOBALS['sugar_config']['hide_full_text_engine_config'] : FALSE;
-
-        $showSchedButton = ($defaultEngine != '' && $this->isFTSConnectionValid()) ? TRUE : FALSE;
+        $justRequestedAScheduledIndex = !empty($_REQUEST['sched']) ? true : false;
+        $hide_fts_config = isset( $GLOBALS['sugar_config']['hide_full_text_engine_config'] ) ? $GLOBALS['sugar_config']['hide_full_text_engine_config'] : false;
+        $showSchedButton = ($defaultEngine != '' && $this->isFTSConnectionValid()) ? true : false;
 
         $sugar_smarty->assign("showSchedButton", $showSchedButton);
         $sugar_smarty->assign("hide_fts_config", $hide_fts_config);

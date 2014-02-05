@@ -28,18 +28,15 @@ class TeamSecurity extends SugarVisibility
 {
     public function addVisibilityFrom(&$query)
     {
+        global $current_user;
+
         // Support portal will never respect Teams, even if they do earn more than them even while raising the teamsets
         if(isset($_SESSION['type'])&&$_SESSION['type']=='support_portal') {
             return;
         }
 
-
-        // copied from old team security clause
-        if($this->bean->module_dir == 'WorkFlow') return;
-        if(!$this->bean->disable_row_level_security) {
-            // We need to confirm that the user is a member of the team of the item.
-
-            global $current_user;
+        if($this->isTeamSecurityApplicable())
+        {
             if(empty($current_user)) {
                 $current_user_id = '';
             } else {
@@ -54,20 +51,19 @@ class TeamSecurity extends SugarVisibility
                 $table_alias = $this->bean->table_name;
             }
             $team_table_alias = DBManagerFactory::getInstance()->getValidDBName($team_table_alias, 'alias');
-            if ((empty($current_user) || !$current_user->isAdminForModule($this->module_dir)) && $this->module_dir != 'WorkFlow') {
-                if($this->getOption('as_condition')) {
-                    $query .= " AND {$table_alias}.team_set_id IN (select tst.team_set_id from team_sets_teams tst
-                              INNER JOIN team_memberships {$team_table_alias} ON tst.team_id = {$team_table_alias}.team_id
-                              AND {$team_table_alias}.user_id = '$current_user_id'
-                              AND {$team_table_alias}.deleted=0)";
-                } else {
-                    $query .= " INNER JOIN (select tst.team_set_id from team_sets_teams tst";
-                    $query .= " INNER JOIN team_memberships {$team_table_alias} ON tst.team_id = {$team_table_alias}.team_id
-                                        AND {$team_table_alias}.user_id = '$current_user_id'
-                                        AND {$team_table_alias}.deleted=0 group by tst.team_set_id) {$table_alias}_tf on {$table_alias}_tf.team_set_id  = {$table_alias}.team_set_id ";
-                    if($this->getOption('join_teams')) {
-                        $query .= " INNER JOIN teams ON teams.id = team_memberships.team_id AND teams.deleted=0 ";
-                    }
+            if ($this->getOption('as_condition')) {
+                $query .= " AND {$table_alias}.team_set_id IN (select tst.team_set_id from team_sets_teams tst
+                          INNER JOIN team_memberships {$team_table_alias} ON tst.team_id = {$team_table_alias}.team_id
+                          AND {$team_table_alias}.user_id = '$current_user_id'
+                          AND {$team_table_alias}.deleted=0)";
+            } else {
+                $query .= " INNER JOIN (select tst.team_set_id from team_sets_teams tst";
+                $query .= " INNER JOIN team_memberships {$team_table_alias} ON tst.team_id = {$team_table_alias}.team_id
+                                    AND {$team_table_alias}.user_id = '$current_user_id'
+                                    AND {$team_table_alias}.deleted=0 group by tst.team_set_id) {$table_alias}_tf
+                                    on {$table_alias}_tf.team_set_id  = {$table_alias}.team_set_id ";
+                if ($this->getOption('join_teams')) {
+                    $query .= " INNER JOIN teams ON teams.id = team_memberships.team_id AND teams.deleted=0 ";
                 }
             }
         }
@@ -104,5 +100,45 @@ class TeamSecurity extends SugarVisibility
             }
         }
         return $sugarQuery;
+    }
+
+    /*
+     * Get sugar search engine definitions
+     * @param string $engine search engine name
+     * @return array
+     * Called before the bean is indexed so that any calculated attributes can updated.
+     * Since the team security id is updated directly, there is no need to implement anything custom
+     */
+    public function beforeSseIndexing()
+    {
+    }
+
+    public function addSseVisibilityFilter($engine, $filter)
+    {
+        if($this->isTeamSecurityApplicable())
+        {
+            if($engine instanceof SugarSearchEngineElastic) {
+                $filter->addMust($engine->getTeamTermFilter());
+            }
+        }
+        return $filter;
+    }
+
+    /**
+     * Verifies if team security needs to be applied
+     * @return bool true if team security needs to be applied
+     */
+    protected function isTeamSecurityApplicable()
+    {
+        global $current_user;
+
+        if( $this->bean->module_dir == 'WorkFlow'  // copied from old team security clause
+            || $this->bean->disable_row_level_security
+            || (!empty($current_user) && $current_user->isAdminForModule($this->module_dir))
+        ) return false;
+
+        // Note that if the $current_user is not set we still apply team security
+        // This does not make any sense by itself as the result will always be negative (no access)
+        return true;
     }
 }

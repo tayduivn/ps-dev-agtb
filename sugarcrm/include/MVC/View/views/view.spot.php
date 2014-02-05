@@ -90,6 +90,7 @@ class ViewSpot extends ViewAjax
         $displayResults = array();
         $displayMoreForModule = array();
         //$actions=0;
+        if($results == null) $results = array();
         foreach($results as $m=>$data)
         {
             if(empty($data['data']))
