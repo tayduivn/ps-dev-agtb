@@ -949,6 +949,24 @@ class MetaDataManager
     }
 
     /**
+     * The collector method for the app list keys
+     *
+     * @param  string use the $app_list_strings
+     * @return array  The app list strings for the requested language
+     */
+    public function getAppListKeys($app_list_strings)
+    {
+        $strings = array();
+        foreach ($app_list_strings as $key => $value) {
+            if (is_array($value)) {
+                $strings[$key] = array_keys($value);
+            }
+        }
+
+        return $strings;
+    }
+
+    /**
      * Gets a list of platforms found in the application.
      *
      * @return array
@@ -2542,6 +2560,7 @@ class MetaDataManager
 
         $stringData = array();
         $stringData['app_list_strings'] = $this->getAppListStrings($language);
+        $stringData['app_list_keys'] = $this->getAppListKeys($stringData['app_list_strings']);
         $stringData['app_strings'] = $this->getAppStrings($language);
         if ($this->public) {
             // Exception for the AppListStrings.
