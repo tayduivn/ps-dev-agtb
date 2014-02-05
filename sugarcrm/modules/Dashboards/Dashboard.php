@@ -1,31 +1,16 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
-* Agreement ("License") which can be viewed at
-* http://www.sugarcrm.com/crm/master-subscription-agreement
-* By installing or using this file, You have unconditionally agreed to the
-* terms and conditions of the License, and You may not use this file except in
-* compliance with the License.  Under the terms of the license, You shall not,
-* among other things: 1) sublicense, resell, rent, lease, redistribute, assign
-* or otherwise transfer Your rights to the Software, and 2) use the Software
-* for timesharing or service bureau purposes such as hosting the Software for
-* commercial gain and/or for the benefit of a third party.  Use of the Software
-* may be subject to applicable fees and any use of the Software without first
-* paying applicable fees is strictly prohibited.  You do not have the right to
-* remove SugarCRM copyrights from the source code or user interface.
-*
-* All copies of the Covered Code must include on each user interface screen:
-*  (i) the "Powered by SugarCRM" logo and
-*  (ii) the SugarCRM copyright notice
-* in the same form as they appear in the distribution.  See full license for
-* requirements.
-*
-* Your Warranty, Limitations of liability and Indemnity are expressly stated
-* in the License.  Please refer to the License for the specific language
-* governing these rights and limitations under the License.  Portions created
-* by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
-********************************************************************************/
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
 
 require_once('data/visibility/OwnerVisibility.php');
 
@@ -55,11 +40,18 @@ class Dashboard extends Basic
 
     /**
      * This function fetches an array of dashboards for the current user
+     *
+     * 'view' is deprecated because it's reserved db word.
+     * Some old API (before 7.2.0) can use 'view'.
+     * Because of that API will use 'view' as 'view_name' if 'view_name' isn't present.
      */
     public function getDashboardsForUser( User $user, $options = array() )
     {
         $order = !empty($options['order_by']) ? $options['order_by'] : 'date_entered desc';
         $from = "assigned_user_id = '".$this->db->quote($user->id)."' and dashboard_module ='".$this->db->quote($options['dashboard_module'])."'";
+        if (isset($options['view']) && !isset($options['view_name'])) {
+            $options['view_name'] = $options['view'];
+        }
         if (!empty($options['view_name'])) {
             $from .= " and view_name =" . $this->db->quoted($options['view_name']);
         }
@@ -73,11 +65,45 @@ class Dashboard extends Basic
     /**
      * This overrides the default save function setting assigned_user_id
      * @see SugarBean::save()
+     *
+     * 'view' is deprecated because it's reserved db word.
+     * Some old API (before 7.2.0) can use 'view'.
+     * Because of that API will use 'view' as 'view_name' if 'view_name' isn't present.
      */
     function save($check_notify = FALSE)
     {
         $this->assigned_user_id = $GLOBALS['current_user']->id;
+        if (isset($this->view) && !isset($this->view_name)) {
+            $this->view_name = $this->view;
+        }
         // never send assignment notifications for dashboards
         return parent::save(false);
+    }
+
+    /**
+     * 'view' is deprecated because it's reserved db word.
+     * Some old API (before 7.2.0) can use 'view'.
+     * Because of that API will return 'view' with the same value as 'view_name'.
+     *
+     * @param string $order_by
+     * @param string $where
+     * @param int    $row_offset
+     * @param int    $limit
+     * @param int    $max
+     * @param int    $show_deleted
+     * @param bool   $singleSelect
+     * @param array  $select_fields
+     *
+     * @return array
+     */
+    public function get_list($order_by = "", $where = "", $row_offset = 0, $limit = -1, $max = -1, $show_deleted = 0, $singleSelect = false, $select_fields = array())
+    {
+        $result = parent::get_list($order_by, $where, $row_offset, $limit, $max, $show_deleted, $singleSelect, $select_fields);
+        if (!empty($result['list'])) {
+            foreach ($result['list'] as $dashboard) {
+                $dashboard->view = $dashboard->view_name;
+            }
+        }
+        return $result;
     }
 }
