@@ -144,8 +144,8 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         $tableName = self::QUEUE_TABLE;
         $query = sprintf(
             'INSERT INTO %s (bean_id, bean_module, id, date_created)
-            SELECT m.id as bean_id, %s, %s, %s
-            FROM %s as m WHERE m.deleted = 0 ',
+            SELECT m.id bean_id, %s, %s, %s
+            FROM %s m WHERE m.deleted = 0 ',
             $tableName,
             $db->quoted($beanName),
             $db->getGuidSQL(),
