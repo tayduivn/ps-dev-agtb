@@ -89,6 +89,7 @@ $action_button = smarty_function_sugar_action_menu(array(
 
 $ListView->setHeaderTitle($header_text.$action_button);
 
+$ListView->show_select_menu = false;
 $ListView->show_export_button = false;
 $ListView->show_mass_update = false;
 $ListView->show_delete_button = false;
