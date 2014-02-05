@@ -133,7 +133,7 @@ class ListViewData {
     {
         global $beanList;
 
-        $blockVariables = array('mass', 'uid', 'massupdate', 'delete', 'merge', 'selectCount',$this->var_order_by, $this->var_offset, 'lvso', 'sortOrder', 'orderBy', 'request_data', 'current_query_by_page', 'entryPoint');
+        $blockVariables = array('mass', 'uid', 'massupdate', 'delete', 'merge', 'selectCount',$this->var_order_by, $this->var_offset, 'lvso', 'sortOrder', 'orderBy', 'request_data', 'current_query_by_page');
         foreach($beanList as $bean)
         {
             $blockVariables[] = 'Home2_'.strtoupper($bean).'_ORDER_BY';
@@ -562,6 +562,8 @@ class ListViewData {
 
         $queries['orderBy'] = $queries['baseURL'];
         $queries['orderBy'][$this->var_order_by] = '';
+        // Do not send entryPoint for sorting URLs
+        unset($queries['orderBy']['entryPoint']);
 
         if($nextOffset > -1)
         {
