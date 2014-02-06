@@ -84,10 +84,10 @@ function retrieve_relationships($module_name,  $related_module, $relationship_qu
 
 	$mod = BeanFactory::getBean($module_1);
 
-	$count_query = str_replace('rt.*', 'count(*)', $query);
+    $count_query = str_replace('rt.*', 'count(*) cnt', $query);
 	$result = $mod->db->query($count_query);
 	$row = $mod->db->fetchByAssoc($result);
-	$total_count = $row['count(*)'];
+    $total_count = $row['cnt'];
 
 	if($max_results != '-99'){
 		$result = $mod->db->limitQuery($query, $offset, $max_results);
