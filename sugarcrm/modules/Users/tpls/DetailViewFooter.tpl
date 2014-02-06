@@ -113,13 +113,6 @@
                 <td><slot><input tabindex='3' name='use_real_names' disabled class="checkbox" type="checkbox" {$USE_REAL_NAMES}></slot></td>
                 <td><slot>{$MOD.LBL_USE_REAL_NAMES_DESC}</slot></td>
                 </tr>
-                <!--//BEGIN SUGARCRM flav=pro ONLY -->
-                <tr>
-                <td scope="row" valign="top"><slot>{$MOD.LBL_OWN_OPPS|strip_semicolon}:</slot></td>
-                <td valign="top" nowrap><slot><input name='no_opps' disabled class="checkbox" type="checkbox" {$NO_OPPS}></slot></td>
-                <td><slot>{$MOD.LBL_OWN_OPPS_DESC}</slot></td>
-                </tr>
-                <!--//END SUGARCRM flav=pro ONLY -->
                 {if $DISPLAY_EXTERNAL_AUTH}
                 <tr>
                   <td scope="row" valign="top"><slot>{$EXTERNAL_AUTH_CLASS|strip_semicolon}:</slot></td>

@@ -349,10 +349,6 @@ class UserViewHelper {
             $this->ss->assign('MAILMERGE_ON', 'checked');
         }
 
-        if($this->bean->getPreference('no_opps') == 'on') {
-            $this->ss->assign('NO_OPPS', 'CHECKED');
-        }
-
 	$reminder_time = $this->bean->getPreference('reminder_time');
 	if(empty($reminder_time)){
 		$reminder_time = -1;
