@@ -35,6 +35,6 @@ $viewdefs['Styleguide']['base']['layout']['field'] = array(
         array(
             'view' => 'field',
         ),
+        'type' => 'simple',
     ),
-    'type' => 'field',
 );

@@ -26,9 +26,23 @@
  ********************************************************************************/
 ({
     plugins: ['Prettify'],
+    className: 'row-fluid',
+
+    initialize: function(options) {
+        app.view.Layout.prototype.initialize.call(this, options);
+        // load up the styleguide css if not already loaded
+        if ($('head #styleguide_css').length === 0) {
+            $('<link>')
+                .attr({
+                    rel: 'stylesheet',
+                    href: 'styleguide/assets/css/styleguide.css',
+                    id: 'styleguide_css'
+                })
+                .appendTo('head');
+        }
+    },
 
     _placeComponent: function(component) {
-        this.$('#styleguide').append(component.$el);
+        this.$('.styleguide').append(component.$el);
     }
-
 })

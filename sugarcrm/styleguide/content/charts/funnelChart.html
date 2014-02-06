@@ -33,8 +33,8 @@
   <meta name="viewport" content="width=320" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>Funnel Chart</title>
-  <link rel="stylesheet/less" type="text/css" href="../css/styles.less" />
-  <script src="../js/less-1.3.3.min.js" type="text/javascript"></script>
+  <link rel="stylesheet/less" type="text/css" href="less/styles.less" />
+  <script src="js/less-1.3.3.min.js" type="text/javascript"></script>
 </head>
 <body class="full-screen">
   <div class="nv-demo">
@@ -45,7 +45,6 @@
 
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
-<script src="data/funnel_data.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/legend.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/funnel.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/funnelChart.js"></script>
@@ -67,11 +66,13 @@
             })
         ;
 
-    d3.select('#funnel svg')
-        .datum(funnel_data_default)
-      .transition().duration(500).call(chart);
-
     nv.utils.windowResize(chart.update);
+
+    d3.json("data/funnel_data.json", function(data) {
+      d3.select('#funnel svg')
+          .datum(data)
+        .transition().duration(500).call(chart);
+    });
 
     return chart;
   });
