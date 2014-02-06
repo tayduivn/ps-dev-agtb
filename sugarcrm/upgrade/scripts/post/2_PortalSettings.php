@@ -17,7 +17,7 @@
  */
 class SugarUpgradePortalSettings extends UpgradeScript
 {
-    public $order = 2000;
+    public $order = 2170;
     public $type = self::UPGRADE_DB;
     public $version = '7.1.5';
 
