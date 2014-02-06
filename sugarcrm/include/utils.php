@@ -489,6 +489,11 @@ function get_sugar_config_defaults()
             'merge_relate_update_timeout' => 90000,
             'merge_relate_max_attempt' => 3,
         ),
+       'hide_history_contacts_emails' => array (
+            'Cases' => false,
+            'Accounts' => false,
+            'Opportunities' => true
+        ),
     );
 
     if (empty($locale)) {

@@ -46,20 +46,7 @@ class ArchivedEmailsBeanLink extends ArchivedEmailsLink
         }
         $rel_join = str_replace("{$this->focus->table_name}.id", $bean_id, $rel_join);
 
-        if (!empty($GLOBALS['sugar_config']['hide_history_contacts_emails']) && isset($GLOBALS['sugar_config']['hide_history_contacts_emails'][$this->focus->module_name])) {
-            $hideHistoryContactsEmails = !empty($GLOBALS['sugar_config']['hide_history_contacts_emails'][$this->focus->module_name]);
-        }
-
-        if(!isset($hideHistoryContactsEmails)) {
-            // not set from admin tool, check for default value in viewdefs:
-            // Emails/client/base/views/subpanel-for-{module}/subpanel-for-{module}.php
-            $mm = MetadataManager::getManager();
-            $views = $mm->getModuleViews('Emails');
-            $module = strtolower($this->focus->module_name);
-            $hideHistoryContactsEmails = isset($views["subpanel-for-{$module}"])
-                && isset($views["subpanel-for-{$module}"]['meta'])
-                && !empty($views["subpanel-for-{$module}"]['meta']['hide_history_contacts_emails']);
-        }
+        $hideHistoryContactsEmails = !empty($GLOBALS['sugar_config']['hide_history_contacts_emails'][$this->focus->module_name]);
 
         $query = "INNER JOIN (\n".
         // directly assigned emails

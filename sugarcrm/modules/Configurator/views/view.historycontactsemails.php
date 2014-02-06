@@ -57,17 +57,11 @@ class ConfiguratorViewHistoryContactsEmails extends SugarView
                 continue;
             }
 
-            $bean->load_relationships();
-            foreach ($bean->get_linked_fields() as $fieldName => $fieldDef) {
-                if ($bean->$fieldName->getRelatedModuleName() == 'Contacts') {
-                    $modules[$moduleName] = array(
-                        'module' => $moduleName,
-                        'label' => translate($moduleName),
-                        'enabled' => empty($fieldDef['hide_history_contacts_emails'])
-                    );
-                    break;
-                }
-            }
+            $modules[$moduleName] = array(
+                'module' => $moduleName,
+                'label' => translate($moduleName),
+                'enabled' => true,
+                );
         }
 
         if (!empty($GLOBALS['sugar_config']['hide_history_contacts_emails'])) {
