@@ -1155,7 +1155,7 @@ function validate_form(formname, startsWith){
 	var isError = false;
 	var errorMsg = "";
 	var _date = new Date();
-	if(_date.getTime() < (lastSubmitTime + 2000) && startsWith == oldStartsWith) { // ignore submits for the next 2 seconds
+	if(_date.getTime() < (lastSubmitTime + 5000) && startsWith == oldStartsWith) { // ignore submits for the next 5 seconds
 		return false;
 	}
 	lastSubmitTime = _date.getTime();
