@@ -56,6 +56,10 @@ class KBDocumentsApiHelper extends SugarBeanApiHelper
             while ( $row = $db->fetchByAssoc($ret) ) {
                 $thisFile = array();
                 $thisFile['document_revision_id'] = $row['rev_id'];
+                // add some extra meta so we can build the urls on the client
+                $thisFile['id'] = $row['rev_id'];
+                $thisFile['module'] = 'DocumentRevisions';
+                $thisFile['field_name'] = 'filename';
                 $thisFile['name'] = $row['filename'];
                 $thisFile['kbdocument_revision_id'] = $row['docrev_id'];
                 $thisFile['uri'] = $this->api->getResourceURI(array('DocumentRevisions',$row['rev_id'],'file','filename'));

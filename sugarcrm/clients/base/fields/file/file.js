@@ -148,28 +148,39 @@
             }, this);
         } else if (value) {
             // If it's a string, build the uri with the api library
-            var isImage = this._isImage(this.model.get('file_mime_type')),
-                forceDownload = !isImage,
-                mimeType = isImage ? 'image' : '',
-                fileObj = {
-                    name: value,
-                    mimeType: mimeType,
-                    url: app.api.buildFileURL({
-                            module: this.module,
-                            id: this.model.id,
-                            field: this.name
-                        },
-                        {
-                            htmlJsonFormat: false,
-                            passOAuthToken: false,
-                            cleanCache: true,
-                            forceDownload: forceDownload
-                        })
-                };
+            var urlOpts = {
+                    module: this.module,
+                    id: this.model.id,
+                    field: this.name
+                },
+                fileObj = this._createFileObj(value, urlOpts);
             attachments.push(fileObj);
         }
         // Cannot be a hard check against "list" since subpanel-list needs this too
         return attachments;
+    },
+    /**
+     * gets file object
+     * @param {String} value file name
+     * @param {Object} urlOpts url options
+     * @returns {{name: *, mimeType: string, url: (String|*)}}
+     * @private
+     */
+    _createFileObj: function (value, urlOpts) {
+        var isImage = this._isImage(this.model.get('file_mime_type')),
+            forceDownload = !isImage,
+            mimeType = isImage ? 'image' : '';
+        return {
+            name: value,
+            mimeType: mimeType,
+            url: app.api.buildFileURL(urlOpts,
+                {
+                    htmlJsonFormat: false,
+                    passOAuthToken: false,
+                    cleanCache: true,
+                    forceDownload: forceDownload
+                })
+        };
     },
     /**
      * This is overriden by portal in order to prepend site url
