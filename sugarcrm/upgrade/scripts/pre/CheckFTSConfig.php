@@ -98,7 +98,7 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
      * Wrapper to instantiate Elastica Client object
      *
      * @param array $config
-     * @return mixed(\Elastica\Client|Elastica_Client)
+     * @return mixed \Elastica\Client|Elastica_Client
      */
     protected function getElasticaClient($config)
     {
