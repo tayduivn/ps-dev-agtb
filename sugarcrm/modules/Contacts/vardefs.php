@@ -615,6 +615,47 @@ $dictionary['Contact'] = array(
             'rname' => 'id',
             'rname_exists' => true,
         ),
+
+        // Marketo Fields
+        'mkto_sync' =>
+            array(
+                'name' => 'mkto_sync',
+                'vname' => 'LBL_MKTO_SYNC',
+                'type' => 'bool',
+                'default' => '0',
+                'comment' => 'Should the Lead be synced to Marketo',
+                'massupdate' => true,
+                'audited' => true,
+                'duplicate_merge' => true,
+                'reportable' => true,
+                'importable' => 'true',
+            ),
+        'mkto_id' =>
+            array(
+                'name' => 'mkto_id',
+                'vname' => 'LBL_MKTO_ID',
+                'comment' => 'Associated Marketo Lead ID',
+                'type' => 'int',
+                'default' => null,
+                'audited' => true,
+                'mass_update' => false,
+                'duplicate_merge' => true,
+                'reportable' => true,
+                'importable' => 'false',
+            ),
+        'mkto_lead_score' =>
+            array(
+                'name' => 'mkto_lead_score',
+                'label' => 'LBL_MKTO_LEAD_SCORE',
+                'comment' => null,
+                'type' => 'int',
+                'default_value' => null,
+                'audited' => true,
+                'mass_update' => false,
+                'duplicate_merge' => true,
+                'reportable' => true,
+                'importable' => 'true',
+            ),
     ),
     'indices' => array(
         array(
@@ -649,6 +690,12 @@ $dictionary['Contact'] = array(
         ),
         array('name' => 'idx_contact_title', 'type' => 'index', 'fields' => array('title')),
         array('name' => 'idx_contact_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
+        array(
+            'name' => 'idx_contact_mkto_id',
+            'type' => 'index',
+            'fields' => array('mkto_id')
+        ),
+
     ),
     'relationships' => array(
         'contact_direct_reports' => array(

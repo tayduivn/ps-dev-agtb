@@ -593,6 +593,34 @@ $dictionary['Opportunity'] = array(
             'relationship' => 'opportunities_products',
             'source' => 'non-db',
         ),
+
+        // Marketo Fields
+        'mkto_sync' =>
+            array(
+                'name' => 'mkto_sync',
+                'vname' => 'LBL_MKTO_SYNC',
+                'type' => 'bool',
+                'default' => '0',
+                'comment' => 'Should the Lead be synced to Marketo',
+                'massupdate' => true,
+                'audited' => true,
+                'duplicate_merge' => true,
+                'reportable' => true,
+                'importable' => 'true',
+            ),
+        'mkto_id' =>
+            array(
+                'name' => 'mkto_id',
+                'vname' => 'LBL_MKTO_ID',
+                'comment' => 'Associated Marketo Lead ID',
+                'type' => 'int',
+                'default' => null,
+                'audited' => true,
+                'mass_update' => false,
+                'duplicate_merge' => true,
+                'reportable' => true,
+                'importable' => 'false',
+            ),
     ),
     'indices' => array(
         array(
@@ -615,6 +643,11 @@ $dictionary['Opportunity'] = array(
         array('name' => 'idx_opportunity_lead_source', 'type' => 'index', 'fields' => array('lead_source')),
         array('name' => 'idx_opportunity_next_step', 'type' => 'index', 'fields' => array('next_step')),
         array('name' => 'idx_opportunity_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
+        array(
+            'name' => 'idx_opportunity_mkto_id',
+            'type' => 'index',
+            'fields' => array('mkto_id')
+        ),
     ),
     'relationships' => array(
         'opportunity_calls' => array(

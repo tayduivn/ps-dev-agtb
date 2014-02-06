@@ -173,4 +173,8 @@ To create a {{module_name}}:
 2. Click "Save" to finalize the new record and return to the {{plural_module_name}} list view.
  * Choose "Save and view" to open the new {{module_name}} in record view.
  * Choose "Save and create new" to immediately create another new {{module_name}}.',
+
+    //Marketo
+    'LBL_MKTO_SYNC' => 'Sync to Marketo&reg;',
+    'LBL_MKTO_ID' => 'Marketo Lead ID',
 );

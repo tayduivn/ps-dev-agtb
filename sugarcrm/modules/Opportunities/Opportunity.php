@@ -87,6 +87,10 @@ class Opportunity extends SugarBean
     public $commit_stage;
 //END SUGARCRM flav=pro ONLY
 
+    //Marketo
+    var $mkto_sync;
+    var $mkto_id;
+
     public $importable = true;
     public $object_name = "Opportunity";
 
