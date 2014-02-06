@@ -205,5 +205,16 @@ $vardefs = array(
             'merge_filter' => 'enabled',
             //END SUGARCRM flav=pro ONLY
         )
+    ),
+    'duplicate_check' => array(
+        'enabled' => true,
+        'FilterDuplicateCheck' => array(
+            'filter_template' => array(
+                array('name' => array('$starts' => '$name')),
+            ),
+            'ranking_fields' => array(
+                array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
+            )
+        )
     )
 );

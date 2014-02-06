@@ -158,6 +158,17 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'duplicate_on_record_copy' => 'always',
     'Comment' => 'Document status for Meta-Data framework',
   ),
+ ),
+ 'duplicate_check' => array(
+     'enabled' => true,
+     'FilterDuplicateCheck' => array(
+         'filter_template' => array(
+             array('document_name' => array('$starts' => '$document_name')),
+         ),
+         'ranking_fields' => array(
+             array('in_field_name' => 'document_name', 'dupe_field_name' => 'document_name'),
+         )
+     )
  )
 );
 

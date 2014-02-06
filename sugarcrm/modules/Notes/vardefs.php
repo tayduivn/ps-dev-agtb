@@ -397,20 +397,23 @@ $dictionary['Note'] = array(
         'rows' => 30,
         'cols' => 90,
       ),
-),
-'relationships'=>array(
-)
-                                                      , 'indices' => array (
+    ),
+    'relationships'=>array(
+    )
+    , 'indices' => array (
        array('name' =>'idx_note_name', 'type'=>'index', 'fields'=>array('name')),
        array('name' =>'idx_notes_parent', 'type'=>'index', 'fields'=>array('parent_id', 'parent_type')),
        array('name' =>'idx_note_contact', 'type'=>'index', 'fields'=>array('contact_id')),
        array('name' =>'idx_notes_assigned_del', 'type' =>'index', 'fields'=>array( 'deleted', 'assigned_user_id')),
-                                                      )
+    )
 
+    //This enables optimistic locking for Saves From EditView
+    ,'optimistic_locking'=>true
 
-                                                      //This enables optimistic locking for Saves From EditView
-	,'optimistic_locking'=>true,
-                            );
+    ,'duplicate_check' => array(
+        'enabled' => false
+    )
+);
 
 VardefManager::createVardef('Notes','Note', array('default', 'assignable',
 //BEGIN SUGARCRM flav=pro ONLY

@@ -6823,7 +6823,12 @@ class SugarBean
     protected function loadDuplicateCheckManager()
     {
         if(empty($this->duplicate_check_manager)) {
-            $data = isset($GLOBALS['dictionary'][$this->object_name]['duplicate_check'])?$GLOBALS['dictionary'][$this->object_name]['duplicate_check']:array();
+            if (isset($GLOBALS['dictionary'][$this->object_name]['duplicate_check']) &&
+                !empty($GLOBALS['dictionary'][$this->object_name]['duplicate_check']['enabled'])) {
+                $data = $GLOBALS['dictionary'][$this->object_name]['duplicate_check'];
+            } else {
+                $data = array();  // duplicate_check not defined  or  is not enabled
+            }
             $this->duplicate_check_manager = new BeanDuplicateCheck($this, $data);
         }
         return $this->duplicate_check_manager;
