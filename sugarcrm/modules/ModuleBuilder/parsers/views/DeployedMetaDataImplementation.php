@@ -122,6 +122,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 					$this->_mergeFielddefs ( $fielddefs , $loaded ) ;
 					break;
 
+                case MB_RECORDVIEW:
                 //BEGIN SUGARCRM flav=ent ONLY
                 case MB_PORTALLISTVIEW:
                 case MB_PORTALRECORDVIEW:
@@ -134,7 +135,9 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
                 case MB_WIRELESSLISTVIEW:
                     $_viewtype = 'mobile';
                 //END SUGARCRM flav=pro ONLY
-
+                if ($view === MB_RECORDVIEW) {
+                    $_viewtype = 'base';
+                }
 
                 //BEGIN SUGARCRM flav=ent ONLY
                     // Set a view type (ie, portal, wireless)
