@@ -69,7 +69,7 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
      */
     protected function getServerStatusElastic($searchEngine, $config)
     {
-        $this->_client = new \Elastica\Client($config);
+        $this->_client = $this->getElasticaClient($config);
         global $app_strings, $sugar_config;
         $isValid = false;
         $timeOutValue = $this->_client->getConfig('timeout');
@@ -77,7 +77,7 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
             //Default test timeout is 5 seconds
             $ftsTestTimeout = (isset($sugar_config['fts_test_timeout'])) ? $sugar_config['fts_test_timeout'] : 5;
             $this->_client->setConfigValue('timeout', $ftsTestTimeout);
-            $results = $this->_client->request('', \Elastica\Request::GET)->getData();
+            $results = $this->_client->request('', $this->getElasticaRequestConstant('GET'))->getData();
             if (!empty($results['ok'])) {
                 $isValid = true;
                 $displayText = $app_strings['LBL_EMAIL_SUCCESS'];
@@ -92,5 +92,45 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
         $this->_client->setConfigValue('timeout', $timeOutValue);
 
         return array('valid' => $isValid, 'status' => $displayText);
+    }
+
+    /**
+     * Wrapper to instantiate Elastica Client object
+     *
+     * @param array $config
+     * @return mixed \Elastica\Client|Elastica_Client
+     */
+    protected function getElasticaClient($config)
+    {
+        $class = $this->getElasticaFQClassName('Client');
+        return new $class($config);
+    }
+
+    /**
+     * Wrapper to get constant values from Elastica Request
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function getElasticaRequestConstant($name)
+    {
+        $class = $this->getElasticaFQClassName('Request');
+        return constant($class.'::'.$name);
+    }
+
+    /**
+     * Get fully qualified Elastica class name based on the available Elastica library
+     *
+     * @param string $class Base Elastica class name (i.e. Client, Request, ...)
+     * @return string
+     */
+    protected function getElasticaFQClassName($class)
+    {
+        if (class_exists('Elastica_'.$class)) {
+            $prefix =  'Elastica_';
+        } else {
+            $prefix = '\\Elastica\\';
+        }
+        return $prefix.$class;
     }
 }
