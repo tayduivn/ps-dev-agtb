@@ -164,7 +164,8 @@
       .calcWidth(~"34.042553198% + 1px");
       border-left: 1px solid darken(@grayLighter,10%);
       background: url(@textureSecondary);
-      right: 0;
+      right: auto;
+      margin-left: -1px;
       /* middle div is unnecessary, filipe said it cannot
          be removed from template, doing this for now */
       .record-cell {
@@ -176,9 +177,7 @@
       .record-cell:first-child {
         display: table-cell;
         position: relative;
-        padding-left: ~"-moz-calc(1.5% + 6px)";
-        padding-left: ~"-webkit-calc(1.5% + 6px)";
-        padding-left: ~"calc(1.5% + 6px)";
+        padding-left: 10px;
         padding-top: 14px;
         padding-right: 0;
       }
@@ -236,11 +235,6 @@
             }
           }
         }
-      }
-      .btn-toolbar {
-        padding-right: ~"-moz-calc(1.5% + 8px)";
-        padding-right: ~"-webkit-calc(1.5% + 8px)";
-        padding-right: ~"calc(1.5% + 8px)";
       }
     }
     &.edit {
