@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,35 +22,51 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class WorksheetTests extends Sugar_PHPUnit_Framework_TestCase
+class QuoteTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
         SugarTestCurrencyUtilities::createCurrency('MonkeyDollars', '$', 'MOD', 2.0);
     }
 
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
-        SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
+        SugarTestQuoteUtilities::removeAllCreatedQuotes();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestHelper::tearDown();
     }
 
-    /**
+    /*
      * Test that the base_rate field is populated with rate
      * of currency_id
      *
-     * @group forecasts
-     * @group worksheet
      */
-    public function testWorksheetRate()
+    public function testQuoteRate()
     {
-        $worksheet = SugarTestWorksheetUtilities::createWorksheet();
+        $quote = SugarTestQuoteUtilities::createQuote();
         $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
-        $worksheet->currency_id = $currency->id;
-        $worksheet->save();
-        $this->assertEquals($worksheet->base_rate,$currency->conversion_rate,'',2);
+        $quote->currency_id = $currency->id;
+        $quote->save();
+        $this->assertEquals(
+            sprintf('%.6f', $quote->base_rate),
+            sprintf('%.6f', $currency->conversion_rate)
+        );
     }
+
+    /**
+     * test related opportunity count
+     */
+    public function testGetRelatedOpportunityCount()
+    {
+        $quote = SugarTestQuoteUtilities::createQuote();
+        $this->assertEquals(0, $quote->getRelatedOpportunityCount());
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        SugarTestQuoteUtilities::relateQuoteToOpportunity($quote->id, $opp->id);
+        $this->assertEquals(1, $quote->getRelatedOpportunityCount());
+    }
+
 }

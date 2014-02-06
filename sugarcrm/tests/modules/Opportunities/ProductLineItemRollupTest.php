@@ -23,7 +23,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class ProductLineItemRollupTests extends Sugar_PHPUnit_Framework_TestCase
+class ProductLineItemRollupTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private static $isSetup;
 

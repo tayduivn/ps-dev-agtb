@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class QuotaTests extends Sugar_PHPUnit_Framework_TestCase
+class QuotaTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
