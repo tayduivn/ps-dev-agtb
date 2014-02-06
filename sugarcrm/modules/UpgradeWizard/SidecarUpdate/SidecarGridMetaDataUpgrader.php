@@ -43,6 +43,22 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
     protected $basic_defsfile;
 
     /**
+     * Panel names in the new style, for the first two panels
+     * 
+     * @var array
+     */
+    protected $panelNames = array(
+        array(
+            'name' => 'panel_body',
+            'label' => 'LBL_RECORD_BODY',
+        ),
+        array(
+            'name' => 'panel_hidden',
+            'label' => 'LBL_RECORD_SHOWMORE'
+        ),
+    );
+
+    /**
      * Load current Sugar metadata for this module
      * @return array
      */
@@ -129,11 +145,53 @@ END;
         // Find out which panel key to use based on viewtype and client
         $panelKey = $this->panelKeys[$this->client.$this->viewtype];
         if (isset($defs[$panelKey])) {
-            $fields = array();
+            // Get the converted defs
+            $fields = $this->handleConversion($defs, $panelKey);
 
+            // If we still don't have new viewdefs then fall back onto the old
+            // ones. This shouldn't happen, but we need to make sure we have defs
+            $newdefs = $this->loadDefaultMetadata();
+            if (empty($newdefs)) {
+                $newdefs = $defs;
+            }
+
+            // Set the new panel defs from the fields that were just converted
+            $paneldefs = array(array('label' => 'LBL_PANEL_DEFAULT', 'fields' => $fields));
+
+            // Kill the data (old defs) and panels (new defs) elements from the defs
+            unset($newdefs['data'], $newdefs['panels']);
+
+            // Create, or recreate, the panel defs
+            $newdefs['panels'] = $paneldefs;
+
+            // Clean up the module name for saving
+            $module = $this->getNormalizedModuleName();
+            $this->logUpgradeStatus("Setting new $client:{$this->type} view defs internally for $module");
+            // Setup the new defs
+            $this->sidecarViewdefs[$module][$client]['view'][$this->viewtype] = $newdefs;
+        }
+    }
+
+    /**
+     * Handles the actual conversion of viewdefs. By default this method will 
+     * only convert field defs without panel data to support original upgrading
+     * from 6.5 -> 6.6 and to support portal and mobile conversion. 
+     * 
+     * @param array $defs The complete legacy viewdef
+     * @param string $panelKey The viewdef key that contains panel data
+     * @param boolean $full Flag that tells this method whether to return a 
+     *                      single array of fields or a full conversion of defs
+     * @return array
+     */
+    public function handleConversion($defs, $panelKey, $full = false)
+    {
+        $fields = $panels = array();
+        if (isset($defs[$panelKey])) {
+            $c = 0;
+            
             // Necessary for setting the proper field array types
             $maxcols = isset($defs['templateMeta']['maxColumns']) ? intval($defs['templateMeta']['maxColumns']) : 2;
-            foreach ($defs[$panelKey] as $row) {
+            foreach ($defs[$panelKey] as $label => $row) {
                 $cols = count($row);
                 // Assumption here is that Portal and Wireless will never have
                 // more than 2 columns in the old setup
@@ -185,32 +243,50 @@ END;
                             $fields[] = $field['field'];
                         }
                     }
-
                 }
+
+                // For full conversion of metadata we need to group fields into 
+                // their respective panels. This handles that here.
+                if ($full) {
+                    // Handle panel naming and labeling
+                    if (isset($this->panelNames[$c]['name'])) {
+                        $panelName = $this->panelNames[$c]['name'];
+                        $panelLabel = $this->panelNames[$c]['label'];
+                    } else {
+                        $panelName = strtolower($label);
+                        $panelLabel = strtoupper($label);
+                    }
+
+                    // Build this panel's metadata
+                    $panels[] = array(
+                        'name' => $panelName,
+                        'label' => $panelLabel,
+                        'columns' => $maxcols,
+                        'labels' => true,
+                        'labelsOnTop' => true,
+                        'placeholders' => true,
+                        'fields' => $fields,
+                    );
+
+                    // Reset fields array so they don't stack up inside of panels
+                    $fields = array();
+                }
+
+                // Increment the counter that handles 
+                $c++;
             }
-
-            $newdefs = $this->loadDefaultMetadata();
-
-            // If we still don't have new viewdefs then fall back onto the old
-            // ones. This shouldn't happen, but we need to make sure we have defs
-            if (empty($newdefs)) {
-                $newdefs = $defs;
-            }
-
-            // Set the new panel defs from the fields that were just converted
-            $paneldefs = array(array('label' => 'LBL_PANEL_DEFAULT', 'fields' => $fields));
-
-            // Kill the data (old defs) and panels (new defs) elements from the defs
-            unset($newdefs['data'], $newdefs['panels']);
-
-            // Create, or recreate, the panel defs
-            $newdefs['panels'] = $paneldefs;
-
-            // Clean up the module name for saving
-            $module = $this->getNormalizedModuleName();
-            $this->logUpgradeStatus("Setting new $client:{$this->type} view defs internally for $module");
-            // Setup the new defs
-            $this->sidecarViewdefs[$module][$client]['view'][$this->viewtype] = $newdefs;
         }
+
+        // This is a full metadata conversion, so send back a complete metadata
+        // collection
+        if ($full) {
+            return array(
+                'templateMeta' => $defs['templateMeta'],
+                'panels' => $panels
+            );
+        }
+
+        // Return the default converted fields array
+        return $fields;
     }
 }
