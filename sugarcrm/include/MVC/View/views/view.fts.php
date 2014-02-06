@@ -199,6 +199,11 @@ class ViewFts extends SugarView
         $userDisabled = $GLOBALS['current_user']->getPreference('fts_disabled_modules');
         $userDisabled = explode(",", $userDisabled);
 
+        // Filter by System enabled FTS modules
+        $systemEnabledModules = SugarSearchEngineMetadataHelper::getSystemEnabledFTSModules();
+        $userDisabled = array_intersect_key($systemEnabledModules, array_flip($userDisabled));
+        $filteredEnabled = array_intersect_key($systemEnabledModules, array_flip($filteredEnabled));
+
         $userDisabled = $this->translateModulesList($userDisabled);
         $filteredEnabled = $this->translateModulesList($filteredEnabled);
         sort($filteredEnabled);
