@@ -1071,7 +1071,7 @@ function checkSystemCompliance() {
         $ret['error_found'] = true;
     }
 
-	/* mbstring.func_overload
+	// mbstring.func_overload
 	$ret['mbstring.func_overload'] = '';
 	$mb = ini_get('mbstring.func_overload');
 
@@ -1079,7 +1079,6 @@ function checkSystemCompliance() {
 		$ret['mbstring.func_overload'] = "<b><span class=\"stop\">{$mod_strings['ERR_UW_MBSTRING_FUNC_OVERLOAD']}</b>";
 		$ret['error_found'] = true;
 	}
-	*/
 	return $ret;
 }
 
