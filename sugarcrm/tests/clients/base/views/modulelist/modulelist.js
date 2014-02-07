@@ -223,66 +223,63 @@ describe("Module List", function() {
             SugarTest.app.router = oRouter;
             getModuleStub.restore();
         });
-        it("Should populate Recents and call recents populate callback", function() {
+
+        it('Should populate Recents and call recents populate callback', function() {
             var cbMock = sinon.mock();
             var module = 'Accounts';
-            var beanCreateMock = sinon.stub(SugarTest.app.data,'createBeanCollection', function(module, models) {
-                var collection = new Backbone.Collection(models);
-                return collection;
+            var beanCreateMock = sinon.stub(SugarTest.app.data, 'createBeanCollection', function(module, models) {
+                return new Backbone.Collection(models);
             });
-            // Workaround because router not defined yet
-            var oRouter = SugarTest.app.router;
-            SugarTest.app.router = {buildRoute: function(){}};
-            sinon.stub(SugarTest.app.router,'buildRoute',function(){
-                    return 'testRouteString';
-                }
-            );
+            sinon.stub(SugarTest.app.router, 'buildRoute', function() {
+                return 'testRouteString';
+            });
             var getModuleStub = sinon.stub(SugarTest.app.metadata, 'getModule', function(key) {
                 var data = {
                     Accounts: {
                         menu: {
                             header: {
                                 meta: {
-                                    acl_action: "create",
-                                    acl_module: "Accounts",
-                                    icon: "icon-plus",
-                                    label: "LNK_NEW_ACCOUNT",
-                                    route: "#Accounts/create"
+                                    acl_action: 'create',
+                                    acl_module: 'Accounts',
+                                    icon: 'icon-plus',
+                                    label: 'LNK_NEW_ACCOUNT',
+                                    route: '#Accounts/create'
                                 }
                             }
                         }
                     }
-                }
+                };
                 return data[key];
             });
             view.activeModule._moduleList = view;
             view.render();
 
             SugarTest.seedFakeServer();
-            SugarTest.server.respondWith("GET", /.*\/Accounts.*/,
-                [200, {  "Content-Type": "application/json"},
-                    JSON.stringify( {
-                            records: [
-                                new Backbone.Model({
-                                    id:'model1',
-                                    name:'model1'
-                                }),
-                                new Backbone.Model({
-                                    id:'model2',
-                                    name:'model2'
-                                })
-                            ]
-                        }
-                    )]);
+            SugarTest.server.respondWith('GET', /.*\/Accounts.*/, [
+                200,
+                {'Content-Type': 'application/json'},
+                JSON.stringify({
+                    records: [
+                        new Backbone.Model({
+                            id: 'model1',
+                            name: 'model1'
+                        }),
+                        new Backbone.Model({
+                            id: 'model2',
+                            name: 'model2'
+                        })
+                    ]
+                })
+            ]);
 
             view.populateRecents(module, cbMock);
             SugarTest.server.respond();
             expect(cbMock).toHaveBeenCalled();
-            expect(view.$el.find("[data-module='Accounts']").find('.recentContainer').find('li').length).toEqual(2);
+            expect(view.$el.find('[data-module="Accounts"]').find('.recentContainer').find('li').length).toEqual(2);
             beanCreateMock.restore();
-            SugarTest.app.router = oRouter;
             getModuleStub.restore();
         });
+
         it("Should be able to filter menu items by acl", function() {
             sinon.stub(SugarTest.app.acl, 'hasAccess', function(action,module) {
                 if (module == 'noAccess' || action =='edit') {
