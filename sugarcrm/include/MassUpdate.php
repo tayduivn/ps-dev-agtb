@@ -464,7 +464,7 @@ eoq;
                             break;
                     }
 
-                    if(isset($def['id_name'])) {
+                    if(isset($def['id_name']) && isset($fielddefs[$def['id_name']])) {
                         $fielddefs[$def['id_name']]['massupdate'] = false;
                     }
                 }
