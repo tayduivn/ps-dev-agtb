@@ -82,13 +82,15 @@ class SugarTestQuoteUtilities
 
     public static function relateQuoteToOpportunity($quoteId, $oppId)
     {
+        $db = DBManagerFactory::getInstance();
         $query = sprintf(
-            "insert into quotes_opportunities(id,opportunity_id,quote_id,date_modified,deleted) values('%s','%s','%s',NOW(),0)",
+            "insert into quotes_opportunities(id,opportunity_id,quote_id,date_modified,deleted) values('%s','%s','%s',%s,0)",
             create_guid(),
             $oppId,
-            $quoteId
+            $quoteId,
+            $db->convert(null, 'today')
         );
-        $GLOBALS['db']->query($query);
+        $db->query($query);
     }
 }
 ?>
