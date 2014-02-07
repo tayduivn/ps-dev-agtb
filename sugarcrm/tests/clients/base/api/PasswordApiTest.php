@@ -1,30 +1,16 @@
 <?php
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/**
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
 
 require_once 'clients/base/api/PasswordApi.php';
 require_once 'tests/SugarTestRestUtilities.php';
@@ -39,6 +25,10 @@ class PasswordApiTest extends Sugar_PHPUnit_Framework_TestCase
     public $unifiedSearchApi;
     public $moduleApi;
     public $serviceMock;
+    public $args = array(
+        'email' => 'test@test.com',
+        'username' => 'test'
+    );
 
     public function setUp()
     {
@@ -46,19 +36,18 @@ class PasswordApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
 
+        // Stored in SugarTestHelper:initVar and restoring in global scope each tearDown.
+        $GLOBALS['sugar_config']['passwordsetting']['SystemGeneratedPasswordON'] = true;
+
         $this->passwordApi = new PasswordApi();
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
 
-        $this->args = array(
-            'email' => 'test@test.com',
-            'username' => 'test'
-        );
         $this->passwordApi->usr = $this->getMock('User');
 
         $this->passwordApi->usr->expects($this->any())->method('retrieve_user_id')->will($this->returnValue('test_id'));
         $this->passwordApi->usr->expects($this->any())->method('retrieve')->will($this->returnValue(true));
 
-        $this->passwordApi->usr->db = $this->getMock('db');
+        $this->passwordApi->usr->db = $this->getMock(get_class($GLOBALS['db']));
         $this->passwordApi->usr->db->expects($this->any())->method('query')->will($this->returnValue(true));
         $this->passwordApi->usr->emailAddress = $this->getMock('emailAddress');
         $this->passwordApi->usr->emailAddress->expects($this->any())->method('getPrimaryAddress')->will($this->returnValue($this->args['email']));
@@ -68,7 +57,6 @@ class PasswordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->passwordApi->usr->email1 = $this->args['email'];
 
         $this->passwordApi->usr->username = $this->args['username'];
-
 
 
     }
@@ -101,68 +89,136 @@ class PasswordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($result, 1);
     }
 
-    // test that when read only is set for every field you can still retrieve
-    public function testException()
+    /**
+     * Test change password link.
+     */
+    public function testRequestPasswordAsSystemGeneratedLink()
     {
-        $this->passwordApi->usr->expects($this->any())->method('sendEmailForPassword')->will(
-            $this->returnValue(
-                array(
-                    'status' => true,
+        $this->passwordApi->usr->expects($this->any())->method('isPrimaryEmail')->will(
+            $this->returnValue(true)
+        );
+        $this->passwordApi->usr->expects($this->once())->method('sendEmailForPassword')
+            ->with(
+                $GLOBALS['sugar_config']['passwordsetting']['lostpasswordtmpl'],
+                $this->logicalAnd(
+                    $this->arrayHasKey('url'),
+                    $this->contains(true), // Link.
+                    $this->contains('') // Password.
                 )
             )
-        );
+            ->will($this->returnValue(array('status' => true)));
 
-        $this->args['email'] = 'asdf';
-        try {
-            $this->passwordApi->requestPassword($this->serviceMock, $this->args);
-        } catch (SugarApiExceptionRequestMethodFailure $expected) {
-            return;
-        }
+        $GLOBALS['sugar_config']['passwordsetting']['SystemGeneratedPasswordON'] = false;
 
-        $this->fail('An expected exception has not been raised.');
-
+        $this->passwordApi->requestPassword($this->serviceMock, $this->args);
     }
+
+
+    /**
+     * @expectedException SugarApiExceptionMissingParameter
+     */
     public function testMissingParamException()
     {
         unset($this->args['email']);
-        try {
-            $this->passwordApi->requestPassword($this->serviceMock, $this->args);
-        } catch (SugarApiExceptionMissingParameter $expected) {
-            return;
-        }
-
-        $this->fail('An expected exception has not been raised.');
-
+        $this->passwordApi->requestPassword($this->serviceMock, $this->args);
     }
+
+    /**
+     * @expectedException SugarApiExceptionMissingParameter
+     */
     public function testEmptyParam()
     {
         $this->args['email'] = '';
-        try {
-            $this->passwordApi->requestPassword($this->serviceMock, $this->args);
-        } catch (SugarApiExceptionMissingParameter $expected) {
-            return;
-        }
-
-        $this->fail('An expected exception has not been raised.');
-
+        $this->passwordApi->requestPassword($this->serviceMock, $this->args);
     }
-    public function testBadEmailException()
+
+    /**
+     * @expectedException SugarApiExceptionRequestMethodFailure
+     */
+    public function testForgotPasswordException()
+    {
+        $this->passwordApi->requestPassword($this->serviceMock, $this->args);
+    }
+
+    /**
+     * @dataProvider providerEmailData
+     * @expectedException SugarApiExceptionRequestMethodFailure
+     */
+    public function testRequestException($data)
     {
         $this->passwordApi->usr->expects($this->any())->method('sendEmailForPassword')->will(
             $this->returnValue(
                 array(
-                    'status' => false,
-                    'message' => 'fail'
+                    'status' => $data['status'],
+                    'message' => $data['message'],
                 )
             )
         );
-        try {
-            $this->passwordApi->requestPassword($this->serviceMock, $this->args);
-        } catch (SugarApiExceptionRequestMethodFailure $expected) {
-            return;
-        }
+        $this->passwordApi->usr->expects($this->any())->method('isPrimaryEmail')->will(
+            $this->returnValue($data['primary'])
+        );
+        $this->passwordApi->usr->emailAddress = $this->getMock('emailAddress');
+        $this->passwordApi->usr->emailAddress->expects($this->any())->method('getPrimaryAddress')->will(
+            $this->returnValue($data['email'])
+        );
+        $this->passwordApi->usr->portal_only = $data['portalOnly'];
 
-        $this->fail('An expected exception has not been raised.');
+        $this->passwordApi->requestPassword($this->serviceMock, $this->args);
+    }
 
+    public function providerEmailData()
+    {
+        return array(
+            array(
+                array(
+                    // Not primary email.
+                    'primary' => false,
+                    'status' => true,
+                    'message' => 'fail',
+                    'email' => $this->args['email'],
+                    'portalOnly' => false,
+                ),
+            ),
+            array(
+                array(
+                    // Status is false. Message exists.
+                    'primary' => true,
+                    'status' => false,
+                    'message' => 'fail',
+                    'email' => $this->args['email'],
+                    'portalOnly' => false,
+                ),
+            ),
+            array(
+                array(
+                    // Status is false. Message empty.
+                    'primary' => true,
+                    'status' => false,
+                    'message' => '',
+                    'email' => $this->args['email'],
+                    'portalOnly' => false,
+                ),
+            ),
+            array(
+                array(
+                    // Portal only user.
+                    'primary' => true,
+                    'status' => true,
+                    'message' => 'fail',
+                    'email' => $this->args['email'],
+                    'portalOnly' => true,
+                ),
+            ),
+            array(
+                array(
+                    // Wrong Email.
+                    'primary' => true,
+                    'status' => true,
+                    'message' => 'fail',
+                    'email' => 'bad',
+                    'portalOnly' => false,
+                ),
+            ),
+        );
     }
 }
