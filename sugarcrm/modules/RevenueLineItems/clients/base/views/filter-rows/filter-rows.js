@@ -18,7 +18,7 @@
      * {@inheritDoc}
      */
     getFilterableFields: function(moduleName) {
-        var fields = this._super("getFilterableFields", [moduleName]);
+        var fields = this._getFilterableFields(moduleName);
         if (app.metadata.getModule("Forecasts", "config").is_setup != 1) {
             delete fields['commit_stage'];
         } else {

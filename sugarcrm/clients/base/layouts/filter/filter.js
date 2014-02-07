@@ -34,7 +34,7 @@
      */
     className: 'filter-view search',
 
-    plugins: ['QuickSearchFilter'],
+    plugins: ['QuickSearchFilter', 'Filter'],
 
     events: {
         'click .add-on.icon-remove': function() { this.trigger('filter:clear:quicksearch'); }
@@ -278,8 +278,9 @@
         if (editState) {
             filter = app.data.createBean('Filters');
             filter.set(editState);
+
             // Open the filter form with last edit state
-            this.trigger("filter:create:open", filter);
+            this.trigger("filter:create:open", this.filters.get(filter.id) || filter);
             if (!filter.id ||
                 (this.filters.get(filter.id) && !_.isEqual(editState, this.filters.get(filter.id).toJSON()))) {
                 // Validate so `Save` button is available
@@ -294,6 +295,7 @@
         _.each(ctxList, function(ctx) {
             var filterDef = filter.get('filter_definition');
             var orig = ctx.get('collection').origFilterDef;
+
             ctx.get('collection').origFilterDef = filterDef;  //Set new filter def on each collection
             if (_.isUndefined(orig) || !_.isEqual(orig, filterDef)) {
                 clear = true;
@@ -324,11 +326,15 @@
             massCollection.reset([],{silent: true});
         }
         var self = this,
-            ctxList = this.getRelevantContextList();
+            fieldList = this._getFilterableFields(this.layout.currentModule),
+            ctxList = this.getRelevantContextList(),
+            removeInvalidFilterDef = function (def) {
+                return _.keys(fieldList).length === 0 || fieldList[_.keys(def)[0]];
+            };
         _.each(ctxList, function(ctx) {
             var ctxCollection = ctx.get('collection'),
-                origFilterDef = dynamicFilterDef || ctxCollection.origFilterDef || [],
-                filterDef = self.buildFilterDef(origFilterDef, query, ctx),
+                origFilterDef = _.filter(dynamicFilterDef || ctxCollection.origFilterDef || [], removeInvalidFilterDef),
+                filterDef = _.filter(self.buildFilterDef(origFilterDef, query, ctx), removeInvalidFilterDef),
                 options = {
                     //Show alerts for this request
                     showAlerts: true,
@@ -530,6 +536,7 @@
             this.clearLastFilter(moduleName, this.layoutType);
             this.setLastFilter(moduleName, this.layoutType, _.first(possibleFilters) || 'all_records');
         }
+
         this.layout.trigger('filterpanel:change:module', moduleName);
         this.trigger('filter:render:filter');
         this.trigger('filter:change:filter', this.getLastFilter(moduleName, this.layoutType), true);
