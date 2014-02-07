@@ -79,7 +79,14 @@ class ViewModulefields extends SugarView
             foreach($dictionary[$objectName]['fields'] as $def) {
                 if ($this->isValidStudioField($def))
                 {
-                    $def['label'] = translate($def['vname'], $module_name);
+                    if (!empty($def['vname'])) {
+                        $def['label'] = translate($def['vname'], $module_name);
+                    } elseif (!empty($def['label'])) {
+                        $def['label'] = translate($def['label'], $module_name);
+                    } else {
+                        $def['label'] = $def['name'];
+                    }
+
 					//Custom relate fields will have a non-db source, but custom_module set
                 	if(isset($def['source']) && $def['source'] == 'custom_fields' || isset($def['custom_module'])) {
                        $f[$mod_strings['LBL_HCUSTOM']][$def['name']] = $def;
