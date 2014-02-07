@@ -192,7 +192,11 @@
                     module: app.lang.getAppListStrings('moduleList')[moduleName]
                 }));
 
-                this._reinitializeFilterPanel(moduleName, null, 'all_records');
+                // Re-initialize the filterpanel with the new module.
+                this.dashModel.set('module', moduleName),
+                this.dashModel.set('filter_id', 'assigned_to_me');
+                this.layout.trigger('dashlet:filter:reinitialize');
+
                 this._updateDisplayColumns();
                 this.updateLinkedFields(moduleName);
             }, this);
@@ -204,11 +208,6 @@
                     this.setLinkedFieldVisibility('0');
                 }
             }, this);
-            this.listenTo(this.layout, 'render', function() {
-                if (this.meta.config) {
-                    this._reinitializeFilterPanel(this.context.get('module'), null, this.settings.get('filterId'));
-                }
-            });
         }
         this._initializeSettings();
 
@@ -238,26 +237,36 @@
         // the pivot point for the various dashlet paths
         if (this.meta.config) {
             this._configureDashlet();
+            this.listenTo(this.layout, 'init', this._addFilterComponent);
+            this.listenTo(this.layout.context, 'filter:add', this.updateDashletFilterAndSave);
+            this.layout.before('dashletconfig:save', function() {
+                this.saveDashletFilter();
+                // NOTE: This prevents the drawer from closing prematurely.
+                return false;
+            }, null, this);
+
         } else if (this.moduleIsAvailable) {
-            var filterId = this.settings.get('filterId');
-            if (filterId) {
-                var filterDef = this._getFilterDefFromMeta(filterId);
-                if (filterDef) {
-                    this._displayDashlet(filterDef);
-                } else {
-                    this._fetchCustomFilter(filterId, {
-                        success: _.bind(function(data) {
-                            var filterDef = data.filter_definition;
-                            this._displayDashlet(filterDef);
-                        }, this),
-                        error: _.bind(function(err) {
-                            this._displayDashlet();
-                        }, this)
-                    });
-                }
-            } else {
+            var filterId = this.settings.get('filter_id');
+            if (!filterId || this.meta.preview) {
                 this._displayDashlet();
+                return;
             }
+
+            var filterDef = this._getFilterDefFromMeta(filterId);
+            if (!filterDef) {
+                this._fetchCustomFilter(filterId, {
+                    success: _.bind(function(model) {
+                        var filterDef = model.get('filter_definition');
+                        this._displayDashlet(filterDef);
+                    }, this),
+                    error: _.bind(function(err) {
+                        this._displayDashlet();
+                    }, this)
+                });
+                return;
+            }
+
+            this._displayDashlet(filterDef);
         }
         this.metaFields = this.meta.panels && _.first(this.meta.panels).fields || [];
     },
@@ -283,21 +292,59 @@
     },
 
     /**
-     * Trigger's a reinitialization event on the filterpanel, and sets the
-     * current module, link module, and filter ID on the filter layout.
+     * This function is invoked by the `dashletconfig:save` event. If the dashlet
+     * we are saving is a dashable list, it initiates the save process for a new
+     * filter on the appropriate module's list view, otherwise, it takes the
+     * `currentFilterId` stored on the context, and saves it on the dashlet.
      *
-     * @param {String} module The current module.
-     * @param {String} link The link module.
-     * @param {String} filterId The filter ID to set on the filterpanel.
-     * @private
+     * @param {Bean} model The dashlet model.
      */
-    _reinitializeFilterPanel: function(module, link, filterId) {
-        var filterPanelLayout = this.layout.getComponent('filterpanel'),
-            filterLayout = filterPanelLayout ? filterPanelLayout.getComponent('filter') : null;
+    saveDashletFilter: function() {
+        // Accessing the dashableconfiguration context.
+        var context = this.layout.context;
 
-        if (filterLayout) {
-            filterLayout.trigger('filter:get', module, link, filterId);
+        if (context.editingFilter) {
+            // We are editing/creating a new filter
+            if (!context.editingFilter.get('name')) {
+                context.editingFilter.set('name', app.lang.get('LBL_DASHLET') +
+                    ': ' + this.settings.get('label'));
+            }
+            // Triggers the save on `filter-rows` which then triggers
+            // `filter:add` which then calls `updateDashletFilterAndSave`
+            context.trigger('filter:create:save');
+        } else {
+            // We are saving a dashlet with a predefined filter
+            var filterId = context.get('currentFilterId'),
+                obj = {id: filterId};
+            this.updateDashletFilterAndSave(obj);
         }
+    },
+
+    /**
+     * This function is invoked by the `filter:add` event. It saves the
+     * filter ID on the dashlet model prior to saving it, for later reference.
+     *
+     * @param {Bean} filterModel The saved filter model.
+     */
+    updateDashletFilterAndSave: function(filterModel) {
+        // We need to save the filter ID on the dashlet model before saving
+        // the dashlet.
+        var id = filterModel.id || filterModel.get('id');
+        this.settings.set('filter_id', id);
+
+        var dashletModel = this.layout.context.get('model'),
+            componentType = dashletModel.get('componentType') || 'view';
+
+        // Adding a new dashlet requires componentType to be set on the model.
+        if (!dashletModel.get('componentType')) {
+            dashletModel.set('componentType', componentType);
+        }
+
+        app.drawer.close(dashletModel);
+        // The filter collection is not shared amongst views and therefore
+        // changes to this collection on different contexts (list views and
+        // dashlets) need to be kept in sync.
+        app.events.trigger('dashlet:filter:save', dashletModel.get('module'));
     },
 
     /**
@@ -457,11 +504,26 @@
     },
 
     /**
-     * Acquires pre-defined filters that may exist in metadata, for a given
+     * This function adds the `dashablelist-filter` component to the layout
+     * (dashletconfiguration), if the component doesn't already exist.
+     */
+    _addFilterComponent: function() {
+        var filterComponent = this.layout.getComponent('dashablelist-filter');
+        if (filterComponent) {
+            return;
+        }
+
+        this.layout._addComponentsFromDef([{
+            layout: 'dashablelist-filter'
+        }]);
+    },
+
+    /**
+     * Acquires predefined filters that may exist in metadata, for a given
      * module.
      *
      * @param {String} module The module to fetch predefined filters from.
-     * @return {Array} An array of pre-defined filter objects.
+     * @return {Array} The list of predefined filter objects.
      * @private
      */
     _getPreDefinedFilters: function(module) {
@@ -481,17 +543,18 @@
      * @private
      */
     _getFilterDefFromMeta: function(id) {
-        var module = this.settings.get('module');
+        if (!id) {
+            return;
+        }
 
-        if (id) {
-            var filtersFromMeta = this._getPreDefinedFilters(module),
-                filter = _.find(filtersFromMeta, function(filter) {
-                    return filter.id === id;
-                }, this);
+        var module = this.settings.get('module'),
+            filtersFromMeta = this._getPreDefinedFilters(module),
+            filter = _.find(filtersFromMeta, function(filter) {
+                return filter.id === id;
+            }, this);
 
-            if (filter) {
-                return filter.filter_definition;
-            }
+        if (filter) {
+            return filter.filter_definition;
         }
     },
 
@@ -503,13 +566,8 @@
      * @private
      */
     _fetchCustomFilter: function(id, callbacks) {
-        var self = this,
-            module = this.settings.get('module'),
-            url = app.api.buildURL('Filters', 'read', {id: id});
-
-        if (id && callbacks) {
-            app.api.call('read', url, null, callbacks);
-        }
+        var filterModel = app.data.createBean('Filters', {id: id});
+        filterModel.fetch(callbacks);
     },
 
     /**
@@ -576,7 +634,7 @@
     /**
      * Perform any necessary setup before displaying the dashlet.
      *
-     * @param {Array} filterDef The filter definition array.
+     * @param {Array} [filterDef] The filter definition array.
      * @private
      */
     _displayDashlet: function(filterDef) {

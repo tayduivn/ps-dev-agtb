@@ -30,7 +30,7 @@
     <div class="controls span6">
         <input type="text" class="inherit-width" placeholder="{{str 'LBL_FILTER_NEW_NAME' 'Filters'}}…">
     </div>
-    {{#unless context.attributes.hideFilterActions}}
+    {{#if showActions}}
     <div class="span6">
         <div class="pull-right">
             <a class="btn btn-link btn-invisible reset_button" track="click:filter-reset">{{str "LBL_RESET"}}</a>
@@ -39,5 +39,5 @@
             <a class="btn btn-primary disabled save_button" track="click:filter-save">{{str "LBL_SAVE_BUTTON_LABEL"}}</a>
         </div>
     </div>
-    {{/unless}}
+    {{/if}}
 </div>

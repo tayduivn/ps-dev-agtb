@@ -36,6 +36,12 @@
     saveState: false,
 
     /**
+     * @property {Boolean} showActions Whether or not to display
+     * the filter action buttons.
+     */
+    showActions: true,
+
+    /**
      * @{inheritDoc}
      */
     initialize: function(opts) {
@@ -48,6 +54,19 @@
 
         this.listenTo(this.layout, 'filter:toggle:savestate', this.toggleSave);
         this.listenTo(this.layout, 'filter:set:name', this.setFilterName);
+        this.listenTo(this.context, 'change:filterOptions', this.render);
+        this.before('render', this.setShowActions, null, this);
+    },
+
+    /**
+     * This function sets the `showActions` object on the controller.
+     * `true` when `show_actions` is set to `true` on the `filterOptions`
+     * object on the context (originating from filterpanel metadata),
+     * `false` otherwise.
+     */
+    setShowActions: function() {
+        var filterOptions = this.context.get('filterOptions') || {};
+        this.showActions = !!filterOptions.show_actions;
     },
 
     /**
@@ -139,8 +158,8 @@
      * Trigger `filter:create:save` to save the created filter.
      */
     triggerSave: function() {
-        var filterName = this.context.editingFilter.get('name') || this.getFilterName();
-        this.layout.trigger('filter:create:save', filterName);
+        var filterName = this.getFilterName();
+        this.context.trigger('filter:create:save', filterName);
     },
 
     /**

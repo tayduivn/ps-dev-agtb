@@ -32,41 +32,6 @@ $viewdefs['base']['view']['dashablelist'] = array(
             ),
         ),
     ),
-    'filter_panel' => array(
-        'layout' => array(
-            'type' =>'filterpanel',
-            'meta' => array(
-                'components' => array(
-                    array(
-                        'layout' => array(
-                            'meta' => array(
-                                'components' => array(
-                                    array(
-                                        'view' => 'filter-filter-dropdown'
-                                    ),
-                                ),
-                                'last_state' => array(
-                                    'id' => 'filter',
-                                ),
-                            ),
-                            'span' => 12,
-                            'type' =>'filter',
-                        ),
-                        'targetEl' => '.filter',
-                        'position' => 'prepend'
-                    ),
-                    array(
-                        'view' => 'filter-rows',
-                        'targetEl' => '.filter-options'
-                    ),
-                    array(
-                        'view' => 'filter-actions',
-                        "targetEl" => '.filter-options'
-                    ),
-                ),
-            ),
-        ),
-    ),
     'panels'   => array(
         array(
             'name'         => 'dashlet_settings',

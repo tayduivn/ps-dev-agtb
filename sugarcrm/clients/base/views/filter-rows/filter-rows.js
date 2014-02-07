@@ -111,7 +111,7 @@
     /**
      * Save the filter.
      *
-     * @param {String} name The name of the filter. (optional)
+     * @param {String} [name] The name of the filter.
      */
     saveFilter: function(name) {
         var self = this,
@@ -154,7 +154,7 @@
      */
     deleteFilter: function() {
         var self = this,
-            name = this.layout.editingFilter.get('name'),
+            name = this.context.editingFilter.get('name'),
             message = app.lang.get('TPL_DELETE_FILTER_SUCCESS', this.moduleName, {name: name});
 
         this.context.editingFilter.destroy({

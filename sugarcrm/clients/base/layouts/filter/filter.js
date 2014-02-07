@@ -15,34 +15,6 @@
      * Layout for filtering a collection.
      * Composed of a module dropdown(optional), a filter dropdown and an input
      *
-     * Certain options can be set on the filterpanel context:
-     *     - `applyFilter`: this will determine whether or not to apply the
-     *       filter while completing filter rows. This is used mainly because
-     *       getRelevantContextList may return the global context and will
-     *       filter its collection automatically, and sometimes this is not
-     *       desired (e.g. a drawer layout with a filterpanel embedded).
-     *     - `saveLastFilter`: this will determine whether or not to save
-     *       properties pertaining to filters in localstorage. This is needed
-     *       for certain views that have filterpanels, do not require
-     *       stickiness and do not want to affect already-stored values in
-     *       localstorage (e.g. the filterpanel layout in dashboardconfiguration
-     *       shouldn't affect the stickiness of filters on record/list views,
-     *       so it should be set to false).
-     *     - `hideFilterActions`: this will determine whether or not the
-     *       `delete`, `reset`, and `cancel` action buttons will be rendered on
-     *       the `filter-actions` view.
-     *
-     * Usage example:
-     *
-     * <pre><code>
-     * var filterOptions = {
-     *     'applyFilter': false,
-     *     'saveLastFilter': false,
-     *     'hideFilterActions': true
-     * };
-     * this.context.set(filterOptions);
-     * </code></pre>
-     *
      * @class BaseFilterLayout
      * @extends Layout
      */
@@ -63,7 +35,7 @@
         filterLayout.loadedModules = filterLayout.loadedModules || {};
         app.view.Layout.prototype.initialize.call(this, opts);
 
-        this.layoutType = this.context.get('layout') || this.context.get('layoutName') || app.controller.context.get('layout');
+        this.layoutType = app.utils.deepCopy(this.options.meta.layoutType) || this.context.get('layout') || this.context.get('layoutName') || app.controller.context.get('layout');
 
         this.aclToCheck = (this.layoutType === 'record')? 'view' : 'list';
         this.filters = app.data.createBeanCollection('Filters');
@@ -138,18 +110,40 @@
         this.layout.on('filter:remove', this.removeFilter, this);
 
         this.layout.on('filter:reinitialize', function() {
-            this.initializeFilterState(this.layout.currentModule, this.layout.currentLink);
+            var currentFilter = this.context.get('currentFilterId');
+            this.initializeFilterState(this.layout.currentModule, this.layout.currentLink, currentFilter);
         }, this);
+
+        this.listenTo(app.events, 'dashlet:filter:save', this.refreshDropdown);
     },
+
+    /**
+     * This function refreshes the list of filters in the filter dropdown, and
+     * is invoked when a filter is saved on a dashlet (`dashlet:filter:save`).
+     * It triggers a `filter:reinitialize` event and resets the cached
+     * module in `loadedModules` on the filter layout if the dashlet module
+     * matches the `currentModule` on the filter layout.
+     *
+     * @param {String} module
+     */
+    refreshDropdown: function(module) {
+        if (module === this.layout.currentModule) {
+            var filterLayout = app.view._getController({type:'layout', name:'filter'});
+            filterLayout.loadedModules[module] = false;
+            this.layout.trigger('filter:reinitialize');
+        }
+    },
+
     /**
      * handles filter removal
      * @param model
      */
     removeFilter: function(model) {
         this.filters.remove(model);
+        this.context.set('currentFilterId', null);
         this.clearFilterEditState();
         this.clearLastFilter(this.layout.currentModule, this.layoutType);
-        app.user.lastState.set(app.user.lastState.key("saved-" + this.layout.currentModule, this), this.filters.toJSON());
+        app.user.lastState.set(app.user.lastState.key('saved-' + this.layout.currentModule, this), this.filters.toJSON());
         this.layout.trigger('filter:reinitialize');
     },
     /**
@@ -161,8 +155,9 @@
      * @returns {*}
      */
     setLastFilter: function(filterModule, layoutName, value) {
-        if (this.context.get('saveLastFilter') !== false) {
-            var key = app.user.lastState.key("last-" + filterModule + "-" + layoutName, this);
+        var filterOptions = this.context.get('filterOptions') || {};
+        if (filterOptions.stickiness !== false) {
+            var key = app.user.lastState.key('last-' + filterModule + '-' + layoutName, this);
             return app.user.lastState.set(key, value);
         }
     },
@@ -174,8 +169,9 @@
      * @returns {*}
      */
     getLastFilter: function(filterModule, layoutName) {
-        if (this.context.get('saveLastFilter') !== false) {
-            var key = app.user.lastState.key("last-" + filterModule + "-" + layoutName, this),
+        var filterOptions = this.context.get('filterOptions') || {};
+        if (filterOptions.stickiness !== false) {
+            var key = app.user.lastState.key('last-' + filterModule + '-' + layoutName, this),
             value = app.user.lastState.get(key);
             this.context.set('currentFilterId', value);
             return value;
@@ -189,8 +185,9 @@
      * @returns {*}
      */
     clearLastFilter:function(filterModule, layoutName) {
-        if (this.context.get('saveLastFilter') !== false) {
-            var key = app.user.lastState.key("last-" + filterModule + "-" + layoutName, this);
+        var filterOptions = this.context.get('filterOptions') || {};
+        if (filterOptions.stickiness !== false) {
+            var key = app.user.lastState.key('last-' + filterModule + '-' + layoutName, this);
             return app.user.lastState.remove(key);
         }
     },
@@ -201,8 +198,9 @@
      * @param {Object} filter
      */
     retrieveFilterEditState: function() {
-        if (this.context.get('saveLastFilter') !== false) {
-            var key = app.user.lastState.key("edit-" + this.layout.currentModule + "-" + this.layoutType, this);
+        var filterOptions = this.context.get('filterOptions') || {};
+        if (filterOptions.stickiness !== false) {
+            var key = app.user.lastState.key('edit-' + this.layout.currentModule + '-' + this.layoutType, this);
             return app.user.lastState.get(key);
         }
     },
@@ -213,8 +211,9 @@
      * @param {Object} filter
      */
     saveFilterEditState: function(filter) {
-        if (this.context.get('saveLastFilter') !== false) {
-            var key = app.user.lastState.key("edit-" + this.layout.currentModule + "-" + this.layoutType, this);
+        var filterOptions = this.context.get('filterOptions') || {};
+        if (filterOptions.stickiness !== false) {
+            var key = app.user.lastState.key('edit-' + this.layout.currentModule + '-' + this.layoutType, this);
             app.user.lastState.set(key, filter);
         }
     },
@@ -223,8 +222,9 @@
      * Removes the edit state from the cache
      */
     clearFilterEditState: function() {
-        if (this.context.get('saveLastFilter') !== false) {
-            var key = app.user.lastState.key("edit-" + this.layout.currentModule + "-" + this.layoutType, this);
+        var filterOptions = this.context.get('filterOptions') || {};
+        if (filterOptions.stickiness !== false) {
+            var key = app.user.lastState.key('edit-' + this.layout.currentModule + '-' + this.layoutType, this);
             app.user.lastState.remove(key);
         }
     },
@@ -236,7 +236,7 @@
     addFilter: function(model){
         var id = model.get('id');
         this.filters.add(model, { merge: true });
-        app.user.lastState.set(app.user.lastState.key("saved-" + this.layout.currentModule, this), this.filters.toJSON());
+        app.user.lastState.set(app.user.lastState.key('saved-' + this.layout.currentModule, this), this.filters.toJSON());
         this.setLastFilter(this.layout.currentModule, this.layoutType, id);
         this.context.set('currentFilterId', id);
         this.clearFilterEditState();
@@ -323,12 +323,12 @@
 
         this.context.set('currentFilterId', filter.get('id'));
 
-        if (filter && filter.get('filter_template') &&
+        // If the user selects a filter template, open the filterpanel
+        // to indicate it is ready for further editing.
+        if (filter.get('filter_template') &&
             JSON.stringify(filter.get('filter_definition')) !== JSON.stringify(filter.get('filter_template'))
         ) {
             this.trigger('filter:create:open', filter);
-        } else if (!editState) {
-            this.trigger('filter:create:close');
         }
 
         var ctxList = this.getRelevantContextList();
@@ -362,7 +362,8 @@
         // TODO: getRelevantContextList needs to be refactored to handle filterpanels in drawer layouts,
         // as it will return the global context instead of filtering a list view within the drawer context.
         // As a result, this flag is needed to prevent filtering on the global context.
-        if (this.context.get('applyFilter') === false) {
+        var filterOptions = this.context.get('filterOptions') || {};
+        if (filterOptions.auto_apply === false) {
             return;
         }
 
@@ -469,8 +470,9 @@
 
     /**
      * Reset the filter to the previous state
-     * @param {String} moduleName
-     * @param {String} linkName
+     * @param {String} moduleName The module name.
+     * @param {String} linkName The link module name.
+     * @param {String} lastFilter The filter ID to initialize with.
      */
     initializeFilterState: function(moduleName, linkName, lastFilter) {
         moduleName = moduleName || this.module;
@@ -479,7 +481,7 @@
         if (this.layoutType === 'record' && !this.showingActivities) {
             linkName = app.user.lastState.get(app.user.lastState.key("subpanels-last", this)) || linkName;
             filterData = {
-                link: lastFilter || 'all_modules',
+                link: linkName || 'all_modules',
                 filter: lastFilter || 'all_records'
             };
         } else {
