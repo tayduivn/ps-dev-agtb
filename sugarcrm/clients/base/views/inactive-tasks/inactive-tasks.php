@@ -156,4 +156,8 @@ $viewdefs['base']['view']['inactive-tasks'] = array(
             ),
         ),
     ),
+    'visibility_labels' => array(
+        'user' => 'LBL_INACTIVE_TASKS_DASHLET_USER_BUTTON_LABEL',
+        'group' => 'LBL_INACTIVE_TASKS_DASHLET_GROUP_BUTTON_LABEL',
+    ),
 );
