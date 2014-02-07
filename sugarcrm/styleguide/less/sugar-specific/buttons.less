@@ -81,6 +81,14 @@
       color: @grayLight;
     }
   }
+  //a darker version of btn-invisible
+  &.btn-dark {
+    background-color: darken(@grayLighter, 5%);
+    > [class^="icon-"],
+    > [class*=" icon-"] {
+      color: darken(@grayLight, 10%);
+    }
+  }
 }
 
 // Buttons styled as links

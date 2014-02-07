@@ -34,6 +34,7 @@
     addToListFieldName: 'prospect_lists',
     listModule: 'ProspectLists',
     massUpdateViewName: 'massaddtolist-progress',
+    className: 'extend',
 
     initialize: function(options) {
         var additionalEvents = {};

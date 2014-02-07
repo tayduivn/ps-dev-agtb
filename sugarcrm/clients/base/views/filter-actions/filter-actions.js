@@ -41,7 +41,6 @@
         "click a.delete_button:not(.hide)": "triggerDelete"
     },
 
-    tagName: "article",
     className: "filter-header",
     /**
      * row disabled state
