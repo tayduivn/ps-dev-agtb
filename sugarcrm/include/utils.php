@@ -494,6 +494,7 @@ function get_sugar_config_defaults()
             'Accounts' => false,
             'Opportunities' => true
         ),
+        'enable_mobile_redirect' => true,
     );
 
     if (empty($locale)) {
