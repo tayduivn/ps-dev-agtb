@@ -152,7 +152,16 @@ class SugarQuery
      */
     public function from(SugarBean $bean, $options = array())
     {
+        global $db;
         $alias = (isset($options['alias'])) ? $options['alias'] : false;
+
+        if (!empty($alias)) {
+            $newAlias = $GLOBALS['db']->getValidDBName($alias, false, 'alias');
+            if (strtolower($alias) != $newAlias) {
+                throw new SugarQueryException("From alias is more than the max allowed length for an alias");
+            }
+        }
+
         $team_security = (isset($options['team_security'])) ? $options['team_security'] : true;
         $add_deleted = (isset($options['add_deleted'])) ? $options['add_deleted'] : true;
         $this->from = $bean;

@@ -37,6 +37,14 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
         if (empty($this->alias) && !empty($this->def['name'])) {
             $this->alias = $this->def['name'];
         }
+        
+        if (!empty($this->alias)) {
+            $newAlias = $GLOBALS['db']->getValidDBName($this->alias, false, 'alias');
+            if (strtolower($this->alias) != $newAlias) {
+                throw new SugarQueryException("Alias is more than the max allowed length for an alias");
+            }
+        }
+
         if ($this->field == '*') {
             // remove *
             $this->moduleName = empty($this->moduleName) ? $this->query->getFromBean()->module_name : $this->moduleName;
