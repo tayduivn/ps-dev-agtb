@@ -27,12 +27,14 @@
     /**
      * @property {String} The last state key that contains the full list of
      * fields displayable in list views of this module.
+     * @protected
      */
     _allListViewsFieldListKey: null,
 
     /**
      * @property {String} The last state key that contains the visible state of
      * the fields and their position in the table.
+     * @protected
      */
     _thisListViewFieldListKey: null,
 
@@ -199,10 +201,9 @@
      * Create an object that contains 2 keys. Each key is associated to an array
      * that contains the field metadata.
      * List of keys:
-     * - `visible`  lists fields user wants to see,
-     * - `all`      lists all the fields, with a `selected` attribute that
-     *                    indicates their visible state (used to populate the
-     *                    ellipsis dropdown).
+     * - `visible` lists fields user wants to see,
+     * - `all` lists all the fields, with a `selected` attribute that indicates
+     * their visible state (used to populate the ellipsis dropdown).
      *
      * @return {Object} The catalog object.
      * @private
@@ -398,8 +399,8 @@
      * Append the list of fields defined in the metadata that are missing in the
      * field storage cache entry.
      *
-     * @return {Array} The list of all the fields that are displayable in
-     *                  list views of this module.
+     * @return {Array} The list of all the fields that are displayable in listå
+     * views of this module.
      * @private
      */
     _appendFieldsToAllListViewsFieldList: function() {

@@ -17,10 +17,10 @@
             /**
              * Move an item to a specific index.
              *
-             * @param {Array} initialArray  The initial array.
-             * @param {Integer} fromIndex  The index of the item to move.
+             * @param {Array} initialArray The initial array.
+             * @param {Integer} fromIndex The index of the item to move.
              * @param {Integer} toIndex The index before which the item is
-             *                              moved.
+             * moved.
              * @return {Array} The array reordered.
              */
             moveIndex: function(array, fromIndex, toIndex) {

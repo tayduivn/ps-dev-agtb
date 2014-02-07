@@ -45,7 +45,7 @@
             _makeColumnReorderable: _.debounce(function() {
 
                 if (!this.$('table').hasClass('reorderable-columns')) {
-                    app.logger.error('ReorderablePlugins expects the table to have .draggable-columns class ' +
+                    app.logger.error('ReorderableColumns plugin expects the table to have .draggable-columns class ' +
                         'in order to work.');
                     return;
                 }
@@ -144,7 +144,7 @@
              *
              * @param {jQuery.Element} $draggedItem The element being dragged.
              * @param {jQuery.Element} $droppedInItem The placeholder where the
-             *                         element is dropped.
+             * element is dropped.
              * @return {Array} The full list freshly ordered.
              * @private
              */
@@ -172,7 +172,7 @@
              * On render makes the list view columns reorderable.
              */
             onAttach: function(component, plugin) {
-                this.on('render', this._makeColumnReorderable, null, this);
+                this.on('render', this._makeColumnReorderable, this);
             }
         });
     });

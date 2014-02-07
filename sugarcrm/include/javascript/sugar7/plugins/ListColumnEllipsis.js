@@ -70,7 +70,7 @@
                     var f = this._fields._byId[column];
                     return f && f.selected;
                 }
-                return false;//so we don't return object
+                return false;
             },
             /**
              * Reopens fields dropdown and stopPropagation to keep fields dropdown opened
