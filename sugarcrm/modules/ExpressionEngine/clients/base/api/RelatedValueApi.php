@@ -61,7 +61,6 @@ class RelatedValueApi extends SugarApi
         }
         $fields = json_decode(html_entity_decode($args['fields']), true);
         $focus = $this->loadBean($api, $args);
-        $id = $focus->id;
         $ret = array();
         foreach ($fields as $rfDef) {
             $link = $rfDef['link'];
@@ -85,7 +84,7 @@ class RelatedValueApi extends SugarApi
                     $ret[$link]['related'][$rfDef['relate']] = "";
 
                     //If we have neither a focus id nor a related record id, we can't retrieve anything
-                    if (!empty($id) || !empty($rfDef['relId'])) {
+                    if (!empty($rfDef['relId'])) {
                         $relBean = null;
                         if (empty($rfDef['relId']) || empty($rfDef['relModule'])) {
                             //If the relationship is invalid, just move onto another field
@@ -118,7 +117,7 @@ class RelatedValueApi extends SugarApi
                     }
                     break;
                 case "count":
-                    if (!empty($id) && $focus->load_relationship($link)) {
+                    if ($focus->load_relationship($link)) {
                         $ret[$link][$type] = count($focus->$link->get());
                     } else {
                         $ret[$link][$type] = 0;

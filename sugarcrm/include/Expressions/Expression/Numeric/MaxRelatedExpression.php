@@ -61,7 +61,7 @@ class MaxRelatedExpression extends NumericExpression
 
 			if (typeof(linkField) == "string" && linkField != "")
 			{
-                return SUGAR.forms.AssignmentHandler.getRelatedField(linkField, 'rollupMax', relField);
+                return this.context.getRelatedField(linkField, 'rollupMax', relField);
 			} else if (typeof(rel) == "object") {
 			    //Assume we have a Link object that we can delve into.
 			    //This is mostly used for n level dives through relationships.
