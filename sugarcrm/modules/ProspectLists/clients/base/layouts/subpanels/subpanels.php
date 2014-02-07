@@ -32,6 +32,7 @@ $viewdefs['ProspectLists']['base']['layout']['subpanels'] = array (
     array (
       'layout' => 'subpanel',
       'label' => 'LBL_PROSPECTS_SUBPANEL_TITLE',
+      'override_paneltop_view' => 'panel-top-for-prospectlists',
       'context' => array (
         'link' => 'prospects',
       ),
@@ -39,6 +40,7 @@ $viewdefs['ProspectLists']['base']['layout']['subpanels'] = array (
     array (
       'layout' => 'subpanel',
       'label' => 'LBL_CONTACTS_SUBPANEL_TITLE',
+      'override_paneltop_view' => 'panel-top-for-prospectlists',
       'context' => array (
         'link' => 'contacts',
       ),
@@ -46,6 +48,7 @@ $viewdefs['ProspectLists']['base']['layout']['subpanels'] = array (
     array (
       'layout' => 'subpanel',
       'label' => 'LBL_LEADS_SUBPANEL_TITLE',
+      'override_paneltop_view' => 'panel-top-for-prospectlists',
       'context' => array (
         'link' => 'leads',
       ),
@@ -53,6 +56,7 @@ $viewdefs['ProspectLists']['base']['layout']['subpanels'] = array (
     array (
       'layout' => 'subpanel',
       'label' => 'LBL_USERS_SUBPANEL_TITLE',
+      'override_paneltop_view' => 'panel-top-for-prospectlists',
       'context' => array (
         'link' => 'users',
       ),
@@ -61,6 +65,7 @@ $viewdefs['ProspectLists']['base']['layout']['subpanels'] = array (
       'layout' => 'subpanel',
       'label' => 'LBL_ACCOUNTS_SUBPANEL_TITLE',
       'override_subpanel_list_view' => 'subpanel-for-prospectlists',
+      'override_paneltop_view' => 'panel-top-for-prospectlists',
       'context' => array (
         'link' => 'accounts',
       ),

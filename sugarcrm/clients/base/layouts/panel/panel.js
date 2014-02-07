@@ -88,11 +88,11 @@
         }, this);
     },
     /**
-     * Show or hide component except `panel-top`.
+     * Show or hide component except `panel-top`(subpanel-header) component.
      * @param {Component} component
      */
     _hideComponent: function(component, show) {
-        if (component.name != "panel-top") {
+        if (!component.$el.hasClass('subpanel-header')) {
             if (show) {
                 component.show();
             } else {

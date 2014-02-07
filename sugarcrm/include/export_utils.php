@@ -177,8 +177,8 @@ function exportFromApi($args, $sample=false) {
 
     $type = clean_string($args['module']);
 
-    require_once('clients/base/api/RecordListApi.php');
-    $recordList = RecordListApi::loadRecordList($args['record_list_id']);
+    require_once('include/RecordListFactory.php');
+    $recordList = RecordListFactory::getRecordList($args['record_list_id']);
     if (empty($recordList)) {
         throw new SugarApiExceptionNotFound();
     }

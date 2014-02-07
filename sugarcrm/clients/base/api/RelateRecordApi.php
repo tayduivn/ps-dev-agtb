@@ -21,6 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('clients/base/api/ModuleApi.php');
+require_once('include/RecordListFactory.php');
 
 class RelateRecordApi extends ModuleApi {
     public function registerApiRest() {
@@ -72,6 +73,14 @@ class RelateRecordApi extends ModuleApi {
                 'method'    => 'deleteRelatedLink',
                 'shortHelp' => 'Deletes a relationship between two records',
                 'longHelp'  => 'include/api/help/module_record_link_link_name_remote_id_delete_help.html',
+            ),
+            'createRelatedLinksFromRecordList' => array(
+                'reqType' => 'POST',
+                'path' => array('<module>', '?', 'link', '?', 'add_record_list', '?'),
+                'pathVars' => array('module', 'record', '', 'link_name', '', 'remote_id'),
+                'method' => 'createRelatedLinksFromRecordList',
+                'shortHelp' => 'Relates existing records from a record list to this record.',
+                'longHelp' => 'include/api/help/module_record_links_from_recordlist_post_help.html',
             ),
         );
     }
@@ -314,4 +323,46 @@ class RelateRecordApi extends ModuleApi {
         return $this->formatNearAndFarRecords($api,$args,$primaryBean, $this->formatBean($api, $args, $relatedBean));
     }
 
+    /**
+     * Relates existing records to related bean.
+     *
+     * @param ServiceBase $api The API class of the request.
+     * @param array $args The arguments array passed in from the API.
+     * @return array Array of formatted fields.
+     * @throws SugarApiExceptionNotFound If bean can't be retrieved.
+     */
+    public function createRelatedLinksFromRecordList($api, $args)
+    {
+        Activity::disable();
+
+        $result = array(
+            'related_records' => array(
+                'success' => array(),
+                'error' => array(),
+            ),
+        );
+
+        $this->requireArgs($args, array('module', 'record', 'remote_id', 'link_name'));
+
+        $primaryBean = $this->loadBean($api, $args);
+
+        list($linkName) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view', 'view');
+
+        $recordList = RecordListFactory::getRecordList($args['remote_id']);
+        $relatedBeans = $primaryBean->$linkName->add($recordList['records']);
+
+        if ($relatedBeans === true) {
+            $result['related_records']['success'] = $recordList['records'];
+        } elseif (is_array($relatedBeans)) {
+            $result['related_records']['success'] = array_diff($recordList['records'], $relatedBeans);
+            $result['related_records']['error']   = $relatedBeans;
+        }
+
+        SugarRelationship::resaveRelatedBeans();
+
+        Activity::enable();
+        $result['record'] = $this->formatBean($api, $args, $primaryBean);
+
+        return $result;
+    }
 }

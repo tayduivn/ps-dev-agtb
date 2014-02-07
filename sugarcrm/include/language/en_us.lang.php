@@ -3134,6 +3134,9 @@ $app_strings = array (
     'LBL_UNSUBSCRIBE'=>'Unsubscribe',
     'LBL_CREATE_LINK_RECORD' => 'Create and Link Record',
     'LBL_CREATE_LINK_BUTTON_LABEL' => 'Create and Link Record',
+    'LBL_LINK_FROM_REPORT_SUCCESS' => '{{reportCount}} records have been linked.',
+    'LBL_LINK_FROM_REPORT_NO_DATA' => 'No records to link.',
+    'LBL_LINK_FROM_REPORT_WRONG_MODULE' => 'The report selected is not based on the correct module type.',
     'ERROR_EMPTY_LINK_MODULE' => 'Please select the relationship first.',
     // Ajax status strings
     'LBL_LOADING' => 'Loading...',
