@@ -40,12 +40,15 @@ if(!function_exists("get_encoded")){
 }
 
 function clean_for_sync( $module_name){
+    $db = DBManagerFactory::getInstance();
 	$seed = BeanFactory::getBean($module_name);
 	$table_name = $seed->table_name;
-	$seed->db->query("TRUNCATE TABLE $table_name");
+    $db->commit();
+    $db->query($db->truncateTableSQL($table_name));
 	//clean up custom fields
 	if($seed->hasCustomFields()){
-		$seed->db->query("TRUNCATE TABLE ".$table_name."_cstm");
+        $db->commit();
+        $db->query($db->truncateTableSQL($table_name . '_cstm'));
 	}
 }
 
@@ -71,8 +74,9 @@ function clean_relationships_for_sync($module_name,  $related_module){
 		}
 		$table = $row['join_table'];
 		$mod = BeanFactory::getBean($module_1);
-		$clear_query = "TRUNCATE TABLE $table";
-		$result = $mod->db->query($clear_query);
+        $db = DBManagerFactory::getInstance();
+        $db->commit();
+        $db->query($db->truncateTableSQL($table));
 	}
 	return true;
 }
@@ -101,7 +105,10 @@ function get_altered( $module_name,$from_date,$to_date){
 	//by the server and synced down.
 	$seed->disable_row_level_security = DISABLE_ROW_LEVEL_SECURITY;
 
-	$response = $seed->get_list('', "$table_name.date_modified > ".db_convert("'".$GLOBALS['db']->quote($from_date)."'",'datetime')." && $table_name.date_modified <= ".db_convert("'".$GLOBALS['db']->quote($to_date)."'",'datetime'), 0,-1,-1, 2);
+    $db = DBManagerFactory::getInstance();
+    $where = "{$table_name}.date_modified > {$db->convert($db->quoted($from_date), 'datetime')}";
+    $where .= " AND {$table_name}.date_modified <= {$db->convert($db->quoted($to_date), 'datetime')}";
+    $response = $seed->get_list('', $where, 0, -1, -1, 2);
 
 	$list = $response['list'];
 	$output_list = array();
@@ -189,8 +196,10 @@ function save_altered($module_name, $list){
 function get_altered_relationships( $module_name,$related_module,$from_date,$to_date){
 	global $disable_date_format;
 	$disable_date_format = true;
-
-	$results = retrieve_relationships($module_name,  $related_module, "rt.date_modified > " . db_convert("'".$GLOBALS['db']->quote($from_date)."'", 'datetime'). " AND rt.date_modified <= ". db_convert("'".$GLOBALS['db']->quote($to_date)."'", 'datetime'), 2, 0, -99);
+    $db = DBManagerFactory::getInstance();
+    $where = "rt.date_modified > {$db->convert($db->quoted($from_date), 'datetime')}";
+    $where .= " AND rt.date_modified <= {$db->convert($db->quoted($to_date), 'datetime')}";
+    $results = retrieve_relationships($module_name, $related_module, $where, 2, 0, -99);
 	$list = $results['result'];
 	$output_list = array();
 	foreach($list as $value)
