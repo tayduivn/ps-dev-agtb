@@ -426,7 +426,7 @@ eoq;
 		$email_mod_strings = return_module_language($current_language,'Emails');
 		$modStrings = "var mod_strings = new Object();\n";
 		foreach($email_mod_strings as $k => $v) {
-			$v = str_replace("'", "\'", $v);
+            $v = str_replace(array("'", "\n"), array("\'", "<br>"), $v);
 			$modStrings .= "mod_strings.{$k} = '{$v}';\n";
 		}
 		$lang .= "\n\n{$modStrings}\n";
@@ -435,7 +435,7 @@ eoq;
 		$ieModStrings = "var ie_mod_strings = new Object();\n";
 		$ie_mod_strings = return_module_language($current_language,'InboundEmail');
 		foreach($ie_mod_strings as $k => $v) {
-			$v = str_replace("'", "\'", $v);
+            $v = str_replace(array("'", "\n"), array("\'", "<br>"), $v);
 			$ieModStrings .= "ie_mod_strings.{$k} = '{$v}';\n";
 		}
 		$lang .= "\n\n{$ieModStrings}\n";
