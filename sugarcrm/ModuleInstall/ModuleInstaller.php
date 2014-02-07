@@ -1395,6 +1395,12 @@ class ModuleInstaller{
 					{
 						rmdir_recursive( $path );
 					}
+
+					// Remove any wireless layoutdefs
+					$path = $basepath . "WirelessLayoutdefs/$fn";
+					if (file_exists($path)) {
+						rmdir_recursive($path);
+					}
 				}
                 // remove the subpanel layoutdefs for the relationship
                 $subpanelFileName = "{$rel_name}_{$mod}.php";
@@ -1439,6 +1445,14 @@ class ModuleInstaller{
 
                     }
                 }
+
+				// Remove relationship metadata
+				$basepath = "custom/Extension/modules/relationships/*/";
+				foreach (array($rel_name . "_" . $mod . ".php", $rel_name . "MetaData.php") as $fileName) {
+					foreach (glob($basepath . $fileName, GLOB_NOSORT) as $file) {
+						unlink($file);
+					}
+				}
 			}
 
 			foreach (array($filename , "custom" . $filename, $rel_name ."_". $mod. ".php") as $fn) {
