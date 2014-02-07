@@ -367,6 +367,7 @@ width:70%;
     SUGAR.FTS.globalSearchEnabledTable.disableEmptyRows = true;
     SUGAR.FTS.globalSearchDisabledTable.disableEmptyRows = true;
     SUGAR.FTS.globalSearchEnabledTable.addRow({module: "", label: ""});
+    SUGAR.FTS.globalSearchDisabledTable.addRow({module: "", label: ""});
     SUGAR.FTS.globalSearchEnabledTable.render();
     SUGAR.FTS.globalSearchDisabledTable.render();
     {/literal}
