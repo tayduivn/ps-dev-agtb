@@ -12,7 +12,7 @@
  */
 
 describe('RevenueLineItems.Base.Views.FilterRows', function() {
-    var app, view, layout, options, sandbox;
+    var app, view, options, sandbox;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -44,18 +44,12 @@ describe('RevenueLineItems.Base.Views.FilterRows', function() {
 
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'filter-rows');
-        SugarTest.loadComponent('base', 'layout', 'filter');
-        SugarTest.loadComponent('base', 'layout', 'togglepanel');
-        SugarTest.loadComponent('base', 'layout', 'filterpanel');
         SugarTest.testMetadata.set();
 
         SugarTest.seedMetadata(true, './fixtures');
         app.metadata.getModule("Forecasts", "config").is_setup = 1;
 
-        layout = SugarTest.createLayout('base', "Cases", "filterpanel", {}, null, null, { layout: new Backbone.View() });
-        layout._components.push(SugarTest.createLayout('base', "Cases", "filter", {}, null, null, { layout: new Backbone.View() }));
-        view = SugarTest.createView('base', 'RevenueLineItems', 'filter-rows', options.meta, null, true, layout);
-        sandbox.stub(view, '_getFilterableFields', function() {
+        sandbox.stub(app.view.views.BaseFilterRowsView.prototype, 'getFilterableFields', function() {
             return {
                 'name': [],
                 'commit_stage': [],
@@ -63,7 +57,10 @@ describe('RevenueLineItems.Base.Views.FilterRows', function() {
                 'likely_case': []
             }
         });
+        sandbox.stub(app.view.views.BaseFilterRowsView.prototype, 'initialize', function() {
+        });
 
+        view = SugarTest.createView('base', 'RevenueLineItems', 'filter-rows', options.meta, null, true);
     });
 
     afterEach(function() {

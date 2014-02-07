@@ -85,6 +85,82 @@ describe("BaseFilterRowsView", function() {
         });
     });
 
+    describe('getFilterableFields', function() {
+        it('should return the list of filterable fields with fields definition', function() {
+            sinonSandbox.stub(app.metadata, 'getModule', function() {
+                var moduleMeta = {
+                    fields: {
+                        name: {
+                            name: 'name',
+                            type: 'varchar',
+                            len: 100
+                        },
+                        date_modified: {
+                            name: 'date_modified',
+                            options: 'date_range_search_dom',
+                            type: 'datetime',
+                            vname: 'LBL_DATE_MODIFIED'
+                        },
+                        number: {
+                            name: 'number',
+                            type: 'varchar',
+                            len: 100,
+                            readonly: true
+                        }
+                    },
+                    filters: {
+                        'default': {
+                            meta: {
+                                default_filter: 'all_records',
+                                fields: {
+                                    account_name_related: {
+                                        dbFields: ['accounts.name'],
+                                        type: 'text',
+                                        vname: 'LBL_ACCOUNT_NAME'
+                                    },
+                                    date_modified: {},
+                                    number: {}
+                                },
+                                filters: [
+                                    {
+                                        'id': 'test_filter',
+                                        'name': 'Test Filter',
+                                        'filter_definition': {
+                                            '$starts': 'Test'
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                };
+                return moduleMeta;
+            });
+            var fields = view.getFilterableFields('Cases');
+            var expected = {
+                account_name_related: {
+                    name: 'account_name_related',
+                    dbFields: ['accounts.name'],
+                    type: 'text',
+                    vname: 'LBL_ACCOUNT_NAME'
+                },
+                date_modified: {
+                    name: 'date_modified',
+                    options: 'date_range_search_dom',
+                    type: 'datetime',
+                    vname: 'LBL_DATE_MODIFIED'
+                },
+                number: {
+                    name: 'number',
+                    type: 'varchar',
+                    len: 100
+                }
+            };
+            expect(fields).toEqual(expected);
+            expect(fields.number['readonly']).not.toBe(true);
+        });
+    });
+
     describe('createField', function() {
         it('should instanciate a field', function() {
             var def = { type: 'enum', options: { 'test': '' } };

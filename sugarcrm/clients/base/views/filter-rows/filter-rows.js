@@ -42,8 +42,6 @@
 
     className: 'filter-definition-container',
 
-    plugins: ['Filter'],
-
     filterFields: [],
 
     lastFilterDef: [],
@@ -87,7 +85,7 @@
         if (!moduleMeta) {
             return;
         }
-        this.fieldList = this._getFilterableFields(moduleName);
+        this.fieldList = this.getFilterableFields(moduleName);
 
         this.filterFields = {};
         this.moduleName = moduleName;
@@ -168,6 +166,37 @@
             }
         });
         this.layout.trigger('filter:create:close');
+    },
+
+
+    /**
+     * Get filterable fields from the module metadata
+     * @param {String} moduleName
+     * @returns {Object}
+     */
+    getFilterableFields: function(moduleName) {
+        var moduleMeta = app.metadata.getModule(moduleName),
+            fieldMeta = moduleMeta.fields,
+            fields = {};
+        if (moduleMeta.filters) {
+            _.each(moduleMeta.filters, function(templateMeta) {
+                if (templateMeta.meta && templateMeta.meta.fields) {
+                    fields = _.extend(fields, templateMeta.meta.fields);
+                }
+            });
+        }
+
+        _.each(fields, function(fieldFilterDef, fieldName) {
+            var fieldMetaData = app.utils.deepCopy(fieldMeta[fieldName]);
+            if (_.isEmpty(fieldFilterDef)) {
+                fields[fieldName] = fieldMetaData || {};
+            } else {
+                fields[fieldName] = _.extend({name: fieldName}, fieldFilterDef, fieldMetaData);
+            }
+            delete fields[fieldName]['readonly'];
+        });
+
+        return fields;
     },
 
     /**
@@ -303,7 +332,9 @@
         this.render();
         this.layout.trigger("filter:set:name", name);
 
-        _.each(filterDef, this.populateRow, this);
+        _.each(filterDef, function(row) {
+            this.populateRow(row);
+        }, this);
         //Set lastFilterDef because the filter has already been applied and fireSearch is called in _disposeFields
         this.lastFilterDef = this.buildFilterDef();
     },
@@ -333,33 +364,18 @@
             //Make sure we use name for relate fields
             if (!this.fieldList[key]) {
                 var relate = _.find(this.fieldList, function(field) { return field.id_name === key; });
-                key = relate && relate.name;
+                key = relate.name;
             }
-            if (key) {
-                $row.find('.filter-field input[type=hidden]').select2('val', key).trigger('change');
-                if (_.isString(value) || _.isNumber(value)) {
-                    value = {"$equals": value};
-                }
-                _.each(value, function(value, operator) {
-                    $row.data('value', value);
-                    $row.find('.filter-operator input[type=hidden]')
-                        .select2('val', operator === '$dateRange' ? value : operator)
-                        .trigger('change');
-                });
+            $row.find('.filter-field input[type=hidden]').select2('val', key).trigger('change');
+            if (_.isString(value) || _.isNumber(value)) {
+                value = {"$equals": value};
             }
-            // Invalid row
-            else {
-                var fieldOpts = [
-                        {'field': 'nameField', 'value': 'name'},
-                        {'field': 'operatorField', 'value': 'operator'},
-                        {'field': 'valueField', 'value': 'value'}
-                    ];
-
-                this._disposeFields($row, fieldOpts);
-                $row.find('.filter-error').removeClass('hide');
-                $row.find('.controls, .addme').addClass('hide');
-                this.validateRows();
-            }
+            _.each(value, function(value, operator) {
+                $row.data('value', value);
+                $row.find('.filter-operator input[type=hidden]')
+                    .select2('val', operator === '$dateRange' ? value : operator)
+                    .trigger('change');
+            });
         }, this);
     },
 
