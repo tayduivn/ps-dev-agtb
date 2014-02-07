@@ -2648,7 +2648,6 @@ $app_strings = array (
     'LBL_FILTER_BETWEEN_TO' => 'To',
     'LBL_FILTER_DATEBETWEEN_FROM' => 'Start date',
     'LBL_FILTER_DATEBETWEEN_TO' => 'End date',
-    'LBL_FILTER_FIELD_INVALID' => 'This field is now invalid. Press "-" to remove it.',
     'LBL_FOLLOW' => 'Follow',
     'LBL_FOLLOWING' => 'Following',
     'LBL_UNFOLLOW' => 'Unfollow',

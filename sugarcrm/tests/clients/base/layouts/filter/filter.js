@@ -340,12 +340,12 @@ describe("Base.Layout.Filter", function () {
             var stub = sinonSandbox.stub(ctxt,'loadData', function(options){options.success();});
             var resetLoadFlagSpy = sinon.spy(ctxt,'resetLoadFlag');
             var query = 'test query';
-            var testFilterDef = [{
+            var testFilterDef = {
               '$name': 'test'
-            }];
-            var testFilterDef1 = [{
+            };
+            var testFilterDef1 = {
                 '$name': 'test1'
-            }];
+            };
             var spy = sinon.spy();
 
             sinonSandbox.stub(layout, 'getRelevantContextList', function () {
