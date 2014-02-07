@@ -21,7 +21,7 @@ class SugarUpgradeForecastsChangeForecastBy extends UpgradeScript
     public function run()
     {
         //Only run this on ent upgrades
-        if (!$this->toFlavor("pro")) {
+        if (!$this->toFlavor("ent")) {
             return;
         }
         
@@ -30,7 +30,7 @@ class SugarUpgradeForecastsChangeForecastBy extends UpgradeScript
                "SET value = 'RevenueLineItems' " .
                "WHERE category = 'Forecasts' " .
                "AND name = 'forecast_by'";
-        $results = $this->db->query($sql);
+        $this->db->query($sql);
 
         $this->log('Done Changing Forecast by from Opportunities to Revenue Line Items');
     }
