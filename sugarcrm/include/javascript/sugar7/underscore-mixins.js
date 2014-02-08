@@ -19,16 +19,10 @@
              *
              * @param {Array} initialArray The initial array.
              * @param {Integer} fromIndex The index of the item to move.
-             * @param {Integer} toIndex The index before which the item is
-             * moved.
+             * @param {Integer} toIndex The index where the item is moved.
              * @return {Array} The array reordered.
              */
             moveIndex: function(array, fromIndex, toIndex) {
-                // Update the beforeIndex since we removed an item.
-                if (toIndex > fromIndex) {
-                    toIndex--;
-                }
-
                 // Remove the item, and add it back to its new position.
                 array.splice(toIndex, 0, _.first(array.splice(fromIndex, 1)));
                 return array;

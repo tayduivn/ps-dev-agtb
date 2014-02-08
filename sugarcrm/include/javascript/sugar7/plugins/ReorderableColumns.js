@@ -122,6 +122,10 @@
              * Takes the list of visible fields, move the item, and verify if
              * the order has changed.
              *
+             * When moving to the right direction, we need to decrease the
+             * destination index by 1 since when we remove the item, all the
+             * others items are moved by 1 to the left.
+             *
              * @param {Integer} draggedIndex The index of the element being
              * dragged.
              * @param {Integer} droppedInIndex The index of the placeholder
@@ -133,6 +137,10 @@
                 var initialOrder,
                     visibleOrder;
 
+                if (droppedInIndex > draggedIndex) {
+                    droppedInIndex--;
+                }
+
                 initialOrder = _.clone(this._listDragColumn);
                 visibleOrder = _.moveIndex(this._listDragColumn, draggedIndex, droppedInIndex);
                 return !_.isEqual(visibleOrder, initialOrder);
@@ -141,6 +149,10 @@
             /**
              * Takes the full list of fields (including hidden fields), move the
              * item, and returns the list.
+             *
+             * When moving to the right direction, we need to decrease the
+             * destination index by 1 since when we remove the item, all the
+             * others items are moved by 1 to the left.
              *
              * @param {jQuery.Element} $draggedItem The element being dragged.
              * @param {jQuery.Element} $droppedInItem The placeholder where the
@@ -161,6 +173,10 @@
                 // before.
                 if ($droppedInItem.hasClass('th-droppable-placeholder-last')) {
                     droppedInIndex++;
+                }
+
+                if (droppedInIndex > draggedIndex) {
+                    droppedInIndex--;
                 }
 
                 return _.moveIndex(globalOrder, draggedIndex, droppedInIndex);
