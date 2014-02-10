@@ -657,6 +657,10 @@ if( count( $bottle ) > 0 ){
 }
 installerHook('post_installModules');
 
+installerHook('pre_handleMissingSmtpServerSettingsNotifications');
+handleMissingSmtpServerSettingsNotifications();
+installerHook('post_handleMissingSmtpServerSettingsNotifications');
+
 // rebuild cache after all is said and done
 installLog("Populating file cache");
 SugarAutoLoader::buildCache();

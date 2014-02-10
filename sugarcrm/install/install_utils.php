@@ -2363,3 +2363,46 @@ function enableInsideViewConnector()
     // $mapping is brought in from the mapping.php file above
     $source->saveMappingHook($mapping);
 }
+
+/**
+ * If `mail_smtpserver` setting is missing on system mailer settings, a
+ * notification is created and assigned to system user.
+ */
+function handleMissingSmtpServerSettingsNotifications()
+{
+    require_once 'include/OutboundEmail/OutboundEmail.php';
+
+    $oe = new OutboundEmail();
+    $settings = $oe->getSystemMailerSettings();
+
+    if (!empty($settings->mail_smtpserver)) {
+        return;
+    }
+
+    $user = \BeanFactory::getBean('Users');
+    $user->getSystemUser();
+
+    if (empty($user)) {
+        return;
+    }
+
+    $app_strings = return_application_language($GLOBALS['current_language']);
+
+    $emailSettingsUrl = sprintf(
+        '<a href="#bwc/index.php?module=EmailMan&action=config">%s</a>',
+        $app_strings['LBL_MISSING_SMPT_SERVER_SETTINGS_NOTIFICATION_LINK_TEXT']
+    );
+
+    $description = str_replace(
+        '{{emailSettingsUrl}}',
+        $emailSettingsUrl,
+        $app_strings['TPL_MISSING_SMPT_SERVER_SETTINGS_NOTIFICATION_DESCRIPTION']
+    );
+
+    $notification = \BeanFactory::getBean('Notifications');
+    $notification->name = $app_strings['LBL_MISSING_SMPT_SERVER_SETTINGS_NOTIFICATION_SUBJECT'];
+    $notification->description = $description;
+    $notification->severity = 'warning';
+    $notification->assigned_user_id = $user->id;
+    $notification->save();
+}
