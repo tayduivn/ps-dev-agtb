@@ -25,15 +25,15 @@
     plugins: ['Tooltip'],
 
     /**
-     * @property {String} The last state key that contains the full list of
-     * fields displayable in list views of this module.
+     * @property {String} _allListViewsFieldListKey The last state key that
+     * contains the full list of fields displayable in list views of this module.
      * @protected
      */
     _allListViewsFieldListKey: null,
 
     /**
-     * @property {String} The last state key that contains the visible state of
-     * the fields and their position in the table.
+     * @property {String} _thisListViewFieldListKey The last state key that
+     * contains the visible state of the fields and their position in the table.
      * @protected
      */
     _thisListViewFieldListKey: null,
@@ -314,31 +314,31 @@
      * Takes the minimized value stored into the cache and decode it to make
      * it more readable and more manipulable.
      *
-     * @example
-     *      If field storage entry is:
-     * <pre><code>
-     *      [
-     *          'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'
-     *      ]
-     * </code></pre>
-     *      And encoded data is:
-     * <pre><code>
-     *      [
-     *          0, [1,5], [1,2], 0, [0,1], [1,3], 0, [1,4]
-     *      ]
-     * </code></pre>
-     *      The decoded data will be:
-     * <pre><code>
-     *      {
-     *          visible: ['B', 'C', 'F', 'H'],
-     *          hidden: ['E'],
-     *          position: ['E', 'C', 'B', 'F', 'H']
-     *      }
-     * </code></pre>
-     *      `visible` contains the list of visible fields,
-     *      `hidden` contains the list of hidden fields,
-     *      `position` is the order of fields,
-     *      indexes whom value is `0` are skipped (fields not displayable).
+     *     @example
+     *     If field storage entry is:
+     *     <pre><code>
+     *     [
+     *         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'
+     *     ]
+     *     </code></pre>
+     *     And encoded data is:
+     *     <pre><code>
+     *     [
+     *         0, [1,5], [1,2], 0, [0,1], [1,3], 0, [1,4]
+     *     ]
+     *     </code></pre>
+     *     The decoded data will be:
+     *     <pre><code>
+     *     {
+     *         visible: ['B', 'C', 'F', 'H'],
+     *         hidden: ['E'],
+     *         position: ['E', 'C', 'B', 'F', 'H']
+     *     }
+     *     </code></pre>
+     *     `visible` contains the list of visible fields,
+     *     `hidden` contains the list of hidden fields,
+     *     `position` is the order of fields,
+     *     indexes whom value is `0` are skipped (fields not displayable).
      *
      * @param {Array} encodedData The minimized data.
      * @return {Object} The decoded data.
@@ -371,30 +371,30 @@
     /**
      * Takes the decoded data and minimize it to save cache size.
      *
-     * @example
-     *      If field storage entry is:
-     * <pre><code>
-     *      [
-     *          'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'
-     *      ]
-     * </code></pre>
-     *      And decoded data is:
-     * <pre><code>
-     *      {
-     *          visible: ['B', 'C', 'F', 'H'],
-     *          hidden: ['E'],
-     *          position: ['E', 'C', 'B', 'F', 'H']
-     *      }
-     * </code></pre>
-     *      The encoded data will be:
-     * <pre><code>
-     *      [
-     *          0, [1,5], [1,2], 0, [0,1], [1,3], 0, [1,4]
-     *      ]
-     * </code></pre>
-     *      `0` means the field is not displayable. (i.e: `A`, `D`, `G`),
-     *      the first item is the visible state: `1` visible, `0` hidden,
-     *      the second item of the array is the position of the field.
+     *     @example
+     *     If field storage entry is:
+     *     <pre><code>
+     *     [
+     *         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'
+     *     ]
+     *     </code></pre>
+     *     And decoded data is:
+     *     <pre><code>
+     *     {
+     *         visible: ['B', 'C', 'F', 'H'],
+     *         hidden: ['E'],
+     *         position: ['E', 'C', 'B', 'F', 'H']
+     *     }
+     *     </code></pre>
+     *     The encoded data will be:
+     *     <pre><code>
+     *     [
+     *         0, [1,5], [1,2], 0, [0,1], [1,3], 0, [1,4]
+     *     ]
+     *     </code></pre>
+     *     `0` means the field is not displayable. (i.e: `A`, `D`, `G`),
+     *     the first item is the visible state: `1` visible, `0` hidden,
+     *     the second item of the array is the position of the field.
      *
      * @param {Object} decodedData The decoded data.
      * @return {Array} The minimized data.
@@ -451,29 +451,30 @@
      * Converts the old localStorage data for fields visibility to the new
      * decoded format.
      *
-     * @example Only visible fields used to be stored. Example of data stored:
-     * <pre><code>
-     *      [
-     *          'B', 'C', 'F', 'H'
-     *      ]
-     * </code></pre>
-     *      If the list of fields defined in the metadata was:
-     * <pre><code>
-     *      [
-     *          'E', 'C', 'B', 'F', 'H'
-     *      ]
-     * </code></pre>
-     *      The decoded data would be:
-     * <pre><code>
-     *      {
-     *          visible: ['B', 'C', 'F', 'H'],
-     *          hidden: ['E'],
-     *          position: ['E', 'C', 'B', 'F', 'H']
-     *      }
-     * </code></pre>
+     * {@link View.FlexListView#_encodeCacheData To see how the new format looks like.}
+     *
+     *     @example Only visible fields used to be stored. Example of data stored:
+     *     <pre><code>
+     *     [
+     *         'B', 'C', 'F', 'H'
+     *     ]
+     *     </code></pre>
+     *     If the list of fields defined in the metadata was:
+     *     <pre><code>
+     *     [
+     *         'E', 'C', 'B', 'F', 'H'
+     *     ]
+     *     </code></pre>
+     *     The decoded data would be:
+     *     <pre><code>
+     *     {
+     *         visible: ['B', 'C', 'F', 'H'],
+     *         hidden: ['E'],
+     *         position: ['E', 'C', 'B', 'F', 'H']
+     *     }
+     *     </code></pre>
      *
      * @return {Array} The data converted to the new decoded format.
-     * @see _encodeCacheData
      * @private
      */
     _convertFromOldFormat: function(visibleFieldList) {
@@ -503,13 +504,13 @@
     /**
      * Save to the cache the current order of fields, and their visible state.
      *
-     * @example Example of value stored in the cache:
-     * <pre><code>
-     *      [
-     *          ['A', 'B', 'D', 'C'],
-     *          [0, 1, 0, 1]
-     *      ]
-     * </code></pre>
+     *     @example Example of value stored in the cache:
+     *     <pre><code>
+     *     [
+     *         ['A', 'B', 'D', 'C'],
+     *         [0, 1, 0, 1]
+     *     ]
+     *     </code></pre>
      * Means the current order is `ABDC`, and only `B` and `C` are visible
      * fields.
      */

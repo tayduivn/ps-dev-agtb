@@ -25,6 +25,8 @@ describe("Base.View.FlexList", function () {
     });
 
     afterEach(function () {
+        layout.dispose();
+        view.dispose();
         sinon.collection.restore();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();

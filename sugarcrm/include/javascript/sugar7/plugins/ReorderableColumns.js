@@ -22,17 +22,23 @@
         app.plugins.register('ReorderableColumns', ['view'], {
 
             /**
-             * @property {String} CSS selector for the draggable columns.
+             * @property {String} _listDragColumnSelector CSS selector for the
+             * draggable columns.
+             * @private
              */
             _listDragColumnSelector: 'th[data-fieldname]',
 
             /**
-             * @property {String} CSS selector for actual draggable items.
+             * @property {String} _listDragItemSelector CSS selector for actual
+             * draggable items.
+             * @private
              */
             _listDragItemSelector: 'th[data-fieldname] [data-draggable="true"]',
 
             /**
-             * @property {Array} Store the current visible columns order.
+             * @property {Array} _listDragColumn Store the current visible
+             * columns order.
+             * @private
              */
             _listDragColumn: [],
 
@@ -122,9 +128,9 @@
              * destination index by 1 since when we remove the item, all the
              * others items are moved by 1 to the left.
              *
-             * @param {Integer} draggedIndex The index of the element being
+             * @param {Number} draggedIndex The index of the element being
              * dragged.
-             * @param {Integer} droppedInIndex The index of the placeholder
+             * @param {Number} droppedInIndex The index of the placeholder
              * where the element is dropped.
              * @return {boolean} `true` if order has changed, `false` otherwise.
              * @private
@@ -150,9 +156,9 @@
              * destination index by 1 since when we remove the item, all the
              * others items are moved by 1 to the left.
              *
-             * @param {jQuery.Element} $draggedItem The element being dragged.
-             * @param {jQuery.Element} $droppedInItem The placeholder where the
-             * element is dropped.
+             * @param {jQuery} $draggedItem The element being dragged.
+             * @param {jQuery} $droppedInItem The placeholder where the element
+             * is dropped.
              * @return {Array} The full list freshly ordered.
              * @private
              */
