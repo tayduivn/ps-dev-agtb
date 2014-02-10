@@ -793,21 +793,18 @@ FLEXLIST GENERIC */
     border-top: 1px solid darken(@grayLighter,10%);
     tr[name$="_commit_history"] td:first-child:last-child {
       padding: 0;
-      width: 100%;
-      max-width: 100%;
       height: auto;
-      .box-sizing(border-box);
       background-color: @grayLight;
-      position: relative;
-      text-align: left;
       .icon-arrow-down:before {
         color: @red;
       }
       .icon-arrow-up:before {
         color: @green;
       }
-      span.list {
+      .list {
+        position: relative;
         color: @grayDark;
+        text-align: left;
         padding: 10px 20px;
         width: 100%;
         .box-sizing(border-box);
