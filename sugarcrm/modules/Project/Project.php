@@ -144,9 +144,9 @@ class Project extends SugarBean {
 	{
 		$return_value = '';
 
-		$query = 'SELECT SUM('.$this->db->convert('estimated_effort', "IFNULL", 0).') total_estimated_effort';
+        $query = 'SELECT SUM('.$this->db->convert('estimated_effort', "IFNULL", array('0')).') total_estimated_effort';
 		$query.= ' FROM project_task';
-		$query.= " WHERE parent_id='{$project_id}' AND deleted=0";
+        $query.= " WHERE project_id='{$project_id}' AND deleted=0";
 
 		$result = $this->db->query($query,true," Error filling in additional detail fields: ");
 		$row = $this->db->fetchByAssoc($result);
@@ -165,9 +165,9 @@ class Project extends SugarBean {
 	{
 		$return_value = '';
 
-		$query = 'SELECT SUM('.$this->db->convert('actual_effort', "IFNULL", 0).') total_actual_effort';
+        $query = 'SELECT SUM('.$this->db->convert('actual_effort', "IFNULL", array('0')).') total_actual_effort';
 		$query.=  ' FROM project_task';
-		$query.=  " WHERE parent_id='{$project_id}' AND deleted=0";
+        $query.=  " WHERE project_id='{$project_id}' AND deleted=0";
 
 		$result = $this->db->query($query,true," Error filling in additional detail fields: ");
 		$row = $this->db->fetchByAssoc($result);
