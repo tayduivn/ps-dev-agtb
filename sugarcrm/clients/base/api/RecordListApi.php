@@ -121,7 +121,7 @@ class RecordListApi extends SugarApi
         if ($recordList == null) {
             throw new SugarApiExceptionNotFound();
         }
-        if ($recordList['module'] != $args['module']) {
+        if ($recordList['module_name'] != $args['module']) {
             throw new SugarApiExceptionNotAuthorized();
         }
         if (!$api->user->isAdmin()) {
