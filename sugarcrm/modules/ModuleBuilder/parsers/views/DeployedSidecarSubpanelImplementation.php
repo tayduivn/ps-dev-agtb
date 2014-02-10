@@ -18,6 +18,7 @@ require_once 'modules/ModuleBuilder/parsers/constants.php';
 require_once 'include/MetaDataManager/MetaDataConverter.php';
 require_once 'include/MetaDataManager/MetaDataManager.php';
 require_once 'include/SubPanel/SubPanelDefinitions.php';
+require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 
 class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementation implements MetaDataImplementationInterface
 {
@@ -152,28 +153,19 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
                 }
             }            
         }
-        // check if there is an override
-        $layoutFiles = array(
-            "modules/{$loadedModule}/clients/" . $this->getViewClient() . "/layouts/subpanels/subpanels.php",
-        );
-        $layoutExtensionName = array("sidecar");
+       
+        $viewdefs = MetaDataFiles::getClientFileContents(MetaDataFiles::getClientFiles(array($this->getViewClient()), 'layout', $loadedModule), 'layout', $loadedModule);
 
-        if ($this->getViewClient() !== 'base') {
-            $layoutFiles[] = "modules/{$loadedModule}/clients/base/layouts/subpanels/subpanels.php";
+        if (empty($viewdefs['subpanels'])) {
+            return $subpanelName;
         }
-        foreach ($layoutFiles as $file) {
-            @include $file;
-        }
-        foreach ($layoutExtensionName as $extension) {
-            $file = SugarAutoLoader::loadExtension($extension, $loadedModule);
-            if ($file !== false) {
-                @include $file;
-            }
-        }
+
+        $legacyDefs = $this->mdc->toLegacySubpanelLayoutDefs($viewdefs['subpanels']['meta']['components'], BeanFactory::newBean($loadedModule));
+
         if (empty($viewdefs)) {
             return $subpanelName;
         }
-        $legacyDefs = $this->mdc->toLegacySubpanelLayoutDefs($viewdefs[$loadedModule]['base']['layout']['subpanels']['components'], BeanFactory::newBean($loadedModule));
+        $legacyDefs = $this->mdc->toLegacySubpanelLayoutDefs($viewdefs['subpanels']['meta']['components'], BeanFactory::newBean($loadedModule));
         
         if(empty($legacyDefs['subpanel_setup'])) {
             $GLOBALS['log']->error("Could not convert subpanels for subpanel: {$subpanelName} - {$loadedModule}");
