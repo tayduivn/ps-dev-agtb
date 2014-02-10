@@ -327,6 +327,7 @@ class ChartDisplay
      */
     protected function get_row_remap($row)
     {
+        global $locale;
         $row_remap = array();
         if (!isset($row['cells'][$this->reporter->chart_numerical_position]['val'])) {
             return $row_remap; 
@@ -337,6 +338,8 @@ class ChartDisplay
             // MRF - Bug # 13501, 47148 - added floor() below:
             $row_remap['numerical_value'] = round(unformat_number(floor($row_remap['numerical_value'])) / 1000);
         }
+        $precision = $locale->getPrecision();
+        $row_remap['numerical_value'] = round($row_remap['numerical_value'], $precision);
         $row_remap['group_text'] = $group_text = (isset($this->reporter->chart_group_position) && !is_array($this->reporter->chart_group_position)) ? chop($row['cells'][$this->reporter->chart_group_position]['val']) : '';
         $row_remap['group_key'] = ((isset($this->reporter->chart_group_position) && !is_array($this->reporter->chart_group_position)) ? $row['cells'][$this->reporter->chart_group_position]['key'] : '');
         $row_remap['count'] = (isset($row['count'])) ? $row['count'] : 0;
