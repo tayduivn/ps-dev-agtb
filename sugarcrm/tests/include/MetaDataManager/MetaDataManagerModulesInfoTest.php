@@ -16,7 +16,7 @@ require_once 'include/MetaDataManager/MetaDataManager.php';
 require_once 'include/MetaDataManager/MetaDataManagerPortal.php';
 require_once 'include/MetaDataManager/MetaDataManagerMobile.php';
 
-class MetaDataManagerModulesInfo extends Sugar_PHPUnit_Framework_TestCase
+class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var TabController Instance of TabController
