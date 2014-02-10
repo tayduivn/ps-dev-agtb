@@ -78,10 +78,13 @@
     &.related-filter {
       vertical-align: top;
     }
-    &.select2-container-disabled .select2-choice .select2-arrow {
-      background: none;
-      .icon-caret-down {
-        display: none;
+    &.select2-container-disabled .select2-choice { 
+      padding-top: 3px;
+      .select2-arrow {
+        background: none;
+        .icon-caret-down {
+          display: none;
+        }
       }
     }
     .select2-choices {
@@ -441,5 +444,53 @@
   margin-top: 0;
   .select2-drop-active {
     border-top: 1px solid #5897FB;
+  }
+}
+
+.drawer {
+  .search-filter {
+    margin: 0 12px;
+    .control-group {
+      background: none;
+      border-bottom: 1px solid darken(@grayLighter, 5%);
+      padding-left: 0;
+      .filter-view.search {
+        border: none;
+        .box-shadow(none);
+        left: -12px;
+      }
+      .filter-view.search {
+        .select2-container {
+          .select2-chosen {
+            background: none;
+            margin-top: 0;
+            font-size: @fontSizeLarge;
+            &:hover, &:active {
+              background: none;
+              .box-shadow(none) !important;
+            }
+          }
+        }
+        .choice-filter {
+          .border-radius(10px);
+          font-size: @fontSizeLarge;
+          font-weight: 500;
+          margin-top: 1px;
+          margin-left: -15px;
+          padding: 6px 8px;
+        }
+      }
+    }
+    .extend {
+      background: none;
+      .box-shadow(none);
+      .filter-header,
+      .filter-body {
+        padding: 7px 1px;
+      }
+      .filter-header {
+        border-bottom: 0;
+      }
+    }
   }
 }
