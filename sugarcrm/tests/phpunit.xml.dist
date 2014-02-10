@@ -40,8 +40,6 @@
             <directory>../custom/tests/</directory>
         </testsuite>
         <testsuite name="Sugar FRM Test Suite">
-            <directory>./metadata/</directory>
-            <directory>./modules/Audit/</directory>
             <directory>./modules/ACL/</directory>
             <directory>./modules/Administration/</directory>
             <directory>./modules/Configurator/</directory>
@@ -49,7 +47,6 @@
             <directory>./modules/DynamicFields/</directory>
             <directory>./modules/EmailAddresses/</directory>
             <directory>./modules/Employees/</directory>
-            <directory>./modules/ExpressionEngine/</directory>
             <directory>./modules/Expression/</directory>
             <directory>./modules/Home/</directory>
             <directory>./modules/Import/</directory>
@@ -65,17 +62,11 @@
             <directory>./modules/SubPanel/</directory>
             <directory>./modules/SugarFavorites/</directory>
             <directory>./modules/SugarFeed/</directory>
-            <directory>./modules/Sync/</directory>
-            <directory>./modules/TeamNotices/</directory>
             <directory>./modules/Teams/</directory>
             <directory>./modules/Trackers/</directory>
             <directory>./modules/UpgradeWizard/</directory>
             <directory>./modules/UserPreferences/</directory>
             <directory>./modules/Users/</directory>
-            <directory>./modules/WebLogicHook/</directory>
-            <!-- global failures, tests are excluded -->
-            <exclude>./tests/metadata/Bug33522Test.php</exclude>
-            <exclude>./tests/metadata/MetaDataLocationChangeTest.php</exclude>
         </testsuite>
         <testsuite name="Sugar Include Test Suite">
             <directory>./include/</directory>
@@ -89,7 +80,6 @@
         </testsuite>
         <testsuite name="Sugar API Test Suite">
             <directory>./clients/base/api/</directory>
-            <directory>./clients/portal/api/</directory>
             <directory>./tests/</directory>
         </testsuite>
         <testsuite name="Sugar SC Test Suite">
@@ -99,10 +89,7 @@
             <directory>./modules/Contacts/</directory>
             <directory>./modules/Dashboards/</directory>
             <directory>./modules/Documents/</directory>
-            <directory>./modules/Filters/</directory>
             <directory>./modules/iCals/</directory>
-            <directory>./modules/KBDocumentRevisions/</directory>
-            <directory>./modules/MergeRecords/</directory>
             <directory>./modules/MassUpdate/</directory>
             <directory>./modules/Meetings/</directory>
             <directory>./modules/Notes/</directory>
@@ -112,7 +99,6 @@
             <directory>./modules/Reports/</directory>
             <directory>./modules/Tasks/</directory>
             <directory>./modules/Workflow/</directory>
-            <directory>./portal2/</directory>
         </testsuite>
         <testsuite name="Sugar SP Test Suite">
             <directory>./modules/Bugs/</directory>
@@ -135,8 +121,8 @@
             <directory>./modules/Prospects/</directory>
         </testsuite>
         <testsuite name="Sugar SFA Test Suite">
-            <file>./tests/data/acl/SugarACLForecastManagerWorksheets.php</file>
-            <file>./tests/data/acl/SugarACLForecastWorksheets.php</file>
+            <file>./data/acl/SugarACLForecastManagerWorksheets.php</file>
+            <file>./data/acl/SugarACLForecastWorksheets.php</file>
             <directory>./include/SugarForecasting/</directory>
             <directory>./modules/Contracts/</directory>
             <directory>./modules/Currencies/</directory>
@@ -144,16 +130,12 @@
             <directory>./modules/Forecasts/</directory>
             <directory>./modules/ForecastWorksheets/</directory>
             <directory>./modules/Opportunities/</directory>
-            <directory>./modules/ProductBundles/</directory>
             <directory>./modules/ProductTemplates/</directory>
             <directory>./modules/Products/</directory>
             <directory>./modules/RevenueLineItems/</directory>
             <directory>./modules/Quotas/</directory>
             <directory>./modules/Quotes/</directory>
             <directory>./modules/TimePeriods/</directory>
-            <!-- global failures, tests are excluded -->
-            <exclude>./tests/modules/Opportunities/ProductLineItemRollupTest.php</exclude>
-            <exclude>./tests/modules/Quotas/QuotaTest.php</exclude>
         </testsuite>
     </testsuites>
     <filter>

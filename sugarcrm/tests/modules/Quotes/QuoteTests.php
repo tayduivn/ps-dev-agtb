@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,29 +22,51 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/ModuleBuilder/Module/DropDownBrowser.php');
-
-class ModuleBuilderRelatedTest extends Sugar_PHPUnit_Framework_TestCase
+class QuoteTests extends Sugar_PHPUnit_Framework_TestCase
 {
-
-    public static function setUpBeforeClass() {
-        SugarTestHelper::setUp('app_list_strings');
+    public function setUp()
+    {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
+        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars', '$', 'MOD', 2.0);
     }
 
-    public static function tearDownAfterClass() {
+    public function tearDown()
+    {
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
+        SugarTestQuoteUtilities::removeAllCreatedQuotes();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestHelper::tearDown();
     }
 
-    /**
-     * This is a test to check that the commit stage labels are not shown on the drop down editor
+    /*
+     * Test that the base_rate field is populated with rate
+     * of currency_id
      *
-     * @group forecasts
-     * @group bug59133
      */
-    public function testRestrictedDropdownOptions() {
-        $this->assertTrue(in_array('commit_stage_dom', DropDownBrowser::$restrictedDropdowns));
-        $this->assertTrue(in_array('commit_stage_binary_dom', DropDownBrowser::$restrictedDropdowns));
-        $this->assertTrue(in_array('commit_stage_custom_dom', DropDownBrowser::$restrictedDropdowns));
+    public function testQuoteRate()
+    {
+        $quote = SugarTestQuoteUtilities::createQuote();
+        $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
+        $quote->currency_id = $currency->id;
+        $quote->save();
+        $this->assertEquals(
+            sprintf('%.6f', $quote->base_rate),
+            sprintf('%.6f', $currency->conversion_rate)
+        );
+    }
+
+    /**
+     * test related opportunity count
+     */
+    public function testGetRelatedOpportunityCount()
+    {
+        $quote = SugarTestQuoteUtilities::createQuote();
+        $this->assertEquals(0, $quote->getRelatedOpportunityCount());
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        SugarTestQuoteUtilities::relateQuoteToOpportunity($quote->id, $opp->id);
+        $this->assertEquals(1, $quote->getRelatedOpportunityCount());
     }
 
 }
