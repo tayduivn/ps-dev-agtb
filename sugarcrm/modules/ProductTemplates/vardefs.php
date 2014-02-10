@@ -448,8 +448,8 @@ $dictionary['ProductTemplate'] = array(
 	array (
 		'name' => 'pricing_formula',
 		'vname' => 'LBL_PRICING_FORMULA',
-		'function' => array('name'=>'getPricingFormula', 'returns'=>'html'),
-		'type' => 'varchar',
+		'type' => 'enum',
+		'options' => 'pricing_formula_dom',
 		'len' => 100,
 		'comment' => 'Pricing formula (ex: Fixed, Markup over Cost)'
 	),
