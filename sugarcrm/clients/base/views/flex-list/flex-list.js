@@ -245,7 +245,7 @@
      * @private
      */
     _toggleFields: function(catalog, fields) {
-        if (_.isEmpty(fields.visible) && _.isEmpty(fields.hidden)) {
+        if (_.isEmpty(fields) || (_.isEmpty(fields.visible) && _.isEmpty(fields.hidden))) {
             return catalog;
         }
         _.each(fields.visible, function(fieldName) {
@@ -399,19 +399,28 @@
      * Append the list of fields defined in the metadata that are missing in the
      * field storage cache entry.
      *
+     * We initially used `_.uniq` to guarantee the unicity of fields. It appears
+     * that this `underscore` method is slow, unlike `Lo-Dash` one. Meanwhile a
+     * potential migration to Lo-Dash, it is faster to build an object whom keys
+     * are field names.
+     *
      * @return {Array} The list of all the fields that are displayable in listå
      * views of this module.
      * @private
      */
     _appendFieldsToAllListViewsFieldList: function() {
         this._allListViewsFieldList = app.user.lastState.get(this._allListViewsFieldListKey) || [];
+        var obj = {};
+        _.each(this._allListViewsFieldList, function(fieldName) {
+            obj[fieldName] = fieldName;
+        });
 
         _.each(this.meta.panels, function(panel) {
             _.each(panel.fields, function(fieldMeta, i) {
-                this._allListViewsFieldList.push(fieldMeta.name);
+                obj[fieldMeta.name] = fieldMeta.name;
             }, this);
         }, this);
-        this._allListViewsFieldList = _.uniq(this._allListViewsFieldList);
+        this._allListViewsFieldList = _.keys(obj);
         app.user.lastState.set(this._allListViewsFieldListKey, this._allListViewsFieldList);
         return this._allListViewsFieldList;
     },
