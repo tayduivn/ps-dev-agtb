@@ -50,10 +50,6 @@
                 }
                 this._fields.visible = _.where(this._fields.all, { selected: true });
 
-                // Trigger an event to let the view know to save/update current
-                // state
-                this.trigger('list:save:laststate');
-
                 // trigger an event to let the view that this is mixed-into that a column has been toggled
                 this.trigger('list:toggle:column', column, changedColumn.selected, changedColumn);
             },

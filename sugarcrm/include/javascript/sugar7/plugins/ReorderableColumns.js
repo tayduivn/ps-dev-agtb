@@ -110,10 +110,6 @@
                 // of fields.
                 this.trigger('list:reorder:columns', this._fields, newOrder);
 
-                // Trigger an event to let the view know to save/update current
-                // state.
-                this.trigger('list:save:laststate');
-
                 // Will render the view on draggable `stop` event.
                 ui.draggable._renderView = true;
             },

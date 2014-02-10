@@ -72,6 +72,7 @@
         }
 
         this.on('list:reorder:columns', this.reorderCatalog, this);
+        this.on('list:toggle:column', this.saveCurrentState, this);
         this.on('list:save:laststate', this.saveCurrentState, this);
     },
 
@@ -158,8 +159,8 @@
         this._thisListViewFieldList = this._getFieldsLastState();
 
         if (this._thisListViewFieldList) {
-            catalog = this._toggleFields(catalog, this._thisListViewFieldList);
-            catalog = this.reorderCatalog(catalog, this._thisListViewFieldList.position);
+            catalog = this._toggleFields(catalog, this._thisListViewFieldList, false);
+            catalog = this.reorderCatalog(catalog, this._thisListViewFieldList.position, false);
         }
         return catalog;
     },
@@ -240,14 +241,17 @@
      * @param {Object} catalog The catalog of fields.
      * @param {Object} fields The decoded cached data that contains fields
      * wanted visible and fields wanted hidden.
+     * @param {Boolean} saveLastState(optional) `true` to save last state,
+     * `false` otherwise. `true` by default.
      * @return {Object} The catalog with visible state of fields based on user
      * preference.
      * @private
      */
-    _toggleFields: function(catalog, fields) {
+    _toggleFields: function(catalog, fields, saveLastState) {
         if (_.isEmpty(fields) || (_.isEmpty(fields.visible) && _.isEmpty(fields.hidden))) {
             return catalog;
         }
+        saveLastState = _.isUndefined(saveLastState) ? true : saveLastState;
         _.each(fields.visible, function(fieldName) {
             var f = catalog._byId[fieldName];
             if (f) {
@@ -260,8 +264,15 @@
                 f.selected = false;
             }
         }, this);
-        catalog.all = _.sortBy(_.toArray(catalog._byId), function(f) { return f.position; });
+        catalog.all = _.sortBy(_.toArray(catalog._byId), function(f) {
+            return f.position;
+        });
         catalog.visible = _.where(catalog.all, { selected: true });
+
+        if (saveLastState) {
+            this.trigger('list:save:laststate');
+        }
+
         return catalog;
     },
 
@@ -272,9 +283,13 @@
      * @param {Object} catalog Field definitions listed in 2 categories:
      * `visible` / `all`.
      * @param {Array} order Array of field names used to sort the catalog.
+     * @param {Boolean} saveLastState(optional) `true` to save last state,
+     * `false` otherwise. `true` by default.
      * @return {Object} catalog The catalog of fields entirely sorted.
      */
-    reorderCatalog: function(catalog, order) {
+    reorderCatalog: function(catalog, order, saveLastState) {
+        saveLastState = _.isUndefined(saveLastState) ? true : saveLastState;
+
         order = _.union(order, _.pluck(catalog.all, 'name'));
 
         _.each(order, function(fieldName, i) {
@@ -283,8 +298,15 @@
                 f.position = ++i;
             }
         });
-        catalog.all = _.sortBy(_.toArray(catalog._byId), function(f) { return f.position; });
+        catalog.all = _.sortBy(_.toArray(catalog._byId), function(f) {
+            return f.position;
+        });
         catalog.visible = _.where(catalog.all, { selected: true });
+
+        if (saveLastState) {
+            this.trigger('list:save:laststate');
+        }
+
         return catalog;
     },
 
