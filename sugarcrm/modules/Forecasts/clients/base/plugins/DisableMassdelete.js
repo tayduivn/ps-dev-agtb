@@ -19,12 +19,25 @@
         app.plugins.register('DisableMassdelete', ["view"], {
 
             /**
+             * @{override}
+             *
+             * This needs to be overridden since we can not call super and we need to have the mass delete use our
+             * _warnDelete method instead of the default warnDelete method.
+             */
+            delegateListFireEvents: function() {
+                this.layout.on("list:massupdate:fire", this.show, this);
+                this.layout.on("list:massaction:hide", this.hide, this);
+                this.layout.on("list:massdelete:fire", this._warnDelete, this);
+                this.layout.on("list:massexport:fire", this.massExport, this);
+                this.layout.on("list:updatecalcfields:fire", this.updateCalcFields, this);
+            },
+            /**
              * override of parent deleteModels. Removes closed lost/won items from the list to be deleted, and
              * throws a warning if it removes anything
              *
              * @return string message
              */
-            warnDelete: function() {
+            _warnDelete: function() {
                 
                 var closedModels = [],
                     sales_stage_won = null,
@@ -79,10 +92,8 @@
                         level: 'warning',
                         messages: message
                     });
-                }
-
-                if (module.models.length > 0) {
-                    this._super("warnDelete");
+                } else if (module.models.length > 0) {
+                    this.warnDelete();
                 }
                 return message;
             }

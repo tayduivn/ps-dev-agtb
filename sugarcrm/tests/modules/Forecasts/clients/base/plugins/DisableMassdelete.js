@@ -63,7 +63,7 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
         });
         
         it("should return null", function() {
-            var message = view.warnDelete();
+            var message = view._warnDelete();
             expect(message).toEqual(null);
         });
     });
@@ -90,7 +90,7 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
         });
         
         it("should return WARNING_NO_DELETE_SELECTED", function() {
-            var message = view.warnDelete();
+            var message = view._warnDelete();
             expect(message).toEqual("WARNING_NO_DELETE_SELECTED");
         });
     });
@@ -117,7 +117,7 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
         });
         
         it("should return WARNING_NO_DELETE_CLOSED_SELECTED", function() {
-            var message = view.warnDelete();
+            var message = view._warnDelete();
             expect(message).toEqual("WARNING_NO_DELETE_CLOSED_SELECTED");
         });
     });
@@ -144,7 +144,7 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
         });
         
         it("should return WARNING_NO_DELETE_SELECTED", function() {
-            var message = view.warnDelete();
+            var message = view._warnDelete();
             expect(message).toEqual("WARNING_NO_DELETE_SELECTED");
         });
     });
@@ -172,7 +172,7 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
         });
         
         it("should return WARNING_NO_DELETE_SELECTED", function() {
-            var message = view.warnDelete();
+            var message = view._warnDelete();
             expect(message).toEqual("WARNING_NO_DELETE_SELECTED");
         });
     });
