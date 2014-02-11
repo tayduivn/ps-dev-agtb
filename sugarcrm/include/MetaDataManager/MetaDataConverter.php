@@ -781,7 +781,7 @@ class MetaDataConverter
         // In this case only 'Path' will be in the parsed url) Since we don't want user to access
         // our internal files, so we return nothing and not push this item to the menu list
         else{
-            $GLOBALS['log']->error("Invalid URL $url");
+            $GLOBALS['log']->error("Invalid URL {$option['URL']}");
             return;
         }
         if(isset($option['OPENWINDOW'])){
