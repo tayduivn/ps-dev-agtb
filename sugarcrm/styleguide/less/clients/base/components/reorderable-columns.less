@@ -1,7 +1,6 @@
 table.reorderable-columns {
 
   th[data-fieldname] {
-    position: relative;
     padding: 0;
 
     &:hover {
@@ -19,6 +18,8 @@ table.reorderable-columns {
       vertical-align: middle;
       text-overflow: initial;
       padding: 0;
+      .box-sizing(border-box);
+      width: 100%;
 
       > div {
         &[data-draggable="true"] {
@@ -30,7 +31,7 @@ table.reorderable-columns {
             cursor: ew-resize;
           }
         }
-        box-sizing: border-box;
+        .box-sizing(border-box);
 
         /* Brings back styling of table.dataTable th > *   */
         > span {
