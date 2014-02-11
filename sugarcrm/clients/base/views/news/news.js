@@ -18,6 +18,7 @@
             var limit = this.settings.get("limit") || "5";
             this.settings.set("limit", limit);
         }
+        this.model.on("change:name", this.loadData, this);
     },
     loadData: function (options) {
         var name, limit;
