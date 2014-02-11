@@ -249,9 +249,6 @@ class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
                 'support' => array('LBL_TRAINING' => 'javascript:void(window.open(\'http://support.sugarcrm.com\'))'),
             )
         );
-        $testlink['attachment'] = array('linkinfo' => array('ATTACHMENTS' => 'client/base/views/attachments/attachments.php'),
-            'submenu' => ''
-        );
         // Transform globalcontrollink format into regular associate array format
         $inputTestLinks = $converter->processFromGlobalControlLinkFormat($testlink);
 
@@ -270,7 +267,6 @@ class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             'LBL_REPORTS' => array( 'label' => 'LBL_REPORTS', 'route' => '#bwc/index.php?module=Reports&action=index', 'acl_action' => 'list'),
             'LBL_ADMIN' => array( 'label' => 'LBL_ADMIN', 'route' => '#bwc/index.php?module=Administration&action=index', 'acl_action' => 'admin'),
-            '' => '',
         );
 
         // Test if custom links are converted correctly by comparing with expectedOutput
@@ -285,5 +281,21 @@ class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
             }
             $this->assertEquals($expectedOutput[$convertedItem['label']], $convertedItem, "{$convertedItem['label']} array did not convert correctly");
         }
+    }
+
+    public function testEmptyConvertProfileactions()
+    {
+        $testlink = array(
+            'attachment' => array(
+                'linkinfo' => array('ATTACHMENTS' => 'client/base/views/attachments/attachments.php'),
+            'submenu' => ''
+            )
+        );
+        $converter = new MetaDataConverter();
+        $result = $converter->processFromGlobalControlLinkFormat($testlink);
+        $this->assertCount(1, $result);
+        $result = array_shift($result);
+        $convertedItem = $converter->convertCustomMenu($result);
+        $this->assertEmpty($convertedItem);
     }
 }
