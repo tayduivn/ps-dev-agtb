@@ -809,7 +809,7 @@ EOJS;
 		$scriptResponse['newDashletsToReg'] = $dashletIds;
 		$scriptResponse['numCols'] = sizeof($pages[$selectedPage]['columns']);
 		//custom chart code
-		$scriptResponse['chartsArray'] = $sugarChart->chartArray($chartsArray);
+		$scriptResponse['chartsArray'] = $chartsArray;
 		$scriptResponse['trackerScript'] = $trackerScript . (strpos($trackerScriptArray,',') ? (substr($trackerScriptArray, 0, strlen($trackerScriptArray)-1) . ']; </script>') : $trackerScriptArray . ']; </script>');
 		$scriptResponse['toggleHeaderToolsetScript'] = "<script>".$toggleHeaderToolsetScript."</script>";
 

@@ -44,8 +44,18 @@ class Dashboard extends Basic
      * 'view' is deprecated because it's reserved db word.
      * Some old API (before 7.2.0) can use 'view'.
      * Because of that API will use 'view' as 'view_name' if 'view_name' isn't present.
+     * Returns all the dashboards available for the User given.
+     *
+     * Optionally you can pass the view in the $options to filter the
+     * dashboards of a certain view.
+     * For homepage the view is assumed empty.
+     *
+     * @param User $user The user that we want to get the dashboards from.
+     * @param array $options A list of options such as: limit, offset and view.
+     *
+     * @return array The list of the User's dashboard and next offset.
      */
-    public function getDashboardsForUser( User $user, $options = array() )
+    public function getDashboardsForUser(User $user, array $options = array())
     {
         $order = !empty($options['order_by']) ? $options['order_by'] : 'date_entered desc';
         $from = "assigned_user_id = '".$this->db->quote($user->id)."' and dashboard_module ='".$this->db->quote($options['dashboard_module'])."'";

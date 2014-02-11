@@ -37,8 +37,28 @@ describe("Base.Layout.Dashboard", function(){
 
     describe("Home Dashboard", function() {
 
+        var sandbox = sinon.sandbox.create();
+
         beforeEach(function() {
             layout = SugarTest.createLayout("base", "Home", "dashboard");
+        });
+
+        afterEach(function() {
+            sandbox.restore();
+        });
+
+        it('should navigate to bwc dashboard', function() {
+            layout.collection.models.push(layout.context.get("model"));
+            sandbox.stub(layout, 'getLastStateKey', function() {
+                return 'Home:last-visit:Home.';
+            });
+            sandbox.stub(app.user.lastState, 'get', function() {
+                return '#bwc/index.php?module=Home&action=bwc_dashboard'
+            });
+            navSpy = sandbox.spy(app.router, 'navigate');
+
+            layout.setDefaultDashboard();
+            expect(navSpy).toHaveBeenCalledWith('#bwc/index.php?module=Home&action=bwc_dashboard', {trigger: true});
         });
 
         it("should initialize dashboard model and collection", function() {

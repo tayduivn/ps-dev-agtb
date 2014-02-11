@@ -198,7 +198,8 @@
         if (this.collection.models.length > 0) {
             var model = _.first(this.collection.models),
                 lastVisitedStateKey = this.getLastStateKey(),
-                lastViewed = app.user.lastState.get(lastVisitedStateKey);
+                lastViewed = app.user.lastState.get(lastVisitedStateKey),
+                currentModule = this.context.get('module');
             if (lastViewed) {
                 var lastVisitedModel = this.collection.get(lastViewed);
                 //if last visited dashboard not in the fetching list,
@@ -216,7 +217,12 @@
             } else {
                 //SC-748: Should dispose the dashboard to release the warning listener
                 this.dispose();
-                app.navigate(this.context, model);
+                // check to see if the legacy dashboard was the last one visited if we are on the Home module
+                if (currentModule == 'Home' && _.isString(lastViewed) && lastViewed.indexOf('bwc_dashboard') !== -1) {
+                    app.router.navigate(lastViewed, {trigger: true});
+                } else {
+                    app.navigate(this.context, model);
+                }
             }
         } else {
             var layoutName = this.dashboardLayouts[this.context.parent ? this.context.parent.get("layout") : 'record'],

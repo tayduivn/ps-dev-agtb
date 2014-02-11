@@ -649,14 +649,7 @@ $resources = $sugarChart->getChartResources();
 $mySugarResources = $sugarChart->getMySugarChartResources();
 $sugar_smarty->assign('chartResources', $resources);
 $sugar_smarty->assign('mySugarChartResources', $mySugarResources);
-//BEGIN SUGARCRM flav=pro ONLY
-$viewed_tour = $current_user->getPreference('viewed_tour');
-if((empty($viewed_tour) || $viewed_tour == 'false') && $theme != "Sugar5") {
-    $sugar_smarty->assign('view_tour', true);
-}
-//END SUGARCRM flav=pro ONLY
 echo $sugar_smarty->fetchCustom('include/MySugar/tpls/MySugar.tpl');
 
 //init the quickEdit listeners after the dashlets have loaded on home page the first time
 echo"<script>if(typeof(qe_init) != 'undefined'){qe_init();}</script>";
-?>

@@ -55,6 +55,18 @@
         if (this.layout) {
             this.layout.on("view:resize", this.resize, this);
         }
+
+        // FIXME we need to refactor this file to support defaultSettings
+        // FIXME we need to support partials for hbs files (each module should
+        // be able to make their own overrides on partials)
+        // FIXME we need to support menu placeholders on the metadata for recent
+        // and favorites if we don't support override of partials on each module
+
+        // not using `hide_dashboard_bwc` form, because we shouldn't give this
+        // feature by default - need confirmation from PMs.
+        if (app.config.enableLegacyDashboards && app.config.enableLegacyDashboards === true) {
+            this.dashboardBwcLink = app.bwc.buildRoute('Home', null, 'bwc_dashboard');
+        }
     },
     _dispose: function(){
         app.view.View.prototype._dispose.call(this);
@@ -163,10 +175,10 @@
 
             }});
     },
-    /**
-     * Populates recently created dashboards on open menu
-     */
 
+    /**
+     * Populates recently created dashboards on open menu.
+     */
     populateDashboards:function () {
         var self = this,
             sync = function(method, model, options) {
