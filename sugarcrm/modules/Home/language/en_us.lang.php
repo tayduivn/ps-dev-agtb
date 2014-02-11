@@ -288,6 +288,8 @@ $mod_strings = array (
   'LBL_MOST_EMAILS_RECEIVED' => '{{count}} emails received',
   'LBL_MOST_MEETING_HELD' => '{{count}} meetings held',
 
+    'LBL_SUGAR_CUBE_ALT' => 'SugarCRM',
+
     //BEGIN SUGARCRM flav=ent ONLY
     // Portal tour content
     'LBL_PORTAL_TOUR_RECORDS_INTRO' => 'Welcome to Sugar Portal.  Use the arrows below to go through a quick tour.',
@@ -302,6 +304,3 @@ $mod_strings = array (
     'LBL_PORTAL_TOUR_RECORDS_RETURN' => 'Clicking here will return you to this view at any time.',
     //END SUGARCRM flav=ent ONLY
 );
-
-
-?>
