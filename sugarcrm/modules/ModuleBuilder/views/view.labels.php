@@ -128,7 +128,7 @@ class ViewLabels extends ViewModulefields
             if($allLabels || isset($vnames[$name]) || preg_match( '/lbl_city|lbl_country|lbl_billing_address|lbl_alt_address|lbl_shipping_address|lbl_postal_code|lbl_state$/si' , $name)) {
                 // Bug 58174 - Escaped labels are sent to the client escaped
                 // even in the label editor in studio
-                $formatted_mod_strings[$name] = html_entity_decode($label);
+                $formatted_mod_strings[$name] = html_entity_decode($label, null, 'UTF-8');
             }
         }
         //Grab everything from the custom files
@@ -144,7 +144,7 @@ class ViewLabels extends ViewModulefields
                foreach ($mod_strings as $key => $label) {
                    // Bug 58174 - Escaped labels are sent to the client escaped
                    // even in the label editor in studio
-                   $formatted_mod_strings[$key] = html_entity_decode($label);
+                   $formatted_mod_strings[$key] = html_entity_decode($label, null, 'UTF-8');
                }
             }
         }
