@@ -71,7 +71,7 @@
         this.listenTo(this.layout, "filter:create:open", this.openForm);
         this.listenTo(this.layout, "filter:create:close", this.render);
         this.listenTo(this.layout, "filter:create:save", this.saveFilter);
-        this.listenTo(this.layout, "filter:create:delete", this.deleteFilter);
+        this.listenTo(this.layout, "filter:create:delete", this.confirmDelete);
         this.listenTo(this.layout, "filter:create:validate", this.validateRows);
     },
 
@@ -123,8 +123,9 @@
     }, 100, true),
 
     /**
-     * Save the filter
-     * @param {String} name
+     * Save the filter.
+     *
+     * @param {String} name The name of the filter.
      */
     saveFilter: function(name) {
         var self = this,
@@ -132,42 +133,56 @@
                 filter_definition: this.buildFilterDef(),
                 name: name,
                 module_name: this.moduleName
-            };
+            },
+            message = app.lang.get('TPL_FILTER_SAVE', this.moduleName, {name: name});
 
         this.layout.editingFilter.save(obj, {
             success: function(model) {
-                self.layout.trigger("filter:add", model);
-                self.layout.trigger("filter:create:rowsValid", false);
+                self.layout.trigger('filter:add', model);
+                self.layout.trigger('filter:create:rowsValid', false);
             },
-            alerts: {
+            showAlerts: {
                 'success': {
-                    title: app.lang.get("LBL_EMAIL_SUCCESS") + ":",
-                    messages: app.lang.get("LBL_FILTER_SAVE") + " " + name
+                    title: app.lang.getAppString('LBL_SUCCESS'),
+                    messages: message
                 }
             }
         });
     },
 
+
     /**
-     * Delete the filter
+     * Popup alert to confirm delete action.
+     */
+    confirmDelete: function() {
+        app.alert.show('delete_confirmation', {
+            level: 'confirmation',
+            messages: app.lang.get('LBL_DELETE_FILTER_CONFIRMATION', this.moduleName),
+            onConfirm: _.bind(this.deleteFilter, this)
+        });
+    },
+
+    /**
+     * Delete the filter.
      */
     deleteFilter: function() {
         var self = this,
-            name = this.layout.editingFilter.get('name');
+            name = this.layout.editingFilter.get('name'),
+            message = app.lang.get('TPL_DELETE_FILTER_SUCCESS', this.moduleName, {name: name});
+
         this.layout.editingFilter.destroy({
             success: function(model) {
-                self.layout.trigger("filter:remove", model);
+                self.layout.trigger('filter:remove', model);
             },
-            alerts: {
+            showAlerts: {
                 'success': {
-                    title: app.lang.get('LBL_EMAIL_SUCCESS') + ':',
-                    message: app.lang.get('LBL_DELETED') + ' ' + name
+                    title: app.lang.getAppString('LBL_SUCCESS'),
+                    messages: message
                 }
             }
         });
         this.layout.trigger('filter:create:close');
     },
-
 
     /**
      * Get filterable fields from the module metadata
