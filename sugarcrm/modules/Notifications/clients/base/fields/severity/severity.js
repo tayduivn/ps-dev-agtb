@@ -8,12 +8,11 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
 ({
     /**
-     * Level Widget.
+     * Severity Widget.
      *
      * Extends from EnumField widget adding style property according to specific
      * severity.
@@ -28,25 +27,65 @@
      * @protected
      */
     _styleMapping: {
-        'default': 'label',
-        alert: 'label label-important',
-        information: 'label label-info',
-        other: 'label label-inverse',
-        success: 'label label-success',
-        warning: 'label label-warning'
+        'default': '',
+        alert: 'label-important',
+        information: 'label-info',
+        other: 'label-inverse',
+        success: 'label-success',
+        warning: 'label-warning'
     },
 
     /**
-     * Defines style property based on field value.
+     * {@inheritDoc}
      *
-     * {@inheritdoc}
+     * Listen to changes on `is_read` field only if view name matches
+     * notifications.
+     */
+    bindDataChange: function() {
+        this._super('bindDataChange');
+
+        if (this.model && this.view.name === 'notifications') {
+            this.model.on('change:is_read', this.render, this);
+        }
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Inject additional logic to load templates based on different view names
+     * according to the following:
+     *
+     * - `fields/severity/<view-name>-<tpl-name>.hbs`
+     * - `fields/severity/<view-template-name>-<tpl-name>.hbs`
+     */
+    _loadTemplate: function() {
+        this._super('_loadTemplate');
+
+        var template = app.template.getField(
+            this.type,
+            this.view.name + '-' + this.tplName,
+            this.model.module
+        );
+
+        if (!template && this.view.meta && this.view.meta.template) {
+            template = app.template.getField(
+                this.type,
+                this.view.meta.template + '-' + this.tplName,
+                this.model.module
+            );
+        }
+
+        this.template = template || this.template;
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Defines style property based on field value.
      */
     _render: function () {
-        this._super('_render');
-
         var severity = this.model.get(this.name);
-        var severityCss = this._styleMapping[severity] || this._styleMapping.default;
-
-        this.getFieldElement().addClass(severityCss);
+        this.severityCss = this._styleMapping[severity] || this._styleMapping.default;
+        this._super('_render');
     }
 })

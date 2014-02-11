@@ -8,7 +8,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
  * Notifications will pull information from the server based on a given delay.
@@ -17,8 +17,6 @@
  *
  * - {Number} delay How often (minutes) should the pulling mechanism run.
  * - {Number} limit Limit imposed to the number of records pulled.
- * - {Object} severity_css An object where its keys map to a specific
- * notification severity and values to a matching CSS class.
  *
  * Example:
  * <pre><code>
@@ -26,13 +24,6 @@
  *     array(
  *         'delay' => 5,
  *         'limit' => 4,
- *         'severity_css' => array(
- *             'alert' => 'label-important',
- *             'information' => 'label-info',
- *             'other' => 'label-inverse',
- *             'success' => 'label-success',
- *             'warning' => 'label-warning',
- *         ),
  *     ),
  * //...
  * </code></pre>
@@ -79,22 +70,17 @@
      * Supported options:
      * - delay: How often (minutes) should the pulling mechanism run.
      * - limit: Limit imposed to the number of records pulled.
-     * - severity_css: An object where its keys map to a specific notification
-     * severity and values to a matching CSS class.
      *
      * @property {Object}
      * @protected
      */
     _defaultOptions: {
         delay: 5,
-        limit: 4,
-        severity_css: {
-            alert: 'label-important',
-            information: 'label-info',
-            other: 'label-inverse',
-            success: 'label-success',
-            warning: 'label-warning'
-        }
+        limit: 4
+    },
+
+    events: {
+        'click [data-action=is-read-handler]': 'isReadHandler'
     },
 
     /**
@@ -119,6 +105,9 @@
         this._initCollection();
         this._initReminders();
         this.startPulling();
+
+        this.collection.on('change:is_read', this.render, this);
+
         return this;
     },
 
@@ -134,7 +123,6 @@
 
         this.delay = options.delay * 60 * 1000;
         this.limit = options.limit;
-        this.severityCss = options.severity_css;
 
         return this;
     },
@@ -153,8 +141,18 @@
             },
             limit: this.limit,
             myItems: true,
-            fields: ['date_entered', 'id', 'name', 'severity']
+            fields: [
+                'date_entered',
+                'id',
+                'is_read',
+                'name',
+                'severity'
+            ]
         };
+
+        this.collection.filterDef = [{
+            is_read: {$equals: false}
+        }];
 
         this.collection.sync = _.wrap(
             this.collection.sync,
@@ -207,29 +205,6 @@
         }, this);
 
         return this;
-    },
-
-    /**
-     * Retrieve label according to supplied severity.
-     *
-     * @param {String} severity Notification severity.
-     * @return {String} Matching label or severity if supplied severity
-     *   doesn't exist.
-     */
-    getSeverityLabel: function(severity) {
-        var list = app.lang.getAppListStrings('notifications_severity_list');
-        return list[severity] || severity;
-    },
-
-    /**
-     * Retrieve CSS class according to supplied severity.
-     *
-     * @param {String} severity Notification severity.
-     * @return {String} Matching css class or an empty string if supplied
-     * severity doesn't exist.
-     */
-    getSeverityCss: function(severity) {
-        return this.severityCss[severity] || '';
     },
 
     /**
@@ -288,12 +263,12 @@
 
     /**
      * Pull and render notifications, if view isn't disposed or dropdown isn't
-     * opened.
+     * open.
      *
      * @return {View.Views.BaseNotificationsView} Instance of this view.
      */
     pull: function() {
-        if (this.disposed || this.isOpened()) {
+        if (this.disposed || this.isOpen()) {
             return this;
         }
 
@@ -301,7 +276,7 @@
 
         this.collection.fetch({
             success: function() {
-                if (self.disposed || self.isOpened()) {
+                if (self.disposed || self.isOpen()) {
                     return this;
                 }
 
@@ -405,36 +380,44 @@
     },
 
     /**
-     * Check if dropdown is opened.
+     * Check if dropdown is open.
      *
-     * @return {Boolean} True if dropdown is opened, false otherwise.
+     * @return {Boolean} `True` if dropdown is open, `false` otherwise.
      */
-    isOpened: function() {
-        return this.$('.notification-list').hasClass('open');
+    isOpen: function() {
+        return this.$('[data-name=notifications-list-button]').hasClass('open');
     },
 
     /**
-     * If notifications collection is available and has models, two 'severity'
-     * related properties are injected into each model:
-     * - severityCss: Model severity matching CSS class.
-     * - severityLabel: Model severity label.
+     * Event handler for notifications.
      *
+     * Whenever the user clicks a notification, its `is_read` property is
+     * defined as read.
+     *
+     * We're doing this instead of a plain save in order to
+     * prevent the case where an error could occur before the notification get
+     * rendered, thus making it as read when the user didn't actually see it.
+     *
+     * @param {Event} event Click event.
+     */
+    isReadHandler: function(event) {
+        var element = $(event.currentTarget),
+            id = element.data('id'),
+            notification = this.collection.get(id),
+            isRead = notification.get('is_read');
+
+        if (!isRead) {
+            notification.set({is_read: true});
+        }
+    },
+
+    /**
      * {@inheritDoc}
      */
     _renderHtml: function() {
         if (!app.api.isAuthenticated() || app.config.appStatus === 'offline') {
             return;
         }
-
-        if (!_.isObject(this.collection)) {
-            this._super('_renderHtml');
-            return;
-        }
-
-        _.each(this.collection.models, function(model) {
-            model.set('severityCss', this.getSeverityCss(model.get('severity')));
-            model.set('severityLabel', this.getSeverityLabel(model.get('severity')));
-        }, this);
 
         this._super('_renderHtml');
     },

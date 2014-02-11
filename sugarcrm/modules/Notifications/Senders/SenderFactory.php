@@ -26,3 +26,6 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 //TO DO
+/**
+ * @deprecated Since 7.2 will be removed on 7.5
+ */

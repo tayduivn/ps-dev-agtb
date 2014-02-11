@@ -207,6 +207,11 @@ $app_list_strings = array (
         1 => 'Yes',
     ),
 
+    'notifications_status_dom' => array(
+        0 => 'Unread',
+        1 => 'Read',
+    ),
+
   'optout_dom' => array(
       '' => '-none-',
       'false' => 'No',

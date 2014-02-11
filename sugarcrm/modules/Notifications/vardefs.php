@@ -10,7 +10,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 
 $dictionary['Notifications'] = array(
@@ -22,7 +22,7 @@ $dictionary['Notifications'] = array(
             'name' => 'is_read',
             'vname' => 'LBL_IS_READ',
             'type' => 'bool',
-            'massupdate' => 0,
+            'massupdate' => true,
             'comments' => '',
             'help' => '',
             'importable' => 'false',
@@ -38,7 +38,46 @@ $dictionary['Notifications'] = array(
             'options' => 'notifications_severity_list',
             'required' => true,
             'type' => 'enum',
+            'massupdate' => false,
             'vname' => 'LBL_SEVERITY',
+            'readonly' => true,
+        ),
+        'parent_name' =>
+        array(
+            'name' => 'parent_name',
+            'parent_type' => 'record_type_display',
+            'type_name' => 'parent_type',
+            'id_name' => 'parent_id',
+            'vname' => 'LBL_LIST_RELATED_TO',
+            'type' => 'parent',
+            'group' => 'parent_name',
+            'source' => 'non-db',
+            'options' => 'parent_type_display',
+            'studio' => true,
+            'massupdate' => false,
+            'readonly' => true,
+        ),
+        'parent_type' =>
+        array(
+            'name' => 'parent_type',
+            'vname' => 'LBL_PARENT_TYPE',
+            'type' => 'parent_type',
+            'dbType' => 'varchar',
+            'group' => 'parent_name',
+            'options' => 'parent_type_display',
+            'len' => 100,
+            'comment' => 'Module notification is associated with.',
+            'studio' => array('searchview' => false, 'wirelesslistview' => false),
+        ),
+        'parent_id' =>
+        array(
+            'name' => 'parent_id',
+            'vname' => 'LBL_PARENT_ID',
+            'type' => 'id',
+            'group' => 'parent_name',
+            'reportable' => false,
+            'comment' => 'ID of item indicated by parent_type.',
+            'studio' => array('searchview' => false),
         ),
     ),
     'relationships' => array(),
@@ -47,3 +86,9 @@ $dictionary['Notifications'] = array(
 
 require_once 'include/SugarObjects/VardefManager.php';
 VardefManager::createVardef('Notifications', 'Notifications', array('basic', 'assignable'));
+
+$dictionary['Notifications']['fields']['assigned_user_name']['massupdate'] = false;
+$dictionary['Notifications']['fields']['assigned_user_name']['readonly'] = true;
+$dictionary['Notifications']['fields']['description']['readonly'] = true;
+$dictionary['Notifications']['fields']['name']['readonly'] = true;
+

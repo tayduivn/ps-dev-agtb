@@ -36,7 +36,6 @@ describe('Notifications', function() {
 
             expect(view.delay / 60 / 1000).toBe(view._defaultOptions.delay);
             expect(view.limit).toBe(view._defaultOptions.limit);
-            expect(view.severityCss).toBe(view._defaultOptions.severity_css);
         });
 
         it('should initialize collection options with default values', function() {
@@ -56,7 +55,13 @@ describe('Notifications', function() {
                 },
                 limit: view.limit,
                 myItems: true,
-                fields: ['date_entered', 'id', 'name', 'severity']
+                fields: [
+                    'date_entered',
+                    'id',
+                    'is_read',
+                    'name',
+                    'severity'
+                ]
             });
         });
     });
@@ -64,14 +69,7 @@ describe('Notifications', function() {
     describe('Initialization with metadata overridden values', function() {
         var app, view, customOptions = {
             delay: 10,
-            limit: 8,
-            severity_css: {
-                alert: 'cstm-label-alert',
-                information: 'cstm-label-info',
-                other: 'cstm-label-inverse',
-                success: 'cstm-label-success',
-                warning: 'cstm-label-warning'
-            }
+            limit: 8
         };
 
         beforeEach(function() {
@@ -96,7 +94,6 @@ describe('Notifications', function() {
 
             expect(view.delay / 60 / 1000).toBe(customOptions.delay);
             expect(view.limit).toBe(customOptions.limit);
-            expect(view.severityCss).toEqual(customOptions.severity_css);
         });
 
         it('should initialize collection options with metadata overridden values', function() {
@@ -116,7 +113,13 @@ describe('Notifications', function() {
                 },
                 limit: view.limit,
                 myItems: true,
-                fields: ['date_entered', 'id', 'name', 'severity']
+                fields: [
+                    'date_entered',
+                    'id',
+                    'is_read',
+                    'name',
+                    'severity'
+                ]
             });
         });
     });
@@ -160,8 +163,8 @@ describe('Notifications', function() {
             view.disposed = false;
         });
 
-        it('should not pull notifications if opened', function() {
-            var isOpened = sinon.collection.stub(view, 'isOpened', function() {
+        it('should not pull notifications if open', function() {
+            var isOpen = sinon.collection.stub(view, 'isOpen', function() {
                 return true;
             });
 
@@ -170,9 +173,9 @@ describe('Notifications', function() {
             expect(view.collection.fetch).not.toHaveBeenCalled();
         });
 
-        it('should not pull notifications if opened after fetch', function() {
+        it('should not pull notifications if open after fetch', function() {
             var fetch = sinon.collection.stub(view.collection, 'fetch', function(o) {
-                var isOpened = sinon.collection.stub(view, 'isOpened', function() {
+                var isOpen = sinon.collection.stub(view, 'isOpen', function() {
                     return true;
                 });
 
@@ -239,74 +242,6 @@ describe('Notifications', function() {
             expect(setTimeout).toHaveBeenCalledTwice();
             expect(isAuthenticated).toHaveBeenCalledTwice();
             expect(stopPulling).toHaveBeenCalledTwice();
-        });
-    });
-
-    describe('Helpers', function() {
-        var app, view;
-
-        beforeEach(function() {
-            app = SugarTest.app;
-            view = SugarTest.createView('base', moduleName, viewName);
-        });
-
-        afterEach(function() {
-            sinon.collection.restore();
-            SugarTest.app.view.reset();
-            view.dispose();
-            view = null;
-        });
-
-        // FIXME: refactor this when data providers support is enabled
-        it('should retrieve severity as a label for non-existent severity', function() {
-            var appList, label, severity;
-
-            appList = sinon.collection.stub(app.lang, 'getAppListStrings', function() {
-                return {};
-            });
-
-            severity = 'non-existent';
-            label = view.getSeverityLabel(severity);
-
-            expect(appList).toHaveBeenCalledOnce();
-            expect(label).toBe(severity);
-        });
-
-        // FIXME: refactor this when data providers support is enabled
-        it('should retrieve matching label for existent severity', function() {
-            var appList, label, severity;
-
-            appList = sinon.collection.stub(app.lang, 'getAppListStrings', function() {
-                return {
-                    alert: 'Alert'
-                };
-            });
-
-            severity = 'alert';
-            label = view.getSeverityLabel(severity);
-
-            expect(appList).toHaveBeenCalledOnce();
-            expect(label).toBe('Alert');
-        });
-
-        // FIXME: refactor this when data providers support is enabled
-        it('should retrieve an empty string for non-existent severity', function() {
-            view.severityCss = {};
-
-            var css = view.getSeverityCss('non-existent');
-
-            expect(css).toBe('');
-        });
-
-        // FIXME: refactor this when data providers support is enabled
-        it('should retrieve a css class for existent severity', function() {
-            view.severityCss = {
-                alert: 'label-important'
-            };
-
-            var css = view.getSeverityCss('alert');
-
-            expect(css).toBe('label-important');
         });
     });
 

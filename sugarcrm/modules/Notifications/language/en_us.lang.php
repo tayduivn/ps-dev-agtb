@@ -10,7 +10,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 
 $mod_strings = array(
@@ -26,7 +26,7 @@ $mod_strings = array(
     'LBL_CREATED_ID' => 'Created By Id',
     'LBL_DESCRIPTION' => 'Description',
     'LBL_DELETED' => 'Deleted',
-    'LBL_NAME' => 'Name',
+    'LBL_NAME' => 'Subject',
     'LBL_CREATED_USER' => 'Created by User',
     'LBL_MODIFIED_USER' => 'Modified by User',
     'LBL_TEAM' => 'Team',
@@ -44,9 +44,12 @@ $mod_strings = array(
     'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activities',
     'LBL_ASX_NOTIFICATIONS_SUBPANEL_TITLE' => 'Notifications',
     'LBL_NEW_FORM_TITLE' => 'New Notifications',
-    'LBL_IS_READ' => 'Read',
+    'LBL_IS_READ' => 'Status',
     'LBL_SEVERITY' => 'Severity',
-    'LBL_SHOW_NOTIFICATIONS' => 'Show notifications...',
-    'LBL_TODAYS_NOTIFICATIONS' => 'Today',
-    'LBL_RECENT_NOTIFICATIONS' => 'Recent',
+    'LBL_SHOW_NOTIFICATIONS' => 'View Notifications',
+    'LBL_LIST_RELATED_TO' => 'Related to',
+    'LBL_PARENT_TYPE' => 'Parent Type',
+    'LBL_PARENT_ID' => 'Parent ID',
+    'LBL_READ' => 'Read',
+    'LBL_UNREAD' => 'Unread',
 );

@@ -452,3 +452,19 @@
 .touch .modal-backdrop { /*SC-2000*/
   display: none;
 }
+
+@media (max-width: 700px) { /* UIUX-1520 */
+  .navbar-inner .nav-collapse ul.nav.megamenu {
+    position: static;
+  }
+  .notification-list,
+  .notification-list > div.open {
+    position: static;
+  }
+  .navbar ul.nav.megamenu li.dropdown.notification-list div.btn-group.open .dropdown-menu { /* long selector to override similar long selector in notifications.less and avoid using !important*/
+    width: 100%;
+    ul {
+      .border-radius(0);
+    }
+  }
+}
