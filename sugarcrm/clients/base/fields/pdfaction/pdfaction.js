@@ -71,7 +71,8 @@
      * @private
      */
     _render: function() {
-        if (this.def.action === 'email' && app.user.getPreference('use_sugar_email_client') !== 'true') {
+        var emailClientPreference = app.user.getPreference('email_client_preference');
+        if (this.def.action === 'email' && emailClientPreference.type !== 'sugar') {
             this.hide();
         } else {
             this._super('_render');

@@ -428,5 +428,8 @@ $mod_strings = array (
     'LBL_HELP_COMPOSE' => 'Compose an email by providing a subject and email body. Click "Send" to send the email or choose "Save draft" from the actions menu to save the email for later editing from your drafts folder within the Emails module.
 
 You may apply a predefined template using the Template button or include one of your signatures using the Signature button. Use the Upload New button to add an attachment to the email.',
+
+    'LBL_EMAIL_INVALID_USER_CONFIGURATION' => 'Your email settings are not correctly configured to send email. An SMTP server must be configured in <a href="#bwc/index.php?module=Users">User Profile Email Settings</a>.',
+    'LBL_EMAIL_INVALID_SYSTEM_CONFIGURATION' => 'The default system SMTP server is not configured.  Please contact your system administrator for further assistance.',
 );
 

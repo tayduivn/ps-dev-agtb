@@ -57,14 +57,14 @@ describe('Base.Fields.Pdfaction', function() {
 
         it('should render an email button when the user can use the sugar email client', function() {
             var stubAppUserGetPreference = sinon.collection.stub(app.user, 'getPreference');
-            stubAppUserGetPreference.withArgs('use_sugar_email_client').returns('true');
+            stubAppUserGetPreference.withArgs('email_client_preference').returns({type:'sugar'});
             email.render();
             expect(email.$el.hasClass('hide')).toBe(false);
         });
 
         it('should not render an email button when the user cannot use the sugar email client', function() {
             var stubAppUserGetPreference = sinon.collection.stub(app.user, 'getPreference');
-            stubAppUserGetPreference.withArgs('use_sugar_email_client').returns('false');
+            stubAppUserGetPreference.withArgs('email_client_preference').returns({type:'mailto'});
             email.render();
             expect(email.$el.hasClass('hide')).toBe(true);
         });

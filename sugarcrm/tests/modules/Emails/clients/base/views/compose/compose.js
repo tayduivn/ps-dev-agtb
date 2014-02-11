@@ -58,7 +58,7 @@ describe("Emails.Views.Compose", function() {
     });
 
     describe('Render', function() {
-        var setTitleStub, hideFieldStub, toggleSenderOptionsStub, prepopulateStub;
+        var setTitleStub, hideFieldStub, toggleSenderOptionsStub, prepopulateStub, notificationStub;
 
         beforeEach(function() {
             setTitleStub = sinon.stub(view, 'setTitle');
@@ -74,21 +74,61 @@ describe("Emails.Views.Compose", function() {
             prepopulateStub.restore();
         });
 
-        it("No prepopulate on context - title should be set no fields pre-populated", function() {
+        it('No prepopulate on context - title should be set no fields pre-populated', function() {
+            notificationStub = sinon.stub(view, 'notifyConfigurationStatus');
             view._render();
             expect(setTitleStub).toHaveBeenCalled();
             expect(prepopulateStub.callCount).toEqual(0);
+
+            notificationStub.restore();
         });
 
-        it("prepopulate on context - call is made to populate them", function() {
+        it('prepopulate on context - call is made to populate them', function() {
             var dummyPrepopulate = {subject: 'Foo!'};
+
+            notificationStub = sinon.stub(view, 'notifyConfigurationStatus');
             view.context.set('prepopulate', dummyPrepopulate);
             view._render();
             expect(prepopulateStub.callCount).toEqual(1);
             expect(prepopulateStub.lastCall.args).toEqual([dummyPrepopulate]);
+
+            notificationStub.restore();
         });
 
-        //test different sender recipient scenarios
+        it('No email client preference error - should not disable the send button or alert user', function() {
+            var alertShowStub = sinon.stub(app.alert, 'show'),
+                stubAppUserGetPreference = sinon.collection.stub(app.user, 'getPreference');
+
+            stubAppUserGetPreference.withArgs('email_client_preference').returns({type: 'sugar'});
+
+            view._render();
+
+            expect(alertShowStub.callCount).toBe(0);
+            stubAppUserGetPreference.restore();
+            alertShowStub.restore();
+        });
+
+        it('Email client preference error - should disable the send button and alert user', function() {
+            var alertShowStub = sinon.stub(app.alert, 'show'),
+                fieldStub = sinon.stub(view, 'getField'),
+                sendField = {setDisabled: $.noop},
+                spyOnField = sinon.spy(sendField, 'setDisabled'),
+                stubAppUserGetPreference = sinon.collection.stub(app.user, 'getPreference');
+
+            stubAppUserGetPreference.withArgs('email_client_preference').returns({type: 'sugar', error: {code: 101, message: 'LBL_EMAIL_INVALID_USER_CONFIGURATION'}});
+            fieldStub.withArgs('send_button').returns(sendField);
+
+            view._render();
+
+            expect(alertShowStub.callCount).toBe(1);
+            expect(spyOnField.calledOnce).toBe(true);
+
+            spyOnField.restore();
+            stubAppUserGetPreference.restore();
+            alertShowStub.restore();
+            fieldStub.restore();
+        });
+
         dataProvider = [
             {
                 'testComment': 'no cc or bcc => both hidden with links',
@@ -122,6 +162,7 @@ describe("Emails.Views.Compose", function() {
 
         _.each(dataProvider, function(data) {
             it(data.testComment, function() {
+                notificationStub = sinon.stub(view, 'notifyConfigurationStatus');
                 view.model.off('change');
                 if (data.model) {
                     view.model.set(data.model);
@@ -132,14 +173,15 @@ describe("Emails.Views.Compose", function() {
                     expect(hideFieldStub.lastCall.args).toEqual(data.hideFieldLastCallArgs);
                 }
                 expect(toggleSenderOptionsStub.lastCall.args).toEqual(data.toggleSenderLastCallArgs);
+                notificationStub.restore();
             });
         });
     });
 
-    describe("prepopulate", function () {
+    describe('prepopulate', function() {
         var populateRelatedStub, modelSetStub, flag;
 
-        beforeEach(function () {
+        beforeEach(function() {
             flag = false;
             populateRelatedStub = sinon.stub(view, 'populateRelated', function() {
                 flag = true;
@@ -149,7 +191,7 @@ describe("Emails.Views.Compose", function() {
             });
         });
 
-        afterEach(function () {
+        afterEach(function() {
             populateRelatedStub.restore();
             modelSetStub.restore();
         });

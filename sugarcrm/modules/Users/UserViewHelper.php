@@ -1,8 +1,16 @@
 <?php
-/*********************************************************************************
- * The contents of this file are subject to
- * *******************************************************************************/
-
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 /**
  * This helper handles the rest of the fields for the Users Edit and Detail views.
  * There are a lot of fields on those views that do not map directly to being used on the metadata based UI, so they are handled here.
@@ -692,20 +700,27 @@ class UserViewHelper {
             $GLOBALS['dictionary']['User']['fields']['email1']['required'] = true;
         }
         $raw_email_link_type = $this->bean->getPreference('email_link_type');
+        $mailerPreferenceStatus = OutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($current_user);
+        $options = $app_list_strings['dom_email_link_type'];
+
         if ( $this->viewType == 'EditView' ) {
-            $this->ss->assign('EMAIL_LINK_TYPE', get_select_options_with_id($app_list_strings['dom_email_link_type'], $raw_email_link_type));
+            if ($mailerPreferenceStatus  === OutboundEmailConfigurationPeer::STATUS_INVALID_SYSTEM_CONFIG) {
+                $raw_email_link_type = 'mailto';
+            }
+            $this->ss->assign('EMAIL_LINK_TYPE', get_select_options_with_id($options, $raw_email_link_type));
         } else {
-            $this->ss->assign('EMAIL_LINK_TYPE', $app_list_strings['dom_email_link_type'][$raw_email_link_type]);
+            $this->ss->assign('EMAIL_LINK_TYPE', $options[$raw_email_link_type]);
         }
 
         /////	END EMAIL OPTIONS
         ///////////////////////////////////////////////////////////////////////////////
 
-
         /////////////////////////////////////////////
         /// Handle email account selections for users
         /////////////////////////////////////////////
         $hide_if_can_use_default = true;
+        $disableSugarClient = false;
+
         if( !($this->usertype=='GROUP' || $this->usertype=='PORTAL_ONLY') ) {
             // email smtp
             $systemOutboundEmail = new OutboundEmail();
@@ -729,7 +744,6 @@ class UserViewHelper {
                     $mail_haspass  = empty($userOverrideOE->mail_smtppass)?0:1;
                 }
 
-
                 if(!$mail_smtpauth_req && (empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser) || empty($systemOutboundEmail->mail_smtppass))) {
                     $hide_if_can_use_default = true;
                 } else{
@@ -746,8 +760,13 @@ class UserViewHelper {
             $this->ss->assign('MAIL_SMTPPORT',$mail_smtpport);
             $this->ss->assign('MAIL_SMTPSSL',$mail_smtpssl);
         }
-        $this->ss->assign('HIDE_IF_CAN_USE_DEFAULT_OUTBOUND',$hide_if_can_use_default );
 
+        if ($mailerPreferenceStatus === OutboundEmailConfigurationPeer::STATUS_INVALID_SYSTEM_CONFIG) {
+            $disableSugarClient = true;
+            $hide_if_can_use_default = true; //to hide the username/password fields
+        }
+        $this->ss->assign('DISABLE_SUGAR_CLIENT', $disableSugarClient);
+        $this->ss->assign('HIDE_IF_CAN_USE_DEFAULT_OUTBOUND', $hide_if_can_use_default);
     }
 
     /**

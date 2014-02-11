@@ -95,7 +95,9 @@
              * @returns {boolean}
              */
             useSugarEmailClient: function() {
-                return (app.user.getPreference('use_sugar_email_client') === 'true');
+                var emailClientPreference = app.user.getPreference('email_client_preference');
+
+                return (emailClientPreference && emailClientPreference.type === 'sugar');
             },
 
             /**

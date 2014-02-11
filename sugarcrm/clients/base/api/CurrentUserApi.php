@@ -577,17 +577,24 @@ class CurrentUserApi extends SugarApi
      */
     protected function getUserPrefEmail_link_type($user)
     {
-        $useSugarEmailClient = ($user->getEmailClientPreference() === 'sugar');
+        $emailClientPreference = $user->getEmailClientPreference();
+        $preferences = array ('type' => $emailClientPreference);
 
-        if ($useSugarEmailClient && !OutboundEmailConfigurationPeer::validSystemMailConfigurationExists($user)) {
-            // even though the user's preference is to use the sugar email client, the user does not have a valid
-            // outbound email configuration, so email must be sent from the user's email client
-            $useSugarEmailClient = false;
+        if ($emailClientPreference === 'sugar') {
+            $statusCode = OutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($user);
+            if($statusCode != OutboundEmailConfigurationPeer::STATUS_VALID_CONFIG) {
+                $preferences['error'] = array (
+                    'code' => $statusCode,
+                    'message' => OutboundEmailConfigurationPeer::$configurationStatusMessageMappings[$statusCode],
+                );
+            }
         }
 
-        return array('use_sugar_email_client' => ($useSugarEmailClient) ? 'true' : 'false');
+        return array(
+            'email_client_preference' => $preferences,
+        );
     }
-    
+
     /**
      * Utility function to get the users preferred language
      * 
