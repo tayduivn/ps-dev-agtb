@@ -157,7 +157,6 @@
      * Default to saveAndClose
      */
     save: function () {
-        $("a[name=" + this.saveButtonName + "]").prop("disabled", true);
         switch (this.context.lastSaveAction) {
             case this.SAVEACTIONS.SAVE_AND_CREATE:
                 this.saveAndCreate();
@@ -631,7 +630,7 @@
             switch (button.type) {
                 case 'button':
                 case 'rowaction':
-                    button.getFieldElement().toggleClass('disabled', !enable);
+                    button.setDisabled(!enable);
                     break;
                 case 'actiondropdown':
                     button.$(button.actionDropDownTag).toggleClass('disabled', !enable);
