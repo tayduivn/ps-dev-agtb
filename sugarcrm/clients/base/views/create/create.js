@@ -157,6 +157,7 @@
      * Default to saveAndClose
      */
     save: function () {
+        $("a[name=" + this.saveButtonName + "]").prop("disabled", true);
         switch (this.context.lastSaveAction) {
             case this.SAVEACTIONS.SAVE_AND_CREATE:
                 this.saveAndCreate();
