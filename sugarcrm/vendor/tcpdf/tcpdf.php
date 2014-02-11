@@ -5066,7 +5066,7 @@ if (!class_exists('TCPDF', false)) {
 			$dest = strtoupper($dest);
 			if ($dest != 'F') {
 				$name = preg_replace('/[\s]+/', '_', $name);
-				$name = preg_replace('/[^a-zA-Z0-9\._-\x{4e00}-\x{9fa5}]/u', '', $name);
+				$name = preg_replace('/[^a-zA-Z0-9\._\-\x{4e00}-\x{9fa5}\x{a700}-\x{d7af}]/u', '', $name);
 			}
 			if ($this->sign) {
 				// *** apply digital signature to the document ***
