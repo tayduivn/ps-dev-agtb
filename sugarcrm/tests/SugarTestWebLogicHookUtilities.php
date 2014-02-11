@@ -23,6 +23,7 @@ class SugarTestWebLogicHookUtilities
 
     public static function createWebLogicHook($id = '', $attributes = array())
     {
+        LogicHook::refreshHooks();
     	$webLogicHook = new WebLogicHookMock();
 
     	foreach ($attributes as $attribute=>$value) {
@@ -45,10 +46,14 @@ class SugarTestWebLogicHookUtilities
     {
         $db = DBManagerFactory::getInstance();
         $conditions = implode(',', array_map(array($db, 'quoted'), self::getCreatedWebLogicHookIds()));
+        foreach (self::$_createdWebLogicHooks as $hook) {
+            $hook->mark_deleted($hook->id);
+        }
         if (!empty($conditions)) {
             $db->query('DELETE FROM weblogichooks WHERE id IN (' . $conditions . ')');
         }
         WebLogicHookMock::$dispatchOptions = null;
+        LogicHook::refreshHooks();
     }
 
     public static function getCreatedWebLogicHookIds()
