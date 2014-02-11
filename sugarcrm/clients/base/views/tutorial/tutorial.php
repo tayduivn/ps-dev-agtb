@@ -38,14 +38,14 @@ $viewdefs['base']['view']['tutorial'] = array(
                 'name' => '.drawerTrig',
                 'text' => 'LBL_TOUR_LIST_INT_TOGGLE',
                 'full' => true,
-                'horizAdj' =>-11,
+                'horizAdj' => -11,
                 'vertAdj' => -13,
             ),
             array(
-                'name' => '.choice-related',
+                'name' => '.filter .search-filter',
                 'text' => 'LBL_TOUR_LIST_FILTER1',
                 'full' => true,
-                'vertAdj' => -15,
+                'vertAdj' => -12,
             ),
             array(
                 'name' => '.choice-filter',
@@ -57,7 +57,7 @@ $viewdefs['base']['view']['tutorial'] = array(
                 'name' => '.filter-view .search-name',
                 'text' => 'LBL_TOUR_LIST_FILTER_SEARCH',
                 'full' => true,
-                'vertAdj' => -15,
+                'vertAdj' => -14,
             ),
             array(
                 'name' => '[data-view="activitystream"]',
