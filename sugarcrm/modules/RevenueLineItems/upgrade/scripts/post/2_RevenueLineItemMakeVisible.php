@@ -29,7 +29,7 @@ class SugarUpgradeRevenueLineItemMakeVisible extends UpgradeScript
         $sql = "SELECT value FROM config " .
                "WHERE category = 'MySettings' " .
                     "AND name = 'Tab' " .
-                    "AND (platform = 'base' OR platform IS NULL);";
+                    "AND (platform = 'base' OR platform IS NULL)";
         $results = $this->db->query($sql);
         
         while ($row = $this->db->fetchRow($results)) {
@@ -40,7 +40,7 @@ class SugarUpgradeRevenueLineItemMakeVisible extends UpgradeScript
                        "SET value = '" . base64_encode(serialize($tabArray)) . "' " .
                        "WHERE category = 'MySettings' " .
                             "AND name = 'Tab' " .
-                            "AND (platform = 'base' OR platform IS NULL);";
+                            "AND (platform = 'base' OR platform IS NULL)";
                 $this->db->query($sql);
             }
         }

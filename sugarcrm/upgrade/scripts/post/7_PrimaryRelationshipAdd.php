@@ -49,7 +49,7 @@ class SugarUpgradePrimaryRelationshipAdd extends UpgradeScript
                                          ."WHERE primary_account = 1 "
                                          ."AND deleted = 0 "
                                          ."GROUP BY contact_id "
-                                         ."HAVING duplicates > 1",0,200);
+                                         ."HAVING COUNT(id) > 1", 0, 200);
             $fixupRecords = array();
             
             while ($row = $this->db->fetchByAssoc($ret)) {
