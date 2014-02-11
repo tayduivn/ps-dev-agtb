@@ -623,7 +623,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'activity_enable
         'mkto_lead_score' =>
             array(
                 'name' => 'mkto_lead_score',
-                'label' => 'LBL_MKTO_LEAD_SCORE',
+                'vname' => 'LBL_MKTO_LEAD_SCORE',
                 'comment' => null,
                 'type' => 'int',
                 'default_value' => null,
