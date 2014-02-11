@@ -1,29 +1,16 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
+ */
+
 ({
     events: {
         'click #tour': 'showTutorial',
@@ -65,6 +52,13 @@
             self.listenTo(app.router, 'route', self.handleRouteChange);
         });
 
+        app.events.on('app:help:shown', function() {
+            this.toggleHelpButton(true);
+        }, this);
+        app.events.on('app:help:hidden', function() {
+            this.toggleHelpButton(false);
+        }, this);
+
     },
     _renderHtml: function() {
         this.isAuthenticated = app.api.isAuthenticated();
@@ -76,20 +70,32 @@
     support: function() {
         window.open('http://support.sugarcrm.com', '_blank');
     },
-    help: function() {
-        var serverInfo = app.metadata.getServerInfo();
-        var lang = app.lang.getLanguage();
-        var module = app.controller.context.get('module');
-        var route = this.routeParams.route;
-        var url = 'http://www.sugarcrm.com/crm/product_doc.php?edition=' + serverInfo.flavor + '&version=' + serverInfo.version + '&lang=' + lang + '&module=' + module + '&route=' + route;
-        if (route == 'bwc') {
-            var action = window.location.hash.match(/#bwc.*action=(\w*)/i);
-            if (action && !_.isUndefined(action[1])) {
-                url += '&action=' + action[1];
-            }
+    /**
+     * Help Button Click Event Listener
+     *
+     * @param event
+     */
+    help: function(event) {
+        var button = $(event.currentTarget),
+            buttonAppEvent = button.hasClass('active') ? 'app:help:hide' : 'app:help:show';
+
+        // trigger the app event to show and hide the help dashboard
+        app.events.trigger(buttonAppEvent);
+    },
+    /**
+     * Utility Method to toggle the help button on and off.
+     *
+     * @param {Boolean} active      Set or remove the active state of the button
+     * @param {Object} (button)     Button Object (optional), will be found if not passed in
+     */
+    toggleHelpButton: function(active, button) {
+        if (_.isUndefined(button)) {
+            button = this.$('a#help');
         }
-        app.logger.info("help URL: " + url);
-        window.open(url);
+
+        if(button) {
+            button.toggleClass('active', active);
+        }
     },
     showTutorial: function() {
         app.tutorial.resetPrefs();
