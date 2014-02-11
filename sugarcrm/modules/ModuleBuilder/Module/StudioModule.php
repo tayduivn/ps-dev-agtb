@@ -364,7 +364,7 @@ class StudioModule
         $popups[] = array(
             'name' => translate('LBL_POPUPLISTVIEW'),
             'type' => 'popuplistview',
-            'action' => 'module=ModuleBuilder&action=editLayout&view=popuplist&view_module=' . $this->module,
+            'action' => 'module=ModuleBuilder&action=editLayout&view=selection-list&view_module=' . $this->module,
         );
         $popups[] = array(
             'name' => translate('LBL_POPUPSEARCH'),

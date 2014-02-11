@@ -19,7 +19,6 @@
     extendsFrom: 'FlexListView',
     plugins: ['ListColumnEllipsis', 'ListDisableSort', 'ListRemoveLinks'],
     collectionSync: null,
-    displayFirstNColumns: 4,
     additionalTableClasses: null,
 
     /**

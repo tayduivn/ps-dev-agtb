@@ -200,6 +200,9 @@
 									{counter name="oCount"}
 									{sugar_translate label=$params.options select=$item}{if $oCount !=  count($vals)},{/if} 
 								{/foreach}
+                        {elseif $params.type == 'url' }
+                            {assign var="fieldKey" value=$col|lower}
+                            {sugar_field parentFieldArray=$rowData vardef=$fields[$fieldKey] displayType=ListView field=$col}
                         {else}
                             {sugar_field parentFieldArray=$rowData vardef=$params displayType=ListView field=$col}
 						{/if}

@@ -139,7 +139,7 @@ class ViewHistory extends SugarView
         {
         	require_once ("modules/ModuleBuilder/views/view.dashlet.php") ;
         	$view = new ViewDashlet ( ) ;
-        }  else if ($this->layout == 'popuplist' || $this->layout == 'popupsearch')
+        }  else if ($this->layout == 'popuplist' || $this->layout == 'popupsearch' || $this->layout == 'selection-list')
         {
         	require_once ("modules/ModuleBuilder/views/view.popupview.php") ;
         	$view = new ViewPopupview ( ) ;

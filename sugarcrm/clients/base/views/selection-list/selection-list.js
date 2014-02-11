@@ -19,8 +19,6 @@
     extendsFrom: 'FlexListView',
     plugins: ['ListColumnEllipsis', 'ListRemoveLinks'],
 
-    displayFirstNColumns: 4,
-
     initialize: function (options) {
         //setting skipFetch to true so that loadData will not run on initial load and the filter load the view.
         options.context.set('skipFetch', true);

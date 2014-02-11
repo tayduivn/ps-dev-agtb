@@ -19,8 +19,6 @@
     extendsFrom: 'FlexListView',
     plugins: ['ListColumnEllipsis', 'ListRemoveLinks'],
 
-    displayFirstNColumns: 4,
-
     initialize: function (options) {
         // set as single select list
         options.meta = options.meta || {};
