@@ -19,6 +19,17 @@ require_once 'include/RecordListFactory.php';
  */
 class RecordListFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user', array(true, true));
+    }
+
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
+    }
 
     /**
      * Data provider for testGetRecordList()
