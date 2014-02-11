@@ -12,9 +12,4 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 }}
-{{! FIXME: replace this by the hbs plugin provided by SC-1170}}
-{{#eachOptions items}}
-    {{#eq this.key ../value}}
-        <span class="label{{#unless ../../this.model.attributes.is_read}} {{../../../severityCss}}{{/unless}}">{{this.value}}</span>
-    {{/eq}}
-{{/eachOptions}}
+<span class="label{{#unless model.attributes.is_read}} {{../severityCss}}{{/unless}}">{{severityLabel}}</span>

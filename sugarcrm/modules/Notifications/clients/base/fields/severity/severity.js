@@ -27,7 +27,7 @@
      * @protected
      */
     _styleMapping: {
-        'default': '',
+        'default': 'label-unknown',
         alert: 'label-important',
         information: 'label-info',
         other: 'label-inverse',
@@ -81,11 +81,17 @@
     /**
      * {@inheritDoc}
      *
-     * Defines style property based on field value.
+     * Defines `severityCss` property based on field value. If current severity
+     * does not match a known value its value is used as label and default
+     * style is used as well.
      */
     _render: function () {
-        var severity = this.model.get(this.name);
-        this.severityCss = this._styleMapping[severity] || this._styleMapping.default;
+        var severity = this.model.get(this.name),
+            options = app.lang.getAppListStrings(this.def.options);
+
+        this.severityCss = this._styleMapping[severity] || this._styleMapping['default'];
+        this.severityLabel = options[severity] || severity;
+
         this._super('_render');
     }
 })
