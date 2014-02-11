@@ -65,7 +65,7 @@ $dictionary['Opportunity'] = array(
             'required' => true,
             'related_field' => array(
                 'account_id'
-            )
+            ),
         ),
         'account_id' => array(
             'name' => 'account_id',
@@ -731,7 +731,7 @@ $dictionary['Opportunity'] = array(
             'rhs_module' => 'Opportunities',
             'rhs_table' => 'opportunities',
             'rhs_key' => 'assigned_user_id',
-            'relationship_type' => 'one-to-many'
+            'relationship_type' => 'one-to-many',
         ),
         'opportunities_modified_user' => array(
             'lhs_module' => 'Users',

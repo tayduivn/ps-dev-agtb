@@ -59,13 +59,11 @@ $viewdefs['Contacts']['base']['view']['list'] = array(
                     'name' => 'account_name',
                     'enabled' => true,
                     'default' => true,
-                    'sortable' => false,
                 ),
                 array(
                     'name' => 'email',
                     'enabled' => true,
                     'default' => true,
-                    'sortable' => false,
                 ),
                 array(
                     'name' => 'phone_work',
@@ -79,7 +77,6 @@ $viewdefs['Contacts']['base']['view']['list'] = array(
                     'id' => 'ASSIGNED_USER_ID',
                     'enabled' => true,
                     'default' => true,
-                    'sortable' => false,
                 ),
                 array(
                     'name' => 'date_entered',

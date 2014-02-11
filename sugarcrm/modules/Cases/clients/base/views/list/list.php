@@ -61,7 +61,6 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'link' => true,
                     'default' => true,
                     'enabled' => true,
-                    'sortable' => false,
                 ),
                 array(
                     'name' => 'priority',
@@ -84,7 +83,6 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'id' => 'ASSIGNED_USER_ID',
                     'default' => true,
                     'enabled' => true,
-                    'sortable' => false,
                 ),
                 array(
                     'name' => 'date_entered',
@@ -101,7 +99,6 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'width' =>  10,
                     'default' => false,
                     'enabled' => true,
-                    'sortable' => false,
                 ),
                 //END SUGARCRM flav=pro ONLY
             ),

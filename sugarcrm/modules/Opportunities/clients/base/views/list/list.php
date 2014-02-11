@@ -60,7 +60,6 @@ $fields = array(
         'label' => 'LBL_LIST_ACCOUNT_NAME',
         'enabled' => true,
         'default' => true,
-        'sortable' => false,
     ),
     array(
         'name' => 'sales_stage',
@@ -123,7 +122,6 @@ $fields = array(
         'name' => 'created_by_name',
         'width' => 10,
         'label' => 'LBL_CREATED',
-        'sortable' => false,
         'enabled' => true,
         'default' => true,
         'readonly' => true
@@ -135,7 +133,6 @@ $fields = array(
         'label' => 'LBL_LIST_TEAM',
         'enabled' => true,
         'default' => false,
-        'sortable' => false,
     ),
     array (
         'name' => 'assigned_user_name',
@@ -144,13 +141,11 @@ $fields = array(
         'id' => 'ASSIGNED_USER_ID',
         'enabled' => true,
         'default' => true,
-        'sortable' => false,
     ),
     array(
         'name' => 'modified_by_name',
         'width' => 5,
         'label' => 'LBL_MODIFIED',
-        'sortable' => false,
         'enabled' => true,
         'default' => true,
         'readonly' => true,
@@ -190,7 +185,6 @@ $fields = array(
         'label' => 'LBL_LIST_ACCOUNT_NAME',
         'enabled' => true,
         'default' => true,
-        'sortable' => false,
     ),
     array(
         'name' => 'sales_status',
@@ -248,7 +242,6 @@ $fields = array(
         'name' => 'created_by_name',
         'width' => 10,
         'label' => 'LBL_CREATED',
-        'sortable' => false,
         'enabled' => true,
         'default' => true,
         'readonly' => true,
@@ -260,7 +253,6 @@ $fields = array(
         'label' => 'LBL_LIST_TEAM',
         'enabled' => true,
         'default' => false,
-        'sortable' => false,
     ),
     array(
         'name' => 'assigned_user_name',
@@ -269,13 +261,11 @@ $fields = array(
         'id' => 'ASSIGNED_USER_ID',
         'enabled' => true,
         'default' => true,
-        'sortable' => false,
     ),
     array(
         'name' => 'modified_by_name',
         'width' => 5,
         'label' => 'LBL_MODIFIED',
-        'sortable' => false,
         'enabled' => true,
         'default' => true,
         'readonly' => true,

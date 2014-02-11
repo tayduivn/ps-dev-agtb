@@ -52,7 +52,6 @@ $viewdefs['Notes']['base']['view']['list'] = array(
                     'module' => 'Contacts',
                     'enabled' => true,
                     'default' => true,
-                    'sortable' => false,
                     'ACLTag' => 'CONTACT',
                     'related_fields' =>
                     array (
@@ -101,7 +100,6 @@ $viewdefs['Notes']['base']['view']['list'] = array(
                     'width' => '10%',
                     'enabled' => true,
                     'default' => true,
-                    'sortable' => false,
                     'related_fields' =>  array ( 'created_by' ),
                 ),
             ),
