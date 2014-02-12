@@ -263,12 +263,9 @@
 
         // set states
         _.each(this.meta.panels, function(panel){
-
             var panelKey = app.user.lastState.key(panel.name+':tabState', this);
             var panelState = app.user.lastState.get(panelKey);
-            if (panelState) {
-                panel.panelState = panelState;
-            }
+            panel.panelState = panelState || panel.panelDefault;
         }, this);
     },
     /**
