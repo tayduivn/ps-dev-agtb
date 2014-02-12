@@ -57,22 +57,22 @@ abstract class UpgradeDriver
 
     /**
      * Version being upgraded
-     * @var sring
+     * @var string
      */
     public $from_version;
     /**
      * Flavor being upgraded
-     * @var sring
+     * @var string
      */
     public $from_flavor;
     /**
      * Version to which we upgrade
-     * @var sring
+     * @var string
      */
     public $to_version;
     /**
      * Flavor to which we upgrade
-     * @var sring
+     * @var string
      */
     public $to_flavor;
 
@@ -264,6 +264,8 @@ abstract class UpgradeDriver
      */
     public function init()
     {
+        list($version, $build) = static::getVersion();
+        $this->log("Upgrader v.$version (build $build) starting");
         chdir($this->context['source_dir']);
         $this->loadConfig();
     	$this->context['temp_dir'] = $this->cacheDir("upgrades/temp");
@@ -1007,7 +1009,7 @@ abstract class UpgradeDriver
     protected function getUser()
     {
         $user = BeanFactory::getBean('Users');
-        $user_id = $this->db->getOne("select id from users where user_name = " . $this->db->quoted($this->context['admin']), false);
+        $user_id = $this->db->getOne("select id from users where deleted=0 AND user_name = " . $this->db->quoted($this->context['admin']), false);
         $user->retrieve($user_id);
         return $user;
     }
