@@ -41,12 +41,13 @@ describe('Filter Actions View', function() {
         expect(stub).toHaveBeenCalled();
     });
 
-    it('should trigger save', function() {
-        var spy = sinon.spy();
-        parentLayout.off();
-        parentLayout.on('filter:create:save', spy);
+    it('should trigger save', function(){
+       var spy = sinon.spy();
+        view.context.off();
+        view.context.on('filter:create:save', spy);
         view.triggerSave();
         expect(spy).toHaveBeenCalled();
+        view.context.off();
     });
 
     it('should trigger delete', function() {
@@ -69,6 +70,10 @@ describe('Filter Actions View', function() {
                 return component;
             };
             saveFilterEditStateStub = sinon.collection.stub(component, 'saveFilterEditState');
+            view.context.editingFilter = new Backbone.Model({id: 'my_filter', filter_definition: [{$owner: ''}]});
+        });
+        afterEach(function() {
+            layoutTriggerStub.restore();
         });
 
         it('should trigger validate', function() {
@@ -80,6 +85,12 @@ describe('Filter Actions View', function() {
         it('should save edit state when filter definition is valid', function() {
             view.filterNameChanged();
             expect(saveFilterEditStateStub).toHaveBeenCalled();
+        });
+
+        it('should not continue if editingFilter does not exist', function() {
+            view.context.editingFilter = null;
+            view.filterNameChanged();
+            expect(layoutTriggerStub).not.toHaveBeenCalled();
         });
     });
 
@@ -106,14 +117,14 @@ describe('Filter Actions View', function() {
             view.layout.getComponent = function() {
                 return component;
             };
-            view.layout.editingFilter = new Backbone.Model({id: 'my_filter'});
+            view.context.editingFilter = new Backbone.Model({id: 'my_filter'});
             view.triggerClose();
             expect(filterLayoutTriggerStub).toHaveBeenCalled();
             expect(filterLayoutTriggerStub).toHaveBeenCalledWith('filter:create:close', true, 'my_filter');
         });
 
         it('should trigger "filter:apply" on the filter layout to cancel changes in filter definition', function() {
-            view.layout.editingFilter = new Backbone.Model({id: 'my_filter', filter_definition: [
+            view.context.editingFilter = new Backbone.Model({id: 'my_filter', filter_definition: [
                 {$owner: ''}
             ]});
             view.triggerClose();

@@ -95,6 +95,9 @@ describe('View.BaseDashablelistView', function() {
             beforeEach(function() {
                 view.meta = {};
                 view.settings._events = {};
+                view._events = {};
+                view.layout.context._events = {};
+                view.layout._before = {};
                 stubInitializeSettings = sinon.collection.stub(view, '_initializeSettings');
                 stubConfigureDashlet = sinon.collection.stub(view, '_configureDashlet');
                 stubDisplayDashlet = sinon.collection.stub(view, '_displayDashlet');
@@ -106,7 +109,9 @@ describe('View.BaseDashablelistView', function() {
                 expect(stubInitializeSettings).toHaveBeenCalledOnce();
                 expect(stubConfigureDashlet).toHaveBeenCalledOnce();
                 expect(stubDisplayDashlet).not.toHaveBeenCalled();
-                expect(_.isEmpty(_.pick(view.settings._events, 'change:module'))).toBeFalsy();
+                expect(view.settings._events['change:module']).toBeDefined();
+                expect(view.layout.context._events['filter:add']).toBeDefined();
+                expect(view.layout._before['dashletconfig:save']).toBeDefined();
             });
 
             it('should call BaseDashablelistView#_displayDashlet when in preview mode', function() {
@@ -115,15 +120,69 @@ describe('View.BaseDashablelistView', function() {
                 expect(stubInitializeSettings).toHaveBeenCalledOnce();
                 expect(stubConfigureDashlet).not.toHaveBeenCalled();
                 expect(stubDisplayDashlet).toHaveBeenCalledOnce();
-                expect(_.isEmpty(_.pick(view.settings._events, 'change:module'))).toBeTruthy();
+                expect(view.settings._events['change:module']).not.toBeDefined();
+                expect(view.layout.context._events['filter:add']).not.toBeDefined();
+                expect(view.layout._before['dashletconfig:save']).not.toBeDefined();
             });
 
-            it('should call BaseDashablelistView#_displayDashlet when in view mode', function() {
+            it('should call BaseDashablelistView#_displayDashlet when in view mode with no filter_id', function() {
+                var getStub = sinon.collection.stub(view.settings, 'get', function(param) {
+                    if (param === 'filter_id') {
+                        return null;
+                    } else {
+                        return this.attributes[param];
+                    }
+                });
+
                 view.initDashlet('view');
                 expect(stubInitializeSettings).toHaveBeenCalledOnce();
                 expect(stubConfigureDashlet).not.toHaveBeenCalled();
                 expect(stubDisplayDashlet).toHaveBeenCalledOnce();
-                expect(_.isEmpty(_.pick(view.settings._events, 'change:module'))).toBeTruthy();
+                expect(view.settings._events['change:module']).not.toBeDefined();
+                expect(view.layout.context._events['filter:add']).not.toBeDefined();
+                expect(view.layout._before['dashletconfig:save']).not.toBeDefined();
+            });
+
+            it('should call _displayDashlet & _getFilterDefFromMeta when in view mode with a filter_id found in meta', function() {
+                var stubGetFilterDefFromMeta = sinon.collection.stub(view, '_getFilterDefFromMeta')
+                        .withArgs('testFilterID')
+                        .returns('testFilterDef'),
+                    getStub = sinon.collection.stub(view.settings, 'get', function(param) {
+                        if (param === 'filter_id') {
+                            return 'testFilterID';
+                        } else {
+                            return this.attributes[param];
+                        }
+                    });
+
+                view.initDashlet('view');
+
+                expect(stubGetFilterDefFromMeta).toHaveBeenCalledWith('testFilterID');
+                expect(stubInitializeSettings).toHaveBeenCalledOnce();
+                expect(stubConfigureDashlet).not.toHaveBeenCalled();
+                expect(view.settings._events['change:module']).not.toBeDefined();
+                expect(view.layout.context._events['filter:add']).not.toBeDefined();
+                expect(view.layout._before['dashletconfig:save']).not.toBeDefined();
+            });
+
+            it('should call _fetchCustomFilter when in view mode with filter_id not found in meta', function() {
+                var stubFetchCustomFilter = sinon.collection.stub(view, '_fetchCustomFilter'),
+                    getStub = sinon.collection.stub(view.settings, 'get', function(param) {
+                        if (param === 'filter_id') {
+                            return 'testFilterID';
+                        } else {
+                            return this.attributes[param];
+                        }
+                    });
+
+                view.initDashlet('view');
+
+                expect(stubFetchCustomFilter).toHaveBeenCalledWith('testFilterID');
+                expect(stubInitializeSettings).toHaveBeenCalledOnce();
+                expect(stubConfigureDashlet).not.toHaveBeenCalled();
+                expect(view.settings._events['change:module']).not.toBeDefined();
+                expect(view.layout.context._events['filter:add']).not.toBeDefined();
+                expect(view.layout._before['dashletconfig:save']).not.toBeDefined();
             });
         });
 
@@ -186,20 +245,29 @@ describe('View.BaseDashablelistView', function() {
     });
 
     describe('configure the dashlet', function() {
-        it('should update the label and columns when the module is changed', function() {
+        it('should update the label, columns, filter_id when the module is changed', function() {
             var oldModule = 'Accounts',
                 newModule = 'Contacts',
-                stubUpdateDisplayColumns = sinon.collection.stub(view, '_updateDisplayColumns');
+                stubUpdateDisplayColumns = sinon.collection.stub(view, '_updateDisplayColumns'),
+                stubDashletFilterReinit = sinon.collection.stub(view.layout, 'trigger');
+
             sinon.collection.stub(view, '_initializeSettings');
             sinon.collection.stub(view, '_configureDashlet');
             sinon.collection.stub(app.lang, 'get').returnsArg(1);
+
             view.meta = {config: true};
             view.settings.set('module', oldModule);
             view.settings.set('label', 'Foo');
             view.initDashlet('config');
-            expect(_.isEmpty(_.pick(view.settings._events, 'change:module'))).toBeFalsy();
+
+            expect(view.settings._events['change:module']).toBeDefined();
+
             view.settings.set('module', newModule);
+
+            expect(view.dashModel.get('module')).toBe(newModule);
+            expect(view.dashModel.get('filter_id')).toBe('assigned_to_me');
             expect(view.settings.get('label')).toBe(newModule);
+            expect(stubDashletFilterReinit).toHaveBeenCalledWith('dashlet:filter:reinitialize');
             expect(stubUpdateDisplayColumns).toHaveBeenCalledOnce();
         });
 
@@ -273,20 +341,228 @@ describe('View.BaseDashablelistView', function() {
         });
     });
 
+    describe('saveDashletFilter', function() {
+        var triggerStub,
+            updateDashletStub;
+
+        beforeEach(function() {
+            triggerStub = sinon.collection.stub(view.layout.context, 'trigger');
+            updateDashletStub = sinon.collection.stub(view, 'updateDashletFilterAndSave');
+        });
+
+        it('should trigger a filter:create:save if editing/creating a filter', function() {
+            view.layout.context.editingFilter = new Backbone.Model({name: 'test'});
+            view.saveDashletFilter();
+            expect(triggerStub).toHaveBeenCalledWith('filter:create:save');
+        });
+
+        it('should call updateDashletFilterAndSave if saving a predefined filter', function() {
+            view.layout.context.set('currentFilterId', 'testID');
+            view.saveDashletFilter();
+            expect(updateDashletStub).toHaveBeenCalledWith({id: 'testID'});
+        });
+    });
+
+    describe('updateDashletFilterAndSave', function() {
+        it('should be invoked by the filter:add event', function() {
+            var initializeSettingsStub = sinon.collection.stub(view, '_initializeSettings'),
+                configureDashletStub = sinon.collection.stub(view, '_configureDashlet'),
+                displayDashletStub = sinon.collection.stub(view, '_displayDashlet'),
+                updateDashletStub = sinon.collection.stub(view, 'updateDashletFilterAndSave'),
+                filterModel = new Backbone.Model();
+
+            view.meta.config = true;
+            view.initDashlet('config');
+            view.layout.context.trigger('filter:add', filterModel);
+            expect(updateDashletStub).toHaveBeenCalledWith(filterModel);
+        });
+
+        it('should call app.drawer.close and save the new dashlet model', function() {
+            if (!app.drawer) {
+                app.drawer = {
+                    open: function() {},
+                    close: function() {}
+                };
+            }
+
+            var appEventsStub = sinon.collection.stub(app.events, 'trigger'),
+                drawerCloseStub = sinon.collection.stub(app.drawer, 'close'),
+                filterModel = new Backbone.Model({id: 'test'});
+
+            view.updateDashletFilterAndSave(filterModel);
+            expect(view.settings.get('filter_id')).toEqual(filterModel.get('id'));
+            expect(drawerCloseStub).toHaveBeenCalled();
+            expect(appEventsStub).toHaveBeenCalledWith('dashlet:filter:save');
+        });
+    });
+
+    describe('_addFilterComponent', function() {
+        it('should be invoked by layout init', function() {
+            var _addFilterComponentStub = sinon.collection.stub(view, '_addFilterComponent'),
+                initializeSettingsStub = sinon.collection.stub(view, '_initializeSettings'),
+                configureDashletStub = sinon.collection.stub(view, '_configureDashlet'),
+                displayDashletStub = sinon.collection.stub(view, '_displayDashlet');
+
+            view.meta.config = true;
+            view.initDashlet('config');
+            view.layout.trigger('init');
+
+            expect(_addFilterComponentStub).toHaveBeenCalled();
+        });
+
+        it('should add the dashablelist-filter component', function() {
+            var _addComponentsFromDefStub = sinon.collection.stub(view.layout, '_addComponentsFromDef'),
+                getComponentStub = sinon.collection.stub(view.layout, 'getComponent'),
+                _componentArray = [{
+                    layout: 'dashablelist-filter'
+                }];
+
+            view._addFilterComponent();
+
+            expect(getComponentStub).toHaveBeenCalledWith('dashablelist-filter');
+            expect(_addComponentsFromDefStub).toHaveBeenCalledWith(_componentArray);
+        });
+    });
+
+    describe('_getPreDefinedFilters', function() {
+        it('should return all predefined filters from a specified module', function() {
+            var fakeModuleMeta = {
+                    'filters': {
+                        'basic': {
+                            'meta': {
+                                'filters': [
+                                    {'filter_definition': {'$test1': ''},'id': 'test1'},
+                                    {'filter_definition': {'$test2': ''},'id': 'test2'}
+                                ]
+                            }
+                        },
+                        'default': {
+                            'meta': {
+                                'filters': [
+                                    {'filter_definition': {'$test3': ''},'id': 'test3'},
+                                    {'filter_definition': {'$test4': ''},'id': 'test4'}
+                                ]
+                            }
+                        },
+                        'person': {
+                            'meta': {
+                                'filters': [
+                                    {'filter_definition': {'$test5': ''},'id': 'test5'},
+                                    {'filter_definition': {'$test6': ''},'id': 'test6'}
+                                ]
+                            }
+                        }
+                    }
+                },
+                expectedArray = [
+                    {'filter_definition': {'$test1': ''},'id': 'test1'},
+                    {'filter_definition': {'$test2': ''},'id': 'test2'},
+                    {'filter_definition': {'$test3': ''},'id': 'test3'},
+                    {'filter_definition': {'$test4': ''},'id': 'test4'},
+                    {'filter_definition': {'$test5': ''},'id': 'test5'},
+                    {'filter_definition': {'$test6': ''},'id': 'test6'}
+                ],
+                getModuleStub = sinon.collection.stub(app.metadata, 'getModule').returns(fakeModuleMeta);
+
+            var result = view._getPreDefinedFilters('test');
+
+            expect(getModuleStub).toHaveBeenCalled();
+            expect(result).toEqual(expectedArray);
+        });
+    });
+
+    describe('_getFilterDefFromMeta', function() {
+        it('should find the filterDef from meta corresponding to the supplied filter ID', function() {
+            var fakePredefinedFilters = [
+                    {'filter_definition': {'$test1': ''},'id': 'test1'},
+                    {'filter_definition': {'$test2': ''},'id': 'test2'}
+                ],
+                getPreDefinedFiltersStub = sinon.collection.stub(view, '_getPreDefinedFilters').returns(fakePredefinedFilters);
+
+            var result = view._getFilterDefFromMeta('test2');
+
+            expect(getPreDefinedFiltersStub).toHaveBeenCalled();
+            expect(result).toEqual(fakePredefinedFilters[1]['filter_definition']);
+        });
+    });
+
+    describe('_fetchCustomFilter', function() {
+        it('should do an app.api.call to fetch the specified filter', function() {
+            var testFilterID = 'testID',
+                testCallbacks = {success: function(){}, error: function(){}},
+                _fetch = {fetch: sinon.collection.stub()},
+                createBeanStub = sinon.collection.stub(app.data, 'createBean').returns(_fetch);
+
+            view._fetchCustomFilter(testFilterID, testCallbacks);
+
+            expect(createBeanStub).toHaveBeenCalledWith('Filters', {id: testFilterID});
+            expect(_fetch.fetch).toHaveBeenCalledWith(testCallbacks);
+        });
+    });
+
+    describe('_applyFilterDef', function() {
+        it('should apply the filterDef on the context collection if supplied', function() {
+            var testFilterDef = [{'$test':''}];
+
+            view._applyFilterDef(testFilterDef);
+            expect(view.context.get('collection').filterDef).toEqual(testFilterDef);
+        });
+
+        it('should not apply the filterDef on the context collection if not supplied', function() {
+            var testFilterDef = [{'$test':''}];
+
+            view._applyFilterDef();
+            expect(_.isEmpty(view.context.get('collection').filterDef)).toBeTruthy();
+        });
+    });
+
     describe('view the dashlet', function() {
-        it('should run through all of the logic necessary to render the dashlet', function() {
-            var columns = _.map(sampleFieldMetadata, function(column) {
-                    return _.extend(column, {sortable: true});
-                }),
+        describe('_displayDashlet', function() {
+            var stubStartAutoRefresh,
+                stubGetColumns,
+                stubApplyFilterDef,
+                stubContextReload;
+
+            beforeEach(function() {
                 stubStartAutoRefresh = sinon.collection.stub(view, '_startAutoRefresh');
-            sinon.collection.stub(view, '_getColumnsForDisplay').returns(columns);
-            view.settings.set('limit', 5);
-            view.meta = {panels: []};
-            view._displayDashlet();
-            expect(view.context.get('skipFetch')).toBeFalsy();
-            expect(view.context.get('limit')).toBe(5);
-            expect(view.meta.panels).toEqual([{fields: columns}]);
-            expect(stubStartAutoRefresh).toHaveBeenCalledOnce();
+                stubGetColumns = sinon.collection.stub(view, '_getColumnsForDisplay');
+                stubApplyFilterDef = sinon.collection.stub(view, '_applyFilterDef');
+                stubContextReload = sinon.collection.stub(view.context, 'reloadData');
+            });
+
+            it('should run through all of the logic necessary to render the dashlet', function() {
+                var columns = _.map(sampleFieldMetadata, function(column) {
+                        return _.extend(column, {sortable: true});
+                    });
+                stubGetColumns.returns(columns);
+                view.settings.set('limit', 5);
+                view.meta = {panels: []};
+                view._displayDashlet();
+                expect(view.context.get('skipFetch')).toBeFalsy();
+                expect(view.context.get('limit')).toBe(5);
+                expect(view.meta.panels).toEqual([{fields: columns}]);
+                expect(stubStartAutoRefresh).toHaveBeenCalledOnce();
+            });
+
+            it('should apply the filter def and reload context if filterDef is supplied', function() {
+                view._displayDashlet();
+
+                expect(view.context.get('skipFetch')).toBeFalsy();
+                expect(stubApplyFilterDef).not.toHaveBeenCalled();
+                expect(stubContextReload).not.toHaveBeenCalled();
+                expect(stubStartAutoRefresh).toHaveBeenCalledOnce();
+                expect(stubGetColumns).toHaveBeenCalledOnce();
+            });
+
+            it('should not apply the filter def and reload context if no filterDef is supplied', function() {
+                view._displayDashlet('testFilterDef');
+
+                expect(view.context.get('skipFetch')).toBeFalsy();
+                expect(stubApplyFilterDef).toHaveBeenCalledWith('testFilterDef');
+                expect(stubContextReload).toHaveBeenCalled();
+                expect(stubStartAutoRefresh).toHaveBeenCalledOnce();
+                expect(stubGetColumns).toHaveBeenCalledOnce();
+            });
         });
 
         describe('get the columns to include in the list', function() {

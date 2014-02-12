@@ -49,7 +49,7 @@ describe("Base.Layout.Filterpanel", function(){
                 set: function(){},
                 register: function(){}
             };
-            layout = SugarTest.createLayout("base", "Accounts", "filterpanel");
+            layout = SugarTest.createLayout("base", "Accounts", "filterpanel", {});
         });
         afterEach(function () {
             app.user.lastState = oLastState;

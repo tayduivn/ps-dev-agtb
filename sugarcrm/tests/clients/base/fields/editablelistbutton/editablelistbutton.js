@@ -22,7 +22,7 @@ describe("BaseEditablelistbuttonField", function() {
         //Fake layouts
         field.view = new Backbone.View();
         field.view.layout = new Backbone.View();
-        field.view.layout.layout = SugarTest.createLayout("base", "Accounts", "filterpanel");
+        field.view.layout.layout = SugarTest.createLayout('base', 'Accounts', 'filterpanel', {});
         field.view.layout.layout.name = 'filterpanel';
         var applyLastFilterStub = sinon.stub(field.view.layout.layout, 'applyLastFilter');
 
