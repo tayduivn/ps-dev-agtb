@@ -21,17 +21,16 @@
                     <img src="{{buildUrl url='styleguide/assets/img/logo.svg'}}" alt="{{str 'LBL_SUGAR_CUBE_ALT' 'Home'}}">
                 </a>
             {{#if menu}}
-                <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle" track="click:cube-dropdown"><b class="icon-caret-down"></b></a>
+                <button type="button" data-toggle="dropdown" class="btn btn-invisible dropdown-toggle" track="click:cube-dropdown"><b class="icon-caret-down"></b></button>
                 <div class="dropdown-menu scroll">
                     <ul role="menu">
                         {{#each menu}}
                             <li><a tabindex="-1" href="{{route}}" data-route="{{route}}" track="click:{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
                         {{/each}}
-                        <div class="dashboardContainer" data-container="dashboard" track="click:dashboardContainer"></div>
+                        <div class="dashboardContainer" track="click:dashboardContainer"></div>
                         {{#if ../../../dashboardBwcLink}}
                             <li><a tabindex="-1" data-route="#{{../../../../dashboardBwcLink}}" href="#{{../../../../dashboardBwcLink}}"><i class="icon-time"></i>{{str 'LBL_DASHBOARD_BWC'}}</a></li>
                         {{/if}}
-                        <div class="recentContainer hide" data-container="recents"></div>
                     </ul>
                 </div>
             {{/if}}
@@ -44,14 +43,14 @@
             <div class="btn-group">
                 <a  class="btn btn-invisible btn-link routeLink" href="#{{name}}" data-route="#{{name}}" track="click:{{name}}">{{label}}</a>
                 {{#if menu}}
-                    <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle" track="click:{{name}}-dropdown"><i class="icon-caret-down"></i></a>
+                    <button type="button" data-toggle="dropdown" class="btn btn-invisible dropdown-toggle" track="click:{{name}}-dropdown"><i class="icon-caret-down"></i></button>
                     <div class="dropdown-menu scroll">
                         <ul role="menu">
                             {{#each menu}}
                                 <li><a class="actionLink" tabindex="-1" href="{{#if event}}javascript:void(0);{{else}}{{route}}{{/if}}" data-navbar-menu-item="{{this.label}}" data-{{#if event}}event="{{event}}"{{else}}route="{{route}}"{{/if}} track="click:{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
                             {{/each}}
-                            <div class="recentContainer hide" data-container="recents"></div>
-                            <div class="favoritesContainer hide" data-container="favorites"></div>
+                            <li class="divider" data-container="recents"></li>
+                            <li class="divider" data-container="favorites"></li>
                         </ul>
                     </div>
                 {{/if}}
@@ -61,7 +60,7 @@
     {{/each}}
     <li class="dropdown more">
         <div class="btn-group">
-            <a href="javascript:void(0)" role="button" data-toggle="dropdown" class="btn btn-invisible btn-link dropdown-toggle" id="moreDrop" track="click:navbar-moreDrop"><b title="{{str "LBL_LINK_MORE"}}" class="icon-chevron-down"></b></a>
+            <button type="button" data-toggle="dropdown" class="btn btn-invisible dropdown-toggle" id="moreDrop" track="click:navbar-moreDrop"><b title="{{str "LBL_LINK_MORE"}}" class="icon-chevron-down"></b></button>
             <div class="dropdown-menu scroll"role="menu">
             <ul class="more-drop-container">
             </ul>

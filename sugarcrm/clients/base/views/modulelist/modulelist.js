@@ -14,10 +14,18 @@
     className: 'module-list',
     plugins: ['Dropdown'],
     events: {
-        'click [data-toggle=dropdown]': 'getRecentlyViewedAndFavoriteRecords',
         'click .actionLink' : 'handleMenuEvent',
-        "click a[data-route]": "handleRouteEvent"
+        'click a[data-route]': 'handleRouteEvent'
     },
+
+    /**
+     * Records collection to be easier to apply filters.
+     *
+     * This will provide allow us to get recently viewed, favorites or other
+     * records in the menu that might be needed.
+     */
+    _recordsCollection: {},
+
     handleRouteEvent: function (event) {
         var currentFragment,
             currentTarget = this.$(event.currentTarget),
@@ -56,6 +64,10 @@
             this.layout.on("view:resize", this.resize, this);
         }
 
+        this.events = _.extend({}, this.events, {
+            'shown.bs.dropdown': 'menuOpen'
+        });
+
         // FIXME we need to refactor this file to support defaultSettings
         // FIXME we need to support partials for hbs files (each module should
         // be able to make their own overrides on partials)
@@ -75,108 +87,112 @@
         this.activeModule.set(app.controller.context.get("module"));
         this.layout.trigger("header:update:route");
     },
-    /**
-     * Populates the recently viewed and favorite records
-     * @param event
-     */
-    getRecentlyViewedAndFavoriteRecords:function (event) {
-        var $currentTarget = $(event.currentTarget),
-            module = $currentTarget.parent().parent().data('module'),
-            moduleMeta = app.metadata.getModule(module);
 
-        if (!$currentTarget.parent().parent().hasClass('more-drop-container') && !$currentTarget.hasClass('actionLink')) {
-            if (module == 'Home') {
-                this.populateDashboards();
-            }
-            else if (moduleMeta && moduleMeta.fields
-                && !_.isArray(moduleMeta.fields) && !_.isEmpty(_.omit(moduleMeta.fields, '_hash'))) {
-                this.clearFavoritesRecents(module);
-                if (moduleMeta.favoritesEnabled) {
-                    this.populateFavorites(module);
-                }
-                this.populateRecents(module);
-            }
+    /**
+     * Method called when a `show.bs.dropdown` event occurs.
+     *
+     * @param {Event} event The `shown.bs.dropdown` triggered by Bootstrap
+     *   dropdown plugin.
+     */
+    menuOpen: function(event) {
+
+        // FIXME, we need to upgrade bootstrap to 3.1.0 to receive the relatedTarget as a param
+        var $target = $(event.target),
+            module = $target.closest('[data-module]').data('module');
+
+        this.populateMenu(module);
+    },
+
+    /**
+     * Populate the favorites and recently viewed records every time we open
+     * the menu.
+     *
+     * @param {String} module The module that we want to populate the data on
+     */
+    populateMenu: function(module) {
+
+        var meta = app.metadata.getModule(module) || {};
+
+        if (module === 'Home') {
+            this.populateDashboards();
+            return;
         }
-    },
-    clearFavoritesRecents: function(module){
-        this.$('[data-module=' + module + '] .recentContainer').html('');
-        this.$('[data-module=' + module + '] .favoritesContainer').html('');
-    },
-    /**
-     * Populates favorites on open menu
-     * @param {Object} module Module name
-     * @param {Function} populateCallback Called on successful api request
-     */
-    populateFavorites: function(module, populateCallback) {
 
-        var url = app.api.buildURL(module, 'read', null, {
-            'fields': ['id', 'name'].join(','),
-            'filter': [{
+        // FIXME some modules don't have fields therefore we don't have recent
+        // and favorites, we should disable them using metadata not with this
+        // hack
+        if (_.isEmpty(_.omit(meta.fields, '_hash'))) {
+            return;
+        }
+
+        if (meta.favoritesEnabled) {
+            this.populate(module, [{
                 '$favorite': ''
-            }],
-            'max_num': 3
-        });
+            }], 'favorites');
+        }
 
-        app.api.call('read', url, null, {
-            success: _.bind(function(data) {
-                if (_.isEmpty(data.records)) {
-                    return;
-                }
-
-                if (_.isFunction(populateCallback)) {
-                    populateCallback();
-                }
-                var beans = [];
-                _.each(data.records, function(recordData) {
-                    beans.push(app.data.createBean(module, recordData));
-                });
-                var collection = app.data.createBeanCollection(module, beans);
-                this.$('[data-module=' + module + '] .favoritesAnchor').show();
-                var favoritesTemplate = app.template.getView('modulelist.favorites', module) ||
-                    app.template.getView('modulelist.favorites');
-                this.$('[data-module=' + module + '] .favoritesContainer')
-                    .show()
-                    .html(favoritesTemplate(collection));
-
-            }, this)
-        });
+        this.populate(module, [{
+            '$tracker': '-7 DAY'
+        }], 'recents');
     },
+
     /**
-     * Populates recents on open menu
-     * @param {String} module Module name
-     * @param {Function} populateCallback Called on successful api request
+     * Returns the records collection (cached) or create a new collection for
+     * the module given.
+     *
+     * @param {String} module The module to get the collection from.
+     * @return {Data.BeanCollection} A new instance of bean collection.
+     * @protected
      */
-    populateRecents: function(module, populateCallback) {
+    _getRecordsCollection: function(module) {
+        if (!this._recordsCollection[module]) {
+            this._recordsCollection[module] = app.data.createBeanCollection(module);
+        }
 
-        var url = app.api.buildURL(module, 'read', null, {
-            'fields': ['id', 'name'].join(','),
-            'filter': [{
-                '$tracker': '-7 DAY'
-            }],
-            'max_num': 3
-        });
+        return this._recordsCollection[module];
+    },
 
-        app.api.call('read', url, null, {
-            success: _.bind(function(data) {
-                if (_.isEmpty(data.records)) {
+    /**
+     * Return `true` if a module's menu is open, `false` otherwise.
+     *
+     * @param {String} module The module that we are checking for menu status.
+     */
+    isMenuOpen: function(module) {
+        return !!this.$('[data-module=' + module + '] .open').length;
+    },
+
+    /**
+     * Populates records templates based on filter given.
+     *
+     * @param {String} module Module name.
+     * @param {String} filter The filter to be applied.
+     */
+    populate: function(module, filter, tplName) {
+
+        var collection = this._getRecordsCollection(module);
+
+        collection.fetch({
+            'fields': ['id', 'name'],
+            'filter': filter,
+            'limit': 3,
+            'success': _.bind(function(data) {
+                if (this.disposed || !this.isMenuOpen(module)) {
                     return;
                 }
 
-                if (_.isFunction(populateCallback)) {
-                    populateCallback();
-                }
-                var beans = [];
-                _.each(data.records, function(recordData) {
-                    beans.push(app.data.createBean(module, recordData));
-                });
-                var collection = app.data.createBeanCollection(module, beans);
-                this.$('[data-module=' + module + '] .recentAnchor').show();
-                var recentsTemplate = app.template.getView('modulelist.recents', module) ||
-                    app.template.getView('modulelist.recents');
-                this.$('[data-module=' + module + '] .recentContainer').show().html(recentsTemplate(collection));
+                var tpl = app.template.getView('modulelist.' + tplName, module) ||
+                    app.template.getView('modulelist.' + tplName);
+
+                var $placeholder = this.$('[data-module="' + module + '"] [data-container="' + tplName + '"]'),
+                    $old = $placeholder.nextUntil('.divider');
+
+                $old.remove();
+                $placeholder.after(tpl(collection));
 
             }, this)
         });
+
+        return;
     },
 
     /**

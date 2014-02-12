@@ -15,16 +15,16 @@
 <li class="dropdown" data-module="{{name}}" data-menuindex="{{menuIndex}}">
     <a  class="moreLink hide" href="#{{name}}" data-route="#{{name}}">{{label}}</a>
     <div class="btn-group">
-        <a  class="btn btn-invisible btn-link routeLink" href="#{{name}}" data-route="#{{name}}">{{label}}</a>
+        <a  class="btn btn-invisible btn-link" href="#{{name}}" data-route="#{{name}}">{{label}}</a>
         {{#if menu}}
-            <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle"><b class="icon-caret-down"></b></a>
+            <button type="button" data-toggle="dropdown" class="btn btn-invisible dropdown-toggle" track="click:{{name}}-dropdown"><i class="icon-caret-down"></i></button>
             <div class="dropdown-menu scroll">
                 <ul role="menu">
                     {{#each menu}}
-                        <li><a class="actionLink" tabindex="-1" href="{{#if event}}javascript:void(0);{{else}}{{route}}{{/if}}" data-{{#if event}}event="{{event}}"{{else}}route="{{route}}"{{/if}}>{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
+                        <li><a class="actionLink" tabindex="-1" href="{{#if event}}javascript:void(0);{{else}}{{route}}{{/if}}" data-{{#if event}}event="{{event}}" track="click:{{event}}"{{else}}route="{{route}}" track="click:{{route}}"{{/if}}>{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
                     {{/each}}
-                    <div class="recentContainer hide"></div>
-                    <div class="favoritesContainer hide"></div>
+                    <li class="divider" data-container="recents"></li>
+                    <li class="divider" data-container="favorites"></li>
                 </ul>
             </div>
         {{/if}}
