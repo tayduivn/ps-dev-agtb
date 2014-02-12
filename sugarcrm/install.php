@@ -161,6 +161,25 @@ if(isset($_REQUEST['page']) && $_REQUEST['page'] == 'licensePrint')
     exit ();
 }
 
+//define web root, which will be used as default for site_url
+if($_SERVER['SERVER_PORT']=='80'){
+    $web_root = $_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'];
+}else{
+    $web_root = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+}
+$web_root = str_replace("/install.php", "", $web_root);
+$web_root = "http://$web_root";
+
+// set the form's php var to the loaded config's var else default to sane settings
+if(!isset($_SESSION['setup_site_url'])  || empty($_SESSION['setup_site_url'])) {
+    if(isset($sugar_config['site_url']) && !empty($sugar_config['site_url'])) {
+        $_SESSION['setup_site_url']= $sugar_config['site_url'];
+    } else {
+        $_SESSION['setup_site_url']= $web_root;
+    }
+}
+
+
 if(isset($_REQUEST['sugar_body_only']) && $_REQUEST['sugar_body_only'] == "1") {
 //if this is a system check, then just run the check and return,
 //this is an ajax call and there is no need for further processing
@@ -211,15 +230,6 @@ $workflow = array(  'welcome.php',
 $workflow[] =  'systemOptions.php';
 $workflow[] = 'dbConfig_a.php';
 //$workflow[] = 'dbConfig_b.php';
-
-//define web root, which will be used as default for site_url
-if($_SERVER['SERVER_PORT']=='80'){
-    $web_root = $_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'];
-}else{
-    $web_root = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
-}
-$web_root = str_replace("/install.php", "", $web_root);
-$web_root = "http://$web_root";
 
 if (!isset($_SESSION['oc_install']) || $_SESSION['oc_install'] == false) {
     $workflow[] = 'siteConfig_a.php';

@@ -347,6 +347,46 @@ if (!function_exists("bcadd"))
 }
 
 
+// check htaccess & rewrite working
+    if(empty($_SERVER["SERVER_SOFTWARE"]) || strpos($_SERVER["SERVER_SOFTWARE"],'Microsoft-IIS') === false) {
+        installLog("Testing .htaccess redirects");
+        if(file_exists(".htaccess")) {
+            $old_htaccess = file_get_contents(".htaccess");
+        }
+        $basePath = parse_url($_SESSION['setup_site_url'], PHP_URL_PATH);
+        if(empty($basePath)) $basePath = '/';
+        $htaccess_test = <<<EOT
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase {$basePath}
+    RewriteRule ^itest.txt$ install_test.txt [N,QSA]
+</IfModule>
+EOT;
+       if(!empty($old_htaccess)) {
+           $htaccess_test = $old_htaccess.$htaccess_test;
+       }
+       file_put_contents(".htaccess", $htaccess_test);
+       file_put_contents("install_test.txt", "SUCCESS");
+       $res = file_get_contents($_SESSION['setup_site_url']."/itest.txt");
+       unlink("install_test.txt");
+       if(!empty($old_htaccess)) {
+           file_put_contents(".htaccess", $old_htaccess);
+       } else {
+           unlink(".htaccess");
+       }
+       if($res != "SUCCESS") {
+           $error_found = true;
+           $error_txt .= '
+          <tr>
+            <td><strong>'.$mod_strings['LBL_CHECKSYS_HTACCESS'].'</strong></td>
+            <td  align="right" class="error"><span class="stop"><b>'.$mod_strings['ERR_CHECKSYS_HTACCESS'].'</b></span></td>
+          </tr>';
+       } else {
+           installLog("Passed .htaccess redirects check");
+       }
+    }
+
+// custom checks
 $customSystemChecks = installerHook('additionalCustomSystemChecks');
 if($customSystemChecks != 'undefined'){
 	if($customSystemChecks['error_found'] == true){
@@ -428,4 +468,3 @@ return $out;
 }
 ////    END PAGEOUTPUT
 ///////////////////////////////////////////////////////////////////////////////
-?>

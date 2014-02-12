@@ -36,6 +36,7 @@
 class SugarUpgradeSearchVendors extends UpgradeScript
 {
     public $order = 50;
+    public $type = self::UPGRADE_CUSTOM;
 
     public $directories = array(
         'include\/HTMLPurifier',

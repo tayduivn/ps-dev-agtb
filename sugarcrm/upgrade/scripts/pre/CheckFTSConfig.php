@@ -34,7 +34,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
 class SugarUpgradeCheckFTSConfig extends UpgradeScript
 {
     public $order = 200;
-    public $type = self::UPGRADE_CORE;
     public $version = '7.1.5';
 
     public function run()
