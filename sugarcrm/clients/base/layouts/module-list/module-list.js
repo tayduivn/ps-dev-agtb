@@ -47,6 +47,7 @@
             }
         }
     },
+
     handleMenuEvent:function (evt) {
         var $currentTarget = this.$(evt.currentTarget);
         if ($currentTarget.data('event')) {
@@ -56,12 +57,16 @@
     },
 
     initialize: function(options) {
+
         this.activeModule = this._setActiveModule(this);
-        app.events.on("app:sync:complete", this.render, this);
-        app.events.on("app:view:change", this.handleViewChange, this);
-        app.view.View.prototype.initialize.call(this, options);
+
+        app.events.on('app:sync:complete', this._resetMenu, this);
+        app.events.on('app:view:change', this.handleViewChange, this);
+
+        this._super('initialize', [options]);
+
         if (this.layout) {
-            this.layout.on("view:resize", this.resize, this);
+            this.layout.on('view:resize', this.resize, this);
         }
 
         this.events = _.extend({}, this.events, {
@@ -80,9 +85,7 @@
             this.dashboardBwcLink = app.bwc.buildRoute('Home', null, 'bwc_dashboard');
         }
     },
-    _dispose: function(){
-        app.view.View.prototype._dispose.call(this);
-    },
+
     handleViewChange: function() {
         this.activeModule.set(app.controller.context.get("module"));
         this.layout.trigger("header:update:route");
@@ -180,8 +183,8 @@
                     return;
                 }
 
-                var tpl = app.template.getView('modulelist.' + tplName, module) ||
-                    app.template.getView('modulelist.' + tplName);
+                var tpl = app.template.getLayout(this.name + '.' + tplName, module) ||
+                    app.template.getLayout(this.name + '.' + tplName);
 
                 var $placeholder = this.$('[data-module="' + module + '"] [data-container="' + tplName + '"]'),
                     $old = $placeholder.nextUntil('.divider');
@@ -227,29 +230,54 @@
                         model.set('name', app.lang.get(model.get('name'), dashCollection.module || null));
                     }
                 });
-                var recentsTemplate = app.template.getView('modulelist.recents');
+                var recentsTemplate = app.template.getLayout('module-list.recents');
                 self.$('[data-module=Home] .dashboardContainer').html(recentsTemplate(dashCollection));
             }
         });
     },
+
     /**
-     * Render list of modules
-     * @private
+     * Render the main navigation bar based on the modules available.
+     * This only renders if we are authenticated, `appStatus` isn't `offline`
+     * and the app is synced.
      */
     _renderHtml: function() {
-        if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
+
         // loadAdditionalComponents fires render before the private metadata is ready, check for this
-        if (app.isSynced) {
-            this.module_list = this.completeMenuMeta(app.metadata.getModuleNames({filter: 'display_tab', access: 'read'}));
-            app.view.View.prototype._renderHtml.call(this);
-            this.resetMenu();
-            this.activeModule.set(app.controller.context.get('module'));
+        if (!app.api.isAuthenticated() || app.config.appStatus === 'offline' || !app.isSynced) {
+            return;
         }
+
+        this.resetMenu();
+        this.activeModule.set(app.controller.context.get('module'));
+
+        // FIXME this should be addComponent
+        this.$el.html(this.template(this));
     },
 
-    completeMenuMeta: function(module_list) {
+    /**
+     * Resets the menu based on new metadata information.
+     *
+     * @protected
+     */
+    _resetMenu: function() {
+        this._addComponents();
+        this.render();
+        this._renderHtml();
+    },
+
+    /**
+     * Adds all menu views as components.
+     *
+     * @private
+     */
+    _addComponents: function() {
+
+        var moduleList = app.metadata.getModuleNames({filter: 'display_tab', access: 'read'});
+
+        // FIXME move this to the module-menu view
         var actions, meta, returnList = [], self = this, listLength;
-        _.each(module_list, function(key) {
+        _.each(moduleList, function(key) {
             actions = {
                 label: app.lang.get('LBL_MODULE_NAME', key),
                 name: key
@@ -263,8 +291,10 @@
             listLength = returnList.push(actions);
             actions.menuIndex = listLength - 1;
         });
-        return returnList;
+
+        this.module_list = returnList;
     },
+
     /**
      * Filters menu metadata by acls
      * @param Array menuMeta
@@ -448,11 +478,11 @@
                             moduleList[module] = app.metadata.getFullModuleList()[module];
 
                             if (!_.isUndefined(moduleList[module])) {
-                                var meta = this._moduleList.completeMenuMeta(moduleList);
-                                meta[0].menuIndex = -1;
-                                var singleMenuTemplate = app.template.get(this._moduleList.name + '.singlemenuPartial');
-                                this._moduleList.$el.find('.dropdown.more').before(singleMenuTemplate(meta[0]));
-                                $module = $modules.find("[data-module='" + module + "']");
+//                                var meta = this._moduleList.completeMenuMeta(moduleList);
+//                                meta[0].menuIndex = -1;
+//                                var singleMenuTemplate = app.template.getLayout(this._moduleList.name + '.menu');
+//                                this._moduleList.$el.find('.dropdown.more').before(singleMenuTemplate(meta[0]));
+//                                $module = $modules.find("[data-module='" + module + "']");
                             }
                         }
                     }

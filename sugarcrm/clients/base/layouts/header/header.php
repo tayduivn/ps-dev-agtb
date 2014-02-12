@@ -17,7 +17,7 @@ $viewdefs['base']['layout']['header'] = array(
     'components' =>
     array(
         array(
-            'view' => 'modulelist',
+            'layout' => 'module-list',
         ),
         array(
             'view' => 'globalsearch',

@@ -16,7 +16,7 @@
          * Adds the ability to hide the dropdown menu
          * when the mouse is clicked on bwc elements.
          */
-        app.plugins.register('Dropdown', ['view'], {
+        app.plugins.register('Dropdown', ['layout', 'view'], {
             onAttach: function(component, plugin) {
                 this.on('init', function() {
                     app.events.on('app:view:change', this.bindIframeListener, this);

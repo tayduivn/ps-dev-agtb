@@ -47,7 +47,7 @@
 
         _.each(this._components, function(component) {
             componentElement = component.$el.children().first();
-            if (component.name !== 'modulelist') {
+            if (component.name !== 'module-list') {
                 // only calculate width for visible components
                 if (componentElement.is(':visible')) {
                     totalWidth += component.$el.outerWidth(true);
@@ -63,14 +63,13 @@
     },
 
     _render: function() {
-        var result = app.view.Layout.prototype._render.call(this);
-        if(app.api.isAuthenticated()) {
+        this._super('_render');
+
+        if (app.api.isAuthenticated()) {
             this.$el.show();
             this.resize();
         } else {
             this.$el.hide();
-            return this;
         }
-        return result;
     }
 })
