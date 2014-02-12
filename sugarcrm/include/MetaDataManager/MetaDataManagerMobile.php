@@ -72,6 +72,24 @@ class MetaDataManagerMobile extends MetaDataManager
     }
 
     /**
+     * Gets every single module of the application and the properties for every
+     * of these modules
+     *
+     * @return array An array with all the modules and their properties
+     */
+    public function getModulesInfo()
+    {
+        // Need to override the base one because it grabs the visibility settings from
+        // the $moduleList global and we don't like messing with globals
+        $modulesInfo = parent::getModulesInfo();
+        if (isset($modulesInfo['Employees'])) {
+            $modulesInfo['Employees']['visible'] = $modulesInfo['Employees']['display_tab'];
+        }
+         
+        return $modulesInfo;
+    }
+
+    /**
      * Gets the list of mobile modules. Used by getModules and the CurrentUserApi
      * to get the module list for a user.
      * 
