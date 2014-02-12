@@ -84,6 +84,10 @@
              * When a column is dropped into a placeholder, we first verify that
              * the item has moved.
              *
+             * When moving to the right direction, we need to decrease the
+             * destination index by 1 since when we remove the item, all the
+             * others items are moved by 1 to the left.
+             *
              * If it has actually moved, we take the full list of columns, and
              * move the item. Then we have to reset the catalog of visible.
              * Once this is done, local storage is updated and we render the
@@ -97,7 +101,10 @@
                 var $draggedItem = $(ui.draggable),
                     $droppedInItem = $(event.target),
                     draggedIndex,
-                    droppedInIndex;
+                    droppedInIndex,
+                    initialOrder,
+                    visibleOrder,
+                    hasChanged;
 
                 draggedIndex = $draggedItem
                     .closest('th')
@@ -106,7 +113,15 @@
 
                 droppedInIndex = $droppedInItem.data('droppableindex');
 
-                if (!this._hasOrderChanged(draggedIndex, droppedInIndex)) {
+                if (droppedInIndex > draggedIndex) {
+                    droppedInIndex--;
+                }
+
+                initialOrder = _.clone(this._listDragColumn);
+                visibleOrder = _.moveIndex(this._listDragColumn, draggedIndex, droppedInIndex);
+                hasChanged = !_.isEqual(visibleOrder, initialOrder);
+
+                if (!hasChanged) {
                     $draggedItem.draggable('option', 'revert', true);
                     return;
                 }
@@ -118,34 +133,6 @@
 
                 // Will render the view on draggable `stop` event.
                 ui.draggable._renderView = true;
-            },
-
-            /**
-             * Takes the list of visible fields, move the item, and verify if
-             * the order has changed.
-             *
-             * When moving to the right direction, we need to decrease the
-             * destination index by 1 since when we remove the item, all the
-             * others items are moved by 1 to the left.
-             *
-             * @param {Number} draggedIndex The index of the element being
-             * dragged.
-             * @param {Number} droppedInIndex The index of the placeholder
-             * where the element is dropped.
-             * @return {boolean} `true` if order has changed, `false` otherwise.
-             * @private
-             */
-            _hasOrderChanged: function(draggedIndex, droppedInIndex) {
-                var initialOrder,
-                    visibleOrder;
-
-                if (droppedInIndex > draggedIndex) {
-                    droppedInIndex--;
-                }
-
-                initialOrder = _.clone(this._listDragColumn);
-                visibleOrder = _.moveIndex(this._listDragColumn, draggedIndex, droppedInIndex);
-                return !_.isEqual(visibleOrder, initialOrder);
             },
 
             /**
