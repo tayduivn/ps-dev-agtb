@@ -280,10 +280,8 @@ class KBDocument extends SugarBean {
         $ret_array['from'] = " FROM kbdocuments left join kbdocuments_views_ratings kvr ON kbdocuments.id = kvr.kbdocument_id  LEFT JOIN  users jt0 ON jt0.id= kbdocuments.assigned_user_id AND jt0.deleted=0  LEFT JOIN  users jt1 ON jt1.id= kbdocuments.kbdoc_approver_id AND jt1.deleted=0 ";
         $ret_array['from'] .= $custom_join['join'];
          //BEGIN SUGARCRM flav=pro ONLY
-        if (!is_admin($current_user) && !$this->disable_row_level_security){
-            $this->addVisibilityFrom($ret_array['from']);
-            $this->addVisibilityWhere($where);
-        }
+        $this->addVisibilityFrom($ret_array['from'], array('where_condition' => true));
+        $this->addVisibilityWhere($where, array('where_condition' => true));
         $favorites = (!empty($params['favorites']))?$params['favorites']: 0;
         if(!empty($favorites)){
             $ret_array['select'] .= " , sfav.id is_favorite ";
@@ -305,20 +303,20 @@ class KBDocument extends SugarBean {
         {
             $where_deleted = "$this->table_name.deleted=1";
         }
-        
+
         if(!empty($where) && trim($where) != '') {
             // Add in the deleted
             if (!empty($where_deleted)) {
                 $where .= ' AND ' . $where_deleted;
             }
-            
+
             // Strip leading AND or OR for bug 48173
             $ret_array['where'] = ' WHERE '. preg_replace('#^\s*(AND|OR)\s+#i', '', $where);
         } else {
             // Handle deleted
             $ret_array['where'] = empty($where_deleted) ? '' : ' WHERE ' . $where_deleted;
         }
-        
+
         //if order by just has asc or des
         $temp_order = trim($order_by);
         $temp_order = strtolower($temp_order);

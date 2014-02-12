@@ -231,6 +231,8 @@ class WorkFlow extends SugarBean
 
         $ret['from'] = " FROM ".$this->table_name." ";
         $ret['from'] .= $custom_join['join'];
+        $this->addVisibilityFrom($ret['from'], array('where_condition' => true));
+        $this->addVisibilityWhere($where, array('where_condition' => true));
 
         $where_auto = "deleted=0 AND ( parent_id IS NULL OR parent_id = '' )";
 

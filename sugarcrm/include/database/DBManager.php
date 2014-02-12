@@ -457,7 +457,7 @@ abstract class DBManager
 	        // take first word of the query, if it's not SELECT - ignore it
 	        return;
 	    }
-		if(!empty($GLOBALS['sugar_config']['disable_count_query']) && (stripos($sql, 'count(*)') === false && stripos($sql, '(select tst.team_set_id from') !==false)){
+		if(!empty($GLOBALS['sugar_config']['disable_count_query']) && (stripos($sql, 'count(*)') === false && stripos($sql, ' JOIN (select tst.team_set_id from') !==false)){
 			if(stripos( $sql, 'UNION ALL') !== false){
 				$parts = explode('UNION ALL', $sql);
 			}else{

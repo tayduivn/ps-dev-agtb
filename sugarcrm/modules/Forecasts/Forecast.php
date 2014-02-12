@@ -21,15 +21,10 @@ if ( !defined('sugarEntry') || !sugarEntry ) {
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Forecast.php 47223 2009-05-16 02:57:14Z eddy $
- * Description: TODO:  To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
-// User is used to store Forecast information.
+/**
+ *  This class is used to store Forecast information.
+ */
 class Forecast extends SugarBean
 {
 
@@ -114,18 +109,18 @@ class Forecast extends SugarBean
 
         return $ret;
     }
-    
+
     /**
      * Generates Pipeline Data for this forecast
-     * 
+     *
      * @param int closed amount
      * @param int closed count
      */
      public function calculatePipelineData($closedAmount, $closedCount)
-     {        
+     {
      	$this->pipeline_amount = $this->likely_case - $closedAmount;
         $this->pipeline_opp_count = $this->opp_count - $closedCount;
-        
+
         $this->pipeline_amount = ($this->pipeline_amount < 0)? 0: $this->pipeline_amount;
         $this->pipeline_opp_count = ($this->pipeline_opp_count < 0)? 0: $this->pipeline_opp_count;
         $this->closed_amount = $closedAmount;
@@ -218,8 +213,9 @@ class Forecast extends SugarBean
         $ret_array           = array();
         $ret_array['select'] = "SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.* ";
         $ret_array['from']   = " FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id  ";
+        $this->addVisibilityFrom($ret_array['from'], array('where_condition' => true));
         $ret_array['where']  = !empty($where) ? ' WHERE ' . $where : '';
-
+        $this->addVisibilityWhere($ret_array['where'], array('where_condition' => true));
         //if order by just has asc or des
         $temp_order = trim($order_by);
         $temp_order = strtolower($temp_order);
@@ -256,7 +252,7 @@ class Forecast extends SugarBean
     /**
      * Retrieve forecast data for user given a timeperiod.  By default uses the currently logged-in
      * user and the current timeperiod.
-     * 
+     *
      * @param String $user_id
      * @param String $timeperiod_id
      * @param bool   $should_rollup     False to use direct numbers, true to use rollup.
@@ -267,25 +263,25 @@ class Forecast extends SugarBean
         if ( is_null($user_id) ) {
             $user_id = $current_user->id;
         }
-        
+
         $where = "user_id='{$user_id}'";
-        
+
         if ( $should_rollup ) {
             $where .= " AND forecast_type='Rollup'";
         } else {
             $where .= " AND forecast_type='Direct'";
         }
-        
+
         if ( !is_null($timeperiod_id)  ) {
             $where .= " AND timeperiod_id='{$timeperiod_id}'";
         } else {
             $where .= " AND timeperiod_id='" . TimePeriod::getCurrentId() . "'";
         }
-        
+
         $query = $this->create_new_list_query(NULL, $where);
-        
+
         $result = $this->db->query($query, true, 'Error retrieving user forecast information: ');
-        
+
         return $this->db->fetchByAssoc($result);
     }
 

@@ -63,7 +63,7 @@ class ForecastDirectReports extends SugarBean {
     var $currency;
     var $currencysymbol;
     var $currency_id;
-    
+
     var $pipeline_amount;
     var $pipeline_opp_count;
 
@@ -281,7 +281,10 @@ class ForecastDirectReports extends SugarBean {
         $ret_array=array();
         $ret_array['select'] = "SELECT id, users.first_name ,users.last_name, users.id as user_id";
         $ret_array['from'] = " FROM users  ";
+        $us = BeanFactory::getBean('Users');
+        $us->addVisibilityFrom($ret_array['from'], array('where_condition' => true));
         $ret_array['where'] = " where $where AND users.status = 'Active'";
+        $us->addVisibilityFrom($ret_array['where'], array('where_condition' => true));
         $ret_array['order_by'] = !empty($order_by) ? ' ORDER BY '. $order_by : '  ORDER BY users.last_name';
         if ( $return_array )
             return $ret_array;
@@ -299,7 +302,7 @@ class ForecastDirectReports extends SugarBean {
         $this->total_opp_count=0;
         $this->total_weigh_value_number = 0;
         $this->total_likely_case_number = 0;
-        $this->total_best_case_number = 0; 
+        $this->total_best_case_number = 0;
         $this->total_worst_case_number = 0;
         $this->pipeline_opp_count = 0;
         $this->pipeline_amount = 0;
@@ -327,7 +330,7 @@ class ForecastDirectReports extends SugarBean {
                 $this->total_worst_case_number += empty($frow['worst_case']) ? 0 : $frow['worst_case'];
                 $this->pipeline_opp_count += empty($frow['pipeline_opp_count']) ? 0 : $frow['pipeline_opp_count'];
                 $this->pipeline_amount += empty($frow['pipeline_amount']) ? 0 : $frow['pipeline_amount'];
-                
+
 
                 if (empty($frow['worksheet_id'])) {
                     $this->total_wk_likely_case_number += empty($frow['likely_case'])? 0 :$frow['likely_case'];

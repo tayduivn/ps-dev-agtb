@@ -96,6 +96,10 @@ class Quota extends SugarBean
 
         $ret_array['from'] = " FROM users, quotas ";
 
+        $us = BeanFactory::getBean('Users');
+        $us->addVisibilityFrom($ret_array['from'], array('where_condition' => true));
+        $us->addVisibilityFrom($where, array('where_condition' => true));
+
         $where_query = ' WHERE ';
 
         if (trim($where) != '') {
