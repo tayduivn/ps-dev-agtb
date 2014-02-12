@@ -144,4 +144,6 @@ $mod_strings = array (
     'LBL_REMINDER_TITLE' => 'Call:',
 
     'LBL_REVENUELINEITEMS' => 'Revenue Line Items',
+
+    'LBL_CALL_CLOSE_SUCCESS' => 'Call closed successfully.',
 );

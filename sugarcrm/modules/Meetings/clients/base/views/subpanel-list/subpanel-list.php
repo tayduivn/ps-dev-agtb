@@ -68,4 +68,19 @@ $viewdefs['Meetings']['base']['view']['subpanel-list'] = array(
       ),
     ),
   ),
+  'rowactions' => array(
+    'actions' => array(
+      array(
+        'type' => 'unlink-action',
+        'icon' => 'icon-trash',
+        'label' => 'LBL_UNLINK_BUTTON',
+      ),
+      array(
+        'type' => 'closebutton',
+        'name' => 'record-close',
+        'label' => 'LBL_CLOSE_BUTTON_TITLE',
+        'acl_action' => 'edit',
+      ),
+    ),
+  ),
 );
