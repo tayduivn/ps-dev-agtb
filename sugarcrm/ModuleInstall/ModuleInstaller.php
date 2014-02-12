@@ -1697,6 +1697,9 @@ class ModuleInstaller{
 
 	function rebuild_languages($languages = array(), $modules="")
 	{
+        global $current_language;
+        global $app_list_strings;
+
             foreach($languages as $language=>$value){
 				$this->log(translate('LBL_MI_REBUILDING') . " Language...$language");
 				$this->merge_files('Ext/Language/', $language.'.lang.ext.php', $language);
@@ -1704,14 +1707,20 @@ class ModuleInstaller{
 	                foreach($modules as $module){
 	                	LanguageManager::clearLanguageCache($module, $language);
 	                }
-	            }
+                } else {
+                    LanguageManager::clearLanguageCache(null, $language);
+                }
 			}
 			sugar_cache_reset();
+
+        // put actual metadata into global variable
+        $app_list_strings = return_app_list_strings_language($current_language);
 	}
 
 	function rebuild_vardefs()
 	{
 	    $this->rebuildExt("Vardefs", 'vardefs.ext.php');
+        VardefManager::clearVardef();
 		sugar_cache_reset();
 	}
 
