@@ -19,6 +19,7 @@ describe('Resolve Conflicts List View', function() {
         SugarTest.testMetadata.init();
         SugarTest.testMetadata.set();
 
+        SugarTest.loadComponent('base', 'view', 'flex-list');
         view = SugarTest.createView('base', module, 'resolve-conflicts-list');
     });
 
@@ -197,7 +198,7 @@ describe('Resolve Conflicts List View', function() {
                         name: 'first_name'
                     }, {
                         name: 'last_name'
-                    }]
+                    }];
                 });
 
             view._buildFieldDefinitions(clientModel, databaseModel);

@@ -103,19 +103,21 @@
         // insert modified by column
         fieldDefinition = _.union([modifiedByColumnDef], fieldDefinition);
 
-        _.each(fieldDefinition, function(field) {
-            field.sortable = false; //set all columns to not sort
-            if (field.name === 'date_modified') {
-                field.selected = false;
-            } else {
-                field.selected = true;
-            }
-        });
+        this._fields = this._createCatalog(fieldDefinition);
+    },
 
-        this._fields = {
-            'visible': _.where(fieldDefinition, { selected: true }),
-            'all': fieldDefinition
-        };
+    /**
+     * {@inheritDoc}
+     */
+    _patchField: function(fieldMeta, i) {
+        var isVisible = (fieldMeta.name !== 'date_modified');
+        return _.extend({
+            sortable: false,
+            selected: isVisible,
+            position: ++i
+        }, fieldMeta, {
+            sortable: false
+        });
     },
 
     /**

@@ -154,7 +154,8 @@
      * @return {Object} The catalog object.
      */
     parseFields: function() {
-        var catalog = this._createCatalog();
+        var fields = _.flatten(_.pluck(this.meta.panels, 'fields'));
+        var catalog = this._createCatalog(fields);
 
         this._thisListViewFieldList = this._getFieldsLastState();
 
@@ -206,28 +207,41 @@
      * - `all` lists all the fields, with a `selected` attribute that indicates
      * their visible state (used to populate the ellipsis dropdown).
      *
+     * @param {Array} fields The list of field definition for this view.
      * @return {Object} The catalog object.
      * @private
      */
-    _createCatalog: function() {
-        var i = 0, catalog = {};
+    _createCatalog: function(fields) {
+        var catalog = {};
         catalog._byId = {};
         catalog.visible = [];
         catalog.all = [];
 
-        _.each(this.meta.panels, function(panel) {
-            _.each(panel.fields, function(fieldMeta, j) {
-                i++;
-                var isVisible = (fieldMeta['default'] !== false);
-                catalog._byId[fieldMeta.name] = _.extend({
-                    selected: isVisible,
-                    position: i
-                }, fieldMeta);
-            }, this);
+        _.each(fields, function(fieldMeta, i) {
+            catalog._byId[fieldMeta.name] = this._patchField(fieldMeta, i);
         }, this);
         catalog.all = _.toArray(catalog._byId);
         catalog.visible = _.where(catalog.all, { selected: true });
         return catalog;
+    },
+
+    /**
+     * Patch a field metadata for this list view.
+     *
+     * Note that {@link View.FlexListView requires the attributes `selected` and
+     * `position`} in order to work properly.
+     *
+     * @param {Object} fieldMeta The field metadata.
+     * @param {Number} i The index of the field in the field list.
+     * @return {Object} The patched metadata.
+     * @private
+     */
+    _patchField: function(fieldMeta, i) {
+        var isVisible = (fieldMeta['default'] !== false);
+        return _.extend({
+            selected: isVisible,
+            position: ++i
+        }, fieldMeta);
     },
 
     /**
