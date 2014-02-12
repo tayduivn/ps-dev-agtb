@@ -1,29 +1,16 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
+ */
+
 /**
  * @class BaseDashboardLayout
  * @extends app.view.Layout
@@ -86,6 +73,27 @@
             }
         }, this);
 
+
+        // help dashboard triggers
+        app.events.on('app:help:show', function() {
+            this.collection.fetch({
+                silent: true,
+                success: _.bind(this.showHelpDashboard, this)
+            });
+        }, this);
+        app.events.on('app:help:hide', function() {
+            this.collection.fetch({
+                silent: true,
+                success: _.bind(this.hideHelpDashboard, this)
+            });
+        }, this);
+        // listen to the model sync event to figure out if we need to highlight the help button in the footer
+        this.model.on('sync', function() {
+            if (this.model.get('dashboard_type') == 'help-dashboard') {
+                app.events.trigger('app:help:shown');
+            }
+        }, this);
+
         if (module === 'Home') {
             this.on("render", this.toggleSidebar, this);
             if (context.get('modelId')) {
@@ -94,6 +102,37 @@
                 app.user.lastState.set(lastVisitedStateKey, context.get('modelId'));
             }
         }
+    },
+
+    /**
+     * Load the dashboards for the current module/view and then find the help dashboard and display it, it should always
+     * exists but if it doesn't, just ignore it.
+     *
+     * @param {Object} collection   The collection of dashboards returned from the fetch
+     */
+    showHelpDashboard: function(collection) {
+        var dashboard = _.find(collection.models, function(model) {
+            return (model.get('dashboard_type') == 'help-dashboard');
+        });
+
+        this._navigate(dashboard);
+    },
+
+    /**
+     * Load the dashboards for the current module/view and then find the first non-help dashboard and display it
+     *
+     * @param {Object} collection   The collection of dashboards returned from the fetch
+     */
+    hideHelpDashboard: function(collection) {
+        var dashboard = _.find(collection.models, function(model) {
+            return (model.get('dashboard_type') != 'help-dashboard');
+        });
+
+        // clear out the last state key for the help dashboard,
+        // it will be reset
+        app.user.lastState.set(this.getLastStateKey(), '');
+
+        this._navigate(dashboard);
     },
 
     /**
@@ -198,8 +237,6 @@
             this._renderEmptyTemplate();
         } else if (this.collection.models.length > 0) {
             var model = _.first(this.collection.models),
-                lastVisitedStateKey = this.getLastStateKey(),
-                lastViewed = app.user.lastState.get(lastVisitedStateKey),
                 currentModule = this.context.get('module');
             if (lastViewed) {
                 var lastVisitedModel = this.collection.get(lastViewed);
@@ -212,18 +249,12 @@
                     model = lastVisitedModel;
                 }
             }
-            if (this.context.parent) {
-                //For other modules
-                this.navigateLayout(model.id);
+
+            if (currentModule == 'Home' && _.isString(lastViewed) && lastViewed.indexOf('bwc_dashboard') !== -1) {
+                app.router.navigate(lastViewed, {trigger: true});
             } else {
-                //SC-748: Should dispose the dashboard to release the warning listener
-                this.dispose();
-                // check to see if the legacy dashboard was the last one visited if we are on the Home module
-                if (currentModule == 'Home' && _.isString(lastViewed) && lastViewed.indexOf('bwc_dashboard') !== -1) {
-                    app.router.navigate(lastViewed, {trigger: true});
-                } else {
-                    app.navigate(this.context, model);
-                }
+                // use the _navigate helper
+                this._navigate(model);
             }
         } else {
             var _initDashboard = this._getInitialDashboardMetadata();
@@ -290,6 +321,33 @@
             key = module + '.' + view;
         this._lastStateKey = app.user.lastState.key(key, this);
         return this._lastStateKey;
+    },
+
+
+    /**
+     * Utility method to use when trying to figure out how we need to navigate when switching dashboards
+     *
+     * @param {Backbone.Model} (dashboard) The dashboard we are trying to navigate to
+     * @private
+     */
+    _navigate: function(dashboard) {
+        var hasParentContext = (this.context && this.context.parent),
+            hasModelId = (dashboard && dashboard.has('id'));
+
+        if (hasParentContext && hasModelId) {
+            // we are on a module and we have an dashboard id
+            this.navigateLayout(dashboard.get('id'));
+        } else if(hasParentContext && !hasModelId) {
+            // we are on a module but we don't have a dashboard id
+            this.navigateLayout('list');
+        } else if(!hasParentContext && hasModelId) {
+            // we on the Home module and we have a dashboard id
+            app.navigate(this.context, dashboard);
+        } else {
+            // we on the Home module and we don't have a dashboard
+            var route = app.router.buildRoute(this.module);
+            app.router.navigate(route, {trigger: true});
+        }
     },
 
     /**
@@ -473,19 +531,12 @@
 
         params.error = _.bind(this._renderEmptyTemplate, this);
 
-        if (this.context.parent) {
-            params.success = _.bind(function(model) {
-                if (!this.disposed && model.get('dashboard_type') === 'help-dashboard') {
-                    this.navigateLayout(model.id);
-                }
-            }, this);
-        } else {
-            params.success = _.bind(function(model) {
-                if (!this.disposed && model.get('dashboard_type') === 'help-dashboard') {
-                    app.navigate(this.context, model);
-                }
-            }, this);
-        }
+        params.success = _.bind(function(model) {
+            if (!this.disposed && model.get('dashboard_type') === 'help-dashboard') {
+                this._navigate(model);
+            }
+        }, this);
+
         return params;
     },
 
@@ -504,6 +555,9 @@
      * {@inheritdoc}
      */
     _dispose: function () {
+        // always trigger the help button off
+        app.events.trigger('app:help:hidden');
+
         this.dashboardLayouts = null;
         this._super('_dispose');
     }
