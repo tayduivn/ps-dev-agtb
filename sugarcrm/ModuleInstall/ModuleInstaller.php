@@ -910,6 +910,12 @@ class ModuleInstaller{
 			$this->reset_file_cache();
 			require_once('include/connectors/utils/ConnectorUtils.php');
 			ConnectorUtils::installSource($cp['name']);
+
+            // refresh connector cache
+            require_once('include/connectors/ConnectorManager.php');
+            $cm = new ConnectorManager();
+            $connectors = $cm->buildConnectorsMeta();
+
 		}
 
 	}

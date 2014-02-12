@@ -22,8 +22,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/externalAPI/Twitter/ExtAPITwitter.php');
+require_once('clients/base/api/ConnectorApi.php');
 // A simple example class
-class TwitterApi extends SugarApi
+class TwitterApi extends ConnectorApi
 {
     public function registerApiRest()
     {
@@ -93,6 +94,7 @@ class TwitterApi extends SugarApi
      */
     public function getTweets($api, $args)
     {
+        $this->validateHash($args);
         $args2params = array(
             'twitterId' => 'screen_name',
             'count' => 'count'
@@ -142,6 +144,7 @@ class TwitterApi extends SugarApi
      */
     public function getCurrentUser($api, $args)
     {
+        $this->validateHash($args);
         $extApi = $this->getEAPM();
         if (is_array($extApi) && isset($extApi['error'])) {
             throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $extApi['error']);

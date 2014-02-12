@@ -355,6 +355,13 @@ class ConnectorsController extends SugarController {
 
 		require_once('include/connectors/utils/ConnectorUtils.php');
 		ConnectorUtils::updateMetaDataFiles();
+
+        // refresh connector
+        require_once('include/connectors/ConnectorManager.php');
+        $cm = new ConnectorManager();
+        $connectors = $cm->buildConnectorsMeta();
+
+
 	    // BEGIN SUGAR INT
 	    if(empty($_REQUEST['from_unit_test'])) {
 	    // END SUGAR INT
@@ -561,6 +568,12 @@ class ConnectorsController extends SugarController {
 		    ConnectorUtils::saveConnectors($connectors);
 
 		    ConnectorUtils::updateMetaDataFiles();
+
+
+            // refresh connector cache
+            require_once('include/connectors/ConnectorManager.php');
+            $cm = new ConnectorManager();
+            $connectors = $cm->buildConnectorsMeta();
 		    // BEGIN SUGAR INT
 		    if(empty($_REQUEST['from_unit_test'])) {
 		    // END SUGAR INT
@@ -618,6 +631,11 @@ class ConnectorsController extends SugarController {
 	    if (isset($_SESSION['searchDefs'])) {
 		    unset($_SESSION['searchDefs']);
 	    }
+
+        // refresh connector cache
+        require_once('include/connectors/ConnectorManager.php');
+        $cm = new ConnectorManager();
+        $connectors = $cm->buildConnectorsMeta();
 
 	    // BEGIN SUGAR INT
 		if(empty($_REQUEST['from_unit_test'])) {
@@ -749,7 +767,7 @@ class ConnectorsController extends SugarController {
 	function action_RetrieveSources() {
 		require_once('include/connectors/utils/ConnectorUtils.php');
 		$this->view = 'ajax';
-		$sources = ConnectorUtils:: getConnectors();
+		$sources = ConnectorUtils::getConnectors();
 		$results = array();
 		foreach($sources as $id=>$entry) {
 			    $results[$id] = !empty($entry['name']) ? $entry['name'] : $id;

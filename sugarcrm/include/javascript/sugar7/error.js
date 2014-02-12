@@ -152,7 +152,7 @@
      */
     app.error.handleHeaderPreconditionFailed = function(error, b, c, d) {
         //Only kick off a sync if we are not already in the process of syncing
-        if (app.isSynced) {
+        if (error && error.code ==='metadata_out_of_date' && app.isSynced) {
             app.sync();
         }
     };
