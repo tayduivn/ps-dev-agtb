@@ -25,16 +25,19 @@ $viewdefs['Emails']['base']['view']['panel-top'] = array(
             'css_class' => 'pull-right',
             'buttons' => array(
                 array(
-                    'type' => 'sticky-rowaction',
+                    'type' => 'emailaction',
                     'icon' => 'icon-plus',
-                    'name' => 'create_button',
+                    'name' => 'email_compose_button',
                     'label' => ' ',
                     'acl_action' => 'create',
+                    'set_recipient_to_parent' => true,
+                    'set_related_to_parent' => true,
                 ),
                 array(
                     'type' => 'link-action',
                     'name' => 'select_button',
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
+                    'css_class' => 'disabled',
                 ),
             ),
         ),
