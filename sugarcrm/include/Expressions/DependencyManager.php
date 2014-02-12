@@ -238,7 +238,7 @@ class DependencyManager
                         }
                         $result_keys[] = 'enum("' . implode('","', $key_list) . '")';
                     } else {
-                        $result_keys[] = 'enum("")';
+                        $result_keys[] = 'enum("' . $label_key . '", enum(""))';
                     }
                 }
 
