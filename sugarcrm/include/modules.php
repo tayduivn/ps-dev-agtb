@@ -660,6 +660,6 @@ $bwcModules = array(
     //END SUGARCRM flav=pro ONLY
 );
 
-foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $file) {
-    include $file;
+foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $modExtFile) {
+    include $modExtFile;
 }
