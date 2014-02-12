@@ -167,4 +167,12 @@ class One2MRelationship extends M2MRelationship
     {
         //No-op on One2M.
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getType($side)
+    {
+        return $side == REL_LHS ? REL_TYPE_MANY : REL_TYPE_ONE;
+    }
 }

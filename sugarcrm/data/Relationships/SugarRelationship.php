@@ -25,6 +25,8 @@ define('REL_BOTH', 'BOTH_SIDES');
 define('REL_MANY_MANY', 'many-to-many');
 define('REL_ONE_MANY', 'one-to-many');
 define('REL_ONE_ONE', 'one-to-one');
+define('REL_TYPE_ONE', 'one');
+define('REL_TYPE_MANY', 'many');
 /**
  * A relationship is between two modules.
  * It contains at least two links.
@@ -53,6 +55,15 @@ abstract class SugarRelationship
      * @return boolean
      */
     public abstract function remove($lhs, $rhs);
+
+    /**
+     * Return type of relationship based on side.
+     *
+     * @abstract
+     * @param string $side Relationship side.
+     * return string Type of current relationship.
+     */
+    abstract public function getType($side);
 
     /**
      * @abstract

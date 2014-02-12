@@ -59,5 +59,12 @@ class One2OneRelationship extends M2MRelationship
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getType($side)
+    {
+        return REL_TYPE_ONE;
+    }
 
 }

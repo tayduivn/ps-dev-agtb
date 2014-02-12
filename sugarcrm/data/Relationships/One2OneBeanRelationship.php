@@ -147,4 +147,12 @@ class One2OneBeanRelationship extends One2MBeanRelationship
 
         return $sugar_query->join[$jta];
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getType($side)
+    {
+        return REL_TYPE_ONE;
+    }
 }

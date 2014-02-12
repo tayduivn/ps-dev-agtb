@@ -119,6 +119,7 @@ class Bug58138Test extends Sugar_PHPUnit_Framework_TestCase
         $this->dynamicField->deleteField($this->field);
 
         SugarTestHelper::tearDown();
+        $GLOBALS['reload_vardefs'] = false;
     }
 
     /**
