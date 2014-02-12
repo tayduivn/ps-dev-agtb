@@ -136,7 +136,7 @@
             _buildMailToURL: function(options) {
                 var mailToUrl = 'mailto:',
                     formattedOptions = {},
-                    queryParams = {};
+                    queryParams = [];
 
                 if (options.to_addresses) {
                     mailToUrl += this._formatRecipientsToString(options.to_addresses);
@@ -145,16 +145,18 @@
                 formattedOptions.cc = this._formatRecipientsToString(options.cc_addresses);
                 formattedOptions.bcc = this._formatRecipientsToString(options.bcc_addresses);
                 formattedOptions.subject = options.subject;
-                formattedOptions.body = options.html_body;
+                formattedOptions.body = options.text_body;
 
                 _.each(['cc', 'bcc', 'subject', 'body'], function(option) {
+                    var param;
                     if (!_.isEmpty(formattedOptions[option])) {
-                        queryParams[option] = formattedOptions[option];
+                        param = option + '=' + encodeURIComponent(formattedOptions[option]);
+                        queryParams.push(param);
                     }
                 });
 
                 if (!_.isEmpty(queryParams)) {
-                    mailToUrl = mailToUrl + '?' + $.param(queryParams);
+                    mailToUrl = mailToUrl + '?' + queryParams.join('&');
                 }
 
                 return mailToUrl;

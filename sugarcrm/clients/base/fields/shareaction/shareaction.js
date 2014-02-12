@@ -33,9 +33,11 @@
      *
      * @class View.Fields.ShareActionField
      * @alias SUGAR.App.view.fields.ShareActionField
-     * @extends View.Fields.RowactionField
+     * @extends View.Fields.EmailactionField
      */
-    extendsFrom: 'RowactionField',
+    extendsFrom: 'EmailactionField',
+
+    plugins: ['EmailClientLaunch'],
 
     /**
      * Share template for subject.
@@ -58,22 +60,13 @@
     /**
      * {@inheritDoc}
      *
-     * Adds the share on click event to call the share action.
+     * Adds the share options for use when launching the email client
      */
     initialize: function(options) {
-        options.def = options.def || {};
-
-        this.events = _.extend({}, this.events, options.def.events || {}, {
-            'click a[name="share"][data-event="true"]': 'share'
-        });
-
         this._super("initialize", [options]);
+        this.type = 'emailaction';
         this._initShareTemplates();
-
-        // FIXME this preference shouldn't be a string
-        if (app.user.getPreference('use_sugar_email_client') !== 'true') {
-            options.def.href = this._shareWithMailTo();
-        }
+        this._setShareOptions();
     },
 
     /**
@@ -104,6 +97,24 @@
     },
 
     /**
+     * Set subject and body settings for the EmailClientLaunch plugin to use
+     *
+     * @protected
+     */
+    _setShareOptions: function() {
+        var shareParams = this._getShareParams(),
+            subject = this.shareTplSubject(shareParams),
+            body = this.shareTplBody(shareParams),
+            bodyHtml = this.shareTplBodyHtml(shareParams);
+
+        this.emailOptions = _.extend({}, this.emailOptions, {
+            subject: subject,
+            html_body: bodyHtml || body,
+            text_body: body
+        });
+    },
+
+    /**
      * Get the params required by the templates defined on
      * {@link _initShareTemplates}.
      *
@@ -122,64 +133,5 @@
             url: window.location.href,
             name: this.model.attributes.name || this.model.attributes.full_name
         });
-    },
-
-    /**
-     * Share button event triggered.
-     *
-     * Check if we can use email compose (from within Sugar) or else use the
-     * `mailto` default browser feature to deliver a pre-filled email message
-     * (subject and body), based on the templates initialized in
-     * {@link _initShareTemplates}.
-     *
-     * @see _shareWithSugarEmailClient()
-     * @see _shareWithMailTo()
-     */
-    share: function() {
-        this._shareWithSugarEmailClient();
-    },
-
-    /**
-     * Share a record using internal SugarEmailClient.
-     *
-     * This will try to use the bodyHtml template and if its empty then it will
-     * fallback to body template.
-     *
-     * @private
-     */
-    _shareWithSugarEmailClient: function() {
-        var subject = this.shareTplSubject(this._getShareParams()),
-            body = this.shareTplBody(this._getShareParams()),
-            bodyHtml = this.shareTplBodyHtml(this._getShareParams());
-
-        app.drawer.open({
-            layout: 'compose',
-            context: {
-                create: true,
-                module: 'Emails',
-                model: app.data.createBean('Emails', {
-                    subject: subject,
-                    html_body: bodyHtml || body
-                })
-            }
-        });
-    },
-
-    /**
-     * Share a record by using the default `mailto` browser feature.
-     *
-     * This will not use the bodyHtml template, since it isn't supported by the
-     * `mailto` feature.
-     *
-     * @private
-     */
-    _shareWithMailTo: function() {
-        var subject = this.shareTplSubject(this._getShareParams()),
-            body = this.shareTplBody(this._getShareParams());
-
-        return 'mailto:?' + [
-            'subject=' + encodeURIComponent(subject),
-            'body=' + encodeURIComponent(body)
-        ].join('&');
     }
 })

@@ -182,14 +182,15 @@ describe('EmailClientLaunch Plugin', function() {
             expect(url).toEqual('mailto:?' + $.param(expectedParams));
         });
 
-        it('should return mailto with subject and body in querystring', function() {
+        it('should return mailto with subject and text body in querystring', function() {
             var expectedParams = {
                     subject: 'Foo',
-                    body: '<b>Bar!</b>'
+                    body: 'Bar!'
                 },
                 url = field._buildMailToURL({
                     subject: expectedParams.subject,
-                    html_body: expectedParams.body
+                    text_body: expectedParams.body,
+                    html_body: '<b>' + expectedParams.body + '</b>'
                 });
             expect(url).toEqual('mailto:?' + $.param(expectedParams));
         });
