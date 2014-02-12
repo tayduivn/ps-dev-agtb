@@ -26,7 +26,7 @@ table.reorderable-columns {
           padding: 8px;
           /* Column being dragged */
           &.ui-draggable-dragging {
-            background-color: #FFF;
+            background-color: @white;
             z-index: 1;
             cursor: ew-resize;
           }
@@ -73,11 +73,6 @@ table.reorderable-columns {
         font-weight: normal;
       }
 
-      &::before {
-        right: 4px;
-        content: "\f0da";
-      }
-
       &::after {
         left: 4px;
         content: "\f0d9";
@@ -94,16 +89,10 @@ table.reorderable-columns {
 }
 
 /* Fixed columns need special treatment for padding and position of placeholder */
-.no-touch .flex-list-view.left-actions.scroll-width table.dataTable.reorderable-columns > thead > tr > th:nth-child(2) {
-
-  > div > div.th-droppable-placeholder {
-    left: -2px !important;
-  }
+.no-touch .flex-list-view.left-actions.scroll-width table.dataTable.reorderable-columns th:nth-child(2) > div > div.th-droppable-placeholder {
+  left: -2px !important;
 }
 
-.no-touch .flex-list-view.left-actions.scroll-width table.dataTable.reorderable-columns > thead > tr > th:nth-last-of-type(2) {
-
-  > div > div.th-droppable-placeholder-last {
-    right: -1px !important;
-  }
+.no-touch .flex-list-view.right-actions.scroll-width table.dataTable.reorderable-columns th:nth-last-of-type(2) > div > div.th-droppable-placeholder-last {
+  right: -1px !important;
 }
