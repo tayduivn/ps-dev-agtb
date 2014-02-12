@@ -607,7 +607,20 @@ class AbstractRelationships
                     );
                 }
             }
-            $installDefs[$moduleName] = array('from' => $fileName, 'to_module' => $moduleName);
+
+            // In cases of package publishing, we need to fetch the right path. 
+            // That path will come from installDefPrefix being set to something 
+            // with /SugarModules as a path. Otherwise, use the path that the defs
+            // are being saved to in this request.
+            $fromPath = $fileName;
+            if (strpos($installDefPrefix, '/SugarModules') !== false) {
+              $fromPath = "{$installDefPrefix}/clients/{$client}/layouts/subpanels/{$relationshipName}_{$moduleName}.php";
+            }
+
+            $installDefs[$moduleName] = array(
+              'from' => $fromPath,
+              'to_module' => $moduleName
+            );
         }
 
         return $installDefs;
