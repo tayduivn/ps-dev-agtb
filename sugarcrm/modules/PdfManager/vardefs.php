@@ -289,6 +289,7 @@ $dictionary['PdfManager'] = array(
             'size' => '20',
         ),
     ),
+    'acls' => array('SugarACLAdminOnly' => true),
     'indices' => array (
         array('name' => 'idx_pdfmanager_name', 'type' => 'index', 'fields' => array('name')),
         array('name' => 'idx_pdfmanager_base_module', 'type' => 'index', 'fields' => array('base_module')),
@@ -299,7 +300,5 @@ $dictionary['PdfManager'] = array(
 
 );
 
-if (!class_exists('VardefManager')) {
-        require_once 'include/SugarObjects/VardefManager.php';
-}
 VardefManager::createVardef('PdfManager','PdfManager', array('basic','team_security','assignable'));
+
