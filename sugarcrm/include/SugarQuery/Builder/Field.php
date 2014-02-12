@@ -231,7 +231,9 @@ class SugarQuery_Builder_Field
                 }
             }
             if (!empty($this->def['link']) && !$this->query->getJoinAlias($this->def['link'])) {
-
+                if ($this instanceof SugarQuery_Builder_Field_Select) {
+                    $params['team_security'] = false;
+                }
                 $join = $this->query->join($this->def['link'], $params);
 
                 $jta = $join->joinName();
