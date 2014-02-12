@@ -12,13 +12,4 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 --}}
-<ul class="nav megamenu" data-container="module-list">
-    <li class="dropdown hidden" data-action="more-modules">
-        <div class="btn-group">
-            <button type="button" data-toggle="dropdown" class="btn btn-invisible dropdown-toggle" track="click:navbar-more-modules"><i title="{{str "LBL_LINK_MORE" module}}" class="icon-chevron-down"></i></button>
-            <div class="dropdown-menu scroll" role="menu">
-                <ul data-container="overflow"></ul>
-            </div>
-        </div>
-    </li>
-</ul>
+<li class="dropdown" data-module="{{module}}"></li>

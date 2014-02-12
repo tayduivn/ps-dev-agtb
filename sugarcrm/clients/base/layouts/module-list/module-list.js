@@ -19,28 +19,50 @@
     },
 
     /**
-     * Records collection to be easier to apply filters.
+     * The catalog of modules linked to their menus (short and long).
      *
-     * This will provide allow us to get recently viewed, favorites or other
-     * records in the menu that might be needed.
+     * The menu element is to the partial created at {@link #_placeComponent}
+     * method.
+     *
+     * @property {Object} A hash of module name with each short and long menus:
+     * <pre><code>
+     *     {
+     *         'Home': {long: el1, short: el2},
+     *         'Accounts': {long: el3, short: el4},
+     *         //...
+     *     }
+     * </code></pre>
+     *
+     * @protected
      */
-    _recordsCollection: {},
+    _catalog: {},
+
+    /**
+     * The cached `[data-action=more-modules]` since this view can be quite
+     * big.
+     *
+     * @property {jQuery} The jQuery element pointing to our
+     * `[data-action=more-modules]` element.
+     *
+     * @protected
+     */
+    _$moreModulesDD: undefined,
 
     handleRouteEvent: function (event) {
         var currentFragment,
             currentTarget = this.$(event.currentTarget),
-            route = currentTarget.data("route");
+            route = currentTarget.data('route');
 
         if (route) {
             if ((!_.isUndefined(event.button) && event.button !== 0) || event.ctrlKey || event.metaKey) {
                 event.stopPropagation();
                 window.open(route, '_blank');
                 // FIXME remove this hack once the drawer doesn't popup even after stopPropagation() is called.
-                return false;
+//                return false;
             }
             event.preventDefault();
             currentFragment = Backbone.history.getFragment();
-            if (("#" + currentFragment) === route) {
+            if (('#' + currentFragment) === route) {
                 app.router.refresh();
             } else {
                 app.router.navigate(route, {trigger: true});
@@ -58,8 +80,6 @@
 
     initialize: function(options) {
 
-        this.activeModule = this._setActiveModule(this);
-
         app.events.on('app:sync:complete', this._resetMenu, this);
         app.events.on('app:view:change', this.handleViewChange, this);
 
@@ -68,10 +88,6 @@
         if (this.layout) {
             this.layout.on('view:resize', this.resize, this);
         }
-
-        this.events = _.extend({}, this.events, {
-            'shown.bs.dropdown': 'menuOpen'
-        });
 
         // FIXME we need to refactor this file to support defaultSettings
         // FIXME we need to support partials for hbs files (each module should
@@ -84,118 +100,12 @@
         if (app.config.enableLegacyDashboards && app.config.enableLegacyDashboards === true) {
             this.dashboardBwcLink = app.bwc.buildRoute('Home', null, 'bwc_dashboard');
         }
+
     },
 
     handleViewChange: function() {
-        this.activeModule.set(app.controller.context.get("module"));
-        this.layout.trigger("header:update:route");
-    },
-
-    /**
-     * Method called when a `show.bs.dropdown` event occurs.
-     *
-     * @param {Event} event The `shown.bs.dropdown` triggered by Bootstrap
-     *   dropdown plugin.
-     */
-    menuOpen: function(event) {
-
-        // FIXME, we need to upgrade bootstrap to 3.1.0 to receive the relatedTarget as a param
-        var $target = $(event.target),
-            module = $target.closest('[data-module]').data('module');
-
-        this.populateMenu(module);
-    },
-
-    /**
-     * Populate the favorites and recently viewed records every time we open
-     * the menu.
-     *
-     * @param {String} module The module that we want to populate the data on
-     */
-    populateMenu: function(module) {
-
-        var meta = app.metadata.getModule(module) || {};
-
-        if (module === 'Home') {
-            this.populateDashboards();
-            return;
-        }
-
-        // FIXME some modules don't have fields therefore we don't have recent
-        // and favorites, we should disable them using metadata not with this
-        // hack
-        if (_.isEmpty(_.omit(meta.fields, '_hash'))) {
-            return;
-        }
-
-        if (meta.favoritesEnabled) {
-            this.populate(module, [{
-                '$favorite': ''
-            }], 'favorites');
-        }
-
-        this.populate(module, [{
-            '$tracker': '-7 DAY'
-        }], 'recents');
-    },
-
-    /**
-     * Returns the records collection (cached) or create a new collection for
-     * the module given.
-     *
-     * @param {String} module The module to get the collection from.
-     * @return {Data.BeanCollection} A new instance of bean collection.
-     * @protected
-     */
-    _getRecordsCollection: function(module) {
-        if (!this._recordsCollection[module]) {
-            this._recordsCollection[module] = app.data.createBeanCollection(module);
-        }
-
-        return this._recordsCollection[module];
-    },
-
-    /**
-     * Return `true` if a module's menu is open, `false` otherwise.
-     *
-     * @param {String} module The module that we are checking for menu status.
-     */
-    isMenuOpen: function(module) {
-        return !!this.$('[data-module=' + module + '] .open').length;
-    },
-
-    /**
-     * Populates records templates based on filter given.
-     *
-     * @param {String} module Module name.
-     * @param {String} filter The filter to be applied.
-     */
-    populate: function(module, filter, tplName) {
-
-        var collection = this._getRecordsCollection(module);
-
-        collection.fetch({
-            'fields': ['id', 'name'],
-            'filter': filter,
-            'limit': 3,
-            'success': _.bind(function(data) {
-                if (this.disposed || !this.isMenuOpen(module)) {
-                    return;
-                }
-
-                var tpl = app.template.getLayout(this.name + '.' + tplName, module) ||
-                    app.template.getLayout(this.name + '.' + tplName);
-
-                var $placeholder = this.$('[data-module="' + module + '"] [data-container="' + tplName + '"]'),
-                    $old = $placeholder.nextUntil('.divider');
-
-                $old.remove();
-                $placeholder.after(tpl(collection));
-
-            }, this)
-        });
-
-        return;
+        this._setActiveModule(app.controller.context.get('module'));
+        this.layout.trigger('header:update:route');
     },
 
     /**
@@ -237,130 +147,141 @@
     },
 
     /**
-     * Render the main navigation bar based on the modules available.
-     * This only renders if we are authenticated, `appStatus` isn't `offline`
-     * and the app is synced.
+     * @inheritDoc
+     *
+     * If it is a `module-menu` component, we wrap it with our `list` template
+     * and place it before the `more-modules` drop down or inside the drop down
+     * if we are handling a short version of the menu.
+     * The short version is always hidden, since it will be toggled on the
+     * first resize call (when it overflows the existing width).
+     *
+     * @param {View.View/View.Layout} component View or layout component.
+     * @protected
      */
-    _renderHtml: function() {
+    _placeComponent: function(component) {
 
-        // loadAdditionalComponents fires render before the private metadata is ready, check for this
-        if (!app.api.isAuthenticated() || app.config.appStatus === 'offline' || !app.isSynced) {
+        if (component.name !== 'module-menu') {
+            this.$el.append(component.el);
             return;
         }
 
-        this.resetMenu();
-        this.activeModule.set(app.controller.context.get('module'));
+        var tpl = app.template.getLayout(this.name + '.list', component.module) ||
+            app.template.getLayout(this.name + '.list'),
+            $content = $(tpl({module: component.module})).append(component.el);
 
-        // FIXME this should be addComponent
-        this.$el.html(this.template(this));
+        // initialize catalog if isn't initialized
+        this._catalog[component.module] = this._catalog[component.module] || {};
+
+        if (component.meta && component.meta.short) {
+            // FIXME remove the hide() when we fix the CSS
+            $content.addClass('hidden').hide();
+            this._catalog[component.module].short = $content;
+            this._$moreModulesDD.find('[data-container="overflow"]').append($content);
+        } else {
+            this._catalog[component.module].long = $content;
+            this.$('[data-action="more-modules"]').before($content);
+        }
     },
 
     /**
      * Resets the menu based on new metadata information.
      *
+     * It resets components, catalog and template (html).
+     *
      * @protected
      */
     _resetMenu: function() {
-        this._addComponents();
+
+        this._components = [];
+        this._catalog = {};
+        this.$el.html(this.template(this, this.options));
+
+        // cache the more-dropdown now
+        this._$moreModulesDD = this.$('[data-action="more-modules"]');
+
+        this._addDefaultMenus();
+        this._setActiveModule(app.controller.context.get('module'));
         this.render();
-        this._renderHtml();
     },
 
     /**
-     * Adds all menu views as components.
+     * Adds all default menu views as components in both full and short
+     * version.
+     *
+     * This will set the menu as sticky to diferentiate from the others that
+     * are added based on navigation/reference only.
      *
      * @private
      */
-    _addComponents: function() {
+    _addDefaultMenus: function() {
 
         var moduleList = app.metadata.getModuleNames({filter: 'display_tab', access: 'read'});
 
-        // FIXME move this to the module-menu view
-        var actions, meta, returnList = [], self = this, listLength;
-        _.each(moduleList, function(key) {
-            actions = {
-                label: app.lang.get('LBL_MODULE_NAME', key),
-                name: key
-            };
-            meta = app.metadata.getModule(key);
-            if (meta && meta.menu && meta.menu.header) {
-                actions.menu = self.filterAvailableMenuActions(meta.menu.header.meta);
-            } else {
-                actions.menu = [];
-            }
-            listLength = returnList.push(actions);
-            actions.menuIndex = listLength - 1;
-        });
-
-        this.module_list = returnList;
+        _.each(moduleList, function(module) {
+            this._addMenu(module, true);
+        }, this);
     },
 
     /**
-     * Filters menu metadata by acls
-     * @param Array menuMeta
-     * @return {Array}
+     * Adds a menu as a component. Sticky menus aren't added to `more-modules`
+     * list.
+     *
+     * @param {String} module The module
+     * @param {Boolean} [sticky=false] Set to `true` if this is a menu that is
+     *   part of user preferences.
+     * @private
      */
-    filterAvailableMenuActions: function(menuMeta){
-        var result = [];
-        _.each(menuMeta, function(menuItem){
-            if(app.acl.hasAccess(menuItem.acl_action, menuItem.acl_module)) {
-                result.push(menuItem);
+    _addMenu: function(module, sticky) {
+
+        var def = {
+            view: {
+                name: 'module-menu',
+                sticky: sticky
             }
-        });
-        return result;
-    },
-    /**
-     * Reset the module list to the full list
-     */
-    resetMenu: function() {
-        this.$('.more').before(this.$('#module_list .more-drop-container').children());
-    },
-    /**
-     * Resize the module list to the specified width and move the extra module names to the dropdown.
-     * We first clone the module list, make adjustments, and then replace.
-     * @param width
-     */
-    resize: function (width) {
-        if (width <= 0) {
+        };
+        this.addComponent(this.createComponentFromDef(def, null, module), def);
+
+        if (!sticky) {
             return;
         }
-        this.activeModule.set(app.controller.context.get("module"));
 
-        var $activeInMore = this.$('.more').find('.dropdown.active');
-        if ($activeInMore.length >0){
-            //show the drop down toggle and hide the more link
-            $activeInMore.find('.btn-group').show();
-            $activeInMore.find('.moreLink').hide();
-            this.$el.find('.dropdown.more').before($activeInMore);
+        def = {
+            view: {
+                name: 'module-menu',
+                short: true
+            }
+        };
+        this.addComponent(this.createComponentFromDef(def, null, module), def);
+    },
+
+    /**
+     * Resize the module list to the specified width and move the extra module
+     * names to the `more-modules` drop down.
+     *
+     * We first clone the module list, make adjustments, and then replace.
+     *
+     * @param {Number} width The width that we have available.
+     */
+    resize: function(width) {
+        if (width <= 0 || _.isEmpty(this._components)) {
+            return;
         }
-
-        var $moduleList = this.$el.find('#module_list'),
-            $moduleListClone = $moduleList.clone(),
-            $cloneContainer = $('<div></div>');
-        // make the cloned module list visible but away from user's view to accurately calculate width
-        $cloneContainer
-            .css({
-                position: 'absolute',
-                top: '-9999px',
-                display: 'block'
-            })
-            .append($moduleListClone);
-
-        this.$el.append($cloneContainer);
 
         //TODO: ie Compatible, scrollable dropdown for low-res. window
         //TODO: Theme Compatible, Filtered switching menu
         //TODO: User preferences maximum menu count
-        if($moduleListClone.outerWidth(true) >= width){
+
+        // FIXME we need to cache more jQuery searches because everytime we
+        // change the module we can retrigger a new resize
+        var $moduleListClone = this.$('[data-container=module-list]'),
+            $dropdown = this._$moreModulesDD.find('[data-container=overflow]');
+
+        if ($moduleListClone.outerWidth(true) >= width) {
             this.removeModulesFromList($moduleListClone, width);
         } else {
             this.addModulesToList($moduleListClone, width);
         }
-
-        // replace the module list with the modified cloned list
-        $moduleList.remove();
-        this.$el.append($moduleListClone);
-        $cloneContainer.remove();
+        this._$moreModulesDD.toggleClass('hidden', $dropdown.children().length === 0);
     },
 
     /**
@@ -369,39 +290,22 @@
      * @param width
      */
     addModulesToList: function($modules, width) {
-        var $dropdown = $modules.find('.more-drop-container'),
-            $moduleToInsert = $dropdown.children("li:first"),
-            $more = $modules.find('.more'),
-            $lastModuleInList, $nextModule,
+
+        var $dropdown = this._$moreModulesDD.find('[data-container=overflow]'),
+            $toHide = $dropdown.children('li').not('.hidden').first(),
             currentWidth = $modules.outerWidth(true);
 
-        while ((currentWidth < width) && ($dropdown.children().length > 0)){
-            $nextModule = $moduleToInsert.next();
+        while (currentWidth < width && $toHide.length > 0) {
 
-            //show the drop down toggle and hide the more link
-            $moduleToInsert.find('.btn-group').show();
-            $moduleToInsert.find('.moreLink').hide();
+            this.toggleModule($toHide.data('module'), true);
 
-            // add the modules in order
-            $lastModuleInList = $more.prev();
-            if (this.activeModule.isActive($lastModuleInList) && !this.activeModule.isNext($moduleToInsert)) {
-                $lastModuleInList.before($moduleToInsert);
-            } else {
-                $more.before($moduleToInsert);
-            }
+            $toHide = $dropdown.children('li').not('.hidden').first();
 
             currentWidth = $modules.outerWidth(true);
-            $moduleToInsert = $nextModule;
-
-            // remove the last added module if the width is wider than desired
-            if (currentWidth >= width) {
-                this.removeModulesFromList($modules, width);
-                break;
-            }
         }
 
-        if( $dropdown.children().length === 0 && $modules.find('.dropdown').is(":visible") ) {
-            this.$('.more').hide();
+        if (currentWidth >= width) {
+            this.toggleModule($toHide.data('module'), false);
         }
     },
 
@@ -411,149 +315,119 @@
      * @param width
      */
     removeModulesFromList: function($modules, width) {
-        var $dropdown = $modules.find('.more-drop-container'),
-            $module = $modules.find('.more').prev(),
-            $next, currentWidth = $modules.outerWidth(true),
 
-            // If we have an active module, # of persistent tabs = active module + sugarcube + "more" button
-            persistentTabs = this.activeModule.isActive($module) ? 3 : 2;
+        var $toHide = this._$moreModulesDD.prev();
 
-        while (currentWidth >= width && ($modules.children().length - persistentTabs) > 0) {
-            // home and currently active module should not be removed from the list
-            if (this.activeModule.isActive($module) || $module.hasClass('Home')) {
-                $module = $module.prev();
+        while ($modules.outerWidth(true) >= width && $toHide.length > 0) {
+
+            if (!this.isRemovableModule($toHide.data('module'))) {
+                $toHide = $toHide.prev();
+                continue;
             }
 
-            $next = $module.prev();
-            $dropdown.prepend($module);
-            //hide the drop down toggle and show the more link
-            $module.find('.btn-group').hide();
-            $module.find('.moreLink').show();
+            this.toggleModule($toHide.data('module'), false);
 
-            currentWidth = $modules.outerWidth(true);
-            $module = $next;
-        }
-        if( $dropdown.children().length !== 0 && $modules.find('.dropdown').is(":visible") ) {
-            this.$('.more').show();
+            $toHide = $toHide.prev();
         }
     },
 
-    _setActiveModule:function (parent) {
-        return {
-            _class:'active', //class to indicate the active module
-            _next:null, //the module next to the active module
-            _moduleList:parent,
+    /**
+     * Toggle module menu given. This will make sure it will be always in sync.
+     *
+     * We decided to assume that the `more-modules` drop down is the master of
+     * the information to keep in sync.
+     *
+     * If we don't have a short menu version (on `more-modules` drop down),
+     * it means that we don't need to keep it in sync and just show/hide based
+     * on the module name. Think at this as a cached menu until we get another
+     * `app:sync:complete` event.
+     *
+     * @param {String} module The module you want to turn on/off.
+     * @param {Boolean} [state] `true` to show it on mega menu, `false`
+     *   otherwise. If no state given, will toggle.
+     *
+     * @chainable
+     */
+    toggleModule: function(module, state) {
 
-            /**
-             * Set the specified module as the active module
-             * @param module
-             */
-            set:function (module) {
-                var $modules, $module, $next,
-                    updateNav = true,
-                    // Name of the module this module is mapped to, if it exists
-                    mapped;
-                if (app.controller && app.controller.layout && app.controller.layout.meta && !_.isUndefined(app.controller.layout.meta.updateNav)) {
-                    updateNav = app.controller.layout.meta.updateNav;
-                }
-                if (module) {
-                    this.reset();
+        // cache version only
+        if (!this._catalog[module].short) {
+            state = !_.isUndefined(state) ? !state : undefined;
+            var newState = this._catalog[module].long.toggleClass('hidden', state).hasClass('hidden');
+            this._catalog[module].long.toggle(!newState);
+            return this;
+        }
 
-                    $modules = this._moduleList.$('#module_list');
-                    $module = $modules.find("[data-module='" + module + "']");
-                    // If this module doesn't have a menu see if there is a tab mapping
-                    if ($module.length < 1) {
-                        mapped = app.metadata.getTabMappedModule(module);
+        // keep it in sync
+        var newState = this._catalog[module].short.toggleClass('hidden', state).hasClass('hidden');
+        this._catalog[module].long.toggleClass('hidden', !newState);
 
-                        // If the mapped module is different from the module, get
-                        // the mapped module element if it exists
-                        if (mapped !== module) {
-                            $module = $modules.find("[data-module='" + mapped + "']");
-                            updateNav = $module.length === 0;
-                        }
-                        if (updateNav) {
-                            module = mapped;
-                            // create the menu and add it
-                            var moduleList = {};
-                            moduleList[module] = app.metadata.getFullModuleList()[module];
+        // FIXME hide() because there is a css problem
+        this._catalog[module].long.toggle(!!newState);
+        this._catalog[module].short.toggle(!newState);
 
-                            if (!_.isUndefined(moduleList[module])) {
-//                                var meta = this._moduleList.completeMenuMeta(moduleList);
-//                                meta[0].menuIndex = -1;
-//                                var singleMenuTemplate = app.template.getLayout(this._moduleList.name + '.menu');
-//                                this._moduleList.$el.find('.dropdown.more').before(singleMenuTemplate(meta[0]));
-//                                $module = $modules.find("[data-module='" + module + "']");
-                            }
-                        }
-                    }
+        return this;
+    },
 
-                    $module.addClass(this._class);
+    /**
+     * Sets the module given as active and shown in the mega nav bar.
+     *
+     * This waits for the full `this._components` to be set first. If we fail
+     * to do that, we will see the current module context as the first menu.
+     *
+     * @param {String} module the Module to set as Active on the menu.
+     *
+     * @protected
+     * @chainable
+     */
+    _setActiveModule: function(module) {
 
-                    // remember which module is supposed to be next to the active module so that
-                    // ordering can be preserved while modules are removed and added to the list
-                    if (!this._next) {
-                        $next = $module.next();
-                        if ($next.hasClass('more')) {
-                            $next = $modules.find('.more-drop-container li:first');
-                        }
-                        this._next = $next.attr('class');
-                    }
-                }
-            },
+        if (_.isEmpty(this._components)) {
+            // wait until we have the mega menu in place
+            return this;
+        }
 
-            /**
-             * Is this module the active module?
-             * @param $module
-             * @return {Boolean}
-             */
-            isActive:function ($module) {
-                return $module.hasClass(this._class);
-            },
+        this.$('[data-container=module-list]').children('.active').removeClass('active');
 
-            /**
-             * Is this module supposed to be next to the the active module?
-             * @param $module
-             * @return {Boolean}
-             */
-            isNext:function ($module) {
-                return (this._next === $module.attr('class'));
-            },
+        if (!this._catalog[module]) {
+            this._addMenu(module, false);
+        }
 
-            /**
-             * Clear active modules and move anything out of order back to where it belongs
-             */
-            reset:function () {
-                this.resetActive();
-                this._next = null;
-                this._moduleList.$('.dropdown.' + this._class).removeClass(this._class);
-            },
-            /**
-             * This function returns active module nodes in the wrong place back to where they belong
-             * and deactivates them
-             */
-            resetActive:function () {
-                var $activeNode = this._moduleList.$('.dropdown.' + this._class);
-                // no point in moving
-                if ($activeNode.length < 1) return;
-                var beforeIndex = $activeNode.prev().data('menuindex');
-                var activeIndex = $activeNode.data('menuindex');
-                var $afterNode = this._moduleList.$('[data-menuindex=' + (activeIndex + 1) + ']');
+        this._catalog[module].long.addClass('active');
+        this.toggleModule(module, true);
 
-                if (activeIndex == -1) {
-                    // this doesn't belong in the list at all normally so remove it
-                    $activeNode.remove();
-                }
-                if (beforeIndex != activeIndex - 1 && activeIndex !== 1) {
-                    $afterNode.before($activeNode);
-                    // this node needs to go into the more so toggle its styles
-                    if ($activeNode.parents().hasClass('more')) {
-                        // hide the drop down toggle and show the more link
-                        $activeNode.find('.btn-group').hide();
-                        $activeNode.find('.moreLink').show();
-                        $activeNode.find('.moreLink').css('display', 'block');
-                    }
-                }
-            }
-        };
+        return this;
+    },
+
+    /**
+     * Returns `true` if a certain module can be removed from the main nav bar,
+     * `false` otherwise.
+     *
+     * Currently we can't remove the Home module (sugar cube) neither the
+     * current active module.
+     *
+     * @param {String} module The module to check.
+     *
+     * @return {Boolean} `true` if the module is safe to be removed.
+     */
+    isRemovableModule: function(module) {
+        return !(module === 'Home' || this.isActiveModule(module));
+    },
+
+    /**
+     * Returns `true` when the module is active in main nav bar, `false`
+     * otherwise.
+     *
+     * This is normally based on the `App.controller.context` current module
+     * and then sets a fallback mechanism to determine which module it is,
+     * that you can see described in {@link #_setActiveModule}.
+     *
+     * @param {String} module The module to check.
+     *
+     * @return {Boolean} `true` if the module is safe to be removed.
+     */
+    isActiveModule: function(module) {
+        return this._catalog[module].long.hasClass('active');
     }
+
 })
