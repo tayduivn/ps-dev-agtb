@@ -134,8 +134,8 @@ class OAuth2Api extends SugarApi
         // Adding the setcookie() here instead of calling $api->setHeader() because
         // manually adding a cookie header will break 3rd party apps that use cookies
         setcookie(RestService::DOWNLOAD_COOKIE.'_'.$platform, $authData['download_token'], time()+$authData['refresh_expires_in'], ini_get('session.cookie_path'), ini_get('session.cookie_domain'), ini_get('session.cookie_secure'), true);
-        
-        // For reauth requests we need to send back the session cookie as well to 
+
+        // For reauth requests we need to send back the session cookie as well to
         // keep the client in sync if there was a session cookie to begin with
         if (isset($_COOKIE[session_name()]) && !empty($args['grant_type']) && $args['grant_type'] == 'refresh_token' && !empty($args['refresh'])) {
             $this->killSessionCookie();
@@ -143,7 +143,7 @@ class OAuth2Api extends SugarApi
         return $authData;
     }
 
-    public function logout($api, $args) 
+    public function logout($api, $args)
     {
         $oauth2Server = $this->getOAuth2Server($args);
         if(!empty($api->user)) {
@@ -180,7 +180,7 @@ class OAuth2Api extends SugarApi
      */
     public function bwcLogin($api, $args)
     {
-        // Send back session_name so the client can use it for other bwc functions, 
+        // Send back session_name so the client can use it for other bwc functions,
         // like studio, module builder, etc when sessions expire outside of the
         // ajax calls
         $session_name = $this->sendSessionCookie();
@@ -238,10 +238,10 @@ class OAuth2Api extends SugarApi
     {
         if (!empty($args['client_info']['app']['name'])
             && !empty($args['client_info']['app']['version'])) {
-            
+
             $name = $args['client_info']['app']['name'];
             $version = $args['client_info']['app']['version'];
-            
+
             if (isset($api->api_settings['minClientVersions'][$name])
                 && version_compare($api->api_settings['minClientVersions'][$name], $args['client_info']['app']['version'],'>') ) {
                 // Version is too old, force them to upgrade.
@@ -255,41 +255,41 @@ class OAuth2Api extends SugarApi
     /**
      * Sends the session cookie. This is needed when moving into and out of BWC mode
      * and the auth token changes.
-     * 
+     *
      * @return string The session name
      */
     protected function sendSessionCookie()
     {
         // This needs to be sent back
         $session_name = session_name();
-
+        $lifetime = ini_get('session.cookie_lifetime');
         setcookie(
-            $session_name, 
-            session_id(), 
-            ini_get('session.cookie_lifetime'), 
-            ini_get('session.cookie_path'), 
-            ini_get('session.cookie_domain'), 
-            ini_get('session.cookie_secure'), 
+            $session_name,
+            session_id(),
+            $lifetime?time()+$lifetime:0,
+            ini_get('session.cookie_path'),
+            ini_get('session.cookie_domain'),
+            ini_get('session.cookie_secure'),
             ini_get('session.cookie_httponly')
         );
 
         return $session_name;
     }
-    
+
     /**
-     * Kills a session cookie. Called from both logout and token on refresh 
+     * Kills a session cookie. Called from both logout and token on refresh
      * requests in which there is an existing session cookie. This will force new
      * BWC logins so that BWC sessions stay in sync with sidecar sessions.
      */
     protected function killSessionCookie()
     {
         setcookie(
-            session_name(), 
-            '', 
-            time() - 3600, 
-            ini_get('session.cookie_path'), 
-            ini_get('session.cookie_domain'), 
-            ini_get('session.cookie_secure'), 
+            session_name(),
+            '',
+            time() - 3600,
+            ini_get('session.cookie_path'),
+            ini_get('session.cookie_domain'),
+            ini_get('session.cookie_secure'),
             ini_get('session.cookie_httponly')
         );
     }
