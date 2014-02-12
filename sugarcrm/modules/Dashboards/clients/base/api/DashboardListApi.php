@@ -63,7 +63,7 @@ class DashboardListApi extends FilterApi
      */
     public function getDashboards($api, $args)
     {
-        if (empty($args['filter'])||!is_array($args_filter)) {
+        if (empty($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
         }
 
@@ -80,7 +80,7 @@ class DashboardListApi extends FilterApi
         if (!empty($args['view_name'])) {
             $args['filter'][]['view_name'] = $args['view_name'];
         }
-        $args['fields'] = 'id,name,view_name';
+        $args['fields'] = 'id,name,view_name,dashboard_type';
 
         $ret = $this->filterList($api, $args);
         
@@ -88,7 +88,7 @@ class DashboardListApi extends FilterApi
         foreach ($ret['records'] as $idx => $dashboard) {
             $ret['records'][$idx]['url'] = $api->getResourceURI('Dashboards/'.$dashboard['id']);
         }
-        
+
         return $ret;
     }
 
@@ -98,7 +98,7 @@ class DashboardListApi extends FilterApi
     protected function parseArguments(ServiceBase $api, array $args, SugarBean $seed = null)
     {
         if (!isset($args['order_by'])) {
-            $args['order_by'] = 'date_entered:DESC';
+            $args['order_by'] = 'dashboard_type:DESC,date_entered:DESC';
         }
         $options = parent::parseArguments($api, $args, $seed);
         

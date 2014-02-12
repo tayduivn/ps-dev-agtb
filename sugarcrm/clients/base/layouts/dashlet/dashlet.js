@@ -25,15 +25,42 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    /**
+     * A reference to the main dashboard
+     */
+    dashboard: undefined,
+
+    /**
+     * {@inheritdoc}
+     */
     initialize: function(options) {
         this.index = options.meta.index;
-        app.view.Layout.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
+
+        if (!(this.meta.preview || this.meta.empty)) {
+            // grab a reference to the dashboard to pass down
+            this.dashboard = this.findLayout('dashboard', options.layout);
+        }
+
         //set current model draggable
         this.on("render", function() {
             this.model.trigger("applyDragAndDrop");
         }, this);
         this.context.on("dashboard:collapse:fire", this.collapse, this);
     },
+
+    /**
+     * Search recursively through the <pre><code>layout.layout</code></pre> list
+     * until the <pre><code>layout.name == name</code></pre>
+     *
+     * @param {String} name the name of the layout you're looking for
+     * @param {Object} layout the layout object to look through
+     * @returns {*}
+     */
+    findLayout: function(name, layout) {
+        return (layout.name == name || layout.type == name) ? layout : this.findLayout(name, layout.layout);
+    },
+
     /**
      * {@inheritdoc}
      * Append dashlet toolbar view based on custom_toolbar definition
@@ -89,8 +116,9 @@
         }
 
         var context = this.context.parent || this.context;
-        app.view.Layout.prototype._addComponentsFromDef.call(this, components, context, context.get("module"));
+        this._super('_addComponentsFromDef', [components, context, context.get("module")]);
     },
+
     /**
      * {@inheritDoc}
      * Set default skipFetch as false.
@@ -110,8 +138,9 @@
         if (def.context && skipFetch !== false) {
             def.context.skipFetch = true;
         }
-        return app.view.Layout.prototype.createComponentFromDef.call(this, def, context, module);
+        return this._super('createComponentFromDef', [def, context, module]);
     },
+
     /**
      * Set current dashlet as invisible
      */
@@ -125,6 +154,7 @@
         this.$el.addClass('hide');
         this.listenTo(comp, "render", this.unsetInvisible, this);
     },
+
     /**
      * Set current dashlet back as visible
      */
@@ -139,6 +169,7 @@
         this.$el.removeClass('hide');
         this.stopListening(comp, "render");
     },
+
     /**
      * {@inheritdoc}
      * Place the each component to the right location
@@ -162,6 +193,7 @@
             this.$("[data-dashlet=dashlet]").append(comp.el);
         }
     },
+
     /**
      * Convert the dashlet setting metadata into the dashboard model data
      *
@@ -191,6 +223,7 @@
         }
         return component;
     },
+
     /**
      * Retrives the seperate component metadata from the whole dashboard components
      *
@@ -207,14 +240,15 @@
 
         return component;
     },
+
     /**
      * Append the dashlet component from the setting metadata
      *
      * @param {Object} setting metadata
      */
     addDashlet: function(meta) {
-        var component = this.setDashletMetadata(meta);
-        var def = component.view || component.layout || component;
+        var component = this.setDashletMetadata(meta),
+            def = component.view || component.layout || component;
 
         this.meta.empty = false;
         this.meta.label = def.label || def.name || "";
@@ -236,6 +270,7 @@
         this.loadData();
         this.render();
     },
+
     /**
      * Remove the current attached dashlet component
      */
@@ -276,9 +311,16 @@
         ]);
         this.render();
     },
+
+    /**
+     * Calls the layout's addRow function to add another row
+     *
+     * @param {Number} columns the number of columns to add
+     */
     addRow: function(columns) {
         this.layout.addRow(columns);
     },
+
     /**
      * Refresh the dashlet
      *
@@ -292,6 +334,7 @@
         context.resetLoadFlag();
         component.loadData(options);
     },
+
     /**
      * Edit current dashlet's settings
      *
@@ -343,6 +386,7 @@
             self.addDashlet(dash);
         });
     },
+
     /**
      * Fold/Unfold the dashlet
      *
@@ -354,6 +398,7 @@
         this.$(".thumbnail").toggleClass("collapsed", collapsed);
         this.$("[data-dashlet=dashlet]").toggleClass("hide", collapsed);
     },
+
     /**
      * Displays current invisible dashlet when current mode is on edit/drag
      *
@@ -391,6 +436,6 @@
         this.model.off("setMode", null, this);
         this.off("render");
         this.context.off("dashboard:collapse:fire", null, this);
-        app.view.Layout.prototype._dispose.call(this);
+        this._super('_dispose');
     }
 })

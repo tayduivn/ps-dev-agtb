@@ -27,6 +27,10 @@
 ({
     tagName: "ul",
     className: "dashlets row-fluid",
+
+    /**
+     * {@inheritdoc}
+     */
     bindDataChange: function() {
         if(this.model) {
             this.model.on("change:metadata", this.setMetadata, this);
@@ -39,6 +43,7 @@
             this.model.trigger('setMode', this.context.get("create") ? 'edit' : 'view');
         }
     },
+
     /**
      * Replace all components based on the dashboard metadata value
      */
@@ -65,6 +70,7 @@
         this.loadData();
         this.render();
     },
+
     /**
      * Set current main layout's width proportion
      */
@@ -77,6 +83,7 @@
             $($el.get(index)).addClass("span" + component.width);
         }, this);
     },
+
     /**
      * Set all appended dashlets drag-and-droppable
      */
@@ -121,6 +128,7 @@
             }
         });
     },
+
     /**
      * Retrives the seperate component metadata from the whole dashboard components
      *
@@ -144,8 +152,9 @@
             layout: layout
         };
     },
+
     /**
-     * Switch the between two components
+     * Switch the places of two components
      *
      * @param {String} target key
      * @param {String} source key
@@ -154,8 +163,8 @@
         if (target === source) {
             return;
         }
-        var metadata = this.model.get("metadata");
-        var targetComponent = this.getCurrentComponent(metadata, target),
+        var metadata = this.model.get("metadata"),
+            targetComponent = this.getCurrentComponent(metadata, target),
             sourceComponent = this.getCurrentComponent(metadata, source);
 
         //Swap the metadata except 'width' property since it's previous size
@@ -222,11 +231,14 @@
         var cloneEl = targetComponent.layout.$el.children(":first").get(0);
         targetComponent.layout.$el.append(sourceComponent.layout.$el.children(":not(.helper)").get(0));
         sourceComponent.layout.$el.append(cloneEl);
-
     },
+
+    /**
+     * {@inheritdoc}
+     */
     _dispose: function() {
         this.$('.dashlet').draggable('destroy');
         this.$('.dashlet-container').droppable('destroy');
-        app.view.Layout.prototype._dispose.call(this);
+        this._super('_dispose');
     }
 })

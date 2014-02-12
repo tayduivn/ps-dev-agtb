@@ -3260,6 +3260,9 @@ $app_strings = array (
     /* Sugar7 Dashboard */
     'LBL_DASHBOARD_BWC' => 'My Legacy Dashboard',
     'LBL_DEFAULT_DASHBOARD_TITLE' => 'My Dashboard',
+    'LBL_DEFAULT_HELP_DASHBOARD_TITLE' => 'Help Dashboard',
+    'LBL_DEFAULT_HELP_DASHLET_TITLE' => 'Help Dashlet',
+    'LBL_DEFAULT_HELP_DASHLET_DESC' => 'Help Dashlet provides module and view-specific help.',
     'LBL_COLLAPSE_ALL' => 'Collapse All',
     'LBL_EXPAND_ALL' => 'Expand All',
     'LBL_DASHLET_CONFIG_EDIT_LABEL' => 'Edit',

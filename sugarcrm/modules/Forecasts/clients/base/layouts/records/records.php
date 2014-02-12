@@ -67,14 +67,16 @@ $viewdefs['Forecasts']['base']['layout']['records'] = array(
                         ),
                     ),
                     array(
-                        'layout' =>
-                        array(
-                            'components' =>
-                            array(
+                        'layout' => array(
+                            'components' => array(
                                 array(
-                                    'layout' => 'dashboard',
-                                    'context' =>
-                                    array(
+                                    'layout' => array(
+                                        'type' => 'dashboard',
+                                        'last_state' => array(
+                                            'id' => 'last-visit',
+                                        )
+                                    ),
+                                    'context' => array(
                                         'forceNew' => true,
                                         'module' => 'Forecasts',
                                     ),

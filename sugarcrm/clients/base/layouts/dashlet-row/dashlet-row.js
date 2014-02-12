@@ -26,18 +26,31 @@
  ********************************************************************************/
 ({
     tagName: 'li',
+
     events: {
         'click .remove-row': 'removeClicked'
     },
     plugins: ['Tooltip'],
+
+    /**
+     * {@inheritdoc}
+     */
     initialize: function(options) {
         this.index = options.meta.index;
         options.meta = this.setMetadata(options.meta);
-        app.view.Layout.prototype.initialize.call(this, options);
+
+        this._super('initialize', [options]);
+
         this.model.on("setMode", this.setMode, this);
         this.model.on("applyDragAndDrop", this.applyDragAndDrop, this);
         this.setMode(this.model.mode);
     },
+
+    /**
+     * Updates and sets metadata based on the meta param
+     * @param {Object} meta
+     * @returns {Object} meta
+     */
     setMetadata: function(meta) {
         meta.components = meta.components || [];
         _.each(meta.components, function(component, index){
@@ -72,6 +85,10 @@
         meta.css_class = 'span' + (meta.width || 12);
         return meta;
     },
+
+    /**
+     * {@inheritdoc}
+     */
     _placeComponent: function(comp, def, prepend) {
         var $body = this.$el.children(".dashlet-row");
         if($body.length === 0) {
@@ -92,6 +109,10 @@
             $body.append($el);
         }
     },
+
+    /**
+     * {@inheritdoc}
+     */
     addComponent: function(component, def) {
         if(this.prependComponent) {
             if (!component.layout) component.layout = this;
@@ -99,9 +120,15 @@
             this._placeComponent(component, def, true);
             this.prependComponent = false;
         } else {
-            app.view.Layout.prototype.addComponent.call(this, component, def);
+            this._super('addComponent', [component, def]);
         }
     },
+
+    /**
+     * Adds a row to the dashboard
+     *
+     * @param {Number} columns the number of columns in this row
+     */
     addRow: function(columns) {
         var span = 12 / columns,
             components = [];
@@ -110,8 +137,8 @@
                 width: span
             });
         });
-        var metadata = this.model.get("metadata");
-        var position = this.index.split(''),
+        var metadata = this.model.get('metadata'),
+            position = this.index.split(''),
             component = metadata.components;
         _.each(position, function(index){
             component = component.rows ? component.rows[index] : component[index];
@@ -159,6 +186,11 @@
         });
     },
 
+    /**
+     * Removes a row based on the index passed in
+     *
+     * @param {Number} index the index of the row to remove
+     */
     removeRow: function(index) {
         var metadata = this.model.get("metadata"),
             position = this.index.split(''),
@@ -177,6 +209,10 @@
         this.model.trigger("change:layout");
         this.$el.children(".dashlet-row").children("li:eq(" + index + ")").remove();
     },
+
+    /**
+     * {@inheritdoc}
+     */
     setMode: function(type) {
         if(type === 'edit' || (this.model._previousMode === 'edit' && type === 'drag')) {
             this.$el.children(".dashlet-row").sortable("enable");
@@ -186,6 +222,10 @@
             this.$el.children(".dashlet-row").children("li").not(":last").addClass("sortable").children(".rows").addClass("well-invisible").children(".btn-link").toggleClass("hide", true);
         }
     },
+
+    /**
+     * Adds drag-and-drop functionality to the row
+     */
     applyDragAndDrop: function() {
         var self = this;
         this.$el.children(".dashlet-row").sortable({
@@ -203,6 +243,13 @@
         });
         this.setMode(this.model.mode);
     },
+
+    /**
+     * Switch the places of two components
+     *
+     * @param {String} target key
+     * @param {String} source key
+     */
     switchComponent: function(target, source) {
         var metadata = this.model.get("metadata"),
             position = this.index.split(''),
@@ -239,10 +286,14 @@
         this.model.set("metadata", app.utils.deepCopy(metadata), {silent: true});
         this.model.trigger("change:layout");
     },
+
+    /**
+     * {@inheritdoc}
+     */
     _dispose: function() {
         this.$el.children(".dashlet-row").sortable("destroy");
         this.model.off("applyDragAndDrop", null, this);
         this.model.off("setMode", null, this);
-        app.view.Layout.prototype._dispose.call(this);
+        this._super('_dispose');
     }
 })

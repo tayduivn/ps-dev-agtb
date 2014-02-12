@@ -36,6 +36,10 @@
 ({
     toggled: false,
     className: 'row-fluid',
+    dashboardLayouts: {
+        'record': 'record-dashboard',
+        'records': 'list-dashboard'
+    },
     events: {
         'click [data-action=create]': 'createClicked'
     },
@@ -51,46 +55,29 @@
             return false;
         }
     },
-    initialize: function (options) {
 
+    /**
+     * {@inheritdoc}
+     */
+    initialize: function (options) {
         var context = options.context,
-            module = context.parent ? context.parent.get("module") : context.get("module"),
-            view = context.parent ? context.parent.get("layout") : '',
-            sync = function (method, model, options) {
-                options = app.data.parseOptionsForSync(method, model, options);
-                var callbacks = app.data.getSyncCallbacks(method, model, options),
-                    path = (this.dashboardModule === 'Home' || model.id) ? this.apiModule : this.apiModule + '/' + this.dashboardModule;
-                if (method === 'read') {
-                    options.params.view_name = view;
-                }
-                app.api.records(method, path, model.attributes, options.params, callbacks);
-            },
-            Dashboard = app.Bean.extend({
-                sync: sync,
-                apiModule: 'Dashboards',
-                module: 'Home',
-                dashboardModule: module,
-                maxColumns: (module === 'Home') ? 3 : 1,
-                minColumnSpanSize: (module === 'Home') ? 4 : 12
-            }),
-            DashboardCollection = app.BeanCollection.extend({
-                sync: sync,
-                apiModule: 'Dashboards',
-                module: 'Home',
-                dashboardModule: module,
-                model: Dashboard
-            });
+            module = context.parent && context.parent.get('module') || context.get("module");
+
         if (options.meta && options.meta.method && options.meta.method === 'record' && !context.get("modelId")) {
             context.set("create", true);
         }
-        var model = new Dashboard();
-        model.set("view_name", view);
+
+        var model = this._getNewDashboardObject('model', context);
         if (context.get("modelId")) {
             model.set("id", context.get("modelId"), {silent: true});
         }
-        context.set("model", model);
-        context.set("collection", new DashboardCollection());
-        app.view.Layout.prototype.initialize.call(this, options);
+        context.set({
+            model: model,
+            collection: this._getNewDashboardObject('collection', context)
+        });
+
+        this._super('initialize', [options]);
+
         this.model.on("setMode", function (mode) {
             if (mode === "edit" || mode === "create") {
                 this.$(".dashboard").addClass("edit");
@@ -98,6 +85,7 @@
                 this.$(".dashboard").removeClass("edit");
             }
         }, this);
+
         if (module === 'Home') {
             this.on("render", this.toggleSidebar, this);
             if (context.get('modelId')) {
@@ -107,17 +95,25 @@
             }
         }
     },
+
+    /**
+     * {@inheritdoc}
+     */
     loadData: function (options, setFields) {
         if (this.context.parent && !this.context.parent.isDataFetched()) {
             var parent = this.context.parent.get("modelId") ? this.context.parent.get("model") : this.context.parent.get("collection");
 
             parent.once("sync", function () {
-                app.view.Layout.prototype.loadData.call(this, options, setFields);
+                this._super('loadData', [options, setFields]);
             }, this);
         } else {
-            app.view.Layout.prototype.loadData.call(this, options, setFields);
+            this._super('loadData', [options, setFields]);
         }
     },
+
+    /**
+     * Checks if the sidebar is toggled, if not this function toggles it
+     */
     toggleSidebar: function () {
         if (!this.toggled) {
             app.controller.context.trigger('toggleSidebar');
@@ -163,10 +159,6 @@
         }
         dashboardEl.append(component.el);
     },
-    dashboardLayouts: {
-        'record': 'record-dashboard',
-        'records': 'list-dashboard'
-    },
 
     /**
      * If current context doesn't contain dashboard model id,
@@ -194,8 +186,17 @@
         if (this.disposed) {
             return;
         }
-        var self = this;
-        if (this.collection.models.length > 0) {
+        var lastVisitedStateKey = this.getLastStateKey(),
+            lastViewed = app.user.lastState.get(lastVisitedStateKey),
+            hasHelpOnly = (this.collection.models.length == 1
+                && _.first(this.collection.models).get('dashboard_type') == 'help-dashboard'),
+            helpLastShown = (hasHelpOnly && lastViewed === _.first(this.collection.models).get('id'));
+
+        if(hasHelpOnly && !helpLastShown) {
+            // If the collection contains exactly one model that is a help dashboard,
+            // and the user saw the help dashboard last and chose to hide it, show the empty template
+            this._renderEmptyTemplate();
+        } else if (this.collection.models.length > 0) {
             var model = _.first(this.collection.models),
                 lastVisitedStateKey = this.getLastStateKey(),
                 lastViewed = app.user.lastState.get(lastVisitedStateKey),
@@ -225,37 +226,54 @@
                 }
             }
         } else {
-            var layoutName = this.dashboardLayouts[this.context.parent ? this.context.parent.get("layout") : 'record'],
-                _initDashboard = app.metadata.getLayout(this.model.dashboardModule, layoutName),
-                params = {
-                    silent: true,
-                    //Don't show alerts for this request
-                    showAlerts: false
-                };
+            var _initDashboard = this._getInitialDashboardMetadata();
 
-            params.error = _.bind(function() {
-                var template = app.template.getLayout(this.type + '.dashboard-empty');
-                this.$el.html(template(this));
+            _.each(_initDashboard, function(dash) {
+                var model = this._getNewDashboardObject('model', this.context);
+                model.set(dash);
+                if (this.context.get("modelId")) {
+                    model.set("id", this.context.get("modelId"), {silent: true});
+                }
+                model.save({}, this._getDashboardModelSaveParams());
             }, this);
-
-            if (this.context.parent) {
-                params.success = function(model) {
-                    self.navigateLayout(model.id);
-                };
-            } else {
-                params.success = function(model) {
-                    app.navigate(self.context, model);
-                };
-            }
-
-            if (!_.isEmpty(_initDashboard) && !_.isEmpty(_initDashboard.metadata)) {
-                this.model.set(_initDashboard, {silent: true});
-                this.model.save({}, params);
-            } else {
-                params.error();
-            }
         }
     },
+
+    /**
+     * Gets initial dashboard metadata and adds help dashboard if it doesnt exist
+     *
+     * @return {Array} an array of dashboard metadata
+     * @private
+     */
+    _getInitialDashboardMetadata: function() {
+        var layoutName = this.dashboardLayouts[this.context.parent && this.context.parent.get('layout') || 'record'],
+            initDash = app.metadata.getLayout(this.model.dashboardModule, layoutName) || {};
+
+        // check to make sure this module has initial dashboards assigned for this view
+        if (!_.isEmpty(initDash)) {
+            // make sure there's a dashboard_type of "dashboard" by default
+            // unless there's a specific custom dashboard_type already defined
+            initDash.dashboard_type = initDash.dashboard_type || 'dashboard';
+        }
+
+        return this.addHelpDashboardMetadata(initDash);
+    },
+
+    /**
+     * Adds the help-dashboard metadata to a metadata Object
+     *
+     * @param {Object} _initDashboard The default dashboard for a module
+     */
+    addHelpDashboardMetadata: function(_initDashboard) {
+        var _helpDB = app.metadata.getLayout(this.model.dashboardModule, 'help-dashboard');
+        if(!_.isEmpty(_initDashboard)) {
+            _initDashboard = [_helpDB, _initDashboard];
+        } else {
+            _initDashboard = [_helpDB];
+        }
+        return _initDashboard;
+    },
+
     /**
      * Build the cache key for last visited dashboard
      * Combine parent module and view name to build the unique id
@@ -273,8 +291,11 @@
         this._lastStateKey = app.user.lastState.key(key, this);
         return this._lastStateKey;
     },
+
     /**
-     * For the RHS dashboard, this method loads entire dashboard component
+     * For the RHS dashboard, this method loads entire dashboard component and adds the
+     * <pre><code>dashboard_type</code></pre> member to the context of the dashboard.
+     * <pre><code>dashboard_type</code></pre> gets used in dashletselect to filter dashlets
      *
      * @param id {String} - dashboard id
      */
@@ -287,6 +308,15 @@
         //it should store last visited dashboard id.
         if (!_.contains(['create', 'list'], id)) {
             app.user.lastState.set(lastVisitedStateKey, id);
+        }
+
+        // add dashboard type to context variables,
+        // can only create dashboards with dashboard_type of 'dashboard'
+        var ctxVars = { dashboard_type: 'dashboard' };
+        if (id === 'create') {
+            ctxVars.create = true;
+        } else if (id !== 'list') {
+            ctxVars.modelId = id;
         }
 
         layout._addComponentsFromDef([
@@ -308,13 +338,17 @@
                 context: _.extend({
                     module: 'Home',
                     forceNew: true
-                }, (id === "create") ? {create: true} : (id !== "list") ? {modelId: id} : {})
+                }, ctxVars)
             }
         ]);
         layout.removeComponent(0);
         layout.loadData({}, false);
         layout.render();
     },
+
+    /**
+     * {@inheritdoc}
+     */
     unbindData: function() {
         var model, collection;
         this.off("render", this.toggleSidebar, this);
@@ -333,10 +367,144 @@
             }
         }
 
-        app.view.Layout.prototype.unbindData.call(this);
+        this._super('unbindData');
     },
+
+    /**
+     * Returns a Dashboard Model or Dashboard Collection based on modelOrCollection
+     *
+     * @param {String} modelOrCollection The return type, 'model' or 'collection'
+     * @param context
+     * @return {Bean|BeanCollection}
+     * @private
+     */
+    _getNewDashboardObject: function(modelOrCollection, context) {
+        var obj,
+            ctx = context && context.parent || context,
+            module = ctx.get("module") || context.get("module"),
+            layoutName = ctx.get("layout") || '',
+            sync = function (method, model, options) {
+                options = app.data.parseOptionsForSync(method, model, options);
+                var callbacks = app.data.getSyncCallbacks(method, model, options),
+                    path = (this.dashboardModule === 'Home' || model.id) ? this.apiModule : this.apiModule + '/' + this.dashboardModule;
+                if (method === 'read') {
+                    options.params.view_name = layoutName;
+                }
+                app.api.records(method, path, model.attributes, options.params, callbacks);
+            };
+
+        if (module === 'Home') {
+            layoutName = '';
+        }
+        switch(modelOrCollection) {
+            case 'model':
+                obj = this._getNewDashboardModel(module, layoutName, sync);
+                break;
+
+            case 'collection':
+                obj = this._getNewDashboardCollection(module, layoutName, sync);
+                break;
+        }
+
+        return obj;
+    },
+
+    /**
+     * Returns a new Dashboard Bean with proper view_name and sync function set
+     *
+     * @param {String} module The name of the module we're in
+     * @param {String} layoutName The name of the layout
+     * @param {Function} syncFn The sync function to use
+     * @param {Boolean} getNew If you want a new instance or just the the Dashboard definition (optional)
+     * @return {Dashboard} a new Dashboard Bean
+     * @private
+     */
+    _getNewDashboardModel: function(module, layoutName, syncFn, getNew) {
+        getNew = (_.isUndefined(getNew)) ? true : getNew;
+        var Dashboard = app.Bean.extend({
+            sync: syncFn,
+            apiModule: 'Dashboards',
+            module: 'Home',
+            dashboardModule: module,
+            maxColumns: (module === 'Home') ? 3 : 1,
+            minColumnSpanSize: (module === 'Home') ? 4 : 12,
+            defaults: {
+                view_name: layoutName
+            }
+        });
+        return (getNew) ? new Dashboard() : Dashboard;
+    },
+
+    /**
+     * Returns a new DashboardCollection with proper view_name and sync function set
+     *
+     * @param {String} module The name of the module we're in
+     * @param {String} layoutName The name of the layout
+     * @param {Function} syncFn The sync function to use
+     * @param {Boolean} getNew If you want a new instance or just the the DashboardCollection definition (optional)
+     * @return {DashboardCollection} A new Dashboard BeanCollection
+     * @private
+     */
+    _getNewDashboardCollection: function(module, layoutName, syncFn, getNew) {
+        getNew = (_.isUndefined(getNew)) ? true : getNew;
+        var Dashboard = this._getNewDashboardModel(module, layoutName, syncFn, false),
+            DashboardCollection = app.BeanCollection.extend({
+                sync: syncFn,
+                apiModule: 'Dashboards',
+                module: 'Home',
+                dashboardModule: module,
+                model: Dashboard
+            });
+        return (getNew) ? new DashboardCollection() : DashboardCollection;
+    },
+
+    /**
+     * Collects params for Dashboard model save
+     *
+     * @return {Object} The dashboard model params to pass to its save function
+     * @private
+     */
+    _getDashboardModelSaveParams: function() {
+        var params = {
+            silent: true,
+            //Don't show alerts for this request
+            showAlerts: false
+        };
+
+        params.error = _.bind(this._renderEmptyTemplate, this);
+
+        if (this.context.parent) {
+            params.success = _.bind(function(model) {
+                if (!this.disposed && model.get('dashboard_type') === 'help-dashboard') {
+                    this.navigateLayout(model.id);
+                }
+            }, this);
+        } else {
+            params.success = _.bind(function(model) {
+                if (!this.disposed && model.get('dashboard_type') === 'help-dashboard') {
+                    app.navigate(this.context, model);
+                }
+            }, this);
+        }
+        return params;
+    },
+
+    /**
+     * Gets the empty dashboard layout template
+     * and renders it to <pre><code>this.$el</code></pre>
+     *
+     * @private
+     */
+    _renderEmptyTemplate: function() {
+        var template = app.template.getLayout(this.type + '.dashboard-empty');
+        this.$el.html(template(this));
+    },
+
+    /**
+     * {@inheritdoc}
+     */
     _dispose: function () {
         this.dashboardLayouts = null;
-        app.view.Layout.prototype._dispose.call(this);
+        this._super('_dispose');
     }
 })
