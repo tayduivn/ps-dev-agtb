@@ -43,6 +43,9 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
                                 'type' => 'forecast-pareto',
                                 'label' => 'LBL_DASHLET_FORECASTS_CHART_NAME',
                             ),
+                            'context' => array(
+                                'module' => 'Forecasts',
+                            ),
                             'width' => 12,
                         ),
                     ),

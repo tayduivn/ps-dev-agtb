@@ -35,7 +35,50 @@ class Dashboard extends Basic
      */
     function retrieve($id='-1', $encode=false,$deleted=true)
     {
-        return parent::retrieve($id, false, $deleted);
+        $dashboard = parent::retrieve($id, false, $deleted);
+
+        // Expand the metadata for processing.
+        $metadata = json_decode($dashboard->metadata);
+
+        // If we don't have a components in metadata for whatever reason, we're out, send back unchanged.
+        if(!isset($metadata->components)) {
+            return $dashboard;
+        }
+
+        $dirty = false;
+
+        // Loop through the dashboard, drilling down to the dashlet level.
+        foreach($metadata->components as $component_key => $component) {
+            foreach($component->rows as $row_key => $row) {
+                foreach($row as $item_key => $item) {
+                    // Check if this user has access to the module upon which this dashlet is based.
+                    if(isset($item->context->module) && !SugarACL::checkAccess($item->context->module, 'access')) {
+                        // The user does not have access, remove the dashlet.
+                        unset($metadata->components[$component_key]->rows[$row_key][$item_key]);
+
+                        // Check if this row is now empty.
+                        if(count($metadata->components[$component_key]->rows[$row_key]) == 0) {
+                            // This row is now empty, remove it and mark the metadata as dirty.
+                            unset($metadata->components[$component_key]->rows[$row_key]);
+                            $dirty = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Check if we've modified the metadata.
+        if($dirty) {
+            // Loop through the rows re-assigning sequential array keys for dashboard display.
+            foreach($metadata->components as $key => $value) {
+                $metadata->components[$key]->rows = array_values($metadata->components[$key]->rows);
+            }
+        }
+
+        // Re-encode and save the metadata back to the dashboard object before returning it.
+        $dashboard->metadata = json_encode($metadata);
+
+        return $dashboard;
     }
 
     /**
