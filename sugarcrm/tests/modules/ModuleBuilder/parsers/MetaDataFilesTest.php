@@ -377,4 +377,65 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
+    public function testLoadingExtFiles() {
+        //Start with base app extensions
+        $baseFilePath = 'custom/clients/base/views/fo/fo.php';
+        $this->createdFiles[] = $baseFilePath;
+        $this->createdDirs[] = dirname($baseFilePath);
+        SugarAutoLoader::ensureDir(dirname($baseFilePath));
+
+        $baseMetaContents = '<?php' . "\n" . '$viewdefs["base"]["view"]["fo"] = array("erma"=>"base");';
+        SugarAutoLoader::put($baseFilePath, $baseMetaContents);
+
+
+        $extFilePath = 'custom/application/Ext/clients/base/views/fo/fo.ext.php';
+        $this->createdFiles[] = $extFilePath;
+        $this->createdDirs[] = dirname($extFilePath);
+        SugarAutoLoader::ensureDir(dirname($extFilePath));
+        $baseExtMetaContents = '<?php' . "\n" . '$viewdefs["base"]["view"]["fo"]["ext"] = "baseByExt";';
+        SugarAutoLoader::put($extFilePath, $baseExtMetaContents);
+
+        $baseFileList = MetaDataFiles::getClientFiles(array('base'),'view');
+
+        $this->assertArrayHasKey($baseFilePath, $baseFileList, "Didn't find the fo section.");
+        $this->assertArrayHasKey($extFilePath, $baseFileList, "Didn't find the fo extension");
+
+        $results  = MetaDataFiles::getClientFileContents($baseFileList, "view");
+
+        $this->assertArrayHasKey("fo", $results, "Didn't load the fo meta.");
+        $this->assertArrayHasKey("ext", $results['fo']['meta'], "Didn't load the fo meta extension correctly");
+        $this->assertArrayHasKey("erma", $results['fo']['meta'], "The metadata extension was not merged with the base meta");
+
+    }
+
+
+    public function testLoadingModuleExtFiles() {
+        //Check module specific extensions
+
+        $baseFilePath = 'modules/Accounts/clients/base/views/fo/fo.php';
+        $this->createdFiles[] = $baseFilePath;
+        $this->createdDirs[] = dirname($baseFilePath);
+        SugarAutoLoader::ensureDir(dirname($baseFilePath));
+        $acctMetaContents = '<?php' . "\n" . '$viewdefs["Accounts"]["base"]["view"]["fo"] = array("erma"=>"baseAcct");';
+        SugarAutoLoader::put($baseFilePath, $acctMetaContents);
+
+        $extFilePath = 'custom/modules/Accounts/Ext/clients/base/views/fo/fo.ext.php';
+        $this->createdFiles[] = $extFilePath;
+        $this->createdDirs[] = dirname($extFilePath);
+        SugarAutoLoader::ensureDir(dirname($extFilePath));
+        $acctExtMetaContents = '<?php' . "\n" . '$viewdefs["Accounts"]["base"]["view"]["fo"]["ext"] = "baseAcctByExt";';
+        SugarAutoLoader::put($extFilePath, $acctExtMetaContents);
+
+        $accountFileList = MetaDataFiles::getClientFiles(array('base'),'view','Accounts');
+
+        $this->assertArrayHasKey($baseFilePath, $accountFileList, "Didn't find the Accounts fo section.");
+        $this->assertArrayHasKey($extFilePath, $accountFileList, "Didn't find the Accounts fo extension");
+
+        $results  = MetaDataFiles::getClientFileContents($accountFileList, "view", "Accounts");
+
+        $this->assertArrayHasKey("fo", $results, "Didn't load the Accounts fo meta.");
+        $this->assertArrayHasKey("ext", $results['fo']['meta'], "Didn't load the Accounts fo meta extension correctly");
+        $this->assertArrayHasKey("erma", $results['fo']['meta'], "The Accounts metadata extension was not merged with the base meta");
+    }
+
 }
