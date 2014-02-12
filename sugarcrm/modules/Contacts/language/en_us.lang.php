@@ -262,16 +262,29 @@ $mod_strings = array (
 
     'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
 
-        // Help Text
+    // Help Text
+    // List View Help Text
+    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module consists of individual people with whom your organization has a relationship. {{module_name}} records are typically related to an {{account_module}} record, and multiple {{plural_module_name}} may be associated to a single {{account_module}}. There are various ways you can create {{plural_module_name}} in Sugar such as via the {{plural_module_name}} module, importing {{plural_module_name}}, converting {{leads_module}} to {{plural_module_name}}, etc. Once the {{module_name}} record is created, you can view and edit information pertaining to the {{module_name}} via the {{plural_module_name}} record view. Each {{module_name}} record may then relate to other Sugar records such as {{meetings_module}}, {{cases_module}}, {{opportunities_module}}, and many others, making the {{module_name}} record a hub for viewing and continuing your interaction with the individual.',
+
+    // Record View Help Text
+    'LBL_HELP_RECORD' => 'The {{plural_module_name}} module consists of individual people with whom your organization has a relationship.
+
+- Edit this record\'s fields by clicking an individual field or the Edit button.
+- View or modify links to other records in the subpanels by toggling the bottom left pane to "Data View".
+- Make and view user comments and record change history in the {{activitystream_module}} by toggling the bottom left pane to "Activity Stream".
+- Follow or favorite this record using the icons to the right of the record name.
+- Additional actions are available in the dropdown Actions menu to the right of the Edit button.',
+
+    // Create View Help Text
     'LBL_HELP_CREATE' => 'The {{plural_module_name}} module consists of individual people with whom your organization has a relationship.
 
 To create a {{module_name}}:
 1. Provide values for the fields as desired.
- * Fields marked "Required" must be completed prior to saving.
- * Click "Show More" to expose additional fields if necessary.
-2. Click "Save" to finalize the new record and return to the {{plural_module_name}} list view.
- * Choose "Save and view" to open the new {{module_name}} in record view.
- * Choose "Save and create new" to immediately create another new {{module_name}}.',
+ - Fields marked "Required" must be completed prior to saving.
+ - Click "Show More" to expose additional fields if necessary.
+2. Click "Save" to finalize the new record and return to the previous page.
+ - Choose "Save and view" to open the new {{module_name}} in record view.
+ - Choose "Save and create new" to immediately create another new {{module_name}}.',
 
     //Marketo
     'LBL_MKTO_SYNC' => 'Sync to Marketo&reg;',

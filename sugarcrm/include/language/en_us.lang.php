@@ -1,5 +1,4 @@
 <?php
-
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -10,10 +9,8 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  */
-
-
 //the left value is the key stored in the db and the right value is ie display value
 //to translate, only modify the right value in each key/value pair
 $app_list_strings = array (
@@ -4607,18 +4604,22 @@ $app_strings = array (
     'LBL_RESOLVE_CONFLICT' => 'Resolve Conflict for {{name}}',
 
     // Generic Help Strings
-    'LBL_HELP_MORE_INFO' => 'For more information, refer to the {{plural_module_name}} documentation.',
+    'LBL_HELP_MORE_INFO' => 'For more information, refer to the {{{more_info_url}}} {{plural_module_name}} documentation.{{{more_info_url_close}}}',
     'LBL_HELP_NO_HELP' => 'No Data Available',
 
     // list view (AKA Records)
-    // these are disable for now as we don't have the generics to use
-    //'LBL_HELP_RECORDS_TITLE' => 'Records View',
-    //'LBL_HELP_RECORDS' => 'Displays records for {{plural_module_name}}',
+    'LBL_HELP_RECORDS_TITLE' => 'List View Help',
+    'LBL_HELP_RECORDS' => "A module's list view displays all records meeting the current search criteria and to which users have access. You can view the basic details of each record within the field columns of the list view or click the record's name to open the record view.",
 
     // record view (AKA Detail View)
-    // these are disable for now as we don't have the generics to use
-    //'LBL_HELP_RECORD_TITLE' => 'Record View',
-    //'LBL_HELP_RECORD' => 'Record View for {{module_name}}',
+    'LBL_HELP_RECORD_TITLE' => 'Record View Help',
+    'LBL_HELP_RECORD' => 'This record view provides thorough information about an individual record as well as some details of the records linked to it.
+
+- Edit this record\'s fields by clicking an individual field or the Edit button.
+- View or modify links to other records in the subpanels by toggling the bottom left pane to "Data View".
+- Interact with user comments and view record change history by toggling the bottom left pane to "Activity Stream".
+- Follow or favorite this record using the icons to the right of the record name.
+- Additional actions are available in the dropdown Actions menu to the right of the Edit button.',
 
     // create view
     'LBL_HELP_CREATE_TITLE' => '{{module_name}} Creation',

@@ -164,15 +164,61 @@ $mod_strings = array(
     'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
 
     // Help Text
-    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module allows you to track individual sales from start to finish and can be used in the {{forecasts_module}} module to understand sales trends and achieve sales quotas.
+// BEGIN SUGARCRM flav=ent ONLY
+// BEGIN ENT/ULT
+    // List View Help Text
+    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module allows you to track individual sales and the line items belonging to those sales from start to finish. Each {{module_name}} record represents a header for a group of {{revenuelineitems_module}} as well as relating to other important records such as {{quotes_module}}, {{contacts_module}}, etc. Each {{revenuelineitem_module}} is the prospective sale of a particular product and includes relevant sale data. Each {{revenuelineitem_module}} will typically progress through several Sales Stages until it is marked either "Closed Won" or "Closed Lost". The {{module_name}} record reflects the amount and expected close date of its {{revenuelineitems_module}}. {{plural_module_name}} and {{revenuelineitems_module}} can be leveraged even further by using Sugar\'s {{forecast_module}}ing module to understand and predict sales trends as well as focus work to achieve sales quotas.',
 
-To create a {{module_name}}:
+    // Record View Help Text
+    'LBL_HELP_RECORD' => 'The {{plural_module_name}} module allows you to track individual sales and the line items belonging to those sales from start to finish. Each {{module_name}} record represents a header for a group of {{revenuelineitems_module}} as well as relating to other important records such as {{quotes_module}}, {{contacts_module}}, etc.
+
+- Edit this record\'s fields by clicking an individual field or the Edit button.
+- View or modify links to other records in the subpanels, including {{revenuelineitems_module}}, by toggling the bottom left pane to "Data View".
+- Make and view user comments and record change history in the {{activitystream_module}} by toggling the bottom left pane to "Activity Stream".
+- Follow or favorite this record using the icons to the right of the record name.
+- Additional actions are available in the dropdown Actions menu to the right of the Edit button.',
+
+    // Create View Help Text
+    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module allows you to track individual sales and the line items belonging to those sales from start to finish. Each {{module_name}} record represents a header for a group of {{revenuelineitems_module}} as well as relating to other important records such as {{quotes_module}}, {{contacts_module}}, etc.
+
+To create an {{module_name}}:
 1. Provide values for the fields as desired.
- * Fields marked "Required" must be completed prior to saving.
- * Click "Show More" to expose additional fields if necessary.
-2. Click "Save" to finalize the new record and return to the {{plural_module_name}} list view.
- * Choose "Save and view" to open the new {{module_name}} in record view.
- * Choose "Save and create new" to immediately create another new {{module_name}}.',
+ - Fields marked "Required" must be completed prior to saving.
+ - Click "Show More" to expose additional fields if necessary.
+2. Click "Save" to finalize the new record and return to the previous page.
+ - Choose "Save and view" to open the new {{module_name}} in record view.
+ - Choose "Save and create new" to immediately create another new {{module_name}}.
+3. After saving, use the {{revenuelineitems_module}} subpanel to add line items to the {{module_name}}.',
+
+// END ENT/ULT
+// END SUGARCRM flav=ent ONLY
+// BEGIN SUGARCRM flav!=ent ONLY
+// BEGIN PRO/CORP
+    // List View Help Text
+    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module allows you to track individual sales from start to finish. Each {{module_name}} record represents a prospective sale and includes relevant sale data as well as relating to other important records such as {{quotes_module}}, {{contacts_module}}, etc. An {{module_name}} will typically progress through several Sales Stages until it is marked either "Closed Won" or "Closed Lost". {{plural_module_name}} can be leveraged even further by using Sugar\'s {{forecast_module}}ing module to understand and predict sales trends as well as focus work to achieve sales quotas.',
+
+    // Record View Help Text
+    'LBL_HELP_RECORD' => 'The {{plural_module_name}} module allows you to track individual sales and the line items belonging to those sales from start to finish. Each {{module_name}} record represents a prospective sale and includes relevant sale data as well as relating to other important records such as {{quotes_module}}, {{contacts_module}}, etc.
+
+- Edit this record\'s fields by clicking an individual field or the Edit button.
+- View or modify links to other records in the subpanels by toggling the bottom left pane to "Data View".
+- Make and view user comments and record change history in the {{activitystream_module}} by toggling the bottom left pane to "Activity Stream".
+- Follow or favorite this record using the icons to the right of the record name.
+- Additional actions are available in the dropdown Actions menu to the right of the Edit button.',
+
+    // Create View Help Text
+    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module allows you to track individual sales and the line items belonging to those sales from start to finish. Each {{module_name}} record represents a prospective sale and includes relevant sale data as well as relating to other important records such as {{quotes_module}}, {{contacts_module}}, etc.
+
+To create an {{module_name}}:
+1. Provide values for the fields as desired.
+ - Fields marked "Required" must be completed prior to saving.
+ - Click "Show More" to expose additional fields if necessary.
+2. Click "Save" to finalize the new record and return to the previous page.
+ - Choose "Save and view" to open the new {{module_name}} in record view.
+ - Choose "Save and create new" to immediately create another new {{module_name}}.',
+
+// END PRO/CORP
+// END SUGARCRM flav!=ent ONLY
 
     //Marketo
     'LBL_MKTO_SYNC' => 'Sync to Marketo&reg;',

@@ -175,13 +175,26 @@ $mod_strings = array(
     'WARNING_MERGE_RLIS_WITH_DIFFERENT_OPPORTUNITIES' => 'One or more of the records you\'ve selected can not be merged together as they belong to different Opportunities',
 
     // Help Text
-    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module consists of all product line items from current and past {{opportunities_module}} and are automatically created from the {{opportunities_module}} module. They may be used in the {{forecasts_module}} module to understand sales trends and achieve sales quotas.
+    // List View Help Text
+    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module consists of individual line items of business which are included on an {{opportunity_module}} record and tracked through the sales life cycle. The {{opportunity_module}} record acts as a header for one or more {{module_name}} records. This allows for greater granularity when working {{opportunities_module}} and {{forecast_module}}ing since each line item within an {{opportunity_module}} can have it\'s own sales stage and probability as well as being included or excluded from a user\'s {{forecast_module}}ing {{worksheet_module}} individually. Each {{module_name}} may be related to a product from your organization\'s Product Catalog. Doing so will cause the product\'s values to automatically populate matching fields on the {{module_name}}.',
+
+    // Record View Help Text
+    'LBL_HELP_RECORD' => 'The {{plural_module_name}} module consists of individual line items of business which are included on an {{opportunity_module}} record and tracked through the sales life cycle. The {{opportunity_module}} record acts as a header for one or more {{module_name}} records.
+
+- Edit this record\'s fields by clicking an individual field or the Edit button.
+- View or modify links to other records in the subpanels by toggling the bottom left pane to "Data View".
+- Make and view user comments and record change history in the {{activitystream_module}} by toggling the bottom left pane to "Activity Stream".
+- Follow or favorite this record using the icons to the right of the record name.
+- Additional actions are available in the dropdown Actions menu to the right of the Edit button.',
+
+    // Create View Help Text
+    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module consists of individual line items of business which are included on an {{opportunity_module}} record and tracked through the sales life cycle. The {{opportunity_module}} record acts as a header for one or more {{module_name}} records.
 
 To create a {{module_name}}:
 1. Provide values for the fields as desired.
- * Fields marked "Required" must be completed prior to saving.
- * Click "Show More" to expose additional fields if necessary.
-2. Click "Save" to finalize the new record and return to the {{plural_module_name}} list view.
- * Choose "Save and view" to open the new {{module_name}} in record view.
- * Choose "Save and create new" to immediately create another new {{module_name}}.',
+ - Fields marked "Required" must be completed prior to saving.
+ - Click "Show More" to expose additional fields if necessary.
+2. Click "Save" to finalize the new record and return to the previous page.
+ - Choose "Save and view" to open the new {{module_name}} in record view.
+ - Choose "Save and create new" to immediately create another new {{module_name}}.',
 );

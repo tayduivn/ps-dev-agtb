@@ -32,7 +32,7 @@
          *
          * @param {String} module Module that we are currently on
          * @param {String} view The view that help text is needed for
-         * @param {Object} (context) The view that help text is needed for
+         * @param {Object} (context) The model to use for the handlebar template
          * @return {Object} Object containing title, body and more_help
          */
         get: function (module, view, context) {
