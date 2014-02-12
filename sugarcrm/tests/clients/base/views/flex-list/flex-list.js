@@ -53,7 +53,6 @@ describe("Base.View.FlexList", function () {
             });
         });
 
-
         it('should add multi selection', function () {
             view.meta = {
                 selection:{
@@ -239,6 +238,7 @@ describe("Base.View.FlexList", function () {
 
     describe('reorderCatalog', function() {
         var catalog, order1, order2;
+
         beforeEach(function() {
             catalog = {
                 '_byId': {
@@ -264,6 +264,7 @@ describe("Base.View.FlexList", function () {
                 ]
             };
         });
+
         it('should sort the catalog based on order1', function() {
             var order1 = [
                 'visible1',
@@ -277,6 +278,7 @@ describe("Base.View.FlexList", function () {
             expect(_.pluck(sortedCatalog.all, 'name')).toEqual(order1);
             expect(_.pluck(sortedCatalog.visible, 'name')).toEqual(['visible1', 'visible3', 'visible2']);
         });
+
         it('should sort the catalog based on order2', function() {
             var order2 = [
                 'available3',
@@ -293,6 +295,7 @@ describe("Base.View.FlexList", function () {
     });
 
     describe('saveCurrentState', function() {
+
         beforeEach(function() {
             view._fields = {
                 'visible': [
@@ -310,6 +313,7 @@ describe("Base.View.FlexList", function () {
                 ]
             };
         });
+
         it('should save all the fields, sorted, and their visible state', function() {
             var lastStateSetStub = sinon.collection.stub(app.user.lastState, 'set');
             var _encodeStub = sinon.collection.stub(view, '_encodeCacheData');
@@ -327,12 +331,14 @@ describe("Base.View.FlexList", function () {
     });
 
     describe('_decodeCacheData', function() {
+
         beforeEach(function() {
             sinon.collection.stub(view, '_appendFieldsToAllListViewsFieldList', function() {
                 return ['field1', 'field2', 'field3', 'field4', 'field5',
                     'field6', 'field7', 'field8', 'field9', 'field10'];
             });
         });
+
         it('should build a readable object', function() {
             var encoded = [
                 0,
@@ -355,12 +361,14 @@ describe("Base.View.FlexList", function () {
     });
 
     describe('_encodeCacheData', function() {
+
         beforeEach(function() {
             sinon.collection.stub(view, '_appendFieldsToAllListViewsFieldList', function() {
                 return ['field1', 'field2', 'field3', 'field4', 'field5',
                     'field6', 'field7', 'field8', 'field9', 'field10'];
             });
         });
+
         it('should build a minimized array', function() {
             var decoded = {
                 visible: ['field3', 'field5'],
@@ -385,10 +393,12 @@ describe("Base.View.FlexList", function () {
 
     describe('_convertFromOldFormat', function() {
         var _encodeStub, setLastStateStub;
+
         beforeEach(function() {
             _encodeStub = sinon.collection.stub(view, '_encodeCacheData');
             setLastStateStub = sinon.collection.stub(app.user.lastState, 'set');
         });
+
         it('should convert the old cache data to the new format', function() {
             var oldFormat = ['case_number', 'type', 'created_by', 'date_entered'];
             var newFormat = view._convertFromOldFormat(oldFormat);
@@ -404,12 +414,14 @@ describe("Base.View.FlexList", function () {
 
     describe('_appendFieldsToAllListViewsFieldList', function() {
         var setAllFieldsStub;
+
         beforeEach(function() {
             sinon.collection.stub(app.user.lastState, 'get', function() {
                 return ['created_by', 'date_entered', 'field1', 'name', 'field2'];
             });
             setAllFieldsStub = sinon.collection.stub(app.user.lastState, 'set');
         });
+
         it('should append missing fields that are defined in the metadata', function() {
             view._appendFieldsToAllListViewsFieldList();
             expect(setAllFieldsStub.firstCall.args[1]).toEqual([
