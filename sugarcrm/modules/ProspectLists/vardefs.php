@@ -206,6 +206,9 @@ $dictionary['ProspectList'] = array(
             'relationship_type' => 'one-to-many',
         ),
     ),
+    'duplicate_check' => array(
+        'enabled' => false
+    ),
     'after_create' => array(
         'copy_rel_from' => array(
             'accounts',

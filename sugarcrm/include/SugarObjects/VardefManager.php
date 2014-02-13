@@ -127,6 +127,11 @@ class VardefManager{
                 );
             }
 
+            /* The duplicate_check property is inherited in full unless already defined - merge has no meaning here */
+            if(empty($GLOBALS['dictionary'][$object]['duplicate_check']) && !empty($templates[$template]['duplicate_check'])) {
+               $GLOBALS['dictionary'][$object]['duplicate_check'] = $templates[$template]['duplicate_check'];
+            }
+
             //BEGIN SUGARCRM flav=pro ONLY
             if(isset($templates[$template]['favorites']) && !isset($GLOBALS['dictionary'][$object]['favorites']))
             {

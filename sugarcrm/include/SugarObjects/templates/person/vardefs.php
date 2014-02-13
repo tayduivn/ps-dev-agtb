@@ -526,4 +526,19 @@ $vardefs =array(
     ),
 ),
 'acls'=>array('SugarACLEmailAddress'=>true),
+'duplicate_check' => array(
+    'enabled' => true,
+    'FilterDuplicateCheck' => array(
+        'filter_template' => array(
+            array('$and' => array(
+                array('first_name' => array('$starts' => '$first_name')),
+                array('last_name' => array('$starts' => '$last_name')),
+            )),
+        ),
+        'ranking_fields' => array(
+            array('in_field_name' => 'last_name', 'dupe_field_name' => 'last_name'),
+            array('in_field_name' => 'first_name', 'dupe_field_name' => 'first_name'),
+        )
+    ),
+),
 );

@@ -34,6 +34,7 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $copyOfLeadsDuplicateCheckVarDef,
             $mockLeadsDuplicateCheckVarDef = array(
+        'enabled' => true,
         'FilterDuplicateCheck' => array(
             'filter_template' => array(
                 array(

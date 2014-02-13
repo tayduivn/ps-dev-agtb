@@ -329,18 +329,7 @@ $dictionary['Task'] = array('table' => 'tasks',
     ),
 
     'duplicate_check' => array(
-        'enabled' => false,
-        'FilterDuplicateCheck' => array(
-            'filter_template' => array(
-                array('$and' => array(
-                    array('name' => array('$starts' => '$name')),
-                    array('status' => array('$not_equals' => 'Completed')),
-                )),
-            ),
-            'ranking_fields' => array(
-                array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
-            )
-        )
+        'enabled' => false
     ),
 
         //This enables optimistic locking for Saves From EditView
