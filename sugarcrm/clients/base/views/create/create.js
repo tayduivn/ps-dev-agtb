@@ -630,7 +630,7 @@
             switch (button.type) {
                 case 'button':
                 case 'rowaction':
-                    button.setDisabled(!enable);
+                    button.getFieldElement().toggleClass('disabled', !enable);
                     break;
                 case 'actiondropdown':
                     button.$(button.actionDropDownTag).toggleClass('disabled', !enable);
