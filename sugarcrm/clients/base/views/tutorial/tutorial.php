@@ -131,8 +131,8 @@ $viewdefs['base']['view']['tutorial'] = array(
                 'name' => '.preview-headerbar .btn-toolbar',
                 'text' => 'LBL_TOUR_RECORD_DASHBOARDACTIONS',
                 'full' => true,
-                'horizAdj' =>-11,
-                'vertAdj' => -13,
+                'horizAdj' => 8,
+                'vertAdj' => 5,
             ),
             array(
                 'name' => '.dashlet-cell .icon-cog',
