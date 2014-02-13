@@ -59,7 +59,7 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                     'label' => 'LBL_LIST_ACCOUNT_NAME',
                     'enabled' => true,
                     'default' => true,
-                    'sortable' => false,
+                    'sortable' => true,
                     'related_fields' => array(
                         'account_id',
                         'converted',
