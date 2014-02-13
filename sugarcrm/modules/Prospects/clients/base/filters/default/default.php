@@ -19,9 +19,7 @@ $viewdefs['Prospects']['base']['filter']['default'] = array(
         'first_name' => array(),
         'last_name' => array(),
         'email' => array(),
-        'do_not_call' => array(
-            'options' => 'filter_checkbox_dom',
-        ),
+        'do_not_call' => array(),
         'phone' => array(
             'dbFields' => array(
                 'phone_mobile',

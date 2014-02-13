@@ -34,9 +34,7 @@ $viewdefs['Leads']['base']['filter']['default'] = array(
         'last_name' => array(),
         'account_name' => array(),
         'lead_source' => array(),
-        'do_not_call' => array(
-            'options' => 'filter_checkbox_dom',
-        ),
+        'do_not_call' => array(),
         'phone' => array(
             'dbFields' => array(
                 'phone_mobile',

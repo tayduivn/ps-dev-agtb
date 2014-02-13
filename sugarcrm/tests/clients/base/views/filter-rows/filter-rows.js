@@ -431,6 +431,9 @@ describe("BaseFilterRowsView", function() {
                     type: 'bool',
                     options: 'boolean_dom'
                 },
+                test_bool_field: {
+                    type: 'bool'
+                },
                 date_created: {
                     type: 'datetime'
                 },
@@ -479,6 +482,20 @@ describe("BaseFilterRowsView", function() {
                     name: 'priority',
                     type: 'enum',
                     options: 'boolean_dom',
+                    searchBarThreshold: 9999,
+                    required: false,
+                    readonly: false
+                });
+                expect(_.isEmpty($valueField.html())).toBeFalsy();
+            });
+            it('should use filter_checkbox_dom by default for bools', function() {
+                spyOn($.fn, 'select2').andReturn('test_bool_field'); //return "test_bool_field" as value
+                view.handleOperatorSelected({currentTarget: $operatorField});
+                expect(createFieldSpy).toHaveBeenCalled();
+                expect(createFieldSpy.lastCall.args[1]).toEqual({
+                    name: 'test_bool_field',
+                    type: 'enum',
+                    options: 'filter_checkbox_dom',
                     searchBarThreshold: 9999,
                     required: false,
                     readonly: false

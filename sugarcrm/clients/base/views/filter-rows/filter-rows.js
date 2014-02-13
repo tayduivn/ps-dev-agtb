@@ -499,15 +499,13 @@
         switch (fieldType) {
             case 'enum':
                 fieldDef.isMultiSelect = true;
-                // minimumResultsForSearch set to 9999 to hide the search field,
-                // See: https://github.com/ivaynberg/select2/issues/414
-                fieldDef.searchBarThreshold = 9999;
+                // Set minimumResultsForSearch to a negative value to hide the search field,
+                // See: https://github.com/ivaynberg/select2/issues/489#issuecomment-13535459
+                fieldDef.searchBarThreshold = -1;
                 break;
             case 'bool':
                 fieldDef.type = 'enum';
-                // minimumResultsForSearch set to 9999 to hide the search field,
-                // See: https://github.com/ivaynberg/select2/issues/414
-                fieldDef.searchBarThreshold = 9999;
+                fieldDef.options = fieldDef.options || 'filter_checkbox_dom';
                 break;
             case 'int':
                 fieldDef.auto_increment = false;
