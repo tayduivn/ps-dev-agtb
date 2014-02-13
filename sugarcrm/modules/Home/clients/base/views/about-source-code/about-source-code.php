@@ -301,5 +301,10 @@ $viewdefs['Home']['base']['view']['about-source-code'] = array(
             'url' => 'http://www.appelsiini.net/projects/jeditable',
             'description' => 'A jQuery plugin which allow edit the content of different html elements.',
         ),
+        array(
+            'name' => 'Moment.js',
+            'url' => 'http://momentjs.com',
+            'description' => 'A javascript date library for parsing, validating, manipulating, and formatting dates.',
+        ),
     ),
 );
