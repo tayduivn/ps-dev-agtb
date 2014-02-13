@@ -90,60 +90,11 @@
         }
 
         // FIXME we need to refactor this file to support defaultSettings
-        // FIXME we need to support partials for hbs files (each module should
-        // be able to make their own overrides on partials)
-        // FIXME we need to support menu placeholders on the metadata for recent
-        // and favorites if we don't support override of partials on each module
-
-        // not using `hide_dashboard_bwc` form, because we shouldn't give this
-        // feature by default - need confirmation from PMs.
-        if (app.config.enableLegacyDashboards && app.config.enableLegacyDashboards === true) {
-            this.dashboardBwcLink = app.bwc.buildRoute('Home', null, 'bwc_dashboard');
-        }
-
     },
 
     handleViewChange: function() {
         this._setActiveModule(app.controller.context.get('module'));
         this.layout.trigger('header:update:route');
-    },
-
-    /**
-     * Populates recently created dashboards on open menu.
-     */
-    populateDashboards:function () {
-        var self = this,
-            sync = function(method, model, options) {
-                options       = app.data.parseOptionsForSync(method, model, options);
-                var callbacks = app.data.getSyncCallbacks(method, model, options);
-                app.api.records(method, this.apiModule, model.attributes, options.params, callbacks);
-            },
-            Dashboard = app.Bean.extend({
-                sync: sync,
-                apiModule: 'Dashboards',
-                module: 'Home'
-            }),
-            DashboardCollection = app.BeanCollection.extend({
-                sync: sync,
-                apiModule: 'Dashboards',
-                module: 'Home',
-                model: Dashboard
-            });
-        var dashCollection = new DashboardCollection();
-        dashCollection.fetch({
-            //Don't show alerts for this request
-            showAlerts: false,
-            success: function(data) {
-                var pattern = /^(LBL|TPL|NTC|MSG)_(_|[a-zA-Z0-9])*$/;
-                _.each(dashCollection.models, function(model) {
-                    if (pattern.test(model.get('name'))) {
-                        model.set('name', app.lang.get(model.get('name'), dashCollection.module || null));
-                    }
-                });
-                var recentsTemplate = app.template.getLayout('module-list.recents');
-                self.$('[data-module=Home] .dashboardContainer').html(recentsTemplate(dashCollection));
-            }
-        });
     },
 
     /**

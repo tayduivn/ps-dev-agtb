@@ -32,14 +32,6 @@
     actions: [],
 
     /**
-     * Records collection to be easier to apply filters.
-     *
-     * This will provide allow us to get recently viewed, favorites or other
-     * records in the menu that might be needed.
-     */
-    _recordsCollection: {},
-
-    /**
      * @inheritDoc
      *
      * Adds listener for bootstrap drop down show even (`shown.bs.dropdown`).
@@ -102,12 +94,6 @@
     populateMenu: function(event) {
 
         var meta = app.metadata.getModule(this.module) || {};
-
-        // FIXME move this to the home override
-        if (this.module === 'Home') {
-            this.populateDashboards();
-            return;
-        }
 
         // FIXME some modules don't have fields therefore we don't have recent
         // and favorites, we should disable them using metadata not with this
