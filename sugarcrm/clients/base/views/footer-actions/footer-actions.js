@@ -16,13 +16,27 @@
         'click #tour': 'showTutorial',
         'click #feedback': 'feedback',
         'click #support': 'support',
-        'click #help': 'help'
+        'click #help': 'help',
+        'mouseenter [rel="tooltip"]': 'triggerTooltip',
+        'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
     tagName: 'span',
     handleViewChange: function(layout, params) {
         var module = params && params.module ? params.module : null;
         if (app.tutorial.hasTutorial(layout, module)) {
             this.enableTourButton();
+            if (params.module === 'Home' && params.layout === 'record' && params.action === 'detail') {
+                // first time in or upgrade, show tour
+                var serverInfo = app.metadata.getServerInfo(),
+                    currentKeyValue = serverInfo.build + '-' + serverInfo.flavor + '-' + serverInfo.version,
+                    lastStateKey = app.user.lastState.key('toggle-show-tutorial', this),
+                    lastKeyValue = app.user.lastState.get(lastStateKey);
+                if (currentKeyValue !== lastKeyValue) {
+                    // first time in, or first time after upgrade
+                    app.user.lastState.set(lastStateKey, currentKeyValue);
+                    this.showTutorial({showTooltip: true});
+                }
+            }
         } else {
             this.disableTourButton();
         }
@@ -97,9 +111,38 @@
             button.toggleClass('active', active);
         }
     },
-    showTutorial: function() {
-        app.tutorial.resetPrefs();
+    showTutorial: function(prefs) {
+        app.tutorial.resetPrefs(prefs);
         app.tutorial.show(app.controller.context.get('layout'), {module: app.controller.context.get('module')});
+    },
+
+    /**
+     * show/hide tooltip on hover, depending on button state.
+     * @param {object} e event object.
+     */
+    triggerTooltip: function(e) {
+        // only show if button is not disabled
+        if (!this.$(e.currentTarget).hasClass('disabled')) {
+            this.showTooltip(e);
+        } else {
+            this.hideTooltip(e);
+        }
+    },
+
+    /**
+     * shows the tooltip over the current target
+     * @param {object} e event object.
+     */
+    showTooltip: function(e) {
+        this.$(e.currentTarget).tooltip({container: 'body'}).tooltip('show');
+    },
+
+    /**
+     * hides the tooltip from the current target
+     * @param {object} e event object.
+     */
+    hideTooltip: function(e) {
+        this.$(e.currentTarget).tooltip('hide');
     }
 })
 

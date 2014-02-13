@@ -1928,6 +1928,7 @@ $app_strings = array (
   'LBL_TOUR_MODULE' => 'Tour this Page',
   'LBL_TOUR_END_TOUR' => 'End Tour',
   'LBL_TOUR_OVERVIEW' => 'Page Overview',
+  'LBL_TOUR_REVISIT' => 'Click here to show the tour at any time.',
   'LBL_MY_AREA_LINKS' => 'My area links: ' /*for 508 compliance fix*/,
   'LBL_GETTINGAIR' => 'Getting Air' /*for 508 compliance fix*/,
   'LBL_WELCOMEBAR' => 'Welcome' /*for 508 compliance fix*/,
