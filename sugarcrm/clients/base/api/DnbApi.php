@@ -51,10 +51,10 @@ class DnbApi extends SugarApi
     {
         $dnbEAPM = ExternalAPIFactory::loadAPI('Dnb',true);
         $dnbEAPM->getConnector();
-        if(!$dnbEAPM->getConnectorParam('dnb_username') ||
-            !$dnbEAPM->getConnectorParam('dnb_password') ||
-            !$dnbEAPM->getConnectorParam('dnb_env')){
-            return array('error' =>'ERROR_DNB_CONFIG');
+        if(!$dnbEAPM->getConnectorParam('dnb_username') || 
+           !$dnbEAPM->getConnectorParam('dnb_password') || 
+           !$dnbEAPM->getConnectorParam('dnb_env')){
+             return array('error' =>'ERROR_DNB_CONFIG');
         }
         return $dnbEAPM;
     }
@@ -75,7 +75,7 @@ class DnbApi extends SugarApi
             throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $extDnbApi['error']);
         }
         if ($extDnbApi === false) {
-            throw new SugarApiExceptionRequestMethodFailure($GLOBALS['app_strings']['ERROR_UNABLE_TO_RETRIEVE_DATA'], $args);
+           throw new SugarApiExceptionRequestMethodFailure($GLOBALS['app_strings']['ERROR_UNABLE_TO_RETRIEVE_DATA'], $args);
         }
         $queryType = $args['qtype'];
         $queryParam = $args['qparam'];
@@ -148,6 +148,8 @@ class DnbApi extends SugarApi
             $result = $extDnbApi->dnbFirmographic($queryData);
         } else if ($queryType ==='findcontacts') {
             $result = $extDnbApi->dnbFindContactsPost($queryData);
+        } else if($queryType === 'familytree') {
+            $result = $extDnbApi->dnbFamilyTree($queryData);
         }
         if (is_array($result) && isset($result['error'])) {
             throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $result['error']);

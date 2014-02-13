@@ -29,6 +29,13 @@ $viewdefs['base']['view']['dnb-family-tree'] = array(
     'custom_toolbar' => array(
         'buttons' => array(
             array(
+                'type' => 'dashletaction',
+                "css_class" => "btn btn-primary importDNBData hide",
+                'name' => 'import_dnb_data',
+                "action" => "importDNBData",
+                "label" => "LBL_DNB_IMPORT",
+            ),
+	        array(
                 'dropdown_buttons' => array(
                     array(
                         'type' => 'dashletaction',

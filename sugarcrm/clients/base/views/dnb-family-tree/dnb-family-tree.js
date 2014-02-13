@@ -10,7 +10,6 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-
 ({
     extendsFrom: 'DnbView',
 
@@ -18,6 +17,13 @@
     idCounter: 1,
 
     duns_num: null,
+
+    //current family tree
+    currentFT: null,
+
+    events: {
+        'click .backToList' : 'backToFamilyTree'
+    },
 
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -29,9 +35,8 @@
     },
 
     loadData: function(options) {
-        if(this.model.get("duns_num")){
-            this.duns_num = this.model.get("duns_num");
-        }
+        if (this.model.get('duns_num'))
+            this.duns_num = this.model.get('duns_num');
     },
 
     /**
@@ -63,11 +68,11 @@
         }
     },
 
-    /**
-     * obtain family tree for a given duns_num
-     * @param  {String} duns_num
+    /** Obtain family tree for a given duns_num and product code
+     * @param {String} duns_num for the given company
+     * @param {String} prod_code possible values are LNK_FF | LNK_UPF
      */
-    getDNBFamilyTree: function(duns_num) {
+    getDNBFamilyTree: function(duns_num, prod_code) {
         var self = this;
         self.duns_num = duns_num;
         self.idCounter = 1;
@@ -77,37 +82,29 @@
             self.$('#dnb-family-tree-loading').show();
             self.$('#dnb-family-tree-details').hide();
         }
+        var ftParams = {
+            'duns_num' : self.duns_num,
+            'prod_code' : prod_code
+        };
         //check if cache has this data already
-        var cacheKey = 'dnb:familytree:' + self.duns_num;
+        var cacheKey = 'dnb:familytree:' + ftParams.duns_num + ':' + ftParams.prod_code;
         if (app.cache.get(cacheKey)) {
-            _.bind(self.renderFamilyTreeFromCache, self, app.cache.get(cacheKey).product)();
+            this.renderFamilyTree.call(self, app.cache.get(cacheKey));
         } else {
-            var dnbFamilyTreeURL = app.api.buildURL('connector/dnb/familytree/' + duns_num, '', {},{});
+            var dnbFamilyTreeURL = app.api.buildURL('connector/dnb/familytree', '', {},{});
             var resultData = {'product': null, 'errmsg': null};
-            app.api.call('READ', dnbFamilyTreeURL, {},{
+            app.api.call('create', dnbFamilyTreeURL, {'qdata': ftParams},{
                 success: function(data) {
-                    var resultIDPath = 'OrderProductResponse.TransactionResult.ResultID';
-                    var resultText = 'OrderProductResponse.TransactionResult.ResultText';
-
-                    if (self.checkNested(data, resultIDPath) &&
-                        data.OrderProductResponse.TransactionResult.ResultID === 'CM000') {
+                    var responseCode = self.getJsonNode(data, self.appendSVCPaths.responseCode),
+                        responseMsg = self.getJsonNode(data, self.appendSVCPaths.responseMsg);
+                    if (responseCode && responseCode === self.responseCodes.success) {
                         resultData.product = data;
+                        self.currentFT = resultData;
                         app.cache.set(cacheKey, resultData);
-                    } else if (self.checkNested(data, resultText)) {
-                        resultData.errmsg = data.OrderProductResponse.TransactionResult.ResultText;
                     } else {
-                        resultData.errmsg = app.lang.get('LBL_DNB_NO_DATA');
+                        resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
                     }
-                    if (self.disposed) {
-                        return;
-                    }
-                    _.extend(self, resultData);
-                    self.render();
-                    if (!resultData.errmsg) {
-                        self.renderFamilyTree(resultData.product);
-                    }
-                    self.$('#dnb-family-tree-loading').hide();
-                    self.$('#dnb-family-tree-details').show();
+                    self.renderFamilyTree(resultData);
                 },
                 error: _.bind(self.checkAndProcessError, self)
             });
@@ -115,54 +112,32 @@
     },
 
     /**
-     * Render the family tree from the cache
-     * @param  {Object} familyTree
+     * Back to Family Tree
      */
-    renderFamilyTreeFromCache: function(familyTree) {
-        if (this.disposed) {
-            return;
+    backToFamilyTree: function() {
+        if (this.currentFT) {
+            this.renderFamilyTree(this.currentFT);
         }
-        this.render();
-        this.renderFamilyTree(familyTree);
-        this.$('#dnb-family-tree-loading').hide();
-        this.$('#dnb-family-tree-details').show();
     },
 
     /**
-     * Check if a particular json path is valid
-     * @param {Object} obj
-     * @param {String} path
-     */
-    checkNested: function(obj, path) {
-        var args = path.split('.');
-        for (var i = 0; i < args.length; i++) {
-            if (_.isNull(obj) || _.isUndefined(obj) || !obj.hasOwnProperty(args[i])) {
-                return false;
-            }
-            obj = obj[args[i]];
-        }
-        return true;
-    },
-
-    /**
-     * converting dnb data to jstree format
-     * @param  {Object} data
+     * Convert Family Response to JSTree Plugin Format
+     * @param {Object} data
      * @return {Object}
      */
     dnbToJSTree: function(data) {
         var jsTreeData = {};
         jsTreeData.data = [];
         var jsonPath = 'OrderProductResponse.OrderProductResponseDetail.Product.Organization';
-        if (this.checkNested(data, jsonPath)) {
+        if (this.checkJsonNode(data, jsonPath)) {
             jsTreeData.data.push(this.getDataRecursive(data.OrderProductResponse.OrderProductResponseDetail.Product.Organization));
         }
         return jsTreeData;
     },
 
     /**
-     * Format family tree data recursively
-     * in accordance with the jstree plugin
-     * @param  {Object} data
+     * Recursively nested family trees and convert them to js tree plugin JSON data format
+     * @param {Object} data
      * @return {Object}
      */
     getDataRecursive: function(data) {
@@ -173,61 +148,104 @@
         var stateNamePath = 'Location.PrimaryAddress.TerritoryOfficialName';
         var dunsPath = 'SubjectHeader.DUNSNumber';
         var childrenPath = 'Linkage.FamilyTreeMemberOrganization';
-        var orgName = this.checkNested(data, orgNamePath) ? data.OrganizationName.OrganizationPrimaryName.OrganizationName['$'] : '';
-        var dunsNum = this.checkNested(data, dunsPath) ? data.SubjectHeader.DUNSNumber : '';
-        var countryName = this.checkNested(data, countryNamePath) ? data.Location.PrimaryAddress.CountryISOAlpha2Code : '';
-        var stateName = this.checkNested(data, stateNamePath) ? data.Location.PrimaryAddress.TerritoryOfficialName : '';
-        var cityName = this.checkNested(data, cityNamePath) ? data.Location.PrimaryAddress.PrimaryTownName : '';
-
+        var orgName = this.checkJsonNode(data, orgNamePath) ? data.OrganizationName.OrganizationPrimaryName.OrganizationName['$'] : '';
+        var dunsNum = this.checkJsonNode(data, dunsPath) ? data.SubjectHeader.DUNSNumber : '';
+        var countryName = this.checkJsonNode(data, countryNamePath) ? data.Location.PrimaryAddress.CountryISOAlpha2Code : '';
+        var stateName = this.checkJsonNode(data, stateNamePath) ? data.Location.PrimaryAddress.TerritoryOfficialName : '';
+        var cityName = this.checkJsonNode(data, cityNamePath) ? data.Location.PrimaryAddress.PrimaryTownName : '';
+        var dunsHTML = '&nbsp;&nbsp;<span class="label label-success pull-right">' + app.lang.get('LBL_DNB_DUNS') + '</span>',
+            duplicateHTML = '&nbsp;&nbsp;<span class="label label-important pull-right">' + app.lang.get('LBL_DNB_DUPLICATE') + '</span>';
         intermediateData.metadata = {'id' : this.idCounter};
-        intermediateData.attr = {'id' : this.idCounter};
+        intermediateData.attr = {'id' : this.idCounter, 'duns': dunsNum};
         this.idCounter++;
-        intermediateData.data = orgName + ' (' + dunsNum + ')' + ((cityName !== '' && cityName !== null) ? (', ' + cityName) : '') + ((stateName !== '' && stateName !== null) ? (', ' + stateName) : '') + (countryName !== '' ? (', ' + countryName) : '');
+        intermediateData.data = orgName + ((stateName != '' && stateName != null) ? (', ' + stateName) : '')
+            + (countryName != '' ? (', ' + countryName) : '');
 
-        if (parseInt(dunsNum) === parseInt(this.duns_num)) {
-            intermediateData.data = intermediateData.data + '&nbsp;&nbsp;<span class="label label-success pull-right">DUNS</span>';
+        if (parseInt(dunsNum, 10) == parseInt(this.duns_num, 10)) {
+            intermediateData.data = intermediateData.data + dunsHTML;
             intermediateData.state = 'open';
             this.initialSelect = [1, intermediateData.metadata.id];
             this.initialOpen = [1, intermediateData.metadata.id];
+        } else if (data.isDupe) {
+            intermediateData.data = intermediateData.data + duplicateHTML;
         }
-
-        if (intermediateData.metadata.id === 1) {
+        if (intermediateData.metadata.id == 1) {
             intermediateData.state = 'open';
         }
-
-        if (this.checkNested(data, childrenPath) &&
-            data.Linkage.FamilyTreeMemberOrganization.length > 0) {
+        if (this.checkJsonNode(data, childrenPath) && data.Linkage.FamilyTreeMemberOrganization.length > 0) {
             var childRootData = data.Linkage.FamilyTreeMemberOrganization;
             intermediateData.children = [];
             //for each child do a getDataRecursive
-            for (var childCounter = 0; childCounter < childRootData.length; childCounter++) {
-                intermediateData.children.push(this.getDataRecursive(childRootData[childCounter]));
-            }
+            _.each(childRootData, function(childRoot) {
+                intermediateData.children.push(this.getDataRecursive(childRoot));
+            },this);
         }
         return intermediateData;
     },
 
     /**
-     * Renders the family tree using the jsTree plugin
-     * @param  {Object} familyTreeData
+     *  renders the family tree using the jsTree plugin
+     *  @param {Object} familyTreeData dnb api response for family tree call
      */
     renderFamilyTree: function(familyTreeData) {
-        $('#dnb-family-tree').jstree({
-            // generating tree from json data
-            'json_data' : this.dnbToJSTree(familyTreeData),
-            // plugins used for this tree
-            'plugins' : ['json_data', 'ui', 'types'],
-            'core' : {
-                'html_titles' : true
+        var self = this;
+        self.template = app.template.get(self.name);
+        if (self.disposed) {
+            return;
+        }
+        self.render();
+        if (!familyTreeData.errmsg && familyTreeData.product) {
+            self.$('#dnb-family-tree').jstree({
+                // generating tree from json data
+                'json_data' : self.dnbToJSTree(familyTreeData.product),
+                // plugins used for this tree
+                'plugins' : ['json_data', 'ui', 'types'],
+                'core' : {
+                    'html_titles' : true
+                }
+            }).bind('loaded.jstree', function() {
+                // do stuff when tree is loaded
+                self.$('#dnb-family-tree').addClass('jstree-sugar');
+                self.$('#dnb-family-tree > ul').addClass('list');
+                self.$('#dnb-family-tree > ul > li > a').addClass('jstree-clicked');
+            }).bind('select_node.jstree', function(e, data) {
+                // do stuff when a node is selected
+                if (data.rslt.e.target.getAttribute('href')) {
+                    var duns_num = data.rslt.obj.attr('duns');
+                    if (duns_num) {
+                        self.getCompanyDetails(duns_num);
+                    }
+                } else {
+                    data.inst.toggle_node(data.rslt.obj);
+                }
+            });
+        } else if (familyTreeData.errmsg) {
+            self.dnbFamilyTree = {};
+            self.dnbFamilyTree.errmsg = familyTreeData.errmsg;
+            if (self.disposed) {
+                return;
             }
-        }).bind('loaded.jstree', function() {
-            // do stuff when tree is loaded
-            $('#dnb-family-tree').addClass('jstree-sugar');
-            $('#dnb-family-tree > ul').addClass('list');
-            $('#dnb-family-tree > ul > li > a').addClass('jstree-clicked');
-        }).bind('select_node.jstree', function(e, data) {
-            // do stuff when a node is selected
-            data.inst.toggle_node(data.rslt.obj);
-        });
+            self.render();
+        }
+        self.$('#dnb-family-tree-loading').hide();
+        self.$('#dnb-family-tree-details').show();
+        //hide import button when rendering the list
+        if (self.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
+            self.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().hide();
+        }
+    },
+
+    /**
+     * Gets D&B Company Details For A DUNS number
+     * @param {String } duns_num
+     */
+    getCompanyDetails: function(duns_num) {
+        if (this.disposed) {
+            return;
+        }
+        this.template = app.template.get('dnb.dnb-company-details');
+        this.render();
+        this.$('div#dnb-company-details').hide();
+        this.baseCompanyInformation(duns_num, this.compInfoProdCD.std, app.lang.get('LBL_DNB_FAMILY_TREE_BACK'), this.renderCompanyDetails);
     }
 })
