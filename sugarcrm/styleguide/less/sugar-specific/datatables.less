@@ -1,4 +1,4 @@
-table.dataTable {
+.dataTable {
   margin: 0;
   clear: both;
   width: 100%;
@@ -18,32 +18,6 @@ table.dataTable {
     &:last-child {
       border-right: none;
     }
-    > * {
-      display: inline-block;
-      width: 100%;
-      overflow-x: hidden;
-      white-space: nowrap;
-      word-break: break-word;
-      vertical-align: middle;
-      text-overflow: ellipsis;
-    }
-
-    a {
-      text-decoration: none;
-    }
-    &.header-quota {
-      min-width: 70px;
-    }
-    .dropdown-menu {
-      text-align: left;
-    }
-    .btn input {
-      position: relative;
-      top: -1px;
-    }
-    input[type=checkbox].toggle-all {
-      margin: 0;
-    }
     &.nosort.select-all {
       padding: 0;
       .btn-group {
@@ -55,6 +29,31 @@ table.dataTable {
           padding-bottom: 1px;
         }
       }
+    }
+    &.header-quota {
+      min-width: 70px;
+    }
+    > span {
+      display: inline-block;
+      width: 100%;
+      overflow-x: hidden;
+      white-space: nowrap;
+      word-break: break-word;
+      vertical-align: middle;
+      text-overflow: ellipsis;
+    }
+    .dropdown-menu {
+      text-align: left;
+    }
+    .btn input {
+      position: relative;
+      top: -1px;
+    }
+    a {
+      text-decoration: none;
+    }
+    input[type=checkbox].toggle-all {
+      margin: 0;
     }
   }
 
@@ -75,18 +74,6 @@ table.dataTable {
     &:last-child {
       border-right: 0;
     }
-    > *:not(.overflow-visible) {
-      overflow-x: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%;
-      width: 100%;
-      display: inline-block;
-      white-space: nowrap;
-      word-break: break-word;
-      position: relative;
-      vertical-align: middle;
-    }
-
     &[data-type="currency"] {
       text-align: right;
       min-width: 132px;
@@ -105,6 +92,9 @@ table.dataTable {
     }
     &[data-type="severity"] {
       width: 80px;
+    }
+    &[data-type="phone"] {
+      max-width: 86px;
     }
     &[data-type="datetimecombo"] {
       input[type="text"].datepicker {
@@ -127,20 +117,19 @@ table.dataTable {
         padding: 3px 0 0 4px;
       }
     }
+    > span:not(.overflow-visible) {
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      width: 100%;
+      display: inline-block;
+      white-space: nowrap;
+      word-break: break-word;
+      position: relative;
+      vertical-align: middle;
+    }
     .btn-toolbar {
       margin: -5px 0 -10px;
-    }
-    span.longtext {
-      display: inline-block;
-      width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    input[type="text"] {
-      min-height: 28px;
-      width: 100%;
-      .box-sizing(border-box);
-      padding: 4px 6px;
     }
     .select2-addon {
       input[type="text"] {
@@ -152,10 +141,6 @@ table.dataTable {
           width: 100%;
         }
       }
-    }
-    input[type=radio],
-    input[type=checkbox] {
-      border: 0;
     }
     .icon-favorite {
       vertical-align: middle;
@@ -170,6 +155,22 @@ table.dataTable {
     }
     .active .icon-star {
       color: @orange;
+    }
+    span.longtext {
+      display: inline-block;
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    input[type="text"] {
+      min-height: 28px;
+      width: 100%;
+      .box-sizing(border-box);
+      padding: 4px 6px;
+    }
+    input[type=radio],
+    input[type=checkbox] {
+      border: 0;
     }
   }
 
@@ -229,9 +230,6 @@ table.dataTable {
         overflow: visible;
         background: #e5f1fc;
         padding: 4px;
-        > span {
-          width: 100%;
-        }
         &:first-child {
           .btn {
             margin-left: 0;
@@ -244,14 +242,6 @@ table.dataTable {
             width: 100%;
             .box-sizing(border-box);
           }
-        }
-
-        > .edit .select2-container-multi {
-          position: absolute;
-          top: -15px;
-        }
-        .icon-favorite {
-          display: none;
         }
         &[data-type="fullname"] {
           min-width: 288px;
@@ -328,16 +318,26 @@ table.dataTable {
             overflow: hidden;
           }
         }
-        input[type="text"] {
+        > span {
           width: 100%;
-          min-width: 82px;
+        }
+        > .edit .select2-container-multi {
+          position: absolute;
+          top: -15px;
         }
         > *:not(.overflow-visible) {
           overflow: visible;
         }
+        .icon-favorite {
+          display: none;
+        }
         .input-append.date {
           margin-bottom: 0;
           font-size: @baseFontSize;
+        }
+        input[type="text"] {
+          width: 100%;
+          min-width: 82px;
         }
       }
     }
@@ -395,8 +395,6 @@ FLEXLIST GENERIC */
     overflow-x: auto;
     width: 100%;
     margin-bottom: -1px;
-
-    //-webkit-transform: translate3d(0, 0, 0);
     /*-webkit-overflow-scrolling: touch;
     > * {
         -webkit-transform: translateZ(0px);
@@ -407,29 +405,28 @@ FLEXLIST GENERIC */
   }
 
   //override of bootstrap to fix safari
-  table.dataTable {
+  .dataTable {
     max-width: none;
     position: static;
   }
 
   /*LEFT ACTIONS ONLY*/
-  &.left-actions table.dataTable {
+  &.left-actions .dataTable {
     th,
     td {
       &:first-child {
         width: 55px;
         min-width: 55px;
+        height: 28px;
         text-align: center;
         overflow-x: visible;
       }
     }
     th:first-child {
       padding: 7px 8px;
-
       > span {
         position: absolute;
         overflow: visible;
-        z-index: 999;
         width: 55px;
         height: 28px;
         top: 0;
@@ -438,6 +435,7 @@ FLEXLIST GENERIC */
         border-right: 1px solid darken(@grayLighter, 5%);
         border-bottom: 1px solid darken(@grayLighter, 5%);
         background-color: inherit;
+        z-index: 999;
       }
       .btn.checkall {
         padding: 4px 7px;
@@ -446,62 +444,37 @@ FLEXLIST GENERIC */
     td:first-child {
       > span {
         position: absolute;
-        left: 0;
-        background-color: inherit;
+        display: inline-block;
         width: 71px;
         height: 36px;
-        border-bottom: 1px solid darken(@grayLighter, 5%);
-        display: inline-block;
-        overflow: visible;
         margin-top: -18px;
+        left: 0;
+        border-bottom: 1px solid darken(@grayLighter, 5%);
+        background-color: inherit;
+        overflow: visible;
         z-index: 10;
         // single search and select
         > input[type=radio] {
           margin-top: 11px;
         }
-        > span.list {
-          position: relative;
-          top: 8px;
-          left: 0;
-          background-color: inherit;
+        > span.list,
+        > span.edit {
           display: inline-block;
+          margin-top: 8px;
           white-space: nowrap;
         }
       }
     }
   }
 
-  /*ADD SHADOW TO LEFT ACTION COLUMN*/
-  &.left-actions.scroll-width table.dataTable {
-    th:first-child {
-      > span {
-        border-right: 1px solid darken(@grayLighter, 5%);
-        -webkit-transform: translate3d(0,0,0);
-        &:after {
-          .right-shadow;
-          height: 43px;
-        }
-      }
-    }
-    td:first-child {
-      > span {
-        border-right: 1px solid darken(@grayLighter, 5%);
-        -webkit-transform: translate3d(0,0,0);
-      }
-      > span:after {
-        .right-shadow;
-      }
-    }
-  }
-
   /*RIGHT ACTIONS ONLY*/
-  &.right-actions table.dataTable {
+  &.right-actions .dataTable {
     th,
     td {
       &:last-child {
         width: 55px;
-        height: 28px;
         min-width: 55px;
+        height: 28px;
         text-align: center;
         overflow-x: visible;
       }
@@ -514,7 +487,7 @@ FLEXLIST GENERIC */
         overflow: visible;
         width: 55px;
         height: 28px;
-        top: 0px;
+        top: 0;
         right: 1px;
         padding: 7px 7px 7px 8px;
         border-bottom: 1px solid darken(@grayLighter, 5%);
@@ -523,9 +496,9 @@ FLEXLIST GENERIC */
       }
     }
     td:last-child {
-      > .list {
+      > span {
         position: absolute;
-        overflow: visible;
+        display: inline-block;
         width: 55px;
         height: 28px;
         margin-top: -18px;
@@ -533,6 +506,7 @@ FLEXLIST GENERIC */
         padding: 4px 7px 4px 8px;
         border-bottom: 1px solid darken(@grayLighter, 5%);
         background-color: inherit;
+        overflow: visible;
         &.open {
           z-index: 99999;
         }
@@ -568,8 +542,31 @@ FLEXLIST GENERIC */
     }
   }
 
+  /*ADD SHADOW TO LEFT ACTION COLUMN*/
+  &.left-actions.scroll-width .dataTable {
+    th:first-child {
+      > span {
+        border-right: 1px solid darken(@grayLighter, 5%);
+        -webkit-transform: translate3d(0,0,0);
+        &:after {
+          .right-shadow;
+          height: 43px;
+        }
+      }
+    }
+    td:first-child {
+      > span {
+        border-right: 1px solid darken(@grayLighter, 5%);
+        -webkit-transform: translate3d(0,0,0);
+        &:after {
+          .right-shadow;
+        }
+      }
+    }
+  }
+
   /*ADD SHADOW TO RIGHT ACTION COLUMN*/
-  &.right-actions.scroll-width table.dataTable {
+  &.right-actions.scroll-width .dataTable {
     th:last-child {
       .dropdown,
       > span {
@@ -582,7 +579,7 @@ FLEXLIST GENERIC */
       }
     }
     td:last-child {
-      > .list {
+      > span {
         border-left: 1px solid darken(@grayLighter, 5%);
         -webkit-transform: translate3d(0,0,0);
         &:before {
@@ -593,7 +590,7 @@ FLEXLIST GENERIC */
   }
 
   /*DUPLICATES*/
-  table.dataTable.duplicates {
+  .dataTable.duplicates {
     th {
       background-color: lighten(@yellow_duplicate, 5%);
     }
@@ -663,8 +660,8 @@ FLEXLIST GENERIC */
   }
 
   /*FORECASTS WORKSHEETS*/
-  &.forecast-worksheet table.dataTable,
-  &.forecast-manager-worksheet table.dataTable {
+  &.forecast-worksheet .dataTable,
+  &.forecast-manager-worksheet .dataTable {
     td {
       &[data-type="currency"] {
         min-width: 115px !important;
@@ -701,26 +698,21 @@ FLEXLIST GENERIC */
   }
 
   /*FORECASTS SALES REP WORKSHEET*/
-  &.forecast-worksheet table.dataTable {
+  &.forecast-worksheet .dataTable {
     th,
     td {
       &:first-child {
         padding-left: 14px;
       }
     }
-    td {
-      &.editableColumn {
-        &.commit_stage_field:first-child {
-          max-width: 80px;
-          padding-left: 6px;
-          > span.list {
-            padding-left: 10px;
-            overflow: hidden;
-          }
-          > span.edit {
-            padding-left: 1px;
-          }
-        }
+    td.editableColumn.commit_stage_field:first-child {
+      max-width: 80px;
+      padding-left: 6px;
+      > span.list {
+        padding-left: 10px;
+      }
+      > span.edit {
+        padding-left: 1px;
       }
     }
     tr.included td {
@@ -743,7 +735,7 @@ FLEXLIST GENERIC */
   }
 
   /*FORECASTS MANAGER WORKSHEET*/
-  &.forecast-manager-worksheet table.dataTable {
+  &.forecast-manager-worksheet .dataTable {
     border-top: 1px solid darken(@grayLighter,10%);
     tr[name$="_commit_history"] td:first-child:last-child {
       padding: 0;
@@ -768,6 +760,9 @@ FLEXLIST GENERIC */
         }
       }
     }
+    th:last-child .dropdown {
+      top: 1px;
+    }
   }
 
 }
@@ -776,12 +771,12 @@ FLEXLIST GENERIC */
   .flex-list-view {
     overflow: scroll;
   }
-  table.dataTable {
+  .dataTable {
     position: relative;
   }
 }*/
 
-.subpanel .flex-list-view table.dataTable {
+.subpanel .flex-list-view .dataTable {
   border-bottom: 0;
   tr {
     //last row
@@ -850,7 +845,7 @@ table th.nosort span:after {
   display: none;
 }
 
-table.dataTable th:active {
+.dataTable th:active {
   outline: none;
 }
 
