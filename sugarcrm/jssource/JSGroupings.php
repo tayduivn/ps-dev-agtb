@@ -257,6 +257,8 @@
                    'include/javascript/jquery/jquery.nouislider.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/nprogress/nprogress.js' => 'include/javascript/sugar_sidecar.min.js',
 
+                   'sidecar/lib/momentjs/min/langs.min.js' => 'include/javascript/sugar_sidecar.min.js',
+
                    //BEGIN SUGARCRM flav=pro ONLY
                    //Expression Engine
                    'sidecar/lib/sugarlogic/expressions.js'              => 'include/javascript/sugar_sidecar.min.js',
