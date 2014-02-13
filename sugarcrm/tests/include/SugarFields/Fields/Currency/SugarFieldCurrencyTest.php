@@ -51,6 +51,30 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
     }
 
+    public function setUp()
+    {
+        parent::setUp();
+        $current_user = $GLOBALS['current_user'];
+        $current_user->setPreference('dec_sep', '.');
+        $current_user->setPreference('num_grp_sep', ',');
+        $current_user->setPreference('default_currency_significant_digits', 2);
+        $current_user->save();
+        //force static var reset
+        get_number_seperators(true);
+    }
+
+    public function tearDown()
+    {
+        $current_user = $GLOBALS['current_user'];
+        $current_user->setPreference('dec_sep', '.');
+        $current_user->setPreference('num_grp_sep', ',');
+        $current_user->setPreference('default_currency_significant_digits', 2);
+        $current_user->save();
+        //force static var reset
+        get_number_seperators(true);
+        parent::tearDown();
+    }
+
     /**
      *
      * @group currency
@@ -156,6 +180,96 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $value = $field->exportSanitize($obj->amount, $vardef, $obj);
         $this->assertEquals($expectedValue, $value);
 
+    }
+
+    /**
+     * @dataProvider unformatFieldProvider
+     * @param $value
+     * @param $expectedValue
+     */
+    public function testUnformatField($value, $expectedValue)
+    {
+        $field = SugarFieldHandler::getSugarField('currency');
+        $this->assertEquals($expectedValue, $field->unformatField($value, null));
+    }
+
+    /**
+     * testUnformatField data provider
+     *
+     * @group currency
+     * @access public
+     */
+    public static function unformatFieldProvider()
+    {
+        return array(
+            array('1000', '1000'),
+            array('1.000', '1.000'),
+            array('1,000', '1000'),
+            array('1,000.00', '1000.00'),
+        );
+    }
+
+    /**
+     * @dataProvider unformatFieldProviderCommaDotFlip
+     * @param $value
+     * @param $expectedValue
+     */
+    public function testUnformatFieldCommaDotFlip($value, $expectedValue)
+    {
+        $current_user = $GLOBALS['current_user'];
+        $current_user->setPreference('dec_sep', ',');
+        $current_user->setPreference('num_grp_sep', '.');
+        $current_user->setPreference('default_currency_significant_digits', 2);
+        $current_user->save();
+
+        //force static var reset
+        get_number_seperators(true);
+
+        $field = SugarFieldHandler::getSugarField('currency');
+        $this->assertEquals($expectedValue, $field->unformatField($value, null));
+    }
+
+    /**
+     * testUnformatFieldCommaDotFlip data provider
+     *
+     * @group currency
+     * @access public
+     */
+    public static function unformatFieldProviderCommaDotFlip()
+    {
+        return array(
+            array('1,000', '1'),
+            array('1000,00', '1000'),
+            array('1.000,65', '1000.65'),
+            array('1.065', '1065'),
+        );
+    }
+
+    /**
+     * @dataProvider apiUnformatFieldProvider
+     * @param $value
+     * @param $expectedValue
+     */
+    public function testApiUnformatField($value, $expectedValue)
+    {
+        $field = SugarFieldHandler::getSugarField('currency');
+        $this->assertEquals($expectedValue, $field->apiUnformatField($value));
+    }
+
+    /**
+     * testApiUnformatField data provider
+     *
+     * @group currency
+     * @access public
+     */
+    public static function apiUnformatFieldProvider()
+    {
+        return array(
+            array('1000', '1000'),
+            array('1.000', '1.000'),
+            array('1,000', '1,000'),
+            array('1,000.00', '1,000.00'),
+        );
     }
 
 }

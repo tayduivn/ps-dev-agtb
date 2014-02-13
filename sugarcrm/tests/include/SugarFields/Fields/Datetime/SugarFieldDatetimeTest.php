@@ -81,14 +81,14 @@ class SugarFieldDatetimeTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @dataProvider unformatDataProvider
      **/
-    public function testApiUnformat($timeZone, $isoDate, $gmtResult)
+    public function testApiUnformatField($timeZone, $isoDate, $gmtResult)
     {
         $GLOBALS['current_user']->setPreference('timezone', $timeZone);
         $GLOBALS['current_user']->savePreferencesToDB();
         $GLOBALS['current_user']->reloadPreferences();
 
         $field = SugarFieldHandler::getSugarField('datetime');
-        $this->assertEquals($gmtResult, $field->apiUnformat($isoDate));
+        $this->assertEquals($gmtResult, $field->apiUnformatField($isoDate));
     }
 
     public function fixForFilterDataProvider()

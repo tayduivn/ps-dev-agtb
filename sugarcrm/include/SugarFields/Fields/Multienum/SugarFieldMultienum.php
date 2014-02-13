@@ -179,7 +179,7 @@ class SugarFieldMultienum extends SugarFieldEnum
      * @param $value
      * @return mixed
      */
-    public function apiUnformat($value)
+    public function apiUnformatField($value)
     {
         if (is_array($value)) {
             $return = '';

@@ -153,7 +153,7 @@ class SugarFieldDatetime extends SugarFieldBase {
      * @param $value - the value that needs unformatted
      * @return string - the unformatted value
      */
-    public function apiUnformat($value)
+    public function apiUnformatField($value)
     {
         global $current_user;
         if (strlen(trim($value)) < 11) {
@@ -246,7 +246,7 @@ class SugarFieldDatetime extends SugarFieldBase {
                         'Y-m-d\TH:i:s',
                         gmmktime(23, 59, 59, $dateParsed['month'], $dateParsed['day'], $dateParsed['year'])
                     );
-                    $where->between($fieldName, $this->apiUnformat($value[0]), $this->apiUnformat($value[1]), $bean);
+                    $where->between($fieldName, $this->apiUnformatField($value[0]), $this->apiUnformatField($value[1]), $bean);
                     return false;
             }
         }

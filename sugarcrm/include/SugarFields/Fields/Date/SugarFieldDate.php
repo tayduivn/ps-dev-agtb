@@ -46,7 +46,8 @@ class SugarFieldDate extends SugarFieldDatetime {
      * @param $value
      * @return string
      */
-    public function apiUnformat($value) {
+    public function apiUnformatField($value)
+    {
         return $value;
     }
 
