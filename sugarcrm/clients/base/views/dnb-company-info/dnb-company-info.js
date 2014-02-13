@@ -10,27 +10,22 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-
 ({
     extendsFrom: 'DnbView',
-
     statesList: '',
-
     countryList: '',
-
     duns_num: null,
-
     selectedCountry: 'Country',
-
     companyList: null,
-
-    //array of data elements to be imported into the accounts model
-    dataElements: ['name', 'billing_address_street', 'billing_address_city', 'billing_address_state',
-        'billing_address_country', 'billing_address_postalcode', 'website', 'phone_office',
-        'employees', 'annual_revenue', 'ownership', 'sic_code'],
-
+    //data dictionary from cleanse match
+    cleanseMatchDD: null,
+    compInfoConst: {
+        'responseCode' : 'GetCleanseMatchResponse.TransactionResult.ResultID',
+        'responseMsg' : 'GetCleanseMatchResponse.TransactionResult.ResultText',
+        'cmCandidates' : 'GetCleanseMatchResponse.GetCleanseMatchResponseDetail.MatchResponseDetail.MatchCandidate'
+    },
     events: {
-        'click a#dnb-lookup': 'dnbCompanySearch',
+        'click a#dnb-lookup': 'dnbSearch',
         'click a.dnb-company-name': 'dunsClickHandler',
         'click .showMoreData': 'showMoreData',
         'click .showLessData': 'showLessData',
@@ -39,8 +34,9 @@
         'change #countryList': 'changeState',
         'change #stateList': 'validateMatchParams',
         'click #dnb-match-btn': 'invokeCMRequest',
-        'click .backToList' : 'renderCompanyList',
-        'click #dnb-refresh' : 'getCompInfo'
+        'click .backToList' : 'backToCompanyList',
+        'click #dnb-refresh' : 'getCompInfo',
+        'click .backToImportEnrich' : 'backToImportEnrich'
     },
 
     initialize: function(options) {
@@ -49,32 +45,57 @@
         app.events.register('dnbcompinfo:industry_code', this);
         this.statesList = app.lang.getAppListStrings('dnb_states_iso');
         this.countryList = app.lang.getAppListStrings('dnb_countries_iso');
+        //initializing the data dictionary for cleanse match
+        this.cleanseMatchDD = this.searchDD;
+        this.cleanseMatchDD.confidenceCode = { 'json_path' : 'MatchQualityInformation.ConfidenceCodeValue' };
     },
 
+    /**
+     * Redirects from the search results or cleanse match results
+     * Back to the import and enrich screen
+     */
+    backToImportEnrich: function() {
+        if (this.disposed) {
+            return;
+        }
+        this.template = app.template.get(this.name + '.dnb-no-duns');
+        this.render();
+    },
+
+    /**
+     * Overriding the render function to populate the state and country drop downs
+     */
     _render: function() {
         app.view.View.prototype._renderHtml.call(this);
-        this.$('#countryList').select2({
-            placeholder: 'Select a Country',
-            data: this.populateCountry()
-        });
-        this.$('#stateList').select2({
-            placeholder: 'Select a State',
-            data: this.populateState(this.selectedCountry)
-        });
+        this.$('#countryList').select2({ placeholder: app.lang.get('LBL_DNB_SLCT_CTRY'), data: this.populateCountry() });
+        this.$('#stateList').select2({ placeholder: app.lang.get('LBL_DNB_SLCT_STATE'), data: this.populateState(this.selectedCountry) });
     },
 
     /**
-     * Gets company information for the duns num
+     * Gets the company information for the current duns_num
      */
     getCompInfo: function() {
-        this.getDNBCompanyDetails(this.model.get('duns_num'));
+        if (this.disposed) {
+            return;
+        }
+        var duns_num = this.model.get('duns_num');
+        if (duns_num) {
+            this.template = app.template.get(this.name + '.dnb-company-details');
+            this.render();
+            this.$('div#dnb-company-detail-loading').show();
+            this.$('div#dnb-company-details').hide();
+            this.baseCompanyInformation(duns_num, this.compInfoProdCD.std, null, this.renderCompanyDetails);
+        }
     },
 
     /**
-     * Gets the refresh information on the duns_num
-     * @param  {String} duns_num
+     * invokes the refreshCheck API
+     * @param {String} duns_num
      */
-    refreshcheck: function(duns_num) {
+    refreshCheck: function(duns_num) {
+        if (this.disposed) {
+            return;
+        }
         var dnbRefreshCheck = app.api.buildURL('connector/dnb/refreshcheck/' + duns_num, '', {},{});
         var self = this;
         self.template = app.template.get(self.name);
@@ -82,21 +103,21 @@
         self.$('div#dnb-refresh-loading').show();
         self.$('div#dnb-refresh-details').hide();
         var resultData = {'uptodate': null, 'errmsg': null};
-        app.api.call('READ', dnbRefreshCheck, {},{
+        app.api.call('READ', dnbRefreshCheck, {}, {
             success: function(data) {
                 //to do error handling
                 var lastRefreshedDatePath = 'GetRefreshByOrganizationsResponse.GetRefreshByOrganizationsResponseDetail.CheckRefreshCandidateDetail.0.LastUpdateDate';
                 if (self.checkJsonNode(data, lastRefreshedDatePath)) {
                     try {
-                        var lastRefreshDate = app.date.parse(data.GetRefreshByOrganizationsResponse.GetRefreshByOrganizationsResponseDetail.CheckRefreshCandidateDetail[0].LastUpdateDate, 'YYYY-mm-dd');
-                        lastRefreshDate.setMonth(lastRefreshDate.getMonth() + 3);
-                        var currentDate = new Date();
-                        //if lastRefreshDate + 30 > currentDate, information is Up To Date
-                        if (lastRefreshDate > currentDate) {
-                            resultData.uptodate = true;
-                            self.isDataUptoDate = true;
+                        var lastRefreshDate = app.date.parse(data.GetRefreshByOrganizationsResponse.GetRefreshByOrganizationsResponseDetail.CheckRefreshCandidateDetail[0].LastUpdateDate, 'YYYY-mm-dd'),
+                            lastModifiedDate = null;
+                        if (self.model.get('date_modified')) {
+                            lastModifiedDate = new Date(Date.parse(self.model.get('date_modified')));
+                            if (lastRefreshDate < lastModifiedDate) {
+                                resultData.uptodate = true;
+                                self.isDataUptoDate = true;
+                            }
                         }
-                        //else information is Out Of Date
                     } catch (e) {
                         app.logger.error('Error parsing dates');
                     }
@@ -110,7 +131,11 @@
                 self.$('div#dnb-refresh-details').show();
                 if (self.layout.getComponent('dashlet-toolbar').getField('data_valid_ind')) {
                     if (resultData.uptodate) {
-                        self.layout.getComponent('dashlet-toolbar').getField('data_valid_ind').getFieldElement().hide();
+                        self.layout.getComponent('dashlet-toolbar').getField('data_valid_ind').getFieldElement().show().addClass('label-uptodate').text(app.lang.get('LBL_DNB_UPTODATE'));
+                        //if the up to date collapse the dashlet
+                        if (self.layout.collapse) {
+                            self.layout.collapse(true);
+                        }
                     } else {
                         self.layout.getComponent('dashlet-toolbar').getField('data_valid_ind').getFieldElement().show().addClass('label-pending').text(app.lang.get('LBL_DNB_OUTOFDATE'));
                     }
@@ -121,36 +146,58 @@
     },
 
     /**
-     * Gets the primary industry code from the array of industry codes
-     * @param  {Array} industryArray
-     * @param  {String} industryCode
-     * @return {Object}
+     * Performs refresh check when the dashlet is loaded
+     * @param {Array} options
      */
-    getPrimaryIndustry: function(industryArray, industryCode) {
-        return _.find(industryArray, function(industryObj) {
-            return industryObj['@DNBCodeValue'] === industryCode && industryObj['DisplaySequence'] === '1';
-        });
-    },
-
     loadData: function(options) {
-        if (!_.isUndefined(this.model.get('duns_num')) && $.trim(this.model.get('duns_num')) !== '') {
-            this.duns_num = this.model.get('duns_num');
-            this.refreshcheck(this.duns_num);
+        if (this.meta && this.meta.config) {
+            this.template = app.template.get(this.name + '.dashlet-config');
+            if (this.disposed) {
+                return;
+            }
+            this.render();
         } else {
-            this.template = app.template.get(this.name + '.dnb-no-duns');
+            if (!_.isUndefined(this.model.get('duns_num'))
+                && $.trim(this.model.get('duns_num')) != '') {
+                this.duns_num = this.model.get('duns_num');
+                this.refreshCheck(this.duns_num);
+            } else {
+                this.template = app.template.get(this.name + '.dnb-no-duns');
+            }
         }
     },
 
     /**
-     * Renders company list for search and cleanse and match results
+     * Renders the company list when the back button is clicked
      */
-    renderCompanyList: function() {
-        if (this.companyList[0].MatchQualityInformation) {
-            this.template = app.template.get(this.name + '.dnb-cm-results');
-        } else {
-            this.template = app.template.get(this.name + '.dnb-company-list');
+    backToCompanyList: function() {
+        this.renderCompanyList({'companies' : this.companyList});
+    },
+
+    /**
+     * Render search and cleanse match results
+     * @param {Array} dnbApiResponse list of companies from dnb search / match api
+     */
+    renderCompanyList: function(dnbApiResponse) {
+        if (this.disposed) {
+            return;
         }
-        _.extend(this, this.companyList);
+        var dnbCompanyList = {};
+        if (dnbApiResponse.companies) {
+            this.companyList = dnbApiResponse.companies;
+            if (dnbApiResponse.companies[0].MatchQualityInformation) {
+                this.template = app.template.get(this.name + '.dnb-cm-results');
+                dnbCompanyList.product = this.formatSrchRslt(dnbApiResponse.companies, this.cleanseMatchDD);
+                dnbCompanyList.product = this.formatConfidenceCodes(dnbCompanyList.product);
+            } else {
+                this.template = app.template.get(this.name + '.dnb-company-list');
+                dnbCompanyList.product = this.formatSrchRslt(dnbApiResponse.companies, this.searchDD);
+            }
+        }
+        if (dnbApiResponse.errmsg) {
+            dnbCompanyList.errmsg = dnbApiResponse.errmsg;
+        }
+        this.dnbCompanyList = dnbCompanyList;
         this.render();
         this.$('div#dnb-company-list-loading').hide();
         this.$('div#dnb-company-list').show();
@@ -165,147 +212,69 @@
     },
 
     /**
-     * D&B search based on the current account name
-     * @param  {Object} options
+     * Invokes D&B Searcg API based on the company nanme
      */
-    dnbCompanySearch: function(options) {
-        var self = this;
-        if (self.disposed) {
-            return;
-        }
-        self.template = app.template.get(self.name + '.dnb-company-list');
-        self.render();
-        $('div#dnb-company-list').hide();
-        var accountsModel = this.model;
-        var companyName = accountsModel.get('name');
-        var candidateData = {'companies': null, 'errmsg': null};
-        var dnbSearchUrl = app.api.buildURL('connector/dnb/search/' + companyName, '', {},{});
-        self.companyList = null;
-        app.api.call('READ', dnbSearchUrl, {},{
-            success: function(data) {
-                var candidateData = {'companies': null, 'errmsg': null};
-                try {
-                    var resultIDPath = 'FindCompanyResponse.TransactionResult.ResultID';
-                    if (self.checkJsonNode(data, resultIDPath) &&
-                        data.FindCompanyResponse.TransactionResult.ResultID === 'CM000') {
-                        candidateData.companies = data.FindCompanyResponse.FindCompanyResponseDetail.FindCandidate;
-                        self.companyList = candidateData.companies;
-                    } else {
-                        candidateData.errmsg = data.FindCompanyResponse.TransactionResult.ResultText;
-                    }
-                } catch (e) {
-                    candidateData.errmsg = app.lang.get('LBL_DNB_SVC_ERR');
-                }
-                _.extend(self, candidateData);
-                self.render();
-                self.$('div#dnb-company-list-loading').hide();
-                self.$('div#dnb-company-list').show();
-                self.$('.showLessData').hide();
-            },
-            error: _.bind(self.checkAndProcessError, self)
-        });
-    },
-
-    /**
-     * Event handler for clicking on DUNS
-     * @param  {Object} evt
-     */
-    dunsClickHandler: function(evt) {
-        var duns_num = evt.target.id;
-        this.getDNBCompanyDetails(duns_num);
-    },
-
-    /**
-     * Gets company information for the duns num
-     * @param  {String} duns_num
-     */
-    getDNBCompanyDetails: function(duns_num) {
-        var self = this;
-        self.template = app.template.get(self.name + '.dnb-company-details');
-        self.render();
-        self.$('div#dnb-company-detail-loading').show();
-        self.$('div#dnb-company-details').hide();
-        self.trigger('dnbcompinfo:duns_selected', duns_num);
-        if (duns_num && duns_num !== '') {
-            //check if cache has this data already
-            var cacheKey = 'dnb:compstd:' + duns_num;
-            if (!_.isUndefined(app.cache.get(cacheKey))) {
-                var resultData = app.cache.get(cacheKey);
-                self.renderCompanyDetails.call(self, app.cache.get(cacheKey));
-                // show import button
-                if (!_.isUndefined(self.layout.getComponent('dashlet-toolbar').getField('dnb_import'))) {
-                    self.layout.getComponent('dashlet-toolbar').getField('dnb_import').getFieldElement().show();
-                }
-            } else {
-                var dnbProfileUrl = app.api.buildURL('connector/dnb/profile/' + duns_num, '', {},{});
-                var resultData = {'product': null, 'errmsg': null};
-                app.api.call('READ', dnbProfileUrl, {},{
-                    success: function(data) {
-                        var duns_path = 'OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber';
-                        var resultIDPath = 'OrderProductResponse.TransactionResult.ResultID';
-                        var resultTextPath = 'OrderProductResponse.TransactionResult.ResultText';
-                        var industry_path = 'OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode';
-                        if (self.checkJsonNode(data, resultIDPath) &&
-                            data.OrderProductResponse.TransactionResult.ResultID === 'CM000') {
-                            resultData.product = data;
-                            self.duns_num = resultData.product.OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber;
-                            if (self.checkJsonNode(resultData.product, industry_path)) {
-                                var industryCodeArray = resultData.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode;
-                                //399 is the industry code type value for US SIC
-                                resultData.product.primarySIC = self.getPrimaryIndustry(industryCodeArray, '399');
-                            }
-                            if (!_.isUndefined(self.layout.getComponent('dashlet-toolbar').getField('dnb_import'))) {
-                                self.layout.getComponent('dashlet-toolbar').getField('dnb_import').getFieldElement().show();
-                            }
-                            app.cache.set(cacheKey, resultData);
-                        } else if (self.checkJsonNode(data, resultTextPath)) {
-                            resultData.errmsg = data.OrderProductResponse.TransactionResult.ResultText;
-                        } else {
-                            resultData.errmsg = app.lang.get('LBL_DNB_SVC_ERR');
-                        }
-                        self.renderCompanyDetails.call(self, resultData);
-                    },
-                    error: _.bind(self.checkAndProcessError, self)
-                });
-            }
-        }
-    },
-
-    /**
-     * Renders D&B Company Information
-     * @param  {Object} resultData
-     */
-    renderCompanyDetails: function(resultData) {
+    dnbSearch: function() {
         if (this.disposed) {
             return;
         }
-        if (!this.model.get('duns_num')) {
-            resultData.isNotLinked = true;
+        var companyName = this.model.get('name');
+        if (companyName) {
+            this.template = app.template.get(this.name + '.dnb-company-list');
+            this.render();
+            this.$('div#dnb-company-list-loading').show();
+            this.$('div#dnb-company-list').hide();
+            this.companyList = null;
+            this.baseCompanySearch(companyName, this.renderCompanyList);
         }
-        if (resultData.product) {
-            var duns_path = 'OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber';
-            var industry_path = 'OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode';
-            if (this.checkJsonNode(resultData.product, duns_path)) {
-                this.duns_num = resultData.product.OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber;
+    },
+
+    /**
+     * Event handler for handling clicks on D&B Search Results
+     * @param {Object} evt
+     */
+    dunsClickHandler: function(evt) {
+        if (this.disposed) {
+            return;
+        }
+        var duns_num = evt.target.id;
+        if (duns_num) {
+            this.template = app.template.get(this.name + '.dnb-company-details');
+            this.render();
+            this.$('div#dnb-company-detail-loading').show();
+            this.$('div#dnb-company-details').hide();
+            this.trigger('dnbcompinfo:duns_selected', duns_num);
+            this.baseCompanyInformation(duns_num, this.compInfoProdCD.std, null, this.renderCompanyDetails);
+        }
+    },
+
+    /**
+     * Renders the dnb company details with chechboxes
+     * @param {Object} companyDetails -- dnb api response for company details
+     */
+    renderCompanyDetails: function(companyDetails) {
+        if (this.disposed) {
+            return;
+        }
+        this.dnbProduct = {};
+        if (companyDetails.product) {
+            var duns_num = this.getJsonNode(companyDetails.product, this.appendSVCPaths.duns);
+            // industryCodeArray = this.getJsonNode(companyDetails.product,this.appendSVCPaths.industry);
+            if (!_.isUndefined(duns_num)) {
+                this.duns_num = duns_num;
                 app.controller.context.set('dnb_temp_duns_num', this.duns_num);
-            }
-            if (this.checkJsonNode(resultData.product, industry_path)) {
-                var industryCodeArray = resultData.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode;
-                //399 is the industry code type value for US SIC
-                resultData.product.primarySIC = this.getPrimaryIndustry(industryCodeArray, '399');
-                //extracting the primary hoovers industry code and passing it on
-                //to the industry info dashlet
-                //25838 indicates hoovers industry code
-                //if the DisplaySequence == 1
-                //it indicates that the industry code is the primary hoovers industry code
-                var primaryHooversCode = this.getPrimaryIndustry(industryCodeArray, '25838');
-                if (primaryHooversCode) {
-                    app.controller.context.set('dnb_temp_hoovers_ind_code', primaryHooversCode.IndustryCode.$ + '-' + primaryHooversCode['@DNBCodeValue']);
+                var orgDetails = this.getJsonNode(companyDetails.product, this.appendSVCPaths.product);
+                this.dnbProduct.product = this.formatCompanyInfo(companyDetails.product, this.accountsDD);
+                this.dnbProduct.product = this.getDataIndicators(orgDetails, this.accountsDD, this.dnbProduct.product);
+                if (!_.isUndefined(this.layout.getComponent('dashlet-toolbar').getField('dnb_import'))) {
+                    this.layout.getComponent('dashlet-toolbar').getField('dnb_import').getFieldElement().show();
                 }
             }
-            resultData.product.dataIndicatorMap = this.getDataIndicators(resultData);
         }
-        _.extend(this, resultData);
+        this.template = app.template.get(this.name + '.dnb-company-details');
+        if (!this.model.get('duns_num')) {
+            this.dnbProduct.isNotLinked = true;
+        }
         this.render();
         this.$('div#dnb-company-detail-loading').hide();
         this.$('div#dnb-company-details').show();
@@ -313,188 +282,46 @@
     },
 
     /**
-     * Expands the dashlets to reveal more data
+     * Populates the stare and compare screen with duplicate / upload indicators
+     * @param   {Object} dnbApiResponse dnb company info api response
+     * @param   {Object} accountsDD accounts data dictionary
+     * @param   {Object} frmtCompInfo formatted company info
+     * @return  {Object} formatted company info with data indicators
      */
-    showMoreData: function() {
-        this.$('.dnb-show-less').attr('class', 'dnb-show-all');
-        this.$('.showLessData').show();
-        this.$('.showMoreData').hide();
-    },
-
-    /**
-     * Truncates the dashlets
-     */
-    showLessData: function() {
-        this.$('.dnb-show-all').attr('class', 'dnb-show-less');
-        this.$('.showLessData').hide();
-        this.$('.showMoreData').show();
-    },
-
-    /**
-     * returns an object of data elements
-     with indicators indicating
-     if the data element exists
-     and is duplicate then add 'dup'
-     else add 'upd'
-     else do not add it to the map
-     * @param  {Object} dnbApiResponse
-     * @return {Object}
-     */
-    getDataIndicators: function(dnbApiResponse) {
+    getDataIndicators: function(dnbApiResponse, accountsDD, frmtCompInfo) {
         var accountsModel = this.model;
-        var dataIndicatorMap = {};
-        var dnbResponseMap = {};
-        var name, billing_address_street, billing_address_city, billing_address_state,
-            billing_address_country, billing_address_postalcode, website, phone_office,
-            ownership, annual_revenue, employees, sic_code;
-        if (this.checkJsonNode(dnbApiResponse, 'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationName.OrganizationPrimaryName.0.OrganizationName.$')) {
-            dnbResponseMap.name = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationName.OrganizationPrimaryName[0].OrganizationName.$;
-        }
-        if (this.checkJsonNode(dnbApiResponse, 'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.0.StreetAddressLine.0.LineText')) {
-            dnbResponseMap.billing_address_street = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress[0].StreetAddressLine[0].LineText;
-        }
-        if (this.checkJsonNode(dnbApiResponse, 'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.0.PrimaryTownName')) {
-            dnbResponseMap.billing_address_city = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress[0].PrimaryTownName;
-        }
-        if (this.checkJsonNode(dnbApiResponse, 'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.0.TerritoryAbbreviatedName')) {
-            dnbResponseMap.billing_address_state = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress[0].TerritoryAbbreviatedName;
-        }
-        if (this.checkJsonNode(dnbApiResponse, 'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.0.CountryISOAlpha2Code')) {
-            dnbResponseMap.billing_address_country = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress[0].CountryISOAlpha2Code;
-        }
-        if (this.checkJsonNode(dnbApiResponse, 'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.0.PostalCode')) {
-            dnbResponseMap.billing_address_postalcode = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress[0].PostalCode;
-        }
-        if (this.checkJsonNode(dnbApiResponse, 'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.WebPageAddress.0.TelecommunicationAddress')) {
-            dnbResponseMap.website = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.WebPageAddress[0].TelecommunicationAddress;
-        }
-        if (this.checkJsonNode(dnbApiResponse, 'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.TelephoneNumber.0.TelecommunicationNumber')) {
-            dnbResponseMap.phone_office = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.TelephoneNumber[0].TelecommunicationNumber;
-        }
-        if (this.checkJsonNode(dnbApiResponse, 'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationDetail.ControlOwnershipTypeText.$')) {
-            dnbResponseMap.ownership = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationDetail.ControlOwnershipTypeText.$;
-        }
-        if (this.checkJsonNode(dnbApiResponse, 'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.0.SalesRevenueAmount.0.$')) {
-            dnbResponseMap.annual_revenue = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview[0].SalesRevenueAmount[0].$;
-        }
-        if (this.checkJsonNode(dnbApiResponse, 'product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.EmployeeFigures.IndividualEntityEmployeeDetails.TotalEmployeeQuantity'))dnbResponseMap.employees = dnbApiResponse.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.EmployeeFigures.IndividualEntityEmployeeDetails.TotalEmployeeQuantity;
-        if (this.checkJsonNode(dnbApiResponse, 'product.primarySIC.IndustryCode.$'))dnbResponseMap.sic_code = dnbApiResponse.product.primarySIC.IndustryCode.$;
-        _.each(this.dataElements, function(dataElementName) {
-            //if value is set on accounts obj and same as dnb response then mark as dup
-            if (!_.isUndefined(accountsModel.get(dataElementName)) && accountsModel.get(dataElementName) !== '' &&
-                !_.isUndefined(dnbResponseMap[dataElementName]) && dnbResponseMap[dataElementName] !== '' &&
-                $.trim(accountsModel.get(dataElementName)) === $.trim(dnbResponseMap[dataElementName])) {
-                dataIndicatorMap[dataElementName] = 'dup';
-            } else if (!_.isUndefined(accountsModel.get(dataElementName)) && accountsModel.get(dataElementName) !== '' &&
-                !_.isUndefined(dnbResponseMap[dataElementName]) && dnbResponseMap[dataElementName] !== '' &&
-                $.trim(accountsModel.get(dataElementName)) !== $.trim(dnbResponseMap[dataElementName])) {
-                dataIndicatorMap[dataElementName] = 'upd';
-            }
-            //else value is set on accounts obj and different from dnb response then mark as upd
-        });
-        return dataIndicatorMap;
-    },
-
-    /**
-     * Import D&B data into accounts
-     */
-    importDNBData: function() {
-        var dnbCheckBox = this.$('.dnb_checkbox:checked');
-        var accountsModel = this.model;
-        // always import the duns_num
-        accountsModel.set('duns_num', this.duns_num);
-        accountsModel.save();
-        // iterate through checkboxes
-        // values being overriden stored in updatedData
-        // values that are newly being set store in newData
-        var updatedData = [];
-        var newData = [];
-        for (var checkBoxCounter = 0; checkBoxCounter < dnbCheckBox.length; checkBoxCounter++) {
-            var dnbPropertyName = dnbCheckBox[checkBoxCounter].id;
-            var dnbPropertyValue = $.trim(this.$('#' + dnbPropertyName).parent().next().next().contents().filter(function()
-            {
-                return this.nodeType === 3;
-            })[0].nodeValue);
-            //check if existing value is getting updated
-            if (!_.isUndefined(accountsModel.get(dnbPropertyName)) &&
-                accountsModel.get(dnbPropertyName) !== '') {
-                updatedData.push({propName: dnbPropertyName, propVal: dnbPropertyValue});
-            } else if (dnbPropertyValue !== '') {
-                newData.push({propName: dnbPropertyName, propVal: dnbPropertyValue});
-            }
-        }
-        //importing new data
-        if (newData.length > 0) {
-            this.updateAccountsModel(newData);
-        }
-        //update existing data
-        if (updatedData.length > 0) {
-            var confirmationMsgKey, confirmationMsgData;
-            //show a detailed warning message about the single data element being imported
-            if (updatedData.length === 1) {
-                var fieldName = app.lang.get(accountsModel.fields[updatedData[0].propName].vname, 'Accounts');
-                confirmationMsgKey = 'LBL_DNB_DATA_OVERRIDE_SINGLE_FIELD';
-                confirmationMsgData = {
-                    fieldName: fieldName.toLowerCase(),
-                    value: updatedData[0].propVal
-                };
-            } else {
-                var fieldList = [
-                    app.lang.get(accountsModel.fields[updatedData[0].propName].vname, 'Accounts').toLowerCase(),
-                    app.lang.get(accountsModel.fields[updatedData[1].propName].vname, 'Accounts').toLowerCase()
-                ];
-                if (updatedData.length === 2) {
-                    //list the two fields being imported
-                    confirmationMsgKey = 'LBL_DNB_DATA_OVERRIDE_TWO_FIELDS';
-                    confirmationMsgData = {
-                        fields: fieldList.join(' ' + app.lang.get('LBL_DNB_AND') + ' ')
-                    };
-                } else {
-                    //list the two first fields and append ` and other(s) field(s)`
-                    confirmationMsgKey = 'LBL_DNB_DATA_OVERRIDE_MULTIPLE_FIELDS';
-                    confirmationMsgData = {
-                        fields: fieldList.join(', ')
-                    };
+        _.each(frmtCompInfo, function(dataObj) {
+            var sugarColumnName = dataObj.dataName;
+            var dnbDataElement = this.getJsonNode(dnbApiResponse, accountsDD[sugarColumnName].json_path),
+                sugarDataElement = accountsModel.get(sugarColumnName);
+            if (dnbDataElement && sugarDataElement) {
+                dnbDataElement = $.trim(dnbDataElement),
+                    sugarDataElement = $.trim(sugarDataElement);
+                if (sugarDataElement == dnbDataElement) {
+                    dataObj.dataInd = 'dup';
+                } else if (sugarDataElement != dnbDataElement) {
+                    dataObj.dataInd = 'upd';
                 }
+            } else if (dnbDataElement) {
+                dataObj.dataInd = 'new';
             }
-            var confirmationMsgTpl = Handlebars.compile(app.lang.get(confirmationMsgKey));
-            app.alert.show('dnb-import-warning',
-                {
-                    level: 'confirmation',
-                    title: 'LBL_WARNING',
-                    messages: confirmationMsgTpl(confirmationMsgData),
-                    onConfirm: _.bind(this.updateAccountsModel, this, updatedData)
-                }
-            );
-        }
+        },this);
+        return frmtCompInfo;
     },
 
     /**
-     * Overrite existing data with new data
-     * @param  {Object} updatedData
-     */
-    updateAccountsModel: function(updatedData) {
-        var self = this;
-        var changedAttributes = {};
-        _.each(updatedData, function(updatedAttribute) {
-            changedAttributes[updatedAttribute.propName] = updatedAttribute.propVal;
-        });
-        self.model.save(changedAttributes);
-        self.context.loadData();
-        app.alert.show('dnb-import-success', {level: 'success', title: 'Success:', messages: app.lang.get('LBL_DNB_OVERRIDE_SUCCESS'), autoClose: true});
-    },
-
-    /**
-     * Checkbox change event handler
+     * Populates the stare and compare screen with duplicate / upload indicators
      */
     importCheckBox: function() {
-        var dnbCheckBoxes = this.$('.dnb_checkbox:checked');
-        if (!_.isUndefined(this.layout.getComponent('dashlet-toolbar').getField('dnb_import'))) {
-            if (dnbCheckBoxes.length > 0) {
+        var dnbCheckBoxes = $('.dnb_checkbox:checked');
+        if (dnbCheckBoxes.length > 0) {
+            if (!_.isUndefined(this.layout.getComponent('dashlet-toolbar').getField('dnb_import'))) {
                 this.layout.getComponent('dashlet-toolbar').getField('dnb_import').setDisabled(false);
                 this.layout.getComponent('dashlet-toolbar').getField('dnb_import').getFieldElement().removeClass('disabled');
                 this.layout.getComponent('dashlet-toolbar').getField('dnb_import').getFieldElement().removeClass('hide');
-            } else {
+            }
+        } else {
+            if (!_.isUndefined(this.layout.getComponent('dashlet-toolbar').getField('dnb_import'))) {
                 this.layout.getComponent('dashlet-toolbar').getField('dnb_import').setDisabled(true);
                 this.layout.getComponent('dashlet-toolbar').getField('dnb_import').getFieldElement().addClass('disabled');
             }
@@ -502,49 +329,30 @@
     },
 
     /**
-     * Check if a particular json path is valid
-     * @param {Object} obj
-     * @param {String} path
-     * @return {Boolean}
-     */
-    checkJsonNode: function(obj, path) {
-        var args = path.split('.');
-        for (var i = 0; i < args.length; i++) {
-            if (_.isNull(obj) || _.isUndefined(obj) || !obj.hasOwnProperty(args[i])) {
-                return false;
-            }
-            obj = obj[args[i]];
-        }
-        return true;
-    },
-
-    /**
-     * Populate the country drop down
+     * Populate the countries drop down
      * @return {Array}
      */
     populateCountry: function() {
-        var self = this;
         var countryOptionsArray = [];
-        $.each(self.countryList, function(index, value) {
+        _.each(this.countryList, function(element, index) {
             countryOptionsArray.push({
                 id: index,
-                text: self.countryList[index]
+                text: element
             });
         });
         return countryOptionsArray;
     },
 
     /**
-     * Populate the state drop down
-     * @param  {String} selectedCountry
+     * Populate the states drop down based on the country selected
+     * @param  {String} selectedCountry country iso-code
      * @return {Array}
      */
     populateState: function(selectedCountry) {
-        var self = this;
         var stateOptionsArray = [];
-        var state_arr = self.statesList[selectedCountry];
+        var state_arr = this.statesList[selectedCountry];
         if (selectedCountry !== 'Country' && !_.isUndefined(state_arr)) {
-            $.each(state_arr, function(index, value) {
+            _.each(state_arr, function(element, index) {
                 stateOptionsArray.push({
                     id: state_arr[index].code,
                     text: state_arr[index].name
@@ -555,18 +363,17 @@
     },
 
     /**
-     * Change state drop down based on country selection
+     * Changes the states drop down based on the country selection
      */
     changeState: function() {
         this.selectedCountry = this.$('#countryList').val();
         //disable match button
         this.$('#dnb-match-btn').addClass('disabled');
         this.$('#stateList').select2({
-            placeholder: 'Select a State',
+            placeholder: app.lang.get('LBL_DNB_SLCT_STATE'),
             data: this.populateState(this.selectedCountry)
         });
     },
-
 
     /**
      * validate if all the parameters for cleanse and match are available
@@ -574,75 +381,81 @@
      */
     validateMatchParams: function() {
         var accountName = this.model.get('name');
-        if (!_.isUndefined(accountName) &&
-            this.$('#countryList').val() !== 'Country' &&
-            this.$('#statesList').val() !== 'State') {
+        if (!_.isUndefined(accountName) && this.$('#countryList').val() !== 'Country' && this.$('#statesList').val() !== 'State') {
             this.$('#dnb-match-btn').removeClass('disabled');
         }
     },
 
     /**
-     * The D&B Direct API Cleanse Match API:
-     * Provides address standardization in two features:
-     * On-Demand Single Entity Resolution and On-Demand Address Cleanse & Update.
-     * The purpose of these features is to produce machine sortable mailing addresses
-     * that are optimized for accurate and quick delivery
-     * @param  {Object} evt
-     * invoke CleanseMatch POST API call
-     * api post data format
-     * {
-     *      "IncludeCleansedAndStandardizedInformationIndicator":"true", //mandatory
-     *      "CountryISOAlpha2Code":"US", //country code mandatory
-     *      "cleansematch":"true",//mandatory
-     *      "SubjectName":"ibm", //company name mandatory
-     *      "PrimaryTownName":"town name", //optional
-     *      "TerritoryName": "territory" //optional
-     * }
+     * Invoke CleanseMatch
+     * It is a D&B API the cleanse the company name addresses and provides a response
+     * with possible matches
+     * @param {Object} evt
      */
     invokeCMRequest: function(evt) {
         if (this.disposed) {
             return;
         }
-        //if match btn is not disabled then invoke cleanse match
-        if (!_.contains(evt.target.classList, 'disabled')) {
-            var self = this;
+        if (!$(evt.target).hasClass('disabled')) {
+            var self = this,
+                townName = this.model.get('billing_address_city'),
+                zipCode = this.model.get('billing_address_postalcode');
             var cmRequestParams = {
-                'IncludeCleansedAndStandardizedInformationIndicator': true, //mandatory
-                'CountryISOAlpha2Code': this.$('#countryList').val(), //country code mandatory
-                'cleansematch': 'true',//mandatory
-                'SubjectName': this.model.get('name'), //company name mandatory
-                // "PrimaryTownName":"town name", //optional
-                'TerritoryName': this.$('#stateList').val() //optional
+                'IncludeCleansedAndStandardizedInformationIndicator' : 'true', //mandatory
+                'CountryISOAlpha2Code' : this.$('#countryList').val(), //country code mandatory
+                'cleansematch' : 'true',//mandatory
+                'SubjectName' : this.model.get('name'), //company name mandatory
+                'TerritoryName' : this.$('#stateList').val() //optional
             };
+            if (townName) {
+                cmRequestParams.PrimaryTownName = townName;
+            }
+            if (zipCode) {
+                cmRequestParams.FullPostalCode = zipCode;
+            }
             self.template = app.template.get(self.name + '.dnb-cm-results');
             self.render();
             self.$('div#dnb-company-list-loading').show();
             self.$('div#dnb-company-list').hide();
             var dnbCMRequestURL = app.api.buildURL('connector/dnb/cmRequest', '', {},{});
-            var resultData;
-            var candidateData = {'companies': null, 'errmsg': null};
-            app.api.call('create', dnbCMRequestURL, {'qdata': cmRequestParams},{
+            var cmResults = {'companies': null, 'errmsg': null};
+            app.api.call('create', dnbCMRequestURL, {'qdata': cmRequestParams}, {
                 success: function(data) {
-                    try {
-                        resultdata = data;
-                        var resultIDPath = 'GetCleanseMatchResponse.TransactionResult.ResultID';
-                        if (self.checkJsonNode(resultdata, resultIDPath) &&
-                            resultdata.GetCleanseMatchResponse.TransactionResult.ResultID === 'CM000') {
-                            candidateData.companies = resultdata.GetCleanseMatchResponse.GetCleanseMatchResponseDetail.MatchResponseDetail.MatchCandidate;
-                            self.companyList = candidateData.companies;
-                        } else {
-                            candidateData.errmsg = resultdata.GetCleanseMatchResponse.TransactionResult.ResultText;
-                        }
-                    } catch (e) {
-                        candidateData.errmsg = app.lang.get('LBL_DNB_SVC_ERR');
+                    var responseCode = self.getJsonNode(data, self.compInfoConst.responseCode),
+                        responseMsg = self.getJsonNode(data, self.compInfoConst.responseMsg);
+                    if (responseCode && responseCode === self.responseCodes.success) {
+                        cmResults.companies = self.getJsonNode(data, self.compInfoConst.cmCandidates);
+                    } else {
+                        cmResults.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
                     }
-                    _.extend(self, candidateData);
-                    self.render();
-                    self.$('div#dnb-company-list-loading').hide();
-                    self.$('div#dnb-company-list').show();
+                    self.renderCompanyList(cmResults);
                 },
                 error: _.bind(self.checkAndProcessError, self)
             });
         }
+    },
+
+    /**
+     * Format confidence codes
+     * @param  {Array} dnbCompanyList
+     * @return {Array} dnbCompanyList formatted
+     */
+    formatConfidenceCodes: function(dnbCompanyList) {
+        _.each(dnbCompanyList, function(compObj) {
+            var confidenceCode = compObj.confidenceCode,
+                matchMeta = {};
+            if (confidenceCode >= 8) {
+                matchMeta.confClass = 'label-success';
+                matchMeta.confText = app.lang.get('LBL_DNB_HIGH_CONF');
+            } else if (confidenceCode === 7 || confidenceCode === 6) {
+                matchMeta.confClass = 'label-pending';
+                matchMeta.confText = app.lang.get('LBL_DNB_MED_CONF');
+            } else if (confidenceCode < 6) {
+                matchMeta.confClass = 'label-important';
+                matchMeta.confText = app.lang.get('LBL_DNB_LOW_CONF');
+            }
+            compObj.matchMeta = matchMeta;
+        },this);
+        return dnbCompanyList;
     }
-});
+})

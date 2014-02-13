@@ -3307,10 +3307,10 @@ $app_strings = array (
     'LBL_DNB_CI_SRCH' => 'D&B: Company Search',
     'LBL_DNB_CI_SRCH_HINT' => 'Enter Company Name To Search D&B',
 
-
     /*DNB Company Info Dashlet*/
     'LBL_DASHLET_COMPANY_INFO' => 'D&B: Import and Enrich',
     'LBL_DASHLET_COMPANY_INFO_DESC' => 'Enrich existing account with D&B Data. Requires D&B subscription.',
+    'LBL_DASHLET_COMPANY_INFO_LONG_DESC' => 'Keep your account information up-to-date with D&B Import and Enrich Feature.',
     'LBL_DNB_NAME'=>'Name',
     'LBL_DNB_DUNS'=>'DUNS',
     'LBL_DNB_ADDRESS'=>'Address',
@@ -3342,6 +3342,10 @@ $app_strings = array (
     'LBL_DNB_UPTODATE' => 'Up To Date',
     'LBL_DNB_RFR_LOADING' => 'D&B Refresh Check In Progress',
     'LBL_DNB_RFR' => 'Refresh',
+    'LBL_DNB_HIGH_CONF' => 'High Confidence',
+    'LBL_DNB_MED_CONF' => 'Medium Confidence',
+    'LBL_DNB_LOW_CONF' => 'Low Confidence',
+    'LBL_DNB_BACK_TO_IMPORT_ENRICH' => 'Back To Import & Enrich',
 
     /*DNB Competitors Dashlet*/
     'LBL_DNB_COMPETITORS'=>'D&B: Competitors',

@@ -26,14 +26,11 @@
  ********************************************************************************/
 ({
     plugins: ['Dashlet'],
-
     currentCompany: null,
-
     //dnb api response codes
     responseCodes: {
         success: 'CM000'
     } ,
-
     //mapping of sugar column names to dnb api response
     accountsMap: {
         'name': 'OrganizationName.OrganizationPrimaryName.0.OrganizationName.$', //account name
@@ -50,7 +47,6 @@
         'ownership': 'OrganizationDetail.ControlOwnershipTypeText.$',
         'sic_code' : 'primarySIC.IndustryCode.$'
     },
-
     //D&B Firmographic API product codes
     compInfoProdCD: {
         'lite' : 'CST_PRD_1',
@@ -465,8 +461,8 @@
             'case_fmt': true
         },
         'streetaddr': {
-            'json_path': 'StreetAddressLine.0.LineText',
-            'case_fmt': true
+            'json_path': 'PrimaryAddress.StreetAddressLine.0.LineText',
+            'case_fmt':true,
         },
         'town': {
             'json_path': 'PrimaryAddress.PrimaryTownName',
@@ -484,9 +480,7 @@
         }
 
     },
-
     accountsDD: null,
-
     //dnb append service json paths
     appendSVCPaths: {
         'responseCode' : 'OrderProductResponse.TransactionResult.ResultID',
@@ -495,7 +489,6 @@
         'product' : 'OrderProductResponse.OrderProductResponseDetail.Product.Organization',
         'duns' : 'OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber'
     },
-
     //common json paths
     commonJSONPaths: {
         'industryCode' : 'IndustryCode.$',
@@ -506,7 +499,6 @@
         'competitors' : 'FindCompetitorResponse.FindCompetitorResponseDetail.Competitor',
         'industryprofile' : 'OrderProductResponse.OrderProductResponseDetail.Product.IndustryProfile'
     },
-
     //common error codes with error labels
     commonErrorMap: {
         'ERROR_DNB_CONFIG' : 'LBL_DNB_NOT_CONFIGURED',
@@ -517,7 +509,6 @@
         'ERROR_DNB_SVC_ERR' : 'LBL_DNB_SVC_ERR',
         'ERROR_DNB_UNKNOWN' : 'LBL_DNB_UNKNOWN_ERROR'
     },
-
     //formatting functions map
     formatTypeMap: null,
 
@@ -591,11 +582,11 @@
         if (this.disposed) {
             return;
         }
-        var resultData = {'product': null, 'errmsg': null};
+        var resultData = { 'product': null, 'errmsg': null };
         app.logger.error('xhr code is:' + xhr.code);
         var errorCode = xhr.code;
         if (xhr.code) {
-            resultData = {'errmsg' : this.commonErrorMap[errorCode] };
+            resultData = { 'errmsg' : this.commonErrorMap[errorCode] };
         }
         this.template = app.template.get('dnb.dnb-error');
         _.extend(this, resultData);
@@ -604,14 +595,13 @@
         this.$('.showLessData').hide();
     },
 
-
     /**
      * Check if a particular json path is valid and returns value if valid else return nothing
      * @param {Object} obj
      * @param {String} path
      * @return {Array|Object|null}
      */
-    getJsonNode: function(obj, path)    {
+    getJsonNode: function(obj, path) {
         var args = path.split('.');
         for (var i = 0; i < args.length; i++) {
             if (_.isNull(obj) || _.isUndefined(obj) || !obj.hasOwnProperty(args[i])) {
@@ -631,7 +621,7 @@
         var srchResults = {'companies': null, 'errmsg': null};
         var dnbSearchUrl = app.api.buildURL('connector/dnb/search/' + searchString, '', {},{});
         var self = this;
-        app.api.call('READ', dnbSearchUrl, {},{
+        app.api.call('READ', dnbSearchUrl, {}, {
             success: function(data) {
                 var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode),
                     responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
@@ -660,7 +650,6 @@
             },
             error: _.bind(self.checkAndProcessError, self)
         });
-
     },
 
     /**
@@ -677,15 +666,16 @@
             'prod_code' : prod_code
         };
         var cacheKey = 'dnb:' + firmoParams.duns_num + ':' + firmoParams.prod_code;
-        if (app.cache.get(cacheKey)) {
-            var resultData = app.cache.get(cacheKey);
+        var cacheContent = app.cache.get(cacheKey);
+        if (cacheContent) {
+            var resultData = cacheContent;
             if (backToListLabel) {
                 resultData.backToListLabel = backToListLabel;
             }
             renderFunction.call(self, resultData);
         } else {
-            var dnbProfileUrl = app.api.buildURL('connector/dnb/firmographic', '', {},{});
-            var resultData = {'product': null, 'errmsg': null, 'backToListLabel': null};
+            var dnbProfileUrl = app.api.buildURL('connector/dnb/firmographic', '', {},{}),
+            resultData = {'product': null, 'errmsg': null, 'backToListLabel': null};
             app.api.call('create', dnbProfileUrl, {'qdata': firmoParams},{
                 success: function(data) {
                     var responseCode = self.getJsonNode(data, self.appendSVCPaths.responseCode),
@@ -1192,4 +1182,4 @@
             this.context.loadData();
         }
     }
-});
+})

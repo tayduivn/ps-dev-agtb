@@ -16,50 +16,56 @@
     {{str "LBL_DNB_SEARCH_LOADING"}}
 </div>
 <div id="dnb-company-list">
-    {{#if companies}}
+    {{#if dnbCompanyList.product}}
         <div>
             <ul class="unstyled listed" id="dnb_company_list">
-                {{#each companies}}
+                {{#each dnbCompanyList.product}}
                     <li>
-                        <a class="dnb-company-name" id="{{this.DUNSNumber}}">
-                            {{this.OrganizationPrimaryName.OrganizationName.$}}
+                    <div class='dnb-company-label'>
+                        <a class="dnb-company-name" id="{{this.dunsnum}}">
+                            {{this.companyname}}
                         </a>
-                        {{#if this.isDupe}}
-                            <span class="label pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
+                        {{#if this.locationtype}}
+                            <span class="label pull-right" data-placement="right">
+                                {{this.locationtype}}
+                            </span>
                         {{/if}}
-                        <br/>
-                        <div class="record-label dnb-company-list">
-                            {{#if this.StreetAddressLine.[0].LineText}}
-                                {{this.StreetAddressLine.[0].LineText}}
-                            {{/if}}
-                            {{#if this.PrimaryAddress.PrimaryTownName}}
-                                {{this.PrimaryAddress.PrimaryTownName}},
-                            {{/if}}
-
-                            {{#if this.PrimaryAddress.TerritoryOfficialName}}
-                                {{this.PrimaryAddress.TerritoryOfficialName}},
-                            {{/if}}
-
-                            {{#if this.PrimaryAddress.CountryISOAlpha2Code}}
-                                {{this.PrimaryAddress.CountryISOAlpha2Code}}
-                            {{/if}}
-                            {{#if this.FamilyTreeMemberRole.0.FamilyTreeMemberRoleText.$}}
-                                <span class="label pull-right" data-placement="right">
-                                    {{this.FamilyTreeMemberRole.0.FamilyTreeMemberRoleText.$}}
-                                </span>
-                            {{/if}}
-                        </div>
+                    </div>
+                    <div class="record-label dnb-company-list">
+                        {{#if this.streetaddr}}
+                            {{this.streetaddr}},
+                        {{/if}}
+                        {{#if this.town}}
+                            {{this.town}},
+                        {{/if}}
+                        {{#if this.territory}}
+                            {{this.territory}},
+                        {{/if}}
+                        {{#if this.ctrycd}}
+                            {{this.ctrycd}}
+                        {{/if}}
+                        {{#if this.isDupe}}
+                            <span class="label label-important pull-right" data-placement="right">
+                                {{str "LBL_DNB_DUPLICATE"}}
+                            </span>
+                        {{/if}}
+                    </div>
                     </li>
                 {{/each}}
             </ul>
         </div>
     {{else}}
         <aside class='create-no-data'>
-            {{#if errmsg}}
-                <em>{{errmsg}}</em>
+            {{#if dnbCompanyList.errmsg}}
+                <em>{{dnbCompanyList.errmsg}}</em>
             {{else}}
                 <em>{{str "LBL_DNB_NO_DATA"}}</em>
             {{/if}}
         </aside>
     {{/if}}
+    <div class="dnb-show-more">
+        <a class="backToImportEnrich">
+            {{str "LBL_DNB_BACK_TO_IMPORT_ENRICH"}}
+        </a>
+    </div>
 </div>

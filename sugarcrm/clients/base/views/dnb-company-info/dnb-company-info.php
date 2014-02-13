@@ -37,9 +37,16 @@ $viewdefs['base']['view']['dnb-company-info'] = array(
             array(
                 'type' => 'dashletaction',
                 "css_class" => "btn btn-primary disabled importDNBData hide",
-                "action" => "importDNBData",
+                "action" => "importAccountsData",
                 "label" => "LBL_DNB_IMPORT",
                 "name" => "dnb_import",
+            ),
+            array(
+                "type" => "dashletaction",
+                "css_class" => "dashlet-toggle btn btn-invisible minify",
+                "icon" => "icon-chevron-down",
+                "action" => "toggleMinify",
+                "tooltip" => "LBL_DASHLET_MAXIMIZE",
             ),
         )
     )
