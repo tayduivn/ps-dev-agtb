@@ -340,7 +340,8 @@
                 'include/javascript/sugar7/help.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/hbs-helpers.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/underscore-mixins.js' => 'include/javascript/sugar_grp7.min.js',
-            )
+                'include/javascript/sugar7/filter-analytics.js' => 'include/javascript/sugar_grp7.min.js',
+            ),
         );
 
     /**
