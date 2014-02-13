@@ -92,7 +92,8 @@ function override_value_to_string_recursive2($array_name, $value_name, $value, $
 		if(!$save_empty && empty($value)){
 			return;
 		}else{
-			return "\$$array_name" . "['$value_name'] = " . var_export($value, true) . ";\n";
+			$index = is_int($value_name)? '' : "'$value_name'";
+			return "\$$array_name" . "[$index] = " . var_export($value, true) . ";\n";
 		}
 	}
 }
