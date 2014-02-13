@@ -112,8 +112,8 @@ describe('EmailClientLaunch Plugin', function() {
         });
     });
 
-    describe('Set Related Email Option', function() {
-        it('should set a copy of the given model in email options', function() {
+    describe('Should Add Email Options', function() {
+        it('should set a copy of the related model in email options', function() {
             var createBeanStub = sinon.stub(app.data, 'createBean', function() {
                     var bean = new Backbone.Model();
                     bean.copy = function(copyFrom) {
@@ -127,22 +127,25 @@ describe('EmailClientLaunch Plugin', function() {
             model.set('id', '123');
             model.set('foo', 'bar');
             model.module = module;
-            field.setRelatedModelEmailOption(model);
+            field.addEmailOptions({related: model});
             expect(field.emailOptions.related).not.toBe(model);
             expect(field.emailOptions.related.toJSON()).toEqual(model.toJSON());
             createBeanStub.restore();
         });
 
         it('should not specify related on email options if model specified has no module', function() {
-            field.emailOptions = {};
-            field.setRelatedModelEmailOption(new Backbone.Model());
+            field.addEmailOptions({related: new Backbone.Model()});
             expect(field.emailOptions.related).toBeUndefined();
         });
 
-        it('should not specify related on email options if model not passed', function() {
-            field.emailOptions = {};
-            field.setRelatedModelEmailOption();
-            expect(field.emailOptions.related).toBeUndefined();
+        it('should overlay email options with new values, not replace the whole set', function() {
+            field.emailOptions = {foo: 'bar', bar: 'foo'};
+            field.addEmailOptions({bar: 'yes', baz: 'no'});
+            expect(field.emailOptions).toEqual({
+                foo: 'bar',
+                bar: 'yes',
+                baz: 'no'
+            });
         });
     });
 
@@ -329,14 +332,14 @@ describe('EmailClientLaunch Plugin', function() {
     describe('Setting email links on attach', function() {
         it('should set href to mailto link on render if client is external', function() {
             setUseSugarClient(false);
-            field.$el = $('<div><a href="#" data-email="true">Foo</a></div>');
+            field.$el = $('<div><a href="#" data-action="email">Foo</a></div>');
             field.trigger('render');
             expect(field.$('a').attr('href')).toEqual('mailto:');
         });
 
         it('should set href to void link on render if client is internal', function() {
             setUseSugarClient(true);
-            field.$el = $('<div><a href="#" data-email="true">Foo</a></div>');
+            field.$el = $('<div><a href="#" data-action="email">Foo</a></div>');
             field.trigger('render');
             expect(field.$('a').attr('href')).toEqual('javascript:void(0)');
         });

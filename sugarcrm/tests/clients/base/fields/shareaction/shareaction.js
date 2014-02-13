@@ -19,6 +19,7 @@ describe('Base.Field.Shareaction', function() {
 
     afterEach(function() {
         app.drawer = undefined;
+        SugarTest.testMetadata.dispose();
         field.dispose();
         field = null;
         app.cache.cutAll();

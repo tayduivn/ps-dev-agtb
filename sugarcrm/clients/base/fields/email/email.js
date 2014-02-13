@@ -41,7 +41,7 @@
         this._super("initialize", [options]);
 
         //set model as the related record when composing an email (copy is made by plugin)
-        this.emailOptions = {related: this.model};
+        this.addEmailOptions({related: this.model});
     },
 
     /**

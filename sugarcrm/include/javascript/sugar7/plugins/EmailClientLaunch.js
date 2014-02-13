@@ -16,7 +16,7 @@
         app.plugins.register('EmailClientLaunch', ['view', 'field'], {
 
             events: {
-                'click a[data-email]': 'launchEmailClient'
+                'click a[data-action="email"]': 'launchEmailClient'
             },
 
             /**
@@ -96,20 +96,37 @@
             },
 
             /**
-             * Set a copy of the related model on the email options
+             * Extends existing email options, adding the specified ones
+             * Also clones the related model passed so we don't modify the original
+             *
+             * @param options
+             */
+            addEmailOptions: function(options) {
+                this.emailOptions = this.emailOptions || {};
+                options = options || {};
+
+                if (options.related) {
+                    options.related = this._cloneRelatedModel(options.related);
+                }
+
+                this.emailOptions = _.extend({}, this.emailOptions, options);
+            },
+
+            /**
+             * Returns a copy of the related model for adding to email options
              *
              * @param model
              */
-            setRelatedModelEmailOption: function(model) {
+            _cloneRelatedModel: function(model) {
                 var relatedModel;
 
                 if (model && model.module) {
                     relatedModel = app.data.createBean(model.module);
                     relatedModel.copy(model);
                     relatedModel.set('id', model.id);
-                    this.emailOptions = this.emailOptions || {};
-                    this.emailOptions.related = relatedModel;
                 }
+
+                return relatedModel;
             },
 
             /**
@@ -257,7 +274,7 @@
             onAttach: function () {
                 this.on('render', function() {
                     var self = this,
-                        $emailLinks = this.$('a[data-email]');
+                        $emailLinks = this.$('a[data-action="email"]');
 
                     $emailLinks.each(function() {
                         var options = self._retrieveEmailOptions($(this)),

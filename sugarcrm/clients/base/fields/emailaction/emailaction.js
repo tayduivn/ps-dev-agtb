@@ -30,14 +30,12 @@
         var context = this.context.parent || this.context,
             parentModel = context.get('model');
 
-        this.emailOptions = {};
-
         if (this.def.set_recipient_to_parent) {
-            this.emailOptions.to_addresses = [{bean: parentModel}];
+            this.addEmailOptions({to_addresses: [{bean: parentModel}]});
         }
 
         if (this.def.set_related_to_parent) {
-            this.setRelatedModelEmailOption(parentModel);
+            this.addEmailOptions({related: parentModel});
         }
     }
 })

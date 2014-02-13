@@ -107,7 +107,7 @@
             body = this.shareTplBody(shareParams),
             bodyHtml = this.shareTplBodyHtml(shareParams);
 
-        this.emailOptions = _.extend({}, this.emailOptions, {
+        this.addEmailOptions({
             subject: subject,
             html_body: bodyHtml || body,
             text_body: body
