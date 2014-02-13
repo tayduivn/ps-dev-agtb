@@ -29,7 +29,6 @@
     // when our main email widget is overkill. For example, the first time
     // login wizard uses email-text. Note that the email mutated is the
     // primary_address email.
-    useSugarEmailClient: false,
     initialize: function(options) {
         options     = options || {};
         options.def = options.def || {};
@@ -37,7 +36,6 @@
             options.def.link = true;
         }
         app.view.Field.prototype.initialize.call(this, options);
-        this.useSugarEmailClient = (app.user.getPreference("use_sugar_email_client") === "true");
     },
    /**
      * Formats for display

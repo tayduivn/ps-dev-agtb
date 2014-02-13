@@ -30,7 +30,7 @@
     {{#if primary_address}}
         {{#if hasAnchor}}
             <div class="ellipsis_inline" rel="tooltip" title="{{email_address}}" data-placement="bottom">
-                <a {{#if ../../../useSugarEmailClient}}class="composeEmail" {{/if}}href="{{#if ../../../useSugarEmailClient}}javascript:void(0);{{else}}mailto:{{email_address}}{{/if}}">{{email_address}}</a>
+                <a href="javascript:void(0);" data-email="true" data-email-to="{{email_address}}">{{email_address}}</a>
             </div>
         {{else}}
             {{#if invalid_email}}

@@ -240,6 +240,13 @@
                 var optionsFromLink = $link.data() || {},
                     optionsFromController = this.emailOptions || {};
 
+                // allow the component implementing this plugin to override optionsFromLink
+                // allows us to pass more complex data like models, which are not easily
+                // passed via data- attributes.
+                if (_.isFunction(this._retrieveEmailOptionsFromLink)) {
+                    optionsFromLink = this._retrieveEmailOptionsFromLink($link);
+                }
+
                 return _.extend({}, optionsFromController, optionsFromLink);
             },
 
