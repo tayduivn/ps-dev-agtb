@@ -138,7 +138,6 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testDateFiscalQueryGroupBy($startDate, $timezone, $expected, $reportDef)
     {
-        $this->markTestIncomplete('Marking this skipped until Report module to be fixed.See RS-221/RS-107');
         // Setup Fiscal Start Date
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting('Forecasts', 'timeperiod_start_date', json_encode($startDate), 'base');
@@ -178,7 +177,6 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testDateTimeFiscalQueryGroupBy($startDate, $timezone, $expected, $reportDef)
     {
-        $this->markTestIncomplete('Marking this skipped until Report module to be fixed.See RS-221/RS-107');
         // Setup Fiscal Start Date
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting('Forecasts', 'timeperiod_start_date', json_encode($startDate), 'base');

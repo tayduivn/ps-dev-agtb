@@ -58,7 +58,6 @@ class Bug63673Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAggregateFunctions($reportDef, $create, $avg, $count, $max, $sum)
     {
-        $this->markTestIncomplete('Marking this skipped until Report module to be fixed.See RS-221/RS-107');
         call_user_func($create);
 
         $report = new Report($reportDef);
