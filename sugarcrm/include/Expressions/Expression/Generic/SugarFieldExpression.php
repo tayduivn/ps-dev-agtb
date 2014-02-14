@@ -80,7 +80,12 @@ class SugarFieldExpression extends GenericExpression
                 if (empty($this->context->$fieldName)) {
                     return false;
                 }
-                $date = $timedate->fromDbDate($this->context->$fieldName);
+                if ($timedate->check_matching_format($this->context->$fieldName, $timedate->get_date_time_format())) {
+                    $date = $timedate->fromUserDate($this->context->$fieldName);
+                } else {
+                    $date = $timedate->fromDbDate($this->context->$fieldName);
+                }
+
                 if (empty($date)) {
                     return false;
                 }
