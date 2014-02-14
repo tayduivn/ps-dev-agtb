@@ -116,7 +116,7 @@
         var id = this.layout.editingFilter.get('id');
 
         //Check the current filter definition
-        var filterDef = this.layout.getComponent('filter-rows').buildFilterDef();
+        var filterDef = this.layout.getComponent('filter-rows').buildFilterDef(true);
         //Apply the previous filter definition if something has changed meanwhile
         if (!_.isEqual(this.layout.editingFilter.get('filter_definition'), filterDef)) {
             this.layout.trigger('filter:apply', null, this.layout.editingFilter.get('filter_definition'));

@@ -679,7 +679,7 @@ describe("BaseFilterRowsView", function() {
                 operator: '$starts',
                 value: 'abc'
             });
-            filter = view.buildRowFilterDef($row);
+            filter = view.buildRowFilterDef($row, true);
             expected = {
                 description: {
                     '$starts': 'abc'
@@ -693,7 +693,7 @@ describe("BaseFilterRowsView", function() {
                 operator: '$starts',
                 value: 'abc'
             });
-            filter = view.buildRowFilterDef($row);
+            filter = view.buildRowFilterDef($row, true);
             expected = {
                 '$or': [
                     {
@@ -716,7 +716,7 @@ describe("BaseFilterRowsView", function() {
             $row = $('<div>').data({
                 name: 'address_street'
             });
-            filter = view.buildRowFilterDef($row);
+            filter = view.buildRowFilterDef($row, true);
             expect(filter).toBeUndefined();
 
             var validate = view.validateRow($row);
@@ -731,7 +731,7 @@ describe("BaseFilterRowsView", function() {
                 var validate = view.validateRow($row);
                 expect(validate).toBe(false);
 
-                filter = view.buildRowFilterDef($row, true);
+                filter = view.buildRowFilterDef($row);
                 //build ad-hoc filter
                 expected = {
                     '$or': [
@@ -759,7 +759,7 @@ describe("BaseFilterRowsView", function() {
                 var validate = view.validateRow($row);
                 expect(validate).toBe(false);
 
-                filter = view.buildRowFilterDef($row, true);
+                filter = view.buildRowFilterDef($row);
                 //build ad-hoc filter
                 expected = {
                     '$or': [
@@ -785,7 +785,7 @@ describe("BaseFilterRowsView", function() {
                     operator: '$in',
                     value: ''
                 });
-                filter = view.buildRowFilterDef($row, true);
+                filter = view.buildRowFilterDef($row);
                 expected = {
                     case_number: {
                         '$in': []
@@ -801,7 +801,7 @@ describe("BaseFilterRowsView", function() {
                 operator: '$in',
                 value: '1,20,35'
             });
-            filter = view.buildRowFilterDef($row);
+            filter = view.buildRowFilterDef($row, true);
             expected = {
                 case_number: {
                     '$in': ['1','20','35']
@@ -815,7 +815,7 @@ describe("BaseFilterRowsView", function() {
                 name: '$favorite',
                 isPredefinedFilter: true
             });
-            filter = view.buildRowFilterDef($row);
+            filter = view.buildRowFilterDef($row, true);
             expected = {
                 $favorite: ''
             };
@@ -833,7 +833,7 @@ describe("BaseFilterRowsView", function() {
                 valueField: fieldMock
             });
             view._updateFilterData($row);
-            filter = view.buildRowFilterDef($row);
+            filter = view.buildRowFilterDef($row, true);
             expected = {
                 assigned_user_id: 'seed_sarah_id'
             };
@@ -851,7 +851,7 @@ describe("BaseFilterRowsView", function() {
             $row.data({
                 operator: 'last_year'
             });
-            filter = view.buildRowFilterDef($row);
+            filter = view.buildRowFilterDef($row, true);
             expected = { date_created: { $dateRange: 'last_year' } };
             expect(filter).toEqual(expected);
         });

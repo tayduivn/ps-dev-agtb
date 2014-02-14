@@ -130,8 +130,8 @@
     saveFilter: function(name) {
         var self = this,
             obj = {
-                filter_definition: this.buildFilterDef(),
-                filter_template: this.buildFilterDef(true),
+                filter_definition: this.buildFilterDef(true),
+                filter_template: this.buildFilterDef(),
                 name: name,
                 module_name: this.moduleName
             },
@@ -354,8 +354,8 @@
             this.populateRow(row);
         }, this);
         //Set lastFilterDef because the filter has already been applied and fireSearch is called in _disposeFields
-        this.lastFilterDef = this.buildFilterDef();
-        this.lastFilterTemplate = this.buildFilterDef(true);
+        this.lastFilterDef = this.buildFilterDef(true);
+        this.lastFilterTemplate = this.buildFilterDef();
     },
 
     /**
@@ -668,8 +668,8 @@
      * Check each row, builds the filter definition and trigger the filtering
      */
     fireSearch: _.debounce(function() {
-        var filterDef = this.buildFilterDef(),
-            filterTemplate = this.buildFilterDef(true),
+        var filterDef = this.buildFilterDef(true),
+            filterTemplate = this.buildFilterDef(),
             defHasChanged = !_.isEqual(this.lastFilterDef, filterDef),
             templateHasChanged = !_.isEqual(this.lastFilterTemplate, filterTemplate);
         // Save the current edit state
@@ -696,8 +696,8 @@
             return;
         }
         this.layout.editingFilter.set({
-            'filter_definition': filterDef || this.buildFilterDef(),
-            'filter_template': templateDef || this.buildFilterDef(true)
+            'filter_definition': filterDef || this.buildFilterDef(true),
+            'filter_template': templateDef || this.buildFilterDef()
         });
         var filter = this.layout.editingFilter.toJSON();
         // Make sure the filter-actions view is rendered, otherwise it will override the name with an empty name.
@@ -709,17 +709,18 @@
     },
 
     /**
-     * Build filter definition for all valid rows unless isFilterTemplate is true.
+     * Build filter definition for all rows.
      *
-     * @param {Boolean} isFilterTemplate Set true to retrieve the entire field template.
+     * @param {Boolean} onlyValidRows Set `true` to retrieve only filter
+     *  definition of valid rows, `false` to retrieve the entire field template.
      * @return {Array} Filter definition.
      */
-    buildFilterDef: function(isFilterTemplate) {
+    buildFilterDef: function(onlyValidRows) {
         var $rows = this.$('[data-filter=row]'),
             filter = [];
 
         _.each($rows, function(row) {
-            var rowFilter = this.buildRowFilterDef($(row), isFilterTemplate);
+            var rowFilter = this.buildRowFilterDef($(row), onlyValidRows);
 
             if (rowFilter) {
                 filter.push(rowFilter);
@@ -730,17 +731,16 @@
     },
 
     /**
-     * Runs validation on this row and build filter definition
-     * when validation passes unless entire is true.
-     * Otherwise, it will return entire filter definition.
+     * Build filter definition for this row.
      *
-     * @param {Element} $row the related row.
-     * @param {Boolean} isFilterTemplate Set true to retrieve the entire displaying filters.
+     * @param {jQuery} $row The related row.
+     * @param {Boolean} onlyIfValid Set `true` to validate the row and return
+     * `undefined` if not valid, or `false` to build the definition anyway.
      * @return {Object} Filter definition for this row.
      */
-    buildRowFilterDef: function($row, isFilterTemplate) {
+    buildRowFilterDef: function($row, onlyIfValid) {
         var data = $row.data();
-        if (!isFilterTemplate && !this.validateRow($row)) {
+        if (onlyIfValid && !this.validateRow($row)) {
             return;
         }
         var operator = data['operator'],
