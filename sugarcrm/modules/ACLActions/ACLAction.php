@@ -293,12 +293,16 @@ class ACLAction  extends SugarBean
         if(!empty($type)){
             $additional_where .= " AND acl_actions.acltype = '$type' ";
         }
-        $query = "SELECT acl_actions.*, acl_roles_actions.access_override
-                    FROM acl_actions
-                    LEFT JOIN acl_roles_users ON acl_roles_users.user_id = '$user_id' AND  acl_roles_users.deleted = 0
-                    LEFT JOIN acl_roles_actions ON acl_roles_actions.role_id = acl_roles_users.role_id AND acl_roles_actions.action_id = acl_actions.id AND acl_roles_actions.deleted=0
-                    WHERE acl_actions.deleted=0 $additional_where ORDER BY category,name";
-        $result = $db->query($query);
+        $query = "SELECT acl_actions.id, acl_actions.name, acl_actions.category, acl_actions.acltype, acl_actions.aclaccess, tt.access_override
+            FROM acl_actions
+            LEFT JOIN (
+            SELECT acl_roles_users.user_id, acl_roles_actions.action_id, acl_roles_actions.access_override
+            FROM acl_roles_users
+            LEFT JOIN acl_roles_actions
+            ON acl_roles_actions.role_id = acl_roles_users.role_id AND acl_roles_actions.deleted=0
+            WHERE acl_roles_users.user_id ='$user_id' AND acl_roles_users.deleted =0) AS tt
+            ON tt.action_id = acl_actions.id
+            WHERE acl_actions.deleted=0 $additional_where ORDER BY acl_actions.category, acl_actions.name";        $result = $db->query($query);
         $selected_actions = array();
         while($row = $db->fetchByAssoc($result, FALSE) ){
             $acl = BeanFactory::getBean('ACLActions');

@@ -70,6 +70,11 @@ $dictionary['acl_roles_actions'] = array (
 			'type' => 'index',
 			'fields' => array ('action_id')
 		),
+        array (
+            'name' => 'idx_del_override',
+            'type' => 'index',
+            'fields' => array ('role_id', 'deleted', 'action_id', 'access_override')
+        ),
 		 array('name' => 'idx_aclrole_action', 'type'=>'alternate_key', 'fields'=>array('role_id','action_id'))
 	),
 	'relationships' => array ('acl_roles_actions' => array('lhs_module'=> 'ACLRoles', 'lhs_table'=> 'acl_roles', 'lhs_key' => 'id',
