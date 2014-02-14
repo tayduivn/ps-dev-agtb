@@ -222,10 +222,49 @@
     _getRelateId: function () {
         return this.model.get(this.def.id_name);
     },
-    format: function (value) {
+
+    /**
+     * {@inheritDoc}
+     *
+     * When there is no value set and we are in a create view, we try to check
+     * if the parent context module matches this relate field. If it matches,
+     * we pre-populate with that data.
+     *
+     * FIXME: the relate field should use this method to pre-populate the
+     * values without touching the model or else we need to use silent to
+     * prevent the warning of unsaved changes, consequently we can't bind
+     * events like `change` to it.
+     *
+     * TODO: the model might not have the field that we are relating to. On
+     * those corner cases, we need to fetch from the server that information.
+     *
+     * @return {String} This field's value. Need to change to object with all
+     *   data that we need to render the field.
+     */
+    format: function(value) {
+
+        var parentCtx = this.context && this.context.parent,
+            setFromCtx;
+
+        setFromCtx = !value && parentCtx &&
+            this.view instanceof app.view.views.BaseCreateView &&
+            parentCtx.get('module') === this.def.module &&
+            this.module !== this.def.module;
+
+        if (setFromCtx) {
+            var model = parentCtx.get('model');
+            // FIXME we need a method to prevent us from doing this
+            this.def.auto_populate = true;
+            // FIXME the setValue receives a model but not a backbone model...
+            this.setValue(model.toJSON());
+            // FIXME we need to iterate over the populated_ that is causing
+            // unsaved warnings when doing the auto populate.
+        }
+
         this._buildRoute();
         return value;
     },
+
     /**
      * Relate takes care of its unformating
      * stub this to return the unformated value off the model
