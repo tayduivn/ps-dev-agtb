@@ -142,7 +142,7 @@ class RS266Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAddColumn($columnDef, $expected)
     {
-        $this->db->query("CREATE TABLE {$this->tableName} (id int, somename varchar)");
+        $this->db->query("CREATE TABLE {$this->tableName} (id int NOT NULL, somename varchar NOT NULL)");
 
         $result = $this->db->addColumn($this->tableName, $columnDef);
         $this->assertNotEmpty($result);
@@ -219,7 +219,7 @@ class RS266Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAddColumnWhenIdentityAlreadyExistsInTable($columnDef, $expected)
     {
-        $this->db->query("CREATE TABLE {$this->tableName} (id int, somename varchar, somenumber INT IDENTITY(1,1))");
+        $this->db->query("CREATE TABLE {$this->tableName} (id int NOT NULL, somename varchar NOT NULL, somenumber INT NOT NULL IDENTITY(1,1))");
 
         $result = $this->db->addColumn($this->tableName, $columnDef);
         $this->assertNotEmpty($result);
@@ -300,7 +300,7 @@ class RS266Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testDropColumn($columnDef, $expected)
     {
-        $this->db->query("CREATE TABLE {$this->tableName} (id int, somename varchar, number_nonidentity INT, number_identity INT IDENTITY(1,1))");
+        $this->db->query("CREATE TABLE {$this->tableName} (id int NOT NULL, somename varchar NOT NULL, number_nonidentity INT NOT NULL, number_identity INT NOT NULL IDENTITY(1,1))");
 
         $sql = $this->db->dropColumnSQL($this->tableName, $columnDef);
         $result = $this->db->query($sql, true, "Error deleting column(s) on table: {$this->tableName}:");
@@ -336,7 +336,7 @@ class RS266Test extends Sugar_PHPUnit_Framework_TestCase
     public function testAlterColumnWhenChangeOnlyDataTypeWithoutIdentity()
     {
         // create test table
-        $this->db->query("CREATE TABLE {$this->tableName} (id int PRIMARY KEY, somename varchar, number INT IDENTITY(1,1))");
+        $this->db->query("CREATE TABLE {$this->tableName} (id int NOT NULL PRIMARY KEY, somename varchar NOT NULL, number INT NOT NULL IDENTITY(1,1))");
         $demoData = array(
             array(
                 'id' => 4353253,
@@ -410,7 +410,7 @@ class RS266Test extends Sugar_PHPUnit_Framework_TestCase
     public function testAlterColumnWhenDropIdentity()
     {
         // create test table
-        $this->db->query("CREATE TABLE {$this->tableName} (id int PRIMARY KEY, somename varchar, number INT IDENTITY(1,1))");
+        $this->db->query("CREATE TABLE {$this->tableName} (id int NOT NULL PRIMARY KEY, somename varchar NOT NULL, number INT NOT NULL IDENTITY(1,1))");
         $demoData = array(
             array(
                 'id' => 4353253,
@@ -486,7 +486,7 @@ class RS266Test extends Sugar_PHPUnit_Framework_TestCase
     public function testAlterColumnWhenCreateIdentity()
     {
         // create test table
-        $this->db->query("CREATE TABLE {$this->tableName} (id int PRIMARY KEY, somename varchar, number INT)");
+        $this->db->query("CREATE TABLE {$this->tableName} (id int NOT NULL PRIMARY KEY, somename varchar NOT NULL, number INT NOT NULL)");
         $demoData = array(
             array(
                 'id' => 4353253,
@@ -566,7 +566,7 @@ class RS266Test extends Sugar_PHPUnit_Framework_TestCase
     public function testAlterColumnWhenCreateIdentityOnTableWithIdentity()
     {
         // create test table
-        $this->db->query("CREATE TABLE {$this->tableName} (id int PRIMARY KEY, somename varchar, number INT, number_identity INT IDENTITY(1,1))");
+        $this->db->query("CREATE TABLE {$this->tableName} (id int NOT NULL PRIMARY KEY, somename varchar NOT NULL, number INT NOT NULL, number_identity INT NOT NULL IDENTITY(1,1))");
         $demoData = array(
             array(
                 'id' => 4353253,
@@ -738,7 +738,7 @@ class RS266Test extends Sugar_PHPUnit_Framework_TestCase
     public function testAlterColumnAddDefaultValue(array $def, array $expected)
     {
         // create test table
-        $this->db->query("CREATE TABLE {$this->tableName} (id int PRIMARY KEY, somename varchar, number INT, number_identity INT IDENTITY(1,1))");
+        $this->db->query("CREATE TABLE {$this->tableName} (id int NOT NULL PRIMARY KEY, somename varchar NOT NULL, number INT NOT NULL, number_identity INT NOT NULL IDENTITY(1,1))");
 
         $result = $this->db->alterColumn($this->tableName, $def);
 
@@ -805,7 +805,7 @@ class RS266Test extends Sugar_PHPUnit_Framework_TestCase
     public function testAlterColumnDropDefaultValue(array $def, array $expected)
     {
         // create test table
-        $this->db->query("CREATE TABLE {$this->tableName} (id int PRIMARY KEY, somename nvarchar DEFAULT 'abc', number INT DEFAULT 200, number_identity INT IDENTITY(1,1))");
+        $this->db->query("CREATE TABLE {$this->tableName} (id int NOT NULL PRIMARY KEY, somename nvarchar NOT NULL DEFAULT 'abc', number INT NOT NULL DEFAULT 200, number_identity INT NOT NULL IDENTITY(1,1))");
 
         $result = $this->db->alterColumn($this->tableName, $def);
 
