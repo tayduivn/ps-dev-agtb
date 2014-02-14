@@ -302,7 +302,8 @@ class ACLAction  extends SugarBean
             ON acl_roles_actions.role_id = acl_roles_users.role_id AND acl_roles_actions.deleted=0
             WHERE acl_roles_users.user_id ='$user_id' AND acl_roles_users.deleted =0) AS tt
             ON tt.action_id = acl_actions.id
-            WHERE acl_actions.deleted=0 $additional_where ORDER BY acl_actions.category, acl_actions.name";        $result = $db->query($query);
+            WHERE acl_actions.deleted=0 $additional_where ORDER BY acl_actions.category, acl_actions.name";
+        $result = $db->query($query);
         $selected_actions = array();
         while($row = $db->fetchByAssoc($result, FALSE) ){
             $acl = BeanFactory::getBean('ACLActions');
