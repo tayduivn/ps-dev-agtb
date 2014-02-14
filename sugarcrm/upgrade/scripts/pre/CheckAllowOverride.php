@@ -55,6 +55,8 @@ class SugarUpgradeCheckAllowOverride extends UpgradeScript
         $basePath = parse_url($this->upgrader->config['site_url'], PHP_URL_PATH);
         if(empty($basePath)) $basePath = '/';
         $htaccess_test = <<<EOT
+
+# Upgrader test addition
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase {$basePath}
