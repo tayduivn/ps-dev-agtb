@@ -748,6 +748,10 @@
             name = data['id_name'] || data['name'],
             filter = {};
 
+        if (_.isEmpty(name)) {
+            return;
+        }
+
         if (data.isPredefinedFilter || !this.fieldList) {
             filter[name] = '';
             return filter;
@@ -773,7 +777,13 @@
                     // IN/NOT IN require an array
                     filter[name] = {};
                     //If value is not an array, we split the string by commas to make it an array of values
-                    filter[name][operator] = _.isArray(value) ? value : (value + '').split(',');
+                    if (_.isArray(value)) {
+                        filter[name][operator] = value;
+                    } else if (!_.isEmpty(value)) {
+                        filter[name][operator] = (value + '').split(',');
+                    } else {
+                        filter[name][operator] = [];
+                    }
                 } else {
                     filter[name] = {};
                     filter[name][operator] = value;

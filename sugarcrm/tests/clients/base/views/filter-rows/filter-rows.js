@@ -778,6 +778,21 @@ describe("BaseFilterRowsView", function() {
                 };
                 expect(filter).toEqual(expected);
             });
+
+            it('should return an empty array if operator is $in and value is an empty string', function() {
+                $row = $('<div>').data({
+                    name: 'case_number',
+                    operator: '$in',
+                    value: ''
+                });
+                filter = view.buildRowFilterDef($row, true);
+                expected = {
+                    case_number: {
+                        '$in': []
+                    }
+                };
+                expect(filter).toEqual(expected);
+            });
         });
 
         it('should split values if operator is $in and value is a string', function() {
@@ -794,6 +809,7 @@ describe("BaseFilterRowsView", function() {
             };
             expect(filter).toEqual(expected);
         });
+
         it('should make an exception for predefined filters', function() {
             $row = $('<div>').data({
                 name: '$favorite',
