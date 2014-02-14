@@ -34,11 +34,11 @@
      */
     initialize: function (options) {
         var createViewEvents = {};
-        createViewEvents['click a[name=' + this.saveButtonName + ']'] = 'save';
+        createViewEvents['click a[name=' + this.saveButtonName + ']:not(.disabled)'] = 'save';
         createViewEvents['click a[name=' + this.cancelButtonName + ']'] = 'cancel';
-        createViewEvents['click a[name=' + this.saveAndCreateButtonName + ']'] = 'saveAndCreate';
-        createViewEvents['click a[name=' + this.saveAndViewButtonName + ']'] = 'saveAndView';
-        createViewEvents['click a[name=' + this.restoreButtonName + ']'] = 'restoreModel';
+        createViewEvents['click a[name=' + this.saveAndCreateButtonName + ']:not(.disabled)'] = 'saveAndCreate';
+        createViewEvents['click a[name=' + this.saveAndViewButtonName + ']:not(.disabled)'] = 'saveAndView';
+        createViewEvents['click a[name=' + this.restoreButtonName + ']:not(.disabled)'] = 'restoreModel';
         this.events = _.extend({}, this.events, createViewEvents);
         this.plugins = _.union(this.plugins || [], [
             'FindDuplicates'
