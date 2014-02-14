@@ -18,48 +18,44 @@
  */
 
 {{foreach from=$class.requires item='require'}}
-require_once('{{$require}}');
+require_once '{{$require}}';
 {{/foreach}}
 
 class {{$class.name}}_sugar extends {{$class.extends}} {
-	var $new_schema = true;
-	var $module_dir = '{{$class.name}}';
-	var $object_name = '{{$class.name}}';
-	var $table_name = '{{$class.table_name}}';
-	var $importable = {{if $class.importable}}true{{else}}false{{/if}};
-	//BEGIN SUGARCRM flav=com ONLY
-	var $disable_row_level_security = true ; // to ensure that modules created and deployed under CE will continue to function under team security if the instance is upgraded to PRO
-	//END SUGARCRM flav=com ONLY
-	{{foreach from=$class.fields key='field' item='def'}}
-	var ${{$field}};
-	{{/foreach}}
-	//BEGIN SUGARCRM flav=pro ONLY
-	{{if empty($class.team_security)}}
-	var $disable_row_level_security = true;
-	{{/if}}
-	//END SUGARCRM flav=pro ONLY
+    public $new_schema = true;
+    public $module_dir = '{{$class.name}}';
+    public $object_name = '{{$class.name}}';
+    public $table_name = '{{$class.table_name}}';
+    public $importable = {{if $class.importable}}true{{else}}false{{/if}};
+{{foreach from=$class.fields key='field' item='def'}}
+    public ${{$field}};
+{{/foreach}}
+    {{if empty($class.team_security)}}
+    public $disable_row_level_security = true;
+    {{/if}}
 
-	/**
-	 * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+    /**
+     * This is a depreciated method, please start using __construct() as this
+     * method will be removed in a future version.
      *
      * @see __construct
      * @depreciated
-	 */
-	public function {{$class.name}}_sugar(){
-		self::__construct();
-	}
+     */
+    public function {{$class.name}}_sugar(){
+        self::__construct();
+    }
 
-	public function __construct(){
-		parent::__construct();
-	}
-	
-	{{if $class.acl}}
-public function bean_implements($interface){
-		switch($interface){
-			case 'ACL': return true;
-		}
-		return false;
-}
-	{{/if}}
-	
+    public function __construct(){
+        parent::__construct();
+    }
+    
+{{if $class.acl}}
+    public function bean_implements($interface){
+        switch($interface){
+            case 'ACL': return true;
+        }
+        return false;
+    }
+{{/if}}
+    
 }
