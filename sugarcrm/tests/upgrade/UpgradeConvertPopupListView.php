@@ -61,7 +61,7 @@ class UpgradeConvertPopupListView extends UpgradeTestCase
                 'label' => 'LBL_DESCRIPTION',
                 'sortable' => false,
                 'width' => '10%',
-                // Name specially omitted
+                // Name intentionally omitted.
                 'default' => true,
             ),
         );
@@ -88,7 +88,7 @@ class UpgradeConvertPopupListView extends UpgradeTestCase
 
     public function testConvertPopupListFieldsToSidecarFormat()
     {
-        $script = $this->upgrader->getScript('post', '4_ConvertPopupListView');
+        $script = $this->upgrader->getScript('post', '7_ConvertPopupListView');
         $script->from_version = 6.7;
         $script->to_version = 7.2;
         $script->run();

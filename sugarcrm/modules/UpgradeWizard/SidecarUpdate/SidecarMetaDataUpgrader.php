@@ -125,6 +125,7 @@ class SidecarMetaDataUpgrader
             MB_SEARCHVIEW             => 'searchdefs',
             MB_QUICKCREATE            => 'quickcreatedefs',
             MB_CONVERT                => 'convertdefs',
+            MB_POPUPLIST              => 'popupdefs',
         )
     );
 
@@ -156,6 +157,7 @@ class SidecarMetaDataUpgrader
         'quickcreate'        => 'Quickcreate',
         'menu'               => 'Menu',
         'convert'            => 'LeadConvert',
+        'popuplist'          => 'SelectionList',
     );
 
     /**
@@ -755,6 +757,10 @@ class SidecarMetaDataUpgrader
 
         if (strpos($filename, 'convert') !== false) {
             return 'convert';
+        }
+
+        if (strpos($filename, 'popup') !== false) {
+            return 'popuplist';
         }
 
         if (strpos($filename, 'search') !== false) {
