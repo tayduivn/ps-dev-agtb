@@ -118,11 +118,14 @@ table.dataTable {
         .calcWidth(~"45% - 2px");
       }
     }
-
-    .label-module {
-      width: 32px;
-      height: 32px;
-      margin-bottom: 2px;
+    &[data-type="avatar"] {
+      .label-module {
+        height: 27px;
+        width: 27px;
+        font-size: 11px;
+        line-height: 11px;
+        padding: 3px 0 0 4px;
+      }
     }
     .btn-toolbar {
       margin: -5px 0 -10px;
@@ -133,7 +136,6 @@ table.dataTable {
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
     input[type="text"] {
       min-height: 28px;
       width: 100%;

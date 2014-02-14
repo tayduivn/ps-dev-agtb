@@ -31,7 +31,7 @@
         <div class="btn-group">
             <a id="userTab" data-toggle="dropdown" href="javascript:void(0)" role="button" class="btn btn-invisible btn-link dropdown-toggle" rel="tooltip" data-placement="bottom" title="{{userName}}" track="click:userActions">
                 {{#if pictureUrl}}
-                    <img src="{{pictureUrl}}" alt="{{userName}}" class="avatar">
+                    <img src="{{pictureUrl}}" alt="{{userName}}" class="avatar avatar-btn">
                 {{else}}
                     <i class="icon-user icon-3X"></i>
                 {{/if}}
@@ -41,7 +41,7 @@
                 <ul role="menu" id="fullmenu">
                     {{#each menulist}}
                         {{#if css_class}}<li class="{{css_class}}">{{else}}<li>{{/if}}<a href="{{route}}" {{#unless submenu}}{{#if openwindow}}target="_blank"{{/if}}{{/unless}} track="click:userAction-{{label}}">
-                            {{#if img_url}}<img src="{{img_url}}" alt="{{../../userName}}" class="avatar">{{else}}{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{/if}}{{str label}}</a>
+                            {{#if img_url}}<img src="{{img_url}}" alt="{{../../userName}}" class="avatar avatar-sm">{{else}}{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{/if}}{{str label}}</a>
                             {{#if submenu}}
                             <button href="javascript:void(0)" data-action="link" class="btn btn-invisible dropdown-submenu">
                                 <i class="icon-caret-down"></i>

@@ -237,14 +237,14 @@
         margin: 0 12px 0 0;
         text-align: center;
       }
-      .avatar.avatar42 {
+      .avatar {
         text-align: center;
         margin-bottom: 12px;
       }
-      .pull-left.avatar42 {
+      .pull-left.avatar {
         font-size: 0;
         line-height: 0;
-        margin-left: -54px;
+        margin-left: -44px;
       }
       .icon-stack {
         font-size: 21px;
@@ -259,12 +259,14 @@
         margin: 3px 12px 12px 0;
       }
       p {
-        padding-left: 54px;
-        margin-bottom: 10px;
+        padding-left: 44px;
+        margin-bottom: 4px;
         font-size: @baseFontSize + 2px;
+        line-height: 16px;
       }
       .details {
-        padding-left: 54px;
+        padding-left: 44px;
+        line-height: 14px;
       }
       .progress,
       .progress .bar {
@@ -336,7 +338,7 @@
     }
   }
 
-  table.dataTable > tbody > tr:last-child td {
+  .dataTable tr:last-child td {
     border-bottom-width: 0;
     &:first-child {
       .border-bottom-left-radius(3px);
@@ -421,9 +423,8 @@
     padding: 0;
     margin: 0;
   }
-  img.avatar {
+  .avatar {
     float: left;
-    height: 40px;
     width: auto;
     margin-right: 8px;
   }

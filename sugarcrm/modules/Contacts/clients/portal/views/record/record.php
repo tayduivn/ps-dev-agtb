@@ -23,8 +23,7 @@ $viewdefs['Contacts']['portal']['view']['record'] = array(
                 array(
                     'name' => 'picture',
                     'type' => 'avatar',
-                    'width' => 42,
-                    'height' => 42,
+                    'size' => 'large',
                     'dismiss_label' => true,
                 ),
                 array(
