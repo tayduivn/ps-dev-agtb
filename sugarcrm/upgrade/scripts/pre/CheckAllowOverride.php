@@ -60,16 +60,16 @@ class SugarUpgradeCheckAllowOverride extends UpgradeScript
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase {$basePath}
-    RewriteRule ^itest.txt$ install_test.txt [N,QSA]
+    RewriteRule ^itest.test$ install_test.test [N,QSA]
 </IfModule>
 EOT;
         if(!empty($old_htaccess)) {
             $htaccess_test = $old_htaccess.$htaccess_test;
         }
         file_put_contents(".htaccess", $htaccess_test);
-        file_put_contents("install_test.txt", "SUCCESS");
-        $res = file_get_contents($this->upgrader->config['site_url']."/itest.txt");
-        unlink("install_test.txt");
+        file_put_contents("install_test.test", "SUCCESS");
+        $res = file_get_contents($this->upgrader->config['site_url']."/itest.test");
+        unlink("install_test.test");
         if(!empty($old_htaccess)) {
             file_put_contents(".htaccess", $old_htaccess);
         } else {
