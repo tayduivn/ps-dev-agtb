@@ -25,8 +25,8 @@ describe("Filter Actions View", function () {
         expect(viewSetFilterStub).toHaveBeenCalled();
         expect(viewSetFilterStub.getCall(0).args).toEqual([name]);
     });
-    it('should call toggleRowState on filter:toggle:savestate', function() {
-       var stub = sinon.stub(view,'toggleRowState', function(){});
+    it('should call toggleSave on filter:toggle:savestate', function() {
+       var stub = sinon.stub(view,'toggleSave');
        view.initialize(view.options);
        parentLayout.trigger('filter:toggle:savestate');
        expect(stub).toHaveBeenCalled();
@@ -70,14 +70,8 @@ describe("Filter Actions View", function () {
             expect(layoutTriggerStub).toHaveBeenCalledWith('filter:toggle:savestate');
         });
         it('should save edit state when filter definition is valid', function() {
-            view.rowState = true;
             view.filterNameChanged();
             expect(saveFilterEditStateStub).toHaveBeenCalled();
-        });
-        it('should not save edit state when filter definition is not valid', function() {
-            view.rowState = false;
-            view.filterNameChanged();
-            expect(saveFilterEditStateStub).not.toHaveBeenCalled();
         });
     });
 
