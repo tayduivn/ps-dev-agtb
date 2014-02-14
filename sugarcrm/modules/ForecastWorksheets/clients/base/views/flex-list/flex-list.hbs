@@ -14,11 +14,11 @@
 }}
 {{#each meta.panels}}
 <div class="flex-list-view-content">
-<table class="table table-striped dataTable">
+<table class="table table-striped dataTable{{#has "ReorderableColumns" ../plugins}} reorderable-columns{{/has}}">
     <thead>
     <tr>
         {{#each ../leftColumns}}
-        <th data-fieldname="{{name}}">
+        <th{{#if name}} data-fieldname="{{name}}"{{/if}}>
             <span>
                 {{field ../../this template="list-header"}}
             </span>
@@ -26,10 +26,29 @@
         {{/each}}
         {{#each ../_fields.visible}}
             <th {{#if this.width}}width="{{this.width}}" {{/if}}class="{{#isSortable ../../module this}}sorting{{#eq ../../../orderBy.field name}}_{{../../../../orderBy.direction}}{{/eq}} orderBy{{name}}{{/isSortable}}"
-                data-fieldname="{{name}}" data-orderby="{{orderBy}}">
-                <span>
-                    {{str label ../../module}}
-                </span>
+                {{#if name}} data-fieldname="{{name}}"{{/if}} data-orderby="{{orderBy}}">
+                {{#has "ReorderableColumns" ../../plugins}}
+                {{! Insert a <div> around all the inner element of the column.
+                    This is a fix for firefox because the <th> does not support
+                    a relative positioning.}}
+                <div>
+                    <div class="th-droppable-placeholder" data-droppableindex="{{@index}}"></div>
+                    {{! Insert a <div> around the <span> containing the field label.
+                        That <div> is the draggable element.
+                        This is a fix for firefox because dragging a <th> is not
+                        supported.}}
+                    <div{{#has "ReorderableColumns" ../../../plugins}} data-draggable="true"{{/has}}>
+                {{/has}}
+                        <span>
+                            {{str label ../../module}}
+                        </span>
+                {{#has "ReorderableColumns" ../../plugins}}
+                    </div>
+                    {{#if @last}}
+                        <div class="th-droppable-placeholder th-droppable-placeholder-last" data-droppableindex="{{../../../../_fields.visible.length}}"></div>
+                    {{/if}}
+                </div>
+                {{/has}}
             </th>
         {{/each}}
         {{#each ../rightColumns}}
@@ -38,7 +57,7 @@
                 <div class="dropdown">
                     <button class="btn btn-invisible" data-toggle="dropdown" data-action="fields-toggle"><i class="icon-ellipsis-horizontal"></i></button>
                     <ul class="dropdown-menu left carettop">
-                    {{#each ../../../_fields.options}}
+                    {{#each ../../../_fields.all}}
                         <li>
                             <button{{#if selected}} class="active"{{/if}} data-field-toggle="{{name}}">
                                 {{#if selected}}<i class="icon icon-ok"></i> {{/if}}{{str label ../../../../module}}
@@ -49,7 +68,7 @@
                 </div>
             </th>
             {{else}}
-            <th data-fieldname="{{name}}">
+            <th{{#if name}} data-fieldname="{{name}}"{{/if}}>
                 <span>
                     {{field ../../this template="list-header"}}
                 </span>

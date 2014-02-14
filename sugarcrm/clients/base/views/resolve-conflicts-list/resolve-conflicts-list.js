@@ -80,9 +80,7 @@
      * @private
      */
     _buildFieldDefinitions: function(modelToSave, modelInDb) {
-        var visibleColumns = [],
-            availableColumns = [],
-            fieldsThatDiffer,
+        var fieldsThatDiffer,
             fieldDefinition,
             modifiedByColumnDef = {
                 name: '_modified_by',
@@ -105,23 +103,21 @@
         // insert modified by column
         fieldDefinition = _.union([modifiedByColumnDef], fieldDefinition);
 
-        _.each(fieldDefinition, function(field) {
-            field.sortable = false; //set all columns to not sort
-            if (field.name === 'date_modified') {
-                field.selected = false;
-                availableColumns.push(field);
-            } else {
-                field.selected = true;
-                visibleColumns.push(field);
-            }
-        });
+        this._fields = this._createCatalog(fieldDefinition);
+    },
 
-        this._fields = {
-            'default': fieldDefinition, //all available fields shown to the user
-            'available': availableColumns, //hidden by default
-            'visible': visibleColumns, //visible by default
-            'options': fieldDefinition
-        };
+    /**
+     * {@inheritDoc}
+     */
+    _patchField: function(fieldMeta, i) {
+        var isVisible = (fieldMeta.name !== 'date_modified');
+        return _.extend({
+            sortable: false,
+            selected: isVisible,
+            position: ++i
+        }, fieldMeta, {
+            sortable: false
+        });
     },
 
     /**

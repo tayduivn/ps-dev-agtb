@@ -18,7 +18,7 @@
         <tr>
             {{#each fields}}
                 <th {{#if this.width}}width="{{this.width}}" {{/if}}class="{{#isSortable ../../module this}}sorting{{#eq ../../../orderBy.field name}}_{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
-                        data-fieldname="{{name}}" data-orderby="{{orderBy}}">
+                    {{#if name}} data-fieldname="{{name}}"{{/if}} data-orderby="{{orderBy}}">
                     {{str label ../../module}}
                 </th>
             {{/each}}
