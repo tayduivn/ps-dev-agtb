@@ -2725,7 +2725,11 @@ protected function checkQuery($sql, $object_name = false)
         }
         elseif (isset($fieldDef['default']) && strlen($fieldDef['default']) > 0)
         {
-            $default = " DEFAULT ".$this->quoted($fieldDef['default']);
+            if (is_numeric($fieldDef['default'])) {
+                $default = " DEFAULT " . $fieldDef['default'];
+            } else {
+                $default = " DEFAULT " . $this->quoted($fieldDef['default']);
+            }
         }
         elseif (!isset($default) && $type == 'bool')
         {

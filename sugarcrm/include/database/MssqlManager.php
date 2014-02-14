@@ -1291,38 +1291,30 @@ class MssqlManager extends DBManager
     }
 
     /**
-     * Returns the SQL Alter table statment
+     * Check identity of table.
      *
-     * MSSQL has a quirky T-SQL alter table syntax. Pay special attention to the
-     * modify operation
-     * @param string $action
-     * @param array  $def
-     * @param bool   $ignorRequired
-     * @param string $tablename
+     * @param string $tableName Name of table.
+     * @return array Array if identity found Or false if not found.
      */
-    protected function alterSQLRep($action, array $def, $ignoreRequired, $tablename)
+    private function checkIdentity($tableName)
     {
-        switch($action){
-        case 'add':
-             $f_def=$this->oneColumnSQLRep($def, $ignoreRequired,$tablename,false);
-            return "ADD " . $f_def;
-            break;
-        case 'drop':
-            return "DROP COLUMN " . $def['name'];
-            break;
-        case 'modify':
-            //You cannot specify a default value for a column for MSSQL
-            $f_def  = $this->oneColumnSQLRep($def, $ignoreRequired,$tablename, true);
-            $f_stmt = "ALTER COLUMN ".$f_def['name'].' '.$f_def['colType'].' '.
-                        $f_def['required'].' '.$f_def['auto_increment']."\n";
-            if (!empty( $f_def['default']))
-                $f_stmt .= " ALTER TABLE " . $tablename .  " ADD  ". $f_def['default'] . " FOR " . $def['name'];
-            return $f_stmt;
-            break;
-        default:
-            return '';
-    	}
+        $sql = "SELECT
+                    c.name AS column_name,
+                    CASE c.system_type_id
+                        WHEN 127 THEN 'bigint'
+                        WHEN 56 THEN 'int'
+                        WHEN 52 THEN 'smallint'
+                        WHEN 48 THEN 'tinyint'
+                    END AS 'data_type',
+                    IDENT_CURRENT(SCHEMA_NAME(t.schema_id)  + '.' + t.name) AS current_identity_value
+                FROM sys.columns AS c
+                INNER JOIN sys.tables AS t ON t.[object_id] = c.[object_id]
+                WHERE c.is_identity = 1 AND t.name = '" . $tableName . "'\n";
+
+        return $this->fetchOne($sql);
     }
+
+
 
     /**
      * @see DBManager::changeColumnSQL()
@@ -1332,50 +1324,194 @@ class MssqlManager extends DBManager
      */
     protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false)
     {
-        $sql=$sql2='';
+        $sql = $sql2 = '';
         $constraints = $this->get_field_default_constraint_name($tablename);
         $columns = array();
-        if ($this->isFieldArray($fieldDefs)) {
-            foreach ($fieldDefs as $def)
-      		{
-          		//if the column is being modified drop the default value
-          		//constraint if it exists. alterSQLRep will add the constraint back
-          		if (!empty($constraints[$def['name']])) {
-          			$sql.=" ALTER TABLE " . $tablename . " DROP CONSTRAINT " . $constraints[$def['name']];
-          		}
-          		//check to see if we need to drop related indexes before the alter
-          		$indices = $this->get_indices($tablename);
-                foreach ( $indices as $index ) {
-                    if ( in_array($def['name'],$index['fields']) ) {
-                        $sql  .= ' ' . $this->add_drop_constraint($tablename,$index,true).' ';
-                        $sql2 .= ' ' . $this->add_drop_constraint($tablename,$index,false).' ';
-                    }
-                }
 
-          		$columns[] = $this->alterSQLRep($action, $def, $ignoreRequired,$tablename);
-      		}
+        if(!$this->isFieldArray($fieldDefs)) {
+            $fieldDefs = array($fieldDefs);
         }
-        else {
+
+        foreach ($fieldDefs as $def) {
             //if the column is being modified drop the default value
-      		//constraint if it exists. alterSQLRep will add the constraint back
-      		if (!empty($constraints[$fieldDefs['name']])) {
-      			$sql.=" ALTER TABLE " . $tablename . " DROP CONSTRAINT " . $constraints[$fieldDefs['name']];
-      		}
-      		//check to see if we need to drop related indexes before the alter
+            //constraint if it exists.
+            if (!empty($constraints[$def['name']])) {
+                $sql .= ' ALTER TABLE ' . $tablename . ' DROP CONSTRAINT ' . $constraints[$def['name']] . "\n";
+            }
+            //check to see if we need to drop related indexes before the alter
             $indices = $this->get_indices($tablename);
+
             foreach ( $indices as $index ) {
-                if ( in_array($fieldDefs['name'],$index['fields']) ) {
-                    $sql  .= ' ' . $this->add_drop_constraint($tablename,$index,true).' ';
-                    $sql2 .= ' ' . $this->add_drop_constraint($tablename,$index,false).' ';
+                if ( in_array($def['name'],$index['fields']) ) {
+                    $sql  .= ' ' . $this->add_drop_constraint($tablename,$index,true) . "\n";
+                    $sql2 .= ' ' . $this->add_drop_constraint($tablename,$index,false) . "\n";
                 }
             }
 
+            switch($action) {
+                case 'add':
+                    if(!empty($def['auto_increment']) && false !== $this->checkIdentity($tablename)) {
+                        // error we can't add identity to table where identity already exists.
+                        // so remove auto_increment from this column.
+                        LoggerManager::getLogger()->error("Can't add identity to table $tablename where identity already exists.");
+                        unset($def['auto_increment']);
+                    }
+                    $columns[] = 'ADD ' . $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, false);
+                    break;
 
-          	$columns[] = $this->alterSQLRep($action, $fieldDefs, $ignoreRequired,$tablename);
+                case 'drop':
+                    $columns[] = 'DROP COLUMN ' . $def['name'];
+                    break;
+
+                case 'modify':
+
+                    $identity = $this->checkIdentity($tablename);
+
+                    // if was identity then we need to drop this column, create a new column and copy data.
+                    if(empty($def['auto_increment']) && false !== $identity && $identity['column_name'] == $def['name']) {
+                        $tmpColumnName = $def['name'] . '_temp';
+                        // mssql not provide batches via one statement, so we must use some hack with reuse db in one statement.
+                        $modifyDef =  $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, true);
+                        $sqlVarIndex = mt_rand(0, PHP_INT_MAX);
+                        $sql .="
+                            DECLARE @useDbSql_$sqlVarIndex varchar(100);
+                            DECLARE @sql_$sqlVarIndex nvarchar(4000);
+
+                            SET @useDbSql_$sqlVarIndex = 'USE " . $this->connectOptions['db_name'] . "; ';\n";
+
+                        // create a temporary column
+                        $tmpColumnDef = array_merge($def, array(
+                            'name' => $tmpColumnName,
+                            'isnull' => true,
+                        ));
+                        unset($tmpColumnDef['default']);
+                        $sql .="SET @sql_$sqlVarIndex = @useDbSql_$sqlVarIndex + 'EXEC sp_executesql N''ALTER TABLE $tablename ADD " . $this->oneColumnSQLRep($tmpColumnDef, $ignoreRequired, $tablename, false) . "''';
+                            EXEC (@sql_$sqlVarIndex);\n";
+
+                        // copy data to temporary column
+                        $sql .="SET @sql_$sqlVarIndex = @useDbSql_$sqlVarIndex + 'EXEC sp_executesql N''UPDATE $tablename SET $tmpColumnName = " . $def['name'] . "''';
+                            EXEC (@sql_$sqlVarIndex);\n";
+
+                        // drop origin column
+                        $sql .="SET @sql_$sqlVarIndex = @useDbSql_$sqlVarIndex + 'EXEC sp_executesql N''ALTER TABLE $tablename DROP COLUMN " . $def['name'] . "''';
+                            EXEC (@sql_$sqlVarIndex);\n";
+
+                        // create a new origin column
+                        $sql .="SET @sql_$sqlVarIndex = @useDbSql_$sqlVarIndex + 'EXEC sp_executesql N''ALTER TABLE $tablename
+                                        ADD " . $this->oneColumnSQLRep(array_merge($def, array(
+                                    'isnull' => true,
+                                )), $ignoreRequired, $tablename, false) . "''';
+                            EXEC (@sql_$sqlVarIndex);\n";
+
+                        // copy data into origin column from temporary column
+                        $sql .="SET @sql_$sqlVarIndex = @useDbSql_$sqlVarIndex + 'EXEC sp_executesql N''UPDATE $tablename SET " . $def['name'] . " = $tmpColumnName''';
+                            EXEC (@sql_$sqlVarIndex);\n";
+
+                        // change null flags on origin column after copy data
+                        $sql .="SET @sql_$sqlVarIndex = @useDbSql_$sqlVarIndex + 'EXEC sp_executesql N''ALTER TABLE $tablename ALTER COLUMN " . $modifyDef['name'] . ' ' . $modifyDef['colType'] . ' ' .
+                            $modifyDef['required'];
+
+                        // drop temporary column
+                        $sql .= "''';
+                            EXEC (@sql_$sqlVarIndex);
+
+                            SET @sql_$sqlVarIndex = @useDbSql_$sqlVarIndex + 'EXEC sp_executesql N''ALTER TABLE $tablename DROP COLUMN $tmpColumnName''';
+                            EXEC (@sql_$sqlVarIndex);
+
+                            -- this code cause a waning message, so not use sp_rename
+                            -- EXEC SP_RENAME N'$tablename.$tmpColumnName', N'{$def['name']}', N'COLUMN'
+                        ";
+                        break;
+                    }
+
+                    // if we want to leave identity unchanged
+                    if((empty($def['auto_increment']) && false === $identity) || (!empty($def['auto_increment']) && false !== $identity)) {
+                        if(!empty($def['auto_increment']) && false !== $identity && $identity['column_name'] != $def['name']) {
+                            // error we can't add identity to table where identity already exists.
+                            // so remove auto_increment from this column.
+                            LoggerManager::getLogger()->error("Can't add identity to table $tablename where identity already exists.");
+                            unset($def['auto_increment']);
+                        }
+                        $modifyDef =  $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, true);
+                        $modifySql = 'ALTER COLUMN ' . $modifyDef['name'] . ' ' . $modifyDef['colType'] . ' ' .
+                            $modifyDef['required'] . "\n";
+
+                        // we can add default value only for non-identical columns.
+                        if (empty($def['auto_increment']) && !empty($modifyDef['default'])) {
+                            $modifySql .= ' ALTER TABLE ' . $tablename .  ' ADD  ' . $modifyDef['default'] . ' FOR ' . $modifyDef['name'] . "\n";
+                        }
+                        $columns[] = $modifySql;
+
+                        break;
+                    }
+                    $sqlVarIndex = rand(0, PHP_INT_MAX);
+                    $tempTableName = $tablename . '_' . $sqlVarIndex;
+                    $sql .="
+                            DECLARE @useDbSql_$sqlVarIndex varchar(100);
+                            DECLARE @sql_$sqlVarIndex nvarchar(4000);
+
+                            SET @useDbSql_$sqlVarIndex = 'USE " . $this->connectOptions['db_name'] . "; ';\n\n";
+
+                    // copy data into temporary table
+                    $sql .= "SELECT * INTO tempdb.dbo.$tempTableName FROM $tablename;\n\n";
+
+
+                    // truncate table
+                    $sql .= "SET @sql_$sqlVarIndex = @useDbSql_$sqlVarIndex + 'EXEC sp_executesql N''" . $this->truncateTableSQL($tablename) . "''';
+                             EXEC(@sql_$sqlVarIndex);\n";
+
+                    // drop column without identity
+                    $sql .= "SET @sql_$sqlVarIndex = @useDbSql_$sqlVarIndex + 'EXEC sp_executesql N''ALTER TABLE $tablename DROP COLUMN " . $def['name'] . "''';
+                            EXEC(@sql_$sqlVarIndex);\n";
+                    // create column with identity
+                    $sql .= "ALTER TABLE $tablename ADD " . $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, false) . "\n";
+                    // prepare fields for coping
+                    $sql .= "DECLARE ColumnNamesCursor_$sqlVarIndex CURSOR FOR SELECT COLUMN_NAME AS ColumnName
+                                FROM INFORMATION_SCHEMA.COLUMNS c
+                                JOIN sys.columns sc ON  c.TABLE_NAME = OBJECT_NAME(sc.object_id) AND c.COLUMN_NAME = sc.Name
+                                WHERE c.TABLE_NAME = '$tablename'
+
+                            OPEN ColumnNamesCursor_$sqlVarIndex
+                            DECLARE @ColumnNamesInline_$sqlVarIndex NVARCHAR(1000)
+                            DECLARE @ColumnName_$sqlVarIndex NVARCHAR(1000)
+
+                            SET @ColumnNamesInline_$sqlVarIndex = N'';
+
+                            FETCH NEXT FROM ColumnNamesCursor_$sqlVarIndex INTO @ColumnName_$sqlVarIndex
+
+                            WHILE @@FETCH_STATUS = 0
+                            BEGIN
+                                IF (@ColumnNamesInline_$sqlVarIndex <> N'')
+                                BEGIN
+                                    SET @ColumnNamesInline_$sqlVarIndex = N'' + @ColumnNamesInline_$sqlVarIndex + N',';
+                                END
+                                SET @ColumnNamesInline_$sqlVarIndex = N'' + @ColumnNamesInline_$sqlVarIndex + N'[' + @ColumnName_$sqlVarIndex + N']';
+                                FETCH NEXT FROM ColumnNamesCursor_$sqlVarIndex INTO @ColumnName_$sqlVarIndex
+                            END
+                            CLOSE ColumnNamesCursor_$sqlVarIndex
+                            DEALLOCATE ColumnNamesCursor_$sqlVarIndex\n";
+                    // turn off check identity when insert
+                    $sql .= "SET IDENTITY_INSERT $tablename ON\n";
+                    // copy data from temporary table
+                    $sql .= "DECLARE @sqlInsert_$sqlVarIndex NVARCHAR(max)
+                             SET @sqlInsert_$sqlVarIndex = N'INSERT INTO $tablename (' + @ColumnNamesInline_$sqlVarIndex + N') SELECT ' + @ColumnNamesInline_$sqlVarIndex + N' FROM tempdb.dbo.$tempTableName'
+                             EXEC sp_executesql @sqlInsert_$sqlVarIndex\n";
+                    // turn on check identity when insert
+                    $sql .= "SET IDENTITY_INSERT $tablename OFF\n";
+                    // drop temporary table
+                    $sql .= 'DROP TABLE tempdb.dbo.' . $tempTableName . "\n";
+                    break;
+
+                default:
+                    // nothing to do.
+                    break;
+            }
         }
 
-        $columns = implode(", ", $columns);
-        $sql .= " ALTER TABLE $tablename $columns " . $sql2;
+        if(count($columns)) {
+            $sql .= " ALTER TABLE $tablename " . implode(", ", $columns) . " \n";
+        }
+        $sql .= $sql2;
 
         return $sql;
     }
@@ -1640,11 +1776,6 @@ EOSQL;
      */
 	private function get_field_default_constraint_name($table, $column = null)
     {
-        static $results = array();
-
-        if ( empty($column) && isset($results[$table]) )
-            return $results[$table];
-
         $query = <<<EOQ
 select s.name, o.name, c.name dtrt, d.name ctrt
     from sys.default_constraints as d
