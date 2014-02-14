@@ -73,11 +73,6 @@ class Role extends SugarBean {
 		return $this->name;
 	}
 
-	function create_export_query($order_by, $where)
-	{
-		return $this->create_new_list_query($order_by, $where);
-	}	
-	
 	function query_modules($allow = 1)
 	{
 		$query = "SELECT module_id FROM roles_modules WHERE ";
@@ -193,5 +188,3 @@ class Role extends SugarBean {
 	}		
 		
 }
-
-?>

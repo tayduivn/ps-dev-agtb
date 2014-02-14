@@ -121,41 +121,6 @@ class ProspectList extends SugarBean {
 		return $query;
 	}
 
-
-	function create_export_query($order_by, $where)
-	{
-
-                                $query = "SELECT
-                                prospect_lists.*,
-                                users.user_name as assigned_user_name ";
-                                //BEGIN SUGARCRM flav=pro ONLY
-								$query .= ", teams.name AS team_name ";
-								//END SUGARCRM flav=pro ONLY
-	                            $query .= "FROM prospect_lists ";
-//BEGIN SUGARCRM flav=pro ONLY
-		// We need to confirm that the user is a member of the team of the item.
-		$this->add_team_security_where_clause($query);
-//END SUGARCRM flav=pro ONLY
-		$query .= 				"LEFT JOIN users
-                                ON prospect_lists.assigned_user_id=users.id ";
-                                //BEGIN SUGARCRM flav=pro ONLY
-								$query .= getTeamSetNameJoin('prospect_lists');
-								//END SUGARCRM flav=pro ONLY
-
-		$where_auto = " prospect_lists.deleted=0";
-
-        if($where != "")
-                $query .= " WHERE $where AND ".$where_auto;
-        else
-                $query .= " WHERE ".$where_auto;
-
-        if($order_by != "")
-                $query .= " ORDER BY $order_by";
-        else
-                $query .= " ORDER BY prospect_lists.name";
-        return $query;
-    }
-
 	function create_export_members_query($record_id)
 	{
 		$leads_query = "SELECT l.id AS id, 'Leads' AS related_type, '' AS \"name\", l.first_name AS first_name, l.last_name AS last_name, l.title AS title, l.salutation AS salutation,

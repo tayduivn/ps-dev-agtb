@@ -245,47 +245,6 @@ class ProductTemplate extends SugarBean {
 		return $this->build_related_list($query, BeanFactory::getBean('Notes'));
 	}
 
-	/** Returns a list of the associated product_templates
-	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-	 * All Rights Reserved.
-	 * Contributor(s): ______________________________________..
-	*/
-
-    function create_export_query(&$order_by, &$where, $relate_link_join='')
-    {
-        $custom_join = $this->getCustomJoin(true, true, $where);
-        $custom_join['join'] .= $relate_link_join;
-                $query = "SELECT ";
-                $query .= " $this->table_name.*,
-                                $this->rel_manufacturers.name as manufacturer_name,
-                                $this->rel_categories.name as category_name,
-                                $this->rel_types.name as type_name
-					";
-        $query .= $custom_join['select'];
-                            $query.=   " FROM $this->table_name ";
-
-
-                                $query .= " LEFT JOIN $this->rel_manufacturers
-                                ON $this->table_name.manufacturer_id=$this->rel_manufacturers.id AND $this->rel_manufacturers.deleted=0
-                                LEFT JOIN $this->rel_categories
-                                ON $this->table_name.category_id=$this->rel_categories.id AND $this->rel_categories.deleted=0
-                                LEFT JOIN $this->rel_types
-                                ON $this->table_name.type_id=$this->rel_types.id AND $this->rel_types.deleted=0
-								";
-        $query .= $custom_join['join'];
-				$where_auto = $this->table_name.'.deleted = 0 ';
-
-                if($where != "")
-                        $query .= "where ($where) AND ".$where_auto;
-                else
-                        $query .= "where ".$where_auto;
-
-                if(!empty($order_by))
-                        $query .= " ORDER BY $order_by";
-
-                return $query;
-	}
-
 	function clear_note_product_template_relationship($product_template_id)
 	{
 		$query = "UPDATE notes set parent_id='', parent_type='' where (parent_id='$product_template_id') and deleted=0";

@@ -173,49 +173,6 @@ class ProductBundle extends SugarBean {
         return $bundle_list;
 	}
 
-
-	/** Returns a list of the associated products
-	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-	 * All Rights Reserved.
-	 * Contributor(s): ______________________________________..
-	*/
-/*
-
-        function create_export_query(&$order_by, &$where)
-        {
-		$query = "SELECT $this->table_name.id, $this->table_name.name, $this->table_name.status,$this->table_name.cost_usdollar, $this->table_name.discount_usdollar, $this->table_name.list_usdollar, $this->table_name.cost_price, $this->table_name.discount_price, $this->table_name.list_price, $this->table_name.mft_part_num FROM $this->table_name ";
-		$where_auto = "$this->table_name.deleted=0";
-
-/*
-                                $query = "SELECT
-                                $this->table_name.*,
-                                $this->rel_manufacturers.name as manufacturer_name,
-                                $this->rel_categories.name as category_name,
-                                $this->rel_types.name as type_name,
-                                users.user_name as assigned_user_name
-                                FROM $this->table_name
-                                LEFT JOIN $this->rel_manufacturers
-                                ON $this->table_name.manufacturer_id=$this->rel_manufacturers.id
-								";
-
-                $where_auto = "$this->table_name.deleted=0
-								AND $this->rel_manufacturers.deleted=0
-								";
-*/
-
- /*               if($where != "")
-                        $query .= "where ($where) AND ".$where_auto;
-                else
-                        $query .= "where ".$where_auto;
-
-                if(!empty($order_by))
-                        $query .= " ORDER BY $order_by";
-
-                return $query;
-        }
-
-
-*/
 	function save_relationship_changes($is_update)
     {
 

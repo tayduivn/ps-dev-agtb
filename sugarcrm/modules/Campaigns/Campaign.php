@@ -119,45 +119,6 @@ class Campaign extends SugarBean {
 		return $this->name;
 	}
 
-        function create_export_query(&$order_by, &$where, $relate_link_join='')
-        {
-            $custom_join = $this->getCustomJoin(true, true, $where);
-            $custom_join['join'] .= $relate_link_join;
-            $query = "SELECT
-            campaigns.*,
-            users.user_name as assigned_user_name ";
-            //BEGIN SUGARCRM flav=pro ONLY
-			$query .= ", teams.name AS team_name ";
-			//END SUGARCRM flav=pro ONLY
-            $query .=  $custom_join['select'];
-	        $query .= " FROM campaigns ";
-			//BEGIN SUGARCRM flav=pro ONLY
-			// We need to confirm that the user is a member of the team of the item.
-			$this->add_team_security_where_clause($query);
-			//END SUGARCRM flav=pro ONLY
-			$query .= "LEFT JOIN users
-                      ON campaigns.assigned_user_id=users.id";
-           	//BEGIN SUGARCRM flav=pro ONLY
-			$query .= getTeamSetNameJoin('campaigns');
-			//END SUGARCRM flav=pro ONLY
-            $query .=  $custom_join['join'];
-
-		$where_auto = " campaigns.deleted=0";
-
-        if($where != "")
-                $query .= " where $where AND ".$where_auto;
-        else
-                $query .= " where ".$where_auto;
-
-        if($order_by != "")
-                $query .= " ORDER BY $order_by";
-        else
-                $query .= " ORDER BY campaigns.name";
-        return $query;
-    }
-
-
-
 	function clear_campaign_prospect_list_relationship($campaign_id, $prospect_list_id='')
 	{
 		if(!empty($prospect_list_id))

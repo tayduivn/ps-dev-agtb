@@ -37,10 +37,9 @@ class Bug43202Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        SugarTestHelper::setUp('current_user', array(true));
-        SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('current_user');
         parent::setUp();
     }
 
@@ -49,15 +48,9 @@ class Bug43202Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testExportQuery()
     {
-        $db = DBManagerFactory::getInstance();
-        $focus = new Account();
-        $focus->disable_row_level_security = true;
-        $order_by = '';
-        $where = 'join_campaign_name.name IS NOT NULL';
-        $addon_join = ' LEFT JOIN campaigns join_campaign_name ON accounts.campaign_id=join_campaign_name.id AND join_campaign_name.deleted=0 ';
-
-        $query = $focus->create_export_query($order_by, $where, $addon_join);
-        $this->assertTrue($db->validateQuery($query));
+        $focus = BeanFactory::getBean('Accounts');
+        $query = $focus->create_export_query('', 'campaign_name IS NOT NULL');
+        $this->assertTrue($focus->db->validateQuery($query));
     }
 
     public function tearDown()

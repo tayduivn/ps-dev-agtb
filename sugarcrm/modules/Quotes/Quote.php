@@ -172,51 +172,6 @@ class Quote extends SugarBean {
 		return $this->name;
 	}
 
-	/**
-	 * returns the query appropriate for export
-	 * @return string query
-	 */
-    function create_export_query(&$order_by, &$where, $relate_link_join='')
-    {
-        $custom_join = $this->getCustomJoin(true, true, $where);
-        $custom_join['join'] .= $relate_link_join;
-        $query = "SELECT
-        $this->table_name.*,
-        $this->user_table.user_name as assigned_user_name";
-        $query .= ", teams.name AS team_name";
-
-        $query .= $custom_join['select'];
-        $query .= " FROM $this->table_name ";
-		// We need to confirm that the user is a member of the team of the item.
-		$this->add_team_security_where_clause($query);
-        $query .= "LEFT JOIN users ON quotes.assigned_user_id=users.id ";
-        $query .= getTeamSetNameJoin('quotes');
-        /*$query .= "LEFT JOIN quotes_accounts ON quotes_accounts.quote_id=quotes.id
-                   LEFT JOIN accounts ON accounts.id=quotes_accounts.account_id
-                   LEFT JOIN quotes_contacts ON quotes_contacts.quote_id=quotes.id
-                   LEFT JOIN contacts ON contacts.id=quotes_contacts.contact_id ";*/
-
-        $query .= $custom_join['join'];
-
-		$where_auto = '1=1';
-		if($show_deleted == 0) {
-       	 	$where_auto = "$this->table_name.deleted=0";
-		} elseif($show_deleted == 1) {
-			 $where_auto = "$this->table_name.deleted=1";
-		}
-
-        if($where != "")
-                $query .= "where $where AND ".$where_auto;
-        else
-                $query .= "where ".$where_auto;
-
-        if($order_by != "")
-                $query .= " ORDER BY $order_by";
-        else
-                $query .= " ORDER BY $this->table_name.name";
-        return $query;
-    }
-
 	function fill_in_additional_list_fields() {
 		$this->fill_in_additional_detail_fields();
 	}

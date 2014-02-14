@@ -199,10 +199,6 @@ class EmailTemplate extends SugarBean {
 		return "$this->name";
 	}
 
-	function create_export_query(&$order_by, &$where) {
-		return $this->create_new_list_query($order_by, $where);
-	}
-
 	function fill_in_additional_detail_fields() {
 	    if (empty($this->body) && !empty($this->body_html))
         {

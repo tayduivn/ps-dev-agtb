@@ -184,41 +184,6 @@ class Note extends SugarBean {
 		return "$this->name";
 	}
 
-    function create_export_query(&$order_by, &$where, $relate_link_join='')
-    {
-        $custom_join = $this->getCustomJoin(true, true, $where);
-        $custom_join['join'] .= $relate_link_join;
-		$query = "SELECT notes.*, contacts.first_name, contacts.last_name, users.user_name as assigned_user_name ";
-
-        $query .= $custom_join['select'];
-
-    	$query .= " FROM notes ";
-		//BEGIN SUGARCRM flav=pro ONLY
-		// We need to confirm that the user is a member of the team of the item.
-		$this->add_team_security_where_clause($query);
-		//END SUGARCRM flav=pro ONLY
-
-		$query .= "	LEFT JOIN contacts ON notes.contact_id=contacts.id ";
-        	$query .= "  LEFT JOIN users ON notes.assigned_user_id=users.id ";
-	
-        $query .= $custom_join['join'];
-
-		$where_auto = " notes.deleted=0 AND (contacts.deleted IS NULL OR contacts.deleted=0)";
-
-        if($where != "")
-			$query .= "where $where AND ".$where_auto;
-        else
-			$query .= "where ".$where_auto;
-
-        $order_by = $this->process_order_by($order_by);
-        if (empty($order_by)) {
-            $order_by = 'notes.name';
-        }
-        $query .= ' ORDER BY ' . $order_by;
-
-		return $query;
-	}
-
 	function fill_in_additional_list_fields() {
 		$this->fill_in_additional_detail_fields();
 	}

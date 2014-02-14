@@ -100,24 +100,6 @@ class ReportMaker extends SugarBean {
 		return "$this->name";
 	}
 
-
-
-
-	/** Returns a list of the associated product_templates
-	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-	 * All Rights Reserved.
-	 * Contributor(s): ______________________________________..
-	*/
-
-        function create_export_query(&$order_by, &$where)
-        {
-
-			$export_object = BeanFactory::getBean('CustomQueries');
-			return $export_object->create_export_query();
-
-
-        }
-
 	function save_relationship_changes($is_update)
     {
     }

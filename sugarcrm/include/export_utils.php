@@ -90,12 +90,6 @@ function export($type, $records = null, $members = false, $sample=false) {
             $where = '';
         }
     }
-    $order_by = "";
-
-    //Must order if it's ACCOUNTS module for building semi-colon separated non-primary mails
-    if (strtolower($focus->module_dir) == "accounts") {
-       $order_by = " id, email_addr_bean_rel.primary_address DESC";
-    }
 
     if($focus->bean_implements('ACL')){
         if(!ACLController::checkAccess($focus->module_dir, 'export', true)){
@@ -110,7 +104,6 @@ function export($type, $records = null, $members = false, $sample=false) {
         }
     }
 
-
 	if($focus->bean_implements('ACL')){
 		if(!ACLController::checkAccess($focus->module_dir, 'export', true)){
 			ACLController::displayNoAccess();
@@ -118,6 +111,7 @@ function export($type, $records = null, $members = false, $sample=false) {
 		}
 	    $focus->addVisibilityWhere($where);
 	}
+
     // Export entire list was broken because the where clause already has "where" in it
     // and when the query is built, it has a "where" as well, so the query was ill-formed.
     // Eliminating the "where" here so that the query can be constructed correctly.
@@ -125,14 +119,11 @@ function export($type, $records = null, $members = false, $sample=false) {
            $query = $focus->create_export_members_query($records);
     }else{
         $beginWhere = substr(trim($where), 0, 5);
-        if ($beginWhere == "where")
+        if ($beginWhere == "where") {
             $where = substr(trim($where), 5, strlen($where));
-        $ret_array = create_export_query_relate_link_patch($type, $searchFields, $where);
-        if(!empty($ret_array['join'])) {
-            $query = $focus->create_export_query($order_by,$ret_array['where'],$ret_array['join']);
-        } else {
-            $query = $focus->create_export_query($order_by,$ret_array['where']);
         }
+
+        $query = $focus->create_export_query('', $where);
     }
 
     $result = null;
@@ -211,12 +202,6 @@ function exportFromApi($args, $sample=false) {
             $where = '';
         }
     }
-    $order_by = "";
-
-    //Must order if it's ACCOUNTS module for building semi-colon separated non-primary mails
-    if (strtolower($focus->module_dir) == "accounts") {
-       $order_by = " id, email_addr_bean_rel.primary_address DESC";
-    }
 
     if ($focus->bean_implements('ACL')) {
         if (ACLController::requireOwner($focus->module_dir, 'export')) {
@@ -239,14 +224,11 @@ function exportFromApi($args, $sample=false) {
         $query = $focus->create_export_members_query($records);
     } else {
         $beginWhere = substr(trim($where), 0, 5);
-        if ($beginWhere == "where")
+        if ($beginWhere == "where") {
             $where = substr(trim($where), 5, strlen($where));
-        $ret_array = create_export_query_relate_link_patch($type, $searchFields, $where);
-        if (!empty($ret_array['join'])) {
-            $query = $focus->create_export_query($order_by,$ret_array['where'], $ret_array['join']);
-        } else {
-            $query = $focus->create_export_query($order_by, $ret_array['where']);
         }
+
+        $query = $focus->create_export_query("", $where);
     }
 
     $result = null;

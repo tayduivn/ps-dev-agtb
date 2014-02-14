@@ -959,17 +959,6 @@ class Scheduler extends SugarBean {
 	/**
 	 * function overrides the one in SugarBean.php
 	 */
-	function create_export_query($order_by, $where, $show_deleted = 0) {
-		return $this->create_new_list_query($order_by, $where,array(),array(), $show_deleted = 0);
-	}
-
-	/**
-	 * function overrides the one in SugarBean.php
-	 */
-
-	/**
-	 * function overrides the one in SugarBean.php
-	 */
 	function fill_in_additional_list_fields() {
 		$this->fill_in_additional_detail_fields();
 	}

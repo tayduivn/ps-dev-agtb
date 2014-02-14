@@ -174,49 +174,6 @@ class Bug extends SugarBean {
 		return $query;
 	}
 
-        function create_export_query(&$order_by, &$where, $relate_link_join='')
-        {
-            $custom_join = $this->getCustomJoin(true, true, $where);
-            $custom_join['join'] .= $relate_link_join;
-                $query = "SELECT
-                                bugs.*,
-                                r1.name found_in_release_name,
-                                r2.name fixed_in_release_name,
-                                users.user_name assigned_user_name";
-//BEGIN SUGARCRM flav=pro ONLY
-						 $query .= ", teams.name AS team_name ";
-//END SUGARCRM flav=pro ONLY
-            $query .=  $custom_join['select'];
-                                $query .= " FROM bugs ";
-//BEGIN SUGARCRM flav=pro ONLY
-		// We need to confirm that the user is a member of the team of the item.
-		$this->add_team_security_where_clause($query);
-//END SUGARCRM flav=pro ONLY
-		$query .= "				LEFT JOIN releases r1 ON bugs.found_in_release = r1.id
-								LEFT JOIN releases r2 ON bugs.fixed_in_release = r2.id
-								LEFT JOIN users
-                                ON bugs.assigned_user_id=users.id";
-//BEGIN SUGARCRM flav=pro ONLY
-						 $query .= getTeamSetNameJoin('bugs');
-//END SUGARCRM flav=pro ONLY
-            $query .=  $custom_join['join'];
-                                $query .= "";
-                $where_auto = "  bugs.deleted=0
-                ";
-
-                if($where != "")
-                        $query .= " where $where AND ".$where_auto;
-                else
-                        $query .= " where ".$where_auto;
-
-                if($order_by != "")
-                        $query .= " ORDER BY $order_by";
-                else
-                        $query .= " ORDER BY bugs.bug_number";
-
-                return $query;
-        }
-
 	function fill_in_additional_detail_fields()
 	{
         parent::fill_in_additional_detail_fields();

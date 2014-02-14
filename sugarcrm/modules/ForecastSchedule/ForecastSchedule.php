@@ -144,27 +144,6 @@ class ForecastSchedule extends SugarBean {
 		return $list_form;
 	}
 
-	function create_export_query($order_by, $where)
-	{
-		$query = "SELECT
-				forecast_schedule.*";
-		$query .= " FROM forecast_schedule ";
-
-		$where_auto = " forecast_schedule.deleted = 0";
-
-		if($where != "")
-			$query .= " WHERE $where AND " . $where_auto;
-		else
-			$query .= " WHERE " . $where_auto;
-
-		if($order_by != "")
-			$query .= " ORDER BY $order_by";
-		else
-			$query .= " ORDER BY forecast_schedule.forecast_start_date";
-
-		return $query;
-	}
-	
 	/**
 	* This function returns a full (ie non-paged) list of the current object type.
 	* Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..

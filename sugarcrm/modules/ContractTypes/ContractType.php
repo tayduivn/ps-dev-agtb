@@ -90,17 +90,6 @@ class ContractType extends SugarBean {
 		return "$this->name";
 	}
 
-
-	/* This method is used to generate query for the list form. The base implementation of this method
-	 * uses the table_name and list_field variables to generate the basic query and then  adds the custom field
-	 * join and team filter. If you are implementing this function do not forget to consider the additional conditions.
-	 */
-
-
-	function create_export_query(&$order_by, &$where){
-		return $this->create_new_list_query($order_by, $where);
-	}
-
 	function get_next_list_order() {
 
 		$retval=1;

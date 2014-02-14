@@ -87,11 +87,6 @@ class EmailMarketing extends SugarBean
 		return $this->name;
 	}
 
-	function create_export_query($order_by, $where)
-	{
-		return $this->create_new_list_query($order_by, $where);
-	}
-
 	function get_list_view_data(){
 
 		$temp_array = $this->get_list_view_array();
