@@ -356,6 +356,7 @@ if (!function_exists("bcadd"))
         $basePath = parse_url($_SESSION['setup_site_url'], PHP_URL_PATH);
         if(empty($basePath)) $basePath = '/';
         $htaccess_test = <<<EOT
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase {$basePath}
