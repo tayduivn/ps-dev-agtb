@@ -232,15 +232,15 @@
      * `position`} in order to work properly.
      *
      * @param {Object} fieldMeta The field metadata.
-     * @param {Number} i The index of the field in the field list.
+     * @param {Number} index The index of the field in the field list.
      * @return {Object} The patched metadata.
      * @private
      */
-    _patchField: function(fieldMeta, i) {
+    _patchField: function(fieldMeta, index) {
         var isVisible = (fieldMeta['default'] !== false);
         return _.extend({
             selected: isVisible,
-            position: ++i
+            position: index + 1
         }, fieldMeta);
     },
 
