@@ -29,5 +29,6 @@
 
 $viewdefs['<module_name>']['base']['filter']['person'] = array(
     'quicksearch_field' => array('first_name', 'last_name'),
-    'quicksearch_priority' => 2
+    'quicksearch_priority' => 2,
+    'quicksearch_split_terms' => true,
 );

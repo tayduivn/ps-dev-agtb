@@ -480,8 +480,8 @@ describe("Base.Layout.Filter", function () {
 
             ctxt.prepare();
 
-            sinonSandbox.stub(layout, 'getModuleQuickSearchFields', function() {
-                return {'name': 'name'};
+            sinonSandbox.stub(layout, 'getModuleQuickSearchMeta', function() {
+                return {fieldNames: ['name']};
             });
             var builtDef = layout.buildFilterDef(odef,searchTerm,ctxt);
             expect(builtDef).toEqual(result);
@@ -515,8 +515,8 @@ describe("Base.Layout.Filter", function () {
 
             ctxt.prepare();
 
-            sinonSandbox.stub(layout, 'getModuleQuickSearchFields', function() {
-                return {'name': 'name'};
+            sinonSandbox.stub(layout, 'getModuleQuickSearchMeta', function() {
+                return {fieldNames: ['name']};
             });
             var builtDef = layout.buildFilterDef(odef,searchTerm,ctxt);
             expect(builtDef).toEqual(result);
@@ -546,8 +546,8 @@ describe("Base.Layout.Filter", function () {
 
             ctxt.prepare();
 
-            sinonSandbox.stub(layout, 'getModuleQuickSearchFields', function() {
-                return {'name': 'name', 'last_name': 'last_name'};
+            sinonSandbox.stub(layout, 'getModuleQuickSearchMeta', function() {
+                return {fieldNames: ['name', 'last_name']};
             });
             var builtDef = layout.buildFilterDef(odef,searchTerm,ctxt);
             expect(builtDef).toEqual(result);

@@ -31,6 +31,7 @@ $viewdefs['<module_name>']['base']['filter']['basic'] = array(
     'create'               => true,
     'quicksearch_field'    => array('name'),
     'quicksearch_priority' => 1,
+    'quicksearch_split_terms' => false,
     'filters'              => array(
         array(
             'id'                => 'all_records',
