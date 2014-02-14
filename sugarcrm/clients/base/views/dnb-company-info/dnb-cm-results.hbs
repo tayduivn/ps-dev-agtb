@@ -13,17 +13,17 @@
  ********************************************************************************/
 }}
 <div id="dnb-company-list-loading" class="block-footer">
-{{str "LBL_DNB_CM_LOADING"}}
+    {{str "LBL_DNB_CM_LOADING"}}
 </div>
 <div id="dnb-company-list">
-	{{#if companies}}
+    {{#if companies}}
         <div>
             <table class="table" id="dnb_company_list">
-            		<tr>
-            			<td><b>{{str "LBL_DNB_NAME"}}</b></td>
-            			<td><b>{{str "LBL_DNB_MATCH_GRADE"}}</b></td>
-            			<td><b>{{str "LBL_DNB_CONFIDENCE"}}</b></td>
-            		</tr>
+                <tr>
+                    <td><b>{{str "LBL_DNB_NAME"}}</b></td>
+                    <td><b>{{str "LBL_DNB_MATCH_GRADE"}}</b></td>
+                    <td><b>{{str "LBL_DNB_CONFIDENCE"}}</b></td>
+                </tr>
                 {{#each companies}}
                     <tr>
                         <td>
@@ -36,25 +36,22 @@
                                 {{#if this.PrimaryAddress.StreetAddressLine.0.LineText}}
                                     {{this.PrimaryAddress.StreetAddressLine.0.LineText}}
                                 {{/if}}
-
                                 {{#if this.PrimaryAddress.PrimaryTownName}}
                                     {{this.PrimaryAddress.PrimaryTownName}},
-                                {{/if}} 
-
+                                {{/if}}
                                 {{#if this.PrimaryAddress.TerritoryAbbreviatedName}}
                                     {{this.PrimaryAddress.TerritoryAbbreviatedName}},
                                 {{/if}}
-
                                 {{#if this.PrimaryAddress.CountryISOAlpha2Code}}
                                     {{this.PrimaryAddress.CountryISOAlpha2Code}}
                                 {{/if}}
                             </div>
                         </td>
                         <td>
-                        	{{this.MatchQualityInformation.MatchGradeText}}
+                            {{this.MatchQualityInformation.MatchGradeText}}
                         </td>
                         <td>
-                        	{{this.MatchQualityInformation.ConfidenceCodeValue}}
+                            {{this.MatchQualityInformation.ConfidenceCodeValue}}
                         </td>
                     </tr>
                 {{/each}}

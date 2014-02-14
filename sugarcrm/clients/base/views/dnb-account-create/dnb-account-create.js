@@ -10,8 +10,9 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-
 ({
+    extendsFrom: 'DnbView',
+
     duns_num: '',
 
     //used to detect if import was clicked for the first time when company info was loaded
@@ -23,417 +24,154 @@
     companyList: null,
 
     keyword: null,
-   
-    events: 
-    {
-        'click a.dnb-company-name':'getDNBCompInfo',
-        'click .showMoreData':'showMoreData',
+
+    events: {
+        'click a.dnb-company-name': 'dunsClickHandler',
+        'click .showMoreData': 'showMoreData',
         'click .showLessData': 'showLessData',
-        'click .importDNBData': 'importDNBData',
+        'click .importDNBData': 'importAccount',
         'click .dnb_checkbox': 'importCheckBox',
         'click .clearDNBResults': 'clearDNBResults',
         'click .backToList' : 'backToCompanyList'
-	},
+    },
 
-    configuredKey: "dnb:account:create:configured",
+    configuredKey: 'dnb:account:create:configured',
 
-	initialize:function(options)
-	{
+    initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.context.on('input:name:keyup', this.dnbSearch, this);
-
-        // check to see if we are configured
-        this.checkConfig();
-	},
-	
-    loadData: function (options) 
-	{
-        var self = this;
-        self.template = app.template.get(self.name + '.dnb-search-hint');
-        self.render();
     },
 
-    backToCompanyList: function()
-    {
-        _.bind(this.renderCompanyList,this,this.companyList)();
+    loadData: function(options) {
+        this.template = app.template.get(this.name + '.dnb-search-hint');
+        if (!this.disposed) {
+            this.render();
+        }
     },
 
-    renderCompanyList: function(companyList)
-    {
+    /**
+     * Navigates from the company details screen to the search results screen
+     */
+    backToCompanyList: function() {
+        this.renderCompanyList.call(this, this.companyList);
+    },
+
+    /**
+     * Render search results
+     * @param  {Object} dnbSrchApiResponse
+     */
+    renderCompanyList: function(dnbSrchApiResponse) {
+        if (this.disposed) {
+            return;
+        }
         this.template = app.template.get(this.name);
-        _.extend(this,companyList);
+        var dnbSrchResults = {};
+        if (dnbSrchApiResponse.companies) {
+            this.companyList = dnbSrchApiResponse;
+            dnbSrchResults.product = this.formatSrchRslt(dnbSrchApiResponse.companies, this.searchDD);
+        }
+        if (dnbSrchApiResponse.errmsg) {
+            dnbSrchResults.errmsg = dnbSrchApiResponse.errmsg;
+        }
+        this.dnbSrchResults = dnbSrchResults;
         this.render();
         this.$('div#dnb-company-list-loading').hide();
         this.$('div#dnb-search-results').show();
         this.$('.showLessData').hide();
     },
-    /**
-     * Checks if external api is configured
-     */
-    checkConfig: function() {
-        var self = this;
-        var searchString = 'sugarcrm';
-        var dnbSearchUrl = app.api.buildURL('connector/dnb/search/' + searchString,'',{},{});
-            this.hide();
-        app.api.call('READ', dnbSearchUrl, {},{
-            success: function(data)
-            {
-                if (data.error && data.error === 'ERROR_DNB_CONFIG') {
-                   // not configured dont do anything
-                    app.cache.set(self.configuredKey, false);
-                } else  {
-                    app.cache.set(self.configuredKey, true);
-                    if (!self.disposed) {
-                        self.show();
-                        self.render();
-                        return true;
-                    }
-                }
 
-            }
-        });
-    },
-    /* event listener for keyup / autocomplete feature */
-    dnbSearch: function(searchString)
-    {
-        if (!app.cache.get(this.configuredKey)) {
+    /** event listener for keyup / autocomplete feature
+     * @param {String} searchString
+     */
+    dnbSearch: function(searchString) {
+        if (this.disposed) {
             return;
         }
-        
-        if(!this.keyword || (this.keyword && this.keyword != searchString))
-        {
+        if (!this.keyword || (this.keyword && this.keyword !== searchString)) {
             this.keyword = searchString;
-            var self = this;
-            self.template = app.template.get(self.name);
-            self.render();
-            self.$('table#dnb_company_list').empty(); //empty results table
-            self.$('div#dnb-search-results').hide(); //hide results div
-            self.$('div#dnb-company-list-loading').show(); //show loading text
-            self.$('.clearDNBResults').attr('disabled','disabled'); //disable clear button
-            self.$('.clearDNBResults').removeClass('enabled');
-            self.$('.clearDNBResults').addClass('disabled');
-
-            var dnbSearchUrl = app.api.buildURL('connector/dnb/search/' + searchString,'',{},{});
-            self.companyList = null;
-            app.api.call('READ', dnbSearchUrl, {},{
-                    success: function(data) 
-                    {
-                        if(data.error)
-                        {
-                        }
-                        else
-                        {
-                             var candidateData = {'companies':null,'errmsg':null};
-                             self.template = app.template.get(self.name);
-
-                             try
-                             {
-                                var resultdata = data;
-                                var resultIDPath = "FindCompanyResponse.TransactionResult.ResultID";
-
-                                 if(self.checkJsonNode(resultdata,resultIDPath) && 
-                                    resultdata.FindCompanyResponse.TransactionResult.ResultID == 'CM000')
-                                 {
-                                    candidateData.companies = resultdata.FindCompanyResponse.FindCompanyResponseDetail.FindCandidate; 
-                                     _.each(candidateData.companies,function(companyObj){
-                                        
-                                        if(companyObj.FamilyTreeMemberRole)
-                                        {
-                                            //we are relying on DNBCodeValue
-                                            //higher the code value more the precedence in the family tree role
-                                            //hence we are using the _.max function
-                                            var locationType = _.max(companyObj.FamilyTreeMemberRole, function(memberRole)
-                                            { 
-                                                return memberRole.FamilyTreeMemberRoleText["@DNBCodeValue"]; 
-                                            });
-
-                                            if(locationType.FamilyTreeMemberRoleText['$'] != 'Parent')
-                                                companyObj.locationType = locationType.FamilyTreeMemberRoleText['$'];
-                                        }
-                                    });
-                                    self.companyList = candidateData.companies;
-                                 }
-                                 else
-                                 {
-                                    candidateData.errmsg = resultdata.FindCompanyResponse.TransactionResult.ResultText;
-                                 }
-                             }
-                             catch(e)
-                             {
-                                 candidateData.errmsg = app.lang.get('LBL_DNB_SVC_ERR');
-                             }
-
-                              _.extend(self, candidateData);
-                              self.render();
-                              self.$('div#dnb-company-list-loading').hide();
-                              self.$('div#dnb-search-results').show();
-                              self.$('.clearDNBResults').removeClass('disabled');
-                              self.$('.clearDNBResults').addClass('enabled');
-                              self.$(".showLessData").hide();
-                        }
-                    }   
-            });
+            this.template = app.template.get(this.name);
+            this.render();
+            this.$('table#dnb_company_list').empty(); //empty results table
+            this.$('div#dnb-search-results').hide(); //hide results div
+            this.$('div#dnb-company-list-loading').show(); //show loading text
+            this.$('.clearDNBResults').attr('disabled', 'disabled'); //disable clear button
+            this.$('.clearDNBResults').removeClass('enabled');
+            this.$('.clearDNBResults').addClass('disabled');
+            this.companyList = null;
+            this.baseCompanySearch(searchString, this.renderCompanyList);
         }
-        
-
-        
     },
-
-
 
     /**
-      Utility function to check if a node exists in a json object
-    **/
-    checkJsonNode: function(obj,path) 
-    {
-        var args = path.split(".");
-
-        for (var i = 0; i < args.length; i++) 
-        {
-            if (obj == null || !obj.hasOwnProperty(args[i]) ) 
-            {
-                return false;
-            }
-            obj = obj[args[i]];
-        }
-        return true;
-    },
-
-    /*
-        Clear D&B Search Results
-    */
-    clearDNBResults:function()
-    {
+     * Clear D&B Search Results
+     */
+    clearDNBResults: function() {
         this.$('table#dnb_company_list').empty();
         this.template = app.template.get(this.name + '.dnb-search-hint');
         this.render();
     },
 
-
-
-    /* Get company details based on DUNS no*/
-    getDNBCompInfo: function(evt)
-    {
-        var dunsNo = evt.target.id;
-        
-        var self = this;
-        self.template = app.template.get(self.name + '.dnb-company-details');
-        self.render();
-        self.$('div#dnb-company-details').hide();
-        self.$('.importDNBData').hide();
-
-        if(dunsNo && dunsNo != '')
-        {
-           //check if cache has this data already
-            var cacheKey = 'dnb:compstd:' + dunsNo;
-
-            if(app.cache.get(cacheKey))
-            {
-                var duns_path = "OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber";
-                var resultData = app.cache.get(cacheKey);
-
-                if(self.checkJsonNode(resultData.product,duns_path))
-                    self.duns_num = resultData.product.OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber;
-                _.bind(self.renderCompanyDetails,self,app.cache.get(cacheKey))();
-            }
-            else
-            {
-               var dnbProfileUrl = app.api.buildURL('connector/dnb/profile/' + dunsNo,'',{},{});
-               var resultData = {'product':null,'errmsg':null};
-               app.api.call('READ', dnbProfileUrl, {},{
-                        success: function(data) 
-                        {
-                            self.importFlag = false;
-
-                            var duns_path = "OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber";
-                            var resultIDPath = "OrderProductResponse.TransactionResult.ResultID";
-                            var resultTextPath = "OrderProductResponse.TransactionResult.ResultText";
-                            var industry_path = "OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode";
-
-                            if(self.checkJsonNode(data,resultIDPath) && 
-                                data.OrderProductResponse.TransactionResult.ResultID == 'CM000')
-                            {
-                                resultData.product = data;
-                                self.duns_num = resultData.product.OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber;
-
-                                if(self.checkJsonNode(resultData.product,industry_path))
-                                {
-                                    var industryCodeArray = resultData.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode;
-                                    //399 is the industry code type value for US SIC
-                                    resultData.product.primarySIC = self.getPrimaryIndustry(industryCodeArray,'399'); 
-                                }
-
-                                self.$('.importDNBData').show();
-                                app.cache.set(cacheKey,resultData);
-                            }
-                            else if(self.checkJsonNode(data,resultTextPath))
-                            {
-                                resultData.errmsg = data.OrderProductResponse.TransactionResult.ResultText;
-                            }
-                            else
-                            {
-                                resultData.errmsg = app.lang.get('LBL_DNB_SVC_ERR');
-                            }
-
-                         _.bind(self.renderCompanyDetails,self,resultData)();
-                              
-                        }
-                });
-            }
-           
-          
-        }
-    },
-
-    renderCompanyDetails: function(companyDetails)
-    {
-        if (this.disposed) {
-                return;
-            }
-        _.extend(this, companyDetails);
-        this.render();
-        if(companyDetails.errmsg)
+    /**
+     * Event handler for handling clicks on D&B Search Results
+     * @param  {Object} evt
+     */
+    dunsClickHandler: function(evt) {
+        var duns_num = evt.target.id;
+        this.dnbProduct = null;
+        if (duns_num) {
+            this.template = app.template.get(this.name + '.dnb-company-details');
+            this.render();
+            this.$('div#dnb-company-detail-loading').show();
+            this.$('div#dnb-company-details').hide();
             this.$('.importDNBData').hide();
-        else if(companyDetails.product)
-            this.$('.importDNBData').show();
+            this.baseCompanyInformation(duns_num, this.compInfoProdCD.std,
+                app.lang.get('LBL_DNB_BACK_TO_SRCH'), this.renderCompanyDetails);
+        }
+    },
+
+
+    /**
+     * Renders the dnb company details with checkboxes
+     * @param {Object} companyDetails
+     */
+    renderCompanyDetails: function(companyDetails) {
+        if (this.disposed) {
+            return;
+        }
+        this.dnbProduct = {};
+        if (companyDetails.product) {
+            var duns_num = this.getJsonNode(companyDetails.product, this.appendSVCPaths.duns);
+            if (!_.isUndefined(duns_num)) {
+                this.duns_num = duns_num;
+                this.dnbProduct.product = this.formatCompanyInfo(companyDetails.product, this.accountsDD);
+            }
+        }
+        if (companyDetails.errmsg) {
+            this.dnbProduct.errmsg = companyDetails.errmsg;
+        }
+        this.render();
         this.$('div#dnb-company-detail-loading').hide();
-        this.$('div#dnb-company-details').show(); 
-    },
-
-    showMoreData: function () {
-        this.$(".dnb-show-less").attr("class","dnb-show-all");
-        this.$(".showLessData").show();
-        this.$(".showMoreData").hide();
-    },
-
-    showLessData: function () {
-        this.$(".dnb-show-all").attr("class","dnb-show-less");
-        this.$(".showLessData").hide();
-        this.$(".showMoreData").show();
-    },
-
-    importDNBData: function()
-    {
-        var dnbCheckBox = this.$('.dnb_checkbox:checked');
-        var accountsModel = this.model;
-
-        // always import the duns_num
-        accountsModel.set('duns_num',this.duns_num);
-
-        // iterate through checkboxes
-        // values being overriden stored in updatedData
-        // values that are newly being set store in newData
-        var updatedData = [];
-        var newData = [];
-        for(var checkBoxCounter = 0; checkBoxCounter < dnbCheckBox.length; checkBoxCounter++)
-        {
-            var dnbPropertyName = dnbCheckBox[checkBoxCounter].id;
-            
-            var dnbPropertyValue = $.trim(this.$('#' + dnbPropertyName).parent().next().next().text());
-            
-            //check if existing value is getting updated
-            if(!_.isUndefined(accountsModel.get(dnbPropertyName)) 
-                && accountsModel.get(dnbPropertyName) != '' && this.importFlag)
-            { 
-                updatedData.push({propName:dnbPropertyName,propVal:dnbPropertyValue});
-            } else if(dnbPropertyValue != ''){
-                newData.push({propName:dnbPropertyName,propVal:dnbPropertyValue});
-            } 
-        } 
-
-        //importing new data
-        if(newData.length > 0)
-        {
-            this.updateAccountsModel(newData);
-        }
-
-        //update existing data
-        if (updatedData.length > 0) {
-
-            var confirmationMsgKey,
-                confirmationMsgData;
-
-            //show a detailed warning message about the single data element being imported
-            if (updatedData.length === 1) {
-                var fieldName = app.lang.get(accountsModel.fields[updatedData[0].propName].vname, 'Accounts');
-                confirmationMsgKey = 'LBL_DNB_DATA_OVERRIDE_SINGLE_FIELD';
-                confirmationMsgData = {
-                    fieldName: fieldName.toLowerCase(),
-                    value: updatedData[0].propVal
-                };
-            }
-            else {
-                var fieldList = [
-                    app.lang.get(accountsModel.fields[updatedData[0].propName].vname, 'Accounts').toLowerCase(),
-                    app.lang.get(accountsModel.fields[updatedData[1].propName].vname, 'Accounts').toLowerCase()
-                ];
-
-                if (updatedData.length === 2) {
-                    //list the two fields being imported
-                    confirmationMsgKey = 'LBL_DNB_DATA_OVERRIDE_TWO_FIELDS';
-                    confirmationMsgData = {
-                        fields: fieldList.join(' ' + app.lang.get('LBL_DNB_AND') + ' ')
-                    };
-                } else {
-                    //list the two first fields and append ` and other(s) field(s)`
-                    confirmationMsgKey = 'LBL_DNB_DATA_OVERRIDE_MULTIPLE_FIELDS';
-                    confirmationMsgData = {
-                        fields: fieldList.join(', ')
-                    };
-                }
-            }
-
-            var confirmationMsgTpl = Handlebars.compile(app.lang.get(confirmationMsgKey));
-
-            app.alert.show('dnb-import-warning',
-                {
-                    level: 'confirmation',
-                    title: 'LBL_WARNING',
-                    messages: confirmationMsgTpl(confirmationMsgData),
-                    onConfirm: _.bind(this.updateAccountsModel, this, updatedData)
-                }
-            );
-        }
-
-        //setting the import flag to true after the first import is complete
-        this.importFlag = true;
-    },
-
-    /* Overrite existing data with new data */
-    updateAccountsModel: function(updatedData)
-    {
-        var self = this;
-        _.each(updatedData,function(updatedAttribute){
-            self.model.set(updatedAttribute.propName,updatedAttribute.propVal);
-        });
-        app.alert.show('dnb-import-success', {level: 'success',title: 'Success:',messages: app.lang.get('LBL_DNB_OVERRIDE_SUCCESS'),autoClose: true});
-    },
-
-    importCheckBox: function() 
-    {       
-        var dnbCheckBoxes = $('.dnb_checkbox:checked');
-
-        if(dnbCheckBoxes.length > 0) 
-        {
-            this.$(".importDNBData").removeClass('disabled');   
-        } 
-        else 
-        {
-            this.$(".importDNBData").addClass('disabled');   
+        this.$('div#dnb-company-details').show();
+        if (this.dnbProduct.errmsg) {
+            this.$('.importDNBData').hide();
+        } else {
+            this.$('.importDNBData').show();
         }
     },
 
     /**
-     * Gets the primary industry code from the array of industry codes
-     * @param industryArray
-     * @param industryCode
-     * @return object
+     * Import Account Information
      */
-    getPrimaryIndustry: function(industryArray,industryCode)
-    {
-        return _.find(industryArray,function(industryObj){
-
-            return industryObj["@DNBCodeValue"] == industryCode && industryObj['DisplaySequence'] == '1';
-        });
+    importAccount: function() {
+        this.importAccountsData(this.importFlag);
+        this.importFlag = true;
     },
-})
+
+    /**
+     * Checkbox change event handler
+     */
+    importCheckBox: function() {
+        var dnbCheckBoxes = this.$('.dnb_checkbox:checked');
+        this.$('.importDNBData').toggleClass('disabled', dnbCheckBoxes.length === 0);
+    }
+});

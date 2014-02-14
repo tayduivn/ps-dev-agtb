@@ -43,7 +43,7 @@ $viewdefs['base']['view']['dnb-contact-info'] = array(
                 "icon" => "icon-chevron-down",
                 "action" => "toggleMinify",
                 "tooltip" => "LBL_DASHLET_MAXIMIZE",
-            ),      
+            ),
         )
     )
 );

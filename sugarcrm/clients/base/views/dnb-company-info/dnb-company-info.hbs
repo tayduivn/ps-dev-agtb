@@ -13,25 +13,25 @@
  ********************************************************************************/
 }}
 <div id="dnb-no-duns" class="block-footer">
-	<div id="dnb-refresh-loading">
-		{{str "LBL_DNB_RFR_LOADING"}}...
-	</div>
-	<div id="dnb-refresh-details">
-	 	{{#if uptodate}}
-	 		<aside>
-	    		<em>{{str "LBL_DNB_UPTODATE_MSG"}}</em>
-	    	</aside>
-	    {{else}}
-	    	{{#if errmsg}}
-	    		<aside>
-		    		<em>{{errmsg}}</em>
-		    	</aside>
-	    	{{else}}
-	    		<aside>
-		    		<em>{{str "LBL_DNB_OUTOFDATE_MSG"}}</em>
-		    	</aside>
-		    	<a id="dnb-refresh">{{str "LBL_DNB_RFR_HINT"}}</a>
-	    	{{/if}}
-	    {{/if}}
-	</div>
+    <div id="dnb-refresh-loading">
+        {{str "LBL_DNB_RFR_LOADING"}}...
+    </div>
+    <div id="dnb-refresh-details">
+        {{#if uptodate}}
+            <aside>
+                <em>{{str "LBL_DNB_UPTODATE_MSG"}}</em>
+            </aside>
+        {{else}}
+            {{#if errmsg}}
+                <aside>
+                    <em>{{errmsg}}</em>
+                </aside>
+            {{else}}
+                <aside>
+                    <em>{{str "LBL_DNB_OUTOFDATE_MSG"}}</em>
+                </aside>
+                <a id="dnb-refresh">{{str "LBL_DNB_RFR_HINT"}}</a>
+            {{/if}}
+        {{/if}}
+    </div>
 </div>

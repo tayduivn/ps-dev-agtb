@@ -12,222 +12,228 @@
  */
 ({
 
-    plugins: ['Dashlet'],
-   
-    events: 
-    {
-      'click .showMoreData':'showMoreData',
-      'click .showLessData':'showLessData',
+    extendsFrom: 'DnbView',
+
+    events: {
+        'click .showMoreData': 'showMoreData',
+        'click .showLessData': 'showLessData'
+    },
+
+    //industry information data dictionary
+    industryInfoDD: {
+        'industryExplanation': {
+            'json_path': 'IndustryCode.0.IndustryExplanationText',
+            'case_fmt': true
+        },
+        'industryChapters': {
+            'json_path': 'IndustryProfileChapterDetail',
+            'case_fmt': true
+        }
+    },
+
+    //industry info constants
+    industryConst: {
+        'industryInfoPath': 'OrderProductResponse.OrderProductResponseDetail.Product.IndustryProfile.IndustryProfileDetail.0'
     },
 
     initialize: function(options) {
         this._super('initialize', [options]);
-        if(this.layout.collapse)
+        if (this.layout.collapse) {
             this.layout.collapse(true);
+        }
         this.layout.on('dashlet:collapse', this.loadIndustryInfo, this);
-        app.events.on("dnbcompinfo:duns_selected",this.collapseDashlet,this);
+        app.events.on('dnbcompinfo:duns_selected', this.collapseDashlet, this);
     },
 
-    collapseDashlet: function()
-    {
-        if(this.layout.collapse)
-            this.layout.collapse(true);      
-    },
-
-    loadData: function (options) {
-        this.template = app.template.get(this.name + '.dnb-desc');
-        if (!this.disposed) this.render();
+    loadData: function(options) {
+        if (this.model.get('duns_num')) {
+            this.duns_num = this.model.get('duns_num');
+        }
     },
 
     /**
-     * Loads Industry Information For Hoovers Industry Code
-     * @param isCollapsed boolean (indicates if dashlet was expanded or collapsed)
+     * Refresh dashlet once Refresh link clicked from gear button
+     * To show updated industry information from DNB service
      */
-    loadIndustryInfo: function(isCollapsed)
-    {
-        //if the dashlet is not collapsed load data from D&B
-        if(!isCollapsed)
-        {
-            //check if Hoovers Industry Code is set in context by refresh dashlet
-            if(!_.isUndefined(app.controller.context.get('dnb_temp_hoovers_ind_code')))
-                this.getDNBIndustryInfo(app.controller.context.get('dnb_temp_hoovers_ind_code'));
-            else if(this.model.get('sic_code'))
-            {
-                var sicToHicParams = {'industryType' : '3599','industryCode': this.model.get('sic_code')};
-                this.getDNBIndustryInfoFromSIC(sicToHicParams);
-            }
-            else
-            {
-                this.template = app.template.get(this.name + '.dnb-no-duns');
-                if (!this.disposed) 
-                    this.render();
-            }
-        }
-        
+    refreshClicked: function() {
+        this.loadIndustryInfo(false);
     },
 
-    showDNBLoading: function(duns_num)
-    {
+    /**
+     * Handles the dashlet expand | collapse events
+     * @param  {Boolean} isCollapsed
+     */
+    loadIndustryInfo: function(isCollapsed) {
+        //if the dashlet is not collapsed load data from D&B
+        if (!isCollapsed) {
+            //check if Hoovers Industry Code is set in context by refresh dashlet
+            if (!_.isUndefined(app.controller.context.get('dnb_temp_hoovers_ind_code'))) {
+                this.getDNBIndustryInfo(app.controller.context.get('dnb_temp_hoovers_ind_code'));
+            } else if (this.model.get('sic_code')) {
+                var sicToHicParams = {'industryType': '3599', 'industryCode': this.model.get('sic_code')};
+                this.getDNBIndustryInfoFromSIC(sicToHicParams);
+            } else {
+                this.template = app.template.get(this.name + '.dnb-no-duns');
+                if (!this.disposed) {
+                    this.render();
+                }
+            }
+        }
+    },
+
+    /**
+     * Display Loading Message
+     * @param  {String} duns_num
+     */
+    showDNBLoading: function(duns_num) {
         this.template = app.template.get(this.name);
+        if (this.disposed) {
+            return;
+        }
         this.render();
         this.$('#dnb-industry-list-loading').show();
         this.$('#dnb-industry-info').hide();
     },
 
-    getDNBIndustryInfoFromSIC: function(sicToHicParams)
-    {
+    /**
+     * Get D&B industry information from SIC codes
+     * @param  {Object} sicToHicParams
+     */
+    getDNBIndustryInfoFromSIC: function(sicToHicParams) {
         var self = this;
-        if(sicToHicParams.industryType == '3599' && sicToHicParams.industryCode)
-        {
+        if (sicToHicParams.industryType == '3599' && sicToHicParams.industryCode) {
             self.template = app.template.get(self.name);
-            self.render();
+            if (!self.disposed) {
+                self.render();
+            }
             self.$('#dnb-industry-list-loading').show();
             self.$('#dnb-industry-info').hide();
-
             //check if cache has this data already
             var cacheKey = 'dnb:industrydet:' + sicToHicParams.industryType + ':' + sicToHicParams.industryCode;
-
-            if(app.cache.get(cacheKey))
-            {
-                _.bind(self.renderIndustryInfo,self,app.cache.get(cacheKey))();
-            }
-            else
-            {
-                var dnbIndustryURL = app.api.buildURL('connector/dnb/industry','',{},{});
-                var resultData = {'product':null,'errmsg':null};
-                app.api.call('create', dnbIndustryURL,{'qdata':sicToHicParams},{
-                    success: function(data) 
-                    {
-                        var resultIDPath = "OrderProductResponse.TransactionResult.ResultID",
-                        errMsgPath = "OrderProductResponse.TransactionResult.ResultText";
-
-                        if(self.checkJsonNode(data,resultIDPath) &&
-                            data.OrderProductResponse.TransactionResult.ResultID == 'CM000')
-                        {
+            if (app.cache.get(cacheKey)) {
+                self.renderIndustryInfo.call(self, app.cache.get(cacheKey));
+            } else {
+                var dnbIndustryURL = app.api.buildURL('connector/dnb/industry', '', {}, {});
+                var resultData = {'product': null, 'errmsg': null};
+                app.api.call('create', dnbIndustryURL, {'qdata': sicToHicParams}, {
+                    success: function(data) {
+                        var responseCode = self.getJsonNode(data, self.appendSVCPaths.responseCode),
+                            responseMsg = self.getJsonNode(data, self.appendSVCPaths.responseMsg);
+                        if (responseCode && responseCode === self.responseCodes.success) {
                             resultData.product = data;
-                            app.cache.set(cacheKey,resultData);
+                            app.cache.set(cacheKey, resultData);
+                        } else {
+                            resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
                         }
-                        else if(self.checkJsonNode(data,errMsgPath))
-                        {
-                            resultData.errmsg = data.OrderProductResponse.TransactionResult.ResultText;
-                        }
-                        else
-                            resultData.errmsg = app.lang.get('LBL_DNB_SVC_ERR');
-
-                        _.bind(self.renderIndustryInfo,self,resultData)();
-                    }
+                        self.renderIndustryInfo.call(self, resultData);
+                    },
+                    error: _.bind(self.checkAndProcessError, self)
                 });
             }
-        }
-        else
-        {
+        } else {
             self.template = app.template.get(self.name + '.dnb-no-duns');
-            if (!self.disposed) 
-            {
+            if (!self.disposed) {
                 self.render();
             }
         }
-    },
-
-    getDNBIndustryInfo: function(industryCodeValue) {
-        var self = this;
-        if(industryCodeValue)
-        {
-            self.template = app.template.get(self.name);
-            self.render();
-            self.$('#dnb-industry-list-loading').show();
-            self.$('#dnb-industry-info').hide();
-
-            //check if cache has this data already
-            var cacheKey = 'dnb:industrydet:' + industryCodeValue;
-
-            if(app.cache.get(cacheKey))
-            {
-                _.bind(self.renderIndustryInfo,self,app.cache.get(cacheKey))();
-            }
-            else
-            {
-                var dnbIndustryURL = app.api.buildURL('connector/dnb/industry/' + industryCodeValue,'',{},{});
-                var resultData = {'product':null,'errmsg':null};
-                app.api.call('READ', dnbIndustryURL, {},{
-                    success: function(data) 
-                    {
-                        var resultIDPath = "OrderProductResponse.TransactionResult.ResultID",
-                        errMsgPath = "OrderProductResponse.TransactionResult.ResultText";
-
-                        if(self.checkJsonNode(data,resultIDPath) &&
-                            data.OrderProductResponse.TransactionResult.ResultID == 'CM000')
-                        {
-                            resultData.product = data;
-                            app.cache.set(cacheKey,resultData);
-                        }
-                        else if(self.checkJsonNode(data,errMsgPath))
-                        {
-                            resultData.errmsg = data.OrderProductResponse.TransactionResult.ResultText;
-                        }
-                        else
-                            resultData.errmsg = app.lang.get('LBL_DNB_SVC_ERR');
-
-                        _.bind(self.renderIndustryInfo,self,resultData)();
-                        
-                    }
-                });
-            }
-        }
-        else
-        {
-            self.template = app.template.get(self.name + '.dnb-no-duns');
-            if (!self.disposed) 
-            {
-                self.render();
-            }
-        }
-    },
-
-    renderIndustryInfo: function(industryDetails)
-    {
-        if (this.disposed) {
-            return;
-        }
-        this.template = app.template.get(this.name);
-        _.extend(this, industryDetails);
-        if (!this.disposed) 
-        {
-            this.render();
-            this.$('#dnb-industry-list-loading').hide();
-            this.$('#dnb-industry-info').show();
-            this.$(".showLessData").hide();
-        }
-    },
-
-     showMoreData: function () {
-        this.$(".dnb-show-less").attr("class","dnb-show-all");
-        this.$(".showLessData").show();
-        this.$(".showMoreData").hide();
-    },
-
-    showLessData: function () {
-        this.$(".dnb-show-all").attr("class","dnb-show-less");
-        this.$(".showLessData").hide();
-        this.$(".showMoreData").show();
     },
 
     /**
-      Utility function to check if a node exists in a json object
-    **/
-    checkJsonNode: function(obj,path) 
-    {
-        var args = path.split(".");
-
-        for (var i = 0; i < args.length; i++) 
-        {
-            if (obj == null || !obj.hasOwnProperty(args[i]) ) 
-            {
-                return false;
+     * Get D&B industry information from HIC codes
+     * @param {Object} industryCodeValue
+     */
+    getDNBIndustryInfo: function(industryCodeValue) {
+        var self = this;
+        if (industryCodeValue) {
+            self.template = app.template.get(self.name);
+            if (!self.disposed) {
+                self.render();
             }
-            obj = obj[args[i]];
+            self.$('#dnb-industry-list-loading').show();
+            self.$('#dnb-industry-info').hide();
+            //check if cache has this data already
+            var cacheKey = 'dnb:industrydet:' + industryCodeValue;
+            if (app.cache.get(cacheKey)) {
+                self.renderIndustryInfo.call(self, app.cache.get(cacheKey));
+            } else {
+                var dnbIndustryURL = app.api.buildURL('connector/dnb/industry/' + industryCodeValue, '', {}, {});
+                var resultData = {'product': null, 'errmsg': null};
+                app.api.call('READ', dnbIndustryURL, {}, {
+                    success: function(data) {
+                        var responseCode = self.getJsonNode(data, self.appendSVCPaths.responseCode),
+                            responseMsg = self.getJsonNode(data, self.appendSVCPaths.responseMsg);
+                        if (responseCode && responseCode === self.responseCodes.success) {
+                            resultData.product = data;
+                            app.cache.set(cacheKey, resultData);
+                        } else {
+                            resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
+                        }
+                        self.renderIndustryInfo.call(self, resultData);
+                    },
+                    error: _.bind(self.checkAndProcessError, self)
+                });
+            }
+        } else {
+            self.template = app.template.get(self.name + '.dnb-no-duns');
+            if (!self.disposed) {
+                self.render();
+            }
         }
-        return true;
     },
 
-})
+    /**
+     * Render industry information from D&B API Response
+     * @param  {Object} dnbApiResponse
+     */
+    renderIndustryInfo: function(dnbApiResponse) {
+        if (this.disposed) {
+            return;
+        }
+        var formattedIndustryInfo, dnbIndustryInfo = {};
+        if (dnbApiResponse.product) {
+            var industryProduct = this.getJsonNode(dnbApiResponse.product, this.industryConst.industryInfoPath);
+            if (industryProduct) {
+                formattedIndustryInfo = this.formatIndustryInfo(industryProduct, this.industryInfoDD);
+                if (!_.isNull(formattedIndustryInfo)) {
+                    dnbIndustryInfo.product = formattedIndustryInfo;
+                } else {
+                    dnbIndustryInfo.errmsg = app.lang.get('LBL_DNB_NO_DATA');
+                }
+            } else {
+                dnbIndustryInfo.errmsg = app.lang.get('LBL_DNB_NO_DATA');
+            }
+        } else {
+            dnbIndustryInfo.errmsg = dnbApiResponse.errmsg || app.lang.get('LBL_DNB_NO_DATA');
+        }
+        this.dnbIndustryInfo = dnbIndustryInfo;
+        this.template = app.template.get(this.name);
+        this.render();
+        this.$('#dnb-industry-list-loading').hide();
+        this.$('#dnb-industry-info').show();
+        this.$('.showLessData').hide();
+    },
+
+    /**
+     * Preprocessing industry information
+     * @param {Object} industryDetails DNB API Response for IndustryInfo
+     * @param {Object} industryInfoDD Data Dictionary for industry information
+     * @return {Object}
+     */
+    formatIndustryInfo: function(industryDetails, industryInfoDD) {
+        var formattedIndustryInfo = {};
+        //iterate through data dictionary and extract required
+        //data elements
+        //populate them as key value pairs in the JS object
+        _.each(industryInfoDD, function(value, key) {
+            var dataElement = this.getJsonNode(industryDetails, value.json_path);
+            if (dataElement) {
+                formattedIndustryInfo[key] = dataElement;
+            }
+        }, this);
+        if (formattedIndustryInfo.industryExplanation && formattedIndustryInfo.industryChapters) {
+            return formattedIndustryInfo;
+        } else {
+            return null;
+        }
+    }
+});
