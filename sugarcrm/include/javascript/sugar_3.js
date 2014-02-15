@@ -779,6 +779,9 @@ function getDateObject(dtStr) {
 	if(dtStr.length== 0) {
 		return true;
 	}
+        if (dtStr instanceof Date) {
+            return dtStr;
+        }
 
 	myregexp = new RegExp(date_reg_format)
 
