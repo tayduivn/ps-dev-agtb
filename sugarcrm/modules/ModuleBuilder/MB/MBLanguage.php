@@ -189,7 +189,7 @@ class MBLanguage{
                 }
                 // if we aren't duplicating or the key has changed let's add it
                 if (!$duplicate || $okey != $key) {
-                    if (isset($this->appListStrings[$lang][$key])) {
+                    if ($rename && isset($this->appListStrings[$lang][$key])) {
                         $arr = $this->appListStrings[$lang][$key];
                     } else {
                         $arr = $array;

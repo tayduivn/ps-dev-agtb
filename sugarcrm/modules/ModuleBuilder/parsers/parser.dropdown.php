@@ -79,7 +79,7 @@ class ParserDropDown extends ModuleBuilderParser
             $this->synchMBDropDown($dropdown_name, $dropdown, $selected_lang, $module);
             //Can't use synch on selected lang as we want to overwrite values, not just keys
             $module->mblanguage->appListStrings[$selected_lang.'.lang.php'][$dropdown_name] = $dropdown;
-            $module->mblanguage->save($module->key_name); // tyoung - key is required parameter as of
+            $module->mblanguage->save($module->key_name, false, true); // tyoung - key is required parameter as of
         } else {
             $contents = return_custom_app_list_strings_file_contents($selected_lang);
             $my_list_strings = return_app_list_strings_language($selected_lang);
