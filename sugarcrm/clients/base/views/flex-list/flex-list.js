@@ -581,30 +581,32 @@
     /**
      * Add multi selection field to left column
      */
-    addMultiSelectionAction: function () {
-        var _generateMeta = function (buttons, disableSelectAllAlert) {
+    addMultiSelectionAction: function() {
+        var _generateMeta = function(buttons, disableSelectAllAlert, isLinkAction) {
             return {
                 'type': 'fieldset',
                 'fields': [
                     {
                         'type': 'actionmenu',
                         'buttons': buttons || [],
-                        'disable_select_all_alert': !!disableSelectAllAlert
+                        'disable_select_all_alert': !!disableSelectAllAlert,
+                        'isLinkAction': !!isLinkAction
                     }
                 ],
                 'value': false,
                 'sortable': false
             };
         };
-        var buttons =               this.meta.selection.actions,
-            disableSelectAllAlert = !!this.meta.selection.disable_select_all_alert;
-        this.leftColumns.push(_generateMeta(buttons, disableSelectAllAlert));
+        var buttons = this.meta.selection.actions,
+            disableSelectAllAlert = !!this.meta.selection.disable_select_all_alert,
+            isLinkAction = !!this.meta.selection.isLinkAction;
+        this.leftColumns.push(_generateMeta(buttons, disableSelectAllAlert, isLinkAction));
     },
     /**
      * Add fieldset of rowactions to the right column
      */
-    addRowActions: function () {
-        var _generateMeta = function (label, css_class, buttons) {
+    addRowActions: function() {
+        var _generateMeta = function(label, css_class, buttons) {
             return {
                 'type': 'fieldset',
                 'fields': [

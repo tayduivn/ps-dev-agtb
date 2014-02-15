@@ -121,7 +121,7 @@ class RelateRecordApi extends ModuleApi {
         }
 
         return array($linkName, $linkSeed);
-        
+
     }
 
     /**
