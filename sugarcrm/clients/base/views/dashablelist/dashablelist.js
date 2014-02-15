@@ -456,14 +456,11 @@
         if (!module) {
             return columns;
         }
-        if (!_.isEmpty(this._availableColumns[module])) {
-            return this._availableColumns[module];
-        }
 
         _.each(this.getFieldMetaForView(this._getListMeta(module)), function(field) {
             columns[field.name] = app.lang.get(field.label || field.name, module);
         });
-        this._availableColumns[module] = columns;
+
         return columns;
     },
 
