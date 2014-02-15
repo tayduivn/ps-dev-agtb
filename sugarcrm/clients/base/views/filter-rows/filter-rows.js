@@ -297,45 +297,51 @@
     },
 
     /**
-     * Validate rows
-     * @returns {Boolean} TRUE if valid, FALSE otherwise
+     * Validate all filter rows.
+     *
+     * @param {Array} rows A list of rows to validate.
+     * @return {Boolean} `true` if all filter rows are valid, `false`
+     *   otherwise.
      */
-    validateRows: function() {
-        var isValid = true,
-            $rows = this.$('[data-filter=row]');
-
-        _.each($rows, function(row) {
-            if (!isValid) return false;
-            isValid = this.validateRow($(row));
-        }, this);
-        return isValid;
+    validateRows: function(rows) {
+        return _.every(rows, this.validateRow, this);
     },
 
     /**
-     * Verify the value of the row is not empty
-     * @param {Element} $row the row to validate
-     * @returns {Boolean} TRUE if valid, FALSE otherwise
+     * Verify the value of the row is not empty.
+     *
+     * @param {Element} $row The row to validate.
+     * @return {Boolean} `true` if valid, `false` otherwise.
+     *
+     * TODO we should receive the data only and be jQuery agnostic.
      */
-    validateRow: function($row) {
-        var data = $row.data();
+    validateRow: function(row) {
+
+        var $row = $(row),
+            data = $row.data();
+
         //For date range and predefined filters there is no value
         if (data.isDateRange || data.isPredefinedFilter) {
             return true;
         }
+
         //Special case for between operators where 2 values are needed
-        var needTwoValues = ['$between', '$dateBetween'];
-        if (_.indexOf(needTwoValues, data.operator) > -1) {
-            if (_.isArray(data.value) && data.value.length === 2) {
-                if (data.operator === "$between") {
-                    return _.isNumber(data.value[0]) && _.isNumber(data.value[1]);
-                }
-                if (data.operator === "$dateBetween") {
-                    return !_.isEmpty(data.value[0]) && !_.isEmpty(data.value[1]);
-                }
-            } else {
+        if (_.contains(['$between', '$dateBetween'], data.operator)) {
+
+            if (!_.isArray(data.value) || data.value.length !== 2) {
                 return false;
             }
+
+            switch (data.operator) {
+                case '$between':
+                    return _.isNumber(data.value[0]) && _.isNumber(data.value[1]);
+                case '$dateBetween':
+                    return !_.isEmpty(data.value[0]) && !_.isEmpty(data.value[1]);
+                default:
+                    return false;
+            }
         }
+
         return _.isNumber(data.value) || !_.isEmpty(data.value);
     },
 

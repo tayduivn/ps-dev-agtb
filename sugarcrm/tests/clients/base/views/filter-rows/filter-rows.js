@@ -222,69 +222,54 @@ describe("BaseFilterRowsView", function() {
         });
     });
 
-    describe('validateRows', function() {
-        var triggerStub, $rows, jQueryStub;
-        beforeEach(function() {
-            triggerStub = sinonSandbox.stub(view.layout, 'trigger');
-            $rows = [];
-            jQueryStub = sinonSandbox.stub(view, '$', function() {
-                return $rows;
+    describe('rows validation', function() {
+
+        it('should return true if all rows have a value set', function() {
+            var $rows = [
+                $('<div>').data({ name: 'abc', value: 'ABC'}),
+                $('<div>').data({ name: '123', value: '123'})
+            ];
+            expect(view.validateRows($rows)).toBe(true);
+        });
+
+        it('should return false if one row has a value not set', function() {
+            var $rows = [
+                $('<div>').data({ name: 'abc', value: 'ABC'}),
+                $('<div>').data({ name: '123'})
+            ];
+            expect(view.validateRows($rows)).toBe(false);
+        });
+
+        using('possible filters', [{
+            filter: $('<div>').data({ name: 'abc', isDateRange: true}),
+            expected: true
+        },{
+            filter: $('<div>').data({ name: '$favorite', isPredefinedFilter: true}),
+            expected: true
+        },{
+            filter: $('<div>').data({ name: 'abc', operator: '$dateBetween', value: ['12-12-12']}),
+            expected: false
+        },{
+            filter: $('<div>').data({ name: 'abc', operator: '$dateBetween', value: ['', '12-12-12']}),
+            expected: false
+        },{
+            filter: $('<div>').data({ name: 'abc', operator: '$dateBetween', value: ['12-12-12', '12-13-12']}),
+            expected: true
+        },{
+            filter: $('<div>').data({ name: 'abc', operator: '$between', value: [11]}),
+            expected: false
+        },{
+            filter: $('<div>').data({ name: 'abc', operator: '$between', value: [11, 22]}),
+            expected: true
+        },{
+            filter: $('<div>').data({ name: 'abc', operator: '$between', value: ['11', 22]}),
+            expected: false
+        }], function(value) {
+            it('should validate a filter correctly', function() {
+                expect(view.validateRows(value.filter)).toBe(value.expected);
             });
         });
-        it('should return true if all rows have a value set', function() {
-            $rows.push($('<div>').data({ name: 'abc', value: 'ABC'}));
-            $rows.push($('<div>').data({ name: '123', value: '123'}));
-            var isValid = view.validateRows($rows);
-            expect(isValid).toBe(true);
-        });
-        it('should return false if a row has a value not set', function() {
-            $rows.push($('<div>').data({ name: 'abc', value: 'ABC'}));
-            $rows.push($('<div>').data({ name: '123'}));
-            var isValid = view.validateRows($rows);
-            expect(isValid).toBe(false);
-        });
-        it('should return true if uses date range instead of value', function() {
-            $rows.push($('<div>').data({ name: 'abc', isDateRange: true}));
-            $rows.push($('<div>').data({ name: '123', value: '123'}));
-            view.validateRows($rows);
-        });
-        it('should return true if predefined filter instead of value', function() {
-            $rows.push($('<div>').data({ name: '$favorite', isPredefinedFilter: true}));
-            $rows.push($('<div>').data({ name: '123', value: '123'}));
-            view.validateRows($rows);
-        });
-        it('should return false if $dateBetween operator does not have 2 values', function() {
-            $rows.push($('<div>').data({ name: 'abc', operator: '$dateBetween', value: ['12-12-12']}));
-            $rows.push($('<div>').data({ name: '123', value: '123'}));
-            var isValid = view.validateRows($rows);
-            expect(isValid).toBe(false);
-        });
-        it('should return true if $dateBetween operator has 2 values', function() {
-            $rows.push($('<div>').data({ name: 'abc', operator: '$dateBetween', value: ['12-12-12', '12-13-12']}));
-            $rows.push($('<div>').data({ name: '123', value: '123'}));
-            var isValid = view.validateRows($rows);
-            expect(isValid).toBe(true);
-        });
-        it('should return false if $between operator does not have 2 values', function() {
-            $rows.push($('<div>').data({ name: 'abc', operator: '$between', value: [11]}));
-            $rows.push($('<div>').data({ name: '123', value: '123'}));
-            var isValid = view.validateRows($rows);
-            expect(isValid).toBe(false);
-        });
-        it('should return true if $between operator has 2 values', function() {
-            $rows.push($('<div>').data({ name: 'abc', operator: '$between', value: [11, 22]}));
-            $rows.push($('<div>').data({ name: '123', value: '123'}));
-            view.validateRows($rows);
-            var isValid = view.validateRows($rows);
-            expect(isValid).toBe(true);
-        });
-        it('should return false if $dateBetween operator has an empty value', function() {
-            $rows.push($('<div>').data({ name: 'abc', operator: '$dateBetween', value: ['', '12-12-12']}));
-            $rows.push($('<div>').data({ name: '123', value: '123'}));
-            view.validateRows($rows);
-            var isValid = view.validateRows($rows);
-            expect(isValid).toBe(false);
-        });
+
     });
 
     describe('populateFilter', function() {
