@@ -678,6 +678,7 @@
             filterTemplate = this.buildFilterDef(),
             defHasChanged = !_.isEqual(this.lastFilterDef, filterDef),
             templateHasChanged = !_.isEqual(this.lastFilterTemplate, filterTemplate);
+
         // Save the current edit state
         if (defHasChanged || templateHasChanged) {
             this.saveFilterEditState(filterDef, filterTemplate);
@@ -694,8 +695,10 @@
     /**
      * Saves the current edit state into the cache
      *
-     * @param {Object} filterDef(optional) Filter Definition.
-     * @param {Object} templateDef(optional) Filter template definition.
+     * @param {Object} [filterDef] Filter Definition. Defaults to the
+     *   {@link #builtFilderDef} with only valid rows.
+     * @param {Object} [templateDef] Filter template definition. Defaults to
+     *   the {@link #builtFilderDef} with all rows.
      */
     saveFilterEditState: function(filterDef, templateDef) {
         if (!this.layout.editingFilter) {
@@ -706,9 +709,11 @@
             'filter_template': templateDef || this.buildFilterDef()
         });
         var filter = this.layout.editingFilter.toJSON();
+
         // Make sure the filter-actions view is rendered, otherwise it will override the name with an empty name.
-        if (this.layout.getComponent('filter-actions')
-            && this.layout.getComponent('filter-actions').$('input').length === 1) {
+        if (this.layout.getComponent('filter-actions') &&
+            this.layout.getComponent('filter-actions').$('input').length === 1
+        ) {
             filter.name = this.layout.getComponent('filter-actions').getFilterName();
         }
         this.layout.getComponent('filter').saveFilterEditState(filter);
@@ -718,7 +723,8 @@
      * Build filter definition for all rows.
      *
      * @param {Boolean} onlyValidRows Set `true` to retrieve only filter
-     *  definition of valid rows, `false` to retrieve the entire field template.
+     *   definition of valid rows, `false` to retrieve the entire field
+     *   template.
      * @return {Array} Filter definition.
      */
     buildFilterDef: function(onlyValidRows) {
@@ -741,7 +747,7 @@
      *
      * @param {jQuery} $row The related row.
      * @param {Boolean} onlyIfValid Set `true` to validate the row and return
-     * `undefined` if not valid, or `false` to build the definition anyway.
+     *   `undefined` if not valid, or `false` to build the definition anyway.
      * @return {Object} Filter definition for this row.
      */
     buildRowFilterDef: function($row, onlyIfValid) {
