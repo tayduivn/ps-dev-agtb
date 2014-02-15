@@ -110,8 +110,11 @@ class SugarApplication
             return false;
         }
 
-        if (isset($_REQUEST['mobile'])) {
-            if ($_REQUEST['mobile'] == '0') {
+        if (isset($_REQUEST['mobile']) || isset($_COOKIE['sugar_mobile'])) {
+            if ($_REQUEST['mobile'] == '0' || $_COOKIE['sugar_mobile'] == '0') {
+                if (!isset($_COOKIE['sugar_mobile']) || $_COOKIE['sugar_mobile'] != '0') {
+                    setcookie('sugar_mobile', '0'); // expires on browser closed
+                }
                 if (isset($_SESSION['isMobile'])) unset($_SESSION['isMobile']);
             }
             else {
@@ -125,12 +128,17 @@ class SugarApplication
     }
 
     public function redirectToMobileApp(){
-        $redirect_url = $this->getMobileUrl();
-        header("Location: $redirect_url");
+        $mobileUrl = $this->getMobileUrl();
+        echo <<<EOF
+<script type="text/javascript">
+    window.location = '$mobileUrl' + location.hash;
+</script>
+EOF;
+
     }
 
     public function getMobileUrl(){
-        return 'mobile/#'; // todo: use configuration param
+        return 'mobile/';
     }
 
     /**
