@@ -112,8 +112,16 @@ class ViewRelationships extends SugarView
         foreach ( $relationships->getRelationshipList () as $relationshipName )
         {
             $rel = $relationships->get ( $relationshipName )->getDefinition () ;
-            $rel [ 'lhs_module' ] = translate( $rel [ 'lhs_module' ] ) ;
-            $rel [ 'rhs_module' ] = translate( $rel [ 'rhs_module' ] ) ;
+            if (isset($rel['lhs_vname'])) {
+                $rel['lhs_module'] = translate($rel['lhs_vname']);
+            } else {
+                $rel['lhs_module'] = translate($rel['lhs_module']);
+            }
+            if (isset($rel['rhs_vname'])) {
+                $rel['rhs_module'] = translate($rel['rhs_vname']);
+            } else {
+                $rel['rhs_module'] = translate($rel['rhs_module']);
+            }
             
             //#28668  , translate the relationship type before render it .
             switch($rel['relationship_type']){
