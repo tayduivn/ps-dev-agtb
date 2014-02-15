@@ -509,9 +509,18 @@
   }
 }
 
-.side.sidebar-content .twitter-widget {
-  &.scroll {
-    max-height: 327px;
+.side.sidebar-content {
+  .thumbnail.dashlet.ui-draggable-dragging:not(.collapsed) {
+    max-height: 440px !important;
+    .block-footer {
+      font-weight: 500;
+      text-align: left;
+    }
+  }
+  .twitter-widget {
+    &.scroll {
+      max-height: 327px;
+    }
   }
 }
 
