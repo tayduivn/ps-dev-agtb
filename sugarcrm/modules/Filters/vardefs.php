@@ -35,10 +35,7 @@ $dictionary['Filters'] = array(
             'unified_search' => false,
             'merge_filter' => 'disabled',
             'calculated' => false,
-            'size' => '20',
             'studio' => 'visible',
-            'rows' => '4',
-            'cols' => '20',
         ),
         'filter_template' => array(
             'required' => true,
