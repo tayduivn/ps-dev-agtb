@@ -10,6 +10,65 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
+/**
+ * Relate field provides a link to a module that is set in the definition of
+ * this field metadata.
+ *
+ * This field requires at least the follow definitions to be exist in the
+ * field:
+ *
+ * ```
+ * array(
+ *     'name' => 'account_name',
+ *     'rname' => 'name',
+ *     'id_name' => 'account_id',
+ *     'module' => 'Accounts',
+ *     'link' => true,
+ *     //...
+ * ),
+ * ```
+ *
+ * The field also support a `populate_list` to update other fields in the
+ * current model from other fields of the selected model.
+ *
+ * ```
+ * array(
+ *     //...
+ *     'populate_list' => array(
+ *         'populate_list' => array(
+ *         'billing_address_street' => 'primary_address_street',
+ *         'billing_address_city' => 'primary_address_city',
+ *         'billing_address_state' => 'primary_address_state',
+ *         'billing_address_postalcode' => 'primary_address_postalcode',
+ *         'billing_address_country' => 'primary_address_country',
+ *         'phone_office' => 'phone_work',
+ *         //...
+ *
+ *     ),
+ * )
+ * ```
+ *
+ * This field allows you to configure the minimum chars that trigger a search
+ * when using the typeahead feature.
+ *
+ * ```
+ * array(
+ *     //...
+ *     'minChars' => 3,
+ * )
+ * ```
+ *
+ * TODO: there is a conflict in the link property of `this.def.link` that
+ * should be populated from the view/field metadata with the `vardefs` one
+ * which needs to be addressed.
+ *
+ * TODO: we have a mix of properties here with camelCase and underscore.
+ * Needs to be addressed.
+ *
+ * @class View.Fields.BaseRelateField
+ * @alias SUGAR.App.view.fields.BaseRelateField
+ * @extends View.Field
+ */
 ({
     allow_single_deselect: true,
     minChars: 1,
