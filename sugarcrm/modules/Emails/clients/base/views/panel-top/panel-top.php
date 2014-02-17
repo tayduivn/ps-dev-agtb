@@ -25,7 +25,7 @@ $viewdefs['Emails']['base']['view']['panel-top'] = array(
             'css_class' => 'pull-right',
             'buttons' => array(
                 array(
-                    'type' => 'emailaction',
+                    'type' => 'emailaction-paneltop',
                     'icon' => 'icon-plus',
                     'name' => 'email_compose_button',
                     'label' => ' ',

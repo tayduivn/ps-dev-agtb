@@ -587,7 +587,7 @@ class MailApi extends ModuleApi
         $mailRecord->fromAddress = $args[self::FROM_ADDRESS];
         $mailRecord->assigned_user_id = $args[self::ASSIGNED_USER_ID];
 
-        if (isset($args[self::DATE_SENT])) {
+        if (!empty($args[self::DATE_SENT])) {
             $date = TimeDate::getInstance()->fromIso($args[self::DATE_SENT]);
             $mailRecord->date_sent = $date->asDb();
         }
