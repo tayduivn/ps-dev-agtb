@@ -20,8 +20,6 @@
  * @alias SUGAR.App.view.views.BaseModuleMenuView
  */
 ({
-    className: 'btn-group',
-
     /**
      * The possible actions that this module menu provides.
      *
@@ -61,6 +59,10 @@
         this.actions = this.filterByAccess(meta.menu && meta.menu.header && meta.menu.header.meta);
 
         this._super('_renderHtml');
+
+        if (!this.meta.short) {
+            this.$el.addClass('btn-group');
+        }
     },
 
     /**
@@ -142,7 +144,6 @@
 
             $old.remove();
             $placeholder.after(tpl(this.collection));
-
         };
 
         this.collection.fetch({

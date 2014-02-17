@@ -139,7 +139,7 @@
             background: @white;
             border: 1px solid rgba(0,0,0,.2);;
             .border-radius(2px);
-            max-height: 330px;
+            max-height: 315px;
             overflow-y: auto;
             overflow-x: hidden;
             .border-radius(0 0 3px 3px);
@@ -147,21 +147,34 @@
           &:before {
             border-bottom-color: rgba(0,0,0,.2);
           }
-          li,
           li.divider {
-            padding: 0;
+            border-bottom: none;
+          }
+          li.divider + li a {
+            border-top: 1px solid @grayLight;
+          }
+          li.hidden {
+            display: none;
           }
           li a {
             display: block;
-            padding: 6px 8px 8px;
-            text-indent: 32px;
+            padding: 8px 10px;
+            text-indent: 30px;
             position: relative;
+            &:hover {
+              color: @dropdownLinkColorHover;
+              text-decoration: none;
+              background: #e5f1fc;
+            }
             i[class^="icon-"] {
               position: relative;
               top: -1px;
               text-indent: -26px;
               color: @grayLight;
               vertical-align: middle;
+            }
+            &.module-list-link {
+              text-indent: 0;
             }
           }
           li .menuItem {
@@ -190,22 +203,6 @@
             &.with-scroll {
               width: 40px;
               margin-right: -5px;
-            }
-          }
-          .recentContainer,
-          .dashboardContainer,
-          .favoritesContainer {
-            text-indent: 40px;
-            line-height: 18px;
-            li:first-child > a {
-              border-top: 1px solid @grayLight;
-              .border-radius(0);
-            }
-            button {
-              color: @linkColor;
-              text-indent: 28px;
-              width: 100%;
-              text-align: left;
             }
           }
         }

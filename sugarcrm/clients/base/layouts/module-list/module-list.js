@@ -58,7 +58,7 @@
                 event.stopPropagation();
                 window.open(route, '_blank');
                 // FIXME remove this hack once the drawer doesn't popup even after stopPropagation() is called.
-//                return false;
+                // return false;
             }
             event.preventDefault();
             currentFragment = Backbone.history.getFragment();
@@ -187,7 +187,8 @@
         var def = {
             view: {
                 name: 'module-menu',
-                sticky: sticky
+                sticky: sticky,
+                short: false
             }
         };
         this.addComponent(this.createComponentFromDef(def, null, module), def);
@@ -300,17 +301,17 @@
      * @chainable
      */
     toggleModule: function(module, state) {
-
+        var newState;
         // cache version only
         if (!this._catalog[module].short) {
             state = !_.isUndefined(state) ? !state : undefined;
-            var newState = this._catalog[module].long.toggleClass('hidden', state).hasClass('hidden');
+            newState = this._catalog[module].long.toggleClass('hidden', state).hasClass('hidden');
             this._catalog[module].long.toggle(!newState);
             return this;
         }
 
         // keep it in sync
-        var newState = this._catalog[module].short.toggleClass('hidden', state).hasClass('hidden');
+        newState = this._catalog[module].short.toggleClass('hidden', state).hasClass('hidden');
         this._catalog[module].long.toggleClass('hidden', !newState);
 
         // FIXME hide() because there is a css problem

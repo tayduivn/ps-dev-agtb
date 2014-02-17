@@ -20,7 +20,6 @@
 
         this._super('initialize', [options]);
 
-
         // not using `hide_dashboard_bwc` form, because we shouldn't give this
         // feature by default - need confirmation from PMs.
         if (app.config.enableLegacyDashboards && app.config.enableLegacyDashboards === true) {
@@ -32,7 +31,7 @@
         this._super('_renderHtml');
 
         this.$el.attr('title', app.lang.get('LBL_TABGROUP_HOME', this.module));
-        this.$el.addClass('home');
+        this.$el.addClass('home btn-group');
     },
 
     /**
