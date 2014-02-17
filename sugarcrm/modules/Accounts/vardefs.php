@@ -85,6 +85,22 @@ $dictionary['Account'] = array(
             'vname' => 'LBL_MEMBER_OF',
             'side' => 'right',
         ),
+        'email_opt_out' => array(
+            'name' => 'email_opt_out',
+            'vname' => 'LBL_EMAIL_OPT_OUT',
+            'source' => 'non-db',
+            'type' => 'bool',
+            'massupdate' => false,
+            'studio' => 'false',
+        ),
+        'invalid_email' => array(
+            'name' => 'invalid_email',
+            'vname' => 'LBL_INVALID_EMAIL',
+            'source' => 'non-db',
+            'type' => 'bool',
+            'massupdate' => false,
+            'studio' => 'false',
+        ),
         'cases' => array(
             'name' => 'cases',
             'type' => 'link',
@@ -93,6 +109,21 @@ $dictionary['Account'] = array(
             'bean_name' => 'aCase',
             'source' => 'non-db',
             'vname' => 'LBL_CASES',
+        ),
+        //bug 42902
+        'email' => array(
+            'name' => 'email',
+            'type' => 'email',
+            'query_type' => 'default',
+            'source' => 'non-db',
+            'operator' => 'subquery',
+            'subquery' => 'SELECT eabr.bean_id FROM email_addr_bean_rel eabr JOIN email_addresses ea ON (ea.id = eabr.email_address_id) WHERE eabr.deleted=0 AND ea.email_address LIKE',
+            'db_field' => array(
+                'id',
+            ),
+            'vname' => 'LBL_ANY_EMAIL',
+            'studio' => array('visible' => false, 'searchview' => true),
+            'len' => 100
         ),
         'tasks' => array(
             'name' => 'tasks',
@@ -177,6 +208,26 @@ $dictionary['Account'] = array(
             'bean_name' => 'Contact',
             'source' => 'non-db',
             'vname' => 'LBL_CONTACTS',
+        ),
+        'email_addresses' => array(
+            'name' => 'email_addresses',
+            'type' => 'link',
+            'relationship' => 'accounts_email_addresses',
+            'source' => 'non-db',
+            'vname' => 'LBL_EMAIL_ADDRESSES',
+            'reportable' => false,
+            'unified_search' => true,
+            'rel_fields' => array('primary_address' => array('type' => 'bool')),
+            'studio' => array("formula" => false),
+        ),
+        'email_addresses_primary' => array(
+            'name' => 'email_addresses_primary',
+            'type' => 'link',
+            'relationship' => 'accounts_email_addresses_primary',
+            'source' => 'non-db',
+            'vname' => 'LBL_EMAIL_ADDRESS_PRIMARY',
+            'duplicate_merge' => 'disabled',
+            'studio' => array("formula" => false),
         ),
         'opportunities' => array(
             'name' => 'opportunities',
@@ -511,19 +562,19 @@ $dictionary['Account'] = array(
     ),
     //This enables optimistic locking for Saves From EditView
     'optimistic_locking' => true,
-    'uses' => array(
+);
+
+VardefManager::createVardef(
+    'Accounts',
+    'Account',
+    array(
         'default',
         'assignable',
 //BEGIN SUGARCRM flav=pro ONLY
         'team_security',
 //END SUGARCRM flav=pro ONLY
         'company',
-    ),
-);
-
-VardefManager::createVardef(
-    'Accounts',
-    'Account'
+    )
 );
 
 //jc - adding for refactor for import to not use the required_fields array

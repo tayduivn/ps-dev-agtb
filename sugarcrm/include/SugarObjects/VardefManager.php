@@ -45,25 +45,12 @@ class VardefManager{
 
         include_once('modules/TableDictionary.php');
 
-        if (isset($GLOBALS['dictionary'][$object]['uses'])) {
-            // Load in the vardef 'uses' first
-            $templates = array_merge($GLOBALS['dictionary'][$object]['uses'], $templates);
-            unset($GLOBALS['dictionary'][$object]['uses']);
-            
-            // createVardef auto-adds the 'default' template, so to avoid using it twice
-            // among avoiding using other templates twice let's make sure the templates
-            // are unique
-            $templates = array_unique($templates);
-        }
-
         //reverse the sort order so priority goes highest to lowest;
         $templates = array_reverse($templates);
         foreach ($templates as $template)
         {
             VardefManager::addTemplate($module, $object, $template, $object_name);
         }
-        // Some of the templates might have loaded templates
-        $templates = $GLOBALS['dictionary'][$object]['templates'];
         LanguageManager::createLanguageFile($module, $templates);
 
         if (isset(VardefManager::$custom_disabled_modules[$module]))
@@ -122,27 +109,22 @@ class VardefManager{
         }
 
         if(!empty($templates[$template])){
-            static $merge_types = array(
-                'fields', 
-                'relationships', 
-                'indices', 
-                'name_format_map',
-                //BEGIN SUGARCRM flav=pro ONLY
-                'visibility',
-                //BEGIN SUGARCRM flav=pro ONLY
-                'acls',
-            );
+            if(empty($GLOBALS['dictionary'][$object]['fields']))$GLOBALS['dictionary'][$object]['fields'] = array();
+            if(empty($GLOBALS['dictionary'][$object]['relationships']))$GLOBALS['dictionary'][$object]['relationships'] = array();
+            if(empty($GLOBALS['dictionary'][$object]['indices']))$GLOBALS['dictionary'][$object]['indices'] = array();
+            $GLOBALS['dictionary'][$object]['fields'] = array_merge($templates[$template]['fields'], $GLOBALS['dictionary'][$object]['fields']);
+            if(!empty($templates[$template]['relationships']))$GLOBALS['dictionary'][$object]['relationships'] = array_merge($templates[$template]['relationships'], $GLOBALS['dictionary'][$object]['relationships']);
+            if(!empty($templates[$template]['indices']))$GLOBALS['dictionary'][$object]['indices'] = array_merge($templates[$template]['indices'], $GLOBALS['dictionary'][$object]['indices']);
 
-            foreach ($merge_types as $merge_type) {
-                if (empty($GLOBALS['dictionary'][$object][$merge_type])) {
-                    $GLOBALS['dictionary'][$object][$merge_type] = array();
-                }
-                if (!empty($templates[$template][$merge_type]) 
-                    && is_array($templates[$template][$merge_type])) {
-                    $GLOBALS['dictionary'][$object][$merge_type] = 
-                        array_merge($templates[$template][$merge_type], 
-                                    $GLOBALS['dictionary'][$object][$merge_type]);
-                }
+            if (!isset($GLOBALS['dictionary'][$object]['name_format_map'])) {
+                $GLOBALS['dictionary'][$object]['name_format_map'] = array();
+            }
+
+            if (isset($templates[$template]['name_format_map'])) {
+                $GLOBALS['dictionary'][$object]['name_format_map'] = array_merge(
+                    $GLOBALS['dictionary'][$object]['name_format_map'],
+                    $templates[$template]['name_format_map']
+                );
             }
 
             /* The duplicate_check property is inherited in full unless already defined - merge has no meaning here */
@@ -155,15 +137,25 @@ class VardefManager{
             {
             	$GLOBALS['dictionary'][$object]['favorites'] = $templates[$template]['favorites'];
             }
+            if(empty($GLOBALS['dictionary'][$object]['visibility']))
+            {
+                $GLOBALS['dictionary'][$object]['visibility'] = array();
+            }
+            if(!empty($templates[$template]['visibility']))
+            {
+                $GLOBALS['dictionary'][$object]['visibility'] = array_merge($templates[$template]['visibility'], $GLOBALS['dictionary'][$object]['visibility']);
+            }
             //END SUGARCRM flav=pro ONLY
+            if(empty($GLOBALS['dictionary'][$object]['acls']))
+            {
+                $GLOBALS['dictionary'][$object]['acls'] = array();
+            }
+            if(!empty($templates[$template]['acls']))
+            {
+                $GLOBALS['dictionary'][$object]['acls'] = array_merge($templates[$template]['acls'], $GLOBALS['dictionary'][$object]['acls']);
+            }
             // maintain a record of this objects inheritance from the SugarObject templates...
             $GLOBALS['dictionary'][$object]['templates'][ $template ] = $template ;
-
-            if (!empty($templates[$template]['uses'])) {
-                foreach ($templates[$template]['uses'] as $extraTemplate) {
-                    VardefManager::addTemplate($module, $object, $extraTemplate, $object_name);
-                }
-            }
         }
     }
 
