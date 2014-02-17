@@ -30,7 +30,7 @@
     {{#each this.tabs}}
         <div class="dashlet-tab{{#eq ../settings.attributes.activeTab @index}} active{{/eq}}">
             <a data-toggle="tab" data-action="tab-switcher" data-index="{{@index}}">
-                <span class="count">{{#if collection.dataFetched}}{{../collection.length}}{{#notEq ../collection.next_offset "-1"}}+{{/notEq}}{{else}}-{{/if}}</span>
+                <span class="count" data-action="count">{{#if collection.dataFetched}}{{../collection.length}}{{#notEq ../collection.next_offset "-1"}}+{{/notEq}}{{else}}-{{/if}}</span>
                 {{#if label}}
                     {{str label module}}
                 {{else}}

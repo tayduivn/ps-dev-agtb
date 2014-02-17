@@ -69,6 +69,7 @@
             app.user.lastState.set(specificDateKey, value);
         }, this);
         this.settings.set('date', this.getDate());
+        this.tbodyTag = 'ul[data-action="pagination-body"]';
     },
 
     /**
@@ -333,20 +334,6 @@
             tab.invitations.dataFetched = false;
         }
         this._super('loadData', [options]);
-    },
-
-    /**
-     * {@inheritDoc}
-     *
-     * Force reload of invitations information (if they exist for this tab)
-     * after showMore is clicked.
-     */
-    showMore: function() {
-        var tab = this.tabs[this.settings.get('activeTab')];
-        if (tab.invitations) {
-            tab.invitations.dataFetched = false;
-        }
-        this._super('showMore');
     },
 
     /**
