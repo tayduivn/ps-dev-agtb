@@ -9,7 +9,7 @@ describe('Base.View.Attachments', function() {
         SugarTest.testMetadata.set();
         app = SugarTest.app;
         layout = SugarTest.createLayout('base', moduleName, 'dashboard');
-        view = SugarTest.createView('base', moduleName, viewName, null, null, null, layout);
+        view = SugarTest.createView('base', moduleName, viewName, {}, null, null, layout);
     });
 
     afterEach(function() {
