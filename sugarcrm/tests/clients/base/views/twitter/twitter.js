@@ -13,6 +13,7 @@ describe("Twitter View", function() {
         view.model = new Backbone.Model();
         view.settings = new Backbone.Model();
         view.settings.set('twitter','test');
+        view.moduleType = 'Home';
         view.context.set('module', 'Home');
         SugarTest.clock.restore();
     });
@@ -64,7 +65,6 @@ describe("Twitter View", function() {
                     }
                 }
             })]);
-
 
         view.loadData();
         SugarTest.server.respond();
@@ -161,7 +161,7 @@ describe("Twitter View", function() {
         expect(apiStub.callCount).toEqual(1);
     });
 
-    it("should loop only once with 412", function() {
+    it("should loop only once when 412 error", function() {
         view.meta.config = false;
         var apiStub = sinon.collection.stub(SugarTest.app.api, 'call', SugarTest.app.api.call);
 

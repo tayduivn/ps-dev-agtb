@@ -32,13 +32,9 @@
     },
 
     initDashlet: function() {
-        // if config view overide with module specific
-        if (this.meta.config) {
-            this.dashletConfig = app.metadata.getView(app.controller.context.get('module'), this.name) || this.dashletConfig;
-        }
-
+        this.initDashletConfig();
         var limit = this.settings.get('limit') || this.limit;
-            this.settings.set('limit', limit);
+        this.settings.set('limit', limit);
         this.cacheKey = 'twitter.dashlet.current_user_cache';
         var currentUserCache = app.cache.get(this.cacheKey);
         if (currentUserCache && currentUserCache.current_twitter_user_name) {
@@ -46,6 +42,25 @@
         }
         if (currentUserCache && currentUserCache.current_twitter_user_pic) {
             self.current_twitter_user_pic = currentUserCache.current_twitter_user_pic;
+        }
+    },
+
+    initDashletConfig: function() {
+        this.moduleType = app.controller.context.get('module');
+        this.layoutType = app.controller.context.get('layout');
+        // if config view override with module specific
+        if (this.meta.config && this.layoutType === 'record') {
+            this.dashletConfig = app.metadata.getView(this.moduleType, this.name) || this.dashletConfig;
+            // if record view that's not the Home module's record view, disable twitter name settings config
+            if (this.moduleType !== 'Home' &&
+                this.dashletConfig.config &&
+                this.dashletConfig.config.fields) {
+                // get rid of the twitter name field
+                this.dashletConfig.config.fields = _.filter(this.dashletConfig.config.fields,
+                    function(field) {
+                        return field.name !== 'twitter';
+                    });
+            }
         }
     },
 
@@ -83,9 +98,11 @@
                 this.model.get('full_name');
         //workaround because home module actually pulls a dashboard instead of an
         //empty home model
-        if (this.context &&
-            this.context.get('module') === 'Home') {
+        if (this.layoutType === 'records' || this.moduleType === 'Home') {
             twitter = this.settings.get('twitter');
+        }
+        if (!twitter) {
+            return false;
         }
         twitter = twitter.replace(/ /g, '');
         this.twitter = twitter;
@@ -199,6 +216,9 @@
                     };
                     self.getConnectors(name, funcWrapper);
                 }
+                else {
+                    self.handleLoadError(null);
+                }
             }
         });
     },
@@ -217,7 +237,7 @@
         this.template = app.template.get(this.name + '.twitter-need-configure.Home');
         if (connector === null) {
             //Connector doesn't exist
-            this.errorLBL = app.lang.get('LBL_ERROR_CANNOT_FIND_TWITTER') + self.twitter;
+            this.errorLBL = app.lang.get('LBL_ERROR_CANNOT_FIND_TWITTER') + this.twitter;
         }
         else if (!connector.test_passed && connector.testing_enabled) {
             //OAuth failed
