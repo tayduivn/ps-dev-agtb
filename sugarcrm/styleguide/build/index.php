@@ -42,12 +42,13 @@ foreach ($themesClientsDir as $platform) {
     <![endif]-->
     <link data-linkcss="bootstrap" href="../assets/css/bootstrap.css" rel="stylesheet">
     <link data-linkcss="bootstrap" href="../assets/css/sugar.css" rel="stylesheet">
+    <link data-linkcss="bootstrap" href="../assets/css/styleguide.css" rel="stylesheet">
 </head>
 <body>
 <div id="header">
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
-            <div class="container-fluid">
+            <div class="nav">
                 <a class="brand" href="#" style="margin-left:0">bootstrap.css builder</a>
             </div>
         </div>
@@ -58,21 +59,21 @@ foreach ($themesClientsDir as $platform) {
         <div class="subnav row-fluid">
             <div class="btn-toolbar pull-left">
                 <div>
-                    <label style="display: inline;" for="min-false">
+                    <label for="min-false">
                         <input id="min-false" type="radio" name="min" value="false" checked>
                         Uncompressed
                     </label>
-                    <label style="display: inline;" for="min-true">
+                    <label for="min-true">
                         <input id="min-true" type="radio" name="min" value="true">
                         Compressed
                     </label>
                 </div>
                 <div>
-                    <label style="display: inline;" for="split_css-true">
+                    <label for="split_css-true">
                         <input id="split_css-true" type="radio" name="split_css" value="true" checked>
                         Split
                     </label>
-                    <label style="display: inline;" for="split_css-false">
+                    <label for="split_css-false">
                         <input id="split_css-false" type="radio" name="split_css" value="false">
                         Combined
                     </label>
@@ -85,9 +86,9 @@ foreach ($themesClientsDir as $platform) {
                 foreach ($lessClientsDir as $client) {
                     $checked = '';
                     if ($client == 'base') $checked = ' checked';
-                    echo '<label style="display: inline;" for="client_'. $client .'">';
+                    echo '<label for="client_'. $client .'">';
                     echo '<input type="radio" name="client" id="client_'. $client .'"value="' . $client . '"' . $checked . '>';
-                    echo ' ' . $client . '</label><br>';
+                    echo ' ' . $client . ' client</label>';
                 }
                 ?>
                 </div>
@@ -173,6 +174,14 @@ foreach ($themesClientsDir as $platform) {
                   rel:  "stylesheet",
                   type: "text/css",
                   href: '../assets/css/sugar.css?t=' + new Date().getTime()
+                });
+            $("head").append("<link>");
+                var css = $("head").children(":last");
+                css.attr({
+                  'data-linkcss': 'sugar',
+                  rel:  "stylesheet",
+                  type: "text/css",
+                  href: '../assets/css/styleguide.css?t=' + new Date().getTime()
                 });
         });
     });

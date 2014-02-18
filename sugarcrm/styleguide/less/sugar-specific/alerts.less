@@ -7,11 +7,11 @@
   border: 1px solid @grayLight;
 }
 .alert [class^=icon-] {
-  margin: 0 5px 0 0;
+  color: inherit;
 }
 .alert,
 .alert-heading {
-  color:  @gray;
+  color: @gray;
 }
 
 // Adjust close link position
@@ -20,12 +20,11 @@
   top: -1px;
   font-size: 14px;
   font-weight: normal;
-  .opacity(100);
+  .opacity(40);
+  text-shadow: none;
+  color: inherit;
   &:hover {
     .opacity(100);
-    .icon-remove {
-      color: lighten(@gray, 5%);
-    }
   }
 }
 
@@ -50,7 +49,6 @@
   color: darken(@red, 10%);
 }
 .alert-warning {
-  text-shadow: 0 1px 0 rgba(255,255,255,.5);
   border: 1px solid @warningBorder;
   background-color: @warningBackground;
 }

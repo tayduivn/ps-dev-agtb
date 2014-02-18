@@ -9,7 +9,9 @@
   .box-shadow(@shadow);
   z-index: 1020;
   border: solid @grayLight 1px;
+  .box-sizing(border-box);
 }
+
 header .subnav {
   .border-radius(4px);
   border: solid @grayLight 1px;
@@ -23,9 +25,11 @@ header .subnav {
 
 .subnav .btn-toolbar.pull-right {
   margin: 9px 20px 0 0;
+  letter-spacing: normal;
 }
 .subnav .btn-toolbar.pull-left {
-  margin: 9px 0 0 0;
+  margin: 9px 0;
+  letter-spacing: normal;
 }
 
 .subnav .control-group {
