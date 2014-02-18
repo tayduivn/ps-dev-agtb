@@ -363,10 +363,10 @@
 
         if (hasParentContext && hasModelId) {
             // we are on a module and we have an dashboard id
-            this.navigateLayout(dashboard.get('id'));
+            this._navigateLayout(dashboard.get('id'));
         } else if(hasParentContext && !hasModelId) {
             // we are on a module but we don't have a dashboard id
-            this.navigateLayout('list');
+            this._navigateLayout('list');
         } else if(!hasParentContext && hasModelId) {
             // we on the Home module and we have a dashboard id
             app.navigate(this.context, dashboard);
@@ -375,6 +375,29 @@
             var route = app.router.buildRoute(this.module);
             app.router.navigate(route, {trigger: true});
         }
+    },
+
+    /**
+     * Intercept the navigateLayout calls to make sure that the dashboard we are currently one didn't change,
+     * if it did, we need to prompt and make sure they want to continue or cancel.
+     *
+     * @param {String} dashboard        What dashboard do we want to display
+     * @returns {Boolean}
+     * @private
+     */
+    _navigateLayout: function(dashboard) {
+        var onConfirm = _.bind(function() {
+            this.navigateLayout(dashboard)
+        }, this),
+            headerpane = this.getComponent('dashboard-headerpane');
+
+        // if we have a headerpane and it was changed then run the warnUnsavedChanges method
+        if (headerpane && headerpane.changed) {
+            return headerpane.warnUnsavedChanges(onConfirm);
+        }
+
+        // if we didn't have a headerpane or we did have one, but nothing changed, just run the normal method
+        onConfirm();
     },
 
     /**
