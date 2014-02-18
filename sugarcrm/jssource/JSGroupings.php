@@ -289,6 +289,7 @@
                     'include/javascript/sugar7/plugins/MassQuote.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Taggable.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Timeago.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/RelativeTime.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ErrorDecoration.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/QuickSearchFilter.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ClickToEdit.js'  => 'include/javascript/sugar_sidecar.min.js',
