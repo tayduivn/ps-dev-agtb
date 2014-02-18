@@ -574,7 +574,7 @@ $dictionary['Opportunity'] = array(
             'name' => 'revenuelineitems',
             'type' => 'link',
             'vname' => 'LBL_RLI',
-            'relationship' => 'revenuelineitems_opportunities',
+            'relationship' => 'opportunities_revenuelineitems',
             'source' => 'non-db',
         ),
         'forecastworksheets' =>  array(
@@ -766,7 +766,12 @@ $dictionary['Opportunity'] = array(
             'rhs_module' => 'RevenueLineItems',
             'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'opportunity_id',
-            'relationship_type' => 'one-to-many'
+            //BEGIN SUGARCRM flav!=ent ONLY
+            'relationship_type' => 'one-to-one',
+            //END SUGARCRM  flav!=ent ONLY
+            //BEGIN SUGARCRM flav=ent ONLY
+            'relationship_type' => 'one-to-many',
+            //END SUGARCRM flav=ent ONLY
         ),
     ),
     'duplicate_check' => array(
