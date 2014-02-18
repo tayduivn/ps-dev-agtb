@@ -1,7 +1,5 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
+ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -29,54 +27,31 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /**
- * Check that AllowOverride is properly configured
+ * Fix ext4 in enum fields which can be messed up old versions thus causing notices
  */
-class SugarUpgradeCheckAllowOverride extends UpgradeScript
+class SugarUpgradeFixEnumFields extends UpgradeScript
 {
-    public $order = 200;
-    public $version = '7.2.0';
+    public $order = 2050;
+    public $type = self::UPGRADE_DB;
 
     public function run()
     {
-        if(version_compare($this->from_version, '7.0', '>=')) {
-            // no need to run this on 7, if AllowOverride doesn't work 7 wouldn't work too
+        if(version_compare($this->form_version, ">=", "7.2")) {
             return;
         }
-
-        if(!empty($_SERVER["SERVER_SOFTWARE"]) && strpos($_SERVER["SERVER_SOFTWARE"],'Microsoft-IIS') !== false) {
-            // can't do it for IIS
-            return;
+        $this->log('Checking for broken enum fields');
+        $drop_ids = array();
+    	$res = $this->db->query("SELECT * FROM fields_meta_data WHERE type='enum' AND deleted=0 AND ext4 IS NOT NULL AND ext4 != '' AND ext4 != 's:0:\"\";'");
+        while($row = $this->db->fetchByAssoc($res, false)) {
+            if(empty($row['ext4'])) {
+                // shouldn't happen but just in case
+                continue;
+            }
+            $this->log("Dependent enum found with ext4: id {$row['id']} ext4 {$row['ext4']}");
+            $drop_ids[] = $this->db->quoted($row['id']);
         }
-
-        $this->log("Testing .htaccess redirects");
-        if(file_exists(".htaccess")) {
-            $old_htaccess = file_get_contents(".htaccess");
-        }
-        $basePath = parse_url($this->upgrader->config['site_url'], PHP_URL_PATH);
-        if(empty($basePath)) $basePath = '/';
-        $htaccess_test = <<<EOT
-
-# Upgrader test addition
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteBase {$basePath}
-    RewriteRule ^itest.test$ install_test.test [N,QSA]
-</IfModule>
-EOT;
-        if(!empty($old_htaccess)) {
-            $htaccess_test = $old_htaccess.$htaccess_test;
-        }
-        file_put_contents(".htaccess", $htaccess_test);
-        file_put_contents("install_test.test", "SUCCESS");
-        $res = file_get_contents($this->upgrader->config['site_url']."/itest.test");
-        unlink("install_test.test");
-        if(!empty($old_htaccess)) {
-            file_put_contents(".htaccess", $old_htaccess);
-        } else {
-            unlink(".htaccess");
-        }
-        if($res != "SUCCESS") {
-            $this->error("Could not verify .htaccess is working: $res");
+        if(!empty($drop_ids)) {
+            $this->db->query("UPDATE fields_meta_data SET ext4 = '' WHERE id IN (".join(",", $drop_ids).")");
         }
     }
 }
