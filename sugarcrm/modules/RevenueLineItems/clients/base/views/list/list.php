@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -13,7 +12,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-//BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+//BEGIN SUGARCRM flav!=ent ONLY
 // PRO/CORP only fields
 $fields = array(
     array(
@@ -85,7 +84,7 @@ $fields = array(
         'readonly' => true,
     ),
 );
-//END SUGARCRM flav=pro && flav!=ent ONLY
+//END SUGARCRM flav!=ent ONLY
 
 //BEGIN SUGARCRM flav=ent ONLY
 // ENT/ULT only fields
@@ -153,6 +152,10 @@ $fields = array(
         'related_fields' => array(
             'currency_id',
             'base_rate',
+            'total_amount',
+            'quantity',
+            'discount_amount',
+            'discount_price'
         ),
         'convertToBase' => true,
         'currency_field' => 'currency_id',
@@ -166,6 +169,10 @@ $fields = array(
         'related_fields' => array(
             'currency_id',
             'base_rate',
+            'total_amount',
+            'quantity',
+            'discount_amount',
+            'discount_price'
         ),
         'convertToBase' => true,
         'currency_field' => 'currency_id',
@@ -179,6 +186,10 @@ $fields = array(
         'related_fields' => array(
             'currency_id',
             'base_rate',
+            'total_amount',
+            'quantity',
+            'discount_amount',
+            'discount_price'
         ),
         'convertToBase' => true,
         'currency_field' => 'currency_id',

@@ -84,7 +84,12 @@ $dictionary['RevenueLineItem'] = array(
             'enforced' => true,
             'vname' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
             'reportable' => false,
-            'type' => 'currency'
+            'type' => 'currency',
+            'related_fields' => array(
+                'discount_price',
+                'quantity',
+                'discount_amount'
+            )
         ),
         'type_id' => array(
             'name' => 'type_id',
@@ -406,16 +411,6 @@ $dictionary['RevenueLineItem'] = array(
             'len' => 100,
             'comment' => 'Tax classification (ex: Taxable, Non-taxable)'
         ),
-        /*
-          'tax_class' =>
-          array (
-            'name' => 'tax_class',
-            'vname' => 'LBL_TAX_CLASS',
-            'type' => 'varchar',
-            'len' => 100,
-            'comment' => 'Tax classification (ex: Taxable, Non-taxable)'
-          ),
-        */
         'website' => array(
             'name' => 'website',
             'vname' => 'LBL_URL',
@@ -559,7 +554,6 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_QUOTE',
             'source' => 'non-db',
         ),
-//BEGIN SUGARCRM flav=pro ONLY
         'best_case' => array(
             'formula' => '$total_amount',
             'calculated' => true,
@@ -571,13 +565,15 @@ $dictionary['RevenueLineItem'] = array(
             'showTransactionalAmount' => true,
             'related_fields' => array(
                 'currency_id',
-                'base_rate'
+                'base_rate',
+                'total_amount',
+                'quantity',
+                'discount_amount',
+                'discount_price'
             ),
-            //END SUGARCRM flav=pro ONLY
-            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            //BEGIN SUGARCRM flav!=ent ONLY
             'studio' => false,
-            //END SUGARCRM flav=pro && flav!=ent ONLY
-            //BEGIN SUGARCRM flav=pro ONLY
+            //END SUGARCRM flav!=ent ONLY
         ),
         'likely_case' => array(
             'formula' => '$total_amount',
@@ -591,13 +587,15 @@ $dictionary['RevenueLineItem'] = array(
             'showTransactionalAmount' => true,
             'related_fields' => array(
                 'currency_id',
-                'base_rate'
+                'base_rate',
+                'total_amount',
+                'quantity',
+                'discount_amount',
+                'discount_price'
             ),
-            //END SUGARCRM flav=pro ONLY
-            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            //BEGIN SUGARCRM flav!=ent ONLY
             'studio' => false,
-            //END SUGARCRM flav=pro && flav!=ent ONLY
-            //BEGIN SUGARCRM flav=pro ONLY
+            //END SUGARCRM flav!=ent ONLY
         ),
         'worst_case' => array(
             'formula' => '$total_amount',
@@ -610,13 +608,15 @@ $dictionary['RevenueLineItem'] = array(
             'showTransactionalAmount' => true,
             'related_fields' => array(
                 'currency_id',
-                'base_rate'
+                'base_rate',
+                'total_amount',
+                'quantity',
+                'discount_amount',
+                'discount_price'
             ),
-            //END SUGARCRM flav=pro ONLY
-            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            //BEGIN SUGARCRM flav!=ent ONLY
             'studio' => false,
-            //END SUGARCRM flav=pro && flav!=ent ONLY
-            //BEGIN SUGARCRM flav=pro ONLY
+            //END SUGARCRM flav!=ent ONLY
         ),
         'date_closed' => array(
             'name' => 'date_closed',
@@ -729,7 +729,6 @@ $dictionary['RevenueLineItem'] = array(
             'relationship' => 'campaign_revenuelineitems',
             'source' => 'non-db',
         ),
-//END SUGARCRM flav=pro ONLY
         'notes' => array(
             'name' => 'notes',
             'type' => 'link',
@@ -802,7 +801,6 @@ $dictionary['RevenueLineItem'] = array(
             'source' => 'non-db',
             'comment' => 'Quote Name'
         ),
-//BEGIN SUGARCRM flav=pro ONLY
         'opportunity_id' => array(
             'name' => 'opportunity_id',
             'type' => 'id',
@@ -866,7 +864,6 @@ $dictionary['RevenueLineItem'] = array(
             'id_name' => 'assigned_user_id',
             'table' => 'users',
         ),
-//END SUGARCRM flav=pro ONLY
         'type_name' => array(
             'name' => 'type_name',
             'rname' => 'name',
@@ -1127,8 +1124,6 @@ VardefManager::createVardef(
     array(
         'default',
         'assignable',
-//BEGIN SUGARCRM flav=pro ONLY
         'team_security',
-//END SUGARCRM flav=pro ONLY
     )
 );
