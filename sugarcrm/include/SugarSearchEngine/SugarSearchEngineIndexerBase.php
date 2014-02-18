@@ -70,7 +70,7 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
     /**
      * @var Number of time to postpone a job by so it's not executed twice during the same request.
      */
-    protected $postpone_job_time = 20;
+    protected $postpone_job_time = 60;
 
     /**
      * @var DBManager
