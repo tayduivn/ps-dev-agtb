@@ -38,6 +38,10 @@ ob_implicit_flush();
 
 require_once('install/install_utils.php');
 
+$mi = new ModuleInstaller();
+$mi->silent = true;
+$mi->rebuild_extensions();
+
 require_once('modules/TableDictionary.php');
 
 
@@ -269,10 +273,6 @@ foreach( $beanFiles as $bean => $file ) {
 //END SUGARCRM flav=int ONLY
 }
 installerHook('post_createAllModuleTables');
-
-$mi = new ModuleInstaller();
-$mi->silent = true;
-$mi->rebuild_extensions();
 
 echo "<br>";
 ////    END TABLE STUFF
