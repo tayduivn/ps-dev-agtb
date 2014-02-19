@@ -36,7 +36,7 @@ class SugarUpgradeFixEnumFields extends UpgradeScript
 
     public function run()
     {
-        if(version_compare($this->form_version, ">=", "7.2")) {
+        if(version_compare($this->from_version, '7.2', '>=')) {
             return;
         }
         $this->log('Checking for broken enum fields');
