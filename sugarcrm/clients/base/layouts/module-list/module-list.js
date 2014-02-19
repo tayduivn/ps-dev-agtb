@@ -10,6 +10,18 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * Module list sets all the user defined modules visible in the main menu.
+ *
+ * This layout is responsible to keep the all the menus (created using
+ * {@link View.Views.BaseModuleMenuView}) in a valid state.
+ * It shows the menu in the main bar as well as in the dropdown (show more)
+ * and keeps it in sync to provide the best user experience possible, while
+ * keeping the DOM changes to a minimum.
+ *
+ * @class View.Views.BaseModuleMenuView
+ * @alias SUGAR.App.view.views.BaseModuleMenuView
+ */
 ({
     className: 'module-list',
     plugins: ['Dropdown'],
@@ -42,7 +54,7 @@
      * big.
      *
      * @property {jQuery} The jQuery element pointing to our
-     * `[data-action=more-modules]` element.
+     *   `[data-action=more-modules]` element.
      *
      * @protected
      */
@@ -78,6 +90,13 @@
         }
     },
 
+    /**
+     * {@inheritDoc}
+     *
+     * Hooks to `app:sync:complete` to handle the refresh of the menu items
+     * that are available after a complete sync.
+     * Hooks to `app:view:change` to keep the active module highlighted.
+     */
     initialize: function(options) {
 
         app.events.on('app:sync:complete', this._resetMenu, this);
@@ -92,6 +111,13 @@
         // FIXME we need to refactor this file to support defaultSettings
     },
 
+    /**
+     * Method called on `app:view:change` hooked in
+     * {@link BaseModuleListLayout#initialize}.
+     *
+     * It sets the active module to the one set in the context and fires a
+     * `header:update:route` event to it's parent layout.
+     */
     handleViewChange: function() {
         this._setActiveModule(app.controller.context.get('module'));
         this.layout.trigger('header:update:route');
