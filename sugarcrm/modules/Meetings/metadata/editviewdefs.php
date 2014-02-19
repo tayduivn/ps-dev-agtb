@@ -83,8 +83,9 @@ array (
       ),
       'javascript' => '<script type="text/javascript">{$JSON_CONFIG_JAVASCRIPT}</script>
 {sugar_getscript file="cache/include/javascript/sugar_grp_jsolait.js"}
-<script>toggle_portal_flag();function toggle_portal_flag()  {ldelim} {$TOGGLE_JS} {rdelim} 
-function formSubmitCheck(){ldelim}if(check_form(\'EditView\') && CAL.checkRecurrenceForm()){ldelim}document.EditView.submit();{rdelim}{rdelim}</script>',
+<script>toggle_portal_flag();function toggle_portal_flag()  {ldelim} {$TOGGLE_JS} {rdelim}
+function disableSaveBtn() {ldelim}document.getElementById(\'SAVE_HEADER\').disabled=true; document.getElementById(\'SAVE_FOOTER\').disabled=true; document.getElementById(\'save_and_send_invites_header\').disabled=true; document.getElementById(\'save_and_send_invites_footer\').disabled=true;{rdelim}
+function formSubmitCheck(){ldelim}if(check_form(\'EditView\') && CAL.checkRecurrenceForm()){ldelim}disableSaveBtn();document.EditView.submit();{rdelim}{rdelim}</script>',
       'useTabs' => false,
     ),
     'panels' =>
