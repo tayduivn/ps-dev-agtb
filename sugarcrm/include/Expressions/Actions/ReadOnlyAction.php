@@ -71,8 +71,8 @@ class ReadOnlyAction extends AbstractAction
                 if (!el) {
                     return;
                 }
-                this.setReadOnly(el, set);
-                this.setDateField(el, set);
+                this.setReadOnly(el, readonly);
+                this.setDateField(el, readonly);
             },
 
             setReadOnly: function(el, set)
