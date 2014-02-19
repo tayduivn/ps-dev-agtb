@@ -18,7 +18,7 @@
      */
     initialize: function(options) {
         this.plugins = _.clone(this.plugins) || [];
-        this.plugins.push('DisableMassdelete', 'Massquote');
+        this.plugins.push('DisableMassDelete', 'MassQuote');
         this._super("initialize", [options]);
     },
 

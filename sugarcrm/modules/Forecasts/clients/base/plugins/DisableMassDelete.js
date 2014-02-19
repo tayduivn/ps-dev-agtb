@@ -16,10 +16,10 @@
         /**
          * This plugin disallows mass-deleting for closed won/lost items (for use in Opps and Products)
          */
-        app.plugins.register('DisableMassdelete', ["view"], {
+        app.plugins.register('DisableMassDelete', ["view"], {
 
             /**
-             * @{override}
+             * @override
              *
              * This needs to be overridden since we can not call super and we need to have the mass delete use our
              * _warnDelete method instead of the default warnDelete method.

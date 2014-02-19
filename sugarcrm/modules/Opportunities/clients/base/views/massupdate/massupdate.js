@@ -18,7 +18,7 @@
      */
     initialize: function(options) {
         this.plugins = _.clone(this.plugins) || [];
-        this.plugins.push('DisableMassdelete');
+        this.plugins.push('DisableMassDelete');
         this._super("initialize", [options]);
     }
 })

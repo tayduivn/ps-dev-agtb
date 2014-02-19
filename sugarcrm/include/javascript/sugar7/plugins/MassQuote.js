@@ -14,15 +14,12 @@
     app.events.on("app:init", function() {
 
         /**
-         * This plugin enables mass-quoting for closed won/lost items (for use in Opps and Products)
+         * This plugin enables mass-quoting for RevenueLineItems (for use in Opps and QLIs)
          */
-        app.plugins.register('Massquote', ["view"], {
+        app.plugins.register('MassQuote', ["view"], {
 
             /**
-             * @{override}
-             *
-             * This needs to be overridden since we can not call super and we need to have the mass delete use our
-             * _warnDelete method instead of the default warnDelete method.
+             * {@inheritdoc}
              */
             delegateListFireEvents: function() {
                 this.layout.on("list:massquote:fire", this.massQuote, this);

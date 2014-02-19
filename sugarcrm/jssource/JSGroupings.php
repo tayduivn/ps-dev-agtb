@@ -282,7 +282,7 @@
                     //BEGIN SUGARCRM flav=pro ONLY
                     //load SFA specific plugins. Remove this in favor of a custom plugin loader.
                     'modules/Forecasts/clients/base/plugins/DisableDelete.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'modules/Forecasts/clients/base/plugins/DisableMassdelete.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'modules/Forecasts/clients/base/plugins/DisableMassDelete.js'  => 'include/javascript/sugar_sidecar.min.js',
                     //END SUGARCRM flav=pro ONLY
                     'include/javascript/sugar7/plugins/MassQuote.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Taggable.js'  => 'include/javascript/sugar_sidecar.min.js',
