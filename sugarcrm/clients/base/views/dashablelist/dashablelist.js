@@ -90,7 +90,7 @@
      *
      * @property {Array}
      */
-    moduleBlacklist: ['Home', 'Forecasts'],
+    moduleBlacklist: ['Home', 'Forecasts', 'ProductCategories', 'ProductTemplates'],
 
     /**
      * Cache of the modules a user is allowed to see.
