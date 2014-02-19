@@ -624,7 +624,7 @@
         var massExport = this.context.get("mass_collection");
 
         if (massExport) {
-            app.alert.show('massexport_loading', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
+            app.alert.show('massexport_loading', {level: 'process', title: app.lang.getAppString('LBL_LOADING')});
 
             app.api.exportRecords({
                     module: this.module,
