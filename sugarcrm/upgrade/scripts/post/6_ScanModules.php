@@ -211,7 +211,42 @@ class SugarUpgradeScanModules extends UpgradeScript
             }
         }
 
+        if(!$this->checkVardefs($module_name, $bean))
+        {
+            return false;
+        }
+
         return true;
+    }
+
+    /**
+     * Check vardefs for module
+     * @param string $module
+     * @param string $object
+     * @return boolean true if vardefs OK, false if module needs to be BWCed
+     */
+    protected function checkVardefs($module, $object)
+    {
+        if(empty($GLOBALS['dictionary'][$object]['fields'])) {
+            $this->log("Failed to load vardefs for $module:$object");
+            return true;
+        }
+        $status = true;
+        foreach($GLOBALS['dictionary'][$object]['fields'] as $key => $value) {
+            if(empty($value['name']) || $key != $value['name']) {
+                $this->log("Bad vardefs - key $key, name {$value['name']}");
+                $status = false;
+            }
+            if(!empty($value['type']) && ($value['type'] == 'enum' || $value['type'] == 'multienum')
+                && !empty($value['function']['returns']) && $value['function']['returns'] == 'html'
+            ) {
+               // found html functional enum
+                $this->log("Vardef $key has HTML function");
+                $status = false;
+            }
+        }
+
+        return $status;
     }
 
     /**
