@@ -36,6 +36,41 @@
     actions: [],
 
     /**
+     * Default settings used when none are supplied through metadata.
+     *
+     * Supported settings:
+     * - {Number} favorites Number of records to show on the favorites
+     *   container. Pass 0 if you don't want to support favorites.
+     * - {Number} recently_viewed Number of records to show on the recently
+     *   viewed container. Pass 0 if you don't want to support recently viewed.
+     *
+     * Example:
+     * ```
+     * // ...
+     * 'settings' => array(
+     *     'favorites' => 5,
+     *     'recently_viewed' => 9,
+     *     //...
+     * ),
+     * //...
+     * ```
+     *
+     * @protected
+     */
+    _defaultSettings: {
+        favorites: 3,
+        recently_viewed: 3
+    },
+
+    /**
+     * Settings after applied metadata settings on top of
+     * {@link View.Views.BaseModuleMenuView#_defaultSettings default settings}.
+     *
+     * @protected
+     */
+    _settings: {},
+
+    /**
      * @inheritDoc
      *
      * Adds listener for bootstrap drop down show even (`shown.bs.dropdown`).
@@ -43,13 +78,39 @@
      */
     initialize: function(options) {
 
+        options.meta = _.extend(
+            {},
+            options.meta,
+            app.metadata.getView(null, options.name),
+            app.metadata.getView(options.module, options.name)
+        );
+
         options.collection = app.data.createBeanCollection(options.module);
 
         this._super('initialize', [options]);
+        this._initSettings();
 
         this.events = _.extend({}, this.events, {
             'shown.bs.dropdown': 'populateMenu'
         });
+    },
+
+
+    /**
+     * Initialize settings, default settings are used when none are supplied
+     * through metadata.
+     *
+     * @return {View.Views.BaseModuleMenuView} Instance of this view.
+     * @protected
+     */
+    _initSettings: function() {
+
+        this._settings = _.extend({},
+            this._defaultSettings,
+            this.meta && this.meta.settings || {}
+        );
+
+        return this;
     },
 
     /**
@@ -95,11 +156,8 @@
      *
      * Populate the favorites and recently viewed records every time we open
      * the menu.
-     *
-     * @param {Event} event The `shown.bs.dropdown` triggered by Bootstrap
-     *   dropdown plugin.
      */
-    populateMenu: function(event) {
+    populateMenu: function() {
 
         var meta = app.metadata.getModule(this.module) || {};
 
@@ -113,12 +171,12 @@
         if (meta.favoritesEnabled) {
             this.populate('favorites', [{
                 '$favorite': ''
-            }]);
+            }], this._settings.favorites);
         }
 
         this.populate('recently-viewed', [{
             '$tracker': '-7 DAY'
-        }]);
+        }], this._settings.recently_viewed);
     },
 
 
@@ -135,8 +193,14 @@
      *
      * @param {String} tplName The template to use to populate data.
      * @param {String} filter The filter to be applied.
+     * @param {Number} limit The number of records to populate. Needs to be an
+     *   integer `> 0`.
      */
-    populate: function(tplName, filter) {
+    populate: function(tplName, filter, limit) {
+
+        if (limit <= 0) {
+            return;
+        }
 
         var renderPartial = function(data) {
             if (this.disposed || !this.isOpen()) {
@@ -156,7 +220,7 @@
         this.collection.fetch({
             'fields': ['id', 'name'],
             'filter': filter,
-            'limit': 3,
+            'limit': limit,
             'success': _.bind(renderPartial, this)
         });
 

@@ -37,9 +37,11 @@
     /**
      * @inheritDoc
      *
-     * Populates recently created dashboards on open menu. We override this
-     * function without calling the parent one because we don't can't reuse any
-     * of it.
+     * Populates all available dashboards when opening the menu. We override
+     * this function without calling the parent one because we don't want to
+     * reuse any of it.
+     *
+     * TODO we need to support `recently-viewed` after SC-2237 is merged
      *
      * TODO We need to create the custom Bean and Collection until SIDECAR-493
      * is ready and merged.
