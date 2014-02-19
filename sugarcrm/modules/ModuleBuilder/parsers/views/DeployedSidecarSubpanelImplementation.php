@@ -43,6 +43,14 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         $this->legacySubpanelName = 'For' . $loadedModule;
         // get the link and the related module name as the module we need the subpanel from
         $bean = BeanFactory::getBean($loadedModule);
+
+        $linkDef = VardefManager::getLinkFieldForRelationship($bean->module_dir, $bean->object_name, $linkName);
+        
+        if(empty($linkDef['name'])) {
+            $GLOBALS['log']->error("Cannot find a link for {$linkName} on {$loadedModule}");
+            return true;
+        }
+        
         $link = new Link2($linkName, $bean);
         $moduleName = $link->getRelatedModuleName();
 
