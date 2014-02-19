@@ -12,6 +12,7 @@
  * Copyright (C) 2004-2013 SugarCRM Inc. All rights reserved.
  */
 
+require_once 'data/Relationships/SugarRelationship.php';
 /**
  * Testing relationships getType
  */
