@@ -287,7 +287,7 @@ describe("Base.Layout.Filter", function () {
                     expect(triggerStub).toHaveBeenCalled();
                     expect(triggerStub).toHaveBeenCalledWith('filter:create:open');
                     expect(layoutTriggerStub).toHaveBeenCalled();
-                    expect(layoutTriggerStub).toHaveBeenCalledWith('filter:create:validate');
+                    expect(layoutTriggerStub).toHaveBeenCalledWith('filter:toggle:savestate');
                 });
                 it('should validate because the filter definition has changed', function() {
                     model.set({name: 'test'});
@@ -311,7 +311,7 @@ describe("Base.Layout.Filter", function () {
                     layout.handleFilterChange(model.get('id'), false);
                     expect(triggerStub).not.toHaveBeenCalledWith('filter:create:open');
                     expect(layoutTriggerStub).not.toHaveBeenCalled();
-                    expect(layoutTriggerStub).not.toHaveBeenCalledWith('filter:create:validate');
+                    expect(layoutTriggerStub).not.toHaveBeenCalledWith('filter:toggle:savestate');
                 });
             });
             it('shoud determine if we need to clear the collection(s) and trigger quicksearch if yes', function() {
@@ -323,7 +323,8 @@ describe("Base.Layout.Filter", function () {
             it('shoud determine if we need to clear the collection(s) and do nothing if no', function() {
                 ctxt.get('collection').origFilterDef = model.get('filter_definition');
                 layout.handleFilterChange(model.get('id'), false);
-                expect(triggerStub).not.toHaveBeenCalled();
+                expect(triggerStub.calledOnce).toBe(true);
+                expect(triggerStub).toHaveBeenCalledWith('filter:create:close');
             });
         });
 

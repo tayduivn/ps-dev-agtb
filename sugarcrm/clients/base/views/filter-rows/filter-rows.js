@@ -72,7 +72,6 @@
         this.listenTo(this.layout, "filter:create:close", this.render);
         this.listenTo(this.layout, "filter:create:save", this.saveFilter);
         this.listenTo(this.layout, "filter:create:delete", this.confirmDelete);
-        this.listenTo(this.layout, "filter:create:validate", this.validateRows);
     },
 
     /**
@@ -108,7 +107,8 @@
     openForm: _.debounce(function(filterModel) {
         // This debounce method should be in accordance with filterpanel `filter:create:open` event handler,
         // so components show up at the same time
-        if (_.isEmpty(filterModel.get('filter_definition'))) {
+        var template = filterModel.get('filter_template') || filterModel.get('filter_definition');
+        if (_.isEmpty(template)) {
             this.render();
             var $row = this.addRow(),
                 field = $row.data('nameField');
@@ -130,7 +130,8 @@
     saveFilter: function(name) {
         var self = this,
             obj = {
-                filter_definition: this.buildFilterDef(),
+                filter_definition: this.buildFilterDef(true),
+                filter_template: this.buildFilterDef(),
                 name: name,
                 module_name: this.moduleName
             },
@@ -139,7 +140,7 @@
         this.layout.editingFilter.save(obj, {
             success: function(model) {
                 self.layout.trigger('filter:add', model);
-                self.layout.trigger('filter:create:rowsValid', false);
+                self.layout.trigger('filter:toggle:savestate', false);
             },
             showAlerts: {
                 'success': {
@@ -251,9 +252,11 @@
             $row = this.$(e.currentTarget).closest('[data-filter=row]');
             $row.after(this.formRowTemplate());
             $row = $row.next();
+            this.layout.trigger('filter:toggle:savestate', true);
         } else {
             // Add the initial row.
             $row = $(this.formRowTemplate()).appendTo(this.$el);
+            this.layout.trigger('filter:toggle:savestate', false);
         }
         model = app.data.createBean(this.moduleName);
         field = this.createField(model, {
@@ -268,8 +271,6 @@
         $row.data('nameField', field);
 
         this._renderField(field);
-
-        this.layout.trigger("filter:create:rowsValid", false);
 
         return $row;
     },
@@ -289,53 +290,58 @@
 
         this._disposeFields($row, fieldOpts);
         $row.remove();
-        this.validateRows();
+        this.layout.trigger('filter:toggle:savestate', true);
         if (this.$('[data-filter=row]').length === 0) {
             this.addRow();
         }
     },
 
     /**
-     * Validate rows
-     * @returns {Boolean} TRUE if valid, FALSE otherwise
+     * Validate all filter rows.
+     *
+     * @param {Array} rows A list of rows to validate.
+     * @return {Boolean} `true` if all filter rows are valid, `false`
+     *   otherwise.
      */
-    validateRows: function() {
-        var isValid = true,
-            $rows = this.$('[data-filter=row]');
-
-        _.each($rows, function(row) {
-            if (!isValid) return false;
-            isValid = this.validateRow($(row));
-        }, this);
-        this.layout.trigger("filter:create:rowsValid", isValid);
-        return isValid;
+    validateRows: function(rows) {
+        return _.every(rows, this.validateRow, this);
     },
 
     /**
-     * Verify the value of the row is not empty
-     * @param {Element} $row the row to validate
-     * @returns {Boolean} TRUE if valid, FALSE otherwise
+     * Verify the value of the row is not empty.
+     *
+     * @param {Element} $row The row to validate.
+     * @return {Boolean} `true` if valid, `false` otherwise.
+     *
+     * TODO we should receive the data only and be jQuery agnostic.
      */
-    validateRow: function($row) {
-        var data = $row.data();
+    validateRow: function(row) {
+
+        var $row = $(row),
+            data = $row.data();
+
         //For date range and predefined filters there is no value
         if (data.isDateRange || data.isPredefinedFilter) {
             return true;
         }
+
         //Special case for between operators where 2 values are needed
-        var needTwoValues = ['$between', '$dateBetween'];
-        if (_.indexOf(needTwoValues, data.operator) > -1) {
-            if (_.isArray(data.value) && data.value.length === 2) {
-                if (data.operator === "$between") {
-                    return _.isNumber(data.value[0]) && _.isNumber(data.value[1]);
-                }
-                if (data.operator === "$dateBetween") {
-                    return !_.isEmpty(data.value[0]) && !_.isEmpty(data.value[1]);
-                }
-            } else {
+        if (_.contains(['$between', '$dateBetween'], data.operator)) {
+
+            if (!_.isArray(data.value) || data.value.length !== 2) {
                 return false;
             }
+
+            switch (data.operator) {
+                case '$between':
+                    return _.isNumber(data.value[0]) && _.isNumber(data.value[1]);
+                case '$dateBetween':
+                    return !_.isEmpty(data.value[0]) && !_.isEmpty(data.value[1]);
+                default:
+                    return false;
+            }
         }
+
         return _.isNumber(data.value) || !_.isEmpty(data.value);
     },
 
@@ -343,17 +349,19 @@
      * Rerender the view with selected filter
      */
     populateFilter: function() {
-        var filterDef = this.layout.editingFilter.get("filter_definition"),
-            name = this.layout.editingFilter.get("name");
+        var name = this.layout.editingFilter.get('name'),
+            filterDef = this.layout.editingFilter.get('filter_template') ||
+                this.layout.editingFilter.get('filter_definition');
 
         this.render();
-        this.layout.trigger("filter:set:name", name);
+        this.layout.trigger('filter:set:name', name);
 
         _.each(filterDef, function(row) {
             this.populateRow(row);
         }, this);
         //Set lastFilterDef because the filter has already been applied and fireSearch is called in _disposeFields
-        this.lastFilterDef = this.buildFilterDef();
+        this.lastFilterDef = this.buildFilterDef(true);
+        this.lastFilterTemplate = this.buildFilterDef();
     },
 
     /**
@@ -666,50 +674,65 @@
      * Check each row, builds the filter definition and trigger the filtering
      */
     fireSearch: _.debounce(function() {
-        var filterDef = this.buildFilterDef();
-        //Do not apply same filter twice
-        if (_.isEqual(this.lastFilterDef, filterDef)) {
+        var filterDef = this.buildFilterDef(true),
+            filterTemplate = this.buildFilterDef(),
+            defHasChanged = !_.isEqual(this.lastFilterDef, filterDef),
+            templateHasChanged = !_.isEqual(this.lastFilterTemplate, filterTemplate);
+
+        // Save the current edit state
+        if (defHasChanged || templateHasChanged) {
+            this.saveFilterEditState(filterDef, filterTemplate);
+            this.lastFilterDef = filterDef;
+            this.lastFilterTemplate = filterTemplate;
+        }
+        if (!defHasChanged) {
             return;
         }
-        // Save the current edit state
-        this.saveFilterEditState(filterDef);
-
-        this.validateRows();
-        this.lastFilterDef = filterDef;
+        this.layout.trigger('filter:toggle:savestate', true);
         this.layout.trigger('filter:apply', null, filterDef);
     }, 400),
 
     /**
      * Saves the current edit state into the cache
      *
-     * @param {Object} filterDef(optional) Filter Definition
+     * @param {Object} [filterDef] Filter Definition. Defaults to the
+     *   {@link #builtFilderDef} with only valid rows.
+     * @param {Object} [templateDef] Filter template definition. Defaults to
+     *   the {@link #builtFilderDef} with all rows.
      */
-    saveFilterEditState: function(filterDef) {
+    saveFilterEditState: function(filterDef, templateDef) {
         if (!this.layout.editingFilter) {
             return;
         }
+        this.layout.editingFilter.set({
+            'filter_definition': filterDef || this.buildFilterDef(true),
+            'filter_template': templateDef || this.buildFilterDef()
+        });
         var filter = this.layout.editingFilter.toJSON();
-        filterDef = filterDef || this.buildFilterDef();
-        filter.filter_definition = filterDef;
 
         // Make sure the filter-actions view is rendered, otherwise it will override the name with an empty name.
-        if (this.layout.getComponent('filter-actions')
-            && this.layout.getComponent('filter-actions').$('input').length === 1) {
+        if (this.layout.getComponent('filter-actions') &&
+            this.layout.getComponent('filter-actions').$('input').length === 1
+        ) {
             filter.name = this.layout.getComponent('filter-actions').getFilterName();
         }
         this.layout.getComponent('filter').saveFilterEditState(filter);
     },
 
     /**
-     * Build filter definition for all valid rows
-     * @returns {Array} Filter definition
+     * Build filter definition for all rows.
+     *
+     * @param {Boolean} onlyValidRows Set `true` to retrieve only filter
+     *   definition of valid rows, `false` to retrieve the entire field
+     *   template.
+     * @return {Array} Filter definition.
      */
-    buildFilterDef: function() {
+    buildFilterDef: function(onlyValidRows) {
         var $rows = this.$('[data-filter=row]'),
             filter = [];
 
         _.each($rows, function(row) {
-            var rowFilter = this.buildRowFilterDef($(row));
+            var rowFilter = this.buildRowFilterDef($(row), onlyValidRows);
 
             if (rowFilter) {
                 filter.push(rowFilter);
@@ -720,22 +743,29 @@
     },
 
     /**
-     * Runs validation on this row and build filter definition when validation passes.
-     * @param {Element} $row the related row
-     * @returns {Object} Filter definition for this row
+     * Build filter definition for this row.
+     *
+     * @param {jQuery} $row The related row.
+     * @param {Boolean} onlyIfValid Set `true` to validate the row and return
+     *   `undefined` if not valid, or `false` to build the definition anyway.
+     * @return {Object} Filter definition for this row.
      */
-    buildRowFilterDef: function($row) {
+    buildRowFilterDef: function($row, onlyIfValid) {
         var data = $row.data();
-        if (!this.validateRow($row)) {
+        if (onlyIfValid && !this.validateRow($row)) {
             return;
         }
         var operator = data['operator'],
-            value = data['value'],
+            value = data['value'] || '',
             name = data['id_name'] || data['name'],
             filter = {};
 
-        if (data.isPredefinedFilter) {
-            filter[name] = "";
+        if (_.isEmpty(name)) {
+            return;
+        }
+
+        if (data.isPredefinedFilter || !this.fieldList) {
+            filter[name] = '';
             return filter;
         } else {
             if (this.fieldList[name] && _.has(this.fieldList[name], 'dbFields')) {
@@ -746,20 +776,26 @@
                     filter[dbField][operator] = value;
                     subfilters.push(filter);
                 });
-                filter["$or"] = subfilters;
+                filter['$or'] = subfilters;
             } else {
-                if (operator === "$equals") {
+                if (operator === '$equals') {
                     filter[name] = value;
                 } else if (data.isDateRange) {
                     //Once here the value is actually a key of date_range_selector_dom and we need to build a real
                     //filter definition on it.
                     filter[name] = {};
                     filter[name].$dateRange = operator;
-                } else if (operator === "$in" || operator === "$not_in") {
+                } else if (operator === '$in' || operator === '$not_in') {
                     // IN/NOT IN require an array
                     filter[name] = {};
                     //If value is not an array, we split the string by commas to make it an array of values
-                    filter[name][operator] = _.isArray(value) ? value : (value + '').split(',');
+                    if (_.isArray(value)) {
+                        filter[name][operator] = value;
+                    } else if (!_.isEmpty(value)) {
+                        filter[name][operator] = (value + '').split(',');
+                    } else {
+                        filter[name][operator] = [];
+                    }
                 } else {
                     filter[name] = {};
                     filter[name][operator] = value;

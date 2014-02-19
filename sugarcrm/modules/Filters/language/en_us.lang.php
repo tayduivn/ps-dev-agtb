@@ -63,6 +63,7 @@ $mod_strings = array(
     'LBL_API_FILTERS_SUBPANEL_TITLE' => 'Filters',
     'LBL_NEW_FORM_TITLE' => 'New Filters',
     'LBL_FILTER_DEFINITION' => 'Filter Definition',
+    'LBL_FILTER_TEMPLATE' => 'Ad-hoc Filter Definition',
     'LBL_ASSIGNED_TO_ME' => 'My {0}',
     'LBL_RECENTLY_VIEWED' => 'Recently Viewed',
     'LBL_NEW_RECORDS' => 'Recently Created',
