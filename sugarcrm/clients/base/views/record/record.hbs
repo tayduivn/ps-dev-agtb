@@ -79,7 +79,7 @@
                         {{#unless header}}
                             {{#if newTab}}
                                 <li class="tab {{name}}">
-                                    <a href="#{{name}}" data-toggle="tab">{{str label ../../../this.module}}</a>
+                                    <a href="#{{name}}{{../../../cid}}" data-toggle="tab">{{str label ../../../this.module}}</a>
                                 </li>
                             {{/if}}
                         {{/unless}}
@@ -91,7 +91,7 @@
                                 {{#unless header}}
                                     {{#if newTab}}
                                         <li class="{{name}}">
-                                            <a href="#{{name}}">{{str label ../../../this.module}}</a>
+                                            <a href="#{{name}}{{../../../cid}}">{{str label ../../../this.module}}</a>
                                         </li>
                                     {{/if}}
                                 {{/unless}}
@@ -107,7 +107,7 @@
                     {{#notEq @index ../../../../meta.firstNonHeaderPanelIndex}}
                         </div>
                     {{/notEq}}
-                    <div class="tab-pane fade" id="{{name}}">
+                    <div class="tab-pane fade" id="{{name}}{{../../../cid}}">
                 {{else}}
                     <div class="row-fluid record-panel" data-panelName = "{{name}}">
                         <div class="row-fluid record-panel-header">
