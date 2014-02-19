@@ -194,8 +194,7 @@ describe('View.BaseDashablelistView', function() {
                 expect(view.settings.get('label')).toBe('LBL_MODULE_NAME');
                 expect(view.settings.get('limit')).toBe(5);
                 expect(view.settings.get('intelligent')).toBe('0');
-                expect(view.settings.get('my_items')).toBe('1');
-                expect(view.settings.get('favorites')).toBe('0');
+                expect(view.settings.get('filter_id')).toBe('assigned_to_me');
             });
 
             it('should not change the module setting when the module is approved', function() {
@@ -603,31 +602,6 @@ describe('View.BaseDashablelistView', function() {
                 var columns = view._getColumnsForDisplay();
                 expect(stubUpdateDisplayColumns).toHaveBeenCalledOnce();
                 expect(columns.length).toBe(displayColumns.length);
-            });
-        });
-
-        describe('set the filter definition on the collection', function() {
-            it('should add an empty filter definition', function() {
-                view.settings.set({my_items: '0', favorites: '0'});
-                view._intializeFilter();
-                expect(view.context.get('collection').filterDef.length).toBe(0);
-            });
-
-            it('should add only one option to the filter definition', function() {
-                view.settings.set({my_items: '1', favorites: '0'});
-                view._intializeFilter();
-                var filterDef = view.context.get('collection').filterDef;
-                expect(_.isArray(filterDef)).toBeTruthy();
-                expect(view.context.get('collection').filterDef.length).toBe(1);
-            });
-
-            it('should add two options to the filter definition', function() {
-                view.settings.set({my_items: '1', favorites: '1'});
-                view._intializeFilter();
-                var filterDef = view.context.get('collection').filterDef;
-                expect(_.isObject(filterDef)).toBeTruthy();
-                expect(_.first(_.keys(filterDef))).toBe('$and');
-                expect(filterDef.$and.length).toBe(2);
             });
         });
 

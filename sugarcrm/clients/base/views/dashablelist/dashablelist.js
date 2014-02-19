@@ -22,15 +22,8 @@
  *                              the dashlet name that the user sees.
  * {Array}   display_columns    The field names of the columns to include in
  *                              the list view.
- * {String}  my_items           Allows for limiting results to only records
- *                              assigned to the user. If '0' or undefined, then
- *                              all records may be returned. If '1', then
- *                              records assigned to the user will be returned.
- * {String}  favorites          Allows for limiting the results to only records
- *                              the user has favorited. If '0' or undefined,
- *                              then all records may be returned. If '1', then
- *                              records the user has favorited will be
- *                              returned.
+ * {String}  filter_id          Filter to be applied, defaults to:
+ *                              'assigned_to_me'.
  * {Integer} limit              The number of records to retrieve for the list
  *                              view.
  * {Integer} auto_refresh       How frequently (in minutes) that the dashlet
@@ -47,8 +40,7 @@
  *         'phone_office',
  *         'billing_address_country',
  *     ),
- *     'my_items'        => '0',
- *     'favorites'       => '1',
+ *     'filter_id'       => 'assigned_to_me',
  *     'limit'           => 15,
  *     'auto_refresh'    => 5,
  * ),
@@ -79,8 +71,7 @@
      */
     _defaultSettings: {
         limit: 5,
-        my_items: '1',
-        favorites: '0',
+        filter_id: 'assigned_to_me',
         intelligent: '0'
     },
 
@@ -187,7 +178,7 @@
         if (this.meta.config) {
             // keep the display_columns and label fields in sync with the selected module when configuring a dashlet
             this.settings.on('change:module', function(model, moduleName) {
-                var label = (model.get('my_items') == '1') ? 'TPL_DASHLET_MY_MODULE' : 'LBL_MODULE_NAME';
+                var label = (model.get('filter_id') === 'assigned_to_me') ? 'TPL_DASHLET_MY_MODULE' : 'LBL_MODULE_NAME';
                 model.set('label', app.lang.get(label, moduleName, {
                     module: app.lang.getAppListStrings('moduleList')[moduleName]
                 }));
@@ -352,7 +343,7 @@
      *
      * Builds the available module cache by way of the
      * {@link BaseDashablelistView#_setDefaultModule} call. The module is set
-     * after "my_items" because the value of "my_items" could impact the value
+     * after "filter_id" because the value of "filter_id" could impact the value
      * of "label" when the label is set in response to the module change while
      * in configuration mode (see the "module:change" listener in
      * {@link BaseDashablelistView#initDashlet}).
@@ -375,11 +366,8 @@
         if (!this.settings.get('limit')) {
             this.settings.set('limit', this._defaultSettings.limit);
         }
-        if (!this.settings.get('my_items')) {
-            this.settings.set('my_items', this._defaultSettings.my_items);
-        }
-        if (!this.settings.get('favorites')) {
-            this.settings.set('favorites', this._defaultSettings.favorites);
+        if (!this.settings.get('filter_id')) {
+            this.settings.set('filter_id', this._defaultSettings.filter_id);
         }
         this._setDefaultModule();
         if (!this.settings.get('label')) {

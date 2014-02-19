@@ -28,9 +28,6 @@ $viewdefs['base']['view']['dashablelist'] = array(
                     'phone_office',
                     'billing_address_country',
                 ),
-                // my_items is defaulted '1' which may result in no records being found
-                // so make it '0' for preview to nearly guarantee that records will be shown in the sample
-                'my_items' => '0',
             ),
         ),
     ),
@@ -68,18 +65,6 @@ $viewdefs['base']['view']['dashablelist'] = array(
                     'label' => 'Auto Refresh',
                     'type' => 'enum',
                     'options' => 'sugar7_dashlet_auto_refresh_options',
-                ),
-                array(
-                    'name' => 'my_items',
-                    'label' => 'LBL_DASHLET_CONFIGURE_MY_ITEMS_ONLY',
-                    'type' => 'enum',
-                    'options' => 'list_visibility_options',
-                ),
-                array(
-                    'name' => 'favorites',
-                    'label' => 'LBL_DASHLET_CONFIGURE_MY_FAVORITES_ONLY',
-                    'type' => 'enum',
-                    'options' => 'list_visibility_options',
                 ),
                 array(
                     'name' => 'intelligent',
