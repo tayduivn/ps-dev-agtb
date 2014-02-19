@@ -11,7 +11,14 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
+ * Module menu provides a reusable and easy render of a module Menu.
  *
+ * This also helps doing customization of the menu per module and provides more
+ * metadata driven features.
+ *
+ * @class View.Views.BaseHomeModuleMenuView
+ * @alias SUGAR.App.view.views.BaseHomeModuleMenuView
+ * @extends View.Views.BaseModuleMenuView
  */
 ({
     extendsFrom: 'ModuleListView',
