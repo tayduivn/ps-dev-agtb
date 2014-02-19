@@ -46,10 +46,10 @@
             return;
         }
 
-        if(!_.isEmpty(this.meta)){
-            this.menulist = this.filterAvailableMenu(this.meta);
+        if (!_.isEmpty(this.meta)) {
+            this.menulist = this.filterAvailableMenu(app.utils.deepCopy(this.meta));
         }
-        app.view.View.prototype._renderHtml.call(this);
+        this._super('_renderHtml');
     },
     /**
      * Handle the button click event.
