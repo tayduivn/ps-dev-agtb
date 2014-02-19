@@ -17,20 +17,21 @@
          * This plugin disallows mass-deleting for closed won/lost items (for use in Opps and Products)
          */
         app.plugins.register('DisableMassDelete', ["view"], {
-
             /**
-             * @override
+             * Attach code for when the plugin is registered on a view
              *
-             * This needs to be overridden since we can not call super and we need to have the mass delete use our
-             * _warnDelete method instead of the default warnDelete method.
+             * @param component
+             * @param plugin
              */
-            delegateListFireEvents: function() {
-                this.layout.on("list:massupdate:fire", this.show, this);
-                this.layout.on("list:massaction:hide", this.hide, this);
-                this.layout.on("list:massdelete:fire", this._warnDelete, this);
-                this.layout.on("list:massexport:fire", this.massExport, this);
-                this.layout.on("list:updatecalcfields:fire", this.updateCalcFields, this);
+            onAttach: function(component, plugin) {
+                this.once('init', function() {
+                    // we need to stop listening to the original warnDelete message
+                    this.layout.off('list:massdelete:fire', this.warnDelete, this);
+                    // but instead listen to our custom one
+                    this.layout.on('list:massdelete:fire', this._warnDelete, this);
+                }, this);
             },
+
             /**
              * override of parent deleteModels. Removes closed lost/won items from the list to be deleted, and
              * throws a warning if it removes anything

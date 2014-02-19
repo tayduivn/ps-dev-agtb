@@ -17,12 +17,16 @@
          * This plugin enables mass-quoting for RevenueLineItems (for use in Opps and QLIs)
          */
         app.plugins.register('MassQuote', ["view"], {
-
             /**
-             * {@inheritdoc}
+             * Attach code for when the plugin is registered on a view
+             *
+             * @param component
+             * @param plugin
              */
-            delegateListFireEvents: function() {
-                this.layout.on("list:massquote:fire", this.massQuote, this);
+            onAttach: function(component, plugin) {
+                this.once('init', function() {
+                    this.layout.on("list:massquote:fire", this.massQuote, this);
+                }, this);
             },
 
             /**
