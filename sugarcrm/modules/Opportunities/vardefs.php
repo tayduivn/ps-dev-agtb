@@ -316,6 +316,7 @@ $dictionary['Opportunity'] = array(
             'options' => 'sales_status_dom',
             'len' => '255',
             'readonly' => true,
+            'duplicate_merge' => 'disabled',
             //BEGIN SUGARCRM flav!=ent ONLY
             'studio' => false,
             'reportable' => false,
