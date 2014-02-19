@@ -25,10 +25,6 @@
 ({
     className: 'module-list',
     plugins: ['Dropdown'],
-    events: {
-        'click .actionLink' : 'handleMenuEvent',
-        'click a[data-route]': 'handleRouteEvent'
-    },
 
     /**
      * The catalog of modules linked to their menus (short and long).
@@ -59,36 +55,6 @@
      * @protected
      */
     _$moreModulesDD: undefined,
-
-    handleRouteEvent: function (event) {
-        var currentFragment,
-            currentTarget = this.$(event.currentTarget),
-            route = currentTarget.data('route');
-
-        if (route) {
-            if ((!_.isUndefined(event.button) && event.button !== 0) || event.ctrlKey || event.metaKey) {
-                event.stopPropagation();
-                window.open(route, '_blank');
-                // FIXME remove this hack once the drawer doesn't popup even after stopPropagation() is called.
-                // return false;
-            }
-            event.preventDefault();
-            currentFragment = Backbone.history.getFragment();
-            if (('#' + currentFragment) === route) {
-                app.router.refresh();
-            } else {
-                app.router.navigate(route, {trigger: true});
-            }
-        }
-    },
-
-    handleMenuEvent:function (evt) {
-        var $currentTarget = this.$(evt.currentTarget);
-        if ($currentTarget.data('event')) {
-            var module = $currentTarget.closest('li.dropdown').data('module');
-            app.events.trigger($currentTarget.data('event'), module, evt);
-        }
-    },
 
     /**
      * {@inheritDoc}

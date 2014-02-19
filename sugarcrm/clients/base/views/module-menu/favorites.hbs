@@ -13,5 +13,5 @@
  */
 --}}
 {{#each models}}
-    <li><a tabindex="-1" class="favoriteLink actionLink" href="#{{buildRoute model=this}}" data-route="#{{buildRoute model=this}}"><i class="icon-favorite active"></i>{{getFieldValue this "name"}}</a></li>
+    <li><a tabindex="-1" class="favoriteLink" href="#{{buildRoute model=this}}" data-route="#{{buildRoute model=this}}"><i class="icon-favorite active"></i>{{getFieldValue this "name"}}</a></li>
 {{/each}}

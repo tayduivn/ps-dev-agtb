@@ -20,6 +20,12 @@
  * @alias SUGAR.App.view.views.BaseModuleMenuView
  */
 ({
+
+    events: {
+        'click [data-event]': 'handleMenuEvent',
+        'click [data-route]': 'handleRouteEvent'
+    },
+
     /**
      * The possible actions that this module menu provides.
      *
@@ -118,6 +124,7 @@
 
     /**
      * Return `true` if this menu is open, `false` otherwise.
+     * @return {Boolean} `true` if this menu is open, `false` otherwise.
      */
     isOpen: function() {
         return !!this.$el.hasClass('open');
@@ -154,6 +161,50 @@
         });
 
         return;
+    },
+
+    /**
+     * This gives support to any events that might exist in the menu actions.
+     *
+     * Out of the box we don't have any use case for actions that are event
+     * driven. Since it was already provided since 7.0.0 we will keep it util
+     * further notice.
+     *
+     * @param {Event} evt The event that triggered this (normally a click
+     *   event).
+     */
+    handleMenuEvent: function(evt) {
+        var $currentTarget = this.$(evt.currentTarget);
+        app.events.trigger($currentTarget.data('event'), this.module, evt);
+    },
+
+    /**
+     * This triggers router navigation on both menu actions and module links.
+     *
+     * Since we normally trigger the drawer for some actions, we prevent it
+     * when using the click with the `ctrlKey` (or `metaKey` in Mac OS).
+     * We also prevent the routing to be fired when this happens.
+     *
+     * When we are triggering the same route that we already are in, we just
+     * trigger a {@link Core.Routing#refresh}.
+     *
+     * @param {Event} event The event that triggered this (normally a click
+     *   event).
+     */
+    handleRouteEvent: function(event) {
+        var currentRoute,
+            $currentTarget = this.$(event.currentTarget),
+            route = $currentTarget.data('route');
+
+        event.preventDefault();
+        if ((!_.isUndefined(event.button) && event.button !== 0) || event.ctrlKey || event.metaKey) {
+            event.stopPropagation();
+            window.open(route, '_blank');
+            return false;
+        }
+
+        currentRoute = '#' + Backbone.history.getFragment();
+        (currentRoute === route) ? app.router.refresh() : app.router.navigate(route, {trigger: true});
     }
 
 })
