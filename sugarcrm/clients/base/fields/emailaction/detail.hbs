@@ -1,3 +1,4 @@
+{{!
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -10,7 +11,13 @@
  *
  * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
  */
-({
-    extendsFrom: 'QuickcreateField',
-    plugins: ['EmailClientLaunch']
-})
+}}
+<a data-action="email" href="javascript:void(0);"
+{{#if def.tooltip}}
+    rel="tooltip"
+    data-placement="bottom"
+    title="{{str def.tooltip module}}"
+{{/if}}
+    name="{{name}}"
+    track="click:{{#if name}}{{name}}{{else}}{{label}}{{/if}}">
+{{#if def.icon}}<i class="{{def.icon}}"></i>{{/if}}{{str label}}</a>

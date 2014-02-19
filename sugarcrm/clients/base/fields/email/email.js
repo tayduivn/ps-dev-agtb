@@ -11,21 +11,19 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 ({
-    useSugarEmailClient: false,
     events: {
         'change .existingAddress': 'updateExistingAddress',
         'click  .btn-edit':        'toggleExistingAddressProperty',
         'click  .removeEmail':     'removeExistingAddress',
         'click  .addEmail':        'addNewAddress',
-        'change .newEmail':        'addNewAddress',
-        'click  .composeEmail':    'composeEmail'
+        'change .newEmail':        'addNewAddress'
     },
     _flag2Deco: {
         primary_address: {lbl: "LBL_EMAIL_PRIMARY", cl: "primary"},
         opt_out: {lbl: "LBL_EMAIL_OPT_OUT", cl: "opted-out"},
         invalid_email: {lbl: "LBL_EMAIL_INVALID", cl: "invalid"}
     },
-    plugins: ['Tooltip', 'ListEditable'],
+    plugins: ['Tooltip', 'ListEditable', 'EmailClientLaunch'],
 
     /**
      * @inheritdoc
@@ -42,8 +40,8 @@
 
         this._super("initialize", [options]);
 
-        // determine if the app should send email according to the use_sugar_email_client user preference
-        this.useSugarEmailClient = (app.user.getPreference("use_sugar_email_client") === "true");
+        //set model as the related record when composing an email (copy is made by plugin)
+        this.addEmailOptions({related: this.model});
     },
 
     /**
@@ -478,32 +476,20 @@
     },
 
     /**
-     * Event handler to open up Quick Compose drawer with the selected email address.
-     * @param {Event} evt
+     * Retrieve link specific email options for launching the email client
+     * Builds upon emailOptions on this
+     *
+     * @param $link
+     * @private
      */
-    composeEmail: function(evt) {
-        evt.stopPropagation();
-        evt.preventDefault();
-
-        var model = app.data.createBean(this.model.module);
-        model.copy(this.model);
-        model.set('id', this.model.id);
-
-        app.drawer.open({
-            layout : 'compose',
-            context: {
-                create: 'true',
-                module: 'Emails',
-                prepopulate: {
-                    to_addresses: [
-                        {
-                            email: this.$(evt.currentTarget).text(),
-                            bean: model
-                        }
-                    ],
-                    related: model
+    _retrieveEmailOptionsFromLink: function($link) {
+        return {
+            to_addresses: [
+                {
+                    email: $link.data('email-to'),
+                    bean: this.emailOptions.related
                 }
-            }
-        });
+            ]
+        };
     }
 })

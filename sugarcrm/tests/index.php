@@ -35,6 +35,7 @@
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/FindDuplicates.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/LinkedModel.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/ToggleVisibility.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/EmailClientLaunch.js"></script>
 
     <!-- customized beans -->
     <script type="text/javascript" src="../modules/Contacts/clients/base/lib/bean.js"></script>
