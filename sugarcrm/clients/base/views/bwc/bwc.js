@@ -274,6 +274,32 @@
             self.$el.get(0).contentWindow.location.reload(true);
         });
     },
+
+    /**
+     * Opens the Archive Email drawer, passing in the parent model to relate to
+     * Reloads the BWC page if email created so it appears in the subpanel
+     */
+    openArchiveEmailDrawer: function() {
+        var self = this,
+            parentModel = this.context.get('model');
+
+        app.drawer.open({
+            layout: 'archive-email',
+            context: {
+                create: true,
+                module: 'Emails',
+                prepopulate: {
+                    related: parentModel
+                }
+            }
+        }, function(model) {
+            if (model) {
+                // Reload the BWC to update subpanels.
+                self.$el.get(0).contentWindow.location.reload(true);
+            }
+        });
+    },
+
     /**
      * Update current window location once bwc link is clicked.
      *

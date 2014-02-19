@@ -22,6 +22,11 @@
             'click [name=archive_button]': 'archive'
         });
         this._super('initialize', [options]);
+
+        if (!this.model.has('assigned_user_id')) {
+            this.model.set('assigned_user_id', app.user.id);
+            this.model.set('assigned_user_name', app.user.get('full_name'));
+        }
     },
 
     /**

@@ -1,6 +1,10 @@
 describe('Archive Email View', function () {
     var view,
-        setMainButtonsDisabledStub;
+        setMainButtonsDisabledStub,
+        userId = '1234567890',
+        userName = 'Johnny Appleseed',
+        userIdBefore,
+        userNameBefore;
 
     beforeEach(function() {
         var metadata = {
@@ -35,6 +39,10 @@ describe('Archive Email View', function () {
         context.prepare();
 
         SugarTest.app.drawer = { on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop };
+        userIdBefore = SugarTest.app.user.id;
+        SugarTest.app.user.id = userId;
+        userNameBefore = SugarTest.app.user.attributes.full_name;
+        SugarTest.app.user.attributes.full_name = userName;
 
         view = SugarTest.createView('base', 'Emails', 'archive-email', null, context, true);
         setMainButtonsDisabledStub = sinon.stub(view, 'setMainButtonsDisabled');
@@ -44,10 +52,17 @@ describe('Archive Email View', function () {
         setMainButtonsDisabledStub.restore();
         view.dispose();
         SugarTest.app.drawer = undefined;
+        SugarTest.app.user.id = userIdBefore;
+        SugarTest.app.user.attributes.full_name = userNameBefore;
         SugarTest.testMetadata.dispose();
         SugarTest.app.cache.cutAll();
         SugarTest.app.view.reset();
         Handlebars.templates = {};
+    });
+
+    it('should prepopulate the current user on assigned to field if not already set', function() {
+        expect(view.model.get('assigned_user_id')).toEqual(userId);
+        expect(view.model.get('assigned_user_name')).toEqual(userName);
     });
 
     describe('archive', function () {
