@@ -144,6 +144,7 @@ $mod_strings = array (
 	'SYSTEM_NAME'=>'System Name:',
 	'SYSTEM_NAME_WIZARD'=>'Name:',
 	'SYSTEM_NAME_HELP'=>'This is the name that displays in the title bar of your browser.',
+    'LBL_ENABLE_HISTORY_CONTACTS_EMAILS' => 'Enable/Disable emails from related (or linked) contacts to show in Email Subpanel.',
     //BEGIN SUGARCRM flav=pro ONLY
 
     'LBL_OC_STATUS'                     => 'Default Offline Client Status',

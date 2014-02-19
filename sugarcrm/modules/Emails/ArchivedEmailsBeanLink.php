@@ -45,26 +45,35 @@ class ArchivedEmailsBeanLink extends ArchivedEmailsLink
             $table_name = 'emails';
         }
         $rel_join = str_replace("{$this->focus->table_name}.id", $bean_id, $rel_join);
-        return "INNER JOIN (\n".
+
+        $hideHistoryContactsEmails = !empty($GLOBALS['sugar_config']['hide_history_contacts_emails'][$this->focus->module_name]);
+
+        $query = "INNER JOIN (\n".
         // directly assigned emails
-        	"select eb.email_id, 'direct' source FROM emails_beans eb where eb.bean_module = '{$this->focus->module_dir}'
-                AND eb.bean_id = $bean_id AND eb.deleted=0\n" .
-        " UNION ".
-        // Assigned to contacts
-        	"select DISTINCT eb.email_id, 'contact' source FROM emails_beans eb
-                $rel_join AND link_bean.id = eb.bean_id
-        		where eb.bean_module = '$rel_module' AND eb.deleted=0\n" .
-        " UNION ".
+        "select eb.email_id, 'direct' source FROM emails_beans eb where eb.bean_module = '{$this->focus->module_dir}'
+                AND eb.bean_id = $bean_id AND eb.deleted=0\n";
+
+        $query .= " UNION ".
         // Related by directly by email
             "select DISTINCT eear.email_id, 'relate' source  from emails_email_addr_rel eear INNER JOIN email_addr_bean_rel eabr
-            	ON eabr.bean_id = $bean_id AND eabr.bean_module = '{$this->focus->module_dir}' AND
-    			eabr.email_address_id = eear.email_address_id and eabr.deleted=0 where eear.deleted=0\n" .
-        " UNION ".
-        // Related by email to linked contact
-            "select DISTINCT eear.email_id, 'relate_contact' source FROM emails_email_addr_rel eear INNER JOIN email_addr_bean_rel eabr
-            	ON eabr.email_address_id=eear.email_address_id AND eabr.bean_module = '$rel_module' AND eabr.deleted=0
-            	$rel_join AND link_bean.id = eabr.bean_id
-            	where eear.deleted=0\n" .
-      ") email_ids ON $table_name.id=email_ids.email_id ";
+                ON eabr.bean_id = $bean_id AND eabr.bean_module = '{$this->focus->module_dir}' AND
+                eabr.email_address_id = eear.email_address_id and eabr.deleted=0 where eear.deleted=0\n";
+
+        if (!$hideHistoryContactsEmails) {
+            // Assigned to contacts
+            $query .= " UNION ".
+                "select DISTINCT eb.email_id, 'contact' source FROM emails_beans eb
+                $rel_join AND link_bean.id = eb.bean_id
+                where eb.bean_module = '$rel_module' AND eb.deleted=0\n";
+            // Related by email to linked contact
+            $query .= " UNION select DISTINCT eear.email_id, 'relate_contact' source FROM emails_email_addr_rel eear INNER JOIN email_addr_bean_rel eabr
+                ON eabr.email_address_id=eear.email_address_id AND eabr.bean_module = '$rel_module' AND eabr.deleted=0
+                $rel_join AND link_bean.id = eabr.bean_id
+                where eear.deleted=0\n";
+        }
+
+        $query .= ") email_ids ON $table_name.id=email_ids.email_id ";
+
+        return $query;
     }
 }

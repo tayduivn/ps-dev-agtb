@@ -147,6 +147,7 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
     'link_file' => 'modules/Cases/CaseEmailsLink.php',
     'link_class' => 'CaseEmailsLink',
     'link' => 'contacts',
+    'module' => 'Emails',
     'source' => 'non-db',
     'vname' => 'LBL_EMAILS',
     'link_type' => 'many',
