@@ -59,10 +59,56 @@ class SugarQuery_Compiler_SQL
     public function compile(SugarQuery $sugar_query)
     {
         $this->sugar_query = $sugar_query;
+
+        if (!empty($this->sugar_query->union) &&
+            $this->sugar_query->union instanceof SugarQuery_Builder_Union
+        ) {
+            return $this->compileUnionQuery();
+        }
+
         if (empty($this->sugar_query->select)) {
             $this->sugar_query->select = new SugarQuery_Builder_Select($this->sugar_query, array('*'));
         }
         return $this->compileSelectQuery();
+    }
+
+    /**
+     * Convert a Union SugarQuery Object into a string.
+     *
+     * @return string
+     */
+    protected function compileUnionQuery()
+    {
+        $sql = '';
+        $unions = $this->sugar_query->union->getQueries();
+
+        if (empty($unions)) {
+            throw new SugarQueryException("Incorrect union query.");
+        }
+
+        foreach ($unions as $union) {
+            if (isset($union['query'])) {
+                $sql .= (!empty($sql)) ? ' UNION ' . ($union['all'] ? 'ALL ' : '') : '';
+                $sql .= '(' . $union['query']->compileSql() . ')';
+            }
+        }
+
+        if (!empty($this->sugar_query->order_by)) {
+            $sql .= " ORDER BY " . $this->compileOrderBy($this->sugar_query->order_by, false) . " ";
+        }
+
+        if (!empty($this->sugar_query->limit)) {
+            $sql = $this->db->limitQuery(
+                $sql,
+                $this->sugar_query->offset ? $this->sugar_query->offset : 0,
+                $this->sugar_query->limit,
+                false,
+                '',
+                false
+            );
+        }
+
+        return $sql;
     }
 
     /**
@@ -87,7 +133,6 @@ class SugarQuery_Compiler_SQL
         $limit = $this->sugar_query->limit;
         $offset = $this->sugar_query->offset;
 
-        $union = $this->sugar_query->union;
         // if there aren't any selected fields, add them all
         if (empty($this->sugar_query->select->select)) {
             $this->sugar_query->select('*');
@@ -159,15 +204,7 @@ class SugarQuery_Compiler_SQL
         if (!empty($limit)) {
             $sql = $this->db->limitQuery($sql, $offset, $limit, false, '', false);
         }
-        if (!empty($union)) {
-            foreach ($union as $u) {
-                if (isset($u['select'])) {
-                    $sql .= ' UNION ';
-                    $sql .= ($u['all']) ? 'ALL ' : '';
-                    $sql .= $u['select']->compileSql();
-                }
-            }
-        }
+
         return trim($sql);
     }
 
@@ -204,16 +241,19 @@ class SugarQuery_Compiler_SQL
      * Create an Order By Statement
      *
      * @param array $orderBy
-     *
+     * @param boolean $orderById (optional) Indicates if column id should be
+     *     added to orderBy. Default value is `true`.
      * @return string
      */
-    protected function compileOrderBy($orderBy)
+    protected function compileOrderBy($orderBy, $orderById = true)
     {
         $return = array();
         // order by ID
-        $orderId = new SugarQuery_Builder_Orderby($this->sugar_query);
-        $orderId->addField('id');
-        $orderBy[] = $orderId;
+        if ($orderById) {
+            $orderId = new SugarQuery_Builder_Orderby($this->sugar_query);
+            $orderId->addField('id');
+            $orderBy[] = $orderId;
+        }
 
         foreach ($orderBy as $order) {
             if ($order->column->isNonDb() == 1) {

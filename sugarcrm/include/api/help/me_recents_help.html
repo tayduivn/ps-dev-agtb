@@ -1,0 +1,173 @@
+<!--
+/*********************************************************************************
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
+ ********************************************************************************/
+
+-->
+<h2>Overview</h2>
+<span class="lead">
+    Returns all of the current users recents records
+</span>
+
+<h2>Query String Parameters</h2>
+<span class="lead">
+    module, fields, date, limit and offset are available query parameters.
+</span>
+
+<h2>Input Parameters</h2>
+<span class="lead">
+    This endpoint does not accept any input parameters.
+</span>
+
+<h2>Result</h2>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Required</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            module
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            Name of module to fetch recents records.
+            <br>
+            Example: <code>Accouts</code>
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>
+            fields
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            Comma delimited list of fields to return. The field date_modified will always be returned.
+            <br>
+            Example: <code>id,name</code>
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>
+            date
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            The date expression. Filter recents records from this date.
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>
+            limit
+        </td>
+        <td>
+            Integer
+        </td>
+        <td>
+            A maximum number of records to return. Default is 20.
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>
+            offset
+        </td>
+        <td>
+            Integer
+        </td>
+        <td>
+            The number of records to skip over before records are returned. Default is 0.
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>Output Example</h3>
+<pre class="pre-scrollable">
+{
+    "next_offset": -1,
+    "records": [
+        {
+            "id": "eaa1aead-2da1-c4a2-f178-52fb5cda3c37",
+            "name": "Young Nagao",
+            "date_modified": "2014-02-12T14:31:25+03:00",
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Contacts"
+        },
+        {
+            "id": "ebdab13c-418b-66a7-73e3-52fb5cb7aa80",
+            "name": "A.G. Parr PLC",
+            "date_modified": "2014-02-12T14:31:25+03:00",
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Accounts"
+        },
+        {
+            "id": "ef85d565-3567-1eb4-c1d3-52fb5cfe8e8b",
+            "name": "T-Squared Techs",
+            "date_modified": "2014-02-12T14:31:25+03:00",
+            "_acl": {
+                "fields": {}
+            },
+            "_module": "Accounts"
+        }
+    ]
+}
+</pre>
+
+<h2>Change Log</h2>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Version</th>
+        <th>Change</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            v10 (7.2+)
+        </td>
+        <td>
+            Added <code>/recent</code> GET endpoint.
+        </td>
+    </tr>
+    </tbody>
+</table>
