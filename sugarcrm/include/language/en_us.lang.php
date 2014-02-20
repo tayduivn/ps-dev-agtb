@@ -4641,6 +4641,10 @@ To modify an existing record rather than creating a new one, click "Select and e
 If, instead, you wish to use the values you have just entered instead of the values on the existing record, click "Reset to original". The values you entered will then be applied to the existing record, and you may now provide any additional changes and click "Save" to finalize modifications to the existing record.
 
 To create a new record using the values you have entered, click "Ignore Duplicate and Save" at the top right of the screen.',
+
+    'LBL_MISSING_SMPT_SERVER_SETTINGS_NOTIFICATION_SUBJECT' => 'Missing SMTP Server settings',
+    'TPL_MISSING_SMPT_SERVER_SETTINGS_NOTIFICATION_DESCRIPTION' => 'To send record assignment notifications, an SMTP server must be configured in {{emailSettingsUrl}}.',
+    'LBL_MISSING_SMPT_SERVER_SETTINGS_NOTIFICATION_LINK_TEXT' => 'Email Settings',
 );
 
 $app_list_strings['interactions_options'] = array (

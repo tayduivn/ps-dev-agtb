@@ -57,6 +57,7 @@ $viewdefs['Notifications']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'description',
+                    'type' => 'html',
                     'span' => 12,
                 ),
                 array(
