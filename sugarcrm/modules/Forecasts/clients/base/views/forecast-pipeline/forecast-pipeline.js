@@ -113,10 +113,12 @@
                     this.chart.update();
             }
         }, this);
-        app.events.on('app:toggle:sidebar', function(state) {
+
+        // FIXME this event should be listened on the `default` layout instead of the global context (SC-2398).
+        app.controller.context.on('sidebar:state:changed', function(state) {
             this.state = state;
             if (this.chartLoaded && this.state == 'open' && !this.preview_open) {
-                if(this.chart && this.chart.update)
+                if (this.chart && this.chart.update)
                     this.chart.update();
             }
         }, this);
@@ -237,5 +239,14 @@
             ]);
         }
         return this;
+    },
+
+    /**
+     * @inheritDoc
+     */
+    unbind: function() {
+        // FIXME the listener should be on the `default` layout instead of the global context (SC-2398).
+        app.controller.context.off(null, null, this);
+        app.view.View.prototype.unbind.call(this);
     }
 })

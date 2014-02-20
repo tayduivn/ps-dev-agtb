@@ -61,8 +61,9 @@
             .transition().duration(500)
             .call(this.chart);
 
-        app.events.on('app:toggle:sidebar', function(state) {
-            if(state == 'open' && this.chart.update) {
+        // FIXME this event should be listened on the `default` layout instead of the global context (SC-2398).
+        app.controller.context.on('sidebar:state:changed', function(state) {
+            if (state == 'open' && this.chart.update) {
                 this.chart.update();
             }
         }, this);
@@ -180,9 +181,20 @@
         this.tabClass = ['one','two','three','four','five'][this.tabData.length] || 'four';
     },
 
+    /**
+     * @inheritDoc
+     */
+    unbind: function() {
+        // FIXME the events should be happening on the `default` layout instead of the global context (SC-2398).
+        app.controller.context.off(null, null, this);
+        app.view.View.prototype.unbind.call(this);
+    },
+
+    /**
+     * @inheritDoc
+     */
     _dispose: function() {
         this.favFields = null;
-        this.model.off("change", this.loadData, this);
         if (!_.isEmpty(this.chart)) {
             nv.utils.windowUnResize(this.chart.update);
             nv.utils.unResizeOnPrint(this.chart.update);

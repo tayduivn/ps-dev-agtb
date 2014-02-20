@@ -129,8 +129,9 @@
             nv.utils.windowResize(this.chart.render);
             nv.utils.resizeOnPrint(this.chart.render);
 
-            app.events.on('app:toggle:sidebar', function(state) {
-                if(state == 'open') {
+        // FIXME this event should be listened on the `default` layout instead of the global context (SC-2398).
+            app.controller.context.on('sidebar:state:changed', function(state) {
+                if (state == 'open') {
                     this.chart.render();
                 }
             }, this);
@@ -250,6 +251,18 @@
         this.loadData();
     },
 
+    /**
+     * @inheritDoc
+     */
+    unbind: function() {
+        // FIXME the listener should be on the `default` layout instead of the global context (SC-2398).
+        app.controller.context.off(null, null, this);
+        app.view.View.prototype.unbind.call(this);
+    },
+
+    /**
+     * @inheritDoc
+     */
     _dispose: function () {
         this.on('data-changed', null, this);
         if (!_.isEmpty(this.chart)) {

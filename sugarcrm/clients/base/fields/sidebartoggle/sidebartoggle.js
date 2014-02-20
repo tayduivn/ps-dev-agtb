@@ -1,80 +1,157 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
+
+/**
+ * Some events have been deprecated in 7.2 and removed.
+ * List of changes:
+ *
+ * - `sidebarRendered` has been removed. Now, when the field renders it triggers
+ *    an event `sidebar:state:ask` to ask for the state, and listens to
+ *    `sidebar:state:respond` for the response.
+ *    {@link Field.Sidebartoggle#toggleState}
+ *
+ * - `toggleSidebar` has been removed. Triggers `sidebar:toggle` instead.
+ *
+ * - `toggleSidebarArrows` has been removed. Listens to `sidebar:state:respond`
+ *    instead.
+ *
+ * - `openSidebarArrows` has been removed. Listens to `sidebar:state:send`
+ *    instead.
+ *
+ * - The app event `app:toggle:sidebar` has been removed. Listen to
+ *   `sidebar:state:changed` instead.
+ */
 ({
     extendsFrom: 'button',
 
     events: {
-        'click .drawerTrig': 'toggle' //ensure "hit area" big enough
+        // The event is on the anchor to and not on the icon to ensure
+        // `hit area` is big enough.
+        'click .drawerTrig': 'toggle'
     },
+
+    /**
+     * The selector for the element that carries the `open` or `close` classes.
+     *
+     * @type {String}
+     */
+    _chevron: '.drawerTrig i',
+
+    /**
+     * The `icon` classes that carries the button when `open` or `close`.
+     *
+     * @type {Object}
+     */
+    _classes: {
+        close: 'icon-double-angle-left',
+        open: 'icon-double-angle-right'
+    },
+
+    /**
+     * @inheritDoc
+     */
+    initialize: function(options) {
+        app.view.Field.prototype.initialize.call(this, options);
+        // FIXME these events should be listened on the `default` layout instead of the global context (SC-2398).
+        app.controller.context.on('sidebar:state:respond', this.toggleState, this);
+        app.controller.context.on('sidebar:state:changed', this.toggleState, this);
+    },
+
+    /**
+     * @inheritDoc
+     */
     _render: function() {
         app.view.Field.prototype._render.call(this);
-        // Broadcast when we've fully rendered sidebar toggle
-        app.controller.context.trigger("sidebarRendered");
+
+        // FIXME this should be triggered on the `default` layout instead of the global context (SC-2398).
+        app.controller.context.trigger('sidebar:state:ask');
     },
-    bindDataChange:function () {
-        // These corresponding to the toggleSide & openSide events in default layout
-        app.controller.context.on("toggleSidebarArrows", this.updateArrows, this);
-        app.controller.context.on("openSidebarArrows", this.sidebarArrowsOpen, this);
+
+    /**
+     * Toggle the `open` or `close` class of the icon.
+     *
+     * @param {String} [state] The state. Possible values: `open` or `close`.
+     */
+    toggleState: function(state) {
+        if (state !== 'open' && state !== 'close') {
+            var current = this.$(this._chevron).hasClass(this._classes.open);
+            state = current ? 'close' : 'open';
+        }
+        this.updateArrowsWithDirection(state);
     },
+
+    /**
+     * Toggle the `open` or `close` class of the icon.
+     *
+     * @deprecated 7.2 and will be removed on 7.5. Use
+     *  {@link Field.Sidebartoggle#toggleState} by triggering `sidebar:toggle`
+     *  instead.
+     */
     updateArrows: function() {
-        var chevron = this.$('.drawerTrig i'),
-            pointRightClass = 'icon-double-angle-right';
-        if (chevron.hasClass(pointRightClass)) {
-            this.updateArrowsWithDirection('close');
-        } else {
-            this.updateArrowsWithDirection('open');
-        }
+        app.logger.warn('Field.Sidebartoggle#updateArrows was called and is deprecated. ' +
+            'The event "toggleSidebarArrows" is deprecated. ' +
+            'Please update your code to trigger "sidebar:state:respond" instead');
+        this.toggleState();
     },
+
+    /**
+     * Set the `open` state.
+     *
+     * @deprecated 7.2 and will be removed on 7.5. Use
+     *  {@link Field.Sidebartoggle#toggleState} by triggering `sidebar:toggle`
+     *  instead.
+     */
     sidebarArrowsOpen: function() {
-        this.updateArrowsWithDirection('open');
+        app.logger.warn('Field.Sidebartoggle#sidebarArrowsOpen was called and is deprecated. ' +
+            'The event "openSidebarArrows" is deprecated. ' +
+            'Please update your code to trigger "sidebar:state:respond" instead.');
+        this.toggleState('open');
     },
+
+
+    /**
+     * Update the icon class to `open` or `close` state.
+     *
+     * @param {String} state The state. Possible values : `open` or `close`.
+     */
     updateArrowsWithDirection: function(state) {
-        var chevron = this.$('.drawerTrig i'),
-            pointRightClass = 'icon-double-angle-right',
-            pointLeftClass = 'icon-double-angle-left';
+        var chevron = this.$(this._chevron);
         if (state === 'open') {
-            chevron.removeClass(pointLeftClass).addClass(pointRightClass);
-            app.events.trigger('app:toggle:sidebar', 'open');
+            chevron.removeClass(this._classes.close).addClass(this._classes.open);
         } else if (state === 'close') {
-            chevron.removeClass(pointRightClass).addClass(pointLeftClass);
-            app.events.trigger('app:toggle:sidebar', 'close');
+            chevron.removeClass(this._classes.open).addClass(this._classes.close);
         } else {
-            app.logger.warn("updateArrowsWithDirection called with invalid state; should be 'open' or 'close', but was: "+state)
+            app.logger.warn('updateArrowsWithDirection called with invalid state; ' +
+                'should be "open" or "close", but was: ' + state);
         }
     },
-    // If toggled from a user clicking on anchor simply trigger toggleSidebar
-    toggle: function() {
-        this.context.trigger('toggleSidebar');
-        //toggling sidebar can affect the width of content in the same way as a window resize
-        //notify of a window resize so that any content listening for a resize can react in the same way for this sidebar toggle
-        $(window).trigger('resize');
+
+    /**
+     * Toggle the sidebar.
+     *
+     * @param {Event} The `click` event.
+     */
+    toggle: function(event) {
+        // FIXME this should be triggered on the `default` layout instead of the global context (SC-2398).
+        app.controller.context.trigger('sidebar:toggle');
     },
-    _dispose: function () {
-        this._super("_dispose");
+
+    /**
+     * @inheritDoc
+     */
+    unbind: function() {
+        this._super('unbind');
+        // FIXME the events should be happening on the `default` layout instead of the global context (SC-2398).
         app.controller.context.off(null, null, this);//remove all events for context `this`
     }
 })
