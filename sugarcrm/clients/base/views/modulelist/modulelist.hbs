@@ -27,10 +27,11 @@
                         {{#each menu}}
                             <li><a tabindex="-1" href="{{route}}" data-route="{{route}}" track="click:{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
                         {{/each}}
-                        <div class="dashboardContainer" track="click:dashboardContainer"></div>
+                        <div class="dashboardContainer" data-container="dashboard" track="click:dashboardContainer"></div>
                         {{#if ../../../dashboardBwcLink}}
                             <li><a tabindex="-1" data-route="#{{../../../../dashboardBwcLink}}" href="#{{../../../../dashboardBwcLink}}"><i class="icon-time"></i>{{str 'LBL_DASHBOARD_BWC'}}</a></li>
                         {{/if}}
+                        <div class="recentContainer hide" data-container="recents"></div>
                     </ul>
                 </div>
             {{/if}}
@@ -49,8 +50,8 @@
                             {{#each menu}}
                                 <li><a class="actionLink" tabindex="-1" href="{{#if event}}javascript:void(0);{{else}}{{route}}{{/if}}" data-navbar-menu-item="{{this.label}}" data-{{#if event}}event="{{event}}"{{else}}route="{{route}}"{{/if}} track="click:{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
                             {{/each}}
-                            <div class="recentContainer hide"></div>
-                            <div class="favoritesContainer hide"></div>
+                            <div class="recentContainer hide" data-container="recents"></div>
+                            <div class="favoritesContainer hide" data-container="favorites"></div>
                         </ul>
                     </div>
                 {{/if}}

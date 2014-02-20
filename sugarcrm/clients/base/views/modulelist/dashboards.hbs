@@ -15,14 +15,7 @@
 {{#each models}}
     <li>
         <a tabindex="-1" class="recentLink actionLink" href="#{{buildRoute model=this}}" data-route="#{{buildRoute model=this}}">
-            <i class="icon-time active"></i>{{getFieldValue this "name"}}
+            <i class="icon-dashboard active"></i>{{getFieldValue this "name"}}
         </a>
     </li>
 {{/each}}
-{{#if models.length}}
-    {{#if showMoreLink}}
-        <li>
-            <button class="btn-link btn-invisible" data-action="more_mixed_recents" data-module="{{module}}">{{str 'LBL_SHOW_MORE_RECENTS' module}}</button>
-        </li>
-    {{/if}}
-{{/if}}
