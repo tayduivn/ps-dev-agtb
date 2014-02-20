@@ -12,7 +12,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-//BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+//BEGIN SUGARCRM flav!=ent ONLY
 // PRO/CORP only fields
 $fields = array(
     array(
@@ -72,7 +72,7 @@ $fields = array(
     ),
     'date_entered'
 );
-//END SUGARCRM flav=pro && flav!=ent ONLY
+//END SUGARCRM flav!=ent ONLY
 
 //BEGIN SUGARCRM flav=ent ONLY
 // ENT/ULT only fields
@@ -107,6 +107,18 @@ $fields = array(
     ),
     'quantity',
     array(
+        'name' => 'worst_case',
+        'type' => 'currency',
+        'related_fields' => array(
+            'currency_id',
+            'base_rate',
+        ),
+        'showTransactionalAmount' => true,
+        'convertToBase' => true,
+        'currency_field' => 'currency_id',
+        'base_rate_field' => 'base_rate',
+    ),
+    array(
         'name' => 'likely_case',
         'type' => 'currency',
         'related_fields' => array(
@@ -120,18 +132,6 @@ $fields = array(
     ),
     array(
         'name' => 'best_case',
-        'type' => 'currency',
-        'related_fields' => array(
-            'currency_id',
-            'base_rate',
-        ),
-        'showTransactionalAmount' => true,
-        'convertToBase' => true,
-        'currency_field' => 'currency_id',
-        'base_rate_field' => 'base_rate',
-    ),
-    array(
-        'name' => 'worst_case',
         'type' => 'currency',
         'related_fields' => array(
             'currency_id',
