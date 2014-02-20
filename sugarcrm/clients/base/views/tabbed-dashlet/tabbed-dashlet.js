@@ -456,8 +456,9 @@
                 if (self.disposed) {
                     return;
                 }
-
                 self.collection = self.tabs[self.settings.get('activeTab')].collection;
+                self.context.set('collection', self.collection);
+
                 self.render();
 
                 if (_.isFunction(options.complete)) {
@@ -506,6 +507,7 @@
 
         this.settings.set('activeTab', index);
         this.collection = this.tabs[index].collection;
+        this.context.set('collection', this.collection);
         this.render();
     },
 
@@ -547,7 +549,6 @@
         }
 
         var tab = this.tabs[this.settings.get('activeTab')];
-        this.context.set('collection', tab.collection);
 
         var recordsTpl = this._getRecordsTemplate(tab.module);
 

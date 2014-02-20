@@ -87,6 +87,32 @@
     },
 
     /**
+     * {@inheritDoc}
+     * Update the invitation collection if the next page record is added.
+     *
+     * @return {Object} Fetch options.
+     */
+    getPaginationOptions: function() {
+        return {
+            success: _.bind(this.updateInvitation, this)
+        };
+    },
+
+    /**
+     * Update the invitation collection.
+     *
+     * @param {BeanCollection} collection Active tab's collection.
+     * @param {Array} data Added recordset's data.
+     */
+    updateInvitation: function(collection, data) {
+        var tab = this.tabs[this.settings.get('activeTab')];
+        if (!data.length || !tab.invitations) {
+            return;
+        }
+        this._fetchInvitationActions(tab, _.pluck(data, 'id'));
+    },
+
+    /**
      * Mark the model as held and update the collection and re-render the dashlet to remove it from the view
      * @param model {app.Bean} Call/Meeting model to be marked as Held
      */
@@ -339,13 +365,14 @@
     /**
      * Fetch the invitation actions collection for
      * showing the invitation actions buttons
-     * @param tab
+     * @param {Object} tab Tab properties.
+     * @param {Array|*} addedIds New added record ids.
      * @private
      */
-    _fetchInvitationActions: function(tab) {
+    _fetchInvitationActions: function(tab, addedIds) {
         this.invitationActions = tab.invitation_actions;
         tab.invitations.filterDef = {
-            'id': {'$in': this.collection.pluck('id')}
+            'id': {'$in': addedIds || this.collection.pluck('id')}
         };
 
         var self = this;
@@ -361,6 +388,9 @@
                     model.set('invitation', invitation);
                 }, self);
 
+                if (!_.isEmpty(addedIds)) {
+                    return;
+                }
                 self.render();
             },
             complete: function() {
