@@ -221,7 +221,6 @@ describe('View.BaseDashablelistView', function() {
                 moduleField = _.findWhere(fieldMeta, {name: 'module'}),
                 columnsField = _.findWhere(fieldMeta, {name: 'display_columns'});
             expect(moduleField.options).toEqual(view._availableModules);
-            expect(columnsField.options).toEqual(view._availableColumns[module]);
         });
 
         describe('get the approved modules', function() {
@@ -266,56 +265,10 @@ describe('View.BaseDashablelistView', function() {
         });
 
         describe('get the available columns', function() {
-            it('should cache and return columns from the module list view', function() {
-                var module = 'Accounts';
-                sinon.collection.stub(view, 'getFieldMetaForView').returns(sampleFieldMetadata);
-                sinon.collection.stub(app.lang, 'get').returnsArg(0);
-                view.settings.set('module', module);
-                view._availableColumns = {};
-                var columns = view._getAvailableColumns();
-                expect(columns).toEqual(sampleColumns);
-                expect(view._availableColumns[module]).toEqual(sampleColumns);
-            });
-
-            it('should return the available columns from cache', function() {
-                var module = 'Accounts';
-                view.settings.set('module', module);
-                view._availableColumns[module] = sampleFieldMetadata;
-                var columns = view._getAvailableColumns();
-                expect(columns).toEqual(sampleFieldMetadata);
-            });
-
             it('should return an empty set when the module is not set', function() {
                 view.settings.set('module', null);
                 var columns = view._getAvailableColumns();
                 expect(columns).toEqual({});
-            });
-        });
-
-        describe('update the display_columns field/attribute', function() {
-            var module;
-
-            beforeEach(function() {
-                module = 'Accounts';
-                view._availableColumns = {};
-                view._availableColumns[module] = sampleColumns;
-                view.settings.set('module', module);
-            });
-
-            it('should update only the attribute when there is no DOM field', function() {
-                var stubGetField = sinon.collection.stub(view, 'getField');
-                stubGetField.withArgs('display_columns').returns(null);
-                view._updateDisplayColumns();
-                expect(view.settings.get('display_columns')).toEqual(_.keys(sampleColumns));
-            });
-
-            it('should update both the attribute and the field when there is a DOM field', function() {
-                var field = {},
-                    stubGetField = sinon.collection.stub(view, 'getField');
-                stubGetField.withArgs('display_columns').returns(field);
-                view._updateDisplayColumns();
-                expect(view.settings.get('display_columns')).toEqual(_.keys(sampleColumns));
-                expect(field.items).toEqual(view._availableColumns[module]);
             });
         });
     });

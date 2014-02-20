@@ -880,6 +880,14 @@ class ModuleBuilderController extends SugarController
             $subpanelName = (!empty ($_REQUEST ['subpanel'])) ? $_REQUEST ['subpanel'] : null;
             $parser = ParserFactory::getParser($_REQUEST ['view'], $_REQUEST ['view_module'], $packageName, $subpanelName);
             $this->view = 'listView';
+            
+            // To make sure that dashlets can render customized list views on BWC
+            // modules, we need to save list customizations for BWC modules in 
+            // the new style as well.
+            if (isModuleBWC($_REQUEST['view_module']) && empty($packageName) && empty($subpanelName)) {
+                $sidecarListParser = new SidecarListLayoutMetaDataParser(MB_SIDECARLISTVIEW, $_REQUEST['view_module'], null, 'base');
+                $sidecarListParser->handleSave();
+            }
             //BEGIN SUGARCRM flav=ent ONLY
         }
         //END SUGARCRM flav=ent ONLY
