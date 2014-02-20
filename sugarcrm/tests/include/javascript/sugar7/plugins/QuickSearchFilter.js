@@ -20,7 +20,7 @@ describe("Plugins.Quicksearchfilter", function () {
 
         beforeEach(function() {
             field = SugarTest.createField("base", "account_name", "relate", "edit");
-            field._moduleSearchFields = {};
+            field._moduleQuickSearchMeta = {};
         });
         afterEach(function() {
             metadataStub.restore();
@@ -68,7 +68,7 @@ describe("Plugins.Quicksearchfilter", function () {
                 ] }
             ]);
         });
-        it('should search if first field starts with first term and second field starts with other terms if multiple fields and multiple terms', function() {
+        it('should search if first field starts with first term and second field starts with other terms if quicksearch_split_terms is true', function() {
             quicksearch_field = ['first_name', 'last_name'];
             metadataStub = sinon.stub(app.metadata, 'getModule', function() {
                 return {
@@ -76,7 +76,8 @@ describe("Plugins.Quicksearchfilter", function () {
                         _default: {
                             meta: {
                                 quicksearch_field: quicksearch_field,
-                                quicksearch_priority: 1
+                                quicksearch_priority: 1,
+                                quicksearch_split_terms: true
                             }
                         }
                     }
@@ -90,11 +91,58 @@ describe("Plugins.Quicksearchfilter", function () {
                 ] }
             ]);
         });
+
+        it('should search if either field starts with full search string when quicksearch_split_terms is false', function() {
+            quicksearch_field = ['name', 'bug_number'];
+            metadataStub = sinon.stub(app.metadata, 'getModule', function() {
+                return {
+                    filters: {
+                        _default: {
+                            meta: {
+                                quicksearch_field: quicksearch_field,
+                                quicksearch_priority: 1,
+                                quicksearch_split_terms: false
+                            }
+                        }
+                    }
+                };
+            });
+            filterDef = field.getFilterDef('Bugs', searchTerm);
+            expect(filterDef).toEqual([
+                { $or: [
+                    { name: { $starts: searchTerm } },
+                    { bug_number: { $starts: searchTerm } }
+                ] }
+            ]);
+        });
+
+        it('should search if either field starts with full search string when quicksearch_split_terms not specified', function() {
+            quicksearch_field = ['name', 'bug_number'];
+            metadataStub = sinon.stub(app.metadata, 'getModule', function() {
+                return {
+                    filters: {
+                        _default: {
+                            meta: {
+                                quicksearch_field: quicksearch_field,
+                                quicksearch_priority: 1
+                            }
+                        }
+                    }
+                };
+            });
+            filterDef = field.getFilterDef('Bugs', searchTerm);
+            expect(filterDef).toEqual([
+                { $or: [
+                    { name: { $starts: searchTerm } },
+                    { bug_number: { $starts: searchTerm } }
+                ] }
+            ]);
+        });
     });
 
     it("Highest priority filter should be selected among the multiple quick search filters", function () {
         field = SugarTest.createField("base", "account_name", "relate", "edit");
-        field._moduleSearchFields = {};
+        field._moduleQuickSearchMeta = {};
 
         var expectedFilterFields = [
                 'first_name',

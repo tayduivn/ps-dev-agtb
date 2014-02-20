@@ -27,30 +27,76 @@
 (function(app) {
     app.events.on("app:init", function() {
         app.plugins.register('QuickSearchFilter', ['layout', 'view', 'field'], {
-            _moduleSearchFields: {},
-            _getQuickSearchFieldsByPriority: function(searchModule) {
+            /**
+             * Metadata about how quick search should be performed
+             * @private
+             */
+            _moduleQuickSearchMeta: {},
+
+            /**
+             * Retrieve the highest priority quick search metadata
+             *
+             * @param {String} searchModule
+             * @return {Object} Field names and whether to split search terms
+             * @private
+             */
+            _getQuickSearchMetaByPriority: function(searchModule) {
                 var meta = app.metadata.getModule(searchModule),
                     filters = meta ? meta.filters : [],
-                    fields = [],
-                    priority = 0;
+                    fieldNames = [],
+                    priority = 0,
+                    splitTerms = false;
 
                 _.each(filters, function(value) {
                     if (value && value.meta && value.meta.quicksearch_field &&
                         priority < value.meta.quicksearch_priority) {
-                        fields = value.meta.quicksearch_field;
+                        fieldNames = value.meta.quicksearch_field;
                         priority = value.meta.quicksearch_priority;
+                        if (_.isBoolean(value.meta.quicksearch_split_terms)) {
+                            splitTerms = value.meta.quicksearch_split_terms;
+                        }
                     }
                 });
 
-                return fields;
+                return {
+                    fieldNames: fieldNames,
+                    splitTerms: splitTerms
+                };
             },
+
+            /**
+             * Retrieve and cache the quick search metadata
+             *
+             * @param searchModule
+             * @return {Object} Quick search metadata (with highest priority)
+             * @return {Array} return.fieldNames The fields to be used in quick search
+             * @return {Boolean} return.splitTerms Whether to split the search terms
+             * when there are multiple search fields
+             */
+            getModuleQuickSearchMeta: function (searchModule) {
+                this._moduleQuickSearchMeta[searchModule] = this._moduleQuickSearchMeta[searchModule] ||
+                    this._getQuickSearchMetaByPriority(searchModule);
+                return this._moduleQuickSearchMeta[searchModule];
+            },
+
+            /**
+             * Retrieve just the array of field names for a quick search
+             * @param searchModule
+             * @return {Array}
+             */
             getModuleQuickSearchFields: function(searchModule) {
-                this._moduleSearchFields[searchModule] = this._moduleSearchFields[searchModule] ||
-                    this._getQuickSearchFieldsByPriority(searchModule);
-                return this._moduleSearchFields[searchModule];
+                return this.getModuleQuickSearchMeta(searchModule).fieldNames;
             },
+
+            /**
+             * Get the filter definition based on quick search metadata
+             *
+             * @param searchModule
+             * @param searchTerm
+             * @return {Array}
+             */
             getFilterDef: function(searchModule, searchTerm) {
-                var searchFilter = [], returnFilter = [], fieldNames, terms;
+                var searchFilter = [], returnFilter = [], searchMeta, fieldNames, terms;
 
                 //Special case where no specific module is selected
                 if (searchModule === 'all_modules') {
@@ -60,12 +106,15 @@
                 // For example, the Contacts module will search the records
                 // whose first name or last name begins with the typed string.
                 // To extend the search results, you should update the metadata for basic search filter
-                fieldNames = this.getModuleQuickSearchFields(searchModule);
+                searchMeta = this.getModuleQuickSearchMeta(searchModule);
+                fieldNames = searchMeta.fieldNames;
 
                 if (searchTerm) {
-                    //See SP-1093.
+                    //strip leading or trailing whitespace
+                    searchTerm = searchTerm.trim();
+
                     //For Person Type modules, need to split the terms and build a smart filter definition
-                    if (fieldNames.length === 2) {
+                    if (fieldNames.length === 2 && searchMeta.splitTerms) {
                         terms = searchTerm.split(' ');
                         var firstTerm = _.first(terms.splice(0, 1));
                         var otherTerms = terms.join(' ');
