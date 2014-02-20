@@ -845,7 +845,7 @@ $dictionary['RevenueLineItem'] = array(
         'opportunities' => array(
             'name' => 'opportunities',
             'type' => 'link',
-            'relationship' => 'revenuelineitems_opportunities',
+            'relationship' => 'opportunities_revenuelineitems',
             'source' => 'non-db',
             'link_type' => 'one',
             'module' => 'Opportunities',
@@ -1023,20 +1023,6 @@ $dictionary['RevenueLineItem'] = array(
             'relationship_type' => 'one-to-many',
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'RevenueLineItems'
-        ),
-        'revenuelineitems_opportunities' => array(
-            'lhs_module' => 'Opportunities',
-            'lhs_table' => 'opportunities',
-            'lhs_key' => 'id',
-            'rhs_module' => 'RevenueLineItems',
-            'rhs_table' => 'revenue_line_items',
-            'rhs_key' => 'opportunity_id',
-            //BEGIN SUGARCRM flav=pro && flav != ent ONLY
-            'relationship_type' => 'one-to-one',
-            //END SUGARCRM  flav=pro && flav != ent ONLY
-            //BEGIN SUGARCRM flav=ent ONLY
-            'relationship_type' => 'one-to-many',
-            //END SUGARCRM flav=ent ONLY
         ),
         'revenuelineitems_accounts' => array(
             'lhs_module' => 'Accounts',
