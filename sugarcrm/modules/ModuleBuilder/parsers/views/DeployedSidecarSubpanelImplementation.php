@@ -18,6 +18,7 @@ require_once 'modules/ModuleBuilder/parsers/constants.php';
 require_once 'include/MetaDataManager/MetaDataConverter.php';
 require_once 'include/MetaDataManager/MetaDataManager.php';
 require_once 'include/SubPanel/SubPanelDefinitions.php';
+require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 
 class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementation implements MetaDataImplementationInterface
 {
@@ -37,16 +38,24 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
 
         $this->mdc = new MetaDataConverter();
         $this->loadedModule = $loadedModule;
-        $this->linkName = $linkName;
+        $this->setViewClient($client);
+        $this->linkName = $this->getLinkName($linkName, $loadedModule);
         $this->legacySubpanelName = 'For' . $loadedModule;
         // get the link and the related module name as the module we need the subpanel from
         $bean = BeanFactory::getBean($loadedModule);
+
+        $linkDef = VardefManager::getLinkFieldForRelationship($bean->module_dir, $bean->object_name, $linkName);
+        
+        if(empty($linkDef['name'])) {
+            $GLOBALS['log']->error("Cannot find a link for {$linkName} on {$loadedModule}");
+            return true;
+        }
+        
         $link = new Link2($linkName, $bean);
         $moduleName = $link->getRelatedModuleName();
 
         $this->_moduleName = $moduleName;
         $this->bean = BeanFactory::getBean($moduleName);
-        $this->setViewClient($client);
 
         // Handle validation up front that will throw exceptions
         if (empty($this->bean) && !$this->fixUpSubpanel()) {
@@ -131,6 +140,53 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         }
         return true;
     }
+
+    /**
+     * Get the link name for a subpanel using witchcraft and wizardry
+     * @param string $subpanelName - this is the name of the subpanel
+     * @param string $loadedModule - this is the name of the module that is loaded
+     * @return string the linkname for the subpanel
+     */
+    protected function getLinkName($subpanelName, $loadedModule)
+    {
+        if (isModuleBWC($loadedModule) && !file_exists("modules/{$loadedModule}/clients/" . $this->getViewClient() . "/layouts/subpanels/subpanels.php")) {
+            @include "modules/{$loadedModule}/metadata/subpaneldefs.php";
+            if(empty($layout_defs[$loadedModule]['subpanel_setup'])) {
+                $GLOBALS['log']->error("Cannot find subpanel layout defs for {$loadedModule}");
+                return $subpanelName;
+            }
+            foreach($layout_defs[$loadedModule]['subpanel_setup'] as $linkName => $def) {
+                if ($def['module'] == $subpanelName) {
+                    return $linkName;
+                }
+            }            
+        }
+       
+        $viewdefs = MetaDataFiles::getClientFileContents(MetaDataFiles::getClientFiles(array($this->getViewClient()), 'layout', $loadedModule), 'layout', $loadedModule);
+
+        if (empty($viewdefs['subpanels'])) {
+            return $subpanelName;
+        }
+
+        $legacyDefs = $this->mdc->toLegacySubpanelLayoutDefs($viewdefs['subpanels']['meta']['components'], BeanFactory::newBean($loadedModule));
+
+        if (empty($viewdefs)) {
+            return $subpanelName;
+        }
+        $legacyDefs = $this->mdc->toLegacySubpanelLayoutDefs($viewdefs['subpanels']['meta']['components'], BeanFactory::newBean($loadedModule));
+        
+        if(empty($legacyDefs['subpanel_setup'])) {
+            $GLOBALS['log']->error("Could not convert subpanels for subpanel: {$subpanelName} - {$loadedModule}");
+            return $subpanelName;
+        }
+
+        foreach($legacyDefs['subpanel_setup'] as $linkName => $def) {
+            if ($def['module'] == $subpanelName) {
+                return $linkName;
+            }
+        }
+    }
+
 
     /**
      * Sets up the class vars for the file information
