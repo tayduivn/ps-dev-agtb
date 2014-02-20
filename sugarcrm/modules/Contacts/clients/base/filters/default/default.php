@@ -42,9 +42,7 @@ $viewdefs['Contacts']['base']['filter']['default'] = array(
             'vname' => 'LBL_ACCOUNT_NAME',
         ),
         'lead_source' => array(),
-        'do_not_call' => array(
-            'options' => 'filter_checkbox_dom',
-        ),
+        'do_not_call' => array(),
         'phone' => array(
             'dbFields' => array(
                 'phone_mobile',

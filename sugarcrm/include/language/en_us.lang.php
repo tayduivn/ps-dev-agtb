@@ -193,6 +193,10 @@ $app_list_strings = array (
    'Shippers' => 'Shipping Provider',
   ),
 
+/*
+ * @deprecated as of 7.2.0 since it is only used on massupdate in BWC mode.
+ * @see `filter_checkbox_dom` and `checkbox_massupdate_dom` for sidecar-compatibility.
+ */
   'checkbox_dom'=> array(
     ''=>'',
     '1'=>'Yes',
