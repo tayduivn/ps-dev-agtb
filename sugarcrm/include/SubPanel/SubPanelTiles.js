@@ -111,6 +111,16 @@ function subp_nav_sidecar(m, i, a, link) {
     }
 }
 
+/**
+ * Launches the Archive Email drawer
+ */
+function subp_archive_email() {
+    var app = parent.SUGAR.App,
+        view = app.controller.layout.getComponent('bwc');
+
+    view.openArchiveEmailDrawer();
+    return false;
+}
 
 /*this function will take in three parameters, m,i,a and recreate navigation
 * m = module
