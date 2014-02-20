@@ -169,7 +169,14 @@
 					return;
 				}
 			}
-			this.set();
+			// Replace set() by setValue() call in order to use
+			// this.element.val() instead of this.date - this problem came up
+			// on SC-2380.
+			//
+			// We should do an upgrade to the latest version, which seems to fix
+			// this issue (at the time being), though, we seem to have a lot of
+			// internal customizations which should be handled with care.
+			this.setValue(this.element.val());
 			this.element.trigger({
 				type: 'hide',
 				date: this.date
