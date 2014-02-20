@@ -32,12 +32,20 @@
     className: 'row-fluid',
 
     /**
-     * Key for storing the last state.
+     * Name of the last state.
      *
      * @const
      * @type {String}
      */
     HIDE_KEY: 'hide',
+
+    /**
+     * Key for storing the last state.
+     *
+     * @type {String}
+     * @protected
+     */
+    _hideLastStateKey: null,
 
     /**
      * @inheritDoc
@@ -50,14 +58,9 @@
         // FIXME this should be triggered on this layout instead of the global context (SC-2398).
         app.controller.context.on('sidebar:toggle', this.toggleSidePane, this);
 
-        // FIXME this should be triggered on this layout instead of app.events (SC-2398).
-        app.events.on('preview:open', function() {
-            this.toggleSidePane(true);
-        }, this);
-
         this.meta.last_state = { id: 'default' };
 
-        this.hideLastStateKey = app.user.lastState.key(this.HIDE_KEY, this);
+        this._hideLastStateKey = app.user.lastState.key(this.HIDE_KEY, this);
 
         //Update the panel to be open or closed depending on how user left it last
         this._toggleVisibility(this.isSidePaneVisible());
@@ -76,7 +79,7 @@
      * @return {Boolean} `true` if visible, `false` otherwise.
      */
     isSidePaneVisible: function() {
-        var hideLastState = app.user.lastState.get(this.hideLastStateKey);
+        var hideLastState = app.user.lastState.get(this._hideLastStateKey);
         return _.isUndefined(hideLastState);
     },
 
@@ -100,9 +103,9 @@
         }
 
         if (visible) {
-            app.user.lastState.remove(this.hideLastStateKey);
+            app.user.lastState.remove(this._hideLastStateKey);
         } else {
-            app.user.lastState.set(this.hideLastStateKey, 'hide');
+            app.user.lastState.set(this._hideLastStateKey, 1);
         }
 
         this._toggleVisibility(visible);
@@ -127,32 +130,6 @@
 
         // FIXME this should be triggered on this layout instead of the global context (SC-2398).
         app.controller.context.trigger('sidebar:state:changed', visible ? 'open' : 'close');
-    },
-
-    /**
-     * Toggle sidebar and save the current state.
-     *
-     * @deprecated 7.2 and will be removed on 7.5. Use
-     *  {@link Layout.Default#toggleSidePane} by triggering `sidebar:toggle`
-     *  instead.
-     */
-    toggleSide: function() {
-        app.logger.warn('BaseDefaultLayout#openSide was called and is deprecated. ' +
-            'Please update your code to trigger "sidebar:toggle" instead');
-        this.toggleSidePane();
-    },
-
-    /**
-     * Open the side pane.
-     *
-     * @deprecated 7.2 and will be removed on 7.5. Use
-     *  {@link Layout.Default#toggleSidePane} by triggering `sidebar:toggle`
-     *  instead.
-     */
-    openSide: function() {
-        app.logger.warn('BaseDefaultLayout#openSide was called and is deprecated. ' +
-            'Please update your code to trigger "sidebar:toggle" instead');
-        this.toggleSidePane(true);
     },
 
     /**

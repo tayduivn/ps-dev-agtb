@@ -1,5 +1,5 @@
 describe('Sidebar Toggle', function() {
-    var field, layout, app;
+    var field, app;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -10,17 +10,13 @@ describe('Sidebar Toggle', function() {
             ]};
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'field', 'sidebartoggle');
-        SugarTest.loadComponent('base', 'layout', 'default');
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
-        layout = SugarTest.createLayout('base', null, 'default', def, null);
         field = SugarTest.createField('base', null, 'sidebartoggle', 'record', def);
-        sinon.collection.stub(app.view.layouts.BaseDefaultLayout.prototype, 'processDef');
     });
     afterEach(function() {
         sinon.collection.restore();
         field.dispose();
-        layout.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
@@ -38,6 +34,7 @@ describe('Sidebar Toggle', function() {
 
         beforeEach(function() {
             toggleStateStub = sinon.collection.stub(field, 'toggleState');
+            app.controller.context.off();
             field.initialize({});
         });
 
@@ -60,81 +57,29 @@ describe('Sidebar Toggle', function() {
         });
     });
 
-    describe('deprecated methods', function() {
-        var warnStub;
-
-        beforeEach(function() {
-            warnStub = sinon.collection.stub(app.logger, 'warn');
-        });
-
-        it('should warn that updateArrows is deprecated', function() {
-            field.updateArrows();
-            expect(warnStub).toHaveBeenCalled();
-        });
-
-        it('should warn that sidebarArrowsOpen is deprecated', function() {
-            field.sidebarArrowsOpen();
-            expect(warnStub).toHaveBeenCalled();
-        });
-    });
-
     describe('toggleState', function() {
-        var updateArrowsWithDirectionStub, hasClassStub,
-            isOpen;
-
-        beforeEach(function() {
-            updateArrowsWithDirectionStub = sinon.collection.stub(field, 'updateArrowsWithDirection');
-            hasClassStub = sinon.collection.stub($.fn, 'hasClass', function() {
-                return isOpen;
-            });
-        });
-        it('should call updateArrowsWithDirection with open', function() {
+        it('should call stay open if called with open', function() {
+            field._state = 'open';
             field.toggleState('open');
-            expect(updateArrowsWithDirectionStub).toHaveBeenCalledWith('open');
+            expect(field._state).toEqual('open');
         });
 
-        it('should call updateArrowsWithDirection with close', function() {
+        it('should stay close if called with close', function() {
+            field._state = 'close';
             field.toggleState('close');
-            expect(updateArrowsWithDirectionStub).toHaveBeenCalledWith('close');
+            expect(field._state).toEqual('close');
         });
 
-        it('should call updateArrowsWithDirection with open if currently close', function() {
-            isOpen = false;
+        it('should become open if currently close', function() {
+            field._state = 'close';
             field.toggleState();
-            expect(updateArrowsWithDirectionStub).toHaveBeenCalledWith('open');
+            expect(field._state).toEqual('open');
         });
 
-        it('should call updateArrowsWithDirection with close if currently open', function() {
-            isOpen = true;
+        it('should become close if currently open', function() {
+            field._state = 'open';
             field.toggleState();
-            expect(updateArrowsWithDirectionStub).toHaveBeenCalledWith('close');
+            expect(field._state).toEqual('close');
         });
     });
-
-    describe('updateArrowsWithDirection', function() {
-        var addClassStub, removeClassStub;
-
-        beforeEach(function() {
-            // Stub the addClass/removeClass jQuery methods on $'s prototype
-            addClassStub = sinon.collection.stub($.fn, 'addClass', function() {
-                return $.fn;
-            });
-            removeClassStub = sinon.collection.stub($.fn, 'removeClass', function() {
-                return $.fn;
-            });
-        });
-
-        it('should update arrows with direction (open)', function() {
-            field.updateArrowsWithDirection('open');
-            expect(removeClassStub).toHaveBeenCalledWith('icon-double-angle-left');
-            expect(addClassStub).toHaveBeenCalledWith('icon-double-angle-right');
-        });
-
-        it('should update arrows with direction (close)', function() {
-            field.updateArrowsWithDirection('close');
-            expect(removeClassStub).toHaveBeenCalledWith('icon-double-angle-right');
-            expect(addClassStub).toHaveBeenCalledWith('icon-double-angle-left');
-        });
-    });
-
 });

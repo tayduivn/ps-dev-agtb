@@ -12,11 +12,10 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 }}
-<a class="btn btn-invisible btn-link drawerTrig"
-   href="javascript:void(0);"
+<button class="btn btn-invisible btn-link sidebar-toggle"
    rel="tooltip"
    title="{{str 'LBL_DASHLET_TOGGLE' module}}"
    data-placement="left"
    track="click:togglesidebar">
-    <i class="icon-double-angle-right"></i>
-</a>
+    <i class="{{#eq _state 'open'}}icon-double-angle-right{{else}}icon-double-angle-left{{/eq}}"></i>
+</button>

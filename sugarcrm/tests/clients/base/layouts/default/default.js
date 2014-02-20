@@ -39,11 +39,6 @@ describe('BaseDefaultLayout', function() {
             expect(toggleSidePaneStub).toHaveBeenCalled();
         });
 
-        it('should open side pane when "preview:open" is triggered', function() {
-            app.events.trigger('preview:open');
-            expect(toggleSidePaneStub).toHaveBeenCalledWith(true);
-        });
-
         it('should respond when "sidebar:state:ask" is triggered', function() {
             var triggerSpy = sinon.collection.spy(app.controller.context, 'trigger');
             app.controller.context.trigger('sidebar:state:ask');
@@ -156,24 +151,4 @@ describe('BaseDefaultLayout', function() {
         });
     });
 
-    describe('deprecated methods', function() {
-        var warnStub, toggleSidePaneStub;
-
-        beforeEach(function() {
-            warnStub = sinon.collection.stub(app.logger, 'warn');
-            toggleSidePaneStub = sinon.collection.stub(layout, 'toggleSidePane');
-        });
-
-        it('should warn that toggleSide is deprecated', function() {
-            layout.toggleSide();
-            expect(toggleSidePaneStub).toHaveBeenCalled();
-            expect(warnStub).toHaveBeenCalled();
-        });
-
-        it('should warn that openSide is deprecated', function() {
-            layout.openSide();
-            expect(toggleSidePaneStub).toHaveBeenCalledWith(true);
-            expect(warnStub).toHaveBeenCalled();
-        });
-    });
 });

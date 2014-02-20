@@ -32,30 +32,16 @@
  *   `sidebar:state:changed` instead.
  */
 ({
-    extendsFrom: 'button',
-
     events: {
-        // The event is on the anchor to and not on the icon to ensure
-        // `hit area` is big enough.
-        'click .drawerTrig': 'toggle'
+        'click': 'toggle'
     },
 
     /**
-     * The selector for the element that carries the `open` or `close` classes.
+     * Store the current `open` or `close` state
      *
      * @type {String}
      */
-    _chevron: '.drawerTrig i',
-
-    /**
-     * The `icon` classes that carries the button when `open` or `close`.
-     *
-     * @type {Object}
-     */
-    _classes: {
-        close: 'icon-double-angle-left',
-        open: 'icon-double-angle-right'
-    },
+    _state: 'open',
 
     /**
      * @inheritDoc
@@ -63,8 +49,7 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         // FIXME these events should be listened on the `default` layout instead of the global context (SC-2398).
-        app.controller.context.on('sidebar:state:respond', this.toggleState, this);
-        app.controller.context.on('sidebar:state:changed', this.toggleState, this);
+        app.controller.context.on('sidebar:state:respond sidebar:state:changed', this.toggleState, this);
 
         app.controller.context.trigger('sidebar:state:ask');
     },
@@ -76,62 +61,18 @@
      */
     toggleState: function(state) {
         if (state !== 'open' && state !== 'close') {
-            var current = this.$(this._chevron).hasClass(this._classes.open);
-            state = current ? 'close' : 'open';
+            state = (this._state === 'open') ? 'close' : 'open';
         }
-        this.updateArrowsWithDirection(state);
-    },
-
-    /**
-     * Toggle the `open` or `close` class of the icon.
-     *
-     * @deprecated 7.2 and will be removed on 7.5. Use
-     *  {@link Field.Sidebartoggle#toggleState} by triggering `sidebar:toggle`
-     *  instead.
-     */
-    updateArrows: function() {
-        app.logger.warn('Field.Sidebartoggle#updateArrows was called and is deprecated. ' +
-            'The event "toggleSidebarArrows" is deprecated. ' +
-            'Please update your code to trigger "sidebar:state:respond" instead');
-        this.toggleState();
-    },
-
-    /**
-     * Set the `open` state.
-     *
-     * @deprecated 7.2 and will be removed on 7.5. Use
-     *  {@link Field.Sidebartoggle#toggleState} by triggering `sidebar:toggle`
-     *  instead.
-     */
-    sidebarArrowsOpen: function() {
-        app.logger.warn('Field.Sidebartoggle#sidebarArrowsOpen was called and is deprecated. ' +
-            'The event "openSidebarArrows" is deprecated. ' +
-            'Please update your code to trigger "sidebar:state:respond" instead.');
-        this.toggleState('open');
-    },
-
-
-    /**
-     * Update the icon class to `open` or `close` state.
-     *
-     * @param {String} state The state. Possible values : `open` or `close`.
-     */
-    updateArrowsWithDirection: function(state) {
-        var $chevron = this.$(this._chevron);
-        if (state === 'open') {
-            $chevron.removeClass(this._classes.close).addClass(this._classes.open);
-        } else if (state === 'close') {
-            $chevron.removeClass(this._classes.open).addClass(this._classes.close);
-        } else {
-            app.logger.warn('updateArrowsWithDirection called with invalid state; ' +
-                'should be "open" or "close", but was: ' + state);
+        this._state = state;
+        if (!this.disposed) {
+            this.render();
         }
     },
 
     /**
      * Toggle the sidebar.
      *
-     * @param {Event} The `click` event.
+     * @param {Event} event The `click` event.
      */
     toggle: function(event) {
         // FIXME this should be triggered on the `default` layout instead of the global context (SC-2398).
@@ -144,6 +85,6 @@
     unbind: function() {
         this._super('unbind');
         // FIXME the events should be happening on the `default` layout instead of the global context (SC-2398).
-        app.controller.context.off(null, null, this);//remove all events for context `this`
+        app.controller.context.off(null, null, this);
     }
 })
