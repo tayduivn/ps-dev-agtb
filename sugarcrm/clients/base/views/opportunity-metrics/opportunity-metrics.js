@@ -19,10 +19,13 @@
     chartCollection: {},
     chart: {},
 
-    _renderHtml: function () {
-        app.view.View.prototype._renderHtml.call(this);
+    /**
+     * @inheritDoc
+     */
+    _renderHtml: function() {
+        this._super('_renderHtml');
 
-        if (this.viewName === "config" || _.isEmpty(this.chartCollection)) {
+        if (this.viewName === 'config' || _.isEmpty(this.chartCollection)) {
             return;
         }
 
@@ -53,7 +56,7 @@
 
         // FIXME this event should be listened on the `default` layout instead of the global context (SC-2398).
         app.controller.context.on('sidebar:state:changed', function(state) {
-            if (state == 'open' && this.chart.update) {
+            if (state === 'open' && this.chart.update) {
                 this.chart.update();
             }
         }, this);
@@ -132,7 +135,7 @@
     unbind: function() {
         // FIXME the events should be happening on the `default` layout instead of the global context (SC-2398).
         app.controller.context.off(null, null, this);
-        app.view.View.prototype.unbind.call(this);
+        this._super('unbind');
     },
 
     /**
@@ -143,6 +146,6 @@
             nv.utils.windowUnResize(this.chart.update);
             nv.utils.unResizeOnPrint(this.chart.update);
         }
-        app.view.View.prototype._dispose.call(this);
+        this._super('_dispose');
     }
 })

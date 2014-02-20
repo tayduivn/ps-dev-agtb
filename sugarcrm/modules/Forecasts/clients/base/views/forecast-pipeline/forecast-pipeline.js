@@ -45,10 +45,13 @@
      */
     isManager: false,
 
+    /**
+     * @inheritDoc
+     */
     initialize: function(options) {
         this.isManager = app.user.get('is_manager');
         this._initPlugins();
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
 
         // check to make sure that forecast is configured
         this.forecastSetup = app.metadata.getModule('Forecasts', 'config').is_setup;
@@ -117,9 +120,9 @@
         // FIXME this event should be listened on the `default` layout instead of the global context (SC-2398).
         app.controller.context.on('sidebar:state:changed', function(state) {
             this.state = state;
-            if (this.chartLoaded && this.state == 'open' && !this.preview_open) {
-                if (this.chart && this.chart.update)
-                    this.chart.update();
+            if (this.chartLoaded && this.state === 'open' && !this.preview_open &&
+                this.chart && _.isFunction(this.chart.update)) {
+                this.chart.update();
             }
         }, this);
     },
@@ -127,8 +130,8 @@
     /**
      * {@inheritDoc}
      */
-    render: function() {
-        this._super("render");
+    _renderHtml: function() {
+        this._super('_renderHtml');
         if(this.chart && !_.isEmpty(this.results)) {
             this.renderChart();
         }
@@ -247,6 +250,6 @@
     unbind: function() {
         // FIXME the listener should be on the `default` layout instead of the global context (SC-2398).
         app.controller.context.off(null, null, this);
-        app.view.View.prototype.unbind.call(this);
+        this._super('unbind');
     }
 })

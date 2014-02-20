@@ -34,6 +34,7 @@
     /**
      * Key for storing the last state.
      *
+     * @const
      * @type {String}
      */
     HIDE_KEY: 'hide',
@@ -41,8 +42,8 @@
     /**
      * @inheritDoc
      */
-    initialize: function(opts) {
-        app.view.Layout.prototype.initialize.call(this, opts);
+    initialize: function(options) {
+        this._super('initialize', [options]);
 
         this.processDef();
 
@@ -70,7 +71,7 @@
     },
 
     /**
-     * Check wether the side pane is currently visible
+     * Check wether the side pane is currently visible.
      *
      * @return {Boolean} `true` if visible, `false` otherwise.
      */
@@ -195,7 +196,7 @@
      */
     unbind: function() {
         // FIXME the events should be happening on this layout instead of the global context (SC-2398).
-        app.controller.context.off(null, null, this);//remove all events for context `this`
-        app.view.Layout.prototype.unbind.call(this);
+        app.controller.context.off(null, null, this);
+        this._super('unbind');
     }
 })

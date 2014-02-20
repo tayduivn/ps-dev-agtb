@@ -15,6 +15,7 @@ describe('BaseDefaultLayout', function() {
         SugarTest.app.data.declareModels();
         layout = SugarTest.createLayout('base', null, 'default', def, null);
     });
+
     afterEach(function() {
         sinon.collection.restore();
         layout.dispose();
@@ -42,7 +43,7 @@ describe('BaseDefaultLayout', function() {
             app.events.trigger('preview:open');
             expect(toggleSidePaneStub).toHaveBeenCalledWith(true);
         });
-        
+
         it('should respond when "sidebar:state:ask" is triggered', function() {
             var triggerSpy = sinon.collection.spy(app.controller.context, 'trigger');
             app.controller.context.trigger('sidebar:state:ask');
@@ -71,9 +72,9 @@ describe('BaseDefaultLayout', function() {
     });
 
     describe('toggleSidePane', function() {
-        var isSidePaneVisibleStub, isSidePaneVisible;
-        var lastStateSetStub, lastStateRemoveStub;
-        var _toggleVisibilityStub;
+        var isSidePaneVisibleStub, isSidePaneVisible,
+            lastStateSetStub, lastStateRemoveStub,
+            _toggleVisibilityStub;
 
         beforeEach(function() {
             isSidePaneVisibleStub = sinon.collection.stub(layout, 'isSidePaneVisible', function() {

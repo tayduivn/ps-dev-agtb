@@ -61,19 +61,11 @@
      * @inheritDoc
      */
     initialize: function(options) {
-        app.view.Field.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
         // FIXME these events should be listened on the `default` layout instead of the global context (SC-2398).
         app.controller.context.on('sidebar:state:respond', this.toggleState, this);
         app.controller.context.on('sidebar:state:changed', this.toggleState, this);
-    },
 
-    /**
-     * @inheritDoc
-     */
-    _render: function() {
-        app.view.Field.prototype._render.call(this);
-
-        // FIXME this should be triggered on the `default` layout instead of the global context (SC-2398).
         app.controller.context.trigger('sidebar:state:ask');
     },
 
@@ -125,11 +117,11 @@
      * @param {String} state The state. Possible values : `open` or `close`.
      */
     updateArrowsWithDirection: function(state) {
-        var chevron = this.$(this._chevron);
+        var $chevron = this.$(this._chevron);
         if (state === 'open') {
-            chevron.removeClass(this._classes.close).addClass(this._classes.open);
+            $chevron.removeClass(this._classes.close).addClass(this._classes.open);
         } else if (state === 'close') {
-            chevron.removeClass(this._classes.open).addClass(this._classes.close);
+            $chevron.removeClass(this._classes.open).addClass(this._classes.close);
         } else {
             app.logger.warn('updateArrowsWithDirection called with invalid state; ' +
                 'should be "open" or "close", but was: ' + state);

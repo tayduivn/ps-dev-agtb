@@ -29,7 +29,7 @@ describe('Sidebar Toggle', function() {
 
     it('should trigger "sidebar:state:ask" to get the current open/close state', function() {
         var contextStub = sinon.collection.stub(app.controller.context, 'trigger');
-        field._render();
+        field.initialize({});
         expect(contextStub).toHaveBeenCalledWith('sidebar:state:ask');
     });
 
@@ -79,8 +79,8 @@ describe('Sidebar Toggle', function() {
     });
 
     describe('toggleState', function() {
-        var updateArrowsWithDirectionStub, hasClassStub;
-        var isOpen;
+        var updateArrowsWithDirectionStub, hasClassStub,
+            isOpen;
 
         beforeEach(function() {
             updateArrowsWithDirectionStub = sinon.collection.stub(field, 'updateArrowsWithDirection');
