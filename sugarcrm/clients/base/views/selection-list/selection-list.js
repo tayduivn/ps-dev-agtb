@@ -103,5 +103,18 @@
         } else {
             this.rightColumns.push({});
         }
+    },
+
+    /**
+    * Override to force translation of the module names as columns are added to the list.
+    *
+    * @param field
+    * @private
+    */
+    _renderField: function(field) {
+        if (field.name === 'module') {
+            field.model.set(field.name, app.lang.get('LBL_MODULE_NAME', field.model.get(field.name)));
+        }
+        this._super('_renderField', [field]);
     }
 })
