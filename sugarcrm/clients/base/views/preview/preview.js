@@ -222,9 +222,6 @@
             app.events.trigger("preview:open",this);
             // Highlight the row
             app.events.trigger("list:preview:decorate", this.model, this);
-            if(!this.$el.is(":visible")) {
-                this.context.trigger("openSidebar",this);
-            }
         }
     },
 

@@ -38,6 +38,11 @@ describe('BaseDefaultLayout', function() {
             expect(toggleSidePaneStub).toHaveBeenCalled();
         });
 
+        it('should open side pane when "preview:open" is triggered', function() {
+            app.events.trigger('preview:open');
+            expect(toggleSidePaneStub).toHaveBeenCalledWith(true);
+        });
+        
         it('should respond when "sidebar:state:ask" is triggered', function() {
             var triggerSpy = sinon.collection.spy(app.controller.context, 'trigger');
             app.controller.context.trigger('sidebar:state:ask');

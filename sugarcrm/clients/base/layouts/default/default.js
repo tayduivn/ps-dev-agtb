@@ -49,6 +49,11 @@
         // FIXME this should be triggered on this layout instead of the global context (SC-2398).
         app.controller.context.on('sidebar:toggle', this.toggleSidePane, this);
 
+        // FIXME this should be triggered on this layout instead of app.events (SC-2398).
+        app.events.on('preview:open', function() {
+            this.toggleSidePane(true);
+        }, this);
+
         this.meta.last_state = { id: 'default' };
 
         this.hideLastStateKey = app.user.lastState.key(this.HIDE_KEY, this);

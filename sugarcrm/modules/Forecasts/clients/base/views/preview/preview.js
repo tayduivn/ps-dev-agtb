@@ -134,9 +134,6 @@
             // Highlight the row
             // use the original model when going to the list:preview:decorate event
             app.events.trigger("list:preview:decorate", this.originalModel, this);
-            if(!this.$el.is(":visible")) {
-                this.context.trigger("openSidebar",this);
-            }
         }
     },
 
