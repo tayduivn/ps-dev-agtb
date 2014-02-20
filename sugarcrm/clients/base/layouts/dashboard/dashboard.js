@@ -582,8 +582,18 @@
         params.error = _.bind(this._renderEmptyTemplate, this);
 
         params.success = _.bind(function(model) {
-            if (!this.disposed && model.get('dashboard_type') === 'help-dashboard') {
-                this._navigate(model);
+            if (!this.disposed) {
+                if (model.get('dashboard_module') !== 'Home') {
+                    // if this is not the Home module, only navigate to the Help dashboards
+                    if (model.get('dashboard_type') === 'help-dashboard') {
+                        this._navigate(model);
+                    }
+                } else {
+                    // if this is the Home module, navigate to the non-Help My Dashboard
+                    if (model.get('dashboard_type') === 'dashboard') {
+                        this._navigate(model);
+                    }
+                }
             }
         }, this);
 
