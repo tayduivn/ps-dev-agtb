@@ -241,13 +241,23 @@ class ChartDisplay
             }
         }
 
-        // check to see if the chart can be stackable
-        foreach ($chart_rows as $element) {
-            if (count($element) > 1) {
-                $this->stackChart = true;
-                break;
-            }
+      //THIS IS BOGUS, DATA IS ALREADY FORMATED BASED ON CHART TYPE
+      //WE CANNOT CHANGE CHART THIS LATE IN THE GAME
+      // check to see if the chart can be stackable
+      // foreach ($chart_rows as $element) {
+      //     if (count($element) > 1) {
+      //         $this->stackChart = true;
+      //         break;
+      //     }
+      // }
+
+
+        //INSTEAD WE NEED TO DETERMINE IF THE ORIGINAL REPORT DEF
+        //HAS A GROUPING LEVEL GREATER THAN ONE
+        if (isset($this->reporter->report_def['group_defs'])) {
+            $this->stackChart = (count($this->reporter->report_def['group_defs']) > 1) ? true : false;
         }
+
         switch ($this->chartType) {
             case 'hBarF':
                 if ($this->isStackable()) {
@@ -329,7 +339,7 @@ class ChartDisplay
     {
         $row_remap = array();
         if (!isset($row['cells'][$this->reporter->chart_numerical_position]['val'])) {
-            return $row_remap; 
+            return $row_remap;
         }
         $row_remap['numerical_value'] = $numerical_value = unformat_number(strip_tags($row['cells'][$this->reporter->chart_numerical_position]['val']));
         global $do_thousands;
