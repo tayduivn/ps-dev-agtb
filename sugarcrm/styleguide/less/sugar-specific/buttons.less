@@ -97,15 +97,24 @@
   &:not(.disabled):hover {
     text-decoration: underline;
     color: @linkColorHover;
+    .box-shadow(none);
   }
   &.active,
   &:not(.disabled):active {
     color: @linkColor;
     background-color: transparent;
-    box-shadow: none;
+    .box-shadow(none);
   }
 }
 
+.btn.btn-inline {
+  padding: 0;
+  margin: 0;
+  border: none;
+  height: auto;
+  line-height: inherit;
+  vertical-align: baseline;
+}
 
 // Reposition the caret
 .btn:hover .icon-caret-down,

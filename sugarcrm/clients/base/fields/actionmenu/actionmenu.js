@@ -227,9 +227,9 @@
          * @return {HTMLElement}
          */
         var buildAlertForReset = function() {
-            var alert = $(self._selectedOffsetTpl({
+            var alert = $('<div/>').append($('<span/>').html(self._selectedOffsetTpl({
                 num: massCollection.length
-            }));
+            })));
             alert.find('[data-action=clear]').each(function() {
                 var $el = $(this);
                 $el.on('click', function() {
@@ -244,10 +244,10 @@
          * @return {HTMLElement}
          */
         var buildAlertForEntire = function() {
-            var alert = $('<div></div>').html(self._selectAllTpl({
+            var alert = $('<div/>').append($('<span/>').html(self._selectAllTpl({
                 num: massCollection.length,
                 link: self._selectAllLinkTpl
-            }));
+            })));
             alert.find('[data-action=select-all]').each(function() {
                 var $el = $(this);
                 $el.on('click', function() {
@@ -435,7 +435,7 @@
             app.template.getView('list.selected-offset', this.module);
 
         this._selectAllLinkTpl = new Handlebars.SafeString(
-            '<button type="button" class="btn-link" data-action="select-all">' +
+            '<button type="button" class="btn btn-link btn-inline" data-action="select-all">' +
             app.lang.get('LBL_LISTVIEW_SELECT_ALL_RECORDS') +
             '</button>'
         );

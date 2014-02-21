@@ -166,11 +166,11 @@
     },
 
     showAlert: function(message) {
-        this.$(".alert .container").html(message);
-        this.$(".alert").removeClass("hide");
+        this.$("[data-target=alert]").html(message).removeClass("hide");
     },
+
     hideAlert: function() {
-        this.$(".alert").addClass("hide");
+        this.$("[data-target=alert]").addClass("hide");
     },
     filterToggled:function (isOpened) {
         this.filterOpened = isOpened;
