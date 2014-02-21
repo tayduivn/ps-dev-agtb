@@ -261,6 +261,14 @@
      * Remove the current attached dashlet component
      */
     removeDashlet: function() {
+        var cellLayout = this.layout,
+            rowLayout = cellLayout.layout;
+        if (this.model.mode === 'view' && cellLayout._components.length === 1) {
+            // this.layout needs to have method to return all the components
+            this.layout.layout.removeRow.call(this.layout.layout, this.layout.index.split('').pop());
+            this.model.save(null, {showAlerts: true});
+            return;
+        }
         var metadata = this.model.get("metadata"),
             component = this.getCurrentComponent(metadata, this.index);
         _.each(component, function(value, key){
