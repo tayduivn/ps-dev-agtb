@@ -16,7 +16,7 @@
     <li><a tabindex="-1" href="#{{buildRoute model=this}}" data-route="#{{buildRoute model=this}}"><i class="icon-time active"></i>{{getFieldValue this "name"}}</a></li>
 {{/each}}
 {{#if showRecentToggle}}
-    <li><button type="button" class="btn-link btn-invisible" data-toggle="recently-viewed">
+    <li><button type="button" class="btn-link btn-invisible toggle-recents" data-toggle="recently-viewed">
         {{#if open}}{{str 'LBL_SHOW_MORE_RECENTS' module}}{{else}}{{str 'LBL_SHOW_LESS_RECENTS' module}}{{/if}}
     </button></li>
 {{/if}}
