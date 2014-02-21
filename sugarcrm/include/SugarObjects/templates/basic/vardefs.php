@@ -55,6 +55,7 @@ $vardefs = array(
                 ),
                 'duplicate_on_record_copy' => 'no',
                 'readonly' => true,
+                'massupdate' => false,
             ),
         'date_modified' => array(
                 'name' => 'date_modified',
@@ -69,6 +70,7 @@ $vardefs = array(
                 'options' => 'date_range_search_dom',
                 'duplicate_on_record_copy' => 'no',
                 'readonly' => true,
+                'massupdate' => false,
             ),
         'modified_user_id' => array(
                 'name' => 'modified_user_id',

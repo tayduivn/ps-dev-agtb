@@ -53,6 +53,8 @@
 	{/if}
 	</td>
 </tr>
+{* Readonly fields should not have a massupdate option *}
+{if empty($vardef.readonly)}
 <tr>
 	<td class='mbLBL' >{sugar_translate module="DynamicFields" label="COLUMN_TITLE_MASS_UPDATE"}:</td>
 	<td>
@@ -63,6 +65,7 @@
 	{/if}
 	</td>
 </tr>
+{/if}
 {* //BEGIN SUGARCRM flav=pro ONLY *}
 {if !$multi && !$radio}
 <tr id='depTypeRow' class="toggleDep"><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_DEPENDENT"}:</td>

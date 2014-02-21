@@ -131,7 +131,9 @@
             var moduleMetadata = app.metadata.getModule(options.module),
                 massFields = [];
             _.each(moduleMetadata.fields, function(field){
-                if(field.massupdate) {
+                // Only fields that are marked with massupdate set to true AND
+                // that are not readonly should be used
+                if(field.massupdate && !field.readonly) {
                     var cloneField = app.utils.deepCopy(field);
                     cloneField.label = field.label || field.vname;
                     if(!cloneField.label) delete cloneField.label;

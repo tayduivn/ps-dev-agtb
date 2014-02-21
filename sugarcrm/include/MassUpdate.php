@@ -416,8 +416,11 @@ eoq;
         $banned = array('date_modified'=>1, 'date_entered'=>1, 'created_by'=>1, 'modified_user_id'=>1, 'deleted'=>1,'modified_by_name'=>1,);
 
         foreach ($fielddefs as $name => $def) {
+            // Readonly fields are NOT be massupdatable
+            if (!empty($def['readonly'])) {
+                $def['massupdate'] = false;
             // Calculated fields are NOT massupdatable
-            if (isset($def['calculated'])) { 
+            } elseif (isset($def['calculated'])) { 
                 // If calculated is set and is enforced and is some value of truthy...
                 if (self::isTrue($def['calculated']) && isset($def['enforced']) && self::isTrue($def['enforced'])) {
                     // Then massupdate has to be false
