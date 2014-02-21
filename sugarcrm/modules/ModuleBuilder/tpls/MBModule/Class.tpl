@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -35,13 +35,14 @@ class {{$class.name}}_sugar extends {{$class.extends}} {
     {{/if}}
 
     /**
-     * This is a depreciated method, please start using __construct() as this
+     * This is a deprecated method, please start using __construct() as this
      * method will be removed in a future version.
      *
      * @see __construct
-     * @depreciated
+     * @deprecated
      */
     public function {{$class.name}}_sugar(){
+        $GLOBALS['log']->deprecated('Calls to {{$class.name}}::{{$class.name}} are deprecated.');
         self::__construct();
     }
 

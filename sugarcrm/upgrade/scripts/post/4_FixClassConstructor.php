@@ -28,13 +28,17 @@ class SugarUpgradeFixClassConstructor extends UpgradeScript
     public function run()
     {
         // Only run this when coming from a version lower than 7.2.0
-        if (version_compare($this->from_version, '7.2.0', '>=')) {
+        if (version_compare($this->from_version, '7.2', '>=')) {
             return;
         }
 
         // Find all the classes we want to convert.
         $customModules = array();
-        foreach (glob('modules/*/*_sugar.php') as $customFile) {
+        $customFiles = glob(
+            'modules' . DIRECTORY_SEPARATOR . '*' . DIRECTORY_SEPARATOR . '*_sugar.php',
+            GLOB_NOSORT
+        );
+        foreach ($customFiles as $customFile) {
             $moduleName = str_replace('_sugar', '', pathinfo($customFile, PATHINFO_FILENAME));
             $customModules[] = $moduleName;
         }
@@ -60,9 +64,6 @@ class SugarUpgradeFixClassConstructor extends UpgradeScript
             $this->log("FixClassConstructor: Found a custom module {$moduleName} not recognized by ModuleBuilder");
             $this->replaceCustomModuleClassesByReflection($moduleName);
         }
-
-        // TODO: ModuleBuilder outputs some blank lines. Verify why.
-        ob_end_clean();
     }
 
     /**
@@ -114,6 +115,14 @@ class SugarUpgradeFixClassConstructor extends UpgradeScript
     {
         $className = $moduleName . '_sugar';
 
+        require_once 'modules' . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . $moduleName . '_sugar.php';
+
+        try {
+            $reflectionClass = new \ReflectionClass($className);
+        } catch (\ReflectionException $e) {
+            return $this->log("FixClassConstructor: Could not use ReflectionClass with {$className}");
+        }
+
         $reflectionClass = new ReflectionClass($className);
         $parentClass = get_parent_class($className);
 
@@ -130,7 +139,11 @@ class SugarUpgradeFixClassConstructor extends UpgradeScript
             $fields[$name] = $name;
         }
 
-        $isImportable = $reflectionClass->getProperty('importable')->getValue(new $className);
+        $isImportable = false;
+        $importable = $reflectionClass->getProperty('importable');
+        if (!empty($importable)) {
+            $isImportable = $importable->getValue(new $className);
+        }
 
         $teamSecurityEnabled = true;
         $disable_row_level_security = $reflectionClass->getProperty('disable_row_level_security');
@@ -174,7 +187,11 @@ class SugarUpgradeFixClassConstructor extends UpgradeScript
         $class['requires'] = array();
         if ($parentClass !== 'Basic') {
             $template = strtolower($parentClass);
-            $class['requires'][] = 'include/SugarObjects/templates/' . $template . '/' . $parentClass . '.php';
+            $class['requires'][] = 'include' . DIRECTORY_SEPARATOR .
+                'SugarObjects' . DIRECTORY_SEPARATOR .
+                'templates' . DIRECTORY_SEPARATOR .
+                $template . DIRECTORY_SEPARATOR .
+                $parentClass . '.php';
         }
 
         $class['extends'] = $parentClass;
@@ -189,7 +206,13 @@ class SugarUpgradeFixClassConstructor extends UpgradeScript
         $smarty->left_delimiter = '{{';
         $smarty->right_delimiter = '}}';
         $smarty->assign('class', $class);
-        $content = $smarty->fetch('modules/ModuleBuilder/tpls/MBModule/Class.tpl');
+        $content = $smarty->fetch(
+            'modules' . DIRECTORY_SEPARATOR .
+            'ModuleBuilder' . DIRECTORY_SEPARATOR .
+            'tpls' . DIRECTORY_SEPARATOR .
+            'MBModule' . DIRECTORY_SEPARATOR .
+            'Class.tpl'
+        );
 
         return $content;
     }
@@ -204,6 +227,9 @@ class SugarUpgradeFixClassConstructor extends UpgradeScript
     {
         //write sugar generated class
         $this->log("FixClassConstructor: Replace {$moduleName}_sugar.php for module: {$moduleName}");
-        sugar_file_put_contents_atomic('modules/' . $moduleName . '/' . $moduleName . '_sugar.php', $content);
+        sugar_file_put_contents_atomic(
+            'modules' . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . $moduleName . '_sugar.php',
+            $content
+        );
     }
 }
