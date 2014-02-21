@@ -103,6 +103,22 @@ describe("date field", function() {
     });
     describe("basedatepicker core functions", function() {
 
+        it('should return today date if date string passed in is falsy', function() {
+            var stub = sinon.stub(app.date, 'format');
+            field.usersDatePrefs = 'Y.m.d';
+            field._getTodayDateStringIfNoDate();
+            expect(stub).toHaveBeenCalledOnce();
+            expect(stub.args[0][1]).toEqual('Y.m.d');
+            stub.restore();
+        });
+        it("should return date string passed in if it's truthy", function() {
+            var actual, stub = sinon.stub(app.date, 'format');
+            field.usersDatePrefs = 'Y.m.d';
+            actual = field._getTodayDateStringIfNoDate('1970.09.12');
+            expect(stub).not.toHaveBeenCalled();
+            expect(actual).toEqual('1970.09.12');
+            stub.restore();
+        });
         it("should return true if edit view", function() {
             field.options = {
                 def: {

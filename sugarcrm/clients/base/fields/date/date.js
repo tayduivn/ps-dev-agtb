@@ -234,17 +234,20 @@
      * user selects time part, date part will be pre-filled with today's date.
      */
     _getDatepickerValue: function() {
-        // so hbs template will pick up on next render
-        this.dateValue = this.$('input.datepicker').prop('value');
+        var date  = this.$('input.datepicker'), dateValue;
 
-        return this.dateValue;
+        dateValue = this._getTodayDateStringIfNoDate(date.prop('value'));
+        this.dateValue = dateValue; // so hbs template will pick up on next render
+        return dateValue;
     },
     /**
      * Sets the current datepicker value.
      * @param String dateValue date value
      */
     _setDatepickerValue: function(dateValue) {
-        this.$('input.datepicker').prop('value', dateValue);
+        var date = this.$('input.datepicker');
+        dateValue = this._getTodayDateStringIfNoDate(dateValue);
+        date.prop('value', dateValue);
     },
     /**
      * Set the date string for REST Api. If stripT
@@ -277,6 +280,19 @@
             return jsDate.toISOString();
         }
         return jsDate;
+    },
+    /**
+     * Checks if dateStringToCheck is falsy..if so, returns today's date as string formatted by
+     * user's prefs. Otherwise, just returns dateStringToCheck.
+     * @param {String} dateStringToCheck Date string
+     * @return {String} Date string
+     */
+    _getTodayDateStringIfNoDate: function(dateStringToCheck) {
+        if (!dateStringToCheck) {
+            var d = new Date();
+            return app.date.format(d, this.usersDatePrefs);
+        }
+        return dateStringToCheck;
     },
     /**
      * Gets the name of this view.
