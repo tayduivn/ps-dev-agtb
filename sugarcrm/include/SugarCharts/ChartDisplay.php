@@ -241,19 +241,7 @@ class ChartDisplay
             }
         }
 
-      //THIS IS BOGUS, DATA IS ALREADY FORMATED BASED ON CHART TYPE
-      //WE CANNOT CHANGE CHART THIS LATE IN THE GAME
-      // check to see if the chart can be stackable
-      // foreach ($chart_rows as $element) {
-      //     if (count($element) > 1) {
-      //         $this->stackChart = true;
-      //         break;
-      //     }
-      // }
-
-
-        //INSTEAD WE NEED TO DETERMINE IF THE ORIGINAL REPORT DEF
-        //HAS A GROUPING LEVEL GREATER THAN ONE
+        //Determine if the original report def has a grouping level greater than one
         if (isset($this->reporter->report_def['group_defs'])) {
             $this->stackChart = (count($this->reporter->report_def['group_defs']) > 1) ? true : false;
         }
