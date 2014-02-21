@@ -30,7 +30,14 @@
     //dnb api response codes
     responseCodes: {
         success: 'CM000'
-    } ,
+    },
+    //common constants
+    commonConst: {
+        'sic_code': 399,
+        'hoovers_ind_code': 25838,
+        'sic_to_hic': 3599
+    },
+
     //mapping of sugar column names to dnb api response
     accountsMap: {
         'name': 'OrganizationName.OrganizationPrimaryName.0.OrganizationName.$', //account name
@@ -540,7 +547,7 @@
                 'json_path' : 'IndustryCode.IndustryCode',
                 'sub_object': {
                     'data_type' : 'prim_sic',
-                    'sic_type_code' : '399',
+                    'sic_type_code' : 399,
                     'ind_code' : 'IndustryCode.$',
                     'label' : 'LBL_DNB_SIC'
                 }
@@ -688,7 +695,7 @@
                         var industryCodeArray = self.getJsonNode(data, self.appendSVCPaths.industry);
                         if (!_.isUndefined(industryCodeArray)) {
                             //399 is the industry code type value for US SIC
-                            resultData.product.primarySIC = self.getPrimaryIndustry(industryCodeArray, '399');
+                            resultData.product.primarySIC = self.getPrimaryIndustry(industryCodeArray, self.commonConst.sic_code);
                         }
                         app.cache.set(cacheKey, resultData);
                     } else {
