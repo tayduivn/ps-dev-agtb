@@ -16,8 +16,31 @@
     events: {
         'click [data-toggle=dropdown]': 'getRecentlyViewedAndFavoriteRecords',
         'click .actionLink' : 'handleMenuEvent',
-        "click a[data-route]": "handleRouteEvent"
+        'click [data-route]': 'handleRouteEvent',
+        'click [data-action=more_mixed_recents]': 'handleMoreRecents'
     },
+
+    /**
+     * Default settings used for recents records on home page.
+     *
+     * Supported settings:
+     * - {Number} recents_rows Number of recents by default.
+     * - {Array} recents_extend_rows Number of recents in extend mode.
+     * - {Array} recents_extend_rows.default Default number of recents in extend mode.
+     *           Used for all modules if it is not overrided.
+     * - {Array} recents_extend_rows.Home Overrided number of recents in extend mode for Home module.
+     *
+     * @property {Object}
+     * @protected
+     */
+    _defaultSettings: {
+        recents_rows: 3,
+        recents_extend_rows: {
+            'default': 3,
+            'Home': 10
+        }
+    },
+
     handleRouteEvent: function (event) {
         var currentFragment,
             currentTarget = this.$(event.currentTarget),
@@ -45,6 +68,20 @@
             var module = $currentTarget.closest('li.dropdown').data('module');
             app.events.trigger($currentTarget.data('event'), module, evt);
         }
+    },
+
+    /**
+     * Handler for more recents link.
+     * @param {Event} event DOM event.
+     */
+    handleMoreRecents: function(event) {
+        var $currentTarget = this.$(event.currentTarget),
+            module = this.$(event.currentTarget).data('module') || null,
+            recentsContainer = this.$('[data-module=' + module + '] [data-container=recents]');
+
+        recentsContainer.find('[data-route]').show();
+        $currentTarget.hide();
+        event.stopPropagation();
     },
 
     initialize: function(options) {
@@ -76,17 +113,21 @@
         this.layout.trigger("header:update:route");
     },
     /**
-     * Populates the recently viewed and favorite records
-     * @param event
+     * Populates the recently viewed and favorite records.
+     * @param {Event} event DOM event.
      */
-    getRecentlyViewedAndFavoriteRecords:function (event) {
+    getRecentlyViewedAndFavoriteRecords: function(event) {
         var $currentTarget = $(event.currentTarget),
             module = $currentTarget.parent().parent().data('module'),
             moduleMeta = app.metadata.getModule(module);
 
-        if (!$currentTarget.parent().parent().hasClass('more-drop-container') && !$currentTarget.hasClass('actionLink')) {
+        if (!$currentTarget.parent().parent().hasClass('more-drop-container') &&
+            !$currentTarget.hasClass('actionLink')
+        ) {
             if (module == 'Home') {
+                this.clearFavoritesRecents(module);
                 this.populateDashboards();
+                this.populateRecents(module);
             }
             else if (moduleMeta && moduleMeta.fields
                 && !_.isArray(moduleMeta.fields) && !_.isEmpty(_.omit(moduleMeta.fields, '_hash'))) {
@@ -99,8 +140,8 @@
         }
     },
     clearFavoritesRecents: function(module){
-        this.$('[data-module=' + module + '] .recentContainer').html('');
-        this.$('[data-module=' + module + '] .favoritesContainer').html('');
+        this.$('[data-module=' + module + '] [data-container=recents]').html('');
+        this.$('[data-module=' + module + '] [data-container=favorites]').html('');
     },
     /**
      * Populates favorites on open menu
@@ -133,47 +174,97 @@
                     self.$('[data-module=' + module + '] .favoritesAnchor').show();
                     var favoritesTemplate = app.template.getView('modulelist.favorites', module) ||
                         app.template.getView('modulelist.favorites');
-                    self.$('[data-module=' + module + '] .favoritesContainer')
+                    self.$('[data-module=' + module + '] [data-container=favorites]')
                         .show()
                         .html(favoritesTemplate(collection));
                 }
            }
         });
     },
+
     /**
      * Populates recents on open menu
      * @param {String} module Module name
      * @param {Function} populateCallback Called on successful api request
      */
-    populateRecents:function (module, populateCallback) {
-        var self = this;
-        var filter = {
-            "filter":[
-                {
-                    "$tracker":"-7 DAY"
-                }
-            ],
-            "max_num":3
-        };
-        var url = app.api.buildURL(module, 'read', {id:"filter"});
-        app.api.call('create', url, filter, {
-            success:function (data) {
+    populateRecents: function(module, populateCallback) {
+        var self = this,
+            maxNum = !_.isUndefined(this._defaultSettings.recents_extend_rows[module]) ?
+                this._defaultSettings.recents_extend_rows[module] :
+                this._defaultSettings.recents_extend_rows.default;
+
+        var url = app.api.buildURL('recent', 'read', null, {
+            module: module == 'Home' ? null : module,
+            fields: ['id', 'name'].join(','),
+            date: '-7 DAY',
+            limit: maxNum
+        });
+
+        app.api.call('read', url, null, {
+            success: _.bind(function(data) {
                 if (data.records && data.records.length > 0) {
+                    if (_.isEmpty(data.records)) {
+                        return;
+                    }
+
                     if (_.isFunction(populateCallback)) {
                         populateCallback();
                     }
-                    var beans = [];
-                    _.each(data.records, function (recordData) {
-                        beans.push(app.data.createBean(module, recordData));
-                    });
-                    var collection = app.data.createBeanCollection(module, beans);
-                    self.$('[data-module=' + module + '] .recentAnchor').show();
+
+                    var collection = (module === 'Home') ?
+                        self._populateMixedRecentsCollection(data) :
+                        self._populateRecentsCollection(module, data);
+
+                    collection.module = module;
+                    collection.showMoreLink = !!(data.records.length > self._defaultSettings.recents_rows);
+
                     var recentsTemplate = app.template.getView('modulelist.recents', module) ||
                         app.template.getView('modulelist.recents');
-                    self.$('[data-module=' + module + '] .recentContainer').show().html(recentsTemplate(collection));
+
+                    var recentsContainer = self.$('[data-module=' + module + '] [data-container=recents]');
+                    recentsContainer.show().html(recentsTemplate(collection));
+                    recentsContainer
+                        .find('[data-route]:gt(' + (self._defaultSettings.recents_rows - 1) + ')')
+                        .hide();
                 }
 
-            }});
+            }, this)});
+    },
+
+    /**
+     * Create new collection for recents beans.
+     * @param {String} module Name of bean.
+     * @param {Array} data Data to create beans.
+     * @return {BeanCollection} New created collection.
+     * @protected
+     */
+    _populateRecentsCollection: function(module, data) {
+        var beans = [];
+
+        _.each(data.records, function(recordData) {
+            beans.push(app.data.createBean(module, recordData));
+        });
+
+        return app.data.createBeanCollection(module, beans);
+    },
+
+    /**
+     * Create new mixed collection for recents beans.
+     * @param {Array} data Data to create beans.
+     * @return {MixedBeanCollection} New created collection.
+     * @protected
+     */
+    _populateMixedRecentsCollection: function(data) {
+        var beans = [],
+            bean = null;
+
+        _.each(data.records, function(recordData) {
+            if (recordData['_module']) {
+                bean = app.data.createBean(recordData['_module'], recordData);
+                beans.push(bean);
+            }
+        });
+        return app.data.createMixedBeanCollection(beans);
     },
 
     /**
@@ -182,7 +273,7 @@
     populateDashboards:function () {
         var self = this,
             sync = function(method, model, options) {
-                options       = app.data.parseOptionsForSync(method, model, options);
+                options = app.data.parseOptionsForSync(method, model, options);
                 var callbacks = app.data.getSyncCallbacks(method, model, options);
                 app.api.records(method, this.apiModule, model.attributes, options.params, callbacks);
             },
@@ -208,8 +299,12 @@
                         model.set('name', app.lang.get(model.get('name'), dashCollection.module || null));
                     }
                 });
-                var recentsTemplate = app.template.getView('modulelist.recents');
-                self.$('[data-module=Home] .dashboardContainer').html(recentsTemplate(dashCollection));
+
+                var dashboardsTemplate = app.template.getView('modulelist.dashboards', dashCollection.module) ||
+                    app.template.getView('modulelist.dashboards');
+
+                self.$('[data-module=Home] [data-container=dashboard]')
+                    .html(dashboardsTemplate(dashCollection));
             }
         });
     },

@@ -166,19 +166,21 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->accounts[] = $account;
 
+        $sq1 = new SugarQuery();
+        $sq1->select(array("id", "name"));
+        $sq1->from(BeanFactory::newBean('Accounts'));
+        $sq1->where()->equals('name', 'Awesome');
+
+        $sq2 = new SugarQuery();
+        $sq2->select(array("id", "name"));
+        $sq2->from(BeanFactory::newBean('Accounts'));
+        $sq2->where()->equals('name', 'Not Awesome');
+
         $sqUnion = new SugarQuery();
-        $sqUnion->select(array("id", "name"));
-        $sqUnion->from(BeanFactory::newBean('Accounts'));
-        $sqUnion->where()->equals('name','Awesome');
+        $sqUnion->union($sq1);
+        $sqUnion->union($sq2);
 
-        $sq = new SugarQuery();
-        $sq->select(array("id", "name"));
-        $sq->from(BeanFactory::newBean('Accounts'));
-        $sq->where()->equals('name','Not Awesome');
-
-        $sq->union($sqUnion);
-
-        $result = $sq->execute();
+        $result = $sqUnion->execute();
 
         $this->assertEquals(2, count($result), "More than 2 rows were returned.");
 
@@ -452,7 +454,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from(BeanFactory::getBean('Contacts'));
-        $sq->orderByRaw("last_name+1 DESC");
+        $sq->orderByRaw("last_name+1", 'DESC');
         $sql = $sq->compileSql();
         $this->assertContains("ORDER BY last_name+1 DESC", $sql);
     }

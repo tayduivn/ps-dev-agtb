@@ -22,6 +22,7 @@ require_once 'include/SugarQuery/Builder/Andwhere.php';
 require_once 'include/SugarQuery/Builder/Orwhere.php';
 require_once 'include/SugarQuery/Builder/Join.php';
 require_once 'include/SugarQuery/Builder/Select.php';
+require_once 'include/SugarQuery/Builder/Union.php';
 require_once 'include/SugarQuery/Builder/Condition.php';
 require_once 'include/SugarQuery/Builder/Literal.php';
 require_once 'include/SugarQuery/Builder/Field.php';
@@ -34,6 +35,12 @@ class SugarQuery
      * @var null|SugarQuery_Builder_Select
      */
     public $select = null;
+
+    /**
+     * This is the Union Object
+     * @var null|SugarQuery_Builder_Union
+     */
+    public $union = null;
 
     /**
      * @var null|array
@@ -59,11 +66,6 @@ class SugarQuery
      * @var null|integer
      */
     public $offset = null;
-
-    /**
-     * @var null|array(SugarQuery)
-     */
-    public $union = null;
 
     /**
      * @var bool
@@ -141,6 +143,25 @@ class SugarQuery
         return $this->select;
     }
 
+    /**
+     * Build the union object.
+     *
+     * @param SugarQuery $select Query object.
+     * @param bool $all (optional) Indicates if 'UNION ALL' should be used or not. Default is `true`.
+     * @return SugarQuery_Builder_Union instance of union object.
+     */
+    public function union(SugarQuery $select, $all = true)
+    {
+        if (!is_object($this->union)) {
+            $this->union = new SugarQuery_Builder_Union($this);
+        }
+
+        if (!empty($select)) {
+            $this->union->addQuery($select, $all);
+        }
+
+        return $this->union;
+    }
 
     /**
      * Set the from bean
@@ -492,22 +513,6 @@ class SugarQuery
     }
 
     /**
-     * Add a union query to this query
-     *
-     * @param SugarQuery $select
-     * @param bool $all
-     *
-     * @return SugarQuery
-     */
-    public function union(SugarQuery $select, $all = true)
-    {
-
-        $this->union [] = array('select' => $select, 'all' => $all);
-
-        return $this;
-    }
-
-    /**
      * Add a group by statement to this query
      *
      * @param array $array
@@ -579,9 +584,17 @@ class SugarQuery
     }
 
 
-    public function orderByRaw($expression)
+    /**
+     * Add an order by raw expression for this query
+     *
+     * @param string $expression Raw expression to sort.
+     * @param string $direction Values ASC or DESC.
+     *
+     * @return SugarQuery
+     */
+    public function orderByRaw($expression, $direction = 'DESC')
     {
-        $orderBy = new SugarQuery_Builder_Orderby($this);
+        $orderBy = new SugarQuery_Builder_Orderby($this, $direction);
         $orderBy->addRaw($expression);
         $this->order_by[] = $orderBy;
         return $this;
