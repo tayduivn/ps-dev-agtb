@@ -242,7 +242,7 @@ function make_sugar_config(&$sugar_config)
             'hard_lifetime' => 21, // how many days until job record will be purged from DB
         ),
         "cron" => array(
-            'max_cron_jobs' => 10, // max jobs per cron schedule run
+            'max_cron_jobs' => 25, // max jobs per cron schedule run
             'max_cron_runtime' => 60, // max runtime for cron jobs
             'min_cron_interval' => 30, // minimal interval between cron jobs
         ),
@@ -472,7 +472,7 @@ function get_sugar_config_defaults()
             'timeout' => 86400, // how long a job may spend as running before being force-failed
         ),
         "cron" => array(
-            'max_cron_jobs' => 10, // max jobs per cron schedule run
+            'max_cron_jobs' => 25, // max jobs per cron schedule run
             'max_cron_runtime' => 30, // max runtime for cron jobs
             'min_cron_interval' => 30, // minimal interval between cron jobs
         ),

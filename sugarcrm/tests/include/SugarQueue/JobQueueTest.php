@@ -135,41 +135,47 @@ class JobQueueTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetNextJob()
     {
-        // should get only jobs with status QUEUED, in date_entered order, and mark them as running
+        // should get only jobs with status QUEUED, in execute_time order, and mark them as running
+        // expected execution: job1 -> job2 -> job3 (nlt triggered though, in future)
+
         // Clean up the queue
         $GLOBALS['db']->query("DELETE FROM job_queue WHERE status='".SchedulersJob::JOB_STATUS_QUEUED."'");
         $job = $this->jq->nextJob("unit test");
         $this->assertNull($job, "Extra job found");
-        // older job
+
+        // older job, execution time newer then job below
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->scheduler_id = 'unittest';
         $job->date_entered = '2010-01-01 12:00:00';
-        $job->name = "Old Job";
+        $job->name = "job1";
         $job->target = "test::test";
-        $job->execute_time = $GLOBALS['timedate']->getNow()->asDb();
+        $job->execute_time = '2012-01-01 12:00:00';
         $job->save();
         $jobid1 = $job->id;
-        // another job, later date
+
+        // newer job, same execution time
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->scheduler_id = 'unittest';
-        $job->date_entered = '2012-01-01 12:00:00';
-        $job->name = "Newer Job";
+        $job->date_entered = '2011-01-01 12:00:00';
+        $job->name = "job2";
         $job->target = "test::test";
-        $job->execute_time = TimeDate::getInstance()->getNow()->asDb();
+        $job->execute_time = '2011-01-01 12:00:00';
         $job->save();
         $jobid2 = $job->id;
+
         // job with execute date in the future
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->scheduler_id = 'unittest';
         $job->execute_time = $GLOBALS['timedate']->getNow()->modify("+3 days")->asDb();
         $job->date_entered = '2010-01-01 12:00:00';
-        $job->name = "Future Job";
+        $job->name = "job3";
         $job->target = "test::test";
         $job->save();
         $jobid3 = $job->id;
+
         //running job
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_RUNNING;
@@ -180,6 +186,7 @@ class JobQueueTest extends Sugar_PHPUnit_Framework_TestCase
         $job->execute_time = TimeDate::getInstance()->getNow()->asDb();
         $job->save();
         $jobid4 = $job->id;
+
         // done job
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_DONE;
@@ -190,26 +197,75 @@ class JobQueueTest extends Sugar_PHPUnit_Framework_TestCase
         $job->execute_time = TimeDate::getInstance()->getNow()->asDb();
         $job->save();
         $jobid5 = $job->id;
+
         // get the first one
-        $job = $this->jq->nextJob("unit test");
-        $this->assertEquals($jobid1, $job->id, "Wrong job fetched");
-        $this->assertEquals(SchedulersJob::JOB_STATUS_RUNNING, $job->status, "Wrong status");
-        $this->assertEquals("unit test", $job->client, "Wrong client");
-        // check that DB record matches
-        $job = new SchedulersJob();
-        $job->retrieve($jobid1);
-        $this->assertEquals(SchedulersJob::JOB_STATUS_RUNNING, $job->status, "Wrong status");
-        $this->assertEquals("unit test", $job->client, "Wrong client");
-        // get the second one
         $job = $this->jq->nextJob("unit test");
         $this->assertEquals($jobid2, $job->id, "Wrong job fetched");
         $this->assertEquals(SchedulersJob::JOB_STATUS_RUNNING, $job->status, "Wrong status");
         $this->assertEquals("unit test", $job->client, "Wrong client");
+
+        // check that DB record matches
+        $job = new SchedulersJob();
+        $job->retrieve($jobid2);
+        $this->assertEquals(SchedulersJob::JOB_STATUS_RUNNING, $job->status, "Wrong status");
+        $this->assertEquals("unit test", $job->client, "Wrong client");
+
+        // get the second one
+        $job = $this->jq->nextJob("unit test");
+        $this->assertEquals($jobid1, $job->id, "Wrong job fetched");
+        $this->assertEquals(SchedulersJob::JOB_STATUS_RUNNING, $job->status, "Wrong status");
+        $this->assertEquals("unit test", $job->client, "Wrong client");
+
         // try to get the third one, should get null
         $job = $this->jq->nextJob("unit test");
         $this->assertNull($job, "Extra job found");
     }
 
+    public function testResolveJob()
+    {
+        $jobId = '1234';
+        $msg = 'test msg';
+        $delay = 95;
+
+        $job = $this->getClassMock('SchedulersJob');
+        $job->expects($this->once())
+            ->method('postponeJob')
+            ->with($this->equalTo($msg), $this->equalTo($delay));
+
+        $sut = $this->getClassMock('SugarJobQueue', array('getJob'));
+        $sut->expects($this->any())
+            ->method('getJob')
+            ->will($this->returnValue($job));
+
+        $sut->postponeJob($jobId, $msg, $delay);
+    }
+
+    public function testPostponeJob()
+    {
+        $jobId = '1234';
+        $msg = 'test msg';
+        $delay = 95;
+
+        $job = $this->getClassMock('SchedulersJob');
+        $job->expects($this->once())
+        ->method('resolveJob')
+        ->with($this->equalTo($msg), $this->equalTo($delay));
+
+        $sut = $this->getClassMock('SugarJobQueue', array('getJob'));
+        $sut->expects($this->any())
+        ->method('getJob')
+        ->will($this->returnValue($job));
+
+        $sut->resolveJob($jobId, $msg, $delay);
+    }
+
+    protected function getClassMock($class, $methods = array())
+    {
+        return $this->getMockbuilder($class)
+            ->disableOriginalConstructor()
+            ->setMethods($methods)
+            ->getMock();
+    }
 }
 
 class TestSugarJobQueue extends SugarJobQueue
