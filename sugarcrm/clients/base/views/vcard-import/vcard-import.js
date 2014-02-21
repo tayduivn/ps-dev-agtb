@@ -54,7 +54,7 @@
             app.alert.show('error_validation_vcard', {
                 level:'error',
                 messages: 'LBL_EMPTY_VCARD',
-                autoClose: false
+                autoClose: true
             });
         } else {
             app.file.checkFileFieldsAndProcessUpload(self, {
@@ -64,6 +64,13 @@
                         app.alert.show('vcard-import-saved', {
                             level: 'success',
                             messages: app.lang.get('LBL_IMPORT_VCARD_SUCCESS', self.module),
+                            autoClose: true
+                        });
+                    },
+                    error: function(error) {
+                        app.alert.show('error_validation_vcard', {
+                            level: 'error',
+                            messages: app.lang.get('TPL_IMPORT_VCARD_FAILURE', self.module, {module: self.module}),
                             autoClose: true
                         });
                     }

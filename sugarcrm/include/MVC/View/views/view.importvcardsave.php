@@ -30,12 +30,7 @@ require_once('include/vCard.php');
 
 class ViewImportvcardsave extends SugarView
 {
-    var $type = 'save';
-
-    public function __construct()
-    {
-        parent::SugarView();
-    }
+    public $type = 'save';
 
     /**
      * @see SugarView::display()
@@ -44,29 +39,30 @@ class ViewImportvcardsave extends SugarView
     {
         $redirect = "index.php?action=Importvcard&module={$_REQUEST['module']}";
 
-        if (!empty($_FILES['vcard']) && $_FILES['vcard']['error'] == 0) {
+        if (!empty($_FILES['vcard'])
+            && is_uploaded_file($_FILES['vcard']['tmp_name'])
+            && $_FILES['vcard']['error'] == 0
+        ) {
             $vcard = new vCard();
-            $record = $vcard->importVCard($_FILES['vcard']['tmp_name'], $_REQUEST['module']);
-
-            if (empty($record)) {
+            try {
+                $record = $vcard->importVCard($_FILES['vcard']['tmp_name'], $_REQUEST['module']);
+            } catch (Exception $e) {
                 SugarApplication::redirect($redirect . '&error=vcardErrorRequired');
             }
 
             SugarApplication::redirect("index.php?action=DetailView&module={$_REQUEST['module']}&record=$record");
         } else {
-            switch ($_FILES['vcard']['error'])
-            {
+            switch ($_FILES['vcard']['error']) {
                 case UPLOAD_ERR_FORM_SIZE:
                     $redirect .= "&error=vcardErrorFilesize";
-                break;
+                    break;
                 default:
                     $redirect .= "&error=vcardErrorDefault";
-                    $GLOBALS['log']->error('Upload error code: ' . $_FILES['vcard']['error'] . '. Please refer to the error codes http://php.net/manual/en/features.file-upload.errors.php');
-                break;
+                    $GLOBALS['log']->info('Upload error code: ' . $_FILES['vcard']['error'] . '.');
+                    break;
             }
 
             SugarApplication::redirect($redirect);
         }
     }
 }
-?>
