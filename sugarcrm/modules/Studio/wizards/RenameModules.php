@@ -767,6 +767,12 @@ class RenameModules
             $replace = call_user_func($modifier, $replace);
         }
 
+        // After filtering and modification, the replacement string may appear empty
+        if (!strlen($replace)) {
+            // In this case leave the label unchanged
+            return $oldStringValue;
+        }
+
         // Get the mod_strings key from metadata
         $modKey = $this->formatModuleLanguageKey($replacementMetaData['name'], $replacementLabels);
 
