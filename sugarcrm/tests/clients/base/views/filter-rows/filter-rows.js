@@ -468,7 +468,7 @@ describe("BaseFilterRowsView", function() {
                     type: 'enum',
                     options: 'status_dom',
                     isMultiSelect: true,
-                    searchBarThreshold: 9999,
+                    searchBarThreshold: -1,
                     required: false,
                     readonly: false
                 });
@@ -482,7 +482,6 @@ describe("BaseFilterRowsView", function() {
                     name: 'priority',
                     type: 'enum',
                     options: 'boolean_dom',
-                    searchBarThreshold: 9999,
                     required: false,
                     readonly: false
                 });
@@ -496,7 +495,6 @@ describe("BaseFilterRowsView", function() {
                     name: 'test_bool_field',
                     type: 'enum',
                     options: 'filter_checkbox_dom',
-                    searchBarThreshold: 9999,
                     required: false,
                     readonly: false
                 });
