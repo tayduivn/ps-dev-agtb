@@ -12,7 +12,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
+describe("Forecasts.Base.Plugins.DisableMassDelete", function() {
     
     var app, view, layout, moduleName = 'Opportunities', context, options, model;
     
@@ -20,7 +20,7 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
         app = SUGAR.App;
         context = app.context.getContext();
         
-        SugarTest.loadFile('../modules/Forecasts/clients/base/plugins', 'DisableMassdelete', 'js', function(d) {
+        SugarTest.loadFile('../modules/Forecasts/clients/base/plugins', 'DisableMassDelete', 'js', function(d) {
             app.events.off('app:init');
             eval(d);
             app.events.trigger('app:init');
@@ -43,7 +43,7 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
     });
     
     afterEach(function() {
-        delete app.plugins.plugins['field']['DisableMassdelete'];
+        delete app.plugins.plugins['field']['DisableMassDelete'];
         view = null;
         app = null;
         context = null;
