@@ -218,6 +218,7 @@
         };
 
         this.collection.fetch({
+            'showAlerts': false,
             'fields': ['id', 'name'],
             'filter': filter,
             'limit': limit,

@@ -48,8 +48,6 @@
      * this function without calling the parent one because we don't want to
      * reuse any of it.
      *
-     * TODO we need to support `recently-viewed` after SC-2237 is merged
-     *
      * TODO We need to create the custom Bean and Collection until SIDECAR-493
      * is ready and merged.
      */
@@ -97,5 +95,50 @@
 
             }, this)
         });
+
+        this.populateRecentlyViewed(this._settings.recently_viewed);
+    },
+
+    /**
+     * Populates all recently viewed records.
+     *
+     * @param {Number} limit The number of records to populate. Needs to be an
+     *   integer `> 0`.
+     */
+    populateRecentlyViewed: function(limit) {
+
+        if (limit <= 0) {
+            return;
+        }
+
+        this.collection.fetch({
+            'showAlerts': false,
+            'fields': ['id', 'name'],
+            'date': '-7 DAY',
+            'limit': limit,
+            'success': _.bind(this._renderPartial, this, 'recently-viewed'),
+            'endpoint': function(method, model, options, callbacks) {
+                var url = app.api.buildURL('recent', 'read', options.attributes, options.params);
+                app.api.call(method, url, null, callbacks, options.params);
+            }
+        });
+
+        return;
+    },
+
+    _renderPartial: function(tplName) {
+
+        if (this.disposed || !this.isOpen()) {
+            return;
+        }
+
+        var tpl = app.template.getView(this.name + '.' + tplName, this.module) ||
+            app.template.getView(this.name + '.' + tplName);
+
+        var $placeholder = this.$('[data-container="' + tplName + '"]'),
+            $old = $placeholder.nextUntil('.divider');
+
+        $old.remove();
+        $placeholder.after(tpl(this.collection));
     }
 })

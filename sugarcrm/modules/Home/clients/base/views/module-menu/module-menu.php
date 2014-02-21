@@ -15,7 +15,7 @@
 $viewdefs['Home']['base']['view']['module-menu'] = array(
     'settings' => array(
         'favorites' => 0,
-        // TODO needs to be changed when SC-2237 is merged
-        'recently_viewed' => 0,
+        'recently_viewed' => 10,
+        'recently_viewed_toggle' => 3,
     ),
 );
