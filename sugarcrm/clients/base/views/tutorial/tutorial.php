@@ -35,7 +35,7 @@ $viewdefs['base']['view']['tutorial'] = array(
         'intro' =>'LBL_TOUR_LIST_INTRO',
         'content' => array(
             array(
-                'name' => '.drawerTrig',
+                'name' => '.sidebar-toggle',
                 'text' => 'LBL_TOUR_LIST_INT_TOGGLE',
                 'full' => true,
                 'horizAdj' => -11,
