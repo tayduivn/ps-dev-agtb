@@ -201,6 +201,11 @@
             this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().hide();
         }
         this.$('.showLessData').hide();
+        //hide the show more link if the list has less than 3 results
+        if (this.dnbContactsList.product && this.dnbContactsList.product.length < 3) {
+            this.$('.showMoreData').hide();
+            this.$('.dnb-show-less').attr('class', 'dnb-show-all');
+        }
     },
 
     /**
