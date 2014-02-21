@@ -28,13 +28,28 @@
     preview_open: false,
 
     /**
+     * Is the dashlet collapsed or not
+     * @param boolean
+     */
+    collapsed: false,
+
+    /**
      * {@inheritdoc}
      */
     initialize: function(options) {
         this.once('render', function() {
             this.renderChart();
         }, this);
-        app.view.Field.prototype.initialize.call(this, options);
+
+        this._super('initialize', [options]);
+
+        // we need this if because Jasmine breaks with out as you can't define a view with a layout in Jasmine Test
+        // @see BR-1217
+        if(this.view.layout) {
+            // we need to listen to the context on the layout for this view for when it collapses
+            this.view.layout.on('dashlet:collapse', this.handleDashletCollapse, this);
+            this.view.layout.context.on('dashboard:collapse:fire', this.handleDashletCollapse, this);
+        }
     },
 
     /**
@@ -46,18 +61,11 @@
         }, this);
         app.events.on('preview:close', function() {
             this.preview_open = false;
-            if (!_.isUndefined(this._serverData)) {
-                this.convertDataToChartData();
-                this.generateD3Chart();
-            }
+            this.renderDashletContents();
         }, this);
         app.events.on('app:toggle:sidebar', function(state) {
             this.state = state;
-            if (this.state == 'open' && !this.preview_open
-                && !_.isUndefined(this._serverData)) {
-                this.convertDataToChartData();
-                this.generateD3Chart();
-            }
+            this.renderDashletContents();
         }, this);
 
         this.model.on('change', function(model) {
@@ -67,13 +75,43 @@
             }
         }, this);
 
-        this.model.on('change:group_by change:dataset change:ranges', function() {
-            if (this.state == 'open' && !this.preview_open
-                && !_.isUndefined(this._serverData)) {
-                this.convertDataToChartData();
-                this.generateD3Chart();
-            }
-        }, this);
+        this.model.on('change:group_by change:dataset change:ranges', this.renderDashletContents, this);
+    },
+
+    /**
+     * Utility method to check is the dashlet is visible
+     *
+     * @returns {boolean}
+     */
+    isDashletVisible: function() {
+        return (this.state === 'open' && !this.preview_open && !this.collapsed && !_.isUndefined(this._serverData));
+    },
+
+    /**
+     * Utility method to render the chart if the dashlet is visible
+     *
+     * @return {boolean}
+     */
+    renderDashletContents: function() {
+        if (this.isDashletVisible()) {
+            this.convertDataToChartData();
+            this.generateD3Chart();
+
+            return true;
+        }
+
+        return false;
+    },
+
+    /**
+     * Utility method since there are two event listeners
+     *
+     * @param {Boolean} collapsed       Is this dashlet collapsed or not
+     */
+    handleDashletCollapse: function(collapsed) {
+        this.collapsed = collapsed;
+
+        this.renderDashletContents();
     },
 
     /**
@@ -81,8 +119,14 @@
      * Clean up!
      */
     unbindData: function() {
+        // we need this if because Jasmine breaks with out as you can't define a view with a layout in Jasmine Test
+        // @see BR-1217
+        if (this.view.layout) {
+            this.view.layout.off('dashlet:collapse', null, this);
+            this.view.layout.context.off('dashboard:collapse:fire', null, this);
+        }
         app.events.off(null, null, this);
-        app.view.View.prototype.unbindData.call(this);
+        this._super('unbindData');
     },
 
     /**
@@ -205,7 +249,7 @@
      * Utility method to determine which data we need to parse,
      */
     convertDataToChartData: function() {
-        if(this.state == 'closed' || this.preview_open || _.isUndefined(this._serverData)) {
+        if(this.state == 'closed' || this.preview_open || this.collapsed || _.isUndefined(this._serverData)) {
             return -1;
         }
 
@@ -438,11 +482,7 @@
             this.adjustProbabilityLabels();
         }
 
-        if (this.state == 'open' && !this.preview_open
-                && !_.isUndefined(this._serverData)) {
-            this.convertDataToChartData();
-            this.generateD3Chart();
-        }
+        this.renderDashletContents();
     },
 
     /**
@@ -461,7 +501,7 @@
         if (!_.isEmpty(this.chart)) {
             $(window).off('resize.' + this.sfId);
         }
-        app.view.Field.prototype._dispose.call(this);
+        this._super('_dispose');
     }
 
 })
