@@ -48,52 +48,29 @@
      * this function without calling the parent one because we don't want to
      * reuse any of it.
      *
-     * TODO We need to create the custom Bean and Collection until SIDECAR-493
-     * is ready and merged.
+     * TODO We need to keep changing the endpoint until SIDECAR-493 is
+     * implemented.
      */
     populateMenu: function() {
-        var sync, Dashboard, DashboardCollection, dashCollection;
 
-        sync = function(method, model, options) {
-            options = app.data.parseOptionsForSync(method, model, options);
-            var callbacks = app.data.getSyncCallbacks(method, model, options);
-            app.api.records(method, this.apiModule, model.attributes, options.params, callbacks);
-        };
-
-        Dashboard = app.Bean.extend({
-            sync: sync,
-            apiModule: 'Dashboards',
-            module: 'Home'
-        }),
-        DashboardCollection = app.BeanCollection.extend({
-            sync: sync,
-            apiModule: 'Dashboards',
-            module: 'Home',
-            model: Dashboard
-        });
-
-        dashCollection = new DashboardCollection();
-        dashCollection.fetch({
-            //Don't show alerts for this request
-            showAlerts: false,
-            success: _.bind(function(data) {
+        this.collection.fetch({
+            'showAlerts': false,
+            'success': _.bind(function(data) {
 
                 var pattern = /^(LBL|TPL|NTC|MSG)_(_|[a-zA-Z0-9])*$/;
 
-                _.each(dashCollection.models, function(model) {
+                _.each(data.models, function(model) {
                     if (pattern.test(model.get('name'))) {
-                        model.set('name', app.lang.get(model.get('name'), dashCollection.module));
+                        model.set('name', app.lang.get(model.get('name'), model.module));
                     }
                 });
 
-                var tpl = app.template.getView(this.name + '.dashboards', this.module);
-                var $placeholder = this.$('[data-container="dashboards"]'),
-                    $old = $placeholder.nextUntil('.divider');
+                this._renderPartial('dashboards');
 
-                $old.remove();
-                $placeholder.after(tpl(dashCollection));
-
-            }, this)
+            }, this),
+            'endpoint': function(method, model, options, callbacks) {
+                app.api.records(method, 'Dashboards', model.attributes, options.params, callbacks);
+            }
         });
 
         this.populateRecentlyViewed(this._settings.recently_viewed);
@@ -126,6 +103,12 @@
         return;
     },
 
+    /**
+     * Renders the data in the partial template given.
+     *
+     * @param {String} tplName The template to use to render the partials.
+     * @protected
+     */
     _renderPartial: function(tplName) {
 
         if (this.disposed || !this.isOpen()) {
