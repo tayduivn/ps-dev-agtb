@@ -26,9 +26,6 @@ describe('Module List Layout', function() {
 
         beforeEach(function() {
 
-            sinon.collection.stub(app.api, 'isAuthenticated', function() {
-                return true;
-            });
             sinon.collection.stub(app.metadata, 'getModuleNames', function() {
                 return {
                     Home: 'Home',

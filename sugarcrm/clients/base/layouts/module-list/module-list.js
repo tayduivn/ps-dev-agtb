@@ -73,8 +73,6 @@
         if (this.layout) {
             this.layout.on('view:resize', this.resize, this);
         }
-
-        // FIXME we need to refactor this file to support defaultSettings
     },
 
     /**

@@ -51,7 +51,11 @@ class RecentApi extends SugarApi
     protected function parseArguments($args)
     {
         $options = array();
-        $options['limit'] = !empty($args['limit']) ? $args['limit'] : 20;
+        $options['limit'] = !empty($args['limit']) ? (int) $args['limit'] : 20;
+        if (!empty($args['max_num'])) {
+            $options['limit'] = (int) $args['max_num'];
+        }
+
         $options['offset'] = 0;
 
         if (!empty($args['offset'])) {

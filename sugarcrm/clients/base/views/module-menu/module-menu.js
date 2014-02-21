@@ -155,15 +155,12 @@
      * Method called when a `show.bs.dropdown` event occurs.
      *
      * Populate the favorites and recently viewed records every time we open
-     * the menu.
+     * the menu. This is only supported on modules that have fields.
      */
     populateMenu: function() {
 
         var meta = app.metadata.getModule(this.module) || {};
 
-        // FIXME some modules don't have fields therefore we don't have recent
-        // and favorites, we should disable them using metadata not with this
-        // hack
         if (_.isEmpty(_.omit(meta.fields, '_hash'))) {
             return;
         }

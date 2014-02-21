@@ -23,6 +23,56 @@
 ({
     extendsFrom: 'ModuleListView',
 
+    events: {
+        'click [data-toggle="recently-viewed"]': 'handleToggleRecentlyViewed'
+    },
+
+    /**
+     * Default settings used when none are supplied through metadata.
+     *
+     * Supported settings:
+     * - {Number} favorites Number of records to show on the favorites
+     *   container. Pass 0 if you don't want to support favorites.
+     * - {Number} recently_viewed Number of records to show on the recently
+     *   viewed container. Pass 0 if you don't want to support recently viewed.
+     * - {Number} recently_viewed_toggle Threshold of records to use for
+     *   toggling the recently viewed container. Pass 0 if you don't want to
+     *   support recently viewed.
+     *
+     * Example:
+     * ```
+     * // ...
+     * 'settings' => array(
+     *     'favorites' => 5,
+     *     'recently_viewed' => 9,
+     *     'recently_viewed_toggle' => 4,
+     *     //...
+     * ),
+     * //...
+     * ```
+     *
+     * @protected
+     */
+    _defaultSettings: {
+        favorites: 3,
+        recently_viewed: 10,
+        recently_viewed_toggle: 3
+    },
+
+    /**
+     * Key for storing the last state of the recently viewed toggle.
+     *
+     * @const
+     * @type {String}
+     */
+    TOGGLE_RECENTS_KEY: 'more',
+
+    /**
+     * The lastState key to use in order to retrieve or save last recently
+     * viewed toggle.
+     */
+    _recentToggleKey: null,
+
     initialize: function(options) {
 
         this._super('initialize', [options]);
@@ -32,8 +82,16 @@
         if (app.config.enableLegacyDashboards && app.config.enableLegacyDashboards === true) {
             this.dashboardBwcLink = app.bwc.buildRoute('Home', null, 'bwc_dashboard');
         }
+
+        this.meta.last_state = { id: 'recent' };
+        this._recentToggleKey = app.user.lastState.key(this.TOGGLE_RECENTS_KEY, this);
     },
 
+    /**
+     * @inheritDoc
+     *
+     * Adds the title and the class for the Home module (Sugar cube).
+     */
     _renderHtml: function() {
         this._super('_renderHtml');
 
@@ -47,6 +105,8 @@
      * Populates all available dashboards when opening the menu. We override
      * this function without calling the parent one because we don't want to
      * reuse any of it.
+     *
+     * **Attention** We only populate up to 20 dashboards.
      *
      * TODO We need to keep changing the endpoint until SIDECAR-493 is
      * implemented.
@@ -73,16 +133,26 @@
             }
         });
 
-        this.populateRecentlyViewed(this._settings.recently_viewed);
+        this.populateRecentlyViewed();
     },
 
     /**
-     * Populates all recently viewed records.
+     * Populates recently viewed records with a limit based on last state key.
      *
-     * @param {Number} limit The number of records to populate. Needs to be an
-     *   integer `> 0`.
+     * Based on the state it will read 2 different metadata properties:
+     *
+     * - `recently_viewed_toggle` for the value to start toggling
+     * - `recently_viewed` for maximum records to retrieve
+     *
+     * Defaults to `recently_viewed_toggle` if no state is defined.
+     *
+     * @param {String} state Populates recently viewed based on the state.
      */
-    populateRecentlyViewed: function(limit) {
+    populateRecentlyViewed: function() {
+
+        var visible = app.user.lastState.get(this._recentToggleKey),
+            threshold = this._settings['recently_viewed_toggle'],
+            limit = this._settings[visible ? 'recently_viewed' : 'recently_viewed_toggle'];
 
         if (limit <= 0) {
             return;
@@ -93,7 +163,12 @@
             'fields': ['id', 'name'],
             'date': '-7 DAY',
             'limit': limit,
-            'success': _.bind(this._renderPartial, this, 'recently-viewed'),
+            'success': _.bind(function(data) {
+                this._renderPartial('recently-viewed', {
+                    open: !visible,
+                    showRecentToggle: data.models.length > threshold || data.next_offset !== -1
+                });
+            }, this),
             'endpoint': function(method, model, options, callbacks) {
                 var url = app.api.buildURL('recent', 'read', options.attributes, options.params);
                 app.api.call(method, url, null, callbacks, options.params);
@@ -106,10 +181,13 @@
     /**
      * Renders the data in the partial template given.
      *
+     * The partial template can receive more data from the options parameter.
+     *
      * @param {String} tplName The template to use to render the partials.
+     * @param {Object} options Other optional data to pass to the template.
      * @protected
      */
-    _renderPartial: function(tplName) {
+    _renderPartial: function(tplName, options) {
 
         if (this.disposed || !this.isOpen()) {
             return;
@@ -122,6 +200,24 @@
             $old = $placeholder.nextUntil('.divider');
 
         $old.remove();
-        $placeholder.after(tpl(this.collection));
+        $placeholder.after(tpl(_.extend({
+            'collection': this.collection
+        }, options)));
+    },
+
+    /**
+     * Handles the toggle of the more recently viewed mixed records.
+     *
+     * This triggers a refresh on the data to be retrieved based on the amount
+     * defined in metadata for the given state. This way we limit the amount of
+     * data to be retrieve to the current state and not getting always the
+     * maximum.
+     *
+     * @param {Event} event The click event that triggered the toggle.
+     */
+    handleToggleRecentlyViewed: function(event) {
+        app.user.lastState.set(this._recentToggleKey, Number(!app.user.lastState.get(this._recentToggleKey)));
+        this.populateRecentlyViewed();
+        event.stopPropagation();
     }
 })
