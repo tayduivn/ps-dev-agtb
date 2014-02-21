@@ -14,14 +14,17 @@
     /**
      * {@inheritDoc}
      *
-     * Unformats the float based on userPreferences (grouping separator).
-     * If we weren't able to parse the value, `undefined` is returned.
+     * Unformats the float based on userPreferences (grouping/decimal separator).
+     * If we weren't able to parse the value, the original value is returned.
      *
      * @param {String} value the formatted value based on user preferences.
-     * @return {Number|undefined} the unformatted value.
+     * @return {Number|String} the unformatted value, or original string if invalid.
      */
     unformat: function(value) {
-        return app.utils.unformatNumberStringLocale(value, true);
+        var unformattedValue = app.utils.unformatNumberStringLocale(value, true);
+        // if unformat failed, return original value
+        return _.isFinite(unformattedValue) ? unformattedValue : value;
+
     },
 
     /**

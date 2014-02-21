@@ -37,6 +37,9 @@ describe('Base.Fields.Float', function() {
             expect(field.format(value)).toEqual('12.351.616.461,2552');
             expect(field.unformat('12.351.616.461,2552')).toEqual(12351616461.2552);
 
+            expect(field.unformat('5.000,65,')).toEqual('5.000,65,');
+            expect(field.unformat('5.000,65')).toEqual(5000.65);
+
             preferenceStub.withArgs('decimal_precision').returns(2);
 
             expect(field.format(value)).toEqual('12.351.616.461,26');
