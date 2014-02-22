@@ -13,7 +13,7 @@
  */
 --}}
 {{#if meta.short}}
-    <a class="module-list-link" href="#{{buildRoute module=module}}" data-route="#{{buildRoute module=module}}" track="click:{{module}}"><span class="label label-module-mini label-{{module}}" title="{{str "LBL_MODULE_NAME" module}}">{{moduleIconLabel module}}</span>{{str 'LBL_MODULE_NAME' module}}</a>
+    <a class="module-list-link" href="#{{buildRoute module=module}}" data-route="#{{buildRoute module=module}}" track="click:{{module}}"><span class="label label-module label-module-mini label-{{module}}" title="{{str "LBL_MODULE_NAME" module}}">{{moduleIconLabel module}}</span>{{str 'LBL_MODULE_NAME' module}}</a>
 {{else}}
     <a class="btn btn-invisible btn-link" href="#{{buildRoute module=module}}" data-route="#{{buildRoute module=module}}" track="click:{{module}}">{{str 'LBL_MODULE_NAME' module}}</a>
     {{#if actions}}
