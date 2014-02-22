@@ -115,7 +115,6 @@ class RecentApi extends SugarApi
      */
     public function retrieveRecents($api, $args, $acl = 'list')
     {
-        $currentUser = $this->getUserBean();
         $options = $this->parseArguments($args);
 
         if (!empty($options['module'])) {
@@ -187,7 +186,7 @@ class RecentApi extends SugarApi
         // Since tracker relationships don't actually exist, we're gonna have to add a direct join
         $query->joinRaw(
             sprintf(
-                " LEFT JOIN tracker ON tracker.item_id=%s.id AND tracker.module_name='%s' AND tracker.user_id='%s' ",
+                " JOIN tracker ON tracker.item_id=%s.id AND tracker.module_name='%s' AND tracker.user_id='%s' ",
                 $query->from->getTableName(),
                 $query->from->module_name,
                 $currentUser->id
