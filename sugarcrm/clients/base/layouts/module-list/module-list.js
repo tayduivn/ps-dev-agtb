@@ -200,8 +200,6 @@
      * Resize the module list to the specified width and move the extra module
      * names to the `more-modules` drop down.
      *
-     * We first clone the module list, make adjustments, and then replace.
-     *
      * @param {Number} width The width that we have available.
      */
     resize: function(width) {
@@ -213,23 +211,22 @@
         //TODO: Theme Compatible, Filtered switching menu
         //TODO: User preferences maximum menu count
 
-        // FIXME we need to cache more jQuery searches because everytime we
-        // change the module we can retrigger a new resize
-        var $moduleListClone = this.$('[data-container=module-list]'),
+        var $moduleList = this.$('[data-container=module-list]'),
             $dropdown = this._$moreModulesDD.find('[data-container=overflow]');
 
-        if ($moduleListClone.outerWidth(true) >= width) {
-            this.removeModulesFromList($moduleListClone, width);
+        if ($moduleList.outerWidth(true) >= width) {
+            this.removeModulesFromList($moduleList, width);
         } else {
-            this.addModulesToList($moduleListClone, width);
+            this.addModulesToList($moduleList, width);
         }
         this._$moreModulesDD.toggleClass('hidden', $dropdown.children().length === 0);
     },
 
     /**
-     * Move modules from the dropdown to the list to fit the specified width
-     * @param $modules
-     * @param width
+     * Move modules from the dropdown to the list to fit the specified width.
+     * @param {jQuery} $modules The jQuery element that contains all the
+     *   modules.
+     * @param {Number} width The current width we have available.
      */
     addModulesToList: function($modules, width) {
 
@@ -238,7 +235,6 @@
             currentWidth = $modules.outerWidth(true);
 
         while (currentWidth < width && $toHide.length > 0) {
-
             this.toggleModule($toHide.data('module'), true);
 
             $toHide = $dropdown.children('li').not('.hidden').first();
@@ -247,14 +243,15 @@
         }
 
         if (currentWidth >= width) {
-            this.toggleModule($toHide.data('module'), false);
+            this.removeModulesFromList($modules, width);
         }
     },
 
     /**
      * Move modules from the list to the dropdown to fit the specified width
-     * @param $modules
-     * @param width
+     * @param {jQuery} $modules The jQuery element that contains all the
+     *   modules.
+     * @param {Number} width The current width we have available.
      */
     removeModulesFromList: function($modules, width) {
 
