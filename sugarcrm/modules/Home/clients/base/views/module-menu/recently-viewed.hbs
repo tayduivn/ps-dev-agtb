@@ -13,7 +13,7 @@
  */
 --}}
 {{#each collection.models}}
-    <li><a tabindex="-1" href="#{{buildRoute model=this}}" data-route="#{{buildRoute model=this}}"><i class="icon-time active"></i>{{getFieldValue this "name"}}</a></li>
+    <li><a tabindex="-1" href="#{{buildRoute model=this}}" data-route="#{{buildRoute model=this}}"><i class="icon-time active"></i>{{getFieldValue this 'name'}}</a></li>
 {{/each}}
 {{#if showRecentToggle}}
     <li><button type="button" class="btn-link btn-invisible toggle-recents" data-toggle="recently-viewed">
