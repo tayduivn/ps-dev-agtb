@@ -114,8 +114,7 @@
         this._catalog[component.module] = this._catalog[component.module] || {};
 
         if (component.meta && component.meta.short) {
-            // FIXME remove the hide() when we fix the CSS
-            $content.addClass('hidden').hide();
+            $content.addClass('hidden');
             this._catalog[component.module].short = $content;
             this._$moreModulesDD.find('[data-container="overflow"]').append($content);
         } else {
@@ -293,17 +292,12 @@
         if (!this._catalog[module].short) {
             state = !_.isUndefined(state) ? !state : undefined;
             newState = this._catalog[module].long.toggleClass('hidden', state).hasClass('hidden');
-            this._catalog[module].long.toggle(!newState);
             return this;
         }
 
         // keep it in sync
         newState = this._catalog[module].short.toggleClass('hidden', state).hasClass('hidden');
         this._catalog[module].long.toggleClass('hidden', !newState);
-
-        // FIXME hide() because there is a css problem
-        this._catalog[module].long.toggle(!!newState);
-        this._catalog[module].short.toggle(!newState);
 
         return this;
     },

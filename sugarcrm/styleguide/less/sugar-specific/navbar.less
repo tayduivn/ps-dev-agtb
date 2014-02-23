@@ -21,7 +21,6 @@
     .box-shadow(@shadow);
     width: 100%;
     display: table;
-    //height: 44px;
     min-height: 0;
     padding: 0;
     margin: 0;
@@ -54,6 +53,9 @@
   }
   .dropdown .icon-caret-down {
     color: @gray;
+  }
+  .megamenu {
+    margin: 0;
   }
 }
 
@@ -223,7 +225,6 @@
   }
 }
 
-
 .module-list .megamenu {
   max-height: 44px;
   white-space: nowrap;
@@ -241,7 +242,7 @@
     .btn-group {
       /*cube*/
       &.home {
-        padding-left: 16px;
+        padding: 8px 10px 8px 16px;
         &.open {
           .dropdown-menu {
             left: 0;
@@ -279,9 +280,7 @@
         }
       }
       &:not(.home):not(.more) {
-        .btn-link {
-          padding: 4px 0;
-        }
+        padding: 8px 6px 8px 8px;
         .dropdown-toggle {
           padding: 5px 8px;
         }
