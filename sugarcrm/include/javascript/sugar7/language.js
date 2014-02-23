@@ -37,7 +37,7 @@
      * When application finishes syncing.
      */
     app.events.on('app:sync:complete', function() {
-        moment.lang(app.user.getPreference('language'));
+        app.date.lang(app.user.getPreference('language'));
     });
 
 })(SUGAR.App);
