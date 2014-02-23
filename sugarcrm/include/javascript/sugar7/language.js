@@ -13,8 +13,9 @@
 (function(app) {
     app.events.on('app:init', function() {
         app.lang = _.extend(app.lang, {
+
             /**
-             * Retrieves module singular form name.
+             * Retrieves module singular from name.
              *
              * @param {String} module Module name.
              * @return {String} Module singular form.
@@ -29,5 +30,14 @@
                 return moduleSingular;
             }
         });
+
     });
+
+    /**
+     * When application finishes syncing.
+     */
+    app.events.on('app:sync:complete', function() {
+        moment.lang(app.user.getPreference('language'));
+    });
+
 })(SUGAR.App);

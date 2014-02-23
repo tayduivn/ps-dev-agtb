@@ -555,7 +555,7 @@
                 // date is not inside the current timeperiod
 
                 // check if the newDate is before or after the current TP
-                if(app.date.isDateAfter(newDate, this.modelTP.get('end_date'))) {
+                if (app.date(newDate).isAfter(this.modelTP.get('end_date'))) {
                     // handle if date is after model (Opportunity) timeperiod
 
                     // fetch new TP based on the new date if user changed item's date
@@ -564,7 +564,7 @@
 
                     // after fetching, add this model to the server data that comes back
                     options.beforeParseData = _.bind(this.addModelTotalsToServerData, this, model);
-                } else if(app.date.isDateBefore(newDate, this.modelTP.get('start_date'))) {
+                } else if (app.date(newDate).isBefore(this.modelTP.get('start_date'))) {
                     // handle if date is before model (Opportunity) timeperiod
 
                     // check if this RLI has already been inside the TP
@@ -735,7 +735,7 @@
         var inTimePeriod = false;
 
         // check if date is between the timePeriod
-        if(app.date.isDateBetween(date, timePeriod.start_date, timePeriod.end_date)) {
+        if (app.date(date).isBetween(timePeriod.start_date, timePeriod.end_date)) {
             inTimePeriod = true;
         }
 

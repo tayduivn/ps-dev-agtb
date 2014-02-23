@@ -59,7 +59,7 @@
  * @alias SUGAR.App.view.views.BaseTabbedDashletView
  */
 ({
-    plugins: ['Dashlet', 'Timeago', 'ToggleVisibility', 'Tooltip'],
+    plugins: ['Dashlet', 'RelativeTime', 'ToggleVisibility', 'Tooltip'],
 
     events: {
         'click [data-action=show-more]': 'showMore',

@@ -18,7 +18,7 @@
             <button class="btn {{#if this.collection.length}}btn-danger{{else}}btn-inverse{{/if}} dropdown-toggle"
                     data-toggle="dropdown"
                     rel="tooltip"
-                    title="{{str "LBL_NOTIFICATIONS"}}"
+                    title="{{str "LBL_NOTIFICATIONS" this.module}}"
                     data-placement="bottom">
                 {{this.collection.length}}
                 {{#if this.collection.next_offset}}{{#notEq this.collection.next_offset "-1"}}+{{/notEq}}{{/if}}
@@ -37,7 +37,7 @@
                                 {{field ../../this model=../this template="detail"}}
                             {{/with}}
                             {{this.attributes.name}}</span>
-                            <time class="span4 pull-right">{{timeago this.attributes.date_entered "{{relativetime}}"}}</time>
+                            {{relativeTime this.attributes.date_entered class="span4 pull-right"}}
                         </a></li>
                     {{/each}}
                     <li><a class="row-fluid" href="#{{module}}"><i class="icon-reorder span1"></i><span class="span8 ellipsis_inline">{{str "LBL_SHOW_NOTIFICATIONS" module}}</span></a></li>

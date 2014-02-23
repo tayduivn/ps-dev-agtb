@@ -58,9 +58,7 @@
      * @protected
      */
     _getFilters: function(index) {
-        var filterDate = new Date();
-        filterDate.setDate(filterDate.getDate() - this.settings.get('filter'));
-        var filterStr = app.date.format(filterDate, 'Y-m-d');
+        var filterStr = app.date().subtract('days', this.settings.get('filter')).format('YYYY-MM-DD');
 
         var tab = this.tabs[index],
             filter = {},

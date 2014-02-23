@@ -259,10 +259,9 @@
      * {@inheritDoc}
      */
     _getFilters: function(index) {
-        var todayDate = new Date(),
-            today = app.date.format(todayDate,'Y-m-d');
 
-        var tab = this.tabs[index],
+        var today = app.date().format('YYYY-MM-DD'),
+            tab = this.tabs[index],
             filter = {},
             filters = [],
             defaultFilters = {

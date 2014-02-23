@@ -257,6 +257,8 @@
                    'include/javascript/jquery/jquery.nouislider.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/nprogress/nprogress.js' => 'include/javascript/sugar_sidecar.min.js',
 
+                   'sidecar/lib/momentjs/min/langs.min.js' => 'include/javascript/sugar_sidecar.min.js',
+
                    //BEGIN SUGARCRM flav=pro ONLY
                    //Expression Engine
                    'sidecar/lib/sugarlogic/expressions.js'              => 'include/javascript/sugar_sidecar.min.js',
@@ -287,6 +289,7 @@
                     'include/javascript/sugar7/plugins/MassQuote.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Taggable.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Timeago.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/RelativeTime.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ErrorDecoration.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/QuickSearchFilter.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ClickToEdit.js'  => 'include/javascript/sugar_sidecar.min.js',
@@ -316,6 +319,7 @@
                     'portal2/user.js'                => 'portal2/portal.min.js',
                     'portal2/portal.js'              => 'portal2/portal.min.js',
                     'portal2/portal-ui.js'           => 'portal2/portal.min.js',
+                    'sugarcrm/include/javascript/sugar7/language.js'           => 'portal2/portal.min.js',
                     'include/javascript/jquery/jquery.popoverext.js'           => 'portal2/portal.min.js',
                     'include/javascript/jquery/jquery.effects.custombounce.js'           => 'portal2/portal.min.js',
                 )

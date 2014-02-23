@@ -32,7 +32,7 @@
  * @alias SUGAR.App.view.views.BaseNotificationsView
  */
 ({
-    plugins: ['Dropdown', 'Timeago', 'EllipsisInline', 'Tooltip'],
+    plugins: ['Dropdown', 'RelativeTime', 'EllipsisInline', 'Tooltip'],
 
     /**
      * Notifications bean collection.
