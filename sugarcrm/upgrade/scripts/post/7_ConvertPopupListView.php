@@ -22,7 +22,7 @@ require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParse
  */
 class SugarUpgradeConvertPopupListView extends UpgradeScript
 {
-    public $order = 4000;
+    public $order = 7100;
     public $type = self::UPGRADE_CUSTOM;
     public $version = '7.2';
 

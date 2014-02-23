@@ -178,6 +178,7 @@ abstract class SidecarAbstractMetaDataUpgrader
         'baselist'        => MB_SIDECARLISTVIEW,
         'baserecordview'  => MB_RECORDVIEW,
         'basefilter'      => MB_SEARCHVIEW,
+        'basepopuplist'   => MB_SIDECARPOPUPVIEW,
     );
 
     /**
@@ -445,5 +446,14 @@ abstract class SidecarAbstractMetaDataUpgrader
      */
     protected function logUpgradeStatus($message) {
         $this->upgrader->logUpgradeStatus($message);
+    }
+
+    /**
+     * Returns sidecar view defs.
+     *
+     * @return array
+     */
+    public function getSidecarViewDefs() {
+        return $this->sidecarViewdefs;
     }
 }
