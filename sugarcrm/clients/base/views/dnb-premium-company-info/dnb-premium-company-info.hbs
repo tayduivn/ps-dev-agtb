@@ -16,7 +16,7 @@
 	{{str "LBL_DNB_PREMIUM_COMPANY_INFO_LOADING"}}
 </div>
 <div id="dnb-prem-company-details">
-	{{#if product}}
+    {{#if product}}
 		<div class='dnb-show-less'>
 			<ul class="unstyled listed">
 				{{#if product.SubjectHeader.OrganizationSummaryText}}
@@ -29,7 +29,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- Total Inquires Count-->
 				{{#if product.SubjectHeader.TotalInquiriesCount}}
 					<li>
@@ -41,7 +40,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- Industry Code -->
 				{{#if product.IndustryCode.IndustryCode}}
 					{{#each product.IndustryCode.IndustryCode}}
@@ -60,8 +58,6 @@
 						</li>
 					{{/each}}
 				{{/if}}
-
-
 				<!-- Not Reachable Indicator -->
 				{{#if product.Telecommunication.TelephoneNumber.0.UnreachableIndicator}}
 					<li>
@@ -73,7 +69,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- Residential Address Indicator -->
 				{{#if product.Location.PrimaryAddress.0.ResidentialAddressIndicator}}
 					<li>
@@ -85,8 +80,6 @@
 						</div>
 					</li>
 				{{/if}}
-
-
 				<!-- Last Update Date -->
 				{{#if product.SubjectHeader.LastUpdateDate.$}}
 					<li>
@@ -98,8 +91,7 @@
 						</div>
 					</li>
 				{{/if}}
-
-				<!-- Street Adress Line Text -->
+				<!-- Street Address Line Text -->
 				{{#if product.RegisteredDetail.OrganizationIdentificationNumberDetail.0.RegistrationLocation.PrimaryAddress.0.StreetAddressLine.0.LineText}}
 					<li>
 						<div class='dnb-company-label'>
@@ -110,7 +102,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- County Official Name -->
 				{{#if product.Location.PrimaryAddress0.CountyOfficialName}}
 					<li>
@@ -122,8 +113,7 @@
 						</div>
 					</li>
 				{{/if}}
-
-				<!-- Territory Offical Name -->
+				<!-- Territory Official Name -->
 				{{#if product.Location.PrimaryAddress.0.TerritoryOfficialName}}
 					<li>
 						<div class='dnb-company-label'>
@@ -134,7 +124,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- Territory Abbreviated Name-->
 				{{#if product.Location.PrimaryAddress.0.TerritoryAbbreviatedName}}
 					<li>
@@ -146,7 +135,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- Telecommunication Number -->
 				{{#if product.Telecommunication.TelephoneNumber.0.TelecommunicationNumber}}
 					<li>
@@ -158,7 +146,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- International Dialling Code -->
 				{{#if product.Telecommunication.TelephoneNumber.0.InternationalDialingCode}}
 					<li>
@@ -170,7 +157,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- Incorporation Year-->
 				{{#if product.RegisteredDetail.IncorporationYear}}
 					<li>
@@ -182,7 +168,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!--  Organization Identification Number -->
 				{{#if product.RegisteredDetail.OrganizationIdentificationNumberDetail.0.OrganizationIdentificationNumber}}
 					<li>
@@ -194,7 +179,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- Filling Organization Name -->
 				{{#if product.RegisteredDetail.OrganizationIdentificationNumberDetail.0.FilingOrganizationName}}
 					<li>
@@ -206,7 +190,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- Stock Exchange Ticker Name-->
 				{{#if product.RegisteredDetail.StockExchangeDetails.1.StockExchangeTickerName}}
 					<li>
@@ -218,7 +201,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- Line of Business Description -->
 				{{#if product.ActivitiesAndOperations.LineOfBusinessDetails.0.LineOfBusinessDescription.$}}
 					<li>
@@ -230,7 +212,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- Import Indicator-->
 				{{#if product.ActivitiesAndOperations.ImportDetails.ImportIndicator}}
 					<li>
@@ -242,7 +223,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- Export Indicator-->
 				{{#if product.ActivitiesAndOperations.ExportDetails.ExportIndicator}}
 					<li>
@@ -254,7 +234,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- Agent Indicator-->
 				{{#if product.ActivitiesAndOperations.SubjectIsAgentDetails.AgentIndicator}}
 					<li>
@@ -266,7 +245,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- Total Employee Quantity-->
 				{{#if product.EmployeeFigures.IndividualEntityEmployeeDetails.TotalEmployeeQuantity}}
 					<li>
@@ -278,7 +256,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- Current Principal-->
 				{{#if product.PrincipalsAndManagement.CurrentPrincipal}}
 					{{#each product.PrincipalsAndManagement.CurrentPrincipal}}
@@ -297,7 +274,6 @@
 						</li>
 					{{/each}}
 				{{/if}}
-
 				<!-- Most Senior Principal-->
 				{{#if product.PrincipalsAndManagement.MostSeniorPrincipal}}
 					<li>
@@ -315,7 +291,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- Third Party Assessment-->
 				{{#if product.ThirdPartyAssessment.ThirdPartyAssessment}}
 					{{#each product.ThirdPartyAssessment.ThirdPartyAssessment}}
@@ -329,7 +304,6 @@
 						</li>
 					{{/each}}
 				{{/if}}
-
 				<!-- Small Business Indicator -->
 				{{#if product.SocioEconomicIdentification.SmallBusinessIndicator}}
 					<li>
@@ -341,7 +315,6 @@
 							</div>
 					</li>
 				{{/if}}
-
 				<!-- Ethnicity Type Text -->
 				{{#if product.SocioEconomicIdentification.OwnershipEthnicity.0.EthnicityTypeText.$}}
 					<li>
@@ -353,7 +326,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				<!-- History Rating Text -->
 				{{#if product.Assessment.HistoryRatingText}}
 					<li>
@@ -365,7 +337,6 @@
 							</div>
 					</li>
 				{{/if}}
-
 				{{#if product.SubjectHeader.TransferDUNSNumberRegistration.0.TransferredFromDUNSNumber}}
 					<li>
 						<div class='dnb-company-label'>
@@ -376,8 +347,6 @@
 						</div>
 					</li>
 				{{/if}}
-
-
 				{{#if product.SubjectHeader.DUNSSelfRequestIndicator}}
 					<li>
 						<div class='dnb-company-label'>
@@ -398,7 +367,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				{{#if product.Location.PrimaryAddress.0.PostalCode}}
 					<li>
 						<div class='dnb-company-label'>
@@ -409,8 +377,6 @@
 						</div>
 					</li>
 				{{/if}}
-
-
 				{{#if product.Location.PrimaryAddress.0.UndeliverableIndicator}}
 					<li>
 						<div class='dnb-company-label'>
@@ -431,7 +397,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				{{#if product.Location.PrimaryAddress.0.CountryGroupName}}
 					<li>
 						<div class='dnb-company-label'>
@@ -492,8 +457,6 @@
 						</div>
 					</li>
 				{{/if}}
-
-
 				{{#if product.Telecommunication.WebPageAddress.0.TelecommunicationAddress}}
 					<li>
 						<div class='dnb-company-label'>
@@ -504,10 +467,6 @@
 						</div>
 					</li>
 				{{/if}}
-
-
-
-
 				{{#if productName.OrganizationPrimaryName.0.OrganizationName.$}}
 					<li>
 						<div class='dnb-company-label'>
@@ -588,9 +547,6 @@
 						</div>
 					</li>
 				{{/if}}
-
-
-
 				{{#if product.RegisteredDetail.OrganizationIdentificationNumberDetail.0.RegistrationLocation.PrimaryAddress.0.PrimaryTownName}}
 					<li>
 						<div class='dnb-company-label'>
@@ -611,7 +567,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				{{#if product.RegisteredDetail.OrganizationIdentificationNumberDetail.0.RegistrationIssuerName}}
 					<li>
 						<div class='dnb-company-label'>
@@ -622,8 +577,6 @@
 						</div>
 					</li>
 				{{/if}}
-
-
 				{{#if product.RegisteredDetail.StockExchangeDetails.1.StockExchangeName.$}}
 					<li>
 						<div class='dnb-company-label'>
@@ -634,7 +587,6 @@
 						</div>
 					</li>
 				{{/if}}
-
 				{{#if product.SocioEconomicIdentification.MinorityOwnedIndicator}}
 					<li>
 						<div class='dnb-company-label'>
@@ -645,7 +597,6 @@
 							</div>
 					</li>
 				{{/if}}
-
 				{{#if product.Assessment.CommercialCreditScore}}
 					<li>
 						<div class='dnb-company-label'>

@@ -14,44 +14,47 @@
 }}
 
 <div id="dnb-competitors-loading" class="block-footer">
-{{str "LBL_DNB_COMPETITORS_LOADING"}}
+    {{str "LBL_DNB_COMPETITORS_LOADING"}}
 </div>
 <div id="dnb-competitors-list">
-{{#if competitors}}
-	<div>
-        <ul class="unstyled listed">
-			{{#each competitors}}
-				<li> 
-                       {{this.OrganizationPrimaryName.OrganizationName.$}}
-						{{#if this.TopCompetitorIndicator}}
+    {{#if dnbComp.product}}
+        <div>
+            <ul class="unstyled listed">
+                {{#each dnbComp.product}}
+                    <li>
+                        <a class="dnb-company-name" id="{{this.dunsnum}}">
+                            {{this.orgname}}
+                        </a>
+                        {{#if this.topcompetitorindicator}}
                             <span class="label label-warning pull-right" data-placement="right">{{str "LBL_DNB_COMPETITORS_TOP"}}</span>
                         {{/if}}
-                        
-                         <div class='txt'>
-                            {{#if companies}}
-                                {{this.PrimaryAddress.PrimaryTownName}},
+                        <div class='record-label dnb-company-list'>
+                            {{#if territoryabbreviatedname}}
+                                {{this.territoryabbreviatedname}},
                             {{/if}}
-
-                            {{#if PrimaryAddress.PrimaryTownName}}
-                                {{this.PrimaryAddress.PrimaryTownName}},
+                            {{#if town}}
+                                {{this.town}},
                             {{/if}}
-
-                            {{#if this.PrimaryAddress.CountryOfficialName}}
-                                {{this.PrimaryAddress.CountryOfficialName}},
+                            {{#if this.countryofficialname}}
+                                {{this.countryofficialname}},
                             {{/if}}
-
-                            {{#if SalesRevenueAmount.0.$}}
+                            {{#if salesrevenueamt}}
                                 <b>Sales:</b>
-                                {{this.SalesRevenueAmount.0.$}}
+                                {{this.salesrevenueamt}}
+                            {{/if}}
+                            {{#if this.isDupe}}
+                                <span class="label label-important pull-right" data-placement="right">
+                                    {{str "LBL_DNB_DUPLICATE"}}
+                                </span>
                             {{/if}}
                         </div>
-					</li>
-			{{/each}}
-		</ul>
-	</div>
-{{else}}
-    <aside>
-        <em>{{errmsg}}</em>
-    </aside>
-{{/if}}
+                    </li>
+                {{/each}}
+            </ul>
+        </div>
+    {{else}}
+        <aside class='create-no-data'>
+            <em>{{dnbComp.errmsg}}</em>
+        </aside>
+    {{/if}}
 </div>

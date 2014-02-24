@@ -22,17 +22,17 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/externalAPI/Dnb/ExtAPIDnb.php');
-// A simple example class
+
 class DnbApi extends SugarApi
 {
     public function registerApiRest()
     {
         return array(
-            'dnbdirectapi' => array(
+            'dnbDirectGet' => array(
                 'reqType' => 'GET',
                 'path' => array('connector','dnb','?','?'),
                 'pathVars' => array('connector','dnb','qtype','qparam'),
-                'method' => 'dnbdirectapi',
+                'method' => 'dnbDirectGet',
                 'shortHelp' => 'Invoke DNB API using GET',
                 'noLoginRequired' => true,
                 'longHelp' => 'include/api/help/dnb_get_help.html',
@@ -56,90 +56,68 @@ class DnbApi extends SugarApi
     public function getEAPM()
     {
         $dnbEAPM = ExternalAPIFactory::loadAPI('Dnb',true);
-
         $dnbEAPM->getConnector();
-
+        if (!$dnbEAPM->getConnectorParam('dnb_username') ||
+            !$dnbEAPM->getConnectorParam('dnb_password') ||
+            !$dnbEAPM->getConnectorParam('dnb_env')){
+            return array('error' =>'ERROR_DNB_CONFIG');
+        }
         return $dnbEAPM;
     }
 
     /**
-     * Gets Company Search results based on keyword
+     * Invokes D&B API using GET
      * @param $api
      * @param $args
      * @return mixed
      * @throws SugarApiExceptionRequestMethodFailure
      * @throws SugarApiExceptionMissingParameter
      */
-    public function dnbdirectapi($api,$args)
+    public function dnbDirectGet($api,$args)
     {
-        $args2params = array(
-            'qtype' => 'qtype',
-            'qparam' => 'qparam'
-        );
-
-        $params = array();
-        foreach ($args2params as $argKey => $paramKey) {
-            if (isset($args[$argKey])) {
-                $params[] = $args[$argKey];
-            }
-        }
-
         //invoke dnb api based on query type and query parameter
-        $api = $this->getEAPM();
+        $extDnbApi = $this->getEAPM();
+        if (is_array($extDnbApi) && isset($extDnbApi['error'])) {
+            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $extDnbApi['error']);
+        }
+        if ($extDnbApi === false) {
+            throw new SugarApiExceptionRequestMethodFailure($GLOBALS['app_strings']['ERROR_UNABLE_TO_RETRIEVE_DATA'], $args);
+        }
         $queryType = $args['qtype'];
         $queryParam = $args['qparam'];
-
-        if (!$api->isConnectorConfigured()) {
+        if (!$extDnbApi->isConnectorConfigured()) {
             return array('error' =>'ERROR_DNB_CONFIG');
         }
-
         $result = '';
-
-        if($queryType === 'search')
-        {
-            $result = $api->dnbsearch($queryParam);         
-        }
-        else if($queryType === 'dupcheck')
-        {
-            // API to test sugar query
-            $result = $api->dupcheck($queryParam);
-        }
-        else if ($queryType === 'profile') {
-            $result = $api->dnbProfile($queryParam);
+        if ($queryType === 'search'){
+            $result = $extDnbApi->dnbSearch($queryParam);
+        } else if ($queryType === 'profile') {
+            $result = $extDnbApi->dnbProfile($queryParam);
         } else if($queryType==='competitors') {
-            $result = $api->dnbCompetitors($queryParam);
+            $result = $extDnbApi->dnbCompetitors($queryParam);
         }  else if($queryType==='industry') {
-            $result = $api->dnbIndustryInfo($queryParam);
+            $result = $extDnbApi->dnbIndustryInfo($queryParam);
         } else if($queryType==='financial') {
-            $result = $api->dnbFinancialInfo($queryParam);
+            $result = $extDnbApi->dnbFinancialInfo($queryParam);
         } else if($queryType==='familytree') {
-            $result = $api->dnbFamilyTree($queryParam);
+            $result = $extDnbApi->dnbFamilyTree($queryParam);
         } else if($queryType==='firmographic') {
-            $result = $api->dnbStandardProfile($queryParam);
+            $result = $extDnbApi->dnbStandardProfile($queryParam);
         } else if($queryType==='premfirmographic') {
-            $result = $api->dnbPremiumProfile($queryParam);
+            $result = $extDnbApi->dnbPremiumProfile($queryParam);
         } else if($queryType==='findIndustry') {
-            $result = $api->dnbIndustrySearch($queryParam);
-        }
-        else if($queryType === 'findContacts') {
-            $result = $api->dnbFindContacts($queryParam);
-        }
-        else if($queryType === 'refreshcheck') {
-            $result = $api->dnbRefreshCheck($queryParam);
+            $result = $extDnbApi->dnbIndustrySearch($queryParam);
+        } else if($queryType === 'findContacts') {
+            $result = $extDnbApi->dnbFindContacts($queryParam);
+        } else if($queryType === 'refreshcheck') {
+            $result = $extDnbApi->dnbRefreshCheck($queryParam);
         } else if($queryType === 'litefirmographic') {
-            $result = $api->dnbLiteProfile($queryParam);
+            $result = $extDnbApi->dnbLiteProfile($queryParam);
+        } else if($queryType === 'news') {
+            $result = $extDnbApi->dnbNews($queryParam);
         }
-        else if($queryType === 'news')
-        {
-            $result = $api->dnbNews($queryParam);
-        }
-
-        if (isset($result['errors'])) {
-            $errorString = '';
-            foreach($result['errors'] as $errorKey => $error) {
-                $errorString .= $error['code'].str_replace(' ', '_', $error['message']);
-            }
-            throw new SugarApiExceptionRequestMethodFailure('errors_from_dnb: '.$errorString, $args);
+        if (is_array($result) && isset($result['error'])) {
+            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $result['error']);
         }
         return $result;
     }
@@ -154,53 +132,29 @@ class DnbApi extends SugarApi
      */
     public function dnbDirectPost($api,$args)
     {
-        $args2params = array(
-            'qtype' => 'qtype',
-            'qdata' => 'qdata'
-        );
-
-        $params = array();
-        foreach ($args2params as $argKey => $paramKey) {
-            if (isset($args[$argKey])) {
-                $params[] = $args[$argKey];
-            }
-        }
-
         //invoke dnb api based on query type and query data
-        $api = $this->getEAPM();
+        $extDnbApi = $this->getEAPM();
+        if (is_array($extDnbApi) && isset($extDnbApi['error'])) {
+            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $extDnbApi['error']);
+        }
         $queryType = $args['qtype'];
         $queryData = $args['qdata']; //data posted 
-
         $result = '';
-
-        if($queryType === 'cmRequest')
-        {
-            $result = $api->dnbCMRrequest($queryData);         
+        if ($queryType === 'cmRequest') {
+            $result = $extDnbApi->dnbCMRrequest($queryData);         
+        } else if($queryType === 'bal') {
+            $result = $extDnbApi->dnbBALRequest($queryData);
+        } else if($queryType === 'contacts') {
+            $result = $extDnbApi->dnbContactDetails($queryData);
+        } else if($queryType === 'indMap') {
+            $result = $extDnbApi->dnbIndustryConversion($queryData);   
+        } else if($queryType==='industry') {
+            $result = $extDnbApi->dnbIndustryInfoPost($queryData);
+        } else if($queryType==='firmographic') {
+            $result = $extDnbApi->dnbFirmographic($queryData);
         }
-        else if($queryType === 'bal')
-        {
-            $result = $api->dnbBALRequest($queryData);
-        }
-        else if($queryType === 'contacts')
-        {
-            $result = $api->dnbContactDetails($queryData);
-        }
-        else if($queryType === 'indMap')
-        {
-            $result = $api->dnbIndustryConversion($queryData);   
-        }
-        else if($queryType==='industry') 
-        {
-            $result = $api->dnbIndustryInfoPost($queryData);
-        }
-        
-
-        if (isset($result['errors'])) {
-            $errorString = '';
-            foreach($result['errors'] as $errorKey => $error) {
-                $errorString .= $error['code'].str_replace(' ', '_', $error['message']);
-            }
-            throw new SugarApiExceptionRequestMethodFailure('errors_from_dnb: '.$errorString, $args);
+        if (is_array($result) && isset($result['error'])) {
+            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $result['error']);
         }
         return $result;
     }

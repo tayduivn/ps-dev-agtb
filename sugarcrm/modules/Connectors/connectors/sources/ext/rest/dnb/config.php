@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * *******************************************************************************/
 
 $config = array (
-  'name' => 'DNB&#169;',
+  'name' => 'D&B&#169;',
   'eapm' => array(
     'enabled' => true,
   ),
@@ -37,7 +37,6 @@ $config = array (
       //BEGIN SUGARCRM flav=pro ONLY
       'dnb_username' => '',
       'dnb_password' => '',
-      'dnb_application_id' => '',
       'dnb_env' => '' // stg or prod
       //END SUGARCRM flav=pro ONLY
       ),

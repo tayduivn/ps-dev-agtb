@@ -12,41 +12,31 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  ********************************************************************************/
 }}
-<div id="dnb-contact-list-loading" class="block-footer">
-    {{str "LBL_DNB_CNTCT_LOADING"}} ...
+<div id="dnb-compinfo-loading" class="block-footer">
+    {{str dnbFirmo.loading_label}}
 </div>
-<div id="dnb-contact-list">
-    {{#if contacts}}
-        <div class="dnb-show-less">
+<div id="dnb-compinfo-details">
+    {{#if dnbFirmo.product}}
+        <div class='dnb-show-less'>
             <ul class="unstyled listed">
-                {{#each contacts}}
+                {{#each dnbFirmo.product}}
                     <li>
                         <div class='dnb-company-label'>
-                            {{this.JobTitle.[0].JobTitleText.$}}
-                            {{#if this.moreDetails}}
-                                <span class="label label-success pull-right" data-placement="right">{{str "LBL_DNB_PREMIUM"}}</span>
+                            {{#if dnbLabel}}
+                                {{{dnbLabel}}}
+                            {{else}}
+                                {{str dataLabel}}
                             {{/if}}
                         </div>
-                        <div class="record-label dnb-company-list">
-                            {{#if this.moreDetails}}
-                                <a id="{{this.PrincipalIdentificationNumberDetail.[0].PrincipalIdentificationNumber}}" class="dnb-cnt-prem">
-                                    {{this.ContactName.FullName}}
-                                </a>
-                            {{else}}
-                                <a id="{{this.PrincipalIdentificationNumberDetail.[0].PrincipalIdentificationNumber}}" class="dnb-cnt-std">
-                                    {{this.ContactName.FullName}}
-                                </a>
-                            {{/if}}
-                            {{#if this.isDupe}}
-                                <span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
-                            {{/if}}
+                        <div class='txt import-data'>
+                            {{{dataElement}}}
                         </div>
                     </li>
                 {{/each}}
             </ul>
         </div>
         <div class="dnb-show-more">
-            <a class="showMoreData more">{{str "LBL_DNB_CONTACT_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
+            <a class="showMoreData more">{{str "LBL_DNB_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
             <a class="showLessData less">{{str "LBL_DNB_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
         </div>
     {{else}}

@@ -13,51 +13,49 @@
  ********************************************************************************/
 }}
 <div id="dnb-news-detail-loading" class="block-footer">
-	{{str "LBL_DNB_NEWS_AND_MEDIA_LOADING"}}...
+    {{str "LBL_DNB_NEWS_AND_MEDIA_LOADING"}}...
 </div>
 <div id="dnb-news-detail">
-	{{#if product}}
-		<div class='accordian dnb-show-less' id="dnb_news_accordian">
-			{{#each product.NewsDetails}}
-				<div class="accordion-group">
-					<div class="accordion-heading">
-						{{#if this.TitleText}}
-							<a class="accordion-toggle" data-toggle="collapse" data-parent="#dnb_news_accordian" href="#news_{{@index}}">
-								{{this.TitleText}}
-							</a>
-						{{/if}}
-					</div>
-
-					<div id="news_{{@index}}" class="accordion-body collapse">
-						{{#if this.ContentText}}
-							<div class="accordion-inner">
-								{{this.ContentText}}
-							</div>
-						{{/if}}
-
-						{{#if this.WebPageURL}}
-							<div class="dnb-weburl">
-								Read More: 
-								<a href="{{this.WebPageURL}}" target="_blank">
-									{{this.SourceDescription}}
-								</a>
-							</div>
-						{{/if}}
-					</div>
-				</div>
-			{{/each}}
-		</div>
-		<div class="dnb-show-more">
-	        <a class="showMoreData more">{{str "LBL_DNB_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
-	        <a class="showLessData less">{{str "LBL_DNB_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
-	    </div>
-	{{else}}
-		 <aside class='create-no-data'>
+    {{#if product}}
+        <div class='accordian dnb-show-less' id="dnb_news_accordian">
+            {{#each product.NewsDetails}}
+                <div class="accordion-group">
+                    <div class="accordion-heading">
+                        {{#if this.TitleText}}
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#dnb_news_accordian" href="#news_{{@index}}">
+                                {{this.TitleText}}
+                            </a>
+                        {{/if}}
+                    </div>
+                    <div id="news_{{@index}}" class="accordion-body collapse">
+                        {{#if this.ContentText}}
+                            <div class="accordion-inner">
+                                {{this.ContentText}}
+                            </div>
+                        {{/if}}
+                        {{#if this.WebPageURL}}
+                            <div class="dnb-weburl">
+                                Read More:
+                                <a href="{{this.WebPageURL}}" target="_blank">
+                                    {{this.SourceDescription}}
+                                </a>
+                            </div>
+                        {{/if}}
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+        <div class="dnb-show-more">
+            <a class="showMoreData more">{{str "LBL_DNB_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
+            <a class="showLessData less">{{str "LBL_DNB_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
+        </div>
+    {{else}}
+        <aside class='create-no-data'>
             {{#if errmsg}}
                 <em>{{errmsg}}</em>
             {{else}}
                 <em>{{str "LBL_DNB_NO_DATA"}}</em>
             {{/if}}
         </aside>
-	{{/if}}
+    {{/if}}
 </div>

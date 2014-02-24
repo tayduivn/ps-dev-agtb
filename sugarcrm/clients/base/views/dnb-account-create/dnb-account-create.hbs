@@ -12,15 +12,14 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  ********************************************************************************/
 }}
-    <div class="dashboard main-pane" data-dashboard="true">
+<div class="dashboard main-pane" data-dashboard="true">
     <div class="cols row-fluid">
         <div>
             <div class="preview-headerbar">
                 <div class="headerpane">
                     <span class="record-cell">
-                        <h1><span class="detail">{{str "LBL_DNB_ACC_CRT"}}</span></h1>
+                        <h1 class="dnb-account-create"><span class="detail">{{str "LBL_DNB_ACC_CRT"}}</span></h1>
                     </span>
-
                     <span class="record-cell">
                         <h1><span class="detail"></span></h1>
                     </span>
@@ -36,7 +35,7 @@
                                 <i class="icon-cog"></i></a>
                             <ul class="dropdown-menu left carettop">
                                 <div>
-                                    <li><a class="remove-row">Remove</a></li>
+                                    <li><a class="remove-row">{{str "LBL_REMOVE"}}</a></li>
                                 </div>
                             </ul>
                             <a class="move btn btn-invisible btn-link hide">
@@ -45,10 +44,8 @@
                                 <li class="dashlet-container span12">
                                     <div>
                                         <div class="thumbnail dashlet">
-
                                             <div data-dashlet="toolbar">
                                                 <div class="dashlet-header">
-
                                                     <h4 data-toggle="dashlet">{{str "LBL_DNB_SRCH_RES"}}</h4>
                                                 </div>
                                             </div>
@@ -59,59 +56,47 @@
                                                 <div id="dnb-search-results">
                                                     <div class="block dnb-show-less create-acc">
                                                         <div class="globe-chart-wrapper">
-
                                                             <div>
-                                                                {{#if companies}}
-
+                                                                {{#if dnbSrchResults.product}}
                                                                     <div>
-
                                                                         <ul class="unstyled listed">
-                                                                            {{#each companies}}
-
+                                                                            {{#each dnbSrchResults.product}}
                                                                                 <li>
                                                                                     <div class='dnb-company-label'>
-                                                                                        <a class="dnb-company-name" id="{{this.DUNSNumber}}">
-                                                                                            {{this.OrganizationPrimaryName.OrganizationName.$}}
+                                                                                        <a class="dnb-company-name" id="{{this.dunsnum}}">
+                                                                                            {{this.companyname}}
                                                                                         </a>
-
-                                                                                         {{#if this.locationType}}
+                                                                                        {{#if this.locationtype}}
                                                                                             <span class="label pull-right" data-placement="right">
-                                                                                                {{this.locationType}}
+                                                                                                {{this.locationtype}}
                                                                                             </span>
-                                                                                         {{/if}}
+                                                                                        {{/if}}
                                                                                     </div>
                                                                                     <div class="record-label dnb-company-list">
-                                                                                        {{#if this.StreetAddressLine.[0].LineText}}
-                                                                                            {{this.StreetAddressLine.[0].LineText}}
+                                                                                        {{#if this.streetaddr}}
+                                                                                            {{this.streetaddr}}
                                                                                         {{/if}}
-
-                                                                                            {{#if this.PrimaryAddress.PrimaryTownName}}
-                                                                                                {{this.PrimaryAddress.PrimaryTownName}},
-                                                                                            {{/if}}
-
-                                                                                            {{#if this.PrimaryAddress.TerritoryOfficialName}}
-                                                                                                {{this.PrimaryAddress.TerritoryOfficialName}},
-                                                                                            {{/if}}
-
-                                                                                            {{#if this.PrimaryAddress.CountryISOAlpha2Code}}
-                                                                                                {{this.PrimaryAddress.CountryISOAlpha2Code}}
-                                                                                            {{/if}}
-                                                                                             {{#if this.isDupe}}
-                                                                                                <span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
-                                                                                            {{/if}}
-
-                                                                                        </div>
-                                                                                    </li>
-
+                                                                                        {{#if this.town}}
+                                                                                            {{this.town}},
+                                                                                        {{/if}}
+                                                                                        {{#if this.territory}}
+                                                                                            {{this.territory}},
+                                                                                        {{/if}}
+                                                                                        {{#if this.ctrycd}}
+                                                                                            {{this.ctrycd}}
+                                                                                        {{/if}}
+                                                                                        {{#if this.isDupe}}
+                                                                                            <span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
+                                                                                        {{/if}}
+                                                                                    </div>
+                                                                                </li>
                                                                             {{/each}}
-
                                                                         </ul>
-
                                                                     </div>
                                                                 {{else}}
                                                                     <aside class='create-no-data'>
-                                                                        {{#if errmsg}}
-                                                                            <em>{{errmsg}}</em>
+                                                                        {{#if dnbSrchResults.errmsg}}
+                                                                            <em>{{dnbSrchResults.errmsg}}</em>
                                                                         {{else}}
                                                                             <em>{{str "LBL_DNB_NO_DATA"}}</em>
                                                                         {{/if}}
@@ -127,9 +112,7 @@
                                                 </div>
                                             </div>
                                             <div class="swappable-dashlet icon-download-alt"></div>
-
                                         </div>
-
                                     </div>
                                 </li>
                             </ul>
@@ -137,12 +120,12 @@
                     </li>
                     <li class="row-fluid" data-sortable="1">
                         <div class="rows well well-invisible">
-								<a data-toggle="dropdown" class="btn btn-invisible btn-link hide">
-									<i class="icon-cog"></i>
-								</a>
-								<a class="move btn btn-invisible btn-link hide">
-									<i class="icon-resize-vertical"></i>
-								</a>
+                            <a data-toggle="dropdown" class="btn btn-invisible btn-link hide">
+                                <i class="icon-cog"></i>
+                            </a>
+                            <a class="move btn btn-invisible btn-link hide">
+                                <i class="icon-resize-vertical"></i>
+                            </a>
                         </div>
                     </li>
                 </ul>

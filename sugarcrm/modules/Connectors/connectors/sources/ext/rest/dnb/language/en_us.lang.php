@@ -20,23 +20,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
 /*********************************************************************************
-* Description:
-* Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
-* Reserved. Contributor(s): contact@synolia.com - www.synolia.com
-* *******************************************************************************/
-
-
+ * Description:
+ * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
+ * Reserved. Contributor(s): contact@synolia.com - www.synolia.com
+ * *******************************************************************************/
 $connector_strings = array (
-    'LBL_LICENSING_INFO' => '<table border="0" cellspacing="1"><tr><td valign="top" width="35%" class="dataLabel">DNB Connector</td></tr></table>',
-    'LBL_NAME' => 'DNB Username',
-    'LBL_ID' => 'DNB Username',
-	'company_url' => 'URL',
-    'dnb_username' => 'DNB Username',
-    'dnb_password' => 'DNB Application Key',
-    'dnb_application_id' => 'DNB Application Id',
-    'dnb_env' => 'DNB Environment'
+    'LBL_LICENSING_INFO' => '<table border="0" cellspacing="1"><tr><td valign="top" width="35%" class="dataLabel">D&B Connector</td></tr></table>',
+    'LBL_NAME' => 'D&B Username',
+    'LBL_ID' => 'D&B Username',
+    'company_url' => 'URL',
+    'dnb_username' => 'D&B Username',
+    'dnb_password' => 'D&B Application Key',
+    'dnb_env' => 'D&B Environment'
 );
 
 ?>

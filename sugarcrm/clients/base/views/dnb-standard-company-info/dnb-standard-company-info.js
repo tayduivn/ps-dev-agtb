@@ -12,166 +12,149 @@
  */
 
 ({
-    plugins: ['Dashlet'],
+    extendsFrom: 'DnbView',
 
     duns_num: null,
 
-    events: 
-    {
-      'click .showMoreData':'showMoreData',
-      'click .showLessData':'showLessData',
+    events: {
+        'click .showMoreData': 'showMoreData',
+        'click .showLessData': 'showLessData'
     },
 
-    initialize: function(options)
-    {
+    initialize: function(options) {
         this._super('initialize', [options]);
-         if(this.layout.collapse)
-            this.layout.collapse(true);      
+        if (this.layout.collapse) {
+            this.layout.collapse(true);
+        }
         this.layout.on('dashlet:collapse', this.loadCompanyInfo, this);
-        app.events.on("dnbcompinfo:duns_selected",this.collapseDashlet,this);
+        app.events.on('dnbcompinfo:duns_selected', this.collapseDashlet, this);
     },
 
-    collapseDashlet: function()
-    {
-        if(this.layout.collapse)
-            this.layout.collapse(true);      
+    /**
+     * Collapses the dashlet
+     */
+    collapseDashlet: function() {
+        if (this.layout.collapse) {
+            this.layout.collapse(true);
+        }
     },
 
     loadData: function(options) {
-
-        if(this.model.get("duns_num"))
-          this.duns_num = this.model.get("duns_num");
+        if (this.model.get('duns_num')) {
+            this.duns_num = this.model.get('duns_num');
+        }
         this.template = app.template.get(this.name + '.dnb-desc');
-        if (!this.disposed) this.render();
+        if (!this.disposed) {
+            this.render();
+        }
     },
 
-    loadCompanyInfo: function(isCollapsed)
-    {
-        if(!isCollapsed)
-        {
+    /**
+     * loads company information for a duns
+     * @param  {Boolean} isCollapsed true indicates dashlet was collapsed
+     */
+    loadCompanyInfo: function(isCollapsed) {
+        if (!isCollapsed) {
             //check if account is linked with a D-U-N-S
-            if(this.duns_num)
+            if (this.duns_num) {
                 this.getDNBStdCompanyDetails(this.duns_num);
-            //check if D-U-N-S is set in context by refresh dashlet
-            else if(!_.isUndefined(app.controller.context.get('dnb_temp_duns_num')))
+            } else if (!_.isUndefined(app.controller.context.get('dnb_temp_duns_num'))) {
+                //check if D-U-N-S is set in context by refresh dashlet
                 this.getDNBStdCompanyDetails(app.controller.context.get('dnb_temp_duns_num'));
-            else
-            {
+            } else {
                 this.template = app.template.get(this.name + '.dnb-no-duns');
-                if (!this.disposed) 
+                if (!this.disposed) {
                     this.render();
+                }
             }
         }
     },
 
-    getDNBStdCompanyDetails: function(duns_num)
-    {
+    /**
+     * Get D&B Premium Company information
+     * @param  {String} duns_num
+     */
+    getDNBStdCompanyDetails: function(duns_num) {
         var self = this;
         self.template = app.template.get(self.name);
         self.render();
         self.$('div#dnb-company-detail-loading').show();
         self.$('div#dnb-std-company-details').hide();
         self.$('.showLessData').hide();
-
-        if(duns_num && duns_num != '')
-        {
-                //check if cache has this data already
-                var cacheKey = 'dnb:compstd:' + duns_num;
-
-                if(app.cache.get(cacheKey))
-                {
-                    _.bind(self.renderCompanyDetails,self,app.cache.get(cacheKey))();
-                }
-                else
-                {
-                       var dnbProfileUrl = app.api.buildURL('connector/dnb/firmographic/' + duns_num,'',{},{});
-                       var resultData = {'product':null,'errmsg':null};
-                       app.api.call('READ', dnbProfileUrl, {},{
-                            success: function(data) 
-                            {
-                                var resultIDPath = "OrderProductResponse.TransactionResult.ResultID";
-                                var industry_path = "OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode";
-                                if(self.checkJsonNode(data,resultIDPath) 
-                                    && data.OrderProductResponse.TransactionResult.ResultID == 'CM000')
-                                {
-                                    resultData.product = data;
-
-				    if(self.checkJsonNode(resultData.product,industry_path)){
-                                        var industryCodeArray = resultData.product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode;
-                                        //399 is the industry code type value for US SIC
-                                        resultData.product.primarySIC = self.getPrimaryIndustry(industryCodeArray,'399'); 
-                                    }	
-
-                                    app.cache.set(cacheKey,resultData);
-                                }
-                                else
-                                    resultData = {'errmsg': app.lang.get('LBL_DNB_SVC_ERR')};
-                                    
-                                _.bind(self.renderCompanyDetails,self,resultData)();
-                            }
-                    });
-                }
-               
+        if (duns_num && duns_num !== '') {
+            //check if cache has this data already
+            var cacheKey = 'dnb:compstd:' + duns_num;
+            if (app.cache.get(cacheKey)) {
+                self.renderCompanyDetails.call(self, app.cache.get(cacheKey));
+            } else {
+                var dnbProfileUrl = app.api.buildURL('connector/dnb/firmographic/' + duns_num, '', {},{});
+                var resultData = {'product': null, 'errmsg': null};
+                app.api.call('READ', dnbProfileUrl, {},{
+                    success: function(data) {
+                        var resultIDPath = 'OrderProductResponse.TransactionResult.ResultID';
+                        var productPath = 'OrderProductResponse.OrderProductResponseDetail.Product.Organization';
+                        if (self.checkJsonNode(data, resultIDPath) &&
+                            data.OrderProductResponse.TransactionResult.ResultID == 'CM000' &&
+                            self.checkJsonNode(data, productPath)) {
+                            resultData.product = data.OrderProductResponse.OrderProductResponseDetail.Product.Organization;
+                            app.cache.set(cacheKey, resultData);
+                        } else {
+                            resultData = {'errmsg': app.lang.get('LBL_DNB_SVC_ERR')};
+                        }
+                        self.renderCompanyDetails.call(self, resultData);
+                    },
+                    error: _.bind(self.checkAndProcessError, self)
+                });
+            }
         }
     },
 
-    renderCompanyDetails: function(companyDetails)
-    {
+    /**
+     * Renders D&B Company Information
+     * @param  {Object} companyDetails dnb api response
+     */
+    renderCompanyDetails: function(companyDetails) {
         if (this.disposed) {
-                return;
-            }
+            return;
+        }
         _.extend(this, companyDetails);
         this.render();
         this.$('div#dnb-std-company-detail-loading').hide();
-        this.$('div#dnb-std-company-details').show(); 
-        this.$(".showLessData").hide();
-    },
-
-    showMoreData: function () {
-        this.$(".dnb-show-less").attr("class","dnb-show-all");
-        this.$(".showLessData").show();
-        this.$(".showMoreData").hide();
-    },
-
-    showLessData: function () {
-        this.$(".dnb-show-all").attr("class","dnb-show-less");
-        this.$(".showLessData").hide();
-        this.$(".showMoreData").show();
+        this.$('div#dnb-std-company-details').show();
+        this.$('.showLessData').hide();
     },
 
     /**
-     * Check if a particular json path is valid 
-     * @param object -- JSON object
-     * @param path -- string
-     * @return bool
-    */
-    checkJsonNode: function(obj,path) 
-    {
-        var args = path.split(".");
+     * Expands the dashlet to reveal more data
+     */
+    showMoreData: function() {
+        this.$('.dnb-show-less').attr('class', 'dnb-show-all');
+        this.$('.showLessData').show();
+        this.$('.showMoreData').hide();
+    },
 
-        for (var i = 0; i < args.length; i++) 
-        {
-            if (obj == null || !obj.hasOwnProperty(args[i]) ) 
-            {
+    /**
+     * Truncates the dashlet
+     */
+    showLessData: function() {
+        this.$('.dnb-show-all').attr('class', 'dnb-show-less');
+        this.$('.showLessData').hide();
+        this.$('.showMoreData').show();
+    },
+
+    /**
+     * Check if a particular json path is valid
+     * @param {Object} obj
+     * @param {String} path
+     */
+    checkJsonNode: function(obj, path) {
+        var args = path.split('.');
+        for (var i = 0; i < args.length; i++) {
+            if (_.isNull(obj) || _.isUndefined(obj) || !obj.hasOwnProperty(args[i])) {
                 return false;
             }
             obj = obj[args[i]];
         }
         return true;
-    },
-
-
-    /**
-     * Gets the primary industry code from the array of industry codes
-     * @param industryArray
-     * @param industryCode
-     * @return object
-     */
-    getPrimaryIndustry: function(industryArray,industryCode)
-    {
-        return _.find(industryArray,function(industryObj){
-
-            return industryObj["@DNBCodeValue"] == industryCode && industryObj['DisplaySequence'] == '1';
-        });
-    },
-})
+    }
+});

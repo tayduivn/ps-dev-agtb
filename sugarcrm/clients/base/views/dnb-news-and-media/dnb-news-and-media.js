@@ -12,120 +12,132 @@
  */
 
 ({
-    plugins: ['Dashlet'],
+    extendsFrom: 'DnbView',
 
-    events: 
-    {
-      'click .showMoreData':'showMoreData',
-      'click .showLessData':'showLessData',
+    events: {
+        'click .showMoreData': 'showMoreData',
+        'click .showLessData': 'showLessData'
     },
 
-    initialize: function(options)
-    {
+    initialize: function(options) {
         this._super('initialize', [options]);
-        if(this.layout.collapse)
-            this.layout.collapse(true);      
+        if (this.layout.collapse) {
+            this.layout.collapse(true);
+        }
         this.layout.on('dashlet:collapse', this.loadNews, this);
-        app.events.on("dnbcompinfo:duns_selected",this.collapseDashlet,this);
+        app.events.on('dnbcompinfo:duns_selected', this.collapseDashlet, this);
     },
 
-    collapseDashlet: function()
-    {
-        if(this.layout.collapse)
-            this.layout.collapse(true);      
+    /**
+     * Collapses the dashlet
+     */
+    collapseDashlet: function() {
+        if (this.layout.collapse) {
+            this.layout.collapse(true);
+        }
     },
 
     loadData: function(options) {
-
-       if(this.model.get("duns_num"))
-          this.duns_num = this.model.get("duns_num");
-       this.template = app.template.get(this.name + '.dnb-desc');
-       if (!this.disposed) this.render();
+        if (this.model.get('duns_num')) {
+            this.duns_num = this.model.get('duns_num');
+        }
+        this.template = app.template.get(this.name + '.dnb-desc');
+        if (!this.disposed) {
+            this.render();
+        }
     },
 
-    loadNews: function(isCollapsed)
-    {
-        if(!isCollapsed)
-        {
+    /**
+     * Handles the dashlet expand | collapse events
+     * @param  {Boolean} isCollapsed
+     */
+    loadNews: function(isCollapsed) {
+        if (!isCollapsed) {
             //check if account is linked with a D-U-N-S
-            if(this.duns_num)
+            if (this.duns_num) {
                 this.getNewsandMediaInfo(this.duns_num);
-            //check if D-U-N-S is set in context by refresh dashlet
-            else if(!_.isUndefined(app.controller.context.get('dnb_temp_duns_num')))
+            } else if (!_.isUndefined(app.controller.context.get('dnb_temp_duns_num'))) {
+                //check if D-U-N-S is set in context by refresh dashlet
                 this.getNewsandMediaInfo(app.controller.context.get('dnb_temp_duns_num'));
-            else
-            {
+            } else {
                 this.template = app.template.get(this.name + '.dnb-no-duns');
-                if (!this.disposed) 
+                if (!this.disposed) {
                     this.render();
+                }
             }
         }
     },
 
-    getNewsandMediaInfo: function(duns_num)
-    {
+    /**
+     * Invokes D&B News and Social Media API
+     * @param {String} duns_num
+     */
+    getNewsandMediaInfo: function(duns_num) {
         var self = this;
         self.template = app.template.get(self.name);
-        self.render();
+        if (!self.disposed) {
+            self.render();
+        }
         self.$('div#dnb-news-detail-loading').show();
         self.$('div#dnb-news-detail').hide();
-
-        if(duns_num && duns_num != '')
-        {
-               var dnbNewInfoURL = app.api.buildURL('connector/dnb/news/' + duns_num,'',{},{});
-               var resultData = {'product':null,'errmsg':null};
-               app.api.call('READ', dnbNewInfoURL, {},{
-                    success: function(data) 
-                    {
-                        var resultIDPath = "OrderProductResponse.TransactionResult.ResultID";
-                        var productPath = "OrderProductResponse.OrderProductResponseDetail.Product.Organization.News";
-                         if(self.checkJsonNode(data,resultIDPath) 
-                            && data.OrderProductResponse.TransactionResult.ResultID == 'CM000')
-                        {
-                            if(self.checkJsonNode(data,productPath))
-                                resultData.product = data.OrderProductResponse.OrderProductResponseDetail.Product.Organization.News;
-                            else
-                               resultData.errmsg = app.lang.get('LBL_DNB_NO_DATA');
+        if (duns_num && duns_num !== '') {
+            var dnbNewInfoURL = app.api.buildURL('connector/dnb/news/' + duns_num, '', {},{});
+            var resultData = {'product': null, 'errmsg': null};
+            app.api.call('READ', dnbNewInfoURL, {},{
+                success: function(data) {
+                    var resultIDPath = 'OrderProductResponse.TransactionResult.ResultID';
+                    var productPath = 'OrderProductResponse.OrderProductResponseDetail.Product.Organization.News';
+                    if (self.checkJsonNode(data, resultIDPath) &&
+                        data.OrderProductResponse.TransactionResult.ResultID === 'CM000') {
+                        if (self.checkJsonNode(data, productPath)) {
+                            resultData.product = data.OrderProductResponse.OrderProductResponseDetail.Product.Organization.News;
+                        } else {
+                            resultData.errmsg = app.lang.get('LBL_DNB_NO_DATA');
                         }
-                        else
-                            resultData = {'errmsg': app.lang.get('LBL_DNB_SVC_ERR')};
-                            
-                        if (self.disposed)
-                            return;
-
-                        _.extend(self, resultData);
-                        self.render();
-                        self.$('div#dnb-news-detail-loading').hide();
-                        self.$('div#dnb-news-detail').show(); 
-                        self.$(".showLessData").hide();
+                    } else {
+                        resultData = {'errmsg': app.lang.get('LBL_DNB_SVC_ERR')};
                     }
+                    if (self.disposed) {
+                        return;
+                    }
+                    _.extend(self, resultData);
+                    self.render();
+                    self.$('div#dnb-news-detail-loading').hide();
+                    self.$('div#dnb-news-detail').show();
+                    self.$('.showLessData').hide();
+                },
+                error: _.bind(self.checkAndProcessError, self)
             });
         }
     },
 
-    showMoreData: function () {
-        this.$(".dnb-show-less").attr("class","dnb-show-all");
-        this.$(".showLessData").show();
-        this.$(".showMoreData").hide();
+    /**
+     * Expands the dashlets to reveal more data
+     */
+    showMoreData: function() {
+        this.$('.dnb-show-less').attr('class', 'dnb-show-all');
+        this.$('.showLessData').show();
+        this.$('.showMoreData').hide();
     },
 
-    showLessData: function () {
-        this.$(".dnb-show-all").attr("class","dnb-show-less");
-        this.$(".showLessData").hide();
-        this.$(".showMoreData").show();
+    /**
+     * Truncates the dashlets
+     */
+    showLessData: function() {
+        this.$('.dnb-show-all').attr('class', 'dnb-show-less');
+        this.$('.showLessData').hide();
+        this.$('.showMoreData').show();
     },
 
-     /**
-      Utility function to check if a node exists in a json object
-    **/
-    checkJsonNode: function(obj,path) 
-    {
-        var args = path.split(".");
-
-        for (var i = 0; i < args.length; i++) 
-        {
-            if (obj == null || !obj.hasOwnProperty(args[i]) ) 
-            {
+    /**
+     * Check if a particular json path is valid
+     * @param {Object} obj
+     * @param {String} path
+     */
+    checkJsonNode: function(obj, path) {
+        var args = path.split('.');
+        for (var i = 0; i < args.length; i++) {
+            if (_.isNull(obj) || _.isUndefined(obj) || !obj.hasOwnProperty(args[i])) {
                 return false;
             }
             obj = obj[args[i]];

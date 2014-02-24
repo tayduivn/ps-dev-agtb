@@ -1,5 +1,4 @@
 <?php
-
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -12,7 +11,6 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-
 $viewdefs['base']['view']['dnb-family-tree'] = array(
     'dashlets' => array(
         array(
@@ -36,7 +34,7 @@ $viewdefs['base']['view']['dnb-family-tree'] = array(
                 "icon" => "icon-chevron-down",
                 "action" => "toggleMinify",
                 "tooltip" => "LBL_DASHLET_MAXIMIZE",
-            )            
+            )
         )
     )
 );
