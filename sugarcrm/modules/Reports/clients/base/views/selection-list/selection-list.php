@@ -28,6 +28,7 @@ $viewdefs['Reports']['base']['view']['selection-list'] = array(
                 array(
                     'name' => 'module',
                     'label' => 'LBL_MODULE',
+                    'type' => 'module',
                     'default' => true,
                 ),
                 array(
