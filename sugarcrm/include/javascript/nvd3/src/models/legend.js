@@ -4,21 +4,20 @@ nv.models.legend = function() {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var margin = {top: 10, right: 10, bottom: 10, left: 10}
-    , width = 400
-    , height = 20
-    , radius = 5
-    , gutter = 10
-    , lineHeight = 20
-    , align = 'right'
-    , equalColumns = true
-    , strings = {close: 'close', type: 'legend'}
-    , id = Math.floor(Math.random() * 10000) //Create semi-unique ID in case user doesn't select one
-    , getKey = function(d) { return d.key.length > 0 ? d.key : 'undefined'; }
-    , color = nv.utils.defaultColor()
-    , classes = function (d,i) { return ''; }
-    , dispatch = d3.dispatch('legendClick', 'legendMouseover', 'legendMouseout', 'linkClick')
-    ;
+  var margin = {top: 10, right: 10, bottom: 10, left: 10},
+      width = 400,
+      height = 20,
+      radius = 5,
+      gutter = 10,
+      lineHeight = 20,
+      align = 'right',
+      equalColumns = true,
+      strings = {close: 'close', type: 'legend'},
+      id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one
+      getKey = function(d) { return d.key.length > 0 ? d.key : 'undefined'; },
+      color = nv.utils.defaultColor(),
+      classes = function(d, i) { return ''; },
+      dispatch = d3.dispatch('legendClick', 'legendMouseover', 'legendMouseout', 'linkClick');
 
   // Private Variables
   //------------------------------------------------------------
@@ -29,11 +28,11 @@ nv.models.legend = function() {
 
   function legend(selection) {
     selection.each(function(data) {
-      var availableWidth = width - margin.left - margin.right
-        , availableHeight = height - margin.top - margin.bottom
-        , container = d3.select(this)
-        , legendWidth = 0
-        , legendHeight = 0;
+      var availableWidth = width - margin.left - margin.right,
+          availableHeight = height - margin.top - margin.bottom,
+          container = d3.select(this),
+          legendWidth = 0,
+          legendHeight = 0;
 
       //------------------------------------------------------------
       // Setup containers and skeleton of legend
@@ -67,13 +66,17 @@ nv.models.legend = function() {
       var zoom = d3.behavior.zoom();
 
       function zoomLegend(d) {
-        var trans = d3.transform(g.attr("transform")).translate
-          , transX = trans[0]
-          , transY = trans[1] + d3.event.sourceEvent.wheelDelta / 4
-          , upMax = Math.max(transY, back.attr('height') - legendHeight); //should not go beyond diff
+        var trans = d3.transform(g.attr('transform')).translate,
+            transX = trans[0],
+            transY = trans[1] + d3.event.sourceEvent.wheelDelta / 4,
+            upMax = Math.max(transY, back.attr('height') - legendHeight); //should not go beyond diff
         if (upMax) {
           g .attr('transform', 'translate(' + transX + ',' + Math.min(upMax, 0) + ')');
         }
+      }
+
+      function offsetX(x) {
+        return align === 'right' ? width - legendWidth + x : align === 'center' ? x + (width - legendWidth) / 2 : x;
       }
 
       clip
@@ -89,7 +92,7 @@ nv.models.legend = function() {
         .attr('ry', 2)
         .attr('width', 0)
         .attr('height', 0)
-        .attr('filter', nv.utils.dropShadow('legend_back_' + id, defs, {blur: 2} ))
+        .attr('filter', nv.utils.dropShadow('legend_back_' + id, defs, {blur: 2}))
         .style('opacity', 0)
         .style('pointer-events', 'all');
 
@@ -100,22 +103,22 @@ nv.models.legend = function() {
         .attr('dx', 0)
         .attr('transform', 'translate(' + (align === 'right' ? width : 0) + ',' + (margin.top + radius) + ')')
         .style('opacity', 0)
-        .on('click', function(d,i) {
-          dispatch.linkClick(d,i);
+        .on('click', function(d, i) {
+          dispatch.linkClick(d, i);
         });
 
       mask
         .attr('clip-path', 'url(#nv-edge-clip-' + id + ')');
 
       seriesEnter
-        .on('mouseover', function(d,i) {
-          dispatch.legendMouseover(d,i);  //TODO: Make consistent with other event objects
+        .on('mouseover', function(d, i) {
+          dispatch.legendMouseover(d, i);  //TODO: Make consistent with other event objects
         })
-        .on('mouseout', function(d,i) {
-          dispatch.legendMouseout(d,i);
+        .on('mouseout', function(d, i) {
+          dispatch.legendMouseout(d, i);
         })
-        .on('click', function(d,i) {
-          dispatch.legendClick(d,i);
+        .on('click', function(d, i) {
+          dispatch.legendClick(d, i);
         });
       seriesEnter.append('circle')
         .style('stroke-width', 2)
@@ -129,9 +132,9 @@ nv.models.legend = function() {
       series.classed('disabled', function(d) { return d.disabled; });
       series.exit().remove();
       series.select('circle')
-        .attr('class', function(d,i) { return this.getAttribute('class') || classes(d,i); })
-        .attr('fill', function(d,i) { return this.getAttribute('fill') || color(d,i); })
-        .attr('stroke', function(d,i) { return this.getAttribute('fill') || color(d,i); });
+        .attr('class', function(d, i) { return this.getAttribute('class') || classes(d, i); })
+        .attr('fill', function(d, i) { return this.getAttribute('fill') || color(d, i); })
+        .attr('stroke', function(d, i) { return this.getAttribute('fill') || color(d, i); });
       series.select('text').text(getKey);
 
       //------------------------------------------------------------
@@ -141,16 +144,22 @@ nv.models.legend = function() {
       //TODO: implement fixed-width and max-width options (max-width is especially useful with the align option)
 
       if (equalColumns) {
-        var keyWidths = []
-          , keyCount = 0
-          , keysPerRow = 0
-          , columnWidths = []
-          , computeWidth = function(prev, cur, index, array) {
+        var keyWidths = [],
+            keyCount = 0,
+            keysPerRow = 0,
+            columnWidths = [],
+            keyPositions = [],
+            computeWidth = function(prev, cur, index, array) {
               return prev + cur;
             };
 
-        series.each(function(d,i) {
-          keyWidths.push(d3.select(this).select('text').node().getComputedTextLength() + 2*radius + 3 + gutter); // 28 is ~ the width of the circle plus some padding
+        g
+          .style('display', 'inline');
+
+        series.each(function(d, i) {
+          var textWidth = d3.select(this).select('text').node().getComputedTextLength() + 2 * radius + 3 + gutter;
+          keyWidths.push(textWidth);
+          // 28 is ~ the width of the circle plus some padding
         });
 
         keyCount = keyWidths.length;
@@ -159,6 +168,7 @@ nv.models.legend = function() {
 
         //keep decreasing the number of keys per row until
         //legend width is less than the available width
+
         while (keysPerRow > 1) {
           columnWidths = [];
 
@@ -180,7 +190,6 @@ nv.models.legend = function() {
 
         if (Math.ceil(keyCount / keysPerRow) < 3) {
 
-          var keyPositions = [];
           for (var i = 0, curX = radius; i < keysPerRow; i += 1) {
             keyPositions[i] = curX;
             curX += columnWidths[i];
@@ -197,9 +206,8 @@ nv.models.legend = function() {
             .attr('width', legendWidth + margin.right + margin.left)
             .attr('height', height);
 
-          var offSet = 0.5 - margin.left;
           back
-            .attr('x', align === 'right' ? width - legendWidth + offSet : align === 'center' ? offSet + (width - legendWidth) / 2 : offSet)
+            .attr('x', offsetX(0.5 - margin.left))
             .attr('width', legendWidth + margin.left + margin.right)
             .attr('height', height)
             .style('opacity', 0)
@@ -207,7 +215,7 @@ nv.models.legend = function() {
 
           //position legend as far right as possible within the total width
           mask
-            .attr('transform', 'translate(' + (align === 'right' ? width - legendWidth : align === 'center' ? (width - legendWidth) / 2 : 0) + ',' + (margin.top + radius) + ')');
+            .attr('transform', 'translate(' + offsetX(0) + ',' + (margin.top + radius) + ')');
 
           g
             .style('opacity', 1)
@@ -260,15 +268,15 @@ nv.models.legend = function() {
 
       } else {
 
-        var xpos
-          , ypos = radius
-          , newxpos = radius;
+        var xpos,
+            ypos = radius,
+            newxpos = radius;
 
         legendOpen = 0;
 
         series
           .attr('transform', function(d, i) {
-            var length = d3.select(this).select('text').node().getComputedTextLength() + 2*radius + 3 + gutter;
+            var length = d3.select(this).select('text').node().getComputedTextLength() + 2 * radius + 3 + gutter;
             xpos = newxpos;
 
             if (availableWidth < xpos + length - gutter) {
