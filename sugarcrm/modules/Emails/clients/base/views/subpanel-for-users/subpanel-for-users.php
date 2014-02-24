@@ -44,11 +44,13 @@ $viewdefs['Emails']['base']['view']['subpanel-for-users'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'date_modified',
+          'readonly' => true
         ),
         array(
           'enabled' => true,
           'default' => true,
           'name' => 'date_entered',
+          'readonly' => true
         ),
         array(
           'name' => 'assigned_user_name',
