@@ -218,7 +218,7 @@
         } else {
             this.addModulesToList($moduleList, width);
         }
-        this._$moreModulesDD.toggleClass('hidden', $dropdown.children().length === 0);
+        this._$moreModulesDD.toggleClass('hidden', $dropdown.children('li').not('.hidden').length === 0);
     },
 
     /**

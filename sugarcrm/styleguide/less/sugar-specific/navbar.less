@@ -249,21 +249,6 @@
             right: auto;
           }
         }
-        /*img*/
-        .cube {
-          z-index: 2000;
-          padding: 3px;
-          &.hide {
-            display: none;
-          }
-          &:hover {
-            text-decoration: none;
-          }
-          img {
-            height: 22px;
-            width: 22px;
-          }
-        }
         .dropdown-toggle {
           padding: 5px 2px;
         }
@@ -283,6 +268,21 @@
         padding: 8px 6px 8px 8px;
         .dropdown-toggle {
           padding: 5px 8px;
+        }
+      }
+      /*img*/
+      &> .btn.cube {
+        z-index: 2000;
+        padding: 3px;
+        &.hide {
+          display: none;
+        }
+        &:hover {
+          text-decoration: none;
+        }
+        img {
+          height: 22px;
+          width: 22px;
         }
       }
     }
