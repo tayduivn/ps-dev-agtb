@@ -206,10 +206,6 @@
             return;
         }
 
-        //TODO: ie Compatible, scrollable dropdown for low-res. window
-        //TODO: Theme Compatible, Filtered switching menu
-        //TODO: User preferences maximum menu count
-
         var $moduleList = this.$('[data-container=module-list]'),
             $dropdown = this._$moreModulesDD.find('[data-container=overflow]');
 
