@@ -368,8 +368,8 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $lastNameResult = array_reduce(
             $result,
             function ($out, $val) {
-                if (isset($val['last_name'])) {
-                    $out[] = $val['last_name'];
+                if (isset($val['contacts__last_name'])) {
+                    $out[] = $val['contacts__last_name'];
                 }
                 return $out;
             }
@@ -387,16 +387,12 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
         $expected = array(
             array(
-                'full_name__last_name' => 'Awesome-Sauce',
-                'full_name__first_name' => 'Super',
-                'full_name__salutation' => null,
                 'last_name' => 'Awesome-Sauce',
+                'contacts__last_name' => 'Awesome-Sauce',
             ),
             array(
-                'full_name__last_name' => 'Bad-Sauce',
-                'full_name__first_name' => 'Super',
-                'full_name__salutation' => null,
                 'last_name' => 'Bad-Sauce',
+                'contacts__last_name' => 'Bad-Sauce',
             ),
         );
 

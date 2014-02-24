@@ -79,6 +79,9 @@ class SugarQuery_Builder_Select
 
     public function addField($column, $options = array())
     {
+        if (!empty($options['alias'])) {
+            $column = array(array($column, $options['alias']));
+        }
         $this->field($column);
     }
 

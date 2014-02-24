@@ -137,19 +137,6 @@ class SugarQuery_Compiler_SQL
         if (empty($this->sugar_query->select->select)) {
             $this->sugar_query->select('*');
         }
-        /* order by clauses should be in SELECT, ensure they are there */
-        if (!empty($order_by)) {
-            $order_fields = array();
-            foreach ($order_by as $order) {
-                $field = $this->compileField($order->column);
-                if (!empty($field)) {
-                    $order_fields[] = $field;
-                }
-            }
-            if (!empty($order_fields)) {
-                $this->sugar_query->select->field($order_fields);
-            }
-        }
 
         if (!empty($this->sugar_query->from)) {
             $from_part = trim($this->compileFrom($this->sugar_query->from));
