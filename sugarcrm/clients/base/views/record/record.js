@@ -189,6 +189,7 @@
         if (this.meta && this.meta.panels) {
             this._initTabsAndPanels();
         }
+
         app.view.View.prototype._render.call(this);
 
         if (this.context.get('record_label')) {
@@ -276,8 +277,14 @@
 
         // Set to first tab by default
         if (!activeTabHref) {
-            activeTabHref = this.$('#recordTab > .tab:first-child > a').attr('href');
-            app.user.lastState.set(app.user.lastState.key('activeTab', this), activeTabHref);
+            activeTabHref = this.$('#recordTab > .tab:first-child > a').attr('href') || '';
+            app.user.lastState.set(
+                app.user.lastState.key('activeTab', this),
+                activeTabHref.substring(0, activeTabHref.indexOf(this.cid))
+            );
+        }
+        else {
+            activeTabHref += this.cid;
         }
 
         var activeTab = this.$('#recordTab > .tab > a[href="'+activeTabHref+'"]');
@@ -293,9 +300,12 @@
      * @param {Event} event
      */
     setActiveTab: function(event) {
-       var tabTarget = this.$(event.currentTarget).attr('href');
-       var tabKey = app.user.lastState.key('activeTab', this);
-       app.user.lastState.set(tabKey, tabTarget);
+        var tabTarget = this.$(event.currentTarget).attr('href'),
+            tabKey = app.user.lastState.key('activeTab', this),
+            cidIndex = tabTarget.indexOf(this.cid);
+
+        tabTarget = tabTarget.substring(0, cidIndex);
+        app.user.lastState.set(tabKey, tabTarget);
     },
     /**
      * saves panel state in user last state
