@@ -1,0 +1,384 @@
+// COMMUNICATIONS STYLES (from Mango/sugarcrm/styleguide/less/clients/base/custom.less) [2]
+.sending-stats {
+    padding: 12px;
+    .nav-tabs {
+        margin-bottom: 0;
+        border: none;
+    }
+    li {
+        padding: 4px 4px 2px;
+        font-size: 11px;
+        text-align: center;
+        width: 25%;
+        border-right: 1px solid @grayLighter;
+        .box-sizing(border-box);
+        .dot {
+            .border-radius(3px);
+            width: 80%;
+            display: block;
+            vertical-align: middle;
+            margin: 5px auto 0;
+            padding: 2px 0;
+            font-size: 11px;
+            color: @white;
+        }
+        .count {
+            font-size: @fontSizeHeader;
+        }
+        span {
+            font-size: 12px;
+            color: @grayLight;
+        }
+        &:last-child {
+            border-right: none;
+        }
+        &:hover {
+            cursor: pointer;
+            background-color: @grayLighter;
+        }
+    }
+}
+.email-template-preview {
+    padding: 12px;
+    li {
+        padding: 8px;
+        border-bottom: 1px solid @grayLighter;
+        .dot {
+            display: none;
+            .border-radius(6px);
+            width: 8px;
+            height: 8px;
+            //display: inline-block;
+            margin: 0 5px 0 0;
+            &.red {
+                background: #F49992;
+            }
+            &.green {
+                background: #A3CA88;
+            }
+        }
+        span {
+            float: right;
+            color: @grayLight;
+        }
+    }
+    .highlights {
+        display: table;
+        margin: 0 auto;
+        position: relative;
+        .highlight {
+            display: none;
+            .border-radius(3px);
+            position: absolute;
+            height: 15px;
+            width: 35px;
+            box-shadow: 0px 0px 0px 2px @white;
+            &.red {
+                background: rgba(244, 153, 146, .9);
+            }
+            &.green {
+                background: rgba(163, 202, 136, .9);
+            }
+        }
+    }
+    img {
+        max-height: 240px;
+    }
+    .preview-container {
+        .headerpane {
+            top: 0;
+            position: relative;
+            h1 .record-cell {
+                padding-bottom: 40px;
+                vertical-align: top;
+                &[data-type="name"] {
+                    padding-top: 15px;
+                }
+                .details {
+                    font-size: 10px;
+                }
+            }
+        }
+        .hybrid-list {
+            padding: 10px 0;
+            overflow: hidden;
+            .hybrid-list-item {
+                float: left;
+                width: 50%;
+                &:hover {
+                    background: rgba(255, 255, 255, .5);
+                }
+                .stats { display: none; }
+                .details {
+                    float: none;
+                    color: inherit;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    //width: 150px;
+                }
+            }
+        }
+    }
+}
+.email-templates {
+    .thumbnails {
+        padding: 12px 12px 0;
+        p {
+            text-align: center;
+            color: @gray;
+            margin: 0;
+        }
+        .thumbnail {
+            position: relative;
+            border: none;
+            .box-shadow(none);
+            &:hover {
+                background-color: @grayLight;
+            }
+            &.active {
+                background-color: @grayDark;
+                p { color: @white; }
+            }
+            a {
+                display: inline-block;
+            }
+            .status {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                font-size: 18px;
+                color: @gray;
+                &.hide {
+                    display: none;
+                    font-size: 15px;
+                }
+            }
+            &:hover .status.hide {
+                display: block;
+            }
+        }
+    }
+}
+.template_preview {
+    font-size: 11px;
+    a {
+        color: @white;
+        text-decoration: underline;
+    }
+    .header, .footer {
+        padding: 5px 5px;
+        .left { float: left; }
+        .right { float: right; }
+        div {
+            color: #999;
+        }
+    }
+    .header {
+        overflow: auto;
+        .title {
+            font-size: 16px;
+            color: @white;
+        }
+        .ctr {
+            span {
+                &.good { color: #43960F; }
+            }            
+        }
+    }
+    .image {
+        img {
+            width: 600px !important;
+            height: 350px !important;
+        }
+    }
+    .footer {
+        overflow: auto;
+    }
+}
+.tooltip.template-preview {
+    .tooltip-arrow {
+        top: 5%;
+        margin-top: 0;
+    }
+    .tooltip-inner {
+        max-width: inherit !important;
+        white-space: normal !important;
+    }
+}
+.email-editor {
+    border-top: 1px solid @grayLighter;
+    border-bottom: 1px solid @grayLighter;
+    margin-bottom: 0;
+    & > li {
+        padding: 4px 0;
+        &:first-child {
+            padding-left: 20px;
+        }
+    }
+    .btn.dropdown-toggle,
+    .btn-group.open .btn.dropdown-toggle {
+        .box-shadow(none);
+        &:hover {
+            background-color: transparent;
+        }
+    }
+    .btn.dropdown-toggle {
+        color: @gray;
+        img {
+            width: 20px;
+            height: 20px;
+            margin-right: 3px;
+            vertical-align: top;
+            margin-top: -2px;
+        }
+    }
+    .btn-group.open .btn.dropdown-toggle {
+        border: 1px solid transparent;
+        background-color: transparent;
+    }
+    .btn.accordion-toggle {
+        &:not(.collapsed) {
+            background-color: @gray;
+            color: @white;
+            text-shadow: none;
+            &:hover {
+                background-color: @grayLight;
+                color: @black;
+            }
+            [class^="icon-"] {
+                color: @white;
+                text-shadow: none;
+            }
+        }
+    }
+    .dropdown-menu {
+        margin-top: 4px;
+        li {
+            a {
+                display: block;
+                padding: 6px 8px 8px;
+                text-indent: 32px;
+                position: relative;
+                &.alt {
+                    border-top-color: #ccc;
+                    text-indent: 0;
+                    background-color: #fafafa;
+                    box-shadow: 0 0 0 1px white;
+                }
+            }
+            .avatar {
+                position: absolute;
+                left: 11px;
+                height: 20px;
+                width: 20px;
+                min-width: 20px;
+                .box-shadow(none);
+                &[class*="icon-"] {
+                    text-indent: 0;
+                    font-size: 14px;
+                    text-align: center;
+                    line-height: 21px;
+                }
+            }
+        }
+    }
+    .btn-group.open .menu-toolbar {
+        display: block;
+    }
+    .btn-toolbar {
+        margin: 0;
+        padding-right: 12px;
+    }
+    .email-from {
+        span {
+            padding: 0 4px;
+        }
+    }
+    .email-time,
+    .email-date {
+        .btn.dropdown-toggle {
+            padding: 0;
+        }
+        input {
+            border: none;
+            .box-shadow(none);
+            width: 64px;
+            padding: 4px 0 4px 2px;
+            // width: auto;
+        }
+    }
+    .email-time {
+        input {
+            width: 50px;
+        }
+    }
+}
+.nav.nav-tabs.email-editor .open .dropdown-toggle {
+  color: @gray;
+}
+.menu-toolbar {
+    width: 100%;
+    .box-sizing(border-box);
+    padding: 12px 10px 12px 20px;
+    border-top: none;
+    border-bottom: 1px solid @grayLighter;
+    span {
+        color: @grayLight;
+    }
+}
+// COMBINE WITH .menu-toolbar
+.email-menu-toolbars {
+    .email-attachments, .email-documents {
+        .btn {
+            margin-right: 8px;
+        }
+    }
+    .email-attachments {
+        &.in.collapse {
+            .btn.attachment {
+                background-color: #343434;
+                background-image: none;
+                text-shadow: none;
+                font-weight: bold;
+                .icon.file-type {
+                    width: 18px;
+                    height: 18px;
+                    margin: -2px 0 -3px;
+                    display: inline-block;
+                    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAMAAAC6V+0/AAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1lADA0LzExLzA4YZUFlAAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNAay06AAAACcUExURQAAAAAAAAAAAAAAAAAAAAAAAAAAADMzMzMzMwAAADMzMwAAAAAAADMzMwAAAAAAADMzMwAAADAwMCwsLCsrKx0dHWBgYCEhIRwcHLKysrS0tLa2trq6usHBwcPDw8wAAMwBAeFWVuHh4eVhYeZ3d+ltbemAgOnp6erq6uyJiezs7O3t7e+Sku/v7/Dw8PHx8fKbm/z8/P7+/v///6/QATAAAAAZdFJOUwABAwsPEBQZICQmLzAzP0BARU5WY250gozvTdQzAAAAqElEQVQY03XPiw6CMAxAUZ8MQedUEBUUkYmi+Oz//5uFdmSaeBnNcrKQ0en8aeDLptnY6bXon6gYlk7XoDxTMcBiaFReqDUAzPsGr9QWEUYGb9Rht0mSqcG7lTT4sGJM91+lhE/8fvM2g7GCY/3QqBhLPJBDjgs3JWMBWZZBvXAUjBq01nhINxvGn/ieLyu6p6fCt1WoPEShgmjVFgVK8I8K4U4wVxB8AC+QJnroiSNdAAAAAElFTkSuQmCC");
+                }
+                .title.file-name {
+                    color: @white;
+                }
+                .icon-remove {
+                    color: #787878;
+                    font-size: 12px;
+                    top: 0;
+                    &:hover {
+                        color: #aaa;
+                    }
+                }
+            }
+        }
+    }
+    .email-formatting {
+        .menu-toolbar {
+           min-height: 40px;
+           padding: 0 10px 0 20px;
+        }
+        .btn-toolbar {
+            display: inline-block;
+            margin: 0 0 -1px -3px;
+            padding: 6px 0;
+            border-right: 1px solid @grayLighter;
+            border-bottom: 1px solid @grayLighter;
+            .btn:first-child {
+                margin-left: 0;
+            }
+            &:first-child {
+                //padding-left: 20px;
+            }
+        }
+    }
+}
