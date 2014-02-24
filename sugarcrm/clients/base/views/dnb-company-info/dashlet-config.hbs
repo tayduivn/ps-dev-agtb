@@ -12,28 +12,8 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  ********************************************************************************/
 }}
-<div id="dnb-no-duns" class="block-footer">
-    <div id="dnb-refresh-loading">
-        {{str "LBL_DNB_RFR_LOADING"}}...
-    </div>
-    <div id="dnb-refresh-details">
-        {{#if uptodate}}
-            <aside>
-                <em>{{str "LBL_DNB_UPTODATE_MSG"}}</em>
-            </aside>
-        {{else}}
-            {{#if errmsg}}
-                <aside>
-                    <em>{{errmsg}}</em>
-                </aside>
-            {{else}}
-                <aside>
-                    <em>{{str "LBL_DNB_OUTOFDATE_MSG"}}</em>
-                </aside>
-                <a id="dnb-refresh">
-                    {{str "LBL_DNB_RFR_HINT"}}
-                </a>
-            {{/if}}
-        {{/if}}
-    </div>
+<div class="record">
+    <aside class='txt'>
+        {{str "LBL_DASHLET_COMPANY_INFO_LONG_DESC"}}
+    </aside>
 </div>
