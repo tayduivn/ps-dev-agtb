@@ -9109,10 +9109,6 @@ i.icon-arrow-up:before {
     margin-top: 0px;
 }
 
-.touch table.edit.view tr td > a > span[class^="spr_"] {
-    display:none;
-}
-
 html.touch {
     height: 100%;
     position: static;
