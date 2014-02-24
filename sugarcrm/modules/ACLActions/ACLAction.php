@@ -300,7 +300,7 @@ class ACLAction  extends SugarBean
             FROM acl_roles_users
             LEFT JOIN acl_roles_actions
             ON acl_roles_actions.role_id = acl_roles_users.role_id AND acl_roles_actions.deleted=0
-            WHERE acl_roles_users.user_id ='$user_id' AND acl_roles_users.deleted =0) AS tt
+            WHERE acl_roles_users.user_id ='$user_id' AND acl_roles_users.deleted =0) tt
             ON tt.action_id = acl_actions.id
             WHERE acl_actions.deleted=0 $additional_where ORDER BY acl_actions.category, acl_actions.name";
         $result = $db->query($query);
