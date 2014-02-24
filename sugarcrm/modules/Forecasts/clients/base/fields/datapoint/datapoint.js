@@ -56,7 +56,7 @@
     total_field: '',
 
     initialize: function(options) {
-        app.view.Field.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
 
         this.total_field = this.total_field || this.name;
 
@@ -72,8 +72,8 @@
                 return false;
             }
             // adjust the arrow
-            this.arrow = app.utils.getArrowIconColorClass(this.total, this.initial_total);
-            this.checkIfNeedsCommit()
+            this.arrow = this._getArrowIconColorClass(this.total, this.initial_total);
+            this.checkIfNeedsCommit();
             return true;
         }, this);
         //if user resizes browser, adjust datapoint layout accordingly
@@ -102,7 +102,7 @@
      */
     _dispose: function() {
         $(window).off('resize.datapoints');
-        app.view.Field.prototype._dispose.call(this);
+        this._super('_dispose');
     },
 
     /**
@@ -205,5 +205,23 @@
 
             if (!this.disposed) this.render();
         }, this);
+    },
+
+    /**
+     * Returns the CSS classes for an up or down arrow icon
+     *
+     * @param {String|Number} newValue the new value
+     * @param {String|Number} oldValue the previous value
+     * @return {String} css classes for up or down arrow icons, if the values didn't change, returns ''
+     * @private
+     */
+    _getArrowIconColorClass: function(newValue, oldValue) {
+        var cls = '';
+
+        // figure out if it changed here based
+        if(app.math.isDifferentWithPrecision(newValue, oldValue)) {
+            cls = (newValue > oldValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
+        }
+        return cls;
     }
 })
