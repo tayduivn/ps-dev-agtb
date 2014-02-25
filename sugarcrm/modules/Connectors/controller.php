@@ -717,6 +717,11 @@ class ConnectorsController extends SugarController {
 		//Rewrite the metadata files
 		ConnectorUtils::updateMetaDataFiles();
 
+        // refresh connectors
+        require_once('include/connectors/ConnectorManager.php');
+        $cm = new ConnectorManager();
+        $connectors = $cm->buildConnectorsMeta();
+
 	    // BEGIN SUGAR INT
 		if(empty($_REQUEST['from_unit_test'])) {
 		// END SUGAR INT

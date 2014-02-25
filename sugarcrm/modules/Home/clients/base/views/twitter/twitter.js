@@ -91,8 +91,10 @@
      * @returns {string} twitter name
      */
     getTwitterName: function() {
+        var mapping = this.getConnectorModuleFieldMapping('ext_rest_twitter', this.moduleType);
         var twitter =
                 this.model.get('twitter') ||
+                this.model.get(mapping.name) ||
                 this.model.get('name') ||
                 this.model.get('account_name') ||
                 this.model.get('full_name');
@@ -123,7 +125,7 @@
         this.screen_name = this.settings.get('twitter') || false;
         this.tried = false;
 
-        if (!this.getTwitterName() || this.viewName === 'config') {
+        if (this.viewName === 'config') {
             return false;
         }
 
@@ -140,6 +142,10 @@
      * @param {object} connector - connector will have been validated already
      */
     loadDataWithValidConnector: function(connector) {
+        if (!this.getTwitterName()) {
+            return false;
+        }
+
         var limit = parseInt(this.settings.get('limit'), 10) || this.limit,
             self = this;
 

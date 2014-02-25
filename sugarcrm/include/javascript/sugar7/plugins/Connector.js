@@ -24,10 +24,10 @@
              * @param {function} errorCall
              * @param {array} connectorCriteria
              */
-            checkConnector: function(name, successCall, errorCall, connectorCriteria) {
+            checkConnector: function (name, successCall, errorCall, connectorCriteria) {
                 var connectors,
                     connector = null;
-                var successCallWrapper = _.bind(function() {
+                var successCallWrapper = _.bind(function () {
                     this.checkConnector(name, successCall, errorCall, connectorCriteria);
                 }, this);
 
@@ -64,10 +64,10 @@
              *
              * @return {boolean} true if criteria is met
              */
-            checkCriteria: function(connector, criteria) {
+            checkCriteria: function (connector, criteria) {
                 var check = true;
 
-                _.each(criteria, function(criterion) {
+                _.each(criteria, function (criterion) {
                     if (criterion === 'test_passed') {
                         if (connector.testing_enabled) {
                             check = check && connector.test_passed;
@@ -84,17 +84,35 @@
 
                 return check;
             },
+            /**
+             * gets connector field mappings
+             * @param {String} connector
+             * @param {Module} module
+             * @returns {{}}
+             */
+            getConnectorModuleFieldMapping: function (connector, module) {
+                var connectors = app.cache.get(hashKey);
+                var mappings = {};
+                if (connectors[connector] &&
+                    connectors[connector].field_mapping &&
+                    connectors[connector].field_mapping.beans &&
+                    connectors[connector].field_mapping.beans[module]
+                    ) {
+                    mappings = connectors[connector].field_mapping.beans[module];
+                }
+                return mappings;
+            },
 
             /**
              * API call to connectors endpoint to populate cache
              * @param {string} name
              * @param {function} successCall
              */
-            getConnectors: function(name, successCall) {
+            getConnectors: function (name, successCall) {
                 var connectorURL = app.api.buildURL('connectors');
 
                 app.api.call('GET', connectorURL, {}, {
-                    success: function(data) {
+                    success: function (data) {
                         hashKey = data['_hash'];
                         app.cache.set(hashKey, data['connectors']);
                         successCall();
