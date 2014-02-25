@@ -151,4 +151,52 @@ class SugarFieldFloatTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    public function dataProviderFixForFilter()
+    {
+        return array(
+            array('$equals', 10.69, '='),
+            array('$not_equals', 10.69, '!='),
+            array('$between', array(10.69, 100.69), 'BETWEEN'),
+            array('$lt', 10.69, '<'),
+            array('$lte', 10.69, '<='),
+            array('$gt', 10.69, '>'),
+            array('$gte', 10.69, '>='),
+        );
+    }
+
+    /**
+     *
+     * @dataProvider dataProviderFixForFilter
+     * @param String $op                The Filer Operation
+     * @param Number $value             The Value we are looking for
+     * @param String $query_op          The value of $op in the query
+     */
+    public function testFixForFilter($op, $value, $query_op)
+    {
+        $bean = BeanFactory::getBean('RevenueLineItems');
+
+        /* @var $where SugarQuery_Builder_Where */
+        $where = $this->getMockBuilder('SugarQuery_Builder_Where')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        /* @var $bean RevenueLineItem */
+        $q = new SugarQuery();
+        $q->from($bean);
+
+        $field = new SugarFieldFloat('float');
+
+        $ret = $field->fixForFilter($value, 'unit_test', $bean, $q, $where, $op);
+
+        $this->assertFalse($ret);
+        if (!is_array($value)) {
+            $this->assertContains('(ROUND(unit_test, 2) ' . $query_op . ' ' . $value . ')', $q->compileSql());
+        } else {
+            $this->assertContains(
+                '(ROUND(unit_test, 2) ' . $query_op . ' ' . $value[0] . ' AND ' . $value[1] . ')',
+                $q->compileSql()
+            );
+        }
+    }
+
 }
