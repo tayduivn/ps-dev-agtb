@@ -44,4 +44,5 @@ $mod_strings = array(
     'TPL_COMMENT' => '{{{value}}}',
     'TPL_MORE_COMMENT' => '{{this}} more comment&hellip;',
     'TPL_MORE_COMMENTS' => '{{this}} more comments&hellip;',
+    'TPL_SHOW_MORE_MODULE' => 'More posts...',
 );
