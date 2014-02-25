@@ -347,7 +347,7 @@
             searchModule = this.getSearchModule(),
             params = {},
             limit = self.def.limit || 5,
-            relatedModuleField = this.def.rname;
+            relatedModuleField = this.def.rname || 'name';
 
         searchCollection = query.context || app.data.createBeanCollection(searchModule);
 
