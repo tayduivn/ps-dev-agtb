@@ -312,11 +312,19 @@
                     var _this = $(node);
                     var _first_item = $(node).find("a:first").not($(node).find(".subnav > li a"));
                     if(_first_item.length == 0) {
-                        var sub_items = $(node).find(".subnav > li:first").children();
-                        if(sub_items.length == 0)
+                        var _first_sub_item = $(node).find(".subnav > li:first");
+                        var sub_items = _first_sub_item.children();
+                        if(sub_items.length == 0) {
                             menuNode.hide();
-                        else
+                        } else {
                             _this.prepend(sub_items);
+                            _first_sub_item.remove();
+                        }
+                    }
+                    // Remove submenu and dropdown arrow if submenu become empty after replacing
+                    if (_this.find(".subnav > li").length == 0) {
+                        _this.parent('.subnav').remove();
+                        _this.find('span').remove();
                     }
                 });
 
