@@ -27,5 +27,5 @@
  ********************************************************************************/
 }}
         <textarea rows="{{def.rows}}" cols="{{def.cols}}" name="{{name}}"
-                  class="input-xlarge wide tleft">{{value}}</textarea>
+                  class="input-xlarge wide tleft"{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}>{{value}}</textarea>
         {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}

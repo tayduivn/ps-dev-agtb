@@ -39,6 +39,6 @@
         </div>
     {{/each}}
 {{else}}
-    <input type="file" name="{{name}}" />
+    <input type="file" name="{{name}}"{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}} />
 {{/if}}
 {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}

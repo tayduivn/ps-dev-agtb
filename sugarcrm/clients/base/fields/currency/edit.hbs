@@ -27,11 +27,11 @@
  ********************************************************************************/
 }}
 {{#if hideCurrencyDropdown}}
-    <input type="text" name="{{name}}" value="{{value}}" class="inherit-width">
+    <input type="text" name="{{name}}" value="{{value}}" class="inherit-width"{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}>
 {{else}}
     <div class="select2-addon">
         <span sfuuid="{{currencySfId}}" class="currency edit"></span>
-        <input type="text" name="{{name}}" value="{{value}}">
+        <input type="text" name="{{name}}" value="{{value}}"{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}>
     </div>
 {{/if}}
 {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
