@@ -302,7 +302,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
             'name' => 'deal_tot',
             'vname' => 'LBL_DEAL_TOT',
             'dbType' => 'decimal',
-            'type' => 'decimal',
+            'type' => 'currency',
             'len' => '26,2',
         ),
         'deal_tot_usdollar' =>
@@ -310,7 +310,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
             'name' => 'deal_tot_usdollar',
             'vname' => 'LBL_DEAL_TOT_USDOLLAR',
             'dbType' => 'decimal',
-            'type' => 'decimal',
+            'type' => 'currency',
             'is_base_currency' => true,
             'len' => '26,2',
             'studio' => array(

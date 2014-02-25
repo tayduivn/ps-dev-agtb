@@ -109,7 +109,7 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
   array (
     'name' => 'tax',
     'vname' => 'LBL_TAX',
-    'type' => 'decimal',
+    'type' => 'currency',
     'len' => '26,6',
     'disable_num_format' => true,
     'comment' => 'Tax rate applied to items in the group',
@@ -122,7 +122,7 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     array (
         'name' => 'tax_usdollar',
         'vname' => 'LBL_TAX_USDOLLAR',
-    'type' => 'decimal',
+    'type' => 'currency',
         'len' => '26,6',
         'disable_num_format' => true,
         'comment' => 'Total tax for all items in group in USD',
@@ -143,7 +143,7 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
   array (
         'name' => 'total',
         'vname' => 'LBL_TOTAL',
-    'type' => 'decimal',
+    'type' => 'currency',
         'len' => '26,6',
         'disable_num_format' => true,
         'comment' => 'Total amount for all items in the group',
@@ -156,7 +156,7 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     array (
         'name' => 'total_usdollar',
         'vname' => 'LBL_TOTAL_USDOLLAR',
-    'type' => 'decimal',
+    'type' => 'currency',
         'len' => '26,6',
         'disable_num_format' => true,
         'comment' => 'Total amount for all items in the group in USD',
@@ -178,7 +178,7 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     array (
         'name' => 'subtotal_usdollar',
         'vname' => 'LBL_SUBTOTAL_USDOLLAR',
-    'type' => 'decimal',
+    'type' => 'currency',
         'len' => '26,6',
         'disable_num_format' => true,
         'comment' => 'Group total minus tax and shipping in USD',
@@ -199,7 +199,7 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
   array (
         'name' => 'shipping_usdollar',
         'vname' => 'LBL_SHIPPING',
-    'type' => 'decimal',
+    'type' => 'currency',
         'len' => '26,6',
         'disable_num_format' => true,
         'comment' => 'Shipping charge for group in USD',
@@ -220,7 +220,7 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     array(
         'name' => 'deal_tot',
         'vname' => 'LBL_DEAL_TOT',
-    'type' => 'decimal',
+    'type' => 'currency',
     'len' => '26,2',
         'disable_num_format' => true,
         'comment' => 'discount amount',
@@ -233,7 +233,7 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     array(
         'name' => 'deal_tot_usdollar',
         'vname' => 'LBL_DEAL_TOT',
-    'type' => 'decimal',
+    'type' => 'currency',
     'len' => '26,2',
         'disable_num_format' => true,
         'comment' => 'discount amount',
@@ -254,7 +254,7 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     array(
         'name' => 'new_sub',
         'vname' => 'LBL_NEW_SUB',
-    'type' => 'decimal',
+    'type' => 'currency',
     'len' => '26,6',
         'disable_num_format' => true,
         'comment' => 'Group total minus discount and tax and shipping',
@@ -267,7 +267,7 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     array (
         'name' => 'new_sub_usdollar',
         'vname' => 'LBL_NEW_SUB',
-    'type' => 'decimal',
+    'type' => 'currency',
         'len' => '26,6',
         'disable_num_format' => true,
         'comment' => 'Group total minus discount and tax and shipping',
@@ -289,7 +289,7 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     array(
         'name' => 'subtotal',
         'vname' => 'LBL_SUBTOTAL',
-    'type' => 'decimal',
+    'type' => 'currency',
     'len' => '26,6',
         'disable_num_format' => true,
         'comment' => 'Group total minus tax and shipping',
@@ -302,7 +302,7 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     array(
         'name' => 'shipping',
         'vname' => 'LBL_SHIPPING',
-    'type' => 'decimal',
+    'type' => 'currency',
     'len' => '26,6',
         'disable_num_format' => true,
         'comment' => 'Shipping charge for group',
