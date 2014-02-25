@@ -85,7 +85,7 @@
      */
     _render: function() {
         var self = this;
-        if(_.isUndefined(this.items)){
+        if (!this.items) {
             this.loadEnumOptions(false, function() {
                 //Re-render widget since we have fresh options list
                 if(!this.disposed){
@@ -204,7 +204,8 @@
             fieldMeta = meta && meta[this.name] ? meta[this.name] : this.def;
         this.items = this.def.options || fieldMeta.options;
         fetch = fetch || false;
-        if (fetch || _.isUndefined(this.items)) {
+
+        if (fetch || !this.items) {
             var _key = 'request:' + this.module + ':' + this.name;
             //if previous request is existed, ignore the duplicate request
             if (this.context.get(_key)) {
