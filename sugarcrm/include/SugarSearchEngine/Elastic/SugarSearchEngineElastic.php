@@ -120,6 +120,15 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     }
 
     /**
+     * Setter forceAsyncIndex
+     * @param boolean $value
+     */
+    public function setForceAsyncIndex($value)
+    {
+        $this->forceAsyncIndex = $value;
+    }
+
+    /**
      * Check if this is an Elastic client exception, disable FTS if it is
      * @param $e Exception
      * @return boolean tru if it's an Elastic client exception, false otherwise

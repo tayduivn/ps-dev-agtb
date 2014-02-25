@@ -440,6 +440,18 @@ enableInsideViewConnector();
 ///////////////////////////////////////////////////////////////////////////////
 ////    START DEMO DATA
 
+/*
+ * Enable asynchronous index mode before adding demo data. At this point
+ * the ES idex has not been initialized yet. The demo data loader uses
+ * SugarBean->save() which automatically triggers an inline index of each
+ * object. This is pointless as we want to take care of this in bulk
+ * during the intial full indexer run. This will also speed up the install
+ * process significantly and avoids ES errors when dyamic update is
+ * disabled on the ES cluster itself.
+ */
+$sse = SugarSearchEngineFactory::getInstance();
+$sse->setForceAsyncIndex(true);
+
     // populating the db with seed data
     installLog("populating the db with seed data");
     if( $_SESSION['demoData'] != 'no' ){
