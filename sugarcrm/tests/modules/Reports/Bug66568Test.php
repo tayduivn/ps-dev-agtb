@@ -109,7 +109,8 @@ class Bug66568Test extends Sugar_PHPUnit_Framework_TestCase
         $aclActions = $this->role->getRoleActions($this->role->id);
         $this->role->setAction($this->role->id, $aclActions['Accounts']['module']['export']['id'], ACL_ALLOW_NONE);
         // Clear ACL cache
-        unset($_SESSION['ACL']);
+        $action = BeanFactory::getBean('ACLActions');
+        $action->clearACLCache();
 
         $this->assertEquals(false, hasExportAccess($this->args), "User doesn't have rights, shouldn't allow exports");
     }
