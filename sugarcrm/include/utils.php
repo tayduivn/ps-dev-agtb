@@ -1008,7 +1008,7 @@ function return_app_list_strings_language($language)
         return $cache_entry;
     }
 
-    $default_language = $sugar_config['default_language'];
+    $default_language = !empty($sugar_config['default_language']) ? $sugar_config['default_language'] : $language;
     $temp_app_list_strings = $app_list_strings;
 
     $langs = array();
@@ -1141,7 +1141,7 @@ function return_application_language($language)
     }
 
     $temp_app_strings = $app_strings;
-    $default_language = $sugar_config['default_language'];
+    $default_language = !empty($sugar_config['default_language']) ? $sugar_config['default_language'] : $language;
 
     $langs = array();
     if ($language != 'en_us') {
@@ -1243,7 +1243,7 @@ function return_module_language($language, $module, $refresh=false)
     $temp_mod_strings = $mod_strings;
     $loaded_mod_strings = array();
     $language_used = $language;
-    $default_language = $sugar_config['default_language'];
+    $default_language = !empty($sugar_config['default_language']) ? $sugar_config['default_language'] : $language;
     $bean = BeanFactory::getBean($module);
 
     if (empty($language)) {
@@ -1268,21 +1268,21 @@ function return_module_language($language, $module, $refresh=false)
     }
 
     // cn: bug 6048 - merge en_us with requested language
-    if ($language != $sugar_config['default_language']) {
+    if ($language != $default_language) {
         $loaded_mod_strings = sugarLangArrayMerge(
-            LanguageManager::loadModuleLanguage($module, $sugar_config['default_language'],$refresh),
+            LanguageManager::loadModuleLanguage($module, $default_language, $refresh),
                 $loaded_mod_strings
             );
         if ($bean && !empty($bean->module_dir) && $bean->module_dir !== $module) {
             $loaded_mod_strings = sugarLangArrayMerge(
-                LanguageManager::loadModuleLanguage($bean->module_dir, $sugar_config['default_language'], $refresh),
+                LanguageManager::loadModuleLanguage($bean->module_dir, $default_language, $refresh),
                 $loaded_mod_strings
             );
         }
     }
 
     // Load in en_us strings by default
-    if ($language != 'en_us' && $sugar_config['default_language'] != 'en_us') {
+    if ($language != 'en_us' && $default_language != 'en_us') {
         $loaded_mod_strings = sugarLangArrayMerge(
             LanguageManager::loadModuleLanguage($module, 'en_us', $refresh),
                 $loaded_mod_strings
@@ -1335,7 +1335,7 @@ function return_mod_list_strings_language($language,$module)
 
     $language_used = $language;
     $temp_mod_list_strings = $mod_list_strings;
-    $default_language = $sugar_config['default_language'];
+    $default_language = !empty($sugar_config['default_language']) ? $sugar_config['default_language'] : $language;
 
     if ($currentModule == $module && isset($mod_list_strings) && $mod_list_strings != null) {
         return $mod_list_strings;
@@ -1384,7 +1384,7 @@ function return_theme_language($language, $theme)
     global $mod_strings, $sugar_config, $current_language;
 
     $language_used = $language;
-    $default_language = $sugar_config['default_language'];
+    $default_language = !empty($sugar_config['default_language']) ? $sugar_config['default_language'] : $language;
     $path = SugarThemeRegistry::get($theme)->getFilePath();
 
     foreach(SugarAutoLoader::existing(

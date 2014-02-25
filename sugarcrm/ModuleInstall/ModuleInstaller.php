@@ -1715,28 +1715,28 @@ class ModuleInstaller{
 		}
 	}
 
-	function rebuild_languages($languages = array(), $modules="")
-	{
+    function rebuild_languages($languages = array(), $modules = "")
+    {
         global $current_language, $app_list_strings, $app_strings;
 
-            foreach($languages as $language=>$value){
-				$this->log(translate('LBL_MI_REBUILDING') . " Language...$language");
-				$this->merge_files('Ext/Language/', $language.'.lang.ext.php', $language);
-	            if($modules!=""){
-	                foreach($modules as $module){
-	                	LanguageManager::clearLanguageCache($module, $language);
-	                }
-                } else {
-                    LanguageManager::clearLanguageCache(null, $language);
+        foreach ($languages as $language => $value) {
+            $this->log(translate('LBL_MI_REBUILDING') . " Language...$language");
+            $this->merge_files('Ext/Language/', $language . '.lang.ext.php', $language);
+            if ($modules != "") {
+                foreach ($modules as $module) {
+                    LanguageManager::clearLanguageCache($module, $language);
                 }
-			}
-			sugar_cache_reset();
+            } else {
+                LanguageManager::clearLanguageCache(null, $language);
+            }
+        }
+        sugar_cache_reset();
 
         // put actual metadata into global variable
         $app_list_strings = return_app_list_strings_language($current_language);
         // since both were cleared out, we need to set the app_strings as well
         $app_strings = return_application_language($current_language);
-	}
+    }
 
 	function rebuild_vardefs()
 	{
