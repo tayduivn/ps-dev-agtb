@@ -151,16 +151,12 @@
      * Main hook to update model when datepicker selected.
      */
     hideDatepicker: function(ev) {
-        var model     = this.model,
-            fieldName = this.name,
-            timeValue = '',
+        var timeValue = '',
             hrsMins   = {},
             dateValue = '',
             $timepicker;
 
         this.datepickerVisible = false;
-        model      = this.model;
-        fieldName  = this.name;
 
         // Only if object has a _setTimepickerValue
         if (!_.isUndefined(this._setTimepickerValue) && _.isFunction(this._setTimepickerValue)) {
@@ -179,10 +175,10 @@
         // If date isn't good we set it raw and let sidecar catch upstream in validation.
         if (this._verifyDateString(dateValue)) {
             this.leaveDirty = false;
-            model.set(fieldName, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes));
+            this.model.set(this.name, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes));
         } else {
             this.leaveDirty = true;//leave invalid date value alone so sidecar can catch on validation
-            model.set(fieldName, dateValue, hrsMins.hours, hrsMins.minutes);
+            this.model.set(this.name, dateValue, hrsMins.hours, hrsMins.minutes);
         }
     },
     /**
@@ -367,16 +363,20 @@
      * @param  {String} value the value
      */
     _render: function(value) {
-        var self = this, viewName;
+        var viewName = this._getViewName(),
+            isEditView = this._isEditView(viewName);
 
-        self._presetDateValues();
+        this._presetDateValues();
 
-        app.view.Field.prototype._render.call(this);//call proto render
+        if (!isEditView && this.datepickerVisible) {
+            // todo: when SC-2395 gets implemented change this to 'remove' not 'hide'
+            this.$(".datepicker").datepicker('hide');
+        }
 
-        viewName = self._getViewName();
+        this._super('_render');
 
-        if (self._isEditView(viewName)) {
-            self._setupDatepicker();
+        if (isEditView) {
+            this._setupDatepicker();
         }
         if (app.utils.isTouchDevice()) {
            this.$("[rel=datepicker]").attr('readonly',true);
