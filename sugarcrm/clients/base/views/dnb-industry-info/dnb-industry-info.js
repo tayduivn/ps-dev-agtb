@@ -189,23 +189,23 @@
         if (this.disposed) {
             return;
         }
-        var formattedIndustryInfo, dnbIndustryInfo = {};
+        var formattedIndustryInfo;
+        this.dnbIndustryInfo = {};
         if (dnbApiResponse.product) {
             var industryProduct = this.getJsonNode(dnbApiResponse.product, this.industryConst.industryInfoPath);
             if (industryProduct) {
                 formattedIndustryInfo = this.formatIndustryInfo(industryProduct, this.industryInfoDD);
                 if (!_.isNull(formattedIndustryInfo)) {
-                    dnbIndustryInfo.product = formattedIndustryInfo;
+                    this.dnbIndustryInfo.product = formattedIndustryInfo;
                 } else {
-                    dnbIndustryInfo.errmsg = app.lang.get('LBL_DNB_NO_DATA');
+                    this.dnbIndustryInfo.errmsg = app.lang.get('LBL_DNB_NO_DATA');
                 }
             } else {
-                dnbIndustryInfo.errmsg = app.lang.get('LBL_DNB_NO_DATA');
+                this.dnbIndustryInfo.errmsg = app.lang.get('LBL_DNB_NO_DATA');
             }
         } else {
-            dnbIndustryInfo.errmsg = dnbApiResponse.errmsg || app.lang.get('LBL_DNB_NO_DATA');
+            this.dnbIndustryInfo.errmsg = dnbApiResponse.errmsg || app.lang.get('LBL_DNB_NO_DATA');
         }
-        this.dnbIndustryInfo = dnbIndustryInfo;
         this.template = app.template.get(this.name);
         this.render();
         this.$('#dnb-industry-list-loading').hide();

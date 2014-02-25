@@ -3753,8 +3753,16 @@ $app_strings = array (
 
     /*D&B News Dashlet*/
     'LBL_DNB_NEWS_AND_MEDIA' => 'D&B: News',
+    'LBL_DNB_NEWS' => 'News',
+    'LBL_DNB_SOCIAL' => 'Social Media',
     'LBL_DNB_NEWS_AND_MEDIA_DESC' => 'Fetches News From D&B Services. Requires D&B subscription.',
+    'LBL_DNB_NEWS_AND_MEDIA_LONG_DESC' => 'Get the complete view of your client with D&B News and Social! Use the power of the DUNSright process to ensure that you are pulling from the right news sources and social handles. Requires D&B Subscription.',
     'LBL_DNB_NEWS_AND_MEDIA_LOADING' => 'Loading News From D&B',
+    'LBL_DNB_NEWS_AND_MEDIA_MORE' => 'Read More',
+    'LBL_DNB_NEWS_FACEBOOK' => 'Facebook',
+    'LBL_DNB_NEWS_TWITTER' => 'Twitter',
+    'LBL_DNB_NEWS_YOUTUBE' => 'YouTube',
+    'LBL_DNB_NEWS_WIKI' => 'Wikipedia',
 
     /* Twitter Dashlet */
     'LBL_TWITTER_REPLY' => 'Reply',
