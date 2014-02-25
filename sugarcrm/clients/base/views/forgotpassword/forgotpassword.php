@@ -59,7 +59,7 @@ $viewdefs['base']['view']['forgotpassword'] = array(
                 ),
                 array(
                     'name' => 'email',
-                    'type' => 'email',
+                    'type' => 'email-text',
                     'placeholder' => "LBL_EMAIL_BUTTON",
                     'required' => true,
                 ),
