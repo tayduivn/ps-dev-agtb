@@ -8,7 +8,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 ({
     /**
@@ -22,28 +22,38 @@
     additionalTableClasses: null,
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
-     * Use dupecheck-list metadata by default - subviews will just extend.
+     * The metadata used is the default `dupecheck-list` metadata, extended by
+     * the module specific `dupecheck-list` metadata, extended by subviews
+     * metadata.
      */
     initialize: function(options) {
-        var dupeListMeta = app.metadata.getView(options.module, 'dupecheck-list') || {};
-        options.meta = _.extend({}, dupeListMeta, options.meta || {});
+        var dupeListMeta = app.metadata.getView(null, 'dupecheck-list') || {},
+            moduleMeta = app.metadata.getView(options.module, 'dupecheck-list') || {};
+
+        options.meta = _.extend({}, dupeListMeta, moduleMeta, options.meta || {});
 
         this._super('initialize', [options]);
         this.context.on('dupecheck:fetch:fire', this.fetchDuplicates, this);
     },
 
+    /**
+     * @inheritDoc
+     */
     bindDataChange: function() {
         this.collection.on('reset', function() {
             this.context.trigger('dupecheck:collection:reset');
         }, this);
         this._super('bindDataChange');
-   },
+    },
 
+    /**
+     * @inheritDoc
+     */
     _renderHtml: function() {
         var classesToAdd = 'duplicates highlight';
-        this._super("_renderHtml");
+        this._super('_renderHtml');
         if (this.additionalTableClasses) {
             classesToAdd = classesToAdd + ' ' + this.additionalTableClasses;
         }
