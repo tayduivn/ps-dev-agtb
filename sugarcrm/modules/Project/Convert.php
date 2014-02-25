@@ -72,6 +72,14 @@ $sugar_smarty->assign('PRINT_URL', "index.php?".$GLOBALS['request_string']);
 $sugar_smarty->assign('ID', $focus->id);
 $sugar_smarty->assign('NAME', $focus->name);
 
+// get date/time fields in correct display format to pass front end validation
+foreach ($focus->fetched_row as $field=>$value) {
+    if (isset($focus->field_name_map[$field]['type'])
+        && in_array($focus->field_name_map[$field]['type'], array('date','datetime','datetimecombo','time'))) {
+        $focus->fetched_row[$field] = $focus->$field;
+    }
+}
+
 // awu: Bug 11820 - date entered was not conforming to correct date in Oracle
 $focus->fetched_row['estimated_start_date'] = $focus->estimated_start_date;
 $focus->fetched_row['estimated_end_date'] = $focus->estimated_end_date;

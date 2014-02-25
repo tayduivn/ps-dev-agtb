@@ -1137,7 +1137,7 @@ function isFieldHidden(field, type)
         td = Dom.getAncestorByTagName(td, 'TD');
     }
 
-	return Dom.hasClass(td, 'vis_action_hidden') || field.type == 'hidden';
+    return Dom.hasClass(td, 'vis_action_hidden');
 }
 //END SUGARCRM flav=pro ONLY
 function validate_form(formname, startsWith){
