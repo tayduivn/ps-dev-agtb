@@ -148,7 +148,7 @@ class MetaDataManager
     protected $sectionMap = array(
         self::MM_MODULES        => false,
         self::MM_FULLMODULELIST => 'getModuleList',
-        self::MM_MODULESINFO     => 'getModulesInfo',
+        self::MM_MODULESINFO    => 'getModulesInfo',
         self::MM_FIELDS         => 'getSugarFields',
         self::MM_LABELS         => 'getStringUrls',
         self::MM_VIEWS          => 'getSugarViews',
@@ -305,6 +305,19 @@ class MetaDataManager
      * @var array
      */
     protected $data = array();
+
+    /**
+     * These sections are skipped as part of a full metadata fetch either because
+     * they are handled in a combination method like the modules section builder
+     * or because they are handled separately, like override values
+     * 
+     * @var array
+     */
+    protected $sectionsToSkip = array(
+        self::MM_OVERRIDEVALUES => true,
+        self::MM_FULLMODULELIST => true,
+        self::MM_MODULESINFO => true,
+    );
 
     /**
      * The constructor for the class. Sets the visibility flag, the visibility
@@ -666,7 +679,8 @@ class MetaDataManager
     {
         $relFactory = SugarRelationshipFactory::getInstance();
 
-        $data = $relFactory->getRelationshipDefs();
+        // Request fresh relationship metadata always
+        $data = $relFactory->getRelationshipDefs(true);
 
         // Sanity check the rel defs, just in case they came back empty
         if (is_array($data)) {
@@ -1902,9 +1916,9 @@ class MetaDataManager
 
         foreach ($this->sections as $section) {
             // Overrides are handled at the end because they are "special"
-            // full_module_list is handled by the modules section handler and is
-            // only found in private metadata
-            if ($section == self::MM_OVERRIDEVALUES || $section == self::MM_FULLMODULELIST) {
+            // full_module_list and module_info are handled by the modules section 
+            // handler and is only found in private metadata
+            if ($this->sectionIsSkipped($section)) {
                 continue;
             }
 
@@ -2199,7 +2213,8 @@ class MetaDataManager
      */
     public function populateModules($data)
     {
-        $data['full_module_list'] = $this->getModuleList();
+        $this->data['full_module_list'] = $this->getModuleList();
+        $data['full_module_list'] = $this->data['full_module_list'];
         $data['modules'] = $this->getModulesData();
         $data['modules_info'] = $this->getModulesInfo();
         return $data;
@@ -3043,5 +3058,17 @@ class MetaDataManager
         }
 
         return $moduleList;
+    }
+
+    /**
+     * Checks to see if a particular sections is supposed to be skipped in the 
+     * full metadata load
+     * 
+     * @param string $section Name of the section to check
+     * @return boolean
+     */
+    protected function sectionIsSkipped($section) 
+    {
+        return !empty($this->sectionsToSkip[$section]);
     }
 }

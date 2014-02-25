@@ -45,6 +45,7 @@ require_once 'include/utils/progress_bar_utils.php';
 require_once 'ModuleInstall/ModuleScanner.php';
 require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
+require_once 'modules/MySettings/TabController.php';
 
 define('DISABLED_PATH', 'Disabled');
 
@@ -54,6 +55,16 @@ class ModuleInstaller{
 	var $base_dir  = '';
 	var $modulesInPackage = array();
 	public $disabled_path = DISABLED_PATH;
+	
+	/**
+	 * List of install sections and modules affected by installation in each 
+	 * sections. This is used to handle post install cleanup prior to a complete 
+	 * rebuild to allow various caches to be handled at the correct point in
+	 * installation.
+	 * 
+	 * @var array
+	 */
+	protected $affectedModules = array();
 
 	function ModuleInstaller(){
 		$this->ms = new ModuleScanner();
@@ -151,6 +162,9 @@ class ModuleInstaller{
 						update_progress_bar('install', $current_step, $total_steps);
 					}
 				}
+				// Run clean up on processes that need it prior to installing beans
+				$this->runInstallCleanup();
+				
 				$this->install_beans($this->installed_modules);
 				if(!$this->silent){
 					$current_step++;
@@ -192,7 +206,7 @@ class ModuleInstaller{
 				$rac = new RepairAndClear();
 				$rac->repairAndClearAll($selectedActions, $this->installed_modules,true, false);
 				$this->rebuild_relationships();
-				UpdateSystemTabs('Add',$this->tab_modules);
+				$this->updateSystemTabs('Add',$this->tab_modules);
                 //Clear out all the langauge cache files.
                 clearAllJsAndJsLangFilesWithoutOutput();
                 $cache_key = 'app_list_strings.'.$GLOBALS['current_language'];
@@ -385,6 +399,9 @@ class ModuleInstaller{
                 elseif($item['to_module'] == 'application') {
                     $path = "custom/Extension/application/Ext/$extname";
                 } else {
+                    // Stack modules affected by this change to make sure all
+                    // modules that need updating in caches can handle it
+                    $this->affectedModules[$section][$item['to_module']] = $item['to_module'];
 				    $path = "custom/Extension/modules/{$item['to_module']}/Ext/$extname";
                 }
                 if(!file_exists($path)){
@@ -970,12 +987,15 @@ class ModuleInstaller{
             $this->log(translate('LBL_MI_IN_LANG') );
             foreach($this->installdefs['language'] as $packs)
             {
-                $modules[]=$packs['to_module'];
+                // Prevent multiple modules from being sent to rebuild_languages
+                $modules[$packs['to_module']] = $packs['to_module'];
                 $languages[$packs['language']] = $packs['language'];
 				$packs['from'] = str_replace('<basepath>', $this->base_dir, $packs['from']);
 				$GLOBALS['log']->debug("Installing Language Pack ..." . $packs['from']  .  " for " .$packs['to_module']);
 			    $path = 'custom/Extension/modules/' . $packs['to_module']. '/Ext/Language';
 				if($packs['to_module'] == 'application'){
+				    // Unset the 'application' module
+				    unset($modules[$packs['to_module']]);
 				    $path ='custom/Extension/' . $packs['to_module']. '/Ext/Language';
 				}
 
@@ -1674,7 +1694,7 @@ class ModuleInstaller{
 					echo '</div>';
 				}
 
-				UpdateSystemTabs('Restore',$installed_modules);
+				$this->updateSystemTabs('Restore',$installed_modules);
 
 	            //clear the unified_search_module.php file
 	            require_once('modules/Home/UnifiedSearchAdvanced.php');
@@ -1992,6 +2012,14 @@ class ModuleInstaller{
      */
 	function install_beans($beans){
 		foreach($beans as $bean){
+			// This forces new beans to refresh their vardefs because at this 
+			// point the global dictionary for this object may be set with just
+			// relationship fields.
+			$rv = isset($GLOBALS['reload_vardefs']) ? $GLOBALS['reload_vardefs'] : null;
+			$dm = isset($_SESSION['developerMode']) ? $_SESSION['developerMode'] : null;
+			$GLOBALS['reload_vardefs'] = true;
+			$_SESSION['developerMode'] = true;
+			
 			$this->log( translate('LBL_MI_IN_BEAN') . " $bean");
 			$mod = BeanFactory::getBean($bean);
 			if(!empty($mod) && $mod instanceof SugarBean && empty($mod->disable_vardefs)) { //#30273
@@ -1999,6 +2027,10 @@ class ModuleInstaller{
 				$mod->create_tables();
 				SugarBean::createRelationshipMeta($mod->getObjectName(), $mod->db,$mod->table_name,'',$mod->module_dir);
 			}
+			
+			// Return state. Null values essentially unset what wasn't set before
+			$GLOBALS['reload_vardefs'] = $rv;
+			$_SESSION['developerMode'] = $dm;
 		}
 	}
 
@@ -2302,7 +2334,7 @@ private function dir_file_count($path){
 					update_progress_bar('install', $current_step, $total_steps);
 					echo '</div>';
 				}
-				UpdateSystemTabs('Add',$installed_modules);
+				$this->updateSystemTabs('Add',$installed_modules);
 				$GLOBALS['log']->debug('Complete');
 
 		}else{
@@ -2358,7 +2390,7 @@ private function dir_file_count($path){
 					update_progress_bar('install', $current_step, $total_steps);
 					echo '</div>';
 				}
-			UpdateSystemTabs('Restore',$installed_modules);
+			$this->updateSystemTabs('Restore',$installed_modules);
 
 		}else{
 			die("No manifest.php Defined In $this->base_dir/manifest.php");
@@ -2813,44 +2845,78 @@ private function dir_file_count($path){
         SugarAutoloader::saveMap();
     }
 
-}
+    /**
+     * Refreshes vardefs for modules that are affected by a change during installation.
+     * 
+     * @param array $modules List of modules to refresh vardefs for
+     */
+    protected function clearAffectedVardefsCache($modules = array()) 
+    {
+        foreach ($modules as $module) {
+            $obj = BeanFactory::getObjectName($module);
+            VardefManager::refreshVardefs($module, $obj);
+        }
+    }
 
-    function UpdateSystemTabs($action, $installed_modules){
-        require_once("modules/MySettings/TabController.php");
+    /**
+     * Runs cleanup after installation to make sure various extension section are
+     * fresh for the next steps in the installation
+     * 
+     * This is called in the {@see install} method prior to installing new beans.
+     * 
+     * @return [type] [description]
+     */
+    protected function runInstallCleanup()
+    {
+        foreach ($this->affectedModules as $section => $modules) {
+            $method = 'clearAffected' . $section . 'Cache';
+            if (method_exists($this, $method)) {
+                $this->$method($modules);
+            }
+        }
+    }
+
+    /**
+     * Updates systems tabs
+     * 
+     * @param string $action The action to take 
+     * @param array $installed_modules The list of modules to add for this action
+     */
+    protected function updateSystemTabs($action, $installed_modules) 
+    {
+        global $moduleList;
+        
         $controller = new TabController();
         $isSystemTabsInDB = $controller->is_system_tabs_in_db();
-        if ($isSystemTabsInDB && !empty($installed_modules))
-        {
-            global $moduleList;
-            switch ($action)
-            {
-                case 'Restore' :
+        if ($isSystemTabsInDB && !empty($installed_modules)) {
+            switch ($action) {
+                case 'Restore':
                     $currentTabs = $controller->get_system_tabs();
-                    foreach ($installed_modules as $module)
-                    {
-                        if(in_array($module, $currentTabs)){
+                    foreach ($installed_modules as $module) {
+                        if (in_array($module, $currentTabs)) {
                             unset($currentTabs[$module]);
                         }
                     }
-                    $controller->set_system_tabs($currentTabs);;
+                    $controller->set_system_tabs($currentTabs);
                     break;
-                case 'Add' :
+                case 'Add':
                     $currentTabs = $controller->get_system_tabs();
-                    foreach ($installed_modules as $module)
-                    {
-                        if(!in_array($module, $currentTabs)){
+                    foreach ($installed_modules as $module) {
+                        if (!in_array($module, $currentTabs)) {
                             $currentTabs[$module] = $module;
                         }
                     }
                     $controller->set_system_tabs($currentTabs);
-                default:
                     break;
             }
+
             //BEGIN SUGARCRM flav=pro ONLY
-	        if (isset($_SESSION['get_workflow_admin_modules_for_user'])) {
-		        return $_SESSION['get_workflow_admin_modules_for_user'];
-		    }
-		    //END SUGARCRM flav=pro ONLY
+            if (isset($_SESSION['get_workflow_admin_modules_for_user'])) {
+                return $_SESSION['get_workflow_admin_modules_for_user'];
+            }
+            //END SUGARCRM flav=pro ONLY
+        }
     }
 
 }
+

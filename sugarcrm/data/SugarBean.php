@@ -397,6 +397,14 @@ class SugarBean
     public $emailData = array();
 
     /**
+     * Previously a static cache in the constructor, allows this bean to not 
+     * have to reload vardefs
+     * 
+     * @var array
+     */
+    protected static $loadedDefs = array();
+
+    /**
      * This method has been moved into the __construct() method to follow php standards
      *
      * Please start using __construct() as this method will be removed in a future version
@@ -444,7 +452,7 @@ class SugarBean
         //$this->checkBacktrace();
 
         global  $dictionary, $current_user;
-        static $loaded_defs = array();
+
         $this->db = DBManagerFactory::getInstance();
         if (empty($this->module_name))
             $this->module_name = $this->module_dir;
@@ -464,7 +472,7 @@ class SugarBean
             $this->disable_row_level_security =true;
         }
         //END SUGARCRM flav=pro ONLY
-        if (false == $this->disable_vardefs && (empty($loaded_defs[$this->object_name]) || !empty($GLOBALS['reload_vardefs'])))
+        if (false == $this->disable_vardefs && (empty(self::$loadedDefs[$this->object_name]) || !empty($GLOBALS['reload_vardefs'])))
         {
             //BEGIN SUGARCRM flav=int ONLY
             if(empty($this->module_dir))
@@ -523,21 +531,21 @@ class SugarBean
                     $this->optimistic_lock=true;
                 }
             }
-            $loaded_defs[$this->object_name]['column_fields'] =& $this->column_fields;
-            $loaded_defs[$this->object_name]['list_fields'] =& $this->list_fields;
-            $loaded_defs[$this->object_name]['required_fields'] =& $this->required_fields;
-            $loaded_defs[$this->object_name]['field_name_map'] =& $this->field_name_map;
-            $loaded_defs[$this->object_name]['field_defs'] =& $this->field_defs;
-            $loaded_defs[$this->object_name]['name_format_map'] =& $this->name_format_map;
+            self::$loadedDefs[$this->object_name]['column_fields'] =& $this->column_fields;
+            self::$loadedDefs[$this->object_name]['list_fields'] =& $this->list_fields;
+            self::$loadedDefs[$this->object_name]['required_fields'] =& $this->required_fields;
+            self::$loadedDefs[$this->object_name]['field_name_map'] =& $this->field_name_map;
+            self::$loadedDefs[$this->object_name]['field_defs'] =& $this->field_defs;
+            self::$loadedDefs[$this->object_name]['name_format_map'] =& $this->name_format_map;
         }
         else
         {
-            $this->column_fields =& $loaded_defs[$this->object_name]['column_fields'] ;
-            $this->list_fields =& $loaded_defs[$this->object_name]['list_fields'];
-            $this->required_fields =& $loaded_defs[$this->object_name]['required_fields'];
-            $this->field_name_map =& $loaded_defs[$this->object_name]['field_name_map'];
-            $this->field_defs =& $loaded_defs[$this->object_name]['field_defs'];
-            $this->name_format_map =& $loaded_defs[$this->object_name]['name_format_map'];
+            $this->column_fields =& self::$loadedDefs[$this->object_name]['column_fields'] ;
+            $this->list_fields =& self::$loadedDefs[$this->object_name]['list_fields'];
+            $this->required_fields =& self::$loadedDefs[$this->object_name]['required_fields'];
+            $this->field_name_map =& self::$loadedDefs[$this->object_name]['field_name_map'];
+            $this->field_defs =& self::$loadedDefs[$this->object_name]['field_defs'];
+            $this->name_format_map =& self::$loadedDefs[$this->object_name]['name_format_map'];
             $this->added_custom_field_defs = true;
 
             if(!isset($this->custom_fields) &&
@@ -7106,4 +7114,17 @@ class SugarBean
 	{
 	    self::$opStatus = array();
 	}
+
+    /**
+     * Clears the loaded def cache for an object to allow the next call of get 
+     * bean from a fresh cache to actually load the vardef again. This is useful
+     * in cases where a bean properties can change in the middle of a request and
+     * need to be updated immediately, like in module installer.
+     * 
+     * @param string $objectName The object name of a bean
+     */
+    public static function clearLoadedDef($objectName)
+    {
+        unset(self::$loadedDefs[$objectName]);
+    }
 }
