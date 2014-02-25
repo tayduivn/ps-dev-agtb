@@ -166,11 +166,13 @@
     },
 
     showAlert: function(message) {
-        this.$("[data-target=alert]").html(message).removeClass("hide");
+        this.$("[data-target=alert]").html(message);
+        this.$("[data-target=alert-container]").removeClass("hide");
     },
 
     hideAlert: function() {
-        this.$("[data-target=alert]").addClass("hide");
+        this.$("[data-target=alert-container]").addClass("hide");
+        this.$("[data-target=alert]").empty();
     },
     filterToggled:function (isOpened) {
         this.filterOpened = isOpened;
