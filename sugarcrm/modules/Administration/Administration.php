@@ -190,15 +190,17 @@ class Administration extends SugarBean {
             $value = $this->encrpyt_before_save($value);
 
         if( $row_count == 0){
-            $result = $this->db->query("INSERT INTO config (value, category, name, platform) VALUES ('$value','$category', '$key', '$platform')");
+            $sql = "INSERT INTO config (value, category, name, platform) VALUES ('$value','$category', '$key', '$platform')";
         }
         else{
             if (empty($platform)) {
-                $result = $this->db->query("UPDATE config SET value = '{$value}' WHERE category = '{$category}' AND name = '{$key}' AND (platform = '{$platform}' OR platform IS NULL)");
+                $sql = "UPDATE config SET value = '{$value}' WHERE category = '{$category}' AND name = '{$key}' AND (platform = '{$platform}' OR platform IS NULL)";
             } else {
-                $result = $this->db->query("UPDATE config SET value = '{$value}' WHERE category = '{$category}' AND name = '{$key}' AND platform = '{$platform}'");
+                $sql = "UPDATE config SET value = '{$value}' WHERE category = '{$category}' AND name = '{$key}' AND platform = '{$platform}'";
             }
         }
+        $result = $this->db->query($sql);
+
         sugar_cache_clear('admin_settings_cache');
 
         // check to see if category is a module
@@ -301,15 +303,17 @@ class Administration extends SugarBean {
         $var = html_entity_decode(stripslashes($var));
         // make sure the value is not null and the length is greater than 0
         if (!is_null($var) && strlen($var) > 0) {
-            // if it's not numeric, then lets run the json_decode on it
-            if (!is_numeric($var)) {
+            // if it looks like a JSON string then lets run the json_decode on it
+            if ($var[0] == '{' 
+                || $var[0] == '['
+                || $var[0] == '"') {
                 $decoded = json_decode($var, true);
                 // if we didn't get a json error, then put the decoded value as the value we want to return
                 if(json_last_error() == JSON_ERROR_NONE) {
                     $var = $decoded;
                 }
-            // if it's a numeric value and all the string only contains digits, the convert it to an integer
             } elseif (is_numeric($var) && ctype_digit($var)) {
+                // if it's a numeric value and all the string only contains digits, the convert it to an integer
                 $var = intval($var);
             }
         }

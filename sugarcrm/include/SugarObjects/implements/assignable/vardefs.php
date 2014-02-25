@@ -43,7 +43,8 @@ $vardefs = array(
 			'audited'=>true,
             'duplicate_on_record_copy' => 'always',
 			'comment' => 'User ID assigned to record',
-            'duplicate_merge'=>'disabled'
+            'duplicate_merge'=>'disabled',
+            'mandatory_fetch' => true,
 		),
 	 'assigned_user_name' =>
 	 array (

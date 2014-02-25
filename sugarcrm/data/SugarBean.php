@@ -2772,6 +2772,7 @@ class SugarBean
     /**
      * This function processes the fields before save.
      * Interal function, do not override.
+     * @deprecated Since 6.x
      */
     function preprocess_fields_on_save()
     {
@@ -2783,6 +2784,7 @@ class SugarBean
      * It only unformats numbers.  Function relies on user/system prefernce for format strings.
      *
      * Internal Function, do not override.
+     * @deprecated Since 6.x
     */
     function unformat_all_fields()
     {
@@ -2793,6 +2795,7 @@ class SugarBean
     * This functions adds formatting to all number fields before presenting them to user interface.
      *
      * Internal function, do not override.
+     * @deprecated Since 6.x
     */
     function format_all_fields()
     {
@@ -2808,6 +2811,7 @@ class SugarBean
      * Function corrects any bad formatting done by 3rd party/custom code
      *
      * This function will be removed in a future release, it is only here to assist upgrading existing code that expects formatted data in the bean
+     * @deprecated Since 6.x
      */
     function fixUpFormatting()
     {
@@ -2933,6 +2937,7 @@ class SugarBean
      * @param array  $user_fields Fields of users table to be selected
      *
      * @return array
+     * @deprecated Use SugarQuery instead
      */
     protected function getUsersJoin($id_field, $alias, array $user_fields)
     {
@@ -2978,6 +2983,8 @@ class SugarBean
             return null;
         }
 
+        // TODO: When BWC is removed, replace from here
+        // ----------------------------------------------
         $custom_join = $this->getCustomJoin();
 
         $query_select = "{$this->table_name}.*";
@@ -3013,6 +3020,11 @@ class SugarBean
             $query_select .= ', sf.id AS my_favorite';
             $query_from .= " LEFT JOIN sugarfavorites sf ON sf.deleted = 0 AND sf.module = '{$this->module_name}' AND sf.record_id = {$this->db->quoted($id)} AND sf.assigned_user_id = '{$GLOBALS['current_user']->id}'";
         }
+
+        if(isset($this->module_name) && !empty($this->module_name) && !empty($GLOBALS['current_user']) && $this->isActivityEnabled()) {
+            $query_select .= ', IF(sub.id IS NOT NULL,1,0) AS following';
+            $query_from .= " LEFT JOIN subscriptions sub ON sub.deleted = 0 AND sub.parent_type = '{$this->module_name}' AND sub.parent_id = {$this->db->quoted($id)} AND sub.modified_user_id = '{$GLOBALS['current_user']->id}'";
+        }
         //END SUGARCRM flav=pro ONLY
 
         $query = "SELECT $query_select FROM $query_from ";
@@ -3047,6 +3059,10 @@ class SugarBean
 
         //make copy of the fetched row for construction of audit record and for business logic/workflow
         $this->fetched_row=$this->populateFromRow($row, true);
+        // --------------------------------------------------------
+        // to here with this call:
+        // $this->fetch($id, array(), array('skipSecondaryQuery' => true));
+        // It is more correct, gives us better data but gives a huge slowdown in BWC code
 
         global $module, $action;
         //Just to get optimistic locking working for this release
@@ -3108,6 +3124,144 @@ class SugarBean
     }
 
     /**
+     * Destructively loads a bean with only the specified fields
+     *
+     * @param string - $id The id of the bean you wish to load, for multiple beans use ->fetchFromQuery
+     * @param array - $fields (Optional) A list of fields to populate in the bean
+     * @param array $options - (Optional) Optional parameters for the function:
+     * @return SugarBean - AhThe bean you requested
+     */
+    function fetch($id, array $fields = array(), array $options = array())
+    {
+
+        $query = new SugarQuery();
+        $query->from($this);
+        $query->where()->equals('id',$id);
+        
+        // Pass this in so fetchFromQuery mutates $this instead of grabbing a fresh bean
+        // This is so fetch() can work like retrieve()
+        $options['beanList'][$id] = $this;
+        $this->fetchFromQuery($query, $fields, $options);
+
+        if (!isset($this->id)) {
+            return false;
+        } else {
+            return $this;
+        }
+    }
+
+    /**
+     * Gets an array of beans from a SugarQuery
+     *
+     * @param SugarQuery $query - Query object with everything but the from() section filled in
+     * @param array $fields - (Optional) A list of fields to populate in the beans
+     * @param array $options - (Optional) Optional parameters for the function:
+     *                         returnRawRows - Returns raw rows in the _row key, indexed by bean id
+     *                         beanList - An array of beans to merge the results into
+     *                         skipSecondaryQuery - Don't perform the secondary queries
+     * @return array SugarBean - An array of SugarBeans populated with the requested fields
+     */
+    function fetchFromQuery(SugarQuery $query, array $fields = array(), array $options = array())
+    {
+        $queryFields = array();
+        $secondaryFields = array();
+        $beans = array();
+
+        $sfh = new SugarFieldHandler();
+
+        if (empty($fields)) {
+            $fields = array_keys($this->field_defs);
+        }
+
+        foreach ($fields as $field) {
+            if (!isset($this->field_defs[$field]) || !isset($this->field_defs[$field]['type'])) {
+                // Not a valid field, remove it from the list
+                continue;
+            }
+            
+            $def = $this->field_defs[$field];
+            if ($def['type'] == 'link') {
+                continue;
+            }
+
+            if (isset($def['link_type'])
+                && $def['link_type'] == 'relationship_info') {
+                // These fields are only here for backwards compatibility
+                continue;
+            }
+
+            if (isset($def['link'])
+                && $def['link'] != true
+                && !isset($this->field_defs[$def['link']])) {
+                $GLOBALS['log']->error("Invalid link detected: $field is looking for {$def['link']}");
+                continue;
+            }
+
+            if (!isset($options['skipSecondaryQuery'])
+                || $options['skipSecondaryQuery'] == false) {
+                $type = !empty($def['custom_type']) ? $def['custom_type'] : $def['type'];
+                $sugarField = $sfh->getSugarField($type);
+                
+                if ($sugarField->fieldNeedsSecondaryQuery($field, $this)) {
+                    $secondaryFields[$field] = $sugarField;
+                    continue;
+                }
+            }
+
+            if (isset($def['source']) 
+                && $def['source'] == 'non-db' 
+                && (empty($def['rname'])  || empty($def['link']))) {
+                // Non-db that isn't a relate field.
+                continue;
+            }
+            $queryFields[$field] = $field;
+        }
+
+        foreach ($this->field_defs as $field => $fieldDef) {
+            if (isset($fieldDef['mandatory_fetch']) && $fieldDef['mandatory_fetch'] == true) {
+                $queryFields[$field] = $field;
+            }
+        }
+
+        $queryFields['id'] = 'id';
+        if (isset($this->field_defs['assigned_user_id'])) {
+            $queryFields['assigned_user_id'] = 'assigned_user_id';
+        }
+
+        $query->select($queryFields);
+
+        $this->call_custom_logic('before_fetch_query', array('query' => $query, 'fields' => $fields));
+
+        $rows = $query->execute();
+        $rawRows = array();
+        foreach ($rows as $row) {
+            if (isset($options['beanList'][$row['id']])) {
+                $bean = $options['beanList'][$row['id']];
+            } else {
+                $bean = $this->getCleanCopy();
+            }
+            $bean->fetched_row = $bean->populateFromRow($row);
+            $beans[$bean->id] = $bean;
+            $rawRows[$bean->id] = $row;
+        }
+
+        if (!isset($options['skipSecondaryQuery'])
+            || $options['skipSecondaryQuery'] == false) {
+            foreach ($secondaryFields as $fieldName => $sugarField) {
+                $sugarField->runSecondaryQuery($fieldName, $this, $beans);
+            }
+        }
+
+        $this->call_custom_logic('after_fetch_query', array('beans' => $beans, 'fields' => $fields));
+        
+        if (!empty($options['returnRawRows'])) {
+            $beans['_rows'] = $rawRows;
+        }
+
+        return $beans;
+    }
+
+    /**
      * Sets value from fetched row into the bean.
      *
      * @param array $row Fetched row
@@ -3151,6 +3305,7 @@ class SugarBean
     * @param string $where
     *
     * Internal Function, do Not override.
+    * @deprecated Use SugarQuery instead
     */
     function add_list_count_joins(&$query, $where)
     {
@@ -3168,6 +3323,7 @@ class SugarBean
      * @return string count query
      *
      * Internal function, do not override.
+     * @deprecated Use SugarQuery instead
     */
     function create_list_count_query($query)
     {
@@ -3235,6 +3391,7 @@ class SugarBean
     *
     * Internal function, do not override.
     *
+    * @deprecated Use SugarQuery & $this->fetchFromQuery() instead
     */
     function get_list($order_by = "", $where = "", $row_offset = 0, $limit=-1, $max=-1, $show_deleted = 0, $singleSelect=false, $select_fields = array())
     {
@@ -3259,6 +3416,7 @@ class SugarBean
     * @return string Processed order by clause
     *
     * Internal function, do not override.
+    * @deprecated Use SugarQuery & $this->fetchFromQuery() instead
     */
     public function process_order_by($order_by, $submodule = null, $suppress_table_name = false)
     {
@@ -3346,6 +3504,7 @@ class SugarBean
     * @return array Fetched data.
     *
     * Internal function, do not override.
+    * @deprecated Use SugarQuery & $this->fetchFromQuery() instead
     */
     function get_detail($order_by = "", $where = "",  $offset = 0, $row_offset = 0, $limit=-1, $max=-1, $show_deleted = 0)
     {
@@ -3372,6 +3531,7 @@ class SugarBean
     * @return array Fetched data.
     *
     * Internal function, do not override.
+    * @deprecated Use SugarQuery & $this->fetchFromQuery() instead
     */
     function get_related_list($child_seed,$related_field_name, $order_by = "", $where = "",
     $row_offset = 0, $limit=-1, $max=-1, $show_deleted = 0)
@@ -3567,6 +3727,7 @@ class SugarBean
      * @return array
      *
      * Internal Function, do not overide.
+     * @deprecated Use SugarQuery & $this->fetchFromQuery() instead
      */
     function get_union_related_list($parentbean, $order_by = "", $sort_order='', $where = "",
     $row_offset = 0, $limit=-1, $max=-1, $show_deleted = 0, $subpanel_def)
@@ -3766,6 +3927,7 @@ class SugarBean
     * @param string $where where clause. defaults to ""
     * @param boolean $check_dates. defaults to false
     * @param int $show_deleted show deleted records. defaults to 0
+    * @deprecated Use SugarQuery & $this->fetchFromQuery() instead
     */
     function get_full_list($order_by = "", $where = "", $check_dates=false, $show_deleted = 0)
     {
@@ -3793,6 +3955,7 @@ class SugarBean
      * @param object $parentbean creating a subquery for this bean.
      * @param boolean $singleSelect Optional, default false.
      * @return String select query string, optionally an array value will be returned if $return_array= true.
+     * @deprecated Use SugarQuery & $this->fetchFromQuery() instead
      */
 	function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false, $ifListForExport = false)
     {
@@ -4396,6 +4559,7 @@ class SugarBean
      * @param int $max_per_page Optional, default -1
      * @param string $where Optional, additional filter criteria.
      * @return array Fetched data
+     * @deprecated Use SugarQuery & $this->fetchFromQuery() instead
      */
     function process_list_query($query, $row_offset, $limit= -1, $max_per_page = -1, $where = '')
     {
@@ -4545,6 +4709,7 @@ class SugarBean
      * @param string $query valid select  query
      * @param boolean $is_count_query Optional, Default false, set to true if passed query is a count query.
      * @return int count of rows found
+     * @deprecated Use SugarQuery instead
     */
     function _get_num_rows_in_query($query, $is_count_query=false)
     {
@@ -4626,6 +4791,7 @@ class SugarBean
      * @param string $query_row_count
      * @param array $seconday_queries
      * @return array Fetched data.
+     * @deprecated Use SugarQuery & $this->fetchFromQuery() instead
      */
     function process_union_list_query($parent_bean, $query,
     $row_offset, $limit= -1, $max_per_page = -1, $where = '', $subpanel_def, $query_row_count='', $secondary_queries = array())
@@ -4922,6 +5088,7 @@ class SugarBean
      * @param boolean $check_date Optional, default false. if set to true date time values are processed.
      * @return array Fetched data.
      *
+     * @deprecated Use SugarQuery & $this->fetchFromQuery() instead
      */
     function process_full_list_query($query, $check_date=false)
     {
@@ -4994,6 +5161,7 @@ class SugarBean
      * Returns the summary text that should show up in the recent history list for this object.
      *
      * @return string
+     * @deprecated Not used in the REST API
      */
     public function get_summary_text()
     {
@@ -5006,6 +5174,7 @@ class SugarBean
     * queries to get related fields and add them to the record.  The contact's
     * account for instance.  This method is only used for populating extra fields
     * in lists.
+    * @deprecated Not used in the REST API
     */
     function fill_in_additional_list_fields(){
         if(!empty($this->field_defs['parent_name']) && empty($this->parent_name)){
@@ -5019,6 +5188,7 @@ class SugarBean
     * queries to get related fields and add them to the record.  The contact's
     * account for instance.  This method is only used for populating extra fields
     * in the detail form
+    * @deprecated Not used in the REST API
     */
     function fill_in_additional_detail_fields()
     {
@@ -5305,6 +5475,7 @@ class SugarBean
     * @param int $row_offset Optional, default 0
     * @param int $limit Optional, default -1
     * @return array
+    * @deprecated Use SugarQuery instead
     */
     function build_related_list($query, $template, $row_offset = 0, $limit = -1)
     {
@@ -5345,6 +5516,7 @@ class SugarBean
     *
     * @param string $query - the query that should be executed to build the list
     * @param object $template - The object that should be used to copy the records.
+    * @deprecated Use SugarQuery instead
     */
   function build_related_list_where($query, $template, $where='', $in='', $order_by, $limit='', $row_offset = 0)
   {
@@ -5409,6 +5581,7 @@ class SugarBean
      *
      * @param string @query query to be executed.
      *
+     * @deprecated Use SugarQuery instead
      */
     function build_related_in($query)
     {
@@ -5446,6 +5619,7 @@ class SugarBean
     * @param object $template - The object that should be used to copy the records
     * @param array $field_list List of  fields.
     * @return array
+    * @deprecated Use SugarQuery instead
     */
     function build_related_list2($query, $template, &$field_list)
     {
@@ -5589,6 +5763,7 @@ class SugarBean
      * @param array $fields_array Name/value pairs for column checks
      * @param boolean $deleted Optional, default true, if set to false deleted filter will not be added.
      * @return string The WHERE clause
+     * @deprecated Use SugarQuery instead
      */
     function get_where($fields_array, $deleted=true)
     {
@@ -5622,6 +5797,7 @@ class SugarBean
      * @param boolean $encode Optional, default true, encode fetched data.
      * @param boolean $deleted Optional, default true, if set to false deleted filter will not be added.
      * @return object Instance of this bean with fetched data.
+     * @deprecated Use SugarQuery instead
      */
     function retrieve_by_string_fields($fields_array, $encode=true, $deleted=true)
     {
@@ -5677,6 +5853,7 @@ class SugarBean
     /**
      * Override this function to build a where clause based on the search criteria set into bean .
      * @abstract
+     * @deprecated Use SugarQuery instead
      */
     function build_generic_where_clause($value)
     {
@@ -5755,6 +5932,7 @@ class SugarBean
     /**
      * Add visibility clauses to the query
      * @param string $query
+     * @deprecated Use SugarQuery instead
      */
     function add_team_security_where_clause(&$query,$table_alias='',$join_type='INNER',$force_admin=false,$join_teams=false)
     {
@@ -6515,6 +6693,7 @@ class SugarBean
     * @return  prefixed
     *
     * Internal function do not override.
+    * @deprecated Use SugarQuery instead
     */
    function create_qualified_order_by( $order_by, $qualify)
    {	// if the column is empty, but the sort order is defined, the value will throw an error, so do not proceed if no order by is given

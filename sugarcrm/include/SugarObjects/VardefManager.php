@@ -101,6 +101,12 @@ class VardefManager{
 
     static function addTemplate($module, $object, $template, $object_name=false){
         if($template == 'default')$template = 'basic';
+        // The ActivityStream has subdirectories but this code doesn't expect it
+        // let's fix it up here
+        if (strpos($module,'/') !== false) {
+            $tmp = explode('/',$module);
+            $module = array_pop($tmp);
+        }
         $templates = array();
         $fields = array();
         if(empty($object_name))$object_name = $object;
