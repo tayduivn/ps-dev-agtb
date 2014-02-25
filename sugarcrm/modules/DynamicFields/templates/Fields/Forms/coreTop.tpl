@@ -49,13 +49,49 @@
 		document.getElementById('field_name_id').value = document.getElementById('field_name_id').value.toLowerCase();"/>
 		{$vardef.name}
 	{/if}
-		<script>
-		addToValidate('popup_form', 'name', 'DBName', true,'{sugar_translate module="DynamicFields" label="COLUMN_TITLE_NAME"} [a-zA-Z_]' );
-		addToValidateIsInArray('popup_form', 'name', 'in_array', true,'{sugar_translate module="DynamicFields" label="ERR_RESERVED_FIELD_NAME"}', '{$field_name_exceptions}', 'u==');
-		{if $hideLevel == 0}	
-		addToValidateIsInArray('popup_form', 'name', 'in_array', true, '{sugar_translate module="DynamicFields" label="ERR_FIELD_NAME_ALREADY_EXISTS"}', '{$existing_field_names}', 'u==');
-		{/if}	
-		</script>
+        <script>
+            {literal}
+            addToValidateCallback("popup_form", "name", "callback", true, "{/literal}{sugar_translate module="DynamicFields" label="COLUMN_TITLE_NAME"}{literal}", (function(nameExceptions, existingFields) {
+                return function(formName, fieldName, index) {
+                    var el = document.forms[formName].elements[fieldName],
+                        value = el.value, i, arrValue;
+
+                    // will be already validated as required
+                    if (value === "") {
+                        return true;
+                    }
+
+                    if (!isDBName(value)) {
+                        validate[formName][index][msgIndex] = "{/literal}{sugar_translate module="DynamicFields" label="ERR_FIELD_NAME_NON_DB_CHARS"}{literal}";
+                        return false;
+                    }
+
+                    value = value.toUpperCase();
+
+                    // check where field name is in the list of exceptions
+                    for (i = 0; i < nameExceptions.length; i++) {
+                        arrValue = nameExceptions[i];
+                        if (arrValue == value) {
+                            validate[formName][index][msgIndex] = "{/literal}{sugar_translate module="DynamicFields" label="ERR_RESERVED_FIELD_NAME"}{literal}";
+                            return false;
+                        }
+                    }
+
+                    {/literal}{if $hideLevel == 0}{literal}
+                    // check where field name is in the list of existing fields
+                    for (i = 0; i < existingFields.length; i++) {
+                        arrValue = existingFields[i];
+                        if (arrValue == value) {
+                            validate[formName][index][msgIndex] = "{/literal}{sugar_translate module="DynamicFields" label="ERR_FIELD_NAME_ALREADY_EXISTS"}{literal}";
+                            return false;
+                        }
+                    }
+                    {/literal}{/if}{literal}
+
+                    return true;
+                }
+            })({/literal}{$field_name_exceptions}, {$existing_field_names}));
+        </script>
 	</td>
 </tr>
 <tr>
