@@ -28,23 +28,18 @@
         app.events.on('dnbcompinfo:duns_selected', this.collapseDashlet, this);
     },
 
-    /**
-     * Collapses the dashlet
-     */
-    collapseDashlet: function() {
-        if (this.layout.collapse) {
-            this.layout.collapse(true);
+    loadData: function(options) {
+        if(this.model.get("duns_num")){
+            this.duns_num = this.model.get("duns_num");
         }
     },
 
-    loadData: function(options) {
-        if (this.model.get('duns_num')) {
-            this.duns_num = this.model.get('duns_num');
-        }
-        this.template = app.template.get(this.name + '.dnb-desc');
-        if (!this.disposed) {
-            this.render();
-        }
+    /**
+     * Refresh dashlet once Refresh link clicked from gear button
+     * To show updated contact information from DNB service
+     */
+    refreshClicked: function() {
+        this.loadFamilyTree(false);
     },
 
     /**
@@ -235,4 +230,4 @@
             data.inst.toggle_node(data.rslt.obj);
         });
     }
-});
+})

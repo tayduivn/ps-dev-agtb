@@ -1,5 +1,4 @@
 <?php
-
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -12,7 +11,6 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-
 $viewdefs['base']['view']['dnb-contact-info'] = array(
     'dashlets' => array(
         array(
@@ -36,6 +34,25 @@ $viewdefs['base']['view']['dnb-contact-info'] = array(
                 'name' => 'import_dnb_data',
                 "action" => "importDNBData",
                 "label" => "LBL_DNB_IMPORT",
+            ),
+            array(
+                'dropdown_buttons' => array(
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'editClicked',
+                        'label' => 'LBL_DASHLET_CONFIG_EDIT_LABEL',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'refreshClicked',
+                        'label' => 'LBL_DASHLET_REFRESH_LABEL',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'removeClicked',
+                        'label' => 'LBL_DASHLET_REMOVE_LABEL',
+                    ),
+                )
             ),
             array(
                 "type" => "dashletaction",

@@ -210,4 +210,4 @@
 
         return formattedCompetitors;
     }
-});
+})
