@@ -526,25 +526,25 @@
      * Popup dialog message to confirm delete action
      */
     warnDelete: function() {
-        var self = this;
-        this._modelsToDelete = self.getMassUpdateModel(self.module);
+        this._modelsToDelete = this.getMassUpdateModel(this.module);
         this._modelsToDelete.setChunkSize(this._settings.mass_delete_chunk_size);
 
-        self._targetUrl = Backbone.history.getFragment();
+        this._targetUrl = Backbone.history.getFragment();
         //Replace the url hash back to the current staying page
-        if (self._targetUrl !== self._currentUrl) {
-            app.router.navigate(self._currentUrl, {trigger: false, replace: true});
+        if (this._targetUrl !== this._currentUrl) {
+            app.router.navigate(this._currentUrl, {trigger: false, replace: true});
         }
 
-        self.hideAll();
+        this.hideAll();
 
         app.alert.show('delete_confirmation', {
             level: 'confirmation',
             messages: app.lang.get('NTC_DELETE_CONFIRMATION_MULTIPLE'),
-            onConfirm: _.bind(self.deleteModels, self),
-            onCancel: function() {
-                self._modelsToDelete = null;
-            }
+            onConfirm: _.bind(this.deleteModels, this),
+            onCancel: _.bind(function() {
+                this._modelsToDelete = null;
+                app.router.navigate(this._targetUrl, {trigger: false, replace: true});
+            }, this)
         });
     },
 
