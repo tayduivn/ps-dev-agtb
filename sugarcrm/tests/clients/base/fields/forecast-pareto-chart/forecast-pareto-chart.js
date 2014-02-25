@@ -1,4 +1,3 @@
-//FILE SUGARCRM flav=pro ONLY
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -432,6 +431,7 @@ describe('Base.Fields.ForecastParetoChart', function() {
             beforeEach(function() {
                 field.state = "open";
                 field.preview_open = false;
+                field.collapsed = false;
                 field.setServerData({}, false);
             });
             it("should call convertDataToChartData", function() {
@@ -446,6 +446,7 @@ describe('Base.Fields.ForecastParetoChart', function() {
             beforeEach(function() {
                 field.state = "closed";
                 field.preview_open = false;
+                field.collapsed = false;
                 field.setServerData({}, false);
             });
             it("should not call convertDataToChartData", function() {
@@ -460,6 +461,7 @@ describe('Base.Fields.ForecastParetoChart', function() {
             beforeEach(function() {
                 field.state = "open";
                 field.preview_open = true;
+                field.collapsed = false;
                 field.setServerData({}, false);
             });
             it("should not call convertDataToChartData", function() {
@@ -469,6 +471,60 @@ describe('Base.Fields.ForecastParetoChart', function() {
                 expect(field.generateD3Chart).not.toHaveBeenCalled();
             });
         });
-        
+
+        describe("when the dashlet is collapsed", function() {
+            beforeEach(function() {
+                field.state = "open";
+                field.preview_open = false;
+                field.collapsed = true;
+                field.setServerData({}, false);
+            });
+            it("should not call convertDataToChartData", function() {
+                expect(field.convertDataToChartData).not.toHaveBeenCalled();
+            });
+            it("should not call generateD3Chart", function() {
+                expect(field.generateD3Chart).not.toHaveBeenCalled();
+            });
+        });
+
+        describe("when the dashlet is not collapsed", function() {
+            beforeEach(function() {
+                field.state = "open";
+                field.preview_open = false;
+                field.collapsed = false;
+                field.setServerData({}, false);
+            });
+            it("should call convertDataToChartData", function() {
+                expect(field.convertDataToChartData).toHaveBeenCalled();
+            });
+            it("should call generateD3Chart", function() {
+                expect(field.generateD3Chart).toHaveBeenCalled();
+            });
+        });
     });
+
+    using('isDashletVisible',
+        [['open', false, true], ['open', true, false], ['closed', false, false], ['closed', true, true]],
+        function(state, preview_open, collapsed) {
+            it('should return false', function() {
+                field.state = state;
+                field.preview_open = preview_open;
+                field.collapsed = collapsed;
+                expect(field.isDashletVisible()).toBeFalsy();
+            });
+        }
+    );
+
+    using('isDashletVisible',
+        [['open', false, false]],
+        function(state, preview_open, collapsed) {
+            it('should return true', function() {
+                field.state = state;
+                field.preview_open = preview_open;
+                field.collapsed = collapsed;
+                expect(field.isDashletVisible()).toBeTruthy();
+            });
+        }
+    );
+
 });

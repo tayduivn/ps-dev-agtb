@@ -78,7 +78,7 @@ $viewdefs['Forecasts']['base']['layout']['records'] = array(
                                     ),
                                     'context' => array(
                                         'forceNew' => true,
-                                        'module' => 'Forecasts',
+                                        'module' => 'Home',
                                     ),
                                 ),
                             ),
