@@ -107,8 +107,10 @@ class ConnectorManager
 
         // mix in user specific data
         foreach ($connectors as $name => $connector) {
-            $eapmBean = $this->getEAPMForConnector($connector);
-            $connectors[$name]['eapm_bean'] = !empty($eapmBean->id);
+            if (is_array($connectors[$name])) {
+                $eapmBean = $this->getEAPMForConnector($connector);
+                $connectors[$name]['eapm_bean'] = !empty($eapmBean->id);
+            }
         }
 
         $hash = $this->hash($connectors);
