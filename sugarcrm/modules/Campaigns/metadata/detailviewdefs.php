@@ -55,21 +55,6 @@ $viewdefs['Campaigns']['DetailView'] = array(
                     ),
                 ),
                 array(
-                    'customCode' => '<input title="{$APP.LBL_MAILMERGE}" class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'MailMerge\';SUGAR.ajaxUI.submitForm(this.form);" type="submit" name="button" id="mail_merge_button" value="{$APP.LBL_MAILMERGE}">',
-                    //Bug#51778: The custom code will be replaced with sugar_html. customCode will be duplicated.
-                    'sugar_html' => array(
-                        'type'        => 'submit',
-                        'value'       => '{$APP.LBL_MAILMERGE}',
-                        'htmlOptions' => array(
-                            'title'   => '{$APP.LBL_MAILMERGE}',
-                            'class'   => 'button',
-                            'onclick' => 'this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'MailMerge\';SUGAR.ajaxUI.submitForm(this.form);',
-                            'name'    => 'button',
-                            'id'      => 'mail_merge_button',
-                        ),
-                    ),
-                ),
-                array(
                     'customCode' => '<input title="{$MOD.LBL_MARK_AS_SENT}" class="button" onclick="this.form.return_module.value=\'Campaigns\'; this.form.return_action.value=\'TrackDetailView\';this.form.action.value=\'DetailView\';this.form.mode.value=\'set_target\';SUGAR.ajaxUI.submitForm(this.form);" type="{$TARGET_BUTTON_STATE}" name="button" id="mark_as_sent_button" value="{$MOD.LBL_MARK_AS_SENT}">',
                     //Bug#51778: The custom code will be replaced with sugar_html. customCode will be duplicated.
                     'sugar_html' => array(
