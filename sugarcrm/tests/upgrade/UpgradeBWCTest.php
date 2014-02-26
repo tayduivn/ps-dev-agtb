@@ -4,38 +4,30 @@ require_once "tests/upgrade/UpgradeTestCase.php";
 class UpgradeBWCTest extends UpgradeTestCase
 {
 
+    protected $modules = array(
+        'scantest', 'scantestMB', 'scantestExt', 'scantestHooks', 'scantestHTML'
+    );
+
     public function setUp()
     {
         parent::setUp();
         SugarTestHelper::saveFile('custom/Extension/application/Ext/Include/scantest.php');
-        $data = <<<'END'
-<?php
-$beanList['scantest'] = 'scantest';
-$beanFiles['scantest'] = 'modules/scantest/scantest.php';
-$moduleList[] = 'scantest';
-$beanList['scantestMB'] = 'scantestMB';
-$beanFiles['scantestMB'] = 'modules/scantestMB/scantestMB.php';
-$moduleList[] = 'scantestMB';
-$beanList['scantestExt'] = 'scantestExt';
-$beanFiles['scantestExt'] = 'modules/scantestExt/scantestExt.php';
-$moduleList[] = 'scantestExt';
-$beanList['scantestHooks'] = 'scantestHooks';
-$beanFiles['scantestHooks'] = 'modules/scantestHooks/scantestHooks.php';
-$moduleList[] = 'scantestHooks';
+        $data = "<?php \n";
+        foreach($this->modules as $mod) {
+            $data .= <<<END
+\$beanList['$mod'] = '$mod';
+\$beanFiles['$mod'] = 'modules/$mod/$mod.php';
+\$moduleList[] = '$mod';
 END;
-        sugar_mkdir('modules/scantest');
-        sugar_mkdir('modules/scantestMB');
-        sugar_mkdir('modules/scantestExt');
-        sugar_mkdir('modules/scantestHooks');
+            sugar_mkdir("modules/$mod");
+            file_put_contents("modules/$mod/$mod.php", "<?php echo 'Hello world!'; ");
+            $GLOBALS['dictionary'][$mod] = $GLOBALS['dictionary']['Contact'];
+        }
         mkdir_recursive('custom/Extension/application/Ext/Include/');
         mkdir_recursive("modules/scantestHooks/views");
         file_put_contents('custom/Extension/application/Ext/Include/scantest.php', $data);
 
-        file_put_contents('modules/scantest/scantest.php', "<?php echo 'Hello world!'; ");
         file_put_contents('modules/scantest/scantest2.php', "<?php echo 'Hello world!'; ");
-        file_put_contents('modules/scantestMB/scantestMB.php', "<?php echo 'Hello world!'; ");
-        file_put_contents('modules/scantestExt/scantestExt.php', "<?php echo 'Hello world!'; ");
-        file_put_contents('modules/scantestHooks/scantestHooks.php', "<?php echo 'Hello world!'; ");
         copy(dirname(__FILE__)."/view_edit.php", "modules/scantestHooks/views/view.edit.php");
 
         mkdir_recursive('custom/modules/scantestHooks/Ext/LogicHooks');
@@ -51,8 +43,20 @@ END;
 
         mkdir_recursive('custom/modules/scantestExt/Ext/ActionViewMap');
         file_put_contents('custom/modules/scantestExt/Ext/ActionViewMap/scantestExt.php', "<?php echo 'Hello world!'; ");
+
+
         $this->mi = new ModuleInstaller();
         $this->mi->silent = true;
+
+        $GLOBALS['dictionary']['scantestHTML']['fields']['test_c'] = array(
+            'name'       => 'test_c',
+            'type'       => 'enum',
+            'dbType'     => 'varchar',
+            'function'   => array(
+                            'name'    => 'test',
+                            'returns' => 'html',
+            )
+        );
 
         $this->mi->rebuild_modules();
 
@@ -65,12 +69,11 @@ END;
     {
         parent::tearDown();
         SugarTestHelper::tearDown();
-        rmdir_recursive("modules/scantest");
-        rmdir_recursive("modules/scantestMB");
-        rmdir_recursive("modules/scantestExt");
-        rmdir_recursive('modules/scantestHooks');
-        rmdir_recursive('custom/modules/scantestExt');
-        rmdir_recursive('custom/modules/scantestHooks');
+        foreach($this->modules as $mod) {
+            rmdir_recursive("modules/$mod");
+            rmdir_recursive("custom/modules/$mod");
+            unset($GLOBALS['dictionary'][$mod]);
+        }
         $this->mi->rebuild_modules();
     }
 
@@ -87,6 +90,6 @@ END;
         $this->assertFileExists('custom/Extension/application/Ext/Include/upgrade_bwc.php', "custom/Extension/application/Ext/Include/upgrade_bwc.php not created");
         include 'custom/Extension/application/Ext/Include/upgrade_bwc.php';
         // scantest should be in bwc
-        $this->assertEquals(array('scantest', 'scantestExt'), $bwcModules);
+        $this->assertEquals(array('scantest', 'scantestExt', 'scantestHTML'), $bwcModules);
     }
 }
