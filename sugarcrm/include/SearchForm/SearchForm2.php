@@ -1038,10 +1038,13 @@ require_once('include/EditView/EditView2.php');
                                  }elseif(!empty($parms['query_type']) && $parms['query_type'] == 'format'){
                                      // "stringify" the field value if it isn't wrapped in quotes already
                                      if (substr($field_value, 0, 1) != "'" && substr($field_value, -1) != "'") {
-                                        $field_value = "'" . $GLOBALS['db']->quote($field_value) . "'";
+                                         $field_value = $GLOBALS['db']->quote($field_value);
                                      }
-                                     $stringFormatParams = array(0 => $field_value, 1 => "'{$GLOBALS['current_user']->id}'");
-                                     $where .= "{$db_field} $in (".string_format($parms['subquery'], $stringFormatParams).")";
+                                     $stringFormatParams = array(0 => $field_value, 1 => $GLOBALS['current_user']->id);
+                                     $where .= "{$db_field} $in (" . string_format(
+                                             $parms['subquery'],
+                                             $stringFormatParams
+                                         ) . ")";
                                  } else {
                                      //Bug#37087: Re-write our sub-query to it is executed first and contents stored in a derived table to avoid mysql executing the query
                                      //outside in. Additional details: http://bugs.mysql.com/bug.php?id=9021
