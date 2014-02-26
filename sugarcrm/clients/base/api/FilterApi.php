@@ -803,7 +803,7 @@ class FilterApi extends SugarApi
         // Since tracker relationships don't actually exist, we're gonna have to add a direct join
         $q->joinRaw(
             sprintf(
-                " LEFT JOIN tracker ON tracker.item_id=%s.id AND tracker.module_name='%s' AND tracker.user_id='%s' ",
+                " JOIN tracker ON tracker.item_id=%s.id AND tracker.module_name='%s' AND tracker.user_id='%s' ",
                 $q->from->getTableName(),
                 $q->from->module_name,
                 $GLOBALS['current_user']->id

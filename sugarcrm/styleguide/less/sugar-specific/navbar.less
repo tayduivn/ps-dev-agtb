@@ -21,7 +21,6 @@
     .box-shadow(@shadow);
     width: 100%;
     display: table;
-    //height: 44px;
     min-height: 0;
     padding: 0;
     margin: 0;
@@ -34,268 +33,11 @@
       vertical-align: top;
       &.module-list {
         width: 100%;
-        ul.nav.megamenu {
-          max-height: 44px;
-          white-space: nowrap;
-          > li.dropdown {
-            float: none;
-            display: inline-block;
-          }
-        }
       }
     }
   }
 
-  // First navbar element
-  // ====================
-
-
-  // Nav links (both module list and other)
-  // ======================================
-  ul.nav.megamenu {
-    margin: 0;
-    float: none;
-
-    > li.dropdown {
-      border-left: 1px solid #404040;
-      border-right: none;
-      padding: 0;
-
-      &.active {
-        border-left-color: lighten(@black, 20%);
-        border-right-color: darken(@white, 75%);
-        div.btn-group:not(.open) {
-          background-color: rgba(0,0,0,0.21);
-          border-left-color: lighten(@black,15%);
-          border-right-color: @black;
-          a.btn.btn-invisible.btn-link {
-            text-decoration: none;
-            color: @navbarLinkColorActive;
-            .border-radius(~"0 !important");
-            border-left: 0;
-            border-right: 0;
-            outline: none !important;
-          }
-        }
-      }
-      div.btn-group.open {
-        /*Menu position and menu carets*/
-        .dropdown-menu {
-          top: 42px;
-          left: auto;
-          margin-top: 0;
-          padding-top: 8px;
-          overflow: hidden;
-          border: none;
-          background: none;
-          .box-shadow(none);
-          .dropdownMinWidth();
-          &> ul {
-            background: @white;
-            border: 1px solid rgba(0,0,0,.2);;
-            .border-radius(2px);
-            max-height: 330px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            .border-radius(0 0 3px 3px);
-          }
-          &:before {
-            border-bottom-color: rgba(0,0,0,.2);
-          }
-          li,
-          li.divider {
-            padding: 0;
-          }
-          li a {
-            display: block;
-            padding: 6px 8px 8px;
-            text-indent: 32px;
-            position: relative;
-            i[class^="icon-"] {
-              position: relative;
-              top: -1px;
-              text-indent: -26px;
-              color: @grayLight;
-              vertical-align: middle;
-            }
-          }
-          li a.menuItem {
-            display: inline-block;
-            padding-right: 32px;
-          }
-          li button.dropdown-submenu {
-            display: inline-block;
-            padding: 8px;
-            line-height: 12px;
-            text-indent: 0;
-            position: absolute;
-            right: 0;
-            .icon-caret-down {
-              color: @grayLight;
-              text-indent: 0;
-              top: 0;
-            }
-            &:hover,
-            &.open {
-              background: none;
-              .icon-caret-down {
-                color: @gray;
-              }
-            }
-            &.with-scroll {
-              width: 40px;
-              margin-right: -5px;
-            }
-          }
-          .recentContainer,
-          .dashboardContainer,
-          .favoritesContainer {
-            text-indent: 40px;
-            line-height: 18px;
-            li:first-child > a {
-              border-top: 1px solid @grayLight;
-              .border-radius(0);
-            }
-            button {
-              color: @linkColor;
-              text-indent: 28px;
-              width: 100%;
-              text-align: left;
-            }
-          }
-        }
-      }
-
-      /*This is the actual content in nav item*/
-      div.btn-group {
-        padding: 8px;
-        margin: 0;
-        border-left: 1px solid @black;
-        border-right: none;
-
-        /*This is the link text or image*/
-        &> a.btn.btn-invisible.btn-link {
-          margin: 0;
-          padding: 0;
-          border: none;
-          text-shadow: none;
-          color: lighten(@black,80%);
-          &:hover {
-            text-decoration: none;
-          }
-          &:active {
-            .box-shadow(none) !important;
-            border-color: transparent;
-            background: none;
-          }
-        }
-        &.open {
-          .box-shadow(~"inset 2px 4px 12px rgba(255,255,255,.25)");
-          border-left-color: @black;
-          border-right-color: transparent;
-          a.dropdown-toggle {
-            background: none;
-            border-left: none;
-            border-right: none;
-            border: none;
-            .box-shadow(none);
-            &> i {
-              color: @white;
-            }
-          }
-        }
-      }
-
-    }
-
-    &#module_list {
-
-      > li.dropdown {
-        border-left: none;
-        border-right: none;
-        div.btn-group {
-          border-left: none;
-          border-right: none;
-          &.open {
-            .dropdown-menu {
-              left: 0;
-              right: auto;
-            }
-          }
-        }
-      }
-      > li.dropdown.home {
-        div.btn-group {
-          padding: 8px 8px 8px 16px;
-          .dropdown-toggle {
-            padding: 5px 2px;
-            margin-right: 0;
-          }
-          &.open {
-            .dropdown-menu {
-              left: 0;
-              right: auto;
-            }
-          }
-        }
-        .cube {
-          z-index: 2000;
-          &.hide {
-            display: none;
-          }
-          &:hover {
-            text-decoration: none;
-          }
-          img {
-            height: 22px;
-            width: 22px;
-          }
-        }
-      }
-      > li.dropdown.more {
-        div.btn-group {
-          padding: 8px 0;
-          .dropdown-toggle {
-            padding: 5px 7px;
-          }
-        }
-        &:hover {
-          b[class^="icon-"] {
-            color: @white !important;
-          }
-        }
-      }
-      > li.dropdown:not(.home):not(.more) {
-        /*These are used of calculating size only*/
-        > a.moreLink {
-          color: @black;
-          text-shadow: none;
-          padding: 8px 28px 8px 8px;
-          border-left: none;
-          border-right: none;
-          &.hide {
-            display: none;
-          }
-        }
-        div.btn-group {
-          padding: 8px;
-
-          /*Both routelink and dropdown toggle*/
-          &> a.btn.btn-invisible.btn-link {
-            padding: 4px 0;
-            /*Module list caret*/
-            &.dropdown-toggle {
-              padding: 5px 8px;
-              margin-right: -5px;
-            }
-          }
-        }
-      }
-    }
-
-  }
-
-  a [class^="icon-"] {
+  [class^="icon-"] {
     color: @white;
     font-size: 14px;
   }
@@ -312,14 +54,246 @@
   .dropdown .icon-caret-down {
     color: @gray;
   }
+  .megamenu {
+    margin: 0;
+  }
 }
 
+
+// Nav links (both module list and other)
+// ======================================
+.megamenu {
+  margin: 0;
+
+  > .dropdown {
+    border-left: 1px solid #404040;
+    border-right: none;
+    padding: 0;
+
+    &.active {
+      border-left-color: lighten(@black, 20%);
+      border-right-color: darken(@white, 75%);
+      .btn-group:not(.open) {
+        background-color: rgba(0,0,0,0.21);
+        border-left-color: lighten(@black,15%);
+        border-right-color: @black;
+        .btn.btn-invisible.btn-link {
+          text-decoration: none;
+          color: @navbarLinkColorActive;
+          .border-radius(~"0 !important");
+          border-left: 0;
+          border-right: 0;
+          outline: none !important;
+        }
+      }
+    }
+
+    /*This is the actual content in nav item*/
+    .btn-group {
+      padding: 8px;
+      margin: 0;
+      border-left: 1px solid @black;
+      border-right: none;
+
+      /*This is the link text or image*/
+      &> .btn.btn-invisible {
+        margin: 0;
+        padding: 0;
+        border: none;
+        text-shadow: none;
+        color: lighten(@black,80%);
+        .box-sizing(content-box);
+        &:hover {
+          text-decoration: none;
+        }
+        &:active {
+          .box-shadow(none) !important;
+          border-color: transparent;
+          background: none;
+        }
+      }
+
+      &.open {
+        .box-shadow(~"inset 2px 4px 12px rgba(255,255,255,.25)");
+        border-left-color: @black;
+        border-right-color: transparent;
+        .dropdown-toggle {
+          background: none;
+          border-left: none;
+          border-right: none;
+          border: none;
+          .box-shadow(none);
+          &> i {
+            color: @white;
+          }
+        }
+      }
+    }
+
+    /*Menu position and menu carets*/
+    .dropdown-menu {
+      top: 42px;
+      left: 0;
+      right: auto;
+      margin-top: 0;
+      padding-top: 8px;
+      overflow: hidden;
+      border: none;
+      background: none;
+      .box-shadow(none);
+      .dropdownMinWidth();
+      &.pull-right {
+        left: auto;
+        right: 0;
+      }
+      &> ul {
+        background: @white;
+        border: 1px solid rgba(0,0,0,.2);;
+        .border-radius(2px);
+        max-height: 315px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        .border-radius(0 0 3px 3px);
+      }
+      &:before {
+        border-bottom-color: rgba(0,0,0,.2);
+      }
+      li.divider {
+        border-bottom: none;
+      }
+      li.divider + li a {
+        border-top: 1px solid @grayLight;
+      }
+      li.hidden {
+        display: none;
+      }
+      li a {
+        display: block;
+        padding: 8px 10px;
+        text-indent: 30px;
+        position: relative;
+        &:hover {
+          color: @dropdownLinkColorHover;
+          text-decoration: none;
+          background: #e5f1fc;
+        }
+        i[class^="icon-"] {
+          position: relative;
+          top: -1px;
+          text-indent: -26px;
+          color: @grayLight;
+          vertical-align: middle;
+        }
+        &.module-list-link {
+          text-indent: 0;
+        }
+      }
+      li .menuItem {
+        display: inline-block;
+        padding-right: 32px;
+      }
+      li .dropdown-submenu {
+        display: inline-block;
+        padding: 8px;
+        line-height: 12px;
+        text-indent: 0;
+        position: absolute;
+        right: 0;
+        .icon-caret-down {
+          color: @grayLight;
+          text-indent: 0;
+          top: 0;
+        }
+        &:hover,
+        &.open {
+          background: none;
+          .icon-caret-down {
+            color: @gray;
+          }
+        }
+        &.with-scroll {
+          width: 40px;
+          margin-right: -5px;
+        }
+      }
+    }
+
+    button.toggle-recents {
+      width: 100%;
+      text-align: left;
+    }
+  }
+}
+
+.module-list .megamenu {
+  max-height: 44px;
+  white-space: nowrap;
+  > .dropdown,
+  > .dropdown.active,
+  > .dropdown .btn-group {
+    border-left: none;
+    border-right: none;
+  }
+  > .dropdown {
+    float: none;
+    &:not(.hidden) {
+      display: inline-block;
+    }
+    .btn-group {
+      /*cube*/
+      &.home {
+        padding: 8px 10px 8px 16px;
+        &.open {
+          .dropdown-menu {
+            left: 0;
+            right: auto;
+          }
+        }
+        .dropdown-toggle {
+          padding: 5px 2px;
+        }
+      }
+      &.more {
+        padding: 8px 2px;
+        &:hover {
+          [class^="icon-"] {
+            color: @white !important;
+          }
+        }
+        .dropdown-toggle {
+          padding: 5px 7px;
+        }
+      }
+      &:not(.home):not(.more) {
+        padding: 8px 6px 8px 8px;
+        .dropdown-toggle {
+          padding: 5px 8px;
+        }
+      }
+      /*img*/
+      &> .btn.cube {
+        z-index: 2000;
+        padding: 3px;
+        &.hide {
+          display: none;
+        }
+        &:hover {
+          text-decoration: none;
+        }
+        img {
+          height: 22px;
+          width: 22px;
+        }
+      }
+    }
+  }
+}
 
 #userActions {
   .dropdown-menu {
     min-width: 0;
   }
-  &> div.btn-group {
+  &> .btn-group {
     padding-right: 6px;
   }
   .dropdown-toggle .avatar {
@@ -341,10 +315,8 @@
 }
 
 #createList {
-  border-right: none;
-  &> div.btn-group {
-    border-right: none;
-    &> a.dropdown-toggle {
+  &> .btn-group {
+    &> .dropdown-toggle {
       &:hover {
         i {
           color: @white !important;

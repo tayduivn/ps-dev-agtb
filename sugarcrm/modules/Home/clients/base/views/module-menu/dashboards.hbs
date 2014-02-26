@@ -1,5 +1,4 @@
-<?php
-
+{{!--
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -12,20 +11,7 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
-$viewdefs['portal']['layout']['header'] = array(
-    'components' => array(
-        array(
-            'layout' => 'module-list',
-        ),
-        array(
-            'view' => 'globalsearch',
-        ),
-        array(
-            'view' => 'profileactions',
-        ),
-        array(
-            'view' => 'quickcreate',
-        )
-    ),
-);
+--}}
+{{#each collection.models}}
+    <li><a tabindex="-1" href="#{{buildRoute model=this}}" data-route="#{{buildRoute model=this}}"><i class="icon-time active"></i>{{getFieldValue this 'name'}}</a></li>
+{{/each}}

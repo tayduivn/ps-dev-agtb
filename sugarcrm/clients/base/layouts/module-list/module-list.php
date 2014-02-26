@@ -13,19 +13,6 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['portal']['layout']['header'] = array(
-    'components' => array(
-        array(
-            'layout' => 'module-list',
-        ),
-        array(
-            'view' => 'globalsearch',
-        ),
-        array(
-            'view' => 'profileactions',
-        ),
-        array(
-            'view' => 'quickcreate',
-        )
-    ),
+$viewdefs['base']['layout']['module-list'] = array(
+    'components' => array()
 );

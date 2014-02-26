@@ -1,5 +1,4 @@
 <?php
-
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -10,22 +9,13 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-$viewdefs['portal']['layout']['header'] = array(
-    'components' => array(
-        array(
-            'layout' => 'module-list',
-        ),
-        array(
-            'view' => 'globalsearch',
-        ),
-        array(
-            'view' => 'profileactions',
-        ),
-        array(
-            'view' => 'quickcreate',
-        )
+$viewdefs['Home']['base']['view']['module-menu'] = array(
+    'settings' => array(
+        'favorites' => 0,
+        'recently_viewed' => 10,
+        'recently_viewed_toggle' => 3,
     ),
 );

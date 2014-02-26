@@ -1,5 +1,4 @@
-<?php
-
+{{!--
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -12,20 +11,14 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
-$viewdefs['portal']['layout']['header'] = array(
-    'components' => array(
-        array(
-            'layout' => 'module-list',
-        ),
-        array(
-            'view' => 'globalsearch',
-        ),
-        array(
-            'view' => 'profileactions',
-        ),
-        array(
-            'view' => 'quickcreate',
-        )
-    ),
-);
+--}}
+<ul class="nav megamenu" data-container="module-list">
+    <li class="dropdown hidden" data-action="more-modules">
+        <div class="btn-group more">
+            <button type="button" data-toggle="dropdown" class="btn btn-invisible dropdown-toggle" title="{{str 'LBL_LINK_MORE' module}}" track="click:navbar-more-modules"><i class="icon-chevron-down"></i></button>
+            <div class="dropdown-menu scroll" role="menu">
+                <ul data-container="overflow"></ul>
+            </div>
+        </div>
+    </li>
+</ul>

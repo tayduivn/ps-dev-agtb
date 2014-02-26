@@ -110,6 +110,7 @@
         };
 
         this._settings = _.extend(
+            {},
             this._defaultSettings,
             configSettings,
             this.meta && this.meta.settings || {}
