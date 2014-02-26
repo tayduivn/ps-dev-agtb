@@ -35,6 +35,7 @@ class DependencyManager
         "EditView",
         "CreateView",
         "RecordlistView",
+        "Subpanel-listView",
         "Create-actionsView",
     );
 
@@ -311,7 +312,9 @@ class DependencyManager
 
         $type = 'view';
 
-        if (in_array($view, self::$editable_views) || strpos($view, "QuickCreate") !== false) {
+        if (in_array($view, self::$editable_views)
+            || strpos($view, "Subpanel-for-") !== false     // custom subpanels
+            || strpos($view, "QuickCreate") !== false) {
             $type = 'edit';
         }
 

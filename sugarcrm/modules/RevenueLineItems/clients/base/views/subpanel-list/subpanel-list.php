@@ -112,6 +112,10 @@ $fields = array(
         'related_fields' => array(
             'currency_id',
             'base_rate',
+            'total_amount',
+            'quantity',
+            'discount_amount',
+            'discount_price'
         ),
         'showTransactionalAmount' => true,
         'convertToBase' => true,
@@ -124,6 +128,10 @@ $fields = array(
         'related_fields' => array(
             'currency_id',
             'base_rate',
+            'total_amount',
+            'quantity',
+            'discount_amount',
+            'discount_price'
         ),
         'showTransactionalAmount' => true,
         'convertToBase' => true,
@@ -136,6 +144,10 @@ $fields = array(
         'related_fields' => array(
             'currency_id',
             'base_rate',
+            'total_amount',
+            'quantity',
+            'discount_amount',
+            'discount_price'
         ),
         'showTransactionalAmount' => true,
         'convertToBase' => true,
