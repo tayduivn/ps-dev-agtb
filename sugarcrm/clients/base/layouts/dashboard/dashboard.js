@@ -393,7 +393,15 @@
 
         // if we have a headerpane and it was changed then run the warnUnsavedChanges method
         if (headerpane && headerpane.changed) {
-            return headerpane.warnUnsavedChanges(onConfirm);
+            return headerpane.warnUnsavedChanges(
+                onConfirm,
+                undefined,
+                _.bind(function() {
+                    // when the cancel button is presses, we need to clear out the collection
+                    // because it messes with the add dashlet screen.
+                    this.collection.reset([], {silent: true});
+                }, this)
+            );
         }
 
         // if we didn't have a headerpane or we did have one, but nothing changed, just run the normal method

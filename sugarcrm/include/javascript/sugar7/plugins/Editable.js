@@ -99,11 +99,12 @@
              *
              * View must override `hasUnsavedChanges` and return true to active the warning dialog.
              *
-             * @param {Function} onConfirm Callback function which is executed once user clicks "ok".
-             * @param {String} customMessage Custom warning message.
+             * @param {Function} onConfirm Callback function which is executed once the user clicks "ok".
+             * @param {String} (customMessage) Custom warning message.
+             * @param {Function} (onCancel) Callback function which is executed once the users clicks "cancel".
              * @return {Boolean} True only if it contains unsaved changes.
              */
-            warnUnsavedChanges: function(onConfirm, customMessage) {
+            warnUnsavedChanges: function(onConfirm, customMessage, onCancel) {
                 //When we reload the page after retrying a save, never block it
                 if (this.resavingAfterMetadataSync) {
                     return false;
@@ -117,7 +118,8 @@
                     app.alert.show('leave_confirmation', {
                         level: 'confirmation',
                         messages: app.lang.get(customMessage || 'LBL_WARN_UNSAVED_CHANGES', this.module),
-                        onConfirm: onConfirm
+                        onConfirm: onConfirm,
+                        onCancel: onCancel || $.noop
                     });
                     return false;
                 }
