@@ -100,6 +100,28 @@ class KBDocument extends SugarBean {
 		$this->setupCustomFields('KBDocuments'); //parameter is module name
 	}
 
+    /**
+     * @see SugarBean::populateFromRow
+     */
+    public function populateFromRow($row, $convert = false)
+    {
+        $row = parent::populateFromRow($row, $convert);
+
+        if (!empty($this->kbdocument_name) && empty($this->name)) {
+            $this->name = $this->kbdocument_name;
+        }
+
+        return $row;
+    }
+
+    public function save($check_notify = false)
+    {
+        if (empty($this->kbdocument_name) && !empty($this->name)) {
+            $this->kbdocument_name = $this->name;
+        }
+        return parent::save($check_notify);
+    }
+
 	function get_notification_recipients() {
 		$notify_user = BeanFactory::getBean('Users');
 		if ($this->status_id=='In Review') {
@@ -173,7 +195,10 @@ class KBDocument extends SugarBean {
             $this->kbarticle_author_name = $locale->formatName('Users', $row);
 		   $this->created_by = $this->kbarticle_author_name;
 		}
-
+        //populate name
+        if (isset($this->kbdocument_name)) {
+            $this->name = $this->kbdocument_name;
+        }
         $this->body = html_entity_decode(KBDocument::get_kbdoc_body_without_incrementing_count($this->id));
 
 	}
