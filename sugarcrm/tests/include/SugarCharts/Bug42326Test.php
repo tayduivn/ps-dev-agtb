@@ -30,6 +30,7 @@ class Bug42326Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
     {
+        $this->markTestSkipped('The fix for 42326 has been changed in UIUX-1454.');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->sugarChart = SugarChartFactory::getInstance('Jit', 'Reports');
     }
