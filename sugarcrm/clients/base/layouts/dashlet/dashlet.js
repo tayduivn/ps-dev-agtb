@@ -169,14 +169,16 @@
             this.$el.append(comp.el);
         } else if(this.meta.preview) {
             //preview mode
-            this.$el.addClass("preview-data");
-            this.$("[data-dashlet=dashlet]").append(comp.el);
+            this.$el.addClass('preview-data');
+            this.$('[data-dashlet=dashlet]').append(comp.el);
+        } else if (_.isUndefined(def)) {
+            this.$('[data-dashlet=dashlet]').after(comp.el);
         } else if(def.view && !_.isUndefined(def.view.toolbar)) {
             //toolbar view
-            this.$("[data-dashlet=toolbar]").append(comp.el);
+            this.$('[data-dashlet=toolbar]').append(comp.el);
         } else {
             //main dashlet component
-            this.$("[data-dashlet=dashlet]").append(comp.el);
+            this.$('[data-dashlet=dashlet]').append(comp.el);
         }
     },
 
@@ -252,6 +254,7 @@
         }
         this.meta.components = [component];
         this._addComponentsFromDef(this.meta.components);
+        this.trigger('init');
         this.model.set('updated', true);
         this.loadData();
         this.render();

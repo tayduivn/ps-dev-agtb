@@ -20,9 +20,8 @@
  * @class View.Views.BaseAttachmentsView
  */
 ({
-    plugins: ['LinkedModel', 'Dashlet', 'Timeago'],
+    plugins: ['LinkedModel', 'Dashlet', 'Timeago', 'Pagination'],
     events: {
-        'click [name=show_more_button]' : 'showMore',
         'click [data-event=create_button]': 'createRelatedNote',
         'click [data-event=select_button]': 'openSelectDrawer'
     },
@@ -72,6 +71,7 @@
      * @protected
      */
     _initOptions: function() {
+        this.tbodyTag = 'ul[data-action="pagination-body"]';
         var options = _.extend(this._defaultOptions, this.settings.attributes || {});
         this.timer = parseInt(options['auto_refresh'], 10) * 60 * 1000;
         this.limit = options.limit;
@@ -115,22 +115,17 @@
     },
 
     /**
-     * {@inheritDoc}
-     *
      * Apply svg icon plugin.
-     * @protected
      */
-    _renderHtml: function() {
+    applySvgIcon: function() {
         var self = this,
             svgIconTemplate = app.template.get('attachments.svg-icon', this.module) ||
                 app.template.get('attachments.svg-icon');
-        app.view.View.prototype._renderHtml.call(this);
         this.$('[data-mime]').each(function() {
             var mimeType = $(this).data('mime'),
                 filetype = self.dashletConfig.supportedImageExtensions[mimeType] || self._getFileType(mimeType);
             $(this).attr('data-filetype', filetype).html(svgIconTemplate());
         });
-        return this;
     },
 
     /**
@@ -154,22 +149,7 @@
         if (this.collection) {
             this.collection.on('reset', this.render, this);
         }
-    },
-
-    /**
-     * Show next offset records.
-     */
-    showMore: function() {
-        this.collection.paginate({
-            add: true,
-            limit: this.limit,
-            success: _.bind(function() {
-                if (this.disposed) {
-                    return;
-                }
-                this.render();
-            }, this)
-        });
+        this.on('render', this.applySvgIcon, this);
     },
 
     /**

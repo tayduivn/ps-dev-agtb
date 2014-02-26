@@ -2693,6 +2693,7 @@ $app_strings = array (
     'LBL_SHOW_MORE_MODULE' => 'More {{{module}}}...',
     'LBL_SHOW_MORE_RECENTS' => 'More recents...',
     'LBL_SHOW_LESS_RECENTS' => 'Less recents...',
+    'TPL_SHOW_MORE_MODULE' => 'More {{module}}...',
     'LBL_TODAYS_ACTIVITIES' => 'Today\'s Activities',
     'LBL_LEADS'=>'Leads',
     'LBL_LESS' => 'less',

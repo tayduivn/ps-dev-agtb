@@ -28,7 +28,7 @@
 }}
 <div class="tab-pane active">
     {{#if collection.length}}
-        <ul class="unstyled listed">
+        <ul class="unstyled listed" data-action="pagination-body">
             {{#each collection.models}}
                 <li>
                     {{#if ../../row_actions}}
@@ -64,9 +64,6 @@
                     </div>
                 </li>
             {{/each}}
-            {{#notEq ../collection.next_offset "-1"}}
-                <li><a class="more" data-action="show-more">{{str "LBL_SHOW_MORE_MODULE" this.module}}</a></li>
-            {{/notEq}}
         </ul>
     {{else}}
         <div class="block-footer">{{#if ../collection.dataFetched}}{{str "LBL_NO_DATA_AVAILABLE" this.module}}{{else}}{{str "LBL_LOADING" this.module}}{{/if}}</div>

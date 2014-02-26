@@ -69,6 +69,7 @@
             app.user.lastState.set(specificDateKey, value);
         }, this);
         this.settings.set('date', this.getDate());
+        this.tbodyTag = 'ul[data-action="pagination-body"]';
     },
 
     /**
@@ -83,6 +84,32 @@
         this.on('planned-activities:close-record:fire', this.heldActivity, this);
 
         return this;
+    },
+
+    /**
+     * {@inheritDoc}
+     * Update the invitation collection if the next page record is added.
+     *
+     * @return {Object} Fetch options.
+     */
+    getPaginationOptions: function() {
+        return {
+            success: _.bind(this.updateInvitation, this)
+        };
+    },
+
+    /**
+     * Update the invitation collection.
+     *
+     * @param {BeanCollection} collection Active tab's collection.
+     * @param {Array} data Added recordset's data.
+     */
+    updateInvitation: function(collection, data) {
+        var tab = this.tabs[this.settings.get('activeTab')];
+        if (!data.length || !tab.invitations) {
+            return;
+        }
+        this._fetchInvitationActions(tab, _.pluck(data, 'id'));
     },
 
     /**
@@ -336,29 +363,16 @@
     },
 
     /**
-     * {@inheritDoc}
-     *
-     * Force reload of invitations information (if they exist for this tab)
-     * after showMore is clicked.
-     */
-    showMore: function() {
-        var tab = this.tabs[this.settings.get('activeTab')];
-        if (tab.invitations) {
-            tab.invitations.dataFetched = false;
-        }
-        this._super('showMore');
-    },
-
-    /**
      * Fetch the invitation actions collection for
      * showing the invitation actions buttons
-     * @param tab
+     * @param {Object} tab Tab properties.
+     * @param {Array|*} addedIds New added record ids.
      * @private
      */
-    _fetchInvitationActions: function(tab) {
+    _fetchInvitationActions: function(tab, addedIds) {
         this.invitationActions = tab.invitation_actions;
         tab.invitations.filterDef = {
-            'id': {'$in': this.collection.pluck('id')}
+            'id': {'$in': addedIds || this.collection.pluck('id')}
         };
 
         var self = this;
@@ -374,6 +388,9 @@
                     model.set('invitation', invitation);
                 }, self);
 
+                if (!_.isEmpty(addedIds)) {
+                    return;
+                }
                 self.render();
             },
             complete: function() {

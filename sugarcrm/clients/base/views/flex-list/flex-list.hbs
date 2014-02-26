@@ -103,4 +103,11 @@
     </tbody>
 </table>
 </div>
+{{#if ../collection.dataFetched}}
+    {{#unless ../../collection.length}}
+        <div class="block-footer">
+            {{str "LBL_NO_DATA_AVAILABLE"}}
+        </div>
+    {{/unless}}
+{{/if}}
 {{/each}}

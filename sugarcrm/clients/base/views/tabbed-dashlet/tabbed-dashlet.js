@@ -59,7 +59,7 @@
  * @alias SUGAR.App.view.views.BaseTabbedDashletView
  */
 ({
-    plugins: ['Dashlet', 'RelativeTime', 'ToggleVisibility', 'Tooltip'],
+    plugins: ['Dashlet', 'RelativeTime', 'ToggleVisibility', 'Tooltip', 'Pagination'],
 
     events: {
         'click [data-action=show-more]': 'showMore',
@@ -73,6 +73,20 @@
      * @protected
      */
     _defaultSettings: {},
+
+    /**
+     * {@inheritDoc}
+     *
+     * Bind the separate context to avoid sharing context's handlers
+     * between its extension dashlets.
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        this.context = options.context.getChildContext({
+            forceNew: true,
+            collection: new Backbone.Collection()
+        });
+    },
 
     /**
      * {@inheritDoc}
@@ -118,6 +132,7 @@
         this.settings.on('change:filter', this.loadData, this);
         this.on('tabbed-dashlet:unlink-record:fire', this.unlinkRecord, this);
         this.context.on('tabbed-dashlet:refresh', this.refreshTabsForModule, this);
+        this.context.on('change:collection', this.onCollectionChange, this);
 
         return this;
     },
@@ -140,6 +155,9 @@
             if (_.isNull(collection)) {
                 return;
             }
+
+            collection.on('add', this.bindCollectionAdd, this);
+            collection.on('reset', this.bindCollectionReset, this);
 
             this.tabs[index] = tab;
             this.tabs[index].collection = collection;
@@ -196,6 +214,53 @@
         this.settings.set(settings);
 
         return this;
+    },
+
+    /**
+     * New model related properties are injected into each model.
+     * Update the record date associating by tab's record date value.
+     *
+     * @param {Bean} model Appended new model.
+     */
+    bindCollectionAdd: function(model) {
+        var tab = this.tabs[this.settings.get('activeTab')];
+        model.set('record_date', model.get(tab.record_date));
+    },
+
+    /**
+     * Bind event trigger's for each updated models on collection reset.
+     *
+     * @param {BeanCollection} collection Activated tab's collection.
+     */
+    bindCollectionReset: function(collection) {
+        _.each(collection.models, this.bindCollectionAdd, this);
+    },
+
+    /**
+     * Bind event listener for the updating collection count on the tab.
+     */
+    onCollectionChange: function() {
+        var prevCollection = this.context.previous('collection');
+        if (prevCollection) {
+            prevCollection.off(null, this.updateCollectionCount, this);
+        }
+        this.collection = this.context.get('collection');
+        this.collection.on('add remove reset', _.debounce(this.updateCollectionCount, 100), this);
+    },
+
+    /**
+     * Update the collection's count on the active tab.
+     */
+    updateCollectionCount: function() {
+        var tabIndex = this.settings.get('activeTab'),
+            count = this.collection.length;
+
+        if (this.collection.next_offset >= 0) {
+            count += '+';
+        }
+        this.$('[data-action=tab-switcher][data-index=' + tabIndex + ']')
+            .children('[data-action=count]')
+            .text(count);
     },
 
     /**
@@ -391,8 +456,9 @@
                 if (self.disposed) {
                     return;
                 }
-
                 self.collection = self.tabs[self.settings.get('activeTab')].collection;
+                self.context.set('collection', self.collection);
+
                 self.render();
 
                 if (_.isFunction(options.complete)) {
@@ -422,16 +488,9 @@
      * Show more records for current collection.
      */
     showMore: function() {
-        var self = this;
-
-        this.collection.paginate({
-            limit: this.settings.get('limit'),
-            add: true,
-            success: function() {
-                if (!self.disposed) {
-                    self.render();
-                }
-            }
+        this.getNextPagination({
+            showAlerts: true,
+            limit: this.settings.get('limit')
         });
     },
 
@@ -448,6 +507,7 @@
 
         this.settings.set('activeTab', index);
         this.collection = this.tabs[index].collection;
+        this.context.set('collection', this.collection);
         this.render();
     },
 
@@ -489,10 +549,6 @@
         }
 
         var tab = this.tabs[this.settings.get('activeTab')];
-
-        _.each(this.collection.models, function(model) {
-            model.set('record_date', model.get(tab.record_date));
-        }, this);
 
         var recordsTpl = this._getRecordsTemplate(tab.module);
 

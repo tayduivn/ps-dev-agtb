@@ -1,3 +1,4 @@
+{{!
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -10,8 +11,13 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-({
-    bindDataChange: function() {
-        this.collection.on('reset', this.render, this);
-    }
-})
+}}
+{{#with rowModel}}
+    <tr name="{{module}}_{{attributes.id}}" class="single">
+        {{#each ../metaFields}}
+            <td{{#if this.align}} class="{{this.align}}"{{/if}}>
+                {{field ../../this model=../this template=../../this.viewName}}
+            </td>
+        {{/each}}
+    </tr>
+{{/with}}

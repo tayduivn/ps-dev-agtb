@@ -23,7 +23,8 @@
         'ListColumnEllipsis',
         'ErrorDecoration',
         'Editable',
-        'MergeDuplicates'
+        'MergeDuplicates',
+        'Pagination'
     ],
 
     /**
@@ -63,6 +64,11 @@
         this.on('field:focus:location', this.setPanelPosition, this);
         if (this.layout) {
             this.layout.on('list:mergeduplicates:fire', this.mergeDuplicatesClicked, this);
+
+            // We listen for if the search filters are opened or not. If so, when
+            // user clicks show more button, we treat this as a search, otherwise,
+            // normal show more for list view.
+            this.layout.on('list:filter:toggled', this.filterToggled, this);
         }
         this.toggledModels = {};
 
@@ -74,6 +80,60 @@
         // when user escapes the page without confirming deleting
         app.routing.before("route", this.beforeRouteDelete, this, true);
         $(window).on("beforeunload.delete" + this.cid, _.bind(this.warnDeleteOnRefresh, this));
+    },
+
+    /**
+     * Update the filter enable status.
+     *
+     * @param {Boolean} isOpened Value whether the filter is opened.
+     */
+    filterToggled: function(isOpened) {
+        this.context.set('filterOpened', isOpened);
+    },
+
+    /**
+     * Add the opened filter options to the paginate query.
+     * Please see the {@link Pagination#getNextPagination} for detail.
+     *
+     * @return {Object} Pagination fetch options.
+     */
+    getPaginationOptions: function() {
+        // If in "search mode" (the search filter is toggled open) set q:term param
+        var options = this.context.get('filterOpened') ? this.getSearchOptions() : {};
+
+        // Dashboard layout injects shared context with limit: 5.
+        // Otherwise, we don't set so fetches will use max query in config.
+        if (this.context.get('limit')) {
+            options.limit = this.context.get('limit');
+        }
+        options = _.extend({}, this.context.get('collectionOptions'), options);
+        return options;
+    },
+
+    /**
+     * Add the previous typed search term.
+     *
+     * @return {Object} Pagination fetch options.
+     */
+    getSearchOptions: function() {
+        var collection, options, previousTerms, term = '';
+        collection = this.context.get('collection');
+
+        // If we've made a previous search for this module grab from cache
+        if (app.cache.has('previousTerms')) {
+            previousTerms = app.cache.get('previousTerms');
+            if (previousTerms) {
+                term = previousTerms[this.module];
+            }
+        }
+        // build search-specific options and return
+        options = {
+            params: {
+                q: term
+            },
+            fields: collection.fields ? collection.fields : this.collection
+        };
+        return options;
     },
 
     /**

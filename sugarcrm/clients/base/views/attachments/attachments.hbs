@@ -26,8 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-{{#if this.collection.length}}
-    <ul class="unstyled listed">
+{{#if collection.dataFetched}}
+    <ul class="unstyled listed" data-action="pagination-body">
     {{#each this.collection.models}}
         <li>
             <div class="actions pull-right">
@@ -51,12 +51,8 @@
             </div>
         </li>
     {{/each}}
-    {{#notEq this.collection.next_offset "-1"}}
-        <li>
-            <button name="show_more_button" class="btn-invisible more">{{str "LBL_SHOW_MORE_MODULE" this.module}}</button>
-        </li>
-    {{/notEq}}
     </ul>
-{{else}}
-    <div class="block-footer">{{#if ../collection.dataFetched}}{{str "LBL_NO_DATA_AVAILABLE" this.module}}{{else}}{{str "LBL_LOADING" this.module}}{{/if}}</div>
+    {{#unless collection.length}}
+    <div class="block-footer">{{str "LBL_NO_DATA_AVAILABLE" this.module}}</div>
+    {{/unless}}
 {{/if}}

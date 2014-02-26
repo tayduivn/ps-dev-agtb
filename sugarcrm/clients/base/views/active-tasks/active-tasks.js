@@ -53,6 +53,8 @@
             'LinkedModel'
         ]);
 
+        this.tbodyTag = 'ul[data-action="pagination-body"]';
+
         this._super('initialize', [options]);
     },
 
@@ -145,12 +147,29 @@
     },
 
     /**
+     * New model related properties are injected into each model.
+     * Update the picture url's property for model's assigned user.
+     *
+     * @param {Bean} model Appended new model.
+     */
+    bindCollectionAdd: function(model) {
+        var tab = this.tabs[this.settings.get('activeTab')];
+        model.set('record_date', model.get(tab.record_date));
+        var pictureUrl = app.api.buildFileURL({
+            module: 'Users',
+            id: model.get('assigned_user_id'),
+            field: 'picture'
+        });
+        model.set('picture_url', pictureUrl);
+        this._super('bindCollectionAdd', [model]);
+    },
+
+    /**
      * {@inheritDoc}
      *
      * New model related properties are injected into each model:
      *
      * - {Boolean} overdue True if record is prior to now.
-     * - {String} picture_url Picture url for model's assigned user.
      */
     _renderHtml: function() {
         if (this.meta.config) {
@@ -163,15 +182,6 @@
         if (tab.overdue_badge) {
             this.overdueBadge = tab.overdue_badge;
         }
-
-        _.each(this.collection.models, function(model) {
-            var pictureUrl = app.api.buildFileURL({
-                module: 'Users',
-                id: model.get('assigned_user_id'),
-                field: 'picture'
-            });
-            model.set('picture_url', pictureUrl);
-        }, this);
 
         this._super('_renderHtml');
     }

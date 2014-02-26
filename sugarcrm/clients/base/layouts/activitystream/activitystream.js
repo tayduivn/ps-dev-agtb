@@ -158,7 +158,7 @@
 
         if(component.name === "activitystream") {
             this.$el.find(".activitystream-list").append(component.el);
-        } else if(component.name === "activitystream-bottom") {
+        } else if (_.contains(['activitystream-bottom', 'list-bottom'], component.name)) {
             this.$el.append(component.el);
             component.render();
         } else {
