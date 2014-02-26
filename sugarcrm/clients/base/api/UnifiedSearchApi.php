@@ -350,11 +350,10 @@ class UnifiedSearchApi extends SugarListApi {
 
         if(is_object($results)) {
             foreach ( $results as $result ) {
-                $record = BeanFactory::getBean($result->getModule(), $result->getId());
+                $record = BeanFactory::retrieveBean($result->getModule(), $result->getId());
 
-                // if we cant' get the bean skip it
-                if($record === false)
-                {
+                // if we can't get the bean skip it
+                if(!$record) {
                     continue;
                 }
                 $module = $record->module_dir;
@@ -365,6 +364,9 @@ class UnifiedSearchApi extends SugarListApi {
                     $moduleFields = $options['fieldFilters']['_default'];
                 } else {
                     $moduleFields = array();
+                }
+                if (!in_array('id', $moduleFields)) {
+                    $moduleFields[] = 'id';
                 }
                 $moduleArgs['fields'] = implode(',',$moduleFields);
                 $formattedRecord = $this->formatBean($api,$moduleArgs,$record);
