@@ -535,7 +535,7 @@ class SugarFieldBase {
          }
      }
 
-	/**
+    /**
      * This should be called when the bean is saved from the API. Most fields can just use default, which calls the field's individual ->save() function instead.
      * @param SugarBean $bean - the bean performing the save
      * @param array $params - an array of paramester relevant to the save, which will be an array passed up to the API
@@ -543,7 +543,13 @@ class SugarFieldBase {
      * @param array $properties - Any properties for this field
      */
     public function apiSave(SugarBean $bean, array $params, $field, $properties) {
-        return $this->save($bean, $params, $field, $properties);
+        if (isset($params[$field])) {
+            if (isset($properties['len']) && isset($properties['type']) && $this->isTrimmable($properties['type'])) {
+                $bean->$field = trim($this->apiUnformatField($params[$field], $properties));
+            } else {
+                $bean->$field = $this->apiUnformatField($params[$field], $properties);
+            }
+        }
     }
 
     /**
@@ -751,11 +757,29 @@ class SugarFieldBase {
     }
 
     /**
-     * Unformat a value from an API format
+     * Unformat a value from an API format.
+     *
+     * Note: this method will be removed in a later API version. apiUnformatField() is the correct
+     * method to use. apiUnformat() is being deprecated and continued to be used by the endpoints
+     * to avoid breaking any code that extends it.
+     *
+     * @deprecated
+     * @see apiUnformatField()
      * @param $value - the value that needs unformatted
      * @return string - the unformatted value
      */
     public function apiUnformat($value)
+    {
+        return $this->apiUnformatField($value);
+    }
+
+
+    /**
+     * Unformat a value from an API format
+     * @param $value - the value that needs unformatted
+     * @return string - the unformatted value
+     */
+    public function apiUnformatField($value)
     {
         return $value;
     }

@@ -665,11 +665,6 @@ function unformat_number($string)
         $currency = BeanFactory::getBean('Currencies', $currency_id);
     }
 
-    // if we already having a numeric value, then it's already been unformatted and it shouldn't be ran again
-    if (is_numeric($string)) {
-        return (float)$string;
-    }
-
     $seps = get_number_seperators();
     // remove num_grp_sep and replace decimal separator with decimal
     $string = trim(str_replace(array($seps[0], $seps[1], $currency->symbol), array('', '.', ''), $string));

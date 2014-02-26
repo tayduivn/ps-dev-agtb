@@ -124,14 +124,13 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
      */
     public function testGetBaseCurrencyISO()
     {
-        $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
         $this->assertEquals('USD',$this->currencyYen->getDefaultISO4217());
     }
 
     /**
      * test retrieval of currency by symbol
      *
-     * @dataProvider testRetrieveIdBySymbolProvider
+     * @dataProvider retrieveIdBySymbolProvider
      * @param string $expectedId
      * @param string $symbol
      * @group currency
@@ -146,7 +145,7 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
      *
      * @group currency
      */
-    public function testRetrieveIdBySymbolProvider()
+    public function retrieveIdBySymbolProvider()
     {
         return array(
             array($this->currencyId,'¥'),
@@ -157,14 +156,13 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
     /**
      * test retrieval of currency by ISO
      *
-     * @dataProvider testRetrieveIdByIsoProvider
+     * @dataProvider retrieveIdByIsoProvider
      * @param string $expectedId
      * @param string $ISO
      * @group currency
      */
     public function testRetrieveIdByIso($expectedId,$ISO)
     {
-        $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
         $this->assertEquals($expectedId,$this->currencyYen->retrieveIDByISO($ISO));
     }
 
@@ -173,7 +171,7 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
      *
      * @group currency
      */
-    public function testRetrieveIdByIsoProvider()
+    public function retrieveIdByIsoProvider()
     {
         return array(
             array($this->currencyId,'YEN'),
@@ -184,7 +182,7 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
     /**
      * test retrieval of currency by symbol
      *
-     * @dataProvider testRetrieveIdByNameProvider
+     * @dataProvider retrieveIdByNameProvider
      * @param string $expectedId
      * @param string $name
      * @group currency
@@ -199,7 +197,7 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
      *
      * @group currency
      */
-    public function testRetrieveIdByNameProvider()
+    public function retrieveIdByNameProvider()
     {
         return array(
             array($this->currencyId,'Yen'),
@@ -215,7 +213,6 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
 
     public function testUnformatNumber()
     {
-        $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
         global $current_user;
         $testValue = "$100,000.50";
         

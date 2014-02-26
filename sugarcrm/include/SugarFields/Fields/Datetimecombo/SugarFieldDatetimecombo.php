@@ -279,10 +279,10 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
      * @param $value - the value that needs unformatted
      * @return string - the unformatted value
      */
-    public function apiUnformat($value)
+    public function apiUnformatField($value)
     {
         $sugarField = SugarFieldHandler::getSugarField('datetime');
-        return $sugarField->apiUnformat($value);
+        return $sugarField->apiUnformatField($value);
     }
 
     /**

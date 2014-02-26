@@ -626,9 +626,11 @@ class FilterApi extends SugarApi
 
                         if (is_array($value)) {
                             foreach ($value as $i => $val) {
+                                // TODO: apiUnformat() is deprecated, this will change to apiUnformatField() in next API version
                                 $value[$i] = $sugarField->apiUnformat($val);
                             }
                         } else {
+                            // TODO: apiUnformat() is deprecated, this will change to apiUnformatField() in next API version
                             $value = $sugarField->apiUnformat($value);
                         }
 

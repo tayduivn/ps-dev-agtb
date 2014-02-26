@@ -148,12 +148,15 @@ class SugarFieldCurrency extends SugarFieldFloat
     }
 
     /**
-     * @param $formattedField
-     * @param $vardef
+     * BWC modules always unformat server-side
+     *
+     * @param string $formattedField
+     * @param array $vardef
      * @return null|string
      */
-    public function unformatField($formattedField, $vardef){
-        if ( $formattedField === '' || $formattedField === NULL ) {
+    public function unformatField($formattedField, $vardef)
+    {
+        if ($formattedField === '' || $formattedField === null) {
             return null;
         }
         return (string)unformat_number($formattedField);
