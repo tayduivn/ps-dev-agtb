@@ -106,5 +106,4 @@ describe("Sugar7 utils", function() {
             expect(app.utils.getRecordName(model)).toEqual('Simple Name');
         });
     });
-
 });
