@@ -11,6 +11,11 @@
  * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
  */
 
+/**
+ * @class BaseFooterActionsView
+ * @alias SUGAR.App.view.views.BaseFooterActionsView
+ * @extends View.View
+ */
 ({
     events: {
         'click #tour': 'showTutorial',
@@ -23,6 +28,9 @@
     tagName: 'span',
     handleViewChange: function(layout, params) {
         var module = params && params.module ? params.module : null;
+        // should we disable the help button or not, this only happens when layout is 'bwc'
+        layout = _.isObject(layout) ? layout.name : layout;
+        this.disableHelpButton(layout === 'bwc' || layout === 'first-login-wizard');
         if (app.tutorial.hasTutorial(layout, module)) {
             this.enableTourButton();
             if (params.module === 'Home' && params.layout === 'record' && params.action === 'detail') {
@@ -96,6 +104,23 @@
         // trigger the app event to show and hide the help dashboard
         app.events.trigger(buttonAppEvent);
     },
+
+    /**
+     * Disable the help button
+     *
+     * @param {boolean} [disable=true]      Should we disable it or enable it, if not passed will default to true
+     */
+    disableHelpButton: function(disable) {
+        disable = _.isUndefined(disable) ? true : disable;
+
+        var button = this.$('#help');
+        if (button) {
+            button.toggleClass('disabled', disable);
+        }
+
+        return disable;
+    },
+
     /**
      * Utility Method to toggle the help button on and off.
      *
@@ -104,7 +129,7 @@
      */
     toggleHelpButton: function(active, button) {
         if (_.isUndefined(button)) {
-            button = this.$('a#help');
+            button = this.$('#help');
         }
 
         if(button) {
