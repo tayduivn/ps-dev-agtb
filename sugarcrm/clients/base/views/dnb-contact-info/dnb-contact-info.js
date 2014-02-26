@@ -223,10 +223,10 @@
      * @param {String} duns_num
      */
     getDNBContacts: function(duns_num) {
-        var self = this;
         if (this.disposed) {
             return;
         }
+        var self = this;
         if (duns_num) {
             self.duns_num = duns_num;
             self.template = app.template.get(self.name);
@@ -485,32 +485,17 @@
         //if search btn is not disabled and a duns exists then invoke contact search
         if (!this.$(evt.target).hasClass('disabled') && this.duns_num) {
             var self = this;
-            var cntctSrchParams = {},
-                srchParams = {'fname': null, 'lname': null, 'jobTitle': null};
-            var fname = $.trim(self.$('#dnb-fname').val()),
-                lname = $.trim(self.$('#dnb-lname').val()),
+            var cntctSrchParams = {}, //used for API
+                srchParams = {'name': null, 'jobTitle': null}; //used for rendering view
+            var name = $.trim(self.$('#dnb-name').val()),
                 jobTitle = $.trim(self.$('#dnb-job').val());
-            var contactName;
-            if (fname) {
-                contactName = fname;
-                srchParams.fname = fname;
-            }
-            if (lname) {
-                if (contactName) {
-                    contactName = contactName + ' ' + lname;
-                } else {
-                    contactName = lname;
-                }
-                srchParams.lname = lname;
-            }
-            if (contactName !== '') {
-                cntctSrchParams.ContactName = contactName;
+            if (name !== '') {
+                cntctSrchParams.ContactName = name;
+                srchParams.name = name;
             }
             if (jobTitle !== '') {
                 cntctSrchParams.KeywordContactText = jobTitle;
-                if (jobTitle) {
-                    srchParams.jobTitle = jobTitle;
-                }
+                srchParams.jobTitle = jobTitle;
             }
             cntctSrchParams['DUNSNumber-1'] = self.duns_num;
             self.template = app.template.get(self.name);
@@ -644,15 +629,15 @@
      * to enable the search button
      */
     validateSearchParams: function() {
-        var self = this;
-        self.$('#dnb-cntct-srch-btn').addClass('disabled');
+        this.$('#dnb-cntct-srch-btn').addClass('disabled');
         var searchInputsColl = this.$('.input-large');
         //A Search can be performed only if the accounts is associated with a DUNS
-        if (self.duns_num) {
+        if (this.duns_num) {
             _.each(searchInputsColl, function(searchInputObj) {
-                if ($.trim($(searchInputObj).val()) !== '')
-                    self.$('#dnb-cntct-srch-btn').removeClass('disabled');
-            });
+                if ($.trim($(searchInputObj).val()) !== '') {
+                    this.$('#dnb-cntct-srch-btn').removeClass('disabled');
+                }
+            }, this);
         }
     },
 
