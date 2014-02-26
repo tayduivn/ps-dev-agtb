@@ -161,6 +161,11 @@
             this.rliCollection = app.utils.getSubpanelCollection(ctx, 'RevenueLineItems');
 
             if(this.rliCollection) {
+                // because the user may be loading this dashlet by switching
+                // between the Help dashboard and a user's dashboard,
+                // process the collection now to init the dashlet properly
+                this.processRLICollection(this.rliCollection);
+                
                 this.rliCollection.on('reset', this.processRLICollection, this);
 
                 this.rliCollection.on('change:likely_case change:best_case change:worst_case change:amount', this.processCases, this);
