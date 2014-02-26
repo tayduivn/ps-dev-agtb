@@ -160,7 +160,7 @@ $checks = array(
     'stream_msg'                => $mod_strings['LBL_UW_COMPLIANCE_STREAM'],
     'ZipStatus'			        => $mod_strings['LBL_UW_COMPLIANCE_ZIPARCHIVE'],
 	//commenting mbstring overload.
-	//'mbstring.func_overload'	=> $mod_strings['LBL_UW_COMPLIANCE_MBSTRING_FUNC_OVERLOAD'],
+	'mbstring.func_overload'	=> $mod_strings['LBL_UW_COMPLIANCE_MBSTRING_FUNC_OVERLOAD'],
 );
 if($result['error_found'] == true) {
 	$stop = true;

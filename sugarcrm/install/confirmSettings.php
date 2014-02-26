@@ -279,11 +279,18 @@ $envString = '
 
 // mbstrings
 
-        $envString .='
+      // mbstring.func_overload
+        $mbStatus = $mod_strings['LBL_CHECKSYS_OK'];
+        $mb = ini_get('mbstring.func_overload');
+        if ($mb > 1) {
+            $mbStatus = "<b><span class=\"stop\">" . translate('ERR_UW_MBSTRING_FUNC_OVERLOAD', 'UpgradeWizard') . "</span></b>";
+            $ret['error_found'] = true;
+        }
+        $envString .= '
       <tr>
         <td></td>
-        <td><strong>'.$mod_strings['LBL_CHECKSYS_MBSTRING'].'</strong></td>
-        <td  >'.$mod_strings['LBL_CHECKSYS_OK'].'</td>
+        <td><strong>' . $mod_strings['LBL_CHECKSYS_MBSTRING'] . '</strong></td>
+        <td  >' . $mbStatus . '</td>
       </tr>';
 
 // config.php
