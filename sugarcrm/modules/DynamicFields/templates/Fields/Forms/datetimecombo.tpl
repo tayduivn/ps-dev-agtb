@@ -81,6 +81,8 @@
 	{/if}
 	</td>
 </tr>
+{* Readonly fields should not have a massupdate option *}
+{if empty($vardef.readonly)}
 <tr>
 	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_MASS_UPDATE"}:</td>
 	<td>
@@ -91,6 +93,7 @@
 	{/if}
 	</td>
 </tr>
+{/if}
 {if $range_search_option_enabled}
 <tr>	
     <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_ENABLE_RANGE_SEARCH"}:</td>
