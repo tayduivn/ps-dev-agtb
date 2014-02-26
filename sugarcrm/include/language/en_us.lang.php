@@ -3442,6 +3442,8 @@ $app_strings = array (
     'LBL_DNB_ERROR_CURL_CONNECTION_FAIL' => 'Failed to connect to host or proxy. Please check proxy settings.',
     'LBL_DNB_ERROR_CURL_NETWORK_FAIL' => 'Failure with receiving network data.' ,
     'LBL_DNB_UNKNOWN_ERROR' => 'Unknown error. Please check the logs for more details.',
+    'LBL_DNB_EMPTY_PARAM' => 'Empty parameter passed to D&B Duplicate Check API',
+    'LBL_DNB_INVALID_MODULE_NAME' => 'Invalid module name passed to D&B Duplicate Check API',
 
 
     /*DNB Financial Dashlet*/

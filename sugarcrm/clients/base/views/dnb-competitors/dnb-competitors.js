@@ -63,7 +63,8 @@
     competitorsConst: {
         'responseCode' : 'FindCompetitorResponse.TransactionResult.ResultID',
         'responseMsg' : 'FindCompetitorResponse.TransactionResult.ResultText',
-        'competitorsPath' : 'FindCompetitorResponse.FindCompetitorResponseDetail.Competitor'
+        'competitorsPath' : 'FindCompetitorResponse.FindCompetitorResponseDetail.Competitor',
+        'salesRevenuePath' : 'SalesRevenueAmount.0.$'
     },
 
     initialize: function(options) {
@@ -126,34 +127,24 @@
             }
             //check if cache has this data already
             var cacheKey = 'dnb:competitors:' + duns_num;
-            if (app.cache.get(cacheKey)) {
-                self.renderCompetitors.call(self, app.cache.get(cacheKey));
+            var cacheContent = app.cache.get(cacheKey);
+            if (cacheContent) {
+                var dupeCheckParams = {
+                    'type': 'duns',
+                    'apiResponse': cacheContent,
+                    'module': 'competitors'
+                };
+                this.baseDuplicateCheck(dupeCheckParams, this.renderCompetitors);
             } else {
                 var dnbCompetitorsURL = app.api.buildURL('connector/dnb/competitors/' + duns_num, '', {},{});
-                var resultData = {'competitors': null, 'errmsg' : null};
+                var resultData = {'product': null, 'errmsg' : null};
                 app.api.call('READ', dnbCompetitorsURL, {},{
                     success: function(data) {
                         var responseCode = self.getJsonNode(data, self.competitorsConst.responseCode),
                             responseMsg = self.getJsonNode(data, self.competitorsConst.responseMsg);
                         if (responseCode && responseCode === self.responseCodes.success) {
-                            var topCompGroup = _.groupBy(self.getJsonNode(data, self.competitorsConst.competitorsPath),
-                                function(competitorObj) {
-                                    return competitorObj.TopCompetitorIndicator;
-                                });
-                            if (topCompGroup.hasOwnProperty('true') && topCompGroup.hasOwnProperty('false')) {
-                                resultData.competitors = _.union(topCompGroup.true, topCompGroup.false);
-                            } else {
-                                resultData.competitors = data.FindCompetitorResponse.FindCompetitorResponseDetail.Competitor;
-                            }
-                            _.each(resultData.competitors, function(competitorObj) {
-                                var salesPath = 'SalesRevenueAmount.0.$';
-                                if (self.checkJsonNode(competitorObj, salesPath)) {
-                                    competitorObj.SalesRevenueAmount[0].$ = '$' + self.formatSalesRevenue(competitorObj.SalesRevenueAmount[0].$) +
-                                        app.lang.get('LBL_DNB_MILLION');
-                                }
-                            });
-                            self.competitorsList = resultData;
-                            app.cache.set(cacheKey, resultData);
+                            resultData.product = data;
+                            app.cache.set(cacheKey, data);
                         } else {
                             resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
                         }
@@ -188,8 +179,9 @@
         }
         this.template = app.template.get(this.name);
         this.dnbComp = {};
-        if (competitorsList.competitors) {
-            this.dnbComp.product = this.formatCompetitors(competitorsList.competitors, this.competitorsDD);
+        if (competitorsList.product) {
+            var competitors = this.getJsonNode(competitorsList.product, this.competitorsConst.competitorsPath);
+            this.dnbComp.product = this.formatCompetitors(competitors, this.competitorsDD);
         } else {
             this.dnbComp.errmsg = competitorsList.errmsg;
         }
@@ -211,6 +203,21 @@
      */
     formatCompetitors: function(competitorsList, competitorsDD) {
         var formattedCompetitors = [];
+
+        //grouping top competitors
+        var topCompGroup = _.groupBy(competitorsList, function (competitorObj) {
+            return competitorObj.TopCompetitorIndicator;
+        });
+        if (topCompGroup.hasOwnProperty('true') && topCompGroup.hasOwnProperty('false')) {
+            competitorsList = _.union(topCompGroup.true, topCompGroup.false);
+        }
+        //formatting sales revenue
+        _.each(competitorsList, function (competitorObj) {
+            var salesRevenue = this.getJsonNode(competitorObj,this.competitorsConst.salesRevenuePath);
+            if (salesRevenue) {
+                competitorObj.SalesRevenueAmount[0].$ = '$' + this.formatSalesRevenue(salesRevenue) + app.lang.get('LBL_DNB_MILLION');
+            }
+        }, this);
         //iterate thru the search results, extract the necessary info
         //populate a js object
         //push it through an array

@@ -90,7 +90,12 @@
         var cacheKey = 'dnb:familytree:' + ftParams.duns_num + ':' + ftParams.prod_code;
         var cacheContent = app.cache.get(cacheKey);
         if (cacheContent) {
-            this.renderFamilyTree.call(self, cacheContent);
+            var dupeCheckParams = {
+                'type': 'duns',
+                'apiResponse': cacheContent,
+                'module': 'familytree'
+            };
+            this.baseDuplicateCheck(dupeCheckParams, this.renderFamilyTree);
         } else {
             var dnbFamilyTreeURL = app.api.buildURL('connector/dnb/familytree', '', {},{});
             var resultData = {'product': null, 'errmsg': null};
@@ -101,7 +106,7 @@
                     if (responseCode && responseCode === self.responseCodes.success) {
                         resultData.product = data;
                         self.currentFT = resultData;
-                        app.cache.set(cacheKey, resultData);
+                        app.cache.set(cacheKey, data);
                     } else {
                         resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
                     }

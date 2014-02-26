@@ -247,7 +247,7 @@ class ExtAPIDnb extends ExternalAPIBase
                 $reply['responseJSON']['FindCompetitorResponse']['FindCompetitorResponseDetail']['Competitor'] = $modifiedCompaniesList;
             }
         }
-        return $reply['responseJSON']; 
+        return $reply['responseJSON'];
     }
 
     /**
@@ -321,7 +321,7 @@ class ExtAPIDnb extends ExternalAPIBase
     public function dnbCMRrequest($cmParams)
     {
         //convert $cmParams to queryString
-        //TO DO: validate the POST parameters 
+        //TO DO: validate the POST parameters
         $cmQueryString = '?' . http_build_query($cmParams);
         $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbCleanseMatchURL . $cmQueryString;
         $reply = $this->makeRequest('GET', $dnbendpoint);
@@ -358,7 +358,7 @@ class ExtAPIDnb extends ExternalAPIBase
     public function dnbBALRequest($balParams)
     {
         //convert $balParams to queryString
-        //TO DO: validate the POST parameters 
+        //TO DO: validate the POST parameters
         $balQueryString = '?' . http_build_query($balParams);
         $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbBALURL . $balQueryString;
         $reply = $this->makeRequest('GET', $dnbendpoint);
@@ -445,7 +445,7 @@ class ExtAPIDnb extends ExternalAPIBase
      * @param $ftParams
      * @return array
      */
-    public function dnbFamilyTree($ftParams) 
+    public function dnbFamilyTree($ftParams)
     {
         $ftQueryString = http_build_query($ftParams);
         //dnb family tree cache key
@@ -457,7 +457,7 @@ class ExtAPIDnb extends ExternalAPIBase
         if ($this->arrayKeyExists($reply['responseJSON'], $this->familyTreePaths['familyTree'])) {
             $reply['responseJSON'] = $this->checkAndMarkFTDuplicateDuns($reply['responseJSON']);
         }
-        return $reply['responseJSON']; 
+        return $reply['responseJSON'];
     }
 
     /**
@@ -476,7 +476,7 @@ class ExtAPIDnb extends ExternalAPIBase
             //check if the duns has a nestedFamilyTree
             $nestedFamilyTree = $this->getObjectValue($dnbRecordObj, $this->familyTreePaths['nestedTree']);
             if (!empty($nestedFamilyTree)) {
-                //if the duns has nested family tree 
+                //if the duns has nested family tree
                 //then recursively get the duns
                 $nestedDunsArray = $this->getFamilyTreeDuns($nestedFamilyTree);
                 $dunsArray = array_merge($dunsArray, $nestedDunsArray);
@@ -501,7 +501,7 @@ class ExtAPIDnb extends ExternalAPIBase
             //check if the duns has a nestedFamilyTree
             $nestedFamilyTree = $this->getObjectValue($dnbRecordObj, $this->familyTreePaths['nestedTree']);
             if (!empty($nestedFamilyTree)) {
-                //if the duns has nested family tree 
+                //if the duns has nested family tree
                 //then recursively mark duplicates
                 $nestedModifiedRecords = $this->markFamilyTreeDuplicates($nestedFamilyTree, $dunsArray);
                 $dnbRecordObj['Linkage']['FamilyTreeMemberOrganization'] = $nestedModifiedRecords;
@@ -776,7 +776,7 @@ class ExtAPIDnb extends ExternalAPIBase
         $tempObj = $value;
     }
 
-     /**
+    /**
      * Invokes REST API
      * @param $requestMethod Method type GET|POST
      * @param $url Service End Point
