@@ -194,9 +194,9 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 'mft_part_num',
                 array(
                     'name' => 'discount_amount',
-                    'type' => 'currency',
+                    'type' => 'discount',
                     'related_fields' => array(
-                        'discount_amount',
+                        'discount_select',
                         'currency_id',
                         'base_rate',
                     ),
@@ -205,6 +205,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
+                'discount_select'
             ),
         ),
         array(

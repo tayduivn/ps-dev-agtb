@@ -267,11 +267,13 @@ $dictionary['Product'] = array(
         'discount_amount' =>  array(
             'name' => 'discount_amount',
             'vname' => 'LBL_DISCOUNT_AMOUNT',
-            'type' => 'currency',
+            'dbtype' => 'decimal',
+            'type' => 'discount',
             'comment' => 'Discounted amount',
             'related_fields' => array(
                 'currency_id',
-                'base_rate'
+                'base_rate',
+                'discount_select',
             ),
         ),
         'discount_rate_percent' => array(
@@ -279,7 +281,7 @@ $dictionary['Product'] = array(
             'formula' => 'ifElse(isNumeric($discount_price), ifElse(equal($discount_price, 0), 0, multiply(divide($discount_amount, $discount_price), 100)), 0)',
             'calculated' => true,
             'enforced' => true,
-            'vname' => 'LBL_DISCOUNT_AS_PERCENT',
+            'vname' => 'LBL_DISCOUNT_RATE',
             'reportable' => false,
             'type' => 'decimal',
             'precision' => 2,
@@ -300,7 +302,7 @@ $dictionary['Product'] = array(
         ),
         'discount_select' =>  array(
             'name' => 'discount_select',
-            'vname' => 'LBL_SELECT_DISCOUNT',
+            'vname' => 'LBL_DISCOUNT_AS_PERCENT',
             'type' => 'bool',
             'reportable' => false,
         ),
