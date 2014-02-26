@@ -178,7 +178,7 @@ class DependencyManagerTest extends Sugar_PHPUnit_Framework_TestCase {
 
         $this->assertEquals("SetOptions", $aDef['action']);
 
-        $expectedKeys = 'cond(equal(indexOf($dd_trigger, getDD("dd_trigger_options")), -1), enum(""), valueAt(indexOf($dd_trigger,getDD("dd_trigger_options")),enum(enum("foo"),enum("foo","bar"))))';
+        $expectedKeys = 'getListWhere($dd_trigger, enum(enum("one", enum("Foo")),enum("two", enum("Foo","Bar"))))';
         $expectedLabels = '"dd_options"';
         $this->assertEquals($this->dd_field['name'], $aDef['params']['target']);
         $this->assertEquals($expectedKeys, $aDef['params']['keys']);

@@ -232,23 +232,18 @@ class DependencyManager
                 foreach ($trigger_values as $label_key => $label) {
                     if (!empty($grid['values'][$label_key])) {
                         $key_list = array();
-                        foreach ($grid['values'][$label_key] as $label_key) {
-                            if (isset($options[$label_key])) {
-                                $key_list[$label_key] = $label_key;
+                        foreach ($grid['values'][$label_key] as $key => $value) {
+                            if (isset($options[$value])) {
+                                $key_list[] = $options[$value];
                             }
                         }
-                        $result_keys[] = 'enum("' . implode('","', $key_list) . '")';
+                        $result_keys[] = 'enum("' . $label_key . '", enum("' . implode('","', $key_list) . '"))';
                     } else {
-                        $result_keys[] = 'enum("")';
+                        $result_keys[] = 'enum("' . $label_key . '", enum(""))';
                     }
                 }
 
-                $keys = 'enum(' . implode(',', $result_keys) . ')';
-                //If the trigger key doesn't appear in the child list, hide the child field.
-                $keys_expression = 'cond(equal(indexOf($' . $grid ['trigger']
-                    . ', getDD("' . $trigger_list_id . '")), -1), enum(""), '
-                    . 'valueAt(indexOf($' . $grid ['trigger']
-                    . ',getDD("' . $trigger_list_id . '")),' . $keys . '))';
+                $keys_expression = 'getListWhere($' . $grid ['trigger'] . ', enum(' . implode(',', $result_keys) . '))';
                 //Have SetOptionsAction pull from the javascript language files.
                 $labels_expression = '"' . $def['options'] . '"';
                 $dep = new Dependency ($field . "DDD");
