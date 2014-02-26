@@ -100,12 +100,30 @@ class SidecarMetaDataFileBuilder
                 'sidecarpath' => 'custom/working/modules/Cases/clients/portal/views/record/record.php',
         ),
         //END SUGARCRM flav=ent ONLY
-        // record view
+        // Record view, and merge combo fields and special fields
         array(
                 'module'      => 'Accounts', 'view' => 'record', 'type' => 'base',
-                'testpath'    => 'tests/modules/UpgradeWizard/metadata/Accountswirelessedit.php',
+                'testpath'    => 'tests/modules/UpgradeWizard/metadata/Accountsedit.php',
                 'legacypath'  => 'custom/modules/Accounts/metadata/editviewdefs.php',
                 'sidecarpath' => 'custom/modules/Accounts/clients/base/views/record/record.php',
+        ),
+        array(
+                'module'      => 'Contacts', 'view' => 'record', 'type' => 'base',
+                'testpath'    => 'tests/modules/UpgradeWizard/metadata/Contactsdetail.php',
+                'legacypath'  => 'custom/modules/Contacts/metadata/detailviewdefs.php',
+                'sidecarpath' => 'custom/modules/Contacts/clients/base/views/record/record.php',
+        ),
+        array(
+                'module'      => 'Contacts', 'view' => 'record', 'type' => 'base',
+                'testpath'    => 'tests/modules/UpgradeWizard/metadata/Contactsedit.php',
+                'legacypath'  => 'custom/modules/Contacts/metadata/editviewdefs.php',
+                'sidecarpath' => 'custom/modules/Contacts/clients/base/views/record/record.php',
+        ),
+        array(
+                'module'      => 'Leads', 'view' => 'record', 'type' => 'base',
+                'testpath'    => 'tests/modules/UpgradeWizard/metadata/Leadsdetail.php',
+                'legacypath'  => 'custom/modules/Leads/metadata/detailviewdefs.php',
+                'sidecarpath' => 'custom/modules/Leads/clients/base/views/record/record.php',
         ),
         // Search defs to filter
         array(
@@ -198,16 +216,17 @@ class SidecarMetaDataFileBuilder
      *
      * @param array|string $view If an array, gets all files of view type in the array
      * @param string $path The path type to get
+     * @param array $modules List of modules to get views for
      * @return array
      */
-    public function getFilesToMakeByView($view, $path = 'sidecar') {
+    public function getFilesToMakeByView($view, $path = 'sidecar', $modules = array()) {
         $return = array();
         $index = $path . 'path';
         foreach ($this->filesToMake as $file) {
-            if (is_array($view) && in_array($file['view'], $view)) {
+            if (is_array($view) && in_array($file['view'], $view) && (empty($modules) || in_array($file['module'], $modules))) {
                 $return[] = array('module' => $file['module'], 'view' => $file['view'], 'type' => $file['type'], 'filepath' => $file[$index]);
             } else {
-                if ($file['view'] == $view) {
+                if ($file['view'] == $view && (empty($modules) || in_array($file['module'], $modules))) {
                     $return[] = array('module' => $file['module'], 'view' => $file['view'], 'type' => $file['type'], 'filepath' => $file[$index]);
                 }
             }

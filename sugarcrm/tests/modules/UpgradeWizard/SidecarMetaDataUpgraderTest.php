@@ -160,7 +160,19 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($exists, 'Opportunities metadata did not convert');
 
         require $filename;
-        $this->assertEquals(count($viewdefs['Opportunities']['base']['view']['record']['panels']), 4);
+
+        // Begin assertions, first being that there are now 5 panels since header is added
+        $this->assertEquals(count($viewdefs['Opportunities']['base']['view']['record']['panels']), 5);
+
+        // Assert labels for converted panels
+        $this->assertNotEmpty($viewdefs['Opportunities']['base']['view']['record']['panels'][1]);
+        $this->assertNotEmpty($viewdefs['Opportunities']['base']['view']['record']['panels'][1]['label']);
+        $this->assertEquals('LBL_RECORD_BODY', $viewdefs['Opportunities']['base']['view']['record']['panels'][1]['label']);
+
+        // Assert labels for converted but not relabeld panels
+        $this->assertNotEmpty($viewdefs['Opportunities']['base']['view']['record']['panels'][3]);
+        $this->assertNotEmpty($viewdefs['Opportunities']['base']['view']['record']['panels'][3]['label']);
+        $this->assertEquals('LBL_PANEL_ASSIGNMENT', $viewdefs['Opportunities']['base']['view']['record']['panels'][3]['label']);
     }
     // END SUGARCRM flav=ent ONLY
     public function _sidecarFilesInPlaceProvider()
@@ -309,6 +321,110 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $builder = self::getBuilder();
         return $builder->getFilesToMakeByView('record');
+    }
+
+    /**
+     * Tests that merged fields are handled correctly 
+     * 
+     * @param string $module The module to test
+     * @param string $view The view to test
+     * @param string $type The client to test
+     * @param string $filepath The full path the new defs files that has been upgraded
+     * @param string $field The name of the field to check exists on
+     * @param boolean $exists The expectation of the field on a layout after upgrade
+     * @dataProvider _sidecarRecordviewMergeProvider
+     */
+    public function testRecordviewMerge($module, $view, $type, $filepath, $field, $exists)
+    {
+        $this->assertFileExists($filepath, "$filepath does not exist");
+        require $filepath;
+
+        $defs = $viewdefs[$module][$type]['view'][$view];
+        $this->assertTrue(isset($defs['panels'][1]['fields']), 'Field array is missing from the upgrade file');
+
+        $found = $this->_fieldExistsInDefs($field, $defs);
+        $this->assertEquals($exists, $found, "Failed to prove existence of field $field in file $filepath");
+    }
+
+    /**
+     * Data provider that appends some additional test data to the collection, 
+     * specifically for testing handling of merge fields
+     * 
+     * @return array
+     */
+    public function _sidecarRecordviewMergeProvider()
+    {
+        // Exists is an after the fact check
+        $testFields = array(
+            // Tests proper address field handling
+            'Accounts' => array(
+                array('field' => 'billing_address', 'exists' => true,),
+                array('field' => 'shipping_address', 'exists' => true,),
+                array('field' => 'billing_address_street', 'exists' => false,),
+                array('field' => 'shipping_address_street', 'exists' => false,),
+            ),
+            // Tests proper address field handling and forced removed field handling
+            'Contacts' => array(
+                array('field' => 'alt_address', 'exists' => true,),
+                array('field' => 'primary_address', 'exists' => true,),
+                array('field' => 'alt_address_street', 'exists' => false,),
+                array('field' => 'primary_address_street', 'exists' => false,),
+                array('field' => 'portal_password1', 'exists' => false,),
+            ),
+            // Tests proper address handling and proper date combo field handling
+            'Leads' => array(
+                array('field' => 'alt_address', 'exists' => true,),
+                array('field' => 'primary_address', 'exists' => true,),
+                array('field' => 'alt_address_street', 'exists' => false,),
+                array('field' => 'primary_address_street', 'exists' => false,),
+                array('field' => 'date_entered', 'exists' => false,),
+                array('field' => 'date_modified', 'exists' => false,),
+                array('field' => 'date_entered_by', 'exists' => true,),
+                array('field' => 'date_modified_by', 'exists' => true,),
+            ),
+            'Opportunities' => array(
+                array('field' => 'date_entered_by', 'exists' => true,),
+                array('field' => 'date_modified_by', 'exists' => true,),
+                array('field' => 'date_entered', 'exists' => false,),
+                array('field' => 'date_modified', 'exists' => false,),
+            ),
+        );
+
+        $builder = self::getBuilder();
+        $rows = $builder->getFilesToMakeByView('record', 'sidecar', array('Accounts', 'Contacts', 'Leads', 'Opportunities'));
+        $return = array();
+        foreach ($rows as $row) {
+            foreach ($testFields[$row['module']] as $fields) {
+                $return[] = array_merge($row, $fields);
+            }
+        }
+        
+        return $return;
+    }
+
+    /**
+     * Checks whether a fieldname exists in a viewdef
+     *
+     * @param string $fieldname The fieldname
+     * @param array $defs The defs, as of view type
+     * @return bool
+     */
+    protected function _fieldExistsInDefs($fieldname, $defs) {
+        foreach ($defs['panels'] as $panel) {
+            foreach ($panel['fields'] as $field) {
+                // Broken up into two conditions to improve readability and make 
+                // it "twitter rule" compliant
+                if ($field == $fieldname) {
+                    return true;
+                }
+
+                if (is_array($field) && isset($field['name']) && $field['name'] == $fieldname) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

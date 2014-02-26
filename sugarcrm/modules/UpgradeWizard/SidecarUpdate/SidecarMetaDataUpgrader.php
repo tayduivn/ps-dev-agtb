@@ -561,7 +561,8 @@ class SidecarMetaDataUpgrader
         // Hit the legacy paths list to start the ball rolling
         if (!empty($this->legacyFilePaths[$client]) && is_array($this->legacyFilePaths[$client])) {
             foreach ($this->legacyFilePaths[$client] as $type => $path) {
-                // Get the modules from inside the path
+                // Get the modules from inside the path. If $this->module is set
+                // this process will run only for that module.
                 $dirs = glob($path . "modules/{$this->module}*", GLOB_ONLYDIR);
                 if (!empty($dirs)) {
                     foreach ($dirs as $dirpath) {
