@@ -197,6 +197,7 @@ $fields = array(
         'enabled' => true,
         'default' => true,
         'readonly' => true,
+        'css_class' => 'disabled',
     ),
     array(
         'name' => 'amount',
