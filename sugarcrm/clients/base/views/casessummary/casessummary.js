@@ -25,179 +25,179 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'Chart'],
     className: 'cases-summary-wrapper',
-    chart: {},
-    total: 0,
+
+    tabData: null,
+    tabClass: '',
 
     /**
      * @inheritDoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+
+        this.chart = nv.models.pieChart()
+                .x(function(d) {
+                    return d.key;
+                })
+                .y(function(d) {
+                    return d.value;
+                })
+                .margin({top: 10, right: 10, bottom: 15, left: 10})
+                .donut(true)
+                .donutLabelsOutside(true)
+                .donutRatio(0.4)
+                .hole(this.total)
+                .showTitle(false)
+                .tooltips(true)
+                .showLegend(false)
+                .colorData('class')
+                .tooltipContent(function(key, x, y, e, graph) {
+                    return '<p><b>' + key + ' ' + parseInt(y, 10) + '</b></p>';
+                });
     },
 
     /**
-     * @inheritDoc
+     * Generic method to render chart with check for visibility and data.
+     * Called by _renderHtml and loadData.
      */
-    _renderHtml: function() {
-        this._super('_renderHtml');
-
-        if (this.viewName === 'config' || this.total === 0) {
+    renderChart: function() {
+        if (!this.isChartReady()) {
             return;
         }
 
-        this.chart = nv.models.pieChart()
-            .x(function(d) { return d.key; })
-            .y(function(d) { return d.value; })
-            .margin({top:10, right:10, bottom:15, left:10})
-            .donut(true)
-            .donutLabelsOutside(true)
-            .donutRatio(0.4)
-            .hole(self.totalCases)
-            .showTitle(false)
-            .showLegend(false)
-            .colorData('class')
-            .tooltipContent( function(key, x, y, e, graph) {
-                return '<p><b>' + key +' '+  parseInt(y, 10) +'</b></p>';
-            });
+        // Set value of label inside donut chart
+        this.chart.hole(this.total);
 
         d3.select('svg#' + this.cid)
-            .datum(this.chartData)
+            .datum(this.chartCollection)
             .transition().duration(500)
             .call(this.chart);
 
-        var defaultLayout = this.closestComponent('sidebar');
-        if (defaultLayout) {
-            this.listenTo(defaultLayout, 'sidebar:state:changed', function(state) {
-                if (state === 'open' && this.chart.update) {
-                    this.chart.update();
-                }
-            });
-        }
-        app.events.on('preview:close', function() {
-            if(this.chart && this.chart.update) {
-                this.chart.update();
-            }
-        }, this);
+        this.chart_loaded = _.isFunction(this.chart.update);
+        this.displayNoData(!this.chart_loaded);
+    },
 
-        if(this.chart && this.chart.update) {
-            nv.utils.windowResize(this.chart.update);
-            nv.utils.resizeOnPrint(this.chart.update);
-        }
+    /**
+     * Build content with favorite fields for content tabs
+     */
+    addFavs: function() {
+        var self = this;
+        //loop over metricsCollection
+        _.each(this.tabData, function(tabGroup) {
+            if (tabGroup.models && tabGroup.models.length > 0) {
+                _.each(tabGroup.models, function(model) {
+                    var field = app.view.createField({
+                            def: {type: 'favorite'},
+                            model: model,
+                            meta: {view: 'detail'},
+                            viewName: 'detail',
+                            view: self
+                        });
+                    field.setElement(self.$('.favTarget.[data-model-id="' + model.id + '"]'));
+                    field.render();
+                });
+            }
+        });
     },
 
     /* Process data loaded from REST endpoint so that d3 chart can consume
      * and set general chart properties
      */
-    evaluateResult: function (data) {
-        this.chartCollection = data;
-        this.closedCases = this.chartCollection.where({status:'Closed'});
-        this.closedCases = this.closedCases.concat(this.chartCollection.where({status:'Rejected'}));
-        this.closedCases = this.closedCases.concat(this.chartCollection.where({status:'Duplicate'}));
-        this.openCases = this.chartCollection.models.length - this.closedCases.length;
-        this.chartData = {
-            'data': [
-            ]
+    evaluateResult: function(data) {
+        this.total = data.models.length;
+
+        var countClosedCases = data.where({status: 'Closed'})
+                .concat(data.where({status: 'Rejected'}))
+                .concat(data.where({status: 'Duplicate'})).length,
+            countOpenCases = this.total - countClosedCases;
+
+        this.chartCollection = {
+            data: [],
+            properties: {
+                title: app.lang.getAppString('LBL_CASE_SUMMARY_CHART'),
+                value: 3,
+                label: this.total
+            }
         };
-        this.chartData.data.push({
+        this.chartCollection.data.push({
             key: app.lang.getAppString('LBL_DASHLET_CASESSUMMARY_CLOSE_CASES'),
             class: 'nv-fill-green',
-            value: this.closedCases.length
+            value: countClosedCases
         });
-        this.chartData.data.push({
+        this.chartCollection.data.push({
             key: app.lang.getAppString('LBL_DASHLET_CASESSUMMARY_OPEN_CASES'),
             class: 'nv-fill-red',
-            value: this.openCases
+            value: countOpenCases
         });
 
-        this.total = this.openCases + this.closedCases.length;
-    },
-
-    loadData: function (options) {
-        var self = this,
-            oppID = this.model.get('account_id'),
-            accountBean;
-        if (oppID) {
-            accountBean = app.data.createBean('Accounts', {id: oppID});
+        if (!_.isEmpty(data.models)) {
+            this.processCases(data);
         }
-        var relatedCollection = app.data.createRelatedCollection(accountBean || this.model, 'cases');
-        relatedCollection.fetch({
-            relate: true,
-            success: function(resultCollection) {
-                self.evaluateResult(resultCollection);
-                self.processCases();
-                self.render();
-                self.addFavs();
-            },
-            complete: options ? options.complete : null
-        });
     },
 
-    addFavs: function() {
-        var self = this;
-        this.favFields = [];
-        //loop over chartCollection
-        _.each(this.tabData, function(tabGroup) {
-            if (tabGroup.models && tabGroup.models.length >0) {
-                _.each(tabGroup.models, function(model){
-                    var field = app.view.createField({
-                            def: {
-                                type: "favorite"
-                            },
-                            model: model,
-                            meta: {
-                                view: "detail"
-                            },
-                            viewName: "detail",
-                            view: self
-                        }
-                    );
-                    field.setElement(self.$('.favTarget.[data-model-id="'+model.id+'"]'));
-                    field.render();
-                    self.favFields.push(field);
-                });
-            }
-        });
-    },
-
-    processCases: function () {
-        var status2css = {
-            'Rejected':'label-success',
-            'Closed':'label-success',
-            'Duplicate':'label-success'
-        };
-        if (!this.chartCollection || this.chartCollection.models.length === 0) return;
+    /**
+     * Build tab related data and set tab class name based on number of tabs
+     * @param {data} object The chart related data.
+     */
+    processCases: function(data) {
         this.tabData = [];
 
-        var stati = _.uniq(this.chartCollection.pluck('status'));
-        var statusOptions = app.metadata.getModule('Cases', 'fields').status.options || 'case_status_dom';
+        var status2css = {
+                'Rejected': 'label-success',
+                'Closed': 'label-success',
+                'Duplicate': 'label-success'
+            },
+            stati = _.uniq(data.pluck('status')),
+            statusOptions = app.metadata.getModule('Cases', 'fields').status.options || 'case_status_dom';
 
-
-        _.each(stati, function(status, index){
+        _.each(stati, function(status, index) {
             if (!status2css[status]) {
                 this.tabData.push({
                     index: index,
                     status: status,
                     statusLabel: app.lang.getAppListStrings(statusOptions)[status],
-                    models: this.chartCollection.where({'status':status}),
+                    models: data.where({'status': status}),
                     cssClass: status2css[status] ? status2css[status] : 'label-important'
                 });
             }
         }, this);
 
-        this.tabClass = ['one','two','three','four','five'][this.tabData.length] || 'four';
+        this.tabClass = ['one', 'two', 'three', 'four', 'five'][this.tabData.length] || 'four';
     },
 
     /**
      * @inheritDoc
      */
-    _dispose: function() {
-        this.favFields = null;
-        if (!_.isEmpty(this.chart)) {
-            nv.utils.windowUnResize(this.chart.update);
-            nv.utils.unResizeOnPrint(this.chart.update);
+    loadData: function(options) {
+        var self = this,
+            oppID,
+            accountBean,
+            relatedCollection;
+        if (this.meta.config) {
+            return;
         }
-        this._super('_dispose');
+        oppID = this.model.get('account_id');
+        if (oppID) {
+            accountBean = app.data.createBean('Accounts', {id: oppID});
+        }
+        relatedCollection = app.data.createRelatedCollection(accountBean || this.model, 'cases');
+        relatedCollection.fetch({
+            relate: true,
+            success: function(data) {
+                self.evaluateResult(data);
+                if (!self.disposed) {
+                    // we have to rerender the entire dashlet, not just the chart,
+                    // because the HBS file is dependant on processCases completion
+                    self.render();
+                    self.addFavs();
+                }
+            },
+            error: _.bind(function() {
+                this.displayNoData(true);
+            }, this),
+            complete: options ? options.complete : null
+        });
     }
 })

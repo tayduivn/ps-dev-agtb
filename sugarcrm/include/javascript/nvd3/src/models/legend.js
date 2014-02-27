@@ -12,6 +12,7 @@ nv.models.legend = function() {
       lineHeight = 20,
       align = 'right',
       equalColumns = true,
+      showAll = false,
       strings = {close: 'close', type: 'legend'},
       id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one
       getKey = function(d) { return d.key.length > 0 ? d.key : 'undefined'; },
@@ -188,7 +189,7 @@ nv.models.legend = function() {
           keysPerRow -= 1;
         }
 
-        if (Math.ceil(keyCount / keysPerRow) < 3) {
+        if (showAll || Math.ceil(keyCount / keysPerRow) < 3) {
 
           for (var i = 0, curX = radius; i < keysPerRow; i += 1) {
             keyPositions[i] = curX;
@@ -386,6 +387,12 @@ nv.models.legend = function() {
   legend.equalColumns = function(_) {
     if (!arguments.length) { return equalColumns; }
     equalColumns = _;
+    return legend;
+  };
+
+  legend.showAll = function(_) {
+    if (!arguments.length) { return showAll; }
+    showAll = _;
     return legend;
   };
 

@@ -13,7 +13,7 @@
 ({
     results: {},
     chart: {},
-    plugins: ['Dashlet', 'Tooltip'],
+    plugins: ['Dashlet', 'Chart', 'Tooltip'],
 
     /**
      * Is the forecast Module setup??
@@ -24,16 +24,6 @@
      * Is the user a forecast Admin? This is only used if forecasts is not setup
      */
     forecastAdmin: false,
-
-    /**
-     * The open state of the sidepanel
-     */
-    state: "open",
-
-    /**
-     * Visible state of the preview window
-     */
-    preview_open: false,
 
     /**
      * Holds the forecast isn't set up message if Forecasts hasn't been set up yet
@@ -57,11 +47,14 @@
         this.forecastSetup = app.metadata.getModule('Forecasts', 'config').is_setup;
         this.forecastAdmin = (_.isUndefined(app.user.getAcls()['Forecasts'].admin));
 
-        if(!this.forecastSetup) {
+        if (!this.forecastSetup) {
             this.forecastsNotSetUpMsg = app.utils.getForecastNotSetUpMessage(this.forecastAdmin);
         }
     },
 
+    /**
+     * {@inheritDoc}
+     */
     initDashlet: function(view) {
         if (!this.isManager && this.meta.config) {
             // FIXME: Dashlet's config page is rendered from meta.panels directly.
@@ -72,7 +65,7 @@
             }).value();
         }
         // get the current timeperiod
-        if(this.forecastSetup) {
+        if (this.forecastSetup) {
             app.api.call('GET', app.api.buildURL('TimePeriods/current'), null, {
                 success: _.bind(function(o) {
                     this.settings.set({'selectedTimePeriod': o.id}, {silent: true});
@@ -85,109 +78,79 @@
         this.chart = nv.models.funnelChart()
             .showTitle(false)
             .tooltips(true)
-            .margin({top:0})
-            .tooltipContent( function(key, x, y, e, graph) {
+            .margin({top: 0})
+            .tooltipContent(function(key, x, y, e, graph) {
                 return '<p>Stage: <b>' + key + '</b></p>' +
                     '<p>Amount: <b>' + y + '</b></p>' +
-                    '<p>Percent: <b>' +  x + '%</b></p>';
+                    '<p>Percent: <b>' + x + '%</b></p>';
             })
-            .colorData('class', {step:2})
+            .colorData('class', {step: 2})
             .fmtValueLabel(function(d) {
                 return d.label;
             });
     },
 
-    bindDataChange: function() {
-        this.settings.on('change', function(model) {
-            // reload the chart
-            // reload the chart
-            if(this.state == 'open' && !this.preview_open) {
-                this.loadData({});
-            }
-        }, this);
-
-        app.events.on('preview:open', function() {
-            this.preview_open = true;
-        }, this);
-        app.events.on('preview:close', function() {
-            this.preview_open = false;
-            if (this.chartLoaded) {
-                if(this.chart && this.chart.update)
-                    this.chart.update();
-            }
-        }, this);
-
-        var defaultLayout = this.closestComponent('sidebar');
-        if (defaultLayout) {
-            this.listenTo(defaultLayout, 'sidebar:state:changed', this._handleSidebarChange);
-        }
-    },
-
     /**
-     * Update the chart when the sidebar is open.
+     * Initialize plugins.
+     * Only manager can toggle visibility.
      *
-     * @param {String} state The sidebar state. Possible values: `open` or
-     *  `close`.
-     * @private
+     * @return {View.Views.BaseForecastPipeline} Instance of this view.
+     * @protected
      */
-    _handleSidebarChange: function(state) {
-        this.state = state;
-        if (this.chartLoaded && this.state === 'open' && !this.preview_open &&
-            this.chart && _.isFunction(this.chart.update)) {
-            this.chart.update();
+    _initPlugins: function() {
+        if (this.isManager) {
+            this.plugins = _.union(this.plugins, [
+                'ToggleVisibility'
+            ]);
         }
+        return this;
     },
 
     /**
      * {@inheritDoc}
      */
-    _renderHtml: function() {
-        this._super('_renderHtml');
-        if(this.chart && !_.isEmpty(this.results)) {
-            this.renderChart();
-        }
+    bindDataChange: function() {
+        this.settings.on('change', function(model) {
+            // reload the chart
+            if (this.$el && this.$el.is(':visible')) {
+                this.loadData({});
+            }
+        }, this);
     },
 
+    /**
+     * Generic method to render chart with check for visibility and data.
+     * Called by _renderHtml and loadData.
+     */
     renderChart: function() {
-        if (this.state != 'open' || this.preview_open) {
+        if (!this.isChartReady()) {
             return;
         }
+        // Clear out the current chart before a re-render
+        this.$('svg#' + this.cid).children().remove();
 
-        if(this.disposed) {
-            return;
-        }
+        d3.select('svg#' + this.cid)
+            .datum(this.results)
+            .transition().duration(500)
+            .call(this.chart);
 
-        // clear out the current chart before a re-render
-        if (!_.isEmpty(this.chart)) {
-            nv.utils.windowUnResize(this.chart.update);
-            this.$("svg#" + this.cid).children().remove();
-        }
-
-        if (this.results.data && this.results.data.length > 0) {
-            this.$('.nv-chart').toggleClass('hide', false);
-            this.$('.block-footer').toggleClass('hide', true);
-
-            d3.select('svg#' + this.cid)
-                .datum(this.results)
-                .transition().duration(500).call(this.chart);
-
-            nv.utils.windowResize(this.chart.update);
-            this.resizeOnPrint(this.chart);
-            this.chartLoaded = true;
-        } else {
-            this.$('.nv-chart').toggleClass('hide', true);
-            this.$('.block-footer').toggleClass('hide', false);
-            this.chartLoaded = false;
-        }
+        this.chart_loaded = _.isFunction(this.chart.update);
+        this.displayNoData(!this.chart_loaded);
     },
 
-    loadData: function(options) {
 
+    hasChartData: function() {
+        return !_.isEmpty(this.results) && this.results.data && this.results.data.length > 0;
+    },
+
+    /**
+     * @inheritDoc
+     */
+    loadData: function(options) {
         var timePeriod = this.settings.get('selectedTimePeriod');
         if (!timePeriod) {
             return;
         }
-
 //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
         var url_base = 'Opportunities/chart/pipeline';
 //END SUGARCRM flav=pro && flav!=ent ONLY
@@ -215,43 +178,11 @@
         }
     },
 
-    resizeOnPrint: function(chart) {
-
-        var resizeChart = function(){
-            chart.delay(0);
-            chart.update();
-            chart.delay(300);
-        };
-
-        if (window.matchMedia) {
-            var mediaQueryList = window.matchMedia('print');
-            mediaQueryList.addListener(function(mql) {
-                if (mql.matches) {
-                    resizeChart();
-                }
-            });
-        } else if (window.attachEvent) {
-          window.attachEvent("onbeforeprint", resizeChart);
-        } else {
-          window.onbeforeprint = resizeChart;
-        }
-
-        window.onafterprint = resizeChart;
-    },
-
     /**
-     * Initialize plugins.
-     * Only manager can toggle visibility.
-     *
-     * @return {View.Views.BaseForecastPipeline} Instance of this view.
-     * @protected
+     * @inheritDoc
      */
-    _initPlugins: function() {
-        if (this.isManager) {
-            this.plugins = _.union(this.plugins, [
-                'ToggleVisibility'
-            ]);
-        }
-        return this;
+    unbind: function() {
+        this.settings.off('change');
+        this._super('unbind');
     }
 })

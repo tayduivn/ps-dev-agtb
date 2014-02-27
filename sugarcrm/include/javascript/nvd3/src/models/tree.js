@@ -132,6 +132,7 @@ nv.models.tree = function() {
 
       chart.orientation = function(orientation) {
         horizontal = (orientation === 'horizontal' || !horizontal ? true : false);
+        tree.elementsize([(horizontal ? nodeSize.height : nodeSize.width),1]);
         chart.reset();
         chart.update(_data);
       };
@@ -272,6 +273,7 @@ nv.models.tree = function() {
             .attr("height", 1)
             .attr("x", -1)
             .attr("y", -1)
+            .attr("externalResourcesRequired",true)
           .append("xhtml:body")
             .style("font", "14px 'Helvetica Neue'")
             .html(nodeRenderer);

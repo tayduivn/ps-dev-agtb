@@ -84,10 +84,12 @@
             start: function(event, ui) {
                 $(this).css({visibility: 'hidden'});
                 self.model.trigger("setMode", "drag");
+                self.context.trigger('dashlet:draggable:start');
             },
             stop: function() {
                 self.model.trigger("setMode", self.model._previousMode);
                 self.$(".dashlet.ui-draggable").attr("style", "");
+                self.context.trigger('dashlet:draggable:stop');
             },
             helper: function() {
                 var $clone = $(this).clone();

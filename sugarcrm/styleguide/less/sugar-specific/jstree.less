@@ -186,9 +186,21 @@ li.jstree-closed > ul {
   }
 }
 
+.dropdown-menu .jstree.jstree-sugar {
+  padding: 0;
+  ul.list li {
+    padding: 0;
+    text-indent: 4px;
+    & > a {
+      padding: 10px 0;
+    }
+    &.jstree-leaf> a {
+      padding: 5px 0;
+    }
+  }
+}
 
 #jstree-marker.jstree-sugar { background:url("@{baseUrl}/img/.png") -41px -57px no-repeat !important; text-indent:-100px; }
-
 #vakata-dragged.jstree-sugar ins { background:transparent !important; }
 #vakata-dragged.jstree-sugar .jstree-ok { background:url("@{baseUrl}/img/.png") -2px -53px no-repeat !important; }
 #vakata-dragged.jstree-sugar .jstree-invalid { background:url("@{baseUrl}/img/.png") -18px -53px no-repeat !important; }

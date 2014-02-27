@@ -22,25 +22,20 @@
         'click .zoom-control': 'zoomChart',
         'click .toggle-control': 'toggleChart'
     },
-
-    results: {},
-    plugins: ['Dashlet', 'Tooltip'],
+    plugins: ['Dashlet', 'Tooltip', 'Chart'],
 
     // user configurable
-    nodetemplate: {},
+    nodetemplate: null,
     reporteesEndpoint: '',
     currentRootId: '',
-    zoomExtents: {},
-    nodeSize: {},
+    zoomExtents: null,
+    nodeSize: null,
 
     // private
-    treeData: {},
-    jsTree: {},
-    slider: {},
-    sliderZoomIn: {},
-    sliderZoomOut: {},
-    chart: {},
-    viewName: '',
+    jsTree: null,
+    slider: null,
+    sliderZoomIn: null,
+    sliderZoomOut: null,
 
     /**
      * Initialize the View
@@ -48,45 +43,29 @@
      * @constructor
      * @param {Object} options
      */
-    initialize: function (options) {
-        app.view.View.prototype.initialize.call(this, options);
+    initialize: function(options) {
+        var self = this;
+        this._super('initialize', [options]);
 
-        // custom renderer for node
+        // custom renderer for tree node
         this.nodetemplate = app.template.getView(this.name + '.orgchartnode');
-
         //TODO: change api to accept id as param or attrib as object to produce
         this.reporteesEndpoint = app.api.buildURL('Forecasts', 'reportees/' + app.user.get('id'), null, {'level': 2});
-
         this.currentRootId = app.user.get('id');
-        this.zoomExtents = { 'min': 0.25, 'max': 2 };
-        this.nodeSize = { 'width': 124, 'height': 56 };
-    },
+        this.zoomExtents = {'min': 0.25, 'max': 2};
+        this.nodeSize = {'width': 124, 'height': 56};
 
-    /**
-     * store current view state of dashlet
-     */
-    initDashlet: function (viewName) {
-        this.viewName = viewName;
-    },
-
-    /**
-     * overriding _dispose to make sure custom added event listeners are removed
-     * @private
-     */
-    _dispose: function () {
-
-        if (!_.isEmpty(this.jsTree)) {
-            this.jsTree.off();
-        }
-        if (!_.isEmpty(this.slider)) {
-            this.slider.off('move');
-        }
-        if (!_.isEmpty(this.chart)) {
-            nv.utils.windowUnResize(this.chart.resize);
-            nv.utils.unResizeOnPrint(this.chart.resize);
-        }
-
-        app.view.View.prototype._dispose.call(this);
+        this.chart = nv.models.tree()
+                .duration(300)
+                .nodeSize(this.nodeSize)
+                .nodeRenderer(function(d) {
+                    return self.nodetemplate(d.metadata);
+                })
+                .zoomExtents(self.zoomExtents)
+                .horizontal(false)
+                .getId(function(d) {
+                    return d.metadata.id;
+                });
     },
 
     /**
@@ -99,169 +78,161 @@
     },
 
     /**
-     * Renders JSTree
-     * @param ctx
-     * @param options
-     * @protected
+     * Generic method to render chart with check for visibility and data.
+     * Called by _renderHtml and loadData.
      */
-    _renderHtml: function () {
-        if (this.viewName !== "config" && nv && nv.models) {
-            var self = this,
-                chart = nv.models.tree()
-                    .duration(300)
-                    .nodeSize(this.nodeSize)
-                    .nodeRenderer(function (d) {
-                        return self.nodetemplate(d.metadata);
-                    })
-                    .zoomExtents(this.zoomExtents)
-                    .horizontal(false)
-                    .getId(function (d) {
-                        return d.metadata.id;
-                    });
-
-
-            app.view.View.prototype._renderHtml.call(this);
-
-            // chart controls
-            this.slider = this.$('.btn-slider .noUiSlider');
-            this.sliderZoomIn = this.$('.btn-slider i[data-control="zoom-in"]');
-            this.sliderZoomOut = this.$('.btn-slider i[data-control="zoom-out"]');
-
-
-            if (!_.isEmpty(this.treeData)) {
-
-                //jsTree control for selecting root node
-                var $jsTree = this.$('div[data-control="org-jstree"]');
-                this.jsTree = $jsTree.jstree({
-                        // generating tree from json data
-                        'json_data': {
-                            'data': this.treeData
-                        },
-                        // plugins used for this tree
-                        'plugins': [ 'json_data', 'ui', 'types' ],
-                        'core': {
-                            'animation': 0
-                        },
-                        'ui': {
-                            // when the tree re-renders, initially select the root node
-                            'initially_select': [ 'jstree_node_' + app.user.get("user_name") ]
-                        }
-                    })
-                    .on('loaded.jstree', function (e) {
-                        // do stuff when tree is loaded
-                        self.$('div[data-control="org-jstree"]').addClass('jstree-sugar');
-                        self.$('div[data-control="org-jstree"] > ul').addClass('list');
-                        self.$('div[data-control="org-jstree"] > ul > li > a').addClass('jstree-clicked');
-                    })
-                    .on('click.jstree', function (e) {
-                        e.stopPropagation();
-                        e.preventDefault();
-                    })
-                    .on('select_node.jstree', function (event, data) {
-                        var jsData = data.inst.get_json();
-
-                        chart.filter(jQuery.data(data.rslt.obj[0], 'id'));
-                        self.$('div[data-control="org-jstree-dropdown"] .jstree-label').text(data.inst.get_text());
-                        data.inst.toggle_node(data.rslt.obj);
-                    });
-                app.accessibility.run($jsTree, 'click');
-
-
-                d3.select('svg#' + this.cid)
-                    .datum(this.treeData[0])
-                    .transition().duration(700)
-                    .call(chart);
-
-
-                //slider
-                this.slider.noUiSlider('init', {
-                    start: 100,
-                    knobs: 1,
-                    scale: [25, 200],
-                    connect: false,
-                    step: 25,
-                    change: function () {
-                        var values = self.slider.noUiSlider('value'),
-                            scale = chart.zoomLevel(values[0] / 100);
-                        self.sliderZoomIn.toggleClass('disabled', (scale === self.zoomExtents.max));
-                        self.sliderZoomOut.toggleClass('disabled', (scale === self.zoomExtents.min));
-                    }
-                });
-
-                self.chart = chart;
-                nv.utils.windowResize(self.chart.resize);
-                nv.utils.resizeOnPrint(self.chart.resize);
-
-                _.debounce(function () {
-                    if (self.disposed) {
-                        return;
-                    }
-                    self.chart.reset();
-                }, 3000);
-            }
+    renderChart: function() {
+        var self = this;
+        if (!this.isChartReady()) {
+            return;
         }
+
+        // chart controls
+        this.slider = this.$('.btn-slider .noUiSlider');
+        this.sliderZoomIn = this.$('.btn-slider i[data-control="zoom-in"]');
+        this.sliderZoomOut = this.$('.btn-slider i[data-control="zoom-out"]');
+
+        //zoom slider
+        this.slider.noUiSlider('init', {
+            start: 100,
+            knobs: 1,
+            scale: [25, 200],
+            connect: false,
+            step: 25,
+            change: function() {
+                var values = self.slider.noUiSlider('value'),
+                    scale = self.chart.zoomLevel(values[0] / 100);
+                self.sliderZoomIn.toggleClass('disabled', (scale === self.zoomExtents.max));
+                self.sliderZoomOut.toggleClass('disabled', (scale === self.zoomExtents.min));
+            }
+        });
+
+        //jsTree control for selecting root node
+        var $jsTree = this.$('div[data-control="org-jstree"]');
+        this.jsTree = $jsTree.jstree({
+                // generating tree from json data
+                'json_data': {
+                    'data': this.chartCollection
+                },
+                // plugins used for this tree
+                'plugins': ['json_data', 'ui', 'types'],
+                'core': {
+                    'animation': 0
+                },
+                'ui': {
+                    // when the tree re-renders, initially select the root node
+                    'initially_select': ['jstree_node_' + app.user.get('user_name')]
+                }
+            })
+            .on('loaded.jstree', function(e) {
+                // do stuff when tree is loaded
+                self.$('div[data-control="org-jstree"]').addClass('jstree-sugar');
+                self.$('div[data-control="org-jstree"] > ul').addClass('list');
+                self.$('div[data-control="org-jstree"] > ul > li > a').addClass('jstree-clicked');
+            })
+            .on('click.jstree', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+            })
+            .on('select_node.jstree', function(event, data) {
+                var jsData = data.inst.get_json();
+
+                self.chart.filter(jQuery.data(data.rslt.obj[0], 'id'));
+                self.$('div[data-control="org-jstree-dropdown"] .jstree-label').text(data.inst.get_text());
+                data.inst.toggle_node(data.rslt.obj);
+            });
+        app.accessibility.run($jsTree, 'click');
+
+        d3.select('svg#' + this.cid)
+            .datum(this.chartCollection[0])
+            .transition().duration(700)
+            .call(this.chart);
+
+        // Refresh SVG display of avatar images in foriegn object
+        this.$('.rep-avatar').on('load', function() {
+            this.style['-webkit-transform'] = 'none';
+        });
+
+        this.chart_loaded = _.isFunction(this.chart.resize);
+        this.displayNoData(!this.chart_loaded);
     },
 
+    /**
+     * Override the hasChartData method in Chart plugin because
+     * this view does not have a total value.
+     */
+    hasChartData: function() {
+        return !_.isEmpty(this.chartCollection);
+    },
+
+    /**
+     * Override the chartResize method in Chart plugin because
+     * orgchart nvd3 model uses resize instead of update.
+     */
+    chartResize: function() {
+        this.chart.resize();
+    },
 
     /**
      * Recursively step through the tree and for each node representing a tree node, run the data attribute through
      * the _postProcessTree function.  This function supports n-levels of the tree hierarchy.
      *
      * @param data The data structure returned from the REST API Forecasts/reportees endpoint
-     * @param ctx A reference to the view's context so that we may recursively call _postProcessTree
      * @return The modified data structure after all the parent and children nodes have been stepped through
      * @private
      */
-    _postProcessTree: function (data, ctx) {
-        var adopt = [],
-            newChild = {};
+    _postProcessTree: function(data) {
+        var root = [],
+            self = this;
 
-        _.each(data, function (entry, index) {
+        if (_.isArray(data)) {
+            root.push(data[0]);
+            root[0].children.push(data[1]);
+        } else {
+            root.push(data);
+        }
+
+        _.each(root, function(entry) {
+            var adopt = [];
 
             //Scan for the nodes with the data attribute.  These are the nodes we are interested in
             if (!entry.data) {
                 return;
             }
 
-            data[index].data = (function (value) {
-                return value.replace(/&amp;/gi, '&').replace(/&#039;/gi, '\'').replace(/&quot;/gi, '"');
-            })(entry.data);
-
-            data[index].metadata.url = ctx._buildUserUrl(entry.metadata.id);
-
-            data[index].metadata.img = app.api.buildFileURL({
-                module: "Employees",
+            entry.metadata.url = self._buildUserUrl(entry.metadata.id);
+            entry.metadata.img = app.api.buildFileURL({
+                module: 'Employees',
                 id: entry.metadata.id,
-                field: "picture"
+                field: 'picture'
             });
 
             if (!entry.children) {
                 return;
             }
 
-            adopt = [];
-
-            //For each children found (if any) then call _postProcessTree again.  Notice setting
-            //childEntry to an Array.  This is crucial so that the beginning _.each loop runs correctly.
-            _.each(entry.children, function (childEntry, index2) {
-                if (entry.metadata.id !== childEntry.metadata.id) {
-
-                    newChild = ctx._postProcessTree([childEntry], ctx);
-
+            //For each children found (if any) then call _postProcessTree again.
+            _.each(entry.children, function(childEntry) {
+                if (entry.metadata.id !== childEntry.metadata.id && childEntry.attr.rel !== 'my_opportunities') {
+                    var newChild = self._postProcessTree(childEntry);
                     if (!_.isEmpty(newChild)) {
                         adopt.push(newChild[0]);
                     }
                 }
             }, this);
 
-            data[index].children = adopt;
+            entry.children = adopt;
 
         }, this);
 
-        return data;
+        return root;
     },
 
-    zoomChart: function (e) {
+    /**
+     * Slider control for zooming chart viewport.
+     * @param {e} event The event object that is triggered.
+     */
+    zoomChart: function(e) {
         var button = $(e.target),
             scale = this.chart.zoom(button.data('control') === 'zoom-in' ? 0.25 : -0.25);
 
@@ -271,7 +242,11 @@
         this.slider.noUiSlider('move', {to: scale * 100});
     },
 
-    toggleChart: function (e) {
+    /**
+     * Handle all chart manipulation toggles.
+     * @param {e} event The event object that is triggered.
+     */
+    toggleChart: function(e) {
         //if icon clicked get parent button
         var button = $(e.currentTarget).hasClass('btn') ? $(e.currentTarget) : $(e.currentTarget).parent('.btn');
 
@@ -294,19 +269,34 @@
         }
     },
 
-    loadData: function (options) {
+    /**
+     * @inheritDoc
+     */
+    loadData: function(options) {
         var self = this;
 
         app.api.call('get', this.reporteesEndpoint, null, {
-            success: function (data) {
-                self.treeData = self._postProcessTree([data], self);
-                self.treeData.ctx = self.context;
+            success: function(data) {
+                self.chartCollection = self._postProcessTree(data);
                 if (!self.disposed) {
-                    self.render();
+                    self.renderChart();
                 }
             },
             complete: options ? options.complete : null
         });
-    }
+    },
 
+    /**
+     * overriding _dispose to make sure custom added event listeners are removed
+     * @private
+     */
+    _dispose: function() {
+        if (this.jsTree) {
+            this.jsTree.off();
+        }
+        if (this.slider) {
+            this.slider.off('move');
+        }
+        this._super('_dispose');
+    }
 })
