@@ -306,7 +306,7 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_TITLE' => 'Forecasts setup',
 
     'LBL_FORECASTS_MISSING_STAGE_TITLE' => 'Forecasts Configuration Error:',
-    'LBL_FORECASTS_MISSING_SALES_STAGE_VALUES' => 'the forecasts module has been improperly configured and is no longer available. Sales stage Won and sales stage lost are missing from the available sales stages values. Please contact your administrator.',
+    'LBL_FORECASTS_MISSING_SALES_STAGE_VALUES' => 'The forecasts module has been improperly configured and is no longer available. Sales stage Won and sales stage lost are missing from the available sales stages values. Please contact your administrator.',
     'LBL_FORECASTS_ACLS_NO_ACCESS_TITLE' => 'Forecasts Access Error:',
     'LBL_FORECASTS_ACLS_NO_ACCESS_MSG' => 'You do not have access to the forecasts module. Please contact your administrator.',
 
@@ -444,7 +444,7 @@ $mod_strings = array (
     'LBL_WARN_UNSAVED_CHANGES_CONFIRM_SORT' => 'You have unsaved changes. Are you sure you want to sort the worksheet and discard changes?',
 
     // Forecasts Records View Help Text
-    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module incorporates {{opportunity_module}} records to build {{module_name}}ing {{worksheet_module}}s and predict sales. Users can work towards sales quotas at the individual, team, and sales organization level. Before users can access the {{plural_module_name}} module to begin building {{module_name}}ing {{worksheet_module}}s, a user with administrator access must configure the {{plural_module_name}} module with the organization\'s desired time periods, Ranges, and scenarios.
+    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module incorporates {{opportunity_module}} records to build {{module_name}}ing {{worksheet_module}}s and predict sales. Users can work towards sales quotas at the individual, team, and sales organization level. Before users can access the {{plural_module_name}} module to begin building {{module_name}}ing {{worksheet_module}}s, a user with administrator access must configure the {{plural_module_name}} module with the organization\'s desired time periods, ranges, and scenarios.
 
 Sales representatives use the {{plural_module_name}} module to work with their assigned {{opportunities_module}} as the current time period progresses. These users will commit total predictions for their personal sales based on the {{opportunities_module}} they expect to close. Sales managers work with their own {{opportunity_module}} records similarly to other sales representatives. In addition, they aggregate their reportee\'s committed {{module_name}} amounts to predict their total team\'s sales and work towards the team\'s quota for each time period. Additional insights are offered by the elements of the expandable intelligence pane including analysis for an individual\'s {{opportunities_module}} worksheet and analysis for a manager\'s team worksheets.',
 );
