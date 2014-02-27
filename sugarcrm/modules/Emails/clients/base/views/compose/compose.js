@@ -451,7 +451,13 @@
      * @return {Boolean}
      */
     isFieldPopulated: function(fieldName) {
-        return ($.trim(this.model.get(fieldName)) !== '');
+        var value = this.model.get(fieldName);
+
+        if (value instanceof Backbone.Collection) {
+            return value.length !== 0;
+        } else {
+            return !_.isEmpty($.trim(value));
+        }
     },
 
     /**
