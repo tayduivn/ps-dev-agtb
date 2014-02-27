@@ -112,7 +112,7 @@ $mod_strings = array (
     //detail view.
     'LBL_DV_HEADER' => 'Forecasts: Worksheet',
     'LBL_DV_MY_FORECASTS' => 'My forecasts',
-    'LBL_DV_MY_TEAM' => "My team's forecasts" ,
+    'LBL_DV_MY_TEAM' => "Team forecasts" ,
     'LBL_DV_TIMEPERIODS' => 'Time periods:',
     'LBL_DV_FORECAST_PERIOD' => 'Forecast Time Period',
     'LBL_DV_FORECAST_OPPORTUNITY' => 'Forecast Opportunities',
