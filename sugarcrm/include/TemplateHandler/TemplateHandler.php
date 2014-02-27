@@ -83,13 +83,8 @@ class TemplateHandler {
         //Insert validation and quicksearch stuff here
         if($view == 'EditView' || strpos($view,'QuickCreate') || $ajaxSave || $view == "ConvertLead") {
 
-            global $dictionary, $beanList, $app_strings, $mod_strings;
-            $mod = $beanList[$module];
-
-            if($mod == 'aCase') {
-                $mod = 'Case';
-            }
-
+            global $dictionary, $app_strings, $mod_strings;
+            $mod = BeanFactory::getObjectName($module);
             $defs = $dictionary[$mod]['fields'];
             $defs2 = array();
             //Retrieve all panel field definitions with displayParams Array field set
@@ -192,13 +187,8 @@ class TemplateHandler {
 			//END SUGARCRM flav=pro ONLY
             $contents .= "{/literal}\n";
         }else if(preg_match('/^SearchForm_.+/', $view)){
-            global $dictionary, $beanList, $app_strings, $mod_strings;
-            $mod = $beanList[$module];
-
-            if($mod == 'aCase') {
-                $mod = 'Case';
-            }
-
+            global $dictionary, $app_strings, $mod_strings;
+            $mod = BeanFactory::getObjectName($module);
             $defs = $dictionary[$mod]['fields'];
             $contents .= '{literal}';
             $contents .= $this->createQuickSearchCode($defs, array(), $view);
@@ -206,10 +196,8 @@ class TemplateHandler {
         }//if
 		//BEGIN SUGARCRM flav=pro ONLY
 		else if ($view == 'DetailView') {
-            global $dictionary, $beanList, $app_strings, $mod_strings;
-            $mod = $beanList[$module];
-            if($mod == 'aCase')
-                $mod = 'Case';
+            global $dictionary, $app_strings, $mod_strings;
+            $mod = BeanFactory::getObjectName($module);
             $defs = $dictionary[$mod]['fields'];
             $contents .= "{literal}\n";
             $contents .= $this->createDependencyJavascript($defs, $metaDataDefs, $view, $module);
