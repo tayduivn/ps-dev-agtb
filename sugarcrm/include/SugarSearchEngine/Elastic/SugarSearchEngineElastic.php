@@ -400,7 +400,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $ftsTestTimeout = (isset($sugar_config['fts_test_timeout'])) ? $sugar_config['fts_test_timeout'] : 5;
             $this->_client->setConfigValue('timeout', $ftsTestTimeout);
             $results = $this->_client->request('', \Elastica\Request::GET)->getData();
-            if (!empty($results['ok']) ) {
+            if (!empty($results['status']) && $results['status'] == 200) {
                 $isValid = true;
                 if (!empty($GLOBALS['app_strings'])) {
                     $displayText = $app_strings['LBL_EMAIL_SUCCESS'];
