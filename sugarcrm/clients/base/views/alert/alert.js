@@ -94,7 +94,6 @@
 
         var template = this.getAlertTemplate(options.level, options.messages, options.title, this.templateOptions);
         this.$el.html(template);
-        this.$el.after('<br>');
 
         if (options.level === 'confirmation') {
             this.bindCancelAndReturn();
