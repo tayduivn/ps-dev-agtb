@@ -344,14 +344,8 @@
              * @return {*}
              */
             getDifference: function(oldModel, newModel, attr) {
-                var diff = newModel.get(attr) - oldModel.get(attr);
-                /**
-                 * if the difference is between -0.01 and 0.01 not including those numbers,
-                 * set the diff to zero otherwise you get "Forecast went up $0.00 to..." when the difference is < 0.01
-                 * because it gets rounded later
-                 */
-                //
-                return (Math.abs(diff) < 0.01) ? 0 : diff;
+                return (app.math.isDifferentWithPrecision(newModel.get(attr), oldModel.get(attr))) ?
+                    app.math.getDifference(newModel.get(attr), oldModel.get(attr)) : 0;
             },
 
 
