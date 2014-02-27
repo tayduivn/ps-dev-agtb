@@ -52,6 +52,14 @@ class ForecastsApi extends SugarApi
                 'shortHelp' => 'Gets reportees to a user by id',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastApiReporteesGet.html',
             ),
+            'orgtree' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts', 'orgtree', '?'),
+                'pathVars' => array('', '', 'user_id'),
+                'method' => 'getOrgTree',
+                'shortHelp' => 'Gets managers and reportees of user',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastApiOrgetreeGet.html',
+            ),
             'list' => array(
                 'reqType' => 'GET',
                 'path' => array('Forecasts',),
@@ -237,6 +245,85 @@ class ForecastsApi extends SugarApi
             }
 
             isset($reportees['children']) ? $reportees['children'] = $children : $reportees[1]['children'] = $children;
+        }
+
+        return $reportees;
+    }
+
+    /**
+     * Retrieve an array of Users and their tree state that report to the user that was passed in
+     *
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return array|string of users that reported to specified/current user
+     */
+    public function getOrgTree($api, $args)
+    {
+        $args['user_id'] = isset($args["user_id"]) ? $args["user_id"] : $GLOBALS["current_user"]->id;
+        $args['level'] = isset($args['level']) ? (int) $args['level'] : 1;
+
+        // base file and class name
+        $file = 'include/SugarForecasting/ReportingUsers.php';
+        $klass = 'SugarForecasting_ReportingUsers';
+
+        // check for a custom file exists
+        SugarAutoLoader::requireWithCustom($file);
+        $klass = SugarAutoLoader::customClass($klass);
+        // create the class
+
+        /* @var $obj SugarForecasting_AbstractForecast */
+        $obj = new $klass($args);
+        $reportees = $obj->process();
+
+        $isManager = false;
+        $isSalesRep = false;
+
+        if (isset($reportees['metadata'])) {
+            //associative array
+            $isManager = true;
+        } else if (is_array($reportees) && count($reportees) === 2) {
+            //array of associative arrays
+            $isSalesRep = true;
+        }
+
+        if ($isManager) {
+            $rootId = $reportees['metadata']['id'];
+            if (isset($reportees['children'])) {
+                $children = $reportees['children'];
+            }
+        } else if ($isSalesRep) {
+            $rootId = $reportees[1]['metadata']['id'];
+            if (isset($reportees[1]['children'])) {
+                $children = $reportees[1]['children'];
+            }
+        }
+
+        if (isset($children)) {
+
+            foreach ($children as $childKey => &$child) {
+
+                if ($rootId === $args['user_id'] && $child['metadata']['reports_to_id'] !== $args['user_id']) {
+                    //get rid of my_opportunity elemetns
+                    unset($children[$childKey]);
+                } else if ($rootId !== $args['user_id'] && $child['metadata']['id'] !== $args['user_id']) {
+                    //get rid of sibling elements if a sales rep
+                    unset($children[$childKey]);
+                } else if ($rootId === $args['user_id'] && $child['metadata']['is_manager'] === true && $args['level'] > 1) {
+                    $childArgs = $args;
+                    $childArgs['user_id'] = $child['metadata']['id'];
+                    $childArgs['level'] = $args['level'] - 1;
+
+                    $childReportees = $this->getOrgTree($api, $childArgs);
+
+                    $child['children'] = isset($childReportees['children']) ? $childReportees['children'] : $childReportees[1]['children'];
+                }
+            }
+
+            if ($isManager) {
+                $reportees['children'] = $children;
+            } else if ($isSalesRep) {
+                $reportees[1]['children'] = $children;
+            }
         }
 
         return $reportees;

@@ -264,8 +264,7 @@ nv.models.tree = function() {
                 } else {
                   return "translate(" + getX0(source) + "," + getY0(source) + ")";
                 }
-              })
-              .on('click', leafClick);
+              });
 
         // node content
         nodeEnter.append("foreignObject").attr('class', 'nv-foreign-object')
@@ -280,7 +279,8 @@ nv.models.tree = function() {
 
         // node circle
         var xcCircle = nodeEnter.append('svg:g').attr('class', 'nv-expcoll')
-              .style('opacity', 1e-6);
+              .style('opacity', 1e-6)
+              .on('click', leafClick);
             xcCircle.append('svg:circle').attr('class', 'nv-circ-back')
               .attr('r', r);
             xcCircle.append('svg:line').attr('class', 'nv-line-vert')
