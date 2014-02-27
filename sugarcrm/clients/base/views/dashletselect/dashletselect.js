@@ -41,11 +41,11 @@
             }
         });
 
-        this.context.on('dashletlist:select-and-edit', function(model, collection) {
+        this.context.on('dashletlist:select-and-edit', function(model) {
             this.selectDashlet(model.get('metadata'));
         }, this);
 
-        this.context.on('dashletlist:preview:fire', function(model, collection) {
+        this.context.on('dashletlist:preview:fire', function(model) {
             this.previewDashlet(model.get('metadata'));
         }, this);
     },

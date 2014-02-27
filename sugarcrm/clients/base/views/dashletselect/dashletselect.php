@@ -21,6 +21,10 @@ $viewdefs['base']['view']['dashletselect'] = array(
                     'label' => 'LBL_DASHLET_CONFIGURE_TITLE',
                     'name' => 'title',
                     'type' => 'text',
+                    'link' => true,
+                    'events' => array(
+                        'click a' => 'dashletlist:select-and-edit',
+                    ),
                     'filter' => 'startsWith',
                     'sortable' => true,
                 ),
@@ -30,15 +34,6 @@ $viewdefs['base']['view']['dashletselect'] = array(
                     'type' => 'text',
                     'filter' => 'contains',
                     'sortable' => true,
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'name' => 'select_and_edit',
-                    'label' => 'LBL_LISTVIEW_SELECT_AND_EDIT',
-                    'event' => 'dashletlist:select-and-edit',
-                    'css_class' => 'btn-invisible btn-link',
-                    'width' => '10%',
-                    'sortable' => false,
                 ),
                 array(
                     'type' => 'rowaction',

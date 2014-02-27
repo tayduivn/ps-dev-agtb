@@ -8,13 +8,39 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
+
+/**
+ * This is the base field and all of other fields extend from it.
+ *
+ * @class View.Fields.BaseField
+ * @alias SUGAR.App.view.fields.BaseField
+ * @extends View.Fields.ButtonField
  */
 ({
-    plugins: ['EllipsisInline', 'Tooltip'],
+    plugins: ['EllipsisInline', 'Tooltip', 'MetadataEventDriven'],
 
+    /**
+     * {@inheritDoc}
+     *
+     * Some plugins use events which prevents {@link View.Field#delegateEvents}
+     * to fallback to metadata defined events.
+     * This will make sure we merge metadata events with the ones provided by
+     * the plugins.
+     */
+    initialize: function(options) {
+
+        this.events = _.extend({}, this.events, options.def.events);
+
+        this._super('initialize', arguments);
+    },
+
+    /**
+     * {@inheritDoc}
+     */
     _render: function() {
-        var action = "view";
+        var action = 'view';
         if (this.def.link && this.def.route) {
             action = this.def.route.action;
         }
@@ -43,12 +69,13 @@
         // FIXME remove this.def.bwcLink functionality (not yet removed due to Portal need for Documents)
         return '#' + app.router.buildRoute(module, this.model.id, defRoute.action, this.def.bwcLink);
     },
+
     /**
-     * Trim whitespace from value if it is a String
-     * @param value
-     * @return {*}
+     * {@inheritDoc}
+     *
+     * Trim whitespace from value if it is a String.
      */
-    unformat: function(value){
+    unformat: function(value) {
         return _.isString(value) ? value.trim() : value;
     }
 })

@@ -17,6 +17,20 @@ describe("Base.Field.Base", function() {
         sinonSandbox.restore();
     });
 
+    it('should initialize events from metadata def', function() {
+        var events = {
+            'eventType1': 'callback1',
+            'eventType2': 'callback2'
+        };
+
+        field = SugarTest.createField('base', 'button', 'base', 'list', {
+            events: events
+        });
+
+        expect(field.events.eventType1).toEqual('callback1');
+        expect(field.events.eventType2).toEqual('callback2');
+    });
+
     it('should trim whitespace on unformat', function(){
         field = SugarTest.createField("base","button", "base", "list");
         expect(field.unformat("  ")).toEqual("");
