@@ -86,12 +86,6 @@
                 <td scope="row" valign="top"><slot>{$MOD.LBL_REMINDER|strip_semicolon}:</td>
                 <td valign="top" nowrap><slot>{include file="modules/Meetings/tpls/reminders.tpl"}</slot></td>
                 <td ><slot>{$MOD.LBL_REMINDER_TEXT}&nbsp;</slot></td>
-
-                </tr>
-                <tr>
-                <td valign="top" scope="row"><slot>{$MOD.LBL_MAILMERGE|strip_semicolon}:</slot></td>
-                <td valign="top" nowrap><slot><input tabindex='3' name='mailmerge_on' disabled class="checkbox" type="checkbox" {$MAILMERGE_ON}></slot></td>
-                <td><slot>{$MOD.LBL_MAILMERGE_TEXT}&nbsp;</slot></td>
                 </tr>
                 <tr>
                 <td valign="top" scope="row"><slot>{$MOD.LBL_SETTINGS_URL|strip_semicolon}:</slot></td>

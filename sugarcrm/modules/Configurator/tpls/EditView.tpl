@@ -225,24 +225,6 @@
 	</tr>
  </table>
 
-
-{* //BEGIN SUGARCRM flav!=com ONLY*}
-<table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
-	<tr>
-	<th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_MAILMERGE}</h4></th>
-	</tr>
-	<tr>
-	<td width="25%" scope="row" valign='middle'>{$MOD.LBL_ENABLE_MAILMERGE}&nbsp{sugar_help text=$MOD.LBL_MAILMERGE_DESC WIDTH=400}</td>
-	{if !empty($settings.system_mailmerge_on)}
-		{assign var='system_mailmerge_on_checked' value='CHECKED'}
-	{else}
-		{assign var='system_mailmerge_on_checked' value=''}
-	{/if}
-	<td width="75%" align="left"  valign='middle'><input type='hidden' name='system_mailmerge_on' value='0'><input name="system_mailmerge_on" id="system_mailmerge" value="1" class="checkbox" type="checkbox" {$system_mailmerge_on_checked}></td>
-	</tr>
-</table>
-{* //END SUGARCRM flav!=com ONLY*}
-
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>
 	<th align="left" scope="row" colspan="4"><h4>{$MOD.ADVANCED}</h4></th>
