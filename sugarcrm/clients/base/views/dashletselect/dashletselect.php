@@ -23,7 +23,7 @@ $viewdefs['base']['view']['dashletselect'] = array(
                     'type' => 'text',
                     'link' => true,
                     'events' => array(
-                        'click' => 'dashletlist:select-and-edit',
+                        'click a' => 'dashletlist:select-and-edit',
                     ),
                     'filter' => 'startsWith',
                     'sortable' => true,
