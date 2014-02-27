@@ -63,7 +63,8 @@
             this.preview_open = false;
             this.renderDashletContents();
         }, this);
-        app.events.on('app:toggle:sidebar', function(state) {
+        // FIXME this event should be listened on the `default` layout instead of the global context (SC-2398).
+        app.controller.context.on('sidebar:state:changed', function(state) {
             this.state = state;
             this.renderDashletContents();
         }, this);
@@ -115,7 +116,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      * Clean up!
      */
     unbindData: function() {
@@ -125,6 +126,8 @@
             this.view.layout.off('dashlet:collapse', null, this);
             this.view.layout.context.off('dashboard:collapse:fire', null, this);
         }
+        // FIXME the listener should be on the `default` layout instead of the global context (SC-2398).
+        app.controller.context.off(null, null, this);
         app.events.off(null, null, this);
         this._super('unbindData');
     },
@@ -497,6 +500,9 @@
         this._serverData.labels.probability = _.object(probabilities, probabilities);
     },
 
+    /**
+     * @inheritDoc
+     */
     _dispose: function() {
         if (!_.isEmpty(this.chart)) {
             $(window).off('resize.' + this.sfId);

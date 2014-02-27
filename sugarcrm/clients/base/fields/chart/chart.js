@@ -55,11 +55,6 @@
 
             $(window).on('resize.' + this.sfId, _.bind(this.chart.update, this));
 
-            app.events.on('app:toggle:sidebar', function(state) {
-                if(state == 'open') {
-                    this.chart.update();
-                }
-            }, this);
             app.events.on('preview:close', function() {
                 this.chart.update();
             }, this);

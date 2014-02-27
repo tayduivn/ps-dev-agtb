@@ -19,10 +19,13 @@
     chartCollection: {},
     chart: {},
 
-    _renderHtml: function () {
-        app.view.View.prototype._renderHtml.call(this);
+    /**
+     * @inheritDoc
+     */
+    _renderHtml: function() {
+        this._super('_renderHtml');
 
-        if (this.viewName === "config" || _.isEmpty(this.chartCollection)) {
+        if (this.viewName === 'config' || _.isEmpty(this.chartCollection)) {
             return;
         }
 
@@ -51,8 +54,9 @@
             .transition().duration(500)
             .call(this.chart);
 
-        app.events.on('app:toggle:sidebar', function(state) {
-            if(state == 'open' && this.chart.update) {
+        // FIXME this event should be listened on the `default` layout instead of the global context (SC-2398).
+        app.controller.context.on('sidebar:state:changed', function(state) {
+            if (state === 'open' && this.chart.update) {
                 this.chart.update();
             }
         }, this);
@@ -125,11 +129,23 @@
         });
     },
 
-    _dispose: function () {
+    /**
+     * @inheritDoc
+     */
+    unbind: function() {
+        // FIXME the events should be happening on the `default` layout instead of the global context (SC-2398).
+        app.controller.context.off(null, null, this);
+        this._super('unbind');
+    },
+
+    /**
+     * @inheritDoc
+     */
+    _dispose: function() {
         if (!_.isEmpty(this.chart)) {
             nv.utils.windowUnResize(this.chart.update);
             nv.utils.unResizeOnPrint(this.chart.update);
         }
-        app.view.View.prototype._dispose.call(this);
+        this._super('_dispose');
     }
 })

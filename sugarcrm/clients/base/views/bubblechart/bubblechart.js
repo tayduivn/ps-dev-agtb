@@ -24,10 +24,13 @@
      */
     isManager: false,
 
-    initialize: function (options) {
+    /**
+     * @inheritDoc
+     */
+    initialize: function(options) {
         this.isManager = app.user.get('is_manager');
         this._initPlugins();
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
 
         var fields = [
             'id',
@@ -129,8 +132,9 @@
             nv.utils.windowResize(this.chart.render);
             nv.utils.resizeOnPrint(this.chart.render);
 
-            app.events.on('app:toggle:sidebar', function(state) {
-                if(state == 'open') {
+        // FIXME this event should be listened on the `default` layout instead of the global context (SC-2398).
+            app.controller.context.on('sidebar:state:changed', function(state) {
+                if (state === 'open') {
                     this.chart.render();
                 }
             }, this);
@@ -181,9 +185,9 @@
     /**
      * {@inheritDoc}
      */
-    render: function() {
-        this._super("render");
-        if(this.chart && !_.isEmpty(this.dataset)) {
+    _renderHtml: function() {
+        this._super('_renderHtml');
+        if (this.chart && !_.isEmpty(this.dataset)) {
             this.updateChart();
         }
     },
@@ -250,15 +254,6 @@
         this.loadData();
     },
 
-    _dispose: function () {
-        this.on('data-changed', null, this);
-        if (!_.isEmpty(this.chart)) {
-            nv.utils.windowUnResize(this.chart.render);
-            nv.utils.unResizeOnPrint(this.chart.render);
-        }
-        app.view.View.prototype._dispose.call(this);
-    },
-
     /**
      * Initialize plugins.
      * Only manager can toggle visibility.
@@ -273,6 +268,26 @@
             ]);
         }
         return this;
-    }
+    },
 
+    /**
+     * @inheritDoc
+     */
+    unbind: function() {
+        // FIXME the listener should be on the `default` layout instead of the global context (SC-2398).
+        app.controller.context.off(null, null, this);
+        this._super('unbind');
+    },
+
+    /**
+     * @inheritDoc
+     */
+    _dispose: function() {
+        this.on('data-changed', null, this);
+        if (!_.isEmpty(this.chart)) {
+            nv.utils.windowUnResize(this.chart.render);
+            nv.utils.unResizeOnPrint(this.chart.render);
+        }
+        this._super('_dispose');
+    }
 })

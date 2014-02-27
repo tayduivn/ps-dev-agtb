@@ -36,6 +36,7 @@ describe("Preview View", function() {
 
 
     afterEach(function() {
+        sinon.collection.restore();
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
@@ -96,7 +97,7 @@ describe("Preview View", function() {
     it("should bind to sync event and update our source model", function(){
         var dummySourceModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
         var dummyModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
-        var dummyFetchStub = sinon.stub(dummyModel, 'fetch');
+        var dummyFetchStub = sinon.collection.stub(dummyModel, 'fetch');
         preview.model = dummyModel;
         preview.bindUpdates(dummySourceModel);
         SugarTest.seedFakeServer();
@@ -106,14 +107,13 @@ describe("Preview View", function() {
         SugarTest.server.respond();
         expect(dummyFetchStub).not.toHaveBeenCalled();
         expect(preview.model.id).toEqual("newid");
-        dummyFetchStub.restore();
     });
     it("should trigger 'preview:close' and 'list:preview:decorate' when source model destroy", function() {
         var dummySourceModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
         var dummyModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
         var closePreviewFired = false;
         var listPreviewDecorateFired = false;
-        var triggerStub = sinon.stub(app.events,"trigger", function(event){
+        sinon.collection.stub(app.events, 'trigger', function(event) {
             expect(event).not.toBeEmpty();
             if(event == "preview:close"){
                 closePreviewFired = true;
@@ -133,15 +133,13 @@ describe("Preview View", function() {
 
         expect(closePreviewFired).toBe(true);
         expect(listPreviewDecorateFired).toBe(true);
-
-        triggerStub.restore();
     });
     it("should trigger 'preview:close' and 'list:preview:decorate' when model remove from collection", function() {
         var dummyModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
         var dummyCollection = {};
         var closePreviewFired = false;
         var listPreviewDecorateFired = false;
-        var triggerStub = sinon.stub(app.events,"trigger", function(event){
+        sinon.collection.stub(app.events, 'trigger', function(event) {
             expect(event).not.toBeEmpty();
             if(event == "preview:close"){
                 closePreviewFired = true;
@@ -156,8 +154,6 @@ describe("Preview View", function() {
 
         expect(closePreviewFired).toBe(true);
         expect(listPreviewDecorateFired).toBe(true);
-
-        triggerStub.restore();
     });
 
     describe("renderPreview", function(){
@@ -167,7 +163,7 @@ describe("Preview View", function() {
             dummyCollection.models = [dummyModel];
             var openPreviewFired = false;
             var listPreviewDecorateFired = false;
-            var triggerStub = sinon.stub(app.events,"trigger", function(event, model){
+            sinon.collection.stub(app.events, 'trigger', function(event, model) {
                 expect(event).not.toBeEmpty();
                 if(event == "preview:open"){
                     openPreviewFired = true;
@@ -179,13 +175,12 @@ describe("Preview View", function() {
             preview.renderPreview(dummyModel, dummyCollection);
             expect(openPreviewFired).toBe(true);
             expect(listPreviewDecorateFired).toBe(true);
-            triggerStub.restore();
         });
         it("should be called on 'preview:render' event", function(){
             var dummyModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
             var dummyCollection = {};
             dummyCollection.models = [dummyModel];
-            var renderPreviewStub = sinon.stub(preview,"renderPreview", function(model, collection){
+            var renderPreviewStub = sinon.collection.stub(preview, 'renderPreview', function(model, collection) {
                expect(model).toEqual(dummyModel);
                expect(collection).toEqual(dummyCollection);
             });
@@ -196,7 +191,6 @@ describe("Preview View", function() {
             };
             app.events.trigger("preview:render", dummyModel, dummyCollection, false);
             expect(renderPreviewStub).toHaveBeenCalled();
-            renderPreviewStub.restore();
         });
     });
 
@@ -270,7 +264,7 @@ describe("Preview View", function() {
 
         it("should filter out the collection sets that only has access for view", function() {
 
-            var accessIds, aclModelStub;
+            var accessIds;
 
             accessIds = [
                 false,
@@ -279,7 +273,7 @@ describe("Preview View", function() {
                 false,
                 true
             ];
-            aclModelStub = sinon.stub(app.acl, "hasAccessToModel", function(method, model){
+            sinon.collection.stub(app.acl, 'hasAccessToModel', function(method, model) {
                 return accessIds[model.get("index")];
             });
 
@@ -296,7 +290,6 @@ describe("Preview View", function() {
                     expect(model.length).toBe(0);
                 }
             }, this);
-            aclModelStub.restore();
         });
 
         it("Should find previous and next actual module when collection has models with different modules.", function() {
@@ -333,5 +326,11 @@ describe("Preview View", function() {
             expect(currModule).toBeDefined();
             expect(currModule).toEqual(models[0].module);
         });
+    });
+
+    it('should trigger ("sidebar:toggle", true) on "preview:open"', function() {
+        var stub = sinon.collection.stub(app.controller.context, 'trigger');
+        app.events.trigger('preview:open');
+        expect(stub).toHaveBeenCalledWith('sidebar:toggle', true);
     });
 });

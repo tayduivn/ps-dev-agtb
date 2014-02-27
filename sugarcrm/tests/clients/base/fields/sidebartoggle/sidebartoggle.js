@@ -1,66 +1,85 @@
-describe("Sidebar Toggle", function () {
-    var field, layout, app, sinonSandbox;
+describe('Sidebar Toggle', function() {
+    var field, app;
 
-    beforeEach(function () {
+    beforeEach(function() {
         app = SugarTest.app;
         var def = {
-            "components": [
-                {"layout": {"span": 4}},
-                {"layout": {"span": 8}}
+            'components': [
+                {'layout': {'span': 4}},
+                {'layout': {'span': 8}}
             ]};
-        sinonSandbox = sinon.sandbox.create();
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'field', 'sidebartoggle');
-        SugarTest.loadComponent('base', 'layout', 'default');
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
-        layout = SugarTest.createLayout('base', null, "default", def, null);
-        field = SugarTest.createField("base", null, "sidebartoggle", "record", def);
-        sinonSandbox.stub(app.view.layouts.BaseDefaultLayout.prototype, 'processDef');
+        field = SugarTest.createField('base', null, 'sidebartoggle', 'record', def);
     });
-    afterEach(function () {
-        sinonSandbox.restore();
+    afterEach(function() {
+        sinon.collection.restore();
+        field.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
     });
-    it("should broadcast sidebarRendered event on _render", function() {
-        var contextOn = sinonSandbox.stub(app.controller.context, 'trigger');
-        field._render();
-        expect(contextOn).toHaveBeenCalledWith('sidebarRendered');
+
+    it('should trigger "sidebar:state:ask" to get the current open/close state', function() {
+        var contextStub = sinon.collection.stub(app.controller.context, 'trigger');
+        field.initialize({});
+        expect(contextStub).toHaveBeenCalledWith('sidebar:state:ask');
     });
-    it("should listen for toggleSidebarArrows event", function() {
-        var updateArrowsStub = sinonSandbox.stub(field, 'updateArrows');
-        field.bindDataChange();
-        app.controller.context.trigger('toggleSidebarArrows');
-        expect(updateArrowsStub).toHaveBeenCalled();
+
+    describe('listeners', function() {
+        var toggleStateStub;
+
+        beforeEach(function() {
+            toggleStateStub = sinon.collection.stub(field, 'toggleState');
+            app.controller.context.off();
+            field.initialize({});
+        });
+
+        it('should listen for "sidebar:state:respond" event', function() {
+            app.controller.context.trigger('sidebar:state:respond');
+            expect(toggleStateStub).toHaveBeenCalled();
+        });
+
+        it('should listen for "sidebar:state:changed" event', function() {
+            app.controller.context.trigger('sidebar:state:changed');
+            expect(toggleStateStub).toHaveBeenCalled();
+        });
     });
-    it("should listen for openSidebarArrows event", function() {
-        var sidebarArrowsOpenStub = sinonSandbox.stub(field, 'sidebarArrowsOpen');
-        field.bindDataChange();
-        app.controller.context.trigger('openSidebarArrows');
-        expect(sidebarArrowsOpenStub).toHaveBeenCalled();
+
+    describe('toggle', function() {
+        it('should trigger "sidebar:toggle" event', function() {
+            var contextStub = sinon.collection.stub(app.controller.context, 'trigger');
+            field.toggle();
+            expect(contextStub).toHaveBeenCalledWith('sidebar:toggle');
+        });
     });
-    it("should toggle and fire toggleSidebar event when user clicks toggle arrows", function() {
-        var contextOn = sinonSandbox.stub(field.context, 'trigger');
-        field.toggle();
-        expect(contextOn).toHaveBeenCalledWith('toggleSidebar');
-    });
-    it("should update arrows with direction (open)", function() {
-        // Stub the addClass/removeClass jQuery methods on $'s prototype
-        var removeClassStub = sinonSandbox.stub($.fn, 'removeClass', function(){return $.fn;});
-        var addClassStub = sinonSandbox.stub($.fn, 'addClass', function() {return $.fn;});
-        field.updateArrowsWithDirection('open');
-        expect(removeClassStub).toHaveBeenCalledWith('icon-double-angle-left');
-        expect(addClassStub).toHaveBeenCalledWith('icon-double-angle-right');
-    });
-    it("should update arrows with direction (close)", function() {
-        // Stub the addClass/removeClass jQuery methods on $'s prototype
-        var removeClassStub = sinonSandbox.stub($.fn, 'removeClass', function(){return $.fn;});
-        var addClassStub = sinonSandbox.stub($.fn, 'addClass', function() {return $.fn;});
-        field.updateArrowsWithDirection('close');
-        expect(removeClassStub).toHaveBeenCalledWith('icon-double-angle-right');
-        expect(addClassStub).toHaveBeenCalledWith('icon-double-angle-left');
+
+    describe('toggleState', function() {
+        it('should call stay open if called with open', function() {
+            field._state = 'open';
+            field.toggleState('open');
+            expect(field._state).toEqual('open');
+        });
+
+        it('should stay close if called with close', function() {
+            field._state = 'close';
+            field.toggleState('close');
+            expect(field._state).toEqual('close');
+        });
+
+        it('should become open if currently close', function() {
+            field._state = 'close';
+            field.toggleState();
+            expect(field._state).toEqual('open');
+        });
+
+        it('should become close if currently open', function() {
+            field._state = 'open';
+            field.toggleState();
+            expect(field._state).toEqual('close');
+        });
     });
 });

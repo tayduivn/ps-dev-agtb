@@ -45,6 +45,7 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.action = 'detail';
+        app.events.on('preview:open', this.openPreview,  this);
         app.events.on("preview:render", this._renderPreview, this);
         app.events.on("preview:collection:change", this.updateCollection, this);
         app.events.on("preview:close", this.closePreview,  this);
@@ -222,9 +223,6 @@
             app.events.trigger("preview:open",this);
             // Highlight the row
             app.events.trigger("list:preview:decorate", this.model, this);
-            if(!this.$el.is(":visible")) {
-                this.context.trigger("openSidebar",this);
-            }
         }
     },
 
@@ -297,6 +295,14 @@
                 }
             });
         }
+    },
+
+    /**
+     * Make sure the side pane is open.
+     */
+    openPreview: function() {
+        // FIXME this should be triggered on this layout instead of app.events (SC-2398).
+        app.controller.context.trigger('sidebar:toggle', true);
     },
 
     closePreview: function() {
