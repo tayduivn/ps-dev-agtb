@@ -16,6 +16,9 @@
 ({
     plugins: ['Dashlet'],
 
+    /**
+     * This is the values model for the template
+     */
     values: new Backbone.Model(),
 
     className: 'forecasts-chart-wrapper',
@@ -36,7 +39,7 @@
     forecastWorksheetContext: undefined,
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this.values.clear({silent: true});
@@ -45,7 +48,7 @@
         this.once('render', function() {
             this.parseCollectionForData();
         }, this);
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
         if (!this.meta.config) {
             var ctx = this.context.parent,
                 user = ctx.get('selectedUser') || app.user.toJSON();
@@ -133,6 +136,9 @@
      * @param {Backbone.Collection} [collection]
      */
     parseCollectionForData: function(collection) {
+        if (this.meta.config) {
+            return;
+        }
         // get the field
         var field = this.getField('paretoChart');
         if(field && !field.hasServerData()) {
@@ -149,6 +155,11 @@
         }
     },
 
+    /**
+     * Parses a chart data collection for the Rep worksheet
+     *
+     * @param {Backbone.Collection} collection
+     */
     parseRepWorksheet: function(collection) {
         var field = this.getField('paretoChart');
         if(field) {
@@ -178,6 +189,11 @@
         }
     },
 
+    /**
+     * Parses a chart data collection for the Manager worksheet
+     *
+     * @param {Backbone.Collection} collection
+     */
     parseManagerWorksheet: function(collection) {
         var field = this.getField('paretoChart');
         if(field) {
@@ -263,7 +279,6 @@
         field.setServerData(serverData, _.contains(changedField, 'probability'));
     },
 
-
     /**
      * Handler for when the Manager Worksheet Changes
      * @param {Object} model
@@ -318,11 +333,11 @@
      * Called after _render
      */
     toggleRepOptionsVisibility: function() {
-        this.$el.find('div.groupByOptions').toggleClass('hide', this.values.get('display_manager') === true);
+        this.$('div.groupByOptions').toggleClass('hide', this.values.get('display_manager') === true);
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     bindDataChange: function() {
         // on the off chance that the init has not run yet.
@@ -336,18 +351,18 @@
         }, this);
 
         this.on('render', function() {
-            var f = this.getField('paretoChart'),
-                dt = this.layout.getComponent('dashlet-toolbar');
+            var field = this.getField('paretoChart'),
+                dashToolbar = this.layout.getComponent('dashlet-toolbar');
 
             // if we have a dashlet-toolbar, then make it do the refresh icon while the chart is loading from the
             // server
-            if (dt) {
-                f.before('chart:pareto:render', function() {
-                    this.$("[data-action=loading]").removeClass(this.cssIconDefault).addClass(this.cssIconRefresh)
-                }, {}, dt);
-                f.on('chart:pareto:rendered', function() {
-                    this.$("[data-action=loading]").removeClass(this.cssIconRefresh).addClass(this.cssIconDefault)
-                }, dt);
+            if (dashToolbar) {
+                field.before('chart:pareto:render', function() {
+                    this.$("[data-action=loading]").removeClass(this.cssIconDefault).addClass(this.cssIconRefresh);
+                }, {}, dashToolbar);
+                field.on('chart:pareto:rendered', function() {
+                    this.$("[data-action=loading]").removeClass(this.cssIconRefresh).addClass(this.cssIconDefault);
+                }, dashToolbar);
             }
             this.toggleRepOptionsVisibility();
             this.parseCollectionForData();
@@ -374,8 +389,7 @@
     },
 
     /**
-     * {@inheritdoc}
-     * Clean up!
+     * @inheritdoc
      */
     unbindData: function() {
         var ctx = this.context.parent;
@@ -399,6 +413,6 @@
             this.values.off(null, null, this);
         }
 
-        app.view.View.prototype.unbindData.call(this);
+        this._super('unbindData');
     }
 })
