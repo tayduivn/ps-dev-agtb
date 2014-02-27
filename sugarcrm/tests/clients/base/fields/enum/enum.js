@@ -115,7 +115,7 @@ describe("enum field", function() {
     });
 
     describe('enum API', function() {
-        it('should load options from enum API if options is undefined', function() {
+        it('should load options from enum API if options is undefined or null', function() {
             var callStub = sinon.stub(app.api, 'enumOptions', function(module, field, callbacks) {
                 expect(field).toEqual('test_enum');
                 //Call success callback
@@ -124,11 +124,23 @@ describe("enum field", function() {
             field = SugarTest.createField('base', fieldName, 'enum', 'detail', {/* no options */});
             var renderSpy = sinon.spy(field, '_render');
             field.render();
+
             expect(callStub).toHaveBeenCalled();
             expect(renderSpy.calledTwice).toBe(true);
             expect(field.items).toEqual(app.lang.getAppListStrings());
+
+            var field2 = SugarTest.createField('base', fieldName, 'enum', 'detail', {options: null}),
+                renderSpy2 = sinon.spy(field2, '_render');
+            field2.render();
+
+            expect(callStub.calledTwice).toBe(true);
+            expect(renderSpy2.calledTwice).toBe(true);
+            expect(field2.items).toEqual(app.lang.getAppListStrings());
+
             callStub.restore();
             renderSpy.restore();
+            renderSpy2.restore();
+            field2.dispose();
         });
         it('should avoid duplicate enum api call', function() {
             var apiSpy = sinon.spy(app.api, 'enumOptions');
