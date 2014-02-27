@@ -51,12 +51,25 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     'acl_action' => 'view',
                 ),
                 array(
+                    'type' => 'divider',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:find_duplicates_button:click',
+                    'name' => 'find_duplicates_button',
+                    'label' => 'LBL_DUP_MERGE',
+                    'acl_action' => 'edit',
+                ),
+                array(
                     'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'acl_module' => $module_name,
                     'acl_action' => 'create',
+                ),
+                array(
+                    'type' => 'divider',
                 ),
                 array(
                     'type' => 'rowaction',
