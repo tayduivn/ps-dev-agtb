@@ -69,7 +69,7 @@ class Bug58685Test extends Sugar_PHPUnit_Framework_TestCase
         $view = new HomeViewList();
         $view->suppressDisplayErrors = true;
         $view->processMaxPostErrors();
-        $this->assertContains('There was an error during your upload', join('\n', $view->errors));
+        $this->assertContains('there was an error during your upload', join('\n', $view->errors));
     }
 
 }
