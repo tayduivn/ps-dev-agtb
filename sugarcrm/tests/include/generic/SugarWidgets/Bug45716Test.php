@@ -240,7 +240,7 @@ class Bug45716Helper {
         array (
             'name' => 'campaign_link',
             'type' => 'link',
-            'relationship' => 'opportunities_campaign',
+            'relationship' => 'campaign_opportunities',
             'vname' => 'LBL_CAMPAIGNS',
             'link_type' => 'one',
             'module' => 'Opportunities',
@@ -277,7 +277,7 @@ class Bug45716Helper {
         array (
             'name' => 'campaigns',
             'type' => 'link',
-            'relationship' => 'opportunities_campaign',
+            'relationship' => 'campaign_opportunities',
             'module' => 'Opportunities',
             'bean_name' => 'CampaignLog',
             'source' => 'non-db',

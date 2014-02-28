@@ -819,7 +819,7 @@ var $field_defs = array (
 			  array (
 			    'name' => 'campaigns',
 			    'type' => 'link',
-			    'relationship' => 'opportunities_campaign',
+			    'relationship' => 'campaign_opportunities',
 			    'module' => 'CampaignLog',
 			    'bean_name' => 'CampaignLog',
 			    'source' => 'non-db',
@@ -829,7 +829,7 @@ var $field_defs = array (
 			  array (
 			    'name' => 'campaign_link',
 			    'type' => 'link',
-			    'relationship' => 'opportunities_campaign',
+			    'relationship' => 'campaign_opportunities',
 			    'vname' => 'LBL_CAMPAIGNS',
 			    'link_type' => 'one',
 			    'module' => 'Campaigns',
