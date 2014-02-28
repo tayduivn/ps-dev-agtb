@@ -10,6 +10,65 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
+/**
+ * Relate field provides a link to a module that is set in the definition of
+ * this field metadata.
+ *
+ * This field requires at least the follow definitions to be exist in the
+ * field:
+ *
+ * ```
+ * array(
+ *     'name' => 'account_name',
+ *     'rname' => 'name',
+ *     'id_name' => 'account_id',
+ *     'module' => 'Accounts',
+ *     'link' => true,
+ *     //...
+ * ),
+ * ```
+ *
+ * The field also support a `populate_list` to update other fields in the
+ * current model from other fields of the selected model.
+ *
+ * ```
+ * array(
+ *     //...
+ *     'populate_list' => array(
+ *         'populate_list' => array(
+ *         'billing_address_street' => 'primary_address_street',
+ *         'billing_address_city' => 'primary_address_city',
+ *         'billing_address_state' => 'primary_address_state',
+ *         'billing_address_postalcode' => 'primary_address_postalcode',
+ *         'billing_address_country' => 'primary_address_country',
+ *         'phone_office' => 'phone_work',
+ *         //...
+ *
+ *     ),
+ * )
+ * ```
+ *
+ * This field allows you to configure the minimum chars that trigger a search
+ * when using the typeahead feature.
+ *
+ * ```
+ * array(
+ *     //...
+ *     'minChars' => 3,
+ * )
+ * ```
+ *
+ * TODO: there is a conflict in the link property of `this.def.link` that
+ * should be populated from the view/field metadata with the `vardefs` one
+ * which needs to be addressed.
+ *
+ * TODO: we have a mix of properties here with camelCase and underscore.
+ * Needs to be addressed.
+ *
+ * @class View.Fields.BaseRelateField
+ * @alias SUGAR.App.view.fields.BaseRelateField
+ * @extends View.Field
+ */
 ({
     allow_single_deselect: true,
     minChars: 1,
@@ -222,10 +281,49 @@
     _getRelateId: function () {
         return this.model.get(this.def.id_name);
     },
-    format: function (value) {
+
+    /**
+     * {@inheritDoc}
+     *
+     * When there is no value set and we are in a create view, we try to check
+     * if the parent context module matches this relate field. If it matches,
+     * we pre-populate with that data.
+     *
+     * FIXME: the relate field should use this method to pre-populate the
+     * values without touching the model or else we need to use silent to
+     * prevent the warning of unsaved changes, consequently we can't bind
+     * events like `change` to it.
+     *
+     * TODO: the model might not have the field that we are relating to. On
+     * those corner cases, we need to fetch from the server that information.
+     *
+     * @return {String} This field's value. Need to change to object with all
+     *   data that we need to render the field.
+     */
+    format: function(value) {
+
+        var parentCtx = this.context && this.context.parent,
+            setFromCtx;
+
+        setFromCtx = !value && parentCtx &&
+            this.view instanceof app.view.views.BaseCreateView &&
+            parentCtx.get('module') === this.def.module &&
+            this.module !== this.def.module;
+
+        if (setFromCtx) {
+            var model = parentCtx.get('model');
+            // FIXME we need a method to prevent us from doing this
+            this.def.auto_populate = true;
+            // FIXME the setValue receives a model but not a backbone model...
+            this.setValue(model.toJSON());
+            // FIXME we need to iterate over the populated_ that is causing
+            // unsaved warnings when doing the auto populate.
+        }
+
         this._buildRoute();
         return value;
     },
+
     /**
      * Relate takes care of its unformating
      * stub this to return the unformated value off the model

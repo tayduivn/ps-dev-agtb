@@ -1,29 +1,15 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
 ({
     minChars: 1,
     extendsFrom: 'RelateField',
@@ -79,26 +65,47 @@
         return this.model.get("parent_id");
     },
     format: function(value) {
+
         this.def.module = this.getSearchModule();
         var moduleString = app.lang.getAppListStrings('moduleListSingular'),
             module;
-        if(this.getSearchModule()) {
-            if (!moduleString[this.getSearchModule()]) {
-                app.logger.error("Module '" + this.getSearchModule() + "' doesn't have singular translation.");
+        if (this.def.module) {
+            if (!moduleString[this.def.module]) {
+                app.logger.error("Module '" + this.def.module + "' doesn't have singular translation.");
                 // graceful fallback
-                module = this.getSearchModule();
+                module = this.def.module;
             } else {
-                module = moduleString[this.getSearchModule()];
+                module = moduleString[this.def.module];
             }
         }
 
-        this.context.set("record_label", {
+        this.context.set('record_label', {
             field: this.name,
             label: (this.tplName === 'detail') ? module : app.lang.get(this.def.label, this.module)
         });
-        this._buildRoute();
 
-        return value;
+        var parentCtx = this.context && this.context.parent,
+            setFromCtx;
+
+        setFromCtx = !value && parentCtx &&
+            this.view instanceof app.view.views.BaseCreateView &&
+            _.contains(app.lang.getAppListKeys(this.def.parent_type), parentCtx.get('module')) &&
+            this.module !== this.def.module;
+
+        if (setFromCtx) {
+            var model = parentCtx.get('model');
+            // FIXME we need a method to prevent us from doing this
+            // FIXME the setValue receives a model but not a backbone model...
+            var attributes = model.toJSON();
+            attributes.silent = true;
+            this.setValue(attributes);
+            value = this.model.get(this.name);
+
+            // FIXME we need to iterate over the populated_ that isn't working now
+        }
+
+        return this._super('format', [value]);
+
     },
     checkAcl: function(action, module) {
         if(app.acl.hasAccess(action, module) === false) {
@@ -108,17 +115,25 @@
         }
     },
     setValue: function(model) {
-        if (model) {
-            var silent = model.silent || false;
-            if(app.acl.hasAccess(this.action, this.model.module, this.model.get('assigned_user_id'), this.name)) {
-                if(model.module) {
-                    this.model.set('parent_type', model.module, {silent: silent});
-                    this.model.removeDefaultAttribute('parent_type');
-                }
-                this.model.set('parent_id', model.id, {silent: silent});
-                this.model.set('parent_name', model.value, {silent: silent});
-            }
+        if (!model) {
+            return;
         }
+        var silent = model.silent || false,
+            // FIXME we shouldn't make this assumption and this method should
+            // receive a true Backbone.Model or Data.Bean
+            module = model.module || model._module;
+
+        if (app.acl.hasAccess(this.action, module, this.model.get('assigned_user_id'), this.name)) {
+            if (module) {
+                this.model.set('parent_type', module, {silent: silent});
+                this.model.removeDefaultAttribute('parent_type');
+            }
+            this.model.set('parent_id', model.id, {silent: silent});
+            // FIXME we shouldn't rely on model.value... and hack the full_name here until we fix it properly
+            var value = model.value || model[this.def.rname || 'name'] || model['full_name'];
+            this.model.set('parent_name', value, {silent: silent});
+        }
+        // TODO we should support the auto populate of other fields like we do on normal relate.js
     },
     /**
      * Is this module available as an option to be set as parent type?
