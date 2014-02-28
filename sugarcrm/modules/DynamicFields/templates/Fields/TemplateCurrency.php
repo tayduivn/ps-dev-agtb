@@ -48,13 +48,12 @@ class TemplateCurrency extends TemplateRange
         );
         parent::save($df);
 
+        $df->addLabel('LBL_CURRENCY');
+
         //currency id
         $currency_id = new TemplateCurrencyId();
         $currency_id->name = 'currency_id';
-        $currency_id->vname = 'LBL_CURRENCY';
-        $currency_id->label = $currency_id->vname;
         $currency_id->save($df);
-        $df->addLabel($currency_id->vname);
 
         //base_rate
         $base_rate = new TemplateCurrencyBaseRate();

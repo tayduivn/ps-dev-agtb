@@ -34,6 +34,7 @@ class TemplateCurrencyId extends TemplateId{
     function get_field_def(){
 		$def = parent::get_field_def();
 		$def['type'] = $this->type;
+        $def['vname'] = 'LBL_CURRENCY_ID';
         $def['dbType'] = 'id';
 		$def['studio'] = 'visible';
 		$def['function'] = array('name'=>'getCurrencyDropDown', 'returns'=>'html');

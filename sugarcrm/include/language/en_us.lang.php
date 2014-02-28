@@ -2644,6 +2644,7 @@ $app_strings = array (
     'LBL_CURRENCY_NAME'=>'Currency name',
     'LBL_CURRENCY_SYMBOL'=>'Currency symbol',
     'LBL_CURRENCY_RATE' => 'Base rate:',
+    'LBL_CURRENCY_ID' => 'Currency ID',
     'LBL_DOCUMENTS'=>'Documents',
     'LBL_DATE_ENTERED' => 'Date created:',
     'LBL_DATE_MODIFIED' => 'Date modified:',
