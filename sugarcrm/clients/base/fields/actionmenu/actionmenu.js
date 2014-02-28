@@ -176,6 +176,7 @@
                     this.$(this.actionDropDownTag).addClass('disabled');
                     this.$(this.fieldTag).attr('checked', false);
                 } else if (massCollection.length === this.collection.length) {
+                    this.$(this.actionDropDownTag).removeClass('disabled');
                     this.$(this.fieldTag).attr('checked', true);
                 }
                 this.toggleSelectAll();
