@@ -70,9 +70,8 @@ $viewdefs['Quotes']['base']['view']['subpanel-list'] = array(
                 'label' => 'LBL_EDIT_BUTTON',
                 'acl_action' => 'edit',
                 'allow_bwc' => true,
-                'route' => array(
-                    'action' => 'edit'
-                )
+                'event' => 'list:editrow:fire',
+                'full_form' => true
             ),
             array(
                 'type' => 'unlink-action',
@@ -80,5 +79,5 @@ $viewdefs['Quotes']['base']['view']['subpanel-list'] = array(
                 'label' => 'LBL_UNLINK_BUTTON',
             ),
         )
-    )
+    ),
 );
