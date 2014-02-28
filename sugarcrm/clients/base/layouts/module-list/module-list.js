@@ -169,9 +169,12 @@
      * @param {String} module The module
      * @param {Boolean} [sticky=false] Set to `true` if this is a menu that is
      *   part of user preferences.
+     * @return {Object} The `menu.long` and `menu.short` components created.
+     *   If `sticky` param is `false`, then no `menu.short` is provided.
      * @private
      */
     _addMenu: function(module, sticky) {
+        var menu = {};
 
         var def = {
             view: {
@@ -180,10 +183,11 @@
                 short: false
             }
         };
-        this.addComponent(this.createComponentFromDef(def, null, module), def);
+        menu.long = this.createComponentFromDef(def, null, module);
+        this.addComponent(menu.long, def);
 
         if (!sticky) {
-            return;
+            return menu;
         }
 
         def = {
@@ -192,7 +196,10 @@
                 short: true
             }
         };
-        this.addComponent(this.createComponentFromDef(def, null, module), def);
+        menu.short = this.createComponentFromDef(def, null, module);
+        this.addComponent(menu.short, def);
+
+        return menu;
     },
 
     /**
@@ -283,16 +290,15 @@
      * @chainable
      */
     toggleModule: function(module, state) {
-        var newState;
         // cache version only
         if (!this._catalog[module].short) {
             state = !_.isUndefined(state) ? !state : undefined;
-            newState = this._catalog[module].long.toggleClass('hidden', state).hasClass('hidden');
+            this._catalog[module].long.toggleClass('hidden', state);
             return this;
         }
 
         // keep it in sync
-        newState = this._catalog[module].short.toggleClass('hidden', state).hasClass('hidden');
+        var newState = this._catalog[module].short.toggleClass('hidden', state).hasClass('hidden');
         this._catalog[module].long.toggleClass('hidden', !newState);
 
         return this;
@@ -319,7 +325,7 @@
         this.$('[data-container=module-list]').children('.active').removeClass('active');
 
         if (!this._catalog[module]) {
-            this._addMenu(module, false);
+            this._addMenu(module, false).long.render();
         }
 
         this._catalog[module].long.addClass('active');
