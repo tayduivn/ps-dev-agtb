@@ -71,11 +71,7 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
         $this->_client = $this->getElasticaClient($config);
         global $app_strings, $sugar_config;
         $isValid = false;
-        $timeOutValue = $this->_client->getConfig('timeout');
         try {
-            //Default test timeout is 5 seconds
-            $ftsTestTimeout = (isset($sugar_config['fts_test_timeout'])) ? $sugar_config['fts_test_timeout'] : 5;
-            $this->_client->setConfigValue('timeout', $ftsTestTimeout);
             $results = $this->_client->request('', $this->getElasticaRequestConstant('GET'))->getData();
             if (!empty($results['ok'])) {
                 $isValid = true;
@@ -87,8 +83,6 @@ class SugarUpgradeCheckFTSConfig extends UpgradeScript
             $displayText = $e->getMessage();
             $this->error("Unable to get server status: $displayText");
         }
-        //Reset previous timeout value.
-        $this->_client->setConfigValue('timeout', $timeOutValue);
 
         return array('valid' => $isValid, 'status' => $displayText);
     }
