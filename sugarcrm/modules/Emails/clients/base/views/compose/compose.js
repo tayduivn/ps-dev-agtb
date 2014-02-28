@@ -66,7 +66,7 @@
         }
 
         if (this.model.isNotEmpty) {
-            var prepopulateValues = this.context.get("prepopulate");
+            var prepopulateValues = this.context.get('prepopulate');
             if (!_.isEmpty(prepopulateValues)) {
                 this.prepopulate(prepopulateValues);
             }
@@ -80,9 +80,31 @@
 
         toAddressesField = this.getField('to_addresses');
         if (toAddressesField) {
-            toAddressesField.on('render', _.bind(function(){
+            toAddressesField.on('render', _.bind(function() {
                 this.setRecipientContentBefore();
             }, this));
+        }
+
+        this.notifyConfigurationStatus();
+    },
+
+    /**
+     * Notifies the user of configuration issues and disables send button
+     */
+    notifyConfigurationStatus: function() {
+        var emailClientPrefence = app.user.getPreference('email_client_preference');
+
+        if (_.isObject(emailClientPrefence) && _.isObject(emailClientPrefence.error)) {
+            app.alert.show('email-client-status', {
+                level: 'warning',
+                messages: app.lang.get(emailClientPrefence.error.message, this.module),
+                autoClose: false,
+                onLinkClick: function() {
+                    app.alert.dismiss('email-client-status');
+                }
+            });
+
+            this.getField('send_button').setDisabled(true);
         }
     },
 
@@ -95,7 +117,7 @@
         var self = this;
         _.defer(function() {
             _.each(values, function(value, fieldName) {
-                switch(fieldName) {
+                switch (fieldName) {
                     case 'related':
                         self.populateRelated(value);
                         break;

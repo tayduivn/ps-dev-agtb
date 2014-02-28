@@ -393,4 +393,20 @@ function onUserEditView() {
     setSymbolValue(document.getElementById('currency_select').options[document.getElementById('currency_select').selectedIndex].value);
     setSigDigits();
     user_status_display(document.getElementById('UserType'));
+    setSugarClientEmailOption();
+}
+
+function setSugarClientEmailOption() {
+    //disable the sugar client option if the system email setting are not configured properly
+    var emailType = document.getElementById('email_link_type'),
+        isSugarClientDisabled = emailType.getAttribute('data-sugarclientdisabled');
+
+    if (isSugarClientDisabled && isSugarClientDisabled === 'true') {
+        var option = emailType.getElementsByTagName('option');
+        for (var i = 0; i < option.length; i++) {
+            if (option[i].value.toLowerCase() === 'sugar') {
+                option[i].disabled = true;
+            }
+        }
+    }
 }

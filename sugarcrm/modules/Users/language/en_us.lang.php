@@ -176,7 +176,7 @@ $mod_strings = array (
 	'LBL_EMAIL_GMAIL_DEFAULTS'			=> 'Prefill Gmail&#153; Defaults',
 	'LBL_EMAIL_LINK_TYPE'				=> 'Email Client',
 
-    'LBL_EMAIL_LINK_TYPE_HELP'			=> '<b>Sugar Mail Client:</b> Send emails using the email client in the Sugar application.<br><b>External Mail Client:</b> Send email using an email client outside of the Sugar application, such as Microsoft Outlook.',
+    'LBL_EMAIL_LINK_TYPE_HELP'			=> '<b>Sugar Mail Client:</b> Send emails using the email client in the Sugar application.<br>This option is only available if the system email settings have been set up correctly by the Administrator.<br><b>External Mail Client:</b> Send email using an email client outside of the Sugar application, such as Microsoft Outlook.',
 
     'LBL_EMAIL_NOT_SENT'                => 'System is unable to process your request. Please contact the system administrator.',
     'LBL_EMAIL_PROVIDER'               => 'Email Provider',

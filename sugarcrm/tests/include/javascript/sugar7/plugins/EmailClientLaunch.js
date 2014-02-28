@@ -21,7 +21,7 @@ describe('EmailClientLaunch Plugin', function() {
     });
 
     setUseSugarClient = function(useSugarClient) {
-        app.user.set('preferences', {use_sugar_email_client: useSugarClient ? 'true' : 'false'});
+        app.user.set('preferences', {email_client_preference: {type: useSugarClient ? 'sugar' : 'mailto'}});
     };
 
     describe('Launch Email Client', function() {

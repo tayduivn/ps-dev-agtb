@@ -52,7 +52,7 @@
                                     {$MOD.LBL_EMAIL_LINK_TYPE}:&nbsp;{sugar_help text=$MOD.LBL_EMAIL_LINK_TYPE_HELP WIDTH=450}
                                 </td>
                                 <td>
-                                    <select id="email_link_type" name="email_link_type" tabindex='410'>
+                                    <select id="email_link_type" name="email_link_type" {if $DISABLE_SUGAR_CLIENT} data-sugarclientdisabled="true"{/if} tabindex='410'>
                                     {$EMAIL_LINK_TYPE}
                                     </select>
                                 </td>
