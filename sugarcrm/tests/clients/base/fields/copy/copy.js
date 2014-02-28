@@ -35,7 +35,7 @@ describe('copy field', function() {
                 }
             };
             field = SugarTest.createField('base', 'copy_from_master', 'copy', 'edit', fieldDef, undefined, model);
-            sinon.stub(field, '_loadTemplate', function() {
+            sinon.collection.stub(field, '_loadTemplate', function() {
                 this.template = function() {
                     return '{{#if def.sync}}<label><input type="checkbox"{{#if value}} checked{{/if}}/>{{label}}</label>{{else}}<button type="button" class="btn">{{label}}</button>{{/if}}';
                 };
@@ -47,7 +47,8 @@ describe('copy field', function() {
             app.view.reset();
             Handlebars.templates = {};
             model = null;
-            field._loadTemplate.restore();
+            sinon.collection.restore();
+            field.dispose();
             field = null;
         });
 
@@ -191,6 +192,33 @@ describe('copy field', function() {
 
         it('should return null on unformat', function() {
             expect(field.unformat()).toEqual(null);
+        });
+
+        it('should be able to default to `false` when using sync setup', function() {
+
+            field.dispose();
+
+            var prev = model.clone();
+
+            var fieldDef = {
+                'default': false,
+                mapping: {
+                    'address_street': 'name',
+                    'float': 'address_street',
+                    'int': 'float',
+                    'address_postalcode': 'int',
+                    'subject': 'address_postalcode',
+                    'description': 'subject'
+                }
+            };
+            field = SugarTest.createField('base', 'copy_from_master', 'copy', 'edit', fieldDef, undefined, model);
+            field.render();
+
+            _.each(field.def.mapping, function(target, source) {
+                expect(field.model.get(target)).toEqual(prev.get(target));
+            });
+
+            expect(field.$('input[type=checkbox]').attr('checked')).toBeFalsy();
         });
 
         describe('hasAccess', function() {
