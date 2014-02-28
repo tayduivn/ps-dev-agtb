@@ -55,10 +55,10 @@
         if (!isCollapsed) {
             //check if account is linked with a D-U-N-S
             if (this.duns_num) {
-                this.getDNBFamilyTree(this.duns_num);
+                this.getDNBFamilyTree(this.duns_num, 'LNK_FF');
             } else if (!_.isUndefined(app.controller.context.get('dnb_temp_duns_num'))) {
                 //check if D-U-N-S is set in context by refresh dashlet
-                this.getDNBFamilyTree(app.controller.context.get('dnb_temp_duns_num'));
+                this.getDNBFamilyTree(app.controller.context.get('dnb_temp_duns_num'), 'LNK_FF');
             } else {
                 this.template = app.template.get(this.name + '.dnb-no-duns');
                 if (!this.disposed) {
@@ -88,8 +88,9 @@
         };
         //check if cache has this data already
         var cacheKey = 'dnb:familytree:' + ftParams.duns_num + ':' + ftParams.prod_code;
-        if (app.cache.get(cacheKey)) {
-            this.renderFamilyTree.call(self, app.cache.get(cacheKey));
+        var cacheContent = app.cache.get(cacheKey);
+        if (cacheContent) {
+            this.renderFamilyTree.call(self, cacheContent);
         } else {
             var dnbFamilyTreeURL = app.api.buildURL('connector/dnb/familytree', '', {},{});
             var resultData = {'product': null, 'errmsg': null};
@@ -208,7 +209,7 @@
                 self.$('#dnb-family-tree').addClass('jstree-sugar');
                 self.$('#dnb-family-tree > ul').addClass('list');
                 self.$('#dnb-family-tree > ul > li > a').addClass('jstree-clicked');
-            }).bind('select_node.jstree', function(e, data) {
+            }).bind('select_node.jstree', function (e, data) {
                 // do stuff when a node is selected
                 if (data.rslt.e.target.getAttribute('href')) {
                     var duns_num = data.rslt.obj.attr('duns');
