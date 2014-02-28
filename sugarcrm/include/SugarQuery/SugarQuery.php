@@ -124,6 +124,12 @@ class SugarQuery
      */
     public $customJoined = false;
 
+
+    public function __construct()
+    {
+        $this->select = new SugarQuery_Builder_Select($this, array());
+    }
+
     /**
      * Build the select object
      *
@@ -571,11 +577,6 @@ class SugarQuery
      */
     public function orderBy($column, $direction = 'DESC')
     {
-        if(!empty($this->select)) {
-            $this->select->addField($column);
-        } else {
-            $this->select($column);
-        }
         $orderBy = new SugarQuery_Builder_Orderby($this, $direction);
         $orderBy->addField($column);
         $this->order_by[] = $orderBy;

@@ -42,6 +42,7 @@ class SugarQuery_Builder_Field_Orderby extends SugarQuery_Builder_Field
                     $table = $this->standardTable;
                 }
                 $this->query->orderBy("{$table}.{$field}", $this->direction);
+                $this->query->select->addField("{$table}.{$field}", array('alias'=>"{$table}__{$field}"));                
             }
             $this->markNonDb();
         }
@@ -51,7 +52,7 @@ class SugarQuery_Builder_Field_Orderby extends SugarQuery_Builder_Field
             $this->query->orderBy("{$jta}.{$fieldToOrder}", $this->direction);
             if (!empty($jta)) {
                 $this->query->orderBy("{$jta}.{$fieldToOrder}", $this->direction);
-                $this->query->select->addField("{$jta}.{$fieldToOrder}");
+                $this->query->select->addField("{$jta}.{$fieldToOrder}", array('alias'=>"{$this->def['table']}__{$fieldToOrder}"));
             }
             $this->markNonDb();
         } elseif(!empty($this->def['rname']) && !empty($this->def['link'])) {
@@ -59,9 +60,11 @@ class SugarQuery_Builder_Field_Orderby extends SugarQuery_Builder_Field
             $fieldToOrder = $this->def['rname'];
             if (!empty($jta)) {
                 $this->query->orderBy("{$jta}.{$fieldToOrder}", $this->direction);
-                $this->query->select->addField("{$jta}.{$fieldToOrder}");
+                $this->query->select->addField("{$jta}.{$fieldToOrder}", array('alias' => "{$this->def['link']}__{$fieldToOrder}"));
             }
             $this->markNonDb();
+        } else {
+            $this->query->select->addField("{$this->table}.{$this->field}", array('alias' => "{$this->table}__{$this->field}"));
         }
         $this->checkCustomField();
     }
