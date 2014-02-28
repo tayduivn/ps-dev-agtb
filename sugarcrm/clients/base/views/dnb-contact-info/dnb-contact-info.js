@@ -657,7 +657,7 @@
      * @return {String} masked phone
      */
     phoneMask: function(phone) {
-        var match = phone.match(/([1-9]{2})(.*)([1-9]{2})/);
+        var match = phone.match(/([0-9]{2})(.*)([0-9]{2})/);
         return match[1] + match[2].replace(/./g, 'x') + match[3];
     }
 })

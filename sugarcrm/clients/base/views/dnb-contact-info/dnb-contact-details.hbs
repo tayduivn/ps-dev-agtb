@@ -45,10 +45,10 @@
                                         <div class="txt importData"> {{email}} </div>
                                     </li>
                                 {{/if}}
-                                {{#if phone}}
+                                {{#if phone_work}}
                                     <li>
                                         <div class="dnb-company-label">{{str "LBL_DNB_CONTACT_PHONE"}}</div>
-                                        <div class="txt importData"> {{phone}} </div>
+                                        <div class="txt importData"> {{phone_work}} </div>
                                     </li>
                                 {{/if}}
                                 {{#if department}}
@@ -137,8 +137,8 @@
         {{/with}}
     {{else}}
         <aside class='create-no-data'>
-            {{#if errmsg}}
-                <em>{{errmsg}}</em>
+            {{#if dnbCntctDet.errmsg}}
+                <em>{{dnbCntctDet.errmsg}}</em>
             {{else}}
                 <em>{{str "LBL_DNB_NO_DATA"}}</em>
             {{/if}}
