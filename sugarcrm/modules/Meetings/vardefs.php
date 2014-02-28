@@ -46,7 +46,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
   ),
   //bug 39559 
   'set_accept_links' => array (
-    'name' => 'accept_status',
+    'name' => 'set_accept_links',
     'vname' => 'LBL_ACCEPT_LINK',
     'type' => 'varchar',
     'dbType' => 'varchar',

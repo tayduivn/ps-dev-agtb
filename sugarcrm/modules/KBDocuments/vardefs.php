@@ -54,7 +54,6 @@ $dictionary['KBDocument'] = array(
 'name' =>
 	array (
 	'name' => 'name',
-	'rname' => 'name',
 	'vname' => 'LBL_NAME',
 	'type' => 'varchar',
 	'fields' => array('kbdocument_name'),
@@ -67,7 +66,6 @@ $dictionary['KBDocument'] = array(
     'body' =>
         array(
             'name' => 'body',
-            'rname' => 'body',
             'vname' => 'LBL_KBDOC_BODY',
             'type' => 'html',
             'default'=> '',

@@ -161,7 +161,6 @@ $dictionary['User'] = array(
         ) ,
         'full_name' => array(
             'name' => 'full_name',
-            'rname' => 'full_name',
             'vname' => 'LBL_NAME',
             'type' => 'fullname',
             'fields' => array('first_name', 'last_name'),
@@ -177,7 +176,6 @@ $dictionary['User'] = array(
         ) ,
         'name' => array(
             'name' => 'name',
-            'rname' => 'name',
             'vname' => 'LBL_NAME',
             'type' => 'fullname',
             'fields' => array('first_name', 'last_name'),
@@ -959,7 +957,7 @@ $dictionary['User'] = array(
   		       'lhs_module'=> 'Users',
   		       'lhs_table'=> 'users',
   		       'lhs_key' => 'id',
-  		       'rhs_module'=> 'UserSignature',
+  		       'rhs_module'=> 'UserSignatures',
   		       'rhs_table'=> 'users_signatures',
   		       'rhs_key' => 'user_id',
   		       'relationship_type'=>'one-to-many'

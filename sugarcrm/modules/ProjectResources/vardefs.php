@@ -72,21 +72,21 @@ $dictionary['ProjectResource'] = array (
 			'dbType' => 'id',
 			'comment' => 'User who created record'
 		),
-  		array (
+  		'project_id' => array (
     		'name' => 'project_id',
     		'vname' => 'LBL_PROJECT_ID',
     		'reportable'=>false,
     		'dbtype' => 'id',
     		'type' => 'id',
 		),
-  		array (
+  		'resource_id' => array (
     		'name' => 'resource_id',
     		'vname' => 'LBL_RESOURCE_ID',
     		'reportable'=>false,
     		'dbtype' => 'id',
     		'type' => 'id',
 		),
-  		array (
+  		'resource_type' => array (
     		'name' => 'resource_type',
     		'vname' => 'LBL_RESOURCE_TYPE',
     		'reportable'=>false,

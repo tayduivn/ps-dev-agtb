@@ -216,7 +216,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   ),
   //bug 39559 
   'set_accept_links' => array (
-    'name' => 'accept_status',
+    'name' => 'set_accept_links',
     'vname' => 'LBL_ACCEPT_LINK',
     'dbType' => 'varchar',
     'type' => 'varchar',
