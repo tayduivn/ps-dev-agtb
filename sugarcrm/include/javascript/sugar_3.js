@@ -1327,11 +1327,11 @@ function validate_form(formname, startsWith){
                                 case 'callback' :
                                     if (typeof validate[formname][i][callbackIndex] == 'function')
                                     {
-                                        var result = validate[formname][i][callbackIndex](formname, validate[formname][i][nameIndex]);
+                                        var result = validate[formname][i][callbackIndex](formname, validate[formname][i][nameIndex], i);
                                         if (result == false)
                                         {
                                             isError = true;
-                                            add_error_style(formname, validate[formname][i][nameIndex], requiredTxt + " " +	validate[formname][i][msgIndex]);
+                                            add_error_style(formname, validate[formname][i][nameIndex], validate[formname][i][msgIndex]);
                                         }
                                     }
                                     break;

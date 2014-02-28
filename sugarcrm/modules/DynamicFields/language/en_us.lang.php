@@ -92,6 +92,7 @@ $mod_strings = array (
     'ERR_RESERVED_FIELD_NAME' => "Reserved Keyword",
 	'ERR_SELECT_FIELD_TYPE' => 'Please Select a Field Type',
 	'ERR_FIELD_NAME_ALREADY_EXISTS' => 'Field Name already exists',
+    'ERR_FIELD_NAME_NON_DB_CHARS' => 'Field name should contain only the following characters: a-zA-Z_',
     'ERR_NO_MODULE_INCLUDED' => 'No Module Included Could Not Save',
     'LBL_BTN_ADD' => 'Add',
     'LBL_BTN_EDIT' => 'Edit',
