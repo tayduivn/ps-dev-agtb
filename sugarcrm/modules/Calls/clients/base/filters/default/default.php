@@ -11,18 +11,13 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Campaigns']['base']['filter']['default'] = array(
+$viewdefs['Calls']['base']['filter']['default'] = array(
     'default_filter' => 'all_records',
     'fields' => array(
         'name' => array(),
         'status' => array(),
-        'campaign_type' => array(),
-        'budget' => array(),
-        'actual_cost' => array(),
-        'expected_cost' => array(),
-        'expected_revenue' => array(),
-        'start_date' => array(),
-        'end_date' => array(),
+        'date_start' => array(),
+        'date_end' => array(),
         'date_entered' => array(),
         'date_modified' => array(),
         'assigned_user_name' => array(),
