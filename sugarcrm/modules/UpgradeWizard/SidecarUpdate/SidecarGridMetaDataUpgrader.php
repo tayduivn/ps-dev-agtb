@@ -191,56 +191,58 @@ END;
             
             // Necessary for setting the proper field array types
             $maxcols = isset($defs['templateMeta']['maxColumns']) ? intval($defs['templateMeta']['maxColumns']) : 2;
-            foreach ($defs[$panelKey] as $label => $row) {
-                $cols = count($row);
+            foreach ($defs[$panelKey] as $label => $rows) {
+                $cols = count($rows);
                 // Assumption here is that Portal and Wireless will never have
                 // more than 2 columns in the old setup
                 if ($cols == 1) {
                     $displayParams = array('colspan' => $maxcols);
                     // Either a string field name or an instruction
-                    if (is_string($row[0])) {
-                        if (!$this->isValidField($row[0])) {
+                    if (is_string($rows[0])) {
+                        if (!$this->isValidField($rows[0])) {
                             continue;
                         }
                         if ($maxcols == 1) {
-                            $fields[] = $row[0];
+                            $fields[] = $rows[0];
                         } else {
-                            $fields[] = array('name' => $row[0], 'displayParams' => $displayParams);
+                            $fields[] = array('name' => $rows[0], 'displayParams' => $displayParams);
                         }
                     } else {
                         // Some sort of instruction set
-                        if (is_array($row[0])) {
-                            if (isset($row[0]['field'])) {
+                        if (is_array($rows[0])) {
+                            if (isset($rows[0]['name'])) {
                                 // Old style field now maps to name
-                                $field = $row[0]['field'];
+                                $field = $rows[0]['name'];
                                 if (!$this->isValidField($field)) {
                                     continue;
                                 }
-                                unset($row[0]['field']);
+                                unset($rows[0]['name']);
                                 $fields[] = array_merge(
                                     array('name' => $field),
-                                    $row[0],
+                                    $rows[0],
                                     $maxcols == 1 ? array() : array('displayParams' => $displayParams)
                                 );
                             } else {
                                 // Fallback... take it as is
-                                $fields[] = $row[0];
+                                $fields[] = $rows[0];
                             }
                         }
                     }
                 } else {
                     // We actually have the necessary col count
-                    foreach ($row as $field) {
-                        if (is_string($field)) {
-                            if (!$this->isValidField($field)) {
-                                continue;
+                    foreach ($rows as $row) {
+                        foreach ($row as $field) {
+                            if (is_string($field)) {
+                                if (!$this->isValidField($field)) {
+                                    continue;
+                                }
+                                $fields[] = $field;
+                            } elseif (isset($field['name'])) {
+                                if (!$this->isValidField($field['name'])) {
+                                    continue;
+                                }
+                                $fields[] = $field['name'];
                             }
-                            $fields[] = $field;
-                        } elseif (isset($field['field'])) {
-                            if (!$this->isValidField($field['field'])) {
-                                continue;
-                            }
-                            $fields[] = $field['field'];
                         }
                     }
                 }
