@@ -22,8 +22,6 @@
         'click #feedback': 'feedback',
         'click #support': 'support',
         'click #help': 'help',
-        'mouseenter [rel="tooltip"]': 'triggerTooltip',
-        'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
     tagName: 'span',
     handleViewChange: function(layout, params) {
@@ -146,34 +144,5 @@
         app.tutorial.resetPrefs(prefs);
         app.tutorial.show(app.controller.context.get('layout'), {module: app.controller.context.get('module')});
     },
-
-    /**
-     * show/hide tooltip on hover, depending on button state.
-     * @param {object} e event object.
-     */
-    triggerTooltip: function(e) {
-        // only show if button is not disabled
-        if (!this.$(e.currentTarget).hasClass('disabled')) {
-            this.showTooltip(e);
-        } else {
-            this.hideTooltip(e);
-        }
-    },
-
-    /**
-     * shows the tooltip over the current target
-     * @param {object} e event object.
-     */
-    showTooltip: function(e) {
-        this.$(e.currentTarget).tooltip({container: 'body'}).tooltip('show');
-    },
-
-    /**
-     * hides the tooltip from the current target
-     * @param {object} e event object.
-     */
-    hideTooltip: function(e) {
-        this.$(e.currentTarget).tooltip('hide');
-    }
 })
 
