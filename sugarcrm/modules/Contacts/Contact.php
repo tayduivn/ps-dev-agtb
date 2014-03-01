@@ -319,17 +319,15 @@ class Contact extends Person {
 
 	}
 
-	function fill_in_additional_list_fields() {
-		parent::fill_in_additional_list_fields();
-		$this->_create_proper_name_field();
-		// cn: bug 8586 - l10n names for Contacts in Email TO: field
-		$this->email_and_name1 = "{$this->full_name} &lt;".$this->email1."&gt;";
-		$this->email_and_name2 = "{$this->full_name} &lt;".$this->email2."&gt;";
+    function fill_in_additional_list_fields()
+    {
+        parent::fill_in_additional_list_fields();
+        $this->_create_proper_name_field();
 
-		if($this->force_load_details == true) {
-			$this->fill_in_additional_detail_fields();
-		}
-	}
+        if ($this->force_load_details == true) {
+            $this->fill_in_additional_detail_fields();
+        }
+    }
 
 	function fill_in_additional_detail_fields() {
 		parent::fill_in_additional_detail_fields();
@@ -401,17 +399,22 @@ class Contact extends Person {
 		}
 	}
 
-	function get_list_view_data($filter_fields = array()) {
-
+    function get_list_view_data($filter_fields = array())
+    {
         $temp_array = parent::get_list_view_data();
 
-		if($filter_fields && !empty($filter_fields['sync_contact'])){
-			$this->load_relationship('user_sync');
-			$temp_array['SYNC_CONTACT'] = $this->user_sync->_relationship->relationship_exists($this, $GLOBALS['current_user']) ? 1 : 0;
-		}
+        if ($filter_fields && !empty($filter_fields['sync_contact'])) {
+            $this->load_relationship('user_sync');
+            $temp_array['SYNC_CONTACT'] = $this->user_sync->_relationship->relationship_exists(
+                $this,
+                $GLOBALS['current_user']
+            ) ? 1 : 0;
+        }
 
-		return $temp_array;
-	}
+        $temp_array['EMAIL_AND_NAME1'] = "{$this->full_name} &lt;" . $temp_array['EMAIL1'] . "&gt;";
+
+        return $temp_array;
+    }
 
 	/**
 		builds a generic search based on the query string using or
