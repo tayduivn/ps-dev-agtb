@@ -21,6 +21,6 @@
             document.cookie = 'sugar_mobile=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
         }
         // navigate to the same route of mobile site
-        window.location = app.utils.buildUrl('mobile') + window.location.hash;
+        window.location = app.utils.buildUrl('mobile/') + window.location.hash;
     }
 })
