@@ -350,6 +350,12 @@ class SugarACL
                 break;
             }
         }
+
+        // Mass Update action should be accessible only if Edit is accessible
+        if (isset($access['edit']) && !$access['edit']) {
+            $access['massupdate'] = false;
+        }
+
         return $access;
     }
 }

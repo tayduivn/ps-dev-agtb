@@ -192,6 +192,52 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
         SugarACL::setACL('Accounts', array($rejectacl));
         $this->assertFalse($acct->ACLAccess('edit'));
     }
+
+    /**
+     * @param array   $access_list
+     * @param boolean $expected
+     *
+     * @dataProvider massUpdateProvider
+     * @covers SugarACL::getUserAccess
+     */
+    public function testMassUpdateDependsOnEdit(array $access_list, $expected)
+    {
+        $acl = new SugarACL();
+        $access = $acl->getUserAccess('Accounts', $access_list);
+        $this->assertEquals($expected, $access['massupdate'], 'MassUpdate access is incorrect');
+    }
+
+    public static function massUpdateProvider()
+    {
+        return array(
+            array(
+                array(
+                    'massupdate' => false,
+                ),
+                false,
+            ),
+            array(
+                array(
+                    'massupdate' => true,
+                ),
+                true,
+            ),
+            array(
+                array(
+                    'massupdate' => true,
+                    'edit' => true,
+                ),
+                true,
+            ),
+            array(
+                array(
+                    'massupdate' => true,
+                    'edit' => false,
+                ),
+                false,
+            ),
+        );
+    }
 }
 
 class MockSugarBeanACL extends SugarBean
