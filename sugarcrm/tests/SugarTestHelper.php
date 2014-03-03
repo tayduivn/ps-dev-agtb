@@ -135,6 +135,8 @@ require_once 'SugarTestWebLogicHookUtilities.php';
 require_once 'SugarTestRelationshipUtilities.php';
 require_once 'SugarTestSugarEmailAddressUtilities.php';
 require_once 'SugarTestCaseUtilities.php';
+require_once 'SugarTestUserIdentitiesUtilities.php';
+require_once 'SugarTestTagUtilities.php';
 require_once 'SugarTestDatabaseMock.php';
 
 // custom helper support

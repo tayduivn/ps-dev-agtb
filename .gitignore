@@ -24,7 +24,6 @@ sugarcrm/custom/include/
 sugarcrm/custom/modules/
 sugarcrm/custom/Extension/
 sugarcrm/custom/themes/
-tags
 build/rome/MAMP
 atlassian-ide-plugin.xml
 sugarcrm/node_modules

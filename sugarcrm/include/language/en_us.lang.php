@@ -107,6 +107,8 @@ $app_list_strings = array (
     'UserSignatures' => 'User Signatures',
     'Shippers' => 'Shipping Providers',
     'Styleguide' => 'Styleguide',
+    'UserIdentities' => 'User Identities',
+    'Tags' => 'Tags',
   ),
 
     'moduleIconList' =>

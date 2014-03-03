@@ -371,6 +371,7 @@
 
     &[data-type="language"],
     &[data-type="enum"],
+    &[data-type="tags"],
     &[data-type="relate"] {
       .normal > span {
         white-space: nowrap;
@@ -402,6 +403,12 @@
         margin-top: 0;
         position: relative;
         top: 28px;
+      }
+    }
+    &[data-type="tags"] {
+      min-height: 50px;
+      .record-edit-link-wrapper {
+        top: 20px;
       }
     }
 
