@@ -57,7 +57,6 @@ $viewdefs['Bugs']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_ASSIGNED_TO_NAME',
           'enabled' => true,
           'default' => true,
-          'sortable' => false,
         ),
       ),
     ),

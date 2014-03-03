@@ -71,7 +71,6 @@ $viewdefs['Opportunities']['base']['view']['subpanel-for-accounts'] = array(
           'label' => 'LBL_LIST_ASSIGNED_TO_NAME',
           'enabled' => true,
           'default' => true,
-          'sortable' => false,
         ),
       ),
     ),

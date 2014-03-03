@@ -43,14 +43,12 @@ $viewdefs['Contacts']['base']['view']['subpanel-for-cases'] = array(
           'label' => 'LBL_LIST_ACCOUNT_NAME',
           'enabled' => true,
           'default' => true,
-          'sortable' => false,
         ),
         array(
           'name' => 'email',
           'label' => 'LBL_LIST_EMAIL',
           'enabled' => true,
           'default' => true,
-          'sortable' => false,
         ),
         array(
           'name' => 'phone_work',

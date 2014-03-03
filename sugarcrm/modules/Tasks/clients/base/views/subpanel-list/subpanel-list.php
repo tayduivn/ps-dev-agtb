@@ -58,7 +58,6 @@ $viewdefs['Tasks']['base']['view']['subpanel-list'] = array(
           'id' => 'ASSIGNED_USER_ID',
           'enabled' => true,
           'default' => true,
-          'sortable' => false,
         ),
       ),
     ),
