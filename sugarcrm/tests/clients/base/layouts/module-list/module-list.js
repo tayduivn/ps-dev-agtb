@@ -83,4 +83,29 @@ describe('Module List Layout', function() {
             expect(layout.isActiveModule(moduleName)).toBeTruthy();
         });
     });
+
+    it('should set catalog of correct module', function() {
+        var accountsSpy = sinon.spy(),
+            callsSpy = sinon.spy(),
+            tempComp = layout._components,
+            tempCat = layout._catalog;
+
+        layout._components = { bypass: 'check' };
+        layout._catalog = {
+            Accounts: {long: {addClass: accountsSpy}},
+            Calls: {long: {addClass: callsSpy}}
+        };
+
+        sinon.collection.stub(layout, 'toggleModule', function(){});
+        sinon.collection.stub(app.metadata, 'getTabMappedModule', function(){return 'Calls';});
+
+        layout._setActiveModule('Accounts');
+
+        expect(accountsSpy).not.toHaveBeenCalled();
+        expect(callsSpy).toHaveBeenCalled();
+
+        sinon.collection.restore();
+        layout._components = tempComp;
+        layout._catalog = tempCat;
+    })
 });
