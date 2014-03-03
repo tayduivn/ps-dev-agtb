@@ -8,7 +8,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
  * Dashablelist is a dashlet representation of a module list view. Users can
@@ -22,15 +22,8 @@
  *                              the dashlet name that the user sees.
  * {Array}   display_columns    The field names of the columns to include in
  *                              the list view.
- * {String}  my_items           Allows for limiting results to only records
- *                              assigned to the user. If '0' or undefined, then
- *                              all records may be returned. If '1', then
- *                              records assigned to the user will be returned.
- * {String}  favorites          Allows for limiting the results to only records
- *                              the user has favorited. If '0' or undefined,
- *                              then all records may be returned. If '1', then
- *                              records the user has favorited will be
- *                              returned.
+ * {String}  filter_id          Filter to be applied, defaults to:
+ *                              'assigned_to_me'.
  * {Integer} limit              The number of records to retrieve for the list
  *                              view.
  * {Integer} auto_refresh       How frequently (in minutes) that the dashlet
@@ -47,8 +40,7 @@
  *         'phone_office',
  *         'billing_address_country',
  *     ),
- *     'my_items'        => '0',
- *     'favorites'       => '1',
+ *     'filter_id'       => 'assigned_to_me',
  *     'limit'           => 15,
  *     'auto_refresh'    => 5,
  * ),
@@ -79,8 +71,7 @@
      */
     _defaultSettings: {
         limit: 5,
-        my_items: '1',
-        favorites: '0',
+        filter_id: 'assigned_to_me',
         intelligent: '0'
     },
 
@@ -187,10 +178,16 @@
         if (this.meta.config) {
             // keep the display_columns and label fields in sync with the selected module when configuring a dashlet
             this.settings.on('change:module', function(model, moduleName) {
-                var label = (model.get('my_items') == '1') ? 'TPL_DASHLET_MY_MODULE' : 'LBL_MODULE_NAME';
+                var label = (model.get('filter_id') === 'assigned_to_me') ? 'TPL_DASHLET_MY_MODULE' : 'LBL_MODULE_NAME';
                 model.set('label', app.lang.get(label, moduleName, {
                     module: app.lang.getAppListStrings('moduleList')[moduleName]
                 }));
+
+                // Re-initialize the filterpanel with the new module.
+                this.dashModel.set('module', moduleName),
+                this.dashModel.set('filter_id', 'assigned_to_me');
+                this.layout.trigger('dashlet:filter:reinitialize');
+
                 this._updateDisplayColumns();
                 this.updateLinkedFields(moduleName);
             }, this);
@@ -231,8 +228,36 @@
         // the pivot point for the various dashlet paths
         if (this.meta.config) {
             this._configureDashlet();
+            this.listenTo(this.layout, 'init', this._addFilterComponent);
+            this.listenTo(this.layout.context, 'filter:add', this.updateDashletFilterAndSave);
+            this.layout.before('dashletconfig:save', function() {
+                this.saveDashletFilter();
+                // NOTE: This prevents the drawer from closing prematurely.
+                return false;
+            }, null, this);
+
         } else if (this.moduleIsAvailable) {
-            this._displayDashlet();
+            var filterId = this.settings.get('filter_id');
+            if (!filterId || this.meta.preview) {
+                this._displayDashlet();
+                return;
+            }
+
+            var filterDef = this._getFilterDefFromMeta(filterId);
+            if (!filterDef) {
+                this._fetchCustomFilter(filterId, {
+                    success: _.bind(function(model) {
+                        var filterDef = model.get('filter_definition');
+                        this._displayDashlet(filterDef);
+                    }, this),
+                    error: _.bind(function(err) {
+                        this._displayDashlet();
+                    }, this)
+                });
+                return;
+            }
+
+            this._displayDashlet(filterDef);
         }
         this.metaFields = this.meta.panels && _.first(this.meta.panels).fields || [];
     },
@@ -258,11 +283,67 @@
     },
 
     /**
+     * This function is invoked by the `dashletconfig:save` event. If the dashlet
+     * we are saving is a dashable list, it initiates the save process for a new
+     * filter on the appropriate module's list view, otherwise, it takes the
+     * `currentFilterId` stored on the context, and saves it on the dashlet.
+     *
+     * @param {Bean} model The dashlet model.
+     */
+    saveDashletFilter: function() {
+        // Accessing the dashableconfiguration context.
+        var context = this.layout.context;
+
+        if (context.editingFilter) {
+            // We are editing/creating a new filter
+            if (!context.editingFilter.get('name')) {
+                context.editingFilter.set('name', app.lang.get('LBL_DASHLET') +
+                    ': ' + this.settings.get('label'));
+            }
+            // Triggers the save on `filter-rows` which then triggers
+            // `filter:add` which then calls `updateDashletFilterAndSave`
+            context.trigger('filter:create:save');
+        } else {
+            // We are saving a dashlet with a predefined filter
+            var filterId = context.get('currentFilterId'),
+                obj = {id: filterId};
+            this.updateDashletFilterAndSave(obj);
+        }
+    },
+
+    /**
+     * This function is invoked by the `filter:add` event. It saves the
+     * filter ID on the dashlet model prior to saving it, for later reference.
+     *
+     * @param {Bean} filterModel The saved filter model.
+     */
+    updateDashletFilterAndSave: function(filterModel) {
+        // We need to save the filter ID on the dashlet model before saving
+        // the dashlet.
+        var id = filterModel.id || filterModel.get('id');
+        this.settings.set('filter_id', id);
+
+        var dashletModel = this.layout.context.get('model'),
+            componentType = dashletModel.get('componentType') || 'view';
+
+        // Adding a new dashlet requires componentType to be set on the model.
+        if (!dashletModel.get('componentType')) {
+            dashletModel.set('componentType', componentType);
+        }
+
+        app.drawer.close(dashletModel);
+        // The filter collection is not shared amongst views and therefore
+        // changes to this collection on different contexts (list views and
+        // dashlets) need to be kept in sync.
+        app.events.trigger('dashlet:filter:save', dashletModel.get('module'));
+    },
+
+    /**
      * Certain dashlet settings can be defaulted.
      *
      * Builds the available module cache by way of the
      * {@link BaseDashablelistView#_setDefaultModule} call. The module is set
-     * after "my_items" because the value of "my_items" could impact the value
+     * after "filter_id" because the value of "filter_id" could impact the value
      * of "label" when the label is set in response to the module change while
      * in configuration mode (see the "module:change" listener in
      * {@link BaseDashablelistView#initDashlet}).
@@ -285,11 +366,8 @@
         if (!this.settings.get('limit')) {
             this.settings.set('limit', this._defaultSettings.limit);
         }
-        if (!this.settings.get('my_items')) {
-            this.settings.set('my_items', this._defaultSettings.my_items);
-        }
-        if (!this.settings.get('favorites')) {
-            this.settings.set('favorites', this._defaultSettings.favorites);
+        if (!this.settings.get('filter_id')) {
+            this.settings.set('filter_id', this._defaultSettings.filter_id);
         }
         this._setDefaultModule();
         if (!this.settings.get('label')) {
@@ -414,6 +492,73 @@
     },
 
     /**
+     * This function adds the `dashablelist-filter` component to the layout
+     * (dashletconfiguration), if the component doesn't already exist.
+     */
+    _addFilterComponent: function() {
+        var filterComponent = this.layout.getComponent('dashablelist-filter');
+        if (filterComponent) {
+            return;
+        }
+
+        this.layout._addComponentsFromDef([{
+            layout: 'dashablelist-filter'
+        }]);
+    },
+
+    /**
+     * Acquires predefined filters that may exist in metadata, for a given
+     * module.
+     *
+     * @param {String} module The module to fetch predefined filters from.
+     * @return {Array} The list of predefined filter objects.
+     * @private
+     */
+    _getPreDefinedFilters: function(module) {
+        var moduleMeta = app.utils.deepCopy(app.metadata.getModule(module));
+
+        if (_.isObject(moduleMeta)) {
+            return _.compact(_.flatten(_.pluck(_.compact(_.pluck(moduleMeta.filters, 'meta')), 'filters')));
+        }
+    },
+
+    /**
+     * Fetches the appropriate filter definition from the module metadata,
+     * for a given filter ID.
+     *
+     * @param {String} id The ID of the filter.
+     * @return {Array} The filter definition array.
+     * @private
+     */
+    _getFilterDefFromMeta: function(id) {
+        if (!id) {
+            return;
+        }
+
+        var module = this.settings.get('module'),
+            filtersFromMeta = this._getPreDefinedFilters(module),
+            filter = _.find(filtersFromMeta, function(filter) {
+                return filter.id === id;
+            }, this);
+
+        if (filter) {
+            return filter.filter_definition;
+        }
+    },
+
+    /**
+     * Fetches a Filters bean record from the server using the supplied ID.
+     *
+     * @param {String} id The ID of the filter to fetch.
+     * @param {Function} callbacks Callback functions to execute after fetch.
+     * @private
+     */
+    _fetchCustomFilter: function(id, callbacks) {
+        var filterModel = app.data.createBean('Filters', {id: id});
+        filterModel.fetch(callbacks);
+    },
+
+    /**
      * Gets all of the modules the current user can see.
      *
      * This is used for populating the module select and list view columns
@@ -477,12 +622,17 @@
     /**
      * Perform any necessary setup before displaying the dashlet.
      *
+     * @param {Array} [filterDef] The filter definition array.
      * @private
      */
-    _displayDashlet: function() {
+    _displayDashlet: function(filterDef) {
         this.context.set('skipFetch', false);
         this.context.set('limit', this.settings.get('limit'));
-        this._intializeFilter();
+
+        if (filterDef) {
+            this._applyFilterDef(filterDef);
+            this.context.reloadData({'recursive': false});
+        }
         // get the columns that are to be displayed and update the panel metadata
         var columns = this._getColumnsForDisplay();
         this.meta.panels = [{fields: columns}];
@@ -490,25 +640,16 @@
     },
 
     /**
-     * Sets the filter definition on the collection for retrieving the records
+     * Sets the filter definition on the context collection to retrieve records
      * for the list view.
      *
-     * A filter will be added if the dashlet is configured to only return
-     * records assigned to the user or favorited by the user. The filters will
-     * be collapsed with an `$and` clause if both filter options are on. Custom
-     * filters are not supported.
-     *
+     * @param {Array} filterDef The filter definition array.
      * @private
      */
-    _intializeFilter: function() {
-        var filter = [];
-        if (this.settings.get('my_items') === '1') {
-            filter.push({'$owner': ''});
+    _applyFilterDef: function(filterDef) {
+        if (filterDef) {
+            this.context.get('collection').filterDef = filterDef;
         }
-        if (this.settings.get('favorites') === '1') {
-            filter.push({'$favorite': ''});
-        }
-        this.context.get('collection').filterDef = (filter.length > 1) ? {'$and': filter} : filter;
     },
 
     /**
@@ -563,7 +704,7 @@
 
     /**
      * Cancels the automatic refresh of the dashlet.
-     * 
+     *
      * @private
      */
     _stopAutoRefresh: function() {
@@ -587,7 +728,7 @@
 
     /**
      * Gets the fields metadata from a particular view's metadata.
-     * 
+     *
      * @param {Object} meta The view's metadata.
      * @return {Object[]} The fields metadata or an empty array.
      */

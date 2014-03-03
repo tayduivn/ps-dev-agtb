@@ -92,13 +92,6 @@ describe("BaseFilterFilterDropdownView", function () {
             expect(view.filterDropdownEnabled).toBeFalsy();
         });
 
-        it('should disable filter dropdown when a BWC module is selected', function(){
-            sinonSandbox.stub(app.metadata, 'getModule', function() { return {isBwcEnabled: true}; });
-            expect(view.filterDropdownEnabled).toBeTruthy();
-            view.layout.trigger("filter:change:module", "TEST_MODULE", "test_id");
-            expect(view.filterDropdownEnabled).toBeFalsy();
-        });
-
     });
 
     describe('filterList', function() {

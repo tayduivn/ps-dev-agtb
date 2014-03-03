@@ -1,29 +1,15 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
 ({
     /**
      * Layout for filtering a collection.
@@ -49,7 +35,7 @@
         filterLayout.loadedModules = filterLayout.loadedModules || {};
         app.view.Layout.prototype.initialize.call(this, opts);
 
-        this.layoutType = this.context.get('layout') || this.context.get('layoutName') || app.controller.context.get('layout');
+        this.layoutType = app.utils.deepCopy(this.options.meta.layoutType) || this.context.get('layout') || this.context.get('layoutName') || app.controller.context.get('layout');
 
         this.aclToCheck = (this.layoutType === 'record')? 'view' : 'list';
         this.filters = app.data.createBeanCollection('Filters');
@@ -92,12 +78,12 @@
                 this.clearLastFilter(this.layout.currentModule, this.layoutType);
                 this.layout.trigger("filter:reinitialize");
             }
-            this.layout.editingFilter = null;
+            this.context.editingFilter = null;
             this.layout.trigger('filter:create:close');
         }, this);
 
         this.on('filter:create:open', function(filterModel) {
-            this.layout.editingFilter = filterModel;
+            this.context.editingFilter = filterModel;
             this.layout.trigger('filter:create:open', filterModel);
         }, this);
 
@@ -117,24 +103,47 @@
         this.layout.on('filterpanel:toggle:button', this.toggleFilterButton, this);
 
         //When a filter is saved, update the cache and set the filter to be the currently used filter
-        this.layout.on('filter:add', this.addFilter, this);
+        this.context.on('filter:add', this.addFilter, this);
 
         // When a filter is deleted, update the cache and set the default filter
         // to be the currently used filter.
         this.layout.on('filter:remove', this.removeFilter, this);
 
         this.layout.on('filter:reinitialize', function() {
-            this.initializeFilterState(this.layout.currentModule, this.layout.currentLink);
+            var currentFilter = this.context.get('currentFilterId');
+            this.initializeFilterState(this.layout.currentModule, this.layout.currentLink, currentFilter);
         }, this);
+
+        this.listenTo(app.events, 'dashlet:filter:save', this.refreshDropdown);
     },
+
+    /**
+     * This function refreshes the list of filters in the filter dropdown, and
+     * is invoked when a filter is saved on a dashlet (`dashlet:filter:save`).
+     * It triggers a `filter:reinitialize` event and resets the cached
+     * module in `loadedModules` on the filter layout if the dashlet module
+     * matches the `currentModule` on the filter layout.
+     *
+     * @param {String} module
+     */
+    refreshDropdown: function(module) {
+        if (module === this.layout.currentModule) {
+            var filterLayout = app.view._getController({type:'layout', name:'filter'});
+            filterLayout.loadedModules[module] = false;
+            this.layout.trigger('filter:reinitialize');
+        }
+    },
+
     /**
      * handles filter removal
      * @param model
      */
-    removeFilter: function(model){
+    removeFilter: function(model) {
         this.filters.remove(model);
+        this.context.set('currentFilterId', null);
         this.clearFilterEditState();
-        app.user.lastState.set(app.user.lastState.key("saved-" + this.layout.currentModule, this), this.filters.toJSON());
+        this.clearLastFilter(this.layout.currentModule, this.layoutType);
+        app.user.lastState.set(app.user.lastState.key('saved-' + this.layout.currentModule, this), this.filters.toJSON());
         this.layout.trigger('filter:reinitialize');
     },
     /**
@@ -146,8 +155,11 @@
      * @returns {*}
      */
     setLastFilter: function(filterModule, layoutName, value) {
-        var key = app.user.lastState.key("last-" + filterModule + "-" + layoutName, this);
-        return app.user.lastState.set(key, value);
+        var filterOptions = this.context.get('filterOptions') || {};
+        if (filterOptions.stickiness !== false) {
+            var key = app.user.lastState.key('last-' + filterModule + '-' + layoutName, this);
+            return app.user.lastState.set(key, value);
+        }
     },
     /**
      * gets last filter from cache
@@ -157,8 +169,13 @@
      * @returns {*}
      */
     getLastFilter: function(filterModule, layoutName) {
-        var key = app.user.lastState.key("last-" + filterModule + "-" + layoutName, this);
-        return app.user.lastState.get(key);
+        var filterOptions = this.context.get('filterOptions') || {};
+        if (filterOptions.stickiness !== false) {
+            var key = app.user.lastState.key('last-' + filterModule + '-' + layoutName, this),
+            value = app.user.lastState.get(key);
+            this.context.set('currentFilterId', value);
+            return value;
+        }
     },
     /**
      * clears last filter from cache
@@ -168,8 +185,11 @@
      * @returns {*}
      */
     clearLastFilter:function(filterModule, layoutName) {
-        var key = app.user.lastState.key("last-" + filterModule + "-" + layoutName, this);
-        return app.user.lastState.remove(key);
+        var filterOptions = this.context.get('filterOptions') || {};
+        if (filterOptions.stickiness !== false) {
+            var key = app.user.lastState.key('last-' + filterModule + '-' + layoutName, this);
+            return app.user.lastState.remove(key);
+        }
     },
 
     /**
@@ -178,8 +198,11 @@
      * @param {Object} filter
      */
     retrieveFilterEditState: function() {
-        var key = app.user.lastState.key("edit-" + this.layout.currentModule + "-" + this.layoutType, this);
-        return app.user.lastState.get(key);
+        var filterOptions = this.context.get('filterOptions') || {};
+        if (filterOptions.stickiness !== false) {
+            var key = app.user.lastState.key('edit-' + this.layout.currentModule + '-' + this.layoutType, this);
+            return app.user.lastState.get(key);
+        }
     },
 
     /**
@@ -188,16 +211,22 @@
      * @param {Object} filter
      */
     saveFilterEditState: function(filter) {
-        var key = app.user.lastState.key("edit-" + this.layout.currentModule + "-" + this.layoutType, this);
-        app.user.lastState.set(key, filter);
+        var filterOptions = this.context.get('filterOptions') || {};
+        if (filterOptions.stickiness !== false) {
+            var key = app.user.lastState.key('edit-' + this.layout.currentModule + '-' + this.layoutType, this);
+            app.user.lastState.set(key, filter);
+        }
     },
 
     /**
      * Removes the edit state from the cache
      */
     clearFilterEditState: function() {
-        var key = app.user.lastState.key("edit-" + this.layout.currentModule + "-" + this.layoutType, this);
-        app.user.lastState.remove(key);
+        var filterOptions = this.context.get('filterOptions') || {};
+        if (filterOptions.stickiness !== false) {
+            var key = app.user.lastState.key('edit-' + this.layout.currentModule + '-' + this.layoutType, this);
+            app.user.lastState.remove(key);
+        }
     },
 
     /**
@@ -205,9 +234,11 @@
      * @param model
      */
     addFilter: function(model){
+        var id = model.get('id');
         this.filters.add(model, { merge: true });
-        app.user.lastState.set(app.user.lastState.key("saved-" + this.layout.currentModule, this), this.filters.toJSON());
-        this.setLastFilter(this.layout.currentModule, this.layoutType, model.get("id"));
+        app.user.lastState.set(app.user.lastState.key('saved-' + this.layout.currentModule, this), this.filters.toJSON());
+        this.setLastFilter(this.layout.currentModule, this.layoutType, id);
+        this.context.set('currentFilterId', id);
         this.clearFilterEditState();
         this.layout.trigger('filter:reinitialize');
     },
@@ -272,6 +303,7 @@
         if (id  && !preventCache) {
             this.setLastFilter(this.layout.currentModule, this.layoutType, id);
         }
+
         var filter, editState = this.retrieveFilterEditState();
         // Figure out if we have an edit state. This would mean user was editing the filter so we want him to retrieve
         // the filter form in the state he left it.
@@ -289,13 +321,16 @@
             filter = this.filters.get(id) || this.emptyFilter;
         }
 
-        if (filter && filter.get('filter_template') &&
+        this.context.set('currentFilterId', filter.get('id'));
+
+        // If the user selects a filter template, open the filterpanel
+        // to indicate it is ready for further editing.
+        if (filter.get('filter_template') &&
             JSON.stringify(filter.get('filter_definition')) !== JSON.stringify(filter.get('filter_template'))
         ) {
             this.trigger('filter:create:open', filter);
-        } else if (!editState) {
-            this.trigger('filter:create:close');
         }
+
         var ctxList = this.getRelevantContextList();
         var clear = false;
         //Determine if we need to clear the collections
@@ -324,6 +359,14 @@
      * @param {Object} dynamicFilterDef(optional)
      */
     applyFilter: function(query, dynamicFilterDef) {
+        // TODO: getRelevantContextList needs to be refactored to handle filterpanels in drawer layouts,
+        // as it will return the global context instead of filtering a list view within the drawer context.
+        // As a result, this flag is needed to prevent filtering on the global context.
+        var filterOptions = this.context.get('filterOptions') || {};
+        if (filterOptions.auto_apply === false) {
+            return;
+        }
+
         //If the quicksearch field is not empty, append a remove icon so the user can clear the search easily
         this._toggleClearQuickSearchIcon(!_.isEmpty(query));
         // reset the selected on filter apply
@@ -427,19 +470,18 @@
 
     /**
      * Reset the filter to the previous state
-     * @param {String} moduleName
-     * @param {String} linkName
+     * @param {String} moduleName The module name.
+     * @param {String} linkName The link module name.
+     * @param {String} lastFilter The filter ID to initialize with.
      */
-    initializeFilterState: function(moduleName, linkName) {
+    initializeFilterState: function(moduleName, linkName, lastFilter) {
         moduleName = moduleName || this.module;
-        var lastFilter = this.getLastFilter(moduleName, this.layoutType),
-            filterData;
-        if (!(this.filters.get(lastFilter)))
-            lastFilter = null;
+        lastFilter = lastFilter || this.getLastFilter(moduleName, this.layoutType);
+        var filterData;
         if (this.layoutType === 'record' && !this.showingActivities) {
             linkName = app.user.lastState.get(app.user.lastState.key("subpanels-last", this)) || linkName;
             filterData = {
-                link: lastFilter || 'all_modules',
+                link: linkName || 'all_modules',
                 filter: lastFilter || 'all_records'
             };
         } else {
@@ -536,11 +578,12 @@
 
         if (!lastFilter || (!this.filters.get(lastFilter) && lastFilter !== 'create')) {
             this.clearLastFilter(moduleName, this.layoutType);
-            this.setLastFilter(moduleName, this.layoutType, _.first(possibleFilters) || 'all_records');
+            lastFilter = _.first(possibleFilters) || 'all_records';
+            this.setLastFilter(moduleName, this.layoutType, lastFilter);
         }
         this.layout.trigger('filterpanel:change:module', moduleName);
         this.trigger('filter:render:filter');
-        this.trigger('filter:change:filter', this.getLastFilter(moduleName, this.layoutType), true);
+        this.trigger('filter:change:filter', lastFilter, true);
     },
 
     /**

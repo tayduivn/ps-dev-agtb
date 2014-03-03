@@ -1,29 +1,15 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
 ({
     /**
      * Form for creating a filter
@@ -70,7 +56,7 @@
         this.listenTo(this.layout, "filterpanel:change:module", this.handleFilterChange);
         this.listenTo(this.layout, "filter:create:open", this.openForm);
         this.listenTo(this.layout, "filter:create:close", this.render);
-        this.listenTo(this.layout, "filter:create:save", this.saveFilter);
+        this.listenTo(this.context, "filter:create:save", this.saveFilter);
         this.listenTo(this.layout, "filter:create:delete", this.confirmDelete);
     },
 
@@ -125,21 +111,21 @@
     /**
      * Save the filter.
      *
-     * @param {String} name The name of the filter.
+     * @param {String} [name] The name of the filter.
      */
     saveFilter: function(name) {
         var self = this,
             obj = {
                 filter_definition: this.buildFilterDef(true),
                 filter_template: this.buildFilterDef(),
-                name: name,
+                name: name || this.context.editingFilter.get('name'),
                 module_name: this.moduleName
             },
             message = app.lang.get('TPL_FILTER_SAVE', this.moduleName, {name: name});
 
-        this.layout.editingFilter.save(obj, {
+        this.context.editingFilter.save(obj, {
             success: function(model) {
-                self.layout.trigger('filter:add', model);
+                self.context.trigger('filter:add', model);
                 self.layout.trigger('filter:toggle:savestate', false);
             },
             showAlerts: {
@@ -168,10 +154,10 @@
      */
     deleteFilter: function() {
         var self = this,
-            name = this.layout.editingFilter.get('name'),
+            name = this.context.editingFilter.get('name'),
             message = app.lang.get('TPL_DELETE_FILTER_SUCCESS', this.moduleName, {name: name});
 
-        this.layout.editingFilter.destroy({
+        this.context.editingFilter.destroy({
             success: function(model) {
                 self.layout.trigger('filter:remove', model);
             },
@@ -349,9 +335,9 @@
      * Rerender the view with selected filter
      */
     populateFilter: function() {
-        var name = this.layout.editingFilter.get('name'),
-            filterDef = this.layout.editingFilter.get('filter_template') ||
-                this.layout.editingFilter.get('filter_definition');
+        var name = this.context.editingFilter.get('name'),
+            filterDef = this.context.editingFilter.get('filter_template') ||
+                this.context.editingFilter.get('filter_definition');
 
         this.render();
         this.layout.trigger('filter:set:name', name);
@@ -687,7 +673,10 @@
             return;
         }
         this.layout.trigger('filter:toggle:savestate', true);
-        this.layout.trigger('filter:apply', null, filterDef);
+        // Needed in order to prevent filtering a global context collection (see filter.js:applyFilter()).
+        if (this.context.get('applyFilter') !== false) {
+            this.layout.trigger('filter:apply', null, filterDef);
+        }
     }, 400),
 
     /**
@@ -699,14 +688,14 @@
      *   the {@link #builtFilderDef} with all rows.
      */
     saveFilterEditState: function(filterDef, templateDef) {
-        if (!this.layout.editingFilter) {
+        if (!this.context.editingFilter) {
             return;
         }
-        this.layout.editingFilter.set({
+        this.context.editingFilter.set({
             'filter_definition': filterDef || this.buildFilterDef(true),
             'filter_template': templateDef || this.buildFilterDef()
         });
-        var filter = this.layout.editingFilter.toJSON();
+        var filter = this.context.editingFilter.toJSON();
 
         // Make sure the filter-actions view is rendered, otherwise it will override the name with an empty name.
         if (this.layout.getComponent('filter-actions') &&

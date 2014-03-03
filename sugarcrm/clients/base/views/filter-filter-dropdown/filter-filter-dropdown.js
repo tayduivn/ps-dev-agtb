@@ -370,7 +370,7 @@
      * Handler for when the user selects a module in the filter bar.
      */
     handleModuleChange: function(linkModuleName, linkName) {
-        this.filterDropdownEnabled = (linkName !== "all_modules" && !app.metadata.getModule(linkModuleName).isBwcEnabled);
+        this.filterDropdownEnabled = (linkName !== "all_modules");
     },
 
     /**

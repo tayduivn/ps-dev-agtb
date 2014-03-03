@@ -41,6 +41,17 @@
 
     /**
      * {@inheritDoc}
+     * Binds the listener for the before `save` event.
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        this.before('save', function(model) {
+            return this.layout.triggerBefore('dashletconfig:save', model);
+        }, this);
+    },
+
+    /**
+     * {@inheritDoc}
      * Compare with the previous attributes and translated dashlet's label
      * in order to warn unsaved changes.
      *
@@ -53,7 +64,16 @@
         return !_.isEmpty(this.model.changedAttributes(previousAttributes));
     },
 
+    /**
+     * Triggers a `save` event before `app.drawer.close()` is called, in case
+     * any processing needs to be done on the model before it is saved.
+     *
+     * @return {Boolean} `false` if the `dashletconfig:save` event returns false.
+     */
     save: function() {
+        if (this.triggerBefore('save', this.model) === false) {
+            return false;
+        }
         app.drawer.close(this.model);
     },
 

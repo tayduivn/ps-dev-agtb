@@ -12,14 +12,51 @@
  */
 ({
     extendsFrom: 'TogglepanelLayout',
-    // This is set to the filter that's currently being edited.
-    editingFilter: null,
 
     /**
-     * @override
-     * @param {Object} opts
+     * @inheritDoc
+     *
+     * Certain options can be set in the filterpanel metadata:
+     *     - `auto_apply`: this will determine whether or not to apply the
+     *       filter while completing filter rows. This is used mainly because
+     *       getRelevantContextList may return the global context and will
+     *       filter its collection automatically, and sometimes this is not
+     *       desired (e.g. a drawer layout with a filterpanel embedded).
+     *
+     *     - `stickiness`: this will determine whether or not to save
+     *       properties pertaining to filters in localstorage. This is needed
+     *       for certain views that have filterpanels, do not require
+     *       stickiness and do not want to affect already-stored values in
+     *       localstorage (e.g. the filterpanel layout in dashboardconfiguration
+     *       shouldn't affect the stickiness of filters on record/list views,
+     *       so it should be set to false).
+     *
+     *     - `show_actions`: this will determine whether or not the
+     *       `delete`, `reset`, and `cancel` action buttons will be rendered on
+     *       the `filter-actions` view.
+     *
+     *     @example
+     *     <pre><code>
+     *         'layout' => array(
+     *              'type' =>'filterpanel',
+     *              'meta' => array(
+     *                  'filter_options' => array(
+     *                      'auto_apply' => false,
+     *                      'stickiness' => false,
+     *                      'show_actions' => false,
+     *                  ),
+     *              ),
+     *          ),
+     *     </code></pre>
      */
     initialize: function(opts) {
+        // The filter options default to true.
+        var defaultOptions = {
+            'auto_apply': true,
+            'stickiness': true,
+            'show_actions': true
+        };
+
         var moduleMeta = app.metadata.getModule(opts.module);
         this.disableActivityStreamToggle(opts.module, moduleMeta, opts.meta || {});
 
@@ -51,9 +88,22 @@
         }, this);
 
         this._super("initialize", [opts]);
-        // Needed to initialize this.currentModule.
-        var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey);
-        this.trigger('filterpanel:change:module', (moduleMeta.activityStreamEnabled && lastViewed === 'activitystream') ? 'Activities' : this.module);
+
+        // Set the filter that's currently being edited.
+        this.context.editingFilter = null;
+
+        // Obtain any options set in the metadata and override the defaultOptions with them
+        // to set on the context.
+        var filterOptions = _.extend(defaultOptions, this.meta.filter_options);
+        this.context.set('filterOptions', filterOptions);
+
+        // The `defaultModule` will either evaluate to the model's module (more
+        // specific, and used on dashablelist filters), or the module on the
+        // current context.
+        var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey),
+            defaultModule = this.model.get('module') || this.context.get('module');
+
+        this.trigger('filterpanel:change:module', (moduleMeta.activityStreamEnabled && lastViewed === 'activitystream') ? 'Activities' : defaultModule);
     },
 
     /**

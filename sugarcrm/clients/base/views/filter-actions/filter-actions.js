@@ -8,7 +8,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright (C) 2004-2013 SugarCRM Inc. All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 ({
     /**
@@ -36,6 +36,12 @@
     saveState: false,
 
     /**
+     * @property {Boolean} showActions Whether or not to display
+     * the filter action buttons.
+     */
+    showActions: true,
+
+    /**
      * @{inheritDoc}
      */
     initialize: function(opts) {
@@ -48,6 +54,19 @@
 
         this.listenTo(this.layout, 'filter:toggle:savestate', this.toggleSave);
         this.listenTo(this.layout, 'filter:set:name', this.setFilterName);
+        this.listenTo(this.context, 'change:filterOptions', this.render);
+        this.before('render', this.setShowActions, null, this);
+    },
+
+    /**
+     * This function sets the `showActions` object on the controller.
+     * `true` when `show_actions` is set to `true` on the `filterOptions`
+     * object on the context (originating from filterpanel metadata),
+     * `false` otherwise.
+     */
+    setShowActions: function() {
+        var filterOptions = this.context.get('filterOptions') || {};
+        this.showActions = !!filterOptions.show_actions;
     },
 
     /**
@@ -70,7 +89,7 @@
         if (_.isFunction(input.placeholder)) {
             input.placeholder();
         }
-        // We have this.layout.editingFilter if we're setting the name.
+        // We have this.context.editingFilter if we're setting the name.
         this.toggleDelete(!_.isEmpty(name));
     },
 
@@ -80,14 +99,18 @@
      * @param {Event} event The `change` event.
      */
     filterNameChanged: _.debounce(function(event) {
-        if (this.disposed) {
+        if (this.disposed || !this.context.editingFilter) {
             return;
         }
+
+        var name = this.getFilterName();
+        this.context.editingFilter.set('name', name);
         this.layout.trigger('filter:toggle:savestate', true);
+
         if (this.layout.getComponent('filter-rows')) {
             this.layout.getComponent('filter-rows').saveFilterEditState();
         }
-    }, 400),
+    }, 200),
 
     /**
      * Toggle delete button.
@@ -113,13 +136,13 @@
      * Trigger `filter:create:close` to close the filter create panel.
      */
     triggerClose: function() {
-        var id = this.layout.editingFilter.get('id');
+        var id = this.context.editingFilter.get('id');
 
         //Check the current filter definition
         var filterDef = this.layout.getComponent('filter-rows').buildFilterDef(true);
         //Apply the previous filter definition if something has changed meanwhile
-        if (!_.isEqual(this.layout.editingFilter.get('filter_definition'), filterDef)) {
-            this.layout.trigger('filter:apply', null, this.layout.editingFilter.get('filter_definition'));
+        if (!_.isEqual(this.context.editingFilter.get('filter_definition'), filterDef)) {
+            this.layout.trigger('filter:apply', null, this.context.editingFilter.get('filter_definition'));
         }
         this.layout.getComponent('filter').trigger('filter:create:close', true, id);
     },
@@ -136,7 +159,7 @@
      */
     triggerSave: function() {
         var filterName = this.getFilterName();
-        this.layout.trigger('filter:create:save', filterName);
+        this.context.trigger('filter:create:save', filterName);
     },
 
     /**

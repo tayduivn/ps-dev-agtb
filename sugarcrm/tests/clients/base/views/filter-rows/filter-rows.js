@@ -13,7 +13,7 @@ describe("BaseFilterRowsView", function() {
         layout._components.push(SugarTest.createLayout('base', "Cases", "filter", {}, null, null, { layout: new Backbone.View() }));
         view = SugarTest.createView("base", "Cases", "filter-rows", null, null, null, layout);
         view.layout = layout;
-        view.layout.editingFilter = new Backbone.Model();
+        view.context.editingFilter = new Backbone.Model();
         app = SUGAR.App;
         sinonSandbox = sinon.sandbox.create();
     });
@@ -66,13 +66,14 @@ describe("BaseFilterRowsView", function() {
 
     describe('saveFilter', function() {
         it('should trigger events', function() {
-            var triggerStub = sinonSandbox.stub(view.layout, 'trigger');
-            sinonSandbox.stub(view.layout.editingFilter, 'sync', function(method, model, options) {
+            var layoutTriggerStub = sinonSandbox.stub(view.layout, 'trigger'),
+                ctxTriggerStub = sinonSandbox.stub(view.context, 'trigger');
+            sinonSandbox.stub(view.context.editingFilter, 'sync', function(method, model, options) {
                 if (options.success) options.success(model, {}, options);
             });
             view.saveFilter();
-            expect(triggerStub).toHaveBeenCalledWith('filter:add', view.layout.editingFilter);
-            expect(triggerStub).toHaveBeenCalledWith('filter:toggle:savestate', false);
+            expect(ctxTriggerStub).toHaveBeenCalledWith('filter:add', view.context.editingFilter);
+            expect(layoutTriggerStub).toHaveBeenCalledWith('filter:toggle:savestate', false);
         });
     });
 
@@ -80,7 +81,7 @@ describe("BaseFilterRowsView", function() {
         it('should trigger events', function() {
             var triggerStub = sinonSandbox.stub(view.layout, 'trigger');
             view.deleteFilter();
-            expect(triggerStub).toHaveBeenCalledWith('filter:remove', view.layout.editingFilter);
+            expect(triggerStub).toHaveBeenCalledWith('filter:remove', view.context.editingFilter);
             expect(triggerStub).toHaveBeenCalledWith('filter:create:close');
         });
     });
@@ -274,7 +275,7 @@ describe("BaseFilterRowsView", function() {
 
     describe('populateFilter', function() {
         it('should trigger filter:set:name and populate rows', function() {
-            view.layout.editingFilter = new Backbone.Model({ name: 'Test',
+            view.context.editingFilter = new Backbone.Model({ name: 'Test',
                 filter_definition: [
                     {
                         first_name: 'FirstName'

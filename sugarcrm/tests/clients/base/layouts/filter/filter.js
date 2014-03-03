@@ -56,20 +56,20 @@ describe("Base.Layout.Filter", function () {
                 expect(stub).toHaveBeenCalled();
             });
 
-            it('should null the parent layout editing filter and trigger parent layout filter:create:close', function () {
+            it('should null the context editing filter and trigger parent layout filter:create:close', function () {
                 var spy = sinon.spy();
                 parentLayout.on('filter:create:close', spy);
 
                 layout.trigger('filter:create:close');
-                expect(parentLayout.editingFilter).toEqual(null);
+                expect(layout.context.editingFilter).toEqual(null);
                 expect(spy).toHaveBeenCalled();
             });
-            it('should set the parent layout editing filter and trigger parent layout filter:create:open', function () {
+            it('should set the context editing filter and trigger parent layout filter:create:open', function () {
                 var spy = sinon.spy();
                 parentLayout.on('filter:create:open', spy);
                 var filtermodule = 'test';
                 layout.trigger('filter:create:open', filtermodule);
-                expect(parentLayout.editingFilter).toEqual(filtermodule);
+                expect(layout.context.editingFilter).toEqual(filtermodule);
                 expect(spy).toHaveBeenCalled();
             });
             it('should trigger parent layout subpanel change on subpanel:change', function () {
@@ -116,16 +116,16 @@ describe("Base.Layout.Filter", function () {
                     setLastFilterStub = sinonSandbox.stub(layout, 'setLastFilter');
                     clearFilterEditStateStub = sinonSandbox.stub(layout, 'clearFilterEditState');
                 });
-                it('should be called by parent layout', function() {
+                it('should be called by layout context', function() {
                     var addFilterStub = sinonSandbox.stub(layout, 'addFilter');
-                    
+
                     // clear previous events
                     layout.off();
-                    parentLayout.off();
+                    layout.context.off();
                     // replace the original fn with the spy
                     layout.initialize(layout.options);
 
-                    parentLayout.trigger('filter:add');
+                    layout.context.trigger('filter:add');
                     expect(addFilterStub).toHaveBeenCalled();
                 });
                 it('should add the filter, update saved filters, set last state, clear edit state and reinitialize"',
@@ -137,6 +137,46 @@ describe("Base.Layout.Filter", function () {
                         expect(clearFilterEditStateStub).toHaveBeenCalled();
                         expect(layoutTriggerStub).toHaveBeenCalled();
                         expect(layoutTriggerStub).toHaveBeenCalledWith('filter:reinitialize');
+                        expect(layout.context.get('currentFilterId')).toEqual('new_filter');
+                    }
+                );
+            });
+            describe('refreshDropdown', function() {
+                beforeEach(function() {
+                    layout.layout.currentModule = 'TestModule';
+                });
+                it('should be called by app events', function() {
+                    var refreshStub = sinonSandbox.stub(layout, 'refreshDropdown');
+
+                    // clear previous events
+                    app.events.off('dashlet:filter:save');
+                    layout.stopListening(app.events);
+                    // replace the original fn with the spy
+                    layout.initialize(layout.options);
+
+                    app.events.trigger('dashlet:filter:save');
+                    expect(refreshStub).toHaveBeenCalled();
+                });
+                it('should not trigger a filter:reinitialize if the module does not match this.layout.currentModule',
+                    function() {
+                        var triggerStub = sinonSandbox.stub(layout.layout, 'trigger'),
+                            testModule = 'Contacts';
+
+                        layout.refreshDropdown(testModule);
+                        expect(triggerStub).not.toHaveBeenCalledWith('filter:reinitialize');
+                    }
+                );
+                it('should trigger a filter:reinitialize if the module matches this.layout.currentModule',
+                    function() {
+                        var triggerStub = sinonSandbox.stub(layout.layout, 'trigger'),
+                            testModule = 'TestModule',
+                            baseController = app.view._getController({type:'layout', name:'filter'});
+                            baseController.loadedModules[testModule] = true;
+
+                        layout.refreshDropdown(testModule);
+
+                        expect(baseController.loadedModules[testModule]).toBeFalsy();
+                        expect(triggerStub).toHaveBeenCalledWith('filter:reinitialize');
                     }
                 );
             });
@@ -166,7 +206,9 @@ describe("Base.Layout.Filter", function () {
 
         it('should remove filters', function () {
             var model = new Backbone.Model({id: '123'});
-            var stubCache = sinonSandbox.stub(app.user.lastState, 'set');
+            var stubCache = sinonSandbox.stub(app.user.lastState, 'set'),
+                clearFilterEditStateStub = sinonSandbox.stub(layout, 'clearFilterEditState');
+                clearLastFilterStub = sinonSandbox.stub(layout, 'clearLastFilter');
             layout.filters.add(model);
             parentLayout.off();
             var spy = sinon.spy();
@@ -178,6 +220,10 @@ describe("Base.Layout.Filter", function () {
             expect(stubCache).toHaveBeenCalled();
             // triggered filter reinit
             expect(spy).toHaveBeenCalled();
+            expect(clearFilterEditStateStub).toHaveBeenCalled();
+            expect(clearLastFilterStub).toHaveBeenCalled();
+            expect(clearLastFilterStub).toHaveBeenCalledWith(layout.currentModule, layout.layoutType);
+            expect(layout.context.get('currentFilterId')).toEqual(null);
         });
 
         it('should add filters', function () {
@@ -323,8 +369,7 @@ describe("Base.Layout.Filter", function () {
             it('shoud determine if we need to clear the collection(s) and do nothing if no', function() {
                 ctxt.get('collection').origFilterDef = model.get('filter_definition');
                 layout.handleFilterChange(model.get('id'), false);
-                expect(triggerStub.calledOnce).toBe(true);
-                expect(triggerStub).toHaveBeenCalledWith('filter:create:close');
+                expect(triggerStub).not.toHaveBeenCalled();
             });
         });
 
@@ -366,6 +411,17 @@ describe("Base.Layout.Filter", function () {
             expect(stub).toHaveBeenCalled();
             expect(spy).toHaveBeenCalled();
             ctxt.get('collection').resetPagination = _oResetPagination;
+        });
+        it('should not apply a filter if auto_apply is false', function(){
+            var getRelevantContextListStub = sinonSandbox.stub(layout, 'getRelevantContextList'),
+                query = 'test query',
+                testFilterDef = {
+                  '$name': 'test'
+                };
+
+            layout.context.set('filterOptions', {auto_apply: false});
+            layout.applyFilter(query, testFilterDef);
+            expect(getRelevantContextListStub).not.toHaveBeenCalled();
         });
         it('should be able to add or remove a clear icon depending on the quicksearch field', function() {
             sinonSandbox.stub(layout, 'getRelevantContextList', function() { return []; });
@@ -591,6 +647,20 @@ describe("Base.Layout.Filter", function () {
                     expect(nextCallStub.lastCall.args).toEqual(expected);
                 }
             );
+            it('should initialize the filter panel with the lastFilter argument', function() {
+                layout.layoutType = 'records';
+                layout.showingActivities = false;
+
+                layout.initializeFilterState('Accounts', null, 'uniqueID');
+                expect(nextCallStub).toHaveBeenCalledWith('Accounts', null, {'filter': 'uniqueID'});
+            });
+            it('should initialize the filter panel with the lastFilter and linkName args', function() {
+                layout.layoutType = 'record';
+                layout.showingActivities = false;
+
+                layout.initializeFilterState('Accounts', 'tasks', 'uniqueID');
+                expect(nextCallStub).toHaveBeenCalledWith('Accounts', 'tasks', {'filter': 'uniqueID', 'link': 'tasks'});
+            });
         });
 
         it('should be able to apply the previous filter when not showing activites', function(){
@@ -836,8 +906,12 @@ describe("Base.Layout.Filter", function () {
         describe('last selected filter', function() {
             var expectedKey = 'Accounts:filter:last-TestModule-TestLayout',
                 filterModule = 'TestModule',
-                layoutName = 'TestLayout';
-            var stubCache;
+                layoutName = 'TestLayout',
+                stubCache;
+
+            beforeEach(function() {
+                layout.context.set('filterOptions', {});
+            });
 
             it('should save filter id into cache', function(){
                 var expectedValue = 'tvalue';
@@ -847,17 +921,39 @@ describe("Base.Layout.Filter", function () {
                 expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
                 expect(stubCache.getCall(0).args[1]).toEqual(expectedValue);
             });
+            it('should not save filter id into cache if stickiness is false', function(){
+                stubCache = sinonSandbox.stub(app.user.lastState, 'set');
+                layout.context.get('filterOptions').stickiness = false;
+                layout.setLastFilter(filterModule, layoutName, 'tvalue');
+                expect(stubCache).not.toHaveBeenCalled();
+            });
             it('should get filter id from cache', function(){
+                var contextStub = sinonSandbox.stub(layout.context, 'set');
                 stubCache = sinonSandbox.stub(app.user.lastState, 'get');
                 layout.getLastFilter(filterModule, layoutName);
                 expect(stubCache).toHaveBeenCalled();
                 expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
+                expect(contextStub).toHaveBeenCalled();
+            });
+            it('should not get filter id from cache if stickiness is false', function(){
+                stubCache = sinonSandbox.stub(app.user.lastState, 'get');
+                layout.context.get('filterOptions').stickiness = false;
+                var contextStub = sinonSandbox.stub(layout.context, 'set');
+                layout.getLastFilter(filterModule, layoutName, 'tvalue');
+                expect(stubCache).not.toHaveBeenCalled();
+                expect(contextStub).not.toHaveBeenCalledWith('currentFilterId');
             });
             it('should clear filter id from cache', function(){
                 stubCache = sinonSandbox.stub(app.user.lastState, 'remove');
                 layout.clearLastFilter(filterModule, layoutName);
                 expect(stubCache).toHaveBeenCalled();
                 expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
+            });
+            it('should not clear filter id from cache if stickiness is false', function(){
+                stubCache = sinonSandbox.stub(app.user.lastState, 'remove');
+                layout.context.get('filterOptions').stickiness = false;
+                layout.clearLastFilter(filterModule, layoutName);
+                expect(stubCache).not.toHaveBeenCalled();
             });
         });
 
@@ -868,6 +964,7 @@ describe("Base.Layout.Filter", function () {
             beforeEach(function() {
                 layout.layout.currentModule = 'TestModule';
                 layout.layoutType = 'TestLayout';
+                layout.context.set('filterOptions', {});
             });
 
             it('should save filter definition into cache', function(){
@@ -879,17 +976,36 @@ describe("Base.Layout.Filter", function () {
                 expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
                 expect(stubCache.getCall(0).args[1]).toEqual(expectedValue);
             });
+            it('should not save filter definition into cache if stickiness is false', function(){
+                stubCache = sinonSandbox.stub(app.user.lastState, 'set');
+                var filter = {'filter_definition':[{'account_type':{'$in':['Competitor']}}],'name':'Test Name'};
+                layout.context.get('filterOptions').stickiness = false;
+                layout.saveFilterEditState(filter);
+                expect(stubCache).not.toHaveBeenCalled();
+            });
             it('should get filter definition from cache', function(){
                 stubCache = sinonSandbox.stub(app.user.lastState, 'get');
                 layout.retrieveFilterEditState();
                 expect(stubCache).toHaveBeenCalled();
                 expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
             });
+            it('should not get filter definition from cache if stickiness is false', function(){
+                stubCache = sinonSandbox.stub(app.user.lastState, 'get');
+                layout.context.get('filterOptions').stickiness = false;
+                layout.retrieveFilterEditState();
+                expect(stubCache).not.toHaveBeenCalled();
+            });
             it('should clear filter definition from cache', function(){
                 stubCache = sinonSandbox.stub(app.user.lastState, 'remove');
                 layout.clearFilterEditState();
                 expect(stubCache).toHaveBeenCalled();
                 expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
+            });
+            it('should not clear filter definition from cache if stickiness is false', function(){
+                stubCache = sinonSandbox.stub(app.user.lastState, 'remove');
+                layout.context.get('filterOptions').stickiness = false;
+                layout.clearFilterEditState();
+                expect(stubCache).not.toHaveBeenCalled();
             });
         });
 
@@ -904,10 +1020,10 @@ describe("Base.Layout.Filter", function () {
                 layout.trigger('filter:create:close');
                 expect(clearFilterEditStateStub).toHaveBeenCalled();
             });
-            it('should reset "editingFilter" on parent layout', function() {
-                layout.layout.editingFilter = 'filter_id';
+            it('should reset "editingFilter" on context', function() {
+                layout.context.editingFilter = 'filter_id';
                 layout.trigger('filter:create:close');
-                expect(layout.layout.editingFilter).toBeNull();
+                expect(layout.context.editingFilter).toBeNull();
             });
             it('should trigger "filter:create:close" on parent layout', function() {
                 layout.trigger('filter:create:close');
