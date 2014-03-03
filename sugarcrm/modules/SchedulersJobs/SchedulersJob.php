@@ -30,7 +30,6 @@ class SchedulersJob extends Basic
     const JOB_STATUS_RUNNING = 'running';
     const JOB_STATUS_DONE = 'done';
 
-    // Resolutions.
     const JOB_PENDING = 'queued';
     const JOB_PARTIAL = 'partial';
     const JOB_SUCCESS = 'success';
@@ -73,11 +72,6 @@ class SchedulersJob extends Basic
 	public $min_interval = 30; // minimal interval for job reruns
 	protected $job_done = true;
     protected $old_user;
-
-    /**
-     * @var string ACL type.
-     */
-    public $acltype = 'SchedulersJob';
 
 	/**
 	 * Job constructor.
@@ -571,18 +565,6 @@ class SchedulersJob extends Basic
             $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_JOBTYPE', 'SchedulersJobs'), strip_tags($this->target)));
 		}
 		return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     **/
-    public function bean_implements($interface)
-    {
-        switch ($interface) {
-            case 'ACL':
-                return true;
-        }
-        return false;
     }
 
 }  // end class Job

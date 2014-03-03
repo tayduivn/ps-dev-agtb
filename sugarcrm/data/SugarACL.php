@@ -163,16 +163,15 @@ class SugarACL
      * @param string $module
      * @param string $action
      * @param array $context
-     * @param string $type optional Module ACL type, is stored in bean.
      * @return bool Access allowed?
      */
-    public static function checkAccess($module, $action, $context = array(), $type = 'module')
+    public static function checkAccess($module, $action, $context = array())
     {
         if(!isset(self::$acls[$module])) {
             self::loadACLs($module, $context);
         }
         foreach(self::$acls[$module] as $acl) {
-            if(!$acl->checkAccess($module, $action, $context, $type)) {
+            if(!$acl->checkAccess($module, $action, $context)) {
                 return false;
             }
         }

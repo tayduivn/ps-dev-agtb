@@ -117,63 +117,6 @@ $GLOBALS['ACLActions'] = array(
 
 
 				),),
-    'SchedulersJob' => array(
-        'actions' => array(
-            'admin' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_NORMAL,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_ADMIN,
-                    ACL_ALLOW_DEV,
-                    ACL_ALLOW_ADMIN_DEV
-                ),
-                'label' => 'LBL_ACTION_ADMIN',
-                'default' => ACL_ALLOW_NORMAL,
-            ),
-            'access' => array(
-                'aclaccess' => array(ACL_ALLOW_ENABLED, ACL_ALLOW_DEFAULT, ACL_ALLOW_DISABLED),
-                'label' => 'LBL_ACTION_ACCESS',
-                'default' => ACL_ALLOW_ENABLED,
-            ),
-            'view' => array(
-                'aclaccess' => array(ACL_ALLOW_ALL, ACL_ALLOW_OWNER, ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
-                'label' => 'LBL_ACTION_VIEW',
-                'default' => ACL_ALLOW_OWNER,
-            ),
-            'list' => array(
-                'aclaccess' => array(ACL_ALLOW_ALL, ACL_ALLOW_OWNER, ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
-                'label' => 'LBL_ACTION_LIST',
-                'default' => ACL_ALLOW_ALL,
-            ),
-            'edit' => array(
-                'aclaccess' => array(ACL_ALLOW_ALL, ACL_ALLOW_OWNER, ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
-                'label' => 'LBL_ACTION_EDIT',
-                'default' => ACL_ALLOW_OWNER,
-
-            ),
-            'delete' => array(
-                'aclaccess' => array(ACL_ALLOW_ALL, ACL_ALLOW_OWNER, ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
-                'label' => 'LBL_ACTION_DELETE',
-                'default' => ACL_ALLOW_OWNER,
-
-            ),
-            'import' => array(
-                'aclaccess' => array(ACL_ALLOW_ALL, ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
-                'label' => 'LBL_ACTION_IMPORT',
-                'default' => ACL_ALLOW_NONE,
-            ),
-            'export' => array(
-                'aclaccess' => array(ACL_ALLOW_ALL, ACL_ALLOW_OWNER, ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
-                'label' => 'LBL_ACTION_EXPORT',
-                'default' => ACL_ALLOW_NONE,
-            ),
-            'massupdate' => array(
-                'aclaccess' => array(ACL_ALLOW_ALL, ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
-                'label' => 'LBL_ACTION_MASSUPDATE',
-                'default' => ACL_ALLOW_NONE,
-            ),
-        ),
-    ),
 //BEGIN SUGARCRM flav=pro ONLY
 'Tracker'=>array('actions'=>
 						array(
