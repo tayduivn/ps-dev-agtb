@@ -2,9 +2,11 @@
 
 // Base alert styles
 .alert {
-  padding: 8px 20px 8px 10px;
+  padding: 8px 26px 8px 10px;
   background-color: @grayLighter;
   border: 1px solid @grayLight;
+
+  position: relative;
 }
 .alert [class^=icon-] {
   color: inherit;
@@ -16,13 +18,14 @@
 
 // Adjust close link position
 .alert .close {
-  right: -12px;
-  top: -1px;
+  right: 7px;
+  top: 7px;
   font-size: 14px;
   font-weight: normal;
   .opacity(40);
   text-shadow: none;
   color: inherit;
+  position: absolute;
   &:hover {
     .opacity(100);
   }
