@@ -51,8 +51,14 @@ class Dashboard extends Basic
         foreach($metadata->components as $component_key => $component) {
             foreach($component->rows as $row_key => $row) {
                 foreach($row as $item_key => $item) {
+
+                    // No need to check access for a module if the module doesn't exist.
+                    if (!isset($item->context->module)) {
+                        continue;
+                    }
+                    $bean = BeanFactory::getBean($item->context->module);
                     // Check if this user has access to the module upon which this dashlet is based.
-                    if(isset($item->context->module) && !SugarACL::checkAccess($item->context->module, 'access')) {
+                    if (!SugarACL::checkAccess($item->context->module, 'access', array(), $bean->acltype)) {
                         // The user does not have access, remove the dashlet.
                         unset($metadata->components[$component_key]->rows[$row_key][$item_key]);
 

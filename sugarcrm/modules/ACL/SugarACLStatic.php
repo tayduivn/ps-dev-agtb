@@ -27,10 +27,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class SugarACLStatic extends SugarACLStrategy
 {
     /**
-     * (non-PHPdoc)
      * @see SugarACLStrategy::checkAccess()
+     * @param string $module
+     * @param string $action
+     * @param array $context
+     * @param string $type optional ACL type.
+     * @return bool
      */
-    public function checkAccess($module, $action, $context)
+    public function checkAccess($module, $action, $context, $type = 'module')
     {
         //BEGIN SUGARCRM flav=pro ONLY
         // Check if we have to apply team security based on ACLs
@@ -81,7 +85,7 @@ class SugarACLStatic extends SugarACLStrategy
             $context['owner_override'] = true;
         }
 
-        return ACLController::checkAccessInternal($module, $action, !empty($context['owner_override']));
+        return ACLController::checkAccessInternal($module, $action, !empty($context['owner_override']), $type);
     }
 
     static $edit_actions = array(
@@ -177,12 +181,12 @@ class SugarACLStatic extends SugarACLStrategy
         {
             case 'import':
             case 'list':
-                return ACLController::checkAccessInternal($module, $action, true);
+                return ACLController::checkAccessInternal($module, $action, true, $bean->acltype);
             case 'delete':
             case 'view':
             case 'export':
             case 'massupdate':
-                return ACLController::checkAccessInternal($module, $action, $is_owner);
+                return ACLController::checkAccessInternal($module, $action, $is_owner, $bean->acltype);
             case 'edit':
                 if(!isset($context['owner_override']) && !empty($bean->id)) {
                     if(!empty($bean->fetched_row) && !empty($bean->fetched_row['id']) && !empty($bean->fetched_row['assigned_user_id']) && !empty($bean->fetched_row['created_by'])){
@@ -202,7 +206,7 @@ class SugarACLStatic extends SugarACLStrategy
                 }
             case 'popupeditview':
             case 'editview':
-                return ACLController::checkAccessInternal($module,'edit', $is_owner);
+                return ACLController::checkAccessInternal($module,'edit', $is_owner, $bean->acltype);
         }
         //if it is not one of the above views then it should be implemented on the page level
         return true;
@@ -235,6 +239,10 @@ class SugarACLStatic extends SugarACLStrategy
 
     /**
      * For some mysterious reasons Tracker ACLs are "special" and do not follow the rules.
+     * TODO: Refactor this part. To override default(module type) ACL some modules have the "acltype" property
+     * that indicates the custom ACL map. Better to take the property from bean instead of hardcoding it here.
+     * Custom ACL schemes are defined in "actiondefs.php".
+     *
      * @var array
      */
     protected static $non_module_acls = array(
@@ -242,7 +250,7 @@ class SugarACLStatic extends SugarACLStrategy
         'TrackerQueries' => 'TrackerQuery',
         'TrackerPerfs' => 'TrackerPerf',
         'TrackerSessions' => 'TrackerSession',
-
+        'SchedulersJobs' => 'SchedulersJob',
     );
 
     /**
@@ -283,7 +291,7 @@ class SugarACLStatic extends SugarACLStrategy
         }
         foreach($access_list as $action => $value) {
             // may have the bean, so we need to use checkAccess
-        	if(!$this->checkAccess($module, $action, $context) || (isset($actions[$action]['aclaccess']) && !ACLAction::hasAccess($is_owner, $actions[$action]['aclaccess']))) {
+        	if(!$this->checkAccess($module, $action, $context, $level) || (isset($actions[$action]['aclaccess']) && !ACLAction::hasAccess($is_owner, $actions[$action]['aclaccess']))) {
         		$access[$action] = false;
         	}
         }
