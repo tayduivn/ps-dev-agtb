@@ -24,6 +24,11 @@ class SugarUpgradeRevenueLineItemMakeVisible extends UpgradeScript
         if (!$this->toFlavor("ent")) {
             return;
         }
+
+        // this should only be ran when upgrading from pro or corp
+        if (!in_array(strtolower($this->from_flavor), array('pro', 'corp'))) {
+            return;
+        }
         
         $this->log('Adding Revenue Line Items to Tabs');
         $sql = "SELECT value FROM config " .
