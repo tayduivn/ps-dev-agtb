@@ -34,7 +34,6 @@ $viewdefs['Contacts']['base']['view']['subpanel-for-cases'] = array(
           'label' => 'LBL_LIST_NAME',
           'enabled' => true,
           'default' => true,
-          'sortable' => false,
         ),
         array(
           'name' => 'account_name',

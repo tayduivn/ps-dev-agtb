@@ -42,7 +42,6 @@ $viewdefs['Leads']['base']['view']['selection-list'] = array(
                     'label' => 'LBL_LIST_ACCOUNT_NAME',
                     'enabled' => true,
                     'default' => true,
-                    'sortable' => true,
                     'related_fields' => array(
                         'account_id',
                         'converted',
@@ -57,7 +56,6 @@ $viewdefs['Leads']['base']['view']['selection-list'] = array(
                 array(
                     'name' => 'email',
                     'label' => 'LBL_LIST_EMAIL_ADDRESS',
-                    'sortable' => false,
                     'enabled' => true,
                     'default' => false,
                 ),
@@ -66,7 +64,6 @@ $viewdefs['Leads']['base']['view']['selection-list'] = array(
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'enabled' => true,
                     'default' => false,
-                    'sortable' => false,
                 ),
                 array(
                     'name' => 'date_entered',

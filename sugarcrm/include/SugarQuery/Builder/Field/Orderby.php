@@ -28,45 +28,51 @@ class SugarQuery_Builder_Field_Orderby extends SugarQuery_Builder_Field
         $this->direction = $direction;
         parent::__construct($field, $query);
     }
-
+    
     public function expandField()
     {
         if (!empty($this->def['sort_on'])) {
-            // this is a compound field
             $this->def['sort_on'] = !is_array($this->def['sort_on']) ? array($this->def['sort_on']) : $this->def['sort_on'];
-            foreach ($this->def['sort_on'] as $field) {
-                $table = $this->table;
-                //Custom fields may use standard or custom fields for sort on.
-                //Let that SugarQuery_Builder_Field figure out if it's custom or not.
-                if (!empty($this->custom) && !empty($this->standardTable)) {
-                    $table = $this->standardTable;
-                }
-                $this->query->orderBy("{$table}.{$field}", $this->direction);
-                $this->query->select->addField("{$table}.{$field}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$table}__{$field}", false, 'alias')));
-            }
-            $this->markNonDb();
         }
+
         if (!empty($this->def['rname']) && !empty($this->def['table'])) {
             $jta = $this->query->getJoinAlias($this->def['table']);
-            $fieldToOrder = $this->def['rname'];
-            $this->query->orderBy("{$jta}.{$fieldToOrder}", $this->direction);
-            if (!empty($jta)) {
+            if (empty($jta)) {
+                $jta = $this->table;
+            }            
+            $fieldsToOrder = empty($this->def['sort_on']) ? array($this->def['rname']) : $this->def['sort_on'];
+            foreach ($fieldsToOrder as $fieldToOrder) {
                 $this->query->orderBy("{$jta}.{$fieldToOrder}", $this->direction);
                 $this->query->select->addField("{$jta}.{$fieldToOrder}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$this->def['table']}__{$fieldToOrder}", false, 'alias')));
             }
             $this->markNonDb();
         } elseif(!empty($this->def['rname']) && !empty($this->def['link'])) {
             $jta = $this->query->getJoinAlias($this->def['link']);
-            $fieldToOrder = $this->def['rname'];
-            if (!empty($jta)) {
+            if (empty($jta)) {
+                $this->def['link'] = $jta = $this->table;
+            }
+            $fieldsToOrder = empty($this->def['sort_on']) ? array($this->def['rname']) : $this->def['sort_on'];
+            foreach ($fieldsToOrder as $fieldToOrder) {
                 $this->query->orderBy("{$jta}.{$fieldToOrder}", $this->direction);
                 $this->query->select->addField("{$jta}.{$fieldToOrder}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$this->def['link']}__{$fieldToOrder}", false, 'alias')));
             }
             $this->markNonDb();
         } else {
-            $this->query->select->addField("{$this->table}.{$this->field}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$this->table}__{$this->field}", false, 'alias')));
+            if (!empty($this->def['sort_on'])) {
+                $table = $this->table;
+                //Custom fields may use standard or custom fields for sort on.
+                //Let that SugarQuery_Builder_Field figure out if it's custom or not.
+                if (!empty($this->custom) && !empty($this->standardTable)) {
+                    $table = $this->standardTable;
+                }
+                foreach ($this->def['sort_on'] as $field) {
+                    $this->query->orderBy("{$table}.{$field}", $this->direction);
+                    $this->query->select->addField("{$table}.{$field}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$this->table}__{$this->field}", false, 'alias')));
+                }
+            } else {
+                $this->query->select->addField("{$this->table}.{$this->field}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$this->table}__{$this->field}", false, 'alias')));
+            }            
         }
         $this->checkCustomField();
     }
-
 }

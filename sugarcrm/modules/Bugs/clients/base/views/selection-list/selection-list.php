@@ -53,7 +53,6 @@ $viewdefs['Bugs']['base']['view']['selection-list'] = array(
                     'name' => 'assigned_user_name',
                     'enabled' => true,
                     'default' => false,
-                    'sortable' => false,
                 ),
                 array(
                     'name' => 'release_name',
@@ -70,7 +69,6 @@ $viewdefs['Bugs']['base']['view']['selection-list'] = array(
                     'name' => 'team_name',
                     'enabled' => true,
                     'default' => false,
-                    'sortable' => false,
                 ),
             ),
         ),
