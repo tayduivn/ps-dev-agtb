@@ -591,18 +591,13 @@ function getNonPrimaryEmailsData(SugarBean $bean, array $ids)
 function getNonPrimaryEmailsExportQuery(SugarBean $bean, array $ids)
 {
     $query = new SugarQuery();
-    $query->select(array(
-        'eabr.bean_id',
-        'email_address',
-        'invalid_email',
-        'opt_out',
-    ));
     $query->from(BeanFactory::newBean('EmailAddresses'), 'ea');
     $query->joinTable('email_addr_bean_rel', array(
         'joinType' => 'LEFT',
         'alias' => 'eabr',
         'linkingTable' => true,
     ))->on()->equalsField('eabr.email_address_id', 'id');
+    $query->select('eabr.bean_id', 'email_address', 'invalid_email', 'opt_out');
     $query->where()
         ->in('eabr.bean_id', $ids)
         ->equals('eabr.bean_module', $bean->module_dir)
