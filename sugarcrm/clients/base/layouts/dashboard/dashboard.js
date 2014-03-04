@@ -21,7 +21,6 @@
  *
  */
 ({
-    toggled: false,
     className: 'row-fluid',
     dashboardLayouts: {
         'record': 'record-dashboard',
@@ -94,13 +93,10 @@
             }
         }, this);
 
-        if (module === 'Home') {
-            this.on("render", this.toggleSidebar, this);
-            if (context.get('modelId')) {
-                // save it as last visit
-                var lastVisitedStateKey = this.getLastStateKey();
-                app.user.lastState.set(lastVisitedStateKey, context.get('modelId'));
-            }
+        if (module === 'Home' && context.get('modelId')) {
+            // save it as last visit
+            var lastVisitedStateKey = this.getLastStateKey();
+            app.user.lastState.set(lastVisitedStateKey, context.get('modelId'));
         }
     },
 
@@ -147,16 +143,6 @@
             }, this);
         } else {
             this._super('loadData', [options, setFields]);
-        }
-    },
-
-    /**
-     * Checks if the sidebar is toggled, if not this function toggles it
-     */
-    toggleSidebar: function () {
-        if (!this.toggled) {
-            app.controller.context.trigger('toggleSidebar');
-            this.toggled = true;
         }
     },
 
@@ -477,7 +463,6 @@
      */
     unbindData: function() {
         var model, collection;
-        this.off("render", this.toggleSidebar, this);
         if (this.collection) {
             this.collection.off("reset", this.setDefaultDashboard, this);
         }
