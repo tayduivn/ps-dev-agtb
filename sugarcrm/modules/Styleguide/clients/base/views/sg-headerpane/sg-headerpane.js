@@ -38,14 +38,14 @@
     initialize: function(options) {
         var self = this;
 
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
 
         this.pageData = app.metadata.getLayout(this.module, 'docs').page_data;
 
         this.file = this.context.get('page_name');
 
         if (!_.isUndefined(this.file) && !_.isEmpty(this.file)) {
-            this.keys = this.file.split('_');
+            this.keys = this.file.split('-');
         }
 
         if (this.keys.length) {
@@ -65,7 +65,7 @@
                 // section page call
                 this.section = this.pageData[this.keys[0]];
                 this.page = this.section.pages[this.keys[1]];
-                this.parent_link = '_' + this.keys[0];
+                this.parent_link = '-' + this.keys[0];
             } else {
                 // general page call
                 this.section = this.pageData[this.keys[0]];
@@ -113,7 +113,7 @@
 
         function fmtLink(section, page) {
             return '#Styleguide/docs/' +
-                (page?'':'index_') + section.replace(/[\s\,]+/g,'-').toLowerCase() + (page?'_'+page:'');
+                (page?'':'index-') + section.replace(/[\s\,]+/g,'-').toLowerCase() + (page?'-'+page:'');
         }
     },
 

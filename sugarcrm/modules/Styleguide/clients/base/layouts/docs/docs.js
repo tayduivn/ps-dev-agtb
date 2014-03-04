@@ -62,7 +62,7 @@
         // page_name defined in router
         request.file = this.context.get('page_name');
         if (!_.isUndefined(request.file) && !_.isEmpty(request.file)) {
-            request.keys = request.file.split('_');
+            request.keys = request.file.split('-');
         }
         if (request.keys.length) {
             // get page content variables from page_data
@@ -80,7 +80,7 @@
                 // this is a section page call
                 request.section = request.page_data[request.keys[0]];
                 request.page = request.section.pages[request.keys[1]];
-                request.parent_link = '_' + request.keys[0];
+                request.parent_link = '-' + request.keys[0];
                 window.prettyPrint && prettyPrint();
             } else {
                 // this is a general page call
@@ -91,7 +91,7 @@
         // load up the page view into the component array
         main = this.getComponent('main-pane');
         main._addComponentsFromDef([{
-            view: 'docs_' + request.file,
+            view: 'docs-' + request.file,
             context: {
                 module: 'Styleguide',
                 skipFetch: true,

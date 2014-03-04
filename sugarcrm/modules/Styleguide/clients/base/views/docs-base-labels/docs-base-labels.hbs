@@ -1,0 +1,214 @@
+{{!
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+}}
+<!-- Labels
+================================================== -->
+<style>
+  .table-example .label-module {
+    vertical-align: top;
+  }
+  .table-example .span2 {
+    padding: 8px;
+  }
+</style>
+<section id="labels">
+  <div class="page-header">
+    <h1>Inline labels <small>Label and annotate text</small></h1>
+  </div>
+
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Labels</th>
+        <th>Markup</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="label">Default</span></td>
+        <td><code>&lt;span class="label"&gt;Default&lt;/span&gt;</code></td>
+      </tr>
+      <tr>
+        <td><span class="label label-important">Important</span></td>
+        <td><code>&lt;span class="label label-important"&gt;Important&lt;/span&gt;</code></td>
+      </tr>
+      <tr>
+        <td><span class="label label-warning">Warning</span></td>
+        <td><code>&lt;span class="label label-warning"&gt;warning&lt;/span&gt;</code></td>
+      </tr>
+      <tr>
+        <td><span class="label label-pending">Pending</span></td>
+        <td><code>&lt;span class="label label-pending"&gt;warning&lt;/span&gt;</code></td>
+      </tr>
+      <tr>
+        <td><span class="label label-success">Success</span></td>
+        <td><code>&lt;span class="label label-success"&gt;Success&lt;/span&gt;</code></td>
+      </tr>
+      <tr>
+        <td><span class="label label-info">Info</span></td>
+        <td><code>&lt;span class="label label-info"&gt;Info&lt;/span&gt;</code></td>
+      </tr>
+      <tr>
+        <td><span class="label label-inverse">Inverse</span></td>
+        <td><code>&lt;span class="label label-inverse"&gt;Inverse&lt;/span&gt;</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Module Element Badges</h3>
+
+  <table class="table table-bordered table-striped table-example">
+    <thead>
+      <tr>
+        <th>Module</th>
+        <th>Labels</th>
+        <th>module Singular</th>
+        <th>Class Name</th>
+      </tr>
+    </thead>
+    <tbody>
+  {{#each module_list}}
+      <tr>
+        <td><b>{{this}}</b></td>
+        <td>
+          <span class="label label-module label-module-lg label-{{this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
+          <span class="label label-module label-module-md label-{{this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
+          <span class="label label-module label-module-btn label-{{this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
+          <span class="label label-module label-{{this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
+          <span class="label label-module label-module-sm label-{{this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
+          <span class="label label-module label-module-mini label-{{this}}" rel="tooltip" data-title="{{moduleIconToolTip this}}">{{moduleIconLabel this}}</span>
+        </td>
+        <td>{{moduleIconToolTip this}}</td>
+        <td><code>.label-{{this}}</code></td>
+      </tr>
+  {{/each}}
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Markup</h3>
+
+<pre class="prettyprint linenums">
+&lt;span class="label label-module label-module-lg label-&#123;&#123;this.module}}" rel="tooltip" data-title="&#123;&#123;moduleIconToolTip this.module}}"&gt;&#123;&#123;moduleIconLabel this.module}}&lt;/span&gt;
+</pre>
+
+  <h3>CSS</h3>
+  <p>The <code>.label-module</code> and <code>.avatar</code> classes share the same size suffixes</p>
+  <div class="table-example">
+    <div class="row">
+      <div class="span2">
+        <code>.label-module-lg</code>
+        <code>.avatar-lg</code>
+      </div>
+      <div class="span2">
+        <span class="label label-module label-module-lg label-Modules" rel="tooltip" data-title="Modules">Mo</span>
+      </div>
+      <div class="span2">
+        <img src="styleguide/content/charts/img/avatar_sabra.jpg" class="avatar avatar-lg">
+      </div>
+      <div class="span2">
+        42px &times; 42px
+      </div>
+    </div>
+    <div class="row">
+      <div class="span2">
+        <code>.label-module-md</code>
+        <code>.avatar-md</code>
+      </div>
+      <div class="span2">
+        <span class="label label-module label-module-md label-Modules" rel="tooltip" data-title="Modules">Mo</span>
+      </div>
+      <div class="span2">
+        <img src="styleguide/content/charts/img/avatar_sabra.jpg" class="avatar avatar-md">
+      </div>
+      <div class="span2">
+        32px &times; 32px
+      </div>
+    </div>
+    <div class="row">
+      <div class="span2">
+        <code>.label-module-btn</code>
+        <code>.avatar-btn</code>
+      </div>
+      <div class="span2">
+        <span class="label label-module label-module-btn label-Modules" rel="tooltip" data-title="Modules">Mo</span>
+      </div>
+      <div class="span2">
+        <img src="styleguide/content/charts/img/avatar_sabra.jpg" class="avatar avatar-btn">
+      </div>
+      <div class="span2">
+        28px &times; 28px
+      </div>
+    </div>
+    <div class="row">
+      <div class="span2">
+        <code>.label-module</code>
+        <code>.avatar</code>
+      </div>
+      <div class="span2">
+        <span class="label label-module label-Modules" rel="tooltip" data-title="Modules">Mo</span>
+      </div>
+      <div class="span2">
+        <img src="styleguide/content/charts/img/avatar_sabra.jpg" class="avatar">
+      </div>
+      <div class="span2">
+        24px &times; 24px
+      </div>
+    </div>
+    <div class="row">
+      <div class="span2">
+        <code>.label-module-sm</code>
+        <code>.avatar-sm</code>
+      </div>
+      <div class="span2">
+        <span class="label label-module label-module-sm label-Modules" rel="tooltip" data-title="Modules">Mo</span>
+      </div>
+      <div class="span2">
+        <img src="styleguide/content/charts/img/avatar_sabra.jpg" class="avatar avatar-sm">
+      </div>
+      <div class="span2">
+        20px &times; 20px
+      </div>
+    </div>
+    <div class="row">
+      <div class="span2">
+        <code>.label-module-mini</code>
+        <code>.avatar-mini</code>
+      </div>
+      <div class="span2">
+        <span class="label label-module label-module-mini label-Modules" rel="tooltip" data-title="Modules">Mo</span>
+      </div>
+      <div class="span2">
+        <img src="styleguide/content/charts/img/avatar_sabra.jpg" class="avatar avatar-mini">
+      </div>
+      <div class="span2">
+        16px &times; 16px
+      </div>
+    </div>
+  </div>
+</section>

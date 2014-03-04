@@ -134,6 +134,9 @@ table.accordion td.accordion-heading .accordion-toggle,
 table.accordion td.accordion-body {
   padding: 0;
 }
+table.accordion {
+  border-left: 1px solid #E8E8E8;
+}
 table.accordion h3 {
   font-size: 16px;
   line-height: 20px;
@@ -158,12 +161,15 @@ table.accordion .accordion-inner.in {
 table.accordion .accordion-heading {
   float: none;
 }
+table.accordion .accordion-heading .accordion-toggle {
+  border: none;
+}
 table.accordion .accordion-heading td,
 table.accordion .accordion-body td {
   border-right: none;
   border-left: none;
 }
-table.accordion table.dataTable {
+table.accordion .dataTable {
   width: auto;
 }
 ul.sg-main {

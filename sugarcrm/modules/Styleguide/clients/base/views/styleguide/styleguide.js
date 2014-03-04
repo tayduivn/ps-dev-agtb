@@ -30,6 +30,6 @@
     _render: function() {
         var self = this;
 
-        app.view.View.prototype._render.call(this);
+        this._super('_render');
     }
 })

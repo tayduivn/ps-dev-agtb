@@ -17,7 +17,15 @@
 $viewdefs['Styleguide']['base']['layout']['view'] = array(
     'components' => array(
         array(
-            'view' => 'sg-headerpane',
+            'layout' => array(
+                'components' => array(
+                    array(
+                        'view' => 'sg-headerpane',
+                    ),
+                ),
+                'type' => 'simple',
+                'name' => 'main-pane',
+            ),
         ),
     ),
     'type' => 'view',

@@ -43,7 +43,7 @@
             this.section.title = 'Form Elements';
             this.section.description = 'Basic fields that support detail, record, and edit modes with error addons.';
             this.useTable = (fieldTypeReq === 'all' ? true : false);
-            this.parent_link = (fieldTypeReq === 'all' ? 'docs/index.forms' : 'field/all');
+            this.parent_link = (fieldTypeReq === 'all' ? 'docs/index-forms' : 'field/all');
             this.tempfields = [];
 
         _.each(fieldTypes, function(fieldType){
@@ -72,7 +72,7 @@
             }
         });
 
-        app.view.View.prototype._render.call(this);
+        this._super('_render');
 
         //render example fields into accordion grids
         //e.g., ['text','bool','date','datetimecombo','currency','email']
