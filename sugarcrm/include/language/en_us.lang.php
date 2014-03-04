@@ -11123,7 +11123,11 @@ $app_list_strings['dnb_states_iso'] = array(
    "10"  =>  array("code" => "MD","name" => "Midlands")
    )
 );
+
 $app_list_strings['moduleList']['KBSDocuments'] = 'Knowledge Base';
 $app_list_strings['moduleListSingular']['KBSDocuments'] = 'Knowledge Base';
 $app_list_strings['moduleList']['KBSContents'] = 'Knowledge Base Content';
 $app_list_strings['moduleListSingular']['KBSContents'] = 'Knowledge Base Content';
+
+$app_list_strings['moduleList']['KBSTags'] = 'Knowledge Base Tags';
+$app_list_strings['moduleListSingular']['KBSTags'] = 'Knowledge Base Tag';
