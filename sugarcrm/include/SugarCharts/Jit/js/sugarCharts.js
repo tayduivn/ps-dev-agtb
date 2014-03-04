@@ -211,7 +211,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                                 enable: true,
                                 onClick: function(node) {
                                     if(!node || $jit.util.isTouchScreen()) return;
-                                    if(node.link == undefined || node.link == '') return;
+                                    if(node.link == 'undefined' || node.link == undefined || node.link == '') return;
                                     window.location.href=node.link;
                                 }
                             },
@@ -241,7 +241,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                                     if(elem.type == 'marker') {
                                         tip.innerHTML = '<b>' + elem.name + '</b>: ' + elem.valuelabel ;
                                     } else {
-                                        if(elem.link != undefined && elem.link != '') {
+                                        if(elem.link != 'undefined' && elem.link != undefined && elem.link != '') {
                                             drillDown = ($jit.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>"+SUGAR.language.get('app_strings','LBL_CLICK_TO_DRILLDOWN')+"</a>" : "<br>"+SUGAR.language.get('app_strings','LBL_CLICK_TO_DRILLDOWN');
                                         } else {
                                             drillDown = "";
@@ -324,7 +324,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                                 enable: true,
                                 onClick: function(node) {
                                     if(!node || $jit.util.isTouchScreen()) return;
-                                    if(node.link == undefined || node.link == '') return;
+                                    if(node.link == 'undefined' || node.link == undefined || node.link == '') return;
                                     window.location.href=node.link;
                                 }
                             },
@@ -348,7 +348,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                             Tips: {
                                 enable: true,
                                 onShow: function(tip, elem) {
-                                    if(elem.link != undefined && elem.link != '') {
+                                    if(elem.link != 'undefined' && elem.link != undefined && elem.link != '') {
                                         drillDown = ($jit.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>"+SUGAR.language.get('app_strings','LBL_CLICK_TO_DRILLDOWN')+"</a>" : "<br>"+SUGAR.language.get('app_strings','LBL_CLICK_TO_DRILLDOWN');
                                     } else {
                                         drillDown = "";
@@ -455,7 +455,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                                 enable: true,
                                 onClick: function(node) {
                                     if(!node || $jit.util.isTouchScreen()) return;
-                                    if(node.link == undefined || node.link == '') return;
+                                    if(node.link == 'undefined' || node.link == undefined || node.link == '') return;
                                     window.location.href=node.link;
                                 }
                             },
@@ -470,7 +470,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                             Tips: {
                                 enable: true,
                                 onShow: function(tip, elem) {
-                                    if(elem.link != undefined && elem.link != '') {
+                                    if(elem.link != 'undefined' && elem.link != undefined && elem.link != '') {
                                         drillDown = ($jit.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>"+SUGAR.language.get('app_strings','LBL_CLICK_TO_DRILLDOWN')+"</a>" : "<br>"+SUGAR.language.get('app_strings','LBL_CLICK_TO_DRILLDOWN');
                                     } else {
                                         drillDown = "";
@@ -546,7 +546,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                                 enable: true,
                                 onClick: function(node) {
                                     if(!node || $jit.util.isTouchScreen()) return;
-                                    if(node.link == undefined || node.link == '') return;
+                                    if(node.link == 'undefined' || node.link == undefined || node.link == '') return;
                                     window.location.href=node.link;
                                 }
                             },
@@ -570,7 +570,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                             Tips: {
                                 enable: true,
                                 onShow: function(tip, elem) {
-                                    if(elem.link != undefined && elem.link != '') {
+                                    if(elem.link != 'undefined' && elem.link != undefined && elem.link != '') {
                                         drillDown = ($jit.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>"+SUGAR.language.get('app_strings','LBL_CLICK_TO_DRILLDOWN')+"</a>" : "<br>"+SUGAR.language.get('app_strings','LBL_CLICK_TO_DRILLDOWN');
                                     } else {
                                         drillDown = "";
@@ -663,7 +663,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                                 enable: true,
                                 onClick: function(node) {
                                     if(!node || $jit.util.isTouchScreen()) return;
-                                    if(node.link == undefined || node.link == '') return;
+                                    if(node.link == 'undefined' || node.link == undefined || node.link == '') return;
                                     window.location.href=node.link;
                                 }
                             },
@@ -678,7 +678,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                             Tips: {
                                 enable: true,
                                 onShow: function(tip, elem) {
-                                    if(elem.link != undefined && elem.link != '') {
+                                    if(elem.link != 'undefined' && elem.link != undefined && elem.link != '') {
                                         drillDown = ($jit.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>Click to drilldown</a>" : "<br>Click to drilldown";
                                     } else {
                                         drillDown = "";
