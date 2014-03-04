@@ -92,7 +92,6 @@
      * {@inheritDoc}
      */
     initDashlet: function() {
-        this._initSettings();
         if (this.meta.config) {
             return;
         }
@@ -105,6 +104,7 @@
         this._initEvents();
         this._initTabs();
         this._initTemplates();
+        this._initSettings();
     },
 
     /**
