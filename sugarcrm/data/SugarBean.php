@@ -3294,7 +3294,7 @@ class SugarBean
                     if ($source == 'db') {
                         $list_column[0] = $bean_queried->table_name . '.' . $list_column[0] ;
                     } elseif ($source == 'custom_fields') {
-                        $list_column[0] = $bean_queried->table_name . '_cstm' . $list_column[0] ;
+                        $list_column[0] = $bean_queried->table_name . '_cstm.' . $list_column[0] ;
                     }
                 }
 
