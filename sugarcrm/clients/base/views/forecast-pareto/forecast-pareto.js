@@ -13,6 +13,10 @@
 
 /**
  * Dashlet that displays a chart
+ *
+ * @class BaseForecastParetoView
+ * @alias SUGAR.App.view.views.BaseForecastParetoView
+ * @extends View.View
  */
 ({
     plugins: ['Dashlet', 'Tooltip'],
@@ -149,12 +153,15 @@
             ranges: _.keys(app.lang.getAppListStrings(this.forecastConfig.buckets_dom))
         };
 
-        if (this.model && !this.displayTimeperiodPivot && this.model.has('date_closed_timestamp')
-            && this.model.get('date_closed_timestamp' != 0)) {
+        var model = this._getNonForecastModel();
+
+        if (model && !this.displayTimeperiodPivot && model.has('date_closed_timestamp')
+            && model.get('date_closed_timestamp') != 0) {
             // if we have a timestamp, use it, otherwise just default to the current time period
-            defaultOptions.timeperiod_id = this.model.get('date_closed_timestamp');
+            defaultOptions.timeperiod_id = model.get('date_closed_timestamp');
+        } else {
+            this.layout.setTitle(this.getLabel() + ' ' + defaultOptions.timeperiod_label);
         }
-        this.layout.setTitle(this.getLabel() + ' ' + defaultOptions.timeperiod_label);
         this.settings.set(defaultOptions);
     },
 
@@ -279,28 +286,32 @@
             }, this);
 
             this.settings.on('change:display_manager', this.toggleRepOptionsVisibility, this);
-            this.settings.on('change:selectedTimePeriod', function(context, timeperiod) {
-                this.settings.set({timeperiod_id: timeperiod});
-            }, this);
 
             if (!this.displayTimeperiodPivot) {
                 this.findModelToListen();
                 this.listenModel.on('change', this.handleDataChange, this);
+            } else {
+                this.settings.on('change:selectedTimePeriod', function(context, timeperiod) {
+                    this.settings.set({timeperiod_id: timeperiod});
+                }, this);
             }
         }
     },
 
     findModelToListen: function() {
-        this.listenModel = this.model;
+        this.listenModel = this._getNonForecastModel();
         //BEGIN SUGARCRM flav=ent ONLY
-        if (this.forecastConfig.forecast_by == 'RevenueLineItems' && this.context.get('module') == 'Opportunities') {
+        // now that this context is set to the forecast module, we should use the parent context if it exists
+        // if it doesn't then we use the context on this dashlet
+        var context = this.context.parent || this.context;
+        if (this.forecastConfig.forecast_by == 'RevenueLineItems' && context.get('module') == 'Opportunities') {
             // we need to watch for when the date changes time periods on the opportunity to re-render the chart
-            this.model.on('change:date_closed_timestamp', function(model, changed) {
+            this._getNonForecastModel().on('change:date_closed_timestamp', function(model, changed) {
                 this.settings.set('timeperiod_id', changed);
             }, this);
             // since we are forecasting by RLI but on the Opp Module, we need to find the subpanel for RLI to watch
             // for the changes there
-            var ctx = _.find(this.context.children, function(child) {
+            var ctx = _.find(context.children, function(child) {
                 return (child.get('module') == 'RevenueLineItems');
             });
             if (ctx && ctx.has('collection')) {
@@ -311,11 +322,26 @@
     },
 
     /**
+     * Utility Method to find the proper model to use, if this.model.module is forecasts, go up to the parent context
+     * and use the model that's attached to it otherwise return this.model
+     *
+     * @returns {*}
+     * @private
+     */
+    _getNonForecastModel: function() {
+        if (this.model.module == 'Forecasts') {
+            return this.context.parent.get('model');
+        }
+
+        return this.model;
+    },
+
+    /**
      * Handler for when the model changes
      * @param {Object} [model]      The model that changed, if not provided, it will use this.model
      */
     handleDataChange: function(model) {
-        model = model || this.model;
+        model = model || this._getNonForecastModel();
         var changed = model.changed,
             changedField = _.keys(changed),
             validChangedFields = _.intersection(this.validChangedFields, _.keys(changed)),
@@ -437,7 +463,7 @@
      * @param {Object} [model]      The Model to add, if not passed in, it will use this.model
      */
     addRowToChart: function(model) {
-        model = model || this.model;
+        model = model || this._getNonForecastModel();
         if (model.get('assigned_user_id') == app.user.get('id') && !this.settings.get('display_manager')) {
             var field = this.getField('paretoChart'),
                 serverData = field.getServerData(),
@@ -480,7 +506,7 @@
      * @param {Object} [model]      The Model to add, if not passed in, it will use this.model
      */
     removeRowFromChart: function(model) {
-        model = model || this.model;
+        model = model || this._getNonForecastModel();
         var field = this.getField('paretoChart'),
             serverData = field.getServerData();
 
@@ -513,7 +539,7 @@
      * Initialize plugins.
      * Only manager can toggle visibility.
      *
-     * @return {View.Views.BaseForecastPareto} Instance of this view.
+     * @return {BaseForecastParetoView} Instance of this view.
      * @protected
      */
     _initPlugins: function() {

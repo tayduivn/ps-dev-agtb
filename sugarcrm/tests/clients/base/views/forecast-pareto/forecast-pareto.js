@@ -1,4 +1,3 @@
-//FILE SUGARCRM flav=pro ONLY
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -9,7 +8,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  */
 
 describe('Base.Views.ForecastPareto', function() {
@@ -140,10 +139,22 @@ describe('Base.Views.ForecastPareto', function() {
         //BEGIN SUGARCRM flav=ent ONLY
         it('when on opps and forecasting by RLI, it should equal collection', function() {
             view.context.set('module', 'Opportunities');
+            view.context.parent = undefined;
             var c1 = new Backbone.Model();
             c1.set('collection', new Backbone.Collection());
             c1.set('module', 'RevenueLineItems');
             view.context.children = [c1];
+            view.findModelToListen();
+            expect(view.listenModel).toEqual(c1.get('collection'));
+        });
+
+        it('when on opps and forecasting by RLI, it should equal collection from the view.context.parent.children', function() {
+            view.context.set('module', 'Forecasts');
+            view.context.parent = app.context.getContext({module: 'Opportunities'});
+            var c1 = new Backbone.Model();
+            c1.set('collection', new Backbone.Collection());
+            c1.set('module', 'RevenueLineItems');
+            view.context.parent.children = [c1];
             view.findModelToListen();
             expect(view.listenModel).toEqual(c1.get('collection'));
         });
