@@ -81,7 +81,9 @@
                 {if $authorization.refresh_token}
                 SUGAR.App.cache.set("{$appPrefix}AuthRefreshToken", "{$authorization.refresh_token}")
                 {/if}
-                history.replaceState(null, 'SugarCRM', window.SUGAR.App.config.siteUrl+"/"+window.location.hash)
+                if (window.SUGAR.App.config.siteUrl != '') {ldelim}
+                    history.replaceState(null, 'SugarCRM', window.SUGAR.App.config.siteUrl+"/"+window.location.hash)
+                {rdelim}
                 {/if}{literal}
                 App = SUGAR.App.init({
                     el: "#sidecar",
