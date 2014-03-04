@@ -32,8 +32,8 @@ class vCardAccountLinkTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function tearDown()
     {
-        $GLOBALS['db']->query("DELETE FROM contacts WHERE id = {$this->contactId}");
-        $GLOBALS['db']->query("DELETE FROM leads WHERE id  = {$this->leadId}");
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contactId}'");
+        $GLOBALS['db']->query("DELETE FROM leads WHERE id  = '{$this->leadId}'");
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();
     }
