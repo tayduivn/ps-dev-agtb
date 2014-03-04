@@ -74,4 +74,60 @@ class SugarFieldFloat extends SugarFieldInt
         
         return $value;
     }
+
+    /**
+     * For Floats we need to round down to the precision of the passed in value, since the db's could be showing
+     * something different
+     *
+     * @param Number $value                         The value for which we are trying to filter
+     * @param String $fieldName                     What field we are trying to modify
+     * @param SugarBean $bean                       The associated SugarBean
+     * @param SugarQuery $q                         The full query object
+     * @param SugarQuery_Builder_Where $where       The where object for the filter
+     * @param String $op                            The filter operation we are trying to do
+     * @return bool
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    public function fixForFilter(&$value, $fieldName, SugarBean $bean, SugarQuery $q, SugarQuery_Builder_Where $where, $op) {
+
+        // if we have an array, pull the first value
+        if (is_array($value)) {
+            $v = $value[1];
+        } else {
+            $v = $value;
+        }
+        // ROUND(<value>, <precision>) is the standard across all DB's we support
+        $field = "ROUND($fieldName, ". strlen(substr(strrchr($v, "."), 1)) . ")";
+
+        switch($op){
+            case '$equals':
+                $q->whereRaw("$field = $value");
+                return false;
+            case '$not_equals':
+                $q->whereRaw("$field != $value");
+                return false;
+            case '$between':
+                if (!is_array($value) || count($value) != 2) {
+                    throw new SugarApiExceptionInvalidParameter(
+                        '$between requires an array with two values.'
+                    );
+                }
+                $q->whereRaw("$field BETWEEN $value[0] AND $value[1]");
+                return false;
+            case '$lt':
+                $q->whereRaw("$field < $value");
+                return false;
+            case '$lte':
+                $q->whereRaw("$field <= $value");
+                return false;
+            case '$gt':
+                $q->whereRaw("$field > $value");
+                return false;
+            case '$gte':
+                $q->whereRaw("$field >= $value");
+                return false;
+        }
+
+        return true;
+    }
 }
