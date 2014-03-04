@@ -660,6 +660,13 @@ $bwcModules = array(
     //END SUGARCRM flav=pro ONLY
 );
 
+$moduleList[] = 'KBSDocuments';
+$beanList['KBSDocuments'] = 'KBSDocument';
+$beanFiles['KBSDocument'] = 'modules/KBSDocuments/KBSDocument.php';
+$moduleList[] = 'KBSContents';
+$beanList['KBSContents'] = 'KBSContent';
+$beanFiles['KBSContent'] = 'modules/KBSContents/KBSContent.php';
+$modInvisList[] = 'KBSContent';
 foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $modExtFile) {
     include $modExtFile;
 }

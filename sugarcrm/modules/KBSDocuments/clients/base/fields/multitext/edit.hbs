@@ -1,0 +1,32 @@
+{{!
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
+ */
+}}
+{{#each value}}
+    <div class="control-group" data-name="multitext_{{name}}">
+        <div class="controls controls-three btn-fit">
+        {{#eachOptions items}}
+            <input type="text" name="key_{{../name}}" class="inherit-width" value="{{key}}" data-id="{{../id}}" data-index="{{@index}}">
+            <input type="text" name="value_{{../name}}" class="inherit-width" value="{{value}}" data-id="{{../id}}" data-index="{{@index}}">
+        {{/eachOptions}}
+            <button type="button" class="btn third {{#if primary}}active{{/if}}" name="primary" data-action="set-primary-field" data-index="{{@index}}" rel="tooltip" title="{{str "LBL_SET_ITEM_PRIMARY" ../module}}"><i class="icon-star"></i></button>
+        {{#if remove_button}}
+            <button type="button" class="btn second" name="remove" data-action="remove-field" data-index="{{@index}}" rel="tooltip" title="{{str "LBL_ITEM_REMOVE" ../../module}}"><i class="icon-minus"></i></button>
+        {{/if}}
+        {{#if add_button}}
+            <button type="button" class="btn first" name="add" data-action="add-field" data-index="{{@index}}" rel="tooltip" title="{{str "LBL_ITEM_ADD" ../../module}}"><i class="icon-plus"></i></button>
+        {{/if}}
+        </div>
+    </div>
+{{/each}}
+{{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
