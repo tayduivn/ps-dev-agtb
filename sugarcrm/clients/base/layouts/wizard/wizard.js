@@ -54,7 +54,7 @@
      * @override
      */
     initialize: function(options) {
-        app.view.Layout.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
         $(window).on('keypress.' + this.cid, _.bind(this.handleKeypress, this));
     },
 
@@ -80,7 +80,7 @@
     addComponent: function(component, def) {
         component = this._addButtonsForComponent(component);
         if (component.showPage()) {
-            app.view.Layout.prototype.addComponent.call(this, component, def);
+            this._super('addComponent', [component, def]);
         }
     },
     /**
@@ -127,6 +127,12 @@
             this._components[this._currentIndex].$el.detach();
             this._currentIndex = newIndex;
             this.$el.append(this._components[this._currentIndex].el);
+
+            // Wait for the wizard-page to tell us it's ready for interactions from keypresses.
+            this.on('wizard-page:render:complete', function() {
+                $(window).on('keypress.' + this.cid, _.bind(this.handleKeypress, this));
+            });
+
             this._components[this._currentIndex].render();
         }
         return this.getProgress();
@@ -161,6 +167,8 @@
      * last page number
      */
     previousPage: function(){
+        // We're navigating, don't get any more keypresses.
+        $(window).off('keypress.' + this.cid);
         return this.setPage(this._currentIndex - 1);
     },
     /**
@@ -169,6 +177,8 @@
      * last page number
      */
     nextPage: function(){
+        // We're navigating, don't get any more keypresses.
+        $(window).off('keypress.' + this.cid);
         return this.setPage(this._currentIndex + 1);
     },
 
@@ -192,10 +202,16 @@
      */
     handleKeypress: function(e) {
         var wizardPage = this._components[this._currentIndex];
-        if (e.keyCode === 13) {
-            document.activeElement.blur();
-            if (wizardPage.isPageComplete()) {
-                wizardPage.next();
+        // Check wizardPage no matter which key we're trapping (for future expansion).
+        if (wizardPage) {
+            // Check if we're catching enter.
+            if (e.keyCode === 13) {
+                document.activeElement.blur();
+                if (wizardPage.isPageComplete()) {
+                    // Once we're navigating, don't get any more keypresses.
+                    $(window).off('keypress.' + this.cid);
+                    wizardPage.next();
+                }
             }
         }
     },
@@ -205,7 +221,8 @@
      * @override
      */
     _dispose: function() {
-        $(window).off('keypress.' + this.cid, _.bind(this.handleKeypress, this));
-        app.view.Layout.prototype._dispose.call(this);
+        // We're done with this view, remove the keypress bind.
+        $(window).off('keypress.' + this.cid);
+        this._super('_dispose');
     }
 })
