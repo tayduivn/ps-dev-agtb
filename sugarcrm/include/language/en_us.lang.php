@@ -11128,6 +11128,7 @@ $app_list_strings['moduleList']['KBSDocuments'] = 'Knowledge Base';
 $app_list_strings['moduleListSingular']['KBSDocuments'] = 'Knowledge Base';
 $app_list_strings['moduleList']['KBSContents'] = 'Knowledge Base Content';
 $app_list_strings['moduleListSingular']['KBSContents'] = 'Knowledge Base Content';
-
 $app_list_strings['moduleList']['KBSTags'] = 'Knowledge Base Tags';
 $app_list_strings['moduleListSingular']['KBSTags'] = 'Knowledge Base Tag';
+$app_list_strings['moduleList']['KBSTopics'] = 'Knowledge Base Topics';
+$app_list_strings['moduleListSingular']['KBSTopics'] = 'Knowledge Base Topic';
