@@ -1,5 +1,5 @@
-{{!
-/*********************************************************************************
+{{!--
+/*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
  * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
@@ -10,20 +10,18 @@
  * certifying that you have authority to bind Company accordingly.
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
- ********************************************************************************/
-}}
-<div>
-    {{#if offset}}
-        {{#eq offset -1}}
-            {{str 'TPL_LISTVIEW_SELECTED_ALL' this.module this}}
-        {{/eq}}
-        {{#notEq offset -1}}
-            {{str 'TPL_LISTVIEW_SELECTED_FIRST_OFFSET' this.module this}}
-        {{/notEq}}
-    {{else}}
+ */
+--}}
+{{#if offset}}
+    {{#eq offset -1}}
         {{str 'TPL_LISTVIEW_SELECTED_ALL' this.module this}}
-    {{/if}}
-    <button type="button" class="btn-link" data-action="clear">
-        {{str 'LBL_LISTVIEW_SELECTED_CLEAR'}}
-    </button>
-</div>
+    {{/eq}}
+    {{#notEq offset -1}}
+        {{str 'TPL_LISTVIEW_SELECTED_FIRST_OFFSET' this.module this}}
+    {{/notEq}}
+{{else}}
+    {{str 'TPL_LISTVIEW_SELECTED_ALL' this.module this}}
+{{/if}}
+<button type="button" class="btn btn-link btn-inline" data-action="clear">
+    {{str 'LBL_LISTVIEW_SELECTED_CLEAR'}}
+</button>
