@@ -68,7 +68,7 @@
         this.fieldsToValidate = this._fieldsToValidate(options.meta);
         Handlebars.registerPartial("wizard-page.header", app.template.get("wizard-page.header"));
         Handlebars.registerPartial("wizard-page.footer", app.template.get("wizard-page.footer"));
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
     },
     /**
      * Additionally update current progress and button status during a render.
@@ -81,8 +81,10 @@
         this.progress = this.layout.getProgress();
         this.percentComplete = this._getPercentageComplete();
         this.wizardCompleted = (this.progress.page === this.progress.lastPage)?true:false;
-        app.view.View.prototype._render.call(this);
+        this._super('_render');
         this.checkIfPageComplete();
+
+        this.layout.trigger("wizard-page:render:complete");
     },
     /**
      * We have to check if required fields are pre-filled once we've sync'd. For example,
