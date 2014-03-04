@@ -1,0 +1,52 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
+({
+    /**
+     * status Widget.
+     *
+     * Extends from EnumField widget adding style property according to specific
+     * status.
+     */
+    extendsFrom: 'EnumField',
+
+    /**
+     * An object where its keys map to specific status and color to matching
+     * CSS classes.
+     *
+     * @property {Object}
+     * @protected
+     */
+    _statusColor: {
+        'draft' : 'gray',
+        'expired' : 'red',
+        'in-review': 'yellow',
+        'published': 'green'
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Defines `statusColor` property based on field value. If current status
+     * does not match a known value its value is used as label and default
+     * style is used as well.
+     */
+    _render: function () {
+        var status = this.model.get(this.name),
+            options = app.lang.getAppListStrings(this.def.options);
+
+        this.statusColor = this._statusColor[status] || this._statusColor['draft'];
+        this.statusLabel = options[status] || status;
+
+        this._super('_render');
+    }
+})

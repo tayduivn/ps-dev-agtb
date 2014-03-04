@@ -29,6 +29,7 @@ $viewdefs['KBSDocuments']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'name'    => 'status',
+                    'type'    => 'status',
                 ),
                 array(
                     'name'              => 'assigned_user_name',

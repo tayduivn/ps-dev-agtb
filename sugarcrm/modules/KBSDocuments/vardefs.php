@@ -25,7 +25,7 @@ $dictionary['KBSDocument'] = array(
             'vname' => 'LBL_STATUS',
             'type' => 'enum',
             'len' => 100,
-            'options' => 'kbdocument_status_dom',
+            'options' => 'kbsdocument_status_dom',
             'reportable' => false,
         ),
     ),
