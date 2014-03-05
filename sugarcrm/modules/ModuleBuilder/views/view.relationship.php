@@ -236,7 +236,8 @@ class ViewRelationship extends SugarView
 
         $relatable = array();
         foreach ($relatableModules as $name => $dummy) {
-            $relatable[$name] = translate($name);
+            // Clean up the relatable module name
+            $relatable[$name] = $this->getModuleName($name);
         }
         unset($relatable['KBDocuments']);
         natcasesort($relatable);
@@ -277,5 +278,36 @@ class ViewRelationship extends SugarView
             $ac->addSection('east', $module->name . ' ' . $GLOBALS['mod_strings']['LBL_RELATIONSHIPS'], $this->smarty->fetch('modules/ModuleBuilder/tpls/studioRelationship.tpl'));
             echo $ac->getJavascript();
         }
+    }
+
+    /**
+     * Gets a translated module name for both deployed and undeployed modules
+     * 
+     * @param string $module The module to get a translated name for
+     * @return string
+     */
+    protected function getModuleName($module)
+    {
+        // If there is an object name for this (or bean name) assume this is a 
+        // deployed module and return the translated string
+        if (BeanFactory::getObjectName($module)) {
+            return translate($module);
+        }
+
+        // If we get here, then see if there is an undeployed module based on 
+        // all installed packages
+        $mb = new ModuleBuilder();
+        $packages = $mb->getPackageList();
+        foreach ($packages as $package) {
+            $mod = $mb->getPackage($package)->getModuleByFullName($module);
+            if ($mod && !empty($mod->config['label'])) {
+                // Since this is undeployed, there is no module "name" so rely on 
+                // the label in the module config
+                return $mod->config['label'];
+            }
+        }
+
+        // Hmmm, what really is this? Don't know, send it back as is
+        return $module;
     }
 }
