@@ -241,13 +241,11 @@ class ChartDisplay
             }
         }
 
-        // check to see if the chart can be stackable
-        foreach ($chart_rows as $element) {
-            if (count($element) > 1) {
-                $this->stackChart = true;
-                break;
-            }
+        //Determine if the original report def has a grouping level greater than one
+        if (isset($this->reporter->report_def['group_defs'])) {
+            $this->stackChart = (count($this->reporter->report_def['group_defs']) > 1) ? true : false;
         }
+
         switch ($this->chartType) {
             case 'hBarF':
                 if ($this->isStackable()) {
@@ -330,7 +328,7 @@ class ChartDisplay
         global $locale;
         $row_remap = array();
         if (!isset($row['cells'][$this->reporter->chart_numerical_position]['val'])) {
-            return $row_remap; 
+            return $row_remap;
         }
         $row_remap['numerical_value'] = $numerical_value = unformat_number(strip_tags($row['cells'][$this->reporter->chart_numerical_position]['val']));
         global $do_thousands;
