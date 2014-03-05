@@ -406,36 +406,55 @@ class VardefManager{
         return $links;
     }
 
-
-    public static function getLinkFieldForRelationship($module, $object, $relName)
+    /**
+     * Gets a link field for a relationship
+     * 
+     * @param string $module The module to find a link field from
+     * @param string $object The object name for the module
+     * @param string $relName The relationship name or link name to use
+     * @param boolean $byLinkName If set, will treat $relName as a link name not
+     *                            a relationship name
+     * @return array, or false if no link field is found
+     */
+    public static function getLinkFieldForRelationship($module, $object, $relName, $byLinkName = false)
     {
         $cacheKey = "LFR{$module}{$object}{$relName}";
         $cacheValue = sugar_cache_retrieve($cacheKey);
-        if(!empty($cacheValue))
+        if(!empty($cacheValue)) {
             return $cacheValue;
+        }
 
+        // If we are searching by link name instead of relationship name, set that here
+        $defIndex = $byLinkName ? 'name' : 'relationship';
         $relLinkFields = self::getLinkFieldsForModule($module, $object);
         $matches = array();
-        if (!empty($relLinkFields))
-        {
-            foreach($relLinkFields as $rfName => $rfDef)
-            {
-                if ($rfDef['relationship'] == $relName)
-                {
-                    $matches[] = $rfDef;
+        if (!empty($relLinkFields)) {
+            // If there is a field with this name as a field def, use it
+            if (isset($relLinkFields[$relName])) {
+                $matches[] = $relLinkFields[$relName];
+            } else {
+                // Otherwise loop and set
+                foreach($relLinkFields as $rfName => $rfDef) {
+                    if ($rfDef[$defIndex] == $relName) {
+                        $matches[] = $rfDef;
+                    }
                 }
             }
         }
-        if (empty($matches))
+
+        if (empty($matches)) {
             return false;
-        if (sizeof($matches) == 1)
+        }
+
+        if (sizeof($matches) == 1) {
             $results = $matches[0];
-        else
+        } else {
             //For relationships where both sides are the same module, more than one link will be returned
             $results = $matches;
+        }
 
         sugar_cache_put($cacheKey, $results);
-        return $results ;
+        return $results;
     }
 
     //BEGIN SUGARCRM flav=pro ONLY

@@ -44,7 +44,8 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         // get the link and the related module name as the module we need the subpanel from
         $bean = BeanFactory::getBean($loadedModule);
 
-        $linkDef = VardefManager::getLinkFieldForRelationship($bean->module_dir, $bean->object_name, $linkName);
+        // Get the linkdef, but make sure to tell VardefManager to use name instead by passing true
+        $linkDef = VardefManager::getLinkFieldForRelationship($bean->module_dir, $bean->object_name, $linkName, true);
         
         if(empty($linkDef['name'])) {
             $GLOBALS['log']->error("Cannot find a link for {$linkName} on {$loadedModule}");
@@ -170,11 +171,6 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
 
         $legacyDefs = $this->mdc->toLegacySubpanelLayoutDefs($viewdefs['subpanels']['meta']['components'], BeanFactory::newBean($loadedModule));
 
-        if (empty($viewdefs)) {
-            return $subpanelName;
-        }
-        $legacyDefs = $this->mdc->toLegacySubpanelLayoutDefs($viewdefs['subpanels']['meta']['components'], BeanFactory::newBean($loadedModule));
-        
         if(empty($legacyDefs['subpanel_setup'])) {
             $GLOBALS['log']->error("Could not convert subpanels for subpanel: {$subpanelName} - {$loadedModule}");
             return $subpanelName;
@@ -185,6 +181,8 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
                 return $linkName;
             }
         }
+
+        return $subpanelName;
     }
 
 
