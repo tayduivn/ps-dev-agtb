@@ -303,23 +303,12 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
 
     public function testGetMailConfigurationStatusForUser_NoSMTPServer_ReturnsInvalidSystemConfiguration()
     {
-        $configuration = array(
-            "name"              => "System",
-            "type"              => "system",
-            "user_id"           => "1",
-            "from_email"        => "foo@bar.com",
-            "from_name"         => "Foo Bar",
-            "mail_sendtype"     => "SMTP",
-            "mail_smtptype"     => "other",
-            "mail_smtpserver"   => "",
-            "mail_smtpport"     => "25",
-            "mail_smtpuser"     => "foo",
-            "mail_smtppass"     => "foobar",
-            "mail_smtpauth_req" => "1",
-            "mail_smtpssl"      => "0",
-        );
+        $systemConfiguration = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
 
-        OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
+        $configuration = new OutboundEmail();
+        $configuration->retrieve($systemConfiguration->id);
+        $configuration->mail_smtpserver = '';
+        $configuration->save();
 
         $mockOutboundEmail = $this->getMock("OutboundEmail", array("isAllowUserAccessToSystemDefaultOutbound", "getSystemMailerSettings"));
         $mockOutboundEmail->expects($this->any())
@@ -344,24 +333,6 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
 
     public function testGetMailConfigurationStatusForUser_ValidSystemConfig_AllowAllUsersSet_ReturnsValidConfiguration()
     {
-        $configuration = array(
-            "name"              => "System",
-            "type"              => "system",
-            "user_id"           => "1",
-            "from_email"        => "foo@bar.com",
-            "from_name"         => "Foo Bar",
-            "mail_sendtype"     => "SMTP",
-            "mail_smtptype"     => "other",
-            "mail_smtpserver"   => "smtp.host.com",
-            "mail_smtpport"     => "25",
-            "mail_smtpuser"     => "foo",
-            "mail_smtppass"     => "foobar",
-            "mail_smtpauth_req" => "1",
-            "mail_smtpssl"      => "0",
-        );
-
-        OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
-
         $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(true);
 
         $status = $mockOutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($GLOBALS["current_user"]);
@@ -371,23 +342,18 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
 
     public function testGetMailConfigurationStatusForUser_ValidSystemConfig_AllowAllUsersNotSet_SMTPAuthenticationNotSet_NoUserData_ReturnsValidUserConfiguration()
     {
-        $configuration = array(
-            "name"              => "System",
-            "type"              => "system",
-            "user_id"           => "1",
-            "from_email"        => "foo@bar.com",
-            "from_name"         => "Foo Bar",
-            "mail_sendtype"     => "SMTP",
-            "mail_smtptype"     => "other",
-            "mail_smtpserver"   => "smtp.host.com",
-            "mail_smtpport"     => "25",
-            "mail_smtpuser"     => "foo",
-            "mail_smtppass"     => "foobar",
-            "mail_smtpauth_req" => "1",
-            "mail_smtpssl"      => "0",
-        );
+        $systemConfiguration = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
 
-        OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
+        $configuration = new OutboundEmail();
+        $configuration->retrieve($systemConfiguration->id);
+        $configuration->mail_smtpauth_req = '0';
+        $configuration->save();
+
+        $userConfiguration = new OutboundEmail();
+        $userConfiguration->retrieve($this->systemOverrideConfiguration->id);
+        $userConfiguration->mail_smtpuser = '';
+        $userConfiguration->mail_smtppass = '';
+        $userConfiguration->save();
 
         $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
 
@@ -398,42 +364,6 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
 
     public function testGetMailConfigurationStatusForUser_ValidSystemConfig_AllowAllUsersNotSet_SMTPAuthenticationSet_ValidUserData_ReturnsValidConfiguration()
     {
-        $systemConfiguration = array(
-            "name"              => "System",
-            "type"              => "system",
-            "user_id"           => "1",
-            "from_email"        => "foo@bar.com",
-            "from_name"         => "Foo Bar",
-            "mail_sendtype"     => "SMTP",
-            "mail_smtptype"     => "other",
-            "mail_smtpserver"   => "smtp.host.com",
-            "mail_smtpport"     => "25",
-            "mail_smtpuser"     => "foo",
-            "mail_smtppass"     => "foobar",
-            "mail_smtpauth_req" => "1",
-            "mail_smtpssl"      => "0",
-        );
-
-        OutboundEmailConfigurationTestHelper::createOutboundEmail($systemConfiguration);
-
-        $userConfiguration = array(
-            "name"              => "System Override",
-            "type"              => "system-override",
-            "user_id"           => $GLOBALS["current_user"]->id,
-            "from_email"        => "foo@bar.com",
-            "from_name"         => "Foo Bar",
-            "mail_sendtype"     => "SMTP",
-            "mail_smtptype"     => "other",
-            "mail_smtpserver"   => "smtp.host.com",
-            "mail_smtpport"     => "25",
-            "mail_smtpuser"     => "user",
-            "mail_smtppass"     => "password",
-            "mail_smtpauth_req" => "1",
-            "mail_smtpssl"      => "0",
-        );
-
-        OutboundEmailConfigurationTestHelper::createOutboundEmail($userConfiguration);
-
         $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
 
         $status = $mockOutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($GLOBALS["current_user"]);
@@ -443,24 +373,6 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
 
     public function testGetMailConfigurationStatusForUser_ValidSystemConfig_AllowAllUsersNotSet_SMTPAuthenticationSet_NoUserData_ReturnsInvalidConfiguration()
     {
-        $systemConfiguration = array(
-            "name"              => "System",
-            "type"              => "system",
-            "user_id"           => "1",
-            "from_email"        => "foo@bar.com",
-            "from_name"         => "Foo Bar",
-            "mail_sendtype"     => "SMTP",
-            "mail_smtptype"     => "other",
-            "mail_smtpserver"   => "",
-            "mail_smtpport"     => "25",
-            "mail_smtpuser"     => "",
-            "mail_smtppass"     => "",
-            "mail_smtpauth_req" => "1",
-            "mail_smtpssl"      => "0",
-        );
-
-        OutboundEmailConfigurationTestHelper::createOutboundEmail($systemConfiguration);
-
         $outboundEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $mockOutboundEmail = $this->getMock("OutboundEmail", array("isAllowUserAccessToSystemDefaultOutbound"));
         $mockOutboundEmail->expects($this->any())
@@ -485,41 +397,12 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
 
     public function testGetMailConfigurationStatusForUser_ValidSystemConfig_AllowAllUsersNotSet_SMTPAuthenticationSet_NoUserData_ReturnsValidConfiguration()
     {
-        $systemConfiguration = array(
-            "name"              => "System",
-            "type"              => "system",
-            "user_id"           => "1",
-            "from_email"        => "foo@bar.com",
-            "from_name"         => "Foo Bar",
-            "mail_sendtype"     => "SMTP",
-            "mail_smtptype"     => "other",
-            "mail_smtpserver"   => "smtp.host.com",
-            "mail_smtpport"     => "25",
-            "mail_smtpuser"     => "",
-            "mail_smtppass"     => "",
-            "mail_smtpauth_req" => "1",
-            "mail_smtpssl"      => "0",
-        );
+        $systemConfiguration = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
 
-        OutboundEmailConfigurationTestHelper::createOutboundEmail($systemConfiguration);
-
-        $userConfiguration = array(
-            "name"              => "System Override",
-            "type"              => "system-override",
-            "user_id"           => $GLOBALS["current_user"]->id,
-            "from_email"        => "foo@bar.com",
-            "from_name"         => "Foo Bar",
-            "mail_sendtype"     => "SMTP",
-            "mail_smtptype"     => "other",
-            "mail_smtpserver"   => "",
-            "mail_smtpport"     => "25",
-            "mail_smtpuser"     => "",
-            "mail_smtppass"     => "",
-            "mail_smtpauth_req" => "1",
-            "mail_smtpssl"      => "0",
-        );
-
-        OutboundEmailConfigurationTestHelper::createOutboundEmail($userConfiguration);
+        $configuration = new OutboundEmail();
+        $configuration->retrieve($systemConfiguration->id);
+        $configuration->mail_smtpauth_req = '0';
+        $configuration->save();
 
         $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
 
