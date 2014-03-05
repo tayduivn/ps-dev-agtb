@@ -194,22 +194,33 @@
     }
 
     &.select2-choices-pills-square {
+      li {
+        border-radius: 3px;
+        padding: 6px;
+        color: @white;
+        font-weight: 600;
+        &.select2-search-choice-focus {
+          color: @dropdownLinkColor;
+          border-radius: 3px;
+          border-color: @linkColor !important;
+          background-color: lighten(@grayDark, 10%);
+        }
+      }
       .select2-choices {
         padding-left: 2px;
-        min-height: 34px;
+        min-height: 30px;
       }
       .select2-search-choice {
         div {
-          padding: 8px 29px 8px 8px;
+          font-size: @baseFontSize;
+          padding: 0px 12px 0px 0px;
           border-radius: 3px;
           color: @white;
-          background: lighten(@grayDark, 10%);
           .label {
             background: #499C00;
             text-align: center;
             color: @white;
             line-height: 16px;
-            font-size: 10px;
           }
         }
         .icon {
@@ -225,22 +236,22 @@
           }
         }
         a.select2-search-choice-close {
-          top: 8px;
-          right: 7px;
+          top: 6px;
+          right: 4px;
           font-size: 12px;
           font-weight: normal;
-          color: @grayLight;
+          color: @black;
           &::before {
             content: "\f00d";
           }
           &:hover {
-            color: @white;
+            color: @grayLight;
           }
         }
       }
       .select2-search-field {
         input {
-          padding: 8px 7px;
+          padding: 6px 4px;
           margin: -1px 0 0;
         }
       }
@@ -544,15 +555,16 @@
   margin: 0;
   .tag-wrapper {
       display: inline-block;
-      padding: 5px 6px;
-      background: @grayLight;
+      padding: 3px 6px 3px;
+      background: @gray;
       top: 3px;
       left: 3px;
       .border-radius(3px);
       margin-right: 4px;
+      margin-top: 2px;
       float: left;
       .tag-name {
-        font-size: @fontSizeSmall;
+        font-size: @baseFontSize;
         color: @white;
         font-weight: 600;
       }
