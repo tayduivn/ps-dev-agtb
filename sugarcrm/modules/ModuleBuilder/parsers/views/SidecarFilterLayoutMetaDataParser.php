@@ -88,19 +88,51 @@ class SidecarFilterLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
      */
     public function getAvailableFields()
     {
+        // Make a copy of the field defs array
+        $fieldDefs = $this->_fielddefs;
+
+        // Grab our original viewdefs since there are fields on here we'll need
+        $viewDefs = $this->implementation->getOriginalViewdefs();
+
+        // The array we will be working on to determine our fields
         $availableFields = array();
 
-        // Select available fields from the field definitions - don't need to worry about checking if ok to include as the Implementation has done that already in its constructor
-        foreach ($this->_fielddefs as $key => $def) {
-            if ($this->isValidField($key, $def) && !$this->panelHasField($key)) {
-                $availableFields[$key] = self::_trimFieldDefs($this->_fielddefs[$key]);
+        // Inspect the original viewdefs to make sure combo fields are handled correctly
+        foreach ($viewDefs['fields'] as $field => $def) {
+            if (empty($def)) {
+                // Nested if here to prevent logic form always falling into the
+                // else that belongs to this ifs parent if
+                if (!isset($fieldDefs[$field])) {
+                    $fieldDefs[$field] = array();
+                }
+            } else {
+                if (isset($def['dbFields']) && is_array($def['dbFields'])) {
+                    // Loop over the dbFields in this filter field and remove them 
+                    // from the field defs
+                    foreach ($def['dbFields'] as $fieldName) {
+                        unset($fieldDefs[$fieldName]);
+                    }
+
+                    // Now create a mock field def from this combo field and add
+                    // it to the available field list. Adding it here adds it to
+                    // the beginning of the list. To add it to the end, change
+                    // this from $availableFields to $fieldDefs.
+                    $availableFields[$field] = $def;
+                }
             }
         }
 
-        foreach ($this->_viewdefs['fields'] AS $name => $details) {
-            if (empty($availableFields[$name])) {
-                continue;
+        // Loop the field defs, checking validity and that the field is not currently
+        // on the list of fields
+        foreach ($fieldDefs as $key => $def) {
+            if ($this->isValidField($key, $def) && !$this->panelHasField($key)) {
+                $availableFields[$key] = self::_trimFieldDefs($fieldDefs[$key]);
             }
+        }
+
+        // Now loop over the current viewdefs and remove whatever is left from the
+        // available field list.
+        foreach ($this->_viewdefs['fields'] AS $name => $details) {
             unset($availableFields[$name]);
         }
 
