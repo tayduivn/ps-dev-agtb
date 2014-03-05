@@ -110,6 +110,14 @@ sw.MessageBox = {
 		if (myConf.beforeHide) {
 			sw.MessageBox.panel.beforeHideEvent.subscribe(function() {myConf.beforeHide();});
 		} // if
+
+        var listener = new YAHOO.util.KeyListener(document, {keys: 27}, {
+            fn: sw.MessageBox.panel.hide,
+            scope: sw.MessageBox.panel,
+            correctScope: true
+        });
+        sw.MessageBox.panel.cfg.queueProperty("keylisteners", listener);
+
 		sw.MessageBox.panel.render(document.body);
 		sw.MessageBox.panel.show();
 	},
