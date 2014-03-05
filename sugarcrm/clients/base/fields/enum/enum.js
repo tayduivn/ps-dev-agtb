@@ -205,7 +205,7 @@
         this.items = this.def.options || fieldMeta.options;
         fetch = fetch || false;
 
-        if (fetch || !this.items) {
+        if (fetch || !this.items || this.def.function) {
             var _key = 'request:' + this.module + ':' + this.name;
             //if previous request is existed, ignore the duplicate request
             if (this.context.get(_key)) {
