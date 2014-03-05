@@ -48,6 +48,7 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                 'exp_date',
                 'approved',
                 'revision',
+                'kbsdocument_name',
                 'rating' => array(
                     'name' => 'rating',
                     'type' => 'rating',
