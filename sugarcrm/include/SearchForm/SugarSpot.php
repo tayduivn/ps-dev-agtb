@@ -369,9 +369,9 @@ class SugarSpot
             // setup the custom query options
             // reset these each time so we don't append my_items calls for tables not in the query
             // this would happen in global search
-            $custom_select = isset($options['custom_select']) ? $options['custom_select'] : '';
-            $custom_from = isset($options['custom_from']) ? $options['custom_from'] : '';
-            $custom_where = isset($options['custom_where']) ? $options['custom_where'] : '';
+            $custom_select = $this->getOption($options, 'custom_select', $moduleName);
+            $custom_from   = $this->getOption($options, 'custom_from', $moduleName);
+            $custom_where  = $this->getOption($options, 'custom_where', $moduleName);
             if (isset($options['custom_where_module'][$moduleName])) {
                 if (!empty($custom_where)) {
                     $custom_where .= " AND {$options['custom_where_module'][$moduleName]}";
@@ -697,6 +697,28 @@ class SugarSpot
         $results['Actions'] = $this->_searchActions($query, $offset, $limit, $primary_module);
         //END SUGARCRM flav=spotactions ONLY
         return $results;
+    }
+
+    /**
+     * Returns the value of specified option in the context of module
+     *
+     * @param array  $options Search options
+     * @param string $name    Option name
+     * @param string $module  Module name
+     *
+     * @return mixed
+     */
+    protected function getOption(array $options, $name, $module = null)
+    {
+        if ($module !== null && isset($options['modules'][$module][$name])) {
+            return $options['modules'][$module][$name];
+        }
+
+        if (isset($options[$name])) {
+            return $options[$name];
+        }
+
+        return null;
     }
 
     //BEGIN SUGARCRM flav=spotactions ONLY

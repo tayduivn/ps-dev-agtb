@@ -168,6 +168,60 @@ class SugarSpotTest extends Sugar_PHPUnit_Framework_TestCase
             ('SugarSpot->filterSearchType expected type ' . $type . ' with value ' . $query . ' to return ' . $expected ? 'true' : false));
     }
 
+    /**
+     * @dataProvider getOptionProvider
+     */
+    public function testGetOption($options, $name, $module, $expected)
+    {
+        $sugarSpot = new Bug50484SugarSpotMock();
+        $actual = $sugarSpot->getOption($options, $name, $module);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function getOptionProvider()
+    {
+        return array(
+            'none-provided' => array(
+                array(),
+                'foo',
+                null,
+                null,
+            ),
+            'global-provided' => array(
+                array(
+                    'foo' => 'bar',
+                ),
+                'foo',
+                null,
+                'bar',
+            ),
+            'module-specific-provided' => array(
+                array(
+                    'modules' => array(
+                        'Accounts' => array(
+                            'foo' => 'baz',
+                        ),
+                    ),
+                ),
+                'foo',
+                'Accounts',
+                'baz',
+            ),
+            'both-provided' => array(
+                array(
+                    'foo' => 'bar',
+                    'modules' => array(
+                        'Accounts' => array(
+                            'foo' => 'baz',
+                        ),
+                    ),
+                ),
+                'foo',
+                'Accounts',
+                'baz',
+            ),
+        );
+    }
 }
 
 
@@ -176,5 +230,10 @@ class Bug50484SugarSpotMock extends SugarSpot
     public function filterSearchType($type, $query)
     {
         return parent::filterSearchType($type, $query);
+    }
+
+    public function getOption(array $options, $name, $module = null)
+    {
+        return parent::getOption($options, $name, $module);
     }
 }
