@@ -276,15 +276,28 @@ class Importer
                 else
                 {
                     $rowValue = $returnValue;
+
+                    $address = array(
+                        'email_address' => $rowValue,
+                        'primary_address' => $field == 'email1',
+                        'invalid_email' => false,
+                        'opt_out' => false,
+                    );
+
                     // check for current opt_out and invalid email settings for this email address
                     // if we find any, set them now
                     $emailres = $focus->db->query( "SELECT opt_out, invalid_email FROM email_addresses WHERE email_address = '".$focus->db->quote($rowValue)."'");
                     if ( $emailrow = $focus->db->fetchByAssoc($emailres) )
                     {
-                        $focus->email_opt_out = $emailrow['opt_out'];
-                        $focus->invalid_email = $emailrow['invalid_email'];
+                        $address = array_merge($address, $emailrow);
                     }
+
+                    $this->importAddress($focus, $address);
                 }
+            }
+
+            if ($field == 'email_addresses_non_primary') {
+                $this->handleNonPrimaryEmails($focus, $rowValue, $defaultRowValue, $fieldTranslated);
             }
 
             // Handle splitting Full Name into First and Last Name parts
@@ -988,5 +1001,139 @@ class Importer
         }
     }
 
+    /**
+     * Handles non-primary emails string read from CSV file
+     *
+     * @param SugarBean $focus           Target bean
+     * @param mixed     $rowValue        Serialized data
+     * @param mixed     $defaultRowValue Default value in case if row value is empty 
+     * @param string    $fieldTranslated Name of CSV column
+     */
+    protected function handleNonPrimaryEmails(SugarBean $focus, $rowValue, $defaultRowValue, $fieldTranslated)
+    {
+        $parsed = $this->parseNonPrimaryEmails($rowValue, $fieldTranslated);
+        if (!$parsed && !empty($defaultRowValue)) {
+            $parsed = $this->parseNonPrimaryEmails($defaultRowValue, $fieldTranslated);
+        }
+        foreach ($parsed as $address) {
+            $this->importAddress($focus, $address);
+        }
+    }
 
+    /**
+     * Imports a single email address into bean
+     *
+     * @param SugarBean $bean    Target bean
+     * @param array     $address Address properties
+     */
+    protected function importAddress(SugarBean $bean, array $address)
+    {
+        // make sure that operating on email addresses is possible
+        if (!isset($bean->emailAddress->addresses) || !is_array($bean->emailAddress->addresses)) {
+            return;
+        }
+
+        // look if bean already has same email address
+        foreach ($bean->emailAddress->addresses as $beanAddress) {
+            if ($beanAddress['email_address'] == $address['email_address']) {
+                // if found, preserve the values of attributes that are not being imported
+                // e.g. previous versions of SugarCRM don't export invalid and opt_out
+                $address = array_merge($beanAddress, $address);
+                break;
+            }
+        }
+
+        // provide default attributes in case they were not inherited from existing address
+        $address = array_merge(array(
+            'reply_to_address' => false,
+            'email_id' => null,
+        ), $address);
+
+        $bean->emailAddress->addAddress(
+            $address['email_address'],
+            $address['primary_address'],
+            $address['reply_to_address'],
+            $address['invalid_email'],
+            $address['opt_out'],
+            $address['email_id']
+        );
+
+        $bean->emailAddress->dontLegacySave = true;
+    }
+
+    /**
+     * Parses serialized data of non-primary email addresses
+     *
+     * @param string $value           Serialized data in the following format:
+     *                                email_address1[,invalid_email1[,opt_out1]][;email_address2...] 
+     * @param string $fieldTranslated Name of CSV column
+     *
+     * @return array                  Collection of address properties
+     * @see serializeNonPrimaryEmails()
+     */
+    protected function parseNonPrimaryEmails($value, $fieldTranslated)
+    {
+        global $mod_strings;
+
+        $result = array();
+
+        // explode serialized value into groups of attributes
+        $emails = explode(';', $value);
+        foreach ($emails as $email) {
+            // explode serialized attributes
+            $attrs = explode(',', $email);
+            if (!$attrs) {
+                continue;
+            }
+
+            $email_address = array_shift($attrs);
+            if (!$this->ifs->email($email_address, array())) {
+                $this->importSource->writeError(
+                    $mod_strings['LBL_ERROR_INVALID_EMAIL'],
+                    $fieldTranslated,
+                    $email_address
+                );
+                continue;
+            }
+
+            $address = array(
+                'email_address' => $email_address,
+                'primary_address' => false,
+            );
+
+            // check if there are elements in $attrs after $email_address was shifted from there
+            if ($attrs) {
+                $invalid_email = array_shift($attrs);
+                $invalid_email = $this->ifs->bool($invalid_email, array());
+                if ($invalid_email === false) {
+                    $this->importSource->writeError(
+                        $mod_strings['LBL_ERROR_INVALID_BOOL'],
+                        $fieldTranslated,
+                        $invalid_email
+                    );
+                    continue;
+                }
+                $address['invalid_email'] = $invalid_email;
+            }
+
+            // check if there are elements in $attrs after $email_address and $invalid_email were shifted from there
+            if ($attrs) {
+                $opt_out = array_shift($attrs);
+                $opt_out = $this->ifs->bool($opt_out, array());
+                if ($opt_out === false) {
+                    $this->importSource->writeError(
+                        $mod_strings['LBL_ERROR_INVALID_BOOL'],
+                        $fieldTranslated,
+                        $opt_out
+                    );
+                    continue;
+                }
+                $address['opt_out'] = $opt_out;
+            }
+
+            $result[] = $address;
+        }
+
+        return $result;
+    }
 }
