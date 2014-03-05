@@ -502,14 +502,6 @@ $dictionary['ForecastWorksheet'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_ACCOUNTS',
         ),
-        'product' =>
-        array(
-            'name' => 'product',
-            'type' => 'link',
-            'relationship' => 'products_worksheets',
-            'source' => 'non-db',
-            'vname' => 'LBL_PRODUCT',
-        ),
         'campaign' =>
         array(
             'name' => 'campaign',

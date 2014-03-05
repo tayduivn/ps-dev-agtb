@@ -121,7 +121,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
   ),
   'description' =>
   array (
-    'name' => 'descrfiption',
+    'name' => 'description',
     'vname' => 'LB_FS_KEY',
     'type' => 'varchar',
     'source'=>'non-db',
@@ -514,7 +514,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
   ),
    'closed_count' =>
       array (
-         'name' => 'close_count',
+         'name' => 'closed_count',
          'type' => 'int',
          'source' => 'non-db',
          'comment' => 'This is used by the commit code to determine how many closed opps exist for the pipeline calc'

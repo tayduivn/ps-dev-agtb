@@ -20,6 +20,7 @@ class SugarFieldBase {
     var $ss; // Sugar Smarty Object
     var $hasButton = false;
     protected static $base = array();
+    public $needsSecondaryQuery = false;
 
     function SugarFieldBase($type) {
     	$this->type = $type;
@@ -798,4 +799,27 @@ class SugarFieldBase {
     {
         return true;
     }
+
+    /**
+     * Does this field need to have a secondary query
+     * @param string $fieldName - the field we are fixing
+     * @param SugarBean $bean - the Bean
+     * @return bool - True if the field needs to run a secondary query to fetch data
+     */
+    public function fieldNeedsSecondaryQuery($fieldName, SugarBean $bean)
+    {
+        return $this->needsSecondaryQuery;
+    }
+
+    /**
+     * Run a secondary query and populate the results into the array of beans
+     * @param string $fieldName - the field we are fixing
+     * @param SugarBean $seed - The seed bean to run the query off of
+     * @param Array $beans - An array of SugarBeans keyed by the ID.
+     */
+    public function runSecondaryQuery($fieldName, SugarBean $seed, array $beans)
+    {
+        return;
+    }
+    
 }

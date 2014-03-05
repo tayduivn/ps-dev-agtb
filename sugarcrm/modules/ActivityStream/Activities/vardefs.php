@@ -156,20 +156,6 @@ $dictionary['Activity'] = array(
             'relationship'=> 'emails_activities',
             'source'=> 'non-db',
         ),
-        'projects' => array(
-            'name' => 'projects',
-            'type' => 'link',
-            'relationship' => 'projects_activities',
-            'source' => 'non-db',
-            'vname' => 'LBL_PROJECTS',
-        ),
-        'project_tasks' => array(
-            'name' => 'project_tasks',
-            'type' => 'link',
-            'relationship' => 'project_tasks_activities',
-            'source' => 'non-db',
-            'vname' => 'LBL_PROJECT_TASKS',
-        ),
         'meetings' => array(
             'name' => 'meetings',
             'type' => 'link',

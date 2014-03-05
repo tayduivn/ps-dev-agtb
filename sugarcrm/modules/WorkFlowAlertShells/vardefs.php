@@ -138,7 +138,7 @@ $dictionary['WorkFlowAlertShell'] = array('table' => 'workflow_alertshells'
   ),
 'parent_base_module' => 
   array (
-  	'name' => 'base_module',
+  	'name' => 'parent_base_module',
     'vname' => 'LBL_BASE_MODULE',
     'type' => 'varchar',
     'source'=>'non-db',

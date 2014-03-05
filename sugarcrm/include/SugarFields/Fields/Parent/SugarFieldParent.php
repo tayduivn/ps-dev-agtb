@@ -6,6 +6,8 @@ require_once('include/SugarFields/Fields/Relate/SugarFieldRelate.php');
 
 class SugarFieldParent extends SugarFieldRelate {
 
+    public $needsSecondaryQuery = true;
+
 	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
 		$nolink = array('Users', 'Teams');
 		if(in_array($vardef['module'], $nolink)){
@@ -188,4 +190,42 @@ class SugarFieldParent extends SugarFieldRelate {
         	$data[$fieldName] = $this->formatField($bean->$fieldName, $properties);
         }
     }
+    
+    /**
+     * Run a secondary query and populate the results into the array of beans
+     *
+     * @overrides SugarFieldBase::runSecondaryQuery
+     */
+    public function runSecondaryQuery($fieldName, SugarBean $seed, array $beans)
+    {
+        if (empty($beans)) {
+            return;
+        }
+
+        $child_info = array();
+        foreach ($beans as $bean) {
+            if (!empty($bean->id) && !empty($bean->parent_type)) {
+                $child_info[$bean->parent_type][] = array(
+                    'child_id' => $bean->id,
+                    'parent_id' => $bean->parent_id,
+                    'parent_type' => $bean->parent_type,
+                    'type' => 'parent'
+                    );
+            }
+        }
+
+        // Load parent records
+        if (!empty($child_info)) {
+            $parent_beans = $seed->retrieve_parent_fields($child_info);
+            foreach ($parent_beans as $id => $parent_data) {
+                unset($parent_data['id']);
+                foreach ($parent_data as $field => $value) {
+                    $beans[$id]->$field = $value;
+                }
+            }
+        }
+
+        return;
+    }
+    
 }

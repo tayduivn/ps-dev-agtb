@@ -24,7 +24,8 @@ $vardefs = array(
                 'required' => true,
                 'reportable' => true,
                 'duplicate_on_record_copy' => 'no',
-                'comment' => 'Unique identifier'
+                'comment' => 'Unique identifier',
+                'mandatory_fetch' => true,
             ),
         'name' => array(
                 'name' => 'name',
@@ -259,6 +260,10 @@ $vardefs = array(
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => $module,
         )
+    ),
+    'uses' => array(
+        'following',
+        'favorite',
     ),
     'duplicate_check' => array(
         'enabled' => true,

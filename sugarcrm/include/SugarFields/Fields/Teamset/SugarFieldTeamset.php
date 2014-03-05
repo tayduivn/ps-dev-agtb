@@ -46,6 +46,8 @@ require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
 class SugarFieldTeamset extends SugarFieldBase {
 
+    public $needsSecondaryQuery = true;
+
 	//the name of the field, defaults to team_name
 	var $field_name = 'team_name';
 
@@ -630,12 +632,17 @@ class SugarFieldTeamset extends SugarFieldBase {
      */
     public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties)
     {
-        require_once('modules/Teams/TeamSetManager.php');
-        $teamList = TeamSetManager::getUnformattedTeamsFromSet($bean->team_set_id);
-        if ( ! is_array($teamList) ) {
-            // No teams on this bean yet.
-            $teamList = array();
+        if (empty($bean->teamList)) {
+            require_once('modules/Teams/TeamSetManager.php');
+            $teamList = TeamSetManager::getUnformattedTeamsFromSet($bean->team_set_id);
+            if ( ! is_array($teamList) ) {
+                // No teams on this bean yet.
+                $teamList = array();
+            }
+        } else {
+            $teamList = $bean->teamList;
         }
+        
         foreach ( $teamList as $idx => $team ) {
             // Check team name as well for cases in which team_name is selected
             // but team_id is not
@@ -720,6 +727,58 @@ class SugarFieldTeamset extends SugarFieldBase {
 
         return array('teamIds'=>$teamIds,'primaryTeamId'=>$primaryTeamId);
     }
+
+    /**
+     * Run a secondary query and populate the results into the array of beans
+     *
+     * @overrides SugarFieldBase::runSecondaryQuery
+     */
+    public function runSecondaryQuery($fieldName, SugarBean $seed, array $beans)
+    {
+        if (empty($beans)) {
+            return;
+        }
+
+        $teamsetToBean = array();
+        foreach ($beans as $bean) {
+            if (empty($bean->team_set_id)) {
+                continue;
+            }
+            $teamsetToBean[$bean->team_set_id][] = $bean->id;
+        }
+
+        $tsb = BeanFactory::newBean('TeamSets');
+
+        $query = new SugarQuery();
+        $query->from($tsb);
+        $query->join('teams', array('alias'=>'teams'));
+        $query->select(
+            array('id', 
+                  array('teams.id', 'team_id'),
+                  array('teams.name', 'name'), 
+                  array('teams.name_2', 'name_2'),
+            )
+        );
+        $query->where()->in('id', array_keys($teamsetToBean));
+
+        $rows = $query->execute();
+
+        $teamsets = array();
+        foreach ($rows as $row) {
+            $team = array('id' => $row['team_id']);
+            $team['name'] = !empty($row['name'])?$row['name']:'';
+            $team['name_2'] = !empty($row['name_2'])?$row['name_2']:'';
+            $teamsets[$row['id']][] = $team;
+        }
+        
+        foreach ($teamsetToBean as $teamSetId => $beansWithTeam) {
+            foreach ($beansWithTeam as $beanId) {
+                $beans[$beanId]->teamList = $teamsets[$teamSetId];
+            }
+        }
+
+    }
+
 }
 
 
