@@ -48,6 +48,7 @@ class ExtAPIDnb extends ExternalAPIBase
     private $dnbNewsURL = "V3.0/organizations/%s/products/NEWS_MDA";
     private $dnbIndustryConversionURL = "V4.0/industries?IndustryCode-1=%s&ReturnOnlyPremiumIndustryIndicator=true&IndustryCodeTypeCode-1=%s&findindustry=true";
     private $dnbRefreshCheckURL = "V4.0/organizations?refresh=refresh&DunsNumber-1=%s";
+    private $dnbContactsBALURL = "V6.0/organizations?CandidateMaximumQuantity=1000&findcontact=true&SearchModeDescription=Advanced";
     private $dnbApplicationId;
     private $dnbUsername;
     private $dnbPassword;
@@ -387,6 +388,45 @@ class ExtAPIDnb extends ExternalAPIBase
     }
 
     /**
+     * Finds Contacts For a Given DUNS Number based on contact name and job title
+     * @param $contactParams array can have the following keys
+     * duns -- DUNS Number -- required
+     * namekw -- Contact Name Key Word -- optional
+     * jobkw -- Job Title Key Word -- optional
+     * either the namekw or the jobkw must be provided
+     * @return array
+     */
+    public function dnbFindContactsPost($contactParams) {
+        $contactQueryString = http_build_query($contactParams);
+        //dnb contacts list
+        $cache_key = 'dnb.contactsearch.' . $contactQueryString;
+        if (!empty($contactParams['KeywordContactText'])) {
+            $contactParams['KeywordContactScopeText'] = 'Title';
+        }
+        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbContactsBALURL . '&' . http_build_query($contactParams);
+        //check if result exists in cache
+        $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
+        // get existing contacts
+        $dnbContactIdArray = array();
+        $path = "FindContactResponse.FindContactResponseDetail.FindCandidate";
+        if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
+            $dnbContactsList = $reply['responseJSON']['FindContactResponse']['FindContactResponseDetail']['FindCandidate'];
+            $this->underscoreEach(
+                $dnbContactsList,
+                function ($contactObj) use (&$dnbContactIdArray) {
+                    $dnbContactIdArray[] = $contactObj['PrincipalIdentificationNumberDetail'][0]['PrincipalIdentificationNumber'];
+                }
+            );
+            $existingContacts = json_decode($this->getExistingContacts($dnbContactIdArray), true);
+            if (count($existingContacts) > 0) {
+                $modifiedApiResponse = $this->getCommonContacts($reply['responseJSON'], $existingContacts);
+                $reply['responseJSON'] = $modifiedApiResponse;
+            }
+        }
+        return $reply['responseJSON'];
+    }
+
+    /**
      * Gets Converts the given Industry Code and Industry Type Code to Hoovers Industry Code (HIC)
      * @param $indMapParams object
      * $indMapParams must contain two keys
@@ -683,6 +723,25 @@ class ExtAPIDnb extends ExternalAPIBase
                 return $val;
             }
         }
+    }
+
+    /**
+     * Gets the value from an object using the path
+     * @param $object array
+     * @param $path string
+     * @return value mixed Return value if it exists else return null
+     */
+    private function getObjectValue($object, $path)
+    {
+        $pathParts = explode(".", $path);
+        for ($i = 0; $i < count($pathParts); $i++) {
+            if ($object[$pathParts[$i]]) {
+                $object = $object[$pathParts[$i]];
+            } else {
+                return null;
+            }
+        }
+        return $object;
     }
 
     /**

@@ -32,7 +32,7 @@ $viewdefs['base']['view']['dnb-contact-info'] = array(
                 'type' => 'dashletaction',
                 "css_class" => "btn btn-primary importDNBData hide",
                 'name' => 'import_dnb_data',
-                "action" => "importDNBData",
+                "action" => "importDNBContact",
                 "label" => "LBL_DNB_IMPORT",
             ),
             array(

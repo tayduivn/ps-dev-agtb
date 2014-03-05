@@ -2,25 +2,19 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
-/********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+/*********************************************************************************
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
+
 require_once('include/externalAPI/Dnb/ExtAPIDnb.php');
 
 class DnbApi extends SugarApi
@@ -57,7 +51,7 @@ class DnbApi extends SugarApi
     {
         $dnbEAPM = ExternalAPIFactory::loadAPI('Dnb',true);
         $dnbEAPM->getConnector();
-        if (!$dnbEAPM->getConnectorParam('dnb_username') ||
+        if(!$dnbEAPM->getConnectorParam('dnb_username') ||
             !$dnbEAPM->getConnectorParam('dnb_password') ||
             !$dnbEAPM->getConnectorParam('dnb_env')){
             return array('error' =>'ERROR_DNB_CONFIG');
@@ -93,27 +87,27 @@ class DnbApi extends SugarApi
             $result = $extDnbApi->dnbSearch($queryParam);
         } else if ($queryType === 'profile') {
             $result = $extDnbApi->dnbProfile($queryParam);
-        } else if($queryType==='competitors') {
+        } else if ($queryType ==='competitors') {
             $result = $extDnbApi->dnbCompetitors($queryParam);
-        }  else if($queryType==='industry') {
+        } else if ($queryType ==='industry') {
             $result = $extDnbApi->dnbIndustryInfo($queryParam);
-        } else if($queryType==='financial') {
+        } else if ($queryType ==='financial') {
             $result = $extDnbApi->dnbFinancialInfo($queryParam);
-        } else if($queryType==='familytree') {
+        } else if ($queryType ==='familytree') {
             $result = $extDnbApi->dnbFamilyTree($queryParam);
-        } else if($queryType==='firmographic') {
+        } else if ($queryType ==='firmographic') {
             $result = $extDnbApi->dnbStandardProfile($queryParam);
-        } else if($queryType==='premfirmographic') {
+        } else if ($queryType ==='premfirmographic') {
             $result = $extDnbApi->dnbPremiumProfile($queryParam);
-        } else if($queryType==='findIndustry') {
+        } else if ($queryType ==='findIndustry') {
             $result = $extDnbApi->dnbIndustrySearch($queryParam);
-        } else if($queryType === 'findContacts') {
+        } else if ($queryType === 'findContacts') {
             $result = $extDnbApi->dnbFindContacts($queryParam);
-        } else if($queryType === 'refreshcheck') {
+        } else if ($queryType === 'refreshcheck') {
             $result = $extDnbApi->dnbRefreshCheck($queryParam);
-        } else if($queryType === 'litefirmographic') {
+        } else if ($queryType === 'litefirmographic') {
             $result = $extDnbApi->dnbLiteProfile($queryParam);
-        } else if($queryType === 'news') {
+        } else if ($queryType === 'news') {
             $result = $extDnbApi->dnbNews($queryParam);
         }
         if (is_array($result) && isset($result['error'])) {
@@ -141,17 +135,19 @@ class DnbApi extends SugarApi
         $queryData = $args['qdata']; //data posted 
         $result = '';
         if ($queryType === 'cmRequest') {
-            $result = $extDnbApi->dnbCMRrequest($queryData);         
-        } else if($queryType === 'bal') {
+            $result = $extDnbApi->dnbCMRrequest($queryData);
+        } else if ($queryType === 'bal') {
             $result = $extDnbApi->dnbBALRequest($queryData);
-        } else if($queryType === 'contacts') {
+        } else if ($queryType === 'contacts') {
             $result = $extDnbApi->dnbContactDetails($queryData);
-        } else if($queryType === 'indMap') {
-            $result = $extDnbApi->dnbIndustryConversion($queryData);   
-        } else if($queryType==='industry') {
+        } else if ($queryType === 'indMap') {
+            $result = $extDnbApi->dnbIndustryConversion($queryData);
+        } else if ($queryType ==='industry') {
             $result = $extDnbApi->dnbIndustryInfoPost($queryData);
-        } else if($queryType==='firmographic') {
+        } else if ($queryType ==='firmographic') {
             $result = $extDnbApi->dnbFirmographic($queryData);
+        } else if ($queryType ==='findcontacts') {
+            $result = $extDnbApi->dnbFindContactsPost($queryData);
         }
         if (is_array($result) && isset($result['error'])) {
             throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $result['error']);
