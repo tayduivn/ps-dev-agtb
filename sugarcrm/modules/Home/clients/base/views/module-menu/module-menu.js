@@ -31,6 +31,8 @@
      * Default settings used when none are supplied through metadata.
      *
      * Supported settings:
+     * - {Number} dashboards Number of dashboards to show on the dashboards
+     *   container. Pass 0 if you don't want to support dashboards listed here.
      * - {Number} favorites Number of records to show on the favorites
      *   container. Pass 0 if you don't want to support favorites.
      * - {Number} recently_viewed Number of records to show on the recently
@@ -43,6 +45,7 @@
      * ```
      * // ...
      * 'settings' => array(
+     *     'dashboards' => 10,
      *     'favorites' => 5,
      *     'recently_viewed' => 9,
      *     'recently_viewed_toggle' => 4,
@@ -54,6 +57,7 @@
      * @protected
      */
     _defaultSettings: {
+        dashboards: 20,
         favorites: 3,
         recently_viewed: 10,
         recently_viewed_toggle: 3
@@ -114,6 +118,7 @@
     populateMenu: function() {
 
         this.collection.fetch({
+            'limit': this._settings['dashboards'],
             'showAlerts': false,
             'success': _.bind(function(data) {
 
