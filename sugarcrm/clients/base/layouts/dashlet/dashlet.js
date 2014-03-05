@@ -267,9 +267,10 @@
         var cellLayout = this.layout,
             rowLayout = cellLayout.layout;
         if (this.model.mode === 'view' && cellLayout._components.length === 1) {
+            var dashletRow = this.closestComponent('dashlet-row');
             // this.layout needs to have method to return all the components
-            this.layout.layout.removeRow.call(this.layout.layout, this.layout.index.split('').pop());
-            this.model.save(null, {showAlerts: true});
+            dashletRow.removeRow(this.layout.index.split('').pop());
+            dashletRow.model.save(null, {showAlerts: true});
             return;
         }
         var metadata = this.model.get("metadata"),
