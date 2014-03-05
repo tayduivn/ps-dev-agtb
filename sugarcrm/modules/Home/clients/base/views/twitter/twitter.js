@@ -128,7 +128,7 @@
         if (this.viewName === 'config') {
             return false;
         }
-
+        this.loadDataCompleteCb = options ? options.complete : null;
         this.connectorCriteria = ['eapm_bean', 'test_passed'];
         this.checkConnector('ext_rest_twitter',
             _.bind(this.loadDataWithValidConnector, this),
@@ -143,6 +143,9 @@
      */
     loadDataWithValidConnector: function(connector) {
         if (!this.getTwitterName()) {
+            if (_.isFunction(this.loadDataCompleteCb)) {
+                this.loadDataCompleteCb();
+            }
             return false;
         }
 
@@ -162,7 +165,8 @@
                     if (!this.disposed) {
                         self.render();
                     }
-                }
+                },
+                complete: self.loadDataCompleteCb
             });
         }
 
@@ -225,7 +229,8 @@
                 else {
                     self.handleLoadError(null);
                 }
-            }
+            },
+            complete: self.loadDataCompleteCb
         });
     },
 
@@ -260,6 +265,9 @@
             this.showAdmin = app.acl.hasAccess('admin', 'Administration');
         }
         app.view.View.prototype._render.call(this);
+        if (_.isFunction(this.loadDataCompleteCb)) {
+            this.loadDataCompleteCb();
+        }
     },
 
     _dispose: function() {
