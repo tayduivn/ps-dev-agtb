@@ -262,8 +262,6 @@
 
     /**
      * {@inheritDoc}
-     *
-     * If current device is a touch device, date picker is readonly.
      */
     _render: function() {
         var $field = this.$(this.fieldTag);
@@ -280,10 +278,6 @@
         }
 
         this._setupDatePicker();
-
-        if (app.utils.isTouchDevice()) {
-            $field.attr('readonly', true);
-        }
     },
 
     /**

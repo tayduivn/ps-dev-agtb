@@ -319,8 +319,6 @@
 
     /**
      * {@inheritDoc}
-     *
-     * If current device is a touch device, time picker is readonly.
      */
     _render: function() {
         this._super('_render');
@@ -330,10 +328,6 @@
         }
 
         this._setupTimePicker();
-
-        if (app.utils.isTouchDevice()) {
-            this.$(this.secondaryFieldTag).attr('readonly', true);
-        }
     },
 
     /**
