@@ -249,7 +249,7 @@
         if (!massCollection) {
             return;
         }
-        massCollection.add(collection, {silent: true});
+        massCollection.reset(collection);
         massCollection.entire = false;
         massCollection.fetched = true;
         massCollection.trigger('massupdate:estimate');
