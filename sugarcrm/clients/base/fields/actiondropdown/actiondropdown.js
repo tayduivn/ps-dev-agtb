@@ -229,9 +229,6 @@
                 cssClass = _.without(cssClass, 'hide');
                 fieldPlaceholder.toggleClass('hide', false);
                 if (index == 0) {
-                    if (field.def.icon) {
-                        field.setMode('small');
-                    }
                     cssClass.push('btn');
                     field.getFieldElement().addClass('btn');
                     if (this.def.primary) {
@@ -241,9 +238,6 @@
                     //The first field needs to be out of the dropdown
                     this.$el.prepend(fieldPlaceholder);
                 } else {
-                    if (field._previousAction) {
-                        field.setMode(field._previousAction);
-                    }
                     cssClass = _.without(cssClass, 'btn', 'btn-primary');
                     field.getFieldElement().removeClass('btn btn-primary');
                     //Append field into the dropdown
