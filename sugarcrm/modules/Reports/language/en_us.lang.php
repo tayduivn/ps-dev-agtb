@@ -475,6 +475,7 @@ $mod_strings = array (
     'LBL_FAVORITE'=>'Favorite',
     'LBL_SCHEDULE_TYPE'=>'Schedule Type',
   	'LBL_NO_ACCESS' => 'You are not able to access this report due to permissions restrictions.',
+    'LBL_NO_EXPORT_ACCESS' => 'Exports Disabled',
   	'LBL_SELECT_REPORT_TYPE' => 'Select the type of report you would like to create:',
   	'LBL_SELECT_MODULE'=> 'Select the module that you want to report on:',
   	'LBL_NEXT' =>'Next >',

@@ -40,7 +40,7 @@ require_once('modules/Reports/templates/templates_export.php');
 require_once('modules/Reports/templates/templates_chart.php');
 
 require_once('modules/Reports/config.php');
-global $current_language, $report_modules, $modules_report, $current_user;
+global $current_language, $report_modules, $modules_report, $current_user, $app_strings, $mod_strings;
 
 require_once('modules/Reports/Report.php');
 
@@ -197,14 +197,10 @@ if(! empty($_REQUEST['to_pdf'])){
 	return;
 } // if
 if(! empty($_REQUEST['to_csv'])){
-    if (ACLController::moduleSupportsACL($args['reporter']->module)) {
-        $acl = SugarACL::getUserAccess($args['reporter']->module);
-        $acl = $acl['export'];
-    } else {
-        $acl = true;
-    }
-    if ($sugar_config['disable_export'] || (!empty($sugar_config['admin_export_only']) && !(is_admin($current_user))) || !$acl) {
-        die("Exports Disabled");
+    //check to see if exporting is allowed
+    if(!hasExportAccess($args)){
+        //die if one of the above conditions has been met
+        sugar_die($mod_strings['LBL_NO_EXPORT_ACCESS']);
     }
 	template_handle_export($args['reporter']);
 	return;
