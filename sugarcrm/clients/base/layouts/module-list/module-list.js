@@ -322,14 +322,16 @@
             return this;
         }
 
+        var mappedModule = app.metadata.getTabMappedModule(module);
+
         this.$('[data-container=module-list]').children('.active').removeClass('active');
 
-        if (!this._catalog[module]) {
-            this._addMenu(module, false).long.render();
+        if (!this._catalog[mappedModule]) {
+            this._addMenu(mappedModule, false).long.render();
         }
 
-        this._catalog[module].long.addClass('active');
-        this.toggleModule(module, true);
+        this._catalog[mappedModule].long.addClass('active');
+        this.toggleModule(mappedModule, true);
 
         return this;
     },
