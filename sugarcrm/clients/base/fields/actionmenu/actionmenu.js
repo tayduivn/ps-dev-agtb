@@ -131,7 +131,6 @@
             return;
         }
         if (this.model.id) { //listeners for each record selection
-
             massCollection.on('add', function(model) {
                 if (this.model && model.id === this.model.id) {
                     this.$(this.fieldTag).attr('checked', true);
@@ -158,6 +157,12 @@
                 this.collection.on('reset', function() {
                     if (massCollection.entire) {
                         massCollection.reset();
+                    }
+                }, this);
+                this.collection.on('add', function() {
+                    if (massCollection.length !== this.collection.length) {
+                        this.$(this.fieldTag).attr('checked', false);
+                        this.view.layout.trigger('list:alert:hide');
                     }
                 }, this);
             }
