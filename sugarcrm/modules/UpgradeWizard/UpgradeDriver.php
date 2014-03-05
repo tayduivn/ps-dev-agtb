@@ -230,18 +230,9 @@ abstract class UpgradeDriver
         //Now that installation is complete, we need to set this to false to have the caches build correctly
         $GLOBALS['installing'] = false;
         $this->log("Populating metadata cache");
-        if(empty($GLOBALS['app_list_strings'])) {
-            $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');
-        }
-        require_once 'include/api/RestService.php';
-        require_once 'clients/base/api/MetadataApi.php';
-        $rest = new RestService();
-        $rest->platform = 'base';
-        $api = new MetadataApi();
-        $api->getAllMetadata($rest, array());
-        $api->getLanguage($rest, array('lang' => 'en_us'));
-        $api->getPublicMetadata($rest, array());
-        $api->getPublicLanguage($rest, array('lang' => 'en_us'));
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');
+        require_once 'include/MetaDataManager/MetaDataManager.php';
+        MetaDataManager::setupMetadata(array('base'), array('en_us'));
         $this->log("Metadata cache populated");
     }
 

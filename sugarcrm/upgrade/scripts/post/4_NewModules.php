@@ -47,7 +47,7 @@ class SugarUpgradeNewModules extends UpgradeScript
             $orig_lang_strings = $app_list_strings;
             $all_strings = return_app_list_strings_language($langKey);
             $addModStrings = array();
-            foreach($newModules as $modKey) {
+            foreach($newModules as $modKey => $modName) {
                 foreach($keyList as $appKey) {
                     if(empty($all_strings[$appKey][$modKey])) {
                         if(!empty($orig_lang_strings[$appKey][$modKey])) {
@@ -74,17 +74,22 @@ class SugarUpgradeNewModules extends UpgradeScript
      */
     protected function updateCustomFile($lang, $data)
     {
-        include "custom/include/language/$lang.lang.php";
-        $app_list_strings = sugarArrayMerge($app_list_strings, $data);
-        $add_strings = '';
-        foreach ($app_list_strings as $key => $array) {
-            $add_strings .= "\$app_list_strings['$key'] = ".var_export($array, true).";\n";
-        }
-        if(empty($add_strings)) {
+        if(empty($data)) {
             return;
         }
-        $add_strings = "<?php \n/* This file was modified by Sugar Upgrade */\n".$add_strings;
-        $this->putFile("custom/include/language/$lang.lang.php", $add_strings);
+        $file_data = trim(file_get_contents("custom/include/language/$lang.lang.php"));
+        if(substr($file_data, -2) == "?>") {
+            // strip closing tag
+            $file_data = substr($file_data, 0, -2);
+        }
+        $file_data .= "\n/* This file was modified by Sugar Upgrade */\n";
+        foreach($data as $key => $array) {
+            foreach($array as $akey => $aval) {
+                $file_data .= "\$app_list_strings['$key']['$akey'] = ".var_export($aval, true).";\n";
+            }
+        }
+
+        $this->putFile("custom/include/language/$lang.lang.php", $file_data);
         $this->log("Updated custom/include/language/$lang.lang.php");
     }
 }
