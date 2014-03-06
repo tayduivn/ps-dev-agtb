@@ -3380,6 +3380,8 @@ $app_strings = array (
     'LBL_DNB_COMPETITORS_DESC'=>'Competitor Information From DNB. Requires D&B subscription.',
     'LBL_DNB_COMPETITORS_LOADING' => 'Loading Competitors From D&B ...',
     'LBL_DNB_COMPETITORS_TOP' => 'Top Competitor',
+    'LBL_DNB_COMPETITORS_LIST' => 'Back To D&B Competitors List',
+
     'LBL_DASHLET_NO_RECORDS' => 'No records were found at this time.',
     'LBL_DASHLET_CASES_SUMMARY_NAME' => 'Case Summary',
     'LBL_DASHLET_NEWS_FEED_NAME' => 'News Feed',
@@ -3451,6 +3453,7 @@ $app_strings = array (
     'LBL_DNB_FAMILY_TREE'=>'D&B: Family Tree',
     'LBL_DNB_FAMILY_TREE_DESC'=>'Family Tree from D&B. Requires D&B subscription.',
     'LBL_DNB_FAMILY_TREE_LOADING' => 'Loading Family Tree From D&B',
+    'LBL_DNB_FAMILY_TREE_BACK' => 'Back To D&B Family Tree',
 
     /*DNB Industry Info Dashlet*/
     'LBL_DNB_INDUSTRY_INFO'=>'D&B: Industry Information',

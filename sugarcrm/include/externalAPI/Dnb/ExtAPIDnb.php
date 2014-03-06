@@ -38,7 +38,7 @@ class ExtAPIDnb extends ExternalAPIBase
     private $dnbCompetitorsURL = "V4.0/organizations/%s/competitors";
     private $dnbIndustryURL = "V3.0/industries/industrycode-%s/IND_STD";
     private $dnbFinancialURL = "V3.0/organizations/%s/products/FIN_HGLT";
-    private $dnbFamilyTreeURL = "V3.1/organizations/%s/products/LNK_FF";
+    private $dnbFamilyTreeURL = "V3.1/organizations/%s/products/%s";
     private $dnbCleanseMatchURL = "V3.0/organizations";
     private $dnbBALURL = "V4.0/organizations";
     private $dnbFindIndustryURL = "V4.0/industries?KeywordText=%s&findindustry=true";
@@ -57,6 +57,8 @@ class ExtAPIDnb extends ExternalAPIBase
     private $cacheTTL = 8640000;
     public $supportedModules = array();
 
+    //commonly used json paths
+   
     function __construct()
     {
         $this->dnbUsername = trim($this->getConnectorParam('dnb_username'));
@@ -235,15 +237,25 @@ class ExtAPIDnb extends ExternalAPIBase
     }
 
     /**
-     * Gets Family Tree for a DUNS number
-     * @param $duns_num
+     * Get the Linkage / Family Tree For a Given DUNS Number
+     * $ftParams array can have the following keys
+     * duns -- DUNS Number -- required
+     * product -- Product Name -- required (LNK_FF | LNK_UPF)
+     * LNK_FF -- Full Family Tree
+     * LNK_UPF -- Upward Family Tree
+     * @param $ftParams
      * @return jsonarray
      */
-    public function dnbFamilyTree($duns_num)
+    public function dnbFamilyTree($ftParams)
     {
-        //dnb family tree
-        $cache_key = 'dnb.familytree.' . $duns_num;
-        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf($this->dnbFamilyTreeURL, $duns_num);
+        $ftQueryString = http_build_query($ftParams);
+        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf(
+                $this->dnbFamilyTreeURL,
+                $ftParams['duns_num'],
+                $ftParams['prod_code']
+            );
+        //dnb family tree cache key
+        $cache_key = 'dnb.ft.' . $ftQueryString;
         //check if result exists in cache
         $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
         return $reply['responseJSON'];

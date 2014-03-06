@@ -17,6 +17,11 @@
 
     competitorsList: null,
 
+    events: {
+        'click a.dnb-company-name': 'getCompanyDetails',
+        'click .backToList' : 'backToCompanyList'
+    },
+
     //D&B Firmographic API product codes
     competitorsDD: {
         'dunsnum': {
@@ -163,10 +168,18 @@
     },
 
     /**
-     * Renders the list of competitors
-     * @param  {Object} competitorsList
+     * Renders the competitors list
+     */
+    backToCompanyList: function() {
+        this.renderCompetitors(this.competitorsList);
+    },
+
+    /**
+     * Renders competitors list
+     * @param {Object} competitorsList
      */
     renderCompetitors: function(competitorsList) {
+        this.template = app.template.get(this.name);
         if (this.disposed) {
             return;
         }
@@ -181,6 +194,10 @@
         this.$('div#dnb-competitors-loading').hide();
         this.$('div#dnb-no-data').hide();
         this.$('div#dnb-competitors-list').show();
+        //hide import button when rendering the list
+        if (this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
+            this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().hide();
+        }
     },
 
     /**
@@ -207,7 +224,24 @@
             },this);
             formattedCompetitors.push(frmtCompetitorsObj);
         },this);
-
         return formattedCompetitors;
+    },
+
+    /**
+     * Gets D&B Company Details For A DUNS number
+     * DUNS number is stored as an id in the anchor tag
+     * @param {Object} evt
+     */
+    getCompanyDetails: function(evt) {
+        if (this.disposed) {
+            return;
+        }
+        var duns_num = evt.target.id;
+        if (duns_num) {
+            this.template = app.template.get('dnb.dnb-company-details');
+            this.render();
+            this.$('div#dnb-company-details').hide();
+            this.baseCompanyInformation(duns_num, this.compInfoProdCD.std, app.lang.get('LBL_DNB_COMPETITORS_LIST'), this.renderCompanyDetails);
+        }
     }
 })
