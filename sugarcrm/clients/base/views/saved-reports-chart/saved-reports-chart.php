@@ -36,7 +36,7 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                     'name' => 'saved_report_id',
                     'label' => 'Select a Report',
                     'type' => 'enum',
-                    'options' => ''
+                    'options' => array('' => ''),
                 ),
                 array(
                     'name' => 'auto_refresh',
