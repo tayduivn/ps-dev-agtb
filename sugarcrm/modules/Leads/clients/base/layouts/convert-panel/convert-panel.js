@@ -147,7 +147,7 @@
             context: context,
             name: this.TOGGLE_DUPECHECK,
             layout: this,
-            module: context.module
+            module: context.get('module')
         });
         this.duplicateView.context.on('change:selection_model', this.handleDupeSelectedChange, this);
         this.duplicateView.collection.once('reset', this.dupeCheckComplete, this);

@@ -101,7 +101,7 @@
         // specific, and used on dashablelist filters), or the module on the
         // current context.
         var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey),
-            defaultModule = this.model.get('module') || this.context.get('module');
+            defaultModule = this.module || this.model.get('module') || this.context.get('module');
 
         this.trigger('filterpanel:change:module', (moduleMeta.activityStreamEnabled && lastViewed === 'activitystream') ? 'Activities' : defaultModule);
     },
