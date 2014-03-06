@@ -43,6 +43,10 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                 'exp_date',
                 'approved',
                 'revision',
+                'viewcount' => array(
+                    'name' => 'viewcount',
+                    'readonly' => 'true'
+                ),
             ),
         ),
     ),
