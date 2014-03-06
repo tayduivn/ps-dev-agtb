@@ -8,17 +8,23 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
 ({
     extendsFrom: 'DateField',
 
-    initialize: function(options) {
-        // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
-        // registration across ExtendedComponents
-        this.plugins = _.clone(this.plugins) || [];
-        this.plugins.push('ClickToEdit');
-        this._super("initialize", [options]);
+    /**
+     * {@inheritDoc}
+     *
+     * Add `ClickToEdit` plugin to the list of required plugins.
+     */
+    _initPlugins: function() {
+        this._super('_initPlugins');
+
+        this.plugins = _.union(this.plugins, [
+            'ClickToEdit'
+        ]);
+
+        return this;
     }
 })

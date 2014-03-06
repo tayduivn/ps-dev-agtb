@@ -154,6 +154,11 @@
 		},
 		hide: function(){
 			this.picker.hide();
+            // TODO: this was moved here 'cause it's what makes more sense plus
+            // it avoids getting into a loop under certain circumstances, we
+            // should check if the upgrade to the latest version solves this
+            // issue.
+            this.hidden = true;
 			$(window).off('resize', this.place);
 			this.viewMode = this.startViewMode;
 			this.showMode();
@@ -181,7 +186,6 @@
 				type: 'hide',
 				date: this.date
 			});
-			this.hidden = true;
 		},
 
 		set: function() {

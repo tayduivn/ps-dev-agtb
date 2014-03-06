@@ -477,11 +477,6 @@
                     return;
                 }
                 if (e.which == 27) { // If esc
-                    if (field.type == 'date') {
-                        // since the field was dirty, we need to flip this back to false so
-                        // it will format the value correctly
-                        this.leaveDirty = false;
-                    }
                     this.setMode('list');
                 } else if (e.which == 13) {
                     if (this.fieldValueChanged(field)) {
@@ -724,44 +719,36 @@
             /**
              * overridden from date.js -- Forecasts must validate date before setting the model
              * whereas the base date.js field sets the model, then does validation when you save
-             *
-             * @param ev
              */
-            hideDatepicker: function(ev) {
-                var hrsMins = {
-                    hours: '00',
-                    minutes: '00'
-                };
+            handleHideDatePicker: function() {
+                var $field = this.$(this.fieldTag),
+                    value = $field.val();
 
-                this.datepickerVisible = false;
+                // if new value is empty, revert it back to the previous value
+                // to be compliant with Forecasts requisites
+                if (_.isEmpty(value)) {
+                    $field.val(this.format());
+                    return;
+                }
 
-                // sets this.dateValue
-                this._getDatepickerValue();
+                value = this.unformat(value);
 
-                if (this._verifyDateString(this.dateValue)) {
-                    // sidecar field validation stuff we don't use, but setting to maintain compatibility
-                    this.leaveDirty = false;
+                if (!_.isEmpty(value)) {
+                    this.model.set(this.name, value);
 
-                    // set the field model with the new valid dateValue
-                    this.model.set(this.name, this._buildUnformatted(this.dateValue, hrsMins.hours, hrsMins.minutes));
-
-                    // find the date picker and hide it
-                    $('.datepicker').datepicker().hide();
                     // trigger the onBlur function to set the field back to list view and render
                     this.setMode('list');
-                } else {
-                    var hb = Handlebars.compile("{{str key module context}}"),
-                        args = {field_name: app.lang.get(this.def.label, this.module)};
-
-                    // sidecar field validation stuff we don't use, but setting to maintain compatibility
-                    this.leaveDirty = true;
-
-                    // set the proper error message
-                    this.errorMessage = hb({'key': 'LBL_EDITABLE_INVALID', 'module': this.module, 'context': args});
-
-                    // display rad error tooltipz!
-                    this.showErrors();
+                    return;
                 }
+
+                var hb = Handlebars.compile("{{str key module context}}"),
+                    args = {field_name: app.lang.get(this.def.label, this.module)};
+
+                // set the proper error message
+                this.errorMessage = hb({'key': 'LBL_EDITABLE_INVALID', 'module': this.module, 'context': args});
+
+                // display rad error tooltipz!
+                this.showErrors();
             }
         });
     });

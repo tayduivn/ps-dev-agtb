@@ -12,291 +12,144 @@
  */
 ({
     /**
-     * Date widget
-     *
-     * Base implementation for widgets that will use the datepicker. Provides core functionality
-     * which can be extended as follows:
-     * <pre><code>
-     * extendsFrom: 'DateField',
-     *
-     * // Derived must also implement method: _setDateIfDefaultValue
-     * _setDateIfDefaultValue: function() {}
-     * </code></pre>
-     *
-     * Derived widgets should set stripIsoTZ to indicate whether ISO 8601 Timezone information should
-     * be stripped from dates or left in tact.
-     *
-     * Any methods defined in date.js may called from derived classes and should work as expected. If
-     * core methods like _render, initialize, etc., are overriden, you should consider calling this
-     * parent at some point in overriden method. For example, in a DateChild widget you may do:
-     * <pre><code>
-     * _render:function(value) {
-     *     this.doSpecialPreParentInitialization();
-     *     this._super("_render");
-     *     // as it's easy to forget and do app.view.views (notice views not fields at end!)
-     *     this.doSomethingElseAfterParentInitialization();
-     * },
-     * </code></pre>
+     * {@inheritDoc}
      */
-    datepickerVisible: false,
-
-    // used by hbs template
-    dateValue: '',
-
-    // date format (for just the date part) that the server expects
-    serverDateFormat: 'Y-m-d',
-
-    // If true, attempts to strip off ISO 8601 TZ related info
-    stripIsoTZ: true,
-
-    // If invalid date flag to leave so sidecar validation will catch downstream
-    leaveDirty: false,
-
-    plugins: ['EllipsisInline'],
+    plugins: [
+        'EllipsisInline',
+        'Tooltip'
+    ],
 
     /**
-     * Base initialization
-     * @param  {Object} options the options
+     * {@inheritDoc}
+     */
+    fieldTag: 'input[data-type=date]',
+
+    /**
+     * {@inheritDoc}
+     */
+    events: {
+        'hide': 'handleHideDatePicker'
+    },
+
+    /**
+     * {@inheritDoc}
      */
     initialize: function(options) {
-        this.userTimePrefs  = app.user.getPreference('timepref');
-        this.usersDatePrefs = app.user.getPreference('datepref');
-
-        // Only for derived widgets that actually have a showAmPm property
-        if (!_.isUndefined(this.showAmPm)) {
-
-            // Sugar time format will always have an 'h'. If it ends with either [aA] it requires am/pm.
-            this.showAmPm = this.userTimePrefs.match(/[aA]$/)==null ? true : false; // TODO: date.js doesn't yet support g/G options
-        }
-        app.view.Field.prototype.initialize.call(this, options);
+        // FIXME: Remove this when SIDECAR-517 gets in
+        this._initPlugins();
+        this._super('initialize', [options]);
+        this._initEvents();
     },
-    /**
-     * NOP - jquery.timepicker (the plugin we use for time part of datetimecombo widget),
-     * triggers both a 'change', and, a 'changeTime' event. If we let base Field's bindDomChange
-     * handle, it will result in our format method getting called and we do NOT want that. Essentially,
-     * we want our datepicker and timepicker plugins to handle any change related events.
-     */
-    bindDomChange: function() {
-        // NOP -- pass through to prevent base Field's bindDomChange from handling
-    },
-    /**
-     * Set our internal time and date values so hbs picks up
-     */
-    _presetDateValues: function() {
-        if (_.isEmpty(this.model.get(this.name))) {
-            this.$('.datepicker').val('');
-        }
-        this.dateValue = this.$('.datepicker').val() || '';
 
-        // Only if object has a _setTimeValue
-        if (!_.isUndefined(this._setTimeValue) && _.isFunction(this._setTimeValue)) {
-            this._setTimeValue();
-        }
-    },
     /**
-     * Set up the Datepicker
+     * Initialize plugins.
+     *
+     * @chainable
+     * @protected
+     * @template
+     *
+     * FIXME: Remove this when SIDECAR-517 gets in
      */
-    _setupDatepicker: function() {
-        this.datepickerMap = this._patchDatepickerMeta(); // converts com_cal_* to languageDictionary
-        this.$(".datepicker").attr('placeholder', app.date.toDatepickerFormat(this.usersDatePrefs));
-        if(_.isFunction(this.setRequiredPlaceholder) && this.def.required){
-            this.setRequiredPlaceholder(this.$(".datepicker"));
-        }
+    _initPlugins: function() {
+        return this;
+    },
+
+    /**
+     * Initialize events.
+     *
+     * @chainable
+     * @protected
+     * @template
+     */
+    _initEvents: function() {
+        return this;
+    },
+
+    /**
+     * Return user date format.
+     *
+     * @return {String} User date format.
+     */
+    getUserDateFormat: function() {
+        return app.user.getPreference('datepref');
+    },
+
+    /**
+     * Set up date picker.
+     *
+     * We rely on the library to confirm that the date picker is only created
+     * once.
+     */
+    _setupDatePicker: function() {
+        var $field = this.$(this.fieldTag),
+            userDateFormat = this.getUserDateFormat(),
+            datePickerDateFormat = app.date.toDatepickerFormat(userDateFormat);
+
+        // FIXME: find a proper way to do this and avoid scrolling issues
         var appendTarget = this.$el.parents('div#drawers').length ? 'div#drawers .active .main-pane:first' : 'div#content .main-pane:first';
-        /* TODO: Remove all this once satisfied language injection works properly ;)
-        var spanishLangExample = {
-            days: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
-            daysShort: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
-            months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-            monthsShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
-        };*/
-        this.$(".datepicker").datepicker({
-            //languageDictionary: spanishLangExample, // TODO: remove this too!
-            languageDictionary: this.datepickerMap,
-            format: (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy',
+
+        $field.datepicker({
+            format: datePickerDateFormat,
+            languageDictionary: this._patchPickerMeta(),
             appendTo: appendTarget
         });
 
-        this.$('.datepicker').on('focus', _.bind(this.handleFocus, this));
+        $field.attr('placeholder', datePickerDateFormat);
 
-        // Bind Datepicker to our proxy functions
-        this.$(".datepicker").datepicker().on({
-            show: _.bind(this.showDatepicker, this),
-            hide: _.bind(this.hideDatepicker, this)
-        });
-
-        $('.main-pane.span8').on('scroll', _.bind(function() {
-            this.$('.datepicker').datepicker('place');
-        }, this));
-        $('.flex-list-view-content').on('scroll', _.bind(function() {
-            this.$('.datepicker').datepicker('place');
-        }, this));
-    },
-
-    /**
-     * {@inheritdoc}
-     */
-    _dispose: function() {
-        $('.main-pane.span8').off();
-        $('.flex-list-view-content').off();
-        app.view.Field.prototype._dispose.call(this);
-    },
-    /**
-     * Hook for when datepicker plugin shown.
-     */
-    showDatepicker: function(ev) {
-        this.datepickerVisible = true;
-    },
-    /**
-     * Main hook to update model when datepicker selected.
-     */
-    hideDatepicker: function(ev) {
-        var timeValue = '',
-            hrsMins   = {},
-            dateValue = '',
-            $timepicker;
-
-        this.datepickerVisible = false;
-
-        // Only if object has a _setTimepickerValue
-        if (!_.isUndefined(this._setTimepickerValue) && _.isFunction(this._setTimepickerValue)) {
-            $timepicker= this.$('.ui-timepicker-input');
-            // Get time values. If none, set to default of midnight; also get date, set model, etc.
-            hrsMins    = this._getHoursMinutes($timepicker);
-            this._setTimepickerValue($timepicker, hrsMins.hours, hrsMins.minutes);
-        } else {
-            // For non datetime type widgets (e.g. date) we simply blank out hours and minutes
-            hrsMins    = {
-                hours: '00',
-                minutes: '00'
-            };
-        }
-        dateValue = this._getDatepickerValue();
-        // If date isn't good we set it raw and let sidecar catch upstream in validation.
-        if (this._verifyDateString(dateValue)) {
-            this.leaveDirty = false;
-            this.model.set(this.name, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes));
-        } else {
-            this.leaveDirty = true;//leave invalid date value alone so sidecar can catch on validation
-            this.model.set(this.name, dateValue, hrsMins.hours, hrsMins.minutes);
+        if (this.def.required) {
+            this.setRequiredPlaceholder($field);
         }
     },
+
     /**
-     * Verifies the parts of a date string are valid according to:
-     * 1. formats supported by SugarCRM
-     * 2. the user's current date format
-     * Note that due to several browser limitations, we can only confirm the validity of
-     * the "date parts" in relation to SugarCRM's supported formats and user's current
-     * date format (and cannot guarantee JavaScript Date.parse, etc., can handle this date!)
-     * @param  {String} value The date string
-     * @return {Boolean}       True if valid, false if not.
-     */
-    _verifyDateString: function(value) {
-        var sep, parsed, parts, valueWithForwardSlash,
-            dateFormat = (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy';
-        //First try generic date parse (since we might have an ISO). This should generally work with the
-        //ISO date strings we get from server.
-        parsed = Date.parse(value);
-        //Firefox for invalid date returns negative value instead NaN.
-        if(_.isNaN(parsed) || parsed < 0) {
-            // If generic Date.parse doesn't work, defer to the more robust bootstrap-datepicker verifier
-            return $.prototype.DateVerifier(value, dateFormat);
-        }
-        return true;
-    },
-    _buildUnformatted: function(d, h, m) {
-        var parsedDate = app.date.parse(d, this.usersDatePrefs);
-        d = app.date.format(parsedDate, this.serverDateFormat);
-        return this.unformat(d + ' ' + h + ':' + m + ':00');
-    },
-    /**
-     * Gets the current datepicker value.
+     * Date picker doesn't trigger a `change` event whenever the date value
+     * changes we need to override this method and listen to the `hide` event.
      *
-     * Note: If we have no date (e.g. display default was set to none), when the
-     * user selects time part, date part will be pre-filled with today's date.
+     * All invalid values are cleared from fields without triggering an event
+     * because `this.model.set()` could have been already empty thus not
+     * triggering a new event and not calling the default code of
+     * `bindDomChange()`.
      */
-    _getDatepickerValue: function() {
-        var date  = this.$('input.datepicker'), dateValue;
+    handleHideDatePicker: function() {
+        var $field = this.$(this.fieldTag),
+            value = this.unformat($field.val());
 
-        dateValue = this._getTodayDateStringIfNoDate(date.prop('value'));
-        this.dateValue = dateValue; // so hbs template will pick up on next render
-        return dateValue;
-    },
-    /**
-     * Sets the current datepicker value.
-     * @param String dateValue date value
-     */
-    _setDatepickerValue: function(dateValue) {
-        var date = this.$('input.datepicker');
-        dateValue = this._getTodayDateStringIfNoDate(dateValue);
-        date.prop('value', dateValue);
-    },
-    /**
-     * Set the date string for REST Api. If stripT
-     * @param {Date} The date we want formatted
-     * @param {Boolean} Forces the format to just have yyyy-mm-dd
-     * @return {String} API ready date string
-     */
-    _setServerDateString: function(jsDate, forceToDate) {
-        var h, m, d;
+        if (!value) {
+            $field.val(value);
+        }
 
-        /**
-         * If we don't want the timezone info we get something like: 2012-12-31T01:30:00
-         * which the server will honor. With timezone will be like: "2012-12-31T01:30:00.814Z"
-         */
-
-        d = app.date.format(jsDate, this.serverDateFormat);
-
-        // Server wants this to be in yyyy-mm-dd format (TimeDate.php fromIsoDate wants it this way)
-        if (forceToDate) {
-            return d;
-        }
-        if (this.stripIsoTZ) {
-            d = app.date.format(jsDate, this.serverDateFormat);
-            h = this._forceTwoDigits(jsDate.getHours().toString());
-            m = this._forceTwoDigits(jsDate.getMinutes().toString());
-            return d + 'T' + h + ':' + m + ':00';
-        }
-        if (_.isFunction(jsDate.toISOString)) {
-            // With timezone info
-            return jsDate.toISOString();
-        }
-        return jsDate;
-    },
-    /**
-     * Checks if dateStringToCheck is falsy..if so, returns today's date as string formatted by
-     * user's prefs. Otherwise, just returns dateStringToCheck.
-     * @param {String} dateStringToCheck Date string
-     * @return {String} Date string
-     */
-    _getTodayDateStringIfNoDate: function(dateStringToCheck) {
-        if (!dateStringToCheck) {
-            var d = new Date();
-            return app.date.format(d, this.usersDatePrefs);
-        }
-        return dateStringToCheck;
-    },
-    /**
-     * Gets the name of this view.
-     * @return {String} view name
-     */
-    _getViewName: function() {
-        return this.view.meta && this.view.meta.type ? this.view.meta.type : this.view.name;
-    },
-    /**
-     * Determines if this view is edit view.
-     * @param {String} The view name
-     * @return Boolean true if edit view
-     */
-    _isEditView: function(viewName) {
-        if(this.options.def.view === 'edit' || this.options.viewName === 'edit' || viewName === 'edit') {
-            return true;
-        }
-        return false;
+        this.model.set(this.name, value);
     },
 
-    // Patches our dom_cal_* metadata for use with our datepicker plugin since they're very similar.
-    _patchDatepickerMeta: function() {
+    /**
+     * {@inheritDoc}
+     */
+    bindDomChange: function() {
+        this._super('bindDomChange');
+
+        var $field = this.$(this.fieldTag);
+
+        $field.on('focus', _.bind(this.handleFocus, this));
+
+        $('.main-pane, .flex-list-view-content').on('scroll', _.bind(function() {
+            $field.datepicker('place');
+        }, this));
+    },
+
+    /**
+     * {@inheritDoc}
+     */
+    unbindDom: function() {
+        this._super('unbindDom');
+
+        $('.main-pane, .flex-list-view-content').off();
+    },
+
+    /**
+     * Patches our `dom_cal_*` metadata for use with date picker plugin since
+     * they're very similar.
+     */
+    _patchPickerMeta: function() {
         var pickerMap = [], pickerMapKey, calMapIndex, mapLen, domCalKey,
             calProp, appListStrings, calendarPropsMap, i, filterIterator;
 
@@ -342,167 +195,98 @@
         }
         return pickerMap;
     },
+
     /**
-     * Helper to determine if this is an edit view
-     * @param  {String}  value value
-     * @return {Boolean} true if edit view
+     * If we're on edit view and a valid `display_default` property was supplied
+     * (e.g.: `next friday`) we'll use it as a date instead.
+     *
+     * @return {Date} The date created or `undefined` if `display_default` isn't
+     *   supplied or is invalid.
      */
-    _isNewEditViewWithNoValue: function(value) {
-        return (this.model.isNew() && !value && this._isEditView(this._getViewName()));
+    _setDefaultValue: function() {
+        if (!this.model.isNew() || this.action !== 'edit' || !this.def.display_default) {
+            return;
+        }
+
+        var value = app.date.parseDisplayDefault(this.def.display_default);
+        if (!value) {
+            return;
+        }
+
+        value = this.unformat(
+            app.date(value).format(
+                app.date.convertFormat(this.getUserDateFormat())
+            )
+        );
+
+        this.model.set(this.name, value);
+        return value;
     },
+
     /**
-     * Pads an int string to two digits.
-     * @param {String} numstr The int as string
+     * Formats date value according to user preferences.
+     *
+     * If no value is defined, we {@link #_setDefaultValue set a default value}.
+     *
+     * @param {String} value Date value to format.
+     * @return {String} Formatted value.
      */
-    _forceTwoDigits: function(numstr) {
-        return numstr.length === 1 ? '0' + numstr: numstr;
+    format: function(value) {
+        value = value || this._setDefaultValue();
+
+        if (!value) {
+            return value;
+        }
+
+        return app.date(value).formatUser(true);
     },
 
     /**
-     * Main render method. Sets up datepicker if view type "edit".
-     * @param  {String} value the value
+     * Unformats date value for storing in model.
+     *
+     * @return {String} Unformatted value.
      */
-    _render: function(value) {
-        var viewName = this._getViewName(),
-            isEditView = this._isEditView(viewName);
+    unformat: function(value) {
+        if (!value) {
+            return value;
+        }
 
-        this._presetDateValues();
+        value = app.date(value, app.date.convertFormat(this.getUserDateFormat()), true);
 
-        if (!isEditView && this.datepickerVisible) {
+        if (!value.isValid()) {
+            return;
+        }
+
+        return value.formatServer(true);
+    },
+
+    /**
+     * {@inheritDoc}
+     */
+    _render: function() {
+        var $field = this.$(this.fieldTag);
+
+        if ($field.data('datepicker') && !$field.data('datepicker').hidden) {
             // todo: when SC-2395 gets implemented change this to 'remove' not 'hide'
-            this.$(".datepicker").datepicker('hide');
+            $field.datepicker('hide');
         }
 
         this._super('_render');
 
-        if (isEditView) {
-            this._setupDatepicker();
+        if (this.action !== 'edit') {
+            return;
         }
-        if (app.utils.isTouchDevice()) {
-           this.$("[rel=datepicker]").attr('readonly',true);
-        }
-    },
-    /**
-     * Formats value per user's preferences
-     * @param {String} value The value to format
-     * @return {String} Formatted value
-     */
-    format:function(value) {
-        var jsDate, parts;
-        if (this._isNewEditViewWithNoValue(value)) {
-            // If there is a default 'string' value like "yesterday", format it as a date
-            jsDate = this._setDateIfDefaultValue();
-            if (!jsDate) {
-                return value;
-            }
-            value  = app.date.format(jsDate, this.usersDatePrefs);
-        } else if (!value) {
-            return value;
-        } else if (!this.leaveDirty) {
-            // Bug 56249 .. Date constructor doesn't reliably handle yyyy-mm-dd
-            // e.g. new Date("2011-10-10" ) // in my version of chrome browser returns
-            // Sun Oct 09 2011 17:00:00 GMT-0700 (PDT)
-            parts = value.match(/(\d+)/g);
-            // Bug 59827: In IE and FF, when changing from 100/23/2013 to 1//2013, got NaN/NaN/NaN.
-            if (parts && parts.length > 2) {
-                jsDate = new Date(parts[0], parts[1]-1, parts[2]); //months are 0-based
-                value  = app.date.format(jsDate, this.usersDatePrefs);
-            } else {
-                return value;
-            }
-        } // else leave dirty is true so "no op"
 
-        this.dateValue = value;
-        this.$(".datepicker").datepicker('update', this.dateValue);
-        jsDate = app.date.parse(value);
-        return app.date.format(jsDate, this.usersDatePrefs);
+        this._setupDatePicker();
     },
 
     /**
-     * Overrides basedate's unformat.
+     * {@inheritdoc}
      */
-    unformat:function(value) {
-        // In case ISO 8601 get it back to js native date which date.format understands
-        var jsDate = new Date(value);
+    _dispose: function() {
+        // FIXME: new date picker versions have support for plugin removal/destroy
+        // we should do the upgrade in order to prevent memory leaks
 
-        // Safari chokes on '.', '-', (supported by datepicker), so retry replacing with '/'
-        if (!jsDate || jsDate.toString() === 'Invalid Date') {
-            jsDate = new Date(value.replace(/[\.\-]/g, '/'));
-        }
-        return app.date.format(jsDate, this.serverDateFormat);
-
-    },
-
-    /**
-     * If the field def has a display_default property, or, is required, this
-     * will set the model with corresponding date time.
-     * @return {Date} The date created
-     */
-    _setDateIfDefaultValue: function() {
-        var value, jsDate;
-
-        if (this.def.display_default) {
-            jsDate = app.date.parseDisplayDefault(this.def.display_default);
-            this.model.set(this.name, app.date.format(jsDate, this.serverDateFormat));
-        } else {
-            return null;
-        }
-        return jsDate;
-    },
-
-    unbindDom: function() {
-        app.view.Field.prototype.unbindDom.call(this);
-    },
-    /**
-     * Custom error styling for date field
-     * @param {Object} errors
-     * @override BaseField
-     */
-    decorateError: function (errors) {
-        var ftag = this.fieldTag || '',
-            $ftag = this.$(ftag),
-            errorMessages = [];
-
-        // Add error styling
-        this.$el.closest('.record-cell').addClass('error');
-        this.$el.addClass('error');
-
-        this.$el.find(".add-on").remove();
-        // For each error add to error help block
-        _.each(errors, function (errorContext, errorName) {
-            errorMessages.push(app.error.getErrorString(errorName, errorContext));
-        });
-        $ftag.wrap('<div class="input-append error ' + ftag + '">');
-        $ftag.after(this.exclamationMarkTemplate(errorMessages)+'<span class="add-on"><i class="icon-calendar"></i></span>');
-        this.createErrorTooltips(this.$('.error-tooltip'));
-    },
-    /**
-     * Remove error decoration from field if it exists.
-     */
-    clearErrorDecoration: function () {
-        var ftag = this.fieldTag || '',
-            $ftag = this.$(ftag);
-        var isWrapped = $ftag.parent().hasClass('input-append');
-        if (isWrapped) {
-            $ftag.parent().removeClass('error');
-        }
-        this.$el.removeClass(ftag);
-        this.$el.removeClass("error");
-        this.$el.closest("span.edit").removeClass('error');
-        this.$el.closest('.record-cell').removeClass("error");
-    },
-
-    /**
-     * @inheritDoc
-     *
-     * When data changes, re-render the field only if it is not on edit
-     * (see MAR-1617).
-     */
-    bindDataChange: function() {
-        this.model.on('change:' + this.name, function() {
-            if (this.action !== 'edit') {
-                this.render();
-            }
-        }, this);
+        this._super('_dispose');
     }
 })
