@@ -320,7 +320,7 @@
                     'portal2/user.js'                => 'portal2/portal.min.js',
                     'portal2/portal.js'              => 'portal2/portal.min.js',
                     'portal2/portal-ui.js'           => 'portal2/portal.min.js',
-                    'sugarcrm/include/javascript/sugar7/language.js'           => 'portal2/portal.min.js',
+                    'include/javascript/sugar7/language.js'           => 'portal2/portal.min.js',
                     'include/javascript/jquery/jquery.popoverext.js'           => 'portal2/portal.min.js',
                     'include/javascript/jquery/jquery.effects.custombounce.js'           => 'portal2/portal.min.js',
                 )
