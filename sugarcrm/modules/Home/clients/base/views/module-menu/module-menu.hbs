@@ -21,12 +21,12 @@
     <div class="dropdown-menu scroll">
         <ul role="menu">
             {{#each actions}}
-                <li><a class="actionLink" tabindex="-1" href="{{#if event}}javascript:void(0);{{else}}{{route}}{{/if}}" data-{{#if event}}event="{{event}}" track="click:{{event}}"{{else}}route="{{route}}" track="click:{{route}}"{{/if}}>{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../module}}</a></li>
+                <li><a class="actionLink ellipsis_inline" tabindex="-1" href="{{#if event}}javascript:void(0);{{else}}{{route}}{{/if}}" data-{{#if event}}event="{{event}}" track="click:{{event}}"{{else}}route="{{route}}" track="click:{{route}}"{{/if}}>{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../module}}</a></li>
             {{/each}}
             <li class="divider" data-container="dashboards"></li>
             {{#if ../dashboardBwcLink}}
             <li class="divider" data-container="legacy-dashboards"></li>
-            <li><a tabindex="-1" data-route="#{{../dashboardBwcLink}}" href="#{{../dashboardBwcLink}}"><i class="icon-time"></i>{{str 'LBL_DASHBOARD_BWC' module}}</a></li>
+            <li><a class="ellipsis_inline" tabindex="-1" data-route="#{{../dashboardBwcLink}}" href="#{{../dashboardBwcLink}}"><i class="icon-time"></i>{{str 'LBL_DASHBOARD_BWC' module}}</a></li>
             {{/if}}
             <li class="divider" data-container="recently-viewed"></li>
         </ul>
