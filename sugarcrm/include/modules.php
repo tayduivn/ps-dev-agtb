@@ -541,6 +541,10 @@ $beanList['KBSTags'] = 'KBSTag';
 $beanFiles['KBSTag'] = 'modules/KBSTags/KBSTag.php';
 $modInvisList[] = 'KBSTags';
 
+$beanList['KBSTopics'] = 'KBSTopic';
+$beanFiles['KBSTopic'] = 'modules/KBSTopics/KBSTopic.php';
+$modInvisList[] = 'KBSTopics';
+
 // TODO: this definition should be grouped with all the others definitions like $beanList, $beanFiles and so on
 $bwcModules = array(
     'ACLFields',
