@@ -1,4 +1,4 @@
-describe("date field", function() {
+xdescribe("date field", function() {
 
     var app, field;
 
