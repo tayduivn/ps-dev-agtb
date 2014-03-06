@@ -71,60 +71,54 @@
             this.enableDuplicateCheck = false;
         }
 
-        var fields = (moduleMetadata && moduleMetadata.fields) ? moduleMetadata.fields : [];
+        var fields = (moduleMetadata && moduleMetadata.fields) ? moduleMetadata.fields : {};
 
         this.model.relatedAttributes = this.model.relatedAttributes || {};
-        _.each(fields, function (field) {
-            var userId, userName, isDuplicate;
-            if (((field.name && field.name === 'assigned_user_id') || (field.id_name && field.id_name === 'assigned_user_id')) &&
-                (field.type && field.type === 'relate')) {
 
-                // set the default assigned user as current user, unless we are copying another record
-                isDuplicate = this.model.has('assigned_user_id') && this.model.has('assigned_user_name');
-                userId = isDuplicate ? this.model.get('assigned_user_id') : app.user.id;
-                userName = isDuplicate ?
-                    this.model.get('assigned_user_name') :
-                    app.user.attributes.full_name;
-
-                this.model.set('assigned_user_id', userId);
-                this.model.set('assigned_user_name', userName);
-                this.model.relatedAttributes.assigned_user_id = app.user.id;
-                this.model.relatedAttributes.assigned_user_name = app.user.attributes.full_name;
+        var assignedUserField = _.find(fields, function(field) {
+            return field.type === 'relate' &&
+                (field.name === 'assigned_user_id' || field.id_name === 'assigned_user_id');
+        });
+        if (assignedUserField) {
+            // set the default assigned user as current user, unless we are copying another record
+            var isDuplicate = this.model.has('assigned_user_id') && this.model.has('assigned_user_name');
+            if (!isDuplicate) {
+                this.model.set('assigned_user_id', app.user.id);
+                this.model.set('assigned_user_name', app.user.get('full_name'));
+                this.model.setDefaultAttribute('assigned_user_id', app.user.id);
+                this.model.setDefaultAttribute('assigned_user_name', app.user.get('full_name'));
             }
-        }, this);
+            this.model.relatedAttributes.assigned_user_id = app.user.id;
+            this.model.relatedAttributes.assigned_user_name = app.user.get('full_name');
+        }
 
         this.model.on("error:validation", function(){
             this.alerts.showInvalidModel();
         }, this);
 
+        // need to reset the default attributes because the plugin may have
+        // calculated default values.
+        this.on('sugarlogic:initialize', function() {
+            this.model.setDefaultAttributes(this.model.attributes);
+        }, this);
     },
 
     /**
-     * Check unsaved changes
+     * @inheritDoc
+     */
+    /**
+     * Check unsaved changes.
+     * This method is called by {@link app.plugins.Editable}.
      *
-     * @return true if current model contains unsaved changes
-     * @link {app.plugins.view.editable}
+     * @return {Boolean} `true` if current model contains unsaved changes,
+     *  `false` otherwise.
      */
     hasUnsavedChanges: function() {
         if (this.resavingAfterMetadataSync) {
             return false;
         }
-        //Are any "meangingful changes" (takes any set default attributes
-        //that should be ignored in to account).
-        var intersection, numDiffKeys,
-            modelHasChanged = this.model.hasChanged(),
-            changedAndDefaultsHashesDiffer = true,
-            changed = _.keys(this.model.changedAttributes() || {}),
-            defaults = _.keys(this.model.getDefaultAttributes());
-
-        //If exact same keys and values changedAndDefaultsDiffer will be falsy
-        numDiffKeys = _.difference(changed, defaults).length;
-        if (numDiffKeys === 0) {
-            //same keys so additionally check if any differing values
-            intersection = _.pick(this.model.getDefaultAttributes(), changed);
-            changedAndDefaultsHashesDiffer = !_.isEqual(intersection, this.model.changedAttributes());
-        }
-        return this.model.isNew() && modelHasChanged && changedAndDefaultsHashesDiffer;
+        var defaults = _.extend({}, this.model._defaults, this.model.getDefaultAttributes());
+        return this.model.isNew() && !_.isEqual(defaults, this.model.attributes);
     },
 
     handleSync: function () {
