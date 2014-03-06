@@ -90,7 +90,7 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
         // Exists only checks
         if (!empty($this->def['rname_exists'])) {
             $this->markNonDb();
-            $this->addToSelectRaw("IF({$this->jta}.{$this->def['rname']} IS NOT NULL,1,0)",$this->field);
+            $this->addToSelectRaw("case when {$this->jta}.{$this->def['rname']} IS NOT NULL then 1 else 0 end",$this->field);
             return;
         }
 
