@@ -58,7 +58,7 @@
             }).length;
             // Show remove button for all unset combos and only set combos if there are more than one
             _.each(result, function (item) {
-                if (_.isUndefined(item.items['']) || numItems > 1) {
+                if (!_.isUndefined(item.items['']) || numItems > 1) {
                     item.remove_button = true;
                 }
             });
@@ -103,6 +103,7 @@
             el.on('change', function () {
                 var value = self.unformatValue();
                 self.model.set(self.name, value, {silent: true});
+                self.value = self.format(value);
             });
         }
     },

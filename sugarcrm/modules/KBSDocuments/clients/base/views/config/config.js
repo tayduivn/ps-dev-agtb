@@ -21,7 +21,7 @@
         var fields = options.meta.panels[0].fields;
         this._super('initialize', [options]);
         this._initModel(fields);
-        this.config = app.metadata.getModule('KBDocuments', 'config');
+        this.config = app.metadata.getModule(this.module, 'config');
         this.model.set(this.config, {silent: true});
 
         this.configUrl = app.api.buildURL(this.module, 'config', null, {});
