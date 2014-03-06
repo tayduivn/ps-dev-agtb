@@ -165,6 +165,15 @@
                 // set the key for the lang string
                 lang_string_key = 'LBL_COMMITTED_HISTORY_' + num_shown + '_SHOWN';
 
+                if(worst_args.changed && worst_args.show) {
+                    final_args.push(
+                        this.gatherLangArgsByParams(worst_direction, worst_arrow, worst_difference, newestModel, 'worst_case')
+                    );
+                } else if(worst_args.show) {
+                    // push an empty array for args
+                    final_args.push([]);
+                }
+
                 //determine what changed and add parts to the array for displaying the changes
                 if(likely_args.changed && likely_args.show) {
                     final_args.push(
@@ -180,15 +189,6 @@
                         this.gatherLangArgsByParams(best_direction, best_arrow, best_difference, newestModel, 'best_case')
                     );
                 } else if(best_args.show) {
-                    // push an empty array for args
-                    final_args.push([]);
-                }
-
-                if(worst_args.changed && worst_args.show) {
-                    final_args.push(
-                        this.gatherLangArgsByParams(worst_direction, worst_arrow, worst_difference, newestModel, 'worst_case')
-                    );
-                } else if(worst_args.show) {
                     // push an empty array for args
                     final_args.push([]);
                 }
@@ -271,6 +271,15 @@
                     args.push('LBL_COMMITTED_HISTORY_UPDATED_FORECAST');
                 }
 
+                // Handle Worst
+                if(worst.show) {
+                    if(worst.changed) {
+                        args.push('LBL_COMMITTED_HISTORY_WORST_CHANGED');
+                    } else {
+                        args.push('LBL_COMMITTED_HISTORY_WORST_SAME');
+                    }
+                }
+
                 // Handle Likely
                 if(likely.show) {
                     if(likely.changed) {
@@ -286,15 +295,6 @@
                         args.push('LBL_COMMITTED_HISTORY_BEST_CHANGED');
                     } else {
                         args.push('LBL_COMMITTED_HISTORY_BEST_SAME');
-                    }
-                }
-
-                // Handle Worst
-                if(worst.show) {
-                    if(worst.changed) {
-                        args.push('LBL_COMMITTED_HISTORY_WORST_CHANGED');
-                    } else {
-                        args.push('LBL_COMMITTED_HISTORY_WORST_SAME');
                     }
                 }
 
