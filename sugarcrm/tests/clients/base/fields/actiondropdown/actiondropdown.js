@@ -320,4 +320,31 @@ describe('Base.Field.Actiondropdown', function() {
             accessStub.restore();
         });
     });
+
+    describe('setMode', function() {
+        var sandbox = sinon.sandbox.create(),
+            f;
+
+        beforeEach(function() {
+            f = _.first(field.fields);
+            f.def.icon = 'icon-edit';
+        });
+
+        afterEach(function() {
+            f.def.icon = undefined;
+            sandbox.restore();
+        });
+
+        it('should set action to list for first field when not in a subpanel', function() {
+            field.setMode('list');
+            expect(f.action).toEqual('list');
+        });
+        it('should set the action to small for first field when in a subpanel', function() {
+            sandbox.stub(f, 'closestComponent', function() {
+                return true;
+            });
+            field.setMode('list');
+            expect(f.action).toEqual('small');
+        });
+    });
 });
