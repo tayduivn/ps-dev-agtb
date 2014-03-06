@@ -32,6 +32,7 @@ require_once('include/SugarSearchEngine/SugarSearchEngineIndexerBase.php');
  */
 class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
 {
+    const ASYNC_TIMEOUT = 120;
 
     /**
      * Name of the scheduler to perform a full index
@@ -46,6 +47,9 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
     {
         parent::__construct($engine);
         $this->results = array();
+
+        // use a higher connection timeout then we do for inline calls
+        $this->SSEngine->setTimeout(self::ASYNC_TIMEOUT);
     }
 
     /**
