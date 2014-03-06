@@ -65,6 +65,15 @@ $dictionary['KBSContent'] = array(
             'options' => 'kbdocument_status_dom',
             'reportable' => false,
         ),
+        'viewcount' => array(
+            'name' => 'viewcount',
+            'vname' => 'LBL_VIEWED_COUNT',
+            'len' => '26,6',
+            'type' => 'decimal',
+            'importable' => 'required',
+            'default' => 0,
+            'sortable' => true,
+        ),
         'revision' => array(
             'name' => 'revision',
             'vname' => 'LBL_REVISION',

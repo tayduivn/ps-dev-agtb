@@ -12,19 +12,16 @@
  * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
  */
 
-$mod_strings = array (
-    'LBL_MODULE_NAME' => 'KBContents',
-    'LBL_MODULE_NAME_SINGULAR' => 'KBContent',
-    'LBL_MODULE_TITLE' => 'KBContent',
-    'LBL_MODULE_ID'=> 'KBContents',
-    'LBL_DOCUMENT_REVISION_ID' => 'Revision ID',
-    'LBL_NUMBER' => 'Number',
-    'LBL_TEXT_BODY' => 'Body',
-    'LBL_LANG' => 'Language',
-    'LBL_ACTIVE_DATE' => 'Active Date',
-    'LBL_EXP_DATE' => 'Expiration Date',
-    'LBL_DOC_ID' => 'Document ID',
-    'LBL_APPROVED' => 'Approved',
-    'LBL_VIEWED_COUNT' => 'View Count',
-    'LBL_REVISION' => 'Revision'
-);
+
+class KBSContentsApiHelper extends SugarBeanApiHelper {
+
+    public function formatForApi(SugarBean $bean, array $fieldList = array(), array $options = array())
+    {
+        if ($this->api->action == 'view' && $this->api->getRequest()->args['viewed']) {
+            $bean->viewcount = $bean->viewcount + 1;
+            $bean->save();
+        }
+        $result = parent::formatForApi($bean, $fieldList, $options);
+        return $result;
+    }
+}
