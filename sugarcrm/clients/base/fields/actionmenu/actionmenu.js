@@ -195,14 +195,20 @@
             return;
         }
 
-        var filterDef = massCollection.filterDef;
+        var filterDef = massCollection.filterDef,
+        //if list view is for linking and link fetch size configuration exists, set it,
+        //otherwise default to maxRecordFetchSize
+            max_num = (this.def.isLinkAction && app.config.maxRecordLinkFetchSize) ?
+                app.config.maxRecordLinkFetchSize :
+                app.config.maxRecordFetchSize;
+
         if (!_.isArray(filterDef)) {
             filterDef = [filterDef];
         }
 
         var url = app.api.buildURL(this.module, null, null, {
             fields: 'id',
-            max_num: app.config.maxRecordFetchSize,
+            max_num: max_num,
             filter: filterDef
         });
 

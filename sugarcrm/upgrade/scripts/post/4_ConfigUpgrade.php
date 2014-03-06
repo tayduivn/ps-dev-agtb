@@ -53,6 +53,7 @@ class SugarUpgradeConfigUpgrade extends UpgradeScript
             'mass_actions' => array(
                 'mass_update_chunk_size' => 20,
                 'mass_delete_chunk_size' => 20,
+                'mass_link_chunk_size' => 20,
             ),
             'merge_duplicates' => array(
                 'merge_relate_fetch_concurrency' => 2,
