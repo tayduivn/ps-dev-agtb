@@ -131,7 +131,7 @@ class Subscription extends Basic
             $query->where()->equals('created_by', $user->id);
             $result = $query->execute();
             foreach ($result as $row) {
-                $return[$row['parent_id']] = true;
+                $return[$row['parent_id']] = !empty($record['id']) ? $record['id'] : false;
             }
         }
 

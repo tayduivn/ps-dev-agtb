@@ -234,7 +234,9 @@ class UnifiedSearchApi extends SugarListApi {
 
         $subscriptions = Subscription::checkSubscriptionList($api->user, $recordSet['records']);
         foreach ($recordSet['records'] as &$record) {
-            $record['following'] = !empty($subscriptions[$record['id']]);
+            if (!empty($record['id'])) {
+                $record['following'] = !empty($subscriptions[$record['id']]);
+            }
         }
 
         return $recordSet;
