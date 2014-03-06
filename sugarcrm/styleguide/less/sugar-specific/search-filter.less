@@ -446,51 +446,21 @@
     border-top: 1px solid #5897FB;
   }
 }
-
-.drawer {
-  .search-filter {
-    margin: 0 12px;
-    .control-group {
-      background: none;
-      border-bottom: 1px solid darken(@grayLighter, 5%);
-      padding-left: 0;
-      .filter-view.search {
-        border: none;
-        .box-shadow(none);
-        left: -12px;
-      }
-      .filter-view.search {
-        .select2-container {
-          .select2-chosen {
-            background: none;
-            margin-top: 0;
-            font-size: @fontSizeLarge;
-            &:hover, &:active {
-              background: none;
-              .box-shadow(none) !important;
-            }
-          }
-        }
-        .choice-filter {
-          .border-radius(10px);
-          font-size: @fontSizeLarge;
-          font-weight: 500;
-          margin-top: 1px;
-          margin-left: -15px;
-          padding: 6px 8px;
-        }
-      }
-    }
-    .extend {
-      background: none;
-      .box-shadow(none);
-      .filter-header,
-      .filter-body {
-        padding: 7px 1px;
-      }
-      .filter-header {
-        border-bottom: 0;
-      }
-    }
+.drawer .dashablelist-filter {
+  > div >.search-filter::before {
+    content: "Default Data Filter";
+    position: relative;
+    left: 20px;
+    font-size: 11px;
+    color: #76777a;
   }
+  .search-filter {
+  .control-group {
+  background: none;
+  }
+  .filter-view {
+    border: none;
+    .box-shadow(none);
+  }
+ }
 }
