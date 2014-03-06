@@ -498,14 +498,7 @@ class PdfManagerHelper
                 $fields_module[$name] = self::parseBeanFields($related_instance, FALSE);
             } elseif (
                 isset($module_instance->field_defs[$name]['type']) &&
-                (
-                        $module_instance->field_defs[$name]['type'] == 'currency'
-                    ||
-                        (
-                                $module_instance->field_defs[$name]['type'] == 'decimal'
-                            &&  in_array($module_instance->object_name , array('Product', 'ProductBundle', 'Quotes'))
-                        )
-                ) &&
+                $module_instance->field_defs[$name]['type'] == 'currency' &&
                 isset($module_instance->currency_id)
                ) {
                 global $locale;
