@@ -776,8 +776,12 @@
     /**
      * Handles a field validation error for record views.
      * @param field
+     * @param {Boolean} hasError True if a field has an error, false if the field is clearing it's error state
      */
-    handleFieldError: function(field) {
+    handleFieldError: function(field, hasError) {
+        if(!hasError) {
+            return;
+        }
         var tabLink,
             fieldTab   = field.$el.closest('.tab-pane'),
             fieldPanel = field.$el.closest('.record-panel-content');
