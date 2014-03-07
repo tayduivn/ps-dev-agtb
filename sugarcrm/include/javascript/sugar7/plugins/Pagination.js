@@ -133,7 +133,10 @@
                     if (this.disposed) {
                         return;
                     }
-
+                    if (this.module !== collection.module) {
+                        this.rowTemplate = app.template.getView(this.name + '.row', collection.module) ||
+                            this.rowTemplate;
+                    }
                     if (_.isEmpty(this.$tableBody) || !this.rowTemplate) {
                         app.logger.warn('Create a row.hbs template to avoid a full render.');
                         this.render();
