@@ -55,13 +55,18 @@
             var tmp = _.omit(val, 'primary');
             _.extend(result, tmp);
             if (val.primary) {
-                def = _.keys(tmp).first();
+                def = _.first(_.keys(tmp));
             }
         });
         this.items = result;
         if (def) {
             this.defaultOnUndefined = false;
-            this.model.setDefaultAttribute(this.name, def);
+            // call with {silent: true} on, so it won't re-render the field, since we haven't rendered the field yet
+            this.model.set(this.name, def, {silent: true});
+            //Forecasting uses backbone model (not bean) for custom enums so we have to check here
+            if (_.isFunction(this.model.setDefaultAttribute)) {
+                this.model.setDefaultAttribute(this.name, def);
+            }
         }
     }
 })
