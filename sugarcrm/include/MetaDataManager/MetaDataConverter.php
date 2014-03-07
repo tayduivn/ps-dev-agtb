@@ -341,7 +341,15 @@ class MetaDataConverter
             if (empty($def['context']['link'])) {
                 continue;
             }
-            $link = new Link2($def['context']['link'], $bean);
+
+            // In most cases we can safely expect a Link2 object. But in cases
+            // where a vardef defines it's own link_class and link_file, we need 
+            // to honor that. For example, archived_emails in Accounts.
+            $linkClass = 'Link2';
+            if (isset($bean->field_defs[$def['context']['link']])) {
+                $linkClass = load_link_class($bean->field_defs[$def['context']['link']]);
+            }
+            $link = new $linkClass($def['context']['link'], $bean);
             $linkModule = $link->getRelatedModuleName();
 
             $legacySubpanelName = $this->toLegacySubpanelName($def);

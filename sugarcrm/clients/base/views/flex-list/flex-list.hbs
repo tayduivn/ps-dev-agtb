@@ -1,4 +1,4 @@
-{{!
+{{!--
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -9,9 +9,9 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-}}
+--}}
 {{#each meta.panels}}
 <div class="flex-list-view-content">
 <table class="table table-striped dataTable{{#has "ReorderableColumns" ../plugins}} reorderable-columns{{/has}}">
@@ -76,8 +76,11 @@
             {{/if}}
         {{/each}}
     </tr>
-    <tr class="alert alert-warning hide">
-        <td class="container"{{#if ../this.colSpan}} colspan="{{../../this.colSpan}}"{{/if}}></td>
+    <tr>
+        <th data-target="alert-container" class="alert alert-warning hide"{{#if ../this.colSpan}} colspan="{{../../this.colSpan}}"{{/if}}>
+            <div data-target="alert">
+            </div>
+        </th>
     </tr>
     </thead>
     <tbody>

@@ -16,7 +16,8 @@ class SugarEmailAddress extends SugarBean
     var $disable_custom_fields = true;
     var $db;
     var $smarty;
-    var $addresses = array(); // array of emails
+    public $addresses = array(); // array of emails
+    public $hasFetched = false; // Set to true when the emails have been fetched
     var $view = '';
     private $stateBeforeWorkflow;
 
@@ -836,7 +837,7 @@ class SugarEmailAddress extends SugarBean
         $q->select(array('email_address', 'opt_out', 'invalid_email', 'ear.primary_address', 'ear.reply_to_address'));
         $q->joinTable("email_addr_bean_rel", array('alias'=>"ear", 'joinType'=>"LEFT", "linkingTable" => true))
             ->on()->equalsField('id', 'ear.email_address_id', $this)->equals('ear.deleted', 0);
-        $q->where()->equals('deleted', 0)->equals('ear.bean_module', $module);
+        $q->where()->equals('deleted', 0)->equals('ear.bean_module', $this->getCorrectedModule($module));
         $q->orderBy('ear.primary_address', 'DESC');
         return $q;
     }

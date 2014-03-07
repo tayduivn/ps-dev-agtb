@@ -2,15 +2,17 @@ describe("Activity Stream View", function() {
     var app,
         view,
         viewName = 'activitystream',
-        createRelatedCollectionStub,
-        processAvatarsStub,
-        getPreviewDataStub;
+        preferenceStub;
 
     beforeEach(function() {
         app = SugarTest.app;
-        createRelatedCollectionStub = sinon.stub(SugarTest.app.data, 'createRelatedCollection', function() {
+
+        sinon.collection.stub(SugarTest.app.data, 'createRelatedCollection', function() {
             return new Backbone.Collection();
         });
+        preferenceStub = sinon.collection.stub(SugarTest.app.user, 'getPreference');
+        preferenceStub.withArgs('datepref').returns('m/d/Y');
+        preferenceStub.withArgs('timepref').returns('H:i');
 
         SugarTest.testMetadata.init();
 
@@ -44,14 +46,11 @@ describe("Activity Stream View", function() {
 
         view = SugarTest.createView('base', 'Cases', viewName, null, context);
 
-        processAvatarsStub = sinon.stub(view, 'processAvatars');
-        getPreviewDataStub = sinon.stub(view, 'getPreviewData');
+        sinon.collection.stub(view, 'processAvatars');
     });
 
     afterEach(function() {
-        createRelatedCollectionStub.restore();
-        processAvatarsStub.restore();
-        getPreviewDataStub.restore();
+        sinon.collection.restore();
         view.dispose();
         SugarTest.testMetadata.dispose();
     });
@@ -125,10 +124,6 @@ describe("Activity Stream View", function() {
         var previewData,
             aclStub,
             getParentModelStub;
-
-        beforeEach(function() {
-            getPreviewDataStub.restore();
-        });
 
         it('Should load preview enabled with default message', function() {
             var previewId = "3be4-2be4-49bcc-dcbc-cccaf35c5bb1";
@@ -360,13 +355,12 @@ describe("Activity Stream View", function() {
         });
 
         it('Before and After values injected in update string properly using Field format method', function () {
-            var results, data, preferenceStub, langStub;
+            var results, data, langStub;
 
-            preferenceStub = sinon.collection.stub(SugarTest.app.user, 'getPreference');
             preferenceStub.withArgs('decimal_separator').returns('.');
             preferenceStub.withArgs('decimal_precision').returns(4);
 
-            langStub = sinon.stub(SugarTest.app.lang, 'get');
+            langStub = sinon.collection.stub(SugarTest.app.lang, 'get');
             langStub.withArgs('TPL_ACTIVITY_UPDATE_FIELD', 'Activities').returns('{{before}}:{{after}}');
 
             view.model.set('parent_type', 'Cases');
@@ -389,9 +383,6 @@ describe("Activity Stream View", function() {
 
             expect(results).toContain("200.0000:100.0000");
             expect(results).toContain("Calm Sailing Inc:Calm Flying");
-
-            langStub.restore();
-            preferenceStub.restore();
         });
     });
 

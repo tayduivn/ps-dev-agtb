@@ -41,21 +41,25 @@
      * an existing record
      */
     openSelectDrawer: function() {
-        if(this.isDisabled()){
+        if (this.isDisabled()) {
             return;
         }
-        var parentModel = this.context.get("parentModel"),
-            linkModule = this.context.get("module"),
-            link = this.context.get("link"),
+        var parentModel = this.context.get('parentModel'),
+            linkModule = this.context.get('module'),
+            link = this.context.get('link'),
             self = this;
 
         app.drawer.open({
             layout: 'link-selection',
             context: {
-                module: linkModule
+                module: linkModule,
+                recParentModel: parentModel,
+                recLink: link,
+                recContext: this.context,
+                recView: this.view
             }
         }, function(model) {
-            if(!model) {
+            if (!model) {
                 return;
             }
             var relatedModel = app.data.createRelatedBean(parentModel, model.id, link),
@@ -67,15 +71,15 @@
                         //We've just linked a related, however, the list of records from
                         //loadData will come back in DESC (reverse chronological order with
                         //our newly linked on top). Hence, we reset pagination here.
-                        self.context.get("collection").resetPagination();
+                        self.context.get('collection').resetPagination();
                         self.context.resetLoadFlag();
                         self.context.set('skipFetch', false);
                         //Reset limit on context so we don't "over fetch" (lose pagination)
-                        var collectionOptions = self.context.has('collectionOptions') ? self.context.get('collectionOptions') : {};
+                        var collectionOptions = self.context.get('collectionOptions') || {};
                         if (collectionOptions.limit) self.context.set('limit', collectionOptions.limit);
                         self.context.loadData({
                             success: function() {
-                                self.view.layout.trigger("filter:record:linked");
+                                self.view.layout.trigger('filter:record:linked');
                             },
                             error: function(error) {
                                 app.alert.show('server-error', {
@@ -107,12 +111,12 @@
      * @override
      */
     isDisabled: function() {
-        if (this._super("isDisabled")) {
+        if (this._super('isDisabled')) {
             return true;
         }
-        var link = this.context.get("link");
-        var parentModule = this.context.get("parentModule");
-        var required = app.utils.isRequiredLink(parentModule, link);
+        var link = this.context.get('link'),
+            parentModule = this.context.get('parentModule'),
+            required = app.utils.isRequiredLink(parentModule, link);
         return required;
     }
 })

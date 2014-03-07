@@ -408,83 +408,32 @@ class FilterApi extends SugarApi
     protected function runQuery(ServiceBase $api, array $args, SugarQuery $q, array $options, SugarBean $seed) {
         $seed->call_custom_logic("before_filter", array($q, $options));
         $GLOBALS['log']->info("Filter SQL: " . $q->compileSql());
-        $idRows = $q->execute();
+        
+        if (empty($args['fields'])) {
+            $fields = array();
+        } else {
+            $fields = $options['select'];
+        }
+
+        $beans = $seed->fetchFromQuery($q, $fields, array('returnRawRows' => true));
+
+        $rows = $beans['_rows'];
+        unset($beans['_rows']);
 
         $data = array();
         $data['next_offset'] = -1;
 
-        $beans = $bean_ids = array();
-        foreach ($idRows as $i => $row) {
+        $i = 0;
+        foreach ($beans as $bean_id => $bean) {
             if ($i == $options['limit']) {
+                unset($beans[$bean_id]);
                 $data['next_offset'] = (int) ($options['limit'] + $options['offset']);
                 continue;
             }
-            if (empty($args['fields'])) {
-                //FIXME: Without a field list, we need to just do a full retrieve to make sure we get the entire bean.
-                $getBeanOptions = array();
-                if (!empty($args['deleted'])) {
-                    $getBeanOptions['deleted'] = false;
-                }
-                
-                // The Admin module doesn't have an id
-                if (!empty($row['id'])) {
-                    $bean = BeanFactory::getBean($options['module'], $row['id'],$getBeanOptions);
-                } else {
-                    $bean = BeanFactory::getBean($options['module'], null,$getBeanOptions);
-                }
+            $i++;
 
-                // If we are filtering on a link and there is link data we need to populate the bean manually
-                if (!empty($options['linkDataFields']) && is_array($options['linkDataFields'])) {
-                    foreach ($options['linkDataFields'] as $fieldName) {
-                        if (!empty($row[$fieldName])) {
-                            $bean->$fieldName = $row[$fieldName];
-                        }
-                    }
-                }
-            } else {
-                // Fetch a fresh "bean", even if $seed is a mock.
-                $bean = $seed->getCleanCopy();
-                // convert will happen inside populateFromRow
-                $bean->loadFromRow($row, true);
-                $this->populateRelatedFields($bean, $row);
-                if (!empty($bean->id) && !empty($row['parent_type']) && $q->hasParent()) {
-                    $child_info[$row['parent_type']][] = array(
-                        'child_id' => $bean->id,
-                        'parent_id' => $bean->parent_id,
-                        'parent_type' => $bean->parent_type,
-                        'type' => 'parent'
-                    );
-                }
-            }
-            if ($bean && !empty($bean->id)) {
-                $beans[$bean->id] = $bean;
-                $bean_ids[] = $bean->id;
-            }
-        }
-        /* FIXME: this is a hack for emails, think about how to fix it */
-        if (!empty($bean_ids) && isset($seed->field_defs['email']) && in_array(
-            'email',
-            $options['select']
-        )
-        ) {
-            $email = BeanFactory::getBean('EmailAddresses');
-            $q = $email->getEmailsQuery($seed->module_name);
-            $q->where()->in("ear.bean_id", $bean_ids);
-            $q->select->field("ear.bean_id");
-            $email_rows = $q->execute();
-            foreach ($email_rows as $email) {
-                $beans[$email['bean_id']]->emailData[] = $email;
-            }
-        }
-        // Load parent records
-        if (!empty($child_info)) {
-            $parent_beans = $seed->retrieve_parent_fields($child_info);
-            foreach ($parent_beans as $id => $parent_data) {
-                unset($parent_data['id']);
-                foreach ($parent_data as $field => $value) {
-                    $beans[$id]->$field = $value;
-                }
-            }
+            $this->populateRelatedFields($bean, $rows[$bean_id]);
+
         }
 
         $data['records'] = $this->formatBeans($api, $args, $beans);

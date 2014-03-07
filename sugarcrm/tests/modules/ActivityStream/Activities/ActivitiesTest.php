@@ -153,15 +153,6 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * For an activity without an ID, adding a comment should return false.
-     * @covers Activity::deleteComment
-     */
-    public function testDeleteComment6()
-    {
-        $comment = SugarTestCommentUtilities::createComment($this->activity);
-    }
-
-    /**
      * Test that data and last_comment are valid JSON when getting them from the
      * bean.
      * @covers Activity

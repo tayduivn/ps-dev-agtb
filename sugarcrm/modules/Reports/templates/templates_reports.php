@@ -245,13 +245,8 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	$report_export_access = SugarACL::checkAccess('Reports', 'export', $context);
 	$smarty->assign('report_export_access', $report_export_access);
 
-    if($report_export_access && empty($sugar_config['disable_export'])
-        && SugarACL::checkAccess($reporter->module, 'export')
-        && $reporter->report_def['report_type'] == 'tabular') {
-        $isExportAccess = true;
-    } else {
-        $isExportAccess = false;
-    }
+     //check to see if exporting is allowed
+    $isExportAccess = hasExportAccess($args);
 
 	$smarty->assign('report_export_as_csv_access', $isExportAccess);
 	$smarty->assign('form_submit', empty($_REQUEST['form_submit']) ? false : $_REQUEST['form_submit']);
@@ -1207,3 +1202,38 @@ function template_reports_tables(&$smarty, &$args) {
 	$smarty->assign('reporter_report_def_report_type', $reporter->report_def['report_type']);
 	js_setup($smarty);
 } // fn
+
+/*
+ * Check if user is allowed to export report
+ *
+ * @param array $args array of args that should contain the reporter object
+ * @return boolean returns true or false
+ */
+function hasExportAccess($args = array())
+{
+    global $sugar_config, $current_user;
+
+    // If reporter is not passed in just default to no access
+    if (empty($args['reporter'])) {
+        return false;
+    }
+
+    if (// Exports disabled
+        !(empty($sugar_config['disable_export']))
+        // Report is not tabular
+        || $args['reporter']->report_def['report_type'] != 'tabular'
+        // User doesn't have rights to export the reported module
+        || !SugarACL::checkAccess($args['reporter']->module, 'export')
+        // Only admins can export, and the user doesn't have admin rights
+        || (
+            $sugar_config['admin_export_only']
+            && !$current_user->isAdminForModule($args['reporter']->module)
+            )
+    ) {
+        // User does not have export access, return false
+        return false;
+    }
+
+    // User has export access, return true
+    return true;
+}

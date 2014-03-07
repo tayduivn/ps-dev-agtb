@@ -21,7 +21,7 @@
     <div class="dropdown-menu scroll">
         <ul role="menu">
             {{#each actions}}
-                <li><a tabindex="-1" {{#if event}}href="javascript:void(0);" data-event="{{event}}" track="click:{{event}}"{{else}}href="{{route}}" data-route="{{route}}" track="click:{{route}}"{{/if}}>{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../module}}</a></li>
+                <li><a class="ellipsis_inline" tabindex="-1" {{#if event}}href="javascript:void(0);" data-event="{{event}}" track="click:{{event}}"{{else}}href="{{route}}" data-route="{{route}}" track="click:{{route}}"{{/if}}>{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../module}}</a></li>
             {{/each}}
             <li class="divider" data-container="recently-viewed"></li>
             <li class="divider" data-container="favorites"></li>

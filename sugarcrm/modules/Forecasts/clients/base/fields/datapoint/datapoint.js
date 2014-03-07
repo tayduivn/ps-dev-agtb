@@ -55,6 +55,9 @@
      */
     total_field: '',
 
+    /**
+     * @inheritdoc
+     */
     initialize: function(options) {
         this._super('initialize', [options]);
 
@@ -102,6 +105,10 @@
      */
     _dispose: function() {
         $(window).off('resize.datapoints');
+
+        // make sure we've cleared the resize timer before navigating away
+        clearInterval(this.resizeDetectTimer);
+
         this._super('_dispose');
     },
 
@@ -112,45 +119,50 @@
      */
     getPlaceholder: function() {
         if(this.hasAccess) {
-            return app.view.Field.prototype.getPlaceholder.call(this);
+            return this._super('getPlaceholder');
         }
 
         return '';
     },
 
+    /**
+     * Adjusts the CSS for the datapoint
+     */
     adjustDatapointLayout: function(){
         if(this.hasAccess) {
-            var parentMarginLeft = this.view.$el.find(".topline .datapoints").css("margin-left");
-            var parentMarginRight = this.view.$el.find(".topline .datapoints").css("margin-right");
-            var timePeriodWidth = this.view.$el.find(".topline .span4").outerWidth(true);
-            var toplineWidth = this.view.$el.find(".topline ").width();
-            var collection = this.view.$el.find(".topline div.pull-right").children("span");
-            var collectionWidth = parseInt(parentMarginLeft) + parseInt(parentMarginRight);
+            var parentMarginLeft = this.view.$(".topline .datapoints").css("margin-left"),
+                parentMarginRight = this.view.$(".topline .datapoints").css("margin-right"),
+                timePeriodWidth = this.view.$(".topline .span4").outerWidth(true),
+                toplineWidth = this.view.$(".topline ").width(),
+                collection = this.view.$(".topline div.pull-right").children("span"),
+                collectionWidth = parseInt(parentMarginLeft) + parseInt(parentMarginRight);
+
             collection.each(function(index){
                 collectionWidth += $(this).children("div.datapoint").outerWidth(true);
             });
+
             //change width of datapoint div to span entire row to make room for more numbers
             if((collectionWidth+timePeriodWidth) > toplineWidth) {
-                this.view.$el.find(".topline div.hr").show();
-                this.view.$el.find(".info .last-commit").find("div.hr").show();
-                this.view.$el.find(".topline .datapoints").removeClass("span8").addClass("span12");
-                this.view.$el.find(".info .last-commit .datapoints").removeClass("span8").addClass("span12");
-                this.view.$el.find(".info .last-commit .commit-date").removeClass("span4").addClass("span12");
+                this.view.$(".topline div.hr").show();
+                this.view.$(".info .last-commit").find("div.hr").show();
+                this.view.$(".topline .datapoints").removeClass("span8").addClass("span12");
+                this.view.$(".info .last-commit .datapoints").removeClass("span8").addClass("span12");
+                this.view.$(".info .last-commit .commit-date").removeClass("span4").addClass("span12");
 
             } else {
-                this.view.$el.find(".topline div.hr").hide();
-                this.view.$el.find(".info .last-commit").find("div.hr").hide();
-                this.view.$el.find(".topline .datapoints").removeClass("span12").addClass("span8");
-                this.view.$el.find(".info .last-commit .datapoints").removeClass("span12").addClass("span8");
-                this.view.$el.find(".info .last-commit .commit-date").removeClass("span12").addClass("span4");
-                var lastCommitHeight = this.view.$el.find(".info .last-commit .commit-date").height();
-                this.view.$el.find(".info .last-commit .datapoints div.datapoint").height(lastCommitHeight);
+                this.view.$(".topline div.hr").hide();
+                this.view.$(".info .last-commit").find("div.hr").hide();
+                this.view.$(".topline .datapoints").removeClass("span12").addClass("span8");
+                this.view.$(".info .last-commit .datapoints").removeClass("span12").addClass("span8");
+                this.view.$(".info .last-commit .commit-date").removeClass("span12").addClass("span4");
+                var lastCommitHeight = this.view.$(".info .last-commit .commit-date").height();
+                this.view.$(".info .last-commit .datapoints div.datapoint").height(lastCommitHeight);
             }
             //adjust height of last commit datapoints
-            var index = this.$el.index();
-            var width = this.$el.find("div.datapoint").outerWidth();
-            var datapointLength = this.view.$el.find(".info .last-commit .datapoints div.datapoint").length;
-            var sel = this.view.$el.find('.last-commit .datapoints div.datapoint:nth-child('+index+')');
+            var index = this.$el.index(),
+                width = this.$("div.datapoint").outerWidth(),
+                datapointLength = this.view.$(".info .last-commit .datapoints div.datapoint").length,
+                sel = this.view.$('.last-commit .datapoints div.datapoint:nth-child('+index+')');
             if (datapointLength > 2 && index <= 2 || datapointLength == 2 && index == 1) {
                 $(sel).width(width-8);
             }  else {
@@ -158,17 +170,24 @@
             }
         }
     },
+
+    /**
+     * Resizes the datapoint on window resize
+     */
     resize: function() {
-        var self = this;
         //The resize event is fired many times during the resize process. We want to be sure the user has finished
         //resizing the window that's why we set a timer so the code should be executed only once
-        if (self.resizeDetectTimer) {
+        if (this.resizeDetectTimer) {
             clearTimeout(this.resizeDetectTimer);
         }
-        self.resizeDetectTimer = setTimeout(function() {
-            self.adjustDatapointLayout();
-        }, 250);
+        this.resizeDetectTimer = setTimeout(_.bind(function() {
+            this.adjustDatapointLayout();
+        }, this), 250);
     },
+
+    /**
+     * @inheritdoc
+     */
     bindDataChange: function() {
         if (!this.hasAccess) {
             return;
@@ -192,7 +211,9 @@
                 this.total = 0;
                 this.arrow = '';
             }
-            if (!this.disposed) this.render();
+            if (!this.disposed) {
+                this.render();
+            }
         }, this);
         this.context.on('forecasts:worksheet:totals', function(totals, type) {
             var field = this.total_field;
@@ -203,7 +224,9 @@
             this.total = totals[field];
             this.previous_type = type;
 
-            if (!this.disposed) this.render();
+            if (!this.disposed) {
+                this.render();
+            }
         }, this);
     },
 

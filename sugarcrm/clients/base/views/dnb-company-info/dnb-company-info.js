@@ -259,7 +259,6 @@
         this.dnbProduct = {};
         if (companyDetails.product) {
             var duns_num = this.getJsonNode(companyDetails.product, this.appendSVCPaths.duns);
-            // industryCodeArray = this.getJsonNode(companyDetails.product,this.appendSVCPaths.industry);
             if (!_.isUndefined(duns_num)) {
                 this.duns_num = duns_num;
                 app.controller.context.set('dnb_temp_duns_num', this.duns_num);

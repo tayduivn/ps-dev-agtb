@@ -617,6 +617,11 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
             $errorObject->set_error('invalid_login');
 			$this->setFaultObject($errorObject);
             return false;
+        } catch (Zend_Oauth_Exception $e) {
+            $GLOBALS['log']->debug("Zend_Oauth_Exception: $e");
+            $errorObject->set_error('invalid_login');
+            $this->setFaultObject($errorObject);
+            return false;
         }
 
 	    $user = BeanFactory::getBean('Users', $token->assigned_user_id);

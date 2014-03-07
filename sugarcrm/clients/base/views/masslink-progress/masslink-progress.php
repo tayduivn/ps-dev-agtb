@@ -1,4 +1,4 @@
-{{!
+<?php
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -9,11 +9,9 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2013 SugarCRM Inc. All rights reserved.
  */
-}}
-{{#if dateValue}}
-<div class="ellipsis_inline" data-placement="bottom" title="{{dateValue}}">
-    {{dateValue}}
-</div>
-{{/if}}
+
+$viewdefs['base']['view']['masslink-progress'] = array(
+    'template' => 'massupdate-progress',
+);

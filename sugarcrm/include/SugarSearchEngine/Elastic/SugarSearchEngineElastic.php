@@ -98,6 +98,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     {
         // Setup Elastica Client object
         $this->_config = $params;
+
+        // this timeout can be overriden at $sugar_config['full_text_engine']['Elastic']['timeout']
         if (empty($this->_config['timeout'])) {
             $this->_config['timeout'] = 15;
         }
@@ -126,6 +128,19 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     public function setForceAsyncIndex($value)
     {
         $this->forceAsyncIndex = $value;
+    }
+
+    /**
+     * setter connection timeout
+     * @param integer $value CURLOPT_TIMEOUT for http elastica backend
+     */
+    public function setTimeout($value)
+    {
+        $this->_config['timeout'] = $value;
+        $this->_client->setConfigValue('timeout', $value);
+        foreach ($this->_client->getConnections() as $connection) {
+            $connection->setTimeout($value);
+        }
     }
 
     /**
@@ -394,11 +409,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         global $app_strings, $sugar_config;
         $isValid = false;
         $displayText = "";
-        $timeOutValue = $this->_client->getConfig('timeout');
         try {
-            //Default test timeout is 5 seconds
-            $ftsTestTimeout = (isset($sugar_config['fts_test_timeout'])) ? $sugar_config['fts_test_timeout'] : 5;
-            $this->_client->setConfigValue('timeout', $ftsTestTimeout);
             $results = $this->_client->request('', \Elastica\Request::GET)->getData();
             if (!empty($results['status']) && $results['status'] == 200) {
                 $isValid = true;
@@ -415,8 +426,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $this->reportException("Unable to get server status", $e);
             $displayText = $e->getMessage();
         }
-        //Reset previous timeout value.
-        $this->_client->setConfigValue('timeout', $timeOutValue);
         return array('valid' => $isValid, 'status' => $displayText);
     }
 

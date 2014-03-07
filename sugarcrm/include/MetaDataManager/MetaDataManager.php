@@ -257,9 +257,11 @@ class MetaDataManager
         'list_max_entries_per_page' => true,
         'list_max_entries_per_subpanel' => true,
         'max_record_fetch_size' => true,
+        'max_record_link_fetch_size' => true,
         'mass_actions' => array(
             'mass_update_chunk_size' => true,
             'mass_delete_chunk_size' => true,
+            'mass_link_chunk_size' => true,
         ),
         'merge_duplicates' => array(
             'merge_relate_fetch_concurrency' => true,

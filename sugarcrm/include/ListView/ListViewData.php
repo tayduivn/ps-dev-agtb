@@ -427,7 +427,7 @@ class ListViewData {
 				$data[$dataIndex] = $temp->get_list_view_data($filter_fields);
 				//BEGIN SUGARCRM flav=pro ONLY
                 if($temp->isFavoritesEnabled()){
-					$data[$dataIndex]['star'] = SugarFavorites::generateStar(!empty($row['is_favorite']), $temp->module_dir, $temp->id);
+					$data[$dataIndex]['star'] = SugarFavorites::generateStar(!empty($row['my_favorite']), $temp->module_dir, $temp->id);
 				}
 
 				$temp->ACLFilterFieldList($data[$dataIndex]);

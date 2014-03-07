@@ -545,8 +545,7 @@ class ForecastWorksheet extends SugarBean
         $affected_rows += $db->getAffectedRowCount($res);
 
         // clear reports_to for inactive users
-        $objFromUser = BeanFactory::getBean('Users');
-        $objFromUser->retrieve($fromUserId);
+        $objFromUser = BeanFactory::getBean('Users', $fromUserId, array('deleted' => false));
         $fromUserReportsTo = !empty($objFromUser->reports_to_id) ? $objFromUser->reports_to_id : '';
         $objFromUser->reports_to_id = '';
         $objFromUser->save();

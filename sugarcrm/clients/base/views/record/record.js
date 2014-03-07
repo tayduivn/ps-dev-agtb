@@ -35,7 +35,7 @@
         'click [data-action=scroll]': 'paginateRecord',
         'click .record-panel-header': 'togglePanel',
         'click #recordTab > .tab > a': 'setActiveTab',
-        'click .dropdown-menu a': 'triggerNavTab'
+        'click .tab.dropdown-menu a': 'triggerNavTab'
     },
 
     /**

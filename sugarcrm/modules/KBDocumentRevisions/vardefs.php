@@ -168,13 +168,6 @@ $dictionary['KBDocumentRevision'] = array(
             'len' => '36',
             'source' => 'non-db',
         ),
-        'document_revisions' => array(
-            'name' => 'document_revisions',
-            'type' => 'link',
-            'relationship' => 'kbrev_document_revisions',
-            'source' => 'non-db',
-            'vname' => 'LBL_DOCUMENT_REVISIONS',
-        ),
     ),
     'relationships' => array(
         'kbrev_revisions_created_by' => array(

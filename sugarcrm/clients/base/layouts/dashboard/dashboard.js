@@ -236,8 +236,18 @@
             // and the user saw the help dashboard last and chose to hide it, show the empty template
             this._renderEmptyTemplate();
         } else if (this.collection.models.length > 0) {
-            var model = _.first(this.collection.models),
-                currentModule = this.context.get('module');
+            var currentModule = this.context.get('module'),
+                model;
+
+            if(currentModule !== 'Home') {
+                model = _.first(this.collection.models);
+            } else {
+                // get the first model that is not a help-dashboard
+                model = this.collection.find(function(dash) {
+                    return dash.get('dashboard_type') === 'dashboard'
+                });
+            }
+
             if (lastViewed) {
                 var lastVisitedModel = this.collection.get(lastViewed);
                 //if last visited dashboard not in the fetching list,

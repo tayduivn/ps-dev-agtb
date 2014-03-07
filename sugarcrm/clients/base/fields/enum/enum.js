@@ -111,7 +111,7 @@
         if (this.defaultOnUndefined && !this.def.isMultiSelect && _.isUndefined(this.model.get(this.name))
             && app.acl.hasAccessToModel('write', this.model, this.name)
             ) {
-            var defaultValue = _.first(optionsKeys);
+            var defaultValue = this._getDefaultOption(optionsKeys);
             if (defaultValue) {
                 // call with {silent: true} on, so it won't re-render the field, since we haven't rendered the field yet
                 this.model.set(this.name, defaultValue, {silent: true});
@@ -205,7 +205,7 @@
         this.items = this.def.options || fieldMeta.options;
         fetch = fetch || false;
 
-        if (fetch || !this.items) {
+        if (fetch || !this.items || this.def.function) {
             var _key = 'request:' + this.module + ':' + this.name;
             //if previous request is existed, ignore the duplicate request
             if (this.context.get(_key)) {
@@ -359,6 +359,15 @@
             options = null;
         }
         query.callback(data);
+    },
+
+    /**
+     * Helper function for retrieving the default value for the selection
+     * @param {Array} optionsKeys Set of option keys that will be loaded into Select2 widget
+     * @returns {String} The default value
+     */
+    _getDefaultOption: function (optionsKeys) {
+        return _.first(optionsKeys);
     },
 
     /**

@@ -81,17 +81,6 @@ abstract class SugarApi {
             $this->trackAction($bean);
         }
 
-        if (empty($args['fields']) || in_array('following', $args['fields'])) {
-            // Support returning whether the current user is following the record.
-            if (!isset($bean->following)) {
-                // To support PHP <5.5 we have to read this value into a variable
-                // before checking empty on it.
-                $subCheck = Subscription::checkSubscription($api->user, $bean);
-                $bean->following = !empty($subCheck);
-            }
-            $data['following'] = $bean->following;
-        }
-
         if (!empty($bean->module_name)) {
             $data['_module'] = $bean->module_name;
         }
@@ -106,18 +95,6 @@ abstract class SugarApi {
         }
 
         $ret = array();
-        if (empty($args['fields']) || in_array('following',$args['fields'])) {
-            // Get subscriptions for the list of beans
-            $beanArray = array();
-            foreach ($beans as $bean) {
-                $beanArray[] = array('id'=>$bean->id);
-            }
-            $subscriptions = Subscription::checkSubscriptionList($api->user, $beanArray);
-            
-            foreach ($beans as $bean) {
-                $bean->following = !empty($subscriptions[$bean->id]);
-            }
-        }
 
         foreach ($beans as $bean) {
             if (!is_subclass_of($bean, 'SugarBean')) {

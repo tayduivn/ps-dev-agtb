@@ -2,7 +2,7 @@ function forceTwoDigits(numstr) {
     return numstr.length === 1 ? '0' + numstr: numstr;
 }
 
-describe("datetimecombo field", function() {
+xdescribe("datetimecombo field", function() {
     var app, baseDateField, field, myUser;
 
     beforeEach(function() {

@@ -70,7 +70,7 @@
             if (!_.isUndefined(app.controller.context.get('dnb_temp_hoovers_ind_code'))) {
                 this.getDNBIndustryInfo(app.controller.context.get('dnb_temp_hoovers_ind_code'));
             } else if (this.model.get('sic_code')) {
-                var sicToHicParams = {'industryType': '3599', 'industryCode': this.model.get('sic_code')};
+                var sicToHicParams = {'industryType': this.commonConst.sic_to_hic, 'industryCode': this.model.get('sic_code')};
                 this.getDNBIndustryInfoFromSIC(sicToHicParams);
             } else {
                 this.template = app.template.get(this.name + '.dnb-no-duns');
@@ -101,7 +101,7 @@
      */
     getDNBIndustryInfoFromSIC: function(sicToHicParams) {
         var self = this;
-        if (sicToHicParams.industryType == '3599' && sicToHicParams.industryCode) {
+        if (sicToHicParams.industryType === this.commonConst.sic_to_hic && sicToHicParams.industryCode) {
             self.template = app.template.get(self.name);
             if (!self.disposed) {
                 self.render();

@@ -147,6 +147,23 @@ $fields = array(
         'default' => true,
     ),
     array(
+        'name' => 'worst_case',
+        'type' => 'currency',
+        'related_fields' => array(
+            'currency_id',
+            'base_rate',
+            'total_amount',
+            'quantity',
+            'discount_amount',
+            'discount_price'
+        ),
+        'convertToBase' => true,
+        'currency_field' => 'currency_id',
+        'base_rate_field' => 'base_rate',
+        'enabled' => true,
+        'default' => true,
+    ),
+    array(
         'name' => 'likely_case',
         'type' => 'currency',
         'related_fields' => array(
@@ -165,23 +182,6 @@ $fields = array(
     ),
     array(
         'name' => 'best_case',
-        'type' => 'currency',
-        'related_fields' => array(
-            'currency_id',
-            'base_rate',
-            'total_amount',
-            'quantity',
-            'discount_amount',
-            'discount_price'
-        ),
-        'convertToBase' => true,
-        'currency_field' => 'currency_id',
-        'base_rate_field' => 'base_rate',
-        'enabled' => true,
-        'default' => true,
-    ),
-    array(
-        'name' => 'worst_case',
         'type' => 'currency',
         'related_fields' => array(
             'currency_id',

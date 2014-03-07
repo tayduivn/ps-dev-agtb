@@ -28,6 +28,16 @@
     extendsFrom: 'EnumField',
 
     /**
+     * @inheritDoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        if (!this.model.has(this.name)) {
+            this._setToDefault();
+        }
+    },
+
+    /**
      * Ensure we load enum templates
      *
      * @override
@@ -46,12 +56,31 @@
      */
     format: function(value) {
         if (!this.items[value]) {
-            value = app.lang.defaultLanguage;
+            value = this._getDefaultOption();
+            this._setToDefault();
         }
-        if (this.action === 'edit') {
-            value = value || app.lang.defaultLanguage;
-            this.model.set(this.name, value, {silent: true});
-        }
+
         return value;
+    },
+
+    /**
+     * {@inheritdoc}
+     *
+     * @returns {String}  The default language as the default value
+     */
+    _getDefaultOption: function(optionsKeys) {
+        return app.lang.defaultLanguage;
+    },
+
+    /**
+     * Sets the default value for the field.
+     */
+    _setToDefault: function() {
+        var defaultValue = this._getDefaultOption();
+        this.model.set(this.name, defaultValue, {silent: true});
+        //Forecasting uses backbone model (not bean) for custom enums so we have to check here
+        if (_.isFunction(this.model.setDefaultAttribute)) {
+            this.model.setDefaultAttribute(this.name, defaultValue);
+        }
     }
 })

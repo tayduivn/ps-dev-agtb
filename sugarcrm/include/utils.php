@@ -247,9 +247,11 @@ function make_sugar_config(&$sugar_config)
             'min_cron_interval' => 30, // minimal interval between cron jobs
         ),
         'max_record_fetch_size' => 1000,
+        'max_record_link_fetch_size' => 5000,
         'mass_actions' => array(
             'mass_update_chunk_size' => 20,
             'mass_delete_chunk_size' => 20,
+            'mass_link_chunk_size' => 20,
         ),
         'merge_duplicates' => array(
             'merge_relate_fetch_concurrency' => 2,
@@ -477,9 +479,11 @@ function get_sugar_config_defaults()
             'min_cron_interval' => 30, // minimal interval between cron jobs
         ),
         'max_record_fetch_size' => 1000,
+        'max_record_link_fetch_size' => 5000,
         'mass_actions' => array(
             'mass_update_chunk_size' => 20,
             'mass_delete_chunk_size' => 20,
+            'mass_link_chunk_size' => 20,
         ),
         'merge_duplicates' => array(
             'merge_relate_fetch_concurrency' => 2,
@@ -1067,8 +1071,7 @@ function return_app_list_strings_language($language)
     $app_list_strings = $temp_app_list_strings;
 
     //Add to the app_list_strings the list of language available in the application.
-    $return_value['available_language_dom'][""] = "";
-    $return_value['available_language_dom'] = array_merge($return_value['available_language_dom'], get_languages());
+    $return_value['available_language_dom'] = get_languages();
 
     sugar_cache_put($cache_key, $return_value);
 

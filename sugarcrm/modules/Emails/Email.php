@@ -865,9 +865,16 @@ class Email extends SugarBean {
 					$a = $this->db->fetchOne("SELECT count(*) c FROM emails_beans WHERE  email_id = '{$this->id}' AND bean_id = '{$this->parent_id}' AND bean_module = '{$this->parent_type}'");
 					if($a['c'] == 0) {
 					    $bean = BeanFactory::getBean($_REQUEST['parent_type'], $_REQUEST['parent_id']);
-					    if(!empty($bean) && $bean->load_relationship('emails')) {
-					        $bean->emails->add($this->id);
-					    }
+                        if (!empty($bean)) {
+                            if (!empty($bean->field_defs['emails']['type']) && $bean->field_defs['emails']['type'] == 'link') {
+                                $email_link = "emails";
+                            } else {
+                                $email_link = $this->findEmailsLink($bean);
+                            }
+                            if ($email_link && $bean->load_relationship($email_link) ){
+                                $bean->$email_link->add($this);
+                            }
+                        }
 					} // if
 
 				} else {
@@ -1649,6 +1656,22 @@ class Email extends SugarBean {
 		}
 		return $newarr;
 	}
+
+    /**
+     * Used to find a usable Emails relationship link
+     * @param SugarBean $bean
+     *
+     * @return bool|string Name of an Emails relationship link or false
+     */
+    protected function findEmailsLink(SugarBean $bean)
+    {
+        foreach($bean->field_defs as $field => $def) {
+            if (!empty($def['type']) && $def['type'] == 'link' && !empty($def['module']) && $def['module'] == 'Emails') {
+                return $field;
+            }
+        }
+        return false;
+    }
 
 	/**
 	 * handles attachments of various kinds when sending email

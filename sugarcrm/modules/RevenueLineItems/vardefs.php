@@ -860,7 +860,6 @@ $dictionary['RevenueLineItem'] = array(
             'bean_name' => 'User',
             'source' => 'non-db',
             'duplicate_merge' => 'enabled',
-            'rname' => 'user_name',
             'id_name' => 'assigned_user_id',
             'table' => 'users',
         ),
@@ -879,6 +878,13 @@ $dictionary['RevenueLineItem'] = array(
             'dbType' => 'varchar',
             'len' => '255',
             'source' => 'non-db',
+        ),
+        'currencies' => array(
+            'name' => 'currencies',
+            'type' => 'link',
+            'relationship' => 'revenuelineitem_currencies',
+            'source' => 'non-db',
+            'vname' => 'LBL_CURRENCIES',
         ),
         'account_link' => array(
             'name' => 'account_link',
@@ -999,6 +1005,15 @@ $dictionary['RevenueLineItem'] = array(
         array('name' => 'idx_revenuelineitem_quantity', 'type' => 'index', 'fields' => array('quantity')),
     ),
     'relationships' => array(
+        'revenuelineitem_currencies' => array(
+            'lhs_module' => 'RevenueLineItems',
+            'lhs_table' => 'revenue_line_items',
+            'lhs_key' => 'currency_id',
+            'rhs_module' => 'Currencies',
+            'rhs_table' => 'currencies',
+            'rhs_key' => 'id',
+            'relationship_type' => 'one-to-many'
+        ),
         'revenuelineitem_tasks' => array(
             'lhs_module' => 'RevenueLineItems',
             'lhs_table' => 'revenue_line_items',

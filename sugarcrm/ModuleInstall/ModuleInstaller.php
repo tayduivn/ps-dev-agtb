@@ -1355,11 +1355,15 @@ class ModuleInstaller{
             $item['table'] = $db->getValidDBName($item['table'], false, 'table');
         }
         $key = $db->getValidDBName($key);
-        foreach ($item['fields'] as &$field) {
-            $field['name'] = $db->getValidDBName($field['name']);
+        if (is_array($item['fields'])) {
+            foreach ($item['fields'] as &$field) {
+                $field['name'] = $db->getValidDBName($field['name']);
+            }
         }
-        foreach ($item['indices'] as &$index) {
-            $index['name'] = $db->getValidDBName($index['name'], false, 'index');
+        if (is_array($item['indices'])) {
+            foreach ($item['indices'] as &$index) {
+                $index['name'] = $db->getValidDBName($index['name'], false, 'index');
+            }
         }
     }
 

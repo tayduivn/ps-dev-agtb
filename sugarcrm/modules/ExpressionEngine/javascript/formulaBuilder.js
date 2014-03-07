@@ -247,6 +247,7 @@ SUGAR.expressions.validateCurrExpression = function(silent, matchType)
 		if (matchType && matchType != tokens.returnType)
 		{
 			Msg.show({
+                type: "alert",
                 title: SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_INVALID"),
                 msg: SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_TYPE") + matchType
             });
@@ -259,6 +260,7 @@ SUGAR.expressions.validateCurrExpression = function(silent, matchType)
 		return true;
 	} catch (e) {
 			Msg.show({
+                type: "alert",
                 title: SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_INVALID"),
                 msg: YAHOO.lang.escapeHTML(e.message ? e.message : e)
             });
