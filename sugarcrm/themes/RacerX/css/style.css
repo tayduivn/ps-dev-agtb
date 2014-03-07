@@ -3854,18 +3854,21 @@ textarea
 }
 
 
-span.id-ff button {
-	font-size: 10px;
+span.id-ff button,
+span.id-ff .button {
+	font-size: 10px; 
 	padding:3px 0px 0px 0px;
 	margin-top: -8px\9;
 	height: 23px\9;
 }
-span.id-ff button img{
+
+span.id-ff button img,
+span.id-ff .button img {
 	width: 14px;
 	height: 14px;
 }
 
-span.id-ff button#btn_vCardButton img{
+span.id-ff #btn_vCardButton img {
 	width: 16px;
 	height: 11px;
 }
