@@ -251,12 +251,13 @@ class SugarBeanApiHelper
 
         //BEGIN SUGARCRM flav=pro ONLY
         // check ACLs first
+        $acl = !empty($options['acl']) ? $options['acl'] : 'save';
         foreach ($bean->field_defs as $fieldName => $properties) {
             if ( !isset($submittedData[$fieldName]) ) {
                 // They aren't trying to modify this field
                 continue;
             }
-            if ( !$bean->ACLFieldAccess($fieldName,'save', $context) ) {
+            if ( !$bean->ACLFieldAccess($fieldName, $acl, $context) ) {
                 // No write access to this field, but they tried to edit it
                 throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$submittedData['module']);
             }
