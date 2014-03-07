@@ -296,7 +296,6 @@ class ExtAPIDnb extends ExternalAPIBase
         //check if result exists in cache
         $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
         // get existing contacts
-        $dnbContactIdArray = array();
         $path = $this->commonJsonPaths['contacts'];
         if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
             $reply['responseJSON'] = $this->checkAndMarkDuplicateContacts($reply['responseJSON'], $path);
@@ -421,21 +420,9 @@ class ExtAPIDnb extends ExternalAPIBase
         //check if result exists in cache
         $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
         // get existing contacts
-        $dnbContactIdArray = array();
-        $path = "FindContactResponse.FindContactResponseDetail.FindCandidate";
+        $path = $this->commonJsonPaths['contacts'];
         if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
-            $dnbContactsList = $reply['responseJSON']['FindContactResponse']['FindContactResponseDetail']['FindCandidate'];
-            $this->underscoreEach(
-                $dnbContactsList,
-                function ($contactObj) use (&$dnbContactIdArray) {
-                    $dnbContactIdArray[] = $contactObj['PrincipalIdentificationNumberDetail'][0]['PrincipalIdentificationNumber'];
-                }
-            );
-            $existingContacts = json_decode($this->getExistingContacts($dnbContactIdArray), true);
-            if (count($existingContacts) > 0) {
-                $modifiedApiResponse = $this->getCommonContacts($reply['responseJSON'], $existingContacts);
-                $reply['responseJSON'] = $modifiedApiResponse;
-            }
+            $reply['responseJSON'] = $this->checkAndMarkDuplicateContacts($reply['responseJSON'], $path);
         }
         return $reply['responseJSON'];
     }

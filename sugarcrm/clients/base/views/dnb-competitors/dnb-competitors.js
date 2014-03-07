@@ -48,7 +48,7 @@
             'case_fmt': true
         },
         'salesrevenueamt': {
-            'json_path': 'SalesRevenueAmount.0.$',
+            'json_path': 'salesrevenueamt',
             'case_fmt': false
         },
         'topcompetitorindicator': {
@@ -145,6 +145,7 @@
                         if (responseCode && responseCode === self.responseCodes.success) {
                             resultData.product = data;
                             app.cache.set(cacheKey, data);
+                            self.competitorsList = data;
                         } else {
                             resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
                         }
@@ -165,7 +166,22 @@
      * Renders the competitors list
      */
     backToCompanyList: function() {
-        this.renderCompetitors(this.competitorsList);
+        if (this.disposed) {
+            return;
+        }
+        this.template = app.template.get(this.name);
+        this.render();
+        this.$('div#dnb-competitors-loading').show();
+        this.$('div#dnb-competitors-list').hide();
+        if (this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
+            this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().hide();
+        }
+        var dupeCheckParams = {
+            'type': 'duns',
+            'apiResponse': this.competitorsList,
+            'module': 'competitors'
+        };
+        this.baseDuplicateCheck(dupeCheckParams, this.renderCompetitors);
     },
 
     /**
@@ -215,7 +231,7 @@
         _.each(competitorsList, function (competitorObj) {
             var salesRevenue = this.getJsonNode(competitorObj,this.competitorsConst.salesRevenuePath);
             if (salesRevenue) {
-                competitorObj.SalesRevenueAmount[0].$ = '$' + this.formatSalesRevenue(salesRevenue) + app.lang.get('LBL_DNB_MILLION');
+                competitorObj.salesrevenueamt = '$' + this.formatSalesRevenue(salesRevenue) + app.lang.get('LBL_DNB_MILLION');
             }
         }, this);
         //iterate thru the search results, extract the necessary info

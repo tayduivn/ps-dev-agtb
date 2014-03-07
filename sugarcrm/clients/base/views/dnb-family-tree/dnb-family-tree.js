@@ -105,7 +105,7 @@
                         responseMsg = self.getJsonNode(data, self.appendSVCPaths.responseMsg);
                     if (responseCode && responseCode === self.responseCodes.success) {
                         resultData.product = data;
-                        self.currentFT = resultData;
+                        self.currentFT = data;
                         app.cache.set(cacheKey, data);
                     } else {
                         resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
@@ -121,9 +121,24 @@
      * Back to Family Tree
      */
     backToFamilyTree: function() {
-        if (this.currentFT) {
-            this.renderFamilyTree(this.currentFT);
+        if (this.disposed) {
+            return;
         }
+        this.template = app.template.get(this.name);
+        this.render();
+        this.$('#dnb-family-tree-loading').show();
+        this.$('#dnb-family-tree-details').hide();
+        //hide import button when rendering the list
+        if (this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
+            this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().hide();
+        }
+        var dupeCheckParams = {
+            'type': 'duns',
+            'apiResponse': this.currentFT,
+            'module': 'familytree'
+        };
+        this.baseDuplicateCheck(dupeCheckParams, this.renderFamilyTree);
+
     },
 
     /**

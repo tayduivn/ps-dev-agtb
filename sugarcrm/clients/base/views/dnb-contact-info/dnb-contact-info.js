@@ -193,16 +193,21 @@
 
     /**
      * Renders the list of D&B Contacts
-     * @param {Object} dnbContactsList
+     * @param {Object} dnbApiResponse
      */
-    renderContactsList: function(dnbContactsList) {
+    renderContactsList: function(dnbApiResponse) {
         if (this.disposed) {
             return;
         }
         this.template = app.template.get(this.name);
         var dnbContactsList = {};
-        if (dnbApiResponse.contacts) {
-            dnbContactsList.product = this.formatContactList(dnbApiResponse.contacts, this.contactsListDD);
+        if (dnbApiResponse.product) {
+            var contacts = this.getJsonNode(dnbApiResponse.product, this.contactConst.contactsPath);
+            if (contacts) {
+                dnbContactsList.product = this.formatContactList(contacts, this.contactsListDD);
+            } else {
+                dnbContactsList.errmsg = app.lang.get('LBL_DNB_NO_DATA');
+            }
         } else if (dnbApiResponse.errmsg) {
             dnbContactsList.errmsg = dnbApiResponse.errmsg;
         }
@@ -259,21 +264,16 @@
                 this.baseDuplicateCheck(dupeCheckParams, this.renderContactsList);
             } else {
                 var dnbFindContactsURL = app.api.buildURL('connector/dnb/findContacts/' + duns_num, '', {},{});
-                var resultData = {'contacts': null, 'errmsg': null};
+                var resultData = {'product': null, 'errmsg': null};
                 app.api.call('READ', dnbFindContactsURL, {},{
                     success: function(data) {
                         var responseCode = self.getJsonNode(data, self.contactConst.responseCode),
                             responseMsg = self.getJsonNode(data, self.contactConst.responseMsg);
                         if (responseCode && responseCode === self.responseCodes.success) {
-                            var contactsArray = self.getJsonNode(data, self.contactConst.contactsPath);
-                            if (contactsArray) {
-                                resultData.contacts = contactsArray;
+                                resultData.product = data;
                                 //for back to list functionality
-                                self.contactsList = resultData;
-                                app.cache.set(cacheKey, resultData);
-                            } else {
-                                resultData.errmsg = app.lang.get('LBL_DNB_NO_DATA');
-                            }
+                                self.contactsList = data;
+                                app.cache.set(cacheKey, data);
                         } else {
                             resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
                         }
@@ -536,15 +536,10 @@
                         var responseCode = self.getJsonNode(data, self.contactConst.responseCode),
                             responseMsg = self.getJsonNode(data, self.contactConst.responseMsg);
                         if (responseCode && responseCode === self.responseCodes.success) {
-                            var contactsArray = self.getJsonNode(data, self.contactConst.contactsPath);
-                            if (contactsArray) {
-                                resultData.contacts = contactsArray;
+                                resultData.product = data;
                                 //for back to list functionality
-                                self.contactsList = resultData;
-                                app.cache.set(cacheKey, resultData);
-                            } else {
-                                resultData.errmsg = app.lang.get('LBL_DNB_NO_DATA');
-                            }
+                                self.contactsList = data;
+                                app.cache.set(cacheKey, data);
                         } else {
                             resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
                         }
