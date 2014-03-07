@@ -239,6 +239,19 @@
     &:not(.hidden) {
       display: inline-block;
     }
+    &.more {
+      .btn-group:not(.home) {
+        padding: 8px 2px;
+        &:hover {
+          [class^="icon-"] {
+            color: @white !important;
+          }
+        }
+        .dropdown-toggle {
+          padding: 5px 7px;
+        }
+      }
+    }
     .btn-group {
       /*cube*/
       &.home {
@@ -253,18 +266,7 @@
           padding: 5px 2px;
         }
       }
-      &.more {
-        padding: 8px 2px;
-        &:hover {
-          [class^="icon-"] {
-            color: @white !important;
-          }
-        }
-        .dropdown-toggle {
-          padding: 5px 7px;
-        }
-      }
-      &:not(.home):not(.more) {
+      &:not(.home) {
         padding: 8px 6px 8px 8px;
         .dropdown-toggle {
           padding: 5px 8px;
@@ -286,6 +288,9 @@
         }
       }
     }
+  }
+  > .dropdown.hidden.more {
+    display: inline-block; /* UIUX-1610 */
   }
 }
 
