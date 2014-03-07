@@ -4836,7 +4836,6 @@ $app_strings = array (
     'LBL_RESTORE' => 'Reset to Original',
 
     // tabbed dashlet
-    'TPL_TABBED_DASHLET_TIME_RELATIVE' => '{{relativetime}} on {{date}} at {{time}}',
     'TPL_TABBED_DASHLET_USER_BUTTON_LABEL' => 'My Items',
     'TPL_TABBED_DASHLET_GROUP_BUTTON_LABEL' => 'Team Items',
 
