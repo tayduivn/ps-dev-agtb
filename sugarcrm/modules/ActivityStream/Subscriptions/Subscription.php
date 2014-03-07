@@ -115,6 +115,10 @@ class Subscription extends Basic
         // Plucks IDs of records passed in.
         $ids = array_map(
             function ($record) {
+                if (!isset($record['id'])) {
+                    $GLOBALS['log']->error("Attempting to check for a subscription with a null ID");
+                    return;
+                }
                 return $record['id'];
             },
             $records
