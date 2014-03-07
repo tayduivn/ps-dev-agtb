@@ -3969,6 +3969,8 @@ class SugarBean
         $distinct = '';
         $options = array('where_condition' => true);
         $this->addVisibilityWhere($where, $options);
+        //store value of export query parameter before it gets overwritten
+        $export_query = (!empty($params['export_query']))?$params['export_query']: 0;
 
         if(!empty($params['distinct']))
         {
@@ -4066,6 +4068,12 @@ class SugarBean
 
         foreach($fields as $field=>$value)
         {
+            //if this is a query meant for exporting and the field is not importable, then skip this field
+            //this will restrict the columns and table joins to minimize impact on performance
+            if($export_query && (empty($value['importable'])|| $value['importable']=='false')){
+                continue;
+            }
+
             //alias is used to alias field names
             $alias='';
             if 	(isset($value['alias']))
@@ -4411,13 +4419,23 @@ class SugarBean
             //END SUGARCRM flav=pro ONLY
         }
 
-	if ($ifListForExport) {
+	if ($ifListForExport || $export_query) {
 		if(isset($this->field_defs['email1'])) {
             $ret_array['select'] .= ', email_addresses.email_address email1';
             $ret_array['select'] .= ', email_addresses.invalid_email';
             $ret_array['select'] .= ', email_addresses.opt_out email_opt_out';
 			$ret_array['from'].= " LEFT JOIN email_addr_bean_rel on {$this->table_name}.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='{$this->module_dir}' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id ";
 		}
+                if(isset($this->field_defs['teams'])){
+                	$ret_array['select'].= ", teams.name AS team_name";
+                	$ret_array['from'].= getTeamSetNameJoin($this->table_name);
+                }
+
+                if(isset($this->field_defs['assigned_user_name'])){
+	                $ret_array['select'].= ', users.user_name as assigned_user_name';
+                	$ret_array['from'].= " LEFT JOIN users ON {$this->table_name}.assigned_user_id=users.id";
+                }
+
 	}
 
         //BEGIN SUGARCRM flav=pro ONLY
@@ -6972,7 +6990,8 @@ class SugarBean
      */
     public function create_export_query($order_by, $where)
 	{
-		return $this->create_new_list_query($order_by, $where, array(), array(), 0, '', false, $this, true, true);
+        $params = array('export_query' => true);
+		return $this->create_new_list_query($order_by, $where, array(), $params, 0, '', false, $this, true, true);
 	}
 
 	/**
