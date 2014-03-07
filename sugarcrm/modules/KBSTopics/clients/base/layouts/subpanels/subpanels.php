@@ -12,14 +12,16 @@
  * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
  */
 
-$mod_strings = array(
-    'LBL_MODULE_NAME' => 'Knowledge Base Topics',
-    'LBL_MODULE_NAME_SINGULAR' => 'Knowledge Base Topic',
-    'LBL_MODULE_TITLE' => 'Knowledge Base Topics',
-    'LNK_NEW_TOPIC' => 'Create Topic',
-    'LNK_TOPIC_LIST' => 'View Topics',
-    'LNK_TOPICS' => 'Topics',
-    'LBL_TOPIC_NAME' => 'Topic Name',
-    'LBL_PARENT_NAME' => 'Parent Topic',
-    'LBL_TOPICS_SUBPANEL_TITLE' => 'Topics',
+$viewdefs['KBSTopics']['base']['layout']['subpanels'] = array(
+    'components' => array(
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_TOPICS_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'subnodes',
+            ),
+        ),
+    ),
+    'type' => 'subpanels',
+    'span' => 12,
 );
