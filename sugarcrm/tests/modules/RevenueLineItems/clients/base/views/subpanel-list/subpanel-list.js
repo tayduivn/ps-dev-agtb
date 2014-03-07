@@ -8,10 +8,10 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  */
-describe("RevenueLineItems.Base.Views.SubpanelList", function() {
-    var app, view, options, context, layout, parentLayout, sandbox = sinon.sandbox.create();
+describe('RevenueLineItems.Base.Views.SubpanelList', function() {
+    var app, view, options, context, layout, parentLayout, sandbox = sinon.sandbox.create(), config;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -20,41 +20,51 @@ describe("RevenueLineItems.Base.Views.SubpanelList", function() {
             module: 'RevenueLineItems'
         });
         context.prepare();
-        
+
         options = {
             meta: {
                 panels: [{
                     fields: [{
-                        name: "commit_stage"
+                        name: 'commit_stage'
                     },{
-                        name: "best_case"
+                        name: 'best_case'
                     },{
-                        name: "likely_case"
+                        name: 'likely_case'
                     },{
-                        name: "name"
+                        name: 'worst_case'
+                    },{
+                        name: 'name'
                     }]
                 }]
             }
         };
 
-        
+
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'list');
         SugarTest.loadComponent('base', 'view', 'flex-list');
         SugarTest.loadComponent('base', 'view', 'recordlist');
         SugarTest.loadComponent('base', 'view', 'subpanel-list');
         SugarTest.testMetadata.set();
-        
+
         SugarTest.seedMetadata(true);
-        app.metadata.getModule("Forecasts", "config").is_setup = 1;
-        layout = SugarTest.createLayout("base", "RevenueLineItems", "subpanels", null, null);
-        parentLayout = SugarTest.createLayout("base", "RevenueLineItems", "list", null, null);
+        config = app.metadata.getModule('Forecasts', 'config');
+        config.is_setup = 1;
+        config.show_worksheet_worst = 1;
+        config.show_worksheet_likely = 1;
+        config.show_worksheet_best = 1;
+        layout = SugarTest.createLayout('base', 'RevenueLineItems', 'subpanels', null, null);
+        parentLayout = SugarTest.createLayout('base', 'RevenueLineItems', 'list', null, null);
         layout.layout = parentLayout;
     });
-    
+
     afterEach(function() {
-        app.metadata.getModule("Forecasts", "config").is_setup = null;
+        config.is_setup = null;
+        config.show_worksheet_worst = null;
+        config.show_worksheet_likely = null;
+        config.show_worksheet_best = null;
         sandbox.restore();
+        config = null;
         app = null;
         view = null;
         layout = null;
@@ -66,25 +76,96 @@ describe("RevenueLineItems.Base.Views.SubpanelList", function() {
         });
 
         afterEach(function() {
-            app.metadata.getModule("Forecasts", "config").is_setup = null;
+            config.is_setup = null;
+            config.show_worksheet_worst = 1;
+            config.show_worksheet_likely = 1;
+            config.show_worksheet_best = 1;
             view = null;
         });
 
         it('should remove the commit_stage field when forecast is not setup', function() {
-            app.metadata.getModule("Forecasts", "config").is_setup = 0;
-            view = SugarTest.createView('base', 'RevenueLineItems', 'subpanel-list', options.meta, context, true, layout);
+            config.is_setup = 0;
+            view = SugarTest.createView(
+                'base',
+                'RevenueLineItems',
+                'subpanel-list',
+                options.meta,
+                context,
+                true,
+                layout
+            );
 
-            expect(view._fields.visible.length).toEqual(3);
-            _.each(view._fields.visible, function(field) {
-                expect(field.name).not.toEqual('commit_stage');
-            });
+            expect(view._fields.visible.length).toEqual(4);
+            expect(_.where(view._fields.visible, {name: 'commit_stage'})).toEqual([]);
         });
 
         it('should not remove the commit_stage field when forecast is setup', function() {
-            app.metadata.getModule("Forecasts", "config").is_setup = 1;
-            view = SugarTest.createView('base', 'RevenueLineItems', 'subpanel-list', options.meta, context, true, layout);
+            config.is_setup = 1;
+            view = SugarTest.createView(
+                'base',
+                'RevenueLineItems',
+                'subpanel-list',
+                options.meta,
+                context,
+                true,
+                layout
+            );
+
+            expect(view._fields.visible.length).toEqual(5);
+        });
+
+        it('should remove worst_case field when not shown', function() {
+            config.is_setup = 1;
+            config.show_worksheet_worst = 0;
+
+            view = SugarTest.createView(
+                'base',
+                'RevenueLineItems',
+                'subpanel-list',
+                options.meta,
+                context,
+                true,
+                layout
+            );
 
             expect(view._fields.visible.length).toEqual(4);
+            expect(_.where(view._fields.visible, {name: 'worst_case'})).toEqual([]);
+        });
+
+        it('should remove best_case field when not shown', function() {
+            config.is_setup = 1;
+            config.show_worksheet_best = 0;
+
+            view = SugarTest.createView(
+                'base',
+                'RevenueLineItems',
+                'subpanel-list',
+                options.meta,
+                context,
+                true,
+                layout
+            );
+
+            expect(view._fields.visible.length).toEqual(4);
+            expect(_.where(view._fields.visible, {name: 'best_case'})).toEqual([]);
+        });
+
+        it('should remove likely_case field when not shown', function() {
+            config.is_setup = 1;
+            config.show_worksheet_likely = 0;
+
+            view = SugarTest.createView(
+                'base',
+                'RevenueLineItems',
+                'subpanel-list',
+                options.meta,
+                context,
+                true,
+                layout
+            );
+
+            expect(view._fields.visible.length).toEqual(4);
+            expect(_.where(view._fields.visible, {name: 'likely_case'})).toEqual([]);
         });
     });
 });
