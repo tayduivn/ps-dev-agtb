@@ -38,39 +38,76 @@
 </head>
 <body class="full-screen">
   <div class="nv-demo">
+    <div class="dashlet-options">
+      <div class="row-fluid">
+          <div class="span12">
+              <div class="dashlet-group pull-right">
+                  <button class="btn toggle-control" rel="tooltip" data-control="orientation" title="" data-original-title="Toggle orientation">Toggle orientation</button>
+                  <button class="btn toggle-control" rel="tooltip" data-control="show-all-nodes" title="" data-original-title="Show all nodes">Show all nodes</button>
+                  <button class="btn toggle-control" rel="tooltip" data-control="zoom-to-fit" title="" data-original-title="Zoom to fit">Zoom to fit</button>
+              </div>
+          </div>
+      </div>
+    </div>
     <div id="org" class="nv-chart nv-chart-org nv-chart-texture">
       <svg></svg>
     </div>
   </div>
 
+<script src="js/jquery-1.7.2.min.js"></script>
+
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
-<script src="data/tree_data.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/tree.js"></script>
 
 <script>
   nv.addGraph(function() {
 
-    var nodeRenderer = function(d){
+    var nodeRenderer = function(d) {
       return '<img src="img/'+ d.image +'" class="rep-avatar" width="32" height="32"><div class="rep-name">'+ d.name +'</div><div class="rep-title">'+ d.title + '</div>';
     }
 
     var chart = nv.models.tree()
           .duration(500)
-          .nodeSize({ 'width': 124, 'height': 56 })
+          .nodeSize({'width': 124, 'height': 56})
           .nodeRenderer(nodeRenderer)
-          .zoomExtents({ 'min': 0.25, 'max': 4 })
-          .horizontal(true);
+          .zoomExtents({'min': 0.25, 'max': 4})
+          .horizontal(false);
 
-    d3.select("#org svg")
-        .datum(tree_data)
-      .transition().duration(700)
-        .call(chart);
+    d3.json("data/tree_data.json", function(data) {
+      d3.select("#org svg")
+          .datum(data)
+        .transition().duration(700)
+          .call(chart);
+    });
 
     nv.utils.windowResize(function(){ chart.resize(); });
+
+    var toggleChart = function(e) {
+        //if icon clicked get parent button
+        var button = $(e.currentTarget);
+
+        switch (button.data('control')) {
+            case 'orientation':
+                chart.nodeSize({'width': 124, 'height': 56}).orientation();
+                break;
+
+            case 'show-all-nodes':
+                chart.showall();
+                break;
+
+            case 'zoom-to-fit':
+                chart.reset();
+                break;
+
+            default:
+        }
+    }
+
+    $('.toggle-control').on('click', toggleChart);
 
     return chart;
   });
 </script>
-
 </body>
 </html>
