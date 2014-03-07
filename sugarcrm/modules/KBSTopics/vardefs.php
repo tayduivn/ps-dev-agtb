@@ -48,12 +48,22 @@ $dictionary['KBSTopic'] = array(
             'table' => 'kbstopics',
             'massupdate' => false,
             'source' => 'non-db',
-            'link' => 'topics',
+            'link' => 'parent_topic',
         ),
-        'topics' => array(
+        'parent_topic' => array(
             'name' => 'topics',
             'type' => 'link',
-            'relationship' => 'subnodes',
+            'relationship' => 'kbstopics_relations',
+            'module' => 'KBSTopics',
+            'bean_name' => 'KBSTopic',
+            'source' => 'non-db',
+            'vname' => 'LNK_TOPICS',
+            'side' => 'right',
+        ),
+        'subnodes' => array(
+            'name' => 'subnodes',
+            'type' => 'link',
+            'relationship' => 'kbstopics_relations',
             'module' => 'KBSTopics',
             'bean_name' => 'KBSTopic',
             'source' => 'non-db',
@@ -66,26 +76,19 @@ $dictionary['KBSTopic'] = array(
         ),
     ),
     'indices' => array(
-        array('name' => 'kbstopics_pk', 'type' => 'primary', 'fields' => array('id')),
+        array('name' => 'idx_kbstopics_parent_id', 'type' => 'index', 'fields' => array('parent_id')),
     ),
     'relationships' => array(
-        'subnodes' => array(
+        'kbstopics_relations' => array(
             'lhs_module' => 'KBSTopics',
             'lhs_table' => 'kbstopics',
-            'lhs_key' => 'parent_id',
+            'lhs_key' => 'id',
             'rhs_module' => 'KBSTopics',
             'rhs_table' => 'kbstopics',
-            'rhs_key' => 'id',
+            'rhs_key' => 'parent_id',
             'relationship_type' => 'one-to-many'
         )
     )
 );
 
-VardefManager::createVardef(
-    'KBSTopics',
-    'KBSTopic',
-    array(
-        'default',
-        'basic',
-    )
-);
+VardefManager::createVardef('KBSTopics', 'KBSTopic', array('basic'));
