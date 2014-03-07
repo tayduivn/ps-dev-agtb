@@ -22,8 +22,6 @@
     // Model being previewed (if any)
     _previewed: null,
 
-    plugins: ['Tooltip'],
-
     /**
      * @property {String} _allListViewsFieldListKey The last state key that
      * contains the full list of fields displayable in list views of this module.
@@ -41,8 +39,9 @@
     /**
      * {@inheritDoc}
      */
-    initialize: function (options) {
-        this._super("initialize", [options]);
+    initialize: function(options) {
+        this.plugins = _.union(this.plugins, ['Tooltip']);
+        this._super('initialize', [options]);
         this.template = app.template.getView('flex-list');
         this.events = _.clone(this.events);
 

@@ -17,9 +17,9 @@
      * @extends View.FlexListView
      */
     extendsFrom: 'FlexListView',
-    plugins: ['ListColumnEllipsis', 'ListRemoveLinks'],
 
     initialize: function(options) {
+        this.plugins = _.union(this.plugins, ['ListColumnEllipsis', 'ListRemoveLinks']);
         //setting skipFetch to true so that loadData will not run on initial load and the filter load the view.
         options.context.set('skipFetch', true);
         options.meta = options.meta || {};
