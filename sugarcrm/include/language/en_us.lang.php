@@ -4985,7 +4985,12 @@ $app_list_strings['moduleList']['Library'] = 'Library';
 $app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');
 $app_list_strings['moduleList']['EmailAddresses'] = 'Email address';
 
-
+$app_list_strings['kbsdocument_status_dom'] = array(
+    'draft' => 'Draft',
+    'expired' => 'Expired',
+    'in-review' => 'In Review',
+    'published' => 'Published',
+);
 
 $app_list_strings['kbdocument_status_dom'] = array (
     'Draft' => 'Draft',
