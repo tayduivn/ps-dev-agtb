@@ -59,7 +59,7 @@
             }
         });
         this.items = result;
-        if (def) {
+        if (def && _.isUndefined(this.model.get(this.name))) {
             this.defaultOnUndefined = false;
             // call with {silent: true} on, so it won't re-render the field, since we haven't rendered the field yet
             this.model.set(this.name, def, {silent: true});
