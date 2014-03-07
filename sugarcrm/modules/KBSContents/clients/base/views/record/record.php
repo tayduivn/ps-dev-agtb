@@ -48,6 +48,14 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                 'exp_date',
                 'approved',
                 'revision',
+                'rating' => array(
+                    'name' => 'rating',
+                    'type' => 'rating',
+                    'fields' => array(
+                        'useful',
+                        'notuseful',
+                    ),
+                ),
                 'viewcount' => array(
                     'name' => 'viewcount',
                     'readonly' => 'true'

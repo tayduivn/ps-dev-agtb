@@ -80,7 +80,24 @@ $dictionary['KBSContent'] = array(
             'type' => 'varchar',
             'len' => '10',
             'required' => true,
-        )
+        ),
+        'rating' => array(
+            'name' => 'rating',
+            'vname' => 'LBL_RATING',
+            'source' => 'non-db',
+        ),
+        'useful' => array(
+            'name' => 'useful',
+            'vname' => 'LBL_USEFUL',
+            'type' => 'int',
+            'default' => '0',
+        ),
+        'notuseful' => array(
+            'name' => 'notuseful',
+            'vname' => 'LBL_NOT_USEFUL',
+            'type' => 'int',
+            'default' => '0',
+        ),
     ),
 );
 

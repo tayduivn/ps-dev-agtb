@@ -25,6 +25,9 @@ $mod_strings = array (
     'LBL_EXP_DATE' => 'Expiration Date',
     'LBL_DOC_ID' => 'Document ID',
     'LBL_APPROVED' => 'Approved',
+    'LBL_REVISION' => 'Revision',
+    'LBL_USEFUL' => 'Useful',
+    'LBL_NOT_USEFUL' => 'Not Useful',
+    'LBL_RATING' => 'Rating',
     'LBL_VIEWED_COUNT' => 'View Count',
-    'LBL_REVISION' => 'Revision'
 );
