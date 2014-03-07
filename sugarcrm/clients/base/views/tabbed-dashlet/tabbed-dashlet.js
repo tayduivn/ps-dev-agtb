@@ -80,17 +80,6 @@
      * Bind the separate context to avoid sharing context's handlers
      * between its extension dashlets.
      */
-    initialize: function(options) {
-        this._super('initialize', [options]);
-        this.context = options.context.getChildContext({
-            forceNew: true,
-            collection: new Backbone.Collection()
-        });
-    },
-
-    /**
-     * {@inheritDoc}
-     */
     initDashlet: function() {
         this._initSettings();
         if (this.meta.config) {
@@ -98,6 +87,11 @@
         }
 
         this.collection = new Backbone.Collection();
+        this.context = this.context.getChildContext({
+            forceNew: true,
+            model: this.context.parent && this.context.parent.get('model'),
+            collection: this.collection
+        });
 
         this.context.set('parentModule', this.module);
 
@@ -145,7 +139,6 @@
      */
     _initTabs: function() {
         this.tabs = [];
-
         _.each(this.dashletConfig.tabs, function(tab, index) {
             if (tab.active) {
                 this.settings.set('activeTab', index);
@@ -311,7 +304,6 @@
         }
 
         var meta = app.metadata.getModule(module);
-
         if (_.isUndefined(meta)) {
             return null;
         }
