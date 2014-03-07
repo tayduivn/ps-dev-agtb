@@ -32,6 +32,12 @@
  *          First action goes to the default action (unless no_default_action set as true)
  *
  */
+
+/**
+ * @class BaseActiondropdownField
+ * @alias SUGAR.App.view.fields.BaseActiondropdownField
+ * @extends BaseFieldsetField
+ */
 ({
     extendsFrom: 'FieldsetField',
     fields: null,
@@ -65,11 +71,11 @@
     showNoData: false,
 
     initialize: function(options) {
-        this._super("initialize", [options]);
+        this._super('initialize', [options]);
         this.dropdownFields = [];
 
         //Throttle the setPlaceholder function per instance of this field.
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+        // TODO: Calling 'across controllers' considered harmful .. please consider using a plugin instead.
         var actiondropdownField = app.view._getController({type: 'field', name: 'actiondropdown'});
         this.setPlaceholder = _.throttle(actiondropdownField.prototype.setPlaceholder, 100);
     },
@@ -174,7 +180,7 @@
     },
 
     _render: function() {
-        this._super("_render");
+        this._super('_render');
         this.setPlaceholder();
         this._updateCaret();
     },
@@ -229,6 +235,9 @@
                 cssClass = _.without(cssClass, 'hide');
                 fieldPlaceholder.toggleClass('hide', false);
                 if (index == 0) {
+                    if (field.def.icon && field.closestComponent('subpanel')) {
+                        field.setMode('small');
+                    }
                     cssClass.push('btn');
                     field.getFieldElement().addClass('btn');
                     if (this.def.primary) {
@@ -238,6 +247,9 @@
                     //The first field needs to be out of the dropdown
                     this.$el.prepend(fieldPlaceholder);
                 } else {
+                    if (field._previousAction) {
+                        field.setMode(field._previousAction);
+                    }
                     cssClass = _.without(cssClass, 'btn', 'btn-primary');
                     field.getFieldElement().removeClass('btn btn-primary');
                     //Append field into the dropdown
@@ -277,7 +289,7 @@
         }
     },
     setDisabled: function(disable) {
-        this._super("setDisabled", [disable]);
+        this._super('setDisabled', [disable]);
         disable = _.isUndefined(disable) ? true : disable;
         if (disable) {
             this.$(this.actionDropDownTag).addClass('disabled');
@@ -292,7 +304,7 @@
             field.off('show hide', this.setPlaceholder, this);
         }, this);
         this.dropdownFields = null;
-        this._super("_dispose");
+        this._super('_dispose');
     },
 
     /**
@@ -300,5 +312,22 @@
      */
     isVisible: function() {
         return !this.getFieldElement().is(':hidden');
+    },
+
+    /**
+     * @override
+     * @param {String} mode     What mode we are changing to
+     */
+    setMode: function(mode) {
+        this._super('setMode', [mode]);
+        _.each(this.fields, function(field, index) {
+            // when we are on the first field, mode is changing to list, the field has an icon
+            // and the field is in a subpanel, use the small template
+            if (index === 0 && mode === 'list' && field.def.icon && field.closestComponent('subpanel')) {
+                field.setMode('small');
+            } else {
+                field.setMode(mode);
+            }
+        }, this);
     }
 })
