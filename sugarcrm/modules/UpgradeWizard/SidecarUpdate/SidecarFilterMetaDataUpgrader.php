@@ -125,7 +125,12 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                         unset($fields[$name]['label']);
                     }
                 }
-                continue;
+                // team_name is special in 6.7 and handled separately, it is not part of
+                // SearchFields, so we have to make one-off exception for it here.
+                // See BR-1283 for more details
+                if($name != "team_name") {
+                    continue;
+                }
             }
 
             if (!$this->isValidField($name)) {

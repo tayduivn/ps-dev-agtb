@@ -324,8 +324,8 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests that merged fields are handled correctly 
-     * 
+     * Tests that merged fields are handled correctly
+     *
      * @param string $module The module to test
      * @param string $view The view to test
      * @param string $type The client to test
@@ -347,9 +347,9 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Data provider that appends some additional test data to the collection, 
+     * Data provider that appends some additional test data to the collection,
      * specifically for testing handling of merge fields
-     * 
+     *
      * @return array
      */
     public function _sidecarRecordviewMergeProvider()
@@ -400,7 +400,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
                 $return[] = array_merge($row, $fields);
             }
         }
-        
+
         return $return;
     }
 
@@ -414,7 +414,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
     protected function _fieldExistsInDefs($fieldname, $defs) {
         foreach ($defs['panels'] as $panel) {
             foreach ($panel['fields'] as $field) {
-                // Broken up into two conditions to improve readability and make 
+                // Broken up into two conditions to improve readability and make
                 // it "twitter rule" compliant
                 if ($field == $fieldname) {
                     return true;
@@ -446,6 +446,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey("fields", $defs);
         $this->assertArrayHasKey('$owner', $defs['fields']);
         $this->assertArrayHasKey('$favorite',  $defs['fields']);
+        $this->assertArrayHasKey('team_name',  $defs['fields']);
         $this->assertArrayNotHasKey('address_city',  $defs['fields']);
     }
 
