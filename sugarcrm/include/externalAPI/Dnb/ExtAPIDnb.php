@@ -736,7 +736,7 @@ class ExtAPIDnb extends ExternalAPIBase
     {
         $pathParts = explode(".", $path);
         for ($i = 0; $i < count($pathParts) ; $i++) {
-            if ($object[$pathParts[$i]]) {
+            if (isset($object[$pathParts[$i]])) {
                 $object = $object[$pathParts[$i]];
             } else {
                 return null;
