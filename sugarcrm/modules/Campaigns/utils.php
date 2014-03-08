@@ -327,20 +327,19 @@ function get_subscription_lists_query($focus, $additional_fields = null) {
     //BEGIN SUGARCRM flav=pro ONLY
     // We need to confirm that the user is a member of the team of the item.
     global $current_user;
-    $focus->disable_row_level_security = false;
+    $bean = BeanFactory::getBean('Campaigns');
 
     //BEGIN SUGARCRM flav=ent ONLY
     //In the event of portal user, retrieve subscriptions with Global team access
     if($current_user->portal_only) {
-       $focus->disable_row_level_security = true;
+       $bean->disable_row_level_security = true;
        $all_news_type_pl_query .= " INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_membershipsc ON tst.team_id = team_membershipsc.team_id
 				                    AND team_membershipsc.user_id = '1' AND team_membershipsc.deleted=0 group by tst.team_set_id) c_tf on c_tf.team_set_id  = c.team_set_id ";
 
     }
     //END SUGARCRM flav=ent ONLY
 
-	$focus->add_team_security_where_clause($all_news_type_pl_query, 'c');
-	$focus->disable_row_level_security = true;
+    $bean->add_team_security_where_clause($all_news_type_pl_query, 'c');
 	//END SUGARCRM flav=pro ONLY
 
 	$all_news_type_pl_query .= "where plc.campaign_id = c.id ";
