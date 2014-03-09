@@ -169,7 +169,7 @@ describe("Base.View.Massupdate", function() {
             view._modelsToDelete = new Backbone.Collection();
             sinonSandbox.stub(view._modelsToDelete, 'fetch', function(options) {
                 if (options.success) {
-                    options.success({}, {status: 'done'});
+                    options.success({}, null, {status: 'done'});
                 }
                 return;
             });

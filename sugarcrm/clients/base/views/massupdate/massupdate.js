@@ -449,36 +449,38 @@
                     //split set into chunks.
                     this.updateChunk();
                     var callbacks = {
-                        success: function(data, response) {
-                            model.attempt = 0;
-                            model.updateProgress();
-                            model.trigger('massupdate:done');
-                            if (model.length === 0) {
-                                model.trigger('massupdate:end');
-                                if (_.isFunction(options.success)) {
-                                    options.success(model, data, response);
+                            success: function(data, response) {
+                                model.attempt = 0;
+                                model.updateProgress();
+                                model.trigger('massupdate:done');
+                                if (model.length === 0) {
+                                    model.trigger('massupdate:end');
+                                    if (_.isFunction(options.success)) {
+                                        //setting data to null since backbone reset will add the data object to the collection
+                                        //using the respoonse as options for callback
+                                        options.success(model, null, response);
+                                    }
+                                } else {
+                                    model.fetch(options);
                                 }
-                            } else {
-                                model.fetch(options);
+                            },
+                            error: function(xhr, status, error) {
+                                model.attempt++;
+                                model.trigger('massupdate:fail');
+                                if (model.attempt <= model.maxAllowAttempt) {
+                                    model.fetch(options);
+                                } else if (_.isFunction(options.error)) {
+                                    model.trigger('massupdate:end');
+                                    options.error(xhr, status, error);
+                                }
+                            },
+                            complete: function(xhr, status) {
+                                model.trigger('massupdate:always');
+                                if (_.isFunction(options.complete)) {
+                                    options.complete(xhr, status);
+                                }
                             }
                         },
-                        error: function(xhr, status, error) {
-                            model.attempt++;
-                            model.trigger('massupdate:fail');
-                            if (model.attempt <= model.maxAllowAttempt) {
-                                model.fetch(options);
-                            } else if (_.isFunction(options.error)) {
-                                model.trigger('massupdate:end');
-                                options.error(xhr, status, error);
-                            }
-                        },
-                        complete: function(xhr, status) {
-                            model.trigger('massupdate:always');
-                            if (_.isFunction(options.complete)) {
-                                options.complete(xhr, status);
-                            }
-                        }
-                    },
                         method = options.method || this.defaultMethod,
                         data = this.getAttributes(options.attributes, method),
                         url = app.api.buildURL(baseModule, this.module, data, options.params);
@@ -577,14 +579,14 @@
                 error: function() {
                     app.alert.show('error_while_mass_update', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
                 },
-                success: function(data, response) {
+                success: function(data, response, options) {
                     self.layout.trigger("list:records:deleted", lastSelectedModels);
                     var redirect = self._targetUrl !== self._currentUrl;
-                    if(response.status == 'done') {
+                    if (options.status === 'done') {
                         //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
                         //TODO: Need trigger for fetching new record list
                         self.layout.context.reloadData({showAlerts: false});
-                    } else if (response.status == 'queued') {
+                    } else if (options.status === 'queued') {
                         app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
                     }
                     self._modelsToDelete = null;
@@ -664,9 +666,9 @@
             this.$(".fieldPlaceHolder .error").removeClass("error");
             this.$(".fieldPlaceHolder .help-block").hide();
 
-            if(_.isEmpty(errors)) {
+            if (_.isEmpty(errors)) {
                 confirmMessage += '<br>[' + emptyValues.join(',') + ']<br>' + app.lang.getAppString('LBL_MASS_UPDATE_EMPTY_CONFIRM') + '<br>';
-                if(massUpdate) {
+                if (massUpdate) {
                     var fetchMassupdate = _.bind(function() {
                         var successMessages = this.buildSaveSuccessMessages(massUpdate);
                         massUpdate.fetch({
@@ -676,9 +678,9 @@
                             error: function() {
                                 app.alert.show('error_while_mass_update', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
                             },
-                            success: function(data, response) {
+                            success: function(data, response, options) {
                                 self.hide();
-                                if(response.status == 'done') {
+                                if (options.status === 'done') {
                                     //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
                                     //TODO: Need trigger for fetching new record list
                                     self.collection.fetch({
@@ -688,13 +690,13 @@
                                         // Boolean coercion.
                                         relate: !!self.layout.collection.link
                                     });
-                                } else if(response.status == 'queued') {
-                                    app.alert.show('jobqueue_notice', {level: 'success', messages: successMessages[response.status], autoClose: true});
+                                } else if (options.status === 'queued') {
+                                    app.alert.show('jobqueue_notice', {level: 'success', messages: successMessages[options.status], autoClose: true});
                                 }
                             }
                         });
                     }, this);
-                    if(emptyValues.length == 0) {
+                    if (emptyValues.length === 0) {
                         fetchMassupdate.call(this);
                     } else {
                         app.alert.show('empty_confirmation', {
