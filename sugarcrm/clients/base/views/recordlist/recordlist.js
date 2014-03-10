@@ -264,7 +264,8 @@
     _getRightBorderPosition: function() {
         if (!this._rightBorderPosition) {
             var scrollPanel = this.$('.flex-list-view-content');
-            this._rightBorderPosition = scrollPanel.find('thead th:last').position().left;
+            this._rightBorderPosition = scrollPanel.find('thead th:last span:first').position().left;
+            console.log(this._rightBorderPosition);
         }
         return this._rightBorderPosition;
     },
