@@ -111,7 +111,6 @@
         $buttonGroup.parents('.main-pane')
             .on('scroll.right-actions', _.bind(_.debounce(function() {
                 // detect window bottom collision on scroll
-            console.log('fsf');
                 $buttonGroup.toggleClass('dropup', needsDropupClass($buttonGroup));
             }, 30), this));
     },
