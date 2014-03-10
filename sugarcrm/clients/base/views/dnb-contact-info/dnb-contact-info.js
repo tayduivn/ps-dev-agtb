@@ -527,6 +527,7 @@
             });
             var cacheContent = app.cache.get(cacheKey);
             if (cacheContent) {
+                self.contactsList = data;
                 self.renderContactsList(cacheContent);
             } else {
                 var dnbFindContactsURL = app.api.buildURL('connector/dnb/findcontacts', '', {},{});

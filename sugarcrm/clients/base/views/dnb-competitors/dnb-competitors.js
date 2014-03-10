@@ -134,6 +134,7 @@
                     'apiResponse': cacheContent,
                     'module': 'competitors'
                 };
+                this.competitorsList = cacheContent;
                 this.baseDuplicateCheck(dupeCheckParams, this.renderCompetitors);
             } else {
                 var dnbCompetitorsURL = app.api.buildURL('connector/dnb/competitors/' + duns_num, '', {},{});

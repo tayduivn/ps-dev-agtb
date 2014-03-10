@@ -95,6 +95,7 @@
                 'apiResponse': cacheContent,
                 'module': 'familytree'
             };
+            this.currentFT = cacheContent;
             this.baseDuplicateCheck(dupeCheckParams, this.renderFamilyTree);
         } else {
             var dnbFamilyTreeURL = app.api.buildURL('connector/dnb/familytree', '', {},{});
