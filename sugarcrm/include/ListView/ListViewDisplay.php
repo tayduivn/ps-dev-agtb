@@ -1,4 +1,4 @@
-<?php
+wwwwwwwwwwwwwwwwww<?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -618,7 +618,7 @@ EOF;
 
             // bug50645 Blank value for URL custom field in DetailView and subpanel
             // we need to replace the "default" attribute value with the value set in field definition
-            if ($this->displayColumns[$columnName]['default'] && isset($seedDef['default'])) {
+            if (!empty($this->displayColumns[$columnName]['default']) && isset($seedDef['default'])) {
                 $this->displayColumns[$columnName]['default'] = $seedDef['default'];
             }
 
