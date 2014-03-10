@@ -370,8 +370,32 @@ function set_value(target_id, target_value){
 	}	
 }	
 
+/**
+ * Submits the form containing only non-empty fields in order to bypass server side limitation
+ * on the number of submitted fields 
+ *
+ * @param {HTMLFormElement} srcForm
+ */
+function submit_filtered(srcForm)
+{
+    var dstForm = document.createElement("form");
+    dstForm.action = srcForm.getAttribute("action");
+    dstForm.method = srcForm.getAttribute("method");
+    document.body.appendChild(dstForm);
 
-
+    var inputs = srcForm.getElementsByTagName("input");
+    for (var i = 0, length = inputs.length, srcInput, dstInput; i < length; i++) {
+        srcInput = inputs[i];
+        if (srcInput.value !== "") {
+            dstInput = document.createElement("input");
+            dstInput.type  = "hidden";
+            dstInput.name  = srcInput.name;
+            dstInput.value = srcInput.value;
+            dstForm.appendChild(dstInput);
+        }
+    }
+    dstForm.submit();
+}
 
 ///USED FOR ADVANCED / BASIC REL_FILTER BUTTON FUNCTIONALITY		////////
 
