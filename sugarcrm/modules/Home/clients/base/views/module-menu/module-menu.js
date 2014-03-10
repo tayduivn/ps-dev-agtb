@@ -169,6 +169,10 @@
             'date': '-7 DAY',
             'limit': limit,
             'success': _.bind(function(data) {
+                _.each(data.models, function (model) {
+                    model.module = model.get('_module');
+                });
+
                 this._renderPartial('recently-viewed', {
                     open: !visible,
                     showRecentToggle: data.models.length > threshold || data.next_offset !== -1
