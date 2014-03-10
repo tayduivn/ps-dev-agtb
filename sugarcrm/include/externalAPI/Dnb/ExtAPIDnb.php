@@ -657,18 +657,15 @@ class ExtAPIDnb extends ExternalAPIBase
     {
         $sugarRecordIds = $this->underscorePluck($sugarRecords, $sugarColumnName);
         $dnbModifiedRecordsCollection = array();
-        $self = $this;
-        $this->underscoreEach($dnbRecords,
-            function ($dnbRecordObj) use (&$sugarRecordIds, &$dnbModifiedRecordsCollection, &$dnbPath, &$self) {
-                $recordId = $self->getObjectValue($dnbRecordObj, $dnbPath);
-                if (in_array($recordId, $sugarRecordIds)) {
-                    $dnbRecordObj['isDupe'] = true;
-                } else if (!empty($dnbRecordObj['isDupe'])) {
-                    unset($dnbRecordObj['isDupe']);
-                }
-                $dnbModifiedRecordsCollection[] = $dnbRecordObj;
+        foreach ($dnbRecords as &$dnbRecordObj) {
+            $recordId = $this->getObjectValue($dnbRecordObj, $dnbPath);
+            if (in_array($recordId, $sugarRecordIds)) {
+                $dnbRecordObj['isDupe'] = true;
+            } else if (!empty($dnbRecordObj['isDupe'])) {
+                unset($dnbRecordObj['isDupe']);
             }
-        );
+            $dnbModifiedRecordsCollection[] = $dnbRecordObj;
+        }
         return $dnbModifiedRecordsCollection;
     }
 
