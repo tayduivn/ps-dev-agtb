@@ -1095,6 +1095,18 @@ EOHTML;
         return $imageArray;
     }
 
+    /**
+     * Clears a key from the image cache. If key is empty, will clear the entire image cache.
+     * @param string $key cache key
+     */
+    public function clearImageCache($key = '')
+    {
+        if ($key) {
+            unset($this->_imageCache[$key]);
+        } else {
+            $this->_imageCache = array();
+        }
+    }
 }
 
 /**
