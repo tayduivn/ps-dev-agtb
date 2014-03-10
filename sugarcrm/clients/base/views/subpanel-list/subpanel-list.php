@@ -51,7 +51,7 @@ $viewdefs['base']['view']['subpanel-list'] = array(
             ),
             array(
                 'type' => 'unlink-action',
-                'icon' => 'icon-trash',
+                'icon' => 'icon-unlink',
                 'label' => 'LBL_UNLINK_BUTTON',
             ),
         ),

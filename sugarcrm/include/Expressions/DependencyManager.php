@@ -234,7 +234,7 @@ class DependencyManager
                         $key_list = array();
                         foreach ($grid['values'][$label_key] as $key => $value) {
                             if (isset($options[$value])) {
-                                $key_list[] = $options[$value];
+                                $key_list[] = $value;
                             }
                         }
                         $result_keys[] = 'enum("' . $label_key . '", enum("' . implode('","', $key_list) . '"))';
