@@ -72,13 +72,7 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
-                    'type' => 'rowaction',
-                    'route' => '#bwc/index.php?' . http_build_query(
-                        array(
-                            'module' => 'KBDocuments',
-                            'action' => 'EditView',
-                        )
-                    ),
+                    'type' => 'create-article-action',
                     'name' => 'create_kbdocument_button',
                     'label' => 'LBL_CREATE_KB_DOCUMENT',
                     'acl_module' => 'KBDocuments',
