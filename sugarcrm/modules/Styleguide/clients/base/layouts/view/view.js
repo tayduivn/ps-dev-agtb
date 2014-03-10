@@ -19,10 +19,11 @@
     section: {},
 
     initialize: function(options) {
-        app.view.Layout.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
         this.page_name = this.options.context.get('page_name').split('_')[1];
         this.section.title = 'Default Views';
         // load up the styleguide css if not already loaded
+        //TODO: cleanup styleguide.css and add to main file
         if ($('head #styleguide_css').length === 0) {
             $('<link>')
                 .attr({
@@ -35,7 +36,7 @@
     },
 
     _render: function() {
-        app.view.Layout.prototype._render.call(this);
+        this._super('_render');
 
         var page_content = app.template.getView( this.page_name + '.' + this.page_name + '-doc', 'Styleguide');
 
@@ -48,7 +49,6 @@
                 readonly: true
             });
 
-        this.$('.styleguide').append('<div class="container-fluid"></div>');
         this.$('.styleguide .container-fluid').append(page_content(this));
         this.$('#exampleView').append(this.page_doc.el);
 

@@ -41,12 +41,13 @@
             },
             main;
 
-        app.view.Layout.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
 
         // trigger initial close of side bar
         app.events.trigger('app:dashletPreview:close');
 
         // load up the styleguide css if not already loaded
+        //TODO: cleanup styleguide.css and add to main file
         if ($('head #styleguide_css').length === 0) {
             $('<link>')
                 .attr({

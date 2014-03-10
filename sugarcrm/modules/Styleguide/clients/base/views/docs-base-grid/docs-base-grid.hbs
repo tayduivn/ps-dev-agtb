@@ -32,7 +32,7 @@
     <h1>Grid system <small>12 columns with a responsive twist</small></h1>
   </div>
   <h2>Default 940px grid</h2>
-  <div class="row show-grid">
+  <div class="row-fluid show-grid">
     <div class="span1">1</div>
     <div class="span1">1</div>
     <div class="span1">1</div>
@@ -46,23 +46,23 @@
     <div class="span1">1</div>
     <div class="span1">1</div>
   </div>
-  <div class="row show-grid">
+  <div class="row-fluid show-grid">
     <div class="span4">4</div>
     <div class="span4">4</div>
     <div class="span4">4</div>
   </div>
-  <div class="row show-grid">
+  <div class="row-fluid show-grid">
     <div class="span4">4</div>
     <div class="span8">8</div>
   </div>
-  <div class="row show-grid">
+  <div class="row-fluid show-grid">
     <div class="span6">6</div>
     <div class="span6">6</div>
   </div>
-  <div class="row show-grid">
+  <div class="row-fluid show-grid">
     <div class="span12">12</div>
   </div>
-  <div class="row">
+  <div class="row-fluid">
     <div class="span4">
       <p>The default grid system provided is a <strong>940px-wide, 12-column grid</strong>.</p>
       <p>It also has four responsive variations for various devices and resolutions: phone, tablet portrait, table landscape and small desktops, and large widescreen desktops.</p>
@@ -78,22 +78,22 @@
     <div class="span4">
       <p>As shown here, a basic layout can be created with two "columns," each spanning a number of the 12 foundational columns we defined as part of our grid system.</p>
     </div>
-  </div><!-- /row -->
+  </div>
 
   <br>
 
   <h2>Offsetting columns</h2>
-  <div class="row show-grid">
+  <div class="row-fluid show-grid">
     <div class="span4">4</div>
     <div class="span4 offset4">4 offset 4</div>
-  </div><!-- /row -->
-  <div class="row show-grid">
+  </div>
+  <div class="row-fluid show-grid">
     <div class="span3 offset3">3 offset 3</div>
     <div class="span3 offset3">3 offset 3</div>
-  </div><!-- /row -->
-  <div class="row show-grid">
+  </div>
+  <div class="row-fluid show-grid">
     <div class="span8 offset4">8 offset 4</div>
-  </div><!-- /row -->
+  </div>
 <pre class="prettyprint linenums">
 &lt;div class="row"&gt;
   &lt;div class="span4"&gt;...&lt;/div&gt;
@@ -104,14 +104,14 @@
   <br>
 
   <h2>Nesting columns</h2>
-  <div class="row">
+  <div class="row-fluid">
     <div class="span6">
       <p>With the static (non-fluid) grid system, nesting is easy. To nest your content, just add a new <code>.row</code> and set of <code>.span*</code> columns within an existing <code>.span*</code> column.</p>
       <h4>Example</h4>
-      <div class="row show-grid">
+      <div class="row-fluid show-grid">
         <div class="span6">
          vel 1 of column
-          <div class="row show-grid">
+          <div class="row-fluid show-grid">
             <div class="span3">
              vel 2
             </div>
@@ -169,7 +169,7 @@
       </tr>
     </tbody>
   </table>
-  <div class="row">
+  <div class="row-fluid">
     <div class="span4">
       <h3>Variables in LESS</h3>
       <p>Built in are a handful of variables for customizing the default 940px grid system, documented above. All variables for the grid are stored in variables.less.</p>
@@ -182,7 +182,7 @@
       <h3>Staying responsive</h3>
       <p>Customization of the grid only works at the default level, the 940px grid. To maintain the responsive aspects, you'll also have to customize the grids in responsive.less.</p>
     </div>
-  </div><!-- /row -->
+  </div>
 
 </section>
 
@@ -191,7 +191,7 @@
     <h1>Layouts <small>Basic templates to create webpages</small></h1>
   </div>
 
-  <div class="row">
+  <div class="row-fluid">
     <div class="span6">
       <h2>Fixed layout</h2>
       <p>The default and simple 940px-wide, centered layout for just about any website or page provided by a single <code>&lt;div class="container"&gt;</code>.</p>
@@ -226,5 +226,5 @@
 &lt;/div&gt;
 </pre>
     </div><!-- /col -->
-  </div><!-- /row -->
+  </div>
 </section>

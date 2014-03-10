@@ -28,8 +28,9 @@
     className: 'row-fluid',
 
     initialize: function(options) {
-        app.view.Layout.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
         // load up the styleguide css if not already loaded
+        //TODO: cleanup styleguide.css and add to main file
         if ($('head #styleguide_css').length === 0) {
             $('<link>')
                 .attr({

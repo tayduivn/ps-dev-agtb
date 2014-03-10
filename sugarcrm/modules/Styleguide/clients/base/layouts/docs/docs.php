@@ -92,7 +92,8 @@ $viewdefs['Styleguide']['base']['layout']['docs'] = array(
             "pages" => array (
                 "fields" => array("label"=>"Sugar7 fields", "url"=>"#Styleguide/field/all", "description"=>"Basic fields that support detail, record, and edit modes with error addons."),
                 "buttons" => array("label"=>"Buttons", "description"=>"Standard css only button styles."),
-                "editable" => array("label"=>"Editable", "description"=>"Inline form edit inputs."),
+                //TODO: remove this page or update
+                //"editable" => array("label"=>"Editable", "description"=>"Inline form edit inputs."),
                 "layouts" => array("label"=>"Form layouts", "description"=>"Customized layouts of field components."),
                 "file" => array("label"=>"File uploader", "description"=>"Avatar file upload widget."),
                 "datetime" => array("label"=>"Date-time picker", "description"=>"Lightweight date/time picker."),
@@ -125,6 +126,7 @@ $viewdefs['Styleguide']['base']['layout']['docs'] = array(
                 "drawer" => array("label"=>"Drawers", "description"=>"Drawer is a form of a modal that pushes main content down and expands from the top taking 100% of the screen width."),
                 "navbar" => array("label"=>"Navbar", "description"=>"Top level navigation layout."),
                 "tabs" => array("label"=>"Tab Navigation", "description"=>"Use this plugin to make tabs and pills more useful by allowing them to toggle through tabbable panes of local content."),
+                //TODO: remove these pages or update
                 //"modals" => array("label"=>"Modals", "description"=>"A streamlined, but flexible, take on the traditional javascript modal plugin with only the minimum required functionality and smart defaults."),
                 //"wizard" => array("label"=>"Wizard", "description"=>"Wizard takes advantage of bootstrap modals and sets up a framework for taking a user through multiple steps to complete a task."),
                 //"thumbnails" => array("label"=>"Thumbnails", "description"=>"Grids of images, videos, text, and more."),
