@@ -1,5 +1,6 @@
-/* Editable
---------------*/
+/* ERROR
+  ----------------*/
+
 .error {
   &.input-append.select, &.input-append.select2 {
     display: inline;
@@ -12,26 +13,28 @@
   .help-block {
     color: @errorText;
   }
-  input {
+  textarea,
+  input,
+  .preview > span > .icon-plus {
     border-color: @errorText !important;
-    margin-bottom: 0;
     color: @errorText !important;
+  }
+  input {
+    margin-bottom: 0;
     &:focus {
       z-index: 3;
       border-color: @errorText !important;
       border-width: 1px !important;
     }
   }
-  textarea {
-    border-color:@errorText !important;
-    color: @errorText !important;
-  }
   /* On fieldset/email, only the input that has an error must be decorate */
-  .control-group.email input, &[data-type=fieldset] input {
+  .control-group.email input,
+  &[data-type=fieldset] input {
     border-color: @gray !important;
     color: @gray !important;
   }
-  .control-group.email .input-append.error input , &[data-type=fieldset] .error input{
+  .control-group.email .input-append.error input,
+  &[data-type=fieldset] .error input{
     border-color: @errorText !important;
     color: @errorText !important;
   }
@@ -54,19 +57,10 @@
     border-color: @errorText;
     color: @errorText;
   }
+  .select2-choice > .select2-chosen {
+    margin-right: 18px;
+  }
   label.file-upload {
     background: @errorText;
   }
-  .urleditable-wrap {
-    .editable-trigger > i,
-    .urleditable-field a {
-      color: @errorText !important;
-    }
-  }
 }
-
-/*
-.control-group.error > .input-append > input {
- .border-radius(@inputBorderRadius);
-}
-*/
