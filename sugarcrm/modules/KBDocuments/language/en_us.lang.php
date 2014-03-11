@@ -32,7 +32,7 @@ $mod_strings = array (
 	'LBL_MODULE_NAME' => 'Knowledge Base',
     'LBL_MODULE_NAME_SINGULAR' => 'KBDocument',
 	'LBL_MODULE_TITLE' => 'Knowledge Base Article',
-	'LNK_NEW_ARTICLE' => 'Create article',
+	'LNK_NEW_ARTICLE' => 'Create Article',
 	'LNK_KBDOCUMENT_LIST'=> 'View Documents',
 	'LBL_DOC_REV_HEADER' => 'Document Revisions',
 	'LBL_SEARCH_FORM_TITLE'=> 'Document Search',
@@ -115,7 +115,7 @@ $mod_strings = array (
 
     'LBL_KNOWLEDGE_BASE_SEARCH' => 'Knowledge Base',
 	'LBL_KNOWLEDGE_BASE_ADMIN' => 'Knowledge Base Admin',
-    'LBL_KNOWLEDGE_BASE_ADMIN_MENU' => 'Administer knowledge base',
+    'LBL_KNOWLEDGE_BASE_ADMIN_MENU' => 'Administer Knowledge Base',
      
 	'LBL_CAT_OR_SUBCAT_UNSPEC'=>'Unspecified',
 	//document edit and detail view
@@ -149,7 +149,7 @@ $mod_strings = array (
 	'LBL_DOC_EXP_DATE'=> 'Expiration Date:',
 
 	//document list view.
-	'LBL_LIST_ARTICLES' => 'View articles',
+	'LBL_LIST_ARTICLES' => 'View Articles',
 	'LBL_LIST_FORM_TITLE' => 'Document List',
 	'LBL_LIST_DOCUMENT' => 'Document',
 	'LBL_LIST_CATEGORY' => 'Category',
