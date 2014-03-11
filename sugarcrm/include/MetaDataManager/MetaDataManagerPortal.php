@@ -58,6 +58,19 @@ class MetaDataManagerPortal extends MetaDataManager
     }
 
     /**
+     * Gets the moduleTabMap array to allow clients to decide which menu element
+     * a module should live in for non-module modules
+     *
+     * @return array
+     */
+    public function getModuleTabMap()
+    {
+        $map = $GLOBALS['moduleTabMap'];
+        $map['Search'] = 'Home';
+        return $map;
+    }
+
+    /**
      * Gets configs
      * 
      * @return array
