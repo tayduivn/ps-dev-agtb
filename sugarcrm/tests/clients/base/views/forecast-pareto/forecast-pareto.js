@@ -358,25 +358,25 @@ describe('Base.Views.ForecastPareto', function() {
         it('should update likely', function() {
             model.set({'likely_case': 60});
             view.handleDataChange(model);
-            expect(serverData.data[0].likely).toEqual(60);
+            expect(serverData.data[0].likely).toEqual('60.000000');
         });
 
         it('should update likely when amount is changed', function() {
             model.set({'amount': 60});
             view.handleDataChange(model);
-            expect(serverData.data[0].likely).toEqual(60);
+            expect(serverData.data[0].likely).toEqual('60.000000');
         });
 
         it('should update best', function() {
             model.set({'best_case': 60});
             view.handleDataChange(model);
-            expect(serverData.data[0].best).toEqual(60);
+            expect(serverData.data[0].best).toEqual('60.000000');
         });
 
         it('should update worst', function() {
             model.set({'worst_case': 60});
             view.handleDataChange(model);
-            expect(serverData.data[0].worst).toEqual(60);
+            expect(serverData.data[0].worst).toEqual('60.000000');
         });
 
         it('should update view.settings when timeperiod not found', function() {
