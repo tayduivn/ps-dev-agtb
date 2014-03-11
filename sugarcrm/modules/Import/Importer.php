@@ -164,6 +164,11 @@ class Importer
             $this->ifs->currency_id = $currency_id;
         }
 
+        // Collect email addresses, and add them before save
+        $emailAddresses = array(
+            'non-primary' => array()
+        );
+
         for ( $fieldNum = 0; $fieldNum < $_REQUEST['columncount']; $fieldNum++ )
         {
             // loop if this column isn't set
@@ -292,12 +297,17 @@ class Importer
                         $address = array_merge($address, $emailrow);
                     }
 
-                    $this->importAddress($focus, $address);
+                    if ($field === 'email1') {
+                        $emailAddresses['primary'] = $address;
+                    } else {
+                        $emailAddresses['non-primary'][] = $address;
+                    }
                 }
             }
 
             if ($field == 'email_addresses_non_primary') {
-                $this->handleNonPrimaryEmails($focus, $rowValue, $defaultRowValue, $fieldTranslated);
+                $nonPrimaryAddresses = $this->handleNonPrimaryEmails($rowValue, $defaultRowValue, $fieldTranslated);
+                $emailAddresses['non-primary'] = array_merge($emailAddresses['non-primary'], $nonPrimaryAddresses);
             }
 
             // Handle splitting Full Name into First and Last Name parts
@@ -428,6 +438,20 @@ class Importer
             {
                 $focus->new_with_id = true;
             }
+        }
+
+        try {
+            // Update e-mails here, because we're calling retrieve, and it overwrites the emailAddress object
+            if ($focus->hasEmails()) {
+                $this->handleEmailUpdate($focus, $emailAddresses);
+            }
+        } catch (Exception $e) {
+            $this->importSource->writeError(
+                $e->getMessage(),
+                $fieldTranslated,
+                $focus->id
+            );
+            $do_save = false;
         }
 
         if ($do_save)
@@ -1002,22 +1026,57 @@ class Importer
     }
 
     /**
+     * Fill the emailAddress object with e-mails
+     *
+     * @param SugarBean $bean Target bean
+     * @param array $addresses Addresses to be added
+     */
+    protected function handleEmailUpdate(SugarBean $bean, array $addresses)
+    {
+        // Make sure that operating on email addresses is possible
+        if (!isset($bean->emailAddress->addresses) || !is_array($bean->emailAddress->addresses)) {
+            throw new RuntimeException("Trying to handle email addresses in a Bean that doesn't support it.");
+        }
+
+        if (!empty($addresses['primary'])) {
+            foreach ($bean->emailAddress->addresses as $key => $value) {
+                if ($value['primary_address']) {
+                    unset($bean->emailAddress->addresses[$key]);
+                    break;
+                }
+            }
+            $this->importAddress($bean, $addresses['primary']);
+        }
+
+        if (!empty($addresses['non-primary'])) {
+            foreach ($bean->emailAddress->addresses as $key => $value) {
+                if (!$value['primary_address']) {
+                    unset($bean->emailAddress->addresses[$key]);
+                }
+            }
+            foreach ($addresses['non-primary'] as $address) {
+                $this->importAddress($bean, $address);
+            }
+        }
+    }
+
+    /**
      * Handles non-primary emails string read from CSV file
      *
-     * @param SugarBean $focus           Target bean
      * @param mixed     $rowValue        Serialized data
      * @param mixed     $defaultRowValue Default value in case if row value is empty 
      * @param string    $fieldTranslated Name of CSV column
+     *
+     * @return array                     Collection of parsed non-primary e-mails
      */
-    protected function handleNonPrimaryEmails(SugarBean $focus, $rowValue, $defaultRowValue, $fieldTranslated)
+    protected function handleNonPrimaryEmails($rowValue, $defaultRowValue, $fieldTranslated)
     {
         $parsed = $this->parseNonPrimaryEmails($rowValue, $fieldTranslated);
         if (!$parsed && !empty($defaultRowValue)) {
             $parsed = $this->parseNonPrimaryEmails($defaultRowValue, $fieldTranslated);
         }
-        foreach ($parsed as $address) {
-            $this->importAddress($focus, $address);
-        }
+
+        return $parsed;
     }
 
     /**

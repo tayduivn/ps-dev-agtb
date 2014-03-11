@@ -19,25 +19,37 @@ require_once('modules/Import/sources/ImportFile.php');
  * Test if non-primary emails are being imported properly from a CSV file
  * on Accounts module, or modules based on Person
  */
-class Bug25736ImportTest extends Sugar_PHPUnit_Framework_TestCase
+class ImportEmailsTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $importObject;
     private $file;
     private $cleanId;
+    private $emails = array();
 
     public function setUp()
     {
-        $this->file = $GLOBALS['sugar_config']['upload_dir'] . 'Bug25736Test.csv';
+        $this->file = dirname(__FILE__) . '/Bug25736Test.csv';
 
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
+
+        $_REQUEST['importlocale_charset'] = 'UTF-8';
+        $_REQUEST['importlocale_dateformat'] = "m/d/Y";
+        $_REQUEST['importlocale_timeformat'] = "h:i a";
+        $_REQUEST['importlocale_timezone'] = 'GMT';
+        $_REQUEST['importlocale_default_currency_significant_digits'] = '2';
+        $_REQUEST['importlocale_currency'] = '-99';
+        $_REQUEST['importlocale_dec_sep'] = '.';
+        $_REQUEST['importlocale_currency'] = '-99';
+        $_REQUEST['importlocale_default_locale_name_format'] = 's f l';
+        $_REQUEST['importlocale_num_grp_sep'] = ',';
     }
 
     public function tearDown()
     {
         $GLOBALS['db']->query("DELETE FROM email_addr_bean_rel WHERE bean_id = '{$this->cleanId}' AND bean_module = '{$this->importObject->module_dir}'");
-        $GLOBALS['db']->query("DELETE FROM email_addresses WHERE email_address IN ('testmail1@test.com', 'testmail2@test.com', 'testmail3@test.com')");
+        $GLOBALS['db']->query("DELETE FROM email_addresses WHERE email_address IN ('" . implode("', '", $this->emails) . "')");
         $GLOBALS['db']->query("DELETE FROM {$this->importObject->table_name} WHERE created_by = '{$GLOBALS['current_user']->id}'");
 
         $_REQUEST = array();
@@ -63,39 +75,28 @@ class Bug25736ImportTest extends Sugar_PHPUnit_Framework_TestCase
         $this->importObject = $bean = new $module;
 
         // Setup needed $_REQUEST data
-        $_REQUEST['columncount'] = 4;
+        $_REQUEST['columncount'] = 2;
         $_REQUEST['colnum_0'] = $nameField;
         $_REQUEST['colnum_1'] = 'email_addresses_non_primary';
-
         $_REQUEST['import_module'] = $bean->module_dir;
-        $_REQUEST['importlocale_charset'] = 'UTF-8';
-        $_REQUEST['importlocale_dateformat'] = "m/d/Y";
-        $_REQUEST['importlocale_timeformat'] = "h:i a";
-        $_REQUEST['importlocale_timezone'] = 'GMT';
-        $_REQUEST['importlocale_default_currency_significant_digits'] = '2';
-        $_REQUEST['importlocale_currency'] = '-99';
-        $_REQUEST['importlocale_dec_sep'] = '.';
-        $_REQUEST['importlocale_currency'] = '-99';
-        $_REQUEST['importlocale_default_locale_name_format'] = 's f l';
-        $_REQUEST['importlocale_num_grp_sep'] = ',';
 
         // Create the Importer and try importing
         $importer = new Importer($importSource, $bean);
         $importer->import();
 
-        // Check if the Lead is created
+        // Check if the Bean is created
         $query = "SELECT id FROM $bean->table_name WHERE $nameField = '$name'";
         $result = $GLOBALS['db']->query($query);
         $row = $GLOBALS['db']->fetchByAssoc($result);
 
         $this->assertNotEmpty($row['id'], $module . ' not created');
-        // Save Lead id for easier cleanup after test
+        // Save Bean id for easier cleanup after test
         $this->cleanId = $row['id'];
 
         // Check if all of the mails got created and linked properly
         foreach ($expected as $email) {
             list($address, $invalid, $optOut) = $email;
-
+            $this->emails[] = $address;
             // Check if the mail got created
             $query = "SELECT id, invalid_email, opt_out FROM email_addresses WHERE email_address = '$address'";
             $result = $GLOBALS['db']->query($query);
@@ -137,6 +138,98 @@ class Bug25736ImportTest extends Sugar_PHPUnit_Framework_TestCase
                     array('testmail1@test.com', 0, 1),
                     array('testmail2@test.com', 1, 0),
                 ),
+            );
+        }
+
+        return $data;
+    }
+
+    /**
+     * Check if emails get updated on import
+     *
+     * @dataProvider providerEmailUpdate
+     */
+    public function testEmailUpdate($module, $nameField, $name, $csvDataImport, $csvDataUpdate, $expected)
+    {
+        $fileCreated = sugar_file_put_contents($this->file, $csvDataImport);
+        $this->assertGreaterThan(0, $fileCreated, 'Failed to write to ' . $this->file);
+
+        // Create the ImportFile the Importer uses from our CSV
+        $importSource = new ImportFile($this->file, ',', '"');
+
+        // Create the bean type we're importing
+        $this->importObject = $bean = new $module;
+
+        // Setup needed $_REQUEST data
+        $_REQUEST['columncount'] = 3;
+        $_REQUEST['colnum_0'] = 'id';
+        $_REQUEST['colnum_1'] = $nameField;
+        $_REQUEST['colnum_2'] = 'email1';
+        $_REQUEST['import_module'] = $bean->module_dir;
+
+        // Create the Importer and try importing
+        $importer = new Importer($importSource, $bean);
+        $importer->import();
+
+        // Check if the Bean is created
+        $query = "SELECT id FROM $bean->table_name WHERE $nameField = '$name'";
+        $result = $GLOBALS['db']->query($query);
+        $row = $GLOBALS['db']->fetchByAssoc($result);
+
+        $this->assertNotEmpty($row['id'], $module . ' not created');
+        // Save Bean id for easier cleanup after test
+        $this->cleanId = $row['id'];
+
+        // Now update
+        $_REQUEST['import_type'] = 'update';
+        $fileCreated = sugar_file_put_contents($this->file, $csvDataUpdate);
+        $this->assertGreaterThan(0, $fileCreated, 'Failed to write to ' . $this->file);
+
+        // Create the ImportFile the Importer uses from our CSV
+        $importSource = new ImportFile($this->file, ',', '"');
+
+        // Create the bean type we're importing
+        $this->importObject = $bean = new $module;
+
+        // Create the Importer and try importing
+        $importer = new Importer($importSource, $bean);
+        $importer->import();
+
+        $this->emails[] = $expected;
+        $bean->retrieve($this->cleanId);
+        $this->assertEquals($expected, $bean->email1);
+
+    }
+
+    /**
+     * @return array The import data provided for the test.
+     *   Generates data for different modules
+     *   Each row has a csv string with columns: module, required name field,
+     *   name field vlaue, CSV data to create a record, CSV data to update the created record,
+     *   e-mail the updated record should contain
+     */
+    public function providerEmailUpdate()
+    {
+        $modules = array(
+            'Account' => 'name',
+            'Contact' => 'last_name',
+            'Lead' => 'last_name',
+            'Prospect' => 'last_name',
+        );
+
+        $data = array();
+        foreach ($modules as $module => $nameField) {
+            $data[] = array(
+                $module,
+                $nameField,
+                'Random Guy',
+                array(
+                    '"import_email_update","Random Guy","old.primary@email.com"',
+                ),
+                array(
+                    '"import_email_update","Random Guy","new.primary@email.com"',
+                ),
+                'new.primary@email.com',
             );
         }
 
