@@ -206,6 +206,10 @@ class SugarQuery_Compiler_SQL
     {
         $return = array();
         foreach ($groupBy AS $groupBy) {
+            $isNonDb = $groupBy->column->isNonDb();
+            if (empty($isNonDb)) {
+                continue;
+            }
             $return[] = $this->compileField($groupBy->column);
         }
 
