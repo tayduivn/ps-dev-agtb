@@ -262,7 +262,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            "p.probability, " .
                            "o.lead_source, " .
                            "o.campaign_id, " .
-                           "p.opportunity_id, " .
+                           "qo.opportunity_id, " .
                            "o.opportunity_type " .
                    "FROM products p  " .
                    "INNER JOIN quotes q  " .
