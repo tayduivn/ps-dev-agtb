@@ -118,7 +118,7 @@ class IBMDB2Manager  extends DBManager
 		//"case_sensitive" => false, // DB2 is case insensitive by default
 		"fulltext" => true, // DB2 supports this though it needs to be initialized and we are currently not capable of doing though through code. Pending request to IBM
 		"auto_increment_sequence" => true, // Opted to use DB2 sequences instead of identity columns because of the restriction of only 1 identity per table
-		"limit_subquery" => true,
+        "limit_subquery" => false, // DB2 doesn't support OPTIMIZE FOR n ROWS in sub query
         "recursive_query" => true,
 	);
 
