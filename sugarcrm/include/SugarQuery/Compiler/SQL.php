@@ -206,8 +206,7 @@ class SugarQuery_Compiler_SQL
     {
         $return = array();
         foreach ($groupBy AS $groupBy) {
-            $isNonDb = $groupBy->column->isNonDb();
-            if (empty($isNonDb)) {
+            if ($groupBy->column->isNonDb()) {
                 continue;
             }
             $return[] = $this->compileField($groupBy->column);
@@ -247,7 +246,7 @@ class SugarQuery_Compiler_SQL
         }
 
         foreach ($orderBy as $order) {
-            if ($order->column->isNonDb() == 1) {
+            if ($order->column->isNonDb()) {
                 continue;
             }
             $field = trim($this->compileField($order->column));
@@ -283,7 +282,7 @@ class SugarQuery_Compiler_SQL
         }
 
         foreach ($selectObj->select as $field) {
-            if ($field->isNonDb() == 1) {
+            if ($field->isNonDb()) {
                 continue;
             }
             $compiledField = $this->compileField($field);
@@ -308,7 +307,7 @@ class SugarQuery_Compiler_SQL
             }
         }
 
-        if ($field->isNonDb() == 1) {
+        if ($field->isNonDb()) {
             return '';
         }
         $sql = "{$field->table}.{$field->field}";
