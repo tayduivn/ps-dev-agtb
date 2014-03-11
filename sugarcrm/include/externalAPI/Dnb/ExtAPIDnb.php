@@ -58,7 +58,22 @@ class ExtAPIDnb extends ExternalAPIBase
     public $supportedModules = array();
 
     //commonly used json paths
-   
+    private $familyTreePaths = array(
+        'nestedDuns' => 'SubjectHeader.DUNSNumber',
+        'nestedTree' => 'Linkage.FamilyTreeMemberOrganization',
+        'familyTree' => 'OrderProductResponse.OrderProductResponseDetail.Product.Organization.Linkage.FamilyTreeMemberOrganization',
+        'duns' => 'OrderProductResponse.OrderProductResponseDetail.Product.Organization.SubjectHeader.DUNSNumber',
+        'inquiryDet' => 'OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber'
+    );
+
+    private $commonJsonPaths = array(
+        'findcompany' => 'FindCompanyResponse.FindCompanyResponseDetail.FindCandidate',
+        'competitors' => 'FindCompetitorResponse.FindCompetitorResponseDetail.Competitor',
+        'cleansematch' => 'GetCleanseMatchResponse.GetCleanseMatchResponseDetail.MatchResponseDetail.MatchCandidate',
+        'contacts' => 'FindContactResponse.FindContactResponseDetail.FindCandidate',
+        'principalIdPath' => 'PrincipalIdentificationNumberDetail.0.PrincipalIdentificationNumber'
+    );
+
     function __construct()
     {
         $this->dnbUsername = trim($this->getConnectorParam('dnb_username'));
@@ -113,9 +128,14 @@ class ExtAPIDnb extends ExternalAPIBase
         //check if result exists in cache
         $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
         // get existing duns
-        $existingDUNSArray = json_decode($this->getExistingDUNS(), true);
-        $modifiedApiResponse = $this->getCommonDuns($reply['responseJSON'], $existingDUNSArray);
-        $reply['responseJSON'] = $modifiedApiResponse;
+        $path = $this->commonJsonPaths['findcompany'];
+        if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
+            //get the list of companies from dnb
+            $modifiedCompaniesList = $this->checkAndMarkDuplicateDuns($reply['responseJSON'],$path);
+            if (!empty($modifiedCompaniesList)) {
+                $reply['responseJSON']['FindCompanyResponse']['FindCompanyResponseDetail']['FindCandidate'] = $modifiedCompaniesList;
+            }
+        }
         return $reply['responseJSON'];
     }
 
@@ -208,7 +228,7 @@ class ExtAPIDnb extends ExternalAPIBase
 
     /**
      * Gets Competitors for a D-U-N-S number
-     * @param $duns_num
+     * @param string $duns_num
      * @return jsonarray
      */
     public function dnbCompetitors($duns_num)
@@ -218,6 +238,15 @@ class ExtAPIDnb extends ExternalAPIBase
         $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf($this->dnbCompetitorsURL, $duns_num);
         //check if result exists in cache
         $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
+        // get existing duns
+        $path = $this->commonJsonPaths['competitors'];
+        if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
+            //get the list of companies from dnb
+            $modifiedCompaniesList = $this->checkAndMarkDuplicateDuns($reply['responseJSON'], $path);
+            if (!empty($modifiedCompaniesList)) {
+                $reply['responseJSON']['FindCompetitorResponse']['FindCompetitorResponseDetail']['Competitor'] = $modifiedCompaniesList;
+            }
+        }
         return $reply['responseJSON'];
     }
 
@@ -231,31 +260,6 @@ class ExtAPIDnb extends ExternalAPIBase
         //dnb financials
         $cache_key = 'dnb.financials.' . $duns_num;
         $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf($this->dnbFinancialURL, $duns_num);
-        //check if result exists in cache
-        $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
-        return $reply['responseJSON'];
-    }
-
-    /**
-     * Get the Linkage / Family Tree For a Given DUNS Number
-     * $ftParams array can have the following keys
-     * duns -- DUNS Number -- required
-     * product -- Product Name -- required (LNK_FF | LNK_UPF)
-     * LNK_FF -- Full Family Tree
-     * LNK_UPF -- Upward Family Tree
-     * @param $ftParams
-     * @return jsonarray
-     */
-    public function dnbFamilyTree($ftParams)
-    {
-        $ftQueryString = http_build_query($ftParams);
-        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf(
-                $this->dnbFamilyTreeURL,
-                $ftParams['duns_num'],
-                $ftParams['prod_code']
-            );
-        //dnb family tree cache key
-        $cache_key = 'dnb.ft.' . $ftQueryString;
         //check if result exists in cache
         $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
         return $reply['responseJSON'];
@@ -292,21 +296,9 @@ class ExtAPIDnb extends ExternalAPIBase
         //check if result exists in cache
         $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
         // get existing contacts
-        $dnbContactIdArray = array();
-        $path = "FindContactResponse.FindContactResponseDetail.FindCandidate";
+        $path = $this->commonJsonPaths['contacts'];
         if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
-            $dnbContactsList = $reply['responseJSON']['FindContactResponse']['FindContactResponseDetail']['FindCandidate'];
-            $this->underscoreEach(
-                $dnbContactsList,
-                function ($contactObj) use (&$dnbContactIdArray) {
-                    $dnbContactIdArray[] = $contactObj['PrincipalIdentificationNumberDetail'][0]['PrincipalIdentificationNumber'];
-                }
-            );
-            $existingContacts = json_decode($this->getExistingContacts($dnbContactIdArray), true);
-            if (count($existingContacts) > 0) {
-                $modifiedApiResponse = $this->getCommonContacts($reply['responseJSON'], $existingContacts);
-                $reply['responseJSON'] = $modifiedApiResponse;
-            }
+            $reply['responseJSON'] = $this->checkAndMarkDuplicateContacts($reply['responseJSON'], $path);
         }
         return $reply['responseJSON'];
     }
@@ -328,13 +320,22 @@ class ExtAPIDnb extends ExternalAPIBase
     public function dnbCMRrequest($cmParams)
     {
         //convert $cmParams to queryString
-        //TO DO: validate the POST parameters 
+        //TO DO: validate the POST parameters
         $cmQueryString = '?' . http_build_query($cmParams);
         $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbCleanseMatchURL . $cmQueryString;
         $reply = $this->makeRequest('GET', $dnbendpoint);
         if (!$reply['success']) {
             $GLOBALS['log']->error('DNB failed, reply said: ' . print_r($reply, true));
             return array('error' => 'ERROR_DNB_CONFIG');
+        }
+        // get existing duns
+        $path = $this->commonJsonPaths['cleansematch'];
+        if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
+            //get the list of companies from dnb
+            $modifiedCompaniesList = $this->checkAndMarkDuplicateDuns($reply['responseJSON'], $path);
+            if (!empty($modifiedCompaniesList)) {
+                $reply['responseJSON']['GetCleanseMatchResponse']['GetCleanseMatchResponseDetail']['MatchResponseDetail']['MatchCandidate'] = $modifiedCompaniesList;
+            }
         }
         return $reply['responseJSON'];
     }
@@ -356,7 +357,7 @@ class ExtAPIDnb extends ExternalAPIBase
     public function dnbBALRequest($balParams)
     {
         //convert $balParams to queryString
-        //TO DO: validate the POST parameters 
+        //TO DO: validate the POST parameters
         $balQueryString = '?' . http_build_query($balParams);
         $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbBALURL . $balQueryString;
         $reply = $this->makeRequest('GET', $dnbendpoint);
@@ -419,23 +420,86 @@ class ExtAPIDnb extends ExternalAPIBase
         //check if result exists in cache
         $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
         // get existing contacts
-        $dnbContactIdArray = array();
-        $path = "FindContactResponse.FindContactResponseDetail.FindCandidate";
+        $path = $this->commonJsonPaths['contacts'];
         if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
-            $dnbContactsList = $reply['responseJSON']['FindContactResponse']['FindContactResponseDetail']['FindCandidate'];
-            $this->underscoreEach(
-                $dnbContactsList,
-                function ($contactObj) use (&$dnbContactIdArray) {
-                    $dnbContactIdArray[] = $contactObj['PrincipalIdentificationNumberDetail'][0]['PrincipalIdentificationNumber'];
-                }
-            );
-            $existingContacts = json_decode($this->getExistingContacts($dnbContactIdArray), true);
-            if (count($existingContacts) > 0) {
-                $modifiedApiResponse = $this->getCommonContacts($reply['responseJSON'], $existingContacts);
-                $reply['responseJSON'] = $modifiedApiResponse;
-            }
+            $reply['responseJSON'] = $this->checkAndMarkDuplicateContacts($reply['responseJSON'], $path);
         }
         return $reply['responseJSON'];
+    }
+
+    /**
+     * Get the Linkage / Family Tree For a Given DUNS Number
+     * @param $ftParams
+     * @return array
+     */
+    public function dnbFamilyTree($ftParams)
+    {
+        $ftQueryString = http_build_query($ftParams);
+        //dnb family tree cache key
+        $cache_key = 'dnb.ft.'.$ftQueryString;
+        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv].sprintf($this->dnbFamilyTreeURL,$ftParams['duns_num'],$ftParams['prod_code']);
+        //check if result exists in cache
+        $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
+        //family tree duplicate check
+        if ($this->arrayKeyExists($reply['responseJSON'], $this->familyTreePaths['familyTree'])) {
+            $reply['responseJSON'] = $this->checkAndMarkFTDuplicateDuns($reply['responseJSON']);
+        }
+        return $reply['responseJSON'];
+    }
+
+    /**
+     * Given a family tree return an array of duns
+     * if a duns has a nested family tree recursively traverse it
+     * to bring in the array of duns
+     * @param $familyTree
+     * @return array
+     */
+    private function getFamilyTreeDuns($familyTree)
+    {
+        $dunsArray = array();
+        foreach ($familyTree as &$dnbRecordObj) {
+            //add the duns to the dunsArray
+            $dunsArray[] = $this->getObjectValue($dnbRecordObj, $this->familyTreePaths['nestedDuns']);
+            //check if the duns has a nestedFamilyTree
+            $nestedFamilyTree = $this->getObjectValue($dnbRecordObj, $this->familyTreePaths['nestedTree']);
+            if (!empty($nestedFamilyTree)) {
+                //if the duns has nested family tree
+                //then recursively get the duns
+                $nestedDunsArray = $this->getFamilyTreeDuns($nestedFamilyTree);
+                $dunsArray = array_merge($dunsArray, $nestedDunsArray);
+            }
+        }
+        return $dunsArray;
+    }
+
+    /**
+     * Given a family tree and an array of duns in sugar db
+     * traverse through the family tree and mark the common duns as duplicates
+     * @param $familyTree
+     * @param $dunsArray
+     * @return array
+     */
+    private function markFamilyTreeDuplicates($familyTree, $dunsArray)
+    {
+        $dnbModifiedRecordsCollection = array();
+        foreach ($familyTree as &$dnbRecordObj) {
+            $duns = $this->getObjectValue($dnbRecordObj, $this->familyTreePaths['nestedDuns']);
+            $duns = str_pad($duns, 9, "0", STR_PAD_LEFT);
+            //check if the duns has a nestedFamilyTree
+            $nestedFamilyTree = $this->getObjectValue($dnbRecordObj, $this->familyTreePaths['nestedTree']);
+            if (!empty($nestedFamilyTree)) {
+                //if the duns has nested family tree
+                //then recursively mark duplicates
+                $nestedModifiedRecords = $this->markFamilyTreeDuplicates($nestedFamilyTree, $dunsArray);
+                $dnbRecordObj['Linkage']['FamilyTreeMemberOrganization'] = $nestedModifiedRecords;
+            }
+            //if duns is there then mark it as duplicate
+            if (in_array($duns, $dunsArray)) {
+                $dnbRecordObj['isDupe'] = true;
+            }
+            $dnbModifiedRecordsCollection[] = $dnbRecordObj;
+        }
+        return $dnbModifiedRecordsCollection;
     }
 
     /**
@@ -546,143 +610,67 @@ class ExtAPIDnb extends ExternalAPIBase
     }
 
     /**
-     * Lists DUNS already existing in  SUGARDB
-     * @param $keyword company search string
+     * Lists Records already present in sugar db using the $columnName & $moduleName paramerts
+     * @param $recordIds array (array of id to be used in the in clause of the query)
      * @return array
      */
-    public function dupcheck($keyword)
+    private function getExistingRecords($columnName, $moduleName, $recordIds = null)
     {
-        $responseArray = array('responseJSON' => json_decode($this->getExistingDUNS(), true));
-        return $responseArray['responseJSON'];
-    }
-
-    //TO DO parametrize this function with field name and array values
-    //make a common function for duns_num and principal_identification_number
-    /**
-     * Lists Contacts already present in sugar db using D&B principal identification number
-     * @param $principalIdsArr array (array of principal identification numbers)
-     * @return array
-     */
-    private function getExistingContacts($principalIdsArr = null)
-    {
-        $seed = BeanFactory::newBean('Contacts');
-        $principal_id = 'dnb_principal_id';
-        $options = array();
-        $options['offset'] = 0;
-        $options['order_by'] = array(array('date_modified', 'DESC'));
-        $options['add_deleted'] = true;
-        $options['offset'] = 'end';
-        $options['module'] = $seed->module_name;
-        $options['team_security'] = false; //TO DO: Ask dtam why setting this to true returns 0 results
-        $q = new SugarQuery();
-        $q->from($seed, $options);
-        $fields = array($principal_id);
-        $q->select($fields);
-        $where = $q->where();
-        $where->in($principal_id, $principalIdsArr);
-        $q->compileSql();
-        $queryResults = $q->execute('json');
-        return $queryResults;
-    }
-
-    //TO DO parametrize this function with field name and array values
-    //make a common function for duns_num and principal_identification_number
-    /**
-     * Lists Accounts already present in sugar db using D&B D-U-N-S
-     * @return array
-     */
-    private function getExistingDUNS()
-    {
-        $seed = BeanFactory::newBean('Accounts');
-        $duns_field = 'duns_num';
-        $options = array();
-        $options['offset'] = 0;
-        $options['order_by'] = array(array('date_modified', 'DESC'));
-        $options['add_deleted'] = true;
-        $options['offset'] = 'end';
-        $options['module'] = $seed->module_name;
-        $options['team_security'] = false; //TO DO: Ask dtam why setting this to true returns 0 results
-        $q = new SugarQuery();
-        $q->from($seed, $options);
-        $fields = array($duns_field);
-        $q->select($fields);
-        $where = $q->where();
-        $where->notNull($duns_field);
-        $q->compileSql();
-        $queryResults = $q->execute('json');
-        return $queryResults;
-    }
-
-    /**
-     * Gets DUNS that are present in the database and in the DNB service reponse
-     * These DUNS are flagged as duplicates using the array key 'isDupe'
-     * @param $dnbApiResponse array (dnb api response)
-     * @param $dbDunsArray array (array of DUNS in sugar database)
-     * @return array (modified dnb api response with duplicates flagged)
-     */
-    private function getCommonDuns($dnbApiResponse, $dbDunsArray)
-    {
-        //check if the particular key exists in the $dnbApiResponse
-        $path = "FindCompanyResponse.FindCompanyResponseDetail.FindCandidate";
-        if ($this->arrayKeyExists($dnbApiResponse, $path)) {
-            $apiDuns = $this->underscorePluck(
-                $dnbApiResponse['FindCompanyResponse']['FindCompanyResponseDetail']['FindCandidate'],
-                'DUNSNumber'
-            );
-            $dbDuns = $this->underscorePluck($dbDunsArray, 'duns_num');
-            if (count($apiDuns) > 0 && count($dbDuns) > 0) {
-                $commonDuns = array_intersect($apiDuns, $dbDuns);
-                if (count($commonDuns) > 0) {
-                    for ($i = 0; $i < count($apiDuns); $i++) {
-                        if (in_array($apiDuns[$i], $commonDuns)) {
-                            $dnbApiResponse['FindCompanyResponse']['FindCompanyResponseDetail']['FindCandidate'][$i]['isDupe'] = true;
-                        }
-                    }
-                    return $dnbApiResponse;
-                } else {
-                    return $dnbApiResponse;
-                }
-            } else {
-                return $dnbApiResponse;
+        $seed = BeanFactory::newBean($moduleName);
+        //if duns_num, format all duns to be 0 padded
+        // for 9 digits
+        if ($columnName == 'duns_num') {
+            foreach ($recordIds as &$duns) {
+                $duns = str_pad($duns, 9, "0", STR_PAD_LEFT);;
             }
-        } else {
-            return $dnbApiResponse;
         }
+        $options = array();
+        $options['offset'] = 0;
+        $options['order_by'] = array(array('date_modified', 'DESC'));
+        $options['add_deleted'] = true;
+        $options['offset'] = 'end';
+        $options['module'] = $seed->module_name;
+        $options['team_security'] = false;
+        $q = new SugarQuery();
+        $q->from($seed, $options);
+        $fields = array($columnName);
+        $q->select($fields);
+        $where = $q->where();
+        $where->in($columnName, $recordIds);
+        $where = $where->queryAnd();
+        $where->equals('deleted', 0);
+        $q->compileSql();
+        $queryResults = $q->execute('json');
+        return $queryResults;
     }
 
     /**
-     * Gets Contacts that are present in the database and in the DNB service reponse
-     * These Contacts are flagged as duplicates using the array key 'isDupe'
-     * @param $dnbApiResponse array (dnb api response)
-     * @param $dbPrincipalIdArray array (array of principal identification nos. in sugar database)
-     * @return array (modified dnb api response with duplicates flagged)
+     * Gets Records that are present in the database and in the DNB service reponse
+     * These Records are flagged as duplicates using the array key 'isDupe'
+     * @param $dnbRecords array (dnb records to be compared with sugar db records)
+     * @param $sugarRecords array (array of ids in sugar database)
+     * @param $dnbPath string (path to traverse in each of the dnb records to get the recordId)
+     * @param $sugarColumnName string (name of column in sugar db to check against)
+     * @return array (modified dnb records with duplicates flagged)
      */
-    private function getCommonContacts($dnbApiResponse, $dbPrincipalIdArray)
+    private function getCommonRecords($dnbRecords, $sugarRecords, $dnbPath, $sugarColumnName)
     {
-        //check if the particular key exists in the $dnbApiResponse
-        $path = "FindContactResponse.FindContactResponseDetail.FindCandidate";
-        if ($this->arrayKeyExists($dnbApiResponse, $path)) {
-            $dnbContactsCollection = $dnbApiResponse['FindContactResponse']['FindContactResponseDetail']['FindCandidate'];
-            $dbContacts = $this->underscorePluck($dbPrincipalIdArray, 'dnb_principal_id');
-            $dnbModifiedContactsCollection = array();
-            $this->underscoreEach(
-                $dnbContactsCollection,
-                function ($contactObj) use (&$dbContacts, &$dnbModifiedContactsCollection) {
-                    $contactId = $contactObj['PrincipalIdentificationNumberDetail'][0]['PrincipalIdentificationNumber'];
-                    if (in_array($contactId, $dbContacts)) {
-                        $contactObj['isDupe'] = true;
-                    }
-                    $dnbModifiedContactsCollection[] = $contactObj;
-                }
-            );
-            $dnbApiResponse['FindContactResponse']['FindContactResponseDetail']['FindCandidate'] = $dnbModifiedContactsCollection;
+        $sugarRecordIds = $this->underscorePluck($sugarRecords, $sugarColumnName);
+        $dnbModifiedRecordsCollection = array();
+        foreach ($dnbRecords as &$dnbRecordObj) {
+            $recordId = $this->getObjectValue($dnbRecordObj, $dnbPath);
+            if (in_array($recordId, $sugarRecordIds)) {
+                $dnbRecordObj['isDupe'] = true;
+            } else if (!empty($dnbRecordObj['isDupe'])) {
+                unset($dnbRecordObj['isDupe']);
+            }
+            $dnbModifiedRecordsCollection[] = $dnbRecordObj;
         }
-        return $dnbApiResponse;
+        return $dnbModifiedRecordsCollection;
     }
 
     /**
      * Mimics the pluck function in underscore.js
-     * This code is a modification adapted from http://brianhaveri.github.io/Underscore.php/
      * @param $collection array
      * @param $key string
      * @return array
@@ -702,7 +690,6 @@ class ExtAPIDnb extends ExternalAPIBase
 
     /**
      * Mimics the each function in underscore.js
-     * This code is a modification adapted from http://brianhaveri.github.io/Underscore.php/
      * @param $collection array
      * @param $iterator function
      * @return null
@@ -720,7 +707,6 @@ class ExtAPIDnb extends ExternalAPIBase
 
     /**
      * Mimics the find function in underscore.js
-     * This code is a modification adapted from http://brianhaveri.github.io/Underscore.php/
      * @param $collection array
      * @param $iterator function
      * @return object
@@ -746,14 +732,32 @@ class ExtAPIDnb extends ExternalAPIBase
     private function getObjectValue($object, $path)
     {
         $pathParts = explode(".", $path);
-        for ($i = 0; $i < count($pathParts); $i++) {
-            if ($object[$pathParts[$i]]) {
+        for ($i = 0; $i < count($pathParts) ; $i++) {
+            if (isset($object[$pathParts[$i]])) {
                 $object = $object[$pathParts[$i]];
             } else {
                 return null;
             }
         }
         return $object;
+    }
+
+    /**
+     * Sets the value to an object using the path
+     * @param array $object
+     * @param string $path
+     * @param mixed $value
+     * @return array
+     */
+    private function setObjectValue(&$object, $path, $value)
+    {
+        $tempObj = & $object;
+        foreach (explode('.', $path) as $key) {
+            if (isset($tempObj[$key])) {
+                $tempObj = & $tempObj[$key];
+            }
+        }
+        $tempObj = $value;
     }
 
     /**
@@ -817,11 +821,7 @@ class ExtAPIDnb extends ExternalAPIBase
      */
     public function isConnectorConfigured()
     {
-        if (empty($this->dnbUsername) || empty($this->dnbPassword) || empty($this->dnbEnv)) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(empty($this->dnbUsername) || empty($this->dnbPassword) || empty($this->dnbEnv));
     }
 
     /**
@@ -925,9 +925,9 @@ class ExtAPIDnb extends ExternalAPIBase
 
     /**
      * Utility function to check if an array key exists in a nested associative array
-     * @param $array -- Associative Array
-     * @param $path -- string -- '.' delimited path to the particular key in the associative array
-     * @return TRUE | FALSE
+     * @param $array
+     * @param $path
+     * @return bool
      */
     private function arrayKeyExists($array, $path)
     {
@@ -942,6 +942,150 @@ class ExtAPIDnb extends ExternalAPIBase
             return true;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * Checks the D&B List of companies for duns_num already existing in SugarDB
+     * @param array $dnbApiResponse
+     * @param string $path
+     * @return mixed
+     */
+    private function checkAndMarkDuplicateDuns($dnbApiResponse,$path)
+    {
+        $dnbCompaniesList = $this->getObjectValue($dnbApiResponse, $path);
+        $dnbDunsArray = $this->underscorePluck($dnbCompaniesList, 'DUNSNumber');
+        //get the list of duns existing in sugar that match with the above list of duns
+        $existingDUNSArray = json_decode($this->getExistingRecords('duns_num', 'Accounts', $dnbDunsArray), true);
+        if (count($existingDUNSArray) > 0) {
+            //identify the duns common in the api response and in the sugar db and make the dupe
+            $modifiedCompaniesList = $this->getCommonRecords($dnbCompaniesList, $existingDUNSArray, 'DUNSNumber', 'duns_num');
+            return $modifiedCompaniesList;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Checks Family tree response for duns_num already existing in SugarDB
+     * @param array $dnbFTApiResponse
+     * @param string $path
+     * @return mixed
+     */
+    private function checkAndMarkFTDuplicateDuns($dnbFTApiResponse)
+    {
+        $familyTree = $this->getObjectValue($dnbFTApiResponse, $this->familyTreePaths['familyTree']);
+        //get a list of duns in the family tree response -- recursive function
+        $dunsArray = $this->getFamilyTreeDuns($familyTree);
+        //adding the duns of the first node in the family tree to the dunsArray
+        $firstNodeDuns = $this->getObjectValue($dnbFTApiResponse, $this->familyTreePaths['duns']);
+        $firstNodeDuns = str_pad($firstNodeDuns, 9, "0", STR_PAD_LEFT);
+        $dunsArray[] = $firstNodeDuns;
+        $GLOBALS['log']->debug('ft duns count: ' . count($dunsArray));
+        //omit the current DUNS from the dunsArray
+        $currentDUNS = $this->getObjectValue($dnbFTApiResponse, $this->familyTreePaths['inquiryDet']);
+        if (!empty($currentDUNS) && in_array($currentDUNS, $dunsArray)) {
+            $dunsPos = array_search($currentDUNS, $dunsArray);
+            // Remove from array
+            unset($dunsArray[$dunsPos]);
+        }
+        //get the list of duns existing in sugar that match with the above list of duns
+        $existingDUNSArray = json_decode($this->getExistingRecords('duns_num', 'Accounts', $dunsArray), true);
+        if (count($existingDUNSArray) > 0) {
+            $commonDuns = $this->underscorePluck($existingDUNSArray, 'duns_num');
+            //identify the duns common in the api response and in the sugar db and make the dupe
+            $modifiedFamilyTree = $this->markFamilyTreeDuplicates(
+                $this->getObjectValue($dnbFTApiResponse, $this->familyTreePaths['familyTree']),
+                $commonDuns
+            );
+            //marking the first node as duplicate if it is
+            if (in_array($firstNodeDuns, $commonDuns)) {
+                $dnbFTApiResponse['OrderProductResponse']['OrderProductResponseDetail']['Product']['Organization']['isDupe'] = true;
+            }
+            if ($modifiedFamilyTree) {
+                $dnbFTApiResponse['OrderProductResponse']['OrderProductResponseDetail']['Product']['Organization']['Linkage']['FamilyTreeMemberOrganization'] = $modifiedFamilyTree;
+            }
+        }
+        return $dnbFTApiResponse;
+    }
+
+    /**
+     * Checks the D&B List of contacts for contacts already existing in SugarDB
+     * @param array $dnbApiResponse
+     * @param string $path
+     * @return mixed
+     */
+    private function checkAndMarkDuplicateContacts($dnbApiResponse,$path)
+    {
+        $dnbContactsList = $this->getObjectValue($dnbApiResponse, $path);
+        // get existing contacts
+        $dnbPrincIdArray = array();
+        //get the list of dnb principal ids from the above list of contacts
+        $this->underscoreEach(
+            $dnbContactsList,
+            function ($contactObj) use (&$dnbPrincIdArray) {
+                $dnbPrincIdArray[] = $contactObj['PrincipalIdentificationNumberDetail'][0]['PrincipalIdentificationNumber'];
+            }
+        );
+        //get the list of principal ids existing in sugar that match with the above list of principal ids
+        $existingPrincIdArray = json_decode($this->getExistingRecords('dnb_principal_id', 'Contacts', $dnbPrincIdArray), true);
+        if (count($existingPrincIdArray) > 0) {
+            //identify the contacts common in the api response and in the sugar db and mark the dupe
+            $modifiedContactsList = $this->getCommonRecords($dnbContactsList, $existingPrincIdArray, $this->commonJsonPaths['principalIdPath'], 'dnb_principal_id');
+            if ($modifiedContactsList && count($modifiedContactsList) > 0) {
+                $this->setObjectValue($dnbApiResponse, $path, $modifiedContactsList);
+            }
+        }
+        return $dnbApiResponse;
+    }
+
+    /**
+     * API used to check for duplicates in D&B API Response
+     * This API is primarily being created to check the browser cached responses for duplicates
+     * @param array $dupeCheckParams
+     * $dupeCheckParams must have two keys
+     * 1. type -- Currently two possible values (duns,contacts)
+     * 2. apiResponse -- The api response to be marked as duplicates
+     * 3. module -- findcompany, competitors, cleansematch, familytree, contacts
+     * @return array
+     */
+    public function dupeCheck($dupeCheckParams)
+    {
+        //validate parameters
+        if (empty($dupeCheckParams['type']) || empty($dupeCheckParams['apiResponse']) || empty($dupeCheckParams['module'])) {
+            return array('error' => 'ERROR_EMPTY_PARAM');
+        }
+        $type = $dupeCheckParams['type'];
+        $apiResponse = $dupeCheckParams['apiResponse'];
+        $module = $dupeCheckParams['module'];
+        if ($type === 'duns') {
+            if ($module === 'familytree') {
+                $modifiedApiResponse = $this->checkAndMarkFTDuplicateDuns($apiResponse);
+                return $modifiedApiResponse;
+            } else {
+                $path = $this->commonJsonPaths[$module];
+                if (!empty($path)) {
+                    $modifiedApiResponse = $this->checkAndMarkDuplicateDuns($apiResponse,$path);
+                    if (!empty($modifiedApiResponse)) {
+                        $this->setObjectValue($apiResponse, $path, $modifiedApiResponse);
+                    }
+                    return $apiResponse;
+                } else {
+                    return array('error' => 'ERROR_INVALID_MODULE_NAME');
+                }
+            }
+        } else if ($type === 'contacts') {
+            $path = $this->commonJsonPaths[$module];
+            if (!empty($path)) {
+                $modifiedApiResponse = $this->checkAndMarkDuplicateContacts($apiResponse,$path);
+                if (!empty($modifiedApiResponse)) {
+                    return $modifiedApiResponse;
+                } else {
+                    return $apiResponse;
+                }
+            } else {
+                return array('error' => 'ERROR_INVALID_MODULE_NAME');
+            }
         }
     }
 }

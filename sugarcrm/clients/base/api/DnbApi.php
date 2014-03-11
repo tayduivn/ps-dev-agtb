@@ -93,8 +93,6 @@ class DnbApi extends SugarApi
             $result = $extDnbApi->dnbIndustryInfo($queryParam);
         } else if ($queryType ==='financial') {
             $result = $extDnbApi->dnbFinancialInfo($queryParam);
-        } else if ($queryType ==='familytree') {
-            $result = $extDnbApi->dnbFamilyTree($queryParam);
         } else if ($queryType ==='firmographic') {
             $result = $extDnbApi->dnbStandardProfile($queryParam);
         } else if ($queryType ==='premfirmographic') {
@@ -142,14 +140,16 @@ class DnbApi extends SugarApi
             $result = $extDnbApi->dnbContactDetails($queryData);
         } else if ($queryType === 'indMap') {
             $result = $extDnbApi->dnbIndustryConversion($queryData);
-        } else if ($queryType ==='industry') {
+        } else if ($queryType === 'industry') {
             $result = $extDnbApi->dnbIndustryInfoPost($queryData);
-        } else if ($queryType ==='firmographic') {
+        } else if ($queryType === 'firmographic') {
             $result = $extDnbApi->dnbFirmographic($queryData);
         } else if ($queryType ==='findcontacts') {
             $result = $extDnbApi->dnbFindContactsPost($queryData);
-        } else if($queryType === 'familytree') {
+        } else if ($queryType === 'familytree') {
             $result = $extDnbApi->dnbFamilyTree($queryData);
+        } else if ($queryType === 'dupecheck') {
+            $result = $extDnbApi->dupeCheck($queryData);
         }
         if (is_array($result) && isset($result['error'])) {
             throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $result['error']);

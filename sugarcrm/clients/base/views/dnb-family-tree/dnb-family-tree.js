@@ -90,7 +90,13 @@
         var cacheKey = 'dnb:familytree:' + ftParams.duns_num + ':' + ftParams.prod_code;
         var cacheContent = app.cache.get(cacheKey);
         if (cacheContent) {
-            this.renderFamilyTree.call(self, cacheContent);
+            var dupeCheckParams = {
+                'type': 'duns',
+                'apiResponse': cacheContent,
+                'module': 'familytree'
+            };
+            this.currentFT = cacheContent;
+            this.baseDuplicateCheck(dupeCheckParams, this.renderFamilyTree);
         } else {
             var dnbFamilyTreeURL = app.api.buildURL('connector/dnb/familytree', '', {},{});
             var resultData = {'product': null, 'errmsg': null};
@@ -100,8 +106,8 @@
                         responseMsg = self.getJsonNode(data, self.appendSVCPaths.responseMsg);
                     if (responseCode && responseCode === self.responseCodes.success) {
                         resultData.product = data;
-                        self.currentFT = resultData;
-                        app.cache.set(cacheKey, resultData);
+                        self.currentFT = data;
+                        app.cache.set(cacheKey, data);
                     } else {
                         resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
                     }
@@ -116,9 +122,24 @@
      * Back to Family Tree
      */
     backToFamilyTree: function() {
-        if (this.currentFT) {
-            this.renderFamilyTree(this.currentFT);
+        if (this.disposed) {
+            return;
         }
+        this.template = app.template.get(this.name);
+        this.render();
+        this.$('#dnb-family-tree-loading').show();
+        this.$('#dnb-family-tree-details').hide();
+        //hide import button when rendering the list
+        if (this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
+            this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().hide();
+        }
+        var dupeCheckParams = {
+            'type': 'duns',
+            'apiResponse': this.currentFT,
+            'module': 'familytree'
+        };
+        this.baseDuplicateCheck(dupeCheckParams, this.renderFamilyTree);
+
     },
 
     /**
@@ -161,7 +182,6 @@
         this.idCounter++;
         intermediateData.data = orgName + ((stateName != '' && stateName != null) ? (', ' + stateName) : '')
             + (countryName != '' ? (', ' + countryName) : '');
-
         if (parseInt(dunsNum, 10) == parseInt(this.duns_num, 10)) {
             intermediateData.data = intermediateData.data + dunsHTML;
             intermediateData.state = 'open';
@@ -170,30 +190,27 @@
         } else if (data.isDupe) {
             intermediateData.data = intermediateData.data + duplicateHTML;
         }
-        if (intermediateData.metadata.id == 1) {
+        if (intermediateData.metadata.id === 1) {
             intermediateData.state = 'open';
         }
         if (this.checkJsonNode(data, childrenPath) && data.Linkage.FamilyTreeMemberOrganization.length > 0) {
             var childRootData = data.Linkage.FamilyTreeMemberOrganization;
-            intermediateData.children = [];
             //for each child do a getDataRecursive
-            _.each(childRootData, function(childRoot) {
-                intermediateData.children.push(this.getDataRecursive(childRoot));
-            },this);
+            intermediateData.children = _.map(childRootData, this.getDataRecursive, this);
         }
         return intermediateData;
     },
 
     /**
      *  renders the family tree using the jsTree plugin
-     *  @param {Object} familyTreeData dnb api response for family tree call
+     *  @param {Object} familyTreeData -- dnb api response for family tree call
      */
     renderFamilyTree: function(familyTreeData) {
-        var self = this;
-        self.template = app.template.get(self.name);
-        if (self.disposed) {
+        if (this.disposed) {
             return;
         }
+        var self = this;
+        self.template = app.template.get(self.name);
         self.render();
         if (!familyTreeData.errmsg && familyTreeData.product) {
             self.$('#dnb-family-tree').jstree({
@@ -223,9 +240,6 @@
         } else if (familyTreeData.errmsg) {
             self.dnbFamilyTree = {};
             self.dnbFamilyTree.errmsg = familyTreeData.errmsg;
-            if (self.disposed) {
-                return;
-            }
             self.render();
         }
         self.$('#dnb-family-tree-loading').hide();
