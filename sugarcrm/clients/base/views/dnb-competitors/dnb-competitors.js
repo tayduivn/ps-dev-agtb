@@ -48,19 +48,23 @@
             'case_fmt': true
         },
         'salesrevenueamt': {
-            'json_path': 'SalesRevenueAmount.0.$',
+            'json_path': 'salesrevenueamt',
             'case_fmt': false
         },
         'topcompetitorindicator': {
             'json_path': 'TopCompetitorIndicator',
             'case_fmt': false
+        },
+        'isDupe': {
+            'json_path': 'isDupe'
         }
     },
 
     competitorsConst: {
         'responseCode' : 'FindCompetitorResponse.TransactionResult.ResultID',
         'responseMsg' : 'FindCompetitorResponse.TransactionResult.ResultText',
-        'competitorsPath' : 'FindCompetitorResponse.FindCompetitorResponseDetail.Competitor'
+        'competitorsPath' : 'FindCompetitorResponse.FindCompetitorResponseDetail.Competitor',
+        'salesRevenuePath' : 'SalesRevenueAmount.0.$'
     },
 
     initialize: function(options) {
@@ -123,34 +127,26 @@
             }
             //check if cache has this data already
             var cacheKey = 'dnb:competitors:' + duns_num;
-            if (app.cache.get(cacheKey)) {
-                self.renderCompetitors.call(self, app.cache.get(cacheKey));
+            var cacheContent = app.cache.get(cacheKey);
+            if (cacheContent) {
+                var dupeCheckParams = {
+                    'type': 'duns',
+                    'apiResponse': cacheContent,
+                    'module': 'competitors'
+                };
+                this.competitorsList = cacheContent;
+                this.baseDuplicateCheck(dupeCheckParams, this.renderCompetitors);
             } else {
                 var dnbCompetitorsURL = app.api.buildURL('connector/dnb/competitors/' + duns_num, '', {},{});
-                var resultData = {'competitors': null, 'errmsg' : null};
+                var resultData = {'product': null, 'errmsg' : null};
                 app.api.call('READ', dnbCompetitorsURL, {},{
                     success: function(data) {
                         var responseCode = self.getJsonNode(data, self.competitorsConst.responseCode),
                             responseMsg = self.getJsonNode(data, self.competitorsConst.responseMsg);
                         if (responseCode && responseCode === self.responseCodes.success) {
-                            var topCompGroup = _.groupBy(self.getJsonNode(data, self.competitorsConst.competitorsPath),
-                                function(competitorObj) {
-                                    return competitorObj.TopCompetitorIndicator;
-                                });
-                            if (topCompGroup.hasOwnProperty('true') && topCompGroup.hasOwnProperty('false')) {
-                                resultData.competitors = _.union(topCompGroup.true, topCompGroup.false);
-                            } else {
-                                resultData.competitors = data.FindCompetitorResponse.FindCompetitorResponseDetail.Competitor;
-                            }
-                            _.each(resultData.competitors, function(competitorObj) {
-                                var salesPath = 'SalesRevenueAmount.0.$';
-                                if (self.checkJsonNode(competitorObj, salesPath)) {
-                                    competitorObj.SalesRevenueAmount[0].$ = '$' + self.formatSalesRevenue(competitorObj.SalesRevenueAmount[0].$) +
-                                        app.lang.get('LBL_DNB_MILLION');
-                                }
-                            });
-                            self.competitorsList = resultData;
-                            app.cache.set(cacheKey, resultData);
+                            resultData.product = data;
+                            app.cache.set(cacheKey, data);
+                            self.competitorsList = data;
                         } else {
                             resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
                         }
@@ -171,7 +167,22 @@
      * Renders the competitors list
      */
     backToCompanyList: function() {
-        this.renderCompetitors(this.competitorsList);
+        if (this.disposed) {
+            return;
+        }
+        this.template = app.template.get(this.name);
+        this.render();
+        this.$('div#dnb-competitors-loading').show();
+        this.$('div#dnb-competitors-list').hide();
+        if (this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
+            this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().hide();
+        }
+        var dupeCheckParams = {
+            'type': 'duns',
+            'apiResponse': this.competitorsList,
+            'module': 'competitors'
+        };
+        this.baseDuplicateCheck(dupeCheckParams, this.renderCompetitors);
     },
 
     /**
@@ -185,8 +196,9 @@
         }
         this.template = app.template.get(this.name);
         this.dnbComp = {};
-        if (competitorsList.competitors) {
-            this.dnbComp.product = this.formatCompetitors(competitorsList.competitors, this.competitorsDD);
+        if (competitorsList.product) {
+            var competitors = this.getJsonNode(competitorsList.product, this.competitorsConst.competitorsPath);
+            this.dnbComp.product = this.formatCompetitors(competitors, this.competitorsDD);
         } else {
             this.dnbComp.errmsg = competitorsList.errmsg;
         }
@@ -208,6 +220,21 @@
      */
     formatCompetitors: function(competitorsList, competitorsDD) {
         var formattedCompetitors = [];
+
+        //grouping top competitors
+        var topCompGroup = _.groupBy(competitorsList, function (competitorObj) {
+            return competitorObj.TopCompetitorIndicator;
+        });
+        if (topCompGroup.hasOwnProperty('true') && topCompGroup.hasOwnProperty('false')) {
+            competitorsList = _.union(topCompGroup.true, topCompGroup.false);
+        }
+        //formatting sales revenue
+        _.each(competitorsList, function (competitorObj) {
+            var salesRevenue = this.getJsonNode(competitorObj,this.competitorsConst.salesRevenuePath);
+            if (salesRevenue) {
+                competitorObj.salesrevenueamt = '$' + this.formatSalesRevenue(salesRevenue) + app.lang.get('LBL_DNB_MILLION');
+            }
+        }, this);
         //iterate thru the search results, extract the necessary info
         //populate a js object
         //push it through an array

@@ -229,39 +229,33 @@ class WorkFlowAction extends SugarBean {
 /////////////////Handling Avanced WorkFlow Actions
 
 
+    /**
+     * Populate workflow action with data from request
+     *
+     * @param string $field Field name
+     * @param int    $i     Field index
+     */
+    public function populate_from_save($field, $i)
+    {
+        if (isset($_REQUEST[$field][$i])) {
+            $this->$field = $_REQUEST[$field][$i];
+        }
 
-
-
-
-function populate_from_save($field, $i, $temp_set_type){
-
-			$target_field = $field."_".$i;
-			
-	
-			if(isset($_REQUEST[$target_field])){		
-				$this->$field = $_REQUEST[$target_field];
-			//end if
-			}
-			
-		//Handling Advanced fields			
-			if($_REQUEST[$temp_set_type]=="Advanced"){
-				$this->value = $_REQUEST['adv_value_'.$i];
-			} else {
-
-				if( $_REQUEST['adv_type_'.$i] =='datetime' && $_REQUEST['ext1_'.$i] != ""){
-					//compensates for datetime field types
-				} else {	
-					$this->adv_type = "";
-					$this->ext1 = "";
-					$this->ext2 = "";
-					$this->ext3 = "";
-				}
-			}		
-			
-//end function populate_from_save
-}	
+        // handling advanced fields
+        if (isset($_REQUEST['set_type'][$i]) && $_REQUEST['set_type'][$i] == 'Advanced') {
+            $this->value = $_REQUEST['adv_value'][$i];
+        } else {
+            if (isset($_REQUEST['adv_type'][$i], $_REQUEST['ext1'][$i])
+                && $_REQUEST['adv_type'][$i] == 'datetime' && $_REQUEST['ext1'][$i] != '') {
+                // compensates for datetime field types
+            } else {
+                $this->adv_type = '';
+                $this->ext1 = '';
+                $this->ext2 = '';
+                $this->ext3 = '';
+            }
+        }
+    }
 
 ///End Class WorkFlowAction
 }
-
-?>

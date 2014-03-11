@@ -305,10 +305,15 @@
     },
 
     /**
-     * Sets the module given as active and shown in the mega nav bar.
+     * Sets the module given as active and shown in the main nav bar.
      *
      * This waits for the full `this._components` to be set first. If we fail
      * to do that, we will see the current module context as the first menu.
+     *
+     * The module to be shown as active in the main nav bar is mapped by
+     * {@link Core.MetadataManager#getTabMappedModule} to be displayed.
+     *
+     * Cached versions of the modules are always hidden if not active.
      *
      * @param {String} module the Module to set as Active on the menu.
      *
@@ -322,9 +327,14 @@
             return this;
         }
 
-        var mappedModule = app.metadata.getTabMappedModule(module);
+        var mappedModule = app.metadata.getTabMappedModule(module),
+            $activeModule = this.$('[data-container=module-list]').children('.active').removeClass('active'),
+            activeModule = $activeModule.data('module');
 
-        this.$('[data-container=module-list]').children('.active').removeClass('active');
+        if (this._catalog[activeModule] && !this._catalog[activeModule].short) {
+            // hide the cached version only module
+            this.toggleModule(activeModule, false);
+        }
 
         if (!this._catalog[mappedModule]) {
             this._addMenu(mappedModule, false).long.render();

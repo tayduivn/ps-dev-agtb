@@ -417,40 +417,37 @@ $tiny = new SugarTinyMCE();
 $tiny->defaultConfig['cleanup_on_startup']=true;
 $ed = $tiny->getInstance('body_html');
 $xtpl->assign("tiny", $ed);
-if(from_html(KBDocument::get_kbdoc_body_without_incrementing_count($kbId)) != null){
-    $edValue = KBDocument::get_kbdoc_body_without_incrementing_count($kbId);
-}
-else if(isset($from_case) && !empty($from_case)){
-    //set the kb fields from case i.e. kb name
-    if($from_case->case_number != null){
-        $edValue = "Case Number: $from_case->case_number</br>";
-    }
-    if($from_case->name != null){
-        $edValue .= "Subject: $from_case->name</br>";
-    }
-    if($from_case->description != null){
-        $edValue .= "Description: $from_case->description</br>";
-    }
-    if($from_case->resolution != null){
-        $edValue .= "Resolution: $from_case->resolution</br>";
-    }
-     //if bugs are associated to cases then extract the work_log and notes etc...
-     //also extract notes associated to the cases
-}
-else if(isset($from_email) && !empty($from_email)){
-    //set the kb fields from case i.e. kb name
-    if($from_email->description != null){
-        $edValue = "$from_email->description</br>";
-    }
-    if($from_email->description_html != null){
-        $edValue = "$from_email->description_html</br>";
-    }
-     //if bugs are associated to cases then extract the work_log and notes etc...
-     //also extract notes associated to the cases
-}
 
-else{
-    $edValue ='';
+$edValue = '';
+$kbDocBody = from_html(KBDocument::get_kbdoc_body_without_incrementing_count($kbId));
+if (!empty($kbDocBody)) {
+    $edValue = $kbDocBody;
+} else if (!empty($from_case)) {
+    //set the kb fields from case i.e. kb name
+    if (!empty($from_case->case_number)) {
+        $edValue = '<p>Case Number: ' . $from_case->case_number . '</p>';
+    }
+    if (!empty($from_case->name)) {
+        $edValue .= '<p>Subject: ' . $from_case->name . '</p>';
+    }
+    if (!empty($from_case->description)) {
+        $edValue .= '<p>Description: ' . $from_case->description . '</p>';
+    }
+    if (!empty($from_case->resolution)) {
+        $edValue .= '<p>Resolution: ' . $from_case->resolution . '</p>';
+    }
+    //if bugs are associated to cases then extract the work_log and notes etc...
+    //also extract notes associated to the cases
+} else if (!empty($from_email)) {
+    //set the kb fields from case i.e. kb name
+    if (!empty($from_email->description)) {
+        $edValue = $from_email->description . '<br>';
+    }
+    if (!empty($from_email->description_html)) {
+        $edValue = $from_email->description_html . '<br>';
+    }
+    //if bugs are associated to cases then extract the work_log and notes etc...
+    //also extract notes associated to the cases
 }
 $xtpl->assign("HTMLAREA",$edValue);
 $xtpl->parse("main.htmlarea");

@@ -170,17 +170,30 @@
     },
 
     /**
-     * handles the back to contact list functionality
+     * Back to contacts list functionality
      */
     backToContactsList: function() {
-        if (this.contactsList) {
-            this.renderContactsList(this.contactsList);
+        if (this.disposed) {
+            return;
         }
+        this.template = app.template.get(this.name);
+        this.render();
+        this.$('#dnb-contact-list-loading').show();
+        this.$('#dnb-contact-list').hide();
+        if (this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
+            this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().hide();
+        }
+        var dupeCheckParams = {
+            'type': 'contacts',
+            'apiResponse': this.contactsList,
+            'module': 'contacts'
+        };
+        this.baseDuplicateCheck(dupeCheckParams, this.renderContactsList);
     },
 
     /**
-     * Render the list of contacts
-     * @param {Array} dnbApiResponse Dnb contacts list
+     * Renders the list of D&B Contacts
+     * @param {Object} dnbApiResponse
      */
     renderContactsList: function(dnbApiResponse) {
         if (this.disposed) {
@@ -188,8 +201,13 @@
         }
         this.template = app.template.get(this.name);
         var dnbContactsList = {};
-        if (dnbApiResponse.contacts) {
-            dnbContactsList.product = this.formatContactList(dnbApiResponse.contacts, this.contactsListDD);
+        if (dnbApiResponse.product) {
+            var contacts = this.getJsonNode(dnbApiResponse.product, this.contactConst.contactsPath);
+            if (contacts) {
+                dnbContactsList.product = this.formatContactList(contacts, this.contactsListDD);
+            } else {
+                dnbContactsList.errmsg = app.lang.get('LBL_DNB_NO_DATA');
+            }
         } else if (dnbApiResponse.errmsg) {
             dnbContactsList.errmsg = dnbApiResponse.errmsg;
         }
@@ -238,24 +256,24 @@
             var cacheContent = app.cache.get(cacheKey);
             if (cacheContent) {
                 self.contactsList = cacheContent;
-                self.renderContactsList(cacheContent);
+                var dupeCheckParams = {
+                    'type': 'contacts',
+                    'apiResponse': cacheContent,
+                    'module': 'contacts'
+                };
+                this.baseDuplicateCheck(dupeCheckParams, this.renderContactsList);
             } else {
                 var dnbFindContactsURL = app.api.buildURL('connector/dnb/findContacts/' + duns_num, '', {},{});
-                var resultData = {'contacts': null, 'errmsg': null};
+                var resultData = {'product': null, 'errmsg': null};
                 app.api.call('READ', dnbFindContactsURL, {},{
                     success: function(data) {
                         var responseCode = self.getJsonNode(data, self.contactConst.responseCode),
                             responseMsg = self.getJsonNode(data, self.contactConst.responseMsg);
                         if (responseCode && responseCode === self.responseCodes.success) {
-                            var contactsArray = self.getJsonNode(data, self.contactConst.contactsPath);
-                            if (contactsArray) {
-                                resultData.contacts = contactsArray;
+                                resultData.product = data;
                                 //for back to list functionality
-                                self.contactsList = resultData;
-                                app.cache.set(cacheKey, resultData);
-                            } else {
-                                resultData.errmsg = app.lang.get('LBL_DNB_NO_DATA');
-                            }
+                                self.contactsList = data;
+                                app.cache.set(cacheKey, data);
                         } else {
                             resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
                         }
@@ -509,6 +527,7 @@
             });
             var cacheContent = app.cache.get(cacheKey);
             if (cacheContent) {
+                self.contactsList = data;
                 self.renderContactsList(cacheContent);
             } else {
                 var dnbFindContactsURL = app.api.buildURL('connector/dnb/findcontacts', '', {},{});
@@ -518,15 +537,10 @@
                         var responseCode = self.getJsonNode(data, self.contactConst.responseCode),
                             responseMsg = self.getJsonNode(data, self.contactConst.responseMsg);
                         if (responseCode && responseCode === self.responseCodes.success) {
-                            var contactsArray = self.getJsonNode(data, self.contactConst.contactsPath);
-                            if (contactsArray) {
-                                resultData.contacts = contactsArray;
+                                resultData.product = data;
                                 //for back to list functionality
-                                self.contactsList = resultData;
-                                app.cache.set(cacheKey, resultData);
-                            } else {
-                                resultData.errmsg = app.lang.get('LBL_DNB_NO_DATA');
-                            }
+                                self.contactsList = data;
+                                app.cache.set(cacheKey, data);
                         } else {
                             resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
                         }

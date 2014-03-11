@@ -3022,7 +3022,7 @@ class SugarBean
         }
 
         if(isset($this->module_name) && !empty($this->module_name) && !empty($GLOBALS['current_user']) && $this->isActivityEnabled()) {
-            $query_select .= ', IF(sub.id IS NOT NULL,1,0) AS following';
+            $query_select .= ', case when sub.id IS NOT NULL then 1 else 0 end following';
             $query_from .= " LEFT JOIN subscriptions sub ON sub.deleted = 0 AND sub.parent_type = '{$this->module_name}' AND sub.parent_id = {$this->db->quoted($id)} AND sub.modified_user_id = '{$GLOBALS['current_user']->id}'";
         }
         //END SUGARCRM flav=pro ONLY
@@ -3215,6 +3215,10 @@ class SugarBean
                 continue;
             }
             $queryFields[$field] = $field;
+            // Oracle doesn't allow DISTINCT on CLOB fields, in that case if we select CLOB field then DISTINCT should be disabled
+            if (!empty($def['type']) && $def['type'] == 'text') {
+                $query->distinct(false);
+            }
         }
 
         foreach ($this->field_defs as $field => $fieldDef) {

@@ -27,6 +27,7 @@ class RS193Test extends Sugar_PHPUnit_Framework_TestCase
                         '$tracker' => '-7 DAY'
                     ),
                 ),
+                'fields' => 'id,name',
                 'max_num' => 3,
                 'module' => 'Accounts',
             ));

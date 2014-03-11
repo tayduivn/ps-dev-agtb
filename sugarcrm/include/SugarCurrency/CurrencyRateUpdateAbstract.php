@@ -297,7 +297,7 @@ abstract class CurrencyRateUpdateAbstract
     protected function doUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId)
     {
         // setup SQL statement
-        $query = sprintf("UPDATE %s SET %s = base_rate * %s where currency_id = '%s'",
+        $query = sprintf("UPDATE %s SET %s = %s / base_rate where currency_id = '%s'",
             $tableName,
             $usDollarColumn,
             $amountColumn,

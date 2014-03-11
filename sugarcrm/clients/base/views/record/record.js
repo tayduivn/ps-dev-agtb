@@ -34,8 +34,8 @@
         'click a[name=cancel_button]': 'cancelClicked',
         'click [data-action=scroll]': 'paginateRecord',
         'click .record-panel-header': 'togglePanel',
-        'click #recordTab > .tab > a': 'setActiveTab',
-        'click .tab.dropdown-menu a': 'triggerNavTab'
+        'click #recordTab > .tab > a:not(.dropdown-toggle)': 'setActiveTab',
+        'click .tab .dropdown-menu a': 'triggerNavTab'
     },
 
     /**
@@ -273,6 +273,21 @@
      * handles setting active tab
      */
     handleActiveTab: function() {
+        var activeTabHref = this.getActiveTab(),
+            activeTab = this.$('#recordTab > .tab > a[href="'+activeTabHref+'"]');
+
+        if (activeTabHref && activeTab) {
+            activeTab.tab('show');
+        } else if (this.meta.useTabsAndPanels && this.checkFirstPanel()) {
+            // If tabs and no last state set, show first tab on render
+            this.$('#recordTab a:first').tab('show');
+        }
+    },
+    /**
+     * Gets the active tab in the user last state
+     * @return {String} The active tab id in the user's last state.
+     */
+    getActiveTab: function() {
         var activeTabHref = app.user.lastState.get(app.user.lastState.key('activeTab', this));
 
         // Set to first tab by default
@@ -286,14 +301,7 @@
         else {
             activeTabHref += this.cid;
         }
-
-        var activeTab = this.$('#recordTab > .tab > a[href="'+activeTabHref+'"]');
-        if (activeTabHref && activeTab) {
-            activeTab.tab('show');
-        } else if (this.meta.useTabsAndPanels && this.checkFirstPanel()) {
-            // If tabs and no last state set, show first tab on render
-            this.$('#recordTab a:first').tab('show');
-        }
+        return activeTabHref;
     },
     /**
      * sets active tab in user last state
@@ -1173,7 +1181,7 @@
             $dropdownList = this.$('#recordTab .dropdown'),
             $dropdownTabs = this.$('#recordTab .dropdown-menu li'),
             navWidth = this.$('#recordTab').width(),
-            activeTabHref = app.user.lastState.get(app.user.lastState.key('activeTab', this)),
+            activeTabHref = this.getActiveTab(),
             $activeTab = this.$('#recordTab > .tab > a[href="'+activeTabHref+'"]').parent(),
             // Calculate available width for items in navbar
             // Includes the activetab to ensure it is displayed
