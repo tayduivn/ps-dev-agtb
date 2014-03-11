@@ -102,7 +102,8 @@ function getControl(
         // hack to disable one of the js calls in this control
         if ( isset($vardef['function'])
                 && ( $vardef['function'] == 'getCurrencyDropDown'
-                    || $vardef['function']['name'] == 'getCurrencyDropDown' ) )
+                    || $vardef['function']['name'] == 'getCurrencyDropDown'
+                    || $vardef['function'] == 'getCurrencies') )
         $contents .= "{literal}<script>function CurrencyConvertAll() { return; }</script>{/literal}";
 
         // Save it to the cache file
@@ -161,16 +162,23 @@ function getControl(
     // fill in function return values
     if ( !in_array($fieldname,array('email1','email2')) )
     {
-        if (!empty($fieldlist[$fieldname]['function']['returns']) && $fieldlist[$fieldname]['function']['returns'] == 'html')
+        if ((!empty($fieldlist[$fieldname]['function']['returns']) && $fieldlist[$fieldname]['function']['returns'] == 'html')
+                || (isset($fieldlist[$fieldname]['function']) && $fieldlist[$fieldname]['function'] == 'getCurrencies'))
         {
 
-            $function = $fieldlist[$fieldname]['function']['name'];
+            $doRegex = false;
+            if (isset($fieldlist[$fieldname]['function']) && $fieldlist[$fieldname]['function'] == 'getCurrencies') {
+                $doRegex = true;
+                $function = 'getCurrencyDropDown';
+            } else {
+                $function = $fieldlist[$fieldname]['function']['name'];
+            }
             // include various functions required in the various vardefs
             if ( isset($fieldlist[$fieldname]['function']['include']) && is_file($fieldlist[$fieldname]['function']['include']))
                 require_once($fieldlist[$fieldname]['function']['include']);
             $value = $function($focus, $fieldname, $value, 'EditView');
             // Bug 22730 - add a hack for the currency type dropdown, since it's built by a function.
-            if ( preg_match('/getCurrency.*DropDown/s',$function)  )
+            if ( preg_match('/getCurrency.*DropDown/s',$function) || $doRegex)
                 $value = str_ireplace('</select>','<option value="">'.$app_strings['LBL_NONE'].'</option></select>',$value);
         }
         elseif($fieldname == 'assigned_user_name' && empty($value))

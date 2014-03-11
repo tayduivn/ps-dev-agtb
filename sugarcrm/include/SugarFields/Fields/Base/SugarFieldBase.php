@@ -268,6 +268,11 @@ class SugarFieldBase {
             $includeFile = '';
             $onListView = false;
             $returnsHtml = false;
+            if (isset($vardef['function']) && $vardef['function'] == 'getCurrencies') {
+                // there is more hacks in this code to allow this to happen since we moved the values to the rest
+                // way for getting the values
+                $returnsHtml = true;
+            }
         } else {
             $funcName = $vardef['function']['name'];
             $includeFile = '';
