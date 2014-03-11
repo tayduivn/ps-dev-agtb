@@ -29,7 +29,7 @@ $viewdefs['base']['view']['history-summary'] = array(
                 array(
                     'name' => 'picture',
                     'type' => 'avatar',
-                    'align' => 'tcenter',
+                    'align' => 'center',
                     'label' => 'LBL_MODULE_TYPE',
                     'dismiss_label' => true,
                     'readonly' => true,
