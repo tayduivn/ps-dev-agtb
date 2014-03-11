@@ -319,7 +319,9 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'required'=>false,
     'reportable'=>false,
     'default'=>'-99',
-    'comment' => 'Currency used'
+    'comment' => 'Currency used',
+    'function' => 'getCurrencies',
+    'function_bean' => 'Currencies',
   ),
         'base_rate' => array(
             'name' => 'base_rate',
