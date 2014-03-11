@@ -668,11 +668,11 @@
             this.saveFilterEditState(filterDef, filterTemplate);
             this.lastFilterDef = filterDef;
             this.lastFilterTemplate = filterTemplate;
+            this.layout.trigger('filter:toggle:savestate', true);
         }
         if (!defHasChanged) {
             return;
         }
-        this.layout.trigger('filter:toggle:savestate', true);
         // Needed in order to prevent filtering a global context collection (see filter.js:applyFilter()).
         if (this.context.get('applyFilter') !== false) {
             this.layout.trigger('filter:apply', null, filterDef);
