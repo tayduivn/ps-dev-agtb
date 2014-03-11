@@ -19,7 +19,6 @@
     plugins: [],
 
     initialize: function(options) {
-        debugger;
         this._super("initialize", [options]);
         if (!this.model.has('useful')) {
             this.model.add('useful');
@@ -43,10 +42,5 @@
         this.model.save();
         this.voted = true;
         this._render();
-    },
-
-    _render: function() {
-        debugger;
-        this._super('_render');
     }
 })
