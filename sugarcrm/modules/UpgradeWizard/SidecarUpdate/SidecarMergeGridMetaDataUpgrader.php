@@ -569,12 +569,55 @@ END;
                 $defaultDefs = $this->handleConversion($data, 'panels', true);
                 array_unshift($defaultDefs['panels'], $headerPanel);
             }
-            
+
+            // Make a header fields array so that fields that may be in legacy 
+            // defs can be plucked out
+            $headerFields = array();
+            foreach ($defaultDefs['panels'][0]['fields'] as $hField) {
+                if (isset($hField['name'])) {
+                    // First set from the name of the field we are on
+                    $headerFields[$hField['name']] = $hField['name'];
+
+                    // Now if there are fields for this field (fieldset), grab those too
+                    if (isset($hField['fields']) && is_array($hField['fields'])) {
+                        foreach ($hField['fields'] as $hFieldName) {
+                            // Some modules have header field fieldset defs that are arrays
+                            if (is_array($hFieldName) && isset($hFieldName['name'])) {
+                                $headerFields[$hFieldName['name']] = $hFieldName['name'];
+                            } else {
+                                $headerFields[$hFieldName] = $hFieldName;
+                            }
+                        }
+                    }
+                }
+            }
+
             // Step 2, convert panels if there are any to handle
             if(!empty($data['panels'])) {
-                foreach($legacyParser->getFieldsFromPanels($data['panels']) as $fieldname => $fielddef) {
+                $legacyPanelFields = $legacyParser->getFieldsFromPanels($data['panels']);
+                foreach($legacyPanelFields as $fieldname => $fielddef) {
                     // Handle removal of fields from customFields (legacy defs) as needed
-                    if (empty($fieldname) || isset($customFields[$fieldname]) || isset($this->removeFields[$fieldname])) {
+                    $skip = false;
+                    if (empty($fieldname)) {
+                        // Definitely skip keeping empty field names
+                        $skip = true;
+                    } else {
+                        // Is this field alread in the customFields collection?
+                        $cf = isset($customFields[$fieldname]);
+
+                        // Or perhaps it is explicitly in the removeFields array?
+                        $rf = isset($this->removeFields[$fieldname]);
+
+                        // Or maybe it is in the headerFields array?
+                        $hf = isset($headerFields[$fieldname]);
+
+                        // If this field is any of the arrays above, skip it
+                        if ($cf || $rf || $hf) {
+                            $skip = true;
+                        }
+                    }
+
+                    if ($skip) {
                         continue;
                     }
                     $customFields[$fieldname] = array('data' => $fielddef, 'source' => $lViewtype);
@@ -587,6 +630,31 @@ END;
                 unset($customFields['email1']);
             }
 
+            // Handle unsetting of header fields from non header panels and handle
+            // email1 <=> email conversion
+            foreach ($defaultDefs['panels'] as $panelIndex => $panel) {
+                foreach ($panel['fields'] as $fieldIndex => $fieldName) {
+                    // Handle fields that are not meant to be here, like header
+                    // fields, but only if we are not in the header panel
+                    if ($panelIndex > 0) {
+                        $check1 = is_array($fieldName) && isset($fieldName['name']) && isset($headerFields[$fieldName['name']]);
+                        $check2 = is_string($fieldName) && isset($headerFields[$fieldName]);
+                        if ($check1 || $check2) {
+                            unset($defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex]);
+                        }
+                    }
+
+                    // Hack email field into submission
+                    if ($fieldName == 'email1') {
+                        $defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex] = 'email';
+                    }
+                }
+
+                // Reset the array indexes
+                $defaultDefs['panels'][$panelIndex]['fields'] = array_values($defaultDefs['panels'][$panelIndex]['fields']);
+            }
+            // End email1 => email hack
+
             $origFields = array();
             // replace viewdefs with defaults, since parser's viewdefs can be already customized by other parts
             // of the upgrade
@@ -595,7 +663,8 @@ END;
             $origData = $parser->getFieldsFromPanels($defaultDefs['panels'], $parser->_fielddefs);
             // Go through existing fields and remove those not in the new data
             foreach($origData as $fname => $fielddef) {
-                if (!$this->isValidField($fname)) {
+                // Make sure that this field passes validation both here and in the parser
+                if (!$this->isValidField($fname) || !$parser->isValidField($fname, $fielddef)) {
                     continue;
                 }
                 if(is_array($fielddef) && !empty($fielddef['fields'])) {
@@ -633,12 +702,14 @@ END;
                             $origFields[$setfname] = $fielddef;
                         }
                     } else {
-                        // else we delete the set
-                        $parser->removeField($fname);
+                        // else we delete the set but only if it isn't a header field
+                        if (!isset($headerFields[$fname])) {
+                            $parser->removeField($fname);
+                        }
                     }
                 } else {
                     // if it's a regular field, check against existing field in new data
-                    if(!isset($customFields[$fname])) {
+                    if(!isset($customFields[$fname]) && !isset($headerFields[$fname])) {
                         // not there - remove it
                         $parser->removeField($fname);
                     } else {
@@ -652,13 +723,16 @@ END;
             // $customFields is legacy defs, $origFields are Sugar7 OOTB defs
             foreach($customFields as $fieldname => $data) {
                 if(isset($origFields[$fieldname])) {
-                    // TODO: merge the data such as label, readonly, etc.
-                    continue;
+                    // If the field is special, massage it into latest format being
+                    // sure to maintain its current position in the layout
+                    if ($this->isSpecialField($fieldname)) {
+                        $fielddata = $this->convertFieldData($fieldname, $data['data']);
+                        $this->updateField($parser, $fieldname, $fielddata);
+                    }
                 } else {
                     $fielddata = $this->convertFieldData($fieldname, $data['data']);
                     // FIXME: hack since addField cuts field defs
-                    $special = !empty($this->knownFields[$fieldname]) || !empty($this->addressFields[$fieldname]);
-                    if($special && empty($parser->_originalViewDef[$fielddata['name']])) {
+                    if($this->isSpecialField($fieldname) && empty($parser->_originalViewDef[$fielddata['name']])) {
                         $parser->_originalViewDef[$fielddata['name']] = $fielddata;
                     }
                     $parser->addField($fielddata, $this->getPanelName($parser->_viewdefs['panels'], $data['source']));
@@ -667,18 +741,18 @@ END;
 
             $newdefs = $parser->_viewdefs;
             $newdefs['panels'] = $parser->convertToCanonicalForm($parser->_viewdefs['panels'] ,$parser->_fielddefs);
-            
+
             // Add back in tabDefs if there are any
             if (!empty($tabdefs)) {
                 foreach($newdefs['panels'] as $key => $panel) {
                     if (!empty($panel['label']) && isset($tabdefs[$panel['label']])) {
-                        $newdefs['panel'][$key]['newTab'] = $tabdefs[$panel['label']]['newTab'];
-                        $newdefs['panel'][$key]['panelDefault'] = $tabdefs[$panel['label']]['panelDefault'];
+                        $newdefs['panels'][$key]['newTab'] = $tabdefs[$panel['label']]['newTab'];
+                        $newdefs['panels'][$key]['panelDefault'] = $tabdefs[$panel['label']]['panelDefault'];
                     }
                 }
             }
         }
-        
+
         $this->sidecarViewdefs[$this->module][$this->client]['view'][MetaDataFiles::getName($this->viewtype)] = $newdefs;
     }
 
@@ -760,5 +834,49 @@ END;
         
         // Now delegate to the parent
         return parent::isValidField($field);
+    }
+
+    /**
+     * Determines if a field is special by name
+     * 
+     * @param string $fieldname The name of the field to check
+     * @return boolean
+     */
+    protected function isSpecialField($fieldname)
+    {
+        return !empty($this->knownFields[$fieldname]) || !empty($this->addressFields[$fieldname]);
+    }
+
+    /**
+     * Updates relevant information for a field on the parser prior to saving new
+     * defs
+     * 
+     * @param AbstractMetaDataParser $parser A metadata parser object, probably a Grid Parser
+     * @param string $fieldname The name of the field to update
+     * @param array $fielddata The data that should be used to do the update on the field
+     * @return boolean
+     */
+    protected function updateField($parser, $fieldname, $fielddata)
+    {
+        // Find $fieldname in the viewdefs and change it to fielddata[name]
+        foreach ($parser->_viewdefs['panels'] as $panelName => $panel) {
+            foreach ($panel as $rowIndex => $row) {
+                foreach ($row as $index => $field) {
+                    if ($field == $fieldname) {
+                        // Change the field name to what it should be
+                        $parser->_viewdefs['panels'][$panelName][$rowIndex][$index] = $fielddata['name'];
+
+                        // Update the original view def with the newest def
+                        $parser->_originalViewDef[$fielddata['name']] = $fielddata;
+
+                        // Remove the old def since it is no longer needed
+                        unset($parser->_originalViewDef[$fieldname]);
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }
