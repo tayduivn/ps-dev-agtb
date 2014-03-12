@@ -32,7 +32,7 @@ class SugarPlugins
     /**
      * @const URL of the Sugar plugin server
      */
-    const SUGAR_PLUGIN_SERVER = 'http://www.sugarcrm.com/crm/plugin_service.php?wsdl';
+    const SUGAR_PLUGIN_SERVER = 'https://www.sugarcrm.com/crm/plugin_service.php?wsdl';
 
     /**
      * Constructor
@@ -91,6 +91,6 @@ class SugarPlugins
 	{
 		$token = $this->_getPluginDownloadToken($plugin_id);
 		ob_clean();
-		SugarApplication::redirect('http://www.sugarcrm.com/crm/plugin_service.php?token=' . $token );
+		SugarApplication::redirect('https://www.sugarcrm.com/crm/plugin_service.php?token=' . $token );
 	}
 }
