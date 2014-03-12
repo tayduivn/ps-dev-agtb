@@ -133,5 +133,21 @@
             url: window.location.href,
             name: this.model.attributes.name || this.model.attributes.full_name
         });
+    },
+
+    /**
+     * Explicit share action to launch the sugar email client with share info
+     * (used by bwc)
+     */
+    shareWithSugarEmailClient: function() {
+        this.launchSugarEmailClient(this.emailOptions);
+    },
+
+    /**
+     * Retrieve a mailto URL to launch an external mail client with share info
+     * (used by bwc)
+     */
+    getShareMailtoUrl: function() {
+        return this._buildMailToURL(this.emailOptions);
     }
 })

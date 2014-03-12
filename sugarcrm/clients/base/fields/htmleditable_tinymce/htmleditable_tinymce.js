@@ -176,7 +176,7 @@
                 }
                 self._htmleditor = editor;
                 self._htmleditor.onInit.add(function(ed) {
-                    self.setEditorContent(self.value);
+                    self.setEditorContent(self.getFormattedValue());
                     $(ed.getWin()).blur(function(e){ // Editor window lost focus, update model immediately
                         self._saveEditor();
                     });
