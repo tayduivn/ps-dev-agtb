@@ -49,7 +49,7 @@ class Bug43202Test extends Sugar_PHPUnit_Framework_TestCase
     public function testExportQuery()
     {
         $focus = BeanFactory::getBean('Accounts');
-        $query = $focus->create_export_query('', 'campaign_name IS NOT NULL');
+        $query = $focus->create_export_query('', 'teams.name IS NOT NULL');
         $this->assertTrue($focus->db->validateQuery($query));
     }
 

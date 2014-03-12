@@ -131,7 +131,6 @@
             return;
         }
         if (this.model.id) { //listeners for each record selection
-
             massCollection.on('add', function(model) {
                 if (this.model && model.id === this.model.id) {
                     this.$(this.fieldTag).attr('checked', true);
@@ -158,6 +157,12 @@
                 this.collection.on('reset', function() {
                     if (massCollection.entire) {
                         massCollection.reset();
+                    }
+                }, this);
+                this.collection.on('add', function() {
+                    if (massCollection.length < this.collection.length) {
+                        this.$(this.fieldTag).attr('checked', false);
+                        this.view.layout.trigger('list:alert:hide');
                     }
                 }, this);
             }
@@ -244,7 +249,7 @@
         if (!massCollection) {
             return;
         }
-        massCollection.add(collection, {silent: true});
+        massCollection.reset(collection);
         massCollection.entire = false;
         massCollection.fetched = true;
         massCollection.trigger('massupdate:estimate');
@@ -286,13 +291,18 @@
          */
         var showAlert = function() {
             var alert;
-            if (massCollection && self.collection.next_offset > 0) {
-                //only if the collection contains more records
-                if (massCollection.entire) {
-                    alert = self._buildAlertForReset(massCollection);
-                } else if (massCollection.length === self.collection.length) {
+            if (self.collection.length === 0) {
+                return;
+            }
+
+            if (massCollection.length === self.collection.length) {
+                if (self.collection.next_offset > 0) {
                     alert = self._buildAlertForEntire(massCollection);
+                } else {
+                    alert = self._buildAlertForReset(massCollection);
                 }
+            } else if (massCollection.entire) {
+                alert = self._buildAlertForReset(massCollection);
             }
             if (alert) {
                 self.view.layout.trigger('list:alert:show', alert);

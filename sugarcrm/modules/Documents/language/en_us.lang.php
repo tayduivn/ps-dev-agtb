@@ -32,8 +32,8 @@ $mod_strings = array (
     'LBL_MODULE_NAME' => 'Documents',
     'LBL_MODULE_NAME_SINGULAR' => 'Document',
     'LBL_MODULE_TITLE' => 'Documents: Home',
-    'LNK_NEW_DOCUMENT' => 'Create document',
-    'LNK_DOCUMENT_LIST'=> 'View documents',
+    'LNK_NEW_DOCUMENT' => 'Create Document',
+    'LNK_DOCUMENT_LIST'=> 'View Documents',
     'LBL_DOC_REV_HEADER' => 'Document Revisions',
     'LBL_SEARCH_FORM_TITLE'=> 'Document Search',
     //vardef labels

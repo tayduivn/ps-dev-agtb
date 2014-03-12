@@ -95,10 +95,10 @@ $mod_strings = array (
 	'LBL_ACTIVITIES_REPORTS' => 'Activities Report',
     'LBL_PARENT_TYPE' => 'Parent Type',
     'LBL_PARENT_ID' => 'Parent ID',
-	'LNK_MEETING_LIST'=>'View meetings',
+	'LNK_MEETING_LIST'=>'View Meetings',
 	'LNK_NEW_APPOINTMENT' => 'Create Appointment',
-	'LNK_NEW_MEETING'=>'Schedule meeting',
-	'LNK_IMPORT_MEETINGS' => 'Import meetings',
+	'LNK_NEW_MEETING'=>'Schedule Meeting',
+	'LNK_IMPORT_MEETINGS' => 'Import Meetings',
 
 	'NTC_REMOVE_INVITEE' => 'Are you sure you want to remove this invitee from the Meeting?',
     'LBL_CREATED_USER' => 'Created User',
