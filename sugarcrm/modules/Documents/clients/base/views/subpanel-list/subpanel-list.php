@@ -44,6 +44,7 @@ $viewdefs['Documents']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_DOC_TYPE',
           'enabled' => true,
           'default' => true,
+          'readonly' => true,
         ),
         array(
           'name' => 'status_id',
