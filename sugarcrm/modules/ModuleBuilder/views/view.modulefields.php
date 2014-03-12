@@ -129,6 +129,8 @@ class ViewModulefields extends SugarView
 
             $package->getModule($module_name);
             $this->mbModule = $package->modules[$module_name];
+            // We need the type to determine true custom fields
+            $moduleType = $this->mbModule->getModuleType();
             $this->loadPackageHelp($module_name);
             $this->mbModule->getVardefs(true);
             $this->mbModule->mbvardefs->vardefs['fields'] = array_reverse($this->mbModule->mbvardefs->vardefs['fields'], true);
@@ -174,7 +176,9 @@ class ViewModulefields extends SugarView
                 	   unset($this->mbModule->mbvardefs->vardefs['fields'][$k][$field]);
                     } else {
                        $this->mbModule->mbvardefs->vardefs['fields'][$k][$field]['label'] = isset($def['vname']) && isset($this->mbModule->mblanguage->strings[$current_language.'.lang.php'][$def['vname']]) ? $this->mbModule->mblanguage->strings[$current_language.'.lang.php'][$def['vname']] : $field;
-                       $customFieldsData[$field] = ($k == $this->mbModule->name) ? true : false;
+                       // It's only custom if the module name is the same as the key AND not the same as the module type
+                       $custom = $k == $this->mbModule->name && $this->mbModule->name != $moduleType;
+                       $customFieldsData[$field] = $custom ? true : false;
                        $loadedFields[$field] = true;
                         
                        $type = $this->mbModule->mbvardefs->vardefs['fields'][$k][$field]['type'];
