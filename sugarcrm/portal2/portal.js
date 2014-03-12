@@ -275,4 +275,10 @@
         __superBeanSave__.call(this, attributes, options);
     };
 
+    /**
+     * When application finishes syncing.
+     */
+    app.events.on('app:sync:complete', function() {
+        app.date.lang(app.user.getPreference('language'));
+    });
 })(SUGAR.App);
