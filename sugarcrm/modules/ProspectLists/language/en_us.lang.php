@@ -67,19 +67,19 @@ $mod_strings = array (
 
     // Help Text
     // List View Help Text
-    'LBL_HELP_RECORDS' => 'A {{module_name}} consists of a collection of individuals or organizations you want to include or exclude in a mass marketing {{campaign_module}}. {{plural_module_name}} can contain any number and any combination of Targets, {{contacts_module}}, {{leads_module}}, Users, and {{accounts_module}}. Targets can be grouped into a {{module_name}} according to a set of predetermined criteria such as age group, geographic location, or spending habits. {{plural_module_name}} are used in mass email marketing {{campaigns_module}} that can be configured in the {{campaigns_module}} module.',
+    'LBL_HELP_RECORDS' => 'A {{module_name}} consists of a collection of individuals or organizations you want to include or exclude in a mass marketing {{campaigns_singular_module}}. {{plural_module_name}} can contain any number and any combination of Targets, {{contacts_module}}, {{leads_module}}, Users, and {{accounts_module}}. Targets can be grouped into a {{module_name}} according to a set of predetermined criteria such as age group, geographic location, or spending habits. {{plural_module_name}} are used in mass email marketing {{campaigns_module}} that can be configured in the {{campaigns_module}} module.',
 
     // Record View Help Text
-    'LBL_HELP_RECORD' => 'A {{module_name}} consists of a collection of individuals or organizations you want to include or exclude in a mass marketing {{campaign_module}}.
+    'LBL_HELP_RECORD' => 'A {{module_name}} consists of a collection of individuals or organizations you want to include or exclude in a mass marketing {{campaigns_singular_module}}.
 
 - Edit this record\'s fields by clicking an individual field or the Edit button.
-- View or modify links to other records in the subpanels, including {{campaign_module}} recipeints, by toggling the bottom left pane to "Data View".
-- Make and view user comments and record change history in the {{activitystream_module}} by toggling the bottom left pane to "Activity Stream".
+- View or modify links to other records in the subpanels, including {{campaigns_singular_module}} recipeints, by toggling the bottom left pane to "Data View".
+- Make and view user comments and record change history in the {{activitystream_singular_module}} by toggling the bottom left pane to "Activity Stream".
 - Follow or favorite this record using the icons to the right of the record name.
 - Additional actions are available in the dropdown Actions menu to the right of the Edit button.',
 
     // Create View Help Text
-    'LBL_HELP_CREATE' => 'A {{module_name}} consists of a collection of individuals or organizations you want to include or exclude in a mass marketing {{campaign_module}}.
+    'LBL_HELP_CREATE' => 'A {{module_name}} consists of a collection of individuals or organizations you want to include or exclude in a mass marketing {{campaigns_singular_module}}.
 
 To create a {{module_name}}:
 1. Provide values for the fields as desired.
@@ -88,5 +88,5 @@ To create a {{module_name}}:
 2. Click "Save" to finalize the new record and return to the previous page.
  - Choose "Save and view" to open the new {{module_name}} in record view.
  - Choose "Save and create new" to immediately create another new {{module_name}}.
-3. After saving, use the subpanels available on the target\'s record view to add {{campaign_module}} recipients.',
+3. After saving, use the subpanels available on the target\'s record view to add {{campaigns_singular_module}} recipients.',
 );
