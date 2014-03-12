@@ -259,7 +259,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            "o.next_step, " .
                            "p.commit_stage, " .
                            "o.sales_stage, " .
-                           "p.probability, " .
+                           "o.probability, " .
                            "o.lead_source, " .
                            "o.campaign_id, " .
                            "qo.opportunity_id, " .
