@@ -112,6 +112,14 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse(isset($this->_themeObject->_cssCache['style.css']));
     }
 
+    public function testClearImageCache()
+    {
+        // populate image cache first
+        $this->_themeObject->getAllImages();
+        $this->_themeObject->clearImageCache();
+        $this->assertAttributeEmpty('_imageCache', $this->_themeObject);
+    }
+
     public function testCreateInstance()
     {
         foreach ( $this->_themeDef as $key => $value )
