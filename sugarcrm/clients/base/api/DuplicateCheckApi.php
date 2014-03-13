@@ -64,7 +64,8 @@ class DuplicateCheckApi extends SugarApi
         }
 
         //populate bean
-        $errors = $this->populateFromApi($api, $bean, $args);
+        $options = array('acl' => 'read');
+        $errors = $this->populateFromApi($api, $bean, $args, $options);
         if ($errors !== true) {
             $displayErrors = print_r($errors, true);
             throw new SugarApiExceptionInvalidParameter("Unable to run duplicate check. There were validation errors on the submitted data: $displayErrors");
