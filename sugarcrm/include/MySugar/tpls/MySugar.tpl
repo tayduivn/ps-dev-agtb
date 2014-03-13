@@ -179,8 +179,10 @@ app.user.lastState.set('Home:last-visit:Home.', '#bwc/index.php?module=Home&acti
 			</span>
 			<span id="pageNum_{$pageNum}_link_span" class="tabText">
 			<span id="pageNum_{$pageNum}_title_text" {if !$lock_homepage}ondblclick="SUGAR.mySugar.renamePage('{$pageNum}');"{/if}>{$pageData.pageTitle}</span></span>
+            {if !$lock_homepage}
 			{capture assign=attr}align="absmiddle" border="0" class="deletePageImg" id="pageNum_{$pageNum}_delete_page_img" style="display: none;" onclick="return SUGAR.mySugar.deletePage()"  alt="{$app.LBL_DELETE_PAGE}"{/capture}
 			{sugar_getimage name="info-del.png" attr=$attr}
+            {/if}
 		   </a>
 	   </li>
 	   {/foreach}
@@ -189,14 +191,15 @@ app.user.lastState.set('Home:last-visit:Home.', '#bwc/index.php?module=Home&acti
 
 </div>
 <!--//BEGIN SUGARCRM flav=pro ONLY -->
+{if !$lock_homepage}
 	<div id="addPage">
 		{capture assign=attr}id="add_page" onclick="return SUGAR.mySugar.showAddPageDialog();"{/capture}
 		{capture assign=img_attr}align="absmiddle" border="0" alt="{$app.LBL_ADD_PAGE}"{/capture}
 		{sugar_getlink url="javascript:void(0)" title="Add page" attr=$attr img_name="info-add-page.png" img_attr=$img_attr}
 	</div>
 <!--//END SUGARCRM flav=pro ONLY -->
+{/if}
 </td>
-
 <!--//BEGIN SUGARCRM flav=pro ONLY -->
 {if !$lock_homepage}
 <td nowrap id="dashletCtrlsTD">
