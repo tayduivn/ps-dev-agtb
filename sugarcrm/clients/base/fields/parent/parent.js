@@ -89,7 +89,7 @@
 
         setFromCtx = !value && parentCtx &&
             this.view instanceof app.view.views.BaseCreateView &&
-            _.contains(app.lang.getAppListKeys(this.def.parent_type), parentCtx.get('module')) &&
+            _.contains(_.keys(app.lang.getAppListStrings(this.def.parent_type)), parentCtx.get('module')) &&
             this.module !== this.def.module;
 
         if (setFromCtx) {
