@@ -176,19 +176,19 @@ $mod_strings = array(
 
     // Help Text
     // List View Help Text
-    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module consists of individual line items of business which are included on an {{opportunity_module}} record and tracked through the sales life cycle. The {{opportunity_module}} record acts as a header for one or more {{module_name}} records. This allows for greater granularity when working {{opportunities_module}} and {{forecast_module}}ing since each line item within an {{opportunity_module}} can have it\'s own sales stage and probability as well as being included or excluded from a user\'s {{forecast_module}}ing {{worksheet_module}} individually. Each {{module_name}} may be related to a product from your organization\'s Product Catalog. Doing so will cause the product\'s values to automatically populate matching fields on the {{module_name}}.',
+    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module consists of individual line items of business which are included on an {{opportunities_singular_module}} record and tracked through the sales life cycle. The {{opportunities_singular_module}} record acts as a header for one or more {{module_name}} records. This allows for greater granularity when working {{opportunities_module}} and {{forecasts_singular_module}}ing since each line item within an {{opportunities_singular_module}} can have it\'s own sales stage and probability as well as being included or excluded from a user\'s {{forecasts_singular_module}}ing {{worksheet_module}} individually. Each {{module_name}} may be related to a product from your organization\'s Product Catalog. Doing so will cause the product\'s values to automatically populate matching fields on the {{module_name}}.',
 
     // Record View Help Text
-    'LBL_HELP_RECORD' => 'The {{plural_module_name}} module consists of individual line items of business which are included on an {{opportunity_module}} record and tracked through the sales life cycle. The {{opportunity_module}} record acts as a header for one or more {{module_name}} records.
+    'LBL_HELP_RECORD' => 'The {{plural_module_name}} module consists of individual line items of business which are included on an {{opportunities_singular_module}} record and tracked through the sales life cycle. The {{opportunities_singular_module}} record acts as a header for one or more {{module_name}} records.
 
 - Edit this record\'s fields by clicking an individual field or the Edit button.
 - View or modify links to other records in the subpanels by toggling the bottom left pane to "Data View".
-- Make and view user comments and record change history in the {{activitystream_module}} by toggling the bottom left pane to "Activity Stream".
+- Make and view user comments and record change history in the {{activitystream_singular_module}} by toggling the bottom left pane to "Activity Stream".
 - Follow or favorite this record using the icons to the right of the record name.
 - Additional actions are available in the dropdown Actions menu to the right of the Edit button.',
 
     // Create View Help Text
-    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module consists of individual line items of business which are included on an {{opportunity_module}} record and tracked through the sales life cycle. The {{opportunity_module}} record acts as a header for one or more {{module_name}} records.
+    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module consists of individual line items of business which are included on an {{opportunities_singular_module}} record and tracked through the sales life cycle. The {{opportunities_singular_module}} record acts as a header for one or more {{module_name}} records.
 
 To create a {{module_name}}:
 1. Provide values for the fields as desired.

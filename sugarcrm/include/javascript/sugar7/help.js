@@ -94,18 +94,18 @@
          * This list is passed into the app.lang.get when app.help.get is called so you can reference other modules
          * in the help text
          *
-         * @returns {Object}
+         * @return {Object}
          * @private
          */
         _getModuleLabelMap: function() {
             if (_.isUndefined(this._moduleLabelMap)) {
                 var singularModules = {},
                     modules = {};
-                _.each(app.lang.getAppListStrings('moduleListSingular'), function(module) {
-                    singularModules[module.replace(/\s/g, "").toLowerCase() + "_module"] = module;
+                _.each(app.lang.getAppListStrings('moduleListSingular'), function(module, key) {
+                    singularModules[key.replace(/\s/g, '').toLowerCase() + '_singular_module'] = module;
                 }, this);
-                _.each(app.lang.getAppListStrings('moduleList'), function(module) {
-                    modules[module.replace(/\s/g, "").toLowerCase() + "_module"] = module;
+                _.each(app.lang.getAppListStrings('moduleList'), function(module, key) {
+                    modules[key.replace(/\s/g, '').toLowerCase() + '_module'] = module;
                 }, this);
 
                 // combine them into one master object and save it on the object

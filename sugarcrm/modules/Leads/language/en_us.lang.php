@@ -281,19 +281,19 @@ $mod_strings = array (
 
     // Help Text
     // List View Help Text
-    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module consists of individual prospects who may be interested in a product or service your organization provides. Once the {{module_name}} is qualified as a sales {{opportunity_module}}, {{plural_module_name}} can be converted into {{contacts_module}}, {{opportunities_module}}, and {{accounts_module}}. There are various ways you can create {{plural_module_name}} in Sugar such as via the {{plural_module_name}} module, duplication, importing {{plural_module_name}}, etc. Once the {{module_name}} record is created, you can view and edit information pertaining to the {{module_name}} via the {{plural_module_name}} record view.',
+    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module consists of individual prospects who may be interested in a product or service your organization provides. Once the {{module_name}} is qualified as a sales {{opportunities_singular_module}}, {{plural_module_name}} can be converted into {{contacts_module}}, {{opportunities_module}}, and {{accounts_module}}. There are various ways you can create {{plural_module_name}} in Sugar such as via the {{plural_module_name}} module, duplication, importing {{plural_module_name}}, etc. Once the {{module_name}} record is created, you can view and edit information pertaining to the {{module_name}} via the {{plural_module_name}} record view.',
 
     // Record View Help Text
     'LBL_HELP_RECORD' => 'The {{plural_module_name}} module consists of individual prospects who may be interested in a product or service your organization provides.
 
 - Edit this record\'s fields by clicking an individual field or the Edit button.
 - View or modify links to other records in the subpanels by toggling the bottom left pane to "Data View".
-- Make and view user comments and record change history in the {{activitystream_module}} by toggling the bottom left pane to "Activity Stream".
+- Make and view user comments and record change history in the {{activitystream_singular_module}} by toggling the bottom left pane to "Activity Stream".
 - Follow or favorite this record using the icons to the right of the record name.
 - Additional actions are available in the dropdown Actions menu to the right of the Edit button.',
 
     // Create View Help Text
-    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module consists of individual prospects who may be interested in a product or service your organization provides. Once the {{module_name}} is qualified as a sales {{opportunity_module}}, it can be converted into a {{contact_module}}, {{account_module}}, {{opportunity_module}}, or other record.
+    'LBL_HELP_CREATE' => 'The {{plural_module_name}} module consists of individual prospects who may be interested in a product or service your organization provides. Once the {{module_name}} is qualified as a sales {{opportunities_singular_module}}, it can be converted into a {{contacts_singular_module}}, {{accounts_singular_module}}, {{opportunities_singular_module}}, or other record.
 
 To create a {{module_name}}:
 1. Provide values for the fields as desired.

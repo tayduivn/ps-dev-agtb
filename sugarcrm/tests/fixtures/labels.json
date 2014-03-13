@@ -24,7 +24,7 @@
             "LBL_HELP_RECORD": "Accounts Help Record Body",
             "LBL_HELP_RECORDS_TITLE": "{{plural_module_name}} Help Records Title",
             "LBL_HELP_RECORDS": "{{module_name}} Help Records Body",
-            "LBL_HELP_CREATE_TITLE": "My {{revenuelineitem_module}}",
+            "LBL_HELP_CREATE_TITLE": "My {{revenuelineitems_singular_module}}",
             "LBL_HELP_CREATE": "My {{revenuelineitems_module}}",
             "_hash": "65155e56846282acf37a51305a6ca9e6"
         }
