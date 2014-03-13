@@ -1,3 +1,16 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
+ */
+
 describe('Base.Fields.Currency', function() {
 
     var app;
@@ -12,42 +25,42 @@ describe('Base.Fields.Currency', function() {
         moduleName = 'Opportunities';
         metadata = {
             fields: {
-                "amount": {
-                    "name": "amount",
-                    "vname": "LBL_AMOUNT",
-                    "type": "currency",
-                    "dbType": "currency",
-                    "comment": "Unconverted amount of the opportunity",
-                    "importable": "required",
-                    "duplicate_merge": "1",
-                    "required": true,
-                    "options": "numeric_range_search_dom",
-                    "enable_range_search": true,
-                    "validation": {
-                        "type": "range",
-                        "min": 0
+                'amount': {
+                    'name': 'amount',
+                    'vname': 'LBL_AMOUNT',
+                    'type': 'currency',
+                    'dbType': 'currency',
+                    'comment': 'Unconverted amount of the opportunity',
+                    'importable': 'required',
+                    'duplicate_merge': '1',
+                    'required': true,
+                    'options': 'numeric_range_search_dom',
+                    'enable_range_search': true,
+                    'validation': {
+                        'type': 'range',
+                        'min': 0
                     }
                 },
-                "currency_id": {
-                    "name": "currency_id",
-                    "type": "id",
-                    "group": "currency_id",
-                    "vname": "LBL_CURRENCY",
-                    "function": "getCurrencies",
-                    "function_bean" : 'Currencies',
-                    "reportable": false,
-                    "comment": "Currency used for display purposes"
+                'currency_id': {
+                    'name': 'currency_id',
+                    'type': 'id',
+                    'group': 'currency_id',
+                    'vname': 'LBL_CURRENCY',
+                    'function': 'getCurrencies',
+                    'function_bean' : 'Currencies',
+                    'reportable': false,
+                    'comment': 'Currency used for display purposes'
                 },
-                "base_rate": {
-                    "name": "base_rate",
-                    "vname": "LBL_CURRENCY_RATE",
-                    "type": "double",
-                    "required": true
+                'base_rate': {
+                    'name': 'base_rate',
+                    'vname': 'LBL_CURRENCY_RATE',
+                    'type': 'double',
+                    'required': true
                 }
             },
             views: [],
             layouts: [],
-            _hash: "d7e699e7cf748d05ac311b0165e7591a"
+            _hash: 'd7e699e7cf748d05ac311b0165e7591a'
         };
 
         app = SugarTest.app;
@@ -163,7 +176,7 @@ describe('Base.Fields.Currency', function() {
             });
 
 
-        it("should render with currencies selector", function() {
+        it('should render with currencies selector', function() {
 
             var currencyRender,
                 sandbox = sinon.sandbox.create();
@@ -202,7 +215,7 @@ describe('Base.Fields.Currency', function() {
             sinon.stub(app.metadata, 'getCurrency', function() {
                 return {
                     'conversion_rate': '0.900'
-                }
+                };
             });
 
             app.user.setPreference('currency_id', 'abc123');
@@ -343,7 +356,7 @@ describe('Base.Fields.Currency', function() {
             unformatAmountLocale.restore();
         });
 
-        it("should show transactional amount on render", function() {
+        it('should show transactional amount on render', function() {
 
             model = app.data.createBean(moduleName, {
                 amount: 123456789.12,
@@ -359,7 +372,7 @@ describe('Base.Fields.Currency', function() {
 
         });
 
-        it("should force currency_id to base on usdollar field", function() {
+        it('should force currency_id to base on usdollar field', function() {
             model = app.data.createBean(moduleName, {
                 amount: 900.00,
                 currency_id: '12a29c87-a685-dbd1-497f-50abfe93aae6',
@@ -373,7 +386,7 @@ describe('Base.Fields.Currency', function() {
         });
 
 
-        it("should not show transactional amount on render when converted to base rate", function() {
+        it('should not show transactional amount on render when converted to base rate', function() {
             //convert the field to push a transactionValue as needed
             model = app.data.createBean(moduleName, {
                 amount: 123456789.12,
@@ -399,7 +412,7 @@ describe('Base.Fields.Currency', function() {
             expect(field.transactionValue).toEqual('');
         });
 
-        it("transactional amount should be empty when using the base currency and currency_field not set", function() {
+        it('transactional amount should be empty when using the base currency and currency_field not set', function() {
             model = app.data.createBean(moduleName, {
                 amount: 123456789.12,
                 currency_id: '-99',
@@ -505,13 +518,13 @@ describe('Base.Fields.Currency', function() {
                 moduleName,
                 model
             );
-            field.action = 'detail'
+            field.action = 'detail';
             sinon.stub(field, 'render', function() {});
             sinon.stub(field, 'setCurrencyValue', function() {});
             sinon.stub(app.metadata, 'getCurrency', function() {
                 return {
                     'conversion_rate': '0.900'
-                }
+                };
             });
         });
 
@@ -523,7 +536,7 @@ describe('Base.Fields.Currency', function() {
         });
 
         it('should call render', function() {
-            field.action = 'detail'
+            field.action = 'detail';
             field._valueChangeHandler({}, '123');
             expect(field.render).toHaveBeenCalled();
             expect(field.setCurrencyValue).not.toHaveBeenCalled();
