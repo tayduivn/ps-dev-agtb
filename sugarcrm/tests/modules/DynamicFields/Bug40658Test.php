@@ -71,8 +71,7 @@ class Bug40658Test extends Sugar_PHPUnit_Framework_TestCase
 	    $joinTableAlias = 'jt1';
 	    $relatedJoinInfo = $dynamicField->getRelateJoin($field_def, $joinTableAlias);
 	    //echo var_export($relatedJoinInfo, true);
-        $this->assertContains('accounts_cstm.def_m1_id_c', $relatedJoinInfo['select']);
-        $this->assertContains('jt1.name m1_related_c', $relatedJoinInfo['select']);
+	    $this->assertEquals(', accounts_cstm.def_m1_id_c, jt1.name m1_related_c ', $relatedJoinInfo['select']);
     }
     
     public function testSubpanelMetaDataParser()
