@@ -14,21 +14,21 @@
 
   $searchdefs['Accounts'] = array(
 					  'templateMeta' => array(
-							'maxColumns' => '3', 
-  							'maxColumnsBasic' => '4', 
-                            'widths' => array('label' => '10', 'field' => '30'),                 
+							'maxColumns' => '3',
+  							'maxColumnsBasic' => '4',
+                            'widths' => array('label' => '10', 'field' => '30'),
                            ),
-					  'layout' => 
+					  'layout' =>
 					  array (
-					    'basic_search' => 
+					    'basic_search' =>
 					    array (
-					      'name' => 
+					      'name' =>
 					      array (
 					        'name' => 'name',
 					        'default' => true,
 					        'width' => '10%',
 					      ),
-					      'current_user_only' => 
+					      'current_user_only' =>
 					      array (
 					        'name' => 'current_user_only',
 					        'label' => 'LBL_CURRENT_USER_FILTER',
@@ -36,24 +36,24 @@
 					        'default' => true,
 					        'width' => '10%',
 					      ),
-					      
+
 		      array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
 					    ),
-					    'advanced_search' => 
+					    'advanced_search' =>
 					    array (
-					      'name' => 
+					      'name' =>
 					      array (
 					        'name' => 'name',
 					        'default' => true,
 					        'width' => '10%',
 					      ),
-					      'website' => 
+					      'website' =>
 					      array (
 					        'name' => 'website',
 					        'default' => true,
 					        'width' => '10%',
 					      ),
-					      'phone' => 
+					      'phone' =>
 					      array (
 					        'name' => 'phone',
 					        'label' => 'LBL_ANY_PHONE',
@@ -61,7 +61,7 @@
 					        'default' => true,
 					        'width' => '10%',
 					      ),
-					      'email' => 
+					      'email' =>
 					      array (
 					        'name' => 'email',
 					        'label' => 'LBL_ANY_EMAIL',
@@ -69,7 +69,7 @@
 					        'default' => true,
 					        'width' => '10%',
 					      ),
-					      'address_street' => 
+					      'address_street' =>
 					      array (
 					        'name' => 'address_street',
 					        'label' => 'LBL_ANY_ADDRESS',
@@ -77,7 +77,7 @@
 					        'default' => true,
 					        'width' => '10%',
 					      ),
-					      'address_city' => 
+					      'address_city' =>
 					      array (
 					        'name' => 'address_city',
 					        'label' => 'LBL_CITY',
@@ -85,7 +85,7 @@
 					        'default' => true,
 					        'width' => '10%',
 					      ),
-					      'address_state' => 
+					      'address_state' =>
 					      array (
 					        'name' => 'address_state',
 					        'label' => 'LBL_STATE',
@@ -93,7 +93,7 @@
 					        'default' => true,
 					        'width' => '10%',
 					      ),
-					      'address_postalcode' => 
+					      'address_postalcode' =>
 					      array (
 					        'name' => 'address_postalcode',
 					        'label' => 'LBL_POSTAL_CODE',
@@ -101,7 +101,7 @@
 					        'default' => true,
 					        'width' => '10%',
 					      ),
-					      'billing_address_country' => 
+					      'billing_address_country' =>
 					      array (
 					        'name' => 'billing_address_country',
 					        'label' => 'LBL_COUNTRY',
@@ -110,27 +110,44 @@
 					        'default' => true,
 					        'width' => '10%',
 					      ),
-					      'account_type' => 
+					      'account_type' =>
 					      array (
 					        'name' => 'account_type',
 					        'default' => true,
 					        'width' => '10%',
 					      ),
-					      'industry' => 
+					      'industry' =>
 					      array (
 					        'name' => 'industry',
 					        'default' => true,
 					        'width' => '10%',
 					      ),
-					      'assigned_user_id' => 
+						     'team_name' =>
+                          array (
+                            'type' => 'relate',
+                            'link' => true,
+                            'studio' =>
+                            array (
+                              'portallistview' => false,
+                              'portaldetailview' => false,
+                              'portaleditview' => false,
+                            ),
+                            'label' => 'LBL_TEAMS',
+                            'id' => 'TEAM_ID',
+                            'width' => '10%',
+                            'default' => true,
+                            'name' => 'team_name',
+                          ),
+
+					      'assigned_user_id' =>
 					      array (
 					        'name' => 'assigned_user_id',
 					        'type' => 'enum',
 					        'label' => 'LBL_ASSIGNED_TO',
-					        'function' => 
+					        'function' =>
 					        array (
 					          'name' => 'get_user_array',
-					          'params' => 
+					          'params' =>
 					          array (
 					            0 => false,
 					          ),
@@ -138,7 +155,7 @@
 					        'default' => true,
 					        'width' => '10%',
 					      ),
-					      
+
 		      array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
 					    ),
 					  ),
