@@ -46,12 +46,12 @@
                     closed_RLI_count = 0,
                     message = null,
                     status = null,
-                    module = this.getMassUpdateModel(this.module);
+                    massUpdateModel = this.getMassUpdateModel(this.module);
 
                 sales_stage_won = app.metadata.getModule("Forecasts", "config").sales_stage_won;
                 sales_stage_lost = app.metadata.getModule("Forecasts", "config").sales_stage_lost;
 
-                closedModels = _.filter(module.models, function(model) {
+                closedModels = _.filter(massUpdateModel.models, function(model) {
                     status = null;
                     //BEGIN SUGARCRM flav=ent ONLY
                     //ENT allows sales_status, so we need to check to see if this module has it and use it
@@ -82,8 +82,11 @@
                 });
 
                 if (closedModels.length > 0) {
-                   module.remove(closedModels);
-                   this.context.set('mass_collection', module);
+                    // get the mass_collection from actionmenu.js
+                    var massCollection = this.context.get('mass_collection');
+                    // remove the closed models from the massCollection
+                    massCollection.remove(closedModels);
+
                     //uncheck items
                     _.each(closedModels, function(item){
                         var id = item.module + "_" + item.id;
@@ -93,7 +96,7 @@
                         level: 'warning',
                         messages: message
                     });
-                } else if (module.models.length > 0) {
+                } else if (massUpdateModel.models.length > 0) {
                     this.warnDelete();
                 }
                 return message;

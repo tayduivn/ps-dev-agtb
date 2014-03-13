@@ -19,7 +19,8 @@ describe("Forecasts.Base.Plugins.DisableMassDelete", function() {
     beforeEach(function() {
         app = SUGAR.App;
         context = app.context.getContext();
-        
+        context.set({mass_collection: new Backbone.Collection() });
+
         SugarTest.loadFile('../modules/Forecasts/clients/base/plugins', 'DisableMassDelete', 'js', function(d) {
             app.events.off('app:init');
             eval(d);
