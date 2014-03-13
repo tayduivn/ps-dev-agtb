@@ -251,7 +251,7 @@
     _getLeftBorderPosition: function() {
         if (!this._leftBorderPosition) {
             var scrollPanel = this.$('.flex-list-view-content');
-            this._leftBorderPosition = scrollPanel.find('thead th:first').outerWidth();
+            this._leftBorderPosition = scrollPanel.find('thead tr:first th:first').outerWidth();
         }
         return this._leftBorderPosition;
     },
@@ -264,7 +264,7 @@
     _getRightBorderPosition: function() {
         if (!this._rightBorderPosition) {
             var scrollPanel = this.$('.flex-list-view-content');
-            this._rightBorderPosition = scrollPanel.find('thead th:last').position().left;
+            this._rightBorderPosition = scrollPanel.find('thead tr:first th:last').position().left;
         }
         return this._rightBorderPosition;
     },
