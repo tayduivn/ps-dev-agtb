@@ -358,7 +358,6 @@ describe("Activity Stream View", function() {
             var results, data, langStub;
 
             preferenceStub.withArgs('decimal_separator').returns('.');
-            preferenceStub.withArgs('decimal_precision').returns(4);
 
             langStub = sinon.collection.stub(SugarTest.app.lang, 'get');
             langStub.withArgs('TPL_ACTIVITY_UPDATE_FIELD', 'Activities').returns('{{before}}:{{after}}');

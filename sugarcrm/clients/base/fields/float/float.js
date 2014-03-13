@@ -43,6 +43,11 @@
         if (this.def.disable_num_format) {
             return value;
         }
-        return app.utils.formatNumberLocale(value);
+        return app.utils.formatNumber(
+            value,
+            this.def.round || 4,
+            this.def.precision || 4,
+            app.user.getPreference('number_grouping_separator') || ',',
+            app.user.getPreference('decimal_separator') || '.');
     }
 })

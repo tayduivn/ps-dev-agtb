@@ -130,8 +130,8 @@ tmpMetadata = {
                 "case_number": {
                     "name": "case_number",
                     "type": "float",
-                    round: 2,
-                    precision: 2,
+                    round: 4,
+                    precision: 4,
                     number_group_seperator: ",",
                     decimal_seperator: "."
                 },
