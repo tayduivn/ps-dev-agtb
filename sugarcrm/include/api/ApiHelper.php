@@ -43,7 +43,8 @@ class ApiHelper
 
             if (SugarAutoLoader::requireWithCustom('modules/'.$module.'/'.$module.'ApiHelper.php')) {
                 $moduleHelperClass = SugarAutoLoader::customClass($module.'ApiHelper');
-            } elseif (SugarAutoLoader::requireWithCustom('data/SugarBeanApiHelper.php')) {
+            } else {
+                SugarAutoLoader::requireWithCustom('data/SugarBeanApiHelper.php');
                 $moduleHelperClass = SugarAutoLoader::customClass('SugarBeanApiHelper');
             }
 
