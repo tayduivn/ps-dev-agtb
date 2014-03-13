@@ -93,6 +93,10 @@ function smarty_function_sugar_run_helper($params, &$smarty)
         require_once($params['include']);
     }
 
+    if ($funcName == 'getCurrencies') {
+        $funcName = 'getCurrencyDropDown';
+    }
+
     $_contents = $funcName($params['bean'],$params['field'],$params['value'],$params['displayType'],$params['tabindex']);
     return $_contents;
 }

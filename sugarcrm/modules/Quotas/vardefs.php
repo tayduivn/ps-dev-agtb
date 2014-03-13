@@ -127,6 +127,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	  'reportable' => false,
 	  'importable' => 'required',
       'default'=>'-99',
+      'function' => 'getCurrencies',
+      'function_bean' => 'Currencies',
 	),
     'base_rate' =>
     array (

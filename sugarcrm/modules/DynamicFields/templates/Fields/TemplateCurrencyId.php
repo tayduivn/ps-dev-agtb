@@ -37,8 +37,9 @@ class TemplateCurrencyId extends TemplateId{
         $def['vname'] = 'LBL_CURRENCY_ID';
         $def['dbType'] = 'id';
 		$def['studio'] = 'visible';
-		$def['function'] = array('name'=>'getCurrencyDropDown', 'returns'=>'html');
-		return $def;	
+		$def['function'] = 'getCurrencies';
+        $def['function_bean'] = 'Currencies';
+		return $def;
 	}
 	
 	function save($df){

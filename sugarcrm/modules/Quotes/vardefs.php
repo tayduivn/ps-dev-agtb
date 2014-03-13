@@ -64,6 +64,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
             'do_report'=>false,
             'reportable'=>false,
             'default'=>'-99',
+            'function' => 'getCurrencies',
+            'function_bean' => 'Currencies',
         ),
         'base_rate' =>
         array (
