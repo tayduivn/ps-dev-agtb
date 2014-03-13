@@ -384,23 +384,10 @@
 }
 
 @media screen and (min-width:~"0\0") { /* IE9/IE10 hack */
-  .nav.megamenu > .dropdown .dropdown-menu { /*UIUX-1592*/
-  top: 42px;
-  left: auto;
-  position: absolute;
-  border: none;
-  .border-radius(none);
-  max-height: none;
-  padding-top: 8px;
-  overflow: hidden;
-  }
-
-  .nav.megamenu > .dropdown .dropdown-menu > ul {
-  border: 1px solid rgba(0,0,0,.2);;
-  .border-radius(2px);
-  max-height: 315px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  .border-radius(0 0 3px 3px);
+  .megamenu > .dropdown .dropdown-menu { /*UIUX-1592*/
+    top: 0;
+    margin-top: 50px;
+    max-height: 70% !important;
   }
 }
+
