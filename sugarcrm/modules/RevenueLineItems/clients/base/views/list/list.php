@@ -24,7 +24,6 @@ $fields = array(
     ),
     array(
         'name' => 'account_name',
-        'sortable' => false,
         'enabled' => true,
         'default' => true,
     ),
@@ -98,14 +97,12 @@ $fields = array(
     ),
     array(
         'name' => 'opportunity_name',
-        'sortable' => false,
         'enabled' => true,
         'default' => true,
     ),
     array(
         'name' => 'account_name',
         'readonly' => true,
-        'sortable' => false,
         'enabled' => true,
         'default' => true,
     ),
@@ -131,13 +128,11 @@ $fields = array(
     ),
     array(
         'name' => 'product_template_name',
-        'sortable' => false,
         'enabled' => true,
         'default' => true,
     ),
     array(
         'name' => 'category_name',
-        'sortable' => false,
         'enabled' => true,
         'default' => true,
     ),
@@ -207,7 +202,6 @@ $fields = array(
     ),
     array(
         'name' => 'assigned_user_name',
-        'sortable' => false,
         'enabled' => true,
         'default' => true,
     )

@@ -89,7 +89,6 @@ $viewdefs['Products']['base']['view']['resolve-conflicts-list'] = array(
                 ),
                 array(
                     'name' => 'assigned_user_name',
-                    'sortable' => false,
                     'default' => false,
                 ),
             ),

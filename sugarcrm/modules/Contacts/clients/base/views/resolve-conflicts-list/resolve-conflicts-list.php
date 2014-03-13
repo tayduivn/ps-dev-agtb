@@ -40,13 +40,11 @@ $viewdefs['Contacts']['base']['view']['resolve-conflicts-list'] = array(
                     'name' => 'account_name',
                     'enabled' => true,
                     'default' => true,
-                    'sortable' => false,
                 ),
                 array(
                     'name' => 'email',
                     'enabled' => true,
                     'default' => true,
-                    'sortable' => false,
                 ),
                 array(
                     'name' => 'phone_work',
@@ -60,7 +58,6 @@ $viewdefs['Contacts']['base']['view']['resolve-conflicts-list'] = array(
                     'id' => 'ASSIGNED_USER_ID',
                     'enabled' => true,
                     'default' => false,
-                    'sortable' => false,
                 ),
                 array(
                     'name' => 'date_entered',

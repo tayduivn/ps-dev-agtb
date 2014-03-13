@@ -39,7 +39,6 @@ $viewdefs['Products']['base']['view']['subpanel-for-accounts'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'contact_name',
-          'sortable' => false,
         ),
         array(
           'label' => 'LBL_LIST_DATE_PURCHASED',

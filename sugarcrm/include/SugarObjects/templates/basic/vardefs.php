@@ -104,6 +104,7 @@ $vardefs = array(
                 'massupdate' => false,
                 'duplicate_on_record_copy' => 'no',
                 'readonly' => true,
+                'sort_on' => array('last_name'),
             ),
         'created_by' => array(
                 'name' => 'created_by',
@@ -136,6 +137,7 @@ $vardefs = array(
                 'massupdate' => false,
                 'duplicate_on_record_copy' => 'no',
                 'readonly' => true,
+                'sort_on' => array('last_name'),                
             ),
         'doc_owner' => array(
                 'name' => 'doc_owner',

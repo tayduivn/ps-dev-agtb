@@ -769,20 +769,6 @@ $dictionary['Product'] = array(
             'bean_name' => 'Opportunity',
             'vname' => 'LBL_OPPORTUNITIES',
         ),
-        'assigned_user_link' =>  array(
-            'name' => 'assigned_user_link',
-            'type' => 'link',
-            'relationship' => 'products_assigned_user',
-            'vname' => 'LBL_USERS',
-            'link_type' => 'one',
-            'module' => 'Users',
-            'bean_name' => 'User',
-            'source' => 'non-db',
-            'duplicate_merge' => 'enabled',
-            'rname' => 'user_name',
-            'id_name' => 'assigned_user_id',
-            'table' => 'users',
-        ),
 //END SUGARCRM flav=pro ONLY
         'type_name' =>  array(
             'name' => 'type_name',
