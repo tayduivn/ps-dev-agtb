@@ -125,20 +125,33 @@ class ImportEmailsTest extends Sugar_PHPUnit_Framework_TestCase
             'Prospect' => 'last_name',
         );
 
+        // keys are CSV values, values are resulting emails and their attributes
+        $emails = array(
+            // attributes are explicitly specified and imported
+            '"testmail1@test.com,0,1;testmail2@test.com,1,0"' => array(
+                array('testmail1@test.com', 0, 1),
+                array('testmail2@test.com', 1, 0),
+            ),
+            // attributes are omitted and set to default values
+            '"testmail3@test.com;testmail4@test.com"' => array(
+                array('testmail3@test.com', 0, 0),
+                array('testmail4@test.com', 0, 0),
+            ),
+        );
+
         $data = array();
         foreach ($modules as $module => $nameField) {
-            $data[] = array(
-                $module,
-                $nameField,
-                'Random Guy',
-                array(
-                    '"Random Guy","testmail1@test.com,0,1;testmail2@test.com,1,0"',
-                ),
-                array(
-                    array('testmail1@test.com', 0, 1),
-                    array('testmail2@test.com', 1, 0),
-                ),
-            );
+            foreach ($emails as $csvData => $expected) {
+                $data[] = array(
+                    $module,
+                    $nameField,
+                    'Random Guy',
+                    array(
+                        '"Random Guy",' . $csvData,
+                    ),
+                    $expected,
+                );
+            }
         }
 
         return $data;
