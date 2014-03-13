@@ -25,22 +25,15 @@ describe('Home Menu', function() {
 
     it('should populate recently viewed on menu open', function() {
         var fetchStub = sinon.collection.stub(view.collection, 'fetch', function(options) {
-            var data = {
+            options.success.call(this, {
                 next_offset: -1,
-                models: [
-                    new Backbone.Model({
-                        _module: 'asdf'
-                    })
-                ]
-            };
-            options.success(data);
-            view.collection.models = data.models;
+                models: []
+            });
         });
 
         view.$el.trigger('shown.bs.dropdown');
 
         expect(fetchStub.calledTwice).toBeTruthy();
-        expect(view.collection.models[0].module).toBe('asdf');
     });
 
     using('different recently records amount and settings', [{
