@@ -35,7 +35,6 @@ describe("enum field", function() {
     });
 
     afterEach(function() {
-        sinon.collection.restore();
         if (field) {
             field.dispose();
         }
@@ -243,78 +242,5 @@ describe("enum field", function() {
                 jQueryStub.restore();
             });
         });
-    });
-
-    describe('_sortResults', function() {
-        var getAppListKeysStub, _sortBySpy, results, _order;
-
-        var _expectOrder = function(results, order) {
-            _.each(_order, function(key, i) {
-                expect(results[i].id).toEqual(key + '');
-            });
-        };
-
-        beforeEach(function() {
-            field = SugarTest.createField('base', fieldName, 'enum', 'edit');
-            field.items = {};
-            field.items['90'] = 90;
-            field.items['100'] = 100;
-            field.items[''] = '';
-            field.items['Defect'] = 'DefectValue';
-            field.items['Feature'] = 'FeatureValue';
-            results = _.map(field.items, function(label, key) {
-                return {id: key, text: label};
-            });
-            getAppListKeysStub = sinon.collection.stub(app.lang, 'getAppListKeys', function() {
-                return _order;
-            });
-            _sortBySpy = sinon.collection.spy(_, 'sortBy');
-        });
-
-        using('undefined `app_list_keys` or same order',
-            [
-                [{}],
-                [[90, 100, '', 'Defect', 'Feature']]
-            ],
-            function(values) {
-
-                it('should not sort the results', function() {
-                    _order = values;
-
-                    results = field._sortResults(results);
-                    _expectOrder(results, _order);
-                    expect(getAppListKeysStub).toHaveBeenCalledOnce();
-                    expect(_sortBySpy).not.toHaveBeenCalled();
-
-                    results = field._sortResults(results);
-                    expect(getAppListKeysStub).not.toHaveBeenCalledTwice();
-                    expect(_sortBySpy).not.toHaveBeenCalled();
-                });
-            }
-        );
-
-        using('different order',
-            [
-                [['', 'Feature', 90, 'Defect', 100]],
-                [['', 'Defect', 100, 'Feature', 90]]
-            ],
-            function(values) {
-
-                it('should sort the results', function() {
-                    _order = values;
-
-                    results = field._sortResults(results);
-                    _expectOrder(results, _order);
-                    expect(getAppListKeysStub).toHaveBeenCalledOnce();
-                    expect(_sortBySpy).toHaveBeenCalled();
-
-                    results = field._sortResults(results);
-                    _expectOrder(results, _order);
-                    expect(getAppListKeysStub).not.toHaveBeenCalledTwice();
-                    expect(_sortBySpy).toHaveBeenCalled();
-
-                    expect(field._keysOrder).not.toEqual({});
-                });
-            });
     });
 });

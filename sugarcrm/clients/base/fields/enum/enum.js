@@ -39,42 +39,6 @@
     BLANK_VALUE_ID: '___i_am_empty___',
 
     /**
-     * The dropdown elements.
-     *
-     *     @example The format of the object is:
-     *     ```
-     *     {
-     *         "key1": "value1",
-     *         "key2": "value2",
-     *         "key3": "value3"
-     *     }
-     *     ```
-     *
-     * @type {Object}
-     */
-    items: null,
-
-    /**
-     * The keys of dropdown elements and their index in the related
-     * `app_list_keys` array.
-     *
-     *     @example The format of the object is:
-     *     ```
-     *     {
-     *         "key1": 1,
-     *         "key2": 0,
-     *         "key3": 2
-     *     }
-     *     ```
-     *
-     * If no `app_list_keys` entry, or if elements in the expected order, the
-     * object will be empty.
-     *
-     * @type {Object}
-     */
-    _keysOrder: null,
-
-    /**
      * Bind the additional keydown handler on select2
      * search element (affected by version 3.4.3).
      *
@@ -342,7 +306,6 @@
 
         select2Options.initSelection = _.bind(this._initSelection, this);
         select2Options.query = _.bind(this._query, this);
-        select2Options.sortResults = _.bind(this._sortResults, this);
 
         return select2Options;
     },
@@ -396,47 +359,6 @@
             options = null;
         }
         query.callback(data);
-    },
-
-    /**
-     * Sort the dropdown items in the order defined in the metadata.
-     *
-     * This method is the implementation of the select2 `sortResults` option.
-     * See {@link http://ivaynberg.github.io/select2/ official documentation}.
-     *
-     * The sorting that is done is based on the `app_list_keys` entry that
-     * contains the order of keys within this dropdown. If such an entry is not
-     * found, the script will fall back to its default behavior and just return
-     * the `results`.
-     *
-     * @param {Array} results The list of results `{id: *, text: *}.`
-     * @param {jQuery} container jQuery wrapper of the node that should contain
-     *  the representation of the result.
-     * @param {Object} query The query object used to request this set of
-     *  results.
-     * @return {Array} The list of results {id: *, text: *} sorted.
-     * @private
-     */
-    _sortResults: function(results, container, query) {
-        var keys, sortedResults;
-        if (!this._keysOrder) {
-            this._keysOrder = {};
-            keys = _.map(app.lang.getAppListKeys(this.def.options), function(key) {
-                return key.toString();
-            });
-            if (!_.isEqual(keys, _.keys(this.items))) {
-                _.each(keys, function(key, index) {
-                    return this._keysOrder[key] = index;
-                }, this);
-            }
-        }
-        if (_.isEmpty(this._keysOrder)) {
-            return results;
-        }
-        sortedResults = _.sortBy(results, function(item) {
-            return this._keysOrder[item.id];
-        }, this);
-        return sortedResults;
     },
 
     /**
