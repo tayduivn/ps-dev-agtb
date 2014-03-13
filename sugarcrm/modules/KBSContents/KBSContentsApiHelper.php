@@ -17,7 +17,7 @@ class KBSContentsApiHelper extends SugarBeanApiHelper {
 
     public function formatForApi(SugarBean $bean, array $fieldList = array(), array $options = array())
     {
-        if ($this->api->action == 'view' && $this->api->getRequest()->args['viewed']) {
+        if ($this->api->action == 'view' && !empty($this->api->getRequest()->args['viewed'])) {
             $bean->viewcount = $bean->viewcount + 1;
             $bean->save();
         }
