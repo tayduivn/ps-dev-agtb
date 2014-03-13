@@ -49,7 +49,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::tearDown();
     }
-   
+
     protected function getValidModules()
     {
         static $validModules;
@@ -59,7 +59,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
             SugarTestHelper::setUp('app_list_strings');
 
             $validModules = array();
-            
+
             $invalidModules = array(
                 'DynamicFields',
                 'Connectors',
@@ -69,8 +69,8 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
                 'Audit',
                 'MergeRecords',
             );
-            
-            
+
+
             foreach ( array_keys($GLOBALS['beanList']) as $moduleName ) {
                 if ( in_array($moduleName,$invalidModules) ) {
                     continue;
@@ -78,25 +78,25 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
                 $validModules[] = $moduleName;
             }
         }
-        
+
         return $validModules;
     }
 
     protected function getSeedBean( $moduleName )
     {
         static $seedBeans = array();
-        
+
         if (!isset($seedBeans[$moduleName])) {
             $seedBeans[$moduleName] = BeanFactory::newBean($moduleName);
         }
-        
+
         return $seedBeans[$moduleName];
     }
 
     public function provideValidModules()
     {
         static $validModulesDataSet;
-        
+
         if (!isset($validModulesDataSet)) {
             $validModulesDataSet = array();
 
@@ -105,7 +105,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
                 $validModulesDataSet[] = array($module);
             }
         }
-        
+
         return $validModulesDataSet;
     }
 
@@ -132,7 +132,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
         foreach ($bean->field_defs as $key => $def) {
             $this->assertArrayHasKey('name', $def, "Def for {$bean->module_dir}/$key is missing a name attribute");
             $this->assertEquals($key, $def['name'], "Def's name for {$bean->module_dir}/$key doesn't match the key");
-            
+
             $this->assertArrayHasKey('type', $def, "Def for {$bean->module_dir}/$key is missing a type");
 
             // Teams operate in their own weird way
@@ -140,17 +140,17 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
                 continue;
             }
 
-            if ($def['type'] == 'relate' 
-                || (isset($def['source']) 
-                    && $def['source'] == 'non-db' 
+            if ($def['type'] == 'relate'
+                || (isset($def['source'])
+                    && $def['source'] == 'non-db'
                     && !empty($def['link'])) ) {
                 // These are related items, they get checked differently
                 continue;
             }
 
-            if (!empty($def['rname']) 
+            if (!empty($def['rname'])
                 && $def['type'] != 'link'
-                && !empty($def['source']) 
+                && !empty($def['source'])
                 && $def['source'] == 'non-db' ) {
                 $this->assertTrue(!empty($def['link']), "Def for {$bean->module_dir}/{$key} has an rname, but no link");
             }
@@ -176,7 +176,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
     public function provideLinkFields()
     {
         $moduleList = $this->getValidModules();
-        
+
         $linkFields = array();
 
         $oneWayRelationships = array(
@@ -193,18 +193,18 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
             'favorite_link',
             'following_link',
         );
-        
+
         foreach ( $moduleList as $module ) {
             $bean = $this->getSeedBean($module);
             if (!is_array($bean->field_defs)) {
                 continue;
             }
-            
+
             foreach ($bean->field_defs as $linkName => $def) {
                 if ($def['type'] != 'link') {
                     continue;
                 }
-                
+
                 // There are some relationships that don't link both ways
                 if (in_array($linkName,$oneWayRelationships)) {
                     continue;
@@ -224,23 +224,23 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
     public function testLinkFields($moduleName, $linkName)
     {
         $bean = $this->getSeedBean($moduleName);
-        
+
         $bean->load_relationship($linkName);
         $this->assertNotNull($bean->$linkName,"Could not load link {$bean->module_dir}/{$linkName}");
-        
+
         $relatedModuleName = $bean->$linkName->getRelatedModuleName();
         $this->assertNotNull($relatedModuleName,"Could not figure out the related module name for link {$bean->module_dir}/{$linkName}");
-        
+
         $relatedBean = $this->getSeedBean($relatedModuleName);
         $this->assertNotNull($relatedBean,"Could not load related module ({$relatedModuleName}) for link {$bean->module_dir}/{$linkName}");
-        
+
         return;
 
         // The following tests make sure that the relationship has both ends.
         // the world is too cruel for these tests right now.
         static $allowedOneWay = array(
-            'Emails' => 'Emails', 
-            'Users' => 'Users', 
+            'Emails' => 'Emails',
+            'Users' => 'Users',
             'Activities' => 'Activities',
         );
 
@@ -250,9 +250,18 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
 
         $relatedLinkName = $bean->$linkName->getRelatedModuleLinkName();
         $this->assertNotNull($relatedLinkName,"Could not load related module's link record for link {$bean->module_dir}/{$linkName}");
-        
+
         $relatedBean->load_relationship($relatedLinkName);
         $this->assertNotNull($relatedBean->$relatedLinkName,"Could not load related module link {$relatedBean->module_dir}/${relatedLinkName}");
 
+    }
+
+    /**
+     * Test that moduleList and moduleListSingular are in sync
+     */
+    public function testModuleList()
+    {
+        $diff = array_diff(array_keys($GLOBALS['app_list_strings']['moduleList']), array_keys($GLOBALS['app_list_strings']['moduleListSingular']));
+        $this->assertEquals(array(), $diff, "Key lists do not match");
     }
 }

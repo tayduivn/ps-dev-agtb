@@ -105,7 +105,7 @@ $app_list_strings = array (
     'TrackerQueries' => 'Tracker Queries',
     'FAQ' => 'FAQ',
     'Newsletters' => 'Newsletters',
-    'KBDocuments' => 'Knowledge Base Documents',
+    'KBDocuments' => 'Knowledge Base',
   	'SugarFavorites'=>'Favorites',
 //BEGIN SUGARCRM flav=pro ONLY
 	'PdfManager' => 'PDF Manager',
@@ -116,6 +116,7 @@ $app_list_strings = array (
     'Filters' => 'Filters',
     'UserSignatures' => 'User Signatures',
     'Shippers' => 'Shipping Providers',
+    'Styleguide' => 'Styleguide',
   ),
 
     'moduleIconList' =>
@@ -157,7 +158,9 @@ $app_list_strings = array (
     'ForecastManagerWorksheets' => 'Forecast Manager Worksheet',
     'ForecastSchedule'=>'Forecast Schedule',
     'Quotas' => 'Quota',
+    'MergeRecords'=>'Merge Record',
     'Teams' => 'Team',
+    'TeamNotices' => 'Team Notice',
     //END SUGARCRM flav=pro ONLY
     'Activities' => 'Activity',
     'ActivityStream' => 'Activity Stream',
@@ -166,31 +169,66 @@ $app_list_strings = array (
     'Feeds' => 'RSS',
     'iFrames'=>'My Sites',
     'TimePeriods'=>'Time Period',
+    'TaxRates'=>'Tax Rate',
+    'ContractTypes' => 'Contract Type',
+    'Schedulers'=>'Scheduler',
+    'Campaigns'=>'Campaign',
+    'CampaignLog'=>'Campaign Log',
     'Prospects' => 'Target',
     'ProspectLists' => 'Target List',
     'Campaigns'=>'Campaign',
     'CampaignTrackers'=>'Campaign Tracker',
     'Documents'=>'Document',
+    'DocumentRevisions'=>'Document Revision',
+    'Connectors'=>'Connector',
+    'Roles'=>'Role',
+    'Notifications'=>'Notification',
     'Sync'=>'Sync',
 //BEGIN SUGARCRM flav=pro ONLY
 	'PdfManager' => 'PDF Manager',
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=ent ONLY
-    'ReportMaker' => ' SweetReport',
-//END SUGARCRM flav=ent ONLY
+    'ReportMaker' => ' Advanced Report',
+    'DataSets' => 'Data Format',
+    'CustomQueries' => 'Custom Query',
+    //END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav=pro ONLY
     'WorkFlow' => 'Workflow',
     'EAPM' => 'External Account',
+    'Worksheet' => 'Worksheet',
 //END SUGARCRM flav=pro ONLY
     'Users' => 'User',
-  'SugarFavorites'=>'SugarFavorites',
-   'Employees' => 'Employee',
-   'Filters' => 'Filter',
-   'Currencies' => 'Currency',
-   'ProductTemplates' => 'Product Template',
-   'ProductCategories' => 'Product Category',
-   'ProductTypes' => 'Product Type',
-   'Shippers' => 'Shipping Provider',
+    'SugarFavorites'=>'SugarFavorites',
+    'Employees' => 'Employee',
+    'Administration' => 'Administration',
+    'ACLRoles' => 'Role',
+    'InboundEmail' => 'Inbound Email',
+    'Releases' => 'Release',
+    'Queues' => 'Queue',
+    'EmailMarketing' => 'Email Marketing',
+    'EmailTemplates' => 'Email Template',
+    'SNIP' => "Email Archiving",
+    'SavedSearch' => 'Saved Search',
+    'UpgradeWizard' => 'Upgrade Wizard',
+    'Trackers' => 'Tracker',
+    'TrackerPerfs' => 'Tracker Performance',
+    'TrackerSessions' => 'Tracker Session',
+    'TrackerQueries' => 'Tracker Query',
+    'FAQ' => 'FAQ',
+    'Newsletters' => 'Newsletter',
+    'OAuthKeys' => 'OAuth Consumer Key',
+    'OAuthTokens' => 'OAuth Token',
+    'Filters' => 'Filter',
+    'Comments' => 'Comment',
+    'Currencies' => 'Currency',
+    'Project' => 'Project',
+    'ProductTemplates' => 'Product Template',
+    'ProductCategories' => 'Product Category',
+    'ProductTypes' => 'Product Type',
+    'Shippers' => 'Shipping Provider',
+    'Subscriptions' => 'Subscription',
+    'UserSignatures' => 'User Signature',
+    'Reports_1'=>'Saved Report',
   ),
 
 /*
@@ -3379,8 +3417,8 @@ $app_strings = array (
 
     /*DNB Competitors Dashlet*/
     'LBL_DNB_COMPETITORS'=>'D&B: Competitors',
-    'LBL_DNB_COMPETITORS_LONG_DESC' => 'Find competitors to the current account in order expand your prospects.  
-                                        A top competitor designation is assigned by D&B based on analysis of the company and industry in which it operates. 
+    'LBL_DNB_COMPETITORS_LONG_DESC' => 'Find competitors to the current account in order expand your prospects.
+                                        A top competitor designation is assigned by D&B based on analysis of the company and industry in which it operates.
                                         Public companies frequently identify top competitors in their public filings, which is also taken into consideration. Requires D&B subscription.',
     'LBL_DNB_LOCATION'=>'Location',
     'LBL_DNB_SALES'=>'Sales',
@@ -3431,11 +3469,11 @@ $app_strings = array (
     'LBL_DNB_CLEAR' => 'Clear',
     'LBL_DNB_SLCT_STATE' => 'Select A State',
     'LBL_DNB_SLCT_CTRY' => 'Select A Country',
-    'LBL_DNB_COMPINFO_LONG_DESC' => 'The most efficient way to gain basic marketing information about a potential prospect such as business name, address, 
-                                     D&B® D-U-N-S® Number, fax, phone and trade style. 
-                                     Includes business intelligence such as executive names and titles, financials, number of employees, 
+    'LBL_DNB_COMPINFO_LONG_DESC' => 'The most efficient way to gain basic marketing information about a potential prospect such as business name, address,
+                                     D&B® D-U-N-S® Number, fax, phone and trade style.
+                                     Includes business intelligence such as executive names and titles, financials, number of employees,
                                      import or export code, branch indicator, and more. Requires D&B Subscription.',
-				     
+
     /*DNB Errors */
     'LBL_DNB_ERROR_CURL_RESOLVE_PROXY' => 'Could not resolve proxy. The given proxy host could not be resolved. Please check proxy settings.',
     'LBL_DNB_ERROR_CURL_RESOLVE_HOST' => 'Could not resolve host. The given remote host was not resolved.',
@@ -5001,8 +5039,10 @@ $app_list_strings['forecast_pareto_visibility_options'] = array (
 );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
+$app_list_strings['moduleListSingular']['Library'] = 'Library';
 $app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');
 $app_list_strings['moduleList']['EmailAddresses'] = 'Email Address';
+$app_list_strings['moduleListSingular']['EmailAddresses'] = 'Email Address';
 
 
 
@@ -5034,8 +5074,8 @@ $app_list_strings['kbdocument_status_dom'] = array (
         'name' => 'Specify Name',
     );
 
-  $app_list_strings['moduleList']['KBDocuments'] = 'Knowledge Base';
-$app_list_strings['moduleList']['Words'] = 'Words';
+  $app_list_strings['moduleList']['Words'] = 'Words';
+  $app_list_strings['moduleListSingular']['Words'] = 'Word';
   $app_strings['LBL_CREATE_KB_DOCUMENT'] = 'Create Article';
   $app_list_strings['kbdocument_viewing_frequency_dom'] =
   array(
@@ -5779,9 +5819,8 @@ $app_list_strings['state_dom'] = array(
   'America/Caracas' => 'America/Caracas',
   );
 
-  $app_list_strings['moduleList']['Styleguide'] = 'Styleguide';
-
   $app_list_strings['moduleList']['Sugar_Favorites'] = 'Favorites';
+  $app_list_strings['moduleListSingular']['Sugar_Favorites'] = 'Favorite';
   $app_list_strings['eapm_list']= array(
     'Sugar'=>'Sugar',
     'WebEx'=>'WebEx',
