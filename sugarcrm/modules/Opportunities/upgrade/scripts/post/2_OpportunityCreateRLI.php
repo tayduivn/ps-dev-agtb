@@ -36,7 +36,7 @@ class SugarUpgradeOpportunityCreateRLI extends UpgradeScript
                        "o.worst_case, " .
                        "o.amount, " .
                        "o.best_case, " .
-                       "o.amount, " .
+                       "o.amount as cost_price, " .
                        "1 as quantity, " .
                        "o.currency_id, " .
                        "o.amount_usdollar/o.amount as base_rate, " .
