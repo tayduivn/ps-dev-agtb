@@ -35,6 +35,10 @@ class SidecarListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
      */
     public function convertLegacyViewDefsToSidecar() {
         $this->logUpgradeStatus('Converting ' . $this->client . ' list view defs for ' . $this->module);
+        if(empty($this->legacyViewdefs)) {
+            $this->logUpgradeStatus('Empty metadata, doing nothing');
+            return false;
+        }
         $newdefs = array();
         foreach ($this->legacyViewdefs as $field => $def) {
             if (!$this->isValidField($field)) {
