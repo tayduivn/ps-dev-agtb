@@ -289,7 +289,11 @@ $dictionary['PdfManager'] = array(
             'size' => '20',
         ),
     ),
-    'acls' => array('SugarACLAdminOnly' => true),
+    'acls' => array(
+        'SugarACLAdminOnly' => array(
+            'allowUserRead' => true,
+        ),
+    ),
     'indices' => array (
         array('name' => 'idx_pdfmanager_name', 'type' => 'index', 'fields' => array('name')),
         array('name' => 'idx_pdfmanager_base_module', 'type' => 'index', 'fields' => array('base_module')),
