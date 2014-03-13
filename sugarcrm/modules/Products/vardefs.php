@@ -714,6 +714,13 @@ $dictionary['Product'] = array(
             'duplicate_merge' => 'disabled',
             'massupdate' => false
         ),
+        'currencies' => array(
+            'name' => 'currencies',
+            'type' => 'link',
+            'relationship' => 'product_currencies',
+            'source' => 'non-db',
+            'vname' => 'LBL_CURRENCIES',
+        ),
         'quote_name' =>  array(
             'name' => 'quote_name',
             'rname' => 'name',
@@ -917,6 +924,15 @@ $dictionary['Product'] = array(
 
     ),
     'relationships' => array(
+        'product_currencies' => array(
+            'lhs_module' => 'Products',
+            'lhs_table' => 'products',
+            'lhs_key' => 'currency_id',
+            'rhs_module' => 'Currencies',
+            'rhs_table' => 'currencies',
+            'rhs_key' => 'id',
+            'relationship_type' => 'one-to-many'
+        ),
         'product_notes' => array(
             'lhs_module' => 'Products',
             'lhs_table' => 'products',
