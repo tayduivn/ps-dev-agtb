@@ -42,14 +42,15 @@
     initialize: function(options) {
         this.plugins = _.union(this.plugins, ['Tooltip']);
         this._super('initialize', [options]);
-        this.template = app.template.getView('flex-list');
-        this.events = _.clone(this.events);
 
         //Store left column fields
         this.leftColumns = [];
         //Store right column fields
         this.rightColumns = [];
         this.addActions();
+
+        this.template = app.template.getView('flex-list');
+        this.events = _.clone(this.events);
 
         this._allListViewsFieldListKey = app.user.lastState.buildKey('field-list', 'list-views', this.module);
         this._thisListViewFieldListKey = app.user.lastState.key('visible-fields', this);
@@ -544,9 +545,10 @@
     /**
      * Add actions to left and right columns
      */
-    addActions: function () {
+    addActions: function() {
         var meta = this.meta;
         if (_.isObject(meta.selection)) {
+            this.isLinkAction = meta.selection.isLinkAction;
             switch (meta.selection.type) {
                 case 'single':
                     this.addSingleSelectionAction();

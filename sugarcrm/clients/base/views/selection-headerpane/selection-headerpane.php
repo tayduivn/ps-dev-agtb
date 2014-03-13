@@ -47,6 +47,15 @@ $viewdefs['base']['view']['selection-headerpane'] = array(
             'acl_action' => 'create',
         ),
         array(
+            'name' => 'link_button',
+            'type' => 'button',
+            'label' => 'LBL_LINK_BUTTON',
+            'css_class' => 'btn-primary',
+            'events' => array(
+                'click' => 'selection:link:fire',
+            ),
+        ),
+        array(
             'name' => 'sidebar_toggle',
             'type' => 'sidebartoggle',
         ),
