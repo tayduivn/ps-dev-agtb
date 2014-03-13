@@ -1895,7 +1895,7 @@ function validate_manifest($manifest) {
         if(!$version_ok && isset($manifest['acceptable_sugar_versions']['regex_matches'])) {
             $matches_empty = false;
             foreach($manifest['acceptable_sugar_versions']['regex_matches'] as $match) {
-                if(preg_match("/$match/", $sugar_version)) {
+                if(!empty($match) && preg_match("/$match/", $sugar_version)) {
                     $version_ok = true;
                 }
             }
