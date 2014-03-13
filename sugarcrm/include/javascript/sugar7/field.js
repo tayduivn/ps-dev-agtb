@@ -66,7 +66,7 @@
 
                     // handle view specific validation error considerations
                     if (field.view && field.view.trigger) {
-                        field.view.trigger('field:error', field);
+                        field.view.trigger('field:error', field, true);
                     }
 
                     field.decorateError(errors);
@@ -452,6 +452,10 @@
                 this.$el.removeClass(ftag);
                 this.$el.removeClass("error");
                 this.$el.closest('.record-cell').removeClass("error");
+
+                if (this.view && this.view.trigger) {
+                    this.view.trigger('field:error', this, false);
+                }
             },
 
             /**
