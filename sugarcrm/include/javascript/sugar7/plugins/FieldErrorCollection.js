@@ -11,7 +11,7 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 (function(app) {
-    app.events.on("app:init", function() {
+    app.events.on('app:init', function() {
         /**
          * The FieldErrorCollection Plugin listens for any field:error events
          * being triggered on a View's context from any Field. This allows a View

@@ -32,15 +32,9 @@
     },
 
     /**
-     * Boolean if the datepicker is visible or not
-     */
-    datepickerVisible: undefined,
-
-    /**
      * {@inheritDoc}
      */
     initialize: function(options) {
-        this.datepickerVisible = false;
         // FIXME: Remove this when SIDECAR-517 gets in
         this._initPlugins();
         this._super('initialize', [options]);
@@ -99,8 +93,6 @@
             languageDictionary: this._patchPickerMeta(),
             appendTo: appendTarget
         });
-
-        this.datepickerVisible = true;
 
         $field.attr('placeholder', datePickerDateFormat);
 
@@ -272,7 +264,11 @@
      * {@inheritDoc}
      */
     _render: function() {
-        this._closeDatepicker();
+        var $field = this.$(this.fieldTag);
+        if ($field.data('datepicker') && !$field.data('datepicker').hidden) {
+            // todo: when SC-2395 gets implemented change this to 'remove' not 'hide'
+            $field.datepicker('hide');
+        }
 
         this._super('_render');
 
@@ -284,29 +280,15 @@
     },
 
     /**
-     * Closes datepicker without setting value on the model
-     *
-     * @private
-     */
-    _closeDatepicker: function() {
-        var $field = this.$(this.fieldTag);
-        if ($field.data('datepicker') && !$field.data('datepicker').hidden) {
-            // todo: when SC-2395 gets implemented change this to 'remove' not 'hide'
-            $field.datepicker('hide');
-            this.datepickerVisible = false;
-        }
-    },
-
-    /**
      * {@inheritdoc}
      */
     _dispose: function() {
         // FIXME: new date picker versions have support for plugin removal/destroy
         // we should do the upgrade in order to prevent memory leaks
 
-        // if datepicker is open, close before disposing
-        if(this.datepickerVisible) {
-            this._closeDatepicker();
+        var $field = this.$(this.fieldTag);
+        if ($field.data('datepicker')) {
+            $(window).off('resize', $field.data('datepicker').place);
         }
 
         this._super('_dispose');
