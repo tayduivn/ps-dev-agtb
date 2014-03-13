@@ -181,17 +181,7 @@ class ACLField  extends ACLAction
 
         // We can not cache per user ID because ACLs are stored per role
         if(!$refresh) {
-            $cached = self::loadFromCache($user_id, 'fields');
-            if ($cached) {
-                // ACL data for some modules may already have been loaded and it shouldn't be erased
-                // in case it's not cached
-                if (isset(self::$acl_fields[$user_id])) {
-                    self::$acl_fields[$user_id] = array_merge(self::$acl_fields[$user_id], $cached);
-                } else {
-                    self::$acl_fields[$user_id] = $cached;
-                }
-            }
-
+            self::$acl_fields[$user_id] = self::loadFromCache($user_id, 'fields');
             if(isset(self::$acl_fields[$user_id][$module_name])) {
                 return self::$acl_fields[$user_id][$module_name];
             }
