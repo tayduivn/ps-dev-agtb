@@ -47,21 +47,14 @@ class jsLanguage
         // cn: bug 8242 - non-US langpack chokes
         $app_strings = return_application_language($lang);
         $app_list_strings = return_app_list_strings_language($lang);
-        $app_list_keys = array();
-        foreach ($app_list_strings as $key => $value) {
-            if (is_array($value)) {
-                $app_list_keys[$key] = array_keys($value);
-            }
-        }
 
         $json = getJSONobj();
         $app_list_strings_encoded = $json->encode($app_list_strings);
         $app_strings_encoded = $json->encode($app_strings);
-        $app_list_keys_encoded = $json->encode($app_list_keys);
+
         $str = <<<EOQ
 SUGAR.language.setLanguage('app_strings', $app_strings_encoded);
 SUGAR.language.setLanguage('app_list_strings', $app_list_strings_encoded);
-SUGAR.language.setLanguage('app_list_keys', $app_list_keys_encoded);
 EOQ;
 
         $cacheDir = create_cache_directory('jsLanguage/');
