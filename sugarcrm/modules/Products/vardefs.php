@@ -915,13 +915,14 @@ $dictionary['Product'] = array(
             'source' => 'non-db',
         ),
     ),
-    'indices' => array(  array('name' => 'idx_products', 'type' => 'index', 'fields' => array('name', 'deleted')),  array(
-        'name' => 'idx_prod_user_dc_timestamp',
-        'type' => 'index',
-        'fields' => array('id', 'assigned_user_id', 'date_closed_timestamp')
-    ),
+    'indices' => array(
+        array('name' => 'idx_products', 'type' => 'index', 'fields' => array('name', 'deleted')),
+        array(
+            'name' => 'idx_prod_user_dc_timestamp',
+            'type' => 'index',
+            'fields' => array('id', 'assigned_user_id', 'date_closed_timestamp')
+        ),
         array('name' => 'idx_product_quantity', 'type' => 'index', 'fields' => array('quantity')),
-
     ),
     'relationships' => array(
         'product_currencies' => array(
