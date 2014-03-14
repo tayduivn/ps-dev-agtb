@@ -67,11 +67,31 @@ class SugarSearchEngineElasticMapping
         'varchar'   => 'name',
         'text'      => 'name',
         'double'    => array(
-                            'type' => 'double',
+                            'type' => 'multi_field',
+                            'fields' => array(
+                                'default' => array(
+                                    'type' => 'string',
+                                    'index' => 'not_analyzed',
+                                ),
+                                'number' => array(
+                                    'type' => 'double',
+                                ),
+                            ),
                         ),
         'currency'  => 'double',
+        'float'     => 'double',
+        'decimal'   => 'double',
         'int'       => array(
-                            'type' => 'integer',
+                            'type' => 'multi_field',
+                            'fields' => array(
+                                'default' => array(
+                                    'type' => 'string',
+                                    'index' => 'not_analyzed',
+                                ),
+                                'number' => array(
+                                    'type' => 'integer',
+                                ),
+                            ),
                         ),
         'boolean'   => array(
                             'type' => 'boolean',

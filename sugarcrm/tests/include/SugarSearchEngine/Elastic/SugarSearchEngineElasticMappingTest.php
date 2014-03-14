@@ -102,19 +102,74 @@ class SugarSearchEngineElasticMappingTest extends Sugar_PHPUnit_Framework_TestCa
                 "testing fullname mapping",
             ),
             array(
-                array('type'=>'double'),
-                array('type'=>'double'),
-                "testing basic double mapping",
+                array(
+                    'type' => 'double',
+                    'name' => 'test_double',
+                ),
+                array(
+                    'type' => 'multi_field',
+                    'fields' => array(
+                        'number' => array('type' => 'double'),
+                        'test_double' => array('type' => 'string'),
+                    ),
+                ),
+                'testing double mapping',
             ),
             array(
-                array('type'=>'currency'),
-                array('type'=>'double'),
-                "testing currency mapping",
+                array(
+                    'type' => 'currency',
+                    'name' => 'test_currency',
+                ),
+                array(
+                    'type' => 'multi_field',
+                    'fields' => array(
+                        'number' => array('type' => 'double'),
+                        'test_currency' => array('type' => 'string'),
+                    ),
+                ),
+                'testing currency mapping',
             ),
             array(
-                array('type'=>'int'),
-                array('type'=>'integer'),
-                "testing int mapping",
+                array(
+                    'type' => 'float',
+                    'name' => 'test_float',
+                ),
+                array(
+                    'type' => 'multi_field',
+                    'fields' => array(
+                        'number' => array('type' => 'double'),
+                        'test_float' => array('type' => 'string'),
+                    ),
+                ),
+                'testing float mapping',
+            ),
+            array(
+                array(
+                    'type' => 'decimal',
+                    'name' => 'test_decimal',
+                ),
+                array(
+                    'type' => 'multi_field',
+                    'fields' => array(
+                        'number' => array('type' => 'double'),
+                        'test_decimal' => array('type' => 'string'),
+                    ),
+                ),
+                'testing decimal mapping',
+            ),
+            array(
+                array(
+                    'type' => 'int',
+                    'name' => 'test_int',
+                ),
+                array(
+                    'type' => 'multi_field',
+                    'fields' => array(
+                        'number' => array('type' => 'integer'),
+                        'test_int' => array('type' => 'string'),
+                    ),
+                ),
+                'testing int mapping',
             ),
             array(
                 array('type'=>'boolean'),
@@ -127,14 +182,18 @@ class SugarSearchEngineElasticMappingTest extends Sugar_PHPUnit_Framework_TestCa
                 "testing bool mapping",
             ),
             array(
-                array('type'=>'relate',
-                      'name'=>'unit_test'),
-                array('type'=>'multi_field',
-                      'fields'=> array(
-                         'length' => 2,
-                         'type' => 'string',
-                      )),
-                "testing relate mapping",
+                array(
+                    'type' => 'relate',
+                    'name' => 'unit_test',
+                ),
+                array(
+                    'type' => 'multi_field',
+                    'fields' => array(
+                        'raw' => array('type' => 'string'),
+                        'unit_test' => array('type' => 'string'),
+                    ),
+                ),
+                'testing relate mapping',
             ),
         );
     }
@@ -144,14 +203,14 @@ class SugarSearchEngineElasticMappingTest extends Sugar_PHPUnit_Framework_TestCa
      */
     public function testGetFtsTypeFromDef($fieldDef, $expectedType, $message)
     {
-        $newType = self::$stub->getFtsTypeFromDef($fieldDef);
-        foreach($expectedType as $key => $val)
-        {
-            $this->assertArrayHasKey($key, $newType, "Mapped type is missing $key for $message");
-            if($key == 'fields')
-                $this->assertFields($val, $newType[$key], $message);
-            else
-                $this->assertEquals($val, $newType[$key], "$key did not match for $message");
+        $ftsType = self::$stub->getFtsTypeFromDef($fieldDef);
+        foreach ($expectedType as $key => $val) {
+            $this->assertArrayHasKey($key, $ftsType, "Mapped type is missing $key for $message");
+            if ($key == 'fields') {
+                $this->assertFields($val, $ftsType[$key], $message);
+            } else {
+                $this->assertEquals($val, $ftsType[$key], "$key did not match for $message");
+            }
         }
     }
 
@@ -162,13 +221,15 @@ class SugarSearchEngineElasticMappingTest extends Sugar_PHPUnit_Framework_TestCa
      * @param $mappedType
      * @param $message
      */
-    private function assertFields($val, $mappedType, $message)
+    private function assertFields($expectedType, $ftsType, $message)
     {
-        $this->assertEquals($val['length'], count($mappedType), "Number of multi-fields did not match for $message");
-        foreach($mappedType as $name => $map)
-        {
-            if($name == 'type')
-                $this->assertEquals($map, $mappedType['type'], "One of the fields type did not match for $message");
+        $this->assertEquals(count($expectedType), count($ftsType), "Number of multi-fields did not match for $message");
+        foreach ($expectedType as $field => $map) {
+            $this->assertArrayHasKey($field, $ftsType, "Multi-field is missing definition for field '$field'");
+
+            foreach ($map as $key => $val) {
+                $this->assertEquals($val, $ftsType[$field][$key], $message);
+            }
         }
     }
 }
