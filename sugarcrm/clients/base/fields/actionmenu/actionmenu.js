@@ -200,7 +200,7 @@
             return;
         }
 
-        var filterDef = massCollection.filterDef,
+        var filterDef = massCollection.filterDef || [],
         //if list view is for linking and link fetch size configuration exists, set it,
         //otherwise default to maxRecordFetchSize
             max_num = (this.def.isLinkAction && app.config.maxRecordLinkFetchSize) ?
