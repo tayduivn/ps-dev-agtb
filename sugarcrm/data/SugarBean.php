@@ -3216,7 +3216,7 @@ class SugarBean
             }
             $queryFields[$field] = $field;
             // Oracle doesn't allow DISTINCT on CLOB fields, in that case if we select CLOB field then DISTINCT should be disabled
-            if (!empty($def['type']) && $def['type'] == 'text') {
+            if (!empty($def['type']) && ($def['type'] == 'text' || $def['type'] == 'json')) {
                 $query->distinct(false);
             }
         }

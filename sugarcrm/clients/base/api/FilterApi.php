@@ -300,7 +300,9 @@ class FilterApi extends SugarApi
             if (!empty($seed->field_defs[$field])) {
                 $fields[] = $field;
                 // Oracle doesn't allow DISTINCT on CLOB fields, in that case if we select CLOB field then DISTINCT should be disabled
-                if (!empty($seed->field_defs[$field]['type']) && $seed->field_defs[$field]['type'] == 'text') {
+                if (!empty($seed->field_defs[$field]['type']) &&
+                    ($seed->field_defs[$field]['type'] == 'text' || $seed->field_defs[$field]['type'] == 'json')
+                ) {
                     $q->distinct(false);
                 }
             }
