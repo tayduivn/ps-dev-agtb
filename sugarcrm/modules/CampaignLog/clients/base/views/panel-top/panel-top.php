@@ -30,6 +30,7 @@ $viewdefs['CampaignLog']['base']['view']['panel-top'] = array(
                     'label' => ' ',
                     'acl_action' => 'create',
                     'css_class' => 'disabled',
+                    'tooltip' => 'LBL_CREATE_BUTTON_LABEL',
                 ),
                 array(
                     'type' => 'sticky-rowaction',
