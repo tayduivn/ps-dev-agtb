@@ -80,22 +80,77 @@ function override_recursive_helper($key_names, $array_name, $value){
 	}
 }
 
-function override_value_to_string_recursive2($array_name, $value_name, $value, $save_empty = true) {
+function override_value_to_string_recursive2($array_name, $value_name, $value, $save_empty = true, $keyArray = array()) {
+
+	global $sugar_config;
+
 	if (is_array($value)) {
 		$str = '';
 		$newArrayName = $array_name . "['$value_name']";
+		$keyArray[] = $value_name;
 		foreach($value as $key=>$val) {
-			$str.= override_value_to_string_recursive2($newArrayName, $key, $val, $save_empty);
+			$str.= override_value_to_string_recursive2($newArrayName, $key, $val, $save_empty, $keyArray);
 		}
 		return $str;
 	} else {
 		if(!$save_empty && empty($value)){
 			return;
 		}else{
-			$index = is_int($value_name)? '' : "'$value_name'";
-			return "\$$array_name" . "[$index] = " . var_export($value, true) . ";\n";
+			if (is_int($value_name)) {
+			    $isAppend = false;
+			    if (!empty($keyArray)) {
+			        $original_config_key_array = get_config_key_array($keyArray);
+			        if (!empty($original_config_key_array)) {
+			            $i = 0;
+			            $total = count($original_config_key_array);
+			            while ($i < $total) { // Check if sequential keys exist
+			                if (empty($original_config_key_array[$i])) {
+			                    break;
+			                }
+			                $i++;
+			            }
+			            if ($i == $total) { // It is sequential, then check it is append or override
+			                $merged_config_key_array = get_config_key_array($keyArray, $sugar_config);
+			                if (!empty($merged_config_key_array)) {
+			                    $idx_key = array_search($value, $merged_config_key_array);
+			                    // If $idx_key from merged array is greater than the original array count,
+			                    // it is appending, otherwise, overriding
+			                    if ($idx_key > count($original_config_key_array)-1) {
+			                        $isAppend = true;
+			                    }
+			                }
+			            }
+			        }
+			    }
+			    if ($isAppend) {
+			        return "\$$array_name" . "[] = " . var_export($value, true) . ";\n";
+			    }
+			}
+			return "\$$array_name" . "['$value_name'] = " . var_export($value, true) . ";\n";
 		}
 	}
+}
+
+function get_config_key_array($keyArray, $sugar_config = array(), $count = 0, $confArray = array())
+{
+    if(empty($sugar_config)) {
+        include('config.php');
+    }
+
+    $ret = null;
+    if (empty($confArray) && !empty($sugar_config[$keyArray[$count]])) {
+        $confArray = $sugar_config[$keyArray[$count]];
+    }
+    $count++;
+    if (is_array($confArray) && !empty($keyArray[$count]) && !empty($confArray[$keyArray[$count]])) {
+        $ret = get_config_key_array($keyArray, $sugar_config, $count, $confArray[$keyArray[$count]]);
+    }
+    else {
+        if (!empty($confArray)) {
+            $ret = $confArray;
+        }
+    }
+    return $ret;
 }
 
 /**
