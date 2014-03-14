@@ -17,8 +17,8 @@ require_once 'include/api/ApiHelper.php';
 
 class Bug67650Test extends Sugar_PHPUnit_Framework_TestCase
 {
-	protected $customIncludeDir = 'custom/data';
-	protected $customIncludeFile = 'SugarBeanApiHelper.php';
+    protected $customIncludeDir = 'custom/data';
+    protected $customIncludeFile = 'SugarBeanApiHelper.php';
 
     public function setUp()
     {
@@ -34,10 +34,16 @@ EOQ;
         }
           
         SugarAutoLoader::put($this->customIncludeDir . '/' . $this->customIncludeFile, $customIncludeFileContent);
+        // clean cache
+        unset(ApiHelper::$moduleHelpers['Campaigns']);
     }
 
     public function tearDown()
     {
+        // clean cache
+        unset(ApiHelper::$moduleHelpers['Campaigns']);
+
+        // remove the custom file
         if (file_exists($this->customIncludeDir . '/' . $this->customIncludeFile)) {
             SugarAutoLoader::unlink($this->customIncludeDir . '/' . $this->customIncludeFile);
         }
@@ -46,8 +52,8 @@ EOQ;
     public function testFindCustomHelper()
     {
         $api = new RestService();
-        $accountsBean = BeanFactory::getBean('Accounts');
-        $helper = ApiHelper::getHelper($api,$accountsBean);
+        $bean = BeanFactory::getBean('Campaigns');
+        $helper = ApiHelper::getHelper($api,$bean);
         $this->assertEquals('CustomSugarBeanApiHelper',get_class($helper));
     }
 }
