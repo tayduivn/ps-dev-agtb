@@ -367,9 +367,11 @@ class UnifiedSearchApi extends SugarListApi {
                 } else {
                     $moduleFields = array();
                 }
-                if (!in_array('id', $moduleFields)) {
+                
+                if (!empty($moduleFields) && !in_array('id', $moduleFields)) {
                     $moduleFields[] = 'id';
                 }
+                
                 $moduleArgs['fields'] = implode(',',$moduleFields);
                 $formattedRecord = $this->formatBean($api,$moduleArgs,$record);
                 $formattedRecord['_module'] = $module;
