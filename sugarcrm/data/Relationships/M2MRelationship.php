@@ -126,6 +126,7 @@ class M2MRelationship extends SugarRelationship
 
         // Test to see if the relationship already exists before attempting to
         // add it again.
+        $isUpdate = false;
         if (!$this->relationship_exists($lhs, $rhs)) {
 
             //BEGIN SUGARCRM flav=pro ONLY
@@ -152,6 +153,9 @@ class M2MRelationship extends SugarRelationship
             }
             //END SUGARCRM flav=pro ONLY
         }
+        else {
+            $isUpdate = true;
+        }
 
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
         $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
@@ -162,6 +166,11 @@ class M2MRelationship extends SugarRelationship
          * See SP-1043 for other details
          * */
         $this->addRow($dataToInsert);
+
+        if ($isUpdate) {
+            $this->callAfterUpdate($lhs, $rhs, $lhsLinkName);
+            $this->callAfterUpdate($rhs, $lhs, $rhsLinkName);
+        }
 
         if ($this->self_referencing) {
             $this->addSelfReferencing($lhs, $rhs, $additionalFields);

@@ -216,8 +216,7 @@
          * @param {String} name The record name that we are sharing.
          */
         shareRecord: function(module, id, name) {
-            var tempMailTo,
-                shareField = app.view.createField({
+            var shareField = app.view.createField({
                     def: {
                         type: 'shareaction'
                     },
@@ -228,17 +227,28 @@
                     }),
                     view: app.view.createView({})
                 });
-            if (shareField.def.href) {
-                // Yes, this is a hack, but strategically placed in BWC so it will go away.
-                // If you have a better solution, please fix this.
-                // Note: doing window.location.href = 'mailto:'; window.close(); has timing problems.
-                // Also, reworking Smarty sugar_button function code has its own set of challenges.
-                tempMailTo = $('<a href="' + shareField.def.href + '"></a>').appendTo('body');
-                tempMailTo.get(0).click();
-                tempMailTo.remove();
+
+            if (shareField.useSugarEmailClient()) {
+                shareField.shareWithSugarEmailClient();
             } else {
-                shareField.share();
+                this._launchExternalEmail(shareField.getShareMailtoUrl());
             }
+        },
+
+        /**
+         * Launch a mailto via javascript
+         * Yes, this is a hack, but strategically placed in BWC so it will go away.
+         * If you have a better solution, please fix this.
+         * Note: doing window.location.href = 'mailto:'; window.close(); has timing problems.
+         * Also, reworking Smarty sugar_button function code has its own set of challenges.
+         *
+         * @param mailto
+         * @private
+         */
+        _launchExternalEmail: function(mailto) {
+            var tempMailTo = $('<a href="' + mailto + '"></a>').appendTo('body');
+            tempMailTo.get(0).click();
+            tempMailTo.remove();
         },
 
         /**

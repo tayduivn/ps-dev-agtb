@@ -388,6 +388,8 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
        'dbType' => 'id',
        'default'=>'-99',
        'required' => true,
+       'function' => 'getCurrencies',
+       'function_bean' => 'Currencies',
    ),
    'base_rate' =>
    array (

@@ -122,14 +122,14 @@ $mod_strings = array (
 
     // Help Text
     // List View Help Text
-    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module is used to track and manage product or service related problems reported to your organization by customers. {{plural_module_name}} are typically related to an {{account_module}} record, and multiple {{plural_module_name}} may be associated to a single {{account_module}}. There are various ways you can create {{plural_module_name}} in Sugar such as via the {{plural_module_name}} module, importing {{plural_module_name}}, or converted from email. Once the {{module_name}} is created, you can view and edit information pertaining to the {{module_name}} via the {{module_name}}\'s record view. Each {{module_name}} record may then relate to other Sugar records such as {{calls_module}}, {{contacts_module}}, {{bugs_module}}, and many others.',
+    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module is used to track and manage product or service related problems reported to your organization by customers. {{plural_module_name}} are typically related to an {{accounts_singular_module}} record, and multiple {{plural_module_name}} may be associated to a single {{accounts_singular_module}}. There are various ways you can create {{plural_module_name}} in Sugar such as via the {{plural_module_name}} module, importing {{plural_module_name}}, or converted from email. Once the {{module_name}} is created, you can view and edit information pertaining to the {{module_name}} via the {{module_name}}\'s record view. Each {{module_name}} record may then relate to other Sugar records such as {{calls_module}}, {{contacts_module}}, {{bugs_module}}, and many others.',
 
     // Record View Help Text
     'LBL_HELP_RECORD' => 'The {{plural_module_name}} module is used to track and manage product or service related problems reported to your organization by customers.
 
 - Edit this record\'s fields by clicking an individual field or the Edit button.
 - View or modify links to other records in the subpanels by toggling the bottom left pane to "Data View".
-- Make and view user comments and record change history in the {{activitystream_module}} by toggling the bottom left pane to "Activity Stream".
+- Make and view user comments and record change history in the {{activitystream_singular_module}} by toggling the bottom left pane to "Activity Stream".
 - Follow or favorite this record using the icons to the right of the record name.
 - Additional actions are available in the dropdown Actions menu to the right of the Edit button.',
 

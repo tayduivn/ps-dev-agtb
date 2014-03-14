@@ -319,9 +319,14 @@
                 var $errorTooltips;
                 if (this.isErrorState === false) {
                     this.isErrorState = true;
+
+                    var ctx = this.context.parent || this.context;
+                    // trigger field error on context
+                    ctx.trigger('field:error', this, true);
+
                     this.$el.addClass('error');
-                    this.$el.find('.error-tooltip').addClass('add-on local').removeClass('hide').css('display', 'inline-block');
-                    this.$el.find('input').addClass('local-error');
+                    this.$('.error-tooltip').addClass('add-on local').removeClass('hide').css('display', 'inline-block');
+                    this.$('input').addClass('local-error');
                     // we want to show the tooltip message, but hide the add-on (exclamation)
                     $errorTooltips = this.$('[rel=tooltip]');
                     app.utils.tooltip.initialize($errorTooltips, {
@@ -341,6 +346,10 @@
             clearErrorDecoration: function() {
                 app.utils.tooltip.destroy(this.$('[rel=tooltip]'));
                 this.isErrorState = false;
+
+                var ctx = this.context.parent || this.context;
+                // trigger field error on context
+                ctx.trigger('field:error', this, false);
                 this.errorMessage = '';
             },
 

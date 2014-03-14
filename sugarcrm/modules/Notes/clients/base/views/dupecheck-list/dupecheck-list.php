@@ -34,7 +34,6 @@ $viewdefs['Notes']['base']['view']['dupecheck-list'] = array(
                     'module' => 'Contacts',
                     'enabled' => true,
                     'default' => true,
-                    'sortable' => false,
                     'ACLTag' => 'CONTACT',
                     'related_fields' =>
                         array(
@@ -83,7 +82,6 @@ $viewdefs['Notes']['base']['view']['dupecheck-list'] = array(
                     'width' => '10%',
                     'enabled' => true,
                     'default' => false,
-                    'sortable' => false,
                     'related_fields' => array('created_by'),
                 ),
             ),

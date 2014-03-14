@@ -254,15 +254,15 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            "p.best_case, " .
                            "p.likely_case, " .
                            "p.worst_case, " .
-                           "p.date_closed, " .
-                           "p.date_closed_timestamp, " .
+                           "o.date_closed, " .
+                           "o.date_closed_timestamp, " .
                            "o.next_step, " .
                            "p.commit_stage, " .
                            "o.sales_stage, " .
-                           "p.probability, " .
+                           "o.probability, " .
                            "o.lead_source, " .
                            "o.campaign_id, " .
-                           "p.opportunity_id, " .
+                           "qo.opportunity_id, " .
                            "o.opportunity_type " .
                    "FROM products p  " .
                    "INNER JOIN quotes q  " .

@@ -266,6 +266,7 @@
                    //END SUGARCRM flav=pro ONLY
 
                     // Plugins for Sugar 7.
+                    'include/javascript/sugar7/plugins/FieldErrorCollection.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Dashlet.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Connector.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Tooltip.js'  => 'include/javascript/sugar_sidecar.min.js',

@@ -24,7 +24,6 @@ $fields = array(
     ),
     array(
         'name' => 'account_name',
-        'sortable' => false
     ),
     'status',
     'quantity',
@@ -83,7 +82,6 @@ $fields = array(
     array(
         'name' => 'account_name',
         'readonly' => true,
-        'sortable' => false
     ),
     'sales_stage',
     'probability',
@@ -91,11 +89,9 @@ $fields = array(
     'commit_stage',
     array(
         'name' => 'product_template_name',
-        'sortable' => false
     ),
     array(
         'name' => 'category_name',
-        'sortable' => false
     ),
     'quantity',
     array(
@@ -156,7 +152,6 @@ $fields = array(
     ),
     array(
         'name' => 'assigned_user_name',
-        'sortable' => false
     )
 );
 //END SUGARCRM flav=ent ONLY

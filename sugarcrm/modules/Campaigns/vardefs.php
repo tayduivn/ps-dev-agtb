@@ -130,10 +130,8 @@ $dictionary['Campaign'] = array (
             'type' => 'currency_id',
             'dbType' => 'id',
             'group' => 'currency_id',
-            'function' => array (
-                'name' => 'getCurrencyDropDown',
-                'returns' => 'html'
-            ),
+            'function' => 'getCurrencies',
+            'function_bean' => 'Currencies',
             'required' => false,
             'do_report' => false,
             'reportable' => false,

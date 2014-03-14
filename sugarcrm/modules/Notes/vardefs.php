@@ -228,29 +228,6 @@ $dictionary['Note'] = array(
   ),
   //END SUGARCRM flav=pro ONLY
 
-  'created_by_link' =>
-  array (
-        'name' => 'created_by_link',
-    'type' => 'link',
-    'relationship' => 'notes_created_by',
-    'vname' => 'LBL_CREATED_BY_USER',
-    'link_type' => 'one',
-    'module'=>'Users',
-    'bean_name'=>'User',
-    'source'=>'non-db',
-  ),
-  'modified_user_link' =>
-  array (
-        'name' => 'modified_user_link',
-    'type' => 'link',
-    'relationship' => 'notes_modified_user',
-    'vname' => 'LBL_MODIFIED_BY_USER',
-    'link_type' => 'one',
-    'module'=>'Users',
-    'bean_name'=>'User',
-    'source'=>'non-db',
-  ),
-
   'contact' =>
   array (
     'name' => 'contact',

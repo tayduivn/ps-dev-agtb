@@ -69,7 +69,7 @@ class SugarQuery_Builder_Field
     /**
      * @var bool is this field a non-db field
      */
-    public $nonDb = 0;
+    public $nonDb = false;
 
     /**
      * Makin' the magic in the sugar field
@@ -254,7 +254,7 @@ class SugarQuery_Builder_Field
      */
     public function markNonDb()
     {
-        $this->nonDb = 1;
+        $this->nonDb = true;
     }
 
     /**

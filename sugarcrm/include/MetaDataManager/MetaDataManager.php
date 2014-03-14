@@ -966,24 +966,6 @@ class MetaDataManager
     }
 
     /**
-     * The collector method for the app list keys
-     *
-     * @param  string use the $app_list_strings
-     * @return array  The app list strings for the requested language
-     */
-    public function getAppListKeys($app_list_strings)
-    {
-        $strings = array();
-        foreach ($app_list_strings as $key => $value) {
-            if (is_array($value)) {
-                $strings[$key] = array_keys($value);
-            }
-        }
-
-        return $strings;
-    }
-
-    /**
      * Gets a list of platforms found in the application.
      *
      * @return array
@@ -2011,8 +1993,10 @@ class MetaDataManager
             $js .= "\n\t\"modules\":{";
 
             $allModuleJS = '';
-            foreach ($data['modules'] as $module => $def) {
-                $moduleJS = $this->buildJavascriptComponentSection($def,true);
+            //Grab the keys this way rather than through $key => $value to preserve pass by reference for $data
+            $modules = array_keys($data['modules']);
+            foreach ($modules as $module) {
+                $moduleJS = $this->buildJavascriptComponentSection($data['modules'][$module], true);
                 if (!empty($moduleJS)) {
                     $allModuleJS .= ",\n\t\t\"$module\":{{$moduleJS}}";
                 }
@@ -2086,6 +2070,10 @@ class MetaDataManager
                         }
                     }
                     unset($data[$mdType][$name]['controller']);
+                    //Remove any entries that were only a controller
+                    if (empty($data[$mdType][$name])) {
+                        unset($data[$mdType][$name]);
+                    }
                 }
 
                 // We should have all of the controllers for this type, split up by platform
@@ -2578,7 +2566,6 @@ class MetaDataManager
 
         $stringData = array();
         $stringData['app_list_strings'] = $this->getAppListStrings($language);
-        $stringData['app_list_keys'] = $this->getAppListKeys($stringData['app_list_strings']);
         $stringData['app_strings'] = $this->getAppStrings($language);
         if ($this->public) {
             // Exception for the AppListStrings.

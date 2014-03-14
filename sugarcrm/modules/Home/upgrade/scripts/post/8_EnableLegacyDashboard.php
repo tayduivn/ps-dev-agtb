@@ -23,6 +23,7 @@ class SugarUpgradeEnableLegacyDashboard extends UpgradeScript
         if (version_compare($this->from_version, '7.0.0', '<')) {
             $config = new Configurator();
             $config->config['enable_legacy_dashboards'] = true;
+            $config->config['lock_homepage'] = true;
             $config->handleOverride();
             $this->log('Legacy Dashboards Enabled!');
         }

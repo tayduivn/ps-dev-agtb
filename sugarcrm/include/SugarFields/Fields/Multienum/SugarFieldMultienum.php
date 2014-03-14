@@ -72,6 +72,17 @@ class SugarFieldMultienum extends SugarFieldEnum
     }
 
     /**
+     * Override of parent apiSave to force the custom save to be run from API
+     * @param SugarBean $bean
+     * @param array     $params
+     * @param string    $field
+     * @param array     $properties
+     */
+    public function apiSave(SugarBean $bean, array $params, $field, $properties) {
+        return $this->save($bean, $params, $field, $properties);
+    }
+
+    /**
      * @see SugarFieldBase::importSanitize()
      */
     public function importSanitize(

@@ -16,26 +16,40 @@
     initialize: function(options) {
         var moduleMeta = app.metadata.getModule(options.module),
             isBwcEnabled = (moduleMeta && moduleMeta.isBwcEnabled),
+            buttonsToRemove = [],
             additionalEvents = {};
 
         if (isBwcEnabled) {
-            options = this._removeCreateButton(options);
+            buttonsToRemove.push('create_button');
         } else {
             additionalEvents['click .btn[name=create_button]'] = 'createAndSelect';
             this.events = _.extend({}, this.events, additionalEvents);
         }
-        this._super("initialize", [options]);
+
+        this.isMultiLink = options.context.has('recLink');
+        if (!this.isMultiLink) {
+            buttonsToRemove.push('link_button');
+        }
+
+        options = this._removeButtons(options, buttonsToRemove);
+        this._super('initialize', [options]);
     },
 
     _renderHtml: function() {
-        var titleTemplate = Handlebars.compile(app.lang.getAppString("LBL_SEARCH_AND_SELECT")),
-            moduleName = app.lang.get("LBL_MODULE_NAME", this.module);
+        var titleTemplate = Handlebars.compile(app.lang.getAppString('LBL_SEARCH_AND_SELECT')),
+            moduleName = app.lang.get('LBL_MODULE_NAME', this.module);
         this.title = titleTemplate({module: moduleName});
-        this._super("_renderHtml");
+        this._super('_renderHtml');
 
         this.layout.on('selection:closedrawer:fire', function() {
             app.drawer.close();
         }, this);
+
+        if (this.isMultiLink) {
+            this.layout.on('selection:link:fire', function() {
+                this.context.trigger('selection-list:link:multi');
+            });
+        }
     },
 
     /**
@@ -49,7 +63,7 @@
                 module: this.module,
                 create: true
             }
-        }, _.bind(function (context, model) {
+        }, _.bind(function(context, model) {
             if (model) {
                 this.context.trigger('selection-list:select', model);
             }
@@ -57,16 +71,17 @@
     },
 
     /**
-     * Remove the create button from the options metadata
+     * Remove the specified buttons from the options metadata
      *
-     * @param options
-     * @returns {*}
+     * @param {object} options
+     * @param {array} buttons
+     * @return {*}
      * @private
      */
-    _removeCreateButton: function(options) {
+    _removeButtons: function(options, buttons) {
         if (options && options.meta && options.meta.buttons) {
             options.meta.buttons = _.filter(options.meta.buttons, function(button) {
-                return (button.name !== 'create_button');
+                return !_.contains(buttons, button.name);
             });
         }
 

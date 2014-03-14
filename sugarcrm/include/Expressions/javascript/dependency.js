@@ -943,6 +943,46 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
     },
     getElement : function(variable) {
         return AH.getElement(variable, this.formName);
+    },
+    /**
+     * Used to Add Currency Values
+     *
+     * @param {String} start        What we are starting with
+     * @param {String} add          What we want to add to the value
+     * @return {String}
+     */
+    currencyAdd: function(start, add) {
+        return (parseFloat(start) + parseFloat(add)).toFixed(6);
+    },
+    /**
+     * Used to Subtract Currency Values
+     *
+     * @param {String} start        What we are starting with
+     * @param {String} subtract          What we want to subtract from the value
+     * @return {String}
+     */
+    currencySubtract: function(start, subtract) {
+        return (parseFloat(start) - parseFloat(subtract)).toFixed(6);
+    },
+    /**
+     * Used to Multiply Currency Values
+     *
+     * @param {String} start        What we are starting with
+     * @param {String} multiply     What we want to multipy by
+     * @return {String}
+     */
+    currencyMultiply: function(start, multiply) {
+        return (parseFloat(start) * parseFloat(multiply)).toFixed(6);
+    },
+    /**
+     * Used to Divide Currency Values
+     *
+     * @param {String} start        What we are starting with
+     * @param {String} divide       What we want to divide the currency value by
+     * @return {String}
+     */
+    currencyDivide: function(start, divide) {
+        return (parseFloat(start) / parseFloat(divide)).toFixed(6);
     }
 });
 

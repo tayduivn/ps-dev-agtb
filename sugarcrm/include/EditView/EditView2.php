@@ -425,9 +425,23 @@ class EditView
                     $functionBean = isset($this->fieldDefs[$name]['function_bean']) ? $this->fieldDefs[$name]['function_bean'] : null;
                     $function = $this->fieldDefs[$name]['function'];
                     $functionArgs = array($this->focus, $name, $value, $this->view);
+
+                    // since we are on the old edit view, we need to revert to the old way to get the currency
+                    // drop down and not the new fancy way that REST needs to get it.
+                    $setValueFormatted = false;
+                    if($function == 'getCurrencies' && $functionBean == 'Currencies') {
+                        $function = array('returns' => 'html', 'name' => 'getCurrencyDropDown');
+                        $functionBean = array();
+                        $setValueFormatted = true;
+                    }
+
                     $value = getFunctionValue($functionBean, $function, $functionArgs);
 
-	       	 		if(!empty($this->fieldDefs[$name]['function']['returns']) && $this->fieldDefs[$name]['function']['returns'] == 'html'){
+
+	       	 		if($setValueFormatted ||
+                        (!empty($this->fieldDefs[$name]['function']['returns']) &&
+                            $this->fieldDefs[$name]['function']['returns'] == 'html')
+                    ){
 						$valueFormatted = true;
 					}else{
 						$this->fieldDefs[$name]['options'] = $value;

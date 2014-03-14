@@ -35,7 +35,6 @@ $viewdefs['Tasks']['base']['view']['resolve-conflicts-list'] = array(
                     'default' => true,
                     'ACLTag' => 'CONTACT',
                     'related_fields' => array('contact_id'),
-                    'sortable' => false,
                 ),
                 array(
                     'name' => 'parent_name',
@@ -64,7 +63,6 @@ $viewdefs['Tasks']['base']['view']['resolve-conflicts-list'] = array(
                     'label' => 'LBL_LIST_TEAM',
                     'enabled' => true,
                     'default' => false,
-                    'sortable' => false,
                 ),
                 array(
                     'name' => 'assigned_user_name',
@@ -73,7 +71,6 @@ $viewdefs['Tasks']['base']['view']['resolve-conflicts-list'] = array(
                     'id' => 'ASSIGNED_USER_ID',
                     'enabled' => true,
                     'default' => false,
-                    'sortable' => false,
                 ),
                 array(
                     'name' => 'date_start',

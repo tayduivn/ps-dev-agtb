@@ -37,7 +37,6 @@ $viewdefs['Opportunities']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'account_name',
-          'sortable' => false,
         ),
 //BEGIN SUGARCRM flav!=ent ONLY
           array(
@@ -83,7 +82,6 @@ $viewdefs['Opportunities']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_ASSIGNED_TO_NAME',
           'enabled' => true,
           'default' => true,
-          'sortable' => false,
         ),
       ),
     ),

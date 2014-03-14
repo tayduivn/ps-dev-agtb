@@ -52,7 +52,6 @@ $viewdefs['Contacts']['base']['view']['subpanel-for-accounts'] = array(
           'label' => 'LBL_LIST_EMAIL',
           'enabled' => true,
           'default' => true,
-          'sortable' => false,
         ),
         array(
           'name' => 'phone_work',

@@ -265,7 +265,6 @@
      */
     _render: function() {
         var $field = this.$(this.fieldTag);
-
         if ($field.data('datepicker') && !$field.data('datepicker').hidden) {
             // todo: when SC-2395 gets implemented change this to 'remove' not 'hide'
             $field.datepicker('hide');
@@ -286,6 +285,11 @@
     _dispose: function() {
         // FIXME: new date picker versions have support for plugin removal/destroy
         // we should do the upgrade in order to prevent memory leaks
+
+        var $field = this.$(this.fieldTag);
+        if ($field.data('datepicker')) {
+            $(window).off('resize', $field.data('datepicker').place);
+        }
 
         this._super('_dispose');
     }

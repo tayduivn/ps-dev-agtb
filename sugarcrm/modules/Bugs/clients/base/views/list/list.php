@@ -67,7 +67,6 @@ $viewdefs['Bugs']['base']['view']['list'] = array(
                     'name'=>  'assigned_user_name',
                     'enabled' => true,
                     'default'=>true,
-                    'sortable' => false,
                 ),
                 array(
                     'name'=>  'release_name',
@@ -85,7 +84,6 @@ $viewdefs['Bugs']['base']['view']['list'] = array(
                     'name'=>  'team_name',
                     'enabled' => true,
                     'default'=>false,
-                    'sortable' => false,
                 ),
                 //END SUGARCRM flav=pro ONLY
             ),

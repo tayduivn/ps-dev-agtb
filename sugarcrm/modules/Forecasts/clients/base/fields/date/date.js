@@ -21,7 +21,7 @@
     _initPlugins: function() {
         this._super('_initPlugins');
 
-        if (this.def.click_to_edit) {
+        if (this.options.def.click_to_edit) {
             this.plugins = _.union(this.plugins, [
                 'ClickToEdit'
             ]);

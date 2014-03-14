@@ -196,19 +196,19 @@ describe('Forecasts.Base.Views.ForecastsChart', function() {
         it('should update likely', function() {
             m.set({'likely_case': 60});
             view.repWorksheetChanged(m);
-            expect(view.serverData.data[0].likely).toEqual(60);
+            expect(view.serverData.data[0].likely).toEqual('60.000000');
         });
 
         it('should update best', function() {
             m.set({'best_case': 60});
             view.repWorksheetChanged(m);
-            expect(view.serverData.data[0].best).toEqual(60);
+            expect(view.serverData.data[0].best).toEqual('60.000000');
         });
 
         it('should update worst', function() {
             m.set({'worst_case': 60});
             view.repWorksheetChanged(m);
-            expect(view.serverData.data[0].worst).toEqual(60);
+            expect(view.serverData.data[0].worst).toEqual('60.000000');
         });
     });
 

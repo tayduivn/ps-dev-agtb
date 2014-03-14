@@ -169,6 +169,7 @@ $viewdefs['base']['view']['planned-activities'] = array(
             'overdue_badge' => array(
                 'name' => 'date_start',
                 'type' => 'overdue-badge',
+                'css_class' => 'pull-right',
             ),
         ),
         array(

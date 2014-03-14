@@ -17,6 +17,9 @@
      * @extends View.FlexListView
      */
     extendsFrom: 'FlexListView',
+    events: {
+        'click .search-and-select .single': 'triggerCheck'
+    },
 
     initialize: function(options) {
         this.plugins = _.union(this.plugins, ['ListColumnEllipsis', 'ListRemoveLinks']);
@@ -32,20 +35,14 @@
         if (this.oneToMany) {
             options.meta.selection = {
                 type: 'multi',
-                actions: [{
-                    name: 'link_button',
-                    type: 'button',
-                    label: 'LBL_LINK_BUTTON',
-                    primary: true,
-                    events: {
-                        click: 'list:link:multi'
-                    },
-                    acl_action: 'edit'
-                }],
                 isLinkAction: true
             };
         } else {
-            options.meta.selection = {type: 'single', label: 'LBL_LINK_SELECT'};
+            options.meta.selection = {
+                type: 'single',
+                label: 'LBL_LINK_SELECT',
+                isLinkAction: true
+            };
         }
 
         this._super('initialize', [options]);
@@ -69,11 +66,29 @@
     },
 
     /**
+     * check the checkbox when the row is clicked
+     * @param {object} event
+     */
+    triggerCheck: function(event) {
+        //Ignore inputs and links/icons, because those already have defined effects
+        if (!($(event.target).is('a,i,input'))) {
+            if (this.oneToMany) {
+                //simulate click on the input for this row
+                var checkbox = $(event.currentTarget).find('input[name="check"]');
+                checkbox[0].click();
+            } else {
+                var radioButton = $(event.currentTarget).find('.selection[type="radio"]');
+                radioButton[0].click();
+            }
+        }
+    },
+
+    /**
      * Override to setup events for subclasses
      */
     initializeEvents: function() {
         if (this.oneToMany) {
-            this.layout.on('list:link:multi', this._selectMultipleAndClose, this);
+            this.context.on('selection-list:link:multi', this._selectMultipleAndClose, this);
             this.context.on('selection-list:select', this._refreshList, this);
         } else {
             this.context.on('change:selection_model', this._selectAndClose, this);

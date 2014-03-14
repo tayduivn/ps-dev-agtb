@@ -73,6 +73,8 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'vname' => 'LBL_CURRENCY_ID',
             'type' => 'currency_id',
             'dbType' => 'id',
+            'function' => 'getCurrencies',
+            'function_bean' => 'Currencies',
         ),
         'base_rate' =>
         array(

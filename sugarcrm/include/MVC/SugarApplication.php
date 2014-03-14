@@ -111,7 +111,7 @@ class SugarApplication
         }
 
         if (isset($_REQUEST['mobile']) || isset($_COOKIE['sugar_mobile'])) {
-            if ($_REQUEST['mobile'] == '0' || $_COOKIE['sugar_mobile'] == '0') {
+            if ((isset($_REQUEST['mobile']) && $_REQUEST['mobile'] == '0') || (isset($_COOKIE['sugar_mobile']) && $_COOKIE['sugar_mobile'] == '0')) {
                 if (!isset($_COOKIE['sugar_mobile']) || $_COOKIE['sugar_mobile'] != '0') {
                     setcookie('sugar_mobile', '0'); // expires on browser closed
                 }

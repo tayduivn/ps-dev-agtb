@@ -119,7 +119,7 @@ $mod_strings = array (
 
 - Edit this record\'s fields by clicking an individual field or the Edit button.
 - View or modify links to other records in the subpanels by toggling the bottom left pane to "Data View".
-- Make and view user comments and record change history in the {{activitystream_module}} by toggling the bottom left pane to "Activity Stream".
+- Make and view user comments and record change history in the {{activitystream_singular_module}} by toggling the bottom left pane to "Activity Stream".
 - Follow or favorite this record using the icons to the right of the record name.
 - Additional actions are available in the dropdown Actions menu to the right of the Edit button.',
 

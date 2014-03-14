@@ -276,7 +276,8 @@ $dictionary['ForecastWorksheet'] = array(
             'dbType' => 'id',
             'group' => 'currency_id',
             'vname' => 'LBL_CURRENCY',
-            'function' => array('name' => 'getCurrencyDropDown', 'returns' => 'html'),
+            'function' => 'getCurrencies',
+            'function_bean' => 'Currencies',
             'reportable' => false,
             'comment' => 'Currency used for display purposes',
             'studio' => false

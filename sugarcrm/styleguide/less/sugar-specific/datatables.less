@@ -394,6 +394,15 @@
   margin-top: 1px;
 }
 
+//Search and Select lists
+.search-and-select.dataTable tbody {
+  tr:hover {
+    td {
+      background-color: @dropdownLinkBackgroundHover;
+    }
+  }
+}
+
 /* ---------
 FLEXLIST GENERIC */
 .flex-list-view {
@@ -403,13 +412,7 @@ FLEXLIST GENERIC */
     overflow-x: auto;
     width: 100%;
     margin-bottom: -1px;
-    /*-webkit-overflow-scrolling: touch;
-    > * {
-        -webkit-transform: translateZ(0px);
-    }
-    > * {
-        -webkit-transform: translate3d(0,0,0);
-    }*/
+    /*-webkit-overflow-scrolling: touch;*/
   }
 
   //override of bootstrap to fix safari
@@ -496,11 +499,13 @@ FLEXLIST GENERIC */
         width: 55px;
         height: 28px;
         top: 0;
-        right: 1px;
-        padding: 7px 7px 7px 8px;
+        right: 0;
+        padding: 7px 8px;
         border-bottom: 1px solid darken(@grayLighter, 5%);
         background-color: inherit;
-        z-index: 999;
+        &.open {
+          z-index: 999;
+        }
       }
     }
     td:last-child {
@@ -516,7 +521,7 @@ FLEXLIST GENERIC */
         background-color: inherit;
         overflow: visible;
         &.open {
-          z-index: 99999;
+          z-index: 999;
         }
         > .list:first-child {
           position: absolute;
@@ -555,7 +560,6 @@ FLEXLIST GENERIC */
     th:first-child {
       > span {
         border-right: 1px solid darken(@grayLighter, 5%);
-        -webkit-transform: translate3d(0,0,0);
         &:after {
           .right-shadow;
           height: 43px;
@@ -565,7 +569,6 @@ FLEXLIST GENERIC */
     td:first-child {
       > span {
         border-right: 1px solid darken(@grayLighter, 5%);
-        -webkit-transform: translate3d(0,0,0);
         &:after {
           .right-shadow;
         }
@@ -579,7 +582,6 @@ FLEXLIST GENERIC */
       .dropdown,
       > span {
         border-left: 1px solid darken(@grayLighter, 5%);
-        -webkit-transform: translate3d(0,0,0);
         &:before {
           .left-shadow;
           height: 43px;
@@ -589,7 +591,6 @@ FLEXLIST GENERIC */
     td:last-child {
       > span {
         border-left: 1px solid darken(@grayLighter, 5%);
-        -webkit-transform: translate3d(0,0,0);
         &:before {
           .left-shadow;
         }
@@ -780,28 +781,30 @@ FLEXLIST GENERIC */
       top: 1px;
     }
   }
-
 }
 
-/*.touch {
-  .flex-list-view {
-    overflow: scroll;
-  }
-  .dataTable {
-    position: relative;
-  }
-}*/
-
-.subpanel .flex-list-view .dataTable {
-  border-bottom: 0;
-  tr {
-    //last row
-    &:last-child {
-      td {
-        border-bottom: 0;
+.touch .flex-list-view {
+  /*Fix rendering of scrolled absolute spans on iPad*/
+  &.left-actions.scroll-width .dataTable,
+  &.right-actions.scroll-width .dataTable {
+    th:first-child,
+    td:first-child {
+      > span {
+        -webkit-transform: translate3d(0,0,0);
       }
     }
   }
+  &.right-actions.scroll-width .dataTable {
+    th:last-child {
+      .dropdown {
+        -webkit-transform: translate3d(0,0,0);
+      }
+    }
+  }
+}
+
+.subpanel .flex-list-view .dataTable {
+  border-bottom: 0;
 }
 
 //from twitter-bootstrap/datatables.less
