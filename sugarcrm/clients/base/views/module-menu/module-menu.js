@@ -85,7 +85,7 @@
             app.metadata.getView(options.module, options.name)
         );
 
-        options.collection = app.data.createBeanCollection(options.module);
+        options.collection = options.collection || app.data.createBeanCollection(options.module);
 
         this._super('initialize', [options]);
         this._initSettings();

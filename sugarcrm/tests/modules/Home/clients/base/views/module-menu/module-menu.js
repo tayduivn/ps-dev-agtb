@@ -24,16 +24,19 @@ describe('Home Menu', function() {
     });
 
     it('should populate recently viewed on menu open', function() {
-        var fetchStub = sinon.collection.stub(view.collection, 'fetch', function(options) {
+        var fetchStub = sinon.collection.stub(view.recentlyViewed, 'fetch', function(options) {
             options.success.call(this, {
                 next_offset: -1,
                 models: []
             });
         });
 
+        // ignore dashboards fetch
+        sinon.collection.stub(view.dashboards, 'fetch');
+
         view.$el.trigger('shown.bs.dropdown');
 
-        expect(fetchStub.calledTwice).toBeTruthy();
+        expect(fetchStub.calledOnce).toBeTruthy();
     });
 
     using('different recently records amount and settings', [{
@@ -70,13 +73,13 @@ describe('Home Menu', function() {
         }
     }], function(value) {
         it('should show recently viewed toggle based on amount of records found', function() {
-            var renderPartialStub = sinon.collection.stub(view, '_renderPartial');
+            var renderPartialSpy = sinon.collection.spy(view, '_renderPartial');
 
             sinon.collection.stub(app.user.lastState, 'get', function() {
                 return value.visible;
             });
 
-            sinon.collection.stub(view.collection, 'fetch', function(options) {
+            sinon.collection.stub(view.recentlyViewed, 'fetch', function(options) {
 
                 var models = [];
                 for (var i = 0; i < value.recordSize; i++) {
@@ -92,7 +95,10 @@ describe('Home Menu', function() {
             });
 
             view.populateRecentlyViewed();
-            expect(renderPartialStub).toHaveBeenCalledWith('recently-viewed', value.expect);
+            expect(renderPartialSpy.lastCall.args[0]).toBe('recently-viewed');
+            _.each(value.expect, function(value, key) {
+                expect(renderPartialSpy.lastCall.args[1][key]).toBe(value);
+            });
         });
     });
 });

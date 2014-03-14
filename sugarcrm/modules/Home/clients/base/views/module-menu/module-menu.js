@@ -28,6 +28,27 @@
     },
 
     /**
+     * The collection used to list dashboards on the dropdown.
+     *
+     * This is initialized on {@link #_initCollections}.
+     *
+     * @property
+     * @type {Data.BeanCollection}
+     */
+    dashboards: null,
+
+    /**
+     * The collection used to list the recently viewed on the dropdown,
+     * since it needs to use a {@link Data.MixedBeanCollection}
+     *
+     * This is initialized on {@link #_initCollections}.
+     *
+     * @property
+     * @type {Data.MixedBeanCollection}
+     */
+    recentlyViewed: null,
+
+    /**
      * Default settings used when none are supplied through metadata.
      *
      * Supported settings:
@@ -77,18 +98,64 @@
      */
     _recentToggleKey: null,
 
+    /**
+     * @inheritDoc
+     *
+     * Initializes the collections that will be used when the dropdown is
+     * opened.
+     *
+     * Initializes Legacy dashboards.
+     *
+     * Sets the recently viewed toggle key to be ready to use when the dropdown
+     * is opened.
+     */
     initialize: function(options) {
 
         this._super('initialize', [options]);
 
-        // not using `hide_dashboard_bwc` form, because we shouldn't give this
-        // feature by default - need confirmation from PMs.
-        if (app.config.enableLegacyDashboards && app.config.enableLegacyDashboards === true) {
-            this.dashboardBwcLink = app.bwc.buildRoute('Home', null, 'bwc_dashboard');
-        }
+        this._initCollections();
+        this._initLegacyDashboards();
 
         this.meta.last_state = { id: 'recent' };
         this._recentToggleKey = app.user.lastState.key(this.TOGGLE_RECENTS_KEY, this);
+    },
+
+    /**
+     * Creates the collections needed for list of dashboards and recently
+     * viewed.
+     *
+     * The views' collection is pointing to the Home module and we might need
+     * to use that later for something that could be populated from that
+     * module. Therefore, we create other collections to be used for extra
+     * information that exists on the Home dropdown menu.
+     *
+     * @chainable
+     * @private
+     */
+    _initCollections: function() {
+
+        this.dashboards = app.data.createBeanCollection('Dashboards');
+        this.recentlyViewed = app.data.createMixedBeanCollection();
+
+        return this;
+    },
+
+    /**
+     * Sets the legacy dashboards link if it is configured to be enabled.
+     *
+     * We are not using the `hide_dashboard_bwc` form, because we don't provide
+     * this feature by default and it is enabled only on upgrades from 6.x..
+     * This will be removed in the future, when all dashlets are available in
+     * 7.x..
+     *
+     * @chainable
+     * @private
+     */
+    _initLegacyDashboards: function() {
+        if (app.config.enableLegacyDashboards && app.config.enableLegacyDashboards === true) {
+            this.dashboardBwcLink = app.bwc.buildRoute(this.module, null, 'bwc_dashboard');
+        }
+        return this;
     },
 
     /**
@@ -117,7 +184,7 @@
      */
     populateMenu: function() {
 
-        this.collection.fetch({
+        this.dashboards.fetch({
             'limit': this._settings['dashboards'],
             'showAlerts': false,
             'success': _.bind(function(data) {
@@ -128,9 +195,14 @@
                     if (pattern.test(model.get('name'))) {
                         model.set('name', app.lang.get(model.get('name'), model.module));
                     }
+                    // hardcode the module to `Home` due to different link that
+                    // we support
+                    model.module = 'Home';
                 });
 
-                this._renderPartial('dashboards');
+                this._renderPartial('dashboards', {
+                    collection: this.dashboards
+                });
 
             }, this),
             'endpoint': function(method, model, options, callbacks) {
@@ -163,13 +235,14 @@
             return;
         }
 
-        this.collection.fetch({
+        this.recentlyViewed.fetch({
             'showAlerts': false,
             'fields': ['id', 'name'],
             'date': '-7 DAY',
             'limit': limit,
             'success': _.bind(function(data) {
                 this._renderPartial('recently-viewed', {
+                    collection: this.recentlyViewed,
                     open: !visible,
                     showRecentToggle: data.models.length > threshold || data.next_offset !== -1
                 });
@@ -197,6 +270,8 @@
         if (this.disposed || !this.isOpen()) {
             return;
         }
+
+        options = options || {};
 
         var tpl = app.template.getView(this.name + '.' + tplName, this.module) ||
             app.template.getView(this.name + '.' + tplName);
