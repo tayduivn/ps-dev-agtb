@@ -649,12 +649,13 @@ a:hover {
 
                                 uploader.stage = uploader.stages.indexOf(response.data);
                                 uploader.updateProgress('unpack', 100);
+/*                              License display disabled for now.
                                 if(response.license || response.readme) {
                                     uploader.displayLicense(response);
-                                } else {
+                                } else { */
                                     uploader.executeStage();
                                     uploader.setNextStatusUpdate();
-                                }
+                                //}
                             }
                         } catch (e) {
                             $('#uploadBox').removeClass('hide');
@@ -668,10 +669,9 @@ a:hover {
 
             uploader.displayLicense = function(response) {
             	window.location.hash = 'modal-text';
-            	$('#licenseText')[0].innerText = response.license;
+            	$('#licenseText').text(response.license || response.readme);
             	window.addEventListener('hashchange', function(e) {
                     var hash = window.location.hash.replace('#', '');
-                    console.log(hash);
             	    if(hash == 'accepted') {
                         window.removeEventListener('hashchange', arguments.callee);
                         if(uploader.acceptedLicense) {
