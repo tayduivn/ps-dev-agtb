@@ -41,7 +41,11 @@
     	<td valign=TOP><slot>{EMAIL_TEMPLATE.BASE_MODULE}</slot></td>
 		<td valign=TOP><slot>{EMAIL_TEMPLATE.DESCRIPTION}</slot></td>
     	<td nowrap valign=TOP><slot>{EMAIL_TEMPLATE.DATE_MODIFIED}</slot></td>
-    	<td valign=TOP class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap><slot><a class="listViewTdToolsS1" onclick="return confirm('{NTC_REMOVE_ALERT}')" href="{URL_PREFIX}index.php?module=EmailTemplates&action=Delete&record={EMAIL_TEMPLATE.ID}{RETURN_URL}">{DELETE_INLINE_PNG}&nbsp;{APP.LNK_REMOVE}</a></slot></td>
+        <td valign=TOP class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap><slot>
+            <form id="{EMAIL_TEMPLATE.ID}" method="post" action="{URL_PREFIX}index.php?&module=EmailTemplates&action=Delete&record={EMAIL_TEMPLATE.ID}{RETURN_URL}">
+                <a class="listViewTdToolsS1" href="javascript:void(0);" onclick="if (confirm('{NTC_REMOVE_ALERT}')) document.getElementById('{EMAIL_TEMPLATE.ID}').submit();">{DELETE_INLINE_PNG}&nbsp;{APP.LNK_REMOVE}</a>
+            </form>
+        </slot></td>
 </tr>
 
 <!-- END: row -->
