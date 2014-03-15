@@ -496,23 +496,11 @@ class MBModule
         $class['team_security'] = !empty($this->config['team_security']);
         //END SUGARCRM flav=pro ONLY
 
-        if (empty($this->config['audit'])) {
-            $class['audited'] = 'false';
-        } else {
-            $class['audited'] = 'true';
-        }
+        $class['audited'] = !empty($this->config['audit']);
 
-        if (empty($this->config['activity_enabled'])) {
-            $class['activity_enabled'] = 'false';
-        } else {
-            $class['activity_enabled'] = 'true';
-        }
+        $class['activity_enabled'] = !empty($this->config['activity_enabled']);
 
-        if (empty($this->config['acl'])) {
-            $class['acl'] = 'false';
-        } else {
-            $class['acl'] = 'true';
-        }
+        $class['acl'] = !empty($this->config['acl']);
 
         $class['templates'] = "'basic'";
         foreach ($this->iTemplate as $template) {
