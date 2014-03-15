@@ -1174,6 +1174,7 @@ class MetaDataManager
         if (!empty($data)) {
             $this->clearLanguagesCache();
             $data = $this->loadSectionMetadata(self::MM_LABELS, $data);
+            $data = $this->normalizeMetadata($data);
             $data['_hash'] = $this->hashChunk($data);
             $this->putMetadataCache($data);
         }
@@ -1234,6 +1235,7 @@ class MetaDataManager
 
             // Now cache the new data if there is a need
             if ($write) {
+                $data = $this->normalizeMetadata($data);
                 $data['_hash'] = $this->hashChunk($data);
                 $this->putMetadataCache($data);
             }
@@ -1278,6 +1280,7 @@ class MetaDataManager
 
             // Now cache the new data if there is a need
             if ($write) {
+                $data = $this->normalizeMetadata($data);
                 $data['_hash'] = $this->hashChunk($data);
                 $this->putMetadataCache($data);
             }
@@ -1911,6 +1914,9 @@ class MetaDataManager
 
         // Handle overrides
         $this->data['_override_values'] = $this->getOverrides($this->data, $args);
+
+        // Handle client specific normalizations
+        $this->data = $this->normalizeMetadata($this->data);
 
         // Handle hashing
         $this->data["_hash"] = $this->hashChunk($this->data);
@@ -3059,5 +3065,20 @@ class MetaDataManager
     protected function sectionIsSkipped($section) 
     {
         return !empty($this->sectionsToSkip[$section]);
+    }
+
+    /**
+     * Normalizes the metadata response for the platform.
+     * 
+     * This is here for platforms that need to manipulate the metadata collection
+     * prior to sending it back to the client. This should be overridden as needed
+     * in the platform specific metadata managers.
+     * 
+     * @param array $data The metadata collection
+     * @return array The normalize metadata collection for this platform
+     */
+    public function normalizeMetadata($data)
+    {
+        return $data;
     }
 }

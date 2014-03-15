@@ -117,6 +117,36 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedConfigs, $manager->getConfigs());
     }
+
+    public function testNormalizeMetadata()
+    {
+        // Test data, to be used for testing both mobile and base
+        $data = array(
+            'modules' => array(
+                'Accounts' => array(
+                    'menu' => true,
+                    'views' => array(
+                        'record' => true,
+                    ),
+                    'layouts' => array(
+                        'record' => true,
+                    ),
+                ),
+            ),
+        );
+
+        // Test base first, which should be equality
+        $mm = MetaDataManager::getManager();
+        $test = $mm->normalizeMetadata($data);
+        $this->assertEquals($test, $data, "Base data was manipulated and it should not have been");
+        
+        $mm = MetaDataManager::getManager('mobile');
+        $test = $mm->normalizeMetadata($data);
+        $this->assertNotEquals($test, $data, "Mobile metadata was not manipulated and it should have been");
+        $this->assertFalse(isset($test['modules']['Accounts']['menu']));
+        $this->assertEmpty($test['modules']['Accounts']['views']);
+        $this->assertEmpty($test['modules']['Accounts']['layouts']);
+    }
 }
 
 class MetadataManagerMock extends MetadataManager
