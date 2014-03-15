@@ -39,21 +39,28 @@ if(isset($_REQUEST['root_directory'])){
             //for each item in array, concatenate the source files
             foreach($grp_array as $grp){
                 foreach($grp as $original =>$concat){
+
+                    // if the original file doesn't exist, skip it (so does the build util)
+                    if (!is_file($original)) {
+                        continue;
+                    }
+
                     $concat = sugar_cached($concat);
-                    //make sure both files are still valid
-                    if(is_file($original)  &&  is_file($concat)){
+
+                    // make sure concatenated file is still valid
+                    if (is_file($concat)) {
                         //if individual file has been modifed date later than modified date of
                         //concatenated file, then force a rebuild
                         if(filemtime($original) > filemtime($concat)){
                             $forceReb = true;
                             //no need to continue, we will rebuild
-                            break;
+                            break 2;
                         }
                     }else{
                         //if files are not valid, rebuild as one file could have been deleted
                         $forceReb = true;
                         //no need to continue, we will rebuild
-                        break;
+                        break 2;
                     }
                 }
             }
