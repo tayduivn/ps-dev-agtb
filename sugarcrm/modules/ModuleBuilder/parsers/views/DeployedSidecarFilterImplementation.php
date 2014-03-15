@@ -53,16 +53,18 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
         $studioModule = new StudioModule($this->_moduleName);
         $defaultTemplate = $studioModule->getType();
         $defaultTemplateFilterFile = "include/SugarObjects/templates/{$defaultTemplate}/clients/base/filters/default/default.php";
-
         $baseTemplateFilterFile = "include/SugarObjects/templates/basic/clients/base/filters/default/default.php";
+        $customModuleFilterFile = "custom/modules/{$loadedModule}/clients/{$client}/filters/default/default.php";
+        $clientModuleFilterFile = "modules/{$loadedModule}/clients/{$client}/filters/default/default.php";
+        $baseModuleFilterFile = "modules/{$loadedModule}/clients/base/filters/default/default.php";
 
-        if(file_exists("custom/modules/{$loadedModule}/clients/{$client}/filters/default/default.php")) {
-            include "custom/modules/{$loadedModule}/clients/{$client}/filters/default/default.php";
-        } elseif(file_exists("modules/{$loadedModule}/clients/{$client}/filters/default/default.php")) {
-            include "modules/{$loadedModule}/clients/{$client}/filters/default/default.php";
+        if(file_exists($customModuleFilterFile)) {
+            include $customModuleFilterFile;
+        } elseif(file_exists($clientModuleFilterFile)) {
+            include $clientModuleFilterFile;
         } else {
-            if ($client != 'base' && file_exists("modules/{$loadedModule}/clients/base/filters/default/default.php")) {
-                include "modules/{$loadedModule}/clients/base/filters/default/default.php";
+            if ($client != 'base' && file_exists($baseModuleFilterFile)) {
+                include $baseModuleFilterFile;
                 $this->loadedViewClient='base';
             } elseif (file_exists($defaultTemplateFilterFile)) {
                 include $defaultTemplateFilterFile;
@@ -74,11 +76,66 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
                 throw new Exception("Could not find a filter file for {$loadedModule}");
             }
         }
-        $this->_viewdefs = !empty($viewdefs) ? $this->getNewViewDefs($viewdefs) : array('fields' => array());
+        $this->_viewdefs = !empty($viewdefs) ? $this->getNewViewDefs($viewdefs) : $this->getEmptyDefs();
         $this->_fielddefs = $this->bean->field_defs;
 
         // Make sure the paneldefs are proper if there are any
         $this->_paneldefs = isset($this->_viewdefs) ? $this->_viewdefs : array();
+        
+        // Set the original defs, as these are needed for handling available fields
+        $files = array(
+            // The default filter defs for a module in the requested client
+            $clientModuleFilterFile,
+            // The default filter defs for a module in the base client
+            $baseModuleFilterFile,
+            // The default filter defs for the module type in the base client
+            $defaultTemplateFilterFile,
+            // The default filter defs for the basic type in the base client
+            $baseTemplateFilterFile,
+        );
+
+        foreach ($files as $file) {
+            if (SugarAutoLoader::fileExists($file)) {
+                require $file;
+                if (!empty($viewdefs)) {
+                    // This needs to be done in the event we have a SugarObject template file in use
+                    $viewdefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($this->bean, $viewdefs);
+                    if (isset($viewdefs[$this->_moduleName])) {
+                        $client = key($viewdefs[$this->_moduleName]);
+                        $newdefs = $this->getDefsFromArray($viewdefs, $client);
+                        if (!empty($newdefs['fields'])) {
+                            $this->_originalViewdefs = $newdefs;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Gets an array containing just a fields element
+     * 
+     * @return array
+     */
+    public function getEmptyDefs()
+    {
+        return array('fields' => array());
+    }
+
+    /**
+     * Gets correct view definitions from an array of definitions 
+     * @param array $defs Complete viewdef to get defs from
+     * @param string $client The client to search the defs for
+     * @return array
+     */
+    public function getDefsFromArray($defs, $client)
+    {
+        if (isset($defs[$this->_moduleName][$client]['filter']['default'])) {
+            return $defs[$this->_moduleName][$client]['filter']['default'];
+        }
+        
+        return $this->getEmptyDefs();
     }
 
     /**
@@ -88,11 +145,7 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
      */
     public function getNewViewDefs(array $viewDefs)
     {
-        if (isset($viewDefs[$this->_moduleName][$this->loadedViewClient]['filter']['default'])) {
-            return $viewDefs[$this->_moduleName][$this->loadedViewClient]['filter']['default'];
-        }
-
-        return array();
+        return $this->getDefsFromArray($viewDefs, $this->loadedViewClient);
     }
 
     /**
