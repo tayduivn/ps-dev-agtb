@@ -52,8 +52,7 @@
             {{else}}
                 {{str "LBL_UNASSIGNED" this.module}}
             {{/if}}
-            &#44;&nbsp;
-            <date class="date">{{timeago attributes.record_date "TPL_TABBED_DASHLET_TIME_RELATIVE"}}</date>
+            {{relativeTime attributes.record_date class='date'}}
         </div>
     </li>
 {{/with}}
