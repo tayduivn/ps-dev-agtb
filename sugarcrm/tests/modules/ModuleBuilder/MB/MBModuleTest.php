@@ -21,18 +21,19 @@ class MBModuleTest extends Sugar_PHPUnit_Framework_TestCase
     protected $mbModuleName;
     protected $target;
     protected $path;
-    
+
     protected function setUp()
     {
         SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('files');
         $this->mbModuleName = "{$this->packageKey}_{$this->moduleName}";
         $this->path = "modules/{$this->moduleName}";
         $this->target = "$this->path/clients/base/menus/header/header.php";
+        SugarTestHelper::saveFile($this->target);
     }
 
     protected function tearDown()
     {
-        @unlink($this->target);
         SugarTestHelper::tearDown();
     }
 
@@ -46,7 +47,7 @@ class MBModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $mb = new MBModule($this->moduleName, "modules/{$this->moduleName}", 'superAwesomePackage', $this->packageKey);
         $mb->config['importable'] = false;
         $mb->createMenu($this->path);
-        
+
         // Assertions
         $this->assertFileExists($this->target);
 
@@ -55,7 +56,7 @@ class MBModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $menu = $viewdefs[$this->mbModuleName]['base']['menu']['header'];
         $this->assertEquals($expectedArray, $menu);
     }
-    
+
     /**
      * @covers MBModule::createMenu
      */
@@ -66,7 +67,7 @@ class MBModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $mb = new MBModule($this->moduleName, "modules/{$this->moduleName}", 'superAwesomePackage', $this->packageKey);
         $mb->config['importable'] = true;
         $mb->createMenu($this->path);
-        
+
         // Assertions
         $this->assertFileExists($this->target);
 
@@ -75,7 +76,7 @@ class MBModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $menu = $viewdefs[$this->mbModuleName]['base']['menu']['header'];
         $this->assertEquals($expectedArray, $menu);
     }
-    
+
     protected function getExpectedActionItems($import = false)
     {
         $expectedArray = array(
@@ -94,7 +95,7 @@ class MBModuleTest extends Sugar_PHPUnit_Framework_TestCase
                 'icon' => 'icon-reorder',
             ),
         );
-            
+
         if ($import) {
             $importRoute = http_build_query(
                 array(
@@ -105,7 +106,7 @@ class MBModuleTest extends Sugar_PHPUnit_Framework_TestCase
                     'return_action' => 'index',
                 )
             );
-            
+
             $expectedArray[] = array(
                 'route' => "#bwc/index.php?{$importRoute}",
                 'label' => 'LBL_IMPORT',
@@ -114,7 +115,41 @@ class MBModuleTest extends Sugar_PHPUnit_Framework_TestCase
                 'icon' => 'icon-upload',
             );
         }
-        
+
         return $expectedArray;
+    }
+
+
+    public function vardefProvider()
+    {
+        return array(
+          array(
+                array("name" => "testvardef", "label" => "testvardef"),
+                "testvardef"
+            ),
+          array(
+                array("name" => "range", "label" => "testvardef"),
+                "range_field"
+            ),
+          array(
+                array("name" => "hipopotomounstruosesquipedaliofobia_pentakismyriahexakisquilioletracosiohexacontapentagono", "label" => "testvardef"),
+                $GLOBALS['db']->getValidDBName('hipopotomounstruosesquipedaliofobia_pentakismyriahexakisquilioletracosiohexacontapentagono', true, 'column'),
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider vardefProvider
+     * @param array $vardef
+     * @param string $exp_name
+     */
+    public function testVardefValidation($vardef, $exp_name)
+    {
+        $mb = new MBModule($this->moduleName, "modules/{$this->moduleName}", 'superAwesomePackage', $this->packageKey);
+        $mb->addField($vardef);
+        $defs = $mb->mbvardefs->getVardef();
+        $this->assertArrayHasKey('fields', $defs);
+        $this->assertArrayHasKey($exp_name, $defs['fields']);
+        $this->assertEquals($exp_name, $defs['fields'][$exp_name]['name']);
     }
 }

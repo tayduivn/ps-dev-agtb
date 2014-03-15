@@ -3851,6 +3851,25 @@ protected function checkQuery($sql, $object_name = false)
         return $sql;
     }
 
+    /**
+     * Get the list of reserved words
+     * @return array
+     */
+    public function getReservedWords()
+    {
+        return self::$reserved_words;
+    }
+
+    /**
+     * Check if the word is reserved word
+     * @param string $word
+     * @return boolean
+     */
+    public function isReservedWord($word)
+    {
+        return !empty(self::$reserved_words[strtoupper($word)]);
+    }
+
 	/**
 	 * Check special requirements for DB installation.
 	 * @abstract
@@ -4237,4 +4256,132 @@ protected function checkQuery($sql, $object_name = false)
      * @return string
      */
 	abstract public function getGuidSQL();
+
+	/**
+	 * List of SQL reserved words
+	 * Column can not be named as one of these
+	 * Sources:
+	 * http://msdn.microsoft.com/en-us/library/aa238507(SQL.80).aspx
+	 * http://dev.mysql.com/doc/refman/5.0/en/reserved-words.html
+	 * @var array
+	 */
+    public static $reserved_words = array('ACCESS' => true, 'ACCESSIBLE' => true, 'ADD' => true,
+        'AFTER' => true, 'ALL' => true, 'ALLOCATE' => true, 'ALLOW' => true, 'ALTER' => true,
+        'ANALYZE' => true, 'AND' => true, 'ANY' => true, 'AS' => true, 'ASC' => true,
+        'ASENSITIVE' => true, 'ASSOCIATE' => true, 'ASUTIME' => true, 'AT' => true, 'AUDIT' => true,
+        'AUTHORIZATION' => true, 'AUX' => true, 'AUXILIARY' => true, 'BACKUP' => true,
+        'BEFORE' => true, 'BEGIN' => true, 'BETWEEN' => true, 'BFILE' => true, 'BIG' => true,
+        'BIGINT' => true, 'BINARY' => true, 'BINARY_INTEGER' => true, 'BIND' => true,
+        'BINLOG' => true, 'BLOB' => true, 'BOTH' => true, 'BREAK' => true, 'BROWSE' => true,
+        'BUFFERPOOL' => true, 'BULK' => true, 'BY' => true, 'CALC' => true, 'CALL' => true,
+        'CAPTURE' => true, 'CASCADE' => true, 'CASCADED' => true, 'CASE' => true, 'CAST' => true,
+        'CCSID' => true, 'CEILING' => true, 'CERT' => true, 'CHANGE' => true, 'CHAR' => true,
+        'CHARACTER' => true, 'CHECK' => true, 'CHECKPOINT' => true, 'CLOB' => true, 'CLONE' => true,
+        'CLOSE' => true, 'CLUSTER' => true, 'CLUSTERED' => true, 'COALESCE' => true,
+        'COLLATE' => true, 'COLLECTION' => true, 'COLLID' => true, 'COLUMN' => true,
+        'COMMENT' => true, 'COMMIT' => true, 'COMPRESS' => true, 'COMPUTE' => true, 'CONCAT' => true,
+        'CONDITION' => true, 'CONNECT' => true, 'CONNECTION' => true, 'CONSTRAINT' => true,
+        'CONTAINS' => true, 'CONTAINSTABLE' => true, 'CONTENT' => true, 'CONTINUE' => true,
+        'CONVERT' => true, 'CREATE' => true, 'CROSS' => true, 'CTYPE' => true, 'CURRENT' => true,
+        'CURRENT_DATE' => true, 'CURRENT_TIME' => true, 'CURRENT_TIMESTAMP' => true,
+        'CURRENT_USER' => true, 'CURRVAL' => true, 'CURSOR' => true, 'DATA' => true,
+        'DATABASE' => true, 'DATABASES' => true, 'DATE' => true, 'DAY' => true, 'DAYS' => true,
+        'DAY_HOUR' => true, 'DAY_MICROSECOND' => true, 'DAY_MINUTE' => true, 'DAY_SECOND' => true,
+        'DBCC' => true, 'DBINFO' => true, 'DEALLOCATE' => true, 'DEC' => true, 'DECIMAL' => true,
+        'DECLARE' => true, 'DEFAULT' => true, 'DELAYED' => true, 'DELETE' => true, 'DENY' => true,
+        'DESC' => true, 'DESCRIBE' => true, 'DESCRIPTOR' => true, 'DETERMINISTIC' => true,
+        'DISABLE' => true, 'DISALLOW' => true, 'DISK' => true, 'DISTINCT' => true,
+        'DISTINCTROW' => true, 'DISTRIBUTED' => true, 'DIV' => true, 'DO' => true,
+        'DOCUMENT' => true, 'DOUBLE' => true, 'DOWN' => true, 'DROP' => true, 'DSSIZE' => true,
+        'DUAL' => true, 'DUMMY' => true, 'DUMP' => true, 'DYNAMIC' => true, 'EACH' => true,
+        'EDITPROC' => true, 'ELSE' => true, 'ELSEIF' => true, 'ENCLOSED' => true, 'ENCODING' => true,
+        'ENCRYPTION' => true, 'END' => true, 'ENDING' => true, 'ERASE' => true, 'ERRLVL' => true,
+        'ESCAPE' => true, 'ESCAPED' => true, 'EVEN' => true, 'EXCEPT' => true, 'EXCEPTION' => true,
+        'EXCLUSIVE' => true, 'EXEC' => true, 'EXECUTE' => true, 'EXISTS' => true, 'EXIT' => true,
+        'EXPLAIN' => true, 'EXTERNAL' => true, 'FALSE' => true, 'FENCED' => true, 'FETCH' => true,
+        'FIELDPROC' => true, 'FILE' => true, 'FILLFACTOR' => true, 'FINAL' => true, 'FIRST' => true,
+        'FLOAT' => true, 'FLOAT4' => true, 'FLOAT8' => true, 'FLOOR' => true, 'FOR' => true,
+        'FORCE' => true, 'FOREIGN' => true, 'FOUND' => true, 'FREE' => true, 'FREETEXT' => true,
+        'FREETEXTTABLE' => true, 'FROM' => true, 'FULL' => true, 'FULLTEXT' => true,
+        'FUNCTION' => true, 'GENERATED' => true, 'GET' => true, 'GLOBAL' => true, 'GO' => true,
+        'GOTO' => true, 'GRANT' => true, 'GROUP' => true, 'GTIDS' => true, 'HALF' => true,
+        'HANDLER' => true, 'HAVING' => true, 'HIGH' => true, 'HIGH_PRIORITY' => true, 'HOLD' => true,
+        'HOLDLOCK' => true, 'HOUR' => true, 'HOURS' => true, 'HOUR_MICROSECOND' => true,
+        'HOUR_MINUTE' => true, 'HOUR_SECOND' => true, 'IDENTIFIED' => true, 'IDENTITY' => true,
+        'IDENTITYCOL' => true, 'IDENTITY_INSERT' => true, 'IF' => true, 'IGNORE' => true,
+        'IMMEDIATE' => true, 'IN' => true, 'INCLUSIVE' => true, 'INCREMENT' => true, 'INDEX' => true,
+        'INFILE' => true, 'INHERIT' => true, 'INITIAL' => true, 'INNER' => true, 'INOUT' => true,
+        'INSENSITIVE' => true, 'INSERT' => true, 'INT' => true, 'INT1' => true, 'INT2' => true,
+        'INT3' => true, 'INT4' => true, 'INT8' => true, 'INTEGER' => true, 'INTERSECT' => true,
+        'INTERVAL' => true, 'INTO' => true, 'IO' => true, 'IS' => true, 'ISOBID' => true,
+        'ITERATE' => true, 'JAR' => true, 'JOIN' => true, 'KEEP' => true, 'KEY' => true,
+        'KEYS' => true, 'KILL' => true, 'LABEL' => true, 'LANGUAGE' => true, 'LAST' => true,
+        'LC' => true, 'LEADING' => true, 'LEAVE' => true, 'LEFT' => true, 'LEVEL' => true,
+        'LIKE' => true, 'LIMIT' => true, 'LINEAR' => true, 'LINENO' => true, 'LINES' => true,
+        'LOAD' => true, 'LOCAL' => true, 'LOCALE' => true, 'LOCALTIME' => true,
+        'LOCALTIMESTAMP' => true, 'LOCATOR' => true, 'LOCATORS' => true, 'LOCK' => true,
+        'LOCKMAX' => true, 'LOCKSIZE' => true, 'LONG' => true, 'LONGBLOB' => true,
+        'LONGTEXT' => true, 'LOOP' => true, 'LOW' => true, 'LOW_PRIORITY' => true,
+        'MAINTAINED' => true, 'MASTER' => true, 'MATCH' => true, 'MATERIALIZED' => true,
+        'MAXEXTENTS' => true, 'MAXVALUE' => true, 'MEDIUMBLOB' => true, 'MEDIUMINT' => true,
+        'MEDIUMTEXT' => true, 'MICROSECOND' => true, 'MICROSECONDS' => true, 'MIDDLEINT' => true,
+        'MINUS' => true, 'MINUTE' => true, 'MINUTES' => true, 'MINUTE_MICROSECOND' => true,
+        'MINUTE_SECOND' => true, 'MLSLABEL' => true, 'MOD' => true, 'MODE' => true,
+        'MODIFIES' => true, 'MODIFY' => true, 'MONTH' => true, 'MONTHS' => true, 'NATIONAL' => true,
+        'NATURAL' => true, 'NCHAR' => true, 'NCLOB' => true, 'NEXT' => true, 'NEXTVAL' => true,
+        'NO' => true, 'NOAUDIT' => true, 'NOCHECK' => true, 'NOCOMPRESS' => true,
+        'NONBLOCKING' => true, 'NONCLUSTERED' => true, 'NONE' => true, 'NOT' => true,
+        'NOWAIT' => true, 'NO_WRITE_TO_BINLOG' => true, 'NULL' => true, 'NULLIF' => true,
+        'NULLS' => true, 'NUMBER' => true, 'NUMERIC' => true, 'NUMPARTS' => true,
+        'NVARCHAR2' => true, 'OBID' => true, 'OF' => true, 'OFF' => true, 'OFFLINE' => true,
+        'OFFSETS' => true, 'OLD' => true, 'ON' => true, 'ONLINE' => true, 'OPEN' => true,
+        'OPENCONNECTOR' => true, 'OPENQUERY' => true, 'OPENROWSET' => true, 'OPENXML' => true,
+        'OPTIMIZATION' => true, 'OPTIMIZE' => true, 'OPTION' => true, 'OPTIONALLY' => true,
+        'OR' => true, 'ORDER' => true, 'ORGANIZATION' => true, 'OUT' => true, 'OUTER' => true,
+        'OUTFILE' => true, 'OVER' => true, 'PACKAGE' => true, 'PADDED' => true, 'PARAMETER' => true,
+        'PART' => true, 'PARTITION' => true, 'PARTITIONED' => true, 'PARTITIONING' => true,
+        'PATH' => true, 'PCTFREE' => true, 'PERCENT' => true, 'PERIOD' => true, 'PIECESIZE' => true,
+        'PLAN' => true, 'PLS_INTEGER' => true, 'PRECISION' => true, 'PREPARE' => true,
+        'PREVVAL' => true, 'PRIMARY' => true, 'PRINT' => true, 'PRIOR' => true, 'PRIORITY' => true,
+        'PRIQTY' => true, 'PRIVILEGES' => true, 'PROC' => true, 'PROCEDURE' => true,
+        'PROGRAM' => true, 'PSID' => true, 'PUBLIC' => true, 'PURGE' => true, 'QUERY' => true,
+        'QUERYNO' => true, 'RAISERROR' => true, 'RANGE' => true, 'RAW' => true, 'READ' => true,
+        'READS' => true, 'READTEXT' => true, 'REAL' => true, 'RECONFIGURE' => true,
+        'REFERENCES' => true, 'REFRESH' => true, 'REGEXP' => true, 'RELEASE' => true,
+        'RENAME' => true, 'REPEAT' => true, 'REPLACE' => true, 'REPLICATION' => true,
+        'REQUIRE' => true, 'RESIGNAL' => true, 'RESOURCE' => true, 'RESTORE' => true,
+        'RESTRICT' => true, 'RESULT' => true, 'RETURN' => true, 'RETURNS' => true, 'REVOKE' => true,
+        'RIGHT' => true, 'RLIKE' => true, 'ROLE' => true, 'ROLLBACK' => true, 'ROUND' => true,
+        'ROW' => true, 'ROWCOUNT' => true, 'ROWGUIDCOL' => true, 'ROWID' => true, 'ROWNUM' => true,
+        'ROWS' => true, 'ROWSET' => true, 'RULE' => true, 'RUN' => true, 'SAVE' => true,
+        'SAVEPOINT' => true, 'SCHEMA' => true, 'SCHEMAS' => true, 'SCRATCHPAD' => true,
+        'SECOND' => true, 'SECONDS' => true, 'SECOND_MICROSECOND' => true, 'SECQTY' => true,
+        'SECURITY' => true, 'SELECT' => true, 'SENSITIVE' => true, 'SEPARATOR' => true,
+        'SEQUENCE' => true, 'SERVER' => true, 'SESSION' => true, 'SESSION_USER' => true,
+        'SET' => true, 'SETUSER' => true, 'SHARE' => true, 'SHOW' => true, 'SHUTDOWN' => true,
+        'SIGNAL' => true, 'SIMPLE' => true, 'SIZE' => true, 'SMALL' => true, 'SMALLINT' => true,
+        'SOME' => true, 'SONAME' => true, 'SOURCE' => true, 'SPATIAL' => true, 'SPECIFIC' => true,
+        'SQL' => true, 'SQLEXCEPTION' => true, 'SQLSTATE' => true, 'SQLWARNING' => true,
+        'SQL_BIG_RESULT' => true, 'SQL_CALC_FOUND_ROWS' => true, 'SQL_SMALL_RESULT' => true,
+        'SSL' => true, 'STANDARD' => true, 'START' => true, 'STARTING' => true, 'STATEMENT' => true,
+        'STATIC' => true, 'STATISTICS' => true, 'STAY' => true, 'STOGROUP' => true, 'STORES' => true,
+        'STRAIGHT' => true, 'STRAIGHT_JOIN' => true, 'STYLE' => true, 'SUCCESSFUL' => true,
+        'SUMMARY' => true, 'SYNONYM' => true, 'SYSDATE' => true, 'SYSTEM_USER' => true,
+        'SYSTIMESTAMP' => true, 'TABLE' => true, 'TABLESPACE' => true, 'TERMINATED' => true,
+        'TEXTSIZE' => true, 'THEN' => true, 'TIME' => true, 'TIMESTAMP' => true, 'TINYBLOB' => true,
+        'TINYINT' => true, 'TINYTEXT' => true, 'TO' => true, 'TOP' => true, 'TRAILING' => true,
+        'TRAN' => true, 'TRANSACTION' => true, 'TRIGGER' => true, 'TRUE' => true, 'TRUNCATE' => true,
+        'TSEQUAL' => true, 'TYPE' => true, 'UID' => true, 'UNDO' => true, 'UNION' => true,
+        'UNIQUE' => true, 'UNLOCK' => true, 'UNSIGNED' => true, 'UNTIL' => true, 'UP' => true,
+        'UPDATE' => true, 'UPDATETEXT' => true, 'UPGRADE' => true, 'UROWID' => true, 'USAGE' => true,
+        'USE' => true, 'USER' => true, 'USING' => true, 'UTC' => true, 'UTC_DATE' => true,
+        'UTC_TIME' => true, 'UTC_TIMESTAMP' => true, 'VALIDATE' => true, 'VALIDPROC' => true,
+        'VALUE' => true, 'VALUES' => true, 'VARBINARY' => true, 'VARCHAR' => true,
+        'VARCHAR2' => true, 'VARCHARACTER' => true, 'VARIABLE' => true, 'VARIANT' => true,
+        'VARYING' => true, 'VCAT' => true, 'VERIFY' => true, 'VIEW' => true, 'VOLATILE' => true,
+        'VOLUMES' => true, 'WAITFOR' => true, 'WHEN' => true, 'WHENEVER' => true, 'WHERE' => true,
+        'WHILE' => true, 'WITH' => true, 'WLM' => true, 'WRITE' => true, 'WRITETEXT' => true,
+        'XMLCAST' => true, 'XMLEXISTS' => true, 'XMLNAMESPACES' => true, 'XMLTYPE' => true,
+        'XOR' => true, 'YEAR' => true, 'YEARS' => true, 'YEAR_MONTH' => true, 'ZEROFILL' => true,
+        'ZEROFILLADD' => true, 'ZONE' => true);
 }
