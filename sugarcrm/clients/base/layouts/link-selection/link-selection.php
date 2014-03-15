@@ -28,16 +28,29 @@ $viewdefs['base']['layout']['link-selection'] = array(
                                     'layout' => array(
                                         'type' => 'filterpanel',
                                         'span' => 12,
-                                        'availableToggles' => array(
-                                        ),
+                                        'availableToggles' => array(),
                                         'components' => array(
                                             array(
-                                                'layout' => 'filter',
+                                                'layout' => array(
+                                                    'meta' => array(
+                                                        'components' => array(
+                                                            array(
+                                                                'view' => 'filter-filter-dropdown'
+                                                            ),
+                                                            array(
+                                                                'view' => 'filter-quicksearch'
+                                                            ),
+                                                        ),
+                                                        'last_state' => array(
+                                                            'id' => 'filter',
+                                                        ),
+                                                        'layoutType' => 'records',
+                                                    ),
+                                                    'span' => 12,
+                                                    'type' =>'filter',
+                                                ),
                                                 'targetEl' => '.filter',
                                                 'position' => 'prepend',
-                                                'context' => array(
-                                                    'layoutName' => 'records',
-                                                ),
                                             ),
                                             array(
                                                 'view' => 'filter-rows',

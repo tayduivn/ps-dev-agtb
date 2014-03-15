@@ -425,7 +425,7 @@
             });
         } else {
             if (this.layoutType === 'records') {
-                var ctx = this.context.parent || this.context;
+                var ctx = this.context;
                 if (!ctx.get('modelId') && ctx.get('collection')) {
                     contextList.push(ctx);
                 }
