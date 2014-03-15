@@ -201,4 +201,26 @@ class TeamSecurity extends SugarVisibility
        // This does not make any sense by itself as the result will always be negative (no access)
        return true;
    }
+
+   /*
+     * Get sugar search engine definitions
+     * @param string $engine search engine name
+     * @return array
+     * Called before the bean is indexed so that any calculated attributes can updated.
+     * Since the team security id is updated directly, there is no need to implement anything custom
+     */
+    public function beforeSseIndexing()
+    {
+    }
+
+    public function addSseVisibilityFilter($engine, $filter)
+    {
+        if($this->isTeamSecurityApplicable())
+        {
+            if($engine instanceof SugarSearchEngineElastic) {
+                $filter->addMust($engine->getTeamTermFilter());
+            }
+        }
+        return $filter;
+    }   
 }
