@@ -223,7 +223,9 @@ class LogicHook{
 					$class = new $hook_class();
                     if (!is_null($this->bean)) {
                         $callback = array($class, $hook_function);
-                        $params = array_merge(array($this->bean, $event, $arguments), array_slice($hook_details, 5));
+                        // & is here because of BR-1345 and old broken hooks
+                        // that use &$bean in args.
+                        $params = array_merge(array(&$this->bean, $event, $arguments), array_slice($hook_details, 5));
                         call_user_func_array($callback, $params);
                     }
 					else
