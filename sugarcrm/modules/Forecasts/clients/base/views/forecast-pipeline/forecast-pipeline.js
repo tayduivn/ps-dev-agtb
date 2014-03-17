@@ -117,14 +117,16 @@
             }
         }, this);
 
-        // FIXME this event should be listened on the `default` layout instead of the global context (SC-2398).
-        app.controller.context.on('sidebar:state:changed', function(state) {
-            this.state = state;
-            if (this.chartLoaded && this.state === 'open' && !this.preview_open &&
-                this.chart && _.isFunction(this.chart.update)) {
-                this.chart.update();
-            }
-        }, this);
+        var defaultLayout = this.closestComponent('sidebar');
+        if (defaultLayout) {
+            this.listenTo(defaultLayout, 'sidebar:state:changed', function(state) {
+                this.state = state;
+                if (this.chartLoaded && this.state === 'open' && !this.preview_open &&
+                    this.chart && _.isFunction(this.chart.update)) {
+                    this.chart.update();
+                }
+            });
+        }
     },
 
     /**
@@ -242,14 +244,5 @@
             ]);
         }
         return this;
-    },
-
-    /**
-     * @inheritDoc
-     */
-    unbind: function() {
-        // FIXME the listener should be on the `default` layout instead of the global context (SC-2398).
-        app.controller.context.off(null, null, this);
-        this._super('unbind');
     }
 })
