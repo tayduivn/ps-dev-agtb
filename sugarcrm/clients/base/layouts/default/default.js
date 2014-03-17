@@ -57,7 +57,7 @@
 
         this.on('sidebar:toggle', this.toggleSidePane, this);
 
-        this.meta.last_state = { id: 'default' };
+        this.meta.last_state = this.meta.last_state || { id: 'default' };
 
         this._hideLastStateKey = app.user.lastState.key(this.HIDE_KEY, this);
 
