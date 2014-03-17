@@ -450,6 +450,7 @@ $modInvisList[] = 'Notifications';
 // Be sure to also add the modules to $modInvisList, otherwise their tab will still appear
 $GLOBALS['moduleTabMap'] = array(
     'UpgradeWizard' => 'Administration',
+    'KBSContents' => 'KBSDocuments',
     'EmailMan' => 'Administration',
     'ModuleBuilder' => 'Administration',
     'Configurator' => 'Administration',

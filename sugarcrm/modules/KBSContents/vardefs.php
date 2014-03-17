@@ -194,7 +194,7 @@ $dictionary['KBSContent'] = array(
             'rhs_table' => 'kbstopics',
             'rhs_key' => 'topic_id',
             'relationship_type' => 'one-to-many'
-        )
+        ),
         'kbsdocuments_kbscontents' => array (
             'lhs_module' => 'KBSDocuments',
             'lhs_table' => 'kbsdocuments',
