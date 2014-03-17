@@ -12,12 +12,12 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['Meetings']['base']['view']['subpanel-list'] = array(
-  'panels' => 
+  'panels' =>
   array(
     array(
       'name' => 'panel_header',
       'label' => 'LBL_PANEL_1',
-      'fields' => 
+      'fields' =>
       array(
         array(
           'name' => 'name',
@@ -42,7 +42,6 @@ $viewdefs['Meetings']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'related_fields' => array('contact_id'),
-          'sortable' => false,
         ),
         array(
           'name' => 'date_start',
