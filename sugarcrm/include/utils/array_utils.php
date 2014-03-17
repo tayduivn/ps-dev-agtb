@@ -131,6 +131,28 @@ function override_value_to_string_recursive2($array_name, $value_name, $value, $
 	}
 }
 
+/*
+ * This function retrieves the sugar_config array leaf element(s) and returns them in an array.
+ *
+ * Example: If an array exists in $sugar_config with structure like:
+ *
+ * $sugar_config('http_referrer' => array('list' => array(0 => 'abc.com', 1 => 'def.com', 2 => 'ghi.com')))
+ *
+ * Given an array and key names from parameter $keyArray,
+ *      0 => 'http_referer',
+ *      1 => 'list'
+ *
+ * The returned array:
+ *      0 => 'abc.com',
+ *      1 => 'def.com',
+ *      2 => 'ghi.com'
+ *
+ * @params : $keyArray - array of keys
+ * 			 $sugar_config - the sugar_config data structure
+ * 			 $count - current level of the array
+ * 			 $confArray - current level of array structure
+ * @return : array of the sugar_config array leaf element(s)
+ */
 function get_config_key_array($keyArray, $sugar_config = array(), $count = 0, $confArray = array())
 {
     if(empty($sugar_config)) {

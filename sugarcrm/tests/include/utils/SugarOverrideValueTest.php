@@ -32,9 +32,9 @@ class SugarOverrideValueTest extends Sugar_PHPUnit_Framework_TestCase
         {
             $this->config_file = '<?php' . "\r\n";
         }
-        $new_line = '$sugar_config[\'http_referer\'][\'list\'][0] = \'abc.com\';' . "\r\n" .
-            '$sugar_config[\'http_referer\'][\'list\'][1] = \'123.com\';' . "\r\n" .
-            '$sugar_config[\'test\'][\'abc\'] = \'abc\';' . "\r\n";
+        $new_line = '$sugar_config[\'http_referer_396\'][\'list\'][0] = \'abc.com\';' . "\r\n" .
+            '$sugar_config[\'http_referer_396\'][\'list\'][1] = \'123.com\';' . "\r\n" .
+            '$sugar_config[\'test_396\'][\'abc\'] = \'abc\';' . "\r\n";
 
         SugarAutoLoader::put('config.php', $this->config_file . "\r\n" . $new_line, true);
     }
@@ -45,6 +45,11 @@ class SugarOverrideValueTest extends Sugar_PHPUnit_Framework_TestCase
         {
             SugarAutoLoader::put('config.php', $this->config_file);
         }
+
+        global $sugar_config;
+        unset($sugar_config['http_referer_396']);
+        unset($sugar_config['full_text_engine_396']);
+        unset($sugar_config['test_396']);
 
         SugarTestHelper::tearDown();
         parent::tearDown();
@@ -58,9 +63,10 @@ class SugarOverrideValueTest extends Sugar_PHPUnit_Framework_TestCase
     {
         global $sugar_config;
 
-        $sugar_config[$value_name] = $config;
+        if (!empty($config)) {
+            $sugar_config[$value_name] = $config;
+        }
         $this->assertEquals($expected, override_value_to_string_recursive2($array_name, $value_name, $value));
-        array_pop($sugar_config);
     }
 
     public function providerOverride()
@@ -68,52 +74,45 @@ class SugarOverrideValueTest extends Sugar_PHPUnit_Framework_TestCase
         $returnArray = array(
             array( // Append: sequential array exists in config.php
                 "sugar_config",
-                "http_referer",
+                "http_referer_396",
                 array('list' => array(0 => 'location.com')), // structure from config_override.php
                 array('list' => array(0 => 'abc.com', 1 => '123.com', 2 => 'location.com')), // merged config
-                "\$sugar_config['http_referer']['list'][] = 'location.com';\n"
-            ),
-            array( // Append: sequential array exists in config.php
-                "sugar_config",
-                "http_referer",
-                array('list' => array(0 => 'location1.com')), // structure from config_override.php
-                array('list' => array(0 => 'abc.com', 1 => '123.com', 2 => 'location.com', 3 => 'location1.com')), // merged config
-                "\$sugar_config['http_referer']['list'][] = 'location1.com';\n"
+                "\$sugar_config['http_referer_396']['list'][] = 'location.com';\n"
             ),
             array( // Override: sequential array exists in config.php
                 "sugar_config",
-                "http_referer",
+                "http_referer_396",
                 array('list' => array(0 => 'location.com')), // structure from config_override.php
                 array('list' => array(0 => 'location.com', 1 => '123.com')), // merged config
-                "\$sugar_config['http_referer']['list']['0'] = 'location.com';\n"
+                "\$sugar_config['http_referer_396']['list']['0'] = 'location.com';\n"
             ),
             array( // Override: sequential array exists in config.php
                 "sugar_config",
-                "http_referer",
+                "http_referer_396",
                 array('list' => array(1 => 'location.com')), // structure from config_override.php
                 array('list' => array(0 => 'abc.com', 1 => 'location.com')), // merged config
-                "\$sugar_config['http_referer']['list']['1'] = 'location.com';\n"
+                "\$sugar_config['http_referer_396']['list']['1'] = 'location.com';\n"
             ),
             array( // Override: does not exist in config.php
                 "sugar_config",
-                "full_text_engine",
+                "full_text_engine_396",
                 array('Elastic' => array('curl' => array(123 => 'user:password'))), // structure from config_override.php
                 array('Elastic' => array('curl' => array(123 => 'user:password'))), // merged config
-                "\$sugar_config['full_text_engine']['Elastic']['curl']['123'] = 'user:password';\n"
+                "\$sugar_config['full_text_engine_396']['Elastic']['curl']['123'] = 'user:password';\n"
             ),
             array( // Override: key is a string
                 "sugar_config",
-                "test",
+                "test_396",
                 array('def' => 'def'), // structure from config_override.php
                 array('abc' => 'abc', 'def' => 'def'), // merged config
-                "\$sugar_config['test']['def'] = 'def';\n"
+                "\$sugar_config['test_396']['def'] = 'def';\n"
             ),
             array( // Override: not config related
                 "app_list_strings",
-                "http_referer",
+                "http_referer_396",
                 array('list' => array(0 => 'location.com')), // structure from config_override.php
                 array(),
-                "\$app_list_strings['http_referer']['list']['0'] = 'location.com';\n"
+                "\$app_list_strings['http_referer_396']['list']['0'] = 'location.com';\n"
             ),
         );
         return $returnArray;
