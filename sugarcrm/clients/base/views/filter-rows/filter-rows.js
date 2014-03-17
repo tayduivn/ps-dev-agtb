@@ -242,7 +242,6 @@
         } else {
             // Add the initial row.
             $row = $(this.formRowTemplate()).appendTo(this.$el);
-            this.layout.trigger('filter:toggle:savestate', false);
         }
         model = app.data.createBean(this.moduleName);
         field = this.createField(model, {
