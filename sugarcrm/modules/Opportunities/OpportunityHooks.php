@@ -69,6 +69,9 @@ class OpportunityHooks extends AbstractForecastHooks
                 return;
             }
 
+            // Load forecast config so we have the sales_stage data.
+            static::loadForecastSettings();
+
             // we don't have a new row, so figure out what we need to set it to
             $closed_won = static::$settings['sales_stage_won'];
             $closed_lost = static::$settings['sales_stage_lost'];
