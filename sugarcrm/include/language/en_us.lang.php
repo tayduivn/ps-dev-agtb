@@ -2542,7 +2542,14 @@ $app_strings = array (
     'LBL_PREVIOUS_TIMEPERIOD' => 'Previous Time Period',
     'LBL_NEXT_TIMEPERIOD' => 'Next Time Period',
     'LBL_PREVIOUS_CURRENT_NEXT_TIMEPERIODS' => 'Previous,Current,Next',
+
+    //BEGIN SUGARCRM flav!=ent ONLY
+    'NOTICE_NO_DELETE_CLOSED' => 'You cannot delete records that have a closed sales stage.',
+    //END SUGARCRM flav!=ent ONLY
+
+    //BEGIN SUGARCRM flav=ent ONLY
     'NOTICE_NO_DELETE_CLOSED' => 'You cannot delete records that have a closed sales status.',
+    //END SUGARCRM flav=ent ONLY
 
     //BEGIN SUGARCRM flav!=ent ONLY
     'WARNING_NO_DELETE_SELECTED' => 'One or more of the selected records has a sales stage of Closed Won or Closed Lost and cannot be deleted.',
