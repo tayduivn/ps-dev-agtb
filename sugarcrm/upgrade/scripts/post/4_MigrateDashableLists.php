@@ -98,7 +98,13 @@ class SugarUpgradeMigrateDashableLists extends UpgradeScript
                     $view = $row->view;
                     $hasTypeDashableList = property_exists($view, 'type') && $view->type === 'dashablelist';
                     $hasNameDashableList = property_exists($view, 'name') && $view->name === 'dashablelist';
-                    if (!$hasTypeDashableList && !$hasNameDashableList) {
+
+                    if ($hasNameDashableList) {
+                        unset($view->name);
+                        $view->type = 'dashablelist';
+                        $hasTypeDashableList = true;
+                    }
+                    if (!$hasTypeDashableList) {
                         continue;
                     }
 
