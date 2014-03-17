@@ -78,10 +78,16 @@ function getControl(
         }
 
         // remove the special text entry field function 'getEmailAddressWidget'
-        if ( isset($vardef['function'])
-                && ( $vardef['function'] == 'getEmailAddressWidget'
-                    || $vardef['function']['name'] == 'getEmailAddressWidget' ) )
-            unset($vardef['function']);
+        if (isset($vardef['function'])) {
+            if (is_array($vardef['function']) && isset($vardef['function']['name'])) {
+                $fn = $vardef['function']['name'];
+            } else {
+                $fn = $vardef['function'];
+            }
+            if ($fn === 'getEmailAddressWidget') {
+                unset($vardef['function']);
+            }
+        }
 
         // load SugarFieldHandler to render the field tpl file
         static $sfh;
@@ -100,11 +106,16 @@ function getControl(
         $contents = preg_replace('/\{\*[^\}]*?\*\}/', '', $contents);
 
         // hack to disable one of the js calls in this control
-        if ( isset($vardef['function'])
-                && ( $vardef['function'] == 'getCurrencyDropDown'
-                    || $vardef['function']['name'] == 'getCurrencyDropDown'
-                    || $vardef['function'] == 'getCurrencies') )
-        $contents .= "{literal}<script>function CurrencyConvertAll() { return; }</script>{/literal}";
+        if (isset($vardef['function'])) {
+            if (is_array($vardef['function']) && isset($vardef['function']['name'])) {
+                $fn = $vardef['function']['name'];
+            } else {
+                $fn = $vardef['function'];
+            }
+            if ($fn === 'getCurrencyDropDown' || $fn === 'getCurrencies') {
+                $contents .= "{literal}<script>function CurrencyConvertAll() { return; }</script>{/literal}";
+            }
+        }
 
         // Save it to the cache file
         if($fh = @sugar_fopen($file, 'w')) {

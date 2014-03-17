@@ -18,47 +18,53 @@ require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarLayoutdefsMetaDataUpgra
 
 class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
 {
-    protected $subpanelUpgrader;
     protected $oldDefs;
     protected $expectedDefs;
-    protected $oldFileName = 'custom/modules/Accounts/metadata/subpanels/ForAwesometest.php';
+
+    /** @var SidecarMetaDataUpgrader */
+    protected $upgrader;
+    protected $filesToRemove = array();
 
     protected function setUp()
     {
         $this->upgrader = new SidecarMetaDataUpgrader();
+        $this->filesToRemove = array();
     }
 
     protected function tearDown()
     {
-        unset($this->subpanelUpgrader);
-        if(file_exists($this->oldFileName)) {
-            unlink($this->oldFileName);
+        foreach ($this->filesToRemove as $file) {
+            if (file_exists($file)) {
+                unlink($file);
+            }
         }
     }
 
     public function testViewDefsUpgrade()
     {
         $this->setUpViewDefs();
-        if (!is_dir(dirname($this->oldFileName))) {
-            sugar_mkdir(dirname($this->oldFileName), null, true);
+
+        $oldFileName = 'custom/modules/Accounts/metadata/subpanels/ForAwesometest.php';
+        if (!is_dir(dirname($oldFileName))) {
+            sugar_mkdir(dirname($oldFileName), null, true);
         }
         write_array_to_file(
             "subpanel_layout",
             $this->oldDefs,
-            $this->oldFileName
+            $oldFileName
         );
+        $this->filesToRemove[] = $oldFileName;
 
         $fileArray = array(
             'module' => 'Accounts',
             'client' => 'base',
-            'fullpath' => $this->oldFileName,
+            'fullpath' => $oldFileName,
         );
 
-        $this->subpanelUpgrader = new SidecarSubpanelViewDefUpgraderMock($this->upgrader, $fileArray);
+        $subpanelUpgrader = new SidecarSubpanelViewDefUpgraderMock($this->upgrader, $fileArray);
+        $subpanelUpgrader->upgrade();
 
-        $this->subpanelUpgrader->upgrade();
-
-        $this->assertEquals($this->expectedDefs, $this->subpanelUpgrader->sidecarViewdefs);
+        $this->assertEquals($this->expectedDefs, $subpanelUpgrader->sidecarViewdefs);
     }
 
     public function testLayoutDefsUpgrade()
@@ -71,7 +77,7 @@ class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
             'filename' => 'overridecalls.php',
             'fullpath' => 'custom/Extension/modules/Accounts/Ext/Layoutdefs/overridecalls.php',
         );
-        $this->subpanelUpgrader = new SidecarLayoutdefsMetaDataUpgrader($this->upgrader, $fileArray);
+        $subpanelUpgrader = new SidecarLayoutdefsMetaDataUpgrader($this->upgrader, $fileArray);
         if (!is_dir("custom/modules/Accounts/metadata/")) {
             sugar_mkdir("custom/modules/Accounts/metadata/", null, true);
         }
@@ -88,18 +94,23 @@ class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
             $this->oldLayoutDefs,
             "custom/modules/Accounts/metadata/subpaneldefs.php"
         );
+        $this->filesToRemove[] = 'custom/modules/Accounts/metadata/subpaneldefs.php';
+
         write_array_to_file(
             "layout_defs['Accounts']['subpanel_setup']['calls']['override_subpanel_name']",
             'ForCalls',
             "custom/Extension/modules/Accounts/Ext/Layoutdefs/overridecalls.php"
         );
+        $this->filesToRemove[] = 'custom/Extension/modules/Accounts/Ext/Layoutdefs/overridecalls.php';
+
         write_array_to_file(
             "layout_defs['Accounts']['subpanel_setup']['calls']['override_subpanel_name']",
             'ForCalls',
             "custom/modules/Accounts/Ext/Layoutdefs/layoutdefs.ext.php"
         );
+        $this->filesToRemove[] = 'custom/modules/Accounts/Ext/Layoutdefs/layoutdefs.ext.php';
 
-        $this->subpanelUpgrader->upgrade();
+        $subpanelUpgrader->upgrade();
 
         $this->assertFileExists(
             "custom/Extension/modules/Accounts/Ext/clients/base/layouts/subpanels/overridecalls.php"

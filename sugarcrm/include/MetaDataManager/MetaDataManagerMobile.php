@@ -151,44 +151,6 @@ class MetaDataManagerMobile extends MetaDataManager
     }
 
     /**
-     * The same as MetadataApi::loadMetadata except that the result is filtered to remove
-     * unnecesary elements for nomad/mobile
-     *
-     * @return array|void
-     */
-    protected function loadMetadata($args = array()) {
-        $data = parent::loadMetadata($args);
-
-        if (!empty($data['modules'])) {
-            foreach($data['modules'] as $module=> $mData) {
-                //blacklist certain data types alltogether
-                foreach($this->blackListModuleDataKeys as $key) {
-                    unset($data['modules'][$module][$key]);
-                }
-                //views and layouts should be white-list filtered
-                if (!empty($mData['views'])) {
-                    foreach($mData['views'] as $key => $def) {
-                        if (!in_array($key, $this->allowedModuleViews)) {
-                            unset($data['modules'][$module]['views'][$key]);
-                        }
-                    }
-                }
-                if (!empty($mData['layouts'])) {
-                    foreach($mData['layouts'] as $key => $def) {
-                        if (!in_array($key, $this->allowedModuleLayouts)) {
-                            unset($data['modules'][$module]['layouts'][$key]);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Handle the new hash
-        $data['_hash'] = $this->hashChunk($data);
-        return $data;
-    }
-
-    /**
      * Retrieve white listed properties which shall be copied from server side
      * configurations to client side configurations.
      *
@@ -199,5 +161,45 @@ class MetaDataManagerMobile extends MetaDataManager
         $properties = parent::getConfigProperties();
         $properties['offlineEnabled'] = true;
         return $properties;
+    }
+
+    /**
+     * Normalizes the metadata response for the platform.
+     * 
+     * Mobile needs to cleanse itself of some of the stuff that base metadata 
+     * needs that mobile doesn't. That is done here.
+     * 
+     * @param array $data The metadata collection
+     * @return array The normalize metadata collection for this platform
+     */
+    public function normalizeMetadata($data)
+    {
+        if (!empty($data['modules'])) {
+            foreach($data['modules'] as $module=> $mData) {
+                //blacklist certain data types alltogether
+                foreach($this->blackListModuleDataKeys as $key) {
+                    unset($data['modules'][$module][$key]);
+                }
+
+                //views and layouts should be white-list filtered
+                if (!empty($mData['views'])) {
+                    foreach($mData['views'] as $key => $def) {
+                        if (!in_array($key, $this->allowedModuleViews)) {
+                            unset($data['modules'][$module]['views'][$key]);
+                        }
+                    }
+                }
+
+                if (!empty($mData['layouts'])) {
+                    foreach($mData['layouts'] as $key => $def) {
+                        if (!in_array($key, $this->allowedModuleLayouts)) {
+                            unset($data['modules'][$module]['layouts'][$key]);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $data;
     }
 }

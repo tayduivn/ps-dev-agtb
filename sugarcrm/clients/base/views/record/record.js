@@ -22,7 +22,8 @@
         'Editable',
         'Audit',
         'FindDuplicates',
-        'ToggleMoreLess'
+        'ToggleMoreLess',
+        'Tooltip'
     ],
 
     enableHeaderButtons: true,
@@ -1150,6 +1151,7 @@
         var $panelHeader = this.$(e.currentTarget);
         if ($panelHeader && $panelHeader.next()) {
             $panelHeader.next().toggle();
+            $panelHeader.toggleClass('panel-inactive panel-active');
         }
         if ($panelHeader && $panelHeader.find('i')) {
             $panelHeader.find('i').toggleClass('icon-chevron-up icon-chevron-down');

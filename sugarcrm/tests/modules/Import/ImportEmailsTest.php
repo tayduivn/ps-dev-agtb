@@ -185,9 +185,6 @@ class ImportEmailsTest extends Sugar_PHPUnit_Framework_TestCase
         $fileCreated = sugar_file_put_contents($this->file, $csvDataUpdate);
         $this->assertGreaterThan(0, $fileCreated, 'Failed to write to ' . $this->file);
 
-        // Create the ImportFile the Importer uses from our CSV
-        $importSource = new ImportFile($this->file, ',', '"');
-
         // Create the bean type we're importing
         $this->importObject = $bean = new $module;
 

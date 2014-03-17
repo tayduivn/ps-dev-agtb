@@ -111,13 +111,30 @@ class MBVardefs{
 	function getVardef(){
 		return $this->vardef;
 	}
-		
+
+	/**
+	 * Ensure the vardef name is OK for database
+	 * @param string $name
+	 * @return string
+	 */
+	protected function validateVardefName($name)
+	{
+	    $name = $GLOBALS['db']->getValidDBName($name, true, 'column');
+	    if($GLOBALS['db']->isReservedWord($name)) {
+	        $name = $name."_field";
+	    }
+	    return $GLOBALS['db']->getValidDBName($name, true, 'column');
+	}
 
     function addFieldVardef($vardef)
     {
         if(!isset($vardef['default']) || strlen($vardef['default']) == 0)
         {
             unset($vardef['default']);
+        }
+        if(empty($this->vardef['fields'][$vardef['name']])) {
+            // clean up names for new fields
+            $vardef['name'] = $this->validateVardefName($vardef['name']);
         }
         $this->vardef['fields'][$vardef['name']] = $vardef;
     }
@@ -142,10 +159,4 @@ class MBVardefs{
 			$this->vardef = $vardefs;
 		}
 	}
-
-
-
-
-
 }
-?>

@@ -162,10 +162,22 @@ class SugarFieldEmail extends SugarFieldBase
             $bean->emailAddress->hasFetched = true;
         }
 
+        // Primary address works in weird ways.
+        // The getEmailsQuery() code orders by primary_address
+        // So the first email address returned by bean should be primary
+        // Even if it isn't flagged because the old primary was deleted or whatever
+        $has_primary = array();
+
         foreach ($rows as $row) {
             $bean = $beans[$row['bean_id']];
+            if (empty($has_primary[$row['bean_id']])) {
+                $row['primary_address'] = true;
+                $has_primary[$row['bean_id']] = true;
+            } else {
+                $row['primary_address'] = false;
+            }
             $bean->emailAddress->addAddress($row['email_address'],
-                                            isset($row['primary_address'])?$row['primary_address']:false,
+                                            $row['primary_address'],
                                             false,
                                             $row['invalid_email'],
                                             $row['opt_out']);

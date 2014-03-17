@@ -29,6 +29,13 @@
   overflow-y: scroll;
 }
 
+.headerpane {
+	display: block;
+}
+.headerpane h1 {
+	display: table;
+}
+
 @media (max-width: 768px) {
   .row-fluid .span8.main-pane {
     width: 100%;

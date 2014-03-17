@@ -625,7 +625,7 @@
   .record-panel-header {
     background: #f5f5f5;
     display: block !important;
-    padding: 5px 5px 5px 15px;
+    padding: 0 5px 0 15px;
     width: auto !important;
     border-top: 1px solid rgba(220,220,220,1);
     box-shadow: inset 0px 1px 0px 0px white;
@@ -634,9 +634,15 @@
     &:hover {
       background: #fafafa;
     }
+    &.panel-active {
+      background: @white;
+    }
+    &.panel-inactive {
+      .pull-left { font-weight: normal; }
+    }
   }
   .pull-right {
-    margin: 5px 5px 0px 0px;
+    margin: 4px 5px 0px 0px;
   }
   .record-panel-content {
     width: auto !important;

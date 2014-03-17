@@ -251,10 +251,10 @@ $viewdefs[\'Accounts\'][\'mobile\'][\'view\'][\'herfy\'] = array(\'test\' => \'t
         $this->assertArrayNotHasKey('herfy', $md['modules']['Accounts']['views'], "The test view was found in the original Accounts metadata.");
         $this->assertArrayNotHasKey('fandy', $md['modules']['Cases']['views'], "The test view was found in the original Cases metadata.");
         
-        // Assertions of state after refresh
-        $this->assertNotEquals($md['modules']['Accounts']['views'], $data['modules']['Accounts']['views'], "First and second metadata Accounts module sections are the same");
+        // Assertions of state after refresh. Mobile will cull certain elements from metadata
+        $this->assertEquals($md['modules']['Accounts']['views'], $data['modules']['Accounts']['views'], "First and second metadata Accounts module sections are not the same");
         $this->assertEquals($md['modules']['Cases']['views'], $data['modules']['Cases']['views'], "First and second metadata Cases module sections are different");
-        $this->assertNotEmpty($data['modules']['Accounts']['views']['herfy'], "The test view was not found in the refreshed Accounts metadata.");
+        $this->assertFalse(isset($data['modules']['Accounts']['views']['herfy']), "The test view was found in the refreshed Accounts metadata.");
         $this->assertArrayNotHasKey('fandy', $md['modules']['Cases']['views'], "The test view was found in the refreshed Cases metadata.");
     }
     //END SUGARCRM flav=pro ONLY
