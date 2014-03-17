@@ -259,7 +259,7 @@
     /**
      * Open the body of the panel if enabled
      */
-    openPanel: function () {debugger;
+    openPanel: function () {
         //only open the panel if it is enabled
         if (this.isPanelEnabled()) {
             this.$(this.accordionBody).collapse('show');
