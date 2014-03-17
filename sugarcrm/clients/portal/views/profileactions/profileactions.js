@@ -27,6 +27,39 @@
 ({
     extendsFrom: 'ProfileactionsView',
     plugins: ['Tooltip'],
+
+    /**
+     * The selector for the tab that contains profile actions.
+     *
+     * @type {String}
+     */
+    _profileActionsTag: '[data-menu="user-actions"]',
+
+    /**
+     * @inheritDoc
+     */
+    initialize: function(options) {
+        var self = this;
+        this._super('initialize', [options]);
+        app.events.on('app:view:change', function(layout, params){
+            if (params.module === 'Contacts') {
+                self.$(self._profileActionsTag).addClass('active');
+            } else {
+                self.$(self._profileActionsTag).removeClass('active');
+            }
+        });
+    },
+
+    /**
+     * @inheritDoc
+     */
+    _renderHtml: function(){
+        this._super('_renderHtml');
+        if (app.controller.context.get('module') === 'Contacts') {
+            this.$(this._profileActionsTag).addClass('active');
+        }
+    },
+
     /**
      * Sets the current user's information like full name, user name, avatar, etc.,
      * using portal's user module which is currently the Contacts module.
@@ -43,6 +76,7 @@
         }) : '';
         this.render();
     },
+
     /**
      * Filters single menu data
      * @param Array menu data
