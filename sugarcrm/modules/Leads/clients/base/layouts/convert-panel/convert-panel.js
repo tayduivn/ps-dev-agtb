@@ -259,10 +259,14 @@
     /**
      * Open the body of the panel if enabled
      */
-    openPanel: function () {
+    openPanel: function () {debugger;
         //only open the panel if it is enabled
         if (this.isPanelEnabled()) {
             this.$(this.accordionBody).collapse('show');
+            // fix tab rendering issue for create view
+            if (this.currentToggle === this.TOGGLE_CREATE && this.createView.meta.useTabsAndPanels) {
+                this.createView.render();
+            }
         }
     },
 
