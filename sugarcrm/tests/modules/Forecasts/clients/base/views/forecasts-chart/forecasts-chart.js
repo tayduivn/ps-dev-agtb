@@ -1,4 +1,3 @@
-//FILE SUGARCRM flav=pro ONLY
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -267,6 +266,54 @@ describe('Forecasts.Base.Views.ForecastsChart', function() {
             m.set({quota: 45});
             view.mgrWorksheetChanged(m);
             expect(view.serverData.quota).toEqual(45);
+        });
+    });
+
+    describe('parseManagerWorksheet', function() {
+        var c = new Backbone.Collection(), sandbox = sinon.sandbox.create();
+        beforeEach(function() {
+            c.add([
+                {
+                    likely_case: '500.00',
+                    likely_case_adjusted: '500.00',
+                    base_rate: 1.0,
+                    quota: '500.00',
+                    id: 'test_1_id',
+                    name: 'test 1',
+                    user_id: 'test_1'
+                },
+                {
+                    likely_case: '500.00',
+                    likely_case_adjusted: '500.00',
+                    base_rate: 1.0,
+                    quota: '500.00',
+                    id: 'test_2_id',
+                    name: 'test 2',
+                    user_id: 'test_2'
+                }
+            ]);
+        });
+
+        afterEach(function() {
+            c.reset({}, {silent: true});
+            sandbox.restore();
+        });
+
+        it('quota should be 1000.00', function() {
+            var server_data;
+            sandbox.stub(view, 'getField', function() {
+                return {
+                    getServerData: function() {
+                        return {};
+                    },
+                    setServerData: function(serverData) {
+                        server_data = serverData;
+                    }
+                };
+            });
+
+            view.parseManagerWorksheet(c);
+            expect(server_data.quota).toEqual('1000.000000');
         });
     });
 });
