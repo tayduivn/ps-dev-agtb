@@ -380,6 +380,7 @@
             //display import btn if there is no err msg
             if (!dnbCntctDet.errmsg) {
                 if (this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
+                    this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().removeClass('hide');
                     this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().show();
                 }
             }
