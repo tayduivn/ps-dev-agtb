@@ -399,7 +399,6 @@
                         errorMessages.push(app.error.getErrorString(errorName, errorContext));
                     });
                 }
-                $ftag.wrap('<div class="input-append error ' + ftag + '">');
                 $tooltip = $(this.exclamationMarkTemplate(errorMessages));
                 $ftag.after($tooltip);
                 this.createErrorTooltips($tooltip);
@@ -444,7 +443,7 @@
                 var ftag = this.fieldTag || '',
                     $ftag = this.$(ftag);
                 // Remove previous exclamation then add back.
-                this.$('.add-on').remove();
+                this.$('.add-on.error-tooltip').remove();
                 var isWrapped = $ftag.parent().hasClass('input-append');
                 if (isWrapped) {
                     $ftag.unwrap();
