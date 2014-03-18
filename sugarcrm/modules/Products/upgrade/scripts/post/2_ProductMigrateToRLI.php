@@ -9,7 +9,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  */
 
 class SugarUpgradeProductMigrateToRLI extends UpgradeScript
@@ -38,79 +38,79 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
         // need to copy over Products that are quoted and associated to an Opportunity
         if (version_compare($this->from_version, '6.7.0', "<")) {
             $this->log('Migrating 6.5 Products assigned to Quotes that have Opportunities.');
-            $sql = "SELECT  p.id, " .
-                           "p.name, " .
-                           "p.date_entered, " .
-                           "p.date_modified, " .
-                           "p.modified_user_id, " .
-                           "p.created_by, " .
-                           "p.description, " .
-                           "p.deleted, " .
-                           "q.assigned_user_id, " .
-                           "p.team_id, " .
-                           "p.team_set_id, " .
-                           "p.product_template_id, " .
-                           "p.account_id, " .
-                           "(p.discount_price * p.quantity) as total_amount, " . //calculate total_amount
-                           "p.type_id, " .
-                           "p.quote_id, " .
-                           "p.manufacturer_id, " .
-                           "p.category_id, " .
-                           "p.mft_part_num, " .
-                           "p.vendor_part_num, " .
-                           "p.date_purchased, " .
-                           "p.cost_price, " .
-                           "p.discount_price, " .
-                           "p.discount_amount, " .
-                           "null as discount_rate_percent, " . //discount_rate_percent
-                           "p.discount_amount_usdollar, " .
-                           "p.discount_select, " .
-                           "p.deal_calc, " .
-                           "p.deal_calc_usdollar, " .
-                           "p.list_price, " .
-                           "p.cost_usdollar, " .
-                           "p.discount_usdollar, " .
-                           "p.list_usdollar, " .
-                           "p.currency_id, " .
-                           "(p.discount_usdollar / p.discount_price) as base_rate, " . //base_rate
-                           "p.status, " .
-                           "p.tax_class, " .
-                           "p.website, " .
-                           "p.weight, " .
-                           "p.quantity, " .
-                           "p.support_name, " .
-                           "p.support_description, " .
-                           "p.support_contact, " .
-                           "p.support_term, " .
-                           "p.date_support_expires, " .
-                           "p.date_support_starts, " .
-                           "p.pricing_formula, " .
-                           "p.pricing_factor, " .
-                           "p.serial_number, " .
-                           "p.asset_number, " .
-                           "p.book_value, " .
-                           "p.book_value_usdollar, " .
-                           "p.book_value_date, " .
-                           "o.amount, " . //best_case
-                           "o.amount, " . //likely_case
-                           "o.amount, " . //worst_case
-                           "o.date_closed, " .
-                           "0 as date_closed_timestamp, " . //date_closed_timestamp -- needs to be updated later
-                           "o.next_step, " .
-                           "null as commit_stage, " . //commit_stage
-                           "o.sales_stage, " .
-                           "o.probability, " .
-                           "o.lead_source, " .
-                           "o.campaign_id, " .
-                           "o.id, " .
-                           "o.opportunity_type " .
-                   "FROM products p  " .
-                   "INNER JOIN quotes q  " .
-                   "ON q.id = p.quote_id " .
-                   "INNER JOIN quotes_opportunities qo " .
-                   "ON qo.quote_id = q.id " .
-                   "INNER JOIN opportunities o " .
-                   "ON o.id = qo.opportunity_id";
+            $sql = "SELECT p.id,
+                           p.name, 
+                           p.date_entered, 
+                           p.date_modified, 
+                           p.modified_user_id, 
+                           p.created_by, 
+                           p.description, 
+                           p.deleted, 
+                           q.assigned_user_id, 
+                           p.team_id, 
+                           p.team_set_id, 
+                           p.product_template_id, 
+                           p.account_id, 
+                           (p.discount_price * p.quantity) as total_amount,
+                           p.type_id, 
+                           p.quote_id, 
+                           p.manufacturer_id, 
+                           p.category_id, 
+                           p.mft_part_num, 
+                           p.vendor_part_num, 
+                           p.date_purchased, 
+                           p.cost_price, 
+                           p.discount_price, 
+                           p.discount_amount, 
+                           null as discount_rate_percent,
+                           p.discount_amount_usdollar, 
+                           p.discount_select, 
+                           p.deal_calc, 
+                           p.deal_calc_usdollar, 
+                           p.list_price, 
+                           p.cost_usdollar, 
+                           p.discount_usdollar, 
+                           p.list_usdollar, 
+                           p.currency_id, 
+                           (p.discount_usdollar / p.discount_price) as base_rate,
+                           p.status, 
+                           p.tax_class, 
+                           p.website, 
+                           p.weight, 
+                           p.quantity, 
+                           p.support_name, 
+                           p.support_description, 
+                           p.support_contact, 
+                           p.support_term, 
+                           p.date_support_expires, 
+                           p.date_support_starts, 
+                           p.pricing_formula, 
+                           p.pricing_factor, 
+                           p.serial_number, 
+                           p.asset_number, 
+                           p.book_value, 
+                           p.book_value_usdollar, 
+                           p.book_value_date, 
+                           o.amount,
+                           o.amount,
+                           o.amount,
+                           o.date_closed, 
+                           0 as date_closed_timestamp,
+                           o.next_step, 
+                           null as commit_stage,
+                           o.sales_stage, 
+                           o.probability, 
+                           o.lead_source, 
+                           o.campaign_id, 
+                           o.id, 
+                           o.opportunity_type 
+                   FROM products p  
+                   INNER JOIN quotes q  
+                   ON q.id = p.quote_id 
+                   INNER JOIN quotes_opportunities qo 
+                   ON qo.quote_id = q.id 
+                   INNER JOIN opportunities o 
+                   ON o.id = qo.opportunity_id";
 
             $results = $this->db->query($sql);
             $this->insertRows($results);
@@ -121,156 +121,156 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
         //Now we need to do some migration on the 6.7 data, which is a bit more like what we need in 7.
         if (version_compare($this->from_version, '6.7.0', ">=")) {
             $this->log('Migrating 6.7 Products with Opportunities and without Quotes.');
-            $sql = "SELECT  p.id, " .
-                           "p.name, " .
-                           "p.date_entered, " .
-                           "p.date_modified, " .
-                           "p.modified_user_id, " .
-                           "p.created_by, " .
-                           "p.description, " .
-                           "p.deleted, " .
-                           "p.assigned_user_id, " .
-                           "p.team_id, " .
-                           "p.team_set_id, " .
-                           "p.product_template_id, " .
-                           "p.account_id, " .
-                           "(p.discount_price * p.quantity) as total_amount, " . //calculate total amount
-                           "p.type_id, " .
-                           "p.quote_id, " .
-                           "p.manufacturer_id, " .
-                           "p.category_id, " .
-                           "p.mft_part_num, " .
-                           "p.vendor_part_num, " .
-                           "p.date_purchased, " .
-                           "p.cost_price, " .
-                           "p.discount_price, " .
-                           "p.discount_amount, " .
-                           "null as discount_rate_percent, " . //discount_rate_percent
-                           "p.discount_amount_usdollar, " .
-                           "p.discount_select, " .
-                           "p.deal_calc, " .
-                           "p.deal_calc_usdollar, " .
-                           "p.list_price, " .
-                           "p.cost_usdollar, " .
-                           "p.discount_usdollar, " .
-                           "p.list_usdollar, " .
-                           "p.currency_id, " .
-                           "p.base_rate, " .
-                           "p.status, " .
-                           "p.tax_class, " .
-                           "p.website, " .
-                           "p.weight, " .
-                           "p.quantity, " .
-                           "p.support_name, " .
-                           "p.support_description, " .
-                           "p.support_contact, " .
-                           "p.support_term, " .
-                           "p.date_support_expires, " .
-                           "p.date_support_starts, " .
-                           "p.pricing_formula, " .
-                           "p.pricing_factor, " .
-                           "p.serial_number, " .
-                           "p.asset_number, " .
-                           "p.book_value, " .
-                           "p.book_value_usdollar, " .
-                           "p.book_value_date, " .
-                           "p.best_case, " .
-                           "p.likely_case, " .
-                           "p.worst_case, " .
-                           "p.date_closed, " .
-                           "p.date_closed_timestamp, " .
-                           "o.next_step, " .
-                           "p.commit_stage, " .
-                           "o.sales_stage, " .
-                           "p.probability, " .
-                           "o.lead_source, " .
-                           "o.campaign_id, " .
-                           "p.opportunity_id, " .
-                           "o.opportunity_type " .
-                   "FROM products p " .
-                   "INNER JOIN opportunities o " .
-                   "on o.id = p.opportunity_id " .
-                   "WHERE p.opportunity_id IS NOT NULL " .
-                   "AND (p.quote_id IS NULL OR p.quote_id = '')";
+            $sql = "SELECT p.id,
+                           p.name, 
+                           p.date_entered, 
+                           p.date_modified, 
+                           p.modified_user_id, 
+                           p.created_by, 
+                           p.description, 
+                           p.deleted, 
+                           p.assigned_user_id, 
+                           p.team_id, 
+                           p.team_set_id, 
+                           p.product_template_id, 
+                           p.account_id, 
+                           (p.discount_price * p.quantity) as total_amount, 
+                           p.type_id, 
+                           p.quote_id, 
+                           p.manufacturer_id, 
+                           p.category_id, 
+                           p.mft_part_num, 
+                           p.vendor_part_num, 
+                           p.date_purchased, 
+                           p.cost_price, 
+                           p.discount_price, 
+                           p.discount_amount, 
+                           null as discount_rate_percent, 
+                           p.discount_amount_usdollar, 
+                           p.discount_select, 
+                           p.deal_calc, 
+                           p.deal_calc_usdollar, 
+                           p.list_price, 
+                           p.cost_usdollar, 
+                           p.discount_usdollar, 
+                           p.list_usdollar, 
+                           p.currency_id, 
+                           p.base_rate, 
+                           p.status, 
+                           p.tax_class, 
+                           p.website, 
+                           p.weight, 
+                           p.quantity, 
+                           p.support_name, 
+                           p.support_description, 
+                           p.support_contact, 
+                           p.support_term, 
+                           p.date_support_expires, 
+                           p.date_support_starts, 
+                           p.pricing_formula, 
+                           p.pricing_factor, 
+                           p.serial_number, 
+                           p.asset_number, 
+                           p.book_value, 
+                           p.book_value_usdollar, 
+                           p.book_value_date, 
+                           p.best_case, 
+                           p.likely_case, 
+                           p.worst_case, 
+                           p.date_closed, 
+                           p.date_closed_timestamp, 
+                           o.next_step, 
+                           p.commit_stage, 
+                           o.sales_stage, 
+                           p.probability, 
+                           o.lead_source, 
+                           o.campaign_id, 
+                           p.opportunity_id, 
+                           o.opportunity_type 
+                   FROM products p 
+                   INNER JOIN opportunities o 
+                   on o.id = p.opportunity_id 
+                   WHERE p.opportunity_id IS NOT NULL 
+                   AND (p.quote_id IS NULL OR p.quote_id = '')";
             $results = $this->db->query($sql);
             $this->insertRows($results);
 
             $this->log('Done migrating 6.7 Products with Opportunities and without Quotes.');
 
             $this->log('Migrating 6.7 Products assigned to Quotes that have Opportunities.');
-            $sql = "SELECT  p.id, " .
-                           "p.name, " .
-                           "p.date_entered, " .
-                           "p.date_modified, " .
-                           "p.modified_user_id, " .
-                           "p.created_by, " .
-                           "p.description, " .
-                           "p.deleted, " .
-                           "q.assigned_user_id, " .
-                           "p.team_id, " .
-                           "p.team_set_id, " .
-                           "p.product_template_id, " .
-                           "p.account_id, " .
-                           "(p.discount_price * p.quantity) as total_amount, " . //calculate total_amount
-                           "p.type_id, " .
-                           "p.quote_id, " .
-                           "p.manufacturer_id, " .
-                           "p.category_id, " .
-                           "p.mft_part_num, " .
-                           "p.vendor_part_num, " .
-                           "p.date_purchased, " .
-                           "p.cost_price, " .
-                           "p.discount_price, " .
-                           "p.discount_amount, " .
-                           "null as discount_rate_percent, " . //discount_rate_percent
-                           "p.discount_amount_usdollar, " .
-                           "p.discount_select, " .
-                           "p.deal_calc, " .
-                           "p.deal_calc_usdollar, " .
-                           "p.list_price, " .
-                           "p.cost_usdollar, " .
-                           "p.discount_usdollar, " .
-                           "p.list_usdollar, " .
-                           "p.currency_id, " .
-                           "p.base_rate, " .
-                           "p.status, " .
-                           "p.tax_class, " .
-                           "p.website, " .
-                           "p.weight, " .
-                           "p.quantity, " .
-                           "p.support_name, " .
-                           "p.support_description, " .
-                           "p.support_contact, " .
-                           "p.support_term, " .
-                           "p.date_support_expires, " .
-                           "p.date_support_starts, " .
-                           "p.pricing_formula, " .
-                           "p.pricing_factor, " .
-                           "p.serial_number, " .
-                           "p.asset_number, " .
-                           "p.book_value, " .
-                           "p.book_value_usdollar, " .
-                           "p.book_value_date, " .
-                           "p.best_case, " .
-                           "p.likely_case, " .
-                           "p.worst_case, " .
-                           "o.date_closed, " .
-                           "o.date_closed_timestamp, " .
-                           "o.next_step, " .
-                           "p.commit_stage, " .
-                           "o.sales_stage, " .
-                           "o.probability, " .
-                           "o.lead_source, " .
-                           "o.campaign_id, " .
-                           "qo.opportunity_id, " .
-                           "o.opportunity_type " .
-                   "FROM products p  " .
-                   "INNER JOIN quotes q  " .
-                   "ON q.id = p.quote_id " .
-                   "INNER JOIN quotes_opportunities qo " .
-                   "ON qo.quote_id = q.id " .
-                   "INNER JOIN opportunities o " .
-                   "ON o.id = qo.opportunity_id";
+            $sql = "SELECT p.id,
+                           p.name, 
+                           p.date_entered, 
+                           p.date_modified, 
+                           p.modified_user_id, 
+                           p.created_by, 
+                           p.description, 
+                           p.deleted, 
+                           q.assigned_user_id, 
+                           p.team_id, 
+                           p.team_set_id, 
+                           p.product_template_id, 
+                           p.account_id, 
+                           (p.discount_price * p.quantity) as total_amount, 
+                           p.type_id, 
+                           p.quote_id, 
+                           p.manufacturer_id, 
+                           p.category_id, 
+                           p.mft_part_num, 
+                           p.vendor_part_num, 
+                           p.date_purchased, 
+                           p.cost_price, 
+                           p.discount_price, 
+                           p.discount_amount, 
+                           null as discount_rate_percent, 
+                           p.discount_amount_usdollar, 
+                           p.discount_select, 
+                           p.deal_calc, 
+                           p.deal_calc_usdollar, 
+                           p.list_price, 
+                           p.cost_usdollar, 
+                           p.discount_usdollar, 
+                           p.list_usdollar, 
+                           p.currency_id, 
+                           p.base_rate, 
+                           p.status, 
+                           p.tax_class, 
+                           p.website, 
+                           p.weight, 
+                           p.quantity, 
+                           p.support_name, 
+                           p.support_description, 
+                           p.support_contact, 
+                           p.support_term, 
+                           p.date_support_expires, 
+                           p.date_support_starts, 
+                           p.pricing_formula, 
+                           p.pricing_factor, 
+                           p.serial_number, 
+                           p.asset_number, 
+                           p.book_value, 
+                           p.book_value_usdollar, 
+                           p.book_value_date, 
+                           p.best_case, 
+                           p.likely_case, 
+                           p.worst_case, 
+                           o.date_closed, 
+                           o.date_closed_timestamp, 
+                           o.next_step, 
+                           p.commit_stage, 
+                           o.sales_stage, 
+                           o.probability, 
+                           o.lead_source, 
+                           o.campaign_id, 
+                           qo.opportunity_id, 
+                           o.opportunity_type 
+                   FROM products p  
+                   INNER JOIN quotes q  
+                   ON q.id = p.quote_id 
+                   INNER JOIN quotes_opportunities qo 
+                   ON qo.quote_id = q.id 
+                   INNER JOIN opportunities o 
+                   ON o.id = qo.opportunity_id";
             $results = $this->db->query($sql);
             $this->insertRows($results);
             $this->log('Done migrating 6.7 Products assigned to Quotes that have Opportunities.');
