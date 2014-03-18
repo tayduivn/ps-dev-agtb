@@ -119,13 +119,22 @@
 
         var defaultLayout = this.closestComponent('sidebar');
         if (defaultLayout) {
-            this.listenTo(defaultLayout, 'sidebar:state:changed', function(state) {
-                this.state = state;
-                if (this.chartLoaded && this.state === 'open' && !this.preview_open &&
-                    this.chart && _.isFunction(this.chart.update)) {
-                    this.chart.update();
-                }
-            });
+            this.listenTo(defaultLayout, 'sidebar:state:changed', this._handleSidebarChange);
+        }
+    },
+
+    /**
+     * Update the chart when the sidebar is open.
+     *
+     * @param {String} state The sidebar state. Possible values: `open` or
+     *  `close`.
+     * @private
+     */
+    _handleSidebarChange: function(state) {
+        this.state = state;
+        if (this.chartLoaded && this.state === 'open' && !this.preview_open &&
+            this.chart && _.isFunction(this.chart.update)) {
+            this.chart.update();
         }
     },
 
