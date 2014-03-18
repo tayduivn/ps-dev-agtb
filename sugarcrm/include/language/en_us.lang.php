@@ -4572,6 +4572,7 @@ $app_strings = array (
     'ERR_OFFLINE' => 'Offline error',
     'ERR_OFFLINE_STORAGE_UNAVAILABLE' => 'Failed to open local storage',
     'ERR_OFFLINE_STORAGE_CREATE' => 'Failed to create local storage',
+    'ERR_OFFLINE_START_FAILED_OUT_OF_SPACE' => 'Failed to create local storage: you\'ve run out of space.',
     'ERR_OFFLINE_OUT_OF_SPACE' => 'You\'ve run out of space for local storage.',
     'ERR_OFFLINE_DB_CLEANING_ERROR' => 'Database clean-up failed',
     'ERR_OFFLINE_CLEAN_UP_CONFIRMATION' => 'You\'ve run out of space for offline storage. Storage clean-up is recommended. Do you want to perform it now?',
