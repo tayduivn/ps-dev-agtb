@@ -682,24 +682,33 @@ class User extends Person {
 	}
 
     /**
-     * retrieves an User bean
-     * preformat name & full_name attribute with first/last
+     * Retrieves an User bean
+     * pre-format name & full_name attribute with first/last
      * loads User's preferences
+     * If the picture doesn't exist on the file system, it empties out the picture field
      *
-     * @param string id ID of the User
-     * @param bool encode encode the result
-     * @return object User bean
-     * @return null null if no User found
+     * @param string $id         ID of the User
+     * @param bool $encode       Encode the result
+     * @param bool $deleted      Include deleted users
+     * @return User|null         Returns the user object unless once is not found, then it returns null
      */
-	function retrieve($id, $encode = true, $deleted = true) {
+    public function retrieve($id, $encode = true, $deleted = true) {
         $ret = parent::retrieve($id, $encode, $deleted);
         //CurrentUserApi needs a consistent timestamp/format of the data modified for hash purposes.
         $this->hashTS = $this->fetched_row['date_modified'];
 		if ($ret) {
-			if (isset ($_SESSION)) {
+			if (isset($_SESSION)) {
 				$this->loadPreferences();
 			}
+
+            // make sure that the picture actually exists
+            SugarAutoLoader::requireWithCustom('include/download_file.php');
+            $download_file = new DownloadFile();
+            if (!empty($ret->picture) && !file_exists($download_file->getFilePathFromId($ret->picture))) {
+                $ret->picture = '';
+            }
 		}
+
 		return $ret;
 	}
 
