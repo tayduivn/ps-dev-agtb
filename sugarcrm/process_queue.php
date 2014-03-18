@@ -30,25 +30,25 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //FILE SUGARCRM flav=pro ONLY
 
 $modListHeader = array();
-require_once('modules/Reports/SavedReport.php');
 require_once('modules/Reports/schedule/ReportSchedule.php');
-require_once('modules/Reports/templates/templates_pdf.php');
+require_once('modules/Reports/utils.php');
 require_once('include/modules.php');
 require_once('config.php');
-require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 /** @var Localization $locale */
 global $sugar_config,
        $current_language,
        $app_list_strings,
        $app_strings,
-       $locale;
+       $locale,
+       $timedate;
 
 $language         = $sugar_config['default_language']; // here we'd better use English, because pdf coding problem.
 $app_list_strings = return_app_list_strings_language($language);
 $app_strings      = return_application_language($language);
 
 $reportSchedule = new ReportSchedule();
+$reportSchedule->handleFailedReports();
 $reportsToEmail = $reportSchedule->get_reports_to_email();
 
 //BEGIN SUGARCRM flav=ent ONLY
@@ -61,131 +61,15 @@ global $report_modules,
        $modListHeader,
        $current_user;
 
+$queue = new SugarJobQueue();
 foreach ($reportsToEmail as $scheduleInfo) {
-    $GLOBALS["log"]->debug("-----> in Reports foreach() loop");
-
-    $user = BeanFactory::getBean('Users', $scheduleInfo['user_id']);
-
-    $current_user = $user; // this changes the global $current_user
-
-    $modListHeader  = query_module_access_list($current_user);
-    $report_modules = getAllowedReportModules($modListHeader);
-
-    $theme       = $sugar_config['default_theme'];
-    $savedReport = BeanFactory::getBean('Reports', $scheduleInfo['report_id']);
-
-    $GLOBALS["log"]->debug("-----> Generating Reporter");
-    $reporter = new Report(html_entity_decode($savedReport->content));
-
-    $reporter->is_saved_report = true;
-    $reporter->saved_report = &$savedReport;
-    $reporter->saved_report_id = $savedReport->id;
-    
-    $mod_strings = return_module_language($current_language, 'Reports');
-
-    // prevent invalid report from being processed
-    if (!$reporter->is_definition_valid()) {
-        $invalidFields = $reporter->get_invalid_fields();
-        $args          = array($scheduleInfo['report_id'], implode(', ', $invalidFields));
-        $message       = string_format($mod_strings['ERR_REPORT_INVALID'], $args);
-
-        $GLOBALS["log"]->fatal("-----> {$message}");
-
-        try {
-            require_once 'modules/Reports/utils.php';
-
-            BeanFactory::getBean('Users', $savedReport->assigned_user_id);
-            $reportOwner = new User();
-            $reportOwner->retrieve($savedReport->assigned_user_id);
-
-            $reportsUtils = new ReportsUtilities();
-            $reportsUtils->sendNotificationOfInvalidReport($reportOwner, $message);
-        } catch (MailerException $me) {
-            //@todo consider logging the error at the very least
-        }
-    } else {
-        $GLOBALS["log"]->debug("-----> Reporter settings attributes");
-        $reporter->layout_manager->setAttribute("no_sort", 1);
-
-        $GLOBALS["log"]->debug("-----> Reporter Handling PDF output");
-        $reportFilename = template_handle_pdf($reporter, false);
-
-        // get the recipient's data...
-
-        // first get all email addresses known for this recipient
-        $recipientEmailAddresses = array($user->email1, $user->email2);
-        $recipientEmailAddresses = array_filter($recipientEmailAddresses);
-
-        // then retrieve first non-empty email address
-        $recipientEmailAddress = array_shift($recipientEmailAddresses);
-
-        // get the recipient name that accompanies the email address
-        $recipientName = $locale->formatName($user);
-
-        try {
-            $GLOBALS["log"]->debug("-----> Generating Mailer");
-            $mailer = MailerFactory::getMailerForUser($current_user);
-
-            // set the subject of the email
-            $subject = empty($savedReport->name) ? "Report" : $savedReport->name;
-            $mailer->setSubject($subject);
-
-            // add the recipient
-            $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
-
-            // attach the report, using the subject as the name of the attachment
-            $charsToRemove  = array("\r", "\n");
-            $attachmentName = str_replace($charsToRemove, "", $subject); // remove these characters from the attachment name
-            $attachmentName = str_replace(" ", "_", "{$attachmentName}.pdf"); // replace spaces with the underscores
-            $attachment     = new Attachment($reportFilename, $attachmentName, Encoding::Base64, "application/pdf");
-            $mailer->addAttachment($attachment);
-
-            // set the body of the email
-            $body = $mod_strings["LBL_HELLO"];
-
-            if ($recipientName != "") {
-                $body .= " {$recipientName}";
-            }
-
-            $body .= ",\n\n" .
-                     $mod_strings["LBL_SCHEDULED_REPORT_MSG_INTRO"] .
-                     $savedReport->date_entered .
-                     $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY1"] .
-                     $savedReport->name .
-                     $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY2"];
-
-            $textOnly = EmailFormatter::isTextOnly($body);
-            if ($textOnly) {
-                $mailer->setTextBody($body);
-            } else {
-                $textBody = strip_tags(br2nl($body)); // need to create the plain-text part
-                $mailer->setTextBody($textBody);
-                $mailer->setHtmlBody($body);
-            }
-
-            $GLOBALS["log"]->debug("-----> Sending PDF via Email to [ {$recipientEmailAddress} ]");
-            $mailer->send();
-
-            $GLOBALS["log"]->debug("-----> Send successful");
-            $reportSchedule->update_next_run_time(
-                $scheduleInfo["id"],
-                $scheduleInfo["next_run"],
-                $scheduleInfo["time_interval"]
-            );
-        } catch (MailerException $me) {
-            switch ($me->getCode()) {
-                case MailerException::InvalidEmailAddress:
-                    $GLOBALS["log"]->info("No email address for {$recipientName}");
-                    break;
-                default:
-                    $GLOBALS["log"]->fatal("Mail error: " . $me->getMessage());
-                    break;
-            }
-        }
-
-        $GLOBALS["log"]->debug("-----> Removing temporary PDF file");
-        unlink($reportFilename);
-    }
+    $job = BeanFactory::getBean('SchedulersJobs');
+    $job->name = 'Send Scheduled Report ' . $scheduleInfo['report_id'];
+    $job->assigned_user_id = $scheduleInfo['user_id'];
+    $job->target = 'class::SugarJobSendScheduledReport';
+    $job->data = $scheduleInfo['id'];
+    $job->job_group = 'Report ' . $scheduleInfo['report_id'];
+    $queue->submitJob($job);
 }
 
 sugar_cleanup(false); // continue script execution so that if run from Scheduler, job status will be set back to "Active"

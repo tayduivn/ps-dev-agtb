@@ -1221,6 +1221,8 @@ class MssqlManager extends DBManager
                 return 'DATEADD(minute, ' . $operation . abs($getUserUTCOffset) . ', ' . $string. ')';
             case 'avg':
                 return "avg($string)";
+            case 'substr':
+                return "substring($string, " . implode(', ', $additional_parameters) . ')';
         }
 
         return "$string";

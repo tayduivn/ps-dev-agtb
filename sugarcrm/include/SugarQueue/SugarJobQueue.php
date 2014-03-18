@@ -66,8 +66,10 @@ class SugarJobQueue
 
     /**
      * Submit a new job to the queue
-     * @param SugarJob $job
-     * @param User $user User to run the job under
+     *
+     * @param SchedulersJob $job Job object
+     *
+     * @return string            Job ID
      */
     public function submitJob($job)
     {

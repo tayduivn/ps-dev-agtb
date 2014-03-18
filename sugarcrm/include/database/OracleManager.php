@@ -777,6 +777,8 @@ class OracleManager extends DBManager
                     )
                 ";
                 return $avg;
+            case 'substr':
+                return "substr($string, " . implode(', ', $additional_parameters) . ')';
         }
 
         return $string;
