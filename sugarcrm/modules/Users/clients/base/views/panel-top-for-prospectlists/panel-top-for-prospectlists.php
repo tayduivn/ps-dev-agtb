@@ -32,6 +32,7 @@ $viewdefs['Users']['base']['view']['panel-top-for-prospectlists'] = array(
                     'name' => 'create_button',
                     'label' => ' ',
                     'acl_action' => 'create',
+                    'css_class' => 'disabled',
                 ),
                 array(
                     'type' => 'link-action',
