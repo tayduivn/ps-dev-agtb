@@ -1143,7 +1143,8 @@
                 }
             }
             var confirmationMsgTpl = Handlebars.compile(app.lang.get(confirmationMsgKey));
-            app.alert.show('dnb-import-warning', { level: 'confirmation',
+            app.alert.show('dnb-import-warning', {
+                level: 'confirmation',
                 title: 'LBL_WARNING',
                 messages: confirmationMsgTpl(confirmationMsgData),
                 onConfirm: _.bind(this.updateAccountsModel, this, updatedData)
@@ -1205,7 +1206,7 @@
 
     /**
      * Checks the Sugar data base for duplicate duns or contacts
-     * @param dupeCheckParams
+     * @param {Object} dupeCheckParams
      * dupeCheckParams must have the following keys
      * 1.type Possible values are duns,contacts
      * 2.apiResponse
@@ -1225,10 +1226,10 @@
 
     /**
      * Toggles the visibility of the import button in the dashlet
-     * @param {Boolean} isVisible
      * @param {String} btnName
+     * @param {isVisible} visibility
      */
-    toggleImportBtn: function(isVisible, btnName) {
+    toggleImportBtn: function(btnName, isVisible) {
         if (this.layout.getComponent('dashlet-toolbar').getField(btnName)) {
             if (isVisible) {
                 this.layout.getComponent('dashlet-toolbar').getField(btnName).getFieldElement().show();
