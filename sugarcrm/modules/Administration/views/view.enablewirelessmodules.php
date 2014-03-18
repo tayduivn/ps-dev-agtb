@@ -114,6 +114,17 @@ class AdministrationViewEnablewirelessmodules extends SugarView
             $disabled_modules ['Employees'] = $app_strings['LBL_EMPLOYEES'];
         }
 
+        // NOMAD-1793
+        // Handling case when modules from initial wireless list are vanishing because they're not listed in studio browser.
+        include 'include/MVC/Controller/wireless_module_registry.php';
+        foreach($wireless_module_registry as $moduleName => $def) {
+            // not in any list
+            if (empty($enabled_modules[$moduleName]) && empty($disabled_modules[$moduleName])) {
+                // add module to disabled modules list
+                $disabled_modules[$moduleName] = empty($app_list_strings['moduleList'][$moduleName]) ? $moduleName : ($app_list_strings['moduleList'][$moduleName]);
+            }
+        }
+
         $json_enabled = array();
         foreach($enabled_modules as $mod => $label)
         {
