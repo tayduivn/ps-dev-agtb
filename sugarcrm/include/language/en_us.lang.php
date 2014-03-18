@@ -32,7 +32,6 @@ $app_list_strings = array (
     'Leads' => 'Leads',
     'Currencies' => 'Currencies',
     'Project' => 'Project',
-    //BEGIN SUGARCRM flav=pro ONLY
     'Contracts'=>'Contracts',
     'Quotes' => 'Quotes',
     'Products' => 'Quoted Line Items',
@@ -41,9 +40,6 @@ $app_list_strings = array (
     'ProductCategories' => 'Product Categories',
     'ProductTypes' => 'Product Types',
     'ProductTemplates' => 'Product Catalog',
-  //END SUGARCRM flav=pro ONLY
-
-  //BEGIN SUGARCRM flav=pro ONLY
     'Reports' => 'Reports',
     'Reports_1'=>'Saved Reports',
     'Forecasts' => 'Forecasts',
@@ -55,7 +51,6 @@ $app_list_strings = array (
     'Teams' => 'Teams',
     'TeamNotices' => 'Team Notices',
     'Manufacturers' => 'Manufacturers',
-    //END SUGARCRM flav=pro ONLY
     'Activities' => 'Activities',
     'Comments' => 'Comments',
     'Subscriptions' => 'Subscriptions',
@@ -80,11 +75,9 @@ $app_list_strings = array (
     'DataSets' => 'Data Formats',
     'CustomQueries' => 'Custom Queries',
 //END SUGARCRM flav=ent ONLY
-//BEGIN SUGARCRM flav=pro ONLY
     'WorkFlow' => 'Workflow Definitions',
     'EAPM' => 'External Accounts',
     'Worksheet' => 'Worksheet',
-//END SUGARCRM flav=pro ONLY
     'Users' => 'Users',
     'Employees' => 'Employees',
     'Administration' => 'Administration',
@@ -107,9 +100,7 @@ $app_list_strings = array (
     'Newsletters' => 'Newsletters',
     'KBDocuments' => 'Knowledge Base',
   	'SugarFavorites'=>'Favorites',
-//BEGIN SUGARCRM flav=pro ONLY
 	'PdfManager' => 'PDF Manager',
-//END SUGARCRM flav=pro ONLY
 
     'OAuthKeys' => 'OAuth Consumer Keys',
     'OAuthTokens' => 'OAuth Tokens',
@@ -145,7 +136,6 @@ $app_list_strings = array (
     'Calendar' => 'Calendar',
     'Leads' => 'Lead',
     'Manufacturers' => 'Manufacturer',
-    //BEGIN SUGARCRM flav=pro ONLY
     'Contracts'=>'Contract',
     'Quotes' => 'Quote',
     'Products' => 'Quoted Line Item',
@@ -161,7 +151,6 @@ $app_list_strings = array (
     'MergeRecords'=>'Merge Record',
     'Teams' => 'Team',
     'TeamNotices' => 'Team Notice',
-    //END SUGARCRM flav=pro ONLY
     'Activities' => 'Activity',
     'ActivityStream' => 'Activity Stream',
     'Bugs' => 'Bug',
@@ -184,19 +173,15 @@ $app_list_strings = array (
     'Roles'=>'Role',
     'Notifications'=>'Notification',
     'Sync'=>'Sync',
-//BEGIN SUGARCRM flav=pro ONLY
 	'PdfManager' => 'PDF Manager',
-//END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=ent ONLY
     'ReportMaker' => ' Advanced Report',
     'DataSets' => 'Data Format',
     'CustomQueries' => 'Custom Query',
     //END SUGARCRM flav=ent ONLY
-//BEGIN SUGARCRM flav=pro ONLY
     'WorkFlow' => 'Workflow',
     'EAPM' => 'External Account',
     'Worksheet' => 'Worksheet',
-//END SUGARCRM flav=pro ONLY
     'Users' => 'User',
     'SugarFavorites'=>'SugarFavorites',
     'Employees' => 'Employee',
@@ -591,19 +576,12 @@ $app_list_strings = array (
     'Cases' => 'Case',
     'Leads' => 'Lead',
     'Contacts' => 'Contacts', // cn (11/22/2005) added to support Emails
-    //BEGIN SUGARCRM flav=pro ONLY
     'Products' => 'Quoted Line Item',
     'RevenueLineItems' => 'Revenue Line Item',
     'Quotes' => 'Quote',
-
-    //END SUGARCRM flav=pro ONLY
-
-
     'Bugs' => 'Bug',
     'Prospects' => 'Target',
-
     'Tasks' => 'Task',
-
   ),
 
   'record_type_display_notes' =>
@@ -612,12 +590,10 @@ $app_list_strings = array (
     'Contacts' => 'Contact',
     'Opportunities' => 'Opportunity',
     'Tasks' => 'Task',
-    //BEGIN SUGARCRM flav=pro ONLY
     'ProductTemplates' => 'Product Catalog',
     'Quotes' => 'Quote',
     'Products' => 'Quoted Line Item',
     'Contracts' => 'Contract',
-    //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=ent ONLY
     'RevenueLineItems' => 'Revenue Line Item',
     //END SUGARCRM flav=ent ONLY
@@ -643,10 +619,8 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=ent ONLY
     'RevenueLineItems' => 'Revenue Line Item',
     //END SUGARCRM flav=ent ONLY
-    //BEGIN SUGARCRM flav=pro ONLY
     'Products' => 'Quoted Line Item',
     'Quotes' => 'Quote',
-    //END SUGARCRM flav=pro ONLY
 
     'Bugs' => 'Bugs',
     'Cases' => 'Case',
@@ -656,7 +630,6 @@ $app_list_strings = array (
 
   ),
 
-  //BEGIN SUGARCRM flav=pro ONLY
   'product_status_default_key' => 'Ship',
   'product_status_quote_key' => 'Quotes',
   'product_status_dom' =>
@@ -741,7 +714,6 @@ $app_list_strings = array (
     'Standard' => 'Quote',
     'Invoice' => 'Invoice',
   ),
-  //END SUGARCRM flav=PRO ONLY
   'issue_priority_default_key' => 'Medium',
   'issue_priority_dom' =>
   array (
@@ -845,11 +817,9 @@ $app_list_strings = array (
     'Notes' => 'Notes',
     'Opportunities' => 'Opportunities',
     'Outlook Plugin' => 'Outlook Plugin',
-    //BEGIN SUGARCRM flav=pro ONLY
     'Product Catalog' => 'Product Catalog',
     'Products' => 'Quoted Line Items',
     'RevenueLineItems' => 'Revenue Line Items',
-    //END SUGARCRM flav=pro ONLY
     'Quotes' => 'Quotes',
     'Releases' => 'Releases',
     'RSS' => 'RSS',
@@ -1298,7 +1268,7 @@ $app_list_strings = array (
     'italic' => 'Italic',
   ),
 //END SUGARCRM flav=ent ONLY
-//BEGIN SUGARCRM flav=pro ONLY
+
   'query_calc_oper_dom' =>
       array (
     '+' => '(+) Plus',
@@ -1470,7 +1440,6 @@ $app_list_strings = array (
 
 
 
-//END SUGARCRM flav=pro ONLY
     'duration_intervals' => array('0'=>'00',
                                     '15'=>'15',
                                     '30'=>'30',
@@ -1512,9 +1481,7 @@ $app_list_strings = array (
 /*// QUEUES MODULE DOMs
 'queue_type_dom' => array(
     'Users' => 'Users',
-//BEGIN SUGARCRM flav=pro ONLY
     'Teams' => 'Teams',
-//END SUGARCRM flav=pro ONLY
     'Mailbox' => 'Mailbox',
 ),
 */
@@ -1586,19 +1553,15 @@ $app_list_strings = array (
   'custom_fields_merge_dup_dom'=> array (
         0=>'Disabled',
         1=>'Enabled',
-//BEGIN SUGARCRM flav=pro ONLY
         2=>'In Filter',
         3=>'Default Selected Filter',
         4=>'Filter Only',
-//END SUGARCRM flav=pro ONLY
   ),
 
   'navigation_paradigms' => array(
         'm'=>'Modules',
         'gm'=>'Grouped Modules',
   ),
-
-//BEGIN SUGARCRM flav=pro ONLY
 
     // Contracts module enums
 
@@ -1633,7 +1596,6 @@ $app_list_strings = array (
     ),
 
 
-//END SUGARCRM flav=pro ONLY
 
 
     // strings to pass to Flash charts
@@ -1653,12 +1615,10 @@ $app_list_strings = array (
         'print'       => 'Print',
         'pieWedgeName'      => 'sections',
     ),
-    //BEGIN SUGARCRM flav=pro ONLY
     'pipeline_chart_dom' => array (
         'fun'   => 'Funnel',
         'hbar'  => 'Horizontal Bar',
     ),
-    //END SUGARCRM flav=pro ONLY
     'release_status_dom' =>
     array (
         'Active' => 'Active',
@@ -1936,7 +1896,6 @@ $app_list_strings = array (
         'move' => 'Move',
         'donothing' => 'Do Nothing'
   ),
-    //BEGIN SUGARCRM flav=pro ONLY
     'forecasts_chart_options_group' => array(
         'forecast' => 'In Forecast',
         'sales_stage' => 'Sales Stage',
@@ -1956,7 +1915,6 @@ $app_list_strings = array (
         'after_logout' => 'After Logout',
         'after_login_failed' => 'After Login Failed',
     ),
-    //END SUGARCRM flav=pro ONLY
 );
 
 $app_strings = array (
@@ -2239,10 +2197,7 @@ $app_strings = array (
     'LBL_EMAIL_FOLDERS_NO_VALID_NODE'       => 'Please select a folder before performing this action.',
     'LBL_EMAIL_FOLDERS_TITLE'               => 'Folder Management',
     'LBL_EMAIL_FOLDERS_USING_GROUP_USER'    => 'Using Group',
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_EMAIL_FOLDERS_USING_TEAM'          => 'Assign to Team',
-    //END SUGARCRM flav=pro ONLY
-
     'LBL_EMAIL_FORWARD'                     => 'Forward',
     'LBL_EMAIL_DELIMITER'                   => '::;::',
     'LBL_EMAIL_DOWNLOAD_STATUS'             => 'Downloaded [[count]] of [[total]] Emails',
@@ -2261,11 +2216,9 @@ $app_strings = array (
     'LBL_EMAIL_IMPORT_EMAIL'                => 'Import to Sugar',
     'LBL_EMAIL_IMPORT_SETTINGS'                => 'Import Settings',
     'LBL_EMAIL_INVALID'                     => 'Invalid',
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_EMAIL_LIST_RENAME_TITLE'           => 'Rename Mailing List',
     'LBL_EMAIL_LIST_RENAME_DESC '           => 'Enter a new name for this mailing list',
     'LBL_EMAIL_CONFIRM_DELETE_LIST'         => 'Remove these entries from your mailing lists?',
-    //END SUGARCRM flav=pro ONLY
     'LBL_EMAIL_LOADING'                     => 'Loading...',
     'LBL_EMAIL_MARK'                        => 'Mark',
     'LBL_EMAIL_MARK_FLAGGED'                => 'As Flagged',
@@ -2440,9 +2393,7 @@ $app_strings = array (
     'LBL_EMAIL_TO'                        => 'To',
     'LBL_EMAIL_SUCCESS'                     => 'Success',
     'LBL_EMAIL_SUGAR_FOLDER'                => 'SugarFolder',
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_EMAIL_TEAMS'                       => 'Assign to Teams',
-    //END SUGARCRM flav=pro ONLY
     'LBL_EMAIL_TEMPLATE_EDIT_PLAIN_TEXT'    => 'Email template body is empty',
     'LBL_EMAIL_TEMPLATES'                   => 'Templates',
     'LBL_EMAIL_TEXT_FIRST'                  => 'First Page',
@@ -2478,7 +2429,6 @@ $app_strings = array (
     'LBL_CLOSE_ACTIVITY_CONFIRM' => "Do you want to close this #module#?",
     'LBL_CLOSE_ACTIVITY_REMEMBER' => "Do not display this message in the future: &nbsp;",
     'LBL_INVALID_FILE_EXTENSION' => 'Invalid File Extension',
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_LIST_TEAM' => 'Team',
     'LBL_TEAM' => 'Team:',
     'LBL_TEAMS' =>'Teams',
@@ -2492,7 +2442,6 @@ $app_strings = array (
     'LBL_TEAM_ADD' => 'Add&nbsp;Team',
     'LBL_TEAM_REMOVE' => 'Remove Team',
     'LBL_TEAM_PRIMARY' => 'Set as Primary Team',
-    //END SUGARCRM flav=pro ONLY
 
     //BEGIN SUGARCRM flav=ent ONLY
     'LBL_QUERY_VALID'=>'Valid',
@@ -2581,7 +2530,6 @@ $app_strings = array (
     'EXCEPTION_CLIENT_OUTDATED'         => 'Your software is out of date, please update your client before attempting to connect again.',
     'EXCEPTION_MAINTENANCE'             => 'SugarCRM is in maintenance mode. Only admins can login. Please contact your administrator for details.',
 
-    //BEGIN SUGARCRM flav=pro ONLY
     //Lotus Live specific error messages
     'ERR_EXTERNAL_API_LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system.',
 
@@ -2595,9 +2543,14 @@ $app_strings = array (
     'LBL_NEXT_TIMEPERIOD' => 'Next Time Period',
     'LBL_PREVIOUS_CURRENT_NEXT_TIMEPERIODS' => 'Previous,Current,Next',
     'NOTICE_NO_DELETE_CLOSED' => 'You cannot delete records that have a closed sales status.',
-    'WARNING_NO_DELETE_SELECTED' => 'One or more of the selected records has a status of Closed Won or Closed Lost and cannot be deleted.',
 
-    //END SUGARCRM flav=pro ONLY
+    //BEGIN SUGARCRM flav!=ent ONLY
+    'WARNING_NO_DELETE_SELECTED' => 'One or more of the selected records has a sales stage of Closed Won or Closed Lost and cannot be deleted.',
+    //END SUGARCRM flav!=ent ONLY
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    'WARNING_NO_DELETE_SELECTED' => 'One or more of the selected records has a status of Closed Won or Closed Lost and cannot be deleted.',
+    //END SUGARCRM flav=ent ONLY
 
     'LBL_ACCOUNT'=>'Account',
     'LBL_OLD_ACCOUNT_LINK'=>'Old Account',
@@ -2885,9 +2838,7 @@ $app_strings = array (
     'LBL_PARENT_TYPE' => 'Parent Type',
     'LBL_PERCENTAGE_SYMBOL' => '%',
     'LBL_PHASE' => 'Range',
-    //BEGIN SUGARCRM flav!=com ONLY
     'LBL_PICTURE_FILE' => 'Avatar',
-    //END SUGARCRM flav!=com ONLY
     'LBL_POSTAL_CODE' => 'Postal Code:',
     'LBL_PRIMARY_ADDRESS_CITY' => 'Primary Address City:',
     'LBL_PRIMARY_ADDRESS_COUNTRY' => 'Primary Address Country:',
@@ -3232,11 +3183,9 @@ $app_strings = array (
     'LBL_PROCESSING_REQUEST'=>'Processing..',
     'LBL_REQUEST_PROCESSED'=>'Done',
     'LBL_AJAX_FAILURE' => 'Ajax failure',
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_OC_STATUS' => 'Offline Client Status',
     'LBL_OC_STATUS_TEXT' => 'Indicates whether or not the current user is able to use an Offline Client.',
     'LBL_OC_DEFAULT_STATUS' => 'Inactive',
-    //END SUGARCRM flav=pro ONLY
     'LBL_SEARCH_PARENT_RELATED_ITEM' => 'Search ...',
     'LBL_SAVED_SEARCH_SHORTCUT' => 'Saved Searches',
     'LBL_SEARCH_POPULATE_ONLY'=> 'Perform a search using the search form above',
@@ -3920,12 +3869,8 @@ $app_strings = array (
     'ERR_STORE_FILE_MISSING' => 'Error: Unable to find Store implementation file',
 
     'LBL_MONITOR_ID' => 'Monitor Id',
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_TEAM_ID' => 'Team id',
-    //END SUGARCRM flav=pro ONLY
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_SELECT_MODULE' => 'Select a module:',
-    //END SUGARCRM flav=pro ONLY
     'LBL_USER_ID' => 'User Id',
     'LBL_MODULE_NAME' => 'Module Name',
     'LBL_MODULE_ALL' => 'All',
@@ -3937,7 +3882,6 @@ $app_strings = array (
     'LBL_VISIBLE' => 'Record Visible',
     'LBL_DATE_LAST_ACTION' => 'Date of Last Action',
 
-    //BEGIN SUGARCRM flav=pro ONLY
     //Tracker Queries
     'LBL_SQL_TEXT' => 'SQL Text',
     'LBL_QUERY_HASH' => 'SQL Hash',
@@ -3960,9 +3904,7 @@ $app_strings = array (
     //Twitter Connector
     'LBL_TWITTER_DATA_LOADING' => 'Loading Twitter Connector...',
     'LBL_TWITTER_DATA_EMPTY' => 'No data availlable from Twitter',
-    //END SUGARCRM flav=pro ONLY
 
-    //BEGIN SUGARCRM flav!=com ONLY
     'LBL_PLUGIN_OUTLOOK_NAME' => 'Sugar Plug-in for Outlook',
     'LBL_PLUGIN_OUTLOOK_DESC' => 'Integrate Sugar e-mail and calendar information with Microsoft Outlook.',
     'LBL_PLUGIN_WORD_NAME' => 'Sugar Plug-in for Word',
@@ -3971,7 +3913,6 @@ $app_strings = array (
     'LBL_PLUGIN_EXCEL_DESC' => 'Integrate Sugar with spreadsheets for better analysis of key metrics.',
     'LBL_PLUGINS_TITLE' => 'Sugar Plug-ins for Microsoft Office<sup>TM</sup>',
     'LBL_PLUGINS_DESC' => 'Read about the plug-in features within the <a href="https://www.sugarcrm.com/crm/support/documentation/SugarPlugIns">Plug-ins Documentation</a>.',
-    //END SUGARCRM flav!=com ONLY
 
      //BEGIN SUGARCRM flav=ent ONLY
     'LBL_PLUGINS_LOTUS_TITLE' => 'Sugar Plug-ins for Lotus Notes<sup>TM</sup>',
@@ -4232,11 +4173,9 @@ $app_strings = array (
     'TPL_RECORD_SHARE_BODY' => 'Please checkout {{module}} {{{name}}} from {{appId}}',
 
     'ERR_CONNECTOR_NOT_ARRAY' => 'connector array in {0} been defined incorrectly or is empty and could not be used.',
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_PDF_VIEW' => 'Download PDF',
     'LBL_PDF_EMAIL' => 'Email PDF',
     'LBL_NO_PDF_TEMPLATE' => 'No PDF template found.',
-    //END SUGARCRM flav=pro ONLY
 
     'ERR_SUHOSIN' => 'Upload stream is blocked by Suhosin, please add &quot;upload&quot; to suhosin.executor.include.whitelist (See sugarcrm.log for more information)',
 
@@ -4369,7 +4308,6 @@ $app_strings = array (
     // image loader
     'LBL_SELECT_PHOTO' => 'Select a Photo',
 
-  	//BEGIN SUGARCRM flav=PRO ONLY
     //in app tour
     'LBL_TOUR_SCREEN_1_TITLE_670' => 'Enhanced forecasting functionality in Sugar',
     'LBL_TOUR_SCREEN_1_DESCRIPTION_670' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Setup your forecasting parameters</li><li class="icon-ok">Easily track projected sales and pipeline health</li><li class="icon-ok">Forecast based on projected sales from your sales team</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen1-thumb.png" width="220" id="thumbnail_1" class="thumb"></div></div><div class="clear"></div>',
@@ -4393,7 +4331,6 @@ $app_strings = array (
     'LNK_TOUR_DOCUMENTATION' => 'documentation',
     'LBL_TOUR_CALENDAR_URL_1' => 'Do you share your SugarCRM calendar with 3rd party applications, such as Microsoft Outlook or Exchange? If so, you have a new URL. This new, more secure URL includes a personal key which will prevent unauthorized publishing of your calendar.',
     'LBL_TOUR_CALENDAR_URL_2' => 'Retrieve your new shared calendar URL.',
-    //END SUGARCRM flav=PRO ONLY
     'LBL_TOUR_CUBE' => 'Access Dashboards and Activity Stream',
     'LBL_TOUR_NAV_BAR' => 'Access all modules in the Navigation menu and take actions',
     'LBL_TOUR_NOTIFICATIONS' => 'Click to see Notifications',
@@ -4821,12 +4758,10 @@ $app_strings = array (
     'LBL_PANEL_DEFAULT' => 'Default',
     'ERR_BAD_RESPONSE_FROM_SERVER' => 'Bad response from the server',
 
-    //BEGIN SUGARCRM flav=pro ONLY
     //These are for the timeperiod name formats
     'LBL_ANNUAL_TIMEPERIOD_FORMAT' => 'Year {0}',
     'LBL_QUARTER_TIMEPERIOD_FORMAT' => '{1} Q{0}',
     'LBL_MONTH_TIMEPERIOD_FORMAT' => '{0}',
-    //END SUGARCRM flav=pro ONLY
 
     //quickcreate modal dialog
     'LBL_MESSAGE_BOX_TITLE' => 'Alert',
@@ -5956,9 +5891,7 @@ $app_list_strings ['emailTemplates_type_list'] = array (
     '' => '' ,
     'campaign' => 'Campaign' ,
     'email' => 'Email',
-    //BEGIN SUGARCRM flav=pro ONLY
     'workflow' => 'Workflow',
-    //END SUGARCRM flav=pro ONLY
   );
 
 $app_list_strings ['emailTemplates_type_list_campaigns'] = array (
@@ -5979,15 +5912,13 @@ $app_list_strings ['documentation'] = array (
     'PRO' => '04_Sugar_Professional',
     'COM' => '05_Sugar_Community_Edition'
 );
-//BEGIN SUGARCRM flav=pro ONLY
+
 $app_list_strings['forecasts_config_ranges_options_dom'] = array(
     'show_binary' => 'Two Ranges',
     'show_buckets' => 'Three Ranges',
-//END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=ent ONLY
     'show_custom_buckets' => 'Custom Ranges',
 //END SUGARCRM flav=ent ONLY
-//BEGIN SUGARCRM flav=pro ONLY
 );
 $app_list_strings['forecasts_timeperiod_types_dom'] = array(
     'chronological' => 'Date Based Year',
@@ -6005,7 +5936,6 @@ $app_list_strings ['pdfmanager_yes_no_list'] = array (
     'yes' => 'Yes' ,
     'no' => 'No',
 );
-//END SUGARCRM flav=pro ONLY
 
 $app_list_strings['notifications_severity_list'] = array(
     'alert' => 'Alert',

@@ -36,5 +36,11 @@ class SugarUpgradeProductRemoveFiles extends UpgradeScript
 
             $this->fileToDelete($files);
         }
+
+
+        // coming into 7.2 we don't need this file any more
+        if (version_compare($this->from_version, '7.2', '<')) {
+            $this->fileToDelete('modules/Products/clients/base/views/list-headerpane/');
+        }
     }
 }
