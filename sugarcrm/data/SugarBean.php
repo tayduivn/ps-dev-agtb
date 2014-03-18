@@ -7415,7 +7415,10 @@ class SugarBean
      */
     public function getRelateAlias($field, $name_field)
     {
-        return sprintf('rel_%s_%s', $field, $name_field);
+        $alias = sprintf('rel_%s_%s', $field, $name_field);
+        $alias = $this->db->getValidDBName($alias, true, 'alias');
+
+        return $alias;
     }
 
     /**
