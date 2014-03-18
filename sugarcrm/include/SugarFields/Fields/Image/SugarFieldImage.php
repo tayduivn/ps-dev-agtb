@@ -120,4 +120,17 @@ class SugarFieldImage extends SugarFieldBase
         }
     }
 
+    /**
+     * Override apiSave to call save method instead of using parent apiSave
+     *
+     * @override
+     * @param SugarBean $bean       - the bean performing the save
+     * @param array     $params     - an array of parameters array from passed up to the API
+     * @param string    $field      - The name of the field to save (the vardef name, not the form element name)
+     * @param array     $properties - Any properties for this field
+     */
+    public function apiSave(SugarBean $bean, array $params, $field, $properties)
+    {
+        $this->save($bean, $params, $field, $properties);
+    }
 }
