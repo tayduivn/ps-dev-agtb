@@ -63,6 +63,11 @@ $viewdefs = array (
             'newTab' => true,
             'panelDefault' => 'expanded',
           ),
+          'LBL_DETAILVIEW_PANEL1' => 
+          array (
+            'newTab' => true,
+            'panelDefault' => 'expanded',
+          ),
           'LBL_PANEL_ADVANCED' => 
           array (
             'newTab' => true,
@@ -195,6 +200,16 @@ $viewdefs = array (
               'comment' => 'Full text of the note',
               'label' => 'LBL_DESCRIPTION',
             ),
+          ),
+        ),
+        'lbl_detailview_panel1' => array(
+          0 => array(
+            0 => array(
+              'name' => 'phone_alternate',
+              'comment' => 'An alternate phone number',
+              'label' => 'LBL_PHONE_ALT',
+            ),
+            1 => '',
           ),
         ),
         'LBL_PANEL_ADVANCED' => 
