@@ -8519,6 +8519,7 @@ body.full-screen .nv-chart {
   border-radius: 4px;
   background-color: #E9EFEF;
   box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  overflow: visible;
 }
 .nv-chart-org .nv-foreign-object img.rep-avatar {
   float: left;

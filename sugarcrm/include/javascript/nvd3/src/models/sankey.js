@@ -153,13 +153,13 @@ d3.sankey = function() {
     function computeNodeDepths(iterations) {
         var nodesByBreadth = d3.nest()
             .key(function(d) {
-            return d.x;
-        })
-            .sortKeys(d3.ascending)
+                return d.x;
+            })
+            //.sortKeys(d3.ascending)
             .entries(nodes)
             .map(function(d) {
-            return d.values;
-        });
+                return d.values;
+            });
 
         //
         initializeNodeDepth();
@@ -167,8 +167,8 @@ d3.sankey = function() {
         for (var alpha = 1; iterations > 0; --iterations) {
             relaxRightToLeft(alpha *= .99);
             resolveCollisions();
-            relaxLeftToRight(alpha);
-            resolveCollisions();
+            // relaxLeftToRight(alpha);
+            // resolveCollisions();
         }
 
         function initializeNodeDepth() {
@@ -207,13 +207,13 @@ d3.sankey = function() {
             nodesByBreadth.slice()
                 .reverse()
                 .forEach(function(nodes) {
-                nodes.forEach(function(node) {
-                    if (node.sourceLinks.length) {
-                        var y = d3.sum(node.sourceLinks, weightedTarget) / d3.sum(node.sourceLinks, value);
-                        node.y += (y - center(node)) * alpha;
-                    }
+                    nodes.forEach(function(node) {
+                        if (node.sourceLinks.length) {
+                            var y = d3.sum(node.sourceLinks, weightedTarget) / d3.sum(node.sourceLinks, value);
+                            node.y += (y - center(node)) * alpha;
+                        }
+                    });
                 });
-            });
 
             function weightedTarget(link) {
                 return center(link.target) * link.value;
@@ -254,15 +254,16 @@ d3.sankey = function() {
         }
 
         function ascendingDepth(a, b) {
+
             return a.y - b.y;
         }
     }
 
     function computeLinkDepths() {
-        nodes.forEach(function(node) {
-            node.sourceLinks.sort(ascendingTargetDepth);
-            node.targetLinks.sort(ascendingSourceDepth);
-        });
+        // nodes.forEach(function(node) {
+        //     node.sourceLinks.sort(ascendingTargetDepth);
+        //     node.targetLinks.sort(ascendingSourceDepth);
+        // });
         nodes.forEach(function(node) {
             var sy = 0,
                 ty = 0;

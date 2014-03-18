@@ -1,6 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
-
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -11,9 +9,8 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
 $viewdefs['Styleguide']['base']['view']['sg-headerpane'] = array(
     'template_values' => array(
         'last_updated' => '2014-02-14T22:47:00+00:00',

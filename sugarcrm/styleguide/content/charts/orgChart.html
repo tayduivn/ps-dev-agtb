@@ -1,30 +1,14 @@
 <!--
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
 -->
 <!DOCTYPE html>
 <html>
@@ -38,39 +22,76 @@
 </head>
 <body class="full-screen">
   <div class="nv-demo">
+    <div class="dashlet-options">
+      <div class="row-fluid">
+          <div class="span12">
+              <div class="dashlet-group pull-right">
+                  <button class="btn toggle-control" rel="tooltip" data-control="orientation" title="" data-original-title="Toggle orientation">Toggle orientation</button>
+                  <button class="btn toggle-control" rel="tooltip" data-control="show-all-nodes" title="" data-original-title="Show all nodes">Show all nodes</button>
+                  <button class="btn toggle-control" rel="tooltip" data-control="zoom-to-fit" title="" data-original-title="Zoom to fit">Zoom to fit</button>
+              </div>
+          </div>
+      </div>
+    </div>
     <div id="org" class="nv-chart nv-chart-org nv-chart-texture">
       <svg></svg>
     </div>
   </div>
 
+<script src="js/jquery-1.7.2.min.js"></script>
+
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
-<script src="data/tree_data.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/tree.js"></script>
 
 <script>
   nv.addGraph(function() {
 
-    var nodeRenderer = function(d){
+    var nodeRenderer = function(d) {
       return '<img src="img/'+ d.image +'" class="rep-avatar" width="32" height="32"><div class="rep-name">'+ d.name +'</div><div class="rep-title">'+ d.title + '</div>';
     }
 
     var chart = nv.models.tree()
           .duration(500)
-          .nodeSize({ 'width': 124, 'height': 56 })
+          .nodeSize({'width': 124, 'height': 56})
           .nodeRenderer(nodeRenderer)
-          .zoomExtents({ 'min': 0.25, 'max': 4 })
-          .horizontal(true);
+          .zoomExtents({'min': 0.25, 'max': 4})
+          .horizontal(false);
 
-    d3.select("#org svg")
-        .datum(tree_data)
-      .transition().duration(700)
-        .call(chart);
+    d3.json("data/tree_data.json", function(data) {
+      d3.select("#org svg")
+          .datum(data)
+        .transition().duration(700)
+          .call(chart);
+    });
 
     nv.utils.windowResize(function(){ chart.resize(); });
+
+    var toggleChart = function(e) {
+        //if icon clicked get parent button
+        var button = $(e.currentTarget);
+
+        switch (button.data('control')) {
+            case 'orientation':
+                chart.nodeSize({'width': 124, 'height': 56}).orientation();
+                break;
+
+            case 'show-all-nodes':
+                chart.showall();
+                break;
+
+            case 'zoom-to-fit':
+                chart.reset();
+                break;
+
+            default:
+        }
+    }
+
+    $('.toggle-control').on('click', toggleChart);
 
     return chart;
   });
 </script>
-
 </body>
 </html>
