@@ -118,7 +118,9 @@
                     return proto.openCreateDrawer.call(this, module, link);
                 }
                 link = link || this.context.get('link');
-                var context = this.context.parent || this.context;
+                //FIXME: `this.context` should always be used - SC-2550
+                var context = (this.context.get('name') === 'tabbed-dashlet') ?
+                    this.context : (this.context.parent || this.context);
                 var parentModel = context.get('model'),
                     model = this.createLinkModel(parentModel, link),
                     self = this;
