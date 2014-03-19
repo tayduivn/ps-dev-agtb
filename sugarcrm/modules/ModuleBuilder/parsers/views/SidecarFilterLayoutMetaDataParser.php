@@ -197,7 +197,7 @@ class SidecarFilterLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
      * @param  array $def The field defs for key
      * @return bool
      */
-    public function isValidField($key, $def)
+    public function isValidField($key, array $def)
     {
         if (parent::isValidField($key, $def)) {
             // Predefined filters are valid 'fields'

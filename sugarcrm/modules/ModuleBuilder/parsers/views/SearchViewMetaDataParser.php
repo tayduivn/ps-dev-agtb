@@ -102,7 +102,7 @@ class SearchViewMetaDataParser extends ListLayoutMetaDataParser
 
     }
 
-    public function isValidField($key, $def)
+    public function isValidField($key, array $def)
     {
 		if(isset($def['type']) && $def['type'] == "assigned_user_name")
 		{

@@ -96,7 +96,7 @@ abstract class AbstractMetaDataParser
      * @param string $client The client for this request
      * @return boolean       True if ok to show, false otherwise
      */
-    static function validField($def, $view = "", $client = '')
+    public static function validField(array $def, $view = "", $client = '')
     {
         //Studio invisible fields should always be hidden
         if (isset($def['studio'])) {
