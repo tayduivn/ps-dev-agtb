@@ -38,7 +38,7 @@ $viewdefs['WebLogicHooks']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 'url',
-                'module_name',
+                'webhook_target_module',
                 'trigger_event',
                 'request_method',
             ),
