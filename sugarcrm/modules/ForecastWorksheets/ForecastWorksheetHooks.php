@@ -27,7 +27,9 @@ class ForecastWorksheetHooks extends AbstractForecastHooks
      */
     public static function fixDateModified(ForecastWorksheet $worksheet, $event, $params = array())
     {
-        $worksheet->date_modified = $worksheet->fetched_row['date_modified'];
+        if (isset($worksheet->fetched_row['date_modified'])) {
+            $worksheet->date_modified = $worksheet->fetched_row['date_modified'];
+        }
     }
 
     /**
@@ -49,7 +51,8 @@ class ForecastWorksheetHooks extends AbstractForecastHooks
             }
 
             // if we are in a delete operation, don't update the date modified
-            if (SugarBean::inOperation('delete') || SugarBean::inOperation('saving_related')) {
+            if (isset($bean->fetched_row['date_modified']) &&
+                (SugarBean::inOperation('delete') || SugarBean::inOperation('saving_related'))) {
                 $bean->date_modified = $bean->fetched_row['date_modified'];
             }
         }
