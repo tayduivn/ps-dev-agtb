@@ -9,7 +9,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 ({
     extendsFrom : 'RecordlistView',
@@ -47,33 +47,34 @@
 
         return true;
     },
-    
+
     /**
-     * We have to overwrite this method completely, since there is currently no way to completely disable
-     * a field from being displayed
+     * @inheritDoc
      *
-     * @returns {{default: Array, available: Array, visible: Array, options: Array}}
+     * Augment to remove the fields that should not be displayed.
      */
-    parseFields : function() {
-        var catalog = this._super("parseFields");
-        _.each(catalog, function (group, i) {
-            catalog[i] = _.filter(group, function (fieldMeta) {
-                var leave = true;
-                if (app.metadata.getModule("Forecasts", "config").is_setup) {
-                    if (fieldMeta.name.indexOf('_case') != -1) {
-                        var field = 'show_worksheet_' + fieldMeta.name.replace('_case', '');
-                        leave = (app.metadata.getModule("Forecasts", "config")[field] == 1);
-                    }
-                } else {
-                    // forecast is not setup,
-                    leave = !(fieldMeta.name == "commit_stage");
+    _createCatalog: function(fields) {
+        var forecastConfig = app.metadata.getModule('Forecasts', 'config');
+
+        if (forecastConfig.is_setup) {
+            fields = _.filter(fields, function(fieldMeta) {
+                if (fieldMeta.name.indexOf('_case') !== -1) {
+                    var field = 'show_worksheet_' + fieldMeta.name.replace('_case', '');
+                    return (forecastConfig[field] == 1);
                 }
-                return leave;
+                return true;
             });
-        });
+        } else {
+            // Forecast is not setup
+            fields = _.reject(fields, function(fieldMeta) {
+                return (fieldMeta.name === 'commit_stage');
+            });
+        }
+
+        var catalog = this._super('_createCatalog', [fields]);
         return catalog;
     },
-    
+
     /**
      * Shows a warning message if a RLI that is included in a forecast is deleted.
      * @return string message
