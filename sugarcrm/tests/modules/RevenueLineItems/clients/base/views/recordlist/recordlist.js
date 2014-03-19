@@ -9,10 +9,10 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 describe("RevenueLineItems.Base.Views.RecordList", function() {
-    var app, view, options, context, layout;
+    var app, view, options, context, layout, message;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -52,12 +52,9 @@ describe("RevenueLineItems.Base.Views.RecordList", function() {
     });
     
     afterEach(function() {
-        app.metadata.getModule("Forecasts", "config").is_setup = null;
         app.metadata.getModule("Forecasts", "config").show_worksheet_best = null;
-        app = null;
-        view = null;
-        layout = null;
-        options = null;
+        view.dispose();
+        layout.dispose();
     });
 
     it("should not contain best_case field", function() {
@@ -66,7 +63,7 @@ describe("RevenueLineItems.Base.Views.RecordList", function() {
         expect(view._fields.visible.length).toEqual(3);
         _.each(view._fields.visible, function(field) {
             expect(field.name).not.toEqual('best_case');
-        })
+        });
     });
 
     it("should not contain commit_stage field", function() {
@@ -119,10 +116,6 @@ describe("RevenueLineItems.Base.Views.RecordList", function() {
 
         afterEach(function() {
             app.alert.show.restore();
-            model1 = undefined;
-            model2 = undefined;
-            models = [];
-            view = undefined;
         });
 
         it('should return true', function() {
