@@ -8,7 +8,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  */
 
 /**
@@ -69,7 +69,7 @@
         app.events.on('app:view:change', this.handleViewChange, this);
         var self = this;
         app.utils.doWhen(function() {
-            return !_.isUndefined(app.router)
+            return !_.isUndefined(app.router);
         }, function() {
             self.listenTo(app.router, 'route', self.handleRouteChange);
         });
@@ -95,14 +95,20 @@
     /**
      * Help Button Click Event Listener
      *
-     * @param event
+     * @param {Object} event        The Click Event
      */
     help: function(event) {
         var button = $(event.currentTarget),
+            buttonDisabled = button.hasClass('disabled'),
             buttonAppEvent = button.hasClass('active') ? 'app:help:hide' : 'app:help:show';
 
-        // trigger the app event to show and hide the help dashboard
-        app.events.trigger(buttonAppEvent);
+        if (!buttonDisabled) {
+            // add the disabled so that way if it's clicked again, it won't triggered the events again,
+            // this will get removed below
+            button.addClass('disabled');
+            // trigger the app event to show and hide the help dashboard
+            app.events.trigger(buttonAppEvent);
+        }
     },
 
     /**
@@ -132,8 +138,8 @@
             button = this.$('#help');
         }
 
-        if(button) {
-            button.toggleClass('active', active);
+        if (button) {
+            button.removeClass('disabled').toggleClass('active', active);
         }
     },
     showTutorial: function(prefs) {
