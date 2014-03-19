@@ -194,7 +194,7 @@
                         <div class="form-horizontal">
                             <fieldset class="card2">
                                 {{#each grid}}
-                                    <div class="row-fluid control-group {{../name}}{{#if ../hide}} hide{{/if}}">
+                                    <div class="row-fluid control-group {{../name}}{{#if ../hide}}{{#if ../../../../../hidePanel}} hide{{/if}}{{/if}}">
                                         {{#each this}}
                                             {{#if ../../labels}}
                                                 {{#unless dismiss_label}}
