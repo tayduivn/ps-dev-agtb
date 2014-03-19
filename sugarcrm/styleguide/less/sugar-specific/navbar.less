@@ -33,6 +33,9 @@
       vertical-align: top;
       &.module-list {
         width: 100%;
+        .nav .dropdown > .btn-group:not(.home) .dropdown-menu {
+          margin-left: -8px;
+        }
       }
     }
   }
@@ -132,13 +135,19 @@
 
     /*Menu position and menu carets*/
     .dropdown-menu {
-      top: 42px;
-      left: 0;
+      position: fixed;
+      top: 50px;
+      left: auto;
       right: auto;
+      border: 1px solid rgba(0,0,0,.2);
+      .border-radius(0 0 2px 2px);
+      max-height: ~"-moz-calc(100% - 100px)";
+      max-height: ~"-webkit-calc(100% - 100px)";
+      max-height: ~"calc(100% - 100px)";
       margin-top: 0;
-      padding-top: 8px;
-      overflow: hidden;
-      border: none;
+      padding-top: 0px;
+      overflow-y: auto;
+      overflow-x: hidden;
       background: none;
       .box-shadow(none);
       .dropdownMinWidth();
@@ -148,12 +157,6 @@
       }
       &> ul {
         background: @white;
-        border: 1px solid rgba(0,0,0,.2);;
-        .border-radius(2px);
-        max-height: 315px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        .border-radius(0 0 3px 3px);
       }
       &:before {
         border-bottom-color: rgba(0,0,0,.2);
@@ -387,3 +390,12 @@
   top: 8px;
   font-weight: normal;
 }
+
+@media screen and (min-width:~"0\0") { /* IE9/IE10 hack */
+  .megamenu > .dropdown .dropdown-menu { /*UIUX-1592*/
+    top: 0;
+    margin-top: 50px;
+    max-height: 70% !important;
+  }
+}
+

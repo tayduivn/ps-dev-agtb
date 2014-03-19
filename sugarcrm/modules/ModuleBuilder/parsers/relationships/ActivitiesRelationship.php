@@ -288,9 +288,7 @@ class ActivitiesRelationship extends OneToManyRelationship
 \$coreDefs['tabs'][0]['link'] = '{$relationshipName}_meetings';
 \$coreDefs['tabs'][1]['link'] = '{$relationshipName}_emails';
 \$coreDefs['tabs'][2]['link'] = '{$relationshipName}_calls';
-\$coreDefs['custom_toolbar']['buttons'][0]['buttons'][0]['params']['link'] = '{$relationshipName}_meetings';
-\$coreDefs['custom_toolbar']['buttons'][0]['buttons'][1]['params']['link'] = '{$relationshipName}_emails';
-\$coreDefs['custom_toolbar']['buttons'][0]['buttons'][2]['params']['link'] = '{$relationshipName}_calls';
+\$coreDefs['custom_toolbar']['buttons'][0]['buttons'][0]['params']['link'] = '{$relationshipName}_emails';
 \$viewdefs['{$this->lhs_module}']['base']['view']['history'] = \$coreDefs;\n";
 
         $files['clients/base/views/planned-activities/planned-activities.php'] = $fileBase .

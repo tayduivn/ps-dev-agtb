@@ -246,7 +246,6 @@
       margin-left: 1px;
     }
   }
-
   .filter-body {
     padding: 7px 8px 7px 9px;
     border-top: 1px solid lighten(@grayLighter, 5%);
@@ -261,6 +260,19 @@
         position: static;
       }
     }
+    .controls[data-filter='value']  {
+      .input-prepend.input-append {
+        .add-on:first-child {
+          background: none;
+          color: darken(@grayLighter, 40%);
+          left: 0;
+          .calcWidth(~"30% - 6px");
+        }
+        .datepicker {
+          width: 70%;
+        }
+      }
+    }
     .controls {
       .filter-rows .input-append .add-on:first-child {
         margin-left: 0;
@@ -273,7 +285,6 @@
       vertical-align: baseline;
     }
   }
-
   // containing divs for create filter
   .filter-value {
     position: relative;

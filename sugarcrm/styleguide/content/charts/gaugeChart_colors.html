@@ -1,30 +1,14 @@
 <!--
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
 -->
 <!DOCTYPE html>
 <html>
@@ -112,108 +96,86 @@
 
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
-<script src="data/gauge_data.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/gauge.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/gaugeChart.js"></script>
 
 <script>
-  var gauge_data_default_JSON = JSON.stringify(gauge_data_default);
-  var gauge_data_color_JSON = JSON.stringify(gauge_data_color);
-
   //default
-  nv.addGraph(function() {
-    var chart = nv.models.gaugeChart()
+  d3.json("data/gauge_data.json", function(chartData) {
+    var chart1 = nv.models.gaugeChart()
           .tooltips(false)
           .maxValue(9)
-          .colorData( 'default' )
-        ;
+          .colorData('default');
     d3.select('#chart1 svg')
-        .datum(JSON.parse(gauge_data_default_JSON))
-      .transition().duration(500).call(chart);
-    return chart;
-  });
-  nv.addGraph(function() {
-    var chart = nv.models.gaugeChart()
+        .datum(chartData)
+      .transition().duration(500)
+      .call(chart1);
+
+    var chart2 = nv.models.gaugeChart()
           .tooltips(false)
           .maxValue(9)
-          .colorData( 'default', {gradient:true} )
-        ;
+          .colorData('default', {gradient: true});
     d3.select('#chart2 svg')
-        .datum(JSON.parse(gauge_data_default_JSON))
-      .transition().duration(500).call(chart);
-    return chart;
-  });
-  nv.addGraph(function() {
-    var chart = nv.models.gaugeChart()
+        .datum(chartData)
+      .transition().duration(500)
+      .call(chart2);
+
+    var chart3 = nv.models.gaugeChart()
           .tooltips(false)
           .maxValue(9)
-          .colorData( 'class', {step:2} )
-        ;
+          .colorData('class', {step: 2});
     d3.select('#chart3 svg')
-        .datum(JSON.parse(gauge_data_default_JSON))
-      .transition().duration(500).call(chart);
-    return chart;
-  });
+        .datum(chartData)
+      .transition().duration(500)
+      .call(chart3);
 
-  //data defined
-  nv.addGraph(function() {
-    var chart = nv.models.gaugeChart()
+    var chart7 = nv.models.gaugeChart()
           .tooltips(false)
           .maxValue(9)
-          .colorData( 'default' )
-        ;
-    d3.select('#chart4 svg')
-        .datum(JSON.parse(gauge_data_color_JSON))
-      .transition().duration(500).call(chart);
-    return chart;
-  });
-  nv.addGraph(function() {
-    var chart = nv.models.gaugeChart()
-          .tooltips(false)
-          .maxValue(9)
-          .colorData( 'default', {gradient:true} )
-        ;
-    d3.select('#chart5 svg')
-        .datum(JSON.parse(gauge_data_color_JSON))
-      .transition().duration(500).call(chart);
-    return chart;
-  });
-  nv.addGraph(function() {
-    var chart = nv.models.gaugeChart()
-          .tooltips(false)
-          .maxValue(9)
-          .colorData( 'class', {step:2} )
-        ;
-    d3.select('#chart6 svg')
-        .datum(JSON.parse(gauge_data_color_JSON))
-      .transition().duration(500).call(chart);
-    return chart;
-  });
-
-  //graduated
-  nv.addGraph(function() {
-    var chart = nv.models.gaugeChart()
-          .tooltips(false)
-          .maxValue(9)
-          .colorData( 'graduated', {c1:'#12448f', c2:'#deeeff', l:gauge_data_default.data.length} )
-        ;
+          .colorData('graduated', {c1: '#12448f', c2: '#deeeff', l: chartData.data.length});
     d3.select('#chart7 svg')
-        .datum(JSON.parse(gauge_data_default_JSON))
-      .transition().duration(500).call(chart);
-    return chart;
-  });
-  nv.addGraph(function() {
-    var chart = nv.models.gaugeChart()
+        .datum(chartData)
+      .transition().duration(500)
+      .call(chart7);
+
+    var chart8 = nv.models.gaugeChart()
           .tooltips(false)
           .maxValue(9)
-          .colorData( 'graduated', {c1:'#12448f', c2:'#deeeff', l:gauge_data_default.data.length, gradient:true} )
-        ;
+          .colorData('graduated', {c1: '#12448f', c2: '#deeeff', l: chartData.data.length, gradient: true});
     d3.select('#chart8 svg')
-        .datum(JSON.parse(gauge_data_default_JSON))
-      .transition().duration(500).call(chart);
-    return chart;
+        .datum(chartData)
+      .transition().duration(500)
+      .call(chart8);
   });
 
+  d3.json("data/gauge_data_color.json", function(chartData) {
+    var chart4 = nv.models.gaugeChart()
+          .tooltips(false)
+          .maxValue(9)
+          .colorData('default');
+    d3.select('#chart4 svg')
+        .datum(chartData)
+      .transition().duration(500)
+      .call(chart4);
+
+    var chart5 = nv.models.gaugeChart()
+          .tooltips(false)
+          .maxValue(9)
+          .colorData('default', {gradient: true});
+    d3.select('#chart5 svg')
+        .datum(chartData)
+      .transition().duration(500)
+      .call(chart5);
+
+    var chart6 = nv.models.gaugeChart()
+          .tooltips(false)
+          .maxValue(9)
+          .colorData('class', {step: 2});
+    d3.select('#chart6 svg')
+        .datum(chartData)
+      .transition().duration(500)
+      .call(chart6);
+  });
 </script>
 </body>
 </html>

@@ -1,32 +1,17 @@
 <?php
  if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
 $viewdefs['Styleguide']['base']['layout']['docs'] = array(
     'components' => array(
         array(
@@ -92,7 +77,8 @@ $viewdefs['Styleguide']['base']['layout']['docs'] = array(
             "pages" => array (
                 "fields" => array("label"=>"Sugar7 fields", "url"=>"#Styleguide/field/all", "description"=>"Basic fields that support detail, record, and edit modes with error addons."),
                 "buttons" => array("label"=>"Buttons", "description"=>"Standard css only button styles."),
-                "editable" => array("label"=>"Editable", "description"=>"Inline form edit inputs."),
+                //TODO: remove this page or update
+                //"editable" => array("label"=>"Editable", "description"=>"Inline form edit inputs."),
                 "layouts" => array("label"=>"Form layouts", "description"=>"Customized layouts of field components."),
                 "file" => array("label"=>"File uploader", "description"=>"Avatar file upload widget."),
                 "datetime" => array("label"=>"Date-time picker", "description"=>"Lightweight date/time picker."),
@@ -125,6 +111,7 @@ $viewdefs['Styleguide']['base']['layout']['docs'] = array(
                 "drawer" => array("label"=>"Drawers", "description"=>"Drawer is a form of a modal that pushes main content down and expands from the top taking 100% of the screen width."),
                 "navbar" => array("label"=>"Navbar", "description"=>"Top level navigation layout."),
                 "tabs" => array("label"=>"Tab Navigation", "description"=>"Use this plugin to make tabs and pills more useful by allowing them to toggle through tabbable panes of local content."),
+                //TODO: remove these pages or update
                 //"modals" => array("label"=>"Modals", "description"=>"A streamlined, but flexible, take on the traditional javascript modal plugin with only the minimum required functionality and smart defaults."),
                 //"wizard" => array("label"=>"Wizard", "description"=>"Wizard takes advantage of bootstrap modals and sets up a framework for taking a user through multiple steps to complete a task."),
                 //"thumbnails" => array("label"=>"Thumbnails", "description"=>"Grids of images, videos, text, and more."),

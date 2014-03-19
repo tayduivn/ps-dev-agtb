@@ -8,10 +8,15 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  */
+
 /**
  * Datapoints in the info pane for Forecasts
+ *
+ * @class BaseForecastsDatapointField
+ * @alias SUGAR.App.view.fields.BaseForecastsDatapointField
+ * @extends View.Field
  */
 ({
 
@@ -65,7 +70,7 @@
 
         this.hasAccess = app.utils.getColumnVisFromKeyMap(this.name, 'forecastsWorksheet');
         this.hasDataAccess = app.acl.hasAccess('read', 'ForecastWorksheets', app.user.get('id'), this.name);
-        if(this.hasDataAccess === false) {
+        if (this.hasDataAccess === false) {
             this.noDataAccessTemplate = app.template.getField('base', 'noaccess')(this);
         }
 
@@ -89,11 +94,11 @@
             return true;
         }, this);
     },
-    
+
     /**
      * Check to see if the worksheet needs commit
      */
-    checkIfNeedsCommit: function(){
+    checkIfNeedsCommit: function() {
         // if the initial_total is an empty string (default value) don't run this
         if (!_.isEqual(this.initial_total, '') && !_.isEqual(+this.total, +this.initial_total)) {
             this.context.trigger('forecasts:worksheet:needs_commit', null);
@@ -115,10 +120,10 @@
     /**
      * Overwrite this to only place the placeholder if we actually have access to view it
      *
-     * @returns {*}
+     * @return {*}
      */
     getPlaceholder: function() {
-        if(this.hasAccess) {
+        if (this.hasAccess) {
             return this._super('getPlaceholder');
         }
 
@@ -128,44 +133,44 @@
     /**
      * Adjusts the CSS for the datapoint
      */
-    adjustDatapointLayout: function(){
-        if(this.hasAccess) {
-            var parentMarginLeft = this.view.$(".topline .datapoints").css("margin-left"),
-                parentMarginRight = this.view.$(".topline .datapoints").css("margin-right"),
-                timePeriodWidth = this.view.$(".topline .span4").outerWidth(true),
-                toplineWidth = this.view.$(".topline ").width(),
-                collection = this.view.$(".topline div.pull-right").children("span"),
+    adjustDatapointLayout: function() {
+        if (this.hasAccess) {
+            var parentMarginLeft = this.view.$('.topline .datapoints').css('margin-left'),
+                parentMarginRight = this.view.$('.topline .datapoints').css('margin-right'),
+                timePeriodWidth = this.view.$('.topline .span4').outerWidth(true),
+                toplineWidth = this.view.$('.topline ').width(),
+                collection = this.view.$('.topline div.pull-right').children('span'),
                 collectionWidth = parseInt(parentMarginLeft) + parseInt(parentMarginRight);
 
-            collection.each(function(index){
-                collectionWidth += $(this).children("div.datapoint").outerWidth(true);
+            collection.each(function(index) {
+                collectionWidth += $(this).children('div.datapoint').outerWidth(true);
             });
 
             //change width of datapoint div to span entire row to make room for more numbers
-            if((collectionWidth+timePeriodWidth) > toplineWidth) {
-                this.view.$(".topline div.hr").show();
-                this.view.$(".info .last-commit").find("div.hr").show();
-                this.view.$(".topline .datapoints").removeClass("span8").addClass("span12");
-                this.view.$(".info .last-commit .datapoints").removeClass("span8").addClass("span12");
-                this.view.$(".info .last-commit .commit-date").removeClass("span4").addClass("span12");
+            if ((collectionWidth + timePeriodWidth) > toplineWidth) {
+                this.view.$('.topline div.hr').show();
+                this.view.$('.info .last-commit').find('div.hr').show();
+                this.view.$('.topline .datapoints').removeClass('span8').addClass('span12');
+                this.view.$('.info .last-commit .datapoints').removeClass('span8').addClass('span12');
+                this.view.$('.info .last-commit .commit-date').removeClass('span4').addClass('span12');
 
             } else {
-                this.view.$(".topline div.hr").hide();
-                this.view.$(".info .last-commit").find("div.hr").hide();
-                this.view.$(".topline .datapoints").removeClass("span12").addClass("span8");
-                this.view.$(".info .last-commit .datapoints").removeClass("span12").addClass("span8");
-                this.view.$(".info .last-commit .commit-date").removeClass("span12").addClass("span4");
-                var lastCommitHeight = this.view.$(".info .last-commit .commit-date").height();
-                this.view.$(".info .last-commit .datapoints div.datapoint").height(lastCommitHeight);
+                this.view.$('.topline div.hr').hide();
+                this.view.$('.info .last-commit').find('div.hr').hide();
+                this.view.$('.topline .datapoints').removeClass('span12').addClass('span8');
+                this.view.$('.info .last-commit .datapoints').removeClass('span12').addClass('span8');
+                this.view.$('.info .last-commit .commit-date').removeClass('span12').addClass('span4');
+                var lastCommitHeight = this.view.$('.info .last-commit .commit-date').height();
+                this.view.$('.info .last-commit .datapoints div.datapoint').height(lastCommitHeight);
             }
             //adjust height of last commit datapoints
             var index = this.$el.index(),
-                width = this.$("div.datapoint").outerWidth(),
-                datapointLength = this.view.$(".info .last-commit .datapoints div.datapoint").length,
-                sel = this.view.$('.last-commit .datapoints div.datapoint:nth-child('+index+')');
+                width = this.$('div.datapoint').outerWidth(),
+                datapointLength = this.view.$('.info .last-commit .datapoints div.datapoint').length,
+                sel = this.view.$('.last-commit .datapoints div.datapoint:nth-child(' + index + ')');
             if (datapointLength > 2 && index <= 2 || datapointLength == 2 && index == 1) {
-                $(sel).width(width-8);
-            }  else {
+                $(sel).width(width - 8);
+            } else {
                 $(sel).width(width);
             }
         }
@@ -203,7 +208,7 @@
         // this contains the commit history
         this.collection.on('reset', function() {
             // get the first line
-            var model = _.first(this.collection.models)
+            var model = _.first(this.collection.models);
             if (!_.isUndefined(model)) {
                 this.initial_total = model.get(this.total_field);
             } else {
@@ -217,9 +222,9 @@
         }, this);
         this.context.on('forecasts:worksheet:totals', function(totals, type) {
             var field = this.total_field;
-            if (type == "manager") {
-                // split off "_case"
-                field = field.split('_')[0] + '_adjusted'
+            if (type == 'manager') {
+                // split off '_case'
+                field = field.split('_')[0] + '_adjusted';
             }
             this.total = totals[field];
             this.previous_type = type;
@@ -242,7 +247,7 @@
         var cls = '';
 
         // figure out if it changed here based
-        if(app.math.isDifferentWithPrecision(newValue, oldValue)) {
+        if (app.math.isDifferentWithPrecision(newValue, oldValue)) {
             cls = (newValue > oldValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
         }
         return cls;

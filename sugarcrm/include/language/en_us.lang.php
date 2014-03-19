@@ -2542,7 +2542,14 @@ $app_strings = array (
     'LBL_PREVIOUS_TIMEPERIOD' => 'Previous Time Period',
     'LBL_NEXT_TIMEPERIOD' => 'Next Time Period',
     'LBL_PREVIOUS_CURRENT_NEXT_TIMEPERIODS' => 'Previous,Current,Next',
+
+    //BEGIN SUGARCRM flav!=ent ONLY
+    'NOTICE_NO_DELETE_CLOSED' => 'You cannot delete records that have a closed sales stage.',
+    //END SUGARCRM flav!=ent ONLY
+
+    //BEGIN SUGARCRM flav=ent ONLY
     'NOTICE_NO_DELETE_CLOSED' => 'You cannot delete records that have a closed sales status.',
+    //END SUGARCRM flav=ent ONLY
 
     //BEGIN SUGARCRM flav!=ent ONLY
     'WARNING_NO_DELETE_SELECTED' => 'One or more of the selected records has a sales stage of Closed Won or Closed Lost and cannot be deleted.',
@@ -4572,6 +4579,7 @@ $app_strings = array (
     'ERR_OFFLINE' => 'Offline error',
     'ERR_OFFLINE_STORAGE_UNAVAILABLE' => 'Failed to open local storage',
     'ERR_OFFLINE_STORAGE_CREATE' => 'Failed to create local storage',
+    'ERR_OFFLINE_START_FAILED_OUT_OF_SPACE' => 'Failed to create local storage: you\'ve run out of space.',
     'ERR_OFFLINE_OUT_OF_SPACE' => 'You\'ve run out of space for local storage.',
     'ERR_OFFLINE_DB_CLEANING_ERROR' => 'Database clean-up failed',
     'ERR_OFFLINE_CLEAN_UP_CONFIRMATION' => 'You\'ve run out of space for offline storage. Storage clean-up is recommended. Do you want to perform it now?',

@@ -51,21 +51,68 @@ class ReportsUtilities
      * @throws MailerException Allows exceptions to bubble up for the caller to report if desired.
      */
     public function sendNotificationOfInvalidReport($recipient, $message) {
+        $mod_strings = return_module_language($this->language, "Reports");
+        $subject = $mod_strings["ERR_REPORT_INVALID_SUBJECT"];
+        $this->sendNotificationOfReport($recipient, $subject, $message);
+    }
+
+    /**
+     * Notify the report owner of deactivated report schedule.
+     *
+     * @param int  $report_id
+     * @param User $owner
+     * @param User $subscriber
+     *
+     * @throws MailerException Allows exceptions to bubble up for the caller to report if desired.
+     */
+    public function sendNotificationOfDisabledReport($report_id, User $owner = null, User $subscriber = null)
+    {
+        $recipients = array($owner, $subscriber);
+        $recipients = array_filter($recipients);
+
+        // return early in case there are no recipients specified
+        if (!$recipients) {
+            return;
+        }
+
+        $mod_strings = return_module_language($this->language, 'Reports');
+        $subject = $mod_strings['ERR_REPORT_DEACTIVATED_SUBJECT'];
+
+        $body = string_format($mod_strings['ERR_REPORT_DEACTIVATED'], array($report_id));
+
+        // make sure that the same user doesn't receive the notification twice
+        $unique = array();
+        foreach ($recipients as $recipient) {
+            $unique[$recipient->id] = $recipient;
+        }
+
+        foreach ($unique as $recipient) {
+            $this->sendNotificationOfReport($recipient, $subject, $body);
+        }
+    }
+
+    /**
+     * Notifies the given user of a report problem
+     *
+     * @param User   $recipient Message recipient
+     * @param string $subject   Message subject
+     * @param string $body      Message body
+     */
+    protected function sendNotificationOfReport(User $recipient, $subject, $body)
+    {
         $mailer = MailerFactory::getSystemDefaultMailer();
 
         // set the subject of the email
-        $mod_strings = return_module_language($this->language, "Reports");
-        $mailer->setSubject($mod_strings["ERR_REPORT_INVALID_SUBJECT"]);
+        $mailer->setSubject($subject);
 
         // set the body of the email...
-
-        $textOnly = EmailFormatter::isTextOnly($message);
+        $textOnly = EmailFormatter::isTextOnly($body);
         if ($textOnly) {
-            $mailer->setTextBody($message);
+            $mailer->setTextBody($body);
         } else {
-            $textBody = strip_tags(br2nl($message)); // need to create the plain-text part
+            $textBody = strip_tags(br2nl($body)); // need to create the plain-text part
             $mailer->setTextBody($textBody);
-            $mailer->setHtmlBody($message);
+            $mailer->setHtmlBody($body);
         }
 
         // add the recipient...

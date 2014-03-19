@@ -674,6 +674,8 @@ public function convert($string, $type, array $additional_parameters = array())
             return $string . ' ' . $operation . ' ' . abs($getUserUTCOffset) . ' minutes';
         case 'avg':
             return "avg($string)";
+        case 'substr':
+            return "substr($string, " . implode(', ', $additional_parameters) . ')';
 	}
 
 	return $string;
