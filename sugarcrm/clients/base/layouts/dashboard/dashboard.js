@@ -93,10 +93,21 @@
             }
         }, this);
 
-        if (module === 'Home' && context.get('modelId')) {
+        if (module === 'Home' && context.has('modelId')) {
             // save it as last visit
             var lastVisitedStateKey = this.getLastStateKey();
             app.user.lastState.set(lastVisitedStateKey, context.get('modelId'));
+        }
+
+        // When the module is Activities, and it doesn't have a modelId set and the model mode is undefined
+        // it should fetch the collection and hand off to the setDefaultDashboard
+        if (module === 'Activities' && !context.has('modelId') && _.isUndefined(this.model.mode)) {
+            this.once('render', function() {
+                this.collection.fetch({
+                    silent: true,
+                    success: _.bind(this.setDefaultDashboard, this)
+                });
+            }, this);
         }
     },
 
@@ -288,7 +299,10 @@
                 if (this.context.get("modelId")) {
                     model.set("id", this.context.get("modelId"), {silent: true});
                 }
-                model.save({}, this._getDashboardModelSaveParams());
+                // make sure that the model actually has some metadata
+                if (!_.isUndefined(model.get('metadata'))) {
+                    model.save({}, this._getDashboardModelSaveParams());
+                }
             }, this);
         }
     },
@@ -610,7 +624,7 @@
      * @private
      */
     _renderEmptyTemplate: function() {
-        var template = app.template.getLayout(this.type + '.dashboard-empty');
+        var template = app.template.getLayout(this.type || this.name + '.dashboard-empty');
         this.$el.html(template(this));
     },
 

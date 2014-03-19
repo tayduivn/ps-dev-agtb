@@ -47,6 +47,14 @@ class DashboardListApi extends FilterApi
                 'shortHelp' => 'Get dashboards for home',
                 'longHelp' => 'include/api/help/get_dashboards.html',
             ),
+            'getDashboardsForActivities' => array(
+                'reqType' => 'GET',
+                'path' => array('Dashboards', 'Activities'),
+                'pathVars' => array('', 'module'),
+                'method' => 'getDashboards',
+                'shortHelp' => 'Get dashboards for home',
+                'longHelp' => 'include/api/help/get_dashboards.html',
+            ),
         );
     }
 
@@ -83,7 +91,7 @@ class DashboardListApi extends FilterApi
         $args['fields'] = 'id,name,view_name,dashboard_type';
 
         $ret = $this->filterList($api, $args);
-        
+
         // Add dashboard URL's
         foreach ($ret['records'] as $idx => $dashboard) {
             $ret['records'][$idx]['url'] = $api->getResourceURI('Dashboards/'.$dashboard['id']);
