@@ -114,6 +114,9 @@ class SugarFieldCurrency extends SugarFieldFloat
      */
     public function exportSanitize($value, $vardef, $focus, $row = array())
     {
+        // If $value is null, default to zero to prevent conversion errors.
+        $value = is_null($value) ? 0 : $value;
+
         require_once('include/SugarCurrency/SugarCurrency.php');
         if (isset($vardef['convertToBase']) && $vardef['convertToBase']) {
             // convert amount to base
