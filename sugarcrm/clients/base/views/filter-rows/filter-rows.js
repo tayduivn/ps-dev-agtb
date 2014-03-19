@@ -354,7 +354,10 @@
      * @param {Object} rowObj
      */
     populateRow: function(rowObj) {
-        var $row = this.addRow();
+        var $row = this.addRow(),
+            moduleMeta = app.metadata.getModule(this.layout.currentModule),
+            fieldMeta = moduleMeta.fields;
+
         _.each(rowObj, function(value, key) {
             if (key === "$or") {
                 var keys = _.reduce(value, function(memo, obj) {
@@ -369,13 +372,22 @@
 
                 // Predicates are identical, so we just use the first.
                 value = _.values(value[0])[0];
+            } else if (!fieldMeta[key]) {
+                $row.remove();
+                return;
             }
 
-            //Make sure we use name for relate fields
             if (!this.fieldList[key]) {
+                //Make sure we use name for relate fields
                 var relate = _.find(this.fieldList, function(field) { return field.id_name === key; });
+                // field not found so don't create row for it.
+                if (!relate) {
+                    $row.remove();
+                    return;
+                }
                 key = relate.name;
             }
+
             $row.find('[data-filter=field] input[type=hidden]').select2('val', key).trigger('change');
             if (_.isString(value) || _.isNumber(value)) {
                 value = {"$equals": value};

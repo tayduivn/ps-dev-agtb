@@ -500,16 +500,37 @@ describe('View.BaseDashablelistView', function() {
     });
 
     describe('_applyFilterDef', function() {
-        it('should apply the filterDef on the context collection if supplied', function() {
-            var testFilterDef = [{'$test':''}];
+        var getModuleStub,
+            filter1 = {'name': {'$starts': 'A'}},
+            filter2 = {'name_c': {'$starts': 'B'}},
+            filter3 = {'$favorite': ''},
+            fakeModuleMeta = {
+                'fields': {'name': {}},
+                'filters': {
+                    'default': {
+                        'meta': {
+                            'filters': [
+                                {'filter_definition': filter1,'id': 'test1'},
+                                {'filter_definition': filter2,'id': 'test2'},
+                                {'filter_definition': filter3,'id': 'test3'}
+                            ]
+                        }
+                    }
+                }
+            };
+
+        beforeEach(function() {
+            getModuleStub = sinon.collection.stub(app.metadata, 'getModule').returns(fakeModuleMeta);
+        });
+
+        it('should apply the field-filtered filterDef on the context collection', function() {
+            var testFilterDef = [filter1, filter2, filter3];
 
             view._applyFilterDef(testFilterDef);
-            expect(view.context.get('collection').filterDef).toEqual(testFilterDef);
+            expect(view.context.get('collection').filterDef).toEqual([filter1, filter3]);
         });
 
         it('should not apply the filterDef on the context collection if not supplied', function() {
-            var testFilterDef = [{'$test':''}];
-
             view._applyFilterDef();
             expect(_.isEmpty(view.context.get('collection').filterDef)).toBeTruthy();
         });
