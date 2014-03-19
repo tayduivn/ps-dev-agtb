@@ -3256,7 +3256,7 @@ class SugarBean
             }
         }
 
-        $this->call_custom_logic('after_fetch_query', array('beans' => $beans, 'fields' => $fields));
+        $this->call_custom_logic('after_fetch_query', array('beans' => $beans, 'fields' => $fields, 'rows' => $rawRows));
         
         if (!empty($options['returnRawRows'])) {
             $beans['_rows'] = $rawRows;

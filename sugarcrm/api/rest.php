@@ -35,6 +35,7 @@ require_once("include/api/RestService.php");
 SugarAutoLoader::load('custom/include/RestService.php');
 $restServiceClass = SugarAutoLoader::customClass('RestService');
 
+global $service;
 $service = new $restServiceClass();
 $service->execute();
 
