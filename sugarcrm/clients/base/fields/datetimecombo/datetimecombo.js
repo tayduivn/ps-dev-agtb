@@ -341,6 +341,43 @@
     },
 
     /**
+     * Override decorateError to take into account the two fields.
+     *
+     * @override
+     */
+    decorateError: function (errors) {
+        var ftag = this.fieldTag || '',
+            $ftag = this.$(ftag),
+            errorMessages = [],
+            $tooltip;
+
+        // Add error styling
+        this.$el.closest('.record-cell').addClass('error');
+        this.$el.addClass('error');
+
+        if (_.isString(errors)) {
+            // A custom validation error was triggered for this field
+            errorMessages.push(errors);
+        } else {
+            // For each error add to error help block
+            _.each(errors, function (errorContext, errorName) {
+                errorMessages.push(app.error.getErrorString(errorName, errorContext));
+            });
+        }
+
+        $ftag.parent().addClass('error');
+
+        $tooltip = [$(this.exclamationMarkTemplate(errorMessages)), $(this.exclamationMarkTemplate(errorMessages))];
+
+        var self = this;
+
+        $ftag.parent().children('input').each(function(index) {
+            $(this).after($tooltip[index]);
+            self.createErrorTooltips($tooltip[index]);
+        });
+    },
+
+    /**
      * {@inheritDoc}
      */
     _render: function() {
