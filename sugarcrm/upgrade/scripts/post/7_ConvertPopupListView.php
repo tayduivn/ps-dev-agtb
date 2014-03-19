@@ -32,7 +32,7 @@ class SugarUpgradeConvertPopupListView extends UpgradeScript
      */
     public function run()
     {
-        if (!version_compare($this->from_version, '7.0', '<') || !version_compare($this->to_version, '7.2', '>=')) {
+        if (!version_compare($this->from_version, '7.2', '<')) {
             return;
         }
 
