@@ -126,23 +126,32 @@ class RelateRecordApi extends ModuleApi {
 
     /**
      * This function is used to popluate an fields on the relationship from the request
+     *
      * @param $api ServiceBase The API class of the request, used in cases where the API changes how security is applied
      * @param $args array The arguments array passed in from the API
      * @param $primaryBean SugarBean The near side of the link
      * @param $linkName string What is the name of the link field that you want to get the related fields for
+     *
      * @return array A list of the related fields pulled out of the $args array
      */
-    protected function getRelatedFields(ServiceBase $api, $args, SugarBean $primaryBean, $linkName, $seed = null) {
+    protected function getRelatedFields(ServiceBase $api, $args, SugarBean $primaryBean, $linkName, $seed = null)
+    {
         $relatedData = array();
-        if ($seed instanceof SugarBean) {
-            foreach ($args as $field => $value) {
-                if (empty($seed->field_defs[$field]['rname_link'])) {
-                    continue;
+        if (!empty($primaryBean->$linkName) || $primaryBean->load_relationship($linkName)) {
+            $otherLink = $primaryBean->$linkName->getLinkForOtherSide();
+            if ($seed instanceof SugarBean) {
+                foreach ($args as $field => $value) {
+                    if (empty($seed->field_defs[$field]['rname_link']) ||
+                        empty($seed->field_defs[$field]['link']) ||
+                        $seed->field_defs[$field]['link'] != $otherLink
+                    ) {
+                        continue;
+                    }
+                    $relatedData[$seed->field_defs[$field]['rname_link']] = $value;
                 }
-                $relatedData[$seed->field_defs[$field]['rname_link']] = $value;
             }
         }
-        
+
         return $relatedData;
     }
 
