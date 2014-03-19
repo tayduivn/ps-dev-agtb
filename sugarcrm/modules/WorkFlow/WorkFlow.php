@@ -772,23 +772,32 @@ $alert_file_contents = "";
                 $eval_dump .= "\$checkFields = array('for' => 'activity', ";
                 $eval_dump .= "'field_filter' => array(";
                 $additionalEval = array();
-                if ($row['trigger_type'] != 'compare_any_time') {
+                $bean = BeanFactory::getBean($this->base_module);
+                $dateTypeFields = array('date', 'datetime', 'datetimecombo');
+                if ($row['trigger_type'] != 'compare_any_time'
+                	&& !($row['trigger_type'] == 'compare_specific'
+                	&& in_array($bean->field_defs[$row['target_field']]['type'], $dateTypeFields))
+                ) {
                     $additionalEval[] = "({$eval})";
                 }
                 foreach ($this->secondary_triggers as $secondaryTrigger) {
                     $eval_dump .= "'" . $secondaryTrigger['field'] . "', ";
 
-                    if ($secondaryTrigger['type'] != 'compare_any_time' && !empty($secondaryTrigger['eval'])) {
+                    if (!empty($secondaryTrigger['eval'])
+                    	&& $secondaryTrigger['type'] != 'compare_any_time'
+                    	&& !($secondaryTrigger['type'] == 'compare_specific'
+                    	&& in_array($bean->field_defs[$secondaryTrigger['field']]['type'], $dateTypeFields))
+                    ) {
                         $additionalEval[] = $secondaryTrigger['eval'];
                     }
                 }
                 $eval_dump .= "'" . $row['target_field'] . "'));\n";
                 $eval_dump .= "\$dataChanged = \$GLOBALS['db']->getDataChanges(\$focus, \$checkFields);\n";
-                $eval_dump .= "if ( (empty(\$focus->fetched_row) || !empty(\$dataChanged))";
+                $eval_dump .= "if ((empty(\$focus->fetched_row) || !empty(\$dataChanged))";
                 if (!empty($additionalEval)) {
                     $eval_dump .= ' && (' . implode(' && ', $additionalEval) . ')';
                 }
-                $eval_dump .= " ) {\n";
+                $eval_dump .= ") {\n";
                 // Need to add the $timeArray and $workflow_id here for check_for_schedule() call
                 $eval_dump .= $timeArray;
                 $eval_dump .= "\$workflow_id = '" . $row['id'] . "'; \n\n";
