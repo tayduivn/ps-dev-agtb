@@ -240,6 +240,13 @@ $dictionary['Document'] = array('table' => 'documents',
             'source' => 'non-db',
             'vname' => 'LBL_CONTRACTS',
         ),
+        'contracttypes' => array(
+            'name' => 'contracttypes',
+            'type' => 'link',
+            'relationship' => 'contracttype_documents',
+            'source' => 'non-db',
+            'vname' => 'LBL_CONTRACTTYPES',
+        ),
         //todo remove
         'leads' => array(
             'name' => 'leads',
