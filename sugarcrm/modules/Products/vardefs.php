@@ -735,8 +735,7 @@ $dictionary['Product'] = array(
             'len' => '255',
             'vname' => 'LBL_QUOTE_NAME',
             'source' => 'non-db',
-            'comment' => 'Quote Name',
-            'importable' => 'required'
+            'comment' => 'Quote Name'
         ),
 //BEGIN SUGARCRM flav=pro ONLY
         'opportunity_id' =>  array(
