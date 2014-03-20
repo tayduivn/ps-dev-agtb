@@ -81,6 +81,7 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
 
                     // After the .call(paretoChart) line, we are selecting the text elements for the Y-Axis
                     // only so we can custom format the Y-Axis values
+                    d3.select('#' + d3ChartId).html('');
                     d3.select('#' + d3ChartId)
                         .append('svg')
                         .datum(json)
@@ -128,6 +129,7 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .tickSize(0)
                         .tickFormat(d3.format(",.0f"));
 
+                    d3.select('#' + d3ChartId).html('');
                     d3.select('#' + d3ChartId)
                         .append('svg')
                         .datum(json)
@@ -169,6 +171,7 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .highlightZero(false)
                         .tickFormat(function(d,i) { return xLabels[d]; });
 
+                    d3.select('#' + d3ChartId).html('');
                     d3.select('#' + d3ChartId)
                         .append('svg')
                         .datum(json)
@@ -195,6 +198,7 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .colorData('default')
                         .id(d3ChartId);
 
+                    d3.select('#' + d3ChartId).html('');
                     d3.select('#' + d3ChartId)
                         .append('svg')
                         .datum(json)
@@ -226,6 +230,7 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .colorData('default')
                         .id(d3ChartId);
 
+                    d3.select('#' + d3ChartId).html('');
                     d3.select('#' + d3ChartId)
                         .append('svg')
                         .datum(json)
