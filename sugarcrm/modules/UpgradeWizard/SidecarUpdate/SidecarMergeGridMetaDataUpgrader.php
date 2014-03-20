@@ -291,6 +291,16 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
         ),
     );
 
+    /**
+     * List of acceptable templateMeta properties for new metadata
+     * 
+     * @var array
+     */
+    protected $templateMetaProps = array(
+        'useTabs' => 1, 
+        'maxColumns' => 1,
+    );
+
     protected function getOriginalFile($filepath)
     {
         $files = explode("/", $filepath);
@@ -518,7 +528,7 @@ END;
         $this->logUpgradeStatus('Converting ' . $this->client . ' ' . $this->viewtype . ' view defs for ' . $this->module);
 
         $parser = ParserFactory::getParser($this->viewtype, $this->module, null, null, $this->client);
-        $newdefs = array();
+        $newdefs = $tempdefs = $finaldefs = array();
         $defaultDefs = $this->loadDefaultMetadata();
 
         // Go through merge views, add fields added to detail view to base panel
@@ -568,6 +578,22 @@ END;
                 $headerPanel = $defaultDefs['panels'][0];
                 $defaultDefs = $this->handleConversion($data, 'panels', true);
                 array_unshift($defaultDefs['panels'], $headerPanel);
+            }
+
+            // TemplateMeta needs to be added if it isn't, to both the default defs
+            // and the parser viewdefs
+            if (isset($data['templateMeta'])) {
+                if (!isset($defaultDefs['templateMeta'])) {
+                    $defaultDefs['templateMeta'] = $data['templateMeta'];
+                } else {
+                    $defaultDefs['templateMeta'] = array_merge($defaultDefs['templateMeta'], $data['templateMeta']);
+                }
+
+                if (!isset($parser->_viewdefs['templateMeta'])) {
+                    $parser->_viewdefs['templateMeta'] = $defaultDefs['templateMeta'];
+                } else {
+                    $parser->_viewdefs['templateMeta'] = array_merge($parser->_viewdefs['templateMeta'], $defaultDefs['templateMeta']);
+                }
             }
 
             // Make a header fields array so that fields that may be in legacy 
@@ -750,21 +776,36 @@ END;
                 }
             }
 
-            $newdefs = $parser->_viewdefs;
-            $newdefs['panels'] = $parser->convertToCanonicalForm($parser->_viewdefs['panels'] ,$parser->_fielddefs);
+            // Convert the panels array to something useful
+            $panels = $parser->convertToCanonicalForm($parser->_viewdefs['panels'] ,$parser->_fielddefs);
 
-            // Add back in tabDefs if there are any
+            // Add back in tabDefs on the panels if there are any
             if (!empty($tabdefs)) {
-                foreach($newdefs['panels'] as $key => $panel) {
+                foreach($panels as $key => $panel) {
                     if (!empty($panel['label']) && isset($tabdefs[$panel['label']])) {
-                        $newdefs['panels'][$key]['newTab'] = $tabdefs[$panel['label']]['newTab'];
-                        $newdefs['panels'][$key]['panelDefault'] = $tabdefs[$panel['label']]['panelDefault'];
+                        $panels[$key]['newTab'] = $tabdefs[$panel['label']]['newTab'];
+                        $panels[$key]['panelDefault'] = $tabdefs[$panel['label']]['panelDefault'];
                     }
                 }
             }
+
+            // There needs to be two different arrays here to allow for non-recursive
+            // but nested array merges. This allows for detail views to be upgraded
+            // first followed by edit views while still maintaining tab definitions
+            // for detail views
+            if (empty($newdefs['panels'])) {
+                $newdefs = $parser->_viewdefs;
+                $newdefs['panels'] = $panels;
+            } else {
+                $tempdefs = $parser->_viewdefs;
+                $tempdefs['panels'] = $panels;
+            }
+
+            // After all iterations, this will be the final, merged layout def
+            $finaldefs = $this->mergeLayoutDefs($newdefs, $tempdefs);
         }
 
-        $this->sidecarViewdefs[$this->module][$this->client]['view'][MetaDataFiles::getName($this->viewtype)] = $newdefs;
+        $this->sidecarViewdefs[$this->module][$this->client]['view'][MetaDataFiles::getName($this->viewtype)] = $finaldefs;
     }
 
    /**
@@ -889,5 +930,34 @@ END;
         }
 
         return false;
+    }
+
+    /**
+     * Merges current defs into previous, also cleaning up defs along the way
+     * 
+     * @param array $current The current layoutdefs array
+     * @param array $previous The last layout defs array
+     * @return array
+     */
+    protected function mergeLayoutDefs(array $current, array $previous) 
+    {
+        if (empty($previous)) {
+            return $current;
+        }
+
+        // Handle panel merging
+        foreach ($previous['panels'] as $index => $panel) {
+            $current['panels'][$index] = array_merge($current['panels'][$index], $panel);
+        }
+
+        if (isset($current['templateMeta'])) {
+            foreach ($current['templateMeta'] as $key => $value) {
+                if (!isset($this->templateMetaProps[$key])) {
+                    unset($current['templateMeta'][$key]);
+                }
+            }
+        }
+
+        return $current;
     }
 }

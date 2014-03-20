@@ -155,24 +155,54 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testUpgraderPreservedTabsPanels()
     {
-        $filename = 'custom/modules/Opportunities/clients/base/views/record/record.php';
-        $exists = file_exists($filename);
-        $this->assertTrue($exists, 'Opportunities metadata did not convert');
-
+        $module = 'Contacts';
+        $filename = "custom/modules/$module/clients/base/views/record/record.php";
+        $this->assertFileExists($filename);
         require $filename;
+        
+        // Handle assertion of templateMeta.useTabs right up front
+        $this->assertNotEmpty($viewdefs[$module]['base']['view']['record']['templateMeta']);
+        $this->assertNotEmpty($viewdefs[$module]['base']['view']['record']['templateMeta']['useTabs']);
 
-        // Begin assertions, first being that there are now 5 panels since header is added
-        $this->assertEquals(count($viewdefs['Opportunities']['base']['view']['record']['panels']), 5);
+        // Now handle panels
+        $this->assertNotEmpty($viewdefs[$module]['base']['view']['record']['panels']);
+        $this->assertEquals(5, count($viewdefs[$module]['base']['view']['record']['panels']));
+        
+        // Panels 1-3 should have:
+        // 'newTab' => true and 'panelDefault' => 'expanded',
+        // Panel 4 should have:
+        // 'newTab' => false and 'panelDefault' => 'expanded',
+        $panels = $viewdefs[$module]['base']['view']['record']['panels'];
+        
+        // Test panels 1 - 3
+        $this->assertArrayHasKey('newTab', $panels[1]);
+        $this->assertTrue($panels[1]['newTab']);
+        $this->assertArrayHasKey('panelDefault', $panels[1]);
+        $this->assertEquals('expanded', $panels[1]['panelDefault']);
+        $this->assertArrayHasKey('newTab', $panels[2]);
+        $this->assertTrue($panels[2]['newTab']);
+        $this->assertArrayHasKey('panelDefault', $panels[2]);
+        $this->assertEquals('expanded', $panels[2]['panelDefault']);
+        $this->assertArrayHasKey('newTab', $panels[3]);
+        $this->assertTrue($panels[3]['newTab']);
+        $this->assertArrayHasKey('panelDefault', $panels[3]);
+        $this->assertEquals('expanded', $panels[3]['panelDefault']);
+        
+        // Panel 4 should be different
+        $this->assertArrayHasKey('newTab', $panels[4]);
+        $this->assertFalse($panels[4]['newTab']);
+        $this->assertArrayHasKey('panelDefault', $panels[4]);
+        $this->assertEquals('expanded', $panels[4]['panelDefault']);
 
         // Assert labels for converted panels
-        $this->assertNotEmpty($viewdefs['Opportunities']['base']['view']['record']['panels'][1]);
-        $this->assertNotEmpty($viewdefs['Opportunities']['base']['view']['record']['panels'][1]['label']);
-        $this->assertEquals('LBL_RECORD_BODY', $viewdefs['Opportunities']['base']['view']['record']['panels'][1]['label']);
+        $this->assertArrayHasKey('label', $panels[1]);
+        $this->assertEquals('LBL_RECORD_BODY', $panels[1]['label']);
 
-        // Assert labels for converted but not relabeld panels
-        $this->assertNotEmpty($viewdefs['Opportunities']['base']['view']['record']['panels'][3]);
-        $this->assertNotEmpty($viewdefs['Opportunities']['base']['view']['record']['panels'][3]['label']);
-        $this->assertEquals('LBL_PANEL_ASSIGNMENT', $viewdefs['Opportunities']['base']['view']['record']['panels'][3]['label']);
+        // Assert labels for converted but not relabeled panels
+        $this->assertArrayHasKey('label', $panels[3]);
+        $this->assertEquals('LBL_PANEL_ADVANCED', $panels[3]['label']);
+        $this->assertArrayHasKey('label', $panels[4]);
+        $this->assertEquals('LBL_PANEL_ASSIGNMENT', $panels[4]['label']);
     }
     // END SUGARCRM flav=ent ONLY
     public function _sidecarFilesInPlaceProvider()
