@@ -18,6 +18,11 @@ class SugarUpgradeRepairUsDollarFields extends UpgradeScript
 
     public function run()
     {
+        // Bug 66658, 66795, 65573 update scripts
+        if (version_compare($this->from_version, '6.7.2', '>') && version_compare($this->from_version, '6.7.6', '<')) {
+            $this->fixUSDollarFields();
+        }
+
         // only affects upgrades from Sugar 7.x
         if (version_compare($this->from_version, '7.0', '<')) {
             return;
@@ -63,4 +68,40 @@ class SugarUpgradeRepairUsDollarFields extends UpgradeScript
         }
 
     }
+
+    public function fixUSDollarFields()
+    {
+        // Fix Opportunities
+        $this->db->query(
+            "
+            UPDATE opportunities
+            SET amount_usdollar = amount / base_rate
+            WHERE base_rate > 0
+            AND format(amount / base_rate, 6) <> format(amount_usdollar, 6)
+            AND deleted = 0
+            "
+        );
+
+        // Fix Products
+        $fields = array(
+            'deal_calc' => 'deal_calc_usdollar',
+            'discount_amount' => 'discount_amount_usdollar',
+            'cost_price' => 'cost_usdollar',
+            'discount_price' => 'discount_usdollar',
+            'list_price' => 'list_usdollar',
+            'book_value' => 'book_value_usdollar',
+        );
+        foreach ($fields as $field => $fieldUSDollar) {
+            $this->db->query(
+                "
+            UPDATE products
+            SET {$fieldUSDollar} = {$field} / base_rate
+            WHERE base_rate > 0
+            AND format({$field} / base_rate, 6) <> format({$fieldUSDollar}, 6)
+            AND deleted = 0
+            "
+            );
+        }
+    }
+
 }
