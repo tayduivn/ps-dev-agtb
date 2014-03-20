@@ -399,6 +399,14 @@
                         errorMessages.push(app.error.getErrorString(errorName, errorContext));
                     });
                 }
+
+                var isDatetime = $ftag.parent().hasClass('datetime') || $ftag.parent().hasClass('date');
+                if (!isDatetime) {
+                    $ftag.wrap('<div class="input-append error ' + ftag + '">');
+                } else {
+                    $ftag.parent().addClass('error');
+                }
+
                 $tooltip = $(this.exclamationMarkTemplate(errorMessages));
                 $ftag.after($tooltip);
                 this.createErrorTooltips($tooltip);
@@ -445,9 +453,16 @@
                 // Remove previous exclamation then add back.
                 this.$('.add-on.error-tooltip').remove();
                 var isWrapped = $ftag.parent().hasClass('input-append');
-                if (isWrapped) {
+
+                //TODO: this check for datetime should be made generic based on use of normal addon
+                var isDatetime = $ftag.parent().hasClass('datetime');
+                if (isWrapped && !isDatetime) {
                     $ftag.unwrap();
                 }
+                if (isDatetime) {
+                    $ftag.parent().removeClass('error');
+                }
+
                 this.$el.removeClass(ftag);
                 this.$el.removeClass("error");
                 this.$el.closest('.record-cell').removeClass("error");
