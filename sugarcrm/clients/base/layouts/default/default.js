@@ -22,10 +22,10 @@
  *    `sidebar:toggle` and passing `true`. Note that you can also close the
  *    sidebar by triggering `sidebar:toggle` and passing `false`.
  *
- * - `toggleSidebarArrows` has been removed. Trigger `sidebar:state:respond`
+ * - `toggleSidebarArrows` has been removed. Trigger `sidebar:state:changed`
  *    with the value `open` or `close` instead.
  *
- * - `openSidebarArrows` has been removed. Trigger `sidebar:state:respond` with
+ * - `openSidebarArrows` has been removed. Trigger `sidebar:state:changed` with
  *    the value `open` instead.
  */
 ({
@@ -55,22 +55,14 @@
 
         this.processDef();
 
-        // FIXME this should be triggered on this layout instead of the global context (SC-2398).
-        app.controller.context.on('sidebar:toggle', this.toggleSidePane, this);
+        this.on('sidebar:toggle', this.toggleSidePane, this);
 
-        this.meta.last_state = { id: 'default' };
+        this.meta.last_state = this.meta.last_state || { id: 'default' };
 
         this._hideLastStateKey = app.user.lastState.key(this.HIDE_KEY, this);
 
         //Update the panel to be open or closed depending on how user left it last
         this._toggleVisibility(this.isSidePaneVisible());
-
-        // FIXME this should be listened on this layout instead of the global context (SC-2398).
-        app.controller.context.on('sidebar:state:ask', function() {
-            var state = this.isSidePaneVisible() ? 'open' : 'close';
-            // FIXME this should be triggered on this layout instead of the global context (SC-2398).
-            app.controller.context.trigger('sidebar:state:respond', state);
-        }, this);
     },
 
     /**
@@ -128,8 +120,7 @@
 
         $(window).trigger('resize');
 
-        // FIXME this should be triggered on this layout instead of the global context (SC-2398).
-        app.controller.context.trigger('sidebar:state:changed', visible ? 'open' : 'close');
+        this.trigger('sidebar:state:changed', visible ? 'open' : 'close');
     },
 
     /**
@@ -166,14 +157,5 @@
             }, this);
 
         return this.$(pane).width() || 0;
-    },
-
-    /**
-     * @inheritDoc
-     */
-    unbind: function() {
-        // FIXME the events should be happening on this layout instead of the global context (SC-2398).
-        app.controller.context.off(null, null, this);
-        this._super('unbind');
     }
 })

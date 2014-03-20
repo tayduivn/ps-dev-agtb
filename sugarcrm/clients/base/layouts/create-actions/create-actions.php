@@ -73,6 +73,9 @@ $viewdefs['base']['layout']['create-actions'] = array(
                 'type' => 'default',
                 'name' => 'sidebar',
                 'span' => 12,
+                'last_state' => array(
+                    'id' => 'create-default',
+                ),
             ),
         ),
     ),
