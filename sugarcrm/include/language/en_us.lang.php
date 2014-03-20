@@ -2216,6 +2216,7 @@ $app_strings = array (
     'LBL_EMAIL_IMPORT_EMAIL'                => 'Import to Sugar',
     'LBL_EMAIL_IMPORT_SETTINGS'                => 'Import Settings',
     'LBL_EMAIL_INVALID'                     => 'Invalid',
+    'LBL_EMAIL_LINK_RECORD'                 => 'Click Here',
     'LBL_EMAIL_LIST_RENAME_TITLE'           => 'Rename Mailing List',
     'LBL_EMAIL_LIST_RENAME_DESC '           => 'Enter a new name for this mailing list',
     'LBL_EMAIL_CONFIRM_DELETE_LIST'         => 'Remove these entries from your mailing lists?',

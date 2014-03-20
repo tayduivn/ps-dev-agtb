@@ -870,7 +870,13 @@ function get_href_link($focus)
         $link .= '/#' . buildSidecarRoute($focus->module_dir, $focus->id);
     }
 
-    return '<a href="' . $link . '">Click Here</a>';
+    if (!empty($focus->name)) {
+        $label = $focus->name;
+    } else {
+        $label = translate('LBL_EMAIL_LINK_RECORD', $focus->module_dir);
+    }
+
+    return '<a href="' . $link . '">' . $label . '</a>';
 }
 
 
