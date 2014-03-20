@@ -60,6 +60,16 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'name' => 'viewcount',
                     'readonly' => 'true'
                 ),
+                'attachment_list' => array(
+                    'name'        => 'attachment_list',
+                    'label'       => 'LBL_ATTACHMENTS',
+                    'type'        => 'attachments',
+                    'link' => 'notes',
+                    'module' => 'Notes',
+                    'modulefield' => 'filename',
+                    'bLable' => 'LBL_ADD_ATTACHMENT',
+                    'bIcon' => 'icon-paper-clip',
+                ),
             ),
         ),
     ),

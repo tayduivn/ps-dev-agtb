@@ -1,0 +1,17 @@
+{{!
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
+ */
+}}
+<input type="hidden" class="select2 select2-choices-pills-close" value="" data-type="attachments">
+<label class="btn span4" style="margin:-5px 0px 0px -7px;" for="{{cid}}">{{#if def.bIcon}}<i class="{{def.bIcon}}"></i>{{/if}}{{#if bLabel}}{{str bLabel}}{{/if}}</label>
+<input type="file" name="attachment_list" class="hidden" data-type="fileinput" id="{{cid}}"{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}>

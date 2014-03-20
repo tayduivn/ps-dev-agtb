@@ -98,6 +98,36 @@ $dictionary['KBSContent'] = array(
             'type' => 'int',
             'default' => '0',
         ),
+        'attachment_list' => array(
+            'name' => 'attachment_list',
+            'type' => 'file',
+            'source' => 'non-db',
+            'vname' => 'LBL_RATING',
+        ),
+        'notes' => array(
+            'name' => 'notes',
+            'vname' => 'LBL_ATTACHMENTS',
+            'type' => 'link',
+            'relationship' => 'kbscontent_notes',
+            'module' => 'Notes',
+            'bean_name' => 'Note',
+            'source' => 'non-db',
+        ),
+    ),
+    'relationships' => array(
+        'kbscontent_notes' => array(
+            'lhs_module' => 'KBSContents',
+            'lhs_table' => 'kbscontents',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Notes',
+            'rhs_table' => 'notes',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+        ),
+    ),
+
+    'duplicate_check' => array(
+        'enabled' => false,
     ),
 );
 
