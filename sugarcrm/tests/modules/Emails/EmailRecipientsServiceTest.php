@@ -119,6 +119,28 @@ class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual, "Should have found {$expected} {$module} who matched {$term}.");
     }
 
+    public function testFind_SearchContactsForTerm_ReturnsNameCorrectly()
+    {
+        $this->createRecipientsAcrossModules();
+        $term     = "{$this->salt}_john";
+        $module   = "contacts";
+        $expected = "John Doe";
+        $recipients = $this->emailRecipientsService->find($term, $module);
+        $actual = $recipients[0]["name"];
+        $this->assertEquals($expected, $actual, "Should have returned name of '{$expected}' instead of '{$actual}'.");
+    }
+
+    public function testFind_SearchAccountsForTerm_ReturnsNameCorrectly()
+    {
+        $this->createRecipientsAcrossModules();
+        $term     = "{$this->salt}_this";
+        $module   = "accounts";
+        $expected = "This Account";
+        $recipients = $this->emailRecipientsService->find($term, $module);
+        $actual = $recipients[0]["name"];
+        $this->assertEquals($expected, $actual, "Should have returned name of '{$expected}' instead of '{$actual}'.");
+    }
+
     public function testFind_SearchAccountsForTermAndOrderByEmailAsc_ReturnsSortedMatchingAccounts()
     {
         $this->createRecipientsAcrossModules();
