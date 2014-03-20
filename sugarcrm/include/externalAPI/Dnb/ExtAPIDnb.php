@@ -118,25 +118,35 @@ class ExtAPIDnb extends ExternalAPIBase
 
     /**
      * Searches for companies in DNB based on the keyword
-     * @param $keyword company search string
+     * @param $quertString queryString
      * @return jsonarray
      */
-    public function dnbSearch($keyword)
+    public function dnbSearch($queryString)
     {
-        $cache_key = 'dnb.search.' . $keyword;
-        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf($this->dnbSearchURL, urlencode($keyword));
-        //check if result exists in cache
-        $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
-        // get existing duns
-        $path = $this->commonJsonPaths['findcompany'];
-        if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
-            //get the list of companies from dnb
-            $modifiedCompaniesList = $this->checkAndMarkDuplicateDuns($reply['responseJSON'],$path);
-            if (!empty($modifiedCompaniesList)) {
-                $reply['responseJSON']['FindCompanyResponse']['FindCompanyResponseDetail']['FindCandidate'] = $modifiedCompaniesList;
+        $queryParams = array();
+        parse_str($queryString, $queryParams);
+        if (array_key_exists('q',$queryParams)) {
+            $keyword = $queryParams['q'];
+            $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf($this->dnbSearchURL, urlencode($keyword));
+            $reply = $this->makeRequest('GET', $dnbendpoint);
+            if (!$reply['success']) {
+                $GLOBALS['log']->error('DNB failed, reply said: ' . print_r($reply, true));
+                return $reply;
             }
+            // get existing duns
+            $path = $this->commonJsonPaths['findcompany'];
+            if ($this->arrayKeyExists($reply['responseJSON'], $path)) {
+                //get the list of companies from dnb
+                $modifiedCompaniesList = $this->checkAndMarkDuplicateDuns($reply['responseJSON'],$path);
+                if (!empty($modifiedCompaniesList)) {
+                    $reply['responseJSON']['FindCompanyResponse']['FindCompanyResponseDetail']['FindCandidate'] = $modifiedCompaniesList;
+                }
+            }
+            return $reply['responseJSON'];
+        } else {
+            //send error
+            return array('error' => 'ERROR_BAD_REQUEST');
         }
-        return $reply['responseJSON'];
     }
 
     /**

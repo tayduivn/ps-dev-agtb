@@ -3487,12 +3487,12 @@ $app_strings = array (
     /* D&B Assesment */
     'LBL_DNB_ASSESSMENT' => 'Assessment',
     'LBL_DNB_HIST_RAT' => 'History Rating',
-    'LBL_DNB_CCS' => 'Comercial Credit Score',
+    'LBL_DNB_CCS' => 'Pre Screen Score',
     'LBL_DNB_USPAT_SCR' => 'US Patriot Act Compliance Risk Score',
     'LBL_DNB_TPA' => 'Third Party Assesment',
     'LBL_DNB_ASSESMENT_DESC' => 'Records insightful and value added information on organizations, such as: - recommendations on how much credit to extend to them, - assessments of their liquidity, - concise evaluations of their performance and behavior, - predictions on the risk of conducting business with them. The predictive scores are usually calculated and assigned by D&B, but such assessments may also be recorded when assigned by third parties.',
     'LBL_DNB_HIST_RAT_DESC' => 'Text that specifies if D&B has any information that may reflect unfavorably on this organization, e.g., clear, incomplete, management, business.',
-    'LBL_DNB_CCS_DESC' => 'recording of the most recent risk scores that are assigned to this organization on a given date/time using a scoring model that help predict the likelihood that the organization will pay its bills in a severely delinquent manner (90+ days past due) over the next 12 months',
+    'LBL_DNB_CCS_DESC' => 'Recording of the most recent risk scores that are assigned to this organization on a given date/time using a scoring model that help predict the likelihood that the organization will pay its bills in a severely delinquent manner (90+ days past due) over the next 12 months',
     'LBL_DNB_USPAT_SCR_DESC' => 'The compliance risk index is intended to provide organisations subject to the USA Patriot Act with an additional tool in performing compliance risk based assessment of trading partners. The Index is a numeric value that represents an aggregation of weighted risk flags, assigned through a proprietary rules based algorithm. Values range form 0 to ~255. Higher Index values represent a higher perceived level of risk',
     'LBL_DNB_TPA_DESC' => 'Appraisals/opinions assigned to this Subject by an entity other than the D&B Worldwide Network (WWN)',
 
@@ -3664,7 +3664,6 @@ $app_strings = array (
     'LBL_DNB_TOTAL_EMPLOYEE_QUANTITY' => 'Total Employee Quantity',
     'LBL_DNB_RELIABILITY_TEXT' => 'Reliability Text',
     'LBL_DNB_HISTORY_RATING_TEXT' => 'History Rating',
-    'LBL_DNB_CCS' => 'Comercial Credit Score',
     'LBL_DNB_RISK_CLASS' => 'Risk Class',
     'LBL_DNB_PRINCIPAL_IDENTIFICATION_NUMBER' => 'Principal Identification Number',
     'LBL_DNB_JOB_TITLE_TEXT' => 'Job Title',
