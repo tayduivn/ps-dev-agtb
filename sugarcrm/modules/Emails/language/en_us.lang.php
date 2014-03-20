@@ -190,7 +190,7 @@ $mod_strings = array (
 	'LBL_LIST_TO_ADDR'			=> 'To',
 	'LBL_LIST_TYPE'				=> 'Type',
     "LBL_SELECTED_RECIPIENTS"   => "Selected Recipients",
-    "LBL_SHOW_MORE_RECIPIENTS"  => "More Recipients...",
+    "LBL_SHOW_MORE_RECIPIENTS"  => "More recipients...",
     "LBL_COMPOSE_ADDRESSBOOK"   => "Address Book",
 
 	'NTC_REMOVE_INVITEE'		=> 'Are you sure you want to remove this recipient from the email?',
