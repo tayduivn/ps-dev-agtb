@@ -320,8 +320,8 @@ class WorkFlowGlue {
 		if($type_object->exp_type=='date'){
 		$eval_string .= " !='0000-00-00' ";
 		}
-		if($type_object->exp_type=='datetime'){
-		$eval_string .= " !='0000-00-00 00:00:00' ";
+		if($type_object->exp_type=='datetime'  || $type_object->exp_type == 'datetimecombo'){
+			$eval_string .= " !='0000-00-00 00:00:00' ";
 		}
 
 		//compensates if the user changes the field sometime later
@@ -336,7 +336,7 @@ class WorkFlowGlue {
 		}
 
 		$eval_string .= ")  \n";
-        if ($type_object->exp_type=='date' || $type_object->ext_type == 'datetime') {
+            if (in_array($type_object->exp_type, array('date', 'datetime', 'datetimecombo'))) {
             // rgonzalez Bug 50258, 50482 - date comparisons being improperly evaluated
             // Logic should be if LHS Field is MORE THAN x days old then the eval
             // should be $lhsfield < (time() - interval) [field timestamp LESS THAN

@@ -32,6 +32,7 @@ $viewdefs['Accounts']['base']['view']['panel-top-for-prospectlists'] = array(
                     'name' => 'create_button',
                     'label' => ' ',
                     'acl_action' => 'create',
+                    'tooltip' => 'LBL_CREATE_BUTTON_LABEL',
                 ),
                 array(
                     'type' => 'link-action',
