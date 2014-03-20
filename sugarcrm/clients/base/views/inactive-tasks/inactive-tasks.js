@@ -91,8 +91,6 @@
      * @param {Bean} model Appended new model.
      */
     bindCollectionAdd: function(model) {
-        var tab = this.tabs[this.settings.get('activeTab')];
-        model.set('record_date', model.get(tab.record_date));
         var pictureUrl = app.api.buildFileURL({
             module: 'Users',
             id: model.get('assigned_user_id'),
