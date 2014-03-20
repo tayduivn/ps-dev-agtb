@@ -22,6 +22,59 @@ class KBSContentsApiHelper extends SugarBeanApiHelper {
             $bean->save();
         }
         $result = parent::formatForApi($bean, $fieldList, $options);
+        $bean->load_relationship('notes');
+        $result['attachment_list'] = array();
+        foreach ($bean->notes->getBeans() as $note) {
+            $attach = array(
+                'id' => $note->id,
+                'filename' => $note->filename,
+                'name' => $note->filename,
+            );
+            array_push($result['attachment_list'], $attach);
+        }
+        return $result;
+    }
+
+    public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
+    {
+        $attachment_list = array();
+        if (!empty($submittedData['attachment_list'])) {
+            $attachment_list = $submittedData['attachment_list'];
+            unset($submittedData['attachment_list']);
+        }
+        $result = parent::populateFromApi($bean, $submittedData, $options);
+        if (!empty($attachment_list) && $result) {
+            $bean->load_relationship('notes');
+            $notes = array();
+            if ($bean->id) {
+                $notes = $bean->notes->getBeans();
+            } else {
+                $bean->id = create_guid();
+                $bean->new_with_id = true;
+            }
+            foreach ($attachment_list as $info) {
+                $found = false;
+                foreach ($notes as $note) {
+                    if ($note->id === $info['id']) {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    //@TODO: Add mime-type detection
+                    $note = BeanFactory::getBean('Notes');
+                    $note->new_with_id = true;
+                    $note->id = create_guid();
+                    sugar_rename(
+                        UploadFile::get_file_path('', $info['id'], true),
+                        UploadFile::get_file_path('', $note->id, true)
+                    );
+                    $note->filename = $info['name'];
+                    $note->name = $info['name'];
+                    $bean->notes->add($note);
+                }
+            }
+        }
         return $result;
     }
 }

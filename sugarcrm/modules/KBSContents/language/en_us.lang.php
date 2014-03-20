@@ -30,4 +30,7 @@ $mod_strings = array (
     'LBL_NOT_USEFUL' => 'Not Useful',
     'LBL_RATING' => 'Rating',
     'LBL_VIEWED_COUNT' => 'View Count',
+    'LBL_DOWNLOAD_ALL' => 'Download All',
+    'LBL_ATTACHMENTS' => 'Attachments',
+    'LBL_ADD_ATTACHMENT' => 'Add attachment',
 );
