@@ -131,7 +131,6 @@
             self._rewriteLinksForSidecar(this.contentWindow);
             self._rewriteNewWindowLinks(this.contentWindow);
             self._cloneBodyClasses(this.contentWindow);
-            self._resizeIframe(this.contentWindow);
         });
     },
 
@@ -178,25 +177,6 @@
         var app = window.parent.SUGAR.App;
         app.controller.context.set('module', module);
         app.events.trigger('app:view:change', this.layout, {module: module});
-    },
-
-    /**
-     * Dynamically adjust height of IFRAME, iOS hack.
-     *
-     * Don't adjust height for JS dynamic loaded pages that set height after
-     * some xhr calls.
-     * See UIUX-1165 and UIUX-1506 for more information about this.
-     */
-    _resizeIframe: function(contentWindow) {
-        if (Modernizr.touch) {
-            var module = this.moduleRegex.exec(contentWindow.location.search);
-            module = (_.isArray(module)) ? module[1] : null;
-            if (_.contains(['Reports', 'ModuleBuilder'], module)) {
-                $('.bwc-frame').css('height', '');
-                return;
-            }
-            $('.bwc-frame').css('height', contentWindow.$('#main').height());
-        }
     },
 
     /**
