@@ -104,11 +104,14 @@ function override_value_to_string_recursive2($array_name, $value_name, $value, $
 		if(!$save_empty && empty($value)){
 			return;
 		}else{
-			if (is_int($value_name)) {
+			if (is_numeric($value_name)) {
 			    $isAppend = false;
 			    if (!empty($keyArray)) {
 			        $get_string = implode(".", $keyArray);
-			        $merged_config_key_array = SugarConfig::getInstance()->get($get_string);
+			        $merged_config_key_array = array();
+			        if (strpos($array_name, 'sugar_config') == 0) {
+			            $merged_config_key_array = SugarConfig::getInstance()->get($get_string);
+			        }
 			        if (!empty($merged_config_key_array)) {
 			            $total = count($merged_config_key_array);
 			            $oldKeyExist = true;
@@ -116,9 +119,9 @@ function override_value_to_string_recursive2($array_name, $value_name, $value, $
 			                if (!array_key_exists($i, $merged_config_key_array)) {
 			                    break;
 			                }
-			                if ($value_name == $i && $value == $merged_config_key_array[$i]) { // Override
-			                    $oldKeyExist = false;
-			                }
+			            }
+			            if ($merged_config_key_array[$value_name] == $value) { // Override
+			                $oldKeyExist = false;
 			            }
 			            if ($i == $total && $oldKeyExist == true) {
 			                $isAppend = true;
