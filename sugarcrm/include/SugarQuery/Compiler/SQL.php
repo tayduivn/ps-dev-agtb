@@ -353,7 +353,6 @@ class SugarQuery_Compiler_SQL
 
         return $return;
     }
-
     /**
      * Create a where statement
      *
@@ -363,30 +362,63 @@ class SugarQuery_Compiler_SQL
      */
     protected function compileWhere(array $where)
     {
-        $sql = false;
+        $sql = array();
         foreach ($where as $whereObj) {
             if ($whereObj instanceof SugarQuery_Builder_Andwhere) {
-                $operator = " AND ";
+                $operator = "AND";
             } else {
-                $operator = " OR ";
+                $operator = "OR";
             }
+            $sql[] = $this->buildWhereSql($operator, $whereObj);
+        }
 
-            if (!empty($whereObj->raw)) {
-                $sql .= $this->compileField($whereObj->raw);
-            }
-            foreach ($whereObj->conditions as $condition) {
-                if ($condition instanceof SugarQuery_Builder_Where) {
-                    if (!empty($sql) && substr($sql, -1) != '(') {
-                        $sql .= $operator;
-                    }
-                    $sql .= ' (' . $this->compileWhere(array($condition)) . ')';
-                    continue;
-                } elseif ($condition instanceof SugarQuery_Builder_Condition) {
-                    $sql = $this->compileCondition($condition, $sql, $operator);
+        $compiledSql = '';
+        foreach ($sql as $conditionals) {
+            foreach($conditionals as $operator => $statement) {
+                if(count($statement) > 1) {
+                    $compiledSql .= implode(" {$operator} ", $statement);
                 } else {
-                    if (is_array($condition)) {
-                        $sql .= join(' ', $condition);
-                    }
+                    $compiledSql .= reset($statement);
+                }
+            }
+        }
+
+        return $compiledSql;
+    }
+
+    /**
+     * Build the Where Statement using arrays, to keep it nice and clean
+     *
+     * @param string $operator [AND/OR]
+     * @param object SugarQuery_Builder_AndWhere/SugarQuery_Builder_OrWhere
+     *
+     * @return array
+     */    
+    protected function buildWhereSql($operator, $whereObj)
+    {
+        $sql[$operator] = array();
+        if (!empty($whereObj->raw)) {
+            $compiledField = $this->compileField($whereObj->raw);
+            if (!empty($compiledField)) {
+                $sql[$operator][] = $compiledField;
+            }
+        }
+        foreach ($whereObj->conditions as $condition) {
+            $compiledField = false;
+            if ($condition instanceof SugarQuery_Builder_Where) {
+                $compiledField = $this->compileWhere(array($condition));
+                if (!empty($compiledField)) {
+                    $sql[$operator][] = "({$compiledField})";
+                }
+                continue;
+            } elseif ($condition instanceof SugarQuery_Builder_Condition) {
+                $compiledField = $this->compileCondition($condition);
+                if (!empty($compiledField)) {
+                    $sql[$operator][] = $compiledField;
+                }
+            } else {
+                if (is_array($condition) && !empty($condition)) {
+                    $sql[$operator][] = join(' ', $condition);
                 }
             }
         }
@@ -404,14 +436,9 @@ class SugarQuery_Compiler_SQL
      * @return string
      */
     public function compileCondition(
-        SugarQuery_Builder_Condition $condition,
-        $sql,
-        $operator
+        SugarQuery_Builder_Condition $condition
     ) {
-        if (!empty($sql) && substr($sql, -1) != '(') {
-            $sql .= $operator;
-        }
-
+        $sql = '';
         $field = $this->compileField($condition->field);
 
         if (empty($field)) {
