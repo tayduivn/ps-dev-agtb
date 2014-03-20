@@ -70,6 +70,10 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'bLable' => 'LBL_ADD_ATTACHMENT',
                     'bIcon' => 'icon-paper-clip',
                 ),
+                array(
+                    'name' => 'topic_name',
+                    'label' => 'LBL_TOPIC_NAME',
+                ),
             ),
         ),
     ),

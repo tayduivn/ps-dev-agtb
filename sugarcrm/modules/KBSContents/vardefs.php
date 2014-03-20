@@ -113,6 +113,36 @@ $dictionary['KBSContent'] = array(
             'bean_name' => 'Note',
             'source' => 'non-db',
         ),
+        'topic_id' => array(
+            'name' => 'topic_id',
+            'vname' => 'LBL_TOPIC_ID',
+            'type' => 'id',
+            'isnull' => 'true',
+            'comment' => 'Topic ID',
+        ),
+        'topic_name' => array(
+            'name' => 'topic_name',
+            'rname' => 'name',
+            'id_name' => 'topic_id',
+            'vname' => 'LBL_TOPIC_NAME',
+            'type' => 'relate',
+            'isnull' => 'true',
+            'module' => 'KBSTopics',
+            'table' => 'kbstopics',
+            'massupdate' => false,
+            'source' => 'non-db',
+            'link' => 'parent_topic',
+        ),
+        'topic' => array(
+            'name' => 'topic',
+            'type' => 'link',
+            'relationship' => 'kbscontent_topic',
+            'module' => 'KBSTopics',
+            'bean_name' => 'KBSTopic',
+            'source' => 'non-db',
+            'vname' => 'LNK_TOPICS',
+            'side' => 'right',
+        ),
     ),
     'relationships' => array(
         'kbscontent_notes' => array(
@@ -124,6 +154,15 @@ $dictionary['KBSContent'] = array(
             'rhs_key' => 'parent_id',
             'relationship_type' => 'one-to-many',
         ),
+        'kbscontent_topic' => array(
+            'lhs_module' => 'KBSContents',
+            'lhs_table' => 'kbscontents',
+            'lhs_key' => 'id',
+            'rhs_module' => 'KBSTopics',
+            'rhs_table' => 'kbstopics',
+            'rhs_key' => 'topic_id',
+            'relationship_type' => 'one-to-many'
+        )
     ),
 
     'duplicate_check' => array(
