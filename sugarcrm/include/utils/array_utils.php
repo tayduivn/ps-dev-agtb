@@ -80,6 +80,17 @@ function override_recursive_helper($key_names, $array_name, $value){
 	}
 }
 
+/**
+ * Given an array name, key name and value of array, return a string of re-composed array.
+ *
+ * @param string $array_name : name of the array
+ * @param string $value_name : name of the array keys
+ * @param array $value : value of current array
+ * @param boolean $save_empty : flag to allow save empty
+ * @param array $keyArray : value name of each recursion
+ *
+ * @return string : example - "\$sugar_config['a']['b']['c'][0] = 'hello';\n"
+ */
 function override_value_to_string_recursive2($array_name, $value_name, $value, $save_empty = true, $keyArray = array()) {
 	if (is_array($value)) {
 		$str = '';
@@ -99,15 +110,17 @@ function override_value_to_string_recursive2($array_name, $value_name, $value, $
 			        $get_string = implode(".", $keyArray);
 			        $merged_config_key_array = SugarConfig::getInstance()->get($get_string);
 			        if (!empty($merged_config_key_array)) {
-			            $i = 0;
 			            $total = count($merged_config_key_array);
-			            while ($i < $total) { // Check if sequential keys exist
-			                if (empty($merged_config_key_array[$i])) {
+			            $oldKeyExist = true;
+			            for ($i = 0; $i < $total; $i++) { // Check if sequential keys exist
+			                if (!array_key_exists($i, $merged_config_key_array)) {
 			                    break;
 			                }
-			                $i++;
+			                if ($value_name == $i && $value == $merged_config_key_array[$i]) { // Override
+			                    $oldKeyExist = false;
+			                }
 			            }
-			            if ($i == $total) { // It is sequential
+			            if ($i == $total && $oldKeyExist == true) {
 			                $isAppend = true;
 			            }
 			        }

@@ -36,18 +36,13 @@ class array_utils extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
-    private function _addKeyValueToConfig($key, $value)
-    {
-        $GLOBALS['sugar_config'][$key] = $value;
-    }
-
     /**
      * @ticket 396
      * @dataProvider providerOverride
      */
     public function test_override_value_to_string_recursive2($array_name, $value_name, $value, $config, $expected)
     {
-        $this->_addKeyValueToConfig($value_name, $config);
+        $GLOBALS['sugar_config'][$value_name] = $config;
         $this->assertEquals($expected, override_value_to_string_recursive2($array_name, $value_name, $value));
     }
 
@@ -60,6 +55,13 @@ class array_utils extends Sugar_PHPUnit_Framework_TestCase
                 array('list' => array(0 => 'location.com')), // structure from config_override.php
                 array('list' => array(0 => 'abc.com', 1 => '123.com', 2 => 'location.com')), // merged config
                 "\$sugar_config['http_referer_396']['list'][] = 'location.com';\n"
+            ),
+            array( // Override: sequential array exists in config.php but old key is overridden
+                "sugar_config",
+                "http_referer_396",
+                array('list' => array(0 => 'location.com')), // structure from config_override.php
+                array('list' => array(0 => 'location.com', 1 => '123.com')), // merged config
+                "\$sugar_config['http_referer_396']['list']['0'] = 'location.com';\n"
             ),
             array( // Override: does not exist in config.php
                 "sugar_config",
@@ -74,13 +76,6 @@ class array_utils extends Sugar_PHPUnit_Framework_TestCase
                 array('def' => 'def'), // structure from config_override.php
                 array('abc' => 'abc', 'def' => 'def'), // merged config
                 "\$sugar_config['test_396']['def'] = 'def';\n"
-            ),
-            array( // Override: not config related
-                "app_list_strings",
-                "http_referer_396",
-                array('list' => array(0 => 'location.com')), // structure from config_override.php
-                array(),
-                "\$app_list_strings['http_referer_396']['list']['0'] = 'location.com';\n"
             ),
         );
         return $returnArray;
