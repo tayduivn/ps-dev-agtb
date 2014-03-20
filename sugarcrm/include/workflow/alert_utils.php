@@ -852,16 +852,25 @@ function replace_target_body_items($target_body, $replace_array){
 //end function replace_target_body_items
 }
 
+/**
+ * Format a link to a record.
+ *
+ * @param SugarBean $focus The record.
+ * @return string The formatted HTML link.
+ */
+function get_href_link($focus)
+{
+    global $sugar_config;
 
-function get_href_link(& $focus){
-	global $app_list_strings;
-	global $sugar_config;
+    $link = $sugar_config['site_url'];
 
-	$link = "{$sugar_config['site_url']}/index.php?module={$focus->module_dir}&action=DetailView&record={$focus->id}";
+    if (isModuleBWC($focus->module_name)) {
+        $link .= "/#bwc/index.php?module={$focus->module_dir}&action=DetailView&record={$focus->id}";
+    } else {
+        $link .= '/#' . buildSidecarRoute($focus->module_dir, $focus->id);
+    }
 
-	return "<a href=\"$link\">Click Here</a>";
-
-//end function get_href_link
+    return '<a href="' . $link . '">Click Here</a>';
 }
 
 
