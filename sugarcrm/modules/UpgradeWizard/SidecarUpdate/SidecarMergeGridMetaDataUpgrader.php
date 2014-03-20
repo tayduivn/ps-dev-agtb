@@ -663,8 +663,7 @@ END;
             $origData = $parser->getFieldsFromPanels($defaultDefs['panels'], $parser->_fielddefs);
             // Go through existing fields and remove those not in the new data
             foreach($origData as $fname => $fielddef) {
-                // Make sure that this field passes validation both here and in the parser
-                if (!$this->isValidField($fname) || !$parser->isValidField($fname, $fielddef)) {
+                if (!$this->isValidField($fname)) {
                     continue;
                 }
                 if(is_array($fielddef) && !empty($fielddef['fields'])) {

@@ -225,7 +225,8 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
      * @param array $def The defs for this field
      * @return bool
      */
-    public function isValidField($key, $def) {
+    public function isValidField($key, array $def)
+    {
         if (!empty($this->client)) {
             $method = 'isValidField' . ucfirst(strtolower($this->client));
             if (method_exists($this, $method)) {
@@ -245,7 +246,8 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
      * @param array $def Teh field def for this field
      * @return bool
      */
-    public function isValidFieldPortal($key, $def) {
+    public function isValidFieldPortal($key, array $def)
+    {
         if (isset($this->invalidTypes['portal'])) {
             $view = str_replace(array('portal', 'view'), '', $this->_view);
 
