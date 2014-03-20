@@ -574,21 +574,28 @@ END;
             // defs can be plucked out
             $headerFields = array();
             foreach ($defaultDefs['panels'][0]['fields'] as $hField) {
-                if (isset($hField['name'])) {
-                    // First set from the name of the field we are on
-                    $headerFields[$hField['name']] = $hField['name'];
+                // Handle array type fields first
+                if (is_array($hField)) {
+                    // But only if there is a name element of the array
+                    if (isset($hField['name'])) {
+                        // First set from the name of the field we are on
+                        $headerFields[$hField['name']] = $hField['name'];
 
-                    // Now if there are fields for this field (fieldset), grab those too
-                    if (isset($hField['fields']) && is_array($hField['fields'])) {
-                        foreach ($hField['fields'] as $hFieldName) {
-                            // Some modules have header field fieldset defs that are arrays
-                            if (is_array($hFieldName) && isset($hFieldName['name'])) {
-                                $headerFields[$hFieldName['name']] = $hFieldName['name'];
-                            } else {
-                                $headerFields[$hFieldName] = $hFieldName;
+                        // Now if there are fields for this field (fieldset), grab those too
+                        if (isset($hField['fields']) && is_array($hField['fields'])) {
+                            foreach ($hField['fields'] as $hFieldName) {
+                                // Some modules have header field fieldset defs that are arrays
+                                if (is_array($hFieldName) && isset($hFieldName['name'])) {
+                                    $headerFields[$hFieldName['name']] = $hFieldName['name'];
+                                } else {
+                                    $headerFields[$hFieldName] = $hFieldName;
+                                }
                             }
                         }
                     }
+                } else {
+                    // This will be a string, take it as is
+                    $headerFields[$hField] = $hField;
                 }
             }
 
@@ -654,6 +661,11 @@ END;
                 $defaultDefs['panels'][$panelIndex]['fields'] = array_values($defaultDefs['panels'][$panelIndex]['fields']);
             }
             // End email1 => email hack
+
+            // Make sure the array pointer for the panels is back at the start.
+            // This is needed to allow canonical conversion to pick up the right 
+            // header panel
+            reset($defaultDefs['panels']);
 
             $origFields = array();
             // replace viewdefs with defaults, since parser's viewdefs can be already customized by other parts
