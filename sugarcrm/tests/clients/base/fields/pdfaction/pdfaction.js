@@ -69,4 +69,24 @@ describe('Base.Fields.Pdfaction', function() {
             expect(email.$el.hasClass('hide')).toBe(true);
         });
     });
+
+    describe('downloadClicked', function() {
+
+        it('should authenticate in bwc mode before triggering the download', function() {
+            var download = SugarTest.createField('base', 'download-pdf', 'pdfaction', 'detail', {
+                label: 'LBL_PDF_VIEW',
+                action: 'download',
+                acl_action: 'view'
+            });
+            var loginSpy = sinon.collection.spy(app.bwc, 'login');
+            var fileDownloadStub = sinon.collection.stub(app.api, 'fileDownload');
+            sinon.collection.stub(app.api, 'call', function(method, url, data, callbacks, options) {
+                callbacks.success();
+            });
+            download.downloadClicked({});
+
+            expect(loginSpy).toHaveBeenCalled();
+            expect(fileDownloadStub).toHaveBeenCalled();
+        });
+    });
 });
