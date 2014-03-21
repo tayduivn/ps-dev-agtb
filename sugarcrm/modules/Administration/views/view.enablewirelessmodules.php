@@ -59,8 +59,6 @@ class AdministrationViewEnablewirelessmodules extends SugarView
         global $app_list_strings;
         global $app_strings;
         global $license;
-        global $current_user;
-        global $currentModule;
 
         $configurator = new Configurator();
         $this->ss->assign('config', $configurator->config);
@@ -83,12 +81,15 @@ class AdministrationViewEnablewirelessmodules extends SugarView
             require $file;
         }
 
-        foreach ( $wireless_module_registry as $e => $def )
+        $moduleList = $GLOBALS['moduleList'];
+        array_push($moduleList, 'Employees');
+
+        foreach ($wireless_module_registry as $e => $def)
         {
-            if (in_array($e, $GLOBALS['moduleList']) && !in_array($e, $wireless_not_supported_modules))
-        {
-            $enabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? $e : ($app_list_strings['moduleList'][$e]);
-        }
+            if (in_array($e, $moduleList) && !in_array($e, $wireless_not_supported_modules))
+            {
+                $enabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? $e : $app_list_strings['moduleList'][$e];
+            }
         }
 
         // Employees should be in the mobile module list by default
