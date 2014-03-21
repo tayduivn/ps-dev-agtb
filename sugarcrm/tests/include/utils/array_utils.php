@@ -16,22 +16,13 @@ require_once 'include/utils/array_utils.php';
 
 class array_utils extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $_old_sugar_config = null;
-
     protected function setUp()
     {
         parent::setUp();
-
-        $this->_old_sugar_config = $GLOBALS['sugar_config'];
-        $GLOBALS['sugar_config'] = array();
     }
 
     protected function tearDown()
     {
-        $conf = SugarConfig::getInstance();
-        $conf->clearCache();
-        $GLOBALS['sugar_config'] = $this->_old_sugar_config;
-
         SugarTestHelper::tearDown();
         parent::tearDown();
     }
@@ -42,7 +33,6 @@ class array_utils extends Sugar_PHPUnit_Framework_TestCase
      */
     public function test_override_value_to_string_recursive2($array_name, $value_name, $value, $config, $expected)
     {
-        //$GLOBALS['sugar_config'][$value_name] = $config;
         $this->assertEquals($expected, override_value_to_string_recursive2($array_name, $value_name, $value, true, $config));
     }
 
