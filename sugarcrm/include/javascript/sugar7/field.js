@@ -403,8 +403,8 @@
                 // FIXME: un-needed extra div wrapping the field should be
                 // removed when SC-2568 gets in, for the time being it is only
                 // used on non datetime fields
-                var isDatetime = $ftag.parent().hasClass('datetime') || $ftag.parent().hasClass('date');
-                if (!isDatetime) {
+                var isWrapped = $ftag.parent().hasClass('input-append');
+                if (!isWrapped) {
                     $ftag.wrap('<div class="input-append error ' + ftag + '">');
                 } else {
                     $ftag.parent().addClass('error');
@@ -459,12 +459,11 @@
 
                 // FIXME: this check for datetime should be made generic (when
                 // SC-2568 gets in) based on use of normal addon
-                var isDatetime = $ftag.parent().hasClass('datetime');
-                if (isWrapped && !isDatetime) {
-                    $ftag.unwrap();
-                }
-                if (isDatetime) {
+                var isDateField = $ftag.parent().hasClass('date');
+                if (isDateField) {
                     $ftag.parent().removeClass('error');
+                } else if (isWrapped) {
+                    $ftag.unwrap();
                 }
 
                 this.$el.removeClass(ftag);
