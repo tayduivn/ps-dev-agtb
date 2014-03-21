@@ -142,6 +142,39 @@ $dictionary['KBSContent'] = array(
             'vname' => 'LNK_TOPICS',
             'side' => 'right',
         ),
+        'kbsdocuments_kbscontents' => array(
+            'name' => 'kbsdocuments_kbscontents',
+            'type' => 'link',
+            'vname' => 'LBL_KBSDOCUMENTS',
+            'relationship' => 'kbsdocuments_kbscontents',
+            'source' => 'non-db',
+        ),
+        'kbsdocument_id' => array(
+            'name' => 'kbsdocument_id',
+            'id_name' => 'kbsdocument_id',
+            'vname' => 'LBL_KBSDOCUMENT_ID',
+            'rname' => 'id',
+            'type' => 'id',
+            'table' => 'kbsdocuments',
+            'isnull' => 'true',
+            'module' => 'KBSDocuments',
+            'reportable' => false,
+            'massupdate' => false,
+            'duplicate_merge' => 'disabled',
+        ),
+        'kbsdocument_name' => array(
+            'name' => 'kbsdocument_name',
+            'rname' => 'name',
+            'vname' => 'LBL_KBSDOCUMENT',
+            'type' => 'relate',
+            'reportable' => false,
+            'source' => 'non-db',
+            'table' => 'kbsdocuments',
+            'id_name' => 'kbsdocument_id',
+            'link' => 'kbsdocuments_kbscontents',
+            'module' => 'KBSDocuments',
+            'duplicate_merge' => 'disabled',
+        ),       
     ),
     'relationships' => array(
         'kbscontent_notes' => array(
@@ -161,7 +194,17 @@ $dictionary['KBSContent'] = array(
             'rhs_table' => 'kbstopics',
             'rhs_key' => 'topic_id',
             'relationship_type' => 'one-to-many'
-        )
+        ),
+        'kbsdocuments_kbscontents' => array (
+            'lhs_module' => 'KBSDocuments',
+            'lhs_table' => 'kbsdocuments',
+            'lhs_key' => 'id',
+            'rhs_module' => 'KBSContents',
+            'rhs_table' => 'kbscontents',
+            'rhs_key' => 'kbsdocument_id',
+            'relationship_type' => 'one-to-many'
+        ),
+
     ),
 
     'duplicate_check' => array(
