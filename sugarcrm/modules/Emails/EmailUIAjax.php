@@ -113,11 +113,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         	$email->uid = $_REQUEST['uid'];
         }
 
-        if ($email->email2Send($_REQUEST)) {
+        $sendResult = false;
+        try {
+            $sendResult = $email->email2Send($_REQUEST);
+        } catch (Exception $e) {
+            ob_clean();
+            echo($app_strings['LBL_EMAIL_ERROR_PREPEND']. " " . $e->getMessage());
+        }
+        if ($sendResult) {
             $ret = array(
                 'composeLayoutId'  => $_REQUEST['composeLayoutId'],
             );
-	        $out = $json->encode($ret, true);
+            $out = $json->encode($ret, true);
             echo $out; // async call to close the proper compose tab
         }
     break;
