@@ -81,60 +81,77 @@ function override_recursive_helper($key_names, $array_name, $value){
 }
 
 /**
+ * Check if the array is a sequential numeric array - [0,1,2,3, etc.]
+ * @param $arr array
+ * @return bool
+ */
+function is_sequential($arr)
+{
+    if(!is_array($arr)) {
+        return false;
+    }
+    $total = count($arr);
+    for ($i = 0; $i < $total; $i++) { // Check if sequential keys exist
+        if (!array_key_exists($i, $arr)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
  * Given an array name, key name and value of array, return a string of re-composed array.
  *
  * @param string $array_name : name of the array
  * @param string $value_name : name of the array keys
  * @param array $value : value of current array
  * @param boolean $save_empty : flag to allow save empty
- * @param array $keyArray : value name of each recursion
+ * @param array $original : original sugar_config array
  *
  * @return string : example - "\$sugar_config['a']['b']['c'][0] = 'hello';\n"
  */
-function override_value_to_string_recursive2($array_name, $value_name, $value, $save_empty = true, $keyArray = array()) {
-	if (is_array($value)) {
-		$str = '';
-		$newArrayName = $array_name . "['$value_name']";
-		$keyArray[] = $value_name;
-		foreach($value as $key=>$val) {
-			$str.= override_value_to_string_recursive2($newArrayName, $key, $val, $save_empty, $keyArray);
-		}
-		return $str;
-	} else {
-		if(!$save_empty && empty($value)){
-			return;
-		}else{
-			if (is_numeric($value_name)) {
-			    $isAppend = false;
-			    if (!empty($keyArray)) {
-			        $get_string = implode(".", $keyArray);
-			        $merged_config_key_array = array();
-			        if (strpos($array_name, 'sugar_config') == 0) {
-			            $merged_config_key_array = SugarConfig::getInstance()->get($get_string);
-			        }
-			        if (!empty($merged_config_key_array)) {
-			            $total = count($merged_config_key_array);
-			            $oldKeyExist = true;
-			            for ($i = 0; $i < $total; $i++) { // Check if sequential keys exist
-			                if (!array_key_exists($i, $merged_config_key_array)) {
-			                    break;
-			                }
-			            }
-			            if ($merged_config_key_array[$value_name] == $value) { // Override
-			                $oldKeyExist = false;
-			            }
-			            if ($i == $total && $oldKeyExist == true) {
-			                $isAppend = true;
-			            }
-			        }
-			    }
-			    if ($isAppend) {
-			        return "\$$array_name" . "[] = " . var_export($value, true) . ";\n";
-			    }
-			}
-			return "\$$array_name" . "['$value_name'] = " . var_export($value, true) . ";\n";
-		}
-	}
+function override_value_to_string_recursive2($array_name, $value_name, $value, $save_empty = true, $original = null) {
+    if (is_array($value)) {
+        $str = '';
+        $seq = false;
+        $newArrayName = $array_name . "['$value_name']";
+        if (is_array($original)) {
+            if (!empty($original[$value_name]) && is_array($original[$value_name])) {
+                $original = $original[$value_name];
+                $seq = is_sequential($original);
+            }
+            else {
+                $original = array();
+            }
+        } else {
+            $original = null;
+        }
+        foreach($value as $key=>$val) {
+            $org = null;
+            if (is_array($val) || $seq) {
+                $org = $original;
+            }
+            else if (is_array($original) && empty($original)) {
+                $org = array();
+            }
+            $str.= override_value_to_string_recursive2($newArrayName, $key, $val, $save_empty, $org);
+        }
+        return $str;
+    } else {
+        if(!$save_empty && empty($value)){
+            return;
+        }else{
+            if (is_numeric($value_name)) {
+                if($original && !array_key_exists($value_name, $original)) {
+                    return "\$$array_name" . "[] = " . var_export($value, true) . ";\n";
+                }
+                if($value_name === 0 && is_array($original) && empty($original)) {
+                    return "\$$array_name" . "[] = " . var_export($value, true) . ";\n";
+                }
+            }
+            return "\$$array_name" . "['$value_name'] = " . var_export($value, true) . ";\n";
+        }
+    }
 }
 
 /**
