@@ -12,10 +12,7 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#if def.text}}
-    <label>
-{{/if}}
-<input type="checkbox"{{#eq action 'disabled'}} disabled{{/eq}}{{#if value}} checked{{/if}}{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}>
-{{#if def.text}}
-    {{str def.text this.module}}</label>
-{{/if}}
+<select>
+    <option value='0'>{{str 'LBL_NO' module}}</option>
+    <option {{#if value}}selected {{/if}}value='1'>{{str 'LBL_YES' module}}</option>
+</select>
