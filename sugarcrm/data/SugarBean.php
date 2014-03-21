@@ -3244,7 +3244,8 @@ class SugarBean
             } else {
                 $bean = $this->getCleanCopy();
             }
-            $bean->fetched_row = $bean->populateFromRow($row);
+            //true parameter below tells populate to perform conversions on row data
+            $bean->fetched_row = $bean->populateFromRow($row, true);
             $beans[$bean->id] = $bean;
             $rawRows[$bean->id] = $row;
         }
