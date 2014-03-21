@@ -10,18 +10,18 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  */
-
 /**
  * @class BaseFooterActionsView
  * @alias SUGAR.App.view.views.BaseFooterActionsView
  * @extends View.View
  */
 ({
+    // TODO remove the id links in footer and replace to data-attributes (SC-2580)
     events: {
         'click #tour': 'showTutorial',
         'click #feedback': 'feedback',
         'click #support': 'support',
-        'click #help': 'help',
+        'click #help': 'help'
     },
     tagName: 'span',
     handleViewChange: function(layout, params) {
@@ -143,6 +143,5 @@
     showTutorial: function(prefs) {
         app.tutorial.resetPrefs(prefs);
         app.tutorial.show(app.controller.context.get('layout'), {module: app.controller.context.get('module')});
-    },
+    }
 })
-
