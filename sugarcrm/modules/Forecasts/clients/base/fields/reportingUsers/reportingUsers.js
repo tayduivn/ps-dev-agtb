@@ -95,7 +95,9 @@
      */
     bindDataChange: function(){
         this.context.on("forecasts:user:canceled", function(){
+            this.initHasSelected = false;
             this.selectJSTreeNode(this.previousUserName);
+            this.initHasSelected = true;
         }, this);
     },
 
@@ -250,7 +252,7 @@
         .on("select_node.jstree", _.bind(function(event, data) {
             if (this.initHasSelected) {
                 this.previousUserName = (this.selectedUser.is_manager && this.selectedUser.showOpps ? 'jstree_node_myopps_' : 'jstree_node_') + this.selectedUser.user_name;
-                
+
                 var jsData = data.inst.get_json(),
                     nodeType = jsData[0].attr.rel,
                     userData = jsData[0].metadata,
@@ -276,7 +278,7 @@
                     'reportees': []
                 };
 
-                this.context.trigger("forecasts:user:changed", selectedUser, this.context);
+                this.context.trigger('forecasts:user:changed', selectedUser, this.context);
             }
         }, this));
 
