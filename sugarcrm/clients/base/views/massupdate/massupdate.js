@@ -63,20 +63,32 @@
 
     /**
      * {@inheritDoc}
+     *
+     * Try to find the `massupdate` template
+     * falls back to `edit` when it does not exist
+     */
+    fallbackFieldTemplate: 'edit',
+
+    /**
+     * {@inheritDoc}
      * Retrieves metadata from sugarTemplate and then able to override it from
-     * the current module or from core metadata.
+     * the core metadata. `panels` will only be supported on the core metadata.
      *
-     * Please define your metadata on:
+     * Each module can override the massupdate default metadata definitions.
+     * To do this, please use the following path:
+     * `{custom/,}modules/{module}/clients/{platform}/view/massupdate/massupdate.php`
      *
-     * - `custom/clients/{platform}/view/massupdate/massupdate.php`
-     * - `{custom/,}modules/{module}/clients/{platform}/view/massupdate/massupdate.php`
+     * Core massupdate metadata (non-module based) doesn't support the `panels` and
+     * `fields` properties, since we don't support generic default fields to be added.
+     * Keep that in mind when defining your metadata on:
+     * `{custom/,}clients/{platform}/view/massupdate/massupdate.php`
      */
     initialize: function(options) {
+        var genericMeta = _.omit(app.metadata.getView(null, options.name), 'panels');
         options.meta = _.extend(
             {},
-            options.meta,
-            app.metadata.getView(null, options.name),
-            app.metadata.getView(options.module, options.name)
+            genericMeta,
+            options.meta
         );
         this.fieldValues = [{}];
         this.setMetadata(options);
@@ -126,75 +138,90 @@
         this.layout.on("list:massexport:fire", this.massExport, this);
         this.layout.on("list:updatecalcfields:fire", this.updateCalcFields, this);
     },
-    setMetadata: function(options) {
-        options.meta.panels = options.meta.panels || [{fields:[]}];
-        if(_.size(options.meta.panels[0].fields) === 0) {
-            var moduleMetadata = app.metadata.getModule(options.module),
-                massFields = [];
 
-            if (!moduleMetadata) {
+    /**
+     * Filter and patch the mass update fields.
+     *
+     * If the view definition contains an empty list of fields, it will pull all
+     * the fields from the module metadata and add those with `massupdate = true`
+     *
+     * @param {Object} options The options object passed in 'initialize'.
+     * @deprecated This will be removed on future versions.
+     * Please see {@link view.fields.BaseBoolField} how you should define
+     * your fields to be rendered on with a massupdate template.
+     */
+    //FIXME: remove this method when SC-2554 is implemented
+    setMetadata: function(options) {
+        var fieldList,
+            massFields = [],
+            metadataModule = app.metadata.getModule(options.module);
+        if (!metadataModule) {
+            app.logger.error('Failed to get module ' + options.module);
+            return;
+        }
+        options.meta.panels = options.meta.panels || [{fields: []}];
+        fieldList = metadataModule.fields;
+
+        if (!_.isEmpty(options.meta.panels[0].fields)) {
+            fieldList = _.map(options.meta.panels[0].fields, function(fieldDef) {
+                var def = _.extend({}, fieldList[fieldDef.name], fieldDef);
+                return def;
+            });
+        }
+        _.each(fieldList, function(field) {
+            // Only fields that are marked with massupdate set to true AND
+            // that are not readonly should be used
+            if (!field.massupdate || field.readonly) {
                 return;
             }
 
-            _.each(moduleMetadata.fields, function(field){
-                // Only fields that are marked with massupdate set to true AND
-                // that are not readonly should be used
-                if(field.massupdate && !field.readonly) {
-                    var cloneField = app.utils.deepCopy(field);
-                    cloneField.label = field.label || field.vname;
-                    if(!cloneField.label) delete cloneField.label;
-                    //TODO: Remove hack code for teamset after metadata return correct team type
-                    if(cloneField.name === 'team_name') {
-                        cloneField.type = 'teamset';
-                        cloneField.css_class = 'span9';
-                        cloneField = {
-                            type: 'fieldset',
-                            name: 'team_name',
-                            label: cloneField.label,
-                            css_class : 'row-fluid',
-                            fields: [
-                                cloneField,
-                                {
-                                    'name' : 'team_name_type',
-                                    'type' : 'bool',
-                                    'text' : 'LBL_SELECT_APPEND_TEAMS',
-                                    'css_class' : 'span3'
-                                }
-                            ]
-                        };
-                    }
-                    if(cloneField.type === 'bool') {
-                        cloneField.type = 'enum';
-                        cloneField.options = 'checkbox_massupdate_dom';
-                    }
-                    // FIXME this needs proper fixing due to metadata fields (SC-2294)
-                    if (cloneField.type === 'multienum') {
-                        cloneField.type = 'enum';
-                        cloneField.css_class = 'span9';
-                        cloneField = {
-                            type: 'fieldset',
-                            // FIXME this shouldn't need to be the same name as the field,
-                            // but if it isn't it will throw an alert of empty value
-                            name: cloneField.name,
-                            label: cloneField.label,
-                            css_class: 'row-fluid',
-                            fields: [
-                                cloneField,
-                                {
-                                    'name' : cloneField.name + '_replace',
-                                    'type' : 'bool',
-                                    'text' : 'LBL_SELECT_APPEND_VALUES',
-                                    'css_class' : 'span3'
-                                }
-                            ]
-                        };
-                    }
-                    massFields.push(cloneField);
-                }
-            });
-            options.meta.panels[0].fields = massFields;
-        }
+            //we clone the metadata definition
+            //to make sure we don't change the original metadata
+            //FIXME we should not be faking metadata - (SC-2554)
+            var cloneField = app.utils.deepCopy(field);
+            cloneField.label = cloneField.label || cloneField.vname;
+            if (cloneField.name === 'team_name') {
+                cloneField.css_class = 'span9';
+                cloneField = {
+                    type: 'fieldset',
+                    name: 'team_name',
+                    label: cloneField.label,
+                    css_class: 'row-fluid',
+                    fields: [
+                        cloneField,
+                        {
+                            'name': 'team_name_type',
+                            'type': 'bool',
+                            'text': 'LBL_SELECT_APPEND_TEAMS',
+                            'css_class': 'span3'
+                        }
+                    ]
+                };
+            }
+            if (cloneField.type === 'multienum') {
+                cloneField.type = 'enum';
+                cloneField.css_class = 'span9';
+                cloneField = {
+                    type: 'fieldset',
+                    name: cloneField.name,
+                    label: cloneField.label,
+                    css_class: 'row-fluid',
+                    fields: [
+                        cloneField,
+                        {
+                            'name': cloneField.name + '_replace',
+                            'type': 'bool',
+                            'text': 'LBL_SELECT_APPEND_VALUES',
+                            'css_class': 'span3'
+                        }
+                    ]
+                };
+            }
+            massFields.push(cloneField);
+        });
+        options.meta.panels[0].fields = massFields;
     },
+
     _render: function() {
         var result = app.view.View.prototype._render.call(this),
             self = this;
@@ -796,9 +823,8 @@
                 validator = {};
                 validator[field.name] = field;
                 field.required = (_.isBoolean(field.required) && field.required) || (field.required && field.required == 'true') || false;
-
                 var value = this.model.get(field.name);
-                if (!value) {
+                if (!_.isBoolean(value) && !value) {
                     emptyValues.push(app.lang.get(field.label, this.model.module));
                     this.model.set(field.name, '', {silent: true});
                     if (field.id_name) {
@@ -844,6 +870,8 @@
         this.visible = true;
         this.defaultOption = null;
         this.model.clear();
+        var defaults = _.extend({}, this.model._defaults, this.model.getDefaultAttributes());
+        this.model.set(defaults);
         this.setDefault();
 
         var massModel = this.context.get('mass_collection');
