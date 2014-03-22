@@ -2150,8 +2150,7 @@ return str_replace(' > ','_',
         $fields = array();
 
         foreach ($db_row as $key => $value) {
-            // null values break some reports, set to 0 instead
-            $fields[strtoupper($key)] = is_null($value) ? '0' : $value;
+            $fields[strtoupper($key)] = $value;
         }
 
         // here we want to make copies, so use foreach
