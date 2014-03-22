@@ -259,22 +259,16 @@ input[type=radio] {
       margin-left: -46px;
     }
   }
-  &.date {
-    .error {
-      .add-on {
-        left: -48px;
-        &.error-tooltip {
-          left: -44px;
-        }
-      }
-    }
-  }
+  &.date,
   &.datetime {
     &.error {
       .add-on {
-        left: -48px;
+        left: -28px;
         &.error-tooltip {
-          left: -40px;
+          left: -42px;
+          & + .add-on {
+            left: -50px;
+          }
         }
       }
     }
