@@ -123,6 +123,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 					break;
 
                 case MB_RECORDVIEW:
+                case MB_SIDECARPOPUPVIEW:
                 //BEGIN SUGARCRM flav=ent ONLY
                 case MB_PORTALLISTVIEW:
                 case MB_PORTALRECORDVIEW:
@@ -135,7 +136,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
                 case MB_WIRELESSLISTVIEW:
                     $_viewtype = 'mobile';
                 //END SUGARCRM flav=pro ONLY
-                if ($view === MB_RECORDVIEW) {
+                if (in_array($view, array(MB_RECORDVIEW, MB_SIDECARPOPUPVIEW))) {
                     $_viewtype = 'base';
                 }
 
