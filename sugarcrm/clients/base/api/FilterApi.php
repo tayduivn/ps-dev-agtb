@@ -748,39 +748,29 @@ class FilterApi extends SugarApi
         $where->notNull($fjoin->joinName() . '.id');
     }
 
-    protected static function addTrackerFilter(
-        SugarQuery $q,
-        SugarQuery_Builder_Where $where,
-        $interval
-    ) {
-        // FIXME: FRM-226, logic for these needs to be moved to SugarQuery
-
-        // Since tracker relationships don't actually exist, we're gonna have to add a direct join
-        $q->joinRaw(
-            sprintf(
-                " JOIN tracker ON tracker.item_id=%s.id AND tracker.module_name='%s' AND tracker.user_id='%s' ",
-                $q->from->getTableName(),
-                $q->from->module_name,
-                $GLOBALS['current_user']->id
-            ),
-            array('alias' => 'tracker')
-        );
-
-        // we need to set the linkName to hack around tracker not having real relationships
-        /* TODO think about how to fix this so we can be less restrictive to raw joins that don't have a relationship */
-        $q->join['tracker']->linkName = 'tracker';
+    protected static function addTrackerFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $interval) {
+        global $db;
 
         $td = new SugarDateTime();
         $td->modify($interval);
-        $where->queryAnd()->gte("tracker.date_modified", $td->asDb());
+        $min_date = $td->asDb();
+
+        // Have to do a subselect because MAX() and GROUP BY don't get along with
+        // databases other than MySQL
+        $q->joinRaw(
+            " INNER JOIN ( SELECT t.item_id item_id, MAX(t.date_modified) track_max ".
+            " FROM tracker t ".
+            " WHERE t.module_name = '".$db->quote($q->from->module_name)."' ".
+            " AND t.user_id = '".$db->quote($GLOBALS['current_user']->id)."' ".
+            " AND t.date_modified >= ".$db->convert("'".$min_date."'", 'datetime')." ".
+            " GROUP BY t.item_id ".
+            " ) tracker ON tracker.item_id = ".$q->from->getTableName().".id ",
+            array('alias' => 'tracker')
+        );
 
         // Now, if they want tracker records, so let's order it by the tracker date_modified
-        foreach ($q->select()->select as $v) {
-            $q->groupBy($v->table . '.' . $v->field);
-        }
         $q->order_by = array();
-        $q->orderByRaw('MAX(tracker.date_modified)', 'DESC');
-        // need this to eliminate dupe id's in case you visit the same record many-a-time
+        $q->orderByRaw('tracker.track_max', 'DESC');
         $q->distinct(false);
     }
 }
