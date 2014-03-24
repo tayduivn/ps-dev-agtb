@@ -58,7 +58,29 @@ class QuotesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      */
     public function doCustomUpdateRate($table, $column, $currencyId)
     {
-        return false;
+        // get the conversion rate
+        $rate = $this->db->getOne(sprintf("SELECT conversion_rate FROM currencies WHERE id = '%s'", $currencyId));
+
+        // setup SQL statement
+        $query = sprintf("UPDATE %s SET %s = '%s'
+        WHERE quote_stage NOT LIKE ('%%Closed%%')
+        AND currency_id = '%s'",
+            $table,
+            $column,
+            $rate,
+            $currencyId
+        );
+        // execute
+        $result = $this->db->query(
+            $query,
+            true,
+            string_format(
+                $GLOBALS['app_strings']['ERR_DB_QUERY'],
+                array('QuotesCurrencyRateUpdate',$query
+                )
+            )
+        );
+        return !empty($result);
     }
 
     /**
@@ -77,7 +99,25 @@ class QuotesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      */
     public function doCustomUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId)
     {
-        return false;
+        // setup SQL statement
+        $query = sprintf("UPDATE %s SET %s = %s / base_rate
+            WHERE quote_stage NOT LIKE ('%%Closed%%')
+            AND currency_id = '%s'",
+            $tableName,
+            $usDollarColumn,
+            $amountColumn,
+            $currencyId
+        );
+        // execute
+        $result = $this->db->query(
+            $query,
+            true,
+            string_format(
+                $GLOBALS['app_strings']['ERR_DB_QUERY'],
+                array('QuotesCurrencyRateUpdate', $query)
+            )
+        );
+        return !empty($result);
     }
 
 }
