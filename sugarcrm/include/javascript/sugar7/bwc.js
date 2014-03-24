@@ -199,9 +199,9 @@
         /**
          * Route to Create Related record UI for a BWC module
          */
-        createRelatedRecord: function(module, parentModel, link) {
+        createRelatedRecord: function(module, parentModel, link, id) {
             var params = this._createRelatedRecordUrlParams(parentModel, link);
-            var route = app.bwc.buildRoute(module, null, "EditView", params);
+            var route = app.bwc.buildRoute(module, id || null, "EditView", params);
             app.router.navigate("#" + route, {trigger: true}); // Set route so that we switch over to BWC mode
         },
 
