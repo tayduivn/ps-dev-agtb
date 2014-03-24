@@ -51,6 +51,7 @@ $config['builds']['corp']['languages']= array(
 'sq_AL',
 'et_EE',
 'es_LA',
+'fi_FI',
 );
 $config['builds']['corp']['lic'] = array('sub');
 $config['blackList']['corp'] = array(

@@ -51,6 +51,7 @@ $config['builds']['ult']['languages']= array(
 'sq_AL',
 'et_EE',
 'es_LA',
+'fi_FI',
 );
 $config['builds']['ult']['lic'] = array('sub');
 $config['blackList']['ult'] = array(
