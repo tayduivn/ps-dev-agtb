@@ -17,144 +17,44 @@
 </div>
 <div id="dnb-company-details">
     <div class="dnb-show-all">
-        {{#if product}}
+        {{#if dnbFirmo.product}}
             <div class='dnb-company-details'>
                 <ul class="unstyled listed">
-                    <li>
-                        <div class="dnb-company-label">{{str "LBL_DNB_NAME"}}</div>
-                        <div class="txt importData">
-                            {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationName.OrganizationPrimaryName.[0].OrganizationName.$}}
+                    {{#each dnbFirmo.product}}
+                        <li>
+                            <div class='dnb-company-label'>
+                                {{#if dnbLabel}}
+                                    {{{dnbLabel}}}
+                                {{else}}
+                                    {{str dataLabel}}
+                                {{/if}}
+                            </div>
+                            {{#if dataType}}
+                                {{#eq dataType 'link'}}
+                                <div class="url-txt importData">
+                                {{/eq}}
+                            {{else}}
+                            <div class="txt importData">
+                            {{/if}}
+                            {{{dataElement}}}
                         </div>
-                    </li>
-                    {{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].StreetAddressLine.[0].LineText}}
-                        <li>
-                            <div class="dnb-company-label">
-                                {{str "LBL_DNB_CI_STREET"}}
-                            </div>
-                            <div class="txt importData">
-                                {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].StreetAddressLine.[0].LineText }}<br/>
-                            </div>
                         </li>
-                    {{/if}}
-                    {{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].PrimaryTownName }}
-                        <li>
-                            <div class="dnb-company-label">
-                                {{str "LBL_DNB_CI_CITY"}}
-                            </div>
-                            <div class="txt importData">
-                                {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].PrimaryTownName }}<br/>
-                            </div>
-                        </li>
-                    {{/if}}
-                    {{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].TerritoryAbbreviatedName }}
-                        <li>
-                            <div class="dnb-company-label">
-                                {{str "LBL_DNB_CI_STATE"}}
-                            </div>
-                            <div class="txt importData">
-                                {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].TerritoryAbbreviatedName }}<br/>
-                            </div>
-                        </li>
-                    {{/if}}
-                    {{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].CountryISOAlpha2Code }}
-                        <li>
-                            <div class="dnb-company-label">
-                                {{str "LBL_DNB_CI_CTRY"}}
-                            </div>
-                            <div class="txt importData">
-                                {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].CountryISOAlpha2Code }}<br/>
-                            </div>
-                        </li>
-                    {{/if}}
-                    {{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].PostalCode }}
-                        <li>
-                            <div class="dnb-company-label">
-                                {{str "LBL_DNB_CI_POSTAL_CD"}}
-                            </div>
-                            <div class="txt importData">
-                                {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Location.PrimaryAddress.[0].PostalCode }} <br/>
-                            </div>
-                        </li>
-                    {{/if}}
-                    {{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.WebPageAddress.[0].TelecommunicationAddress}}
-                        <li>
-                            <div class="dnb-company-label">
-                                {{str "LBL_DNB_URL"}}
-                            </div>
-                            <div class="url-txt importData">
-                                {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.WebPageAddress.[0].TelecommunicationAddress}}
-                            </div>
-                        </li>
-                    {{/if}}
-                    {{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.TelephoneNumber.[0].TelecommunicationNumber}}
-                        <li>
-                            <div class="dnb-company-label">
-                                {{str "LBL_DNB_PHONE"}}
-                            </div>
-                            <div class="txt importData">
-                                {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Telecommunication.TelephoneNumber.[0].TelecommunicationNumber}}
-                            </div>
-                        </li>
-                    {{/if}}
-                    {{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationDetail.ControlOwnershipTypeText.$}}
-                        <li>
-                            <div class="dnb-company-label">{{str "LBL_DNB_OWNERSHIP_TYPE"}}</div>
-                            <div class="txt importData">
-                                {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.OrganizationDetail.ControlOwnershipTypeText.$}}
-                            </div>
-                        </li>
-                    {{/if}}
-                    {{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0]}}
-                        <li>
-                            <div class="dnb-company-label">
-                                {{str "LBL_DNB_SALES_REVENUE"}}
-                                {{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].SalesRevenueAmount.[0].[@UnitOfSize] }}
-                                    ({{str "LBL_DNB_IN"}}
-                                    {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].SalesRevenueAmount.[0].[@UnitOfSize]}}
-                                    {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].SalesRevenueAmount.[0].[@CurrencyISOAlpha3Code]}})
-                                {{/if}}
-                                {{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].StatementHeaderDetails.FinancialStatementToDate.$}}
-                                    <span class="label label-success pull-right" data-placement="right">
-                                        {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].StatementHeaderDetails.FinancialStatementToDate.$}}
-                                    </span>
-                                {{/if}}
-                            </div>
-                            <div class="txt importData">
-                                {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.Financial.KeyFinancialFiguresOverview.[0].SalesRevenueAmount.[0].$}}
-                            </div>
-                        </li>
-                    {{/if}}
-                    {{#if product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.EmployeeFigures.IndividualEntityEmployeeDetails.TotalEmployeeQuantity}}
-                        <li>
-                            <div class="dnb-company-label">
-                                {{str "LBL_DNB_TOTAL_EMPLOYEE_QUANTITY"}}
-                            </div>
-                            <div class="txt importData">
-                                {{product.OrderProductResponse.OrderProductResponseDetail.Product.Organization.EmployeeFigures.IndividualEntityEmployeeDetails.TotalEmployeeQuantity}}
-                            </div>
-                        </li>
-                    {{/if}}
-                    {{#if product.primarySIC}}
-                        <li>
-                            <div class="dnb-company-label">
-                                {{str "LBL_DNB_SIC"}}
-                            </div>
-                            <div class="txt importData">
-                                {{product.primarySIC.IndustryCode.$}}
-                            </div>
-                        </li>
-                    {{/if}}
+                    {{/each}}
                 </ul>
             </div>
         {{else}}
             <aside class='create-no-data'>
-                <em>{{errmsg}}</em>
+                {{#if dnbFirmo.errmsg}}
+                    <em>{{dnbFirmo.errmsg}}</em>
+                {{else}}
+                    <em>{{str "LBL_DNB_NO_DATA"}}</em>
+                {{/if}}
             </aside>
         {{/if}}
     </div>
-    {{#if backToListLabel}}
+    {{#if dnbFirmo.backToListLabel}}
         <div class="dnb-show-more">
-            <a class="backToList"> {{backToListLabel}} <i class="icon-chevron-down"></i> </a>
+            <a class="backToList"> {{dnbFirmo.backToListLabel}} <i class="icon-chevron-down"></i> </a>
         </div>
     {{/if}}
 </div>

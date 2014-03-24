@@ -1,0 +1,83 @@
+{{!--
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
+--}}
+<div class="dashboard" data-dashboard="true">
+    <div class="cols row-fluid">
+        <div>
+            <div class="preview-headerbar">
+                <div class="headerpane">
+                    <span class="record-cell">
+                        <h1 class="dnb-account-create">
+                            <span class="detail">
+                                {{str "LBL_DNB_BAL_RSLT"}}
+                            </span>
+                        </h1>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <ul class="dashlets row-fluid">
+            <li class="span12">
+                <ul class="dashlet-row ui-sortable ui-sortable-disabled">
+                    <li class="row-fluid sortable" data-sortable="1">
+                        <div class="rows well well-invisible">
+                            <a data-toggle="dropdown"  class="btn btn-invisible btn-link hide">
+                                <i class="icon-cog"></i></a>
+                            <ul class="dropdown-menu left carettop">
+                                <div>
+                                    <li><a class="remove-row">{{str "LBL_REMOVE"}}</a></li>
+                                </div>
+                            </ul>
+                            <a class="move btn btn-invisible btn-link hide">
+                                <i class="icon-resize-vertical"></i></a>
+                            <ul class="dashlet-cell rows row-fluid">
+                                <li class="dashlet-container span12">
+                                    <div>
+                                        <div class="thumbnail dashlet">
+                                            <div data-dashlet="toolbar">
+                                                <div class="dashlet-header">
+                                                    <h4 data-toggle="dashlet">
+                                                        {{str "LBL_DNB_BAL_ACCT_PREVIEW"}}
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                            <div data-dashlet="dashlet" class="dashlet-content">
+                                                <div id="dnb-search-hint" class="block-footer">
+                                                    <aside>
+                                                        <em>{{str "LBL_DNB_BAL_HINT"}}</em>
+                                                    </aside>
+                                                </div>
+                                            </div>
+                                            <div class="swappable-dashlet icon-download-alt"></div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="row-fluid" data-sortable="1">
+                        <div class="rows well well-invisible">
+                            <a data-toggle="dropdown" class="btn btn-invisible btn-link hide">
+                                <i class="icon-cog"></i>
+                            </a>
+                            <a class="move btn btn-invisible btn-link hide">
+                                <i class="icon-resize-vertical"></i>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
