@@ -166,7 +166,7 @@ class SugarFieldFloatTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      *
-     * @dataProvider dataProviderFixForFilter
+     * @dataProvider dataProviderFixForForFloats
      * @param String $op                The Filer Operation
      * @param Number $value             The Value we are looking for
      * @param String $query_op          The value of $op in the query
@@ -214,7 +214,7 @@ class SugarFieldFloatTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      *
-     * @dataProvider dataProviderFixForFilter
+     * @dataProvider dataProviderFixForWholeNumbers
      * @param String $op                The Filer Operation
      * @param Number $value             The Value we are looking for
      */
