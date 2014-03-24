@@ -98,6 +98,7 @@ $dictionary['Dashboard'] = array(
           'type' => 'varchar',
           'len' => '100',
           'comment' => 'The type of dashboard: dashboard, help-dashboard, etc',
+          'default' => 'dashboard'
       ),
   ),
   'indices' => array (

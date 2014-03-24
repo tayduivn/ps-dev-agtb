@@ -93,10 +93,21 @@
             }
         }, this);
 
-        if (module === 'Home' && context.get('modelId')) {
+        if (module === 'Home' && context.has('modelId')) {
             // save it as last visit
             var lastVisitedStateKey = this.getLastStateKey();
             app.user.lastState.set(lastVisitedStateKey, context.get('modelId'));
+        }
+
+        // When the module is Activities, and it doesn't have a modelId set and the model mode is undefined
+        // it should fetch the collection and hand off to the setDefaultDashboard
+        if (module === 'Activities' && !context.has('modelId') && _.isUndefined(this.model.mode)) {
+            this.once('render', function() {
+                this.collection.fetch({
+                    silent: true,
+                    success: _.bind(this.setDefaultDashboard, this)
+                });
+            }, this);
         }
     },
 
@@ -288,7 +299,10 @@
                 if (this.context.get("modelId")) {
                     model.set("id", this.context.get("modelId"), {silent: true});
                 }
-                model.save({}, this._getDashboardModelSaveParams());
+                // make sure that the model actually has some metadata
+                if (!_.isUndefined(model.get('metadata'))) {
+                    model.save({}, this._getDashboardModelSaveParams());
+                }
             }, this);
         }
     },
@@ -304,7 +318,7 @@
             initDash = app.metadata.getLayout(this.model.dashboardModule, layoutName) || {};
 
         // check to make sure this module has initial dashboards assigned for this view
-        if (!_.isEmpty(initDash)) {
+        if (_.has(initDash, 'metadata')) {
             // make sure there's a dashboard_type of "dashboard" by default
             // unless there's a specific custom dashboard_type already defined
             initDash.dashboard_type = initDash.dashboard_type || 'dashboard';
@@ -320,7 +334,7 @@
      */
     addHelpDashboardMetadata: function(_initDashboard) {
         var _helpDB = app.metadata.getLayout(this.model.dashboardModule, 'help-dashboard');
-        if(!_.isEmpty(_initDashboard)) {
+        if(_.has(_initDashboard, 'metadata')) {
             _initDashboard = [_helpDB, _initDashboard];
         } else {
             _initDashboard = [_helpDB];
@@ -610,7 +624,8 @@
      * @private
      */
     _renderEmptyTemplate: function() {
-        var template = app.template.getLayout(this.type + '.dashboard-empty');
+        var tplName = this.type || this.name,
+            template = app.template.getLayout(tplName + '.dashboard-empty');
         this.$el.html(template(this));
     },
 
