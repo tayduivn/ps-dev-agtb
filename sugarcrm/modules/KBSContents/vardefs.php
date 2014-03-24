@@ -174,7 +174,15 @@ $dictionary['KBSContent'] = array(
             'link' => 'kbsdocuments_kbscontents',
             'module' => 'KBSDocuments',
             'duplicate_merge' => 'disabled',
-        ),       
+        ),
+        'active_rev' => array(
+            'name' => 'active_rev',
+            'vname' => 'LBL_ACTIVE_REV',
+            'type' => 'tinyint',
+            'isnull' => 'true',
+            'comment' => 'Active revision flag',
+            'default' => 0,
+        ),
     ),
     'relationships' => array(
         'kbscontent_notes' => array(
