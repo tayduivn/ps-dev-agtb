@@ -146,13 +146,22 @@ describe("Forecasts.Base.Field.Datapoint", function() {
     describe('_onCommitCollectionReset after _onWorksheetTotals', function() {
         var sandbox = sinon.sandbox.create(), renderSpy;
         beforeEach(function() {
-            field = SugarTest.createField('base', 'best_case', 'datapoint', 'list', fieldDef, moduleName, null, null, true);
+            field = SugarTest.createField(
+                'base',
+                'best_case',
+                'datapoint',
+                'list',
+                fieldDef,
+                moduleName,
+                null,
+                null,
+                true
+            );
             renderSpy = sandbox.spy(field, 'render');
         });
 
         afterEach(function() {
             sandbox.restore();
-            c = undefined;
         });
 
         it('should not set total to 0 when collection is empty', function() {
@@ -175,6 +184,37 @@ describe("Forecasts.Base.Field.Datapoint", function() {
             expect(renderSpy).toHaveBeenCalled(2);
             expect(field.total).toEqual('500.00');
             expect(field.initial_total).toEqual('500.00');
+        });
+    });
+
+    describe('_onWorksheetCommit', function() {
+       var sandbox = sinon.sandbox.create(), renderSpy;
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                'best_case',
+                'datapoint',
+                'list',
+                fieldDef,
+                moduleName,
+                null,
+                null,
+                true
+            );
+            renderSpy = sandbox.spy(field, 'render');
+        });
+
+        afterEach(function() {
+            sandbox.restore();
+        });
+
+        it('should set total and initial total to be equal and arrow to be empty', function() {
+            field._onWorksheetCommit('manager', {
+                best_adjusted: '500.00'
+            });
+            expect(field.total).toEqual(field.initial_total);
+            expect(field.arrow).toEqual('');
+            expect(renderSpy).toHaveBeenCalled(1);
         });
     });
 });
