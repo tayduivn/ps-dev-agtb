@@ -44,7 +44,7 @@
                             <ul class="dashlet-cell rows row-fluid">
                                 <li class="dashlet-container span12">
                                     <div>
-                                        <div class="thumbnail dashlet">
+                                        <div class="thumbnail dashlet dashlet-dnb-tall">
                                             <div data-dashlet="toolbar">
                                                 <div class="dashlet-header">
                                                     <h4 data-toggle="dashlet">
@@ -62,7 +62,7 @@
                                                 </div>
                                                 <div id="dnb-bal-result" class="hide">
                                                     {{#if dnbContactsList.product}}
-                                                        <ul class="unstyled listed">
+                                                        <ul class="unstyled listed" id="dnb-results-list">
                                                             {{#each dnbContactsList.product}}
                                                                 <li>
                                                                     <div class="dnb-company-label dnb-company-list">
@@ -105,6 +105,18 @@
                                                     {{/if}}
                                                 </div>
                                             </div>
+                                            <div class="block-footer hide" id="dnb-page-ctrl">
+                                                <button data-action="show-more" class="btn btn-link btn-invisible more">
+                                                    {{str "LBL_DNB_MORE_SRCH_RES"}}
+                                                </button>
+                                                <div class="loading">
+                                                    {{str "LBL_ALERT_TITLE_LOADING"}}
+                                                    <i class="l1 icon-circle"></i>
+                                                    <i class="l2 icon-circle"></i>
+                                                    <i class="l3 icon-circle"></i>
+                                                </div>
+                                            </div>
+                                            <div class="swappable-dashlet icon-download-alt"></div>
                                         </div>
                                     </div>
                                 </li>

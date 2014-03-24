@@ -443,7 +443,7 @@
             'json_path': 'OrganizationPrimaryName.OrganizationName.$',
             'case_fmt': true
         },
-        'dunsnum': {
+        'duns_num': {
             'json_path': 'DUNSNumber'
         },
         'locationtype': {
@@ -467,6 +467,9 @@
         },
         'isDupe': {
             'json_path': 'isDupe'
+        },
+        'recordNum': {
+            'json_path': 'DisplaySequence'
         }
     },
     accountsDD: null,
@@ -540,6 +543,9 @@
         },
         'dunsNum' : {
             'json_path' : 'DUNSNumber'
+        },
+        'recordNum': {
+            'json_path': 'DisplaySequence'
         }
     },
 
@@ -1307,8 +1313,7 @@
      * dupeCheckParams must have the following keys
      * 1.type Possible values are duns,contacts
      * 2.apiResponse
-     * 3.module Possible values are findcompany, competitors, cleansematch, familytree, contacts
-     * @param renderFunction
+     * 3.module Possible values are findcompany, competitors, cleansematch, familytree, contacts, dunsPage, contactsPage
      */
     baseDuplicateCheck: function(dupeCheckParams, callBack) {
         var dupeCheckURL = app.api.buildURL('connector/dnb/dupecheck', '', {}, {});
@@ -1316,6 +1321,30 @@
         app.api.call('create', dupeCheckURL, {'qdata': dupeCheckParams}, {
             success: function(data) {
                 callBack.call(self, {'product': data});
+            },
+            error: _.bind(self.checkAndProcessError, self)
+        });
+    },
+
+    /**
+     * Build a list of accounts
+     * @param {Object} balParams
+     * @param {Function} callBack (function used to render api response)
+     */
+    baseAccountsBAL: function(balParams, callBack) {
+        var balRslt = {'product': null, 'errmsg': null};
+        var dnbBalURL = app.api.buildURL('connector/dnb/Accounts/bal', '', {}, {});
+        var self = this;
+        app.api.call('create', dnbBalURL, {'qdata': balParams}, {
+            success: function(data) {
+                var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode),
+                    responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
+                if (responseCode && responseCode === self.responseCodes.success) {
+                    balRslt.product = data;
+                } else {
+                    balRslt.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
+                }
+                callBack.call(self, balRslt);
             },
             error: _.bind(self.checkAndProcessError, self)
         });
@@ -1801,5 +1830,104 @@
             moduleModel = app.data.createBean(module, filteredModelBean);
         }
         return moduleModel;
+    },
+
+    /**
+     * Gets the next set of records from the recordSet
+     * @param {Array} recordSet
+     * @param {Number} pageStart
+     * @param {Number} pageEnd
+     * @returns {Array} recordSet
+     */
+    getNextPage: function(recordSet, pageStart, pageEnd) {
+        return  _.filter(recordSet, function(resultObj) {
+            return resultObj.recordNum >= pageStart && resultObj.recordNum <= pageEnd;
+        });
+    },
+
+    /**
+     * Render pagination control
+     */
+    renderPaginationControl: function() {
+        //it more records exist in api display pagination controls
+        if (this.recordCount > this.endRecord) {
+            //display pagination controls
+            this.$('#dnb-page-ctrl').toggleClass('hide', false);
+            this.$('[data-action="show-more"]').removeClass('hide');
+            this.$('.loading').hide();
+        } else {
+            //hide pagination controls
+            this.$('#dnb-page-ctrl').toggleClass('hide', true);
+        }
+    },
+
+    /**
+     * Display pagination loading message
+     */
+    displayPaginationLoading: function() {
+        this.$('[data-action="show-more"]').addClass('hide');
+        this.$('.loading').show();
+    },
+
+    /**
+     * Sets pagination offset and page numbers
+     */
+    setPaginationParams: function() {
+        this.pageNo = this.pageNo + 1;
+        this.endRecord = this.pageNo * this.pageSize;
+        this.startRecord = (this.endRecord - this.pageSize) + 1;
+    },
+
+    /**
+     * Gets the next set of records from the context
+     * Else invoke the
+     */
+    paginateRecords: function() {
+        var nextPage = this.getNextPage(this.formattedRecordSet, this.startRecord, this.endRecord);
+        if (_.isUndefined(this.currentPage) || _.isNull(this.currentPage)) {
+            this.currentPage = nextPage;
+        } else {
+            this.currentPage = this.currentPage.concat(nextPage);
+        }
+    },
+
+    /**
+     * Initialize pagination parameters
+     */
+    initPaginationParams: function() {
+        //# of records to be displayed in the dashlet
+        this.pageSize = 10;
+        //initial page no.
+        this.pageNo = 1;
+        //max # of records D&B API to return
+        //default to 10 times page size
+        this.apiPageSize = 2 * this.pageSize;
+        this.apiPageOffset = 1;
+        this.startRecord = 1;
+        this.endRecord = this.pageSize;
+        //sets the record no for the last record from the api
+        //this will be used to determine if we can fetch the next set of records
+        // from the context or do we need to invoke the api
+        this.apiPageEndRecord = (this.apiPageOffset + this.apiPageSize) - 1;
+        //setting the current set of formatted records to the context
+        //this is to be used for:
+        //1. concatenating the next page
+        //2. dupe check for back to list
+        this.currentPage = null;
+        //this flag is used to determine whether pagination params must be reset
+        //this would be set to false when we invoke the API pagination
+        //this would help us preserve the pagination params across API calls
+        this.resetPaginationFlag = true;
+    },
+
+    /**
+     * Sets pagination params to existing params
+     * @param {Object} apiParams
+     * @returns {Object}
+     */
+    setApiPaginationParams: function(apiParams) {
+        apiParams.CandidatePerPageMaximumQuantity = this.apiPageSize;
+        apiParams.CandidateDisplayStartSequenceNumber = this.apiPageOffset;
+        return apiParams;
     }
 })

@@ -41,10 +41,16 @@
                             <ul class="dashlet-cell rows row-fluid">
                                 <li class="dashlet-container span12">
                                     <div>
-                                        <div class="thumbnail dashlet">
+                                        <div class="thumbnail dashlet dashlet-dnb-tall">
                                             <div data-dashlet="toolbar">
                                                 <div class="dashlet-header">
-                                                    <h4 data-toggle="dashlet">{{str "LBL_DNB_SRCH_RES"}}</h4>
+                                                    <h4 data-toggle="dashlet">
+                                                        {{#if dnbSrchResults.count}}
+                                                            {{dnbSrchResults.count}}
+                                                        {{else}}
+                                                            {{str "LBL_DNB_SRCH_RES"}}
+                                                        {{/if}}
+                                                    </h4>
                                                 </div>
                                             </div>
                                             <div data-dashlet="dashlet" class="dashlet-content">
@@ -52,61 +58,62 @@
                                                     {{str "LBL_DNB_SRCH_LOAD"}} ...
                                                 </div>
                                                 <div id="dnb-search-results">
-                                                    <div class="block dnb-show-less create-acc">
-                                                        <div class="globe-chart-wrapper">
-                                                            <div>
-                                                                {{#if dnbSrchResults.product}}
-                                                                    <div>
-                                                                        <ul class="unstyled listed">
-                                                                            {{#each dnbSrchResults.product}}
-                                                                                <li>
-                                                                                    <div class='dnb-company-label'>
-                                                                                        <a class="dnb-company-name" id="{{this.dunsnum}}">
-                                                                                            {{this.companyname}}
-                                                                                        </a>
-                                                                                        {{#if this.locationtype}}
-                                                                                            <span class="label pull-right" data-placement="right">
-                                                                                                {{this.locationtype}}
-                                                                                            </span>
-                                                                                        {{/if}}
-                                                                                    </div>
-                                                                                    <div class="record-label dnb-company-list">
-                                                                                        {{#if this.streetaddr}}
-                                                                                            {{this.streetaddr}}
-                                                                                        {{/if}}
-                                                                                        {{#if this.town}}
-                                                                                            {{this.town}},
-                                                                                        {{/if}}
-                                                                                        {{#if this.territory}}
-                                                                                            {{this.territory}},
-                                                                                        {{/if}}
-                                                                                        {{#if this.ctrycd}}
-                                                                                            {{this.ctrycd}}
-                                                                                        {{/if}}
-                                                                                        {{#if this.isDupe}}
-                                                                                            <span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
-                                                                                        {{/if}}
-                                                                                    </div>
-                                                                                </li>
-                                                                            {{/each}}
-                                                                        </ul>
-                                                                    </div>
-                                                                {{else}}
-                                                                    <aside class='create-no-data'>
-                                                                        {{#if dnbSrchResults.errmsg}}
-                                                                            <em>{{dnbSrchResults.errmsg}}</em>
-                                                                        {{else}}
-                                                                            <em>{{str "LBL_DNB_NO_DATA"}}</em>
+                                                    {{#if dnbSrchResults.product}}
+                                                    <div>
+                                                        <ul class="unstyled listed" id="dnb-results-list">
+                                                            {{#each dnbSrchResults.product}}
+                                                                <li>
+                                                                    <div class='dnb-company-label'>
+                                                                        <a class="dnb-company-name" id="{{this.duns_num}}">
+                                                                            {{this.companyname}}
+                                                                        </a>
+                                                                        {{#if this.locationtype}}
+                                                                            <span class="label pull-right" data-placement="right">
+                                                                                {{this.locationtype}}
+                                                                            </span>
                                                                         {{/if}}
-                                                                    </aside>
-                                                                {{/if}}
-                                                            </div>
-                                                        </div>
+                                                                    </div>
+                                                                    <div class="record-label dnb-company-list">
+                                                                        {{#if this.streetaddr}}
+                                                                            {{this.streetaddr}}
+                                                                        {{/if}}
+                                                                        {{#if this.town}}
+                                                                            {{this.town}},
+                                                                        {{/if}}
+                                                                        {{#if this.territory}}
+                                                                            {{this.territory}},
+                                                                        {{/if}}
+                                                                        {{#if this.ctrycd}}
+                                                                            {{this.ctrycd}}
+                                                                        {{/if}}
+                                                                        {{#if this.isDupe}}
+                                                                            <span class="label label-important pull-right" data-placement="right">{{str "LBL_DNB_DUPLICATE"}}</span>
+                                                                        {{/if}}
+                                                                    </div>
+                                                                </li>
+                                                            {{/each}}
+                                                        </ul>
                                                     </div>
-                                                    <div class="dnb-show-more">
-                                                        <a class="showMoreData more">{{str "LBL_DNB_MORE_SRCH_RES"}} <i class="icon-chevron-down"></i></a>
-                                                        <a class="showLessData less">{{str "LBL_DNB_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
-                                                    </div>
+                                                {{else}}
+                                                    <aside class='create-no-data'>
+                                                        {{#if dnbSrchResults.errmsg}}
+                                                            <em>{{dnbSrchResults.errmsg}}</em>
+                                                        {{else}}
+                                                            <em>{{str "LBL_DNB_NO_DATA"}}</em>
+                                                        {{/if}}
+                                                    </aside>
+                                                {{/if}}
+                                                </div>
+                                            </div>
+                                            <div class="block-footer hide" id="dnb-page-ctrl">
+                                                <button data-action="show-more" class="btn btn-link btn-invisible more">
+                                                    {{str "LBL_DNB_MORE_SRCH_RES"}}
+                                                </button>
+                                                <div class="loading">
+                                                    {{str "LBL_ALERT_TITLE_LOADING"}}
+                                                    <i class="l1 icon-circle"></i>
+                                                    <i class="l2 icon-circle"></i>
+                                                    <i class="l3 icon-circle"></i>
                                                 </div>
                                             </div>
                                             <div class="swappable-dashlet icon-download-alt"></div>

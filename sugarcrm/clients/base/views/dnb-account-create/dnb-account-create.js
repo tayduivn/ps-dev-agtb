@@ -37,7 +37,8 @@
         'click .importDNBData': 'importAccount',
         'click .dnb_checkbox': 'importCheckBox',
         'click .clearDNBResults': 'clearDNBResults',
-        'click .backToList' : 'backToCompanyList'
+        'click .backToList' : 'backToCompanyList',
+        'click [data-action="show-more"]': 'invokePagination'
     },
 
     configuredKey: 'dnb:account:create:configured',
@@ -46,6 +47,8 @@
         this._super('initialize', [options]);
         this.initDashlet();
         this.loadData();
+        this.initPaginationParams();
+        this.paginationCallback = this.baseAccountsBAL;
     },
 
     loadData: function() {
@@ -93,10 +96,10 @@
         this.$('.importDNBData').hide();
         var dupeCheckParams = {
             'type': 'duns',
-            'apiResponse': this.companyList,
-            'module': 'findcompany'
+            'apiResponse': this.currentPage,
+            'module': 'dunsPage'
         };
-        this.baseDuplicateCheck(dupeCheckParams, this.renderCompanyList);
+        this.baseDuplicateCheck(dupeCheckParams, this.renderPage);
     },
 
     /**
@@ -104,23 +107,75 @@
      * @param  {Object} dnbSrchApiResponse
      */
     renderCompanyList: function(dnbSrchApiResponse) {
+        var dnbSrchResults = {};
+        if (this.resetPaginationFlag) {
+            this.initPaginationParams();
+        }
+        if (dnbSrchApiResponse.product) {
+            var apiCompanyList = this.getJsonNode(dnbSrchApiResponse.product, this.commonJSONPaths.srchRslt);
+            //setting the formatted set of records to context
+            //will be required when we paginate from the client side itself
+            this.formattedRecordSet = this.formatSrchRslt(apiCompanyList, this.searchDD);
+            //setting the api recordCount to context
+            //will be used to determine if the pagination controls must be displayed
+            this.recordCount = this.getJsonNode(dnbSrchApiResponse.product, this.commonJSONPaths.srchCount);
+            this.paginateRecords();
+            dnbSrchResults.product = this.currentPage;
+            if (this.recordCount) {
+                dnbSrchResults.count = this.recordCount;
+            }
+        } else if (dnbSrchApiResponse.errmsg) {
+            dnbSrchResults.errmsg = dnbSrchApiResponse.errmsg;
+        }
+        this.renderPage(dnbSrchResults);
+    },
+
+    /**
+     * Renders the currentPage
+     * @param {Object} pageData
+     */
+    renderPage: function(pageData) {
         if (this.disposed) {
             return;
         }
         this.template = app.template.get(this.name);
-        var dnbSrchResults = {};
-        if (dnbSrchApiResponse.product) {
-            this.companyList = dnbSrchApiResponse.product;
-            var apiCompanyList = this.getJsonNode(dnbSrchApiResponse.product, this.commonJSONPaths.srchRslt);
-            dnbSrchResults.product = this.formatSrchRslt(apiCompanyList, this.searchDD);
-        } else if (dnbSrchApiResponse.errmsg) {
-            dnbSrchResults.errmsg = dnbSrchApiResponse.errmsg;
+        this.dnbSrchResults = pageData;
+        if (_.isUndefined(pageData.count)) {
+            pageData.count = this.recordCount;
         }
-        this.dnbSrchResults = dnbSrchResults;
+        this.dnbSrchResults.count = app.lang.get('LBL_DNB_BAL_ACCT_HEADER') + " (" + this.formatSalesRevenue(pageData.count) + ")";
         this.render();
         this.$('div#dnb-company-list-loading').hide();
         this.$('div#dnb-search-results').show();
-        this.$('.showLessData').hide();
+        if (pageData.product) {
+            this.renderPaginationControl();
+        }
+    },
+
+    /**
+     * Event handler for pagination controls
+     * Renders next page from context if available
+     * else invokes the D&B API to get the next page
+     */
+    invokePagination: function() {
+        this.displayPaginationLoading();
+        this.setPaginationParams();
+        //if the endRecord after pagination is greater than apiPageEndRecord
+        //we have to invoke the api with the pagination controls
+        if (this.endRecord > this.apiPageEndRecord) {
+            this.apiPageEndRecord = (this.startRecord + this.apiPageSize) - 1;
+            this.resetPaginationFlag = false;
+            //setting the apiPageOffset
+            this.apiPageOffset = this.startRecord;
+            this.paginationCallback(this.setApiPaginationParams(this.balParams), this.renderCompanyList);
+        } else {
+            this.paginateRecords();
+            var pageData = {
+                'product': this.currentPage,
+                'count': this.recordCount
+            };
+            this.renderPage(pageData);
+        }
     },
 
     /** event listener for keyup / autocomplete feature
@@ -144,7 +199,8 @@
             var balParams = {
                 'KeywordText': searchString
             };
-            this.baseAccountsBAL(balParams, this.renderCompanyList);
+            this.balParams = balParams;
+            this.baseAccountsBAL(this.setApiPaginationParams(balParams), this.renderCompanyList);
         }
     },
 

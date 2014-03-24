@@ -141,6 +141,15 @@ $dictionary['Lead'] = array(
            'comment' => 'Unique Id For D&B Contact',
         ),
         'account_name' => array(
+  //d&b principal id, a unique id assigned to a contact by D&B API
+  //this contact is used for dupe check
+  'dnb_principal_id' => array (
+    'name' => 'dnb_principal_id',
+    'vname' => 'LBL_DNB_PRINCIPAL_ID',
+    'type' => 'varchar',
+    'len' => 30,
+    'comment' => 'Unique Id For D&B Contact',
+  ),
             'name' => 'account_name',
             'vname' => 'LBL_ACCOUNT_NAME',
             'type' => 'varchar',
