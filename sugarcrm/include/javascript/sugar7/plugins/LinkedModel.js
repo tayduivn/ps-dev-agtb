@@ -121,7 +121,7 @@
                 //FIXME: `this.context` should always be used - SC-2550
                 var context = (this.context.get('name') === 'tabbed-dashlet') ?
                     this.context : (this.context.parent || this.context);
-                var parentModel = context.get('model'),
+                var parentModel = context.get('model') || context.parent.get('model'),
                     model = this.createLinkModel(parentModel, link),
                     self = this;
                 app.drawer.open({
