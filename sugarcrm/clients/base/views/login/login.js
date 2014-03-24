@@ -179,6 +179,8 @@
                 }
             }, self)
         );
+
+        app.alert.dismiss('offset_problem');
     },
     /**
      * After login and app:sync:complete, we need to see if there's any post login setup we need to do prior to
