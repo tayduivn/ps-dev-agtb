@@ -1,82 +1,111 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
+/**
+ * Login form view.
+ *
+ * @class View.Views.LoginView
+ * @alias SUGAR.App.view.views.BaseLoginView
+ */
 ({
-    plugins: ['ErrorDecoration'],
-    fallbackFieldTemplate: 'edit',
     /**
-     * Login form view.
-     * @class View.Views.LoginView
-     * @alias SUGAR.App.view.views.LoginView
+     * @inheritDoc
+     */
+    plugins: ['ErrorDecoration'],
+
+    /**
+     * @inheritDoc
+     */
+    fallbackFieldTemplate: 'edit',
+
+    /**
+     * @inheritDoc
      */
     events: {
-        "click [name=login_button]": "login",
-        "keypress": "handleKeypress"
+        'click [name=login_button]': 'login',
+        'keypress': 'handleKeypress'
     },
 
     /**
-     * Process login on key 'Enter'
-     * @param e
+     * An object containing the keys of the alerts that may be displayed in this
+     * view.
+     *
+     * @type {Object}
      */
-    handleKeypress: function(e) {
-        if (e.keyCode === 13) {
-            this.$("input").trigger("blur");
+    _alertKeys: {
+        adminOnly: 'admin_only',
+        login: 'login',
+        unsupportedBrowser: 'unsupported_browser',
+        offsetProblem: 'offset_problem'
+    },
+
+    /**
+     * Flag to indicate if the link to reset the password should be displayed.
+     *
+     * @type {Boolean}
+     */
+    showPasswordReset: false,
+
+    /**
+     * The company logo url.
+     *
+     * @type {String}
+     */
+    logoUrl: null,
+
+    /**
+     * Process login on key `Enter`.
+     *
+     * @param {Event} event The `keypress` event.
+     */
+    handleKeypress: function(event) {
+        if (event.keyCode === 13) {
+            this.$('input').trigger('blur');
             this.login();
         }
     },
 
     /**
-     * Get the fields metadata from panels and declare a Bean with the metadata attached
-     * @param meta
+     * Get the fields metadata from panels and declare a Bean with the metadata
+     * attached.
+     *
+     * Fields metadata needs to be converted to {@link Data.Bean#declareModel}
+     * format.
+     *
+     *     @example
+     *      {
+     *        "username": { "name": "username", ... },
+     *        "password": { "name": "password", ... },
+     *        ...
+     *      }
+     *
+     * @param {Object} meta The view metadata.
      * @private
      */
     _declareModel: function(meta) {
         meta = meta || {};
 
         var fields = {};
-        _.each(_.flatten(_.pluck(meta.panels, "fields")), function(field) {
+        _.each(_.flatten(_.pluck(meta.panels, 'fields')), function(field) {
             fields[field.name] = field;
         });
-        /**
-         * Fields metadata needs to be converted to this format for App.data.declareModel
-         *  {
-          *     "username": { "name": "username", ... },
-          *     "password": { "name": "password", ... },
-          *      ...
-          * }
-         */
         app.data.declareModel('Login', {fields: fields});
     },
 
     /**
-     * @override
-     * @param options
+     * @inheritDoc
      */
     initialize: function(options) {
-        if(app.progress) {
+        if (app.progress) {
             app.progress.hide();
         }
         // Declare a Bean so we can process field validation
@@ -85,7 +114,7 @@
         // Reprepare the context because it was initially prepared without metadata
         options.context.prepare(true);
 
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
 
         var config = app.metadata.getConfig();
         if (config && app.config.forgotpasswordON === true) {
@@ -95,20 +124,18 @@
     },
 
     /**
-     * @override
-     * @private
+     * @inheritDoc
      */
     _render: function() {
         this.logoUrl = app.metadata.getLogoUrl();
-        app.view.View.prototype._render.call(this);
+
+        this._super('_render');
+
         this.refreshAddtionalComponents();
-        /**
-         * Added browser version check for MSIE since we are dropping support
-         * for MSIE 9.0 for SugarCon
-         */
+
         if (!this._isSupportedBrowser()) {
-            app.alert.show('unsupported_browser', {
-                level:'warning',
+            app.alert.show(this._alertKeys.unsupportedBrowser, {
+                level: 'warning',
                 title: '',
                 messages: [
                     app.lang.getAppString('LBL_ALERT_BROWSER_NOT_SUPPORTED'),
@@ -116,20 +143,21 @@
                 ]
             });
         }
-        var config = app.metadata.getConfig();
-        if (config.system_status
-            && config.system_status.level
-            && (config.system_status.level == 'maintenance'
-                || config.system_status.level == 'admin_only')) {
-            app.alert.show('admin_only', {
-                level:'warning',
+
+        var config = app.metadata.getConfig(),
+            level = config.system_status && config.system_status.level;
+
+        if (level === 'maintenance' || level === 'admin_only') {
+            app.alert.show(this._alertKeys.adminOnly, {
+                level: 'warning',
                 title: '',
                 messages: [
                     '',
-                    app.lang.getAppString(config.system_status.message),
+                    app.lang.getAppString(config.system_status.message)
                 ]
-            });            
+            });
         }
+        app.alert.dismiss(this._alertKeys.offsetProblem);
         return this;
     },
 
@@ -143,61 +171,74 @@
     },
 
     /**
-     * Process Login
+     * Process login.
+     *
+     * We have to manually set `username` and `password` to the model because
+     * browser autocomplete does not always trigger DOM change events that would
+     * propagate changes into the model.
      */
     login: function() {
-        var self = this;
-        // We have to do this because browser autocomplete does not always trigger DOM change events that would propagate changes into the model
         this.model.set({
-            password: this.$("input[name=password]").val(),
-            username: this.$("input[name=username]").val()
+            password: this.$('input[name=password]').val(),
+            username: this.$('input[name=username]').val()
         });
         this.model.doValidate(null,
             _.bind(function(isValid) {
                 if (isValid) {
                     app.$contentEl.hide();
-                    var args = {password: this.model.get("password"), username: this.model.get("username")};
 
-                    app.alert.show('login', {level: 'process', title: app.lang.getAppString('LBL_LOADING'), autoClose: false});
+                    app.alert.show(this._alertKeys.login, {
+                        level: 'process',
+                        title: app.lang.getAppString('LBL_LOADING'),
+                        autoClose: false
+                    });
+
+                    var args = {
+                        password: this.model.get('password'),
+                        username: this.model.get('username')
+                    };
+
                     app.login(args, null, {
                         error: function() {
                             app.$contentEl.show();
-                            app.logger.debug("login failed!");
-                            app.alert.dismiss('login');
+                            app.logger.debug('login failed!');
                         },
-                        success: function() {
-                            app.logger.debug("logged in successfully!");
+                        success: _.bind(function() {
+                            app.logger.debug('logged in successfully!');
+
                             app.events.on('app:sync:complete', function() {
-                                app.logger.debug("sync in successfully!");
+                                app.logger.debug('sync in successfully!');
                                 _.defer(_.bind(this.postLogin, this));
-                            }, self);
-                        },
-                        complete: function() {
-                            app.alert.dismiss('login');
-                        }
+                            }, this);
+                        }, this),
+                        complete: _.bind(function() {
+                            app.alert.dismiss(this._alertKeys.login);
+                        }, this)
                     });
                 }
-            }, self)
+            }, this)
         );
 
         app.alert.dismiss('offset_problem');
     },
+
     /**
-     * After login and app:sync:complete, we need to see if there's any post login setup we need to do prior to
-     * rendering the rest of the Sugar app
+     * After login and app:sync:complete, we need to see if there's any post
+     * login setup we need to do prior to rendering the rest of the Sugar app.
      */
-    postLogin: function(){
+    postLogin: function() {
         if (!app.user.get('show_wizard')) {
+
             this.refreshAddtionalComponents();
-            
-            if (new Date().getTimezoneOffset() != (app.user.getPreference('tz_offset_sec')/-60)) {
-                var link = new Handlebars.SafeString('<a href="#' + 
-                                                     app.router.buildRoute('Users', app.user.id, 'edit') + '">' + 
-                                                     app.lang.get('LBL_TIMEZONE_DIFFERENT_LINK') + '</a>');
-                
+
+            if (new Date().getTimezoneOffset() != (app.user.getPreference('tz_offset_sec') / -60)) {
+                var link = new Handlebars.SafeString('<a href="#' +
+                    app.router.buildRoute('Users', app.user.id, 'edit') + '">' +
+                    app.lang.get('LBL_TIMEZONE_DIFFERENT_LINK') + '</a>');
+
                 var message = app.lang.get('TPL_TIMEZONE_DIFFERENT', null, {link: link});
-                
-                app.alert.show('offset_problem', {
+
+                app.alert.show(this._alertKeys.offsetProblem, {
                     messages: message,
                     closeable: true,
                     level: 'warning'
@@ -208,18 +249,20 @@
     },
 
     /**
-     * Taken from sugar_3. returns true if the users browser is recognized
-     * @return {Boolean}
+     * Taken from sugar_3.
+     *
+     * @return {Boolean} `true` if the browser is supported, `false` otherwise.
      * @private
      */
-    _isSupportedBrowser:function () {
+    _isSupportedBrowser: function() {
         var supportedBrowsers = {
-            msie:{min:9},
-            mozilla:{min:18},
-            // For Safari & Chrome jQuery.Browser returns the webkit revision instead of the browser version
-            // and it's hard to determine this number.
-            safari:{min:536},
-            chrome:{min:537}
+            msie: {min: 9},
+            mozilla: {min: 18},
+            // For Safari & Chrome jQuery.Browser returns the webkit revision
+            // instead of the browser version and it's hard to determine this
+            // number.
+            safari: {min: 536},
+            chrome: {min: 537}
         };
         for (var b in supportedBrowsers) {
             if ($.browser[b]) {
