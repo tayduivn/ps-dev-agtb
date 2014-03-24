@@ -482,7 +482,7 @@
         }, this);
 
         //mark the model as copied so that the currency field doesn't set currency_id to user's default value
-        if (hasChanged) {
+        if (hasChanged && model.has('currency_id')) {
             this.createView.model.isCopied = true;
         }
 
