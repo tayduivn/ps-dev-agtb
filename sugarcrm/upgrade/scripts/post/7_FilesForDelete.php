@@ -128,6 +128,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'clients/mobile/api/CurrentUserMobileApi.php',
             'clients/mobile/api/MetadataMobileApi.php',
             'clients/portal/api/MetadataPortalApi.php',
+            'clients/base/views/activitystream-bottom/activitystream-bottom.php',
             // NOMAD-1179 mobile search definitions
             'modules/Accounts/clients/mobile/views/search/search.php',
             'modules/Bugs/clients/mobile/views/search/search.php',
