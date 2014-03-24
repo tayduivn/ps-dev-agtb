@@ -147,28 +147,31 @@
     /**
      * Handles download pdf link.
      *
+     * Authenticate in bwc mode before triggering the download.
+     *
      * @param {Event} evt The `click` event.
      */
     downloadClicked: function(evt) {
         var templateId = this.$(evt.currentTarget).data('id');
 
-        /**
-         * Download the file once authenticated in bwc mode.
-         *
-         * @private
-         */
-        var _onceAuthenticated = function() {
+        app.bwc.login(null, _.bind(function() {
+            this._triggerDownload(this._buildDownloadLink(templateId));
+        }, this));
+    },
 
-            app.api.fileDownload(this._buildDownloadLink(templateId), {
-                error: function(data) {
-                    // refresh token if it has expired
-                    app.error.handleHttpError(data, {});
-                }
-            }, {iframe: this.$el});
-
-        };
-
-        app.bwc.login(null, _.bind(_onceAuthenticated, this));
+    /**
+     * Download the file once authenticated in bwc mode.
+     *
+     * @param {String} url The file download url.
+     * @protected
+     */
+    _triggerDownload: function(url) {
+        app.api.fileDownload(url, {
+            error: function(data) {
+                // refresh token if it has expired
+                app.error.handleHttpError(data, {});
+            }
+        }, {iframe: this.$el});
     },
 
     /**
