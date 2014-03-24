@@ -15,17 +15,16 @@
  * Some events have been deprecated in 7.2 and removed.
  * List of changes:
  *
- * - `sidebarRendered` has been removed. Now, when the field renders it triggers
- *    an event `sidebar:state:ask` to ask for the state, and listens to
- *    `sidebar:state:respond` for the response.
- *    {@link Field.Sidebartoggle#toggleState}
+ * - `sidebarRendered` has been removed. Now, when the field renders it calls
+ *    {@link Layout.Default#isSidePaneVisible} directly to get the current
+ *    state.
  *
  * - `toggleSidebar` has been removed. Triggers `sidebar:toggle` instead.
  *
- * - `toggleSidebarArrows` has been removed. Listens to `sidebar:state:respond`
+ * - `toggleSidebarArrows` has been removed. Listens to `sidebar:state:changed`
  *    instead.
  *
- * - `openSidebarArrows` has been removed. Listens to `sidebar:state:send`
+ * - `openSidebarArrows` has been removed. Listens to `sidebar:state:changed`
  *    instead.
  *
  * - The app event `app:toggle:sidebar` has been removed. Listen to
@@ -48,10 +47,12 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        // FIXME these events should be listened on the `default` layout instead of the global context (SC-2398).
-        app.controller.context.on('sidebar:state:respond sidebar:state:changed', this.toggleState, this);
 
-        app.controller.context.trigger('sidebar:state:ask');
+        var defaultLayout = this.closestComponent('sidebar');
+        if (defaultLayout && _.isFunction(defaultLayout.isSidePaneVisible)) {
+            this.toggleState(defaultLayout.isSidePaneVisible() ? 'open' : 'close');
+            this.listenTo(defaultLayout, 'sidebar:state:changed', this.toggleState);
+        }
     },
 
     /**
@@ -75,16 +76,9 @@
      * @param {Event} event The `click` event.
      */
     toggle: function(event) {
-        // FIXME this should be triggered on the `default` layout instead of the global context (SC-2398).
-        app.controller.context.trigger('sidebar:toggle');
-    },
-
-    /**
-     * @inheritDoc
-     */
-    unbind: function() {
-        this._super('unbind');
-        // FIXME the events should be happening on the `default` layout instead of the global context (SC-2398).
-        app.controller.context.off(null, null, this);
+        var defaultLayout = this.closestComponent('sidebar');
+        if (defaultLayout) {
+            defaultLayout.trigger('sidebar:toggle');
+        }
     }
 })

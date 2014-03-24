@@ -85,7 +85,7 @@
         }
         if (changed) {
             this.model.set(this.name, emails);
-            this.model.trigger('change:'+this.name);
+            this.model.trigger('change:' + this.name, this, emails);
         }
         return emails;
     }

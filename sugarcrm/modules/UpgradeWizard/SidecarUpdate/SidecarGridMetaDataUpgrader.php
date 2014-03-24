@@ -250,25 +250,43 @@ END;
                 // For full conversion of metadata we need to group fields into 
                 // their respective panels. This handles that here.
                 if ($full) {
+                    // Set the hidden flag for handling 'hide' property
+                    $hidden = false;
+
                     // Handle panel naming and labeling
                     if (isset($this->panelNames[$c]['name'])) {
                         $panelName = $this->panelNames[$c]['name'];
                         $panelLabel = $this->panelNames[$c]['label'];
+
+                        // Set the hide property?
+                        if ($panelName == 'panel_hidden') {
+                            $hidden = true;
+                        }
                     } else {
                         $panelName = strtolower($label);
                         $panelLabel = strtoupper($label);
                     }
 
-                    // Build this panel's metadata
-                    $panels[] = array(
+                    // Basic defs that should never change
+                    $defs = array(
                         'name' => $panelName,
                         'label' => $panelLabel,
                         'columns' => $maxcols,
                         'labels' => true,
                         'labelsOnTop' => true,
                         'placeholders' => true,
-                        'fields' => $fields,
                     );
+
+                    // Handle the 'hide' property
+                    if ($hidden) {
+                        $defs['hide'] = true;
+                    }
+
+                    // Add in the fields array
+                    $defs['fields'] = $fields;
+
+                    // Build this panel's metadata
+                    $panels[] = $defs;
 
                     // Reset fields array so they don't stack up inside of panels
                     $fields = array();

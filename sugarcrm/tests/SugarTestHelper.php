@@ -432,6 +432,11 @@ class SugarTestHelper
     protected static $cleanModules = array();
 
     /**
+     * @var array of modules and their custom fields created during setup.
+     */
+    protected static $customFields = array();
+
+    /**
      * @var bool is SugarTestHelper inited or not. Just to skip initialization on the second and others call of init method
      */
     protected static $isInited = false;
@@ -576,7 +581,9 @@ class SugarTestHelper
             self::$registeredVars['current_user'] = $cu;
         }
 
-        foreach (self::$registeredVars as $varName => $isCalled) {
+        // unregister variables in reverse order in order to have dependencies unregistered after dependants
+        $unregisterVars = array_reverse(self::$registeredVars);
+        foreach ($unregisterVars as $varName => $isCalled) {
             if ($isCalled) {
                 unset(self::$registeredVars[$varName]);
                 if (method_exists(__CLASS__, 'tearDown_' . $varName)) {
@@ -813,6 +820,73 @@ class SugarTestHelper
         }
 
         return true;
+    }
+
+    /**
+     * Create custom field
+     *
+     * @static
+     * @param array $params Array containing module name and field vardefs
+     *
+     * @throws SugarTestHelperException
+     */
+    protected static function setUp_custom_field(array $params)
+    {
+        self::$registeredVars['custom_field'] = true;
+
+        if (count($params) < 2) {
+            throw new SugarTestHelperException(sprintf(
+                '%s requires 2 parameters, %d given',
+                __METHOD__,
+                count($params)
+            ));
+        }
+
+        list($module, $vardefs) = $params;
+        if (!isset($vardefs['type'])) {
+            throw new SugarTestHelperException('Field type is not specified');
+        }
+
+        $field = get_widget($vardefs['type']);
+        foreach ($vardefs as $param => $value) {
+            $field->{$param} = $value;
+        }
+
+        $bean = BeanFactory::getBean($module);
+        if (!$bean) {
+            throw new SugarTestHelperException(sprintf(
+                '%s is not a valid module name',
+                $module
+            ));
+        }
+
+        $dynamicField = new DynamicField($module);
+        $dynamicField->setup($bean);
+        $dynamicField->addFieldObject($field);
+
+        self::$customFields[] = array($dynamicField, $field);
+
+        $objectName = BeanFactory::getObjectName($module);
+        VardefManager::clearVardef($module, $objectName);
+
+        $GLOBALS['reload_vardefs'] = true;
+    }
+
+    /**
+     * Removal of custom fields
+     *
+     * @static
+     */
+    protected static function tearDown_custom_field()
+    {
+        unset($GLOBALS['reload_vardefs']);
+
+        foreach (self::$customFields as $data) {
+            list($dynamicField, $field) = $data;
+            $dynamicField->deleteField($field);
+        }
+
+        self::$customFields = array();
     }
 
     const NOFILE_DATA = '__NO_FILE__';

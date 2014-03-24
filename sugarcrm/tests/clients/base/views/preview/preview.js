@@ -1,4 +1,4 @@
-describe("Preview View", function() {
+describe("Base.View.Preview", function() {
 
     var preview, layout, app, meta;
 
@@ -329,8 +329,10 @@ describe("Preview View", function() {
     });
 
     it('should trigger ("sidebar:toggle", true) on "preview:open"', function() {
-        var stub = sinon.collection.stub(app.controller.context, 'trigger');
+        var defaultLayout = new Backbone.View();
+        sinon.collection.stub(preview, 'closestComponent').withArgs('sidebar').returns(defaultLayout);
+        var triggerStub = sinon.collection.stub(defaultLayout, 'trigger');
         app.events.trigger('preview:open');
-        expect(stub).toHaveBeenCalledWith('sidebar:toggle', true);
+        expect(triggerStub).toHaveBeenCalledWith('sidebar:toggle', true);
     });
 });

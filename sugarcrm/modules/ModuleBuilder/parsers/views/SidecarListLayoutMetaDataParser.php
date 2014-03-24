@@ -257,7 +257,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
      * @param  array  $def The field defs for key
      * @return bool
      */
-    public function isValidField($key, $def)
+    public function isValidField($key, array $def)
     {
         if (!empty($this->client)) {
             $method = 'isValidField' . ucfirst(strtolower($this->client));
@@ -278,7 +278,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
      * @param  array  $def The field defs for the key
      * @return bool
      */
-    public function isValidFieldPortal($key, $def)
+    public function isValidFieldPortal($key, array $def)
     {
         if (isset($this->invalidTypes['portal'])) {
             if (!isset($def['type']) || in_array($def['type'], $this->invalidTypes['portal'])) {

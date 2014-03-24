@@ -46,8 +46,10 @@
             layout.find(".dashboard-pane").hide();
             layout.find(".preview-pane").addClass("active");
 
-            // FIXME this should be triggered on this layout instead of the global context (SC-2398).
-            app.controller.context.trigger('sidebar:toggle', true);
+            var defaultLayout = this.closestComponent('sidebar');
+            if (defaultLayout) {
+                defaultLayout.trigger('sidebar:toggle', true);
+            }
         }
     },
 

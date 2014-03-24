@@ -243,7 +243,7 @@ function gridInit() {
 
 			var resize = grid.resizeGrid = function () {
 				SUGAR.email2.grid.set("width",  SUGAR.email2.grid.get("element").parentNode.clientWidth + "px");
-				SUGAR.email2.grid.set("height", (SUGAR.email2.grid.get("element").parentNode.clientHeight - 47) + "px");
+				SUGAR.email2.grid.set("height", (SUGAR.email2.grid.get("element").parentNode.clientHeight - 57) + "px");
 			}
 			grid.convertDDRows = function() {
 				var rowEl = this.getFirstTrEl();

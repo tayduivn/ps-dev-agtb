@@ -748,6 +748,18 @@ class SidecarMetaDataUpgrader
      */
     protected function getViewTypeFromFilename($filename, $client, $type, $fullname)
     {
+        if(strpos($fullname, '/Ext/Layoutdefs/') !== false || strpos($fullname, '/Ext/WirelessLayoutdefs/') !== false) {
+            return 'layoutdef';
+        }
+
+        if(strpos($fullname, '/Ext/Menus/') !== false || $filename == 'Menu') {
+            return 'menu';
+        }
+
+        if (strpos($filename, 'For') !== false || strpos($filename, 'default') !== false || strpos($fullname, "metadata/subpanels/") !== false) {
+            return 'subpanel';
+        }
+
         if (strpos($filename, 'list') !== false) {
             return 'list';
         }
@@ -769,22 +781,6 @@ class SidecarMetaDataUpgrader
                 return 'filter';
             }
             return 'search';
-        }
-
-        if(strpos($fullname, '/Ext/Layoutdefs/') !== false) {
-            return 'layoutdef';
-        }
-
-        if(strpos($fullname, '/Ext/WirelessLayoutdefs/') !== false) {
-            return 'layoutdef';
-        }
-
-        if(strpos($fullname, '/Ext/Menus/') !== false || $filename == 'Menu') {
-            return 'menu';
-        }
-
-        if (strpos($filename, 'For') !== false || strpos($filename, 'default') !== false || strpos($fullname, "metadata/subpanels/") !== false) {
-            return 'subpanel';
         }
 
         if (strpos($filename, 'edit') !== false) {

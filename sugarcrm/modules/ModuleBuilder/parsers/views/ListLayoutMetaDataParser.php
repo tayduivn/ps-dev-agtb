@@ -223,7 +223,7 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         return $availableFields;
     }
 
-    public function isValidField($key, $def)
+    public function isValidField($key, array $def)
     {
         if (isset($def['studio']))
         {

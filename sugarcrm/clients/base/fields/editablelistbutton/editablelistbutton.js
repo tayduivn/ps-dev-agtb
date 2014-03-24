@@ -102,7 +102,14 @@
                     }
                 },
                 complete: function() {
-                    self.setDisabled(false);
+                    // remove this model from the list if it has been unlinked
+                    if (self.model.get('_unlinked')) {
+                        self.collection.remove(self.model, { silent: true });
+                        self.collection.trigger('reset');
+                        self.view.render();
+                    } else {
+                        self.setDisabled(false);
+                    }
                 },
                 lastModified: self.model.get('date_modified'),
                 //Show alerts for this request

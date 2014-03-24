@@ -399,7 +399,17 @@
                         errorMessages.push(app.error.getErrorString(errorName, errorContext));
                     });
                 }
-                $ftag.wrap('<div class="input-append error ' + ftag + '">');
+
+                // FIXME: un-needed extra div wrapping the field should be
+                // removed when SC-2568 gets in, for the time being it is only
+                // used on non datetime fields
+                var isWrapped = $ftag.parent().hasClass('input-append');
+                if (!isWrapped) {
+                    $ftag.wrap('<div class="input-append error ' + ftag + '">');
+                } else {
+                    $ftag.parent().addClass('error');
+                }
+
                 $tooltip = $(this.exclamationMarkTemplate(errorMessages));
                 $ftag.after($tooltip);
                 this.createErrorTooltips($tooltip);
@@ -444,11 +454,18 @@
                 var ftag = this.fieldTag || '',
                     $ftag = this.$(ftag);
                 // Remove previous exclamation then add back.
-                this.$('.add-on').remove();
+                this.$('.add-on.error-tooltip').remove();
                 var isWrapped = $ftag.parent().hasClass('input-append');
-                if (isWrapped) {
+
+                // FIXME: this check for datetime should be made generic (when
+                // SC-2568 gets in) based on use of normal addon
+                var isDateField = $ftag.parent().hasClass('date');
+                if (isDateField) {
+                    $ftag.parent().removeClass('error');
+                } else if (isWrapped) {
                     $ftag.unwrap();
                 }
+
                 this.$el.removeClass(ftag);
                 this.$el.removeClass("error");
                 this.$el.closest('.record-cell').removeClass("error");

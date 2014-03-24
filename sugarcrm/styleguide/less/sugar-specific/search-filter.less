@@ -78,7 +78,7 @@
     &.related-filter {
       vertical-align: top;
     }
-    &.select2-container-disabled .select2-choice { 
+    &.select2-container-disabled .select2-choice {
       padding-top: 3px;
       .select2-arrow {
         background: none;
@@ -250,10 +250,9 @@
     padding: 7px 8px 7px 9px;
     border-top: 1px solid lighten(@grayLighter, 5%);
     border-bottom: 1px solid darken(@grayLighter, 5%);
-    .row-fluid {
+    > .row-fluid {
       position: relative;
       padding-right: 64px;
-      float: left;
       .box-sizing(border-box);
       &.massupdate {
         padding: 0;
@@ -281,8 +280,9 @@
       }
     }
     input[type="checkbox"] {
-      margin-bottom: inherit;
-      vertical-align: baseline;
+      margin: 0;
+      vertical-align: text-bottom;
+      display: inline-block;
     }
   }
   // containing divs for create filter
@@ -378,8 +378,8 @@
   label {
     padding-left: 16px;
     text-indent: -16px;
-    line-height: 16px;
-    margin: -3px 0 0;
+    line-height: 10px;
+    margin: 0;
   }
 }
 
@@ -467,12 +467,12 @@
     color: #76777a;
   }
   .search-filter {
-  .control-group {
-  background: none;
+    .control-group {
+      background: none;
+    }
+    .filter-view {
+      border: none;
+      .box-shadow(none);
+    }
   }
-  .filter-view {
-    border: none;
-    .box-shadow(none);
-  }
- }
 }

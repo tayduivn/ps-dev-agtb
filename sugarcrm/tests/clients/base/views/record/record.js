@@ -175,7 +175,7 @@ describe("Record View", function () {
 
         it("Should hide 4 editable fields", function () {
             var hiddenFields = 0;
-
+            view.hidePanel = true; //setting directly instead of using togglePlugin
             view.render();
             view.model.set({
                 name: 'Name',

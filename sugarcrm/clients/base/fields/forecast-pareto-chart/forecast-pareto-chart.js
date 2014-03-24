@@ -63,11 +63,14 @@
             this.preview_open = false;
             this.renderDashletContents();
         }, this);
-        // FIXME this event should be listened on the `default` layout instead of the global context (SC-2398).
-        app.controller.context.on('sidebar:state:changed', function(state) {
-            this.state = state;
-            this.renderDashletContents();
-        }, this);
+
+        var defaultLayout = this.closestComponent('sidebar');
+        if (defaultLayout) {
+            this.listenTo(defaultLayout, 'sidebar:state:changed', function(state) {
+                this.state = state;
+                this.renderDashletContents();
+            });
+        }
 
         this.model.on('change', function(model) {
             var changed = _.keys(model.changed);
@@ -126,8 +129,6 @@
             this.view.layout.off('dashlet:collapse', null, this);
             this.view.layout.context.off('dashboard:collapse:fire', null, this);
         }
-        // FIXME the listener should be on the `default` layout instead of the global context (SC-2398).
-        app.controller.context.off(null, null, this);
         app.events.off(null, null, this);
         this._super('unbindData');
     },

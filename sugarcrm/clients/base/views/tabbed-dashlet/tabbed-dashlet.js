@@ -90,7 +90,9 @@
         this.context = this.context.getChildContext({
             forceNew: true,
             model: this.context.parent && this.context.parent.get('model'),
-            collection: this.collection
+            collection: this.collection,
+            //FIXME: name is temporary - special case for LinkedModel - SC-2550
+            name: 'tabbed-dashlet'
         });
 
         this.context.set('parentModule', this.module);

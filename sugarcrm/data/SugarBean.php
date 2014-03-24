@@ -3244,7 +3244,8 @@ class SugarBean
             } else {
                 $bean = $this->getCleanCopy();
             }
-            $bean->fetched_row = $bean->populateFromRow($row);
+            //true parameter below tells populate to perform conversions on row data
+            $bean->fetched_row = $bean->populateFromRow($row, true);
             $beans[$bean->id] = $bean;
             $rawRows[$bean->id] = $row;
         }
@@ -3256,7 +3257,7 @@ class SugarBean
             }
         }
 
-        $this->call_custom_logic('after_fetch_query', array('beans' => $beans, 'fields' => $fields));
+        $this->call_custom_logic('after_fetch_query', array('beans' => $beans, 'fields' => $fields, 'rows' => $rawRows));
         
         if (!empty($options['returnRawRows'])) {
             $beans['_rows'] = $rawRows;
@@ -3275,6 +3276,7 @@ class SugarBean
      */
     function populateFromRow($row, $convert = false)
     {
+        global $locale;
         foreach($this->field_defs as $field=>$field_value)
         {
             if(isset($row[$field]))
@@ -3290,7 +3292,37 @@ class SugarBean
             } else {
                 $this->$field = '';
             }
+
+            // check if relate field refers field of "fullname" type
+            if (isset($field_value['type'], $field_value['module']) && $field_value['type'] == 'relate') {
+                $rel_bean = BeanFactory::getBean($field_value['module']);
+                if ($rel_bean) {
+                    $rname = isset($field_value['rname']) ? $field_value['rname'] : 'name';
+                    $rel_mod_defs = $rel_bean->field_defs;
+                    if (isset($rel_mod_defs[$rname])) {
+                        $rname_field_def = $rel_mod_defs[$rname];
+                        if (isset($rname_field_def['type']) && $rname_field_def['type'] == 'fullname') {
+                            $data = array();
+
+                            // if $rname of related module has "fullname" type, by this moment $row is supposed
+                            // to contain elements like rel_{this_field_name}_{name_format_field}
+                            // where {name_format_field} are names returned by Localization::getNameFormatFields()
+                            $name_format_fields = $locale->getNameFormatFields($field_value['module']);
+
+                            foreach ($name_format_fields as $name_field) {
+                                $alias = $this->getRelateAlias($field, $name_field);
+                                if (isset($row[$alias])) {
+                                    $data[$name_field] = $row[$alias];
+                                }
+                            }
+
+                            $this->$field = $locale->formatName($rel_bean, $data);
+                        }
+                    }
+                }
+            }
         }
+
         // TODO: add a vardef for my_favorite
         $this->my_favorite = false;
         if(!empty($row['my_favorite'])) {
@@ -4144,7 +4176,7 @@ class SugarBean
             //Custom relate field or relate fields built in module builder which have no link field associated.
             if ($data['type'] == 'relate' && (isset($data['custom_module']) || isset($data['ext2']))) {
                 $joinTableAlias = 'jt' . $jtcount;
-                $relateJoinInfo = $this->custom_fields->getRelateJoin($data, $joinTableAlias);
+                $relateJoinInfo = $this->custom_fields->getRelateJoin($data, $joinTableAlias, false);
                 $ret_array['select'] .= $relateJoinInfo['select'];
                 $ret_array['from'] .= $relateJoinInfo['from'];
                 //Replace any references to the relationship in the where clause with the new alias
@@ -4301,23 +4333,14 @@ class SugarBean
                     }
                     else
                     {
-                        if(isset($data['db_concat_fields']))
-                        {
-                            //BEGIN SUGARCRM flav=pro ONLY
-                            //rrs for teams we have to check the user's locale format to determine how to display the team name
-                            if($data['name'] == 'team_name'){
-                                global $current_user;
-                                if($current_user->showLastNameFirst()){
-                                    $data['db_concat_fields'] = array_reverse($data['db_concat_fields']);
-                                }
-                            }
-                            //END SUGARCRM flav=pro ONLY
-                            $ret_array['select'] .= ' , ' . $this->db->concat($params['join_table_alias'], $data['db_concat_fields']) . ' ' . $field;
+                        $relate_query = $rel_mod->getRelateFieldQuery($data, $params['join_table_alias']);
+                        if ($relate_query['select']) {
+                            $ret_array['select'] .= ', ' . $relate_query['select'];
                         }
-                        else
-                        {
-                            $ret_array['select'] .= ' , ' . $params['join_table_alias'] . '.' . $data['rname'] . ' ' . $field;
+                        if ($relate_query['join']) {
+                            $join['join'] .= ' ' . $relate_query['join'];
                         }
+
                         if(isset($data['additionalFields'])){
                             foreach($data['additionalFields'] as $k=>$v){
                                 if (!isset($fields[$v])) {
@@ -5325,7 +5348,7 @@ class SugarBean
     */
     function fill_in_relationship_fields()
     {
-        global $fill_in_rel_depth;
+        global $fill_in_rel_depth, $locale;
         if(empty($fill_in_rel_depth) || $fill_in_rel_depth < 0)
             $fill_in_rel_depth = 0;
 
@@ -5349,33 +5372,55 @@ class SugarBean
                     {
                        $this->fill_in_link_field($id_name, $field);
                     }
-                    if(!empty($this->$id_name) && isset($this->$name) && ( $this->object_name != $related_module || ( $this->object_name == $related_module && $this->$id_name != $this->id ))){
-                        $mod = BeanFactory::getBean($related_module, $this->$id_name
-                        //BEGIN SUGARCRM flav=pro ONLY
-                        , array("disable_row_level_security" => true)
-                        //END SUGARCRM flav=pro ONLY
-                        );
-                        if ($mod){
-                            if (!empty($field['rname'])) {
-                                $this->$name = $mod->$field['rname'];
-                            } else if (isset($mod->name)) {
-                                $this->$name = $mod->name;
+
+                    if (!empty($this->$id_name) && ($this->object_name != $related_module
+                        || ($this->object_name == $related_module && $this->$id_name != $this->id))) {
+                        $fields = isset($field['additionalFields']) ? $field['additionalFields'] : array();
+
+                        $is_full_name_relate = false;
+                        $rel_bean = BeanFactory::getBean($field['module']);
+                        $rname = 'name';
+                        if ($rel_bean) {
+                            if (isset($field['rname'])) {
+                                $rname = $field['rname'];
+                            }
+                            $rel_mod_defs = $rel_bean->field_defs;
+                            if (isset($rel_mod_defs[$rname])) {
+                                $rname_field_def = $rel_mod_defs[$rname];
+                                if (isset($rname_field_def['type']) && $rname_field_def['type'] == 'fullname') {
+                                    $is_full_name_relate = true;
+                                }
                             }
                         }
-                    }
-                    if(!empty($this->$id_name) && isset($this->$name))
-                    {
-                        if(!isset($field['additionalFields']))
-                           $field['additionalFields'] = array();
-                        if(!empty($field['rname']))
-                        {
-                            $field['additionalFields'][$field['rname']]= $name;
+
+                        $related_name_fields = array();
+                        if ($is_full_name_relate) {
+                            $name_format_fields = $locale->getNameFormatFields($rel_bean);
+
+                            // add fields like rel_{this_field_name}_{name_format_field} to $fields
+                            // that is about to be passed to SugarBean::getRelatedFields().
+                            // in this case, the latter will initialize properties
+                            // like rel_{this_field_name}_{name_format_field} in the bean
+                            foreach ($name_format_fields as $name_field) {
+                                $related_name_fields[$name_field] = $fields[$name_field]
+                                    = $this->getRelateAlias($name, $name_field);
+                            }
+                        } else {
+                            $fields[$rname] = $name;
                         }
-                        else
-                        {
-                            $field['additionalFields']['name']= $name;
+
+                        $this->getRelatedFields($related_module, $this->$id_name, $fields);
+
+                        if ($is_full_name_relate) {
+                            $data = array();
+                            foreach ($related_name_fields as $name_field => $alias) {
+                                if (isset($this->$alias)) {
+                                    $data[$name_field] = $this->$alias;
+                                }
+                            }
+
+                            $this->$name = $locale->formatName($rel_bean, $data);
                         }
-                        $this->getRelatedFields($related_module, $this->$id_name, $field['additionalFields']);
                     }
                 }
             }
@@ -6542,6 +6587,24 @@ class SugarBean
         }
         return false;
     }
+
+    /**
+     * Determine whether the given field is custom field
+     *
+     * @param string $field Field name
+     * @return bool
+     */
+    protected function is_custom_field($field)
+    {
+        if (!isset($this->field_defs[$field])) {
+            return false;
+        }
+
+        $field_def = $this->field_defs[$field];
+
+        return isset($field_def['custom_module']) || isset($field_def['ext2']);
+    }
+
     /**
     * Gets there where statement for checking if a user is an owner
     *
@@ -7341,5 +7404,85 @@ class SugarBean
     {
         return isset($this->field_defs['email_addresses']['type'])
             && $this->field_defs['email_addresses']['type'] == 'link';
+    }
+
+    /**
+     * Composes alias for related name field part
+     *
+     * @param string $field      Current bean field
+     * @param string $name_field Related bean field
+     *
+     * @return string
+     */
+    public function getRelateAlias($field, $name_field)
+    {
+        $alias = sprintf('rel_%s_%s', $field, $name_field);
+        $alias = $this->db->getValidDBName($alias, true, 'alias');
+
+        return $alias;
+    }
+
+    /**
+     * Composes SELECT statement for fetching data of a relate field
+     *
+     * @param array $field_def       Relate field definition
+     * @param string $joinTableAlias Alias for joined table
+     *
+     * @return string
+     */
+    public function getRelateFieldQuery($field_def, $joinTableAlias)
+    {
+        global $locale;
+
+        $name = $field_def['name'];
+        $rname = isset($field_def['rname']) ? $field_def['rname'] : 'name';
+
+        $joinCustomTableAlias = $joinTableAlias . '_cstm';
+
+        $fields = array();
+        $has_custom_fields = false;
+        if (isset($this->field_defs[$rname])) {
+            $rname_field_def = $this->field_defs[$rname];
+            if (isset($rname_field_def['type']) && $rname_field_def['type'] == 'fullname') {
+                $format_fields = $locale->getNameFormatFields($this);
+                foreach ($format_fields as $format_field) {
+                    $is_custom = $this->is_custom_field($format_field);
+                    if ($is_custom) {
+                        $joinAlias = $joinCustomTableAlias;
+                        $has_custom_fields = true;
+                    } else {
+                        $joinAlias = $joinTableAlias;
+                    }
+                    $alias = $this->getRelateAlias($name, $format_field);
+                    $fields[$alias] = $joinAlias . '.' . $format_field;
+                }
+            } elseif (isset($rname_field_def['db_concat_fields'])) {
+                $fields[$name] = $this->db->concat($joinTableAlias, $rname_field_def['db_concat_fields']);
+            } else {
+                $fields[$name] = $rname;
+                if ($joinTableAlias) {
+                    $fields[$name] = $joinTableAlias . '.' . $fields[$name];
+                }
+            }
+        }
+
+        $parts = array();
+        foreach ($fields as $alias => $field) {
+            $parts[] = $field . ' ' . $alias;
+        }
+
+        $select = implode(', ', $parts);
+
+        if ($has_custom_fields) {
+            $join = ' LEFT JOIN ' . $this->get_custom_table_name() . ' ' . $joinCustomTableAlias
+                . ' ON ' . $joinCustomTableAlias. '.id_c = ' . $joinTableAlias . '.id';
+        } else {
+            $join = '';
+        }
+
+        return array(
+            'select' => $select,
+            'join'   => $join,
+        );
     }
 }

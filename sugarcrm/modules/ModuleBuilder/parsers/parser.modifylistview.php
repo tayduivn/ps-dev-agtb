@@ -174,7 +174,8 @@ class ParserModifyListView extends ModuleBuilderParser
     }
 
 
-	function isValidField($key, $def) {
+    public function isValidField($key, array $def)
+    {
 	    //Allow fields that are studio visible
 		if (! empty ( $def [ 'studio' ] ) && $def [ 'studio' ] == 'visible')
 		  return true;

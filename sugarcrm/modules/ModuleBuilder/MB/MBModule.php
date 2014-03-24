@@ -1016,4 +1016,15 @@ class MBModule
         }
     }
 
+    /**
+     * Gets the sugar object template type for this module
+     * 
+     * @return string
+     */
+    public function getModuleType() 
+    {
+        // The last key in the template array it the type
+        return end(array_keys($this->config['templates']));
+    }
+
 }

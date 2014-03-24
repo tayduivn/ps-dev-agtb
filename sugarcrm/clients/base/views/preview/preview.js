@@ -301,8 +301,10 @@
      * Make sure the side pane is open.
      */
     openPreview: function() {
-        // FIXME this should be triggered on this layout instead of app.events (SC-2398).
-        app.controller.context.trigger('sidebar:toggle', true);
+        var defaultLayout = this.closestComponent('sidebar');
+        if (defaultLayout) {
+            defaultLayout.trigger('sidebar:toggle', true);
+        }
     },
 
     closePreview: function() {

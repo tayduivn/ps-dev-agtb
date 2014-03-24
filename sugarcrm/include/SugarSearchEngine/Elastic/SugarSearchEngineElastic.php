@@ -751,6 +751,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
             } else {
                 $qString = html_entity_decode($queryString, ENT_QUOTES);
+
+                // we need to escape slash for lucene query_string query
+                $qString = str_replace('/', '\\/', $qString);
+
                 $queryObj = new \Elastica\Query\QueryString($qString);
                 $queryObj->setAnalyzeWildcard(true);
                 $queryObj->setAutoGeneratePhraseQueries(false);

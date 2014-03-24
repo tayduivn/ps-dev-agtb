@@ -1,4 +1,4 @@
-describe('BaseDefaultLayout', function() {
+describe('Base.Layout.Default', function() {
     var layout, app, def;
 
     beforeEach(function() {
@@ -35,14 +35,8 @@ describe('BaseDefaultLayout', function() {
         });
 
         it('should toggle side pane when "sidebar:toggle" is triggered', function() {
-            app.controller.context.trigger('sidebar:toggle');
+            layout.trigger('sidebar:toggle');
             expect(toggleSidePaneStub).toHaveBeenCalled();
-        });
-
-        it('should respond when "sidebar:state:ask" is triggered', function() {
-            var triggerSpy = sinon.collection.spy(app.controller.context, 'trigger');
-            app.controller.context.trigger('sidebar:state:ask');
-            expect(triggerSpy).toHaveBeenCalledWith('sidebar:state:respond');
         });
     });
 
@@ -137,17 +131,17 @@ describe('BaseDefaultLayout', function() {
 
 
     describe('_toggleVisibility', function() {
-        var resizeStub, contextStub;
+        var resizeStub, triggerStub;
 
         beforeEach(function() {
             resizeStub = sinon.collection.stub($.fn, 'trigger');
-            contextStub = sinon.collection.stub(app.controller.context, 'trigger');
+            triggerStub = sinon.collection.stub(layout, 'trigger');
         });
 
         it('should call window "resize"', function() {
             layout._toggleVisibility(true);
             expect(resizeStub).toHaveBeenCalledWith('resize');
-            expect(contextStub).toHaveBeenCalledWith('sidebar:state:changed');
+            expect(triggerStub).toHaveBeenCalledWith('sidebar:state:changed');
         });
     });
 

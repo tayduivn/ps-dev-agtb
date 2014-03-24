@@ -54,12 +54,14 @@
             .transition().duration(500)
             .call(this.chart);
 
-        // FIXME this event should be listened on the `default` layout instead of the global context (SC-2398).
-        app.controller.context.on('sidebar:state:changed', function(state) {
-            if (state === 'open' && this.chart.update) {
-                this.chart.update();
-            }
-        }, this);
+        var defaultLayout = this.closestComponent('sidebar');
+        if (defaultLayout) {
+            this.listenTo(defaultLayout, 'sidebar:state:changed', function(state) {
+                if (state === 'open' && this.chart.update) {
+                    this.chart.update();
+                }
+            });
+        }
         app.events.on('preview:close', function() {
             if(this.chart && this.chart.update) {
                 this.chart.update();
@@ -127,15 +129,6 @@
             },
             complete: (options) ? options.complete : null
         });
-    },
-
-    /**
-     * @inheritDoc
-     */
-    unbind: function() {
-        // FIXME the events should be happening on the `default` layout instead of the global context (SC-2398).
-        app.controller.context.off(null, null, this);
-        this._super('unbind');
     },
 
     /**

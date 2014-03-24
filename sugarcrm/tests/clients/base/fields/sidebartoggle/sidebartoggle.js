@@ -1,5 +1,5 @@
-describe('Sidebar Toggle', function() {
-    var field, app;
+describe('Base.Field.Sidebartoggle', function() {
+    var defaultLayout, field, app;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -12,7 +12,10 @@ describe('Sidebar Toggle', function() {
         SugarTest.loadComponent('base', 'field', 'sidebartoggle');
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
+        defaultLayout = new Backbone.View();
+        defaultLayout.isSidePaneVisible = $.noop;
         field = SugarTest.createField('base', null, 'sidebartoggle', 'record', def);
+        sinon.collection.stub(field, 'closestComponent').withArgs('sidebar').returns(defaultLayout);
     });
     afterEach(function() {
         sinon.collection.restore();
@@ -23,10 +26,10 @@ describe('Sidebar Toggle', function() {
         Handlebars.templates = {};
     });
 
-    it('should trigger "sidebar:state:ask" to get the current open/close state', function() {
-        var contextStub = sinon.collection.stub(app.controller.context, 'trigger');
-        field.initialize({});
-        expect(contextStub).toHaveBeenCalledWith('sidebar:state:ask');
+    it('should call isSidePaneVisible on default layout to get the current open/close state', function() {
+        var isSidePaneVisibleStub = sinon.collection.stub(defaultLayout, 'isSidePaneVisible');
+        field.initialize(field.options);
+        expect(isSidePaneVisibleStub).toHaveBeenCalled();
     });
 
     describe('listeners', function() {
@@ -34,26 +37,20 @@ describe('Sidebar Toggle', function() {
 
         beforeEach(function() {
             toggleStateStub = sinon.collection.stub(field, 'toggleState');
-            app.controller.context.off();
-            field.initialize({});
-        });
-
-        it('should listen for "sidebar:state:respond" event', function() {
-            app.controller.context.trigger('sidebar:state:respond');
-            expect(toggleStateStub).toHaveBeenCalled();
+            field.initialize(field.options);
         });
 
         it('should listen for "sidebar:state:changed" event', function() {
-            app.controller.context.trigger('sidebar:state:changed');
+            defaultLayout.trigger('sidebar:state:changed');
             expect(toggleStateStub).toHaveBeenCalled();
         });
     });
 
     describe('toggle', function() {
         it('should trigger "sidebar:toggle" event', function() {
-            var contextStub = sinon.collection.stub(app.controller.context, 'trigger');
+            var triggerStub = sinon.collection.stub(defaultLayout, 'trigger');
             field.toggle();
-            expect(contextStub).toHaveBeenCalledWith('sidebar:toggle');
+            expect(triggerStub).toHaveBeenCalledWith('sidebar:toggle');
         });
     });
 

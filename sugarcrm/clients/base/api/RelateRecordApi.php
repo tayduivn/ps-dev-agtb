@@ -288,10 +288,24 @@ class RelateRecordApi extends ModuleApi {
             throw new SugarApiExceptionNotFound('Could not find the related bean');
         }
 
+        // updateBean may remove the relationship. see PAT-337 for details
         $id = $this->updateBean($relatedBean, $api, $args);
 
-        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
-        $primaryBean->$linkName->add(array($relatedBean),$relatedData);
+        $relatedArray = array();
+        $relObj = $primaryBean->$linkName->getRelationshipObject();
+        // If the relationship still exists, we need to save changes to relationship fields
+        if ($relObj->relationship_exists($primaryBean, $relatedBean)) {
+            $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
+            // This function add() is actually 'addOrUpdate'. Here we use it for update only.
+            $primaryBean->$linkName->add(array($relatedBean),$relatedData);
+        }
+        // If the relationship has been removed, we don't need to update the relationship fields
+        else {
+            // Prepare the ralated bean data for formatNearAndFarRecords() below
+            $relatedArray = $this->formatBean($api, $args, $relatedBean);
+            // This record is unlinked to primary bean
+            $relatedArray['_unlinked'] = true;
+        }
         
         //Clean up any hanging related records.
         SugarRelationship::resaveRelatedBeans();
@@ -299,7 +313,7 @@ class RelateRecordApi extends ModuleApi {
         // This forces a re-retrieval of the bean from the database
         BeanFactory::unregisterBean($relatedBean);
 
-        return $this->formatNearAndFarRecords($api,$args,$primaryBean);
+        return $this->formatNearAndFarRecords($api,$args,$primaryBean,$relatedArray);
     }
 
     function deleteRelatedLink($api, $args) {
