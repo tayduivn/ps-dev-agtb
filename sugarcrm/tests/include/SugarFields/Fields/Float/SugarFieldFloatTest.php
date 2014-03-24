@@ -151,7 +151,7 @@ class SugarFieldFloatTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
-    public function dataProviderFixForFilter()
+    public function dataProviderFixForForFloats()
     {
         return array(
             array('$equals', 10.69, '='),
@@ -171,7 +171,7 @@ class SugarFieldFloatTest extends Sugar_PHPUnit_Framework_TestCase
      * @param Number $value             The Value we are looking for
      * @param String $query_op          The value of $op in the query
      */
-    public function testFixForFilter($op, $value, $query_op)
+    public function testFixForFilterForFloats($op, $value, $query_op)
     {
         $bean = BeanFactory::getBean('RevenueLineItems');
 
@@ -197,6 +197,46 @@ class SugarFieldFloatTest extends Sugar_PHPUnit_Framework_TestCase
                 $q->compileSql()
             );
         }
+    }
+
+    public function dataProviderFixForWholeNumbers()
+    {
+        return array(
+            array('$equals', 10),
+            array('$not_equals', 10),
+            array('$between', array(10, 100)),
+            array('$lt', 10),
+            array('$lte', 10),
+            array('$gt', 10),
+            array('$gte', 10),
+        );
+    }
+
+    /**
+     *
+     * @dataProvider dataProviderFixForFilter
+     * @param String $op                The Filer Operation
+     * @param Number $value             The Value we are looking for
+     */
+    public function testFixForFilterForWholeNumbers($op, $value)
+    {
+        $bean = BeanFactory::getBean('RevenueLineItems');
+
+        /* @var $where SugarQuery_Builder_Where */
+        $where = $this->getMockBuilder('SugarQuery_Builder_Where')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        /* @var $bean RevenueLineItem */
+        $q = new SugarQuery();
+        $q->from($bean);
+
+        $field = new SugarFieldFloat('float');
+
+        $ret = $field->fixForFilter($value, 'unit_test', $bean, $q, $where, $op);
+
+        // should always return true
+        $this->assertTrue($ret);
     }
 
 }
