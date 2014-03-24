@@ -19,7 +19,10 @@ class KBSContentsApiHelper extends SugarBeanApiHelper {
     {
         if ($this->api->action == 'view' && !empty($this->api->getRequest()->args['viewed'])) {
             $bean->viewcount = $bean->viewcount + 1;
-            $bean->save();
+            $query = "UPDATE {$bean->table_name}
+                set viewcount = {$bean->viewcount}
+                where id = {$bean->db->quoted($bean->id)}";
+            $bean->db->query($query);
         }
         $result = parent::formatForApi($bean, $fieldList, $options);
         $bean->load_relationship('notes');
