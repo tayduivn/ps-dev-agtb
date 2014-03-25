@@ -535,7 +535,7 @@ class ForecastManagerWorksheet extends SugarBean
             $amount = $row['amount'];
         }
 
-        return $amount;
+        return (empty($amount)) ? 0 : $amount;
     }
 
     /**
@@ -696,21 +696,31 @@ class ForecastManagerWorksheet extends SugarBean
     {
         global $current_user;
 
+        $isCurrentUser = ($current_user->id === $userId);
         $reporteeTotal = $this->getQuotaSum($userId, $timeperiodId);
         $managerQuota = $this->getManagerQuota($userId, $timeperiodId);
         $managerAmount = (isset($managerQuota['amount'])) ? $managerQuota['amount'] : '0';
         $newTotal = SugarMath::init($managerAmount, 6)->sub($reporteeTotal)->result();
         $quota = BeanFactory::getBean('Quotas', isset($managerQuota['id']) ? $managerQuota['id'] : null);
-        $directAmount = isset($quota->amount) ? $quota->amount : '0';
+        $quotaAmount = isset($quota->amount) ? $quota->amount : '0';
+        /**
+         * if this is the current user, we need to use the manager assigned amount to figure out if we need to adjust
+         * their quota to make sure that the reporteeTotal + the current assigned Quota is > the manager assigned
+         * quota, if it's not we need to adjust the mid level managers quota to make up the gap.
+         */
+        if ($isCurrentUser) {
+            $quotaAmount = $managerAmount;
+        }
 
-        /* If the newTotal - manager direct amount is < 0, we want to leave the direct amount alone
-         * (making newTotal the direct amount), unless this is a top level manager.  In that case,
-         * just return the direct amount
-        **/
-        if (SugarMath::init($newTotal, 6)->sub($directAmount)->result() < 0 ||
-            (($current_user->id == $userId) && empty($current_user->reports_to_id))
-        ) {
-            $newTotal = $directAmount;
+        /**
+         * If the reporteeTotal + the current assigned direct amount is greater than quotaAmount (see above),
+         * then we should just return the current assigned direct quota amount,
+         *
+         * this is also true for top level managers
+         */
+        if (SugarMath::init($reporteeTotal, 6)->add($quota->amount)->result() > $quotaAmount ||
+            ($isCurrentUser && empty($current_user->reports_to_id))) {
+            return $quota->amount;
         }
 
         // if a user is not a manager, then just take the value that the manager assigned to them as the rollup and use
@@ -720,7 +730,7 @@ class ForecastManagerWorksheet extends SugarBean
         }
 
         //save Manager quota
-        if ($newTotal != $directAmount) {
+        if ($newTotal != $quota->amount) {
             $quota->user_id = $userId;
             $quota->timeperiod_id = $timeperiodId;
             $quota->quota_type = 'Direct';
