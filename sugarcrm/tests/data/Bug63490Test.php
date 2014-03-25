@@ -46,19 +46,42 @@ class Bug63490Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $raw
+     * @param string $input
      * @param string $expected
      * @param bool $suppress_table_name
+     * @param array $field_map
      *
-     * @dataProvider provider
+     * @dataProvider correctProvider
      */
-    public function testProcessOrderBy($raw, $expected, $suppress_table_name = false)
-    {
-        $actual = self::$bean->process_order_by($raw, null, $suppress_table_name);
-        $this->assertEquals($expected, $actual);
+    public function testCorrectColumns(
+        $input,
+        $expected,
+        $suppress_table_name = false,
+        $field_map = array()
+    ) {
+        $actual = self::$bean->process_order_by(
+            $input,
+            null,
+            $suppress_table_name,
+            $field_map
+        );
+        $this->assertContains($expected, $actual);
+        $this->assertContains('bean.id', $actual);
     }
 
-    public static function provider()
+    /**
+     * @param string $input
+     *
+     * @dataProvider incorrectProvider
+     */
+    public function testIncorrectColumns($input)
+    {
+        $actual = self::$bean->process_order_by($input);
+        $this->assertNotContains($input, $actual);
+        $this->assertContains('bean.id', $actual);
+    }
+
+    public static function correctProvider()
     {
         return array(
             // existing field is accepted
@@ -73,14 +96,24 @@ class Bug63490Test extends Sugar_PHPUnit_Framework_TestCase
             array('name somehow', 'bean.name'),
             // everything after the first white space considered order
             array('name desc asc', 'bean.name'),
-            // non-existing field is removed
-            array('title', ''),
-            // non-existing field is removed together with order
-            array('title asc', ''),
-            // field name containing table name is removed
-            array('bean.name', ''),
             // $suppress_table_name usage
             array('name', 'name', true),
+            // $relate_field_map usage
+            array('name desc', 'first_name desc, last_name desc', false, array(
+                'name' => array('first_name', 'last_name'),
+            )),
+        );
+    }
+
+    public static function incorrectProvider()
+    {
+        return array(
+            // non-existing field is removed
+            array('title'),
+            // non-existing field is removed together with order
+            array('title asc'),
+            // field name containing table name is removed
+            array('bean.name'),
         );
     }
 }
