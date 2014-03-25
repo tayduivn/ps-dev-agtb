@@ -142,4 +142,79 @@ describe("Forecasts.Base.Field.Datapoint", function() {
             expect(field._getArrowIconColorClass(99.90, 100.00)).toEqual(' icon-arrow-down font-red');
         });
     });
+
+    describe('_onCommitCollectionReset after _onWorksheetTotals', function() {
+        var sandbox = sinon.sandbox.create(), renderSpy;
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                'best_case',
+                'datapoint',
+                'list',
+                fieldDef,
+                moduleName,
+                null,
+                null,
+                true
+            );
+            renderSpy = sandbox.spy(field, 'render');
+        });
+
+        afterEach(function() {
+            sandbox.restore();
+        });
+
+        it('should not set total to 0 when collection is empty', function() {
+            field._onWorksheetTotals({
+                best_adjusted: '500.00'
+            }, 'manager');
+            field._onCommitCollectionReset(new Backbone.Collection());
+
+            expect(renderSpy).toHaveBeenCalled(1);
+            expect(field.total).toEqual('500.00');
+        });
+        it('should set initial_total when collection is not empty', function() {
+            field._onWorksheetTotals({
+                best_adjusted: '500.00'
+            }, 'manager');
+            field._onCommitCollectionReset(new Backbone.Collection([
+                {best_case: '500.00'}
+            ]));
+
+            expect(renderSpy).toHaveBeenCalled(2);
+            expect(field.total).toEqual('500.00');
+            expect(field.initial_total).toEqual('500.00');
+        });
+    });
+
+    describe('_onWorksheetCommit', function() {
+       var sandbox = sinon.sandbox.create(), renderSpy;
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                'best_case',
+                'datapoint',
+                'list',
+                fieldDef,
+                moduleName,
+                null,
+                null,
+                true
+            );
+            renderSpy = sandbox.spy(field, 'render');
+        });
+
+        afterEach(function() {
+            sandbox.restore();
+        });
+
+        it('should set total and initial total to be equal and arrow to be empty', function() {
+            field._onWorksheetCommit('manager', {
+                best_adjusted: '500.00'
+            });
+            expect(field.total).toEqual(field.initial_total);
+            expect(field.arrow).toEqual('');
+            expect(renderSpy).toHaveBeenCalled(1);
+        });
+    });
 });
