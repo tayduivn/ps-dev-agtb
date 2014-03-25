@@ -8,8 +8,9 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  */
+
 
 /**
  * @class BaseDashboardLayout
@@ -17,7 +18,7 @@
  *
  * The outer layout of the dashboard.
  * This layout contains the header view and wraps the daslet-main layout.
- * The layouts for each dashboard are stored in the dashboard endpoint (rest/v10/Dashboards/{id})
+ * The layouts for each dashboard are stored in the dashboard endpoint (rest/v10/Dashboards/<id>)
  *
  */
 ({
@@ -32,12 +33,12 @@
     error: {
         //Dashboard is a special case where a 404 here shouldn't break the page,
         //it should just send us back to the default homepage
-        handleNotFoundError : function(error) {
-            app.router.redirect("#Home");
+        handleNotFoundError: function(error) {
+            app.router.redirect('#Home');
             //Prevent the default error handler
             return false;
         },
-        handleValidationError : function(error) {
+        handleValidationError: function(error) {
             return false;
         }
     },
@@ -45,17 +46,17 @@
     /**
      * {@inheritdoc}
      */
-    initialize: function (options) {
+    initialize: function(options) {
         var context = options.context,
-            module = context.parent && context.parent.get('module') || context.get("module");
+            module = context.parent && context.parent.get('module') || context.get('module');
 
-        if (options.meta && options.meta.method && options.meta.method === 'record' && !context.get("modelId")) {
-            context.set("create", true);
+        if (options.meta && options.meta.method && options.meta.method === 'record' && !context.get('modelId')) {
+            context.set('create', true);
         }
 
         var model = this._getNewDashboardObject('model', context);
-        if (context.get("modelId")) {
-            model.set("id", context.get("modelId"), {silent: true});
+        if (context.get('modelId')) {
+            model.set('id', context.get('modelId'), {silent: true});
         }
         context.set({
             model: model,
@@ -64,11 +65,11 @@
 
         this._super('initialize', [options]);
 
-        this.model.on("setMode", function (mode) {
-            if (mode === "edit" || mode === "create") {
-                this.$(".dashboard").addClass("edit");
+        this.model.on('setMode', function(mode) {
+            if (mode === 'edit' || mode === 'create') {
+                this.$('.dashboard').addClass('edit');
             } else {
-                this.$(".dashboard").removeClass("edit");
+                this.$('.dashboard').removeClass('edit');
             }
         }, this);
 
@@ -145,11 +146,12 @@
     /**
      * {@inheritdoc}
      */
-    loadData: function (options, setFields) {
+    loadData: function(options, setFields) {
         if (this.context.parent && !this.context.parent.isDataFetched()) {
-            var parent = this.context.parent.get("modelId") ? this.context.parent.get("model") : this.context.parent.get("collection");
+            var parent = this.context.parent.get('modelId') ?
+                this.context.parent.get('model') : this.context.parent.get('collection');
 
-            parent.once("sync", function () {
+            parent.once('sync', function() {
                 this._super('loadData', [options, setFields]);
             }, this);
         } else {
@@ -172,26 +174,26 @@
     },
 
     /**
-     * Places only components that include the Dashlet plugin and places them in the "main-pane" div of
+     * Places only components that include the Dashlet plugin and places them in the 'main-pane' div of
      * the dashlet layout.
-     * @param component {app.view.Component}
+     * @param {app.view.Component} component
      * @private
      */
-    _placeComponent: function (component) {
-        var dashboardEl = this.$("[data-dashboard]"),
-            css = this.context.get("create") ? " edit" : "";
+    _placeComponent: function(component) {
+        var dashboardEl = this.$('[data-dashboard]'),
+            css = this.context.get('create') ? ' edit' : '';
         if (dashboardEl.length === 0) {
-            dashboardEl = $("<div></div>").attr({
+            dashboardEl = $('<div></div>').attr({
                 'class': 'cols row-fluid'
             });
             this.$el.append(
-                $("<div></div>")
+                $('<div></div>')
                     .addClass('dashboard' + css)
                     .attr({'data-dashboard': 'true'})
                     .append(dashboardEl)
             );
         } else {
-            dashboardEl = dashboardEl.children(".row-fluid");
+            dashboardEl = dashboardEl.children('.row-fluid');
         }
         dashboardEl.append(component.el);
     },
@@ -200,10 +202,10 @@
      * If current context doesn't contain dashboard model id,
      * it will trigger set default dashboard to create default metadata
      */
-    bindDataChange: function () {
-        var modelId = this.context.get("modelId");
-        if (!(modelId && this.context.get("create")) && this.collection) {
-            this.collection.on("reset", this.setDefaultDashboard, this);
+    bindDataChange: function() {
+        var modelId = this.context.get('modelId');
+        if (!(modelId && this.context.get('create')) && this.collection) {
+            this.collection.on('reset', this.setDefaultDashboard, this);
         }
     },
 
@@ -224,11 +226,11 @@
         }
         var lastVisitedStateKey = this.getLastStateKey(),
             lastViewed = app.user.lastState.get(lastVisitedStateKey),
-            hasHelpOnly = (this.collection.models.length == 1
-                && _.first(this.collection.models).get('dashboard_type') == 'help-dashboard'),
+            hasHelpOnly = (this.collection.models.length == 1 &&
+                _.first(this.collection.models).get('dashboard_type') === 'help-dashboard'),
             helpLastShown = (hasHelpOnly && lastViewed === _.first(this.collection.models).get('id'));
 
-        if(hasHelpOnly && !helpLastShown) {
+        if (hasHelpOnly && !helpLastShown) {
             // If the collection contains exactly one model that is a help dashboard,
             // and the user saw the help dashboard last and chose to hide it, show the empty template
             this._renderEmptyTemplate();
@@ -236,12 +238,12 @@
             var currentModule = this.context.get('module'),
                 model;
 
-            if(currentModule !== 'Home') {
+            if (currentModule !== 'Home') {
                 model = _.first(this.collection.models);
             } else {
                 // get the first model that is not a help-dashboard
                 model = this.collection.find(function(dash) {
-                    return dash.get('dashboard_type') === 'dashboard'
+                    return dash.get('dashboard_type') === 'dashboard';
                 });
             }
 
@@ -266,38 +268,32 @@
         } else {
             var _initDashboard = this._getInitialDashboardMetadata();
 
-            if(_initDashboard && !_.isEmpty(_initDashboard.metadata)) {
+            if (_initDashboard && !_.isEmpty(_initDashboard.metadata)) {
                 // Drill-down to the dashlet level to check permissions for that module.
                 _.each(_initDashboard.metadata['components'], function(component, component_key) {
                     _.each(component['rows'], function(row, row_key) {
                         // Loop the cells checking access, rebuilding the cell array to only contain permitted dashlets.
-                        _initDashboard.metadata['components'][component_key]['rows'][row_key] = _.filter(row, function(cell){
-                            var module = (cell.context && cell.context.module) ? cell.context.module : this.module;
-
-                            if(!app.acl.hasAccess('access', module)) {
-                                return false;
-                            }
-
-                            return true;
-                        });
+                        _initDashboard.metadata['components'][component_key]['rows'][row_key] =
+                            _.filter(row, function(cell) {
+                                var module = (cell.context && cell.context.module) ? cell.context.module : this.module;
+                                return (!app.acl.hasAccess('access', module));
+                            });
                     }, this);
 
-                    // Now that we've processed all the rows in this component, rebuild the array to only have rows with dashlets.
-                    _initDashboard.metadata['components'][component_key]['rows'] = _.filter(_initDashboard.metadata['components'][component_key]['rows'], function(row){
-                        if(row.length > 0) {
-                            return true;
-                        }
-
-                        return false;
-                    });
+                    // Now that we've processed all the rows in this component,
+                    // rebuild the array to only have rows with dashlets.
+                    _initDashboard.metadata['components'][component_key]['rows'] =
+                        _.filter(_initDashboard.metadata['components'][component_key]['rows'], function(row) {
+                            return (row.length > 0);
+                        });
                 }, this);
             }
-            
+
             _.each(_initDashboard, function(dash) {
                 var model = this._getNewDashboardObject('model', this.context);
                 model.set(dash);
-                if (this.context.get("modelId")) {
-                    model.set("id", this.context.get("modelId"), {silent: true});
+                if (this.context.get('modelId')) {
+                    model.set('id', this.context.get('modelId'), {silent: true});
                 }
                 // make sure that the model actually has some metadata
                 if (!_.isUndefined(model.get('metadata'))) {
@@ -374,10 +370,10 @@
         if (hasParentContext && hasModelId) {
             // we are on a module and we have an dashboard id
             this._navigateLayout(dashboard.get('id'));
-        } else if(hasParentContext && !hasModelId) {
+        } else if (hasParentContext && !hasModelId) {
             // we are on a module but we don't have a dashboard id
             this._navigateLayout('list');
-        } else if(!hasParentContext && hasModelId) {
+        } else if (!hasParentContext && hasModelId) {
             // we on the Home module and we have a dashboard id
             app.navigate(this.context, dashboard);
         } else {
@@ -392,13 +388,13 @@
      * if it did, we need to prompt and make sure they want to continue or cancel.
      *
      * @param {String} dashboard        What dashboard do we want to display
-     * @returns {Boolean}
+     * @return {Boolean}
      * @private
      */
     _navigateLayout: function(dashboard) {
         var onConfirm = _.bind(function() {
-            this.navigateLayout(dashboard)
-        }, this),
+                this.navigateLayout(dashboard);
+            }, this),
             headerpane = this.getComponent('dashboard-headerpane');
 
         // if we have a headerpane and it was changed then run the warnUnsavedChanges method
@@ -423,9 +419,9 @@
      * <pre><code>dashboard_type</code></pre> member to the context of the dashboard.
      * <pre><code>dashboard_type</code></pre> gets used in dashletselect to filter dashlets
      *
-     * @param id {String} - dashboard id
+     * @param {String} id dashboard id
      */
-    navigateLayout:function (id) {
+    navigateLayout: function(id) {
         var layout = this.layout,
             lastVisitedStateKey = this.getLastStateKey();
         this.dispose();
@@ -478,17 +474,17 @@
     unbindData: function() {
         var model, collection;
         if (this.collection) {
-            this.collection.off("reset", this.setDefaultDashboard, this);
+            this.collection.off('reset', this.setDefaultDashboard, this);
         }
         if (this.context.parent) {
-            model = this.context.parent.get("model");
-            collection = this.context.parent.get("collection");
+            model = this.context.parent.get('model');
+            collection = this.context.parent.get('collection');
 
             if (model) {
-                model.off("sync", null, this);
+                model.off('sync', null, this);
             }
             if (collection) {
-                collection.off("sync", null, this);
+                collection.off('sync', null, this);
             }
         }
 
@@ -499,19 +495,20 @@
      * Returns a Dashboard Model or Dashboard Collection based on modelOrCollection
      *
      * @param {String} modelOrCollection The return type, 'model' or 'collection'
-     * @param context
+     * @param {Object} context
      * @return {Bean|BeanCollection}
      * @private
      */
     _getNewDashboardObject: function(modelOrCollection, context) {
         var obj,
             ctx = context && context.parent || context,
-            module = ctx.get("module") || context.get("module"),
-            layoutName = ctx.get("layout") || '',
-            sync = function (method, model, options) {
+            module = ctx.get('module') || context.get('module'),
+            layoutName = ctx.get('layout') || '',
+            sync = function(method, model, options) {
                 options = app.data.parseOptionsForSync(method, model, options);
                 var callbacks = app.data.getSyncCallbacks(method, model, options),
-                    path = (this.dashboardModule === 'Home' || model.id) ? this.apiModule : this.apiModule + '/' + this.dashboardModule;
+                    path = (this.dashboardModule === 'Home' || model.id) ?
+                                this.apiModule : this.apiModule + '/' + this.dashboardModule;
                 if (method === 'read') {
                     options.params.view_name = layoutName;
                 }
@@ -521,7 +518,7 @@
         if (module === 'Home') {
             layoutName = '';
         }
-        switch(modelOrCollection) {
+        switch (modelOrCollection) {
             case 'model':
                 obj = this._getNewDashboardModel(module, layoutName, sync);
                 break;
@@ -632,7 +629,7 @@
     /**
      * {@inheritdoc}
      */
-    _dispose: function () {
+    _dispose: function() {
         // always trigger the help button off
         app.events.trigger('app:help:hidden');
 
