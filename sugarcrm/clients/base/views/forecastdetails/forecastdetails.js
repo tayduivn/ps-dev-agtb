@@ -155,7 +155,7 @@
      * {@inheritdoc}
      */
     initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
 
         this.currentModule = app.controller.context.get("module");
 
@@ -884,7 +884,12 @@
      */
     isManagerView: function () {
         var isMgrView = false;
-        if(this.selectedUser.is_manager == true
+        if (this.currentModule == 'Forecasts') {
+            // Forecasts has a more dynamic state, so make sure we check which worksheet is showing now
+            if (this.context && this.context.parent && this.context.parent.has('model')) {
+                isMgrView = this.context.parent.get('model').get('forecastType') == 'Rollup';
+            }
+        } else if(this.selectedUser.is_manager == true
             && (this.selectedUser.showOpps == undefined || this.selectedUser.showOpps === false))
         {
             isMgrView = true;

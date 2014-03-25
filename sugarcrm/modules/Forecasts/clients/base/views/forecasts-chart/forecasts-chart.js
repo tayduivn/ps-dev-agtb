@@ -51,10 +51,12 @@
         this._super('initialize', [options]);
         if (!this.meta.config) {
             var ctx = this.context.parent,
-                user = ctx.get('selectedUser') || app.user.toJSON();
+                user = ctx.get('selectedUser') || app.user.toJSON(),
+                showMgr = ctx.get('model').get('forecastType') == 'Rollup';
+
             this.values.set({
                 user_id: user.id,
-                display_manager: user.is_manager,
+                display_manager: showMgr,
                 show_target_quota: (user.is_manager && !user.is_top_level_manager),
                 ranges: ctx.get('selectedRanges') || ['include'],
                 timeperiod_id: ctx.get('selectedTimePeriod'),
@@ -371,7 +373,7 @@
         var ctx = this.context.parent;
 
         ctx.on('change:selectedUser', function(context, user) {
-            var displayMgr = (user.showOpps === false && user.is_manager === true),
+            var displayMgr = ctx.get('model').get('forecastType') == 'Rollup',
                 showTargetQuota = (displayMgr && !user.is_top_level_manager);
             this.values.set({
                 user_id: user.id,

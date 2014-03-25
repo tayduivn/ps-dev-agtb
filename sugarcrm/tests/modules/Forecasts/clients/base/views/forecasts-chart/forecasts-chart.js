@@ -27,9 +27,12 @@ describe('Forecasts.Base.Views.ForecastsChart', function() {
 
         context = app.context.getContext();
         context.parent = new Backbone.Model();
-        context.parent.set('selectedUser', {id: 'test_user', is_manager: false});
-        context.parent.set('selectedTimePeriod', 'test_timeperiod');
-        context.parent.set('module', 'Forecasts');
+        context.parent.set({
+            selectedUser: {id: 'test_user', is_manager: false},
+            selectedTimePeriod: 'test_timeperiod',
+            module: 'Forecasts',
+            model: new Backbone.Model()
+        });
         context.parent.children = [];
 
         getViewStub = sandbox.stub(app.metadata, 'getView', function() {
