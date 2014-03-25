@@ -13,9 +13,18 @@
  */
 
 $mod_strings = array (
-    'LBL_MODULE_NAME' => 'KBContents',
-    'LBL_MODULE_NAME_SINGULAR' => 'KBContent',
-    'LBL_MODULE_TITLE' => 'KBContent',
+    'LBL_MODULE_NAME' => 'Knowledge Base',
+    'LBL_MODULE_NAME_SINGULAR' => 'KBDocument',
+    'LBL_MODULE_TITLE' => 'Knowledge Base Article',
+    'LNK_NEW_ARTICLE' => 'Create Article',
+    'LBL_LIST_ARTICLES' => 'View Articles',
+    'LBL_KNOWLEDGE_BASE_ADMIN_MENU' => 'Administration',
+    'LBL_EDIT_LANGUAGES' => 'Available languages',
+    'LBL_ADMIN_LABEL_LANGUAGES' => 'Edit languages',
+    'LBL_CONFIG_PAGE' => 'Knowledge Base Settings',
+    'LBL_SET_ITEM_PRIMARY' => 'Set Value as Primary',
+    'LBL_ITEM_REMOVE' => 'Remove Item',
+    'LBL_ITEM_ADD' => 'Add Item',
     'LBL_MODULE_ID'=> 'KBContents',
     'LBL_DOCUMENT_REVISION_ID' => 'Revision ID',
     'LBL_NUMBER' => 'Number',

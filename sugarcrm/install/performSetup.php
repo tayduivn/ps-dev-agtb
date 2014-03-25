@@ -629,6 +629,7 @@ FP;
     $enabled_tabs[] = 'Home';
 
     $enabled_tabs[] = 'Accounts';
+    $enabled_tabs[] = 'KBSContents';
     $enabled_tabs[] = 'Contacts';
     $enabled_tabs[] = 'Opportunities';
     $enabled_tabs[] = 'Leads';
