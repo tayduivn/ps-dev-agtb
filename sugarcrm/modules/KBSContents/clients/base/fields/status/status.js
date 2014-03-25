@@ -26,11 +26,12 @@
      * @property {Object}
      * @protected
      */
-    _statusColor: {
-        'draft' : 'gray',
-        'expired' : 'red',
-        'in-review': 'yellow',
-        'published': 'green'
+    _statusClass: {
+        'draft' : 'st-draft',
+        'expired' : 'st-expired',
+        'in-review': 'st-review',
+        'published-in': 'st-pub-in',
+        'published-ex': 'st-pub-ex'
     },
 
     /**
@@ -44,7 +45,7 @@
         var status = this.model.get(this.name),
             options = app.lang.getAppListStrings(this.def.options);
 
-        this.statusColor = this._statusColor[status] || this._statusColor['draft'];
+        this.statusClass = this._statusClass[status] || this._statusClass['draft'];
         this.statusLabel = options[status] || status;
 
         this._super('_render');

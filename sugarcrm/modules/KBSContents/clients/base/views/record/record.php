@@ -22,7 +22,7 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                 'name',
                 'status' => array(
                     'name' => 'status',
-                    'type' => 'enum'
+                    'type' => 'status',
                 ),
                 'language' => array(
                     'name' => 'language',

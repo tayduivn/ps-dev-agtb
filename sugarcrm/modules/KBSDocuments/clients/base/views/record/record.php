@@ -20,10 +20,7 @@ $viewdefs['KBSDocuments']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 'name',
-                'status' => array(
-                    'name' => 'status',
-                    'type' => 'status',
-                ),
+                'status',
             )
         ),
         array(

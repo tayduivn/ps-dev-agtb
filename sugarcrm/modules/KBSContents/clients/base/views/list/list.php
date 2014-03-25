@@ -37,7 +37,7 @@ $viewdefs['KBSContents']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'name' => 'status',
-                    'readonly' => true,
+                    'type' => 'status',
                 ),
             ),
         ),
