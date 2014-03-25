@@ -145,7 +145,7 @@
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
-        this.plugins = _.clone(this.plugins);
+        this.plugins = _.without(this.plugins, 'ReorderableColumns');
         this.plugins.push('CteTabbing');
         this.plugins.push('DirtyCollection');
         this._super("initialize", [options]);
