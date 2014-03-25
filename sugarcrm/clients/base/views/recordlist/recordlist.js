@@ -24,7 +24,8 @@
         'ErrorDecoration',
         'Editable',
         'MergeDuplicates',
-        'Pagination'
+        'Pagination',
+        'LinkedModel'
     ],
 
     /**
@@ -466,10 +467,14 @@
      *
      * @param {Backbone.Model} model Selected row's model.
      */
-    editClicked: function(model) {
-        this.toggleRow(model.id, true);
-        //check to see if horizontal scrolling needs to be enabled
-        this.resize();
+    editClicked: function(model, field) {
+        if (field.def.full_form) {
+            this.createRelatedRecord(this.module, this.context.get('link'), model.id);
+        } else {
+            this.toggleRow(model.id, true);
+            //check to see if horizontal scrolling needs to be enabled
+            this.resize();
+        }
     },
 
     /**

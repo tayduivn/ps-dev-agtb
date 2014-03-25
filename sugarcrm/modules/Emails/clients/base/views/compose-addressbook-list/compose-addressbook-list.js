@@ -17,7 +17,7 @@
      * @extends View.FlexListView
      */
     extendsFrom: 'FlexListView',
-    plugins: ['ListColumnEllipsis', 'ListRemoveLinks'],
+    plugins: ['ListColumnEllipsis', 'ListRemoveLinks', 'Pagination'],
     /**
      * Removes the event listeners that were added to the mass collection.
      */
@@ -67,10 +67,17 @@
                 }
             }, this);
             // remove from the selected recipients field all recipients found in the current collection
-            massCollection.on('reset', function() {
+            massCollection.on('reset', function(newCollection, prevCollection) {
                 var existingRecipients = this.model.get(selectedRecipientsFieldName);
                 if (existingRecipients instanceof Backbone.Collection) {
-                    existingRecipients.remove(this.collection.models);
+                    if (newCollection.length > 0) {
+                        //select all should be cumulative
+                        newCollection.add(prevCollection.previousModels);
+                    } else {
+                        //remove all should only remove models that are visible in the list
+                        newCollection.add(_.difference(prevCollection.previousModels, this.collection.models));
+                    }
+                    existingRecipients.reset(newCollection.models);
                 }
             }, this);
             // find any currently selected recipients and add them to mass_collection so the checkboxes on the

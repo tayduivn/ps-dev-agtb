@@ -92,7 +92,8 @@
      * Notifies the user of configuration issues and disables send button
      */
     notifyConfigurationStatus: function() {
-        var emailClientPrefence = app.user.getPreference('email_client_preference');
+        var sendButton,
+            emailClientPrefence = app.user.getPreference('email_client_preference');
 
         if (_.isObject(emailClientPrefence) && _.isObject(emailClientPrefence.error)) {
             app.alert.show('email-client-status', {
@@ -104,7 +105,10 @@
                 }
             });
 
-            this.getField('send_button').setDisabled(true);
+            sendButton = this.getField('send_button');
+            if (sendButton) {
+                sendButton.setDisabled(true);
+            }
         }
     },
 

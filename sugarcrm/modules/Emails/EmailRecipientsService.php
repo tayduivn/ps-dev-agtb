@@ -157,10 +157,15 @@ class EmailRecipientsService
             $GLOBALS["log"]->debug("EmailRecipientsService::find took {$runTime} milliseconds");
 
             while($row = $inboundEmail->db->fetchByAssoc($result)) {
+                // Account name is mapped to last_name in data set,
+                // otherwise format the name of the Person type object
+                $name = ($row["module"] === 'Accounts')
+                    ? $row["last_name"]
+                    : $GLOBALS["locale"]->formatName($row["module"], $row);
                 $records[] = array(
                     "id"     => $row["id"],
                     "_module" => $row["module"],
-                    "name"   => $GLOBALS["locale"]->formatName($row["module"], $row),
+                    "name"   => $name,
                     "email"  => $row["email_address"],
                 );
             }

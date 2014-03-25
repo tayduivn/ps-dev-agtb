@@ -3002,6 +3002,10 @@ SUGAR.reports = function() {
 					alert(SUGAR.language.get("Reports", 'LBL_USER_EMPTY_HELP'));							
 				}
 		 	}
+            else if (qualifier_name.indexOf("_n_days") != -1) {
+                SUGAR.reports.addFilterInputText(row, filter);
+                SUGAR.reports.addRunTimeCheckBox(row, filter, rowId);
+            }
 			else if (field_type == 'date' || field_type == 'datetime') {
 				if (qualifier_name.indexOf('tp_') == 0) {
 					SUGAR.reports.addFilterInputEmpty(row,filter);

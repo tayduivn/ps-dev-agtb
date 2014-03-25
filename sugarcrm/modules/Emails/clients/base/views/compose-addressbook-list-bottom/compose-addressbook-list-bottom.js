@@ -25,5 +25,13 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    extendsFrom: "ListBottomView"
+    extendsFrom: "ListBottomView",
+
+    /**
+     * Assign proper label for 'show more' link.
+     * Label should be "More recipients...".
+     */
+    setShowMoreLabel: function() {
+        this.showMoreLabel = app.lang.get('LBL_SHOW_MORE_RECIPIENTS', this.module);
+    }
 })

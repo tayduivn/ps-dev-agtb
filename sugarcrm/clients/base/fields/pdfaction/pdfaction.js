@@ -1,29 +1,15 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
 ({
     extendsFrom: 'RowactionField',
     events: {
@@ -35,14 +21,14 @@
     /**
      * PDF Template collection.
      *
-     * @property
+     * @type {Data.BeanCollection}
      */
     templateCollection: null,
 
     /**
      * Visibility property for available template links.
      *
-     * @property
+     * @property {Boolean}
      */
     fetchCalled: false,
 
@@ -161,11 +147,26 @@
     /**
      * Handles download pdf link.
      *
-     * @param {Event} evt Mouse event.
+     * Authenticate in bwc mode before triggering the download.
+     *
+     * @param {Event} evt The `click` event.
      */
     downloadClicked: function(evt) {
         var templateId = this.$(evt.currentTarget).data('id');
-        app.api.fileDownload(this._buildDownloadLink(templateId), {
+
+        app.bwc.login(null, _.bind(function() {
+            this._triggerDownload(this._buildDownloadLink(templateId));
+        }, this));
+    },
+
+    /**
+     * Download the file once authenticated in bwc mode.
+     *
+     * @param {String} url The file download url.
+     * @protected
+     */
+    _triggerDownload: function(url) {
+        app.api.fileDownload(url, {
             error: function(data) {
                 // refresh token if it has expired
                 app.error.handleHttpError(data, {});

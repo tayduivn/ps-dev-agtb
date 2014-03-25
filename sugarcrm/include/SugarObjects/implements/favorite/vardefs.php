@@ -35,7 +35,11 @@ $vardefs = array(
             'type' => 'bool',
             'source' => 'non-db',
             'comment' => 'Favorite for the user',
-            'studio' => 'true',
+            'studio' => array(
+                // This field is on sidecar list and record views by default
+                'list' => false,
+                'recordview' => false,
+            ),
             'link' => 'favorite_link',
             'rname' => 'id',
             'rname_exists' => true,

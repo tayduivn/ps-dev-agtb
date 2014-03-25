@@ -58,7 +58,7 @@
                 target = this.view.layout;
             }
             if ($(evt.currentTarget).data('event')) {
-                target.trigger($(evt.currentTarget).data('event'), this.model);
+                target.trigger($(evt.currentTarget).data('event'), this.model, this);
             }
         }
     }

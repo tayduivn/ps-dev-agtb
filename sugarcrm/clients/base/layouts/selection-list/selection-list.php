@@ -1,5 +1,4 @@
 <?php
-
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -10,7 +9,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 
 $viewdefs['base']['layout']['selection-list'] = array(
@@ -28,16 +27,29 @@ $viewdefs['base']['layout']['selection-list'] = array(
                                     'layout' => array(
                                         'type' => 'filterpanel',
                                         'span' => 12,
-                                        'availableToggles' => array(
-                                        ),
+                                        'availableToggles' => array(),
                                         'components' => array(
                                             array(
-                                                'layout' => 'filter',
+                                                'layout' => array(
+                                                    'meta' => array(
+                                                        'components' => array(
+                                                            array(
+                                                                'view' => 'filter-filter-dropdown'
+                                                            ),
+                                                            array(
+                                                                'view' => 'filter-quicksearch'
+                                                            ),
+                                                        ),
+                                                        'last_state' => array(
+                                                            'id' => 'filter',
+                                                        ),
+                                                        'layoutType' => 'records',
+                                                    ),
+                                                    'span' => 12,
+                                                    'type' =>'filter',
+                                                ),
                                                 'targetEl' => '.filter',
                                                 'position' => 'prepend',
-                                                'context' => array(
-                                                    'layoutName' => 'records',
-                                                ),
                                             ),
                                             array(
                                                 'view' => 'filter-rows',

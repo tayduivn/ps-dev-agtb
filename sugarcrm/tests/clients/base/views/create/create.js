@@ -984,4 +984,53 @@ describe("Create View", function() {
             expect(createLayoutSpy).not.toHaveBeenCalledTwice();
         });
     });
+
+
+    describe('hasUnsavedChanges', function() {
+
+        it('should return true if model has changed', function() {
+            expect(view.model.get('foo')).toBeUndefined();
+            expect(view.hasUnsavedChanges()).toBeFalsy();
+
+            view.model.set('foo', true);
+            expect(view.hasUnsavedChanges()).toBeTruthy();
+
+            view.model.set('foo', false);
+            expect(view.hasUnsavedChanges()).toBeTruthy();
+
+            view.model.set('foo', false);
+            expect(view.hasUnsavedChanges()).toBeTruthy();
+
+            view.model.set('foo', true);
+            expect(view.hasUnsavedChanges()).toBeTruthy();
+
+            view.model.setDefaultAttribute('foo', true);
+            expect(view.hasUnsavedChanges()).toBeFalsy();
+        });
+
+        it('should return false if "resavingAfterMetadataSync" is true', function() {
+            view.model.set('foo', true);
+            expect(view.hasUnsavedChanges()).toBeTruthy();
+
+            view.resavingAfterMetadataSync = true;
+            expect(view.hasUnsavedChanges()).toBeFalsy();
+        });
+
+        it('should return false if model is not new', function() {
+            view.model.set('foo', true);
+            expect(view.hasUnsavedChanges()).toBeTruthy();
+
+            view.model.id = 'not_undefined';
+            expect(view.hasUnsavedChanges()).toBeFalsy();
+        });
+    });
+
+    describe('SugarLogic integration', function() {
+
+        it('should set the default attributes once plugin is initialized', function() {
+            var setDefaultAttributesStub = sinonSandbox.stub(view.model, 'setDefaultAttributes');
+            view.trigger('sugarlogic:initialize');
+            expect(setDefaultAttributesStub).toHaveBeenCalled();
+        });
+    });
 });

@@ -238,6 +238,8 @@ class ModuleApi extends SugarApi {
         }
 
         $this->toggleFavorites($bean, true);
+        Subscription::subscribeUserToRecord($api->user, $bean);
+        $bean = BeanFactory::getBean($bean->module_dir, $bean->id, array('use_cache' => false));        
         $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
         return $data;
@@ -262,6 +264,8 @@ class ModuleApi extends SugarApi {
         }
 
         $this->toggleFavorites($bean, false);
+        Subscription::unsubscribeUserFromRecord($api->user, $bean);
+        $bean = BeanFactory::getBean($bean->module_dir, $bean->id, array('use_cache' => false));        
         $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
         return $data;

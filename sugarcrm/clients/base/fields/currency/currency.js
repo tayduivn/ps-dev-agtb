@@ -48,19 +48,29 @@
     plugins: ['FieldDuplicate'],
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     initialize: function(options) {
-        app.view.Field.prototype.initialize.call(this, options);
-        var currencyField = this.def.currency_field || 'currency_id';
+        var currencyField, currencyFieldValue,
+            baseRateField, baseRateFieldValue;
+
+        this._super('initialize', [options]);
+
         if (this.model.isNew() && (!this.model.isCopy())) {
             // new records are set the user's preferred currency
-            this.model.set(currencyField, app.user.get('preferences').currency_id);
+            currencyField = this.def.currency_field || 'currency_id';
+            currencyFieldValue = app.user.getPreference('currency_id');
+            this.model.set(currencyField, currencyFieldValue);
+
             // set the base rate for the user's preferred currency
-            this.model.set(
-                this.def.base_rate_field || 'base_rate',
-                app.metadata.getCurrency(app.user.get('preferences').currency_id).conversion_rate
-            );
+            baseRateField = this.def.base_rate_field || 'base_rate';
+            baseRateFieldValue = app.metadata.getCurrency(currencyFieldValue).conversion_rate;
+            this.model.set(baseRateField, baseRateFieldValue);
+
+            if (_.isFunction(this.model.setDefaultAttribute)) {
+                this.model.setDefaultAttribute(currencyField, currencyFieldValue);
+                this.model.setDefaultAttribute(baseRateField, baseRateFieldValue);
+            }
         }
         // hide currency dropdown on list views
         this.hideCurrencyDropdown = this.view.action === 'list';
@@ -235,7 +245,7 @@
         if ((this.def.is_base_currency || this.def.convertToBase) &&
             !this.def.skip_preferred_conversion &&
             app.user.get('preferences').currency_show_preferred) {
-                var userPreferredCurrencyId = app.user.get('preferences').currency_id;
+                var userPreferredCurrencyId = app.user.getPreference('currency_id');
                 if (userPreferredCurrencyId !== transactionalCurrencyId) {
                     convertedCurrencyId = userPreferredCurrencyId;
                     value = app.currency.convertWithRate(
