@@ -20,13 +20,13 @@ class RecentApi extends SugarApi
     public function registerApiRest()
     {
         return array(
-            'retrieveRecents' => array(
+            'getRecentlyViewed' => array(
                 'reqType' => 'GET',
                 'path' => array('recent'),
                 'pathVars' => array('',''),
-                'method' => 'retrieveRecents',
-                'shortHelp' => 'This method retrieves recents beans for the user.',
-                'longHelp' => 'include/api/help/me_recents_help.html',
+                'method' => 'getRecentlyViewed',
+                'shortHelp' => 'This method retrieves recently viewed records for the user.',
+                'longHelp' => 'include/api/help/me_recently_viewed_help.html',
             ),
         );
     }
@@ -70,77 +70,64 @@ class RecentApi extends SugarApi
         $options['module'] = !empty($args['module']) ? $args['module'] : null;
         $options['date'] = !empty($args['date']) ? $args['date'] : null;
 
+        $options['moduleList'] = array();
+        if (!empty($args['module_list'])) {
+            $options['moduleList'] = array_filter(explode(',', $args['module_list']));
+        }
+
         return $options;
     }
 
     /**
-     * Returns list of modules that can be used as recents.
+     * Filters the list of modules to the ones that the user has access to and
+     * that exist on the moduleList.
      *
+     * @param array $modules Modules list.
      * @param string $acl (optional) ACL action to check, default is `list`.
-     * @return array list of modules.
+     * @return array Filtered modules list.
      */
-    protected function getAllowedModulesForRecents($acl = 'list')
+    private function filterModules(array $modules, $acl = 'list')
     {
-        $query = new SugarQuery();
-        $query->select('module_name');
-        $query->from(BeanFactory::newBean('Trackers'))
-            ->distinct(true)
-            ->groupBy('module_name');
-        $query->where()->notIn('module_name', array('Dashboards'));
-
-        $result = $query->execute();
-        if (empty($result)) {
-            return array();
-        }
-
-        $allowedModules = array();
-        foreach ($result as $module) {
-            $seed = BeanFactory::newBean($module['module_name']);
-            if ($seed->ACLAccess($acl)) {
-                $allowedModules[] = $module['module_name'];
+        foreach ($modules as $key => $module) {
+            $seed = BeanFactory::newBean($module);
+            if (!is_subclass_of($seed, 'SugarBean') || !$seed->ACLAccess($acl) || !in_array($module, $GLOBALS['moduleList'])) {
+                unset($modules[$key]);
             }
         }
 
-        return $allowedModules;
+        return $modules;
     }
 
     /**
-     * Gets list of recents beans.
+     * Gets recently viewed records.
      *
      * @param ServiceBase $api Current api.
      * @param array $args Arguments from request.
      * @param string $acl (optional) ACL action to check, default is `list`.
-     * @return array List of recents.
-     * @throws SugarApiExceptionNotAuthorized if no access to module.
+     * @return array List of recently viewed records.
      */
-    public function retrieveRecents($api, $args, $acl = 'list')
+    public function getRecentlyViewed($api, $args, $acl = 'list')
     {
+        $this->requireArgs($args, array('module_list'));
+
         $options = $this->parseArguments($args);
 
-        if (!empty($options['module'])) {
-            $seed = BeanFactory::newBean($options['module']);
-            if (!$seed->ACLAccess($acl)) {
-                throw new SugarApiExceptionNotAuthorized('No access to view recents for module: ' . $options['module']);
-            }
-            $modulesList = array($options['module']);
-        } else {
-            $modulesList = $this->getAllowedModulesForRecents();
-        }
-
-        if (empty($modulesList)) {
+        $moduleList = $this->filterModules($options['moduleList'], $acl);
+        if (empty($moduleList)) {
             return array('next_offset' => -1 , 'records' => array());
         }
 
-        if (sizeof($modulesList) == 1) {
-            $moduleName = $modulesList[0];
+        if (count($moduleList) === 1) {
+            $moduleName = $moduleList[0];
             $seed = BeanFactory::newBean($moduleName);
-            $mainQuery = $this->getRecentsQueryObject($seed, $options);
+            $mainQuery = $this->getRecentlyViewedQueryObject($seed, $options);
             $mainQuery->orderByRaw('MAX(tracker.date_modified)', 'DESC');
+
         } else {
             $mainQuery = new SugarQuery();
-            foreach ($modulesList as $moduleName) {
+            foreach ($moduleList as $moduleName) {
                 $seed = BeanFactory::newBean($moduleName);
-                $mainQuery->union($this->getRecentsQueryObject($seed, $options), true);
+                $mainQuery->union($this->getRecentlyViewedQueryObject($seed, $options), true);
             }
             $mainQuery->orderByRaw('max_date_modified', 'DESC');
         }
@@ -152,8 +139,8 @@ class RecentApi extends SugarApi
         $data = $beans = array();
         $data['next_offset'] = -1;
 
-        $recents = $mainQuery->execute();
-        foreach ($recents as $idx => $recent) {
+        $results = $mainQuery->execute();
+        foreach ($results as $idx => $recent) {
             if ($idx == $options['limit']) {
                 $data['next_offset'] = (int) ($options['limit'] + $options['offset']);
                 break;
@@ -168,13 +155,14 @@ class RecentApi extends SugarApi
     }
 
     /**
-     * Returns query object to retrieve list of recents by seed (module).
+     * Returns query object to retrieve list of recently viewed records by
+     * module.
      *
      * @param SugarBean $seed Instance of current bean.
      * @param array $options Prepared options.
      * @return SugarQuery query to execute.
      */
-    protected function getRecentsQueryObject($seed, $options)
+    protected function getRecentlyViewedQueryObject($seed, $options)
     {
         $currentUser = $this->getUserBean();
 
