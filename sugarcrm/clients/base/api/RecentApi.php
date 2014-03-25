@@ -191,7 +191,7 @@ class RecentApi extends SugarApi
         if (!empty($options['date'])) {
             $td = new SugarDateTime();
             $td->modify($options['date']);
-            $query->where()->queryAnd()->gte("tracker.date_modified", $td->asDb());
+            $query->where()->queryAnd()->gte('tracker.date_modified', $td->asDb());
         }
 
         foreach ($query->select()->select as $v) {
