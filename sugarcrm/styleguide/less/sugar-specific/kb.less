@@ -1,0 +1,21 @@
+[data-type="status"] {
+  .label {
+    text-align: center;
+    font-weight: bold;
+    &.st-draft {
+      background-color: @gray;
+    }
+    &.st-expired {
+      background-color: @red;
+    }
+    &.st-review {
+      background-color: @yellow;
+    }
+    &.st-pub-in {
+      background-color: @green;
+    }
+    &.st-pub-ex {
+      background-color: darken(@green, 10%);
+    }
+  }
+}
