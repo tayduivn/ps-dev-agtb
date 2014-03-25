@@ -1,34 +1,15 @@
-//FILE SUGARCRM flav=pro ONLY
-/**
- * Javascript for Quotes
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * LICENSE: The contents of this file are subject to the SugarCRM Professional
- * End User License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You
- * may not use this file except in compliance with the License.  Under the
- * terms of the license, You shall not, among other things: 1) sublicense,
- * resell, rent, lease, redistribute, assign or otherwise transfer Your
- * rights to the Software, and 2) use the Software for timesharing or service
- * bureau purposes such as hosting the Software for commercial gain and/or for
- * the benefit of a third party.  Use of the Software may be subject to
- * applicable fees and any use of the Software without first paying applicable
- * fees is strictly prohibited.  You do not have the right to remove SugarCRM
- * copyrights from the source code or user interface.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  */
-
-// $Id: quotes.js 56510 2010-05-17 18:54:49Z jenny $
 
 table_array = new Array();
 function QuotesEditManager(Y){
@@ -1614,15 +1595,22 @@ function QuotesEditManager(Y){
             var discount_price = this.lookup_item("discount_price_" + y, document);
             var list_price = this.lookup_item("list_price_" + y, document);
             var cost_price = this.lookup_item("cost_price_" + y, document);
+            var discount_amount = this.lookup_item("discount_amount_" + y, document);
+            var discount_select = this.lookup_item("discount_select_" + y, document);
 
             if(discount_price != null && typeof(discount_price ) != 'undefined') {
                 discount_price.value = unformatNumber(discount_price.value, num_grp_sep, dec_sep);
                 list_price.value = unformatNumber(list_price.value, num_grp_sep, dec_sep);
                 cost_price.value = unformatNumber(cost_price.value, num_grp_sep, dec_sep);
-			
+
                 items[items.length] = list_price;
                 items[items.length] = cost_price;
                 items[items.length] = discount_price;
+
+                if (discount_select.value == 'false') {
+                    discount_amount.value = unformatNumber(discount_amount.value, num_grp_sep, dec_sep);
+                    items[items.length] = discount_amount;
+                }
             }
         }
 	
@@ -1632,11 +1620,17 @@ function QuotesEditManager(Y){
             var discount_price = this.lookup_item("discount_price_" + y, document);
             var list_price = this.lookup_item("list_price_" + y, document);
             var cost_price = this.lookup_item("cost_price_" + y, document);
+            var discount_amount = this.lookup_item("discount_amount_" + y, document);
+            var discount_select = this.lookup_item("discount_select_" + y, document);
 
             if(discount_price != null && typeof(discount_price ) != 'undefined') {
                 discount_price.value = formatNumber(discount_price.value, num_grp_sep, dec_sep, precision, precision);
                 list_price.value = formatNumber(list_price.value, num_grp_sep, dec_sep, precision, precision);
                 cost_price.value = formatNumber(cost_price.value, num_grp_sep, dec_sep, precision, precision);
+
+                if (discount_select.value == 'false') {
+                    discount_amount.value = formatNumber(discount_amount.value, num_grp_sep, dec_sep, precision, precision);
+                }
             }		
         }
 		
