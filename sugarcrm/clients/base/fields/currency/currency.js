@@ -226,6 +226,9 @@
         // force this to recalculate the transaction value if needed
         // and more importantly, clear out previous transaction value
         this.transactionValue = '';
+        if (value === '') {
+            return value;
+        }
         if (this.def.is_base_currency) {
             // usdollar field, treat the field as base currency
             transactionalCurrencyId = convertedCurrencyId = app.currency.getBaseCurrencyId();
