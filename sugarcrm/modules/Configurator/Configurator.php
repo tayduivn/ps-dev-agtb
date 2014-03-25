@@ -93,7 +93,7 @@ class Configurator {
 	{
 		global $sugar_config, $sugar_version;
 		$sc = SugarConfig::getInstance();
-		$overrideArray = $this->readOverride();
+		list($oldConfig, $overrideArray) = $this->readOverride();
 		$this->previous_sugar_override_config_array = $overrideArray;
 		$diffArray = deepArrayDiff($this->config, $sugar_config);
 		$overrideArray = sugarArrayMergeRecursive($overrideArray, $diffArray);
@@ -130,7 +130,7 @@ class Configurator {
 					$this->config[$key] = false;
 				}
 			}
-			$overideString .= override_value_to_string_recursive2('sugar_config', $key, $val);
+			$overideString .= override_value_to_string_recursive2('sugar_config', $key, $val, true, $oldConfig);
 		}
 		$overideString .= '/***CONFIGURATOR***/';
 
@@ -142,7 +142,7 @@ class Configurator {
     function clearCache()
     {
         global $sugar_config, $sugar_version;
-        $currentConfigArray = $this->readOverride();
+        list($oldConfig, $currentConfigArray) = $this->readOverride();
         foreach($currentConfigArray as $key => $val) {
             if (in_array($key, $this->allow_undefined) || isset ($sugar_config[$key])) {
                 if (empty($val) ) {
@@ -165,8 +165,16 @@ class Configurator {
 		$this->clearCache();
 	}
 
-	function readOverride() {
+	/**
+	 * Read config & config override, and return old config and their difference
+	 * @return array[old config, difference in configs]
+	 */
+	protected function readOverride() {
 		$sugar_config = array();
+		if(is_readable('config.php')) {
+		    include 'config.php';
+		}
+		$old_config = $sugar_config;
 		if (file_exists('config_override.php')) {
 		    if ( !is_readable('config_override.php') ) {
 		        $GLOBALS['log']->fatal("Unable to read the config_override.php file. Check the file permissions");
@@ -175,7 +183,7 @@ class Configurator {
 	            include('config_override.php');
 	        }
 		}
-		return $sugar_config;
+		return array($old_config, deepArrayDiff($sugar_config, $old_config));
 	}
 	function saveOverride($override) {
         require_once('install/install_utils.php');
