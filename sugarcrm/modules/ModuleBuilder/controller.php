@@ -458,7 +458,7 @@ class ModuleBuilderController extends SugarController
                 $repair = new RepairAndClear();
                 $class_name = $GLOBALS ['beanList'] [$module];
 
-                $repair->repairAndClearAll(array('clearVardefs', 'clearTpls', 'clearSearchCache'), array($class_name), true, false);
+                $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls', 'clearSearchCache'), array($class_name), true, false);
                 if ($module == 'Users') {
                     $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls', 'clearSearchCache'), array('Employee'), true, false);
                 }
@@ -466,7 +466,7 @@ class ModuleBuilderController extends SugarController
                 VardefManager::loadVardef($module, $obj, true);
 
                 //BEGIN SUGARCRM flav=pro ONLY
-                //Make sure to clear the vardef for related modules as well
+                //Make sure to clear the vardef for related modules as well.
                 $relatedMods = array();
                 if (!empty($field->dependency))
                     $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->dependency));
