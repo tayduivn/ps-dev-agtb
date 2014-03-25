@@ -310,6 +310,7 @@
                     //END SUGARCRM flav=ent ONLY
                     'include/javascript/sugar7/plugins/DirtyCollection.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Prettify.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/Chart.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/EmailClientLaunch.js'  => 'include/javascript/sugar_sidecar.min.js',
                 )
            ),
@@ -327,7 +328,7 @@
                 )
             ),
            //END SUGARCRM flav=ent ONLY
-            
+
             $sugar_grp_sugar7 = array(
                 'include/javascript/sugar7.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/bwc.js' => 'include/javascript/sugar_grp7.min.js',

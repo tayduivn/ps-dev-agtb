@@ -12,8 +12,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 }}
-{{#if total}}
-<div class="opportunity-metrics-wrapper">
+<div data-content="chart">
     <div class="nv-chart nv-chart-donut">
         <svg id="{{cid}}"></svg>
     </div>
@@ -25,7 +24,4 @@
         </div>
     {{/eachOptions}}
 </div>
-{{/if}}
-{{#eq total 0}}
-    <div class="block-footer">{{str "LBL_NO_DATA_AVAILABLE"}}</div>
-{{/eq}}
+<div class="block-footer hide" data-content="nodata">{{str "LBL_NO_DATA_AVAILABLE"}}</div>

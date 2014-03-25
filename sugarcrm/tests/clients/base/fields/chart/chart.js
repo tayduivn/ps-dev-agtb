@@ -13,7 +13,7 @@ describe('Base.Field.Chart', function() {
     describe('getChartConfig()', function() {
         var rawChartData;
         beforeEach(function() {
-            rawChartData = {}
+            rawChartData = {};
             rawChartData.properties = [];
             rawChartData.values = [0, 1, 2];
             sinon.stub(field, 'bindDataChange', function() {});

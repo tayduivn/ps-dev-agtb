@@ -11,13 +11,10 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 ({
-    plugins: ['Dashlet', 'Tooltip'],
+    plugins: ['Dashlet', 'Tooltip', 'Chart'],
 
-    dateRange: [],
-    dataset: {},
-    params: {},
-    chart: {},
-    tooltiptemplate: {},
+    tooltiptemplate: null,
+    params: null,
 
     /**
      * Track if current user is manager.
@@ -56,12 +53,16 @@
         this.tooltiptemplate = app.template.getView(this.name + '.tooltiptemplate');
     },
 
+    /**
+     * @inheritDoc
+     */
     initDashlet: function(view) {
         var self = this;
+
         this.setDateRange();
 
         if (!this.isManager && this.meta.config) {
-            // FIXME: Dashlet's config page is rendered from meta.panels directly.
+            // FIXME: Dashlet's config page is loaded from meta.panels directly.
             // See the "dashletconfiguration-edit.hbs" file.
             this.meta.panels = _.chain(this.meta.panels).filter(function(panel) {
                 panel.fields = _.without(panel.fields, _.findWhere(panel.fields, {name: 'visibility'}));
@@ -70,83 +71,85 @@
         }
 
         this.chart = nv.models.bubbleChart()
-            .x(function (d) {
+            .x(function(d) {
                 return d3.time.format('%Y-%m-%d').parse(d.x);
             })
-            .y(function (d) {
+            .y(function(d) {
                 return d.y;
             })
-            .margin({top:0})
-            .tooltipContent(function (key, x, y, e, graph) {
+            .margin({top: 0})
+            .tooltipContent(function(key, x, y, e, graph) {
                 e.point.close_date = d3.time.format('%x')(d3.time.format('%Y-%m-%d').parse(e.point.x));
                 e.point.amount = e.point.currency_symbol + d3.format(',.2d')(e.point.base_amount);
-                return self.tooltiptemplate(e.point).replace(/(\r\n|\n|\r)/gm,"");
+                return self.tooltiptemplate(e.point).replace(/(\r\n|\n|\r)/gm, '');
             })
             .showTitle(false)
             .tooltips(true)
             .showLegend(true)
-            .bubbleClick(function (e) {
+            .bubbleClick(function(e) {
                 self.chart.dispatch.tooltipHide(e);
                 app.router.navigate(app.router.buildRoute('RevenueLineItems', e.point.id), {trigger: true});
             })
-            .colorData('class', {step:2})
-            .groupBy(function (d) {
+            .colorData('class', {step: 2})
+            .groupBy(function(d) {
                 return (self.isManager && self.getVisibility() === 'user') ?
                     d.sales_stage_short :
                     d.assigned_user_name;
             })
-            .filterBy(function (d) {
+            .filterBy(function(d) {
                 return d.probability;
             });
 
-        this.on('data-changed', function () {
-            this.updateChart();
+        this.on('data-changed', function() {
+            this.renderChart();
         }, this);
         this.settings.on('change:filter_duration', this.changeFilter, this);
     },
 
     /**
-     * Load data into chart model
-     * and and set reference to chart
+     * Initialize plugins.
+     * Only manager can toggle visibility.
+     *
+     * @return {View.Views.BaseBubbleChart} Instance of this view.
+     * @protected
      */
-    updateChart: function () {
-        if (this.meta.config) {
+    _initPlugins: function() {
+        if (this.isManager) {
+            this.plugins = _.union(this.plugins, [
+                'ToggleVisibility'
+            ]);
+        }
+        return this;
+    },
+
+    /**
+     * Generic method to render chart with check for visibility and data.
+     * Called by _renderHtml and loadData.
+     */
+    renderChart: function() {
+        if (!this.isChartReady()) {
             return;
         }
 
-        // clear out the current chart before a re-render
-        if (!_.isEmpty(this.chart)) {
-            nv.utils.windowUnResize(this.chart.render);
-            d3.select('svg#' + this.cid).select('.nvd3').remove();
-        }
+        // Clear out the current chart before a re-render
+        this.$('svg#' + this.cid).children().remove();
 
-        if (this.dataset.data.length > 0) {
-            this.$('.nv-chart').toggleClass('hide', false);
-            this.$('.block-footer').toggleClass('hide', true);
+        // Load data into chart model and set reference to chart
+        d3.select('svg#' + this.cid)
+            .datum(this.chartCollection)
+            .transition().duration(500)
+            .call(this.chart);
 
-            d3.select('svg#' + this.cid)
-                .datum(this.dataset)
-                .transition().duration(500)
-                .call(this.chart);
+        this.chart_loaded = _.isFunction(this.chart.render);
+        this.displayNoData(!this.chart_loaded);
+    },
 
-            nv.utils.windowResize(this.chart.render);
-            nv.utils.resizeOnPrint(this.chart.render);
-
-            var defaultLayout = this.closestComponent('sidebar');
-            if (defaultLayout) {
-                this.listenTo(defaultLayout, 'sidebar:state:changed', function(state) {
-                    if (state === 'open') {
-                        this.chart.render();
-                    }
-                });
-            }
-            app.events.on('preview:close', function() {
-                this.chart.render();
-            }, this);
-        } else {
-            this.$('.nv-chart').toggleClass('hide', true);
-            this.$('.block-footer').toggleClass('hide', false);
-        }
+    /**
+     * Override the chartResize method in Chart plugin because
+     * bubblechart nvd3 model uses render instead of update.
+     */
+    chartResize: function() {
+        this.chart.render();
     },
 
     /**
@@ -154,13 +157,16 @@
      * and convert into format convenient for d3
      */
     evaluateResult: function(data) {
+        this.total = data.records.length;
+
         var statusOptions = 'sales_stage_dom',
             fieldMeta = app.metadata.getModule('RevenueLineItems', 'fields');
+
         if (fieldMeta) {
             statusOptions = fieldMeta.sales_stage.options || statusOptions;
         }
 
-        this.dataset = {
+        this.chartCollection = {
             data: data.records.map(function(d) {
                 var sales_stage = app.lang.getAppListStrings(statusOptions)[d.sales_stage] || d.sales_stage;
                 return {
@@ -185,19 +191,9 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
-    _renderHtml: function() {
-        this._super('_renderHtml');
-        if (this.chart && !_.isEmpty(this.dataset)) {
-            this.updateChart();
-        }
-    },
-
-    /**
-     * Request data from REST endpoint, evaluate result and trigger data change event
-     */
-    loadData: function (options) {
+    loadData: function(options) {
         var self = this,
             _filter = [
                 {
@@ -217,17 +213,18 @@
         }
 
         var _local = _.extend({'filter': _filter}, this.params);
-
         var url = app.api.buildURL('RevenueLineItems', null, null, _local, this.params);
 
+        // Request data from REST endpoint, evaluate result and trigger data change event
         app.api.call('read', url, null, {
-            success: function (data) {
+            success: function(data) {
                 self.evaluateResult(data);
-                self.trigger('data-changed');
+                if (!self.disposed) {
+                    self.trigger('data-changed');
+                }
             },
             error: _.bind(function() {
-                this.$('.nv-chart').toggleClass('hide', true);
-                this.$('.block-footer').toggleClass('hide', false);
+                this.displayNoData(true);
             }, this),
             complete: options ? options.complete : null
         });
@@ -236,7 +233,7 @@
     /**
      * Calculate date range based on date range dropdown control
      */
-    setDateRange: function () {
+    setDateRange: function() {
         var now = new Date(),
             duration = parseInt(this.settings.get('filter_duration'), 10),
             startMonth = Math.floor(now.getMonth() / 3) * 3,
@@ -251,36 +248,17 @@
     /**
      * Trigger data load event based when date range dropdown changes
      */
-    changeFilter: function () {
+    changeFilter: function() {
         this.setDateRange();
         this.loadData();
-    },
-
-    /**
-     * Initialize plugins.
-     * Only manager can toggle visibility.
-     *
-     * @return {View.Views.BaseBubbleChart} Instance of this view.
-     * @protected
-     */
-    _initPlugins: function() {
-        if (this.isManager) {
-            this.plugins = _.union(this.plugins, [
-                'ToggleVisibility'
-            ]);
-        }
-        return this;
     },
 
     /**
      * @inheritDoc
      */
     _dispose: function() {
-        this.on('data-changed', null, this);
-        if (!_.isEmpty(this.chart)) {
-            nv.utils.windowUnResize(this.chart.render);
-            nv.utils.unResizeOnPrint(this.chart.render);
-        }
+        this.off('data-changed');
+        this.settings.off('change:filter_duration');
         this._super('_dispose');
     }
 })
