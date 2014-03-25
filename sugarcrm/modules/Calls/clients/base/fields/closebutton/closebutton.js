@@ -13,16 +13,21 @@
 ({
     extendsFrom: 'ClosebuttonField',
 
-    closedStatus: 'Held', //status indicating that the it is closed or complete
+    /**
+     * Status indicating that the call is closed or complete.
+     *
+     * @type {String}
+     */
+    closedStatus: 'Held',
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     showSuccessMessage: function() {
         app.alert.show('close_call_success', {
             level: 'success',
             autoClose: true,
-            title: app.lang.get('LBL_CALL_CLOSE_SUCCESS', this.module)
+            messages: app.lang.get('LBL_CALL_CLOSE_SUCCESS', this.module)
         });
     }
 })
