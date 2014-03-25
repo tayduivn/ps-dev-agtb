@@ -46,20 +46,26 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
 
         // Get the linkdef, but make sure to tell VardefManager to use name instead by passing true
         $linkDef = VardefManager::getLinkFieldForRelationship($bean->module_dir, $bean->object_name, $linkName, true);
-        
-        if(empty($linkDef['name'])) {
-            $GLOBALS['log']->error("Cannot find a link for {$linkName} on {$loadedModule}");
-            return true;
+
+        if ($bean->load_relationship($linkName)) {
+            $link = $bean->$linkName;
+        } else {
+            $link = new Link2($linkName, $bean);
         }
-        
-        $link = new Link2($linkName, $bean);
+
         $moduleName = $link->getRelatedModuleName();
 
         $this->_moduleName = $moduleName;
         $this->bean = BeanFactory::getBean($moduleName);
 
+        $subpanelFixed = $this->fixUpSubpanel();
+        if(empty($linkDef['name']) && (!$subpanelFixed && isModuleBWC($this->loadedModule))) {
+            $GLOBALS['log']->error("Cannot find a link for {$linkName} on {$loadedModule}");
+            return true;
+        }
+
         // Handle validation up front that will throw exceptions
-        if (empty($this->bean) && !$this->fixUpSubpanel()) {
+        if (empty($this->bean) && !$subpanelFixed) {
             throw new Exception("No valid parent bean found for {$this->linkName} on {$this->loadedModule}");
         }
 
