@@ -222,7 +222,7 @@
             }, this);
 
             serverData.quota = _.reduce(serverData.data, function(memo, item) {
-                return memo + item.quota;
+                return app.math.add(memo, item.quota, undefined, true);
             }, 0);
 
             field.setServerData(serverData);
