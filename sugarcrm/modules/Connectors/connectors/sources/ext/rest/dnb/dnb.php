@@ -35,6 +35,7 @@ class ext_rest_dnb extends ext_rest {
         $this->_enable_in_wizard = false;
         $this->_enable_in_hover = true;
         $this->_enable_in_admin_display = false;
+        $this->_enable_in_admin_mapping = false;
     }
 
     /*
