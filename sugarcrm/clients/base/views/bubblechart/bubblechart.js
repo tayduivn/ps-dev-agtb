@@ -22,6 +22,16 @@
     isManager: false,
 
     /**
+     * What module are we forecasting by
+     */
+    forecastBy: null,
+
+    /**
+     * Which field holds the likely case value
+     */
+    likelyField: null,
+
+    /**
      * @inheritDoc
      */
     initialize: function(options) {
@@ -29,11 +39,12 @@
         this._initPlugins();
         this._super('initialize', [options]);
 
+        this.forecastBy = app.metadata.getModule('Forecasts', 'config').forecast_by || 'Opportunities';
+
         var fields = [
             'id',
             'name',
             'account_name',
-            'likely_case',
             'base_rate',
             'currency_id',
             'assigned_user_name',
@@ -44,10 +55,21 @@
             'commit_stage'
         ];
 
+        var orderBy = '';
+        if (this.forecastBy === 'Opportunities') {
+            fields.push('amount');
+            orderBy = 'amount:desc';
+            this.likelyField = 'amount';
+        } else {
+            fields.push('likely_case');
+            orderBy = 'likely_case:desc';
+            this.likelyField = 'likely_case';
+        }
+
         this.params = {
             'fields': fields.join(','),
             'max_num': 10,
-            'order_by': 'likely_case:desc'
+            'order_by': orderBy
         };
 
         this.tooltiptemplate = app.template.getView(this.name + '.tooltiptemplate');
@@ -88,7 +110,7 @@
             .showLegend(true)
             .bubbleClick(function(e) {
                 self.chart.dispatch.tooltipHide(e);
-                app.router.navigate(app.router.buildRoute('RevenueLineItems', e.point.id), {trigger: true});
+                app.router.navigate(app.router.buildRoute(self.forecastBy, e.point.id), {trigger: true});
             })
             .colorData('class', {step: 2})
             .groupBy(function(d) {
@@ -160,7 +182,7 @@
         this.total = data.records.length;
 
         var statusOptions = 'sales_stage_dom',
-            fieldMeta = app.metadata.getModule('RevenueLineItems', 'fields');
+            fieldMeta = app.metadata.getModule(this.forecastBy, 'fields');
 
         if (fieldMeta) {
             statusOptions = fieldMeta.sales_stage.options || statusOptions;
@@ -172,17 +194,17 @@
                 return {
                     id: d.id,
                     x: d.date_closed,
-                    y: Math.round(parseInt(d.likely_case, 10) / parseFloat(d.base_rate)),
+                    y: Math.round(parseInt(d[this.likelyField], 10) / parseFloat(d.base_rate)),
                     shape: 'circle',
                     account_name: d.account_name,
                     assigned_user_name: d.assigned_user_name,
                     sales_stage: sales_stage,
                     sales_stage_short: sales_stage,
                     probability: parseInt(d.probability, 10),
-                    base_amount: parseInt(d.likely_case, 10),
+                    base_amount: parseInt(d[this.likelyField], 10),
                     currency_symbol: app.currency.getCurrencySymbol(d.currency_id)
                 };
-            }),
+            }, this),
             properties: {
                 title: app.lang.getAppString('LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME'),
                 value: data.records.length
@@ -213,7 +235,7 @@
         }
 
         var _local = _.extend({'filter': _filter}, this.params);
-        var url = app.api.buildURL('RevenueLineItems', null, null, _local, this.params);
+        var url = app.api.buildURL(this.forecastBy, null, null, _local, this.params);
 
         // Request data from REST endpoint, evaluate result and trigger data change event
         app.api.call('read', url, null, {
