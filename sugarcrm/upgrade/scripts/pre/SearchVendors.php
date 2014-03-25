@@ -93,6 +93,10 @@ class SugarUpgradeSearchVendors extends UpgradeScript
 
     public function run()
     {
+        if(version_compare($this->from_version, '7.0', ">=")) {
+            // omit checks on 7.x
+            return;
+        }
         $this->checkForVendors();
         if (!empty($this->filesToFix)) {
             // if there are fails to fix, fail the upgrade with a message about the files that need fixed
