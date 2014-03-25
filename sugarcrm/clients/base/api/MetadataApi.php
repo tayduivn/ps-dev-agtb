@@ -349,6 +349,9 @@ class MetadataApi extends SugarApi
             return;
         }
 
+        //Since this is a raw response we need to set the content type ourselves.
+        $api->getResponse()->setHeader("Content-Type", "application/json");
+
         return $mm->getLanguage($args['lang']);
     }
 
