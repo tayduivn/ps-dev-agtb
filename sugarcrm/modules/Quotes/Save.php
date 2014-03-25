@@ -1,31 +1,16 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-/*********************************************************************************
- * $Id: Save.php 53545 2010-01-08 08:41:51Z rob $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
+ */
 
 require_once('include/formbase.php');
 require_once('modules/Quotes/config.php');
@@ -121,23 +106,23 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
         $pb->team_set_id = $focus->team_set_id;
         //END SUGARCRM flav=pro ONLY
 
-		$pb->tax = unformat_number($_REQUEST['tax'][$total_keys[$k]]);
-		$pb->shipping = unformat_number($_REQUEST['shipping'][$total_keys[$k]]);
-		$pb->subtotal = unformat_number($_REQUEST['subtotal'][$total_keys[$k]]);
-		$pb->deal_tot = unformat_number($_REQUEST['deal_tot'][$total_keys[$k]]);
-		$pb->new_sub = unformat_number($_REQUEST['new_sub'][$total_keys[$k]]);
-		$pb->total = unformat_number($_REQUEST['total'][$total_keys[$k]]);
+		$pb->tax = (string)unformat_number($_REQUEST['tax'][$total_keys[$k]]);
+		$pb->shipping = (string)unformat_number($_REQUEST['shipping'][$total_keys[$k]]);
+		$pb->subtotal = (string)unformat_number($_REQUEST['subtotal'][$total_keys[$k]]);
+		$pb->deal_tot = (string)unformat_number($_REQUEST['deal_tot'][$total_keys[$k]]);
+		$pb->new_sub = (string)unformat_number($_REQUEST['new_sub'][$total_keys[$k]]);
+		$pb->total = (string)unformat_number($_REQUEST['total'][$total_keys[$k]]);
 		$pb->currency_id = $focus->currency_id;
 		$pb->bundle_stage = $_REQUEST['bundle_stage'][$total_keys[$k]];
 		$pb->name = $_REQUEST['bundle_name'][$total_keys[$k]];
 
-            // Bug 54931. Grand Total for custom groups too.
-			$focus->tax += $pb->tax;
-			$focus->shipping += $pb->shipping;
-			$focus->subtotal += $pb->subtotal;
-			$focus->deal_tot += $pb->deal_tot;
-			$focus->new_sub += $pb->new_sub;
-			$focus->total += $pb->total;
+        // Bug 54931. Grand Total for custom groups too.
+        $focus->tax = SugarMath::init($focus->tax, 6)->add($pb->tax)->result();
+        $focus->shipping = SugarMath::init($focus->shipping, 6)->add($pb->shipping)->result();
+        $focus->subtotal = SugarMath::init($focus->subtotal, 6)->add($pb->subtotal)->result();
+        $focus->deal_tot = SugarMath::init($focus->deal_tot, 6)->add($pb->deal_tot)->result();
+        $focus->new_sub = SugarMath::init($focus->new_sub, 6)->add($pb->new_sub)->result();
+        $focus->total = SugarMath::init($focus->total, 6)->add($pb->total)->result();
 
 		$product_bundels[$total_keys[$k]] = $pb->save();
 		if(substr_count($total_keys[$k], 'group_') > 0){
@@ -248,6 +233,3 @@ if (!empty($_REQUEST['return_module']))
 	$return_module = $_REQUEST['return_module'];
 }
 handleRedirect($return_id,$return_module);
-
-
-?>
