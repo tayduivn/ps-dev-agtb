@@ -12,7 +12,7 @@
  * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
  */
 
-$viewdefs['KBSDocuments']['base']['layout']['config-main'] = array(
+$viewdefs['KBSContents']['base']['layout']['config-main'] = array(
     'type' => 'config-main',
     'name' => 'config-main',
     'components' =>

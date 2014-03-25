@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
  */
 
-$module_name = 'KBSDocuments';
+$module_name = 'KBSContents';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route' => "#{$module_name}/create",
@@ -37,3 +37,4 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'icon-question-sign',
     ),
 );
+

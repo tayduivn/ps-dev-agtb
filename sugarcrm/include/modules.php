@@ -450,7 +450,7 @@ $modInvisList[] = 'Notifications';
 // Be sure to also add the modules to $modInvisList, otherwise their tab will still appear
 $GLOBALS['moduleTabMap'] = array(
     'UpgradeWizard' => 'Administration',
-    'KBSContents' => 'KBSDocuments',
+    'KBSDocuments' => 'KBSContents',
     'EmailMan' => 'Administration',
     'ModuleBuilder' => 'Administration',
     'Configurator' => 'Administration',
@@ -669,13 +669,12 @@ $bwcModules = array(
     //END SUGARCRM flav=pro ONLY
 );
 
-$moduleList[] = 'KBSDocuments';
 $beanList['KBSDocuments'] = 'KBSDocument';
 $beanFiles['KBSDocument'] = 'modules/KBSDocuments/KBSDocument.php';
 $moduleList[] = 'KBSContents';
 $beanList['KBSContents'] = 'KBSContent';
 $beanFiles['KBSContent'] = 'modules/KBSContents/KBSContent.php';
-$modInvisList[] = 'KBSContent';
+$modInvisList[] = 'KBSDocument';
 foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $modExtFile) {
     include $modExtFile;
 }

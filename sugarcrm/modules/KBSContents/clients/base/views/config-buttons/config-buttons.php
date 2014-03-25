@@ -13,7 +13,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
  */
 
-$viewdefs['KBSDocuments']['base']['view']['config-buttons'] = array(
+$viewdefs['KBSContents']['base']['view']['config-buttons'] = array(
     'buttons' => array(
         array(
             'name'    => 'cancel_button',

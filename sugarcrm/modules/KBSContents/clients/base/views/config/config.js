@@ -18,13 +18,14 @@
      * {@inheritdoc}
      */
     initialize: function (options) {
-        var fields = options.meta.panels[0].fields;
+        var fields = options.meta.panels[0].fields,
+            configModule = options.meta.configModule || options.module;
         this._super('initialize', [options]);
         this._initModel(fields);
-        this.config = app.metadata.getModule(this.module, 'config');
+        this.config = app.metadata.getModule(configModule, 'config');
         this.model.set(this.config, {silent: true});
 
-        this.configUrl = app.api.buildURL(this.module, 'config', null, {});
+        this.configUrl = app.api.buildURL(configModule, 'config', null, {});
         app.api.call('read', this.configUrl, null, {
             success:  _.bind(function (data) {
                 if (this.disposed) {

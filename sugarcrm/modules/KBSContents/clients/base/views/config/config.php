@@ -13,8 +13,9 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
  */
 
-$viewdefs['KBSDocuments']['base']['view']['config'] = array(
+$viewdefs['KBSContents']['base']['view']['config'] = array(
     'columns' => 2,
+    'configModule' => 'KBSDocuments',
     'panels' => array(
         array(
             'label' => 'LBL_ADMIN_LABEL_LANGUAGES',
