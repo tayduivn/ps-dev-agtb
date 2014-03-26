@@ -25,6 +25,9 @@ require_once 'modules/Users/User.php';
 
 class UserTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @var User
+     */
     protected $_user = null;
 
     public function setUp()
@@ -335,6 +338,29 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_user->email1 = 'example@example.com';
         $this->assertTrue($this->_user->isPrimaryEmail('EXAMPLE@example.com'));
+    }
+
+    public function testUserPictureIsEmptyWhenItDoesntExist()
+    {
+        $this->_user->picture = 'thisdoesntexist';
+        $this->_user->save();
+
+        $tuser = $this->_user->retrieve($this->_user->id);
+
+        $this->assertEmpty($tuser->picture);
+    }
+
+    public function testUserPictureIsSetWhenFileExists()
+    {
+        touch('upload/test_user_picture');
+        $this->_user->picture = 'test_user_picture';
+        $this->_user->save();
+
+        $tuser = $this->_user->retrieve($this->_user->id);
+
+        $this->assertEquals('test_user_picture', $tuser->picture);
+
+        unlink('upload/test_user_picture');
     }
 
     private function backUpConfig($name)
