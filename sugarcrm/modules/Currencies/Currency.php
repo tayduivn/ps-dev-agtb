@@ -651,12 +651,12 @@ function format_place_symbol($amount, $symbol, $symbol_space) {
  * @param $string
  * @return float|string
  */
-function unformat_number($string)
+function unformat_number($string, $useBaseCurrency = false)
 {
     static $currency = null;
     if(!isset($currency)) {
         global $current_user;
-        if(!empty($current_user->id) && $current_user->getPreference('currency_show_preferred') == true){
+        if(!empty($current_user->id) && !$useBaseCurrency){
             $currency_id = $current_user->getPreference('currency');
         }
         if(empty($currency_id)) {
