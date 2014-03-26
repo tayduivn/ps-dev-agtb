@@ -25,7 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 (function (app) {
-    app.events.on("app:init", function () {
+    app.events.on('app:init', function () {
         app.plugins.register('DragdropAttachments', ['view'], {
             events: {
                 'dragenter .attachable': 'expandNewPost',
@@ -35,7 +35,7 @@
             },
 
             expandNewPost: function(event) {
-                this.$(event.currentTarget).addClass("dragdrop");
+                this.$(event.currentTarget).addClass('dragdrop');
                 return false;
             },
 
@@ -46,12 +46,12 @@
             shrinkNewPost: function(event) {
                 event.stopPropagation();
                 event.preventDefault();
-                this.$(event.currentTarget).removeClass("dragdrop");
+                this.$(event.currentTarget).removeClass('dragdrop');
                 return false;
             },
 
             dropAttachment: function(event) {
-                var text = $.trim(event.dataTransfer.getData("text")),
+                var text = $.trim(event.dataTransfer.getData('text')),
                     container = this.$(event.currentTarget);
                 this.shrinkNewPost(event);
 
@@ -69,7 +69,7 @@
                                 sizes = ['B', 'KB', 'MB', 'GB'],
                                 size_index = 0,
                                 size = file.size,
-                                unique = _.uniqueId("activitystream_attachment");
+                                unique = _.uniqueId('activitystream_attachment');
 
                             while (size > 1024 && size_index < sizes.length - 1) {
                                 size_index++;
@@ -84,17 +84,17 @@
 
                             // TODO: Review creation of inline HTML
                             var $close = $('<a class="close">&times;</a>');
-                            $close.on('click',function(e) {
+                            $close.on('click', function(e) {
                                 container.trigger('close');
                             }).appendTo(container);
                             app.accessibility.run($close, 'click');
 
-                            container.append(file.name + " (" + size + " " + sizes[size_index] + ")");
+                            container.append(file.name + ' (' + size + ' ' + sizes[size_index] + ')');
 
-                            if (file.type.indexOf("image/") !== -1) {
+                            if (file.type.indexOf('image/') !== -1) {
                                 container.append("<img style='display:block;' src='" + e.target.result + "' />");
                             } else {
-                                container.append("<div>No preview available</div>");
+                                container.append('<div>No preview available</div>');
                             }
 
                             container.appendTo(view.$(event.currentTarget).parent());
@@ -120,21 +120,21 @@
             },
 
             clearAttachments: function() {
-                this.$(".activitystream-pending-attachment").trigger('close');
+                this.$('.activitystream-pending-attachment').trigger('close');
                 this.dragdrop_attachments = {};
             },
 
             onAttach: function(component, plugin) {
                 component.on('render', function() {
-                    this.$(".attachable").attr('dropzone', 'copy');
+                    this.$('.attachable').attr('dropzone', 'copy');
                 });
 
                 component.on('attachments:process', function() {
                     var self = this,
                         attachments = this.getAttachments(),
                         callback = _.after(_.size(attachments), this.clearAttachments),
-                        parentId = self.context.parent.get("model").id,
-                        parentType = self.context.parent.get("model").module,
+                        parentId = self.context.parent.get('model').id,
+                        parentType = self.context.parent.get('model').module,
                         additionalNoteAttr = this._mapNoteParentAttributes(parentId, parentType);
 
                     component.trigger('attachments:start');
@@ -163,11 +163,11 @@
                                     field: 'filename'
                                 });
 
-                                data.append("filename", file);
+                                data.append('filename', file);
                                 data.append('OAuth-Token', app.api.getOAuthToken());
                                 $.ajax({
                                     url: url,
-                                    type: "POST",
+                                    type: 'POST',
                                     data: data,
                                     processData: false,
                                     contentType: false
@@ -179,7 +179,7 @@
                             function(callback) {
                                 var activity = app.data.createBean('Activities'),
                                     payload = {
-                                        activity_type: "attach",
+                                        activity_type: 'attach',
                                         parent_id: parentId || null,
                                         parent_type: parentType || null,
                                         data: {
@@ -215,13 +215,17 @@
              * Map parentId and parentType into note attributes
              * Do nothing if parentId or parentType are empty
              *
-             * @param parentId id of the parent (null if no parent)
-             * @param parentType module of the parent record
+             * @param {string} parentId id of the parent (null if no parent)
+             * @param {string} parentType module of the parent record
              * @private
              */
             _mapNoteParentAttributes: function(parentId, parentType) {
                 if (parentId && parentType) {
-                    return {
+                    return parentType === 'Contacts' ? {
+                        'parent_id': parentId,
+                        'parent_type': parentType,
+                        'contact_id': parentId
+                    } : {
                         'parent_id': parentId,
                         'parent_type': parentType
                     };
