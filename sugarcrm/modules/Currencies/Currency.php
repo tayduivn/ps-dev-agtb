@@ -656,7 +656,7 @@ function unformat_number($string)
     static $currency = null;
     if(!isset($currency)) {
         global $current_user;
-        if(!empty($current_user->id)){
+        if(!empty($current_user->id) && $current_user->getPreference('currency_show_preferred') == true){
             $currency_id = $current_user->getPreference('currency');
         }
         if(empty($currency_id)) {
