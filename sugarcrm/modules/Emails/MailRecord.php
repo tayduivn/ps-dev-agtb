@@ -200,8 +200,8 @@ class MailRecord
             $request["primaryteam"] = $this->teams["primary"];
             $teamIds = array($this->teams["primary"]);
 
-            if (isset($this->teams["other"]) && is_array(($this->teams["other"]))) {
-                foreach ($this->teams["other"] as $teamId) {
+            if (isset($this->teams["others"]) && is_array(($this->teams["others"]))) {
+                foreach ($this->teams["others"] as $teamId) {
                     $teamIds[] = $teamId;
                 }
             }
