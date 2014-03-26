@@ -1147,10 +1147,6 @@
 
         this.collection.remove(model, {silent: true});
 
-        if (this.context.parent) {
-            this.context.parent.get('mass_collection').remove(model);
-        }
-
         var selModelEl = '[data-container=merge-record][data-record-id=' + model.get('id') + ']';
 
         if (model === this.primaryRecord) {
