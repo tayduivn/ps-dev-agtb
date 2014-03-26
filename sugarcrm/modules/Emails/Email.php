@@ -413,6 +413,11 @@ class Email extends SugarBean {
 		global $timedate;
 
         $saveAsDraft = !empty($request['saveDraft']);
+        if (!$saveAsDraft && !empty($request["MAIL_RECORD_STATUS"]) &&  $request["MAIL_RECORD_STATUS"]=='archived') {
+            $archived = true;
+        } else {
+            $archived = false;
+        }
 
 		/**********************************************************************
 		 * Sugar Email PREP
@@ -455,6 +460,12 @@ class Email extends SugarBean {
 			$this->type = 'draft';
 			$this->status = 'draft';
 		} else {
+
+            if ($archived) {
+                $this->type = 'archived';
+                $this->status = 'archived';
+            }
+
 			/* Apply Email Templates */
 			// do not parse email templates if the email is being saved as draft....
 		    $toAddresses = $this->email2ParseAddresses($_REQUEST['sendTo']);
@@ -491,13 +502,16 @@ class Email extends SugarBean {
 	        $this->name = EmailTemplate::parse_template($this->name, $object_arr);
 	        $this->description = EmailTemplate::parse_template($this->description, $object_arr);
 	        $this->description = html_entity_decode($this->description,ENT_COMPAT,'UTF-8');
-			if($this->type != 'draft' && $this->status != 'draft') {
-	        	$this->id = create_guid();
-	        	$this->date_entered = "";
-	        	$this->new_with_id = true;
-		        $this->type = 'out';
-		        $this->status = 'sent';
-			}
+            
+            if ($this->type != 'draft' && $this->status != 'draft' &&
+                $this->type != 'archived' && $this->status != 'archived'
+            ) {
+                $this->id = create_guid();
+                $this->date_entered = "";
+                $this->new_with_id = true;
+                $this->type = 'out';
+                $this->status = 'sent';
+            }
         }
 
         if(isset($_REQUEST['parent_type']) && empty($_REQUEST['parent_type']) &&
@@ -542,17 +556,17 @@ class Email extends SugarBean {
                 $mailConfig = OutboundEmailConfigurationPeer::getSystemMailConfiguration($current_user);
             }
         } catch(Exception $e) {
-            if (!$saveAsDraft) {
+            if (!$saveAsDraft && !$archived) {
                 throw $e;
             }
         }
-        if (!$saveAsDraft && is_null($mailConfig)) {
+        if (!$saveAsDraft && !$archived && is_null($mailConfig)) {
             throw new MailerException("No Valid Mail Configurations Found", MailerException::InvalidConfiguration);
         }
 
         try {
             $mailer = null;
-            if (!$saveAsDraft) {
+            if (!$saveAsDraft && !$archived) {
                 $mailerFactoryClass = $this->MockMailerFactoryClass;
                 $mailer = $mailerFactoryClass::getMailer($mailConfig);
                 $mailer->setSubject($subject);
@@ -822,6 +836,7 @@ class Email extends SugarBean {
 
 		if(	$forceSave ||
 			$this->type == 'draft' ||
+            $this->type == 'archived' ||
 			(isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
 
             // Set Up From Name and Address Information
@@ -2990,6 +3005,7 @@ eoq;
             $upload = new UploadFile();
 			$this->description_html = preg_replace("#class=\"image\" src=\"cid:$noteId\.(.+?)\"#", "class=\"image\" src=\"{$this->imagePrefix}{$noteId}.\\1\"", $this->description_html);
 	        // ensure the image is in the cache
+            sugar_mkdir(sugar_cached("images/"));
 			$imgfilename = sugar_cached("images/")."$noteId.".strtolower($subtype);
 			$src = "upload://$noteId";
 			if(!file_exists($imgfilename) && file_exists($src)) {

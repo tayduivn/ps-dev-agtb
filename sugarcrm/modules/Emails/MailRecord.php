@@ -74,66 +74,13 @@ class MailRecord
     }
 
     /**
-     * Archive this mail record.
+     * Saves the email as a draft.
      *
      * @return array
-     * @throws MailerException
      */
     public function archive()
     {
-        global $current_user;
-        if (!empty($this->mockEmailBean)) {
-            $email = $this->mockEmailBean; // Testing purposes only
-        } else {
-            $email = new Email();
-        }
-
-        $to = $this->addRecipients($this->toAddresses);
-        $cc = $this->addRecipients($this->ccAddresses);
-        $bcc = $this->addRecipients($this->bccAddresses);
-
-        $email->name = $this->subject;
-        $email->status = $email->type = 'archived';
-        $email->to_addrs = $email->to_addrs_names = $to;
-        $email->cc_addrs = $email->cc_addrs_names = $cc;
-        $email->bcc_addrs = $email->bcc_addrs_names = $bcc;
-        $email->from_addr = $email->from_addr_name = $this->fromAddress;
-        $email->description = $this->text_body;
-        $email->description_html = $this->html_body;
-        $email->date_sent = $this->date_sent;
-        if (is_array($this->related) && !empty($this->related["type"]) && !empty($this->related["id"])) {
-            $email->parent_type = $this->related["type"];
-            $email->parent_id = $this->related["id"];
-        }
-        if (empty($this->assigned_user_id)) {
-            $email->assigned_user_id = $current_user->id;
-        } else {
-            $email->assigned_user_id = $this->assigned_user_id;
-        }
-
-        $attachments = $this->splitAttachments($this->attachments);
-
-        $request = $this->setupSendRequest($email->status, $email->from_addr, $to, $cc, $bcc, $attachments);
-        $_REQUEST = array_merge($_REQUEST, $request);
-
-        $errorData = null;
-
-        try {
-            $email->save();
-            $response = $this->toApiResponse($email->status, $email);
-            return $response;
-        } catch (Exception $e) {
-            if (!($e instanceof MailerException)) {
-                $e = new MailerException($e->getMessage());
-            }
-            if (empty($errorData)) {
-                $GLOBALS["log"]->error("Message: " . $e->getLogMessage());
-            } else {
-                $GLOBALS["log"]->error("Message: " . $e->getLogMessage() . "  Data: " . $errorData);
-            }
-
-            throw $e;
-        }
+        return $this->toEmailBean("archived");
     }
 
     /**
@@ -265,6 +212,8 @@ class MailRecord
         if ($status == "draft") {
             $request["saveDraft"] = "true"; // send ("ready") is the default behavior
         }
+
+        $request["MAIL_RECORD_STATUS"] = $status;
 
         return $request;
     }
