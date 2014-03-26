@@ -97,7 +97,10 @@
 
             /**
              * Paginates a collection and handles rendering appending DOM
-             * element.
+             * element. FOR INTERNAL USE ONLY.
+             *
+             * FIXME This function needs refactoring to become
+             * render-agnostic, see SC-2605
              *
              * @param {Object} options (optional) Fetch options.
              * See {@link BeanCollection#fetch} for details.
@@ -142,9 +145,16 @@
                         this.render();
                         return;
                     }
+
+                    // FIXME Remove this event-driven behaviour for SC-2605
+                    if (!this.triggerBefore('render:rows', data)) {
+                        return false;
+                    }
                     _.each(data, function(model) {
                         this._renderRow(this.collection.get(model.id));
                     }, this);
+                    this.trigger('render:rows');
+
                     this.trigger('render');
                 }, this);
 
