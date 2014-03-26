@@ -83,6 +83,16 @@ class SidecarListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             // Merge the rest of the defs
             $defs = array_merge($defs, $def);
 
+            // Some MergeTemplate merges leave type for fields like team_name as relate
+            // ignoring custom_type. We can't fix it there so we fix it here.
+            // Since list takes def from vardef anyway, we can delete type if it matches vardef
+            // See BR-1402
+            if(!empty($defs['type']) && !empty($this->field_defs)
+               && !empty($this->field_defs[$field]['type']) && $defs['type'] == $this->field_defs[$field]['type']
+            ) {
+                unset($defs['type']);
+            }
+
             $newdefs[] = $defs;
         }
         $this->logUpgradeStatus("view defs converted, getting normalized module name");

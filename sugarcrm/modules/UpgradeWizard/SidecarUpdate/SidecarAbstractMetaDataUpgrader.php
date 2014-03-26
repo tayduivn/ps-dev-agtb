@@ -130,6 +130,12 @@ abstract class SidecarAbstractMetaDataUpgrader
     public $deleteOld = true;
 
     /**
+     * Field defs for current module
+     * @var array
+     */
+    protected $field_defs;
+
+    /**
      * Mapping of viewdef vars for a client and viewtype
      * @var array
      */
@@ -344,6 +350,24 @@ abstract class SidecarAbstractMetaDataUpgrader
     }
 
     /**
+     * Retrieve field defs for current module
+     * @return array
+     */
+    protected function getFieldDefs()
+    {
+        if(is_null($this->field_defs)) {
+            $bean = BeanFactory::getBean($this->module);
+            if (empty($bean)) {
+                // broken state, don't try again
+                $this->field_defs = array();
+            } else {
+                $this->field_defs = $bean->field_defs;
+            }
+        }
+        return $this->field_defs;
+    }
+
+    /**
      * Determines if a field exists on the bean
      * @param $field
      * @return bool
@@ -351,12 +375,12 @@ abstract class SidecarAbstractMetaDataUpgrader
     public function isValidField($field)
     {
         $field = strtolower($field);
-        $bean = BeanFactory::getBean($this->module);
-        if (empty($bean)) {
+        $defs = $this->getFieldDefs();
+        if (empty($defs)) {
             // no idea where it came from, let it pass.no reason to remove fields that may be necessary
             return true;
         }
-        if (empty($bean->field_defs[$field])) {
+        if (empty($defs[$field])) {
             return false;
         }
         return true;
