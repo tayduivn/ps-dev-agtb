@@ -231,7 +231,7 @@ class QuotesViewEdit extends ViewEdit
 											. ", '".format_number($line_item->discount_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'"
 											. ", '', '', '$line_item->pricing_factor', '$line_item->tax_class', '$tax_class_name', '$line_item->mft_part_num', '$product_bundle->id', '$product_bundle->bundle_stage', '$product_bundle->name', '"
 											. format_number($product_bundle->shipping)."', '".js_escape(br2nl($line_item->description))."', '". $line_item->type_id."'"
-											. ", '".format_number($line_item->discount_amount_usdollar, $significantDigits, $significantDigits, array('convert' => !$line_item->discount_select, 'currency_id' => $curid))."'"
+											. ", '".format_number($line_item->discount_amount, $significantDigits, $significantDigits)."'"
 		                                    . ", ".($line_item->discount_select?1:0)
 		                                    . ", ".($line_item->deal_calc?1:0)
 		                                    . ", '".$line_item->status."');\n";
