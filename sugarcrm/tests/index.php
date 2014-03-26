@@ -37,6 +37,7 @@
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/ToggleVisibility.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/Pagination.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/EmailClientLaunch.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/Chart.js"></script>
 
     <!-- customized beans -->
     <script type="text/javascript" src="../modules/Contacts/clients/base/lib/bean.js"></script>
@@ -55,6 +56,8 @@ if (file_exists('../config.js')) {
     <script type="text/javascript" src="../include/javascript/twitterbootstrap/bootstrap-dropdown.js"></script>
     <script type="text/javascript" src="../include/javascript/twitterbootstrap/bootstrap-datepicker.js"></script>
     <script type="text/javascript" src="../include/javascript/select2/select2.js"></script>
+    <script type="text/javascript" src="../include/javascript/nvd3/lib/d3.min.js"></script>
+    <script type="text/javascript" src="../include/javascript/nvd3/nv.d3.min.js"></script>
 
     <!-- jasmine and sinon core files -->
     <script type="text/javascript" src="../sidecar/lib/sinon/sinon.js"></script>

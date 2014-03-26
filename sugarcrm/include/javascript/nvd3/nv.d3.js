@@ -199,7 +199,7 @@ d3.scale.quantile = function() {
       // Find the tooltips, mark them for removal by this class (so others cleanups won't find it)
       var tooltips = document.getElementsByClassName('tooltip');
       var purging = [];
-      while(tooltips.length) {
+      while (tooltips.length) {
         purging.push(tooltips[0]);
         tooltips[0].style.transitionDelay = '0 !important';
         tooltips[0].style.opacity = 0;
@@ -1086,6 +1086,7 @@ nv.models.legend = function() {
       lineHeight = 20,
       align = 'right',
       equalColumns = true,
+      showAll = false,
       strings = {close: 'close', type: 'legend'},
       id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one
       getKey = function(d) { return d.key.length > 0 ? d.key : 'undefined'; },
@@ -1262,7 +1263,7 @@ nv.models.legend = function() {
           keysPerRow -= 1;
         }
 
-        if (Math.ceil(keyCount / keysPerRow) < 3) {
+        if (showAll || Math.ceil(keyCount / keysPerRow) < 3) {
 
           for (var i = 0, curX = radius; i < keysPerRow; i += 1) {
             keyPositions[i] = curX;
@@ -1460,6 +1461,12 @@ nv.models.legend = function() {
   legend.equalColumns = function(_) {
     if (!arguments.length) { return equalColumns; }
     equalColumns = _;
+    return legend;
+  };
+
+  legend.showAll = function(_) {
+    if (!arguments.length) { return showAll; }
+    showAll = _;
     return legend;
   };
 
@@ -11731,6 +11738,7 @@ nv.models.tree = function() {
 
       chart.orientation = function(orientation) {
         horizontal = (orientation === 'horizontal' || !horizontal ? true : false);
+        tree.elementsize([(horizontal ? nodeSize.height : nodeSize.width),1]);
         chart.reset();
         chart.update(_data);
       };
@@ -11871,6 +11879,7 @@ nv.models.tree = function() {
             .attr("height", 1)
             .attr("x", -1)
             .attr("y", -1)
+            .attr("externalResourcesRequired",true)
           .append("xhtml:body")
             .style("font", "14px 'Helvetica Neue'")
             .html(nodeRenderer);

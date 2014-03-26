@@ -26,8 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-{{#if total}}
-<div class="tabbable tabs-full {{tabClass}}">
+<div class="tabbable tabs-full {{tabClass}}" data-content="chart">
     <ul id="tab" class="nav nav-tabs">
         <li class="active"><a href="#tab-chart" data-toggle="tab">{{str "LBL_DASHLET_CASESSUMMARY_SUMMARY"}}<br><span class="label count nv-fill00">{{total}}</span></a></li>
         {{#each tabData}}
@@ -51,7 +50,4 @@
         {{/each}}
     </div>
 </div>
-{{/if}}
-{{#eq total 0}}
-    <div class="block-footer">{{str "LBL_NO_DATA_AVAILABLE"}}</div>
-{{/eq}}
+<div class="block-footer hide" data-content="nodata">{{str "LBL_NO_DATA_AVAILABLE"}}</div>

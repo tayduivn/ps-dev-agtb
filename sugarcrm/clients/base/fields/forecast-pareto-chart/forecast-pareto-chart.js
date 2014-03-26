@@ -49,6 +49,9 @@
             // we need to listen to the context on the layout for this view for when it collapses
             this.view.layout.on('dashlet:collapse', this.handleDashletCollapse, this);
             this.view.layout.context.on('dashboard:collapse:fire', this.handleDashletCollapse, this);
+            // We listen to this event to call the chart resize method
+            // because the size of the dashlet can change in the dashboard.
+            this.view.layout.context.on('dashlet:draggable:stop', this.handleDashletCollapse, this);
         }
     },
 
@@ -92,6 +95,17 @@
     },
 
     /**
+     * Utility method to resize dashlet with check for visibility
+     *
+     * @returns {boolean}
+     */
+    resize: function() {
+        if (this.isDashletVisible()) {
+            this.paretoChart.update();
+        }
+    },
+
+    /**
      * Utility method to render the chart if the dashlet is visible
      *
      * @return {boolean}
@@ -119,6 +133,57 @@
     },
 
     /**
+     * Attach and detach a resize method to the print event
+     * @param {string} The state of print handling.
+     */
+    handlePrinting: function(state) {
+        var self = this,
+            mediaQueryList = window.matchMedia('print'),
+            pausecomp = function(millis) {
+                // www.sean.co.uk
+                var date = new Date(),
+                    curDate = null;
+                do {
+                    curDate = new Date();
+                } while (curDate - date < millis);
+            },
+            printResize = function(mql) {
+                if (mql.matches) {
+                    self.paretoChart.width(640).height(320).update();
+                    // Pause for a second to let chart finish rendering
+                    pausecomp(200);
+                } else {
+                    browserResize();
+                }
+            },
+            browserResize = function() {
+                self.paretoChart.width(null).height(null).update();
+            };
+
+        if (state === 'on') {
+            if (window.matchMedia) {
+                mediaQueryList.addListener(printResize);
+            } else if (window.attachEvent) {
+                window.attachEvent('onbeforeprint', printResize);
+                window.attachEvent('onafterprint', printResize);
+            } else {
+                window.onbeforeprint = printResize;
+                window.onafterprint = browserResize;
+            }
+        } else {
+            if (window.matchMedia) {
+                mediaQueryList.removeListener(printResize);
+            } else if (window.detachEvent) {
+                window.detachEvent('onbeforeprint', printResize);
+                window.detachEvent('onafterprint', printResize);
+            } else {
+                window.onbeforeprint = null;
+                window.onafterprint = null;
+            }
+        }
+    },
+
+    /**
      * @inheritDoc
      * Clean up!
      */
@@ -128,6 +193,7 @@
         if (this.view.layout) {
             this.view.layout.off('dashlet:collapse', null, this);
             this.view.layout.context.off('dashboard:collapse:fire', null, this);
+            this.view.layout.context.off('dashlet:draggable:stop', null, this);
         }
         app.events.off(null, null, this);
         this._super('unbindData');
@@ -221,7 +287,7 @@
 
         // clear out the current chart before a re-render
         if (!_.isEmpty(this.paretoChart)) {
-            nv.utils.windowUnResize(this.paretoChart.update);
+            $(window).off('resize.' + this.sfId);
             d3.select('#' + this.chartId + ' svg').remove();
         }
 
@@ -239,8 +305,8 @@
                 .datum(this.d3Data)
                 .call(this.paretoChart);
 
-            $(window).on('resize.' + this.sfId, _.bind(this.paretoChart.update, this));
-            nv.utils.resizeOnPrint(this.paretoChart.update);
+            $(window).on('resize.' + this.sfId, _.debounce(_.bind(this.resize, this), 100));
+            this.handlePrinting('on');
         } else {
             this.$('.nv-chart').toggleClass('hide', true);
             this.$('.block-footer').toggleClass('hide', false);
@@ -506,6 +572,7 @@
      */
     _dispose: function() {
         if (!_.isEmpty(this.chart)) {
+            this.handlePrinting('off');
             $(window).off('resize.' + this.sfId);
         }
         this._super('_dispose');

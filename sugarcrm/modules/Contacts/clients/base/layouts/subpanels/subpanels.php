@@ -74,7 +74,7 @@ $viewdefs['Contacts']['base']['layout']['subpanels'] = array (
         'layout' => 'subpanel',
         'label' => 'LBL_EMAILS_SUBPANEL_TITLE',
         'context' => array (
-            'link' => 'emails',
+            'link' => 'archived_emails',
         ),
     ),
     array (

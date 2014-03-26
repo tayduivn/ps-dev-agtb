@@ -204,35 +204,67 @@
             this.arrow = '';
         }, this);
 
-        // any time the main forecast collection is reset
-        // this contains the commit history
-        this.collection.on('reset', function() {
-            // get the first line
-            var model = _.first(this.collection.models);
-            if (!_.isUndefined(model)) {
-                this.initial_total = model.get(this.total_field);
-            } else {
-                this.initial_total = '';
-                this.total = 0;
-                this.arrow = '';
-            }
-            if (!this.disposed) {
-                this.render();
-            }
-        }, this);
-        this.context.on('forecasts:worksheet:totals', function(totals, type) {
-            var field = this.total_field;
-            if (type == 'manager') {
-                // split off '_case'
-                field = field.split('_')[0] + '_adjusted';
-            }
-            this.total = totals[field];
-            this.previous_type = type;
+        // any time the main forecast collection is reset this contains the commit history
+        this.collection.on('reset', this._onCommitCollectionReset, this);
+        this.context.on('forecasts:worksheet:totals', this._onWorksheetTotals, this);
+        this.context.on('forecasts:worksheet:committed', this._onWorksheetCommit, this);
+    },
 
+    /**
+     * Collection Reset Handler
+     * @param {Backbone.Collection} collection
+     * @private
+     */
+    _onCommitCollectionReset: function(collection) {
+        // get the first line
+        var model = _.first(collection.models);
+        if (!_.isUndefined(model)) {
+            this.initial_total = model.get(this.total_field);
             if (!this.disposed) {
                 this.render();
             }
-        }, this);
+        }
+    },
+
+    /**
+     * Worksheet Totals Handler
+     * @param {Object} totals       The totals from the worksheet
+     * @param {String} type         Which worksheet are we dealing with it
+     * @private
+     */
+    _onWorksheetTotals: function(totals, type) {
+        var field = this.total_field;
+        if (type == 'manager') {
+            // split off '_case'
+            field = field.split('_')[0] + '_adjusted';
+        }
+        this.total = totals[field];
+        this.previous_type = type;
+
+        if (!this.disposed) {
+            this.render();
+        }
+    },
+
+    /**
+     * What to do when the worksheet is committed
+     *
+     * @param {String} type     What type of worksheet was committed
+     * @param {Object} forecast What was committed for the timeperiod
+     * @private
+     */
+    _onWorksheetCommit: function(type, forecast) {
+        var field = this.total_field;
+        if (type == 'manager') {
+            // split off '_case'
+            field = field.split('_')[0] + '_adjusted';
+        }
+        this.total = forecast[field];
+        this.initial_total = forecast[field];
+        this.arrow = '';
+        if (!this.disposed) {
+            this.render();
+        }
     },
 
     /**
