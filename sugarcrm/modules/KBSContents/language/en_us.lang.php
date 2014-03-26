@@ -45,5 +45,6 @@ $mod_strings = array (
     'LBL_DOWNLOAD_ALL' => 'Download All',
     'LBL_ATTACHMENTS' => 'Attachments',
     'LBL_ADD_ATTACHMENT' => 'Add attachment',
+    'LBL_TOPICS' => 'Topics',
     'LBL_TOPIC_NAME' => 'Topic',
 );
