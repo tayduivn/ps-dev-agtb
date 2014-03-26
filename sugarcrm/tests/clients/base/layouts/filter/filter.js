@@ -521,94 +521,164 @@ describe("Base.Layout.Filter", function () {
             });
             expect(_.contains(resultList, ctxtWithoutCollection)).toBeFalsy();
         });
-        it('should be able to build filter defs', function(){
-            var searchTerm = 'test',
-                ctxt = app.context.getContext();
-            var odef = {};
-            var result = [{
-                'name': {
-                    '$starts':'test'
-                }
-            }];
-            ctxt.set({
-                module: 'Accounts',
-                layout: 'filter'
-            });
 
-            ctxt.prepare();
-
-            sinonSandbox.stub(layout, 'getModuleQuickSearchMeta', function() {
-                return {fieldNames: ['name']};
-            });
-            var builtDef = layout.buildFilterDef(odef,searchTerm,ctxt);
-            expect(builtDef).toEqual(result);
-        });
-        it('should be able to build filter defs with multiple quick search fields', function(){
-            var searchTerm = 'test',
-                ctxt = app.context.getContext();
-            var odef = {
-                'test': {
-                    '$test':'test'
-                }
-            };
-            var result = [{
-                '$and': [
-                    {
-                        'test': {
-                            '$test':'test'
-                        }
-                    },
-                    {
-                        'name': {
-                            '$starts':'test'
+        describe('buildFilterDef', function() {
+            var getModuleStub,
+                filter1 = {'name': {'$starts': 'A'}},
+                filter2 = {'name_c': {'$starts': 'B'}},
+                filter3 = {'$favorite': ''},
+                fakeModuleMeta = {
+                    'fields': {'name': {}, 'test': {}},
+                    'filters': {
+                        'default': {
+                            'meta': {
+                                'filters': [
+                                    {'filter_definition': filter1,'id': 'test1'},
+                                    {'filter_definition': filter2,'id': 'test2'},
+                                    {'filter_definition': filter3,'id': 'test3'}
+                                ]
+                            }
                         }
                     }
-                ]
-            }];
-            ctxt.set({
-                module: 'Accounts',
-                layout: 'filter'
+                };
+
+            beforeEach(function() {
+                getModuleStub = sinon.collection.stub(app.metadata, 'getModule').returns(fakeModuleMeta);
             });
 
-            ctxt.prepare();
+            it('should build a field-filtered filterDef', function() {
+                var testFilterDef = [filter1, filter2, filter3],
+                    result = [filter1, filter3],
+                    ctxt = app.context.getContext();
 
-            sinonSandbox.stub(layout, 'getModuleQuickSearchMeta', function() {
-                return {fieldNames: ['name']};
+                ctxt.set({
+                    module: 'Accounts',
+                    layout: 'filter'
+                });
+                ctxt.prepare();
+
+                sinonSandbox.stub(layout, 'getModuleQuickSearchMeta', function() {
+                    return {fieldNames: ['name']};
+                });
+
+                var builtDef = layout.buildFilterDef(testFilterDef, null, ctxt);
+                expect(builtDef).toEqual(result);
             });
-            var builtDef = layout.buildFilterDef(odef,searchTerm,ctxt);
-            expect(builtDef).toEqual(result);
-        });
-        it('should be able to append filter defs on filter build', function(){
-            var searchTerm = 'test',
-                ctxt = app.context.getContext();
-            var odef = {};
-            var result = [{
-                '$or': [
-                    {
-                        'name': {
-                            '$starts':'test'
-                        }
-                    },
-                    {
-                        'last_name': {
-                            '$starts':'test'
-                        }
+
+            it('should build a field-filtered filterDef with a search term', function() {
+                var searchTerm = 'abc',
+                    searchFilterDef = {'name': {'$starts': searchTerm}},
+                    testFilterDef = [filter1, filter2, filter3],
+                    result = [{
+                        '$and': [filter1, filter3, searchFilterDef]
+                    }],
+                    ctxt = app.context.getContext();
+
+                ctxt.set({
+                    module: 'Accounts',
+                    layout: 'filter'
+                });
+                ctxt.prepare();
+
+                sinonSandbox.stub(layout, 'getModuleQuickSearchMeta', function() {
+                    return {fieldNames: ['name']};
+                });
+
+                var builtDef = layout.buildFilterDef(testFilterDef, searchTerm, ctxt);
+                expect(builtDef).toEqual(result);
+            });
+
+            it('should be able to build a filter def via a search term', function(){
+                var searchTerm = 'test',
+                    ctxt = app.context.getContext();
+                var odef = {};
+                var result = [{
+                    'name': {
+                        '$starts':'test'
                     }
-                ]
-            }];
-            ctxt.set({
-                module: 'Accounts',
-                layout: 'filter'
-            });
+                }];
+                ctxt.set({
+                    module: 'Accounts',
+                    layout: 'filter'
+                });
 
-            ctxt.prepare();
+                ctxt.prepare();
 
-            sinonSandbox.stub(layout, 'getModuleQuickSearchMeta', function() {
-                return {fieldNames: ['name', 'last_name']};
+                sinonSandbox.stub(layout, 'getModuleQuickSearchMeta', function() {
+                    return {fieldNames: ['name']};
+                });
+
+                var builtDef = layout.buildFilterDef(odef,searchTerm,ctxt);
+                expect(builtDef).toEqual(result);
             });
-            var builtDef = layout.buildFilterDef(odef,searchTerm,ctxt);
-            expect(builtDef).toEqual(result);
+            it('should be able to build filter defs with multiple quick search fields', function(){
+                var searchTerm = 'test',
+                    ctxt = app.context.getContext();
+                var odef = {
+                    'test': {
+                        '$test':'test'
+                    }
+                };
+                var result = [{
+                    '$and': [
+                        {
+                            'test': {
+                                '$test':'test'
+                            }
+                        },
+                        {
+                            'name': {
+                                '$starts':'test'
+                            }
+                        }
+                    ]
+                }];
+                ctxt.set({
+                    module: 'Accounts',
+                    layout: 'filter'
+                });
+
+                ctxt.prepare();
+
+                sinonSandbox.stub(layout, 'getModuleQuickSearchMeta', function() {
+                    return {fieldNames: ['name']};
+                });
+                var builtDef = layout.buildFilterDef(odef,searchTerm,ctxt);
+                expect(builtDef).toEqual(result);
+            });
+            it('should be able to append filter defs on filter build', function(){
+                var searchTerm = 'test',
+                    ctxt = app.context.getContext();
+                var odef = {};
+                var result = [{
+                    '$or': [
+                        {
+                            'name': {
+                                '$starts':'test'
+                            }
+                        },
+                        {
+                            'last_name': {
+                                '$starts':'test'
+                            }
+                        }
+                    ]
+                }];
+                ctxt.set({
+                    module: 'Accounts',
+                    layout: 'filter'
+                });
+
+                ctxt.prepare();
+
+                sinonSandbox.stub(layout, 'getModuleQuickSearchMeta', function() {
+                    return {fieldNames: ['name', 'last_name']};
+                });
+                var builtDef = layout.buildFilterDef(odef,searchTerm,ctxt);
+                expect(builtDef).toEqual(result);
+            });
         });
+
         describe('initializeFilterState', function() {
             var lastStateFilter;
             var stubCache, nextCallStub;

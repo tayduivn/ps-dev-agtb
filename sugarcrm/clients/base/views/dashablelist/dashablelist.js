@@ -648,6 +648,26 @@
      */
     _applyFilterDef: function(filterDef) {
         if (filterDef) {
+
+            filterDef = _.isArray(filterDef) ? filterDef : [filterDef];
+            /**
+             * Filter fields that don't exist either on vardefs or search definition.
+             *
+             * Special fields (fields that start with `$`) like `$favorite` aren't
+             * cleared.
+             *
+             * TODO move this to a plugin method when refactoring the code (see SC-2555)
+             * TODO we should support cleanup on all levels (currently made on 1st
+             * level only).
+             */
+            var specialField = /^\$/,
+                meta = app.metadata.getModule(this.module),
+                searchMeta = meta.filters['default'].meta;
+            filterDef = _.filter(filterDef, function(def) {
+                var fieldName = _.keys(def).pop();
+                return specialField.test(fieldName) || meta.fields[fieldName];
+            }, this);
+
             this.context.get('collection').filterDef = filterDef;
         }
     },
