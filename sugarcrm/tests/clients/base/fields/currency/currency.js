@@ -490,7 +490,7 @@ describe('Base.Fields.Currency', function() {
             sandbox.restore();
         });
 
-        it('should not return null if the model has a null value for the field', function() {
+        it('should be empty for null value', function() {
             field.model = app.data.createBean(moduleName, {
                 myfield: null
             });
@@ -499,7 +499,7 @@ describe('Base.Fields.Currency', function() {
             field.def.showTransactionalAmount = true;
             field.format();
 
-            expect(field.transactionValue).toEqual('$0.00');
+            expect(field.transactionValue).toEqual('');
         });
     });
     describe('_valueChangeHandler', function() {
