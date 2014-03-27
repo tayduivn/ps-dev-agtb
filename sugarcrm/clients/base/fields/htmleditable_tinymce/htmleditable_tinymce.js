@@ -40,6 +40,12 @@
      * @private
      */
     _render: function() {
+
+        // load fieldSelector from field defs
+        if (!_.isUndefined(this.options.def.fieldSelector)) {
+            this.fieldSelector = '[data-htmleditable=' + this.options.def.fieldSelector + ']';
+        }
+
         this.destroyTinyMCEEditor();
 
         app.view.Field.prototype._render.call(this);
@@ -77,6 +83,8 @@
             if(editable.contents().find('body').length > 0){
                 editable.contents().find('body').html(value);
             }
+        } else if (editable) {
+            editable.html(value);
         }
     },
 
@@ -167,7 +175,7 @@
     initTinyMCEEditor: function(optConfig) {
         var self = this;
         if(_.isEmpty(this._htmleditor)){
-            var config = optConfig || this.getTinyMCEConfig();
+            var config = _.extend({}, this.getTinyMCEConfig(), optConfig || {});
             var __superSetup__ = config.setup;
             // Preserve custom setup if it exists, add setup function needed for widget to work properly
             config.setup = function(editor){
