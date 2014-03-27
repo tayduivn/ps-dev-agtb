@@ -649,6 +649,7 @@ function format_place_symbol($amount, $symbol, $symbol_space) {
 
 /**
  * @param $string
+ * @param bool $useBaseCurrency default user locale
  * @return float|string
  */
 function unformat_number($string, $useBaseCurrency = false)
@@ -656,7 +657,7 @@ function unformat_number($string, $useBaseCurrency = false)
     static $currency = null;
     if(!isset($currency)) {
         global $current_user;
-        if(!empty($current_user->id) && !$useBaseCurrency){
+        if(!$useBaseCurrency && !empty($current_user->id)){
             $currency_id = $current_user->getPreference('currency');
         }
         if(empty($currency_id)) {
