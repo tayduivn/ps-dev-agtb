@@ -42,6 +42,9 @@ $viewdefs['KBSContents']['base']['layout']['record-dashboard'] = array(
                                                 'label' => 'LBL_DASHLET_TOPICS_NAME',
                                                 'module_name' => 'KBSTopics',
                                                 'link_name' => 'subnodes',
+                                                'last_state' => array(
+                                                    'id' => 'kbs-dashlet-topics-record',
+                                                ),
                                             ),
                                         'context' =>
                                             array(

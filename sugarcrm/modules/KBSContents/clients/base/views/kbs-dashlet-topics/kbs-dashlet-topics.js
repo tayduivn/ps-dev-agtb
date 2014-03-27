@@ -14,29 +14,54 @@
 
     plugins: ['Dashlet'],
 
+    events: {
+        'click [data-node-icon="folder"]': 'toggleNode'
+    },
+
     /**
-     * List of tree nodes
+     * List of tree nodes.
+     *
+     * @property {Object}
      */
     nodes: null,
 
     /**
-     * ID of tree item which is in active state (currently selected)
+     * ID of tree item which is in active state (currently selected).
+     *
+     * @property {String}
      */ 
     active: null,
 
     /**
-     * Initialize dashlet properties
+     * Last state key.
+     *
+     * @property {String}
+     */
+    _lastStateKey: null,
+
+    /**
+     * Initialize dashlet properties.
      */
     initDashlet: function() {
-        var listTpl = app.template.getView('kbs-dashlet-topics.node-list', this.module),
-            topicId = this.model.get('topic_id');
-
+        var listTpl = app.template.getView('kbs-dashlet-topics.node-list', this.module);
         Handlebars.registerPartial('kbs-dashlet-topics.node-list', listTpl);
-        this.active = !_.isUndefined(topicId) ? topicId : null;
     },
 
     /**
-     * Re-render the dashlet when the model data changed.
+     * Build the state key for nodes.
+     *
+     * @return {String} hash key.
+     */
+    getLastStateKey: function() {
+        if (this._lastStateKey) {
+            return this._lastStateKey;
+        }
+        this._lastStateKey = app.user.lastState.key('nodes-expanded', this);
+        return this._lastStateKey;
+    },
+
+    /**
+     * {@inheritDocs}
      */
     bindDataChange: function(){
         if (this.model) {
@@ -48,8 +73,11 @@
      * {@inheritDocs}
      */
     loadData: function(options) {
-        var link = this.settings.get('link_name');
-        var module = this.settings.get('module_name');
+        var link = this.settings.get('link_name'),
+            module = this.settings.get('module_name'),
+            topicId = app.controller.context.get('model').get('topic_id');
+
+        this.active = !_.isUndefined(topicId) ? topicId : null;    
 
         if (this.disposed || !link || !module) {
             return;
@@ -66,18 +94,126 @@
                     return;
                 }
                 self.nodes = data;
-                self.render();
+
+                if (self.active) {
+                    var url = app.api.buildURL('KBSContents', null, null, {
+                        'max_num' : -1,
+                        'fields' : 'name,topic_id',
+                        'order_by' : 'name:asc',
+                        'filter'   : [
+                            {'topic_id' : self.active}
+                        ]
+                    });
+                    app.api.call('read', url, null, {
+                        success:  function(data) {
+                            if (self.disposed) {
+                                return;
+                            }
+
+                            self._traverseNodes(self.nodes, function(node) {
+                                if (node.id == self.active) {
+                                    if (_.has(node.subnodes, 'records')) {
+                                        node.subnodes.records = _.union(node.subnodes.records, data.records);
+                                    } else {
+                                        node = _.extend(node, {
+                                            'subnodes' : data
+                                        });    
+                                    }
+                                    return false;
+                                }
+                                return true;
+                            });
+
+                            self.render();
+                        }
+                    });
+                } else {
+                    self.render();
+                }
             }
         });
+    },
+
+    /**
+     * Change open/close node state and save to last state.
+     *
+     * @param {Event} event 
+     */
+    toggleNode: function(event) {
+        event.preventDefault();
+        var $sender = $(event.currentTarget),
+            $node = $sender.parent('[data-node-id]'),
+            $subnodes = $node.find('[data-type="node-list"]:first'),
+            nodeId = $node.data('node-id'),
+            nodesExpanded = _.without(app.user.lastState.get(this.getLastStateKey()) || [], nodeId);
+
+        $subnodes.toggle();
+        $sender.blur();
+        $node.find('[data-node-icon="folder"]:first').toggleClass('icon-folder-open-alt', $subnodes.is(':visible'));
+
+        if ($subnodes.is(':visible')) {
+            nodesExpanded.push(nodeId);
+        }
+
+        app.user.lastState.set(this.getLastStateKey(), nodesExpanded);
+    },
+
+    /**
+     * Traversing a nodes of tree and calling user-specified callbacks.
+     *
+     * @param {Object} nodes List of tree nodes.
+     * @param {Function} callback User specified function that will be called for each node.
+     */
+    _traverseNodes: function(nodes, callback) {
+        if (!_.isFunction(callback)) {
+            return false;
+        }
+
+        _.each(nodes.records, function(record) {
+            if (callback.apply(this, [record])) {
+                this._traverseNodes(record.subnodes, callback);    
+            }
+            return false;
+        }, this);
+    },
+
+    /**
+     * Update node attributes to make it UI in active state.
+     *
+     * @param {Mixed} node Node ID or jQuery element collection that should be activated.
+     * @param {Boolean} activateParents whether to activate parent tree nodes when one of the corresponding child nodes is active.
+     */
+    _activateItem: function(node, activateParents) {
+        var self = this,
+            $node = _.isObject(node) ? node : this.$('[data-node-id="' + node + '"]');
+
+        activateParents = activateParents || false;
+
+        $node.find('[data-node-icon="folder"]:first')
+            .addClass('icon-folder-open-alt')
+            .toggleClass('active', (_.isObject(node) || $node.data('node-id') == this.active));
+
+        if (activateParents == true) {
+            _.each($node.parents('[data-type="node-list"]'), function(list) {
+                self._activateItem($(list).show().parent());
+            });
+        } else {
+            $node.find('[data-type="node-list"]:first').show();
+        }
     },
 
     /**
      * {@inheritDocs}
      */
     _render: function() {
+        if (!_.isObject(this.nodes)) {
+            return;
+        }
         this._super('_render');
-        if (_.isObject(this.nodes) && this.active != null) {
-            this.$('[data-node-id="' + this.active + '"]').addClass('active');
+        this.$('[data-type="node-list"] [data-type="node-list"]').hide();
+        _.each(app.user.lastState.get(this.getLastStateKey()), _.bind(this._activateItem, this));
+        if (this.active != null) {
+            this._activateItem(this.active, true);
         }
     }
 })
