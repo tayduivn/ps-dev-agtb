@@ -258,6 +258,29 @@
     },
 
     /**
+     * @override
+     */
+    _setDefaultValue: function() {
+        if (!this.model.isNew() || this.action !== 'edit' || !this.def.display_default) {
+            return;
+        }
+
+        var value = app.date.parseDisplayDefault(this.def.display_default);
+        if (!value) {
+            return;
+        }
+
+        value = this.unformat(
+            app.date(value).format(
+                app.date.convertFormat(this.getUserDateTimeFormat())
+            )
+        );
+
+        this.model.set(this.name, value);
+        return value;
+    },
+
+    /**
      * Formats date value according to user preferences.
      *
      * If no value is defined, we {@link #_setDefaultValue set a default value}.

@@ -296,51 +296,38 @@ describe("BaseFilterRowsView", function() {
     });
 
     describe('populateRow', function() {
-        var addRowStub, select2Stub, $triggerStub;
+        var addRowStub, select2Stub;
         beforeEach(function() {
             view.fieldList = {
-                first_name: {
-                },
-                last_name: {
-                },
-                probability: {
-                }
+                first_name: {}
             };
-            addRowStub = sinonSandbox.stub(view, 'addRow', function() {
-                return $('<div data-filter="row">').appendTo(view.$el);
-            });
-            select2Stub = sinonSandbox.stub($.fn, 'select2', function(sel) {
-                return $(sel);
-            });
-            $triggerStub = sinonSandbox.stub($.fn, 'trigger');
+            _select2Obj = {
+                select2: sinonSandbox.stub($.fn, 'select2', function(sel) {
+                    return $(sel);
+                })
+            };
+            _rowObj = {
+                remove: sinonSandbox.stub(),
+                data: sinonSandbox.stub(),
+                find: sinonSandbox.stub().returns(_select2Obj),
+            };
+            addRowStub = sinonSandbox.stub(view, 'addRow').returns(_rowObj);
         });
-        it('should retrieve the field, the operator and the value from the filter object (1)', function () {
+        it('should remove the row if the field does not exist in the metadata', function () {
             view.populateRow({
                 first_name: 'FirstName'
             });
-            expect(select2Stub.firstCall.args).toEqual(['val', 'first_name']);
-            expect(select2Stub.secondCall.args).toEqual(['val', '$equals']);
-            expect(view.$('[data-filter=row]').data('value')).toEqual('FirstName');
+            expect(_select2Obj.select2).not.toHaveBeenCalled();
+            expect(_rowObj.remove).toHaveBeenCalled();
         });
-        it('should retrieve the field, the operator and the value from the filter object (2)', function() {
+        it('should remove the row if the field does not exist in the `fieldList`', function () {
             view.populateRow({
-                probability: 80
+                case_number: '123456'
             });
-            expect(select2Stub.firstCall.args).toEqual(['val', 'probability']);
-            expect(select2Stub.secondCall.args).toEqual(['val', '$equals']);
-            expect(view.$('[data-filter=row]').data('value')).toEqual(80);
+            expect(_select2Obj.select2).not.toHaveBeenCalled();
+            expect(_rowObj.remove).toHaveBeenCalled();
         });
-        it('should retrieve the field, the operator and the value from the filter object (3)', function () {
-            view.populateRow({
-                last_name: {
-                    '$starts': 'LastName'
-                }
-            });
-            expect(select2Stub.firstCall.args).toEqual(['val', 'last_name']);
-            expect(select2Stub.secondCall.args).toEqual(['val', '$starts']);
-            expect(view.$('[data-filter=row]').data('value')).toEqual('LastName');
-        });
-        it('should retrieve the field, the operator and the value from the filter object (3)', function() {
+        it('should retrieve the field, the operator and the value from the filter object', function() {
             view.fieldList = {
                 address_state: {
                     dbFields: ['primary_address_state', 'alt_address_state']
@@ -352,9 +339,10 @@ describe("BaseFilterRowsView", function() {
                     {"alt_address_state": {"$equals": "12"}}
                 ]
             });
-            expect(select2Stub.firstCall.args).toEqual(['val', 'address_state']);
-            expect(select2Stub.secondCall.args).toEqual(['val', '$equals']);
-            expect(view.$('[data-filter=row]').data('value')).toEqual('12');
+
+            expect(_select2Obj.select2.firstCall.args).toEqual(['val', 'address_state']);
+            expect(_select2Obj.select2.secondCall.args).toEqual(['val', '$equals']);
+            expect(_rowObj.data.firstCall.args).toEqual(['value', '12']);
         });
     });
 

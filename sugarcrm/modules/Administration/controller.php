@@ -115,29 +115,21 @@ class AdministrationController extends SugarController
         $configurator = new Configurator();
         $configurator->saveConfig();
 
-        if ( isset( $_REQUEST['enabled_modules'] ) && ! empty ($_REQUEST['enabled_modules'] ))
+        if (isset($_REQUEST['enabled_modules']) && !empty ($_REQUEST['enabled_modules']))
         {
-            $updated_enabled_modules = array () ;
-            foreach ( explode (',', $_REQUEST['enabled_modules'] ) as $e )
-            {
-                $updated_enabled_modules [ $e ] = array () ;
+            $updated_enabled_modules = array();
+            $wireless_module_registry = array();
+
+            $file = 'include/MVC/Controller/wireless_module_registry.php';
+
+            if (SugarAutoLoader::fileExists($file)) {
+                require $file;
             }
 
-            // transfer across any pre-existing definitions for the enabled modules from the current module registry
-            if (file_exists('include/MVC/Controller/wireless_module_registry.php'))
+            foreach (explode (',', $_REQUEST['enabled_modules']) as $moduleName)
             {
-                require('include/MVC/Controller/wireless_module_registry.php');
-                if ( ! empty ( $wireless_module_registry ) )
-                {
-                    foreach ( $updated_enabled_modules as $e => $def )
-                    {
-                        if ( isset ( $wireless_module_registry [ $e ] ) )
-                        {
-                            $updated_enabled_modules [ $e ] = $wireless_module_registry [ $e ] ;
-                        }
-
-                    }
-                }
+                $moduleDef = array_key_exists($moduleName, $wireless_module_registry) ? $wireless_module_registry[$moduleName] : array();
+                $updated_enabled_modules [ $moduleName ] = $moduleDef;
             }
 
             $filename = create_custom_directory('include/MVC/Controller/wireless_module_registry.php');
