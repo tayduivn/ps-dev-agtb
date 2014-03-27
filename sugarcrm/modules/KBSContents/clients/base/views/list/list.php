@@ -26,6 +26,16 @@ $viewdefs['KBSContents']['base']['view']['list'] = array(
                     'link' => true,
                 ),
                 array(
+                    'name' => 'language',
+                    'label' => 'LBL_LANG',
+                    'default' => true,
+                    'enabled' => true,
+                    'link' => true,
+                    'type' => 'enum-config',
+                    'module' => 'KBSDocuments',
+                    'key' => 'languages',
+                ),
+                array(
                     'label' => 'LBL_DATE_ENTERED',
                     'enabled' => true,
                     'default' => true,
