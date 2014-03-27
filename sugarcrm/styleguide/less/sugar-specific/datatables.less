@@ -1,6 +1,16 @@
 /* DATATABLES
   ----------------*/
 
+.table {
+  display: table;
+}
+.table-row {
+  display: table-row;
+}
+.table-cell {
+  display: table-cell;
+}
+
 .dataTable {
   margin: 0;
   clear: both;
@@ -93,6 +103,7 @@
     border-bottom: 1px solid darken(@grayLighter, 5%);
     background-color: @white;
     .rtl(@direction,ltr);
+
     &:last-child {
       border-right: 0;
     }
@@ -139,6 +150,7 @@
         padding: 3px 0 0 4px;
       }
     }
+
     > span:not(.overflow-visible) {
       overflow-x: hidden;
       text-overflow: ellipsis;
@@ -482,6 +494,29 @@ FLEXLIST GENERIC */
     }
   }
 
+  /*ADD SHADOW TO LEFT ACTION COLUMN*/
+  &.left-actions.scroll-width .dataTable {
+    th:first-child {
+      > span {
+        border-right: 1px solid darken(@grayLighter, 5%);
+        -webkit-transform: translate3d(0,0,0);
+        &:after {
+          .right-shadow;
+          height: 43px;
+        }
+      }
+    }
+    td:first-child {
+      > span {
+        border-right: 1px solid darken(@grayLighter, 5%);
+        -webkit-transform: translate3d(0,0,0);
+        &:after {
+          .right-shadow;
+        }
+      }
+    }
+  }
+
   /*RIGHT ACTIONS ONLY*/
   &.right-actions .dataTable {
     th,
@@ -555,27 +590,6 @@ FLEXLIST GENERIC */
 
       .list .btn.rowaction {
         margin-left: 0;
-      }
-    }
-  }
-
-  /*ADD SHADOW TO LEFT ACTION COLUMN*/
-  &.left-actions.scroll-width .dataTable {
-    th:first-child {
-      > span {
-        border-right: 1px solid darken(@grayLighter, 5%);
-        &:after {
-          .right-shadow;
-          height: 43px;
-        }
-      }
-    }
-    td:first-child {
-      > span {
-        border-right: 1px solid darken(@grayLighter, 5%);
-        &:after {
-          .right-shadow;
-        }
       }
     }
   }
@@ -942,7 +956,7 @@ and (orientation : landscape) {
 .dashlet-content { /* UIUX-1636 */
   :not(.left-actions):not(.right-actions) > table.dataTable {
     thead tr th:last-child > span,
-    tbody tr td:last-child > span 
+    tbody tr td:last-child > span
     {
       margin-right: 0;
     }
