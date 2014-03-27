@@ -820,6 +820,7 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 	$countKey = "";
 	$summary_column_label_to_name = getSummaryColumnLableToNameArray($summary_columns_array);
 	$rowsAndColumnsCount = count($rowsAndColumnsData);
+	$useBaseCurrency = !$current_user->getPreference('currency_show_preferred');
 	for ($i = 0 ; $i < $rowsAndColumnsCount ; $i++) {
 		$rowData = $rowsAndColumnsData[$i];
 		$rowsAndColumnsData[$i]['Total'] = array();
@@ -848,19 +849,19 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 						$sumKey = $key;
 					    $displayColumn = $labelToDataTypeArray[$key];
 						if (!$rowsAndColumnsTotalSet) {
-					    	$rowsAndColumnsData[$i]['Total'][$key] = unformat_number($rowsAndColumnsData[$i]['Total'][$key]) + unformat_number($value);
+					    	$rowsAndColumnsData[$i]['Total'][$key] = unformat_number($rowsAndColumnsData[$i]['Total'][$key], $useBaseCurrency) + unformat_number($value, $useBaseCurrency);
 					    	$displayColumn['fields'] = array(strtoupper($key) => $rowsAndColumnsData[$i]['Total'][$key]);
 					    	$rowsAndColumnsData[$i]['Total'][$key] = $reporter->layout_manager->widgetDisplay($displayColumn);
 						} // if
 					    if (!$grandTotalColumnSet) {
-					    	$grandTotal[$columnData[$j]][$key] = unformat_number($grandTotal[$columnData[$j]][$key]) + unformat_number($value);
+					    	$grandTotal[$columnData[$j]][$key] = unformat_number($grandTotal[$columnData[$j]][$key], $useBaseCurrency) + unformat_number($value, $useBaseCurrency);
 					    	$displayColumn['fields'] = array(strtoupper($key) => $grandTotal[$columnData[$j]][$key]);
 					    	$grandTotal[$columnData[$j]][$key] = $reporter->layout_manager->widgetDisplay($displayColumn);					    	
 					    }
 					    if (!isset($grandTotal['Total'][$key])) {
 					    	$grandTotal['Total'][$key] = $grandTotal[$columnData[$j]][$key];
 					    } else {
-					    	$grandTotal['Total'][$key] = unformat_number($grandTotal['Total'][$key]) + unformat_number($value);
+					    	$grandTotal['Total'][$key] = unformat_number($grandTotal['Total'][$key], $useBaseCurrency) + unformat_number($value, $useBaseCurrency);
 					    	$displayColumn['fields'] = array(strtoupper($key) => $grandTotal['Total'][$key]);
 					    	$grandTotal['Total'][$key] = $reporter->layout_manager->widgetDisplay($displayColumn);	
 					    }
@@ -869,8 +870,8 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 					    if (!isset($grandTotal['Total'][$key])) {
 					    	$grandTotal['Total'][$key] = $grandTotal[$columnData[$j]][$key];
 					    } // if
-						if (unformat_number($value) < 
-							unformat_number($rowsAndColumnsData[$i]['Total'][$key])) {
+						if (unformat_number($value, $useBaseCurrency) <
+							unformat_number($rowsAndColumnsData[$i]['Total'][$key], $useBaseCurrency)) {
 							
 							if (!$rowsAndColumnsTotalSet) {
 								$rowsAndColumnsData[$i]['Total'][$key] = $value;
@@ -878,14 +879,14 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 						    //$grandTotal['Total'][$key] = $value;
 						} // if
 						
-						if (unformat_number($value) < 
-							unformat_number($grandTotal['Total'][$key])) {
+						if (unformat_number($value, $useBaseCurrency) <
+							unformat_number($grandTotal['Total'][$key], $useBaseCurrency)) {
 
 							$grandTotal['Total'][$key] = $value;																				
 						} // if
 						
-						if (unformat_number($value) < 
-							unformat_number($grandTotal[$columnData[$j]][$key])) {
+						if (unformat_number($value, $useBaseCurrency) <
+							unformat_number($grandTotal[$columnData[$j]][$key], $useBaseCurrency)) {
 
 						    if (!$grandTotalColumnSet) {
 						    	$grandTotal[$columnData[$j]][$key] = $value;
@@ -897,22 +898,22 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 					    if (!isset($grandTotal['Total'][$key])) {
 					    	$grandTotal['Total'][$key] = $grandTotal[$columnData[$j]][$key];
 					    } // if
-						if (unformat_number($value) >
-							unformat_number($rowsAndColumnsData[$i]['Total'][$key])) {
+						if (unformat_number($value, $useBaseCurrency) >
+							unformat_number($rowsAndColumnsData[$i]['Total'][$key], $useBaseCurrency)) {
 							if (!$rowsAndColumnsTotalSet) {
 								$rowsAndColumnsData[$i]['Total'][$key] = $value;
 							} // if
 						    //$grandTotal['Total'][$key] = $value;
 						} // if
 						
-						if (unformat_number($value) > 
-							unformat_number($grandTotal['Total'][$key])) {
+						if (unformat_number($value, $useBaseCurrency) >
+							unformat_number($grandTotal['Total'][$key], $useBaseCurrency)) {
 
 							$grandTotal['Total'][$key] = $value;																				
 						} // if
 						
-						if (unformat_number($value) > 
-							unformat_number($grandTotal[$columnData[$j]][$key])) {
+						if (unformat_number($value, $useBaseCurrency) >
+							unformat_number($grandTotal[$columnData[$j]][$key], $useBaseCurrency)) {
 
 						    if (!$grandTotalColumnSet) {
 						    	$grandTotal[$columnData[$j]][$key] = $value;
@@ -936,13 +937,13 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 					    	$rowsAndColumnsData[$i]['Total'][$key] = $rowsAndColumnsData[$i]['Total'][$key] + $value;
 						} // if
 					    if (!$grandTotalColumnSet) {
-					    	$grandTotal[$columnData[$j]][$key] = unformat_number($grandTotal[$columnData[$j]][$key]) + unformat_number($value);
+					    	$grandTotal[$columnData[$j]][$key] = unformat_number($grandTotal[$columnData[$j]][$key], $useBaseCurrency) + unformat_number($value, $useBaseCurrency);
 					    }
 					    
 					    if (!isset($grandTotal['Total'][$key])) {
 					    	$grandTotal['Total'][$key] = $grandTotal[$columnData[$j]][$key];
 					    } else {
-					    	$grandTotal['Total'][$key] = unformat_number($grandTotal['Total'][$key]) + unformat_number($value);
+					    	$grandTotal['Total'][$key] = unformat_number($grandTotal['Total'][$key], $useBaseCurrency) + unformat_number($value, $useBaseCurrency);
 					    }
 					} // if
 					
@@ -955,7 +956,7 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 		} // for
 			// calculate average. Assume that Sum and Count exists.
 			if ($isAverageExists) {
-				$rowsAndColumnsData[$i]['Total'][$averageKey] = number_format(unformat_number($rowsAndColumnsData[$i]['Total'][$sumKey]) /  $rowsAndColumnsData[$i]['Total'][$countKey], 4, $decimalSep, '');
+				$rowsAndColumnsData[$i]['Total'][$averageKey] = number_format(unformat_number($rowsAndColumnsData[$i]['Total'][$sumKey], $useBaseCurrency) /  $rowsAndColumnsData[$i]['Total'][$countKey], 4, $decimalSep, '');
 				$displayColumn = $labelToDataTypeArray[$averageKey];
 		    	$displayColumn['fields'] = array(strtoupper($averageKey) => $rowsAndColumnsData[$i]['Total'][$averageKey]);
 		    	$rowsAndColumnsData[$i]['Total'][$averageKey] = $reporter->layout_manager->widgetDisplay($displayColumn);
@@ -963,13 +964,13 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 	} // for
 	
 	if ($isAverageExists) {
-				$grandTotal['Total'][$averageKey] = number_format(unformat_number($grandTotal['Total'][$sumKey]) /  $grandTotal['Total'][$countKey], 4, $decimalSep, '');
+				$grandTotal['Total'][$averageKey] = number_format(unformat_number($grandTotal['Total'][$sumKey], $useBaseCurrency) /  $grandTotal['Total'][$countKey], 4, $decimalSep, '');
 				$displayColumn = $labelToDataTypeArray[$averageKey];
 		    	$displayColumn['fields'] = array(strtoupper($averageKey) => $grandTotal['Total'][$averageKey]);
 		    	$grandTotal['Total'][$averageKey] = $reporter->layout_manager->widgetDisplay($displayColumn);
 		    	
 		for ($j = 0 ; $j < count($columnData) ; $j++) {
-				$grandTotal[$columnData[$j]][$averageKey] = number_format(unformat_number($grandTotal[$columnData[$j]][$sumKey]) /  $grandTotal[$columnData[$j]][$countKey], 4, $decimalSep, '');
+				$grandTotal[$columnData[$j]][$averageKey] = number_format(unformat_number($grandTotal[$columnData[$j]][$sumKey], $useBaseCurrency) /  $grandTotal[$columnData[$j]][$countKey], 4, $decimalSep, '');
 				$displayColumn = $labelToDataTypeArray[$averageKey];
 		    	$displayColumn['fields'] = array(strtoupper($averageKey) => $grandTotal[$columnData[$j]][$averageKey]);
 		    	$grandTotal[$columnData[$j]][$averageKey] = $reporter->layout_manager->widgetDisplay($displayColumn);
