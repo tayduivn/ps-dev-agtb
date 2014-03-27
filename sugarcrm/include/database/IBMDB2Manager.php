@@ -828,13 +828,9 @@ public function convert($string, $type, array $additional_parameters = array())
 		switch($action) {
 			case "ADD":
                 $ref = $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, true);
-                if($ref['required'] == 'NULL') {
-                    // DB2 doesn't have NULL definition, only NOT NULL
+                if($ref['required'] == 'NULL' // DB2 doesn't have NULL definition, only NOT NULL
+                        || ($ref['required'] == 'NOT NULL' && $ref['default'] == '')) { // Make it nullable if no default value provided
                     $ref['required'] = ''; 
-                }
-                if($ref['required'] == 'NOT NULL' && empty($ref['default'])) {
-                    // Make it nullable if no default value provided. This change is only needed when adding a new column to existing tables
-                    $ref['required'] = '';
                 }
                 $sql = $this->alterTableColumnSQL($action, "{$ref['name']} {$ref['colType']} {$ref['default']} {$ref['required']} {$ref['auto_increment']}");
 				break;
