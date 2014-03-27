@@ -29,43 +29,40 @@
 
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/axis.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/legend.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/multiBar.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/multiBarHorizontalChart.js"></script>
+
 <script>
-  nv.addGraph(function() {
     var chart = nv.models.multiBarHorizontalChart()
           .x(function(d) { return d.label })
           .y(function(d) { return d.value })
-          .margin({top: 10, right: 20, bottom: 30, left: 20})
-          .stacked(false)
-          .showValues(true)
           .showTitle(true)
           .showControls(true)
-          //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: horizbar_data.data.length} )
-          //.colorData( 'class' )
+          .showValues(true)
+          .stacked(false)
+          //.colorData('graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: horizbar_data.data.length})
+          //.colorData('class')
           //.colorData('default')
           .tooltips(true)
           .tooltipContent( function(key, x, y, e, graph) {
             return '<p>Outcome: <b>' + key + '</b></p>' +
                    '<p>Lead Source: <b>' +  x + '</b></p>' +
                    '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>'
-          })
-        ;
+          });
 
     chart.yAxis
-        .tickFormat(d3.format(',.2f'));
-
-    nv.utils.windowResize(chart.update);
+      .tickFormat(d3.format(',.2f'));
 
     d3.json("data/horizbar_data_color.json", function(data) {
-      d3.select('#chart1 svg')
-          .datum(data)
-        .transition().duration(500)
-          .call(chart);
-    });
+        d3.select('#chart1 svg')
+            .datum(data)
+          .transition().duration(500)
+            .call(chart);
 
-    return chart;
-  });
+        nv.utils.windowResize(chart.update);
+    });
 </script>
 </body>
 </html>

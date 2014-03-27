@@ -40,9 +40,10 @@
     </div>
   </div>
 
-<script src="js/jquery-1.7.2.min.js"></script>
-<script src="js/underscore-min.js"></script>
-<script src="js/backbone-min.js"></script>
+<script src="../../../include/javascript/jquery/jquery-min.js"></script>
+<script src="../../../sidecar/lib/backbone/underscore.min.js"></script>
+<script src="../../../sidecar/lib/backbone/backbone.min.js"></script>
+
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/treemap.js"></script>
@@ -61,10 +62,11 @@
       var self = this;
 
       self.collection.bind( 'reset', function(model) {
-          var root = self.parseData( model.models.map( function(d,i) { return d.attributes ;})[0].records );
+          var data = self.parseData( model.models.map( function(d,i) { return d.attributes ;})[0].records );
           d3.select(self.el)
-            .datum(root)
-            .transition().duration(500).call(self.chart);
+              .datum(data)
+            .transition().duration(500)
+              .call(self.chart);
       });
     },
 
@@ -127,11 +129,7 @@
       var day_ms = 1000*60*60*24
         , d1 = new Date(today.getTime() + 31*day_ms);
 
-      var data = data.filter(function(model) {
-          // Filter for 30 days from now.
-          var d2 = new Date(model.date_closed || '1970-01-01');
-          return (d2-d1)/day_ms <= 30;
-      }).map(function(d){
+      var data = data.map(function(d){
           // Include properties to be included in leaves
           return {
             assigned_user_name: d.assigned_user_name,
@@ -141,6 +139,7 @@
             color: d.color
           };
       });
+console.log(JSON.stringify(data, null, '  '));
 
       data = _.groupBy(data, function(m) {
           return m.assigned_user_name;
