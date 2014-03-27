@@ -617,17 +617,12 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         $out = array();
         foreach ($panels as $panel) {
             foreach($panel['fields'] as $field) {
-                if (!is_array($field)) {
-                    $name = $field;
-                } elseif (!empty($field['name'])) {
-                    $name = $field['name'];
-                } else {
-                    $name = '';
-                }
-                if(empty($name)) {
-                    $out[] = $field;
-                } else {
-                    $out[$name] = $field;
+                if (!empty($field)) {
+                    if (!is_array($field)) {
+                        $out[$field] = $field;
+                    } elseif (!empty($field['name'])) {
+                        $out[$field['name']] = $field;
+                    }
                 }
             }
         }
@@ -650,7 +645,10 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             foreach ($panel as $rowIndex => $row) {
                 if (is_array($row)) {
                     foreach ($row as $fieldIndex => $field) {
-                        if ($field == $fieldName) {
+                        // Need strict equality here to prevent upgrade issues
+                        // like with Cases, that have an empty field placeholder
+                        // in it's layout
+                        if ($field === $fieldName) {
                             $panel[$rowIndex][$fieldIndex] = MBConstants::$EMPTY['name'];
                             $result = true;
                             break 2;
@@ -672,7 +670,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                     $cols = count($row);
                     $empties = 0;
                     foreach ($row as $field) {
-                        if ($field == MBConstants::$EMPTY['name']) {
+                        if ($field === MBConstants::$EMPTY['name']) {
                             $empties++;
                         }
                     }
