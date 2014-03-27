@@ -109,13 +109,15 @@
         this.setSelect2Node();
         if (this.$node.length > 0) {
             this.$node.select2({
-                allowClear:          true,
-                multiple:            true,
-                containerCssClass:   'select2-choices-pills-close span8',
+                allowClear: true,
+                multiple: true,
+                containerCssClass: 'select2-choices-pills-close span12 select2-choices-pills-square with-padding',
                 tags: [],
                 formatSelection: _.bind(this.formatSelection, this),
                 width: 'off',
-                escapeMarkup: function (m) { return m; }
+                escapeMarkup: function(m) {
+                    return m;
+                }
             });
             this.refreshFromModel();
         }

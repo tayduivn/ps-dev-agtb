@@ -16,6 +16,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $dictionary['KBSContent'] = array(
     'table' => 'kbscontents',
     'audited' => true,
+    'activity_enabled' => true,
     'comment' => 'A content represents information about document',
     'fields' => array(
         'kbdocument_body' => array(

@@ -21,6 +21,30 @@ class KBSContent extends SugarBean {
     public $module_dir = 'KBSContents';
 
     /**
+     * Return primary language for KB.
+     * @return array Key and label for primary language.
+     */
+    public function getPrimaryLanguage()
+    {
+        $admin = BeanFactory::getBean('Administration');
+        $config = $admin->getConfigForModule('KBSDocuments');
+        $langs = $config['languages'];
+        $default = null;
+        foreach ($langs as $lang) {
+            if ($lang['primary'] === true) {
+                $default = $lang;
+                unset($default['primary']);
+                $default = array(
+                    'label' => reset($default),
+                    'key' => key($default)
+                );
+                break;
+            }
+        }
+        return $default;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function save($check_notify = false)
@@ -38,6 +62,11 @@ class KBSContent extends SugarBean {
                 $doc->save();
                 $this->load_relationship('kbsdocuments_kbscontents');
                 $this->kbsdocuments_kbscontents->add($doc);
+
+                if (empty($this->language)) {
+                    $lang = $this->getPrimaryLanguage();
+                    $this->language = $lang['key'];
+                }
             }
             if (!$this->active_rev) {
                 $query = "UPDATE {$this->table_name}

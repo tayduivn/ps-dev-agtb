@@ -629,7 +629,6 @@ FP;
     $enabled_tabs[] = 'Home';
 
     $enabled_tabs[] = 'Accounts';
-    $enabled_tabs[] = 'KBSContents';
     $enabled_tabs[] = 'Contacts';
     $enabled_tabs[] = 'Opportunities';
     $enabled_tabs[] = 'Leads';
@@ -661,6 +660,7 @@ FP;
         $enabled_tabs[] = 'Bugs';
     }
     //END SUGARCRM flav=ent ONLY
+    $enabled_tabs[] = 'KBSContents';
 
     installerHook('pre_setSystemTabs');
     require_once('modules/MySettings/TabController.php');

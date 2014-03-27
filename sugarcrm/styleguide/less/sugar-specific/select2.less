@@ -161,6 +161,59 @@
         padding-right: 6px;
       }
     }
+
+    &.select2-choices-pills-square {
+      .select2-choices {
+        padding-left: 2px;
+        min-height: 30px;
+      }
+      .select2-search-choice {
+        div {
+          padding: 6px 24px 6px 6px;
+          border-radius: 3px;
+          color: @white;
+          background: lighten(@grayDark, 10%);
+          .label {
+            background: #499C00;
+            text-align: center;
+            color: @white;
+            line-height: 16px;
+            font-size: 10px;
+          }
+        }
+        .icon {
+          display: block;
+          float: left;
+          width: 20px;
+          height: 20px;
+          margin: -5px 5px 0 -5px;
+          box-sizing: border-box;
+          img {
+            width: inherit;
+            height: inherit;
+          }
+        }
+        a.select2-search-choice-close {
+          top: 6px;
+          right: 4px;
+          font-size: 12px;
+          font-weight: normal;
+          color: @black;
+          &::before {
+            content: "\f00d";
+          }
+          &:hover {
+            color: @grayLight;
+          }
+        }
+      }
+      .select2-search-field {
+        input {
+          padding: 6px 4px;
+          margin: -1px 0 0;
+        }
+      }
+    }
   }
   .select2-select-legend {
     .icon-plus {
@@ -217,8 +270,8 @@
 }
 
 .selected_recipients .select2-container.select2-container-multi.select2-choices-pills-close.select2-container-disabled .select2-choices {
- // needed for address book recipients
- background-color: @white;
+  // needed for address book recipients
+  background-color: @white;
 }
 
 .select2-drop-mask {
@@ -252,14 +305,7 @@
 .select2-drop-error {
   border-color:@errorText;
   .select2-results {
-  /*    li:first-child {
-      border-top: none;
-      .border-radius(3px 3px 0 0);
-    }
-    li:last-child {
-      border-bottom: none;
-      .border-radius(0 0 3px 3px);
-    }*/
+
   }
 }
 
@@ -399,4 +445,24 @@
 }
 .error .select2-addon .select2-choice > div {
   margin-right: 0;
+}
+
+.tags {
+  margin: 0;
+  .tag-wrapper {
+    display: inline-block;
+    padding: 3px 6px 3px;
+    background: @gray;
+    top: 3px;
+    left: 3px;
+    .border-radius(3px);
+    margin-right: 4px;
+    margin-top: 2px;
+    float: left;
+    .tag-name {
+      font-size: @baseFontSize;
+      color: @white;
+      font-weight: 600;
+    }
+  }
 }

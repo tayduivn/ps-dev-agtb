@@ -12,11 +12,22 @@
  * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
  */
 }}
-{{#each value}}
-    {{#eq mimeType 'image'}}
-        <a class="ellipsis_inline" data-placement="bottom" title="{{name}}" href="{{url}}" target="_blank">{{name}}</a>
-    {{/eq}}
-    {{#notEq mimeType 'image'}}
-        <a class="ellipsis_inline" data-placement="bottom" title="{{name}}" href="javascript:void(0);" data-url="{{url}}" data-action="download">{{name}}</a>
-    {{/notEq}}
-{{/each}}
+<div class="select2-container select2-container-multi select2-choices-pills-close select2-choices-pills-square select2 span12">
+    <ul class="select2-choices">
+        {{#each value}}
+            <li class="select2-search-choice">
+                <div>
+                <span class="select2-choice-type">
+                    <a class="ellipsis_inline kb-attachment-link"
+                       data-placement="bottom"
+                       title="{{name}}"
+                       href="javascript:void(0);"
+                       data-url="{{url}}"
+                       data-action="download">{{name}}
+                    </a>
+                </span>
+                </div>
+            </li>
+        {{/each}}
+    </ul>
+</div>
