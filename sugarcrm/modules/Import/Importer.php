@@ -1158,6 +1158,8 @@ class Importer
             $address = array(
                 'email_address' => $email_address,
                 'primary_address' => false,
+                'invalid_email' => false,
+                'opt_out' => false,
             );
 
             // check if there are elements in $attrs after $email_address was shifted from there
