@@ -129,7 +129,7 @@ class RecentApi extends SugarApi
                 $seed = BeanFactory::newBean($moduleName);
                 $mainQuery->union($this->getRecentlyViewedQueryObject($seed, $options), true);
             }
-            $mainQuery->orderByRaw('max_date_modified', 'DESC');
+            $mainQuery->orderByRaw('last_viewed_date', 'DESC');
         }
 
         // Add an extra record to the limit so we can detect if there are more records to be found.
@@ -139,6 +139,11 @@ class RecentApi extends SugarApi
         $data = $beans = array();
         $data['next_offset'] = -1;
 
+        // 'Cause last_viewed_date is an alias (not a real field), we need to
+        // temporarily store its values and append it later to each recently
+        // viewed record
+        $lastViewedDates = array();
+
         $results = $mainQuery->execute();
         foreach ($results as $idx => $recent) {
             if ($idx == $options['limit']) {
@@ -146,10 +151,18 @@ class RecentApi extends SugarApi
                 break;
             }
             $seed = BeanFactory::getBean($recent['module_name'], $recent['id']);
+            $lastViewedDates[$seed->id] = $recent['last_viewed_date'];
             $beans[$seed->id] = $seed;
         }
 
         $data['records'] = $this->formatBeans($api, $args, $beans);
+
+        global $timedate;
+
+        // Append last_viewed_date to each recently viewed record
+        foreach($data['records'] as &$record) {
+            $record['_last_viewed_date'] = $timedate->asIso($timedate->fromDb($lastViewedDates[$record['id']]));
+        }
 
         return $data;
     }
@@ -198,7 +211,7 @@ class RecentApi extends SugarApi
             $query->groupBy($v->table . '.' . $v->field);
         }
 
-        $query->select()->fieldRaw('MAX(tracker.date_modified)', 'max_date_modified');
+        $query->select()->fieldRaw('MAX(tracker.date_modified)', 'last_viewed_date');
 
         return $query;
     }
