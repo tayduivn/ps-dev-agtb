@@ -527,9 +527,15 @@ END;
         }
         $this->logUpgradeStatus('Converting ' . $this->client . ' ' . $this->viewtype . ' view defs for ' . $this->module);
 
-        $parser = ParserFactory::getParser($this->viewtype, $this->module, null, null, $this->client);
+        // Holds merged defs and final defs
         $newdefs = $tempdefs = $finaldefs = array();
+
+        // This needs to be called before the parser is instantiated to prevent 
+        // custom metadata from being created from basic module template
         $defaultDefs = $this->loadDefaultMetadata();
+
+        // Get the parser now that default metadata has been fetched
+        $parser = ParserFactory::getParser($this->viewtype, $this->module, null, null, $this->client);
 
         // Go through merge views, add fields added to detail view to base panel
         // and fields added to edit view not in detail view or hidden panel
