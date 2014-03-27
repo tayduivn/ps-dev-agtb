@@ -40,59 +40,52 @@
     loadData: function(options) {
         options = options || {};
         var dt = this.layout.getComponent('dashlet-toolbar');
-        if(dt) {
+        if (dt) {
             // manually set the icon class to spiny
-            this.$("[data-action=loading]").removeClass(dt.cssIconDefault).addClass(dt.cssIconRefresh);
+            this.$('[data-action=loading]')
+                .removeClass(dt.cssIconDefault)
+                .addClass(dt.cssIconRefresh);
         }
 
         var useful = app.controller.context.get('model').get('useful') || '0';
         var notuseful = app.controller.context.get('model').get('notuseful') || '0';
-        useful = parseInt(useful);
-        notuseful = parseInt(notuseful);
+
+        useful = parseInt(useful, 10);
+        notuseful = parseInt(notuseful, 10);
+
+        // correcting values for pie chart,
+        // because pie chart not support all zero values.
+        if (0 === useful && 0 === notuseful) {
+            useful = 1;
+            notuseful = 1;
+        }
 
         var chartData = {
-            color: [
-                '#ff0000',
-                '#00ff00'
-            ],
-            label: [
-                'Not Useful',
-                'Useful'
-            ],
             properties: [
                 {
-                    labels: "value",
-                    legend: "on",
-                    print: "",
-                    subtitle: "",
-                    thousands: "",
-                    title: "Total: " + (notuseful + useful),
-                    type: "horizontal group by chart"
+                    labels: 'value',
+                    legend: 'on',
+                    print: '',
+                    subtitle: '',
+                    thousands: '',
+                    title: '',
+                    type: 'pie chart'
                 }
             ],
             values: [
                 {
-                    gvalue: (notuseful + useful),
-                    gvaluelabel: (notuseful + useful),
-                    label: "",
-                    links: [
-                        "",
-                        ""
-                    ],
-                    valuelabels: [
-                        notuseful,
-                        useful
-                    ],
-                    values: [
-                        notuseful,
-                        useful
-                    ]
+                    label: [app.lang.get('LBL_USEFUL', 'KBSContents')],
+                    values: [useful]
+                },
+                {
+                    label: [app.lang.get('LBL_NOT_USEFUL', 'KBSContents')],
+                    values: [notuseful]
                 }
             ]
         };
 
         _.defer(_.bind(function() {
-            this.chartData.set({rawChartData: chartData})
+            this.chartData.set({rawChartData: chartData});
         }, this));
         if (options && _.isFunction(options.complete)) {
             options.complete();

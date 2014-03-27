@@ -50,4 +50,8 @@ $mod_strings = array (
     'LBL_DASHLET_MOST_USEFUL_NAME' => 'Most Useful Knowledge Base Articles',
     'LBL_DASHLET_MOST_USEFUL_DESC' => 'Most Useful Knowledge Base Articles Description',
     'LBL_MORE_MOST_USEFUL_ARTICLES' => 'More most useful knowledge base articles...',
+    'LBL_USEFUL' => 'Useful',
+    'LBL_NOT_USEFUL' => 'Not Useful',
+    'LBL_DASHLET_USEFULNESS_NAME' => 'Usefulness for Articles',
+    'LBL_DASHLET_USEFULNESS_DESC' => 'Usefulness for Articles Description',
 );

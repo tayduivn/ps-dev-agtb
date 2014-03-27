@@ -23,8 +23,8 @@ $viewdefs['KBSContents']['base']['layout']['record-dashboard'] = array(
                                     array(
                                         'view' =>
                                             array(
-                                                'type' => 'kbs-dashlet-rating',
-                                                'label' => 'KBS Dashlet Rating',
+                                                'type' => 'kbs-dashlet-usefulness',
+                                                'label' => 'LBL_DASHLET_USEFULNESS_NAME',
                                             ),
                                         'context' =>
                                             array(

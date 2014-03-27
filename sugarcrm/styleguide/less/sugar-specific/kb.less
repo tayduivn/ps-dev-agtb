@@ -32,3 +32,20 @@
     }
   }
 }
+
+[data-type="usefulness"] {
+  .btn.btn-invisible {
+    &:not(.disabled) {
+      color: @linkColor;
+      &:hover,&:active {
+        color: @linkColorHover;
+      }
+    }
+    &.disabled.voted {
+      color: @linkColorHover;
+      .icon-thumbs-down, .icon-thumbs-up {
+        color: @gray;
+      }
+    }
+  }
+}

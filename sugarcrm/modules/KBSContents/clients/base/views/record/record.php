@@ -49,14 +49,6 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                 'approved',
                 'revision',
                 'kbsdocument_name',
-                'rating' => array(
-                    'name' => 'rating',
-                    'type' => 'rating',
-                    'fields' => array(
-                        'useful',
-                        'notuseful',
-                    ),
-                ),
                 'viewcount' => array(
                     'name' => 'viewcount',
                     'readonly' => 'true'
@@ -74,6 +66,14 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                 array(
                     'name' => 'topic_name',
                     'label' => 'LBL_TOPIC_NAME',
+                ),
+                'usefulness' => array(
+                    'name' => 'usefulness',
+                    'type' => 'usefulness',
+                    'fields' => array(
+                        'useful',
+                        'notuseful',
+                    ),
                 ),
             ),
         ),
