@@ -128,7 +128,8 @@ for ($k = 0; $k < sizeof($total_keys); $k++) {
 
     $product_bundels[$total_keys[$k]] = $pb->save();
     if (substr_count($total_keys[$k], 'group_') > 0) {
-        $pb->set_productbundle_quote_relationship($focus->id, $pb->id, $k);
+        $lastIndex = getLastProductBundleIndex($focus->id);
+        $pb->set_productbundle_quote_relationship($focus->id, $pb->id, $lastIndex + 1);
     }
 
     //clear the old relationships out
@@ -249,3 +250,13 @@ if (!empty($_REQUEST['return_module'])) {
     $return_module = $_REQUEST['return_module'];
 }
 handleRedirect($return_id, $return_module);
+
+function getLastProductBundleIndex($focusId)
+{
+    $tableName = $GLOBALS['dictionary']['product_bundle_quote']['table'];
+    $focusId = $GLOBALS['db']->quoted($focusId);
+    $query = "SELECT MAX(bundle_index) as last_index FROM $tableName WHERE quote_id = $focusId AND deleted = 0";
+    $result = $GLOBALS['db']->query($query);
+    $row = $GLOBALS['db']->fetchByAssoc($result);
+    return ($row['last_index'] != null) ? $row['last_index'] : -1;
+}
