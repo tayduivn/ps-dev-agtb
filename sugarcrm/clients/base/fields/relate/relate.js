@@ -353,6 +353,11 @@
         }, this);
 
         if (_.isEmpty(newData)) {
+            // the model has already been set,
+            // re-render field if we don't have anything to auto-populate
+            if (!this.disposed) {
+                this.render();
+            }
             return;
         }
 
