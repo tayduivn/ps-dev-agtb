@@ -935,13 +935,13 @@ and (orientation : landscape) {
 
 .dashlet-content { /* UIUX-1636 */
   :not(.left-actions):not(.right-actions) > table.dataTable {
-    thead tr th > span,
-    tbody tr td > span 
+    thead tr th:last-child > span,
+    tbody tr td:last-child > span 
     {
       margin-right: 0;
     }
 
-    thead tr th { /* two rules below necessary because sort icons run into text on <th> */
+    thead tr th:last-child { /* two rules below necessary because sort icons run into text on <th> */
       padding-left: 12px;
       &> span {
         padding-right: 6px;
