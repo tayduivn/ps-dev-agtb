@@ -48,10 +48,11 @@ class SugarUpgradeMergeTemplates extends UpgradeScript
             if (file_exists('modules/UpgradeWizard/SugarMerge/SugarMerge7.php')) {
                 require_once('modules/UpgradeWizard/SugarMerge/SugarMerge7.php');
             } else {
-                $this->error('SugarMerge7.php not found, this file is required for Sugar7 Upgrades', true);
+                return $this->error('SugarMerge7.php not found, this file is required for Sugar7 Upgrades', true);
             }
         }
         $merger = new SugarMerge7($this->context['new_source_dir']);
+        $merger->setUpgrader($this->upgrader);
         $merger->mergeAll();
         $this->log("**** Merge finished ");
     }
