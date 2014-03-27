@@ -63,7 +63,9 @@ class VardefManager{
             VardefManager::addTemplate($module, $object, $template, $object_name);
         }
         // Some of the templates might have loaded templates
-        $templates = $GLOBALS['dictionary'][$object]['templates'];
+        if (isset($GLOBALS['dictionary'][$object]['templates'])) {
+            $templates = $GLOBALS['dictionary'][$object]['templates'];
+        }
         LanguageManager::createLanguageFile($module, $templates);
 
         if (isset(VardefManager::$custom_disabled_modules[$module]))
