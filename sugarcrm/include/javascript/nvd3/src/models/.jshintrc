@@ -18,7 +18,6 @@
   "trailing": true,
   "globalstrict": false,
   "nonstandard": true,
-  "quotemark": "single",
   "white": false,
   "indent": 2,
   "onevar": false,
