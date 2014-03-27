@@ -47,4 +47,7 @@ $mod_strings = array (
     'LBL_ADD_ATTACHMENT' => 'Add attachment',
     'LBL_TOPICS' => 'Topics',
     'LBL_TOPIC_NAME' => 'Topic',
+    'LBL_DASHLET_MOST_USEFUL_NAME' => 'Most Useful Knowledge Base Articles',
+    'LBL_DASHLET_MOST_USEFUL_DESC' => 'Most Useful Knowledge Base Articles Description',
+    'LBL_MORE_MOST_USEFUL_ARTICLES' => 'More most useful knowledge base articles...',
 );
