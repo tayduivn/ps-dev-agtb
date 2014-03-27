@@ -145,5 +145,5 @@ $mod_strings = array (
 
     'LBL_REVENUELINEITEMS' => 'Revenue Line Items',
 
-    'LBL_CALL_CLOSE_SUCCESS' => 'Call marked as held.',
+    'TPL_CALL_STATUS_CHANGED' => 'Call marked as {{status}}.',
 );
