@@ -18,7 +18,7 @@
 ({
     // TODO remove the id links in footer and replace to data-attributes (SC-2580)
     events: {
-        'click #tour': 'showTutorial',
+        'click #tour': 'showTutorialClick',
         'click #feedback': 'feedback',
         'click #support': 'support',
         'click #help': 'help'
@@ -52,7 +52,7 @@
     },
     enableTourButton: function() {
         this.$('#tour').removeClass('disabled');
-        this.events['click #tour'] = 'showTutorial';
+        this.events['click #tour'] = 'showTutorialClick';
         this.undelegateEvents();
         this.delegateEvents();
     },
@@ -140,6 +140,19 @@
             button.removeClass('disabled').toggleClass('active', active);
         }
     },
+
+    /**
+     * click event for show tour icon
+     * @param {Object} e click event.
+     */
+    showTutorialClick: function(e) {
+        this.showTutorial();
+    },
+
+    /**
+     * show tour overlay
+     * @param {Object} prefs preferences to preserve.
+     */
     showTutorial: function(prefs) {
         app.tutorial.resetPrefs(prefs);
         app.tutorial.show(app.controller.context.get('layout'), {module: app.controller.context.get('module')});

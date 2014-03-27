@@ -88,16 +88,29 @@ class SugarFieldFloat extends SugarFieldInt
      * @return bool
      * @throws SugarApiExceptionInvalidParameter
      */
-    public function fixForFilter(&$value, $fieldName, SugarBean $bean, SugarQuery $q, SugarQuery_Builder_Where $where, $op) {
-
+    public function fixForFilter(
+        &$value,
+        $fieldName,
+        SugarBean $bean,
+        SugarQuery $q,
+        SugarQuery_Builder_Where $where,
+        $op
+    ) {
         // if we have an array, pull the first value
         if (is_array($value)) {
             $v = $value[1];
         } else {
             $v = $value;
         }
+
+        $decimal_separator_location = substr(strrchr($v, '.'), 1);
+        // if we don't have a decimal, just use the normal methods back up the chain
+        // since it's a whole number that is being searched on
+        if ($decimal_separator_location === false) {
+            return true;
+        }
         // ROUND(<value>, <precision>) is the standard across all DB's we support
-        $field = "ROUND($fieldName, ". strlen(substr(strrchr($v, "."), 1)) . ")";
+        $field = "ROUND($fieldName, ". strlen($decimal_separator_location) . ")";
 
         switch($op){
             case '$equals':

@@ -41,9 +41,12 @@ describe("Base.View.Forecastdetails", function() {
             model: new Backbone.Model()
         });
         context.parent = new Backbone.Model();
-        context.parent.set('selectedUser', {id: 'test_user', is_manager: false});
-        context.parent.set('selectedTimePeriod', 'test_timeperiod');
-        context.parent.set('module', 'Forecasts');
+        context.parent.set({
+            selectedUser: {id: 'test_user', is_manager: false},
+            selectedTimePeriod: 'test_timeperiod',
+            module: 'Forecasts',
+            model: new Backbone.Model()
+        });
 
         var meta = {
             config: false
@@ -552,8 +555,8 @@ describe("Base.View.Forecastdetails", function() {
     });
 
     describe("isManagerView()", function() {
-        it("selectedUser is a manager and showOpps is undefined", function() {
-            view.selectedUser.is_manager= true;
+        it("forecastType is Rollup", function() {
+            view.context.parent.get('model').set({forecastType: 'Rollup'})
             view.currentModule = "Forecasts";
 
             result = view.isManagerView();
@@ -561,29 +564,10 @@ describe("Base.View.Forecastdetails", function() {
             expect(result).toBeTruthy();
         });
 
-        it("selectedUser is a manager and showOpps is true", function() {
-            view.selectedUser.is_manager= true;
-            view.selectedUser.showOpps = true;
+        it("forecastType is Direct", function() {
+            view.context.parent.get('model').set({forecastType: 'Direct'})
             view.currentModule = "Forecasts";
 
-            result = view.isManagerView();
-
-            expect(result).toBeFalsy();
-        });
-
-        it("selectedUser is a manager and showOpps is false", function() {
-            view.selectedUser.is_manager= true;
-            view.selectedUser.showOpps = false;
-            view.currentModule = "Forecasts";
-
-            result = view.isManagerView();
-
-            expect(result).toBeTruthy();
-        });
-
-        it("selectedUser is not a manager and showOpps is undefined", function() {
-            view.selectedUser.is_manager= false;
-            view.currentModule = "Forecasts";
             result = view.isManagerView();
 
             expect(result).toBeFalsy();

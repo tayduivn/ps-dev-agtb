@@ -214,6 +214,27 @@ $dictionary['ProductCategory'] = array(
         ),
 
         //END SUGARCRM flav=pro ONLY
+        
+        'modified_user_link' => array(
+            'name' => 'modified_user_link',
+            'type' => 'link',
+            'relationship' => 'product_categories_modified_user',
+            'vname' => 'LBL_MODIFIED_USER',
+            'link_type' => 'one',
+            'module' => 'Users',
+            'bean_name' => 'User',
+            'source' => 'non-db',
+        ),
+        'created_by_link' => array(
+            'name' => 'created_by_link',
+            'type' => 'link',
+            'relationship' => 'product_categories_created_by',
+            'vname' => 'LBL_CREATED_USER',
+            'link_type' => 'one',
+            'module' => 'Users',
+            'bean_name' => 'User',
+            'source' => 'non-db',
+        ),
     ),
     'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Products', 'allowUserRead' => true)),
     'indices' =>
@@ -230,7 +251,27 @@ $dictionary['ProductCategory'] = array(
             'rhs_table' => 'product_categories',
             'rhs_key' => 'id',
             'relationship_type' => 'one-to-many'
-        )
+        ),
+        'product_categories_modified_user' =>
+            array(
+                'lhs_module' => 'Users',
+                'lhs_table' => 'users',
+                'lhs_key' => 'id',
+                'rhs_module' => 'ProductCategories',
+                'rhs_table' => 'product_categories',
+                'rhs_key' => 'modified_user_id',
+                'relationship_type' => 'one-to-many'
+            ),
+        'product_categories_created_by' =>
+            array(
+                'lhs_module' => 'Users',
+                'lhs_table' => 'users',
+                'lhs_key' => 'id',
+                'rhs_module' => 'ProductCategories',
+                'rhs_table' => 'product_categories',
+                'rhs_key' => 'created_by',
+                'relationship_type' => 'one-to-many'
+            ),
     )
 );
 
