@@ -1,24 +1,29 @@
-nv.models.legend = function() {
+nv.models.legend = function () {
 
   //============================================================
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
   var margin = {top: 10, right: 10, bottom: 10, left: 10},
-      width = 400,
-      height = 20,
+      width = 0,
+      height = 0,
+      align = 'right',
+      position = 'start',
       radius = 5,
       gutter = 10,
-      lineHeight = 20,
-      align = 'right',
       equalColumns = true,
       showAll = false,
+      enabled = false,
       strings = {close: 'close', type: 'legend'},
       id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one
-      getKey = function(d) { return d.key.length > 0 ? d.key : 'undefined'; },
+      getKey = function (d) {
+        return d.key.length > 0 || (!isNaN(parseFloat(d.key)) && isFinite(d.key)) ? d.key : 'undefined';
+      },
       color = nv.utils.defaultColor(),
-      classes = function(d, i) { return ''; },
-      dispatch = d3.dispatch('legendClick', 'legendMouseover', 'legendMouseout', 'linkClick');
+      classes = function (d, i) {
+        return '';
+      },
+      dispatch = d3.dispatch('legendClick', 'legendMouseover', 'legendMouseout', 'toggleMenu', 'closeMenu');
 
   // Private Variables
   //------------------------------------------------------------
@@ -28,12 +33,24 @@ nv.models.legend = function() {
   //============================================================
 
   function legend(selection) {
-    selection.each(function(data) {
-      var availableWidth = width - margin.left - margin.right,
-          availableHeight = height - margin.top - margin.bottom,
-          container = d3.select(this),
-          legendWidth = 0,
-          legendHeight = 0;
+
+    selection.each(function (data) {
+
+      var container = d3.select(this),
+          containerWidth = width,
+          containerHeight = height,
+          keyWidths = [],
+          legendHeight = 0,
+          dropdownHeight = 0,
+          type = '';
+
+      if (!data || !data.length || !data.filter(function (d) { return !d.values || d.values.length; }).length) {
+        return legend;
+      }
+
+      enabled = true;
+
+      type = !data[0].type || data[0].type === 'bar' ? 'bar' : 'line';
 
       //------------------------------------------------------------
       // Setup containers and skeleton of legend
@@ -61,33 +78,30 @@ nv.models.legend = function() {
       var mask = container.select('.nv-legend-mask');
       var g = container.select('g.nv-legend');
 
-      var series = g.selectAll('.nv-series').data(function(d) { return d; });
+      var series = g.selectAll('.nv-series').data(function (d) { return d; });
       var seriesEnter = series.enter().append('g').attr('class', 'nv-series');
+      series.exit().remove();
 
       var zoom = d3.behavior.zoom();
 
       function zoomLegend(d) {
         var trans = d3.transform(g.attr('transform')).translate,
-            transX = trans[0],
-            transY = trans[1] + d3.event.sourceEvent.wheelDelta / 4,
-            upMax = Math.max(transY, back.attr('height') - legendHeight); //should not go beyond diff
+          transY = trans[1] + d3.event.sourceEvent.wheelDelta / 4,
+          diffY = dropdownHeight - legendHeight,
+          upMax = Math.max(transY, diffY); //should not go beyond diff
         if (upMax) {
-          g .attr('transform', 'translate(' + transX + ',' + Math.min(upMax, 0) + ')');
+          g .attr('transform', 'translate(0,' + Math.min(upMax, 0) + ')');
         }
       }
 
-      function offsetX(x) {
-        return align === 'right' ? width - legendWidth + x : align === 'center' ? x + (width - legendWidth) / 2 : x;
-      }
-
       clip
-        .attr('x', 0)
-        .attr('y', 0)
+        .attr('x', 0.5 - margin.left)
+        .attr('y', 0.5)
         .attr('width', 0)
         .attr('height', 0);
 
       back
-        .attr('x', 0)
+        .attr('x', 0.5)
         .attr('y', 0.5)
         .attr('rx', 2)
         .attr('ry', 2)
@@ -99,162 +113,303 @@ nv.models.legend = function() {
 
       link
         .text(legendOpen === 1 ? legend.strings().close : legend.strings().type)
-        .attr('text-anchor', align === 'right' ? 'end' : 'start')
+        .attr('text-anchor', align === 'left' ? 'start' : 'end')
         .attr('dy', '.32em')
         .attr('dx', 0)
-        .attr('transform', 'translate(' + (align === 'right' ? width : 0) + ',' + (margin.top + radius) + ')')
         .style('opacity', 0)
-        .on('click', function(d, i) {
-          dispatch.linkClick(d, i);
+        .on('click', function (d, i) {
+          dispatch.toggleMenu(d, i);
         });
-
-      mask
-        .attr('clip-path', 'url(#nv-edge-clip-' + id + ')');
 
       seriesEnter
-        .on('mouseover', function(d, i) {
+        .on('mouseover', function (d, i) {
           dispatch.legendMouseover(d, i);  //TODO: Make consistent with other event objects
         })
-        .on('mouseout', function(d, i) {
+        .on('mouseout', function (d, i) {
           dispatch.legendMouseout(d, i);
         })
-        .on('click', function(d, i) {
+        .on('click', function (d, i) {
           dispatch.legendClick(d, i);
+          d3.event.stopPropagation();
         });
-      seriesEnter.append('circle')
-        .style('stroke-width', 2)
-        .attr('r', radius);
-      seriesEnter.append('text')
-        .style('stroke-width', 0)
-        .style('stroke', 'inherit')
-        .attr('text-anchor', 'start')
-        .attr('dy', '.32em')
-        .attr('dx', '8');
-      series.classed('disabled', function(d) { return d.disabled; });
-      series.exit().remove();
-      series.select('circle')
-        .attr('class', function(d, i) { return this.getAttribute('class') || classes(d, i); })
-        .attr('fill', function(d, i) { return this.getAttribute('fill') || color(d, i); })
-        .attr('stroke', function(d, i) { return this.getAttribute('fill') || color(d, i); });
-      series.select('text').text(getKey);
+
+      if (type === 'bar') {
+
+        seriesEnter.append('circle')
+          .attr('r', radius)
+          .attr('class', function (d, i) {
+            return this.getAttribute('class') || classes(d, i);
+          })
+          .attr('fill', function (d, i) {
+            return this.getAttribute('fill') || color(d, i);
+          })
+          .attr('stroke', function (d, i) {
+            return this.getAttribute('fill') || color(d, i);
+          })
+          .style('stroke-width', 2);
+
+        seriesEnter.append('text')
+          .text(getKey)
+          .attr('dy', '.36em');
+
+      } else {
+
+        seriesEnter.append('circle')
+          .attr('r', function (d, i) {
+            return d.type === 'dash' ? 0 : radius;
+          })
+          .attr('class', function (d, i) {
+            return this.getAttribute('class') || classes(d, i);
+          })
+          .attr('fill', function (d, i) {
+            return this.getAttribute('fill') || color(d, i);
+          })
+          .attr('stroke', function (d, i) {
+            return this.getAttribute('fill') || color(d, i);
+          })
+          .style('stroke-width', 0);
+
+        seriesEnter.append('line')
+          .attr('class', function (d, i) {
+            return this.getAttribute('class') || classes(d, i);
+          })
+          .attr('stroke', function (d, i) {
+            return this.getAttribute('stroke') || color(d, i);
+          })
+          .attr('stroke-width', 3)
+          .attr('x0', 0)
+          .attr('y0', 0)
+          .attr('y1', 0)
+          .style('stroke-width', '4px');
+
+        seriesEnter.append('circle')
+          .attr('r', function (d, i) {
+            return d.type === 'dash' ? 0 : radius;
+          })
+          .attr('class', function (d, i) {
+            return this.getAttribute('class') || classes(d, i);
+          })
+          .attr('fill', function (d, i) {
+            return this.getAttribute('fill') || color(d, i);
+          })
+          .attr('stroke', function (d, i) {
+            return this.getAttribute('fill') || color(d, i);
+          })
+          .style('stroke-width', 0);
+
+        seriesEnter.append('text')
+          .text(getKey)
+          .attr('dy', '.32em')
+          .attr('dx', 0)
+          .attr('text-anchor', position);
+
+      }
+
+      series.classed('disabled', function (d) {
+        return d.disabled;
+      });
 
       //------------------------------------------------------------
 
       //TODO: add ability to add key to legend
       //var label = g.append('text').text('Probability:').attr('class','nv-series-label').attr('transform','translate(0,0)');
-      //TODO: implement fixed-width and max-width options (max-width is especially useful with the align option)
 
-      if (equalColumns) {
-        var keyWidths = [],
-            keyCount = 0,
-            keysPerRow = 0,
-            columnWidths = [],
-            keyPositions = [],
-            computeWidth = function(prev, cur, index, array) {
-              return prev + cur;
-            };
+      // store legend label widths
+      legend.calculateWidth = function () {
 
-        g
-          .style('display', 'inline');
+        var shift = gutter + (position === 'start' ? 2 * radius + 3 : 0);
+        keyWidths = [];
 
-        series.each(function(d, i) {
-          var textWidth = d3.select(this).select('text').node().getComputedTextLength() + 2 * radius + 3 + gutter;
-          keyWidths.push(textWidth);
-          // 28 is ~ the width of the circle plus some padding
+        g .style('display', 'inline');
+
+        series.select('text').each(function (d, i) {
+          var textWidth = d3.select(this).node().getBBox().width;
+          keyWidths.push(Math.max(Math.floor(textWidth) + shift, 50));
         });
 
-        keyCount = keyWidths.length;
-        keysPerRow = keyCount;
-        legendWidth = keyWidths.reduce(computeWidth) - gutter;
+        legend.width(d3.sum(keyWidths) - gutter);
 
-        //keep decreasing the number of keys per row until
-        //legend width is less than the available width
+        return legend.width();
+      };
 
-        while (keysPerRow > 1) {
-          columnWidths = [];
+      legend.getLineHeight = function () {
+        g .style('display', 'inline');
+        var lineHeightBB = Math.floor(series.select('text').node().getBBox().height);
+        return lineHeightBB;
+      };
 
-          for (var k = 0, iCol = 0; k < keyCount; k += 1) {
-            iCol = k % keysPerRow;
-            if (keyWidths[k] > (columnWidths[iCol] || 0)) {
-              columnWidths[iCol] = keyWidths[k];
-            }
-          }
+      legend.arrange = function (w) {
 
-          legendWidth = columnWidths.reduce(computeWidth) - gutter;
+        containerWidth = w;
 
-          if (legendWidth < availableWidth) {
-            break;
-          }
-
-          keysPerRow -= 1;
+        if (keyWidths.length === 0) {
+          this.calculateWidth();
         }
 
-        if (showAll || Math.ceil(keyCount / keysPerRow) < 3) {
+        var keys = keyWidths.length,
+            rows = 1,
+            cols = keys,
+            columnWidths = [],
+            keyPositions = [],
+            leftOffSet = 0,
+            topOffset = 0,
+            maxRowWidth = 0,
+            lineSpacing = position === 'start' ? 10 : 6,
+            textHeight = this.getLineHeight(),
+            lineHeight = lineSpacing + radius * 2 + (position === 'start' ? 0 : textHeight),
+            xpos = 0,
+            ypos = 0,
+            i;
 
-          for (var i = 0, curX = radius; i < keysPerRow; i += 1) {
-            keyPositions[i] = curX;
-            curX += columnWidths[i];
+        if (equalColumns) {
+
+          //keep decreasing the number of keys per row until
+          //legend width is less than the available width
+          while (cols > 0) {
+            columnWidths = [];
+            for (i = 0; i < keys; i += 1) {
+              if (keyWidths[i] > (columnWidths[i % cols] || 0)) {
+                columnWidths[i % cols] = keyWidths[i];
+              }
+            }
+            if (d3.sum(columnWidths) < containerWidth) {
+              break;
+            }
+            cols -= 1;
           }
 
-          height = margin.top + margin.bottom + radius * 2 + ((Math.ceil(keyCount / keysPerRow) - 1) * lineHeight);
+          rows = Math.ceil(keys / cols);
+          maxRowWidth = d3.sum(columnWidths) - gutter;
+
+          for (i = 0; i < keys; i += 1) {
+            if (position === 'start') {
+              xpos += i % cols === 0 ? 0 - xpos : columnWidths[i % cols - 1];
+            } else {
+              xpos += (i % cols === 0 ? 0 - xpos : columnWidths[i % cols - 1] / 2) + columnWidths[i % cols] / 2;
+            }
+            ypos = Math.floor(i / cols) * lineHeight;
+            keyPositions[i] = {x: xpos, y: ypos};
+          }
+
+        } else {
+
+          for (i = 0; i < keys; i += 1) {
+            if (xpos + keyWidths[i] - gutter > containerWidth) {
+              xpos = 0;
+              rows += 1;
+            }
+            if (xpos + keyWidths[i] - gutter > maxRowWidth) {
+              maxRowWidth = xpos + keyWidths[i] - gutter;
+            }
+            keyPositions[i] = {x: xpos, y: (rows - 1) * (lineSpacing + radius * 2)};
+            xpos += keyWidths[i];
+          }
+
+        }
+
+        if (showAll || rows < 3) {
+
           legendOpen = 0;
 
-          zoom.on('zoom', null);
+          topOffset = 0.5 + margin.top + radius;
+
+          legend
+            .width(margin.left + maxRowWidth + margin.right)
+            .height(margin.top + rows * lineHeight - lineSpacing + margin.bottom);
+
+          leftOffSet = 0.5 + (align === 'right' ?
+            containerWidth - legend.width() + margin.right :
+            align === 'center' ?
+              (containerWidth - legend.width()) / 2 :
+              0 - margin.left);
+
+          zoom
+            .on('zoom', null);
 
           clip
-            .attr('x', 0 - margin.left)
-            .attr('y', 0 - lineHeight + radius + 0.5)
-            .attr('width', legendWidth + margin.right + margin.left)
-            .attr('height', height);
+            .attr('y', 0 - topOffset)
+            .attr('width', legend.width())
+            .attr('height', legend.height());
 
           back
-            .attr('x', offsetX(0.5 - margin.left))
-            .attr('width', legendWidth + margin.left + margin.right)
-            .attr('height', height)
+            .attr('x', leftOffSet)
+            .attr('width', legend.width())
+            .attr('height', legend.height())
             .style('opacity', 0)
             .style('display', 'inline');
 
-          //position legend as far right as possible within the total width
           mask
-            .attr('transform', 'translate(' + offsetX(0) + ',' + (margin.top + radius) + ')');
+            .attr('clip-path', 'none')
+            .attr('transform', 'translate(' + (leftOffSet + margin.left + (position === 'start' ? radius : 0 - gutter / 2)) + ',' + topOffset + ')');
 
           g
             .style('opacity', 1)
             .style('display', 'inline');
 
           series
-            .attr('transform', function(d, i) {
-              return 'translate(' + keyPositions[i % keysPerRow] + ',' + (Math.floor(i / keysPerRow) * lineHeight) + ')';
+            .attr('transform', function (d, i) {
+              var pos = keyPositions[i];
+              return 'translate(' + pos.x + ',' + pos.y + ')';
             });
+
+          series
+            .selectAll('text')
+              .attr('text-anchor', position)
+              .attr('transform', function (d, i) {
+                return position === 'start' ? 'translate(8,0)' : 'translate(0,' +  textHeight + ')';
+              });
+          series
+            .selectAll('circle')
+              .attr('transform', function (d, i) {
+                return 'translate(' + (position === 'start' || type === 'bar' ? 0 : (i ? 15 : -15)) + ',0)';
+              });
+          series
+            .selectAll('line')
+              .attr('x1', function (d, i) {
+                return d.type === 'dash' ? 40 : 30;
+              })
+              .attr('transform', function (d, i) {
+                return d.type === 'dash' ? 'translate(-20,0)' : 'translate(-15,0)';
+              })
+              .style('stroke-dasharray', function (d, i) {
+                return d.type === 'dash' ? '8, 8' : '0,0';
+              });
 
         } else {
 
-          height = lineHeight + radius;
-          legendWidth = d3.max(keyWidths) - gutter;
-          legendHeight = margin.top + margin.bottom + radius * 2 + (keyCount - 1) * lineHeight;
+          legend
+            .width(margin.left + d3.max(keyWidths) - gutter + (position === 'start' ? 0 : 2 * radius + 3) + margin.right)
+            .height(margin.top + radius * 2 + margin.bottom);
 
-          zoom.on('zoom', zoomLegend);
+          leftOffSet = 0.5 + (align === 'left' ? 0 : containerWidth - legend.width());
+          topOffset = 0.5 + legend.height() + margin.top + radius;
+          legendHeight = margin.top + radius * 2 * keys + (keys - 1) * 10 + margin.bottom;//TODO: why is this 10 hardcoded?
+          dropdownHeight = Math.min(containerHeight - legend.height(), legendHeight);
+
+          zoom
+            .on('zoom', zoomLegend);
 
           clip
-            .attr('x', 0 - margin.left)
-            .attr('y', 0 - lineHeight + radius + 0.5)
-            .attr('width', legendWidth + margin.right + margin.left)
-            .attr('height', Math.min(availableHeight - height, legendHeight));
+            .attr('y', 0 - margin.top - radius)
+            .attr('width', legend.width())
+            .attr('height', dropdownHeight);
 
           back
-            .attr('x', align === 'right' ? availableWidth - legendWidth + 0.5 : 0.5)
-            .attr('y', lineHeight + radius + 0.5)
-            .attr('width', legendWidth + margin.right + margin.left)
-            .attr('height', Math.min(availableHeight - height, legendHeight))
+            .attr('x', leftOffSet)
+            .attr('y', 0.5 + legend.height())
+            .attr('width', legend.width())
+            .attr('height', dropdownHeight)
             .style('opacity', legendOpen * 0.9)
             .style('display', legendOpen ? 'inline' : 'none')
             .call(zoom);
 
           link
+            .attr('transform', 'translate(' + (align === 'left' ? 0 : containerWidth) + ',' + (margin.top + radius) + ')')
             .style('opacity', 1);
 
           mask
-            .attr('transform', 'translate(' + (align === 'right' ? width - margin.right - legendWidth : margin.left) + ',' + (margin.top + radius * 2 + lineHeight) + ')');
+            .attr('clip-path', 'url(#nv-edge-clip-' + id + ')')
+            .attr('transform', 'translate(' + (leftOffSet + margin.left + radius) + ',' + topOffset + ')');
 
           g
             .style('opacity', legendOpen)
@@ -262,51 +417,31 @@ nv.models.legend = function() {
             .call(zoom);
 
           series
-            .attr('transform', function(d, i) {
-              return 'translate(' + radius + ',' + (i * lineHeight) + ')';
+            .attr('transform', function (d, i) {
+              return 'translate(0,' + (i * (10 + radius * 2)) + ')';//TODO: why is this 10 hardcoded?
             });
+          series
+            .selectAll('circle')
+              .attr('transform', '');
+          series
+            .selectAll('line')
+              .attr('x1', 16)
+              .attr('transform', 'translate(-8,0)')
+              .style('stroke-dasharray', 'inherit');
+          series
+            .selectAll('text')
+              .attr('text-anchor', 'start')
+              .attr('transform', 'translate(' + (type === 'bar' ? 8 : 10) + ',0)'); //TODO: why are these hardcoded?
+
         }
 
-      } else {
+      };
 
-        var xpos,
-            ypos = radius,
-            newxpos = radius;
+      //============================================================
+      // Event Handling/Dispatching (in chart's scope)
+      //------------------------------------------------------------
 
-        legendOpen = 0;
-
-        series
-          .attr('transform', function(d, i) {
-            var length = d3.select(this).select('text').node().getComputedTextLength() + 2 * radius + 3 + gutter;
-            xpos = newxpos;
-
-            if (availableWidth < xpos + length - gutter) {
-              newxpos = xpos = radius;
-              ypos += lineHeight;
-            }
-
-            newxpos += length;
-            if (newxpos - gutter > legendWidth) {
-              legendWidth = newxpos - gutter;
-            }
-
-            return 'translate(' + xpos + ',' + ypos + ')';
-          });
-
-        height = margin.top + margin.bottom + ypos + radius;
-
-        //position legend as far right as possible within the total width
-        g
-          .attr('transform', 'translate(' + (width - margin.right - legendWidth) + ',' + margin.top + ')');
-
-        back
-          .attr('x', availableWidth - legendWidth + 0.5)
-          .attr('width', legendWidth + margin.right + margin.left)
-          .attr('height', margin.top + margin.bottom + radius + ypos);
-      }
-
-      dispatch.on('linkClick', function(d) {
-        legendOpen = 1 - legendOpen;
+      function displayMenu() {
         back
           .transition()
           .duration(200)
@@ -318,7 +453,20 @@ nv.models.legend = function() {
           .style('opacity', legendOpen)
           .style('display', legendOpen ? 'inline' : 'none');
         link
-          .text(legendOpen === 1 ? 'close' : 'legend');
+          .text(legendOpen === 1 ? legend.strings().close : legend.strings().type);
+      }
+
+      dispatch.on('toggleMenu', function (d) {
+        d3.event.stopPropagation();
+        legendOpen = 1 - legendOpen;
+        displayMenu();
+      });
+
+      dispatch.on('closeMenu', function (d) {
+        if (legendOpen === 1) {
+          legendOpen = 0;
+          displayMenu();
+        }
       });
 
     });
@@ -333,7 +481,7 @@ nv.models.legend = function() {
 
   legend.dispatch = dispatch;
 
-  legend.margin = function(_) {
+  legend.margin = function (_) {
     if (!arguments.length) { return margin; }
     margin.top    = typeof _.top    !== 'undefined' ? _.top    : margin.top;
     margin.right  = typeof _.right  !== 'undefined' ? _.right  : margin.right;
@@ -342,51 +490,67 @@ nv.models.legend = function() {
     return legend;
   };
 
-  legend.width = function(_) {
-    if (!arguments.length) { return width; }
+  legend.width = function (_) {
+    if (!arguments.length) {
+      return width;
+    }
     width = Math.round(_);
     return legend;
   };
 
-  legend.height = function(_) {
-    if (!arguments.length) { return height; }
+  legend.height = function (_) {
+    if (!arguments.length) {
+      return height;
+    }
     height = Math.round(_);
     return legend;
   };
 
-  legend.id = function(_) {
-    if (!arguments.length) { return id; }
+  legend.id = function (_) {
+    if (!arguments.length) {
+      return id;
+    }
     id = _;
     return legend;
   };
 
-  legend.key = function(_) {
-    if (!arguments.length) { return getKey; }
+  legend.key = function (_) {
+    if (!arguments.length) {
+      return getKey;
+    }
     getKey = _;
     return legend;
   };
 
-  legend.color = function(_) {
-    if (!arguments.length) { return color; }
+  legend.color = function (_) {
+    if (!arguments.length) {
+      return color;
+    }
     color = nv.utils.getColor(_);
     return legend;
   };
 
-  legend.classes = function(_) {
-    if (!arguments.length) { return classes; }
+  legend.classes = function (_) {
+    if (!arguments.length) {
+      return classes;
+    }
     classes = _;
     return legend;
   };
 
-  legend.align = function(_) {
-    if (!arguments.length) { return align; }
+  legend.align = function (_) {
+    if (!arguments.length) {
+      return align;
+    }
     align = _;
     return legend;
   };
 
-  legend.equalColumns = function(_) {
-    if (!arguments.length) { return equalColumns; }
-    equalColumns = _;
+  legend.position = function (_) {
+    if (!arguments.length) {
+      return position;
+    }
+    position = _;
     return legend;
   };
 
@@ -396,11 +560,38 @@ nv.models.legend = function() {
     return legend;
   };
 
-  legend.strings = function(_) {
-    if (!arguments.length) { return strings; }
+  legend.lineSpacing = function (_) {
+    if (!arguments.length) {
+      return lineSpacing;
+    }
+    lineSpacing = _;
+    return legend;
+  };
+
+  legend.strings = function (_) {
+    if (!arguments.length) {
+      return strings;
+    }
     strings = _;
     return legend;
   };
+
+  legend.equalColumns = function (_) {
+    if (!arguments.length) {
+      return equalColumns;
+    }
+    equalColumns = _;
+    return legend;
+  };
+
+  legend.enabled = function (_) {
+    if (!arguments.length) {
+      return enabled;
+    }
+    enabled = _;
+    return legend;
+  };
+
   //============================================================
 
 

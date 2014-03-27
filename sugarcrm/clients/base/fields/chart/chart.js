@@ -79,6 +79,10 @@
         $(window).on('resize.' + this.sfId, _.debounce(_.bind(this.resize, this), 100));
         // Resize chart on print.
         this.handlePrinting('on');
+        // This on click event is required to dismiss the dropdown legend
+        this.$('.nv-chart').on('click', _.bind(function(e){
+          this.chart.dispatch.chartClick();
+        }, this));
     },
 
     /**
@@ -276,6 +280,7 @@
         if (this.view && this.view.layout) {
             this.view.layout.context.off(null, null, this);
         }
+        this.$('.nv-chart').off('click');
         $(window).off('resize.' + this.sfId);
         this.handlePrinting('off');
 

@@ -548,6 +548,10 @@ body.full-screen {
     stroke-width: 2px;
     stroke: #bbb;
   }
+  .nv-y.nv-axis text.nv-quotaValue,
+  .nv-y.nv-axis text.nv-targetQuotaValue {
+    font-weight: bold;
+  }
   .nv-x.nv-axis .domain {
     stroke-width: 2px;
     stroke: #bbb;
@@ -556,17 +560,30 @@ body.full-screen {
     font-size: 12px;
     fill: #aaa;
   }
+  svg text.nv-legend-link {
+    fill: @linkColor;
+  }
   .nv-multibar .nv-groups rect {
     stroke-opacity: 1;
     stroke-width: 2px;
     stroke: #FFF;
     fill-opacity: 0.85;
   }
+  .nv-line .nv-groups path {
+    stroke-width: 4px;
+  }
+  .nv-linesWrap1 .nv-line .nv-groups path {
+    stroke-width: 6px;
+  }
+  .nv-linesWrap2 .nv-scatter .nv-groups circle {
+    stroke: #FFF;
+  }
   .nv-x.nv-axis text,
   .nv-legend text {
     fill: #888;
     font-size: 12px;
   }
+
 }
 .nv-lineLegend .nv-series {
   cursor: default;

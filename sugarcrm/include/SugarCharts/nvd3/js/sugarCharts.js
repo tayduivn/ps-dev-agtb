@@ -105,7 +105,7 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                 if (SUGAR.chartsD3.isDataEmpty(data)) {
                     var json = SUGAR.chartsD3.translateDataToD3(data,params,chartConfig);
 
-                    var rotateLabels = (chartConfig["orientation"] === 'vertical' && data.values.length > 8) ? 20 : 0;
+                    var rotateTicks = (chartConfig["orientation"] === 'vertical' && data.values.length > 8) ? 25 : 0;
 
                     var barChart = (chartConfig["orientation"] === 'vertical') ? nv.models.multiBarChart() : nv.models.multiBarHorizontalChart();
 
@@ -118,7 +118,7 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                                 '<p>' +  y + '</p>';
                         })
                         .showControls(false)
-                        .rotateLabels(rotateLabels)
+                        .rotateTicks(rotateTicks)
                         .reduceXTicks(false)
                         .colorData('default')
                         .stacked(chartConfig.barType === 'stacked'? true : true)

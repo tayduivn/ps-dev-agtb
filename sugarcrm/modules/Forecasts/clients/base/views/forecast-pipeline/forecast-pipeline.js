@@ -141,7 +141,6 @@
         this.displayNoData(!this.chart_loaded);
     },
 
-
     hasChartData: function() {
         return !_.isEmpty(this.results) && this.results.data && this.results.data.length > 0;
     },
