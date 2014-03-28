@@ -563,9 +563,8 @@ END;
                 // pull out the tab definitions from the originals, put them into the Canonical Form
                 foreach($data['templateMeta']['tabDefs'] as $tabName => $tabContent) {
                     // Handle panel labels for matching later
-                    if (isset($this->panelNames[$c]['label'])) {
-                        $tabName = $this->panelNames[$c]['label'];
-                    }
+                    $panelNames = $this->getConvertedPanelName($tabName, $c);
+                    $tabName = $panelNames['label'];
 
                     // Save these for later to prevent conflict with new panels later
                     $tabdefs[$tabName] = array(
