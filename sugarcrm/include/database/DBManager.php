@@ -1035,7 +1035,6 @@ protected function checkQuery($sql, $object_name = false)
     {
         $take_action = false;
         $compareIndices = $this->get_indices($tableName);
-        $tableDefs = $this->get_columns($tableName);
         $sql = "/* INDEXES */\n";
         $correctedIndexes = array();
 
@@ -1097,13 +1096,6 @@ protected function checkQuery($sql, $object_name = false)
 
             if ( in_array($value['type'],array('alternate_key','foreign')) )
                 $value['type'] = 'index';
-
-            // Filter the fields, remove non-indexable ones
-            $value['fields'] = $this->filterIndexFields($tableDefs, $value['fields']);
-            if(empty($value['fields'])) {
-                // if we have no fields, ignore this index
-                continue;
-            }
 
             if ( !isset($compareIndices[$name]) ) {
                 //First check if an index exists that doesn't match our name, if so, try to rename it
@@ -1300,29 +1292,6 @@ protected function checkQuery($sql, $object_name = false)
 	}
 
 	/**
-	 * Filter indexed fields, remove non-indexable ones
-	 * @param array $tableDefs Table field definitions
-	 * @param array $fields Fields to filter
-	 */
-	public function filterIndexFields($tableDefs, $fields)
-	{
-	    if(!is_array($fields)) {
-	        $fields = array($fields);
-	    }
-	    foreach($fields as $k => $field) {
-            if(empty($tableDefs[$field]) || empty($tableDefs[$field]['type'])) {
-                // if we don't know this field, ignore it - we may add it as a part of bulk SQL update
-                // we're assuming that if somebody adds field they won't lead us astray
-                continue;
-            }
-            if($this->isTextType($tableDefs[$field]['type'])) {
-                unset($fields[$k]);
-            }
-	    }
-	    return $fields;
-	}
-
-	/**
 	 * returns a SQL query that creates the indices as defined in metadata
 	 * @param  array  $indices Assoc array with index definitions from vardefs
 	 * @param  string $table Focus table
@@ -1336,12 +1305,10 @@ protected function checkQuery($sql, $object_name = false)
 		$columns = array();
 
 		foreach ($indices as $index) {
-			if(!empty($index['db']) && $index['db'] != $this->dbType) {
+			if(!empty($index['db']) && $index['db'] != $this->dbType)
 				continue;
-			}
-			if (isset($index['source']) && $index['source'] != 'db') {
-			    continue;
-			}
+			if (isset($index['source']) && $index['source'] != 'db')
+			continue;
 
 			$sql = $this->add_drop_constraint($table, $index);
 

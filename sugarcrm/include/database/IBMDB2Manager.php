@@ -1239,23 +1239,6 @@ EOQ;
 		return "utf8_general_ci";
 	}
 
-	/**
-	 * Does this type represent text (i.e., non-varchar) value?
-	 * @param string $type
-	 */
-	public function isTextType($type)
-	{
-	    $type = strtolower($type);
-	    if(strncmp($type, 'clob', 4) === 0 || strncmp($type, 'blob', 4) === 0) {
-	        return true;
-	    }
-	    $type = $this->getColumnType($type);
-	    if(strncmp($type, 'clob', 4) === 0 || strncmp($type, 'blob', 4) === 0) {
-	        return true;
-	    }
-	    return false;
-	}
-
 	/**+
 	 * @see DBManager::renameColumnSQL()
 	 * Only supported
@@ -1798,7 +1781,7 @@ EOQ;
 
             $whereClause .= ' ';  // make sure there is a trailing blank
 		}
-
+		
         return "SELECT $fields FROM $tablename $startWith $whereClause $connectBy $whereClause";
     }
 
