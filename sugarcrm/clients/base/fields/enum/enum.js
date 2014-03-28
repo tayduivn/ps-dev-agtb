@@ -85,7 +85,7 @@
      */
     _render: function() {
         var self = this;
-        if (!this.items) {
+        if (!this.items || _.isEmpty(this.items)) {
             this.loadEnumOptions(false, function() {
                 //Re-render widget since we have fresh options list
                 if(!this.disposed){
