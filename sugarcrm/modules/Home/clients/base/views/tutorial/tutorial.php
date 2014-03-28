@@ -38,11 +38,13 @@ $viewdefs['Home']['base']['view']['tutorial'] = array(
                 'name' => '[href=#Home]',
                 'text' => 'LBL_TOUR_CUBE',
                 'full' => true,
+                'horizAdj' => -11,
             ),
             array(
-                'name' => '.routeLink.[data-route="#Accounts"]',
+                'name' => '[data-route="#Accounts"]',
                 'text' => 'LBL_TOUR_NAV_BAR',
                 'full' => true,
+                'vertAdj'=> -5,
             ),
             array(
                 'name' => '.search-query',
@@ -50,21 +52,23 @@ $viewdefs['Home']['base']['view']['tutorial'] = array(
                 'full' => true,
             ),
             array(
-                'name' => '#notificationDrop',
+                'name' => '.notification-list',
                 'text' => 'LBL_TOUR_NOTIFICATIONS',
                 'full' => true,
-                'horizAdj'=> -15,
-                'vertAdj'=> -5,
+                'horizAdj'=> -5,
+                'vertAdj'=> 8,
             ),
             array(
                 'name' => '#userActions',
                 'text' => 'LBL_TOUR_AVATAR',
                 'full' => true,
+                'vertAdj'=> 8,
             ),
             array(
                 'name' => '#createList',
                 'text' => 'LBL_TOUR_ADD',
                 'full' => true,
+                'vertAdj'=> 8,
             ),
             array(
                 'name' => '#tour',
