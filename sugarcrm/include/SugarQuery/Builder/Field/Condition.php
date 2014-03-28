@@ -20,6 +20,7 @@
 
 class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
 {
+    protected $rNameExists = false;
 
     public function __construct($field, SugarQuery $query)
     {
@@ -32,6 +33,12 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
         if(!isset($this->def['source']) || $this->def['source'] == 'db') {
             return;
         }
+        // Exists only checks
+        if (!empty($this->def['rname_exists'])) {
+            $this->markNonDb();
+            $this->rNameExists = true;
+            return;
+        }        
         if(!empty($this->def['rname']) && !empty($this->def['link'])) {
             $this->table = $this->query->getJoinAlias($this->def['link']);
             $this->field = $this->def['rname'];
@@ -50,6 +57,17 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
             }
         }
         $this->checkCustomField();
+    }
+
+    public function verifyCondition($value, $query)
+    {
+        if ($this->rNameExists) {
+            if (isTruthy($value)) {
+                $query->whereRaw("{$this->jta}.{$this->def['rname']} IS NOT NULL");
+            } else {
+                $query->whereRaw("{$this->jta}.{$this->def['rname']} IS NULL");
+            }
+        }
     }
 
 

@@ -397,6 +397,23 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test rname exists
+     */
+    public function testRnameExists()
+    {
+        $contact = BeanFactory::getBean("Contacts");
+        // will throw because name is composite
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name", "account_name"));
+        $sq->from($contact);
+        $sq->where()->equals('sync_contact',1);
+        $sql = $sq->compileSql();
+        // the field should not be there now
+        $this->assertContains("id IS NOT NULL", $sql);
+
+    }
+
+    /**
      * Test bad conditions
      */
     public function testBadRelateConditions()
