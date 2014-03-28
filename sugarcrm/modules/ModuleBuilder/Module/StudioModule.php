@@ -45,6 +45,18 @@ class StudioModule
         'Prospects', // Targets
     );
 
+    /**
+     * BWC modules that do not have a quick create layout
+     * @var array
+     */
+    static $quickCreateNotSupportedModules = array(
+        'kbdocuments',
+        'projecttask',
+        'campaigns',
+        'quotes',
+        'producttemplates'
+    );
+
     public $name;
     private $popups = array();
     public $module;
@@ -122,6 +134,15 @@ class StudioModule
                     'path'  => "modules/{$this->module}/metadata/listviewdefs.php",
                 ),
             );
+             // Some modules should not have a QuickCreate form at all, so do not add them to the list
+             if (!in_array(strtolower($this->module), self::$quickCreateNotSupportedModules)) {
+                 $this->sources[] = array(
+                     'name' => translate('LBL_QUICKCREATE'),
+                     'type' => MB_QUICKCREATE,
+                     'image' => 'QuickCreate',
+                     'path'  => "modules/{$this->module}/metadata/quickcreatedefs.php",
+                 );
+             }
         } else {
             $this->sources = array(
                 array(
@@ -676,7 +697,7 @@ class StudioModule
                 $parser = ParserFactory::getParser($defs['type'], $this->module);
                 if ($parser && method_exists($parser, 'removeField') && $parser->removeField($fieldName)) {
                     // don't populate from $_REQUEST, just save as is...
-                    $parser->handleSave(false); 
+                    $parser->handleSave(false);
                 }
             } catch (Exception $e) {}
         }
