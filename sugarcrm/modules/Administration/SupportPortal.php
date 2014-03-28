@@ -50,10 +50,10 @@ switch ($_REQUEST['view']) {
             "Administration",
             array(
                 "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
-               $mod_strings['LBL_SUPPORT_TITLE'],
-               ),
+                $mod_strings['LBL_SUPPORT_TITLE'],
+            ),
             false
-            );
+        );
 
         $sugar_smarty = new Sugar_Smarty();
         $sugar_smarty->assign('iframeURL', $iframe_url);
@@ -61,8 +61,8 @@ switch ($_REQUEST['view']) {
         echo $sugar_smarty->fetch('modules/Administration/SupportPortal.tpl');
 
 		break;
-	default:
 
+	default:
 		$send_version = isset($_REQUEST['version']) ? $_REQUEST['version'] : "";
 		$send_edition = isset($_REQUEST['edition']) ? $_REQUEST['edition'] : "";
 		$send_lang = isset($_REQUEST['lang']) ? $_REQUEST['lang'] : "";
@@ -74,11 +74,11 @@ switch ($_REQUEST['view']) {
 		if ($send_module == 'ProjectTasks')
 			$send_module = 'ProjectTask';
         if ($send_module == 'ProductCatalog')
-                $send_module = 'ProductTemplates';
+            $send_module = 'ProductTemplates';
         if ($send_module == 'TargetLists')
-                $send_module = 'ProspectLists';
+            $send_module = 'ProspectLists';
         if ($send_module == 'Targets')
-                $send_module = 'Prospects';
+            $send_module = 'Prospects';
         if($send_module == 'OAuthKeys') {
         	$send_module = 'Administration';
         	$send_action = 'OAuthKeys';
@@ -88,8 +88,7 @@ switch ($_REQUEST['view']) {
 
 		//go to the support portal if the file is not found.
 		// FG - Bug 39820 - Devs can write help files also in english, so skip check for language not equals "en_us" !
-		if (!empty($helpPath))
-		{
+		if (!empty($helpPath)) {
 		    $sugar_smarty = new Sugar_Smarty();
 		    $sugar_smarty->assign('helpFileExists', TRUE);
 			$sugar_smarty->assign('MOD', $mod_strings);
@@ -103,7 +102,6 @@ switch ($_REQUEST['view']) {
 			$sugar_smarty->assign('charset', $app_strings['LBL_CHARSET']);
             $sugar_smarty->assign('langHeader', get_language_header());
 			echo $sugar_smarty->fetchCustom('modules/Administration/SupportPortal.tpl');
-
 		} else {
 			if(empty($send_module)){
 				$send_module = 'toc';
@@ -121,98 +119,93 @@ switch ($_REQUEST['view']) {
 
 			//map certain modules
 			$sendModuleMap = array(
-								'administration' => array(
-													array('name' => 'Administration', 'action' => 'supportportal', 'anchor' => '1910574'),
-													array('name' => 'Administration', 'action' => 'updater', 'anchor' => '1910574'),
-													array('name' => 'Administration', 'action' => 'licensesettings', 'anchor' => '1910574'),
-													array('name' => 'Administration', 'action' => 'diagnostic', 'anchor' => '1111949'),
-													array('name' => 'Administration', 'action' => 'listviewofflineclient', 'anchor' => '1111949'),
-//BEGIN SUGARCRM flav=pro ONLY
-													array('name' => 'Administration', 'action' => 'enablewirelessmodules', 'anchor' => '1111949'),
-//END SUGARCRM flav=pro ONLY
-													array('name' => 'Administration', 'action' => 'backups', 'anchor' => '1111949'),
-													array('name' => 'Administration', 'action' => 'upgrade', 'anchor' => '1111949'),
-													array('name' => 'Administration', 'action' => 'locale', 'anchor' => '1111949'),
-													array('name' => 'Administration', 'action' => 'passwordmanager', 'anchor' => '1446494'),
-													array('name' => 'Administration', 'action' => 'upgradewizard', 'anchor' => '1168410'),
-													array('name' => 'Administration', 'action' => 'configuretabs', 'anchor' => '1168410'),
-													array('name' => 'Administration', 'action' => 'configuresubpanels', 'anchor' => '1168410'),
-													array('name' => 'Administration', 'action' => 'wizard', 'anchor' => '1168410'),
-												),
-								'calls' => array(array('name' => 'Activities')),
-								'tasks' => array(array('name' => 'Activities')),
-								'meetings' => array(array('name' => 'Activities')),
-								'notes' => array(array('name' => 'Activities')),
-								'calendar' => array(array('name' => 'Activities')),
-								'configurator' => array(array('name' => 'Administration', 'anchor' => '1878359')),
-								'upgradewizard' => array(array('name' => 'Administration', 'anchor' => '1878359')),
-								'schedulers' => array(array('name' => 'Administration', 'anchor' => '1878359')),
-								'connectors' => array(array('name' => 'Administration', 'anchor' => '1878359')),
-								'trackers' => array(array('name' => 'Administration', 'anchor' => '1878359')),
-								'currencies' => array(array('name' => 'Administration', 'anchor' => '1878359')),
-								'aclroles' => array(array('name' => 'Administration', 'anchor' => '1916499')),
-								'roles' => array(array('name' => 'Administration', 'anchor' => '1916499')),
-								'teams' => array(array('name' => 'Administration', 'anchor' => '1916499')),
-								'users' => array(array('name' => 'Administration', 'anchor' => '1916499'), array('name' => 'Administration', 'action' => 'detailview', 'anchor' => '1916518')),
-								'modulebuilder' => array(array('name' => 'Administration', 'anchor' => '1168410')),
-								'studio' => array(array('name' => 'Administration', 'anchor' => '1168410')),
-								'workflow' => array(array('name' => 'Administration', 'anchor' => '1168410')),
-								'producttemplates' => array(array('name' => 'Administration', 'anchor' => '1957376')),
-								'productcategories' => array(array('name' => 'Administration', 'anchor' => '1957376')),
-								'producttypes' => array(array('name' => 'Administration', 'anchor' => '1957376')),
-								'manufacturers' => array(array('name' => 'Administration', 'anchor' => '1957376')),
-								'shippers' => array(array('name' => 'Administration', 'anchor' => '1957376')),
-								'taxrates' => array(array('name' => 'Administration', 'anchor' => '1957376')),
-								'releases' => array(array('name' => 'Administration', 'anchor' => '1868932')),
-								'timeperiods' => array(array('name' => 'Administration', 'anchor' => '1957639')),
-								'contracttypes' => array(array('name' => 'Administration', 'anchor' => '1957677')),
-								'contracttype' => array(array('name' => 'Administration', 'anchor' => '1957677')),
-								'emailman' => array(array('name' => 'Administration', 'anchor' => '1445484')),
-								'inboundemail' => array(array('name' => 'Administration', 'anchor' => '1445484')),
-								'emailtemplates' => array(array('name' => 'Emails')),
-								'prospects' => array(array('name' => 'Campaigns')),
-								'prospectlists' => array(array('name' => 'Campaigns')),
-								'reportmaker' => array(array('name' => 'Reports')),
-								'customqueries' => array(array('name' => 'Reports')),
-								'quotas' => array(array('name' => 'Forecasts')),
-								'projecttask' => array(array('name' => 'Projects')),
-								'project' => array(array('name' => 'Projects'), array('name' => 'Dashboard', 'action' => 'dashboard'), ),
-								'projecttemplate' => array(array('name' => 'Projects')),
-								'datasets' => array(array('name' => 'Reports')),
-								'dataformat' => array(array('name' => 'Reports')),
-								'employees' => array(array('name' => 'Administration', 'anchor' => '1957677')),
-								'kbdocuments' => array(array('name' => 'Administration', 'action' => 'kbadminview', 'anchor' => '1957677')),
-							 );
+                'administration' => array(
+                    array('name' => 'Administration', 'action' => 'supportportal', 'anchor' => '1910574'),
+                    array('name' => 'Administration', 'action' => 'updater', 'anchor' => '1910574'),
+                    array('name' => 'Administration', 'action' => 'licensesettings', 'anchor' => '1910574'),
+                    array('name' => 'Administration', 'action' => 'diagnostic', 'anchor' => '1111949'),
+                    array('name' => 'Administration', 'action' => 'listviewofflineclient', 'anchor' => '1111949'),
+                    //BEGIN SUGARCRM flav=pro ONLY
+                    array('name' => 'Administration', 'action' => 'enablewirelessmodules', 'anchor' => '1111949'),
+                    //END SUGARCRM flav=pro ONLY
+                    array('name' => 'Administration', 'action' => 'backups', 'anchor' => '1111949'),
+                    array('name' => 'Administration', 'action' => 'upgrade', 'anchor' => '1111949'),
+                    array('name' => 'Administration', 'action' => 'locale', 'anchor' => '1111949'),
+                    array('name' => 'Administration', 'action' => 'passwordmanager', 'anchor' => '1446494'),
+                    array('name' => 'Administration', 'action' => 'upgradewizard', 'anchor' => '1168410'),
+                    array('name' => 'Administration', 'action' => 'configuretabs', 'anchor' => '1168410'),
+                    array('name' => 'Administration', 'action' => 'configuresubpanels', 'anchor' => '1168410'),
+                    array('name' => 'Administration', 'action' => 'wizard', 'anchor' => '1168410'),
+                ),
+                'calls' => array(array('name' => 'Activities')),
+                'tasks' => array(array('name' => 'Activities')),
+                'meetings' => array(array('name' => 'Activities')),
+                'notes' => array(array('name' => 'Activities')),
+                'calendar' => array(array('name' => 'Activities')),
+                'configurator' => array(array('name' => 'Administration', 'anchor' => '1878359')),
+                'upgradewizard' => array(array('name' => 'Administration', 'anchor' => '1878359')),
+                'schedulers' => array(array('name' => 'Administration', 'anchor' => '1878359')),
+                'connectors' => array(array('name' => 'Administration', 'anchor' => '1878359')),
+                'trackers' => array(array('name' => 'Administration', 'anchor' => '1878359')),
+                'currencies' => array(array('name' => 'Administration', 'anchor' => '1878359')),
+                'aclroles' => array(array('name' => 'Administration', 'anchor' => '1916499')),
+                'roles' => array(array('name' => 'Administration', 'anchor' => '1916499')),
+                'teams' => array(array('name' => 'Administration', 'anchor' => '1916499')),
+                'users' => array(array('name' => 'Administration', 'anchor' => '1916499'), array('name' => 'Administration', 'action' => 'detailview', 'anchor' => '1916518')),
+                'modulebuilder' => array(array('name' => 'Administration', 'anchor' => '1168410')),
+                'studio' => array(array('name' => 'Administration', 'anchor' => '1168410')),
+                'workflow' => array(array('name' => 'Administration', 'anchor' => '1168410')),
+                'producttemplates' => array(array('name' => 'Administration', 'anchor' => '1957376')),
+                'productcategories' => array(array('name' => 'Administration', 'anchor' => '1957376')),
+                'producttypes' => array(array('name' => 'Administration', 'anchor' => '1957376')),
+                'manufacturers' => array(array('name' => 'Administration', 'anchor' => '1957376')),
+                'shippers' => array(array('name' => 'Administration', 'anchor' => '1957376')),
+                'taxrates' => array(array('name' => 'Administration', 'anchor' => '1957376')),
+                'releases' => array(array('name' => 'Administration', 'anchor' => '1868932')),
+                'timeperiods' => array(array('name' => 'Administration', 'anchor' => '1957639')),
+                'contracttypes' => array(array('name' => 'Administration', 'anchor' => '1957677')),
+                'contracttype' => array(array('name' => 'Administration', 'anchor' => '1957677')),
+                'emailman' => array(array('name' => 'Administration', 'anchor' => '1445484')),
+                'inboundemail' => array(array('name' => 'Administration', 'anchor' => '1445484')),
+                'emailtemplates' => array(array('name' => 'Emails')),
+                'prospects' => array(array('name' => 'Campaigns')),
+                'prospectlists' => array(array('name' => 'Campaigns')),
+                'reportmaker' => array(array('name' => 'Reports')),
+                'customqueries' => array(array('name' => 'Reports')),
+                'quotas' => array(array('name' => 'Forecasts')),
+                'projecttask' => array(array('name' => 'Projects')),
+                'project' => array(array('name' => 'Projects'), array('name' => 'Dashboard', 'action' => 'dashboard'), ),
+                'projecttemplate' => array(array('name' => 'Projects')),
+                'datasets' => array(array('name' => 'Reports')),
+                'dataformat' => array(array('name' => 'Reports')),
+                'employees' => array(array('name' => 'Administration', 'anchor' => '1957677')),
+                'kbdocuments' => array(array('name' => 'Administration', 'action' => 'kbadminview', 'anchor' => '1957677')),
+            );
 
-			if(!empty($sendModuleMap[strtolower($send_module)])){
+			if(!empty($sendModuleMap[strtolower($send_module)])) {
 				$mappings = $sendModuleMap[strtolower($send_module)];
 
-				foreach($mappings as $map){
-					if(!empty($map['action'])){
-						if($map['action'] == strtolower($send_action)){
+				foreach($mappings as $map) {
+					if(!empty($map['action'])) {
+						if($map['action'] == strtolower($send_action)) {
 							$send_module = $map['name'];
-							if(!empty($map['anchor'])){
+							if(!empty($map['anchor'])) {
 								$send_anchor = $map['anchor'];
 							}
 						}
-					}else{
+					} else {
 						$send_module = $map['name'];
-						if(!empty($map['anchor'])){
+						if(!empty($map['anchor'])) {
 								$send_anchor = $map['anchor'];
 						}
 					}
 				}
-				//$send_module = $sendModuleMap[strtolower($send_module)];
 			}
 
 
             $iframe_url = get_help_url($send_edition, $send_version, $send_lang, $send_module, $send_action, $dev_status, $send_key, $send_anchor);
 
 			header("Location: {$iframe_url}");
-
-			//$sugar_smarty->assign('helpFileExists', FALSE);
-			//$sugar_smarty->assign('iframeURL', $iframe_url);
 		}
 		break;
-
 }
