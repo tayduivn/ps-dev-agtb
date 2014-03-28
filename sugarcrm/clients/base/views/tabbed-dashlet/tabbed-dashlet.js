@@ -218,7 +218,7 @@
      * @param {Bean} model Appended new model.
      */
     bindCollectionAdd: function(model) {
-        var tab = this.tabs[this.settings.get('activeTab')];
+        var tab = this._getTab(model.collection);
         model.set('record_date', model.get(tab.record_date));
     },
 
@@ -377,6 +377,19 @@
         }
         
         return filters;
+    },
+
+    /**
+     * Retrieves tab based on supplied collection.
+     *
+     * @param {Object} collection Collection of the desired tab.
+     * @return {Object} Tab.
+     * @private
+     */
+    _getTab: function(collection) {
+        return _.find(this.tabs, function(tab) {
+            return tab.collection === collection;
+        }, this);
     },
 
     /**
