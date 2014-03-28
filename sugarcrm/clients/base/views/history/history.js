@@ -120,6 +120,7 @@
             if (model) {
                 self.layout.reloadDashlet();
                 self.context.parent.trigger('panel-top:refresh', 'emails');
+                self.context.parent.trigger('panel-top:refresh', 'archived_emails');
             }
         });
     }

@@ -320,7 +320,7 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
             array(
                 array(
                     "primary" => "team1",
-                    "other"   => array("team2", "team3"),
+                    "others"   => array("team2", "team3"),
                 ),
                 "team1,team2,team3",
             ),
@@ -499,7 +499,7 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $mailRecord->teams       = array(
             "primary" => "West",
-            "other"   => array("1", "East"),
+            "others"   => array("1", "East"),
         );
 
         $responseRecord = $mailRecord->saveAsDraft();
