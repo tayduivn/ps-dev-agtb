@@ -308,4 +308,40 @@ describe("Base.View.RecordList", function () {
             expect(meta.selection.actions).toEqual([]);
         });
     });
+
+    describe('_setRowFields', function() {
+        var models;
+
+        beforeEach(function() {
+
+            models = [
+                new Backbone.Model({ id: _.uniqueId('_setRowFields-model-id-') }),
+                new Backbone.Model({ id: _.uniqueId('_setRowFields-model-id-') }),
+                new Backbone.Model({ id: _.uniqueId('_setRowFields-model-id-') })
+            ];
+
+            _.each(models, function(model) {
+                view.fields[_.uniqueId('_setRowFields-field-id-')] = { model: model };
+                view.fields[_.uniqueId('_setRowFields-field-id-')] = { model: model };
+                view.fields[_.uniqueId('_setRowFields-field-id-')] = { model: model };
+                view.fields[_.uniqueId('_setRowFields-field-id-')] = { model: model };
+            });
+        });
+
+        afterEach(function() {
+            view.fields = {};
+        });
+
+        it('should store the collection of fields for each row/model', function() {
+            expect(_.size(view.rowFields)).toEqual(0);
+
+            view.trigger('render');
+            expect(view.rowFields).toBeDefined();
+
+            _.each(models, function(model) {
+                expect(view.rowFields[model.id]).toBeDefined();
+                expect(view.rowFields[model.id].length).toEqual(4);
+            });
+        });
+    });
 });
