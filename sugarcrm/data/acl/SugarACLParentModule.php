@@ -53,6 +53,7 @@ class SugarACLParentModule extends SugarACLStrategy
      */
     public function checkAccess($module, $action, $context)
     {
+        $action = $this->fixUpActionName($action);
 
         if ($action == "field") {
             return true;

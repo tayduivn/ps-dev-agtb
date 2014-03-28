@@ -673,12 +673,14 @@ body.full-screen {
   fill: #E9EFEF;
   stroke: #AAA;
   stroke-width: .5px;
-  cursor: pointer;
   .nv-circ-front {
     stroke-width: 0;
   }
   line {
     stroke-width: 2;
+  }
+  .nv-expcoll {
+    cursor: pointer;
   }
 }
 .nv-tree {
@@ -687,6 +689,23 @@ body.full-screen {
     stroke: #ccc;
     stroke-width: 1.5px;
   }
+}
+
+@-webkit-keyframes animaopacity {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@-moz-keyframes animaopacity {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@-o-keyframes animaopacity {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes animaopacity {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 // for org chart demo renderer
@@ -705,7 +724,12 @@ body.full-screen {
   .nv-foreign-object img.rep-avatar {
     float: left;
     margin-right: 4px;
-    -webkit-transform: translate3d(0, 0, 0);
+    width: 32px;
+    height: 32px;
+    &.loaded {
+      -webkit-animation: animaopacity .5s;
+      animation: animaopacity .5s;
+    }
   }
   .nv-foreign-object div.rep-name {
     font-size: 10px;
@@ -715,7 +739,6 @@ body.full-screen {
     font-size: 8px;
   }
 }
-
 
 /**********
 * Globe

@@ -27,7 +27,6 @@
     // user configurable
     nodetemplate: null,
     reporteesEndpoint: '',
-    currentRootId: '',
     zoomExtents: null,
     nodeSize: null,
 
@@ -50,8 +49,7 @@
         // custom renderer for tree node
         this.nodetemplate = app.template.getView(this.name + '.orgchartnode');
         //TODO: change api to accept id as param or attrib as object to produce
-        this.reporteesEndpoint = app.api.buildURL('Forecasts', 'reportees/' + app.user.get('id'), null, {'level': 2});
-        this.currentRootId = app.user.get('id');
+        this.reporteesEndpoint = app.api.buildURL('Forecasts', 'orgtree/' + app.user.get('id'), null, {'level': 2});
         this.zoomExtents = {'min': 0.25, 'max': 2};
         this.nodeSize = {'width': 124, 'height': 56};
 
@@ -100,6 +98,9 @@
             connect: false,
             step: 25,
             change: function() {
+                if (!self.chart_loaded) {
+                    return;
+                }
                 var values = self.slider.noUiSlider('value'),
                     scale = self.chart.zoomLevel(values[0] / 100);
                 self.sliderZoomIn.toggleClass('disabled', (scale === self.zoomExtents.max));
@@ -138,6 +139,7 @@
                 var jsData = data.inst.get_json();
 
                 self.chart.filter(jQuery.data(data.rslt.obj[0], 'id'));
+                self.forceRepaint();
                 self.$('div[data-control="org-jstree-dropdown"] .jstree-label').text(data.inst.get_text());
                 data.inst.toggle_node(data.rslt.obj);
             });
@@ -148,13 +150,24 @@
             .transition().duration(700)
             .call(this.chart);
 
-        // Refresh SVG display of avatar images in foriegn object
-        this.$('.rep-avatar').on('load', function() {
-            this.style['-webkit-transform'] = 'none';
+        this.forceRepaint();
+
+        this.$('.nv-expcoll').on('click', function(e) {
+            self.forceRepaint();
         });
 
         this.chart_loaded = _.isFunction(this.chart.resize);
         this.displayNoData(!this.chart_loaded);
+    },
+
+    /**
+     * Forces repaint of images using opacity animation to fix
+     * issue with rendering foreignObject in SVG
+     */
+    forceRepaint: function() {
+        self.$('.rep-avatar').on('load', function() {
+            $(this).removeClass('loaded').addClass('loaded');
+        });
     },
 
     /**
@@ -185,11 +198,16 @@
         var root = [],
             self = this;
 
-        if (_.isArray(data)) {
+        if (_.isArray(data) && data.length == 2) {
             root.push(data[0]);
             root[0].children.push(data[1]);
         } else {
             root.push(data);
+        }
+
+        //protect against admin and other valid Employees
+        if (_.isEmpty(root[0].metadata.id)) {
+            return null;
         }
 
         _.each(root, function(entry) {
@@ -213,7 +231,7 @@
 
             //For each children found (if any) then call _postProcessTree again.
             _.each(entry.children, function(childEntry) {
-                if (entry.metadata.id !== childEntry.metadata.id && childEntry.attr.rel !== 'my_opportunities') {
+                if (entry.metadata.id !== childEntry.metadata.id) {
                     var newChild = self._postProcessTree(childEntry);
                     if (!_.isEmpty(newChild)) {
                         adopt.push(newChild[0]);
@@ -233,6 +251,10 @@
      * @param {e} event The event object that is triggered.
      */
     zoomChart: function(e) {
+        if (!this.chart_loaded) {
+            return;
+        }
+
         var button = $(e.target),
             scale = this.chart.zoom(button.data('control') === 'zoom-in' ? 0.25 : -0.25);
 
@@ -247,6 +269,10 @@
      * @param {e} event The event object that is triggered.
      */
     toggleChart: function(e) {
+        if (!this.chart_loaded) {
+            return;
+        }
+
         //if icon clicked get parent button
         var button = $(e.currentTarget).hasClass('btn') ? $(e.currentTarget) : $(e.currentTarget).parent('.btn');
 
@@ -258,6 +284,7 @@
 
             case 'show-all-nodes':
                 this.chart.showall();
+                this.forceRepaint();
                 break;
 
             case 'zoom-to-fit':

@@ -313,6 +313,19 @@ class Link2 {
         $GLOBALS['log']->error("Unable to get proper side for link {$this->name}");
     }
 
+
+    /**
+     * @return String name of link field that maps to this relationship on the other side
+     */
+    public function getLinkForOtherSide()
+    {
+        if ($this->getSide() == REL_LHS) {
+            return $this->relationship->getRHSLink();
+        } else {
+            return $this->relationship->getLHSLink();
+        }
+    }
+
     /**
      * @return bool true if LHSModule == RHSModule
      */

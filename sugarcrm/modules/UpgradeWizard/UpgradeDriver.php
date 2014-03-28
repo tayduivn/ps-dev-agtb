@@ -141,6 +141,12 @@ abstract class UpgradeDriver
     public $db;
 
     /**
+     * Log file pointer
+     * @var resource
+     */
+    public $fp;
+
+    /**
      * Copy data files
      */
     protected function commit()

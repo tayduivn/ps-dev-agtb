@@ -217,4 +217,35 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->getMock();
     }
 
+    public function testGetRelatedFieldsReturnsOnlyFieldsForPassedInLink()
+    {
+        $opp = $this->getMock('Opportunity', array('save'));
+        $contact = $this->getMock('Contact', array('save'));
+
+        $rr_api = new RelateRecordApi();
+
+        $api = new RestService();
+        $api->user = $GLOBALS['current_user'];
+
+        $fields = SugarTestReflection::callProtectedMethod(
+            $rr_api,
+            'getRelatedFields',
+            array(
+                $api,
+                // all of the below fields contain a rname_link.
+                array(
+                    'accept_status_calls' => '',
+                    'accept_status_meetings' => '',
+                    'opportunity_role' => 'Unit Test'
+                ),
+                $opp,
+                'contacts',
+                $contact
+            )
+        );
+
+        // this should only contain one field as opportunity_role is the only valid one for the contacts link
+        $this->assertCount(1, $fields);
+    }
+
 }
