@@ -188,7 +188,7 @@
             css_class: 'btn',
             tooltip: 'LBL_PREVIEW',
             event: 'list:preview:fire',
-            icon: 'icon-eye-open'
+            icon: 'fa-eye'
         });
     }
 })

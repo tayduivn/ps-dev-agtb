@@ -20,7 +20,7 @@ $viewdefs['base']['layout']['asdashlet-filter'] = array(
                     'availableToggles' => array(
                         array(
                             'name' => 'activitystream',
-                            'icon' => 'icon-th-list',
+                            'icon' => 'fa-th-list',
                             'label' => 'LBL_ACTIVITY_STREAM',
                         ),
                     ),

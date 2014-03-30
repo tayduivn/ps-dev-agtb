@@ -394,8 +394,8 @@
      * @param {Boolean} true if it needs to be collapsed
      */
     collapse: function(collapsed) {
-        this.$(".dashlet-toggle > i").toggleClass("icon-chevron-down", collapsed);
-        this.$(".dashlet-toggle > i").toggleClass("icon-chevron-up", !collapsed);
+        this.$(".dashlet-toggle > i").toggleClass("fa-chevron-down", collapsed);
+        this.$(".dashlet-toggle > i").toggleClass("fa-chevron-up", !collapsed);
         this.$(".thumbnail").toggleClass("collapsed", collapsed);
         this.$("[data-dashlet=dashlet]").toggleClass("hide", collapsed);
     },

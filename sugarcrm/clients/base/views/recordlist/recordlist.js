@@ -614,7 +614,7 @@
         }, this, true);
 
         app.shortcuts.register('List:Favorite', 'f a', function() {
-            this.$('.selected .icon-favorite:visible').click();
+            this.$('.selected .fa-favorite:visible').click();
         }, this);
 
         app.shortcuts.register('List:Follow', 'f o', function() {

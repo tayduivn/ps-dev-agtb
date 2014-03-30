@@ -816,8 +816,8 @@
                 tabLink = this.$('[href="#'+fieldTab.attr('id')+'"].[data-toggle="tab"]');
                 tabLink.tab('show');
                 // Put a ! next to the tab if one doesn't already exist
-                if (tabLink.find('.icon-exclamation-sign').length === 0) {
-                    tabLink.append(' <i class="icon-exclamation-sign tab-warning"></i>');
+                if (tabLink.find('.fa-exclamation-circle').length === 0) {
+                    tabLink.append(' <i class="fa fa-exclamation-circle tab-warning"></i>');
                 }
             }
 
@@ -825,7 +825,7 @@
             if (fieldPanel && fieldPanel.is(':hidden')) {
                 fieldPanel.toggle();
                 var fieldPanelArrow = fieldPanel.prev().find('i');
-                fieldPanelArrow.toggleClass('icon-chevron-up icon-chevron-down');
+                fieldPanelArrow.toggleClass('fa-chevron-up fa-chevron-down');
             }
         } else if (field.$el.is(':hidden')) {
             this.$('.more[data-moreless]').trigger('click');
@@ -1232,7 +1232,7 @@
             $panelHeader.toggleClass('panel-inactive panel-active');
         }
         if ($panelHeader && $panelHeader.find('i')) {
-            $panelHeader.find('i').toggleClass('icon-chevron-up icon-chevron-down');
+            $panelHeader.find('i').toggleClass('fa-chevron-up fa-chevron-down');
         }
         var panelName = this.$(e.currentTarget).parent().data('panelname');
         var state = 'collapsed';
@@ -1352,7 +1352,7 @@
         }, this);
 
         app.shortcuts.register('Record:Favorite', 'f a', function() {
-            this.$('.headerpane .icon-favorite:visible').click();
+            this.$('.headerpane .fa-favorite:visible').click();
         }, this);
 
         app.shortcuts.register('Record:Follow', 'f o', function() {

@@ -54,12 +54,12 @@
             {{#if isColumnDropdown}}
             <th class="nosort morecol">
                 <div class="dropdown">
-                    <button class="btn btn-invisible" data-toggle="dropdown" rel="tooltip" title="{{str 'LBL_COLUMNS'}}" data-placement="bottom" data-action="fields-toggle" track="click:morecol"><i class="icon-gear"></i></button>
+                    <button class="btn btn-invisible" data-toggle="dropdown" rel="tooltip" title="{{str 'LBL_COLUMNS'}}" data-placement="bottom" data-action="fields-toggle" track="click:morecol"><i class="fa fa-cog"></i></button>
                     <ul class="dropdown-menu left">
                     {{#each ../../../_fields.all}}
                         <li>
                             <button class="{{#if selected}}active{{/if}}" data-field-toggle="{{name}}" track="click:{{name}}">
-                                {{#if selected}}<i class="icon icon-ok"></i> {{/if}}{{str label ../../../../module}}
+                                {{#if selected}}<i class="fa fa-check"></i> {{/if}}{{str label ../../../../module}}
                             </button>
                         </li>
                     {{/each}}
