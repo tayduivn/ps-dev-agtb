@@ -60,10 +60,10 @@ describe("image field", function() {
             field.render();
             field.$('.image_btn').css({height: '15px'});
             field.resizeHeight(200);
-            expect(field.$(".icon-plus").css('lineHeight')).toEqual(200 - 15 + 'px');
+            expect(field.$(".fa-plus").css('lineHeight')).toEqual(200 - 15 + 'px');
             field.$('.image_btn').css({height: '12px'});
             field.resizeHeight(100);
-            expect(field.$(".icon-plus").css('lineHeight')).toEqual(100 - 12 + 'px');
+            expect(field.$(".fa-plus").css('lineHeight')).toEqual(100 - 12 + 'px');
         });
 
         it("should resize width", function() {
