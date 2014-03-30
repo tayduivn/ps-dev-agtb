@@ -69,7 +69,7 @@ $viewdefs['Meetings']['base']['view']['subpanel-list'] = array(
       array(
           'type' => 'rowaction',
           'name' => 'edit_button',
-          'icon' => 'icon-pencil',
+          'icon' => 'fa-pencil',
           'label' => 'LBL_EDIT_BUTTON',
           'event' => 'list:editrow:fire',
           'acl_action' => 'edit',
@@ -77,12 +77,12 @@ $viewdefs['Meetings']['base']['view']['subpanel-list'] = array(
       ),
       array(
         'type' => 'unlink-action',
-        'icon' => 'icon-unlink',
+        'icon' => 'fa-chain-broken',
         'label' => 'LBL_UNLINK_BUTTON',
       ),
       array(
         'type' => 'closebutton',
-        'icon' => 'icon-remove-circle',
+        'icon' => 'fa-times-circle',
         'name' => 'record-close',
         'label' => 'LBL_CLOSE_BUTTON_TITLE',
         'closed_status' => 'Held',

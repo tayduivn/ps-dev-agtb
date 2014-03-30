@@ -17,20 +17,20 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_ARTICLE',
         'acl_action'=>'create',
         'acl_module'=>$module_name,
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
     array(
         'route'=>'#'.$module_name,
         'label' =>'LBL_LIST_ARTICLES',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
         ),
     array(
         'route'=>'#bwc/index.php?module=KBDocuments&action=KBAdminView',
         'label' =>'LBL_KNOWLEDGE_BASE_ADMIN_MENU',
         'acl_action'=>'admin',
         'acl_module'=>$module_name,
-        'icon' => 'icon-question-sign',
+        'icon' => 'fa-question-circle',
     ),
 );

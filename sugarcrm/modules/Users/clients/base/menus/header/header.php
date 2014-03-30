@@ -24,7 +24,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' => 'LNK_NEW_USER',
         'acl_action' => 'admin',
         'acl_module' => $moduleName,
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
     array(
         'route' => '#bwc/index.php?' . http_build_query(
@@ -39,7 +39,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' => 'LNK_NEW_GROUP_USER',
         'acl_action' => 'admin',
         'acl_module' => $moduleName,
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
 );
 if (!empty($sugar_config['enable_web_services_user_creation'])) {
@@ -75,7 +75,7 @@ $viewdefs[$moduleName]['base']['menu']['header'][] =
         'label' => 'LNK_NEW_PORTAL_USER',
         'acl_action' => 'admin',
         'acl_module' => $moduleName,
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     );
 //END SUGARCRM flav=ent ONLY
 $viewdefs[$moduleName]['base']['menu']['header'][] =
@@ -89,7 +89,7 @@ $viewdefs[$moduleName]['base']['menu']['header'][] =
         'label' => 'LNK_REASSIGN_RECORDS',
         'acl_action' => 'admin',
         'acl_module' => $moduleName,
-        'icon' => 'icon-move',
+        'icon' => 'fa-arrows',
     );
 $viewdefs[$moduleName]['base']['menu']['header'][] =
     array(
@@ -105,5 +105,5 @@ $viewdefs[$moduleName]['base']['menu']['header'][] =
         'label' => 'LNK_IMPORT_USERS',
         'acl_action' => 'admin',
         'acl_module' => $moduleName,
-        'icon' => 'icon-upload',
+        'icon' => 'fa-arrow-circle-o-up',
     );

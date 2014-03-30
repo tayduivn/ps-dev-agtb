@@ -16,7 +16,7 @@
     <a class="close" data-dismiss="modal">×</a>
     <h3>{$APP.LBL_TOUR_WELCOME}</h3>
     </div>
-    
+
 	<div class="modal-body" {if $view_calendar_url}style="overflow: auto;"{/if}>
         <div style="float: left;">
             <div style="float: left; width: 300px;">
@@ -44,14 +44,14 @@
     <a class="close" data-dismiss="modal">×</a>
     <h3>{$APP.LBL_TOUR_DONE}</h3>
     </div>
-    
+
 	<div class="modal-body">
-		<div style="float: left;"> 
+		<div style="float: left;">
 			<div style="float: left; width: 360px; margin-right: 50px;">
 			<p>
 			{$APP.LBL_TOUR_REFERENCE_1} <a href="javascript:void window.open('http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/{$appList.documentation.$sugarFlavor}')">{$APP.LNK_TOUR_DOCUMENTATION}</a> {$APP.LBL_TOUR_REFERENCE_2}
 <br>
-				<i class="icon-arrow-right icon-lg" style="float: right; position: relative; right: -33px; top: -30px;"></i>
+				<i class="fa fa-arrow-right fa-lg" style="float: right; position: relative; right: -33px; top: -30px;"></i>
 			</p>
 			</div>
 			<div style="float: left">
@@ -60,7 +60,7 @@
 		</div>
 	</div>
     <div class="clear"></div>
-    
+
     <div class="modal-footer">
     <a href="#" class="btn btn-primary">{$APP.LBL_TOUR_BTN_DONE}</a>
     <a href="#" class="btn">{$APP.LBL_TOUR_BACK}</a>

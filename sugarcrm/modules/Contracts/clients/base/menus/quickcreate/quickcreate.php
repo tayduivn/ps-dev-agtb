@@ -16,5 +16,5 @@ $viewdefs[$module_name]['base']['menu']['quickcreate'] = array(
     'href' => '#bwc/index.php?module='.$module_name.'&action=EditView&return_module='.$module_name.'&return_action=DetailView',
     'label' => 'LNK_NEW_CONTRACT',
     'visible' => false,
-    'icon' => 'icon-plus',
+    'icon' => 'fa-plus',
 );

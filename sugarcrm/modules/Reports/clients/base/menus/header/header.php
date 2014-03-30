@@ -17,21 +17,21 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LBL_CREATE_REPORT',
         'acl_action'=>'create',
         'acl_module'=>$module_name,
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
     array(
         'route'=>'#bwc/index.php?module=Reports&favorite=1&action=index',
         'label' =>'LBL_FAVORITE_REPORTS',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => 'icon-favorite',
+        'icon' => 'fa-favorite',
     ),
     array(
         'route'=>'#bwc/index.php?module=Reports&action=index',
         'label' =>'LBL_ALL_REPORTS',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
     //BEGIN SUGARCRM flav=ent ONLY
     array(
@@ -39,7 +39,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_ADVANCED_REPORTING',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
-        'icon' => 'icon-bar-chart',
+        'icon' => 'fa-bar-chart-o',
     ),
     //END SUGARCRM flav=ent ONLY
 );

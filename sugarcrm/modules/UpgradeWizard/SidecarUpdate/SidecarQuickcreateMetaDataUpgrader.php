@@ -103,7 +103,7 @@ class SidecarQuickcreateMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             $viewdefs[$this->module]['base']['menu']['quickcreate'] = array(
                 'layout' => 'create',
                 'label' => $quickcreateLabel,
-                'icon' => 'icon-plus',
+                'icon' => 'fa-plus',
             );
         }
 

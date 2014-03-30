@@ -17,21 +17,21 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_VIEW_MY_INBOX',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
     array(
         'route'=>'#bwc/index.php?module=EmailTemplates&action=EditView&return_module=EmailTemplates&return_action=DetailView',
         'label' =>'LNK_NEW_EMAIL_TEMPLATE',
         'acl_action'=>'create',
         'acl_module'=>'EmailTemplates',
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
     array(
         'route'=>'#EmailTemplates',
         'label' =>'LNK_EMAIL_TEMPLATE_LIST',
         'acl_action'=>'list',
         'acl_module'=>'EmailTemplates',
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
     //BEGIN SUGARCRM flav=int ONLY
     array(
@@ -39,7 +39,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LBL_ACTIVITIES_REPORTS',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
     //END SUGARCRM flav=int ONLY
 );

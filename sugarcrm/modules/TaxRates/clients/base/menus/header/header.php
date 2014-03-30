@@ -17,21 +17,21 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_SHIPPER',
         'acl_action'=>'admin',
         'acl_module'=>'Products',
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
     array(
         'route'=>'#bwc/index.php?module=TaxRates&action=EditView&return_module=TaxRates&return_action=DetailView',
         'label' =>'LNK_NEW_TAXRATE',
         'acl_action'=>'admin',
         'acl_module'=>'Products',
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
     array(
         'route'=>'#bwc/index.php?module=Import&action=Step1&import_module=TaxRates&return_module=TaxRates&return_action=index',
         'label' =>'LNK_IMPORT_TAXRATES',
         'acl_action'=>'admin',
         'acl_module'=>'Products',
-        'icon' => 'icon-upload',
+        'icon' => 'fa-arrow-circle-o-up',
 
     )
 );

@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = array(
     'type' => 'subpanel-list',
     'favorite' => true,
@@ -150,13 +151,13 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
                 'css_class' => 'btn',
                 'tooltip' => 'LBL_PREVIEW',
                 'event' => 'list:preview:fire',
-                'icon' => 'icon-eye-open',
+                'icon' => 'fa-eye',
                 'acl_action' => 'view',
             ),
             array(
                 'type' => 'rowaction',
                 'name' => 'edit_button',
-                'icon' => 'icon-pencil',
+                'icon' => 'fa-pencil',
                 'label' => 'LBL_EDIT_BUTTON',
                 'event' => 'list:editrow:fire',
                 'acl_action' => 'edit',

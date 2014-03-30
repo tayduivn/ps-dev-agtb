@@ -15,7 +15,7 @@ $viewdefs['RevenueLineItems']['base']['view']['panel-top'] = array(
         array(
             'type' => 'button',
             'css_class' => 'btn-invisible',
-            'icon' => 'icon-chevron-up',
+            'icon' => 'fa-chevron-up',
             'tooltip' => 'LBL_TOGGLE_VISIBILITY',
         ),
         array(
@@ -24,7 +24,7 @@ $viewdefs['RevenueLineItems']['base']['view']['panel-top'] = array(
             'buttons' => array(
                 array(
                     'type' => 'sticky-rowaction',
-                    'icon' => 'icon-plus',
+                    'icon' => 'fa-plus',
                     'name' => 'create_button',
                     'label' => ' ',
                     'acl_action' => 'create',

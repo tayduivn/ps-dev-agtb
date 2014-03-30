@@ -16,7 +16,7 @@ $viewdefs['Contacts']['base']['view']['panel-top-for-prospectlists'] = array(
         array(
             'type' => 'button',
             'css_class' => 'btn-invisible',
-            'icon' => 'icon-chevron-up',
+            'icon' => 'fa-chevron-up',
             'tooltip' => 'LBL_TOGGLE_VISIBILITY',
         ),
         array(
@@ -26,7 +26,7 @@ $viewdefs['Contacts']['base']['view']['panel-top-for-prospectlists'] = array(
             'buttons' => array(
                 array(
                     'type' => 'sticky-rowaction',
-                    'icon' => 'icon-plus',
+                    'icon' => 'fa-plus',
                     'name' => 'create_button',
                     'label' => ' ',
                     'acl_action' => 'create',
