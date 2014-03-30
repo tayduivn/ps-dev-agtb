@@ -584,7 +584,7 @@
         min-height: 0;
       }
       .btn {
-        [class^="icon-"] {
+        .fa {
           margin-right: 6px;
         }
       }
@@ -593,7 +593,7 @@
         right: auto;
       }
       .btn.dropdown-toggle {
-        [class^="icon-"] {
+        .fa {
           margin-right: 0;
         }
       }
@@ -863,7 +863,7 @@
 .record-cell:not(.edit):hover {
   .record-edit-link {
     display: inline-block;
-    .icon-pencil {
+    .fa-pencil {
       left: 0;
       top: 2px;
       font-size: 10px;
@@ -925,7 +925,7 @@
     padding: 0 5px 0 15px;
     width: auto !important;
     border-top: 1px solid rgba(220,220,220,1);
-    box-shadow: inset 0px 1px 0px 0px white;
+    .box-shadow(~"inset 0px 1px 0px 0px white");
     border-bottom: 1px solid #cfcfcf;
     cursor: pointer;
     &:hover {
