@@ -301,6 +301,18 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
         'maxColumns' => 1,
     );
 
+    /**
+     * List of invalid label regular expressions. Needed for cases in which some
+     * labels should NOT be allowed to be carried over from past incarnations of
+     * sugar. Like Products.
+     * 
+     * @var array
+     */
+    protected $invalidLabelRegex = array(
+        // Products module, because they liked Smarty code as labels. WUT?
+        '/\{\$MOD.(.*)|strip_semicolon/',
+    );
+
     protected function getOriginalFile($filepath)
     {
         $files = explode("/", $filepath);
@@ -456,18 +468,38 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
             if (!empty($address)) {
                 return $address;
             }
-        } 
+        }
 
         $newdata = array('name' => $fieldname);
-        if(is_array($data)) {
-            if(!empty($data['readonly']) || !empty($data['readOnly'])) {
+        if (is_array($data)) {
+            if (!empty($data['readonly']) || !empty($data['readOnly'])) {
                 $newdata['readonly'] = true;
             }
-            if(!empty($data['label'])) {
+
+            if (!empty($data['label']) && $this->isValidLabel($data['label'])) {
                 $newdata['label'] = $data['label'];
             }
         }
         return $newdata;
+    }
+
+    /**
+     * Checks to see if a label is valid for inclusion on a Record view. The 
+     * {@see $invalidLabelRegex} array contains a list of regular expressions to
+     * check the label against to make sure that it is clean for use.
+     * 
+     * @param string $label The label to check for validation
+     * @return boolean
+     */
+    protected function isValidLabel($label)
+    {
+        foreach ($this->invalidLabelRegex as $pattern) {
+            if (preg_match($pattern, $label)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     protected function loadDefaultMetadata()
@@ -527,9 +559,15 @@ END;
         }
         $this->logUpgradeStatus('Converting ' . $this->client . ' ' . $this->viewtype . ' view defs for ' . $this->module);
 
-        $parser = ParserFactory::getParser($this->viewtype, $this->module, null, null, $this->client);
+        // Holds merged defs and final defs
         $newdefs = $tempdefs = $finaldefs = array();
+
+        // This needs to be called before the parser is instantiated to prevent 
+        // custom metadata from being created from basic module template
         $defaultDefs = $this->loadDefaultMetadata();
+
+        // Get the parser now that default metadata has been fetched
+        $parser = ParserFactory::getParser($this->viewtype, $this->module, null, null, $this->client);
 
         // Go through merge views, add fields added to detail view to base panel
         // and fields added to edit view not in detail view or hidden panel
@@ -557,9 +595,8 @@ END;
                 // pull out the tab definitions from the originals, put them into the Canonical Form
                 foreach($data['templateMeta']['tabDefs'] as $tabName => $tabContent) {
                     // Handle panel labels for matching later
-                    if (isset($this->panelNames[$c]['label'])) {
-                        $tabName = $this->panelNames[$c]['label'];
-                    }
+                    $panelNames = $this->getConvertedPanelName($tabName, $c);
+                    $tabName = $panelNames['label'];
 
                     // Save these for later to prevent conflict with new panels later
                     $tabdefs[$tabName] = array(

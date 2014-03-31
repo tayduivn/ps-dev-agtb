@@ -254,17 +254,13 @@ END;
                     $hidden = false;
 
                     // Handle panel naming and labeling
-                    if (isset($this->panelNames[$c]['name'])) {
-                        $panelName = $this->panelNames[$c]['name'];
-                        $panelLabel = $this->panelNames[$c]['label'];
+                    $panelNames = $this->getConvertedPanelName($label, $c);
+                    $panelName = $panelNames['name'];
+                    $panelLabel = $panelNames['label'];
 
-                        // Set the hide property?
-                        if ($panelName == 'panel_hidden') {
-                            $hidden = true;
-                        }
-                    } else {
-                        $panelName = strtolower($label);
-                        $panelLabel = strtoupper($label);
+                    // Set the hide property?
+                    if ($panelName == 'panel_hidden') {
+                        $hidden = true;
                     }
 
                     // Basic defs that should never change
@@ -301,12 +297,40 @@ END;
         // collection
         if ($full) {
             return array(
-                'templateMeta' => $defs['templateMeta'],
+                'templateMeta' => isset($defs['templateMeta']) ? $defs['templateMeta'] : array(),
                 'panels' => $panels
             );
         }
 
         // Return the default converted fields array
         return $fields;
+    }
+
+    /**
+     * Gets a panel name. Used in conversion of old style to new style. Checks
+     * whether a panel label ($name) is a custom panel or not and if not, will
+     * convert it to Business Card or Show More where appropriate.
+     * 
+     * @param string $name The name or label of the panel
+     * @param integer $index The numeric position of the panel
+     * @return array
+     */
+    protected function getConvertedPanelName($name, $index)
+    {
+        // Custom panels on Edit/Detail views were named lbl_{type}view_panel#
+        $custom = preg_match('/lbl_(edit|detail)view_panel/i', $name);
+
+        // If this isn't a custom panel and the index is a known special panel
+        // handle it
+        if (!$custom && isset($this->panelNames[$index]['name'])) {
+            $panelName = $this->panelNames[$index]['name'];
+            $panelLabel = $this->panelNames[$index]['label'];
+        } else {
+            // Else just transform the name and label as appropriate
+            $panelName = strtolower($name);
+            $panelLabel = strtoupper($name);
+        }
+
+        return array('name' => $panelName, 'label' => $panelLabel);
     }
 }
