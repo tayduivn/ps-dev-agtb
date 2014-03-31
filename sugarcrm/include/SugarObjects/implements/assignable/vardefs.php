@@ -50,7 +50,7 @@ $vardefs = array(
 	 array (
 		    'name' => 'assigned_user_name',
 		    'link'=>'assigned_user_link' ,
-		    'vname' => 'LBL_ASSIGNED_TO_NAME',
+            'vname' => 'LBL_ASSIGNED_TO',
 		    'rname' => 'full_name',
 		    'type' => 'relate',
 		    'reportable'=>false,
@@ -60,6 +60,7 @@ $vardefs = array(
 		    'module'=>'Users',
 		    'duplicate_merge'=>'disabled',
             'duplicate_on_record_copy' => 'always',
+            'massupdate' => false,
             'sort_on' => array('last_name'),
      ),
 		      'assigned_user_link' =>
