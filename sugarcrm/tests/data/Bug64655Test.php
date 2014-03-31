@@ -88,7 +88,7 @@ class Bug64655Test extends Sugar_PHPUnit_Framework_TestCase
      *
      * @dataProvider provider
      */
-    public function testGetRelateFieldQuery(array $rel_field_defs, $alias, $expected)
+    public function testGetRelateFieldQuery(array $rel_field_defs, $alias, $expectedSelect, $expectedFields)
     {
         /** @var User */
         global $current_user;
@@ -97,7 +97,8 @@ class Bug64655Test extends Sugar_PHPUnit_Framework_TestCase
         $bean = new Bug64655Test_SugarBean2();
         $bean->field_defs = $rel_field_defs;
         $query = $bean->getRelateFieldQuery($this->bean->field_defs['contact_name'], $alias);
-        $this->assertEquals($expected, $query['select']);
+        $this->assertEquals($expectedSelect, $query['select']);
+        $this->assertEquals($expectedFields, $query['fields']);
     }
 
     public function testCustomFieldsInFormat()
@@ -118,7 +119,7 @@ class Bug64655Test extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             'empty-vardefs' => array(
-                array(), 'jt1', '',
+                array(), 'jt1', '', array()
             ),
             'non-name-field' => array(
                 array(
@@ -129,6 +130,9 @@ class Bug64655Test extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 'jt2',
                 'jt2.name contact_name',
+                array(
+                    'contact_name' => 'jt2.name',
+                ),
             ),
             'name-field' => array(
                 array(
@@ -139,6 +143,10 @@ class Bug64655Test extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 'jt3',
                 'jt3.foo rel_contact_name_foo, jt3.bar rel_contact_name_bar',
+                array(
+                    'rel_contact_name_foo' => 'jt3.foo',
+                    'rel_contact_name_bar' => 'jt3.bar',
+                ),
             ),
         );
     }
