@@ -435,33 +435,28 @@
      * @param {String|Array} value single email address or set of email addresses
      */
     unformat: function(value) {
-        if(this.view.action === 'list') {
-            var emails = this.model.get(this.name),
-                changed = false;
-            if(!_.isArray(emails)){ // emails is empty, initialize array
+        if (this.view.action === 'list') {
+            var emails = app.utils.deepCopy(this.model.get(this.name));
+
+            if (!_.isArray(emails)) { // emails is empty, initialize array
                 emails = [];
             }
-            _.each(emails, function(email, index) {
-                if(email.primary_address) {
-                    if(email.email_address !== value) {
-                        changed = true;
-                        emails[index].email_address = value;
-                    }
+
+            emails = _.map(emails, function(email) {
+                if (email.primary_address && email.email_address !== value) {
+                    email.email_address = value;
                 }
+                return email;
             }, this);
 
             // Adding a new email
             if (emails.length == 0) {
                 emails.push({
-                    email_address:   value,
+                    email_address: value,
                     primary_address: true
                 });
-                changed = true;
             }
 
-            if(changed) {
-                emails = app.utils.deepCopy(emails);
-            }
             return emails;
         }
     },
