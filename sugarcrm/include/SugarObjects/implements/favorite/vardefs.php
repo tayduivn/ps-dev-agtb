@@ -29,7 +29,7 @@
 $vardefs = array(
     'fields' => array(
         'my_favorite' => array(
-            'massupdate' => true,
+            'massupdate' => false,
             'name' => 'my_favorite',
             'vname' => 'LBL_FAVORITE',
             'type' => 'bool',
