@@ -184,6 +184,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'modules/Calls/views/view.wirelesssave.php',
             'modules/Meetings/views/view.wirelesssave.php',
             'tests/include/SubPanel/Bug63486Test.php',
+            'modules/Meetings/api/MeetingsApi.php',
         );
         $this->fileToDelete($files);
     }
