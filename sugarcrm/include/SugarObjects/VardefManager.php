@@ -395,7 +395,9 @@ class VardefManager{
         foreach($vardef['fields'] as $name => $def)
         {
             //Look through all link fields for related modules that have calculated fields that use that relationship
-            if(!empty($def['type']) && $def['type'] == 'link' && !empty($def['relationship']))
+            if(!empty($def['type']) && $def['type'] == 'link'
+                && (!empty($def['relationship']) || (!empty($def['link_class'])))
+            )
             {
                 $links[$name] = $def;
             }
