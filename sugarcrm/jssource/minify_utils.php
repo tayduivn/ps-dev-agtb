@@ -107,7 +107,16 @@ class SugarMinifyUtils
             // Process each group array. $loc is the file to read in, $trgt is 
             // the concatenated file
             foreach($fg as $loc=>$trgt){
-                $contents = '';
+                $already_minified = preg_match('/[\.\-]min\.js$/', $loc);
+                if (preg_match('/[\.\-]min\.js$/', $loc)) {
+                    $already_minified = true;
+                } else {
+                    $minified_loc = str_replace('.js', '-min.js', $loc);
+                    if (is_file($minified_loc)) {
+                        $loc = $minified_loc;
+                        $already_minified = true;
+                    }
+                }
                 $relpath = $loc;
                 $loc = $from_path.'/'.$loc;
 
@@ -122,8 +131,8 @@ class SugarMinifyUtils
                     
                     //make sure we have handles to both source and target file
                     $content = file_get_contents($loc);
-                    //Skip minifying files in exclude list
-                    if (!isset($excludedFiles[$loc])) {
+                    //Skip minifying files in exclude list and already minified files
+                    if (!$already_minified && !isset($excludedFiles[$loc])) {
                         try {
                             $content = SugarMin::minify($content);
                         } catch (RuntimeException  $e) {
