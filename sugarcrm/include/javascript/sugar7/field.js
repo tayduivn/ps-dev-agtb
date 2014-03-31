@@ -202,7 +202,10 @@
                 }
                 this._addViewClass(this.action);
                 if (isErrorState) {
-                    this.decorateError(this._errors);
+                    this.clearErrorDecoration();
+                    if (this.action === 'edit') {
+                        this.decorateError(this._errors);
+                    }
                 }
                 if (this.def.required) {
                     this.clearRequiredLabel();
