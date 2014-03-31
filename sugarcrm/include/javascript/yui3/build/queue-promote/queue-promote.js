@@ -1,11 +1,11 @@
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
-Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+YUI 3.15.0 (build 834026e)
+Copyright 2014 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
 */
-YUI.add('queue-promote', function(Y) {
+
+YUI.add('queue-promote', function (Y, NAME) {
 
 /**
  * Adds methods promote, remove, and indexOf to Queue instances.
@@ -17,7 +17,7 @@ YUI.add('queue-promote', function(Y) {
 Y.mix(Y.Queue.prototype, {
     /**
      * Returns the current index in the queue of the specified item
-     * 
+     *
      * @method indexOf
      * @param needle {MIXED} the item to search for
      * @return {Number} the index of the item or -1 if not found
@@ -36,7 +36,7 @@ Y.mix(Y.Queue.prototype, {
         var index = this.indexOf(callback);
 
         if (index > -1) {
-            this._q.unshift(this._q.splice(index,1));
+            this._q.unshift(this._q.splice(index,1)[0]);
         }
     },
 
@@ -57,4 +57,4 @@ Y.mix(Y.Queue.prototype, {
 });
 
 
-}, '3.3.0' ,{requires:['yui-base']});
+}, '3.15.0', {"requires": ["yui-base"]});

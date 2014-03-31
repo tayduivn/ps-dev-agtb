@@ -1,18 +1,17 @@
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
-Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+YUI 3.15.0 (build 834026e)
+Copyright 2014 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
 */
-YUI.add('imageloader', function(Y) {
+
+YUI.add('imageloader', function (Y, NAME) {
 
 /**
  * The ImageLoader Utility is a framework to dynamically load images according to certain triggers,
  * enabling faster load times and a more responsive UI.
  *
  * @module imageloader
- * @requires base-base, node-style, node-screen
  */
 
 
@@ -31,7 +30,7 @@ YUI.add('imageloader', function(Y) {
 	Y.ImgLoadGroup.NAME = 'imgLoadGroup';
 
 	Y.ImgLoadGroup.ATTRS = {
-		
+
 		/**
 		 * Name for the group. Only used to identify the group in logging statements.
 		 * @attribute name
@@ -72,7 +71,18 @@ YUI.add('imageloader', function(Y) {
 			value: null,
 			setter: function(name) { this._className = name; return name; },
 			lazyAdd: false
-		}
+		},
+
+        /**
+         * Determines how to act when className is used as the way to delay load images. The "default" action is to just
+         * remove the class name. The "enhanced" action is to remove the class name and also set the src attribute if
+         * the element is an img.
+         * @attribute classNameAction
+         * @type String
+         */
+        classNameAction: {
+            value: "default"
+        }
 
 	};
 
@@ -163,7 +173,7 @@ YUI.add('imageloader', function(Y) {
 
 			/* Need to wrap the fetch function. Event Util can't distinguish prototyped functions of different instantiations.
 			 *   Leads to this scenario: groupA and groupZ both have window-scroll triggers. groupZ also has a 2-sec timeout (groupA has no timeout).
-			 *   groupZ's timeout fires; we remove the triggers. The detach call finds the first window-scroll event with Y.ILG.p.fetch, which is groupA's. 
+			 *   groupZ's timeout fires; we remove the triggers. The detach call finds the first window-scroll event with Y.ILG.p.fetch, which is groupA's.
 			 *   groupA's trigger is removed and never fires, leaving images unfetched.
 			 */
 			var wrappedFetch = function() {
@@ -252,7 +262,7 @@ YUI.add('imageloader', function(Y) {
 		 * Registers an image with the group.
 		 * Arguments are passed through to a <code>Y.ImgLoadImgObj</code> constructor; see that class' attribute documentation for detailed information. "<code>domId</code>" is a required attribute.
 		 * @method registerImage
-		 * @param {Object} *  A configuration object literal with attribute name/value pairs  (passed through to a <code>Y.ImgLoadImgObj</code> constructor)
+		 * @param {Object} config A configuration object literal with attribute name/value pairs  (passed through to a <code>Y.ImgLoadImgObj</code> constructor)
 		 * @return {Object}  <code>Y.ImgLoadImgObj</code> that was registered
 		 */
 		registerImage: function() {
@@ -339,20 +349,47 @@ YUI.add('imageloader', function(Y) {
 						continue;
 					}
 					if (els[i].y && els[i].y <= hLimit) {
-						els[i].el.removeClass(this._className);
-						els[i].fetched = true;
+						//els[i].el.removeClass(this._className);
+						this._updateNodeClassName(els[i].el);
+                        els[i].fetched = true;
 					}
 					else {
 						allFetched = false;
 					}
 				}
 			}
-			
+
 			// if allFetched, remove listeners
 			if (allFetched) {
 				this._clearTriggers();
 			}
 		},
+
+        /**
+         * Updates a given node, removing the ImageLoader class name. If the
+         * node is an img and the classNameAction is "enhanced", then node
+         * class name is removed and also the src attribute is set to the
+         * image URL as well as clearing the style background image.
+         * @method _updateNodeClassName
+         * @param node {Node} The node to act on.
+         * @private
+         */
+        _updateNodeClassName: function(node){
+            var url;
+
+            if (this.get("classNameAction") == "enhanced"){
+
+                if (node.get("tagName").toLowerCase() == "img"){
+                    url = node.getStyle("backgroundImage");
+                    /url\(["']?(.*?)["']?\)/.test(url);
+                    url = RegExp.$1;
+                    node.set("src", url);
+                    node.setStyle("backgroundImage", "");
+                }
+            }
+
+            node.removeClass(this._className);
+        },
 
 		/**
 		 * Finds all elements in the DOM with the class name specified in the group. Removes the class from the element in order to let the style definitions trigger the image fetching.
@@ -365,7 +402,7 @@ YUI.add('imageloader', function(Y) {
 			}
 
 
-			Y.all('.' + this._className).removeClass(this._className);
+			Y.all('.' + this._className).each(Y.bind(this._updateNodeClassName, this));
 		}
 
 	};
@@ -387,7 +424,7 @@ YUI.add('imageloader', function(Y) {
 		Y.ImgLoadImgObj.superclass.constructor.apply(this, arguments);
 		this._init();
 	};
-		
+
 	Y.ImgLoadImgObj.NAME = 'imgLoadImgObj';
 
 	Y.ImgLoadImgObj.ATTRS = {
@@ -529,7 +566,7 @@ YUI.add('imageloader', function(Y) {
 		 * Displays the image; puts the URL into the DOM.
 		 * This method shouldn't be called externally, but is not private in the rare event that it needs to be called immediately.
 		 * @method fetch
-		 * @param {Int} withinY  The pixel distance from the top of the page, for which if the image lies within, it will be fetched. Undefined indicates that no check should be made, and the image should always be fetched
+		 * @param {Number} withinY  The pixel distance from the top of the page, for which if the image lies within, it will be fetched. Undefined indicates that no check should be made, and the image should always be fetched
 		 * @return {Boolean}  Whether the image has been fetched (either during this execution or previously)
 		 */
 		fetch: function(withinY) {
@@ -588,7 +625,7 @@ YUI.add('imageloader', function(Y) {
 		/**
 		 * Gets the object (as a <code>Y.Node</code>) of the DOM element indicated by "<code>domId</code>".
 		 * @method _getImgEl
-		 * @returns {Object} DOM element of the image as a <code>Y.Node</code> object
+		 * @return {Object} DOM element of the image as a <code>Y.Node</code> object
 		 * @private
 		 */
 		_getImgEl: function() {
@@ -602,7 +639,7 @@ YUI.add('imageloader', function(Y) {
 		 * Gets the Y position of the node in page coordinates.
 		 * Expects that the page-coordinate position of the image won't change.
 		 * @method _getYPos
-		 * @returns {Object} The Y position of the image
+		 * @return {Object} The Y position of the image
 		 * @private
 		 */
 		_getYPos: function() {
@@ -620,4 +657,4 @@ YUI.add('imageloader', function(Y) {
 
 
 
-}, '3.3.0' ,{requires:['base-base', 'node-style', 'node-screen']});
+}, '3.15.0', {"requires": ["base-base", "node-style", "node-screen"]});

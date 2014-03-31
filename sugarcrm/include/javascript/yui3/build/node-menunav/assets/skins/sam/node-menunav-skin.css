@@ -1,10 +1,10 @@
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
-Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+YUI 3.15.0 (build 834026e)
+Copyright 2014 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
 */
+
 /* Vertical menus and submenus */
 
 .yui3-skin-sam .yui3-menu-content, 
@@ -112,7 +112,8 @@ build: 3167
 .yui3-skin-sam .yui3-menuitem-content,
 .yui3-skin-sam .yui3-menu .yui3-menu .yui3-menuitem-content {
 
-    padding: 0 20px;
+    /*padding: 0 20px;*/
+    padding: 0 1em;
     color: #000;
     text-decoration: none;
     cursor: default;
