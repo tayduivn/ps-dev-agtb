@@ -749,8 +749,10 @@
         // in caseValueN == 0 && stageValueN == 0
         if(hasAccess)
         {
-            params.amount = app.currency.formatAmountLocale(caseValue);
-            params.labelAmount = params.label + ': ' + params.amount.toString();
+            if (caseValue) {
+                params.amount = app.currency.formatAmountLocale(caseValue);
+                params.labelAmount = params.label + ': ' + params.amount.toString();
+            }
 
             if (caseValueN == 0 && stageValueN == 0) {
                 // if we have no data
