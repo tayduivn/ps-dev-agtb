@@ -249,6 +249,9 @@ describe("Leads.Base.Layout.ConvertPanel", function() {
                 west:'Contact Value for WEST',
                 east:'Contact Value for EAST'
             });
+        leadModel.setDefaultAttribute = sinon.stub();
+        createModel.setDefaultAttribute = sinon.stub();
+
         layout.createView.model = createModel;
         layout.meta.duplicateCheckOnStart = true;
         layout.meta.fieldMapping = {
@@ -314,6 +317,8 @@ describe("Leads.Base.Layout.ConvertPanel", function() {
     it("should update create model if dependency module changes and trigger dupe check", function() {
         var createModel = new Backbone.Model(),
             fooModel = new Backbone.Model({id: '456'});
+        createModel.setDefaultAttribute = sinon.stub();
+        fooModel.setDefaultAttribute = sinon.stub();
         layout.createView.model = createModel;
         layout.updateFromDependentModuleChanges('Foo', fooModel);
         expect(createModel.get('foo_id')).toEqual('456');
