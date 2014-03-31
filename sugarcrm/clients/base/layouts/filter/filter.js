@@ -517,8 +517,7 @@
          * level only).
          */
         var specialField = /^\$/,
-            meta = app.metadata.getModule(module),
-            searchMeta = meta.filters['default'].meta;
+            meta = app.metadata.getModule(module);
         selectedFilter = _.filter(selectedFilter, function(def) {
             var fieldName = _.keys(def).pop();
             return specialField.test(fieldName) || meta.fields[fieldName];
