@@ -96,12 +96,12 @@
       border-right: 0;
     }
     &[data-type="currency"] {
-      text-align: right;
       min-width: 132px;
       max-width: 100% !important;
       .list {
-        .box-sizing(border-box);
         width: 100%;
+        text-align: right;
+        .box-sizing(border-box);
       }
     }
     &[data-type="bool"] {
@@ -176,6 +176,9 @@
     }
     .active .icon-star {
       color: @orange;
+    }
+    .help-block {
+      display: none;
     }
     span.longtext {
       display: inline-block;
