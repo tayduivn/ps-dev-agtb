@@ -36,7 +36,6 @@
      * {@inheritdoc}
      */
     initialize: function(options) {
-        options.def.readonly = true;
         this._super('initialize', [options]);
         if (!this.model.has('useful')) {
             this.model.add('useful');
@@ -123,5 +122,6 @@
     _render: function() {
         this.isVoted();
         this._super('_render');
+        return this;
     }
 })
