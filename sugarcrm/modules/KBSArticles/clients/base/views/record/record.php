@@ -9,10 +9,9 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
-$viewdefs['KBSDocuments']['base']['view']['record'] = array(
+$viewdefs['KBSArticles']['base']['view']['record'] = array(
     'panels' => array(
         array(
             'name' => 'panel_header',
@@ -32,8 +31,8 @@ $viewdefs['KBSDocuments']['base']['view']['record'] = array(
                     'name' => 'favorite',
                     'label' => 'LBL_FAVORITE',
                     'type' => 'favorite',
-                    'readonly' => true,
                     'dismiss_label' => true,
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'follow',
@@ -42,7 +41,7 @@ $viewdefs['KBSDocuments']['base']['view']['record'] = array(
                     'readonly' => true,
                     'dismiss_label' => true,
                 ),
-            )
+            ),
         ),
         array(
             'name' => 'panel_body',

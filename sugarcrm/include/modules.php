@@ -451,6 +451,7 @@ $modInvisList[] = 'Notifications';
 $GLOBALS['moduleTabMap'] = array(
     'UpgradeWizard' => 'Administration',
     'KBSDocuments' => 'KBSContents',
+    'KBSArticles' => 'KBSContents',
     'EmailMan' => 'Administration',
     'ModuleBuilder' => 'Administration',
     'Configurator' => 'Administration',
@@ -671,10 +672,16 @@ $bwcModules = array(
 
 $beanList['KBSDocuments'] = 'KBSDocument';
 $beanFiles['KBSDocument'] = 'modules/KBSDocuments/KBSDocument.php';
-$moduleList[] = 'KBSContents';
+$modInvisList[] = 'KBSDocument';
+
 $beanList['KBSContents'] = 'KBSContent';
 $beanFiles['KBSContent'] = 'modules/KBSContents/KBSContent.php';
-$modInvisList[] = 'KBSDocument';
+$moduleList[] = 'KBSContents';
+
+$beanList['KBSArticles'] = 'KBSArticle';
+$beanFiles['KBSArticle'] = 'modules/KBSArticles/KBSArticle.php';
+$moduleList[] = 'KBSArticles';
+
 foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $modExtFile) {
     include $modExtFile;
 }
