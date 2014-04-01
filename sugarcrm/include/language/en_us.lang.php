@@ -116,7 +116,9 @@ $app_list_strings = array (
         'Cases' => 'Cs',
         'Campaigns' => 'Ca',
         'Notes' => 'Nt',
-        'Tasks' => 'Ts'
+        'Tasks' => 'Ts',
+        'KBLocalizations' => 'Lo',
+        'KBRevisions' => 'Re',
     ),
 
   'moduleListSingular' =>
@@ -11229,3 +11231,5 @@ $app_list_strings['moduleList']['KBSTags'] = 'Knowledge Base Tags';
 $app_list_strings['moduleListSingular']['KBSTags'] = 'Knowledge Base Tag';
 $app_list_strings['moduleList']['KBSTopics'] = 'Knowledge Base Topics';
 $app_list_strings['moduleListSingular']['KBSTopics'] = 'Knowledge Base Topic';
+$app_list_strings['moduleList']['KBSArticles'] = 'Knowledge Base Article';
+$app_list_strings['moduleListSingular']['KBSArticles'] = 'Knowledge Base Article';

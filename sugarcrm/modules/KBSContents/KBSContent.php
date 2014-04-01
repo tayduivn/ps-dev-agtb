@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -12,7 +11,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
  */
-
 class KBSContent extends SugarBean {
 
     public $table_name = "kbscontents";
@@ -50,30 +48,57 @@ class KBSContent extends SugarBean {
     public function save($check_notify = false)
     {
         if (!SugarBean::inOperation('saving_related')) {
-            if ((!$this->id || $this->new_with_id) && empty($this->kbsdocument_id)) {
+            if (!$this->id || $this->new_with_id) {
                 if (!$this->id) {
                     $this->id = create_guid();
                     $this->new_with_id = true;
                 }
-                $doc = BeanFactory::getBean('KBSDocuments');
-                $doc->new_with_id = true;
-                $doc->id = create_guid();
-                $doc->name = $this->name;
-                $doc->save();
-                $this->load_relationship('kbsdocuments_kbscontents');
-                $this->kbsdocuments_kbscontents->add($doc);
+
+                $doc = $article = null;
+
+                if (empty($this->kbsdocument_id)) {
+                    $doc = BeanFactory::getBean('KBSDocuments');
+                    $doc->new_with_id = true;
+                    $doc->id = create_guid();
+                    $doc->name = $this->name;
+                    $doc->save();
+                    $this->load_relationship('kbsdocuments_kbscontents');
+                    $this->kbsdocuments_kbscontents->add($doc);
+                }
+
+                if (empty($this->kbsarticle_id)) {
+                    $article = BeanFactory::getBean('KBSArticles');
+                    $article->new_with_id = true;
+                    $article->id = create_guid();
+                    $article->name = $this->name;
+                    $article->save();
+                    $this->load_relationship('kbsarticles_kbscontents');
+                    $this->kbsarticles_kbscontents->add($article);
+                }
+
+                if (!empty($article) && !empty($doc)) {
+                    $article->load_relationship('kbsdocuments_kbsarticles');
+                    $article->kbsdocuments_kbsarticles->add($doc);
+                }
 
                 if (empty($this->language)) {
                     $lang = $this->getPrimaryLanguage();
                     $this->language = $lang['key'];
                 }
-            }
-            if (!$this->active_rev) {
-                $query = "UPDATE {$this->table_name}
-                    set active_rev = 0
-                    where active_rev = 1 and kbsdocument_id = {$this->db->quoted($this->kbsdocument_id)}";
-                $this->db->query($query);
-                $this->active_rev = 1;
+
+                $this->active_rev = (int) !empty($article);
+
+                if (empty($this->revision)) {
+                    $query = new SugarQuery();
+                    $query->from(BeanFactory::getBean('KBSContents'));
+                    $query->select(array('id'))->fieldRaw('MAX(revision)', 'max_revision');
+                    $query->where()
+                        ->equals('kbsdocument_id', $this->kbsdocument_id)
+                        ->equals('kbsarticle_id', $this->kbsarticle_id);
+
+                    $result = $query->execute();
+                    $this->revision = !empty($result[0]['max_revision']) ? $result[0]['max_revision'] + 1 : 1;
+                }
             }
         }
         return parent::save($check_notify);

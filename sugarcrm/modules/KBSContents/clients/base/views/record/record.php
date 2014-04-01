@@ -106,10 +106,6 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'kbsdocument_name' => array(
-                    'name' => 'kbsdocument_name',
-                    'readonly' => true,
-                ),
                 'topic_name' => array(
                     'name' => 'topic_name',
                     'label' => 'LBL_TOPIC_NAME',
