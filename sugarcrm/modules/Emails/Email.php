@@ -840,7 +840,9 @@ class Email extends SugarBean {
 			(isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
 
             // Set Up From Name and Address Information
-            if (!empty($mailConfig)) {
+            if ($this->type == 'archived') {
+                $this->from_addr = empty($request['archive_from_address']) ? '' : $request['archive_from_address'];
+            } elseif (!empty($mailConfig)) {
                 $sender = $mailConfig->getFrom();
                 $decodedFromName = mb_decode_mimeheader($sender->getName());
                 $this->from_addr = "{$decodedFromName} <" . $sender->getEmail() . ">";

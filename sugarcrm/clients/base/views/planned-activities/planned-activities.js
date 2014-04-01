@@ -74,6 +74,9 @@
 
     /**
      * {@inheritDoc}
+     *
+     * Once new records are received, prevent rendering new rows until we fetch
+     * the invitation collection by calling {@link #updateInvitation}.
      */
     _initEvents: function() {
         this.events = _.extend(this.events, {
@@ -83,19 +86,12 @@
         this._super('_initEvents');
         this.on('planned-activities:close-record:fire', this.heldActivity, this);
 
-        return this;
-    },
+        this.before('render:rows', function(data) {
+            this.updateInvitation(this.collection, data);
+            return false;
+        }, null, this);
 
-    /**
-     * {@inheritDoc}
-     * Update the invitation collection if the next page record is added.
-     *
-     * @return {Object} Fetch options.
-     */
-    getPaginationOptions: function() {
-        return {
-            success: _.bind(this.updateInvitation, this)
-        };
+        return this;
     },
 
     /**
@@ -354,7 +350,7 @@
         if (this.disposed || this.meta.config) {
             return;
         }
-        
+
         var tab = this.tabs[this.settings.get('activeTab')];
         if (tab.invitations) {
             tab.invitations.dataFetched = false;
@@ -375,24 +371,27 @@
             'id': {'$in': addedIds || this.collection.pluck('id')}
         };
 
-        var self = this;
         tab.invitations.fetch({
             relate: true,
-            success: function(collection) {
-                if (self.disposed) {
+            success: _.bind(function(collection) {
+                if (this.disposed) {
                     return;
                 }
 
                 _.each(collection.models, function(invitation) {
                     var model = this.collection.get(invitation.get('id'));
                     model.set('invitation', invitation);
-                }, self);
+                }, this);
 
                 if (!_.isEmpty(addedIds)) {
+                    _.each(addedIds, function(id) {
+                        var model = this.collection.get(id);
+                        this._renderRow(model);
+                    }, this);
                     return;
                 }
-                self.render();
-            },
+                this.render();
+            }, this),
             complete: function() {
                 tab.invitations.dataFetched = true;
             }

@@ -91,7 +91,7 @@ $vardefs = array(
             ),
         'modified_by_name' => array(
                 'name' => 'modified_by_name',
-                'vname' => 'LBL_MODIFIED_NAME',
+                'vname' => 'LBL_MODIFIED',
                 'type' => 'relate',
                 'reportable' => false,
                 'source' => 'non-db',

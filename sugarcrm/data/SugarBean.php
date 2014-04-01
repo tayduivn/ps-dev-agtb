@@ -3449,13 +3449,18 @@ class SugarBean
     * @param string $order_by  Order by clause to be processed
     * @param SugarBean $submodule name of the module this order by clause is for
     * @param boolean $suppress_table_name Whether table name should be suppressed
+    * @param array $field_map Map of bean fields to query columns
     * @return string Processed order by clause
     *
     * Internal function, do not override.
     * @deprecated Use SugarQuery & $this->fetchFromQuery() instead
     */
-    public function process_order_by($order_by, $submodule = null, $suppress_table_name = false)
-    {
+    public function process_order_by(
+        $order_by,
+        $submodule = null,
+        $suppress_table_name = false,
+        $field_map = array()
+    ) {
         if (empty($order_by))
             return $order_by;
         //submodule is empty,this is for list object in focus
@@ -3516,8 +3521,27 @@ class SugarBean
             }
 
             if ($is_valid) {
-                $valid_elements[$key] = implode(' ', $list_column);
+                if (isset($field_map[$list_column_name])) {
+                    $columns = array();
+                    $order = array_slice($list_column, 1);
+                    foreach ($field_map[$list_column_name] as $field) {
+                        $columns[] = array_merge(array($field), $order);
+                    }
+                } else {
+                    $columns = array($list_column);
+                }
+
+                foreach ($columns as $column) {
+                    $valid_elements[] = implode(' ', $column);
+                }
             }
+        }
+
+        // make sure ORDER BY contains "bean_table.id"
+        // in order to guarantee stable sequence
+        $id_column = $bean_queried->getTableName() . '.id';
+        if (!in_array($id_column, $valid_elements)) {
+            $valid_elements[] = $id_column;
         }
 
         return implode(', ', $valid_elements);
@@ -4100,7 +4124,7 @@ class SugarBean
         }
 
         $used_join_key = array();
-
+        $relate_field_sort = array();
 
         foreach($fields as $field=>$value)
         {
@@ -4334,6 +4358,7 @@ class SugarBean
                     else
                     {
                         $relate_query = $rel_mod->getRelateFieldQuery($data, $params['join_table_alias']);
+                        $relate_field_sort[$field] = $relate_query['sort_fields'];
                         if ($relate_query['select']) {
                             $ret_array['select'] .= ', ' . $relate_query['select'];
                         }
@@ -4491,7 +4516,7 @@ class SugarBean
             $ret_array['where'] = " where $where_auto";
 
         //make call to process the order by clause
-        $order_by = $this->process_order_by($order_by);
+        $order_by = $this->process_order_by($order_by, null, false, $relate_field_sort);
         if (!empty($order_by)) {
             $ret_array['order_by'] = " ORDER BY " . $order_by;
         }
@@ -7428,7 +7453,7 @@ class SugarBean
      * @param array $field_def       Relate field definition
      * @param string $joinTableAlias Alias for joined table
      *
-     * @return string
+     * @return array
      */
     public function getRelateFieldQuery($field_def, $joinTableAlias)
     {
@@ -7439,7 +7464,7 @@ class SugarBean
 
         $joinCustomTableAlias = $joinTableAlias . '_cstm';
 
-        $fields = array();
+        $fields = $sort_fields = array();
         $has_custom_fields = false;
         if (isset($this->field_defs[$rname])) {
             $rname_field_def = $this->field_defs[$rname];
@@ -7464,6 +7489,13 @@ class SugarBean
                     $fields[$name] = $joinTableAlias . '.' . $fields[$name];
                 }
             }
+
+            $sort_fields = $this->getRelateSortColumns(
+                $rname_field_def,
+                $joinTableAlias,
+                $joinCustomTableAlias,
+                $has_custom_fields
+            );
         }
 
         $parts = array();
@@ -7483,6 +7515,44 @@ class SugarBean
         return array(
             'select' => $select,
             'join'   => $join,
+            'fields' => $fields,
+            'sort_fields' => $sort_fields,
         );
+    }
+
+    /**
+     * Returns array of query column names which should be used for sorting on relate full name field
+     *
+     * @param array $field_defs Field definition from related module
+     * @param string $alias Alias representing standard table of related module
+     * @param string $custom_alias Alias representing custom table of related module
+     * @param boolean $has_custom_fields Set to true if custom fields are involved
+     *
+     * @return array
+     */
+    protected function getRelateSortColumns(array $field_defs, $alias, $custom_alias, &$has_custom_fields)
+    {
+        $fields = array();
+        if (isset($field_defs['sort_on'])) {
+            $sort_on = (array) $field_defs['sort_on'];
+            foreach ($sort_on as $sort_field) {
+                // prepend table alias only if it's not specified in "sort_on"
+                if (strpos($sort_field, '.') === false) {
+                    $is_custom = $this->is_custom_field($sort_field);
+                    if ($is_custom) {
+                        $joinAlias = $custom_alias;
+                        $has_custom_fields = true;
+                    } else {
+                        $joinAlias = $alias;
+                    }
+                    $column = $joinAlias . '.' . $sort_field;
+                } else {
+                    $column = $sort_field;
+                }
+                $fields[] = $column;
+            }
+        }
+
+        return $fields;
     }
 }

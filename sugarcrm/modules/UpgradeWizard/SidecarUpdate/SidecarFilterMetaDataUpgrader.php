@@ -115,6 +115,11 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             // We'll add those later
             if($name == 'favorites_only' || $name == 'current_user_only') continue;
 
+            // Also try range_* for date fields, see BR-1409
+            if(!empty($searchFields["range_".$name])) {
+                $searchFields[$name] = $searchFields["range_".$name];
+            }
+
             // We don't know this field
             if(empty($searchFields[$name])) {
                 // may be a custom field
@@ -124,11 +129,6 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                         $fields[$name]['vname'] = $fields[$name]['label'];
                         unset($fields[$name]['label']);
                     }
-                }
-                // team_name is special in 6.7 and handled separately, it is not part of
-                // SearchFields, so we have to make one-off exception for it here.
-                // See BR-1283 for more details
-                if($name != "team_name") {
                     continue;
                 }
             }

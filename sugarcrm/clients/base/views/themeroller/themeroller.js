@@ -39,7 +39,8 @@
         "blur input": "previewTheme"
     },
     initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
+        this.context.set('skipFetch', true);
         this.customTheme = "default";
         this.loadTheme();
     },

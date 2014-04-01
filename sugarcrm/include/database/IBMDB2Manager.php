@@ -827,8 +827,12 @@ public function convert($string, $type, array $additional_parameters = array())
 	protected function changeOneColumnSQL($tablename, $def, $action, $ignoreRequired = false) {
 		switch($action) {
 			case "ADD":
-				$sql = $this->alterTableColumnSQL($action,
-												$this->oneColumnSQLRep($def, $ignoreRequired, $tablename));
+                $ref = $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, true);
+                if($ref['required'] == 'NULL' // DB2 doesn't have NULL definition, only NOT NULL
+                        || ($ref['required'] == 'NOT NULL' && $ref['default'] == '')) { // Make it nullable if no default value provided
+                    $ref['required'] = ''; 
+                }
+                $sql = $this->alterTableColumnSQL($action, "{$ref['name']} {$ref['colType']} {$ref['default']} {$ref['required']} {$ref['auto_increment']}");
 				break;
 			case "DROP":
 				$sql = $this->alterTableColumnSQL($action, $def['name']);

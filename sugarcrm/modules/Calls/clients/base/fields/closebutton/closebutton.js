@@ -13,16 +13,25 @@
 ({
     extendsFrom: 'ClosebuttonField',
 
-    closedStatus: 'Held', //status indicating that the it is closed or complete
+    /**
+     * Status indicating that the call is closed or complete.
+     *
+     * @type {String}
+     */
+    closedStatus: 'Held',
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     showSuccessMessage: function() {
+        var options = app.metadata.getModule(this.module).fields.status.options,
+            strings = app.lang.getAppListStrings(options),
+            status = strings[this.closedStatus].toLocaleLowerCase();
+
         app.alert.show('close_call_success', {
             level: 'success',
             autoClose: true,
-            title: app.lang.get('LBL_CALL_CLOSE_SUCCESS', this.module)
+            messages: app.lang.get('TPL_CALL_STATUS_CHANGED', this.module, {status: status})
         });
     }
 })

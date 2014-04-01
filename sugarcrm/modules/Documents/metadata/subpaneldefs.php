@@ -34,7 +34,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $layout_defs['Documents'] = array(
 	// list of what Subpanels to show in the DetailView 
 	'subpanel_setup' => array(
-		'therevisions' => array(
+		'revisions' => array(
 			'order' => 10,
 			'sort_order' => 'desc',
 			'sort_by' => 'revision',			

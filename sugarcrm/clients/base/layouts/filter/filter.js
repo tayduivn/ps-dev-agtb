@@ -143,7 +143,7 @@
         this.context.set('currentFilterId', null);
         this.clearFilterEditState();
         this.clearLastFilter(this.layout.currentModule, this.layoutType);
-        app.user.lastState.set(app.user.lastState.key('saved-' + this.layout.currentModule, this), this.filters.toJSON());
+        this.saveFilterCollection(this.layout.currentModule);
         this.layout.trigger('filter:reinitialize');
     },
     /**
@@ -230,13 +230,63 @@
     },
 
     /**
-     * handles filter additionF
-     * @param model
+     * Get the filters of one module from the cache.
+     *
+     * @param {String} module The module name.
+     * @return {String} The BeanCollection at the JSON format.
      */
-    addFilter: function(model){
+    getFilterCollection: function(module) {
+        var layoutModule = this.module;
+        this.module = module;
+        var filters = app.user.lastState.get(app.user.lastState.key('saved-filters', this));
+        this.module = layoutModule;
+        return filters;
+    },
+
+    /**
+     * Save the filters of one module to the cache.
+     *
+     * Previously, the filters were stored in the local storage with a key
+     * looking like this:
+     * ```
+     * this.module + ':filter:saved-' + this.layout.currentModule
+     * ```
+     * where `this.module` is the main context module, and `currentModule` is
+     * the filtered module.
+     *
+     * As a consequence, the collection of filters of the filtered module,
+     * saying `Accounts`, was stored multiple times like that:
+     * ```
+     * Home:filter:saved-Accounts
+     * Accounts:filter:saved-Accounts
+     * Contacts:filter:saved-Accounts
+     * ```
+     * And all the copies were not in sync.
+     *
+     * To fix this before a major refactor where `this.module` would be the
+     * filtered module, we need to fake it. We also need to clean old entries in
+     * the local storage.
+     *
+     * @param {String} module The module name.
+     */
+    saveFilterCollection: function(module) {
+        app.user.lastState.remove(app.user.lastState.key('saved-' + module, this));
+
+        var layoutModule = this.module;
+        this.module = module;
+        app.user.lastState.set(app.user.lastState.key('saved-filters', this), this.filters.toJSON());
+        this.module = layoutModule;
+    },
+
+    /**
+     * Handle filter addition or update.
+     *
+     * @param {Data.Bean} model The filter model that is created or updated.
+     */
+    addFilter: function(model) {
         var id = model.get('id');
         this.filters.add(model, { merge: true });
-        app.user.lastState.set(app.user.lastState.key('saved-' + this.layout.currentModule, this), this.filters.toJSON());
+        this.saveFilterCollection(this.layout.currentModule);
         this.setLastFilter(this.layout.currentModule, this.layoutType, id);
         this.context.set('currentFilterId', id);
         this.clearFilterEditState();
@@ -467,8 +517,7 @@
          * level only).
          */
         var specialField = /^\$/,
-            meta = app.metadata.getModule(module),
-            searchMeta = meta.filters['default'].meta;
+            meta = app.metadata.getModule(module);
         selectedFilter = _.filter(selectedFilter, function(def) {
             var fieldName = _.keys(def).pop();
             return specialField.test(fieldName) || meta.fields[fieldName];
@@ -533,37 +582,38 @@
     },
 
     /**
-     * Retrieves the appropriate list of filters from the server.
-     * @param  {String} moduleName
-     * @param  {String} defaultId
+     * Retrieve the appropriate list of filters from cache if found, otherwise
+     * from the server.
+     *
+     * @param {String} moduleName The module name.
+     * @param {String} defaultId The filter `id` to select once loaded.
      */
     getFilters: function(moduleName, defaultId) {
-        var filter = [
-            {'created_by': app.user.id},
-            {'module_name': moduleName}
-        ], self = this;
-        // TODO: Add filtering on subpanel vs. non-subpanel filters here.
-        var filterLayout = app.view._getController({type:'layout',name:'filter'});
-        if (filterLayout.loadedModules[moduleName] && !_.isUndefined(app.user.lastState.get(app.user.lastState.key("saved-" + moduleName, this))))
-        {
+        var filterLayout = app.view._getController({type: 'layout', name: 'filter'}),
+            cachedFilters = this.getFilterCollection(moduleName);
+
+        if (filterLayout.loadedModules[moduleName] && !_.isUndefined(cachedFilters)) {
             this.filters.reset();
-            var filters = app.user.lastState.get(app.user.lastState.key("saved-" + moduleName, this));
-            _.each(filters, function(f){
-                self.filters.add(app.data.createBean("Filters", f));
-            });
-            self.handleFilterRetrieve(moduleName, defaultId);
-        }
-        else {
+            _.each(cachedFilters, function(filter) {
+                this.filters.add(app.data.createBean('Filters', filter));
+            }, this);
+            this.handleFilterRetrieve(moduleName, defaultId);
+
+        } else {
             this.filters.fetch({
                 //Don't show alerts for this request
                 showAlerts: false,
-                filter: filter,
-                success:function(){
-                    if (self.disposed) return;
+                filter: [
+                    {'created_by': app.user.id},
+                    {'module_name': moduleName}
+                ],
+                success: _.bind(function() {
+                    if (this.disposed) return;
+
                     filterLayout.loadedModules[moduleName] = true;
-                    app.user.lastState.set(app.user.lastState.key("saved-" + moduleName, self), self.filters.toJSON());
-                    self.handleFilterRetrieve(moduleName, defaultId);
-                }
+                    this.saveFilterCollection(moduleName);
+                    this.handleFilterRetrieve(moduleName, defaultId);
+                }, this)
             });
         }
     },

@@ -166,6 +166,7 @@ class MailRecord
     ) {
         $request = array(
             "fromAccount" => $from,
+            "archive_from_address" => $this->fromAddress, // "archived" status only
             "sendSubject" => $this->subject,
             "sendTo" => $to,
             "sendCc" => $cc,

@@ -1,13 +1,11 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
+/********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
  *not use this file except in compliance with the License. Under the terms of the license, You
  *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
  *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
  *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
  *of a third party.  Use of the Software may be subject to applicable fees and any use of the
@@ -22,18 +20,53 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$wireless_module_registry = array(
-	'Accounts' => array(),
-	'Contacts' => array(),
-	'Leads' => array(),
-	'Opportunities' => array('disable_create' => true),
-	//BEGIN SUGARCRM flav=ent ONLY
-	'RevenueLineItems' => array(),
-	//END SUGARCRM flav=ent ONLY
-	'Cases' => array('disable_create' => true),
-	'Calls' => array(),
-	'Tasks' => array(),
-    'Meetings' => array(),
-	'Employees' => array('disable_create' => true),
-	'Reports' => array('disable_create' => true),
-);
+require_once 'clients/base/api/FilterApi.php';
+
+/**
+ * Meetings module API
+ */
+class MobileMeetingsApi extends FilterApi
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function registerApiRest()
+    {
+        $endPoints = parent::registerApiRest();
+
+        // force the use of this class for all Meetings filter endpoints
+        foreach ($endPoints as &$endPoint) {
+            $endPoint['path'][0] = 'Meetings';
+        }
+
+        return $endPoints;
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function filterListSetup(ServiceBase $api, array $args)
+    {
+        /** @var $timedate TimeDate */
+        global $timedate;
+
+        $args = array_merge(
+            array(
+                // by default show only upcoming meetings
+                'filter' => array(
+                    array(
+                        'date_start' => array(
+                            '$gte' => $timedate->getNow()->modify('-30 minutes')->asDb(),
+                        ),
+                    ),
+                ),
+                // by default sort records by start date
+                'order_by' => 'date_start:asc,id:desc',
+            ),
+            $args
+        );
+
+        return parent::filterListSetup($api, $args);
+    }
+}

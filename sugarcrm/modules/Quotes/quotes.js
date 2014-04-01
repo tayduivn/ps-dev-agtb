@@ -1034,7 +1034,7 @@ function QuotesEditManager(Y) {
             'id': itemName,
             'value': this.selectButtonValue
         }, ['button']);
-        Y.one(buttonEl).setContent('<img src='index.php?entryPoint=getImage&imageName=id-ff-select.png&themeName=' + SUGAR.themes.theme_name + ''>');
+        Y.one(buttonEl).setContent('<img src="index.php?entryPoint=getImage&imageName=id-ff-select.png&themeName=' + SUGAR.themes.theme_name + '">');
         buttonEl.textElement = 'name_' + this.count;
         buttonEl.count = this.count;
         buttonEl.onclick = function() {

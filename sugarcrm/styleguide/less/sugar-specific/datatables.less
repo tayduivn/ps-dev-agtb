@@ -2,8 +2,6 @@
   margin: 0;
   clear: both;
   width: 100%;
-  overflow-x: hidden;
-
   /* ---------
   TABLE HEADER CELL (specific) */
   th {
@@ -931,6 +929,24 @@ and (orientation : landscape) {
     }
     .span12 .main-content > div {
       display: block;
+    }
+  }
+}
+
+.dashlet-content { /* UIUX-1636 */
+  :not(.left-actions):not(.right-actions) > table.dataTable {
+    thead tr th:last-child > span,
+    tbody tr td:last-child > span 
+    {
+      margin-right: 0;
+    }
+
+    thead tr th:last-child { /* two rules below necessary because sort icons run into text on <th> */
+      padding-left: 12px;
+      &> span {
+        padding-right: 6px;
+        right: 4px;
+      }
     }
   }
 }

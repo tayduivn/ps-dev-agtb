@@ -42,7 +42,7 @@ class WebLogicHookTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $hook = SugarTestWebLogicHookUtilities::createWebLogicHook(false, array(
             'name' => ('Text Hook ' . time()),
-            'module_name' => 'Accounts',
+            'webhook_target_module' => 'Accounts',
             'request_method' => 'POST',
             'url' => 'http://www.example.com',
             'trigger_event' => 'after_save',

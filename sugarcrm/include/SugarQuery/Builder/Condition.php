@@ -66,6 +66,7 @@ class SugarQuery_Builder_Condition
     public function setValues($values)
     {
         $this->values = $values;
+        $this->field->verifyCondition($values, $this->query);
         return $this;
     }
 

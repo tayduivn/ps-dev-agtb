@@ -20,26 +20,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'clients/base/api/FilterApi.php';
+require_once 'include/api/SugarApi.php';
 
 /**
  * Meetings module API
  */
-class MeetingsApi extends FilterApi
+class MeetingsApi extends SugarApi
 {
     /**
      * {@inheritdoc}
      */
     public function registerApiRest()
     {
-        $endPoints = parent::registerApiRest();
 
-        // force the use of this class for all Meetings filter endpoints
-        foreach ($endPoints as &$endPoint) {
-            $endPoint['path'][0] = 'Meetings';
-        }
-
-        $endPoints = array_merge($endPoints, array(
+        return array(
             'getAgenda' => array(
                 'reqType' => 'GET',
                 'path' => array('Meetings','Agenda'),
@@ -48,37 +42,8 @@ class MeetingsApi extends FilterApi
                 'shortHelp' => 'Fetch an agenda for a user',
                 'longHelp' => 'include/api/html/meetings_agenda_get_help',
             ),
-        ));
-
-        return $endPoints;
-
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function filterListSetup(ServiceBase $api, array $args)
-    {
-        /** @var $timedate TimeDate */
-        global $timedate;
-
-        $args = array_merge(
-            array(
-                // by default show only upcoming meetings
-                'filter' => array(
-                    array(
-                        'date_start' => array(
-                            '$gte' => $timedate->getNow()->modify('-30 minutes')->asDb(),
-                        ),
-                    ),
-                ),
-                // by default sort records by start date
-                'order_by' => 'date_start:asc,id:desc',
-            ),
-            $args
         );
 
-        return parent::filterListSetup($api, $args);
     }
 
     public function getAgenda($api, $args) {
