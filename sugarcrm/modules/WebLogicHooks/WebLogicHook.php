@@ -19,7 +19,7 @@ class WebLogicHook extends SugarBean implements RunnableSchedulerJob
 {
     public $id;
     public $name;
-    public $module_name;
+    public $webhook_target_module;
     public $request_method;
     public $url;
     public $trigger_event;
@@ -65,11 +65,11 @@ class WebLogicHook extends SugarBean implements RunnableSchedulerJob
             $oldhook = $hook;
             // since remove_logic_hook compares 1, 3 and 4
             $oldhook[3] = 'WebLogicHook';
-            remove_logic_hook($this->module_name, $this->trigger_event, $oldhook);
+            remove_logic_hook($this->webhook_target_module, $this->trigger_event, $oldhook);
         }
         parent::save();
         $hook[5] = $this->id;
-        check_logic_hook_file($this->module_name, $this->trigger_event, $hook);
+        check_logic_hook_file($this->webhook_target_module, $this->trigger_event, $hook);
     }
 
     /**
@@ -162,7 +162,7 @@ class WebLogicHook extends SugarBean implements RunnableSchedulerJob
                 return;
             }
         }
-        remove_logic_hook($this->module_name, $this->trigger_event, $this->getActionArray());
+        remove_logic_hook($this->webhook_target_module, $this->trigger_event, $this->getActionArray());
         parent::mark_deleted($id);
     }
 
@@ -177,7 +177,7 @@ class WebLogicHook extends SugarBean implements RunnableSchedulerJob
             $data['id'] = $bean->id;
         }
 
-        if (!SugarACL::moduleSupportsACL($bean->module_name) || $bean->ACLAccess('detail')) {
+        if (!SugarACL::moduleSupportsACL($bean->webhook_target_module) || $bean->ACLAccess('detail')) {
             $fieldList = $bean->field_defs;
 
             $this->ACLFilterFieldList($fieldList, array(

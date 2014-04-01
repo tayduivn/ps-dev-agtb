@@ -31,7 +31,7 @@ $viewdefs['WebLogicHooks']['base']['view']['list'] = array(
                     'sortable' => true,
                 ),
                 array(
-                    'name' => 'module_name',
+                    'name' => 'webhook_target_module',
                     'enabled' => true,
                     'sortable' => true,
                 ),

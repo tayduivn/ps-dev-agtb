@@ -33,8 +33,8 @@ $dictionary['WebLogicHook'] = array(
             'comment' => 'Hook name',
             'required' => true,
         ),
-        'module_name' => array(
-            'name' => 'module_name',
+        'webhook_target_module' => array(
+            'name' => 'webhook_target_module',
             'vname' => 'LBL_TARGET_NAME',
             'type' => 'enum',
             'options' => 'moduleList',
