@@ -60,4 +60,5 @@ $mod_strings = array (
     'LBL_LOCALIZATIONS_SUBPANEL_TITLE' => 'Localizations',
     'LBL_KBSREVISIONS' => 'Revisions',
     'LBL_REVISIONS_SUBPANEL_TITLE' => 'Revisions',
+    'LBL_LISTVIEW_FILTER_ALL' => 'All Articles',
 );

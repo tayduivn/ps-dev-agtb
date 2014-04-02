@@ -439,6 +439,8 @@
                         app.events.trigger('preview:close');
                     }};
 
+            filterDef = self.applyRequiredFilters(filterDef, ctx);
+
             ctxCollection.filterDef = filterDef;
             ctxCollection.origFilterDef = origFilterDef;
             ctxCollection.resetPagination();
@@ -533,6 +535,40 @@
         }
 
         return [];
+    },
+
+    /**
+     * Apply required filters.
+     * @param {Array|string} filterDef Preselected filters defs.
+     * @param {Context} context Context object.
+     * @return {Array} Filter defs.
+     */
+    applyRequiredFilters: function(filterDef, context) {
+        var specialField = /^\$/,
+            meta = App.metadata.getModule(context.get('module')),
+            filtersMeta = meta.filters || null,
+            filtersMetaSection = context.get('layout') || context.get('link');
+
+        if (!filtersMetaSection || !filtersMeta) {
+            return filterDef;
+        }
+
+        filtersMeta = filtersMeta.required && filtersMeta.required.meta;
+
+        if (filtersMeta && filtersMeta[filtersMetaSection]) {
+            filterDef = _.isArray(filterDef) ? filterDef : [filterDef];
+
+            filtersMeta = _.filter(filtersMeta[filtersMetaSection], function(def) {
+                var fieldName = _.keys(def).pop();
+                return specialField.test(fieldName) || meta.fields[fieldName];
+            }, this);
+
+            _.each(filtersMeta, function(filter) {
+                filterDef.push(filter);
+            });
+        }
+
+        return filterDef;
     },
 
     /**
