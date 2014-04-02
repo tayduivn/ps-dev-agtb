@@ -13,39 +13,15 @@
 ({
     extendsFrom: 'PanelTopView',
 
+    plugins: ['LinkedModel', 'KBSContent'],
+
     /**
      * {@inheritDoc}
      */
     createRelatedClicked: function(event) {
-        var self = this,
-            parentModel = this.context.parent.get('model'),
-            prefill = app.data.createBean(this.parentModule);
-
-        parentModel.fetch({
-            success: function() {
-                prefill.copy(parentModel);
-                self.model.trigger('duplicate:before', prefill);
-                prefill.unset('id');
-                prefill.unset('kbsarticle_id', {silent: true});
-
-                app.drawer.open({
-                    layout: 'create-actions',
-                    context: {
-                        create: true,
-                        model: prefill,
-                        copiedFromModelId: parentModel.get('id')
-                    }
-                }, function(context, newModel) {
-                    if (newModel && newModel.id) {
-                        app.router.navigate(
-                            app.router.buildRoute(self.parentModule, newModel.id),
-                            {trigger: true}
-                        );
-                    }
-                });
-
-                prefill.trigger('duplicate:field', parentModel);
-            }
-        });
+        var parentModel = this.context.parent.get('model');
+        if (parentModel) {
+            this.createRelatedContent(parentModel, this.CONTENT_LOCALIZATION);
+        }
     }
 })
