@@ -30,16 +30,29 @@ $viewdefs['base']['view']['dnb-company-info'] = array(
         'buttons' => array(
             array(
                 'type' => 'dashletaction',
-                "css_class" => "label dnb-refresh dnb-hide",
-                "label" => "LBL_DNB_RFR",
-                "name" => "data_valid_ind",
-            ),
-            array(
-                'type' => 'dashletaction',
                 "css_class" => "btn btn-primary disabled importDNBData hide",
                 "action" => "importAccountsData",
                 "label" => "LBL_DNB_IMPORT",
                 "name" => "dnb_import",
+            ),
+            array(
+                'dropdown_buttons' => array(
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'editClicked',
+                        'label' => 'LBL_DASHLET_CONFIG_EDIT_LABEL',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'refreshClicked',
+                        'label' => 'LBL_DASHLET_REFRESH_LABEL',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'removeClicked',
+                        'label' => 'LBL_DASHLET_REMOVE_LABEL',
+                    ),
+                )
             ),
             array(
                 "type" => "dashletaction",
@@ -47,7 +60,7 @@ $viewdefs['base']['view']['dnb-company-info'] = array(
                 "icon" => "icon-chevron-down",
                 "action" => "toggleMinify",
                 "tooltip" => "LBL_DASHLET_MAXIMIZE",
-            ),
+            )
         )
     )
 );

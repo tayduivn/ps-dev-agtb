@@ -298,6 +298,25 @@ class Importer
                     }
 
                     if ($field === 'email1') {
+
+                        //flip the array so we can use it to get the key #
+                        $flippedVals = array_flip($this->importColumns);
+
+                        //if the opt out column is set, then attempt to retrieve the values
+                        if(isset($flippedVals['email_opt_out'])){
+                            //if the string for this value has a length, then use it.
+                            if(isset($row[$flippedVals['email_opt_out']]) && strlen($row[$flippedVals['email_opt_out']])>0){
+                                $address['opt_out'] = $row[$flippedVals['email_opt_out']];
+                            }
+                        }
+
+                        //if the invalid email column is set, then attempt to retrieve the values
+                        if(isset($flippedVals['invalid_email'])){
+                            //if the string for this value has a length, then use it.
+                            if(isset($row[$flippedVals['invalid_email']]) && strlen($row[$flippedVals['invalid_email']])>0){
+                                $address['invalid_email'] = $row[$flippedVals['invalid_email']];
+                            }
+                        }
                         $emailAddresses['primary'] = $address;
                     } else {
                         $emailAddresses['non-primary'][] = $address;

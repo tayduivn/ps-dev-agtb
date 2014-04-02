@@ -59,6 +59,8 @@
             'click [name=inline-cancel]' : 'resize'
         });
 
+        this.on('render', this._setRowFields, this);
+
         //fire resize scroll-width on column add/remove
         this.on('list:toggle:column', this.resize, this);
         this.on('mergeduplicates:complete', this.refreshCollection, this);
@@ -230,14 +232,17 @@
     },
 
     /**
-     * @override
+     * Set, or reset, the collection of fields that contains each row.
+     *
+     * This function is invoked when the view renders. It will update the row
+     * fields once the `Pagination` plugin successfully fetches new records.
+     *
      * @private
      */
-    _render:function () {
-        this._super("_render");
+    _setRowFields: function() {
         this.rowFields = {};
         _.each(this.fields, function(field) {
-             if(field.model.id && _.isUndefined(field.parent)) {
+            if (field.model.id && _.isUndefined(field.parent)) {
                 this.rowFields[field.model.id] = this.rowFields[field.model.id] || [];
                 this.rowFields[field.model.id].push(field);
             }

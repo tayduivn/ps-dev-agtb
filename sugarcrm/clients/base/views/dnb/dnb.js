@@ -469,7 +469,7 @@
         },
         'streetaddr': {
             'json_path': 'PrimaryAddress.StreetAddressLine.0.LineText',
-            'case_fmt': true,
+            'case_fmt': true
         },
         'town': {
             'json_path': 'PrimaryAddress.PrimaryTownName',
@@ -522,7 +522,7 @@
     formatTypeMap: null,
 
     //dashlet initialize
-    initDashlet: function () {
+    initDashlet: function() {
         this.accountsDD = {
             'name': this.compinfoDD.compname,
             'billing_address_street': this.compinfoDD.primaddrstreet,
@@ -570,7 +570,7 @@
      * @param {String} path
      * @return {Boolean}
      */
-    checkJsonNode: function (obj, path) {
+    checkJsonNode: function(obj, path) {
         var args = path.split('.');
         for (var i = 0; i < args.length; i++) {
             if (_.isNull(obj) || _.isUndefined(obj) || !obj.hasOwnProperty(args[i])) {
@@ -587,7 +587,7 @@
      * @param {Object} status
      * @param {Object} error
      */
-    checkAndProcessError: function (xhr, status, error) {
+    checkAndProcessError: function(xhr, status, error) {
         if (this.disposed) {
             return;
         }
@@ -610,7 +610,7 @@
      * @param {String} path
      * @return {Array|Object|null}
      */
-    getJsonNode: function (obj, path) {
+    getJsonNode: function(obj, path) {
         var args = path.split('.');
         for (var i = 0; i < args.length; i++) {
             if (_.isNull(obj) || _.isUndefined(obj) || !obj.hasOwnProperty(args[i])) {
@@ -626,22 +626,22 @@
      * @param {String} searchString
      * @param {Function} renderFunction, a function to be called to render the search results
      */
-    baseCompanySearch: function (searchString, renderFunction) {
+    baseCompanySearch: function(searchString, renderFunction) {
         var srchResults = {'companies': null, 'errmsg': null};
         var dnbSearchUrl = app.api.buildURL('connector/dnb/search/' + searchString, '', {}, {});
         var self = this;
         app.api.call('READ', dnbSearchUrl, {}, {
-            success: function (data) {
+            success: function(data) {
                 var responseCode = self.getJsonNode(data, self.commonJSONPaths.srchRespCode), responseMsg = self.getJsonNode(data, self.commonJSONPaths.srchRespMsg);
                 if (responseCode && responseCode === self.responseCodes.success) {
                     srchResults.companies = self.getJsonNode(data, self.commonJSONPaths.srchRslt);
                     //assigning location type
-                    _.each(srchResults.companies, function (companyObj) {
+                    _.each(srchResults.companies, function(companyObj) {
                         if (companyObj.FamilyTreeMemberRole) {
                             //we are relying on DNBCodeValue
                             //higher the code value more the precedence in the family tree role
                             //hence we are using the _.max function
-                            var locationType = _.max(companyObj.FamilyTreeMemberRole, function (memberRole) {
+                            var locationType = _.max(companyObj.FamilyTreeMemberRole, function(memberRole) {
                                 return memberRole.FamilyTreeMemberRoleText['@DNBCodeValue'];
                             });
                             //if the location type is parent then we need not display it
@@ -667,7 +667,7 @@
      * @param {String} backToListLabel -- label to be rendered to redirect to the previous view
      * @param {Function} renderFunction -- a function to be called to render the dnbapiresponse
      */
-    baseCompanyInformation: function (duns_num, prod_code, backToListLabel, renderFunction) {
+    baseCompanyInformation: function(duns_num, prod_code, backToListLabel, renderFunction) {
         var self = this;
         var firmoParams = {
             'duns_num': duns_num,
@@ -684,7 +684,7 @@
         } else {
             var dnbProfileUrl = app.api.buildURL('connector/dnb/firmographic', '', {}, {}), resultData = {'product': null, 'errmsg': null, 'backToListLabel': null};
             app.api.call('create', dnbProfileUrl, {'qdata': firmoParams}, {
-                success: function (data) {
+                success: function(data) {
                     var responseCode = self.getJsonNode(data, self.appendSVCPaths.responseCode), responseMsg = self.getJsonNode(data, self.appendSVCPaths.responseMsg);
                     if (!_.isUndefined(responseCode) && responseCode === 'CM000') {
                         resultData.product = data;
@@ -716,8 +716,8 @@
      * @param {String} industryCode
      * @return {Object}
      */
-    getPrimaryIndustry: function (industryArray, industryCode) {
-        return _.find(industryArray, function (industryObj) {
+    getPrimaryIndustry: function(industryArray, industryCode) {
+        return _.find(industryArray, function(industryObj) {
             return industryObj['@DNBCodeValue'] === industryCode && industryObj['DisplaySequence'] === 1;
         });
     },
@@ -728,18 +728,18 @@
      * @param  {Object} dataElementsMap -- Data Elements Map
      * @return {Array}  -- to be passed to the hbs file
      */
-    formatCompanyInfo: function (firmoResponse, dataElementsMap) {
+    formatCompanyInfo: function(firmoResponse, dataElementsMap) {
         var productDetails = this.getJsonNode(firmoResponse, this.appendSVCPaths.product);
         var formattedDataElements = [];
         if (productDetails) {
             //iterate thru the compinfo map
-            _.each(dataElementsMap, function (value, key) {
+            _.each(dataElementsMap, function(value, key) {
                 //extract the informtaion
                 var dnbDataElement = null;
                 //if the data map is array then traverse the nested array
                 if (value.sub_array) {
                     dnbDataElement = this.getJsonNode(productDetails, value.json_path);
-                    _.each(dnbDataElement, function (dnbSubData) {
+                    _.each(dnbDataElement, function(dnbSubData) {
                         var dnbDataObj = this.formatTypeMap[value.sub_array.data_type].call(this, dnbSubData, value.sub_array);
                         if (!_.isNull(dnbDataObj)) {
                             formattedDataElements.push(dnbDataObj);
@@ -781,7 +781,7 @@
      * @param {Object} empDD Data Dictionary
      * @return {Object}
      */
-    formatEmployeeDet: function (employeeObj, empDD) {
+    formatEmployeeDet: function(employeeObj, empDD) {
         var dnbDataObj = null;
         var jobTitle = this.getJsonNode(employeeObj, empDD.job_title);
         var empName = this.getJsonNode(employeeObj, empDD.full_name);
@@ -804,7 +804,7 @@
      * @param {Object} tpaDD from the Data Dictionary
      * @return {Object} with label and dataelement
      */
-    formatTPA: function (tpaObj, tpaDD) {
+    formatTPA: function(tpaObj, tpaDD) {
         var dnbDataObj = null;
         var assmt = this.getJsonNode(tpaObj, tpaDD.assmt);
         var assmt_type = this.getJsonNode(tpaObj, tpaDD.assmt_type);
@@ -822,7 +822,7 @@
      * @param {Object} indSicDD industryCode data dic
      * @return {Object} with label and dataelement
      */
-    formatPrimSic: function (indCdArr, indSicDD) {
+    formatPrimSic: function(indCdArr, indSicDD) {
         var dnbDataObj = null, primSicCode = null, primSicObj = this.getPrimaryIndustry(indCdArr, indSicDD.sic_type_code);
         if (primSicObj) {
             primSicCode = this.getJsonNode(primSicObj, indSicDD.ind_code);
@@ -842,7 +842,7 @@
      * @param {Object} indDD Data Dictionary
      * @return {Object} with label and dataelement
      */
-    formatIndCodes: function (indCodeObj, indDD) {
+    formatIndCodes: function(indCodeObj, indDD) {
         var dnbDataObj = null;
         var ind_code_type = this.getJsonNode(indCodeObj, indDD.ind_code_type);
         var ind_code_desc = this.getJsonNode(indCodeObj, indDD.ind_code_desc);
@@ -868,14 +868,14 @@
      * @param {Object} searchDD Data Elements Map
      * @return {Array} of json objects -- to be passed to the hbs file
      */
-    formatSrchRslt: function (srchResults, searchDD) {
+    formatSrchRslt: function(srchResults, searchDD) {
         var formattedSrchRslts = [];
         //iterate thru the search results, extract the necessary info
         //populate a js object
         //push it through an array
-        _.each(srchResults, function (searchResultObj) {
+        _.each(srchResults, function(searchResultObj) {
             var frmtSrchRsltObj = {};
-            _.each(searchDD, function (value, key) {
+            _.each(searchDD, function(value, key) {
                 var dataElement = this.getJsonNode(searchResultObj, value.json_path);
                 if (dataElement) {
                     if (value.case_fmt) {
@@ -895,7 +895,7 @@
      * @param {Object} annsalesDD Data Dictionary
      * @return {Object} with label and dataelement
      */
-    formatAnnualSales: function (annsalesObj, annsalesDD) {
+    formatAnnualSales: function(annsalesObj, annsalesDD) {
         var dnbDataObj = null;
         var amount = this.getJsonNode(annsalesObj, annsalesDD.amount);
         var units = this.getJsonNode(annsalesObj, annsalesDD.units);
@@ -928,7 +928,7 @@
      * Renders the dnb company details for adding companies from dashlets
      * @param {Object} companyDetails dnb api response for company details
      */
-    renderCompanyDetails: function (companyDetails) {
+    renderCompanyDetails: function(companyDetails) {
         if (this.disposed) {
             return;
         }
@@ -953,7 +953,7 @@
      * Renders the dnb company information for Lite, Standard and Premium dashlets
      * @param {Object} companyDetails dnb api response for company details
      */
-    renderCompanyInformation: function (companyDetails) {
+    renderCompanyInformation: function(companyDetails) {
         if (this.disposed) {
             return;
         }
@@ -976,7 +976,7 @@
     /**
      * Import D&B Accounts Data
      */
-    importDNBData: function () {
+    importDNBData: function() {
         var parentModel = this.context.get('model'), accountsModel = this.getAccountsModel(this.currentCompany);
         if (!_.isUndefined(accountsModel)) {
             var self = this;
@@ -987,7 +987,7 @@
                     module: 'Accounts',
                     model: accountsModel
                 }
-            }, function (accountsModel) {
+            }, function(accountsModel) {
                 if (!accountsModel) {
                     return;
                 }
@@ -1003,7 +1003,7 @@
      * @param  {Object} companyApiResponse -- obj -- dnb api response for company information
      * @return {Object}
      */
-    getAccountsModel: function (companyApiResponse) {
+    getAccountsModel: function(companyApiResponse) {
         var organizationDetails = this.getJsonNode(companyApiResponse, this.appendSVCPaths.product);
         var accountsModel = null;
         if (!_.isUndefined(organizationDetails)) {
@@ -1011,7 +1011,7 @@
             if (companyApiResponse.primarySIC) {
                 organizationDetails.primarySIC = companyApiResponse.primarySIC;
             }
-            _.each(this.accountsMap, function (dataElementPath, sugarColumnName) {
+            _.each(this.accountsMap, function(dataElementPath, sugarColumnName) {
                 var dnbDataElement = this.getJsonNode(organizationDetails, dataElementPath);
                 if (dnbDataElement) {
                     accountsBean[sugarColumnName] = dnbDataElement;
@@ -1025,7 +1025,7 @@
     /**
      * Collapses the dashlet
      */
-    collapseDashlet: function () {
+    collapseDashlet: function() {
         if (this.layout.collapse) {
             this.layout.collapse(true);
         }
@@ -1034,7 +1034,7 @@
     /**
      * Expands the dashlets to reveal more data
      */
-    showMoreData: function () {
+    showMoreData: function() {
         this.$('.dnb-show-less').attr('class', 'dnb-show-all');
         this.$('.showLessData').show();
         this.$('.showMoreData').hide();
@@ -1043,7 +1043,7 @@
     /**
      * Truncates the dashlets
      */
-    showLessData: function () {
+    showLessData: function() {
         this.$('.dnb-show-all').attr('class', 'dnb-show-less');
         this.$('.showLessData').hide();
         this.$('.showMoreData').show();
@@ -1054,7 +1054,7 @@
      * @param  {String} amount sales revenue
      * @return {String} formatted string
      */
-    formatSalesRevenue: function (amount) {
+    formatSalesRevenue: function(amount) {
         amount = amount.toFixed(0).replace(/(\d)(?=(\d{3})+\b)/g, '$1,');
         return amount;
     },
@@ -1064,9 +1064,9 @@
      * @param {String}  strParam string to convert
      * @return {String}  properCase String
      */
-    properCase: function (strParam) {
+    properCase: function(strParam) {
         //http://stackoverflow.com/a/196991/226906
-        return strParam.replace(/\w\S*/g, function (txt) {
+        return strParam.replace(/\w\S*/g, function(txt) {
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });
     },
@@ -1081,7 +1081,7 @@
      *                 setting the flag to false prevents the warning message from being displayed
      *                )
      */
-    importAccountsData: function (importFlag) {
+    importAccountsData: function(importFlag) {
         var setModelFlag = true;
         if (_.isUndefined(importFlag)) {
             importFlag = true;
@@ -1094,11 +1094,14 @@
         // iterate through checkboxes
         // values being overriden stored in updatedData
         // values that are newly being set store in newData
-        var updatedData = [], newData = [], dnbPropertyName = null, dnbPropertyValue = null;
-        _.each(dnbCheckBox, function (dataElement) {
+        var updatedData = [], newData = [], dnbPropertyName = null, dnbPropertyValue = null, dnbPropertySelector = null;
+        _.each(dnbCheckBox, function(dataElement) {
             dnbPropertyName = dataElement.id;
             if (dnbPropertyName) {
-                dnbPropertyValue = $.trim(this.$('#' + dnbPropertyName).parent().siblings('.importData').text());
+                //we are cloning the selected property value
+                //so that we can remove the nested html elements and retain the text alone
+                dnbPropertySelector = this.$('#' + dnbPropertyName). parent().siblings('.importData').clone();
+                dnbPropertyValue = $.trim(dnbPropertySelector.children().remove().end().text());
                 if (!_.isUndefined(accountsModel.get(dnbPropertyName)) && accountsModel.get(dnbPropertyName) !== '' && importFlag) {
                     updatedData.push({propName: dnbPropertyName, propVal: dnbPropertyValue});
                 } else if (dnbPropertyValue !== '') {
@@ -1141,10 +1144,10 @@
             }
             var confirmationMsgTpl = Handlebars.compile(app.lang.get(confirmationMsgKey));
             app.alert.show('dnb-import-warning', { level: 'confirmation',
-                    title: 'LBL_WARNING',
-                    messages: confirmationMsgTpl(confirmationMsgData),
-                    onConfirm: _.bind(this.updateAccountsModel, this, updatedData)
-                });
+                title: 'LBL_WARNING',
+                messages: confirmationMsgTpl(confirmationMsgData),
+                onConfirm: _.bind(this.updateAccountsModel, this, updatedData)
+            });
         }
     },
 
@@ -1154,12 +1157,12 @@
      * @param {Boolean} setFlag -- true -- just set the updated parameters to the model
      *                    -- false -- save the updated parameters to the model
      */
-    updateAccountsModel: function (updatedData, setFlag) {
+    updateAccountsModel: function(updatedData, setFlag) {
         var changedAttributes = {};
         // always import the duns_num
         this.model.set('duns_num', this.duns_num);
         if (setFlag) {
-            _.each(updatedData, function (updatedAttribute) {
+            _.each(updatedData, function(updatedAttribute) {
                 this.model.set(updatedAttribute.propName, updatedAttribute.propVal);
             }, this);
             app.alert.show('dnb-import-success', { level: 'success',
@@ -1167,10 +1170,10 @@
                 messages: app.lang.get('LBL_DNB_OVERRIDE_SUCCESS'),
                 autoClose: true});
         } else {
-            _.each(updatedData, function (updatedAttribute) {
+            _.each(updatedData, function(updatedAttribute) {
                 changedAttributes[updatedAttribute.propName] = updatedAttribute.propVal;
             });
-            this.model.save(changedAttributes, {success: function () {
+            this.model.save(changedAttributes, {success: function() {
                 app.alert.show('dnb-import-success', { level: 'success',
                     title: app.lang.get('LBL_SUCCESS') + ':',
                     messages: app.lang.get('LBL_DNB_OVERRIDE_SUCCESS'),
@@ -1183,9 +1186,9 @@
     /**
      * Filters the data elements for the company information
      */
-    baseFilterData: function () {
+    baseFilterData: function() {
         this.filteredDD = {};
-        _.each(this.compinfoDD, function (value, key) {
+        _.each(this.compinfoDD, function(value, key) {
             var settingsFlag = this.settings.get(key);
             //if the settings flag is defined and is selected then
             //add that property to the filtered data dictionary
@@ -1209,14 +1212,48 @@
      * 3.module Possible values are findcompany, competitors, cleansematch, familytree, contacts
      * @param renderFunction
      */
-    baseDuplicateCheck: function (dupeCheckParams, renderFunction) {
+    baseDuplicateCheck: function(dupeCheckParams, renderFunction) {
         var dupeCheckURL = app.api.buildURL('connector/dnb/dupecheck', '', {}, {});
         var self = this;
         app.api.call('create', dupeCheckURL, {'qdata': dupeCheckParams}, {
-            success: function (data) {
+            success: function(data) {
                 renderFunction.call(self, {'product': data});
             },
             error: _.bind(self.checkAndProcessError, self)
         });
+    },
+
+    /**
+     * Toggles the visibility of the import button in the dashlet
+     * @param {Boolean} isVisible
+     * @param {String} btnName
+     */
+    toggleImportBtn: function(isVisible, btnName) {
+        if (this.layout.getComponent('dashlet-toolbar').getField(btnName)) {
+            if (isVisible) {
+                this.layout.getComponent('dashlet-toolbar').getField(btnName).getFieldElement().show();
+                this.layout.getComponent('dashlet-toolbar').getField(btnName).getFieldElement().removeClass('hide');
+            } else {
+                this.layout.getComponent('dashlet-toolbar').getField(btnName).getFieldElement().hide();
+            }
+        }
+    },
+
+    /**
+     * Toggles enabled / disabled state of the button on the dashlet toolbar
+     * @param {Boolean} isEnabled
+     * @param {String} btnName
+     */
+    toggleDashletBtn: function(isEnabled, btnName) {
+        if (this.layout.getComponent('dashlet-toolbar').getField(btnName)) {
+            if (isEnabled) {
+                this.layout.getComponent('dashlet-toolbar').getField(btnName).setDisabled(false);
+                this.layout.getComponent('dashlet-toolbar').getField(btnName).getFieldElement().removeClass('disabled');
+                this.layout.getComponent('dashlet-toolbar').getField(btnName).getFieldElement().removeClass('hide');
+            } else {
+                this.layout.getComponent('dashlet-toolbar').getField(btnName).setDisabled(true);
+                this.layout.getComponent('dashlet-toolbar').getField(btnName).getFieldElement().addClass('disabled');
+            }
+        }
     }
 })

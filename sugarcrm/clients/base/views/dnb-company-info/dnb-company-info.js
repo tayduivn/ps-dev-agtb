@@ -35,12 +35,15 @@
         'change #stateList': 'validateMatchParams',
         'click #dnb-match-btn': 'invokeCMRequest',
         'click .backToList' : 'backToCompanyList',
-        'click #dnb-refresh' : 'getCompInfo',
         'click .backToImportEnrich' : 'backToImportEnrich'
     },
 
     initialize: function(options) {
         this._super('initialize', [options]);
+        if (this.layout.collapse) {
+            this.layout.collapse(true);
+        }
+        this.layout.on('dashlet:collapse', this.loadImportEnrich, this);
         app.events.register('dnbcompinfo:duns_selected', this);
         app.events.register('dnbcompinfo:industry_code', this);
         this.statesList = app.lang.getAppListStrings('dnb_states_iso');
@@ -48,6 +51,34 @@
         //initializing the data dictionary for cleanse match
         this.cleanseMatchDD = this.searchDD;
         this.cleanseMatchDD.confidenceCode = { 'json_path' : 'MatchQualityInformation.ConfidenceCodeValue' };
+    },
+
+    /**
+     * Refresh dashlet
+     */
+    refreshClicked: function() {
+        this.loadImportEnrich(false);
+    },
+
+    /**
+     * Handles the dashlet expand | collapse events
+     * @param  {Boolean} isCollapsed
+     */
+    loadImportEnrich: function(isCollapsed) {
+        //if the dashlet is not collapsed load data from D&B
+        if (!isCollapsed) {
+            //check if account is linked with a D-U-N-S
+            if (this.duns_num) {
+                this.getCompInfo(this.duns_num);
+            } else {
+                this.template = app.template.get(this.name + '.dnb-no-duns');
+                if (!this.disposed) {
+                    this.render();
+                }
+            }
+        } else {
+            this.toggleImportBtn(false, 'dnb_import');
+        }
     },
 
     /**
@@ -67,82 +98,31 @@
      */
     _render: function() {
         app.view.View.prototype._renderHtml.call(this);
-        this.$('#countryList').select2({ placeholder: app.lang.get('LBL_DNB_SLCT_CTRY'), data: this.populateCountry() });
-        this.$('#stateList').select2({ placeholder: app.lang.get('LBL_DNB_SLCT_STATE'), data: this.populateState(this.selectedCountry) });
+        this.$('#countryList').select2({
+            placeholder: app.lang.get('LBL_DNB_SLCT_CTRY'),
+            data: this.populateCountry(),
+            containerCss: {'width': '100%'}
+        });
+        this.$('#stateList').select2({
+            placeholder: app.lang.get('LBL_DNB_SLCT_STATE'),
+            data: this.populateState(this.selectedCountry),
+            containerCss: {'width': '100%'}
+        });
     },
 
     /**
-     * Gets the company information for the current duns_num
-     */
-    getCompInfo: function() {
-        if (this.disposed) {
-            return;
-        }
-        var duns_num = this.model.get('duns_num');
-        if (duns_num) {
-            this.template = app.template.get(this.name + '.dnb-company-details');
-            this.render();
-            this.$('div#dnb-company-detail-loading').show();
-            this.$('div#dnb-company-details').hide();
-            this.baseCompanyInformation(duns_num, this.compInfoProdCD.std, null, this.renderCompanyDetails);
-        }
-    },
-
-    /**
-     * invokes the refreshCheck API
+     * Gets the company information duns_num
      * @param {String} duns_num
      */
-    refreshCheck: function(duns_num) {
+    getCompInfo: function(duns_num) {
         if (this.disposed) {
             return;
         }
-        var dnbRefreshCheck = app.api.buildURL('connector/dnb/refreshcheck/' + duns_num, '', {},{});
-        var self = this;
-        self.template = app.template.get(self.name);
-        self.render();
-        self.$('div#dnb-refresh-loading').show();
-        self.$('div#dnb-refresh-details').hide();
-        var resultData = {'uptodate': null, 'errmsg': null};
-        app.api.call('READ', dnbRefreshCheck, {}, {
-            success: function(data) {
-                //to do error handling
-                var lastRefreshedDatePath = 'GetRefreshByOrganizationsResponse.GetRefreshByOrganizationsResponseDetail.CheckRefreshCandidateDetail.0.LastUpdateDate';
-                if (self.checkJsonNode(data, lastRefreshedDatePath)) {
-                    try {
-                        var lastRefreshDate = app.date.parse(data.GetRefreshByOrganizationsResponse.GetRefreshByOrganizationsResponseDetail.CheckRefreshCandidateDetail[0].LastUpdateDate, 'YYYY-mm-dd'),
-                            lastModifiedDate = null;
-                        if (self.model.get('date_modified')) {
-                            lastModifiedDate = new Date(Date.parse(self.model.get('date_modified')));
-                            if (lastRefreshDate < lastModifiedDate) {
-                                resultData.uptodate = true;
-                                self.isDataUptoDate = true;
-                            }
-                        }
-                    } catch (e) {
-                        app.logger.error('Error parsing dates');
-                    }
-                } else {
-                    resultData.errmsg = app.lang.get('LBL_DNB_SVC_ERR');
-                }
-                _.extend(self, resultData);
-                self.template = app.template.get(self.name);
-                self.render();
-                self.$('div#dnb-refresh-loading').hide();
-                self.$('div#dnb-refresh-details').show();
-                if (self.layout.getComponent('dashlet-toolbar').getField('data_valid_ind')) {
-                    if (resultData.uptodate) {
-                        self.layout.getComponent('dashlet-toolbar').getField('data_valid_ind').getFieldElement().show().addClass('label-uptodate').text(app.lang.get('LBL_DNB_UPTODATE'));
-                        //if the up to date collapse the dashlet
-                        if (self.layout.collapse) {
-                            self.layout.collapse(true);
-                        }
-                    } else {
-                        self.layout.getComponent('dashlet-toolbar').getField('data_valid_ind').getFieldElement().show().addClass('label-pending').text(app.lang.get('LBL_DNB_OUTOFDATE'));
-                    }
-                }
-            },
-            error: _.bind(self.checkAndProcessError, self)
-        });
+        this.template = app.template.get(this.name + '.dnb-company-details');
+        this.render();
+        this.$('div#dnb-company-detail-loading').show();
+        this.$('div#dnb-company-details').hide();
+        this.baseCompanyInformation(duns_num, this.compInfoProdCD.std, null, this.renderCompanyDetails);
     },
 
     /**
@@ -150,20 +130,8 @@
      * @param {Array} options
      */
     loadData: function(options) {
-        if (this.meta && this.meta.config) {
-            this.template = app.template.get(this.name + '.dashlet-config');
-            if (this.disposed) {
-                return;
-            }
-            this.render();
-        } else {
-            if (!_.isUndefined(this.model.get('duns_num'))
-                && $.trim(this.model.get('duns_num')) != '') {
-                this.duns_num = this.model.get('duns_num');
-                this.refreshCheck(this.duns_num);
-            } else {
-                this.template = app.template.get(this.name + '.dnb-no-duns');
-            }
+        if (this.model.get('duns_num')) {
+            this.duns_num = this.model.get('duns_num');
         }
     },
 
@@ -203,16 +171,11 @@
         this.$('div#dnb-company-list').show();
         //hide the import button
         //display it only when the company details are displayed
-        if (!_.isUndefined(this.layout.getComponent('dashlet-toolbar').getField('dnb_import'))) {
-            this.layout.getComponent('dashlet-toolbar').getField('dnb_import').getFieldElement().hide();
-        }
-        if (!_.isUndefined(this.layout.getComponent('dashlet-toolbar').getField('data_valid_ind'))) {
-            this.layout.getComponent('dashlet-toolbar').getField('data_valid_ind').getFieldElement().hide();
-        }
+        this.toggleImportBtn(false, 'dnb_import');
     },
 
     /**
-     * Invokes D&B Searcg API based on the company nanme
+     * Invokes D&B Search API based on the company nanme
      */
     dnbSearch: function() {
         if (this.disposed) {
@@ -264,9 +227,18 @@
                 app.controller.context.set('dnb_temp_duns_num', this.duns_num);
                 var orgDetails = this.getJsonNode(companyDetails.product, this.appendSVCPaths.product);
                 this.dnbProduct.product = this.formatCompanyInfo(companyDetails.product, this.accountsDD);
-                this.dnbProduct.product = this.getDataIndicators(orgDetails, this.accountsDD, this.dnbProduct.product);
-                if (!_.isUndefined(this.layout.getComponent('dashlet-toolbar').getField('dnb_import'))) {
-                    this.layout.getComponent('dashlet-toolbar').getField('dnb_import').getFieldElement().show();
+                this.dnbProduct.product = this.getDataIndicators(this.accountsDD, this.dnbProduct.product);
+                //check if there are any new data
+                var newDataElementsArray = _.filter(this.dnbProduct.product, function(dataElement) {
+                    return dataElement.dataInd === 'new' || dataElement.dataInd === 'upd';
+                });
+                //if there are no new data elements then display
+                // message that the company information is up to date
+                if (newDataElementsArray.length === 0) {
+                    this.dnbProduct.product = null;
+                    this.dnbProduct.errmsg = app.lang.get('LBL_DNB_UPTODATE_MSG');
+                } else {
+                    this.toggleImportBtn(true, 'dnb_import');
                 }
             }
         }
@@ -282,16 +254,15 @@
 
     /**
      * Populates the stare and compare screen with duplicate / upload indicators
-     * @param   {Object} dnbApiResponse dnb company info api response
      * @param   {Object} accountsDD accounts data dictionary
      * @param   {Object} frmtCompInfo formatted company info
      * @return  {Object} formatted company info with data indicators
      */
-    getDataIndicators: function(dnbApiResponse, accountsDD, frmtCompInfo) {
+    getDataIndicators: function(accountsDD, frmtCompInfo) {
         var accountsModel = this.model;
         _.each(frmtCompInfo, function(dataObj) {
             var sugarColumnName = dataObj.dataName;
-            var dnbDataElement = this.getJsonNode(dnbApiResponse, accountsDD[sugarColumnName].json_path),
+            var dnbDataElement = dataObj.dataElement,
                 sugarDataElement = accountsModel.get(sugarColumnName);
             if (dnbDataElement && sugarDataElement) {
                 dnbDataElement = $.trim(dnbDataElement),
@@ -314,16 +285,9 @@
     importCheckBox: function() {
         var dnbCheckBoxes = $('.dnb_checkbox:checked');
         if (dnbCheckBoxes.length > 0) {
-            if (!_.isUndefined(this.layout.getComponent('dashlet-toolbar').getField('dnb_import'))) {
-                this.layout.getComponent('dashlet-toolbar').getField('dnb_import').setDisabled(false);
-                this.layout.getComponent('dashlet-toolbar').getField('dnb_import').getFieldElement().removeClass('disabled');
-                this.layout.getComponent('dashlet-toolbar').getField('dnb_import').getFieldElement().removeClass('hide');
-            }
+            this.toggleDashletBtn(true, 'dnb_import');
         } else {
-            if (!_.isUndefined(this.layout.getComponent('dashlet-toolbar').getField('dnb_import'))) {
-                this.layout.getComponent('dashlet-toolbar').getField('dnb_import').setDisabled(true);
-                this.layout.getComponent('dashlet-toolbar').getField('dnb_import').getFieldElement().addClass('disabled');
-            }
+            this.toggleDashletBtn(false, 'dnb_import');
         }
     },
 
@@ -368,9 +332,11 @@
         this.selectedCountry = this.$('#countryList').val();
         //disable match button
         this.$('#dnb-match-btn').addClass('disabled');
+        this.$('#countryList').select2('val', this.selectedCountry);
         this.$('#stateList').select2({
             placeholder: app.lang.get('LBL_DNB_SLCT_STATE'),
-            data: this.populateState(this.selectedCountry)
+            data: this.populateState(this.selectedCountry),
+            containerCss: {'width': '100%'}
         });
     },
 
