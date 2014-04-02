@@ -5963,7 +5963,6 @@ $app_list_strings['email_check_interval_dom'] = array(
 );
 
 $app_list_strings['dnb_countries_iso'] = array(
-  "Country"  => "Country",
    "AF" => "Afghanistan",
    "AL" => "Albania",
    "DZ" => "Algeria",

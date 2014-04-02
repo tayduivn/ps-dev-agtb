@@ -17,20 +17,25 @@
         <em>{{str "LBL_DNB_NO_DUNS"}}</em>
         <br/>
     </aside>
-    <table class="table">
-        <tr>
-            <td>{{str "LBL_DNB_COUNTRY"}}</td>
-            <td>{{str "LBL_DNB_STATE"}}</td>
-        </tr>
-        <tr>
-            <td>
+    <div class="row-fluid">
+        <div class="span6 record-cell" data-type="enum">
+            <div class="record-label">
+                {{str "LBL_DNB_COUNTRY"}}
+            </div>
+            <span class="normal">
                 <input type='hidden' id='countryList'/>
-            </td>
-            <td>
+            </span>
+        </div>
+        <div class="span6 record-cell" data-type="enum">
+            <div class="record-label">
+                <td>{{str "LBL_DNB_STATE"}}</td>
+            </div>
+            <span class="normal">
                 <input type='hidden' id='stateList'/>
-            </td>
-        </tr>
-    </table>
+            </span>
+        </div>
+    </div>
+    <br/>
     <a href="javascript:void(0);" class="btn btn-primary disabled" id="dnb-match-btn">
         {{str "LBL_DNB_CM_MATCH"}}
     </a>
