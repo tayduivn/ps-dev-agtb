@@ -119,7 +119,7 @@ else {
 		$_REQUEST['subpanel_id'] = $uids;
  	}
 
- 	if(ucfirst(get_class($focus)) === 'Team'){
+ 	if ($_REQUEST['module'] == 'Teams') {
  		$subpanel_id = $_REQUEST['subpanel_id'];
  		if(is_array($subpanel_id)){
  			foreach($subpanel_id as $id){
