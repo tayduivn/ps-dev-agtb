@@ -216,6 +216,9 @@
                 };
             this.collection = app.data.createBeanCollection(module, null, options);
             this.context.set('collection', this.collection);
+            this.context.set('link', link);
+        } else {
+            this.context.unset('link');
         }
 
         this.before('render', function() {
