@@ -67,6 +67,7 @@ $dictionary['Contact'] = array(
                 'phone_office' => 'phone_work',
             ),
             'populate_confirm_label' => 'TPL_OVERWRITE_POPULATED_DATA_CONFIRM_WITH_MODULE_SINGULAR',
+            'importable' => 'true',
         ),
         'account_id' => array(
             'name' => 'account_id',
