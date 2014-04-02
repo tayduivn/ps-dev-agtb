@@ -16,11 +16,17 @@ $dictionary['KBSTopic'] = array(
     'table' => 'kbstopics',
     'comment' => 'Knowledge Base Topicss',
     'audited' => true,
-    'activity_enabled'=>false,
-    'unified_search' => false,
-    'unified_search_default_enabled' => false,
-    'full_text_search' => false,
+    'activity_enabled' => true,
     'fields' => array(
+        'contents' => array(
+            'name' => 'contents',
+            'type' => 'link',
+            'relationship' => 'kbstopic_contents',
+            'module' => 'KBSContents',
+            'bean_name' => 'KBSContent',
+            'source' => 'non-db',
+            'vname' => 'LNK_CONTENTS',
+        ),
         'name' => array(
             'name' => 'name',
             'vname' => 'LBL_NAME',
@@ -43,17 +49,17 @@ $dictionary['KBSTopic'] = array(
             'id_name' => 'parent_id',
             'vname' => 'LBL_PARENT_NAME',
             'type' => 'relate',
-            'isnull' => 'true',
+            'isnull' => true,
             'module' => 'KBSTopics',
             'table' => 'kbstopics',
             'massupdate' => false,
             'source' => 'non-db',
-            'link' => 'parent_topic',
+            'link' => 'parent',
         ),
-        'parent_topic' => array(
-            'name' => 'topics',
+        'parent' => array(
+            'name' => 'parent',
             'type' => 'link',
-            'relationship' => 'kbstopics_relations',
+            'relationship' => 'kbstopics_subnodes',
             'module' => 'KBSTopics',
             'bean_name' => 'KBSTopic',
             'source' => 'non-db',
@@ -63,7 +69,7 @@ $dictionary['KBSTopic'] = array(
         'subnodes' => array(
             'name' => 'subnodes',
             'type' => 'link',
-            'relationship' => 'kbstopics_relations',
+            'relationship' => 'kbstopics_subnodes',
             'module' => 'KBSTopics',
             'bean_name' => 'KBSTopic',
             'source' => 'non-db',
@@ -79,16 +85,28 @@ $dictionary['KBSTopic'] = array(
         array('name' => 'idx_kbstopics_parent_id', 'type' => 'index', 'fields' => array('parent_id')),
     ),
     'relationships' => array(
-        'kbstopics_relations' => array(
+        'kbstopic_contents' => array(
+            'lhs_module' => 'KBSTopics',
+            'lhs_table' => 'kbstopics',
+            'lhs_key' => 'id',
+            'rhs_module' => 'KBSContents',
+            'rhs_table' => 'kbscontents',
+            'rhs_key' => 'topic_id',
+            'relationship_type' => 'one-to-many',
+        ),
+        'kbstopics_subnodes' => array(
             'lhs_module' => 'KBSTopics',
             'lhs_table' => 'kbstopics',
             'lhs_key' => 'id',
             'rhs_module' => 'KBSTopics',
             'rhs_table' => 'kbstopics',
             'rhs_key' => 'parent_id',
-            'relationship_type' => 'one-to-many'
-        )
-    )
+            'relationship_type' => 'one-to-many',
+        ),
+    ),
+    'duplicate_check' => array(
+        'enabled' => false,
+    ),
 );
 
-VardefManager::createVardef('KBSTopics', 'KBSTopic', array('basic'));
+VardefManager::createVardef('KBSTopics', 'KBSTopic', array('basic', 'team_security'));

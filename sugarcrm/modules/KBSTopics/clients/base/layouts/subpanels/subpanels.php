@@ -21,6 +21,13 @@ $viewdefs['KBSTopics']['base']['layout']['subpanels'] = array(
                 'link' => 'subnodes',
             ),
         ),
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_CONTENTS_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'contents',
+            ),
+        ),
     ),
     'type' => 'subpanels',
     'span' => 12,
