@@ -127,7 +127,15 @@ class SugarUpgradeFixClassConstructor extends UpgradeScript
         $parentClass = get_parent_class($className);
 
         $fields = array();
-        $notVardefs = array('new_schema', 'module_dir', 'object_name', 'table_name', 'importable');
+        // All the public properties in `Class.tpl` that are not vardefs.
+        $notVardefs = array(
+            'new_schema',
+            'module_dir',
+            'object_name',
+            'table_name',
+            'importable',
+            'disable_row_level_security'
+        );
         foreach ($reflectionClass->getProperties() as $property) {
             if ($property->class !== $className) {
                 continue;
