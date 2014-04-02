@@ -43,7 +43,7 @@ class ForecastsController extends SugarController
         global $current_user;
         if($current_user->isAdminForModule('Forecasts')) {
             $db = DBManagerFactory::getInstance();
-            $db->query("UPDATE config SET value = 0 WHERE category = 'Forecasts' and name in ('is_setup', 'has_commits')");
+            $db->query("UPDATE config SET value = '0' WHERE category = 'Forecasts' and name in ('is_setup', 'has_commits')");
             MetaDataManager::refreshModulesCache(array('Forecasts'));
             MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_CONFIG));
             echo '<script>' . navigateToSidecar(buildSidecarRoute("Forecasts")) . ';</script>';
