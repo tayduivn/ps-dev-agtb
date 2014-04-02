@@ -19,17 +19,27 @@ $viewdefs['KBSTopics']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 array(
-                    'name' => 'name',
-                    'required' => true,
-                    'label' => 'LBL_NAME'
+                    'name' => 'picture',
+                    'type' => 'avatar',
+                    'size' => 'large',
+                    'dismiss_label' => true,
+                    'readonly' => true,
                 ),
                 array(
-                    'name' => 'parent_name',
-                    'label' => 'LBL_PARENT_NAME'
+                    'name' => 'name',
+                    'required' => true,
+                    'label' => 'LBL_NAME',
+                ),
+                array(
+                    'type' => 'favorite',
                 ),
                 array(
                     'type' => 'follow',
                     'readonly' => true,
+                ),
+                array(
+                    'name' => 'parent_name',
+                    'label' => 'LBL_PARENT_NAME',
                 ),
             ),
         ),

@@ -21,5 +21,6 @@ $mod_strings = array(
     'LNK_TOPICS' => 'Topics',
     'LBL_TOPIC_NAME' => 'Topic Name',
     'LBL_PARENT_NAME' => 'Parent Topic',
-    'LBL_TOPICS_SUBPANEL_TITLE' => 'Topics',
+    'LBL_TOPICS_SUBPANEL_TITLE' => 'Child Topics',
+    'LBL_CONTENTS_SUBPANEL_TITLE' => 'Contents',
 );
