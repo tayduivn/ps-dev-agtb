@@ -152,20 +152,18 @@ EOQ;
     }
 
     /**
-     * Bug 56717
      *
-     * When ModuleScanner is enabled, handle bars templates are invalidating published
-     * package installation.
+     * When ModuleScanner is enabled, validating allowed and disallowed file extension names.
      *
-     * @group bug56717
      */
-    public function testBug56717ValidExtsAllowed() {
+    public function testValidExtsAllowed() {
         // Allowed file names
         $allowed = array(
             'php' => 'test.php',
             'htm' => 'test.htm',
             'xml' => 'test.xml',
             'hbs' => 'test.hbs',
+            'less' => 'test.less',
             'config' => 'custom/config.php',
         );
 
