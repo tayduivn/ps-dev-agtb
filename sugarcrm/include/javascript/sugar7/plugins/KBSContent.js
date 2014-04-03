@@ -31,12 +31,20 @@
                 });
             },
 
-            createLocalization: function() {
-                this.createRelatedContent(this.model, self.CONTENT_LOCALIZATION);
+            /**
+             * Handler to create localization.
+             * @param {Data.Model} model Parent model.
+             */
+            createLocalization: function(model) {
+                this.createRelatedContent(model, this.CONTENT_LOCALIZATION);
             },
 
-            createRevision: function() {
-                this.createRelatedContent(this.model, self.CONTENT_REVISION);
+            /**
+             * Handler to create revision.
+             * @param {Data.Model} model Parent model.
+             */
+            createRevision: function(model) {
+                this.createRelatedContent(model, this.CONTENT_REVISION);
             },
 
             /**
