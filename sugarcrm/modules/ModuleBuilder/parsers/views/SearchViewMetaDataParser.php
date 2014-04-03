@@ -129,8 +129,6 @@ class SearchViewMetaDataParser extends ListLayoutMetaDataParser
         	if ($key == "assigned_user_name" && isset($origDefs['assigned_user_id']))
         		return false;
         }
-        if (substr($key, -8) == "_by_name" &&  isset($def['rname']) && $def['rname'] == "user_name")
-        	return false;
 
         //Remove image fields (unless studio was set)
         if (!empty($def [ 'studio' ]) && isset($def['type']) && $def['type'] == "image")
