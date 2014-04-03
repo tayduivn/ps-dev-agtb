@@ -283,6 +283,10 @@ class campaign_charts {
 		$sugarChart->is_currency = true;
         $sugarChart->currency_symbol = $currency_symbol;
 
+        // campaign charts should not convert currency values
+        // see SugarChart::convertCurrency()
+        $sugarChart->div = 1;
+
 		if ($not_empty)
 	 		$sugarChart->setData($opp_data1);
 		else

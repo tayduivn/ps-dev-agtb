@@ -850,11 +850,16 @@ class ConnectorUtils
         $lang .= '.lang.php';
         $dir = str_replace('_', '/', $source_id);
 
-      if (!write_array_to_file("connector_strings", $connector_strings, "custom/modules/Connectors/connectors/sources/{$dir}/language/{$lang}")) {
+        $langPath = "custom/modules/Connectors/connectors/sources/{$dir}/language";
+        $path = "{$langPath}/{$lang}";
+
+        if (!sugar_mkdir($langPath, 755, true) || !write_array_to_file("connector_strings", $connector_strings, $path)) {
            //Log error and return empty array
-           $GLOBALS['log']->fatal("Cannot write connectory_strings to file custom/modules/Connectors/connectors/sources/{$dir}/language/{$lang}");
+           $GLOBALS['log']->fatal("Cannot write connectory_strings to file {$path}");
            return false;
         }
+
+        return true;
     }
 
     /**

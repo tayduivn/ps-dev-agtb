@@ -113,6 +113,10 @@
     //for storing the current contact details
     currentContact: null,
     importBtn: null,
+    //for storing the state of dashlet
+    dashletState: null,
+    searchCacheKey: null,
+    detailCacheKey: null,
 
     events: {
         'click .showMoreData' : 'showMoreData',
@@ -132,12 +136,17 @@
         }
         this.layout.on('dashlet:collapse', this.loadContacts, this);
         app.events.on('dnbcompinfo:duns_selected', this.collapseDashlet, this);
+        this.dashletState = {
+            'view' : null, //possible values list or detail or search,
+            'content' : null, //used to store the cache key to render content
+            'params' : null //used to store the search params, when view is search
+        };
     },
 
     /**
      * Refresh dashlet once Refresh link clicked from gear button
      * To show updated contact information from DNB service
-    */
+     */
     refreshClicked: function() {
         this.loadContacts(false);
     },
@@ -154,9 +163,9 @@
      */
     loadContacts: function(isCollapsed) {
         if (!isCollapsed) {
-            //check if account is linked with a D-U-N-S
             if (this.duns_num) {
-                this.getDNBContacts(this.duns_num);
+                //check if account is linked with a D-U-N-S
+                this.renderDashletFromState(this.dashletState);
             } else if (!_.isUndefined(app.controller.context.get('dnb_temp_duns_num'))) {
                 //check if D-U-N-S is set in context by refresh dashlet
                 this.getDNBContacts(app.controller.context.get('dnb_temp_duns_num'));
@@ -166,6 +175,9 @@
                     this.render();
                 }
             }
+        } else {
+            //hide the import button if visible when minimized
+            this.toggleImportBtn('import_dnb_data', false);
         }
     },
 
@@ -177,12 +189,10 @@
             return;
         }
         this.template = app.template.get(this.name);
+        this.toggleImportBtn('import_dnb_data', false);
         this.render();
         this.$('#dnb-contact-list-loading').show();
         this.$('#dnb-contact-list').hide();
-        if (this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
-            this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().hide();
-        }
         var dupeCheckParams = {
             'type': 'contacts',
             'apiResponse': this.contactsList,
@@ -200,6 +210,15 @@
             return;
         }
         this.template = app.template.get(this.name);
+        if (!_.isNull(this.searchCacheKey)) {
+            this.dashletState.view = 'search';
+            this.dashletState.params = this.cntctSrchParams;
+            this.dashletState.content = this.searchCacheKey;
+        } else {
+            this.dashletState.view = 'list';
+            this.dashletState.params = null;
+            this.dashletState.content = null;
+        }
         var dnbContactsList = {};
         if (dnbApiResponse.product) {
             var contacts = this.getJsonNode(dnbApiResponse.product, this.contactConst.contactsPath);
@@ -215,9 +234,7 @@
         this.render();
         this.$('#dnb-contact-list-loading').hide();
         this.$('#dnb-contact-list').show();
-        if (this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
-            this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().hide();
-        }
+        this.toggleImportBtn('import_dnb_data', false);
         this.$('.showLessData').hide();
         //hide the show more link if the list has less than 3 results
         if (this.dnbContactsList.product && this.dnbContactsList.product.length < 3) {
@@ -246,7 +263,6 @@
         }
         var self = this;
         if (duns_num) {
-            self.duns_num = duns_num;
             self.template = app.template.get(self.name);
             self.render();
             self.$('#dnb-contact-list-loading').show();
@@ -256,6 +272,10 @@
             var cacheContent = app.cache.get(cacheKey);
             if (cacheContent) {
                 self.contactsList = cacheContent;
+                self.dashletState.view = 'list';
+                self.dashletState.content = cacheKey;
+                self.dashletState.params = null;
+                self.searchCacheKey = null;
                 var dupeCheckParams = {
                     'type': 'contacts',
                     'apiResponse': cacheContent,
@@ -270,10 +290,14 @@
                         var responseCode = self.getJsonNode(data, self.contactConst.responseCode),
                             responseMsg = self.getJsonNode(data, self.contactConst.responseMsg);
                         if (responseCode && responseCode === self.responseCodes.success) {
-                                resultData.product = data;
-                                //for back to list functionality
-                                self.contactsList = data;
-                                app.cache.set(cacheKey, data);
+                            resultData.product = data;
+                            //for back to list functionality
+                            self.contactsList = data;
+                            app.cache.set(cacheKey, data);
+                            self.dashletState.view = 'list';
+                            self.dashletState.content = cacheKey;
+                            self.dashletState.params = null;
+                            self.searchCacheKey = null;
                         } else {
                             resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
                         }
@@ -306,15 +330,12 @@
             contact_type = this.contactConst.stdCntct;
         }
         var self = this;
-        self.cntctLoadMsg = null,
         self.template = app.template.get(self.name + '.dnb-contact-details');
         self.cntctLoadMsg = {'contactName' : contact_name};
         self.render();
         self.$('div#dnb-contact-details-loading').show();
         self.$('div#dnb-contact-details').hide();
-        if (self.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
-            self.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().hide();
-        }
+        self.toggleImportBtn('import_dnb_data', false);
         var contactParams = {
             'duns_num' : self.duns_num,
             'contact_id' : contact_id,
@@ -322,7 +343,7 @@
         };
         //check if cache has this data already
         var cacheKey = 'dnb:' + contactParams.contact_type + ':'
-                        + contactParams.duns_num + ':' + contactParams.contact_id;
+            + contactParams.duns_num + ':' + contactParams.contact_id;
         var cacheContent = app.cache.get(cacheKey);
         if (cacheContent) {
             self.currentContact = cacheContent.contactDetail;
@@ -341,6 +362,10 @@
                             resultData.contactDetail = contactDetail;
                             self.currentContact = resultData.contactDetail;
                             app.cache.set(cacheKey, resultData);
+                            //setting dashlet state
+                            self.dashletState.view = 'detail';
+                            self.dashletState.content = cacheKey;
+                            self.dashletState.params = null;
                         } else {
                             resultData.errmsg = app.lang.get('LBL_DNB_NO_DATA');
                         }
@@ -379,10 +404,8 @@
             this.$('div#dnb-contact-details').show();
             //display import btn if there is no err msg
             if (!dnbCntctDet.errmsg) {
-                if (this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data')) {
+                this.toggleImportBtn('import_dnb_data', true);
                     this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().removeClass('hide');
-                    this.layout.getComponent('dashlet-toolbar').getField('import_dnb_data').getFieldElement().show();
-                }
             }
         }
     },
@@ -538,10 +561,15 @@
                         var responseCode = self.getJsonNode(data, self.contactConst.responseCode),
                             responseMsg = self.getJsonNode(data, self.contactConst.responseMsg);
                         if (responseCode && responseCode === self.responseCodes.success) {
-                                resultData.product = data;
-                                //for back to list functionality
-                                self.contactsList = data;
-                                app.cache.set(cacheKey, data);
+                            resultData.product = data;
+                            //for back to list functionality
+                            self.contactsList = data;
+                            app.cache.set(cacheKey, data);
+                            //setting dashlet state
+                            self.dashletState.view = 'search';
+                            self.dashletState.content = cacheKey;
+                            self.dashletState.params = self.cntctSrchParams;
+                            self.searchCacheKey = cacheKey;
                         } else {
                             resultData.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
                         }
@@ -674,5 +702,27 @@
     phoneMask: function(phone) {
         var match = phone.match(/([0-9]{2})(.*)([0-9]{2})/);
         return match[1] + match[2].replace(/./g, 'x') + match[3];
+    },
+
+    /**
+     * Render dashlet from previously stored state information
+     * @param {Object} dashletState
+     */
+    renderDashletFromState: function(dashletState) {
+        var cacheContent = app.cache.get(dashletState.content),
+            view = dashletState.view,
+            srchParams = dashletState.params;
+        if (!_.isNull(cacheContent) && !_.isNull(dashletState.view)) {
+            if (view === 'detail') {
+                this.renderContactDetails(cacheContent);
+            } else if (view === 'search' && !_.isNull(srchParams)) {
+                this.renderContactsList({'product' : cacheContent});
+                this.cntctSrchParams = srchParams;
+            } else {
+                this.getDNBContacts(this.duns_num);
+            }
+        } else {
+            this.getDNBContacts(this.duns_num);
+        }
     }
 })

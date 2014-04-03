@@ -68,6 +68,7 @@
         this.context.on('lead:convert:'+this.meta.module+':enable', this.handleEnablePanel, this);
         this.context.on('lead:convert:'+this.meta.moduleNumber+':open', this.handleOpenRequest, this);
         this.context.on('lead:convert:exit', this.turnOffUnsavedChanges, this);
+        this.context.on('lead:convert:'+this.meta.module+':shown', this.handleShowComponent, this);
 
         //if this panel is dependent on others - listen for changes and react accordingly
         this.addDependencyListeners();
@@ -263,6 +264,18 @@
         //only open the panel if it is enabled
         if (this.isPanelEnabled()) {
             this.$(this.accordionBody).collapse('show');
+        }
+    },
+
+    showComponent: function (name) {
+        this._super('showComponent', [name]);
+        this.handleShowComponent();
+    },
+
+    handleShowComponent: function () {
+        if (this.currentToggle === this.TOGGLE_CREATE && this.createView.meta.useTabsAndPanels && !this.createViewRendered) {
+            this.createView.render();
+            this.createViewRendered = true;
         }
     },
 
