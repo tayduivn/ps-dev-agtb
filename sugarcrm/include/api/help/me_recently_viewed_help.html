@@ -15,7 +15,7 @@
 -->
 <h2>Overview</h2>
 <span class="lead">
-    Returns all of the current users recents records
+    Returns all of the current users recently viewed records
 </span>
 
 <h2>Query String Parameters</h2>
@@ -41,15 +41,17 @@
     <tbody>
     <tr>
         <td>
-            module
+            module_list
         </td>
         <td>
             String
         </td>
         <td>
-            Name of module to fetch recents records.
+            Comma delimited list of modules to return recently viewed records.
             <br>
-            Example: <code>Accouts</code>
+            Example: <code>Accounts,Contacts</code>
+            <br>
+            If no access to one of the supplied modules, no records are returned for that module.
         </td>
         <td>
             False
@@ -79,7 +81,7 @@
             String
         </td>
         <td>
-            The date expression. Filter recents records from this date.
+            The date expression. Filter recently viewed records from this date.
         </td>
         <td>
             False

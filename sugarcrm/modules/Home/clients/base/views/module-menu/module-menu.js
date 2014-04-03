@@ -171,7 +171,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @override
      *
      * Populates all available dashboards when opening the menu. We override
      * this function without calling the parent one because we don't want to
@@ -235,11 +235,17 @@
             return;
         }
 
+        var modules = this._getModulesForRecentlyViewed();
+        if (_.isEmpty(modules)) {
+            return;
+        }
+
         this.recentlyViewed.fetch({
             'showAlerts': false,
             'fields': ['id', 'name'],
             'date': '-7 DAY',
             'limit': limit,
+            'module_list': modules,
             'success': _.bind(function(data) {
                 this._renderPartial('recently-viewed', {
                     collection: this.recentlyViewed,
@@ -254,6 +260,34 @@
         });
 
         return;
+    },
+
+    /**
+     * Retrieve a list of modules where support for recently viewed records is
+     * enabled and current user has access to list their records.
+     *
+     * Dashboards is discarded since it is already populated by default on the
+     * drop down list {@link #populateMenu}.
+     *
+     * To disable recently viewed items for a specific module, please set the
+     * `recently_viewed => 0` on:
+     *
+     * - `{custom/,}modules/{module}/clients/{platform}/view/module-menu/module-menu.php`
+     *
+     * @return {Array} List of supported modules names.
+     * @private
+     */
+    _getModulesForRecentlyViewed: function() {
+        // FIXME: we should find a better option instead of relying on visible
+        // modules
+        var modules = app.metadata.getModuleNames({filter: 'visible', access: 'list'});
+
+        modules = _.filter(modules, function(module) {
+            var view = app.metadata.getView(module, 'module-menu');
+            return !view || !view.settings || view.settings.recently_viewed > 0;
+        });
+
+        return modules;
     },
 
     /**
