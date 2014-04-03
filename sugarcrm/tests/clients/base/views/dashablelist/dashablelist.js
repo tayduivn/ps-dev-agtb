@@ -1,4 +1,4 @@
-describe('View.BaseDashablelistView', function() {
+describe('Base.View.Dashablelist', function() {
     var app,
         view,
         layout,
@@ -546,6 +546,7 @@ describe('View.BaseDashablelistView', function() {
             beforeEach(function() {
                 stubStartAutoRefresh = sinon.collection.stub(view, '_startAutoRefresh');
                 stubGetColumns = sinon.collection.stub(view, '_getColumnsForDisplay');
+                stubGetFields = sinon.collection.stub(view, 'getFieldNames');
                 stubApplyFilterDef = sinon.collection.stub(view, '_applyFilterDef');
                 stubContextReload = sinon.collection.stub(view.context, 'reloadData');
             });
@@ -553,13 +554,19 @@ describe('View.BaseDashablelistView', function() {
             it('should run through all of the logic necessary to render the dashlet', function() {
                 var columns = _.map(sampleFieldMetadata, function(column) {
                         return _.extend(column, {sortable: true});
-                    });
+                    }),
+                    fields = _.pluck(columns, 'name');
+
                 stubGetColumns.returns(columns);
+                stubGetFields.returns(fields);
                 view.settings.set('limit', 5);
                 view.meta = {panels: []};
+
                 view._displayDashlet();
+
                 expect(view.context.get('skipFetch')).toBeFalsy();
                 expect(view.context.get('limit')).toBe(5);
+                expect(view.context.get('fields')).toEqual(fields);
                 expect(view.meta.panels).toEqual([{fields: columns}]);
                 expect(stubStartAutoRefresh).toHaveBeenCalledOnce();
             });
@@ -571,6 +578,7 @@ describe('View.BaseDashablelistView', function() {
                 expect(stubApplyFilterDef).not.toHaveBeenCalled();
                 expect(stubContextReload).not.toHaveBeenCalled();
                 expect(stubStartAutoRefresh).toHaveBeenCalledOnce();
+                expect(stubGetFields).toHaveBeenCalledOnce();
                 expect(stubGetColumns).toHaveBeenCalledOnce();
             });
 
@@ -581,6 +589,7 @@ describe('View.BaseDashablelistView', function() {
                 expect(stubApplyFilterDef).toHaveBeenCalledWith('testFilterDef');
                 expect(stubContextReload).toHaveBeenCalled();
                 expect(stubStartAutoRefresh).toHaveBeenCalledOnce();
+                expect(stubGetFields).toHaveBeenCalledOnce();
                 expect(stubGetColumns).toHaveBeenCalledOnce();
             });
         });
