@@ -49,7 +49,7 @@
      */
     loadData: function(options) {
         var link = this.settings.get('link_name');
-        var module = this.settings.get('module');
+        var module = this.settings.get('module_name');
 
         if (this.disposed || !link || !module) {
             return;
