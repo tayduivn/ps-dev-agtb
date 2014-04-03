@@ -13,6 +13,42 @@
  */
 $viewdefs['KBSContents']['base']['view']['subpanel-for-localizations'] = array(
     'type' => 'subpanel-list',
+    'rowactions' => array(
+        'actions' => array(
+            array(
+                'type' => 'rowaction',
+                'css_class' => 'btn',
+                'tooltip' => 'LBL_PREVIEW',
+                'event' => 'list:preview:fire',
+                'icon' => 'icon-eye-open',
+                'acl_action' => 'view',
+                'allow_bwc' => false,
+            ),
+            array(
+                'type' => 'rowaction',
+                'name' => 'edit_button',
+                'icon' => 'icon-pencil',
+                'label' => 'LBL_EDIT_BUTTON',
+                'event' => 'list:editrow:fire',
+                'acl_action' => 'edit',
+                'allow_bwc' => true,
+            ),
+            array(
+                'type' => 'rowaction',
+                'event' => 'button:create_localization_button:click',
+                'name' => 'create_localization_button',
+                'label' => 'LBL_CREATE_LOCALIZATION_BUTTON_LABEL',
+                'acl_action' => 'edit',
+            ),
+            array(
+                'type' => 'rowaction',
+                'event' => 'button:create_revision_button:click',
+                'name' => 'create_revision_button',
+                'label' => 'LBL_CREATE_REVISION_BUTTON_LABEL',
+                'acl_action' => 'edit',
+            ),
+        ),
+    ),
     'panels' => array(
         array(
             'name' => 'panel_header',
