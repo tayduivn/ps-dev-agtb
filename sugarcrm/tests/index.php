@@ -38,6 +38,7 @@
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/Pagination.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/EmailClientLaunch.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/Chart.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/KBSContent.js"></script>
 
     <!-- customized beans -->
     <script type="text/javascript" src="../modules/Contacts/clients/base/lib/bean.js"></script>
