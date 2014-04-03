@@ -804,6 +804,12 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                         } else if (! empty ( $col [ 'name' ] ))
                         {
                             $fieldname = $col [ 'name' ] ;
+                        } else if (! empty ( $col [ 'field' ] ))
+                        {
+                            $fieldname = $col [ 'field' ] ;
+                        } else {
+                            $GLOBALS['log']->error("Could not find a valid field in $col");
+                            continue;
                         }
                     } else
                     {
