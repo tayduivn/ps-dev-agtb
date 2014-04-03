@@ -95,6 +95,65 @@ describe('Base.Fields.Currency', function() {
         SugarTest.testMetadata.dispose();
     });
 
+    describe('_lastCurrencyId', function() {
+        var field;
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                'amount',
+                'currency',
+                'edit',
+                {
+                    related_fields: ['currency_id', 'base_rate'],
+                    currency_field: 'currency_id',
+                    base_rate_field: 'base_rate'
+                },
+                moduleName,
+                model
+            );
+            field._loadTemplate();
+        });
+
+        afterEach(function() {
+            field = null;
+        });
+
+        it('is set after initialize', function() {
+            expect(field._lastCurrencyId).toEqual('-99');
+        });
+    });
+
+    describe('hideCurrencyDropdown', function() {
+        var field;
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                'amount',
+                'currency',
+                'edit',
+                {
+                    related_fields: ['currency_id', 'base_rate'],
+                    currency_field: 'currency_id',
+                    base_rate_field: 'base_rate'
+                },
+                moduleName,
+                model
+            );
+            field._loadTemplate();
+        });
+
+        afterEach(function() {
+            field = null;
+        });
+
+        it('is not changed when setMode is called', function() {
+            var initialValue = field.hideCurrencyDropdown;
+            field.setMode('list');
+            expect(field.hideCurrencyDropdown).toEqual(initialValue);
+
+        });
+    });
+
     describe('EditView', function() {
         var field;
 

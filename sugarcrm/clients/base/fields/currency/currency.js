@@ -51,14 +51,13 @@
      * @inheritDoc
      */
     initialize: function(options) {
-        var currencyField, currencyFieldValue,
-            baseRateField, baseRateFieldValue;
-
         this._super('initialize', [options]);
+
+        var currencyField = this.def.currency_field || 'currency_id',
+            currencyFieldValue, baseRateField, baseRateFieldValue;
 
         if (this.model.isNew() && (!this.model.isCopy())) {
             // new records are set the user's preferred currency
-            currencyField = this.def.currency_field || 'currency_id';
             currencyFieldValue = app.user.getPreference('currency_id');
             this.model.set(currencyField, currencyFieldValue);
 
@@ -323,8 +322,7 @@
      * @param {String} the mode name.
      */
     setMode: function(name) {
-        this.hideCurrencyDropdown = !!(name === 'list');
-        app.view.Field.prototype.setMode.call(this, name);
+        this._super('setMode', [name]);
         this.getCurrencyField().setMode(name);
     },
 
