@@ -67,9 +67,12 @@
         // get the current timeperiod
         if (this.forecastSetup) {
             app.api.call('GET', app.api.buildURL('TimePeriods/current'), null, {
-                success: _.bind(function(o) {
-                    this.settings.set({'selectedTimePeriod': o.id}, {silent: true});
+                success: _.bind(function(currentTP) {
+                    this.settings.set({'selectedTimePeriod': currentTP.id}, {silent: true});
                     this.layout.loadData();
+                }, this),
+                error: _.bind(function() {
+                    // Needed to catch the 404 in case there isnt a current timeperiod
                 }, this),
                 complete: view.options ? view.options.complete : null
             });
