@@ -135,6 +135,15 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
                 $fieldsFilter[] = $value['name'];
             }
         }
+        // need to get the doc owner to be indexed
+        if (isset($bean->field_defs['assigned_user_id'])) {
+            $docOwnerField = 'assigned_user_id';
+        } else if (isset($bean->field_defs['created_by'])) {
+            $docOwnerField = 'created_by';
+        }
+        if (!empty($docOwnerField)) {
+            $fieldsFilter[] = $docOwnerField;
+        }
         $ftsQuery->select($fieldsFilter);
 
         // join fts_queue table
