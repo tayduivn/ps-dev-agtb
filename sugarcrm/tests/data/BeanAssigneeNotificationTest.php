@@ -66,12 +66,17 @@ class BeanAssigneeNotificationTest extends Sugar_PHPUnit_Framework_TestCase
             'action' => 'DetailView',
             'record' => $bean->id,
         );
+
         parse_str($components['query'], $query);
-        $this->assertCount(
-            count($expectedQuery),
-            array_intersect_assoc($query, $expectedQuery),
-            'URL does not contain all expected query parameters'
-        );
+
+
+        $this->assertArrayHasKey('module', $query);
+        $this->assertArrayHasKey('action', $query);
+        $this->assertArrayHasKey('record', $query);
+
+        $this->assertEquals($query['module'], $expectedQuery['module']);
+        $this->assertEquals($query['action'], $expectedQuery['action']);
+        $this->assertEquals($query['record'], $expectedQuery['record']);
     }
 
     public function testAssigneeForNonBWCModule()
