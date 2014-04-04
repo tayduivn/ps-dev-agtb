@@ -343,7 +343,7 @@ class MetaDataConverter
             }
 
             // In most cases we can safely expect a Link2 object. But in cases
-            // where a vardef defines it's own link_class and link_file, we need 
+            // where a vardef defines it's own link_class and link_file, we need
             // to honor that. For example, archived_emails in Accounts.
             $linkClass = 'Link2';
             if (isset($bean->field_defs[$def['context']['link']])) {
@@ -535,49 +535,46 @@ class MetaDataConverter
         }
 
         foreach ($layoutdef as $key => $value) {
-            if (substr_count($value, '_') > 1 && stristr($value, 'subpanel')) {
-                $parts = explode('_subpanel_', $value);
-                $beanNameParts = explode('_', $parts[0]);
-                $subPanelBeanName = '';
-                foreach ($beanNameParts as $part) {
-                    $subPanelBeanName .= ucwords($part);
-                }
+            if ($key == 'override_subpanel_name') {
+                $subpanelFileName = $value;
+                if (substr_count($value, '_') > 1 && stristr($value, 'subpanel')) {
+                    $parts = explode('_subpanel_', $value);
+                    $beanNameParts = explode('_', $parts[0]);
+                    $subPanelBeanName = '';
+                    foreach ($beanNameParts as $part) {
+                        $subPanelBeanName .= ucwords($part);
+                    }
 
-                // case is not the actually object name, it's aCase
-                if ($subPanelBeanName == 'Case') {
-                    $subPanelBeanName = 'aCase';
-                }
+                    // case is not the actually object name, it's aCase
+                    if ($subPanelBeanName == 'Case') {
+                        $subPanelBeanName = 'aCase';
+                    }
 
-                $focus = BeanFactory::newBeanByName($subPanelBeanName);
-                if ($focus) {
-                    $field = $focus->getFieldDefinition($parts[1]);
-                    if ($field && $field['type'] == 'link') {
-                        // since we have a valid link, we need to test the relationship to see if it's custom relationship
-                        $relationships = new DeployedRelationships($focus->module_name);
-                        $relationship = $relationships->get($parts[1]);
-                        $relDef = array();
-                        if ($relationship) {
-                            $relDef = $relationship->getDefinition();
-                        }
-                        if (isset($relDef['is_custom']) && $relDef['is_custom']
+                    $focus = BeanFactory::newBeanByName($subPanelBeanName);
+                    if ($focus) {
+                        $field = $focus->getFieldDefinition($parts[1]);
+                        if ($field && $field['type'] == 'link') {
+                            // since we have a valid link, we need to test the relationship to see if it's custom relationship
+                            $relationships = new DeployedRelationships($focus->module_name);
+                            $relationship = $relationships->get($parts[1]);
+                            $relDef = array();
+                            if ($relationship) {
+                                $relDef = $relationship->getDefinition();
+                            }
+                            if (isset($relDef['is_custom']) && $relDef['is_custom']
                             && isset($relDef['from_studio']) && $relDef['from_studio']) {
-                            $subpanelFileName = "For{$relDef['name']}";
-                        } else {
-                            $subpanelFileName = "For{$focus->module_name}";
+                                $subpanelFileName = "For{$relDef['name']}";
+                            } else {
+                                $subpanelFileName = "For{$focus->module_name}";
+                            }
                         }
                     }
                 }
-            } else {
-                $subpanelFileName = $value;
-            }
-            if ($key == 'override_subpanel_name') {
                 $viewdefs['override_subpanel_list_view'] = array(
                     'view' => $this->fromLegacySubpanelName($subpanelFileName),
                     'link' => $layoutdef['get_subpanel_data'],
                 );
-            }
-
-            if ($key == 'title_key') {
+            } elseif ($key == 'title_key') {
                 $viewdefs['label'] = $value;
             } elseif ($key == 'get_subpanel_data') {
                 $viewdefs['context']['link'] = $value;
