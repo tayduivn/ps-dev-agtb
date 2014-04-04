@@ -12,14 +12,17 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 }}
-<ul class="unstyled nested-list">
+<ul class="unstyled" data-type="node-list">
 {{#each this}}
-    <li data-node-id="{{id}}">
-        {{#if subnodes.records}}
-            <i class="icon-folder-open"></i>{{name}}
-            {{> kbs-dashlet-topics.node-list subnodes.records }}
+    <li data-node-id="{{#if topic_id}}{{topic_id}}{{else}}{{id}}{{/if}}">
+        {{#if topic_id}}
+            <i class="icon-file" data-node-icon="file"></i>
         {{else}}
-            <i class="icon-file"></i>{{name}}
+            <i class="icon-folder icon-folder-close" data-node-icon="folder"></i>
+        {{/if}}
+        <a href="#{{buildRoute module=_module id=id}}">{{name}}</a>
+        {{#if subnodes.records}}
+            {{> kbs-dashlet-topics.node-list subnodes.records }}
         {{/if}}
     </li>
 {{/each}}

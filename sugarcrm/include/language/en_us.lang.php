@@ -3823,6 +3823,10 @@ $app_strings = array (
     'LBL_DASHLET_COUNTRY_CHART_NAME' => 'Sales by Country',
     'LBL_DASHLET_COUNTRY_CHART_DESCRIPTION' => 'Displays the sales chart by country map.',
 
+    /* Knowledge base topics tree dashlet */
+    'LBL_DASHLET_TOPICS_NAME' => 'Knowledge Base Topics',
+    'LBL_DASHLET_TOPICS_DESCRIPTION' => 'Topics tree dashelet description',
+
     // MySugar Menu Options
     'LBL_ADD_PAGE' => 'Add Page',
     'LBL_DELETE_PAGE' => 'Delete Page',

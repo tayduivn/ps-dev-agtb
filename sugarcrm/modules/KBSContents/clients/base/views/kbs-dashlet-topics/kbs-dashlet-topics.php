@@ -14,13 +14,18 @@
 $viewdefs['KBSContents']['base']['view']['kbs-dashlet-topics'] = array(
     'dashlets' => array(
         array(
-            'label' => 'LBL_TOPICS',
-            'description' => 'Description of Dashlet',
+            'label' => 'LBL_DASHLET_TOPICS_NAME',
+            'description' => 'LBL_DASHLET_TOPICS_DESCRIPTION',
             'config' => array(
-
+                'module_name' => 'KBSTopics',
+                'link_name' => 'subnodes',
+                'last_state' => array(
+                    'id' => 'kbs-dashlet-topics',
+                ),
             ),
             'preview' => array(
-
+                'module_name' => 'KBSTopics',
+                'link_name' => 'subnodes',
             ),
         )
     )
