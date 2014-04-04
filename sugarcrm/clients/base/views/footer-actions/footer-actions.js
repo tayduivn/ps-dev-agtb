@@ -24,12 +24,13 @@
         'click #help': 'help'
     },
     tagName: 'span',
+    layoutName: '',
     handleViewChange: function(layout, params) {
         var module = params && params.module ? params.module : null;
         // should we disable the help button or not, this only happens when layout is 'bwc'
-        layout = _.isObject(layout) ? layout.name : layout;
-        this.disableHelpButton(layout === 'bwc' || layout === 'first-login-wizard');
-        if (app.tutorial.hasTutorial(layout, module)) {
+        this.layoutName = _.isObject(layout) ? layout.name : layout;
+        this.disableHelpButton(this.layoutName === 'first-login-wizard');
+        if (app.tutorial.hasTutorial(this.layoutName, module)) {
             this.enableTourButton();
             if (params.module === 'Home' && params.layout === 'record' && params.action === 'detail') {
                 // first time in or upgrade, show tour
@@ -90,22 +91,27 @@
     support: function() {
         window.open('http://support.sugarcrm.com', '_blank');
     },
+
     /**
      * Help Button Click Event Listener
      *
      * @param {Object} event        The Click Event
      */
     help: function(event) {
-        var button = $(event.currentTarget),
-            buttonDisabled = button.hasClass('disabled'),
-            buttonAppEvent = button.hasClass('active') ? 'app:help:hide' : 'app:help:show';
+        if(this.layoutName === 'bwc') {
+            this.bwcHelpClicked();
+        } else {
+            var button = $(event.currentTarget),
+                buttonDisabled = button.hasClass('disabled'),
+                buttonAppEvent = button.hasClass('active') ? 'app:help:hide' : 'app:help:show';
 
-        if (!buttonDisabled) {
-            // add the disabled so that way if it's clicked again, it won't triggered the events again,
-            // this will get removed below
-            button.addClass('disabled');
-            // trigger the app event to show and hide the help dashboard
-            app.events.trigger(buttonAppEvent);
+            if (!buttonDisabled) {
+                // add the disabled so that way if it's clicked again, it won't triggered the events again,
+                // this will get removed below
+                button.addClass('disabled');
+                // trigger the app event to show and hide the help dashboard
+                app.events.trigger(buttonAppEvent);
+            }
         }
     },
 
@@ -156,5 +162,24 @@
     showTutorial: function(prefs) {
         app.tutorial.resetPrefs(prefs);
         app.tutorial.show(app.controller.context.get('layout'), {module: app.controller.context.get('module')});
+    },
+
+    /**
+     * Calls the old Help Docs if in BWC mode
+     */
+    bwcHelpClicked: function() {
+        var serverInfo = app.metadata.getServerInfo(),
+            lang = app.lang.getLanguage(),
+            module = app.controller.context.get('module'),
+            route = this.routeParams.route,
+            url = 'http://www.sugarcrm.com/crm/product_doc.php?edition=' + serverInfo.flavor + '&version=' + serverInfo.version + '&lang=' + lang + '&module=' + module + '&route=' + route;
+        if (route == 'bwc') {
+            var action = window.location.hash.match(/#bwc.*action=(\w*)/i);
+            if (action && !_.isUndefined(action[1])) {
+                url += '&action=' + action[1];
+            }
+        }
+        app.logger.info("help URL: " + url);
+        window.open(url);
     }
 })
