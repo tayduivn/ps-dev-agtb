@@ -435,6 +435,410 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests panel conversion from old style to new style
+     * 
+     * @param string $client The client to test conversion for
+     * @param boolean $full Flag that decides whether to return just fields or a full conversion
+     * @param array $former Former format for conversion
+     * @param array $expect Expected format for testing
+     * @dataProvider _getHandleConversionTestData
+     */
+    public function testGetConvertedPanelDefs($client, $full, $former, $expect)
+    {
+        $ug = new SidecarGridMetaDataUpgrader(
+            new SidecarMetaDataUpgraderForTest, 
+            array('client' => $client)
+        );
+        $converted = $ug->handleConversion($former, 'panels', $full);
+        $this->assertEquals($expect, $converted);
+    }
+
+    /**
+     * Data provider for testGetConverterPanelDefs
+     * 
+     * @return array
+     */
+    public function _getHandleConversionTestData()
+    {
+        return array(
+            // Mobile
+            array(
+                'client' => 'mobile',
+                'full' => false,
+                'former' => $this->getMobileTestConversionFormer(),
+                'expect' => $this->getMobileTestConversionExpect(),
+                
+            ),
+            // Base full
+            array(
+                'client' => 'base',
+                'full' => true,
+                'former' => $this->getBaseTestConversionFormer(),
+                'expect' => $this->getBaseTestConversionExpect(),
+            ),
+        );
+    }
+
+    /**
+     * Expected result of base full metadata upgrade conversion
+     * 
+     * @return array
+     */
+    protected function getBaseTestConversionExpect()
+    {
+        return array(
+            'templateMeta' => array(),
+            'panels' => array(
+                array(
+                    'name' => 'panel_body',
+                    'label' => 'LBL_RECORD_BODY',
+                    'columns' => 2,
+                    'labels' => true,
+                    'labelsOnTop' => true,
+                    'placeholders' => true,
+                    'fields' => array(
+                        'first_name',
+                        'remove_from_queue_c',
+                        'last_name',
+                        'do_not_call',
+                        'account_name',
+                        '',
+                        'phone_home',
+                        'phone_work',
+                        'phone_mobile',
+                        'phone_other',
+                        'email1',
+                        'phone_fax',
+                        'primary_address_street',
+                        'alt_address_street',
+                    ),
+                ),
+                array(
+                    'name' => 'panel_hidden',
+                    'label' => 'LBL_RECORD_SHOWMORE',
+                    'columns' => 2,
+                    'labels' => true,
+                    'labelsOnTop' => true,
+                    'placeholders' => true,
+                    'hide' => true,
+                    'fields' => array(
+                        'sales_quote_amount_c',
+                        'wpsourcecode_c',
+                        'sales_lawn_size_c',
+                        'assigned_user_name',
+                        'realgreen_number_c',
+                        '',
+                        array(
+                            'name' => 'description',
+                            'displayParams' => array(
+                                'colspan' => 2,
+                            ),
+                        ),
+                    ),
+                ),
+                array(
+                    'name' => 'lbl_panel_advanced',
+                    'label' => 'LBL_PANEL_ADVANCED',
+                    'columns' => 2,
+                    'labels' => true,
+                    'labelsOnTop' => true,
+                    'placeholders' => true,
+                    'fields' => array(
+                        'customer_cancelled_c',
+                        'status',
+                        'sales_cancel_reject_reason_c',
+                        'weed_pro_customer_c',
+                        'task_call_stage_list_c',
+                        '',
+                        'date_entered',
+                        'date_modified',
+                    ),
+                ),
+                array(
+                    'name' => 'lbl_editview_panel4',
+                    'label' => 'LBL_EDITVIEW_PANEL4',
+                    'columns' => 2,
+                    'labels' => true,
+                    'labelsOnTop' => true,
+                    'placeholders' => true,
+                    'fields' => array(
+                        'sales_lifecycle_stage_c',
+                        'intakeformtype_c',
+                        'hubspot_lead_score_c',
+                        'hs_analytics_source_c',
+                        'campaign_name_c',
+                        'campaign_name',
+                    ),
+                ),
+                array(
+                    'name' => 'lbl_editview_panel2',
+                    'label' => 'LBL_EDITVIEW_PANEL2',
+                    'columns' => 2,
+                    'labels' => true,
+                    'labelsOnTop' => true,
+                    'placeholders' => true,
+                    'fields' => array(
+                        array(
+                            'name' => 'leadmap_c',
+                            'label' => 'LBL_LEADMAP',
+                            'displayParams' => array(
+                                'colspan' => 2,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * Test data for a full base conversion. This represents the old style of 
+     * metadata.
+     * 
+     * @return array
+     */
+    protected function getBaseTestConversionFormer()
+    {
+        return array(
+            'panels' => array(
+                'LBL_CONTACT_INFORMATION' => array(
+                    array(
+                        array(
+                            'name' => 'first_name',
+                            'comment' => 'First name of the contact',
+                            'label' => 'LBL_FIRST_NAME',
+                        ),
+                        array(
+                            'name' => 'remove_from_queue_c',
+                            'label' => 'LBL_REMOVE_FROM_QUEUE',
+                        ),
+                    ),
+                    array(
+                        array(
+                            'name' => 'last_name',
+                            'comment' => 'Last name of the contact',
+                            'label' => 'LBL_LAST_NAME',
+                        ),
+                        'do_not_call',
+                    ),
+                    array(
+                        array(
+                            'name' => 'account_name',
+                            'displayParams' => array(),
+                        ),
+                        array(
+                            'name' => '',
+                            'displayParams' => array(
+                                'enableConnectors' => true,
+                                'module' => 'Leads',
+                                'connectors' => array(
+                                    'ext_rest_twitter',
+                                ),
+                            ),
+                        ),
+                    ),
+                    array(
+                        array(
+                            'name' => 'phone_home',
+                            'comment' => 'Home phone number of the contact',
+                            'label' => 'LBL_HOME_PHONE',
+                        ),
+                        'phone_work',
+                    ),
+                    array(
+                        'phone_mobile',
+                        array(
+                            'name' => 'phone_other',
+                            'comment' => 'Other phone number for the contact',
+                            'label' => 'LBL_OTHER_PHONE',
+                        ),
+                    ),
+                    array(
+                        'email1',
+                        'phone_fax',
+                    ),
+                    array(
+                        array(
+                            'name' => 'primary_address_street',
+                            'label' => 'LBL_PRIMARY_ADDRESS',
+                            'type' => 'address',
+                            'displayParams' => array(
+                                'key' => 'primary',
+                            ),
+                        ),
+                        array(
+                            'name' => 'alt_address_street',
+                            'label' => 'LBL_ALTERNATE_ADDRESS',
+                            'type' => 'address',
+                            'displayParams' => array(
+                                'key' => 'alt',
+                            ),
+                        ),
+                    ),
+                ),
+                'LBL_PANEL_ASSIGNMENT' => array(
+                    array(
+                        array(
+                            'name' => 'sales_quote_amount_c',
+                            'label' => 'LBL_SALES_QUOTE_AMOUNT',
+                        ),
+                        array(
+                            'name' => 'wpsourcecode_c',
+                            'studio' => 'visible',
+                            'label' => 'LBL_WPSOURCECODE',
+                        ),
+                    ),
+                    array(
+                        array(
+                            'name' => 'sales_lawn_size_c',
+                            'label' => 'LBL_SALES_LAWN_SIZE',
+                        ),
+                        array(
+                            'name' => 'assigned_user_name',
+                            'label' => 'LBL_ASSIGNED_TO',
+                        ),
+                    ),
+                    array(
+                        array(
+                            'name' => 'realgreen_number_c',
+                            'label' => 'LBL_REALGREEN_NUMBER',
+                        ),
+                        '',
+                    ),
+                    array(
+                        'description',
+                    ),
+                ),
+                'LBL_PANEL_ADVANCED' => array(
+                    array(
+                        array(
+                            'name' => 'customer_cancelled_c',
+                            'studio' => 'visible',
+                            'label' => 'LBL_CUSTOMER_CANCELLED',
+                        ),
+                        'status',
+                    ),
+                    array(
+                        array(
+                            'name' => 'sales_cancel_reject_reason_c',
+                            'studio' => 'visible',
+                            'label' => 'LBL_SALES_CANCEL_REJECT_REASON',
+                        ),
+                        array(
+                            'name' => 'weed_pro_customer_c',
+                            'studio' => 'visible',
+                            'label' => 'LBL_WEED_PRO_CUSTOMER',
+                        ),
+                    ),
+                    array(
+                        array(
+                            'name' => 'task_call_stage_list_c',
+                            'studio' => 'visible',
+                            'label' => 'LBL_TASK_CALL_STAGE_LIST',
+                        ),
+                        '',
+                    ),
+                    array(
+                        array(
+                            'name' => 'date_entered',
+                            'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',
+                        ),
+                        array(
+                        'name' => 'date_modified',
+                        'label' => 'LBL_DATE_MODIFIED',
+                        'customCode' => '{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}',
+                        ),
+                    ),
+                ),
+                'lbl_editview_panel4' => array(
+                    array(
+                        array(
+                            'name' => 'sales_lifecycle_stage_c',
+                            'studio' => 'visible',
+                            'label' => 'LBL_SALES_LIFECYCLE_STAGE',
+                        ),
+                        array(
+                            'name' => 'intakeformtype_c',
+                            'studio' => 'visible',
+                            'label' => 'LBL_INTAKEFORMTYPE',
+                        ),
+                    ),
+                    array(
+                        array(
+                            'name' => 'hubspot_lead_score_c',
+                            'label' => 'LBL_HUBSPOT_LEAD_SCORE',
+                        ),
+                        array(
+                            'name' => 'hs_analytics_source_c',
+                            'label' => 'LBL_HS_ANALYTICS_SOURCE',
+                        ),
+                    ),
+                    array(
+                        array(
+                            'name' => 'campaign_name_c',
+                            'label' => 'LBL_CAMPAIGN_NAME',
+                        ),
+                        array(
+                            'name' => 'campaign_name',
+                            'label' => 'LBL_CAMPAIGN',
+                        ),
+                    ),
+                ),
+                'lbl_editview_panel2' => array(
+                    array(
+                        array(
+                            'name' => 'leadmap_c',
+                            'label' => 'LBL_LEADMAP',
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * Gets expected converted metadata for mobile platform
+     * 
+     * @return array
+     */
+    protected function getMobileTestConversionExpect()
+    {
+        return array(
+            array(
+                'name' => 'document_name',
+                'label' => 'LBL_DOC_NAME',
+            ),
+            'active_date',
+            'exp_date',
+            'team_name',
+        );
+    }
+
+    /**
+     * Gets the old style metadata for mobile edit/detail view for testing 
+     * conversion.
+     * 
+     * @return array
+     */
+    protected function getMobileTestConversionFormer()
+    {
+        return array(
+            'templateMeta' => array('maxColumns' => 1),
+            'panels' => array(
+                array(
+                    array(
+                        'name' => 'document_name',
+                        'label' => 'LBL_DOC_NAME',
+                    ),
+                ),
+                array('active_date'),
+                array('exp_date'),
+                array('team_name'),
+            ),
+        );
+    }
+
+    /**
      * Checks whether a fieldname exists in a viewdef
      *
      * @param string $fieldname The fieldname

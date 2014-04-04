@@ -489,6 +489,7 @@
 
         _.each(fieldMapping, function (sourceField, targetField) {
             if (model.has(sourceField) && model.get(sourceField) !== this.createView.model.get(targetField)) {
+                this.createView.model.setDefaultAttribute(targetField, model.get(sourceField));
                 this.createView.model.set(targetField, model.get(sourceField));
                 hasChanged = true;
             }

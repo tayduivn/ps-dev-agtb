@@ -184,7 +184,7 @@
                 }));
 
                 // Re-initialize the filterpanel with the new module.
-                this.dashModel.set('module', moduleName),
+                this.dashModel.set('module', moduleName);
                 this.dashModel.set('filter_id', 'assigned_to_me');
                 this.layout.trigger('dashlet:filter:reinitialize');
 
@@ -457,7 +457,7 @@
             }, this),
             result = {};
         _.each(relates, function(field) {
-            result[field.name] = app.lang.get(field.vname || field.name, this.layout.module);
+            result[field.name] = app.lang.get(field.vname || field.name, [this.layout.module, moduleName]);
         }, this);
         return result;
     },
@@ -626,16 +626,18 @@
      * @private
      */
     _displayDashlet: function(filterDef) {
+        // Get the columns that are to be displayed and update the panel metadata.
+        var columns = this._getColumnsForDisplay();
+        this.meta.panels = [{fields: columns}];
+
         this.context.set('skipFetch', false);
         this.context.set('limit', this.settings.get('limit'));
+        this.context.set('fields', this.getFieldNames());
 
         if (filterDef) {
             this._applyFilterDef(filterDef);
             this.context.reloadData({'recursive': false});
         }
-        // get the columns that are to be displayed and update the panel metadata
-        var columns = this._getColumnsForDisplay();
-        this.meta.panels = [{fields: columns}];
         this._startAutoRefresh();
     },
 

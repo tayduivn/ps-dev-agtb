@@ -80,6 +80,17 @@ $dictionary['Notifications'] = array(
             'studio' => array('searchview' => false),
         ),
     ),
+    'indices' => array(
+        array(
+            'name' => 'idx_notifications_my_unread_items',
+            'type' => 'index',
+            'fields' => array(
+                'assigned_user_id',
+                'is_read',
+                'deleted',
+            ),
+        ),
+    ),
     'relationships' => array(),
     'optimistic_lock' => true,
 );

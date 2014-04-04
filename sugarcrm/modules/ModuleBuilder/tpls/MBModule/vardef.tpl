@@ -12,20 +12,21 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 $dictionary['{{$class.name}}'] = array(
-	'table'=>'{{$class.table_name}}',
-	'audited'=>{{$class.audited}},
-	'activity_enabled'=>{{$class.activity_enabled}},
-	{{if !($class.templates|strstr:"file")}}
-	'duplicate_merge'=>true,
-	{{/if}}
-	'fields'=>{{$class.fields_string}},
-	'relationships'=>{{$class.relationships}},
-	'optimistic_locking'=>true,
-	{{if !empty($class.table_name) && !empty($class.templates)}}
-	'unified_search'=>true,
-	{{/if}}
+    'table' => '{{$class.table_name}}',
+    'audited' => {{if $class.audited}}true{{else}}false{{/if}},
+    'activity_enabled' => {{if $class.activity_enabled}}true{{else}}false{{/if}},
+{{if !($class.templates|strstr:"file")}}
+    'duplicate_merge' => true,
+{{/if}}
+    'fields' => {{$class.fields_string}},
+    'relationships' => {{$class.relationships}},
+    'optimistic_locking' => true,
+{{if !empty($class.table_name) && !empty($class.templates)}}
+    'unified_search' => true,
+{{/if}}
 );
+
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
+    require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('{{$class.name}}','{{$class.name}}', array({{$class.templates}}));
