@@ -67,10 +67,10 @@ class ImportViewDupcheck extends ImportView
 
         $content = $this->ss->fetch('modules/Import/tpls/dupcheck.tpl');
         $this->ss->assign("CONTENT", $content);
-        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
+        $this->ss->display($this->getCustomFilePathIfExists('modules/Import/tpls/wizardWrapper.tpl'));
     }
 
-    private function getImportMap()
+    protected function getImportMap()
     {
         if( !empty($_REQUEST['source_id']) )
         {
@@ -87,7 +87,7 @@ class ImportViewDupcheck extends ImportView
     /**
      * Returns JS used in this view
      */
-    private function _getJS()
+    protected function _getJS()
     {
         global $mod_strings, $sugar_config;
 
