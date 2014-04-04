@@ -15,13 +15,15 @@
      * {@inheritDoc}
      */
     events: {
-        'click [data-action=download]': 'startDownload'
+        'click [data-action=download]': 'startDownload',
+        'click [data-action=download-all]': 'startDownloadArchive'
     },
 
     /**
      * @property {Object} `Select2` object.
      */
     $node: null,
+
     /**
      * @property {String} Selector for `Select2` dropdown.
      */
@@ -228,6 +230,35 @@
      */
     startDownload: function (evt) {
         var uri = this.$(evt.currentTarget).data('url');
+        app.api.fileDownload(
+            uri,
+            {
+                error: function (data) {
+                    // refresh token if it has expired
+                    app.error.handleHttpError(data, {});
+                }
+            },
+            {iframe: this.$el}
+        );
+    },
+
+    /**
+     * Download archived files from server.
+     */
+    startDownloadArchive: function () {
+        var params = {
+            format:'sugar-html-json',
+            link_name: this.def.link,
+            platform: 'base'
+        };
+        params[(new Date()).getTime()] = 1;
+
+        // todo: change buildURL to buildFileURL when will be allowed "link" attribute
+        var uri = app.api.buildURL(this.model.module, 'file', {
+            module: this.model.module,
+            id: this.model.id,
+            field: this.def.modulefield
+        }, params);
 
         app.api.fileDownload(
             uri,

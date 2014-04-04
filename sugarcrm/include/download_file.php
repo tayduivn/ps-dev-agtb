@@ -272,6 +272,57 @@ class DownloadFile {
     }
 
     /**
+     * Gets a archive of files and returns an HTTP response with the contents
+     * of the request file for download archive.
+     *
+     * @param array $beans The list of SugarBean(s) to get the archive for
+     * @param string $field The field name to get the file for
+     * @param boolean $forceDownload force to download the file if true.
+     * @param string $outputName Output archive name.
+     *
+     * @throws Exception
+     */
+    public function getArchive(array $beans, $field, $forceDownload = true, $outputName = '')
+    {
+        $archive = tempnam(sys_get_temp_dir(), 'sug');
+
+        $zip = new ZipArchive();
+        $zip->open($archive);
+        $counts = 0;
+
+        foreach ($beans as $bean) {
+            if ($this->validateBeanAndField($bean, $field, 'file')
+                || $this->validateBeanAndField($bean, $field, 'image')) {
+
+                $info = $this->getFileInfo($bean, $field);
+                if ($info) {
+                    $zip->addFromString($info['name'], file_get_contents($info['path']));
+                    $counts++;
+                }
+            }
+        }
+        $zip->close();
+
+        if (!$counts) {
+            throw new Exception('Files could not be retrieved for this record');
+        }
+
+        $outputName = trim($outputName);
+        if (empty($outputName)) {
+            $outputName = 'archive.zip';
+        } else if (substr($outputName, strlen($outputName) - 4) != '.zip') {
+            $outputName .= '.zip';
+        }
+
+        $this->outputFile($forceDownload, array(
+            'content-type' => $this->getMimeType($archive),
+            'content-length' => filesize($archive),
+            'name' => $outputName,
+            'path' => $archive,
+        ));
+    }
+
+    /**
      * Gets the mime type of a file
      *
      * @param string $filename Path to the file
@@ -341,7 +392,11 @@ class DownloadFileApi extends DownloadFile
             }
         } else {
             $this->api->setHeader("Content-Type", "application/force-download");
-            $this->api->setHeader("Content-type", "application/octet-stream");
+            if(!empty($info['content-type'])) {
+                $this->api->setHeader("Content-Type", $info['content-type']);
+            } else {
+                $this->api->setHeader("Content-Type", "application/octet-stream");
+            }
             if(empty($info['name'])) {
                 $info['name'] = pathinfo($info['path'], PATHINFO_BASENAME);
             }
