@@ -173,6 +173,84 @@ END;
     }
 
     /**
+     * Gets fields from a panel and converts them from legacy format to sidecar
+     * format
+     * 
+     * @param array $panel The legacy panel
+     * @param integer $maxcols The maximum number of columns for the layout
+     * @return array
+     */
+    public function getConvertedPanelDefs($panel, $maxcols)
+    {
+        $fields = array();
+        if (is_array($panel)) {
+            foreach ($panel as $rowIndex => $row) {
+                // This is a single panel, most likely mobile or portal
+                if (is_string($row)) {
+                    $fields[] = $row;
+                    continue;
+                }
+
+                // If this is an array, handle it
+                $cols = count($row);
+                // Assumption here is that Portal and Wireless will never have
+                // more than 2 columns in the old setup
+                if ($cols == 1) {
+                    $displayParams = array('colspan' => $maxcols);
+                    // Either a string field name or an instruction
+                    if (is_string($row[0])) {
+                        if (!$this->isValidField($row[0])) {
+                            continue;
+                        }
+                        if ($maxcols == 1) {
+                            $fields[] = $row[0];
+                        } else {
+                            $fields[] = array(
+                                'name' => $row[0],
+                                'displayParams' => $displayParams
+                            );
+                        }
+                    } elseif (is_array($row[0])) {
+                        // Some sort of instruction set
+                        if (isset($row[0]['name'])) {
+                            // Old style field now maps to name
+                            $field = $row[0]['name'];
+                            if (!$this->isValidField($field)) {
+                                continue;
+                            }
+                            unset($row[0]['name']);
+                            $fields[] = array_merge(
+                                array('name' => $field),
+                                $row[0],
+                                $maxcols == 1 ? array() : array('displayParams' => $displayParams)
+                            );
+                        } else {
+                            // Fallback... take it as is
+                            $fields[] = $row[0];
+                        }
+                    }
+                } else {
+                    // We actually have the necessary col count
+                    foreach ($row as $rowFields) {
+                        if (is_array($rowFields)) {
+                            if (isset($rowFields['name'])) {
+                                if (!$this->isValidField($rowFields['name'])) {
+                                    continue;
+                                }
+                                $fields[] = $rowFields['name'];
+                            }
+                        } else {
+                            $fields[] = $rowFields;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $fields;
+    }
+
+    /**
      * Handles the actual conversion of viewdefs. By default this method will 
      * only convert field defs without panel data to support original upgrading
      * from 6.5 -> 6.6 and to support portal and mobile conversion. 
@@ -187,65 +265,23 @@ END;
     {
         $fields = $panels = array();
         if (isset($defs[$panelKey])) {
-            $c = 0;
-            
             // Necessary for setting the proper field array types
             $maxcols = isset($defs['templateMeta']['maxColumns']) ? intval($defs['templateMeta']['maxColumns']) : 2;
-            foreach ($defs[$panelKey] as $label => $rows) {
-                $cols = count($rows);
-                // Assumption here is that Portal and Wireless will never have
-                // more than 2 columns in the old setup
-                if ($cols == 1) {
-                    $displayParams = array('colspan' => $maxcols);
-                    // Either a string field name or an instruction
-                    if (is_string($rows[0])) {
-                        if (!$this->isValidField($rows[0])) {
-                            continue;
-                        }
-                        if ($maxcols == 1) {
-                            $fields[] = $rows[0];
-                        } else {
-                            $fields[] = array('name' => $rows[0], 'displayParams' => $displayParams);
-                        }
-                    } else {
-                        // Some sort of instruction set
-                        if (is_array($rows[0])) {
-                            if (isset($rows[0]['name'])) {
-                                // Old style field now maps to name
-                                $field = $rows[0]['name'];
-                                if (!$this->isValidField($field)) {
-                                    continue;
-                                }
-                                unset($rows[0]['name']);
-                                $fields[] = array_merge(
-                                    array('name' => $field),
-                                    $rows[0],
-                                    $maxcols == 1 ? array() : array('displayParams' => $displayParams)
-                                );
-                            } else {
-                                // Fallback... take it as is
-                                $fields[] = $rows[0];
-                            }
-                        }
-                    }
-                } else {
-                    // We actually have the necessary col count
-                    foreach ($rows as $row) {
-                        foreach ($row as $field) {
-                            if (is_string($field)) {
-                                if (!$this->isValidField($field)) {
-                                    continue;
-                                }
-                                $fields[] = $field;
-                            } elseif (isset($field['name'])) {
-                                if (!$this->isValidField($field['name'])) {
-                                    continue;
-                                }
-                                $fields[] = $field['name'];
-                            }
-                        }
-                    }
-                }
+
+            // Mobile and portal implement one panel only, so this needs to be
+            // handled up front. Also, neither portal nor mobile utilize the
+            // additional metadata per panel so sending back the field defs here
+            // is adequate.
+            if (in_array($this->client, array('mobile', 'wireless', 'portal'))) {
+                return $this->getConvertedPanelDefs($defs[$panelKey], $maxcols);
+            }
+
+            // Loop counter, used to keep track of labels for a panel
+            $c = 0;
+
+            foreach ($defs[$panelKey] as $label => $panel) {
+                // Get fields from this panel and convert them
+                $fields = array_merge($fields, $this->getConvertedPanelDefs($panel, $maxcols));
 
                 // For full conversion of metadata we need to group fields into 
                 // their respective panels. This handles that here.
@@ -288,7 +324,7 @@ END;
                     $fields = array();
                 }
 
-                // Increment the counter that handles 
+                // Increment the counter that handles panel labels
                 $c++;
             }
         }
