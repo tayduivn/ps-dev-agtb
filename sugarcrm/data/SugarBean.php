@@ -3474,6 +3474,11 @@ class SugarBean
             $bean_queried = $submodule;
         }
 
+        // make sure ORDER BY contains "bean_table.id"
+        // in order to guarantee stable sequence
+        $id_column = $bean_queried->getTableName() . '.id';
+        $id_is_used = false;
+
         $raw_elements = explode(',', $order_by);
         $valid_elements = array();
         foreach ($raw_elements as $key => $value) {
@@ -3532,15 +3537,15 @@ class SugarBean
                 }
 
                 foreach ($columns as $column) {
+                    if ($column[0] === $id_column) {
+                        $id_is_used = true;
+                    }
                     $valid_elements[] = implode(' ', $column);
                 }
             }
         }
 
-        // make sure ORDER BY contains "bean_table.id"
-        // in order to guarantee stable sequence
-        $id_column = $bean_queried->getTableName() . '.id';
-        if (!in_array($id_column, $valid_elements)) {
+        if (!$id_is_used) {
             $valid_elements[] = $id_column;
         }
 
