@@ -17,12 +17,12 @@ class LanguageManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $testModule = 'do_not_change';
     protected $testLanguage = 'ever';
-    
+
     /**
      * Tests that the language file load order is correct always.
-     * 
+     *
      * IF THIS TEST FAILS THEN A CHANGE WAS MADE THAT SHOULD NOT HAVE BEEN MADE.
-     * 
+     *
      * @param int $index The numeric index of this path in the list
      * @param string $path The path to match to this index
      * @dataProvider languageFilePathProvider
@@ -42,5 +42,26 @@ class LanguageManagerTest extends Sugar_PHPUnit_Framework_TestCase
             array('index' => 2, 'path' => 'custom/modules/do_not_change/language/ever.lang.php'),
             array('index' => 3, 'path' => 'custom/modules/do_not_change/Ext/Language/ever.lang.ext.php'),
         );
+    }
+
+    public function setUp()
+    {
+        parent::setUp();
+        SugarTestHelper::setUp('files');
+    }
+
+    /**
+     * @ticket BR-1467
+     * Test that filter_operators_dom is loaded if default is non-english and we load English
+     */
+    public function testLanguageOrder()
+    {
+        $GLOBALS['sugar_config']['default_language'] = 'tlh_QON';
+        $GLOBALS['current_language'] = 'en_us';
+        SugarTestHelper::saveFile('include/language/tlh_QON.lang.php');
+        SugarAutoLoader::put('include/language/tlh_QON.lang.php', '<?php $app_list_strings = array ("language_pack_name" => "tlhIngan Hol");', false);
+        $strings = return_app_list_strings_language('en_us');
+        $this->assertArrayHasKey('filter_operators_dom', $strings);
+        $this->assertNotEmpty($strings['filter_operators_dom'], 'filter_operators_dom is empty');
     }
 }
