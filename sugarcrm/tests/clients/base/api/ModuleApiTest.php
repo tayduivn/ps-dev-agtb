@@ -36,6 +36,9 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public $accounts, $account_ids;
     public $roles;
+    /**
+     * @var ModuleApi
+     */
     public $moduleApi;
     public $serviceMock;
 
@@ -58,7 +61,7 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public function tearDown()
+    public static function tearDownAfterClass()
     {
         // delete the bunch of accounts crated
         $GLOBALS['db']->query("DELETE FROM accounts WHERE assigned_user_id = '{$GLOBALS['current_user']->id}'");
@@ -68,11 +71,6 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
 
         SugarACL::resetACLs();
-        parent::tearDown();
-    }
-
-    public static function tearDownAfterClass()
-    {
         SugarTestHelper::tearDown();
     }
 
@@ -82,17 +80,27 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->moduleApi->setFavorite($this->serviceMock,
             array('module' => 'Accounts', 'record' => $this->accounts[0]->id));
         $this->assertTrue((bool)$result['my_favorite'], "Was not set to true");
-    }
-    // test remove favorite
-    public function testRemoveFavorite()
-    {
-        $result = $this->moduleApi->setFavorite($this->serviceMock,
-            array('module' => 'Accounts', 'record' => $this->accounts[0]->id));
-        $this->assertTrue((bool)$result['my_favorite'], "Was not set to true");
 
+        $this->assertArrayHasKey('following', $result, 'API response does not contain "following" key');
+        $this->assertNotEmpty($result['following'], 'Bean was not auto-followed when marked as favorite');
+
+        return $this->accounts[0];
+    }
+
+    /**
+     * @depends testSetFavorite
+     */
+    public function testRemoveFavorite(Account $account)
+    {
         $result = $this->moduleApi->unsetFavorite($this->serviceMock,
-            array('module' => 'Accounts', 'record' => $this->accounts[0]->id));
-        $this->assertFalse((bool)$result['my_favorite'], "Was not set to false");
+            array('module' => 'Accounts', 'record' => $account->id)
+        );
+
+        $this->assertArrayHasKey('my_favorite', $result, 'API response does not contain "my_favorite" key');
+        $this->assertEmpty($result['my_favorite'], 'Bean was not removed from favorites');
+
+        $this->assertArrayHasKey('following', $result, 'API response does not contain "following" key');
+        $this->assertNotEmpty($result['following'], 'Bean was auto-unfollowed when removed from favorites');
     }
     // test set favorite of deleted record
     public function testSetFavoriteDeleted()
