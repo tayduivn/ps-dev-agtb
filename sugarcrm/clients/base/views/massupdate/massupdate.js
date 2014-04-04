@@ -131,6 +131,11 @@
         if(_.size(options.meta.panels[0].fields) === 0) {
             var moduleMetadata = app.metadata.getModule(options.module),
                 massFields = [];
+
+            if (!moduleMetadata) {
+                return;
+            }
+
             _.each(moduleMetadata.fields, function(field){
                 // Only fields that are marked with massupdate set to true AND
                 // that are not readonly should be used
