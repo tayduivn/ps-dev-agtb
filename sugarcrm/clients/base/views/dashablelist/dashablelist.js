@@ -457,7 +457,7 @@
             }, this),
             result = {};
         _.each(relates, function(field) {
-            result[field.name] = app.lang.get(field.vname || field.name, this.layout.module);
+            result[field.name] = app.lang.get(field.vname || field.name, [this.layout.module, moduleName]);
         }, this);
         return result;
     },
