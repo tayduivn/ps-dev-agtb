@@ -17,6 +17,7 @@ describe("Base.Layout.Dashboard", function(){
 
     beforeEach(function() {
         app = SugarTest.app;
+        SugarTest.loadComponent('base', 'layout', 'default');
     });
 
     afterEach(function() {
@@ -109,7 +110,7 @@ describe("Base.Layout.Dashboard", function(){
     });
 
     describe("Module Dashboard", function() {
-        var context, parentLayout, parentModule, sandbox = sinon.sandbox.create();;
+        var context, parentLayout, parentModule, sandbox = sinon.sandbox.create();
         beforeEach(function() {
             parentModule = "Tasks";
             context = app.context.getContext({
@@ -132,39 +133,230 @@ describe("Base.Layout.Dashboard", function(){
             sandbox.restore();
         });
 
-        it('should show help dashboard', function() {
-            var collection = new Backbone.Collection();
-            collection.add(new Backbone.Model({'dashboard_type' : 'help-dashboard', id: 'help-dash'}));
-            collection.add(new Backbone.Model({'dashboard_type' : 'dashboard', id: 'normal-dash'}));
-
-            sandbox.stub(layout, 'navigateLayout', function(id) {
+        describe('openHelpDashboard', function() {
+            var closestLayout, def;
+            beforeEach(function() {
+                layout.dashboardVisibleState = 'open';
+                def = {
+                    'components': [
+                        {'layout': {'span': 4}},
+                        {'layout': {'span': 8}}
+                    ]
+                };
+                closestLayout = SugarTest.createLayout('base', null, 'default', def, null);
+                sandbox.stub(layout, 'closestComponent', function() {
+                    return closestLayout;
+                });
+                sandbox.stub(closestLayout, 'toggleSidePane');
+                sandbox.stub(layout, 'navigateLayout', function(id) {
+                });
+                sandbox.stub(layout.collection, 'fetch');
             });
 
-            layout.showHelpDashboard(collection);
-            expect(layout.navigateLayout).toHaveBeenCalledWith('help-dash');
+            afterEach(function() {
+                layout.dashboardVisibleState = 'open';
+                sandbox.restore();
+            });
+
+            it('will not toggle sidebar if already open', function() {
+                layout.openHelpDashboard();
+                expect(layout.closestComponent).not.toHaveBeenCalled();
+                expect(closestLayout.toggleSidePane).not.toHaveBeenCalled();
+            });
+
+            it('will open sidebar if closed', function() {
+                layout.dashboardVisibleState = 'close';
+                layout.openHelpDashboard();
+                expect(layout.closestComponent).toHaveBeenCalled();
+                expect(closestLayout.toggleSidePane).toHaveBeenCalled();
+            });
+
+            it('will not call fetch when help is visible', function() {
+                sandbox.stub(layout, 'isHelpDashboard', function() {
+                    return true;
+                });
+                layout.openHelpDashboard();
+                expect(layout.collection.fetch).not.toHaveBeenCalled();
+            });
+
+            it('will call fetch help is not visible', function() {
+                sandbox.stub(layout, 'isHelpDashboard', function() {
+                    return false;
+                });
+                layout.openHelpDashboard();
+                expect(layout.collection.fetch).toHaveBeenCalled();
+            });
         });
 
-        it('should hide help dashboard when another dashboard is present', function() {
-            var collection = new Backbone.Collection();
-            collection.add(new Backbone.Model({'dashboard_type' : 'help-dashboard', id: 'help-dash'}));
-            collection.add(new Backbone.Model({'dashboard_type' : 'dashboard', id: 'normal-dash'}));
-
-            sandbox.stub(layout, 'navigateLayout', function(id) {
+        describe('closeHelpDashboard', function() {
+            beforeEach(function() {
+                sandbox.stub(layout.collection, 'fetch');
             });
 
-            layout.hideHelpDashboard(collection);
-            expect(layout.navigateLayout).toHaveBeenCalledWith('normal-dash');
+            afterEach(function() {
+                sandbox.restore();
+            });
+
+            it('will call fetch when help is visible', function() {
+                sandbox.stub(layout, 'isHelpDashboard', function() {
+                    return true;
+                });
+                layout.closeHelpDashboard();
+                expect(layout.collection.fetch).toHaveBeenCalled();
+            });
+
+            it('will not call fetch help is not visible', function() {
+                sandbox.stub(layout, 'isHelpDashboard', function() {
+                    return false;
+                });
+                layout.closeHelpDashboard();
+                expect(layout.collection.fetch).not.toHaveBeenCalled();
+            });
         });
 
-        it('should hide the help dashboard and display list', function() {
-            var collection = new Backbone.Collection();
-            collection.add(new Backbone.Model({'dashboard_type' : 'help-dashboard', id: 'help-dash'}));
-
-            sandbox.stub(layout, 'navigateLayout', function(id) {
+        describe('showHelpDashboard', function() {
+            beforeEach(function() {
+                sandbox.stub(layout, 'navigateLayout', function(id) {
+                });
             });
 
-            layout.hideHelpDashboard(collection);
-            expect(layout.navigateLayout).toHaveBeenCalledWith('list');
+            afterEach(function() {
+                sandbox.restore();
+            });
+
+            it('will call navigateLayout', function() {
+                var collection = new Backbone.Collection();
+                collection.add(new Backbone.Model({'dashboard_type': 'help-dashboard', id: 'help-dash'}));
+                collection.add(new Backbone.Model({'dashboard_type': 'dashboard', id: 'normal-dash'}));
+
+                layout.showHelpDashboard(collection);
+                expect(layout.navigateLayout).toHaveBeenCalledWith('help-dash');
+            });
+        });
+
+        describe('hideHelpDashboard', function() {
+            beforeEach(function() {
+                sandbox.stub(layout, 'navigateLayout', function(id) {
+                });
+            });
+
+            afterEach(function() {
+                sandbox.restore();
+            });
+
+            it('will hide help dashboard when another dashboard is present', function() {
+                var collection = new Backbone.Collection();
+                collection.add(new Backbone.Model({'dashboard_type': 'help-dashboard', id: 'help-dash'}));
+                collection.add(new Backbone.Model({'dashboard_type': 'dashboard', id: 'normal-dash'}));
+
+                layout.hideHelpDashboard(collection);
+                expect(layout.navigateLayout).toHaveBeenCalledWith('normal-dash');
+            });
+
+            it('will hide the help dashboard and display list', function() {
+                var collection = new Backbone.Collection();
+                collection.add(new Backbone.Model({'dashboard_type': 'help-dashboard', id: 'help-dash'}));
+
+                layout.hideHelpDashboard(collection);
+                expect(layout.navigateLayout).toHaveBeenCalledWith('list');
+            });
+        });
+
+        describe('isHelpDashboard', function() {
+            var ogType;
+            beforeEach(function() {
+                ogType = layout.model.get('dashboard_type');
+            });
+
+            afterEach(function() {
+                layout.model.set('dashboard_type', ogType, {silent: true});
+            });
+
+            it('will return true', function() {
+                layout.model.set('dashboard_type', 'help-dashboard', {silent: true});
+                expect(layout.isHelpDashboard()).toBeTruthy();
+            });
+
+            it('will return false', function() {
+                layout.model.set('dashboard_type', 'dashboard', {silent: true});
+                expect(layout.isHelpDashboard()).toBeFalsy();
+            });
+        });
+
+        describe('layout.model.sync event', function() {
+            beforeEach(function() {
+                sandbox.stub(app.events, 'trigger');
+            });
+
+            afterEach(function() {
+                sandbox.restore();
+            });
+
+            describe('when sidebar is open', function() {
+                var isHelpStub;
+                beforeEach(function() {
+                    layout.dashboardVisibleState = 'open';
+                });
+
+                afterEach(function() {
+                    if (isHelpStub) {
+                        isHelpStub.restore();
+                    }
+                });
+
+                it('will trigger event when dashboard is help', function() {
+                    isHelpStub = sandbox.stub(layout, 'isHelpDashboard', function() {
+                        return true;
+                    });
+                    layout.model.trigger('sync');
+
+                    expect(isHelpStub).toHaveBeenCalled();
+                    expect(app.events.trigger).toHaveBeenCalledWith('app:help:shown');
+                });
+
+                it('will not trigger event when dashboard is not help', function() {
+                    isHelpStub = sandbox.stub(layout, 'isHelpDashboard', function() {
+                        return false;
+                    });
+                    layout.model.trigger('sync');
+
+                    expect(isHelpStub).toHaveBeenCalled();
+                    expect(app.events.trigger).not.toHaveBeenCalled();
+                });
+            });
+
+            describe('when sidebar is closed', function() {
+                var isHelpStub;
+                beforeEach(function() {
+                    layout.dashboardVisibleState = 'close';
+                });
+
+                afterEach(function() {
+                    if (isHelpStub) {
+                        isHelpStub.restore();
+                    }
+                });
+
+                it('will not trigger event when dashboard is help', function() {
+                    isHelpStub = sandbox.stub(layout, 'isHelpDashboard', function() {
+                        return true;
+                    });
+                    layout.model.trigger('sync');
+
+                    expect(isHelpStub).not.toHaveBeenCalled();
+                    expect(app.events.trigger).not.toHaveBeenCalled();
+                });
+
+                it('will not trigger event when dashboard is not help', function() {
+                    isHelpStub = sandbox.stub(layout, 'isHelpDashboard', function() {
+                        return false;
+                    });
+                    layout.model.trigger('sync');
+
+                    expect(isHelpStub).not.toHaveBeenCalled();
+                    expect(app.events.trigger).not.toHaveBeenCalled();
+                });
+            });
         });
 
         it("should initialize dashboard model and collection", function() {

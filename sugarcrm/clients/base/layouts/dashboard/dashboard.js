@@ -44,6 +44,11 @@
     },
 
     /**
+     * What is the current Visible State of the dashboard
+     */
+    dashboardVisibleState: 'open',
+
+    /**
      * {@inheritdoc}
      */
     initialize: function(options) {
@@ -75,21 +80,32 @@
 
 
         // help dashboard triggers
-        app.events.on('app:help:show', function() {
-            this.collection.fetch({
-                silent: true,
-                success: _.bind(this.showHelpDashboard, this)
-            });
-        }, this);
-        app.events.on('app:help:hide', function() {
-            this.collection.fetch({
-                silent: true,
-                success: _.bind(this.hideHelpDashboard, this)
-            });
-        }, this);
+        app.events.on('app:help:show', this.openHelpDashboard, this);
+        app.events.on('app:help:hide', this.closeHelpDashboard, this);
+
+        var defaultLayout = this.closestComponent('sidebar');
+        if (defaultLayout) {
+            this.listenTo(defaultLayout, 'sidebar:state:changed', function(state) {
+                this.dashboardVisibleState = state;
+                if (state === 'open' && this.isHelpDashboard()) {
+                    app.events.trigger('app:help:shown');
+                } else {
+                    app.events.trigger('app:help:hidden');
+                }
+            }, this);
+
+            try {
+                this.dashboardVisibleState = defaultLayout.isSidePaneVisible() ? 'open' : 'close';
+            } catch (error) {
+                // this happens when the dashboard component is initially created because the defaultLayout doesn't
+                // have _hideLastStateKey key set yet.  Just ignore this for now as with the way dashboards work
+                // it this code will get run again once the logic below selects which dashboard to show.
+            }
+        }
+
         // listen to the model sync event to figure out if we need to highlight the help button in the footer
         this.model.on('sync', function() {
-            if (this.model.get('dashboard_type') == 'help-dashboard') {
+            if (this.dashboardVisibleState === 'open' && this.isHelpDashboard()) {
                 app.events.trigger('app:help:shown');
             }
         }, this);
@@ -113,6 +129,40 @@
     },
 
     /**
+     * Method to open the help dashboard if it's not already loaded
+     *
+     * This will also toggle the sidebar to open if it's collapsed
+     */
+    openHelpDashboard: function() {
+        if (this.dashboardVisibleState === 'close') {
+            var defaultLayout = this.closestComponent('sidebar');
+            if (defaultLayout) {
+                defaultLayout.toggleSidePane(true);
+            }
+        }
+        if (!this.isHelpDashboard()) {
+            // if the help dashboard is already visible, just leave it
+            this.collection.fetch({
+                silent: true,
+                success: _.bind(this.showHelpDashboard, this)
+            });
+        }
+    },
+
+    /**
+     * Method to close the help dashbaord, if the help dashboard is visible
+     */
+    closeHelpDashboard: function() {
+        // the active one is not a help dashboard, don't bother refreshing the page
+        if (this.isHelpDashboard()) {
+            this.collection.fetch({
+                silent: true,
+                success: _.bind(this.hideHelpDashboard, this)
+            });
+        }
+    },
+
+    /**
      * Load the dashboards for the current module/view and then find the help dashboard and display it, it should always
      * exists but if it doesn't, just ignore it.
      *
@@ -120,7 +170,7 @@
      */
     showHelpDashboard: function(collection) {
         var dashboard = _.find(collection.models, function(model) {
-            return (model.get('dashboard_type') == 'help-dashboard');
+            return (model.get('dashboard_type') === 'help-dashboard');
         });
 
         this._navigate(dashboard);
@@ -141,6 +191,13 @@
         app.user.lastState.set(this.getLastStateKey(), '');
 
         this._navigate(dashboard);
+    },
+
+    /**
+     * Is the current open dashboad a help dashboard
+     */
+    isHelpDashboard: function() {
+        return (this.model.get('dashboard_type') === 'help-dashboard');
     },
 
     /**
@@ -330,7 +387,7 @@
      */
     addHelpDashboardMetadata: function(_initDashboard) {
         var _helpDB = app.metadata.getLayout(this.model.dashboardModule, 'help-dashboard');
-        if(_.has(_initDashboard, 'metadata')) {
+        if (_.has(_initDashboard, 'metadata')) {
             _initDashboard = [_helpDB, _initDashboard];
         } else {
             _initDashboard = [_helpDB];
@@ -632,6 +689,11 @@
     _dispose: function() {
         // always trigger the help button off
         app.events.trigger('app:help:hidden');
+
+        var defaultLayout = this.closestComponent('sidebar');
+        if (defaultLayout) {
+            this.stopListening(defaultLayout);
+        }
 
         this.dashboardLayouts = null;
         this._super('_dispose');
