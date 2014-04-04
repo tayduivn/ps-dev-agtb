@@ -174,8 +174,12 @@ require_once 'vendor/HTTP_WebDAV_Server/Server.php';
             // if we haven't found a user, then return 401
             if ( empty($this->user_focus->id) || $this->user_focus->id == -1)
             {
+                //set http status
                 $this->http_status('401 Unauthorized');
-                header('WWW-Authenticate: Basic realm="'.($this->http_auth_realm).'"');
+                //send authenticate header only if this is not a freebusy request
+                if (empty($_REQUEST['type']) || $_REQUEST['type'] != 'vfb'){
+                    header('WWW-Authenticate: Basic realm="'.($this->http_auth_realm).'"');
+                }
                 return;
             }
 
