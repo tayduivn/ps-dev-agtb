@@ -699,7 +699,8 @@ class ForecastManagerWorksheet extends SugarBean
         $isCurrentUser = ($current_user->id === $userId);
         $reporteeTotal = $this->getQuotaSum($userId, $timeperiodId);
         $managerQuota = $this->getManagerQuota($userId, $timeperiodId);
-        $managerAmount = (isset($managerQuota['amount'])) ? $managerQuota['amount'] : '0';
+        $managerAmount = (isset($managerQuota['amount']) && !empty($managerQuota['amount']))
+                            ? $managerQuota['amount'] : '0';
         $newTotal = SugarMath::init($managerAmount, 6)->sub($reporteeTotal)->result();
         $quota = BeanFactory::getBean('Quotas', isset($managerQuota['id']) ? $managerQuota['id'] : null);
         $quotaAmount = isset($quota->amount) ? $quota->amount : '0';
