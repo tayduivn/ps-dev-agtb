@@ -413,10 +413,10 @@ class RenameModules
                     //At this point we don't know if we should replace the string with the plural or singular version of the new
                     //strings so we'll try both but with the plural version first since it should be longer than the singular.
                     // The saved old strings are html decoded, so we need to decode the new string first before str_replace.
-                    $replacedString = str_replace(html_entity_decode_utf8($renameFields['prev_plural'], ENT_QUOTES), $renameFields['plural'], $oldStringValue);
-                    if ($replacedString == $oldStringValue) {
+                    $replacedString = str_replace($renameFields['prev_plural'], html_entity_decode_utf8($renameFields['plural'], ENT_QUOTES), $oldStringValue);
+                    if ($replacedString === $oldStringValue) {
                         // continue to replace singular only if nothing been replaced yet
-                        $replacedString = str_replace(html_entity_decode_utf8($renameFields['prev_singular'], ENT_QUOTES), $renameFields['singular'], $replacedString);
+                        $replacedString = str_replace($renameFields['prev_singular'], html_entity_decode_utf8($renameFields['singular'], ENT_QUOTES), $replacedString);
                     }
                     $replacementStrings[$replaceKey] = $replacedString;
                 }
