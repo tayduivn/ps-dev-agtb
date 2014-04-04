@@ -28,7 +28,27 @@ class SugarUpgradeProjectShowModule extends UpgradeScript
         $projectModuleEnabled = ($this->db->tableExists("project") && $this->db->fetchOne("SELECT id FROM project"));
         if ($projectModuleEnabled && !SugarAutoLoader::fileExists($path . '/Include/' . $file_name)) {
 
-            if (!sugar_is_dir($path. '/Include/')) {
+            // add in subpanel for Opportunities
+            $sub_panel_path = 'custom/Extension/modules/Opportunities/Ext/clients/base/layouts/subpanels/';
+            if (!sugar_is_dir($sub_panel_path)) {
+                sugar_mkdir($sub_panel_path, null, true);
+            }
+
+            $file_contents = '
+<?php
+// WARNING: The contents of this file are auto-generated.
+
+$viewdefs["Opportunities"]["base"]["layout"]["subpanels"]["components"][] = array (
+            "layout" => "subpanel",
+            "label" => "LBL_PROJECTS_SUBPANEL_TITLE",
+            "context" => array (
+                "link" => "project",
+            ),
+);
+';
+            sugar_file_put_contents($sub_panel_path . $file_name, $file_contents);
+
+            if (!sugar_is_dir($path . '/Include/')) {
                 sugar_mkdir($path . '/Include/', null, true);
             }
 
