@@ -15,16 +15,17 @@
   position: fixed;
   top: 48px;
 
-    .list-headerpane.headerpane {
-        position: relative;
-        top: inherit;
-        border: 0px none;
-        left: inherit;
-        display:inline-block;
-        height: 28px;
-        min-height: 28px;
-        width: auto;
-    }
+  .list-headerpane.headerpane {
+      position: relative;
+      top: inherit;
+      border: 0px none;
+      left: inherit;
+      display:inline-block;
+      height: 28px;
+      min-height: 28px;
+      width: auto;
+  }
+
   h1 {
     width: 100%;
     .box-sizing(border-box);
@@ -145,6 +146,30 @@
     }
     .detail .record-cell {
       max-width: 180px;
+    }
+  }
+
+  span[data-type="enum"],
+  span[data-type="relate"] {
+    .input-append {
+      position: absolute;
+      font-size: inherit;
+      right: 0;
+    }
+    .normal > span {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .edit.error {
+      position: relative;
+      display: block;
+      .add-on.error-tooltip {
+        position: absolute;
+        top: 3px;
+        right: 16px;
+        left: auto;
+        background: transparent;
+      }
     }
   }
 
