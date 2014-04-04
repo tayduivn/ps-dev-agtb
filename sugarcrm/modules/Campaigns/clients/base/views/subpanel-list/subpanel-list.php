@@ -35,4 +35,22 @@ $viewdefs['Campaigns']['base']['view']['subpanel-list'] = array(
       ),
     ),
   ),
+    'rowactions' => array(
+        'actions' => array(
+            array(
+                'type' => 'rowaction',
+                'name' => 'edit_button',
+                'icon' => 'icon-pencil',
+                'label' => 'LBL_EDIT_BUTTON',
+                'event' => 'list:editrow:fire',
+                'acl_action' => 'edit',
+                'allow_bwc' => true,
+            ),
+            array(
+                'type' => 'unlink-action',
+                'icon' => 'icon-unlink',
+                'label' => 'LBL_UNLINK_BUTTON',
+            ),
+        ),
+    ),
 );
