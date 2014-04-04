@@ -244,7 +244,12 @@ class MetaDataConverter
                     $details['link'] = true;
                 } elseif($details['widget_class'] == 'SubPanelEmailLink') {
                     $details['type'] = 'email';
+                } else {
+                    // See BR-1436: we will drop unknown widgets for now since Sidecar
+                    // can not properly display them
+                    continue;
                 }
+
             }
 
             if ($bean && !empty($bean->field_defs[$details['name']])) {
