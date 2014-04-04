@@ -60,6 +60,7 @@ class FormulaHelper
                 case "url":
                 case "encrypt":
                 case "enum":
+                case "radioenum":
                     $fieldArray[$fieldName] = array($fieldName, 'string');
                     break;
                 case 'fullname':
