@@ -679,6 +679,21 @@
                 }
 
                 return msg;
+            },
+            /**
+             * gets window location parameters by name regardless of case
+             * @param {String} name name of parameter being searched for
+             * @param {String} queryString
+             * @returns {String}
+             */
+            getWindowLocationParameterByName: function (name, queryString) {
+                name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+                var regex = new RegExp('[\\?&]' + name + '=([^&#]*)', 'g'),
+                    matchResults = queryString.match(regex);
+                if (matchResults && matchResults.length > 0) {
+                    var results = regex.exec(matchResults[matchResults.length - 1]);
+                }
+                return (results === undefined || results === null) ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
             }
         });
     });

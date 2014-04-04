@@ -348,7 +348,16 @@
         if (showWizard) {
             var callbacks = {
                 complete: function() {
-                    window.location.reload(); //Reload when done
+                    var module = app.utils.getWindowLocationParameterByName('module', window.location.search),
+                        action = app.utils.getWindowLocationParameterByName('action', window.location.search);
+
+                    // work around for saml authentication of a new user
+                    if (_.isString(module) && _.isString(action) &&
+                        module.toLowerCase() === 'users' && action.toLowerCase() === 'authenticate') {
+                        window.location = window.location.pathname;
+                    } else  {
+                        window.location.reload(); //Reload when done
+                    }
                 }
             };
             app.controller.loadView({

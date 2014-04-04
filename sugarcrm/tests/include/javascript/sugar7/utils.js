@@ -106,4 +106,19 @@ describe("Sugar7 utils", function() {
             expect(app.utils.getRecordName(model)).toEqual('Simple Name');
         });
     });
+
+    var name = 'module';
+    using('query strings',
+        [
+            ['?module=asdf', 'asdf'],
+            ['?asdf=asdf&module=asdf&module=zxcv', 'zxcv'],
+            ['?asdf=asdf&module=zxcv&modtrwer=zxcv', 'zxcv'],
+            ['?xcvb=asdf&asdf=asdf&ryuit=zxcv', '']
+        ],
+        function (value, result) {
+            it('should be able to get parameters', function () {
+                var testResult = app.utils.getWindowLocationParameterByName(name, value);
+                expect(result).toEqual(testResult);
+            });
+        });
 });
