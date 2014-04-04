@@ -30,6 +30,11 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
         $this->checkCustomField();
 
         if (isset($this->def['type']) && $this->def['type'] == 'function') {
+            if(!empty($this->def['function_params'])) {
+                foreach($this->def['function_params'] as $param) {
+                    $this->addToSelect("{$this->table}.{$param}");
+                }
+            }
             $this->markNonDb();
             return;
         }
@@ -37,7 +42,7 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
         if (empty($this->alias) && !empty($this->def['name'])) {
             $this->alias = $this->def['name'];
         }
-        
+
         if (!empty($this->alias)) {
             $newAlias = $GLOBALS['db']->getValidDBName($this->alias, false, 'alias');
             if (strtolower($this->alias) != $newAlias) {

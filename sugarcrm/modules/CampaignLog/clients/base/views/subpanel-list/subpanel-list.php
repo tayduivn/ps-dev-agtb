@@ -47,8 +47,8 @@ $viewdefs['CampaignLog']['base']['view']['subpanel-list'] = array(
                     'name' => 'related_name',
                     'type' => 'parent',
                     'related_fields' => array(
-                        'parent_id',
-                        'parent_type',
+                        'related_id',
+                        'related_type',
                     ),
                 ),
             ),
