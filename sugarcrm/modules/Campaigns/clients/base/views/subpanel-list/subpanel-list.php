@@ -12,29 +12,27 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['Campaigns']['base']['view']['subpanel-list'] = array(
-  'panels' => 
-  array(
-    array(
-      'name' => 'panel_header',
-      'label' => 'LBL_PANEL_1',
-      'fields' => 
-      array(
+    'panels' => array(
         array(
-          'name' => 'name',
-          'label' => 'LBL_LIST_CAMPAIGN_NAME',
-          'enabled' => true,
-          'default' => true,
-          'link' => true,
+            'name' => 'panel_header',
+            'label' => 'LBL_PANEL_1',
+            'fields' => array(
+                array(
+                    'name' => 'name',
+                    'label' => 'LBL_LIST_CAMPAIGN_NAME',
+                    'enabled' => true,
+                    'default' => true,
+                    'link' => true,
+                ),
+                array(
+                    'name' => 'status',
+                    'label' => 'LBL_LIST_STATUS',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+            ),
         ),
-        array(
-          'name' => 'status',
-          'label' => 'LBL_LIST_STATUS',
-          'enabled' => true,
-          'default' => true,
-        ),
-      ),
     ),
-  ),
     'rowactions' => array(
         'actions' => array(
             array(
