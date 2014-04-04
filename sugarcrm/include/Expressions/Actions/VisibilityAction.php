@@ -93,19 +93,21 @@ class VisibilityAction extends AbstractAction{
 			},
 			sidecarExec : function(context, target, hide) {
 				var inv_class = 'vis_action_hidden';
-                    wasHidden = $(target).hasClass(inv_class);
-                if (_.isUndefined(this.wasRequired)) {
-                    var field = context.view.getField(this.target);
-                    if (field) {
-                        this.wasRequired = field.def.required;
-                    }
+                    wasHidden = $(target).hasClass(inv_class),
+                    field = context.view.getField(this.target);
+                if (field && _.isUndefined(field.wasRequired)) {
+                    field.wasRequired = field.def.required;
+                    if (field.wasRequired)
+                        console.log(this.target + ' was required!');
+                    else
+                        console.log(this.target + ' was not required!');
                 }
 				if (hide)
 				{
 					context.addClass(this.target, inv_class, true);
 					//Disable the field to prevent tabbing into the edit mode of the field
 					context.setFieldDisabled(this.target, true);
-					if (this.wasRequired === true)
+					if (field.wasRequired === true)
 					    context.setFieldRequired(this.target, false);
 				}
 				else
@@ -114,7 +116,7 @@ class VisibilityAction extends AbstractAction{
 					context.setFieldDisabled(this.target, false);
 					if (wasHidden)
 						SUGAR.forms.FlashField(target, null, this.target);
-                    if (this.wasRequired === true)
+                    if (field.wasRequired === true)
                         context.setFieldRequired(this.target, true);
 				}
 			},
