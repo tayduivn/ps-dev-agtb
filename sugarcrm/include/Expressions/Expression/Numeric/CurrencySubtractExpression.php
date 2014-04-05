@@ -30,7 +30,7 @@ class CurrencySubtractExpression extends NumericExpression
         $params = $this->getParameters();
         $diff = $params[0]->evaluate();
         for ($i = 1; $i < sizeof($params); $i++) {
-            $diff = SugarMath::init($diff, 6)->add($params[$i]->evaluate())->result();
+            $diff = SugarMath::init($diff, 6)->sub($params[$i]->evaluate())->result();
         }
 
         return (string)$diff;
