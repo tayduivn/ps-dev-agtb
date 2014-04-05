@@ -686,13 +686,27 @@ class MetaDataManager
 
         // Sanity check the rel defs, just in case they came back empty
         if (is_array($data)) {
+            // Certain elements of the relationship defs need to be pruned
+            $unsets = array('table', 'fields', 'indices', 'relationships');
             foreach ($data as $relKey => $relData) {
-                unset($data[$relKey]['table']);
-                unset($data[$relKey]['fields']);
-                unset($data[$relKey]['indices']);
-                unset($data[$relKey]['relationships']);
+                // Prune the relationship defs as needed
+                foreach ($unsets as $unset) {
+                    unset($relData[$unset]);
+                }
+
+                // Sort each def array for consistency to ensure sameness between
+                // metadata cache refreshes
+                ksort($relData);
+
+                // Reset the defs for this key
+                $data[$relKey] = $relData;
             }
         }
+
+        // To maintain hashes between requests, make sure this array is always
+        // in the same order. Otherwise, the serialized value of this data will
+        // potentially be different from one request to another.
+        sort($data);
 
         $data["_hash"] = $this->hashChunk($data);
 
