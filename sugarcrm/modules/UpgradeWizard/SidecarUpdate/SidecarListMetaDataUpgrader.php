@@ -39,6 +39,11 @@ class SidecarListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             $this->logUpgradeStatus('Empty metadata, doing nothing');
             return false;
         }
+        // Get the default defs so that data can be merged as needed
+        $defaults = $this->loadDefaultMetadata();
+        $defaults = $this->setDefaultsByKey($defaults);
+
+        // Now get to the converting
         $newdefs = array();
         foreach ($this->legacyViewdefs as $field => $def) {
             if (!$this->isValidField($field)) {
@@ -83,6 +88,11 @@ class SidecarListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             // Merge the rest of the defs
             $defs = array_merge($defs, $def);
 
+            // Merge the new defs into the defaults
+            if (isset($defaults[$defs['name']])) {
+                $defs = array_merge($defaults[$defs['name']], $defs);
+            }
+
             // Remove module from the defs since the app doesn't like that
             unset($defs['module']);
 
@@ -115,5 +125,30 @@ class SidecarListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 ),
             ),
         );
+    }
+
+    /**
+     * Scans the Sugar7 list view style metadata and keys the list defs on field
+     * name for use later
+     * 
+     * @param array $defaults Array of current defs
+     * @return array
+     */
+    public function setDefaultsByKey(Array $defaults)
+    {
+        $return = array();
+        if (isset($defaults['panels'])) {
+            foreach ($defaults['panels'] as $panel) {
+                if (isset($panel['fields']) && is_array($panel['fields'])) {
+                    foreach ($panel['fields'] as $fielddef) {
+                        if (isset($fielddef['name'])) {
+                            $return[$fielddef['name']] = $fielddef;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return $return;
     }
 }
