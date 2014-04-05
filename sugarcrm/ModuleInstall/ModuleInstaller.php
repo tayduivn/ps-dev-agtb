@@ -223,6 +223,9 @@ class ModuleInstaller{
                 // Get the newest app_list_strings
                 $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
 
+                // Refresh the vardefs
+                $this->clearAffectedVardefsCache($this->modules);
+
                 // Destroy all metadata caches and rebuild the base metadata. This
                 // will cause a small amount of lag on subsequent requests for other
                 // clients.
