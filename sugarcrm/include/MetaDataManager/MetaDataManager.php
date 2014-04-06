@@ -706,7 +706,7 @@ class MetaDataManager
         // To maintain hashes between requests, make sure this array is always
         // in the same order. Otherwise, the serialized value of this data will
         // potentially be different from one request to another.
-        sort($data);
+        ksort($data);
 
         $data["_hash"] = $this->hashChunk($data);
 
