@@ -117,8 +117,7 @@ class FileApi extends SugarApi {
 
         // Now get our actual mime type from our internal methodology if it wasn't passed
         if (empty($filetype)) {
-            require_once 'include/download_file.php';
-            $dl = new DownloadFileApi($api);
+            $dl = $this->getDownloadFileApi($api);
             $filetype = $dl->getMimeType($tempfile);
         }
 
@@ -238,8 +237,7 @@ class FileApi extends SugarApi {
                 // Noticed for some reason that API FILE[type] was set to application/octet-stream
                 // That breaks the uploader which is looking for very specific mime types
                 // So rather than rely on what $_FILES thinks, set it with our own methodology
-                require_once 'include/download_file.php';
-                $dl = new DownloadFileApi($api);
+                $dl = $this->getDownloadFileApi($api);
                 $mime = $dl->getMimeType($_FILES[$filesIndex]['tmp_name']);
                 $_FILES[$filesIndex]['type'] = $mime;
 
@@ -346,6 +344,13 @@ class FileApi extends SugarApi {
      * @throws SugarApiExceptionMissingParameter|SugarApiExceptionNotFound
      */
     public function getFile($api, $args) {
+        // if exists link_name param then get archive
+        if (!empty($args['link_name'])) {
+            // @TODO Remove this code and use getArchive method via rest
+            $this->getArchive($api, $args);
+            return;
+        }
+
         // Get the field
         if (empty($args['field'])) {
             // @TODO Localize this exception message
@@ -377,8 +382,7 @@ class FileApi extends SugarApi {
             $forceDownload = (bool) $args['force_download'];
         }
 
-        require_once 'include/download_file.php';
-        $download = new DownloadFileApi($api);
+        $download = $this->getDownloadFileApi($api);
         try {
             $download->getFile($bean, $field, $forceDownload);
         } catch (Exception $e) {
@@ -437,6 +441,73 @@ class FileApi extends SugarApi {
         }
 
         return $this->getFileList($api, $args);
+    }
+
+    /**
+     * Gets a zip archive of files for rendering.
+     *
+     * @param ServiceBase $api The service base
+     * @param array $args Arguments array built by the service base
+     *
+     * @return string
+     *
+     * @throws SugarApiExceptionNotFound
+     * @throws SugarApiExceptionNotAuthorized
+     * @throws SugarApiExceptionMissingParameter
+     */
+    public function getArchive($api, $args)
+    {
+        // Get the field
+        if (empty($args['field'])) {
+            throw new SugarApiExceptionMissingParameter('Field name is missing');
+        }
+        // Load the parent bean.
+        $record = BeanFactory::retrieveBean($args['module'], $args['record']);
+
+        if (empty($record)) {
+            throw new SugarApiExceptionNotFound(
+                sprintf(
+                    'Could not find parent record %s in module: %s',
+                    $args['record'],
+                    $args['module']
+                )
+            );
+        }
+        if (!$record->ACLAccess('view')) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
+        }
+
+        // Load the relationship.
+        $linkName = $args['link_name'];
+        if (!$record->load_relationship($linkName)) {
+            // The relationship did not load.
+            throw new SugarApiExceptionNotFound('Could not find a relationship named: ' . $args['link_name']);
+        }
+        $linkModuleName = $record->$linkName->getRelatedModuleName();
+        $linkSeed = BeanFactory::getBean($linkModuleName);
+
+        if(empty($linkSeed)) {
+            throw new SugarApiExceptionInvalidParameter("Cannot use condition against $linkName - unknown module");
+        }
+        if (!$linkSeed->ACLAccess('list')) {
+            throw new SugarApiExceptionNotAuthorized('No access to list records for module: ' . $linkModuleName);
+        }
+        $field = $args['field'];
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        // Handle ACL
+        $this->verifyFieldAccess($linkSeed, $field);
+        //END SUGARCRM flav=pro ONLY
+
+        $forceDownload = isset($args['force_download']) ? (bool) $args['force_download'] : true;
+
+        $beans = $record->$linkName->getBeans();
+        $download = $this->getDownloadFileApi($api);
+        try {
+            $download->getArchive($beans, $field, $forceDownload, empty($record->name) ? $record->id : $record->name);
+        } catch (Exception $e) {
+            throw new SugarApiExceptionNotFound($e->getMessage(), null, null, 0, $e);
+        }
     }
 
     /**
@@ -499,8 +570,7 @@ class FileApi extends SugarApi {
                         'uri' => $api->getResourceURI(array($bean->module_dir, $bean->id, 'file', $field)),
                     );
                 } elseif ($def['type'] == 'file') {
-                    require_once 'include/download_file.php';
-                    $download = new DownloadFileApi($api);
+                    $download = $this->getDownloadFileApi($api);
                     $info = $download->getFileInfo($bean, $field);
                     if (!empty($info) && empty($info['uri'])) {
                         $info['uri'] = $api->getResourceURI(array($bean->module_dir, $bean->id, 'file', $field));
@@ -607,5 +677,17 @@ class FileApi extends SugarApi {
     public function getTempFileName()
     {
         return tempnam(sys_get_temp_dir(), 'API');
+    }
+
+    /**
+     * Gets the DownloadFile object for api.
+     *
+     * @param ServiceBase $api Api.
+     * @return DownloadFileApi
+     */
+    protected function getDownloadFileApi(ServiceBase $api)
+    {
+        require_once 'include/download_file.php';
+        return new DownloadFileApi($api);
     }
 }
