@@ -16,8 +16,15 @@ $viewdefs['KBSContents']['base']['view']['kbs-dashlet-usefulness'] = array(
         array(
             'label' => 'LBL_DASHLET_USEFULNESS_NAME',
             'description' => 'LBL_DASHLET_USEFULNESS_DESC',
-            'config' => array(),
+            'config' => array(
+                'module' => 'KBSContents'
+            ),
             'preview' => array(),
+            'filter' => array(
+                'module' => array(
+                    'KBSContents'
+                )
+            )
         )
     ),
     'chart' => array(
