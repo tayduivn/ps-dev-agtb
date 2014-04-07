@@ -26,9 +26,9 @@ class SugarUpgradeProductRemoveOldItems extends UpgradeScript
 
         //clean up products that we've just moved over (non quoted)
         $this->log('Removing Products that were moved.');
-        $sql = "DELETE FROM products " .
-               "WHERE opportunity_id IS NOT NULL " .
-               "AND (quote_id IS NULL OR quote_id = '')";
+        $sql = "DELETE FROM products
+                WHERE (opportunity_id IS NOT NULL AND opportunity_id <> '')
+                AND (quote_id IS NULL OR quote_id = '')";
         $this->db->query($sql);
         $this->log('Done removing Products that were moved.');
     }
