@@ -36,7 +36,7 @@
     This endpoint will return a set of records filtered by an expression. The filter can be applied to multiple fields and have multiple and/or conditions in it. Care will need to be taken to make sure this filter has appropriate indexes on the server side otherwise the runtime of the endpoint will be very long. Related fields can be searched by specifying the field name as: "link_name.remote_field", so if you wished to search the Accounts module by a related member account you would use "members.sic_code".
 </span>
 
-<h2>Query String Parameters</h2>
+<h2>Request Arguments</h2>
 <table class="table table-hover">
     <thead>
     <tr>
@@ -151,6 +151,7 @@
     </tr>
     </tbody>
 </table>
+
 <h3>Filter Expressions</h3>
 <span class="lead">
 There are four types of filters:
@@ -160,7 +161,7 @@ There are four types of filters:
 <div class="well well-small">
     This will filter the results by checking the field "name" for value "Nelson Inc". This will only find exact matches.
 
-    <h5>Example</h5>
+<h5>Example</h5>
 <pre class="pre-scrollable">
 {
    "filter":[
@@ -348,7 +349,7 @@ There are four types of filters:
 <div class="well well-small">
     There are two module expressions, they operate on modules instead of fields. The current module can be specified by either using the module name "_this" or by leaving the module name as a blank string. The example expression would filter the records in the current module to only your favorites. The only currently accepted module expressions are "$favorite" and "$owner".
 
-    <h5>Example</h5>
+<h5>Example</h5>
 <pre class="pre-scrollable">
 {
    "filter":[
@@ -360,12 +361,7 @@ There are four types of filters:
 </pre>
 </div>
 
-<h2>Input Parameters</h2>
-<span class="lead">
-    This endpoint does not accept any input parameters.
-</span>
-
-<h2>Result</h2>
+<h2>Response Arguments</h2>
 <table class="table table-hover">
     <thead>
     <tr>
@@ -400,7 +396,7 @@ There are four types of filters:
     </tbody>
 </table>
 
-<h3>Output Example</h3>
+<h3>Response</h3>
 <pre class="pre-scrollable">
 {
    "next_offset":-1,
