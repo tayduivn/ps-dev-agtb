@@ -519,12 +519,10 @@ function getExportContentFromResult(
             $keys = array_keys($records);
 
             $email_data = getNonPrimaryEmailsData($focus, $keys);
-            foreach ($records as $bean_id => $record) {
-                if (isset($email_data[$bean_id])) {
-                    $records[$bean_id] = array_merge($record, $email_data[$bean_id]);
-                }
+            foreach (array_keys($records) as $bean_id) {
+                $records[$bean_id]['email_addresses_non_primary'] = isset($email_data[$bean_id])
+                    ? $email_data[$bean_id] : '';
             }
-            unset($record);
         }
 
         // Setup the "header" row with proper delimiters
@@ -574,7 +572,7 @@ function getNonPrimaryEmailsData(SugarBean $bean, array $ids)
 
     $result = array();
     foreach ($non_primary_emails as $bean_id => $emails) {
-        $result[$bean_id]['email_addresses_non_primary'] = serializeNonPrimaryEmails($emails);
+        $result[$bean_id] = serializeNonPrimaryEmails($emails);
     }
 
     return $result;
