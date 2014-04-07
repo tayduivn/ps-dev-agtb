@@ -133,7 +133,7 @@
 
     saveModel: function() {
         this.setDisabled(true);
-        var fieldsToValidate = this.view.getFields(this.module);
+        var fieldsToValidate = this.view.getFields(this.module, this.model);
         this.model.doValidate(fieldsToValidate, _.bind(this._validationComplete, this));
     },
     cancelEdit: function() {
