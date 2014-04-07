@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -17,6 +16,14 @@ $dictionary['KBSContent'] = array(
     'table' => 'kbscontents',
     'audited' => true,
     'activity_enabled' => true,
+    'unified_search' => true,
+    'full_text_search' => true,
+    'full_text_search_filter' => array(
+        'term' => array(
+            'active_rev' => 1,
+        )
+    ),
+    'unified_search_default_enabled' => true,
     'comment' => 'A content represents information about document',
     'fields' => array(
         'kbdocument_body' => array(
@@ -184,6 +191,10 @@ $dictionary['KBSContent'] = array(
             'comment' => 'Active revision flag',
             'default' => 0,
             'duplicate_on_record_copy' => 'no',
+            'full_text_search' => array(
+                'enabled'=> true,
+                'type' => 'bool',
+            ),
         ),
         'kbsarticles_kbscontents' => array(
             'name' => 'kbsarticles_kbscontents',
