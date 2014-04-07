@@ -96,21 +96,6 @@ $dictionary['KBTag'] = array('table' => 'kbtags'
 //    'bean_name'=>'User',
 //    'source'=>'non-db',
 //  ),  
-'created_by_name' => 
-  array (
-    'name' => 'created_by_name',
-    'rname' => 'full_name',
-    'id_name' => 'created_by',
-    'vname' => 'LBL_CREATED_BY_NAME',
-    'type' => 'relate',
-    'table' => 'users',
-    'isnull' => 'true',
-    'module' => 'Users',
-    'dbType' => 'varchar',
-    'link'=>'created_by_link',
-    'len' => '255',
-    'source'=>'non-db',
-  ),  
 ), 
 'indices' => array (
        array('name' =>'kbtagspk', 'type' =>'primary', 'fields'=>array('id'))
