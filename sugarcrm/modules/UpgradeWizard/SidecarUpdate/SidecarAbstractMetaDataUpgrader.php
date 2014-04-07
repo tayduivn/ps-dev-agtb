@@ -108,6 +108,14 @@ abstract class SidecarAbstractMetaDataUpgrader
      */
     protected $legacyViewdefs = array();
 
+
+    /**
+     * The OOB legacy style view defs
+     *
+     * @var array
+     */
+    protected $originalLegacyViewdefs = array();
+
     /**
      * The sidecar style view defs
      *
