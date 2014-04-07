@@ -209,7 +209,7 @@ class SugarQuery_Builder_Field
                 $farBean = BeanFactory::newBean($this->def['module']);
 
                 // check and see if we need to do the join, it may already be done.
-                if (!$this->query->getJoinAlias($farBean->table_name) && !$this->query->getJoinAlias(
+                if (!$this->query->getJoinAlias($farBean->table_name) || !$this->query->getJoinAlias(
                         $this->def['name']
                     )
                 ) {

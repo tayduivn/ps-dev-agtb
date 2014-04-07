@@ -50,15 +50,45 @@ class BeanAssigneeNotificationTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $bean = SugarTestMeetingUtilities::createMeeting();
         $template = $bean->getNotificationEmailTemplate();
-        $expectedUrl = $this->siteUrl . '/#bwc/index.php?module=' . $bean->module_dir . '&action=DetailView&record=' . $bean->id;
-        $this->assertEquals($expectedUrl, $template->VARS['URL']);
+        $url = $template->VARS['URL'];
+
+        // check if the URL points to the proper instance
+        $this->assertStringStartsWith($this->siteUrl, $url);
+
+        // analyze URL fragment as URL inside URL
+        $fragment = parse_url($url, PHP_URL_FRAGMENT);
+        $components = parse_url($fragment);
+
+        $this->assertStringStartsWith('bwc/', $components['path']);
+
+        $expectedQuery = array(
+            'module' => $bean->module_dir,
+            'action' => 'DetailView',
+            'record' => $bean->id,
+        );
+
+        parse_str($components['query'], $query);
+
+
+        $this->assertArrayHasKey('module', $query);
+        $this->assertArrayHasKey('action', $query);
+        $this->assertArrayHasKey('record', $query);
+
+        $this->assertEquals($query['module'], $expectedQuery['module']);
+        $this->assertEquals($query['action'], $expectedQuery['action']);
+        $this->assertEquals($query['record'], $expectedQuery['record']);
     }
 
     public function testAssigneeForNonBWCModule()
     {
         $bean = SugarTestContactUtilities::createContact(null, null, 'ContactMock');
         $template = $bean->getNotificationEmailTemplate(true);
-        $expectedUrl = $this->siteUrl . '/index.php#' . $bean->module_name . '/' . $bean->id;
-        $this->assertEquals($expectedUrl, $template->VARS['URL']);
+        $url = $template->VARS['URL'];
+
+        // check if the URL points to the proper instance
+        $this->assertStringStartsWith($this->siteUrl, $url);
+
+        $fragment = parse_url($url, PHP_URL_FRAGMENT);
+        $this->assertEquals($bean->module_name . '/' . $bean->id, $fragment);
     }
 }

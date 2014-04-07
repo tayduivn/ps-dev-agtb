@@ -132,6 +132,13 @@ input[type=radio] {
   display: inline-block;
 }
 
+[data-type="currency"] {
+  .currency.edit {
+    .add-on.error-tooltip {
+      display: none;
+    }
+  }
+}
 
 #header .control-group label.hide {
   display: none;
@@ -190,12 +197,11 @@ input[type=radio] {
     position: relative;
     border: none;
     background: @white;
+    line-height: 16px;
+    border-radius: 0;
     i {
       line-height: 16px;
     }
-  }
-  span {
-    font-size: @baseFontSize;
   }
   &.textarea,
   &.select,

@@ -413,12 +413,6 @@
                 $tooltip = $(this.exclamationMarkTemplate(errorMessages));
                 $ftag.after($tooltip);
                 this.createErrorTooltips($tooltip);
-                // Select2 sometimes has hidden fields, this prevents errors for said fields from showing on screen
-                $ftag.each(function() {
-                    if($(this).hasClass("select2-offscreen")) {
-                        $(this).parent("div.input-append.error").addClass("select2-offscreen");
-                    }
-                });
             },
 
             /**

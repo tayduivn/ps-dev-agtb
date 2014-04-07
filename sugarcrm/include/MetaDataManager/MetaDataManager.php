@@ -59,6 +59,7 @@ class MetaDataManager
     const MM_MODULESINFO    = 'modules_info';
     const MM_FIELDS         = 'fields';
     const MM_LABELS         = 'labels';
+    const MM_ORDEREDLABELS  = 'ordered_labels';
     const MM_VIEWS          = 'views';
     const MM_LAYOUTS        = 'layouts';
     const MM_RELATIONSHIPS  = 'relationships';
@@ -151,6 +152,7 @@ class MetaDataManager
         self::MM_MODULESINFO    => 'getModulesInfo',
         self::MM_FIELDS         => 'getSugarFields',
         self::MM_LABELS         => 'getStringUrls',
+        self::MM_ORDEREDLABELS  => 'getOrderedStringUrls',
         self::MM_VIEWS          => 'getSugarViews',
         self::MM_LAYOUTS        => 'getSugarLayouts',
         self::MM_RELATIONSHIPS  => 'getRelationshipData',
@@ -686,13 +688,27 @@ class MetaDataManager
 
         // Sanity check the rel defs, just in case they came back empty
         if (is_array($data)) {
+            // Certain elements of the relationship defs need to be pruned
+            $unsets = array('table', 'fields', 'indices', 'relationships');
             foreach ($data as $relKey => $relData) {
-                unset($data[$relKey]['table']);
-                unset($data[$relKey]['fields']);
-                unset($data[$relKey]['indices']);
-                unset($data[$relKey]['relationships']);
+                // Prune the relationship defs as needed
+                foreach ($unsets as $unset) {
+                    unset($relData[$unset]);
+                }
+
+                // Sort each def array for consistency to ensure sameness between
+                // metadata cache refreshes
+                ksort($relData);
+
+                // Reset the defs for this key
+                $data[$relKey] = $relData;
             }
         }
+
+        // To maintain hashes between requests, make sure this array is always
+        // in the same order. Otherwise, the serialized value of this data will
+        // potentially be different from one request to another.
+        ksort($data);
 
         $data["_hash"] = $this->hashChunk($data);
 
@@ -953,12 +969,16 @@ class MetaDataManager
      * @param  string $lang The language you wish to fetch the app list strings for
      * @return array  The app list strings for the requested language
      */
-    public function getAppListStrings($lang = 'en_us')
+    public function getAppListStrings($lang = 'en_us', $useTuples = false)
     {
         $strings = return_app_list_strings_language($lang);
         if (is_array($strings)) {
             foreach ($strings as $k => $v) {
-                $strings[$k] = $this->decodeStrings($v);
+                $list = $this->decodeStrings($v);
+                if ($useTuples) {
+                    $list = $this->convertToTuples($list);
+                }
+                $strings[$k] = $list;
             }
         }
 
@@ -1037,6 +1057,22 @@ class MetaDataManager
 
             return $source;
         }
+    }
+
+    /**
+     * Converts an associative array of strings to a flat array of tuples to preserve ordering
+     * @param Array $list
+     *
+     */
+    protected function convertToTuples($list) {
+        if (!is_array($list)) {
+            return $list;
+        }
+        $ret = array();
+        foreach($list as $key => $val) {
+            $ret[] = array($key, $val);
+        }
+        return $ret;
     }
 
     /**
@@ -1898,6 +1934,7 @@ class MetaDataManager
      */
     protected function loadMetadata($args = array())
     {
+        $this->args = $args;
         // Start collecting data
         $this->data = array();
 
@@ -2181,11 +2218,18 @@ class MetaDataManager
     /**
      * Returns a language JSON contents
      *
-     * @param string $lang
+     * @param array $args
      */
-    public function getLanguage($lang)
+    public function getLanguage($args)
     {
-        return $this->getLanguageFileData($lang);
+        if (is_string($args)) {
+            $lang = $args;
+            $ordered = false;
+        } else {
+            $lang = $args['lang'];
+            $ordered = empty($args['ordered']) ? false : (bool) $args['ordered'];
+        }
+        return $this->getLanguageFileData($lang, $ordered);
     }
 
     /**
@@ -2194,9 +2238,9 @@ class MetaDataManager
      * @param  string  $lang   The language to get data for
      * @return string  A JSON string of langauge data
      */
-    protected function getLanguageFileData($lang)
+    protected function getLanguageFileData($lang, $ordered = false)
     {
-        $resp = $this->getLanguageFileProperties($lang);
+        $resp = $this->getLanguageFileProperties($lang, $ordered);
         return $resp['data'];
     }
 
@@ -2422,14 +2466,14 @@ class MetaDataManager
      * @param  array $data The metadata array
      * @return array
      */
-    public function getStringUrls()
+    public function getStringUrls($ordered = false)
     {
         $languageList = array_keys(get_languages());
         sugar_mkdir(sugar_cached('api/metadata'), null, true);
 
         $fileList = array();
         foreach ($languageList as $language) {
-            $fileList[$language] = $this->getLangUrl($language);
+            $fileList[$language] = $this->getLangUrl($language, $ordered);
         }
         $urlList = array();
         foreach ($fileList as $lang => $file) {
@@ -2442,6 +2486,10 @@ class MetaDataManager
         $urlList['default'] = $GLOBALS['sugar_config']['default_language'];
 
         return $urlList;
+    }
+
+    public function getOrderedStringUrls() {
+        return $this->getStringUrls(true);
     }
 
     /**
@@ -2493,11 +2541,12 @@ class MetaDataManager
      * @param string $language The language to get the file for
      * @return string
      */
-    protected function getLangUrl($language)
+    protected function getLangUrl($language, $ordered = false)
     {
+        $order_key = $ordered ? "_ordered" : "";
         $public_key = $this->public ? "_public" : "";
         $platform = $this->platforms[0];
-        return  sugar_cached("api/metadata/lang_{$language}_{$platform}{$public_key}.json");
+        return  sugar_cached("api/metadata/lang_{$language}_{$platform}{$public_key}{$order_key}.json");
     }
 
     /**
@@ -2506,9 +2555,9 @@ class MetaDataManager
      * @param  string  $lang   The language to get data for
      * @return string  The hash of the contents of the language file
      */
-    protected function getLanguageFileHash($lang)
+    protected function getLanguageFileHash($lang, $ordered = false)
     {
-        $resp = $this->getLanguageFileProperties($lang);
+        $resp = $this->getLanguageFileProperties($lang, $ordered);
         return $resp['hash'];
     }
 
@@ -2518,10 +2567,10 @@ class MetaDataManager
      * @param  string  $lang   The language to get data for
      * @return array   Array containing the hash and data for a language file
      */
-    protected function getLanguageFileProperties($lang)
+    protected function getLanguageFileProperties($lang, $ordered = false)
     {
         $hash = $this->getCachedLanguageHash($lang);
-        $resp = $this->buildLanguageFile($lang, $this->getModuleList());
+        $resp = $this->buildLanguageFile($lang, $this->getModuleList(), $ordered);
         if (empty($hash) || $hash != $resp['hash']) {
             $this->putCachedLanguageHash($lang, $resp['hash']);
         }
@@ -2549,17 +2598,17 @@ class MetaDataManager
      * @param array $modules The module list
      * @return array Array containing the language file contents and the hash for the data
      */
-    protected function buildLanguageFile($language, $modules)
+    protected function buildLanguageFile($language, $modules, $ordered = false)
     {
         sugar_mkdir(sugar_cached('api/metadata'), null, true);
         $filePath = $this->getLangUrl($language);
         if (SugarAutoLoader::fileExists($filePath)) {
             // Get the contents of the file so that we can get the hash
-            $data = file_get_contents($filePath);
+            $v1data = file_get_contents($filePath);
 
             // Decode the json and get the hash. The hash should be there but
             // check for it just in case something went wrong somewhere.
-            $array = json_decode($data, true);
+            $array = json_decode($v1data, true);
             $hash = isset($array['_hash']) ? $array['_hash'] : '';
 
             // Cleanup
@@ -2567,7 +2616,7 @@ class MetaDataManager
 
             // Return the same thing as would be returned if we had to build the
             // file for the first time
-            return array('hash' => $hash, 'data' => $data);
+            return array('hash' => $hash, 'data' => $v1data);
         }
 
         $stringData = array();
@@ -2579,7 +2628,7 @@ class MetaDataManager
             $app_list_strings_public['available_language_dom'] = $stringData['app_list_strings']['available_language_dom'];
 
             // Let clients fill in any gaps that may need to be filled in
-            $app_list_strings_public = $this->fillInAppListStrings($app_list_strings_public, $stringData['app_list_strings'],$language);
+            $app_list_strings_public = $this->fillInAppListStrings($app_list_strings_public, $stringData['app_list_strings'], $language);
             $stringData['app_list_strings'] = $app_list_strings_public;
 
         } else {
@@ -2590,17 +2639,20 @@ class MetaDataManager
             }
             $stringData['mod_strings'] = $modStrings;
         }
-        // cast the app list strings to objects to make integer key usage in them consistent for the clients
-        foreach ($stringData['app_list_strings'] as $listIndex => $listArray) {
-            if (is_array($listArray) && !array_key_exists('',$listArray)) {
-                $stringData['app_list_strings'][$listIndex] = (object) $listArray;
-            }
-        }
         $stringData['_hash'] = $this->hashChunk($stringData);
-        $data = json_encode($stringData);
-        sugar_file_put_contents_atomic($filePath,$data);
+        $v1data = json_encode($stringData);
+        sugar_file_put_contents_atomic($filePath, $v1data);
 
-        return array("hash" => $stringData['_hash'], "data" => $data);
+        //Now build v2 of the file that uses tuples for list strings to preverse order for numeric keyed arrays
+        $stringData['app_list_strings'] = $this->getAppListStrings($language, true);
+        $orderedData = json_encode($stringData);
+        $filePath = $this->getLangUrl($language, true);
+        sugar_file_put_contents_atomic($filePath, $orderedData);
+
+        if ($ordered) {
+            return array("hash" => $stringData['_hash'], "data" => $orderedData);
+        }
+        return array("hash" => $stringData['_hash'], "data" => $v1data);
     }
 
     /**
@@ -2820,6 +2872,7 @@ class MetaDataManager
             self::MM_VIEWS,
             self::MM_LAYOUTS,
             self::MM_LABELS,
+            self::MM_ORDEREDLABELS,
             self::MM_CONFIG,
             self::MM_JSSOURCE,
             self::MM_LOGOURL,
@@ -2842,6 +2895,7 @@ class MetaDataManager
             self::MM_VIEWS,
             self::MM_LAYOUTS,
             self::MM_LABELS,
+            self::MM_ORDEREDLABELS,
             self::MM_CONFIG,
             self::MM_RELATIONSHIPS,
             self::MM_JSSOURCE,

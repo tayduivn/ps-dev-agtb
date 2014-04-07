@@ -83,6 +83,9 @@ class SidecarListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             // Merge the rest of the defs
             $defs = array_merge($defs, $def);
 
+            // Remove module from the defs since the app doesn't like that
+            unset($defs['module']);
+
             // Some MergeTemplate merges leave type for fields like team_name as relate
             // ignoring custom_type. We can't fix it there so we fix it here.
             // Since list takes def from vardef anyway, we can delete type if it matches vardef

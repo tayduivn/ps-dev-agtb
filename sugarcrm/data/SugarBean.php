@@ -3539,7 +3539,10 @@ class SugarBean
 
         // make sure ORDER BY contains "bean_table.id"
         // in order to guarantee stable sequence
-        $id_column = $bean_queried->getTableName() . '.id';
+        $id_column = 'id';
+        if (!$suppress_table_name) {
+            $id_column = $bean_queried->getTableName() . '.id';
+        }
         if (!in_array($id_column, $valid_elements)) {
             $valid_elements[] = $id_column;
         }
@@ -7480,6 +7483,13 @@ class SugarBean
                     }
                     $alias = $this->getRelateAlias($name, $format_field);
                     $fields[$alias] = $joinAlias . '.' . $format_field;
+                }
+                if (!empty($rname_field_def['sort_on'])) {
+                    if ($joinTableAlias) {
+                        $fields[$name] = $joinTableAlias . '.' . $rname_field_def['sort_on'];
+                    } else {
+                        $fields[$name] = $rname_field_def['sort_on'];
+                    }
                 }
             } elseif (isset($rname_field_def['db_concat_fields'])) {
                 $fields[$name] = $this->db->concat($joinTableAlias, $rname_field_def['db_concat_fields']);

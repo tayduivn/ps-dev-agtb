@@ -296,6 +296,8 @@ $dictionary['Contract'] = array(
             'audited' => true,
             'source' => 'non-db',
             'comment' => 'parent_name of contract, added to prevent ability to add flex relate field to module because of relationship in linked_documentsMetaData.php',
+            'massupdate' => false,
+            'studio' => false
         ),
         'contacts' => array(
             'name' => 'contacts',

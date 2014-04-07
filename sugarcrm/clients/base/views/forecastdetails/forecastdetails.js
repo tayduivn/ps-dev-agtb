@@ -466,14 +466,17 @@
     getInitData: function(options) {
         // get the current timeperiod
         app.api.call('GET', app.api.buildURL('TimePeriods/current'), null, {
-            success: _.bind(function(o) {
+            success: _.bind(function(currentTP) {
                 // Make sure the model is here when we get back and this isn't mid-pageload or anything
                 if(this.model) {
                     this.initDataLoaded = true;
-                    this.model.set({selectedTimePeriod: o.id}, {silent: true});
-                    this.settings.set({selectedTimePeriod: o.id}, {silent: true});
+                    this.model.set({selectedTimePeriod: currentTP.id}, {silent: true});
+                    this.settings.set({selectedTimePeriod: currentTP.id}, {silent: true});
                     this.loadData();
                 }
+            }, this),
+            error: _.bind(function() {
+                // Needed to catch the 404 in case there isnt a current timeperiod
             }, this),
             complete: options ? options.complete : null
         });

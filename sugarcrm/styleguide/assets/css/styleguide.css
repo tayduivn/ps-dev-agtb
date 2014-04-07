@@ -158,6 +158,9 @@ table.accordion .accordion-inner.in {
   overflow: visible;
   padding: 12px;
 }
+table.accordion .accordion-inner td span.edit {
+  margin-left: 0;
+}
 table.accordion .accordion-heading {
   float: none;
 }

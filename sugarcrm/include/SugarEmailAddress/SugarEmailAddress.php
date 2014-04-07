@@ -536,10 +536,11 @@ class SugarEmailAddress extends SugarBean
             $invalidFlag = ($invalid) ? '1' : '0';
             $optOutFlag = ($optOut) ? '1' : '0';
 
-            // If we have such address already, remove it and add new one in.
+            // If we have such address already, replace it with the new one.
+            $key = false;
             foreach ($this->addresses as $k => $address) {
                 if ($address['email_address'] == $addr) {
-                    unset($this->addresses[$k]);
+                    $key = $k;
                 } elseif ($primary && $address['primary_address'] == '1') {
                     // We should only have one primary. If we are adding a primary but
                     // we find an existing primary, reset this one's primary flag.
@@ -547,7 +548,7 @@ class SugarEmailAddress extends SugarBean
                 }
             }
 
-            $this->addresses[] = array(
+            $attributes = array(
                 'email_address' => $addr,
                 'primary_address' => $primaryFlag,
                 'reply_to_address' => $replyToFlag,
@@ -555,6 +556,12 @@ class SugarEmailAddress extends SugarBean
                 'opt_out' => $optOutFlag,
                 'email_address_id' => $email_id,
             );
+
+            if ($key === false) {
+                $this->addresses[] = $attributes;
+            } else {
+                $this->addresses[$key] = $attributes;
+            }
         } else {
             $GLOBALS['log']->fatal("SUGAREMAILADDRESS: address did not validate [ {$addr} ]");
         }

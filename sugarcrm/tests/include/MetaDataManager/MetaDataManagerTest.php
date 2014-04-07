@@ -79,10 +79,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
             'br_ikea' => 'Ikead an idea',
         );
 
-        $GLOBALS['sugar_config']['disabled_languages'] = array (
-            'whiskey',
-            'br_ikea',
-        );
+        $GLOBALS['sugar_config']['disabled_languages'] = "whiskey,br_ikea";
     }
 
     public function testGetConfigs()
@@ -146,6 +143,27 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse(isset($test['modules']['Accounts']['menu']));
         $this->assertEmpty($test['modules']['Accounts']['views']);
         $this->assertEmpty($test['modules']['Accounts']['layouts']);
+    }
+
+    public function testGetAppListStrings() {
+        $mm = MetaDataManager::getManager();
+        $normalList = $mm->getAppListStrings('en_us');
+        $tupleList = $mm->getAppListStrings('en_us', true);
+
+        //Would be nice to mock the app_list_strings, but this currently isn't possible with return_app_list_strings_language
+        $this->assertEquals($normalList['checkbox_dom'], array(
+                '' => '',
+                '1' => 'Yes',
+                '2' => 'No',
+            )
+        );
+
+        $this->assertEquals($tupleList['checkbox_dom'], array(
+                array('', ''),
+                array('1', 'Yes'),
+                array('2', 'No'),
+            )
+        );
     }
 }
 

@@ -1015,14 +1015,13 @@ function return_app_list_strings_language($language)
     $default_language = !empty($sugar_config['default_language']) ? $sugar_config['default_language'] : $language;
     $temp_app_list_strings = $app_list_strings;
 
-    $langs = array();
-    if ($language != 'en_us') {
-        $langs[] = 'en_us';
-    }
-    if ($default_language != 'en_us' && $language != $default_language) {
+    $langs = array('en_us');
+    if ($default_language != 'en_us') {
         $langs[] = $default_language;
     }
-    $langs[] = $language;
+    if(!in_array($language, $langs) || ($default_language != 'en_us' && $language == 'en_us')) {
+        $langs[] = $language;
+    }
 
     $app_list_strings_array = array();
 
@@ -5676,12 +5675,12 @@ function getFunctionValue($bean, $function, $args = array())
         if (!empty($function['include'])) {
             require_once($function['include']);
         }
-        
+
         if (!empty($function['name'])) {
             $function = $function['name'];
         }
     }
-    
+
     if (!empty($bean)) {
         $function = array($bean, $function);
     }

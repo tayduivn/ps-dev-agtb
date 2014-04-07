@@ -72,7 +72,7 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
     /**
      * Fields that need to be removed entirely as they no longer have context in
      * Sugar7+. This is a hash of $fieldname => 1 values.
-     * 
+     *
      * @var array
      */
     protected $removeFields = array(
@@ -86,8 +86,8 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
 
     /**
      * Field defs for address type fieldset fields that were previously handled
-     * through templating. 
-     * 
+     * through templating.
+     *
      * @var array
      */
     protected $addressFields = array(
@@ -293,11 +293,11 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
 
     /**
      * List of acceptable templateMeta properties for new metadata
-     * 
+     *
      * @var array
      */
     protected $templateMetaProps = array(
-        'useTabs' => 1, 
+        'useTabs' => 1,
         'maxColumns' => 1,
     );
 
@@ -305,7 +305,7 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
      * List of invalid label regular expressions. Needed for cases in which some
      * labels should NOT be allowed to be carried over from past incarnations of
      * sugar. Like Products.
-     * 
+     *
      * @var array
      */
     protected $invalidLabelRegex = array(
@@ -451,9 +451,9 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
     }
 
     /**
-     * Handles conversion of old style defs to new style defs, using the basics 
+     * Handles conversion of old style defs to new style defs, using the basics
      * of a layout def
-     * 
+     *
      * @param string $fieldname The fieldname to work with
      * @param array $data The layout def of the legacy field
      * @return array
@@ -484,10 +484,10 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
     }
 
     /**
-     * Checks to see if a label is valid for inclusion on a Record view. The 
+     * Checks to see if a label is valid for inclusion on a Record view. The
      * {@see $invalidLabelRegex} array contains a list of regular expressions to
      * check the label against to make sure that it is clean for use.
-     * 
+     *
      * @param string $label The label to check for validation
      * @return boolean
      */
@@ -528,7 +528,7 @@ END;
     /**
      * Checks whether there are customizations to tab defs in the detailview layout
      * of the module. At this time all other views are not checked for tab customizations.
-     * 
+     *
      * @param string $view The viewtype to check tab customizations on
      * @return boolean
      */
@@ -562,7 +562,7 @@ END;
         // Holds merged defs and final defs
         $newdefs = $tempdefs = $finaldefs = array();
 
-        // This needs to be called before the parser is instantiated to prevent 
+        // This needs to be called before the parser is instantiated to prevent
         // custom metadata from being created from basic module template
         $defaultDefs = $this->loadDefaultMetadata();
 
@@ -579,7 +579,7 @@ END;
             } else {
                 $legacyParser = ParserFactory::getParser($lViewtype, $this->module);
             }
-            
+
             // Step 1, handle tabDef changes
             $hasTabDefCustomizations = $this->hasTabDefCustomizations($lViewtype);
 
@@ -633,7 +633,7 @@ END;
                 }
             }
 
-            // Make a header fields array so that fields that may be in legacy 
+            // Make a header fields array so that fields that may be in legacy
             // defs can be plucked out
             $headerFields = array();
             foreach ($defaultDefs['panels'][0]['fields'] as $hField) {
@@ -726,7 +726,7 @@ END;
             // End email1 => email hack
 
             // Make sure the array pointer for the panels is back at the start.
-            // This is needed to allow canonical conversion to pick up the right 
+            // This is needed to allow canonical conversion to pick up the right
             // header panel
             reset($defaultDefs['panels']);
 
@@ -856,7 +856,7 @@ END;
        if(isset($this->viewPanels[$this->viewtype][$source])) {
            $panelName = $this->viewPanels[$this->viewtype][$source];
        }
-       if(empty($panelName) || empty($panels[$panelName])) {
+       if(empty($panelName) || !isset($panels[$panelName])) {
            // will use last available panel
            $panelNames = array_keys($panels);
            $panelName = array_pop($panelNames);
@@ -867,11 +867,11 @@ END;
     /**
      * Gets address field recordview defs to replace previous address fields from
      * edit/detail view
-     * 
+     *
      * @param string $name The name of the field from the old viewdef
      * @return array
      */
-    protected function getAddressFieldsetDef($name) 
+    protected function getAddressFieldsetDef($name)
     {
         if (isset($this->addressFields[$name])) {
             return $this->addressFields[$name];
@@ -882,7 +882,7 @@ END;
 
     /**
      * Determines if a field is valid based on name.
-     * 
+     *
      * @param string $field The name of the field
      * @return boolean True if the field name is valid
      */
@@ -893,17 +893,17 @@ END;
         // we know about. This loops over those special fields before delegating
         // to the bean.
         $props = array('addressFields', 'knownFields');
-        
+
         foreach ($props as $prop) {
             $array = $this->$prop;
             foreach ($array as $fieldName => $fieldDef) {
-                // If the field is the same name as the special array index, it's 
+                // If the field is the same name as the special array index, it's
                 // good to go
                 if ($field == $fieldName) {
                     return true;
                 }
 
-                // If the name of the field in the def is the same as the field, 
+                // If the name of the field in the def is the same as the field,
                 // it's good to go
                 if (isset($fieldDef['name']) && $fieldDef['name'] == $field) {
                     return true;
@@ -920,14 +920,14 @@ END;
                 }
             }
         }
-        
+
         // Now delegate to the parent
         return parent::isValidField($field);
     }
 
     /**
      * Determines if a field is special by name
-     * 
+     *
      * @param string $fieldname The name of the field to check
      * @return boolean
      */
@@ -939,7 +939,7 @@ END;
     /**
      * Updates relevant information for a field on the parser prior to saving new
      * defs
-     * 
+     *
      * @param AbstractMetaDataParser $parser A metadata parser object, probably a Grid Parser
      * @param string $fieldname The name of the field to update
      * @param array $fielddata The data that should be used to do the update on the field
@@ -971,12 +971,12 @@ END;
 
     /**
      * Merges current defs into previous, also cleaning up defs along the way
-     * 
+     *
      * @param array $current The current layoutdefs array
      * @param array $previous The last layout defs array
      * @return array
      */
-    protected function mergeLayoutDefs(array $current, array $previous) 
+    protected function mergeLayoutDefs(array $current, array $previous)
     {
         if (empty($previous)) {
             return $current;

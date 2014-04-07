@@ -253,6 +253,7 @@
       top: 6px;
       right: 18px;
       font-size: 12px;
+      display: none;
       &:before{
         content: "\f00D";
       }
@@ -398,23 +399,56 @@
   left: -10000px;
   top: -1px;
 }
-.select2-container .select2-choice abbr {
-  display: none;
+
+//caret, clear and error addons
+.select2-container .select2-choice {
+  .select2-chosen {
+    margin-right: 20px;
+  }
 }
 .select2-container.select2-allowclear .select2-choice {
   .select2-chosen {
     margin-right: 36px;
   }
-  abbr {
-    display: inline;
-  }
 }
-
-.currency {
-  .select2-choice .select2-chosen {
+.currency .select2-container .select2-choice {
+  .select2-chosen {
     min-width: 8px;
   }
 }
+.error .select2-container {
+  .select2-choice > .select2-chosen {
+    margin-right: 38px;
+  }
+  &.select2-allowclear .select2-choice {
+    .select2-chosen {
+      margin-right: 55px;
+    }
+    abbr {
+      right: 36px;
+    }
+  }
+}
+.error .currency .select2-container {
+  .select2-choice .select2-chosen {
+    margin-right: 20px;
+    min-width: 8px;
+  }
+}
+.error {
+  .select2-container + .input-append {
+    position: static;
+    font-size: inherit;
+    .add-on.error-tooltip {
+      position: absolute;
+      top: 3px;
+      right: 17px;
+      left: auto;
+      background: transparent;
+    }
+  }
+}
+
 // Added for currency field, or any field that has
 // a select2 field at end of input
 .select2-addon {

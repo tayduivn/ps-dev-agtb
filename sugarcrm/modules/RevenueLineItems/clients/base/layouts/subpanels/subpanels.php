@@ -60,7 +60,7 @@ $viewdefs['RevenueLineItems']['base']['layout']['subpanels'] = array (
           'layout' => 'subpanel',
           'label' => 'LBL_EMAILS_SUBPANEL_TITLE',
           'context' => array(
-              'link' => 'archived_emails',
+              'link' => 'emails',
           ),
       ),
     array (
