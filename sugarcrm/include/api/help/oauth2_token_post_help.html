@@ -31,7 +31,7 @@
     Retrieves the token portion of the OAuth 2.0 specification.
 </span>
 
-<h2>Input Parameters</h2>
+<h2>Parameters</h2>
 <table class="table table-hover">
     <thead>
         <tr>
@@ -64,7 +64,7 @@
                 String
             </td>
             <td>
-                The client_id of "sugar" will automatically create an OAuth Key in the system and can be used for "password" authentication. The client_id of "support_portal" will create an OAuth Key if the portal system is enabled and will allow for portal authentication. Other client_id's can be created by the administrator in the OAuthKeys section in the Administration section and can be used in the future for additional grant types, if the client secret is filled in, it will be checked to validate use of the client id.
+                Used to identify the client. A client_id of "sugar" will automatically create an OAuth Key in the system that is used for "password" authentication. A client_id of "support_portal" will create an OAuth Key that will allow for portal authentication. Additional client_id's can be created by the administrator in Admin > OAuth Keys to allow for additional grant types. If the client secret is populated, it will be validated against the client id.
             </td>
             <td>
                 True
@@ -119,7 +119,7 @@
                 String
             </td>
             <td>
-                ??
+                The platform type. Available types are "base", "mobile", and "portal".
             </td>
             <td>
                 True
@@ -128,7 +128,7 @@
     </tbody>
 </table>
 
-<h3>Input for Password Grant Types Example</h3>
+<h3>Payload for Password Grant Types</h3>
 <pre class="pre-scrollable">
 {
    "grant_type":"password",
@@ -140,7 +140,7 @@
 }
 </pre>
 
-<h3>Input for Refresh Token Grant Types Example</h3>
+<h3>Payload for Refresh Token Grant Types</h3>
 <pre class="pre-scrollable">
 {
     "grant_type":"refresh_token",
@@ -149,11 +149,6 @@
     "client_secret":"",
 }
 </pre>
-
-<h2>Query String Parameters</h2>
-<span class="lead">
-    This endpoint does not accept any query string parameters.
-</span>
 
 <h2>Result</h2>
 <table class="table table-hover">
@@ -184,7 +179,7 @@
                 Integer
             </td>
             <td>
-                The length of time until the access_token expires.
+                The length of time until access_token expires in seconds.
             </td>
         </tr>
         <tr>
@@ -195,18 +190,18 @@
                 String
             </td>
             <td>
-                ????.
+                The token type. Currently only "bearer" is supported.
             </td>
         </tr>
         <tr>
             <td>
-                scope
+                null|<scope>
             </td>
             <td>
-                ????
+
             </td>
             <td>
-                ????.
+                The Oauth scope. Normally returned as null.
             </td>
         </tr>
         <tr>
@@ -220,19 +215,44 @@
                 The token needed to extend the access_token expiration timeout.
             </td>
         </tr>
+        <tr>
+            <td>
+                refresh_expires_in
+            </td>
+            <td>
+                Integer
+            </td>
+            <td>
+                The length of time until refresh_token expires in seconds.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                download_token
+            </td>
+            <td>
+                String
+            </td>
+            <td>
+                The token used to download images and files.
+            </td>
+        </tr>
     </tbody>
 </table>
 
 <h3>Output Example</h3>
 <pre class="pre-scrollable">
 {
-   "access_token":"c19fff9b-b767-233e-ebb4-512e369d3e39",
+   "access_token":"802b64c0-5eac-8431-a541-5342d38ac527",
    "expires_in":3600,
    "token_type":"bearer",
    "scope":null,
-   "refresh_token":"c1be5132-655b-1ca3-fb44-512e36709871"
+   "refresh_token":"85053198-24b1-4521-b1a1-5342d382e0b7",
+   "refresh_expires_in":1209600,
+   "download_token":"8c9b5461-0d95-8d87-6084-5342d357b39e"
 }
 </pre>
+
 <h2>Change Log</h2>
 <table class="table table-hover">
     <tr>

@@ -26,54 +26,84 @@
 * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
 ********************************************************************************/
 -->
-<div class="longHelpTitle">MostActiveUsers</div>
-<div class="summary">
-    <h2>Summary:</h2>
-    This endpoint is used to most active users for meetings, 'calls, inbound emails, and outbound emails.
-</div>
-<div class="params">
-    <h2>Query Parameters:</h2>
-    <table>
-        <tr>
-            <td><strong>Param</strong></td>
-            <td><strong>Description</strong></td>
-            <td><strong>Optional</strong></td>
-        </tr>
+
+<h2>Overview</h2>
+<span class="lead">
+    Fetches the most active users for meetings, calls, inbound emails, and outbound emails.
+</span>
+
+
+<h2>Parameters</h2>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Required</th>
+    </tr>
+    </thead>
+    <tbody>
         <tr>
             <td>days</td>
-            <td>Returns most active users for last n days</td>
-            <td>yes</td>
+            <td>Integer</td>
+            <td>Returns most active users for the last specified quantity of days. Defaults to 30 days if not specified.</td>
+            <td>False</td>
         </tr>
-    </table>
-</div>
-<div class="input">
-    <h2>Input Example:</h2>
-    <code class="codesample">
-        {
-        days:30
-        }
-    </code>
-</div>
-<div class="output">
-    <h2>Output Example:</h2>
-    <code class="codesample">
-        {
-           "meetings": 
-           {
-               "user_id": "seed_sally_id",
-                "count": "17",
-                "first_name": "Sally",
-                "last_name": "Bronsen"
-            },
-            "calls": {},
-            "inbound_emails": {},
-            "outbound_emails": 
-            {
-                "user_id": "seed_sally_id",
-                "count": "48",
-                "first_name": "Sally",
-                "last_name": "Bronsen"
-            }
-        }
-    </code>
-</div>
+    </tbody>
+</table>
+
+
+
+<h3>Payload</h3>
+<pre class="pre-scrollable">
+http://{site_url}/rest/v10/mostactiveusers?days=30
+</pre>
+<strong>Note:</strong> GET endpoint parameters are passed in the form of a query string.
+
+
+<h2>Output</h2>
+<pre class="pre-scrollable">
+{
+   "meetings":{
+      "user_id":"seed_sarah_id",
+      "count":"20",
+      "first_name":"Sarah",
+      "last_name":"Smith"
+   },
+   "calls":{
+      "user_id":"seed_will_id",
+      "count":"7",
+      "first_name":"Will",
+      "last_name":"Westin"
+   },
+   "inbound_emails":{
+      "user_id":"seed_sarah_id",
+      "count":"20",
+      "first_name":"Sarah",
+      "last_name":"Smith"
+   },
+   "outbound_emails":{
+      "user_id":"seed_max_id",
+      "count":"17",
+      "first_name":"Max",
+      "last_name":"Jensen"
+   }
+}
+</pre>
+
+<h2>Change Log</h2>
+<table class="table table-hover">
+    <tr>
+        <th>Version</th>
+        <th>Change</th>
+    </tr>
+    <tr>
+        <td>
+            v10
+        </td>
+        <td>
+            Added <code>/mostactiveusers</code> GET endpoint.
+        </td>
+    </tr>
+</table>
