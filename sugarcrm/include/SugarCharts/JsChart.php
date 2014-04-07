@@ -694,6 +694,7 @@ class JsChart extends SugarChart {
 
 		if(!file_exists($xmlFile)) {
 			$GLOBALS['log']->debug("Cannot open file ($xmlFile)");
+            return '';
 		}
 
 		$pattern = array();
