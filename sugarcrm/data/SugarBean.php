@@ -2761,13 +2761,29 @@ class SugarBean
 							}
 						}
 					} elseif($type == 'encrypt' && empty($disable_date_format)){
-					    $this->encfields[$field] = $this->$field;
-					    unset($this->$field); // unset it so when it is accessed the data comes through __get
+                        $this->preprocess_encrypt_before_get($field);
 					}
 				}
 			}
 		}
 	}
+
+    /**
+     * Process encrypt fields so that accessing them later will properly perform a __get to decrypt the field
+     * @param $field - the encrypted 'encrypt' field that will be pre-processed
+     */
+    function preprocess_encrypt_before_get($field)
+    {
+        if (!isset($this->encfield_touched)) {
+            $this->encfield_touched = array();
+        }
+
+        if (!isset($this->encfield_touched[$field])) {
+            $this->encfields[$field] = $this->$field;
+            unset($this->$field);
+            $this->encfield_touched[$field] = true;
+        }
+    }
 
     /**
      * This function processes the fields before save.
@@ -3320,6 +3336,10 @@ class SugarBean
                         }
                     }
                 }
+            }
+
+            if (isset($field_value['type']) && $field_value['type'] === 'encrypt') {
+                $this->preprocess_encrypt_before_get($field);
             }
         }
 
