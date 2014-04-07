@@ -56,7 +56,11 @@
      * @param options
      */
     setMetadata: function(options) {
-        var moduleMetadata = app.metadata.getModule(options.module);
+        var moduleMetadata = app.metadata.getModule(options.module) || {};
+
+        if (!moduleMetadata) {
+            return;
+        }
 
         var addToListField = _.find(moduleMetadata.fields, function(field) {
             return field.name === this.addToListFieldName;
