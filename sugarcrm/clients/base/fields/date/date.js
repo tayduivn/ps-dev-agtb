@@ -156,7 +156,7 @@
         appListStrings = app.metadata.getStrings('app_list_strings');
 
         filterIterator = function(v, k, l) {
-            return v !== "";
+            return v[1] !== "";
         };
 
         // Note that ordering here is used in following for loop
@@ -172,10 +172,13 @@
             // But we need:
             // ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
             if (!_.isUndefined(calProp) && !_.isNull(calProp)) {
-                // Reject the first 0: "" element
-                calProp = _.filter(calProp, filterIterator);
+                // Reject the first 0: "" element and then map out the new language tuple
+                // so it's back to an array of strings
+                calProp = _.filter(calProp, filterIterator).map(function(prop) {
+                    return prop[1];
+                });
                 //e.g. pushed the Sun in front to end (as required by datepicker)
-                calProp.push(calProp[0]);
+                calProp.push(calProp);
             }
             switch (calMapIndex) {
                 case 0:
