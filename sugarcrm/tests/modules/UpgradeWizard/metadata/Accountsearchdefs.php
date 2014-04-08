@@ -138,6 +138,13 @@
                             'default' => true,
                             'name' => 'team_name',
                           ),
+					    'somefield' =>
+					    array (
+					            'name' => 'somefield',
+					            'default' => true,
+					            'width' => '10%',
+					    ),
+
 
 					      'assigned_user_id' =>
 					      array (

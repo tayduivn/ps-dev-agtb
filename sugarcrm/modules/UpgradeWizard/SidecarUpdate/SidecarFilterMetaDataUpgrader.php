@@ -133,10 +133,6 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 }
             }
 
-            if (!$this->isValidField($name)) {
-                continue;
-            }
-
             // Subqueries not supported yet
             if(!empty($searchFields[$name]['operator']) && $searchFields[$name]['operator'] == 'subquery') continue;
 
@@ -149,13 +145,20 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                     $label = $searchFields[$name]['vname'];
                 }
                 $fields[$name] = array(
-                    'dbFields' => $searchFields[$name]['db_field'],
+                    'dbFields' => array_filter($searchFields[$name]['db_field'], array($this, "isValidField")),
                     'type' => isset($searchFields[$name]['type'])?$searchFields[$name]['type']:"text",
                 );
+                if(empty($fields[$name]['dbFields'])) {
+                    unset($fields[$name]);
+                    continue;
+                }
                 if(!empty($label)) {
                     $fields[$name]['vname'] = $label;
                 }
             } else {
+                if (!$this->isValidField($name)) {
+                    continue;
+                }
                 $fields[$name] = array();
             }
         }
