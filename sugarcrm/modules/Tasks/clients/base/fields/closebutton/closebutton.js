@@ -83,7 +83,7 @@
                 }
             },
             error: function (error) {
-                app.alert.show('close_task_error', {level: 'error', autoClose: true, title: app.lang.getAppString('ERR_AJAX_LOAD')});
+                app.alert.show('close_task_error', {level: 'error', autoClose: false, title: app.lang.getAppString('ERR_AJAX_LOAD')});
                 app.logger.error('Failed to close a task. ' + error);
 
                 // we didn't save, revert!
