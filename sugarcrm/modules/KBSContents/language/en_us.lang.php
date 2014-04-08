@@ -62,4 +62,6 @@ $mod_strings = array (
     'LBL_LISTVIEW_FILTER_ALL' => 'All Articles',
     'LBL_CREATE_LOCALIZATION_BUTTON_LABEL' => 'Create Localization',
     'LBL_CREATE_REVISION_BUTTON_LABEL' => 'Create Revision',
+    'LNK_NEW_TOPIC' => 'Create Topic',
+    'LNK_TOPIC_LIST' => 'View Topics',
 );
