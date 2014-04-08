@@ -575,6 +575,11 @@ class JsChart extends SugarChart {
 
 	function buildHTMLLegend($xmlFile) {
 		$xmlstr = $this->processXML($xmlFile);
+
+        if (empty($xmlstr)) {
+            return '';
+        }
+
 		$xml = new SimpleXMLElement($xmlstr);
 		$this->chartType = $xml->properties->type;
 		$html = "<table align=\"left\" cellpadding=\"2\" cellspacing=\"2\">";

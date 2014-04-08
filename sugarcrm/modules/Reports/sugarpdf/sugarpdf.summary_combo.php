@@ -72,7 +72,7 @@ class ReportsSugarpdfSummary_combo extends ReportsSugarpdfReports
                      
                     $this->Image($imageFile,$this->GetX(),$this->GetY(),$imageWidth,$imageHeight,"","","N",false,300,"", false,false,0,true);
 
-                    if($sugarChart->print_html_legend_pdf && file_exists($xmlFile))
+                    if($sugarChart->print_html_legend_pdf)
                     {
                         $legend = $sugarChart->buildHTMLLegend($xmlFile);
         //		    	$this->Write(12,$legend);
