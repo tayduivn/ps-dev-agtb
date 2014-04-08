@@ -586,6 +586,10 @@ END;
         // Get the parser now that default metadata has been fetched
         $parser = ParserFactory::getParser($this->viewtype, $this->module, null, null, $this->client);
 
+        // Get the fields that are on the default defs panels since we may need 
+        // those as well
+        $defaultDefsFields = $parser->getFieldsFromPanels($defaultDefs['panels']);
+
         // Go through merge views, add fields added to detail view to base panel
         // and fields added to edit view not in detail view or hidden panel
         $customFields = array();
@@ -711,11 +715,8 @@ END;
                 }
             }
 
-            // Hack: we've moved email1 to email
-            if(isset($customFields['email1'])) {
-                $customFields['email'] = $customFields['email1'];
-                unset($customFields['email1']);
-            }
+            // Handle field conversion and renames from previous versions
+            $customFields = $this->applyFieldConversionPatches($customFields);
 
             // Handle unsetting of header fields from non header panels and handle
             // email1 <=> email conversion
@@ -734,6 +735,17 @@ END;
                     // Hack email field into submission
                     if ($fieldName == 'email1') {
                         $defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex] = 'email';
+                    }
+
+                    // Handle twitter_id to twitter renaming
+                    if ($fieldName == 'twitter_id' && $this->needsTwitterConversion()) {
+                        // If twitter is already on the defaults, remove twitter_id entirely
+                        if (isset($defaultDefsFields['twitter'])) {
+                            unset($defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex]);
+                        } else {
+                            // If twitter is not on the default layout, rename twitter_id
+                            $defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex] = 'twitter';
+                        }
                     }
                 }
 
@@ -1059,5 +1071,59 @@ END;
         }
 
         return $newDefs;
+    }
+
+    /**
+     * Applies hacks and patches to fielddefs that have changes since the previous
+     * version
+     * 
+     * @param array $data The current custom defs to check
+     * @return array The hacked together defs
+     */
+    public function applyFieldConversionPatches($data)
+    {
+        // Hack: we've moved email1 to email
+        if(isset($data['email1'])) {
+            $data['email'] = $data['email1'];
+            unset($data['email1']);
+        }
+
+        // We've also moved twitter_id to twitter for some module types
+        if (isset($data['twitter_id']) && $this->needsTwitterConversion()) {
+            // Only reset twitter_id to twitter if twitter isn't set already
+            if (!isset($data['twitter'])) {
+                $data['twitter'] = $data['twitter_id'];
+            }
+
+            // We no longer need this
+            unset($data['twitter_id']);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Checks a bean to see if the module needs to have the twitter_id field
+     * converted
+     * 
+     * @return boolean
+     */
+    public function needsTwitterConversion()
+    {
+        // Get the bean for this module since we might need it
+        $bean = BeanFactory::getBean($this->module);
+
+        if (!empty($bean)) {
+            // Check our type
+            $checkType  = $bean instanceof Company || $bean instanceof Person;
+
+            // Check the tables... there are exceptions, eg, Employees, Styleguide
+            $checkTable = !empty($bean->table_name) && $bean->table_name != 'users' && $bean->table_name != 'styleguide';
+
+            // Send back what we know
+            return $checkType && $checkTable;
+        }
+
+        return false;
     }
 }

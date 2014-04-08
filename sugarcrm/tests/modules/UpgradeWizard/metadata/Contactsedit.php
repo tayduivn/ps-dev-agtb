@@ -282,7 +282,7 @@ $viewdefs['Contacts']['EditView'] = array (
       4 =>
       array (
         'id',
-        '',
+        'twitter_id',
       ),
     ),
   ),

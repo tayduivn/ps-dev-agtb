@@ -399,6 +399,8 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
                 array('field' => 'primary_address', 'exists' => true,),
                 array('field' => 'alt_address_street', 'exists' => false,),
                 array('field' => 'primary_address_street', 'exists' => false,),
+                array('field' => 'twitter_id', 'exists' => false,),
+                array('field' => 'twitter', 'exists' => true,),
                 // BEGIN SUGARCRM flav=ent ONLY
                 array('field' => 'portal_password1', 'exists' => false,),
                 // END SUGARCRM flav=ent ONLY
