@@ -60,29 +60,123 @@
                     success: function() {
                         prefill.copy(parentModel);
                         prefill.unset('id');
+
                         if (type === self.CONTENT_LOCALIZATION) {
-                            prefill.unset('kbsarticle_id', {silent: true});
+                            self._onCreateLocalization(prefill, parentModel);
+                        } else {
+                            self._onCreateRevision(prefill, parentModel);
                         }
-
-                        app.drawer.open({
-                            layout: 'create-actions',
-                            context: {
-                                create: true,
-                                model: prefill,
-                                copiedFromModelId: parentModel.get('id')
-                            }
-                        }, function(context, newModel) {
-                            if (newModel && newModel.id) {
-                                app.router.navigate(
-                                    app.router.buildRoute('KBSContents', newModel.id),
-                                    {trigger: true}
-                                );
-                            }
-                        });
-
-                        prefill.trigger('duplicate:field', parentModel);
                     }
                 });
+            },
+
+            /**
+             * Method called on create localization.
+             *
+             * Setup additional model properties for localization.
+             * If no available langs for localizations it shows alert message.
+             *
+             * @param {Data.Model} prefill New created model.
+             * @param {Data.Model} parentModel Parent model.
+             * @private
+             */
+            _onCreateLocalization: function(prefill, parentModel) {
+
+                if (!this.checkCreateLocalization(parentModel)) {
+                    app.alert.show('localizations', {
+                        level: 'warning',
+                        title: app.lang.get('LBL_CANNOT_CREATE_LOCALIZATION', 'KBSContents'),
+                        autoClose: false
+                    });
+                    return;
+                }
+
+                prefill.set(
+                    'related_languages',
+                    this.getAvailableLangsForLocalization(parentModel),
+                    {silent: true}
+                );
+                prefill.unset('language', {silent: true});
+                prefill.unset('kbsarticle_id', {silent: true});
+
+                this._openCreateRelatedDrawer(prefill, parentModel);
+            },
+
+            /**
+             * Method called on create localization.
+             *
+             * Setup additional model properties for revision.
+             *
+             * @param {Data.Model} prefill New created model.
+             * @param {Data.Model} parentModel Parent model.
+             * @private
+             */
+            _onCreateRevision: function(prefill, parentModel) {
+                prefill.set('useful', parentModel.get('useful'));
+                prefill.set('notuseful', parentModel.get('notuseful'));
+                prefill.set(
+                    'related_languages',
+                    [parentModel.get('language')],
+                    {silent: true}
+                );
+
+                this._openCreateRelatedDrawer(prefill, parentModel);
+            },
+
+            /**
+             * Open drawer for create form.
+             * @param {Data.Model} prefill New created model.
+             * @param {Data.Model} parentModel Parent model.
+             * @private
+             */
+            _openCreateRelatedDrawer: function(prefill, parentModel) {
+                app.drawer.open({
+                    layout: 'create-actions',
+                    context: {
+                        create: true,
+                        model: prefill,
+                        copiedFromModelId: parentModel.get('id')
+                    }
+                }, function(context, newModel) {
+                    if (newModel && newModel.id) {
+                        app.router.navigate(
+                            app.router.buildRoute('KBSContents', newModel.id),
+                            {trigger: true}
+                        );
+                    }
+                });
+
+                prefill.trigger('duplicate:field', parentModel);
+            },
+
+            /**
+             * Checks if there are available lang for localization.
+             *
+             * @param {Data.Model} model Parent model.
+             * @return {boolean} True on success otherwise false.
+             */
+            checkCreateLocalization: function(model) {
+                var langs = this.getAvailableLangsForLocalization(model),
+                    config = app.metadata.getModule('KBSDocuments', 'config');
+
+                if (!langs || !config['languages']) {
+                    return true;
+                }
+
+                if (!config['languages'] || config['languages'].length == langs.length) {
+                    return false;
+                }
+
+                return true;
+            },
+
+            /**
+             * Returns array of langs for that there is localization.
+             * @param {Data.Model} model Parent model.
+             * @return {Array} Array of langs.
+             */
+            getAvailableLangsForLocalization: function(model) {
+                return model.get('related_languages') || [];
             }
         });
     });

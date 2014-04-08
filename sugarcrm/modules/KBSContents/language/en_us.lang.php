@@ -64,4 +64,8 @@ $mod_strings = array (
     'LBL_CREATE_REVISION_BUTTON_LABEL' => 'Create Revision',
     'LNK_NEW_TOPIC' => 'Create Topic',
     'LNK_TOPIC_LIST' => 'View Topics',
+    'LBL_CANNOT_CREATE_LOCALIZATION' =>
+        'Cannot create new localization. ' .
+        'There are no available languages for new localization. ' .
+        'Please add them first.',
 );

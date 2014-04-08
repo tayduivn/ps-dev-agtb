@@ -25,6 +25,7 @@ class KBSContentsApiHelper extends SugarBeanApiHelper {
             $bean->db->query($query);
         }
         $result = parent::formatForApi($bean, $fieldList, $options);
+
         $bean->load_relationship('notes');
         $result['attachment_list'] = array();
         foreach ($bean->notes->getBeans() as $note) {
@@ -35,6 +36,21 @@ class KBSContentsApiHelper extends SugarBeanApiHelper {
             );
             array_push($result['attachment_list'], $attach);
         }
+
+        $query = new SugarQuery();
+        $query->select(array('language'));
+        $query->from(BeanFactory::getBean('KBSContents'));
+        $query->where()
+            ->equals('kbsdocument_id', $bean->kbsdocument_id)
+            ->equals('active_rev', 1);
+        $langs = $query->execute();
+        if ($langs) {
+            $result['related_languages'] = array();
+            foreach ($langs as $lang) {
+                $result['related_languages'][] = $lang['language'];
+            }
+        }
+
         return $result;
     }
 

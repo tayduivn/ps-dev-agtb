@@ -247,6 +247,12 @@ $dictionary['KBSContent'] = array(
             'vname' => 'LBL_KBSREVISIONS',
             'relationship' => 'revisions',
         ),
+        'related_languages' => array(
+            'name' => 'lang_localizations',
+            'type' => 'enum',
+            'source' => 'non-db',
+            'vname' => 'LBL_KBSLOCALIZATIONS',
+        ),
     ),
     'relationships' => array(
         'kbscontent_notes' => array(
