@@ -17,7 +17,7 @@ $viewdefs['KBSContents']['base']['view']['kbs-dashlet-most-useful'] = array(
             'label' => 'LBL_DASHLET_MOST_USEFUL_NAME',
             'description' => 'LBL_DASHLET_MOST_USEFUL_DESC',
             'config' => array(
-
+                'module' => 'KBSContents'
             ),
             'preview' => array(
 
