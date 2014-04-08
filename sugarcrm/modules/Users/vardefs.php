@@ -675,7 +675,7 @@ $dictionary['User'] = array(
             'group'=>'email1',
             'required' => true,
             'merge_filter' => 'enabled',
-            'studio' => array('editview' => true, 'editField' => true, 'searchview' => false, 'popupsearch' => false), // bug 46859 
+            'studio' => array('editField' => true, 'searchview' => false, 'popupsearch' => false), // bug 46859
             'full_text_search' => array('enabled' => true, 'boost' => 3, 'index' => 'not_analyzed'), //bug 54567
         ), 
         'email'=> array(
