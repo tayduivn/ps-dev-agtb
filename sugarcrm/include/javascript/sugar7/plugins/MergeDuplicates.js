@@ -176,8 +176,7 @@
                 );
                 app.alert.show('invalid-record-count', {
                     level: 'error',
-                    messages: msg,
-                    autoClose: true
+                    messages: msg
                 });
             },
 
