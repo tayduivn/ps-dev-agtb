@@ -137,6 +137,8 @@ class MBModule
         $this->mbvardefs->load () ;
         $this->mblanguage->load () ;
 
+        $this->verifyMetadata();
+
     }
 
     function addTemplate ($template)
@@ -437,6 +439,26 @@ class MBModule
                     $this->copyMetaRecursive(MB_TEMPLATES . '/' . $template . '/clients/' . $client, $this->path . '/clients/' . $client);
                 }
             }
+        }
+    }
+
+    /**
+     * Ensures that all required metadata files exist or copies them from the templates if they don't exist.
+     */
+    protected function verifyMetadata() {
+        //Abort if we have never been saved
+        if (!file_exists($this->path))
+            return;
+
+        $rebuildClients = false;
+        foreach (array('base', 'mobile') as $client) {
+            if (!file_exists($this->path . '/clients/' . $client)) {
+                $rebuildClients = true;
+                break;
+            }
+        }
+        if ($rebuildClients) {
+            $this->copyClients();
         }
     }
 
