@@ -113,8 +113,11 @@
 
         app.alert.show('convert_access_denied', {
             level: 'error',
-            messages: app.lang.get('LBL_CONVERT_ACCESS_DENIED', this.module, {requiredModulesMissing:translatedModuleNames.join(', ')}),
-            autoClose: false
+            messages: app.lang.get(
+                'LBL_CONVERT_ACCESS_DENIED',
+                this.module,
+                {requiredModulesMissing: translatedModuleNames.join(', ')}
+            )
         });
         app.drawer.close();
     },

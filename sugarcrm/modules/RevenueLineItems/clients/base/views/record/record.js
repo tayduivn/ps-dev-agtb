@@ -116,7 +116,6 @@
         if (_.isEmpty(this.model.get('product_template_id')) && !_.isEmpty(this.model.get('category_id'))) {
             app.alert.show('invalid_items', {
                 level: 'error',
-                autoClose: false,
                 title: app.lang.get('LBL_ALERT_TITLE_ERROR', this.module) + ':',
                 messages: [app.lang.get('LBL_CONVERT_INVALID_RLI_PRODUCT', this.module)]
             });

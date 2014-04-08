@@ -50,9 +50,8 @@
     codeBlockForecasts: function(title, msg) {
         var alert = app.alert.show('no_access_to_forecasts', {
             level: 'error',
-            autoClose: false,
-            title: app.lang.get(title, "Forecasts") + ":",
-            messages: [app.lang.get(msg, "Forecasts")]
+            title: app.lang.get(title, 'Forecasts') + ':',
+            messages: [app.lang.get(msg, 'Forecasts')]
         });
 
         var $close = alert.getCloseSelector();

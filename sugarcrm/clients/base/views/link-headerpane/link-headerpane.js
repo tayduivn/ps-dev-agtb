@@ -62,8 +62,7 @@
         if (_.isEmpty(this.link)) {
             app.alert.show('invalid-data', {
                 level: 'error',
-                messages: app.lang.get('ERROR_EMPTY_LINK_MODULE'),
-                autoClose: true
+                messages: app.lang.get('ERROR_EMPTY_LINK_MODULE')
             });
             return;
         }
@@ -93,8 +92,7 @@
                     error: function (error) {
                         app.alert.show('server-error', {
                             level: 'error',
-                            messages: 'ERR_GENERIC_SERVER_ERROR',
-                            autoClose: false
+                            messages: 'ERR_GENERIC_SERVER_ERROR'
                         });
                     }
                 };
@@ -105,8 +103,7 @@
         if (_.isEmpty(this.link)) {
             app.alert.show('invalid-data', {
                 level: 'error',
-                messages: app.lang.get('ERROR_EMPTY_LINK_MODULE'),
-                autoClose: true
+                messages: app.lang.get('ERROR_EMPTY_LINK_MODULE')
             });
             return;
         }

@@ -64,8 +64,8 @@
                         app.alert.show('pass_verification_failed', {
                             level: 'error',
                             title: app.lang.get('LBL_PASSWORD', self.module),
-                            messages: app.lang.get('ERR_PASSWORD_MISMATCH', self.module),
-                            autoClose: true});
+                            messages: app.lang.get('ERR_PASSWORD_MISMATCH', self.module)
+                        });
                         self.$('[name=current_password]').val('');
                         self.$('[name=current_password]').focus();
                     } else {
@@ -159,8 +159,8 @@
                     app.alert.show('pass_update_failed', {
                         level: 'error',
                         title: app.lang.get('LBL_PASSWORD', self.module),
-                        messages: app.lang.get('LBL_CANNOT_SEND_PASSWORD'),
-                        autoClose: true});
+                        messages: app.lang.get('LBL_CANNOT_SEND_PASSWORD')
+                    });
                     self.$('.modal').modal().find('input:text, input:password').val('');
                     self.resetButton();
                 }

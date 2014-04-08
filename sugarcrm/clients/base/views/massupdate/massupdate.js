@@ -582,7 +582,11 @@
                 showAlerts: false,
                 method: 'delete',
                 error: function() {
-                    app.alert.show('error_while_mass_update', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
+                    app.alert.show('error_while_mass_update', {
+                        level:'error',
+                        title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'),
+                        messages: app.lang.getAppString('ERR_HTTP_500_TEXT')
+                    });
                 },
                 success: function(data, response, options) {
                     self.layout.trigger("list:records:deleted", lastSelectedModels);
@@ -681,7 +685,11 @@
                             showAlerts: true,
                             attributes: attributes,
                             error: function() {
-                                app.alert.show('error_while_mass_update', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
+                                app.alert.show('error_while_mass_update', {
+                                    level: 'error',
+                                    title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'),
+                                    messages: app.lang.getAppString('ERR_HTTP_500_TEXT')
+                                });
                             },
                             success: function(data, response, options) {
                                 self.hide();

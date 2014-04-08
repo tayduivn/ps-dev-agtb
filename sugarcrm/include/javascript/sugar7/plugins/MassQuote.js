@@ -72,8 +72,7 @@
 
                             app.alert.show(('invalid_items_' + key), {
                                 level: 'error',
-                                autoClose: false,
-                                title: app.lang.get("LBL_ALERT_TITLE_ERROR", this.module) + ':',
+                                title: app.lang.get('LBL_ALERT_TITLE_ERROR', this.module) + ':',
                                 messages: messages,
                                 onLinkClick: function() {
                                     app.alert.dismiss('invalid_items_' + key);
