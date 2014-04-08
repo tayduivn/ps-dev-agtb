@@ -46,7 +46,6 @@ $moduleList[] = 'Quotes';
 $moduleList[] = 'Products';
 $moduleList[] = 'Forecasts';
 $moduleList[] = 'Contracts';
-$moduleList[] = 'KBDocuments';
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=ent ONLY
 $moduleList[] = 'RevenueLineItems';
@@ -343,7 +342,8 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     //BEGIN SUGARCRM flav=pro ONLY
     'Manufacturers', 'ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes',
     'Shippers', 'TaxRates', 'TeamNotices', 'Teams', 'TimePeriods', 'ForecastOpportunities', 'Quotas',
-    'KBDocumentRevisions', 'KBDocumentKBTags', 'KBTags', 'KBContents', 'ContractTypes', 'ForecastSchedule',
+    'KBDocumentRevisions', 'KBDocumentKBTags', 'KBTags', 'KBContents', 'KBDocuments',
+    'ContractTypes', 'ForecastSchedule',
     'ACLFields', 'Holidays', 'SNIP', 'ForecastDirectReports',
     //END SUGARCRM flav=pro ONLY
     'Releases','Sync',
@@ -452,6 +452,7 @@ $GLOBALS['moduleTabMap'] = array(
     'UpgradeWizard' => 'Administration',
     'KBSDocuments' => 'KBSContents',
     'KBSArticles' => 'KBSContents',
+    'KBSTopics' => 'KBSContents',
     'EmailMan' => 'Administration',
     'ModuleBuilder' => 'Administration',
     'Configurator' => 'Administration',
@@ -680,7 +681,7 @@ $moduleList[] = 'KBSContents';
 
 $beanList['KBSArticles'] = 'KBSArticle';
 $beanFiles['KBSArticle'] = 'modules/KBSArticles/KBSArticle.php';
-$moduleList[] = 'KBSArticles';
+$modInvisList[] = 'KBSArticles';
 
 foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $modExtFile) {
     include $modExtFile;

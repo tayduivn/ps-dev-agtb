@@ -23,12 +23,26 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'icon-plus',
     ),
     array(
+        'route' => "#KBSTopics/create",
+        'label' => 'LNK_NEW_TOPIC',
+        'acl_action' => 'admin',
+        'acl_module' => 'KBSTopics',
+        'icon' => 'icon-plus',
+    ),
+    array(
         'route' => "#{$module_name}",
         'label' => 'LBL_LIST_ARTICLES',
         'acl_action' => 'list',
         'acl_module' => $module_name,
         'icon' => 'icon-reorder',
-        ),
+    ),
+    array(
+        'route' => "#KBSTopics",
+        'label' => 'LNK_TOPIC_LIST',
+        'acl_action' => 'admin',
+        'acl_module' => 'KBSTopics',
+        'icon' => 'icon-reorder',
+    ),
     array(
         'route' => "#{$module_name}/config",
         'label' => 'LBL_KNOWLEDGE_BASE_ADMIN_MENU',
