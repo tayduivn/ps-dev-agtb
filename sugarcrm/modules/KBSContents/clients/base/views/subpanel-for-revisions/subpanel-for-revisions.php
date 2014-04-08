@@ -70,6 +70,7 @@ $viewdefs['KBSContents']['base']['view']['subpanel-for-revisions'] = array(
                     'default' => true,
                     'enabled' => true,
                     'link' => false,
+                    'readonly' => true,
                 ),
                 array(
                     'label' => 'LBL_DATE_ENTERED',

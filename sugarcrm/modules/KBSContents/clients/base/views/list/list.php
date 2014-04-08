@@ -24,6 +24,10 @@ $viewdefs['KBSContents']['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'link' => true,
+                    'related_fields' => array(
+                        'kbsdocument_id',
+                        'kbsarticle_id',
+                    ),
                 ),
                 array(
                     'name' => 'language',
