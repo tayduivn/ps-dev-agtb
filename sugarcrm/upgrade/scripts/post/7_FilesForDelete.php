@@ -186,8 +186,19 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'tests/include/SubPanel/Bug63486Test.php',
             'modules/Meetings/api/MeetingsApi.php',
             // MAR-1736 / SC-2611
-            'modules/Emails/clients/base/views/panel-top/panel-top.js'
+            'modules/Emails/clients/base/views/panel-top/panel-top.js',
         );
+
+        if (version_compare($this->from_version, '7.2', '<')
+            && version_compare($this->from_version, '7.1.5', '>=')
+        ) {
+            // SC-2664
+            $files[] = 'modules/Notifications/clients/base/layouts/records/records.php';
+            $files[] = 'modules/Notifications/clients/base/views/raw/raw.hbs';
+            $files[] = 'modules/Notifications/clients/base/views/raw/raw.js';
+            $files[] = 'modules/Notifications/clients/base/views/raw/raw.php';
+        }
+
         $this->fileToDelete($files);
     }
 }
