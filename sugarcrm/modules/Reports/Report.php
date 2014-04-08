@@ -1763,7 +1763,10 @@ return str_replace(' > ','_',
                 // Not a field or unknown field type - don't touch it
                 return $field;
             }
-            $field_type = $this->focus->field_name_map[$field_data[1]]['type'];
+
+            $db = DBManagerFactory::getInstance();
+            $field_type = $db->getFieldType($this->focus->field_name_map[$field_data[1]]);
+
             if(!in_array($field_type, array('currency','double','float','decimal','int','date','datetime')))
             {
                 // add IFNULL to the field and then re-add alias back

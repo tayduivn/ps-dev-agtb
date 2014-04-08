@@ -712,7 +712,7 @@
 
         if (creatable && contexts.length === 1) {
             meta = app.metadata.getModule(contexts[0].get("module"));
-            if (_.isObject(meta.filters)) {
+            if (meta && _.isObject(meta.filters)) {
                 _.each(meta.filters, function(value) {
                     if (_.isObject(value)) {
                         creatable = creatable && value.meta.create !== false;

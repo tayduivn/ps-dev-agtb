@@ -57,7 +57,7 @@
             'show_actions': true
         };
 
-        var moduleMeta = app.metadata.getModule(opts.module);
+        var moduleMeta = app.metadata.getModule(opts.module) || {};
         this.disableActivityStreamToggle(opts.module, moduleMeta, opts.meta || {});
 
         this.on("filterpanel:change:module", function(module, link) {

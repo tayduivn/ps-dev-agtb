@@ -10,12 +10,13 @@
 *
 * Copyright (C) 2004-2013 SugarCRM Inc. All rights reserved.
 */
+
 <h2>Overview</h2>
 <span class="lead">
     Downloads a vCard.
 </span>
 
-<h2>Query String Parameters</h2>
+<h2>Request Arguments</h2>
 <table class="table table-hover">
     <thead>
     <tr>
@@ -57,17 +58,14 @@
     </tbody>
 </table>
 
-<h2>Query String Parameters</h2>
-<span class="lead">
+<h3>Request</h3>
 <pre class="pre-scrollable">
-{
-   "id":"2c9e5c09-6824-0d14-f5cb-5130321ac3cf",
-   "module":"Contacts"
-}
+http://{site_url}/rest/v10/VCardDownload?id=2c9e5c09-6824-0d14-f5cb-5130321ac3cf&module=Contacts
 </pre>
-</span>
+<strong>Note:</strong> GET endpoint parameters are passed in the form of a query string.
 
-<h2>Result</h2>
+
+<h2>Response Arguments</h2>
 <table class="table table-hover">
     <thead>
     <tr>
@@ -91,7 +89,7 @@
     </tbody>
 </table>
 
-<h3>Output Example</h3>
+<h3>Response</h3>
 <pre class="pre-scrollable">
 BEGIN:VCARD
 N;CHARSET=utf-8:Leone;Rosemarie;;

@@ -28,14 +28,10 @@
 -->
 <h2>Overview</h2>
 <span class="lead">
-    Get an access token as another user.
-The current user must be an admin in order to access this endpoint. This method is
-useful for integrations in order to be able to access the system with the same permission
-restrictions as a specified user. The calling user does not lose their existing
-token, this one is granted in addition.
+    Get an access token as another user. The current user must be an admin in order to access this endpoint. This method is useful for integrations in order to be able to access the system with the same permission restrictions as a specified user. The calling user does not lose their existing token, this one is granted in addition.
 </span>
 
-<h2>Input Parameters</h2>
+<h2>Request Arguments</h2>
 <table class="table table-hover">
     <thead>
         <tr>
@@ -77,7 +73,7 @@ token, this one is granted in addition.
     </tbody>
 </table>
 
-<h3>Input Example</h3>
+<h3>Request</h3>
 <pre class="pre-scrollable">
 {
    "client_id":"sugar",
@@ -85,12 +81,7 @@ token, this one is granted in addition.
 }
 </pre>
 
-<h2>Query String Parameters</h2>
-<span class="lead">
-    This endpoint does not accept any query string parameters.
-</span>
-
-<h2>Result</h2>
+<h2>Response Arguments</h2>
 <table class="table table-hover">
     <thead>
         <tr>
@@ -147,7 +138,7 @@ token, this one is granted in addition.
     </tbody>
 </table>
 
-<h3>Output Example</h3>
+<h3>Response</h3>
 <pre class="pre-scrollable">
 {
    "access_token":"c19fff9b-b767-233e-ebb4-512e369d3e39",
@@ -156,6 +147,7 @@ token, this one is granted in addition.
    "scope":null
 }
 </pre>
+
 <h2>Change Log</h2>
 <table class="table table-hover">
     <tr>

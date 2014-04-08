@@ -205,17 +205,27 @@
         //otherwise default to maxRecordFetchSize
             max_num = (this.def.isLinkAction && app.config.maxRecordLinkFetchSize) ?
                 app.config.maxRecordLinkFetchSize :
-                app.config.maxRecordFetchSize;
+                app.config.maxRecordFetchSize,
+            order = this.context.get('collection').orderBy;
 
         if (!_.isArray(filterDef)) {
             filterDef = [filterDef];
         }
 
-        var url = app.api.buildURL(this.module, null, null, {
+        var params = {
             fields: 'id',
-            max_num: max_num,
-            filter: filterDef
-        });
+            max_num: max_num
+        };
+
+        if (order && order.field) {
+            params.order_by = order.field + ':' + order.direction;
+        }
+
+        if (!_.isEmpty(filterDef)) {
+            params.filter = filterDef;
+        }
+
+        var url = app.api.buildURL(this.module, null, null, params);
 
         app.alert.show('totalrecord', {
             level: 'process',

@@ -159,7 +159,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         $filename = "custom/modules/$module/clients/base/views/record/record.php";
         $this->assertFileExists($filename);
         require $filename;
-        
+
         // Handle assertion of templateMeta.useTabs right up front
         $this->assertNotEmpty($viewdefs[$module]['base']['view']['record']['templateMeta']);
         $this->assertNotEmpty($viewdefs[$module]['base']['view']['record']['templateMeta']['useTabs']);
@@ -167,13 +167,13 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         // Now handle panels
         $this->assertNotEmpty($viewdefs[$module]['base']['view']['record']['panels']);
         $this->assertEquals(5, count($viewdefs[$module]['base']['view']['record']['panels']));
-        
+
         // Panels 1-3 should have:
         // 'newTab' => true and 'panelDefault' => 'expanded',
         // Panel 4 should have:
         // 'newTab' => false and 'panelDefault' => 'expanded',
         $panels = $viewdefs[$module]['base']['view']['record']['panels'];
-        
+
         // Test panels 1 - 3
         $this->assertArrayHasKey('newTab', $panels[1]);
         $this->assertTrue($panels[1]['newTab']);
@@ -187,7 +187,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($panels[3]['newTab']);
         $this->assertArrayHasKey('panelDefault', $panels[3]);
         $this->assertEquals('expanded', $panels[3]['panelDefault']);
-        
+
         // Panel 4 should be different
         $this->assertArrayHasKey('newTab', $panels[4]);
         $this->assertFalse($panels[4]['newTab']);
@@ -881,7 +881,8 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('$owner', $defs['fields']);
         $this->assertArrayHasKey('$favorite',  $defs['fields']);
         $this->assertArrayHasKey('team_name',  $defs['fields']);
-        $this->assertArrayNotHasKey('address_city',  $defs['fields']);
+        $this->assertArrayHasKey('address_city',  $defs['fields']);
+        $this->assertArrayNotHasKey('somefield',  $defs['fields']);
     }
 
     public function _sidecarSearchProvider()
@@ -956,6 +957,35 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         return $builder->getFilesToMakeByView('quickmenu');
     }
 
+    public function testSidecarListMerge()
+    {
+        $module = 'Bugs';
+        $field = 'fixed_in_release_name';
+        $filepath = "custom/modules/$module/clients/base/views/list/list.php";
+
+        // Simple first assertions
+        $this->assertFileExists($filepath, "$filepath does not exist");
+        require $filepath;
+
+        // Begin proper assertions
+        $defs = $viewdefs[$module]['base']['view']['list'];
+        $this->assertTrue(isset($defs['panels'][0]['fields']), 'Field array is missing from the upgrade file');
+
+        // Before assertions on our test field, make sure it's there
+        $found = $this->_fieldExistsInDefs($field, $defs);
+        $this->assertTrue($found, "Failed to prove existence of field '$field' in file $filepath");
+
+        // Test field should be the seventh field in the field list
+        $this->assertEquals($field, $defs['panels'][0]['fields'][6]['name']);
+
+        // Tests merge of new defs
+        $this->assertArrayHasKey('link', $defs['panels'][0]['fields'][6]);
+        $this->assertFalse($defs['panels'][0]['fields'][6]['link']);
+
+        // Tests conversion of defs
+        $this->assertArrayHasKey('id', $defs['panels'][0]['fields'][6]);
+        $this->assertEquals('FIXED_IN_RELEASE', $defs['panels'][0]['fields'][6]['id']);
+    }
 
 
 }

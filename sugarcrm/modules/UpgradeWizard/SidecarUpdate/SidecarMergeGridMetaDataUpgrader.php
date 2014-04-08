@@ -369,7 +369,7 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
      */
     public function setLegacyViewdefs()
     {
-        $views = $this->sidecar?$this->mergeViewsSidecar:$this->mergeViews;
+        $views = $this->sidecar ? $this->mergeViewsSidecar : $this->mergeViews;
         if(empty($views[$this->viewtype])) {
             $this->logUpgradeStatus("Did not find merge views for {$this->viewtype}");
             return;
@@ -380,61 +380,78 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
         $foundCustom = false;
         // Load all views for this combined view
         foreach($views[$this->viewtype] as $view => $data) {
-            unset($module_name);
             list($file, $lViewtype) = $data;
             if($this->sidecar) {
-                $filepath = "$dirname/$file/$file.php";
+                $customFilePath = "$dirname/$file/$file.php";
             } else {
-                $filepath = "$dirname/$file.php";
+                $customFilePath = "$dirname/$file.php";
             }
-            if(!file_exists($filepath)) {
-                // try without custom/, as this is a merge
-                $filepath = $this->getOriginalFile($filepath);
-                if(!file_exists($filepath)) {
-                    $this->logUpgradeStatus("Could not find $filepath for $lViewtype");
-                    continue;
-                }
+            $originalFilePath = $this->getOriginalFile($customFilePath);
+            $origExists = file_exists($originalFilePath);
+            $custExists = file_exists($customFilePath);
+            // try without custom/, as this is a merge
+            if(!$origExists && !$custExists) {
+                $this->logUpgradeStatus("Could not find $originalFilePath or $customFilePath for $lViewtype");
+                continue;
+            }
+
+            if (!$origExists && $custExists) {
+                $this->originalLegacyViewdefs[$lViewtype] = $this->loadLayout($view, $customFilePath, $lViewtype);
             } else {
+                $this->originalLegacyViewdefs[$lViewtype] = $this->loadLayout($view, $originalFilePath, $lViewtype);
+            }
+            if($custExists) {
                 $foundCustom = true;
-            }
-
-            $this->logUpgradeStatus("Loading $filepath for $lViewtype");
-            include $filepath;
-            // There is an odd case where custom modules are pathed without the
-            // package name prefix but still use it in the module name for the
-            // viewdefs. This handles that case. Also sets a prop that lets the
-            // rest of the process know that the module is named differently
-            if (isset($module_name)) {
-                $this->modulename = $module = $module_name;
+                $this->legacyViewdefs[$lViewtype] = $this->loadLayout($view, $customFilePath, $lViewtype);
             } else {
-                $module = $this->module;
+                $this->legacyViewdefs[$lViewtype] = $this->originalLegacyViewdefs[$lViewtype];
             }
 
-            $var = $this->variableMap[$this->client][$view];
-            if (isset($$var)) {
-                $defs = $$var;
-                if($this->sidecar) {
-                    if(!empty($defs[$module][$this->client]['view'][$view])) {
-                        $this->legacyViewdefs[$lViewtype] = $defs[$module][$this->client]['view'][$view];
-                    }
-                } else {
-                    if (isset($this->vardefIndexes[$this->client.$view])) {
-                        $index = $this->vardefIndexes[$this->client.$view];
-                        $this->legacyViewdefs[$lViewtype] = empty($index) ? $defs[$module] : $defs[$module][$index];
-                        if($this->client == 'portal' && !empty($this->legacyViewdefs[$lViewtype]['data'])) {
-                            // Portal views are in 'data', not 'panels'
-                            // Because it'd be boring if all data formats were the same, right?
-                            $this->legacyViewdefs[$lViewtype]['panels'] = array($this->legacyViewdefs[$lViewtype]['data']);
-                        }
-                    }
-                }
-            }
         }
         // If we didn't find any custom files - we don't need to do anything
         if(!$foundCustom) {
             $this->legacyViewdefs = array();
             $this->logUpgradeStatus("Did not find customizations for {$this->viewtype}");
         }
+    }
+
+    protected function loadLayout($view, $filepath, $lViewtype){
+        $this->logUpgradeStatus("Loading $filepath for $lViewtype");
+        include $filepath;
+        // There is an odd case where custom modules are pathed without the
+        // package name prefix but still use it in the module name for the
+        // viewdefs. This handles that case. Also sets a prop that lets the
+        // rest of the process know that the module is named differently
+        if (isset($module_name)) {
+            $this->modulename = $module = $module_name;
+        } else {
+            $module = $this->module;
+        }
+
+
+        $ret = array();
+
+        $var = $this->variableMap[$this->client][$view];
+        if (isset($$var)) {
+            $defs = $$var;
+            if($this->sidecar) {
+                if(!empty($defs[$module][$this->client]['view'][$view])) {
+                    $ret = $defs[$module][$this->client]['view'][$view];
+                }
+            } else {
+                if (isset($this->vardefIndexes[$this->client.$view])) {
+                    $index = $this->vardefIndexes[$this->client.$view];
+                    $ret = empty($index) ? $defs[$module] : $defs[$module][$index];
+                    if($this->client == 'portal' && !empty($ret['data'])) {
+                        // Portal views are in 'data', not 'panels'
+                        // Because it'd be boring if all data formats were the same, right?
+                        $ret['panels'] = array($ret['data']);
+                    }
+                }
+            }
+        }
+
+        return $ret;
     }
 
     /**
@@ -842,6 +859,9 @@ END;
             $finaldefs = $this->mergeLayoutDefs($newdefs, $tempdefs);
         }
 
+        //Finally re-add any fields that are on the OOB sidecar view but not on the OOB Legacy views
+        $finaldefs = $this->addNewFieldsToLayout($finaldefs);
+
         $this->sidecarViewdefs[$this->module][$this->client]['view'][MetaDataFiles::getName($this->viewtype)] = $finaldefs;
     }
 
@@ -996,5 +1016,48 @@ END;
         }
 
         return $current;
+    }
+
+    /**
+     * Walk through default record view lookng for fields that did not exist on the original pre-sidecar layout defs
+     * Any such fields should be appended to the final defs
+     *
+     * @param array $newDefs
+     * @param array $defaultDefs
+     */
+    protected function addNewFieldsToLayout(array $newDefs) {
+        $defaultDefs = $this->loadDefaultMetadata();
+        $parser = ParserFactory::getParser($this->viewtype, $this->module, null, null, $this->client);
+        $defaultFields = $parser->getFieldsFromPanels($defaultDefs['panels'], $parser->_fielddefs);
+        $currentFields = $parser->getFieldsFromPanels($newDefs['panels'], $parser->_fielddefs);
+        $origFields = array();
+        foreach($this->originalLegacyViewdefs as $lViewtype => $data) {
+            // We will need a parser no matter what
+            if($this->sidecar) {
+                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, null, null, $this->client);
+            } else {
+                $legacyParser = ParserFactory::getParser($lViewtype, $this->module);
+            }
+            // replace viewdefs with defaults, since parser's viewdefs can be already customized by other parts
+            // of the upgrade
+            $legacyParser->_viewdefs['panels'] = $legacyParser->convertFromCanonicalForm($data['panels'], $legacyParser->_fielddefs);
+            // get field list
+            $origData = $legacyParser->getFieldsFromPanels($data['panels'], $legacyParser->_fielddefs);
+            $origFields = array_merge($origFields, $origData);
+        }
+        //Add fields always defaults to the bottom of the first panel.
+        //In this case the 'first panel' is the first non-header panel, AKA panel[1]
+        if (empty($newDefs['panels'][1]['fields'])) {
+            $this->logUpgradeStatus("Unable to find panels to add to");
+        }
+
+        foreach($defaultFields as $field => $def) {
+            //If a field wasn't on the lagacy layout, add it to the custom one.
+            if (empty($origFields[$field]) && empty($currentFields[$field]) && !empty($newDefs['panels'][1]['fields'])) {
+                $newDefs['panels'][1]['fields'][] = $def;
+            }
+        }
+
+        return $newDefs;
     }
 }

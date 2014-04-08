@@ -102,6 +102,9 @@
                     }
                 }
             }
+        },
+        'module_tab_map': {
+            'Error': 'Home'
         }
     },
 
