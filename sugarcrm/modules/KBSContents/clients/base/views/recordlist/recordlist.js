@@ -24,5 +24,9 @@
         ]);
 
         this._super('initialize', [options]);
+
+        this.layout.on('list:record:deleted', function() {
+            this.refreshCollection();
+        }, this);
     }
 })
