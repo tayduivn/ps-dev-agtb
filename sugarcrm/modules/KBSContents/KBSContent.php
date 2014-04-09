@@ -103,4 +103,51 @@ class KBSContent extends SugarBean {
         }
         return parent::save($check_notify);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function mark_deleted($id)
+    {
+        if ($this->active_rev == 1) {
+            $query = new SugarQuery();
+            $query->from(BeanFactory::getBean('KBSContents'));
+            $query->select(array('id'));
+            $query->where()
+                ->notEquals('id', $this->id)
+                ->equals('kbsdocument_id', $this->kbsdocument_id)
+                ->equals('kbsarticle_id', $this->kbsarticle_id);
+            $query->orderBy('date_entered', 'DESC');
+            $query->limit(1);
+
+            $result = $query->execute();
+
+            if ($result) {
+                $bean = BeanFactory::getBean('KBSContents', $result[0]['id']);
+                if ($bean->id) {
+                    $this->resetActivRev();
+
+                    $bean->active_rev = 1;
+                    $bean->save();
+                }
+            }
+        }
+        parent::mark_deleted($id);
+    }
+
+    /**
+     * Reset active revision status for all revisions in article.
+     * @param SugarBean $bean
+     */
+    protected function resetActivRev($bean = null)
+    {
+        $bean = ($bean === null) ? $this : $bean;
+        $query = "UPDATE {$bean->table_name}
+                    SET active_rev = 0
+                    WHERE
+                      kbsdocument_id = {$bean->db->quoted($bean->kbsdocument_id)} AND
+                      kbsarticle_id = {$bean->db->quoted($bean->kbsarticle_id)}
+                ";
+        $bean->db->query($query);
+    }
 }
