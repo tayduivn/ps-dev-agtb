@@ -68,4 +68,10 @@ $mod_strings = array (
         'Cannot create new localization. ' .
         'There are no available languages for new localization. ' .
         'Please add them first.',
+    'LBL_KBSTATUS_DRAFT' => 'Draft',
+    'LBL_KBSTATUS_EXPIRED' => 'Expired',
+    'LBL_KBSTATUS_INREVIEW' => 'In Review',
+    'LBL_KBSTATUS_PUBLISHED' => 'Published',
+    'LBL_KBSTATUS_PUBLISHED_IN' => 'Published (Internal)',
+    'LBL_KBSTATUS_PUBLISHED_EX' => 'Published (Extrenal)',
 );

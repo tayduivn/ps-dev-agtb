@@ -23,6 +23,66 @@ $viewdefs['KBSContents']['base']['filter']['basic'] = array(
             'editable' => false,
         ),
         array(
+            'id' => 'draft',
+            'name' => 'LBL_KBSTATUS_DRAFT',
+            'filter_definition' => array(
+                array(
+                    'status' => array('$equals' => 'draft'),
+                ),
+            ),
+            'editable' => false,
+        ),
+        array(
+            'id' => 'expired',
+            'name' => 'LBL_KBSTATUS_EXPIRED',
+            'filter_definition' => array(
+                array(
+                    'status' => array('$equals' => 'expired'),
+                ),
+            ),
+            'editable' => false,
+        ),
+        array(
+            'id' => 'in-review',
+            'name' => 'LBL_KBSTATUS_INREVIEW',
+            'filter_definition' => array(
+                array(
+                    'status' => array('$equals' => 'in-review'),
+                ),
+            ),
+            'editable' => false,
+        ),
+        array(
+            'id' => 'published-in',
+            'name' => 'LBL_KBSTATUS_PUBLISHED_IN',
+            'filter_definition' => array(
+                array(
+                    'status' => array('$equals' => 'published-in'),
+                ),
+            ),
+            'editable' => false,
+        ),
+        array(
+            'id' => 'published-ex',
+            'name' => 'LBL_KBSTATUS_PUBLISHED_EX',
+            'filter_definition' => array(
+                array(
+                    'status' => array('$equals' => 'published-ex'),
+                ),
+            ),
+            'editable' => false,
+        ),
+        array(
+            'id' => 'published',
+            'name' => 'LBL_KBSTATUS_PUBLISHED',
+            'filter_definition' => array(
+                array(
+                    'status' => array('$equals' => 'published'),
+                ),
+            ),
+            'editable' => false,
+        ),
+        array(
             'id' => 'recently_viewed',
             'name' => 'LBL_RECENTLY_VIEWED',
             'filter_definition' => array(
