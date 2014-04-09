@@ -447,7 +447,7 @@ class MBModule
      */
     protected function verifyMetadata() {
         //Abort if we have never been saved
-        if (!file_exists($this->path))
+        if (empty($this->name) || !file_exists($this->path))
             return;
 
         $rebuildClients = false;
