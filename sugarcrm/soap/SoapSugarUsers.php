@@ -109,6 +109,7 @@ function login($user_auth, $application){
 	} else if(function_exists('mcrypt_cbc')){
 		$password = decrypt_string($user_auth['password']);
         $authController = AuthenticationController::getInstance();
+        $authController->loggedIn = false; // reset login attempt to try again with decrypted password
 		if($authController->login($user_auth['user_name'], $password) && isset($_SESSION['authenticated_user_id'])){
 			$success = true;
 		} // if
