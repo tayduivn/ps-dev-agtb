@@ -59,7 +59,7 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                 'email',
                 'phone_fax',
                 array(
-                    'name' => 'fieldset_address',
+                    'name' => 'billing_address',
                     'type' => 'fieldset',
                     'css_class' => 'address',
                     'label' => 'LBL_BILLING_ADDRESS',

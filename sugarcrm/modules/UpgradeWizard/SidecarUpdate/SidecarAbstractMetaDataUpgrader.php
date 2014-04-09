@@ -551,7 +551,13 @@ abstract class SidecarAbstractMetaDataUpgrader
             }
             // See if there are viewdefs defined that we can use
             if (isset($viewdefs['<module_name>'][$client]['view'][$viewname])) {
-                $newdefs = $viewdefs['<module_name>'][$client]['view'][$viewname];
+                //Need to perform variable replacement for some field defs
+                $convertedDefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($this->module, $viewdefs);
+                if (isset($convertedDefs[$this->module][$client]['view'][$viewname])) {
+                    $newdefs = $convertedDefs[$this->module][$client]['view'][$viewname];
+                } else {
+                    $newdefs = $viewdefs['<module_name>'][$client]['view'][$viewname];
+                }
             }
 
             if($newdefs) {
