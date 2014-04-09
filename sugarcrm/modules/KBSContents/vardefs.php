@@ -31,6 +31,9 @@ $dictionary['KBSContent'] = array(
             'vname' => 'LBL_TEXT_BODY',
             'type' => 'longtext',
             'comment' => 'Article body',
+            'full_text_search' => array(
+                'enabled' => true,
+            ),
         ),
         'language' => array(
             'name' => 'language',
@@ -192,7 +195,7 @@ $dictionary['KBSContent'] = array(
             'default' => 0,
             'duplicate_on_record_copy' => 'no',
             'full_text_search' => array(
-                'enabled'=> true,
+                'enabled' => true,
                 'type' => 'bool',
             ),
         ),
