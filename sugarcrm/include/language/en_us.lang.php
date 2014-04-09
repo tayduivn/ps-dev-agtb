@@ -4958,7 +4958,10 @@ $app_strings = array (
     'LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER' => 'Add your comment&hellip; Type @ to mention a user. Type # to reference a record.',
     'LBL_ACTIVITY_STREAM' => 'Activity Stream',
     'LBL_ACTIVITY_STREAM_DISABLED' => 'Activity Stream is not enabled',
+    'LBL_ACTIVITY_STREAM_DISABLED_MODULE' => 'Activity Stream is not enabled for this module',
     'LBL_ACTIVTY_STREAM_SHOW_MORE' => 'More posts...',
+    'LBL_ACTIVITY_STREAM_DASHLET_NAME' => 'My Activity Stream',
+    'LBL_ACTIVITY_STREAM_DASHLET_DESCRIPTION' => 'View a list of activities performed on records and create and post comments.',
 
     'LBL_DATA_VIEW' => 'Data View',
     'LBL_COMMENT' => 'Comment',

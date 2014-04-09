@@ -158,3 +158,26 @@ div[data-placeholder]:not(:focus):not([data-hide-placeholder]):before {
   content: attr(data-placeholder);
   color: @grayLight;
 }
+
+// Fix for activity stream dashlet for record view
+.dashboard .well .dashlet-content .activitystream-posts-comments-container {
+  padding: 12px 68px 8px 62px !important;
+}
+
+// Fix for activity stream dashlet actions
+.dashlet .activitystream-posts-comments-container  .actions {
+  position: absolute;
+  top: 10px;
+}
+
+.dashlet .activitystream-layout .omnibar .sayit {
+  margin-right: 70px;
+}
+
+.activitystream-layout .omnibar .inputactions {
+  position: absolute;
+  top: 3px;
+  right: 0px;
+  padding:0px;
+  background-color: #fff;
+}
