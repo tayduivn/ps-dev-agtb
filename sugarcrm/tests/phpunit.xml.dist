@@ -23,7 +23,7 @@
          processIsolation="false"
          stopOnFailure="false"
          strict="true"
-         timeoutForSmallTests="35"
+         timeoutForSmallTests="40"
          timeoutForMediumTests="45"
          timeoutForLargeTests="65"
          syntaxCheck="false"
