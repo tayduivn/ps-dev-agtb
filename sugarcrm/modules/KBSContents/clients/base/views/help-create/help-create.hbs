@@ -1,0 +1,57 @@
+{{!
+/*********************************************************************************
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ ********************************************************************************/
+}}
+<div class="dashboard" data-dashboard="true">
+    <div class="cols row-fluid">
+        <div>
+            <div class="preview-headerbar">
+                <div class="headerpane">
+                    <span class="record-cell">
+                        <h1 class="dnb-account-create"><span class="detail">{{str "LBL_HELP"}}</span></h1>
+                    </span>
+                    <span class="record-cell">
+                        <h1><span class="detail"></span></h1>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <ul class="dashlets row-fluid">
+            <li class="span12">
+                <ul class="dashlet-cell rows row-fluid">
+                    <li class="dashlet-container span12 ui-droppable">
+                        <div>
+                            <div class="thumbnail dashlet ui-draggable" data-type="dashlet" data-action="droppable">
+                                <div data-dashlet="toolbar">
+                                    <div class="dashlet-header">
+                                        <div class="btn-toolbar pull-right">
+                                        </div>
+                                        <h4 data-toggle="dashlet" class="dashlet-title">{{title}}</h4>
+                                    </div>
+                                </div>
+                                <div data-dashlet="dashlet" class="dashlet-content">
+                                    <div>
+                                        <div class="help-dashlet-content">
+                                            <div class="help-body">{{nl2br body}}</div>
+                                            <div class="help-more">{{{more_help}}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
