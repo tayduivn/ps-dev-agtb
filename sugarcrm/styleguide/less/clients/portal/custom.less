@@ -190,3 +190,25 @@ ul.nav.nav-tabs li.activity > p {
   float: left;
   margin: 0 1em 0 2em;
 }
+
+.sorting_asc,
+.sorting_desc,
+.sorting {
+  span {
+    margin-right: auto;
+    position: static !important;
+  }
+  span::after{
+      right: 4px;
+      top: 15px;
+  }
+}
+.dataTable th{
+    padding-right: 16px;
+    position: relative;
+}
+.sorting_desc{
+    span::after{
+        top: 21px;
+    }
+}
