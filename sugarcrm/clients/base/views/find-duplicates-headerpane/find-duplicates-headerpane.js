@@ -57,11 +57,12 @@
     },
 
     /**
-     * Set up add/remove listener on the mass_collection so we can enable/disable the merge button
+     * Set up `add`, `remove` and `reset` listeners on the `mass_collection` so
+     * we can enable/disable the merge button whenever the collection changes.
      */
     addMassCollectionListener: function() {
         var massCollection = this.context.get('mass_collection');
-        massCollection.on('add remove', this.toggleMergeButton, this);
+        massCollection.on('add remove reset', this.toggleMergeButton, this);
     },
 
     /**
