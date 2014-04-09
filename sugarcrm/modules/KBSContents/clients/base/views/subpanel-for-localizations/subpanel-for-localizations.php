@@ -26,15 +26,6 @@ $viewdefs['KBSContents']['base']['view']['subpanel-for-localizations'] = array(
             ),
             array(
                 'type' => 'rowaction',
-                'name' => 'edit_button',
-                'icon' => 'icon-pencil',
-                'label' => 'LBL_EDIT_BUTTON',
-                'event' => 'list:editrow:fire',
-                'acl_action' => 'edit',
-                'allow_bwc' => true,
-            ),
-            array(
-                'type' => 'rowaction',
                 'event' => 'button:create_localization_button:click',
                 'name' => 'create_localization_button',
                 'label' => 'LBL_CREATE_LOCALIZATION_BUTTON_LABEL',
