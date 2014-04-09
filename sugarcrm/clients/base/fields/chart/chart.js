@@ -207,7 +207,7 @@
      */
     handlePrinting: function(state) {
         var self = this,
-            mediaQueryList = window.matchMedia('print'),
+            mediaQueryList = window.matchMedia && window.matchMedia('print'),
             pausecomp = function(millis) {
                 // www.sean.co.uk
                 var date = new Date(),

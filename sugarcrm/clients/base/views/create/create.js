@@ -637,15 +637,13 @@
         showInvalidModel: function () {
             app.alert.show('invalid-data', {
                 level: 'error',
-                messages: 'ERR_RESOLVE_ERRORS',
-                autoClose: true
+                messages: 'ERR_RESOLVE_ERRORS'
             });
         },
         showServerError: function () {
             app.alert.show('server-error', {
                 level: 'error',
-                messages: 'ERR_GENERIC_SERVER_ERROR',
-                autoClose: false
+                messages: 'ERR_GENERIC_SERVER_ERROR'
             });
         },
         showSuccessButDeniedAccess: function() {
