@@ -5092,6 +5092,7 @@ $app_list_strings['kbsdocument_status_dom'] = array(
     'draft' => 'Draft',
     'expired' => 'Expired',
     'in-review' => 'In Review',
+    'published' => 'Published',
     'published-in' => 'Published (Internal)',
     'published-ex' => 'Published (Extrenal)',
 );

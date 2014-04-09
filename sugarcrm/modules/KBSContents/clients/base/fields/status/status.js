@@ -31,7 +31,8 @@
         'expired' : 'st-expired',
         'in-review': 'st-review',
         'published-in': 'st-pub-in',
-        'published-ex': 'st-pub-ex'
+        'published-ex': 'st-pub-ex',
+        'published': 'st-pub'
     },
 
     /**
