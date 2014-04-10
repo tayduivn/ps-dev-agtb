@@ -235,8 +235,8 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'filter' => array(
                         'type' => 'range',
-                        'fieldname' => 'test',
-                        'range' => array('to' => 3)
+                        'fieldName' => 'test',
+                        'value' => array('to' => 3)
                     )
                 )
             ),
