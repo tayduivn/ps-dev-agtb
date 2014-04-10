@@ -173,13 +173,15 @@
 
     // Not to be confused with the event fired for data:sync:complete.
     var syncCompleteHandler = function(type, messages, method, model, options) {
+
+        options = options || {};
+
         // Preconstruct the alert options.
         var alertOpts = {
             level: type,
-            messages: messages,
-            autoClose: true
+            messages: messages
         };
-        options = options || {};
+        alertOpts.autoClose = (alertOpts.level === 'error') ? false : true;
 
         // By default we don't display the alert
         if (!options.showAlerts) return;

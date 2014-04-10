@@ -109,7 +109,7 @@ class WebUpgrader extends UpgradeDriver
          $this->cleanState();
          $this->state['admin'] = $_SESSION['authenticated_user_id'];
          $this->initSugar();
-         if(empty($GLOBALS['current_user']) || !$GLOBALS['current_user']->isAdmin()) {
+         if(empty($GLOBALS['current_user']) || !$GLOBALS['current_user']->isAdmin() || !empty($GLOBALS['sugar_config']['disable_uw_upload'])) {
              return false;
          }
          $this->state['webToken'] = create_guid();

@@ -26,6 +26,13 @@ class SugarEmailAddress extends SugarBean
 
     static $count = 0;
 
+    /**
+     * Collection of fetched addressed for a record. Originally set to null to 
+     * indicate a trip to the database was not yet made.
+     * 
+     * @var array
+     */
+    public $fetchedAddresses = null;
 
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
@@ -53,6 +60,36 @@ class SugarEmailAddress extends SugarBean
     }
 
     /**
+     * Gets a hashed string representation of an addresses array. This is used in
+     * {@see handleLegacySave} for comparison of various address collections to
+     * determine which one needs to be saved.
+     * 
+     * @param array $addresses An array of addresses
+     * @return string
+     */
+    public function getAddressHash(array $addresses) 
+    {
+        $indexes = array(
+            "email_address" => 1,
+            "primary_address" => 1,
+            "invalid_email" => 1,
+            "opt_out" => 1,
+            "reply_to_address" => 1,
+        );
+
+        foreach ($addresses as $key => $val) {
+            $val = array_intersect_key($val, $indexes);
+            foreach (array("primary_address", "invalid_email", "opt_out", "reply_to_address") as $var) {
+                $val[$var] = isset($val[$var]) ? (bool) $val[$var] : false;
+            }
+            ksort($val);
+            $addresses[$key] = $val;
+        }
+
+        return md5(json_encode($addresses));
+    }
+
+    /**
      * Legacy email address handling.  This is to allow support for SOAP or customizations
      * @param string $id
      * @param string $module
@@ -64,13 +101,24 @@ class SugarEmailAddress extends SugarBean
         }
         if (!isset($_REQUEST) || !isset($_REQUEST['useEmailWidget'])) {
             if (empty($this->addresses) || !isset($_REQUEST['massupdate'])) {
+                // When saving a bean with email addresses, it is necessary to 
+                // determine if what is being saved is a sugar7 style $bean->email
+                // collection or legacy style $bean->emailXX properties as found
+                // in the legacy SOAP api. The hashes collected in this block are
+                // for that purpose.
+
+                // This is the data that would have been called in retrieve
+                $originalAddresses = $this->getAddressesForBean($bean);
+                // Hash the original data for comparisons
+                $originalHash = $this->getAddressHash($originalAddresses);
+                // Reset the addresses array to make it clean for each stage
                 $this->addresses = array();
+
+                // Check the collection of emails first if they are there
                 $optOut = (isset($bean->email_opt_out) && $bean->email_opt_out == "1") ? true : false;
                 $invalid = (isset($bean->invalid_email) && $bean->invalid_email == "1") ? true : false;
-
                 $isPrimary = true;
-                // this is for the new rest interface it supports addresses sent as a json array assigned to a email field
-                if (isset($bean->email) && is_array($bean->email)) {
+                if (!empty($bean->email) && is_array($bean->email)) {
                     foreach ($bean->email as $emailAddr) {
                         $address = $emailAddr['email_address'];
                         $optO = (isset($emailAddr['opt_out']) && $emailAddr['opt_out'] == "1") ? true : false;
@@ -78,24 +126,51 @@ class SugarEmailAddress extends SugarBean
                         $primaryE = (isset($emailAddr['primary_address']) && $emailAddr['primary_address'] == "1") ? true : false;
                         $this->addAddress($address, $primaryE, false, $invalidE, $optO);
                     }
-                } else if (empty($bean->email)) {
-                    // Special case if not bean->email - removing results in legacy breakage, broken tests, and general sadness.
-                    for ($i = 1; $i <= 10; $i++) {
-                        $email = 'email' . $i;
-                        if (isset($bean->$email) && !empty($bean->$email)) {
-                            $opt_out_field = $email . '_opt_out';
-                            $invalid_field = $email . '_invalid';
-                            $field_optOut = (isset($bean->$opt_out_field)) ? $bean->$opt_out_field : $optOut;
-                            $field_invalid = (isset($bean->$invalid_field)) ? $bean->$invalid_field : $invalid;
-                            $this->addAddress($bean->$email, $isPrimary, false, $field_invalid, $field_optOut);
-                            $isPrimary = false;
-                        }
+                }
+                // Grab the collection addresses and hash them. This will be used
+                // to compare against original data to determine if changes were 
+                // made.
+                $collection = $this->addresses;
+                $collectionHash = $this->getAddressHash($collection);
+                
+                // Now check legacy style emailXX fields to see if any of those 
+                // were added.
+                $this->addresses = array();
+                $optOut = (isset($bean->email_opt_out) && $bean->email_opt_out == "1") ? true : false;
+                $invalid = (isset($bean->invalid_email) && $bean->invalid_email == "1") ? true : false;
+                $isPrimary = true;
+                // Special case if not bean->email - removing results in legacy breakage, broken tests, and general sadness.
+                for ($i = 1; $i <= 10; $i++) {
+                    $email = 'email' . $i;
+                    $handleField = true;
+                    // When sending a request to modify email1, if there are more
+                    // than one email addresses on the record, all emails beyond
+                    // the second will be clobbered. email2 will linger because
+                    // email1 and email2 are set on legacyRetrieve. To remove
+                    // email2 when email1 is edited, uncomment the following two
+                    // lines.
+                    //$colIndex = $i - 1;
+                    //$handleField = (!isset($collection[$colIndex]) || $collection[$colIndex]['email_address'] != $bean->$email);
+                    if (isset($bean->$email) && !empty($bean->$email) && $handleField) {
+                        $opt_out_field = $email . '_opt_out';
+                        $invalid_field = $email . '_invalid';
+                        $field_optOut = (isset($bean->$opt_out_field)) ? $bean->$opt_out_field : $optOut;
+                        $field_invalid = (isset($bean->$invalid_field)) ? $bean->$invalid_field : $invalid;
+                        $this->addAddress($bean->$email, $isPrimary, false, $field_invalid, $field_optOut);
+                        $isPrimary = false;
                     }
+                }
+                // Grab the legacy addresses and hash them too
+                $legacy = $this->addresses;
+                $legacyHash = $this->getAddressHash($legacy);
+
+                // Now check the hashes. If legacy is different than original 
+                // and the collection is the same, use legacy addresses, else 
+                // use the collection
+                if ($legacyHash != $originalHash && $collectionHash == $originalHash) {
+                    $this->addresses = $legacy;
                 } else {
-                    // bug57601 - All but first two email addresses removed; settings changed e.g. opt out isn't marked
-                    $mod_dir = $this->getCorrectedModule($bean->module_dir);
-                    $this->addresses = $this->getAddressesByGUID($bean->id, $mod_dir);
-                    $this->populateLegacyFields($bean);
+                    $this->addresses = $collection;
                 }
             }
         }
@@ -106,6 +181,22 @@ class SugarEmailAddress extends SugarBean
     }
 
     /**
+     * Gets email addresses for a bean
+     * 
+     * @param SugarBean $bean The bean to get emails for
+     * @param boolean $fresh Flag that tells this method whether to get fresh data
+     * @return array
+     */
+    public function getAddressesForBean($bean, $fresh = false)
+    {
+        if (is_null($this->fetchedAddresses) || $fresh) {
+            $module_dir = $this->getCorrectedModule($bean->module_dir);
+            $this->fetchedAddresses = $this->getAddressesByGUID($bean->id, $module_dir);
+        }
+        return $this->fetchedAddresses;
+    }
+
+    /**
      * Fills standard email1 legacy fields
      * @param string id
      * @param string module
@@ -113,8 +204,7 @@ class SugarEmailAddress extends SugarBean
      */
     function handleLegacyRetrieve(&$bean)
     {
-        $module_dir = $this->getCorrectedModule($bean->module_dir);
-        $this->addresses = $this->getAddressesByGUID($bean->id, $module_dir);
+        $this->addresses = $this->getAddressesForBean($bean, true);
         $this->populateLegacyFields($bean);
         if (isset($bean->email1) && !isset($bean->fetched_row['email1'])) {
             $bean->fetched_row['email1'] = $bean->email1;
@@ -541,7 +631,7 @@ class SugarEmailAddress extends SugarBean
             foreach ($this->addresses as $k => $address) {
                 if ($address['email_address'] == $addr) {
                     $key = $k;
-                } elseif ($primary && $address['primary_address'] == '1') {
+                } elseif ($primary && isset($address['primary_address']) && $address['primary_address'] == '1') {
                     // We should only have one primary. If we are adding a primary but
                     // we find an existing primary, reset this one's primary flag.
                     $address['primary_address'] = '0';

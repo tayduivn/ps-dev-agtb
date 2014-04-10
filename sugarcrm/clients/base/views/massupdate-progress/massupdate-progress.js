@@ -193,9 +193,7 @@
             messages: app.lang.get(this.LABELSET['FAIL_TO_ATTEMPT'], this.module, {
                 num: this.collection.attempt,
                 total: this.collection.maxAllowAttempt
-            }),
-            autoClose: true,
-            autoCloseDelay: 8000
+            })
         });
     },
 

@@ -371,8 +371,7 @@
         this.context.trigger('attachments:remove-by-id', fileId);
         app.alert.show('upload_error', {
             level: 'error',
-            messages: 'LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED',
-            autoClose: false
+            messages: 'LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED'
         });
     },
 

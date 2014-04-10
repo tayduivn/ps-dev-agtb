@@ -133,6 +133,21 @@ EOQ;
 $viewdefs['MyFakeModule']['DetailView'] = array(
     'templateMeta' => array(
         'maxColumns' => '2',
+        'useTabs' => true,
+        'tabDefs' => array(
+            'LBL_ACCOUNT_INFORMATION' => array(
+                'newTab' => true,
+                'panelDefault' => 'expanded',
+            ), 'LBL_PANEL_ADVANCED' =>
+            array(
+                'newTab' => true,
+                'panelDefault' => 'expanded',
+            ), 'LBL_PANEL_ASSIGNMENT' =>
+            array(
+                'newTab' => false,
+                'panelDefault' => 'expanded',
+            ),
+        ),
     ),
 
     'panels' => array(
@@ -148,6 +163,16 @@ $viewdefs['MyFakeModule']['DetailView'] = array(
                 ),
                 //Throw a blank in instead of phone_office. Since edit still has it is should remain on the new record view
                 ''
+            ),
+            array(
+                array (
+                    'name' => 'billing_address_street',
+                    'label' => 'LBL_BILLING_ADDRESS',
+                    'type' => 'address',
+                    'displayParams' => array(
+                        'key' => 'billing',
+                    ),
+                ),
             ),
             array(
                 array(
@@ -226,7 +251,20 @@ $viewdefs['MyFakeModule']['base']['view']['record'] = array(
             'fields' => array(
                 'website',
                 'phone_office',
-                'new_record_field'
+                'new_record_field',
+                array(
+                    'name' => 'billing_address',
+                    'type' => 'fieldset',
+                    'css_class' => 'address',
+                    'label' => 'LBL_BILLING_ADDRESS',
+                    'fields' => array(
+                        array(
+                            'name' => 'billing_address_street',
+                            'css_class' => 'address_street',
+                            'placeholder' => 'LBL_BILLING_ADDRESS_STREET',
+                        ),
+                    ),
+                ),
             ),
         ),
     ),
@@ -274,6 +312,9 @@ EOQ;
         $this->assertArrayHasKey("new_record_field", $finalRecordFields);
         //The website fields was removed from both layouts so should not end up on the record view
         $this->assertArrayNotHasKey("website", $finalRecordFields);
+        //BR-1494 ensure that for custom company modules, the extra billing address gets scraped if the normal billing address fieldset was used.
+        $this->assertArrayNotHasKey("fieldset_address", $finalRecordFields);
+        $this->assertArrayHasKey("billing_address", $finalRecordFields);
         //phone_office was only removed from detail, so edit should have included it into the record
         $this->assertArrayHasKey("phone_office", $finalRecordFields);
         //Verify that fields only on the edit view are migrated

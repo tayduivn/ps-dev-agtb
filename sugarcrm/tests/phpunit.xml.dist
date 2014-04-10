@@ -23,9 +23,9 @@
          processIsolation="false"
          stopOnFailure="false"
          strict="true"
-         timeoutForSmallTests="35"
-         timeoutForMediumTests="45"
-         timeoutForLargeTests="65"
+         timeoutForSmallTests="100"
+         timeoutForMediumTests="145"
+         timeoutForLargeTests="165"
          syntaxCheck="false"
          bootstrap="SugarTestHelper.php"
         >

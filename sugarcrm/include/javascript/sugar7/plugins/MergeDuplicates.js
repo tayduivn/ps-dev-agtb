@@ -142,8 +142,7 @@
                 var msg = app.lang.get('LBL_MERGE_NO_ACCESS', this.module);
                 app.alert.show('no-record-to-edit', {
                     level: 'error',
-                    messages: msg,
-                    autoClose: true
+                    messages: msg
                 });
             },
 

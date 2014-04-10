@@ -264,9 +264,7 @@
             level: 'error',
             messages: app.lang.get(this.LABELSET['FAIL'], this.module, {
                 objectName: context.objectName || ''
-            }),
-            autoClose: true,
-            autoCloseDelay: 8000
+            })
         });
         this.model.trigger('massupdate:item:fail:completed');
     },
