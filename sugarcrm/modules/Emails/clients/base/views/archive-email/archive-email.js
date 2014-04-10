@@ -85,7 +85,7 @@
                 app.drawer.close(this.model);
             }, this),
             error: function(error) {
-                var msg = {autoClose: false, level: 'error'};
+                var msg = {level: 'error'};
                 if (error && _.isString(error.message)) {
                     msg.messages = error.message;
                 }

@@ -183,8 +183,7 @@
                     error: function(error) {
                         app.alert.show('server-error', {
                             level: 'error',
-                            messages: 'ERR_GENERIC_SERVER_ERROR',
-                            autoClose: false
+                            messages: 'ERR_GENERIC_SERVER_ERROR'
                         });
                     }
                 };

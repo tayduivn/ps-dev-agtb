@@ -434,7 +434,7 @@
                 app.drawer.close();
             },
             error: function(error) {
-                var msg = {autoClose: false, level: 'error'};
+                var msg = {level: 'error'};
                 if (error && _.isString(error.message)) {
                     msg.messages = error.message;
                 }
@@ -779,10 +779,9 @@
      * @private
      */
     _showServerError: function(error) {
-        app.alert.show("server-error", {
-            level: "error",
-            messages: "ERR_GENERIC_SERVER_ERROR",
-            autoClose: false
+        app.alert.show('server-error', {
+            level: 'error',
+            messages: 'ERR_GENERIC_SERVER_ERROR'
         });
         app.error.handleHttpError(error);
     },

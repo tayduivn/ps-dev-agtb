@@ -45,10 +45,9 @@
             app.api.call('GET', myURL, null, {
                 success: this.populateValues,
                 error:   function(error) {
-                    app.alert.show("server-error", {
-                        level: "error",
-                        messages: "ERR_GENERIC_SERVER_ERROR",
-                        autoClose: false
+                    app.alert.show('server-error', {
+                        level: 'error',
+                        messages: 'ERR_GENERIC_SERVER_ERROR'
                     });
                     app.error.handleHttpError(error);
                 }
