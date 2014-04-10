@@ -76,11 +76,6 @@ $dictionary['KBSTopic'] = array(
             'vname' => 'LNK_TOPICS',
         ),
     ),
-    'acls' => array(
-        'SugarACLAdminOnly' => array(
-            'adminFor' => 'Users',
-        ),
-    ),
     'indices' => array(
         array('name' => 'idx_kbstopics_parent_id', 'type' => 'index', 'fields' => array('parent_id')),
     ),

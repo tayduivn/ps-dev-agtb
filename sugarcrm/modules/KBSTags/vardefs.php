@@ -31,11 +31,6 @@ $dictionary['KBSTag'] = array(
             'required' => true,
         ),
     ),
-    'acls' => array(
-        'SugarACLAdminOnly' => array(
-            'adminFor' => 'Users',
-        ),
-    ),
 );
 
 VardefManager::createVardef(

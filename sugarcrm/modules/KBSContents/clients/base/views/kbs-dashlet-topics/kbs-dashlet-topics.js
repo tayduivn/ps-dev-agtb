@@ -206,10 +206,10 @@
      * {@inheritDocs}
      */
     _render: function() {
+        this._super('_render');
         if (!_.isObject(this.nodes)) {
             return;
         }
-        this._super('_render');
         this.$('[data-type="node-list"] [data-type="node-list"]').hide();
         _.each(app.user.lastState.get(this.getLastStateKey()), _.bind(this._activateItem, this));
         if (this.active != null) {
