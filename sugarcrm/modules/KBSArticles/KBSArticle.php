@@ -22,7 +22,7 @@ class KBSArticle extends SugarBean
     {
         switch ($interface) {
             case 'ACL':
-                return true;
+                return false;
         }
         return false;
     }

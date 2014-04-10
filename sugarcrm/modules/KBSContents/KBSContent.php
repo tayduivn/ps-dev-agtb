@@ -150,4 +150,16 @@ class KBSContent extends SugarBean {
                 ";
         $bean->db->query($query);
     }
+
+    /**
+     * {@inheritdoc}
+     **/
+    public function bean_implements($interface)
+    {
+        switch ($interface) {
+            case 'ACL':
+                return true;
+        }
+        return false;
+    }
 }

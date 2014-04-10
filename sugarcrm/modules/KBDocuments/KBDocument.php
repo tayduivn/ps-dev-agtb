@@ -351,13 +351,17 @@ class KBDocument extends SugarBean {
 		//delete.php handles deletion of document revisions.
 	}
 
-	function bean_implements($interface) {
-		switch ($interface) {
-			case 'ACL' :
-				return true;
-		}
-		return false;
-	}
+    /**
+     * {@inheritdoc}
+     **/
+    function bean_implements($interface)
+    {
+        switch ($interface) {
+            case 'ACL':
+                return false;
+        }
+        return false;
+    }
 
 	//static function.
 	function get_document_name($doc_id){
