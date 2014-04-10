@@ -189,9 +189,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'modules/Emails/clients/base/views/panel-top/panel-top.js',
         );
 
-        if (version_compare($this->from_version, '7.2', '<')
-            && version_compare($this->from_version, '7.1.5', '>=')
-        ) {
+        if (version_compare($this->from_version, '7.2', '<')) {
             // SC-2664
             $files[] = 'modules/Notifications/clients/base/layouts/records/records.php';
             $files[] = 'modules/Notifications/clients/base/views/raw/raw.hbs';
