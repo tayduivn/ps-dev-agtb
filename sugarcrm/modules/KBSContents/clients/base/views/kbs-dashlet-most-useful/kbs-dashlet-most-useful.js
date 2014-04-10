@@ -49,7 +49,15 @@
                 'date_entered',
                 'created_by',
                 'created_by_name'
-            ]
+            ],
+            filter: {
+                'active_rev': {
+                    '$equals': 1
+                },
+                'status': {
+                    '$in': ['published', 'published-in', 'published-ex']
+                }
+            }
         };
         this.collection.sync = _.wrap(
             this.collection.sync,
