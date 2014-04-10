@@ -56,7 +56,7 @@
      * @param options
      */
     setMetadata: function(options) {
-        var moduleMetadata = app.metadata.getModule(options.module) || {};
+        var moduleMetadata = app.metadata.getModule(options.module);
 
         if (!moduleMetadata) {
             return;

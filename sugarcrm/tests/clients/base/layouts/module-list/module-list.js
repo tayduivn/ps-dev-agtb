@@ -1,4 +1,4 @@
-describe('Module List Layout', function() {
+describe('Base.Layout.ModuleList', function() {
 
     var moduleName = 'Cases',
         layoutName = 'module-list',
@@ -83,19 +83,39 @@ describe('Module List Layout', function() {
             expect(layout.isActiveModule(moduleName)).toBeTruthy();
         });
 
-        it('should  show the correct mapped version of the module', function() {
-            layout.layout = {
-                trigger: $.noop,
-                off: $.noop
-            };
+        using('mappedModule values', [
+            {
+                module: 'MyCustomCases',
+                tabExists: true,
+                toggleModuleCalled: true
+            },
+            {
+                module: '',
+                tabExists: false,
+                toggleModuleCalled: false
+            },
+            {
+                module: undefined,
+                tabExists: false,
+                toggleModuleCalled: true
+            }
+        ], function(value) {
+            it('should show the correct mapped version of the module', function() {
+                var _tabMap = {},
+                    toggleModuleStub = sinon.collection.stub(layout, 'toggleModule');
+                layout.layout = {
+                    trigger: $.noop,
+                    off: $.noop
+                };
 
-            sinon.collection.stub(app.metadata, 'getTabMappedModule', function(module) {
-                return module === moduleName ? 'MyCustomCases' : module;
+                _tabMap[moduleName] = value.module;
+                sinon.collection.stub(app.metadata, 'getModuleTabMap').returns(_tabMap);
+
+                layout.handleViewChange();
+
+                expect((layout.$('[data-module=' + value.module + ']')).length > 0).toBe(value.tabExists);
+                expect(toggleModuleStub.called).toBe(value.toggleModuleCalled);
             });
-
-            layout.handleViewChange(moduleName);
-
-            expect(layout.$('[data-module=MyCustomCases]')).toExist();
         });
 
         it('should hide cached versions of the modules', function() {

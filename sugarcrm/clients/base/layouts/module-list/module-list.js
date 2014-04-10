@@ -327,13 +327,20 @@
             return this;
         }
 
-        var mappedModule = app.metadata.getTabMappedModule(module),
+        var tabMap = app.metadata.getModuleTabMap(),
+            mappedModule = _.isUndefined(tabMap[module]) ? module : tabMap[module],
             $activeModule = this.$('[data-container=module-list]').children('.active').removeClass('active'),
             activeModule = $activeModule.data('module');
 
         if (this._catalog[activeModule] && !this._catalog[activeModule].short) {
             // hide the cached version only module
             this.toggleModule(activeModule, false);
+        }
+
+        // If this is a tab-mapped module, but not mapped to anything,
+        // don't continue execution.
+        if (!mappedModule) {
+            return this;
         }
 
         if (!this._catalog[mappedModule]) {
