@@ -30,6 +30,7 @@ $viewdefs['KBSContents']['base']['layout']['subpanels'] = array (
           'context' => array(
               'link' => 'revisions',
           ),
+          'acl_action' => 'edit',
       ),
   ),
   'type' => 'subpanels',
