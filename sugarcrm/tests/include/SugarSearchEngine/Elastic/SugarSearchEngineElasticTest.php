@@ -108,6 +108,10 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSearch($options)
     {
+        // temp fix for BR=1505 - need refactoring to remove the actual ES ping tests
+        $admin = BeanFactory::getBean('Administration');
+        $admin->saveSetting('info', 'fts_down', 0);
+
         // Elastica\Client mock
         $client = $this->getMockBuilder('Elastica\\Client')
             ->setMethods(array('request'))
