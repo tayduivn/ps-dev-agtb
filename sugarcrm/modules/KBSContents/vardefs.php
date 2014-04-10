@@ -251,7 +251,7 @@ $dictionary['KBSContent'] = array(
             'relationship' => 'revisions',
         ),
         'related_languages' => array(
-            'name' => 'lang_localizations',
+            'name' => 'related_languages',
             'type' => 'enum',
             'source' => 'non-db',
             'vname' => 'LBL_KBSLOCALIZATIONS',
