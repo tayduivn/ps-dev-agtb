@@ -28,7 +28,8 @@ abstract class UpgradeDriver
     /**
      * Execution context
      * zip - ZIP file
-     * temp_dir - temporary directory
+     * temp_dir - temporary directory for upgrader work files
+     * extract_dir - directory where zip files are opened (usually the same as temp_dir)
      * source_dir - Sugar source dir
      * new_source_dir - directory where new Sugar source files are stored
      * admin - Admin user
@@ -147,15 +148,21 @@ abstract class UpgradeDriver
     public $fp;
 
     /**
+     * Should we cleanup extracted files on fail?
+     * @var bool
+     */
+    protected $clean_on_fail = true;
+
+    /**
      * Copy data files
      */
     protected function commit()
     {
-    	$this->manifest = $this->dataInclude("{$this->context['temp_dir']}/manifest.php", 'manifest');
+    	$this->manifest = $this->dataInclude("{$this->context['extract_dir']}/manifest.php", 'manifest');
         if(empty($this->manifest) || empty($this->manifest['copy_files']['from_dir'])) {
             return false;
         }
-        $zip_from_dir = $this->context['temp_dir']."/".$this->manifest['copy_files']['from_dir'];
+        $zip_from_dir = $this->context['extract_dir']."/".$this->manifest['copy_files']['from_dir'];
         $target_dir = $this->context['source_dir'];
         $files = $this->findFiles($zip_from_dir);
         foreach($files as $file) {
@@ -266,7 +273,8 @@ abstract class UpgradeDriver
         chdir($this->context['source_dir']);
         $this->loadConfig();
     	$this->context['temp_dir'] = $this->cacheDir("upgrades/temp");
-        $this->ensureDir($this->context['temp_dir']);
+    	$this->context['extract_dir'] = $this->context['temp_dir'];
+    	$this->ensureDir($this->context['temp_dir']);
         $this->context['state_file'] = $this->cacheDir('upgrades/').self::STATE_FILE;
         $this->loadState();
         $this->context['backup_dir'] = $this->config['upload_dir']."/upgrades/backup/".pathinfo($this->context['zip'], PATHINFO_FILENAME) . "-restore";
@@ -570,8 +578,8 @@ abstract class UpgradeDriver
      */
     protected function preflightWriteUnzip()
     {
-        if(!is_writable($this->context["temp_dir"])) {
-            return $this->error("{$this->context["temp_dir"]} is not writable", true);
+        if(!is_writable($this->context["extract_dir"])) {
+            return $this->error("{$this->context["extract_dir"]} is not writable", true);
         }
         return true;
     }
@@ -722,7 +730,7 @@ abstract class UpgradeDriver
     protected function extractZip($zip)
     {
         // Create target dir
-        $unzip_dir = realpath($this->context['temp_dir']);
+        $unzip_dir = realpath($this->context['extract_dir']);
         $this->cleanDir($unzip_dir);
         // unzip file
         $zip = new ZipArchive;
@@ -772,15 +780,19 @@ abstract class UpgradeDriver
         }
 
         // load manifest
-        if(!file_exists($this->context['temp_dir']."/manifest.php")) {
-            $this->cleanDir($this->context['temp_dir']);
+        if(!file_exists($this->context['extract_dir']."/manifest.php")) {
+            if($this->clean_on_fail) {
+                $this->cleanDir($this->context['extract_dir']);
+            }
             return $this->error("Package does not contain manifest.php", true);
         }
         // validate manifest
         list($this->from_version, $this->from_flavor) = $this->loadVersion();
         $res = $this->validateManifest();
         if($res !== true) {
-            $this->cleanDir($this->context['temp_dir']);
+            if($this->clean_on_fail) {
+                $this->cleanDir($this->context['extract_dir']);
+            }
             return $this->error($res, true);
         }
         $this->log("**** Upgrade checks passed");
@@ -1269,7 +1281,7 @@ abstract class UpgradeDriver
      */
     protected function getManifest()
     {
-        return $this->dataInclude("{$this->context['temp_dir']}/manifest.php", 'manifest');
+        return $this->dataInclude("{$this->context['extract_dir']}/manifest.php", 'manifest');
     }
 
     /**
@@ -1317,7 +1329,7 @@ abstract class UpgradeDriver
             return false;
     	}
     	if(!empty($this->manifest['copy_files']['from_dir'])) {
-    	    $this->context['new_source_dir'] = $this->context['temp_dir']."/".$this->manifest['copy_files']['from_dir'];
+    	    $this->context['new_source_dir'] = $this->context['extract_dir']."/".$this->manifest['copy_files']['from_dir'];
     	}
     	$scripts = $this->getScripts($this->context['new_source_dir'], $stage);
     	$this->state['script_count'][$stage] = count($scripts);
@@ -1476,7 +1488,7 @@ abstract class UpgradeDriver
             switch($stage) {
                 case "unpack":
                     // Verify package
-                    if(!$this->verify($this->context['zip'], $this->context['temp_dir'])) {
+                    if(!$this->verify($this->context['zip'], $this->context['extract_dir'])) {
                         $this->error("Package verificaition failed");
                         return false;
                     }
