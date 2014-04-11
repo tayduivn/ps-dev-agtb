@@ -19,4 +19,10 @@ $viewdefs[$module_name]['base']['menu']['quickcreate'] = array(
     'visible' => true,
     'order' => 9,
     'icon' => 'icon-plus',
+    'related' => array(
+        array(
+            'module' => 'Contacts',
+            'link' => 'notes',
+        ),
+    ),
 );
