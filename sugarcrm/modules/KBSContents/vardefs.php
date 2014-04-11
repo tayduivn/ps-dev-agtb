@@ -34,6 +34,7 @@ $dictionary['KBSContent'] = array(
             'full_text_search' => array(
                 'enabled' => true,
             ),
+            'audited' => true,
         ),
         'language' => array(
             'name' => 'language',
@@ -41,6 +42,7 @@ $dictionary['KBSContent'] = array(
             'len' => '2',
             'required' => true,
             'vname' => 'LBL_LANG',
+            'audited' => true,
         ),
         'active_date' => array(
             'name' => 'active_date',
@@ -76,6 +78,7 @@ $dictionary['KBSContent'] = array(
             'len' => 100,
             'options' => 'kbsdocument_status_dom',
             'reportable' => false,
+            'audited' => true,
         ),
         'viewcount' => array(
             'name' => 'viewcount',
@@ -129,6 +132,7 @@ $dictionary['KBSContent'] = array(
             'type' => 'id',
             'isnull' => 'true',
             'comment' => 'Topic ID',
+            'audited' => true,
         ),
         'topic_name' => array(
             'name' => 'topic_name',
@@ -218,6 +222,7 @@ $dictionary['KBSContent'] = array(
             'reportable' => false,
             'massupdate' => false,
             'duplicate_merge' => 'disabled',
+            'audited' => true,
         ),
         'kbsarticle_name' => array(
             'name' => 'kbsarticle_name',
@@ -326,3 +331,4 @@ $dictionary['KBSContent'] = array(
 );
 
 VardefManager::createVardef('KBSContents','KBSContent', array('basic', 'team_security'));
+$dictionary['KBSContent']['fields']['name']['audited'] = true;
