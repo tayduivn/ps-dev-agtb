@@ -43,6 +43,7 @@ $dictionary['KBSContent'] = array(
             'required' => true,
             'vname' => 'LBL_LANG',
             'audited' => true,
+            'studio' => false,
         ),
         'active_date' => array(
             'name' => 'active_date',
@@ -50,12 +51,14 @@ $dictionary['KBSContent'] = array(
             'type' => 'date',
             'importable' => 'required',
             'sortable' => true,
+            'studio' => false,
         ),
         'exp_date' => array(
             'name' => 'exp_date',
             'vname' => 'LBL_EXP_DATE',
             'type' => 'date',
             'sortable' => true,
+            'studio' => false,
         ),
         'doc_id' => array(
             'name' => 'doc_id',
@@ -63,6 +66,7 @@ $dictionary['KBSContent'] = array(
             'type' => 'id',
             'sortable' => false,
             'required' => true,
+            'studio' => false,
         ),
         'approved' => array(
             'name' => 'approved',
@@ -70,6 +74,7 @@ $dictionary['KBSContent'] = array(
             'type' => 'bool',
             'sortable' => true,
             'duplicate_on_record_copy' => 'no',
+            'studio' => false,
         ),
         'status' => array(
             'name' => 'status',
@@ -79,6 +84,7 @@ $dictionary['KBSContent'] = array(
             'options' => 'kbsdocument_status_dom',
             'reportable' => false,
             'audited' => true,
+            'studio' => false,
         ),
         'viewcount' => array(
             'name' => 'viewcount',
@@ -88,6 +94,7 @@ $dictionary['KBSContent'] = array(
             'default' => 0,
             'sortable' => true,
             'duplicate_on_record_copy' => 'no',
+            'studio' => false,
         ),
         'revision' => array(
             'name' => 'revision',
@@ -96,6 +103,7 @@ $dictionary['KBSContent'] = array(
             'len' => '10',
             'required' => true,
             'duplicate_on_record_copy' => 'no',
+            'studio' => false,
         ),
         'useful' => array(
             'name' => 'useful',
@@ -103,6 +111,7 @@ $dictionary['KBSContent'] = array(
             'type' => 'int',
             'default' => '0',
             'duplicate_on_record_copy' => 'no',
+            'studio' => false,
         ),
         'notuseful' => array(
             'name' => 'notuseful',
@@ -110,12 +119,14 @@ $dictionary['KBSContent'] = array(
             'type' => 'int',
             'default' => '0',
             'duplicate_on_record_copy' => 'no',
+            'studio' => false,
         ),
         'attachment_list' => array(
             'name' => 'attachment_list',
             'type' => 'file',
             'source' => 'non-db',
             'vname' => 'LBL_RATING',
+            'studio' => false,
         ),
         'notes' => array(
             'name' => 'notes',
@@ -133,6 +144,7 @@ $dictionary['KBSContent'] = array(
             'isnull' => 'true',
             'comment' => 'Topic ID',
             'audited' => true,
+            'studio' => false,
         ),
         'topic_name' => array(
             'name' => 'topic_name',
@@ -176,6 +188,7 @@ $dictionary['KBSContent'] = array(
             'reportable' => false,
             'massupdate' => false,
             'duplicate_merge' => 'disabled',
+            'studio' => false,
         ),
         'kbsdocument_name' => array(
             'name' => 'kbsdocument_name',
@@ -202,6 +215,7 @@ $dictionary['KBSContent'] = array(
                 'enabled' => true,
                 'type' => 'bool',
             ),
+            'studio' => false,
         ),
         'kbsarticles_kbscontents' => array(
             'name' => 'kbsarticles_kbscontents',
@@ -223,6 +237,7 @@ $dictionary['KBSContent'] = array(
             'massupdate' => false,
             'duplicate_merge' => 'disabled',
             'audited' => true,
+            'studio' => false,
         ),
         'kbsarticle_name' => array(
             'name' => 'kbsarticle_name',
@@ -260,6 +275,7 @@ $dictionary['KBSContent'] = array(
             'type' => 'enum',
             'source' => 'non-db',
             'vname' => 'LBL_KBSLOCALIZATIONS',
+            'studio' => false,
         ),
     ),
     'relationships' => array(
