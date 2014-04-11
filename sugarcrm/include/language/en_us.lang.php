@@ -3827,6 +3827,10 @@ $app_strings = array (
     'LBL_DASHLET_TOPICS_NAME' => 'Knowledge Base Topics',
     'LBL_DASHLET_TOPICS_DESCRIPTION' => 'Topics tree dashelet description',
 
+    /* Knowledge base localizations dashlet */
+    'LBL_DASHLET_LOCALIZATIONS_NAME' => 'Other Languages',
+    'LBL_DASHLET_LOCALIZATIONS_DESCRIPTION' => 'Localizations dashelet description',
+
     // MySugar Menu Options
     'LBL_ADD_PAGE' => 'Add Page',
     'LBL_DELETE_PAGE' => 'Delete Page',
