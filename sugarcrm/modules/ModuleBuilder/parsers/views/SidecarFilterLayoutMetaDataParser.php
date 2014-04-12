@@ -17,6 +17,11 @@ require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class SidecarFilterLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
 {
+    /**
+     * @var array The list of field types and their filter operators.
+     */
+    public $operators = array();
+
     /*
      * Constructor, builds the parent ListLayoutMetaDataParser then adds the
      * panel data to it
@@ -44,10 +49,14 @@ class SidecarFilterLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
             $this->implementation = new UndeployedSidecarFilterImplementation($moduleName, $packageName, $client);
         }
 
+        $this->_moduleName = $moduleName;
         $this->_viewdefs = $this->implementation->getViewdefs();
         $this->_paneldefs = $this->_viewdefs;
         $this->_fielddefs = $this->implementation->getFieldDefs();
         $this->columns = array('LBL_DEFAULT' => 'getDefaultFields', 'LBL_HIDDEN' => 'getAvailableFields');
+
+        $filterBeanClass = BeanFactory::getBeanName('Filters');
+        $this->operators = $filterBeanClass::getOperators($client);
     }
 
     /**
@@ -206,12 +215,13 @@ class SidecarFilterLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
     }
 
     /**
-     * Sidecar specific method that delegates validity checking to client specific
-     * methods if they exists, otherwise passes through to the parent checker
+     * Sidecar specific method that delegates validity checking to client
+     * specific methods if they exists, otherwise passes through to the parent
+     * checker.
      *
-     * @param  string $key The field name
-     * @param  array $def The field defs for key
-     * @return bool
+     * @param string $key The field name.
+     * @param array $def The field defs for key.
+     * @return bool `true` if valid, `false` otherwise.
      */
     public function isValidField($key, array $def)
     {
@@ -220,12 +230,13 @@ class SidecarFilterLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
             if (!empty($def['predefined_filter'])) {
                 return true;
             }
-            
-            // Ensure there is a type before checking that the type is in the
-            // filters operator dropdown
-            if (!empty($def['type']) && !empty($GLOBALS['app_list_strings']['filter_operators_dom'][$def['type']])) {
+            if (empty($def['type'])) {
+                return false;
+            }
+
+            if (!empty($this->operators[$def['type']])) {
                 return true;
-            } 
+            }
         }
 
         return false;

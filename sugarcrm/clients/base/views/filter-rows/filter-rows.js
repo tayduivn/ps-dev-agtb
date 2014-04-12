@@ -50,7 +50,12 @@
         //Load partial
         this.formRowTemplate = app.template.get("filter-rows.filter-row-partial");
 
-        this.filterOperatorMap = app.lang.getAppListStrings("filter_operators_dom");
+        var operators = app.metadata.getFilterOperators();
+        if (_.isEmpty(operators)) {
+            app.logger.error('Filter operators not found.');
+            operators = {};
+        }
+        this.filterOperatorMap = operators;
         app.view.View.prototype.initialize.call(this, opts);
 
         this.listenTo(this.layout, "filterpanel:change:module", this.handleFilterChange);
@@ -445,7 +450,10 @@
         //$row.find('.field-operator select').select2('val', '');
 
         _.each(types, function(operand) {
-            payload[operand] = this.filterOperatorMap[fieldType][operand];
+            payload[operand] = app.lang.get(
+                this.filterOperatorMap[fieldType][operand],
+                [this.layout.moduleName, 'Filters']
+            );
         }, this);
 
         // Render the operator field
