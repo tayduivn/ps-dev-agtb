@@ -34,9 +34,12 @@
         //Dashboard is a special case where a 404 here shouldn't break the page,
         //it should just send us back to the default homepage
         handleNotFoundError: function(error) {
-            app.router.redirect('#Home');
-            //Prevent the default error handler
-            return false;
+            var currentRoute = Backbone.history.getFragment();
+            if (currentRoute.substr(0, 5) === 'Home/') {
+                app.router.redirect('#Home');
+                //Prevent the default error handler
+                return false;
+            }
         },
         handleValidationError: function(error) {
             return false;

@@ -1,21 +1,14 @@
 describe('Sugar7.Routes', function() {
-    var app, navigateStub, appController, appUserLastState;
+    var app, loadViewStub, buildKeyStub, getStub, setStub;
 
     beforeEach(function() {
         app = SugarTest.app;
-        navigateStub = sinon.stub(app.Router.prototype, 'navigate');
-        appController = app.controller;
-        app.controller = {
-            loadView: sinon.stub()
-        };
-        appUserLastState = app.user.lastState;
-        app.user.lastState = {
-            buildKey: sinon.stub(),
-            get: sinon.stub(),
-            set: sinon.stub()
-        };
+        loadViewStub = sinon.collection.stub(app.controller, 'loadView');
+        buildKeyStub = sinon.collection.stub(app.user.lastState, 'buildKey');
+        getStub = sinon.collection.stub(app.user.lastState, 'get');
+        setStub = sinon.collection.stub(app.user.lastState, 'set');
 
-        SugarTest.loadFile("../include/javascript", "sugar7", "js", function(d) {
+        SugarTest.loadFile('../include/javascript', 'sugar7', 'js', function(d) {
             app.events.off('app:init');
             eval(d);
             app.events.trigger('app:init');
@@ -24,48 +17,115 @@ describe('Sugar7.Routes', function() {
     });
 
     afterEach(function() {
-        app.controller = appController;
-        app.user.lastState = appUserLastState;
-        navigateStub.restore();
+        sinon.collection.restore();
     });
 
-    describe("Home.Routing", function() {
+    describe('Routes', function() {
         var mockKey = 'foo:key',
-            homeOptions = {
-                dashboard: 'dashboard',
-                activities: 'activities'
-            };
+            oldIsSynced;
 
         beforeEach(function () {
-            app.user.lastState.buildKey.returns(mockKey);
+            oldIsSynced = app.isSynced;
+            app.isSynced = true;
+            sinon.collection.stub(app.router, 'index');
+            sinon.collection.stub(app.router, 'hasAccessToModule').returns(true);
+            sinon.collection.stub(app.api, 'isAuthenticated').returns(true);
+            sinon.collection.stub(app, 'sync');
+            buildKeyStub.returns(mockKey);
         });
 
-        it("should load dashboard layout if last visited Home is dashboard", function() {
-            var route = _.find(app.router.customRoutes, function(route) {return (route.name==='home')});
-            app.user.lastState.get.returns(homeOptions.dashboard);
-            route.callback();
-            expect(app.controller.loadView.calledWith({module: 'Home', layout: 'records'})).toBe(true);
+        afterEach(function() {
+            app.isSynced = oldIsSynced;
+            app.router.navigate('', {trigger: true});
+            Backbone.history.stop();
         });
 
-        it("should navigate to activities route if last visited Home is activity stream", function() {
-            var route = _.find(app.router.customRoutes, function(route) {return (route.name==='home')});
-            app.user.lastState.get.returns(homeOptions.activities);
-            route.callback();
-            expect(navigateStub.calledWith('#activities', {trigger: true})).toBe(true);
+        describe('Activities', function() {
+            it('should set last visited Home to activity stream when routing to activity stream', function() {
+                app.router.navigate('activities', {trigger: true});
+
+                expect(setStub).toHaveBeenCalledWith(mockKey, 'activities');
+                expect(loadViewStub).toHaveBeenCalledWith({
+                    layout: 'activities',
+                    module: 'Activities',
+                    skipFetch: true
+                });
+            });
         });
 
-        it("should set last visited Home to activity stream when routing to activity stream", function() {
-            var route = _.find(app.router.customRoutes, function(route) {return (route.name==='activities')});
-            route.callback();
-            expect(app.user.lastState.set.calledWith(mockKey, homeOptions.activities));
+        describe('homeRecord', function() {
+            var recordStub;
+
+            beforeEach(function() {
+                recordStub = sinon.collection.stub(app.router, 'record');
+            });
+
+            it('should set last visited Home to dashboard when routing to a dashboard', function() {
+                app.router.navigate('Home/test_ID', {trigger: true});
+
+                expect(setStub).toHaveBeenCalledWith(mockKey, 'dashboard');
+                expect(recordStub).toHaveBeenCalledWith('Home', 'test_ID');
+            });
         });
 
-        it("should set last visited Home to dashboard when routing to a dashboard", function() {
-            var route = _.find(app.router.customRoutes, function(route) {return (route.name==='homeRecord')}),
-                routerRecordStub = sinon.stub(app.router, 'record');
-            route.callback();
-            expect(app.user.lastState.set.calledWith(mockKey, homeOptions.dashboard));
-            routerRecordStub.restore();
+        describe('Home', function() {
+            var redirectStub,
+                listStub;
+
+            beforeEach(function () {
+                redirectStub = sinon.collection.stub(app.router, 'redirect');
+                listStub = sinon.collection.stub(app.router, 'list');
+            });
+
+            using('homeOptions', [
+                {
+                    value: 'dashboard',
+                    redirectCalled: false,
+                    listRouteCalled: true
+                },
+                {
+                    value: 'activities',
+                    redirectCalled: true,
+                    listRouteCalled: false
+                }
+            ], function(option) {
+                it('should navigate to the appropriate route according to the lastState', function() {
+                    getStub.returns(option.value);
+                    app.router.navigate('Home', {trigger: true});
+
+                    expect(redirectStub.calledWith('#activities')).toBe(option.redirectCalled);
+                    expect(listStub.called).toBe(option.listRouteCalled);
+                });
+            });
+        });
+
+        describe('404', function() {
+            var errorStub, appMetaStub;
+
+            beforeEach(function() {
+                appMetaStub = sinon.collection.stub(app.metadata, 'getModule');
+                errorStub = sinon.collection.stub(app.error, 'handleHttpError');
+            });
+
+            // FIXME: We should ensure that current routes work as expected
+            // with valid modules as well, aka, testing route callbacks; will
+            // be completed in SC-2761.
+            using('module routes', [
+                'notexists',
+                'notexists/test_ID',
+                'notexists/create',
+                'notexists/vcard-import',
+                'notexists/config',
+                'notexists/layout/test_view',
+                'notexists/test_ID/edit',
+                'notexists/test_ID/layout/test_view',
+                'notexists/test_ID/layout/test_view/edit'
+            ], function(route) {
+                it('should redirect to 404 if module does not exist', function() {
+                    app.router.navigate(route, {trigger: true});
+                    expect(errorStub).toHaveBeenCalledWith({status: 404});
+                });
+            });
         });
     });
 
@@ -85,7 +145,7 @@ describe('Sugar7.Routes', function() {
         it("should return false if user's show_wizard true", function() {
             var route = 'record';
             app.user.set('show_wizard', true);
-            var response = app.routing.triggerBefore("route", {route:route})
+            var response = app.routing.triggerBefore('route', {route:route});
             expect(response).toBe(false);
         });
     });
