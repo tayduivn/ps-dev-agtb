@@ -88,7 +88,7 @@
             context.prepare();
         }
 
-        model = model || new Backbone.Model();
+        model = model || new app.data.createBean();
 
         if (fieldDef) {
             model.fields = model.fields || {};
