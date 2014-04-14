@@ -196,6 +196,15 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'bLabel' => 'LBL_ADD_ATTACHMENT',
                     'span' => 12,
                 ),
+                'usefulness' => array(
+                    'name' => 'usefulness',
+                    'type' => 'usefulness',
+                    'span' => 12,
+                    'fields' => array(
+                        'useful',
+                        'notuseful',
+                    ),
+                ),
             ),
         ),
         array(
@@ -227,24 +236,6 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                 ),
                 'date_modified' => array(
                     'name' => 'date_modified'
-                ),
-            ),
-        ),
-        array(
-            'name' => 'panel_in_moreless',
-            'label' => 'LBL_PANEL_INMORELESS',
-            'columns' => 2,
-            'labelsOnTop' => true,
-            'placeholders' => true,
-            'fields' => array(
-                'usefulness' => array(
-                    'name' => 'usefulness',
-                    'type' => 'usefulness',
-                    'span' => 12,
-                    'fields' => array(
-                        'useful',
-                        'notuseful',
-                    ),
                 ),
             ),
         ),
