@@ -28,6 +28,9 @@ $dictionary['KBDocument'] = array(
   'unified_search' => true,
   'full_text_search' => true,
   'comment' => 'Knowledge Document management and FTS',
+  'studio_enabled' => array(
+    'portal' => false,
+  ),
   'fields' => array (
   'id' =>
   array (
