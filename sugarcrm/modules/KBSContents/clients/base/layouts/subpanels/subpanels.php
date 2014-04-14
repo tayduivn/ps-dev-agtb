@@ -16,10 +16,7 @@ $viewdefs['KBSContents']['base']['layout']['subpanels'] = array (
       array(
           'layout' => 'subpanel',
           'label' => 'LBL_LOCALIZATIONS_SUBPANEL_TITLE',
-          'override_subpanel_list_view' => array(
-              'view' => 'subpanel-for-localizations',
-              'link' => 'localizations',
-          ),
+          'override_subpanel_list_view' => 'subpanel-for-localizations',
           'override_paneltop_view' => 'panel-top-for-localizations',
           'context' => array(
               'link' => 'localizations',
@@ -28,10 +25,7 @@ $viewdefs['KBSContents']['base']['layout']['subpanels'] = array (
       array(
           'layout' => 'subpanel',
           'label' => 'LBL_REVISIONS_SUBPANEL_TITLE',
-          'override_subpanel_list_view' => array(
-              'view' => 'subpanel-for-revisions',
-              'link' => 'revisions',
-          ),
+          'override_subpanel_list_view' => 'subpanel-for-revisions',
           'override_paneltop_view' => 'panel-top-for-revisions',
           'context' => array(
               'link' => 'revisions',
