@@ -55,6 +55,7 @@ if (file_exists('../config.js')) {
     <script type="text/javascript" src="../include/javascript/twitterbootstrap/bootstrap-tab.js"></script>
     <script type="text/javascript" src="../include/javascript/twitterbootstrap/bootstrap-dropdown.js"></script>
     <script type="text/javascript" src="../include/javascript/twitterbootstrap/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="../include/javascript/jquery/jquery.timepicker.js"></script>
     <script type="text/javascript" src="../include/javascript/select2/select2.js"></script>
     <script type="text/javascript" src="../include/javascript/nvd3/lib/d3.min.js"></script>
     <script type="text/javascript" src="../include/javascript/nvd3/nv.d3.min.js"></script>
