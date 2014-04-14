@@ -143,7 +143,9 @@ class RS320ApiTest extends Sugar_PHPUnit_Framework_TestCase
 
                 $unit->assertEquals($unit->account->name . '.zip', $info['name']);
 
-                $unit->assertEquals('application/zip', $info['content-type'], 'Invalid content-type');
+                $contentType = mime_is_detectable() ? 'application/zip' : 'application/octet-stream';
+
+                $unit->assertEquals($contentType, $info['content-type'], 'Invalid content-type');
                 $unit->assertEquals(filesize($info['path']), $info['content-length'], 'Invalid content-length');
 
                 $zip = new ZipArchive();
