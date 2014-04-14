@@ -59,6 +59,24 @@ class SugarMinifyUtils
         );
         return $compress_exempt_files;
     }
+    
+    /**
+     * Gets the js_groupings array for use in the concatenation process
+     * 
+     * @return array
+     */
+    protected function getJSGroupings()
+    {
+        $js_groupings = array();
+        if(isset($_REQUEST['root_directory'])){
+            require('jssource/JSGroupings.php');
+            require_once('jssource/jsmin.php');
+        } else {
+            require('JSGroupings.php');
+            require_once('jsmin.php');
+        }
+        return $js_groupings;
+    }
 
     /**ConcatenateFiles($from_path)
      *
@@ -68,121 +86,80 @@ class SugarMinifyUtils
      * @from_path root directory where processing should take place
      */
     public function ConcatenateFiles($from_path){
+        global $sugar_config;
+
         // Minifying the group files takes a long time sometimes.
         @ini_set('max_execution_time', 300);
-        $js_groupings = array();
-        if(isset($_REQUEST['root_directory'])){
-            require('jssource/JSGroupings.php');
-            require_once('jssource/jsmin.php');
-        } else {
-            require('JSGroupings.php');
-            require_once('jsmin.php');
-        }
-        //get array with file sources to concatenate
-        $file_groups = $js_groupings;//from JSGroupings.php;
-        $files_opened = array();
-        $currPerm = '';
+        $js_groupings = $this->getJSGroupings();
 
+        // Get the files that are not meant to be minified
         $excludedFiles = $this->get_exclude_files($from_path);
-        //for each item in array, concatenate the source files
-        foreach($file_groups as $fg){
 
-            //process each group array
+        // For each item in the $js_groupings array (from JSGroupings.php), 
+        // concatenate the source files into the target file
+        foreach ($js_groupings as $fg) {
+            // List of files to build into one
+            $buildList = array();
+
+            // Default the permissions to the most restrictive to start
+            $currPerm = 0;
+
+            // Process each group array. $loc is the file to read in, $trgt is 
+            // the concatenated file
             foreach($fg as $loc=>$trgt){
+                $contents = '';
                 $relpath = $loc;
                 $loc = $from_path.'/'.$loc;
 
                 $trgt = sugar_cached($trgt);
                 //check to see that source file is a file, and is readable.
                 if(is_file($loc) && is_readable($loc)){
-                    $currPerm = fileperms($loc);
-                    //check to see if target exists, if it does then open file
-                    if(file_exists($trgt)){
-                        if(in_array($trgt, $files_opened)){
-                            //open target file
-                            if(function_exists('sugar_fopen')){
-                                $trgt_handle = sugar_fopen($trgt, 'a');
-                            }else{
-                                $trgt_handle = fopen($trgt, 'a');
-                            }
-                        }else{
-                            //open target file
-                            if(function_exists('sugar_fopen')){
-                                $trgt_handle = sugar_fopen($trgt, 'w');
-                            }else{
-                                $trgt_handle = fopen($trgt, 'w');
-                            }
-                        }
-
-                    }else{
-
-                        if(!function_exists('mkdir_recursive')) {
-                            require_once('include/dir_inc.php');
-                        }
-
-                        mkdir_recursive(dirname($trgt));
-                        //create and open target file
-                        if(function_exists('sugar_fopen')){
-                                $trgt_handle = @sugar_fopen($trgt, 'w');
-                        }else{
-                            $trgt_handle = @fopen($trgt, 'w');
-                        }
-
-                        // todo: make this failure more friendly.  Ideally, it will display a
-                        //       warning to admin users and revert back to displaying all of the
-                        //       Javascript files insted of displaying the minified versions.
-                        if ($trgt_handle === false) {
-                            $target_directory = dirname($trgt);
-                            $base = dirname($target_directory);
-                            while(!is_dir($base) && !empty($base) && $base != dirname($base)) {
-                                $base = dirname($base);
-                            }
-                            sugar_die("Creating $target_directory failed: please make sure {$base} is writable\n");
-                        }
-
+                    // Build a file perm based on the loosest file being read in
+                    $tPerm = fileperms($loc);
+                    if ($tPerm !== false && $tPerm > $currPerm) {
+                        $currPerm = $tPerm;
                     }
-                    $files_opened[] = $trgt;
-
+                    
                     //make sure we have handles to both source and target file
-                    if ($trgt_handle) {
-                        $buffer = file_get_contents($loc);
-                        if(!isset($excludedFiles[$loc])){  //Skip minifying files in exclude list
-                            try {
-                                $buffer = SugarMin::minify($buffer);
-                            } catch (RuntimeException  $e) {
-                                //Use unminified $buffer instead
-                            }
+                    $content = file_get_contents($loc);
+                    //Skip minifying files in exclude list
+                    if (!isset($excludedFiles[$loc])) {
+                        try {
+                            $content = SugarMin::minify($content);
+                        } catch (RuntimeException  $e) {
+                            //Use unminified $buffer instead
                         }
-                        $buffer .= "\n/* End of File $relpath */\n\n";
-                        $num = fwrite($trgt_handle, $buffer);
-
-                        if( $num=== false ){
-                         //log error, file did not get appended
-                         echo "Error while concatenating file $loc to target file $trgt \n";
-                        }
-                        //close file opened.
-                        fclose($trgt_handle);
                     }
+                    $content .= "\n/* End of File $relpath */\n\n";
+                    $buildList[] = $content;
+                }
+            }
 
-                }
+            // Ensure target directory exists
+            $targetDir = dirname($trgt);
+            if (!file_exists($targetDir)) {
+                mkdir_recursive($targetDir);
             }
-            //set permissions on this file
-            if(!empty($currPerm) && $currPerm !== false){
-                //if we can retrieve permissions from target files, use same
-                //permission on concatenated file
-                if(function_exists('sugar_chmod')){
-                    @sugar_chmod($trgt, $currPerm);
-                }else{
-                    @chmod($trgt, $currPerm);
-                }
-            }else{
-                //no permissions could be retrieved, so set to 777
-                if(function_exists('sugar_chmod')){
-                    @sugar_chmod($trgt, 0777);
-                }else{
-                    @chmod($trgt, 0777);
-                }
+
+            // Build the file now using atomic write
+            $contents = implode("", $buildList);
+            sugar_file_put_contents_atomic($trgt, $contents);
+
+            // And handle permissions like the way we used to do it
+            $func = function_exists('sugar_chmod') ? 'sugar_chmod' : 'chmod';
+
+            // Get a default permission, from config if possible
+            if (isset($sugar_config['default_permissions']['file_mode'])) {
+                $defaultPerm = $sugar_config['default_permissions']['file_mode'];
+            } else {
+                $defaultPerm = 0777;
             }
+
+            // Handle permission value here
+            $newPerm = $currPerm ? $currPerm : $defaultPerm;
+
+            // Set the perms for the new file
+            @$func($trgt, $newPerm);
         }
     }
 

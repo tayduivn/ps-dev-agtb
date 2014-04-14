@@ -96,12 +96,14 @@ if(isset($_REQUEST['root_directory'])){
         require_once('include/utils/file_utils.php');
         require_once('include/utils/autoloader.php');
         require_once('include/utils/sugar_file_utils.php');
+        require_once('include/dir_inc.php');
     }
     if(!function_exists('sugar_cached')) {
         if ($argv[1] != '-?') {
             require_once($from.'/./include/utils.php');
             require_once($from.'/./include/utils/file_utils.php');
             require_once($from.'/./include/utils/sugar_file_utils.php');
+            require_once($from.'/./include/dir_inc.php');
         }
         if(!function_exists('sugar_cached')) {
             function sugar_cached($dir) { return "cache/$dir"; }
