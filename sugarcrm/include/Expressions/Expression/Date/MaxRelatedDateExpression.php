@@ -51,9 +51,10 @@ class MaxRelatedDateExpression extends DateExpression
         }           
                         
         foreach ($linkField as $bean) {
-            //set up our timestamp
-            $timestamp = $bean->$relfield;
-            if (isset($bean->$relfield)) {
+            // we have to use the fetched_row as it's still in db format
+            // where as the $bean->$relfield is formatted into the users format.
+            if (isset($bean->fetched_row[$relfield])) {
+                $timestamp = $bean->fetched_row[$relfield];
                 //if it isn't a timestamp, mark the flag as such and convert it for comparison
                 if (!is_int($timestamp)) {
                     $isTimestamp = false;
@@ -93,4 +94,3 @@ class MaxRelatedDateExpression extends DateExpression
         return "";
     }
 }
-?>
