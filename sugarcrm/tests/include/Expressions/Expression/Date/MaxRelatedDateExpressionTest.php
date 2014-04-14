@@ -86,6 +86,6 @@ class MaxRelatedDateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
         $expr = 'maxRelatedDate($revenuelineitems, "date_closed")';
         $result = Parser::evaluate($expr, $opp)->evaluate();
 
-        $this->assertEquals($result, '2014-04-14');
+        $this->assertEquals('2014-04-14', $result);
     }
 }
