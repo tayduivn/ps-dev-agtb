@@ -96,6 +96,7 @@
             }, this)
         );
 
+        this.context.set('collection', this.collection);
         return this;
     },
 
@@ -122,10 +123,11 @@
     /**
      * @inheritDoc
      */
-    loadData: function() {
+    loadData: function(options) {
+        options = options || {};
         if (this.collection.dataFetched) {
             return;
         }
-        this.collection.fetch();
+        this.collection.fetch(options);
     }
 })
