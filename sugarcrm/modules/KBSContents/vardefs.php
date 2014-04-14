@@ -295,10 +295,10 @@ $dictionary['KBSContent'] = array(
         'kbscontent_topic' => array(
             'lhs_module' => 'KBSContents',
             'lhs_table' => 'kbscontents',
-            'lhs_key' => 'id',
+            'lhs_key' => 'topic_id',
             'rhs_module' => 'KBSTopics',
             'rhs_table' => 'kbstopics',
-            'rhs_key' => 'topic_id',
+            'rhs_key' => 'id',
             'relationship_type' => 'one-to-many'
         ),
         'kbsdocuments_kbscontents' => array (
