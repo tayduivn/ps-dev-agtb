@@ -14,7 +14,7 @@
 
 $mod_strings = array (
     'LBL_MODULE_NAME' => 'Knowledge Base',
-    'LBL_MODULE_NAME_SINGULAR' => 'KBDocument',
+    'LBL_MODULE_NAME_SINGULAR' => 'Knowledge Base Article',
     'LBL_MODULE_TITLE' => 'Knowledge Base Article',
     'LNK_NEW_ARTICLE' => 'Create Article',
     'LBL_LIST_ARTICLES' => 'View Articles',
