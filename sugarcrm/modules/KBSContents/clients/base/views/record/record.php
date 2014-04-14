@@ -153,6 +153,7 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'name' => 'status',
                     'type' => 'status',
                     'span' => 2,
+                    'enum_width' => '200px',
                 ),
                 'language' => array(
                     'name' => 'language',
@@ -173,7 +174,7 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'name' => 'kbdocument_body',
                     'type' => 'htmleditable_tinymce',
                     'span' => 12,
-                    'dismiss_label' => true,
+                    'dismiss_label' => false,
                     'fieldSelector' => 'kbdocument_body',
                     'tinyConfig' => array(
                         'height' => '300',
@@ -192,18 +193,8 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'link' => 'notes',
                     'module' => 'Notes',
                     'modulefield' => 'filename',
-                    'bLable' => 'LBL_ADD_ATTACHMENT',
-                    'bIcon' => 'icon-paper-clip',
+                    'bLabel' => 'LBL_ADD_ATTACHMENT',
                     'span' => 12,
-                ),
-                'usefulness' => array(
-                    'name' => 'usefulness',
-                    'type' => 'usefulness',
-                    'span' => 12,
-                    'fields' => array(
-                        'useful',
-                        'notuseful',
-                    ),
                 ),
             ),
         ),
@@ -236,6 +227,24 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                 ),
                 'date_modified' => array(
                     'name' => 'date_modified'
+                ),
+            ),
+        ),
+        array(
+            'name' => 'panel_in_moreless',
+            'label' => 'LBL_PANEL_INMORELESS',
+            'columns' => 2,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
+                'usefulness' => array(
+                    'name' => 'usefulness',
+                    'type' => 'usefulness',
+                    'span' => 12,
+                    'fields' => array(
+                        'useful',
+                        'notuseful',
+                    ),
                 ),
             ),
         ),

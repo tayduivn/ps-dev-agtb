@@ -47,7 +47,7 @@ $mod_strings = array (
     'LBL_VIEWED_COUNT' => 'View Count',
     'LBL_DOWNLOAD_ALL' => 'Download All',
     'LBL_ATTACHMENTS' => 'Attachments',
-    'LBL_ADD_ATTACHMENT' => 'Add attachment',
+    'LBL_ADD_ATTACHMENT' => 'Browse',
     'LBL_TOPIC_NAME' => 'Topic',
     'LBL_TOPIC_ID' => 'Topic Id',
     'LBL_DASHLET_MOST_USEFUL_NAME' => 'Most Useful Knowledge Base Articles',
@@ -76,4 +76,5 @@ $mod_strings = array (
     'LBL_KBSTATUS_PUBLISHED' => 'Published',
     'LBL_KBSTATUS_PUBLISHED_IN' => 'Published (Internal)',
     'LBL_KBSTATUS_PUBLISHED_EX' => 'Published (Extrenal)',
+    'LBL_PANEL_INMORELESS' => 'Usefulness',
 );

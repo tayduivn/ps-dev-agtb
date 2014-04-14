@@ -202,6 +202,7 @@ $dictionary['KBSContent'] = array(
             'link' => 'kbsdocuments_kbscontents',
             'module' => 'KBSDocuments',
             'duplicate_merge' => 'disabled',
+            'studio' => false,
         ),
         'active_rev' => array(
             'name' => 'active_rev',
@@ -251,6 +252,7 @@ $dictionary['KBSContent'] = array(
             'link' => 'kbsarticles_kbscontents',
             'module' => 'KBSArticles',
             'duplicate_merge' => 'disabled',
+            'studio' => false,
         ),
         'localizations' => array(
             'name' => 'localizations',
@@ -260,6 +262,7 @@ $dictionary['KBSContent'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_KBSLOCALIZATIONS',
             'relationship' => 'localizations',
+            'studio' => false,
         ),
         'revisions' => array(
             'name' => 'revisions',
@@ -269,6 +272,7 @@ $dictionary['KBSContent'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_KBSREVISIONS',
             'relationship' => 'revisions',
+            'studio' => false,
         ),
         'related_languages' => array(
             'name' => 'related_languages',

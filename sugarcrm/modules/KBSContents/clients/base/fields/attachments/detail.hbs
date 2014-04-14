@@ -13,9 +13,7 @@
  */
 }}
 <div class="select2-container select2-container-multi select2-choices-pills-close
-    select2-choices-pills-square select2 span12 with-padding">
-    <a class="btn kb-download-all-btn" href="javascript:void(0);" data-action="download-all"
-       title="{{str "LBL_DOWNLOAD_ALL" this.module}}"><i class="icon-download"></i></a>
+    select2-choices-pills-square select2 span12 kb-attachmentlist-details-view">
     <ul class="select2-choices">
         {{#each value}}
             <li class="select2-search-choice">
@@ -32,5 +30,12 @@
                 </div>
             </li>
         {{/each}}
+        {{#if value}}
+            <li>
+                <button class="btn-link btn-invisible btn-kb-download-all" data-action="download-all">
+                    <i class="icon-download"></i>{{str "LBL_DOWNLOAD_ALL" this.module}}
+                </button>
+            </li>
+        {{/if}}
     </ul>
 </div>

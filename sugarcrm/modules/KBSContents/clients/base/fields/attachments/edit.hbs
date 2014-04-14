@@ -14,10 +14,10 @@
 }}
 <label class="btn kb-attach-btn" for="{{cid}}">
     {{#if def.bIcon}}<i class="{{def.bIcon}}"></i>{{/if}}
-    {{#if bLabel}}{{str bLabel}}{{/if}}
+    {{#if def.bLabel}}{{str def.bLabel this.module}}{{/if}}
 </label>
 <input type="hidden" class="select2 select2-choices-pills-close" value="" data-type="attachments">
 <input type="file" name="attachment_list"
        class="hidden" data-type="fileinput"
        id="{{cid}}"
-       {{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}>
+    {{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}>
