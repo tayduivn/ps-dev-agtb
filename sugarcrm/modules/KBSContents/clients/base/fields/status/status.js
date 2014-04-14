@@ -42,7 +42,7 @@
      * does not match a known value its value is used as label and default
      * style is used as well.
      */
-    _render: function () {
+    _render: function() {
         var status = this.model.get(this.name),
             options = app.lang.getAppListStrings(this.def.options);
 
@@ -50,5 +50,17 @@
         this.statusLabel = options[status] || status;
 
         this._super('_render');
+    },
+
+    /**
+     * {@inheritDoc}
+     */
+    focus: function() {
+        var self = this;
+        if (this.action !== 'disabled' && !this.def.isMultiSelect) {
+            _.defer(function() {
+                self.$(self.fieldTag).select2('open');
+            });
+        }
     }
 })

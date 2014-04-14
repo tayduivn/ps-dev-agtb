@@ -25,5 +25,13 @@
         ]);
 
         this._super('initialize', [options]);
+    },
+
+    /**
+     * {@inheritDoc}
+     */
+    _initTabsAndPanels: function() {
+        this._super('_initTabsAndPanels');
+        this.meta.useTabsAndPanels = false;
     }
 })

@@ -25,6 +25,54 @@
   }
 }
 
+.headerpane {
+  [data-type="status"]:not(.edit) {
+    .label {
+      text-align: center;
+      font-weight: bold;
+      padding: 1px 4px 2px;
+      margin-top: 3px;
+      font-size: @fontSizeMini;
+    }
+  }
+  [data-type="status"].edit {
+    .record-edit-link-wrapper {
+      left: -12px !important;
+    }
+  }
+
+}
+
+.record .record-cell .record-label {
+  &[data-name="attachment_list"] {
+    padding-bottom: 6px !important;
+  }
+}
+[data-fieldname="attachment_list"] {
+  .select2-container {
+    margin-left: -1px !important;
+  }
+}
+div.kb-attachmentlist-details-view {
+  ul.select2-choices {
+    border: none;
+    margin-left: -4px;
+    box-shadow: none;
+    border-radius: 0;
+    -webkit-border-radius: 0;
+    background: none;
+    li.select2-search-choice div {
+      padding: 6px !important;
+    }
+  }
+  .btn-kb-download-all{
+    margin: 4px 0 0 -5px;
+    i.icon-download {
+      padding: 0 5px 0 5px;
+    }
+  }
+}
+
 .dashlet .listed {
   &.kbcontents li {
     p, .details {
@@ -36,6 +84,17 @@
   }
 }
 
+.panel_in_moreless {
+  height: 1px;
+  [data-type="usefulness"] {
+    margin-bottom: 0 !important;
+    min-height: 20px !important;
+    position: relative !important;
+    top: 9px !important;
+    float: right !important;
+    width: 200px !important;
+  }
+}
 [data-type="usefulness"] {
   .btn.btn-invisible {
     &:not(.disabled) {
@@ -51,12 +110,12 @@
       }
     }
   }
+  span.record-edit-link-wrapper {
+    display: none !important;
+  }
 }
 
 [data-name="kbdocument_body"] {
-  .kbdocument-body {
-    min-height: 200px;
-  }
   span.record-edit-link-wrapper {
     display: none !important;
   }
@@ -74,9 +133,9 @@
 label.kb-attach-btn {
   position: absolute;
   z-index: 10;
-  top: 24px;
-  left: 18px;
-  width: 36px;
+  top: 28px;
+  left: 25px;
+  width: 50px;
   margin:-5px 0px 0px -7px;
 }
 
@@ -92,7 +151,7 @@ label.kb-attach-btn {
 .select2-choices-pills-square {
   &.with-padding {
     .select2-choices {
-      padding-left: 50px !important;
+      padding-left: 66px !important;
     }
   }
 }
