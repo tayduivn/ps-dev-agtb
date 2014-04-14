@@ -57,7 +57,7 @@ class KBSContentsApi extends SugarListApi
 
         $mltName = new \Elastica\Query\MoreLikeThis();
         $mltName->setFields(array('name'));
-        $mltName->setLikeText($targetBean->kbsdocument_name);
+        $mltName->setLikeText($targetBean->name);
         // TODO: Configure after demo.
         $mltName->setMinTermFrequency(1);
         $mltName->setMinDocFrequency(1);
