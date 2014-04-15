@@ -1,31 +1,18 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
+
 
 /*********************************************************************************
 
@@ -41,20 +28,25 @@ require_once 'include/database/PreparedStatement.php';
 
 class MysqliPreparedStatement extends PreparedStatement
 {
-
-    /**
-     * Place to bind query vars to
-     * @var array
-     */
-    protected $bound_vars = array();
-
     /**
      * Place to bind query output vars to
      * @var array
      */
     protected $output_vars = array();
 
-    /*
+    /**
+     * Fields in the result
+     * @var array
+     */
+    protected $resultFields = array();
+
+    /**
+     * MySQLi statement object
+     * @var mysqli_stmt
+     */
+    protected $stmt;
+
+    /**
      * Maps MySQL column datatypes to MySQL bind variable types
      *
      * Possible types are:
@@ -64,167 +56,132 @@ class MysqliPreparedStatement extends PreparedStatement
      *   s - string
      *
      */
-    protected $ps_type_map = array(
+    protected $typeMap = array(
         // Sugar DataType      PHP Bind Variable data type
-
-        // char types
-        'char'             => 's', // char
-        'char(36)'         => 's', // id
-        'varchar'          => 's', // varchar, enum, relate, url, encrypt, file
-        'text'             => 's', // text, multienum, html,
-        'longtext'         => 's', // longtext, longhtml
-        'blob'             => 's', // blob       todo b?
-        'longblob'         => 's', // longblob   todo b?
-
-        // floating point types
-        'double'           => 'd', // double
-        'float'            => 'd', // float
-        'decimal(26,6)'    => 'd', // currency
-        'decimal'          => 'd', // decimal, decimal2
-        'decimal(%d, %d)'  => 'd', // decimal_tpl
-
-        // integer types
-        'bool'             => 'i', // bool
-        'tinyint'          => 'i', // tinyint
-        'smallint'         => 'i', // short
-        'int'              => 'i', // int
-        'int unsigned'     => 'i', // uint
-        'bigint'           => 'i', // long
-        'bigint unsigned'  => 'i', // ulong
-
-        // date time types
-        'time'             => 's', // time
-        'date'             => 's', // date
-        'datetime'         => 's', // datetime, datetimecombo
-
+        'string'           => 's',
+        'date'             => 's',
+        'time'             => 's',
+        'float'            => 'd',
+        'bigint'           => 'i',
+        'int'              => 'i',
+        'bool'             => 'i',
     );
 
 
+    /**
+     * Prepare the statement for concrete database
+     * @param string $this->parsedSQL SQL text of the query
+     * @param array $fieldDefs Definitions for variables
+     * @param string $msg Error message
+     */
+    protected function preparePreparedStatement($msg = '' )
+    {
+        if(empty($this->parsedSQL)) {
+            $this->DBM->registerError($msg, "Empty SQL query");
+            return false;
+        }
 
-  /**
-   * Tracks slow queries in the tracker database table
-   *
-   * @param resource $dblink   database resource to use
-   * @param string   $sqlText  the sql statement to prepare
-   * @param array    $data     1D array of data to match the positional params
-   * @param array    fieldDefs field definitions
-   *
-   */
-  public function preparePreparedStatement($sqlText,  array $fieldDefs, $msg = '' ){
+        $GLOBALS['log']->info('QueryPrepare: ' . $this->parsedSQL);
+        if (!($this->stmt = $this->dblink->prepare($this->parsedSQL))) {
+            $this->DBM->registerError($msg, "Prepare failed: for sql: $this->parsedSQL (" . $this->dblink->errno . ") " . $this->dblink->error);
+            return false;
+        }
+        $num_args = $this->stmt->param_count;
 
-      $this->lastsql = $sqlText;
-      $GLOBALS['log']->info('QueryPrepare:' . $sqlText);
-      if (!($this->stmt = $this->dblink->prepare($sqlText))) {
+        if ($num_args > 0) {
+            $this->bound_vars = $bound = array_fill(0, $num_args, null);
+            $types = "";
+            for($i=0; $i<$num_args;$i++) {
+                if(empty($this->fieldDefs[$i]["type"])) {
+                    $this->DBM->registerError($msg, "No defs entry for parameter $i");
+                    return false;
+                }
 
-          $this->DBM->registerError("Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error, null, $dieOnError);
-          return false;
-      }
-      $num_args = $this->stmt->param_count;
+                $type = $this->fieldDefs[$i]["type"];
+                $mappedType = $this->DBM->getTypeClass($type);
+                if($this->DBM->isTextType($type)) {
+                    // FIXME: add support for send_long_data
+                    $mappedType = 's';
+                } elseif(!empty($this->typeMap[$mappedType])) {
+                    $mappedType = $this->typeMap[$mappedType];
+                } else {
+                    $mappedType = 's';
+                }
+                $types .= $mappedType;  // SugarType->type_map->ps_type_map
+                $bound[$i] =& $this->bound_vars[$i];
+            }
+            array_unshift($bound, $types);    // puts $types in front of the data elements
 
-      if ($num_args > 0) {
-      $this->bound_vars = $bound = array_fill(0, $num_args, null);
-      $types = "";
-      for($i=0; $i<$num_args;$i++) {
-          $thisType = trim($fieldDefs[$i]["type"]);
-          $mappedType = $this->DBM->type_map[$thisType];
-          $types .= $this->ps_type_map[ $mappedType ];  // SugarType->type_map->ps_type_map
-          $bound[$i] =& $this->bound_vars[$i];
-      }
-      array_unshift($bound, $types);    // puts $types in front of the data elements
+            call_user_func_array(array($this->stmt, "bind_param"), $bound);
 
-      call_user_func_array(array($this->stmt, "bind_param"), $bound);
+            $this->DBM->checkError("QueryPrepare Failed: $msg for sql: $this->parsedSQL :");
+        }
 
-      $this->DBM->checkError(" QueryPrepare Failed: $msg for sql: $sqlText ::");
+        return $this;
+    }
 
-      }
-      return $this;
-  }
+    /**
+     * (non-PHPdoc)
+     * @see PreparedStatement::executePreparedStatement()
+     */
+    public function executePreparedStatement(array $data, $msg = '')
+    {
+        if(!$this->prepareStatementData($data, !empty($this->stmt)?$this->stmt->param_count:0, $msg)) {
+            return false;
+        }
+        $this->preparedStatementResult = null;
+        $res = $this->stmt->execute();
 
+        return $this->finishStatement($res, $msg);
+    }
 
+    /**
+     * (non-PHPdoc)
+     * @see PreparedStatement::preparedStatementFetch()
+     */
+    public function preparedStatementFetch($msg = '')
+    {
+        if(!$this->stmt) {
+            return false;
+        }
 
+        // first time, create an array of column names from the returned data set
+        if (empty($this->preparedStatementResult)) {
+            $this->resultFields = null;
+            $this->preparedStatementResult = $this->stmt->result_metadata();
+            if (is_object($this->preparedStatementResult))  {
+                $this->resultFields = $this->preparedStatementResult->fetch_fields();
+            } else {
+                $this->preparedStatementResult = null;
+                return false;
+            }
 
-   public function executePreparedStatement(array $data, $msg = ''){
+            if (!empty($this->resultFields) && is_array($this->resultFields))  {
+                $this->output_vars = $bound = array();
+                foreach($this->resultFields as $k => $field) {
+                    $this->output_vars[$field->name] = null;
+                    $bound[$k] =& $this->output_vars[$field->name];
+                }
+                call_user_func_array(array($this->stmt, "bind_result"), $bound);
+            } else {
+                $this->preparedStatementResult = null;
+                return false;
+            }
+        }
 
-      //parent::countQuery($this->sqlText);
-      $GLOBALS['log']->info('Query:' . $this->sqlText);
+        // Get the next results
+        if($this->stmt->fetch()) {
+            return $this->output_vars;
+        } else {
+            return false;
+        }
+    }
 
-      $this->query_time = microtime(true);
-
-      if (!empty($data)) {
-          if ($this->stmt->param_count != count($data) )  {
-              $this->DBM->registerError( "incorrect number of elements. Expected " . $this->stmt->param_count . " but got " . count($data));
-             return false;
-          }
-          // bind the variables
-      for($i=0; $i<$this->stmt->param_count;$i++) {
-         $this->bound_vars[$i] = array_shift($data);
-      }
-
-      }
-
-
-      $this->preparedStatementResult = null;
-      $res = $this->stmt->execute();
-
-      $this->query_time = microtime(true) - $this->query_time;
-      $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
-
-      if (!$res) {
-          $this->DBM->registerError("Query Failed: $this->sqlText", null, $dieOnError);
-          $this->stmt = false; // Making sure we don't use the statement resource for error reporting
-      }
-      else {
-
-          if($this->DBM->dump_slow_queries($this->sqlText)) {
-              $this->DBM->track_slow_queries($this->sqlText);
-          }
-      }
-      $this->DBM->checkError($msg.' Query Failed:' . $this->sqlText . '::');
-
-      return $this->stmt;
-   }
-
-
-   public function preparedStatementFetch( $msg = '' ) {
-
-       // first time, create an array of column names from the returned data set
-       if (empty($this->preparedStatementResult)) {
-
-          $fieldCount = $this->stmt->field_count;
-
-          $returnVars = array();
-
-          $statement='';
-          $this->preparedStatmentResult = $this->stmt->result_metadata();
-          if (is_object($this->preparedStatmentResult))  {
-              $fields = $this->preparedStatmentResult->fetch_fields();
-              foreach($fields as $field) {
-                  $returnVars[]['name'] = $field->name;
-                  if(empty($statement)){
-                      $statement.="\$out_vars['".$field->name."']";
-                  }else{
-                      $statement.=", \$out_vars['".$field->name."']";
-                  }
-              }
-              $statement="\$this->stmt->bind_result($statement);";
-
-          }
-
-           $out_vars = array(); //array_fill(0, $fieldCount, null);
-           eval($statement);
-
-       }
-
-
-       // Get the next results
-       $this->stmt->fetch();
-
-       return $out_vars;
-   }
-
-   public function preparedStatementClose() {
-
-       $this->stmt->close();
-
-   }
+    public function preparedStatementClose()
+    {
+        if($this->stmt) {
+            $this->stmt->close();
+            $this->stmt = null;
+        }
+    }
 }

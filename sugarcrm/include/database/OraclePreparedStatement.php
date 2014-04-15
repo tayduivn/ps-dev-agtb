@@ -84,12 +84,6 @@ require_once 'include/database/PreparedStatement.php';
 class OraclePreparedStatement extends PreparedStatement
 {
 
-    /**
-     * Place to bind query vars to
-     * @var array
-     */
-    protected $bound_vars = array();
-
 
     /*
      * Maps column datatypes to MySQL bind variable types
@@ -120,167 +114,153 @@ class OraclePreparedStatement extends PreparedStatement
      *     SQLT_AVC                      - Used with oci_bind_array_by_name() to bind arrays of VARCHAR2.
      *     SQLT_VCS                      - Used with oci_bind_array_by_name() to bind arrays of VARCHAR.
      */
-    protected $ps_type_map = array(
-        // Oracle DataType => PHP Bind Variable   Used by Sugar Data Types
 
-        // char types
-        'char'             =>  SQLT_CHR,    // char
-        'varchar2'         =>  SQLT_CHR,    // varchar, relate, url
-        'varchar2(36)'     =>  SQLT_CHR,    // id
-        'varchar2(255)'    =>  SQLT_CHR,    // enum, encrypt, file
-        'clob'             =>  SQLT_CLOB,   // text, longtext, multienum, html, longhtml
-        'blob'             =>  SQLT_BLOB,   // blob, longblob
-
-        // floating point types
-        'number(20,2)'     =>  SQLT_FLT,    // decimal
-        'number(26,6)'     =>  SQLT_FLT,    // currency
-        'number(30,6)'     =>  SQLT_FLT,    // float, decimal2
-        'number(38,10)'    =>  SQLT_FLT,    // double
-        'number(%d, %d)'   =>  SQLT_FLT,    // decimal_tpl
-
-        // integer types
-        'number'           =>  SQLT_INT,    // int
-        'number(1)'        =>  SQLT_INT,    // bool
-        'number(3)'        =>  SQLT_INT,    // tinyint, short
-        'number(15)'       =>  SQLT_INT,    // uint
-        'number(38)'       =>  SQLT_INT,    // ulong
-        'number(38)'       =>  SQLT_INT,    // long
-
-        // date time types
-        'date'             =>  SQLT_CHR,    // date
-        'date'             =>  SQLT_CHR,    // datetime, datetimecombo, time
+    /**
+     * Maps SQL column datatypes to OCI bind variable types
+     *
+     * Possible types are:
+     *   b - blob
+     *   d - double
+     *   i - integer
+     *   s - string
+     *
+     */
+    protected $typeMap = array(
+            // Sugar DataType      PHP Bind Variable data type
+            'string'           => SQLT_CHR,
+            'date'             => SQLT_CHR,
+            'time'             => SQLT_CHR,
+            'float'            => SQLT_FLT,
+            'bigint'           => SQLT_LNG,
+            'int'              => SQLT_INT,
+            'bool'             => OCI_B_BOL,
     );
 
+    /**
+     * List of LOB fields
+     * index => name
+     * @var array
+     */
+    protected $lobFields = array();
 
-  public function preparePreparedStatement($sqlText, array $fieldDefs,  $msg = '' ){
-
-
-      $this->lastsql = $sqlText;
-      $GLOBALS['log']->info('QueryPrepare:' . $sqlText);
-
-      // Convert ? into :var in prepared statements
-      if (!empty($fieldDefs) ) {
-
-         $cleanedSql = "";
-         $fields = array();
-         $dataTypes = array();
-         $i = 0;
-         $nextParam = strpos( $sqlText, "?" );
-         if ($nextParam == 0 )
-             $cleanedSql = $sqlText;
-         else {     // parse the sql string looking for params
-             while ($nextParam > 0 ) {
-                 $name = "p$i"; // we don't always get fielddefs so we make up our own instead of using $fieldDefs[$i]['name'];
-                 $thisType = trim($fieldDefs[$i]["type"]);
-                 $mappedType = $this->DBM->type_map[$thisType];
-
-                 $dataType = $this->ps_type_map[$mappedType ];
-                 $cleanedSql .= substr( $sqlText, 0, $nextParam ) . ":$name";
-
-                 // insert the fieldDef and type
-                 $fields[] = $name;
-                 $dataTypes[] = $dataType;
-
-                 $sqlText = substr($sqlText, $nextParam+1); // strip off the ?
-                 $nextParam = strpos( $sqlText, "?" ); // look for another param
-                 $i++;
-              }
-              // add the remaining sql
-              $cleanedSql .= $sqlText;
-          }
-
-      }
-      else {
-          $this->DBM->registerError("ERROR Prepared Statements without field definitions not yet supported.", null, $dieOnError);
-          $this->stmt = false; // Making sure we don't use the statement resource for error reporting      }
-      }
-
-      $sqlText = $cleanedSql;
-
-      // do the prepare
-      if (!($this->stmt = oci_parse($this->dblink, $sqlText))) {
-          $this->DBM->registerError("preparePreparedStatement: Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error, null, $dieOnError);
-          $this->stmt = false; // Making sure we don't use the statement resource for error reporting
-      }
-
-      // bind the array elements
-      $num_args = count($fieldDefs);
-
-      $this->bound_vars = array();
-      $this->bound_vars = array_fill(0, $num_args, null);
-
-      foreach($this->bound_vars as $statement_bind => $variable_bind) {
-          $oraBvName = ":p" . $statement_bind;
-			if (!empty($fieldDefs[$statement_bind]["len"]))
-				$len = $fieldDefs[$statement_bind]["len"];
-			else
-				$len = 5000;
-
-          if(!oci_bind_by_name($this->stmt, $oraBvName, $this->bound_vars[$statement_bind], $len, $dataTypes[$statement_bind])) {
-              $this->DBM->registerError("preparePreparedStatement: Bind failed: $msg for sql: $sqlText for param $bindvars[$statement_bind] "
-                                . " as type $dataTypes[$statement_bind]  lenL $len" . $this->dblink->errno . " " . $this->dblink->error,
-                  null, $dieOnError);
-              $this->stmt = false; // Making sure we don't use the statement resource for error reporting
-          }
-      }
-
-      $this->DBM->checkError(" QueryPrepare Failed: $msg for sql: $sqlText ::");
-
-      return $this;
-  }
-
-
-
-
-   public function executePreparedStatement(array $data,  $msg = ''){
-
-      //parent::countQuery($this->sqlText);
-      $GLOBALS['log']->info('Query:' . $this->sqlText);
-      $this->DBM->query_time = microtime(true);
-
-      // transfer the data from the input array to the bound array
-      for($i=0; $i<count($data);$i++) {
-          $this->bound_vars[$i] = array_shift($data);
-      }
-
-      $res = oci_execute($this->stmt, OCI_DEFAULT);
-
-      $this->DBM->query_time = microtime(true) - $this->DBM->query_time;
-      $GLOBALS['log']->info('Query Execution Time:'.$this->DBM->query_time);
-
-      if (!$res) {
-          $this->DBM->registerError("Query Failed: $this->sqlText", null, $dieOnError);
-          $this->stmt = false; // Making sure we don't use the statement resource for error reporting
-      }
-      else {
-
-          if($this->DBM->dump_slow_queries($this->sqlText)) {
-              $this->DBM->track_slow_queries($this->sqlText);
-          }
-      }
-      $this->DBM->checkError($msg.' Query Failed:' . $this->sqlText);
-
-
-      return $this->stmt;
-   }
-
-    public function preparedStatementFetch( $msg = '' ) {
-
-        //return = oci_fetch_assoc($this->stmt);
-
-        $row = oci_fetch_array($this->stmt, OCI_ASSOC|OCI_RETURN_NULLS|OCI_RETURN_LOBS);
-        if ( !$row )
+    public function preparePreparedStatement( $msg = '' )
+    {
+        if(empty($this->parsedSQL)) {
+            $this->DBM->registerError($msg, "Empty SQL query");
             return false;
-        if (!$this->DBM->checkError("Fetch error", false, $this->stmt)) {
-            $temp = $row;
-            $row = array();
-            foreach ($temp as $key => $val)
-                // make the column keys as lower case. Trim the val returned
-                $row[strtolower($key)] = trim($val);
         }
-        else
-            return false;
 
-        return $row;
+        $GLOBALS['log']->info('QueryPrepare: ' . $this->parsedSQL);
+
+        $i = 0;
+        $db = $this->DBM;
+        $defs = $this->fieldDefs;
+        $oSQL = preg_replace_callback('#\?#',
+            function() use(&$i, $db, $defs) {
+                ++$i;
+                if($db->isTextType($defs[$i]["type"]) || !empty($this->lobFields[$i])) {
+                    // BLOBS should have empty(...) in the query
+                    return $db->emptyValue($defs[$i]["type"]);
+                }
+                return $db->convert(":p$i", $defs[$i]["type"]);
+            },
+            $this->parseSQL);
+
+        if(!empty($this->lobFields)) {
+            $oSQL .= ' RETURNING '.implode(",", array_values($this->lobFields)).
+                ' INTO :p'.implode(",p:", array_keys($this->lobFields));
+        }
+
+        // do the prepare
+        $this->stmt = oci_parse($this->dblink, $oSQL);
+        if($this->DBM->checkError(" QueryPrepare Failed: $msg for sql: $oSQL ::")) {
+            return false;
+        }
+
+        // bind the array elements
+        $num_args = count($this->fieldDefs);
+        $this->bound_vars = array_fill(0, $num_args, null);
+
+        for($i=0; $i<$num_args;$i++) {
+            if(empty($this->fieldDefs[$i]["type"])) {
+                $this->DBM->registerError($msg, "No defs entry for parameter $i");
+                return false;
+            }
+
+            $type = $this->fieldDefs[$i]["type"];
+            if($this->DBM->isTextType($type)) {
+                if($this->DBM->getColumnType($type) == 'clob') {
+                    $mappedType = OCI_B_CLOB;
+                } else {
+                    $mappedType = OCI_B_BLOB;
+                }
+            } else {
+                $mappedType = $this->DBM->getTypeClass($type);
+                if(!empty($this->typeMap[$mappedType])) {
+                    $mappedType = $this->typeMap[$mappedType];
+                } else {
+                    $mappedType = SQLT_CHR;
+                }
+            }
+
+            oci_bind_by_name($this->stmt, ":p$i", $this->bound_vars[$i], -1, $mappedType);
+            if($this->DBM->checkError("$msg: QueryPrepare Failed for parameter $i")) {
+                oci_free_statement($this->stmt);
+                $this->stmt = null;
+                return false;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set LOB fields
+     * @param array $lob_fields
+     */
+    public function setLobs(array $lob_fields)
+    {
+        $this->lobFields = $lob_fields;
+        return $this;
+    }
+
+    public function executePreparedStatement(array $data,  $msg = '')
+    {
+        if(!$this->prepareStatementData($data, count($this->fieldDefs), $msg)) {
+            return false;
+        }
+        foreach($this->lobFields as $idx => $name) {
+            $this->bound_vars[$idx] = oci_new_descriptor($this->dblink, OCI_D_LOB);
+        }
+
+        $res = oci_execute($this->stmt, OCI_NO_AUTO_COMMIT);
+        foreach($this->lobFields as $idx => $name) {
+            if(!$this->bound_vars[$idx]->save($data[$idx])) {
+                $this->DBM->checkError("$msg: Saving BLOB for {$data[$idx]}");
+                oci_rollback($this->dblink);
+                return false;
+            }
+        }
+        oci_commit($this->dblink);
+
+        return $this->finishStatement($res, $msg);
+    }
+
+    public function preparedStatementFetch($msg = '')
+    {
+        if(!$this->stmt) {
+            return false;
+        }
+        // Just go to regular fetch
+        return $this->DBM->fetchRow($this->stmt);
+    }
+
+    public function preparedStatementClose()
+    {
+        foreach($this->lobFields as $idx => $name) {
+            if(!empty($this->bound_vars[$idx])) {
+                $this->bound_vars[$idx]->free();
+            }
+        }
     }
 }

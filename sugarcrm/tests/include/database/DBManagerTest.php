@@ -2347,12 +2347,12 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         // CE is failing on CI because of forecast_tree check
         $this->markTestSkipped("This test needs to be modified to use a different table name because forecasts_tree breaks CE builds");
         //END SUGARCRM flav=com ONLY
-        
+
         if ( !$this->_db->supports('recursive_query') )
         {
             $this->markTestSkipped('DBManager does not support recursive query');
         }
-        
+
         $this->_db->preInstall();
 
         // Setup test data
@@ -2533,8 +2533,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group preparedStatements
      */
-    public function setupPreparedStatementsInsertStructure() {
-
+    public function setupPreparedStatementsInsertStructure()
+    {
         if ( !$this->_db->supports('prepared_statements') )
         {
             $this->markTestSkipped('This DBManager does not support prepared statements');
@@ -2555,7 +2555,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             'col2' => array (
                 'name' => 'col2',
-                'type' => 'varchar',
+                'type' => 'text',
                 'len' =>'200000',
             ),
         );
@@ -2569,10 +2569,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         if($this->_db->tableExists($tableName)) {
             $this->_db->dropTableName($tableName);
         }
-        $this->_db->createTableParams($tableName, $params, $indexes);
-
-        // Disable automatic destruction of the table after each test completes
-        unset($this->created[$tableName]);
+        $this->createTableParams($tableName, $params, $indexes);
 
         return array('tableName' => $tableName,
                      'params' => $params);
@@ -2597,23 +2594,19 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testPreparedStatementsInsertSql($data){
 
         // turn on prepared statements
-        $this->_db->usePreparedStatements = true;
-
         $dataStructure = $this->setupPreparedStatementsInsertStructure();
         $params = $dataStructure['params'];
         $tableName = $dataStructure['tableName'];
-        $sql = "INSERT INTO {$tableName}(id,col1,col2) VALUES(?int, ?, ?varchar)";
-        $ps = $this->_db->prepareStatement($sql, $params);
-        $ps->executePreparedStatement($data);
-        $resultsCntExpected=1;
+        $sql = "INSERT INTO {$tableName}(id,col1,col2) VALUES(?int, ?, ?text)";
+        $ps = $this->_db->preparedQuery($sql, $data);
+        $this->assertNotEmpty($ps, "Prepare failed");
 
         $result = $this->_db->query("SELECT * FROM $tableName");
         $resultsCnt = 0;
-        while(($row = $this->_db->fetchByAssoc($result)) != null)
+        while(($row = $this->_db->fetchByAssoc($result)) != null) {
             $resultsCnt++;
-        $this->assertEquals($resultsCnt, $resultsCntExpected, "Incorrect number or records. Found: $resultsCnt Expected: $resultsCntExpected");
-        $this->_db->query("DELETE FROM $tableName");
-        $this->_db->usePreparedStatements = false;
+        }
+        $this->assertEquals(1, $resultsCnt, "Incorrect number or records. Found: $resultsCnt Expected: 1");
     }
 
 
@@ -2622,11 +2615,10 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      * @group preparedStatements
      * @param $data
      */
-    public function testPreparedStatementsInsertParams($data){
+    public function testPreparedStatementsInsertParams($data)
+    {
 
         // turn on prepared statements
-        $this->_db->usePreparedStatements = true;
-
         $dataStructure = $this->setupPreparedStatementsInsertStructure();
         $params = $dataStructure['params'];
         $tableName = $dataStructure['tableName'];
@@ -2639,27 +2631,25 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $resultsCnt++;
         }
         $this->assertEquals($resultsCnt, $resultsCntExpected, "Incorrect number or records. Found: $resultsCnt Expected: $resultsCntExpected");
-        $this->_db->query("DELETE FROM $tableName");
-        $this->_db->usePreparedStatements = false;
     }
 
 
     /**
      * @group preparedStatements
      */
-    public function testPreparedStatementsInsertBlob(){
+    public function testPreparedStatementsInsertBlob()
+    {
 
         // turn on prepared statements
-        $this->_db->usePreparedStatements = true;
-
         $dataStructure = $this->setupPreparedStatementsInsertStructure();
         $params = $dataStructure['params'];
         $tableName = $dataStructure['tableName'];
         $this->_db->query("DELETE FROM $tableName");
 
         $blobData = '0123456789abcdefghijklmnopqrstuvwxyz';
-        while(strlen($blobData) < 100000)
+        while(strlen($blobData) < 100000) {
             $blobData .= $blobData;
+        }
 
         $data = array( 'id'=> '1', 'col1' => '10', 'col2' => $blobData);
         $this->_db->insertParams($tableName, $params, $data, null, true, true);
@@ -2669,44 +2659,39 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $foundLen = strlen($row['col2']);
         $expectedLen = strlen($blobData);
         $this->assertEquals($row['col2'], $blobData, "Failed test writing blob data. Found: $foundLen chars, Expected: $expectedLen");
-        $this->_db->query("DELETE FROM $tableName");
-        $this->_db->usePreparedStatements = false;
     }
 
 
     /**
      * @group preparedStatements
      */
-    public function testPreparedStatementsBean() {
-
+    public function testPreparedStatementsBean()
+    {
         $this->_db->usePreparedStatements = true;
-
         // insert test
         $bean = new Contact();
         $bean->last_name = 'foobar' . mt_rand();
         $bean->id   = 'test' . mt_rand();
-        //$this->_db->insert($bean);
-        $this->_db->insertParams($bean->getTableName(), $bean->getFieldDefinitions(), get_object_vars($bean),
-            isset($bean->field_name_map)?$bean->field_name_map:null, true, true);
+        $this->_db->insert($bean);
 
         $result = $this->_db->query("select id, last_name from contacts where id = '{$bean->id}'");
         $row = $this->_db->fetchByAssoc($result);
-        $this->assertEquals(trim($row['last_name']),trim($bean->last_name), 'last_name failed');
-        $this->assertEquals(trim($row['id']),$bean->id,'id failed');
+        $this->assertEquals($bean->last_name, $row['last_name'], 'last_name failed');
+        $this->assertEquals($bean->id, $row['id'],'id failed');
 
         // update test
         $bean->last_name = 'newfoobar' . mt_rand();   // change their lastname field
-        $this->_db->updateSQL($bean, array('id'=>$bean->id), true);
+        $this->_db->update($bean, array('id'=>$bean->id));
         $result = $this->_db->query("select id, last_name from contacts where id = '{$bean->id}'");
         $row = $this->_db->fetchByAssoc($result);
-        $this->assertEquals(trim($row['last_name']),$bean->last_name, 'last_name failed');
-        $this->assertEquals(trim($row['id']),$bean->id, 'id failed');
+        $this->assertEquals($bean->last_name, $row['last_name'], 'last_name failed');
+        $this->assertEquals($bean->id, $row['id'], 'id failed');
 
         // delete test
         $sql=$this->_db->deleteSQL($bean,array('id'=>$bean->id), true);
         $result = $this->_db->query("select deleted from contacts where id = '{$bean->id}'");
         $row = $this->_db->fetchByAssoc($result);
-        $this->assertEquals(trim($row['deleted']),'1');
+        $this->assertEquals(1, $row['deleted']);
 
         $this->_db->usePreparedStatements = false;
     }
@@ -2720,6 +2705,10 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     private function setupPreparedStatementsDataTypesStructure() {
 
         // create test table for datatType testing
+        if ( !$this->_db->supports('prepared_statements') )
+        {
+            $this->markTestSkipped('DBManager does not support prepared statements');
+        }
 
         $tableName = "testPreparedStatementTypes";
         $params =  array( 'id'                  =>array ('name'=>'id',                  'type'=>'id','required'=>true),
@@ -2767,10 +2756,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         if($this->_db->tableExists($tableName)) {
             $this->_db->dropTableName($tableName);
         }
-        $this->_db->createTableParams($tableName, $params, $indexes);
-
-        // Disable automatic destruction of the table after each test completes
-        unset($this->created[$tableName]);
+        $this->createTableParams($tableName, $params, $indexes);
 
         return array('tableName' => $tableName,
                      'params' => $params);
@@ -2863,18 +2849,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group preparedStatements
-     * @params $data
      */
     public function testPreparedStatementsDataTypes()
     {
-        if ( !$this->_db->supports('prepared_statements') )
-        {
-            $this->markTestSkipped('DBManager does not support prepared statements');
-        }
-
-        // turn on prepared statements
-        $this->_db->usePreparedStatements = true;
-
         // create data table
         $dataStructure = $this->setupPreparedStatementsDataTypesStructure();
         $params = $dataStructure['params'];
@@ -2884,37 +2861,23 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $dataArray = $this->setupPreparedStatementsDataTypesData();
 
         foreach($dataArray as $data) {  // insert a single row of data and check it column by column
-
-        $this->_db->insertParams($tableName, $params, $data, null, true, true);
+            $this->_db->insertParams($tableName, $params, $data, null, true, true);
             $id = $data['id'];
-        $result = $this->_db->query("SELECT * FROM $tableName WHERE ID = $id");
-        while(($row = $this->_db->fetchByAssoc($result)) != null) {
+            $result = $this->_db->query("SELECT * FROM $tableName WHERE ID = $id");
+            while(($row = $this->_db->fetchByAssoc($result)) != null) {
+                    foreach ($data as $colKey => $col ) {
+                        $found=$row[$colKey];
+                        $expected=$data[$colKey];
+                        if (empty($expected)) { // if null then compare to the table defined default
+                            $expected = $params[$colKey]['default'];
+                        }
+                        $this->assertEquals( $expected, $found, "Failed prepared statement data compare for column $colKey. Found: $found  Expected: $expected");
 
-                /*
-                foreach ($row as $colKey => $col ) {
-                    $found=$row[$colKey];
-                    $expected=$data[$colKey];
-                    if (empty($expected)) { // if null then compare to the table defined default
-                        $expected = $params[$colKey]['default'];
-        }
-                    $this->assertEquals( $found, $expected, "Failed prepared statement data compare for column $colKey. Found: $found  Expected: $expected");
-
-                } */
-                foreach ($data as $colKey => $col ) {
-                    $found=$row[$colKey];
-                    $expected=$data[$colKey];
-                    if (empty($expected)) { // if null then compare to the table defined default
-                        $expected = $params[$colKey]['default'];
                     }
-                    $this->assertEquals( $found, $expected, "Failed prepared statement data compare for column $colKey. Found: $found  Expected: $expected");
-
-                }
 
             }
 
         }
-        //do not delete the data. It will be used by testPreparedStatementsSqlSelect for select testing
-        $this->_db->usePreparedStatements = false;
     }
 
 
@@ -2923,11 +2886,11 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function providerPreparedStatementsSqlSelect()
     {
-        return array( array( "SELECT id FROM testPreparedStatementTypes WHERE ID = ?int",
+        return array( array(
                              array( 'id' => 1,),
                              array( 'id' => 1,)
                            ),
-                      array( "SELECT id FROM testPreparedStatementTypes WHERE ID = ?int",
+                      array(
                              array( 'id' => 2,),
                              array( 'id' => 2,)
                            ),
@@ -2939,32 +2902,33 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group preparedStatements
-     *  testPreparedStatementsDataTypes
-     * @dataProvider providerPreparedStatementsSqlSelect
-     * @param $sql
-     * @param $executeData
-     * @param $resultsData
      */
-    public function testPreparedStatementsSqlSelect($sql, $executeData, $resultsData) {
+    public function testPreparedStatementsSqlSelect()
+    {
+        $this->setupPreparedStatementsDataTypesStructure();
+        // create data table
+        $dataStructure = $this->setupPreparedStatementsDataTypesStructure();
+        $params = $dataStructure['params'];
+        $tableName = $dataStructure['tableName'];
 
-        $this->_db->usePreparedStatements = true;
-
-        $ps = $this->_db->prepareStatement($sql, $executeData);
-        $ps->executePreparedStatement($executeData);
-
-        $row = $ps->preparedStatementFetch();
-        foreach ($resultsData as $key => $expected ) {
-            $found = trim($row[$key]);
-            $this->assertEquals($expected, $found, "Incorrect data returned. Found $found, expected $expected");
+        // load and test each data record
+        foreach($this->setupPreparedStatementsDataTypesData() as $data) {  // insert a single row of data and check it column by column
+            $res = $this->_db->insertParams($tableName, $params, $data, null, true, true);
+            $this->assertNotEmpty($res, "Failed to insert");
         }
+        $ps = $this->_db->prepareStatement("SELECT id FROM $tableName WHERE ID = ?int");
+        $this->assertNotEmpty($ps, "Failed to prepare statement");
+
+        foreach($this->providerPreparedStatementsSqlSelect() as $data) {
+            list($executeData, $resultsData) = $data;
+            $result = $ps->executePreparedStatement($executeData);
+            $row = $this->_db->fetchByAssoc($result);
+            foreach ($resultsData as $key => $expected ) {
+                $this->assertEquals($expected, $row[$key], "Incorrect data returned");
+            }
+        }
+
         $ps->preparedStatementClose();
-        $this->_db->usePreparedStatements = false;
+
     }
-
-
-    // todo drop tables
-
-
-
-
 }

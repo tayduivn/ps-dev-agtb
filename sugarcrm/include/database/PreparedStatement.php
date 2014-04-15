@@ -1,31 +1,18 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
+
 
 /*********************************************************************************
 
@@ -43,9 +30,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * @api
  */
 
-abstract class PreparedStatement{
-
-
+abstract class PreparedStatement
+{
+    /**
+     * DBManager parent
+     * @var DBManager
+     */
     protected $DBM = null;
 
     /**
@@ -54,98 +44,212 @@ abstract class PreparedStatement{
      */
     protected $dblink;
 
+    /**
+     * Text of the last query
+     * @var string
+     */
     protected $sqlText = null;
+    /**
+     * Parsed SQL text
+     * @var string
+     */
+    protected $parseSQL = null;
 
+    /**
+     * Prepared field definitions
+     * @var array
+     */
     protected $fieldDefs = array();
 
-    protected $sqlTextHash = null;
+    /**
+     * Place to bind query vars to
+     * @var array
+     */
+    protected $bound_vars = array();
 
-    protected $sqlPrepareCount = null;
-
-    protected $sqlExecuteCount = null;
-
-    protected $statementHandle = null;
-
-    protected $preparedStatementHndl = null;
-
+    /**
+     * Result of the statement execution
+     * @var mixed
+     */
     protected $preparedStatementResult = null;
 
-    abstract public function preparePreparedStatement($sqlText,  array $fieldDefs,  $msg = '' );
+    /**
+     * Prepare the statement for concrete database
+     * @param string $sqlText SQL text of the query
+     * @param array $fieldDefs Definitions for variables
+     * @param string $msg Error message
+     * @return PreparedStatement
+     */
+    abstract protected function preparePreparedStatement($msg = '');
 
-    abstract public function executePreparedStatement(array $data,  $msg = '' );
+    /**
+     * Execute prepared statement
+     * @param array $data Data for placeholders
+     * @param string $msg Error message
+     * @return PreparedStatement
+     */
+    abstract public function executePreparedStatement(array $data,  $msg = '');
 
-    abstract public function preparedStatementFetch( $msg = '' );
+    /**
+     * Fetch data for prepared statement
+     * @param string $msg Error message
+     */
+    abstract public function preparedStatementFetch($msg = '');
 
-    public function preparedStatementClose() {
-
-        return;
-
+    /**
+     * Finalize & close prepared statement
+     */
+    public function preparedStatementClose()
+    {
     }
 
     /**
-     * Create Prepared Statement object from sql in the form of "INSERT INTO testPreparedStatement(id) VALUES(?int, ?varchar)"
+     * Create Prepared Statement object
      */
-    public function __construct($DBM, $sql, array $fieldDefs = array() ){
+    public function __construct(DBManager $DBM)
+    {
         $this->timedate = TimeDate::getInstance();
         $this->log = $GLOBALS['log'];
         $this->DBM = $DBM;
         $this->dblink = $DBM->getDatabase();
+    }
 
-        if (empty($DBM))    {
-            $errmsg = "ERROR Database object missing";
-            $this->log->error("Prepare failed: $errmsg. $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error);
+    /**
+     * Parse SQL with types from sql in the form of "INSERT INTO testPreparedStatement(id, name) VALUES(?int, ?varchar)"
+     * @param string $sql
+     * @return boolean
+     */
+    protected function parseSQL($sql)
+    {
+        if (empty($this->DBM)) {
+            $this->log->error("Prepare failed: Database object missing");
             return false;
         }
 
-        if (empty($sql))    {
-            $errmsg = "ERROR Database object missing";
-            $this->log->error("Prepare failed: $errmsg. $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error);
+        if (empty($sql)) {
+            $this->log->error("Prepare failed: empty SQL statement");
             return false;
         }
-
-
         $this->sqlText = $sql;
-
+        $this->log->info("Parse Query: $sql");
         // Build fieldDefs array and replace ?SugarDataType placeholders with a single ?placeholder
         $cleanedSql = "";
-        $nextParam = strpos( $sql, "?" );
-        if ($nextParam == 0 )
+        $nextParam = strpos($sql, "?");
+        if ($nextParam == 0) {
             $cleanedSql = $sql;
-        else {     // parse the sql string looking for params
-           $row = 0;
-           while ($nextParam > 0 ) {
-              $cleanedSql .= substr( $sql, 0, $nextParam + 1);  // we want the ?
-              $sql = substr( $sql, $nextParam + 1);   // strip leading chars
+        } else { // parse the sql string looking for params
+            $row = 0;
+            while ($nextParam > 0) {
+                $cleanedSql .= substr($sql, 0, $nextParam + 1); // we want the ?
+                $sql = substr($sql, $nextParam + 1); // strip leading chars
 
-              // scan for termination of SugarDataType
-               $sugarDataType = "";
-              for ($i=0; ($i < strlen($sql)) and (strpos(",) ", substr($sql, $i, 1)) === false); $i++){
-                 if (strpos(",) ", substr($sql, $i, 1)) == false) {
-                 $sugarDataType .=  substr($sql, $i, 1);
-              }
-              }
-              // insert the fieldDef
-              if ( $sugarDataType === "" ) //no type, default to varchar
-                  $fieldDefs[$row]['type'] = 'varchar';
-              else
-                  $fieldDefs[$row]['type'] = $sugarDataType;
-              $sql = substr($sql, $i); // strip off the SugarDataType
-              $nextParam = strpos( $sql, "?" ); // look for another param
-              $row++;
-
-
-           }
-           // add the remaining sql
-           $cleanedSql .= $sql;
+                // scan for termination of SugarDataType
+                $sugarDataType = "";
+                for ($i = 0; ($i < strlen($sql)) and (strpos(",) ", substr($sql, $i, 1)) === false); $i++) {
+                    if (strpos(",) ", substr($sql, $i, 1)) == false) {
+                        $sugarDataType .= substr($sql, $i, 1);
+                    }
+                }
+                // insert the fieldDef
+                if ($sugarDataType === "") {
+                    // no type, default to varchar
+                    $this->fieldDefs[$row]['type'] = 'varchar';
+                } else {
+                    $this->fieldDefs[$row]['type'] = $sugarDataType;
+                }
+                $sql = substr($sql, $i); // strip off the SugarDataType
+                $nextParam = strpos($sql, "?"); // look for another param
+                $row++;
+            }
+            // add the remaining sql
+            $cleanedSql .= $sql;
         }
+        $this->parsedSQL = $cleanedSql;
+        return true;
+    }
 
-
-        //Prepare the statement in the database                  $DBM
-        $preparedStatementHndl = $this->preparePreparedStatement($cleanedSql, $fieldDefs );
-        if (empty($preparedStatementHndl)) {
-            $this->log->error("Prepare failed: for sql: $sql (" . $this->dblink->errno . ") " . $this->dblink->error);
+    /**
+     * Prepare statement for execution
+     * @param string $sql SQL string to prepare
+     * @param string $msg Error message
+     * @return false|PreparedStatement
+     */
+    public function prepareStatement($sql, $msg = '')
+    {
+        if(!$this->parseSQL($sql)) {
+            $this->log->error("$msg: SQL parse failed: {$this->sqlText}");
             return false;
         }
+        // Prepare the statement in the concrete database
+        $preparedStatementHndl = $this->preparePreparedStatement();
+        if (empty($preparedStatementHndl)) {
+            return false;
+        }
+        return $this;
+    }
+
+    /**
+     * Fill in data for prepated statement
+     * @param array $data
+     * @param string $msg Error message
+     * @return boolean
+     */
+    protected function prepareStatementData(array $data, $param_count, $msg)
+    {
+        if(!$this->stmt) {
+            $this->DBM->registerError($msg, "No prepared statement to execute");
+            return false;
+        }
+        $this->DBM->countQuery($this->parsedSQL);
+        $GLOBALS['log']->info("Executing Query: {$this->parsedSQL} with ".var_export($data, true));
+
+        $this->query_time = microtime(true);
+
+        if ($param_count > count($data) )  {
+            $this->DBM->registerError($msg, "Incorrect number of elements. Expected $param_count but got " . count($data));
+            return false;
+        }
+
+        if (!empty($data)) {
+            reset($data);
+            // bind the variables
+            for($i=0; $i<$param_count;$i++) {
+                $this->bound_vars[$i] = current($data);
+                next($data);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Finalize after statement execution
+     * @param mixed $res Result. If false, it failed
+     * @param string $msg Error message
+     * @return false|PreparedStatement
+     */
+    protected function finishStatement($res, $msg)
+    {
+        $this->DBM->query_time = microtime(true) - $this->DBM->query_time;
+        $GLOBALS['log']->info('Query Execution Time:'.$this->DBM->query_time);
+
+        $this->query_time = microtime(true) - $this->query_time;
+        $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
+        if($this->DBM->checkError($msg.' Query Failed')) {
+            $this->stmt = false;
+            return false;
+        }
+
+        if (!$res) {
+            $this->DBM->registerError($msg, "Query Failed");
+            $this->stmt = false; // Making sure we don't use the statement resource for error reporting
+        } else {
+            if($this->DBM->dump_slow_queries($this->parsedSQL)) {
+                $this->DBM->track_slow_queries($this->parsedSQL);
+            }
+        }
+
+        return $this;
     }
 
 }

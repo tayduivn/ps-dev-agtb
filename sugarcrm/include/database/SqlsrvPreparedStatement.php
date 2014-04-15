@@ -96,7 +96,7 @@ class SqlsrvPreparedStatement extends PreparedStatement
     );
 
 
-    public function preparePreparedStatement($sqlText,  array $fieldDefs, $msg = '' ){
+    public function preparePreparedStatement($msg = '' ){
 
         $this->lastsql = $sqlText;
         $GLOBALS['log']->info('QueryPrepare:' . $sqlText);
