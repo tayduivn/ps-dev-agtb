@@ -37,15 +37,14 @@
         self.$('[name=save_button]').attr('data-loading-text', app.lang.get('LBL_LOADING'));
         self.$('[name=save_button]').button('loading');
 
-        // portal_flag is a required field for Notes
-        createModel.set('portal_flag', true);
+        self.processModel(createModel);
 
         // saves the related bean
         createModel.save(null, {
             relate: true,
             fieldsToValidate: this.getFields(this.module),
             success: function() {
-                var view = _.extend({}, self, {model:createModel});
+                var view = _.extend({}, self, {model: createModel});
                 app.file.checkFileFieldsAndProcessUpload(view, {
                     success: function() { self.saveComplete(); }
                 });
@@ -55,6 +54,13 @@
             }
 
         });
+    },
+    /**
+     * Preprocess the model before saving. This function is here so that children may override it as necessary.
+     * @param {object} model
+     */
+    processModel: function(model) {
+
     },
     cancelButton: function() {
         if (Modernizr.touch) {
@@ -71,7 +77,7 @@
         //reset the `Save` button
         this.resetButton();
         //add the new model to the collection
-        this.collection.fetch({relate:true});
+        this.collection.fetch({relate: true});
     },
     resetButton: function() {
         this.$('[name=save_button]').button('reset');
