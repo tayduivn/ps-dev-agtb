@@ -38,16 +38,13 @@ class SugarMinifyUtilsTest extends Sugar_PHPUnit_Framework_TestCase
         // Test the file was created
         $this->assertFileExists($this->builtFile);
         
-        // Test the contents of the file
+        // Test the contents of the file. Using contains instead of equals so
+        // systems without JSMin won't fail hard
         $content = file_get_contents($this->builtFile);
-        $expect = 'var a=1;var b=2;
-/* End of File jssource/minify/test/var.js */
-
-var a=1;if(a==1){a=2;}else{a=17;}
-/* End of File jssource/minify/test/if.js */
-
-';
-        $this->assertEquals($expect, $content);
+        $expect1 = file_get_contents('tests/jssource/minify/expect/var.js');
+        $expect2 = file_get_contents('tests/jssource/minify/expect/if.js');
+        $this->assertContains($expect1, $content);
+        $this->assertContains($expect2, $content);
     }
 }
 
