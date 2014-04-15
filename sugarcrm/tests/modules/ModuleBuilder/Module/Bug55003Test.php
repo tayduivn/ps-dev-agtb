@@ -95,7 +95,7 @@ class Bug55003Test extends Sugar_PHPUnit_Framework_TestCase
             array('module' => 'Bugs'),
             array('module' => 'Cases'),
             array('module' => 'Contacts'),
-            array('module' => 'KBDocuments'),
+            array('module' => 'KBSContents'),
         );
     }
 }
