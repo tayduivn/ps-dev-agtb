@@ -192,7 +192,7 @@ $dictionary['Activity'] = array(
             'vname' => 'LBL_KBSCONTENTS',
         ),
         'kbstopics' => array(
-            'name' => 'kbscontents',
+            'name' => 'kbstopics',
             'type' => 'link',
             'relationship' => 'kbstopic_activities',
             'source' => 'non-db',
