@@ -586,6 +586,7 @@ class quicksearchQuery
                             );
                             unset($args['conditions'][$i]);
                             $teams_filtered = true;
+                            break;
                     }
                 }
             }
