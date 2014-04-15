@@ -136,6 +136,10 @@
      * Renders relate field
      */
     _render: function () {
+        //Do not render if the related module is invalid
+        if (!_.contains(app.metadata.getModuleNames(), this.getSearchModule())) {
+            return;
+        }
         var self = this;
 
         var result = app.view.Field.prototype._render.call(this);
