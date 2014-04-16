@@ -51,20 +51,34 @@ class MaxRelatedDateExpression extends DateExpression
         }           
                         
         foreach ($linkField as $bean) {
-            //set up our timestamp
-            $timestamp = $bean->$relfield;
-            if (isset($bean->$relfield)) {
-                //if it isn't a timestamp, mark the flag as such and convert it for comparison
-                if (!is_int($timestamp)) {
-                    $isTimestamp = false;
-                    $timestamp = strtotime($timestamp);
+            // we have to use the fetched_row as it's still in db format
+            // where as the $bean->$relfield is formatted into the users format.
+            if (isset($bean->fetched_row[$relfield])) {
+                $value = $bean->fetched_row[$relfield];
+            } elseif (isset($bean->$relfield)) {
+                if (is_int($bean->$relfield)) {
+                    // if we have a timestamp field, just set the value
+                    $value = $bean->relfield;
+                } else {
+                    // more than likely this is a date field, so try and un-format based on the users preferences
+                    $td = TimeDate::getInstance();
+                    // we pass false to asDbDate as we want the value that would be stored in the DB
+                    $value = $td->fromString($bean->$relfield)->asDbDate(false);
                 }
-                
-                //compare
-                if ( $ret < $timestamp) {
-                    $ret = $timestamp;
-                }
-            }            
+            } else {
+                continue;
+            }
+
+            //if it isn't a timestamp, mark the flag as such and convert it for comparison
+            if (!is_int($value)) {
+                $isTimestamp = false;
+                $value = strtotime($value);
+            }
+
+            //compare
+            if ($ret < $value) {
+                $ret = $value;
+            }
         }
         
         //if nothing was done, return an empty string
@@ -93,4 +107,3 @@ class MaxRelatedDateExpression extends DateExpression
         return "";
     }
 }
-?>
