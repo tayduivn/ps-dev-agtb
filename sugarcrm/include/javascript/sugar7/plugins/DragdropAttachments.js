@@ -26,12 +26,12 @@
  ********************************************************************************/
 (function (app) {
     app.events.on('app:init', function () {
-        app.plugins.register('DragdropAttachments', ['view'], {
+        app.plugins.register('DragdropAttachments', ['view', 'field'], {
             events: {
-                'dragenter .attachable': 'expandNewPost',
-                'dragover .attachable': 'dragoverNewPost',
-                'dragleave .attachable': 'shrinkNewPost',
-                'drop .attachable': 'dropAttachment'
+                'dragenter [data-attachable=true]': 'expandNewPost',
+                'dragover [data-attachable=true]': 'dragoverNewPost',
+                'dragleave [data-attachable=true]': 'shrinkNewPost',
+                'drop [data-attachable=true]': 'dropAttachment'
             },
 
             expandNewPost: function(event) {
@@ -51,6 +51,11 @@
             },
 
             dropAttachment: function(event) {
+                var proto = Object.getPrototypeOf(this);
+                if (_.isFunction(proto.dropAttachment)) {
+                    return proto.dropAttachment.call(this, event);
+                }
+
                 var text = $.trim(event.dataTransfer.getData('text')),
                     container = this.$(event.currentTarget);
                 this.shrinkNewPost(event);
@@ -126,7 +131,7 @@
 
             onAttach: function(component, plugin) {
                 component.on('render', function() {
-                    this.$('.attachable').attr('dropzone', 'copy');
+                    this.$('[data-attachable=true]').attr('dropzone', 'copy');
                 });
 
                 component.on('attachments:process', function() {
