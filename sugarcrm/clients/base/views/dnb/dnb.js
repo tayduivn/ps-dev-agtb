@@ -652,6 +652,10 @@
                     });
                     self.companyList = srchResults.companies;
                 } else {
+                    // Normalize no data message to sugar label.
+                    if (responseCode === 'CM018') {
+                        responseMsg = app.lang.get('LBL_NO_DATA_AVAILABLE');
+                    }
                     srchResults.errmsg = responseMsg || app.lang.get('LBL_DNB_SVC_ERR');
                 }
                 renderFunction.call(self, srchResults);
