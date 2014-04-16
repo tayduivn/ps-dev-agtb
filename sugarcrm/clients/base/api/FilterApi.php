@@ -330,13 +330,17 @@ class FilterApi extends SugarApi
             }
             //END SUGARCRM flav=pro ONLY
 
-            // fields that aren't in field defs are removed, since we don't know what to do with them
+            // fields that aren't in field defs are removed, since we don't know
+            // what to do with them
             if (!empty($seed->field_defs[$field])) {
+                // Set the field into the field list
                 $fields[] = $field;
-                // Oracle doesn't allow DISTINCT on CLOB fields, in that case if we select CLOB field then DISTINCT should be disabled
-                if (!empty($seed->field_defs[$field]['type']) &&
-                    ($seed->field_defs[$field]['type'] == 'text' || $seed->field_defs[$field]['type'] == 'json')
-                ) {
+
+                // Disable distinct on text type fields, since Oracle doesn't 
+                // allow distinct selects on CLOB types
+                $fieldType = $seed->db->getFieldType($seed->field_defs[$field]);
+                $isTextType = $fieldType ? $seed->db->isTextType($fieldType) : false;
+                if ($isTextType) {
                     $q->distinct(false);
                 }
             }
