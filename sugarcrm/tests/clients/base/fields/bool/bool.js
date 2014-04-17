@@ -20,18 +20,20 @@ describe('Base.Field.Bool', function() {
             field.dispose();
         });
 
-        it('should format the value', function() {
-            expect(field.format('0')).toEqual(false);
-            expect(field.format('1')).toEqual(true);
-            expect(field.format(false)).toEqual(false);
-            expect(field.format(true)).toEqual(true);
-        });
+        using('valid values',
+            [['0', false], ['1', true], [false, false], [true, true]],
+            function(value, result) {
+                it('should format the value', function() {
+                    expect(field.format(value)).toEqual(result);
+                });
+            });
 
-        it('should unformat the value', function() {
-            expect(field.unformat('0')).toEqual(false);
-            expect(field.unformat('1')).toEqual(true);
-            expect(field.unformat(false)).toEqual(false);
-            expect(field.unformat(true)).toEqual(true);
+        using('valid values',
+            [['0', false], ['1', true], [false, false], [true, true]],
+            function(value, result) {
+                it('should unformat the value', function() {
+                    expect(field.unformat(value)).toEqual(result);
+                });
         });
     });
 
