@@ -24,6 +24,7 @@ describe("Base.View.List", function () {
         loadDataStub = sinon.stub(view.context, 'loadData');
     });
     afterEach(function () {
+        sinon.collection.restore();
         loadDataStub.restore();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
@@ -154,6 +155,12 @@ describe("Base.View.List", function () {
         it('should set orderby correctly to collection', function() {
             view.setOrderBy(event);
             expect(view.collection.orderBy).toEqual({field: 'name', direction: 'desc'});
+        });
+
+        it('should reset pagination', function() {
+            var resetPagination = sinon.collection.stub(view.collection, 'resetPagination');
+            view.setOrderBy(event);
+            expect(resetPagination).toHaveBeenCalled();
         });
     });
 
