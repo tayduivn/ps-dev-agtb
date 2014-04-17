@@ -19,6 +19,8 @@
         'click [data-action=download-all]': 'startDownloadArchive'
     },
 
+    plugins: ['DragdropAttachments'],
+
     /**
      * @property {Object} `Select2` object.
      */
@@ -121,6 +123,7 @@
                     return m;
                 }
             });
+            $(this.$node.data('select2').containerSelector).attr('data-attachable', true);
             this.refreshFromModel();
         }
 
@@ -213,6 +216,44 @@
             },
             {temp: true}  //for File API to understand we upload a temporary file
         );
+    },
+
+    /**
+     * {@inheritDoc}
+     * Handles drop event.
+     *
+     * @param {Event} event Drop event.
+     */
+    dropAttachment: function(event) {
+        event.preventDefault();
+        var self = this,
+            data = new FormData(),
+            url = app.api.buildFileURL({
+                module: this.module,
+                id: 'temp',
+                field: this.name
+            }, {htmlJsonFormat: false});
+
+        data.append('OAuth-Token', app.api.getOAuthToken());
+
+        _.each(event.dataTransfer.files, function(file) {
+            data.append(this.name, file);
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: data,
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                success: function(rsp) {
+                    var att = {};
+                    att.id = rsp.record.id;
+                    att.name = rsp[self.name].guid;
+                    self.model.set(self.name, _.union([], self.model.get(self.name) || [], [att]));
+                    self.render();
+                }
+            });
+        }, this);
     },
 
     /**
