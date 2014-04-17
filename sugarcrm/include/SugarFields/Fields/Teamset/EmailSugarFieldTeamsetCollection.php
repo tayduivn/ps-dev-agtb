@@ -114,6 +114,7 @@ class EmailSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
         $this->ss->assign('APP', $GLOBALS['app_strings']);
         $this->ss->assign('CUSTOM_METHOD', $this->customMethod);
         $this->ss->assign("USER_ID", (!empty($this->user_id) ? $this->user_id : ''));
+        $this->ss->assign('quickSearchCode', $this->createQuickSearchCode());
 		$this->process();
 		return $this->display();
     }

@@ -37,9 +37,6 @@ class SugarUpgradeUpgradeAccess extends UpgradeScript
 
     public function run()
     {
-        if(!version_compare($this->from_version, '7.1.5', '<') && !$this->toFlavor('ent')) {
-            return;
-        }
         require_once "install/install_utils.php";
 
         if(!empty($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER["SERVER_SOFTWARE"],'Microsoft-IIS') !== false) {

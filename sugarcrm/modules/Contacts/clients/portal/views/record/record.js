@@ -38,7 +38,8 @@
      */
     bindDataChange: function(){
         this._super("bindDataChange");
-        this.context.on("button:save_button:click", this._setPreferredLanguage, this);
+        var model = this.context.get('model');
+        model.on('sync', this._setPreferredLanguage, this);
     },
     /**
      * Update application language based on Portal user's preferred language

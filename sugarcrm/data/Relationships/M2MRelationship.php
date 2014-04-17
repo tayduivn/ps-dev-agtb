@@ -431,7 +431,7 @@ class M2MRelationship extends SugarRelationship
             $relatedSeedKey = $this->def['rhs_key'];
             $whereTable = "";
             if (empty($params['right_join_table_alias'])){
-                if ($relatedSeed !== false){
+                if (!empty($relatedSeed)) {
                     $whereTable = $relatedSeed->table_name;
                 }
             } else {
@@ -446,7 +446,7 @@ class M2MRelationship extends SugarRelationship
             $relatedSeedKey = $this->def['lhs_key'];
             $whereTable = "";
             if (empty($params['left_join_table_alias'])){
-                if ($relatedSeed !== false){
+                if (!empty($relatedSeed)) {
                     $whereTable = $relatedSeed->table_name;
                 }
             } else {

@@ -25,11 +25,20 @@
     },
     tagName: 'span',
     layoutName: '',
+
+    /**
+     * Array of layout names where the help button should be disabled
+     */
+    helpBtnDisabledLayouts: [
+        'about',
+        'first-login-wizard'
+    ],
+
     handleViewChange: function(layout, params) {
         var module = params && params.module ? params.module : null;
         // should we disable the help button or not, this only happens when layout is 'bwc'
         this.layoutName = _.isObject(layout) ? layout.name : layout;
-        this.disableHelpButton(this.layoutName === 'first-login-wizard');
+        this.disableHelpButton((_.indexOf(this.helpBtnDisabledLayouts, this.layoutName) !== -1));
         if (app.tutorial.hasTutorial(this.layoutName, module)) {
             this.enableTourButton();
             if (params.module === 'Home' && params.layout === 'record' && params.action === 'detail') {

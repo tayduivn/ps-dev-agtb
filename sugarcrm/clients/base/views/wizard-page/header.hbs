@@ -28,16 +28,16 @@
 }}
 <div class="welcome">
     <div class="modal">
-        <div class="modal-header modal-header-firstlogin">
+        <div class="modal-header modal-header-firstlogin row-fluid">
             <span class="step-circle">
                 {{#if wizardCompleted}}<i class="icon-ok-sign"></i>{{/if}}
                 {{#unless wizardCompleted}}<span>{{progress.page}}</span>{{/unless}}
             </span>
-            <div class="firstlogin-title">
+            <div class="firstlogin-title span7">
                 <h3>{{str meta.title module}}</h3>
                 <span>{{str meta.message module}}</span>
             </div>
-            <div class="progress-section">
+            <div class="progress-section span5 pull-right">
                 <span>{{str "LBL_SETUP_PROGRESS" module}}</span>
                 <div class="progress progress-success">
                     <div class="bar" style="width: {{percentComplete}}%;"></div>
