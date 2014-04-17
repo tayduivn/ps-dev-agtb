@@ -77,4 +77,5 @@ $mod_strings = array (
     'LBL_KBSTATUS_PUBLISHED_IN' => 'Published (Internal)',
     'LBL_KBSTATUS_PUBLISHED_EX' => 'Published (Extrenal)',
     'LBL_PANEL_INMORELESS' => 'Usefulness',
+    'LBL_MORE_OTHER_LANGUAGES' => 'More Other Languages...',
 );
