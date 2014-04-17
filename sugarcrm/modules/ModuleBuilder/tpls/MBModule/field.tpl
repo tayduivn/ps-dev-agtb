@@ -39,6 +39,9 @@ addForm('popup_form');
 <input type='hidden' name='new_dropdown' value=''>
 <input type='hidden' name='to_pdf' value='true'>
 <input type='hidden' name='view_module' value='{$module->name}'>
+{if $isNew}
+<input type='hidden' name='is_new' value='1'>
+{/if}
 {if isset($package->name)}
     <input type='hidden' name='view_package' value='{$package->name}'>
 {/if}
