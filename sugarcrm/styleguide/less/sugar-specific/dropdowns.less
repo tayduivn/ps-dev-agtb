@@ -1,3 +1,6 @@
+/* DROPDOWNS
+  ----------------*/
+
 .dropdown-menu {
   top: 34px;
   padding: 0;
@@ -142,6 +145,25 @@
       background: @dropdownLinkBackgroundHover;
     }
   }
+}
+
+.dropdown-menu {
+  &:before,
+  &:after {
+    display: none !important;
+  }
+}
+
+.dropdown-menu.scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+.dropdown-menu-select {
+  width: 34px;
+  right: -6px;
+  position: absolute;
+  opacity: 0;
+  letter-spacing: normal;
 }
 
 .dropdown-toggle {
