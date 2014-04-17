@@ -212,7 +212,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
     function getPortalACLRole()
     {
         global $mod_strings;
-        $allowedModules = array('Bugs', 'Cases', 'Notes', 'KBDocuments', 'Contacts');
+        $allowedModules = array('Bugs', 'Cases', 'Notes', 'KBSContents', 'Contacts');
         $allowedActions = array('edit', 'admin', 'access', 'list', 'view');
         $role = BeanFactory::getBean('ACLRoles');
         $role->retrieve_by_string_fields(array('name' => 'Customer Self-Service Portal Role'));

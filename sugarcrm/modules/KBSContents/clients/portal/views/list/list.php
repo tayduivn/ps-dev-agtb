@@ -43,7 +43,6 @@ $viewdefs['KBSContents']['portal']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'name' => 'date_entered',
-                    'readonly' => true,
                 ),
             ),
         ),

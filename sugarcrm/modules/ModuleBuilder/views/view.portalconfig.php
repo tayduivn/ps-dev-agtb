@@ -66,7 +66,7 @@ class ViewPortalConfig extends SugarView
         $disabledModulesFlag = false;
         $disabledModules = array();
         // TODO: maybe consolidate this with the portal module list in install/install_utils.php
-        $maybeDisabledModules = array('Bugs','KBDocuments', 'Cases');
+        $maybeDisabledModules = array('Bugs','KBSContents', 'Cases');
         foreach ($maybeDisabledModules as $moduleName) {
           if (in_array($moduleName, $tabs[1])) {
               $disabledModules[]=translate($moduleName);

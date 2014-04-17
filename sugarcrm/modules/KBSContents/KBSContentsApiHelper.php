@@ -26,13 +26,13 @@ class KBSContentsApiHelper extends SugarBeanApiHelper {
         }
         $result = parent::formatForApi($bean, $fieldList, $options);
 
-        $bean->load_relationship('notes');
+        $bean->load_relationship('attachments');
         $result['attachment_list'] = array();
-        foreach ($bean->notes->getBeans() as $note) {
+        foreach ($bean->attachments->getBeans() as $attachment) {
             $attach = array(
-                'id' => $note->id,
-                'filename' => $note->filename,
-                'name' => $note->filename,
+                'id' => $attachment->id,
+                'filename' => $attachment->filename,
+                'name' => $attachment->filename,
             );
             array_push($result['attachment_list'], $attach);
         }
@@ -64,34 +64,35 @@ class KBSContentsApiHelper extends SugarBeanApiHelper {
         }
         $result = parent::populateFromApi($bean, $submittedData, $options);
         if (!empty($attachment_list) && $result) {
-            $bean->load_relationship('notes');
-            $notes = array();
+            $bean->load_relationship('attachments');
+            $attachments = array();
             if ($bean->id) {
-                $notes = $bean->notes->getBeans();
+                $attachments = $bean->attachments->getBeans();
             } else {
                 $bean->id = create_guid();
                 $bean->new_with_id = true;
             }
             foreach ($attachment_list as $info) {
                 $found = false;
-                foreach ($notes as $note) {
-                    if ($note->id === $info['id']) {
+                foreach ($attachments as $attachment) {
+                    if ($attachment->id === $info['id']) {
                         $found = true;
                         break;
                     }
                 }
                 if (!$found) {
                     //@TODO: Add mime-type detection
-                    $note = BeanFactory::getBean('Notes');
-                    $note->new_with_id = true;
-                    $note->id = create_guid();
+                    $attachment = BeanFactory::getBean('Notes');
+                    $attachment->new_with_id = true;
+                    $attachment->portal_flag = true;
+                    $attachment->id = create_guid();
                     sugar_rename(
                         UploadFile::get_file_path('', $info['id'], true),
-                        UploadFile::get_file_path('', $note->id, true)
+                        UploadFile::get_file_path('', $attachment->id, true)
                     );
-                    $note->filename = $info['name'];
-                    $note->name = $info['name'];
-                    $bean->notes->add($note);
+                    $attachment->filename = $info['name'];
+                    $attachment->name = $info['name'];
+                    $bean->attachments->add($attachment);
                 }
             }
         }

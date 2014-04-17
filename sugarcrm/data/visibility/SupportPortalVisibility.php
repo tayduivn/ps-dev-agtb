@@ -29,6 +29,8 @@ class SupportPortalVisibility extends SugarVisibility
     protected $wherePart = '';
     protected static $accountIds;
 
+    private static $portalBeanName;
+
     /**
      * Pull the list of account id's for a particular contact, we can't cache this because
      * there are requirements about the account id's changing fairly often for a contact.
@@ -92,6 +94,13 @@ class SupportPortalVisibility extends SugarVisibility
 
         // The Portal Rules Of Visibility:
         switch ($this->bean->module_dir) {
+            case 'KBSContents':
+                self::$portalBeanName = 'KBSContents';
+                if ($queryType == 'where') {
+                    $queryPart = " $table_alias.active_rev=1 AND"
+                                ." ($table_alias.status = 'published-ex' OR $table_alias.status ='published') ";
+                }
+                break;
             case 'Contacts':
                 // Contacts: Any contact related to the account list
                 // Special case, if there are no accounts in the list, at least allow them access to their own contact
@@ -121,19 +130,16 @@ class SupportPortalVisibility extends SugarVisibility
                 }
 
                 break;
-            case 'KBDocuments':
-                // KBDocuments: Any KBDocument where is_external_article = 1 AND ( exp_date is empty or > today ) AND status_id = Published
-                if ( $queryType == 'where' ) { 
-                    $queryPart = " {$table_alias}.is_external_article = 1 "
-                        ."AND ( {$table_alias}.exp_date IS NULL OR {$table_alias}.exp_date > " . $GLOBALS['db']->now() . " ) "
-                        ."AND ( {$table_alias}.active_date = " . $GLOBALS['db']->emptyValue('date') . " OR {$table_alias}.active_date < " . $GLOBALS['db']->now() . " ) "
-                        ."AND {$table_alias}.status_id = 'Published' ";
-                }
-
-                break;
             case 'Notes':
+                if (self::$portalBeanName == 'KBSContents') {
+                    if ($queryType == 'where') {
+                        $queryPart = " {$table_alias}.portal_flag = 1 AND " 
+                                    ."({$table_alias}.parent_type = 'KBSContentsNotes' OR {$table_alias}.parent_type = 'KBSContentsAttachments') ";
+                    }
+                    break;
+                }
                 // Notes: Notes that are connected to a Case or a Bug that is connected to one of our Accounts and has the portal_flag set to true
-                if ( $queryType == 'from' ) {
+                if ($queryType == 'from') {
                     if ( !empty($accountIds) ) {
                         // Only add in this join if the user can see bugs related to cases
                         $this->bean->load_relationship('cases');
@@ -156,7 +162,7 @@ class SupportPortalVisibility extends SugarVisibility
                     $queryPart .= " AND bugs_pv.portal_viewable = 1 ";
                     //ENd SUGARCRM flav=ent ONLY
 
-                } else if ( $queryType == 'where' ) {
+                } elseif ($queryType == 'where') {
                     if ( !empty($accountIds) ) {
                         $queryPart = " {$table_alias}.portal_flag = 1 AND ( bugs_pv.id IS NOT NULL OR accounts_cases_pv.id IS NOT NULL ) ";
                     } else {

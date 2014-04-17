@@ -40,7 +40,7 @@ class StudioModule
         'Bugs', // Bug Tracker
         'Campaigns',
         'Contracts',
-        'KBDocuments', // Knowledge Base
+        'KBSContents', // Knowledge Base
         'ProductTemplates', // Product Catalog
         'Prospects', // Targets
     );

@@ -47,7 +47,7 @@ $mlaRoles = array(
          'Contacts'=>array('admin'=>100, 'access'=>89),
          'Bugs'=>array('admin'=>100, 'access'=>89),
          'Cases'=>array('admin'=>100, 'access'=>89),
-         'KBDocuments'=>array('admin'=>100, 'access'=>89),
+         'KBSContents'=>array('admin'=>100, 'access'=>89),
         )
 );
 global $db;
