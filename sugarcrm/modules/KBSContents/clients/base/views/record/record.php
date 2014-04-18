@@ -155,12 +155,6 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'span' => 2,
                     'enum_width' => '200px',
                 ),
-                'language' => array(
-                    'name' => 'language',
-                    'type' => 'enum-config',
-                    'module' => 'KBSDocuments',
-                    'key' => 'languages',
-                ),
             ),
         ),
         array(
@@ -215,27 +209,44 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                'language' => array(
+                    'name' => 'language',
+                    'type' => 'enum-config',
+                    'module' => 'KBSDocuments',
+                    'key' => 'languages',
+                ),
+                'revision' => array(
+                    'name' => 'revision',
+                    'readonly' => true,
+                ),
                 'topic_name' => array(
                     'name' => 'topic_name',
                     'label' => 'LBL_TOPIC_NAME',
                 ),
-                'active_date' => array(
-                    'name' => 'active_date'
+                'team_name' => array(
+                    'name' => 'team_name',
                 ),
-                'exp_date' => array(
-                    'name' => 'exp_date'
+
+                'date_entered' => array(
+                    'name' => 'date_entered',
                 ),
                 'created_by_name' => array(
-                    'name' => 'created_by_name'
-                ),
-                'team_name' => array(
-                    'name' => 'team_name'
-                ),
-                'date_entered' => array(
-                    'name' => 'date_entered'
+                    'name' => 'created_by_name',
                 ),
                 'date_modified' => array(
-                    'name' => 'date_modified'
+                    'name' => 'date_modified',
+                ),
+                'kbsapprover_name' => array(
+                    'name' => 'kbsapprover_name',
+                ),
+                'active_date' => array(
+                    'name' => 'active_date',
+                ),
+                'kbscase_name' => array(
+                    'name' => 'kbscase_name',
+                ),
+                'exp_date' => array(
+                    'name' => 'exp_date',
                 ),
             ),
         ),
