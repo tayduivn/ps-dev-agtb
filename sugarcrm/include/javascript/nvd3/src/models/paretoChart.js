@@ -62,11 +62,11 @@ nv.models.paretoChart = function () {
       barLegend = nv.models.legend()
         .align('left')
         .position('middle')
-        .strings({close: 'close', type: 'bar legend'}),
+        .strings({close: 'Hide bar legend', type: 'Show bar legend'}),
       lineLegend = nv.models.legend()
         .align('right')
         .position('middle')
-        .strings({close: 'close', type: 'line legend'});
+        .strings({close: 'Hide line legend', type: 'Show line legend'});
 
   var showTooltip = function (e, offsetElement, dataGroup) {
     var left = e.pos[0],

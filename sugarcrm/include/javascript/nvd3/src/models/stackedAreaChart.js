@@ -43,7 +43,7 @@ nv.models.stackedAreaChart = function () {
         .align('right'),
       controls = nv.models.legend()
         .align('left')
-        .strings({close: 'close', type: 'controls'})
+        .strings({close: 'Hide chart controls', type: 'Show chart controls'})
         .color(['#444']);
 
   stacked.scatter
