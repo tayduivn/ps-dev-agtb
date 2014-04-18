@@ -49,6 +49,7 @@ abstract class PreparedStatement
      * @var string
      */
     protected $sqlText = null;
+
     /**
      * Parsed SQL text
      * @var string
@@ -68,10 +69,22 @@ abstract class PreparedStatement
     protected $bound_vars = array();
 
     /**
-     * Result of the statement execution
+     * Time when query was started
+     * @var int
+     */
+    protected $query_time;
+
+    /**
+     * Generic statement resource
      * @var mixed
      */
-    protected $preparedStatementResult = null;
+    protected $stmt;
+
+    /**
+     * Log reference
+     * @var LoggerManager
+     */
+    public $log;
 
     /**
      * Prepare the statement for concrete database
@@ -91,16 +104,11 @@ abstract class PreparedStatement
     abstract public function executePreparedStatement(array $data,  $msg = '');
 
     /**
-     * Fetch data for prepared statement
-     * @param string $msg Error message
-     */
-    abstract public function preparedStatementFetch($msg = '');
-
-    /**
      * Finalize & close prepared statement
      */
     public function preparedStatementClose()
     {
+        $this->stmt = null;
     }
 
     /**
@@ -108,7 +116,6 @@ abstract class PreparedStatement
      */
     public function __construct(DBManager $DBM)
     {
-        $this->timedate = TimeDate::getInstance();
         $this->log = $GLOBALS['log'];
         $this->DBM = $DBM;
         $this->dblink = $DBM->getDatabase();
@@ -233,9 +240,7 @@ abstract class PreparedStatement
         $this->DBM->query_time = microtime(true) - $this->DBM->query_time;
         $GLOBALS['log']->info('Query Execution Time:'.$this->DBM->query_time);
 
-        $this->query_time = microtime(true) - $this->query_time;
-        $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
-        if($this->DBM->checkError($msg.' Query Failed')) {
+        if($this->DBM->checkError("$msg: Query Failed")) {
             $this->stmt = false;
             return false;
         }
@@ -250,6 +255,20 @@ abstract class PreparedStatement
         }
 
         return $this;
+    }
+
+    /**
+     * Fetch data for prepared statement
+     * Default implementation just reuses the fetchRow
+     * @param string $msg Error message
+     */
+    public function preparedStatementFetch($msg = '')
+    {
+        if(!$this->stmt) {
+            return false;
+        }
+        // Just go to regular fetch
+        return $this->DBM->fetchRow($this->stmt);
     }
 
 }

@@ -95,6 +95,8 @@ class SqlsrvManager extends MssqlManager
         "prepared_statements" => true,
     );
 
+    public $preparedStatementClass = 'SqlsrvPreparedStatement';
+
     protected $type_map = array(
             'int'      => 'int',
             'double'   => 'float',
@@ -589,10 +591,5 @@ EOSQL;
     public function valid()
     {
         return function_exists("sqlsrv_connect");
-    }
-
-    public function prepareStatement($sql, array $fieldDefs = array() )
-    {
-        return new SqlsrvPreparedStatement($this, $sql, $fieldDefs );
     }
 }

@@ -2696,14 +2696,11 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_db->usePreparedStatements = false;
     }
 
-
-
-
-        /**
-         * @group preparedStatements
-         */
-    private function setupPreparedStatementsDataTypesStructure() {
-
+    /**
+     * @group preparedStatements
+     */
+    private function setupPreparedStatementsDataTypesStructure()
+    {
         // create test table for datatType testing
         if ( !$this->_db->supports('prepared_statements') )
         {

@@ -1501,9 +1501,9 @@ class MysqlManager extends DBManager
 	*/
 	protected function _emptyValue($val, $type)
 	{
-		if($type == 'date' && $val == $this->quoted('0000-00-00')) {
+		if($type == 'date' && ($val == $this->quoted('0000-00-00') || $val == '0000-00-00')) {
 			return true;
-		} elseif($type == 'datetime' && $val == $this->quoted('0000-00-00 00:00:00')) {
+		} elseif($type == 'datetime' && ($val == $this->quoted('0000-00-00 00:00:00') || $val == '0000-00-00 00:00:00')) {
 			return true;
 		}
 

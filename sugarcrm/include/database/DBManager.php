@@ -683,7 +683,8 @@ protected function checkQuery($sql, $object_name = false)
             $query = "INSERT INTO $table (".implode(",", array_keys($values)).") VALUES (";
             $types = array();
             foreach($values as $valueKey => $value) {
-                $types[] = '?'. $this->getFieldType($field_defs[$valueKey]);
+                $type = $this->getFieldType($field_defs[$valueKey]);
+                $types[] = $this->convert("?$type", $type);
             }
             $query .= join(",", $types).")";
 
@@ -2294,7 +2295,7 @@ protected function checkQuery($sql, $object_name = false)
 			}
 
 			if ($usePreparedStatements) {
-			    $columns[] = "{$fieldDef['name']}=?$fieldType";
+			    $columns[] = "{$fieldDef['name']}=".$this->convert("?$fieldType", $fieldType);
 			    $data[] = $val;
 			} else {
 			    $columns[] = "{$fieldDef['name']}=$val";

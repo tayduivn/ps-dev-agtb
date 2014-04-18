@@ -212,4 +212,27 @@ class OracleManagerTest extends Sugar_PHPUnit_Framework_TestCase
              $this->_db->fromConvert($parameters[0],$parameters[1]),
              $result);
     }
+
+    /**
+     * Test that convert is called properly
+     * @group preparedStatements
+     */
+    public function testPreparedStatementsConvert()
+    {
+        $bean = BeanFactory::getBean("Contacts");
+        $bean->date_modified = '2011-05-24 12:34:56';
+        list($sql, $data) = $this->_db->insertSQL($bean, true);
+        $this->assertContains("to_date(?datetime, 'YYYY-MM-DD HH24:MI:SS')", $sql);
+        $this->assertNotContains('2011-05-24 12:34:56', $sql);
+        $this->assertContains('2011-05-24 12:34:56', $data);
+
+        $bean->id = create_guid();
+        $bean->date_modified = '2014-03-21 13:24:46';
+        list($sql, $data) = $this->_db->updateSQL($bean, array("id" => $bean->id), true);
+        $this->assertContains("date_modified=to_date(?datetime, 'YYYY-MM-DD HH24:MI:SS')", $sql);
+        $this->assertNotContains('2014-03-21 13:24:46', $sql);
+        $this->assertContains('2014-03-21 13:24:46', $data);
+    }
+
+
 }

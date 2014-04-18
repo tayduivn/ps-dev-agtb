@@ -83,7 +83,11 @@ require_once 'include/database/PreparedStatement.php';
 
 class OraclePreparedStatement extends PreparedStatement
 {
-
+    /**
+     * Oracle statement resource
+     * @var resource
+     */
+    protected $stmt;
 
     /*
      * Maps column datatypes to MySQL bind variable types
@@ -224,6 +228,10 @@ class OraclePreparedStatement extends PreparedStatement
         return $this;
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see PreparedStatement::executePreparedStatement()
+     */
     public function executePreparedStatement(array $data,  $msg = '')
     {
         if(!$this->prepareStatementData($data, count($this->fieldDefs), $msg)) {
@@ -246,15 +254,10 @@ class OraclePreparedStatement extends PreparedStatement
         return $this->finishStatement($res, $msg);
     }
 
-    public function preparedStatementFetch($msg = '')
-    {
-        if(!$this->stmt) {
-            return false;
-        }
-        // Just go to regular fetch
-        return $this->DBM->fetchRow($this->stmt);
-    }
-
+    /**
+     * (non-PHPdoc)
+     * @see PreparedStatement::preparedStatementClose()
+     */
     public function preparedStatementClose()
     {
         foreach($this->lobFields as $idx => $name) {
@@ -262,5 +265,7 @@ class OraclePreparedStatement extends PreparedStatement
                 $this->bound_vars[$idx]->free();
             }
         }
+
+        $this->stmt = null;
     }
 }

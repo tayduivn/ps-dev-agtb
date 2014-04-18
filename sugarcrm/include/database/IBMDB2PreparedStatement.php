@@ -42,153 +42,48 @@ require_once 'include/database/PreparedStatement.php';
 
 class IBMDB2PreparedStatement extends PreparedStatement
 {
+    /**
+     * DB2 statement resource
+     * @var resource
+     */
+    protected $stmt;
 
     /**
-     * Place to bind query vars to
-     * @var array
+     * (non-PHPdoc)
+     * @see PreparedStatement::preparePreparedStatement()
      */
-    protected $bound_vars = array();
+    public function preparePreparedStatement($msg = '' )
+    {
+        if(empty($this->parsedSQL)) {
+            $this->DBM->registerError($msg, "Empty SQL query");
+            return false;
+        }
 
-    // IBM types:
-    //     DB2_BINARY    binary data shall be returned as is.
-    //     DB2_CHAR      CHAR or VARCHAR
-    //     DB2_DOUBLE    DOUBLE, FLOAT, or REAL
-    //     DB2_LONG      SMALLINT, INTEGER, or BIGINT
+        $GLOBALS['log']->info('QueryPrepare: ' . $this->parsedSQL);
+        if (!($this->stmt = db2_prepare($this->dblink,$this->parsedSQL))) {
+            $this->DBM->checkError($msg);
+            return false;
+        }
 
-    /*
-    public $ps_type_map = array(
+        return $this;
+    }
 
-        'int'      =>  DB2_LONG,
-        'double'   =>  DB2_DOUBLE,
-        'float'    =>  DB2_DOUBLE,
-        'uint'     =>  DB2_LONG,
-        'ulong'    =>  DB2_LONG,
-        'long'     =>  DB2_LONG,
-        'short'    =>  DB2_LONG,
-        'varchar'  =>  DB2_CHAR,
-        'text'     =>  DB2_CHAR,
-        'longtext' =>  DB2_CHAR,
-        'date'     =>  DB2_CHAR,
-        'enum'     =>  DB2_CHAR,
-        'relate'   =>  DB2_CHAR,
-        'multienum'=>  DB2_CHAR,
-        'html'     =>  DB2_CHAR,
-        'longhtml' =>  DB2_CHAR,
-        'datetime' =>  DB2_CHAR,
-        'datetimecombo' => DB2_CHAR,
-        'time'     =>  DB2_DOUBLE,
-        'bool'     =>  DB2_LONG,
-        'tinyint'  =>  DB2_LONG,
-        'char'     =>  DB2_CHAR,
-        'blob'     =>  DB2_BINARY,
-        'longblob' =>  DB2_BINARY,
-        'currency' =>  DB2_DOUBLE,
-        'decimal'  =>  DB2_DOUBLE,
-        'decimal2' =>  DB2_DOUBLE,
-        'id'       =>  DB2_CHAR,
-        'url'      =>  DB2_CHAR,
-        'encrypt'  =>  DB2_CHAR,
-        'file'     =>  DB2_CHAR,
-        'decimal_tpl' => DB2_CHAR,
+    /**
+     * (non-PHPdoc)
+     * @see PreparedStatement::executePreparedStatement()
+     */
+    public function executePreparedStatement(array $data,  $msg = '')
+    {
+        if(!$this->stmt) {
+            $this->DBM->registerError($msg, "No prepared statement to execute");
+            return false;
+        }
+        $this->DBM->countQuery($this->parsedSQL);
+        $GLOBALS['log']->info("Executing Query: {$this->parsedSQL} with ".var_export($data, true));
 
-    );
-    */
+        $this->query_time = microtime(true);
+        $res = db2_execute($this->stmt, $data);
 
-
-
-  public function preparePreparedStatement($msg = '' ){
-
-      $this->lastsql = $sqlText;
-      $GLOBALS['log']->info('QueryPrepare:' . $sqlText);
-
-      if (!($this->stmt = db2_prepare($this->dblink, $sqlText))) {
-          $this->DBM->registerError("Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error, null, $dieOnError);
-          return false;
-      }
-      /*
-      $num_args = $this->stmt->param_count;
-      echo "preparePreparedStatement: num_args from prepare: $num_args \n";
-      $this->bound_vars = $bound = array_fill(0, $num_args, null);
-      $types = "";
-      for($i=0; $i<$num_args;$i++) {
-          $types .= $this->ps_type_map[ $fieldDefs[$i] ];
-          $bound[$i] =& $this->bound_vars[$i];
-      }
-      echo "types: >$types<\n";
-      array_unshift($bound, $types);
-
-      echo "Binding the data: types then vars\n";
-      var_dump($bound);
-      // Pre-bind the internal data array to    $this->bound_vars
-      call_user_func_array(array($this->stmt, "bind_param"), $bound);
-      */
-
-      $this->DBM->checkError(" QueryPrepare Failed: $msg for sql: $sqlText ::", $dieOnError);
-
-      return $this;
-  }
-
-
-
-
-   public function executePreparedStatement(array $data,  $msg = ''){
-
-       //parent::countQuery($this->sqlText);
-       $GLOBALS['log']->info('Query:' . $this->sqlText);
-
-       /*
-      if ($this->stmt->param_count != count($data) )
-          return "incorrect number of elements. Expected " . $this->stmt->param_count . " but got " . count($data);
-
-      // transfer the data from the input array to the bound array
-      for($i=0; $i<count($data);$i++) {
-         $this->bound_vars[$i] = $data[$i];
-      }
-      */
-
-      $this->DBM->query_time = microtime(true);
-
-      $this->preparedStatementResult = db2_execute($this->stmt, $data);
-
-      $this->DBM->query_time = microtime(true) - $this->DBM->query_time;
-      $GLOBALS['log']->info('Query Execution Time:'.$this->DBM->query_time);
-
-       if (!$this->preparedStatementResult) {
-           $this->DBM->registerError("Query Failed: $this->sqlText", null, $dieOnError);
-           $this->stmt = false; // Making sure we don't use the statement resource for error reporting
-      }
-       else {
-
-           if($this->DBM->dump_slow_queries($this->sqlText)) {
-               $this->DBM->track_slow_queries($this->sqlText);
-           }
-       }
-       $this->DBM->checkError($msg.' Query Failed:' . $this->sqlText . '::', $dieOnError);
-
-      return $this->stmt;
-   }
-
-
-   public function preparedStatementFetch( $msg = '' ) {
-
-       //return db2_fetch_assoc($this->stmt);
-
-       $row = db2_fetch_assoc($this->stmt);
-       if ( !$row )
-           return false;
-       if (!$this->DBM->checkError("Fetch error", false, $this->stmt)) {
-           $temp = $row;
-           $row = array();
-           foreach ($temp as $key => $val)
-               // make the column keys as lower case. Trim the val returned
-               $row[strtolower($key)] = trim($val);
-       }
-       else
-           return false;
-
-       return $row;
-
-
-   }
-
+        return $this->finishStatement($res, $msg);
+    }
 }

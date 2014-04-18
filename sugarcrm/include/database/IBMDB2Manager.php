@@ -109,6 +109,8 @@ class IBMDB2Manager  extends DBManager
         "prepared_statements" => true,
 	);
 
+	public $preparedStatementClass = 'IBMDB2PreparedStatement';
+
 	/**
 	 * Schema in which all the DB2 objects live.
 	 * Is only used for management operations for now and set to the DB2 user id.
@@ -825,7 +827,7 @@ public function convert($string, $type, array $additional_parameters = array())
                 $ref = $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, true);
                 if($ref['required'] == 'NULL' // DB2 doesn't have NULL definition, only NOT NULL
                         || ($ref['required'] == 'NOT NULL' && $ref['default'] == '')) { // Make it nullable if no default value provided
-                    $ref['required'] = ''; 
+                    $ref['required'] = '';
                 }
                 $sql = $this->alterTableColumnSQL($action, "{$ref['name']} {$ref['colType']} {$ref['default']} {$ref['required']} {$ref['auto_increment']}");
 				break;
@@ -1836,8 +1838,4 @@ EOQ;
       	return "'$guidStart-' || HEX(generate_unique())";
     }
 
-    public function prepareStatement($sql, array $fieldDefs = array() )
-    {
-        return new IBMDB2PreparedStatement($this, $sql, $fieldDefs );
-    }
 }
