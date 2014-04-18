@@ -114,7 +114,8 @@ $vardefs= array (
   array (
     'name' => 'billing_address_street',
     'vname' => 'LBL_BILLING_ADDRESS_STREET',
-    'type' => 'varchar',
+    'type' => 'textarea',
+    'dbType' => 'varchar',
     'len' => '150',
     'comment' => 'The street address used for billing address',
     'group'=>'billing_address',
@@ -270,7 +271,8 @@ $vardefs= array (
   array (
     'name' => 'shipping_address_street',
     'vname' => 'LBL_SHIPPING_ADDRESS_STREET',
-    'type' => 'varchar',
+    'type' => 'textarea',
+    'dbType' => 'varchar',
     'len' => 150,
     'group'=>'shipping_address',
     'duplicate_on_record_copy' => 'always',
