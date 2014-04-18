@@ -1,3 +1,5 @@
+/* SEARCH FILTER
+  ----------------*/
 
 // search filter widget
 .search-filter {
@@ -33,8 +35,8 @@
     .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)");
   }
   // non-select2 filter pills
-  div.choice-related,
-  div.choice-filter {
+  .choice-related,
+  .choice-filter {
     .border-radius(0 10px 10px 0);
     padding: 4px 6px 4px 4px;
     display: inline-block;
@@ -64,12 +66,12 @@
       }
     }
   }
-  div.choice-related {
+  .choice-related {
     background: darken(@grayLighter, 5%);
     color: @gray;
     cursor: text;
   }
-  div.choice-filter {
+  .choice-filter {
     background: @dropdownLinkBackgroundHover;
     color: @dropdownLinkColorHover;
   }
@@ -113,7 +115,7 @@
       .select2-arrow {
         display: none;
       }
-      span.select2-chosen {
+      .select2-chosen {
         .border-radius(10px 0 0 10px);
         color: @gray;
         padding: 4px 4px 4px 6px;
@@ -129,23 +131,19 @@
           .box-shadow(~"inset 0 -16px 8px rgba(0,0,0,.1) !important");
         }
       }
-      span.select2-choice-related,
-      a.select2-choice-related,
-      span.select2-choice-filter,
-      a.select2-choice-filter {
+      .select2-choice-related,
+      .select2-choice-filter {
         .border-radius(0 10px 10px 0);
         padding: 4px 6px 4px 4px;
         display: inline-block;
         line-height: 12px;
       }
-      span.select2-choice-related,
-      a.select2-choice-related {
+      .select2-choice-related {
         background: #c0f0ca;
         color: #407648;
         cursor: text;
       }
-      span.select2-choice-filter,
-      a.select2-choice-filter {
+      .select2-choice-filter {
         background: @dropdownLinkBackgroundHover;
         color: @dropdownLinkColorHover;
       }
@@ -344,7 +342,8 @@
         padding: 2px 4px 2px 6px;
         margin-right: 2px;
       }
-      a, span:last-child {
+      a,
+      span:last-child {
         .border-radius(0 10px 10px 0);
       }
       span:last-child {
@@ -474,4 +473,8 @@
       .box-shadow(none);
     }
   }
+}
+
+.filter.controls {
+  margin-left: 0 !important;
 }
