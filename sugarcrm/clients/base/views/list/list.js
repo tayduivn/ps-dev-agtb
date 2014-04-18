@@ -221,6 +221,9 @@
         }
 
         collection.orderBy = self.orderBy;
+
+        collection.resetPagination();
+
         options = self.getSortOptions(collection);
 
         if(this.triggerBefore('list:orderby', options)) {
