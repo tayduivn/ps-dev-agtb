@@ -39,10 +39,11 @@ class KBSContentsApiHelper extends SugarBeanApiHelper {
 
         $query = new SugarQuery();
         $query->select(array('language'));
+        $query->distinct(true);
         $query->from(BeanFactory::getBean('KBSContents'));
         $query->where()
-            ->equals('kbsdocument_id', $bean->kbsdocument_id)
-            ->equals('active_rev', 1);
+            ->equals('kbsdocument_id', $bean->kbsdocument_id);
+        
         $langs = $query->execute();
         if ($langs) {
             $result['related_languages'] = array();
