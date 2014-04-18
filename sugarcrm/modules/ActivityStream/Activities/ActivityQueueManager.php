@@ -23,9 +23,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
 class ActivityQueueManager
 {
     public static $linkBlacklist = array('user_sync', 'activities', 'contacts_sync');
-    public static $linkModuleBlacklist = array('ActivityStream/Activities', 'ACLRoles', 'Teams');
+    public static $linkModuleBlacklist = array('ActivityStream/Activities', 'ACLRoles', 'Teams',
+        'KBSArticles', 'KBSDocuments'
+    );
     public static $linkDupeCheck = array();
-    public static $moduleBlacklist = array('OAuthTokens', 'SchedulersJobs', 'Activities', 'vCals', 'KBContents',
+    public static $moduleBlacklist = array('OAuthTokens', 'SchedulersJobs',
+        'Activities', 'vCals', 'KBContents', 'KBSArticles', 'KBSDocuments',
         'Forecasts', 'ForecastWorksheets', 'ForecastManagerWorksheets', 'Notifications',
         'Quotes', //Quotes should not allow admin to enable activities until Quotes are converted to sidecar
         // BEGIN SUGARCRM flav=pro && flav!=ent ONLY

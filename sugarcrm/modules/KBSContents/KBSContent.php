@@ -45,50 +45,55 @@ class KBSContent extends SugarBean {
     /**
      * {@inheritDoc}
      */
+    public function save_relationship_changes($is_update, $exclude = array())
+    {
+        parent::save_relationship_changes($is_update, $exclude);
+
+        if ($is_update) {
+            return;
+        }
+
+        $doc = $article = null;
+
+        if (empty($this->kbsdocument_id)) {
+            $doc = BeanFactory::getBean('KBSDocuments');
+            $doc->new_with_id = true;
+            $doc->id = create_guid();
+            $doc->name = $this->name;
+            $doc->save();
+            $this->load_relationship('kbsdocuments_kbscontents');
+            $this->kbsdocuments_kbscontents->add($doc);
+        }
+
+        if (empty($this->kbsarticle_id)) {
+            $article = BeanFactory::getBean('KBSArticles');
+            $article->new_with_id = true;
+            $article->id = create_guid();
+            $article->name = $this->name;
+            $article->save();
+            $this->load_relationship('kbsarticles_kbscontents');
+            $this->kbsarticles_kbscontents->add($article);
+        }
+
+        if (!empty($article) && !empty($doc)) {
+            $article->load_relationship('kbsdocuments_kbsarticles');
+            $article->kbsdocuments_kbsarticles->add($doc);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function save($check_notify = false)
     {
-        if (!SugarBean::inOperation('saving_related')) {
-            if (!$this->id || $this->new_with_id) {
-                if (!$this->id) {
-                    $this->id = create_guid();
-                    $this->new_with_id = true;
-                }
-
-                $doc = $article = null;
-
-                if (empty($this->kbsdocument_id)) {
-                    $doc = BeanFactory::getBean('KBSDocuments');
-                    $doc->new_with_id = true;
-                    $doc->id = create_guid();
-                    $doc->name = $this->name;
-                    $doc->save();
-                    $this->load_relationship('kbsdocuments_kbscontents');
-                    $this->kbsdocuments_kbscontents->add($doc);
-                }
-
-                if (empty($this->kbsarticle_id)) {
-                    $article = BeanFactory::getBean('KBSArticles');
-                    $article->new_with_id = true;
-                    $article->id = create_guid();
-                    $article->name = $this->name;
-                    $article->save();
-                    $this->load_relationship('kbsarticles_kbscontents');
-                    $this->kbsarticles_kbscontents->add($article);
-                }
-
-                if (!empty($article) && !empty($doc)) {
-                    $article->load_relationship('kbsdocuments_kbsarticles');
-                    $article->kbsdocuments_kbsarticles->add($doc);
-                }
-
-                if (empty($this->language)) {
-                    $lang = $this->getPrimaryLanguage();
-                    $this->language = $lang['key'];
-                }
-
-                $this->active_rev = (int) !empty($article);
-
-                if (empty($this->revision)) {
+        if(empty($this->id) || !empty($this->new_with_id)) {
+            if (empty($this->language)) {
+                $lang = $this->getPrimaryLanguage();
+                $this->language = $lang['key'];
+            }
+            if (empty($this->revision)) {
+                $this->revision = 1;
+                if (!empty($this->kbsdocument_id) && !empty($this->kbsarticle_id)) {
                     $query = new SugarQuery();
                     $query->from(BeanFactory::getBean('KBSContents'));
                     $query->select(array('id'))->fieldRaw('MAX(revision)', 'max_revision');
@@ -97,10 +102,14 @@ class KBSContent extends SugarBean {
                         ->equals('kbsarticle_id', $this->kbsarticle_id);
 
                     $result = $query->execute();
-                    $this->revision = !empty($result[0]['max_revision']) ? $result[0]['max_revision'] + 1 : 1;
+                    if (!empty($result[0]['max_revision'])) {
+                        $this->revision = $result[0]['max_revision'] + 1;
+                    }
                 }
             }
+            $this->active_rev = (int) empty($this->kbsarticle_id);
         }
+
         return parent::save($check_notify);
     }
 

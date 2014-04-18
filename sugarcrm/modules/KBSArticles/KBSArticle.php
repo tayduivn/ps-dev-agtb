@@ -26,4 +26,8 @@ class KBSArticle extends SugarBean
         }
         return false;
     }
+    public function get_summary_text()
+    {
+        return $this->name;
+    }
 }
