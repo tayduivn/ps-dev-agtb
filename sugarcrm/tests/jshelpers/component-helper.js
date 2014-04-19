@@ -6,7 +6,7 @@
 
         SugarTest.loadFile(path, name, "js", function(data) {
             try {
-                data = eval("[" + data + "][0]");
+                data = eval(data);
             } catch(e) {
                 app.logger.error("Failed to eval view controller for " + name + ": " + e + ":\n" + data);
             }
