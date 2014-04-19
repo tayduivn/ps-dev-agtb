@@ -31,7 +31,7 @@
  */
 class SugarUpgradeMergeTemplates extends UpgradeScript
 {
-    public $order = 200;
+    public $order = 400;
     public $type = self::UPGRADE_CUSTOM;
 
     public function run()
