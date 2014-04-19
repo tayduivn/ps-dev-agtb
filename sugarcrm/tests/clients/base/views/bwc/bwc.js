@@ -166,8 +166,14 @@ describe('Base.View.Bwc', function() {
                     }
                 }
             };
+            // Mock it to pretend to be in an iframe
+            window.parent.SUGAR = {App: SugarTest.app};
+
             var module = view._setModule(contentWindowMock);
+
             expect(SugarTest.app.controller.context.get('module')).toEqual('testModuleName');
+
+            delete window.parent.SUGAR;
         });
     });
 });
