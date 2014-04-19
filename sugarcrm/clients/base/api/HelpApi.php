@@ -22,7 +22,25 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('data/BeanFactory.php');
 
-class HelpApi extends SugarApi {
+class HelpApi extends SugarApi 
+{
+    /**
+     * The help endpoints need some client files to function properly.
+     * 
+     * @var array
+     */
+    protected $clientFiles = array(
+        'cache/include/javascript/sugar_grp1_jquery.js',
+    );
+    
+    /**
+     * Used in transformations of class names, like making 
+     * SugarApiExceptionRequestTooLarge into Request Too Large or request-too-large
+     * 
+     * @var string
+     */
+    protected $camelCasePattern = '#(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])#';
+
     public function registerApiRest() {
         return array(
             'getHelp' => array(
@@ -32,6 +50,17 @@ class HelpApi extends SugarApi {
                 'method' => 'getHelp',
                 'shortHelp' => 'Shows Help information',
                 'longHelp' => 'include/api/help/help_get_help.html',
+                'rawReply' => true,
+                // Everyone needs some help sometimes.
+                'noLoginRequired' => true,
+            ),
+            'getExceptions' => array(
+                'reqType' => 'GET',
+                'path' => array('help', 'exceptions'),
+                'pathVars' => array('', ''),
+                'method' => 'getExceptionsHelp',
+                'shortHelp' => 'Shows the exceptions thrown by the API',
+                'longHelp' => 'include/api/help/help_get_exceptions.html',
                 'rawReply' => true,
                 // Everyone needs some help sometimes.
                 'noLoginRequired' => true,
@@ -67,16 +96,99 @@ class HelpApi extends SugarApi {
                 $fullPath .= '/'.$pathPart;
             }
             $endpointList[$idx]['fullPath'] = $fullPath;
+
+            // Handle exception lists
+            $exceptions = array();
+            if (!empty($endpoint['exceptions']) && is_array($endpoint['exceptions'])) {
+                foreach ($endpoint['exceptions'] as $exception) {
+                    $id = $this->getExceptionId($exception);
+                    $type = $this->getExceptionType($exception);
+                    $exceptions[$id] = $type;
+                }
+            }
+            $endpointList[$idx]['exceptions'] = $exceptions;
         }
+
         // Sort the endpoint list
         usort($endpointList,array('HelpApi','cmpEndpoints'));
 
+        $this->ensureClientFiles();
+        $jsfiles = $this->clientFiles;
         ob_start();
         require('include/api/help/extras/helpList.php');
         $endpointHtml = ob_get_clean();
 
         $api->setHeader('Content-Type', 'text/html');
         return $endpointHtml;
+    }
+    
+    /**
+     * Gets the exceptions list for the exceptions help endpoint
+     * 
+     * @param RestService $api The service object
+     * @param array $args The request arguments
+     * @return string The HTML output for this help endpoint
+     */
+    public function getExceptionsHelp($api, $args)
+    {
+        $exceptions = $this->getExceptions();
+        $this->ensureClientFiles();
+        $jsfiles = $this->clientFiles;
+        ob_start();
+        require('include/api/help/extras/exceptionList.php');
+        $endpointHtml = ob_get_clean();
+
+        $api->setHeader('Content-Type', 'text/html');
+        return $endpointHtml;
+    }
+    
+    /**
+     * Gets the list of exceptions for this system along with some useful information
+     * about each exception
+     * 
+     * @return array
+     */
+    protected function getExceptions()
+    {
+        // Read the contents of the API exception file to get the list of API
+        // exceptions we currently throw
+        $file = 'include/api/SugarApiException.php';
+        $content = file_get_contents($file);
+
+        // Parse it for class names, as that will drive the list of data
+        $pattern = '#class ([a-zA-Z0-9_]*) #';
+        $matches = array();
+        preg_match_all($pattern, $content, $matches, PREG_SET_ORDER);
+
+        // Prepare the return
+        $exceptions = array();
+
+        // Now loop through the exceptions and build a collection of information
+        // on each one
+        foreach ($matches as $match) {
+            // The exception class
+            $class = $match[1];
+
+            // Start collecting information now
+            $e = new $class();
+            $code = $e->httpCode;
+            $label = $e->errorLabel;
+            $message = $e->messageLabel;
+            $desc = $e->descriptionLabel;
+            $exceptions[$class] = array(
+                'element_id' => $this->getExceptionId($class),
+                'class' => $class,
+                'code' => $code,
+                'label' => $label,
+                'type' => $this->getExceptionType($class),
+                'message_key' => $message,
+                'message' => translate($message),
+                'desc_key' => $desc,
+                'desc' => translate($desc),
+            );
+        }
+
+        return $exceptions;
     }
 
     /**
@@ -112,5 +224,68 @@ class HelpApi extends SugarApi {
      */
     public static function cmpEndpoints($endpoint1, $endpoint2) {
         return ( $endpoint1['fullPath'] > $endpoint2['fullPath'] ) ? +1 : -1;
+    }
+
+    /**
+     * Ensures that necessary client files are in place 
+     * 
+     * @return boolean
+     */
+    protected function ensureClientFiles()
+    {
+        foreach ($this->clientFiles as $file) {
+            // (re)build the necessary cache files if the file we want does not exist
+            if (!file_exists($file)) {
+                // Maintain state as well as possible
+                $hasRootDirectory = isset($_REQUEST['root_directory']);
+
+                // Same process as SugarView
+                $_REQUEST['root_directory'] = ".";
+                require_once("jssource/minify_utils.php");
+                $minifyUtils = new SugarMinifyUtils();
+                $minifyUtils->ConcatenateFiles(".");
+
+                // If we didn't start with this index, clean up after ourselves
+                if (!$hasRootDirectory) {
+                    unset($_REQUEST['root_directory']);
+                }
+                return true;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Gets the exception type label for an exception from the exception class
+     * name
+     * 
+     * @param string $class The exception class to get the type from
+     * @return string
+     */
+    protected function getExceptionType($class)
+    {
+        // The exception type name (class name less SugarApiException)
+        $typeName = str_replace('SugarApiException', '', $class);
+
+        // Type of the class, normalized for your viewing pleasure
+        $type = preg_replace($this->camelCasePattern, ' $1', $typeName);
+        if (empty($type)) {
+            $type = 'General Exception';
+        }
+
+        return $type;
+    }
+
+    /**
+     * Takes a camel case exception class name and makes it lower case hyphenated:
+     * SugarApiExceptionRequestTooLarge -> sugar-api-exception-request-too-large
+     * 
+     * @param string $class The exception class name to transform
+     * @return string
+     */
+    protected function getExceptionId($class)
+    {
+        return strtolower(preg_replace($this->camelCasePattern, '-$1', $class));
     }
 }

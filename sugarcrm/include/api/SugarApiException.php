@@ -23,7 +23,20 @@ require_once 'include/SugarException.php';
 
 class SugarApiException extends SugarException
 {
+    /**
+     * The HTTP response code to send to the consumer in case of an exception
+     * 
+     * @var integer
+     */
     public $httpCode = 400;
+
+    /**
+     * The label for the description of this exception. Used in help documentation.
+     * Maps to the $messageLabel value with '_DESC' appended to it.
+     * 
+     * @var string
+     */
+    public $descriptionLabel;
 
     /**
      * @param string $messageLabel optional Label for error message.  Used to load the appropriate translated message.
@@ -40,6 +53,9 @@ class SugarApiException extends SugarException
             $this->httpCode = $httpCode;
         }
         parent::__construct($messageLabel, $msgArgs, $moduleName, $errorLabel);
+        if (!empty($this->messageLabel)) {
+            $this->descriptionLabel = $this->messageLabel . '_DESC';
+        }
     }
 
     public function getHttpCode()

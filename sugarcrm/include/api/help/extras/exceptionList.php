@@ -30,11 +30,11 @@ $theme = new SidecarTheme();
 $bootstrap_css = $theme->getCSSURL();
 
 // Fixes pathing for help requests ending in '/'
-$base_path = '../../';
-$link_path = './help/';
+$base_path = '../../../';
+$link_path = '../';
 if (substr($_SERVER['REQUEST_URI'], -1) == '/') {
     $base_path .= '../';
-    $link_path = '';
+    $link_path .= '../';
 }
 ?>
 
@@ -42,7 +42,7 @@ if (substr($_SERVER['REQUEST_URI'], -1) == '/') {
 <html>
 
     <head>
-        <title>SugarCRM Auto Generated API Help</title>
+        <title>SugarCRM Auto Generated API Exceptions Documentation</title>
         <?php
         foreach($bootstrap_css as $css) {
             echo '<link rel="stylesheet" href="' . $base_path . $css . '">';
@@ -104,103 +104,44 @@ if (substr($_SERVER['REQUEST_URI'], -1) == '/') {
 
     <body>
 
-        <h2>SugarCRM API</h2>
-        <p><a href="<?php echo $link_path ?>exceptions">Documentation on SugarAPI exceptions and error messages</a></p>
+        <h2>SugarCRM API Exceptions</h2>
+
+        <p><a href="<?php echo $link_path ?>help">SugarAPI help documentation</a></p>
         <div class="container-fluid">
 
             <div class="row-fluid">
 
-                <div class="span4"><h1>Endpoint</h1></div>
-                <div class="span2"><h1>Method</h1></div>
-                <div class="span3"><h1>Description</h1></div>
-                <div class="span2"><h1>Exceptions</h1></div>
-                <div class="span1 score"><h1>Score</h1></div>
+                <div class="span2"><h1>Type</h1></div>
+                <div class="span1"><h1>HTTP Code</h1></div>
+                <div class="span4"><h1>Description</h1></div>
+                <div class="span2"><h1>Default error code</h1></div>
+                <div class="span3"><h1>Default error message</h1></div>
             </div>
 
-        <?php
-            foreach ( $endpointList as $i => $endpoint )
-            {
-                if ( empty($endpoint['shortHelp']) ) { continue; }
-        ?>
+        <?php foreach ($exceptions as $exception): ?>
 
-            <div class="row-fluid line">
-
+            <div class="row-fluid line" id="<?php echo $exception['element_id'] ?>">
                 <div class="row-fluid">
-
-                    <div class="span3">
-                        <?php echo htmlspecialchars($endpoint['reqType']) ?>  
-                        <span class="btn-link" type="button" data-toggle="collapse" data-target="#endpoint_<?php echo $i ?>_full">
-                            <?php echo htmlspecialchars($endpoint['fullPath']) ?>
-                        </span>
-                    </div>
-
                     <div class="span2">
-
-                        <?php echo $endpoint['method']; ?>
+                        <?php echo $exception['type'] ?>
                     </div>
-
-                    <div class="span3">
-                        <?php echo htmlspecialchars($endpoint['shortHelp']) ?>
+                    <div class="span1">
+                        <?php echo $exception['code'] ?>
                     </div>
-
+                    <div class="span4">
+                        <?php echo $exception['desc'] ?>
+                    </div>
                     <div class="span2">
-                        <?php 
-                        if (empty($endpoint['exceptions'])) {
-                            $exceptions = 'None';
-                        } else {
-                            $exceptions = '';
-                            foreach ($endpoint['exceptions'] as $eid => $etype) {
-                                $exceptions .= "<a href=\"{$link_path}exceptions#{$eid}\">$etype</a>, ";
-                            }
-                            $exceptions = rtrim($exceptions, ", ");
-                        }
-                        ?>
-                        <?php echo $exceptions ?>
+                        <?php echo $exception['label'] ?>
                     </div>
-
-                    <div class="span1 score">
-                        <?php echo sprintf("%.02f",$endpoint['score']) ?>
-                    </div>
-
-                </div>
-
-                <div id="endpoint_<?php echo $i ?>_full" class="row-fluid collapse">
-
-                    <div class="span12 well">
-
-                        <?php
-
-                            if ( file_exists($endpoint['longHelp']) )
-                            {
-                                echo file_get_contents($endpoint['longHelp']);
-                            }
-                            else
-                            {
-                                echo '<span class="lead">No additional help.</span>';
-                            }
-
-                        ?>
-
-                        <div class="pull-right muted">
-                            <i class="icon-file"></i>
-                            <?php echo "./" . htmlspecialchars($endpoint['longHelp']); ?>
-                        </div>
-
-                    </div>
-
-                    <div class="pull-right">
-                        <i class="icon-file"></i>
-                        <?php echo "./" . htmlspecialchars($endpoint['file']); ?>
+                    <div class="span3">
+                        <?php echo $exception['message'] ?>
                     </div>
                 </div>
-
             </div>
 
-        <?php
-            }
-        ?>
+        <?php endforeach; ?>
 
         </div>
-
     </body>
 </html>
