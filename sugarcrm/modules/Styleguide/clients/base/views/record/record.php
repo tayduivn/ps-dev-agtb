@@ -19,7 +19,7 @@ $viewdefs['Styleguide']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'picture',
-                    'type' => 'image',
+                    'type' => 'avatar',
                     'size' => 'large',
                     'dismiss_label' => true,
                 ),

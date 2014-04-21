@@ -9,12 +9,8 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
  */
-
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
 
 $viewdefs['Styleguide']['base']['view']['create-actions'] = array(
     'template' => 'record',
@@ -24,13 +20,6 @@ $viewdefs['Styleguide']['base']['view']['create-actions'] = array(
             'type'      => 'button',
             'label'     => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
-        ),
-        array(
-            'name'      => 'restore_button',
-            'type'      => 'button',
-            'label'     => 'LBL_RESTORE',
-            'css_class' => 'btn-invisible btn-link',
-            'showOn'    => 'select',
         ),
         array(
             'type'    => 'actiondropdown',

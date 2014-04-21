@@ -9,28 +9,33 @@
 
     _render: function() {
         this._super('_render');
+        var error_string = 'You did a bad, bad thing.';
         if (this.showErrorDecoration) {
             _.each(this.fields, function(field) {
                 if (!_.contains(['button','rowaction','actiondropdown'], field.type)) {
+                    field.setMode('edit');
+                    field._errors = error_string;
                     if (field.type === 'email') {
                         var errors = {email: ['primary@example.info']};
-                        field.decorateError(errors);
+                        field.handleValidationError([errors]);
                     } else {
-                        field.setMode('edit');
-                        field.decorateError('You did a bad, bad thing.');
+                        if (_.contains(['image','picture','avatar'], field.type)) {
+                            field.handleValidationError(error_string);
+                        } else {
+                            field.decorateError(error_string);
+                        }
                     }
                 }
-            });
+            }, this);
         }
     },
 
-    _renderHtml: function() {
-        this._super('_renderHtml');
+    _renderField: function(field) {
+        app.view.View.prototype._renderField.call(this, field);
+        var error_string = 'You did a bad, bad thing.';
         if (!this.showHelpText) {
-            _.each(this.fields, function(field) {
-                field.def.help = null;
-                field.options.def.help = null;
-            });
+            field.def.help = null;
+            field.options.def.help = null;
         }
     },
 
