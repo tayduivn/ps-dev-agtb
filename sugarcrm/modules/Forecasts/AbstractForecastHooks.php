@@ -60,8 +60,7 @@ abstract class AbstractForecastHooks
     {
         /* @var $admin Administration */
         if (empty(static::$settings) || $reload === true) {
-            $admin = BeanFactory::getBean('Administration');
-            static::$settings = $admin->getConfigForModule('Forecasts');
+            static::$settings = Forecast::getSettings($reload);
         }
     }
 }

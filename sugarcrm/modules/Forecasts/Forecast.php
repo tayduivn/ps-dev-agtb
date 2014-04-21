@@ -66,6 +66,13 @@ class Forecast extends SugarBean
 
     public $disable_custom_fields = true;
 
+    /**
+     * holds the settings for the Forecast Module
+     *
+     * @var array
+     */
+    public static $settings = array();
+
 
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
@@ -290,6 +297,17 @@ class Forecast extends SugarBean
         $adminBean = BeanFactory::getBean('Administration');
         $config = $adminBean->getConfigForModule($this->module_name);
         return translate($config['buckets_dom']);
+    }
+
+    public static function getSettings($reload = false)
+    {
+        /* @var $admin Administration */
+        if (empty(static::$settings) || $reload === true) {
+            $admin = BeanFactory::getBean('Administration');
+            static::$settings = $admin->getConfigForModule('Forecasts');
+        }
+
+        return static::$settings;
     }
 }
 function getTimePeriodsDropDownForForecasts(){
