@@ -155,7 +155,7 @@ class SavedSearch extends SugarBean {
 
         $json = getJSONobj();
 
-        return $sugarSmarty->fetch('modules/SavedSearch/SavedSearchForm.tpl');
+        return $sugarSmarty->fetchCustom('modules/SavedSearch/SavedSearchForm.tpl');
 	}
 
     function getSelect($module) {
