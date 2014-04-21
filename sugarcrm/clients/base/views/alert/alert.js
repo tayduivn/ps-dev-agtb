@@ -115,6 +115,7 @@
      */
     cancelClicked: function() {
         this.cancel();
+        app.events.trigger('alert:cancel:clicked');
         if (_.isFunction(this.onCancel)) {
             this.onCancel();
         }
@@ -125,6 +126,7 @@
      */
     confirmClicked: function() {
         this.cancel();
+        app.events.trigger('alert:confirm:clicked');
         if (_.isFunction(this.onConfirm)) {
             this.onConfirm();
         }

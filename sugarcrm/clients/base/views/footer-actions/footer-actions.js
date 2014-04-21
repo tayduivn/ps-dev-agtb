@@ -38,7 +38,7 @@
         var module = params && params.module ? params.module : null;
         // should we disable the help button or not, this only happens when layout is 'bwc'
         this.layoutName = _.isObject(layout) ? layout.name : layout;
-        this.disableHelpButton((_.indexOf(this.helpBtnDisabledLayouts, this.layoutName) !== -1));
+        this.disableHelpButton(this.shouldHelpBeDisabled());
         if (app.tutorial.hasTutorial(this.layoutName, module)) {
             this.enableTourButton();
             if (params.module === 'Home' && params.layout === 'record' && params.action === 'detail') {
@@ -72,6 +72,10 @@
         this.undelegateEvents();
         this.delegateEvents();
     },
+
+    /**
+     * @inheritdoc
+     */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         app.events.on('app:view:change', this.handleViewChange, this);
@@ -85,11 +89,25 @@
         app.events.on('app:help:shown', function() {
             this.toggleHelpButton(true);
         }, this);
+
         app.events.on('app:help:hidden', function() {
             this.toggleHelpButton(false);
         }, this);
 
+        app.events.on('alert:cancel:clicked', function() {
+            // re-check if help should be disabled or not and set accordingly
+            this.disableHelpButton(this.shouldHelpBeDisabled());
+        }, this);
     },
+
+    /**
+     * Checks any criteria to see if help button should be disabled
+     * @return {boolean}
+     */
+    shouldHelpBeDisabled: function() {
+        return (_.indexOf(this.helpBtnDisabledLayouts, this.layoutName) !== -1);
+    },
+
     _renderHtml: function() {
         this.isAuthenticated = app.api.isAuthenticated();
         app.view.View.prototype._renderHtml.call(this);
