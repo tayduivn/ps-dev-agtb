@@ -118,7 +118,7 @@ class Contract extends SugarBean
             if (!empty($_SESSION["workflow_cron"])
                 && $_SESSION["workflow_cron"] == "Yes"
                 && !empty($_SESSION["workflow_id_cron"])
-                && $_SESSION["workflow_id_cron"] == CONTRACT_BUILT_IN_WORKFLOW_ID
+                && in_array(CONTRACT_BUILT_IN_WORKFLOW_ID, $_SESSION["workflow_id_cron"])
             ) {
                 $this->special_notification = true;
                 $check_notify = true;
@@ -149,7 +149,7 @@ class Contract extends SugarBean
         if (!empty($_SESSION["workflow_cron"])
             && $_SESSION["workflow_cron"] == "Yes"
             && !empty($_SESSION["workflow_id_cron"])
-            && $_SESSION["workflow_id_cron"] == CONTRACT_BUILT_IN_WORKFLOW_ID
+            && in_array(CONTRACT_BUILT_IN_WORKFLOW_ID, $_SESSION["workflow_id_cron"])
         ) {
             $this->special_notification = false;
         }

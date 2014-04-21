@@ -155,7 +155,7 @@ class WorkFlowGlue {
 		$this->temp_eval .= " || ";
 		$this->temp_eval .= " ( ";
 
-		$this->temp_eval .= " isset(\$focus->".$shell_object->field.") && isset(\$_SESSION['workflow_parameters']) && \$_SESSION['workflow_parameters'] == \$focus->".$shell_object->field." \n";
+		$this->temp_eval .= " isset(\$focus->".$shell_object->field.") && isset(\$_SESSION['workflow_parameters']['$shell_object->parent_id']) && \$_SESSION['workflow_parameters']['$shell_object->parent_id'] == \$focus->".$shell_object->field." \n";
 
 		$this->temp_eval .= " && !empty(\$_SESSION['workflow_cron']) && \$_SESSION['workflow_cron']==\"Yes\"";
 		$this->temp_eval .= " ) ";

@@ -696,7 +696,7 @@ $alert_file_contents = "";
                 $eval_dump .= "\t \$workflow_id = '" . $row['id'] . "'; \n\n";
 
 				$eval_dump .= 'if(!empty($_SESSION["workflow_cron"]) && $_SESSION["workflow_cron"]=="Yes" &&
-				!empty($_SESSION["workflow_id_cron"]) && $_SESSION["workflow_id_cron"]==$workflow_id){
+				!empty($_SESSION["workflow_id_cron"]) && in_array($workflow_id, $_SESSION["workflow_id_cron"])){
 				';
 			//end if type is time
 			}
@@ -1459,10 +1459,12 @@ function getActiveWorkFlowCount() {
         $result = $this->db->query($query, true, "Error getting workflow_schedules for workflow_id: " . $this->id);
 
         // Remove each workflow schedule by id
+        $removeExpired = array();
         $workflowSchedule = new WorkFlowSchedule();
         while ($row = $this->db->fetchByAssoc($result)) {
-            $workflowSchedule->remove_expired($row['id']);
+            $removeExpired[] = $row['id'];
         }
+        $workflowSchedule->remove_expired($removeExpired);
     }
 
     /**
