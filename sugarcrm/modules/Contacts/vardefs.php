@@ -152,6 +152,10 @@ $dictionary['Contact'] = array(
             'len' => 'id',
             'reportable' => false,
             'source' => 'non-db',
+            'populate_list' => array(
+                'account_id' => 'account_id',
+                'account_name' => 'account_name',
+            ),
         ),
         'birthdate' => array(
             'name' => 'birthdate',
