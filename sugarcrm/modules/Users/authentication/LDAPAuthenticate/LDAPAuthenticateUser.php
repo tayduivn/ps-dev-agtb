@@ -50,9 +50,8 @@ class LDAPAuthenticateUser extends SugarAuthenticateUser{
 	 * Contributions by Erik Mitchell erikm@logicpd.com
 	 */
 	function authenticateUser($name, $password) {
-
-		$server = $GLOBALS['ldap_config']->settings['ldap_hostname'];
-		$port = $GLOBALS['ldap_config']->settings['ldap_port'];
+        $server = isset($GLOBALS['ldap_config']->settings['ldap_hostname']) ? $GLOBALS['ldap_config']->settings['ldap_hostname'] : '';
+        $port = isset($GLOBALS['ldap_config']->settings['ldap_port']) ? $GLOBALS['ldap_config']->settings['ldap_port'] : '';
 		if(!$port)
 			$port = DEFAULT_PORT;
 		$GLOBALS['log']->debug("ldapauth: Connecting to LDAP server: $server");
@@ -327,18 +326,18 @@ class LDAPAuthenticateUser extends SugarAuthenticateUser{
     function ldap_rdn_lookup($user_name, $password) {
 
         // MFH BUG# 14547 - Added htmlspecialchars_decode()
-        $server = $GLOBALS['ldap_config']->settings['ldap_hostname'];
-        $base_dn = htmlspecialchars_decode($GLOBALS['ldap_config']->settings['ldap_base_dn']);
+        $server = isset($GLOBALS['ldap_config']->settings['ldap_hostname']) ? $GLOBALS['ldap_config']->settings['ldap_hostname'] : '';
+        $base_dn = isset($GLOBALS['ldap_config']->settings['ldap_base_dn']) ? htmlspecialchars_decode($GLOBALS['ldap_config']->settings['ldap_base_dn']) : '';
 		if(!empty($GLOBALS['ldap_config']->settings['ldap_authentication'])){
-       		$admin_user = htmlspecialchars_decode($GLOBALS['ldap_config']->settings['ldap_admin_user']);
-        	$admin_password = htmlspecialchars_decode($GLOBALS['ldap_config']->settings['ldap_admin_password']);
+            $admin_user = isset($GLOBALS['ldap_config']->settings['ldap_admin_user']) ? htmlspecialchars_decode($GLOBALS['ldap_config']->settings['ldap_admin_user']) : '';
+            $admin_password = isset($GLOBALS['ldap_config']->settings['ldap_admin_password']) ? htmlspecialchars_decode($GLOBALS['ldap_config']->settings['ldap_admin_password']) : '';
 		}else{
 			$admin_user = '';
         	$admin_password = '';
 		}
-        $user_attr = $GLOBALS['ldap_config']->settings['ldap_login_attr'];
-        $bind_attr = $GLOBALS['ldap_config']->settings['ldap_bind_attr'];
-        $port = $GLOBALS['ldap_config']->settings['ldap_port'];
+        $user_attr = isset($GLOBALS['ldap_config']->settings['ldap_login_attr']) ? $GLOBALS['ldap_config']->settings['ldap_login_attr'] : '';
+        $bind_attr = isset($GLOBALS['ldap_config']->settings['ldap_bind_attr']) ? $GLOBALS['ldap_config']->settings['ldap_bind_attr'] : '';
+        $port = isset($GLOBALS['ldap_config']->settings['ldap_port']) ? $GLOBALS['ldap_config']->settings['ldap_port'] : '';
 		if(!$port)
 			$port = DEFAULT_PORT;
         $ldapconn = ldap_connect($server, $port);
