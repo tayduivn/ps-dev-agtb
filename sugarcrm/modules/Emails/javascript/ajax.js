@@ -338,7 +338,18 @@ var AjaxObject = {
 
 	ieSendSuccess : function(o) {
 		SUGAR.hideMessageBox();
-		SUGAR.showMessageBox(app_strings.LBL_EMAIL_TEST_OUTBOUND_SETTINGS_SENT, app_strings.LBL_EMAIL_TEST_NOTIFICATION_SENT, 'plain');
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
+		if (ret.status == false) {
+		    if (ret.errorMessage) {
+		        SUGAR.showMessageBox(app_strings.LBL_EMAIL_TEST_OUTBOUND_SETTINGS, ret.errorMessage, 'plain');
+		    }
+		    else {
+		        SUGAR.showMessageBox(app_strings.LBL_EMAIL_TEST_OUTBOUND_SETTINGS, app_strings.LBL_EMAIL_INVALID_SYSTEM_OUTBOUND, 'plain');
+		    }
+		}
+		else {
+		    SUGAR.showMessageBox(app_strings.LBL_EMAIL_TEST_OUTBOUND_SETTINGS_SENT, app_strings.LBL_EMAIL_TEST_NOTIFICATION_SENT, 'plain');
+		}
 	},
 
 	/**
