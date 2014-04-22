@@ -34,7 +34,7 @@ class RestServiceTest extends Sugar_PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
-        unset($_GET);
+        $_GET = array();
         if (isset($GLOBALS['HTTP_RAW_POST_DATA'])) {
             unset($GLOBALS['HTTP_RAW_POST_DATA']);
         }
