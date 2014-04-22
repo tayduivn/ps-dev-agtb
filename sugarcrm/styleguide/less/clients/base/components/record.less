@@ -586,9 +586,6 @@
 
 /* Special treatment for the address fields */
 .record-cell {
-  [class*='address_']:not(.edit) {
-    display: inline-block;
-  }
   .address_street,
   .address_country,
   .address_misc_block /* miscelaneous class for more complex/international address formats */ {
@@ -600,7 +597,6 @@
       div:after {
         content: ",";
         margin-left: -4px;
-        margin-right: 4px;
       }
     }
   }
