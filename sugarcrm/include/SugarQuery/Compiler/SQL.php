@@ -278,7 +278,7 @@ class SugarQuery_Compiler_SQL
         $addedFields = array();
 
         if ($selectObj->getCountQuery() === true) {
-            return 'count(0) AS record_count';
+            $return['count(0) AS record_count'] = 'count(0) AS record_count';
         }
 
         foreach ($selectObj->select as $field) {
