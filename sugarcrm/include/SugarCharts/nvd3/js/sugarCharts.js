@@ -218,10 +218,12 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .margin({top: 0, right: 10, bottom: 10, left: 10})
                         .showTitle(true)
                         .tooltips(true)
-                        .fmtValueLabel(function(d) { return d.y; })
+                        .fmtValueLabel(function(d) {
+                            return d.value;
+                        })
                         .tooltipContent( function(key, x, y, e, graph) {
                             return '<h3>' + key + '</h3>' +
-                                '<p>' +  y + '</p>';
+                                '<p>' + e.value + '</p>';
                         })
                         .colorData('default')
                         .id(d3ChartId);
