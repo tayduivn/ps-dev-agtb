@@ -25,6 +25,8 @@ class SugarQuery_Builder_Select
 
     protected $countQuery = false;
 
+    protected $selectedFields = array();
+
     /**
      * Create Select Object
      * @param $columns
@@ -54,6 +56,10 @@ class SugarQuery_Builder_Select
             $key = empty($field->alias) ? $field->field : $field->alias;
             if(!$field->isNonDb()) {
                 $this->select[$key] = $field;
+                if (!isset($this->selectedFields[$field->table])) {
+                    $this->selectedFields[$field->table] = array();
+                }
+                $this->selectedFields[$field->table][] = $field->field;
             }
         }
         return $this;
@@ -83,6 +89,25 @@ class SugarQuery_Builder_Select
             $column = array(array($column, $options['alias']));
         }
         $this->field($column);
+    }
+
+    /**
+     * Check if a field is already being selected
+     * @param string $field
+     * @param string $table
+     * @return bool
+     */
+    public function checkField($field, $table)
+    {
+        if (!isset($this->selectedFields[$table])) {
+            return false;
+        }
+
+        if (!in_array($field, $this->selectedFields[$table])) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
