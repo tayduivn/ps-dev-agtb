@@ -633,6 +633,11 @@ class DynamicField {
 
     protected function isDefaultValue($property, $value, $baseField)
     {
+        if (isset($baseField->$property))
+        {
+            return $baseField->$property === $value;
+        }
+
         switch ($property) {
             case "importable":
             //BEGIN SUGARCRM flav=pro ONLY
@@ -642,8 +647,7 @@ class DynamicField {
             case "required":
             case "audited":
             case "massupdate":
-                return (isset($baseField->$property)) ? $baseField->$property == $value : ($value === 'false' || $value === '0' || $value === false || $value === 0);
-                break;
+                return ( $value === 'false' || $value === '0' || $value === false || $value === 0); break;
             case "default_value":
             case "default":
             case "help":
@@ -651,11 +655,6 @@ class DynamicField {
                 return ($value == "");
             case "duplicate_merge":
                 return ( $value === 'false' || $value === '0' || $value === false || $value === 0 || $value === "disabled"); break;
-        }
-
-        if (isset($baseField->$property))
-        {
-            return $baseField->$property == $value;
         }
 
         return false;
