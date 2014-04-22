@@ -149,6 +149,7 @@ $viewdefs['Notes']['base']['view']['record'] = array(
                     ),
                 ),
                 'assigned_user_name',
+                'tags',
             ),
         ),
         array(

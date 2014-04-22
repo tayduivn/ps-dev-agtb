@@ -272,11 +272,19 @@ $dictionary['Prospect'] = array(
         )
     )
 );
-VardefManager::createVardef('Prospects','Prospect', array('default', 'assignable',
-//BEGIN SUGARCRM flav=pro ONLY
-'team_security',
-//END SUGARCRM flav=pro ONLY
-'person'));
+VardefManager::createVardef(
+    'Prospects',
+    'Prospect',
+    array(
+        'default',
+        'assignable',
+        //BEGIN SUGARCRM flav=pro ONLY
+        'team_security',
+        //END SUGARCRM flav=pro ONLY
+        'person',
+        'taggable',
+    )
+);
 
 //BEGIN SUGARCRM flav=com ONLY
 if (isset($GLOBALS['dictionary']['Prospect']['fields']['picture']))

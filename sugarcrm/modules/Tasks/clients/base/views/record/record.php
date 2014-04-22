@@ -157,6 +157,7 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                 'status',
                 'assigned_user_name',
                 'parent_name',
+                'tags',
             ),
         ),
         array(

@@ -335,9 +335,16 @@ $dictionary['Task'] = array('table' => 'tasks',
         //This enables optimistic locking for Saves From EditView
 	'optimistic_locking'=>true,
                             );
-VardefManager::createVardef('Tasks','Task', array('default', 'assignable',
-//BEGIN SUGARCRM flav=pro ONLY
-'team_security',
-//END SUGARCRM flav=pro ONLY
-));
+VardefManager::createVardef(
+    'Tasks',
+    'Task',
+    array(
+        'default',
+        'assignable',
+        //BEGIN SUGARCRM flav=pro ONLY
+        'team_security',
+        //END SUGARCRM flav=pro ONLY
+        'taggable',
+    )
+);
 ?>

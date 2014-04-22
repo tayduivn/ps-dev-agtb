@@ -73,6 +73,7 @@ $fields = array(
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
+    'tags',
 );
 
 $fieldsHidden = array(
@@ -179,6 +180,7 @@ $fields = array(
     ),
     'opportunity_type',
     'assigned_user_name',
+    'tags',
 );
 
 $fieldsHidden = array(
