@@ -43,7 +43,9 @@ class SugarQuery_Builder_Field_Orderby extends SugarQuery_Builder_Field
             $fieldsToOrder = empty($this->def['sort_on']) ? array($this->def['rname']) : $this->def['sort_on'];
             foreach ($fieldsToOrder as $fieldToOrder) {
                 $this->query->orderBy("{$jta}.{$fieldToOrder}", $this->direction);
-                $this->query->select->addField("{$jta}.{$fieldToOrder}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$this->def['table']}__{$fieldToOrder}", false, 'alias')));
+                if (!$this->query->select->checkField($fieldToOrder, $this->table)) {
+                    $this->query->select->addField("{$jta}.{$fieldToOrder}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$this->def['table']}__{$fieldToOrder}", false, 'alias')));
+                }
             }
             $this->markNonDb();
         } elseif(!empty($this->def['rname']) && !empty($this->def['link'])) {
@@ -54,7 +56,9 @@ class SugarQuery_Builder_Field_Orderby extends SugarQuery_Builder_Field
             $fieldsToOrder = empty($this->def['sort_on']) ? array($this->def['rname']) : $this->def['sort_on'];
             foreach ($fieldsToOrder as $fieldToOrder) {
                 $this->query->orderBy("{$jta}.{$fieldToOrder}", $this->direction);
-                $this->query->select->addField("{$jta}.{$fieldToOrder}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$this->def['link']}__{$fieldToOrder}", false, 'alias')));
+                if (!$this->query->select->checkField($fieldToOrder, $this->table)) {
+                    $this->query->select->addField("{$jta}.{$fieldToOrder}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$this->def['link']}__{$fieldToOrder}", false, 'alias')));
+                }
             }
             $this->markNonDb();
         } else {
@@ -67,10 +71,14 @@ class SugarQuery_Builder_Field_Orderby extends SugarQuery_Builder_Field
                 }
                 foreach ($this->def['sort_on'] as $field) {
                     $this->query->orderBy("{$table}.{$field}", $this->direction);
-                    $this->query->select->addField("{$table}.{$field}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$this->table}__{$this->field}", false, 'alias')));
+                    if (!$this->query->select->checkField($field, $this->table)) {
+                        $this->query->select->addField("{$table}.{$field}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$this->table}__{$this->field}", false, 'alias')));
+                    }
                 }
             } else {
-                $this->query->select->addField("{$this->table}.{$this->field}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$this->table}__{$this->field}", false, 'alias')));
+                if (!$this->query->select->checkField($this->field, $this->table)) {
+                    $this->query->select->addField("{$this->table}.{$this->field}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$this->table}__{$this->field}", false, 'alias')));
+                }
             }            
         }
         $this->checkCustomField();
