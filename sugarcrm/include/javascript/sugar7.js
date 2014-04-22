@@ -501,7 +501,6 @@
     app.augment("progress", _.extend({
         init: function() {
             NProgress.configure({
-                positionUsing: "margin-left",
                 template: '<div class="loading gate">' +
                     '    <div class="progress progress-danger">' +
                     '        <div role="bar" class="bar"></div>' +
