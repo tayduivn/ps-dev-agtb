@@ -5108,51 +5108,7 @@ class SugarBean
     protected function processFunctionFields(SugarBean $bean, array $fields)
     {
         foreach ($fields as $field => $value) {
-            if (!isset($value['function_params']) || !is_array($value['function_params'])) {
-                continue;
-            }
-
-            $params = array();
-            $can_execute = true;
-            foreach ($value['function_params'] as $param) {
-                if (empty($value['function_params_source']) || $value['function_params_source'] == 'parent') {
-                    $source = $this;
-                } elseif ($value['function_params_source'] == 'this') {
-                    $source = $bean;
-                } else {
-                    $source = null;
-                    $can_execute = false;
-                    break;
-                }
-
-                if ($param == '$this') {
-                    $params[] = $source;
-                } elseif (!isset($source->$param)) {
-                    $can_execute = false;
-                    break;
-                } else {
-                    $params[] = $source->$param;
-                }
-            }
-
-            if ($can_execute) {
-                if (!empty($value['function_require'])) {
-                    require_once($value['function_require']);
-                }
-
-                if (!empty($value['function_class'])) {
-                    $function = array(
-                        $value['function_class'],
-                        $value['function_name'],
-                    );
-                } else {
-                    $function = $value['function_name'];
-                }
-
-                if (is_callable($function)) {
-                    $bean->$field = call_user_func_array($function, $params);
-                }
-            }
+            $bean->$field = $this->callUserFunction($value, $bean);
         }
     }
 
