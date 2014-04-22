@@ -120,6 +120,13 @@
             })
             .filterBy(function(d) {
                 return d.probability;
+            })
+            .strings({
+                legend: {
+                    close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                    open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                },
+                noData: app.lang.getAppString('LBL_CHART_NO_DATA')
             });
 
         this.on('data-changed', function() {

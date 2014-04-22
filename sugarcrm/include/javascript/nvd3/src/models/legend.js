@@ -112,7 +112,7 @@ nv.models.legend = function () {
         .style('pointer-events', 'all');
 
       link
-        .text(legendOpen === 1 ? legend.strings().close : legend.strings().type)
+        .text(legendOpen === 1 ? legend.strings().close : legend.strings().open)
         .attr('text-anchor', align === 'left' ? 'start' : 'end')
         .attr('dy', '.32em')
         .attr('dx', 0)
@@ -453,7 +453,7 @@ nv.models.legend = function () {
           .style('opacity', legendOpen)
           .style('display', legendOpen ? 'inline' : 'none');
         link
-          .text(legendOpen === 1 ? legend.strings().close : legend.strings().type);
+          .text(legendOpen === 1 ? legend.strings().close : legend.strings().open);
       }
 
       dispatch.on('toggleMenu', function (d) {

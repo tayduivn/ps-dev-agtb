@@ -17,7 +17,11 @@ nv.models.pieChart = function () {
                '<p>' +  y + '</p>';
       },
       state = {},
-      noData = 'No Data Available.',
+      strings = {
+        legend: {close: 'Hide legend', open: 'Show legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      },
       dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
 
   //============================================================
@@ -65,7 +69,7 @@ nv.models.pieChart = function () {
       // Display No Data message if there's nothing to show.
 
       if (!data || !data.length) {
-        var noDataText = container.selectAll('.nv-noData').data([noData]);
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
         noDataText.enter().append('text')
           .attr('class', 'nvd3 nv-noData')
@@ -133,6 +137,7 @@ nv.models.pieChart = function () {
       if (showLegend) {
         legend
           .id('legend_' + chart.id())
+          .strings(chart.strings().legend)
           .height(availableHeight - innerMargin.top);
         legendWrap
           .datum(data)
@@ -377,14 +382,6 @@ nv.models.pieChart = function () {
     return chart;
   };
 
-  chart.noData = function (_) {
-    if (!arguments.length) {
-      return noData;
-    }
-    noData = _;
-    return chart;
-  };
-
   chart.state = function (_) {
     if (!arguments.length) {
       return state;
@@ -402,6 +399,18 @@ nv.models.pieChart = function () {
   };
 
   chart.colorFill = function (_) {
+    return chart;
+  };
+
+  chart.strings = function (_) {
+    if (!arguments.length) {
+      return strings;
+    }
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
     return chart;
   };
 

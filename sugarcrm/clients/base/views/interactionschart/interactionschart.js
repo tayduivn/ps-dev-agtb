@@ -69,9 +69,15 @@
                     .tooltips(false)
                     .showControls(false)
                     .reduceXTicks(false)
-                    .noData(app.lang.getAppString('LBL_CHART_NO_DATA'))
                     .showLegend(self.params.list == "all")
-                    .stacked(true);
+                    .stacked(true)
+                    .strings({
+                        legend: {
+                            close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                            open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                        },
+                        noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+                    });
 
             canvas.children().remove();
 

@@ -19,7 +19,11 @@ nv.models.lineChart = function () {
       x,
       y,
       state = {},
-      noData = 'No Data Available.',
+      strings = {
+        legend: {close: 'Hide legend', open: 'Show legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      },
       dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
 
   //============================================================
@@ -42,7 +46,6 @@ nv.models.lineChart = function () {
         .align('right'),
       controls = nv.models.legend()
         .align('left')
-        .strings({close: 'Hide chart controls', type: 'Show chart controls'})
         .color(['#444']);
 
   var showTooltip = function (e, offsetElement) {
@@ -86,7 +89,7 @@ nv.models.lineChart = function () {
       if (!data || !data.length || !data.filter(function (d) {
         return d.values.length;
       }).length) {
-        var noDataText = container.selectAll('.nv-noData').data([noData]);
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
         noDataText.enter().append('text')
           .attr('class', 'nvd3 nv-noData')
@@ -191,6 +194,7 @@ nv.models.lineChart = function () {
       if (showControls) {
         controls
           .id('controls_' + chart.id())
+          .strings(chart.strings().controls)
           .height(availableHeight - innerMargin.top);
         controlsWrap
           .datum(controlsData)
@@ -202,6 +206,7 @@ nv.models.lineChart = function () {
       if (showLegend) {
         legend
           .id('legend_' + chart.id())
+          .strings(chart.strings().legend)
           .height(availableHeight - innerMargin.top);
         legendWrap
           .datum(data)
@@ -562,19 +567,23 @@ nv.models.lineChart = function () {
     return chart;
   };
 
-  chart.noData = function (_) {
-    if (!arguments.length) {
-      return noData;
-    }
-    noData = _;
-    return chart;
-  };
-
   chart.state = function (_) {
     if (!arguments.length) {
       return state;
     }
     state = _;
+    return chart;
+  };
+
+  chart.strings = function (_) {
+    if (!arguments.length) {
+      return strings;
+    }
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
     return chart;
   };
 

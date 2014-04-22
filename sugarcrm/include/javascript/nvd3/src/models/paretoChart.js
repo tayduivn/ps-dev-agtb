@@ -32,7 +32,12 @@ nv.models.paretoChart = function () {
       },
       x,
       y,
-      noData = 'No Data Available.',
+      strings = {
+        barlegend: {close: 'Hide bar legend', open: 'Show bar legend'},
+        linelegend: {close: 'Hide line legend', open: 'Show line legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      },
       dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove');
 
   //============================================================
@@ -61,12 +66,10 @@ nv.models.paretoChart = function () {
         .showMaxMin(false),
       barLegend = nv.models.legend()
         .align('left')
-        .position('middle')
-        .strings({close: 'Hide bar legend', type: 'Show bar legend'}),
+        .position('middle'),
       lineLegend = nv.models.legend()
         .align('right')
-        .position('middle')
-        .strings({close: 'Hide line legend', type: 'Show line legend'});
+        .position('middle');
 
   var showTooltip = function (e, offsetElement, dataGroup) {
     var left = e.pos[0],
@@ -158,7 +161,7 @@ nv.models.paretoChart = function () {
       if (!data || !data.length || !data.filter(function (d) {
         return d.values.length;
       }).length) {
-        var noDataText = container.selectAll('.nv-noData').data([noData]);
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
         noDataText.enter().append('text')
           .attr('class', 'nvd3 nv-noData')
@@ -313,6 +316,7 @@ nv.models.paretoChart = function () {
         // bar series legend
         barLegend
           .id('barlegend_' + chart.id())
+          .strings(chart.strings().barlegend)
           .height(availableHeight - innerMargin.top);
         barLegendWrap
           .datum(
@@ -327,6 +331,7 @@ nv.models.paretoChart = function () {
         // line series legend
         lineLegend
           .id('linelegend_' + chart.id())
+          .strings(chart.strings().linelegend)
           .height(availableHeight - innerMargin.top);
         lineLegendWrap
           .datum(
@@ -887,14 +892,6 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.noData = function (_) {
-    if (!arguments.length) {
-      return noData;
-    }
-    noData = _;
-    return chart;
-  };
-
   chart.barClick = function (_) {
     if (!arguments.length) {
       return barClick;
@@ -920,6 +917,18 @@ nv.models.paretoChart = function () {
       return quotaTickFormat;
     }
     quotaTickFormat = _;
+    return chart;
+  };
+
+  chart.strings = function (_) {
+    if (!arguments.length) {
+      return strings;
+    }
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
     return chart;
   };
 

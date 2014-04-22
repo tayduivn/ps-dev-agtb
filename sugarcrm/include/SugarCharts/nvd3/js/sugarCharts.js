@@ -74,7 +74,14 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .colorData( 'default' )
                         .colorFill( 'default' )
                         .stacked(!params.display_manager)
-                        .id(chartId);
+                        .id(chartId)
+                        .strings({
+                            legend: {
+                                close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                            },
+                            noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+                        });
 
                     // get chartId from params or use the default for sugar
                     d3ChartId = params.chartId || 'db620e51-8350-c596-06d1-4f866bfcfd5b';
@@ -122,7 +129,14 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .reduceXTicks(false)
                         .colorData('default')
                         .stacked(chartConfig.barType === 'stacked'? true : true)
-                        .id(d3ChartId);
+                        .id(d3ChartId)
+                        .strings({
+                            legend: {
+                                close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                            },
+                            noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+                        });
 
                     barChart.yAxis
                         .tickSize(0)
@@ -162,7 +176,14 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .tooltips(true)
                         .showControls(false)
                         .colorData('default')
-                        .id(d3ChartId);
+                        .id(d3ChartId)
+                        .strings({
+                            legend: {
+                                close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                            },
+                            noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+                        });
 
                     lineChart.xAxis
                         .showMaxMin(false)
@@ -193,7 +214,14 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .showTitle(true)
                         .tooltips(true)
                         .colorData('default')
-                        .id(d3ChartId);
+                        .id(d3ChartId)
+                        .strings({
+                            legend: {
+                                close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                            },
+                            noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+                        });
 
                     d3.select('#' + d3ChartId)
                         .append('svg')
@@ -224,7 +252,14 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                                 '<p>' +  y + '</p>';
                         })
                         .colorData('default')
-                        .id(d3ChartId);
+                        .id(d3ChartId)
+                        .strings({
+                            legend: {
+                                close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                            },
+                            noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+                        });
 
                     d3.select('#' + d3ChartId)
                         .append('svg')

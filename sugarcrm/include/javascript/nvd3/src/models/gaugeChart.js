@@ -17,7 +17,11 @@ nv.models.gaugeChart = function () {
       },
       x,
       y, //can be accessed via chart.yScale()
-      noData = 'No Data Available.',
+      strings = {
+        legend: {close: 'Hide legend', open: 'Show legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      },
       dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove');
 
   //============================================================
@@ -64,7 +68,7 @@ nv.models.gaugeChart = function () {
       // Display No Data message if there's nothing to show.
 
       if (!data || !data.length) {
-        var noDataText = container.selectAll('.nv-noData').data([noData]);
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
         noDataText.enter().append('text')
           .attr('class', 'nvd3 nv-noData')
@@ -124,6 +128,7 @@ nv.models.gaugeChart = function () {
       if (showLegend) {
         legend
           .id('legend_' + chart.id())
+          .strings(chart.strings().legend)
           .height(availableHeight - innerMargin.top);
         legendWrap
           .datum(data)
@@ -323,11 +328,15 @@ nv.models.gaugeChart = function () {
     return chart;
   };
 
-  chart.noData = function (_) {
+  chart.strings = function (_) {
     if (!arguments.length) {
-      return noData;
+      return strings;
     }
-    noData = _;
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
     return chart;
   };
 

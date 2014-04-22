@@ -32,7 +32,11 @@ nv.models.bubbleChart = function () {
       x,
       y,
       state = {},
-      noData = 'No Data Available.',
+      strings = {
+        legend: {close: 'Hide legend', open: 'Show legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      },
       dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
 
   //============================================================
@@ -259,7 +263,7 @@ nv.models.bubbleChart = function () {
         // Display No Data message if there's nothing to show.
 
         if (!data || !data.length) {
-          var noDataText = container.selectAll('.nv-noData').data([noData]);
+          var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
           noDataText.enter().append('text')
             .attr('class', 'nvd3 nv-noData')
@@ -323,6 +327,7 @@ nv.models.bubbleChart = function () {
         if (showLegend) {
           legend
             .id('legend_' + chart.id())
+            .strings(chart.strings().legend)
             .height(availableHeight - innerMargin.top)
             .key(function (d){ return d.key + '%'; });
           legendWrap
@@ -623,14 +628,6 @@ nv.models.bubbleChart = function () {
     return chart;
   };
 
-  chart.noData = function (_) {
-    if (!arguments.length) {
-      return noData;
-    }
-    noData = _;
-    return chart;
-  };
-
   chart.state = function (_) {
     if (!arguments.length) {
       return state;
@@ -672,6 +669,18 @@ nv.models.bubbleChart = function () {
   };
 
   chart.colorFill = function (_) {
+    return chart;
+  };
+
+  chart.strings = function (_) {
+    if (!arguments.length) {
+      return strings;
+    }
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
     return chart;
   };
 

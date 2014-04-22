@@ -1294,7 +1294,7 @@ nv.models.legend = function () {
         .style('pointer-events', 'all');
 
       link
-        .text(legendOpen === 1 ? legend.strings().close : legend.strings().type)
+        .text(legendOpen === 1 ? legend.strings().close : legend.strings().open)
         .attr('text-anchor', align === 'left' ? 'start' : 'end')
         .attr('dy', '.32em')
         .attr('dx', 0)
@@ -1635,7 +1635,7 @@ nv.models.legend = function () {
           .style('opacity', legendOpen)
           .style('display', legendOpen ? 'inline' : 'none');
         link
-          .text(legendOpen === 1 ? legend.strings().close : legend.strings().type);
+          .text(legendOpen === 1 ? legend.strings().close : legend.strings().open);
       }
 
       dispatch.on('toggleMenu', function (d) {
@@ -2478,7 +2478,11 @@ nv.models.bubbleChart = function () {
       x,
       y,
       state = {},
-      noData = 'No Data Available.',
+      strings = {
+        legend: {close: 'Hide legend', open: 'Show legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      },
       dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
 
   //============================================================
@@ -2705,7 +2709,7 @@ nv.models.bubbleChart = function () {
         // Display No Data message if there's nothing to show.
 
         if (!data || !data.length) {
-          var noDataText = container.selectAll('.nv-noData').data([noData]);
+          var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
           noDataText.enter().append('text')
             .attr('class', 'nvd3 nv-noData')
@@ -2769,6 +2773,7 @@ nv.models.bubbleChart = function () {
         if (showLegend) {
           legend
             .id('legend_' + chart.id())
+            .strings(chart.strings().legend)
             .height(availableHeight - innerMargin.top)
             .key(function (d){ return d.key + '%'; });
           legendWrap
@@ -3069,14 +3074,6 @@ nv.models.bubbleChart = function () {
     return chart;
   };
 
-  chart.noData = function (_) {
-    if (!arguments.length) {
-      return noData;
-    }
-    noData = _;
-    return chart;
-  };
-
   chart.state = function (_) {
     if (!arguments.length) {
       return state;
@@ -3118,6 +3115,18 @@ nv.models.bubbleChart = function () {
   };
 
   chart.colorFill = function (_) {
+    return chart;
+  };
+
+  chart.strings = function (_) {
+    if (!arguments.length) {
+      return strings;
+    }
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
     return chart;
   };
 
@@ -3652,7 +3661,11 @@ nv.models.funnelChart = function () {
       x,
       y,
       state = {},
-      noData = 'No Data Available.',
+      strings = {
+        legend: {close: 'Hide legend', open: 'Show legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      },
       dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
 
   //============================================================
@@ -3708,7 +3721,7 @@ nv.models.funnelChart = function () {
       if (!data || !data.length || !data.filter(function (d) {
         return d.values.length;
       }).length) {
-        var noDataText = container.selectAll('.nv-noData').data([noData]);
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
         noDataText.enter().append('text')
           .attr('class', 'nvd3 nv-noData')
@@ -3782,6 +3795,7 @@ nv.models.funnelChart = function () {
       if (showLegend) {
         legend
           .id('legend_' + chart.id())
+          .strings(chart.strings().legend)
           .height(availableHeight - innerMargin.top);
         legendWrap
           .datum(data)
@@ -4068,19 +4082,23 @@ nv.models.funnelChart = function () {
     return chart;
   };
 
-  chart.noData = function (_) {
-    if (!arguments.length) {
-      return noData;
-    }
-    noData = _;
-    return chart;
-  };
-
   chart.state = function (_) {
     if (!arguments.length) {
       return state;
     }
     state = _;
+    return chart;
+  };
+
+  chart.strings = function (_) {
+    if (!arguments.length) {
+      return strings;
+    }
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
     return chart;
   };
 
@@ -4555,7 +4573,11 @@ nv.models.gaugeChart = function () {
       },
       x,
       y, //can be accessed via chart.yScale()
-      noData = 'No Data Available.',
+      strings = {
+        legend: {close: 'Hide legend', open: 'Show legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      },
       dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove');
 
   //============================================================
@@ -4602,7 +4624,7 @@ nv.models.gaugeChart = function () {
       // Display No Data message if there's nothing to show.
 
       if (!data || !data.length) {
-        var noDataText = container.selectAll('.nv-noData').data([noData]);
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
         noDataText.enter().append('text')
           .attr('class', 'nvd3 nv-noData')
@@ -4662,6 +4684,7 @@ nv.models.gaugeChart = function () {
       if (showLegend) {
         legend
           .id('legend_' + chart.id())
+          .strings(chart.strings().legend)
           .height(availableHeight - innerMargin.top);
         legendWrap
           .datum(data)
@@ -4861,11 +4884,15 @@ nv.models.gaugeChart = function () {
     return chart;
   };
 
-  chart.noData = function (_) {
+  chart.strings = function (_) {
     if (!arguments.length) {
-      return noData;
+      return strings;
     }
-    noData = _;
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
     return chart;
   };
 
@@ -5202,7 +5229,11 @@ nv.models.lineChart = function () {
       x,
       y,
       state = {},
-      noData = 'No Data Available.',
+      strings = {
+        legend: {close: 'Hide legend', open: 'Show legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      },
       dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
 
   //============================================================
@@ -5225,7 +5256,6 @@ nv.models.lineChart = function () {
         .align('right'),
       controls = nv.models.legend()
         .align('left')
-        .strings({close: 'close', type: 'controls'})
         .color(['#444']);
 
   var showTooltip = function (e, offsetElement) {
@@ -5269,7 +5299,7 @@ nv.models.lineChart = function () {
       if (!data || !data.length || !data.filter(function (d) {
         return d.values.length;
       }).length) {
-        var noDataText = container.selectAll('.nv-noData').data([noData]);
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
         noDataText.enter().append('text')
           .attr('class', 'nvd3 nv-noData')
@@ -5374,6 +5404,7 @@ nv.models.lineChart = function () {
       if (showControls) {
         controls
           .id('controls_' + chart.id())
+          .strings(chart.strings().controls)
           .height(availableHeight - innerMargin.top);
         controlsWrap
           .datum(controlsData)
@@ -5385,6 +5416,7 @@ nv.models.lineChart = function () {
       if (showLegend) {
         legend
           .id('legend_' + chart.id())
+          .strings(chart.strings().legend)
           .height(availableHeight - innerMargin.top);
         legendWrap
           .datum(data)
@@ -5745,19 +5777,23 @@ nv.models.lineChart = function () {
     return chart;
   };
 
-  chart.noData = function (_) {
-    if (!arguments.length) {
-      return noData;
-    }
-    noData = _;
-    return chart;
-  };
-
   chart.state = function (_) {
     if (!arguments.length) {
       return state;
     }
     state = _;
+    return chart;
+  };
+
+  chart.strings = function (_) {
+    if (!arguments.length) {
+      return strings;
+    }
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
     return chart;
   };
 
@@ -6963,7 +6999,11 @@ nv.models.multiBarChart = function () {
       x,
       y,
       state = {},
-      noData = 'No Data Available.',
+      strings = {
+        legend: {close: 'Hide legend', open: 'Show legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      },
       dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
 
   //============================================================
@@ -6988,7 +7028,6 @@ nv.models.multiBarChart = function () {
         .align('right'),
       controls = nv.models.legend()
         .align('left')
-        .strings({close: 'close', type: 'controls'})
         .color(['#444']);
 
   var showTooltip = function (e, offsetElement, groupTotals) {
@@ -7137,6 +7176,7 @@ nv.models.multiBarChart = function () {
       if (showControls) {
         controls
           .id('controls_' + chart.id())
+          .strings(chart.strings().controls)
           .height(availableHeight - innerMargin.top);
         controlsWrap
           .datum(controlsData)
@@ -7154,6 +7194,7 @@ nv.models.multiBarChart = function () {
 
         legend
           .id('legend_' + chart.id())
+          .strings(chart.strings().legend)
           .height(availableHeight - innerMargin.top);
         legendWrap
           .datum(data)
@@ -7499,19 +7540,23 @@ nv.models.multiBarChart = function () {
     return chart;
   };
 
-  chart.noData = function (_) {
-    if (!arguments.length) {
-      return noData;
-    }
-    noData = _;
-    return chart;
-  };
-
   chart.state = function (_) {
     if (!arguments.length) {
       return state;
     }
     state = _;
+    return chart;
+  };
+
+  chart.strings = function (_) {
+    if (!arguments.length) {
+      return strings;
+    }
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
     return chart;
   };
 
@@ -7540,7 +7585,11 @@ nv.models.multiBarHorizontalChart = function () {
       x,
       y,
       state = {},
-      noData = 'No Data Available.',
+      strings = {
+        legend: {close: 'Hide legend', open: 'Show legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      },
       dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
 
   //============================================================
@@ -7565,7 +7614,6 @@ nv.models.multiBarHorizontalChart = function () {
         .align('right'),
       controls = nv.models.legend()
         .align('left')
-        .strings({close: 'close', type: 'controls'})
         .color(['#444']);
 
   var showTooltip = function (e, offsetElement, groupTotals) {
@@ -7611,7 +7659,7 @@ nv.models.multiBarHorizontalChart = function () {
       if (!data || !data.length || !data.filter(function (d) {
         return d.values.length;
       }).length) {
-        var noDataText = container.selectAll('.nv-noData').data([noData]);
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
         noDataText.enter().append('text')
           .attr('class', 'nvd3 nv-noData')
@@ -7714,6 +7762,7 @@ nv.models.multiBarHorizontalChart = function () {
       if (showControls) {
         controls
           .id('controls_' + chart.id())
+          .strings(chart.strings().controls)
           .height(availableHeight - innerMargin.top);
         controlsWrap
           .datum(controlsData)
@@ -7731,6 +7780,7 @@ nv.models.multiBarHorizontalChart = function () {
 
         legend
           .id('legend_' + chart.id())
+          .strings(chart.strings().legend)
           .height(availableHeight - innerMargin.top);
         legendWrap
           .datum(data)
@@ -8073,19 +8123,23 @@ nv.models.multiBarHorizontalChart = function () {
     return chart;
   };
 
-  chart.noData = function (_) {
-    if (!arguments.length) {
-      return noData;
-    }
-    noData = _;
-    return chart;
-  };
-
   chart.state = function (_) {
     if (!arguments.length) {
       return state;
     }
     state = _;
+    return chart;
+  };
+
+  chart.strings = function (_) {
+    if (!arguments.length) {
+      return strings;
+    }
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
     return chart;
   };
 
@@ -8127,7 +8181,12 @@ nv.models.paretoChart = function () {
       },
       x,
       y,
-      noData = 'No Data Available.',
+      strings = {
+        barlegend: {close: 'Hide bar legend', open: 'Show bar legend'},
+        linelegend: {close: 'Hide line legend', open: 'Show line legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      },
       dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove');
 
   //============================================================
@@ -8156,12 +8215,10 @@ nv.models.paretoChart = function () {
         .showMaxMin(false),
       barLegend = nv.models.legend()
         .align('left')
-        .position('middle')
-        .strings({close: 'Hide bar legend', type: 'Show bar legend'}),
+        .position('middle'),
       lineLegend = nv.models.legend()
         .align('right')
-        .position('middle')
-        .strings({close: 'Hide line legend', type: 'Show line legend'});
+        .position('middle');
 
   var showTooltip = function (e, offsetElement, dataGroup) {
     var left = e.pos[0],
@@ -8253,7 +8310,7 @@ nv.models.paretoChart = function () {
       if (!data || !data.length || !data.filter(function (d) {
         return d.values.length;
       }).length) {
-        var noDataText = container.selectAll('.nv-noData').data([noData]);
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
         noDataText.enter().append('text')
           .attr('class', 'nvd3 nv-noData')
@@ -8408,6 +8465,7 @@ nv.models.paretoChart = function () {
         // bar series legend
         barLegend
           .id('barlegend_' + chart.id())
+          .strings(chart.strings().barlegend)
           .height(availableHeight - innerMargin.top);
         barLegendWrap
           .datum(
@@ -8422,6 +8480,7 @@ nv.models.paretoChart = function () {
         // line series legend
         lineLegend
           .id('linelegend_' + chart.id())
+          .strings(chart.strings().linelegend)
           .height(availableHeight - innerMargin.top);
         lineLegendWrap
           .datum(
@@ -8982,14 +9041,6 @@ nv.models.paretoChart = function () {
     return chart;
   };
 
-  chart.noData = function (_) {
-    if (!arguments.length) {
-      return noData;
-    }
-    noData = _;
-    return chart;
-  };
-
   chart.barClick = function (_) {
     if (!arguments.length) {
       return barClick;
@@ -9015,6 +9066,18 @@ nv.models.paretoChart = function () {
       return quotaTickFormat;
     }
     quotaTickFormat = _;
+    return chart;
+  };
+
+  chart.strings = function (_) {
+    if (!arguments.length) {
+      return strings;
+    }
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
     return chart;
   };
 
@@ -9453,7 +9516,11 @@ nv.models.pieChart = function () {
                '<p>' +  y + '</p>';
       },
       state = {},
-      noData = 'No Data Available.',
+      strings = {
+        legend: {close: 'Hide legend', open: 'Show legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      },
       dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
 
   //============================================================
@@ -9501,7 +9568,7 @@ nv.models.pieChart = function () {
       // Display No Data message if there's nothing to show.
 
       if (!data || !data.length) {
-        var noDataText = container.selectAll('.nv-noData').data([noData]);
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
         noDataText.enter().append('text')
           .attr('class', 'nvd3 nv-noData')
@@ -9569,6 +9636,7 @@ nv.models.pieChart = function () {
       if (showLegend) {
         legend
           .id('legend_' + chart.id())
+          .strings(chart.strings().legend)
           .height(availableHeight - innerMargin.top);
         legendWrap
           .datum(data)
@@ -9813,14 +9881,6 @@ nv.models.pieChart = function () {
     return chart;
   };
 
-  chart.noData = function (_) {
-    if (!arguments.length) {
-      return noData;
-    }
-    noData = _;
-    return chart;
-  };
-
   chart.state = function (_) {
     if (!arguments.length) {
       return state;
@@ -9838,6 +9898,18 @@ nv.models.pieChart = function () {
   };
 
   chart.colorFill = function (_) {
+    return chart;
+  };
+
+  chart.strings = function (_) {
+    if (!arguments.length) {
+      return strings;
+    }
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
     return chart;
   };
 
@@ -10704,7 +10776,11 @@ nv.models.stackedAreaChart = function () {
       y,
       yAxisTickFormat = d3.format(',.2f'),
       state = {},
-      noData = 'No Data Available.',
+      strings = {
+        legend: {close: 'Hide legend', open: 'Show legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      },
       dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
 
   //============================================================
@@ -10727,7 +10803,6 @@ nv.models.stackedAreaChart = function () {
         .align('right'),
       controls = nv.models.legend()
         .align('left')
-        .strings({close: 'close', type: 'controls'})
         .color(['#444']);
 
   stacked.scatter
@@ -10776,7 +10851,7 @@ nv.models.stackedAreaChart = function () {
       if (!data || !data.length || !data.filter(function (d) {
         return d.values.length;
       }).length) {
-        var noDataText = container.selectAll('.nv-noData').data([noData]);
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
         noDataText.enter().append('text')
           .attr('class', 'nvd3 nv-noData')
@@ -10866,6 +10941,7 @@ nv.models.stackedAreaChart = function () {
       if (showControls) {
         controls
           .id('controls_' + chart.id())
+          .strings(chart.strings().controls)
           .height(availableHeight - innerMargin.top);
         controlsWrap
           .datum(controlsData)
@@ -10877,6 +10953,7 @@ nv.models.stackedAreaChart = function () {
       if (showLegend) {
         legend
           .id('legend_' + chart.id())
+          .strings(chart.strings().legend)
           .height(availableHeight - innerMargin.top);
         legendWrap
           .datum(data)
@@ -11250,14 +11327,6 @@ nv.models.stackedAreaChart = function () {
     return chart;
   };
 
-  chart.noData = function (_) {
-    if (!arguments.length) {
-      return noData;
-    }
-    noData = _;
-    return chart;
-  };
-
   chart.state = function (_) {
     if (!arguments.length) {
       return state;
@@ -11272,6 +11341,18 @@ nv.models.stackedAreaChart = function () {
     }
     yAxisTickFormat = _;
     return yAxis;
+  };
+
+  chart.strings = function (_) {
+    if (!arguments.length) {
+      return strings;
+    }
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
+    return chart;
   };
 
   //============================================================
@@ -11688,10 +11769,6 @@ nv.models.treemapChart = function() {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var treemap = nv.models.treemap()
-    , legend = nv.models.legend()
-    ;
-
   var margin = {top: 0, right: 10, bottom: 10, left: 10}
     , width = null
     , height = null
@@ -11708,10 +11785,18 @@ nv.models.treemapChart = function() {
     , colorArray = d3.scale.category20().range().map( function(d){ return d; })
     , x //can be accessed via chart.xScale()
     , y //can be accessed via chart.yScale()
-    , noData = 'No Data Available.'
+    , strings = {
+        legend: {close: 'Hide legend', open: 'Show legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      }
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove', 'elementMousemove')
     ;
 
+
+  var treemap = nv.models.treemap()
+    , legend = nv.models.legend()
+    ;
 
   //============================================================
 
@@ -11749,7 +11834,7 @@ nv.models.treemapChart = function() {
       // Display noData message if there's nothing to show.
 
       if (!data || !data.length || !data.filter(function(d) { return d.children.length; }).length) {
-        var noDataText = container.selectAll('.nv-noData').data([noData]);
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
         noDataText.enter().append('text')
           .attr('class', 'nvd3 nv-noData')
@@ -11797,6 +11882,7 @@ nv.models.treemapChart = function() {
 
         legend
           .id('legend_' + chart.id())
+          .strings(chart.strings().legend)
           .width(availableWidth + margin.left)
           .height(availableHeight);
 
@@ -12045,7 +12131,7 @@ nv.models.treemapChart = function() {
   };
 
   chart.tooltip = function(_) {
-    if (!arguments.length) return tooltip;
+    if (!arguments.length) { return tooltip; }
     tooltip = _;
     return chart;
   };
@@ -12062,9 +12148,15 @@ nv.models.treemapChart = function() {
     return chart;
   };
 
-  chart.noData = function(_) {
-    if (!arguments.length) { return noData; }
-    noData = _;
+  chart.strings = function (_) {
+    if (!arguments.length) {
+      return strings;
+    }
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
     return chart;
   };
 

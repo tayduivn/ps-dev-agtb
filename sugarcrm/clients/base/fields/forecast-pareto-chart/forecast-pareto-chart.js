@@ -249,7 +249,14 @@
             .quotaTickFormat(function(d) {
                 return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + d3.format(',.3s')(d);
             })
-            .id(this.chartId);
+            .id(this.chartId)
+            .strings({
+                legend: {
+                    close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                    open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                },
+                noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+            });
 
         // just on the off chance that no options param is passed in
         options = options || {};
