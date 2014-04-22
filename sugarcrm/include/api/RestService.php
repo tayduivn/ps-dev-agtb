@@ -883,12 +883,7 @@ class RestService extends ServiceBase
             // They have normal post arguments
             $postVars = $_POST;
         } else {
-            $postContents = null;
-            if ( !empty($GLOBALS['HTTP_RAW_POST_DATA']) ) {
-                $postContents = $GLOBALS['HTTP_RAW_POST_DATA'];
-            } else {
-                $postContents = file_get_contents('php://input');
-            }
+            $postContents = $this->request->getPostContents();
             if ( !empty($postContents) ) {
                 // This looks like the post contents are JSON
                 // Note: If we want to support rest based XML, we will need to change this

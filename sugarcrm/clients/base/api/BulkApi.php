@@ -10,8 +10,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
  */
+require_once 'include/api/BulkRestService.php';
+require_once 'include/api/BulkRestRequest.php';
+require_once 'include/api/BulkRestResponse.php';
 
 /**
  * Bulk API calls
@@ -27,8 +30,8 @@ class BulkApi extends SugarApi
                 'path' => array('bulk'),
                 'pathVars' => array(''),
                 'method' => 'bulkCall',
-                'shortHelp' => 'Bulk API call',
-                'longHelp' => 'include/api/help/help_bulk.html',
+                'shortHelp' => 'Run several API call in a sequence',
+                'longHelp' => 'include/api/help/bulk_post_help.html',
             ),
         );
     }
@@ -44,7 +47,8 @@ class BulkApi extends SugarApi
     {
         $this->requireArgs($args,array('requests'));
         $restResp = new BulkRestResponse($_SERVER);
-        $restClass = get_class($api);
+        // reset vars so they won't confuse the child service
+        $_GET = array(); $_POST = array();
         foreach($args['requests'] as $name => $request) {
             if(empty($request['url'])) {
                 $GLOBALS['log']->fatal("Bulk Api: URL missing for request $name");
@@ -63,174 +67,5 @@ class BulkApi extends SugarApi
 
         }
         return $restResp->getResponses();
-    }
-}
-
-/**
- * Bulk API Rest service class
- * Shortcuts some functions that we don't need to do on bulk requests
- */
-class BulkRestService extends RestService
-{
-    protected $parent;
-
-    public function __construct($parent)
-    {
-        $this->parent = $parent;
-        parent::__construct();
-    }
-
-    /**
-     * Shortcut authentication since we're already authenticated before
-     * @see RestService::authenticateUser()
-     */
-    protected function authenticateUser()
-    {
-        $this->user = $this->parent->user;
-        return array('isLoggedIn' => true, 'exception' => false);
-    }
-
-    /**
-     * Don't check metadata - top request checks it
-     * @see RestService::isMetadataCurrent()
-     */
-    protected function isMetadataCurrent()
-    {
-        return true;
-    }
-
-    /**
-     * Don't load envt - top request loads it
-     * @see ServiceBase::loadUserEnvironment()
-     */
-    protected function loadUserEnvironment()
-    {
-    }
-
-    /**
-     * Never release session
-     * @see ServiceBase::releaseSession()
-     */
-    protected function releaseSession()
-    {
-    }
-}
-
-/**
- * Request class for bulk requests
- */
-class BulkRestRequest extends RestRequest
-{
-    /**
-     * Construct request from request data
-     * @param array $request
-     */
-    public function __construct($request)
-    {
-        $svars = $_SERVER;
-        $rvars = array();
-
-        $rvars['__sugar_url'] = $request['url'];
-        if(!empty($request['headers'])) {
-            foreach($request['headers'] as $hname => $hval) {
-                $svars['HTTP_'.str_replace("-", "_", strtoupper($hname))] = $hval;
-            }
-        }
-        if(!empty($request['method'])) {
-            $svars['REQUEST_METHOD'] = $request['method'];
-        } else {
-            $svars['REQUEST_METHOD'] = 'GET';
-        }
-
-        if(isset($request['data'])) {
-            $this->postContents =  $request['data'];
-        }
-
-        parent::__construct($svars, $rvars);
-    }
-}
-
-/**
- * Response class for bulk requests
- * Aggregates multiple responses on send()
- */
-class BulkRestResponse extends RestResponse
-{
-    /**
-     * Current request name
-     * @var string
-     */
-    protected $reqName;
-
-    /**
-     * Request results
-     * @var array
-     */
-    protected $results = array();
-
-    /**
-     * Set request name
-     * @param string $name
-     */
-    public function setRequest($name)
-    {
-        $this->reqName = $name;
-        return $this;
-    }
-
-    /**
-     * Get accumulated responses
-     * @return array
-     */
-    public function getResponses()
-    {
-        return $this->results;
-    }
-
-    /**
-     * Map of fields to record: RestResponse => JSON
-     * @var array
-     */
-    protected $fieldMap = array(
-        'body' => 'contents',
-        'headers' => 'headers',
-        'code' => 'status',
-    );
-
-    /**
-     * Instead of sending, record the request data
-     * @see RestResponse::send()
-     */
-    public function send()
-    {
-        switch($this->type) {
-            case self::FILE:
-                if(!file_exists($this->filename)) {
-                    $this->body = '';
-                    $this->headers = array();
-                    $this->code = 404;
-                } else {
-                    $this->setHeader("Content-Length", filesize($this->filename));
-                    $this->body = file_get_contents($this->filename);
-                }
-                break;
-            case self::JSON:
-            case self::JSON_HTML:
-                // keep as-is
-                break;
-            default:
-                 $this->body = $this->processContent();
-        }
-
-        foreach($this->fieldMap as $prop => $data) {
-            $this->results[$this->reqName][$data] = $this->$prop;
-            if(is_array($this->$prop)) {
-                $this->$prop = array();
-            } else {
-                $this->$prop = null;
-            }
-        }
-        // reset type for next one
-        $this->type = self::RAW;
     }
 }
