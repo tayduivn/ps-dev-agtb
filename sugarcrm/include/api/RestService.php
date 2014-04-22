@@ -123,7 +123,7 @@ class RestService extends ServiceBase
             // Don't use requireWithCustom because we need the data out of it
             require 'custom/include/api/metadata.php';
         }
-        
+
         $this->min_version = $apiSettings['minVersion'];
         $this->max_version = $apiSettings['maxVersion'];
         $this->api_settings = $apiSettings;
@@ -208,7 +208,7 @@ class RestService extends ServiceBase
                         throw $loginException;
                     }
                 } else if (empty($route['ignoreMetaHash'])) {
-                    // Check metadata hash state and return an error to force a 
+                    // Check metadata hash state and return an error to force a
                     // resync so that the new metadata gets picked up if it is
                     // out of date
                     if (!$this->isMetadataCurrent()) {
@@ -267,12 +267,7 @@ class RestService extends ServiceBase
                     // They have normal post arguments
                     $postVars = $_POST;
                 } else {
-                    $postContents = null;
-                    if (!empty($GLOBALS['HTTP_RAW_POST_DATA'])) {
-                        $postContents = $GLOBALS['HTTP_RAW_POST_DATA'];
-                    } else {
-                        $postContents = file_get_contents('php://input');
-                    }
+                    $postContents = $this->request->getPostContents();
                     if (!empty($postContents)) {
                         // This looks like the post contents are JSON
                         // Note: If we want to support rest based XML, we will need to change this
@@ -320,7 +315,7 @@ class RestService extends ServiceBase
             $this->response->setContent($apiClass->$apiMethod($this,$argArray));
 
             $this->respond($route, $argArray);
-            
+
             if (empty($route['rawReply'])) {
                 $this->handleErrorOutput('php_error_after_api');
             }
@@ -486,7 +481,7 @@ class RestService extends ServiceBase
                     // This will return false if anything is wrong with the session
                     // (mismatched IP, mismatched unique_key, etc)
                     $valid = $authController->apiSessionAuthenticate();
-                    
+
                     if ($valid) {
                         $valid = $this->userAfterAuthenticate($_SESSION['authenticated_user_id'],$oauthServer);
                     }
@@ -586,7 +581,7 @@ class RestService extends ServiceBase
      * Handles authentication of the current user from the download token
      *
      * @param string $token The download autentication token.
-     * @param string $platform the platform for the download 
+     * @param string $platform the platform for the download
      * @returns bool Was the login successful
      */
     protected function authenticateUserForDownload()
@@ -611,14 +606,14 @@ class RestService extends ServiceBase
             $oauthServer->setPlatform($platform);
 
             $tokenData = $oauthServer->verifyDownloadToken($token);
-            
+
             $GLOBALS['current_user'] = BeanFactory::getBean('Users',$tokenData['user_id']);
             $valid = $this->userAfterAuthenticate($tokenData['user_id'],$oauthServer);
         }
 
         return $valid;
     }
-    
+
     /**
      * Sets up a user after successful authentication and session setup
      *
@@ -645,9 +640,9 @@ class RestService extends ServiceBase
 
             // Setup visibility where needed
             $oauthServer->setupVisibility();
-            
+
             LogicHook::initialize()->call_custom_logic('', 'after_session_start');
-            
+
             $this->user = $GLOBALS['current_user'];
             $this->user->setupSession();
         }
@@ -778,7 +773,7 @@ class RestService extends ServiceBase
         if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($route['noEtag'])) {
             $this->response->generateETagHeader();
         }
-        
+
         //leaving this logic split out in case more actions on rawreply need added in the future
         if (!empty($route['rawReply'])) {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -833,6 +828,17 @@ class RestService extends ServiceBase
     }
 
     /**
+     * Inject request object
+     * @param RestResponse $resp
+     */
+    public function setRequest(RestRequest $req)
+    {
+        $this->request = $req;
+
+        return $this;
+    }
+
+    /**
      * Gets the full collection of arguments from the request
      *
      * @param  array $route The route description for this request
@@ -849,7 +855,7 @@ class RestService extends ServiceBase
             $getVars = $_GET;
             if ( !empty($route['jsonParams']) ) {
                 foreach ( $route['jsonParams'] as $fieldName ) {
-                    if ( isset($_GET[$fieldName]) 
+                    if ( isset($_GET[$fieldName])
                          && !empty($_GET[$fieldName])
                          && is_string($_GET[$fieldName])
                          &&  isset($_GET[$fieldName]{0})
@@ -899,46 +905,46 @@ class RestService extends ServiceBase
         // the posted document is probably the output of a generated form.
         return array_merge($postVars,$getVars,$pathVars);
     }
-    
+
     /**
-     * Verifies state of the metadata so the API can determine if there needs to 
+     * Verifies state of the metadata so the API can determine if there needs to
      * be an invalid metadata response issued
-     * 
+     *
      * @return boolean
      */
     protected function isMetadataCurrent()
     {
-        // Default expectation is that metadata is current. This also covers the 
+        // Default expectation is that metadata is current. This also covers the
         // case of the metadata hash headers not being sent, which would always
         // assume that the metadata is current.
         $return = true;
-        
+
         // If the metadata hash header was sent in the request, use it to compare
         // the current metadata hash to see if the current hash is valid
         if (isset($this->request_headers[self::HEADER_META_HASH])) {
             $mm = $this->getMetadataManager();
             $return = $mm->isMetadataHashValid($this->request_headers[self::HEADER_META_HASH]);
         }
-        
-        // If the user metadata hash header was sent, use it to compare against 
+
+        // If the user metadata hash header was sent, use it to compare against
         // the current user's preferences change state
-        // 
+        //
         // Only check user metadata if system metadata has passed
         if ($return && isset($this->request_headers[self::USER_META_HASH])) {
             // Metadata manager may have already been set. If not though, get it
             if (empty($mm)) {
                 $mm = $this->getMetadataManager();
             }
-            
+
             $return = !$mm->hasUserMetadataChanged($this->user, $this->request_headers[self::USER_META_HASH]);
         }
-        
+
         return $return;
     }
-    
+
     /**
      * Gets the metadata manager for this user and platform
-     * 
+     *
      * @return MetaDataManager
      */
     protected function getMetadataManager()
