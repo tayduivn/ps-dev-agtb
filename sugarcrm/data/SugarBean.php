@@ -6315,7 +6315,7 @@ class SugarBean
     *		$event - The string for the current event (i.e. before_save)
     * 		$arguments - An array of arguments that are specific to the event.
     */
-    function call_custom_logic($event, $arguments = null)
+    function call_custom_logic($event, $arguments = array())
     {
         if(!isset($this->processed) || $this->processed == false){
             //add some logic to ensure we do not get into an infinite loop
