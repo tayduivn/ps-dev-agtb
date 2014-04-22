@@ -442,5 +442,13 @@ $dictionary['KBSContent'] = array(
     ),
 );
 
-VardefManager::createVardef('KBSContents','KBSContent', array('basic', 'team_security'));
+VardefManager::createVardef(
+    'KBSContents',
+    'KBSContent',
+    array(
+        'basic',
+        'team_security',
+        'taggable',
+    )
+);
 $dictionary['KBSContent']['fields']['name']['audited'] = true;
