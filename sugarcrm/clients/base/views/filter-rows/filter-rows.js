@@ -359,6 +359,8 @@
             fieldMeta = moduleMeta.fields;
 
         _.each(rowObj, function(value, key) {
+            var isPredefinedFilter = (this.fieldList[key] && this.fieldList[key].predefined_filter === true);
+
             if (key === "$or") {
                 var keys = _.reduce(value, function(memo, obj) {
                     return memo.concat(_.keys(obj));
@@ -372,7 +374,7 @@
 
                 // Predicates are identical, so we just use the first.
                 value = _.values(value[0])[0];
-            } else if (!fieldMeta[key]) {
+            } else if (!fieldMeta[key] && !isPredefinedFilter) {
                 $row.remove();
                 return;
             }

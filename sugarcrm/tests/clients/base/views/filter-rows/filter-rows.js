@@ -1,4 +1,4 @@
-describe("BaseFilterRowsView", function() {
+describe("Base.View.FilterRows", function() {
     var view, layout, app, sinonSandbox;
 
     beforeEach(function() {
@@ -296,7 +296,7 @@ describe("BaseFilterRowsView", function() {
     });
 
     describe('populateRow', function() {
-        var addRowStub, select2Stub;
+        var addRowStub, _select2Obj, _rowObj;
         beforeEach(function() {
             view.fieldList = {
                 first_name: {}
@@ -309,7 +309,7 @@ describe("BaseFilterRowsView", function() {
             _rowObj = {
                 remove: sinonSandbox.stub(),
                 data: sinonSandbox.stub(),
-                find: sinonSandbox.stub().returns(_select2Obj),
+                find: sinonSandbox.stub().returns(_select2Obj)
             };
             addRowStub = sinonSandbox.stub(view, 'addRow').returns(_rowObj);
         });
@@ -343,6 +343,19 @@ describe("BaseFilterRowsView", function() {
             expect(_select2Obj.select2.firstCall.args).toEqual(['val', 'address_state']);
             expect(_select2Obj.select2.secondCall.args).toEqual(['val', '$equals']);
             expect(_rowObj.data.firstCall.args).toEqual(['value', '12']);
+        });
+
+        it('should populate because it is a valid predefined filter', function() {
+            view.fieldList = {
+                '$favorite': {
+                    'predefined_filter': true
+                }
+            };
+            view.populateRow({
+                '$favorite': ''
+            });
+
+            expect(_select2Obj.select2.firstCall.args).toEqual(['val', '$favorite']);
         });
     });
 

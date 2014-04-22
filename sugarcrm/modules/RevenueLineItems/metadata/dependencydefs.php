@@ -9,7 +9,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  */
 $fields = array(
     'category_name',
@@ -59,7 +59,7 @@ $dependencies['RevenueLineItems']['commit_stage_readonly_set_value'] = array(
             'params' => array(
                 'target' => 'commit_stage',
                 'label' => 'commit_stage_label', //normally <field>_label
-                'value' => 'isInList($sales_stage, createList("Closed Won", "Closed Lost"))', //Formula
+                'value' => 'isForecastClosed($sales_stage)', //Formula
             ),
         ),
         array(
@@ -68,8 +68,8 @@ $dependencies['RevenueLineItems']['commit_stage_readonly_set_value'] = array(
             'params' => array(
                 'target' => 'commit_stage',
                 'label' => 'commit_stage_label', //normally <field>_label
-                'value' => 'ifElse(equal($sales_stage, "Closed Won"), "include",
-                    ifElse(equal($sales_stage, "Closed Lost"), "exclude", $commit_stage))', //Formula
+                'value' => 'ifElse(isForecastClosedWon($sales_stage), "include",
+                    ifElse(isForecastClosedLost($sales_stage), "exclude", $commit_stage))', //Formula
             ),
         )
     ),
@@ -93,7 +93,7 @@ $dependencies['RevenueLineItems']['best_worst_sales_stage_read_only'] = array(
             'params' => array(
                 'target' => 'best_case',
                 'label' => 'best_case_label', //normally <field>_label
-                'value' => 'isInList($sales_stage, createList("Closed Won", "Closed Lost"))', //Formula
+                'value' => 'isForecastClosed($sales_stage)', //Formula
             ),
         ),
         array(
@@ -102,7 +102,7 @@ $dependencies['RevenueLineItems']['best_worst_sales_stage_read_only'] = array(
             'params' => array(
                 'target' => 'worst_case',
                 'label' => 'worst_case_label', //normally <field>_label
-                'value' => 'isInList($sales_stage, createList("Closed Won", "Closed Lost"))', //Formula
+                'value' => 'isForecastClosed($sales_stage)', //Formula
             ),
         ),
         array(
@@ -111,7 +111,7 @@ $dependencies['RevenueLineItems']['best_worst_sales_stage_read_only'] = array(
             'params' => array(
                 'target' => 'best_case',
                 'label' => 'best_case_label',
-                'value' => 'ifElse(isInList($sales_stage, createList("Closed Won", "Closed Lost")), $likely_case, $best_case)',
+                'value' => 'ifElse(isForecastClosed($sales_stage), $likely_case, $best_case)',
             ),
         ),
         array(
@@ -120,7 +120,7 @@ $dependencies['RevenueLineItems']['best_worst_sales_stage_read_only'] = array(
             'params' => array(
                 'target' => 'worst_case',
                 'label' => 'worst_case_label',
-                'value' => 'ifElse(isInList($sales_stage, createList("Closed Won", "Closed Lost")), $likely_case, $worst_case)',
+                'value' => 'ifElse(isForecastClosed($sales_stage), $likely_case, $worst_case)',
             ),
         ),
     )
@@ -140,7 +140,7 @@ $dependencies['RevenueLineItems']['likely_case_copy_when_closed'] = array(
             'params' => array(
                 'target' => 'best_case',
                 'label' => 'best_case_label',
-                'value' => 'ifElse(isInList($sales_stage, createList("Closed Won", "Closed Lost")), $likely_case, $best_case)',
+                'value' => 'ifElse(isForecastClosed($sales_stage), $likely_case, $best_case)',
             ),
         ),
         array(
@@ -149,7 +149,7 @@ $dependencies['RevenueLineItems']['likely_case_copy_when_closed'] = array(
             'params' => array(
                 'target' => 'worst_case',
                 'label' => 'worst_case_label',
-                'value' => 'ifElse(isInList($sales_stage, createList("Closed Won", "Closed Lost")), $likely_case, $worst_case)',
+                'value' => 'ifElse(isForecastClosed($sales_stage), $likely_case, $worst_case)',
             ),
         ),
     )

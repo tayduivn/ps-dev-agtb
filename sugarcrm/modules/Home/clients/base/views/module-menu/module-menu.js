@@ -183,13 +183,12 @@
      * implemented.
      */
     populateMenu: function() {
+        var pattern = /^(LBL|TPL|NTC|MSG)_(_|[a-zA-Z0-9])*$/;
 
         this.dashboards.fetch({
             'limit': this._settings['dashboards'],
             'showAlerts': false,
             'success': _.bind(function(data) {
-
-                var pattern = /^(LBL|TPL|NTC|MSG)_(_|[a-zA-Z0-9])*$/;
 
                 _.each(data.models, function(model) {
                     if (pattern.test(model.get('name'))) {
@@ -201,7 +200,8 @@
                 });
 
                 this._renderPartial('dashboards', {
-                    collection: this.dashboards
+                    collection: this.dashboards,
+                    active: this.context.get('module') === 'Home' && this.context.get('model')
                 });
 
             }, this),
@@ -296,7 +296,7 @@
      * The partial template can receive more data from the options parameter.
      *
      * @param {String} tplName The template to use to render the partials.
-     * @param {Object} options Other optional data to pass to the template.
+     * @param {Object} [options] Other optional data to pass to the template.
      * @protected
      */
     _renderPartial: function(tplName, options) {
