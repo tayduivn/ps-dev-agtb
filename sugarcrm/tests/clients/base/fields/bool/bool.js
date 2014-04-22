@@ -41,9 +41,6 @@ describe('Base.Field.Bool', function() {
         var field;
         beforeEach(function() {
             SugarTest.testMetadata.init();
-            SugarTest.loadHandlebarsTemplate('bool', 'field', 'base', 'edit');
-            SugarTest.testMetadata.set();
-            field = SugarTest.createField('base', 'bool', 'bool', 'edit');
         });
 
         afterEach(function() {
@@ -51,12 +48,29 @@ describe('Base.Field.Bool', function() {
             SugarTest.testMetadata.dispose();
         });
 
-        it('should update the model on value change', function() {
+        it('should update the model on checkbox value change', function() {
+            SugarTest.loadHandlebarsTemplate('bool', 'field', 'base', 'edit');
+            SugarTest.testMetadata.set();
+            field = SugarTest.createField('base', 'bool', 'bool', 'edit');
+
             field.render();
             var modelSpy = sinon.collection.spy(field.model, 'set');
             field.$(field.fieldTag).attr('checked', true).trigger('change');
             expect(modelSpy).toHaveBeenCalledWith('bool', true);
             field.$(field.fieldTag).attr('checked', false).trigger('change');
+            expect(modelSpy).toHaveBeenCalledWith('bool', false);
+        });
+
+        it('should update the model on dropdown value change', function() {
+            SugarTest.loadHandlebarsTemplate('bool', 'field', 'base', 'dropdown');
+            SugarTest.testMetadata.set();
+            field = SugarTest.createField('base', 'bool', 'bool', 'massupdate');
+
+            field.render();
+            var modelSpy = sinon.collection.spy(field.model, 'set');
+            field.$(field.select2fieldTag).val('1').trigger('change');
+            expect(modelSpy).toHaveBeenCalledWith('bool', true);
+            field.$(field.select2fieldTag).val('0').trigger('change');
             expect(modelSpy).toHaveBeenCalledWith('bool', false);
         });
     });
