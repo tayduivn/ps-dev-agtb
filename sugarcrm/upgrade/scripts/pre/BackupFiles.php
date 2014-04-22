@@ -45,7 +45,7 @@ class SugarUpgradeBackupFiles extends UpgradeScript
             $this->log("**** Backup disabled by config");
             return;
         }
-        $zip_from_dir = $this->context['temp_dir']."/".$this->manifest['copy_files']['from_dir'];
+        $zip_from_dir = $this->context['extract_dir']."/".$this->manifest['copy_files']['from_dir'];
 
         $files = $this->findFiles($zip_from_dir);
         $this->log("**** Backup started");
