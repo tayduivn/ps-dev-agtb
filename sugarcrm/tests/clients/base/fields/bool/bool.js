@@ -13,7 +13,7 @@ describe('Base.Field.Bool', function() {
     describe('format & unformat', function() {
         var field;
         beforeEach(function() {
-            field = SugarTest.createField('base', 'bool', 'bool', 'detail');
+            field = SugarTest.createField('base', 'my_bool', 'bool', 'detail');
         });
 
         afterEach(function() {
@@ -51,27 +51,27 @@ describe('Base.Field.Bool', function() {
         it('should update the model on checkbox value change', function() {
             SugarTest.loadHandlebarsTemplate('bool', 'field', 'base', 'edit');
             SugarTest.testMetadata.set();
-            field = SugarTest.createField('base', 'bool', 'bool', 'edit');
+            field = SugarTest.createField('base', 'my_bool', 'bool', 'edit');
 
             field.render();
             var modelSpy = sinon.collection.spy(field.model, 'set');
             field.$(field.fieldTag).attr('checked', true).trigger('change');
-            expect(modelSpy).toHaveBeenCalledWith('bool', true);
+            expect(modelSpy).toHaveBeenCalledWith('my_bool', true);
             field.$(field.fieldTag).attr('checked', false).trigger('change');
-            expect(modelSpy).toHaveBeenCalledWith('bool', false);
+            expect(modelSpy).toHaveBeenCalledWith('my_bool', false);
         });
 
         it('should update the model on dropdown value change', function() {
             SugarTest.loadHandlebarsTemplate('bool', 'field', 'base', 'dropdown');
             SugarTest.testMetadata.set();
-            field = SugarTest.createField('base', 'bool', 'bool', 'massupdate');
+            field = SugarTest.createField('base', 'my_bool', 'bool', 'massupdate');
 
             field.render();
             var modelSpy = sinon.collection.spy(field.model, 'set');
             field.$(field.select2fieldTag).val('1').trigger('change');
-            expect(modelSpy).toHaveBeenCalledWith('bool', true);
+            expect(modelSpy).toHaveBeenCalledWith('my_bool', true);
             field.$(field.select2fieldTag).val('0').trigger('change');
-            expect(modelSpy).toHaveBeenCalledWith('bool', false);
+            expect(modelSpy).toHaveBeenCalledWith('my_bool', false);
         });
     });
 
@@ -82,7 +82,7 @@ describe('Base.Field.Bool', function() {
                 SugarTest.testMetadata.init();
                 SugarTest.loadHandlebarsTemplate('bool', 'field', 'base', 'detail');
                 SugarTest.testMetadata.set();
-                field = SugarTest.createField('base', 'bool', 'bool', 'detail');
+                field = SugarTest.createField('base', 'my_bool', 'bool', 'detail');
             });
 
             afterEach(function() {
@@ -106,7 +106,7 @@ describe('Base.Field.Bool', function() {
                 SugarTest.testMetadata.init();
                 SugarTest.loadHandlebarsTemplate('bool', 'field', 'base', 'edit');
                 SugarTest.testMetadata.set();
-                field = SugarTest.createField('base', 'bool', 'bool', 'edit');
+                field = SugarTest.createField('base', 'my_bool', 'bool', 'edit');
             });
 
             afterEach(function() {
@@ -135,7 +135,7 @@ describe('Base.Field.Bool', function() {
                 SugarTest.testMetadata.init();
                 SugarTest.loadHandlebarsTemplate('bool', 'field', 'base', 'dropdown');
                 SugarTest.testMetadata.set();
-                field = SugarTest.createField('base', 'bool', 'bool', 'massupdate');
+                field = SugarTest.createField('base', 'my_bool', 'bool', 'massupdate');
             });
 
             afterEach(function() {
@@ -170,7 +170,7 @@ describe('Base.Field.Bool', function() {
                 SugarTest.testMetadata.init();
                 SugarTest.loadHandlebarsTemplate('bool', 'field', 'base', 'edit');
                 SugarTest.testMetadata.set();
-                field = SugarTest.createField('base', 'bool', 'bool', 'disabled');
+                field = SugarTest.createField('base', 'my_bool', 'bool', 'disabled');
             });
 
             afterEach(function() {
