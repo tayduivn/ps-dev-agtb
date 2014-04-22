@@ -21,15 +21,16 @@ describe("Base.View.List", function () {
         layout = SugarTest.createLayout('base', "Cases", "list", null, null);
         view.layout = layout;
         app = SUGAR.App;
-        loadDataStub = sinon.stub(view.context, 'loadData');
+        loadDataStub = sinon.collection.stub(view.context, 'loadData');
     });
     afterEach(function () {
-        loadDataStub.restore();
+        sinon.collection.restore();
+        layout.dispose();
+        view.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
-        view = null;
     });
 
     describe('parseFieldMetadata', function() {
@@ -155,6 +156,12 @@ describe("Base.View.List", function () {
             view.setOrderBy(event);
             expect(view.collection.orderBy).toEqual({field: 'name', direction: 'desc'});
         });
+
+        it('should reset pagination', function() {
+            var resetPagination = sinon.collection.stub(view.collection, 'resetPagination');
+            view.setOrderBy(event);
+            expect(resetPagination).toHaveBeenCalled();
+        });
     });
 
     describe('should use last state for store sorting', function() {
@@ -164,7 +171,7 @@ describe("Base.View.List", function () {
         });
 
         it('should call set last state when set order by', function() {
-            var lastStateSetStub = sinon.stub(app.user.lastState, 'set');
+            var lastStateSetStub = sinon.collection.stub(app.user.lastState, 'set');
             var testElement = $('<th data-orderby="" data-fieldname="name" class="sorting_desc orderByname"><span>Name</span></th>');
             var event = {
                 currentTarget: testElement
@@ -174,8 +181,6 @@ describe("Base.View.List", function () {
 
             expect(lastStateSetStub).toHaveBeenCalled();
             expect(lastStateSetStub.lastCall.args[1]).toEqual({field: 'name', direction: 'desc'});
-
-            lastStateSetStub.restore();
         });
 
         it('should call get last state when initialize view', function() {
@@ -183,7 +188,7 @@ describe("Base.View.List", function () {
                 field: 'name',
                 direction: 'desc'
             };
-            var lastStateGetStub = sinon.stub(app.user.lastState, 'get', function(key) {
+            var lastStateGetStub = sinon.collection.stub(app.user.lastState, 'get', function(key) {
                 return orderBy;
             });
             var testView = SugarTest.createView("base", "Cases", "list", null, null);
@@ -191,17 +196,15 @@ describe("Base.View.List", function () {
             expect(lastStateGetStub).toHaveBeenCalled();
             expect(testView.orderBy).toEqual(orderBy);
             expect(testView.collection.orderBy).toEqual(orderBy);
-
-            lastStateGetStub.restore();
         })
     });
 
     describe('_render', function () {
         it('should render "noaccess" template when user has no access', function () {
-            var hasAccessStub = sinon.stub(app.acl, 'hasAccess', function () {
+            var hasAccessStub = sinon.collection.stub(app.acl, 'hasAccess', function () {
                 return false;
             });
-            var templateGetStub = sinon.stub(app.template, 'get', function() {
+            var templateGetStub = sinon.collection.stub(app.template, 'get', function() {
                 return function() {
                     return '';
                 };
@@ -209,8 +212,6 @@ describe("Base.View.List", function () {
             view.render();
             expect(templateGetStub).toHaveBeenCalled();
             expect(templateGetStub).toHaveBeenCalledWith('list.noaccess');
-            templateGetStub.restore();
-            hasAccessStub.restore();
         });
     });
 });
