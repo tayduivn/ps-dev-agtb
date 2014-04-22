@@ -4,6 +4,8 @@
 
 Modification information for LGPL compliance
 
+Tue Mar 11 2014 jchen - Bug 59792 - fixed unicode wrapping issue by replacing regular expression patterns from new version
+
 Fri Dec 2 2011 smalyshev - Added unserialize/destruct vulnerability protection
 
 Mon May 30 16:16:13 2011 +0300 - alex-vlasov - Bug 41216 - currency is displayed on 2 lines instead of one when printing a quote to PDF
@@ -1464,10 +1466,10 @@ if (!class_exists('TCPDF', false)) {
 				// \p{Z} or \p{Separator}: any kind of Unicode whitespace or invisible separator.
 				// \p{Lo} or \p{Other_Letter}: a Unicode letter or ideograph that does not have lowercase and uppercase variants.
 				// \p{Lo} is needed because Chinese characters are packed next to each other without spaces in between.
-				$this->re_spaces = '/[\s\p{Z}\p{Lo}]/';
+				$this->re_spaces = '/[^\S\P{Z}\xa0]/u';
 			} else {
 				// PCRE unicode support is turned OFF
-				$this->re_spaces = '/[\s]/';
+				$this->re_spaces = '/[^\S\xa0]/';
 			}
 		}
 
