@@ -4364,6 +4364,7 @@ $app_strings = array (
     'LBL_TOUR_FORECASTS_INLINEEDIT' =>'Click to edit data inline',
     'LBL_TOUR_FORECASTS_PROGRESS' =>'Review distance to Quota',
     'LBL_TOUR_FORECASTS_CHART' =>'Review Forecast distribution',
+    'LBL_TOUR_TOUR' => 'Access Tour at any time',
 
 
 
