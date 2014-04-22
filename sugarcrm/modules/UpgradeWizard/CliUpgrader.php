@@ -333,15 +333,18 @@ eoq2;
                 array_pop($upgrader->context['argv']);
             }
             while(1) {
+                $begin = time();
                 $res = $upgrader->runStep($stage);
+                $end = time();
+                $duration = self::formatDuration($begin, $end);
                 if($res === false) {
                     if($stage) {
-                        echo "***************         Step \"{$stage}\" FAILED!\n";
+                        echo "***************         Step \"{$stage}\" FAILED! - {$duration}\n";
                     }
                     exit($upgrader->getStageCode($stage));
                 }
                 if($stage) {
-                    echo "***************         Step \"{$stage}\" OK\n";
+                    echo "***************         Step \"{$stage}\" OK - {$duration}\n";
                 }
                 if($res === true) {
                     // we're done successfully
@@ -375,6 +378,19 @@ eoq2;
     	return $argument_string;
    }
 
+    /**
+     * Format stage duration
+     *
+     * @param int $begin Stage begin timestamp
+     * @param int $end Stage end timestamp
+     *
+     * @return string
+     */
+    protected static function formatDuration($begin, $end)
+    {
+        $duration = $end - $begin;
+        return $duration . ' second' . ($duration == 1 ? '' : 's');
+    }
 }
 
 if(empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) return;
