@@ -144,7 +144,8 @@
 
         var result = app.view.Field.prototype._render.call(this);
 
-        if (this.tplName === 'edit') {
+        //FIXME remove check for tplName SC-2608
+        if (this.tplName === 'edit' || this.tplName === 'massupdate') {
 
             var inList = (this.view.name === 'recordlist'),
                 cssClasses = (inList ? 'select2-narrow' : '') + (this.type === 'parent' ? ' select2-parent' : ''),
