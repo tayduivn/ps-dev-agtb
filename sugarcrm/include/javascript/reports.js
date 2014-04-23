@@ -1812,24 +1812,33 @@ SUGAR.reports = function() {
 			
 			return true;
 		},
-		saveReport: function() {
-			if (!SUGAR.reports.saveCurrentStep())			
-				return false;
-			if (SUGAR.reports.checkReportDetails()) {
-				document.ReportsWizardForm.save_report.value = 'on';
-				document.ReportsWizardForm.current_step.value = currEditorDiv;
-				if (SUGAR.reports.prepareReportForProcessing()) 
-					document.ReportsWizardForm.submit();
-			}
-		},		
-		deleteReport: function() {
-			if (confirm(SUGAR.language.get('app_strings','NTC_DELETE_CONFIRMATION'))) {
-				document.ReportsWizardForm.is_delete.value="1";
-				document.ReportsWizardForm.submit();
-			}
-		},
+        saveReport: function() {
+            if (!SUGAR.reports.saveCurrentStep())
+                return false;
+            if (SUGAR.reports.checkReportDetails()) {
+                document.ReportsWizardForm.save_report.value = 'on';
+                document.ReportsWizardForm.current_step.value = currEditorDiv;
+                if (SUGAR.reports.prepareReportForProcessing()) {
+                    document.ReportsWizardForm.submit();
+                    var dashletEdit = this.getWindowLocationParameterByName('dashletEdit', window.location.search);
+                    if (dashletEdit) {
+                        parent.$(parent).trigger('dashletEdit');
+                    }
+                }
+            }
+        },
+        deleteReport: function() {
+            if (confirm(SUGAR.language.get('app_strings', 'NTC_DELETE_CONFIRMATION'))) {
+                document.ReportsWizardForm.is_delete.value = '1';
+                document.ReportsWizardForm.submit();
+                var dashletEdit = this.getWindowLocationParameterByName('dashletEdit', window.location.search);
+                if (dashletEdit) {
+                    parent.$(parent).trigger('dashletEdit');
+                }
+            }
+        },
 		runReport: function() {
-			if (!SUGAR.reports.saveCurrentStep())			
+			if (!SUGAR.reports.saveCurrentStep())
 				return false;
 			if (SUGAR.reports.checkReportDetails()) {
 				document.ReportsWizardForm.save_report.value = 'on';
@@ -1839,7 +1848,7 @@ SUGAR.reports = function() {
 			}
 		},
 		previewReport: function() {
-			if (!SUGAR.reports.saveCurrentStep())			
+			if (!SUGAR.reports.saveCurrentStep())
 				return false;
 			document.ReportsWizardForm.run_query.value = 1;
 			SUGAR.reports.saveFilters();
@@ -1847,6 +1856,27 @@ SUGAR.reports = function() {
 				document.ReportsWizardForm.submit();
 			}
 		},
+        cancelReport: function() {
+            var dashletEdit = this.getWindowLocationParameterByName('dashletEdit', window.location.search);
+            if (dashletEdit) {
+                parent.$(parent).trigger('dashletEdit');
+            } else {
+                window.location.href = 'index.php?module=Reports&action=index&query=true&clear_query=true';
+            }
+        },
+        /**
+         * gets window location parameters by name regardless of case
+         * @param {String} name name of parameter being searched for
+         * @param {String} queryString
+         * @returns {String}
+         */
+        getWindowLocationParameterByName: function(name, queryString) {
+            if (parent.App && parent.App.utils && parent.App.utils.getWindowLocationParameterByName) {
+                return parent.App.utils.getWindowLocationParameterByName(name, queryString);
+            } else {
+                return '';
+            }
+        },
 		orderBySelected: function(rowNum, sortDir) {
 			if (displayColOrderBySelectedRow != -1 && (document.getElementById("orderByDirectionDiv_" + displayColOrderBySelectedRow))) {
 				document.getElementById("orderByDirectionDiv_" + displayColOrderBySelectedRow).style.display = 'none';
@@ -4230,7 +4260,6 @@ YAHOO.extend(SUGAR.reports.reportDDProxy, YAHOO.util.DDProxy, {
 		var Dom = YAHOO.util.Dom;
         var target = Dom.get(targetId);
         this.lastTarget = target;
-        //target.addClass('dd-over');
 	    var dragEl = this.getDragEl();
 	    var el = this.getEl();
 	    if(this.lastTarget && this.lastTarget.id!= 'displayColsTable' && this.lastTarget.id!= 'displaySummariesTable'
@@ -4245,8 +4274,6 @@ YAHOO.extend(SUGAR.reports.reportDDProxy, YAHOO.util.DDProxy, {
 			} else {
 	        	YAHOO.util.Dom.insertBefore(el, destElem);
 			}
-	        //Dom.setStyle(el, "position", "");
-	        //Dom.setStyle(el, "width", '');
 	        //If we move a groupBy row, we need to move the corresponding display summary row as well.
 	        if (el.id.substring(0,12) == 'group_by_row') {
 		        var destElem = document.getElementById('display_summaries_row_' + this.lastTarget.id);
@@ -4259,38 +4286,11 @@ YAHOO.extend(SUGAR.reports.reportDDProxy, YAHOO.util.DDProxy, {
 	    }
 	},
 	onDragOut: function(e, targetId) {
-        //var target = Ext.get(targetId);
         this.lastTarget = null;
-        //target.removeClass('dd-over');
-	},    
+	},
 	endDrag: function() {
 		var Dom = YAHOO.util.Dom;											
 	    var dragEl = this.getDragEl();
 	    var el = this.getEl();
-	    /*
-	    if(this.lastTarget && this.lastTarget.id!= 'displayColsTable' && this.lastTarget.id!= 'displaySummariesTable'
-	    	&& this.lastTarget.id!= 'groupByTable') {	        
-	        var destElem = document.getElementById(this.lastTarget.id);
-			var dragPosition = YAHOO.util.Dom.getY(dragEl);
-			var midEl = YAHOO.util.Dom.getY(el) + (el.clientHeight / 2);	    
-			if (dragPosition > midEl) {
-	        	destElem.parentNode.insertBefore(el.nextSibling, destElem);
-			} else {
-	        	destElem.parentNode.insertBefore(el, destElem);
-			}
-	        //destElem.parentNode.insertBefore(document.getElementById(el.id), destElem);
-	        //Dom.setStyle(el, "position", "");
-	        //Dom.setStyle(el, "width", '');
-	        //If we move a groupBy row, we need to move the corresponding display summary row as well.
-	        if (el.id.substring(0,12) == 'group_by_row') {
-		        var destElem = document.getElementById('display_summaries_row_' + this.lastTarget.id);
-		        destElem.parentNode.insertBefore(document.getElementById('display_summaries_row_' +el.id), destElem);
-	        } // if
-
-	    } // if
-	    */
-	} // fn
-	
-    
-	
+	}
 });
