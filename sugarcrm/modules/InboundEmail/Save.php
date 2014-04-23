@@ -206,6 +206,21 @@ $GLOBALS['log']->info('----->InboundEmail now saving self');
 $previousTeamAccessCheck = isset($GLOBALS['sugar_config']['disable_team_access_check']) ? $GLOBALS['sugar_config']['disable_team_access_check'] : null;
 $GLOBALS['sugar_config']['disable_team_access_check'] = TRUE;
 
+//Sync any changes within the IE account that need to be synced with the Sugar Folder.
+//Need to do this post save so the correct team/teamset id is generated correctly.
+$monitor_fields = array('name', 'status',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'team_id','team_set_id'
+    //END SUGARCRM flav=pro ONLY
+);
+
+$current_monitor_fields = array();
+foreach ($monitor_fields as $singleField) {
+    if(isset($focus->fetched_row[$singleField])) {
+        $current_monitor_fields[$singleField] = $focus->fetched_row[$singleField];
+    }
+}
+
 $focus->save();
 
 //Reset the value so no other saves are affected.
@@ -217,15 +232,6 @@ if( empty($_REQUEST['id']) && empty($focus->groupfolder_id) )
     $focus->createUserSubscriptionsForGroupAccount();
 //END SUGARCRM flav=pro ONLY
 
-
-//Sync any changes within the IE account that need to be synced with the Sugar Folder.
-//Need to do this post save so the correct team/teamset id is generated correctly.
-$monitor_fields = array('name', 'status',
-                        //BEGIN SUGARCRM flav=pro ONLY
-                        'team_id','team_set_id'
-                        //END SUGARCRM flav=pro ONLY
-                        );
-
 //Only sync IE accounts with a group folder.  Need to sync new records as team set assignment is processed
 //after save.
 if( !empty($focus->groupfolder_id) )
@@ -233,7 +239,7 @@ if( !empty($focus->groupfolder_id) )
     foreach ($monitor_fields as $singleField)
     {
         //Check if the value is being changed during save.
-        if($focus->fetched_row[$singleField] != $focus->$singleField)
+        if($current_monitor_fields[$singleField] != $focus->$singleField)
             syncSugarFoldersWithBeanChanges($singleField, $focus);
     }
 }
