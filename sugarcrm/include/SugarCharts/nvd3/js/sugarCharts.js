@@ -77,10 +77,10 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .id(chartId)
                         .strings({
                             legend: {
-                                close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
-                                open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                                close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
                             },
-                            noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+                            noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
                         });
 
                     // get chartId from params or use the default for sugar
@@ -132,10 +132,10 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .id(d3ChartId)
                         .strings({
                             legend: {
-                                close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
-                                open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                                close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
                             },
-                            noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+                            noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
                         });
 
                     barChart.yAxis
@@ -179,10 +179,10 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .id(d3ChartId)
                         .strings({
                             legend: {
-                                close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
-                                open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                                close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
                             },
-                            noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+                            noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
                         });
 
                     lineChart.xAxis
@@ -217,10 +217,10 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .id(d3ChartId)
                         .strings({
                             legend: {
-                                close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
-                                open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                                close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
                             },
-                            noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+                            noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
                         });
 
                     d3.select('#' + d3ChartId)
@@ -255,10 +255,10 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .id(d3ChartId)
                         .strings({
                             legend: {
-                                close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
-                                open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                                close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
                             },
-                            noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+                            noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
                         });
 
                     d3.select('#' + d3ChartId)

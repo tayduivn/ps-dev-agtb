@@ -85,10 +85,10 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                                 .id(chartId)
                                 .strings({
                                     legend: {
-                                        close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
-                                        open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                                        close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                        open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
                                     },
-                                    noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+                                    noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
                                 });
 
                             // get chartId from params or use the default for sugar
