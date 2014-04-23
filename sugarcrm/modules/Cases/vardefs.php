@@ -284,13 +284,19 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
 //This enables optimistic locking for Saves From EditView
     'optimistic_locking'=>true,
 );
-VardefManager::createVardef('Cases','Case', array('default', 'assignable',
-//BEGIN SUGARCRM flav=pro ONLY
-'team_security',
-//END SUGARCRM flav=pro ONLY
-'issue',
-),
-'case'
+VardefManager::createVardef(
+    'Cases',
+    'Case',
+    array(
+        'default',
+        'assignable',
+        //BEGIN SUGARCRM flav=pro ONLY
+        'team_security',
+        //END SUGARCRM flav=pro ONLY
+        'issue',
+        'taggable',
+    ),
+    'case'
 );
 
 //jc - adding for refactor for import to not use the required_fields array

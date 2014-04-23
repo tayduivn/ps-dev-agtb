@@ -392,9 +392,16 @@ $dictionary['Note'] = array(
     )
 );
 
-VardefManager::createVardef('Notes','Note', array('default', 'assignable',
-//BEGIN SUGARCRM flav=pro ONLY
-'team_security',
-//END SUGARCRM flav=pro ONLY
-));
+VardefManager::createVardef(
+    'Notes',
+    'Note',
+    array(
+        'default',
+        'assignable',
+        //BEGIN SUGARCRM flav=pro ONLY
+        'team_security',
+        //END SUGARCRM flav=pro ONLY
+        'taggable',
+    )
+);
 ?>

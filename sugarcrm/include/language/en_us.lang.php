@@ -108,6 +108,7 @@ $app_list_strings = array (
     'UserSignatures' => 'User Signatures',
     'Shippers' => 'Shipping Providers',
     'Styleguide' => 'Styleguide',
+    'Tags' => 'Tags',
   ),
 
     'moduleIconList' =>
@@ -216,6 +217,7 @@ $app_list_strings = array (
     'Subscriptions' => 'Subscription',
     'UserSignatures' => 'User Signature',
     'Reports_1'=>'Saved Report',
+    'Tags' => 'Tag',
   ),
 
 /*

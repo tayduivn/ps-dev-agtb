@@ -380,12 +380,19 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
 	'optimistic_locking'=>true,
  );
 
-VardefManager::createVardef('Bugs','Bug', array('default', 'assignable',
-//BEGIN SUGARCRM flav=pro ONLY
-'team_security',
-//END SUGARCRM flav=pro ONLY
-'issue',
-));
+VardefManager::createVardef(
+    'Bugs',
+    'Bug',
+    array(
+        'default',
+        'assignable',
+        //BEGIN SUGARCRM flav=pro ONLY
+        'team_security',
+        //END SUGARCRM flav=pro ONLY
+        'issue',
+        'taggable',
+    )
+);
 
 //jc - adding for refactor for import to not use the required_fields array
 //defined in the field_arrays.php file

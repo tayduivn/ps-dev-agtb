@@ -247,6 +247,7 @@
 
     &[data-type="language"],
     &[data-type="enum"],
+    &[data-type="tags"],
     &[data-type="relate"] {
       .normal > span {
         white-space: nowrap;
@@ -265,6 +266,12 @@
           left: auto;
           background: transparent;
         }
+      }
+    }
+    &[data-type="tags"] {
+      min-height: 50px;
+      .record-edit-link-wrapper {
+        top: 20px;
       }
     }
 

@@ -692,11 +692,19 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'activity_enable
 	,'optimistic_locking'=>true,
 );
 
-VardefManager::createVardef('Leads','Lead', array('default', 'assignable',
-//BEGIN SUGARCRM flav=pro ONLY
-'team_security',
-//END SUGARCRM flav=pro ONLY
-'person'));
+VardefManager::createVardef(
+    'Leads',
+    'Lead',
+    array(
+        'default',
+        'assignable',
+        //BEGIN SUGARCRM flav=pro ONLY
+        'team_security',
+        //END SUGARCRM flav=pro ONLY
+        'person',
+        'taggable',
+    )
+);
 
 //BEGIN SUGARCRM flav=com ONLY
 if (isset($GLOBALS['dictionary']['Lead']['fields']['picture']))
