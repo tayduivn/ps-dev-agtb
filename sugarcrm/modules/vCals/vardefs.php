@@ -80,7 +80,7 @@ $dictionary['vCal'] = array('table' => 'vcals'
 )
                                                       , 'indices' => array (
        array('name' =>'vcalspk', 'type' =>'primary', 'fields'=>array('id')),
-        array('name' =>'idx_vcal', 'type' =>'index', 'fields'=>array('type', 'user_id'))
+        array('name' =>'idx_vcal', 'type' =>'index', 'fields'=>array('type', 'user_id', 'source'))
                                                       )
 
                             );
