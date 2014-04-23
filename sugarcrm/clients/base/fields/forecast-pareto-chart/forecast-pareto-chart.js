@@ -582,10 +582,8 @@
      * @inheritDoc
      */
     _dispose: function() {
-        if (!_.isEmpty(this.chart)) {
-            this.handlePrinting('off');
-            $(window).off('resize.' + this.sfId);
-        }
+        this.handlePrinting('off');
+        $(window).off('resize.' + this.sfId);
         this.$('.nv-chart').off('click');
         this._super('_dispose');
     }
