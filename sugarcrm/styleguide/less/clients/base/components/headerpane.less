@@ -80,11 +80,16 @@
     display: inline-block;
   }
 
+  /*needed for firefox to position absolute inside table-cell*/
+  .table-cell-wrapper {
+    position: relative;
+    display: inline-block;
+  }
   .record-edit-link-wrapper {
     width: 28px;
     height: 28px;
-    top: 16px;
-    left: -5px;
+    top: -4px;
+    left: -25px;
     .record-edit-link {
       margin-left: 0;
     }
@@ -114,7 +119,10 @@
       }
     }
     &.edit {
-      padding-top: 7px;
+      padding: 10px 0 0 20px;
+    }
+    .record-edit-link-wrapper {
+      top: 5px;
     }
   }
 
