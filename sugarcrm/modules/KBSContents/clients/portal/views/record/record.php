@@ -38,6 +38,10 @@ $viewdefs['KBSContents']['portal']['view']['record'] = array(
                     'module' => 'KBSDocuments',
                     'key' => 'languages',
                 ),
+                'topic_name' => array(
+                    'name' => 'topic_name',
+                    'label' => 'LBL_TOPIC_NAME',
+                ),
             ),
         ),
         array(
@@ -55,7 +59,7 @@ $viewdefs['KBSContents']['portal']['view']['record'] = array(
                     'name' => 'attachment_list',
                     'label' => 'LBL_ATTACHMENTS',
                     'type' => 'attachments',
-                    'link' => 'notes',
+                    'link' => 'attachments',
                     'module' => 'Notes',
                     'modulefield' => 'filename',
                     'bLable' => 'LBL_ADD_ATTACHMENT',
@@ -70,32 +74,6 @@ $viewdefs['KBSContents']['portal']['view']['record'] = array(
                         'useful',
                         'notuseful',
                     ),
-                ),
-            ),
-        ),
-        array(
-            'name' => 'panel_hidden',
-            'label' => 'LBL_SHOW_MORE',
-            'hide' => true,
-            'columns' => 2,
-            'labelsOnTop' => true,
-            'placeholders' => true,
-            'fields' => array(
-                'topic_name' => array(
-                    'name' => 'topic_name',
-                    'label' => 'LBL_TOPIC_NAME',
-                ),
-                'created_by_name' => array(
-                    'name' => 'created_by_name'
-                ),
-                'team_name' => array(
-                    'name' => 'team_name'
-                ),
-                'date_entered' => array(
-                    'name' => 'date_entered'
-                ),
-                'date_modified' => array(
-                    'name' => 'date_modified'
                 ),
             ),
         ),

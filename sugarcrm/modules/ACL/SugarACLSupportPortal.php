@@ -117,7 +117,7 @@ class SugarACLSupportPortal extends SugarACLStatic
                  && $bean->module_dir != 'Notes'
                  && $bean->module_dir != 'Contacts' 
                  && $bean->module_dir != 'Bugs'
-                 && $bean->module_dir != 'KBDocuments' ) {
+                 && $bean->module_dir != 'KBSContents' ) {
                 return false;
             }
             $context['owner_override'] = $this->isPortalOwner($bean);
