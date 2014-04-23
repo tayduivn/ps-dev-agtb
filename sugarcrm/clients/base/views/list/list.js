@@ -264,8 +264,6 @@
         options.limit = self.limit || null;
         options.success = function (collection, response, options) {
             self.layout.trigger("list:sort:fire", collection, self);
-            // reset the collection with what we fetched to trigger rerender
-            if(!self.disposed) collection.reset(response);
         };
 
         // if we have a bunch of models already fetch at least that many
