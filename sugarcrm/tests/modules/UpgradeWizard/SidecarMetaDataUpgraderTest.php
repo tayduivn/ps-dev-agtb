@@ -1000,9 +1000,9 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         $found = $this->_fieldExistsInDefs('favorite', $defs);
         $this->assertFalse($found, "The `Favorite' field exists in file $filepath");
 
-
+        // The "unit_test_c" field do not appear in vardefs, skip it.
         $found = $this->_fieldExistsInDefs('unit_test_c', $defs);
-        $this->assertTrue($found, "The `unit_test_c` field was missing in file $filepath");
+        $this->assertFalse($found, "The `unit_test_c` field was found in file $filepath");
     }
 
 
