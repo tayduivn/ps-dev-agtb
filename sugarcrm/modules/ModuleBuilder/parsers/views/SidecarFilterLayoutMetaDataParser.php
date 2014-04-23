@@ -140,6 +140,22 @@ class SidecarFilterLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
     }
 
     /**
+     * Removes a field from the layout
+     *
+     * @param string $fieldName Name of the field to remove
+     * @return boolean True if the field was removed; false otherwise
+     */
+    public function removeField($fieldName)
+    {
+        if (isset($this->_viewdefs['fields'][$fieldName])) {
+            unset($this->_viewdefs['fields'][$fieldName]);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Populates the panel defs, and the view defs, from the request
      *
      * @return void

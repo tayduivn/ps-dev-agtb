@@ -41,6 +41,12 @@ class CliUpgrader extends UpgradeDriver
         'none' => 0,
     );
 
+    /**
+     * Do we use directory instead of zip file?
+     * @var bool
+     */
+    protected $zip_as_dir;
+
     /*
      * CLI arguments: Zipfile Logfile Sugardir Adminuser [Stage]
      */
@@ -107,12 +113,12 @@ eoq2;
             self::argError("{$this->context['source_dir']} is not a accessible.");
         }
 
-        if(!is_file($this->context['zip'])) { // valid zip?
-            self::argError("Zip file argument must be a full path to the patch file.");
+        if(!is_file($this->context['zip']) && !is_dir($this->context['zip'])) { // valid zip?
+            self::argError("Zip file argument must be a full path to the patch file or directory.");
         }
 
         if(!is_readable($this->context['zip'])) { // valid zip?
-            self::argError("Zip archive is not readable: {$this->context['zip']}");
+            self::argError("Upgrade archive is not readable: {$this->context['zip']}");
         }
         return true;
     }
@@ -157,6 +163,10 @@ eoq2;
         if(!empty($context['zip'])) {
             $context['zip'] = realpath($context['zip']);
         }
+        if(is_dir($context['zip'])) {
+            $this->zip_as_dir = true;
+            $this->clean_on_fail = false;
+        }
         if(!empty($context['source_dir'])) {
             $context['source_dir'] = realpath($context['source_dir']);
         }
@@ -175,6 +185,45 @@ eoq2;
             }
         }
         return $context;
+    }
+
+    public function init()
+    {
+        parent::init();
+        if($this->zip_as_dir) {
+            $this->context['extract_dir'] = $this->context['zip'];
+        }
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see UpgradeDriver::preflightWriteUnzip()
+     */
+    protected function preflightWriteUnzip()
+    {
+        if($this->zip_as_dir) {
+            // if we're using extracted zip, we don't need it to be writable
+            return true;
+        }
+        return parent::preflightWriteUnzip();
+    }
+
+    /**
+     * Allows to give pre-extracted directory as zip
+     * @see UpgradeDriver::extractZip()
+     */
+    protected function extractZip($zip)
+    {
+        if($this->zip_as_dir && is_dir($zip)) {
+            // pre-extracted
+            if(!file_exists("$zip/manifest.php")) {
+                return $this->error("$zip does not contain manifest.php");
+            }
+            $this->log("Using $zip as extracted ZIP directory");
+            return true;
+        }
+
+        return parent::extractZip($zip);
     }
 
     /**
@@ -333,15 +382,18 @@ eoq2;
                 array_pop($upgrader->context['argv']);
             }
             while(1) {
+                $begin = time();
                 $res = $upgrader->runStep($stage);
+                $end = time();
+                $duration = self::formatDuration($begin, $end);
                 if($res === false) {
                     if($stage) {
-                        echo "***************         Step \"{$stage}\" FAILED!\n";
+                        echo "***************         Step \"{$stage}\" FAILED! - {$duration}\n";
                     }
                     exit($upgrader->getStageCode($stage));
                 }
                 if($stage) {
-                    echo "***************         Step \"{$stage}\" OK\n";
+                    echo "***************         Step \"{$stage}\" OK - {$duration}\n";
                 }
                 if($res === true) {
                     // we're done successfully
@@ -375,6 +427,19 @@ eoq2;
     	return $argument_string;
    }
 
+    /**
+     * Format stage duration
+     *
+     * @param int $begin Stage begin timestamp
+     * @param int $end Stage end timestamp
+     *
+     * @return string
+     */
+    protected static function formatDuration($begin, $end)
+    {
+        $duration = $end - $begin;
+        return $duration . ' second' . ($duration == 1 ? '' : 's');
+    }
 }
 
 if(empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) return;
