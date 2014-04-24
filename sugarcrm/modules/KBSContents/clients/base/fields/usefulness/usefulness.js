@@ -33,16 +33,14 @@
     votedNotUseful: false,
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     initialize: function(options) {
         this._super('initialize', [options]);
         if (!this.model.has('useful')) {
-            this.model.add('useful');
             this.model.set('useful', 0);
         }
-        if (!this.model.has('useful')) {
-            this.model.add('notuseful');
+        if (!this.model.has('notuseful')) {
             this.model.set('notuseful', 0);
         }
     },
@@ -88,12 +86,14 @@
     /**
      * Check voted state.
      *
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     isVoted: function() {
         if (!this.voted) {
             var votes = app.user.lastState.get(this.getLastStateKey()) || {};
-            if (_.has(votes, this.model.id) && -1 !== _.indexOf([this.KEY_USEFUL, this.KEY_NOT_USEFUL], votes[this.model.id])) {
+            if (_.has(votes, this.model.id) &&
+                _.indexOf([this.KEY_USEFUL, this.KEY_NOT_USEFUL], votes[this.model.id]) !== -1
+            ) {
                 this.voted = true;
                 this.votedUseful = (votes[this.model.id] == this.KEY_USEFUL);
                 this.votedNotUseful = (votes[this.model.id] == this.KEY_NOT_USEFUL);
@@ -117,7 +117,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     _render: function() {
         this.isVoted();
