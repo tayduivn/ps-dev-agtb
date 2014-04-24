@@ -22,42 +22,39 @@
 </head>
 <body class="full-screen">
   <div class="nv-demo">
-    <div id="gauge" class="nv-chart">
+    <div id="chart1" class="nv-chart nv-chart-gauge">
       <svg></svg>
     </div>
   </div>
 
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/axis.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/legend.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/gauge.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/gaugeChart.js"></script>
 
 <script>
-  nv.addGraph(function() {
-
     var chart = nv.models.gaugeChart()
-          .x(function(d) { return d.key })
-          .y(function(d) { return d.y })
+          .x(function(d) { return d.key; })
+          .y(function(d) { return d.y; })
           .showLabels(true)
           .showTitle(true)
-          .colorData( 'default' )
+          .colorData('default')
           .ringWidth(50)
           .maxValue(9)
-          .transitionMs(4000)
-        ;
-
-    nv.utils.windowResize(function(){chart.update();});
+          .transitionMs(4000);
 
     d3.json("data/gauge_data.json", function(data) {
-      d3.select("#gauge svg")
-          .datum(data)
-        .transition().duration(1200)
-          .call(chart);
-    });
-    //setInterval(function() { chart.setPointer(Math.random() * 10); }, 5 * 1000);
+        d3.select("#chart1 svg")
+            .datum(data)
+          .transition().duration(1200)
+            .call(chart);
 
-    return chart;
-  });
+        nv.utils.windowResize(chart.update);
+
+        //setInterval(function() { chart.setPointer(Math.random() * 10); }, 5 * 1000);
+    });
 </script>
 </body>
 </html>

@@ -165,7 +165,8 @@
         var select2Options = this.getSelect2Options(optionsKeys);
         var $el = this.$(this.fieldTag);
         if (!_.isEmpty(optionsKeys)) {
-            if (this.tplName === 'edit' || this.tplName === 'list-edit') {
+            //FIXME remove check for tplName SC-2608
+            if (this.tplName === 'edit' || this.tplName === 'list-edit' || this.tplName === 'massupdate') {
                 $el.select2(select2Options);
                 //FIXME: Once select2 upgrades to 3.4.3, this code should use on('select2-focus')
                 var plugin = $el.data('select2');

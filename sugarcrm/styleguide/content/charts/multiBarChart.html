@@ -33,38 +33,34 @@
 <script src="../../../include/javascript/nvd3/src/models/legend.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/multiBar.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/multiBarChart.js"></script>
+
 <script>
-  // Wrapping in nv.addGraph allows for '0 timeout render', stors rendered charts in nv.graphs, and may do more in the future... it's NOT required
-  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart()
+          .showTitle(false)
+          .tooltips(true)
+          .showControls(true)
+          //.rotateTicks(30)
+          .stacked(true)
+          //.colorData( 'class' )
+          //.colorData( 'default' )
+          //.forceY([0,400]).forceX([0,6]);
+          .tooltipContent( function(key, x, y, e, graph) {
+              return '<p>Stage: <b>' + key + '</b></p>' +
+                     '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
+                     '<p>Percent: <b>' +  x + '%</b></p>';
+          });
 
     d3.json("data/multibar_data.json", function(data) {
-      var chart = nv.models.multiBarChart()
-            .showTitle(false)
-            .tooltips(true)
-            .showControls(true)
-            .colorData( 'graduated', {c1: '#e8e2ca', c2: '#336699', l: data.data.length} )
-            //.colorData( 'class' )
-            //.colorData( 'default' )
-            .rotateLabels(0)
-            .tooltipContent( function(key, x, y, e, graph) {
-                return '<p>Stage: <b>' + key + '</b></p>' +
-                       '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
-                       '<p>Percent: <b>' +  x + '%</b></p>'
-            })
-            //.forceY([0,400]).forceX([0,6]);
-          ;
+        chart
+          .colorData('graduated', {c1: '#e8e2ca', c2: '#336699', l: data.data.length});
 
-      nv.utils.windowResize(chart.update);
+        d3.select('#chart1 svg')
+            .datum(data)
+          .transition().duration(500)
+            .call(chart);
 
-      d3.select('#chart1 svg')
-          .datum(data)
-        .transition().duration(500)
-          .call(chart);
+        nv.utils.windowResize(chart.update);
     });
-
-    return chart;
-  });
-
 </script>
 </body>
 </html>

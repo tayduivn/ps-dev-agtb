@@ -52,27 +52,6 @@ describe("Base.View.Massupdate", function() {
         expect(actual).toEqual(expected);
     });
 
-    it("should convert boolean fields into enum fields", function() {
-        var enumField = _.find(view.meta.panels[0].fields, function(field) {
-                return field.name === 'test_boolean_field';
-            }),
-            booleanFieldsInViewMeta = _.size(_.filter(view.meta.panels[0].fields, function(field) {
-                return field.type === 'bool';
-            })),
-            booleanFieldsInModuleMeta = _.size(_.filter(app.metadata.getModule('Contacts').fields, function(field) {
-                return field.type === 'bool';
-            }));
-
-        expect(enumField).toBeDefined();
-        expect(enumField.type).toEqual('enum');
-        expect(enumField.options).toEqual('checkbox_massupdate_dom');
-        expect(enumField.label).toEqual('Test Boolean');
-
-        //Make sure the view did not override module metadata
-        expect(booleanFieldsInViewMeta).toEqual(0);
-        expect(booleanFieldsInModuleMeta).not.toEqual(0);
-    });
-
     it("should convert team_name field into a fieldset field", function() {
         var enumField = _.find(view.meta.panels[0].fields, function(field) {
             return field.name === 'team_name';

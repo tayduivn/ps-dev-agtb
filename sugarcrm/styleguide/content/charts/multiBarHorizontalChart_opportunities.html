@@ -22,50 +22,47 @@
 </head>
 <body class="full-screen">
   <div class="nv-demo">
-    <div id="chart1" class="nv-chart">
+    <div id="chart1" class="nv-chart nv-chart-multibar">
       <svg></svg>
     </div>
   </div>
 
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
-<script src="data/horizbar_data.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/axis.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/legend.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/multiBar.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/multiBarHorizontalChart.js"></script>
+
 <script>
-  nv.addGraph(function() {
-    d3.json("data/opportunities_data.json", function(data) {
-      var chart = nv.models.multiBarHorizontalChart()
-            .x(function(d) { return d.label })
-            .y(function(d) { return d.value })
-            .showValues(true)
-            .showTitle(true)
-            .tooltips(true)
-            .showControls(true)
-            .stacked(true)
-            .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: data.data.length} )
-            .tooltipContent( function(key, x, y, e, graph) {
+    var chart = nv.models.multiBarHorizontalChart()
+          .x(function(d) { return d.label; })
+          .y(function(d) { return d.value; })
+          .showValues(true)
+          .showTitle(true)
+          .tooltips(true)
+          .showControls(true)
+          .stacked(true)
+          .tooltipContent( function(key, x, y, e, graph) {
               return '<p>Outcome: <b>' + key + '</b></p>' +
                      '<p>Lead Source: <b>' +  x + '</b></p>' +
-                     '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>'
-              })
-          ;
+                     '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>';
+          });
 
-      chart.yAxis
+    d3.json("data/opportunities_data.json", function(data) {
+        chart
+          .colorData('graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: data.data.length})
+
+        chart.yAxis
           .tickFormat(d3.format(',.2f'));
 
-      nv.utils.windowResize(chart.update);
+        d3.select('#chart1 svg')
+            .datum(data)
+          .transition().duration(100)
+            .call(chart);
 
-      d3.select('#chart1 svg')
-          .datum(data)
-        .transition().duration(100)
-          .call(chart);
-
-      return chart;
+        nv.utils.windowResize(chart.update);
     });
-  });
 </script>
 </body>
 </html>

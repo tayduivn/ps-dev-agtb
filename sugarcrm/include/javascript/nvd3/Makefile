@@ -17,7 +17,6 @@ JS_FILES = \
 	src/models/multiBar.js \
 	src/models/multiBarChart.js \
 	src/models/multiBarHorizontalChart.js \
-	src/models/paretoLegend.js \
 	src/models/paretoChart.js \
 	src/models/pie.js \
 	src/models/pieChart.js \

@@ -20,16 +20,6 @@ class SugarUpgradeRevenueLineItemSyncToForecastWorksheet extends UpgradeScript
 
     public function run()
     {
-        // are we coming from anything before 7.0?
-        if (!version_compare($this->from_version, '7.0', '<')) {
-            return;
-        }
-
-        // we need to anything other than ENT and ULT
-        if (!$this->fromFlavor('ent')) {
-            return;
-        }
-
         $this->log('Updating Revenue Line Item Rows in Forecast Worksheet');
 
         $fields = array(
