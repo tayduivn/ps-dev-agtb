@@ -36,6 +36,7 @@ class ext_rest_dnb extends ext_rest {
         $this->_enable_in_hover = true;
         $this->_enable_in_admin_display = false;
         $this->_enable_in_admin_mapping = false;
+        $this->_required_config_fields = array('dnb_username', 'dnb_password');
     }
 
     /*
