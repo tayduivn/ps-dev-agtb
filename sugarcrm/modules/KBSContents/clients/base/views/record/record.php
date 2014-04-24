@@ -135,7 +135,13 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'readonly' => true,
                     'span' => 8,
                 ),
-                'name',
+                array(
+                    'name' => 'name',
+                    'related_fields' => array(
+                        'useful',
+                        'notuseful',
+                    ),
+                ),
                 array(
                     'name' => 'favorite',
                     'label' => 'LBL_FAVORITE',
@@ -195,15 +201,6 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
                     'type' => 'tags',
                     'span' => 12,
                 ),
-                'usefulness' => array(
-                    'name' => 'usefulness',
-                    'type' => 'usefulness',
-                    'span' => 12,
-                    'fields' => array(
-                        'useful',
-                        'notuseful',
-                    ),
-                ),
             ),
         ),
         array(
@@ -256,4 +253,17 @@ $viewdefs['KBSContents']['base']['view']['record'] = array(
             ),
         ),
     ),
+    'moreLessInlineFields' => array(
+        'usefulness' => array(
+            'name' => 'usefulness',
+            'type' => 'usefulness',
+            'span' => 6,
+            'cell_css_class' => 'pull-right usefulness',
+            'readonly' => true,
+            'fields' => array(
+                'useful',
+                'notuseful',
+            ),
+        ),
+    )
 );
