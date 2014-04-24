@@ -82,7 +82,14 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                                 .colorData( 'default' )
                                 .colorFill( 'default' )
                                 .stacked(!params.display_manager)
-                                .id(chartId);
+                                .id(chartId)
+                                .strings({
+                                    legend: {
+                                        close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                        open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                                    },
+                                    noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
+                                });
 
                             // get chartId from params or use the default for sugar
                             var chartId = params.chartId || 'db620e51-8350-c596-06d1-4f866bfcfd5b';
@@ -281,7 +288,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                 });
 
 				break;
-				
+
 			case "lineChart":
                 SUGAR.charts.get(jsonFilename, params, function(data) {
                     if(SUGAR.charts.isDataEmpty(data)){

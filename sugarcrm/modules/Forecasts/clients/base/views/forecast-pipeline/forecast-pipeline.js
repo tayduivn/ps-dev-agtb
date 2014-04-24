@@ -83,13 +83,20 @@
             .tooltips(true)
             .margin({top: 0})
             .tooltipContent(function(key, x, y, e, graph) {
-                return '<p>Stage: <b>' + key + '</b></p>' +
-                    '<p>Amount: <b>' + y + '</b></p>' +
-                    '<p>Percent: <b>' + x + '%</b></p>';
+                return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + key + '</b></p>' +
+                    '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + y + '</b></p>' +
+                    '<p>' + SUGAR.App.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>';
             })
             .colorData('class', {step: 2})
             .fmtValueLabel(function(d) {
                 return d.label;
+            })
+            .strings({
+                legend: {
+                    close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                    open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                },
+                noData: app.lang.getAppString('LBL_CHART_NO_DATA')
             });
     },
 
@@ -140,7 +147,6 @@
         this.chart_loaded = _.isFunction(this.chart.update);
         this.displayNoData(!this.chart_loaded);
     },
-
 
     hasChartData: function() {
         return !_.isEmpty(this.results) && this.results.data && this.results.data.length > 0;
