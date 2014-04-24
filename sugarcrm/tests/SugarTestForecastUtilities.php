@@ -59,6 +59,7 @@ class SugarTestForecastUtilities
             SugarTestConfigUtilities::setConfig('Forecasts', $key, $value);
         }
         OpportunityHooks::$settings = array();
+        Forecast::$settings = array();
     }
 
     /**
@@ -68,6 +69,7 @@ class SugarTestForecastUtilities
     {
         SugarTestConfigUtilities::resetConfig();
         OpportunityHooks::$settings = array();
+        Forecast::$settings = array();
     }
 
     /**
