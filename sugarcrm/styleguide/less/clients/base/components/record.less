@@ -146,8 +146,14 @@
 
     /* Must be same as above margin-top definition */
     .input-append input[type="text"] + .add-on,
+    .input-append input[type="password"] + .add-on,
     .input-append textarea + .add-on {
       margin-top: -5px;
+    }
+    .input-append input[type="text"][disabled] + .add-on,
+    .input-append input[type="password"][disabled] + .add-on,
+    .input-append textarea[disabled] + .add-on {
+      background-color: @inputDisabledBackground;
     }
 
     .edit > [type="password"]:first-of-type {
@@ -290,11 +296,24 @@
       }
       .edit .control-group {
         margin-right: -7px;
+        margin-bottom: 0;
         .controls-three {
           padding-right: 101px;
         }
         .btn {
           top: -5px;
+        }
+        + .control-group {
+          margin-top: 9px;
+        }
+      }
+      .input-append.error {
+        .add-on.error-tooltip {
+          position: absolute;
+          top: -2px;
+          right: 24px;
+          left: auto;
+          background: transparent;
         }
       }
     }

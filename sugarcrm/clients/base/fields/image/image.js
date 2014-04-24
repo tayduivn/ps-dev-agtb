@@ -75,7 +75,7 @@
             this.width = this.height = this.$el.parent().height() || 42;
             this.def.width = this.def.height = undefined;
         } else {
-            this.width = parseInt(this.def.width || this.def.height, 10) || 50;
+            this.width = parseInt(this.def.width || this.def.height, 10) || 42;
             this.height = parseInt(this.def.height, 10) || this.width;
         }
 

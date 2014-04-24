@@ -29,8 +29,8 @@ describe("image field", function() {
 
         it("should define widget height and width on render", function() {
             field.render();
-            expect(field.width).toEqual(50);
-            expect(field.height).toEqual(50);
+            expect(field.width).toEqual(42);
+            expect(field.height).toEqual(42);
 
             field = SugarTest.createField("base", "test_image_search", "image", "detail", {width: "120"}, "Contacts", model);
             field.render();
