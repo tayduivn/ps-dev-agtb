@@ -94,7 +94,8 @@ class Bug49723Test extends Sugar_PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        rmdir_recursive('custom/modules/Contacts/workflow');
+        // Bad idea, but because of include_once all tests that run after this one need the workflow..
+        // rmdir_recursive('custom/modules/Contacts/workflow');
 
         $this->db->query("DELETE FROM workflow_triggershells WHERE parent_id = '$this->workFlowId'");
         $this->db->query("DELETE FROM workflow WHERE id = '$this->workFlowId'");
