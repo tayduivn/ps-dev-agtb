@@ -290,7 +290,7 @@
         var params = {
             format:'sugar-html-json',
             link_name: this.def.link,
-            platform: 'base'
+            platform: app.config.platform
         };
         params[(new Date()).getTime()] = 1;
 
