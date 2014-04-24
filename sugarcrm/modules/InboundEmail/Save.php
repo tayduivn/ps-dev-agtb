@@ -206,13 +206,7 @@ $GLOBALS['log']->info('----->InboundEmail now saving self');
 $previousTeamAccessCheck = isset($GLOBALS['sugar_config']['disable_team_access_check']) ? $GLOBALS['sugar_config']['disable_team_access_check'] : null;
 $GLOBALS['sugar_config']['disable_team_access_check'] = TRUE;
 
-//Sync any changes within the IE account that need to be synced with the Sugar Folder.
-//Need to do this post save so the correct team/teamset id is generated correctly.
-$monitor_fields = array('name', 'status',
-    //BEGIN SUGARCRM flav=pro ONLY
-    'team_id','team_set_id'
-    //END SUGARCRM flav=pro ONLY
-);
+$monitor_fields = array('name', 'status', 'team_id', 'team_set_id');
 
 $current_monitor_fields = array();
 foreach ($monitor_fields as $singleField) {
