@@ -67,20 +67,27 @@
         if (this.isVoted()) {
             return;
         }
-        var field = isUseful ? 'useful' : 'notuseful';
-        var votes = app.user.lastState.get(this.getLastStateKey()) || {};
+        var action = isUseful ? 'useful' : 'notuseful';
+        var url = app.api.buildURL(this.model.module, action, {
+            id: this.model.id
+        });
+        var callbacks = app.data.getSyncCallbacks('update', this.model, {
+            success: _.bind(function() {
+                var votes = app.user.lastState.get(this.getLastStateKey()) || {};
+                votes[this.model.id] = isUseful ? this.KEY_USEFUL : this.KEY_NOT_USEFUL;
+                app.user.lastState.set(this.getLastStateKey(), votes);
 
-        votes[this.model.id] = isUseful ? this.KEY_USEFUL : this.KEY_NOT_USEFUL;
-        app.user.lastState.set(this.getLastStateKey(), votes);
+                this.voted = true;
+                this.votedUseful = isUseful;
+                this.votedNotUseful = !isUseful;
 
-        this.model.set(field, parseInt(this.model.get(field), 10) + 1);
-        this.model.save();
-        this.voted = true;
-        this.votedUseful = isUseful;
-        this.votedNotUseful = !isUseful;
-        if (!this.disposed) {
-            this.render();
-        }
+                if (!this.disposed) {
+                    this.render();
+                }
+            }, this)
+        });
+
+        app.api.call('update', url, null, callbacks);
     },
 
     /**

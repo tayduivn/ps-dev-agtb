@@ -84,4 +84,5 @@ $mod_strings = array (
     'LBL_KBSTATUS_PUBLISHED_EX' => 'Published (Extrenal)',
     'LBL_PANEL_INMORELESS' => 'Usefulness',
     'LBL_MORE_OTHER_LANGUAGES' => 'More Other Languages...',
+    'EXCEPTION_VOTE_USEFULNESS_NOT_AUTHORIZED' => 'You are not authorized to vote useful/not useful {moduleName}. Contact your administrator if you need access.',
 );
