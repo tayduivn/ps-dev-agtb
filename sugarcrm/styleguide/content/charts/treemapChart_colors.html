@@ -84,111 +84,94 @@
     </section>
   </div>
 
-<script src="js/jquery-1.7.2.min.js"></script>
-<script src="js/underscore-min.js"></script>
+<script src="../../../include/javascript/jquery/jquery-min.js"></script>
+<script src="../../../sidecar/lib/backbone/underscore.min.js"></script>
+
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
-<script src="data/treemap_data.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/treemap.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/treemapChart.js"></script>
 
 <script>
-  var treemap_data_default_JSON = JSON.stringify(parseData(treemap_data_default.records));
+  d3.json("data/treemap_data.json", function(chartData) {
+    var data = parseData(chartData.records);
 
-  nv.addGraph(function() {
-    var chart = nv.models.treemapChart()
+    var chart1 = nv.models.treemapChart()
           .leafClick(function(d) { alert('leaf clicked'); })
           .getSize(function(d) { return d.value; })
           .showTitle(false)
           .tooltips(false)
           .colorData('default');
     d3.select('#chart1 svg')
-        .datum(JSON.parse(treemap_data_default_JSON))
+        .datum(data)
       .transition().duration(500)
-        .call(chart);
-    return chart;
-  });
-  nv.addGraph(function() {
-    var chart = nv.models.treemapChart()
+        .call(chart1);
+
+    var chart2 = nv.models.treemapChart()
           .leafClick(function(d) { alert('leaf clicked'); })
           .getSize(function(d) { return d.value; })
           .showTitle(false)
           .tooltips(false)
           .colorData('default', {gradient:true});
     d3.select('#chart2 svg')
-        .datum(JSON.parse(treemap_data_default_JSON))
+        .datum(data)
       .transition().duration(500)
-        .call(chart);
-    return chart;
-  });
-  nv.addGraph(function() {
-    var chart = nv.models.treemapChart()
+        .call(chart2);
+
+    var chart3 = nv.models.treemapChart()
           .leafClick(function(d) { alert('leaf clicked'); })
           .getSize(function(d) { return d.value; })
           .showTitle(false)
           .tooltips(false)
           .colorData('class');
     d3.select('#chart3 svg')
-        .datum(JSON.parse(treemap_data_default_JSON))
+        .datum(data)
       .transition().duration(500)
-        .call(chart);
-    return chart;
-  });
+        .call(chart3);
 
-
-  nv.addGraph(function() {
-    var chart = nv.models.treemapChart()
+    var chart4 = nv.models.treemapChart()
           .leafClick(function(d) { alert('leaf clicked'); })
           .getSize(function(d) { return d.value; })
           .showTitle(false)
           .tooltips(false)
           .colorData('data');
     d3.select('#chart4 svg')
-        .datum(JSON.parse(treemap_data_default_JSON))
+        .datum(data)
       .transition().duration(500)
-        .call(chart);
-    return chart;
-  });
-  nv.addGraph(function() {
-    var chart = nv.models.treemapChart()
+        .call(chart4);
+
+    var chart5 = nv.models.treemapChart()
           .leafClick(function(d) { alert('leaf clicked'); })
           .getSize(function(d) { return d.value; })
           .showTitle(false)
           .tooltips(false)
           .colorData('data', {gradient:true});
     d3.select('#chart5 svg')
-        .datum(JSON.parse(treemap_data_default_JSON))
+        .datum(data)
       .transition().duration(500)
-        .call(chart);
-    return chart;
-  });
+        .call(chart5);
 
-
-  nv.addGraph(function() {
-    var chart = nv.models.treemapChart()
+    var chart7 = nv.models.treemapChart()
           .leafClick(function(d) { alert('leaf clicked'); })
           .getSize(function(d) { return d.value; })
           .showTitle(false)
           .tooltips(false)
-          .colorData( 'graduated', {c1:'#12448f', c2:'#deeeff'} )
-        ;
+          .colorData( 'graduated', {c1:'#12448f', c2:'#deeeff'} );
     d3.select('#chart7 svg')
-        .datum(JSON.parse(treemap_data_default_JSON))
-      .transition().duration(500).call(chart);
-    return chart;
-  });
-  nv.addGraph(function() {
-    var chart = nv.models.treemapChart()
+        .datum(data)
+      .transition().duration(500)
+        .call(chart7);
+
+    var chart8 = nv.models.treemapChart()
           .leafClick(function(d) { alert('leaf clicked'); })
           .getSize(function(d) { return d.value; })
           .showTitle(false)
           .tooltips(false)
-          .colorData( 'graduated', {c1:'#12448f', c2:'#deeeff', gradient:true} )
-        ;
+          .colorData( 'graduated', {c1:'#12448f', c2:'#deeeff', gradient:true} );
     d3.select('#chart8 svg')
-        .datum(JSON.parse(treemap_data_default_JSON))
-      .transition().duration(500).call(chart);
-    return chart;
+        .datum(data)
+      .transition().duration(500)
+        .call(chart8);
   });
 
 
@@ -293,7 +276,6 @@
 
     return root;
   }
-
 </script>
 </body>
 </html>

@@ -635,7 +635,7 @@ class DynamicField {
     {
         if (isset($baseField->$property))
         {
-            return $baseField->$property == $value;
+            return $baseField->$property === $value;
         }
 
         switch ($property) {

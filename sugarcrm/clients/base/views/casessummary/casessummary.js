@@ -55,6 +55,9 @@
                 .colorData('class')
                 .tooltipContent(function(key, x, y, e, graph) {
                     return '<p><b>' + key + ' ' + parseInt(y, 10) + '</b></p>';
+                })
+                .strings({
+                    noData: app.lang.getAppString('LBL_CHART_NO_DATA')
                 });
     },
 

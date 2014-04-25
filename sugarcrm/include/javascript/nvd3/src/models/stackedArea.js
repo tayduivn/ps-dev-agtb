@@ -159,12 +159,22 @@ nv.models.stackedArea = function () {
               pos: [d3.event.pageX, d3.event.pageY],
               seriesIndex: i
             });
+            g.select('.nv-chart-' + chart.id() + ' .nv-area-' + i).classed('hover', true);
           })
           .on('mouseout', function (d,i) {
             d3.select(this).classed('hover', false);
             dispatch.areaMouseout({
               point: d,
               series: d.key,
+              pos: [d3.event.pageX, d3.event.pageY],
+              seriesIndex: i
+            });
+            g.select('.nv-chart-' + chart.id() + ' .nv-area-' + i).classed('hover', false);
+          })
+          .on('mousemove', function (d,i){
+            dispatch.areaMousemove({
+              point: d,
+              pointIndex: i,
               pos: [d3.event.pageX, d3.event.pageY],
               seriesIndex: i
             });

@@ -5,10 +5,6 @@ nv.models.treemapChart = function() {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var treemap = nv.models.treemap()
-    , legend = nv.models.legend()
-    ;
-
   var margin = {top: 0, right: 10, bottom: 10, left: 10}
     , width = null
     , height = null
@@ -25,10 +21,18 @@ nv.models.treemapChart = function() {
     , colorArray = d3.scale.category20().range().map( function(d){ return d; })
     , x //can be accessed via chart.xScale()
     , y //can be accessed via chart.yScale()
-    , noData = 'No Data Available.'
+    , strings = {
+        legend: {close: 'Hide legend', open: 'Show legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      }
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove', 'elementMousemove')
     ;
 
+
+  var treemap = nv.models.treemap()
+    , legend = nv.models.legend()
+    ;
 
   //============================================================
 
@@ -66,7 +70,7 @@ nv.models.treemapChart = function() {
       // Display noData message if there's nothing to show.
 
       if (!data || !data.length || !data.filter(function(d) { return d.children.length; }).length) {
-        var noDataText = container.selectAll('.nv-noData').data([noData]);
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
         noDataText.enter().append('text')
           .attr('class', 'nvd3 nv-noData')
@@ -114,6 +118,7 @@ nv.models.treemapChart = function() {
 
         legend
           .id('legend_' + chart.id())
+          .strings(chart.strings().legend)
           .width(availableWidth + margin.left)
           .height(availableHeight);
 
@@ -362,7 +367,7 @@ nv.models.treemapChart = function() {
   };
 
   chart.tooltip = function(_) {
-    if (!arguments.length) return tooltip;
+    if (!arguments.length) { return tooltip; }
     tooltip = _;
     return chart;
   };
@@ -379,9 +384,15 @@ nv.models.treemapChart = function() {
     return chart;
   };
 
-  chart.noData = function(_) {
-    if (!arguments.length) { return noData; }
-    noData = _;
+  chart.strings = function (_) {
+    if (!arguments.length) {
+      return strings;
+    }
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
     return chart;
   };
 

@@ -22,19 +22,19 @@
 </head>
 <body class="full-screen">
   <div class="nv-demo">
-    <div id="pie" class="nv-chart nv-chart-pie">
+    <div id="chart1" class="nv-chart nv-chart-pie">
       <svg></svg>
     </div>
   </div>
 
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/axis.js"></script>
+<script src="../../../include/javascript/nvd3/src/models/legend.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/pie.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/pieChart.js"></script>
+
 <script>
-
-  nv.addGraph(function() {
-
     var chart = nv.models.pieChart()
           // .x(function(d) { return d.key })
           // .y(function(d) { return d.value })
@@ -43,30 +43,25 @@
           //.color(d3.scale.category10().range())
           //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: pie_data.data.length} )
           //.colorData( 'class' )
+          .colorData( 'default', {gradient:true} )
           .donut(true)
           .donutLabelsOutside(true)
           .donutRatio(0.4)
           .hole(10)
-          .colorData( 'default', {gradient:true} )
           .tooltipContent( function(key, x, y, e, graph) {
-            return '<p>Stage: <b>' + key + '</b></p>' +
-                   '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
-                   '<p>Percent: <b>' +  x + '%</b></p>'
-            })
-        ;
-
-    nv.utils.windowResize(function(){chart.update();});
+             return '<p>Stage: <b>' + key + '</b></p>' +
+                    '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
+                    '<p>Percent: <b>' +  x + '%</b></p>';
+           });
 
     d3.json("data/pie_data.json", function(data) {
-      d3.select("#pie svg")
-          .datum(data)
-        .transition().duration(500)
-          .call(chart);
+        d3.select("#chart1 svg")
+            .datum(data)
+          .transition().duration(500)
+            .call(chart);
+
+        nv.utils.windowResize(chart.update);
     });
-
-    return chart;
-  });
-
 </script>
 </body>
 </html>

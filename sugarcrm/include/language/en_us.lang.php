@@ -4830,6 +4830,13 @@ $app_strings = array (
     'LBL_INACTIVE_TASKS_DASHLET_USER_BUTTON_LABEL' => 'My Tasks',
     'LBL_INACTIVE_TASKS_DASHLET_GROUP_BUTTON_LABEL' => 'Team Tasks',
 
+    //common chart strings
+    'LBL_CHART_NO_DATA' => 'No data available.',
+    'LBL_CHART_LEGEND_CLOSE' => 'Hide legend',
+    'LBL_CHART_LEGEND_OPEN' => 'Show legend',
+    'LBL_CHART_CONTROLS_CLOSE' => 'Hide controls',
+    'LBL_CHART_CONTROLS_OPEN' => 'Show controls',
+
     // interactions chart dashlet
     'LBL_EMAIL_SENT' => 'sent',
     'LBL_EMAIL_RECV' => 'rec',
@@ -4854,9 +4861,6 @@ $app_strings = array (
     'TPL_OVERWRITE_POPULATED_DATA_CONFIRM_WITH_MODULE_SINGULAR' => 'The selected {{moduleSingularLower}} has related values: {{values}}. Cancel to keep existing values. Confirm to overwrite with new values.',
     'LBL_OVERWRITE_POPULATED_DATA_FROM' => 'From:',
     'LBL_OVERWRITE_POPULATED_DATA_TO' => 'To:',
-
-    //interaction chart
-    'LBL_CHART_NO_DATA' => 'No data found.',
 
     //organization chart
     'LBL_ORG_CHART' => 'Organization Chart',

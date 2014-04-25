@@ -1,79 +1,75 @@
-nv.models.pieChart = function() {
+nv.models.pieChart = function () {
 
   //============================================================
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var pie = nv.models.pie()
-    , legend = nv.models.legend()
-    ;
-
-  var margin = {top: 30, right: 20, bottom: 20, left: 20}
-    , width = null
-    , height = null
-    , showLegend = true
-    , showTitle = false
-    , hole = false
-    , tooltip = null
-    , tooltips = true
-    , tooltipContent = function(key, y, e, graph) {
-        return '<h3>' + key + '</h3>' +
+  var margin = {top: 10, right: 10, bottom: 10, left: 10},
+      width = null,
+      height = null,
+      showTitle = false,
+      showLegend = true,
+      hole = false,
+      tooltip = null,
+      tooltips = true,
+      tooltipContent = function (key, x, y, e, graph) {
+        return '<h3>' + key + ' - ' + x + '</h3>' +
                '<p>' +  y + '</p>';
-      }
-    , state = {}
-    , noData = "No Data Available."
-    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState')
-    ;
-
-  //============================================================
-
+      },
+      state = {},
+      strings = {
+        legend: {close: 'Hide legend', open: 'Show legend'},
+        controls: {close: 'Hide controls', open: 'Show controls'},
+        noData: 'No Data Available.'
+      },
+      dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
 
   //============================================================
   // Private Variables
   //------------------------------------------------------------
 
-  var showTooltip = function(e, offsetElement, total) {
+  var pie = nv.models.pie(),
+      legend = nv.models.legend()
+        .align('center');
 
-    var left = e.pos[0]
-      , top = e.pos[1]
-      , x = (pie.y()(e.point) * 100 / total).toFixed(1)
-      , y = pie.valueFormat()( pie.y()(e.point) )
-      , content = tooltipContent( e.point.key, x, y, e, chart )
-      //content = tooltip(pie.x()(e.point), y, e, chart);
-    ;
+  var showTooltip = function (e, offsetElement, total) {
+    var left = e.pos[0],
+        top = e.pos[1],
+        x = (pie.y()(e.point) * 100 / total).toFixed(1),
+        y = pie.valueFormat()( pie.y()(e.point)),
+        content = tooltipContent(e.point.key, x, y, e, chart);
 
-    //nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
     tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
   };
 
   //============================================================
 
-
   function chart(selection) {
-    selection.each(function(chartData) {
 
-      var properties = chartData.properties
-        , data = chartData.data;
+    selection.each(function (chartData) {
 
-      var container = d3.select(this),
-          that = this;
+      var properties = chartData.properties,
+          data = chartData.data,
+          container = d3.select(this),
+          that = this,
+          availableWidth = (width || parseInt(container.style('width'), 10) || 960) - margin.left - margin.right,
+          availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom,
+          total = d3.sum( data.map( function (d) { return d.value; }) ),
+          innerWidth = availableWidth,
+          innerHeight = availableHeight,
+          innerMargin = {top: 0, right: 0, bottom: 0, left: 0};
 
-      var availableWidth = (width || parseInt(container.style('width'), 10) || 960) - margin.left - margin.right
-        , availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom
-        , total = d3.sum( data.map( function(d) { return d.value; }) )
-      ;
+      chart.update = function () {
+        container.transition().call(chart);
+      };
 
-      chart.update = function() { container.transition().duration(300).call(chart); };
       chart.container = this;
-
-      //set state.disabled
-      state.disabled = data.map(function(d) { return !!d.disabled });
 
       //------------------------------------------------------------
       // Display No Data message if there's nothing to show.
 
       if (!data || !data.length) {
-        var noDataText = container.selectAll('.nv-noData').data([noData]);
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
 
         noDataText.enter().append('text')
           .attr('class', 'nvd3 nv-noData')
@@ -83,7 +79,9 @@ nv.models.pieChart = function() {
         noDataText
           .attr('x', margin.left + availableWidth / 2)
           .attr('y', margin.top + availableHeight / 2)
-          .text(function(d) { return d; });
+          .text(function (d) {
+            return d;
+          });
 
         return chart;
       } else {
@@ -91,156 +89,153 @@ nv.models.pieChart = function() {
       }
 
       //------------------------------------------------------------
+      // Process data
 
+      //set state.disabled
+      state.disabled = data.map(function (d) { return !!d.disabled; });
 
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
 
-      var wrap = container.selectAll('g.nv-wrap.nv-pieChart').data([data]);
-      var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-pieChart').append('g');
-      var g = wrap.select('g');
+      var wrap = container.selectAll('g.nv-wrap.nv-pieChart').data([data]),
+          gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-pieChart').append('g'),
+          g = wrap.select('g').attr('class', 'nv-chartWrap');
 
+      gEnter.append('g').attr('class', 'nv-titleWrap');
+      var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-pieWrap');
+      var pieWrap = g.select('.nv-pieWrap');
+      gEnter.append('g').attr('class', 'nv-holeWrap');
+      var holeWrap = g.select('.nv-holeWrap');
+      gEnter.append('g').attr('class', 'nv-legendWrap');
+      var legendWrap = g.select('.nv-legendWrap');
+
+      wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
       //------------------------------------------------------------
       // Title & Legend
 
-      var titleHeight = 0
-        , legendHeight = 0;
-
-      if (showLegend) {
-        gEnter.append('g').attr('class', 'nv-legendWrap');
-
-        legend
-          .id('legend_' + chart.id())
-          .width(availableWidth)
-          .height(availableHeight)
-          .align('center')
-          .key(pie.x());
-
-        wrap.select('.nv-legendWrap')
-            .datum(data)
-            .call(legend);
-
-        legendHeight = legend.height() + 10;
-
-        if (margin.top !== legendHeight + titleHeight) {
-          margin.top = legendHeight + titleHeight;
-          availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
-        }
-
-        wrap.select('.nv-legendWrap')
-            .attr('transform', 'translate(0,' + (-margin.top) +')');
-      }
-
       if (showTitle && properties.title) {
-        gEnter.append('g').attr('class', 'nv-titleWrap');
+        titleWrap.select('.nv-title').remove();
 
-        g.select('.nv-title').remove();
-
-        g.select('.nv-titleWrap')
+        titleWrap
           .append('text')
             .attr('class', 'nv-title')
             .attr('x', 0)
-            .attr('y', 0 )
+            .attr('y', 0)
+            .attr('dy', '.71em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
-            .attr('fill', 'black')
-          ;
+            .attr('fill', 'black');
 
-        titleHeight = parseInt(g.select('.nv-title').node().getBBox().height, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
+      }
 
-        if (margin.top !== titleHeight + legendHeight) {
-          margin.top = titleHeight + legendHeight;
-          availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
-        }
+      if (showLegend) {
+        legend
+          .id('legend_' + chart.id())
+          .strings(chart.strings().legend)
+          .height(availableHeight - innerMargin.top);
+        legendWrap
+          .datum(data)
+          .call(legend);
 
-        g.select('.nv-titleWrap')
-            .attr('transform', 'translate(0,'+ ( -margin.top+parseInt(g.select('.nv-title').node().getBBox().height, 10) ) +')');
+        legend
+          .arrange(availableWidth);
+        legendWrap
+          .attr('transform', 'translate(0,' + innerMargin.top + ')');
       }
 
       //------------------------------------------------------------
+      // Recalc inner margins
 
-
-      wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
+      innerMargin.top += legend.height() + 4;
+      innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
       //------------------------------------------------------------
       // Main Chart Component(s)
 
       pie
-        .width(availableWidth)
-        .height(availableHeight);
+        .width(innerWidth)
+        .height(innerHeight);
 
+      pieWrap
+        .datum(data.filter(function (d) { return !d.disabled; }))
+        .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
+        .transition()
+          .call(pie);
 
-      var pieWrap = g.select('.nv-pieWrap')
-          .datum(data);
-
-      pieWrap.transition().call(pie);
-
-      wrap.selectAll('.nv-pie-hole').remove();
 
       if (hole) {
-          var pieHole = wrap.append('g').append('text')
-            .text(hole)
-              .attr('text-anchor', 'middle')
-              .attr('class','nv-pie-hole')
-              .attr('transform', 'translate('+ availableWidth/2 +','+ (12+availableHeight/2) +')')
-              .attr('fill', '#333');
+        holeWrap.select('text').remove();
+        holeWrap.append('text')
+          .text(hole)
+          .attr('text-anchor', 'middle')
+          .attr('dy', '1em')
+          .attr('class','nv-pie-hole')
+          .attr('transform', 'translate('+ (availableWidth / 2) +','+ (availableHeight / 2) +')')
+          .attr('fill', '#333');
       }
-      //------------------------------------------------------------
-
 
       //============================================================
       // Event Handling/Dispatching (in chart's scope)
       //------------------------------------------------------------
 
-      legend.dispatch.on('legendClick', function(d,i, that) {
+      legend.dispatch.on('legendClick', function (d, i) {
         d.disabled = !d.disabled;
 
-        if (!pie.values()(data).filter(function(d) { return !d.disabled; }).length) {
-          pie.values()(data).map(function(d) {
+        if (!pie.values()(data).filter(function (d) { return !d.disabled; }).length) {
+          pie.values()(data).map(function (d) {
             d.disabled = false;
             wrap.selectAll('.nv-series').classed('disabled', false);
             return d;
           });
         }
 
-        state.disabled = data.map(function(d) { return !!d.disabled });
+        state.disabled = data.map(function (d) { return !!d.disabled; });
         dispatch.stateChange(state);
 
-        container.transition().duration(300).call(chart);
+        container.transition().call(chart);
       });
 
-      dispatch.on('tooltipShow', function(e) {
+      dispatch.on('tooltipShow', function (e) {
         if (tooltips) {
           showTooltip(e, that.parentNode, total);
         }
       });
 
-      // pie.dispatch.on('elementMouseout.tooltip', function(e) {
-      //   dispatch.tooltipHide(e);
-      // });
+      dispatch.on('tooltipHide', function () {
+        if (tooltips) {
+          nv.tooltip.cleanup();
+        }
+      });
+
+      dispatch.on('tooltipMove', function (e) {
+        if (tooltip) {
+          nv.tooltip.position(tooltip, e.pos);
+        }
+      });
 
       // Update chart from a state object passed to event handler
-      dispatch.on('changeState', function(e) {
-
+      dispatch.on('changeState', function (e) {
         if (typeof e.disabled !== 'undefined') {
-          data.forEach(function(series,i) {
+          data.forEach(function (series,i) {
             series.disabled = e.disabled[i];
           });
-
           state.disabled = e.disabled;
         }
 
-        container.transition().duration(300).call(chart);
+        container.transition().call(chart);
       });
 
-      //============================================================
-
+      dispatch.on('chartClick', function (e) {
+        if (legend.enabled()) {
+          legend.dispatch.closeMenu(e);
+        }
+      });
 
     });
 
@@ -251,44 +246,37 @@ nv.models.pieChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  pie.dispatch.on('elementMouseover.tooltip', function(e) {
-    e.pos = [e.pos[0] +  margin.left, e.pos[1] + margin.top];
+  pie.dispatch.on('elementMouseover.tooltip', function (e) {
     dispatch.tooltipShow(e);
   });
 
-  pie.dispatch.on('elementMouseout.tooltip', function(e) {
+  pie.dispatch.on('elementMouseout.tooltip', function (e) {
     dispatch.tooltipHide(e);
   });
-  dispatch.on('tooltipHide', function() {
-    if (tooltips) nv.tooltip.cleanup();
-  });
 
-  pie.dispatch.on('elementMousemove', function(e) {
+  pie.dispatch.on('elementMousemove.tooltip', function (e) {
     dispatch.tooltipMove(e);
   });
-  dispatch.on('tooltipMove', function(e) {
-    if (tooltip) {
-      nv.tooltip.position(tooltip,e.pos);
-    }
-  });
-
-  //============================================================
-
 
   //============================================================
   // Expose Public Variables
   //------------------------------------------------------------
 
   // expose chart's sub-components
-  chart.legend = legend;
   chart.dispatch = dispatch;
   chart.pie = pie;
+  chart.legend = legend;
 
-  d3.rebind(chart, pie, 'valueFormat', 'values', 'x', 'y', 'description', 'id', 'showLabels', 'donutLabelsOutside', 'pieLabelsOutside', 'donut', 'donutRatio', 'labelThreshold', 'color', 'fill', 'classes', 'gradient');
+  d3.rebind(chart, pie, 'id', 'x', 'y', 'color', 'fill', 'classes', 'gradient');
+  d3.rebind(chart, pie, 'valueFormat', 'values', 'description', 'showLabels', 'donutLabelsOutside', 'pieLabelsOutside', 'donut', 'donutRatio', 'labelThreshold');
 
   chart.colorData = function (_) {
-    var colors = function (d,i) { return nv.utils.defaultColor()(d,i); },
-        classes = function (d,i) { return 'nv-slice nv-series-' + i; },
+    var colors = function (d, i) {
+          return nv.utils.defaultColor()(d, i);
+        },
+        classes = function (d, i) {
+          return 'nv-slice nv-series-' + i;
+        },
         type = arguments[0],
         params = arguments[1] || {};
 
@@ -297,19 +285,23 @@ nv.models.pieChart = function() {
         var c1 = params.c1
           , c2 = params.c2
           , l = params.l;
-        colors = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(i/l); };
+        colors = function (d, i) {
+          return d3.interpolateHsl(d3.rgb(c1), d3.rgb(c2))(i / l);
+        };
         break;
       case 'class':
-        colors = function () { return 'inherit'; };
-        classes = function (d,i) {
-          var iClass = (i*(params.step || 1))%20;
-          return 'nv-slice nv-series-'+ i +' '+ ( d.classes || 'nv-fill' + (iClass>9?'':'0') + iClass );
+        colors = function () {
+          return 'inherit';
+        };
+        classes = function (d, i) {
+          var iClass = (i * (params.step || 1)) % 20;
+          return 'nv-slice nv-series-' + i + ' ' + (d.classes || 'nv-fill' + (iClass > 9 ? '' : '0') + iClass);
         };
         break;
     }
 
-    var fill = (!params.gradient) ? colors : function (d,i) {
-      return pie.gradient(d,i);
+    var fill = (!params.gradient) ? colors : function (d, i) {
+      return pie.gradient(d, i);
     };
 
     pie.color(colors);
@@ -322,81 +314,107 @@ nv.models.pieChart = function() {
     return chart;
   };
 
-  chart.margin = function(_) {
-    if (!arguments.length) return margin;
-    margin.top    = typeof _.top    != 'undefined' ? _.top    : margin.top;
-    margin.right  = typeof _.right  != 'undefined' ? _.right  : margin.right;
-    margin.bottom = typeof _.bottom != 'undefined' ? _.bottom : margin.bottom;
-    margin.left   = typeof _.left   != 'undefined' ? _.left   : margin.left;
+  chart.margin = function (_) {
+    if (!arguments.length) {
+      return margin;
+    }
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        margin[prop] = _[prop];
+      }
+    }
     return chart;
   };
 
-  chart.width = function(_) {
-    if (!arguments.length) return width;
+  chart.width = function (_) {
+    if (!arguments.length) {
+      return width;
+    }
     width = _;
     return chart;
   };
 
-  chart.height = function(_) {
-    if (!arguments.length) return height;
+  chart.height = function (_) {
+    if (!arguments.length) {
+      return height;
+    }
     height = _;
     return chart;
   };
 
-  chart.showTitle = function(_) {
-    if (!arguments.length) return showTitle;
+  chart.showTitle = function (_) {
+    if (!arguments.length) {
+      return showTitle;
+    }
     showTitle = _;
     return chart;
   };
 
-  chart.showLegend = function(_) {
-    if (!arguments.length) return showLegend;
+  chart.showLegend = function (_) {
+    if (!arguments.length) {
+      return showLegend;
+    }
     showLegend = _;
     return chart;
   };
 
-  chart.tooltips = function(_) {
-    if (!arguments.length) return tooltips;
-    tooltips = _;
-    return chart;
-  };
-
-  chart.tooltipContent = function(_) {
-    if (!arguments.length) return tooltipContent;
-    tooltipContent = _;
-    return chart;
-  };
-
-  chart.state = function(_) {
-    if (!arguments.length) return state;
-    state = _;
-    return chart;
-  };
-
-  chart.noData = function(_) {
-    if (!arguments.length) return noData;
-    noData = _;
-    return chart;
-  };
-
-  chart.hole = function(_) {
-    if (!arguments.length) return hole;
-    hole = _;
-    return chart;
-  };
-
-  chart.tooltip = function(_) {
-    if (!arguments.length) return tooltip;
+  chart.tooltip = function (_) {
+    if (!arguments.length) {
+      return tooltip;
+    }
     tooltip = _;
     return chart;
   };
 
-  chart.colorFill = function(_) {
+  chart.tooltips = function (_) {
+    if (!arguments.length) {
+      return tooltips;
+    }
+    tooltips = _;
+    return chart;
+  };
+
+  chart.tooltipContent = function (_) {
+    if (!arguments.length) {
+      return tooltipContent;
+    }
+    tooltipContent = _;
+    return chart;
+  };
+
+  chart.state = function (_) {
+    if (!arguments.length) {
+      return state;
+    }
+    state = _;
+    return chart;
+  };
+
+  chart.hole = function (_) {
+    if (!arguments.length) {
+      return hole;
+    }
+    hole = _;
+    return chart;
+  };
+
+  chart.colorFill = function (_) {
+    return chart;
+  };
+
+  chart.strings = function (_) {
+    if (!arguments.length) {
+      return strings;
+    }
+    for (var prop in _) {
+      if (_.hasOwnProperty(prop)) {
+        strings[prop] = _[prop];
+      }
+    }
     return chart;
   };
 
   //============================================================
-
 
   return chart;
 };

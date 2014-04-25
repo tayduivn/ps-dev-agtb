@@ -205,9 +205,10 @@
      * @param {Object} [options]        Options from the dashlet loaddata call
      */
     renderChart: function(options) {
-        if (this.disposed || !this.triggerBefore('chart:pareto:render')
-            || _.isUndefined(this.model.get('timeperiod_id'))
-            || _.isUndefined(this.model.get('user_id'))) {
+        if (this.disposed || !this.triggerBefore('chart:pareto:render') ||
+            _.isUndefined(this.model.get('timeperiod_id')) ||
+            _.isUndefined(this.model.get('user_id'))
+        ) {
             return;
         }
 
@@ -215,7 +216,7 @@
 
         this.chartId = this.cid + '_chart';
         this.paretoChart = nv.models.paretoChart()
-            .margin({top: 0, right: 10, bottom: 30, left: 50})
+            .margin({top: 0, right: 10, bottom: 0, left: 10})
             .showTitle(false)
             .tooltips(true)
             .tooltipQuota(function(key, x, y, e, graph) {
@@ -240,16 +241,22 @@
                     '<p>' + app.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + val + '</b></p>' +
                     '<p>' + app.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>';
             }, this))
-            .showControls(false)
             .colorData('default')
             .colorFill('default')
             .yAxisTickFormat(function(d) {
-                return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + d3.format(',.2s')(d)
+                return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + d3.format(',.2s')(d);
             })
             .quotaTickFormat(function(d) {
-                return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + d3.format(',.3s')(d)
+                return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + d3.format(',.3s')(d);
             })
-            .id(this.chartId);
+            .id(this.chartId)
+            .strings({
+                legend: {
+                    close: app.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                    open: app.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                },
+                noData: app.lang.getAppString('LBL_CHART_NO_DATA')
+            });
 
         // just on the off chance that no options param is passed in
         options = options || {};
@@ -307,6 +314,10 @@
 
             $(window).on('resize.' + this.sfId, _.debounce(_.bind(this.resize, this), 100));
             this.handlePrinting('on');
+
+            this.$('.nv-chart').on('click', _.bind(function(e){
+              this.paretoChart.dispatch.chartClick();
+            }, this));
         } else {
             this.$('.nv-chart').toggleClass('hide', true);
             this.$('.block-footer').toggleClass('hide', false);
@@ -428,7 +439,7 @@
             seriesIdx = 0,
             barData = [],
             lineVals = this._serverData['x-axis'].map(function(axis, i) {
-                return { series: seriesIdx, x: i + 1, y: 0 }
+                return { series: seriesIdx, x: i + 1, y: 0 };
             }),
             line = {
                 'key': this._serverData.labels.dataset[dataset],
@@ -571,10 +582,9 @@
      * @inheritDoc
      */
     _dispose: function() {
-        if (!_.isEmpty(this.chart)) {
-            this.handlePrinting('off');
-            $(window).off('resize.' + this.sfId);
-        }
+        this.handlePrinting('off');
+        $(window).off('resize.' + this.sfId);
+        this.$('.nv-chart').off('click');
         this._super('_dispose');
     }
 

@@ -74,7 +74,14 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .colorData( 'default' )
                         .colorFill( 'default' )
                         .stacked(!params.display_manager)
-                        .id(chartId);
+                        .id(chartId)
+                        .strings({
+                            legend: {
+                                close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                            },
+                            noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
+                        });
 
                     // get chartId from params or use the default for sugar
                     d3ChartId = params.chartId || 'db620e51-8350-c596-06d1-4f866bfcfd5b';
@@ -106,7 +113,7 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                 if (SUGAR.chartsD3.isDataEmpty(data)) {
                     var json = SUGAR.chartsD3.translateDataToD3(data,params,chartConfig);
 
-                    var rotateLabels = (chartConfig["orientation"] === 'vertical' && data.values.length > 8) ? 20 : 0;
+                    var rotateTicks = (chartConfig["orientation"] === 'vertical' && data.values.length > 8) ? 25 : 0;
 
                     var barChart = (chartConfig["orientation"] === 'vertical') ? nv.models.multiBarChart() : nv.models.multiBarHorizontalChart();
 
@@ -119,11 +126,18 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                                 '<p>' +  y + '</p>';
                         })
                         .showControls(false)
-                        .rotateLabels(rotateLabels)
+                        .rotateTicks(rotateTicks)
                         .reduceXTicks(false)
                         .colorData('default')
                         .stacked(chartConfig.barType === 'stacked'? true : true)
-                        .id(d3ChartId);
+                        .id(d3ChartId)
+                        .strings({
+                            legend: {
+                                close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                            },
+                            noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
+                        });
 
                     barChart.yAxis
                         .tickSize(0)
@@ -164,7 +178,14 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .tooltips(true)
                         .showControls(false)
                         .colorData('default')
-                        .id(d3ChartId);
+                        .id(d3ChartId)
+                        .strings({
+                            legend: {
+                                close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                            },
+                            noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
+                        });
 
                     lineChart.xAxis
                         .showMaxMin(false)
@@ -196,7 +217,14 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                         .showTitle(true)
                         .tooltips(true)
                         .colorData('default')
-                        .id(d3ChartId);
+                        .id(d3ChartId)
+                        .strings({
+                            legend: {
+                                close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                            },
+                            noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
+                        });
 
                     d3.select('#' + d3ChartId).html('');
                     d3.select('#' + d3ChartId)
@@ -230,7 +258,14 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                                 '<p>' + e.value + '</p>';
                         })
                         .colorData('default')
-                        .id(d3ChartId);
+                        .id(d3ChartId)
+                        .strings({
+                            legend: {
+                                close: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_CLOSE'),
+                                open: SUGAR.App.lang.getAppString('LBL_CHART_LEGEND_OPEN')
+                            },
+                            noData: SUGAR.App.lang.getAppString('LBL_CHART_NO_DATA')
+                        });
 
                     d3.select('#' + d3ChartId).html('');
                     d3.select('#' + d3ChartId)
