@@ -1247,12 +1247,12 @@ function formatRealNameField(SugarBean $focus, $fields_array, $key, $value) {
     if (!empty($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'relate'
         && !empty($focus->field_name_map[$fields_array[$key]]['module']) && $focus->field_name_map[$fields_array[$key]]['module'] == 'Users'
         && !empty($focus->field_name_map[$fields_array[$key]]['rname']) &&
-        ($focus->field_name_map[$fields_array[$key]]['rname'] == 'user_name' || $focus->field_name_map[$fields_array[$key]]['rname'] == 'full_name')
+        $focus->field_name_map[$fields_array[$key]]['rname'] == 'full_name'
     ) {
         $userFocus = BeanFactory::getBean('Users');
         $userFocus->retrieve_by_string_fields(array('user_name' => $value ));
         if (!empty($userFocus->id)) {
-            $value = $locale->getLocaleFormattedName($userFocus->first_name, $userFocus->last_name);
+            $value = $locale->formatName($userFocus);
         }
     }
 
