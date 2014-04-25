@@ -31,6 +31,12 @@ class FilterApi extends SugarApi
                 'jsonParams' => array('filter'),
                 'shortHelp' => 'Lists filtered records.',
                 'longHelp' => 'include/api/help/module_filter_get_help.html',
+                'exceptions' => array(
+                    // Thrown in filterList
+                    'SugarApiExceptionInvalidParameter',
+                    // Thrown in filterListSetup and parseArguments
+                    'SugarApiExceptionNotAuthorized',
+                ),
             ),
             'filterModuleAll' => array(
                 'reqType' => 'GET',
@@ -40,6 +46,12 @@ class FilterApi extends SugarApi
                 'jsonParams' => array('filter'),
                 'shortHelp' => 'List of all records in this module',
                 'longHelp' => 'include/api/help/module_filter_get_help.html',
+                'exceptions' => array(
+                    // Thrown in filterList
+                    'SugarApiExceptionInvalidParameter',
+                    // Thrown in filterListSetup and parseArguments
+                    'SugarApiExceptionNotAuthorized',
+                ),
             ),
             'filterModuleAllCount' => array(
                 'reqType' => 'GET',
@@ -49,6 +61,10 @@ class FilterApi extends SugarApi
                 'method' => 'filterListCount',
                 'shortHelp' => 'List of all records in this module',
                 'longHelp' => 'include/api/help/module_filter_get_help.html',
+                'exceptions' => array(
+                    // Thrown in filterListSetup
+                    'SugarApiExceptionNotAuthorized',
+                ),
             ),
             'filterModulePost' => array(
                 'reqType' => 'POST',
@@ -57,6 +73,12 @@ class FilterApi extends SugarApi
                 'method' => 'filterList',
                 'shortHelp' => 'Lists filtered records.',
                 'longHelp' => 'include/api/help/module_filter_post_help.html',
+                'exceptions' => array(
+                    // Thrown in filterList
+                    'SugarApiExceptionInvalidParameter',
+                    // Thrown in filterListSetup and parseArguments
+                    'SugarApiExceptionNotAuthorized',
+                ),
             ),
             'filterModulePostCount' => array(
                 'reqType' => 'POST',
@@ -65,6 +87,10 @@ class FilterApi extends SugarApi
                 'method' => 'filterListCount',
                 'shortHelp' => 'Lists filtered records.',
                 'longHelp' => 'include/api/help/module_filter_post_help.html',
+                'exceptions' => array(
+                    // Thrown in filterListSetup
+                    'SugarApiExceptionNotAuthorized',
+                ),
             ),
             'filterModuleById' => array(
                 'reqType' => 'GET',
@@ -73,6 +99,14 @@ class FilterApi extends SugarApi
                 'method' => 'filterById',
                 'shortHelp' => 'Filter records for a module by a predefined filter id.',
                 'longHelp' => 'include/api/help/module_filter_record_get_help.html',
+                'exceptions' => array(
+                    // Thrown in filterById
+                    'SugarApiExceptionNotFound',
+                    // Thrown in filterList
+                    'SugarApiExceptionInvalidParameter',
+                    // Thrown in filterListSetup and parseArguments
+                    'SugarApiExceptionNotAuthorized',
+                ),
             ),
         );
     }

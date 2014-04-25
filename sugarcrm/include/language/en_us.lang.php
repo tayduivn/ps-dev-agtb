@@ -2531,6 +2531,26 @@ $app_strings = array (
     'EXCEPTION_CLIENT_OUTDATED'         => 'Your software is out of date, please update your client before attempting to connect again.',
     'EXCEPTION_MAINTENANCE'             => 'SugarCRM is in maintenance mode. Only admins can login. Please contact your administrator for details.',
 
+    // Default SugarApiException descriptions, used in the exceptions help endpoint
+    'EXCEPTION_UNKNOWN_EXCEPTION_DESC'     => 'A condition was encountered because of a general failure or error. The reasons for this exception range but generally fall outside the scope of a more specific API exception.',
+    'EXCEPTION_FATAL_ERROR_DESC'           => 'The request could not be processed as presented or there was an error with the response. This generally means a fatal error occurred and that the specific failure can be identified in the application log.',
+    'EXCEPTION_INCORRECT_VERSION_DESC'     => 'The version of the API you are using is not correct for the current request.',
+    'EXCEPTION_NEED_LOGIN_DESC'            => 'The requested endpoint requires authentication and the requesting consumer has not yet authenticated.',
+    'EXCEPTION_INVALID_TOKEN_DESC'         => 'Indicates that the authentication token presented with the request is invalid. This generally happens due to the token expiring but could also be because the token is malformed or is incorrect.',
+    'EXCEPTION_NOT_AUTHORIZED_DESC'        => 'Indicates that the requested consumer is not authorized to perform the requested action.',
+    'EXCEPTION_INACTIVE_PORTAL_USER_DESC'  => 'The portal account associated with the logged in user is not currently active. This requires action on the part of the customer support.',
+    'EXCEPTION_PORTAL_NOT_CONFIGURED_DESC' => 'Indicates that the portal application is not properly configured and cannot be used. This requires action on the part of the portal administrator.',
+    'EXCEPTION_NO_METHOD_DESC'             => 'The endpoint does not support the HTTP request type being made. This might happen when a POST request is made to an endpoint designed for a GET request for example.',
+    'EXCEPTION_NOT_FOUND_DESC'             => 'The endpoint could not locate a resource for the request or does not have a handler for the request.',
+    'EXCEPTION_EDIT_CONFLICT_DESC'         => 'Indicates that there may have been concurrent edits of a record taking place and the current request to edit the record would impact a previous edit of the record.',
+    'EXCEPTION_METADATA_OUT_OF_DATE_DESC'  => 'Indicates that the metadata on the server does not match the metadata the client is currently using. This could occur after a change to system settings, changes to modules in Studio or the deployment of new modules, among other system changes.',
+    'EXCEPTION_REQUEST_TOO_LARGE_DESC'     => 'The request is too large to be handled by the server.',
+    'EXCEPTION_MISSING_PARAMTER_DESC'      => 'Indicates a require parameter of the request is missing.',
+    'EXCEPTION_INVALID_PARAMETER_DESC'     => 'Indicates a parameter sent in the request is invalid.',
+    'EXCEPTION_REQUEST_FAILURE_DESC'       => 'The request failed to complete.',
+    'EXCEPTION_CLIENT_OUTDATED_DESC'       => 'Indicates the client consuming the API is out of date and must be updated before further consumption of the API can take place.',
+    'EXCEPTION_MAINTENANCE_DESC'           => 'The instance of SugarCRM that is serving the API is in maintenance mode. Access to the API is restricted to administrators only.',
+
     //Lotus Live specific error messages
     'ERR_EXTERNAL_API_LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system.',
 
