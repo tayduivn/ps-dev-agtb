@@ -54,6 +54,13 @@ $viewdefs['KBSContents']['base']['view']['preview'] = array(
                     'module' => 'Notes',
                     'modulefield' => 'filename',
                 ),
+                array(
+                    'label' => 'LBL_TAGS',
+                    'enabled' => true,
+                    'default' => true,
+                    'name' => 'tags',
+                    'type' => 'tags',
+                ),
             ),
         ),
         array(
