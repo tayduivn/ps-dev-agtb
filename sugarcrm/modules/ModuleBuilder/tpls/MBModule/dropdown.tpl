@@ -36,6 +36,10 @@
 <input type='hidden' name='view_module' value='{$module_name}'>
 <input type='hidden' name='view_package' value='{$package_name}'>
 <input type='hidden' id='list_value' name='list_value' value=''>
+{* This indicates that this dropdown is being created from a new field *}
+{if ($fromNewField)}
+<input type='hidden' name='is_new' value='1'>
+{/if}
 {if ($refreshTree)}
 <input type='hidden' name='refreshTree' value='1'>
 {/if}

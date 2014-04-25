@@ -1075,8 +1075,19 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				SUGAR.util.evalScript(o.responseText);
 			});
 		},
-		moduleDropDown: function(name, field){
-			ModuleBuilder.getContent('module=ModuleBuilder&action=dropdown&view_package=' + ModuleBuilder.MBpackage + '&view_module=' + ModuleBuilder.module + '&dropdown_name=' + name + '&field=' + field);
+		inFieldCreate: function() {
+			// See if this is a new field. Used for dropdown fields only when
+			// creating a dropdown while creating a field. This keeps the field
+			// name editable to prevent overwriting OOTB fields.
+			var theform = document.forms[0];
+			return theform.is_new !== undefined && theform.is_new.value == "1";
+		},
+		moduleDropDown: function(name, field) {
+			// If this request is made in the middle of creating a new field then
+			// we need to let the dropdown field know that so when the request
+			// comes back it handles the field naming properly
+			var isNew = ModuleBuilder.inFieldCreate() ? '&is_new_field=1' : '';
+			ModuleBuilder.getContent('module=ModuleBuilder&action=dropdown&view_package=' + ModuleBuilder.MBpackage + '&view_module=' + ModuleBuilder.module + '&dropdown_name=' + name + '&field=' + field + isNew);
 		},
 		moduleViewLayouts: function(o){
 			ModuleBuilder.callLock = false;
