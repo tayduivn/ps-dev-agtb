@@ -19,4 +19,14 @@ $viewdefs['KBSContents']['base']['filter']['required'] = array(
             ),
         ),
     ),
+    'records-noedit' => array(
+        array(
+            'active_rev' => array(
+                '$equals' => '1',
+            ),
+            'status' => array(
+                '$in' => array('published', 'published-ex', 'published-in'),
+            ),
+        ),
+    ),
 );

@@ -11,34 +11,16 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 ({
-    extendsFrom: 'RecordlistView',
+    extendsFrom: 'SubpanelListView',
 
-    /**
-     * {@inheritDoc}
-     *
-     * Add KBSContent plugin for view.
-     */
     initialize: function(options) {
-        this.plugins = _.union(this.plugins || [], [
-            'KBSContent'
-        ]);
-
         this._super('initialize', [options]);
-
-        this.layout.on('list:record:deleted', function() {
-            this.refreshCollection();
-        }, this);
 
         if (!app.acl.hasAccessToModel('edit', this.model)) {
             this.context.set('requiredFilter', 'records-noedit');
         }
     },
 
-    /**
-     * {@inheritDoc}
-     *
-     * Disable diplay status fild on list view if user has no edit access.
-     */
     parseFieldMetadata: function(options) {
         options = this._super('parseFieldMetadata', [options]);
 

@@ -549,6 +549,10 @@
             filtersMeta = meta.filters || null,
             filtersMetaSection = context.get('layout') || context.get('link');
 
+        if (context.has('requiredFilter')) {
+            filtersMetaSection = context.get('requiredFilter');
+        }
+
         if (!filtersMetaSection || !filtersMeta) {
             return filterDef;
         }
