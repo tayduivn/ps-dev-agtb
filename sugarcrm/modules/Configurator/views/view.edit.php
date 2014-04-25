@@ -114,6 +114,12 @@ class ConfiguratorViewEdit extends ViewEdit
         else {
             $this->ss->assign('logger_visible', true);
         }
+        $this->ss->assign('list_entries_per_listview_help', str_replace(
+            '{{listEntriesNum}}', '50', $mod_strings['TPL_LIST_ENTRIES_PER_LISTVIEW_HELP']
+        ));
+        $this->ss->assign('list_entries_per_subpanel_help', str_replace(
+            '{{subpanelEntriesNum}}', '25', $mod_strings['TPL_LIST_ENTRIES_PER_SUBPANEL_HELP']
+        ));
 
         echo $this->getModuleTitle(false);
 
