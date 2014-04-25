@@ -35,6 +35,7 @@ class SugarUpgradeCheckAllowOverride extends UpgradeScript
 {
     public $order = 200;
     public $version = '7.2.0';
+    public $type = self::UPGRADE_CORE;
 
     public function run()
     {
