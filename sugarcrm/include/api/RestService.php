@@ -230,56 +230,6 @@ class RestService extends ServiceBase
                 $this->releaseSession();
             }
 
-            // This loads the path variables in, so that on the /Accounts/abcd, $module is set to Accounts, and $id is set to abcd
-            $pathVars = $this->request->getPathVars($route);
-
-            $getVars = array();
-            if (!empty($_GET)) {
-                // This has some get arguments, let's parse those in
-                $getVars = $_GET;
-                if (!empty($route['jsonParams'])) {
-                    foreach ($route['jsonParams'] as $fieldName) {
-                        if (isset($_GET[$fieldName]) && !empty($_GET[$fieldName])
-                            && isset($_GET[$fieldName]{0})
-                            && ($_GET[$fieldName]{0} == '{'
-                                || $_GET[$fieldName]{0} == '[')
-                        ) {
-                            // This may be JSON data
-                            $jsonData = @json_decode($_GET[$fieldName], true, 32);
-                            if ($jsonData == null) {
-                                // Did not decode, could be a string that just happens to start with a '{', don't mangle it further
-                                continue;
-                            }
-                            // Need to dig through this array and make sure all of the elements in here are safe
-                            $getVars[$fieldName] = $jsonData;
-                        }
-                    }
-                }
-            }
-
-            $postVars = array();
-            if (isset($route['rawPostContents']) && $route['rawPostContents']) {
-                // This route wants the raw post contents
-                // We just ignore it here, the function itself has to know how to deal with the raw post contents
-                // this will mostly be used for binary file uploads.
-            } else {
-                if (!empty($_POST)) {
-                    // They have normal post arguments
-                    $postVars = $_POST;
-                } else {
-                    $postContents = $this->request->getPostContents();
-                    if (!empty($postContents)) {
-                        // This looks like the post contents are JSON
-                        // Note: If we want to support rest based XML, we will need to change this
-                        $postVars = @json_decode($postContents, true, 32);
-                        if (!is_array($postVars)) {
-                            // FIXME: Handle improperly encoded JSON
-                            $postVars = array();
-                        }
-                    }
-                }
-            }
-
             $headers = array();
             foreach ($this->special_headers as $header) {
                 if(isset($this->request_headers[$header])) {
@@ -431,7 +381,6 @@ class RestService extends ServiceBase
         $this->response->setStatus($httpError);
 
         $GLOBALS['log']->error('An exception happened: ( '.$httpError.': '.$errorLabel.')'.$message);
-
         // For edge cases when an HTML response is needed as a wrapper to JSON
         if (isset($_REQUEST['format']) && $_REQUEST['format'] == 'sugar-html-json') {
             $this->response->setContent($this->getHXRReturnArray($message, $httpError));
@@ -770,13 +719,14 @@ class RestService extends ServiceBase
      */
     protected function respond($route, $args)
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($route['noEtag'])) {
+        $method = $this->request->getMethod();
+        if ($method == 'GET' && empty($route['noEtag'])) {
             $this->response->generateETagHeader();
         }
 
         //leaving this logic split out in case more actions on rawreply need added in the future
         if (!empty($route['rawReply'])) {
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if ($method == 'POST') {
                 $this->response->setPostHeaders();
             }
         } else {
@@ -849,20 +799,19 @@ class RestService extends ServiceBase
         // This loads the path variables in, so that on the /Accounts/abcd, $module is set to Accounts, and $id is set to abcd
         $pathVars = $this->request->getPathVars($route);
 
-        $getVars = array();
-        if ( !empty($_GET)) {
+        $getVars = $this->request->getQueryVars();
+        if ( !empty($getVars)) {
             // This has some get arguments, let's parse those in
-            $getVars = $_GET;
             if ( !empty($route['jsonParams']) ) {
                 foreach ( $route['jsonParams'] as $fieldName ) {
-                    if ( isset($_GET[$fieldName])
-                         && !empty($_GET[$fieldName])
-                         && is_string($_GET[$fieldName])
-                         &&  isset($_GET[$fieldName]{0})
-                         && ( $_GET[$fieldName]{0} == '{'
-                               || $_GET[$fieldName]{0} == '[' )) {
+                    if ( isset($getVars[$fieldName])
+                         && !empty($getVars[$fieldName])
+                         && is_string($getVars[$fieldName])
+                         &&  isset($getVars[$fieldName]{0})
+                         && ( $getVars[$fieldName]{0} == '{'
+                               || $getVars[$fieldName]{0} == '[' )) {
                         // This may be JSON data
-                        $jsonData = @json_decode($_GET[$fieldName],true,32);
+                        $jsonData = @json_decode($getVars[$fieldName],true,32);
                         if (json_last_error() !== 0) {
                             // Bad JSON data, throw an exception instead of trying to process it
                             throw new SugarApiExceptionInvalidParameter();

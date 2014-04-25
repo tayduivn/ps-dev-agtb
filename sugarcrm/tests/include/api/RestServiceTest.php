@@ -49,7 +49,7 @@ class RestServiceTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetRequestArgs()
     {
-        $request = $this->getMock('request', array('getPathVars', 'getPostContents'));
+        $request = $this->getMock('request', array('getPathVars', 'getPostContents', 'getQueryVars'));
         $request->expects($this->any())
                 ->method('getPathVars')
                 ->will($this->returnValue(array()));
@@ -62,14 +62,21 @@ class RestServiceTest extends Sugar_PHPUnit_Framework_TestCase
             "", '{"my_json":{"christopher":"walken","bill":"murray"}}', '{"my_json":{"christopher":"walken","bill":"murray"}}}'
         ));
 
+        $request->expects($this->any())
+        ->method('getQueryVars')
+        ->will($this->onConsecutiveCalls(
+            array('my_json'=>'{"christopher":"walken","bill":"murray"}'),
+            array('my_json'=>'{"christopher":"walken","bill":"murray"}}'),
+            array()
+        ));
+
+
         $service = new RestService();
         SugarTestReflection::setProtectedValue($service, 'request', $request);
 
         $output = SugarTestReflection::callProtectedMethod($service, 'getRequestArgs', array(array('jsonParams'=>array('my_json'))));
         $this->assertArrayHasKey('christopher', $output['my_json'], "Missing Christopher => Walken #1");
         $this->assertArrayHasKey('bill', $output['my_json'], "Missing Bill => Murray #1");
-
-        $_GET = array('my_json'=>'{"christopher":"walken","bill":"murray"}}');
 
         $hadException = false;
         try {
@@ -79,8 +86,6 @@ class RestServiceTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $this->assertTrue($hadException, "Did not throw an exception on invalid JSON #1");
-
-        $_GET = array();
 
         $output = SugarTestReflection::callProtectedMethod($service, 'getRequestArgs', array(array()));
 

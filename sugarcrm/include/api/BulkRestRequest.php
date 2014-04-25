@@ -25,7 +25,7 @@ class BulkRestRequest extends RestRequest
         $svars = $_SERVER;
         $rvars = array();
 
-        $rvars['__sugar_url'] = $request['url'];
+        $rvars['__sugar_url'] = parse_url($request['url'], PHP_URL_PATH);
         if(!empty($request['headers'])) {
             foreach($request['headers'] as $hname => $hval) {
                 $svars['HTTP_'.str_replace("-", "_", strtoupper($hname))] = $hval;
@@ -40,6 +40,7 @@ class BulkRestRequest extends RestRequest
         if(isset($request['data'])) {
             $this->postContents =  $request['data'];
         }
+        $svars['QUERY_STRING'] = parse_url($request['url'], PHP_URL_QUERY);
 
         parent::__construct($svars, $rvars);
     }

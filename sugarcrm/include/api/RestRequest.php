@@ -297,6 +297,19 @@ class RestRequest
     }
 
     /**
+     * Get query vars
+     * @return array
+     */
+    public function getQueryVars()
+    {
+        $vars = array();
+        if(!empty($this->server['QUERY_STRING'])) {
+            parse_str($this->server['QUERY_STRING'], $vars);
+        }
+        return $vars;
+    }
+
+    /**
      * Sets the leading portion of any request URI for this API instance
      *
      */

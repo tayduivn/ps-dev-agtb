@@ -54,7 +54,9 @@ class BulkApi extends SugarApi
                 $GLOBALS['log']->fatal("Bulk Api: URL missing for request $name");
                 throw new SugarApiExceptionMissingParameter("Invalid request - URL is missing");
             }
-
+        }
+        // check all reqs first so that we don't execute any reqs if one of them is broken
+        foreach($args['requests'] as $name => $request) {
             $restReq = new BulkRestRequest($request);
             $restResp->setRequest($name);
             /**
