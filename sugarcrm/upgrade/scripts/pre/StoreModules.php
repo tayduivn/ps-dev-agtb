@@ -32,7 +32,7 @@
   */
 class SugarUpgradeStoreModules extends UpgradeScript
 {
-    public $order = 200;
+    public $order = 400;
     // DB because DB scripts may need the data
     public $type = self::UPGRADE_DB;
 
