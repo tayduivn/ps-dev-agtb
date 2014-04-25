@@ -41,6 +41,7 @@ class Bug63490Test extends Sugar_PHPUnit_Framework_TestCase
         self::$bean = new SugarBean();
         self::$bean->table_name = 'bean';
         self::$bean->field_defs = array(
+            'id' => array(),
             'name' => array(),
         );
     }
@@ -85,6 +86,18 @@ class Bug63490Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains('bean.id', $actual);
     }
 
+    /**
+     * @param string $input
+     *
+     * @dataProvider duplicateProvider
+     */
+    public function testNoDuplicates($input)
+    {
+        $actual = self::$bean->process_order_by($input);
+        $count = substr_count($actual, 'bean.id');
+        $this->assertEquals(1, $count, 'There must be exactly one occurrence of bean.id in ORDER BY');
+    }
+
     public static function correctProvider()
     {
         return array(
@@ -118,6 +131,15 @@ class Bug63490Test extends Sugar_PHPUnit_Framework_TestCase
             array('title asc'),
             // field name containing table name is removed
             array('bean.name'),
+        );
+    }
+
+    public static function duplicateProvider()
+    {
+        return array(
+            array('id'),
+            array('id asc'),
+            array('id desc'),
         );
     }
 }
