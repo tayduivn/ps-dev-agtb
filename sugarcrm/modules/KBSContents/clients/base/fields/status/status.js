@@ -62,5 +62,13 @@
                 self.$(self.fieldTag).select2('open');
             });
         }
+    },
+
+    _checkAccessToAction: function(action) {
+        var access = this._super('_checkAccessToAction');
+        if (access) {
+            access = app.acl.hasAccessToModel('edit', this.model, this.name);
+        }
+        return access;
     }
 })
