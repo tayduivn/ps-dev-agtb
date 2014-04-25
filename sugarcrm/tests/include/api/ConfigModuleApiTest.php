@@ -158,4 +158,33 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertArrayNotHasKey("testSetting", $results);
     }
+
+    public function testResaveConfig()
+    {
+        $admin = BeanFactory::getBean('Administration');
+        $api = new RestService();
+        $api->user = $GLOBALS['current_user'];
+        $apiClass = new ConfigModuleApi();
+
+        // Let's save the test setting for the first time
+        $this->assertConfigUpdated($apiClass, $api, $admin, 'foo');
+        // Let's change the test setting and update it
+        $this->assertConfigUpdated($apiClass, $api, $admin, 'bar');
+    }
+
+    private function assertConfigUpdated(ConfigModuleApi $apiClass, RestService $api, Administration $admin, $value)
+    {
+        $args = array(
+            'module' => 'Contacts',
+            'testSetting' => $value,
+        );
+
+        $result = $apiClass->configSave($api, $args);
+        $this->assertArrayHasKey('testSetting', $result);
+        $this->assertEquals($value, $result['testSetting']);
+
+        $config = $admin->getConfigForModule('Contacts', 'base');
+        $this->assertArrayHasKey('testSetting', $config);
+        $this->assertEquals($value, $config['testSetting']);
+    }
 }
