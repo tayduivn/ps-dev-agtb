@@ -43,6 +43,11 @@
      * style is used as well.
      */
     _render: function() {
+
+        if (!this.model.has(this.name)) {
+            return;
+        }
+
         var status = this.model.get(this.name),
             options = app.lang.getAppListStrings(this.def.options);
 
