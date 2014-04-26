@@ -1,8 +1,7 @@
-<?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+<!--
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
+ * Agreement (""License"") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -16,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
+ *  (i) the ""Powered by SugarCRM"" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -26,21 +25,64 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/**
-  * Store old modules list so we could use it to compare to new modules list
-  * and update display tabs, etc.
-  */
-class SugarUpgradeStoreModules extends UpgradeScript
-{
-    public $order = 400;
-    // DB because DB scripts may need the data
-    public $type = self::UPGRADE_DB;
+-->
+<h2>Overview</h2>
+<span class="lead">
+    Fetches the documentation on which exceptions are thrown by the API, their 
+    HTTP codes, their default messages and a brief description of what the exception
+    means.
+</span>
 
-    public function run()
-    {
-        include 'include/modules.php';
-        $this->upgrader->state['old_modules'] = $moduleList;
-        include 'include/language/en_us.lang.php';
-        $this->upgrader->state['old_moduleList'] = $app_list_strings['moduleList'];
-    }
-}
+<h2>Request Arguments</h2>
+<span class="lead">
+    This endpoint does not accept any request arguments.
+</span>
+
+<h2>Response Arguments</h2>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            &lt;html&gt;
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            Returns the html of the help doc
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>Response</h3>
+<span class="lead">
+    The HTML document of the exception help page.
+</span>
+
+<h2>Change Log</h2>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Version</th>
+        <th>Change</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            v10
+        </td>
+        <td>
+            Added <code>/help/exceptions</code> GET endpoint.
+        </td>
+    </tr>
+    </tbody>
+</table>

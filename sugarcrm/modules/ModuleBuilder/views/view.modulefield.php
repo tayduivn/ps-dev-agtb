@@ -54,14 +54,19 @@ class ViewModulefield extends SugarView
         )
     {
         $fv = new FieldViewer();
-        if(empty($_REQUEST['field'])&& !empty($_REQUEST['name']))$_REQUEST['field'] = $_REQUEST['name'];
+        if (empty($_REQUEST['field']) && !empty($_REQUEST['name'])) {
+            $_REQUEST['field'] = $_REQUEST['name'];
+        }
+
         $field_name = '';
-        if(!empty($this->view_object_map['field_name']))
+        if (!empty($this->view_object_map['field_name'])) {
             $field_name = $this->view_object_map['field_name'];
-        elseif(!empty($_REQUEST['field']))
+        } elseif (!empty($_REQUEST['field'])) {
             $field_name = $_REQUEST['field'];
-        else
-            $field_name = '';
+        }
+        
+        // If this is a new field mark it as such
+        $isNew = empty($field_name) || !empty($_REQUEST['is_new']);
 
         $action = 'saveField'; // tyoung bug 17606: default action is to save as a dynamic field; but for standard OOB
                                // fields we override this so don't create a new dynamic field instead of updating the existing field
@@ -118,13 +123,18 @@ class ViewModulefield extends SugarView
                 unset($vardef['name']);
             }
 
-            if(empty($vardef['name'])){
-                if(!empty($_REQUEST['type']))
+            // If this is a new field but we are loading this form a second time,
+            // like from coming back from a dropdown create on a new field, then
+            // keep the 'name' field open to allow the create field process to 
+            // continue like normal
+            if (empty($vardef['name']) || $isNew) {
+                if (!empty($_REQUEST['type'])) {
                     $vardef['type'] = $_REQUEST['type'];
-                    $fv->ss->assign('hideLevel', 0);
-            }elseif(isset($vardef['custom_module'])){
+                }
+                $fv->ss->assign('hideLevel', 0);
+            } elseif (isset($vardef['custom_module'])) {
                 $fv->ss->assign('hideLevel', 2);
-            }else{
+            } else {
                 $action = 'saveSugarField'; // tyoung - for OOB fields we currently only support modifying the label
                 $fv->ss->assign('hideLevel', 3);
             }
@@ -259,6 +269,7 @@ class ViewModulefield extends SugarView
 
         $fv->ss->assign('action',$action);
         $fv->ss->assign('isClone', ($isClone ? 1 : 0));
+        $fv->ss->assign('isNew', $isNew);
         $fv->ss->assign("module_dd_fields", $enumFields);
         $json = getJSONobj();
 

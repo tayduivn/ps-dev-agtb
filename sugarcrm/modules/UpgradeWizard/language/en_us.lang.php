@@ -60,8 +60,9 @@ $mod_strings = array(
     'ERROR_VERSION_INCOMPATIBLE'                => 'The upgrade package is not compatible with this version of Sugar: %s',
     'ERROR_FLAVOR_INCOMPATIBLE'                 => 'The uploaded file is not compatible with this flavor (Community Edition, Professional, or Enterprise) of Sugar: %s',
 
-    'ERROR_UW_CONFIG_DB'                 => 'Error saving %s config var to the db (key %s, value %s).',
-
+    'ERROR_UW_CONFIG_DB'                        => 'Error saving %s config var to the db (key %s, value %s).',
+    'ERR_NOT_ADMIN'                             => "Unauthorized access to administration.",
+    'ERR_NO_VIEW_ACCESS_REASON'                 => 'You do not have permission to access this page.',
 
     'LBL_BUTTON_BACK'							=> '< Back',
 	'LBL_BUTTON_CANCEL'							=> 'Cancel',

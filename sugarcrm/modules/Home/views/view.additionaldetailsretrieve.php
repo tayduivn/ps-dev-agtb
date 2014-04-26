@@ -53,14 +53,16 @@ class HomeViewAdditionaldetailsretrieve extends SugarView
             $json = getJSONobj();
             $bean = BeanFactory::getBean($moduleDir, $id);
 
-        	//bug38901 - shows dropdown list label instead of database value
-			foreach($bean->field_name_map as $field => $value)
-			{
-				if($value["type"] == "enum" && isset($app_list_strings[$value['options']][$bean->$field]))
-				{
-					$bean->$field = $app_list_strings[$value['options']][$bean->$field];
-				}
-			}
+            //bug38901 - shows dropdown list label instead of database value
+            foreach ($bean->field_name_map as $field => $value) {
+                if ($value['type'] == 'enum' &&
+                    !empty($value['options']) &&
+                    !empty($app_list_strings[$value['options']]) &&
+                    isset($app_list_strings[$value['options']][$bean->$field])
+                ) {
+                    $bean->$field = $app_list_strings[$value['options']][$bean->$field];
+                }
+            }
 
             //BEGIN SUGARCRM flav=pro ONLY
             $bean->ACLFilterFields();

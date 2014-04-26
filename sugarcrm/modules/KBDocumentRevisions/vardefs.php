@@ -148,8 +148,7 @@ $dictionary['KBDocumentRevision'] = array(
 
         'created_by_name' => array(
             'name' => 'created_by_name',
-            'rname' => 'user_name',
-            'db_concat_fields' => array(0 => 'first_name', 1 => 'last_name'),
+            'rname' => 'full_name',
             'id_name' => 'created_by',
             'vname' => 'LBL_CREATED_BY_NAME',
             'type' => 'relate',

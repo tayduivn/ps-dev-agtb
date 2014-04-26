@@ -31,7 +31,12 @@ $upg->init();
 if(empty($_REQUEST['action']) || empty($_REQUEST['token'])) {
     $token = $upg->startUpgrade();
     if(!$token) {
-        die("Failed to initialize the upgrader, please check you're logged in as admin");
+        if(!$upg->error) {
+            $errmsg = "Failed to initialize the upgrader, please check you're logged in as admin";
+        } else {
+            $errmsg = $upg->error;
+        }
+        die($errmsg);
     }
 	$upg->displayUpgradePage();
 	exit(0);

@@ -63,11 +63,11 @@
 </tr>
 
 	<tr>
-		<td  scope="row">{$MOD.LIST_ENTRIES_PER_LISTVIEW}: </td>
+		<td  scope="row">{$MOD.LIST_ENTRIES_PER_LISTVIEW}: {sugar_help text=$list_entries_per_listview_help}</td>
 		<td  >
 			<input type='text' size='4' id='ConfigureSettings_list_max_entries_per_page' name='list_max_entries_per_page' value='{$config.list_max_entries_per_page}'>
 		</td>
-		<td  scope="row">{$MOD.LIST_ENTRIES_PER_SUBPANEL}: </td>
+		<td  scope="row">{$MOD.LIST_ENTRIES_PER_SUBPANEL}: {sugar_help text=$list_entries_per_subpanel_help}</td>
 		<td  >
 			<input type='text' size='4' id='ConfigureSettings_list_max_entries_per_subpanel' name='list_max_entries_per_subpanel' value='{$config.list_max_entries_per_subpanel}'>
 		</td>
