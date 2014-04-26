@@ -72,7 +72,7 @@ pre {
 <input type=hidden name="release_id">
 {$hidden_fields}
 <div id='server_upload_div'>
-{$FORM_2_PLACE_HOLDER}
+{$INSTALL_ERRORS}
 {$MODULE_SELECTOR}
 <div id='search_results_div'></div>
 </div>

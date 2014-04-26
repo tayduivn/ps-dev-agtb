@@ -42,11 +42,8 @@ class PackageManagerDisplay{
      * @return String - a string of html which will be used to display the forms
      */
     function buildPackageDisplay($form1, $hidden_fields, $form_action, $types = array('module'), $active_form = 'form1', $install = false){
-		global $current_language;
+        global $current_language, $app_strings;
 
-        $mod_strings = return_module_language($current_language, "Administration");
-        global $app_strings;
-        global $sugar_version, $sugar_config;
         $app_strings = return_application_language($current_language);
         $ss = new Sugar_Smarty();
         $ss->assign('APP_STRINGS', $app_strings);
@@ -55,48 +52,23 @@ class PackageManagerDisplay{
         $ss->assign('hidden_fields', $hidden_fields);
 
         $result = PackageManagerDisplay::getHeader();
-        $header_text = $result['text'];
         $isAlive = $result['isAlive'];
-        $show_login = $result['show_login'];
-        $mi_errors = ModuleInstaller::getErrors();
+
+        $mi = new ModuleInstaller();
+        $mi_errors = $mi->getErrors();
         $error_html = "";
-		if(!empty($mi_errors)){
-			$error_html = "<tr><td><span>";
-			foreach($mi_errors as $error){
-				$error_html .= "<font color='red'>".$error."</font><br>";
-			}
-			$error_html .= "</span></td></tr>";
-		}
-
-        $form2 = "<table  class='tabForm' width='100%'  cellpadding='0' cellspacing='0' width='100%' border='0'>";
-        $form2 .= $error_html;
-        if(!$isAlive)
-        	$form2 .= "<tr><td><span id='span_display_html'>".$header_text."</span></td></tr>";
-        $form2 .= "</table>";
-
-        $tree = null;
-        //if($isAlive){
-            $tree = PackageManagerDisplay::buildTreeView('treeview', $isAlive);
-            $tree->tree_style= 'vendor/ytree/TreeView/css/check/tree.css';
-            $ss->assign('TREEHEADER',$tree->generate_header());
-        //}
-        //$form2 .= PackageManagerDisplay::buildLoginPanel($mod_strings);
-        $form2 .= "<table  class='tabForm' cellpadding='0' cellspacing='0' width='100%' border='0'>";
-        $form2 .= "<tr><td></td><td align='left'>";
-        if($isAlive){
-        	$form2 .= "<input type='button' id='modifCredentialsBtn' class='button' onClick='PackageManager.showLoginDialog(true);' value='".$mod_strings['LBL_MODIFY_CREDENTIALS']."'>";
-        }else{
-            $form2 .= "<input type='button' id='modifCredentialsBtn' class='button' onClick='PackageManager.showLoginDialog(true);' value='".$mod_strings['LBL_MODIFY_CREDENTIALS']."'style='display:none;'>";
+        if (!empty($mi_errors)) {
+            $error_html = "<div style='margin:0px 10px 10px 10px;'>";
+            foreach ($mi_errors as $error) {
+                $error_html .= "<font color='red'>" . $error . "</font><br>";
+            }
+            $error_html .= "</div>";
         }
-        $form2 .= "</td><td align='left'><div id='workingStatusDiv' style='display:none;'>".SugarThemeRegistry::current()->getImage("sqsWait","border='0' align='bottom'",null,null,'.gif',"Loading")."</div></td><td align='right'>";
 
-        if($isAlive){
-            $form2 .= "<slot><a class=\"listViewTdToolsS1\" id='href_animate' onClick=\"PackageManager.toggleDiv('span_animate_server_div', 'catview');\"><span id='span_animate_server_div'><img src='".SugarThemeRegistry::current()->getImageURL('basic_search.gif')."' width='8' height='8' border='0'>&nbsp;Collapse</span></a></slot>";
-        }else{
-            $form2 .= "<slot><a class=\"listViewTdToolsS1\" id='href_animate' onClick=\"PackageManager.toggleDiv('span_animate_server_div', 'catview');\"><span id='span_animate_server_div' style='display:none;'><img src='".SugarThemeRegistry::current()->getImageURL('basic_search.gif')."' width='8' height='8' border='0'>&nbsp;Collapse</span></a></slot>";
-        }
-        $form2 .= "</td></tr></table>";
-		$form2 = '';   //Commenting out the form as part of sugar depot hiding.
+        $tree = PackageManagerDisplay::buildTreeView('treeview', $isAlive);
+        $tree->tree_style = 'include/ytree/TreeView/css/check/tree.css';
+        $ss->assign('TREEHEADER', $tree->generate_header());
+
         $ss->assign('installation', ($install ? 'true' : 'false'));
 
 
@@ -114,7 +86,7 @@ class PackageManagerDisplay{
         }
         $show_login = false; //hiding install from sugar
 		$ss->assign('MODULE_SELECTOR', PackageManagerDisplay::buildGridOutput($tree, $mod_strings, $isAlive, $show_login));
-       $ss->assign('FORM_2_PLACE_HOLDER', $form2);
+        $ss->assign('INSTALL_ERRORS', $error_html);
         $ss->assign('MOD', $mod_strings);
         $descItemsInstalled = $mod_strings['LBL_UW_DESC_MODULES_INSTALLED'];
         $ss->assign('INSTALLED_PACKAGES_HOLDER', PackageManagerDisplay::buildInstalledGrid($mod_strings, $types));
