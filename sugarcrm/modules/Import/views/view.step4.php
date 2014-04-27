@@ -60,8 +60,17 @@ class ImportViewStep4 extends SugarView
             trigger_error($mod_strings['LBL_CANNOT_OPEN'],E_USER_ERROR);
         }
 
+        $currentPart = end(explode("-", $uploadFile));
+
         // Open the import file
-        $importSource = new ImportFile($uploadFile, $_REQUEST['custom_delimiter'],html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES));
+        $importSource = new ImportFile(
+            $uploadFile,
+            $_REQUEST['custom_delimiter'],
+            html_entity_decode($_REQUEST['custom_enclosure'], ENT_QUOTES),
+            true,
+            true,
+            $sugar_config['import_max_records_per_file'] * $currentPart
+        );
 
         //Ensure we have a valid file.
         if ( !$importSource->fileExists() )
