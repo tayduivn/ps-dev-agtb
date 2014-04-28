@@ -233,26 +233,7 @@ class HelpApi extends SugarApi
      */
     protected function ensureClientFiles()
     {
-        foreach ($this->clientFiles as $file) {
-            // (re)build the necessary cache files if the file we want does not exist
-            if (!file_exists($file)) {
-                // Maintain state as well as possible
-                $hasRootDirectory = isset($_REQUEST['root_directory']);
-
-                // Same process as SugarView
-                $_REQUEST['root_directory'] = ".";
-                require_once("jssource/minify_utils.php");
-                $minifyUtils = new SugarMinifyUtils();
-                $minifyUtils->ConcatenateFiles(".");
-
-                // If we didn't start with this index, clean up after ourselves
-                if (!$hasRootDirectory) {
-                    unset($_REQUEST['root_directory']);
-                }
-                return true;
-            }
-        }
-
+        ensureJSCacheFilesExist($this->clientFiles, '.', false);
         return true;
     }
 

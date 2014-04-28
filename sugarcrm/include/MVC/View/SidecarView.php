@@ -49,9 +49,7 @@ class SidecarView extends SugarView
         $config = ModuleInstaller::getBaseConfig();
         $this->ss->assign('configHash', md5(serialize($config)));
 
-        require_once("jssource/minify_utils.php");
-        $minifyUtils = new SugarMinifyUtils();
-        $sugarSidecarPath = ensureCache($minifyUtils, ".");
+        $sugarSidecarPath = ensureJSCacheFilesExist();
         $this->ss->assign("sugarSidecarPath", $sugarSidecarPath);
 
         // TODO: come up with a better way to deal with the various JS files
