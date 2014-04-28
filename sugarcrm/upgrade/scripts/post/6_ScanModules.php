@@ -269,7 +269,7 @@ class SugarUpgradeScanModules extends UpgradeScript
 
         $md5_string = array();
         if(!file_exists('files.md5')) {
-            $this->fail("files.md5 not found");
+            return $this->fail("files.md5 not found");
         }
         require 'files.md5';
         $this->md5_files = $md5_string;
@@ -280,11 +280,11 @@ class SugarUpgradeScanModules extends UpgradeScript
 
         $modules = glob("modules/*", GLOB_ONLYDIR);
         foreach($modules as $module) {
-            if(isModuleBWC($module)) {
+            $module_name = substr($module, 8); // cut off modules/
+            if(isModuleBWC($module_name)) {
                 // it's already bwc, don't bother it
                 continue;
             }
-            $module_name = substr($module, 8); // cut off modules/
             if($this->isNewModule($module_name)) {
                 if(!$this->isMBModule($module)) {
                     // new and not MB - list as BWC
