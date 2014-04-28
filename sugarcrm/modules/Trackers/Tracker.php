@@ -39,7 +39,6 @@ class Tracker extends SugarBean
     var $module_dir = 'Trackers';
     var $table_name = 'tracker';
     var $object_name = 'Tracker';
-    var $disable_var_defs = true;
     var $acltype = 'Tracker';
     var $acl_category = 'Trackers';
     var $disable_custom_fields = true;
@@ -72,12 +71,6 @@ class Tracker extends SugarBean
 
     public function __construct()
     {
-        global $dictionary;
-        if(isset($this->module_dir) && isset($this->object_name) && !isset($GLOBALS['dictionary'][$this->object_name])){
-            $path = 'modules/Trackers/vardefs.php';
-            if(defined('TEMPLATE_URL'))$path = SugarTemplateUtilities::getFilePath($path);
-            require_once($path);
-        }
         parent::__construct();
     }
 
