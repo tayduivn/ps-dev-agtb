@@ -212,7 +212,7 @@ describe("Base.View.FilterRows", function() {
             expect(_.size(view.$('[data-filter=row]'))).toEqual(1);
         });
         it('should dispose fields', function() {
-            var disposeStub = sinonSandbox.stub(view, '_disposeFields');
+            var disposeStub = sinonSandbox.stub(view, '_disposeRowFields');
             view.removeRow({currentTarget: $event});
             expect(disposeStub).toHaveBeenCalled();
             expect(disposeStub.lastCall.args[1]).toEqual([
@@ -393,7 +393,7 @@ describe("Base.View.FilterRows", function() {
             expect(_.isEmpty($operatorField.html())).toBeFalsy();
         });
         it('should dispose previous operator and value fields', function() {
-            var disposeStub = sinonSandbox.stub(view, '_disposeFields');
+            var disposeStub = sinonSandbox.stub(view, '_disposeRowFields');
             view.handleFieldSelected({currentTarget: $filterField});
             expect(disposeStub).toHaveBeenCalled();
             expect(disposeStub.lastCall.args[1]).toEqual([
@@ -607,7 +607,7 @@ describe("Base.View.FilterRows", function() {
         });
 
         it('should dispose previous value field', function() {
-            var disposeStub = sinonSandbox.stub(view, '_disposeFields');
+            var disposeStub = sinonSandbox.stub(view, '_disposeRowFields');
             spyOn($.fn, "select2").andReturn("case_number");
             view.handleOperatorSelected({currentTarget: $operatorField});
             expect(disposeStub).toHaveBeenCalled();
