@@ -442,12 +442,6 @@
 					break;
 				// case 9: Tabs ... letting browser handle this ;=)
 				default: 
-					// Shift keys are NOT reliably handled using the keypress,
-					// event, so, we handle here in keydown ;-)
-					// http://unixpapa.com/js/key.html
-					if (e.shiftKey) {
-						e.preventDefault();
-					}
 					break;
 			}
 			// If date changed, reset internal date representations, update date displayed, and fire changeDate event
