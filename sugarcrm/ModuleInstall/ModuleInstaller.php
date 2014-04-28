@@ -635,14 +635,21 @@ class ModuleInstaller{
                     continue;
                 }
                 $user->retrieve($userId);
+                $prefsInSession = isset($_SESSION[$user->user_name . '_PREFERENCES']) ? $_SESSION[$user->user_name . '_PREFERENCES'] : null;
                 $prefs = $user->getPreference('globalSearch', 'search');
-                if (!is_array($prefs) || !array_key_exists($beanDefs['module'], $prefs))
-                {
-                    continue;
+
+                if (is_array($prefs) && array_key_exists($beanDefs['module'], $prefs)) {
+                    unset($prefs[$beanDefs['module']]);
+                    $user->setPreference('globalSearch', $prefs, 0, 'search');
+                    $user->savePreferencesToDB();
                 }
-                unset($prefs[$beanDefs['module']]);
-                $user->setPreference('globalSearch', $prefs, 0, 'search');
-                $user->savePreferencesToDB();
+
+                // Delete temp session data 
+                if (empty($prefsInSession)) {
+                    unset($_SESSION[$user->user_name . '_PREFERENCES']);
+                } else if (empty($prefsInSession['search'])) {
+                    unset($_SESSION[$user->user_name . '_PREFERENCES']['search']);
+                }
             }
         }
 
