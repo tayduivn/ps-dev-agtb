@@ -2946,6 +2946,7 @@ $app_strings = array (
     'LBL_SEARCH_TIPS_2' => "Press the search button or click enter to get an exact match for",
     'LBL_SEARCH_MORE' => 'more',
     'LBL_SEE_ALL' => 'See All',
+    'LBL_SEARCH_LOAD_MORE' => 'LOAD MORE',
     'LBL_UPLOAD_IMAGE_FILE_INVALID' => 'Invalid file format, only image file can be uploaded.',
     'LBL_UPLOAD_IMAGE_FILE_NOT_SUPPORTED' => 'Image format {0} is no longer supported.',
     'LBL_SELECT_BUTTON_KEY' => 'T',
