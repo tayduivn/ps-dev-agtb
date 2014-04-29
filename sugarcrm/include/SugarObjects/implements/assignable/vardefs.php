@@ -60,7 +60,6 @@ $vardefs = array(
 		    'module'=>'Users',
 		    'duplicate_merge'=>'disabled',
             'duplicate_on_record_copy' => 'always',
-            'massupdate' => false,
             'sort_on' => array('last_name'),
      ),
 		      'assigned_user_link' =>
