@@ -1,106 +1,131 @@
-describe("Base.Field.TextArea", function() {
-    var app, field,
-        fieldName = 'foo',
-        shortText = '12345',
-        langLblStub, template,
-        moreText = 'more', lessText = 'less',
-        longText = shortText + shortText;
+describe('Base.Field.TextArea', function() {
+    var app, field, template,
+        module = 'Bugs',
+        fieldName = 'foo';
 
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        template = SugarTest.loadHandlebarsTemplate("textarea", "field", "base", "detail");
+        template = SugarTest.loadHandlebarsTemplate('textarea', 'field', 'base', 'detail');
         SugarTest.testMetadata.set();
-        field = SugarTest.createField("base",fieldName, "textarea", "detail");
-        field.maxDisplayLength = shortText.length; //for testing
-
-        langLblStub = sinon.stub(app.lang, 'get', function(label) {
-            if (label === 'LBL_MORE') {
-                return moreText;
-            } else {
-                return lessText;
+        fieldDef = {
+            settings: {
+                max_display_chars: 8
             }
-        });
-
+        };
+        field = SugarTest.createField('base', fieldName, 'textarea', 'detail', fieldDef, module);
     });
 
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
-        field = null;
-        langLblStub.restore();
+        field.dispose();
+        sinon.collection.restore();
     });
 
+    describe('initialize', function() {
+        it('should initialize settings to the values in `this.def` appropriately', function() {
+            fieldDef.settings.collapsed = false;
+            var testField = SugarTest.createField('base', fieldName, 'textarea', 'detail', fieldDef, module);
 
-    it('short values should not have more link', function() {
-        field.model.set(fieldName, shortText);
-        field.initialize(field.options);
-        field.render();
-        expect(field.$('.show-more-text').length).toEqual(0);
-        expect(field.isTruncated).toBeFalsy();
+            expect(testField._settings.max_display_chars).toEqual(fieldDef.settings.max_display_chars);
+            expect(testField._settings.collapsed).toEqual(fieldDef.settings.collapsed);
+            expect(testField.collapsed).toEqual(testField._settings.collapsed);
+        });
     });
 
-    it('long values should have more link and text truncated with ellipse', function() {
-        field.model.set(fieldName, longText);
-        field.initialize(field.options);
-        field.render();
-        assertTruncated();
+    describe('format', function() {
+        beforeEach(function() {
+            field.action = 'detail';
+        });
+
+        using('various field actions', [
+            {
+                action: 'list',
+                longExists: false
+            },
+            {
+                action: 'edit',
+                longExists: false
+            },
+            {
+                action: 'disabled',
+                longExists: false
+            },
+            {
+                action: 'detail',
+                longExists: true
+            }
+        ], function(value) {
+            it('should only set a `long` value if in detail mode', function() {
+                field.action = value.action;
+                var returnVal = field.format('testvalue');
+
+                expect(returnVal.hasOwnProperty('long')).toBe(value.longExists);
+            });
+        });
+
+        // max_display_chars was kept to '8' for this test.
+        using('various field values', [
+            {
+                fieldVal: 'testvalue',
+                shortExists: true,
+                expectedShortValue: 'testvalu'
+            },
+            {
+                fieldVal: 'testvalu',
+                shortExists: false,
+                expectedShortValue: undefined
+            },
+            {
+                fieldVal: 'testval',
+                shortExists: false,
+                expectedShortValue: undefined
+            },
+            {
+                fieldVal: '',
+                shortExists: false,
+                expectedShortValue: undefined
+            },
+            {
+                fieldVal: '結葉鮮敬。対好速残',
+                shortExists: true,
+                expectedShortValue: '結葉鮮敬。対好速'
+            },
+            {
+                fieldVal: '結葉鮮敬。対好\n速残',
+                shortExists: true,
+                expectedShortValue: '結葉鮮敬。対好'
+            },
+            {
+                fieldVal: '結葉鮮敬。対\n好速残',
+                shortExists: true,
+                expectedShortValue: '結葉鮮敬。対\n好'
+            }
+        ], function(value) {
+            it('should set a proper `short` value if the field value exceeds `max_display_chars`', function() {
+                var returnVal = field.format(value.fieldVal);
+
+                expect(returnVal.hasOwnProperty('short')).toBe(value.shortExists);
+                expect(returnVal.hasOwnProperty('long')).toBe(true);
+                expect(returnVal.long).toEqual(value.fieldVal);
+                expect(returnVal.short).toEqual(value.expectedShortValue);
+            });
+        });
     });
 
-    it('clicking on more link should show more text', function() {
-        field.model.set(fieldName, longText);
-        field.initialize(field.options);
-        field.render();
-        field.$('.show-more-text').trigger('click'); //click more
-        assertExpanded();
-    });
+    describe('toggleCollapsed', function() {
+        using('values', [true, false], function(value) {
+            it('should toggle the value of `collapsed` and call render', function() {
+                var renderStub = sinon.collection.stub(field, 'render');
 
-    it('clicking on less link should show less text', function() {
-        field.model.set(fieldName, longText);
-        field.initialize(field.options);
-        field.render();
-        field.$('.show-more-text').trigger('click'); //click more
-        field.$('.show-more-text').trigger('click'); //click less
-        assertTruncated();
-    });
+                field.collapsed = value;
+                field.toggleCollapsed();
 
-    it('should not call show less if list view', function() {
-        var spy = sinon.spy(app.view.Field.prototype, '_render');
-        template = SugarTest.loadHandlebarsTemplate("textarea", "field", "base", "list");
-        SugarTest.testMetadata.set();
-        field = SugarTest.createField("base",fieldName, "textarea", "list");
-        field.maxDisplayLength = shortText.length; //for testing
-        field.model.set(fieldName, longText);
-        field.initialize(field.options);
-        field.render();
-        // should be untruncated longtext since on a list view
-        expect(field.$el.text().trim()).toEqual(longText);
-        expect(spy).toHaveBeenCalled();
-        spy.restore();
+                expect(field.collapsed).toBe(!value);
+                expect(renderStub).toHaveBeenCalled();
+            });
+        });
     });
-    it('should return to last "more" or "less" state if coming from textarea edit mode', function() {
-        field.lastMode = 'less';
-        field.tplName  = 'edit';
-        field.model.set(fieldName, longText);
-        field.initialize(field.options);
-        field.render();
-        assertTruncated();
-        field.lastMode = 'more';
-        field.tplName  = 'edit';
-        field.render();
-        assertExpanded();
-    });
-
-    var assertTruncated = function() {
-        expect(field.$('.show-more-text').length).toEqual(1);
-        expect(field.isTruncated).toBeTruthy();
-        expect(field.$el.text().trim()).toEqual(shortText + '...' + moreText);
-    };
-
-    var assertExpanded = function() {
-        expect(field.$('.show-more-text').length).toEqual(1);
-        expect(field.isTruncated).toBeFalsy();
-        expect(field.$el.text().trim()).toEqual(longText + '...' + lessText);
-    };
 });

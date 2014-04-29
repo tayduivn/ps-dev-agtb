@@ -4917,6 +4917,10 @@ $app_strings = array (
     'ERR_GENERIC_SERVER_ERROR' => 'There was an error while connecting to the server. Please try again.',
     'ERR_RESOLVE_ERRORS' => 'Please resolve any errors before proceeding.',
 
+    // Textarea field.
+    'LBL_TEXTAREA_MORE' => 'more',
+    'LBL_TEXTAREA_LESS' => 'less',
+
     //attachments dashlet
     'LBL_MODULE_ATTACHMENTS_TITLE' => '{{module}} attachments',
     'LBL_CREATE_ATTACHMENT' => 'Create attachment',
