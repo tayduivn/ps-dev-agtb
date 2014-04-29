@@ -43,6 +43,11 @@ $viewdefs['Prospects']['base']['view']['panel-top-for-prospectlists'] = array(
                     'type' => 'linkfromreportbutton',
                     'name' => 'select_button',
                     'label' => 'LBL_SELECT_REPORTS_BUTTON_LABEL',
+                    'initial_filter' => 'by_module',
+                    'initial_filter_label' => 'LBL_FILTER_PROSPECTS_REPORTS',
+                    'filter_populate' => array(
+                        'module' => array('Prospects'),
+                    ),
                 ),
             ),
         ),

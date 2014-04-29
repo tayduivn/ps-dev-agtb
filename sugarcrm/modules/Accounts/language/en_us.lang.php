@@ -196,4 +196,6 @@ To create an {{module_name}}:
 2. Click "Save" to finalize the new record and return to the previous page.
  - Choose "Save and view" to open the new {{module_name}} in record view.
  - Choose "Save and create new" to immediately create another new {{module_name}}.',
+
+    'LBL_FILTER_ACCOUNTS_REPORTS' => 'Accounts\' reports',
 );

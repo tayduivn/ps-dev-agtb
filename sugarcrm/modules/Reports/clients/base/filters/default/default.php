@@ -15,7 +15,10 @@ $viewdefs['Reports']['base']['filter']['default'] = array(
     'default_filter' => 'all_records',
     'fields' => array(
         'name' => array(),
-        'module' => array(),
+        'module' => array(
+            'type' => 'enum',
+            'options' => 'moduleList',
+        ),
         'report_type' => array(),
         'date_entered' => array(),
         'date_modified' => array(),

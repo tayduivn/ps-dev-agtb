@@ -195,7 +195,7 @@
             if (_.isEmpty(fieldFilterDef)) {
                 fields[fieldName] = fieldMetaData || {};
             } else {
-                fields[fieldName] = _.extend({name: fieldName}, fieldFilterDef, fieldMetaData);
+                fields[fieldName] = _.extend({name: fieldName}, fieldMetaData, fieldFilterDef);
             }
             delete fields[fieldName]['readonly'];
         });
