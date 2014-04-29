@@ -685,6 +685,10 @@ END;
 
             // Step 2, convert panels if there are any to handle
             if(!empty($data['panels'])) {
+                // Add spans fields as needed
+                $maxSpan = $parser->getMaxSpan();
+                // Need to send the entire data array as we need templateData.maxColumns
+                $data = $this->addSpansToFields($data, $maxSpan);
                 $legacyPanelFields = $legacyParser->getFieldsFromPanels($data['panels']);
                 foreach($legacyPanelFields as $fieldname => $fielddef) {
                     // Handle removal of fields from customFields (legacy defs) as needed
@@ -920,6 +924,11 @@ END;
      */
     public function isValidField($field)
     {
+        // Empty strings are not valid fields
+        if (empty($field)) {
+            return false;
+        }
+
         // Because some fields on a layout are not actual fields (fieldsets) we
         // need to make sure that this field is not one of those special fields
         // we know about. This loops over those special fields before delegating
@@ -1125,5 +1134,57 @@ END;
         }
 
         return false;
+    }
+    
+    /**
+     * Modifies the panels originally picked up in the scraping of layouts for 
+     * upgrading. This will add necessary spans to defs if they aren't there yet.
+     * 
+     * @param array $panels The metadata array
+     * @param int $maxSpan The span size to cover for a cell across a row
+     * @return array
+     */
+    public function addSpansToFields(array $data, $maxSpan)
+    {
+        // Yes, this could be done in a ternary, but long lines anger the standards
+        // monsters so we use more lines to keep them skinny.
+        $maxCols = 2;
+        if (isset($data['templateMeta']['maxColumns'])) {
+            $maxCols = intval($data['templateMeta']['maxColumns']);
+        }
+
+        // Get a single cell span
+        $span = floor($maxSpan / $maxCols);
+
+        // Grab the panels for mutations now
+        $panels = $data['panels'];
+        foreach ($panels as $panelName => $panel) {
+            foreach ($panel as $rowIndex => $row) {
+                // Get the count of the row cells. If they are less than max cols
+                // then span the last cell
+                $count = count($row);
+                if ($count < $maxCols) {
+                    // Index for the last cell in the row
+                    $i = $count - 1;
+
+                    // This is the total span for the last row, including the 
+                    // last cell in the row
+                    $totalSpan = $span * ($maxCols - $i);
+                    if (!is_array($row[$i])) {
+                        $newRow = array('name' => $row[$i]);
+                    } else {
+                        $newRow = $row[$i];
+                    }
+
+                    $newRow['span'] = $totalSpan;
+                    $row[$i] = $newRow;
+                }
+
+                $panels[$panelName][$rowIndex] = $row;
+            }
+        }
+
+        $data['panels'] = $panels;
+        return $data;
     }
 }

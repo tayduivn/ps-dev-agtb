@@ -532,9 +532,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
                         '',
                         array(
                             'name' => 'description',
-                            'displayParams' => array(
-                                'colspan' => 2,
-                            ),
+                            'span' => 12,
                         ),
                     ),
                 ),
@@ -583,9 +581,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
                         array(
                             'name' => 'leadmap_c',
                             'label' => 'LBL_LEADMAP',
-                            'displayParams' => array(
-                                'colspan' => 2,
-                            ),
+                            'span' => 12,
                         ),
                     ),
                 ),
