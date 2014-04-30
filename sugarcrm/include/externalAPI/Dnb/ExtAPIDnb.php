@@ -761,6 +761,31 @@ class ExtAPIDnb extends ExternalAPIBase
     }
 
     /**
+     * Returns a recent valid token if possible
+     * @return string An authenticated token or null if authenticated token was unattainable
+     */
+    private function getRecentToken() {
+        $dnbToken = !empty($_SESSION[$this->dnbEnv . 'dnbToken']) ?
+            $_SESSION[$this->dnbEnv . 'dnbToken'] : null;
+        $dnbTokenIssueTime = !empty($_SESSION[$this->dnbEnv . 'dnbTokenIssueTime']) ?
+            $_SESSION[$this->dnbEnv . 'dnbTokenIssueTime'] : null;
+        //check if token has expired
+        $dnbToken = $this->checkToken($dnbToken, $dnbTokenIssueTime);
+        return $dnbToken;
+    }
+
+    /**
+     * Check if a valid token was procurable
+     * @param string token. if not provided, we try to get a valid one
+     * @return boolean True if token was procurable, false if not
+     */
+    public function checkTokenValidity($token = null)
+    {
+        $dnbToken = $token ?: $this->getRecentToken();
+        return isset($dnbToken);
+    }
+
+    /**
      * Invokes REST API
      * @param $requestMethod Method type GET|POST
      * @param $url Service End Point
@@ -774,11 +799,9 @@ class ExtAPIDnb extends ExternalAPIBase
         if (!$this->isConnectorConfigured()) {
             return array('error' => 'ERROR_DNB_CONFIG');
         }
-        //check if token has expired
-        $dnbToken = !empty($_SESSION[$this->dnbEnv . 'dnbToken']) ? $_SESSION[$this->dnbEnv . 'dnbToken'] : null;
-        $dnbTokenIssueTime = !empty($_SESSION[$this->dnbEnv . 'dnbTokenIssueTime']) ? $_SESSION[$this->dnbEnv . 'dnbTokenIssueTime'] : null;
-        $dnbToken = $this->checkToken($dnbToken, $dnbTokenIssueTime);
-        if ($dnbToken === '') {
+        $dnbToken = $this->getRecentToken();
+        //check if token is valid
+        if (!$this->checkTokenValidity($dnbToken)) {
             return array('success' => false, 'errorMessage' => 'Error Obtaining Authorization Token');
         }
         $dnbApplicationId = $this->dnbApplicationId;
@@ -863,7 +886,7 @@ class ExtAPIDnb extends ExternalAPIBase
      * DNB Token expires after 8 hours of idle time
      * @param $dnbToken
      * @param $dnbTokenIssueTime
-     * @return string
+     * @return string token if valid token found, null otherwise
      */
     private function checkToken($dnbToken, $dnbTokenIssueTime)
     {
@@ -879,8 +902,8 @@ class ExtAPIDnb extends ExternalAPIBase
     }
 
     /**
-     * Return new DNB Authentication to acces DNB api
-     * @return string
+     * Return new DNB Authentication to access DNB api. Return null if authentication could not be verified
+     * @return string token if valid token found, null otherwise
      */
     private function getAuthenticationToken()
     {
@@ -888,6 +911,9 @@ class ExtAPIDnb extends ExternalAPIBase
         $password = $this->dnbPassword;
         $token = '';
         $curl_handle = curl_init();
+        if (!array_key_exists($this->dnbEnv, $this->dnbBaseURL)) {
+            return null;
+        }
         $auth_url = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbAuthURL;
         $curl_headers = array(
             "x-dnb-user: $username",
@@ -902,7 +928,7 @@ class ExtAPIDnb extends ExternalAPIBase
             $curl_errno = curl_errno($curl_handle);
             $curl_error = curl_error($curl_handle);
             $GLOBALS['log']->debug("HTTP client: cURL call failed: error $curl_errno: $curl_error");
-            return array('error' => 'ERROR_CURL_' . $curl_errno);
+            return null;
         }
         $curl_info = curl_getinfo($curl_handle);
         if ($curl_info['http_code'] === 200) {
@@ -910,10 +936,10 @@ class ExtAPIDnb extends ExternalAPIBase
             if (count($tokenArray) > 0) {
                 $token = $tokenArray[1];
             } else {
-                return;
+                return null;
             }
         } else {
-            return;
+            return null;
         }
         $GLOBALS['log']->debug("HTTP client response: $response");
         curl_close($curl_handle);

@@ -4384,6 +4384,7 @@ $app_strings = array (
     'LBL_TOUR_FORECASTS_INLINEEDIT' =>'Click to edit data inline',
     'LBL_TOUR_FORECASTS_PROGRESS' =>'Review distance to Quota',
     'LBL_TOUR_FORECASTS_CHART' =>'Review Forecast distribution',
+    'LBL_TOUR_TOUR' => 'Access Tour at any time',
 
 
 
@@ -4916,6 +4917,10 @@ $app_strings = array (
     //application error messages
     'ERR_GENERIC_SERVER_ERROR' => 'There was an error while connecting to the server. Please try again.',
     'ERR_RESOLVE_ERRORS' => 'Please resolve any errors before proceeding.',
+
+    // Textarea field.
+    'LBL_TEXTAREA_MORE' => 'more',
+    'LBL_TEXTAREA_LESS' => 'less',
 
     //attachments dashlet
     'LBL_MODULE_ATTACHMENTS_TITLE' => '{{module}} attachments',

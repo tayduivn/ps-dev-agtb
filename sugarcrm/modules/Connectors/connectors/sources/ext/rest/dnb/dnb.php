@@ -30,13 +30,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/connectors/sources/ext/rest/rest.php');
 
 class ext_rest_dnb extends ext_rest {
-    public function __construct(){
+    protected $_has_testing_enabled = true;
+
+    public function __construct() {
         parent::__construct();
         $this->_enable_in_wizard = false;
         $this->_enable_in_hover = true;
         $this->_enable_in_admin_display = false;
         $this->_enable_in_admin_mapping = false;
         $this->_required_config_fields = array('dnb_username', 'dnb_password');
+    }
+
+    public function test() {
+        $api = ExternalAPIFactory::loadAPI('Dnb', true);
+        return $api->checkTokenValidity();
     }
 
     /*

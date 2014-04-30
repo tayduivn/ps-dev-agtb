@@ -1,5 +1,6 @@
 <html>
 <head>
+    <meta charset="utf-8">
     <!-- required classes for tests -->
     <script type="text/javascript" src="../sidecar/lib/backbone/underscore.js"></script>
     <script type="text/javascript" src="../sidecar/lib/jquery/jquery.min.js"></script>
