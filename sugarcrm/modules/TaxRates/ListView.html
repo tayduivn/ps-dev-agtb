@@ -41,7 +41,7 @@
     			<td scope="row" valign=TOP><slot><a href="{URL_PREFIX}index.php?action=index&module=TaxRates&record={TAXRATE.ID}" >{TAXRATE.NAME}</a></slot></td>
     			<td valign=TOP><slot>{TAXRATE.STATUS}</slot></td>
     			<td valign=TOP><slot>{TAXRATE.LIST_ORDER}</slot></td>
-    			<td nowrap align="center" valign=TOP><slot><a class="listViewTdToolsS1" onclick="return confirm('{MOD.NTC_DELETE_CONFIRMATION}')" href="{URL_PREFIX}index.php?action=Delete&module=TaxRates&record={TAXRATE.ID}&return_module=TaxRates&return_action=index&return_id=">{DELETE_INLINE_PNG}</a>&nbsp;<a class="listViewTdToolsS1" onclick="return confirm('{MOD.NTC_DELETE_CONFIRMATION}')" href="{URL_PREFIX}index.php?action=Delete&module=TaxRates&record={TAXRATE.ID}&return_module=TaxRates&return_action=index&return_id=">{APP.LNK_DELETE}</a></slot></td>
+    			<td nowrap align="center" valign=TOP>{TAXRATE.DELETE_BUTTON}</td>
 
 </tr>
 
