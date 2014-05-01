@@ -14,6 +14,9 @@
  ********************************************************************************/
 /**
  * Merge sidecar defs for Sugar 7
+ * This is a first part of the process, only collecting the information.
+ * The other part is done by post-script 7_Merge7Templates.
+ * @see BR-1491
  */
 class SugarUpgradeMerge7 extends UpgradeScript
 {
