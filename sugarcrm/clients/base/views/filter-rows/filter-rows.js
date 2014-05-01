@@ -255,7 +255,7 @@
 
         $row.data('nameField', field);
 
-        this._renderField(field);
+        this._renderField(field, $fieldContainer);
 
         return $row;
     },
@@ -273,7 +273,7 @@
                 {'field': 'valueField', 'value': 'value'}
             ];
 
-        this._disposeFields($row, fieldOpts);
+        this._disposeRowFields($row, fieldOpts);
         $row.remove();
         this.layout.trigger('filter:toggle:savestate', true);
         if (this.$('[data-filter=row]').length === 0) {
@@ -344,7 +344,7 @@
         _.each(filterDef, function(row) {
             this.populateRow(row);
         }, this);
-        //Set lastFilterDef because the filter has already been applied and fireSearch is called in _disposeFields
+        //Set lastFilterDef because the filter has already been applied and fireSearch is called in _disposeRowFields
         this.lastFilterDef = this.buildFilterDef(true);
         this.lastFilterTemplate = this.buildFilterDef();
     },
@@ -417,7 +417,7 @@
                 {'field': 'operatorField', 'value': 'operator'},
                 {'field': 'valueField', 'value': 'value'}
             ];
-        this._disposeFields($row, fieldOpts);
+        this._disposeRowFields($row, fieldOpts);
 
         data['name'] = fieldName;
         if (!fieldName) {
@@ -462,7 +462,7 @@
         $field.appendTo($fieldWrapper);
         data['operatorField'] = field;
 
-        this._renderField(field);
+        this._renderField(field, $field);
     },
 
     /**
@@ -478,7 +478,7 @@
                 {'field': 'valueField', 'value': 'value'}
             ];
 
-        this._disposeFields($row, fieldOpts);
+        this._disposeRowFields($row, fieldOpts);
 
         data['operator'] = operation;
         if (!operation) {
@@ -586,7 +586,7 @@
                     field.$('.input-append').removeClass('date');
                     field.$('input, textarea').on('keyup', _.debounce(_.bind(_keyUpCallback, field), 400));
                 });
-                this._renderField(field);
+                this._renderField(field, fieldContainer);
             }, this);
         } else {
             model.set(fieldDef.id_name || fieldName, $row.data('value'));
@@ -613,12 +613,12 @@
                             model.set(fieldName, findRelatedName.first().get(fieldDef.rname), { silent: true });
                         }
                         if (!field.disposed) {
-                            self._renderField(field);
+                            self._renderField(field, fieldContainer);
                         }
                     }
                 }});
             } else {
-                this._renderField(field);
+                this._renderField(field, fieldContainer);
             }
         }
 
@@ -829,14 +829,20 @@
     },
 
     /**
-     * Internal function that disposes fields stored in the data attribute of the row el.
-     * @param  {jQuery el} $row The row which fields are to be disposed.
-     * @param  {array} opts An array of objects, corresponding with the data obj of the row.
-     * Example: opts = [{'field': 'nameField', 'value': 'name'},
-     {'field': 'operatorField', 'value': 'operator'},
-     {'field': 'valueField', 'value': 'value'}]
+     * Disposes fields stored in the data attributes of the row element.
+     *
+     *     @example of an `opts` object param:
+     *      [
+     *       {'field': 'nameField', 'value': 'name'},
+     *       {'field': 'operatorField', 'value': 'operator'},
+     *       {'field': 'valueField', 'value': 'value'}
+     *      ]
+     *
+     * @param  {jQuery} $row The row which fields are to be disposed.
+     * @param  {Array} opts An array of objects containing the field object and
+     *  value to the data attributes of the row.
      */
-    _disposeFields: function($row, opts) {
+    _disposeRowFields: function($row, opts) {
         var data = $row.data(), model;
 
         if (_.isObject(data) && _.isArray(opts)) {

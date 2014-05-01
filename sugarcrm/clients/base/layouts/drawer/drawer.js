@@ -581,7 +581,7 @@
         app.routing.offBefore("route", this.reset, this);
         this.reset();
         $(window).off('resize.drawer');
-        app.view.View.prototype._dispose.call(this);
+        this._super('_dispose');
     },
 
     /**
