@@ -312,8 +312,7 @@
      */
     _clearNewAddressField: function() {
         this._getNewEmailField()
-            .val('')
-            .focus();
+            .val('');
     },
 
     /**
