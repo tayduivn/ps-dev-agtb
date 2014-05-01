@@ -38,8 +38,7 @@
     			<td scope="row" valign=TOP><slot><a href="{URL_PREFIX}index.php?action=index&module=Shippers&record={SHIPPER.ID}" >{SHIPPER.NAME}</a></slot></td>
     			<td valign=TOP><slot>{SHIPPER.STATUS}</slot></td>
     			<td valign=TOP><slot>{SHIPPER.LIST_ORDER}</slot></td>
-    			<td nowrap align="center" valign=TOP><slot><a class="listViewTdToolsS1" onclick="return confirm('{MOD.NTC_DELETE_CONFIRMATION}')" href="{URL_PREFIX}index.php?action=Delete&module=Shippers&record={SHIPPER.ID}&return_module=Shippers&return_action=index&return_id=">{DELETE_INLINE_PNG}</a>&nbsp;<a class="listViewTdToolsS1" onclick="return confirm('{MOD.NTC_DELETE_CONFIRMATION}')" href="{URL_PREFIX}index.php?action=Delete&module=Shippers&record={SHIPPER.ID}&return_module=Shippers&return_action=index&return_id=">{APP.LNK_DELETE}</a></slot></td>
-
+    			<td nowrap align="center" valign=TOP>{SHIPPER.DELETE_BUTTON}</td>
 </tr>
 
 <!-- END: row -->
