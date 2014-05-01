@@ -186,24 +186,6 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
-    public function testSelectCount()
-    {
-        $sqCount = new SugarQuery();
-        $sqCount->select()->setCountQuery();
-        $sqCount->from(BeanFactory::newBean('Accounts'));
-        $this->assertContains('count', $sqCount->compileSql());
-
-        $sqCount = new SugarQuery();
-        $sqCount->select()->setCountQuery();
-        $sqCount->select(array('name', 'account_type'));
-        $sqCount->from(BeanFactory::newBean('Accounts'));
-        $sql = $sqCount->compileSql();
-        $this->assertContains('count(0)', $sql);
-        $this->assertContains('name', $sql);
-        $this->assertContains('account_type', $sql);
-        
-    }
-
     public function testSelectNotes() {
         $account = BeanFactory::newBean('Accounts');
         $account->name = 'Awesome';
