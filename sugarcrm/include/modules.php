@@ -543,11 +543,6 @@ $modInvisList[] = 'PdfManager';
 $adminOnlyList['PdfManager'] = array('all' => 1);
 //END SUGARCRM flav=pro ONLY
 
-
-$beanList['KBSTags'] = 'KBSTag';
-$beanFiles['KBSTag'] = 'modules/KBSTags/KBSTag.php';
-$modInvisList[] = 'KBSTags';
-
 $beanList['KBSTopics'] = 'KBSTopic';
 $beanFiles['KBSTopic'] = 'modules/KBSTopics/KBSTopic.php';
 $modInvisList[] = 'KBSTopics';
