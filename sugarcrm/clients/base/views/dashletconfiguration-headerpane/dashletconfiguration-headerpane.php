@@ -49,6 +49,7 @@ $viewdefs["base"]["view"]["dashletconfiguration-headerpane"] = array(
                     "type" => "base",
                     "name" => "label",
                     "placeholder" => "LBL_NAME",
+                    "required" => true,
                 ),
             )
         )

@@ -68,7 +68,7 @@ class SugarSearchEngineElasticMappingTest extends Sugar_PHPUnit_Framework_TestCa
             array(
                 array('type'=>'email'),
                 array('type'=>'string',
-                      'index'=>'not_analyzed'),
+                      'analyzer'=>'uax_url_email'),
                 "testing email mapping",
             ),
             array(

@@ -17,7 +17,7 @@
      * @extends View.FlexListView
      */
     extendsFrom: 'FlexListView',
-    plugins: ['ListColumnEllipsis', 'ListDisableSort', 'ListRemoveLinks'],
+    plugins: ['ListColumnEllipsis', 'ListDisableSort', 'ListRemoveLinks', 'Pagination'],
     collectionSync: null,
     additionalTableClasses: null,
 

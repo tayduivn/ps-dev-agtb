@@ -25,6 +25,8 @@
 
     keyword: null,
 
+    plugins: ['Connector'],
+
     events: {
         'click a.dnb-company-name': 'dunsClickHandler',
         'click .showMoreData': 'showMoreData',
@@ -38,15 +40,39 @@
     configuredKey: 'dnb:account:create:configured',
 
     initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
-        this.context.on('input:name:keyup', this.dnbSearch, this);
+        this._super('initialize', [options]);
+        this.loadData();
     },
 
-    loadData: function(options) {
-        this.template = app.template.get(this.name + '.dnb-search-hint');
-        if (!this.disposed) {
-            this.render();
+    loadData: function() {
+        if (this.disposed) {
+            return;
         }
+        this.checkConnector('ext_rest_dnb',
+            _.bind(this.loadDataWithValidConnector, this),
+            _.bind(this.handleLoadError, this),
+            ['test_passed']);
+    },
+
+    /**
+     * Success callback to be run when Connector has been verified and validated
+     */
+    loadDataWithValidConnector: function() {
+        this.template = app.template.get(this.name + '.dnb-search-hint');
+        this.render();
+        this.context.on('input:name:keyup', this.dnbSearch, this);
+        this.errmsg = null;
+    },
+
+    /**
+     * Failure callback to be run if Connector verification fails
+     * @param {object} connector that failed
+     */
+    handleLoadError: function(connector) {
+        this.errmsg = 'LBL_DNB_NOT_CONFIGURED';
+        this.template = app.template.get(this.name + '.dnb-need-configure');
+        this.render();
+        this.context.off('input:name:keyup', this.dnbSearch);
     },
 
     /**

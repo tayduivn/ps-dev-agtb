@@ -97,9 +97,17 @@ class ImportFile extends ImportDataSource
      * @param string $delimiter
      * @param string $enclosure
      * @param bool   $deleteFile
+     * @param bool   $checkUploadPath
+     * @param int    $rowsCount
      */
-    public function __construct( $filename, $delimiter  = ',', $enclosure  = '',$deleteFile = true, $checkUploadPath = TRUE )
-    {
+    public function __construct(
+        $filename,
+        $delimiter = ',',
+        $enclosure = '',
+        $deleteFile = true,
+        $checkUploadPath = true,
+        $rowsCount = 0
+    ) {
         if ( !is_file($filename) || !is_readable($filename) ) {
             return false;
         }
@@ -124,6 +132,7 @@ class ImportFile extends ImportDataSource
 
         // Autodetect does setFpAfterBOM()
         $this->_encoding = $this->autoDetectCharacterSet();
+        $this->_rowsCount = $rowsCount;
     }
 
     /**

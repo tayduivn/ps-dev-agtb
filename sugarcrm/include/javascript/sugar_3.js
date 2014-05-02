@@ -1137,7 +1137,7 @@ function isFieldHidden(field, type)
         td = Dom.getAncestorByTagName(td, 'TD');
     }
 
-	return Dom.hasClass(td, 'vis_action_hidden') || field.type == 'hidden';
+    return Dom.hasClass(td, 'vis_action_hidden');
 }
 //END SUGARCRM flav=pro ONLY
 function validate_form(formname, startsWith){
@@ -1189,7 +1189,13 @@ function validate_form(formname, startsWith){
 					if(validate[formname][i][requiredIndex]
 						&& !isFieldTypeExceptFromEmptyCheck(validate[formname][i][typeIndex])
 					){
-						if(typeof form[validate[formname][i][nameIndex]] == 'undefined' || trim(form[validate[formname][i][nameIndex]].value) == ""){
+                        var elementValue = '';
+                        if (form[validate[formname][i][nameIndex]] && form[validate[formname][i][nameIndex]].length) {
+                            elementValue = form[validate[formname][i][nameIndex]][0].value;
+                        } else  {
+                            elementValue = form[validate[formname][i][nameIndex]].value;
+                        }
+						if(typeof form[validate[formname][i][nameIndex]] === 'undefined' || trim(elementValue) === ""){
 							add_error_style(formname, validate[formname][i][nameIndex], requiredTxt +' ' + validate[formname][i][msgIndex]);
 							isError = true;
 						}

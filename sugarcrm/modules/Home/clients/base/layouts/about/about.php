@@ -51,7 +51,7 @@ $viewdefs['Home']['base']['layout']['about'] = array(
                                 array(
                                     'layout' => array(
                                         'type' => 'simple',
-                                        'span' => 4,
+                                        'span' => 6,
                                         'components' => array(
                                             array(
                                                 'view' => 'about-resources',
@@ -62,21 +62,10 @@ $viewdefs['Home']['base']['layout']['about'] = array(
                                 array(
                                     'layout' => array(
                                         'type' => 'simple',
-                                        'span' => 4,
+                                        'span' => 6,
                                         'components' => array(
                                             array(
                                                 'view' => 'about-source-code',
-                                            ),
-                                        ),
-                                    ),
-                                ),
-                                array(
-                                    'layout' => array(
-                                        'type' => 'simple',
-                                        'span' => 4,
-                                        'components' => array(
-                                            array(
-                                                'view' => 'about-language-packs',
                                             ),
                                         ),
                                     ),
