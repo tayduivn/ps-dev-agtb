@@ -1,0 +1,51 @@
+.tags {
+  margin: 0;
+  .tag-wrapper {
+    display: inline-block;
+    padding: 3px 6px 3px;
+    background: @dropdownLinkBackgroundHover;
+    top: 3px;
+    left: 3px;
+    .border-radius(3px);
+    margin-right: 4px;
+    margin-top: 2px;
+    float: left;
+    .tag-name {
+      font-size: @fontSizeSmall;
+      color: @dropdownLinkColorHover;
+      font-weight: 600;
+    }
+  }
+}
+
+.list .tags {
+ .tag-wrapper {
+   padding: 3px 4px;
+   margin-top: 1px;
+   padding: 1px 6px;
+ }
+}
+
+[data-fieldname="tags"] {
+  .select2-container {
+    margin-left: -1px !important;
+    position: relative !important;
+    &.select2-container-multi.select2-choices-pills-close {
+      .select2-search-choice {
+        div {
+          color: @dropdownLinkColorHover;
+          background: @dropdownLinkBackgroundHover;
+          .label {
+            color: @dropdownLinkColorHover;
+          }
+        }
+        a.select2-search-choice-close {
+          color: @grayLight;
+          &:hover {
+            color: @gray;
+          }
+        }
+      }
+    }
+  }
+}
