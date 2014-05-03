@@ -59,7 +59,7 @@ class DropDownBrowser
         
         $my_list_strings = $app_list_strings;
         foreach($my_list_strings as $key=>$value){
-        	if(!is_array($value)){
+            if (!is_array($value) || array_filter($value, 'is_array')) {
         		unset($my_list_strings[$key]);
         	}
         }
