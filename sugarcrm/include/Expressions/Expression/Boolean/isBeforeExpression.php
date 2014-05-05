@@ -52,6 +52,11 @@ class isBeforeExpression extends BooleanExpression {
 			var params = this.getParameters();
 			var a = params[0].evaluate();
 			var b = params[1].evaluate();
+
+            if (!a || !b || isNaN(a) || isNaN(b)) {
+                return SUGAR.expressions.Expression.FALSE;
+            }
+
 			if ( a < b )	return SUGAR.expressions.Expression.TRUE;
 			return SUGAR.expressions.Expression.FALSE;
 EOQ;
