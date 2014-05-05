@@ -1,332 +1,198 @@
-xdescribe("date field", function() {
-
-    var app, field;
+describe('Base.Field.Date', function() {
+    var app;
 
     beforeEach(function() {
         app = SugarTest.app;
-        field = SugarTest.createField("base","date", "date", "detail");
-        // To avoid calling initialize we just set these here
-        field.usersDatePrefs = 'm/d/Y';
+
+        // FIXME: this should be removed when SC-2395 gets in since new
+        // versions are capable of handling translations by themselves
+        sinon.collection.stub(app.metadata, 'getStrings', function() {
+            return {
+                dom_cal_day_long: {0: '', 1: 'Sunday', 2: 'Monday', 3: 'Tuesday', 4: 'Wednesday', 5: 'Thursday', 6: 'Friday', 7: 'Saturday'},
+                dom_cal_day_short: {0: '', 1: 'Sun', 2: 'Mon', 3: 'Tue', 4: 'Wed', 5: 'Thu', 6: 'Fri', 7: 'Sat'},
+                dom_cal_month_long: {0: '', 1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 12: 'December'},
+                dom_cal_month_short: {0: '', 1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun', 7: 'Jul', 8: 'Aug', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec'}
+            };
+        });
     });
 
     afterEach(function() {
+        sinon.collection.restore();
+
         app.cache.cutAll();
         app.view.reset();
-        Handlebars.templates = {};
-        field = null;
     });
 
-    describe("date", function() {
+    describe('format', function() {
+        var field;
 
-        it("should unformat", function() {
-            var isoDateString, actual, parts, now;
+        beforeEach(function() {
+            field = SugarTest.createField('base', 'date', 'date', 'edit');
 
-            field.serverDateFormat = 'Y/m/d';
-            now = new Date();
-            isoDateString = now.toISOString();
+            sinon.collection.spy(app, 'date');
+            sinon.collection.spy(app.date.fn, 'formatUser');
 
-            actual = field.unformat( (new Date().toISOString()) );
-            parts = actual.split('/');
-
-            expect(parseInt(parts[0], 10)).toEqual(now.getFullYear());
-            expect(parseInt(parts[1], 10)).toEqual(now.getMonth()+1);
-            expect(parseInt(parts[2], 10)).toEqual(now.getDate());
-        });
-        it("should format the value", function() {
-            var jsDate, unformatedValue;
-            jsDate = new Date(Date.UTC(2012, 2, 13, 0, 0, 0));
-            unformatedValue = jsDate.toISOString();
-            expect(field.format(unformatedValue)).toEqual('03/13/2012');
+            sinon.collection.stub(app.user, 'getPreference')
+                .withArgs('datepref').returns('d/m/Y');
         });
 
-        it("should format value for display_default", function() {
-            var today = new Date(),
-                actual, stub, parts,
-                originalType = field.view.name;
-
-            stub = sinon.stub(field.model, 'set');
-            field.view.name = 'edit';
-
-            field.def.display_default = 'now';
-            actual = field.format(null);
-            parts = actual.split('/');
-            expect(parseInt(parts[0], 10)).toEqual( (today.getMonth()+1) );
-            expect(parseInt(parts[1], 10)).toEqual( (today.getDate()) );
-            expect(parseInt(parts[2], 10)).toEqual( (today.getFullYear()) );
-            expect(stub).toHaveBeenCalled();
-
-            stub.restore();
-            field.view.name = originalType;
+        afterEach(function() {
+            field.dispose();
         });
 
-        it("should return value from format if NOT edit view and no value", function() {
-            var originalType = field.view.name;
-            field.view.name = 'not_edit';
-            expect(field.format(null)).toEqual(null);
-            field.view.name = originalType;
+        it('should format according to user preferences', function() {
+            expect(field.format('1984-01-15')).toBe('15/01/1984');
+            expect(app.date).toHaveBeenCalledWith('1984-01-15');
+            expect(app.date.fn.formatUser).toHaveBeenCalledWith(true);
         });
 
-        it("should verify date string return false when date is invalid", function() {
-            expect(field._verifyDateString('not date string')).toBeFalsy();
-            expect(field._verifyDateString('30/30/13')).toBeFalsy();
-        });
-
-        it("should ensure valid strings of supported date format and user's selected format return true", function() {
-            // YYYY-MM-DD
-            field.usersDatePrefs = 'Y-m-d';
-            expect(field._verifyDateString('2013-12-31')).toBeTruthy();
-            // MM-DD-YYYY
-            field.usersDatePrefs = 'm-d-Y';
-            expect(field._verifyDateString('12-31-2013')).toBeTruthy();
-            // DD-MM-YYYY
-            field.usersDatePrefs = 'd-m-Y';
-            expect(field._verifyDateString('31-12-2013')).toBeTruthy();
-            // YYYY/MM/DD
-            field.usersDatePrefs = 'Y/m/d';
-            expect(field._verifyDateString('2013/12/31')).toBeTruthy();
-            // MM/DD/YYYY
-            field.usersDatePrefs = 'm/d/Y';
-            expect(field._verifyDateString('12/31/2013')).toBeTruthy();
-            // DD/MM/YYYY
-            field.usersDatePrefs = 'd/m/Y';
-            expect(field._verifyDateString('31/12/2013')).toBeTruthy();
-            // YYYY.MM.DD
-            field.usersDatePrefs = 'Y.m.d';
-            expect(field._verifyDateString('2013.12.31')).toBeTruthy();
-            // MM.DD.YYYY
-            field.usersDatePrefs = 'm.d.Y';
-            expect(field._verifyDateString('12.31.2013')).toBeTruthy();
-            // DD.MM.YYYY
-            field.usersDatePrefs = 'd.m.Y';
-            expect(field._verifyDateString('31.12.2013')).toBeTruthy();
+        it('should return undefined if an invalid date is supplied', function() {
+            expect(field.format()).toBeUndefined();
+            expect(field.format('1984-01-32')).toBeUndefined();
         });
     });
-    describe("basedatepicker core functions", function() {
 
-        it('should return today date if date string passed in is falsy', function() {
-            var stub = sinon.stub(app.date, 'format');
-            field.usersDatePrefs = 'Y.m.d';
-            field._getTodayDateStringIfNoDate();
-            expect(stub).toHaveBeenCalledOnce();
-            expect(stub.args[0][1]).toEqual('Y.m.d');
-            stub.restore();
-        });
-        it("should return date string passed in if it's truthy", function() {
-            var actual, stub = sinon.stub(app.date, 'format');
-            field.usersDatePrefs = 'Y.m.d';
-            actual = field._getTodayDateStringIfNoDate('1970.09.12');
-            expect(stub).not.toHaveBeenCalled();
-            expect(actual).toEqual('1970.09.12');
-            stub.restore();
-        });
-        it("should return true if edit view", function() {
-            field.options = {
-                def: {
-                    view: 'foo'
-                },
-                viewName: 'bar'
-            };
-            expect(field._isEditView('edit')).toBeTruthy();
+    describe('unformat', function() {
+        var field;
 
-            field.options.def.view ='edit';
-            expect(field._isEditView()).toBeTruthy();
+        beforeEach(function() {
+            field = SugarTest.createField('base', 'date', 'date', 'edit');
 
-            // Set options.viewName
-            field.options.def.view = '';
-            field.options.viewName = 'edit';
-            expect(field._isEditView()).toBeTruthy();
-        });
-        it("should return false if it can't find view name or is not edit view", function() {
-            expect(field._isEditView()).toBeFalsy();
-            // Set options empty
-            field.options = {def: {}};
-            expect(field._isEditView()).toBeFalsy();
+            sinon.collection.spy(app, 'date');
+            sinon.collection.spy(app.date, 'convertFormat');
+            sinon.collection.spy(app.date.fn, 'formatServer');
+
+            sinon.collection.stub(app.user, 'getPreference')
+                .withArgs('datepref').returns('d/m/Y');
         });
 
-        it("should set server date string depending on whether stripIsoTZ is true or false",function() {
-            var today = new Date();
-            field.stripIsoTZ = false; // let the browser interpret iso 8601 TZ
-            expect(field._setServerDateString(today).match(/Z$/)).toBeTruthy();
-            expect(field._setServerDateString(today).match(/T/)).toBeTruthy();
-            field.stripIsoTZ = true;
-            expect(field._setServerDateString(today).match(/Z$/)).toBeFalsy();
-            expect(field._setServerDateString(today).match(/T/)).toBeTruthy(); // should still have T delimiter
-            field.stripIsoTZ = false;
+        afterEach(function() {
+            field.dispose();
         });
 
-        it("should identify if view is new edit view with no value or not", function() {
-            var originalType,
-                isNewStub = sinon.stub(field.model, 'isNew', function() { return true; });
-
-            originalType    = field.view.name;
-            field.view.name = 'edit';
-
-            // Since we've forced model.isNew to return true, omitted 'value', and to edit view:
-            expect(field._isNewEditViewWithNoValue(null)).toBeTruthy();
-
-            // Tests - anytime 'value' supplied returns false
-            expect(field._isNewEditViewWithNoValue("nope")).toBeFalsy();
-
-            // Type not edit view returns false
-            field.view.name = 'not_edit';
-            expect(field._isNewEditViewWithNoValue(null)).toBeFalsy();
-
-            // Tests only on "new" model
-            field.view.name = 'edit';
-            isNewStub.restore(); // Prevents 'Attempted to wrap already wrapped'
-            isNewStub = sinon.stub(field.model, 'isNew', function() { return false; });
-            expect(field._isNewEditViewWithNoValue(null)).toBeFalsy();
-
-            // Reset back to previous "state"
-            field.view.name = originalType;
-            isNewStub.restore();
-        });
-        it('should patch dom_cal_* for datepicker languageDictionary format', function() {
-            var actual, expected, stub_appListStrings;
-
-            stub_appListStrings = sinon.stub(app.metadata, 'getStrings', function() {
-                return {
-                    dom_cal_day_long: {0: "", 1: "Sunday", 2: "Monday", 3: "Tuesday", 4: "Wednesday", 5: "Thursday", 6: "Friday", 7: "Saturday"},
-                    dom_cal_day_short: {0: "", 1: "Sun", 2: "Mon", 3: "Tue", 4: "Wed", 5: "Thu", 6: "Fri", 7: "Sat"},
-                    dom_cal_month_long: {0: "", 1: "January", 2: "February", 3: "March", 4: "April", 5: "May", 6: "June", 7: "July", 8: "August", 9: "September", 10: "October", 11: "November", 12: "December"},
-                    dom_cal_month_short: {0: "", 1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun", 7: "Jul", 8: "Aug", 9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec"}
-                };
-            });
-            expected = {
-                    day: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-                    daysShort:  ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-                    months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "January"],
-                    monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan"]
-                };
-
-            actual = field._patchDatepickerMeta();
-
-            expect(actual.day).toEqual(expected.day);
-            expect(actual.daysMin).toEqual(expected.daysMin);
-            expect(actual.months).toEqual(expected.months);
-            expect(actual.monthsShort).toEqual(expected.monthsShort);
-            stub_appListStrings.restore();
-        });
-        it("should pad one character int strings to two character equivalents", function() {
-            expect(field._forceTwoDigits('9')).toEqual('09');
-            expect(field._forceTwoDigits('0')).toEqual('00');
-            expect(field._forceTwoDigits('-1')).toEqual('-1');
-            expect(field._forceTwoDigits('10')).toEqual('10');
-            expect(field._forceTwoDigits('99')).toEqual('99');
-            expect(field._forceTwoDigits('100')).toEqual('100');
+        it('should unformat based on user preferences and according to server format', function() {
+            expect(field.unformat('15/01/1984')).toBe('1984-01-15');
+            expect(app.date.convertFormat).toHaveBeenCalledWith('d/m/Y');
+            expect(app.date.lastCall.args[0]).toBe('15/01/1984');
+            expect(app.date.lastCall.args[2]).toBe(true);
+            expect(app.date.fn.formatServer).toHaveBeenCalledWith(true);
         });
 
+        it('should return undefined if an invalid date is supplied', function() {
+            expect(field.unformat()).toBeUndefined();
+            expect(field.unformat('32/01/1984')).toBeUndefined();
+        });
     });
 
-    describe("basedatepicker datepicker related", function() {
-        var jqFn, expectedValValue, datepickerStub, valStub;
+    describe('defaults', function() {
+        beforeEach(function() {
+            var tomorrow = new Date('Sun Jan 15 1984 19:20:42');
 
-        // Essentially, the following stubs out this.$('doesnt_matter').<val & datepicker>
-        beforeEach(function(){
-            datepickerStub = sinon.stub();
+            sinon.collection.spy(app, 'date');
 
-            valStub = sinon.stub().returns('arbitrary_value');
-            jqFn = sinon.stub(field, '$', function() {
-                return {
-                    'val': valStub,
-                    'attr': function() {},
-                    'datepicker': datepickerStub
-                };
-            });
-            expectedValValue = field.$("foo").val(); // 1970-09-12 from above ;-)
+            sinon.collection.stub(app.date, 'parseDisplayDefault')
+                .withArgs('every other week').returns(undefined)
+                .withArgs('+1 day').returns(tomorrow);
+
+            sinon.collection.stub(app.user, 'getPreference')
+                .withArgs('datepref').returns('d/m/Y');
         });
 
-        afterEach(function(){
-            jqFn.restore();
-            expectedValValue = null;
+        it('should use default value if model has none', function() {
+            var fieldDef = {display_default: '+1 day'},
+                field = SugarTest.createField('base', 'date', 'date', 'edit', fieldDef);
+
+            field.render();
+
+            expect(field.value).toBe('15/01/1984');
+            expect(field.model.get(field.name)).toBe('1984-01-15');
+            expect(field.model.getDefaultAttribute(field.name)).toBe('1984-01-15');
+
+            field.dispose();
         });
 
-        it("should set our internal date value so hbs picks up", function() {
-            var datetimeComboField;
+        it('should not use default value if default value is invalid', function() {
+            var fieldDef = {display_default: 'every other week'},
+                field = SugarTest.createField('base', 'date', 'date', 'edit', fieldDef);
 
-            field.type = 'date';
-            field._presetDateValues();
-            expect(field.dateValue).toEqual(expectedValValue);
-            expect(field.timeValue).toBeFalsy();
-        });
+            field.render();
 
-        it('should reset date picker because model attribute is empty', function() {
-            field.type = 'date';
-            valStub.reset();
-
+            expect(field.value).toBeNull();
             expect(field.model.get(field.name)).toBeUndefined();
-            field._presetDateValues();
-            expect(valStub).toHaveBeenCalledWith('');
-            valStub.reset();
 
-            field.model.set(field.name, expectedValValue);
-            expect(valStub).not.toHaveBeenCalledWith('');
+            field.dispose();
         });
 
-        it('should update model when datepicker selected for datetimecombo', function() {
-            var stub, stubDatepickerInputValue, stubVerifyDateString, conditionallyCalledStub, expected;
+        it('should not use default value if model has a value', function() {
+            var model = new app.data.createBean('Accounts', {date: '1985-01-26'}),
+                fieldDef = {display_default: '+1 day'},
+                field = SugarTest.createField('base', 'date', 'date', 'edit', fieldDef, 'Accounts', model);
 
-            field.type ='datetimecombo';
-            stub = sinon.stub(field, '_buildUnformatted');
-            stubDatepickerInputValue = sinon.stub(field, '_getDatepickerValue', function() { return '11-11-1999'; });
-            stubVerifyDateString = sinon.stub(field, '_verifyDateString', function() { return true; });
-            field._getHoursMinutes = function() {}; // since defined in the child classes ;)
-            field._setTimepickerValue = function() {};
+            field.render();
 
-            expected = {
-                hours: '23',
-                minutes: '59'
-            };
-            conditionallyCalledStub = sinon.stub(field, '_getHoursMinutes', function() {
-                return expected;
+            expect(field.value).toBe('26/01/1985');
+            expect(field.model.get(field.name)).toBe('1985-01-26');
+
+            field.dispose();
+        });
+    });
+
+    describe('render', function() {
+        describe('edit', function() {
+            var field;
+
+            beforeEach(function() {
+                SugarTest.testMetadata.init();
+                SugarTest.loadHandlebarsTemplate('date', 'field', 'base', 'edit');
+                SugarTest.testMetadata.set();
+
+                field = SugarTest.createField('base', 'date', 'date', 'edit');
+
+                sinon.collection.stub(app.user, 'getPreference')
+                    .withArgs('datepref').returns('d/m/Y');
             });
 
-            // Test datetimecombo path - we update just before hiding datepicker
-            field.hideDatepicker({});
-            expect(stub.args[0][1]).toEqual(expected.hours);
-            expect(stub.args[0][2]).toEqual(expected.minutes);
-        });
+            afterEach(function() {
+                field.dispose();
 
-        it('should update model when datepicker selected for type date', function() {
-            var stub, stubDatepickerInputValue, stubVerifyDateString, conditionallyCalledStub, expected;
-
-            field.type ='date';
-            stub = sinon.stub(field, '_buildUnformatted');
-            stubDatepickerInputValue = sinon.stub(field, '_getDatepickerValue', function() { return '11-11-1999'; });
-            stubVerifyDateString = sinon.stub(field, '_verifyDateString', function() { return true; });
-
-            // Test date path - we update just before hiding datepicker
-            field.hideDatepicker({});
-            expected = {
-                hours: '00',
-                minutes: '00'
-            };
-            expect(stub.args[0][1]).toEqual(expected.hours);
-            expect(stub.args[0][2]).toEqual(expected.minutes);
-        });
-
-        it('should update model when datepicker dismissed but leaves bogus date value so error handling kicks in', function() {
-            var stub, stubBadDatepickerInputValue, stubVerifyDateString, conditionallyCalledStub, expected;
-
-            field.type ='datetimecombo';
-            stub = sinon.stub(field, '_buildUnformatted');
-            // purposely bad date value..we now leave these in so sidecar error handling uniformly can handle upstream
-            stubBadDatepickerInputValue = sinon.stub(field, '_getDatepickerValue', function() { return '13-32-123456789'; });
-            stubVerifyDateString = sinon.stub(field, '_verifyDateString', function() { return false; });
-
-            field._getHoursMinutes = function() {}; // since defined in the child classes ;)
-            field._setTimepickerValue = function() {};
-            expected = {
-                hours: '23',
-                minutes: '59'
-            };
-            conditionallyCalledStub = sinon.stub(field, '_getHoursMinutes', function() {
-                return expected;
+                SugarTest.testMetadata.dispose();
+                Handlebars.templates = {};
             });
-            field.hideDatepicker({});
-            expect(stub.called).toBeFalsy();
+
+            it('should have date picker defined only in edit mode', function() {
+                field.render();
+
+                expect(field.$(field.fieldTag).data('datepicker')).toBeDefined();
+
+                field.dispose();
+
+                field = SugarTest.createField('base', 'date', 'date', 'detail');
+                field.render();
+
+                expect(field.$(field.fieldTag).data('datepicker')).toBeUndefined();
+            });
+
+            it('should update field value when date value changes through date picker', function() {
+                field.render();
+
+                expect(field.$(field.fieldTag).val()).toBe('');
+                expect(field.model.get(field.name)).toBeUndefined();
+
+                field.$(field.fieldTag).val('15/01/1984').trigger('hide');
+
+                expect(field.model.get(field.name)).toBe('1984-01-15');
+            });
+
+            it('should update field value when date value manually changes', function() {
+                field.render();
+
+                expect(field.$(field.fieldTag).val()).toBe('');
+                expect(field.model.get(field.name)).toBeUndefined();
+
+                field.$(field.fieldTag).val('15/01/1984').trigger('change');
+
+                expect(field.model.get(field.name)).toBe('1984-01-15');
+            });
         });
-
-
     });
 });

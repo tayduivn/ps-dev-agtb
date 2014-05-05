@@ -39,6 +39,7 @@
         this._initPlugins();
         this._super('initialize', [options]);
         this._initEvents();
+        this._initDefaultValue()
     },
 
     /**
@@ -66,6 +67,35 @@
     },
 
     /**
+     * If we're creating a new model and a valid `display_default` property was
+     * supplied (e.g.: `next friday`) we'll use it as a date instead.
+     *
+     * @chainable
+     * @protected
+     */
+    _initDefaultValue: function() {
+        if (!this.model.isNew() || this.model.get(this.name) || !this.def.display_default) {
+            return this;
+        }
+
+        var value = app.date.parseDisplayDefault(this.def.display_default);
+        if (!value) {
+            return this;
+        }
+
+        value = this.unformat(
+            app.date(value).format(
+                app.date.convertFormat(this.getUserDateFormat())
+            )
+        );
+
+        this.model.set(this.name, value);
+        this.model.setDefaultAttribute(this.name, value);
+
+        return this;
+    },
+
+    /**
      * Return user date format.
      *
      * @return {String} User date format.
@@ -79,26 +109,50 @@
      *
      * We rely on the library to confirm that the date picker is only created
      * once.
+     *
+     * @protected
      */
     _setupDatePicker: function() {
         var $field = this.$(this.fieldTag),
             userDateFormat = this.getUserDateFormat(),
-            datePickerDateFormat = app.date.toDatepickerFormat(userDateFormat);
+            datePickerDateFormat = app.date.toDatepickerFormat(userDateFormat),
+            options = {
+                format: datePickerDateFormat,
+                languageDictionary: this._patchPickerMeta()
+            };
 
-        // FIXME: find a proper way to do this and avoid scrolling issues
-        var appendTarget = this.$el.parents('div#drawers').length ? 'div#drawers .active .main-pane:first' : 'div#content .main-pane:first';
+        var appendToTarget = this._getAppendToTarget();
+        if (appendToTarget) {
+            options['appendTo'] = appendToTarget;
+        }
 
-        $field.datepicker({
-            format: datePickerDateFormat,
-            languageDictionary: this._patchPickerMeta(),
-            appendTo: appendTarget
-        });
-
+        $field.datepicker(options);
         $field.attr('placeholder', datePickerDateFormat);
 
         if (this.def.required) {
             this.setRequiredPlaceholder($field);
         }
+    },
+
+    /**
+     * Retrieve a selector against which the date picker should be appended to.
+     *
+     * FIXME: find a proper way to do this and avoid scrolling issues SC-2739
+     *
+     * @return {String/undefined} Selector against which the date picker should
+     *   be appended to, `undefined` if none.
+     * @private
+     */
+    _getAppendToTarget: function() {
+        if (this.$el.parents('div#drawers').length) {
+            return 'div#drawers .active .main-pane:first';
+        }
+
+        if (this.$el.parents('div#content').length) {
+            return 'div#content .main-pane:first';
+        }
+
+        return;
     },
 
     /**
@@ -143,11 +197,20 @@
         this._super('unbindDom');
 
         $('.main-pane, .flex-list-view-content').off();
+
+        var $field = this.$(this.fieldTag),
+            datePicker = $field.data('datepicker');
+        if (datePicker && !datePicker.hidden) {
+            // todo: when SC-2395 gets implemented change this to 'remove' not 'hide'
+            $field.datepicker('hide');
+        }
     },
 
     /**
      * Patches our `dom_cal_*` metadata for use with date picker plugin since
      * they're very similar.
+     *
+     * @private
      */
     _patchPickerMeta: function() {
         var pickerMap = [], pickerMapKey, calMapIndex, mapLen, domCalKey,
@@ -200,54 +263,31 @@
     },
 
     /**
-     * If we're on edit view and a valid `display_default` property was supplied
-     * (e.g.: `next friday`) we'll use it as a date instead.
-     *
-     * @return {Date} The date created or `undefined` if `display_default` isn't
-     *   supplied or is invalid.
-     */
-    _setDefaultValue: function() {
-        if (!this.model.isNew() || this.action !== 'edit' || !this.def.display_default) {
-            return;
-        }
-
-        var value = app.date.parseDisplayDefault(this.def.display_default);
-        if (!value) {
-            return;
-        }
-
-        value = this.unformat(
-            app.date(value).format(
-                app.date.convertFormat(this.getUserDateFormat())
-            )
-        );
-
-        this.model.set(this.name, value);
-        return value;
-    },
-
-    /**
      * Formats date value according to user preferences.
      *
-     * If no value is defined, we {@link #_setDefaultValue set a default value}.
-     *
      * @param {String} value Date value to format.
-     * @return {String} Formatted value.
+     * @return {String/undefined} Formatted value or `undefined` if value is an
+     *   invalid date.
      */
     format: function(value) {
-        value = value || this._setDefaultValue();
-
         if (!value) {
             return value;
         }
 
-        return app.date(value).formatUser(true);
+        value = app.date(value);
+
+        if (!value.isValid()) {
+            return;
+        }
+
+        return value.formatUser(true);
     },
 
     /**
      * Unformats date value for storing in model.
      *
-     * @return {String} Unformatted value.
+     * @return {String/undefined} Unformatted value or `undefined` if value is
+     *   an invalid date.
      */
     unformat: function(value) {
         if (!value) {
@@ -267,12 +307,6 @@
      * {@inheritDoc}
      */
     _render: function() {
-        var $field = this.$(this.fieldTag);
-        if ($field.data('datepicker') && !$field.data('datepicker').hidden) {
-            // todo: when SC-2395 gets implemented change this to 'remove' not 'hide'
-            $field.datepicker('hide');
-        }
-
         this._super('_render');
 
         if (this.action !== 'edit') {

@@ -51,26 +51,28 @@
     },
 
     /**
-     * Handler to refresh field state.
-     *
-     * Called from {@link Sugar.App.plugins._onFieldDuplicate}.
+     * @override
      */
-    onFieldDuplicate: function() {
-        if (this.disposed) {
-            return;
+    _initDefaultValue: function() {
+        if (!this.model.isNew() || this.model.get(this.name) || !this.def.display_default) {
+            return this;
         }
 
-        if (this.view.name === 'merge-duplicates' &&
-            this.options.viewName &&
-            this.options.viewName === 'edit'
-        ) {
-            if (_.isEmpty(this.model.get(this.name))) {
-                this.$(this.fieldTag).val('');
-                this.$(this.secondaryFieldTag).val('');
-            } else {
-                this.format(this.model.get(this.name));
-            }
+        var value = app.date.parseDisplayDefault(this.def.display_default);
+        if (!value) {
+            return this;
         }
+
+        value = this.unformat(
+            app.date(value).format(
+                app.date.convertFormat(this.getUserDateTimeFormat())
+            )
+        );
+
+        this.model.set(this.name, value);
+        this.model.setDefaultAttribute(this.name, value);
+
+        return this;
     },
 
     /**
@@ -124,6 +126,8 @@
 
     /**
      * Set up the time picker.
+     *
+     * @protected
      */
     _setupTimePicker: function() {
         var $field = this.$(this.secondaryFieldTag),
@@ -250,7 +254,7 @@
                 return;
             }
 
-            value = this.format(value) || {};
+            value = this.format(value) || {'date': '', 'time': ''};
 
             this.$(this.fieldTag).val(value['date']);
             this.$(this.secondaryFieldTag).val(value['time']);
@@ -258,44 +262,17 @@
     },
 
     /**
-     * @override
-     */
-    _setDefaultValue: function() {
-        if (!this.model.isNew() || this.action !== 'edit' || !this.def.display_default) {
-            return;
-        }
-
-        var value = app.date.parseDisplayDefault(this.def.display_default);
-        if (!value) {
-            return;
-        }
-
-        value = this.unformat(
-            app.date(value).format(
-                app.date.convertFormat(this.getUserDateTimeFormat())
-            )
-        );
-
-        this.model.set(this.name, value);
-        return value;
-    },
-
-    /**
      * Formats date value according to user preferences.
-     *
-     * If no value is defined, we {@link #_setDefaultValue set a default value}.
      *
      * @param {String} value Datetime value to format.
      * @return {Object/String/undefined} On edit mode the returned value is an
      *   object with two keys, `date` and `time`. On detail mode the returned
      *   value is a date, formatted according to user preferences if supplied
-     *   value is a valid date, otherwise returned value is undefined.
+     *   value is a valid date, otherwise returned value is `undefined`.
      *
      * @override
      */
     format: function(value) {
-        value = value || this._setDefaultValue();
-
         if (!value) {
             return value;
         }
@@ -313,7 +290,7 @@
             };
 
         } else {
-            value = value.formatUser();
+            value = value.formatUser(false);
         }
 
         return value;
@@ -322,7 +299,8 @@
     /**
      * Unformats datetime value for storing in model.
      *
-     * @return {String} Unformatted value.
+     * @return {String} Unformatted value or `undefined` if value is
+     *   an invalid date.
      *
      * @override
      */
@@ -394,7 +372,9 @@
      * {@inheritdoc}
      */
     _dispose: function() {
-        this.$(this.secondaryFieldTag).timepicker('remove');
+        if (this.$(this.secondaryFieldTag).timepicker) {
+            this.$(this.secondaryFieldTag).timepicker('remove');
+        }
 
         this._super('_dispose');
     }
