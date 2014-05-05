@@ -485,7 +485,7 @@ class SugarQuery_Compiler_SQL
                     //Handling for not contains
                     $comparitor = 'LIKE';
                     $chainWith = 'OR';
-                    if ($condition->operator == 'DOES NOT CONTAIN') {
+                    if ($condition->operator === 'DOES NOT CONTAIN') {
                         $comparitor = 'NOT LIKE';
                         $chainWith = 'AND';
                     }
@@ -496,6 +496,9 @@ class SugarQuery_Compiler_SQL
                             $sql .= "{$field} {$comparitor} {$val} {$chainWith} ";
                         }
                         $sql .= rtrim($sql, "$chainWith ");
+                        if ($condition->operator === 'DOES NOT CONTAIN') {
+                            $sql .= " OR {$field} IS NULL ";
+                        }
                     } else {
                         $value = $condition->field->quoteValue($condition->values, $condition->operator);
                         $sql .= "{$field} {$comparitor} {$value}";
