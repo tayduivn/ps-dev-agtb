@@ -41,7 +41,7 @@
     			<td scope="row" valign=TOP><slot><a href="{URL_PREFIX}index.php?action=index&module=Releases&record={RELEASE.ID}" >{RELEASE.NAME}</a></slot></td>
     			<td valign=TOP><slot>{RELEASE.STATUS}</slot></td>
     			<td valign=TOP><slot>{RELEASE.LIST_ORDER}</slot></td>
-    			<td nowrap align="center" valign=TOP><slot><a class="listViewTdToolsS1" onclick="return confirm('{MOD.NTC_DELETE_CONFIRMATION}')" href="{URL_PREFIX}index.php?action=Delete&module=Releases&record={RELEASE.ID}&return_module=Releases&return_action=index&return_id=">{DELETE_INLINE_PNG}</a>&nbsp;<a class="listViewTdToolsS1" onclick="return confirm('{MOD.NTC_DELETE_CONFIRMATION}')" href="{URL_PREFIX}index.php?action=Delete&module=Releases&record={RELEASE.ID}&return_module=Releases&return_action=index&return_id=">{APP.LNK_DELETE}</a></slot></td>
+    			<td nowrap align="center" valign=TOP>{RELEASE.DELETE_BUTTON}</td>
 
 </tr>
 
