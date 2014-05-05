@@ -747,6 +747,10 @@ class SugarFieldTeamset extends SugarFieldBase {
             $teamsetToBean[$bean->team_set_id][] = $bean->id;
         }
 
+        if (!$teamsetToBean) {
+            return;
+        }
+
         $tsb = BeanFactory::newBean('TeamSets');
 
         $query = new SugarQuery();
