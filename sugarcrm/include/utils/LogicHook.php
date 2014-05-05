@@ -149,7 +149,14 @@ class LogicHook{
 	 * @param array $arguments
 	 * @param SugarBean $bean
 	 */
-	function call_custom_logic($module_dir, $event, $arguments = null){
+	function call_custom_logic($module_dir, $event, $arguments = array()){
+        $origBean = $this->bean;
+        if ($origBean === null) {
+            $bean = BeanFactory::getBean($module_dir);
+            if ($bean instanceOf SugarBean) {
+                $this->setBean($bean);
+            }
+        }
 		// declare the hook array variable, it will be defined in the included file.
 		$hook_array = null;
         if(isset($GLOBALS['log'])){
@@ -166,6 +173,9 @@ class LogicHook{
 		if(!empty($hooks)) {
 		    $this->process_hooks($hooks, $event, $arguments);
 		}
+        if ($origBean === null) {
+            $this->setBean($origBean);
+        }
 	}
 
 	/**
