@@ -30,14 +30,12 @@
     className: 'filter-header',
 
     /**
-     * @property {Boolean} saveState `true` if the button is enabled, `false`
-     *   otherwise.
+     * @type {Boolean} `true` if the button is enabled, `false` otherwise.
      */
     saveState: false,
 
     /**
-     * @property {Boolean} showActions Whether or not to display
-     * the filter action buttons.
+     * @type {Boolean} Whether or not to display the filter action buttons.
      */
     showActions: true,
 
@@ -45,9 +43,10 @@
      * @{inheritDoc}
      */
     initialize: function(opts) {
-        app.view.View.prototype.initialize.call(this, opts);
+        this._super('initialize', [opts]);
 
         this.layout.on('filter:create:open', function(model) {
+            this.toggle(model);
             var name = model ? model.get('name') : '';
             this.setFilterName(name);
         }, this);
@@ -55,6 +54,7 @@
         this.listenTo(this.layout, 'filter:toggle:savestate', this.toggleSave);
         this.listenTo(this.layout, 'filter:set:name', this.setFilterName);
         this.listenTo(this.context, 'change:filterOptions', this.render);
+
         this.before('render', this.setShowActions, null, this);
     },
 
@@ -76,6 +76,18 @@
      */
     getFilterName: function() {
         return this.$('input').val();
+    },
+
+    /**
+     * Shows or hides this view.
+     *
+     * This view will be hidden when the filter is a template that is populated
+     * on the fly.
+     *
+     * @param {Data.Bean} filter The filter being edited.
+     */
+    toggle: function(filter) {
+        this.$el.toggleClass('hide', !!filter.get('is_template'));
     },
 
     /**

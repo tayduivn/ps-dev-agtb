@@ -352,13 +352,20 @@
     },
 
     /**
-     * Populate filter edition row
-     * @param {Object} rowObj
+     * Populates row fields with the row filter definition.
+     *
+     * In case it is a template filter that gets populated by values passed in
+     * the context/metadata, empty values will be replaced by populated
+     * value(s).
+     *
+     * @param {Object} rowObj The filter definition of a row.
      */
     populateRow: function(rowObj) {
         var $row = this.addRow(),
             moduleMeta = app.metadata.getModule(this.layout.currentModule),
-            fieldMeta = moduleMeta.fields;
+            fieldMeta = moduleMeta.fields,
+            filterOptions = this.context.get('filterOptions') || {},
+            populate = this.context.editingFilter.get('is_template') && filterOptions.filter_populate;
 
         _.each(rowObj, function(value, key) {
             var isPredefinedFilter = (this.fieldList[key] && this.fieldList[key].predefined_filter === true);
@@ -393,10 +400,15 @@
             }
 
             $row.find('[data-filter=field] input[type=hidden]').select2('val', key).trigger('change');
+
             if (_.isString(value) || _.isNumber(value)) {
                 value = {"$equals": value};
             }
             _.each(value, function(value, operator) {
+                if (_.isEmpty(value) && populate && filterOptions.filter_populate[key]) {
+                    value = filterOptions.filter_populate[key];
+                }
+
                 $row.data('value', value);
                 $row.find('[data-filter=operator] input[type=hidden]')
                     .select2('val', operator === '$dateRange' ? value : operator)
