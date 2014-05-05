@@ -734,9 +734,11 @@ describe('Base.Layout.Filter', function() {
             expect(spy.getCall(1).args).toEqual(expectedTriggerArgs);
         });
         it('should get filters from cache', function(){
-            var modName = 'Accounts';
-            var defaultName = 'testDefault';
-            var handleFilterRetrieveStub = sinon.collection.stub(layout, 'handleFilterRetrieve');
+            var modName = 'Accounts', defaultName = 'testDefault';
+            var stubs = {
+                selectFilter: sinon.collection.stub(layout, 'selectFilter'),
+                loadPredefinedFilter: sinon.collection.stub(layout, 'loadPredefinedFilters')
+            };
             var baseController = app.view._getController({type:'layout',name:'filter'});
             baseController.loadedModules[modName] = true;
             sinon.collection.stub(layout, 'getFilterCollection', function() {
@@ -749,7 +751,8 @@ describe('Base.Layout.Filter', function() {
 
             layout.getFilters(modName, defaultName);
             expect(layout.filters.models.length).toEqual(2);
-            expect(handleFilterRetrieveStub.getCall(0).args).toEqual([modName,defaultName]);
+            expect(stubs.loadPredefinedFilter.getCall(0).args).toEqual([modName]);
+            expect(stubs.selectFilter.getCall(0).args).toEqual([defaultName]);
         });
         it('should sort filters alphabetically per categories with user filters on top', function(){
             sinon.collection.stub(app.lang, 'get', function(key) {
@@ -778,100 +781,118 @@ describe('Base.Layout.Filter', function() {
             // Sort results: `My Favorites`, `My Leads`, `Best Filter`, `First Filter`
             expect(layout.filters.pluck('id')).toEqual(["random_id_1", "random_id_2", "favorites", "assigned_to_me"]);
         });
-        it('should get filters from the server', function(){
-            var modName = 'TestModule';
-            var defaultName = 'testDefault';
-            var handleFilterRetrieveStub = sinon.collection.stub(layout, 'handleFilterRetrieve');
-            sinon.collection.stub(layout.filters,'fetch', function(options){options.success();});
-            var baseController = app.view._getController({type:'layout',name:'filter'});
+
+        it('should get filters from the server', function() {
+            var modName = 'TestModule', defaultName = 'testDefault';
+            var stubs = {
+                loadPredefinedFilters: sinon.collection.stub(layout, 'loadPredefinedFilters'),
+                selectFilter: sinon.collection.stub(layout, 'selectFilter')
+            };
+            sinon.collection.stub(layout.filters, 'fetch', function(options) {
+                options.success();
+            });
+            var baseController = app.view._getController({type: 'layout', name: 'filter'});
 
             layout.getFilters(modName, defaultName);
             expect(baseController.loadedModules[modName]).toBeTruthy();
-            expect(handleFilterRetrieveStub.getCall(0).args).toEqual([modName,defaultName]);
+            expect(stubs.loadPredefinedFilters.getCall(0).args).toEqual([modName]);
+            expect(stubs.selectFilter.getCall(0).args).toEqual([defaultName]);
         });
-        describe('handleFilterRetrieve', function() {
-            var lastFilter, moduleName = 'TestModule';
-            var clearLastFilterStub, triggerStub, layoutTriggerStub;
+
+        describe('loadPredefinedFilters', function() {
+
             beforeEach(function() {
-                var meta = {
-                    basic: {
-                        meta: {
-                            filters: [
-                                {
-                                    id: 'favorites',
-                                    filter_definition: [
-                                        {'$favorites': ''}
-                                    ]
-                                },
-                                {
-                                    id: 'owner',
-                                    filter_definition: [
-                                        {'$owner': ''}
-                                    ]
-                                }
-                            ],
-                            'default_filter': 'owner'
+                sinon.collection.stub(layout, 'getModuleFilterMeta').returns({
+                    'basic': {
+                        'meta': {
+                            'default_filter': 'test2',
+                            'filters': [
+                                {'filter_definition': {'name': {'$starts': 'A'}}, 'id': 'test1'},
+                                {'filter_definition': {'name': {'$starts': 'B'}}, 'id': 'test2'}
+                            ]
+                        }
+                    },
+                    'cases': {
+                        'meta': {
+                            'default_filter': 'test3',
+                            'filters': [
+                                {'filter_definition': {'name': {'$starts': 'C'}}, 'id': 'test3'},
+                                {'filter_definition': {'name': {'$starts': ''}}, 'id': 'test4', is_template: true}
+                            ]
                         }
                     }
-                };
-                lastFilter = undefined;
-                sinon.collection.stub(layout, 'setLastFilter', function(module, layout, id) {
-                    lastFilter = id;
                 });
-                sinon.collection.stub(layout, 'getLastFilter', function() {
-                    return lastFilter;
-                });
-                sinon.collection.stub(layout, 'getModuleFilterMeta', function() { return meta; });
-                clearLastFilterStub = sinon.collection.stub(layout, 'clearLastFilter');
-                triggerStub = sinon.collection.stub(layout, 'trigger');
-                layoutTriggerStub = sinon.collection.stub(layout.layout, 'trigger');
             });
-            it('should retrieve the default filter from metadata if last filter and defaultId not specified', function() {
-                layout.handleFilterRetrieve(moduleName);
-                expect(clearLastFilterStub).toHaveBeenCalled();
-                expect(triggerStub).toHaveBeenCalledWith('filter:change:filter', 'owner');
+
+            it('should load filters from different templates', function() {
+                layout.loadPredefinedFilters('Cases');
+                expect(layout.filters.defaultFilterFromMeta).toEqual('test3');
+                expect(layout.filters.length).toEqual(3);
+                expect(layout.filters.get('test4')).toBeUndefined();
             });
-            it('should ensure possible filters are in the filters collection', function() {
-                layout.handleFilterRetrieve(moduleName, 'random_test');
-                expect(clearLastFilterStub).toHaveBeenCalled();
-                expect(triggerStub).toHaveBeenCalledWith('filter:change:filter', 'owner');
-            });
-            it('should retrieve the last filter if available in the filter collection', function() {
-                lastFilter = 'my_filter';
-                layout.filters.add({id: 'my_filter'});
-                layout.handleFilterRetrieve(moduleName);
-                expect(clearLastFilterStub).not.toHaveBeenCalled();
-                expect(triggerStub).toHaveBeenCalledWith('filter:change:filter', 'my_filter');
-            });
-            it('should clear last filter if not found in the filter collection', function() {
-                lastFilter = 'random_test';
-                layout.handleFilterRetrieve(moduleName, 'random_test');
-                expect(clearLastFilterStub).toHaveBeenCalled();
-                expect(triggerStub).toHaveBeenCalledWith('filter:change:filter', 'owner');
-            });
-            it('should not clear last filter if filter id is equal to create', function() {
-                lastFilter = 'create';
-                layout.handleFilterRetrieve(moduleName);
-                expect(clearLastFilterStub).not.toHaveBeenCalled();
-                expect(triggerStub).toHaveBeenCalledWith('filter:change:filter', 'create');
+
+            it('should only load a template filter when it is set as the initial filter', function() {
+                layout.context.set('filterOptions', { initial_filter: 'test4' });
+                layout.loadPredefinedFilters('Cases');
+                expect(layout.filters.defaultFilterFromMeta).toEqual('test3');
+                expect(layout.filters.length).toEqual(4);
+                expect(layout.filters.get('test4')).toBeDefined();
             });
         });
-        it('should handle filter retrieve', function(){
-            sinon.collection.stub(app.user.lastState, 'get', function () {
-                return 'testID';
-            });
-            var modName = 'Accounts';
-            var defaultId = 'defaultId';
-            var spy1 = sinon.spy();
-            var spy2 = sinon.spy();
-            // clear other events from firing that we don't care about
-            layout.off();
-            layout.on('filter:render:filter', spy1);
-            layout.on('filter:change:filter', spy2);
-            layout.handleFilterRetrieve(modName, defaultId);
 
-            expect(spy1).toHaveBeenCalled();
-            expect(spy2).toHaveBeenCalled();
+        describe('selectFilter', function() {
+            var stubs;
+
+            beforeEach(function() {
+                layout.filters.add([
+                    {
+                        id: 'favorites',
+                        filter_definition: [
+                            {'$favorites': ''}
+                        ]
+                    },
+                    {
+                        id: 'owner',
+                        filter_definition: [
+                            {'$owner': ''}
+                        ]
+                    },
+                    {
+                        id: 'my_filter',
+                        filter_definition: [
+                            {'name': 'Test'}
+                        ]
+                    }
+                ]);
+                layout.filters.defaultFilterFromMeta = 'owner';
+                stubs = {
+                    setLastFilter: sinon.collection.stub(layout, 'setLastFilter'),
+                    trigger: sinon.collection.stub(layout, 'trigger')
+                };
+            });
+            using('different filters', [
+                {
+                    asked: undefined,
+                    selected: 'owner'
+                },
+                {
+                    asked: 'not_exists',
+                    selected: 'owner'
+                },
+                {
+                    asked: 'my_filter',
+                    selected: 'my_filter'
+                }
+            ], function(value) {
+                it('should retrieve the filter or fallback to default on failure', function() {
+                    layout.selectFilter(value.asked);
+                    if (value.asked !== value.selected) {
+                        expect(stubs.setLastFilter).toHaveBeenCalled();
+                    }
+                    expect(stubs.trigger).toHaveBeenCalledWith('filter:render:filter');
+                    expect(stubs.trigger).toHaveBeenCalledWith('filter:change:filter', value.selected);
+                });
+            });
         });
         describe('canCreateFilter', function() {
             var hasAccess, metadata;
@@ -967,43 +988,42 @@ describe('Base.Layout.Filter', function() {
                 layout.context.set('filterOptions', {});
             });
 
-            it('should save filter id into cache', function(){
+            it('should save filter id into cache', function() {
                 var expectedValue = 'tvalue';
                 stubCache = sinon.collection.stub(app.user.lastState, 'set');
                 layout.setLastFilter(filterModule, layoutName, 'tvalue');
                 expect(stubCache).toHaveBeenCalled();
                 expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
                 expect(stubCache.getCall(0).args[1]).toEqual(expectedValue);
+                expect(layout.context.get('currentFilterId')).toEqual('tvalue');
             });
-            it('should not save filter id into cache if stickiness is false', function(){
+            it('should not save filter id into cache if stickiness is false', function() {
                 stubCache = sinon.collection.stub(app.user.lastState, 'set');
                 layout.context.get('filterOptions').stickiness = false;
                 layout.setLastFilter(filterModule, layoutName, 'tvalue');
                 expect(stubCache).not.toHaveBeenCalled();
+                expect(layout.context.get('currentFilterId')).toEqual('tvalue');
             });
-            it('should get filter id from cache', function(){
-                var contextStub = sinon.collection.stub(layout.context, 'set');
+            it('should get filter id from cache', function() {
                 stubCache = sinon.collection.stub(app.user.lastState, 'get');
-                layout.getLastFilter(filterModule, layoutName);
+                var value = layout.getLastFilter(filterModule, layoutName);
                 expect(stubCache).toHaveBeenCalled();
                 expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
-                expect(contextStub).toHaveBeenCalled();
+                expect(layout.context.get('currentFilterId')).toEqual(value);
             });
-            it('should not get filter id from cache if stickiness is false', function(){
+            it('should not get filter id from cache if stickiness is false', function() {
                 stubCache = sinon.collection.stub(app.user.lastState, 'get');
                 layout.context.get('filterOptions').stickiness = false;
-                var contextStub = sinon.collection.stub(layout.context, 'set');
                 layout.getLastFilter(filterModule, layoutName, 'tvalue');
                 expect(stubCache).not.toHaveBeenCalled();
-                expect(contextStub).not.toHaveBeenCalledWith('currentFilterId');
             });
-            it('should clear filter id from cache', function(){
+            it('should clear filter id from cache', function() {
                 stubCache = sinon.collection.stub(app.user.lastState, 'remove');
                 layout.clearLastFilter(filterModule, layoutName);
                 expect(stubCache).toHaveBeenCalled();
                 expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
             });
-            it('should not clear filter id from cache if stickiness is false', function(){
+            it('should not clear filter id from cache if stickiness is false', function() {
                 stubCache = sinon.collection.stub(app.user.lastState, 'remove');
                 layout.context.get('filterOptions').stickiness = false;
                 layout.clearLastFilter(filterModule, layoutName);

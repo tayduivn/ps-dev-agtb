@@ -296,7 +296,7 @@ describe('Base.View.FilterRows', function() {
         var addRowStub, _select2Obj, _rowObj;
         beforeEach(function() {
             view.fieldList = {
-                first_name: {}
+                name: {}
             };
             _select2Obj = {
                 select2: sinon.collection.stub($.fn, 'select2', function(sel) {
@@ -310,14 +310,14 @@ describe('Base.View.FilterRows', function() {
             };
             addRowStub = sinon.collection.stub(view, 'addRow').returns(_rowObj);
         });
-        it('should remove the row if the field does not exist in the metadata', function () {
+        it('should remove the row if the field does not exist in the metadata', function() {
             view.populateRow({
                 first_name: 'FirstName'
             });
             expect(_select2Obj.select2).not.toHaveBeenCalled();
             expect(_rowObj.remove).toHaveBeenCalled();
         });
-        it('should remove the row if the field does not exist in the `fieldList`', function () {
+        it('should remove the row if the field does not exist in the `fieldList`', function() {
             view.populateRow({
                 case_number: '123456'
             });
@@ -353,6 +353,22 @@ describe('Base.View.FilterRows', function() {
             });
 
             expect(_select2Obj.select2.firstCall.args).toEqual(['val', '$favorite']);
+        });
+
+        it('should populate the template with values passed in options', function() {
+            view.context.editingFilter.set('is_template', true);
+            view.context.set('filterOptions', {
+                filter_populate: {
+                    name: 'Sugar'
+                }
+            });
+            view.populateRow({
+                'name': ''
+            });
+
+            expect(_select2Obj.select2.firstCall.args).toEqual(['val', 'name']);
+            expect(_select2Obj.select2.secondCall.args).toEqual(['val', '$equals']);
+            expect(_rowObj.data.firstCall.args).toEqual(['value', 'Sugar']);
         });
     });
 
