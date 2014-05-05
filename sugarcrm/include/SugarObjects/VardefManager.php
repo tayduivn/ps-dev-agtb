@@ -120,7 +120,7 @@ class VardefManager{
         }
 
         if(empty($templates[$template])){
-            foreach(SugarAutoLoader::existing(
+            foreach(SugarAutoLoader::existingCustom(
                 'include/SugarObjects/templates/' . $template . '/vardefs.php',
                 'include/SugarObjects/implements/' . $template . '/vardefs.php'
             ) as $path) {
