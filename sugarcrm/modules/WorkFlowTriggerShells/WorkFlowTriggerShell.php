@@ -184,14 +184,10 @@ class WorkFlowTriggerShell extends SugarBean {
         // Added a text add to the confirmation of deletes when deleting a primary trigger
         $deleteConfirm = $current_module_strings['NTC_REMOVE_TRIGGER'];
 
-		if ($this->frame_type == "Primary")
-        {
-			$statement1 = $current_module_strings['LBL_LIST_STATEMEMT'];
-            // If there is more than one row and you delete the primary trigger
-            // add a notice that deleting the primary deletes all triggers
-            if ($this->_listview_row_count > 1) {
-                $deleteConfirm .= ' ' . $current_module_strings['NTC_REMOVE_TRIGGER_PRIMARY'];
-            }
+        if ($this->frame_type == "Primary") {
+            $statement1 = $current_module_strings['LBL_LIST_STATEMEMT'];
+            // Add a notice that deleting the primary deletes all triggers
+            $deleteConfirm .= ' ' . $current_module_strings['NTC_REMOVE_TRIGGER_PRIMARY'];
 		} else {
 			$statement1 = $current_module_strings['LBL_FILTER_LIST_STATEMEMT'];
 		}

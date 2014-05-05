@@ -58,7 +58,7 @@ class Bug52584Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->shell_object = new stdClass();
         $this->shell_object->field = $this->field;
-        $this->shell_object->parent_id = 'randomIdForTest';
+        $this->shell_object->parent_id = 'Bug52584Test';
 
         $this->focus = new stdClass();
         $this->focus->{$this->field} = $this->value;

@@ -245,11 +245,11 @@ class WorkFlowSchedule extends SugarBean {
     }
 
     function process_scheduled() {
-        $current_stamp = TimeDate::getInstance()->nowDb();
+        $current_stamp = $this->db->now();
 
         $query = "SELECT *
                     FROM $this->table_name
-                    WHERE $this->table_name.date_expired < '" . $current_stamp . "'
+                    WHERE $this->table_name.date_expired < " . $current_stamp . "
                     AND $this->table_name.deleted = 0
                     ORDER BY $this->table_name.id, $this->table_name.workflow_id";
 

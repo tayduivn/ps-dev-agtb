@@ -41,12 +41,10 @@ if (empty($_REQUEST['record']))
     sugar_die($mod_strings['ERR_DELETE_RECORD']);
 }
 
-$focus->retrieve($_REQUEST['record']);
-if (empty($focus))
-{
+$focus = BeanFactory::retrieveBean('WorkFlowTriggerShells', $_REQUEST['record']);
+if (empty($focus)) {
     sugar_die($mod_strings['ERR_DELETE_EMPTY']);
 }
 $focus->mark_deleted($_REQUEST['record']);
 
 header("Location: index.php?module=".$_REQUEST['return_module']."&action=".$_REQUEST['return_action']."&record=".$_REQUEST['return_id']);
-?>

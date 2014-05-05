@@ -1585,19 +1585,12 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
         //mail merge list
         $mergeList = array();
         $module = '';
-
-        // For workflow triggers but can be used elsewhere...
-        // adds the listview row count to the triggershell
-        // object so it knows how to handle Primary trigger deletes
-        $listview_row_count = count($data);
-
         //todo what is this?  It is using an array as a boolean
         while(list($aVal, $aItem) = each($data))
         {
             if(isset($this->data_array)) {
                 $fields = $this->data_array;
             } else {
-                $aItem->_listview_row_count = $listview_row_count;
                 $aItem->check_date_relationships_load();
                 $fields = $aItem->get_list_view_data();
             }

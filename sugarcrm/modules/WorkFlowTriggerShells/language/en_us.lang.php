@@ -147,7 +147,7 @@ $mod_strings = array (
 	'LBL_SELECT_1ST_FILTER' => 'You must select a valid 1st filter field',
 	'LBL_SELECT_2ND_FILTER' => 'You must select a valid 2nd filter field',
 
-	'ERR_DELETE_RECORD' => 'A record number must be specified to delete the opportunity.',
+	'ERR_DELETE_RECORD' => 'A record number must be specified to delete the record.',
 	'ERR_DELETE_EMPTY' => 'The record is already deleted or non-existent.',
 
 );
