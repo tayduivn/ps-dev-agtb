@@ -136,13 +136,15 @@
      * Renders relate field
      */
     _render: function () {
+        var self = this,
+            searchModule = this.getSearchModule();
+
         //Do not render if the related module is invalid
-        if (!_.contains(app.metadata.getModuleNames(), this.getSearchModule())) {
+        if (searchModule && !_.contains(app.metadata.getModuleNames(), searchModule)) {
             return;
         }
-        var self = this;
 
-        var result = app.view.Field.prototype._render.call(this);
+        var result = this._super('_render');
 
         //FIXME remove check for tplName SC-2608
         if (this.tplName === 'edit' || this.tplName === 'massupdate') {
