@@ -46,7 +46,7 @@
         // check to make sure that forecast is configured
         this.forecastSetup = app.metadata.getModule('Forecasts', 'config').is_setup;
         this.forecastAdmin = (_.isUndefined(app.user.getAcls()['Forecasts'].admin));
-
+        this.salesStageLabels = app.lang.getAppListStrings('sales_stage_dom');
         if (!this.forecastSetup) {
             this.forecastsNotSetUpMsg = app.utils.getForecastNotSetUpMessage(this.forecastAdmin);
         }
@@ -174,6 +174,15 @@
             var url = app.api.buildURL(url_base);
             app.api.call('GET', url, null, {
                 success: _.bind(function(o) {
+                    if (o && o.data) {
+                        // update sales stage labels to translated strings
+                        _.each(o.data, function(dataBlock){
+                            if(dataBlock && dataBlock.key && this.salesStageLabels && this.salesStageLabels[dataBlock.key]) {
+                                dataBlock.key = this.salesStageLabels[dataBlock.key];
+                            }
+
+                        });
+                    }
                     this.results = {};
                     this.results = o;
                     this.renderChart();
