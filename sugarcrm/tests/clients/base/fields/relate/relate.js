@@ -1,4 +1,4 @@
-describe("Base.Field.Relate", function () {
+describe('Base.Field.Relate', function() {
 
     var app, field, fieldDef;
 
@@ -29,7 +29,8 @@ describe("Base.Field.Relate", function () {
         };
     });
 
-    afterEach(function () {
+    afterEach(function() {
+        sinon.collection.restore();
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
@@ -41,6 +42,10 @@ describe("Base.Field.Relate", function () {
             field = SugarTest.createField("base", "account_name", "relate", "edit", fieldDef);
             field.module = 'Accounts';
             field.model = new Backbone.Model({account_id: "1234", account_name: "bob"});
+        });
+
+        afterEach(function() {
+            field.dispose();
         });
 
         it("should set value correctly", function () {
@@ -59,11 +64,6 @@ describe("Base.Field.Relate", function () {
             expect(actual_id).toEqual(expected_id);
             expect(actual_name).toEqual(expected_name);
         });
-
-        afterEach(function () {
-            field.model = null;
-            field = null;
-        });
     });
 
     describe('custom rname', function() {
@@ -73,6 +73,10 @@ describe("Base.Field.Relate", function () {
             field = SugarTest.createField('base', 'account_name', 'relate', 'edit', fieldDef);
             field.module = 'Accounts';
             field.model = new Backbone.Model({account_id: '1234', account_name: 'bob'});
+        });
+
+        afterEach(function() {
+            field.dispose();
         });
 
         it('should set the displaying name by rname property value', function() {
@@ -93,16 +97,14 @@ describe("Base.Field.Relate", function () {
     describe("Populate related fields", function () {
 
         it("should warn the wrong metadata fields that populates unmatched fields", function () {
-            var metadataStub, loggerStub;
-
-            metadataStub = sinon.stub(app.metadata, 'getModule', function () {
+            sinon.collection.stub(app.metadata, 'getModule', function() {
                 return {
                     fields: {
                         'field1': false
                     }
-                }
+                };
             });
-            loggerStub = sinon.stub(app.logger, 'error');
+            var loggerStub = sinon.collection.stub(app.logger, 'error');
             fieldDef.populate_list = {
                 "field1": "foo",
                 "billing_office": "boo"
@@ -110,12 +112,10 @@ describe("Base.Field.Relate", function () {
             field = SugarTest.createField("base", "account_name", "relate", "edit", fieldDef);
             field.module = 'Accounts';
             field.model = new Backbone.Model({account_id: "1234", account_name: "bob"});
+
             expect(loggerStub).toHaveBeenCalled();
 
-            field.model = null;
-            field = null;
-            metadataStub.restore();
-            loggerStub.restore();
+            field.dispose();
         });
 
         it("should populate related variables when the user confirms the changes", function () {
@@ -151,7 +151,7 @@ describe("Base.Field.Relate", function () {
             expect(field.model.get("boo")).toBeUndefined();
 
             //After the user confirms the dialog
-            var confirmStub = sinon.stub(app.alert, 'show', function (msg, param) {
+            sinon.collection.stub(app.alert, 'show', function(msg, param) {
                 param.onConfirm();
             });
             expected_primary_address_1 = '1234 blahblah st.';
@@ -170,9 +170,7 @@ describe("Base.Field.Relate", function () {
             expect(actual_primary_address_1).toEqual(expected_primary_address_1);
             expect(field.model.get("boo")).toBeUndefined();
 
-            field.model = null;
-            field = null;
-            confirmStub.restore();
+            field.dispose();
         });
         it("should not populate related variables which does NOT have acl controls", function () {
             fieldDef.populate_list = {
@@ -191,15 +189,15 @@ describe("Base.Field.Relate", function () {
                 }
             };
             var aclMapping = {
-                    primary_address_1: false,
-                    primary_phone_number: true
-                },
-                confirmStub = sinon.stub(app.alert, 'show', function (msg, param) {
-                    param.onConfirm();
-                }),
-                aclStub = sinon.stub(app.acl, 'hasAccessToModel', function (action, model, field) {
-                    return aclMapping[field];
-                });
+                primary_address_1: false,
+                primary_phone_number: true
+            };
+            sinon.collection.stub(app.alert, 'show', function(msg, param) {
+                param.onConfirm();
+            });
+            sinon.collection.stub(app.acl, 'hasAccessToModel', function(action, model, field) {
+                return aclMapping[field];
+            });
             var expected_id = '0987',
                 expected_name = 'blahblah',
                 expected_primary_address_1 = 'should be undefined',
@@ -222,13 +220,10 @@ describe("Base.Field.Relate", function () {
             expect(field.model.get("boo")).toBeUndefined();
             expect(actual_primary_phone_number).toBe(expected_primary_phone_number);
 
-            field.model = null;
-            field = null;
-            confirmStub.restore();
-            aclStub.restore();
+            field.dispose();
         });
         it("should build route using check access", function () {
-            var aclHasAccessStub = sinon.stub(app.acl, "hasAccess").returns(false);
+            var aclHasAccessStub = sinon.collection.stub(app.acl, 'hasAccess').returns(false);
             var field = SugarTest.createField("base", "account_name", "relate", "edit", fieldDef);
 
             field.module = 'Accounts';
@@ -239,15 +234,13 @@ describe("Base.Field.Relate", function () {
             expect(field.href).toBeUndefined();
 
             aclHasAccessStub.restore();
-            aclHasAccessStub = sinon.stub(app.acl, "hasAccess").returns(true);
+            aclHasAccessStub = sinon.collection.stub(app.acl, 'hasAccess').returns(true);
 
             field.buildRoute('Users', 1);
             expect(aclHasAccessStub).toHaveBeenCalled();
             expect(field.href).toBeDefined();
 
-            field.model = null;
-            field = null;
-            aclHasAccessStub.restore();
+            field.dispose();
         });
     });
 
@@ -269,9 +262,11 @@ describe("Base.Field.Relate", function () {
                     label: ''
                 }
             };
-            alertShowStub = sinon.stub(app.alert, 'show', function (level) {
-                return;
-            });
+            alertShowStub = sinon.collection.stub(app.alert, 'show');
+        });
+
+        afterEach(function() {
+            field.dispose();
         });
 
         it("should call app.alert.show() if auto_populate is not defined", function () {
@@ -316,11 +311,42 @@ describe("Base.Field.Relate", function () {
             });
             expect(app.alert.show).not.toHaveBeenCalled();
         });
+    });
 
-        afterEach(function () {
-            field.model = null;
-            field = null;
-            alertShowStub.restore();
+    describe('render', function() {
+        var _renderStub, getSearchModuleStub;
+
+        beforeEach(function() {
+            field = SugarTest.createField('base', 'account_name', 'relate', 'edit', fieldDef);
+            _renderStub = sinon.collection.stub(app.view.Field.prototype, '_render');
+            getSearchModuleStub = sinon.collection.stub(field, 'getSearchModule');
+        });
+
+        afterEach(function() {
+            field.dispose();
+        });
+
+        using('different search modules', [
+            {
+                module: undefined,
+                render: true
+            },
+            {
+                module: 'invalidModule',
+                render: false
+            },
+            {
+                module: 'Cases',
+                render: true
+            }
+        ], function(options) {
+
+            it('should not render if the related module is invalid', function() {
+                getSearchModuleStub.returns(options.module);
+                field.render();
+
+                expect(_renderStub.called).toBe(options.render);
+            });
         });
     });
 });
