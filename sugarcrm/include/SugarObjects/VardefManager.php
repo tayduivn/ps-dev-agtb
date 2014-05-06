@@ -49,7 +49,7 @@ class VardefManager{
             // Load in the vardef 'uses' first
             $templates = array_merge($GLOBALS['dictionary'][$object]['uses'], $templates);
             unset($GLOBALS['dictionary'][$object]['uses']);
-            
+
             // createVardef auto-adds the 'default' template, so to avoid using it twice
             // among avoiding using other templates twice let's make sure the templates
             // are unique
@@ -120,7 +120,7 @@ class VardefManager{
         }
 
         if(empty($templates[$template])){
-            foreach(SugarAutoLoader::existing(
+            foreach(SugarAutoLoader::existingCustom(
                 'include/SugarObjects/templates/' . $template . '/vardefs.php',
                 'include/SugarObjects/implements/' . $template . '/vardefs.php'
             ) as $path) {
@@ -131,9 +131,9 @@ class VardefManager{
 
         if(!empty($templates[$template])){
             static $merge_types = array(
-                'fields', 
-                'relationships', 
-                'indices', 
+                'fields',
+                'relationships',
+                'indices',
                 'name_format_map',
                 //BEGIN SUGARCRM flav=pro ONLY
                 'visibility',
@@ -145,10 +145,10 @@ class VardefManager{
                 if (empty($GLOBALS['dictionary'][$object][$merge_type])) {
                     $GLOBALS['dictionary'][$object][$merge_type] = array();
                 }
-                if (!empty($templates[$template][$merge_type]) 
+                if (!empty($templates[$template][$merge_type])
                     && is_array($templates[$template][$merge_type])) {
-                    $GLOBALS['dictionary'][$object][$merge_type] = 
-                        array_merge($templates[$template][$merge_type], 
+                    $GLOBALS['dictionary'][$object][$merge_type] =
+                        array_merge($templates[$template][$merge_type],
                                     $GLOBALS['dictionary'][$object][$merge_type]);
                 }
             }
@@ -412,7 +412,7 @@ class VardefManager{
 
     /**
      * Gets a link field for a relationship
-     * 
+     *
      * @param string $module The module to find a link field from
      * @param string $object The object name for the module
      * @param string $relName The relationship name or link name to use
@@ -685,5 +685,5 @@ class VardefManager{
     static function getCacheFileName($module, $object){
         return create_cache_directory('modules/' . $module . '/' . $object . 'vardefs.php');
     }
-    
+
 }

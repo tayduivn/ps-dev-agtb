@@ -34,6 +34,7 @@ class PersonTemplateTest extends Sugar_PHPUnit_Framework_TestCase
         // Can't use Person since Localization needs actual bean
         $this->_bean = BeanFactory::getBean('Contacts');
         SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('files');
     }
 
     public function tearDown()
@@ -65,5 +66,16 @@ class PersonTemplateTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_bean->last_name = 'Contact';
         $this->_bean->title = '';
         $this->assertEquals('Tester Contact Test', $this->_bean->get_summary_text());
+    }
+
+    public function testCustomPersonTemplateFound()
+    {
+        // write out a custom Person File
+        mkdir_recursive("custom/include/SugarObjects/templates/person/");
+        SugarTestHelper::saveFile("custom/include/SugarObjects/templates/person/vardefs.php");
+        SugarAutoLoader::put("custom/include/SugarObjects/templates/person/vardefs.php", file_get_contents("tests/include/SugarObjects/templates/test-vardefs/person-vardef.php"));
+        VardefManager::addTemplate('Contacts', 'Contact', 'person', false);
+        $this->assertArrayHasKey('customField', $GLOBALS['dictionary']['Contact']['fields']);
+
     }
 }
