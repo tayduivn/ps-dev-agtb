@@ -131,7 +131,7 @@
             module: moduleString[this.module] || this.module,
             appId: app.config.appId,
             url: window.location.href,
-            name: this.model.attributes.name || this.model.attributes.full_name
+            name: new Handlebars.SafeString(this.model.attributes.name || this.model.attributes.full_name)
         });
     },
 

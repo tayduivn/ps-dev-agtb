@@ -4193,7 +4193,7 @@ $app_strings = array (
 
     // Share feature on record
     'LBL_RECORD_SHARE_BUTTON' => 'Share',
-    'TPL_RECORD_SHARE_SUBJECT' => 'Shared {{module}} {{{name}}} from {{appId}}',
+    'TPL_RECORD_SHARE_SUBJECT' => 'Shared {{module}} {{name}} from {{appId}}',
     'TPL_RECORD_SHARE_BODY' => 'Please checkout {{module}} {{name}} from {{appId}}',
 
     'ERR_CONNECTOR_NOT_ARRAY' => 'connector array in {0} been defined incorrectly or is empty and could not be used.',
