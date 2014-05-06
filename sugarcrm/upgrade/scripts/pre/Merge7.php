@@ -85,6 +85,7 @@ class SugarUpgradeMerge7 extends UpgradeScript
      */
     protected function checkFile($filename)
     {
+        $this->log("Checking file $filename");
         list($modules, $module_name, $clients, $platform, $views, $viewname) = explode(DIRECTORY_SEPARATOR, $filename);
 
         $old_viewdefs = $this->loadFile($filename, $module_name, $platform, $viewname);
