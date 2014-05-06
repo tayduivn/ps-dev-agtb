@@ -756,6 +756,7 @@ $dictionary['RevenueLineItem'] = array(
             'link_type' => 'many',
             'relationship' => '',
             'hideacl' => true,
+            'readonly' => true,
         ),
         'documents' => array(
             'name' => 'documents',

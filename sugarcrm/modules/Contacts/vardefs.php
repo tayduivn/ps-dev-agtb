@@ -303,6 +303,7 @@ $dictionary['Contact'] = array(
             'module' => 'Emails',
             'link_type' => 'many',
             'relationship' => '',
+            'readonly' => true,
         ),
         'documents' => array(
             'name' => 'documents',

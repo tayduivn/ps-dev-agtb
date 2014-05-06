@@ -532,6 +532,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'activity_enable
         'link_type' => 'many',
         'relationship' => '',
         'hideacl' => true,
+        'readonly' => true,
     ),
 	'campaigns' =>
 		array (
