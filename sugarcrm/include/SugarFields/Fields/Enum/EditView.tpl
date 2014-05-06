@@ -34,11 +34,7 @@
     {{if !empty($displayParams.accesskey)}} accesskey='{{$displayParams.accesskey}}' {{/if}}  {{$displayParams.field}}
 	{{if isset($displayParams.javascript)}}{{$displayParams.javascript}}{{/if}}>
 
-	{if isset({{sugarvar key='value' string=true}}) && {{sugarvar key='value' string=true}} != ''}
-		{html_options options={{sugarvar key='options' string=true}} selected={{sugarvar key='value' string=true}}}
-	{else}
-		{html_options options={{sugarvar key='options' string=true}} selected={{sugarvar key='default' string=true}}}
-	{/if}
+	{html_options options={{sugarvar key='options' string=true}} selected={{sugarvar key='value' string=true}}}
 	</select>
 {else}
 	{assign var="field_options" value={{sugarvar key='options' string="true"}} }
@@ -54,11 +50,7 @@
         {{if !empty($displayParams.accesskey)}} accesskey='{{$displayParams.accesskey}}' {{/if}} {{$displayParams.field}}
 		{{if isset($displayParams.javascript)}}{{$displayParams.javascript}}{{/if}}>
 
-		{if isset({{sugarvar key='value' string=true}}) && {{sugarvar key='value' string=true}} != ''}
-			{html_options options={{sugarvar key='options' string=true}} selected={{sugarvar key='value' string=true}}}
-		{else}
-			{html_options options={{sugarvar key='options' string=true}} selected={{sugarvar key='default' string=true}}}
-		{/if}
+		{html_options options={{sugarvar key='options' string=true}} selected={{sugarvar key='value' string=true}}}
 		</select>
 	{{else}}
 		<input type="hidden"
