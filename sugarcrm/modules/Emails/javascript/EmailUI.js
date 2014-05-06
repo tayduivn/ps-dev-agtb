@@ -1453,13 +1453,12 @@ SE.contextMenus.dv = {
 ///////////////////////////////////////////////////////////////////////////////
 ////    DETAIL VIEW
 SE.detailView = {
-    consumeMetaDetail : function(ret) {
+    consumeMetaDetail: function(ret) {
         // handling if the Email drafts
-        if(ret.type == 'draft') {
+        if (ret.type === 'draft') {
             SE.composeLayout.c0_composeDraft();
             return;
         }
-
 
         // cache contents browser-side
         SE._setDetailCache(ret);
@@ -1480,38 +1479,51 @@ SE.detailView = {
         });
         var tabLabel = meta.email.name;
         if (tabLabel != null && tabLabel.length > 25) {
-        	tabLabel = tabLabel.substring(0, 25) + "...";
+            tabLabel = tabLabel.substring(0, 25) + "...";
         } // if
         targetDiv.set("label", tabLabel);
         targetDiv.set("content", out);
 
         var displayEmailFrameDiv = document.getElementById('displayEmailFrameDiv' + targetDiv.id);
+
         if (SUGAR.email2.util.isIe()) {
-        	displayEmailFrameDiv.style.height = "390px";
+            displayEmailFrameDiv.style.height = "390px";
         } else {
-        	displayEmailFrameDiv.style.height = "410px";
+            displayEmailFrameDiv.style.height = "410px";
         }
 
         var displayFrame = document.getElementById('displayEmailFrame' + targetDiv.id);
         displayFrame.contentWindow.document.write(email.description);
         displayFrame.contentWindow.document.close();
 
+        displayFrame.contentWindow.setTargetAttributeForUrls = function() {
+            if (!this.document.body) {
+                return setTimeout(setTargetAttributeForUrls, 1);
+            }
+            var elements = this.document.body.getElementsByTagName('a');
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].setAttribute('target', '_blank');
+            }
+        };
+
+        var script = displayFrame.contentWindow.document.createElement('script');
+        script.type = 'text/javascript';
+        script.text = 'setTargetAttributeForUrls.call(window);';
+        displayFrame.contentWindow.document.body.appendChild(script);
+
         // hide archive links
-        if(ret.meta.is_sugarEmail) {
-			document.getElementById("archiveEmail" + targetDiv.id).style.display = "none";
+        if (ret.meta.is_sugarEmail) {
+            document.getElementById("archiveEmail" + targetDiv.id).style.display = "none";
             document.getElementById("btnEmailView" + targetDiv.id).style.display = "none";
-        } else {
-            if (document.getElementById("showDeialViewForEmail" + targetDiv.id))
-            	document.getElementById("showDeialViewForEmail" + targetDiv.id).style.display = "none";
+        } else if (document.getElementById("showDeialViewForEmail" + targetDiv.id)) {
+            document.getElementById("showDeialViewForEmail" + targetDiv.id).style.display = "none";
         } // else
 
     },
 
-    consumeMetaPreview : function(ret) {
+    consumeMetaPreview: function(ret) {
         // cache contents browser-side
         SE._setDetailCache(ret);
-
-
 
         var currrow = SE.grid.getLastSelectedRecord();
         currrow = SE.grid.getRecord(currrow);
@@ -1520,7 +1532,7 @@ SE.detailView = {
             return;
         }
         // handling if the Email drafts
-        if(ret.type == 'draft'){
+        if (ret.type === 'draft') {
             if (currrow.getData().uid == ret.uid) {
                 SE.composeLayout.c0_composeDraft();
             }
@@ -1534,46 +1546,53 @@ SE.detailView = {
         // remove loading sprite
         document.getElementById('_blank').innerHTML = '<iframe id="displayEmailFramePreview"/>';
         var displayTemplate = new YAHOO.SUGAR.Template(SE.templates['displayOneEmail']);
+        // 2 below must be in global context
         meta = ret.meta;
         meta['panelId'] = SE.util.getPanelId();
-        email = ret.meta.email;
 
+        email = ret.meta.email;
         document.getElementById('_blank').innerHTML = displayTemplate.exec({
             'app_strings' : app_strings,
             'theme' : theme,
             'idx' : 'Preview',
             'meta' : meta,
-            'email' :meta.email,
+            'email' : meta.email,
             'linkBeans' : linkBeans
         });
-       // document.getElementById('_blank').innerHTML = meta.email;
-       /* displayTemplate.append('_blank', {
-            'app_strings' : app_strings,
-            'theme' : theme,
-            'idx' : 'Preview',
-            'meta' : meta,
-            'email' :meta.email,
-            'linkBeans' : linkBeans
-        });*/
 
         var displayFrame = document.getElementById('displayEmailFramePreview');
         displayFrame.contentWindow.document.write(email.description);
         displayFrame.contentWindow.document.close();
 
+        displayFrame.contentWindow.setTargetAttributeForUrls = function() {
+            if (!this.document.body) {
+                return setTimeout(setTargetAttributeForUrls, 1);
+            }
+            var elements = this.document.body.getElementsByTagName('a');
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].setAttribute('target', '_blank');
+            }
+        };
+
+        var script = displayFrame.contentWindow.document.createElement('script');
+        script.type = 'text/javascript';
+        script.text = 'setTargetAttributeForUrls.call(window);';
+        displayFrame.contentWindow.document.body.appendChild(script);
+
         SE.listViewLayout.resizePreview();
 
         // hide archive links
-        if(ret.meta.is_sugarEmail) {
+        if (ret.meta.is_sugarEmail) {
             document.getElementById("archiveEmailPreview").innerHTML = "&nbsp;";
             document.getElementById("btnEmailViewPreview").style.display = "none";
             document.getElementById("archiveEmail" + meta['panelId']).style.display = "none";
         } else {
-          //hide view relationship link
-		 document.getElementById("showDeialViewForEmail" + meta['panelId']).style.display = "none";
+            //hide view relationship link
+            document.getElementById("showDeialViewForEmail" + meta['panelId']).style.display = "none";
         }
     },
 
-    /**
+     /**
      * wraps emailDelete() for single messages, comes from preview or tab
      */
     emailDeleteSingle : function(ieId, uid, mbox) {
@@ -2620,8 +2639,6 @@ SE.folders = {
         else {
             SE.listView.populateListFrame(node, node.data.ieId, false);
         }
-       //eval(node.data.click);
-       //debugger;
     },
 
     /**
@@ -3022,7 +3039,6 @@ SE.listView = {
      * exception handler for data load failures
      */
     loadException : function(dataModel, ex, response) {
-        //debugger;
     },
 
     /**
