@@ -8,10 +8,15 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  */
+
 /**
  * Forecast Sales Rep Worksheet Record List
+ *
+ * @class BaseForecastWorksheetsRecordlistView
+ * @alias SUGAR.App.view.views.BaseForecastWorksheetsRecordlistView
+ * @extends BaseRecordlistView
  *
  * Events
  *
@@ -882,7 +887,9 @@
             wonWorst = 0,
             includedClosedCount = 0,
             includedClosedAmount = 0,
-            cfg = app.metadata.getModule('Forecasts', 'config');
+            cfg = app.metadata.getModule('Forecasts', 'config'),
+            startEndDates = this.context.get('selectedTimePeriodStartEnd') ||
+                this.context.parent.get('selectedTimePeriodStartEnd');
 
         //Get the excluded_sales_stage property.  Default to empty array if not set
         var sales_stage_won_setting = cfg.sales_stage_won || [],
@@ -896,47 +903,51 @@
         }
 
         this.collection.each(function(model) {
-            var won = _.include(sales_stage_won_setting, model.get('sales_stage')),
-                lost = _.include(sales_stage_lost_setting, model.get('sales_stage')),
-                commit_stage = model.get('commit_stage'),
-                base_rate = model.get('base_rate'),
-                // added || 0 in case these converted out to NaN so they dont make charts blow up
-                worst_base = app.currency.convertWithRate(model.get('worst_case'), base_rate) || 0,
-                amount_base = app.currency.convertWithRate(model.get('likely_case'), base_rate) || 0,
-                best_base = app.currency.convertWithRate(model.get('best_case'), base_rate) || 0,
-                includedInForecast = _.include(commit_stages_in_included_total, commit_stage);
+            // make sure that the selected date is between the start and end dates for the current timeperiod
+            // if it's not, then don't include it in the totals
+            if (app.date(model.get('date_closed')).isBetween(startEndDates['start'], startEndDates['end'])) {
+                var won = _.include(sales_stage_won_setting, model.get('sales_stage')),
+                    lost = _.include(sales_stage_lost_setting, model.get('sales_stage')),
+                    commit_stage = model.get('commit_stage'),
+                    base_rate = model.get('base_rate'),
+                    // added || 0 in case these converted out to NaN so they dont make charts blow up
+                    worst_base = app.currency.convertWithRate(model.get('worst_case'), base_rate) || 0,
+                    amount_base = app.currency.convertWithRate(model.get('likely_case'), base_rate) || 0,
+                    best_base = app.currency.convertWithRate(model.get('best_case'), base_rate) || 0,
+                    includedInForecast = _.include(commit_stages_in_included_total, commit_stage);
 
-            if (won && includedInForecast) {
-                wonAmount = app.math.add(wonAmount, amount_base);
-                wonBest = app.math.add(wonBest, best_base);
-                wonWorst = app.math.add(wonWorst, worst_base);
-                wonCount++;
+                if (won && includedInForecast) {
+                    wonAmount = app.math.add(wonAmount, amount_base);
+                    wonBest = app.math.add(wonBest, best_base);
+                    wonWorst = app.math.add(wonWorst, worst_base);
+                    wonCount++;
 
-                includedClosedCount++;
-                includedClosedAmount = app.math.add(amount_base, includedClosedAmount);
-            } else if (lost) {
-                lostAmount = app.math.add(lostAmount, amount_base);
-                lostBest = app.math.add(lostBest, best_base);
-                lostWorst = app.math.add(lostWorst, worst_base);
-                lostCount++;
+                    includedClosedCount++;
+                    includedClosedAmount = app.math.add(amount_base, includedClosedAmount);
+                } else if (lost) {
+                    lostAmount = app.math.add(lostAmount, amount_base);
+                    lostBest = app.math.add(lostBest, best_base);
+                    lostWorst = app.math.add(lostWorst, worst_base);
+                    lostCount++;
+                }
+
+                if (includedInForecast) {
+                    includedAmount = app.math.add(includedAmount, amount_base);
+                    includedBest = app.math.add(includedBest, best_base);
+                    includedWorst = app.math.add(includedWorst, worst_base);
+                    includedCount++;
+
+                    // since we're already looping through the collection of models and we have
+                    // the included commit stages, set or unset the includedInForecast property here
+                    model.set({ includedInForecast: true }, {silent: true});
+                } else if (model.has('includedInForecast')) {
+                    model.unset('includedInForecast');
+                }
+
+                overallAmount = app.math.add(overallAmount, amount_base);
+                overallBest = app.math.add(overallBest, best_base);
+                overallWorst = app.math.add(overallWorst, worst_base);
             }
-
-            if (includedInForecast) {
-                includedAmount = app.math.add(includedAmount, amount_base);
-                includedBest = app.math.add(includedBest, best_base);
-                includedWorst = app.math.add(includedWorst, worst_base);
-                includedCount++;
-
-                // since we're already looping through the collection of models and we have
-                // the included commit stages, set or unset the includedInForecast property here
-                model.set({ includedInForecast: true }, {silent: true});
-            } else if(model.has('includedInForecast')) {
-                model.unset('includedInForecast');
-            }
-
-            overallAmount = app.math.add(overallAmount, amount_base);
-            overallBest = app.math.add(overallBest, best_base);
-            overallWorst = app.math.add(overallWorst, worst_base);
         }, this);
 
         return {

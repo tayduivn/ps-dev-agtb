@@ -67,7 +67,11 @@ describe("ForecastWorksheets.View.RecordList", function() {
             module: moduleName,
             'selectedUser': app.user.toJSON(),
             'selectedRanges': [],
-            'selectedTimePeriod': 'test_timeperiod'
+            'selectedTimePeriod': 'test_timeperiod',
+            'selectedTimePeriodStartEnd': {
+                'start': '2014-01-01',
+                'end': '2014-03-31'
+            }
         });
         context.parent = undefined;
         context.prepare();
@@ -212,9 +216,9 @@ describe("ForecastWorksheets.View.RecordList", function() {
     describe("filteredCollection", function() {
         beforeEach(function() {
             // add some models
-            var m1 = new Backbone.Model({'name': 'test1', 'commit_stage': 'include'});
-            var m2 = new Backbone.Model({'name': 'test2', 'commit_stage': 'include'});
-            var m3 = new Backbone.Model({'name': 'test3', 'commit_stage': 'exclude'});
+            var m1 = new Backbone.Model({'name': 'test1', 'commit_stage': 'include', 'date_closed': '2014-01-05'});
+            var m2 = new Backbone.Model({'name': 'test2', 'commit_stage': 'include', 'date_closed': '2014-01-05'});
+            var m3 = new Backbone.Model({'name': 'test3', 'commit_stage': 'exclude', 'date_closed': '2014-01-05'});
 
             view.collection.add([m1, m2, m3]);
         });
@@ -249,7 +253,7 @@ describe("ForecastWorksheets.View.RecordList", function() {
         var layoutStub, ctxStub;
         beforeEach(function() {
             // add some models
-            var m1 = new Backbone.Model({'name': 'test1', 'date_modified': '2013-05-14 16:20:15'});
+            var m1 = new Backbone.Model({'name': 'test1', 'date_modified': '2013-05-14 16:20:15', 'date_closed': '2014-01-05'});
             view.collection.add([m1]);
 
             // set that we can edit
@@ -633,6 +637,54 @@ describe("ForecastWorksheets.View.RecordList", function() {
         
         it("should set currentIndex to 0", function() {
             expect(view.currentIndex).toEqual(0);
+        });
+    });
+
+    describe('getCommitTotals', function() {
+        var m1, m2, m3;
+        beforeEach(function() {
+            // add some models
+            m1 = new Backbone.Model({
+                'name': 'test1',
+                'commit_stage': 'include',
+                'likely_case': 500,
+                'date_closed': '2014-01-05'
+            });
+            m2 = new Backbone.Model({
+                'name': 'test2',
+                'commit_stage': 'include',
+                'likely_case': 500,
+                'date_closed': '2014-01-05'
+            });
+            m3 = new Backbone.Model({
+                'name': 'test3',
+                'commit_stage': 'exclude',
+                'likely_case': 500,
+                'date_closed': '2014-01-05'
+            });
+
+            view.collection.add([m1, m2, m3]);
+        });
+
+        afterEach(function() {
+            m1 = null;
+            m2 = null;
+            m3 = null;
+            view.collection.reset();
+        });
+
+        it('will return object with correct values', function() {
+            var totals = view.getCommitTotals();
+
+            expect(totals.likely_case).toEqual(1000);
+            expect(totals.overall_amount).toEqual(1500);
+        });
+        it('will not include model that is outside timeperiod', function() {
+            m1.set('date_closed', '2013-01-05');
+            var totals = view.getCommitTotals();
+
+            expect(totals.likely_case).toEqual(500);
+            expect(totals.overall_amount).toEqual(1000);
         });
     });
 });
