@@ -246,6 +246,8 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 	    if(!empty($_REQUEST['sortOrder'])) $params['sortOrder'] = $_REQUEST['sortOrder'];
 	}
 
+    //make sure the column names (array keys) are in upper case
+    $displayColumns = array_change_key_case($displayColumns, CASE_UPPER);
 	$lv->displayColumns = $displayColumns;
 
 
