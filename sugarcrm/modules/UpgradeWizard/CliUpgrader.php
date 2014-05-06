@@ -324,6 +324,10 @@ eoq2;
         $context = $this->mapArgs($argv);
         if(defined("PHP_BINARY")) {
             $context['php'] = PHP_BINARY;
+        } elseif(!empty($_ENV['_'])) {
+            $context['php'] = $_ENV['_'];
+        } elseif(!empty($_SERVER['_'])) {
+            $context['php'] = $_SERVER['_'];
         } else {
             $context['php'] = $php_path."php";
         }
