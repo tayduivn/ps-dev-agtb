@@ -113,11 +113,12 @@ class SugarTestUserUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCanTearDownAllCreatedAnonymousUsers() 
     {
+        $userIds = array();
         //BEGIN SUGARCRM flav=pro ONLY
         $before_snapshot_teams = $this->_takeTeamDBSnapshot();
         //END SUGARCRM flav=pro ONLY
         for ($i = 0; $i < 5; $i++) {
-            SugarTestUserUtilities::createAnonymousUser();
+            $userIds[] = SugarTestUserUtilities::createAnonymousUser()->id;
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         
@@ -127,6 +128,29 @@ class SugarTestUserUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($before_snapshot_teams, $this->_takeTeamDBSnapshot(),
             'SugarTest_UserUtilities::removeAllCreatedAnonymousUsers() should have removed the teams it added');
         //END SUGARCRM flav=pro ONLY
+
+        $count = function ($table, $where) {
+            $num = 0;
+            $sql = "SELECT COUNT(*) c FROM {$table} WHERE {$where}";
+            if ($row = $GLOBALS['db']->fetchByAssoc($GLOBALS['db']->query($sql))) {
+                $num = $row['c'];
+            }
+            return $num;
+        };
+
+        $in = "'" . implode("', '", $userIds) . "'";
+        $sqls = array(
+            'email_addresses' => "id IN (SELECT DISTINCT email_address_id FROM email_addr_bean_rel WHERE bean_module ='Users' AND bean_id IN ({$in}))",
+            'emails_beans' => "bean_module='Users' AND bean_id IN ({$in})",
+            'email_addr_bean_rel' => "bean_module='Users' AND bean_id IN ({$in})",
+        );
+        foreach ($sqls as $table => $where) {
+            $this->assertEquals(
+                0,
+                $count($table, $where),
+                "Email address references should have been deleted from {$table}"
+            );
+        }
     }
 
     public function testCanCreateAUserSignature()

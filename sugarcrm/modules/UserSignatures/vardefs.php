@@ -1,98 +1,63 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
+ */
 $dictionary['UserSignature'] = array(
-    'table'   => 'users_signatures',
-    'fields'  => array(
-        'id'             => array(
-            'name'     => 'id',
-            'vname'    => 'LBL_ID',
-            'type'     => 'id',
-            'required' => true,
-        ),
-        'date_entered'   => array(
-            'name'     => 'date_entered',
-            'vname'    => 'LBL_DATE_ENTERED',
-            'type'     => 'datetime',
-            'required' => true,
-        ),
-        'date_modified'  => array(
-            'name'     => 'date_modified',
-            'vname'    => 'LBL_DATE_MODIFIED',
-            'type'     => 'datetime',
-            'required' => true,
-        ),
-        'deleted'        => array(
-            'name'       => 'deleted',
-            'vname'      => 'LBL_DELETED',
-            'type'       => 'bool',
-            'required'   => false,
-            'reportable' => false,
-        ),
-        'user_id'        => array(
-            'name'  => 'user_id',
+    'table' => 'users_signatures',
+    'fields' => array(
+        'user_id' => array(
+            'name' => 'user_id',
             'vname' => 'LBL_USER_ID',
-            'type'  => 'id',
-            'len'   => 36,
+            'type' => 'id',
+            'len' => 36,
         ),
-        'name'           => array(
-            'name'     => 'name',
-            'vname'    => 'LBL_SUBJECT',
-            'type'     => 'varchar',
-            'required' => false,
-            'len'      => '255',
+        'name' => array(
+            'name' => 'name',
+            'vname' => 'LBL_NAME',
+            'type' => 'name',
+            'dbType' => 'varchar',
+            'len' => 255,
+            'unified_search' => true,
+            'full_text_search' => array('enabled' => true, 'boost' => 3),
+            'required' => true,
+            'importable' => 'required',
+            'duplicate_merge' => 'enabled',
+            'merge_filter' => 'selected',
+            'duplicate_on_record_copy' => 'always',
         ),
-        'signature'      => array(
-            'name'       => 'signature',
-            'vname'      => 'LBL_SIGNATURE',
-            'type'       => 'text',
+        'signature' => array(
+            'name' => 'signature',
+            'vname' => 'LBL_SIGNATURE',
+            'type' => 'text',
             'reportable' => false,
         ),
         'signature_html' => array(
-            'name'       => 'signature_html',
-            'vname'      => 'LBL_SIGNATURE_HTML',
-            'type'       => 'text',
+            'name' => 'signature_html',
+            'vname' => 'LBL_SIGNATURE_HTML',
+            'type' => 'text',
             'reportable' => false,
-        ),
-        'created_by' => array(
-            'name'             => 'created_by',
-            'vname'            => 'LBL_CREATED',
-            'type'             => 'name',
-            'studio'           => false,
-            'source'           => 'non-db',
-            'fields'           => array('user_id'),
-            'db_concat_fields' => array('user_id'),
         ),
     ),
     'indices' => array(
         array(
-            'name'   => 'users_signaturespk',
-            'type'   => 'primary',
-            'fields' => array('id')
+            'name' => 'idx_usersig_uid',
+            'type' => 'index',
+            'fields' => array('user_id'),
         ),
         array(
-            'name'   => 'idx_usersig_uid',
-            'type'   => 'index',
-            'fields' => array('user_id')
-        )
+            'name' => 'idx_usersig_created_by',
+            'type' => 'index',
+            'fields' => array('created_by'),
+        ),
     ),
 );
+VardefManager::createVardef('UserSignatures', 'UserSignature', array('default'));
