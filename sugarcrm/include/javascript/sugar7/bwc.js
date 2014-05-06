@@ -185,12 +185,13 @@
                 });
             }
             //SP-1600: Account information is not populated during Quote creation via Opportunity Quote Subpanel
-            if (parentModel.module === 'Opportunities' && parentModel.get('account_id') && link == 'quotes') {
+            // any time we link to quotes and we have an account_id, we should always populate it.
+            if (link == 'quotes' && parentModel.get('account_id')) {
                 //Note that the bwc view will automagically give us billing/shipping and only
                 //expects us to set account_id and account_name here
                 params = _.extend(params, {
-                    account_id: parentModel.get("account_id"),
-                    account_name: parentModel.get("account_name")
+                    account_id: parentModel.get('account_id'),
+                    account_name: parentModel.get('account_name')
                 });
             }
             return params;
