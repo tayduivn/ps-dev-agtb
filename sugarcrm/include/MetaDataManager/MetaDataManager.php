@@ -1568,7 +1568,7 @@ class MetaDataManager
      */
     public function getServerInfo()
     {
-        global $system_config;
+        $system_config = Administration::getSettings(false, true);
         $data['flavor'] = $GLOBALS['sugar_flavor'];
         $data['version'] = $GLOBALS['sugar_version'];
         $data['build'] = $GLOBALS['sugar_build'];
