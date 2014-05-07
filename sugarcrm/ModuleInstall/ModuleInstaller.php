@@ -55,13 +55,13 @@ class ModuleInstaller{
 	var $base_dir  = '';
 	var $modulesInPackage = array();
 	public $disabled_path = DISABLED_PATH;
-	
+
 	/**
-	 * List of install sections and modules affected by installation in each 
-	 * sections. This is used to handle post install cleanup prior to a complete 
+	 * List of install sections and modules affected by installation in each
+	 * sections. This is used to handle post install cleanup prior to a complete
 	 * rebuild to allow various caches to be handled at the correct point in
 	 * installation.
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $affectedModules = array();
@@ -164,7 +164,7 @@ class ModuleInstaller{
 				}
 				// Run clean up on processes that need it prior to installing beans
 				$this->runInstallCleanup();
-				
+
 				$this->install_beans($this->installed_modules);
 				if(!$this->silent){
 					$current_step++;
@@ -644,7 +644,7 @@ class ModuleInstaller{
                     $user->savePreferencesToDB();
                 }
 
-                // Delete temp session data 
+                // Delete temp session data
                 if (empty($prefsInSession)) {
                     unset($_SESSION[$user->user_name . '_PREFERENCES']);
                 } else if (empty($prefsInSession['search'])) {
@@ -1907,7 +1907,7 @@ class ModuleInstaller{
                             $override[] = $fullpath;
                         } else {
                             // Logic here it to take the newest touched file and
-                            // read it last. This allows for customizations from 
+                            // read it last. This allows for customizations from
                             // any source and the most recent change to win out.
                             $files[$fullpath] = filemtime($fullpath);
                         }
@@ -1973,7 +1973,7 @@ class ModuleInstaller{
     	// Some processes later in the installation run need the newest members of
     	// these arrays when it comes up
     	global $beanList, $beanFiles, $moduleList;
-    	
+
 	    $this->installed_modules = array();
 		$this->tab_modules = array();
         if(isset($this->installdefs['beans'])){
@@ -2026,14 +2026,14 @@ class ModuleInstaller{
      */
 	function install_beans($beans){
 		foreach($beans as $bean){
-			// This forces new beans to refresh their vardefs because at this 
+			// This forces new beans to refresh their vardefs because at this
 			// point the global dictionary for this object may be set with just
 			// relationship fields.
 			$rv = isset($GLOBALS['reload_vardefs']) ? $GLOBALS['reload_vardefs'] : null;
 			$dm = isset($_SESSION['developerMode']) ? $_SESSION['developerMode'] : null;
 			$GLOBALS['reload_vardefs'] = true;
 			$_SESSION['developerMode'] = true;
-			
+
 			$this->log( translate('LBL_MI_IN_BEAN') . " $bean");
 			$mod = BeanFactory::getBean($bean);
 			if(!empty($mod) && $mod instanceof SugarBean && empty($mod->disable_vardefs)) { //#30273
@@ -2041,7 +2041,7 @@ class ModuleInstaller{
 				$mod->create_tables();
 				SugarBean::createRelationshipMeta($mod->getObjectName(), $mod->db,$mod->table_name,'',$mod->module_dir);
 			}
-			
+
 			// Return state. Null values essentially unset what wasn't set before
 			$GLOBALS['reload_vardefs'] = $rv;
 			$_SESSION['developerMode'] = $dm;
@@ -2727,6 +2727,7 @@ private function dir_file_count($path){
                 "server_info",
                 "config",
                 "_override_values",
+                "filters",
                 "logo_url",
             ),
         );
@@ -2861,10 +2862,10 @@ private function dir_file_count($path){
 
     /**
      * Refreshes vardefs for modules that are affected by a change during installation.
-     * 
+     *
      * @param array $modules List of modules to refresh vardefs for
      */
-    protected function clearAffectedVardefsCache($modules = array()) 
+    protected function clearAffectedVardefsCache($modules = array())
     {
         foreach ($modules as $module) {
             $obj = BeanFactory::getObjectName($module);
@@ -2875,9 +2876,9 @@ private function dir_file_count($path){
     /**
      * Runs cleanup after installation to make sure various extension section are
      * fresh for the next steps in the installation
-     * 
+     *
      * This is called in the {@see install} method prior to installing new beans.
-     * 
+     *
      * @return [type] [description]
      */
     protected function runInstallCleanup()
@@ -2892,14 +2893,14 @@ private function dir_file_count($path){
 
     /**
      * Updates systems tabs
-     * 
-     * @param string $action The action to take 
+     *
+     * @param string $action The action to take
      * @param array $installed_modules The list of modules to add for this action
      */
-    protected function updateSystemTabs($action, $installed_modules) 
+    protected function updateSystemTabs($action, $installed_modules)
     {
         global $moduleList;
-        
+
         $controller = new TabController();
         $isSystemTabsInDB = $controller->is_system_tabs_in_db();
         if ($isSystemTabsInDB && !empty($installed_modules)) {
