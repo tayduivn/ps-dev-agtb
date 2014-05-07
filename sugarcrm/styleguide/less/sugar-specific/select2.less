@@ -421,9 +421,11 @@
   }
   > input[type="text"] {
     width: 50%;
-    .calcWidth(~"100% - 114px");
-    float: left;
+    .calcWidth(~"100% - 100px") !important;
     .border-radius(0 2px 2px 0);
+    float: right;
+    .box-sizing(border-box);
+    height: 28px;
   }
   .edit {
     float: left;
