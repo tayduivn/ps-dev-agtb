@@ -552,8 +552,13 @@
         }
     },
 
+    /**
+     * Resets the model to the default values so that unsaved warning prompt will not be displayed.
+     */
     turnOffUnsavedChanges: function() {
-        this.createView.model.changed = {};
+        var defaults = _.extend({}, this.createView.model._defaults, this.createView.model.getDefaultAttributes());
+        this.createView.model.clear({silent: true});
+        this.createView.model.set(defaults, {silent: true});
     },
 
     _dispose: function() {
