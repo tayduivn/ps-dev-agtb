@@ -306,7 +306,7 @@ r22618 - 2007-05-09 15:36:06 -0700 (Wed, 09 May 2007) - clee - Added file.
  * @param $params The runtime Smarty key/value arguments
  * @param $smarty The reference to the Smarty object used in this invocation
  */
-function smarty_function_sugar_button($params, &$smarty)
+function smarty_function_sugar_button($params, $smarty)
 {
    if(empty($params['module'])) {
    	  $smarty->trigger_error("sugar_button: missing required param (module)");
@@ -782,15 +782,13 @@ function smarty_function_sugar_button($params, &$smarty)
 
               // TODO we shouldn't rely on the name field only, but we don't
               // have this information anywhere and this is BWC code...
-              $shareName = htmlspecialchars_decode($params['fields']['name']['value'], ENT_QUOTES);
-              $shareId = $params['fields']['id']['value'];
-
-              $shareButton = '{capture name="shareBtnJsCode" assign="shareBtnJsCode"}';
-              $shareButton .= '{literal}';
-              $shareButton .= "parent.SUGAR.App.bwc.shareRecord('{$params['module']}', '$shareId', '{$shareName}')";
-              $shareButton .= '{/literal}';
-              $shareButton .= '{/capture}';
-              $shareButton .= '<input title="{$APP.LBL_SHARE_BUTTON_TITLE}" accessKey="{$APP.LBL_SHARE_BUTTON_KEY}" class="button" onclick="{$shareBtnJsCode};" type="button" name="button" value="{$APP.LBL_SHARE_BUTTON_LABEL}"> ';
+              $shareButton = <<<ENDB
+<form>
+<input type="hidden" id="share_button_name" value="{\$fields.name.value}">
+<input title="{\$APP.LBL_SHARE_BUTTON_TITLE}" accessKey="{\$APP.LBL_SHARE_BUTTON_KEY}"
+  class="button" onclick="parent.SUGAR.App.bwc.shareRecord('{$params['module']}', '{\$fields.id.value}', this.form.share_button_name.value)" type="button" name="button" value="{\$APP.LBL_SHARE_BUTTON_LABEL}">
+</form>
+ENDB;
               $output = $shareButton;
               break;
 
