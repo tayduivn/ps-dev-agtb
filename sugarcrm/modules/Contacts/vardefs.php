@@ -278,6 +278,10 @@ $dictionary['Contact'] = array(
             'relationship' => 'contacts_cases',
             'source' => 'non-db',
             'vname' => 'LBL_CASES',
+            'populate_list' => array(
+                'account_id',
+                'account_name'
+            )
         ),
         'direct_reports' => array(
             'name' => 'direct_reports',
