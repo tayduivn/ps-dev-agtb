@@ -35,7 +35,7 @@ class Merge7TestPre extends UpgradeTestCase
     }
 
     /**
-     * Test for ScanModules
+     * Test for Merge7
      */
     public function testMerge7Pre()
     {

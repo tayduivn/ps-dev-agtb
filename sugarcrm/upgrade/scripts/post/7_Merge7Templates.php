@@ -120,10 +120,10 @@ class SugarUpgradeMerge7Templates extends UpgradeScript
         $new_fields = $this->fieldList($new_viewdefs[$module_name][$platform]['view'][$viewname]['panels']);
 
         // Here we care only for field presence, not for changes in field metadata
-        $removed_fields = array_udiff_assoc($old_fields, $new_fields, function () { return true; });
-        $added_fields = array_udiff_assoc($new_fields, $old_fields, function () { return true; });
+        $removed_fields = array_udiff_assoc($old_fields, $new_fields, function () { return 0; });
+        $added_fields = array_udiff_assoc($new_fields, $old_fields, function () { return 0; });
         // This may include also added & removed fields, we'll remove them later
-        $changed_fields = array_udiff_assoc($new_fields, $old_fields, function($a, $b) { return $a == $b; });
+        $changed_fields = array_udiff_assoc($new_fields, $old_fields, function($a, $b) { return $a == $b?0:-1; });
 
         if(empty($added_fields) && empty($removed_fields) && empty($changed_fields)) {
             // nothing to do
@@ -140,7 +140,7 @@ class SugarUpgradeMerge7Templates extends UpgradeScript
                 // Already in custom view - we're done
                 continue;
             }
-            $this->addField($custom_viewdefs[$module_name][$platform]['view'][$viewname]['panels'], $field, $data['pindex'], $data['pname'], $data['data']);
+            $this->addField($custom_viewdefs[$module_name][$platform]['view'][$viewname]['panels'], $data['pindex'], $data['pname'], $data['data']);
             $needSave = true;
         }
 
@@ -155,6 +155,8 @@ class SugarUpgradeMerge7Templates extends UpgradeScript
             $findex = $custom_fields[$field]['findex'];
             // Remove field from panel
             unset($custom_viewdefs[$module_name][$platform]['view'][$viewname]['panels'][$pindex]['fields'][$findex]);
+            // Re-index the fields
+            $custom_viewdefs[$module_name][$platform]['view'][$viewname]['panels'][$pindex]['fields'] = array_values($custom_viewdefs[$module_name][$platform]['view'][$viewname]['panels'][$pindex]['fields']);
             $needSave = true;
         }
 
@@ -192,9 +194,9 @@ class SugarUpgradeMerge7Templates extends UpgradeScript
     protected function addField(&$panels, $pindex, $pname, $field)
     {
         // Try by name
-        foreach($panels as $panel) {
+        foreach($panels as $cpindex => $panel) {
             if(!empty($panel['name']) && $panel['name'] == $pname) {
-                $panels[$pname]['fields'][] = $field;
+                $panels[$cpindex]['fields'][] = $field;
                 return;
             }
         }
