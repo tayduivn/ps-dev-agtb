@@ -367,15 +367,19 @@
              */
             getSubpanelList: function(module) {
                 var list = {},
-                    subpanels = app.metadata.getModule(module).layouts.subpanels;
-                if (subpanels && subpanels.meta && subpanels.meta.components) {
-                    _.each(subpanels.meta.components, function(comp) {
-                        if (comp.context && comp.context.link) {
-                            list[comp.label] = comp.context.link;
-                        } else {
-                            app.logger.warning("Subpanel's subpanels.meta.components has component with no context or context.link");
-                        }
-                    });
+                    subpanels = app.metadata.getModule(module);
+                if (subpanels && subpanels.layouts) {
+                    subpanels = subpanels.layouts.subpanels;
+                    if (subpanels && subpanels.meta && subpanels.meta.components) {
+                        _.each(subpanels.meta.components, function(comp) {
+                            if (comp.context && comp.context.link) {
+                                list[comp.label] = comp.context.link;
+                            } else {
+                                app.logger.warning("Subpanel's subpanels.meta.components "
+                                    + "has component with no context or context.link");
+                            }
+                        });
+                    }
                 }
                 return list;
             },

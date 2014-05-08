@@ -18,9 +18,14 @@
         app.view.declareComponent(type, name, module, data, true, client);
     };
 
-    test.loadPlugin = function(name, subdir) {
-        subdir = subdir ? '/' + subdir : '';
-        var path = "../include/javascript/sugar7/plugins" + subdir;
+    test.loadPlugin = function(name, subdir, overwriteDir) {
+        var path;
+        if (overwriteDir) {
+            path = overwriteDir;
+        } else {
+            subdir = subdir ? '/' + subdir : '';
+            path = "../include/javascript/sugar7/plugins" + subdir;
+        }
         SugarTest.loadFile(path, name, "js", function(d) {
             app.events.off('app:init');
             eval(d);

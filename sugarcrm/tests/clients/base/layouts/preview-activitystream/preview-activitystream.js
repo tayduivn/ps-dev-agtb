@@ -1,7 +1,9 @@
-describe("Preview Activity Stream", function() {
-    var layout;
+describe("Base.Layouts.PreviewActivityStream", function() {
+    var layout,
+        app;
 
     beforeEach(function() {
+        app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('preview-activitystream', 'layout', 'base');
         SugarTest.loadComponent('base', 'layout', 'preview-activitystream');
@@ -27,6 +29,19 @@ describe("Preview Activity Stream", function() {
     });
 
     describe('fetchActivities()', function() {
+        var getModuleStub;
+        beforeEach(function() {
+            getModuleStub = sinon.stub(app.metadata, 'getModule', function() {
+                return {
+                    isBwcEnabled: false
+                };
+            });
+        });
+
+        afterEach(function() {
+            getModuleStub.restore();
+        });
+
         it('Should fetch a collection of activities', function() {
             var collectionStub = sinon.stub(layout.collection, 'fetch');
             layout.fetchActivities(new Backbone.Model());
