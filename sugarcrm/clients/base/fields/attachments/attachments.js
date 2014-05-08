@@ -130,12 +130,12 @@
 
     /**
      * {@inheritdoc}
-     * Update model if attachments are removed (change event only fires when attachment removed)
+     * Update model if attachments are removed (select2-removing event fires when attachment removed)
      * Prevent dropdown from opening on this field (its a container only)
      */
     bindDomChange: function() {
         this.$node = this.$(this.fieldSelector);
-        this.$node.on("change", _.bind(this.handleChange, this));
+        this.$node.on("select2-removing", _.bind(this.handleChange, this));
         this.$node.on("select2-opening", function(event) {
             event.preventDefault();
         });
@@ -177,8 +177,8 @@
      * @param event
      */
     handleChange: function(event) {
-        if (event && event.removed && event.removed.id) {
-            this.removeAttachmentsById(event.removed.id);
+        if (event && event.choice && event.choice.id) {
+            this.removeAttachmentsById(event.choice.id);
         }
 
         this.updateModel();
