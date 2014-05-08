@@ -162,16 +162,20 @@ if(isset($_REQUEST['page']) && $_REQUEST['page'] == 'licensePrint')
 }
 
 //define web root, which will be used as default for site_url
-if($_SERVER['SERVER_PORT']=='80'){
-    $web_root = $_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'];
-}else{
-    $web_root = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+if(!empty($_REQUEST['instance_url'])) {
+    $web_root = $_REQUEST['instance_url'];
+} else {
+    if($_SERVER['SERVER_PORT']=='80'){
+        $web_root = $_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'];
+    }else{
+        $web_root = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+    }
+    $web_root = "http://$web_root";
 }
 $web_root = str_replace("/install.php", "", $web_root);
-$web_root = "http://$web_root";
 
 // set the form's php var to the loaded config's var else default to sane settings
-if(!isset($_SESSION['setup_site_url'])  || empty($_SESSION['setup_site_url'])) {
+if(!isset($_SESSION['setup_site_url'])  || empty($_SESSION['setup_site_url']) || !empty($_REQUEST['instance_url'])) {
     if(isset($sugar_config['site_url']) && !empty($sugar_config['site_url'])) {
         $_SESSION['setup_site_url']= $sugar_config['site_url'];
     } else {
@@ -704,5 +708,3 @@ installerHook('pre_installFileRequire', array('the_file' => $the_file));
 require('install/' . $the_file);
 
 installerHook('post_installFileRequire', array('the_file' => $the_file));
-
-?>

@@ -77,9 +77,10 @@ $out = <<<EOQ
           <tr>
                 <td>
 						    <input type="hidden" name="current_step" value="{$next_step}">
+						    <input type="hidden" name="instance_url" value="">
 						</td>
 					    <td>
-					        <input class="button" type="submit" name="goto" value="{$mod_strings['LBL_NEXT']}" id="button_next2" />
+					        <input class="button" type="submit" name="goto" value="{$mod_strings['LBL_NEXT']}" id="button_next2" onFocus="this.form.instance_url.value = window.location;" />
 			            </td>
           </tr>
         </table>
