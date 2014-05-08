@@ -97,10 +97,6 @@ class VisibilityAction extends AbstractAction{
                     field = context.view.getField(this.target);
                 if (field && _.isUndefined(field.wasRequired)) {
                     field.wasRequired = field.def.required;
-                    if (field.wasRequired)
-                        console.log(this.target + ' was required!');
-                    else
-                        console.log(this.target + ' was not required!');
                 }
 				if (hide)
 				{
