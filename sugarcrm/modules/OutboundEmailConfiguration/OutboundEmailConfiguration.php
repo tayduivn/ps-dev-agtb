@@ -54,6 +54,7 @@ class OutboundEmailConfiguration
     protected $charset;     // the character set of the message
     protected $encoding;    // the encoding of the message, which must be one of the valid encodings from Encoding
     protected $wordwrap;    // number of characters per line before the message body wrap
+    protected $inboundIds;  // the inbound IDs associated with this outbound reply email if any
 
     /**
      * @access public
@@ -287,6 +288,22 @@ class OutboundEmailConfiguration
      */
     public function getInboxId() {
         return $this->inboxId;
+    }
+
+    /**
+     * @access public
+     * @param array $ids required
+     */
+    public function setInboundIds($ids) {
+        $this->inboundIds = $ids;
+    }
+
+    /**
+     * @access public
+     * @return array
+     */
+    public function getInboundIds() {
+        return $this->inboundIds;
     }
 
     /**
