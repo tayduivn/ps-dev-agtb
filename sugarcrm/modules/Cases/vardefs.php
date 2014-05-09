@@ -153,6 +153,7 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
     'link_type' => 'many',
     'relationship' => '',
     'hideacl' => true,
+    'readonly' => true,
   ),
   'documents'=>
   array (

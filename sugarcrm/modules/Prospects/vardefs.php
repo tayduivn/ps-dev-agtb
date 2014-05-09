@@ -170,6 +170,7 @@ $dictionary['Prospect'] = array(
         'link_type' => 'many',
         'relationship' => '',
         'hideacl' => true,
+        'readonly' => true,
     ),
   
 	),
