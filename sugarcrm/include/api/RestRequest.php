@@ -77,6 +77,8 @@ class RestRequest
      */
     protected $resourceURIBase;
 
+    protected $postContents = null;
+
     /**
      * Get the route
      * @return array
@@ -129,6 +131,22 @@ class RestRequest
     public function getMethod()
     {
     	return $this->method;
+    }
+
+    /**
+     * Get POST contents
+     * @return string
+     */
+    public function getPostContents()
+    {
+        if(is_null($this->postContents)) {
+            if (!empty($GLOBALS['HTTP_RAW_POST_DATA'])) {
+                $this->postContents = $GLOBALS['HTTP_RAW_POST_DATA'];
+            } else {
+                $this->postContents = file_get_contents('php://input');
+            }
+        }
+        return $this->postContents;
     }
 
     /**
@@ -279,6 +297,19 @@ class RestRequest
     }
 
     /**
+     * Get query vars
+     * @return array
+     */
+    public function getQueryVars()
+    {
+        $vars = array();
+        if(!empty($this->server['QUERY_STRING'])) {
+            parse_str($this->server['QUERY_STRING'], $vars);
+        }
+        return $vars;
+    }
+
+    /**
      * Sets the leading portion of any request URI for this API instance
      *
      */
@@ -328,7 +359,7 @@ class RestRequest
 
     /**
      * Gets a header value from the request
-     * 
+     *
      * @param string $header The header to get the value of
      * @return string|null The string value of the header or null if not set
      */
@@ -343,7 +374,7 @@ class RestRequest
 
     /**
      * Checks to see if a header is set in the request
-     * 
+     *
      * @param string $header The header to check existence of
      * @return boolean
      */

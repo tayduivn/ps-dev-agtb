@@ -49,13 +49,27 @@ class RestServiceTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetRequestArgs()
     {
-        $request = $this->getMock('request', array('getPathVars'));
+        $request = $this->getMock('request', array('getPathVars', 'getPostContents', 'getQueryVars'));
         $request->expects($this->any())
                 ->method('getPathVars')
                 ->will($this->returnValue(array()));
 
         $_GET = array('my_json'=>'{"christopher":"walken","bill":"murray"}');
         $GLOBALS['HTTP_RAW_POST_DATA'] = '';
+        $request->expects($this->any())
+            ->method('getPostContents')
+            ->will($this->onConsecutiveCalls(
+            "", '{"my_json":{"christopher":"walken","bill":"murray"}}', '{"my_json":{"christopher":"walken","bill":"murray"}}}'
+        ));
+
+        $request->expects($this->any())
+        ->method('getQueryVars')
+        ->will($this->onConsecutiveCalls(
+            array('my_json'=>'{"christopher":"walken","bill":"murray"}'),
+            array('my_json'=>'{"christopher":"walken","bill":"murray"}}'),
+            array()
+        ));
+
 
         $service = new RestService();
         SugarTestReflection::setProtectedValue($service, 'request', $request);
@@ -64,28 +78,19 @@ class RestServiceTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('christopher', $output['my_json'], "Missing Christopher => Walken #1");
         $this->assertArrayHasKey('bill', $output['my_json'], "Missing Bill => Murray #1");
 
-        $_GET = array('my_json'=>'{"christopher":"walken","bill":"murray"}}');
-        $GLOBALS['HTTP_RAW_POST_DATA'] = '';
-
         $hadException = false;
         try {
             $output = SugarTestReflection::callProtectedMethod($service, 'getRequestArgs', array(array('jsonParams'=>array('my_json'))));
         } catch ( SugarApiExceptionInvalidParameter $e ) {
             $hadException = true;
         }
-        
+
         $this->assertTrue($hadException, "Did not throw an exception on invalid JSON #1");
 
-        $_GET = array(); 
-        $GLOBALS['HTTP_RAW_POST_DATA'] = '{"my_json":{"christopher":"walken","bill":"murray"}}';
-
         $output = SugarTestReflection::callProtectedMethod($service, 'getRequestArgs', array(array()));
-        
+
         $this->assertArrayHasKey('christopher', $output['my_json'], "Missing Christopher => Walken #2");
         $this->assertArrayHasKey('bill', $output['my_json'], "Missing Bill => Murray #2");
-
-        $_GET = array(); 
-        $GLOBALS['HTTP_RAW_POST_DATA'] = '{"my_json":{"christopher":"walken","bill":"murray"}}}';
 
         $hadException = false;
         try {
@@ -93,7 +98,7 @@ class RestServiceTest extends Sugar_PHPUnit_Framework_TestCase
         } catch ( SugarApiExceptionInvalidParameter $e ) {
             $hadException = true;
         }
-        
+
         $this->assertTrue($hadException, "Did not throw an exception on invalid JSON #2");
 
     }
@@ -108,9 +113,9 @@ class RestServiceTest extends Sugar_PHPUnit_Framework_TestCase
         echo "Short and stout.";
         echo "Here is my handle.";
         echo "Here is my exception.";
-        
+
         $restService = new RestService();
         $restService->handleErrorOutput();
-        
+
     }
 }
