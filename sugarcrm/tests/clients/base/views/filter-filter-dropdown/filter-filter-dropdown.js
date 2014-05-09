@@ -5,7 +5,17 @@ describe("BaseFilterFilterDropdownView", function () {
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'filter-filter-dropdown');
         SugarTest.testMetadata.set();
+        var filterpanel = SugarTest.createLayout(
+            'base',
+            'Cases',
+            'filterpanel',
+            {},
+            null,
+            null,
+            {layout: new Backbone.View()}
+        );
         layout = SugarTest.createLayout('base', "Cases", "filter", {}, null, null, { layout: new Backbone.View() });
+        layout.layout = filterpanel;
         view = SugarTest.createView("base", "Cases", "filter-filter-dropdown", null, null, null, layout);
         view.layout = layout;
         app = SUGAR.App;
@@ -388,12 +398,11 @@ describe("BaseFilterFilterDropdownView", function () {
                 'stopPropagation': sinon.spy()
             };
             var clearLastFilterStub = sinonSandbox.stub(layout, 'clearLastFilter');
-            var triggerStub = sinonSandbox.stub(layout, 'trigger');
+            var triggerStub = sinonSandbox.stub(layout.layout, 'trigger');
             view.handleClearFilter(evt);
             expect(evt.stopPropagation).toHaveBeenCalled();
             expect(clearLastFilterStub).toHaveBeenCalled();
-            expect(triggerStub).toHaveBeenCalled();
-            expect(triggerStub).toHaveBeenCalledWith('filter:change:filter', 'all_records');
+            expect(triggerStub).toHaveBeenCalledWith('filter:reinitialize');
         });
     });
 });

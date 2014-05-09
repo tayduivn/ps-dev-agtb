@@ -15,6 +15,7 @@ abstract class UpgradeTestCase extends Sugar_PHPUnit_Framework_TestCase
     {
         // create admin user
         self::$admin = SugarTestUserUtilities::createAnonymousUser(true, 1);
+        $GLOBALS['current_user'] = static::$admin;
         // put two files in custom 1 that needs failure, one that doesn't matter
         if (!is_dir('custom/modules/Accounts')) {
             sugar_mkdir('custom/modules/Accounts', false, true);

@@ -11,6 +11,19 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  */
-$viewdefs['UserSignatures']['base']['filter']['default'] = array(
-    'default_filter' => 'created_by_me',
+$viewdefs['UserSignatures']['base']['filter']['basic'] = array(
+    'create' => false,
+    'quicksearch_field' => array('name'),
+    'quicksearch_priority' => 1,
+    'quicksearch_split_terms' => false,
+    'filters' => array(
+        array(
+            'id' => 'created_by_me',
+            'name' => 'LBL_CREATED_BY_ME',
+            'filter_definition' => array(
+                '$creator' => '',
+            ),
+            'editable' => false,
+        ),
+    ),
 );
