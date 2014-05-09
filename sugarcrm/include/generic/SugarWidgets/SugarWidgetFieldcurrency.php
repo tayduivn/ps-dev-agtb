@@ -95,17 +95,24 @@ class SugarWidgetFieldCurrency extends SugarWidgetFieldInt
             return $display;
     }
 
-    function displayListPlain($layout_def) {
-        $value = currency_format_number(
-            parent::displayListPlain($layout_def),
-            array_merge(
-                array(
-                    'convert' => false,
-                ),
-                $this->getCurrency($layout_def)
-            )
-        );
-        return $value;
+    public function displayListPlain($layout_def)
+    {
+        $value = parent::displayListPlain($layout_def);
+        $row_currency = $this->getCurrency($layout_def);
+        $format_id = $row_currency['currency_id'];
+
+        global $current_user;
+        // when the group by function is empty, and we should show the user prefered currency, it should convert it
+        if (empty($layout_def['group_function']) && $current_user->getPreference('currency_show_preferred')) {
+            $user_currency = SugarCurrency::getUserLocaleCurrency();
+
+            if ($user_currency->id != $row_currency['currency_id']) {
+                $value = SugarCurrency::convertAmount($value, $row_currency['currency_id'], $user_currency->id);
+                $format_id = $user_currency->id;
+            }
+        }
+
+        return SugarCurrency::formatAmountUserLocale($value, $format_id);
     }
  function queryFilterEquals(&$layout_def)
  {
