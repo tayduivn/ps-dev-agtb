@@ -214,6 +214,7 @@ class vCard
                         $index = $newindex;
                     }
                     $values = explode(';', $value);
+                    $size = count($values);
                     $key = strtoupper($keyvalue[0]);
                     $key = strtr($key, '=', '');
                     $key = strtr($key, ',', ';');
@@ -255,7 +256,6 @@ class vCard
                     }
 
                     if ($keys[0] == 'N') {
-                        $size = count($values);
                         if ($size > 0) {
                             $bean->last_name = $values[0];
                         }
@@ -275,21 +275,21 @@ class vCard
                 if ($keys[0] == 'ADR') {
                     if (substr_count($key, 'WORK') > 0 && (substr_count($key, 'POSTAL') > 0 || substr_count($key, 'PARCEL') == 0)) {
 
-                        if (!isset($bean->primary_address_street) && sizeof($values) > 2) {
+                        if (!isset($bean->primary_address_street) && $size > 2) {
                             $textBreaks = array("\n", "\r");
                             $vcardBreaks = array("=0A", "=0D");
                             $bean->primary_address_street = str_replace($vcardBreaks, $textBreaks, $values[2]);
                         }
-                        if (!isset($bean->primary_address_city) && sizeof($values) > 3) {
+                        if (!isset($bean->primary_address_city) && $size > 3) {
                             $bean->primary_address_city = $values[3];
                         }
-                        if (!isset($bean->primary_address_state) && sizeof($values) > 4) {
+                        if (!isset($bean->primary_address_state) && $size > 4) {
                             $bean->primary_address_state = $values[4];
                         }
-                        if (!isset($bean->primary_address_postalcode) && sizeof($values) > 5) {
+                        if (!isset($bean->primary_address_postalcode) && $size > 5) {
                             $bean->primary_address_postalcode = $values[5];
                         }
-                        if (!isset($bean->primary_address_country) && sizeof($values) > 6) {
+                        if (!isset($bean->primary_address_country) && $size > 6) {
                             $bean->primary_address_country = $values[6];
                         }
                     }
@@ -345,7 +345,9 @@ class vCard
                                 $bean->account_id = $result->id;
                                 $bean->account_name = $result->name;
                             }
-                            $bean->department = $values[1];
+                            if ($size > 1) {
+                                $bean->department = $values[1];
+                            }
                         } else {
                             $bean->department = $value;
                         }
