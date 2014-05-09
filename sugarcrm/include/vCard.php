@@ -255,12 +255,16 @@ class vCard
                     }
 
                     if ($keys[0] == 'N') {
-                        if (sizeof($values) > 0)
+                        $size = count($values);
+                        if ($size > 0) {
                             $bean->last_name = $values[0];
-                        if (sizeof($values) > 1)
+                        }
+                        if ($size > 1) {
                             $bean->first_name = $values[1];
-                        if (sizeof($values) > 2)
-                            $bean->salutation = $values[2];
+                        }
+                        if ($size > 3) {
+                            $bean->salutation = $values[3];
+                        }
                     }
 
                     if ($keys[0] == 'FN') {
