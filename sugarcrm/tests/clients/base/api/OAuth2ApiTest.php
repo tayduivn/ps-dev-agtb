@@ -116,33 +116,64 @@ class OAuth2ApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->will($this->returnValue($oauth2));
         
         $ret = $api->sudo($service, $stdArgs);
-    } 
+    }
 
-    public function testIsSupportedClientVersion()
+    /**
+     * @param array $info
+     * @param boolean $expected
+     * @param string $message
+     *
+     * @dataProvider clientVersionProvider
+     */
+    public function testIsSupportedClientVersion(array $info, $expected, $message)
     {
-        $service = new RestService();
+        $service = $this->getMock('RestService');
+        $service->api_settings = array(
+            'minClientVersions' => array(
+                'the-client' => '1.2.0',
+            ),
+        );
         $api = new OAuth2Api();
 
-        // Three parts:
-        // #1 Return true if there is no client info
-        $ret = $api->isSupportedClientVersion($service, array('some'=>'things','keep'=>'happening'));
-        $this->assertTrue($ret,"Check client version was pleased by the lack of version");
+        $ret = $api->isSupportedClientVersion($service, $info);
+        $this->assertEquals($expected, $ret, $message);
+    }
 
-        // #2 Return false if the client is out of date
-        $ret = $api->isSupportedClientVersion($service, array('client_info'=>
-                                                        array('app'=>array(
-                                                                  'name'=>'nomad',
-                                                                  'version'=>'1.0.1',
-                                                                  ))));
-        $this->assertFalse($ret, "Returned true on an out of date client");
-
-        // #3 Return true if the client isn't out of date
-        $ret = $api->isSupportedClientVersion($service, array('client_info'=>
-                                                        array('app'=>array(
-                                                                  'name'=>'nomad',
-                                                                  'version'=>'1.2.0',
-                                                                  ))));
-        $this->assertTrue($ret, "Returned false on an up to date client");
+    public static function clientVersionProvider()
+    {
+        return array(
+            array(
+                array(
+                    'some' => 'things',
+                    'keep' => 'happening',
+                ),
+                true,
+                'Check client version was pleased by the lack of version'
+            ),
+            array(
+                array(
+                    'client_info' => array(
+                        'app' => array(
+                            'name' => 'the-client',
+                            'version' => '1.0.1',
+                        )
+                    )
+                ),
+                false,
+                'Returned true on an out of date client'
+            ),
+            array(
+                array(
+                    'client_info' => array(
+                        'app' => array(
+                            'name' => 'the-client',
+                            'version' => '1.2.0',
+                        )
+                    )
+                ),
+                true,
+                'Returned false on an up to date client'
+            ),
+        );
     }
 }
-
