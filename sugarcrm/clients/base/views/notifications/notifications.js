@@ -295,7 +295,7 @@
      */
     _pullReminders: function() {
 
-        if (this.disposed) {
+        if (this.disposed || !_.isFinite(this.reminderMaxTime)) {
             return this;
         }
 

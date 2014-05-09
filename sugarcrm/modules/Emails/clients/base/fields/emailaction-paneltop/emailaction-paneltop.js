@@ -30,5 +30,6 @@
     handleEmailClientClose: function() {
         var context = this.context.parent || this.context;
         context.trigger('panel-top:refresh', 'emails');
+        context.trigger('panel-top:refresh', 'archived_emails');
     }
 })

@@ -160,8 +160,7 @@ class LDAPAuthenticateUser extends SugarAuthenticateUser{
                         $user_uid = $user_uid[0];
                     }
                     // If user_uid contains special characters (for LDAP) we need to escape them !
-                    $user_uid = str_replace(array("(", ")"), array("\(", "\)"), $user_uid);
-
+                    $user_uid = str_replace(array("\\", "(", ")"), array("\\\\", "\(", "\)"), $user_uid);
 				}
 
 				// build search query and determine if we are searching for a bare id or the full dn path

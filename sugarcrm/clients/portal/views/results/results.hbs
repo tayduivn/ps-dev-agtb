@@ -32,7 +32,7 @@
                 {{#each collection.models}}
                 <li class="search" data-id="{{id}}">
                     <span class="label label-module label-module-sm label-{{module}}">{{moduleIconLabel module}}</span>
-                    <p><a href="#{{buildRoute module=module id=id}}">{{attributes.name}}</a></p>
+                    <p class="ellipsis_inline"><a href="#{{buildRoute module=module id=id}}">{{attributes.name}}</a></p>
                     <div class="actions">
                        <a href="javascript:void(0);" rel="tooltip" title="{{str "LBL_PREVIEW"}}"><i class="icon-eye-open"></i></a>
                     </div>

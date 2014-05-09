@@ -141,9 +141,9 @@ class SugarWidgetReportField extends SugarWidgetField
             $query = $this->reporter->db->convert($currency_alias.".conversion_rate", "IFNULL", array(1));
             // We need to use convert() for AVG because of Oracle
             if ($layout_def['group_function'] != 'avg') {
-                $alias = "{$layout_def['group_function']}($alias/{$query})*{$currency->conversion_rate}";
+                $alias = "{$layout_def['group_function']}($alias/{$query})";
             } else {
-                $alias = $this->reporter->db->convert("$alias/$query", "AVG") . " * {$currency->conversion_rate}";
+                $alias = $this->reporter->db->convert("$alias/$query", "AVG");
             }
         } else {
             // We need to use convert() for AVG because of Oracle

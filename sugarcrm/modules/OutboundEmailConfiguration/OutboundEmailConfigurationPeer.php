@@ -194,8 +194,10 @@ class OutboundEmailConfigurationPeer
     ) {
         $mailConfigurations = self::listMailConfigurations($user, $locale, $charset);
         foreach ($mailConfigurations AS $mailConfiguration) {
+            $inboundIds = $mailConfiguration->getInboundIds();
             if ($mailConfiguration->getConfigId() == $configuration_id ||
-                $mailConfiguration->getInboxId() == $configuration_id
+                $mailConfiguration->getInboxId() == $configuration_id ||
+                in_array($configuration_id, $inboundIds)
             ) {
                 return $mailConfiguration;
             }
@@ -302,7 +304,7 @@ class OutboundEmailConfigurationPeer
         /* Retrieve any Inbound User Mail Accounts and the Outbound Mail Accounts Associated with them */
         $ie         = new InboundEmail();
         $ieAccounts = $ie->retrieveAllByGroupIdWithGroupAccounts($user->id);
-
+        $ie_ids = array_keys($ieAccounts);
         foreach ($ieAccounts as $k => $v) {
             $name          = $v->get_stored_options('from_name');
             $addr          = $v->get_stored_options('from_addr');
@@ -390,6 +392,7 @@ class OutboundEmailConfigurationPeer
         $configurations["personal"]      = $personal;
         $configurations["replyto_email"] = $system_replyToAddress;
         $configurations["replyto_name"]  = $system_replyToName;
+        $configurations["inbound_ids"]   = $ie_ids;
         $outboundEmailConfiguration      = self::buildOutboundEmailConfiguration(
             $user,
             $configurations,
@@ -468,6 +471,10 @@ class OutboundEmailConfigurationPeer
 
         if (!empty($configurations["inbox_id"])) {
             $outboundEmailConfiguration->setInboxId($configurations["inbox_id"]);
+        }
+
+        if (!empty($configurations["inbound_ids"])) {
+            $outboundEmailConfiguration->setInboundIds($configurations["inbound_ids"]);
         }
 
         if (!empty($configurations["from_email"])) {

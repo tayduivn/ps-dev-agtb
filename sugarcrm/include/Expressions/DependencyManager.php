@@ -305,6 +305,15 @@ class DependencyManager
             }
         }
 
+        //Sidecar metadata panel dependencies
+        if (isset($viewdef['panels']) && is_array($viewdef['panels'])) {
+            foreach ($viewdef['panels'] as $panelDef) {
+                if (!empty($panelDef['dependency']) && !empty($panelDef['name'])) {
+                    $deps[] = static::getPanelDependency($panelDef['name'], $panelDef['dependency']);
+                }
+            }
+        }
+
         $type = 'view';
 
         if (in_array($view, self::$editable_views)

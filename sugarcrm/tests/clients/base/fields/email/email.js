@@ -1,4 +1,4 @@
-describe("Email field", function() {
+describe('Base.Email', function() {
 
     var app, field, model, mock_addr, oldjQueryFn;
 
@@ -450,6 +450,68 @@ describe("Email field", function() {
             })).email_address;
             expect(actual).toBe(expected);
         });
+
+    });
+
+    describe('when required', function() {
+        var sandbox = sinon.sandbox.create();
+        beforeEach(function() {
+            model = new Backbone.Model();
+            model.fields = {
+                email1: {
+                    required: true
+                }
+            };
+            model.set('email', [{
+                    email_address: 'test1@test.com',
+                    primary_address: true
+                }]
+            );
+            field = SugarTest.createField('base', 'email', 'email', 'edit', undefined, undefined, model);
+            model = field.model;
+
+            field.addPluginTooltips = field.removePluginTooltips = function()
+            {};
+
+            field.render();
+        });
+
+        afterEach(function() {
+            field = null;
+            sandbox.restore();
+        });
+
+        it('field def will have required as true', function() {
+            expect(field.def.required).toBeTruthy();
+        });
+
+        it('field will call decorateRequired when all addresses are removed', function() {
+            sandbox.stub(field, 'decorateRequired', function() {
+            });
+
+            // find the first remove button
+            var el = field.$('.removeEmail').first();
+            // click it
+            el.click();
+
+            // this should have been called
+            expect(field.decorateRequired).toHaveBeenCalled();
+        });
+
+        it('field will remove the required placeholder after add has been called', function() {
+            // since it rendered with one, we need to remove it first
+            field.$('.removeEmail').first().click();
+            var $el = field._getNewEmailField();
+            // make sure we have the LBL_REQUIRED_FIELD in the placeholder
+            expect($el.prop('placeholder')).toContain('LBL_REQUIRED_FIELD');
+            // set the value and add it
+            $el.val('test@test.com');
+            field.$('.addEmail').first().click();
+            // make sure we don't have the LBL_REQUIRED_FIELD in the place holder
+            expect(field._getNewEmailField().prop('placeholder')).not.toContain('LBL_REQUIRED_FIELD');
+
+        });
+
 
     });
 });

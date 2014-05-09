@@ -2233,7 +2233,7 @@ protected function checkQuery($sql, $object_name = false)
     		}
 
     		if(strlen($val) == 0) {
-    			if(isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
+    			if (!empty($fieldDef['required']) && isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
     				$val = $fieldDef['default'];
     			} else {
     				$val = null;

@@ -103,7 +103,7 @@ width:70%;
     <div id="sugar_full_search_results" >
         {include file=$rsTemplate}
     </div>
-    <div id="showMoreDiv"  onclick="SUGAR.FTS.loadMore();" style="{$showMoreDivStyle}">LOAD MORE</div>
+    <div id="showMoreDiv"  onclick="SUGAR.FTS.loadMore();" style="{$showMoreDivStyle}">{$APP.LBL_SEARCH_LOAD_MORE}</div>
 </td>
     </tr>
 </table>
