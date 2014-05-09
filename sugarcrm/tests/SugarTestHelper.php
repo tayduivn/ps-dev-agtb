@@ -935,9 +935,11 @@ class SugarTestHelper
             $path = implode("/", $parts);
             if (!is_dir($path)) {
                 self::$oldDirs[] = $path;
-                SugarAutoLoader::ensureDir($path);
             }
             array_pop($parts);
+        }
+        if (!is_dir($dirname)) {
+            SugarAutoLoader::ensureDir($dirname);
         }
     }
 

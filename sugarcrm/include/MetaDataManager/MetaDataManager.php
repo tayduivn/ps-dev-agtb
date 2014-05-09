@@ -72,6 +72,7 @@ class MetaDataManager
     const MM_MODULETABMAP   = 'module_tab_map';
     const MM_LOGOURL        = 'logo_url';
     const MM_OVERRIDEVALUES = '_override_values';
+    const MM_FILTERS        = 'filters';
 
     /**
      * Collection of fields in the user metadata that can trigger a reauth when
@@ -164,6 +165,7 @@ class MetaDataManager
         self::MM_HIDDENSUBPANELS => 'getHiddenSubpanels',
         self::MM_MODULETABMAP   => 'getModuleTabMap',
         self::MM_LOGOURL        => 'getLogoUrl',
+        self::MM_FILTERS        => 'getSugarFilters',
     );
 
     /**
@@ -314,7 +316,7 @@ class MetaDataManager
      * These sections are skipped as part of a full metadata fetch either because
      * they are handled in a combination method like the modules section builder
      * or because they are handled separately, like override values
-     * 
+     *
      * @var array
      */
     protected $sectionsToSkip = array(
@@ -873,6 +875,16 @@ class MetaDataManager
     }
 
     /**
+     * Filters accessor, gets sugar filter operators
+     *
+     * @return array array of filters with a hash
+     */
+    public function getSugarFilters()
+    {
+        return $this->getSystemClientData('filter');
+    }
+
+    /**
      * Views accessor Gets client views
      *
      * @return array
@@ -1078,7 +1090,7 @@ class MetaDataManager
     /**
      * Registers the API metadata cache to be cleared at shutdown
      *
-     * @param bool $deleteModuleClientCache Should we also delete the client file 
+     * @param bool $deleteModuleClientCache Should we also delete the client file
      *             cache of the modules
      * @param bool $clearNow Tells this method to clear the cache now instead of
      *             at shutdown
@@ -1940,7 +1952,7 @@ class MetaDataManager
 
         foreach ($this->sections as $section) {
             // Overrides are handled at the end because they are "special"
-            // full_module_list and module_info are handled by the modules section 
+            // full_module_list and module_info are handled by the modules section
             // handler and is only found in private metadata
             if ($this->sectionIsSkipped($section)) {
                 continue;
@@ -2892,6 +2904,7 @@ class MetaDataManager
             self::MM_CURRENCIES,
             self::MM_MODULETABMAP,
             self::MM_FIELDS,
+            self::MM_FILTERS,
             self::MM_VIEWS,
             self::MM_LAYOUTS,
             self::MM_LABELS,
@@ -3110,24 +3123,24 @@ class MetaDataManager
     }
 
     /**
-     * Checks to see if a particular sections is supposed to be skipped in the 
+     * Checks to see if a particular sections is supposed to be skipped in the
      * full metadata load
-     * 
+     *
      * @param string $section Name of the section to check
      * @return boolean
      */
-    protected function sectionIsSkipped($section) 
+    protected function sectionIsSkipped($section)
     {
         return !empty($this->sectionsToSkip[$section]);
     }
 
     /**
      * Normalizes the metadata response for the platform.
-     * 
+     *
      * This is here for platforms that need to manipulate the metadata collection
      * prior to sending it back to the client. This should be overridden as needed
      * in the platform specific metadata managers.
-     * 
+     *
      * @param array $data The metadata collection
      * @return array The normalize metadata collection for this platform
      */

@@ -52,7 +52,8 @@ class LanguageManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @ticket BR-1467
-     * Test that filter_operators_dom is loaded if default is non-english and we load English
+     * Test app list strings, e.g `account_type_dom`, are loaded if default is
+     * non-english and we load English.
      */
     public function testLanguageOrder()
     {
@@ -61,7 +62,7 @@ class LanguageManagerTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::saveFile('include/language/tlh_QON.lang.php');
         SugarAutoLoader::put('include/language/tlh_QON.lang.php', '<?php $app_list_strings = array ("language_pack_name" => "tlhIngan Hol");', false);
         $strings = return_app_list_strings_language('en_us');
-        $this->assertArrayHasKey('filter_operators_dom', $strings);
-        $this->assertNotEmpty($strings['filter_operators_dom'], 'filter_operators_dom is empty');
+        $this->assertArrayHasKey('account_type_dom', $strings);
+        $this->assertNotEmpty($strings['account_type_dom'], 'account_type_dom is empty');
     }
 }
