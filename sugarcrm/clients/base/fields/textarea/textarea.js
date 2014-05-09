@@ -104,6 +104,20 @@
     /**
      * {@inheritDoc}
      *
+     * Prevents editing the textarea field in a list view.
+     *
+     * @param {String} name The mode to set the field to.
+     */
+    setMode: function(name) {
+        // FIXME: This will be updated pending changes to fields in sidecar,
+        // see SC-2608, SC-2776.
+        var mode = (this.action === 'list') && _.contains(['edit', 'disabled'], name) ? this.action : name;
+        this._super('setMode', [mode]);
+    },
+
+    /**
+     * {@inheritDoc}
+     *
      * Formatter that always returns the value set on the textarea field. Sets
      * a `short` value for a truncated representation, if the lenght of the
      * value on the field exceeds that of `max_display_chars`. The return value
