@@ -82,11 +82,11 @@
     display: inline-block;
   }
 
-  /*needed for firefox to position absolute inside table-cell*/
   .table-cell-wrapper {
     position: relative;
     display: inline-block;
   }
+
   .record-edit-link-wrapper {
     width: 100%;
     height: calc(100% - 16px);
@@ -95,10 +95,9 @@
     z-index: 10000;
     .record-edit-link {
       margin-left: 0;
-    }
-    &:hover {
-      .record-edit-link {
-        display: inline-block;
+      .icon-pencil {
+        left: -16px !important;
+        top: 4px !important;
       }
     }
   }

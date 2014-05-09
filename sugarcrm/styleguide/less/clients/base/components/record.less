@@ -575,8 +575,6 @@
   }
 }
 
-
-//common to both .record and .headerpane
 .record-edit-link-wrapper {
   position: absolute;
   z-index: 0;
@@ -593,27 +591,29 @@
     height: 100%;
     width: 100%;     
   }
-  &:hover .record-edit-link {
-    display: block;
-    .icon-pencil {
-      left: 0;
-      top: 2px;
-      font-size: 10px;
-      position: absolute;
-      color: @grayLight;
-    }    
+}
+.record-cell {
+  &:hover {
+    .record-edit-link {
+      display: inline-block;
+      .icon-pencil {
+        left: 0;
+        top: 2px;
+        font-size: 10px;
+        position: absolute;
+        color: @grayLight;
+      }    
+    }
   }
 }
-.record-cell:hover,
-.record-cell:focus {
-  .record-edit-link {
-    display: inline-block;
-  }
-}
-.record-cell.edit:hover,
-.record-cell.edit:focus {
-  .record-edit-link {
-    display: none;
+.record-cell.edit {
+  &:hover {
+    .record-edit-link {
+      display: none;
+      .icon-pencil {
+        display: none;
+      }
+    }
   }
 }
 
