@@ -54,6 +54,10 @@ class isAfterExpression extends BooleanExpression {
 			var a = SUGAR.util.DateUtils.parse(params[0].evaluate());
 			var b = SUGAR.util.DateUtils.parse(params[1].evaluate());
 
+            if (!a || !b || isNaN(a) || isNaN(b)) {
+                return SUGAR.expressions.Expression.FALSE;
+            }
+
 			if ( a > b )	return SUGAR.expressions.Expression.TRUE;
 			return SUGAR.expressions.Expression.FALSE;
 EOQ;
