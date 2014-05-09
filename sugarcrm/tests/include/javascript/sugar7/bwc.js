@@ -109,6 +109,20 @@ describe("sugar7.extensions.bwc", function() {
             expect(params['account_id']).toBe(parentModel.get('account_id'));
             expect(params['account_name']).toBe(parentModel.get('account_name'));
         });
+
+        it('will add contact_id when module is contacts', function() {
+            parentModel.module = 'Contacts';
+            parentModel.set('id', 'my_contact_id');
+            var params = app.bwc._handleRelatedRecordSpecialCases({}, parentModel, "quotes");
+            expect(params['contact_id']).toBe(parentModel.get('id'));
+        });
+
+        it('will add contact_id when parentModel contains contact_id', function() {
+            parentModel.module = 'Yahoo';
+            parentModel.set('contact_id', 'my_contact_id');
+            var params = app.bwc._handleRelatedRecordSpecialCases({}, parentModel, "quotes");
+            expect(params['contact_id']).toBe(parentModel.get('contact_id'));
+        });
     });
 
     describe('_createRelatedRecordUrlParams', function() {
