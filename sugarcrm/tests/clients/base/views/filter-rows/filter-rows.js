@@ -296,7 +296,11 @@ describe('Base.View.FilterRows', function() {
         var addRowStub, _select2Obj, _rowObj;
         beforeEach(function() {
             view.fieldList = {
-                name: {}
+                name: {},
+                account_name: {
+                    name: 'account_name',
+                    id_name: 'account_id'
+                }
             };
             _select2Obj = {
                 select2: sinon.collection.stub($.fn, 'select2', function(sel) {
@@ -355,20 +359,46 @@ describe('Base.View.FilterRows', function() {
             expect(_select2Obj.select2.firstCall.args).toEqual(['val', '$favorite']);
         });
 
-        it('should populate the template with values passed in options', function() {
-            view.context.editingFilter.set('is_template', true);
-            view.context.set('filterOptions', {
+        using('normal field, relate field', [
+            {
                 filter_populate: {
                     name: 'Sugar'
+                },
+                filterDef: {
+                    'name': ''
+                },
+                expected: {
+                    field: 'name',
+                    operator: '$equals',
+                    value: 'Sugar'
                 }
-            });
-            view.populateRow({
-                'name': ''
-            });
+            },
+            {
+                filter_populate: {
+                    account_id: '1234-5678'
+                },
+                filterDef: {
+                    'account_id': ''
+                },
+                expected: {
+                    field: 'account_name',
+                    operator: '$equals',
+                    value: '1234-5678'
+                }
+            }
+        ], function(option) {
 
-            expect(_select2Obj.select2.firstCall.args).toEqual(['val', 'name']);
-            expect(_select2Obj.select2.secondCall.args).toEqual(['val', '$equals']);
-            expect(_rowObj.data.firstCall.args).toEqual(['value', 'Sugar']);
+            it('should populate the template with values passed in options', function() {
+                view.context.editingFilter.set('is_template', true);
+                view.context.set('filterOptions', {
+                    filter_populate: option.filter_populate
+                });
+                view.populateRow(option.filterDef);
+
+                expect(_select2Obj.select2.firstCall.args).toEqual(['val', option.expected.field]);
+                expect(_select2Obj.select2.secondCall.args).toEqual(['val', option.expected.operator]);
+                expect(_rowObj.data.firstCall.args).toEqual(['value', option.expected.value]);
+            });
         });
     });
 

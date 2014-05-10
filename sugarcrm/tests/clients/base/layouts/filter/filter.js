@@ -838,6 +838,21 @@ describe('Base.Layout.Filter', function() {
                 expect(layout.filters.length).toEqual(4);
                 expect(layout.filters.get('test4')).toBeDefined();
             });
+
+            it('should create a $relate filter when it is set as the initial filter', function() {
+                layout.context.set('filterOptions', {
+                    initial_filter: '$relate',
+                    filter_populate: {
+                        account_id: '1234-5678'
+                    }
+                });
+                layout.loadPredefinedFilters('Cases');
+                expect(layout.filters.defaultFilterFromMeta).toEqual('test3');
+                expect(layout.filters.length).toEqual(4);
+                expect(layout.filters.get('$relate')).toBeDefined();
+                expect(layout.filters.get('$relate').get('editable')).toEqual(true);
+                expect(layout.filters.get('$relate').get('is_template')).toEqual(true);
+            });
         });
 
         describe('selectFilter', function() {
