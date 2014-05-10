@@ -286,6 +286,17 @@ class MetaDataFiles
     }
 
     /**
+     * Gets a single file path by type
+     *
+     * @static
+     * @return string
+     */
+    public static function getPath($path)
+    {
+        return empty(self::$paths[$path]) ? '' : self::$paths[$path];
+    }
+
+    /**
      * Gets the view type of a client based on the requested view
      *
      * @static
