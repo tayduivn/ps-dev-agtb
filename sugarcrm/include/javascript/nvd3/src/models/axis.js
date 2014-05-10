@@ -85,8 +85,7 @@ nv.models.axis = function() {
           maxTickHeight = 0;
       var tickText = g.selectAll('g.tick').select('text');
       tickText.each(function(d, i) {
-        var bbox = this.getBoundingClientRect(),
-            size = {w: parseInt(bbox.width, 10), h: parseInt(bbox.height / 1.15, 10)};
+        var size = {w: parseInt(this.offsetWidth, 10), h: parseInt(this.offsetHeight / 1.15, 10)};
         if (size.w > maxTickWidth) {
           maxTickWidth = size.w;
         }
@@ -151,7 +150,7 @@ nv.models.axis = function() {
                     rows = 1,
                     maxWidth = axis.scale().rangeBand();
 
-                if (this.getBoundingClientRect().width > maxWidth) {
+                if (this.offsetWidth > maxWidth) {
                   this.textContent = '';
 
                   do {
@@ -170,7 +169,7 @@ nv.models.axis = function() {
                     while (i < l) {
                       textString = textSpan.text();
                       textSpan.text(textString + ' ' + textArray[i]);
-                      if (this.getBoundingClientRect().width <= maxWidth) {
+                      if (this.offsetWidth <= maxWidth) {
                         i += 1;
                       } else {
                         textSpan.text(textString);
@@ -300,8 +299,8 @@ nv.models.axis = function() {
 
         axisLabel.each(function(d, i) {
           thickness += orientation === 'horizontal' ?
-            parseInt(this.getBoundingClientRect().height / 1.15, 10) :
-            parseInt(this.getBoundingClientRect().width / 1.15, 10);
+            parseInt(this.offsetHeight / 1.15, 10) :
+            parseInt(this.offsetWidth / 1.15, 10);
         });
       }
 
@@ -358,10 +357,10 @@ nv.models.axis = function() {
               .each(function(d, i) {
                 try {
                   if (i) { // i== 1, max position
-                    maxMinRange.push(scale(d) - this.getBoundingClientRect().width - 4);  //assuming the max and min labels are as wide as the next tick (with an extra 4 pixels just in case)
+                    maxMinRange.push(scale(d) - this.offsetWidth - 4);  //assuming the max and min labels are as wide as the next tick (with an extra 4 pixels just in case)
                   }
                   else { // i==0, min position
-                    maxMinRange.push(scale(d) + this.getBoundingClientRect().width + 4);
+                    maxMinRange.push(scale(d) + this.offsetWidth + 4);
                   }
                 } catch (err) {
                   if (i) { // i== 1, max position

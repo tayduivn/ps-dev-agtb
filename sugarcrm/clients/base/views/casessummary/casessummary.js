@@ -47,7 +47,7 @@
                 .margin({top: 10, right: 10, bottom: 15, left: 10})
                 .donut(true)
                 .donutLabelsOutside(true)
-                .donutRatio(0.4)
+                .donutRatio(0.447)
                 .hole(this.total)
                 .showTitle(false)
                 .tooltips(true)
