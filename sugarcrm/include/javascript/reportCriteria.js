@@ -1016,7 +1016,7 @@ function addFilterInputDateBetween(row,filter) {
 	new_input.size="12";
 	new_input.maxsize="255";
 	new_input.visible="true";
-	new_input.setAttribute('id','jscal_field'); 
+	new_input.setAttribute('id', 'jscal_field_' + current_filter_id);
 	cell.appendChild(new_input);
 	row.appendChild(cell);
 	filter_row.input_field1 = new_input;
@@ -1025,7 +1025,7 @@ function addFilterInputDateBetween(row,filter) {
 	cell.setAttribute('valign','middle'); 
 	var img_element = document.createElement("img");
 	img_element.setAttribute('src','index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=jscalendar.gif'); 
-	img_element.setAttribute('id','jscal_trigger'); 
+	img_element.setAttribute('id', 'jscal_trigger_' + current_filter_id);
 	cell.appendChild(img_element);
 	row.appendChild(cell);
 
@@ -1058,7 +1058,7 @@ function addFilterInputDateBetween(row,filter) {
 	new_input.size="12";
 	new_input.maxsize="255";
 	new_input.visible="true";
-	new_input.setAttribute('id','jscal_field2'); 
+	new_input.setAttribute('id', 'jscal_field2_' + current_filter_id);
 	cell.appendChild(new_input);
 	row.appendChild(cell);
 	filter_row.input_field1 = new_input;
@@ -1066,7 +1066,7 @@ function addFilterInputDateBetween(row,filter) {
 	var cell = document.createElement("td");
 	var img_element = document.createElement("img");
 	img_element.setAttribute('src','index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=jscalendar.gif'); 
-	img_element.setAttribute('id','jscal_trigger2'); 
+	img_element.setAttribute('id', 'jscal_trigger2_' + current_filter_id);
 	cell.appendChild(img_element);
 	row.appendChild(cell);
 	Calendar.setup ({ 
@@ -1096,13 +1096,13 @@ function addFilterInputDatetimesBetween(row,filter) {
 		new_input.size="12";
 		new_input.maxsize="255";
 		new_input.visible="true";
-		new_input.setAttribute('id','jscal_field'); 
+		new_input.setAttribute('id', 'jscal_field_' + current_filter_id);
 		div1.appendChild(new_input);
 		filter_row.input_field1 = new_input;
 	
 		var img_element = document.createElement("img");
 		img_element.setAttribute('src',"index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=jscalendar.gif"); 
-		img_element.setAttribute('id','jscal_trigger'); 
+		img_element.setAttribute('id', 'jscal_trigger_' + current_filter_id);
 		img_element.setAttribute('style', 'vertical-align:bottom;padding-left:3px;padding-right:3px;');
 		div1.appendChild(img_element);
 		div1.appendChild(this.newSelectSpanElement('namestart', filter.input_name1));
@@ -1134,13 +1134,13 @@ function addFilterInputDatetimesBetween(row,filter) {
 		new_input.size="12";
 		new_input.maxsize="255";
 		new_input.visible="true";
-		new_input.setAttribute('id','jscal_field2'); 
+		new_input.setAttribute('id', 'jscal_field2_' + current_filter_id);
 		div3.appendChild(new_input);
 		filter_row.input_field1 = new_input;
 	
 		var img_element = document.createElement("img");
 		img_element.setAttribute('src',"index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=jscalendar.gif"); 
-		img_element.setAttribute('id','jscal_trigger2'); 
+		img_element.setAttribute('id', 'jscal_trigger2_' + current_filter_id);
 		img_element.setAttribute('style', 'vertical-align:bottom;padding-left:3px;padding-right:3px;');
 		div3.appendChild(img_element);
 		Calendar.setup ({ 
