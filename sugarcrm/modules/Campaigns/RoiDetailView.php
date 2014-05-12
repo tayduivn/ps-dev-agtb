@@ -147,9 +147,10 @@ $campaign_id = $focus->id;
    }
    else{
    	$cost_per_impression = format_number(0);
-   }       
-   $smarty->assign("COST_PER_IMPRESSION",currency_format_number($cost_per_impression));
-   if(empty($camp_data1['click_thru_link'])) $camp_data1['click_thru_link']=0;      
+   }
+   $smarty->assign("COST_PER_IMPRESSION", SugarCurrency::formatAmountUserLocale($cost_per_impression, $focus->currency_id));
+
+   if(empty($camp_data1['click_thru_link'])) $camp_data1['click_thru_link']=0;
    $click_thru_links = $camp_data1['click_thru_link'];
    
    if($click_thru_links >0){
@@ -157,10 +158,10 @@ $campaign_id = $focus->id;
    }
    else{
    	$cost_per_click_thru = format_number(0);
-   } 
-   $smarty->assign("COST_PER_CLICK_THROUGH",currency_format_number($cost_per_click_thru));
-    
-    
+   }
+   $smarty->assign("COST_PER_CLICK_THROUGH", SugarCurrency::formatAmountUserLocale($cost_per_click_thru, $focus->currency_id));
+
+
     	$currency = BeanFactory::getBean('Currencies');
     if(isset($focus->currency_id) && !empty($focus->currency_id))
     {
