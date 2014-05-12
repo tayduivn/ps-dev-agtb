@@ -37,7 +37,7 @@ $dictionary['RecordList'] = array(
 		'records' => array(
 			'name' => 'records',
 			'vname' => 'LBL_RECORD_LIST',
-			'type' => 'text',
+            'type' => 'longtext',
 			'required' => true,
 			'reportable' => false,
 		),
