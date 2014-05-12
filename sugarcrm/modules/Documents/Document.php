@@ -103,12 +103,48 @@ class Document extends SugarBean {
     function populateFromRow($row, $convert = false)
     {
         $row = parent::populateFromRow($row, $convert);
-        
+
         if (!empty($this->document_name) && empty($this->name)) {
             $this->name = $this->document_name;
         }
 
         return $row;
+    }
+
+    public function createRevisionBean()
+    {
+        $Revision = BeanFactory::getBean('DocumentRevisions');
+        //save revision.
+        $Revision->in_workflow = true;
+        $Revision->not_use_rel_in_req = true;
+        $Revision->new_rel_id = $this->id;
+        $Revision->new_rel_relname = 'Documents';
+        $Revision->change_log = translate('DEF_CREATE_LOG','Documents');
+        $Revision->revision = $this->revision;
+        $Revision->document_id = $this->id;
+        $Revision->filename = $this->filename;
+
+        if(isset($this->file_ext))
+        {
+            $Revision->file_ext = $this->file_ext;
+        }
+
+        if(isset($this->file_mime_type))
+        {
+            $Revision->file_mime_type = $this->file_mime_type;
+        }
+
+        $Revision->doc_type = $this->doc_type;
+        if ( isset($this->doc_id) ) {
+            $Revision->doc_id = $this->doc_id;
+        }
+        if ( isset($this->doc_url) ) {
+            $Revision->doc_url = $this->doc_url;
+        }
+
+        $Revision->id = create_guid();
+        $Revision->new_with_id = true;
+        return $Revision;
     }
 
 	function save($check_notify = false) {
@@ -133,37 +169,7 @@ class Document extends SugarBean {
                 $isDuplicate = false;
             }
 
-            $Revision = BeanFactory::getBean('DocumentRevisions');
-            //save revision.
-            $Revision->in_workflow = true;
-            $Revision->not_use_rel_in_req = true;
-            $Revision->new_rel_id = $this->id;
-            $Revision->new_rel_relname = 'Documents';
-            $Revision->change_log = translate('DEF_CREATE_LOG','Documents');
-            $Revision->revision = $this->revision;
-            $Revision->document_id = $this->id;
-            $Revision->filename = $this->filename;
-
-            if(isset($this->file_ext))
-            {
-            	$Revision->file_ext = $this->file_ext;
-            }
-
-            if(isset($this->file_mime_type))
-            {
-            	$Revision->file_mime_type = $this->file_mime_type;
-            }
-
-            $Revision->doc_type = $this->doc_type;
-            if ( isset($this->doc_id) ) {
-                $Revision->doc_id = $this->doc_id;
-            }
-            if ( isset($this->doc_url) ) {
-                $Revision->doc_url = $this->doc_url;
-            }
-
-            $Revision->id = create_guid();
-            $Revision->new_with_id = true;
+            $Revision = $this->createRevisionBean();
 
             $createRevision = false;
             //Move file saved during populatefrompost to match the revision id rather than document id
