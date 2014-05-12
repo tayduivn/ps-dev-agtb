@@ -449,6 +449,10 @@ $dictionary['Opportunity'] = array(
                 )
             ),
             'vname' => 'LBL_CONTACTS',
+            'populate_list' => array(
+                'account_id' => 'account_id',
+                'account_name' => 'account_name',
+            )
         ),
         'contact_role' => array(
             'name' => 'contact_role',

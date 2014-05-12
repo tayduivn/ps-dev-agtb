@@ -257,6 +257,10 @@ $dictionary['Contact'] = array(
             'module' => 'Opportunities',
             'bean_name' => 'Opportunity',
             'vname' => 'LBL_OPPORTUNITIES',
+            'populate_list' => array(
+                'account_id' => 'account_id',
+                'account_name' => 'account_name',
+            )
         ),
         'bugs' => array(
             'name' => 'bugs',
