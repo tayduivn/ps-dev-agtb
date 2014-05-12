@@ -34,6 +34,18 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
     }
 
+    // data providers
+
+    public function vCardsWithSalutations()
+    {
+        return array(
+            array('MAR-1510a.vcf'),
+            array('MAR-1510b.vcf'),
+        );
+    }
+
+    // test cases
+
     /**
      * Check if exception is thrown when required fields are not present
      *
@@ -92,6 +104,22 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
         $bean = $bean->retrieve($record);
 
         $this->assertEquals('Hans Müster',$bean->first_name.' '.$bean->last_name);
+    }
+
+    /**
+     * @dataProvider vCardsWithSalutations
+     */
+    public function testImportVcard_NameIncludesSalutation_PersonIsCreatedWithFirstNameAndLastNameAndSalutation($vcard)
+    {
+        $filename = dirname(__FILE__) . "/vcf/{$vcard}";
+        $module = 'vCardMockModule';
+        $vcard = new vCard();
+        $record = $vcard->importVCard($filename, $module);
+        $bean = new vCardMockModule();
+        $bean = $bean->retrieve($record);
+        $this->assertNotEmpty($bean->first_name, 'The first name should have been parsed from the vcard');
+        $this->assertNotEmpty($bean->last_name, 'The last name should have been parsed from the vcard');
+        $this->assertNotEmpty($bean->salutation, 'The salutation should have been parsed from the vcard');
     }
 
     public function vCardNames()
