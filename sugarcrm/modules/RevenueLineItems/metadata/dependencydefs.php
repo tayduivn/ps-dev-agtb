@@ -111,7 +111,7 @@ $dependencies['RevenueLineItems']['best_worst_sales_stage_read_only'] = array(
             'params' => array(
                 'target' => 'best_case',
                 'label' => 'best_case_label',
-                'value' => 'ifElse(isForecastClosed($sales_stage), $likely_case, $best_case)',
+                'value' => 'string(ifElse(isForecastClosed($sales_stage), $likely_case, $best_case))',
             ),
         ),
         array(
@@ -120,7 +120,7 @@ $dependencies['RevenueLineItems']['best_worst_sales_stage_read_only'] = array(
             'params' => array(
                 'target' => 'worst_case',
                 'label' => 'worst_case_label',
-                'value' => 'ifElse(isForecastClosed($sales_stage), $likely_case, $worst_case)',
+                'value' => 'string(ifElse(isForecastClosed($sales_stage), $likely_case, $worst_case))',
             ),
         ),
     )
@@ -140,7 +140,7 @@ $dependencies['RevenueLineItems']['likely_case_copy_when_closed'] = array(
             'params' => array(
                 'target' => 'best_case',
                 'label' => 'best_case_label',
-                'value' => 'ifElse(isForecastClosed($sales_stage), $likely_case, $best_case)',
+                'value' => 'string(ifElse(isForecastClosed($sales_stage), $likely_case, $best_case))',
             ),
         ),
         array(
@@ -149,7 +149,7 @@ $dependencies['RevenueLineItems']['likely_case_copy_when_closed'] = array(
             'params' => array(
                 'target' => 'worst_case',
                 'label' => 'worst_case_label',
-                'value' => 'ifElse(isForecastClosed($sales_stage), $likely_case, $worst_case)',
+                'value' => 'string(ifElse(isForecastClosed($sales_stage), $likely_case, $worst_case))',
             ),
         ),
     )
