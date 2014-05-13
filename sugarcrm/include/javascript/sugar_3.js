@@ -1189,7 +1189,7 @@ function validate_form(formname, startsWith){
 					if(validate[formname][i][requiredIndex]
 						&& !isFieldTypeExceptFromEmptyCheck(validate[formname][i][typeIndex])
 					){
-						if(typeof form[validate[formname][i][nameIndex]] == 'undefined' || trim(form[validate[formname][i][nameIndex]].value) == ""){
+						if(typeof form[validate[formname][i][nameIndex]] === 'undefined' || trim(form[validate[formname][i][nameIndex]].value) === ""){
 							add_error_style(formname, validate[formname][i][nameIndex], requiredTxt +' ' + validate[formname][i][msgIndex]);
 							isError = true;
 						}
