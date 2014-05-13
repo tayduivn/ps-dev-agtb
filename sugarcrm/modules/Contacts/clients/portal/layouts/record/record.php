@@ -67,7 +67,7 @@ $viewdefs['Contacts']['portal']['layout']['record'] = array (
       ),
     ),
   ),
-  'type' => 'simple',
+  'type' => 'record',
   'name' => 'base',
   'span' => 12,
   'updateNav' => false,

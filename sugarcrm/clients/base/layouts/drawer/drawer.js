@@ -55,6 +55,11 @@
             parentContext;
 
 
+        app.shortcuts.save();
+        if (!app.triggerBefore('app:view:change')) {
+            return;
+        }
+
         //store the callback function to be called later
         if (_.isUndefined(onClose)) {
             this.onCloseCallback.push(function(){});
@@ -116,6 +121,10 @@
         }
 
         if (this._components.length > 0) {
+            if (!app.triggerBefore('app:view:change')) {
+                return;
+            }
+
             //close the drawer
             this._animateCloseDrawer(function() {
                 var layout;
@@ -131,6 +140,8 @@
                 } else { //we've returned to base layout
                     app.trigger("app:view:change", app.controller.context.get("layout"), app.controller.context.attributes);
                 }
+
+                app.shortcuts.restore();
 
                 (self.onCloseCallback.pop()).apply(this, args); //execute callback
             });

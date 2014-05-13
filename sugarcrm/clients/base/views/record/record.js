@@ -26,8 +26,11 @@
         'Audit',
         'FindDuplicates',
         'ToggleMoreLess',
-        'Tooltip'
+        'Tooltip',
+        'Shortcuts'
     ],
+
+    shortcuts: app.shortcuts.SCOPE.RECORD,
 
     enableHeaderButtons: true,
 
@@ -101,6 +104,19 @@
         $(window).on('resize.' + this.cid, this.adjustHeaderpane);
 
         $(window).on('resize.' + this.cid, this.overflowTabs);
+
+        //shortcut keys
+        app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 'd', function() {
+            if (app.acl.hasAccess('delete', this.module)) {
+                this.deleteClicked();
+            }
+        }, this);
+        app.shortcuts.register(app.shortcuts.SCOPE.RECORD, ['ctrl+s','ctrl+alt+a'], function() {
+            var $saveButton = this.$('a[name=save_button]');
+            if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
+                $saveButton.get(0).click();
+            }
+        }, this);
     },
 
     /**

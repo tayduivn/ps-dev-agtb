@@ -57,6 +57,13 @@
         }
         this.def.disable_select_all_alert = !!this.def.disable_select_all_alert;
         this._initTemplates();
+
+        //shortcut keys
+        app.shortcuts.register(app.shortcuts.SCOPE.RECORDS, 'ctrl+a', function() {
+            if (!this.isDisabled()) {
+                this.$('.checkall:visible').click();
+            }
+        }, this);
     },
 
     /**

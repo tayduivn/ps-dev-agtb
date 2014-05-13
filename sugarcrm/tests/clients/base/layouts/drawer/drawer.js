@@ -5,7 +5,8 @@ describe("Drawer Layout", function() {
         $drawers,
         drawer,
         components,
-        app;
+        app,
+        oldController;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
@@ -60,9 +61,25 @@ describe("Drawer Layout", function() {
         drawer = SugarTest.app.drawer;
         components = drawer._components;
         app = SugarTest.app;
+
+        sinonSandbox.stub(app, 'triggerBefore', function() {
+            return true;
+        });
+        sinonSandbox.stub(app.shortcuts, 'save');
+        sinonSandbox.stub(app.shortcuts, 'restore');
+
+        oldController = app.controller;
+        app.controller = {
+            layout: {
+                type: 'simple',
+                context: new Backbone.Model()
+            },
+            context: new Backbone.Model()
+        };
     });
 
     afterEach(function() {
+        app.controller = oldController;
         SugarTest.testMetadata.dispose();
         sinonSandbox.restore();
         delete SugarTest.app.drawer;

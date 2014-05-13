@@ -23,6 +23,11 @@
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
+
+        //shortcut keys
+        app.shortcuts.register(app.shortcuts.SCOPE.GLOBAL, 'c', function() {
+            this.$('[data-toggle=dropdown]').click();
+        }, this);
     },
 
     /**

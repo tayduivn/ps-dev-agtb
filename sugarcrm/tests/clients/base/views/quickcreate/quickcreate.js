@@ -19,6 +19,9 @@ describe("Quick Create Dropdown", function() {
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.set();
+
+        sinon.collection.stub(app.shortcuts, 'register');
+
         view = SugarTest.createView("base",null, viewName, null, null);
 
         // Fake user is authenticated
