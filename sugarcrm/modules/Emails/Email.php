@@ -415,8 +415,10 @@ class Email extends SugarBean {
         $saveAsDraft = !empty($request['saveDraft']);
         if (!$saveAsDraft && !empty($request["MAIL_RECORD_STATUS"]) &&  $request["MAIL_RECORD_STATUS"]=='archived') {
             $archived = true;
+            $this->type = 'archived';
         } else {
             $archived = false;
+            $this->type = 'out';
         }
 
 		/**********************************************************************
