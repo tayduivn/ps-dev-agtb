@@ -2294,11 +2294,10 @@ class SugarBean
     protected function createNotificationEmailTemplate($templateName) {
         global $sugar_config,
                $current_user,
-               $sugar_version;
+               $sugar_version,
+            $locale;
 
-        $currentLanguage = (!empty($_SESSION['authenticated_user_language'])) ?
-            $_SESSION['authenticated_user_language'] :
-            $sugar_config['default_language'];
+        $currentLanguage = $locale->getAuthenticatedUserLanguage();
 
         $xtpl = new XTemplate(get_notify_template_file($currentLanguage));
 
