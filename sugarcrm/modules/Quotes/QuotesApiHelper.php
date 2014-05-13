@@ -34,6 +34,23 @@ require_once('data/SugarBeanApiHelper.php');
 class QuotesApiHelper extends SugarBeanApiHelper
 {
     /**
+     * Formats the bean so it is ready to be handed back to the API's client. Certain fields will get extra processing
+     * to make them easier to work with from the client end.
+     *
+     * @param $bean SugarBean|ForecastManagerWorksheet The bean you want formatted
+     * @param $fieldList array Which fields do you want formatted and returned (leave blank for all fields)
+     * @param $options array Currently no options are supported
+     * @return array The bean in array format, ready for passing out the API to clients.
+     */
+    public function formatForApi(SugarBean $bean, array $fieldList = array(), array $options = array())
+    {
+        // call the legacy method here to load all the data that we need
+        $bean->fill_in_additional_detail_fields();
+
+        return parent::formatForApi($bean, $fieldList, $options);
+    }
+
+    /**
      * This function sets up shipping and billing address for new Quote.
      *
      * @param SugarBean $bean
