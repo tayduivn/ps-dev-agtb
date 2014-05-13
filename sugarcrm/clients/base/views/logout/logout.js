@@ -32,7 +32,7 @@
      */
     events: {
         "click [name=login_button]": "login",
-        "click [name=login_form_button]": "login_form",
+        "click [name=login_form_button]": "login_form"
     },
 
     /**

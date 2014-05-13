@@ -61,6 +61,13 @@
                 message: 'ERR_HTTP_404_TEXT',
                 link: '<a href="javascript:window.history.back()">' + app.lang.get('ERR_HTTP_404_ACTION') + '</a>'
             };
+        } else if(this.context.get('errorType') ==='422') {
+            attributes = {
+                title: 'ERR_HTTP_DEFAULT_TEXT',
+                type: error.status || 'ERR_HTTP_DEFAULT_TYPE',
+                message: 'ERR_CONTACT_TECH_SUPPORT',
+                link: '<a href="javascript:window.history.back()">' + app.lang.get('ERR_HTTP_DEFAULT_ACTION') + '</a>'
+            };
         } else if(this.context.get('errorType') ==='500') {
             attributes = {
                 title: 'ERR_HTTP_500_TITLE',
