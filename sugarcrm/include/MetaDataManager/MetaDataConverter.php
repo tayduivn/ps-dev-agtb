@@ -493,22 +493,7 @@ class MetaDataConverter
 
             $focus = BeanFactory::newBeanByName($subPanelBeanName);
             if ($focus) {
-                $field = $focus->getFieldDefinition($parts[1]);
-                if ($field && $field['type'] == 'link') {
-                    // since we have a valid link, we need to test the relationship to see if it's custom relationship
-                    $relationships = new DeployedRelationships($focus->module_name);
-                    $relationship = $relationships->get($parts[1]);
-                    $relDef = array();
-                    if ($relationship) {
-                        $relDef = $relationship->getDefinition();
-                    }
-                    if (isset($relDef['is_custom']) && $relDef['is_custom']
-                        && isset($relDef['from_studio']) && $relDef['from_studio']) {
-                        $subpanelFileName = "For{$relDef['name']}";
-                    } else {
-                        $subpanelFileName = "For{$focus->module_name}";
-                    }
-                }
+                $subpanelFileName = $this->getLegacySubpanelFileName($focus, $parts[1]);
             }
         }
 
@@ -521,6 +506,31 @@ class MetaDataConverter
         );
 
         return $newPath;
+    }
+
+    /**
+     * Returns name of the file containing legacy subpanel metadata
+     *
+     * @param SugarBean $bean Parent bean
+     * @param string $linkName Subpanel link name
+     * @return string|null
+     */
+    public function getLegacySubpanelFileName(SugarBean $bean, $linkName)
+    {
+        $field = $bean->getFieldDefinition($linkName);
+        if ($field && $field['type'] == 'link') {
+            // since we have a valid link, we need to test the relationship to see if it's custom relationship
+            $relationships = new DeployedRelationships($bean->module_name);
+            $relationship = $relationships->get($linkName);
+            if ($relationship) {
+                $relDef = $relationship->getDefinition();
+                if (!empty($relDef['is_custom']) && !empty($relDef['from_studio'])) {
+                    return 'For' . $relDef['relationship_name'];
+                }
+            }
+        }
+
+        return 'For' . $bean->module_name;
     }
 
     /**
