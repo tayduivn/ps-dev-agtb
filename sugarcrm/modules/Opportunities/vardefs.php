@@ -341,6 +341,11 @@ $dictionary['Opportunity'] = array(
             'comment' => 'The probability of closure',
             'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
             'merge_filter' => 'enabled',
+            //BEGIN SUGARCRM flav=ent ONLY
+            'reportable' => false,
+            'studio' => false,
+            'massupdate' => false,
+            //END SUGARCRM flav=ent ONLY
         ),
         'best_case' => array(
             'name' => 'best_case',
