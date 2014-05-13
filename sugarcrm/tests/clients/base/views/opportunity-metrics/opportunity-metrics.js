@@ -165,6 +165,44 @@ describe('Opportunity Metrics Dashlet', function() {
 
             stub_appListStrings.restore();
         });
+
+        it('User seperator preferences respected.', function() {
+            app.user.setPreference('decimal_separator', ',');
+            app.user.setPreference('number_grouping_separator', '.');
+
+            data = {
+                "won": {
+                    "amount_usdollar": 1000.00,
+                 },
+                 "lost": {
+                    "amount_usdollar": 20.00,
+                 },
+                 "active": {
+                     "amount_usdollar": 30,
+                 }
+            };
+
+            view.evaluateResult(data);
+
+            var expectMetricsCollection = {
+                "won": {
+                    "formattedAmount": "$1.000",
+                },
+                "lost": {
+                    "formattedAmount": "$20",
+                },
+                "active": {
+                    "formattedAmount": "$30",
+                }
+            };
+
+            expect(view.metricsCollection.won.formattedAmount).toEqual(expectMetricsCollection.won.formattedAmount);
+            expect(view.metricsCollection.lost.formattedAmount).toEqual(expectMetricsCollection.lost.formattedAmount);
+            expect(view.metricsCollection.active.formattedAmount).toEqual(expectMetricsCollection.active.formattedAmount);
+
+            app.user.setPreference('decimal_separator', '.');
+            app.user.setPreference('number_grouping_separator', ',');
+        });
     });
 
 });

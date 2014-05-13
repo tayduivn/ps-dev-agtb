@@ -76,7 +76,7 @@
 
         _.each(data, function(value, key) {
             // parse currencies and attach the correct delimiters/symbols etc
-            data[key].formattedAmount = app.currency.formatAmountLocale(value.amount_usdollar, null, 0).replace(/\.[0-9]*/, '');
+            data[key].formattedAmount = app.currency.formatAmountLocale(value.amount_usdollar, null, 0);
 
             data[key].icon = key === 'won' ? 'caret-up' : (key === 'lost' ? 'caret-down' : 'minus');
             data[key].cssClass = key === 'won' ? 'won' : (key === 'lost' ? 'lost' : 'active');
