@@ -331,7 +331,7 @@ function build_source_array($type, $field_value, $var_symbol=true){
             $condition = "empty(\$focus->fetched_row['id'])";
             if (isset($row['id']) && $row['id'] != false)
             {
-                $condition .= ' || (!empty($_SESSION["workflow_cron"]) && $_SESSION["workflow_cron"]=="Yes" && !empty($_SESSION["workflow_id_cron"]) && $_SESSION["workflow_id_cron"]=="' . $row['id'] . '")';
+                $condition .= ' || (!empty($_SESSION["workflow_cron"]) && $_SESSION["workflow_cron"]=="Yes" && !empty($_SESSION["workflow_id_cron"]) && in_array("' . $row['id'] . '", $_SESSION["workflow_id_cron"]))';
             }
             $eval_dump .= "if($condition){ \n ";
             return true;

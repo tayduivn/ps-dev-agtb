@@ -180,16 +180,20 @@ class WorkFlowTriggerShell extends SugarBean {
 		$ProcessView = new ProcessView($this->get_workflow_type(), $this);
 		$ProcessView->local_strings = $current_module_strings;
 		$prev_display_text = $ProcessView->get_prev_text("TriggersCreateStep1", $this->type);
-		
-		if($this->frame_type=="Primary"){
-			$pre_statement = '';$current_module_strings['LBL_LIST_FRAME_PRI'];	
-			$statement1 = $current_module_strings['LBL_LIST_STATEMEMT'];
+
+        // Added a text add to the confirmation of deletes when deleting a primary trigger
+        $deleteConfirm = $current_module_strings['NTC_REMOVE_TRIGGER'];
+
+        if ($this->frame_type == "Primary") {
+            $statement1 = $current_module_strings['LBL_LIST_STATEMEMT'];
+            // Add a notice that deleting the primary deletes all triggers
+            $deleteConfirm .= ' ' . $current_module_strings['NTC_REMOVE_TRIGGER_PRIMARY'];
 		} else {
-			$pre_statement = '';$current_module_strings['LBL_LIST_FRAME_SEC'];	
 			$statement1 = $current_module_strings['LBL_FILTER_LIST_STATEMEMT'];
-		}		
-		
-		$temp_array['FRAME_TYPE'] = $this->frame_type;
+		}
+
+        $temp_array['REMOVE_TRIGGER_CONFIRM'] = $deleteConfirm;
+        $temp_array['FRAME_TYPE'] = $this->frame_type;
 		$temp_array['STATEMENT'] = "<b>".$prev_display_text."</b>";
 		$temp_array['STATEMENT1'] = "<i>".$statement1."</i>";
 		$trigger_display_text = $ProcessView->get_trigger_display_text("TriggersCreateStep1", $this);
@@ -448,14 +452,42 @@ class WorkFlowTriggerShell extends SugarBean {
 			return null;
 		}
 	//end function get_time_int
-	}		
-	
-	
-	
-	
-	
-	
-	
+	}
+
+    /**
+     * Deletes the Trigger.
+     * If it's the primary Trigger, deletes all the Triggers
+     * and Schedules for the parent WorkFlow
+     *
+     * @param $id - $id of the Trigger to be deleted. If empty use $this->id
+     */
+    public function mark_deleted($id = null)
+    {
+        if (!empty($id))
+        {
+            $this->id = $id;
+        }
+
+        //mark delete trigger components
+        mark_delete_components($this->get_linked_beans('future_triggers','Expression'));
+        mark_delete_components($this->get_linked_beans('past_triggers','Expression'));
+        mark_delete_components($this->get_linked_beans('expressions','Expression'));
+        parent::mark_deleted($this->id);
+        $workflow_object = $this->get_workflow_type();
+
+        if($this->frame_type == "Primary")
+        {
+            // Deleting a primary means we delete all triggers, and related schedules
+            $workflow_object->deleteTriggers();
+            $workflow_object->deleteTriggerFilters();
+            $workflow_object->deleteSchedules();
+        }
+
+        //reload $workflow_object to make the trigger changes take effect.
+        $workflow_object = $this->get_workflow_type();
+        $workflow_object->write_workflow();
+    }
+
 ///End Class WorkFlowTrigger
 }
 
