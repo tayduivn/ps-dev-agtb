@@ -264,17 +264,25 @@ abstract class AbstractMetaDataImplementation
         // Now tidy up the module name in the viewdef array
         // MB created definitions store the defs under packagename_modulename and later methods that expect to find them under modulename will fail
 
+        $modulePath = true;
         if (isset ( $variables [ 'module_name' ] )) {
             $mbName = $variables [ 'module_name' ] ;
-            if ($mbName != $this->_moduleName) {
+            $modulePath = isset($defs[$mbName]);
+            // Some defs define a variable but don't path from it (subpanels)
+            if ($mbName != $this->_moduleName && $modulePath) {
                 $defs [ $this->_moduleName ] = $defs [ $mbName ] ;
                 unset ( $defs [ $mbName ] ) ;
             }
         }
         $this->_variables = $variables ;
-        // now remove the modulename preamble from the loaded defs
+        // now remove the modulename preamble from the loaded defs but only if
+        // the defs are pathed from a module
         reset($defs);
-        $temp = each($defs);
+        if ($modulePath) {
+            $temp = each($defs);
+        } else {
+            $temp['value'] = $defs;
+        }
 
         $GLOBALS['log']->debug( get_class ( $this ) . "->_loadFromFile: returning ".print_r($temp['value'],true)) ;
 
