@@ -210,7 +210,7 @@ eoq;
 		$old_value = $disable_date_format;
 		$disable_date_format = true;
 
-		if(!empty($_REQUEST['uid'])) $_POST['mass'] = explode(',', $_REQUEST['uid']); // coming from listview
+		if(!empty($_REQUEST['uid']) && !isset($_REQUEST['entire'])) $_POST['mass'] = explode(',', $_REQUEST['uid']); // coming from listview
 		elseif(isset($_REQUEST['entire']) && empty($_POST['mass'])) {
 			if(empty($order_by))$order_by = '';
 

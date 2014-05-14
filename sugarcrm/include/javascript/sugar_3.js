@@ -2210,18 +2210,26 @@ function sugarListView() {
 
 sugarListView.prototype.confirm_action = function(del) {
 	if (del == 1) {
-		return confirm( SUGAR.language.get('app_strings', 'NTC_DELETE_CONFIRMATION_NUM') + sugarListView.get_num_selected()  + SUGAR.language.get('app_strings', 'NTC_DELETE_SELECTED_RECORDS'));
+		return confirm( SUGAR.language.get('app_strings', 'NTC_DELETE_CONFIRMATION_NUM') + sugarListView.get_num_selected(true)  + SUGAR.language.get('app_strings', 'NTC_DELETE_SELECTED_RECORDS'));
 	}
 	else {
-		return confirm( SUGAR.language.get('app_strings', 'NTC_UPDATE_CONFIRMATION_NUM') + sugarListView.get_num_selected()  + SUGAR.language.get('app_strings', 'NTC_DELETE_SELECTED_RECORDS'));
+		return confirm( SUGAR.language.get('app_strings', 'NTC_UPDATE_CONFIRMATION_NUM') + sugarListView.get_num_selected(true)  + SUGAR.language.get('app_strings', 'NTC_DELETE_SELECTED_RECORDS'));
 	}
 
 }
-sugarListView.get_num_selected = function () {
+sugarListView.get_num_selected = function (asString) {
+    var result = 0;
     var selectCount = $("input[name='selectCount[]']:first");
-    if(selectCount.length > 0)
-        return parseInt(selectCount.val().replace("+", ""));
-    return 0;
+    if(selectCount.length > 0) {
+        if (asString) {
+                result = selectCount.val();
+        } else {
+            result = parseInt(selectCount.val().replace("+", ""));
+        }
+
+    }
+
+    return result;
 
 }
 sugarListView.update_count = function(count, add) {
