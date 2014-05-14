@@ -58,6 +58,7 @@ ensureCache($minifyUtils, $rootDir);
         <script src="../cache/include/javascript/sugar_sidecar.min.js"></script>
         <script src="../include/javascript/sugar7/bwc.js"></script>
         <script src="../include/javascript/sugar7/utils.js"></script>
+        <script src="../include/javascript/sugar7/utils-filters.js"></script>
         <script src="../include/javascript/sugar7/field.js"></script>
         <script src="../include/javascript/sugar7/hacks.js"></script>
         <script src="../include/javascript/sugar7/alert.js"></script>

@@ -388,6 +388,7 @@
                 return;
             }
 
+            var idKey;
             if (!this.fieldList[key]) {
                 //Make sure we use name for relate fields
                 var relate = _.find(this.fieldList, function(field) { return field.id_name === key; });
@@ -396,8 +397,10 @@
                     $row.remove();
                     return;
                 }
+                idKey = key;
                 key = relate.name;
             }
+            idKey = idKey || key;
 
             $row.find('[data-filter=field] input[type=hidden]').select2('val', key).trigger('change');
 
@@ -405,8 +408,8 @@
                 value = {"$equals": value};
             }
             _.each(value, function(value, operator) {
-                if (_.isEmpty(value) && populate && filterOptions.filter_populate[key]) {
-                    value = filterOptions.filter_populate[key];
+                if (_.isEmpty(value) && populate && filterOptions.filter_populate[idKey]) {
+                    value = filterOptions.filter_populate[idKey];
                 }
 
                 $row.data('value', value);

@@ -34,10 +34,14 @@
             return;
         }
 
+        var filterOptions = new app.utils.FilterOptions().config(this.def).format();
+
         app.drawer.open({
             layout: 'selection-list',
             context: {
-                module: 'Reports'
+                module: 'Reports',
+                filterOptions: filterOptions,
+                parent: this.context
             }
         }, _.bind(this.selectDrawerCallback, this));
     },

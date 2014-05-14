@@ -672,6 +672,19 @@
                 this.filters.defaultFilterFromMeta = value.meta.default_filter;
             }
         }, this);
+
+        if (filterOptions.initial_filter === '$relate') {
+            var filterDef = {};
+            _.each(filterOptions.filter_populate, function(value, key) {
+                filterDef[key] = '';
+            });
+            this.filters.add(this.emptyFilter.clone().set({
+                'id': '$relate',
+                'editable': true,
+                'is_template': true,
+                'filter_definition': [filterDef]
+            }));
+        }
     },
 
     /**
