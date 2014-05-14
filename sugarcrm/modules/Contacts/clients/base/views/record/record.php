@@ -268,7 +268,12 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                     'name' => 'description',
                     'span' => 12,
                 ),
-                'report_to_name',
+                array(
+                    'name' => 'report_to_name',
+                    'filter_relate' => array(
+                        'account_id' => 'account_id'
+                    ),
+                ),
                 'sync_contact',
                 'lead_source',
                 'assigned_user_name',
