@@ -138,41 +138,6 @@ class Importer
         //All done, remove file.
     }
 
-    /**
-     * create array with indexes in correct order
-     *
-     * Get correct order for imported columns e.g. if there are account_name and account_id in imported columns
-     * the field account_id should be processed first to prevent invalid retrieving related account by its name
-     *
-     * @param SugarBean $focus
-     * @return array of int
-     */
-    protected function getImportColumnsOrder(SugarBean $focus)
-    {
-        $processed_fields = array();
-        $fields_order = array();
-        foreach ($this->importColumns as $field_index => $field_name) {
-            if (!empty($processed_fields[$field_name])) {
-                continue;
-            }
-            $field_def = $focus->getFieldDefinition($field_name);
-            // if field is relate and has id_name
-            if (!empty($field_def['type']) && $field_def['type'] == 'relate' && !empty($field_def['id_name'])) {
-                // if id_name is in imported columns & has not been processed
-                if (in_array($field_def['id_name'], $this->importColumns)) {
-                    $id_name_key = array_shift(array_keys($this->importColumns, $field_def['id_name']));
-                    $fields_order[] = $id_name_key;
-                    $processed_fields[$field_def['id_name']] = true;
-                }
-            }
-            $fields_order[] = $field_index;
-            $processed_fields[$field_name] = true;
-            unset($field_def);
-        }
-        unset($processed_fields);
-
-        return $fields_order;
-    }
 
     protected function importRow($row)
     {
@@ -204,8 +169,8 @@ class Importer
             'non-primary' => array()
         );
 
-        $fields_order = $this->getImportColumnsOrder($focus);
-        foreach ($fields_order as $fieldNum) {
+        for ( $fieldNum = 0; $fieldNum < $_REQUEST['columncount']; $fieldNum++ )
+        {
             // loop if this column isn't set
             if ( !isset($this->importColumns[$fieldNum]) )
                 continue;
