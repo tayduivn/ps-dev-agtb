@@ -423,7 +423,6 @@
 FLEXLIST GENERIC */
 .flex-list-view {
   position: relative;
-
   .flex-list-view-content {
     overflow-x: auto;
     width: 100%;
@@ -435,6 +434,9 @@ FLEXLIST GENERIC */
   .dataTable {
     max-width: none;
     position: static;
+    td:last-child :not(.btn-group) > span > .rowaction.btn {
+      float: right;
+    }
   }
 
   /*LEFT ACTIONS ONLY*/
