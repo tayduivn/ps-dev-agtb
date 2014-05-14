@@ -138,6 +138,44 @@ class Importer
         //All done, remove file.
     }
 
+    /**
+     * create array with indexes in correct order
+     *
+     * Get correct order for imported columns e.g. if there are account_name and account_id in imported columns
+     * the field account_id should be processed first to prevent invalid retrieving related account by its name
+     *
+     * @param array $field_defs
+     * @return array of int
+     */
+    protected function getImportColumnsOrder($field_defs)
+    {
+        $processed_fields = array();
+        $fields_order = array();
+        foreach ($this->importColumns as $field_index => $field_name) {
+            if (!empty($processed_fields[$field_name])) {
+                continue;
+            }
+            $field_def = $field_defs[$field_name];
+            // if field is relate and has id_name
+            if (!empty($field_def['type']) && $field_def['type'] == 'relate' && !empty($field_def['id_name'])) {
+                // if id_name is in imported columns & has not been processed
+                $id_name_key = array_search($field_def['id_name'], $this->importColumns);
+                if ($id_name_key !== false) {
+                    $key = $field_def['id_name'];
+                    if (empty($processed_fields[$key]) || !$processed_fields[$key]) {
+                        $fields_order[] = $id_name_key;
+                        $processed_fields[$key] = true;
+                    }
+                }
+            }
+            if (empty($processed_fields[$field_name]) || !$processed_fields[$field_name]) {
+                $fields_order[] = $field_index;
+                $processed_fields[$field_name] = true;
+            }
+        }
+
+        return $fields_order;
+    }
 
     protected function importRow($row)
     {
@@ -169,8 +207,8 @@ class Importer
             'non-primary' => array()
         );
 
-        for ( $fieldNum = 0; $fieldNum < $_REQUEST['columncount']; $fieldNum++ )
-        {
+        $fields_order = $this->getImportColumnsOrder($focus->getFieldDefinitions());
+        foreach ($fields_order as $fieldNum) {
             // loop if this column isn't set
             if ( !isset($this->importColumns[$fieldNum]) )
                 continue;
