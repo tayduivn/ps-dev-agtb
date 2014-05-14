@@ -519,9 +519,14 @@ class MetaDataConverter
     {
         $field = $bean->getFieldDefinition($linkName);
         if ($field && $field['type'] == 'link') {
+            if (!empty($bean->field_defs[$linkName]['relationship'])) {
+                $relName = $bean->field_defs[$linkName]['relationship'];
+            } else {
+                $relName = $linkName;
+            }
             // since we have a valid link, we need to test the relationship to see if it's custom relationship
             $relationships = new DeployedRelationships($bean->module_name);
-            $relationship = $relationships->get($linkName);
+            $relationship = $relationships->get($relName);
             if ($relationship) {
                 $relDef = $relationship->getDefinition();
                 if (!empty($relDef['is_custom']) && !empty($relDef['from_studio'])) {
