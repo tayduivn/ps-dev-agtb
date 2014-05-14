@@ -444,6 +444,7 @@ array (
 	'link'=>'users',
 	'len' => '255',
 	'source'=>'non-db',
+    'exportable'=> true,
 	),
 
 	),

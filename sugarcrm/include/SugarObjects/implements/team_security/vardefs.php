@@ -110,6 +110,7 @@ $vardefs = array(
                    //END SUGARCRM flav=pro ONLY
                ), // don't show in studio fields list
             'duplicate_on_record_copy' => 'always',
+            'exportable'=>true,
         ),
 		'team_link' =>
 	    array (

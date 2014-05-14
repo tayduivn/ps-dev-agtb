@@ -82,8 +82,8 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
        'portallistview' => 'visible',
        'portalsearchview' => false,
        //END SUGARCRM flav=ent ONLY
-
 	   ),
+      'exportable'=>true,
   ),
 
     'fixed_in_release'=>
@@ -148,6 +148,7 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
        'portalsearchview' => false,
        //END SUGARCRM flav=ent ONLY
        ),
+      'exportable'=>true,
   ),
     'source' =>
   array (

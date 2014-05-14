@@ -4058,8 +4058,6 @@ class SugarBean
         $distinct = '';
         $options = array('where_condition' => true);
         $this->addVisibilityWhere($where, $options);
-        //store value of export query parameter before it gets overwritten
-        $export_query = (!empty($params['export_query']))?$params['export_query']: 0;
 
         if(!empty($params['distinct']))
         {
@@ -4157,11 +4155,6 @@ class SugarBean
 
         foreach($fields as $field=>$value)
         {
-            //if this is a query meant for exporting and the field is not importable, then skip this field
-            //this will restrict the columns and table joins to minimize impact on performance
-            if($export_query && (empty($value['importable'])|| $value['importable']=='false')){
-                continue;
-            }
 
             //alias is used to alias field names
             $alias='';
@@ -4494,23 +4487,13 @@ class SugarBean
             //END SUGARCRM flav=pro ONLY
         }
 
-	if ($ifListForExport || $export_query) {
+	if ($ifListForExport) {
 		if(isset($this->field_defs['email1'])) {
             $ret_array['select'] .= ', email_addresses.email_address email1';
             $ret_array['select'] .= ', email_addresses.invalid_email';
             $ret_array['select'] .= ', email_addresses.opt_out email_opt_out';
 			$ret_array['from'].= " LEFT JOIN email_addr_bean_rel on {$this->table_name}.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='{$this->module_dir}' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id ";
 		}
-                if(isset($this->field_defs['teams'])){
-                	$ret_array['select'].= ", teams.name AS team_name";
-                	$ret_array['from'].= getTeamSetNameJoin($this->table_name);
-                }
-
-                if(isset($this->field_defs['assigned_user_name'])){
-	                $ret_array['select'].= ', users.user_name as assigned_user_name';
-                	$ret_array['from'].= " LEFT JOIN users ON {$this->table_name}.assigned_user_id=users.id";
-                }
-
 	}
 
         //BEGIN SUGARCRM flav=pro ONLY
@@ -7109,8 +7092,129 @@ class SugarBean
      */
     public function create_export_query($order_by, $where)
 	{
-        $params = array('export_query' => true);
-		return $this->create_new_list_query($order_by, $where, array(), $params, 0, '', false, $this, true, true);
+
+        $new_list_params = array();
+        $filtered_fields = array();
+        $jtcount = 0;
+        $fields_array = array();
+
+        //include fields_array file if it exists
+        if(file_exists('custom/modules' . $this->module_name . '/field_arrays.php')){
+            include('custom/modules' . $this->module_name . '/field_arrays.php');
+        }elseif(file_exists('modules/' . $this->module_name . '/field_arrays.php')){
+            include('modules/' . $this->module_name . '/field_arrays.php');
+        }
+
+        //get fields defs to process from either the defined export fields in fields array file, or the bean field array
+        if(!empty($fields_array) && !empty($fields_array[$this->object_name]) && !empty($fields_array[$this->object_name]['export_fields'])){
+            $fields = array();
+            foreach($fields_array[$this->object_name]['export_fields'] as $export_field){
+                if(!empty($this->field_defs[$export_field])){
+                    $fields[$export_field] = $this->field_defs[$export_field];
+                }
+            }
+        }else{
+            //if no export list is defined, grab all the field defs from the bean
+            $fields = $this->field_defs;
+        }
+
+
+        //iterate through field defs to weed out:
+            //-fields that have export flag set to false
+            //-out of box related fields that have m:m or are the LHS of 1:M relationships
+        foreach($fields as $field=>$data)
+        {
+
+            //fields including custom fields are exported by default, skip if export flag has been explicitly set to false
+            if(isset($data['exportable']) && $data['exportable']==false){
+                continue;
+            }
+
+            //skip assigned_user_name, and email1 fields as they are handled seperately after the loop
+            if($field == 'assigned_user_name' || $field == 'email1'){
+                continue;
+            }
+
+            //process fields of type related
+            if ($this->is_relate_field($field))
+            {
+
+                //unlike regular table fields, fields of type relate including custom relate fields are NOT exported by default.
+                //skip if export flag has not been explicitly to true
+                if(empty($data['exportable']) || $data['exportable']!==true){
+                    continue;
+                }
+
+                //check to see that link exists
+                if(!empty($data['link'])){
+
+                    //create and populate the params array needed to get the join type from the link
+                    $params = array('join_type' => ' LEFT JOIN ');
+                    if (  ($data['type'] == 'parent') || ($data['type'] == 'relate' && (isset($data['custom_module']) || isset($data['ext2'])))  ) {
+                        $jtcount++;
+                    }
+                    if(isset($data['join_name']))
+                    {
+                        $params['join_table_alias'] = $data['join_name'];
+                    }
+                    else
+                    {
+                        $params['join_table_alias']	= 'jt' . $jtcount;
+                    }
+                    if(isset($data['join_link_name']))
+                    {
+                        $params['join_table_link_alias'] = $data['join_link_name'];
+                    }
+                    else
+                    {
+                        $params['join_table_link_alias'] = 'jtl' . $jtcount;
+                    }
+
+                    //load the relationship for processing
+                    $this->load_relationship($data['link']);
+                    if(!empty($this->$data['link'])){
+                        $join = $this->$data['link']->getJoin($params, true);
+
+                        //get the relationship type
+                        if(!empty($data['export_link_type'])){
+                            $rel_type = $data['export_link_type'];
+                        }elseif(!empty($GLOBALS['dictionary'][$data['link']]) && !empty($GLOBALS['dictionary'][$data['link']]['true_relationship_type'])){
+                            $rel_type = $GLOBALS['dictionary'][$data['link']]['true_relationship_type'];
+                        }else{
+                            $rel_type = $join['type'];
+                        }
+
+                     }
+                }
+
+                //filter out fields with relationships that hold multiple records
+                if(!empty($rel_type)
+                        && !empty($this->$data['link'])
+                        && ($rel_type == 'many-to-many' || ($rel_type == 'one-to-many' && $this->$data['link']->getSide() != 'RHS'))){
+                    //if we are here then this is either a many to many or a one to many on the 'one' side.
+                    //We don't export multiple related records so we'll skip this field and continue
+                    continue;
+                }
+
+            }
+            //add field to filtered array
+            $filtered_fields[$field] = $data;
+        }
+
+
+        //retrieve the sql query as an array for easier manipulation
+        //note, we do nothing for email1 field, it is handled by create_new_list_query
+        $returnArray =  $this->create_new_list_query($order_by, $where, $filtered_fields, $new_list_params, 0, '', true, $this, true, true);
+
+        //Process assigned user seperately.  They require slightly different query and should be included by default.
+        if(isset($this->field_defs['assigned_user_name']) && !empty($this->field_defs['assigned_user_name']['exportable'])){
+            $returnArray['select'].= ', assigned_user.user_name as assigned_user_name';
+            $returnArray['from'].= " LEFT JOIN users assigned_user ON {$this->table_name}.assigned_user_id=assigned_user.id";
+        }
+
+
+        return  $returnArray['select'] . $returnArray['from'] . $returnArray['where']. $returnArray['order_by'];
+
 	}
 
 	/**
