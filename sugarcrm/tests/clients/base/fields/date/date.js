@@ -189,7 +189,9 @@ describe('Base.Field.Date', function() {
                 expect(field.$(field.fieldTag).val()).toBe('');
                 expect(field.model.get(field.name)).toBeUndefined();
 
-                field.$(field.fieldTag).val('15/01/1984').trigger('change');
+                // FIXME: `hide` event is still triggered due to the way the
+                // library works, this should be reviewed once SC-2395 gets in
+                field.$(field.fieldTag).val('15/01/1984').trigger('hide');
 
                 expect(field.model.get(field.name)).toBe('1984-01-15');
             });
