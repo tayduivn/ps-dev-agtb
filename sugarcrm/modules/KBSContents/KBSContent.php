@@ -13,6 +13,8 @@
  */
 class KBSContent extends SugarBean {
 
+    const DEFAULT_STATUS = 'draft';
+
     public $table_name = "kbscontents";
     public $object_name = "KBSContent";
     public $new_schema = true;
@@ -106,6 +108,9 @@ class KBSContent extends SugarBean {
                         $this->revision = $result[0]['max_revision'] + 1;
                     }
                 }
+            }
+            if (empty($this->status)) {
+                $this->status = self::DEFAULT_STATUS;
             }
             $this->active_rev = (int) empty($this->kbsarticle_id);
         }
