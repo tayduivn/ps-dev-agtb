@@ -197,6 +197,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
             array(1000,2.0,500),
             array('1000','0.5','2000'),
             array('1000','2.0','500'),
+            array('', '2.0', '0')
         );
     }
 

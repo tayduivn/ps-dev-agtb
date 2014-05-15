@@ -21,6 +21,7 @@ class TemplateCurrency extends TemplateRange
     public $max_size = 25;
     public $len = 26;
     public $precision = 6;
+    public $default = 0;
     public $type = 'currency';
 
     public function delete($df)
