@@ -43,10 +43,12 @@
         display: none;
       }
       &.edit {
-        padding: 1px 0 0 13px;
+        padding: 3px 0 0 13px;
         .record-cell {
           white-space: normal;
           overflow: visible;
+          z-index: 10001;
+          position: relative;
         }
       }
       &:first-child {
@@ -80,22 +82,22 @@
     display: inline-block;
   }
 
-  /*needed for firefox to position absolute inside table-cell*/
   .table-cell-wrapper {
     position: relative;
     display: inline-block;
   }
+
   .record-edit-link-wrapper {
-    width: 28px;
-    height: 28px;
-    top: -4px;
-    left: -25px;
+    width: 100%;
+    height: calc(100% - 16px);
+    top: 0;
+    left: 0;
+    z-index: 10000;
     .record-edit-link {
       margin-left: 0;
-    }
-    &:hover {
-      .record-edit-link {
-        display: inline-block;
+      .icon-pencil {
+        left: -16px !important;
+        top: 4px !important;
       }
     }
   }
