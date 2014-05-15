@@ -26,6 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+<br/>
+<strong>{$mod_strings.LBL_SEARCH_IMPORTED_EMAIL}</strong>
 <form name="advancedSearchForm" id="advancedSearchForm">
 <table cellpadding="4" cellspacing="0" border="0" id='advancedSearchTable'>
 	<tr><td>&nbsp;</td></tr>
