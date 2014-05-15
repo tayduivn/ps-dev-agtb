@@ -358,6 +358,7 @@ class RepairAndClear
 		else
 			$this->_clearCache(sugar_cached('modules/'), 'vardefs.php');
 	}
+
 	public function clearJsFiles()
 	{
 		global $mod_strings;
@@ -371,9 +372,9 @@ class RepairAndClear
 		else {
             $this->_clearCache(sugar_cached('modules/'), '.js');
         }
-
-
+        $this->_clearCache(sugar_cached('themes/'), '.js');
 	}
+
 	public function clearJsLangFiles()
 	{
 		global $mod_strings;

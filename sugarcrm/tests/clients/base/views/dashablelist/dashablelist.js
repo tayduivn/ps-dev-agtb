@@ -390,6 +390,7 @@ describe('Base.View.Dashablelist', function() {
 
             view.updateDashletFilterAndSave(filterModel);
             expect(view.settings.get('filter_id')).toEqual(filterModel.get('id'));
+            expect(view.dashModel.get('filter_id')).toEqual(filterModel.get('id'));
             expect(drawerCloseStub).toHaveBeenCalled();
             expect(appEventsStub).toHaveBeenCalledWith('dashlet:filter:save');
         });

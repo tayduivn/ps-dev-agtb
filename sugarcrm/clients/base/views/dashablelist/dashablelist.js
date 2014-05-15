@@ -325,20 +325,20 @@
         // the dashlet.
         var id = filterModel.id || filterModel.get('id');
         this.settings.set('filter_id', id);
+        this.dashModel.set('filter_id', id);
 
-        var dashletModel = this.layout.context.get('model'),
-            componentType = dashletModel.get('componentType') || 'view';
+        var componentType = this.dashModel.get('componentType') || 'view';
 
         // Adding a new dashlet requires componentType to be set on the model.
-        if (!dashletModel.get('componentType')) {
-            dashletModel.set('componentType', componentType);
+        if (!this.dashModel.get('componentType')) {
+            this.dashModel.set('componentType', componentType);
         }
 
-        app.drawer.close(dashletModel);
+        app.drawer.close(this.dashModel);
         // The filter collection is not shared amongst views and therefore
         // changes to this collection on different contexts (list views and
         // dashlets) need to be kept in sync.
-        app.events.trigger('dashlet:filter:save', dashletModel.get('module'));
+        app.events.trigger('dashlet:filter:save', this.dashModel.get('module'));
     },
 
     /**

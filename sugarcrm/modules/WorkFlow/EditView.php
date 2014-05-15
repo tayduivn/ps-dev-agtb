@@ -109,7 +109,10 @@ if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 	$xtpl->assign("OLD_ID", $old_workflow_id);
     $xtpl->assign('IS_DUPLICATE', "true");
     $xtpl->assign('DISABLE_BASE_MODULE', "disabled");
+    $xtpl->assign('BASE_MODULE_FIELDNAME', 'base_module_disabled');
     $xtpl->assign('DUPLICATE_BASE_MODULE', "<input name=\"base_module\" type=\"hidden\" value={$focus->base_module} \>");
+} else  {
+    $xtpl->assign('BASE_MODULE_FIELDNAME', 'base_module');
 }
 
 $xtpl->assign("ID", $focus->id);

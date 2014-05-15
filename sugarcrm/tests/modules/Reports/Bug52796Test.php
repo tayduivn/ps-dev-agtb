@@ -200,11 +200,8 @@ class Bug52796Test extends Sugar_PHPUnit_Framework_TestCase
 			$euros = str_replace(",", "", $matches[0]);
 			
 			$actual = $euros;
-            /**
-             * used `format_number` because `Localization::getLocaleFormattedNumber` doesn't work.
-             */
-            $expected = format_number($dollars * $currency->conversion_rate);
-			$this->assertEquals($expected, $actual, "Reports are not processing the amount_usdollar field using latest conversion_rates.");
+
+			$this->assertEquals($dollars, $actual, "Reports are not processing the amount_usdollar field using latest conversion_rates." . var_export($row, true));
 		}
 		
 		// Rollback the old conversion_rate after the test

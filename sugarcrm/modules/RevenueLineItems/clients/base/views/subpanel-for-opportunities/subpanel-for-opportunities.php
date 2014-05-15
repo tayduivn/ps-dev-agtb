@@ -24,6 +24,8 @@ $fields = array(
     ),
     array(
         'name' => 'account_name',
+        'enabled' => true,
+        'default' => true        
     ),
     'status',
     'quantity',
@@ -38,6 +40,8 @@ $fields = array(
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
+        'enabled' => true,
+        'default' => true        
 
     ),
     array(
@@ -51,7 +55,8 @@ $fields = array(
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
-
+        'enabled' => true,
+        'default' => true
     ),
     array(
         'name' => 'cost_price',
@@ -64,6 +69,8 @@ $fields = array(
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
+        'enabled' => true,
+        'default' => true        
     ),
     'date_entered'
 );
@@ -82,6 +89,8 @@ $fields = array(
     array(
         'name' => 'account_name',
         'readonly' => true,
+        'enabled' => true,
+        'default' => true        
     ),
     'sales_stage',
     'probability',
@@ -89,9 +98,13 @@ $fields = array(
     'commit_stage',
     array(
         'name' => 'product_template_name',
+        'enabled' => true,
+        'default' => true        
     ),
     array(
         'name' => 'category_name',
+        'enabled' => true,
+        'default' => true        
     ),
     'quantity',
     array(
@@ -109,6 +122,8 @@ $fields = array(
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
+        'enabled' => true,
+        'default' => true        
     ),
     array(
         'name' => 'likely_case',
@@ -125,6 +140,8 @@ $fields = array(
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
+        'enabled' => true,
+        'default' => true        
     ),
     array(
         'name' => 'best_case',
@@ -141,6 +158,8 @@ $fields = array(
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
+        'enabled' => true,
+        'default' => true        
     ),
     array(
         'name' => 'quote_name',
@@ -149,9 +168,13 @@ $fields = array(
         // this is a hack to get the quote_id field loaded
         'readonly' => true,
         'bwcLink' => true,
+        'enabled' => true,
+        'default' => true        
     ),
     array(
         'name' => 'assigned_user_name',
+        'enabled' => true,
+        'default' => true        
     )
 );
 //END SUGARCRM flav=ent ONLY

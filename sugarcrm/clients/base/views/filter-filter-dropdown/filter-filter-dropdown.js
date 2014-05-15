@@ -382,7 +382,7 @@
         //We want to stop propagation so it doesn't bubble up.
         evt.stopPropagation();
         this.layout.clearLastFilter(this.layout.layout.currentModule, this.layout.layoutType);
-        this.layout.trigger('filter:change:filter', 'all_records');
+        this.layout.layout.trigger('filter:reinitialize');
     },
 
     /**

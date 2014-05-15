@@ -415,8 +415,10 @@ class Email extends SugarBean {
         $saveAsDraft = !empty($request['saveDraft']);
         if (!$saveAsDraft && !empty($request["MAIL_RECORD_STATUS"]) &&  $request["MAIL_RECORD_STATUS"]=='archived') {
             $archived = true;
+            $this->type = 'archived';
         } else {
             $archived = false;
+            $this->type = 'out';
         }
 
 		/**********************************************************************
@@ -2248,6 +2250,8 @@ class Email extends SugarBean {
 	function fill_in_additional_detail_fields()
 	{
 		global $app_list_strings,$mod_strings;
+
+        $mod_strings = return_module_language($GLOBALS['current_language'], 'Emails');
 
 		$query  = "SELECT contacts.first_name, contacts.last_name, contacts.phone_work, contacts.id, contacts.assigned_user_id contact_name_owner, 'Contacts' contact_name_mod FROM contacts, emails_beans
 		           WHERE emails_beans.email_id='$this->id' AND emails_beans.bean_id=contacts.id AND emails_beans.bean_module = 'Contacts' AND emails_beans.deleted=0 AND contacts.deleted=0";

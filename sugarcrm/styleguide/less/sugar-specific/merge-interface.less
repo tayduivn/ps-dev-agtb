@@ -54,17 +54,26 @@ h4.merge-interface-header {
             height: auto;
             overflow-x: auto;
 	}
-  .add-on {
-    position: absolute;
-    right: 4px;
-    left: auto;
-    padding-top: 0;
-    &.time {
-      top: 3em;
-    }
+
+  .input-append.date {
+    top: 4px;
   }
-  .ui-timepicker-input {
-    left: 26px;
+  .datetime {
+    input[type="text"].datepicker,
+    input[type="text"].ui-timepicker-input {
+      width: 86px;
+    }
+    .add-on {
+      position: absolute;
+      right: 11px;
+      left: auto;
+      &.time {
+        top: 38px;  
+      }
+    }
+    .ui-timepicker-input { 
+      margin-left: 0;
+    }
   }
 
 	.col {
@@ -203,9 +212,6 @@ h4.merge-interface-header {
 			width: 86px;
             resize: none;
 		}
-      .input-append.date {
-        padding-left: 0;
-      }
       .controls {
         width: 100%;
         height: @mergeFieldHeight;
@@ -264,12 +270,6 @@ h4.merge-interface-header {
         .controls label {
           height: 75px;
           overflow: visible;
-          .icon-time {
-            margin-top: 5px;
-          }
-          .icon-calendar {
-            margin-top: 5px;
-          }
         }
         .controls label > span > div {
           width: 90%;

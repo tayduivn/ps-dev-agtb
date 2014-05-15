@@ -49,7 +49,7 @@ function get_popup_new(parent_id, record, action, frame_type, plugin_module, plu
     	<td scope='row' valign=TOP bgcolor="{BG_COLOR}" class="{ROW_COLOR}S1" ><slot><a href='javascript:get_popup_new("{TRIGGER.PARENT_ID}","{TRIGGER.ID}", "{TRIGGER.ACTION}", "{TRIGGER.FRAME_TYPE}", "{TRIGGER.PLUGIN_MODULE}", "{TRIGGER.PLUGIN_ACTION}", "{TRIGGER.POPUP_WIDTH}", "{TRIGGER.POPUP_HEIGHT}")'>{TRIGGER.STATEMENT}</a></slot></td>
     	<td scope='row' valign=TOP bgcolor="{BG_COLOR}" class="{ROW_COLOR}S1" ><slot>{TRIGGER.STATEMENT2}</slot></td>
     	<td nowrap align="center" valign=TOP bgcolor="{BG_COLOR}" class="{ROW_COLOR}S1" ><slot><a href='javascript:get_popup_new("{TRIGGER.PARENT_ID}","{TRIGGER.ID}", "{TRIGGER.ACTION}", "{TRIGGER.FRAME_TYPE}", "{TRIGGER.PLUGIN_MODULE}", "{TRIGGER.PLUGIN_ACTION}", "{TRIGGER.POPUP_WIDTH}", "{TRIGGER.POPUP_HEIGHT}")'>{EDIT_INLINE_PNG}&nbsp;{APP.LNK_EDIT}</a></td>
-		<td nowrap align="center" valign=TOP><slot><a class="listViewTdToolsS1" onclick="return confirm('{MOD.NTC_REMOVE_TRIGGER}')" href="{URL_PREFIX}index.php?action=Delete&module=WorkFlowTriggerShells&record={TRIGGER.ID}{RETURN_URL}">{DELETE_INLINE_PNG}&nbsp;{APP.LNK_REMOVE}</a></slot></td>
+    	<td nowrap align="center" valign=TOP><slot><a class="listViewTdToolsS1" onclick="return confirm('{TRIGGER.REMOVE_TRIGGER_CONFIRM}')" href="{URL_PREFIX}index.php?action=Delete&module=WorkFlowTriggerShells&record={TRIGGER.ID}{RETURN_URL}">{DELETE_INLINE_PNG}&nbsp;{APP.LNK_REMOVE}</a></slot></td>
 </tr>
 
 <!-- END: row -->

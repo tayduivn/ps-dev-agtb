@@ -341,6 +341,11 @@ $dictionary['Opportunity'] = array(
             'comment' => 'The probability of closure',
             'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
             'merge_filter' => 'enabled',
+            //BEGIN SUGARCRM flav=ent ONLY
+            'reportable' => false,
+            'studio' => false,
+            'massupdate' => false,
+            //END SUGARCRM flav=ent ONLY
         ),
         'best_case' => array(
             'name' => 'best_case',
@@ -449,28 +454,10 @@ $dictionary['Opportunity'] = array(
                 )
             ),
             'vname' => 'LBL_CONTACTS',
-        ),
-        'contact_name' => array(
-            'name' => 'contact_name',
-            'rname' => 'name',
-            'id_name' => 'contact_id',
-            'vname' => 'LBL_CONTACT_NAME',
-            'required' => true,
-            'join_name' => 'contacts',
-            'type' => 'relate',
-            'link' => 'contacts',
-            'table' => 'contacts',
-            'isnull' => 'true',
-            'module' => 'Contacts',
-            'source' => 'non-db',
-            'auto_populate' => true,
             'populate_list' => array(
                 'account_id' => 'account_id',
                 'account_name' => 'account_name',
-            ),
-            'studio' => false,
-            'reportable' => false,
-            'massupdate' => false,
+            )
         ),
         'contact_role' => array(
             'name' => 'contact_role',
@@ -528,6 +515,7 @@ $dictionary['Opportunity'] = array(
             'link_type' => 'many',
             'relationship' => '',
             'hideacl' => true,
+            'readonly' => true,
         ),
         'documents' => array(
             'name' => 'documents',

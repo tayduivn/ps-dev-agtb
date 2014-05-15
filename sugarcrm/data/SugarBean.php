@@ -3231,8 +3231,12 @@ class SugarBean
                 continue;
             }
             $queryFields[$field] = $field;
-            // Oracle doesn't allow DISTINCT on CLOB fields, in that case if we select CLOB field then DISTINCT should be disabled
-            if (!empty($def['type']) && ($def['type'] == 'text' || $def['type'] == 'json')) {
+
+            // Disable distinct on text type fields, since Oracle doesn't 
+            // allow distinct selects on CLOB types
+            $fieldType = $this->db->getFieldType($def);
+            $isTextType = $fieldType ? $this->db->isTextType($fieldType) : false;
+            if ($isTextType) {
                 $query->distinct(false);
             }
         }
@@ -6315,7 +6319,7 @@ class SugarBean
     *		$event - The string for the current event (i.e. before_save)
     * 		$arguments - An array of arguments that are specific to the event.
     */
-    function call_custom_logic($event, $arguments = null)
+    function call_custom_logic($event, $arguments = array())
     {
         if(!isset($this->processed) || $this->processed == false){
             //add some logic to ensure we do not get into an infinite loop

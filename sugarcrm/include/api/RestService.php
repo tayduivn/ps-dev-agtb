@@ -123,7 +123,7 @@ class RestService extends ServiceBase
             // Don't use requireWithCustom because we need the data out of it
             require 'custom/include/api/metadata.php';
         }
-        
+
         $this->min_version = $apiSettings['minVersion'];
         $this->max_version = $apiSettings['maxVersion'];
         $this->api_settings = $apiSettings;
@@ -208,7 +208,7 @@ class RestService extends ServiceBase
                         throw $loginException;
                     }
                 } else if (empty($route['ignoreMetaHash'])) {
-                    // Check metadata hash state and return an error to force a 
+                    // Check metadata hash state and return an error to force a
                     // resync so that the new metadata gets picked up if it is
                     // out of date
                     if (!$this->isMetadataCurrent()) {
@@ -228,61 +228,6 @@ class RestService extends ServiceBase
             }
             if(empty($route['keepSession'])) {
                 $this->releaseSession();
-            }
-
-            // This loads the path variables in, so that on the /Accounts/abcd, $module is set to Accounts, and $id is set to abcd
-            $pathVars = $this->request->getPathVars($route);
-
-            $getVars = array();
-            if (!empty($_GET)) {
-                // This has some get arguments, let's parse those in
-                $getVars = $_GET;
-                if (!empty($route['jsonParams'])) {
-                    foreach ($route['jsonParams'] as $fieldName) {
-                        if (isset($_GET[$fieldName]) && !empty($_GET[$fieldName])
-                            && isset($_GET[$fieldName]{0})
-                            && ($_GET[$fieldName]{0} == '{'
-                                || $_GET[$fieldName]{0} == '[')
-                        ) {
-                            // This may be JSON data
-                            $jsonData = @json_decode($_GET[$fieldName], true, 32);
-                            if ($jsonData == null) {
-                                // Did not decode, could be a string that just happens to start with a '{', don't mangle it further
-                                continue;
-                            }
-                            // Need to dig through this array and make sure all of the elements in here are safe
-                            $getVars[$fieldName] = $jsonData;
-                        }
-                    }
-                }
-            }
-
-            $postVars = array();
-            if (isset($route['rawPostContents']) && $route['rawPostContents']) {
-                // This route wants the raw post contents
-                // We just ignore it here, the function itself has to know how to deal with the raw post contents
-                // this will mostly be used for binary file uploads.
-            } else {
-                if (!empty($_POST)) {
-                    // They have normal post arguments
-                    $postVars = $_POST;
-                } else {
-                    $postContents = null;
-                    if (!empty($GLOBALS['HTTP_RAW_POST_DATA'])) {
-                        $postContents = $GLOBALS['HTTP_RAW_POST_DATA'];
-                    } else {
-                        $postContents = file_get_contents('php://input');
-                    }
-                    if (!empty($postContents)) {
-                        // This looks like the post contents are JSON
-                        // Note: If we want to support rest based XML, we will need to change this
-                        $postVars = @json_decode($postContents, true, 32);
-                        if (!is_array($postVars)) {
-                            // FIXME: Handle improperly encoded JSON
-                            $postVars = array();
-                        }
-                    }
-                }
             }
 
             $headers = array();
@@ -320,7 +265,7 @@ class RestService extends ServiceBase
             $this->response->setContent($apiClass->$apiMethod($this,$argArray));
 
             $this->respond($route, $argArray);
-            
+
             if (empty($route['rawReply'])) {
                 $this->handleErrorOutput('php_error_after_api');
             }
@@ -436,7 +381,6 @@ class RestService extends ServiceBase
         $this->response->setStatus($httpError);
 
         $GLOBALS['log']->error('An exception happened: ( '.$httpError.': '.$errorLabel.')'.$message);
-
         // For edge cases when an HTML response is needed as a wrapper to JSON
         if (isset($_REQUEST['format']) && $_REQUEST['format'] == 'sugar-html-json') {
             $this->response->setContent($this->getHXRReturnArray($message, $httpError));
@@ -486,7 +430,7 @@ class RestService extends ServiceBase
                     // This will return false if anything is wrong with the session
                     // (mismatched IP, mismatched unique_key, etc)
                     $valid = $authController->apiSessionAuthenticate();
-                    
+
                     if ($valid) {
                         $valid = $this->userAfterAuthenticate($_SESSION['authenticated_user_id'],$oauthServer);
                     }
@@ -586,7 +530,7 @@ class RestService extends ServiceBase
      * Handles authentication of the current user from the download token
      *
      * @param string $token The download autentication token.
-     * @param string $platform the platform for the download 
+     * @param string $platform the platform for the download
      * @returns bool Was the login successful
      */
     protected function authenticateUserForDownload()
@@ -611,14 +555,14 @@ class RestService extends ServiceBase
             $oauthServer->setPlatform($platform);
 
             $tokenData = $oauthServer->verifyDownloadToken($token);
-            
+
             $GLOBALS['current_user'] = BeanFactory::getBean('Users',$tokenData['user_id']);
             $valid = $this->userAfterAuthenticate($tokenData['user_id'],$oauthServer);
         }
 
         return $valid;
     }
-    
+
     /**
      * Sets up a user after successful authentication and session setup
      *
@@ -645,9 +589,9 @@ class RestService extends ServiceBase
 
             // Setup visibility where needed
             $oauthServer->setupVisibility();
-            
+
             LogicHook::initialize()->call_custom_logic('', 'after_session_start');
-            
+
             $this->user = $GLOBALS['current_user'];
             $this->user->setupSession();
         }
@@ -775,13 +719,14 @@ class RestService extends ServiceBase
      */
     protected function respond($route, $args)
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($route['noEtag'])) {
+        $method = $this->request->getMethod();
+        if ($method == 'GET' && empty($route['noEtag'])) {
             $this->response->generateETagHeader();
         }
-        
+
         //leaving this logic split out in case more actions on rawreply need added in the future
         if (!empty($route['rawReply'])) {
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if ($method == 'POST') {
                 $this->response->setPostHeaders();
             }
         } else {
@@ -833,6 +778,17 @@ class RestService extends ServiceBase
     }
 
     /**
+     * Inject request object
+     * @param RestResponse $resp
+     */
+    public function setRequest(RestRequest $req)
+    {
+        $this->request = $req;
+
+        return $this;
+    }
+
+    /**
      * Gets the full collection of arguments from the request
      *
      * @param  array $route The route description for this request
@@ -843,20 +799,19 @@ class RestService extends ServiceBase
         // This loads the path variables in, so that on the /Accounts/abcd, $module is set to Accounts, and $id is set to abcd
         $pathVars = $this->request->getPathVars($route);
 
-        $getVars = array();
-        if ( !empty($_GET)) {
+        $getVars = $this->request->getQueryVars();
+        if ( !empty($getVars)) {
             // This has some get arguments, let's parse those in
-            $getVars = $_GET;
             if ( !empty($route['jsonParams']) ) {
                 foreach ( $route['jsonParams'] as $fieldName ) {
-                    if ( isset($_GET[$fieldName]) 
-                         && !empty($_GET[$fieldName])
-                         && is_string($_GET[$fieldName])
-                         &&  isset($_GET[$fieldName]{0})
-                         && ( $_GET[$fieldName]{0} == '{'
-                               || $_GET[$fieldName]{0} == '[' )) {
+                    if ( isset($getVars[$fieldName])
+                         && !empty($getVars[$fieldName])
+                         && is_string($getVars[$fieldName])
+                         &&  isset($getVars[$fieldName]{0})
+                         && ( $getVars[$fieldName]{0} == '{'
+                               || $getVars[$fieldName]{0} == '[' )) {
                         // This may be JSON data
-                        $jsonData = @json_decode($_GET[$fieldName],true,32);
+                        $jsonData = @json_decode($getVars[$fieldName],true,32);
                         if (json_last_error() !== 0) {
                             // Bad JSON data, throw an exception instead of trying to process it
                             throw new SugarApiExceptionInvalidParameter();
@@ -877,12 +832,7 @@ class RestService extends ServiceBase
             // They have normal post arguments
             $postVars = $_POST;
         } else {
-            $postContents = null;
-            if ( !empty($GLOBALS['HTTP_RAW_POST_DATA']) ) {
-                $postContents = $GLOBALS['HTTP_RAW_POST_DATA'];
-            } else {
-                $postContents = file_get_contents('php://input');
-            }
+            $postContents = $this->request->getPostContents();
             if ( !empty($postContents) ) {
                 // This looks like the post contents are JSON
                 // Note: If we want to support rest based XML, we will need to change this
@@ -899,46 +849,46 @@ class RestService extends ServiceBase
         // the posted document is probably the output of a generated form.
         return array_merge($postVars,$getVars,$pathVars);
     }
-    
+
     /**
-     * Verifies state of the metadata so the API can determine if there needs to 
+     * Verifies state of the metadata so the API can determine if there needs to
      * be an invalid metadata response issued
-     * 
+     *
      * @return boolean
      */
     protected function isMetadataCurrent()
     {
-        // Default expectation is that metadata is current. This also covers the 
+        // Default expectation is that metadata is current. This also covers the
         // case of the metadata hash headers not being sent, which would always
         // assume that the metadata is current.
         $return = true;
-        
+
         // If the metadata hash header was sent in the request, use it to compare
         // the current metadata hash to see if the current hash is valid
         if (isset($this->request_headers[self::HEADER_META_HASH])) {
             $mm = $this->getMetadataManager();
             $return = $mm->isMetadataHashValid($this->request_headers[self::HEADER_META_HASH]);
         }
-        
-        // If the user metadata hash header was sent, use it to compare against 
+
+        // If the user metadata hash header was sent, use it to compare against
         // the current user's preferences change state
-        // 
+        //
         // Only check user metadata if system metadata has passed
         if ($return && isset($this->request_headers[self::USER_META_HASH])) {
             // Metadata manager may have already been set. If not though, get it
             if (empty($mm)) {
                 $mm = $this->getMetadataManager();
             }
-            
+
             $return = !$mm->hasUserMetadataChanged($this->user, $this->request_headers[self::USER_META_HASH]);
         }
-        
+
         return $return;
     }
-    
+
     /**
      * Gets the metadata manager for this user and platform
-     * 
+     *
      * @return MetaDataManager
      */
     protected function getMetadataManager()

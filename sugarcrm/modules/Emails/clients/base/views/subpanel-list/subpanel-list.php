@@ -58,12 +58,6 @@ $viewdefs['Emails']['base']['view']['subpanel-list'] = array(
         ),
     ),
     'rowactions' => array(
-        'actions' => array(
-            array(
-                'type' => 'unlink-action',
-                'icon' => 'icon-unlink',
-                'label' => 'LBL_UNLINK_BUTTON',
-            ),
-        ),
+        'actions' => array(),
     ),
 );

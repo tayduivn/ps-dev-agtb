@@ -122,4 +122,57 @@ describe("Base.Field.QuickCreate", function() {
         field.context.parent = origParent;
         expect(newModel.link).not.toBeDefined();
     });
+
+    describe('createLinkModel', function() {
+        var parentModel, sandbox = sinon.sandbox.create();
+
+        beforeEach(function() {
+            parentModel = new Backbone.Model({
+                id: '101-model-id',
+                name: 'parent product name',
+                account_id: 'abc-111-2222',
+                account_name: 'parent account name',
+                assigned_user_name: 'admin'
+            });
+            sandbox.stub(app.data, 'createRelatedBean', function() {
+                return new Backbone.Model();
+            });
+            sandbox.stub(app.data, 'getRelateFields', function() {
+                return [
+                    {
+                        name: 'product_template_name',
+                        rname: 'name',
+                        id_name: 'product_template_id',
+                        populate_list: {
+                            assigned_user_name: 'user_name'
+                        }
+                    }
+                ];
+            });
+            sandbox.stub(app.metadata, 'getModule', function() {
+                return {
+                    fields: {
+                        cases: {
+                            populate_list: [
+                                'account_id',
+                                'account_name'
+                            ]
+                        }
+                    }
+                };
+            });
+        });
+        afterEach(function() {
+            parentModel = null;
+            sandbox.restore();
+        });
+
+        it('newModel will contain account_id and account_name from link populate_list', function() {
+            var newModel = field.createLinkModel(parentModel, 'cases');
+            expect(newModel.get('account_id')).toBe(parentModel.get('account_id'));
+            expect(newModel.get('account_name')).toBe(parentModel.get('account_name'));
+            expect(newModel.get('assigned_user_name')).toBe(parentModel.get('user_name'));
+
+        });
+    });
 });

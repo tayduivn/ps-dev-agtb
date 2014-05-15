@@ -53,12 +53,16 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             $link = new Link2($linkName, $bean);
         }
 
-        $moduleName = $link->getRelatedModuleName();
+        $this->_moduleName = $link->getRelatedModuleName();
 
-        $this->_moduleName = $moduleName;
-        $this->bean = BeanFactory::getBean($moduleName);
+        $this->bean = BeanFactory::getBean($this->_moduleName);
 
-        $subpanelFixed = $this->fixUpSubpanel();
+        $subpanelFixed = true;
+
+        if(empty($this->bean)) {
+            $subpanelFixed = $this->fixUpSubpanel();
+        }
+
         if(empty($linkDef['name']) && (!$subpanelFixed && isModuleBWC($this->loadedModule))) {
             $GLOBALS['log']->error("Cannot find a link for {$linkName} on {$loadedModule}");
             return true;
@@ -75,7 +79,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
 
         // Prepare to load the history file. This will be available in cases when
         // a layout is restored.
-        $this->historyPathname = 'custom/history/modules/' . $moduleName . '/clients/' . $this->getViewClient(
+        $this->historyPathname = 'custom/history/modules/' . $this->_moduleName . '/clients/' . $this->getViewClient(
             ) . '/views/' . $this->sidecarSubpanelName. '/' . self::HISTORYFILENAME;
         $this->_history = new History($this->historyPathname);
 

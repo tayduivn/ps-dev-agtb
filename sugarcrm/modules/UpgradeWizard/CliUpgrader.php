@@ -322,7 +322,15 @@ eoq2;
             $php_path = '';
         }
         $context = $this->mapArgs($argv);
-        $context['php'] = $php_path."php";
+        if(defined("PHP_BINARY")) {
+            $context['php'] = PHP_BINARY;
+        } elseif(!empty($_ENV['_'])) {
+            $context['php'] = $_ENV['_'];
+        } elseif(!empty($_SERVER['_'])) {
+            $context['php'] = $_SERVER['_'];
+        } else {
+            $context['php'] = $php_path."php";
+        }
         if(empty($context['script'])) {
             $context['script'] = __FILE__;
         }

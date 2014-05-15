@@ -34,16 +34,22 @@
                 }
 
                 var model = app.data.createRelatedBean(parentModel, null, link),
-                    relatedFields = app.data.getRelateFields(parentModel.module, link);
+                    relatedFields = app.data.getRelateFields(parentModel.module, link),
+                    parentModule = app.metadata.getModule(parentModel.module);
+
+                if (parentModule && parentModule.fields[link] && parentModule.fields[link].populate_list) {
+                    model.relatedAttributes = model.relatedAttributes || {};
+                    this._parsePopulateList(parentModule.fields[link].populate_list, parentModel, model);
+                }
 
                 if (!_.isEmpty(relatedFields)) {
                     model.relatedAttributes = model.relatedAttributes || {};
                     _.each(relatedFields, function(field) {
                         var parentValue = parentModel.get(field.rname);
-                        if (!parentValue && parentModel.fields[field.rname]
-                            && parentModel.fields[field.rname].type == "fullname"
+                        if (!parentValue && parentModel.fields[field.rname] &&
+                            parentModel.fields[field.rname].type == 'fullname'
                         ) {
-                            parentValue =  parentModel.get("full_name");
+                            parentValue = parentModel.get('full_name');
                         }
                         model.set(field.name, parentValue);
                         model.set(field.id_name, parentModel.get('id'));
@@ -51,22 +57,34 @@
                         model.relatedAttributes[field.id_name] = parentModel.get('id');
 
                         if (field.populate_list) {
-                            _.each(field.populate_list, function(target, source) {
-                                source = _.isNumber(source) ? target : source;
-                                if (
-                                    !_.isUndefined(parentModel.get(source)) &&
-                                    app.acl.hasAccessToModel('edit', model, target)
-                                ) {
-                                    model.set(target, parentModel.get(source));
-                                    model.relatedAttributes[target] = parentModel.get(source);
-                                }
-                            }, this);
+                            this._parsePopulateList(field.populate_list, parentModel, model);
                         }
                     }, this);
                 }
                 this.populateParentFields(model, parentModel);
 
                 return model;
+            },
+
+            /**
+             * Utility Method to parse a populate_list array of fields
+             *
+             * @param {Array|Object} populate_list
+             * @param {Backbone.Model} parentModel
+             * @param {Backbone.Model} model
+             * @private
+             */
+            _parsePopulateList: function(populate_list, parentModel, model) {
+                _.each(populate_list, function(target, source) {
+                    source = _.isNumber(source) ? target : source;
+                    if (
+                        !_.isUndefined(parentModel.get(source)) &&
+                        app.acl.hasAccessToModel('edit', model, target)
+                    ) {
+                        model.set(target, parentModel.get(source));
+                        model.relatedAttributes[target] = parentModel.get(source);
+                    }
+                }, this);
             },
 
             /**

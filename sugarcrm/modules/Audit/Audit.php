@@ -194,22 +194,10 @@ class Audit extends SugarBean
             $fieldType = $db->getFieldType($bean->field_defs[$row['field_name']]);
             switch ($fieldType) {
                 case 'date':
-                    $dateBeforeObj = $timedate->fromDbType($row['before'], 'date');
-                    $dateAfterObj = $timedate->fromDbType($row['after'], 'date');
-                    $row['before'] = $timedate->asIsoDate($dateBeforeObj);
-                    $row['after'] = $timedate->asIsoDate($dateAfterObj);
-                    break;
-                case 'datetime':
-                    $dateBeforeObj = $timedate->fromDbType($row['before'], 'datetime');
-                    $dateAfterObj = $timedate->fromDbType($row['after'], 'datetime');
-                    $row['before'] = $timedate->asIso($dateBeforeObj);
-                    $row['after'] = $timedate->asIso($dateAfterObj);
-                    break;
                 case 'time':
-                    $dateBeforeObj = $timedate->fromDbType($row['before'], 'time');
-                    $dateAfterObj = $timedate->fromDbType($row['after'], 'time');
-                    $row['before'] = $timedate->asIsoTime($dateBeforeObj);
-                    $row['after'] = $timedate->asIsoTime($dateAfterObj);
+                case 'datetime':
+                    $row['before'] = $this->formatDateTime($row['before'], $fieldType);
+                    $row['after'] = $this->formatDateTime($row['after'], $fieldType);
                     break;
                 case 'enum':
                 case 'multienum':
@@ -236,6 +224,26 @@ class Audit extends SugarBean
         }
 
         return $return;
+    }
+
+    /**
+     * Formats datetime value according to type, or returns it as is in case it's empty
+     *
+     * @param mixed $value
+     * @param string $type
+     *
+     * @return mixed
+     */
+    protected function formatDateTime($value, $type)
+    {
+        global $timedate;
+
+        if ($value) {
+            $obj = $timedate->fromDbType($value, $type);
+            $value = $timedate->asIsoDate($obj);
+        }
+
+        return $value;
     }
 
     /**

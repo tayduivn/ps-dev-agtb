@@ -48,6 +48,8 @@ function process($pdf, $reportname, $stream){
         //Force download as a file
         $pdf->Output($filename,'D');
     }else{
+        // try to create the dir in case it doesn't exist for some reason
+        create_cache_directory('pdf');
         $cachefile = sugar_cached('pdf/').$filename;
         $fp = sugar_fopen($cachefile, 'w');
         fwrite($fp, $pdf->Output('','S'));

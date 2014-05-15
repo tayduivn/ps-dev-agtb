@@ -244,67 +244,69 @@ class WorkFlowSchedule extends SugarBean {
         return get_expiry_date("datetime", $time_interval, false, $is_update, $target_stamp);
     }
 
-function process_scheduled(){
-    global $app_strings;
-    global $app_list_strings;
-    global $mod_strings;
-    global $current_user;
-    global $beanList;
+    function process_scheduled() {
+        $current_stamp = $this->db->now();
 
-    if(empty($beanList)) {
-        require('include/modules.php');
-    }
+        $query = "SELECT *
+                    FROM $this->table_name
+                    WHERE $this->table_name.date_expired < " . $current_stamp . "
+                    AND $this->table_name.deleted = 0
+                    ORDER BY $this->table_name.id, $this->table_name.workflow_id";
 
-    $current_stamp = TimeDate::getInstance()->nowDb();
+        $result = $this->db->query(
+            $query,
+            true,
+            " Error checking scheduled triggers to process: "
+        );
 
-    $query = "	SELECT *
-                FROM $this->table_name
-                WHERE $this->table_name.date_expired < '".$current_stamp."'
-                AND $this->table_name.deleted=0";
-    $result = $this->db->query($query,true," Error checking scheduled triggers to process: ");
-
-    // Print out the calculation column info
-    while($row = $this->db->fetchByAssoc($result)){
-        $temp_module = BeanFactory::getBean($row['target_module']);
-        $_SESSION['workflow_cron'] = "Yes";
-        $_SESSION['workflow_id_cron'] = $row['workflow_id'];
-
-        //Set the extension variables in case we need them
-        $_SESSION['workflow_parameters'] = $row['parameters'];
-        //////////////////////////////////////////////////
-
-        $temp_module->retrieve($row['bean_id']);
-
-        if($temp_module->fetched_row['deleted'] == '0'){
-            $temp_module->save();
+        // Collect workflows related to the same bean_id, and process them together
+        $removeExpired = array();
+        $beans = array();
+        while ($row = $this->db->fetchByAssoc($result)) {
+            if (!isset($beans[$row['bean_id']])) {
+                $beans[$row['bean_id']] = array(
+                    'id' => $row['bean_id'],
+                    'module' => $row['target_module'],
+                    'workflows' => array($row['workflow_id']),
+                    'parameters' => array(
+                        $row['workflow_id'] => $row['parameters']
+                    ),
+                );
+            } else {
+                $beans[$row['bean_id']]['workflows'][] = $row['workflow_id'];
+                $beans[$row['bean_id']]['parameters'][$row['workflow_id']] = $row['parameters'];
+            }
+            $removeExpired[] = $row['id'];
         }
 
-        unset($_SESSION['workflow_cron']);
-        unset($_SESSION['workflow_id_cron']);
+        foreach ($beans as $bean) {
+            $_SESSION['workflow_cron'] = "Yes";
+            $_SESSION['workflow_id_cron'] = $bean['workflows'];
+            // Set the extension variables in case we need them
+            $_SESSION['workflow_parameters'] = $bean['parameters'];
 
-        //remove this expired process
-        $this->remove_expired($row['id']);
+            $tempBean = BeanFactory::getBean($bean['module'], $bean['id']);
 
-    //end while processing
+            if ($tempBean->fetched_row['deleted'] == '0') {
+                $tempBean->save();
+            }
+
+            unset($_SESSION['workflow_cron']);
+            unset($_SESSION['workflow_id_cron']);
+            unset($_SESSION['workflow_parameters']);
+        }
+
+        $this->remove_expired($removeExpired);
     }
-////Remove any expired schedules/////
-//end function process_scheduled
+
+    function remove_expired($ids) {
+        $removeQuery = "DELETE FROM $this->table_name
+                        WHERE $this->table_name.id IN ('" . implode("', '", $ids) . "')";
+
+        $this->db->query(
+            $removeQuery,
+            true,
+            " Error remove expired process: "
+        );
+    }
 }
-
-function remove_expired($id){
-
-        $remove_query = "	DELETE FROM $this->table_name
-                            WHERE $this->table_name.id = '".$id."'";
-
-        $remove_results = $this->db->query($remove_query,true," Error remove expired process: ");
-
-
-//end function remove_expired
-}
-
-
-
-//end class
-}
-
-?>

@@ -140,8 +140,10 @@ class One2MBeanRelationship extends One2MRelationship
             // Rather than calling full save on the related bean just update the
             // parent id field to empty it. This saves a significant amount of
             // in mass updating and mass deleting
+            $nullValue = $rhs->db->massageValue(null, $rhs->field_defs[$rhsID]);
+
             $sql = "UPDATE {$rhs->table_name} 
-                    SET {$rhsID} = NULL
+                    SET {$rhsID} = $nullValue
                     WHERE id = '{$rhs->id}'";
             $rhs->db->query($sql);
         }

@@ -38,7 +38,15 @@
             options.def.link = true;
         }
 
-        this._super("initialize", [options]);
+        // Check if the email1 field was made required, if-so copy that property to the dynamic field.
+        if (options.model &&
+            options.model.fields &&
+            options.model.fields.email1 &&
+            options.model.fields.email1.required) {
+            options.def.required = options.model.fields.email1.required;
+        }
+
+        this._super('initialize', [options]);
 
         //set model as the related record when composing an email (copy is made by plugin)
         this.addEmailOptions({related: this.model});
@@ -127,6 +135,15 @@
 
             // add tooltips
             this.addPluginTooltips($newEmailField.prev());
+
+            if (this.def.required && this._shouldRenderRequiredPlaceholder()) {
+                // we need to remove the required place holder now
+                var label = app.lang.get('LBL_REQUIRED_FIELD', this.module),
+                    el = this.$(this.fieldTag).last(),
+                    placeholder = el.prop('placeholder').replace('(' + label + ') ', '');
+
+                el.prop('placeholder', placeholder.trim()).removeClass('required');
+            }
         }
 
         this._clearNewAddressField();
@@ -189,6 +206,11 @@
             this.$('[data-emailproperty=primary_address]')
                 .first()
                 .addClass('active');
+        }
+
+        // if this field is required, and there is nothing in the model, then we should decorate it as required
+        if (this.def.required && _.isEmpty(this.model.get(this.name))) {
+            this.decorateRequired();
         }
     },
 
@@ -312,8 +334,7 @@
      */
     _clearNewAddressField: function() {
         this._getNewEmailField()
-            .val('')
-            .focus();
+            .val('');
     },
 
     /**

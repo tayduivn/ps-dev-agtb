@@ -76,12 +76,17 @@ class SugarTestUserUtilities
     {
         $user_ids = self::getCreatedUserIds();
         if ( count($user_ids) > 0 ) {
-            $GLOBALS['db']->query('DELETE FROM users WHERE id IN (\'' . implode("', '", $user_ids) . '\')');
-            $GLOBALS['db']->query('DELETE FROM user_preferences WHERE assigned_user_id IN (\'' . implode("', '", $user_ids) . '\')');
+            $in = "'" . implode("', '", $user_ids) . "'";
+            $GLOBALS['db']->query("DELETE FROM users WHERE id IN ({$in})");
+            $GLOBALS['db']->query("DELETE FROM user_preferences WHERE assigned_user_id IN ({$in})");
             //BEGIN SUGARCRM flav=pro ONLY
-            $GLOBALS['db']->query('DELETE FROM teams WHERE associated_user_id IN (\'' . implode("', '", $user_ids) . '\')');
-            $GLOBALS['db']->query('DELETE FROM team_memberships WHERE user_id IN (\'' . implode("', '", $user_ids) . '\')');
+            $GLOBALS['db']->query("DELETE FROM teams WHERE associated_user_id IN ({$in})");
+            $GLOBALS['db']->query("DELETE FROM team_memberships WHERE user_id IN ({$in})");
             //END SUGARCRM flav=pro ONLY
+            // delete any created email address rows
+            $GLOBALS['db']->query("DELETE FROM email_addresses WHERE id IN (SELECT DISTINCT email_address_id FROM email_addr_bean_rel WHERE bean_module ='Users' AND bean_id IN ({$in}))");
+            $GLOBALS['db']->query("DELETE FROM emails_beans WHERE bean_module='Users' AND bean_id IN ({$in})");
+            $GLOBALS['db']->query("DELETE FROM email_addr_bean_rel WHERE bean_module='Users' AND bean_id IN ({$in})");
         }
         self::$_createdUsers = array();
     }

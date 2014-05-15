@@ -680,8 +680,14 @@ class EditView
         $this->th->ss->assign('TIME_SEPARATOR', $time_separator);
 
         $seps = get_number_seperators();
-        $this->th->ss->assign('NUM_GRP_SEP', $seps[0]);
-        $this->th->ss->assign('DEC_SEP', $seps[1]);
+
+        if (!isset($this->th->ss->_tpl_vars['NUM_GRP_SEP'])) {
+            $this->th->ss->assign('NUM_GRP_SEP', $seps[0]);
+        }
+
+        if (!isset($this->th->ss->_tpl_vars['DEC_SEP'])) {
+            $this->th->ss->assign('DEC_SEP', $seps[1]);
+        }
 
         if ($this->view == 'EditView')
         {

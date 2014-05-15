@@ -51,10 +51,7 @@ class SugarSearchEngineElasticMapping
                             'index' => 'not_analyzed',
                        ),
         'enum'      => 'id',
-        'email'     => array(
-                        'type' => 'string',
-                        'analyzer' => 'uax_url_email',
-        ),
+        'email'     => 'id',
         'url'       => 'id',
         'date'      => array(
                             'type' => 'date',

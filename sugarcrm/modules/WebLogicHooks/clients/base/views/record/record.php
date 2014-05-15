@@ -44,4 +44,28 @@ $viewdefs['WebLogicHooks']['base']['view']['record'] = array(
             ),
         ),
     ),
+    'dependencies' => array(
+        array(
+            'hooks' => array('all'),
+            'trigger' => 'true',
+            'triggerFields' => array('trigger_event'),
+            'onload' => true,
+            'actions' => array(
+                array(
+                    'action' => 'SetVisibility',
+                    'params' => array(
+                        'target' => 'webhook_target_module',
+                        'value' => 'not(isInList($trigger_event, createList("after_login", "after_logout", "login_failed")))'
+                    )
+                ),
+                array(
+                    'action' => 'SetValue',
+                    'params' => array(
+                        'target' => 'webhook_target_module',
+                        'value' => '"Users"'
+                    )
+                )
+            )
+        )
+    )
 );
