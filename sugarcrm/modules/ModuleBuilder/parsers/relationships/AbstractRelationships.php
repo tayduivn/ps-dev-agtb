@@ -74,7 +74,8 @@ class AbstractRelationships
                                              'prospect_lists_prospects',
                                              'queues_beans',
                                              'queues_queue',
-                                             'tracker_sessions'
+                                             'tracker_sessions',
+                                             'activities_users'             // needed because of `activities_teams`
                                           );
     /*
      * Find all deployed modules that can participate in a relationship

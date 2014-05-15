@@ -9,24 +9,21 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
  */
 class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
+    protected $embedSrc = '<embed src=www.foo.com>';
+    
     /**
      * @covers EmbedLinkService::get
      */
     public function testGet_OneLinkInTextButNothingReturnedFromFetch_ReturnsNoEmbedData()
     {
         $url = 'http://www.sugarcrm.com';
-        $mockClass = $this->getMockClass('EmbedLinkService', array('fetch'));
-        $mockClass::staticExpects($this->once())
-            ->method('fetch')
-            ->will($this->returnValue(''));
-
-        $actual = $mockClass::get($url);
-
+        $mock = $this->getMock('EmbedLinkService', array('fetch'));
+        $mock->expects($this->once())->method('fetch')->will($this->returnValue(''));
+        $actual = $mock->get($url);
         $this->assertEquals(0, count($actual['embeds']), 'Should not return any embed data');
     }
 
@@ -36,13 +33,9 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGet_OneLinkInTextButGetsErrorFromFetch_ReturnsNoEmbedData()
     {
         $url = 'http://www.sugarcrm.com';
-        $mockClass = $this->getMockClass('EmbedLinkService', array('fetch'));
-        $mockClass::staticExpects($this->once())
-            ->method('fetch')
-            ->will($this->returnValue(false));
-
-        $actual = $mockClass::get($url);
-
+        $mock = $this->getMock('EmbedLinkService', array('fetch'));
+        $mock->expects($this->once())->method('fetch')->will($this->returnValue(false));
+        $actual = $mock->get($url);
         $this->assertEquals(0, count($actual['embeds']), 'Should not return any embed data');
     }
 
@@ -51,8 +44,8 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGet_NoLinksInText_ReturnsNoEmbedData()
     {
-        $actual = EmbedLinkService::get('foo bar');
-
+        $service = new EmbedLinkService();
+        $actual = $service->get('foo bar');
         $this->assertEquals(0, count($actual['embeds']), 'Should not return any embed data');
     }
 
@@ -61,13 +54,21 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGet_TwoImageLinksInText_ReturnsTwoImageEmbedData()
     {
-        $actual = EmbedLinkService::get('http://www.foo.com/images/bar.jpg https://www.sugarcrm.com/logo/logo.gif');
-
+        $service = new EmbedLinkService();
+        $actual = $service->get('http://www.foo.com/images/bar.jpg https://www.sugarcrm.com/logo/logo.gif');
         $this->assertEquals(2, count($actual['embeds']), 'Should return two embed data');
         $this->assertEquals('image', $actual['embeds'][0]['type'], 'Should return image type data');
         $this->assertEquals('image', $actual['embeds'][1]['type'], 'Should return image type data');
-        $this->assertEquals('http://www.foo.com/images/bar.jpg', $actual['embeds'][0]['src'], 'Should have the image url');
-        $this->assertEquals('https://www.sugarcrm.com/logo/logo.gif', $actual['embeds'][1]['src'], 'Should have the image url');
+        $this->assertEquals(
+            'http://www.foo.com/images/bar.jpg',
+            $actual['embeds'][0]['src'],
+            'Should have the image url'
+        );
+        $this->assertEquals(
+            'https://www.sugarcrm.com/logo/logo.gif',
+            $actual['embeds'][1]['src'],
+            'Should have the image url'
+        );
     }
 
     /**
@@ -75,26 +76,19 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGet_OneLinkWithVideoJsonEmbedLink_ReturnsVideoEmbedData()
     {
-        $json = '{"type":"video","html":"<embed src=www.foo.com>","width":200,"height":100}';
-
-        $mockClass = $this->getMockClass('EmbedLinkService', array('fetch', 'cleanHtml'));
-        $mockClass::staticExpects($this->at(0))
+        $json = '{"type":"video","html":"' . $this->embedSrc . '","width":200,"height":100}';
+        $oEmbedHtml = '<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>';
+        $mock = $this->getMock('EmbedLinkService', array('fetch', 'cleanHtml'));
+        $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
-            ->will($this->returnValue('<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>'));
-        $mockClass::staticExpects($this->at(1))
-            ->method('fetch')
-            ->with('http://www.foo.com')
-            ->will($this->returnValue($json));
-        $mockClass::staticExpects($this->once())
-            ->method('cleanHtml')
-            ->will($this->returnValue('<embed src=www.foo.com>'));
-
-        $actual = $mockClass::get('http://www.sugarcrm.com');
-
+            ->will($this->returnValue($oEmbedHtml));
+        $mock->expects($this->at(1))->method('fetch')->with('http://www.foo.com')->will($this->returnValue($json));
+        $mock->expects($this->once())->method('cleanHtml')->will($this->returnValue($this->embedSrc));
+        $actual = $mock->get('http://www.sugarcrm.com');
         $this->assertEquals(1, count($actual['embeds']), 'Should return one set of embed data');
         $this->assertEquals('video', $actual['embeds'][0]['type'], 'Should be video type');
-        $this->assertEquals('<embed src=www.foo.com>', $actual['embeds'][0]['html'], 'Should return the correct embed html');
+        $this->assertEquals($this->embedSrc, $actual['embeds'][0]['html'], 'Should return the correct embed html');
         $this->assertEquals(200, $actual['embeds'][0]['width'], 'Should return the correct width');
         $this->assertEquals(100, $actual['embeds'][0]['height'], 'Should return the correct height');
     }
@@ -104,25 +98,19 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGet_OneLinkWithRichJsonEmbedLink_ReturnsRichEmbedData()
     {
-        $json = '{"type":"rich","html":"<embed src=www.foo.com>","width":200,"height":100}';
-        $mockClass = $this->getMockClass('EmbedLinkService', array('fetch', 'cleanHtml'));
-        $mockClass::staticExpects($this->at(0))
+        $json = '{"type":"rich","html":"' . $this->embedSrc . '","width":200,"height":100}';
+        $oEmbedHtml = '<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>';
+        $mock = $this->getMock('EmbedLinkService', array('fetch', 'cleanHtml'));
+        $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
-            ->will($this->returnValue('<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>'));
-        $mockClass::staticExpects($this->at(1))
-            ->method('fetch')
-            ->with('http://www.foo.com')
-            ->will($this->returnValue($json));
-        $mockClass::staticExpects($this->once())
-            ->method('cleanHtml')
-            ->will($this->returnValue('<embed src=www.foo.com>'));
-
-        $actual = $mockClass::get('http://www.sugarcrm.com');
-
+            ->will($this->returnValue($oEmbedHtml));
+        $mock->expects($this->at(1))->method('fetch')->with('http://www.foo.com')->will($this->returnValue($json));
+        $mock->expects($this->once())->method('cleanHtml')->will($this->returnValue($this->embedSrc));
+        $actual = $mock->get('http://www.sugarcrm.com');
         $this->assertEquals(1, count($actual['embeds']), 'Should return one set of embed data');
         $this->assertEquals('rich', $actual['embeds'][0]['type'], 'Should be video type');
-        $this->assertEquals('<embed src=www.foo.com>', $actual['embeds'][0]['html'], 'Should return the correct embed html');
+        $this->assertEquals($this->embedSrc, $actual['embeds'][0]['html'], 'Should return the correct embed html');
         $this->assertEquals(200, $actual['embeds'][0]['width'], 'Should return the correct width');
         $this->assertEquals(100, $actual['embeds'][0]['height'], 'Should return the correct height');
     }
@@ -132,25 +120,20 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGet_OneLinkWithVideoXmlEmbedLink_ReturnsVideoEmbedData()
     {
-        $html = '<oembed><type>video</type><html>&lt;embed src=www.foo.com&gt;</html><width>200</width><height>100</height></oembed>';
-        $mockClass = $this->getMockClass('EmbedLinkService', array('fetch', 'cleanHtml'));
-        $mockClass::staticExpects($this->at(0))
+        $html = '<oembed><type>video</type><html>&lt;embed src=www.foo.com&gt;</html><width>200</width><height>100'
+            . '</height></oembed>';
+        $oEmbedHtml = '<html><head><link type="text/xml+oembed" href="http://www.foo.com"/></head></html>';
+        $mock = $this->getMock('EmbedLinkService', array('fetch', 'cleanHtml'));
+        $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
-            ->will($this->returnValue('<html><head><link type="text/xml+oembed" href="http://www.foo.com"/></head></html>'));
-        $mockClass::staticExpects($this->at(1))
-            ->method('fetch')
-            ->with('http://www.foo.com')
-            ->will($this->returnValue($html));
-        $mockClass::staticExpects($this->once())
-            ->method('cleanHtml')
-            ->will($this->returnValue('<embed src=www.foo.com>'));
-
-        $actual = $mockClass::get('http://www.sugarcrm.com');
-
+            ->will($this->returnValue($oEmbedHtml));
+        $mock->expects($this->at(1))->method('fetch')->with('http://www.foo.com')->will($this->returnValue($html));
+        $mock->expects($this->once())->method('cleanHtml')->will($this->returnValue($this->embedSrc));
+        $actual = $mock->get('http://www.sugarcrm.com');
         $this->assertEquals(1, count($actual['embeds']), 'Should return one set of embed data');
         $this->assertEquals('video', $actual['embeds'][0]['type'], 'Should be video type');
-        $this->assertEquals('<embed src=www.foo.com>', $actual['embeds'][0]['html'], 'Should return the correct embed html');
+        $this->assertEquals($this->embedSrc, $actual['embeds'][0]['html'], 'Should return the correct embed html');
         $this->assertEquals('200', $actual['embeds'][0]['width'], 'Should return the correct width');
         $this->assertEquals('100', $actual['embeds'][0]['height'], 'Should return the correct height');
     }
@@ -160,14 +143,12 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGet_OneLinkInTextButNoEmbedLinks_ReturnsNoEmbedData()
     {
-        $mockClass = $this->getMockClass('EmbedLinkService', array('fetch'));
-        $mockClass::staticExpects($this->once())
+        $mock = $this->getMock('EmbedLinkService', array('fetch'));
+        $mock->expects($this->once())
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
             ->will($this->returnValue('<html><head></head></html>'));
-
-        $actual = $mockClass::get('http://www.sugarcrm.com');
-
+        $actual = $mock->get('http://www.sugarcrm.com');
         $this->assertEquals(0, count($actual['embeds']), 'Should not return any embed data');
     }
 
@@ -176,18 +157,14 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGet_OneLinkWithVideoJsonEmbedLinkButGetsErrorFromFetch_ReturnsNoEmbedData()
     {
-        $mockClass = $this->getMockClass('EmbedLinkService', array('fetch'));
-        $mockClass::staticExpects($this->at(0))
+        $oEmbedHtml = '<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>';
+        $mock = $this->getMock('EmbedLinkService', array('fetch'));
+        $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
-            ->will($this->returnValue('<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>'));
-        $mockClass::staticExpects($this->at(1))
-            ->method('fetch')
-            ->with('http://www.foo.com')
-            ->will($this->returnValue(false));
-
-        $actual = $mockClass::get('http://www.sugarcrm.com');
-
+            ->will($this->returnValue($oEmbedHtml));
+        $mock->expects($this->at(1))->method('fetch')->with('http://www.foo.com')->will($this->returnValue(false));
+        $actual = $mock->get('http://www.sugarcrm.com');
         $this->assertEquals(0, count($actual['embeds']), 'Should not return any embed data');
     }
 
@@ -196,18 +173,14 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGet_OneLinkWithVideoXmlEmbedLinkButGetsErrorFromFetch_ReturnsNoEmbedData()
     {
-        $mockClass = $this->getMockClass('EmbedLinkService', array('fetch'));
-        $mockClass::staticExpects($this->at(0))
+        $oEmbedHtml = '<html><head><link type="text/xml+oembed" href="http://www.foo.com"/></head></html>';
+        $mock = $this->getMock('EmbedLinkService', array('fetch'));
+        $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
-            ->will($this->returnValue('<html><head><link type="text/xml+oembed" href="http://www.foo.com"/></head></html>'));
-        $mockClass::staticExpects($this->at(1))
-            ->method('fetch')
-            ->with('http://www.foo.com')
-            ->will($this->returnValue(false));
-
-        $actual = $mockClass::get('http://www.sugarcrm.com');
-
+            ->will($this->returnValue($oEmbedHtml));
+        $mock->expects($this->at(1))->method('fetch')->with('http://www.foo.com')->will($this->returnValue(false));
+        $actual = $mock->get('http://www.sugarcrm.com');
         $this->assertEquals(0, count($actual['embeds']), 'Should not return any embed data');
     }
 
@@ -216,23 +189,17 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGet_OneLinkWithHttpInHtml_ReturnsRelativeProtocolInHtml()
     {
-        $mockClass = $this->getMockClass('EmbedLinkService', array('fetch', 'cleanHtml'));
-        $mockClass::staticExpects($this->at(0))
+        $json = '{"type":"video","html":"' . $this->embedSrc . '","width":200,"height":100}';
+        $oEmbedHtml = '<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>';
+        $mock = $this->getMock('EmbedLinkService', array('fetch', 'cleanHtml'));
+        $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
-            ->will($this->returnValue('<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>'));
-        $mockClass::staticExpects($this->at(1))
-            ->method('fetch')
-            ->with('http://www.foo.com')
-            ->will($this->returnValue('{"type":"video","html":"<embed src=http://www.foo.com>","width":200,"height":100}'));
-
-        $mockClass::staticExpects($this->once())
-            ->method('cleanHtml')
-            ->will($this->returnValue('<embed src=http://www.foo.com>'));
-
-        $actual = $mockClass::get('http://www.sugarcrm.com');
-
-        $this->assertEquals('<embed src=//www.foo.com>', $actual['embeds'][0]['html'], 'Should return the correct embed html');
+            ->will($this->returnValue($oEmbedHtml));
+        $mock->expects($this->at(1))->method('fetch')->with('http://www.foo.com')->will($this->returnValue($json));
+        $mock->expects($this->once())->method('cleanHtml')->will($this->returnValue($this->embedSrc));
+        $actual = $mock->get('http://www.sugarcrm.com');
+        $this->assertEquals($this->embedSrc, $actual['embeds'][0]['html'], 'Should return the correct embed html');
     }
 
     /**
@@ -240,23 +207,17 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGet_OneLinkWithHttpsInHtml_ReturnsRelativeProtocolInHtml()
     {
-        $mockClass = $this->getMockClass('EmbedLinkService', array('fetch', 'cleanHtml'));
-        $mockClass::staticExpects($this->at(0))
+        $json = '{"type":"video","html":"' . $this->embedSrc . '","width":200,"height":100}';
+        $oEmbedHtml = '<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>';
+        $mock = $this->getMock('EmbedLinkService', array('fetch', 'cleanHtml'));
+        $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
-            ->will($this->returnValue('<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>'));
-        $mockClass::staticExpects($this->at(1))
-            ->method('fetch')
-            ->with('http://www.foo.com')
-            ->will($this->returnValue('{"type":"video","html":"<embed src=https://www.foo.com>","width":200,"height":100}'));
-        $mockClass::staticExpects($this->once())
-            ->method('cleanHtml')
-            ->will($this->returnValue('<embed src=https://www.foo.com>'));
-
-
-        $actual = $mockClass::get('http://www.sugarcrm.com');
-
-        $this->assertEquals('<embed src=//www.foo.com>', $actual['embeds'][0]['html'], 'Should return the correct embed html');
+            ->will($this->returnValue($oEmbedHtml));
+        $mock->expects($this->at(1))->method('fetch')->with('http://www.foo.com')->will($this->returnValue($json));
+        $mock->expects($this->once())->method('cleanHtml')->will($this->returnValue($this->embedSrc));
+        $actual = $mock->get('http://www.sugarcrm.com');
+        $this->assertEquals($this->embedSrc, $actual['embeds'][0]['html'], 'Should return the correct embed html');
     }
 
     /**
@@ -267,9 +228,8 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFindAllUrls_InputText_ReturnsCorrectResults($input, $count)
     {
-        $embedLinkService = new EmbedLinkTestServiceProxy();
-        $actual = $embedLinkService::findAllUrlsTestMethod($input);
-
+        $service = new EmbedLinkTestServiceProxy();
+        $actual = $service->findAllUrls($input);
         $this->assertEquals($count, count($actual));
     }
 
@@ -297,8 +257,8 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
 
 class EmbedLinkTestServiceProxy extends EmbedLinkService
 {
-    public static function findAllUrlsTestMethod($text)
+    public function __call($name, $args)
     {
-        return static::findAllUrls($text);
+        return call_user_func_array(array($this, $name), $args);
     }
 }

@@ -47,6 +47,7 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
         /* @var $hook ForecastWorksheetHooks */
         $hook = $this->getMock('ForecastWorksheetHooks', array('isForecastSetup', 'getNotificationBean'));
+        $hook::$_isForecastSetup = false;
         $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
         $this->assertFalse($ret);
     }
@@ -61,7 +62,8 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $this->worksheet->fetched_row = array();
 
         /* @var $hook ForecastWorksheetHooks */
-        $hook = $this->getMock('ForecastWorksheetHooks', array('isForecastSetup', 'getNotificationBean'));
+        $hook = new MockForecastWorksheetHooks();
+        $hook::$_isForecastSetup = false;
         $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
         $this->assertFalse($ret);
     }
@@ -78,10 +80,8 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
 
-        $hook = $this->getMock('ForecastWorksheetHooks', array('isForecastSetup', 'getNotificationBean'));
-        $hook::staticExpects($this->once())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(false));
+        $hook = new MockForecastWorksheetHooks();
+        $hook::$_isForecastSetup = false;
         /* @var $hook ForecastWorksheetHooks */
         $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
         $this->assertFalse($ret);
@@ -100,10 +100,8 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $this->worksheet->parent_type = 'Test';
 
 
-        $hook = $this->getMock('ForecastWorksheetHooks', array('isForecastSetup', 'getNotificationBean'));
-        $hook::staticExpects($this->once())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(true));
+        $hook = new MockForecastWorksheetHooks();
+        $hook::$_isForecastSetup = false;
         /* @var $hook ForecastWorksheetHooks */
         $hook::$settings = array('forecast_by' => 'Test1');
         $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
@@ -123,10 +121,8 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $this->worksheet->parent_type = 'Test';
 
 
-        $hook = $this->getMock('ForecastWorksheetHooks', array('isForecastSetup', 'getNotificationBean'));
-        $hook::staticExpects($this->once())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(true));
+        $hook = new MockForecastWorksheetHooks();
+        $hook::$_isForecastSetup = false;
         /* @var $hook ForecastWorksheetHooks */
         $hook::$settings = array('forecast_by' => 'Test');
         $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
@@ -147,10 +143,8 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $this->worksheet->parent_type = 'Test';
 
 
-        $hook = $this->getMock('ForecastWorksheetHooks', array('isForecastSetup', 'getNotificationBean'));
-        $hook::staticExpects($this->once())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(true));
+        $hook = new MockForecastWorksheetHooks();
+        $hook::$_isForecastSetup = false;
         /* @var $hook ForecastWorksheetHooks */
         $hook::$settings = array('forecast_by' => 'Test');
         $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
@@ -195,10 +189,7 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
                 )
             );
 
-        $hook = $this->getMock('ForecastWorksheetHooks', array('isForecastSetup', 'getNotificationBean'));
-        $hook::staticExpects($this->once())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(true));
+        $hook = new MockForecastWorksheetHooks();
         /* @var $hook ForecastWorksheetHooks */
         $hook::$settings = array('forecast_by' => 'Test');
         $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
@@ -244,31 +235,18 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
                 )
             );
 
-        $hook = $this->getMock(
-            'ForecastWorksheetHooks',
-            array('isForecastSetup', 'getNotificationBean', 'getLanguageStrings')
-        );
-        $hook::staticExpects($this->once())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(true));
-
         $notification = $this->getMock('Notifications', array('save'));
         $notification->expects($this->once())
             ->method('save')
             ->will($this->returnValue(true));
 
-        $hook::staticExpects($this->once())
-            ->method('getNotificationBean')
-            ->will($this->returnValue($notification));
+        $hook = new MockForecastWorksheetHooks();
+        $hook::$_notificationBean = $notification;
+        $hook::$_languageStringsMock = array(
+            'LBL_MANAGER_NOTIFY' => 'Message One',
+            'LBL_MODULE_NAME_SINGULAR' => 'Message Two'
+        );
 
-        $hook::staticExpects($this->any())
-            ->method('getLanguageStrings')
-            ->will(
-                $this->onConsecutiveCalls(
-                    array('LBL_MANAGER_NOTIFY' => 'Message One'),
-                    array('LBL_MODULE_NAME_SINGULAR' => 'Message Two')
-                )
-            );
         /* @var $hook ForecastWorksheetHooks */
         $hook::$settings = array('forecast_by' => 'Test');
         $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
@@ -284,10 +262,7 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCheckRelatedName($field, $value, $isEmpty)
     {
-        $hook = $this->getMock(
-            'ForecastWorksheetHooks',
-            array('isForecastSetup')
-        );
+        $hook = new MockForecastWorksheetHooks();
 
         $worksheet = $this->getMock('ForecastWorksheet', array('save'));
 
@@ -315,10 +290,7 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testAfterRelationshipDelete()
     {
-        $hook = $this->getMock(
-            'ForecastWorksheetHooks',
-            array('isForecastSetup')
-        );
+        $hook = new MockForecastWorksheetHooks();
 
         $dbMock = new SugarTestDatabaseMock();
         $dbMock->setUp();
@@ -368,5 +340,38 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1, $dbMock->queries['name_query']['runCount']);
 
         $dbMock->tearDown();
+    }
+}
+
+class MockForecastWorksheetHooks extends ForecastWorksheetHooks
+{
+    /**
+     * Allow us to easily change it depending on the test
+     * @var bool
+     */
+    public static $_isForecastSetup = true;
+
+    /**
+     * Allow us to set a custom notification bean
+     *
+     * @var null|SugarBean
+     */
+    public static $_notificationBean = null;
+
+    public static $_languageStringsMock = array();
+
+    public static function isForecastSetup()
+    {
+        return static::$_isForecastSetup;
+    }
+
+    public static function getNotificationBean()
+    {
+        return static::$_notificationBean;
+    }
+
+    public static function getLanguageStrings($key)
+    {
+        return static::$_languageStringsMock;
     }
 }

@@ -174,7 +174,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test dollar amount conversions between currencies
      *
-     * @dataProvider testConvertWithRateProvider
+     * @dataProvider dataProviderConvertWithRateProvider
      * @param $amount
      * @param $rate
      * @param $result
@@ -191,7 +191,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      * @group math
      * @access public
      */
-    public static function testConvertWithRateProvider() {
+    public static function dataProviderConvertWithRateProvider() {
         return array(
             array(1000,0.5,2000),
             array(1000,2.0,500),
@@ -204,7 +204,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test formatting of currency amount with user locale settings
      *
-     * @dataProvider testFormatAmountUserLocaleProvider
+     * @dataProvider dataProviderFormatAmountUserLocaleProvider
      * @param $amount
      * @param $currencyId
      * @param $result
@@ -222,7 +222,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      * @group math
      * @access public
      */
-    public static function testFormatAmountUserLocaleProvider() {
+    public static function dataProviderFormatAmountUserLocaleProvider() {
         $currencyId = 'currency-php';
         $currencySymbol = '₱';
         return array(
@@ -236,7 +236,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test formatting of currency amount manually
      *
-     * @dataProvider testFormatAmountProvider
+     * @dataProvider dataProviderFormatAmountProvider
      * @param $amount
      * @param $currencyId
      * @param $precision
@@ -259,7 +259,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      * @group math
      * @access public
      */
-    public static function testFormatAmountProvider() {
+    public static function dataProviderFormatAmountProvider() {
         $currencyId = 'currency-php';
         $currencySymbol = '₱';
         return array(
@@ -305,7 +305,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test affects of changing base currency type
      *
-     * @dataProvider testBaseCurrencyChangeProvider
+     * @dataProvider dataProviderBaseCurrencyChangeProvider
      * @param $amount
      * @param $currencyId1
      * @param $currencyId2
@@ -335,7 +335,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      * @group math
      * @access public
      */
-    public static function testBaseCurrencyChangeProvider() {
+    public static function dataProviderBaseCurrencyChangeProvider() {
         return array(
             array('1000.00', 'currency-sgd', 'currency-php', '33566.677446'),
             array('1000.00', 'currency-php', 'currency-yen', '1885.496997'),
@@ -363,13 +363,8 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
 
         $currency->conversion_rate = '1.1';
 
-        $sc = $this->getMockBuilder('SugarCurrency')
-            ->setMethods(array('getCurrency'))
-            ->getMock();
-
-        $sc->staticExpects($this->once('getCurrency'))
-            ->method('getCurrency')
-            ->will($this->returnValue($currency));
+        $sc = new MockSugarCurrency();
+        $sc::$mockCurrency = $currency;
 
         /** @var SugarBean $bean */
 
@@ -405,13 +400,8 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $bean->fetched_row['currency_id'] = 'test_1';
         $bean->base_rate = '1.2';
 
-        $sc = $this->getMockBuilder('SugarCurrency')
-            ->setMethods(array('getCurrency'))
-            ->getMock();
-
-        $sc->staticExpects($this->once('getCurrency'))
-            ->method('getCurrency')
-            ->will($this->returnValue($currency));
+        $sc = new MockSugarCurrency();
+        $sc::$mockCurrency = $currency;
 
         /** @var SugarCurrency $sc */
         $sc::verifyCurrencyBaseRateSet($bean);
@@ -443,13 +433,8 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $bean->currency_id = 'test_1';
         $bean->base_rate = '1.2';
 
-        $sc = $this->getMockBuilder('SugarCurrency')
-            ->setMethods(array('getCurrency'))
-            ->getMock();
-
-        $sc->staticExpects($this->once('getCurrency'))
-            ->method('getCurrency')
-            ->will($this->returnValue($currency));
+        $sc = new MockSugarCurrency();
+        $sc::$mockCurrency = $currency;
 
         /** @var SugarCurrency $sc */
 
@@ -497,13 +482,8 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $bean->currency_id = 'test_1';
         $bean->base_rate = '1.2';
 
-        $sc = $this->getMockBuilder('SugarCurrency')
-            ->setMethods(array('getCurrency'))
-            ->getMock();
-
-        $sc->staticExpects($this->once())
-            ->method('getCurrency')
-            ->will($this->returnValue($currency));
+        $sc = new MockSugarCurrency();
+        $sc::$mockCurrency = $currency;
 
         /** @var SugarCurrency $sc */
 
@@ -542,5 +522,23 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
             $expected,
             SugarTestReflection::callProtectedMethod($field, 'hasCurrencyIdChanged', array($bean))
         );
+    }
+}
+
+class MockSugarCurrency extends SugarCurrency
+{
+    /**
+     * Which currency the getCurrency method should return
+     *
+     * @var SugarCurrency
+     */
+    public static $mockCurrency = null;
+
+    /**
+     * @return Currency|SugarCurrency
+     */
+    protected static function getCurrency()
+    {
+        return static::$mockCurrency;
     }
 }

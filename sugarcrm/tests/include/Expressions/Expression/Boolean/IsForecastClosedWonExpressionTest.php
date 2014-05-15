@@ -22,6 +22,12 @@ class IsForecastClosedWonExpressionTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
     }
 
+    public function tearDown()
+    {
+        Forecast::$settings = array();
+        parent::tearDown();
+    }
+
     public static function dataProviderCheckStatus()
     {
         return array(
@@ -41,19 +47,11 @@ class IsForecastClosedWonExpressionTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testIsForecastClosedWonEvaluate($status, $expected)
     {
-        $forecast = $this->getMockBuilder('Forecast')
-            ->setMethods(array('getSettings'))
-            ->getMock();
-
-        $settings_return = array(
+        Forecast::$settings = array(
             'is_setup' => 1,
             'sales_stage_won' => array('Closed Won'),
             'sales_stage_lost' => array('Closed Lost'),
         );
-
-        $forecast->staticExpects($this->any())
-            ->method('getSettings')
-            ->will($this->returnValue($settings_return));
 
         /* @var $rli RevenueLineItem */
         $rli = $this->getMockBuilder('RevenueLineItem')

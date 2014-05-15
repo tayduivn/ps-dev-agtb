@@ -50,9 +50,9 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
     {
         OutboundEmailConfigurationTestHelper::removeAllCreatedEmailRecords();
 
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+        $this->setUpMockOutboundEmailConfigurationPeer(false);
 
-        $configuration = $mockOutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
+        $configuration = MockOutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
 
         $expected = "system";
         $actual   = $configuration[0]->getConfigType();
@@ -66,9 +66,9 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
     {
         OutboundEmailConfigurationTestHelper::removeAllCreatedEmailRecords();
 
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(true);
+        $this->setUpMockOutboundEmailConfigurationPeer(true);
 
-        $configuration = $mockOutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
+        $configuration = MockOutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
 
         $expected = "system";
         $actual   = $configuration[0]->getConfigType();
@@ -88,9 +88,9 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
             $userConfigurations[1]["outbound"]->id => $userConfigurations[1]["outbound"]->name,
         );
 
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+        $this->setUpMockOutboundEmailConfigurationPeer(false);
 
-        $configurations = $mockOutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
+        $configurations = MockOutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
         $actual         = array();
 
         foreach ($configurations AS $configuration) {
@@ -111,9 +111,9 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
             $userConfigurations[1]["outbound"]->id => $userConfigurations[1]["outbound"]->name,
         );
 
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(true);
+        $this->setUpMockOutboundEmailConfigurationPeer(true);
 
-        $configurations = $mockOutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
+        $configurations = MockOutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
         $actual         = array();
 
         foreach ($configurations AS $configuration) {
@@ -125,9 +125,9 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
 
     public function testGetSystemMailConfiguration_SystemConfigurationIsNotAllowed_ReturnsTheUsersSystemOverrideConfiguration()
     {
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+        $this->setUpMockOutboundEmailConfigurationPeer(false);
 
-        $configuration = $mockOutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS["current_user"]);
+        $configuration = MockOutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS["current_user"]);
 
         $expected = $this->systemOverrideConfiguration->id;
         $actual   = $configuration->getConfigId();
@@ -136,9 +136,9 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
 
     public function testGetSystemMailConfiguration_SystemConfigurationIsAllowed_ReturnsTheSystemConfiguration()
     {
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(true);
+        $this->setUpMockOutboundEmailConfigurationPeer(true);
 
-        $configuration = $mockOutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS["current_user"]);
+        $configuration = MockOutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS["current_user"]);
 
         $expected = "system";
         $actual   = $configuration->getConfigType();
@@ -150,9 +150,9 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
 
     public function testValidSystemMailConfigurationExists_SystemConfigurationIsAllowedAndSystemConfigurationIsValid_ReturnsTrue()
     {
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(true);
+        $this->setUpMockOutboundEmailConfigurationPeer(true);
 
-        $actual = $mockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
+        $actual = MockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
         self::assertTrue($actual, "There should be a system configuration and the host should not be empty");
     }
 
@@ -177,17 +177,17 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         );
         OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(true);
+        $this->setUpMockOutboundEmailConfigurationPeer(true);
 
-        $actual = $mockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
+        $actual = MockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
         self::assertFalse($actual, "There should be a system configuration but the host should be empty");
     }
 
     public function testValidSystemMailConfigurationExists_SystemConfigurationIsNotAllowedAndSystemOverrideConfigurationIsValid_ReturnsTrue()
     {
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+        $this->setUpMockOutboundEmailConfigurationPeer(false);
 
-        $actual = $mockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
+        $actual = MockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
         self::assertTrue($actual, "There should be a system-override configuration and the host should not be empty");
     }
 
@@ -212,9 +212,9 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         );
         OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+        $this->setUpMockOutboundEmailConfigurationPeer(false);
 
-        $actual = $mockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
+        $actual = MockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
         self::assertFalse($actual, "There should be a system-override configuration but the host should be empty");
     }
 
@@ -239,9 +239,9 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         );
         OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+        $this->setUpMockOutboundEmailConfigurationPeer(false);
 
-        $actual = $mockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
+        $actual = MockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
         self::assertFalse($actual, "There should be a system-override configuration but the host should be empty");
     }
 
@@ -267,9 +267,9 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         );
         OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+        $this->setUpMockOutboundEmailConfigurationPeer(false);
 
-        $actual = $mockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
+        $actual = MockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
         self::assertTrue($actual, "Configuration should be Valid - Auth Not Required - No Name or Password exists");
     }
 
@@ -295,9 +295,9 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         );
         OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+        $this->setUpMockOutboundEmailConfigurationPeer(false);
 
-        $actual = $mockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
+        $actual = MockOutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
         self::assertTrue($actual, "Configuration should be Valid - Auth Required -  Name and Password exist");
     }
 
@@ -318,24 +318,17 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
             ->method("getSystemMailerSettings")
             ->will($this->returnValue(array()));
 
-        $mockOutboundEmailConfigurationPeer = $this->getMockClass(
-            "OutboundEmailConfigurationPeer",
-            array("loadOutboundEmail")
-        );
-        $mockOutboundEmailConfigurationPeer::staticExpects($this->any())
-            ->method("loadOutboundEmail")
-            ->will($this->returnValue($mockOutboundEmail));
-
-        $status = $mockOutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($GLOBALS["current_user"]);
+        MockOutboundEmailConfigurationPeer::$outboundEmail = $mockOutboundEmail;
+        $status = MockOutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($GLOBALS["current_user"]);
 
         $this->assertEquals(OutboundEmailConfigurationPeer::STATUS_INVALID_SYSTEM_CONFIG, $status, "Invalid system configuration should be returned");
     }
 
     public function testGetMailConfigurationStatusForUser_ValidSystemConfig_AllowAllUsersSet_ReturnsValidConfiguration()
     {
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(true);
+        $this->setUpMockOutboundEmailConfigurationPeer(true);
 
-        $status = $mockOutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($GLOBALS["current_user"]);
+        $status = MockOutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($GLOBALS["current_user"]);
 
         $this->assertEquals(OutboundEmailConfigurationPeer::STATUS_VALID_CONFIG, $status, "Should return a valid configuration");
     }
@@ -355,18 +348,18 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         $userConfiguration->mail_smtppass = '';
         $userConfiguration->save();
 
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+        $this->setUpMockOutboundEmailConfigurationPeer(false);
 
-        $status = $mockOutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($GLOBALS["current_user"]);
+        $status = MockOutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($GLOBALS["current_user"]);
 
         $this->assertEquals(OutboundEmailConfigurationPeer::STATUS_VALID_CONFIG, $status, "The config should be valid");
     }
 
     public function testGetMailConfigurationStatusForUser_ValidSystemConfig_AllowAllUsersNotSet_SMTPAuthenticationSet_ValidUserData_ReturnsValidConfiguration()
     {
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+        $this->setUpMockOutboundEmailConfigurationPeer(false);
 
-        $status = $mockOutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($GLOBALS["current_user"]);
+        $status = MockOutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($GLOBALS["current_user"]);
 
         $this->assertEquals(OutboundEmailConfigurationPeer::STATUS_VALID_CONFIG, $status, "The configuration should be valid");
     }
@@ -379,18 +372,10 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
             ->method("isAllowUserAccessToSystemDefaultOutbound")
             ->will($this->returnValue(false));
 
-        $mockOutboundEmailConfigurationPeer = $this->getMockClass(
-            "OutboundEmailConfigurationPeer",
-            array("loadOutboundEmail","getSystemMailConfiguration")
-        );
-        $mockOutboundEmailConfigurationPeer::staticExpects($this->any())
-            ->method("loadOutboundEmail")
-            ->will($this->returnValue($mockOutboundEmail));
-        $mockOutboundEmailConfigurationPeer::staticExpects($this->any())
-            ->method("getSystemMailConfiguration")
-            ->will($this->returnValue($outboundEmailConfiguration));
+        MockOutboundEmailConfigurationPeer::$outboundEmail = $mockOutboundEmail;
+        MockOutboundEmailConfigurationPeer::$systemMailConfiguration = $outboundEmailConfiguration;
 
-        $status = $mockOutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($GLOBALS["current_user"]);
+        $status = MockOutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($GLOBALS["current_user"]);
 
         $this->assertEquals(OutboundEmailConfigurationPeer::STATUS_INVALID_USER_CONFIG, $status, "The user configuration should not be valid");
     }
@@ -404,28 +389,40 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         $configuration->mail_smtpauth_req = '0';
         $configuration->save();
 
-        $mockOutboundEmailConfigurationPeer = $this->getMockOutboundEmailConfigurationPeer(false);
+        $this->setUpMockOutboundEmailConfigurationPeer(false);
 
-        $status = $mockOutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($GLOBALS["current_user"]);
+        $status = MockOutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($GLOBALS["current_user"]);
 
         $this->assertEquals(OutboundEmailConfigurationPeer::STATUS_VALID_CONFIG, $status, "The configuration should be valid");
     }
 
-    private function getMockOutboundEmailConfigurationPeer($isAllowUserAccessToSystemDefaultOutbound = false)
+    private function setUpMockOutboundEmailConfigurationPeer($isAllowUserAccessToSystemDefaultOutbound)
     {
         $mockOutboundEmail = $this->getMock("OutboundEmail", array("isAllowUserAccessToSystemDefaultOutbound"));
         $mockOutboundEmail->expects($this->any())
             ->method("isAllowUserAccessToSystemDefaultOutbound")
             ->will($this->returnValue($isAllowUserAccessToSystemDefaultOutbound));
 
-        $mockOutboundEmailConfigurationPeer = $this->getMockClass(
-            "OutboundEmailConfigurationPeer",
-            array("loadOutboundEmail")
-        );
-        $mockOutboundEmailConfigurationPeer::staticExpects($this->any())
-            ->method("loadOutboundEmail")
-            ->will($this->returnValue($mockOutboundEmail));
+        MockOutboundEmailConfigurationPeer::$outboundEmail = $mockOutboundEmail;
+    }
+}
 
-        return $mockOutboundEmailConfigurationPeer;
+class MockOutboundEmailConfigurationPeer extends OutboundEmailConfigurationPeer
+{
+    public static $outboundEmail;
+    public static $systemMailConfiguration;
+
+    public static function loadOutboundEmail()
+    {
+        return self::$outboundEmail;
+    }
+
+    public static function getSystemMailConfiguration(User $user, Localization $locale = null, $charset = null)
+    {
+        if (self::$systemMailConfiguration) {
+            return self::$systemMailConfiguration;
+        }
+
+        return parent::getSystemMailConfiguration($user, $locale, $charset);
     }
 }

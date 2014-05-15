@@ -87,9 +87,8 @@ class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $mm = MetaDataManager::getManager(array($platform));
         $data = $mm->getModuleViews('Bugs');
-        $this->assertTrue(isset($data['list']['meta']['panels']), "Panels meta array for detail not set for $platform platform of Bugs module");
-        $this->assertTrue(isset($data['detail']['meta']['panels']), "Panels meta array for detail not set for $platform platform of Bugs module");
-        $this->assertTrue(isset($data['edit']['meta']['panels']), "Panels meta array for detail not set for $platform platform of Bugs module");
+        $this->assertTrue(isset($data['list']['meta']['panels']), "Panels meta array for list not set for $platform platform of Bugs module");
+        $this->assertTrue(isset($data['record']['meta']['panels']), "Panels meta array for record not set for $platform platform of Bugs module");
     }
     
     //BEGIN SUGARCRM flav=ent ONLY
@@ -107,8 +106,8 @@ class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertTrue(isset($child['module']), 'Module is not set in a child node');
             $this->assertNotEmpty($this->_expectedPortalModules[$child['module']], "$child[module] not found in expected portal modules");
             $this->assertNotEmpty($child['children'], 'Children of the child not set');
-            $hasDetailView = $this->_hasDetailViewLink($child['children']);
-            $this->assertTrue($hasDetailView, "$child[module] does not have a detail view link");
+            $hasDetailView = $this->_hasRecordViewLink($child['children']);
+            $this->assertTrue($hasDetailView, "$child[module] does not have a record view link");
         }
     }
     //END SUGARCRM flav=ent ONLY
@@ -117,12 +116,9 @@ class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array('module' => 'Accounts', 'view' => 'edit', 'filepath' => 'modules/Accounts/clients/mobile/views/edit/edit.php'),
-            array('module' => 'Bugs', 'view' => 'list', 'filepath' => 'modules/Bugs/clients/mobile/views/list/list.php'),
-            array('module' => 'Calls', 'view' => 'search', 'filepath' => 'modules/Calls/clients/mobile/views/search/search.php'),
             array('module' => 'Cases', 'view' => 'detail', 'filepath' => 'modules/Cases/clients/mobile/views/detail/detail.php'),
             array('module' => 'Contacts', 'view' => 'edit', 'filepath' => 'modules/Contacts/clients/mobile/views/edit/edit.php'),
             array('module' => 'Employees', 'view' => 'list', 'filepath' => 'modules/Employees/clients/mobile/views/list/list.php'),
-            array('module' => 'Leads', 'view' => 'search', 'filepath' => 'modules/Leads/clients/mobile/views/search/search.php'),
             array('module' => 'Meetings', 'view' => 'detail', 'filepath' => 'modules/Meetings/clients/mobile/views/detail/detail.php'),
         );
     }
@@ -131,10 +127,10 @@ class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
     public function _portalMetaDataFilesExistsProvider()
     {
         return array(
-            array('module' => 'Bugs', 'view' => 'detail', 'filepath' => 'modules/Bugs/clients/portal/views/detail/detail.php'),
+            array('module' => 'Bugs', 'view' => 'record', 'filepath' => 'modules/Bugs/clients/portal/views/record/record.php'),
             array('module' => 'Cases', 'view' => 'list', 'filepath' => 'modules/Cases/clients/portal/views/list/list.php'),
-            array('module' => 'Contacts', 'view' => 'edit', 'filepath' => 'modules/Contacts/clients/portal/views/edit/edit.php'),
-            array('module' => 'KBDocuments', 'view' => 'detail', 'filepath' => 'modules/KBDocuments/clients/portal/views/detail/detail.php'),
+            array('module' => 'Contacts', 'view' => 'record', 'filepath' => 'modules/Contacts/clients/portal/views/record/record.php'),
+            array('module' => 'KBDocuments', 'view' => 'record', 'filepath' => 'modules/KBDocuments/clients/portal/views/record/record.php'),
         );
     }
     //END SUGARCRM flav=ent ONLY
@@ -150,10 +146,10 @@ class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     //BEGIN SUGARCRM flav=ent ONLY
-    protected function _hasDetailViewLink($child) 
+    protected function _hasRecordViewLink($child)
     {
         foreach ($child as $props) {
-            if (isset($props['action']) && strpos($props['action'], 'DetailView') !== false) {
+            if (isset($props['action']) && strpos($props['action'], 'RecordView') !== false) {
                 return true;
             }
         }
