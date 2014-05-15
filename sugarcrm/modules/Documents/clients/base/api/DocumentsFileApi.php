@@ -67,7 +67,11 @@ class DocumentsFileApi extends FileApi {
     protected function saveBean($bean)
     {
         // Recreate revision bean with correct data
-        ++$bean->revision;
+        if($bean->document_revision_id) {
+            ++$bean->revision;
+        } else {
+            $bean->revision = 1;
+        }
         $revision = $bean->createRevisionBean();
         $bean->document_revision_id = $revision->id;
         // Save the bean
@@ -78,5 +82,16 @@ class DocumentsFileApi extends FileApi {
         }
         // Save the revision object
         $revision->save();
+        // update the fields
+        $bean->fill_in_additional_detail_fields();
+    }
+
+    protected function deleteIfFails($bean, $args)
+    {
+        // if we already have the revision, we won't delete the document on failure to add another one
+        if($bean->document_revision_id) {
+            return;
+        }
+        parent::deleteIfFails($bean, $args);
     }
 }

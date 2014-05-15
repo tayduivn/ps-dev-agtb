@@ -467,7 +467,7 @@ class FileApi extends SugarApi {
      * @param array $args The request args
      * @return false if no deletion occured because delete_if_fails was not set otherwise true.
      */
-    private function deleteIfFails($bean, $args) {
+    protected function deleteIfFails($bean, $args) {
         // Bug 57210: Need to be able to mark a related record 'deleted=1' when a file uploads fails.
         // delete_if_fails flag is an optional query string which can trigger this behavior. An example
         // use case might be: user's in a modal and client: 1. POST's related record 2. uploads file...

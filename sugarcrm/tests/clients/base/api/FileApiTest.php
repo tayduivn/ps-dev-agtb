@@ -53,7 +53,7 @@ class FileApiTest extends Sugar_PHPUnit_Framework_TestCase
         $document->save();
         $this->documents[] = $document;
 
-        // no Account view, delete
+        // no Document view, delete
         $acldata['module']['view']['aclaccess'] = ACL_ALLOW_NONE;
         $acldata['module']['delete']['aclaccess'] = ACL_ALLOW_NONE;
         ACLAction::setACLData($GLOBALS['current_user']->id, 'Documents', $acldata);

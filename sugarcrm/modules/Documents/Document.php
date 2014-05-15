@@ -111,6 +111,10 @@ class Document extends SugarBean {
         return $row;
     }
 
+    /**
+     * Create a revision bean for current document
+     * @return DocumentRevision
+     */
     public function createRevisionBean()
     {
         $Revision = BeanFactory::getBean('DocumentRevisions');
