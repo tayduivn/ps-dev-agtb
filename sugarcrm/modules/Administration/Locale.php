@@ -63,12 +63,16 @@ if (isset($_REQUEST['process']) && $_REQUEST['process'] == 'true') {
         $locale->removeInvalidLocaleNameFormatUpgradeNotice();
     }
 
-    //Rebuild language cache then using ping to trigger refresh of client metadata if necessary
+    // Metadata sections that have to be refreshed on `Save`.
+    $refreshSections = array(
+        MetaDataManager::MM_CURRENCIES,
+        MetaDataManager::MM_LABELS,
+        MetaDataManager::MM_ORDEREDLABELS,
+    );
     $mm = MetaDataManager::getManager();
-    $mm->rebuildLanguagesCache();
-    $mm->refreshSectionCache(array(MetaDataManager::MM_CURRENCIES));
+    $mm->refreshSectionCache($refreshSections);
 
-    //Call Ping API to refresh the language list.
+    // Call `ping` API to refresh the metadata.
     echo "
         <script>
         var app = window.parent.SUGAR.App;
