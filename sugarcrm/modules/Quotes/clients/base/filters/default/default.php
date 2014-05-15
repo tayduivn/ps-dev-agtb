@@ -17,13 +17,7 @@ $viewdefs['Quotes']['base']['filter']['default'] = array(
         'name' => array(),
         'quote_num' => array(),
         'quote_type' => array(),
-        'account_name' => array(
-            'dbFields' => array(
-                'accounts.name',
-            ),
-            'type' => 'text',
-            'vname' => 'LBL_ACCOUNT_NAME',
-        ),
+        'account_name' => array(),
         'total' => array(),
         'date_quote_expected_closed' => array(),
         'date_entered' => array(),
