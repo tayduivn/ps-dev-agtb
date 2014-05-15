@@ -103,6 +103,8 @@ class OpportunitiesPipelineChartApi extends SugarApi
             ->gte('date_closed_timestamp', $tp->start_date_timestamp)
             ->lte('date_closed_timestamp', $tp->end_date_timestamp);
 
+        $sq->orderBy('probability', 'DESC');
+
         // determine the type we need to fetch
         if ($args['type'] == 'user') {
             // we are only looking at our pipeline
@@ -151,9 +153,6 @@ class OpportunitiesPipelineChartApi extends SugarApi
             // add to the total
             $total = SugarMath::init($total, 0)->add($base_amount)->result();
         }
-
-        // sort the data for the final loop
-        asort($data);
 
         // get the default currency
         /* @var $currency Currency */
