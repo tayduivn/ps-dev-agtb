@@ -1,8 +1,10 @@
-describe("Base.Field.Parent", function() {
+describe('Base.Field.Parent', function() {
 
-    var app, field, sinonSandbox;
+    var app, field;
 
     beforeEach(function() {
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.set();
         app = SugarTest.app;
         var fieldDef = {
             "name": "parent_name",
@@ -21,7 +23,6 @@ describe("Base.Field.Parent", function() {
             "comment": "The name of the account represented by the account_id field",
             "required": true, "importable": "required"
         };
-        sinonSandbox = sinon.sandbox.create();
 
         SugarTest.loadComponent("base", "field", "relate");
         field = SugarTest.createField("base","parent_name", "parent", "edit", fieldDef);
@@ -39,12 +40,11 @@ describe("Base.Field.Parent", function() {
         }
     });
     afterEach(function() {
+        sinon.collection.restore();
         app.cache.cutAll();
         app.view.reset();
-        sinonSandbox.restore();
         Handlebars.templates = {};
-        field.model = null;
-        field = null;
+        field.dispose();
     });
 
     it("should set value correctly", function() {
@@ -52,7 +52,7 @@ describe("Base.Field.Parent", function() {
             expected_name = 'blahblah',
             expected_module = 'Accounts';
 
-        field.model.removeDefaultAttribute = sinon.stub();
+        field.model.removeDefaultAttribute = sinon.collection.stub();
         field.setValue({id: expected_id, value: expected_name, module: expected_module});
         var actual_id = field.model.get('parent_id'),
             actual_name = field.model.get('parent_name'),
@@ -64,16 +64,13 @@ describe("Base.Field.Parent", function() {
     it("should deal get related module for parent", function() {
         var actual_id = field.model.get('parent_id'),
             actual_module = field.model.get('parent_type'),
-            _relatedModuleSpy = sinon.spy(field, "getSearchModule"),
-            _relateIdSpy = sinon.spy(field, "_getRelateId");
+            _relatedModuleSpy = sinon.collection.spy(field, 'getSearchModule'),
+            _relateIdSpy = sinon.collection.spy(field, '_getRelateId');
 
         field.format();
         expect(_relatedModuleSpy).toHaveBeenCalled();
         expect(_relateIdSpy).toHaveBeenCalled();
         expect(field.href).toEqual("#"+actual_module+"/"+actual_id);
-
-        _relatedModuleSpy.restore();
-        _relateIdSpy.restore();
     });
 
     describe('isAvailableParentType', function () {
@@ -86,6 +83,38 @@ describe("Base.Field.Parent", function() {
             field.typeFieldTag = 'select';
             field.$el.html('<select><option value="Accounts">Account</option></select>');
             expect(field.isAvailableParentType('Contacts')).toBe(false);
+        });
+    });
+
+    describe('render', function() {
+        var _renderStub, getSearchModuleStub;
+
+        beforeEach(function() {
+            _renderStub = sinon.collection.stub(app.view.Field.prototype, '_render');
+            getSearchModuleStub = sinon.collection.stub(field, 'getSearchModule');
+        });
+
+        using('different search modules', [
+            {
+                module: undefined,
+                render: true
+            },
+            {
+                module: 'invalidModule',
+                render: false
+            },
+            {
+                module: 'Cases',
+                render: true
+            }
+        ], function(options) {
+
+            it('should not render if the related module is invalid', function() {
+                getSearchModuleStub.returns(options.module);
+                field.render();
+
+                expect(_renderStub.called).toBe(options.render);
+            });
         });
     });
 });
