@@ -35,6 +35,7 @@ abstract class UpgradeDriver
      * admin - Admin user
      * log - Log file
      * state_file - file where upgrade state is stored (usually cache/upgrades/upgrade_state)
+     * case_insensitive_fs - whether the file-system is case-insensitive
      * CLI:
      * php - PHP binary
      * Shadow:
@@ -162,12 +163,20 @@ abstract class UpgradeDriver
         if(empty($this->manifest) || empty($this->manifest['copy_files']['from_dir'])) {
             return false;
         }
+
         $zip_from_dir = $this->context['extract_dir']."/".$this->manifest['copy_files']['from_dir'];
         $target_dir = $this->context['source_dir'];
         $files = $this->findFiles($zip_from_dir);
         foreach($files as $file) {
             $this->log("Copying $file");
             $this->ensureDir(dirname("$target_dir/$file"));
+
+            // If we're running on a case-insensitive file-system, delete
+            // the file first to ensure we pick up filename case changes.
+            if ($this->context['case_insensitive_fs']) {
+                $this->unlink($target_dir . '/' . $file);
+            }
+
             if(!copy("$zip_from_dir/$file", "$target_dir/$file")) {
                 return $this->error("Failed to copy: $file");
             }
@@ -250,6 +259,26 @@ abstract class UpgradeDriver
     }
 
     /**
+     * Write a test-file to determine if the file-system is case-insensitive.
+    */
+
+    public function testFilesystemCaseInsensitive()
+    {
+        $result = false;
+ 
+        @touch('testFSCase.txt');
+
+        if (file_exists('testfscase.txt')) {
+            $result = true;
+            $this->log('Case-insensitive file-system support enabled.');
+        }
+
+        $this->unlink('testFSCase.txt');
+
+        return $result;
+    }
+
+    /**
      * Execution will start here
      * This function must form context, create a class and run it
      */
@@ -281,6 +310,7 @@ abstract class UpgradeDriver
         if(isset($this->context['script_mask'])) {
             $this->script_mask &= $this->context['script_mask'];
         }
+        $this->context['case_insensitive_fs'] = $this->testFilesystemCaseInsensitive();
         $this->initialized = true;
     }
 

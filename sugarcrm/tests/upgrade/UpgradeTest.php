@@ -107,4 +107,27 @@ END;
         sort($moduleList);
         $this->assertEquals($moduleList, $mods);
     }
+
+    /**
+     * Test for 9_RemoveFiles
+     */
+    public function testRemoveFiles()
+    {
+        @touch('sugarCaseTest.txt');
+
+        $script = $this->upgrader->getScript('post', '9_RemoveFiles');
+        $this->upgrader->state['files_to_delete'] = array('sugarcasetest.txt');
+        $script->run();
+
+        $this->assertEquals(true, file_exists('sugarCaseTest.txt'), 'Failed case-insensitivity file-remove test.');
+
+        $this->upgrader->state['files_to_delete'] = array('sugarCaseTest.txt');
+        $script->run();
+
+        $this->assertEquals(false, file_exists('sugarCaseTest.txt'), 'Failed general file-remove test.');
+
+        if (file_exists('sugarCaseTest.txt')) {
+            @unlink('sugarCaseTest.txt');
+        }
+    }
 }
