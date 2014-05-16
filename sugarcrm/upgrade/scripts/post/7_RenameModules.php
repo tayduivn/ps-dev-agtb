@@ -45,7 +45,12 @@ class SugarUpgradeRenameModules extends UpgradeScript
                             $app_list_strings['moduleList'][$moduleId] = $app_list_strings['moduleListSingular'][$moduleId];
                         }
                         $klass->selectedLanguage = $langKey;
-
+                        if(empty($strings['moduleListSingular'][$moduleId])) {
+                            $strings['moduleListSingular'][$moduleId] = $app_list_strings['moduleListSingular'][$moduleId];
+                        }
+                        if(empty($strings['moduleList'][$moduleId])) {
+                            $strings['moduleList'][$moduleId] = $app_list_strings['moduleList'][$moduleId];
+                        }
                         $replacementLabels = array(
                             'singular' => $strings['moduleListSingular'][$moduleId],
                             'plural' => $strings['moduleList'][$moduleId],
