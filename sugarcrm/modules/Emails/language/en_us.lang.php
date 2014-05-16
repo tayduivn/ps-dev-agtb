@@ -131,6 +131,7 @@ $mod_strings = array (
 	'LBL_SEARCH_FORM_DRAFTS_TITLE'=> 'Search Drafts',
 	'LBL_SEARCH_FORM_SENT_TITLE'=> 'Search Sent Emails',
 	'LBL_SEARCH_FORM_TITLE'		=> 'Email Search',
+    'LBL_SEARCH_IMPORTED_EMAIL' => 'Search Imported Email',
 	'LBL_SEND_ANYWAYS'			=> 'Are you sure you want to send/save the email without subject?',
 	'LBL_NO_BODY_SEND_ANYWAYS'	=> 'Are you sure you want to send/save the email without body?',
 	'LBL_NO_SUBJECT_NO_BODY_SEND_ANYWAYS' => 'Are you sure you want to send/save the email without subject and body?',
