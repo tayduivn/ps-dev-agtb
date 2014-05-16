@@ -414,13 +414,17 @@
         var context = app.controller.context,
             module = context.get('module'),
             template = Handlebars.compile(app.lang.get(titles[context.get('layout')], module) || ''),
-            moduleString = app.lang.getAppListStrings('moduleList');
-
+            moduleString = app.lang.getAppListStrings('moduleList'),
+            title;
         //pass current translated module name and current page's model data
-        return template(_.extend({
+        title = template(_.extend({
             module: moduleString[module],
             appId: app.config.appId
         }, model ? model.attributes : {}));
+        // title may contain XML entities because Handlebars escapes characters
+        // by replacing them for use in HTML, so the true text needs to be
+        // lifted before it can be set on the title
+        return $('<span/>').html(title).text();
     };
     //set current document title with template format
     var setTitle = function(model) {
