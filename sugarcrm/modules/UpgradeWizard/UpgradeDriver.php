@@ -1480,6 +1480,7 @@ abstract class UpgradeDriver
     {
         ini_set('memory_limit',-1);
         ini_set('error_reporting', E_ALL & ~E_STRICT & ~E_DEPRECATED);
+        ini_set('max_execution_time', 0);
         $this->log("Stage $stage staring");
         try {
             $this->current_stage = $stage;

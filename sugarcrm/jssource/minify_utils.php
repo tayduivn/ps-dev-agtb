@@ -59,10 +59,10 @@ class SugarMinifyUtils
         );
         return $compress_exempt_files;
     }
-    
+
     /**
      * Gets the js_groupings array for use in the concatenation process
-     * 
+     *
      * @return array
      */
     protected function getJSGroupings()
@@ -89,13 +89,13 @@ class SugarMinifyUtils
         global $sugar_config;
 
         // Minifying the group files takes a long time sometimes.
-        @ini_set('max_execution_time', 300);
+        @ini_set('max_execution_time', 0);
         $js_groupings = $this->getJSGroupings();
 
         // Get the files that are not meant to be minified
         $excludedFiles = $this->get_exclude_files($from_path);
 
-        // For each item in the $js_groupings array (from JSGroupings.php), 
+        // For each item in the $js_groupings array (from JSGroupings.php),
         // concatenate the source files into the target file
         foreach ($js_groupings as $fg) {
             // List of files to build into one
@@ -104,7 +104,7 @@ class SugarMinifyUtils
             // Default the permissions to the most restrictive to start
             $currPerm = 0;
 
-            // Process each group array. $loc is the file to read in, $trgt is 
+            // Process each group array. $loc is the file to read in, $trgt is
             // the concatenated file
             foreach($fg as $loc=>$trgt){
                 $contents = '';
@@ -119,7 +119,7 @@ class SugarMinifyUtils
                     if ($tPerm !== false && $tPerm > $currPerm) {
                         $currPerm = $tPerm;
                     }
-                    
+
                     //make sure we have handles to both source and target file
                     $content = file_get_contents($loc);
                     //Skip minifying files in exclude list
