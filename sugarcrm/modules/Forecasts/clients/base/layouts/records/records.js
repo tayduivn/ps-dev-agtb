@@ -14,6 +14,10 @@
 /**
  * Forecast Records View
  *
+ * @class BaseForecastsRecordsLayout
+ * @alias SUGAR.App.view.layouts.BaseForecastsRecordsLayout
+ * @extends BaseRecordsLayout
+ *
  * Events
  *
  * forecasts:worksheet:committed
@@ -172,23 +176,62 @@
             }, this);
             
             //handle timeperiod change events
-            this.context.on("forecasts:timeperiod:changed", function(model){
-                if(this.isDirty){
+            this.context.on('forecasts:timeperiod:changed', function(model, startEndDates) {
+                // create an anonymous function to combine the two calls where this is used
+                var onSuccess = _.bind(function() {
+                    this.context.set('selectedTimePeriod', model.get('selectedTimePeriod'));
+                    this._saveTimePeriodStatEndDates(startEndDates['start'], startEndDates['end']);
+                }, this);
+
+                if (this.isDirty) {
                     app.alert.show('leave_confirmation', {
                         level: 'confirmation',
                         messages: app.lang.get(this.navigationMessage, 'Forecasts').split('<br>'),
-                        onConfirm: _.bind(function() {
-                            this.context.set('selectedTimePeriod', model.get('selectedTimePeriod'));
-                        }, this),
+                        onConfirm: onSuccess,
                         onCancel: _.bind(function() {
                             this.context.trigger('forecasts:timeperiod:canceled');
                         }, this)
                     });
                 } else {
-                    this.context.set("selectedTimePeriod", model.get("selectedTimePeriod"));
+                    // call the on success handler
+                    onSuccess();
                 }
             }, this);
         }
+    },
+
+    /**
+     * Utility Method to handle saving of the timeperiod start and end dates so we can use them in other parts
+     * of the forecast application
+     *
+     * @param {String} startDate        Start Date
+     * @param {String} endDate          End Date
+     * @param {Boolean} [doSilent]      When saving to the context, should this be silent to supress events
+     * @return {Object} The object that is saved to the context if the context is there.
+     * @private
+     */
+    _saveTimePeriodStatEndDates: function(startDate, endDate, doSilent)
+    {
+        // if do silent is not passed in or it's not a boolean, then just default it to false, so the events will fire
+        if (_.isUndefined(doSilent) || !_.isBoolean(doSilent)) {
+            doSilent = false;
+        }
+        var userPref = app.date.convertFormat(app.user.getPreference('datepref')),
+            systemPref = 'YYYY-MM-DD',
+            dateObj = {
+                start: app.date(startDate, [userPref, systemPref]).format(systemPref),
+                end: app.date(endDate, [userPref, systemPref]).format(systemPref)
+            };
+
+        if (!_.isUndefined(this.context)) {
+            this.context.set(
+                'selectedTimePeriodStartEnd',
+                dateObj,
+                {silent: doSilent}
+            );
+        }
+
+        return dateObj;
     },
 
     /**
@@ -251,7 +294,12 @@
             // set the value to null since it can be undefined
             currentForecastCommitDate: null,
             selectedTimePeriod: data.defaultSelections.timeperiod_id.id,
-            selectedRanges: data.defaultSelections.ranges
+            selectedRanges: data.defaultSelections.ranges,
+            selectedTimePeriodStartEnd: this._saveTimePeriodStatEndDates(
+                data.defaultSelections.timeperiod_id.start,
+                data.defaultSelections.timeperiod_id.end,
+                true
+            )
         }, {silent: true});
 
         ctx.get('model').set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});

@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  ********************************************************************************/
+/**
+ * @class BaseForecastsInfoView
+ * @alias SUGAR.App.view.views.BaseForecastsInfoView
+ * @extends View.View
+ */
 ({
     /**
      * Timeperiod model 
@@ -32,7 +37,10 @@
      */
     bindDataChange: function(){
         this.tpModel.on("change", function(model){
-            this.context.trigger("forecasts:timeperiod:changed", model);
+            this.context.trigger(
+                'forecasts:timeperiod:changed',
+                model,
+                this.getField('selectedTimePeriod').tpTooltipMap[model.get('selectedTimePeriod')]);
         }, this);
         
         this.context.on("forecasts:timeperiod:canceled", function(){
