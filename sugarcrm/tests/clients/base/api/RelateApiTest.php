@@ -40,6 +40,7 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
     public $accounts = array();
     public $contacts = array();
     public $roles = array();
+    public $opportunities = array();
 
     /** @var  RelateApi */
     public $relateApi;
@@ -62,6 +63,18 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $account->load_relationship('contacts');
         $account->contacts->add($contact);
 
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity();
+        $opportunity->load_relationship('contacts');
+        $contact->opportunity_role = 'A';
+        $contact->save();
+        $opportunity->contacts->add($contact);
+        $contact = SugarTestContactUtilities::createContact();
+        $contact->opportunity_role = 'B';
+        $contact->save();
+        $this->contacts[] = $contact;
+        $opportunity->contacts->add($contact);
+        $opportunity->save();
+        $this->opportunities[] = $opportunity;
     }
 
     public function tearDown() {
@@ -80,6 +93,7 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
             $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id = '{$role->id}'");
         }
         unset($_SESSION['ACL']);
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
 
         SugarTestHelper::tearDown();
         parent::tearDown();        
@@ -195,6 +209,26 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
                   'fields' => 'id,name', 'order_by' => 'name:ASC'));
         $this->assertArrayHasKey('record_count', $reply);
         $this->assertEquals(1, $reply['record_count']);
+    }
+
+    /**
+     * Test sorting on a field with rname_link property defined in vardefs, eg, opportunity_role in Contacts module
+     */
+    public function testOrderByRelationshipField()
+    {
+        $opp_id = $this->opportunities[0]->id;
+        $contact_id = $this->contacts[1]->id;
+        $serviceMock = new RelateApiServiceMockUp();
+        $reply = $this->relateApi->filterRelated(
+            $serviceMock,
+            array('module' => 'Opportunities',
+                  'record' => $opp_id,
+                  'link_name' => 'contacts',
+                  'fields' => 'id, name, opportunity_role',
+                  'order_by' => 'opportunity_role:DESC'));
+
+        $this->assertEquals(2, count($reply['records']), 'Should return two records');
+        $this->assertEquals($contact_id, $reply['records'][0]['id'], 'Should be in desc order');
     }
 }
 
