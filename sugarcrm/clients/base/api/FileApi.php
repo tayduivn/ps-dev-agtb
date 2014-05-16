@@ -436,7 +436,9 @@ class FileApi extends SugarApi {
             }
         }
 
-        return $this->getFileList($api, $args);
+        $list = $this->getFileList($api, $args);
+        $list['record'] = $this->formatBean($api, $args, $bean);
+        return $list;
     }
 
     /**

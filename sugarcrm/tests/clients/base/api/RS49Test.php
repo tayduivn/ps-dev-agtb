@@ -397,7 +397,7 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
 
         $api = $this->getMock('FileApi', array('loadBean', 'getFileList'));
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
-        $api->expects($this->once())->method('getFileList')->will($this->returnValue('getFileListReturnString'));
+        $api->expects($this->once())->method('getFileList')->will($this->returnValue(array('getFileListReturnString')));
 
         $parameters = array(
             'module' => $bean->module_dir,
@@ -405,7 +405,7 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
             'field' => 'filename',
         );
         $actual = $api->removeFile($this->service, $parameters);
-        $this->assertEquals('getFileListReturnString', $actual);
+        $this->assertContains('getFileListReturnString', $actual);
     }
 
     /**
@@ -421,7 +421,7 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
 
         $api = $this->getMock('FileApi', array('loadBean', 'getFileList'));
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
-        $api->expects($this->once())->method('getFileList')->will($this->returnValue('getFileListReturnString'));
+        $api->expects($this->once())->method('getFileList')->will($this->returnValue(array('getFileListReturnString')));
 
         $parameters = array(
             'module' => $bean->module_dir,
@@ -429,7 +429,7 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
             'field' => 'filename',
         );
         $actual = $api->removeFile($this->service, $parameters);
-        $this->assertEquals('getFileListReturnString', $actual);
+        $this->assertContains('getFileListReturnString', $actual);
     }
 
     /**

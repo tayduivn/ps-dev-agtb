@@ -185,10 +185,13 @@
             if (confirm(confirmMessage)) {
                 //Otherwise delete the image
                 app.api.call('delete', self.buildUrl({htmlJsonFormat: false}), {}, {
-                        success: function() {
+                        success: function(response) {
                             //Need to fire the change event twice so model.previous(self.name) is also changed.
                             self.model.unset(self.name);
                             self.model.set(self.name, null);
+                            if (response.record && response.record.date_modified) {
+                                self.model.set('date_modified', response.record.date_modified);
+                            }
                             if (!self.disposed) self.render();
                         },
                         error: function(data) {
