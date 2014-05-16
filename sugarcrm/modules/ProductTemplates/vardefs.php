@@ -449,10 +449,14 @@ $dictionary['ProductTemplate'] = array(
 	array (
 		'name' => 'pricing_formula',
 		'vname' => 'LBL_PRICING_FORMULA',
-		'type' => 'enum',
+        'type' => 'pricing-formula',
+		'dbType' => 'enum',
 		'options' => 'pricing_formula_dom',
 		'len' => 100,
-		'comment' => 'Pricing formula (ex: Fixed, Markup over Cost)'
+		'comment' => 'Pricing formula (ex: Fixed, Markup over Cost)',
+        'related_fields' => array(
+            'pricing_factor',
+        )
 	),
 	'pricing_factor' =>
 	array (
@@ -461,7 +465,10 @@ $dictionary['ProductTemplate'] = array(
 		'type' => 'decimal',
 		'len' => '8',
         'precision' => '2',
-		'comment' => 'Variable pricing factor depending on pricing_formula'
+		'comment' => 'Variable pricing factor depending on pricing_formula',
+        'related_fields' => array(
+            'pricing_formula',
+        )
 	),
     /**
      * Bug 46077 - Removed the account_name vardef to prevent empty account names
