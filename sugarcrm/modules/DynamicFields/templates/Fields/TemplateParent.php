@@ -31,7 +31,7 @@ require_once('modules/DynamicFields/templates/Fields/TemplateEnum.php');
 require_once('modules/DynamicFields/templates/Fields/TemplateId.php');
 require_once('modules/DynamicFields/templates/Fields/TemplateParentType.php');
 class TemplateParent extends TemplateEnum{
-    var $max_size = 25;
+    public $max_size = 36;
     var $type='parent';
     
     function get_field_def(){
