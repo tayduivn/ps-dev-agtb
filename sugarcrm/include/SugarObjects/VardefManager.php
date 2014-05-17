@@ -434,7 +434,7 @@ class VardefManager{
         $matches = array();
         if (!empty($relLinkFields)) {
             // If there is a field with this name as a field def, use it
-            if (isset($relLinkFields[$relName])) {
+            if ($byLinkName && isset($relLinkFields[$relName])) {
                 $matches[] = $relLinkFields[$relName];
             } else {
                 // Otherwise loop and set
