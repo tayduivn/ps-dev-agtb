@@ -208,7 +208,7 @@
         .icon-caret-down {
           color: @grayLight;
           text-indent: 0;
-          top: 0;
+          top: -8px;
         }
         &:hover,
         &.open {
@@ -221,6 +221,12 @@
           width: 40px;
           margin-right: -5px;
         }
+      }
+      li button.dropdown-submenu {
+        height: 8px;
+        right: 10px;
+        opacity: 0.6;
+        position: relative;
       }
     }
 

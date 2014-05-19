@@ -40,13 +40,15 @@
             <div class="dropdown-menu scroll pull-right">
                 <ul role="menu" id="fullmenu">
                     {{#each menulist}}
-                        {{#if css_class}}<li class="{{css_class}}">{{else}}<li>{{/if}}<a href="{{route}}" {{#unless submenu}}{{#if openwindow}}target="_blank"{{/if}}{{/unless}} track="click:userAction-{{label}}">
-                            {{#if img_url}}<img src="{{img_url}}" alt="{{../../userName}}" class="avatar avatar-sm">{{else}}{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{/if}}{{str label}}</a>
-                            {{#if submenu}}
-                            <button href="javascript:void(0)" data-action="link" class="btn btn-invisible dropdown-submenu">
-                                <i class="icon-caret-down"></i>
-                            </button>
-                            {{/if}}
+                        {{#if css_class}}<li class="{{css_class}}">{{else}}<li>{{/if}}
+                            <a href="{{route}}" {{#unless submenu}}{{#if openwindow}}target="_blank"{{/if}}{{/unless}} track="click:userAction-{{label}}">
+                                {{#if img_url}}<img src="{{img_url}}" alt="{{../../userName}}" class="avatar avatar-sm">{{else}}{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{/if}}{{str label}}
+                                {{#if submenu}}
+                                <button href="javascript:void(0)" data-action="link" class="btn btn-invisible dropdown-submenu">
+                                    <i class="icon-caret-down"></i>
+                                </button>
+                                {{/if}}
+                            </a>
                             {{#if submenu.length}}
                                 <ul class="dropdown-inset">
                                     {{#each submenu}}
