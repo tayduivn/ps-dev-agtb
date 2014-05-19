@@ -1118,9 +1118,12 @@ protected function checkQuery($sql, $object_name = false)
                     $sql .=	 "/*MISNAMED INDEX IN DATABASE - $name - $ex_name */\n";
                     $rename = $this->renameIndexDefs($ex_value, $value, $tableName);
                     if($execute) {
-                        $this->query($rename, true, "Cannot rename index");
+                        $rename = is_array($rename) ? $rename : array($rename);
+                        foreach ($rename as $q) {
+                            $this->query($q, true, "Cannot rename index");
+                            $sql .= $q . "\n";
+                        }
                     }
-                    $sql .= is_array($rename)?join("\n", $rename). "\n":$rename."\n";
 
                 } else {
                     // ok we need this field lets create it
@@ -3288,8 +3291,10 @@ protected function checkQuery($sql, $object_name = false)
      */
 	public function renameIndexDefs($old_definition, $new_definition, $table_name)
 	{
-		return array($this->add_drop_constraint($table_name,$old_definition,true),
-				$this->add_drop_constraint($table_name,$new_definition), false);
+        return array(
+            $this->add_drop_constraint($table_name, $old_definition, true),
+            $this->add_drop_constraint($table_name, $new_definition, false),
+        );
 	}
 
 	/**
