@@ -769,9 +769,12 @@ $alert_file_contents = "";
 
                 $eval_dump .= "\$_SESSION['workflow_cron'] = 'Yes';\n";
                 ++ $trigger_time_count;
+                $eval_dump .= "\$secondary_array = array();";
                 $eval_dump .= "\$checkFields = array('for' => 'activity', ";
                 $eval_dump .= "'field_filter' => array(";
                 $additionalEval = array();
+                $additionalEvalRelated = array();
+                $relatedTriggers = '';
                 $bean = BeanFactory::getBean($this->base_module);
                 $dateTypeFields = array('date', 'datetime', 'datetimecombo');
                 if ($row['trigger_type'] != 'compare_any_time'
@@ -780,10 +783,13 @@ $alert_file_contents = "";
                 ) {
                     $additionalEval[] = "({$eval})";
                 }
-                foreach ($this->secondary_triggers as $secondaryTrigger) {
+                foreach ($this->secondary_triggers as $key => $secondaryTrigger) {
                     $eval_dump .= "'" . $secondaryTrigger['field'] . "', ";
 
-                    if (!empty($secondaryTrigger['eval'])
+                    if ($secondaryTrigger['type'] == 'filter_rel_field') {
+                        $relatedTriggers .= "\$filter{$key} = " . $secondaryTrigger['eval'] . "; \n";
+                        $additionalEvalRelated[] = "\$filter{$key}['results'] === true";
+                    } else if (!empty($secondaryTrigger['eval'])
                     	&& $secondaryTrigger['type'] != 'compare_any_time'
                     	&& !($secondaryTrigger['type'] == 'compare_specific'
                     	&& in_array($bean->field_defs[$secondaryTrigger['field']]['type'], $dateTypeFields))
@@ -792,8 +798,14 @@ $alert_file_contents = "";
                     }
                 }
                 $eval_dump .= "'" . $row['target_field'] . "'));\n";
+                $eval_dump .= $relatedTriggers;
                 $eval_dump .= "\$dataChanged = \$GLOBALS['db']->getDataChanges(\$focus, \$checkFields);\n";
-                $eval_dump .= "if ((empty(\$focus->fetched_row) || !empty(\$dataChanged))";
+                $eval_dump .= "if ((empty(\$focus->fetched_row) ";
+                $related = '';
+                if (!empty($additionalEvalRelated)) {
+                    $related .= "|| (" . implode(' && ', $additionalEvalRelated) . ")";
+                }
+                $eval_dump .= "|| !empty(\$dataChanged) $related)";
                 if (!empty($additionalEval)) {
                     $eval_dump .= ' && (' . implode(' && ', $additionalEval) . ')';
                 }
@@ -881,7 +893,8 @@ function get_front_triggers_secondary($workflow_id, & $trigger_count){
 			}
 			if($row['type']=="filter_rel_field"){
 				$this->glue_object->build_trigger_triggers("trigger_".$trigger_count."_secondary_".$secondary_count, $row['id']);
-				$eval .= "\t \$secondary_array = check_rel_filter(\$focus, \$secondary_array, '".$row['rel_module']."', \$trigger_meta_array['trigger_".$trigger_count."_secondary_".$secondary_count."'], '".$row['rel_module_type']."'); \n";
+				$secondaryTriggersEval = "check_rel_filter(\$focus, \$secondary_array, '".$row['rel_module']."', \$trigger_meta_array['trigger_".$trigger_count."_secondary_".$secondary_count."'], '".$row['rel_module_type']."')";
+				$eval .= "\t \$secondary_array = " . $secondaryTriggersEval . "; \n";
 				$eval .= "\t if(";
 				$eval .= "(\$secondary_array['results']==true)";
 				$eval .= "\t ){ \n";
