@@ -32,7 +32,8 @@ class ArchivedEmailsBeanLink extends ArchivedEmailsLink
         if (empty($this->focus->$relation)) {
             $GLOBALS['log']->error("Bad relation '$relation' for bean '{$this->focus->object_name}' id '{$this->focus->id}'");
             // produce join that is always empty
-            return "inner join (select null id) nothing on 1 != 1";
+            $dummy = $this->focus->db->getFromDummyTable();
+            return "inner join (select null id $dummy) nothing on 1 != 1";
         }
 
         $rel_module = $this->focus->$relation->getRelatedModuleName();
