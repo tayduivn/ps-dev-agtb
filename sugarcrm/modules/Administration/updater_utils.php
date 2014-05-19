@@ -750,7 +750,7 @@ function apiLoadSystemStatus($forceReload = false)
 	    $administration = Administration::getSettings('system');
         // key defined in Adminitration::retrieveSettings(): $key = $row['category'] . '_' . $row['name'];
         if (!empty($administration->settings['system_api_system_status'])) {
-            $systemStatus = unserialize(base64_decode($administration->settings));
+            $systemStatus = unserialize(base64_decode($administration->settings['system_api_system_status']));
         }
     } else {
         // if it's not an array and is truthy, comvert it to true
