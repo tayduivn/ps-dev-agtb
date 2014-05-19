@@ -562,7 +562,13 @@
             module = ctx.get('module') || context.get('module'),
             layoutName = ctx.get('layout') || '',
             sync = function(method, model, options) {
+
                 options = app.data.parseOptionsForSync(method, model, options);
+                // there is no max limit for number of dashboards permodule view
+                if (options && options.params ) {
+                    options.params.max_num = -1;
+                }
+
                 var callbacks = app.data.getSyncCallbacks(method, model, options),
                     path = (this.dashboardModule === 'Home' || model.id) ?
                                 this.apiModule : this.apiModule + '/' + this.dashboardModule;
