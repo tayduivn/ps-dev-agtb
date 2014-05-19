@@ -500,19 +500,20 @@ class SavedReport extends SugarBean
      return $unallowed_modules;
   }
 
-    /**
-     * Gets a list of allowed report modules in the current language.
-     *
-     * @return array List of translated module names.
-     */
-    function getModulesDropdown() {
-        require_once 'modules/Reports/config.php';
-        global $app_list_strings, $report_modules;
+/**
+ * Gets a list of allowed report modules in the current language.
+ *
+ * @return array List of translated module names.
+ */
+function getModulesDropdown()
+{
+    require_once 'modules/Reports/config.php';
+    global $app_list_strings, $report_modules;
 
-        $allowed_modules = array();
+    $allowed_modules = array();
 
-        foreach($report_modules as $module => $value) {
-            $allowed_modules[$module] = $app_list_strings['moduleList'][$module];
-        }
-        return $allowed_modules;
+    foreach ($report_modules as $module => $value) {
+        $allowed_modules[$module] = $app_list_strings['moduleList'][$module];
     }
+    return $allowed_modules;
+}
