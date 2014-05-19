@@ -16,6 +16,10 @@ $viewdefs['KBSContents']['base']['filter']['default'] = array(
     'fields' => array(
         'name' => array(),
         'status' => array(),
+        'tags' => array(
+            'type' => 'tags',
+            'vname' => 'LBL_TAGS',
+        ),
         'language' => array(
             'type' => 'enum-config',
             'module' => 'KBSDocuments',
