@@ -35,13 +35,13 @@
     ATTACH_TYPE_TEMPLATE: 'template',
     MIN_EDITOR_HEIGHT: 300,
     EDITOR_RESIZE_PADDING: 5,
+    FIELD_PANEL_BODY_SELECTOR: '.row-fluid.panel_body',
 
     initialize: function(options) {
         _.bindAll(this);
         this._super("initialize", [options]);
         this.events = _.extend({}, this.events, {
-            'click .cc-option': 'showSenderOptionField',
-            'click .bcc-option': 'showSenderOptionField',
+            'click [data-toggle-field]': '_handleSenderOptionClick',
             'click [name=draft_button]': 'saveAsDraft',
             'click [name=send_button]': 'send',
             'click [name=cancel_button]': 'cancel'
@@ -58,8 +58,6 @@
     },
 
     _render: function () {
-        var toAddressesField;
-
         this._super("_render");
         if (this.createMode) {
             this.setTitle(app.lang.get('LBL_COMPOSEEMAIL', this.module));
@@ -70,19 +68,11 @@
             if (!_.isEmpty(prepopulateValues)) {
                 this.prepopulate(prepopulateValues);
             }
-
-            this.renderSenderOptions();
+            this.addSenderOptions();
 
             if (this.model.isNew()) {
                 this._updateEditorWithSignature(this._lastSelectedSignature);
             }
-        }
-
-        toAddressesField = this.getField('to_addresses');
-        if (toAddressesField) {
-            toAddressesField.on('render', _.bind(function() {
-                this.setRecipientContentBefore();
-            }, this));
         }
 
         this.notifyConfigurationStatus();
@@ -168,99 +158,92 @@
     },
 
     /**
-     * Check if CC or BCC fields have values - if not, hide the fields and inject a link to show it
+     * Add Cc/Bcc toggle buttons
+     * Initialize whether to show/hide fields and toggle show/hide buttons appropriately
      */
-    renderSenderOptions: function() {
-        var showCCLink = false,
-            showBCCLink = false,
-            toCC = this.model.get('cc_addresses') || [],
-            toBCC = this.model.get('bcc_addresses') || [];
-
-        if (toCC.length == 0) {
-            this.hideField('cc_addresses');
-            showCCLink = true;
-        }
-
-        if (toBCC.length == 0) {
-            this.hideField('bcc_addresses');
-            showBCCLink = true;
-        }
-
-        this.toggleSenderOptions('to_addresses', showCCLink, showBCCLink);
+    addSenderOptions: function() {
+        this._renderSenderOptions('to_addresses');
+        this._initSenderOption('cc_addresses');
+        this._initSenderOption('bcc_addresses');
     },
 
     /**
-     * Run the sender option template to toggle whether CC or BCC show links are injected
+     * Render the sender option buttons and place them in the given container
      *
-     * @param container
-     * @param showCCLink
-     * @param showBCCLink
+     * @param {String} container Name of field that will contain the sender option buttons
+     * @private
      */
-    toggleSenderOptions: function(container, showCCLink, showBCCLink) {
+    _renderSenderOptions: function(container) {
         var field = this.getField(container),
-            ccField,
+            $panelBody,
             senderOptionTemplate;
 
         if (field) {
-            ccField = field.$el.closest('.row-fluid.panel_body');
+            $panelBody = field.$el.closest(this.FIELD_PANEL_BODY_SELECTOR);
             senderOptionTemplate = app.template.getView("compose-senderoptions", this.module);
 
-            $(senderOptionTemplate({
-                'module' : this.module,
-                'showCC': showCCLink,
-                'showBCC': showBCCLink,
-                'showSeperator': showCCLink && showBCCLink
-            })).insertAfter(ccField.find('div span.normal'));
+            $(senderOptionTemplate({'module' : this.module}))
+                .insertAfter($panelBody.find('div span.normal'));
         }
     },
 
     /**
-     * Event Handler for showing the CC or BCC options on the page.
+     * Check if the given field has a value
+     * Hide the field if there is no value prepopulated
      *
-     * @param evt click event
+     * @param {String} fieldName Name of the field to initialize active state on
+     * @private
      */
-    showSenderOptionField: function(evt) {
-        var ccOption = $(evt.target),
-            fieldName = ccOption.data('ccfield'),
-            field = this.getField(fieldName),
-            ccSeperator = this.$('.compose-sender-options .cc-seperator');
+    _initSenderOption: function(fieldName) {
+        var fieldValue = this.model.get(fieldName) || [];
+        this.toggleSenderOption(fieldName, (fieldValue.length > 0));
+    },
 
-        ccOption.addClass('hide');
-        ccSeperator.toggleClass('hide', true);
+    /**
+     * Toggle the state of the given field
+     * Sets toggle button state and visibility of the field
+     *
+     * @param {String} fieldName Name of the field to toggle
+     * @param {Boolean} [active] Whether toggle button active and field shown
+     */
+    toggleSenderOption: function(fieldName, active) {
+        var toggleButtonSelector = '[data-toggle-field="' + fieldName + '"]',
+            $toggleButton = this.$(toggleButtonSelector);
 
-        field.$el.closest('.row-fluid.panel_body').removeClass('hide');
-
-        this.setRecipientContentBefore();
-
-        //check to see if both fields are hidden then hide the whole thing
-        if (this.$('.cc-option').hasClass('hide') && this.$('.bcc-option').hasClass('hide')){
-            this.$('.compose-sender-options').addClass('hide');
+        // if explicit active state not set, toggle to opposite
+        if (_.isUndefined(active)) {
+            active = !$toggleButton.hasClass('active');
         }
 
+        $toggleButton.toggleClass('active', active);
+        this._toggleFieldVisibility(fieldName, active);
+    },
+
+    /**
+     * Event Handler for toggling the Cc/Bcc options on the page.
+     *
+     * @param event click event
+     * @private
+     */
+    _handleSenderOptionClick: function(event) {
+        var $toggleButton = $(event.currentTarget),
+            fieldName = $toggleButton.data('toggle-field');
+
+        this.toggleSenderOption(fieldName);
         this.resizeEditor();
     },
 
     /**
-     * Creates virtual block on to_address select2 ul to wrap pills
+     * Show/hide a field section on the form
      *
-     * @param fieldName name of the field to hide
+     * @param {String} fieldName Name of the field to show/hide
+     * @param {Boolean} show Whether to show or hide the field
+     * @private
      */
-    setRecipientContentBefore: function() {
-        var toAddressesField = this.getField('to_addresses');
-        if (toAddressesField) {
-            toAddressesField.setContentBefore(this.$('.compose-sender-options a').not('.hide').text());
-        }
-    },
-
-    /**
-     * Hides a field section on the form
-     *
-     * @param fieldName name of the field to hide
-     */
-    hideField: function(fieldName) {
+    _toggleFieldVisibility: function(fieldName, show) {
         var field = this.getField(fieldName);
         if (field) {
-            field.$el.closest('.row-fluid.panel_body').addClass('hide');
+            field.$el.closest(this.FIELD_PANEL_BODY_SELECTOR).toggleClass('hide', !show);
         }
     },
 

@@ -26,35 +26,9 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-
 <div class="compose-sender-options">
-	<div class="btn-group" data-toggle="buttons-radio">
-		{{#if showCC }}
-		<a type="button" class="btn" data-view="subpanels" data-mode="view" rel="tooltip" title="" track="click:subpanels" data-original-title="Add Cc" tabindex="-1"><span class="text">Cc</span></a>
-		{{/if}}
-		{{#if showBCC}}
-		<a type="button" class="btn" data-view="activitystream" data-mode="view" rel="tooltip" title="" track="click:activitystream" data-original-title="Add Bcc" tabindex="-1"><span class="text">Bcc</span></a>
-		{{/if}}
+	<div class="btn-group">
+		<a type="button" class="btn" data-toggle-field="cc_addresses" tabindex="-1"><span class="text">{{str "LBL_CC_BUTTON" this.module}}</span></a>
+		<a type="button" class="btn" data-toggle-field="bcc_addresses" tabindex="-1"><span class="text">{{str "LBL_BCC_BUTTON" this.module}}</span></a>
 	</div>
 </div>
-
-<!--
-<a class="btn comp-send-options" href="javascript:void(0);" data-name="to_addresses">
-	<div>CC</div>
-	<div>BCC</div>
-</a>
--->
-
-<!--
-<div class="compose-sender-options">
-{{#if showCC }}
-<a href="javascript:void(0)" data-ccfield="cc_addresses" class="cc-option">{{str "LBL_ADD_CC" this.module}}</a>
-{{/if}}
-{{#if showSeperator}}
-<span class="cc-seperator"> | </span>
-{{/if}}
-{{#if showBCC}}
-<a href="javascript:void(0)" data-ccfield="bcc_addresses" class="bcc-option">{{str "LBL_ADD_BCC" this.module}}</a>
-{{/if}}
-</div>
--->
