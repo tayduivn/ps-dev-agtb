@@ -34,6 +34,8 @@ describe("Forecasts.Layout.Records", function() {
 
         SugarTest.testMetadata.set();
 
+        app.user.setPreference('datepref', 'm/d/Y');
+
         sinon.stub(app.user, 'getAcls', function () {
             var acls = {};
             acls['Forecasts'] = {};
@@ -68,10 +70,11 @@ describe("Forecasts.Layout.Records", function() {
     });
 
     afterEach(function() {
+        app.user.setPreference('datepref', null);
         app.user.getAcls.restore();
         layout.codeBlockForecasts.restore();
         layout.syncInitData.restore();
-        app.lang.getAppListStrings.restore()
+        app.lang.getAppListStrings.restore();
         // restore the local stubs
         _.each(stubs, function(stub) {
             stub.restore();
@@ -141,7 +144,12 @@ describe("Forecasts.Layout.Records", function() {
                     "forecasts_setup": 1
                 },
                 "defaultSelections": {
-                    "timeperiod_id": {"id": "test_tp_id", "label": "Q2 (04\/01\/2013 - 06\/30\/2013)"},
+                    'timeperiod_id': {
+                        'id': 'test_tp_id',
+                        'label': 'Q2 (04/01/2013 - 06/30/2013)',
+                        'start' : '2013-04-01',
+                        'end': '2013-06-30'
+                    },
                     "ranges": ["include"],
                     "group_by": "forecast",
                     "dataset": "likely"}
@@ -160,6 +168,10 @@ describe("Forecasts.Layout.Records", function() {
             expect(layout.initOptions.context.get('currentForecastCommitDate')).toEqual(null);
             expect(layout.initOptions.context.get('selectedTimePeriod')).toEqual(initData.defaultSelections.timeperiod_id.id);
             expect(layout.initOptions.context.get('selectedRanges')).toEqual(initData.defaultSelections.ranges);
+            expect(layout.initOptions.context.get('selectedTimePeriodStartEnd')).toEqual({
+                start: '2013-04-01',
+                end: '2013-06-30'
+            });
 
             expect(getSelectedUsersReporteesStub).toHaveBeenCalled();
         });

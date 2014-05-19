@@ -115,6 +115,35 @@ describe('Base.Field.TextArea', function() {
         });
     });
 
+    describe('setMode', function() {
+        using('different actions and modes', [
+            {action: 'list', mode: 'edit', expectedMode: 'list'},
+            {action: 'list', mode: 'disabled', expectedMode: 'list'},
+            {action: 'list', mode: 'detail', expectedMode: 'detail'},
+            {action: 'list', mode: 'list', expectedMode: 'list'},
+            {action: 'detail', mode: 'edit', expectedMode: 'edit'},
+            {action: 'detail', mode: 'disabled', expectedMode: 'disabled'},
+            {action: 'detail', mode: 'list', expectedMode: 'list'},
+            {action: 'detail', mode: 'detail', expectedMode: 'detail'},
+            {action: 'edit', mode: 'detail', expectedMode: 'detail'},
+            {action: 'edit', mode: 'list', expectedMode: 'list'},
+            {action: 'edit', mode: 'disabled', expectedMode: 'disabled'},
+            {action: 'edit', mode: 'edit', expectedMode: 'edit'},
+            {action: 'disabled', mode: 'detail', expectedMode: 'detail'},
+            {action: 'disabled', mode: 'list', expectedMode: 'list'},
+            {action: 'disabled', mode: 'edit', expectedMode: 'edit'},
+            {action: 'disabled', mode: 'disabled', expectedMode: 'disabled'}
+        ], function(value) {
+            it('should call the parent `setMode` with the appropriate mode', function() {
+                var superStub = sinon.collection.stub(field, '_super');
+                field.action = value.action;
+                field.setMode(value.mode);
+
+                expect(superStub).toHaveBeenCalledWith('setMode', [value.expectedMode]);
+            });
+        });
+    });
+
     describe('toggleCollapsed', function() {
         using('values', [true, false], function(value) {
             it('should toggle the value of `collapsed` and call render', function() {

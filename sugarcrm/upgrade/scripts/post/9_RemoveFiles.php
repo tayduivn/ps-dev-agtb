@@ -43,14 +43,21 @@ class SugarUpgradeRemoveFiles extends UpgradeScript
             return;
         }
 
-	    foreach($this->state['files_to_delete'] as $file) {
-	        $this->backupFile($file);
-	        $this->log("Removing $file");
-	        if(is_dir($file)) {
-	            $this->removeDir($file);
-	        } else {
-	            $this->unlink($file);
-	        }
-	    }
+        foreach($this->state['files_to_delete'] as $file) {
+            // If we're using a case-insensitive file-system and the
+            // file is not present as we specified it, don't remove it.
+            if ($this->upgrader->context['case_insensitive_fs'] && !in_array($file, glob("$file*"))) {
+                continue;
+            }
+
+            $this->backupFile($file);
+            $this->log("Removing $file");
+
+            if(is_dir($file)) {
+                $this->removeDir($file);
+            } else {
+                $this->unlink($file);
+            }
+        }
     }
 }

@@ -128,6 +128,19 @@ $popup_request_data = array(
 $ss->assign('encoded_team_popup_request_data', $json->encode($popup_request_data));
 //END SUGARCRM flav=pro ONLY
 
+if (!empty($focus->budget)) {
+    $focus->budget = SugarCurrency::formatAmountUserLocale($focus->budget, $focus->currency_id, false);
+}
+if (!empty($focus->actual_cost)) {
+    $focus->actual_cost = SugarCurrency::formatAmountUserLocale($focus->actual_cost, $focus->currency_id, false);
+}
+if (!empty($focus->expected_cost)) {
+    $focus->expected_cost = SugarCurrency::formatAmountUserLocale($focus->expected_cost, $focus->currency_id, false);
+}
+if (!empty($focus->expected_revenue)) {
+    $focus->expected_revenue = SugarCurrency::formatAmountUserLocale($focus->expected_revenue, $focus->currency_id, false);
+}
+
 //set default values
 $ss->assign("CALENDAR_LANG", "en");
 $ss->assign("USER_DATEFORMAT", '('. $timedate->get_user_date_format().')');

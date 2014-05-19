@@ -22,6 +22,7 @@ class SugarUpgradeForecastRemoveFiles extends UpgradeScript
 
     public function run()
     {
+        $files = array();
 
         // we only need to remove these files if the from_version is less than 7.0 but greater or equal than 6.7.0
         if (version_compare($this->from_version, '7.0', '<')
@@ -135,7 +136,16 @@ class SugarUpgradeForecastRemoveFiles extends UpgradeScript
                 'modules/Forecasts/clients/base/api/ForecastsWorksheetManager.php',
                 'modules/Forecasts/tpls'                
             );
+        }
 
+        // Delete files renamed or no longer necessary from 7.0 forward.
+        if (version_compare($this->from_version, '7.0', '>')) {
+            $files = array(
+                'modules/Forecasts/clients/base/plugins/DisableMassdelete.js'
+            );
+        }
+
+        if (!empty($files)) {
             $this->fileToDelete($files);
         }
     }

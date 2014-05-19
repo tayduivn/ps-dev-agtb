@@ -486,6 +486,7 @@ class ModuleBuilderController extends SugarController
                 // Clear the metadata cache for labels and the requested module
                 $repair->module_list = array($module);
                 $repair->repairMetadataAPICache(MetaDataManager::MM_LABELS);
+                $repair->repairMetadataAPICache(MetaDataManager::MM_ORDEREDLABELS);
             }
         } else {
             $mb = new ModuleBuilder ();

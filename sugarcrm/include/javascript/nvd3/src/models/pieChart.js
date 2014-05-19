@@ -129,7 +129,7 @@ nv.models.pieChart = function () {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().offsetHeight / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
       }
@@ -154,6 +154,7 @@ nv.models.pieChart = function () {
 
       innerMargin.top += legend.height() + 4;
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
+      innerWidth = availableWidth - innerMargin.left - innerMargin.right;
 
       //------------------------------------------------------------
       // Main Chart Component(s)
@@ -168,16 +169,16 @@ nv.models.pieChart = function () {
         .transition()
           .call(pie);
 
-
       if (hole) {
         holeWrap.select('text').remove();
         holeWrap.append('text')
           .text(hole)
           .attr('text-anchor', 'middle')
-          .attr('dy', '1em')
           .attr('class','nv-pie-hole')
-          .attr('transform', 'translate('+ (availableWidth / 2) +','+ (availableHeight / 2) +')')
-          .attr('fill', '#333');
+          .attr('fill', '#333')
+          .style('alignment-baseline', 'central');
+        holeWrap
+          .attr('transform', 'translate('+ (innerMargin.left + innerWidth / 2) + ',' + (innerMargin.top + innerHeight / 2) +')');
       }
 
       //============================================================

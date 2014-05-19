@@ -600,7 +600,12 @@ class DynamicField {
             $this->buildCache($this->module);
             $this->saveExtendedAttributes($field, array_keys($fmd->field_defs));
             MetaDataManager::refreshModulesCache(array($this->module));
-            MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_LABELS));
+            MetaDataManager::refreshSectionCache(
+                array(
+                    MetaDataManager::MM_LABELS,
+                    MetaDataManager::MM_ORDEREDLABELS,
+                )
+            );
         }
 
         return true;

@@ -61,6 +61,12 @@ class SugarQuery_Builder_Field_Orderby extends SugarQuery_Builder_Field
                 }
             }
             $this->markNonDb();
+        } elseif (!empty($this->def['rname_link'])) {
+            $this->query->orderBy("{$this->table}.{$this->def['rname_link']}", $this->direction);
+            if (!$this->query->select->checkField($this->def['rname_link'], $this->table)) {
+                $this->query->select->addField("{$this->table}.{$this->def['rname_link']}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$this->table}__{$this->def['rname_link']}", false, 'alias')));
+            }
+            $this->markNonDb();
         } else {
             if (!empty($this->def['sort_on'])) {
                 $table = $this->table;

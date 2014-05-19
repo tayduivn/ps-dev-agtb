@@ -28,6 +28,10 @@
             if (newChartData && this.model.get('rawChartData').values.length > 0) {
                 this.displayNoData(false);
                 this.$('.nv-chart').attr('class', 'nv-chart nv-' + this.chartType);
+                // if the chart already exists, remove it before we generate the new one
+                if (this.chart_loaded) {
+                    this.$('#d3_' + this.cid + ' svg').remove();
+                }
                 this.generateD3Chart();
             } else {
                 this.displayNoData(true);

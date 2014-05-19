@@ -195,25 +195,40 @@
      * Fetch api to retrieve the entire filtered set.
      */
     getTotalRecords: function() {
-        var massCollection = this.context && this.context.get('mass_collection');
+        var massCollection = this.context && this.context.get('mass_collection'),
+            filterDef,
+            max_num,
+            order,
+            fields,
+            params,
+            url;
+
         if (!massCollection) {
             return;
         }
 
-        var filterDef = massCollection.filterDef || [],
+        filterDef = massCollection.filterDef || [];
         //if list view is for linking and link fetch size configuration exists, set it,
         //otherwise default to maxRecordFetchSize
-            max_num = (this.def.isLinkAction && app.config.maxRecordLinkFetchSize) ?
-                app.config.maxRecordLinkFetchSize :
-                app.config.maxRecordFetchSize,
-            order = this.context.get('collection').orderBy;
+        max_num = (this.def.isLinkAction && app.config.maxRecordLinkFetchSize) ?
+            app.config.maxRecordLinkFetchSize :
+            app.config.maxRecordFetchSize;
+        order = this.context.get('collection').orderBy;
 
         if (!_.isArray(filterDef)) {
             filterDef = [filterDef];
         }
 
-        var params = {
-            fields: 'id',
+        fields = ['id'];
+        // if any of the buttons require additional fields, add them to the list
+        _.each(this.def.buttons, function(button) {
+            if (_.isArray(button.related_fields)) {
+                fields = _.union(fields, button.related_fields);
+            }
+        }, this);
+
+        params = {
+            fields: fields.join(','),
             max_num: max_num
         };
 
@@ -225,7 +240,7 @@
             params.filter = filterDef;
         }
 
-        var url = app.api.buildURL(this.module, null, null, params);
+        url = app.api.buildURL(this.module, null, null, params);
 
         app.alert.show('totalrecord', {
             level: 'process',

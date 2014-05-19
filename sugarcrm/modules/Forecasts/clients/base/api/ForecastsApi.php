@@ -135,11 +135,15 @@ class ForecastsApi extends SugarApi
         if (!empty($tp->id)) {
             $defaultSelections["timeperiod_id"] = array(
                 'id' => $tp->id,
-                'label' => $tp->name
+                'label' => $tp->name,
+                'start' => $tp->start_date,
+                'end' => $tp->end_date
             );
         } else {
             $defaultSelections["timeperiod_id"]["id"] = '';
             $defaultSelections["timeperiod_id"]["label"] = '';
+            $defaultSelections["timeperiod_id"]["start"] = '';
+            $defaultSelections["timeperiod_id"]["end"] = '';
         }
 
         $returnInitData["initData"]['forecasts_setup'] = (isset($forecastsSettings['is_setup'])) ? $forecastsSettings['is_setup'] : 0;

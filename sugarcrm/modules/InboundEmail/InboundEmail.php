@@ -3542,7 +3542,7 @@ class InboundEmail extends SugarBean {
 			if(isset($part->parts) && !empty($part->parts) && !( isset($part->subtype) && strtolower($part->subtype) == 'rfc822')  ) {
 				$this->saveAttachments($msgNo, $part->parts, $emailId, $thisBc, $forDisplay);
                 continue;
-			} elseif($part->ifdisposition) {
+                        } elseif ($part->ifdisposition && strtolower($part->subtype) != 'rfc822') {
 				// we will take either 'attachments' or 'inline'
 				if(strtolower($part->disposition) == 'attachment' || ((strtolower($part->disposition) == 'inline') && $part->type != 0)) {
 					$attach = $this->getNoteBeanForAttachment($emailId);
@@ -3573,10 +3573,11 @@ class InboundEmail extends SugarBean {
 			elseif ($part->type == 2 && isset($part->subtype) && strtolower($part->subtype) == 'rfc822' )
 			{
 			    $tmp_eml =  imap_fetchbody($this->conn, $msgNo, $thisBc);
+                            $rfcheaders = imap_rfc822_parse_headers($tmp_eml);
 			    $attach = $this->getNoteBeanForAttachment($emailId);
-			    $attach->file_mime_type = 'messsage/rfc822';
+                            $attach->file_mime_type = 'message/rfc822';
 			    $attach->description = $tmp_eml;
-			    $attach->filename = 'bounce.eml';
+			    $attach->filename = $attach->name = $rfcheaders->subject . ".eml";
 			    $attach->safeAttachmentName();
 			    if($forDisplay) {
 			        $attach->id = $this->getTempFilename();

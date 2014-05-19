@@ -103,9 +103,6 @@
             this.render();
             var $row = this.addRow(),
                 field = $row.data('nameField');
-
-            // Open the dropdown once it's rendered to make form completion easier
-            $row.find(field.fieldTag).select2('open');
         } else {
             this.populateFilter();
         }

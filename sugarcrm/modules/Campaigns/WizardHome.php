@@ -32,8 +32,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('modules/Campaigns/utils.php');
 
-
-
 $focus = BeanFactory::getBean('Campaigns');
 if(isset($_REQUEST['record']) &&  !empty($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
@@ -54,11 +52,6 @@ if($focus->campaign_type == 'NewsLetter'){
 
 global $theme;
 global $currentModule;
-
-
-
-
-
 
     $ss = new Sugar_Smarty();
     $ss->assign("MOD", $mod_strings);
@@ -172,6 +165,19 @@ function create_campaign_summary  ($focus){
     $fields[] = 'expected_cost';
     $fields[] = 'impressions';
     $fields[] = 'objective';
+
+    if (!empty($focus->budget)) {
+        $focus->budget = SugarCurrency::formatAmountUserLocale($focus->budget, $focus->currency_id);
+    }
+    if (!empty($focus->actual_cost)) {
+        $focus->actual_cost = SugarCurrency::formatAmountUserLocale($focus->actual_cost, $focus->currency_id);
+    }
+    if (!empty($focus->expected_cost)) {
+        $focus->expected_cost = SugarCurrency::formatAmountUserLocale($focus->expected_cost, $focus->currency_id);
+    }
+    if (!empty($focus->expected_revenue)) {
+        $focus->expected_revenue = SugarCurrency::formatAmountUserLocale($focus->expected_revenue, $focus->currency_id);
+    }
 
     //create edit view status and input buttons
     $cmp_input = '';

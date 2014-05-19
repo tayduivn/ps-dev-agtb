@@ -25,7 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    plugins: ['Dashlet', 'Chart'],
+    plugins: ['Dashlet', 'Chart', 'EllipsisInline'],
     className: 'cases-summary-wrapper',
 
     tabData: null,
@@ -47,7 +47,7 @@
                 .margin({top: 10, right: 10, bottom: 15, left: 10})
                 .donut(true)
                 .donutLabelsOutside(true)
-                .donutRatio(0.4)
+                .donutRatio(0.447)
                 .hole(this.total)
                 .showTitle(false)
                 .tooltips(true)
