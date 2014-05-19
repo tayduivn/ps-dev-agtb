@@ -748,7 +748,8 @@ function apiLoadSystemStatus($forceReload = false)
     if (empty($systemStatus)) {
         // No luck, try the database
 	    $administration = Administration::getSettings('system');
-        if (!empty($administration->settings['api_system_status'])) {
+        // key defined in Adminitration::retrieveSettings(): $key = $row['category'] . '_' . $row['name'];
+        if (!empty($administration->settings['system_api_system_status'])) {
             $systemStatus = unserialize(base64_decode($administration->settings));
         }
     } else {
