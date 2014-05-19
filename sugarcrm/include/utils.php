@@ -5536,6 +5536,73 @@ function ensureCache($minifyUtils, $rootDir)
 }
 
 /**
+ * Ensures that a javascript cache file exists and if it doesn't, will create 
+ * the necessary JS Groupings files into the cache directory for consumption.
+ * 
+ * @param array $files The basename of the file to check or an array of names to check
+ * @param string $root The directory off which the cache file path lives
+ * @param boolean $addPath Adds the path to the cache for this file if true
+ * @return string|array The path to the single file specified, or the collection of files specified
+ */
+function ensureJSCacheFilesExist($files = array(), $root = '.', $addPath = true)
+{
+    // Create a reasonable default. Using sugar_sidecar since that is what was
+    // used in ensureCache as a default
+    if (empty($files)) {
+        $files = array('sugar_sidecar.min.js');
+    }
+
+    // Make this an array to facilitate more than one file check
+    if (!is_array($files)) {
+        $files = array($files);
+    }
+
+    // Prepare the return
+    $return = array();
+
+    // Check existence of files to allow building only when necessary
+    $cacheExists = true;
+    foreach ($files as $f) {
+        // Build the path to the file we are looking for
+        if ($addPath) {
+            $path = "$root/" . sugar_cached("include/javascript/$f");
+        } else {
+            $path = "$root/$f";
+        }
+
+        // Keep track of existence
+        $cacheExists = $cacheExists && file_exists($path) && is_file($path);
+
+        // Add this file to the return stack
+        $return[] = $path;
+    }
+
+    // If even one of the files doesn't exist, rebuild
+    if (!$cacheExists) {
+        // Maintain state as well as possible
+        $rd = isset($_REQUEST['root_directory']) ? $_REQUEST['root_directory'] : null;
+
+        // Build the concatenated files
+        $_REQUEST['root_directory'] = $root;
+        require_once("jssource/minify_utils.php");
+        $minifyUtils = new SugarMinifyUtils();
+        $minifyUtils->ConcatenateFiles($root);
+
+        // Cleanup the root directory request var if it was found. If it was null
+        // this will in effect unset it
+        $_REQUEST['root_directory'] = $rd;
+    }
+
+    // For a single file check return just that file
+    if (count($return) == 1) {
+        return $return[0];
+    }
+
+    // For multiple file checks return all files
+    return $return;
+}
+
+/**
  * Checks backward compatibility state of a module
  *
  * @param  string  $module The name of the module to check
