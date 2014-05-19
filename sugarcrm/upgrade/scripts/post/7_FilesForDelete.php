@@ -187,6 +187,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'modules/Meetings/api/MeetingsApi.php',
             // MAR-1736 / SC-2611
             'modules/Emails/clients/base/views/panel-top/panel-top.js',
+            // NOMAD-1799
+            'modules/Meetings/clients/mobile/api/MobileMeetingsApi.php',
         );
 
         if (version_compare($this->from_version, '7.2', '<')) {
