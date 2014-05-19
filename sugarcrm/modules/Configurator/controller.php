@@ -158,10 +158,11 @@ class ConfiguratorController extends SugarController
             sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
         }
         $configurator = new Configurator();
-        $configurator->saveConfig();
 
         $focus = BeanFactory::getBean('Administration');
         $focus->saveConfig();
+
+        $configurator->saveConfig();
 
         // Clear the Contacts file b/c portal flag affects rendering
         if (file_exists($cachedfile = sugar_cached('modules/Contacts/EditView.tpl')))
