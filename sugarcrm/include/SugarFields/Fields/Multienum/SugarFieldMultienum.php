@@ -215,4 +215,31 @@ class SugarFieldMultienum extends SugarFieldEnum
     protected function getNormalizedFieldValues($bean, $fieldName) {
         return empty($bean->$fieldName) ? array() : unencodeMultienum($bean->$fieldName);
     }
+
+    /**
+     * Format a multienum field
+     *
+     * @param string $rawField The multienum field to be formatted
+     * @param array $vardef The field vardef
+     * @return string the formatted multienum field
+     */
+    public function formatField($rawField, $vardef) {
+        global $app_list_strings;
+
+        if (!empty($vardef['options'])) {
+            $option_array_name = $vardef['options'];
+            $selectedKeys = unencodeMultienum($rawField);
+            $values = array();
+            foreach ($selectedKeys as $selected) {
+                if (!empty($app_list_strings[$option_array_name][$selected])) {
+                    $values[] = $app_list_strings[$option_array_name][$selected];
+                } else {
+                    $values[] = $selected;
+                }
+            }
+            return implode(", ", $values);
+        } else {
+            return decodeMultienumField($rawField);
+        }
+    }
 }
