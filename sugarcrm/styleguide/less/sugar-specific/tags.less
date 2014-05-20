@@ -26,24 +26,24 @@
  }
 }
 
-[data-fieldname="tags"] {
-  .select2-container {
-    margin-left: -1px !important;
-    position: relative !important;
-    &.select2-container-multi.select2-choices-pills-close {
-      .select2-search-choice {
-        div {
+[data-fieldname="tags"] .select2-container,
+[data-type="tags"] .select2-container,
+.filter-body .select2field-tags {
+  margin-left: -1px !important;
+  position: relative !important;
+  &.select2-container-multi.select2-choices-pills-close {
+    .select2-search-choice {
+      div {
+        color: @dropdownLinkColorHover;
+        background: @dropdownLinkBackgroundHover;
+        .label {
           color: @dropdownLinkColorHover;
-          background: @dropdownLinkBackgroundHover;
-          .label {
-            color: @dropdownLinkColorHover;
-          }
         }
-        a.select2-search-choice-close {
-          color: @grayLight;
-          &:hover {
-            color: @gray;
-          }
+      }
+      a.select2-search-choice-close {
+        color: @grayLight;
+        &:hover {
+          color: @gray;
         }
       }
     }
