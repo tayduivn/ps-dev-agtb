@@ -16,12 +16,12 @@
     plugins: ['File', 'FieldDuplicate', 'Tooltip'],
 
     MAPSIZECLASS: {
-        large: 'label-module-lg ',
-        medium: 'label-module-md ',
-        button: 'label-module-btn ',
-        default: '',
-        small: 'label-module-sm ',
-        mini: 'label-module-mini '
+        'large': 'label-module-lg',
+        'medium': 'label-module-md',
+        'button': 'label-module-btn',
+        'default': '',  //This field does not fallback to this size
+        'small': 'label-module-sm',
+        'mini': 'label-module-mini'
     },
 
     /**
@@ -34,7 +34,7 @@
         this._super("_render");
         if (this.action !== 'edit' || this.view.name === 'merge-duplicates') {
             if (_.isEmpty(this.value)) {
-                className = (_.isEmpty(this.def.size) || _.isUndefined(this.MAPSIZECLASS[this.def.size])) ? '' : this.MAPSIZECLASS[this.def.size];
+                className = _.isUndefined(this.MAPSIZECLASS[this.def.size]) ? this.MAPSIZECLASS['large'] : this.MAPSIZECLASS[this.def.size];
                 // replace the image field with the module icon when there is no avatar to display
                 // load the module icon template
                 template = app.template.getField(this.type, 'module-icon', this.module);
