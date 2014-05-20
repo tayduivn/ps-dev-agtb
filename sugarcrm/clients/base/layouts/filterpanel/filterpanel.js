@@ -94,7 +94,7 @@
 
         // Obtain any options set in the metadata and override the defaultOptions with them
         // to set on the context.
-        var filterOptions = _.extend(defaultOptions, this.meta.filter_options);
+        var filterOptions = _.extend(defaultOptions, this.meta.filter_options, this.context.get('filterOptions'));
         this.context.set('filterOptions', filterOptions);
 
         // The `defaultModule` will either evaluate to the model's module (more

@@ -1,4 +1,4 @@
-describe('Filter Actions View', function() {
+describe('Base.View.FilterActions', function() {
 
     var view, app, parentLayout;
 
@@ -31,6 +31,13 @@ describe('Filter Actions View', function() {
         var stub = sinon.collection.stub(view, 'toggleSave');
         view.initialize(view.options);
         parentLayout.trigger('filter:toggle:savestate');
+        expect(stub).toHaveBeenCalled();
+    });
+
+    it('should call toggle on filter:create:open', function() {
+        var stub = sinon.collection.stub(view, 'toggle');
+        view.initialize(view.options);
+        parentLayout.trigger('filter:create:open', new Backbone.Model());
         expect(stub).toHaveBeenCalled();
     });
 
@@ -134,6 +141,16 @@ describe('Filter Actions View', function() {
             ]);
             expect(filterLayoutTriggerStub).toHaveBeenCalled();
             expect(filterLayoutTriggerStub).toHaveBeenCalledWith('filter:create:close', true, 'my_filter');
+        });
+    });
+
+    describe('toggle', function() {
+        using('template filter', [true, false], function(value) {
+            it('should show or hide the view', function() {
+                var filter = new Backbone.Model({is_template: value});
+                view.toggle(filter);
+                expect(view.$el.hasClass('hide')).toBe(value);
+            });
         });
     });
 });

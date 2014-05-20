@@ -392,17 +392,21 @@ describe("BaseFilterFilterDropdownView", function () {
     });
 
     describe('handleClearFilter', function() {
+
         it('should stop propagation, clear last filter and trigger "filter:reinitialize"', function() {
+            view.layout.filters = new Backbone.Collection();
+            view.layout.filters.defaultFilterFromMeta = 'test_default_filter';
             view.filterNode = $('');
             var evt = {
                 'stopPropagation': sinon.spy()
             };
             var clearLastFilterStub = sinonSandbox.stub(layout, 'clearLastFilter');
-            var triggerStub = sinonSandbox.stub(layout.layout, 'trigger');
+            var triggerStub = sinonSandbox.stub(layout, 'trigger');
             view.handleClearFilter(evt);
             expect(evt.stopPropagation).toHaveBeenCalled();
             expect(clearLastFilterStub).toHaveBeenCalled();
-            expect(triggerStub).toHaveBeenCalledWith('filter:reinitialize');
+            expect(triggerStub).toHaveBeenCalled();
+            expect(triggerStub).toHaveBeenCalledWith('filter:change:filter', 'test_default_filter');
         });
     });
 });

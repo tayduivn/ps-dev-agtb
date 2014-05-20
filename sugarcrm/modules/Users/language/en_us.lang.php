@@ -657,6 +657,8 @@ $mod_strings = array (
     'LBL_HIDEOPTIONS' => 'Hide Options',
     'LBL_SHOWOPTIONS' => 'Show Options',
 
+    'LBL_FILTER_USERS_REPORTS' => 'Users\' reports',
+
 ); // END STRINGS DEFS
 
 ?>

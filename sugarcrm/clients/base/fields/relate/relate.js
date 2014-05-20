@@ -151,7 +151,7 @@
 
             var inList = (this.view.name === 'recordlist'),
                 cssClasses = (inList ? 'select2-narrow' : '') + (this.type === 'parent' ? ' select2-parent' : ''),
-                relatedModuleField = this.def.rname;
+                relatedModuleField = this.getRelatedModuleField();
 
             this.$(this.fieldTag).select2({
                 width: inList?'off':'100%',
@@ -188,13 +188,7 @@
                     }
                 }).on('searchmore', function() {
                     $(this).select2('close');
-                    app.drawer.open({
-                        layout: 'selection-list',
-                        context: {
-                            module: self.getSearchModule(),
-                            fields: _.union(['id', relatedModuleField], _.keys(self.def.populate_list || {}))
-                        }
-                    }, _.bind(self.setValue, self));
+                    self.openSelectDrawer();
                 }).on("change", function (e) {
                     var id = e.val,
                         plugin = $(this).data('select2'),
@@ -347,7 +341,7 @@
         var silent = model.silent || false,
             values = {};
         values[this.def.id_name] = model.id;
-        values[this.def.name] = model[this.def.rname] || model.value;
+        values[this.def.name] = model[this.getRelatedModuleField()] || model.value;
         this.model.set(values, {silent: silent});
 
         var newData = {},
@@ -416,6 +410,63 @@
             }
         });
     },
+
+    /**
+     * Opens the selection drawer.
+     *
+     * Note that if the field definitions have a `filter_relate` property, it
+     * will open the drawer and filter by this relate field.
+     *
+     *     @example a Revenue Line Item is associated to an account and to an
+     *      opportunity. If I want to open a drawer to select an opportunity
+     *      with an initial filter that filters opportunities by the account
+     *      associated to the revenue line item, in the field definitions I can
+     *      specify:
+     *      ```
+     *      'filter_relate' => array(
+     *          'account_id' => 'account_id',
+     *      ),
+     *      ```
+     *      The key is the field name in the Revenue Line Items record,
+     *      the value is the field name in the Opportunities record.
+     */
+    openSelectDrawer: function() {
+        var filterOptions = new app.utils.FilterOptions()
+            .config(this.def)
+            .setInitialFilter('$relate')
+            .populateRelate(this.model)
+            .format();
+
+        app.drawer.open({
+            layout: 'selection-list',
+            context: {
+                module: this.getSearchModule(),
+                fields: this.getSearchFields(),
+                filterOptions: filterOptions
+            }
+        }, _.bind(this.setValue, this));
+    },
+
+    /**
+     * Gets the list of fields to search by in the related module.
+     *
+     * @return {Array} The list of fields.
+     */
+    getSearchFields: function() {
+        return _.union(['id', this.getRelatedModuleField()], _.keys(this.def.populate_list || {}));
+    },
+
+    /**
+     * Gets the related field name in the related module record.
+     *
+     * Falls back to `name` if not defined.
+     *
+     * @return {String} The field name.
+     */
+    getRelatedModuleField: function() {
+        return this.def.rname || 'name';
+    },
+
     /**
      * {@inheritdoc}
      *
@@ -452,7 +503,7 @@
             searchModule = this.getSearchModule(),
             params = {},
             limit = self.def.limit || 5,
-            relatedModuleField = this.def.rname || 'name';
+            relatedModuleField = this.getRelatedModuleField();
 
         searchCollection = query.context || app.data.createBeanCollection(searchModule);
 
@@ -467,9 +518,7 @@
             showAlerts: false,
             update: true,
             remove: _.isUndefined(params.offset),
-            fields: _.union([
-                'id', relatedModuleField
-            ], _.keys(this.def.populate_list || {})),
+            fields: this.getSearchFields(),
             context: self,
             params: params,
             limit: limit,

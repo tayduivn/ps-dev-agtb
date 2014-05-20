@@ -296,7 +296,11 @@ describe('Base.View.FilterRows', function() {
         var addRowStub, _select2Obj, _rowObj;
         beforeEach(function() {
             view.fieldList = {
-                first_name: {}
+                name: {},
+                account_name: {
+                    name: 'account_name',
+                    id_name: 'account_id'
+                }
             };
             _select2Obj = {
                 select2: sinon.collection.stub($.fn, 'select2', function(sel) {
@@ -310,14 +314,14 @@ describe('Base.View.FilterRows', function() {
             };
             addRowStub = sinon.collection.stub(view, 'addRow').returns(_rowObj);
         });
-        it('should remove the row if the field does not exist in the metadata', function () {
+        it('should remove the row if the field does not exist in the metadata', function() {
             view.populateRow({
                 first_name: 'FirstName'
             });
             expect(_select2Obj.select2).not.toHaveBeenCalled();
             expect(_rowObj.remove).toHaveBeenCalled();
         });
-        it('should remove the row if the field does not exist in the `fieldList`', function () {
+        it('should remove the row if the field does not exist in the `fieldList`', function() {
             view.populateRow({
                 case_number: '123456'
             });
@@ -353,6 +357,48 @@ describe('Base.View.FilterRows', function() {
             });
 
             expect(_select2Obj.select2.firstCall.args).toEqual(['val', '$favorite']);
+        });
+
+        using('normal field, relate field', [
+            {
+                filter_populate: {
+                    name: 'Sugar'
+                },
+                filterDef: {
+                    'name': ''
+                },
+                expected: {
+                    field: 'name',
+                    operator: '$equals',
+                    value: 'Sugar'
+                }
+            },
+            {
+                filter_populate: {
+                    account_id: '1234-5678'
+                },
+                filterDef: {
+                    'account_id': ''
+                },
+                expected: {
+                    field: 'account_name',
+                    operator: '$equals',
+                    value: '1234-5678'
+                }
+            }
+        ], function(option) {
+
+            it('should populate the template with values passed in options', function() {
+                view.context.editingFilter.set('is_template', true);
+                view.context.set('filterOptions', {
+                    filter_populate: option.filter_populate
+                });
+                view.populateRow(option.filterDef);
+
+                expect(_select2Obj.select2.firstCall.args).toEqual(['val', option.expected.field]);
+                expect(_select2Obj.select2.secondCall.args).toEqual(['val', option.expected.operator]);
+                expect(_rowObj.data.firstCall.args).toEqual(['value', option.expected.value]);
+            });
         });
     });
 

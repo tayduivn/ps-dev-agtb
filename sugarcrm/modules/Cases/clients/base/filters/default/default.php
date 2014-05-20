@@ -33,13 +33,7 @@ $viewdefs['Cases']['base']['filter']['default'] = array(
     'quicksearch_priority' => 2,
     'fields' => array(
         'name' => array(),
-        'account_name' => array(
-            'dbFields' => array(
-                'accounts.name',
-            ),
-            'type' => 'text',
-            'vname' => 'LBL_ACCOUNT_NAME',
-        ),
+        'account_name' => array(),
         'status' => array(),
         'priority' => array(),
         'case_number' => array(),

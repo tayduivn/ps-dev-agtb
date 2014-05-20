@@ -54,13 +54,36 @@ describe("Base.Layout.Filterpanel", function(){
         afterEach(function () {
             app.user.lastState = oLastState;
         });
-        it("should initialize", function() {
-            var spy = sinon.spy();
-            layout.off();
-            layout.on('filterpanel:change:module', spy);
-            layout.initialize(layout.options);
-            expect(spy).toHaveBeenCalled();
+
+        describe('initialize', function() {
+
+            it('should trigger filterpanel:change:module', function() {
+                var spy = sinon.spy();
+                layout.off();
+                layout.on('filterpanel:change:module', spy);
+
+                layout.initialize(layout.options);
+                expect(spy).toHaveBeenCalled();
+            });
+
+            it('should initialize the filterOptions object', function() {
+                // Verify the filter options fallback chain.
+                layout.options.meta = layout.options.meta || {};
+                layout.options.meta.filter_options = {
+                    stickiness: false,
+                    show_actions: false
+                };
+                layout.context.set('filterOptions', {
+                    show_actions: true
+                });
+
+                layout.initialize(layout.options);
+
+                expect(layout.context.get('filterOptions').stickiness).toEqual(false);
+                expect(layout.context.get('filterOptions').show_actions).toEqual(true);
+            });
         });
+
 
         it("should trigger `filter:reinitialize` on render", function() {
             var spy = sinon.spy();

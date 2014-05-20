@@ -316,4 +316,6 @@ After confirming each required and desired module, click the Save and Convert bu
     'LBL_MKTO_SYNC' => 'Sync to Marketo&reg;',
     'LBL_MKTO_ID' => 'Marketo Lead ID',
     'LBL_MKTO_LEAD_SCORE' => 'Lead Score',
+
+    'LBL_FILTER_LEADS_REPORTS' => 'Leads\' reports',
 );
