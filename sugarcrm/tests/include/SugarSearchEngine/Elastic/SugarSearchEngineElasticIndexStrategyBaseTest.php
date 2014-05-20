@@ -103,6 +103,93 @@ class SugarSearchEngineElasticIndexStrategyBaseTest extends Sugar_PHPUnit_Framew
                     ),
                 )
             ),
+            2 => array(
+                array(
+                    'index_settings' => array(
+                        'default' => array(
+                            'index' => array(
+                                'analysis' => array(
+                                    'analyzer' => array(
+                                        'core_email_lowercase' => array(
+                                            'tokenizer' => 'whitespace',
+                                            'filter' => array(0 => 'lowercase')
+                                        ),
+                                    )
+                                )
+                            )
+                        ),
+                        'test' => array(
+                            'index' => array(
+                                'analysis' => array(
+                                    'analyzer' => array(
+                                        'core_email_lowercase' => array(
+                                            'filter' => array(0 => 'uppercase')
+                                        ),
+                                    )
+                                )
+                            )
+                        )
+                    )
+                ),
+                true,
+                array(
+                    'index' => array(
+                        'analysis' => array(
+                            'analyzer' => array(
+                                'core_email_lowercase' => array(
+                                    'type' => 'custom',
+                                    'tokenizer' => 'whitespace',
+                                    'filter' => array(0 => 'uppercase')
+                                ),
+                            )
+                        )
+                    )
+                )
+            ),
+            3 => array(
+                array(
+                    'index_settings' => array(
+                        'default' => array(
+                            'index' => array(
+                                'analysis' => array(
+                                    'analyzer' => array(
+                                        'core_email_lowercase' => array(
+                                            'tokenizer' => 'whitespace',
+                                            'filter' => array(0 => 'lowercase')
+                                        ),
+                                    )
+                                )
+                            )
+                        ),
+                        'test' => array(
+                            'index' => array(
+                                'analysis' => array(
+                                    'analyzer' => array(
+                                        'core_email_lowercase' => array(
+                                            'tokenizer' => 'keyword',
+                                            'filter' => array(0 => 'uppercase')
+                                        ),
+                                    )
+                                )
+                            )
+                        )
+                    )
+                ),
+                true,
+                array(
+                    'index' => array(
+                        'analysis' => array(
+                            'analyzer' => array(
+                                'core_email_lowercase' => array(
+                                    'type' => 'custom',
+                                    'tokenizer' => 'keyword',
+                                    'filter' => array(0 => 'uppercase')
+                                ),
+                            )
+                        )
+                    )
+                )
+            ),
         );
     }
 }

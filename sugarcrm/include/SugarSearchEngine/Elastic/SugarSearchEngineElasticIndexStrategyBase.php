@@ -126,12 +126,14 @@ abstract class SugarSearchEngineElasticIndexStrategyBase implements SugarSearchE
         }
 
         $settings = $params['index_settings'];
-        if (isset($settings[$indexName]) && is_array($settings[$indexName])) {
-            $indexSettings = $settings[$indexName];
-        }
         if ($addDefaults && isset($settings['default']) && is_array($settings['default'])) {
             $indexSettings = sugarArrayMergeRecursive($indexSettings, $settings['default']);
         }
+
+        if (isset($settings[$indexName]) && is_array($settings[$indexName])) {
+            $indexSettings = sugarArrayMergeRecursive($indexSettings, $settings[$indexName]);
+        }
+
         $GLOBALS['log']->info("Index settings for $indexName -> ".var_export($indexSettings, true));
         return $indexSettings;
     }
