@@ -1,29 +1,15 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
 (function(app) {
     app.events.on("app:init", function() {
         var routes,
@@ -35,6 +21,8 @@
                 return app.user.lastState.buildKey('last-home', 'app-header');
             };
 
+        // FIXME: Routes should be an extension of router.js, and not in a
+        // privately-scoped variable; will be addressed in SC-2761.
         routes = [
             {
                 name: "index",
@@ -68,7 +56,7 @@
                     if (lastHome === homeOptions.dashboard) {
                         app.router.list("Home");
                     } else if (lastHome === homeOptions.activities) {
-                        app.router.navigate('#activities', {trigger: true});
+                        app.router.redirect('#activities');
                     }
                 }
             },
@@ -107,8 +95,8 @@
 
                     var frame = $('#bwc-frame');
                     if (frame.length === 1 &&
-                    		app.utils.rmIframeMark('index.php' + frame.get(0).contentWindow.location.search) === url
-                        ) {
+                        app.utils.rmIframeMark('index.php' + frame.get(0).contentWindow.location.search) === url
+                    ) {
                         // update hash link only
                         return;
                     }
@@ -196,6 +184,12 @@
                         return;
                     }
 
+                    // FIXME: We shouldn't be calling private methods like this.
+                    // Will be addressed in SC-2761.
+                    if (!app.router._moduleExists(module)) {
+                        return;
+                    }
+
                     var previousModule = app.controller.context.get("module"),
                         previousLayout = app.controller.context.get("layout");
                     if (!(previousModule === module && previousLayout === "records")) {
@@ -222,6 +216,11 @@
                 name: "vcardImport",
                 route: ":module/vcard-import",
                 callback: function(module) {
+                    // FIXME: We shouldn't be calling private methods like this.
+                    // Will be addressed in SC-2761.
+                    if (!app.router._moduleExists(module)) {
+                        return;
+                    }
                     app.controller.loadView({
                         module: module,
                         layout: "records"
@@ -244,7 +243,11 @@
                 name: 'config',
                 route: ':module/config',
                 callback: function(module) {
-
+                    // FIXME: We shouldn't be calling private methods like this.
+                    // Will be addressed in SC-2761.
+                    if (!app.router._moduleExists(module)) {
+                        return;
+                    }
                     // figure out where we need to go back to on cancel
                     var previousModule = app.controller.context.get("module"),
                         previousLayout = app.controller.context.get("layout");
@@ -294,13 +297,23 @@
                 name: "record_layout",
                 route: ":module/:id/layout/:view",
                 callback: function(module, id, view) {
-                   app.router.record(module, id, null, view);
+                    // FIXME: We shouldn't be calling private methods like this.
+                    // Will be addressed in SC-2761.
+                    if (!app.router._moduleExists(module)) {
+                        return;
+                    }
+                    app.router.record(module, id, null, view);
                }
             },
             {
                 name: "record_layout_action",
                 route: ":module/:id/layout/:view/:action",
                 callback: function(module, id, layout, action) {
+                    // FIXME: We shouldn't be calling private methods like this.
+                    // Will be addressed in SC-2761.
+                    if (!app.router._moduleExists(module)) {
+                        return;
+                    }
                     app.router.record(module, id, action, layout);
                 }
             }
@@ -309,98 +322,11 @@
         app.routing.setRoutes(routes);
     });
 
-    //check module access before navigating to certain routes
-    //redirect to access denied page if user is lacking module access
     app.routing.before('route', function(options) {
-        options = options || {};
+        var hasAccess = app.router.hasAccessToModule(options) !== false,
+            isBwcRedirect = app.router.bwcRedirect(options) !== false;
 
-        var checkAccessRoutes = {
-                'record': 'view',
-                'create': 'create',
-                'vcardImport': 'create'
-            },
-            route = options.route || '',
-            args = options.args || [],
-            module = args[0],
-            accessCheck = checkAccessRoutes[route];
-
-        if (accessCheck && !app.acl.hasAccess(accessCheck, module)) {
-            app.controller.loadView({
-                layout: 'access-denied'
-            });
-            return false;
-        }
-
-        // Check if first time login wizard should be shown
-        var showWizard = false;
-        if (app.user && app.user.has('show_wizard')) {
-            showWizard = app.user.get('show_wizard');
-            if (showWizard) {
-                // If the license settings need to be input, don't show the wizard
-                var system_config = app.metadata.getConfig();
-                if (system_config.system_status
-                    && system_config.system_status.level
-                    && system_config.system_status.level == 'admin_only') {
-                    showWizard = false;
-                }
-            }
-        }
-        if (showWizard) {
-            var callbacks = {
-                complete: function() {
-                    var module = app.utils.getWindowLocationParameterByName('module', window.location.search),
-                        action = app.utils.getWindowLocationParameterByName('action', window.location.search);
-
-                    // work around for saml authentication of a new user
-                    if (_.isString(module) && _.isString(action) &&
-                        module.toLowerCase() === 'users' && action.toLowerCase() === 'authenticate') {
-                        window.location = window.location.pathname;
-                    } else  {
-                        window.location.reload(); //Reload when done
-                    }
-                }
-            };
-            app.controller.loadView({
-                layout: 'first-login-wizard',
-                module: 'Users',
-                modelId: app.user.get('id'),
-                callbacks: callbacks,
-                wizardName: app.user.get('type')
-            });
-            $('#header').hide(); //Hide the header bar
-            return false;
-        } else {
-            var passwordExpired = false;
-            //If the password has expired (and we're not logging out which is ignored)
-            if (route && route !== 'logout' && app.user && app.user.has('is_password_expired')) {
-                passwordExpired = app.user.get('is_password_expired');
-                if (passwordExpired) {
-                    app.controller.loadView({
-                        layout: 'password-expired',
-                        module: 'Users',
-                        callbacks: {
-                            complete: function() {
-                                window.location.reload();//Reload when password reset
-                            }
-                        },
-                        modelId: app.user.get('id')
-                    });
-                    return false;
-                }
-            }
-        }
-        var args = options.args || [];
-        var subroute;
-        if (args[0]) {
-            var qpos = args[0].indexOf('?');
-            subroute = qpos > -1 ? args[0].substring(0, args[0].indexOf('?')) : args[0];
-        }
-        var viewId = options.route + (subroute ? '/' + subroute : '');
-
-        app.analytics.currentViewId = viewId;
-        app.analytics.trackPageView(app.analytics.currentViewId);
-
-        return true;
+        return hasAccess && isBwcRedirect;
     });
 
     //template language string for each page
@@ -410,6 +336,8 @@
             'record': 'TPL_BROWSER_SUGAR7_RECORD_TITLE',
             'about': 'TPL_BROWSER_SUGAR7_ABOUT_TITLE'
         };
+    // FIXME: This should have unit test coverage, e.g. on `app:view:change`
+    // ensure `document.title` is updated. Will be addressed in SC-2761.
     var getTitle = function(model) {
         var context = app.controller.context,
             module = context.get('module'),
@@ -426,6 +354,7 @@
         // lifted before it can be set on the title
         return $('<span/>').html(title).text();
     };
+    // FIXME: This should have unit test coverage, will be addressed in SC-2761.
     //set current document title with template format
     var setTitle = function(model) {
         var title = getTitle(model);
@@ -463,44 +392,167 @@
         document.title = title || document.title;
     }, this);
 
+    // FIXME: This should have unit test coverage, will be addressed in SC-2761.
     var refreshExternalLogin = function() {
-    	var config = app.metadata.getConfig();
+        var config = app.metadata.getConfig();
         app.api.setExternalLogin(config && config['externalLogin']);
-    }
+    };
 
     app.events.on("app:sync:complete", refreshExternalLogin, this);
     app.events.on("app:init", refreshExternalLogin, this);
 
-    app.routing.before("route", function(o) {
-        if (o && _.isArray(o.args) && o.args[0]) {
-            var module = o.args[0],
-                id = o.args[1],
-                action = id ? 'DetailView':'index',
-                meta = app.metadata.getModule(module);
-            if (meta && meta.isBwcEnabled) {
-                var sidecarAction = o.args[2] || o.route;
-                var bwcAction = app.bwc.getAction(sidecarAction);
+    // FIXME: This functionality should move into router.js, see SC-2761.
+    app.Router = app.Router.extend({
+        /**
+         * Redirects the user to the appropriate BWC route if the requested
+         * module has metadata and is in backward compatibility mode.
+         *
+         * If the route contains a valid BWC action that isn't the original
+         * route, this function will route to that action (if the route is
+         * invalid), otherwise it will route to the detail view (if an ID is
+         * present).
+         *
+         * @param {Object} options Object containing routing information.
+         * @return {Boolean} Returns `false` if redirected, `true` otherwise.
+         */
+        bwcRedirect: function(options) {
+            if (options && _.isArray(options.args) && options.args[0]) {
+                var module = options.args[0],
+                    id = options.args[1],
+                    action = id ? 'DetailView' : 'index',
+                    meta = app.metadata.getModule(module);
+                if (meta && meta.isBwcEnabled) {
+                    var sidecarAction = options.args[2] || options.route,
+                        bwcAction = app.bwc.getAction(sidecarAction);
 
-                // if the route contains a valid bwc action thats not the original route
-                // route to that action if its not a valid route but we have an id route to
-                // detailview
-                if (bwcAction !== sidecarAction) {
-                    action = bwcAction;
+                    if (bwcAction !== sidecarAction) {
+                        action = bwcAction;
+                    }
+
+                    var redirect = 'bwc/index.php?module=' + module + '&action=' + action;
+
+                    if (id) {
+                        redirect += '&record=' + id;
+                    }
+
+                    app.router.navigate(redirect, {trigger: true, replace: true});
+                    return false;
                 }
-                
-                var redirect = "bwc/index.php?module=" + module + "&action=" + action;
+            }
+            return true;
+        },
 
-                if (id) {
-                    redirect += "&record=" + id;
-                }
+        /**
+         * Check module access before navigating to certain routes.
+         * Redirects to access denied page if user is lacking module access.
+         *
+         * @param {Object} [options] Object containing routing information.
+         * @return {Boolean} Returns `false` if the ACL check for module access
+         *   fails, `true` otherwise.
+         */
+        hasAccessToModule: function(options) {
+            options = options || {};
 
-                app.router.navigate(redirect , {trigger: true, replace: true });
+            var checkAccessRoutes = {
+                    'record': 'view',
+                    'create': 'create',
+                    'vcardImport': 'create'
+                },
+                route = options.route || '',
+                args = options.args || [],
+                module = args[0],
+                accessCheck = checkAccessRoutes[route];
+
+            if (accessCheck && !app.acl.hasAccess(accessCheck, module)) {
+                app.controller.loadView({
+                    layout: 'access-denied'
+                });
                 return false;
             }
-        }
-        return true;
-    });
 
+            // FIXME: Show wizard functionality should be broken out into
+            // another function; will be addressed in SC-2761.
+
+            // Check if first time login wizard should be shown
+            var showWizard = false;
+            if (app.user && app.user.has('show_wizard')) {
+                showWizard = app.user.get('show_wizard');
+                if (showWizard) {
+                    // If the license settings need to be input, don't show the wizard
+                    var system_config = app.metadata.getConfig();
+                    if (system_config.system_status &&
+                        system_config.system_status.level &&
+                        system_config.system_status.level === 'admin_only'
+                    ) {
+                        showWizard = false;
+                    }
+                }
+            }
+            // FIXME: Should be in a separate function, will be addressed in
+            // SC-2761.
+            if (showWizard) {
+                var callbacks = {
+                    complete: function() {
+                        var module = app.utils.getWindowLocationParameterByName('module', window.location.search),
+                            action = app.utils.getWindowLocationParameterByName('action', window.location.search);
+
+                        // work around for saml authentication of a new user
+                        if (_.isString(module) && _.isString(action) &&
+                            module.toLowerCase() === 'users' && action.toLowerCase() === 'authenticate') {
+                            window.location = window.location.pathname;
+                        } else {
+                            window.location.reload(); //Reload when done
+                        }
+                    }
+                };
+                app.controller.loadView({
+                    layout: 'first-login-wizard',
+                    module: 'Users',
+                    modelId: app.user.get('id'),
+                    callbacks: callbacks,
+                    wizardName: app.user.get('type')
+                });
+                // FIXME: Should be event-driven, see:
+                // https://github.com/sugarcrm/Mango/pull/18722#discussion_r11782561
+                // Will be addressed in SC-2761.
+                $('#header').hide();
+                return false;
+            }
+
+            var passwordExpired = false;
+            //If the password has expired (and we're not logging out which is ignored)
+            if (route && route !== 'logout' && app.user && app.user.has('is_password_expired')) {
+                passwordExpired = app.user.get('is_password_expired');
+                if (passwordExpired) {
+                    app.controller.loadView({
+                        layout: 'password-expired',
+                        module: 'Users',
+                        callbacks: {
+                            complete: function() {
+                                window.location.reload();//Reload when password reset
+                            }
+                        },
+                        modelId: app.user.get('id')
+                    });
+                    return false;
+                }
+            }
+
+            var subroute;
+            if (module) {
+                var qpos = module.indexOf('?');
+                subroute = qpos > -1 ? module.substring(0, module.indexOf('?')) : module;
+            }
+            var viewId = options.route + (subroute ? '/' + subroute : '');
+
+            // FIXME: Analytics should not be tracked in hasAccessToModule,
+            // will be moved into another function in SC-2761.
+            app.analytics.currentViewId = viewId;
+            app.analytics.trackPageView(app.analytics.currentViewId);
+
+            return true;
+        }
+    });
 
     app.augment("progress", _.extend({
         init: function() {

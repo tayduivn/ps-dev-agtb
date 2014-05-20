@@ -109,14 +109,15 @@
      */
     app.error.handleNotFoundError = function(error) {
         var layout = app.controller.layout;
-        if( !_.isObject(layout.error) ||
+        if (!layout ||
+            !_.isObject(layout.error) ||
             !_.isFunction(layout.error.handleNotFoundError) ||
             layout.error.handleNotFoundError(error) !== false
         ) {
             app.controller.loadView({
-                layout: "error",
-                errorType: "404",
-                module: "Error",
+                layout: 'error',
+                errorType: '404',
+                module: 'Error',
                 create: true
             });
         }
