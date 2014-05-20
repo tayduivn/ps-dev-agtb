@@ -468,7 +468,7 @@ SUGAR.subpanelUtils = function() {
                     SUGAR.subpanelUtils.cancelCreate(buttonName);
                     // parse edit form name in order to get the name of
                     // module which saved item belongs to
-                    var savedModule = theForm.replace(/.*?_([^_]+)$/, "$1");
+                    var savedModule = theForm.replace(/^([^_]+_){2}/, "");
                     if (window.ModuleSubPanels && window.ModuleSubPanels[savedModule]) {
                         var subPanels = window.ModuleSubPanels[savedModule];
                         // reload all sub-panels that may contain the bean
