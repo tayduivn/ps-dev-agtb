@@ -63,6 +63,14 @@ class MBModule
 
     public $config_md5 = null ;
 
+    /**
+     * The metadata converter object, used to keep the peace between BWC and Sidecar
+     * formatted metadata
+     * 
+     * @var MetaDataConverter
+     */
+    public $mdc;
+
     function __construct ($name , $path , $package , $package_key)
     {
         global $mod_strings;
@@ -881,25 +889,22 @@ class MBModule
     /**
      * Return viewdefs for a subpanel by name.
      *
-     * @param string $subpanelName
-     * @param string $client
+     * @param string $subpanelName Name of the subpanel to get the defs for
+     * @param string $client The client to get the defs for
+     * @param boolean $bwc Is this a BWC request?
      * @return array
      */
-    public function getAvailableSubpanelDef($subpanelName, $client = 'base')
+    public function getAvailableSubpanelDef($subpanelName, $client = 'base', $bwc = false)
     {
         if (empty($client)) {
-            throw new \InvalidArgumentException("Client needs to be set");
+            $client = 'base';
         }
-        $mdc = new MetaDataConverter();
-
-        $subpanelName = $mdc->fromLegacySubpanelName($subpanelName);
-        $dir = $this->getModuleDir() . "/clients/{$client}/views/{$subpanelName}/";
-
-        $filepath = "{$dir}/{$subpanelName}.php";
+        $filepath = $this->getSubpanelFilePath($subpanelName, $client, $bwc);
+        $var = $bwc ? 'subpanel_layout' : 'viewdefs';
         if (file_exists($filepath)) {
             include $filepath;
-            if (isset($viewdefs) && is_array($viewdefs)) {
-                return $viewdefs;
+            if (isset($$var) && is_array($$var)) {
+                return $$var;
             }
         }
         return array();
@@ -909,28 +914,34 @@ class MBModule
     /**
      * Saves a viewdef to the correct path
      *
-     * @param string $subpanelName
-     * @param string $layout
-     * @param string $client
+     * @param string $subpanelName Name of the subpanel to get the defs for
+     * @param array $viewdef The defs to save
+     * @param string $client The client to get the defs for
+     * @param boolean $bwc Is this a BWC request?
      */
-    public function saveAvailableSubpanelDef($subpanelName, array $viewdef, $client = 'base')
+    public function saveAvailableSubpanelDef($subpanelName, array $viewdef, $client = 'base', $bwc = false)
     {
         if (empty($client)) {
-            throw new \InvalidArgumentException("Client needs to be set");
+            $client = 'base';
         }
 
-        $dir = $this->getSubpanelPathFromName($subpanelName, $client);
-        if (!mkdir($dir, 0755, true)) {
+        $filepath = $this->getSubpanelFilePath($subpanelName, $client, $bwc);
+
+        $dir = dirname($filepath);
+        if (!file_exists($dir) && !mkdir_recursive($dir)) {
             throw new \RuntimeException(sprintf("Could not make directory %s for subpanel %s"), $dir, $subpanelName);
         }
-        $subpanelName = $this->getProperSubpanelName($subpanelName);
-        $filepath = "{$dir}/{$subpanelName}.php";
-        $moduleName = $this->getModuleName();
 
         $GLOBALS['log']->debug("About to save this file to $filepath");
         $GLOBALS['log']->debug(print_r($viewdef, true));
 
-        write_array_to_file("viewdefs['{$moduleName}']['{$client}']['view']['{$subpanelName}']", $viewdef, $filepath);
+        if ($bwc) {
+            $array = 'subpanel_layout';
+        } else {
+            $array = "viewdefs['{$this->key_name}']['{$client}']['view']['{$subpanelName}']";
+        }
+
+        write_array_to_file($array, $viewdef, $filepath);
     }
 
     function getLocalSubpanelDef ($panelName)
@@ -1064,4 +1075,42 @@ class MBModule
         return end(array_keys($this->config['templates']));
     }
 
+    /**
+     * Gets the MetadataConverter object
+     * 
+     * @return MetaDataConverter
+     */
+    public function getMetadataConverter()
+    {
+        if ($this->mdc === null) {
+            $this->mdc = new MetaDataConverter();
+        }
+
+        return $this->mdc;
+    }
+
+    /**
+     * Gets a new subpanel path from the name of the subpanel and client
+     * 
+     * @param string $name The subpanel name
+     * @param string $client The client
+     * @param boolean $bwc Is this a BWC request?
+     * @return string
+     */
+    public function getSubpanelFilePath($name, $client, $bwc = false)
+    {
+        $dir = $this->getModuleDir();
+        if ($bwc === true) {
+            $path = "$dir/metadata/subpanels/$name.php";
+        } else {
+            // Only convert the name if it needs it, as it may have already been done
+            if (strpos($name, 'subpanel-') === false) {
+                $mdc = $this->getMetadataConverter();
+                $name = $mdc->fromLegacySubpanelName($name);
+            }
+            $path = "$dir/clients/$client/views/$name/$name.php";
+        }
+
+        return $path;
+    }
 }
