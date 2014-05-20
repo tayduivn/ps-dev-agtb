@@ -541,6 +541,7 @@ a:hover {
                         token: uploader.token,
                         action: 'status'
                     },
+                    dataType: 'json',
                     success: function (e) {
                         if (uploader.statusUpdates) {
                             if(e.data.script_count) {
@@ -576,6 +577,7 @@ a:hover {
                         token: uploader.token,
                         action: uploader.stages[uploader.stage]
                     },
+                    dataType: 'json',
                     success: function (e) {
                         if (e.status == 'error' || e.status == undefined) {
                             uploader.displayError(e.message || "A server error occurred, please check your logs");
@@ -635,7 +637,7 @@ a:hover {
                         iframe: true,
                         processData: false,
                         error: function (e) {
-                            uploader.displayError("A server error occurred please check your logs");
+                            uploader.displayError("A server error occurred, please check your logs");
                         }
                     }
                 ).complete(function (data) {
