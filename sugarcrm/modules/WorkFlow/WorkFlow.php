@@ -788,7 +788,7 @@ $alert_file_contents = "";
 
                     if ($secondaryTrigger['type'] == 'filter_rel_field') {
                         $relatedTriggers .= "\$filter{$key} = " . $secondaryTrigger['eval'] . "; \n";
-                        $additionalEvalRelated[] = "\$filter{$key}['results'] === true";
+                        $additionalEval[] = $additionalEvalRelated[] = "\$filter{$key}['results'] === true";
                     } else if (!empty($secondaryTrigger['eval'])
                     	&& $secondaryTrigger['type'] != 'compare_any_time'
                     	&& !($secondaryTrigger['type'] == 'compare_specific'
