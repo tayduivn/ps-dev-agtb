@@ -232,6 +232,10 @@ class ModuleInstaller{
                 MetaDataManager::clearAPICache(true, true);
                 MetaDataManager::setupMetadata();
 
+            require_once 'include/api/ServiceDictionaryRest.php';
+            $dict = new ServiceDictionaryRest();
+            $dict->buildAllDictionaries();
+
 				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 		}else{
 			die("No \$installdefs Defined In $this->base_dir/manifest.php");
@@ -1719,6 +1723,10 @@ class ModuleInstaller{
                 // clients.
                 MetaDataManager::clearAPICache(true, true);
                 MetaDataManager::setupMetadata();
+
+            require_once 'include/api/ServiceDictionaryRest.php';
+            $dict = new ServiceDictionaryRest();
+            $dict->buildAllDictionaries();
 
 				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 				if(!$this->silent){
