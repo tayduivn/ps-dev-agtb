@@ -110,6 +110,14 @@ class SugarCurrency
         if(empty($fromRate) || empty($toRate)) {
             return $amount;
         }
+
+        // handle the use case for when a currency field get added to a module, where no default is set
+        // and if the $amount is passed in as a string but $amount is an empty string or $amount is null,
+        // we should default then we should return as the conversion is not needed
+        if ((is_string($amount) && $amount === '') || is_null($amount)) {
+            return '0';
+        }
+
         return SugarMath::init(0, $precision)->exp('?/?*?',array($amount,$fromRate,$toRate))->result();
     }
 
