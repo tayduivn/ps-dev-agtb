@@ -2146,20 +2146,21 @@ class SugarBean
     * Determines which users receive a notification
     */
     function get_notification_recipients() {
-        $user_list = array();
+        $userList = array();
         if(isset($this->assigned_user_id) && !empty($this->assigned_user_id)) {
             $notify_user = BeanFactory::retrieveBean('Users', $this->assigned_user_id);
             if ( ! $notify_user ) {
                 // The user to notify has been deleted.
-                return $user_list;
+                return $userList;
             }
             $this->new_assigned_user_name = $notify_user->full_name;
 
-            $GLOBALS['log']->info("Notifications: recipient is $this->new_assigned_user_name");
-
-            $user_list[] = $notify_user;
+            if ($notify_user->receive_notifications) {
+                $GLOBALS['log']->info("Notifications: recipient is $this->new_assigned_user_name");
+                $userList[] = $notify_user;
+            }
         }
-        return $user_list;
+        return $userList;
     }
 
     protected function create_notification_email($notify_user) {
