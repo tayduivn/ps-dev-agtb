@@ -235,7 +235,7 @@ class SugarQuery_Compiler_SQL
      *     added to orderBy. Default value is `true`.
      * @return string
      */
-    protected function compileOrderBy($orderBy, $orderById = true)
+    protected function compileOrderBy($orderBy, $orderById = false)
     {
         $return = array();
         // order by ID
@@ -393,7 +393,7 @@ class SugarQuery_Compiler_SQL
      * @param object SugarQuery_Builder_AndWhere/SugarQuery_Builder_OrWhere
      *
      * @return array
-     */    
+     */
     protected function buildWhereSql($operator, $whereObj)
     {
         $sql[$operator] = array();
@@ -575,7 +575,7 @@ class SugarQuery_Compiler_SQL
 
     /**
      * Gets a join SQL string
-     * 
+     *
      * @param  SugarQuery_Builder_Join $join A join object
      * @return string A join SQL part
      */
@@ -610,7 +610,7 @@ class SugarQuery_Compiler_SQL
 
         $sql .= ' ON ';
         $sql .= '(' . $this->compileWhere($join->on) . ')';
-        
+
         return $sql;
     }
 }
