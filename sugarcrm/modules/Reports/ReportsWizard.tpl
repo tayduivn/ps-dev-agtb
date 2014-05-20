@@ -195,7 +195,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 					onClick='SUGAR.reports.previewReport();' id="previewBtn">{/if}{if $record}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}"
 					onClick='SUGAR.reports.runReport();' id="saveAndRunBtn">{/if}{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}"
 					onClick='SUGAR.reports.deleteReport();' id="deleteBtn">{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}"
-					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"' id="cancelBtn"></td>
+					onClick='SUGAR.reports.cancelReport();' id="cancelBtn"></td>
 			</tr>
 		</table>	
 		</br>
@@ -246,7 +246,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 					onClick='SUGAR.reports.previewReport();' id="previewButton">{/if}{if $record}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}"
 					onClick='SUGAR.reports.runReport();' id="saveAndRunButton">{/if}{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}"
 					onClick='SUGAR.reports.deleteReport();' id="deleteButton">{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}"
-					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"' id="cancelButton"></td>
+					onClick='SUGAR.reports.cancelReport();' id="cancelButton"></td>
 			</tr>
 		</table>	
 	</div>
@@ -260,7 +260,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 					onClick='SUGAR.reports.previewReport();' id="previewButton">{/if}{if $record}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}"
 					onClick='SUGAR.reports.runReport();' id="saveAndRunButton">{/if}{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}"
 					onClick='SUGAR.reports.deleteReport();' id="deleteButton">{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}"
-					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"' id="cancelButton"></td>
+					onClick='SUGAR.reports.cancelReport();' id="cancelButton"></td>
 			</tr>
 		</table>	
 		</br>
@@ -311,7 +311,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 					onClick='SUGAR.reports.previewReport();' id="previewButton">{/if}{if $record}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}"
 					onClick='SUGAR.reports.runReport();' id="saveAndRunButton">{/if}{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}"
 					onClick='SUGAR.reports.deleteReport();' id="deleteButton">{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}"
-					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"' id="cancelButton"></td>
+					onClick='SUGAR.reports.cancelReport();' id="cancelButton"></td>
 			</tr>
 		</table>	
 	</div>	
@@ -324,7 +324,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 					onClick='SUGAR.reports.previewReport();' id="previewButton">&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}"
 					onClick='SUGAR.reports.runReport();' id="saveAndRunButton">{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}"
 					onClick='SUGAR.reports.deleteReport();' id="deleteButton">{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}"
-					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"' id="cancelButton"></td>
+					onClick='SUGAR.reports.cancelReport();' id="cancelButton"></td>
 							
 			</tr>
 		</table>
@@ -375,7 +375,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 					onClick='SUGAR.reports.previewReport();' id="previewButton">&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}"
 					onClick='SUGAR.reports.runReport();' id="saveAndRunButton">{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}"
 					onClick='SUGAR.reports.deleteReport();' id="deleteButton">{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}"
-					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"' id="cancelButton"></td>
+					onClick='SUGAR.reports.cancelReport();' id="cancelButton"></td>
 							
 			</tr>
 		</table>	

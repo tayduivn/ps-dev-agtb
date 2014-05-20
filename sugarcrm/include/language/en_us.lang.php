@@ -3035,6 +3035,7 @@ $app_strings = array (
     'WARN_ONLY_ADMINS'=> "Only admins may log in.",
     'WARN_UNSAVED_CHANGES'=> "You are about to leave this record without saving any changes you may have made to the record. Are you sure you want to navigate away from this record?",
     'LBL_WARN_UNSAVED_CHANGES' => 'You have unsaved changes. Are you sure you want to leave page and discard changes?',
+    'LBL_NAVIGATE_TO_REPORTS' => 'You are moving to the Reports module. Your changes to dashlet will not be saved. Continue?',
     'ERROR_NO_RECORD' => 'Error retrieving record.  This record may be deleted or you may not be authorized to view it.',
     'ERROR_TYPE_NOT_VALID' => 'Error. This type is not valid.',
     'ERROR_MAX_FIELD_LENGTH' => 'Error. The max length of this field is {{this}}.',
@@ -4610,6 +4611,11 @@ $app_strings = array (
     'LBL_INCORRECT_PASSWORD' => 'Error: Incorrect password.',
 
     'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
+
+    //Saved Reports
+    'LBL_REPORT_SELECT' => 'Select a Report',
+    'LBL_REPORT_AUTO_REFRESH' => 'Auto Refresh',
+    'LBL_REPORT_EDIT' => 'Edit Selected Report',
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',

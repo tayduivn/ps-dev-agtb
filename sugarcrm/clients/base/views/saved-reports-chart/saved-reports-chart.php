@@ -34,15 +34,22 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
             'fields' => array(
                 array(
                     'name' => 'saved_report_id',
-                    'label' => 'Select a Report',
+                    'label' => 'LBL_REPORT_SELECT',
                     'type' => 'enum',
                     'options' => array('' => ''),
                 ),
                 array(
                     'name' => 'auto_refresh',
-                    'label' => 'Auto Refresh',
+                    'label' => 'LBL_REPORT_AUTO_REFRESH',
                     'type' => 'enum',
                     'options' => 'sugar7_dashlet_reports_auto_refresh_options'
+                ),
+                array(
+                    'name' => 'editReport',
+                    'label' => 'LBL_REPORT_EDIT',
+                    'type' => 'button',
+                    'css_class' => 'btn-invisible btn-link btn-inline',
+                    'dismiss_label' => true,
                 ),
             ),
         ),
