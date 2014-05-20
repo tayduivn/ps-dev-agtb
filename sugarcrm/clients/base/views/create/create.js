@@ -104,20 +104,6 @@
         this.on('sugarlogic:initialize', function() {
             this.model.setDefaultAttributes(this.model.attributes);
         }, this);
-
-        //shortcut keys
-        app.shortcuts.register(app.shortcuts.SCOPE.CREATE_ACTIONS, ['ctrl+s','ctrl+alt+a'], function() {
-            var $saveButton = this.$('a[name=' + this.saveButtonName + ']');
-            if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
-                $saveButton.get(0).click();
-            }
-        }, this);
-        app.shortcuts.register(app.shortcuts.SCOPE.CREATE_ACTIONS, 'esc', function() {
-            var $cancelButton = this.$('a[name=' + this.cancelButtonName + ']');
-            if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
-                $cancelButton.get(0).click();
-            }
-        }, this);
     },
 
     /**
@@ -648,6 +634,24 @@
                     break;
             }
         });
+    },
+
+    registerShortcuts: function() {
+        this._super('registerShortcuts');
+
+        app.shortcuts.register(app.shortcuts.SCOPE.CREATE, ['ctrl+s','ctrl+alt+a'], function() {
+            var $saveButton = this.$('a[name=' + this.saveButtonName + ']');
+            if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
+                $saveButton.get(0).click();
+            }
+        }, this);
+
+        app.shortcuts.register(app.shortcuts.SCOPE.CREATE, ['esc','ctrl+alt+l'], function() {
+            var $cancelButton = this.$('a[name=' + this.cancelButtonName + ']');
+            if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
+                $cancelButton.get(0).click();
+            }
+        }, this);
     },
 
     alerts: {

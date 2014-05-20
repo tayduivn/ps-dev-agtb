@@ -77,7 +77,7 @@ $viewdefs['base']['layout']['create'] = array(
             ),
         ),
     ),
-    'type' => 'simple',
+    'type' => 'create',
     'name' => 'base',
     'span' => 12,
 );

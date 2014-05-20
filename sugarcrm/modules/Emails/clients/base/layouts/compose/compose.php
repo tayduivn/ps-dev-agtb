@@ -70,7 +70,7 @@ $viewdefs['Emails']['base']['layout']['compose'] = array(
             ),
         ),
     ),
-    'type' => 'simple',
+    'type' => 'compose',
     'name' => 'base',
     'span' => 12,
 );

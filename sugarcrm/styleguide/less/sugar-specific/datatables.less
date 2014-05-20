@@ -261,6 +261,17 @@
         }
       }
     }
+    //selecting a row using shortcut keys
+    &.selected td:first-child:before {
+      content: " ";
+      position: absolute;
+      z-index: 11;
+      background: #e61718;
+      height: 36px;
+      margin-top: -18px;
+      width: 4px;
+      left: 0;
+    }
     //inline editing
     &.tr-inline-edit {
       td {

@@ -36,9 +36,6 @@
      * Key sequence: 'f ctrl+a'
      */
 
-    var _shortcuts = {}, //registered shortcut keys
-        _savedShortCuts = []; //saved shortcut keys, which then can be restored.
-
     app.events.once('app:init', function() {
         app.before('app:view:change', function() {
             // clear shortcuts before any view change
@@ -48,14 +45,17 @@
     });
 
     app.shortcuts = {
+        _shortcuts: {}, //registered shortcut keys
+        _savedShortCuts: [], //saved shortcut keys, which then can be restored.
+
         /**
          * All available shortcut keys scopes
          */
         SCOPE: {
             GLOBAL: 'global',
             RECORD: 'record',
-            RECORDS: 'records',
-            CREATE_ACTIONS: 'create-actions'
+            LIST: 'list',
+            CREATE: 'create'
         },
 
         /**
@@ -95,22 +95,19 @@
         register: function(scope, key, func, component) {
             var self = this;
 
-            if (!_shortcuts[scope]) {
-                _shortcuts[scope] = {};
+            if (!this._shortcuts[scope]) {
+                this._shortcuts[scope] = {};
             }
-            if (!_shortcuts[scope][key]) {
-                _shortcuts[scope][key] = {};
+            if (!this._shortcuts[scope][key]) {
+                this._shortcuts[scope][key] = {};
             }
 
-            if (((scope === this.currentScope.get()) || (scope === this.SCOPE.GLOBAL)) && _.isEmpty(_shortcuts[scope][key])) {
-                _shortcuts[scope][key].func = func;
-                _shortcuts[scope][key].component = component;
-
+            if (((scope === this.currentScope.get()) || (scope === this.SCOPE.GLOBAL)) && _.isEmpty(this._shortcuts[scope][key])) {
                 this._bindShortcutKeys(scope, key, func, component);
 
-                component.before('dispose', function() {
+                component._dispose = _.wrap(component._dispose, function(func) {
                     self.unregister(scope, key, component);
-                    return true;
+                    func.call(component);
                 });
             }
         },
@@ -122,8 +119,8 @@
          * @param {View.Component} component - component that the shortcut keys were registered from
          */
         unregister: function(scope, key, component) {
-            if (_shortcuts[scope] && _shortcuts[scope][key] && (_shortcuts[scope][key].component === component)) {
-                _shortcuts[scope][key] = {};
+            if (this._shortcuts[scope] && this._shortcuts[scope][key] && (this._shortcuts[scope][key].component === component)) {
+                this._shortcuts[scope][key] = {};
                 Mousetrap.unbind(key);
             }
         },
@@ -141,9 +138,10 @@
          * Remove all shortcuts except global shortcuts.
          */
         clear: function() {
-            var globalShortcuts = _shortcuts[this.SCOPE.GLOBAL];
-            _shortcuts = {};
-            _shortcuts[this.SCOPE.GLOBAL] = globalShortcuts;
+            var globalShortcuts = this._shortcuts[this.SCOPE.GLOBAL];
+
+            this._shortcuts = {};
+            this._shortcuts[this.SCOPE.GLOBAL] = globalShortcuts;
 
             this.currentScope.set();
             Mousetrap.reset();
@@ -155,16 +153,21 @@
          * Save the currently active shortcut.
          */
         save: function() {
-            _savedShortCuts.push(_shortcuts[this.currentScope.get()]);
+            this._savedShortCuts.push({
+                scope: this.currentScope.get(),
+                shortcuts: this._shortcuts[this.currentScope.get()]
+            });
         },
 
         /**
          * Restore the last set of shortcuts.
          */
         restore: function() {
-            var saved = _savedShortCuts.pop();
-            _.each(saved, function(value, key) {
-                this.register(this.currentScope.get(), key, value.func, value.component);
+            var saved = this._savedShortCuts.pop();
+            this.activate(saved.scope);
+            _.each(saved.shortcuts, function(value, key) {
+                var keyArray = key.split(',');
+                this.register(saved.scope, keyArray, value.func, value.component);
             }, this);
         },
 
@@ -182,11 +185,12 @@
                     var args = Array.prototype.slice.call(arguments, 1);
                     if (self._isComponentInMainPane(component) || (scope === self.SCOPE.GLOBAL)) {
                         callback.apply(component, args);
+                        return false;
                     }
                 });
 
-            _shortcuts[scope][key].func = func;
-            _shortcuts[scope][key].component = component;
+            this._shortcuts[scope][key].func = func;
+            this._shortcuts[scope][key].component = component;
 
             Mousetrap.bind(key, wrapper);
         },
@@ -206,20 +210,10 @@
          * @private
          */
         _registerGlobalKeyBindings: function() {
-            _.each(_shortcuts[this.SCOPE.GLOBAL], function(value, key) {
-                this._bindShortcutKeys(this.SCOPE.GLOBAL, key, value.func, value.component);
+            _.each(this._shortcuts[this.SCOPE.GLOBAL], function(value, key) {
+                var keyArray = key.split(',');
+                this._bindShortcutKeys(this.SCOPE.GLOBAL, keyArray, value.func, value.component);
             }, this);
-        },
-
-        /**
-         * Do not use! Testing purposes only!
-         * @private
-         */
-        _clearAll: function() {
-            _shortcuts = {};
-            _savedShortCuts = [];
-            this.currentScope._scope = undefined;
-            Mousetrap.reset();
         }
     };
 })(SUGAR.App);

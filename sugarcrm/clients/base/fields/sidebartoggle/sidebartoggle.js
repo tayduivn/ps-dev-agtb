@@ -56,6 +56,11 @@
             this.toggleState(defaultLayout.isSidePaneVisible() ? 'open' : 'close');
             this.listenTo(defaultLayout, 'sidebar:state:changed', this.toggleState);
         }
+
+        //shortcut keys
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 't', this.toggle, this);
+        app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 't', this.toggle, this);
+        app.shortcuts.register(app.shortcuts.SCOPE.CREATE, 't', this.toggle, this);
     },
 
     /**

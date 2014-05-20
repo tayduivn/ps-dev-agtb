@@ -13,5 +13,5 @@
 ({
     plugins: ['Shortcuts'],
 
-    shortcuts: app.shortcuts.SCOPE.CREATE
+    shortcuts: app.shortcuts.SCOPE.RECORD
 })

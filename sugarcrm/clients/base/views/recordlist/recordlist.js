@@ -543,5 +543,64 @@
             fields = _.union(fields, ['following']);
         }
         return fields;
+    },
+
+    registerShortcuts: function() {
+        this._super('registerShortcuts');
+
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'e', function() {
+            var self = this;
+            if (this.$('.selected [name=inline-cancel]:visible').length === 0) {
+                this.$('.selected [data-toggle=dropdown]:visible').click();
+                this.$('.selected [name=edit_button]:visible').click();
+                _.defer(function() {
+                    self.$('.selected input:first').focus();
+                });
+            }
+        }, this);
+
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'd', function() {
+            if (this.$('.selected [name=inline-cancel]:visible').length === 0) {
+                this.$('.selected [data-toggle=dropdown]:visible').click().blur();
+                this.$('.selected [name=delete_button]:visible').click();
+            }
+        }, this);
+
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, ['esc','ctrl+alt+l'], function() {
+            var $cancelButton = this.$('.selected [name=inline-cancel]');
+            if (($cancelButton.length > 0) && $cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
+                $cancelButton.click();
+            }
+        }, this);
+
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, ['ctrl+s','ctrl+alt+a'], function() {
+            var $saveButton = this.$('.selected [name=inline-save]');
+            if (($saveButton.length > 0) && $saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
+                $saveButton.click();
+            }
+        }, this);
+
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'f a', function() {
+            this.$('.selected .icon-favorite:visible').click();
+        }, this);
+
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'f o', function() {
+            this.$('.selected [data-toggle=dropdown]:visible').click().blur();
+            this.$('.selected [name=follow_button]:visible').click();
+        }, this);
+
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'p', function() {
+            var $preview = this.$('.selected [data-event="list:preview:fire"]:visible');
+            if ($preview.is(':visible') && !$preview.hasClass('disabled')) {
+                $preview.click();
+            }
+        }, this);
+
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'x', function() {
+            var $checkbox = this.$('.selected input[type=checkbox]:first');
+            if ($checkbox.is(':visible') && !$checkbox.hasClass('disabled')) {
+                $checkbox.get(0).click();
+            }
+        }, this);
     }
 })

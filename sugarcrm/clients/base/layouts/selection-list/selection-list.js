@@ -14,6 +14,10 @@
  * @extends View.Layout
  */
 ({
+    plugins: ['Shortcuts'],
+
+    shortcuts: app.shortcuts.SCOPE.CREATE,
+
     loadData: function(options) {
         var fields = _.union(this.getFieldNames(), (this.context.get('fields') || []));
         this.context.set('fields', fields);

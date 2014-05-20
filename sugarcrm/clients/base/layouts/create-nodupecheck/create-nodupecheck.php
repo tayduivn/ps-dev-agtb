@@ -74,7 +74,7 @@ $viewdefs['base']['layout']['create-nodupecheck'] = array(
             ),
         ),
     ),
-    'type' => 'simple',
+    'type' => 'create-nodupecheck',
     'name' => 'base',
     'span' => 12,
 );

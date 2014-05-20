@@ -59,9 +59,15 @@
         this._initTemplates();
 
         //shortcut keys
-        app.shortcuts.register(app.shortcuts.SCOPE.RECORDS, 'ctrl+a', function() {
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'ctrl+a', function() {
             if (!this.isDisabled()) {
                 this.$('.checkall:visible').click();
+            }
+        }, this);
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'm', function() {
+            var $dropdown = this.$('[data-toggle=dropdown]');
+            if ($dropdown.is(':visible') && !$dropdown.hasClass('disabled')) {
+                $dropdown.click();
             }
         }, this);
     },
@@ -376,7 +382,7 @@
 
         if (viewName === 'list-header' && !this.fields) {
             this.fields = [];
-            var actionMenu = '<ul class="dropdown-menu">';
+            var actionMenu = '<ul class="dropdown-menu" role="menu">';
             _.each(this.def.buttons, function(fieldDef) {
                 var field = app.view.createField({
                     def: fieldDef,

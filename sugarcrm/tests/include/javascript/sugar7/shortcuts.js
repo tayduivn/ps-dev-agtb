@@ -34,7 +34,9 @@ describe('Sugar7 shortcuts', function() {
     });
 
     afterEach(function() {
-        app.shortcuts._clearAll();
+        app.shortcuts._shortcuts = {};
+        app.shortcuts._savedShortCuts = [];
+        app.shortcuts.clear();
         Mousetrap = undefined;
     });
 

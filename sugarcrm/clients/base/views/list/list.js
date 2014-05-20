@@ -71,6 +71,8 @@
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.has('limit') ? this.context.get('limit') : null;
         this.metaFields = this.meta.panels ? _.first(this.meta.panels).fields : [];
+
+        this.registerShortcuts();
     },
 
     /**
@@ -292,5 +294,91 @@
     _dispose: function() {
         this._fields = null;
         app.view.View.prototype._dispose.call(this);
+    },
+
+    selectRow: function(down) {
+        var $rows = this.$('.dataTable tbody tr'),
+            $selected,
+            $next;
+
+        if($rows.hasClass('selected')) {
+            $selected = $rows.filter('.selected');
+            $next = down ? $selected.next() : $selected.prev();
+            if($next.length > 0) {
+                $selected.removeClass('selected');
+                $next.addClass('selected');
+                this.makeRowVisible($next);
+            }
+        } else {
+            $rows.first().addClass('selected')
+            this.makeRowVisible();
+        }
+    },
+
+    makeRowVisible: function($selected) {
+        var $mainpane = $('.main-pane'),
+            mainpaneHeight,
+            selectedHeight,
+            selectedTopPosition;
+
+        if (_.isUndefined($selected)) {
+            $mainpane.scrollTop(0);
+            return;
+        }
+
+        mainpaneHeight = $mainpane.height();
+        selectedHeight = $selected.height();
+        selectedTopPosition = $selected.position().top;
+
+        if ((selectedTopPosition + selectedHeight) > mainpaneHeight) {
+            $mainpane.scrollTop($mainpane.scrollTop() + mainpaneHeight/2);
+        }
+
+        if (selectedTopPosition < 0) {
+            $mainpane.scrollTop($mainpane.scrollTop() - mainpaneHeight/2);
+        }
+    },
+
+    scrollHorizontally: function(right) {
+        var $scrollableDiv = $('.main-pane .flex-list-view-content'),
+            scrollEnabled = $('.main-pane .flex-list-view').hasClass('scroll-width'),
+            nextScrollPosition,
+            increment = 60;
+
+        if (scrollEnabled) {
+            if (right) {
+                nextScrollPosition = $scrollableDiv.scrollLeft() + increment;
+            } else {
+                nextScrollPosition = $scrollableDiv.scrollLeft() - increment;
+            }
+
+            $scrollableDiv.scrollLeft(nextScrollPosition);
+        }
+    },
+
+    registerShortcuts: function() {
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'j', function() {
+            this.selectRow(true);
+        }, this);
+
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'k', function() {
+            this.selectRow(false);
+        }, this);
+
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'h', function() {
+            this.scrollHorizontally(false);
+        }, this);
+
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'l', function() {
+            this.scrollHorizontally(true);
+        }, this);
+
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'o', function() {
+            if (this.$('.selected [data-type=name] a:visible').length > 0) {
+                this.$('.selected [data-type=name] a:visible').get(0).click();
+            } else if (this.$('.selected [data-type=fullname] a:visible').length > 0) {
+                this.$('.selected [data-type=fullname] a:visible').get(0).click();
+            }
+        }, this);
     }
 })

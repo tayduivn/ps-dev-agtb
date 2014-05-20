@@ -25,6 +25,24 @@
             this.title = title;
             if (!this.disposed) this.render();
         }, this);
+
+        //shortcut keys
+        app.shortcuts.register(app.shortcuts.SCOPE.CREATE, ['esc','ctrl+alt+l'], function() {
+            var $cancelButton = this.$('a[name=cancel_button]'),
+                $closeButton = this.$('a[name=close]');
+
+            if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
+                $cancelButton.click();
+            } else if ($closeButton.is(':visible') && !$closeButton.hasClass('disabled')) {
+                $closeButton.click();
+            }
+        }, this);
+        app.shortcuts.register(app.shortcuts.SCOPE.CREATE, ['ctrl+s','ctrl+alt+a'], function() {
+            var $saveButton = this.$('a[name=save_button]');
+            if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
+                $saveButton.click();
+            }
+        }, this);
     },
 
     _renderHtml: function() {

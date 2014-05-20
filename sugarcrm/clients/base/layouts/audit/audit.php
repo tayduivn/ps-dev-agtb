@@ -66,7 +66,7 @@ $viewdefs['base']['layout']['audit'] = array(
             ),
         ),
     ),
-    'type' => 'simple',
+    'type' => 'audit',
     'name' => 'base',
     'span' => 12,
 );
