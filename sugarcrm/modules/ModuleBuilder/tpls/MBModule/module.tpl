@@ -119,6 +119,7 @@
 addForm('CreateModule');
 addToValidate('CreateModule', 'name', 'DBName', true, '{/literal}{$mod_strings.LBL_JS_VALIDATE_NAME}{literal}');
 addToValidate('CreateModule', 'label', 'varchar', true, '{/literal}{$mod_strings.LBL_JS_VALIDATE_LABEL}{literal}');
+addToValidate('CreateModule', 'label_singular', 'varchar', true, '{/literal}{$mod_strings.LBL_JS_VALIDATE_LABEL}{literal}');
 addToValidate('CreateModule', 'type', 'varchar', true, '{/literal}{$mod_strings.LBL_JS_VALIDATE_TYPE}{literal}');
 ModuleBuilder.helpRegister('CreateModule');
 if(document.getElementById('factory_modules'))
