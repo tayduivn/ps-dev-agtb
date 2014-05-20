@@ -863,7 +863,22 @@ function check_special_fields($field_name, $source_object, $use_past_array=false
 //end function check_special_fields
 }
 
-function execute_special_logic($field_name, &$source_object){
+/**
+ * Executes logic specific for the field being updated
+ *
+ * @param string $field_name
+ * @param SugarBean $source_object
+ */
+function execute_special_logic($field_name, SugarBean $source_object)
+{
+    if ($field_name === 'team_id') {
+        // when Team ID is updated, remove all previously associated teams
+        if ($source_object->load_relationship('teams')) {
+            $source_object->teams->replace(array(), array(), false);
+        }
+        $source_object->team_set_id = null;
+    }
+
 	if(SugarAutoLoader::requireWithCustom('modules/'.$source_object->module_dir.'/SaveOverload.php'))
 	{
 		perform_save($source_object);
