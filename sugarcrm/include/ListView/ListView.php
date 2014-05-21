@@ -1126,7 +1126,7 @@ function getUserVariable($localVarName, $varName) {
         static $cache = array();
 
         if(!empty($cache[$html_varName]))return $cache[$html_varName];
-        $blockVariables = array('mass', 'uid', 'massupdate', 'delete', 'merge', 'selectCount','current_query_by_page');
+        $blockVariables = array('mass', 'uid', 'massupdate', 'delete', 'merge', 'selectCount','current_query_by_page', 'bwcFrame');
         if(!empty($this->base_URL)) {
             return $this->base_URL;
         }
