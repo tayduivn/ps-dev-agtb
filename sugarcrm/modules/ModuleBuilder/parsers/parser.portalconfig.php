@@ -54,7 +54,17 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         $tabController = new TabController();
         $tabs = $tabController->getPortalTabs();
 
-        $portalFields = array('appStatus', 'defaultUser', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'maxSearchQueryResult');
+        $portalFields = array(
+            'appStatus', 
+            'defaultUser', 
+            'appName', 
+            'logoURL', 
+            'serverUrl', 
+            'maxQueryResult', 
+            'maxSearchQueryResult', 
+            'publicKnowledgeBase',
+        );
+
         $portalConfig = array(
             'platform' => 'portal',
             'debugSugarApi' => true,
@@ -64,6 +74,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             'metadataTypes' => array(),
             'serverTimeout' => 30,
             'defaultModule' => 'Cases',
+            'publicKnowledgeBase' => 'no',
             'orderByDefaults' => array(
                 'Cases' => array(
                     'field' => 'case_number',
@@ -77,7 +88,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
                     'field' => 'date_modified',
                     'direction' => 'desc'
                 ),
-                'KBDocuments' => array(
+                'KBSContents' => array(
                     'field' => 'date_modified',
                     'direction' => 'desc'
                 )
@@ -100,6 +111,13 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             $portalConfig['appStatus'] = 'offline';
             $portalConfig['on'] = 0;
         }
+
+        if (!empty($portalConfig['publicKnowledgeBase']) && $portalConfig['publicKnowledgeBase'] == 'true') {
+            $portalConfig['publicKnowledgeBase'] = 'yes';
+        } else {
+            $portalConfig['publicKnowledgeBase'] = 'no';
+        }
+
         //TODO: Remove after we resolve issues with test associated to this
         $GLOBALS['log']->info("Updating portal config");
         foreach ($portalConfig as $fieldKey => $fieldValue) {
@@ -243,7 +261,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
                         } else {
                             $aclAllow = ACL_ALLOW_NONE;
                         }
-                        if ($moduleName == 'KBDocuments' && $actionName == 'edit') {
+                        if ($moduleName == 'KBSContents' && $actionName == 'edit') {
                             $aclAllow = ACL_ALLOW_NONE;
                         }
                         if ($moduleName == 'Contacts') {
