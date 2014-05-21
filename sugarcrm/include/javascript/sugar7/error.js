@@ -35,6 +35,19 @@
         app.router.login();
     }
 
+    function showErrorPage(status, dismiss) {
+        if(dismiss) {
+            app.alert.dismissAll();
+        }
+
+        app.controller.loadView({
+           layout: "error",
+           errorType: status,
+           module: "Error",
+           create: true
+       });
+    }
+
     function alertUser(key,title,msg) {
         app.alert.show(key, {
             level: 'error',
@@ -114,12 +127,7 @@
             !_.isFunction(layout.error.handleNotFoundError) ||
             layout.error.handleNotFoundError(error) !== false
         ) {
-            app.controller.loadView({
-                layout: 'error',
-                errorType: '404',
-                module: 'Error',
-                create: true
-            });
+            showErrorPage("404");
         }
     };
 
@@ -139,16 +147,16 @@
     };
 
     /**
-     * 424 Handle validation error
+     * 422 Handle validation error
      */
-    app.error.handleValidationErrorOld = app.error.handleValidationError;
     app.error.handleValidationError = function(error) {
         var layout = app.controller.layout;
         if( !_.isObject(layout.error) ||
             !_.isFunction(layout.error.handleValidationError) ||
             layout.error.handleValidationError(error) !== false
         ) {
-            return app.error.handleValidationErrorOld(error);
+            alertUser("validation_error", "LBL_PRECONDITION_MISSING_TITLE", error.message || "LBL_PRECONDITION_MISSING");
+            error.handled = true;
         }
     };
 
@@ -163,13 +171,17 @@
     };
 
     /**
-     * 422 Method failure error.
+     * 424 Method failure error.
      */
     app.error.handleMethodFailureError = function(error) {
-        backToLogin(true);
         // TODO: For finer grained control we could sniff the {error: <code>} in the response text (JSON) for one of:
         // missing_parameter, invalid_parameter, request_failure
-        alertUser("precondtion_failure_error", "LBL_PRECONDITION_MISSING_TITLE", "LBL_PRECONDITION_MISSING");
+        error.handled = true;
+        if (error.code == "request_failure") {
+            showErrorPage("422");
+        } else {
+            alertUser("precondtion_failure_error", "LBL_PRECONDITION_MISSING_TITLE", "LBL_PRECONDITION_MISSING");
+        }
     };
        
     /**

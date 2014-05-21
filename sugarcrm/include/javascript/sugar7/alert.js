@@ -223,7 +223,7 @@
     app.events.on('data:sync:error', function(method, model, options, error) {
         var suppressErrorMessageFor = [409, 412];
 
-        if (!error || _.indexOf(suppressErrorMessageFor, error.status) === -1) {
+        if (!error || (!error.handled && _.indexOf(suppressErrorMessageFor, error.status) === -1)) {
             syncCompleteHandler('error', 'ERR_GENERIC_SERVER_ERROR', method, model, options);
         } else {
             if (options.showAlerts && options.showAlerts.process !== false) {
