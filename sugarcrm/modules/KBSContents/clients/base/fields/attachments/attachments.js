@@ -51,7 +51,8 @@
      */
     initialize: function (opts) {
         var evt = {},
-            relate;
+            relate,
+            self = this;
         evt['change ' +  this.getFileNode().selector] = 'uploadFile';
         this.events = _.extend({}, this.events, opts.def.events, evt);
 
@@ -67,7 +68,13 @@
         if (this.model.id) {
             relate = this.model.getRelatedCollection(this.def.link);
             relate.fetch({
-                relate: true
+                relate: true,
+                success: function() {
+                    if (self.disposed === true) {
+                        return;
+                    }
+                    self.render();
+                }
             });
         }
     },
