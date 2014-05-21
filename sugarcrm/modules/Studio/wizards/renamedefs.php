@@ -998,6 +998,7 @@ $renamedefs = array(
         array('name' => 'LBL_ACCESSKEY_CLEAR_CONTACTS_LABEL', 'type' => 'singular', 'source' => 'Contacts'),
         array('name' => 'LBL_SHIP_TO_CONTACT', 'type' => 'singular', 'source' => 'Contacts'),
         array('name' => 'LBL_CREATE_CONTACT', 'type' => 'singular', 'source' => 'Contacts'),
+        array('name' => 'LBL_RELATED_CONTACT', 'type' => 'singular', 'source' => 'Contacts'),
 
         // Contracts
         array('name' => 'LBL_CONTRACTS', 'type' => 'plural', 'source' => 'Contracts'),

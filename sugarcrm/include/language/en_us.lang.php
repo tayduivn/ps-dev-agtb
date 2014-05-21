@@ -2309,12 +2309,12 @@ $app_strings = array (
     'LBL_TEAM_REMOVE' => 'Remove Team',
     'LBL_TEAM_PRIMARY' => 'Set as Primary Team',
 
+    'LBL_CLOSE_BUTTON_LABEL' => 'Close',
     //BEGIN SUGARCRM flav=ent ONLY
     'LBL_QUERY_VALID'=>'Valid',
     'LBL_QUERY_ERROR'=>'Error!',
     'LBL_QUERY_CHILD'=>'Valid Sub-Query',
     'LBL_CLOSE_BUTTON_KEY' => 'C',
-    'LBL_CLOSE_BUTTON_LABEL' => 'Close',
     'ERROR_EXAMINE_MSG' => '  Please examine the error message below:',
     'NO_QUERY_SELECTED' => 'The data format you have selected does not contain a query.  Please select a custom query for this data format.',
     //END SUGARCRM flav=ent ONLY
@@ -4814,6 +4814,12 @@ $app_strings = array (
     'LBL_DASHLET_SAVED_REPORTS_CHART_DESC' => 'Displays any chart from a saved report.',
     'LBL_QUESTION_MARK' => '?',
 
+    // Historical Summary
+    'LBL_HISTORICAL_SUMMARY' => 'Historical Summary',
+    'LBL_MORE_HISTORY' => 'More history...',
+    'LBL_RELATED_CONTACT' => 'Related Contact',
+    'LBL_MODULE_TYPE' => 'Type',
+
     //SFA
     'LBL_BEST' => 'Best',
     'LBL_WORST' => 'Worst',
@@ -4822,7 +4828,6 @@ $app_strings = array (
     'LBL_WORST_ADJUSTED' => 'Worst (Adjusted)',
     'LBL_LIKELY_ADJUSTED' => 'Likely (Adjusted)',
     'LBL_AMOUNT_USDOLLAR' => 'Converted Amount',
-
     'LBL_OVERDUE' => 'Overdue',
 
     'LBL_PASSWORD_REQUEST_SENT' => 'Your request has been submitted.',

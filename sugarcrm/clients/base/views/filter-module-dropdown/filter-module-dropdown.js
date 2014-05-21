@@ -37,11 +37,10 @@
     tagName: "span",
 
     /**
-     * @override
-     * @param {Object} opts
+     * @inheritdoc
      */
-    initialize: function(opts) {
-        app.view.View.prototype.initialize.call(this, opts);
+    initialize: function(options) {
+        this._super('initialize', [options]);
 
         //Load partials
         this._select2formatSelectionTemplate = app.template.get("filter-module-dropdown.selection-partial");
@@ -52,11 +51,10 @@
     },
 
     /**
-     * @override
-     * @private
+     * @inheritdoc
      */
     _render: function() {
-        app.view.View.prototype._render.call(this);
+        this._super('_render');
 
         if (this.layout.showingActivities) {
             this.filterList = this.getModuleListForActivities();
@@ -155,12 +153,14 @@
 
         var subpanels = this.pullSubpanelRelationships();
         subpanels = this._pruneHiddenModules(subpanels);
-        _.each(subpanels, function(value, key) {
-            var module = app.data.getRelatedModule(this.module, value);
-            if (app.acl.hasAccess("list", module)) {
-                filters.push({id: value, text: app.lang.get(key, this.module)});
-            }
-        }, this);
+        if (subpanels) {
+            _.each(subpanels, function(value, key) {
+                var module = app.data.getRelatedModule(this.module, value);
+                if (app.acl.hasAccess("list", module)) {
+                    filters.push({id: value, text: app.lang.get(key, this.module)});
+                }
+            }, this);
+        }
         return filters;
     },
 
@@ -197,7 +197,9 @@
      * @private
      */
     _pruneHiddenModules: function(subpanels){
-        var hiddenSubpanels = _.map(app.metadata.getHiddenSubpanels(), function(subpanel) { return subpanel.toLowerCase(); });
+        var hiddenSubpanels = _.map(app.metadata.getHiddenSubpanels(), function(subpanel) {
+            return subpanel.toLowerCase();
+        });
         var pruned = _.reduce(subpanels, function(obj, value, key) {
             var relatedModule = app.data.getRelatedModule(this.module, value);
             if (relatedModule && !_.contains(hiddenSubpanels, relatedModule.toLowerCase())) {
@@ -261,13 +263,12 @@
     },
 
     /**
-     * @override
-     * @private
+     * @inheritdoc
      */
     _dispose: function() {
         if (!_.isEmpty(this.filterNode)) {
             this.filterNode.select2('destroy');
         }
-        app.view.View.prototype._dispose.call(this);
+        this._super('_dispose');
     }
 })

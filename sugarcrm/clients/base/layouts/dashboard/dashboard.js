@@ -211,9 +211,11 @@
             var parent = this.context.parent.get('modelId') ?
                 this.context.parent.get('model') : this.context.parent.get('collection');
 
-            parent.once('sync', function() {
-                this._super('loadData', [options, setFields]);
-            }, this);
+            if (parent) {
+                parent.once('sync', function() {
+                    this._super('loadData', [options, setFields]);
+                }, this);
+            }
         } else {
             this._super('loadData', [options, setFields]);
         }

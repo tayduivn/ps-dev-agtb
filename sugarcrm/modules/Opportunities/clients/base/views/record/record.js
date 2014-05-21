@@ -8,9 +8,8 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
 ({
     extendsFrom: 'RecordView',
 
@@ -20,6 +19,13 @@
     alert: undefined,
 
 //BEGIN SUGARCRM flav!=ent ONLY
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this.plugins = _.union(this.plugins || [], ['HistoricalSummary']);
+        this._super('initialize', [options]);
+    },
 
     /**
      * Holds a reference to the alert this view triggers
@@ -38,7 +44,7 @@
          */
         var changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
         this.model.set(changedAttributes);
-        this._super("cancelClicked");
+        this._super('cancelClicked');
     },
 //END SUGARCRM flav=!ent ONLY
 
@@ -48,7 +54,7 @@
      * @param options
      */
     initialize: function(options) {
-        this.plugins = _.union(this.plugins, ['LinkedModel']);
+        this.plugins = _.union(this.plugins, ['LinkedModel', 'HistoricalSummary']);
         this.once('init', function() {
             var rlis = this.model.getRelatedCollection('revenuelineitems');
             rlis.once('reset', function(collection) {
@@ -60,7 +66,7 @@
             }, this);
             rlis.fetch({ relate: true });
         }, this);
-        this._super("initialize", [options]);
+        this._super('initialize', [options]);
     },
 
     /**
@@ -80,7 +86,7 @@
          */
         var changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
         this.model.set(changedAttributes);
-        this._super("cancelClicked");
+        this._super('cancelClicked');
     },
 
     /**
