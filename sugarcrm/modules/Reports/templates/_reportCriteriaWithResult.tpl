@@ -26,6 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+<link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Reports/tpls/reports.css'}" />
+
 {if ($issetSaveResults)}
 
 	{if ($isSaveResults)}
