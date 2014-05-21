@@ -85,7 +85,6 @@ $viewdefs['base']['view']['dnb-premium-company-info'] = array(
                 'vet_ind' => '1',
                 'lsind' => '1',
                 'vetent' => '1',
-                'compdesc' => '1',
                 'inqcnt' => '1',
                 'transferdunsnbr' => '1',
                 'lastupddate' => '1',
@@ -158,7 +157,6 @@ $viewdefs['base']['view']['dnb-premium-company-info'] = array(
                 'vet_ind' => '1',
                 'lsind' => '1',
                 'vetent' => '1',
-                'compdesc' => '1',
                 'inqcnt' => '1',
                 'transferdunsnbr' => '1',
                 'lastupddate' => '1',
@@ -598,17 +596,11 @@ $viewdefs['base']['view']['dnb-premium-company-info'] = array(
                 'type' => 'bool'
             ),
             array(
-                'name' => 'compdesc',
-                'label' => 'LBL_DNB_COMP_SUMM',
-                'desc' => 'LBL_DNB_COMP_SUMM_DESC',
-                'header' => 'LBL_DNB_SUBJ_HEADER',
-                'header_desc' => 'LBL_DNB_SUBJ_HEADER_DESC',
-                'type' => 'bool'
-            ),
-            array(
                 'name' => 'inqcnt',
                 'label' => 'LBL_DNB_INQ_CNT',
                 'desc' => 'LBL_DNB_INQ_CNT_DESC',
+                'header' => 'LBL_DNB_SUBJ_HEADER',
+                'header_desc' => 'LBL_DNB_SUBJ_HEADER_DESC',
                 'type' => 'bool'
             ),
             array(

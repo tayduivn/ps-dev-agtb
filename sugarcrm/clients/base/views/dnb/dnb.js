@@ -402,11 +402,6 @@
             'label': 'LBL_DNB_VET_ENT',
             'desc': 'LBL_DNB_VET_ENT_DESC'
         },
-        'compdesc': {
-            'json_path': 'SubjectHeader.OrganizationSummaryText',
-            'label': 'LBL_DNB_COMP_SUMM',
-            'desc': 'LBL_DNB_COMP_SUMM_DESC'
-        },
         'inqcnt': {
             'json_path': 'SubjectHeader.TotalInquiriesCount',
             'label': 'LBL_DNB_INQ_CNT',
@@ -516,6 +511,7 @@
         'ERROR_DNB_SVC_ERR': 'LBL_DNB_SVC_ERR',
         'ERROR_DNB_UNKNOWN': 'LBL_DNB_UNKNOWN_ERROR',
         'ERROR_EMPTY_PARAM': 'LBL_DNB_EMPTY_PARAM',
+        'ERROR_BAD_REQUEST': 'EXCEPTION_MISSING_PARAMTER',
         'ERROR_INVALID_MODULE_NAME': 'LBL_DNB_INVALID_MODULE_NAME'
     },
     //formatting functions map
@@ -597,7 +593,11 @@
         if (xhr.code) {
             resultData = { 'errmsg': this.commonErrorMap[errorCode] };
         }
-        this.template = app.template.get('dnb.dnb-error');
+        if (this.name === 'dnb-account-create') {
+            this.template = app.template.get('dnb.dnb-acct-create-error');
+        } else {
+            this.template = app.template.get('dnb.dnb-error');
+        }
         _.extend(this, resultData);
         this.render();
         this.$('div#error-display').show();
@@ -627,8 +627,11 @@
      * @param {Function} renderFunction, a function to be called to render the search results
      */
     baseCompanySearch: function(searchString, renderFunction) {
+        //adding the '*' t0 searchString for wildcard search
+        searchString = searchString + '*';
+        searchString = encodeURI(searchString);
         var srchResults = {'companies': null, 'errmsg': null};
-        var dnbSearchUrl = app.api.buildURL('connector/dnb/search/' + searchString, '', {}, {});
+        var dnbSearchUrl = app.api.buildURL('connector/dnb/search/q=' + searchString, '', {}, {});
         var self = this;
         app.api.call('READ', dnbSearchUrl, {}, {
             success: function(data) {
