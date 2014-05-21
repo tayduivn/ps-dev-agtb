@@ -131,6 +131,14 @@ class CurrentUserPortalApi extends CurrentUserApi {
         return null;
     }
 
+    /**
+     * Returns a value indicating whether the user is a guest.
+     * @return boolean whether the current application user is a guest.
+     */
+    public function getIsGuest()
+    {
+        return empty($_SESSION['contact_id']);
+    }
 
     /**
      * Manipulates the ACLs for portal
@@ -159,6 +167,12 @@ class CurrentUserPortalApi extends CurrentUserApi {
         $apiPerson = $this->getPortalContact();
         // This is a change in the ACL's for users without Accounts
         $vis = new SupportPortalVisibility($apiPerson);
+
+        if ($this->getIsGuest()) {
+            $acls['Bugs']['access'] = 'no';
+            $acls['Contacts']['access'] = 'no';
+        }
+
         $accounts = $vis->getAccountIds();
         if (count($accounts)==0) {
             // This user has no accounts, modify their ACL's so that they match up with enforcement
@@ -166,7 +180,10 @@ class CurrentUserPortalApi extends CurrentUserApi {
             $acls['Cases']['access'] = 'no';
         }
         foreach ($acls as $modName => $modAcls) {
-            if ($modName === 'Contacts') continue;
+            if ($modName === 'Contacts' && !$this->getIsGuest()) {
+                continue;
+            }
+            
             $acls[$modName]['edit'] = 'no';
         }
         

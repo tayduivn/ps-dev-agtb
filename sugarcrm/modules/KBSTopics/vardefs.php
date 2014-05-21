@@ -76,9 +76,6 @@ $dictionary['KBSTopic'] = array(
             'vname' => 'LNK_TOPICS',
         ),
     ),
-    'indices' => array(
-        array('name' => 'idx_kbstopics_parent_id', 'type' => 'index', 'fields' => array('parent_id')),
-    ),
     'relationships' => array(
         'kbstopic_contents' => array(
             'lhs_module' => 'KBSTopics',

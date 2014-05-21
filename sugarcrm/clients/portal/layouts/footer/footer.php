@@ -31,14 +31,16 @@ $viewdefs['portal']['layout']['footer'] = array(
     'type' => 'footer',
     'components' => array(
         array(
-            'view' => 'language-actions'
+            'view' => 'kbs-contents-action',
         ),
         array(
-            'view' => 'tour-action'
+            'view' => 'language-actions',
         ),
         array(
-            'view' => 'footer-actions'
-        )
+            'view' => 'tour-action',
+        ),
+        array(
+            'view' => 'footer-actions',
+        ),
     ),
-
 );
