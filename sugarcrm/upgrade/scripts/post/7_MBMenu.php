@@ -84,22 +84,21 @@ END;
     {
         global $mod_strings;
 
-        if (empty($this->upgrader->state['MBModules'])) {
-            return;
-        }
-
-        foreach ($this->upgrader->state['MBModules'] as $moduleName) {
-            if (!file_exists("modules/$moduleName")) {
-                continue;
-            }
-            if (!file_exists("modules/$moduleName/clients/base/menus/header/header.php")
-                && !file_exists("custom/modules/$moduleName/clients/base/menus/header/header.php")
-            ) {
-                $this->addMenu($moduleName);
+        if (!empty($this->upgrader->state['MBModules'])) {
+            foreach ($this->upgrader->state['MBModules'] as $moduleName) {
+                if (!file_exists("modules/$moduleName")) {
+                    continue;
+                }
+                if (!file_exists("modules/$moduleName/clients/base/menus/header/header.php")
+                    && !file_exists("custom/modules/$moduleName/clients/base/menus/header/header.php")
+                ) {
+                    $this->addMenu($moduleName);
+                }
             }
         }
 
         // Do it also for bwcModules since some of them may not have Menu.php and we need it
+        // Also some non-MB modules marked as BWC in post scripts and should have valid menu as well.
         foreach ($GLOBALS['bwcModules'] as $moduleName) {
             if (!file_exists("modules/$moduleName")) {
                 continue;
