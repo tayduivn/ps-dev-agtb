@@ -1,5 +1,6 @@
 .tags {
   margin: 0;
+  .btn-tag,
   .tag-wrapper {
     display: inline-block;
     padding: 3px 6px 3px;
@@ -16,14 +17,20 @@
       font-weight: 600;
     }
   }
+  .btn-tag {
+    font-size: @fontSizeSmall;
+    color: @dropdownLinkColorHover;
+    font-weight: 600;
+    margin-left: 0px;
+  }
 }
 
 .list .tags {
- .tag-wrapper {
-   padding: 3px 4px;
+  .btn-tag,
+  .tag-wrapper {
    margin-top: 1px;
    padding: 1px 6px;
- }
+  }
 }
 
 [data-fieldname="tags"] {
@@ -47,5 +54,11 @@
         }
       }
     }
+  }
+}
+
+[data-name="tags"] {
+  &.record-edit-link-wrapper {
+    width:0% !important;
   }
 }
