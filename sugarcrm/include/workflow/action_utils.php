@@ -150,6 +150,7 @@ function process_action_update_rel($focus, $action_array){
 				if(empty($action_array['basic_ext'][$field])){
 					$rel_object->$field = convert_bool($new_value, $rel_object->field_defs[$field]['type']);
 				}
+                execute_special_logic($field, $rel_object);
 				//otherwise rely on the basic_ext to handle the action for this field
 				if($field == "email1") $rel_object->email1_set_in_workflow = $rel_object->email1;
                 if($field == "email2") $rel_object->email2_set_in_workflow = $rel_object->email2;
