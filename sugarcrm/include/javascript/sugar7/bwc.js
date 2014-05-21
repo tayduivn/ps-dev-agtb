@@ -168,20 +168,31 @@
         },
         /**
          * Handles special cases when building the related record URL.
-         * @returns {Object} BWC URL parameters taking edge cases in to consideration
+         * @return {Object} BWC URL parameters taking edge cases in to consideration
          * @private
          */
         _handleRelatedRecordSpecialCases: function(params, parentModel, link) {
+            // We should pull the value from the syncedAttributes as they are what comes back from the server on load
+            // and after a save.  The reason for this is the following use case.
+            // On an opportunity, change the account but *don't save* and then press the + button on the quote subpanel
+            // it will take the unsaved value and use it when creating the quote, if you press confirm to the
+            // "Are you sure" dialog.  By using the syncedAttributes, it won't take any unsaved values,
+            // but on the off chance that the value doesn't exist in the synced attributes, it will fall back to the
+            // parentModel
+            var syncedAttributes = parentModel.getSyncedAttributes();
             //Special case for Contacts->meetings. The parent should be the account rather than the contact
-            if (parentModel.module == "Contacts" && parentModel.get("account_id") && (link == "meetings" || link == 'calls')) {
+            if (parentModel.module == 'Contacts' &&
+                    parentModel.has('account_id') &&
+                    (link == 'meetings' || link == 'calls')
+                ) {
                 params = _.extend(params, {
-                    parent_type: "Accounts",
-                    parent_id: parentModel.get("account_id"),
-                    account_id: parentModel.get("account_id"),
-                    account_name: parentModel.get("account_name"),
-                    parent_name: parentModel.get("account_name"),
-                    contact_id: parentModel.get("id"),
-                    contact_name: parentModel.get("full_name")
+                    parent_type: 'Accounts',
+                    parent_id: syncedAttributes.account_id || parentModel.get('account_id'),
+                    account_id: syncedAttributes.account_id || parentModel.get('account_id'),
+                    account_name: syncedAttributes.account_name || parentModel.get('account_name'),
+                    parent_name: syncedAttributes.account_name || parentModel.get('account_name'),
+                    contact_id: syncedAttributes.id || parentModel.get('id'),
+                    contact_name: syncedAttributes.full_name || parentModel.get('full_name')
                 });
             }
             //SP-1600: Account information is not populated during Quote creation via Opportunity Quote Subpanel
@@ -192,19 +203,20 @@
                     //Note that the bwc view will automagically give us billing/shipping and only
                     //expects us to set account_id and account_name here
                     params = _.extend(params, {
-                        account_id: parentModel.get('account_id'),
-                        account_name: parentModel.get('account_name')
+                        account_id: syncedAttributes.account_id || parentModel.get('account_id'),
+                        account_name: syncedAttributes.account_name || parentModel.get('account_name')
                     });
                 }
 
                 if (parentModel.module === 'Contacts') {
                     // if we are coming from the contacts module, we need to get the id and set it
+                    // we don't need the syncedAttribute here as id will never change on the front end.
                     params = _.extend(params, {
                         contact_id: parentModel.get('id')
                     });
                 } else if (parentModel.has('contact_id')) {
                     params = _.extend(params, {
-                        contact_id: parentModel.get('contact_id')
+                        contact_id: syncedAttributes.contact_id || parentModel.get('contact_id')
                     });
                 }
             }
