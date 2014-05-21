@@ -102,8 +102,18 @@ class SugarFieldBool extends SugarFieldBase {
         } else {
             $data[$fieldName] = null;
         }
-    }    
+    }
 
+    /**
+     * Normalizes the default value by making sure it is a real boolean value.
+     *
+     * @param mixed $value The value to normalize.
+     * @return bool Normalized value.
+     * @override
+     * @see SugarFieldBase::normalizeBoolean
+     */
+    public function normalizeDefaultValue($value)
+    {
+        return $this->normalizeBoolean($value);
+    }
 }
-
-?>
