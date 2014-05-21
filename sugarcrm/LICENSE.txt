@@ -1,4 +1,3 @@
+Your installation or use of this SugarCRM file is subject to the applicable terms available at http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/. If you do not agree to all of the applicable terms or do not have the authority to bind the entity as an authorized representative, then do not install or use this SugarCRM file.
 
-Your installation or use of this SugarCRM product and any related SugarCRM services are subject to the terms available at http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/. If you do not agree to all of those terms or do not have the authority to bind the entity the entity as an authorized representative, then do not install or use this SugarCRM product or its related services.
-
-If you proceed, your installation or use also confirms you have read and understand our privacy policy, available http://www.sugarcrm.com/sugarcrm-inc-privacy-policy.
+Copyright (C) SugarCRM Inc. All rights reserved.
