@@ -26,8 +26,9 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry) die ( 'Not A Valid Entry Point' 
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once ('modules/DynamicFields/templates/Fields/TemplateField.php') ;
-require_once ('modules/DynamicFields/templates/Fields/TemplateAddressCountry.php') ;
+require_once ('modules/DynamicFields/templates/Fields/TemplateField.php');
+require_once ('modules/DynamicFields/templates/Fields/TemplateAddressCountry.php');
+require_once ('modules/DynamicFields/templates/Fields/TemplateAddressStreet.php');
 
 class TemplateAddress extends TemplateField
 {
@@ -59,8 +60,14 @@ class TemplateAddress extends TemplateField
             $systemLabel = strtoupper( "LBL_" . $this->name . '_' . $addressFieldName );
             // Use the entered label value as a prefix instead of the field name
             $parser->handleSave ( array( "label_" . $systemLabel => $labelValue . $addressFieldName ) , $GLOBALS [ 'current_language' ] ) ;
-            $addressField = new TemplateField ( ) ;
-            $addressField->len = ($addressFieldName == 'PostalCode') ? 20 : 100 ;
+
+            if ($addressFieldName === 'Street') {
+                $addressField = new TemplateAddressStreet();
+                $addressField->len = 150;
+            } else {
+                $addressField = new TemplateField();
+                $addressField->len = ($addressFieldName === 'PostalCode') ? 20 : 100;
+            }
             $addressField->name = $this->name . '_' . strtolower ( $addressFieldName ) ;
             $addressField->label = $addressField->vname = $systemLabel ;
             // Bug 58560 - Add the group to this field so it gets written to the custom vardefs
