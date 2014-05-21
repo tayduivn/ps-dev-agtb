@@ -69,5 +69,5 @@ if(!empty($msg)) {
         $reply['message'] = $msg;
     }
 }
-header("Content-Type: text/json");
+header("Content-Type: text/plain");
 echo json_encode($reply);
