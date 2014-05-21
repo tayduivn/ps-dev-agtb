@@ -67,7 +67,7 @@ $dictionary['Opportunity'] = array(
                 'account_id'
             ),
             'exportable'=> true,
-            'export_link_type' => 'one-to-many',//relationship link type to be used during export
+            'export_link_type' => 'one',//relationship type to be used during export
         ),
         'account_id' => array(
             'name' => 'account_id',

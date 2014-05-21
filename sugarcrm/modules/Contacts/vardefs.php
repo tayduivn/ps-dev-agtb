@@ -69,7 +69,7 @@ $dictionary['Contact'] = array(
             'populate_confirm_label' => 'TPL_OVERWRITE_POPULATED_DATA_CONFIRM_WITH_MODULE_SINGULAR',
             'importable' => 'true',
             'exportable'=>true,
-            'export_link_type' => 'one-to-many',//relationship link type to be used during export
+            'export_link_type' => 'one',//relationship type to be used during export
         ),
         'account_id' => array(
             'name' => 'account_id',

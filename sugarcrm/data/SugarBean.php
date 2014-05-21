@@ -7099,11 +7099,7 @@ class SugarBean
         $fields_array = array();
 
         //include fields_array file if it exists
-        if(file_exists('custom/modules' . $this->module_name . '/field_arrays.php')){
-            include('custom/modules' . $this->module_name . '/field_arrays.php');
-        }elseif(file_exists('modules/' . $this->module_name . '/field_arrays.php')){
-            include('modules/' . $this->module_name . '/field_arrays.php');
-        }
+        SugarAutoLoader::requireWithCustom("modules/{$this->module_name}/field_arrays.php");
 
         //get fields defs to process from either the defined export fields in fields array file, or the bean field array
         if(!empty($fields_array) && !empty($fields_array[$this->object_name]) && !empty($fields_array[$this->object_name]['export_fields'])){
@@ -7122,11 +7118,11 @@ class SugarBean
         //iterate through field defs to weed out:
             //-fields that have export flag set to false
             //-out of box related fields that have m:m or are the LHS of 1:M relationships
-        foreach($fields as $field=>$data)
+        foreach($fields as $field => $data)
         {
 
             //fields including custom fields are exported by default, skip if export flag has been explicitly set to false
-            if(isset($data['exportable']) && $data['exportable']==false){
+            if(isset($data['exportable']) && $data['exportable'] === false){
                 continue;
             }
 
@@ -7141,61 +7137,19 @@ class SugarBean
 
                 //unlike regular table fields, fields of type relate including custom relate fields are NOT exported by default.
                 //skip if export flag has not been explicitly to true
-                if(empty($data['exportable']) || $data['exportable']!==true){
+                if(empty($data['exportable']) || $data['exportable'] !== true){
                     continue;
                 }
 
                 //check to see that link exists
-                if(!empty($data['link'])){
+                if(!empty($data['link']) && $this->load_relationship($data['link'])){
+                    $type = !empty($data['export_link_type']) ? $data['export_link_type'] : $this->$data['link']->getType();
 
-                    //create and populate the params array needed to get the join type from the link
-                    $params = array('join_type' => ' LEFT JOIN ');
-                    if (  ($data['type'] == 'parent') || ($data['type'] == 'relate' && (isset($data['custom_module']) || isset($data['ext2'])))  ) {
-                        $jtcount++;
+                    //filter out relationships that can point to multiple records
+                    if ($type != "one") {
+                        continue;
                     }
-                    if(isset($data['join_name']))
-                    {
-                        $params['join_table_alias'] = $data['join_name'];
-                    }
-                    else
-                    {
-                        $params['join_table_alias']	= 'jt' . $jtcount;
-                    }
-                    if(isset($data['join_link_name']))
-                    {
-                        $params['join_table_link_alias'] = $data['join_link_name'];
-                    }
-                    else
-                    {
-                        $params['join_table_link_alias'] = 'jtl' . $jtcount;
-                    }
-
-                    //load the relationship for processing
-                    $this->load_relationship($data['link']);
-                    if(!empty($this->$data['link'])){
-                        $join = $this->$data['link']->getJoin($params, true);
-
-                        //get the relationship type
-                        if(!empty($data['export_link_type'])){
-                            $rel_type = $data['export_link_type'];
-                        }elseif(!empty($GLOBALS['dictionary'][$data['link']]) && !empty($GLOBALS['dictionary'][$data['link']]['true_relationship_type'])){
-                            $rel_type = $GLOBALS['dictionary'][$data['link']]['true_relationship_type'];
-                        }else{
-                            $rel_type = $join['type'];
-                        }
-
-                     }
                 }
-
-                //filter out fields with relationships that hold multiple records
-                if(!empty($rel_type)
-                        && !empty($this->$data['link'])
-                        && ($rel_type == 'many-to-many' || ($rel_type == 'one-to-many' && $this->$data['link']->getSide() != 'RHS'))){
-                    //if we are here then this is either a many to many or a one to many on the 'one' side.
-                    //We don't export multiple related records so we'll skip this field and continue
-                    continue;
-                }
-
             }
             //add field to filtered array
             $filtered_fields[$field] = $data;
@@ -7203,7 +7157,7 @@ class SugarBean
 
 
         //retrieve the sql query as an array for easier manipulation
-        //note, we do nothing for email1 field, it is handled by create_new_list_query
+        //note, we do nothing for email1 field in this method, it is already handled by create_new_list_query
         $returnArray =  $this->create_new_list_query($order_by, $where, $filtered_fields, $new_list_params, 0, '', true, $this, true, true);
 
         //Process assigned user seperately.  They require slightly different query and should be included by default.

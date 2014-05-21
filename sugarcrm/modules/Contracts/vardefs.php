@@ -261,7 +261,7 @@ $dictionary['Contract'] = array(
             'link' => 'contract_types',
             'comment' => 'The contract type',
             'exportable'=> true,
-            'export_link_type' => 'one-to-one',//relationship link type to be used during export
+            'export_link_type' => 'one',//relationship type to be used during export
         ),
         'contract_types' => array(
             'name' => 'contract_types',
