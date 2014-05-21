@@ -1,9 +1,6 @@
 /* RESPONSIVE
   ----------------*/
 
-// RESPONSIVE CLASSES
-// ------------------
-
 .hidden {
   display: none;
   visibility: hidden;
@@ -427,7 +424,7 @@
   }
 }
 
-@media (max-width: 700px) { /* UIUX-1511 */
+@media (max-width: 700px) {
   #searchForm,
   #searchForm .typeahead-wrapper {
     position: static;
@@ -437,18 +434,6 @@
       .border-radius(0);
       border: 0;
   }
-}
-
-//is this the best place for this? grid.less? it is responsive though
-.row-fluid [class*="span"] {
-  .rtlFloat(@direction,right);
-}
-
-.touch .modal-backdrop { /*SC-2000*/
-  display: none;
-}
-
-@media (max-width: 700px) { /* UIUX-1520 */
   .navbar-inner .nav-collapse ul.nav.megamenu {
     position: static;
   }
@@ -463,3 +448,24 @@
     }
   }
 }
+
+/* iPad dirty hacks follow in the next three selectors */
+@media only screen and (orientation : landscape) {
+  .touch {
+    .main-pane.span8 > div:first-child {
+      /* This fixes vertical scroll on landscape mode,
+      for the instance when user navigates from portrait to landscape mode */
+      border-bottom: 1px solid transparent;
+      -webkit-transition-delay: .1s;
+    }
+    .span8 .main-content > div {
+      /* This and the following selector take care of scroll fix when user
+      toggles right hand side panel back and forth */
+      display: inline;
+    }
+    .span12 .main-content > div {
+      display: block;
+    }
+  }
+}
+
