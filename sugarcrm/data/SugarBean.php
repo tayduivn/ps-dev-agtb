@@ -5097,6 +5097,12 @@ class SugarBean
 
             $bean->populateFromRow($row);
 
+            // panel_name is not a standard SugarBean field but it's used for fetching
+            // data for composite subpanels. assign it to the bean manually.
+            if (isset($row['panel_name'])) {
+                $bean->panel_name = $row['panel_name'];
+            }
+
             $this->processFunctionFields($bean, $function_fields);
 
             $list[$bean->id] = $bean;
