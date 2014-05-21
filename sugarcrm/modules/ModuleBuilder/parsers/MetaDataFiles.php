@@ -482,9 +482,17 @@ class MetaDataFiles
         $type = strtolower($type);
 
         // BEGIN ASSERTIONS
-        if ($type != MB_BASEMETADATALOCATION && $type != MB_HISTORYMETADATALOCATION) {
-            // just warn rather than die
-            $GLOBALS['log']->warning("UndeployedMetaDataImplementation->getFileName(): view type $type is not recognized");
+        switch ($type) {
+            case MB_BASEMETADATALOCATION:
+            case MB_HISTORYMETADATALOCATION:
+            case MB_WORKINGMETADATALOCATION:
+                break;
+            default:
+                // just warn rather than die
+                $GLOBALS['log']->warn(
+                    "UndeployedMetaDataImplementation->getFileName(): view type $type is not recognized"
+                );
+                break;
         }
         // END ASSERTIONS
 
