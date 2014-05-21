@@ -164,10 +164,6 @@ class OpportunitiesPipelineChartApi extends SugarApi
         $previous_value = '0';
         foreach ($data as $key => $item) {
             $value = $item['total'];
-            // we need the label, not key
-            $key = isset($GLOBALS['app_list_strings']['sales_stage_dom'][$key])?
-                $GLOBALS['app_list_strings']['sales_stage_dom'][$key] :
-                $key;
             // set up each return key
             $return_data[] = array(
                 'key' => $key,          // the label/sales stage
