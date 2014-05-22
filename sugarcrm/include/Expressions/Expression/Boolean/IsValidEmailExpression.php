@@ -111,4 +111,3 @@ EOQ;
 	function toString() {
 	}
 }
-?>
