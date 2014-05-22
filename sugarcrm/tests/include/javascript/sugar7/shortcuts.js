@@ -12,9 +12,18 @@
  */
 
 describe('Sugar7 shortcuts', function() {
-    var app, view, mousetrapBindStub, mousetrapUnbindStub, mousetrapResetStub,
+    var app,
+        view,
+        mousetrapBindStub,
+        mousetrapUnbindStub,
+        mousetrapResetStub,
+        shortcutsMainPaneStub,
         View = Backbone.View.extend({
-            before: $.noop
+            before: $.noop,
+            dispose: function() {
+                this._dispose();
+            },
+            _dispose: $.noop
         });
 
     beforeEach(function() {
@@ -31,9 +40,15 @@ describe('Sugar7 shortcuts', function() {
             unbind: mousetrapUnbindStub,
             reset: mousetrapResetStub
         };
+
+        shortcutsMainPaneStub = sinon.stub(
+            app.shortcuts,
+            '_isComponentInMainPane'
+        ).returns(true);
     });
 
     afterEach(function() {
+        shortcutsMainPaneStub.restore();
         app.shortcuts._shortcuts = {};
         app.shortcuts._savedShortCuts = [];
         app.shortcuts.clear();
@@ -52,32 +67,66 @@ describe('Sugar7 shortcuts', function() {
             expect(mousetrapBindStub.calledOnce).toBe(true);
         });
 
-        it('should bind shortcut keys when that scope is active', function() {
-            app.shortcuts.activate(app.shortcuts.SCOPE.RECORD);
-            app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 'a', $.noop, view);
-            expect(mousetrapBindStub.calledOnce).toBe(true);
+        using('shortcut keys for active scope', ['a', ['b', 'c']], function (keys) {
+            it('should bind shortcut keys when that scope is active', function() {
+                var keyCount = _.isArray(keys) ? keys.length : 1;
+                app.shortcuts.activate(app.shortcuts.SCOPE.RECORD);
+                app.shortcuts.register(app.shortcuts.SCOPE.RECORD, keys, $.noop, view);
+                expect(mousetrapBindStub.callCount).toBe(keyCount);
+            });
         });
 
         it('should not bind shortcut keys when that scope is not active', function() {
-            app.shortcuts.activate(app.shortcuts.SCOPE.RECORDS);
+            app.shortcuts.activate(app.shortcuts.SCOPE.LIST);
             app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 'a', $.noop, view);
             expect(mousetrapBindStub.called).toBe(false);
         });
 
-        it('should bind shortcut keys only once', function() {
+        it('should not bind non-global shortcut keys when the component is not in main pane', function() {
+            shortcutsMainPaneStub.restore();
+            shortcutsMainPaneStub = sinon.stub(app.shortcuts, '_isComponentInMainPane').returns(false);
             app.shortcuts.activate(app.shortcuts.SCOPE.RECORD);
             app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 'a', $.noop, view);
+            expect(mousetrapBindStub.called).toBe(false);
+        });
+
+        using('duplicate shortcut keys', ['a', ['a', 'b']], function (keys) {
+            it('should not allow shortcut keys to be bound to more than one event', function() {
+                var keyCount = _.isArray(keys) ? keys.length : 1;
+                app.shortcuts.activate(app.shortcuts.SCOPE.RECORD);
+                app.shortcuts.register(app.shortcuts.SCOPE.GLOBAL, 'a', $.noop, view);
+                app.shortcuts.register(app.shortcuts.SCOPE.RECORD, keys, $.noop, view);
+                expect(mousetrapBindStub.callCount).toBe(keyCount + 1);
+                expect(mousetrapUnbindStub.callCount).toBe(1);
+                expect(_.isEmpty(app.shortcuts._shortcuts[app.shortcuts.SCOPE.GLOBAL]['a'])).toBe(true);
+            });
+        });
+
+        it('should bind multiple shortcut keys when the keys are an array', function() {
+            app.shortcuts.activate(app.shortcuts.SCOPE.RECORD);
+            app.shortcuts.register(app.shortcuts.SCOPE.RECORD, ['a', 'b'], $.noop, view);
+            expect(mousetrapBindStub.callCount).toBe(2);
+        });
+
+        it("should unregister a component's shortcut keys when the component is disposed", function() {
+            var shortcutsUnregisterSpy = sinon.spy(app.shortcuts, 'unregister');
+            app.shortcuts.activate(app.shortcuts.SCOPE.RECORD);
             app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 'a', $.noop, view);
-            expect(mousetrapBindStub.calledOnce).toBe(true);
+            view.dispose();
+            expect(shortcutsUnregisterSpy.called).toBe(true);
+            shortcutsUnregisterSpy.restore();
         });
     });
 
     describe('unregister', function() {
-        it('should unbind shortcut keys when the key has already been bound.', function() {
-            app.shortcuts.activate(app.shortcuts.SCOPE.RECORD);
-            app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 'a', $.noop, view);
-            app.shortcuts.unregister(app.shortcuts.SCOPE.RECORD, 'a', view);
-            expect(mousetrapUnbindStub.calledOnce).toBe(true);
+        using('bound shortcut keys', ['a', ['a', 'b']], function(keys) {
+            it('should unbind shortcut keys when the key has already been bound.', function() {
+                var keyCount = _.isArray(keys) ? keys.length : 1;
+                app.shortcuts.activate(app.shortcuts.SCOPE.RECORD);
+                app.shortcuts.register(app.shortcuts.SCOPE.RECORD, keys, $.noop, view);
+                app.shortcuts.unregister(app.shortcuts.SCOPE.RECORD, 'a', view);
+                expect(mousetrapUnbindStub.callCount).toBe(keyCount);
+            });
         });
 
         it('should not unbind shortcut keys when the key has not been bound.', function() {
@@ -95,6 +144,13 @@ describe('Sugar7 shortcuts', function() {
     });
 
     describe('activate', function() {
+        it('should call clear', function() {
+            var shortcutsClearSpy = sinon.spy(app.shortcuts, 'clear');
+            app.shortcuts.activate(app.shortcuts.SCOPE.RECORD);
+            expect(shortcutsClearSpy.called).toBe(true);
+            shortcutsClearSpy.restore();
+        });
+
         it('should set scope as active.', function() {
             app.shortcuts.activate(app.shortcuts.SCOPE.RECORD);
             expect(app.shortcuts.currentScope.get()).toBe(app.shortcuts.SCOPE.RECORD);
@@ -122,18 +178,17 @@ describe('Sugar7 shortcuts', function() {
     });
 
     describe('save and restore', function() {
-        it('should save all bindings and the rebind when restore is called.', function() {
+        it('should save all bindings and then rebind when restore is called.', function() {
             app.shortcuts.activate(app.shortcuts.SCOPE.RECORD);
             app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 'a', $.noop, view);
 
             expect(mousetrapBindStub.calledOnce).toBe(true);
             app.shortcuts.save();
-            app.shortcuts.activate(app.shortcuts.SCOPE.RECORDS);
+            app.shortcuts.activate(app.shortcuts.SCOPE.LIST);
 
             app.shortcuts.activate(app.shortcuts.SCOPE.RECORD);
             app.shortcuts.restore();
             expect(mousetrapBindStub.calledTwice).toBe(true);
         });
     });
-    
 });

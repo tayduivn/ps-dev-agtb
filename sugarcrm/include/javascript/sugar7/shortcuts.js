@@ -20,7 +20,8 @@
      * top-level layout, which would then enable shortcuts just for that layout and any global
      * shortcuts.
      *
-     * To register a shortcut for a particular field, view, or layout, add the following:
+     * To register a shortcut for a particular field, view, or layout, add the
+     * following on render:
      * app.shortcuts.register('<top-level layout>', '<shortcut key>', <callback function>, <current component>);
      *
      * This framework is implemented on top of Mousetrap JS library (http://craig.is/killing/mice)
@@ -45,6 +46,7 @@
     });
 
     app.shortcuts = {
+        _keys: {}, //the scope to which each key is attached
         _shortcuts: {}, //registered shortcut keys
         _savedShortCuts: [], //saved shortcut keys, which then can be restored.
 
@@ -84,7 +86,8 @@
         /**
          * Register shortcut keys for a particular scope.
          *
-         * Note: If it registers the same key in the same scope twice, it only registers the first.
+         * Note: In the event of key conflicts, only the last registration will
+         * be kept.
          * Note: Shortcut keys are only available for components inside main pane, unless they are globally scoped.
          *
          * @param {String} scope - name of scope to be registered to
@@ -95,21 +98,26 @@
         register: function(scope, key, func, component) {
             var self = this;
 
-            if (!this._shortcuts[scope]) {
-                this._shortcuts[scope] = {};
-            }
-            if (!this._shortcuts[scope][key]) {
-                this._shortcuts[scope][key] = {};
+            if (scope !== this.SCOPE.GLOBAL &&
+                (scope !== this.currentScope.get() ||
+                    !this._isComponentInMainPane(component))
+            ) {
+                return;
             }
 
-            if (((scope === this.currentScope.get()) || (scope === this.SCOPE.GLOBAL)) && _.isEmpty(this._shortcuts[scope][key])) {
-                this._bindShortcutKeys(scope, key, func, component);
-
-                component._dispose = _.wrap(component._dispose, function(func) {
-                    self.unregister(scope, key, component);
-                    func.call(component);
-                });
+            if (!_.isArray(key)) {
+                key = [key];
             }
+
+            _.each(key, function(k) {
+                this._removeKeyConflicts(k);
+                this._bindShortcutKeys(scope, k, func, component);
+            }, this);
+
+            component._dispose = _.wrap(component._dispose, function(func) {
+                self.unregister(key, component);
+                func.call(component);
+            });
         },
 
         /**
@@ -119,10 +127,20 @@
          * @param {View.Component} component - component that the shortcut keys were registered from
          */
         unregister: function(scope, key, component) {
-            if (this._shortcuts[scope] && this._shortcuts[scope][key] && (this._shortcuts[scope][key].component === component)) {
-                this._shortcuts[scope][key] = {};
-                Mousetrap.unbind(key);
+            if (!_.isArray(key)) {
+                key = [key];
             }
+
+            _.each(key, function(k) {
+                if (this._shortcuts[scope] &&
+                    this._shortcuts[scope][k] &&
+                    this._shortcuts[scope][k].component === component
+                ) {
+                    this._shortcuts[scope][k] = {};
+                    this._keys[k] = undefined;
+                    Mousetrap.unbind(k);
+                }
+            }, this);
         },
 
         /**
@@ -140,6 +158,7 @@
         clear: function() {
             var globalShortcuts = this._shortcuts[this.SCOPE.GLOBAL];
 
+            this._keys = {};
             this._shortcuts = {};
             this._shortcuts[this.SCOPE.GLOBAL] = globalShortcuts;
 
@@ -166,8 +185,7 @@
             var saved = this._savedShortCuts.pop();
             this.activate(saved.scope);
             _.each(saved.shortcuts, function(value, key) {
-                var keyArray = key.split(',');
-                this.register(saved.scope, keyArray, value.func, value.component);
+                this.register(saved.scope, key, value.func, value.component);
             }, this);
         },
 
@@ -180,15 +198,21 @@
          * @private
          */
         _bindShortcutKeys: function(scope, key, func, component) {
-            var self = this,
-                wrapper = _.wrap(func, function(callback) {
-                    var args = Array.prototype.slice.call(arguments, 1);
-                    if (self._isComponentInMainPane(component) || (scope === self.SCOPE.GLOBAL)) {
-                        callback.apply(component, args);
-                        return false;
-                    }
-                });
+            var wrapper = _.wrap(func, function(callback) {
+                var args = Array.prototype.slice.call(arguments, 1);
+                callback.apply(component, args);
+                return false;
+            });
 
+            if (!this._shortcuts[scope]) {
+                this._shortcuts[scope] = {};
+            }
+
+            if (!this._shortcuts[scope][key]) {
+                this._shortcuts[scope][key] = {};
+            }
+
+            this._keys[key] = scope;
             this._shortcuts[scope][key].func = func;
             this._shortcuts[scope][key].component = component;
 
@@ -211,9 +235,28 @@
          */
         _registerGlobalKeyBindings: function() {
             _.each(this._shortcuts[this.SCOPE.GLOBAL], function(value, key) {
-                var keyArray = key.split(',');
-                this._bindShortcutKeys(this.SCOPE.GLOBAL, keyArray, value.func, value.component);
+                this._bindShortcutKeys(this.SCOPE.GLOBAL, key, value.func, value.component);
             }, this);
+        },
+
+        /**
+         * Unregisters any shortcuts that are bound to the specified key.
+         * @param {String} key
+         * @private
+         */
+        _removeKeyConflicts: function(key) {
+            var scope = this._keys[key] || null;
+
+            if (scope &&
+                this._shortcuts[scope] &&
+                !_.isEmpty(this._shortcuts[scope][key])
+            ) {
+                this.unregister(
+                    scope,
+                    key,
+                    this._shortcuts[scope][key].component
+                );
+            }
         }
     };
 })(SUGAR.App);
