@@ -202,7 +202,7 @@
         }
         this._initializeSettings();
 
-        if (this.settings.get('intelligent') === '1') {
+        if (this.settings.get('intelligent') == '1') {
 
             var link = this.settings.get('linked_fields'),
                 model = app.controller.context.get('model'),
@@ -439,7 +439,7 @@
         } else {
             this.setLinkedFieldVisibility('0', intelligent);
         }
-        this.settings.set('linked_fields', _.keys(linked));
+        this.settings.set('linked_fields', _.keys(linked)[0]);
     },
 
     /**
