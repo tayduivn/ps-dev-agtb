@@ -43,15 +43,14 @@
      * style is used as well.
      */
     _render: function() {
-
         if (!this.model.has(this.name)) {
-            return;
+            this.model.set(this.name, 'draft');
         }
 
         var status = this.model.get(this.name),
             options = app.lang.getAppListStrings(this.def.options);
 
-        this.statusClass = this._statusClass[status] || this._statusClass['draft'];
+        this.statusClass = this._statusClass[status];
         this.statusLabel = options[status] || status;
 
         this._super('_render');
