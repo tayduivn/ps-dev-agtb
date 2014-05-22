@@ -441,7 +441,7 @@ $dictionary['KBSContent'] = array(
         ),
         'kbsapprovers_kbscontents' => array (
             'lhs_module' => 'Users',
-            'lhs_table' => 'kbsarticles',
+            'lhs_table' => 'users',
             'lhs_key' => 'id',
             'rhs_module' => 'KBSContents',
             'rhs_table' => 'kbscontents',
