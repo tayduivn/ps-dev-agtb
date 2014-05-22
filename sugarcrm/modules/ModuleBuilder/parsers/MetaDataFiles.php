@@ -939,12 +939,15 @@ class MetaDataFiles
             $extension = substr($fileInfo['path'],-3);
             switch ($extension) {
                 case '.js':
-                    if ( isset($results[$fileInfo['subPath']]['controller'][$fileInfo['platform']]) ) {
+                    $subpath = $fileInfo['subPath'];
+                    if (strpos($fileInfo['path'], "custom/") === 0) {
+                        $subpath = "custom" . ucfirst($subpath);
+                    }
+                    if (isset($results[$subpath]['controller'][$fileInfo['platform']])) {
                         continue;
                     }
-
                     $controller = self::trimLicense(file_get_contents($fileInfo['path'], "js"));
-                    $results[$fileInfo['subPath']]['controller'][$fileInfo['platform']] = $controller;
+                    $results[$subpath]['controller'][$fileInfo['platform']] = $controller;
                     break;
                 case 'hbs':
                     $layoutName = substr($fileInfo['file'],0,-4);
