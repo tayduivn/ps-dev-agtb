@@ -130,12 +130,10 @@
         if (this.model.has(this.name)) {
             switch (this.model.get(this.name)) {
                 case 'ProfitMargin':
-                    return 'LBL_POINTS';
-                    break;
+                    return (this.action === 'edit' && this.view.action === 'list') ? 'LBL_POINTS_ABBR' : 'LBL_POINTS';
                 case 'PercentageMarkup':
                 case 'PercentageDiscount':
-                    return 'LBL_PERCENTAGE';
-                    break;
+                    return (this.action === 'edit' && this.view.action === 'list') ? '%' : 'LBL_PERCENTAGE';
             }
         }
 
