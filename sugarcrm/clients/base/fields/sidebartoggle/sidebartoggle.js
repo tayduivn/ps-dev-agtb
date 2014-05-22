@@ -58,9 +58,7 @@
         }
 
         //shortcut keys
-        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 't', this.toggle, this);
-        app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 't', this.toggle, this);
-        app.shortcuts.register(app.shortcuts.SCOPE.CREATE, 't', this.toggle, this);
+        app.shortcuts.register(app.shortcuts.SCOPE.GLOBAL, 't', this.toggle, this);
     },
 
     /**
