@@ -237,14 +237,14 @@ nv.models.gauge = function() {
             .style('font-size', prop(0.7)+'em')
           ;
 
-        var textBox = g.select('.nv-odomText').node();
+        var bbox = g.select('.nv-odomText').node().getBBox();
 
         g.select('.nv-odometer')
           .insert('path','.nv-odomText')
           .attr('class', 'nv-odom nv-odomBox')
           .attr("d",
             nv.utils.roundedRectangle(
-              -bbox.width/2, -bbox.offsetHeight+prop(1.5), bbox.offsetWidth+prop(4), bbox.offsetHeight+prop(2), prop(2)
+              -bbox.width/2, -bbox.height+prop(1.5), bbox.width+prop(4), bbox.height+prop(2), prop(2)
             )
           )
           .attr('fill', '#eeffff')
