@@ -1319,7 +1319,7 @@ SE.contextMenus = {
     },
 
 	/**
-     * shows the import dialog with only relate visible.
+     * shows the email detail view
      */
     showDetailView : function() {
         SE.contextMenus.emailListContextMenu.hide();
@@ -1332,7 +1332,17 @@ SE.contextMenus = {
         var folder = SE.grid.getRecord(rows[0]).getData().mbox;
         /* iterate through available rows JIC a row is deleted - use first available */
         var uid = SE.grid.getRecord(rows[0]).getData().uid;
-        SE.contextMenus.showEmailDetailViewInPopup(ieId, uid, folder);
+        SE.contextMenus.showEmailDetailViewInFullPage(uid);
+    },
+
+    /**
+     * Open the email detail view in a full page view
+     */
+    showEmailDetailViewInFullPage: function(id) {
+        var app = parent.SUGAR.App,
+            route = app.router.buildRoute('Emails', id);
+
+        app.router.navigate(route, {trigger: true});
     },
 
     /**
