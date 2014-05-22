@@ -435,4 +435,47 @@ describe('Base.Field.Teamset', function() {
             });
         });
     });
+
+    describe('massupdate', function() {
+        var field;
+
+        beforeEach(function() {
+            SugarTest.testMetadata.init();
+            SugarTest.loadHandlebarsTemplate('teamset', 'field', 'base', 'massupdate');
+            SugarTest.testMetadata.set();
+            field = SugarTest.createField('base', 'team_name', 'teamset', 'massupdate');
+        });
+
+        afterEach(function() {
+            field.dispose();
+            SugarTest.testMetadata.dispose();
+        });
+
+        describe('render', function() {
+            it('should render the field with an append_team checkbox', function() {
+                field.render();
+
+                expect(field.$(field.appendTeamTag)).toExist();
+            });
+        });
+
+        describe('bindDomChange', function() {
+            it('should update the model on append_team checkbox change', function() {
+                field.render();
+
+                expect(field.appendTeamValue).toBeUndefined();
+                expect(field.model.get('team_name_type')).toBeUndefined();
+
+                field.$(field.appendTeamTag).prop('checked', true).trigger('change');
+
+                expect(field.appendTeamValue).toBeTruthy();
+                expect(field.model.get('team_name_type')).toBe('1');
+
+                field.$(field.appendTeamTag).prop('checked', false).trigger('change');
+
+                expect(field.appendTeamValue).toBeFalsy();
+                expect(field.model.get('team_name_type')).toBe('0');
+            });
+        });
+    });
 });
