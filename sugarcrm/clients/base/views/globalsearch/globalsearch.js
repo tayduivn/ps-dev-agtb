@@ -31,9 +31,11 @@
         app.view.View.prototype.initialize.call(this, options);
         app.events.on('app:sync:complete', this.populateModules, this);
 
-        //shortcut keys
-        app.shortcuts.register(app.shortcuts.SCOPE.GLOBAL, ['s','ctrl+alt+0'], function() {
-            this.$('input.search-query').focus();
+        this.on('render', function() {
+            //shortcut keys
+            app.shortcuts.register(app.shortcuts.SCOPE.GLOBAL, ['s','ctrl+alt+0'], function() {
+                this.$('input.search-query').focus();
+            }, this);
         }, this);
     },
     /**

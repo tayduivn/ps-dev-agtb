@@ -41,9 +41,11 @@
         this.listenTo(this.layout, 'filter:clear:quicksearch', this.clearInput);
         this.listenTo(this.layout, 'filter:change:module', this.updatePlaceholder);
 
-        //shortcut keys
-        app.shortcuts.register(app.shortcuts.SCOPE.LIST, ['f i','ctrl+alt+9'], function() {
-            this.$el.focus();
+        this.on('render', function() {
+            //shortcut keys
+            app.shortcuts.register(app.shortcuts.SCOPE.LIST, ['f i','ctrl+alt+9'], function() {
+                this.$el.focus();
+            }, this);
         }, this);
     },
 

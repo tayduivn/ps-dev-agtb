@@ -58,17 +58,19 @@
         this.def.disable_select_all_alert = !!this.def.disable_select_all_alert;
         this._initTemplates();
 
-        //shortcut keys
-        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'ctrl+a', function() {
-            if (!this.isDisabled()) {
-                this.$('.checkall:visible').click();
-            }
-        }, this);
-        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'm', function() {
-            var $dropdown = this.$('[data-toggle=dropdown]');
-            if ($dropdown.is(':visible') && !$dropdown.hasClass('disabled')) {
-                $dropdown.click();
-            }
+        this.on('render', function() {
+            //shortcut keys
+            app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'ctrl+a', function() {
+                if (!this.isDisabled()) {
+                    this.$('.checkall:visible').click();
+                }
+            }, this);
+            app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'm', function() {
+                var $dropdown = this.$('[data-toggle=dropdown]');
+                if ($dropdown.is(':visible') && !$dropdown.hasClass('disabled')) {
+                    $dropdown.click();
+                }
+            }, this);
         }, this);
     },
 

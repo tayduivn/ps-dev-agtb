@@ -74,15 +74,17 @@
         var actiondropdownField = app.view._getController({type: 'field', name: 'actiondropdown'});
         this.setPlaceholder = _.throttle(actiondropdownField.prototype.setPlaceholder, 100);
 
-        //shortcut keys
-        var clickPrimaryDropdown = function() {
-            var $primaryDropdown = this.$('.btn-primary[data-toggle=dropdown]');
-            if ($primaryDropdown.is(':visible') && !$primaryDropdown.hasClass('disabled')) {
-                $primaryDropdown.click();
-            }
-        };
-        app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 'm', clickPrimaryDropdown, this);
-        app.shortcuts.register(app.shortcuts.SCOPE.CREATE, 'm', clickPrimaryDropdown, this);
+        this.on('render', function() {
+            //shortcut keys
+            var clickPrimaryDropdown = function() {
+                var $primaryDropdown = this.$('.btn-primary[data-toggle=dropdown]');
+                if ($primaryDropdown.is(':visible') && !$primaryDropdown.hasClass('disabled')) {
+                    $primaryDropdown.click();
+                }
+            };
+            app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 'm', clickPrimaryDropdown, this);
+            app.shortcuts.register(app.shortcuts.SCOPE.CREATE, 'm', clickPrimaryDropdown, this);
+        }, this);
     },
     renderDropdown: function() {
         if (_.isEmpty(this.dropdownFields) || this.isDisabled()) {

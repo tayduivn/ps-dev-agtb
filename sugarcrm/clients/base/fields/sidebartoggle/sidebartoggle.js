@@ -57,8 +57,10 @@
             this.listenTo(defaultLayout, 'sidebar:state:changed', this.toggleState);
         }
 
-        //shortcut keys
-        app.shortcuts.register(app.shortcuts.SCOPE.GLOBAL, 't', this.toggle, this);
+        this.on('render', function() {
+            //shortcut keys
+            app.shortcuts.register(app.shortcuts.SCOPE.GLOBAL, 't', this.toggle, this);
+        }, this);
     },
 
     /**

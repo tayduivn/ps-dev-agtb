@@ -105,7 +105,7 @@
 
         $(window).on('resize.' + this.cid, this.overflowTabs);
 
-        this.registerShortcuts();
+        this.on('render', this.registerShortcuts, this);
     },
 
     /**

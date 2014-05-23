@@ -72,7 +72,7 @@
         this.limit = this.context.has('limit') ? this.context.get('limit') : null;
         this.metaFields = this.meta.panels ? _.first(this.meta.panels).fields : [];
 
-        this.registerShortcuts();
+        this.on('render', this.registerShortcuts, this);
     },
 
     /**

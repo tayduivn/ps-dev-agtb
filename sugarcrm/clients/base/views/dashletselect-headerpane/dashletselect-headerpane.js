@@ -22,12 +22,14 @@
         app.view.View.prototype.initialize.call(this, options);
         this.title = app.lang.get(this.meta.title, this.module);
 
-        //shortcut keys
-        app.shortcuts.register(app.shortcuts.SCOPE.CREATE, ['esc','ctrl+alt+l'], function() {
-            var $cancelButton = this.$('a[name=cancel_button]');
-            if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
-                $cancelButton.click();
-            }
+        this.on('render', function() {
+            //shortcut keys
+            app.shortcuts.register(app.shortcuts.SCOPE.CREATE, ['esc','ctrl+alt+l'], function() {
+                var $cancelButton = this.$('a[name=cancel_button]');
+                if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
+                    $cancelButton.click();
+                }
+            }, this);
         }, this);
     },
 
