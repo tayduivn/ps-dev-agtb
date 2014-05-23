@@ -739,7 +739,7 @@ function get_team_name($team_id)
  */
 function get_team_array($add_blank = FALSE)
 {
-    global  $current_user;
+    global $current_user;
     if (empty($current_user) || empty($current_user->id)) {
         return array();
     }
@@ -761,30 +761,28 @@ function get_team_array($add_blank = FALSE)
     $team->addVisibilityWhere($query);
     $query .= ' ORDER BY t1.private, t1.name ASC';
 
-    $key = md5($query . $add_blank . $current_user->id);
+    $key = md5($query . $current_user->id);
     $team_array = get_register_value('team_array', $key);
 
-    if (!empty($team_array)) {
-        return $team_array;
-    }
+    if (empty($team_array)) {
+        $GLOBALS['log']->debug("get_team_array query: $query");
+        $result = $db->query($query, true, "Error filling in team array: ");
 
-    $GLOBALS['log']->debug("get_team_array query: $query");
-    $result = $db->query($query, true, "Error filling in team array: ");
+        while ($row = $db->fetchByAssoc($result)) {
+
+            if ($current_user->showLastNameFirst()) {
+              $team_array[$row['id']] = trim($row['name_2'] . ' ' . $row['name']);
+            } else {
+              $team_array[$row['id']] = trim($row['name'] . ' ' . $row['name_2']);
+            }
+        }
+
+        set_register_value('team_array', $key, $team_array);
+    }
 
     if ($add_blank) {
-        $team_array[""] = "";
+        $team_array[''] = '';
     }
-
-    while ($row = $db->fetchByAssoc($result)) {
-
-        if ($current_user->showLastNameFirst()) {
-          $team_array[$row['id']] = trim($row['name_2'] . ' ' . $row['name']);
-        } else {
-          $team_array[$row['id']] = trim($row['name'] . ' ' . $row['name_2']);
-        }
-    }
-
-    set_register_value('team_array', $key, $team_array);
 
     return $team_array;
 }
@@ -828,7 +826,7 @@ function get_user_name($id)
  */
 function get_user_array($add_blank=true, $status="Active", $user_id='', $use_real_name=false, $user_name_filter='', $portal_filter=' AND portal_only=0 ', $from_cache = true)
 {
-    global $locale;
+    global $locale, $current_user;
 
     if (empty($locale)) {
         $locale = Localization::getObject();
@@ -846,10 +844,9 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
         $where = "status='$status'" . $portal_filter;
     }
 
-    $user = BeanFactory::getBean('Users');
-    $user->addVisibilityFrom($query);
+    $current_user->addVisibilityFrom($query);
     $query .= " WHERE $where ";
-    $user->addVisibilityWhere($query);
+    $current_user->addVisibilityWhere($query);
 
     if (!empty($user_name_filter)) {
         $user_name_filter = $db->quote($user_name_filter);
@@ -861,7 +858,7 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
     $query .= ' ORDER BY user_name ASC';
 
     if ($from_cache) {
-        $key_name = $query . $add_blank . $status . $user_id . $use_real_name . $user_name_filter . $portal_filter;
+        $key_name = $query . $status . $user_id . $use_real_name . $user_name_filter . $portal_filter;
         $key_name = md5($key_name);
         $user_array = get_register_value('user_array', $key_name);
     }
@@ -871,11 +868,6 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
 
         $GLOBALS['log']->debug("get_user_array query: $query");
         $result = $db->query($query, true, "Error filling in user array: ");
-
-        if ($add_blank==true) {
-            // Add in a blank row
-            $temp_result[''] = '';
-        }
 
 		// Get the id and the name.
 		while($row = $db->fetchByAssoc($result)) {
@@ -894,6 +886,10 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
         if ($from_cache) {
             set_register_value('user_array', $key_name, $temp_result);
         }
+    }
+
+    if ($add_blank) {
+        $user_array[''] = '';
     }
 
     return $user_array;
