@@ -504,11 +504,23 @@ class SugarSpot
                 $selectFields = rtrim($selectFields,', ');
             }
 
-            if(empty($where_clauses))
-            {
-                if ( $allowBlankSearch ) {
+            $showDeleted = (isset($options['deleted']))
+                        ? $options['deleted']
+                            : 0;
 
-                    $ret_array = $seed->create_new_list_query($orderBy, '', $return_fields, $options, 0, '', true, $seed, true);
+            if (empty($where_clauses)) {
+                if ($allowBlankSearch) {
+                    $ret_array = $seed->create_new_list_query(
+                        $orderBy,
+                        '',
+                        $return_fields,
+                        $options,
+                        $showDeleted,
+                        '',
+                        true,
+                        $seed,
+                        true
+                    );
 
                     if (!empty($selectFields)) {
                         $ret_array['select'] = "SELECT DISTINCT ".$selectFields;
@@ -547,7 +559,18 @@ class SugarSpot
             else if (count($where_clauses) > 1) {
                 $query_parts = array();
 
-                $ret_array_start = $seed->create_new_list_query($orderBy, '', $return_fields, $options, 0, '', true, $seed, true);
+                $ret_array_start = $seed->create_new_list_query(
+                    $orderBy,
+                    '',
+                    $return_fields,
+                    $options,
+                    $showDeleted,
+                    '',
+                    true,
+                    $seed,
+                    true
+                );
+
                 $search_keys = array_keys($searchFields[$moduleName]);
 
                 foreach ($where_clauses as $n => $clause) {
@@ -561,7 +584,18 @@ class SugarSpot
                         }
                     }
                     // Individual UNION's don't allow order by
-                    $ret_array = $seed->create_new_list_query('', $clause, $allfields, $options, 0, '', true, $seed, true);
+                    $ret_array = $seed->create_new_list_query(
+                        '',
+                        $clause,
+                        $allfields,
+                        $options,
+                        $showDeleted,
+                        '',
+                        true,
+                        $seed,
+                        true
+                    );
+
                     if (!empty($selectFields)) {
                         $ret_array_start['select'] = "SELECT DISTINCT ".$selectFields;
                     }
@@ -594,7 +628,17 @@ class SugarSpot
                     }
                 }
 
-                $ret_array = $seed->create_new_list_query($orderBy, $where_clauses[0], $return_fields, $options, 0, '', true, $seed, true);
+                $ret_array = $seed->create_new_list_query(
+                    $orderBy,
+                    $where_clauses[0],
+                    $return_fields,
+                    $options,
+                    $showDeleted,
+                    '',
+                    true,
+                    $seed,
+                    true
+                );
 
                 if (!empty($selectFields)) {
                     $ret_array['select'] = "SELECT DISTINCT ".$selectFields;
@@ -647,8 +691,8 @@ class SugarSpot
                 $temp->loadFromRow($row);
                 // need to reload the seed because not all the fields will be filled in, for instance in bugs, all fields are wanted but the query does
                 // not contain description, so the loadFromRow will not load it
-                $temp->retrieve($temp->id);
-                if (isset($options['return_beans']) && $options['return_beans']) {
+                $temp->retrieve($temp->id, true, false); // this may be a deleted record
+                if ( isset($options['return_beans']) && $options['return_beans'] ) {
                     $data[] = $temp;
                 } else {
                     $data[] = $temp->get_list_view_data($return_fields);
