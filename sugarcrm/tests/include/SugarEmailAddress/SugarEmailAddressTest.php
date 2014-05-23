@@ -22,6 +22,34 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
     /** @var SugarEmailAddress */
     private $ea;
 
+    private $primary1 = array(
+        'primary_address' => true,
+        'email_address'   => 'p1@example.com',
+        'opt_out'         => true,
+        'invalid_email'   => true,
+    );
+
+    private $primary2 = array(
+        'primary_address' => true,
+        'email_address'   => 'p2@example.com',
+        'opt_out'         => false,
+        'invalid_email'   => false,
+    );
+
+    private $alternate1 = array(
+        'primary_address' => false,
+        'email_address'   => 'a1@example.com',
+        'opt_out'         => false,
+        'invalid_email'   => false,
+    );
+
+    private $alternate2 = array(
+        'primary_address' => false,
+        'email_address'   => 'a2@example.com',
+        'opt_out'         => false,
+        'invalid_email'   => false,
+    );
+
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
@@ -205,5 +233,89 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
         // Checking for elapsed time. I expect that evaluation takes less than a second.
         $timeElapsed = microtime(true) - $startTime;
         $this->assertLessThan(1.0, $timeElapsed);
+    }
+
+    /**
+     * When primary address exists, it's used to populate email1 property
+     *
+     * @covers SugarEmailAddress::populateLegacyFields
+     */
+    public function testPrimaryAttributeConsidered()
+    {
+        $bean = new SugarBean();
+        $this->ea->addresses = array(
+            $this->alternate1,
+            $this->primary1,
+        );
+
+        $this->ea->populateLegacyFields($bean);
+
+        $this->assertEquals('p1@example.com', $bean->email1);
+        $this->assertEquals(true, $bean->email_opt_out);
+        $this->assertEquals(true, $bean->invalid_email);
+        $this->assertEquals('a1@example.com', $bean->email2);
+    }
+
+    /**
+     * When multiple primary addresses exist, the first of them is used to
+     * populate email1 property
+     *
+     * @covers SugarEmailAddress::populateLegacyFields
+     */
+    public function testMultiplePrimaryAddresses()
+    {
+        $bean = new SugarBean();
+        $this->ea->addresses = array(
+            $this->primary1,
+            $this->primary2,
+        );
+
+        $this->ea->populateLegacyFields($bean);
+
+        $this->assertEquals('p1@example.com', $bean->email1);
+        $this->assertEquals('p2@example.com', $bean->email2);
+    }
+
+    /**
+     * When no primary address exists, the first of non-primary ones is used to
+     * populate email1 property
+     *
+     * @covers SugarEmailAddress::populateLegacyFields
+     */
+    public function testNoPrimaryAddress()
+    {
+        $bean = new SugarBean();
+        $this->ea->addresses = array(
+            $this->alternate1,
+            $this->alternate2,
+        );
+
+        $this->ea->populateLegacyFields($bean);
+
+        $this->assertEquals('a1@example.com', $bean->email1);
+        $this->assertEquals('a2@example.com', $bean->email2);
+    }
+
+    /**
+     * All available addresses are used to populate email properties
+     *
+     * @covers SugarEmailAddress::populateLegacyFields
+     */
+    public function testAllPropertiesArePopulated()
+    {
+        $bean = new SugarBean();
+        $this->ea->addresses = array(
+            $this->primary1,
+            $this->primary2,
+            $this->alternate1,
+            $this->alternate2,
+        );
+
+        $this->ea->populateLegacyFields($bean);
+
+        $this->assertEquals('p1@example.com', $bean->email1);
+        $this->assertEquals('p2@example.com', $bean->email2);
+        $this->assertEquals('a1@example.com', $bean->email3);
+        $this->assertEquals('a2@example.com', $bean->email4);
     }
 }
