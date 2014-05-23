@@ -826,7 +826,7 @@ function get_user_name($id)
  */
 function get_user_array($add_blank=true, $status="Active", $user_id='', $use_real_name=false, $user_name_filter='', $portal_filter=' AND portal_only=0 ', $from_cache = true)
 {
-    global $locale, $current_user;
+    global $locale;
 
     if (empty($locale)) {
         $locale = Localization::getObject();
@@ -844,9 +844,10 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
         $where = "status='$status'" . $portal_filter;
     }
 
-    $current_user->addVisibilityFrom($query);
+    $user = BeanFactory::getBean('Users');
+    $user->addVisibilityFrom($query);
     $query .= " WHERE $where ";
-    $current_user->addVisibilityWhere($query);
+    $user->addVisibilityWhere($query);
 
     if (!empty($user_name_filter)) {
         $user_name_filter = $db->quote($user_name_filter);
