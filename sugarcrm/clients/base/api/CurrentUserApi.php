@@ -149,17 +149,6 @@ class CurrentUserApi extends SugarApi
     }
 
     /**
-     * Gets a MetaDataManager object
-     * @param string $platform The platform to get the manager for
-     * @param boolean $public Flag to describe visibility for metadata
-     * @return MetaDataManager
-     */
-    protected function getMetaDataManager($platform = '', $public = false)
-    {
-        return MetaDataManager::getManager($platform, $public);
-    }
-    
-    /**
      * Retrieves the current user info
      *
      * @param $api
