@@ -36,6 +36,7 @@ $mod_strings = array (
     'LBL_DOC_ID' => 'Document ID',
     'LBL_APPROVED' => 'Approved',
     'LBL_REVISION' => 'Revision',
+    'LBL_ACTIVE_REV' => 'Active Revision',
     'LBL_KBSDOCUMENT_ID' => 'KBSDocument ID',
     'LBL_KBSDOCUMENTS' => 'KBSDocuments',
     'LBL_KBSDOCUMENT' => 'KBSDocument',
