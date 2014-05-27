@@ -188,6 +188,12 @@ class IBMDB2Manager  extends DBManager
 		if($this->checkError($msg.' Query Failed: ' . $sql, $dieOnError)) {
 			return false;
 		}
+        $matches = array();
+        if (preg_match('/^\W*alter\W+table\W+(\w+)/mi', $sql, $matches)) {
+            if ($this->tableExists($matches[1])) {
+                $this->reorgTable($matches[1]);
+            }
+        }
 		return $result;
 	}
 
@@ -1219,15 +1225,18 @@ EOQ;
 			unset(self::$index_descriptions[$tablename][$name]);
 			}
 			if ($index['type'] == 'primary') {
-				$sql[] = 'DROP PRIMARY KEY';
+                $sql[] = "ALTER TABLE {$tablename} DROP PRIMARY KEY";
 			} else {
 				$sql[] = "DROP INDEX $name";
 			}
 		}
 		if (!empty($sql)) {
-			$sql = "ALTER TABLE $tablename ".join(",", $sql);
-			if($execute)
-				$this->query($sql);
+            if ($execute) {
+                foreach ($sql as $q) {
+                    $this->query($q);
+                }
+            }
+            $sql = implode(";", $sql);
 		} else {
 			$sql = '';
 		}
@@ -1684,8 +1693,7 @@ EOQ;
 		$tables = array_unique($this->reorgQueues['table']);
 		foreach($tables as $table)
 		{
-			$sql = "CALL ADMIN_CMD('REORG TABLE $table ALLOW READ ACCESS')";
-			$this->query($sql, false,"REORG problem");
+            $this->reorgTable($table);
 		}
 		if(count($tables) > 0)
 		{
@@ -1693,6 +1701,16 @@ EOQ;
 			$this->reorgQueues['table'] = array(); // Clearing out queue
 		}
 	}
+
+    /**
+     * Perform REORG query for a table.
+     * @param string $table
+     */
+    protected function reorgTable($table)
+    {
+        $sql = "CALL ADMIN_CMD('REORG TABLE {$table} ALLOW READ ACCESS')";
+        $this->query($sql, false, "REORG problem");
+    }
 
 	/// END REORG QUEUE FUNCTIONALITY
 

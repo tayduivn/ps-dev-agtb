@@ -306,7 +306,7 @@ nv.models.paretoChart = function () {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().offsetHeight / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBoundingClientRect().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
       }
@@ -473,7 +473,7 @@ nv.models.paretoChart = function () {
           .attr('text-anchor', 'end')
           .attr('transform', 'translate(' + -yAxis.tickPadding() + ',' + y(quotaValue) + ')');
 
-        tickTextHeight = Math.round(parseInt(g.select('text.nv-quotaValue').node().offsetHeight, 10) / 1.15);
+        tickTextHeight = Math.round(parseInt(g.select('text.nv-quotaValue').node().getBoundingClientRect().height, 10) / 1.15);
         //check if tick lines overlap quota values, if so, hide the values that overlap
         yAxisWrap.selectAll('g.tick')
           .each(function(d, i) {
@@ -522,7 +522,7 @@ nv.models.paretoChart = function () {
           .attr('text-anchor', 'end')
           .attr('transform', 'translate(' + -yAxis.tickPadding() + ',' + y(targetQuotaValue) + ')');
 
-        tickTextHeight = Math.round(parseInt(g.select('text.nv-targetQuotaValue').node().offsetHeight, 10) / 1.15);
+        tickTextHeight = Math.round(parseInt(g.select('text.nv-targetQuotaValue').node().getBoundingClientRect().height, 10) / 1.15);
         //check if tick lines overlap quota values, if so, hide the values that overlap
         yAxisWrap.selectAll('g.tick')
           .each(function(d, i) {
