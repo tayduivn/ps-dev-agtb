@@ -206,7 +206,9 @@ class HistoryApi extends RelateApi
     {
         $GLOBALS['log']->info("Filter SQL: " . $q->compileSql());
 
-        $beans = array();
+        $beans = array(
+            '_rows' => array()
+        );
 
         foreach ($q->execute() as $row) {
             $beans[$row['id']] = BeanFactory::getBean($row['module'], $row['id']);
