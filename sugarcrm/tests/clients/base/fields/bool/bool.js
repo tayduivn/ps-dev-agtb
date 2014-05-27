@@ -7,7 +7,7 @@ describe('Base.Field.Bool', function() {
     afterEach(function() {
         app.cache.cutAll();
         sinon.collection.restore();
-        Handlebars.Templates = {};
+        Handlebars.templates = {};
     });
 
     describe('format & unformat', function() {
