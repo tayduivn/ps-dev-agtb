@@ -1,11 +1,11 @@
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
-Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+YUI 3.15.0 (build 834026e)
+Copyright 2014 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
 */
-YUI.add('node-focusmanager', function(Y) {
+
+YUI.add('node-focusmanager', function (Y, NAME) {
 
 /**
 * <p>The Focus Manager Node Plugin makes it easy to manage focus among
@@ -35,7 +35,11 @@ YUI.add('node-focusmanager', function(Y) {
 * styling focus.
 * </p>
 *
+
+DEPRECATED: The FocusManager Node Plugin has been deprecated as of YUI 3.9.0. This module will be removed from the library in a future version. If you require functionality similar to the one provided by this  module, consider taking a look at the various modules in the YUI Gallery <http://yuilibrary.com/gallery/>.
+
 * @module node-focusmanager
+* @deprecated 3.9.0
 */
 
 	//	Frequently used strings
@@ -193,6 +197,7 @@ NodeFocusManager.ATTRS = {
 
 			}
 
+
 			return returnValue;
 
 		}
@@ -246,6 +251,7 @@ NodeFocusManager.ATTRS = {
 	*
 	* @attribute circular
 	* @type Boolean
+	* @default true
 	*/
 	circular: {
 		value: true
@@ -921,7 +927,6 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	//	Public methods
 
     initializer: function (config) {
-
 		this.start();
 
     },
@@ -938,10 +943,9 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	* @method focus
 	* @description Focuses the active descendant and sets the
 	* <code>focused</code> attribute to true.
-	* @param index {Number} Optional. Number representing the index of the
-	* descendant to be set as the active descendant.
-	* @param index {Node} Optional. Node instance representing the
-	* descendant to be set as the active descendant.
+	* @param index {Number|Node} Optional. Number representing the index of the
+	* descendant to be set as the active descendant or Node instance
+	* representing the descendant to be set as the active descendant.
 	*/
 	focus: function (index) {
 
@@ -1069,4 +1073,4 @@ Y.namespace("Plugin");
 Y.Plugin.NodeFocusManager = NodeFocusManager;
 
 
-}, '3.3.0' ,{requires:['attribute', 'node', 'plugin', 'node-event-simulate', 'event-key', 'event-focus']});
+}, '3.15.0', {"requires": ["attribute", "node", "plugin", "node-event-simulate", "event-key", "event-focus"]});

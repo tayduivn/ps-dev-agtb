@@ -3817,10 +3817,9 @@ getConstrainedY: function (y) {
     */
 
     var getDisplayRegionHeight = function () {
-        //Bug43168: since the initial value Y is empty, the case is calculated in wrong way
-        var _y = oMenu.cfg.getProperty(_Y);
+
         // The Menu is below the context element
-        if ( _y == 0 || (_y - scrollY) > nContextElY ) {
+        if ((oMenu.cfg.getProperty(_Y) - scrollY) > nContextElY) {
             return (nBottomRegionHeight - nViewportOffset);				
         }
         else {	// The Menu is above the context element

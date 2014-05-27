@@ -105,18 +105,35 @@ abstract class SugarSearchEngineElasticIndexStrategyBase implements SugarSearchE
      */
     protected function getIndexSetting($indexName, $params = array(), $addDefaults = true)
     {
-        $indexSettings = array();
+        $indexSettings = array(
+            'index' => array(
+                'analysis' => array(
+                    'analyzer' => array(
+                        'core_email_lowercase' => array(
+                            'type' => 'custom',
+                            'tokenizer' => 'uax_url_email',
+                            'filter' => array(
+                                'lowercase',
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        );
+
         if (empty($params['index_settings']) || !is_array($params['index_settings'])) {
             return $indexSettings;
         }
 
         $settings = $params['index_settings'];
-        if (isset($settings[$indexName]) && is_array($settings[$indexName])) {
-            $indexSettings = $settings[$indexName];
-        }
         if ($addDefaults && isset($settings['default']) && is_array($settings['default'])) {
-            $indexSettings = array_merge($indexSettings, $settings['default']);
+            $indexSettings = sugarArrayMergeRecursive($indexSettings, $settings['default']);
         }
+
+        if (isset($settings[$indexName]) && is_array($settings[$indexName])) {
+            $indexSettings = sugarArrayMergeRecursive($indexSettings, $settings[$indexName]);
+        }
+
         $GLOBALS['log']->info("Index settings for $indexName -> ".var_export($indexSettings, true));
         return $indexSettings;
     }

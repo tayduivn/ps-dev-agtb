@@ -221,12 +221,13 @@ $vardefs =array(
 		array (
 			'name' => 'primary_address_street',
 			'vname' => 'LBL_PRIMARY_ADDRESS_STREET',
-			'type' => 'varchar',
+			'type' => 'textarea',
+			'dbType' => 'varchar',
 			'len' => '150',
-			'group'=>'primary_address',
-			'comment' => 'Street address for primary address',
-            'merge_filter' => 'enabled',
-            'duplicate_on_record_copy' => 'always',
+			'comment' => 'The street address used for primary address',
+			'group' => 'primary_address',
+			'merge_filter' => 'enabled',
+			'duplicate_on_record_copy' => 'always',
 		),
 	'primary_address_street_2' =>
 		array (
@@ -294,7 +295,8 @@ $vardefs =array(
 		array (
 			'name' => 'alt_address_street',
 			'vname' => 'LBL_ALT_ADDRESS_STREET',
-			'type' => 'varchar',
+			'type' => 'textarea',
+			'dbType' => 'varchar',
 			'len' => '150',
 			'group'=>'alt_address',
 			'comment' => 'Street address for alternate address',

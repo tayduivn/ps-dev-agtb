@@ -127,14 +127,8 @@ class SugarQuery_Compiler_SQL
         $order_by_part = '';
         $having_part = '';
 
-        $group_by = $this->sugar_query->group_by;
-        $having = $this->sugar_query->having;
-        $order_by = $this->sugar_query->order_by;
-        $limit = $this->sugar_query->limit;
-        $offset = $this->sugar_query->offset;
-
         // if there aren't any selected fields, add them all
-        if (empty($this->sugar_query->select->select)) {
+        if (empty($this->sugar_query->select->select) && $this->sugar_query->select->getCountQuery() === false) {
             $this->sugar_query->select('*');
         }
 
@@ -155,16 +149,16 @@ class SugarQuery_Compiler_SQL
             $distinct = 'DISTINCT';
         }
 
-        if (!empty($group_by)) {
-            $group_by_part = $this->compileGroupBy($group_by);
+        if (!empty($this->sugar_query->group_by)) {
+            $group_by_part = $this->compileGroupBy($this->sugar_query->group_by);
         }
 
-        if (!empty($having)) {
-            $having_part = $this->compileHaving($having);
+        if (!empty($this->sugar_query->having)) {
+            $having_part = $this->compileHaving($this->sugar_query->having);
         }
 
-        if (!empty($order_by)) {
-            $order_by_part = $this->compileOrderBy($order_by);
+        if (!empty($this->sugar_query->order_by)) {
+            $order_by_part = $this->compileOrderBy($this->sugar_query->order_by);
         }
 
         if (!empty($this->sugar_query->join)) {
@@ -188,8 +182,8 @@ class SugarQuery_Compiler_SQL
         if (!empty($order_by_part)) {
             $sql .= " ORDER BY {$order_by_part} ";
         }
-        if (!empty($limit)) {
-            $sql = $this->db->limitQuery($sql, $offset, $limit, false, '', false);
+        if (!empty($this->sugar_query->limit) && $this->sugar_query->select->getCountQuery() === false) {
+            $sql = $this->db->limitQuery($sql, $this->sugar_query->offset, $this->sugar_query->limit, false, '', false);
         }
 
         return trim($sql);
@@ -235,7 +229,7 @@ class SugarQuery_Compiler_SQL
      *     added to orderBy. Default value is `true`.
      * @return string
      */
-    protected function compileOrderBy($orderBy, $orderById = true)
+    protected function compileOrderBy($orderBy, $orderById = false)
     {
         $return = array();
         // order by ID
@@ -278,7 +272,7 @@ class SugarQuery_Compiler_SQL
         $addedFields = array();
 
         if ($selectObj->getCountQuery() === true) {
-            return 'count(0) AS record_count';
+            $return['count(0) AS record_count'] = 'count(0) AS record_count';
         }
 
         foreach ($selectObj->select as $field) {
@@ -287,6 +281,10 @@ class SugarQuery_Compiler_SQL
             }
             $compiledField = $this->compileField($field);
             $return[$compiledField] = $compiledField;
+    
+            if ($selectObj->getCountQuery() === true) {
+                $this->sugar_query->groupBy("{$field->table}.{$field->field}");
+            }
         }
 
         return implode(", ", $return);
@@ -393,7 +391,7 @@ class SugarQuery_Compiler_SQL
      * @param object SugarQuery_Builder_AndWhere/SugarQuery_Builder_OrWhere
      *
      * @return array
-     */    
+     */
     protected function buildWhereSql($operator, $whereObj)
     {
         $sql[$operator] = array();
@@ -575,7 +573,7 @@ class SugarQuery_Compiler_SQL
 
     /**
      * Gets a join SQL string
-     * 
+     *
      * @param  SugarQuery_Builder_Join $join A join object
      * @return string A join SQL part
      */
@@ -610,7 +608,7 @@ class SugarQuery_Compiler_SQL
 
         $sql .= ' ON ';
         $sql .= '(' . $this->compileWhere($join->on) . ')';
-        
+
         return $sql;
     }
 }

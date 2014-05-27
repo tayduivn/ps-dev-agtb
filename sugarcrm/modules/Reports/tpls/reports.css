@@ -88,5 +88,8 @@ div.bodywrapper{padding: 4px 4px 4px 4px}
 white-space: nowrap;
 };
 .bold {
-    font-weight:bold;eee
+    font-weight:bold;
+}
+td.number_align {
+    text-align: right;
 }

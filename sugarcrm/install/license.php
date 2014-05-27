@@ -75,7 +75,7 @@ $out =<<<EOQ
     </tr>
     <tr>
       <td colspan="2">
-        <textarea cols="80" rows="20" readonly>{$license_file}</textarea>
+        <textarea cols="80" rows="7" readonly>{$license_file}</textarea>
       </td>
     </tr>
 

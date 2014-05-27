@@ -181,7 +181,7 @@ class Importer
     {
         global $sugar_config, $mod_strings, $current_user;
 
-        $focus = clone $this->bean;
+        $focus = BeanFactory::getBean($this->bean->module_dir);
         $focus->unPopulateDefaultValues();
         $focus->save_from_post = false;
         $focus->team_id = null;
@@ -1192,6 +1192,10 @@ class Importer
         global $mod_strings;
 
         $result = array();
+
+        if (empty($value)) {
+            return $result;
+        }
 
         // explode serialized value into groups of attributes
         $emails = explode(';', $value);

@@ -12,6 +12,8 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
+require_once 'include/api/RestService.php';
+
 /**
  * Bulk API Rest service class
  * Shortcuts some functions that we don't need to do on bulk requests

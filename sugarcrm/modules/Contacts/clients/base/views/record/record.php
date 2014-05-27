@@ -101,6 +101,13 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
+                    'event' => 'button:historical_summary_button:click',
+                    'name' => 'historical_summary_button',
+                    'label' => 'LBL_HISTORICAL_SUMMARY',
+                    'acl_action' => 'view',
+                ),
+                array(
+                    'type' => 'rowaction',
                     'event' => 'button:audit_button:click',
                     'name' => 'audit_button',
                     'label' => 'LNK_VIEW_CHANGE_LOG',
@@ -269,7 +276,12 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                     'name' => 'description',
                     'span' => 12,
                 ),
-                'report_to_name',
+                array(
+                    'name' => 'report_to_name',
+                    'filter_relate' => array(
+                        'account_id' => 'account_id'
+                    ),
+                ),
                 'sync_contact',
                 'lead_source',
                 'assigned_user_name',

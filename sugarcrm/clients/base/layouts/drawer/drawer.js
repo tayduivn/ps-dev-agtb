@@ -35,12 +35,23 @@
     },
 
     /**
-     * Open the specified layout in a drawer
-     * @param layoutDef
-     * @param onClose
+     * Open the specified layout in a drawer.
+     *
+     * You can pass the current context if you want the context created to be a
+     * child of that current context. If you don't pass a `scope`, it will
+     * create a child of the main context (`app.controller.context`).
+     *
+     * @param {Object} layoutDef The component definition.
+     * @param {Core.Context/Object} [layoutDef.context] The context to pass to
+     *  the drawer.
+     * @param {Core.Context} [layoutDef.context.parent] The parent context of
+     *  the context to pass to the drawer.
+     * @param {Function} [onClose] Callback method when the drawer closes.
      */
     open: function(layoutDef, onClose) {
-        var layout;
+        var layout,
+            parentContext;
+
 
         //store the callback function to be called later
         if (_.isUndefined(onClose)) {
@@ -57,8 +68,15 @@
             layoutDef.context.forceNew = true;
         }
 
+        if (layoutDef.context.parent instanceof app.Context) {
+            parentContext = layoutDef.context.parent;
+            // Remove the `parent` property to not mess up with the context
+            // attributes.
+            delete layoutDef.context.parent;
+        }
+
         //initialize layout definition components
-        this._addComponentsFromDef([layoutDef]);
+        this._addComponentsFromDef([layoutDef], parentContext);
 
         layout = _.last(this._components);
 

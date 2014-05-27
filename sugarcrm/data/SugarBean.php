@@ -397,9 +397,9 @@ class SugarBean
     public $emailData = array();
 
     /**
-     * Previously a static cache in the constructor, allows this bean to not 
+     * Previously a static cache in the constructor, allows this bean to not
      * have to reload vardefs
-     * 
+     *
      * @var array
      */
     protected static $loadedDefs = array();
@@ -688,7 +688,7 @@ class SugarBean
     {
     	return $this->loadVisibility()->addSseVisibilityFilter($engine, $filter);
     }
-    
+
     /**
      * Returns the object name. If object_name is not set, table_name is returned.
      *
@@ -2146,20 +2146,21 @@ class SugarBean
     * Determines which users receive a notification
     */
     function get_notification_recipients() {
-        $user_list = array();
+        $userList = array();
         if(isset($this->assigned_user_id) && !empty($this->assigned_user_id)) {
             $notify_user = BeanFactory::retrieveBean('Users', $this->assigned_user_id);
             if ( ! $notify_user ) {
                 // The user to notify has been deleted.
-                return $user_list;
+                return $userList;
             }
             $this->new_assigned_user_name = $notify_user->full_name;
 
-            $GLOBALS['log']->info("Notifications: recipient is $this->new_assigned_user_name");
-
-            $user_list[] = $notify_user;
+            if ($notify_user->receive_notifications) {
+                $GLOBALS['log']->info("Notifications: recipient is $this->new_assigned_user_name");
+                $userList[] = $notify_user;
+            }
         }
-        return $user_list;
+        return $userList;
     }
 
     protected function create_notification_email($notify_user) {
@@ -2294,11 +2295,10 @@ class SugarBean
     protected function createNotificationEmailTemplate($templateName) {
         global $sugar_config,
                $current_user,
-               $sugar_version;
+               $sugar_version,
+            $locale;
 
-        $currentLanguage = (!empty($_SESSION['authenticated_user_language'])) ?
-            $_SESSION['authenticated_user_language'] :
-            $sugar_config['default_language'];
+        $currentLanguage = $locale->getAuthenticatedUserLanguage();
 
         $xtpl = new XTemplate(get_notify_template_file($currentLanguage));
 
@@ -3153,7 +3153,7 @@ class SugarBean
         $query = new SugarQuery();
         $query->from($this);
         $query->where()->equals('id',$id);
-        
+
         // Pass this in so fetchFromQuery mutates $this instead of grabbing a fresh bean
         // This is so fetch() can work like retrieve()
         $options['beanList'][$id] = $this;
@@ -3194,7 +3194,7 @@ class SugarBean
                 // Not a valid field, remove it from the list
                 continue;
             }
-            
+
             $def = $this->field_defs[$field];
             if ($def['type'] == 'link') {
                 continue;
@@ -3217,22 +3217,22 @@ class SugarBean
                 || $options['skipSecondaryQuery'] == false) {
                 $type = !empty($def['custom_type']) ? $def['custom_type'] : $def['type'];
                 $sugarField = $sfh->getSugarField($type);
-                
+
                 if ($sugarField->fieldNeedsSecondaryQuery($field, $this)) {
                     $secondaryFields[$field] = $sugarField;
                     continue;
                 }
             }
 
-            if (isset($def['source']) 
-                && $def['source'] == 'non-db' 
+            if (isset($def['source'])
+                && $def['source'] == 'non-db'
                 && (empty($def['rname'])  || empty($def['link']))) {
                 // Non-db that isn't a relate field.
                 continue;
             }
             $queryFields[$field] = $field;
 
-            // Disable distinct on text type fields, since Oracle doesn't 
+            // Disable distinct on text type fields, since Oracle doesn't
             // allow distinct selects on CLOB types
             $fieldType = $this->db->getFieldType($def);
             $isTextType = $fieldType ? $this->db->isTextType($fieldType) : false;
@@ -3278,7 +3278,7 @@ class SugarBean
         }
 
         $this->call_custom_logic('after_fetch_query', array('beans' => $beans, 'fields' => $fields, 'rows' => $rawRows));
-        
+
         if (!empty($options['returnRawRows'])) {
             $beans['_rows'] = $rawRows;
         }
@@ -3498,11 +3498,6 @@ class SugarBean
             $bean_queried = $submodule;
         }
 
-        // make sure ORDER BY contains "bean_table.id"
-        // in order to guarantee stable sequence
-        $id_column = $bean_queried->getTableName() . '.id';
-        $id_is_used = false;
-
         $raw_elements = explode(',', $order_by);
         $valid_elements = array();
         foreach ($raw_elements as $key => $value) {
@@ -3561,16 +3556,9 @@ class SugarBean
                 }
 
                 foreach ($columns as $column) {
-                    if ($column[0] === $id_column) {
-                        $id_is_used = true;
-                    }
                     $valid_elements[] = implode(' ', $column);
                 }
             }
-        }
-
-        if (!$id_is_used) {
-            $valid_elements[] = $id_column;
         }
 
         return implode(', ', $valid_elements);
@@ -5096,6 +5084,12 @@ class SugarBean
             }
 
             $bean->populateFromRow($row);
+
+            // panel_name is not a standard SugarBean field but it's used for fetching
+            // data for composite subpanels. assign it to the bean manually.
+            if (isset($row['panel_name'])) {
+                $bean->panel_name = $row['panel_name'];
+            }
 
             $this->processFunctionFields($bean, $function_fields);
 
@@ -6662,7 +6656,7 @@ class SugarBean
     *
     * @param GUID $user_id
     * @param string $table_alias What table name should we be using (optional)
-    * @return STRING 
+    * @return STRING
     */
     function getOwnerWhere($user_id, $table_alias = null)
     {
@@ -7435,11 +7429,11 @@ class SugarBean
 	}
 
     /**
-     * Clears the loaded def cache for an object to allow the next call of get 
+     * Clears the loaded def cache for an object to allow the next call of get
      * bean from a fresh cache to actually load the vardef again. This is useful
      * in cases where a bean properties can change in the middle of a request and
      * need to be updated immediately, like in module installer.
-     * 
+     *
      * @param string $objectName The object name of a bean
      */
     public static function clearLoadedDef($objectName)

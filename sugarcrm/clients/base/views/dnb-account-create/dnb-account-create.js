@@ -41,6 +41,7 @@
 
     initialize: function(options) {
         this._super('initialize', [options]);
+        this.initDashlet();
         this.loadData();
     },
 

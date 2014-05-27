@@ -27,6 +27,7 @@ describe("Base.Layout.Dashboard", function(){
         layout.dispose();
         layout.context = null;
         layout = null;
+        sinon.collection.restore();
     });
 
     describe("Home Dashboard", function() {
@@ -399,11 +400,42 @@ describe("Base.Layout.Dashboard", function(){
         });
 
         afterEach(function() {
-            sinon.collection.restore();
             context.clear();
             parentLayout.dispose();
             parentLayout = null;
             parentModule = null;
+        });
+    });
+
+    describe('Custom Error Handlers', function() {
+        var redirectStub, fragmentStub;
+
+        beforeEach(function() {
+            layout = SugarTest.createLayout('base', 'Home', 'dashboard');
+            redirectStub = sinon.collection.stub(app.router, 'redirect');
+            fragmentStub = sinon.collection.stub(Backbone.history, 'getFragment');
+        });
+
+        using('different routes', [
+            {
+                route: 'Home/test',
+                redirectCalled: true
+            },
+            {
+                route: 'test',
+                redirectCalled: false
+            }
+        ], function(value) {
+            it('should redirect depending on the route when handleNotFoundError is invoked', function() {
+                fragmentStub.returns(value.route);
+                layout.error.handleNotFoundError();
+                expect(redirectStub.called).toBe(value.redirectCalled);
+            });
+        });
+
+        it('should return false when handleValidationError is invoked', function() {
+            var result = layout.error.handleValidationError();
+            expect(result).toBe(false);
         });
     });
 });

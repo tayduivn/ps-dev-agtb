@@ -8,7 +8,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 ({
     extendsFrom: 'RecordView',
@@ -17,7 +17,8 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        this._super("initialize", [options]);
+        this.plugins = _.union(this.plugins || [], ['HistoricalSummary']);
+        this._super('initialize', [options]);
         this._parsePanelFields(this.meta.panels);
     },
 
@@ -38,7 +39,7 @@
          */
         var changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
         this.model.set(changedAttributes);
-        this._super("cancelClicked");
+        this._super('cancelClicked');
 
         // re-trigger this event for dashlets to listen for
         this.context.trigger('button:cancel_button:click');
@@ -72,8 +73,11 @@
         };
     },
 
+    /**
+     * @inheritdoc
+     */
     initButtons: function() {
-        this._super("initButtons");
+        this._super('initButtons');
 
         // if the model has a quote_id and it's not empty, disable the convert_to_quote_button
         if (this.model.has('quote_id') && !_.isEmpty(this.model.get('quote_id'))
@@ -88,7 +92,7 @@
     bindDataChange: function() {
         this.model.on('duplicate:before', this._handleDuplicateBefore, this);
 
-        this._super("bindDataChange");
+        this._super('bindDataChange');
     },
 
     /**
@@ -104,7 +108,7 @@
 
     delegateButtonEvents: function() {
         this.context.on('button:convert_to_quote:click', this.convertToQuote, this);
-        this._super("delegateButtonEvents");
+        this._super('delegateButtonEvents');
     },
 
     /**
@@ -126,31 +130,31 @@
             level: 'info',
             autoClose: false,
             closeable: false,
-            title: app.lang.get("LBL_CONVERT_TO_QUOTE_INFO", this.module) + ":",
-            messages: [app.lang.get("LBL_CONVERT_TO_QUOTE_INFO_MESSAGE", this.module)]
+            title: app.lang.get('LBL_CONVERT_TO_QUOTE_INFO', this.module) + ':',
+            messages: [app.lang.get('LBL_CONVERT_TO_QUOTE_INFO_MESSAGE', this.module)]
         });
         // remove the close since we don't want this to be closable
-        alert.$el.find('a.close').remove();
+        alert.$('.close').remove();
 
-        var url = app.api.buildURL(this.model.module, 'quote', { id: this.model.id });
-        var callbacks = {
-            'success': _.bind(function(resp) {
-                app.alert.dismiss('info_quote');
-                app.router.navigate(app.bwc.buildRoute('Quotes', resp.id, 'EditView', {
-                    return_module: this.model.module,
-                    return_id: this.model.id
-                }), {trigger: true});
-            }, this),
-            'error': _.bind(function() {
-                app.alert.dismiss('info_quote');
-                app.alert.show('error_xhr', {
-                    level: 'error',
-                    title: app.lang.get("LBL_CONVERT_TO_QUOTE_ERROR", this.module) + ":",
-                    messages: [app.lang.get("LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE", this.module)]
-                });
-            }, this)
-        };
-        app.api.call("create", url, null, callbacks);
+        var url = app.api.buildURL(this.model.module, 'quote', { id: this.model.id }),
+            callbacks = {
+                'success': _.bind(function(resp) {
+                    app.alert.dismiss('info_quote');
+                    app.router.navigate(app.bwc.buildRoute('Quotes', resp.id, 'EditView', {
+                        return_module: this.model.module,
+                        return_id: this.model.id
+                    }), {trigger: true});
+                }, this),
+                'error': _.bind(function() {
+                    app.alert.dismiss('info_quote');
+                    app.alert.show('error_xhr', {
+                        level: 'error',
+                        title: app.lang.get('LBL_CONVERT_TO_QUOTE_ERROR', this.module) + ':',
+                        messages: [app.lang.get('LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE', this.module)]
+                    });
+                }, this)
+            };
+        app.api.call('create', url, null, callbacks);
     },
 
     /**
@@ -161,7 +165,7 @@
      */
     _parsePanelFields: function(panels) {
         _.each(panels, function(panel) {
-            if (!app.metadata.getModule("Forecasts", "config").is_setup) {
+            if (!app.metadata.getModule('Forecasts', 'config').is_setup) {
                 // use _.every so we can break out after we found the commit_stage field
                 _.every(panel.fields, function(field, index) {
                     if (field.name == 'commit_stage') {

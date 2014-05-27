@@ -33,14 +33,7 @@ $viewdefs['Contacts']['base']['filter']['default'] = array(
         'first_name' => array(),
         'last_name' => array(),
         'title' => array(),
-        // TODO: Update when we support related types.
-        'account_name'=> array(
-            'dbFields'=>array(
-                'accounts.name',
-            ),
-            'type' => 'text',
-            'vname' => 'LBL_ACCOUNT_NAME',
-        ),
+        'account_name'=> array(),
         'lead_source' => array(),
         'do_not_call' => array(),
         'phone' => array(

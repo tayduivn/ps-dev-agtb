@@ -176,11 +176,12 @@
     },
 
     /**
-     * {@inheritDoc}
+     * {@override}
+     *
+     * Parent method isn't called 'cause `handleHideDatePicker()` already takes
+     * care of unformatting the value.
      */
     bindDomChange: function() {
-        this._super('bindDomChange');
-
         var $field = this.$(this.fieldTag);
 
         $field.on('focus', _.bind(this.handleFocus, this));

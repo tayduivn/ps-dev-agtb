@@ -758,7 +758,7 @@ function reconstruct_target_body($focus, $target_body, $component_array, $notify
 					$replacement_value = check_special_fields($field_array['name'], $focus, true, array());
 				}
 
-				$replace_array[$field_array['original']] = decodeMultienumField($replacement_value);
+				$replace_array[$field_array['original']] = $replacement_value;
 
 
 			//end foreach module_array
@@ -817,7 +817,7 @@ function reconstruct_target_body($focus, $target_body, $component_array, $notify
 					} else {
 						$replacement_value = "Invalid Value";
 					}
-					$replace_array[$field_array['original']] = decodeMultienumField($replacement_value);
+					$replace_array[$field_array['original']] = $replacement_value;
 
 				//end foreach module_array
 				}

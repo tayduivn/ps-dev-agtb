@@ -1,11 +1,11 @@
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
-Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+YUI 3.15.0 (build 834026e)
+Copyright 2014 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
 */
-YUI.add('widget-anim', function(Y) {
+
+YUI.add('widget-anim', function (Y, NAME) {
 
 /**
  * Provides a plugin which can be used to animate widget visibility changes.
@@ -22,7 +22,7 @@ var BOUNDING_BOX = "boundingBox",
     HIDDEN = "hidden",
 
     RENDERED = "rendered",
-    
+
     START = "start",
     END = "end",
 
@@ -31,7 +31,7 @@ var BOUNDING_BOX = "boundingBox",
     ANIM_HIDE = "animHide",
 
     _UI_SET_VISIBLE = "_uiSetVisible",
-    
+
     ANIM_SHOW_CHANGE = "animShowChange",
     ANIM_HIDE_CHANGE = "animHideChange";
 
@@ -47,10 +47,10 @@ function WidgetAnim(config) {
 }
 
 /**
- * The namespace for the plugin. This will be the property on the widget, which will 
+ * The namespace for the plugin. This will be the property on the widget, which will
  * reference the plugin instance, when it's plugged in.
  *
- * @property WidgetAnim.NS
+ * @property NS
  * @static
  * @type String
  * @default "anim"
@@ -61,7 +61,7 @@ WidgetAnim.NS = "anim";
  * The NAME of the WidgetAnim class. Used to prefix events generated
  * by the plugin class.
  *
- * @property WidgetAnim.NAME
+ * @property NAME
  * @static
  * @type String
  * @default "pluginWidgetAnim"
@@ -69,10 +69,10 @@ WidgetAnim.NS = "anim";
 WidgetAnim.NAME = "pluginWidgetAnim";
 
 /**
- * Pre-Packaged Animation implementations, which can be used for animShow and animHide attribute 
+ * Pre-Packaged Animation implementations, which can be used for animShow and animHide attribute
  * values.
  *
- * @property WidgetAnim.ANIMATIONS
+ * @property ANIMATIONS
  * @static
  * @type Object
  * @default "pluginWidgetAnim"
@@ -83,7 +83,7 @@ WidgetAnim.ANIMATIONS = {
 
         var widget = this.get(HOST),
             boundingBox = widget.get(BOUNDING_BOX),
-            
+
             anim = new Y.Anim({
                 node: boundingBox,
                 to: { opacity: 1 },
@@ -114,10 +114,10 @@ WidgetAnim.ANIMATIONS = {
 };
 
 /**
- * Static property used to define the default attribute 
+ * Static property used to define the default attribute
  * configuration for the plugin.
  *
- * @property WidgetAnim.ATTRS
+ * @property ATTRS
  * @type Object
  * @static
  */
@@ -128,7 +128,7 @@ WidgetAnim.ATTRS = {
      *
      * @attribute duration
      * @type Number
-     * @default 0.2 (seconds 
+     * @default 0.2 (seconds
      */
     duration : {
         value: 0.2
@@ -136,7 +136,7 @@ WidgetAnim.ATTRS = {
 
     /**
      * Default animation instance used for showing the widget (opacity fade-in)
-     * 
+     *
      * @attribute animShow
      * @type Anim
      * @default WidgetAnim.ANIMATIONS.fadeIn
@@ -160,11 +160,11 @@ WidgetAnim.ATTRS = {
 Y.extend(WidgetAnim, Y.Plugin.Base, {
 
     /**
-     * The initializer lifecycle implementation. Modifies the host widget's 
+     * The initializer lifecycle implementation. Modifies the host widget's
      * visibililty implementation to add animation.
      *
      * @method initializer
-     * @param {Object} config The user configuration for the plugin  
+     * @param {Object} config The user configuration for the plugin
      */
     initializer : function(config) {
         this._bindAnimShow();
@@ -180,7 +180,7 @@ Y.extend(WidgetAnim, Y.Plugin.Base, {
     /**
      * The initializer destructor implementation. Responsible for destroying the configured
      * animation instances.
-     * 
+     *
      * @method destructor
      */
     destructor : function() {
@@ -237,7 +237,7 @@ Y.extend(WidgetAnim, Y.Plugin.Base, {
      */
     _bindAnimShow : function() {
         // Setup original visibility handling (for show) before starting to animate
-        this.get(ANIM_SHOW).on(START, 
+        this.get(ANIM_SHOW).on(START,
             Y.bind(function() {
                 this._uiSetVisible(true);
             }, this));
@@ -251,7 +251,7 @@ Y.extend(WidgetAnim, Y.Plugin.Base, {
      */
     _bindAnimHide : function() {
         // Setup original visibility handling (for hide) after completing animation
-        this.get(ANIM_HIDE).after(END, 
+        this.get(ANIM_HIDE).after(END,
             Y.bind(function() {
                 this._uiSetVisible(false);
             }, this));
@@ -261,4 +261,4 @@ Y.extend(WidgetAnim, Y.Plugin.Base, {
 Y.namespace("Plugin").WidgetAnim = WidgetAnim;
 
 
-}, '3.3.0' ,{requires:['plugin', 'anim-base', 'widget']});
+}, '3.15.0', {"requires": ["anim-base", "plugin", "widget"]});

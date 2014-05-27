@@ -67,11 +67,6 @@ class Bug63490Test extends Sugar_PHPUnit_Framework_TestCase
             $field_map
         );
         $this->assertContains($expected, $actual);
-        if ($suppress_table_name) {
-            $this->assertContains('id', $actual);
-        } else {
-            $this->assertContains('bean.id', $actual);
-        }
     }
 
     /**
@@ -83,7 +78,6 @@ class Bug63490Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $actual = self::$bean->process_order_by($input);
         $this->assertNotContains($input, $actual);
-        $this->assertContains('bean.id', $actual);
     }
 
     /**

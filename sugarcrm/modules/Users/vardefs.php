@@ -351,7 +351,8 @@ $dictionary['User'] = array(
         'address_street' => array(
             'name' => 'address_street',
             'vname' => 'LBL_ADDRESS_STREET',
-            'type' => 'varchar',
+            'type' => 'textarea',
+            'dbType' => 'varchar',
             'len' => '150',
             'group' => 'address',
         ) ,

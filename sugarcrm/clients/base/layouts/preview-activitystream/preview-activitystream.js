@@ -40,6 +40,10 @@
      * @param {boolean} showActivities
      */
     fetchActivities: function(model, collection, fetch, previewId, showActivities) {
+        if (app.metadata.getModule(model.module).isBwcEnabled) {
+            // don't fetch activities for BWC modules
+            return;
+        }
         this.disposeAllActivities();
         this.collection.dataFetched = false;
         this.$el.hide();

@@ -1,8 +1,8 @@
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
-Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+YUI 3.15.0 (build 834026e)
+Copyright 2014 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
 */
-YUI.add("substitute",function(g){var b=g.Lang,d="dump",f=" ",c="{",e="}",a=function(A,l,t,h){var q,p,n,y,x,z,w=[],m,r,u=A.length;for(;;){q=A.lastIndexOf(c,u);if(q<0){break;}p=A.indexOf(e,q);if(q+1>=p){break;}m=A.substring(q+1,p);y=m;z=null;n=y.indexOf(f);if(n>-1){z=y.substring(n+1);y=y.substring(0,n);}x=l[y];if(t){x=t(y,x,z);}if(b.isObject(x)){if(!g.dump){x=x.toString();}else{if(b.isArray(x)){x=g.dump(x,parseInt(z,10));}else{z=z||"";r=z.indexOf(d);if(r>-1){z=z.substring(4);}if(x.toString===Object.prototype.toString||r>-1){x=g.dump(x,parseInt(z,10));}else{x=x.toString();}}}}else{if(!b.isString(x)&&!b.isNumber(x)){x="~-"+w.length+"-~";w[w.length]=m;}}A=A.substring(0,q)+x+A.substring(p+1);if(!h){u=q-1;}}for(q=w.length-1;q>=0;q=q-1){A=A.replace(new RegExp("~-"+q+"-~"),c+w[q]+e,"g");}return A;};g.substitute=a;b.substitute=a;},"3.3.0",{optional:["dump"]});
+
+YUI.add("substitute",function(e,t){var n=e.Lang,r="dump",i=" ",s="{",o="}",u=/(~-(\d+)-~)/g,a=/\{LBRACE\}/g,f=/\{RBRACE\}/g,l=function(t,l,c,h){var p,d,v,m,g,y,b=[],w,E,S=t.length;for(;;){p=t.lastIndexOf(s,S);if(p<0)break;d=t.indexOf(o,p);if(p+1>=d)break;w=t.substring(p+1,d),m=w,y=null,v=m.indexOf(i),v>-1&&(y=m.substring(v+1),m=m.substring(0,v)),g=l[m],c&&(g=c(m,g,y)),n.isObject(g)?e.dump?n.isArray(g)?g=e.dump(g,parseInt(y,10)):(y=y||"",E=y.indexOf(r),E>-1&&(y=y.substring(4)),g.toString===Object.prototype.toString||E>-1?g=e.dump(g,parseInt(y,10)):g=g.toString()):g=g.toString():n.isUndefined(g)&&(g="~-"+b.length+"-~",b.push(w)),t=t.substring(0,p)+g+t.substring(d+1),h||(S=p-1)}return t.replace(u,function(e,t,n){return s+b[parseInt(n,10)]+o}).replace(a,s).replace(f,o)};e.substitute=l,n.substitute=l},"3.15.0",{requires:["yui-base"],optional:["dump"]});

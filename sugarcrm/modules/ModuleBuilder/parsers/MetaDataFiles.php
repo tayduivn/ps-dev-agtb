@@ -286,6 +286,17 @@ class MetaDataFiles
     }
 
     /**
+     * Gets a single file path by type
+     *
+     * @static
+     * @return string
+     */
+    public static function getPath($path)
+    {
+        return empty(self::$paths[$path]) ? '' : self::$paths[$path];
+    }
+
+    /**
      * Gets the view type of a client based on the requested view
      *
      * @static
@@ -471,9 +482,17 @@ class MetaDataFiles
         $type = strtolower($type);
 
         // BEGIN ASSERTIONS
-        if ($type != MB_BASEMETADATALOCATION && $type != MB_HISTORYMETADATALOCATION) {
-            // just warn rather than die
-            $GLOBALS['log']->warning("UndeployedMetaDataImplementation->getFileName(): view type $type is not recognized");
+        switch ($type) {
+            case MB_BASEMETADATALOCATION:
+            case MB_HISTORYMETADATALOCATION:
+            case MB_WORKINGMETADATALOCATION:
+                break;
+            default:
+                // just warn rather than die
+                $GLOBALS['log']->warn(
+                    "UndeployedMetaDataImplementation->getFileName(): view type $type is not recognized"
+                );
+                break;
         }
         // END ASSERTIONS
 
@@ -920,12 +939,15 @@ class MetaDataFiles
             $extension = substr($fileInfo['path'],-3);
             switch ($extension) {
                 case '.js':
-                    if ( isset($results[$fileInfo['subPath']]['controller'][$fileInfo['platform']]) ) {
+                    $subpath = $fileInfo['subPath'];
+                    if (strpos($fileInfo['path'], "custom/") === 0) {
+                        $subpath = "custom" . ucfirst($subpath);
+                    }
+                    if (isset($results[$subpath]['controller'][$fileInfo['platform']])) {
                         continue;
                     }
-
                     $controller = self::trimLicense(file_get_contents($fileInfo['path'], "js"));
-                    $results[$fileInfo['subPath']]['controller'][$fileInfo['platform']] = $controller;
+                    $results[$subpath]['controller'][$fileInfo['platform']] = $controller;
                     break;
                 case 'hbs':
                     $layoutName = substr($fileInfo['file'],0,-4);

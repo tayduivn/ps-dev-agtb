@@ -144,6 +144,40 @@ class FileApi extends SugarApi {
     }
 
     /**
+     * Check if we have access to upload this file
+     * @param SugarBean $bean
+     * @param string $field
+     * @param array $args
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    protected function checkFileAccess($bean, $field, $args)
+    {
+        if(!$bean->ACLAccess('view')) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
+        }
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        // Handle ACL - if there is no current field data, it is a CREATE
+        // This addresses an issue where the portal user has create but not edit
+        // rights for particular modules. The perspective here is that even if
+        // a record exists, if there is no attachment, you are CREATING the
+        // attachment instead of EDITING the parent record. -rgonzalez
+        $accessType = empty($bean->$field) ? 'create' : 'edit';
+        $this->verifyFieldAccess($bean, $field, $accessType);
+        // END SUGARCRM flav=pro ONLY
+    }
+
+    /**
+     * Save the data into the bean
+     * For overriding in APIs that require more complex save, like Documents
+     * @param SugarBean $bean
+     */
+    protected function saveBean($bean)
+    {
+        $bean->save();
+    }
+
+    /**
      * Saves a file to a module field using the POST method
      *
      * @param ServiceBase $api The service base
@@ -168,9 +202,7 @@ class FileApi extends SugarApi {
         // Get the bean before we potentially delete if fails (e.g. see below if attachment too large, etc.)
         $bean = $this->loadBean($api, $args);
 
-        if(!$bean->ACLAccess('view')) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
-        }
+        $this->checkFileAccess($bean, $field, $args);
 
         // Simple validation
         // In the case of very large files that are too big for the request too handle AND
@@ -195,16 +227,6 @@ class FileApi extends SugarApi {
             // @TODO Localize this exception message
             throw new SugarApiExceptionMissingParameter("Incorrect field name for attachement: $filesIndex");
         }
-
-        //BEGIN SUGARCRM flav=pro ONLY
-        // Handle ACL - if there is no current field data, it is a CREATE
-        // This addresses an issue where the portal user has create but not edit
-        // rights for particular modules. The perspective here is that even if
-        // a record exists, if there is no attachment, you are CREATING the
-        // attachment instead of EDITING the parent record. -rgonzalez
-        $accessType = empty($bean->$field) ? 'create' : 'edit';
-        $this->verifyFieldAccess($bean, $field, $accessType);
-        //END SUGARCRM flav=pro ONLY
 
         // Get the defs for this field
         $def = $bean->field_defs[$field];
@@ -268,12 +290,9 @@ class FileApi extends SugarApi {
                 }
                 else {
                     // Save the bean
-                    $bean->save();
+                    $this->saveBean($bean);
 
                     $fileinfo = $this->getFileInfo($bean, $field, $api);
-
-                    // Clean up the uri
-                    $fileinfo['uri'] = rtrim($api->getResourceURI(''), '/');
 
                     // This isn't needed in this return
                     unset($fileinfo['path']);
@@ -440,7 +459,9 @@ class FileApi extends SugarApi {
             }
         }
 
-        return $this->getFileList($api, $args);
+        $list = $this->getFileList($api, $args);
+        $list['record'] = $this->formatBean($api, $args, $bean);
+        return $list;
     }
 
     /**
@@ -519,7 +540,7 @@ class FileApi extends SugarApi {
      * @param array $args The request args
      * @return false if no deletion occured because delete_if_fails was not set otherwise true.
      */
-    private function deleteIfFails($bean, $args) {
+    protected function deleteIfFails($bean, $args) {
         // Bug 57210: Need to be able to mark a related record 'deleted=1' when a file uploads fails.
         // delete_if_fails flag is an optional query string which can trigger this behavior. An example
         // use case might be: user's in a modal and client: 1. POST's related record 2. uploads file...
@@ -585,12 +606,12 @@ class FileApi extends SugarApi {
     /**
      * Inspects the request to determine if there is a need to decode the file
      * data on PUT requests. This supports legacy SOAP API style file transfers.
-     * 
+     *
      * @param ServiceBase $api A Service object
      * @param array $args The request arguments
      * @return boolean
      */
-    protected function isFileEncoded($api, $args) 
+    protected function isFileEncoded($api, $args)
     {
         if ($api->getRequest()->hasHeader('X_CONTENT_TRANSFER_ENCODING')) {
             return $api->getRequest()->getHeader('X_CONTENT_TRANSFER_ENCODING') === 'base64';
@@ -605,7 +626,7 @@ class FileApi extends SugarApi {
 
     /**
      * Gets a file handle resource
-     * 
+     *
      * @param string $path The path to read/write file data from/to
      * @param string $mode The mode to open the handle in, defaults to 'r'
      * @return Resource A file handle resource
@@ -617,7 +638,7 @@ class FileApi extends SugarApi {
 
     /**
      * Closes a file handle that was fetched with {@see getFileHandle}.
-     * 
+     *
      * @param Resource $handle A file handle resource
      * @return Boolean
      */
@@ -628,9 +649,9 @@ class FileApi extends SugarApi {
 
     /**
      * Writes data from an input file handle to an output file handle. If the
-     * encoded argument is true, will also base64_decode the data as it is 
+     * encoded argument is true, will also base64_decode the data as it is
      * reading.
-     * 
+     *
      * @param Resource $inputHandle The input file data resource
      * @param Resource $outputHandle The output file data resource
      * @param boolean $encoded Tells this method whether to base64 decode the input
@@ -650,7 +671,7 @@ class FileApi extends SugarApi {
 
     /**
      * Creates a temporary file from an input source
-     * 
+     *
      * @param string $tempfile Path to the temporary file that will be created
      * @param string $input Path to the file that is being copied to the temp file
      * @param boolean $encoded Base64 encoding indicator
@@ -668,10 +689,10 @@ class FileApi extends SugarApi {
         $this->closeFileHandle($inputHandle);
         $this->closeFileHandle($outputHandle);
     }
-    
+
     /**
      * Gets a temporary file name. Used in PUT requests to create a temporary file.
-     * 
+     *
      * @return string A temp file name with full path
      */
     public function getTempFileName()

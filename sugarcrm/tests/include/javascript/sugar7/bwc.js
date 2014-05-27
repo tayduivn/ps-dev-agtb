@@ -67,6 +67,10 @@ describe("sugar7.extensions.bwc", function() {
                 assigned_user_name: 'admin',
                 full_name: 'John Smith'
             });
+            parentModel._syncedAttributes = {};
+            parentModel.getSyncedAttributes = function() {
+                return parentModel._syncedAttributes;
+            };
             parentModel.module = 'Contacts';
         });
         afterEach(function() {
@@ -102,6 +106,38 @@ describe("sugar7.extensions.bwc", function() {
             expect(params['account_id']).toBe(parentModel.get('account_id'));
             expect(params['account_name']).toBe(parentModel.get('account_name'));
         });
+
+        it('will add account_id and account_name when link equals quotes regardless of module', function() {
+            parentModel.module = 'Yahoo';
+            var params = app.bwc._handleRelatedRecordSpecialCases({}, parentModel, "quotes");
+            expect(params['account_id']).toBe(parentModel.get('account_id'));
+            expect(params['account_name']).toBe(parentModel.get('account_name'));
+        });
+
+        it('will add contact_id when module is contacts', function() {
+            parentModel.module = 'Contacts';
+            parentModel.set('id', 'my_contact_id');
+            var params = app.bwc._handleRelatedRecordSpecialCases({}, parentModel, "quotes");
+            expect(params['contact_id']).toBe(parentModel.get('id'));
+        });
+
+        it('will add contact_id when parentModel contains contact_id', function() {
+            parentModel.module = 'Yahoo';
+            parentModel.set('contact_id', 'my_contact_id');
+            var params = app.bwc._handleRelatedRecordSpecialCases({}, parentModel, "quotes");
+            expect(params['contact_id']).toBe(parentModel.get('contact_id'));
+        });
+
+        it('will use the syncedAttributes value', function() {
+            parentModel.module = 'Opportunities';
+            parentModel._syncedAttributes = {
+                account_id: 'my_test_account_id',
+                account_name: 'my_test_account_name'
+            };
+            var params = app.bwc._handleRelatedRecordSpecialCases({}, parentModel, 'quotes');
+            expect(params['account_id']).toBe(parentModel._syncedAttributes.account_id);
+            expect(params['account_name']).toBe(parentModel._syncedAttributes.account_name);
+        });
     });
 
     describe('_createRelatedRecordUrlParams', function() {
@@ -114,7 +150,11 @@ describe("sugar7.extensions.bwc", function() {
                 account_id: 'abc-111-2222',
                 account_name: 'parent account name',
                 assigned_user_name: 'admin'
-            }),
+            });
+            parentModel._syncedAttributes = {};
+            parentModel.getSyncedAttributes = function() {
+                return parentModel._syncedAttributes;
+            };
             relateFieldStub = sinonSandbox.stub(app.data, 'getRelateFields', function() {
                 return [{
                     name: 'product_template_name',

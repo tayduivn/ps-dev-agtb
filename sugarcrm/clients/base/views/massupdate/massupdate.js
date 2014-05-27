@@ -681,15 +681,15 @@
     },
 
     /**
-     * Called to start the massupdate process. Checks for validation errors before
-     * sending down the modified attributes and starting the job queue.
+     * Called to start the massupdate process. Checks for validation errors
+     * before sending down the modified attributes and starting the job queue.
      *
-     * @param {boolean=} forCalcFields optional causes save to be called with no attributes and only causes
-     * an empty resave of the records.
+     * @param {Boolean} [forCalcFields=false] Causes the massupdate model to
+     *   fetch with empty attributes, prior to saving the records.
      */
     save: function(forCalcFields) {
+        forCalcFields = !!forCalcFields;
         var massUpdate = this.getMassUpdateModel(this.module),
-            attributes = forCalcFields ? {} : this.getAttributes(),
             self = this;
 
         massUpdate.setChunkSize(this._settings.mass_update_chunk_size);
@@ -697,7 +697,8 @@
         this.once('massupdate:validation:complete', function(validate) {
             var errors = validate.errors,
                 emptyValues = validate.emptyValues,
-                confirmMessage = app.lang.getAppString('LBL_MASS_UPDATE_EMPTY_VALUES');
+                confirmMessage = app.lang.getAppString('LBL_MASS_UPDATE_EMPTY_VALUES'),
+                attributes = validate.attributes || this.getAttributes();
 
             this.$(".fieldPlaceHolder .error").removeClass("error");
             this.$(".fieldPlaceHolder .help-block").hide();
@@ -752,7 +753,11 @@
         }, this);
 
         if (forCalcFields) {
-            this.trigger('massupdate:validation:complete', {errors: [], emptyValues: []});
+            this.trigger('massupdate:validation:complete', {
+                errors: [],
+                emptyValues: [],
+                attributes: {}
+            });
         } else {
             this.checkValidationError();
         }

@@ -349,4 +349,94 @@ describe('Base.Field.Relate', function() {
             });
         });
     });
+
+    describe('openSelectDrawer', function() {
+        var openStub;
+
+        beforeEach(function() {
+            app.drawer = app.drawer || {};
+            app.drawer.open = app.drawer.open || $.noop;
+            field = SugarTest.createField('base', 'account_name', 'relate', 'edit', fieldDef);
+            openStub = sinon.collection.stub(app.drawer, 'open');
+
+            field.model.fields = {
+                account_id: {
+                    name: 'account_id'
+                },
+                account_name: {
+                    name: 'account_name',
+                    id_name: 'account_id'
+                },
+                contact_id: {
+                    name: 'contact_id'
+                },
+                contact_name: {
+                    name: 'contact_name',
+                    id_name: 'contact_id'
+                }
+            };
+        });
+
+        afterEach(function() {
+            field.dispose();
+        });
+
+        it('should open the drawer with no filter options', function() {
+            field.openSelectDrawer();
+            expect(openStub).toHaveBeenCalled();
+            var arguments = openStub.firstCall.args,
+                filterOptions = arguments[0].context.filterOptions;
+            expect(filterOptions).toBeUndefined();
+        });
+
+        using('different definitions', [
+            {
+                def: {
+                    filter_relate: {
+                        'account_id': 'account_id'
+                    }
+                },
+                expected: {
+                    label: 'The related Account',
+                    filter_populate: {
+                        'account_id': '1234-5678'
+                    }
+                }
+            },
+            {
+                def: {
+                    filter_relate: {
+                        'contact_id': 'id'
+                    }
+                },
+                expected: {
+                    label: 'The related Contact',
+                    filter_populate: {
+                        'id': 'abcd-efgh'
+                    }
+                }
+            }
+        ], function(option) {
+
+            beforeEach(function() {
+                field.model.set('account_id', '1234-5678');
+                field.model.set('account_name', 'The related Account');
+                field.model.set('contact_id', 'abcd-efgh');
+                field.model.set('contact_name', 'The related Contact');
+            });
+
+            it('should open the drawer with filter options', function() {
+                field.def.filter_relate = option.def.filter_relate;
+                field.openSelectDrawer();
+                expect(openStub).toHaveBeenCalled();
+                var arguments = openStub.firstCall.args,
+                    filterOptions = arguments[0].context.filterOptions;
+                expect(filterOptions).toBeDefined();
+                expect(filterOptions.initial_filter).toEqual('$relate');
+                expect(filterOptions.initial_filter_label).toEqual(option.expected.label);
+                expect(filterOptions.filter_populate).toEqual(option.expected.filter_populate);
+                expect(filterOptions.stickiness).toEqual(false);
+            });
+        });
+    });
 });

@@ -2313,12 +2313,12 @@ $app_strings = array (
     'LBL_TEAM_REMOVE' => 'Remove Team',
     'LBL_TEAM_PRIMARY' => 'Set as Primary Team',
 
+    'LBL_CLOSE_BUTTON_LABEL' => 'Close',
     //BEGIN SUGARCRM flav=ent ONLY
     'LBL_QUERY_VALID'=>'Valid',
     'LBL_QUERY_ERROR'=>'Error!',
     'LBL_QUERY_CHILD'=>'Valid Sub-Query',
     'LBL_CLOSE_BUTTON_KEY' => 'C',
-    'LBL_CLOSE_BUTTON_LABEL' => 'Close',
     'ERROR_EXAMINE_MSG' => '  Please examine the error message below:',
     'NO_QUERY_SELECTED' => 'The data format you have selected does not contain a query.  Please select a custom query for this data format.',
     //END SUGARCRM flav=ent ONLY
@@ -3039,6 +3039,7 @@ $app_strings = array (
     'WARN_ONLY_ADMINS'=> "Only admins may log in.",
     'WARN_UNSAVED_CHANGES'=> "You are about to leave this record without saving any changes you may have made to the record. Are you sure you want to navigate away from this record?",
     'LBL_WARN_UNSAVED_CHANGES' => 'You have unsaved changes. Are you sure you want to leave page and discard changes?',
+    'LBL_NAVIGATE_TO_REPORTS' => 'You are moving to the Reports module. Your changes to dashlet will not be saved. Continue?',
     'ERROR_NO_RECORD' => 'Error retrieving record.  This record may be deleted or you may not be authorized to view it.',
     'ERROR_TYPE_NOT_VALID' => 'Error. This type is not valid.',
     'ERROR_MAX_FIELD_LENGTH' => 'Error. The max length of this field is {{this}}.',
@@ -3491,12 +3492,12 @@ $app_strings = array (
     /* D&B Assesment */
     'LBL_DNB_ASSESSMENT' => 'Assessment',
     'LBL_DNB_HIST_RAT' => 'History Rating',
-    'LBL_DNB_CCS' => 'Comercial Credit Score',
+    'LBL_DNB_CCS' => 'Pre Screen Score',
     'LBL_DNB_USPAT_SCR' => 'US Patriot Act Compliance Risk Score',
     'LBL_DNB_TPA' => 'Third Party Assesment',
     'LBL_DNB_ASSESMENT_DESC' => 'Records insightful and value added information on organizations, such as: - recommendations on how much credit to extend to them, - assessments of their liquidity, - concise evaluations of their performance and behavior, - predictions on the risk of conducting business with them. The predictive scores are usually calculated and assigned by D&B, but such assessments may also be recorded when assigned by third parties.',
     'LBL_DNB_HIST_RAT_DESC' => 'Text that specifies if D&B has any information that may reflect unfavorably on this organization, e.g., clear, incomplete, management, business.',
-    'LBL_DNB_CCS_DESC' => 'recording of the most recent risk scores that are assigned to this organization on a given date/time using a scoring model that help predict the likelihood that the organization will pay its bills in a severely delinquent manner (90+ days past due) over the next 12 months',
+    'LBL_DNB_CCS_DESC' => 'Recording of the most recent risk scores that are assigned to this organization on a given date/time using a scoring model that help predict the likelihood that the organization will pay its bills in a severely delinquent manner (90+ days past due) over the next 12 months',
     'LBL_DNB_USPAT_SCR_DESC' => 'The compliance risk index is intended to provide organisations subject to the USA Patriot Act with an additional tool in performing compliance risk based assessment of trading partners. The Index is a numeric value that represents an aggregation of weighted risk flags, assigned through a proprietary rules based algorithm. Values range form 0 to ~255. Higher Index values represent a higher perceived level of risk',
     'LBL_DNB_TPA_DESC' => 'Appraisals/opinions assigned to this Subject by an entity other than the D&B Worldwide Network (WWN)',
 
@@ -3668,7 +3669,6 @@ $app_strings = array (
     'LBL_DNB_TOTAL_EMPLOYEE_QUANTITY' => 'Total Employee Quantity',
     'LBL_DNB_RELIABILITY_TEXT' => 'Reliability Text',
     'LBL_DNB_HISTORY_RATING_TEXT' => 'History Rating',
-    'LBL_DNB_CCS' => 'Comercial Credit Score',
     'LBL_DNB_RISK_CLASS' => 'Risk Class',
     'LBL_DNB_PRINCIPAL_IDENTIFICATION_NUMBER' => 'Principal Identification Number',
     'LBL_DNB_JOB_TITLE_TEXT' => 'Job Title',
@@ -4624,6 +4624,11 @@ $app_strings = array (
 
     'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
 
+    //Saved Reports
+    'LBL_REPORT_SELECT' => 'Select a Report',
+    'LBL_REPORT_AUTO_REFRESH' => 'Auto Refresh',
+    'LBL_REPORT_EDIT' => 'Edit Selected Report',
+
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
     'ERR_HTTP_DEFAULT_TITLE' => 'Unknown Error',
@@ -4825,6 +4830,12 @@ $app_strings = array (
     'LBL_DASHLET_RELATED_DOCUMENTS' => 'Related Documents',
     'LBL_DASHLET_RELATED_DOCUMENTS_DESC' => 'Related Documents',
 
+    // Historical Summary
+    'LBL_HISTORICAL_SUMMARY' => 'Historical Summary',
+    'LBL_MORE_HISTORY' => 'More history...',
+    'LBL_RELATED_CONTACT' => 'Related Contact',
+    'LBL_MODULE_TYPE' => 'Type',
+
     //SFA
     'LBL_BEST' => 'Best',
     'LBL_WORST' => 'Worst',
@@ -4833,7 +4844,6 @@ $app_strings = array (
     'LBL_WORST_ADJUSTED' => 'Worst (Adjusted)',
     'LBL_LIKELY_ADJUSTED' => 'Likely (Adjusted)',
     'LBL_AMOUNT_USDOLLAR' => 'Converted Amount',
-
     'LBL_OVERDUE' => 'Overdue',
 
     'LBL_PASSWORD_REQUEST_SENT' => 'Your request has been submitted.',

@@ -280,6 +280,8 @@
                     'include/javascript/sugar7/plugins/ListColumnEllipsis.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ReorderableColumns.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ToggleMoreLess.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'modules/Contacts/clients/base/plugins/ContactsPortalMetadataFilter.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/HistoricalSummary.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/MetadataEventDriven.js' =>
                         'include/javascript/sugar_sidecar.min.js',
                     //BEGIN SUGARCRM flav=pro ONLY
@@ -334,6 +336,7 @@
                 'include/javascript/sugar7.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/bwc.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/utils.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/utils-filters.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/field.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/hacks.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/alert.js' => 'include/javascript/sugar_grp7.min.js',
@@ -341,7 +344,8 @@
                 'include/javascript/sugar7/help.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/hbs-helpers.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/underscore-mixins.js' => 'include/javascript/sugar_grp7.min.js',
-            )
+                'include/javascript/sugar7/filter-analytics.js' => 'include/javascript/sugar_grp7.min.js',
+            ),
         );
 
     /**

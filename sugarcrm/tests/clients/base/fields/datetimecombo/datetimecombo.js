@@ -236,7 +236,9 @@ describe('Base.Field.DateTimeCombo', function() {
                 expect($t.val()).toBe('7:20pm');
                 expect(field.model.get(field.name)).toBe(app.date('1984-01-15 19:20').format());
 
-                $d.val('').trigger('change');
+                // FIXME: `hide` event is still triggered due to the way the
+                // library works, this should be reviewed once SC-2395 gets in
+                $d.val('').trigger('hide');
 
                 expect($t.val()).toBe('');
                 expect(field.model.get(field.name)).toBe('');

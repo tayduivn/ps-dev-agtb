@@ -150,6 +150,10 @@
     /**
      * Handle date and time picker changes.
      *
+     * If model value is defined and supplied date or time is empty, an empty
+     * string is returned, otherwise, empty values will fallback to current
+     * date/time.
+     *
      * All parameters and returned value are formatted according to user
      * preferences.
      *
@@ -158,6 +162,10 @@
      * @return {String} Datetime value.
      */
     handleDateTimeChanges: function(d, t) {
+        if (this.model.get(this.name) && (!d || !t)) {
+            return '';
+        }
+
         var now = app.date();
 
         d = d || (t && now.format(app.date.convertFormat(this.getUserDateFormat())));
@@ -181,16 +189,9 @@
      * @override
      */
     handleHideDatePicker: function() {
-        var $timeField = this.$(this.secondaryFieldTag),
-            $dateField = this.$(this.fieldTag),
-            t = $timeField.val(),
-            d = $dateField.val(),
+        var t = this.$(this.secondaryFieldTag).val(),
+            d = this.$(this.fieldTag).val(),
             datetime = this.unformat(this.handleDateTimeChanges(d, t));
-
-        if (!datetime) {
-            $timeField.val('');
-            $dateField.val('');
-        }
 
         this.model.set(this.name, datetime);
     },
@@ -215,11 +216,6 @@
                 if (t) {
                     var d = $dateField.val();
                     datetime = this.unformat(this.handleDateTimeChanges(d, t));
-                }
-
-                if (!datetime) {
-                    $timeField.val('');
-                    $dateField.val('');
                 }
 
                 this.model.set(this.name, datetime);

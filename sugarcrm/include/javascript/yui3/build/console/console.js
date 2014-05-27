@@ -1,11 +1,11 @@
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
-Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+YUI 3.15.0 (build 834026e)
+Copyright 2014 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
 */
-YUI.add('console', function(Y) {
+
+YUI.add('console', function (Y, NAME) {
 
 /**
  * Console creates a visualization for messages logged through calls to a YUI
@@ -20,10 +20,6 @@ YUI.add('console', function(Y) {
  * configured logLevel.
  *
  * @module console
- * @class Console
- * @extends Widget
- * @param conf {Object} Configuration object (see Configuration attributes)
- * @constructor
  */
 var getCN = Y.ClassNameManager.getClassName,
     CHECKED        = 'checked',
@@ -37,7 +33,6 @@ var getCN = Y.ClassNameManager.getClassName,
     ERROR          = 'error',
     HEIGHT         = 'height',
     INFO           = 'info',
-    INNER_HTML     = 'innerHTML',
     LAST_TIME      = 'lastTime',
     PAUSE          = 'pause',
     PAUSED         = 'paused',
@@ -75,7 +70,7 @@ var getCN = Y.ClassNameManager.getClassName,
     ESC_AMP = '&#38;',
     ESC_GT  = '&#62;',
     ESC_LT  = '&#60;',
-    
+
     ENTRY_TEMPLATE_STR =
         '<div class="{entry_class} {cat_class} {src_class}">'+
             '<p class="{entry_meta_class}">'+
@@ -96,9 +91,16 @@ var getCN = Y.ClassNameManager.getClassName,
     isNumber   = L.isNumber,
     isString   = L.isString,
     merge      = Y.merge,
-    substitute = Y.substitute;
-    
+    substitute = Y.Lang.sub;
 
+/**
+A basic console that displays messages logged throughout your application.
+
+@class Console
+@constructor
+@extends Widget
+@param [config] {Object} Object literal specifying widget configuration properties.
+**/
 function Console() {
     Console.superclass.constructor.apply(this,arguments);
 }
@@ -189,7 +191,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      */
     clearConsole : function () {
         // TODO: clear event listeners from console contents
-        this._body.set(INNER_HTML,'');
+        this._body.empty();
 
         this._cancelPrintLoop();
 
@@ -206,7 +208,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      */
     reset : function () {
         this.fire(RESET);
-        
+
         return this;
     },
 
@@ -240,7 +242,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      * print loop).  The number of buffered messages output to the Console is
      * limited to the number provided as an argument.  If no limit is passed,
      * all buffered messages are rendered.
-     * 
+     *
      * @method printBuffer
      * @param limit {Number} (optional) max number of buffered entries to write
      * @chainable
@@ -259,7 +261,7 @@ Y.Console = Y.extend(Console, Y.Widget,
         }
 
         limit = Math.min(messages.length, (limit || messages.length));
-        
+
         // turn off logging system
         Y.config.debug = false;
 
@@ -294,11 +296,11 @@ Y.Console = Y.extend(Console, Y.Widget,
         return this;
     },
 
-    
+
     /**
      * Constructor code.  Set up the buffer and entry template, publish
      * internal events, and subscribe to the configured logEvent.
-     * 
+     *
      * @method initializer
      * @protected
      */
@@ -315,7 +317,7 @@ Y.Console = Y.extend(Console, Y.Widget,
          * behavior defined in _defEntryFn.
          *
          * @event entry
-         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:
+         * @param event {EventFacade} An Event Facade object with the following attribute specific properties added:
          *  <dl>
          *      <dt>message</dt>
          *          <dd>The message data normalized into an object literal (see _normalizeMessage)</dd>
@@ -328,7 +330,7 @@ Y.Console = Y.extend(Console, Y.Widget,
          * Triggers the reset behavior via the default logic in _defResetFn.
          *
          * @event reset
-         * @param event {Event.Facade} Event Facade object
+         * @param event {EventFacade} Event Facade object
          * @preventable _defResetFn
          */
         this.publish(RESET, { defaultFn: this._defResetFn });
@@ -348,10 +350,8 @@ Y.Console = Y.extend(Console, Y.Widget,
         this._cancelPrintLoop();
 
         this.get('logSource').detach(this._evtCat + '*');
-        
-        Y.Event.purgeElement(bb, true);
 
-        bb.set('innerHTML','');
+        bb.purge(true);
     },
 
     /**
@@ -368,7 +368,7 @@ Y.Console = Y.extend(Console, Y.Widget,
         // Apply positioning to the bounding box if appropriate
         var style = this.get('style');
         if (style !== 'block') {
-            this.get('boundingBox').addClass('yui3-'+style+'-console');
+            this.get('boundingBox').addClass(this.getClassName(style));
         }
     },
 
@@ -410,7 +410,7 @@ Y.Console = Y.extend(Console, Y.Widget,
             this._afterCollapsedChange);
     },
 
-    
+
     /**
      * Create the DOM structure for the header elements.
      *
@@ -526,7 +526,7 @@ Y.Console = Y.extend(Console, Y.Widget,
         // Extract m.source "Foo" from m.sourceAndDetail "Foo bar baz"
         m.source          = RE_INLINE_SOURCE.test(m.sourceAndDetail) ?
                                 RegExp.$1 : m.sourceAndDetail;
-        m.localTime       = m.time.toLocaleTimeString ? 
+        m.localTime       = m.time.toLocaleTimeString ?
                             m.time.toLocaleTimeString() : (m.time + '');
         m.elapsedTime     = m.time - this.get(LAST_TIME);
         m.totalTime       = m.time - this.get(START_TIME);
@@ -758,7 +758,7 @@ Y.Console = Y.extend(Console, Y.Widget,
         if (isString(v)) {
             v = v.toLowerCase();
         }
-        
+
         return (v === WARN || v === ERROR) ? v : INFO;
     },
 
@@ -800,7 +800,9 @@ Y.Console = Y.extend(Console, Y.Widget,
     },
 
     /**
-     * Set the height of the Console container.  Set the body height to the difference between the configured height and the calculated heights of the header and footer.
+     * Set the height of the Console container.  Set the body height to the
+     * difference between the configured height and the calculated heights of
+     * the header and footer.
      * Overrides Widget.prototype._uiSetHeight.
      *
      * @method _uiSetHeight
@@ -822,13 +824,13 @@ Y.Console = Y.extend(Console, Y.Widget,
     /**
      * Over-ride default content box sizing to do nothing, since we're sizing
      * the body section to fill out height ourselves.
-     * 
+     *
      * @method _uiSizeCB
      * @protected
      */
     _uiSizeCB : function() {
         // Do Nothing. Ideally want to move to Widget-StdMod, which accounts for
-        // _uiSizeCB        
+        // _uiSizeCB
     },
 
     /**
@@ -846,11 +848,11 @@ Y.Console = Y.extend(Console, Y.Widget,
             after  = e.newVal;
 
         if ((!prop || prop === TITLE) && before.title !== after.title) {
-            cb.all(DOT+C_CONSOLE_TITLE).set(INNER_HTML, after.title);
+            cb.all(DOT+C_CONSOLE_TITLE).setHTML(after.title);
         }
 
         if ((!prop || prop === PAUSE) && before.pause !== after.pause) {
-            cb.all(DOT+C_PAUSE_LABEL).set(INNER_HTML, after.pause);
+            cb.all(DOT+C_PAUSE_LABEL).setHTML(after.pause);
         }
 
         if ((!prop || prop === CLEAR) && before.clear !== after.clear) {
@@ -897,7 +899,7 @@ Y.Console = Y.extend(Console, Y.Widget,
     /**
      * Calls this._trimOldEntries() in response to changes in the configured
      * consoleLimit attribute.
-     * 
+     *
      * @method _afterConsoleLimitChange
      * @param e {Event} Custom event for the attribute change
      * @protected
@@ -935,7 +937,7 @@ Y.Console = Y.extend(Console, Y.Widget,
         bb[method](C_COLLAPSED);
 
         if (button) {
-            button.set('innerHTML',str);
+            button.setHTML(str);
         }
 
         this._uiSetHeight(v ? this._head.get('offsetHeight'): this.get(HEIGHT));
@@ -970,7 +972,7 @@ Y.Console = Y.extend(Console, Y.Widget,
     /**
      * Responds to log events by normalizing qualifying messages and passing
      * them along through the entry event for buffering etc.
-     * 
+     *
      * @method _onLogEvent
      * @param msg {String} the log message
      * @param cat {String} OPTIONAL the category or logLevel of the message
@@ -1029,7 +1031,7 @@ Y.Console = Y.extend(Console, Y.Widget,
     /**
      * The identity of the widget.
      *
-     * @property Console.NAME
+     * @property NAME
      * @type String
      * @static
      */
@@ -1039,7 +1041,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      * Static identifier for logLevel configuration setting to allow all
      * incoming messages to generate Console entries.
      *
-     * @property Console.LOG_LEVEL_INFO
+     * @property LOG_LEVEL_INFO
      * @type String
      * @static
      */
@@ -1050,7 +1052,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      * incoming messages of logLevel &quot;warn&quot; or &quot;error&quot;
      * to generate Console entries.
      *
-     * @property Console.LOG_LEVEL_WARN
+     * @property LOG_LEVEL_WARN
      * @type String
      * @static
      */
@@ -1061,7 +1063,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      * incoming messages of logLevel &quot;error&quot; to generate
      * Console entries.
      *
-     * @property Console.LOG_LEVEL_ERROR
+     * @property LOG_LEVEL_ERROR
      * @type String
      * @static
      */
@@ -1081,7 +1083,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      *    <li>entry_content_class</li>
      * </ul>
      *
-     * @property Console.ENTRY_CLASSES
+     * @property ENTRY_CLASSES
      * @type Object
      * @static
      */
@@ -1114,7 +1116,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      *   <li>console_title_class</li>
      * </ul>
      *
-     * @property Console.CHROME_CLASSES
+     * @property CHROME_CLASSES
      * @type Object
      * @static
      */
@@ -1146,7 +1148,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      *   <li>str_title - pulled from attribute strings.title</li>
      * </ul>
      *
-     * @property Console.HEADER_TEMPLATE
+     * @property HEADER_TEMPLATE
      * @type String
      * @static
      */
@@ -1164,7 +1166,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      * includes only the {placeholder} &quot;console_bd_class&quot;, which is
      * constributed by Console.CHROME_CLASSES.
      *
-     * @property Console.BODY_TEMPLATE
+     * @property BODY_TEMPLATE
      * @type String
      * @static
      */
@@ -1181,17 +1183,14 @@ Y.Console = Y.extend(Console, Y.Widget,
      *   <li>str_clear - pulled from attribute strings.clear</li>
      * </ul>
      *
-     * @property Console.FOOTER_TEMPLATE
+     * @property FOOTER_TEMPLATE
      * @type String
      * @static
      */
     FOOTER_TEMPLATE :
         '<div class="{console_ft_class}">'+
             '<div class="{console_controls_class}">'+
-                '<label for="{id_guid}" class="{console_pause_label_class}">'+
-                    '<input type="checkbox" class="{console_checkbox_class} '+
-                        '{console_pause_class}" value="1" id="{id_guid}"> '+
-                    '{str_pause}</label>' +
+                '<label class="{console_pause_label_class}"><input type="checkbox" class="{console_checkbox_class} {console_pause_class}" value="1" id="{id_guid}"> {str_pause}</label>' +
                 '<button type="button" class="'+
                     '{console_button_class} {console_clear_class}">{str_clear}'+
                 '</button>'+
@@ -1201,7 +1200,7 @@ Y.Console = Y.extend(Console, Y.Widget,
     /**
      * Default markup template used to create the DOM structure for Console
      * entries. The markup contains {placeholder}s for content and classes
-     * that are replaced via Y.substitute.  The default template contains
+     * that are replaced via Y.Lang.sub.  The default template contains
      * the {placeholder}s identified in Console.ENTRY_CLASSES as well as the
      * following placeholders that will be populated by the log entry data:
      *
@@ -1215,7 +1214,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      *   <li>message</li>
      * </ul>
      *
-     * @property Console.ENTRY_TEMPLATE
+     * @property ENTRY_TEMPLATE
      * @type String
      * @static
      */
@@ -1225,7 +1224,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      * Static property used to define the default attribute configuration of
      * the Widget.
      *
-     * @property Console.ATTRS
+     * @property ATTRS
      * @Type Object
      * @static
      */
@@ -1486,7 +1485,7 @@ Y.Console = Y.extend(Console, Y.Widget,
          * By default this is set to false, which will disable logging to the
          * browser console when a Console instance is created.  If the
          * logSource is not a YUI instance, this has no effect.
-         * 
+         *
          * @attribute useBrowserConsole
          * @type {Boolean}
          * @default false
@@ -1504,7 +1503,7 @@ Y.Console = Y.extend(Console, Y.Widget,
 
          /**
           * Allows the Console to flow in the document.  Available values are
-          * 'inline', 'block', and 'separate' (the default).  
+          * 'inline', 'block', and 'separate' (the default).
           *
           * @attribute style
           * @type {String}
@@ -1522,4 +1521,4 @@ Y.Console = Y.extend(Console, Y.Widget,
 });
 
 
-}, '3.3.0' ,{requires:['substitute','widget'], lang:['en', 'es' ]});
+}, '3.15.0', {"requires": ["yui-log", "widget"], "skinnable": true, "lang": ["en", "es", "hu", "it", "ja"]});

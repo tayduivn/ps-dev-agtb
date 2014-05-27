@@ -106,7 +106,8 @@
                 var listSelector = '#' + key;
                 this.$(listSelector).select2({
                     placeholder: app.lang.get(value.label),
-                    data: value.list
+                    data: value.list,
+                    containerCss: {'width': '100%'}
                 });
             }
         }, this);

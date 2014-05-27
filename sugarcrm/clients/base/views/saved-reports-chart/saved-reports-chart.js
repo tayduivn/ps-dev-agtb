@@ -47,6 +47,10 @@
      */
     timerId: undefined,
 
+    events: {
+        'click a[name=editReport]': 'editSavedReport'
+    },
+
     /**
      * {@inheritDocs}
      */
@@ -56,7 +60,7 @@
             this.meta.panels = this.dashletConfig.dashlet_config_panels;
             this.getAllSavedReports();
         } else {
-            var autoRefresh = +this.settings.get("auto_refresh");
+            var autoRefresh = this.settings.get("auto_refresh");
             if (autoRefresh) {
                 if (this.timerId) {
                     clearInterval(this.timerId);
@@ -78,6 +82,66 @@
     },
 
     /**
+     * Route to the bwc edit view of the currently selected Saved Report. If User clicks 'save' or 'cancel' or 'delete'
+     * from there, return the user to the current page.
+     */
+    editSavedReport: function() {
+        var currentTargetId = this.dashModel.get('saved_report_id'),
+            params = {
+                dashletEdit: 1
+            },
+            route = app.bwc.buildRoute('Reports', currentTargetId, 'ReportsWizard', params);
+
+        //If this button was clicked too early, the saved_report_id may not be populated. Then we want to return
+        //because moving on will result in a php error
+        if (!currentTargetId) {
+            return;
+        }
+        app.alert.show('navigate_confirmation', {
+            level: 'confirmation',
+            messages: 'LBL_NAVIGATE_TO_REPORTS',
+            onConfirm: _.bind(function() {
+                //Save current location to this so we can use it in the event listener
+                this.currentLocation = Backbone.history.getFragment();
+
+                //Add event listener for when the user finishes up the edit
+                $(window).one('dashletEdit', _.bind(this.postEditListener, this));
+
+                //Once we've successfully routed to the dashletEdit location,
+                //any successive route should be checked. If the user moves away from the edit without
+                //either cancelling or finishing the edit, we should forget that we have to come back to the current location
+                var dashletEditVisited = false;
+                app.router.on('route', function() {
+                    var routeLocation = Backbone.history.getFragment();
+                    if (routeLocation.indexOf('dashletEdit=1') >= 0) {
+                        dashletEditVisited = true;
+                    }
+                    if (routeLocation.indexOf('dashletEdit=1') < 0 && dashletEditVisited) {
+                        app.router.off('route');
+                        $(window).off('dashletEdit');
+                    }
+                });
+
+                //Go to edit page
+                app.router.navigate(route, {trigger: true});
+            }, this)
+        });
+    },
+
+    /**
+     * Call after the user is done editing the saved report. Return the user to the page that was stored when the
+     * event was set
+     *
+     * @param {object} jquery event
+     */
+    postEditListener: function(event) {
+        //Go back from whence we came
+        if (this.currentLocation) {
+            app.router.navigate(this.currentLocation, {trigger: true});
+        }
+    },
+
+    /**
      * {@inheritDocs}
      */
     bindDataChange: function() {
@@ -88,7 +152,7 @@
                 this.settings.set({label: reportTitle});
 
                 // set the title of the dashlet to the report title
-                $('[name="label"]').val(reportTitle)
+                $('[name="label"]').val(reportTitle);
             }, this);
         }
     },

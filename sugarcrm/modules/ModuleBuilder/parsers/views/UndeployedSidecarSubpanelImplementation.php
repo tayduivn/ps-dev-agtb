@@ -56,6 +56,7 @@ class UndeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementa
 
         $template_subpanel_def = "include/SugarObjects/templates/{$template_def}/clients/{$this->client}/views/subpanel-list/subpanel-list.php";
 
+        $viewdefs = array();
         if (file_exists($template_subpanel_def)) {
             include $template_subpanel_def;
             if (isset($viewdefs['<module_name>'])) {
@@ -69,8 +70,10 @@ class UndeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementa
         }
         $this->sidecarSubpanelName = $this->mdc->fromLegacySubpanelName($subpanelName);
 
-        $this->sidecarFile = "{$this->module->getModuleDir(
-        )}/clients/{$client}/views/{$this->sidecarSubpanelName}/{$this->sidecarSubpanelName}.php";
+        // Set the original view defs from the loaded file if there are any
+        $this->_originalViewdefs = $this->getNewViewDefs($viewdefs);
+
+        $this->sidecarFile = $this->module->getSubpanelFilePath($subpanelName, $this->client);
 
         if (file_exists($this->sidecarFile)) {
             include $this->sidecarFile;
@@ -140,11 +143,7 @@ class UndeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementa
                 throw new Exception(sprintf("Cannot create directory %s", $this->sidecarFile));
             }
         }
-        write_array_to_file(
-            "viewdefs['{$this->_moduleName}']['{$this->_viewClient}']['view']['{$this->sidecarSubpanelName}']",
-            $this->_viewdefs,
-            $this->sidecarFile
-        );
+        $this->module->saveAvailableSubpanelDef($this->sidecarSubpanelName, $this->_viewdefs);
     }
 
 }

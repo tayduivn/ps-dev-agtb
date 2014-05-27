@@ -290,4 +290,6 @@ To create a {{module_name}}:
     'LBL_MKTO_SYNC' => 'Sync to Marketo&reg;',
     'LBL_MKTO_ID' => 'Marketo Lead ID',
     'LBL_MKTO_LEAD_SCORE' => 'Lead Score',
+
+    'LBL_FILTER_CONTACTS_REPORTS' => 'Contacts\' reports',
 );

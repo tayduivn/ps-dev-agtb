@@ -187,6 +187,15 @@ tmpMetadata = {
                     "name": "leradio_c",
                     "type": "radioenum",
                     "options": "Elastic_boost_options"
+                },
+                "account_id": {
+                    "name": "account_id",
+                    "type": "id"
+                },
+                "account_name": {
+                    "name": "account_name",
+                    "id_name": "account_id",
+                    "type": "relate"
                 }
             },
             "views": {

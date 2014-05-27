@@ -32,9 +32,8 @@ chdir($rootDir);
 //initialize the various globals we use this is needed so modules.php properly registers the modules globals, otherwise they end up defined in wrong scope
 global $sugar_config, $db, $fileName, $current_user, $locale, $current_language, $beanFiles, $beanList, $objectList, $moduleList, $modInvisList;
 require_once('include/entryPoint.php');
-require_once('jssource/minify_utils.php');
-$minifyUtils = new SugarMinifyUtils();
-ensureCache($minifyUtils, $rootDir);
+// Make sure the cache files exist
+ensureJSCacheFilesExist();
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -58,6 +57,7 @@ ensureCache($minifyUtils, $rootDir);
         <script src="../cache/include/javascript/sugar_sidecar.min.js"></script>
         <script src="../include/javascript/sugar7/bwc.js"></script>
         <script src="../include/javascript/sugar7/utils.js"></script>
+        <script src="../include/javascript/sugar7/utils-filters.js"></script>
         <script src="../include/javascript/sugar7/field.js"></script>
         <script src="../include/javascript/sugar7/hacks.js"></script>
         <script src="../include/javascript/sugar7/alert.js"></script>

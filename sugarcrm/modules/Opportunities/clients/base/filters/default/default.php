@@ -31,13 +31,7 @@ $viewdefs['Opportunities']['base']['filter']['default'] = array(
     'default_filter' => 'all_records',
     'fields' => array(
         'name' => array(),
-        'account_name' => array(
-            'dbFields' => array(
-                'accounts.name',
-            ),
-            'type' => 'text',
-            'vname' => 'LBL_ACCOUNT_NAME',
-        ),
+        'account_name' => array(),
         'amount' => array(),
         'best_case' => array(),
         'worst_case' => array(),
