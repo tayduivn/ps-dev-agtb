@@ -65,7 +65,7 @@
  * TODO: we have a mix of properties here with camelCase and underscore.
  * Needs to be addressed.
  *
- * @class View.Fields.BaseRelateField
+ * @class View.Fields.Base.RelateField
  * @alias SUGAR.App.view.fields.BaseRelateField
  * @extends View.Field
  */

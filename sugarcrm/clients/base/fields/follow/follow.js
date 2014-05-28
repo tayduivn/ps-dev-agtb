@@ -8,7 +8,12 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
+/**
+ * @class View.Fields.Base.FollowField
+ * @alias SUGAR.App.view.fields.BaseFollowField
+ * @extends View.Fields.Base.RowactionField
  */
 ({
     /**
@@ -104,9 +109,9 @@
     /**
      * Call REST API for subscribe and unsubscribe
      *
-     * @param Window.Event
+     * @param {Event} event The `click` event.
      */
-    toggleFollowing: function(e) {
+    toggleFollowing: function(event) {
         var isFollowing = this.model.get("following");
 
         if(!_.isUndefined(isFollowing)) {

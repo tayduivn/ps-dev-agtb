@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Fields.Base.ParentField
+ * @alias SUGAR.App.view.fields.BaseParentField
+ * @extends View.Fields.Base.RelateField
+ */
 ({
     minChars: 1,
     extendsFrom: 'RelateField',

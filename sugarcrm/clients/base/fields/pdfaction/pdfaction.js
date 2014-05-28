@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Fields.Base.PdfactionField
+ * @alias SUGAR.App.view.fields.BasePdfactionField
+ * @extends View.Fields.Base.RowactionField
+ */
 ({
     extendsFrom: 'RowactionField',
     events: {

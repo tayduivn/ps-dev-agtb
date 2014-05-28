@@ -8,16 +8,17 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
+/**
+ * Emailaction is a button that when selected will launch the appropriate email
+ * client.
+ *
+ * @class View.Fields.Base.EmailactionField
+ * @alias SUGAR.App.view.fields.BaseEmailactionField
+ * @extends View.Fields.Base.ButtonField
  */
 ({
-    /**
-     * Emailaction is a button that when selected will launch the appropriate email client
-     *
-     * @class View.Fields.EmailactionField
-     * @alias SUGAR.App.view.fields.EmailactionField
-     * @extends View.Fields.ButtonField
-     */
     extendsFrom: 'ButtonField',
     plugins: ['EmailClientLaunch'],
 

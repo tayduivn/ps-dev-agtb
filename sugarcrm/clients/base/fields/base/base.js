@@ -10,13 +10,12 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
 /**
  * This is the base field and all of other fields extend from it.
  *
- * @class View.Fields.BaseField
- * @alias SUGAR.App.view.fields.BaseField
- * @extends View.Fields.ButtonField
+ * @class View.Fields.Base.BaseField
+ * @alias SUGAR.App.view.fields.BaseBaseField
+ * @extends View.Field
  */
 ({
     plugins: ['EllipsisInline', 'Tooltip', 'MetadataEventDriven'],

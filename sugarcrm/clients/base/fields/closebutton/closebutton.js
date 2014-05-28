@@ -1,4 +1,4 @@
-/**
+/*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
  * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Fields.Base.CloseButtonField
+ * @alias SUGAR.App.view.fields.BaseCloseButtonField
+ * @extends View.Fields.Base.Rowaction
+ */
 ({
     extendsFrom: 'RowactionField',
 
@@ -17,7 +22,7 @@
 
     /**
      * Setup event handlers.
-     * @inhertdoc
+     * @inheritdoc
      * @param options
      */
     initialize: function(options) {

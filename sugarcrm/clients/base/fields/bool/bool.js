@@ -10,9 +10,8 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
 /**
- * @class BaseBoolField
+ * @class View.Fields.Base.BoolField
  * @alias SUGAR.App.view.fields.BaseBoolField
  * @extends View.Field
  */

@@ -11,8 +11,9 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
- * @class Field.ActionMenuField
- * @alias SUGAR.App.view.views.ActionMenuField
+ * @class View.Fields.Base.ActionmenuField
+ * @alias SUGAR.App.view.fields.BaseActionmenuField
+ * @extends View.Field
  */
 ({
     events: {

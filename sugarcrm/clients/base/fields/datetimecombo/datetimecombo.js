@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Fields.Base.DatetimecomboField
+ * @alias SUGAR.App.view.fields.BaseDatetimecomboField
+ * @extends View.Fields.Base.DateField
+ */
 ({
     extendsFrom: 'DateField',
 

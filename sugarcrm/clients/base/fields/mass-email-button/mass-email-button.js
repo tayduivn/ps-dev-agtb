@@ -11,16 +11,20 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Fields.MassEmailButtonField
- * @alias SUGAR.App.view.fields.MassEmailButtonField
- * @extends View.Fields.ButtonField
-
- * This field uses the EmailClientLaunch plugin to launch the appropriate email client.
+ * This field uses the EmailClientLaunch plugin to launch the appropriate email
+ * client.
+ *
  * Recipients to pre-populate are pulled from the mass_collection.
  * For external email client: Changes to the mass_collection will rebuild the mailto: link
  * For internal email client: Recipients are gathered from the mass_collection on click.
  * In order for the recipients to be prepopulated, this field requires the models in the
  * mass_collection contain the email field - if not, recipients will simply be blank (no error).
+ *
+ * @class View.Fields.Base.MassEmailButtonField
+ * @alias SUGAR.App.view.fields.BaseMassEmailButtonField
+ * @extends View.Fields.Base.ButtonField
+ */
+/**
  */
 ({
     extendsFrom: 'ButtonField',

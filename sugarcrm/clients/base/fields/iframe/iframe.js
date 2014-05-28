@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Fields.Base.IframeField
+ * @alias SUGAR.App.view.fields.BaseIframeField
+ * @extends View.Field
+ */
 ({
     /**
      * {@inheritDoc}

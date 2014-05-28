@@ -11,6 +11,11 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
+ * @class View.Fields.Base.RelatedContactField
+ * @alias SUGAR.App.view.fields.BaseRelatedContactField
+ * @extends View.Field
+ */
+/**
  * RelatedContactField is needed because BaseField specifically gets values from specific keys
  * on the model, and for the HistorySummaryView list, we need to set values on the model
  * that are different from what BaseField uses so it doesn't conflict with the other values
