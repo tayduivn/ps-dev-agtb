@@ -128,17 +128,10 @@ class M2MRelationship extends SugarRelationship
         // add it again.
         $relationshipExists = $this->relationship_exists($lhs, $rhs);
         if (!$relationshipExists) {
-            //BEGIN SUGARCRM flav=pro ONLY
             if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes") {
-                //END SUGARCRM flav=pro ONLY
-                $lhs->$lhsLinkName->addBean($rhs);
-                $rhs->$rhsLinkName->addBean($lhs);
-
                 $this->callBeforeAdd($lhs, $rhs, $lhsLinkName);
                 $this->callBeforeAdd($rhs, $lhs, $rhsLinkName);
-                //BEGIN SUGARCRM flav=pro ONLY
             }
-            //END SUGARCRM flav=pro ONLY
         }
 
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
@@ -156,17 +149,13 @@ class M2MRelationship extends SugarRelationship
         }
 
         if (!$relationshipExists) {
-            //BEGIN SUGARCRM flav=pro ONLY
             if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")) {
-                //END SUGARCRM flav=pro ONLY
                 $lhs->$lhsLinkName->addBean($rhs);
                 $rhs->$rhsLinkName->addBean($lhs);
 
                 $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
                 $this->callAfterAdd($rhs, $lhs, $rhsLinkName);
-                //BEGIN SUGARCRM flav=pro ONLY
             }
-            //END SUGARCRM flav=pro ONLY
         } else { //it's update
             $this->callAfterUpdate($lhs, $rhs, $lhsLinkName);
             $this->callAfterUpdate($rhs, $lhs, $rhsLinkName);
