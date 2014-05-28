@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Views.Base.ActivitystreamBottomView
+ * @alias SUGAR.App.view.views.BaseActivitystreamBottomView
+ * @extends View.View
+ */
 ({
     bindDataChange: function() {
         this.collection.on('reset', this.render, this);

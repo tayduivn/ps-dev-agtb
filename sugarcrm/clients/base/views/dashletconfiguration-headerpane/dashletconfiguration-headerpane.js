@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Views.Base.DashletconfigurationHeaderpaneView
+ * @alias SUGAR.App.view.views.BaseDashletconfigurationHeaderpaneView
+ * @extends View.View
+ */
 ({
     plugins: ['Editable', 'ErrorDecoration'],
 

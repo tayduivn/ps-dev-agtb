@@ -28,8 +28,9 @@
  * //...
  * </code></pre>
  *
- * @class View.Views.BaseNotificationsView
+ * @class View.Views.Base.NotificationsView
  * @alias SUGAR.App.view.views.BaseNotificationsView
+ * @extends View.View
  */
 ({
     plugins: ['Dropdown', 'RelativeTime', 'EllipsisInline', 'Tooltip'],

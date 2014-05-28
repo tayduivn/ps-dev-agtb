@@ -10,13 +10,12 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Views.Base.ListBottomView
+ * @alias SUGAR.App.view.views.BaseListBottomView
+ * @extends View.View
+ */
 ({
-    /**
-     * View that displays a list of models pulled from the context's collection.
-     * @class View.Views.ListViewBottom
-     * @alias SUGAR.App.layout.ListViewBottom
-     * @extends View.View
-     */
     events: {
         'click [data-action="show-more"]': 'showMoreRecords'
     },

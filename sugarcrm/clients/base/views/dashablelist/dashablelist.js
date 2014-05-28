@@ -47,9 +47,9 @@
  * //...
  * </code></pre>
  *
- * @class View.BaseDashablelistView
+ * @class View.Views.Base.DashablelistView
  * @alias SUGAR.App.view.views.BaseDashablelistView
- * @extends View.BaseListView
+ * @extends View.Views.Base.ListView
  */
 ({
     extendsFrom: 'ListView',

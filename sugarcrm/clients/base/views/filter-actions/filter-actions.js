@@ -10,14 +10,16 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * Actions for {@link View.Views.Base.FilterRowsView}.
+ *
+ * Part of {@link View.Layouts.Base.FilterpanelLayout}.
+ *
+ * @class View.Views.Base.FilterActionsView
+ * @alias SUGAR.App.view.views.BaseFilterActionsView
+ * @extends View.View
+ */
 ({
-    /**
-     * Actions for BaseFilterRowsViews
-     * Part of BaseFilterpanelLayout
-     *
-     * @class BaseFilterActionsView
-     * @extends View
-     */
     events: {
         'change input': 'filterNameChanged',
         'keyup input': 'filterNameChanged',

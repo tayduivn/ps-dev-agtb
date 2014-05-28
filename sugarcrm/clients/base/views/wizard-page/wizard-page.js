@@ -1,51 +1,39 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (''License'') which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ''Powered by SugarCRM'' logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
+/**
+ * An abstract WizardPageView.  Wizard pages should extend this and provide
+ * field metadata, custom logic, etc.  This view is detached from Wizard
+ * layout when it is not the current page.  When it becomes the current
+ * page it is appended to Wizard layout and render is called.
+ *
+ * If you want to use the default Wizard template, you'll need to load it in initialize.
+ * For example,
+ *
+ * <pre>
+ * initialize: function(options){
+ *   //Load the default wizard page template, if you want to.
+ *   options.template = app.template.getView("wizard-page");
+ *   this._super("initialize", [options]);
+ * },
+ * </pre>
+ *
+ * @class View.Views.Base.WizardPageView
+ * @alias SUGAR.App.view.views.BaseWizardPageView
+ * @extends View.View
+ */
 ({
     plugins: ['GridBuilder', 'ErrorDecoration'],
-    /**
-     * An abstract WizardPageView.  Wizard pages should extend this and provide
-     * field metadata, custom logic, etc.  This view is detached from Wizard
-     * layout when it is not the current page.  When it becomes the current
-     * page it is appended to Wizard layout and render is called.
-     *
-     * If you want to use the default Wizard template, you'll need to load it in initialize.
-     * For example,
-     *
-     * <pre>
-     * initialize: function(options){
-     *   //Load the default wizard page template, if you want to.
-     *   options.template = app.template.getView("wizard-page");
-     *   this._super("initialize", [options]);
-     * },
-     * </pre>
-     *
-     * @class View.Views.WizardPageView
-     * @alias SUGAR.App.view.views.WizardPageView
-     */
+
     events: {
         'click [name=previous_button]:not(.disabled)': 'previous',
         'click [name=next_button]:not(.disabled)': 'next'
@@ -176,7 +164,9 @@
      * at least one character, we enable the next button. Implementers of
      * wizard pages may override this method to customize if desired, although
      * you may be able to just override `requiredTypesToPrevalidate`.
-     * @see SUGAR.App.view.views.UserWizardPageView
+     *
+     * See {@link View.Views.Base.UserWizardPageView}.
+     *
      * @param {Object} evt the event
      */
     checkIfPageComplete: function(evt) {

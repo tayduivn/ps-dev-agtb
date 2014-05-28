@@ -8,7 +8,7 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
  * Active tasks dashlet takes advantage of the tabbed dashlet abstraction by
@@ -21,9 +21,9 @@
  * - {Array} overdue_badge field def to support overdue calculation, and showing
  *   an overdue badge when appropriate.
  *
- * @class View.Views.BaseActiveTasksView
+ * @class View.Views.Base.ActiveTasksView
  * @alias SUGAR.App.view.views.BaseActiveTasksView
- * @extends View.Views.BaseTabbedDashletView
+ * @extends View.Views.Base.TabbedDashletView
  */
 ({
     extendsFrom: 'TabbedDashletView',
@@ -31,6 +31,7 @@
     /**
      * {@inheritDoc}
      *
+     * @property {Object} _defaultSettings
      * @property {Number} _defaultSettings.limit Maximum number of records to
      *   load per request, defaults to '10'.
      * @property {String} _defaultSettings.visibility Records visibility
@@ -116,6 +117,7 @@
      * Create new record.
      *
      * @param {Event} event Click event.
+     * @param {Object} params
      * @param {String} params.layout Layout name.
      * @param {String} params.module Module name.
      */

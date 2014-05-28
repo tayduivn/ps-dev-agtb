@@ -8,7 +8,12 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
+/**
+ * @class View.Views.Base.RecordView
+ * @alias SUGAR.App.view.views.BaseRecordView
+ * @extends View.View
  */
 ({
     inlineEditMode: false,
@@ -105,8 +110,9 @@
      *
      * Check changes for fields that are editable only.
      *
+     * {@link app.plugins.view.editable}
+     *
      * @return {Boolean} `true` if current model contains unsaved changes, otherwise `false`.
-     * @link {app.plugins.view.editable}
      */
     hasUnsavedChanges: function() {
         var changedAttributes,
