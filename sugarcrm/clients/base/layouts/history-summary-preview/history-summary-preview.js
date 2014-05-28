@@ -10,6 +10,11 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Layouts.Base.HistorySummaryPreviewLayout
+ * @alias SUGAR.App.view.layouts.BaseHistorySummaryPreviewLayout
+ * @extends View.Layouts.Base.PreviewLayout
+ */
 ({
     extendsFrom: 'PreviewLayout'
 })

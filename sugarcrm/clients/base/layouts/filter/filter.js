@@ -10,14 +10,16 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
+/**
+ * Layout for filtering a collection.
+ *
+ * Composed of a module dropdown(optional), a filter dropdown and an input.
+ *
+ * @class View.Layouts.Base.FilterLayout
+ * @alias SUGAR.App.view.layouts.BaseFilterLayout
+ * @extends View.Layout
+ */
 ({
-    /**
-     * Layout for filtering a collection.
-     * Composed of a module dropdown(optional), a filter dropdown and an input
-     *
-     * @class BaseFilterLayout
-     * @extends Layout
-     */
     className: 'filter-view search',
 
     plugins: ['QuickSearchFilter'],
