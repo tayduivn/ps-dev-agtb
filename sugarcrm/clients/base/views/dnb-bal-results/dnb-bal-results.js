@@ -169,8 +169,8 @@
             return;
         }
         this.template = app.template.get(this.name + '.dnb-bal-contacts-rslt');
-        if (this.dnbBalRslt && this.dnbBalRslt.count) {
-            delete this.dnbBalRslt['count'];
+        if (this.dnbContactsList && this.dnbContactsList.count) {
+            delete this.dnbContactsList['count'];
         }
         this.render();
         this.$(this.selectors.load).removeClass('hide');

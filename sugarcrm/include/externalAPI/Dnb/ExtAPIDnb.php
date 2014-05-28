@@ -925,7 +925,6 @@ class ExtAPIDnb extends ExternalAPIBase
         curl_close($curl_handle);
         $_SESSION[$this->dnbEnv . 'dnbTokenIssueTime'] = time();
         $_SESSION[$this->dnbEnv . 'dnbToken'] = $token;
-        $GLOBALS['log']->debug("DNB Session Token Set :".$_SESSION[$this->dnbEnv . 'dnbToken']);
         return $token;
     }
 
