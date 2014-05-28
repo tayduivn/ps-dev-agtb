@@ -10,12 +10,12 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
+/**
+ * @class View.Views.Base.Emails.ComposeAddressbookFilterView
+ * @alias SUGAR.App.view.views.BaseEmailsComposeAddressbookFilterView
+ * @extends View.View
+ */
 ({
-    /**
-     * @class View.ComposeAddressbookFilterView
-     * @alias SUGAR.App.view.views.ComposeAddressbookFilterView
-     * @extends View
-     */
     _moduleFilterList: [],
     _allModulesId:     'All',
     _selectedModule:   null,

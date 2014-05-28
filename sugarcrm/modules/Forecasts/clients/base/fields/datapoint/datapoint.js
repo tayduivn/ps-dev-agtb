@@ -10,11 +10,10 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
  */
-
 /**
  * Datapoints in the info pane for Forecasts
  *
- * @class BaseForecastsDatapointField
+ * @class View.Fields.Base.Forecasts.DatapointField
  * @alias SUGAR.App.view.fields.BaseForecastsDatapointField
  * @extends View.Field
  */

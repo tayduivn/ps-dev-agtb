@@ -8,7 +8,12 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
+/**
+ * @class View.Views.Base.Home.AboutHeaderpaneView
+ * @alias SUGAR.App.view.views.BaseHomeAboutHeaderpaneView
+ * @extends View.Views.Base.HeaderpaneView
  */
 ({
     extendsFrom: 'HeaderpaneView',

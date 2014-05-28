@@ -8,14 +8,17 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
 /**
- * Override the Rowactions Fields to display both next to each other, vs one being in a dropdown.
+ * Override the Rowactions Fields to display both next to each other, vs one
+ * being in a dropdown.
  *
- * ** Note **
- * This might go away later depending on what UIUX has to say
+ * TODO: This might go away later depending on what UIUX has to say.
+ *
+ * @class View.Fields.Base.ForecastsManagerWorksheets.RowactionsField
+ * @alias SUGAR.App.view.fields.BaseForecastsManagerWorksheetsRowactionsField
+ * @extends View.Fields.Base.RowactionsField
  */
 ({
     extendsFrom: 'RowactionsField',

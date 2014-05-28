@@ -8,14 +8,17 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
+/**
+ * Attachment button is a label that is styled like a button and will trigger a
+ * given file input field.
+ *
+ * @class View.Fields.Base.Emails.AttachmentButtonField
+ * @alias SUGAR.App.view.fields.BaseEmailsAttachmentButtonField
+ * @extends View.Fields.Base.ButtonField
  */
 ({
-    /**
-     * Attachment button is a label that is styled like a button and will trigger a given file input field
-     *
-     * @extends View.Fields.ButtonField
-     */
     extendsFrom: 'ButtonField',
     initialize: function(options) {
         this._super('initialize',[options]);

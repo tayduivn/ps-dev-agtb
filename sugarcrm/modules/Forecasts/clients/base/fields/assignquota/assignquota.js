@@ -8,14 +8,14 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-
-
+/**
+ * @class View.Fields.Base.Forecasts.AssignQuotaField
+ * @alias SUGAR.App.view.fields.BaseForecastsAssignQuotaField
+ * @extends View.Fields.Base.RowactionField
+ */
 ({
-    /**
-     * Who is our parent
-     */
     extendsFrom: 'RowactionField',
 
     /**

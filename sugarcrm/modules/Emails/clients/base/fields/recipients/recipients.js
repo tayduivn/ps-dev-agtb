@@ -8,7 +8,12 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
+/**
+ * @class View.Fields.Base.Emails.RecipientsField
+ * @alias SUGAR.App.view.fields.BaseEmailsRecipientsField
+ * @extends View.Field
  */
 ({
     /**
@@ -39,12 +44,13 @@
     /**
      * Sets up event handlers for syncing between the model and the recipients field.
      *
-     * @see RecipientsField::format() For the acceptable formats for recipients.
+     * See {@link #format} for the acceptable formats for recipients.
      */
     bindDataChange: function() {
         /**
          * Sets the value of the Select2 element and rebuilds the tooltips for all recipients.
-         * @param {Array} recipients @see the return value for RecipientsField::format().
+         * @param {Array} recipients the return value for
+         *   {@link #format}.
          */
         var updateTheDom = _.bind(function(recipients) {
             // put the formatted recipients in the DOM
@@ -155,10 +161,12 @@
     },
 
     /**
-     * Fetch additional recipients from the server.
+     * Fetches additional recipients from the server.
      *
-     * @see http://ivaynberg.github.io/select2/#doc-query
-     * @param {Object} query Possible attributes can be found in select2's documentation.
+     * See [Select2 Documentation of `query` parameter](http://ivaynberg.github.io/select2/#doc-query).
+     *
+     * @param {Object} query Possible attributes can be found in select2's
+     *   documentation.
      */
     loadOptions: _.debounce(function(query) {
         var self = this,
@@ -202,7 +210,8 @@
     /**
      * Create additional select2 options when loadOptions returns no matches for the search term.
      *
-     * @see http://ivaynberg.github.io/select2/#documentation
+     * See [Select2 Documentation](http://ivaynberg.github.io/select2/#documentation).
+     *
      * @param {String} term
      * @param {Array} data The options in the select2 drop-down after the query callback has been executed.
      * @returns {Object}
@@ -216,7 +225,8 @@
     /**
      * Formats a recipient object for displaying selected recipients.
      *
-     * @see http://ivaynberg.github.io/select2/#documentation
+     * See [Select2 Documentation](http://ivaynberg.github.io/select2/#documentation).
+     *
      * @param {Object} recipient
      * @return {String}
      */
@@ -235,7 +245,8 @@
     /**
      * Formats a recipient object for displaying items in the recipient options list.
      *
-     * @see http://ivaynberg.github.io/select2/#documentation
+     * See [Select2 Documentation](http://ivaynberg.github.io/select2/#documentation).
+     *
      * @param {Object} recipient
      * @return {String}
      */
@@ -254,7 +265,8 @@
     /**
      * Returns the localized message indicating that a search is in progress
      *
-     * @see http://ivaynberg.github.io/select2/#documentation
+     * See [Select2 Documentation](http://ivaynberg.github.io/select2/#documentation).
+     *
      * @returns {String}
      */
     formatSearching: function() {
@@ -264,7 +276,8 @@
     /**
      * Suppresses the message indicating the number of characters remaining before a search will trigger
      *
-     * @see http://ivaynberg.github.io/select2/#documentation
+     * See [Select2 Documentation](http://ivaynberg.github.io/select2/#documentation).
+     *
      * @param term
      * @param min
      * @returns {String}
@@ -276,10 +289,12 @@
     /**
      * Formats a set of recipients into an array of objects that select2 understands.
      *
+     * See {@link #_formatRecipient()} for the acceptable/expected attributes to
+     * be found on each recipient.
+     *
      * @param {*} data A Backbone collection, a single Backbone model or standard JavaScript object, or an array of
      *                 Backbone models or standard JavaScript objects.
      * @returns {Array}
-     * @see RecipientsField::_formatRecipient() For the acceptable/expected attributes to be found on each recipient.
      */
     format: function(data) {
         var formattedRecipients = [];
@@ -422,7 +437,7 @@
     /**
      * Format a recipient from a Backbone.Model to a standard JavaScript object with id, module, email, and name
      * attributes. Only id and email are required for the recipient to be considered valid
-     * (@see RecipientsField::format()).
+     * {@link #format}.
      *
      * All attributes are optional. However, if the email attribute is not present, then a primary email address should
      * exist on the bean. Without an email address that can be resolved, the recipient is considered to be invalid. The

@@ -8,10 +8,16 @@
  * you are agreeing unconditionally that Company will be bound by the MSA and
  * certifying that you have authority to bind Company accordingly.
  *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 /**
- * Forecast Manger Worksheet Record List
+ * Forecast Manger Worksheet Record List.
+ *
+ * @class View.Views.Base.ForecastsManagerWorksheets.RecordListView
+ * @alias SUGAR.App.view.views.BaseForecastsManagerWorksheetsRecordListView
+ * @extends View.Views.Base.RecordListView
+ */
+/**
  *
  * Events
  *
@@ -691,7 +697,7 @@
      * Check the collection for any rows that may have been saved as a draft or rolled up from a reportee commit and
      * trigger the commit button to be enabled
      *
-     * @trigger forecasts:worksheet:needs_commit
+     * @fires forecasts:worksheet:needs_commit
      * @param lastCommitDate
      */
     checkForDraftRows: function(lastCommitDate) {
@@ -864,7 +870,7 @@
     /**
      * Calculates the display totals for the worksheet
      *
-     * @triggers forecasts:worksheet:totals
+     * @fires forecasts:worksheet:totals
      */
     calculateTotals: function() {
         if (this.layout.isVisible()) {
@@ -959,7 +965,7 @@
     /**
      * Call the worksheet save event
      *
-     * @triggers forecasts:worksheet:saved
+     * @fires forecasts:worksheet:saved
      * @param {bool} isDraft
      * @param {bool} [suppressMessage]
      * @returns {number}
@@ -1019,7 +1025,7 @@
     /**
      * Helper function for worksheet save
      *
-     * @triggers forecasts:worksheet:saved
+     * @fires forecasts:worksheet:saved
      */
     _worksheetSaveHelper: function(saveObj, ctx) {
         saveObj.model.set({

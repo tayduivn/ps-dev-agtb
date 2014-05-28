@@ -16,9 +16,9 @@
  * This also helps doing customization of the menu per module and provides more
  * metadata driven features.
  *
- * @class View.Views.BaseHomeModuleMenuView
+ * @class View.Views.Base.Home.ModuleMenuView
  * @alias SUGAR.App.view.views.BaseHomeModuleMenuView
- * @extends View.Views.BaseModuleMenuView
+ * @extends View.Views.Base.ModuleMenuView
  */
 ({
     extendsFrom: 'ModuleListView',
@@ -87,7 +87,6 @@
     /**
      * Key for storing the last state of the recently viewed toggle.
      *
-     * @const
      * @type {String}
      */
     TOGGLE_RECENTS_KEY: 'more',

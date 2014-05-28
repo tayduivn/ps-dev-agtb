@@ -10,12 +10,12 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
+/**
+ * @class View.Views.Base.Emails.ComposeAddressbookListView
+ * @alias SUGAR.App.view.views.BaseEmailsComposeAddressbookListView
+ * @extends View.Views.Base.FlexListView
+ */
 ({
-    /**
-     * @class View.ComposeAddressbookListView
-     * @alias SUGAR.App.view.views.ComposeAddressbookListView
-     * @extends View.FlexListView
-     */
     extendsFrom: 'FlexListView',
     plugins: ['ListColumnEllipsis', 'ListRemoveLinks', 'Pagination'],
     /**
