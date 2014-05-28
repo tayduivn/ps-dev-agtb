@@ -28,6 +28,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected $contacts = array();
     protected $accounts = array();
+    protected $up = true;
 
     static public function setupBeforeClass()
     {
@@ -47,10 +48,12 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         if(empty($this->_db)){
             $this->_db = DBManagerFactory::getInstance();
         }
+        $this->up = $this->_db->usePreparedStatements;
     }
 
     public function tearDown()
     {
+        $this->_db->usePreparedStatements = $this->up;
         BeanFactory::setBeanClass('Contacts');
 
         if ( !empty($this->contacts) ) {
@@ -274,7 +277,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains('count(0)', $sql);
         $this->assertContains('name', $sql);
         $this->assertContains('account_type', $sql);
-        
+
     }
 
     public function testSelectCountGroupBy()
@@ -293,7 +296,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains('name', $sql);
         $this->assertContains('account_type', $sql);
         $this->assertContains('GROUP BY', $sql);
-        
+
     }
 
     public function testBadFields()
@@ -357,6 +360,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRelateConditions()
     {
+        $this->_db->usePreparedStatements = false;
         $contact = BeanFactory::getBean("Contacts");
         // regular query
         $sq = new SugarQuery();
@@ -530,7 +534,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sql = $sq->compileSql();
         $this->assertContains("HAVING last_name > 55", $sql);
     }
-    
+
     public function testChildJoins()
     {
         $sq = new SugarQuery();

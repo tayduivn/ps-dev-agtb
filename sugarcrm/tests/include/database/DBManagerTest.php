@@ -2688,10 +2688,10 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($bean->id, $row['id'], 'id failed');
 
         // delete test
-        $sql=$this->_db->deleteSQL($bean,array('id'=>$bean->id), true);
+        $this->_db->delete($bean,array('id'=>$bean->id), true);
         $result = $this->_db->query("select deleted from contacts where id = '{$bean->id}'");
         $row = $this->_db->fetchByAssoc($result);
-        $this->assertEquals(1, $row['deleted']);
+        $this->assertEquals(1, $row['deleted'], "Delete failed");
 
         $this->_db->usePreparedStatements = false;
     }

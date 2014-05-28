@@ -36,7 +36,7 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
             $this->markNonDb();
             $this->rNameExists = true;
             return;
-        }        
+        }
         if(!empty($this->def['rname']) && !empty($this->def['link'])) {
             $this->table = $this->query->getJoinAlias($this->def['link']);
             $this->field = $this->def['rname'];
@@ -100,7 +100,7 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
      *
      * @return string
      */
-    public function quoteValue($value, $operator = false)
+    public function quoteValue($value, $operator = false, $forPrepared = false)
     {
         global $db;
         if ($value instanceof SugarQuery_Builder_Literal) {
@@ -114,8 +114,8 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
         if (!empty($this->def)) {
             $dbtype = $db->getFieldType($this->def);
 
-            if (!strcmp($value, '') || $value === 0) {
-                return $db->emptyValue($dbtype);
+            if (is_null($value) || $value === false || $value === '') {
+                return $db->emptyValue($dbtype, $forPrepared);
             }
 
             switch ($dbtype) {
@@ -123,8 +123,11 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
                 case 'datetime':
                 case 'time':
                     if (strtoupper($value) == 'NOW()') {
-                        return $db->now();
+                        return $forPrepared?TimeDate::getInstance()->nowDb():$db->now();
                     }
+                    break;
+                case 'bool':
+                    return (int)isTruthy($value);
             }
 
             if ($db->getTypeClass($dbtype) == 'string') {
@@ -138,8 +141,8 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
                     $value = '%' . $value;
                 }
             }
-            return $db->quoteType($dbtype, $value);
+            return $forPrepared?$value:$db->quoteType($dbtype, $value);
         }
-        return $db->quoted($value);
+        return $forPrepared?$value:$db->quoted($value);
     }
 }

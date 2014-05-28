@@ -392,13 +392,8 @@ class TimePeriod extends SugarBean
             ->equals('type', $type)
             ->lte('start_date_timestamp', $timestamp)
             ->gte('end_date_timestamp', $timestamp);
-        $query = $sq->compileSql();
 
-        $timeperiod_id = $db->getOne(
-            $query,
-            false,
-            string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($db->quote($date)))
-        );
+        $timeperiod_id = $sq->getOne();
 
         if (!empty($timeperiod_id)) {
             $tp = BeanFactory::getBean('TimePeriods');

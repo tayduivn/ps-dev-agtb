@@ -118,7 +118,7 @@ abstract class DBManager
     /**
      * default state for using Prepared Statements
      */
-    public $usePreparedStatements = false;
+    public $usePreparedStatements = true;
 
 	/**
 	 * TimeDate instance
@@ -681,18 +681,19 @@ protected function checkQuery($sql, $object_name = false)
             return $execute?$this->query($query):$query;
         } else {  //Prepared Statement
             $query = "INSERT INTO $table (".implode(",", array_keys($values)).") VALUES (";
-            $types = array();
+            $types = $data_values = array();
             foreach($values as $valueKey => $value) {
                 $type = $this->getFieldType($field_defs[$valueKey]);
                 $types[] = $this->convert("?$type", $type);
+                $data_values[] = $value;
             }
             $query .= join(",", $types).")";
 
             if (!$execute)
-                return array($query, $values);
+                return array($query, $data_values);
 
             // Prepare and execute the statement
-            return $this->preparedQuery($query, $values);
+            return $this->preparedQuery($query, $data_values);
         }
 
 	}
@@ -732,10 +733,16 @@ protected function checkQuery($sql, $object_name = false)
      */
 	public function delete(SugarBean $bean, array $where = array())
 	{
-		$sql = $this->deleteSQL($bean, $where);
-		$tableName = $bean->getTableName();
-		$msg = "Error deleting from table: ".$tableName. ":";
-		return $this->query($sql,true,$msg);
+	    $tablename =  $bean->getTableName();
+	    $msg = "Error deleting from table: $tablename:";
+	    if($this->usePreparedStatements) {
+	        list($sql, $data) = $this->deleteSQL($bean, $where, true);
+	        // Prepare and execute the statement
+	        return $this->preparedQuery($sql, $data, $msg);
+	    } else {
+	        $sql = $this->deleteSQL($bean, $where);
+	        return $this->query($sql,true,$msg);
+	    }
 	}
 
 	/**
@@ -750,10 +757,16 @@ protected function checkQuery($sql, $object_name = false)
 	 */
 	public function retrieve(SugarBean $bean, array $where = array())
 	{
-		$sql = $this->retrieveSQL($bean, $where);
-		$tableName = $bean->getTableName();
-		$msg = "Error retriving values from table:".$tableName. ":";
-		return $this->query($sql,true,$msg);
+		$tablename =  $bean->getTableName();
+	    $msg = "Error retriving values from table: $tablename:";
+	    if($this->usePreparedStatements) {
+	        list($sql, $data) = $this->retrieveSQL($bean, $where, true);
+	        // Prepare and execute the statement
+	        return $this->preparedQuery($sql, $data, $msg);
+	    } else {
+	        $sql = $this->retrieveSQL($bean, $where);
+	        return $this->query($sql,true,$msg);
+	    }
 	}
 
 	/**
@@ -2307,7 +2320,9 @@ protected function checkQuery($sql, $object_name = false)
 		}
 
         // build where clause
-        $where = $this->getWhereClause($bean, $this->updateWhereArray($bean, $where));
+		$where_data = $this->updateWhereArray($bean, $where, $usePreparedStatements);
+		$where = $this->getWhereClause($bean, $where_data, $usePreparedStatements);
+
         if(isset($fields['deleted'])) {
             $where .= " AND deleted=0";
         }
@@ -2318,6 +2333,7 @@ protected function checkQuery($sql, $object_name = false)
 					$where";
         }
         else {  //Prepared Statement
+            $data = array_merge($data, array_values($where_data));
             $query = "UPDATE ".$bean->getTableName()."
 					 SET ".implode(",", $columns)."
 					 $where";
@@ -2360,7 +2376,7 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param  array  $whereArray Optional, where conditions in an array
 	 * @return string
 	 */
-	protected function getColumnWhereClause($table, array $whereArray = array())
+	protected function getColumnWhereClause($table, array $whereArray = array(), $forPrepared = false)
 	{
 		$where = array();
 		foreach ($whereArray as $name => $val) {
@@ -2369,12 +2385,12 @@ protected function checkQuery($sql, $object_name = false)
 				$op = "IN";
 				$temp = array();
 				foreach ($val as $tval){
-					$temp[] = $this->quoted($tval);
+					$temp[] = $forPrepared?$tval:$this->quoted($tval);
 				}
 				$val = implode(",", $temp);
 				$val = "($val)";
 			} else {
-				$val = $this->quoted($val);
+				$val = $forPrepared?$val:$this->quoted($val);
 			}
 
 			$where[] = " $table.$name $op $val";
@@ -2394,9 +2410,15 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param  array  $whereArray Optional, where conditions in an array
 	 * @return string
 	 */
-	protected function getWhereClause(SugarBean $bean, array $whereArray=array())
+	protected function getWhereClause(SugarBean $bean, array $whereArray=array(), $forPrepared = false)
 	{
-	    return " WHERE " . $this->getColumnWhereClause($bean->getTableName(), $whereArray);
+	    if($forPrepared) {
+	       $where = $this->getColumnWhereClause($bean->getTableName(), $this->prepareTypeData($bean, array_keys($whereArray)), true);
+	    } else {
+	        $where = $this->getColumnWhereClause($bean->getTableName(), $whereArray);
+	    }
+
+	    return " WHERE $where";
 	}
 
 	/**
@@ -2449,7 +2471,7 @@ protected function checkQuery($sql, $object_name = false)
 							}
 							return $this->emptyValue($type, $forPrepared);
 						}
-						return "NULL";
+						return $forPrepared?null:"NULL";
 					}
 					break;
 			}
@@ -2466,7 +2488,7 @@ protected function checkQuery($sql, $object_name = false)
 				}
 				return $this->emptyValue($type, $forPrepared);
 			} else {
-				return "NULL";
+				return $forPrepared?null:"NULL";
 			}
 		}
         if($type == "datetimecombo") {
@@ -2578,48 +2600,58 @@ protected function checkQuery($sql, $object_name = false)
 	}
 
 	/**
-	 * Generates SQL for delete statement identified by id.
-	 *
-	 * @param  SugarBean $bean SugarBean instance
-	 * @param  array  $where where conditions in an array
-	 * @return string SQL Update Statement
+	 * Make array of types for prepared statement from list of columns
+	 * @param SugarBean $bean
+	 * @param array $columns
+	 * @return array
 	 */
-	public function deleteSQL(SugarBean $bean, array $where, $usePreparedStatements=false )
+	protected function prepareTypeData(SugarBean $bean, $columns)
 	{
-        // Global override
-        if ($this->usePreparedStatements)
-            $usePreparedStatements = true;
-
-        $useQuotes = !$usePreparedStatements;
-
-		$where = $this->getWhereClause($bean, $this->updateWhereArray($bean, $where, $useQuotes));
-
-        if (!$usePreparedStatements) {
-		return "UPDATE ".$bean->getTableName()." SET deleted=1 $where";
-        }
-        else {  //Prepared Statement
-            $query = "UPDATE ".$bean->getTableName()." SET deleted=1 $where";
-
-            // Prepare and execute the statement
-            $ps = $this->prepareStatement($query);
-            $result = $ps->executePreparedStatement(array());  // $data
-            return $result;
-        }
-
+	    $types = array();
+	    foreach ($columns as $name) {
+	        $def = $bean->getFieldDefinition($name);
+	        $types[$name] = "?" . $def['type'];
+	    }
+	    return $types;
 	}
+
+    /**
+     * Generates SQL for delete statement identified by id.
+     *
+     * @param SugarBean $bean SugarBean instance
+     * @param array $where where conditions in an array
+     * @return string SQL Update Statement
+     */
+    public function deleteSQL(SugarBean $bean, array $where, $usePreparedStatements = false)
+    {
+        $where_data = $this->updateWhereArray($bean, $where);
+        $tname = $bean->getTableName();
+        $where = $this->getWhereClause($bean, $where_data, $usePreparedStatements);
+        if ($usePreparedStatements) {
+            return array("UPDATE $tname SET deleted=1 $where", array_values($where_data));
+        } else {
+            return "UPDATE $tname SET deleted=1 $where";
+        }
+    }
 
     /**
      * Generates SQL for select statement for any bean identified by id.
      *
-     * @param  SugarBean $bean SugarBean instance
-     * @param  array  $where where conditions in an array
+     * @param SugarBean $bean SugarBean instance
+     * @param array $where where conditions in an array
      * @return string SQL Select Statement
      */
-	public function retrieveSQL(SugarBean $bean, array $where)
-	{
-		$where = $this->getWhereClause($bean, $this->updateWhereArray($bean, $where));
-		return "SELECT * FROM ".$bean->getTableName()." $where AND deleted=0";
-	}
+    public function retrieveSQL(SugarBean $bean, array $where, $usePreparedStatements = false)
+    {
+        $where_data = $this->updateWhereArray($bean, $where);
+        $tname = $bean->getTableName();
+        $where = $this->getWhereClause($bean, $where_data, $usePreparedStatements);
+        if ($usePreparedStatements) {
+            return array("SELECT * FROM $tname $where AND deleted=0", array_values($where_data));
+        } else {
+            return "SELECT * FROM $tname $where AND deleted=0";
+        }
+    }
 
     /**
      * This method implements a generic sql for a collection of beans.

@@ -171,7 +171,15 @@ class MysqliPreparedStatement extends PreparedStatement
 
         // Get the next results
         if($this->stmt->fetch()) {
-            return $this->output_vars;
+            $result = array();
+        // FIXME: figure out how to avoid copying for each result
+        // Right now copying is needed due to the fact that the bind_result
+        // uses references so we can not give out the same array twice, as it will be
+        // all referenced together and all have the data of the last row
+            foreach($this->output_vars as $k => $v) {
+                $result[$k] = $v;
+            }
+            return $result;
         } else {
             return false;
         }

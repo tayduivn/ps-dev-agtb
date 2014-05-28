@@ -210,7 +210,7 @@ abstract class PreparedStatement
         $this->DBM->countQuery($this->parsedSQL);
         $GLOBALS['log']->info("Executing Query: {$this->parsedSQL} with ".var_export($data, true));
 
-        $this->query_time = microtime(true);
+        $this->DBM->query_time = microtime(true);
 
         if ($param_count > count($data) )  {
             $this->DBM->registerError($msg, "Incorrect number of elements. Expected $param_count but got " . count($data));

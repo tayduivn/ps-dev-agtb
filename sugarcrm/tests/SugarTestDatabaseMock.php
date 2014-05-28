@@ -18,6 +18,8 @@ class SugarTestDatabaseMock extends DBManager
 
     public $queries = array();
     public $rows = array();
+    // not doing prepareds for now
+    public $usePreparedStatements = false;
 
     public function setUp()
     {
@@ -61,7 +63,7 @@ class SugarTestDatabaseMock extends DBManager
             }
             return true;
         }
-        
+
     }
 
     public function getOne($sql, $dieOnError = false, $msg = '')
@@ -119,4 +121,5 @@ class SugarTestDatabaseMock extends DBManager
     public function installConfig() {}
     public function getFromDummyTable() {}
     public function getGuidSQL() {}
+    public function prepareStatement($sql) { return null; }
 }
