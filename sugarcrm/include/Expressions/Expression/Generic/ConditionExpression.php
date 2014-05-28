@@ -47,9 +47,10 @@ class ConditionExpression extends GenericExpression
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-			var params = this.getParameters();
-			var cond = params[0].evaluate();
-			if (cond == SUGAR.expressions.Expression.TRUE) {
+			var SEE = SUGAR.expressions.Expression,
+				params = this.getParameters(),
+				cond = params[0].evaluate();
+			if (SEE.isTruthy(cond)) {
 				return params[1].evaluate();
 			} else {
 				return params[2].evaluate();

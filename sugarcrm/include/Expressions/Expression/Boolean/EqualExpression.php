@@ -32,10 +32,10 @@ class EqualExpression extends BooleanExpression {
 	function evaluate() {
 		$params = $this->getParameters();
 
-        $a = $params[0]->evaluate();
+		$a = $params[0]->evaluate();
 		$b = $params[1]->evaluate();
 
-        if ( $a == $b )	return AbstractExpression::$TRUE;
+		if ( $a == $b )	return AbstractExpression::$TRUE;
 		return AbstractExpression::$FALSE;
 	}
 
@@ -44,11 +44,18 @@ class EqualExpression extends BooleanExpression {
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-			var params = this.getParameters();
-			var a = params[0].evaluate();
-			var b = params[1].evaluate();
-			if ( a == b )	return SUGAR.expressions.Expression.TRUE;
-			return SUGAR.expressions.Expression.FALSE;
+			var SEE = SUGAR.expressions.Expression,
+				params = this.getParameters(),
+				a = params[0].evaluate(),
+				b = params[1].evaluate(),
+				hasBool = params[0] instanceof SUGAR.expressions.TrueExpression
+							|| params[1] instanceof SUGAR.expressions.TrueExpression;
+
+
+			if ( a == b  || (hasBool && SEE.isTruthy(a) && SEE.isTruthy(b))) {
+			   return SEE.TRUE;
+			}
+			return SEE.FALSE;
 EOQ;
 	}
 
