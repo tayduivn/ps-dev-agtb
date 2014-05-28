@@ -49,9 +49,10 @@
                             {$MOD.LBL_EMAIL_PROVIDER|strip_semicolon}:
                         </td>
                         <td width="35%">
-                            {$mail_smtpserver}
+                            {$mail_smtpdisplay}
                         </td>
                     </tr>
+                    {if !empty($mail_smtpauth_req)}
                     <tr>
                         <td align="top"  scope="row">
                             {$MOD.LBL_MAIL_SMTPUSER|strip_semicolon}:
@@ -60,6 +61,7 @@
                             {$mail_smtpuser}
                         </td>
                     </tr>
+                    {/if}
                     {/if}
                 </table>
             </div>
