@@ -28,20 +28,6 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'route' => '#'.$moduleName.'/layout/dnb-bal',
     ),
     array(
-        'label' => 'LBL_BAL',
-        'acl_action' => 'create',
-        'acl_module' => $moduleName,
-        'icon' => 'icon-plus',
-        'route' => '#'.$moduleName.'/layout/dnb-bal',
-    ),
-    array(
-        'label' => 'LBL_BAL',
-        'acl_action' => 'create',
-        'acl_module' => $moduleName,
-        'icon' => 'icon-plus',
-        'route' => '#'.$moduleName.'/layout/dnb-bal',
-    ),
-    array(
         'route'=>'#'.$moduleName,
         'label' =>'LNK_ACCOUNT_LIST',
         'acl_action'=>'list',
