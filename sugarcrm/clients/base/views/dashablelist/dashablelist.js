@@ -138,11 +138,14 @@
      *
      * A dashlet is considered intelligent when the data relates to the current
      * record.
+     *
+     * @return {String} Whether or not the dashlet can be intelligent.
      */
     checkIntelligence: function() {
         var isIntelligent = app.controller.context.get('layout') === 'record' &&
             !_.contains(this.moduleBlacklist, app.controller.context.get('module'));
         this.intelligent = isIntelligent ? '1' : '0';
+        return this.intelligent;
     },
 
     /**
@@ -359,7 +362,7 @@
                 panel.fields = panel.fields.filter(function(el) {return el.name !== 'intelligent'; });
             }, this);
             this.settings.set('intelligent', '0');
-            this.model.set('intelligent', '0');
+            this.dashModel.set('intelligent', '0');
         } else {
             if (_.isUndefined(this.settings.get('intelligent'))) {
                 this.settings.set('intelligent', this._defaultSettings.intelligent);
@@ -432,7 +435,7 @@
     updateLinkedFields: function(moduleName) {
         var linked = this.getLinkedFields(moduleName),
             displayColumn = this.getField('linked_fields'),
-            intelligent = this.model.get('intelligent');
+            intelligent = this.dashModel.get('intelligent');
         if (displayColumn) {
             displayColumn.items = linked;
             this.setLinkedFieldVisibility('1', intelligent);
