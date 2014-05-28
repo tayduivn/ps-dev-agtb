@@ -13,4 +13,5 @@
 ********************************************************************************/
 }}
 
-<input class="select2field-{{name}} select2-offscreen select2-choices-tags-close">
+<input type="hidden" class="select2 select2field-{{name}} select2-offscreen select2-choices-tags-close"
+name="{{name}}"{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}>

@@ -145,5 +145,9 @@ $viewdefs['base']['filter']['operators'] = array(
     'phone' => array(
         '$starts' => 'LBL_OPERATOR_STARTS_WITH',
         '$equals' => 'LBL_OPERATOR_IS',
-    )
+    ),
+    'tags' => array(
+        '$in' => 'LBL_OPERATOR_CONTAINS',
+        '$not_in' => 'LBL_OPERATOR_NOT_CONTAINS',
+    ),
 );

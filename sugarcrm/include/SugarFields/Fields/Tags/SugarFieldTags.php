@@ -25,4 +25,42 @@ class SugarFieldTags extends SugarFieldRelatecollection
         $properties['collection_fields'] = array('id', 'name');
         return parent::parseProperties($properties);
     }
+
+    /**
+     * Fix a value(s) for a Filter statement
+     * @param $value - the value that needs fixing
+     * @param $fieldName - the field we are fixing
+     * @param SugarBean $bean - the Bean
+     * @param SugarQuery $q - the Query
+     * @param SugarQuery_Builder_Where $where - the Where statement
+     * @param $op - the filter operand
+     * @return bool - true if everything can pass as normal, false if new filters needed to be added to override the existing $op
+     */
+    public function fixForFilter(&$value, $fieldName, SugarBean $bean, SugarQuery $q, SugarQuery_Builder_Where $where, $op)
+    {
+        if (is_array($value)) {
+            foreach($value as $i => $tag) {
+                if (empty($tag['removed'])) {
+                    $value[$i] = $tag['name'];
+                } else {
+                    unset($value[$i]);
+                }
+            }
+        }
+        if (empty($value)) {
+            return false;
+        }
+        $tableAlias = $q->getJoinTableAlias($fieldName);
+        $field = "$tableAlias.name";
+
+        switch ($op) {
+            case '$in':
+                $where->in($field, $value);
+                break;
+            case '$not_in':
+                $where->notIn($field, $value);
+                break;
+        }
+        return false;
+    }
 }
