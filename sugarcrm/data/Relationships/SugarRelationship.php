@@ -603,6 +603,11 @@ abstract class SugarRelationship
         foreach (self::$beansToResave as $module => $beans) {
             foreach ($beans as $bean) {
                 if (empty($bean->deleted) && empty($bean->in_save)) {
+                    // Make sure we're using the newest version of the bean, not the one queued
+                    $latestBean = BeanFactory::getBean($module, $bean->id);
+                    if ($latestBean !== false) {
+                        $bean = $latestBean;
+                    }
                     $bean->save();
                 } else {
                     // Bug 55942 save the in-save id which will be used to send workflow alert later
