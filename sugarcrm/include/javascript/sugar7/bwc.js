@@ -197,8 +197,7 @@
             }
             //SP-1600: Account information is not populated during Quote creation via Opportunity Quote Subpanel
             // any time we link to quotes and we have an account_id, we should always populate it.
-            if (link == 'quotes') {
-
+            if (link == 'quotes' || link == 'contracts') {
                 if (parentModel.has('account_id')) {
                     //Note that the bwc view will automagically give us billing/shipping and only
                     //expects us to set account_id and account_name here

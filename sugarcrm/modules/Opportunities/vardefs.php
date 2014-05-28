@@ -581,6 +581,10 @@ $dictionary['Opportunity'] = array(
             'relationship' => 'contracts_opportunities',
             //'link_type' => 'one', bug# 31652 relationship is one to many from opportunities to contracts
             'source' => 'non-db',
+            'populate_list' => array(
+                'account_id' => 'account_id',
+                'account_name' => 'account_name',
+            )
         ),
         'revenuelineitems' => array(
             'name' => 'revenuelineitems',
