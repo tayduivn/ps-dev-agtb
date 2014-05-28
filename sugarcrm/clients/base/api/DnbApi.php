@@ -44,6 +44,14 @@ class DnbApi extends SugarApi
                 'shortHelp' => 'Invoke BAL For Accounts',
                 'longHelp' => 'include/api/help/dnb_post_help.html',
             ),
+            'dnbContactsBAL' => array(
+                'reqType' => 'POST',
+                'path' => array('connector', 'dnb', 'Contacts', 'bal'),
+                'pathVars' => array('connector', 'dnb', 'Contacts', 'bal'),
+                'method' => 'dnbContactsBAL',
+                'shortHelp' => 'Invoke BAL For Contacts',
+                'longHelp' => 'include/api/help/dnb_post_help.html',
+            ),
         );
     }
 
@@ -135,7 +143,7 @@ class DnbApi extends SugarApi
         $queryData = $args['qdata']; //data posted 
         $result = '';
         if ($queryType === 'cmRequest') {
-            $result = $extDnbApi->dnbCMRrequest($queryData);
+            $result = $extDnbApi->dnbCMRequest($queryData);
         } else if ($queryType === 'contacts') {
             $result = $extDnbApi->dnbContactDetails($queryData);
         } else if ($queryType === 'indMap') {
@@ -175,6 +183,28 @@ class DnbApi extends SugarApi
         }
         $queryData = $args['qdata']; //data posted
         $result = $extDnbApi->dnbBALAccounts($queryData);
+        if (is_array($result) && isset($result['error'])) {
+            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $result['error']);
+        }
+        return $result;
+    }
+
+    /**
+     * Invokes BAL for contacts, leads and prospects
+     * @param $api
+     * @param $args
+     * @return mixed
+     * @throws SugarApiExceptionRequestMethodFailure
+     * @throws SugarApiExceptionMissingParameter
+     */
+    public function dnbContactsBAL($api,$args) {
+        //invoke dnb api based on query type and query data
+        $extDnbApi = $this->getEAPM();
+        if (is_array($extDnbApi) && isset($extDnbApi['error'])) {
+            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $extDnbApi['error']);
+        }
+        $queryData = $args['qdata']; //data posted
+        $result = $extDnbApi->dnbBALContacts($queryData);
         if (is_array($result) && isset($result['error'])) {
             throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $result['error']);
         }

@@ -131,6 +131,15 @@ $dictionary['Lead'] = array(
             'vname' => 'LBL_CONTACTS',
             'reportable' => false
         ),
+        //d&b principal id, a unique id assigned to a contact by D&B API
+        //this contact is used for dupe check
+        'dnb_principal_id' => array (
+           'name' => 'dnb_principal_id',
+           'vname' => 'LBL_DNB_PRINCIPAL_ID',
+           'type' => 'varchar',
+           'len' => 30,
+           'comment' => 'Unique Id For D&B Contact',
+        ),
         'account_name' => array(
             'name' => 'account_name',
             'vname' => 'LBL_ACCOUNT_NAME',
@@ -663,6 +672,7 @@ $dictionary['Lead'] = array(
                                         array('account_name' => array('$starts' => '$account_name')),
                                         array('first_name' => array('$starts' => '$first_name')),
                                         array('last_name' => array('$starts' => '$last_name')),
+                                        array('dnb_principal_id' => array('$equals' => '$dnb_principal_id')),
                                     )
                                 ),
                                 array('phone_work' => array('$equals' => '$phone_work')),
@@ -681,6 +691,7 @@ $dictionary['Lead'] = array(
     ),
     //This enables optimistic locking for Saves From EditView
     'optimistic_locking' => true,
+
 );
 
 VardefManager::createVardef(

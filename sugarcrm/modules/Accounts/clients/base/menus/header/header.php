@@ -22,10 +22,10 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
     ),
     array(
         'label' => 'LBL_BAL',
-        'acl_action'=>'create',
-        'acl_module'=>$moduleName,
+        'acl_action' => 'create',
+        'acl_module' => $moduleName,
         'icon' => 'icon-plus',
-        'route'=>'#'.$moduleName.'/layout/dnb-bal',
+        'route' => '#'.$moduleName.'/layout/dnb-bal',
     ),
     array(
         'route'=>'#'.$moduleName,

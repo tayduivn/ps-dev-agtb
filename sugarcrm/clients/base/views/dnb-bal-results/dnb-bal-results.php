@@ -12,6 +12,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['base']['view']['dnb-bal-results'] = array(
+    'import_enabled_modules' => array('Contacts', 'Leads', 'Prospects'),
     'dashlets' => array(
         array(
             'label' => 'LBL_DNB_BAL_RSLT',
@@ -23,7 +24,7 @@ $viewdefs['base']['view']['dnb-bal-results'] = array(
                     'DnbNoDisplay',
                 ),
                 'view' => 'DnbNoDisplay'
-            ),
+            )
         ),
     )
 );

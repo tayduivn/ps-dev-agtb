@@ -27,40 +27,14 @@
                     <div id="prof_tab" class="accordion-body collapse in">
                         <div class="accordion-inner">
                             <ul class="unstyled listed">
-                                <li>
-                                    <div class="dnb-company-label"> {{str "LBL_DNB_CONTACT_NAME"}} </div>
-                                    <div class="txt importData"> {{full_name}} </div>
-                                </li>
-                                {{#if job_title}}
-                                    <li>
-                                        <div class="dnb-company-label"> {{str "LBL_DNB_CONTACT_JOBTITLE"}} </div>
-                                        <div class="txt importData"> {{job_title}} </div>
-                                    </li>
-                                {{/if}}
-                                {{#if email}}
-                                    <li>
-                                        <div class="dnb-company-label">{{str "LBL_DNB_CONTACT_EMAIL"}}</div>
-                                        <div class="txt importData"> {{email}} </div>
-                                    </li>
-                                {{/if}}
-                                {{#if phone_work}}
-                                    <li>
-                                        <div class="dnb-company-label">{{str "LBL_DNB_CONTACT_PHONE"}}</div>
-                                        <div class="txt importData"> {{phone_work}} </div>
-                                    </li>
-                                {{/if}}
-                                {{#if department}}
-                                    <li>
-                                        <div class="dnb-company-label">{{str "LBL_DNB_CONTACT_RESP"}}</div>
-                                        <div class="txt importData"> {{department}} </div>
-                                    </li>
-                                {{/if}}
-                                {{#if emp_bio}}
-                                    <li>
-                                        <div class="dnb-company-label">{{str "LBL_DNB_CONTACT_BIO"}}</div>
-                                        <div class="txt importData"> {{emp_bio}} </div>
-                                    </li>
-                                {{/if}}
+                                {{#each this.contact_profile}}
+                                    {{#if this.dataLabel}}
+                                        <li>
+                                            <div class="dnb-company-label"> {{str this.dataLabel}} </div>
+                                            <div class="txt importData"> {{this.dataElement}} </div>
+                                        </li>
+                                    {{/if}}
+                                {{/each}}
                             </ul>
                         </div>
                     </div>
@@ -143,6 +117,6 @@
         </aside>
     {{/if}}
     <div class="dnb-show-more">
-        <a class="backToList"> {{str "LBL_DNB_CONTACT_LIST"}} <i class="icon-chevron-down"></i> </a>
+        <a class="backToContactsList"> {{str "LBL_DNB_CONTACT_LIST"}} <i class="icon-chevron-down"></i> </a>
     </div>
 </div>
