@@ -729,6 +729,7 @@ $mod_strings = array(
 'LBL_EC_EXPORTBTN'=>'Export',
 'LBL_MODULE_DEPLOYED' => 'Module has been deployed.',
 'LBL_UNDEFINED' => 'undefined',
+'LBL_EC_CUSTOMLABEL'=>'customized label(s)',
 
 //AJAX STATUS
 'LBL_AJAX_FAILED_DATA' => 'Failed to retrieve data',
