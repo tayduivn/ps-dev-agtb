@@ -4848,6 +4848,9 @@ $app_strings = array (
     'LBL_HELP_MORE_INFO' => 'For more information, refer to the {{{more_info_url}}} {{plural_module_name}} documentation.{{{more_info_url_close}}}',
     'LBL_HELP_NO_HELP' => 'No Data Available',
 
+    // Dashlet Preview Help String
+    'LBL_HELP_PREVIEW' => 'The help dashlet provides specific information pertaining to the module you are currently viewing along with a link to the corresponding documentation (e.g. Leads documentation) in the Application guide for more information.',
+
     // list view (AKA Records)
     'LBL_HELP_RECORDS_TITLE' => 'List View Help',
     'LBL_HELP_RECORDS' => "A module's list view displays all records meeting the current search criteria and to which users have access. You can view the basic details of each record within the field columns of the list view or click the record's name to open the record view.",
