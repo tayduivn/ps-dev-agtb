@@ -375,6 +375,8 @@ class ModuleBuilderController extends SugarController
         // Clear the language cache to make sure the view picks up the latest
         $cache_key = LanguageManager::getLanguageCacheKey($_REQUEST['view_module'], $_REQUEST['selected_lang']);
         sugar_cache_clear($cache_key);
+        MetaDataManager::refreshSectionCache(MetaDataManager::MM_LABELS);
+        MetaDataManager::refreshSectionCache(MetaDataManager::MM_ORDEREDLABELS);
 
         if (isset ($_REQUEST ['view_package'])) { //MODULE BUILDER
             $this->view = 'modulelabels';
@@ -402,6 +404,8 @@ class ModuleBuilderController extends SugarController
                 sugar_cache_clear($cache_key);
 
             }
+            MetaDataManager::refreshSectionCache(MetaDataManager::MM_LABELS);
+            MetaDataManager::refreshSectionCache(MetaDataManager::MM_ORDEREDLABELS);
         }
         $this->view = 'modulefields';
     }
@@ -672,6 +676,8 @@ class ModuleBuilderController extends SugarController
     {
         $parser = new ParserDropDown ();
         $parser->saveDropDown($_REQUEST);
+        MetaDataManager::refreshSectionCache(MetaDataManager::MM_LABELS);
+        MetaDataManager::refreshSectionCache(MetaDataManager::MM_ORDEREDLABELS);
         $this->view = 'dropdowns';
     }
 
