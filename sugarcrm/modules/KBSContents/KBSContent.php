@@ -26,6 +26,11 @@ class KBSContent extends SugarBean {
     {
         $admin = BeanFactory::getBean('Administration');
         $config = $admin->getConfigForModule('KBSDocuments');
+
+        if (empty($config['languages']['primary'])) {
+            $this->setupPrimaryLanguage();
+            $config = $admin->getConfigForModule('KBSDocuments');
+        }
         $langs = $config['languages'];
         $default = null;
         foreach ($langs as $lang) {
@@ -40,6 +45,34 @@ class KBSContent extends SugarBean {
             }
         }
         return $default;
+    }
+
+    /**
+     * Setup Default Languages for KBSDocuments.
+     */
+    public function setupPrimaryLanguage()
+    {
+        require_once 'clients/base/api/ConfigModuleApi.php';
+        require_once 'include/api/RestService.php';
+
+        $apiUser = new User();
+        $apiUser->is_admin = '1';
+        $api = new RestService();
+        $api->user = $apiUser;
+        $api->platform = 'base';
+        $client = new ConfigModuleApi();
+        $client->configSave(
+            $api,
+            array(
+                'languages' => array(
+                    array(
+                        'en' => 'English',
+                        'primary' => true,
+                    ),
+                ),
+                'module' => 'KBSDocuments',
+            )
+        );
     }
 
     /**

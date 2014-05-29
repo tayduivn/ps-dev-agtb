@@ -332,29 +332,9 @@ echo "<br>";
 
     unset($api, $client, $forecast_config);
     //END SUGARCRM flav=pro ONLY
-    
-    // setup Default Languages for KBSDocuments
-    require_once('clients/base/api/ConfigModuleApi.php');
 
-    $apiUser = new User();
-    $apiUser->is_admin = '1';
-    $api = new RestService();
-    $api->user = $apiUser;
-    $api->platform = 'base';
-    $client = new ConfigModuleApi();
-    $client->configSave(
-        $api,
-        array(
-            'languages' => array(
-                array(
-                    'en' => 'English',
-                    'primary' => true,
-                    )
-            ),
-            'module' => 'KBSDocuments'
-        )
-    );
-    unset($api, $client);
+    $KBSContent = new KBSContent();
+    $KBSContent->setupPrimaryLanguage();
 
     installerHook('pre_createUsers');
     if ($new_tables) {
