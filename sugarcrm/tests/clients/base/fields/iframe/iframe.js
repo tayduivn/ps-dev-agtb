@@ -1,45 +1,87 @@
-describe("iframe", function() {
+describe('Base.Field.Iframe', function() {
     var app, field;
 
     beforeEach(function() {
         var def = {
-            'default': "http://www.sugarcrm.com/{ONE}"
+            'default': 'http://www.sugarcrm.com/{ONE}'
         };
         app = SugarTest.app;
-        field = SugarTest.createField("base","iframe", "iframe", "detail", def);
+        field = SugarTest.createField('base', 'iframe', 'iframe', 'detail', def);
         field.model = new Backbone.Model({
-            "ONE":"1",
-            "TWO":"2"
+            'ONE': '1',
+            'TWO': '2',
+            'website': 'http://www.google.com'
         });
     });
 
     afterEach(function() {
-        app.cache.cutAll();
-        app.view.reset();
-        Handlebars.templates = {};
-        field = null;
+        field.dispose();
     });
 
-    describe("iframe", function() {
-        it("should add 'http' scheme to URL if http or https scheme is missing", function() {
-            expect(field.format("http://www.google.com")).toEqual("http://www.google.com");
-            expect(field.format("https://www.google.com")).toEqual("https://www.google.com");
-            expect(field.format("www.google.com")).toEqual("http://www.google.com");
+    describe('unformat', function() {
+        using('different URLs', [
+            {
+                url: 'http://',
+                expectedUrl: ''
+            },
+            {
+                url: 'http://www.google.com',
+                expectedUrl: 'http://www.google.com'
+            }
+        ], function(value) {
+            it('should unformat properly', function() {
+                expect(field.unformat(value.url)).toEqual(value.expectedUrl);
+            });
         });
-        it("should unformat 'http://' to an empty string", function() {
-            expect(field.unformat("http://")).toEqual("");
-            expect(field.unformat("http://www.google.com")).toEqual("http://www.google.com");
-        });
-        it("should insert field values into generated URLs", function(){
-            field.def.gen = "1";
-            expect(field.format("http://{ONE}/{TWO}")).toEqual("http://1/2");
-        });
-        it("should not modify non-generated URLs", function(){
-            expect(field.format("http://{ONE}/{TWO}")).toEqual("http://{ONE}/{TWO}");
-        });
-        it("should handle default values in format", function(){
-            field.def.gen = "1";
-            expect(field.format("")).toEqual("http://www.sugarcrm.com/1");
+    });
+
+    describe('format', function() {
+        using('different URLs', [
+            {
+                url: 'http://www.google.com',
+                expectedUrl: 'http://www.google.com',
+                generated: null
+            },
+            {
+                url: 'https://www.google.com',
+                expectedUrl: 'https://www.google.com',
+                generated: null
+            },
+            {
+                url: 'www.google.com',
+                expectedUrl: 'http://www.google.com',
+                generated: null
+            },
+            {
+                url: 'http://{ONE}/{TWO}',
+                expectedUrl: 'http://{ONE}/{TWO}',
+                generated: null
+            },
+            {
+                url: 'http://{ONE}/{TWO}',
+                expectedUrl: 'http://1/2',
+                generated: '1'
+            },
+            {
+                url: 'https://{ONE}/{TWO}',
+                expectedUrl: 'https://1/2',
+                generated: '1'
+            },
+            {
+                url: '{website}',
+                expectedUrl: 'http://www.google.com',
+                generated: '1'
+            },
+            {
+                url: '',
+                expectedUrl: 'http://www.sugarcrm.com/1',
+                generated: '1'
+            },
+        ], function(value) {
+            it('should format generated and non-generated URLs properly', function() {
+                field.def.gen = value.generated;
+                expect(field.format(value.url)).toEqual(value.expectedUrl);
+            });
         });
     });
 });
