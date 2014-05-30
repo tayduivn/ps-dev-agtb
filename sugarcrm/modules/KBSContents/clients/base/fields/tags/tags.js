@@ -20,13 +20,19 @@
     searchByTag: function(e) {
         var tag = $(e.currentTarget).data('tag');
         var module = this.context.get('module');
-
-        app.drawer.open({
+        var def = {
             layout: 'records-search-tags',
             context: {
                 module: module,
-                tag: tag
+                tag: tag,
+                forceNew: true
             }
-        });
+        };
+
+        if (app.drawer.count() && app.drawer.isActive(this.$el)) {
+            app.drawer.load(def);
+        } else {
+            app.drawer.open(def);
+        }
     }
 })
