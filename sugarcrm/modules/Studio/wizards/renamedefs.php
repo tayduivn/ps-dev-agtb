@@ -1043,6 +1043,8 @@ $renamedefs = array(
         array('name' => 'LBL_FORECAST_WORKSHEET', 'type' => 'singular', 'source' => 'Forecasts'),
         array('name' => 'LBL_TOUR_FEATURES_670', 'type' => 'plural', 'source' => 'Forecasts'),
         array('name' => 'LBL_DASHLET_FORECASTS_DETAILS', 'type' => 'plural', 'source' => 'Forecasts'),
+        // Leads
+        array('name' => 'LBL_HELP_PREVIEW', 'type' => 'plural', 'source' => 'Leads'),
 
         // Meetings
         array('name' => 'LBL_MEETINGS', 'type' => 'plural', 'source' => 'Meetings'),
