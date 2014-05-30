@@ -200,8 +200,30 @@
             });
         }
         if (this.model) {
-            this.model.set(this.name, _.map(this.value, _.clone));
+            this.model.set(this.name, this.unformat(this.value));
         }
+    },
+
+    /**
+     * Formats the value to be used in handlebars template and displayed on
+     * screen.
+     *
+     * @param {Array} value The value to format.
+     * @return {Array} Formatted value.
+     */
+    format: function(value) {
+        return _.clone(value);
+    },
+
+    /**
+     * Unformats the value for storing in a model. This should do the
+     * inverse of {@link #format}.
+     *
+     * @param {Array} value The value to unformat.
+     * @return {Array} Unformatted value.
+     */
+    unformat: function(value) {
+        return _.clone(value);
     },
 
     /**
