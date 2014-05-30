@@ -31,14 +31,7 @@ $viewdefs['Tasks']['base']['filter']['default'] = array(
     'default_filter' => 'assigned_to_me',
     'fields' => array(
         'name' => array(),
-        'contact_name' => array(
-            'dbFields' => array(
-                'contacts.first_name',
-                'contacts.last_name',
-            ),
-            'type' => 'text',
-            'vname' => 'LBL_CONTACT_NAME',
-        ),
+        'contact_name' => array(),
         'status' => array(),
         'date_entered' => array(),
         'date_modified' => array(),
