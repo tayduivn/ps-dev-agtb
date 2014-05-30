@@ -1,31 +1,17 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-/*********************************************************************************
- * $Id: AdditionalDetailsRetrieve.php 51719 2009-10-22 17:18:00Z mitani $
- * Description:  Target for ajax calls to retrieve AdditionalDetails
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
 require_once('include/MVC/View/SugarView.php');
 
 class HomeViewAdditionaldetailsretrieve extends SugarView
@@ -68,24 +54,64 @@ class HomeViewAdditionaldetailsretrieve extends SugarView
             $bean->ACLFilterFields();
             //END SUGARCRM flav=pro ONLY
             $arr = array_change_key_case($bean->toArray(), CASE_UPPER);
-
             $results = $adFunction($arr);
-            $retArray['body'] = str_replace(array("\rn", "\r", "\n"), array('','','<br />'), $results['string']);
-            if(!$bean->ACLAccess('EditView')) $results['editLink'] = '';
-            if(!$bean->ACLAccess('DetailView')) $results['viewLink'] = '';
 
+            $retArray['body'] = str_replace(array("\rn", "\r", "\n"), array('','','<br />'), $results['string']);
             $retArray['caption'] = "<div style='float:left'>{$app_strings['LBL_ADDITIONAL_DETAILS']}</div><div style='float: right'>";
-            if(!empty($_REQUEST['show_buttons'])){
-		    if(!empty($results['editLink']))
-		    	$retArray['caption'] .= "<a title='".$GLOBALS['app_strings']['LBL_EDIT_BUTTON']."' href='".$results['editLink']."'><img border=0 src='".SugarThemeRegistry::current()->getImageURL('edit_inline.png',false)."'></a>";
-		    if(!empty($results['viewLink']))
-		    	$retArray['caption'] .= "<a title='".$GLOBALS['app_strings']['LBL_VIEW_BUTTON']."' href='".$results['viewLink']."'><img border=0 src='".SugarThemeRegistry::current()->getImageURL('view_inline.png',false)."' style='margin-left:2px;'></a>";
-		    	$retArray['caption'] .= "<a title='".$GLOBALS['app_strings']['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE']."' href='javascript: SUGAR.util.closeStaticAdditionalDetails();'><img border=0 src='".SugarThemeRegistry::current()->getImageURL('close.png',false)."' style='margin-left:2px;'></a>";
+
+            if (!empty($_REQUEST['show_buttons'])) {
+                if ($bean->ACLAccess('EditView')) {
+                    $editImg = SugarThemeRegistry::current()->getImageURL('edit_inline.png', false);
+                    $results['editLink'] = $this->buildButtonLink($results['editLink']);
+                    $retArray['caption'] .= <<<EOC
+<a style="text-decoration:none;" title="{$GLOBALS['app_strings']['LBL_EDIT_BUTTON']}" href="{$results['editLink']}">
+    <img border=0 src="$editImg">
+</a>
+EOC;
+                }
+                if ($bean->ACLAccess('DetailView')) {
+                    $detailImg = SugarThemeRegistry::current()->getImageURL('view_inline.png', false);
+                    $results['viewLink'] = $this->buildButtonLink($results['viewLink']);
+                    $retArray['caption'] .= <<<EOC
+<a style="text-decoration:none;" title="{$GLOBALS['app_strings']['LBL_VIEW_BUTTON']}" href="{$results['viewLink']}">
+    <img border=0 src="$detailImg" style="margin-left:2px;">
+</a>
+EOC;
+                }
+                $closeImg = SugarThemeRegistry::current()->getImageURL('close.png', false);
+                $retArray['caption'] .= <<<EOC
+<a title="{$GLOBALS['app_strings']['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE']}" href="javascript:SUGAR.util.closeStaticAdditionalDetails();">
+    <img border=0 src="$closeImg" style="margin-left:2px;">
+</a>
+EOC;
             }
             $retArray['caption'] .= "";
             $retArray['width'] = (empty($results['width']) ? '300' : $results['width']);
             echo 'result = ' . $json->encode($retArray);
         }
+    }
+
+    /**
+     * Builds an appropriate Sidecar or BWC href attribute for the additional
+     * details buttons, using the link supplied from the additional details
+     * module metadata.
+     *
+     * @private
+     * @param string $link (optional) The link from additional details module
+     *   metadata. The function returns an empty string if none is supplied.
+     * @return string The href attribute used for the button.
+     */
+    private function buildButtonLink($link = '')
+    {
+        if (preg_match('/module=([^&]+)/', $link, $matches) && !isModuleBWC($matches[1])) {
+            parse_str(parse_url($link, PHP_URL_QUERY), $params);
+            $script = navigateToSidecar(
+                buildSidecarRoute($params['module'], $params['record'], translateToSidecarAction($params['action']))
+            );
+            $link = "javascript:$script;";
+        }
+
+        return $link;
     }
 
     protected function getAdditionalDetailsMetadataFile($moduleName)

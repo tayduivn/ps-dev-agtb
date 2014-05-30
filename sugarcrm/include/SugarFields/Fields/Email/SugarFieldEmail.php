@@ -39,7 +39,7 @@ class SugarFieldEmail extends SugarFieldBase
      * individual ->save() function instead.
      * 
      * @param SugarBean $bean the bean performing the save
-     * @param array $params an array of paramester relevant to the save, which will be an array passed up to the API
+     * @param array $params an array of parameters relevant to the save, which will be an array passed up to the API
      * @param string $field The name of the field to save (the vardef name, not the form element name)
      * @param array $properties Any properties for this field
      */
@@ -82,7 +82,10 @@ class SugarFieldEmail extends SugarFieldBase
             }
 
             $email = array_merge($mergeAddr, $email);
-
+            if (!SugarEmailAddress::isValidEmail($email['email_address'])) {
+                require_once 'include/api/SugarApiException.php';
+                throw new SugarApiExceptionInvalidParameter("{$email['email_address']} is an invalid email address");
+            }
             $bean->emailAddress->addAddress($email['email_address'],
                                             $email['primary_address'],
                                             false,

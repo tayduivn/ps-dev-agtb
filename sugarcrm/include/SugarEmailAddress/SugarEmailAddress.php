@@ -10,9 +10,6 @@ class SugarEmailAddress extends SugarBean
     var $module_dir = 'EmailAddresses';
     var $object_name = 'EmailAddress';
 
-    //bug 40068, According to rules in page 6 of http://www.apps.ietf.org/rfc/rfc3696.html#sec-3,
-    //allowed special characters ! # $ % & ' * + - / = ?  ^ _ ` . { | } ~ in local part
-    var $regex = "/^(?:['\.\-\+&#!\$\*=\?\^_`\{\}~\/\w]+)@(?:(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|\w+(?:[\.-]*\w+)*(?:\.[\w-]{2,})+)\$/";
     var $disable_custom_fields = true;
     var $db;
     var $smarty;
@@ -51,12 +48,20 @@ class SugarEmailAddress extends SugarBean
         self::$count++;
     }
 
+    /**
+     * Check if an email address is valid.
+     *
+     * The best regex we have for validating email addresses is in PHPMailer and we really shouldn't accept email
+     * addresses that can't pass the PHPMailer test since we wouldn't be able to send to them.
+     *
+     * @see PHPMailerProxy::ValidateAddress()
+     * @param string $emailAddress
+     * @return bool
+     */
     public static function isValidEmail($emailAddress)
     {
-        //bug 40068, According to rules in page 6 of http://www.apps.ietf.org/rfc/rfc3696.html#sec-3,
-        //allowed special characters ! # $ % & ' * + - / = ?  ^ _ ` . { | } ~ in local part
-        $regexmail = "/^(?:['\.\-\+&#!\$\*=\?\^_`\{\}~\/\w]+)@(?:(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|\w+(?:[\.-]*\w+)*(?:\.[\w-]{2,})+)\$/";
-        return preg_match($regexmail, $emailAddress);
+        require_once 'modules/Mailer/PHPMailerProxy.php';
+        return PHPMailerProxy::ValidateAddress($emailAddress);
     }
 
     /**

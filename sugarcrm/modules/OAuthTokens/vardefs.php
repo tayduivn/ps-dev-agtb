@@ -100,12 +100,6 @@ $dictionary['OAuthToken'] = array(
             'comment' => 'Which platform is this token attached to',
             'default' => 'base',
       ),
-//      'authdata' =>
-//      array (
-//            'name' => 'verify',
-//            'type' => 'text',
-//            'comment' => 'Token auth data',
-//      ),
 	  'deleted' =>
 	  array (
 	    'name' => 'deleted',
@@ -175,7 +169,7 @@ $dictionary['OAuthToken'] = array(
           'bean_name'=>'Contact',
           'source'=>'non-db',
       ),
-          
+
 	 'assigned_user_id' =>
 		array (
 			'name' => 'assigned_user_id',
@@ -232,6 +226,7 @@ $dictionary['OAuthToken'] = array(
   ),
 
   ),
+    'acls' => array('SugarACLOAuthTokens' => true),
     'indices' => array (
        'id'=>array('name' =>'oauthtokenpk', 'type' =>'primary', 'fields'=>array('id', 'deleted')),
        'state_ts'=>array('name' =>"oauth_state_ts", 'type' =>'index', 'fields'=>array('tstate','token_ts')),

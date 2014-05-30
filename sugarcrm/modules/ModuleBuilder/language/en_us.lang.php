@@ -119,7 +119,7 @@ $mod_strings = array(
     //BEGIN SUGARCRM flav=pro ONLY
     . '<br/><br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_calculated.png" /> Indicates a Calculated field whose value will be automatically determined based on a formula.'
     //END SUGARCRM flav=pro ONLY
-    ,
+    . '<br/><br/>This configuration applies to popup search layout in legacy modules only.',
         'savebtn'	=> 'Clicking <b>Save & Deploy</b> will save all changes and make them active',
         'Hidden' 	=> '<b>Hidden</b> fields do not appear in the Search.',
         'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.<br><br><b>Restore</b> within <b>View History</b> restores the field placement within previously saved layouts. To change field labels, click the Edit icon next to each field.',
@@ -208,8 +208,8 @@ $mod_strings = array(
         'DashletListViewBtn' =>'The <b>Sugar Dashlet ListView</b> displays records based on the Sugar Dashlet search filters.',
         'DashletSearchViewBtn' =>'The <b>Sugar Dashlet Search</b> filters records for the Sugar Dashlet listview.',
         'popupHelp' =>'The <b>Popup</b> layouts that can be customized appear here.<br>',
-        'PopupListViewBtn' =>'The <b>Popup ListView</b> displays records based on the Popup search views.',
-        'PopupSearchViewBtn' =>'The <b>Popup Search</b> views records for the Popup listview.',
+        'PopupListViewBtn' => '<b>Popup ListView</b> layout is used to view a list of records when selecting one or more records to relate to the current record.',
+        'PopupSearchViewBtn' => '<b>Popup Search</b> layout allows users to search for records to relate to a current record and appears above the popup listview in the same window. Legacy modules use this layout for popup searching while Sidecar modules use the Search layout’s configuration.',
         'BasicSearchBtn' => 'Customize the <b>Basic Search</b> form that appears in the Basic Search tab in the Search area for the module.',
         'AdvancedSearchBtn' => 'Customize the <b>Advanced Search</b> form that appears in the Advanced Search tab in the Search area for the module.',
         'portalHelp' => 'Manage and customize the <b>Sugar Portal</b>.',

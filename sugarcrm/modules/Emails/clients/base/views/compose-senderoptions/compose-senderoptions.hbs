@@ -27,13 +27,8 @@
  ********************************************************************************/
 }}
 <div class="compose-sender-options">
-{{#if showCC }}
-<a href="javascript:void(0)" data-ccfield="cc_addresses" class="cc-option">{{str "LBL_ADD_CC" this.module}}</a>
-{{/if}}
-{{#if showSeperator}}
-<span class="cc-seperator"> | </span>
-{{/if}}
-{{#if showBCC}}
-<a href="javascript:void(0)" data-ccfield="bcc_addresses" class="bcc-option">{{str "LBL_ADD_BCC" this.module}}</a>
-{{/if}}
+	<div class="btn-group">
+		<a type="button" class="btn" data-toggle-field="cc_addresses" tabindex="-1"><span class="text">{{str "LBL_CC_BUTTON" this.module}}</span></a>
+		<a type="button" class="btn" data-toggle-field="bcc_addresses" tabindex="-1"><span class="text">{{str "LBL_BCC_BUTTON" this.module}}</span></a>
+	</div>
 </div>
