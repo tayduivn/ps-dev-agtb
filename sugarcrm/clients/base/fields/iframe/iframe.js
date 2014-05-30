@@ -40,9 +40,6 @@
             // Name conflict with iframe's default value def and the list view's default column flag
             value = _.isString(this.def['default']) ? this.def['default'] : undefined;
         }
-        if (_.isString(value) && !value.match(/^(http|https):\/\//)) {
-            value = "http://" + value.trim();
-        }
         if(this.def.gen == "1"){
             var regex = /{(.+?)}/;
             var result = null;
@@ -52,6 +49,9 @@
                     value = value.replace(result[0], this.model.get(result[1]));
                 }
             }while(result);
+        }
+        if (_.isString(value) && !value.match(/^(http|https):\/\//)) {
+            value = "http://" + value.trim();
         }
         return value;
     }
