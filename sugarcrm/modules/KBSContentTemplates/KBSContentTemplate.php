@@ -1,4 +1,4 @@
-
+<?php
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -11,34 +11,23 @@
  *
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
-({
-    extendsFrom: 'RecordView',
+
+class KBSContentTemplate extends SugarBean
+{
+    public $table_name = 'kbscontent_templates';
+    public $object_name = 'KBSContentTemplate';
+    public $new_schema = true;
+    public $module_dir = 'KBSContentTemplates';
 
     /**
-     * {@inheritDoc}
-     *
-     * Add KBSContent plugin for view.
-     */
-    initialize: function(options) {
-        this.plugins = _.union(this.plugins || [], [
-            'KBSContent'
-        ]);
-
-        this._super('initialize', [options]);
-    },
-
-    /**
-     * {@inheritDoc}
-     *
-     * Show the load template button only in edit mode.
-     */
-    toggleViewButtons: function(isEdit) {
-        this._super('toggleViewButtons', [isEdit]);
-
-        var templateButton = this.getField('template');
-        if (templateButton) {
-            templateButton.$el.toggle(isEdit);
+     * {@inheritdoc}
+     **/
+    public function bean_implements($interface)
+    {
+        switch ($interface) {
+            case 'ACL':
+                return false;
         }
+        return false;
     }
-
-})
+}

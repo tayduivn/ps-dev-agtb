@@ -14,6 +14,10 @@
     app.events.on('app:init', function() {
         app.plugins.register('KBSContent', ['view'], {
 
+            events: {
+                'click [name=template]': 'launchTemplateDrawer'
+            },
+
             CONTENT_LOCALIZATION: 1,
             CONTENT_REVISION: 2,
 
@@ -177,7 +181,48 @@
              */
             getAvailableLangsForLocalization: function(model) {
                 return model.get('related_languages') || [];
+            },
+
+            /**
+             * Open the drawer with the KBSContentTemplates selection list layout and override the
+             * kbdocument_body field with selected template.
+             */
+            launchTemplateDrawer: function() {
+                app.drawer.open({
+                        layout: 'selection-list',
+                        context: {
+                            module: 'KBSContentTemplates'
+                        }
+                    },
+                    _.bind(function(model) {
+                        if (!model) {
+                            return;
+                        }
+                        var self = this;
+                        var template = app.data.createBean('KBSContentTemplates', { id: model.id });
+                        template.fetch({
+                            success: function(template) {
+                                if (this.disposed === true) {
+                                    return;
+                                }
+                                var replace = function() {
+                                    self.model.set('kbdocument_body', template.get('body'));
+                                };
+                                if (!self.model.get('kbdocument_body')) {
+                                    replace();
+                                } else {
+                                    app.alert.show('override_confirmation', {
+                                        level: 'confirmation',
+                                        messages: app.lang.get('LBL_TEMPATE_LOAD_MESSAGE', self.module),
+                                        onConfirm: replace
+                                    });
+                                }
+                            }
+                        });
+                    }, this)
+                );
             }
+
         });
     });
 })(SUGAR.App);

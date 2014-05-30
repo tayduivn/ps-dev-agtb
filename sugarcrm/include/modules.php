@@ -453,6 +453,7 @@ $GLOBALS['moduleTabMap'] = array(
     'KBSDocuments' => 'KBSContents',
     'KBSArticles' => 'KBSContents',
     'KBSTopics' => 'KBSContents',
+    'KBSContentTemplates' => 'KBSContents',
     'EmailMan' => 'Administration',
     'ModuleBuilder' => 'Administration',
     'Configurator' => 'Administration',
@@ -681,6 +682,10 @@ $moduleList[] = 'KBSContents';
 $beanList['KBSArticles'] = 'KBSArticle';
 $beanFiles['KBSArticle'] = 'modules/KBSArticles/KBSArticle.php';
 $modInvisList[] = 'KBSArticles';
+
+$beanList['KBSContentTemplates'] = 'KBSContentTemplate';
+$beanFiles['KBSContentTemplate'] = 'modules/KBSContentTemplates/KBSContentTemplate.php';
+$moduleList[] = 'KBSContentTemplates';
 
 foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $modExtFile) {
     include $modExtFile;
