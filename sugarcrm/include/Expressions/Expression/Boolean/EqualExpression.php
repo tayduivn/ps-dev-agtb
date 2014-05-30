@@ -1,23 +1,16 @@
 <?php
-/************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
 require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 /**
@@ -25,66 +18,73 @@ require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
  * Returns true if "item1" is equal to "item2".<br/>
  * ex: <i>equal("one", "one")</i> = true, <i>equal(1, "one")</i> = false
  */
-class EqualExpression extends BooleanExpression {
-	/**
-	 * Returns itself when evaluating.
-	 */
-	function evaluate() {
-		$params = $this->getParameters();
+class EqualExpression extends BooleanExpression
+{
+    /**
+     * Returns itself when evaluating.
+     */
+    function evaluate()
+    {
+        $params = $this->getParameters();
 
-		$a = $params[0]->evaluate();
-		$b = $params[1]->evaluate();
+        $a = $params[0]->evaluate();
+        $b = $params[1]->evaluate();
 
-		if ( $a == $b )	return AbstractExpression::$TRUE;
-		return AbstractExpression::$FALSE;
-	}
+        if ($a == $b) {
+            return AbstractExpression::$TRUE;
+        }
+        return AbstractExpression::$FALSE;
+    }
 
-	/**
-	 * Returns the JS Equivalent of the evaluate function.
-	 */
-	static function getJSEvaluate() {
-		return <<<EOQ
-			var SEE = SUGAR.expressions.Expression,
-				params = this.getParameters(),
-				a = params[0].evaluate(),
-				b = params[1].evaluate(),
-				hasBool = params[0] instanceof SUGAR.expressions.TrueExpression
-							|| params[1] instanceof SUGAR.expressions.TrueExpression;
+    /**
+     * Returns the JS Equivalent of the evaluate function.
+     */
+    static function getJSEvaluate()
+    {
+        return <<<EOQ
+            var SEE = SUGAR.expressions.Expression,
+                params = this.getParameters(),
+                a = params[0].evaluate(),
+                b = params[1].evaluate(),
+                hasBool = params[0] instanceof SUGAR.expressions.TrueExpression ||
+                    params[1] instanceof SUGAR.expressions.TrueExpression;
 
-
-			if ( a == b  || (hasBool && SEE.isTruthy(a) && SEE.isTruthy(b))) {
-			   return SEE.TRUE;
-			}
-			return SEE.FALSE;
+            if ( a == b  || (hasBool && SEE.isTruthy(a) && SEE.isTruthy(b))) {
+               return SEE.TRUE;
+            }
+            return SEE.FALSE;
 EOQ;
-	}
+    }
 
-	/**
-	 * Any generic type will suffice.
-	 */
-	static function getParameterTypes() {
-		return array(AbstractExpression::$GENERIC_TYPE, AbstractExpression::$GENERIC_TYPE);
-	}
+    /**
+     * Any generic type will suffice.
+     */
+    static function getParameterTypes()
+    {
+        return array(AbstractExpression::$GENERIC_TYPE, AbstractExpression::$GENERIC_TYPE);
+    }
 
-	/**
-	 * Returns the maximum number of parameters needed.
-	 */
-	static function getParamCount() {
-		return 2;
-	}
+    /**
+     * Returns the maximum number of parameters needed.
+     */
+    static function getParamCount()
+    {
+        return 2;
+    }
 
-	/**
-	 * Returns the opreation name that this Expression should be
-	 * called by.
-	 */
-	static function getOperationName() {
-		return "equal";
-	}
+    /**
+     * Returns the opreation name that this Expression should be
+     * called by.
+     */
+    static function getOperationName()
+    {
+        return 'equal';
+    }
 
-	/**
-	 * Returns the String representation of this Expression.
-	 */
-	function toString() {
-	}
+    /**
+     * Returns the String representation of this Expression.
+     */
+    function toString()
+    {
+    }
 }
-?>
