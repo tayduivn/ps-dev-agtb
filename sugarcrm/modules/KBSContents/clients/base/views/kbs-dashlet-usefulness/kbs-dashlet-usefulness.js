@@ -28,7 +28,7 @@
      */
     initialize: function(options) {
         this.chartData = new Backbone.Model();
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
         this.refresh = _.bind(this.loadData, this);
         this.listenTo(app.controller.context.get('model'), 'change:useful', this.refresh);
         this.listenTo(app.controller.context.get('model'), 'change:notuseful', this.refresh);
@@ -94,7 +94,7 @@
 
     dispose: function() {
         this.stopListening(app.controller.context.get('model'), 'change:useful', this.refresh);
-        this.stopListening(app.controller.context.get('model'), 'change:unuseful', this.refresh);
+        this.stopListening(app.controller.context.get('model'), 'change:notuseful', this.refresh);
         this._super('dispose');
     }
 })
