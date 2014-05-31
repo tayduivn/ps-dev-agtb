@@ -46,7 +46,8 @@
                     closed_RLI_count = 0,
                     message = null,
                     status = null,
-                    massUpdateModel = this.getMassUpdateModel(this.module);
+                    massUpdateModel = this.getMassUpdateModel(this.module),
+                    progressView = this.getProgressView();
 
                 sales_stage_won = app.metadata.getModule("Forecasts", "config").sales_stage_won;
                 sales_stage_lost = app.metadata.getModule("Forecasts", "config").sales_stage_lost;
@@ -96,6 +97,10 @@
                         level: 'warning',
                         messages: message
                     });
+
+                    //remove progressView since there is no progress
+                    progressView.dispose();
+                    this.layout.removeComponent(progressView);
                 } else if (massUpdateModel.models.length > 0) {
                     this.warnDelete();
                 }
