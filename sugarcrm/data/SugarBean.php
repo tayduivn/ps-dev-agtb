@@ -7102,10 +7102,10 @@ class SugarBean
         SugarAutoLoader::requireWithCustom("modules/{$this->module_name}/field_arrays.php");
 
         //get fields defs to process from either the defined export fields in fields array file, or the bean field array
-        if(!empty($fields_array) && !empty($fields_array[$this->object_name]) && !empty($fields_array[$this->object_name]['export_fields'])){
+        if (!empty($fields_array) && !empty($fields_array[$this->object_name]) && !empty($fields_array[$this->object_name]['export_fields'])) {
             $fields = array();
-            foreach($fields_array[$this->object_name]['export_fields'] as $export_field){
-                if(!empty($this->field_defs[$export_field])){
+            foreach ($fields_array[$this->object_name]['export_fields'] as $export_field) {
+                if (!empty($this->field_defs[$export_field])) {
                     $fields[$export_field] = $this->field_defs[$export_field];
                 }
             }
@@ -7118,11 +7118,10 @@ class SugarBean
         //iterate through field defs to weed out:
             //-fields that have export flag set to false
             //-out of box related fields that have m:m or are the LHS of 1:M relationships
-        foreach($fields as $field => $data)
-        {
+        foreach ($fields as $field => $data) {
 
             //fields including custom fields are exported by default, skip if export flag has been explicitly set to false
-            if(isset($data['exportable']) && $data['exportable'] === false){
+            if (isset($data['exportable']) && $data['exportable'] === false) {
                 continue;
             }
 
@@ -7132,17 +7131,16 @@ class SugarBean
             }
 
             //process fields of type related
-            if ($this->is_relate_field($field))
-            {
+            if ($this->is_relate_field($field)) {
 
                 //unlike regular table fields, fields of type relate including custom relate fields are NOT exported by default.
                 //skip if export flag has not been explicitly to true
-                if(empty($data['exportable']) || $data['exportable'] !== true){
+                if (empty($data['exportable']) || $data['exportable'] !== true) {
                     continue;
                 }
 
                 //check to see that link exists
-                if(!empty($data['link']) && $this->load_relationship($data['link'])){
+                if (!empty($data['link']) && $this->load_relationship($data['link'])) {
                     $type = !empty($data['export_link_type']) ? $data['export_link_type'] : $this->$data['link']->getType();
 
                     //filter out relationships that can point to multiple records
@@ -7161,11 +7159,10 @@ class SugarBean
         $returnArray =  $this->create_new_list_query($order_by, $where, $filtered_fields, $new_list_params, 0, '', true, $this, true, true);
 
         //Process assigned user seperately.  They require slightly different query and should be included by default.
-        if(isset($this->field_defs['assigned_user_name']) && !empty($this->field_defs['assigned_user_name']['exportable'])){
+        if (isset($this->field_defs['assigned_user_name']) && !empty($this->field_defs['assigned_user_name']['exportable'])) {
             $returnArray['select'].= ', assigned_user.user_name as assigned_user_name';
             $returnArray['from'].= " LEFT JOIN users assigned_user ON {$this->table_name}.assigned_user_id=assigned_user.id";
         }
-
 
         return  $returnArray['select'] . $returnArray['from'] . $returnArray['where']. $returnArray['order_by'];
 
