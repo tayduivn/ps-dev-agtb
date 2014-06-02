@@ -1,32 +1,17 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/**
- * LICENSE: The contents of this file are subject to the SugarCRM Professional
- * End User License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You
- * may not use this file except in compliance with the License.  Under the
- * terms of the license, You shall not, among other things: 1) sublicense,
- * resell, rent, lease, redistribute, assign or otherwise transfer Your
- * rights to the Software, and 2) use the Software for timesharing or service
- * bureau purposes such as hosting the Software for commercial gain and/or for
- * the benefit of a third party.  Use of the Software may be subject to
- * applicable fees and any use of the Software without first paying applicable
- * fees is strictly prohibited.  You do not have the right to remove SugarCRM
- * copyrights from the source code or user interface.
+/*********************************************************************************
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
- */
-
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
+ ********************************************************************************/
 require_once 'modules/Studio/DropDowns/DropDownHelper.php';
 require_once 'modules/ModuleBuilder/parsers/parser.label.php';
 require_once 'modules/Administration/Common.php';
@@ -66,9 +51,9 @@ class RenameModules
     /**
      * Definition data for which modules contain strings related to a module being
      * renamed. Also contains global app strings entries that need to be addressed
-     * as well. This will be set in {@see SetRenameDefs()} and is defined in 
-     * renamedefs.php. 
-     * 
+     * as well. This will be set in {@see SetRenameDefs()} and is defined in
+     * renamedefs.php.
+     *
      * @var array
      */
     protected $renameDefs = array('module' => array(), 'global' => array());
@@ -76,7 +61,7 @@ class RenameModules
     /**
      * Modules from the request, used in renaming singular labels and as a cache
      * for changed modules
-     * 
+     *
      * @var array
      */
     protected $requestModules = array();
@@ -213,7 +198,7 @@ class RenameModules
     }
 
     /**
-     * Sets the rename defs array into this object for use in renaming strings in 
+     * Sets the rename defs array into this object for use in renaming strings in
      * related modules and in the global app and app list strings
      */
     protected function setRenameDefs()
@@ -228,7 +213,7 @@ class RenameModules
 
     /**
      * Changes module names in related module strings
-     * 
+     *
      * @return RenameModules
      */
     protected function changeStringsInRelatedModules()
@@ -239,13 +224,13 @@ class RenameModules
                 $this->renameCertainModuleModStrings($module, $defs);
             }
         }
-        
+
         return $this;
     }
 
     /**
      * Changes module name in global app and app list strings
-     * 
+     *
      * @return RenameModules
      */
     protected function changeGlobalAppStrings()
@@ -255,15 +240,15 @@ class RenameModules
             $GLOBALS['log']->warn("No rename defs found for global app strings");
             return;
         }
-        
+
         // Get the current app_strings for checking keys and values
         $app_strings = return_application_language($this->selectedLanguage);
-        
+
         $new = array();
         foreach ($this->changedModules as $changedModuleName => $renameFields) {
             // Loop over all defined app string keys to handle replacements
             foreach ($this->renameDefs['global'] as $def) {
-                // Make sure changes to Global app strings only affect specific 
+                // Make sure changes to Global app strings only affect specific
                 // strings for a module
                 if (isset($def['source']) && $def['source'] == $changedModuleName) {
                     // Only change something that exists to begin with
@@ -295,15 +280,15 @@ class RenameModules
                 }
             }
         }
-        
+
         // Save the new strings now
         $this->saveCustomLanguageStrings($new);
         return $this;
     }
-    
+
     /**
      * Saves new custom language strings for the application
-     * 
+     *
      * @param array $appStrings The new app strings array values to save
      * @return boolean
      */
@@ -313,23 +298,23 @@ class RenameModules
             // Nothing to save...
             return true;
         }
-        
+
         $contents = return_custom_app_list_strings_file_contents($this->selectedLanguage);
-        
+
         // Clean up the closing PHP tag
         $contents = str_replace("?>", '', $contents);
-        
+
         // Create our file opening
         if (empty($contents)) {
             $contents = "<?php\n";
         }
-        
+
         // Get the current strings to see what might need to be changed
         $all_app_strings = return_application_language($this->selectedLanguage);
-        
+
         // Flag that will tell us if there is a need to write
         $cached = false;
-        
+
         // Now loop the new strings and check what has changed, if anything
         foreach ($appStrings as $key => $value) {
             if (!isset($all_app_strings[$key]) || $all_app_strings[$key] !== $value) {
@@ -340,12 +325,12 @@ class RenameModules
                 $changed = true;
             }
         }
-        
+
         // Only bother saving if there were changes to save
         if ($changed) {
             return save_custom_app_strings_contents($contents, $this->selectedLanguage);
         }
-        
+
         // No changes, no worries
         return true;
     }
@@ -743,7 +728,7 @@ class RenameModules
             file_exists('modules/'.$this->changedModule.'/language/'.$this->selectedLanguage.'.lang.php'))
         {
             include('modules/'.$this->changedModule.'/language/'.$this->selectedLanguage.'.lang.php');
-            return (strpos($mod_strings[$key], $substring) !== false);
+            return (!empty($mod_strings[$key]) && strpos($mod_strings[$key], $substring) !== false);
         }
         return false;
     }
@@ -864,10 +849,10 @@ class RenameModules
     }
 
     /**
-     * Gets all modules from the request. This is used to build the singular 
+     * Gets all modules from the request. This is used to build the singular
      * module list for changes so that the entire list is set properly into the
      * global array after save. This is also used to get all changed modules.
-     * 
+     *
      * @return array
      */
     protected function getAllModulesFromRequest()
