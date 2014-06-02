@@ -21,7 +21,7 @@
      * @return {Number|String} the unformatted value, or original string if invalid.
      */
     unformat: function(value) {
-        var unformattedValue = app.utils.unformatNumberStringLocale(value, true);
+        var unformattedValue = app.utils.unformatNumberStringLocale(value);
         // if unformat failed, return original value
         return _.isFinite(unformattedValue) ? unformattedValue : value;
 
