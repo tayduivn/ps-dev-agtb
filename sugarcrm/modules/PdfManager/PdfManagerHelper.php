@@ -196,7 +196,7 @@ class PdfManagerHelper
             if ($val[1] == "relate" && $focus->load_relationship($name)) {
                 $relatedModule = (!empty($app_list_strings['moduleListSingular'][$focus->$name->getRelatedModuleName()])) ?
                                 $app_list_strings['moduleListSingular'][$focus->$name->getRelatedModuleName()] : $focus->$name->getRelatedModuleName();
-                if ($focus->$name->getType() == 'one' || $focus->$name->getType() == 'many') {
+                if ($focus->$name->getType() == 'one' || $focus->$name == REL_LHS) {
                     //MB will sometimes produce extra link fields that we need to ignore
                     if (!empty($def['side']) && (substr($name, -4) == "_ida" || substr($name, -4) == "_idb")) {
                         continue;
