@@ -111,7 +111,7 @@
 
             _.each(key, function(k) {
                 this._removeKeyConflicts(k);
-                this._bindShortcutKeys(scope, k, func, component);
+                this._bindShortcutKey(scope, k, func, component);
             }, this);
 
             component._dispose = _.wrap(component._dispose, function(func) {
@@ -192,12 +192,12 @@
         /**
          * Bind given function to keys, given a particular scope and component.
          * @param {String} scope
-         * @param {String|Array} key
+         * @param {String} key
          * @param {Function} func
          * @param {View.Component} component
          * @private
          */
-        _bindShortcutKeys: function(scope, key, func, component) {
+        _bindShortcutKey: function(scope, key, func, component) {
             var wrapper = _.wrap(func, function(callback) {
                 var args = Array.prototype.slice.call(arguments, 1);
                 callback.apply(component, args);
@@ -235,7 +235,7 @@
          */
         _registerGlobalKeyBindings: function() {
             _.each(this._shortcuts[this.SCOPE.GLOBAL], function(value, key) {
-                this._bindShortcutKeys(this.SCOPE.GLOBAL, key, value.func, value.component);
+                this._bindShortcutKey(this.SCOPE.GLOBAL, key, value.func, value.component);
             }, this);
         },
 
