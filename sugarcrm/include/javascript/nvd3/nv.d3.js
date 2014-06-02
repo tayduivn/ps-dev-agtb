@@ -194,26 +194,29 @@ d3.scale.quantile = function() {
     return container;
   };
 
-  nvtooltip.cleanup = function() {
+    nvtooltip.cleanup = function() {
+        // Find the tooltips, mark them for removal by this class (so others cleanups won't find it)
+        var tooltips = document.getElementsByClassName('tooltip'),
+            purging = [],
+            i = 0;
+        while (i < tooltips.length) {
+            if (!$(tooltips[i]).hasClass('fade')) {
+                purging.push(tooltips[i]);
+                tooltips[i].style.transitionDelay = '0 !important';
+                tooltips[i].style.opacity = 0;
+                tooltips[i].className = 'nvtooltip-pending-removal out';
+            }
+            i++;
+        }
 
-      // Find the tooltips, mark them for removal by this class (so others cleanups won't find it)
-      var tooltips = document.getElementsByClassName('tooltip');
-      var purging = [];
-      while (tooltips.length) {
-        purging.push(tooltips[0]);
-        tooltips[0].style.transitionDelay = '0 !important';
-        tooltips[0].style.opacity = 0;
-        tooltips[0].className = 'nvtooltip-pending-removal out';
-      }
-
-      setTimeout(function() {
-
-          while (purging.length) {
-             var removeMe = purging.pop();
-              removeMe.parentNode.removeChild(removeMe);
-          }
-      }, 500);
-  };
+        setTimeout(function() {
+            var removeMe;
+            while (purging.length) {
+                removeMe = purging.pop();
+                removeMe.parentNode.removeChild(removeMe);
+            }
+        }, 500);
+    };
 
   nvtooltip.position = function(container,pos,gravity,dist) {
     var body = document.getElementsByTagName('body')[0];
