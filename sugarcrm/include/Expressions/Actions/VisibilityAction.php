@@ -115,6 +115,8 @@ class VisibilityAction extends AbstractAction{
                     if (field.wasRequired === true)
                         context.setFieldRequired(this.target, true);
 				}
+                                var row = $(target).parents('.panel_body')[0];
+                                this.checkRowSidecar(row, inv_class);
 			},
 			legacyExec : function(context, target, hide) {
 				var Dom = YAHOO.util.Dom;
@@ -184,6 +186,22 @@ class VisibilityAction extends AbstractAction{
 					}
 				}
 				el.style.display = hide ? 'none' : '';
+			},
+                        checkRowSidecar: function(el, inv_class)
+                        {
+                                var hide = true;
+                                for(var i = 0; i < el.children.length; i++)
+                                {
+                                        var node = el.children[i];
+                                        // Hide row
+                                        if (node.tagName.toLowerCase() == 'div' &&
+                                            !$(node).hasClass(inv_class) &&  // all members contain the invisible class
+                                            $(node).children().length > 1) { // is a valid non-empty field
+                                                hide = false;
+                                                break;
+                                        }
+                                }
+                                el.style.display = hide ? 'none' : '';
 			}
 
 		});";

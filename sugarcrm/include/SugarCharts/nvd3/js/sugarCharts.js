@@ -535,7 +535,8 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                         break;
 
                     case "funnelChart":
-                        data = json.values.map( function(d,i){
+
+                        data = json.values.reverse().map( function(d,i){
                             return {
                                 "key": (d.label[0] !== '')?d.label[0]:'',
                                 "values": [{ "series": i, "x": 0, "y": (parseInt(d.values[0],10) || 0), y0: 0 }]

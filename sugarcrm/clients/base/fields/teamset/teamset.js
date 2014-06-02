@@ -22,10 +22,42 @@
         'change input.select2': 'inputChanged'
     },
     plugins: ['QuickSearchFilter', 'EllipsisInline', 'Tooltip', 'FieldDuplicate'],
+
+    /**
+     * HTML tag of the append team checkbox.
+     *
+     * @property {String}
+     */
+    appendTeamTag: 'input[name=append_team]',
+
     initialize: function (options) {
         this._super("initialize", [options]);
         this._currentIndex = 0;
         this.model.on("change:team_name_type", this.appendTeam, this);
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Binds append team checkbox change for massupdate.
+     */
+    bindDomChange: function() {
+        var $el = this.$(this.appendTeamTag);
+        if ($el.length) {
+            $el.on('change', _.bind(function() {
+                this.appendTeamValue = $el.prop('checked');
+                this.model.set('team_name_type', this.appendTeamValue ? '1' : '0');
+            }, this));
+        }
+        this._super('bindDomChange');
+    },
+
+    /**
+     * {@inheritDoc}
+     */
+    unbindDom: function() {
+        this.$(this.appendTeamTag).off();
+        this._super('unbindDom');
     },
 
     /**

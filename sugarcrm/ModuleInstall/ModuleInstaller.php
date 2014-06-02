@@ -1811,17 +1811,14 @@ class ModuleInstaller{
 		$this->silent=$silent;
 		global $sugar_config;
 
-		//Check for new module extensions
-		$this->rebuild_modules();
-
 		$this->rebuild_languages($sugar_config['languages']);
 		$this->rebuild_extensions();
 		$this->rebuild_dashletcontainers();
+		// This will be a time consuming process, particularly if $modules is empty
 		$this->rebuild_relationships($modules);
 		$this->rebuild_tabledictionary();
 		$this->reset_opcodes();
 		sugar_cache_reset();
-		$this->reset_file_cache();
 	}
 
 	function reset_file_cache()
