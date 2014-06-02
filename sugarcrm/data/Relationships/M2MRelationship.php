@@ -126,35 +126,12 @@ class M2MRelationship extends SugarRelationship
 
         // Test to see if the relationship already exists before attempting to
         // add it again.
-        $isUpdate = false;
-        if (!$this->relationship_exists($lhs, $rhs)) {
-
-            //BEGIN SUGARCRM flav=pro ONLY
+        $relationshipExists = $this->relationship_exists($lhs, $rhs);
+        if (!$relationshipExists) {
             if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes") {
-                //END SUGARCRM flav=pro ONLY
-                $lhs->$lhsLinkName->addBean($rhs);
-                $rhs->$rhsLinkName->addBean($lhs);
-
                 $this->callBeforeAdd($lhs, $rhs, $lhsLinkName);
                 $this->callBeforeAdd($rhs, $lhs, $rhsLinkName);
-                //BEGIN SUGARCRM flav=pro ONLY
             }
-            //END SUGARCRM flav=pro ONLY
-
-            //BEGIN SUGARCRM flav=pro ONLY
-            if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")) {
-                //END SUGARCRM flav=pro ONLY
-                $lhs->$lhsLinkName->addBean($rhs);
-                $rhs->$rhsLinkName->addBean($lhs);
-
-                $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
-                $this->callAfterAdd($rhs, $lhs, $rhsLinkName);
-                //BEGIN SUGARCRM flav=pro ONLY
-            }
-            //END SUGARCRM flav=pro ONLY
-        }
-        else {
-            $isUpdate = true;
         }
 
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
@@ -167,13 +144,21 @@ class M2MRelationship extends SugarRelationship
          * */
         $this->addRow($dataToInsert);
 
-        if ($isUpdate) {
-            $this->callAfterUpdate($lhs, $rhs, $lhsLinkName);
-            $this->callAfterUpdate($rhs, $lhs, $rhsLinkName);
-        }
-
         if ($this->self_referencing) {
             $this->addSelfReferencing($lhs, $rhs, $additionalFields);
+        }
+
+        if (!$relationshipExists) {
+            if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")) {
+                $lhs->$lhsLinkName->addBean($rhs);
+                $rhs->$rhsLinkName->addBean($lhs);
+
+                $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
+                $this->callAfterAdd($rhs, $lhs, $rhsLinkName);
+            }
+        } else { //it's update
+            $this->callAfterUpdate($lhs, $rhs, $lhsLinkName);
+            $this->callAfterUpdate($rhs, $lhs, $rhsLinkName);
         }
 
         return true;
