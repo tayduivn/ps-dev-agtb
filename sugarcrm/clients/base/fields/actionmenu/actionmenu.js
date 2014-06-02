@@ -59,18 +59,20 @@
         this._initTemplates();
 
         this.on('render', function() {
-            //shortcut keys
-            app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'ctrl+a', function() {
-                if (!this.isDisabled()) {
-                    this.$('.checkall:visible').click();
-                }
-            }, this);
-            app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'm', function() {
-                var $dropdown = this.$('[data-toggle=dropdown]');
-                if ($dropdown.is(':visible') && !$dropdown.hasClass('disabled')) {
-                    $dropdown.click();
-                }
-            }, this);
+            //shortcut keys are only for the checkall field
+            if (this.$('.checkall:visible').length > 0) {
+                app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'ctrl+a', function() {
+                    if (!this.isDisabled()) {
+                        this.$('.checkall:visible').click();
+                    }
+                }, this);
+                app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'm', function() {
+                    var $dropdown = this.$('[data-toggle=dropdown]');
+                    if ($dropdown.is(':visible') && !$dropdown.hasClass('disabled')) {
+                        $dropdown.click();
+                    }
+                }, this);
+            }
         }, this);
     },
 
