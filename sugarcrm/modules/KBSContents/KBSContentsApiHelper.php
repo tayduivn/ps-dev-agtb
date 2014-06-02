@@ -12,6 +12,7 @@
  * Copyright  2004-2014 SugarCRM Inc.  All rights reserved.
  */
 
+require_once 'data/SugarBeanApiHelper.php';
 
 class KBSContentsApiHelper extends SugarBeanApiHelper {
 
