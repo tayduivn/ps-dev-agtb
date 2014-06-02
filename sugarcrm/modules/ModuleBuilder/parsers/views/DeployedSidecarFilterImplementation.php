@@ -40,10 +40,10 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
      * @var array
      */
     protected $currentStateFiles = array(
-        MB_HISTORYMETADATALOCATION,
         MB_WORKINGMETADATALOCATION,
         MB_CUSTOMMETADATALOCATION,
         MB_BASEMETADATALOCATION,
+        MB_HISTORYMETADATALOCATION,
     );
 
     /**
