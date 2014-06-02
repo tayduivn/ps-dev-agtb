@@ -63,6 +63,7 @@ class MetaDataManager
     const MM_VIEWS          = 'views';
     const MM_LAYOUTS        = 'layouts';
     const MM_RELATIONSHIPS  = 'relationships';
+    const MM_DATA           = 'datas';
     const MM_CURRENCIES     = 'currencies';
     const MM_JSSOURCE       = 'jssource';
     const MM_SERVERINFO     = 'server_info';
@@ -156,6 +157,7 @@ class MetaDataManager
         self::MM_ORDEREDLABELS  => 'getOrderedStringUrls',
         self::MM_VIEWS          => 'getSugarViews',
         self::MM_LAYOUTS        => 'getSugarLayouts',
+        self::MM_DATA           => 'getSugarData',
         self::MM_RELATIONSHIPS  => 'getRelationshipData',
         self::MM_CURRENCIES     => 'getSystemCurrencies',
         self::MM_JSSOURCE       => false,
@@ -547,6 +549,18 @@ class MetaDataManager
     }
 
     /**
+     * This method collects all the collection controllers for a module
+     *
+     * @param string $moduleName The name of the sugar module to collect info about.
+     *
+     * @return Array A hash of all collections and models controllers
+     */
+    public function getModuleDatas($moduleName)
+    {
+        return $this->getModuleClientData('data', $moduleName);
+    }
+
+    /**
      * Gets metadata for all modules
      *
      * @return array An array of hashes containing the modules and their
@@ -594,6 +608,7 @@ class MetaDataManager
         $data['fields']['_hash'] = md5(serialize($data['fields']));
         $data['nameFormat'] = isset($vardefs['name_format_map'])?$vardefs['name_format_map']:null;
         $data['views'] = $this->getModuleViews($moduleName);
+        $data['datas'] = $this->getModuleDatas($moduleName);
         $data['layouts'] = $this->getModuleLayouts($moduleName);
         $data['fieldTemplates'] = $this->getModuleFields($moduleName);
         $data['menu'] = $this->getModuleMenu($moduleName);
@@ -903,6 +918,17 @@ class MetaDataManager
     public function getSugarLayouts()
     {
         return $this->getSystemClientData('layout');
+    }
+
+    /**
+     * Gets client models and collection controllers that maybe a platform would like
+     * to override.
+     *
+     * @return array
+     */
+    public function getSugarData()
+    {
+        return $this->getSystemClientData('data');
     }
 
     /**
@@ -2091,9 +2117,9 @@ class MetaDataManager
         $typeData = array();
 
         if ($isModule) {
-            $types = array('fieldTemplates', 'views', 'layouts');
+            $types = array('fieldTemplates', 'views', 'layouts', 'datas');
         } else {
-            $types = array('fields', 'views', 'layouts');
+            $types = array('fields', 'views', 'layouts', 'datas');
         }
 
         foreach ($types as $mdType) {
@@ -2907,6 +2933,7 @@ class MetaDataManager
             self::MM_FILTERS,
             self::MM_VIEWS,
             self::MM_LAYOUTS,
+            self::MM_DATA,
             self::MM_LABELS,
             self::MM_ORDEREDLABELS,
             self::MM_CONFIG,

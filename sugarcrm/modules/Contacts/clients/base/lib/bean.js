@@ -33,7 +33,7 @@
     app.events.on("app:sync:complete", function(){
 
         //Very important to prevent infinite loop. Otherwise it is Bean initialize method who is extended
-        if (!app.metadata.getModule('Contacts')) {
+        if (!app.data.getModelClasses()['Contacts']) {
             return;
         }
 
