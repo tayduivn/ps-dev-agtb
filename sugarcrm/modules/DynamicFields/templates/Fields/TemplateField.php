@@ -474,30 +474,33 @@ class TemplateField{
 		}
 	}
 
-	/**
-	 * populateFromRow
-	 * This function supports setting the values of all TemplateField instances.
-	 * @param $row The Array key/value pairs from fields_meta_data table
-	 */
-	function populateFromRow($row=array()) {
-		$fmd_to_dyn_map = array('comments' => 'comment', 'require_option' => 'required', 'label' => 'vname',
-							    'mass_update' => 'massupdate', 'max_size' => 'len', 'default_value' => 'default', 'id_name' => 'ext3');
-		if(!is_array($row)) {
-			$GLOBALS['log']->error("Error: TemplateField->populateFromRow expecting Array");
-		}
-		//Bug 24189: Copy fields from FMD format to Field objects and vice versa
-		foreach ($fmd_to_dyn_map as $fmd_key => $dyn_key) {
+    /**
+     * This function supports setting the values of all TemplateField instances.
+     * 
+     * @param $row The Array key/value pairs from fields_meta_data table
+     */
+    function populateFromRow($row=array()) {
+        if (!is_array($row)) {
+            // Make it an array so as to prevent issues later on in this method
+            $row = (array) $row;
+            $GLOBALS['log']->error("Error: TemplateField->populateFromRow expecting Array");
+        }
+
+        //Bug 24189: Copy fields from FMD format to Field objects and vice versa
+        $fmd_to_dyn_map = $this->getFieldMetaDataMapping();
+        foreach ($fmd_to_dyn_map as $fmd_key => $dyn_key) {
             if (isset($row[$dyn_key])) {
                 $this->$fmd_key = $row[$dyn_key];
             }
             if (isset($row[$fmd_key])) {
-				$this->$dyn_key = $row[$fmd_key];
-			}
-		}
-		foreach($row as	$key=>$value) {
-			$this->$key = $value;
-		}
-	}
+                $this->$dyn_key = $row[$fmd_key];
+            }
+        }
+
+        foreach($row as $key => $value) {
+            $this->$key = $value;
+        }
+    }
 
 	function populateFromPost(){
 		foreach($this->vardef_map as $vardef=>$field){
@@ -531,24 +534,27 @@ class TemplateField{
 
 	}
 
-	protected function applyVardefRules()
-	{
-		//BEGIN SUGARCRM flav=pro ONLY
-		if (!empty($this->calculated) && !empty($this->formula)
-		      && is_string($this->formula) && !empty($this->enforced) && $this->enforced)
-		{
-				$this->importable = 'false';
-				$this->duplicate_merge = 0;
-				$this->duplicate_merge_dom_value = 0;
-
-		}
-		//END SUGARCRM flav=pro ONLY
+    /**
+     * Applies rules for type specific fields vardefs. This can be overridden in 
+     * child classes.
+     */
+    protected function applyVardefRules()
+    {
+        //BEGIN SUGARCRM flav=pro ONLY
+        if (!empty($this->calculated) && !empty($this->formula)
+            && is_string($this->formula) && !empty($this->enforced) && $this->enforced)
+        {
+            $this->importable = 'false';
+            $this->duplicate_merge = 0;
+            $this->duplicate_merge_dom_value = 0;
+        }
+        //END SUGARCRM flav=pro ONLY
 
         if(!empty($this->full_text_search))
         {
             $this->full_text_search['enabled'] = ($this->full_text_search['boost'] != 0);
         }
-	}
+    }
 
 	function get_additional_defs(){
 		return array();
@@ -604,7 +610,26 @@ class TemplateField{
         }
 	}
 
+    /**
+     * Gets mapping of fields_meta_data to DynamicField properties. This can be 
+     * overridden or extended in child classes.
+     * 
+     * @return array
+     */
+    public function getFieldMetaDataMapping()
+    {
+        return array(
+            'comments' => 'comment',
+            'require_option' => 'required',
+            'label' => 'vname',
+            'mass_update' => 'massupdate',
+            'max_size' => 'len',
+            'default_value' => 'default',
+            'id_name' => 'ext3',
+        );
+    }
+
 }
 
 
-?>
+
