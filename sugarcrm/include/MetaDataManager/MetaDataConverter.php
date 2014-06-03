@@ -583,7 +583,7 @@ class MetaDataConverter
                             }
                             if (isset($relDef['is_custom']) && $relDef['is_custom']
                             && isset($relDef['from_studio']) && $relDef['from_studio']) {
-                                $subpanelFileName = "For{$relDef['name']}";
+                                $subpanelFileName = "For{$relDef['relationship_name']}";
                             } else {
                                 $subpanelFileName = "For{$focus->module_name}";
                             }
