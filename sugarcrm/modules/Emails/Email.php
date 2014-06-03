@@ -2471,7 +2471,7 @@ class Email extends SugarBean {
 			$temp['flagged'] = (is_null($a['flagged']) || $a['flagged'] == '0') ? '' : 1;
 			$temp['status'] = (is_null($a['reply_to_status']) || $a['reply_to_status'] == '0') ? '' : 1;
 			$temp['subject'] = $a['name'];
-			$temp['date']	= $timedate->to_display_date_time($a['date_sent']);
+			$temp['date']  = $timedate->to_display_date_time($this->db->fromConvert($a['date_sent'], 'datetime'));
 			$temp['uid'] = $a['id'];
 			$temp['ieId'] = $a['mailbox_id'];
 			$temp['site_url'] = $sugar_config['site_url'];
@@ -2611,29 +2611,26 @@ class Email extends SugarBean {
         $isdateToSearchSet = !empty($_REQUEST['searchDateTo']);
         $bothDateRangesSet = $isDateFromSearchSet & $isdateToSearchSet;
 
-        //Hanlde date from and to separately
+        //Handle date from and to separately
         if($bothDateRangesSet)
         {
             $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['searchDateFrom'], false);
-            $dbFormatDateFrom = db_convert("'" . $dbFormatDateFrom . "'",'datetime');
+            $dbFormatDateFrom = $GLOBALS['db']->convert($GLOBALS['db']->quoted($dbFormatDateFrom), 'date');
 
             $dbFormatDateTo = $timedate->to_db_date($_REQUEST['searchDateTo'], false);
-            $dbFormatDateTo = db_convert("'" . $dbFormatDateTo . "'",'datetime');
+            $dbFormatDateTo = $GLOBALS['db']->convert($GLOBALS['db']->quoted($dbFormatDateTo), 'date');
 
-            $additionalWhereClause[] = "( emails.date_sent >= $dbFormatDateFrom AND
-                                          emails.date_sent <= $dbFormatDateTo )";
+            $additionalWhereClause[] = "( emails.date_sent >= $dbFormatDateFrom AND emails.date_sent <= $dbFormatDateTo )";
         }
         elseif ($isdateToSearchSet)
         {
             $dbFormatDateTo = $timedate->to_db_date($_REQUEST['searchDateTo'], false);
-            $dbFormatDateTo = db_convert("'" . $dbFormatDateTo . "'",'datetime');
-            $additionalWhereClause[] = "emails.date_sent <= $dbFormatDateTo ";
+            $additionalWhereClause[] = "emails.date_sent <= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($dbFormatDateTo), 'date');
         }
         elseif ($isDateFromSearchSet)
         {
             $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['searchDateFrom'], false);
-            $dbFormatDateFrom = db_convert("'" . $dbFormatDateFrom . "'",'datetime');
-            $additionalWhereClause[] = "emails.date_sent >= $dbFormatDateFrom ";
+            $additionalWhereClause[] = "emails.date_sent >= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($dbFormatDateFrom), 'date');
         }
 
         $additionalWhereClause = implode(" AND ", $additionalWhereClause);
