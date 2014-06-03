@@ -36,9 +36,10 @@
                 more_info_url: this.createMoreHelpLink(),
                 more_info_url_close: '</a>'
             },
-            ctx = this.context && this.context.parent || this.context;
+            ctx = this.context && this.context.parent || this.context,
+            layout = (this.meta.preview) ? 'preview' : ctx.get('layout');
 
-        this.helpObject = app.help.get(ctx.get('module'), ctx.get('layout'), helpUrl);
+        this.helpObject = app.help.get(ctx.get('module'), layout, helpUrl);
 
         // if title is empty for some reason, use the dashlet label as the fallback
         if (_.isEmpty(this.helpObject.title)) {

@@ -328,6 +328,16 @@ class MetaDataManager
     );
 
     /**
+     * Explicit flag that tells the queue to run when the run method is called.
+     * In most cases this will never be changed, but in the case of module builder
+     * this will usually be turned off so that the postExecute method can force
+     * it to run explicitly.
+     * 
+     * @var boolean
+     */
+    protected static $runQueueOnCall = true;
+
+    /**
      * The constructor for the class. Sets the visibility flag, the visibility
      * string indicator and loads the appropriate metadata section list.
      *
@@ -1536,40 +1546,70 @@ class MetaDataManager
      */
     public static function runCacheRefreshQueue($disable = true)
     {
-        // Hold on to the queue state until later when we need it
-        $queueState = self::$isQueued;
+        // Only run the runner if the explicit flag allowing it is true
+        if (self::$runQueueOnCall) {
+            // Hold on to the queue state until later when we need it
+            $queueState = self::$isQueued;
 
-        // Temporarily turn off queueing to allow this to happen
-        self::$isQueued = false;
+            // Temporarily turn off queueing to allow this to happen
+            self::$isQueued = false;
 
-        // If full is set, run all cache clears and be done
-        if (isset(self::$queue['full'])) {
-            // Handle the refreshing of the cache and emptying of the queue
-            self::refreshCache(self::$queue['full']);
-            self::$queue = array();
-        }
+            // If full is set, run all cache clears and be done
+            if (isset(self::$queue['full'])) {
+                // Handle the refreshing of the cache and emptying of the queue
+                self::refreshCache(self::$queue['full']);
+                self::$queue = array();
+            }
 
-        // Run modules first
-        foreach (self::$cacheParts as $part => $method) {
-            if (isset(self::$queue[$part])) {
-                if (isset(self::$queue[$part]['platforms'])) {
-                    $platforms = self::$queue[$part]['platforms'];
-                    unset(self::$queue[$part]['platforms']);
-                } else {
-                    $platforms = array();
+            // Run modules first
+            foreach (self::$cacheParts as $part => $method) {
+                if (isset(self::$queue[$part])) {
+                    if (isset(self::$queue[$part]['platforms'])) {
+                        $platforms = self::$queue[$part]['platforms'];
+                        unset(self::$queue[$part]['platforms']);
+                    } else {
+                        $platforms = array();
+                    }
+
+                    self::$method(self::$queue[$part], $platforms);
+                    unset(self::$queue[$part]);
                 }
+            }
 
-                self::$method(self::$queue[$part], $platforms);
-                unset(self::$queue[$part]);
+            // Handle queue state
+            if ($disable) {
+                self::$isQueued = false;
+            } else {
+                self::$isQueued = $queueState;
             }
         }
+    }
 
-        // Handle queue state
-        if ($disable) {
-            self::$isQueued = false;
-        } else {
-            self::$isQueued = $queueState;
-        }
+    /**
+     * Turns off the queue runner. Setting this to false will prevent the queue
+     * from running even if the run method is called.
+     */
+    public static function setRunQueueOnCallOff()
+    {
+        self::setRunQueueOnCall(false);
+    }
+
+    /**
+     * Turns on the queue runner. This is the default state of the runner.
+     */
+    public static function setRunQueueOnCallOn()
+    {
+        self::setRunQueueOnCall(true);
+    }
+
+    /**
+     * Sets the queue runner flag to boolean true or false
+     * 
+     * @param boolean $value Flag that tells the queue runner to run or not
+     */
+    public static function setRunQueueOnCall($value)
+    {
+        self::$runQueueOnCall = (bool) $value;
     }
 
     /**
