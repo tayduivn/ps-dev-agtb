@@ -1,57 +1,67 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ */
 ({
+    /**
+     * {@inheritDoc}
+     */
     _render: function() {
-        app.view.Field.prototype._render.call(this);
-        if(this.tplName === 'disabled') {
-            this.$(this.fieldTag).attr("disabled", "disabled");
+        this._super('_render');
+        if (this.tplName === 'disabled') {
+            this.$(this.fieldTag).attr('disabled', 'disabled');
         }
     },
-    unformat:function(value){
-        value = (value !== '' && value != 'http://') ? value.trim() : "";
+
+    /**
+     * {@inheritDoc}
+     */
+    unformat: function(value) {
+        value = (value !== '' && value != 'http://') ? value.trim() : '';
         return value;
     },
-    format:function(value){
-        if(_.isEmpty(value)){
-            // Name conflict with iframe's default value def and the list view's default column flag
+
+    /**
+     * {@inheritDoc}
+     *
+     * Formatter for the iframe field. If the iframe field definition is
+     * configured with a generated url (`this.def.gen`) by another field, those
+     * field values (defined in curly braces) are parsed from the model and set
+     * on the value to be returned. Finally, if the value doesn't contain
+     * 'http://' or 'https://', it is prepended on the value before being
+     * returned.
+     *
+     * @param {String} value The value set on the iframe field.
+     * @return {String} The formatted iframe value.
+     */
+    format: function(value) {
+        if (_.isEmpty(value)) {
+            // Name conflict with iframe's default value def and the list view's
+            // default column flag
             value = _.isString(this.def['default']) ? this.def['default'] : undefined;
         }
-        if (_.isString(value) && !value.match(/^(http|https):\/\//)) {
-            value = "http://" + value.trim();
-        }
-        if(this.def.gen == "1"){
-            var regex = /{(.+?)}/;
-            var result = null;
-            do{
+
+        if (this.def.gen == '1') {
+            var regex = /{(.+?)}/,
+                result = null;
+            do {
                 result = regex.exec(value);
-                if(result){
+                if (result) {
                     value = value.replace(result[0], this.model.get(result[1]));
                 }
-            }while(result);
+            } while (result);
+        }
+
+        if (_.isString(value) && !value.match(/^(http|https):\/\//)) {
+            value = 'http://' + value.trim();
         }
         return value;
     }
