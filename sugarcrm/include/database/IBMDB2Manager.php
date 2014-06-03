@@ -401,7 +401,7 @@ class IBMDB2Manager  extends DBManager
 			$row = array();
 			foreach ($temp as $key => $val)
 				// make the column keys as lower case. Trim the val returned
-				$row[strtolower($key)] = trim($val);
+				$row[strtolower($key)] = is_string($val) ? trim($val) : $val;
 		}
 		else
 			return false;
