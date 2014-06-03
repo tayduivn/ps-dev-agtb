@@ -182,7 +182,11 @@
          * Restore the last set of shortcuts.
          */
         restore: function() {
-            var saved = this._savedShortCuts.pop();
+            var saved;
+            if (this._savedShortCuts.length < 1) {
+                return;
+            }
+            saved = this._savedShortCuts.pop();
             this.activate(saved.scope);
             _.each(saved.shortcuts, function(value, key) {
                 this.register(saved.scope, key, value.func, value.component);
@@ -226,7 +230,11 @@
          * @private
          */
         _isComponentInMainPane: function(component) {
-            return (component.$el.closest('.main-pane').length > 0);
+            if (component.disposed === true) {
+                return false;
+            }
+            var main = component.$el ? component.$el.closest('.main-pane') : [];
+            return (main.length > 0);
         },
 
         /**

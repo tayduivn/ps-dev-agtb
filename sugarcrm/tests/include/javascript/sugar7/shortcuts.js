@@ -90,6 +90,22 @@ describe('Sugar7 shortcuts', function() {
             expect(mousetrapBindStub.called).toBe(false);
         });
 
+        it('should not bind non-global shortcut keys when the component is disposed', function() {
+            shortcutsMainPaneStub.restore();
+            view.disposed = true;
+            app.shortcuts.activate(app.shortcuts.SCOPE.RECORD);
+            app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 'a', $.noop, view);
+            expect(mousetrapBindStub.called).toBe(false);
+        });
+
+        it('should not bind non-global shortcut keys when the component has no $el', function() {
+            shortcutsMainPaneStub.restore();
+            view.$el = null;
+            app.shortcuts.activate(app.shortcuts.SCOPE.RECORD);
+            app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 'a', $.noop, view);
+            expect(mousetrapBindStub.called).toBe(false);
+        });
+
         using('duplicate shortcut keys', ['a', ['a', 'b']], function (keys) {
             it('should not allow shortcut keys to be bound to more than one event', function() {
                 var keyCount = _.isArray(keys) ? keys.length : 1;
@@ -189,6 +205,17 @@ describe('Sugar7 shortcuts', function() {
             app.shortcuts.activate(app.shortcuts.SCOPE.RECORD);
             app.shortcuts.restore();
             expect(mousetrapBindStub.calledTwice).toBe(true);
+        });
+
+        it('should do nothing when restore is called without anything to restore', function() {
+            var shortcutsActivateSpy = sinon.spy(app.shortcuts, 'activate'),
+                shortcutsRegisterSpy = sinon.spy(app.shortcuts, 'register');
+            app.shortcuts.restore();
+            expect(shortcutsActivateSpy).not.toHaveBeenCalled();
+            expect(shortcutsRegisterSpy).not.toHaveBeenCalled();
+            expect(mousetrapBindStub).not.toHaveBeenCalled();
+            shortcutsActivateSpy.restore();
+            shortcutsRegisterSpy.restore();
         });
     });
 });
