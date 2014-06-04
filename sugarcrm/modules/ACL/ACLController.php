@@ -48,8 +48,8 @@ class ACLController
      * @param string $type ACL type, usually module but can be different for DCE and Trackers
      * @return bool
      */
-	function checkAccessInternal($category, $action, $is_owner=false, $type='module'){
-
+    public static function checkAccessInternal($category, $action, $is_owner = false, $type = 'module')
+    {
 		global $current_user;
 		if(is_admin($current_user))return true;
 		//calendar is a special case since it has 3 modules in it (calls, meetings, tasks)
