@@ -441,7 +441,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
         array (
             'name' => 'billing_address_street',
             'vname' => 'LBL_BILLING_ADDRESS_STREET',
-            'type' => 'textarea',
+            'type' => 'text',
             'dbType' => 'varchar',
             'group'=>'billing_address',
             'len' => '150',
@@ -482,7 +482,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
         array (
             'name' => 'shipping_address_street',
             'vname' => 'LBL_SHIPPING_ADDRESS_STREET',
-            'type' => 'textarea',
+            'type' => 'text',
             'dbType' => 'varchar',
             'group'=>'shipping_address',
             'len' => '150',
