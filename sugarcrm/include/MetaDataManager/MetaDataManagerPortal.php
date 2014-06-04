@@ -43,6 +43,7 @@ class MetaDataManagerPortal extends MetaDataManager
                 $modules[] = $mname;
             }
         }
+        $modules[] = 'Users';
         return $modules;
     }
 
