@@ -345,6 +345,9 @@ class DependencyManager
                 $hooks = array($hooks);
             if (in_array('all', $hooks) || in_array($action, $hooks)) {
                 self::filterActionDefinitionsForView($def, $action);
+                if (empty($def['actions']) && empty($def['notActions'])) {
+                    continue; // Skip if no actions left after filtering
+                }
                 $triggerExp = empty($def['trigger']) ? self::$default_trigger : $def['trigger'];
                 $triggerFields = empty($def['triggerFields']) ?
                     Parser::getFieldsFromExpression($triggerExp) :
