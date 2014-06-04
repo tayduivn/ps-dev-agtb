@@ -97,7 +97,6 @@
       .border-radius(4px);
     }
   }
-
   .record-cell {
     display: inline-block;
     position: relative;
@@ -105,16 +104,22 @@
     min-height: 43px;
     margin-bottom: 7px;
     height: 100%;
+    &[data-type=iframe] iframe,
+    button,
+    input[type=button],
+    input[type=checkbox],
+    input[type=radio] {
+      position: relative;
+      z-index: 1;
+    }
     .record-label {
       font-size: @fontSizeSmall;
       color: lighten(@gray, 12%);
       padding-bottom: 2px;
     }
-
     .normal > span {
       display: block;
     }
-
     .ellipsis_inline {
       display: block !important;
       white-space: nowrap;
