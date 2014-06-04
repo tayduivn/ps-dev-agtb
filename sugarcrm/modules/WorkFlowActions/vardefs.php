@@ -135,7 +135,7 @@ $dictionary['WorkFlowAction'] = array('table' => 'workflow_actions'
     'len' => '50',
   ),    
 ),
-'acls' => array('SugarACLAdminOnly' => true),
+'acls' => array('SugarACLDeveloperOrAdmin' => true),
 
 'indices' => array (
        array('name' =>'action_k', 'type' =>'primary', 'fields'=>array('id')),

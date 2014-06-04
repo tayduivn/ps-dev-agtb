@@ -363,6 +363,97 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
         unlink('upload/test_user_picture');
     }
 
+    /**
+     * @param boolean $isWorkFlowModule The return value of User::isWorkFlowModule
+     * @param array $modules Module list returned by getAdminModules
+     * @param boolean $expected Expected return value
+     *
+     * @dataProvider isAdminOrDeveloperForModuleProvider
+     * @covers User::isAdminForModule
+     */
+    public function testIsAdminForModule($isWorkFlowModule, array $modules, $expected)
+    {
+        $this->isAdminOrDeveloperForModule(
+            'isAdminForModule',
+            'getAdminModules',
+            $isWorkFlowModule,
+            $modules,
+            $expected
+        );
+    }
+
+    /**
+     * @param boolean $isWorkFlowModule The return value of User::isWorkFlowModule
+     * @param array $modules Module list returned by getDeveloperModules
+     * @param boolean $expected Expected return value
+     *
+     * @dataProvider isAdminOrDeveloperForModuleProvider
+     * @covers User::isDeveloperForModule
+     */
+    public function testIsDeveloperForModule($isWorkFlowModule, array $modules, $expected)
+    {
+        $this->isAdminOrDeveloperForModule(
+            'isDeveloperForModule',
+            'getDeveloperModules',
+            $isWorkFlowModule,
+            $modules,
+            $expected
+        );
+    }
+
+    /**
+     * @param string $testMethod Method to be tested
+     * @param string $getModules Method that returns module list
+     * @param boolean $isWorkFlowModule The return value of User::isWorkFlowModule
+     * @param array $modules Module list returned by $getModules
+     * @param boolean $expected Expected return value
+     */
+    private function isAdminOrDeveloperForModule($testMethod, $getModules, $isWorkFlowModule, array $modules, $expected)
+    {
+        /** @var User|PHPUnit_Framework_MockObject_MockObject $user */
+        $user = $this->getMockBuilder('User')
+            ->setMethods(array($getModules, 'isWorkFlowModule'))
+            ->disableOriginalConstructor()
+            ->getMock();
+        $user->id = 'TEST';
+
+        $user->expects($this->any())
+            ->method($getModules)
+            ->will($this->returnValue($modules));
+
+        $module = 'SomeModule';
+        $user->expects($this->any())
+            ->method('isWorkFlowModule')
+            ->with($module)
+            ->will($this->returnValue($isWorkFlowModule));
+
+        $this->assertEquals($expected, $user->$testMethod($module));
+    }
+
+    public function isAdminOrDeveloperForModuleProvider()
+    {
+        return array(
+            // current module is a workflow module, but there are no developer or admin modules
+            array(
+                true,
+                array(),
+                false,
+            ),
+            // there are developer or admin modules, but current module is not a workflow module
+            array(
+                false,
+                array('Accounts'),
+                false,
+            ),
+            // current module is a workflow module, and there are developer or admin modules
+            array(
+                true,
+                array('Accounts'),
+                true,
+            ),
+        );
+    }
+
     private function backUpConfig($name)
     {
         $config = null;

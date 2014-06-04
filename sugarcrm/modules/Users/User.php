@@ -1764,6 +1764,9 @@ EOQ;
         $devModules = $this->getDeveloperModules();
 
         $module = $this->_fixupModuleForACL($module);
+        if ($this->isWorkFlowModule($module) && count($devModules) > 0) {
+            return true;
+        }
 
         if (in_array($module,$devModules) ) {
             return true;
@@ -1800,6 +1803,9 @@ EOQ;
         $adminModules = $this->getAdminModules();
 
         $module = $this->_fixupModuleForACL($module);
+        if ($this->isWorkFlowModule($module) && count($adminModules) > 0) {
+            return true;
+        }
 
         if (in_array($module,$adminModules) ) {
             return true;
@@ -1807,6 +1813,29 @@ EOQ;
 
         return false;
     }
+
+    /**
+     * Check if module is workflow-related
+     *
+     * @param string $module Module name
+     * @return bool
+     */
+    protected function isWorkFlowModule($module)
+    {
+        switch ($module) {
+            case 'Expressions':
+            case 'WorkFlow':
+            case 'WorkFlowActions':
+            case 'WorkFlowActionShells':
+            case 'WorkFlowAlerts':
+            case 'WorkFlowAlertShells':
+            case 'WorkFlowTriggerShells':
+                return true;
+        }
+
+        return false;
+    }
+
 	/**
 	 * Whether or not based on the user's locale if we should show the last name first.
 	 *
