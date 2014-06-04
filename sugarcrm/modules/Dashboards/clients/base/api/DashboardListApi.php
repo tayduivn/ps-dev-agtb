@@ -111,4 +111,19 @@ class DashboardListApi extends FilterApi
         return $options;
     }
 
+    /**
+     *
+     * The view parameter (in combination with view_name) is already in
+     * use for Dashboards. The field list is never created from a
+     * viewdef for dashboards anyway so we should remove it.
+     *
+     * @see SugarApi::getFieldsFromArgs()
+     */
+    protected function getFieldsFromArgs(ServiceBase $api, array $args, SugarBean $bean = null, $viewName = 'view')
+    {
+        if (isset($args['view'])) {
+            unset($args['view']);
+        }
+        return parent::getFieldsFromArgs($api, $args, $bean, $viewName);
+    }
 }

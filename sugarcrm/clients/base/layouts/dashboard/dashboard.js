@@ -604,6 +604,9 @@
                                 this.apiModule : this.apiModule + '/' + this.dashboardModule;
                 if (method === 'read') {
                     options.params.view_name = layoutName;
+
+                    // do not set the "view" parameter to retrieve field list from viewdefs
+                    delete options.params.view;
                 }
                 app.api.records(method, path, model.attributes, options.params, callbacks);
             };
