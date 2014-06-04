@@ -37,6 +37,63 @@ describe('Base.Field.Relate', function() {
         fieldDef = null;
     });
 
+    describe('getSearchModule', function() {
+        beforeEach(function() {
+            // For testing, reset the module and link name on the field def
+            fieldDef.module = '';
+            fieldDef.link = 'test1_link';
+
+            // Create the demo field setup
+            field = SugarTest.createField("base", "account_name", "relate", "edit", fieldDef);
+
+            // Create the model as a bean with the test link field defined
+            app.data.declareModel('Accounts', {fields: {'test1_link': {}}});
+            field.model = app.data.createBean('Accounts');
+
+            // Stub out getRelatedModule to make sure we get something we expect
+            // but only when working on test args that are what we expect
+            sinon.collection.stub(app.data, 'getRelatedModule').withArgs('Accounts','test1_link').returns("Test3");
+        });
+
+        afterEach(function() {
+            field.dispose();
+        });
+
+        using('varying field and link def module values',
+            [
+                // Test 1 should get the module from the field def module
+                {
+                    fieldDefModule: 'Test1',
+                    linkDefModule: '',
+                    expect: 'Test1'
+                },
+                // Test 2 should get the module from the link field def module
+                {
+                    fieldDefModule: '',
+                    linkDefModule: 'Test2',
+                    expect: 'Test2'
+                },
+                // Test 3 should get the def from getRelatedModule in metadata
+                // manager since both the field def and link field def module are
+                // empty
+                {
+                    fieldDefModule: '',
+                    linkDefModule: '',
+                    expect: 'Test3'
+                }
+            ],
+            function (values) {
+                it('should get the proper module name from known def values', function() {
+                    // Set our test expectations
+                    field.def.module = values.fieldDefModule;
+                    field.model.fields.test1_link.module = values.linkDefModule;
+
+                    expect(field.getSearchModule()).toEqual(values.expect);
+                });
+            }
+        );
+    });
+
     describe("SetValue", function () {
         beforeEach(function () {
             field = SugarTest.createField("base", "account_name", "relate", "edit", fieldDef);

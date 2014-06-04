@@ -479,8 +479,31 @@
      */
     bindDomChange: function () {
     },
+
+    /**
+     * Gets the correct module to search based on field/link defs. 
+     * 
+     * If both `this.def.module` and `link.module` are empty, fall back onto the 
+     * metadata manager to get the proper module as a last resort.
+     * 
+     * @return {String} The module to search on.
+     */
     getSearchModule: function () {
-        return this.def.module;
+        // If we have a module property on this field, use it
+        if (this.def.module) {
+            return this.def.module;
+        }
+
+        // No module in the field def, so check if there is a module in the def
+        // for the link field
+        var link = this.def.link && this.model.fields && this.model.fields[this.def.link] || {};
+        if (link.module) {
+            return link.module;
+        }
+
+        // At this point neither the def nor link field def have a module... let
+        // metadata manager try find it
+        return app.data.getRelatedModule(this.model.module, this.def.link);
     },
     getPlaceHolder: function () {
         var module,
