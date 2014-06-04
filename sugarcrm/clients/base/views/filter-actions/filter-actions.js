@@ -49,6 +49,30 @@
             this.toggle(model);
             var name = model ? model.get('name') : '';
             this.setFilterName(name);
+
+            //shortcut keys
+            app.shortcuts.register(
+                'filter_edit',
+                ['esc', 'ctrl+opt+l'],
+                function() {
+                    this.$('a.filter-close').click();
+                },
+                this
+            );
+            app.shortcuts.register(
+                'filter_edit',
+                ['ctrl+s', 'ctrl+opt+a'],
+                function() {
+                    this.$('a.save_button:not(.disabled)').click();
+                },
+                this
+            );
+            app.shortcuts.register('filter_edit', 'd', function() {
+                this.$('a.delete_button:not(.hide)').click();
+            }, this);
+            app.shortcuts.register('filter_edit', 'r', function() {
+                this.$('a.reset_button').click();
+            }, this);
         }, this);
 
         this.listenTo(this.layout, 'filter:toggle:savestate', this.toggleSave);

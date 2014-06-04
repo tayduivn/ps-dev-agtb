@@ -107,6 +107,14 @@
         }
         // After populating the form, save the current edit state
         this.saveFilterEditState();
+
+        //shortcut keys
+        app.shortcuts.register('filter_edit', '+', function() {
+            this.$('[data-action=add]').last().click();
+        },this);
+        app.shortcuts.register('filter_edit', '-', function() {
+            this.$('[data-action=remove]').last().click();
+        },this);
     }, 100, true),
 
     /**

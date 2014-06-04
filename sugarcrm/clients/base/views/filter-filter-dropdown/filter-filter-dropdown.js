@@ -145,6 +145,9 @@
             },
             this
         );
+        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'f e', function() {
+            this.$('.choice-filter.choice-filter-clickable').click();
+        }, this);
 
         if (!this.filterDropdownEnabled) {
             this.filterNode.select2("disable");
