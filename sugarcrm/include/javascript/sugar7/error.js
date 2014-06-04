@@ -155,6 +155,10 @@
             !_.isFunction(layout.error.handleValidationError) ||
             layout.error.handleValidationError(error) !== false
         ) {
+            //Ignore errors triggered from models, they should be handled by the views.
+            if (error instanceof app.data.beanModel) {
+                return;
+            }
             alertUser("validation_error", "LBL_PRECONDITION_MISSING_TITLE", error.message || "LBL_PRECONDITION_MISSING");
             error.handled = true;
         }
