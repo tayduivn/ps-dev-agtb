@@ -3377,7 +3377,7 @@ $app_strings = array (
     'LBL_DNB_UNKNOWN_ERROR' => 'Unknown error. Please check the logs for more details.',
     'LBL_DNB_EMPTY_PARAM' => 'Empty parameter passed to D&B Duplicate Check API',
     'LBL_DNB_INVALID_MODULE_NAME' => 'Invalid module name passed to D&B Duplicate Check API',
-
+    'LBL_DNB_API_ERR' => 'D&B API Error',
 
     /*DNB Financial Dashlet*/
     'LBL_DNB_FINANCIAL'=>'D&B: Financial Information',
