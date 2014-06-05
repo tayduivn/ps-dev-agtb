@@ -173,7 +173,11 @@ class SugarUpgradeClearSubpanels extends UpgradeScript
     protected function updateFile($file, $var, $varName)
     {
         $this->upgrader->backupFile($file);
-        write_array_to_file($varName, $var, $file);
+        $out = "<?php\n// created: ' . date('Y-m-d H:i:s')\n";
+        foreach (array_keys($var) as $key) {
+            $out .= override_value_to_string_recursive2($varName, $key, $var[$key]);
+        }
+        sugar_file_put_contents_atomic($file, $out);
     }
 
     /**
