@@ -29,7 +29,7 @@ class SugarUpgradeFixAddressStreetFields extends UpgradeScript
      */
     public function upgradeFieldsMetaDataTable() {
         //Get unupgraded address_street fields (fields whose names follow the pattern %_street_c)
-        $query = "SELECT id FROM fields_meta_data WHERE type <> 'textarea' AND deleted = 0 AND name LIKE '%_street_c'";
+        $query = "SELECT id FROM fields_meta_data WHERE type <> 'text' AND deleted = 0 AND name LIKE '%_street_c'";
         $db = DBManagerFactory::getInstance();
         $result = $db->query($query);
         $updatedStreets = array();
@@ -49,7 +49,7 @@ class SugarUpgradeFixAddressStreetFields extends UpgradeScript
 
         $updatedStreets = implode(',', $updatedStreets);
         if (!empty($updatedStreets)) {
-            $query = "UPDATE fields_meta_data SET type = 'textarea', ext3 = 'varchar' WHERE id IN ($updatedStreets)";
+            $query = "UPDATE fields_meta_data SET type = 'text', ext3 = 'varchar' WHERE id IN ($updatedStreets)";
             $db->query($query);
         }
     }
@@ -69,7 +69,7 @@ class SugarUpgradeFixAddressStreetFields extends UpgradeScript
                 foreach($vardefs['fields'] as $fieldName => &$field) {
                     if ($this->validateStreetField($vardefs['fields'], $fieldName)) {
                         //Field is an address street. Proceed to update the street vardef
-                        $field['type'] = 'textarea';
+                        $field['type'] = 'text';
                         $field['dbType'] = 'varchar';
                     }
                 }
@@ -109,7 +109,7 @@ class SugarUpgradeFixAddressStreetFields extends UpgradeScript
                 foreach($dictionary[$module]['fields'] as $fieldName => $field) {
                     if ($this->validateStreetField($dictionary[$module]['fields'], $fieldName)) {
                         $upgradeField = new stdClass();
-                        $upgradeField->type = 'textarea';
+                        $upgradeField->type = 'text';
                         $upgradeField->dbType = 'varchar';
                         $upgradeField->name = $fieldName;
                         $upgradeField->vardef_map = $tempField->vardef_map;
@@ -135,7 +135,7 @@ class SugarUpgradeFixAddressStreetFields extends UpgradeScript
             (substr($varName, -7) === '_street')) {
             //Found a field named like a street would be
             //First make sure it is not already upgraded
-            if (isset($varList[$varName]['type']) && $varList[$varName]['type'] === 'textarea') {
+            if (isset($varList[$varName]['type']) && $varList[$varName]['type'] === 'text') {
                 return false;
             }
 
