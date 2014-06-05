@@ -141,14 +141,14 @@
         } else if (dnbApiResponse.errmsg) {
             dnbContactsList.errmsg = dnbApiResponse.errmsg;
         }
-        this.dnbBalRslt = dnbContactsList;
+        this.dnbContactsList = dnbContactsList;
         this.render();
         this.$('#dnb-contact-list-loading').hide();
         this.$('#dnb-contact-list').show();
         this.toggleImportBtn('import_dnb_data', false);
         this.$('.showLessData').hide();
         //hide the show more link if the list has less than 3 results
-        if (this.dnbBalRslt.product && this.dnbBalRslt.product.length < 3) {
+        if (this.dnbContactsList.product && this.dnbContactsList.product.length < 3) {
             this.$('.showMoreData').hide();
             this.$('.dnb-show-less').attr('class', 'dnb-show-all');
         }
