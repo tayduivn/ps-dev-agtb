@@ -441,7 +441,7 @@ array (
 	'table' => 'users',
 	'module' => 'Users',
 	'dbType' => 'varchar',
-	'link'=>'users',
+    'link'=>'assigned_user_link',
 	'len' => '255',
 	'source'=>'non-db',
 	),

@@ -1,5 +1,4 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,24 +26,37 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$viewdefs['Tasks']['base']['filter']['default'] = array(
-    'default_filter' => 'assigned_to_me',
-    'fields' => array(
-        'name' => array(),
-        'contact_name' => array(),
-        'status' => array(),
-        'date_entered' => array(),
-        'date_modified' => array(),
-        'date_start' => array(),
-        'date_due' => array(),
-        'assigned_user_name' => array(),
-        '$owner' => array(
-            'predefined_filter' => true,
-            'vname' => 'LBL_CURRENT_USER_FILTER',
-        ),
-        '$favorite' => array(
-            'predefined_filter' => true,
-            'vname' => 'LBL_FAVORITES_FILTER',
-        ),
-    ),
-);
+require_once('modules/DynamicFields/DynamicField.php');
+
+class Bug61859Test extends Sugar_PHPUnit_Framework_TestCase
+{
+
+    private $dynamicFields;
+
+    /**
+     * @group 61859
+     */
+    public function testFieldExists()
+    {
+        $this->assertFalse($this->dynamicFields->fieldExists('contact'));
+    }
+
+    public function setUp()
+    {
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('dictionary');
+
+        $leadBean = $bean = BeanFactory::getBean('Leads');
+        $this->dynamicFields = new DynamicField('Leads');
+        $this->dynamicFields->setup($leadBean);
+
+        parent::setUp();
+    }
+
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
+        parent::tearDown();
+    }
+
+}

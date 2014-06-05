@@ -243,23 +243,21 @@ class SugarController
         try
         {
             $this->process();
+            $this->postProcess();
             if(!empty($this->view))
             {
                 $this->processView();
             }
             elseif(!empty($this->redirect_url))
             {
-            			$this->redirect();
+                $this->redirect();
             }
         }
         catch (Exception $e)
         {
             $this->handleException($e);
         }
-
-
-
-	}
+    }
 
     /**
       * Handle exception
@@ -309,6 +307,13 @@ class SugarController
 	 */
 	public function preProcess()
 	{}
+
+    /**
+     * Intended to be defined by child controllers that need functionality after
+     * after the process() method has finished
+     */
+    public function postProcess()
+    {}
 
 	/**
 	 * if we have a function to support the action use it otherwise use the default action

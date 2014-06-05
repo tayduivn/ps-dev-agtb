@@ -40,7 +40,14 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         $this->loadedModule = $loadedModule;
         $this->setViewClient($client);
         $this->linkName = $this->getLinkName($linkName, $loadedModule);
-        $this->legacySubpanelName = 'For' . $loadedModule;
+
+        $focus = BeanFactory::getBean($loadedModule);
+        if ($focus) {
+            $this->legacySubpanelName = $this->mdc->getLegacySubpanelFileName($focus, $this->linkName);
+        } else {
+            $this->legacySubpanelName = 'For' . $loadedModule;
+        }
+
         // get the link and the related module name as the module we need the subpanel from
         $bean = BeanFactory::getBean($loadedModule);
 

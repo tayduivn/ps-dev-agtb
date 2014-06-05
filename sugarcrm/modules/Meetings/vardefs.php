@@ -475,7 +475,9 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
   ),
 	'contact_id' => array(
 		'name' => 'contact_id',
-		'type' => 'id',
+        'type' => 'relate',
+        'link' => 'contacts',
+        'rname' => 'id',
 		'source' => 'non-db',
 	),
 	'repeat_type' =>

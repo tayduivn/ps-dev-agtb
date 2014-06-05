@@ -346,10 +346,15 @@
 
         var newData = {},
             self = this;
-        _.each(this.def.populate_list, function (target, source) {
+        _.each(this.def.populate_list, function(target, source) {
             source = _.isNumber(source) ? target : source;
             if (!_.isUndefined(model[source]) && app.acl.hasAccessToModel('edit', this.model, target)) {
-                newData[target] = model[source];
+                var before = this.model.get(target),
+                    after = model[source];
+
+                if (before !== after) {
+                    newData[target] = model[source];
+                }
             }
         }, this);
 
