@@ -35,6 +35,7 @@
             options.template = app.template.getView(options.name);
         }
         this._super("initialize", [options]);
+        this.context.set('dataView', '');
         this.model.on("change change:layout change:metadata", function() {
             if (this.inlineEditMode) {
                 this.changed = true;
