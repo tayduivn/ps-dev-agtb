@@ -126,18 +126,21 @@
             this.layout.trigger("subpanel:change");
             // Fixes SP-836; esentially, we need to clear subpanel-last-<module> anytime 'All' selected
             app.user.lastState.remove(cacheKey);
-        } else if (linkName && linkName !=='all_modules') {
-            this.layout.trigger("filter:create:close");
+        } else if (linkName) {
             this.layout.trigger("subpanel:change", linkName);
             app.user.lastState.set(cacheKey, linkName);
         }
+
+        // It is important to reset the `currentFilterId` in order to retrieve
+        // the last filter from cache later.
+        this.context.set('currentFilterId', null);
 
         if (this.filterNode) {
             this.filterNode.select2("val", linkName || linkModuleName);
         }
         if (!silent) {
             this.layout.layout.trigger("filter:change", linkModuleName, linkName);
-            this.layout.trigger("filter:get", linkModuleName, linkName);
+            this.layout.trigger('filter:get', linkModuleName, linkName);
             //Clear the search input and apply filter
             this.layout.trigger('filter:clear:quicksearch');
         }

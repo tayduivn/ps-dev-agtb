@@ -42,10 +42,10 @@
         this.filters.comparator = _.bind(this.filterCollectionSorting, this);
 
         this.emptyFilter = app.data.createBean('Filters', {
-            id: 'all_records',
             name: '',
             filter_definition: [],
-            editable: false
+            filter_template: [],
+            editable: true
         });
 
         // Can't use getRelevantContextList here, because the context may not
@@ -71,7 +71,10 @@
         this.on('filter:apply', this.applyFilter, this);
 
         this.on('filter:create:close', function() {
-            this.clearFilterEditState();
+            if (!this.createPanelIsOpen()) {
+                return;
+            }
+            this.layout.trigger('filter:create:close');
             // When canceling creating a new filter, we want to go back to the `all_records` filter
             if (this.getLastFilter(this.layout.currentModule, this.layoutType) === 'create') {
                 // For that we need to remove the last state key and trigger reinitialize
@@ -79,7 +82,6 @@
                 this.layout.trigger("filter:reinitialize");
             }
             this.context.editingFilter = null;
-            this.layout.trigger('filter:create:close');
         }, this);
 
         this.on('filter:create:open', function(filterModel) {
@@ -110,8 +112,7 @@
         this.layout.on('filter:remove', this.removeFilter, this);
 
         this.layout.on('filter:reinitialize', function() {
-            var currentFilter = this.context.get('currentFilterId');
-            this.initializeFilterState(this.layout.currentModule, this.layout.currentLink, currentFilter);
+            this.initializeFilterState(this.layout.currentModule, this.layout.currentLink);
         }, this);
 
         this.listenTo(app.events, 'dashlet:filter:save', this.refreshDropdown);
@@ -141,7 +142,6 @@
     removeFilter: function(model) {
         this.filters.remove(model);
         this.context.set('currentFilterId', null);
-        this.clearFilterEditState();
         this.clearLastFilter(this.layout.currentModule, this.layoutType);
         this.saveFilterCollection(this.layout.currentModule);
         this.layout.trigger('filter:reinitialize');
@@ -205,6 +205,7 @@
             var key = app.user.lastState.key('last-' + filterModule + '-' + layoutName, this);
             app.user.lastState.remove(key);
         }
+        this.clearFilterEditState();
     },
 
     /**
@@ -360,30 +361,22 @@
     },
 
     /**
-     * handles filter change
-     * @param id
-     * @param preventCache
+     * Handles filter change.
+     *
+     * @param {String} id The filter id.
      */
-    handleFilterChange: function(id, preventCache) {
-        if (id  && !preventCache) {
-            this.setLastFilter(this.layout.currentModule, this.layoutType, id);
-        }
+    handleFilterChange: function(id) {
+        this.setLastFilter(this.layout.currentModule, this.layoutType, id);
 
         var filter, editState = this.retrieveFilterEditState();
         // Figure out if we have an edit state. This would mean user was editing the filter so we want him to retrieve
         // the filter form in the state he left it.
-        if (editState) {
+        if (editState && (editState.id === id || (id==='create' && !editState.id))) {
             filter = app.data.createBean('Filters');
             filter.set(editState);
-            // Open the filter form with last edit state
-            this.trigger("filter:create:open", filter);
-            if (!filter.id ||
-                (this.filters.get(filter.id) && !_.isEqual(editState, this.filters.get(filter.id).toJSON()))) {
-                // Validate so `Save` button is available
-                this.layout.trigger('filter:toggle:savestate', true);
-            }
         } else {
-            filter = this.filters.get(id) || this.emptyFilter;
+            editState = false;
+            filter = this.filters.get(id) || this.emptyFilter.clone();
         }
 
         this.context.set('currentFilterId', filter.get('id'));
@@ -397,8 +390,15 @@
         // If the user selects a filter template that gets populated by values
         // passed in the context/metadata, open the filterpanel to show the
         // actual search.
-        if (isIncompleteFilter || filter.get('is_template')) {
+        if (isIncompleteFilter || filter.get('is_template') ||
+            editState || id === 'create' ||
+            !_.isEmpty(filter.changedAttributes(filter.getSyncedAttributes()))
+            ) {
+            this.layout.trigger('filter:set:name', '');
             this.trigger('filter:create:open', filter);
+            this.layout.trigger('filter:toggle:savestate', true);
+        } else {
+            this.layout.trigger('filter:create:close');
         }
 
         var ctxList = this.getRelevantContextList();
@@ -556,50 +556,36 @@
     },
 
     /**
-     * Reset the filter to the previous state
+     * Loads the full filter panel for a module.
+     *
      * @param {String} moduleName The module name.
-     * @param {String} linkName The link module name.
-     * @param {String} lastFilter The filter ID to initialize with.
+     * @param {String} [linkName] The related module link name, by default it
+     *   will load the last selected filter,
+     * @param {String} [lastFilter] The filter ID to initialize with. By default
+     *   it will load the last selected filter or the default filter from
+     *   metadata.
      */
     initializeFilterState: function(moduleName, linkName, lastFilter) {
         moduleName = moduleName || this.module;
-        lastFilter = lastFilter || this.getLastFilter(moduleName, this.layoutType);
-        var filterData;
+
         if (this.layoutType === 'record' && !this.showingActivities) {
-            linkName = app.user.lastState.get(app.user.lastState.key("subpanels-last", this)) || linkName;
-            filterData = {
-                link: linkName || 'all_modules',
-                filter: lastFilter || 'all_records'
-            };
-        } else {
-            filterData = {
-                filter: lastFilter || null
-            };
-        }
-        this.applyPreviousFilter(moduleName, linkName, filterData);
-    },
-    /**
-     * applies previous filter
-     * @param {String} moduleName
-     * @param {String} linkName
-     * @param {Object} data
-     */
-    applyPreviousFilter: function (moduleName, linkName, data) {
-        var module = moduleName || this.module,
-            link = linkName || data.link;
-        if (this.showingActivities) module = "Activities";
-        if (this.layoutType === 'record' && link !== 'all_modules' && !this.showingActivities) {
-            var moduleMeta = app.metadata.getModule(module);
-            // only switch modules if this link actually exists on the module
-            if (!_.isUndefined(moduleMeta.fields[link])) {
-                module = app.data.getRelatedModule(module, link) || module;
+            linkName = linkName || 'all_modules';
+            linkName = app.user.lastState.get(app.user.lastState.key('subpanels-last', this)) || linkName;
+
+            if (linkName !== 'all_modules') {
+                moduleName = app.data.getRelatedModule(moduleName, linkName) || moduleName;
             }
-
+        }
+        if (this.showingActivities) {
+            moduleName = 'Activities';
+            linkName = null;
         }
 
-        this.layout.trigger('filterpanel:change:module', module);
-        this.trigger('filter:change:module', module, link, true);
-        this.getFilters(module, data.filter);
+        var filterId = lastFilter || this.getLastFilter(moduleName, this.layoutType) || 'all_records';
+
+        this.layout.trigger('filterpanel:change:module', moduleName);
+        this.trigger('filter:change:module', moduleName, linkName, true);
+        this.getFilters(moduleName, filterId);
     },
 
     /**
@@ -610,6 +596,10 @@
      * @param {String} defaultId The filter `id` to select once loaded.
      */
     getFilters: function(moduleName, defaultId) {
+        if (moduleName === 'all_modules') {
+            this.selectFilter('all_records');
+            return;
+        }
         var filterLayout = app.view._getController({type: 'layout', name: 'filter'}),
             cachedFilters = this.getFilterCollection(moduleName);
 
@@ -690,6 +680,8 @@
     /**
      * Selects a filter.
      *
+     * @triggers filter:select:filter to select the filter in the dropdown.
+     *
      * @param {String} filterId The filter id to select.
      * @return {String} The selected filter id.
      */
@@ -701,13 +693,9 @@
             possibleFilters = [selectedFilterId, this.filters.defaultFilterFromMeta, 'all_records'];
             possibleFilters = _.filter(possibleFilters, this.filters.get, this.filters);
             selectedFilterId = _.first(possibleFilters);
-
-            if (selectedFilterId !== filterId) {
-                this.setLastFilter(this.layout.currentModule, this.layoutType, selectedFilterId);
-            }
         }
         this.trigger('filter:render:filter');
-        this.trigger('filter:change:filter', selectedFilterId, true);
+        this.trigger('filter:select:filter', selectedFilterId);
         return selectedFilterId;
     },
 

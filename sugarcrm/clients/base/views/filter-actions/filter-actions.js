@@ -145,18 +145,47 @@
     },
 
     /**
-     * Trigger `filter:create:close` to close the filter create panel.
+     * Handler for canceling form edition.
+     *
+     * @triggers filter:apply to apply the previous filter definition.
+     * @triggers filter:select:filter to switch back to the default filter.
+     * @triggers filter:create:close to close the filter creation form.
      */
     triggerClose: function() {
-        var id = this.context.editingFilter.get('id');
+        var filter = this.context.editingFilter,
+            filterLayout = this.layout.getComponent('filter'),
+            id,
+            changedAttributes;
 
-        //Check the current filter definition
-        var filterDef = this.layout.getComponent('filter-rows').buildFilterDef(true);
+        id = filter.get('id');
+        changedAttributes = filter.changedAttributes(filter.getSyncedAttributes());
+
         //Apply the previous filter definition if something has changed meanwhile
-        if (!_.isEqual(this.context.editingFilter.get('filter_definition'), filterDef)) {
-            this.layout.trigger('filter:apply', null, this.context.editingFilter.get('filter_definition'));
+        if (changedAttributes && changedAttributes.filter_definition) {
+            filter.revertAttributes();
+            this.layout.trigger(
+                /**
+                 * @event
+                 * See {@link View.Layouts.Base.FilterPanelLayout#filter:apply}.
+                 */
+                'filter:apply', null, filter.get('filter_definition'));
         }
-        this.layout.getComponent('filter').trigger('filter:create:close', true, id);
+        if (!id) {
+            filterLayout.clearLastFilter(this.layout.currentModule, filterLayout.layoutType);
+            filterLayout.trigger(
+                /**
+                 * @event
+                 * See {@link View.Layouts.Base.FilterLayout#filter:select:filter}.
+                 */
+                'filter:select:filter', filterLayout.filters.defaultFilterFromMeta);
+            return;
+        }
+        this.layout.trigger(
+            /**
+             * @event
+             * See {@link View.Layouts.Base.FilterLayout#filter:create:close}.
+             */
+            'filter:create:close', true, filter.get('id'));
     },
 
     /**
