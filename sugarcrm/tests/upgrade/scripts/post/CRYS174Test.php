@@ -20,6 +20,21 @@ require_once 'upgrade/scripts/post/7_MBMenu.php';
  */
 class CRYS174Test extends UpgradeTestCase
 {
+    private $configBackup = array();
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->configBackup = $this->upgrader->config;
+        $this->upgrader->config['default_permissions'] = array();
+    }
+
+    public function tearDown()
+    {
+        $this->upgrader->config = $this->configBackup;
+        parent::tearDown();
+    }
+
     /**
      * Data provider for testVCardMenuItemCreation
      *
