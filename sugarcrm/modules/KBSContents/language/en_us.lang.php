@@ -86,4 +86,9 @@ $mod_strings = array (
     'LBL_PANEL_INMORELESS' => 'Usefulness',
     'LBL_MORE_OTHER_LANGUAGES' => 'More Other Languages...',
     'EXCEPTION_VOTE_USEFULNESS_NOT_AUTHORIZED' => 'You are not authorized to vote useful/not useful {moduleName}. Contact your administrator if you need access.',
+    'LNK_NEW_KBSCONTENT_TEMPLATE' => 'Create Template',
+    'LNK_LIST_KBSCONTENT_TEMPLATES' => 'View Templates',
+    'LBL_TEMPLATES' => 'Templates',
+    'LBL_TEMPATE_LOAD_MESSAGE' => 'The template will overwrite all contents.' .
+        ' Are you sure you want to use this template?',
 );
