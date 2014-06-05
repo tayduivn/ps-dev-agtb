@@ -152,7 +152,7 @@ $dictionary['WorkFlowAlertShell'] = array('table' => 'workflow_alertshells'
     'source'=>'non-db',
   ),
 ),
-'acls' => array('SugarACLAdminOnly' => true),
+'acls' => array('SugarACLDeveloperOrAdmin' => true),
 'indices' => array (
        array('name' =>'workflowalertshell_k', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_workflowalertshell', 'type'=>'index', 'fields'=>array('name','deleted')),

@@ -165,7 +165,7 @@ $dictionary['WorkFlowActionShell'] = array('table' => 'workflow_actionshells'
     'source'=>'non-db',
   ),
 ),
-'acls' => array('SugarACLAdminOnly' => true),
+'acls' => array('SugarACLDeveloperOrAdmin' => true),
 'indices' => array (
        array('name' =>'actionshell_k', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_actionshell', 'type'=>'index', 'fields'=>array('deleted')),
