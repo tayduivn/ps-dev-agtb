@@ -37,7 +37,9 @@ class UsersViewAuthenticate extends SidecarView
         $service = new $restServiceClass();
         SugarOAuth2Server::getOAuth2Server(); // to load necessary classes
 
-        $oapi = new OAuth2Api();
+        SugarAutoLoader::requireWithCustom('clients/base/api/OAuth2Api.php');
+        $oapiClassName = SugarAutoLoader::customClass('OAuth2Api');
+        $oapi = new $oapiClassName();
         $args = $_REQUEST;
         $args['client_id'] = 'sugar';
         $args['client_secret'] = '';
