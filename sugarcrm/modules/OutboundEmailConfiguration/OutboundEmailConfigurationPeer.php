@@ -68,35 +68,18 @@ class OutboundEmailConfigurationPeer
 
         $systemMailerConfiguration = static::loadOutboundEmail();
         $systemMailerConfiguration->getSystemMailerSettings();
-
-        $system_replyToAddress = '';
-        $systemUserInfo        = $systemUser->getUsersNameAndEmail();
-
-        if (empty($systemUserInfo['email'])) {
-            $systemDefaultInfo       = $systemUser->getSystemDefaultNameAndEmail();
-            $systemUserInfo['email'] = $systemDefaultInfo['email'];
-            $systemUserInfo['name']  = $systemDefaultInfo['name'];
-            $system_replyToAddress   = $systemUserInfo['email'];
-        }
-
-        $system_replyToName = $systemUserInfo['name'];
-        $replyTo            = $systemUser->emailAddress->getReplyToAddress($systemUser, true);
-
-        if (!empty($replyTo)) {
-            $system_replyToAddress = $replyTo;
-        }
+        $systemDefaultInfo = $systemUser->getSystemDefaultNameAndEmail();
 
         $configurations                = array();
         $configurations["config_id"]   = $systemUser->id;
         $configurations["config_type"] = "system";
         $configurations["inbox_id"]    = null;
 
-        $configurations["from_email"]    = $systemUserInfo["email"];
-        $configurations["from_name"]     = $systemUserInfo["name"];
-        $configurations["display_name"]  = "{$systemUserInfo['name']} ({$systemUserInfo['email']}) - [" . $app_strings['LBL_SYSTEM_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION'] . "]";
+        $configurations["from_email"]    = $systemDefaultInfo["email"];
+        $configurations["from_name"]     = $systemDefaultInfo["name"];
+        $configurations["display_name"]  = "{$systemDefaultInfo['name']} ({$systemDefaultInfo['email']}) - [" . $app_strings['LBL_SYSTEM_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION'] . "]";
         $configurations["personal"]      = false;
-        $configurations["replyto_email"] = $system_replyToAddress;
-        $configurations["replyto_name"]  = $system_replyToName;
+
         $outboundEmailConfiguration      = self::buildOutboundEmailConfiguration(
             $systemUser,
             $configurations,
