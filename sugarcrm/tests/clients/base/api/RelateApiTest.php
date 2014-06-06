@@ -95,6 +95,8 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
         unset($_SESSION['ACL']);
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
 
+        SugarTestEmailUtilities::removeAllCreatedEmails();
+        SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestHelper::tearDown();
         parent::tearDown();        
     }
@@ -229,6 +231,99 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
 
         $this->assertEquals(2, count($reply['records']), 'Should return two records');
         $this->assertEquals($contact_id, $reply['records'][0]['id'], 'Should be in desc order');
+    }
+
+    /**
+     * Related records should be accessible for record owner
+     *
+     * @dataProvider aclProvider
+     */
+    public function testFetchRelatedRecordsByOwner(array $acl)
+    {
+        global $current_user;
+
+        list($lead, $email) = $this->setUpArchivedEmails($current_user);
+        $records = $this->getRelatedEmails($lead, $acl);
+        $this->assertCount(1, $records, 'There should be exactly one record');
+        $record = array_shift($records);
+        $this->assertEquals($email->id, $record['id']);
+    }
+
+    /**
+     * Related records should not be accessible for a non-owner
+     *
+     * @dataProvider aclProvider
+     */
+    public function testFetchRelatedRecordsByNonOwner($acl, $exception)
+    {
+        $owner = SugarTestUserUtilities::createAnonymousUser();
+
+        list($lead) = $this->setUpArchivedEmails($owner);
+
+        $this->setExpectedException($exception);
+        $this->getRelatedEmails($lead, $acl);
+    }
+
+    private function setUpArchivedEmails(User $owner)
+    {
+        $lead = SugarTestLeadUtilities::createLead();
+        $lead->assigned_user_id = $owner->id;
+        $lead->save();
+
+        // remove the lead from cache since it doesn't consider ACL
+        BeanFactory::unregisterBean($lead);
+
+        $email = SugarTestEmailUtilities::createEmail();
+        $email->load_relationship('leads');
+        $email->leads->add($lead);
+
+        return array($lead, $email);
+    }
+
+    private function getRelatedEmails(Lead $lead, array $acl)
+    {
+        global $current_user;
+
+        ACLAction::setACLData($current_user->id, $lead->module_dir, array(
+            'module' => array_merge(array(
+                'access' => array('aclaccess' => ACL_ALLOW_ENABLED),
+            ), $acl),
+        ));
+
+        $serviceBase = SugarTestRestUtilities::getRestServiceMock();
+        $response = $this->relateApi->filterRelated($serviceBase, array(
+            'fields' => 'id',
+            'link_name' => 'archived_emails',
+            'module' => $lead->module_dir,
+            'record' => $lead->id,
+        ));
+        $this->assertArrayHasKey('records', $response);
+
+        return $response['records'];
+    }
+
+    public static function aclProvider()
+    {
+        SugarAutoLoader::autoload('ACLAction');
+
+        return array(
+            // lack of list permission should cause SugarApiExceptionNotFound
+            array(
+                array(
+                    'list' => array('aclaccess' => ACL_ALLOW_OWNER),
+                    'view' => array('aclaccess' => ACL_ALLOW_ALL),
+                ),
+                'SugarApiExceptionNotFound',
+            ),
+            // lack of view permission should cause SugarApiExceptionNotAuthorized
+            array(
+                array(
+                    'list' => array('aclaccess' => ACL_ALLOW_ALL),
+                    'view' => array('aclaccess' => ACL_ALLOW_OWNER),
+                ),
+                'SugarApiExceptionNotAuthorized',
+            ),
+        );
     }
 }
 
