@@ -106,13 +106,11 @@ describe('Base.View.FilterActions', function() {
 
         beforeEach(function() {
             component = {
-                trigger: $.noop,
-                buildFilterDef: function() {
-                    return [
-                        {$favorite: ''}
-                    ];
-                }
+                clearLastFilter: $.noop,
+                trigger: $.noop
             };
+            component.filters = app.data.createBeanCollection('Filters');
+            component.filters.defaultFilterFromMeta = 'my_metadata_default_filter';
             view.layout.getComponent = function() {
                 return component;
             };
@@ -120,27 +118,28 @@ describe('Base.View.FilterActions', function() {
             layoutTriggerStub = sinon.collection.stub(view.layout, 'trigger');
         });
 
-        it('should trigger "filter:create:close" on the filter layout', function() {
-            view.layout.getComponent = function() {
-                return component;
-            };
-            view.context.editingFilter = new Backbone.Model({id: 'my_filter'});
-            view.triggerClose();
-            expect(filterLayoutTriggerStub).toHaveBeenCalled();
-            expect(filterLayoutTriggerStub).toHaveBeenCalledWith('filter:create:close', true, 'my_filter');
-        });
-
-        it('should trigger "filter:apply" on the filter layout to cancel changes in filter definition', function() {
-            view.context.editingFilter = new Backbone.Model({id: 'my_filter', filter_definition: [
+        it('should revert changes and trigger events to refresh the data and close the form', function() {
+            view.context.editingFilter = app.data.createBean('Filters', {id: 'my_filter', filter_definition: [
                 {$owner: ''}
+            ]});
+            view.context.editingFilter.setSyncedAttributes({id: 'my_filter', filter_definition: [
+                {$favorite: ''}
             ]});
             view.triggerClose();
             expect(layoutTriggerStub).toHaveBeenCalled();
             expect(layoutTriggerStub).toHaveBeenCalledWith('filter:apply', null, [
-                {$owner: ''}
+                {$favorite: ''}
             ]);
+            expect(layoutTriggerStub).toHaveBeenCalledWith('filter:create:close');
+        });
+
+        it('should switch back to the default filter if the filter was new', function() {
+            view.context.editingFilter = app.data.createBean('Filters', {filter_definition: [
+                {$owner: ''}
+            ]});
+            view.triggerClose();
             expect(filterLayoutTriggerStub).toHaveBeenCalled();
-            expect(filterLayoutTriggerStub).toHaveBeenCalledWith('filter:create:close', true, 'my_filter');
+            expect(filterLayoutTriggerStub).toHaveBeenCalledWith('filter:select:filter', 'my_metadata_default_filter');
         });
     });
 
