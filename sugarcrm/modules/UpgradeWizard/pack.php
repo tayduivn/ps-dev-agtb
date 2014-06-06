@@ -30,6 +30,7 @@ $files=array(
 	"modules/UpgradeWizard/UpgradeDriver.php",
 	"modules/UpgradeWizard/WebUpgrader.php",
 	"modules/UpgradeWizard/upgrade_screen.php",
+	"modules/UpgradeWizard/upgrader_version.json",
 	"include/javascript/jquery/jquery-min.js",
 	"sidecar/lib/jquery/jquery.iframe.transport.js",
 );
@@ -37,7 +38,7 @@ $files=array(
 $manifest = array(
 	'acceptable_sugar_versions' =>
 	array (
-	'regex_matches' => array('6\.[5-7]\.*','7\.[01]\.*')
+        'regex_matches' => array('6\.[5-7]\.*','7\.[012]\.*')
 	),
 	'author' => 'SugarCRM, Inc.',
 	'description' => 'SugarCRM Upgrader 2.0',

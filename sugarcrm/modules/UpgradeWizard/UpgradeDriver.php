@@ -265,7 +265,7 @@ abstract class UpgradeDriver
     public function testFilesystemCaseInsensitive()
     {
         $result = false;
- 
+
         @touch('testFSCase.txt');
 
         if (file_exists('testfscase.txt')) {
@@ -1624,8 +1624,9 @@ abstract class UpgradeDriver
     {
         $version = self::$version;
         $build = self::$build;
-        if(file_exists(self::VERSION_FILE)) {
-            $data = json_decode(file_get_contents(self::VERSION_FILE), true);
+        $vfile = dirname(__FILE__)."/".self::VERSION_FILE;
+        if(file_exists($vfile)) {
+            $data = json_decode(file_get_contents($vfile), true);
             if(empty($data)) {
                 return array($version, $build);
             }
