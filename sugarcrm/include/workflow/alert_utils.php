@@ -398,7 +398,7 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
         $mailTransmissionProtocol = "unknown";
 
         try {
-            $mailer                   = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+            $mailer                   = MailerFactory::getSystemDefaultMailer();
             $mailTransmissionProtocol = $mailer->getMailTransmissionProtocol();
 
             foreach ($address_array['to'] as $userInfo) {
