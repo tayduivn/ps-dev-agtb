@@ -290,7 +290,7 @@ class SubPanel
             $filename = "subpanel-for-{$panel->name}";
             $overrideName = 'override_subpanel_list_view';
             if($panel->_instance_properties['subpanel_name'] == 'default') {
-                $viewName = 'subpanel-for-' . strtolower($panel->parent_bean->module_dir);
+                $viewName = 'subpanel-for-' . strtolower($panel->name);
             } else {
                 $viewName = $mc->fromLegacySubpanelName($panel->_instance_properties['subpanel_name']);
             }
