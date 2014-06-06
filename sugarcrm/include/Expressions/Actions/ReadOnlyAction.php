@@ -18,6 +18,11 @@ class ReadOnlyAction extends AbstractAction
 {
     protected $expression = "";
 
+    /*
+     * array Array of actions on which the Expression Action is not allowed
+     */
+    protected $disallowedActions = array('view');
+
     public function ReadOnlyAction($params)
     {
         $this->params = $params;

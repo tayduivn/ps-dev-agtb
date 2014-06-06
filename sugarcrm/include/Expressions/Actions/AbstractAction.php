@@ -31,6 +31,11 @@ abstract class AbstractAction {
 	protected $targetField = array();
     protected $params = array();
 
+    /**
+     * array Array of actions for which the Expression Action is not allowed
+     */
+    protected $disallowedActions = array();
+
 	/**
 	 * Actions are expressions which modify data or layouts.
 	 *
@@ -52,6 +57,19 @@ abstract class AbstractAction {
 	 * @return string javascript.
 	 */
 	abstract static function getJavascriptClass() ;
+
+    /**
+     * Checks if the Expression Action is allowed for the given action
+     * If disallowedActions array is empty in_array will always return true
+     * otherwise, it just checks if $action exists there
+     *
+     * @param String $action name of the action ("edit", "view", "save", ...)
+     * @return boolean true if allowed, false otherwise
+     */
+    public function isActionAllowed($action)
+    {
+        return !in_array($action, $this->disallowedActions);
+    }
 
 	/**
 	 * Returns the javascript code to create a new action of this type

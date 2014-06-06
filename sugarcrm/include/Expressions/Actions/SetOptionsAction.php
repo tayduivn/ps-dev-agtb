@@ -23,7 +23,12 @@ require_once("include/Expressions/Actions/AbstractAction.php");
 class SetOptionsAction extends AbstractAction{
 	protected $keysExpression =  "";
 	protected $labelsExpressions =  "";
-	
+
+    /**
+     * array Array of actions on which the Expression Action is not allowed
+     */
+    protected $disallowedActions = array('view');
+
 	function SetOptionsAction($params) {
         $this->params = $params;
 		$this->targetField = $params['target'];
