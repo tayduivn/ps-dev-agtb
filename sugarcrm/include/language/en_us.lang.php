@@ -3702,6 +3702,17 @@ $app_strings = array (
     'LBL_TWITTER_MY_ACCOUNT' => 'My Account',
     'LBL_TWITTER_NAME' => 'Twitter',
 
+    /* Learning Resources Dashlet */
+    'LBL_LEARNING_RESOURCES_TITLE' => 'Learning Resources',
+    'LBL_LEARNING_RESOURCES_DESC' => 'SugarCRM Learning Resources',
+    'LBL_LEARNING_RESOURCES_NAME' => 'Learning Resources',
+    'LBL_LEARNING_RESOURCES_SUGAR_UNIVERSITY_LINK' => 'Sugar University',
+    'LBL_LEARNING_RESOURCES_SUGAR_UNIVERSITY_TEASER' => 'Become a Sugar expert with upgrade training, videos, classes, webinars, and certification.',
+    'LBL_LEARNING_RESOURCES_COMMUNITY_LINK' => 'Community Forums',
+    'LBL_LEARNING_RESOURCES_COMMUNITY_TEASER' => 'Join the discussion, problem solve, and share ideas with other users.',
+    'LBL_LEARNING_RESOURCES_SUPPORT_LINK' => 'Documentation & Support',
+    'LBL_LEARNING_RESOURCES_SUPPORT_TEASER' => 'Learn the details of how Sugar works and engage with support.',
+
     /* Country Chart Dashlet */
     'LBL_DASHLET_COUNTRY_CHART_NAME' => 'Sales by Country',
     'LBL_DASHLET_COUNTRY_CHART_DESCRIPTION' => 'Displays the sales chart by country map.',
