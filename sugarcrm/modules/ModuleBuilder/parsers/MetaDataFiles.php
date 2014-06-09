@@ -882,8 +882,11 @@ class MetaDataFiles
                 // These are sorted in order of priority.
                 // The template flag is if that file needs to be "built" by the metadata loader so it
                 // is no longer a template file, but a real file.
-                $checkPaths['custom/modules/'.$module.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
-                $checkPaths['modules/'.$module.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
+                // Use the module_dir if available to support submodules
+                $bean = BeanFactory::getBean($module);
+                $module_path  = isset($bean->module_dir) ? $bean->module_dir : $module;
+                $checkPaths['custom/modules/'.$module_path.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
+                $checkPaths['modules/'.$module_path.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
                 $baseTemplateDir = 'include/SugarObjects/templates/basic/clients/'.$platform.'/'.$type.'s';
                 $nonBaseTemplateDir = self::getSugarObjectFileDir($module, $platform, $type);
                 if (!empty($nonBaseTemplateDir) && $nonBaseTemplateDir != $baseTemplateDir ) {
