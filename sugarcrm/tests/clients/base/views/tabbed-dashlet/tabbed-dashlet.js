@@ -98,6 +98,8 @@ describe('Base.View.TabbedDashlet', function() {
             var element = event.currentTarget = $('<input/>', {value: 'test'});
             element.appendTo(view.$el);
             var setStateStub = sinon.collection.stub(app.user.lastState, 'set');
+            //Prevent actual calls to load data (makes an XHR request)
+            sinon.collection.stub(layout, 'loadData');
 
             view.visibilitySwitcher(event);
             expect(setStateStub.calledOnce).toBe(true);

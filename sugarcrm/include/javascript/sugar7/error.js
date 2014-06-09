@@ -125,9 +125,9 @@
      * requested the data.
      */
     app.error.handleNotFoundError = function(error, model, options) {
-        var layout = app.controller.layout;
+        var layout = app.controller.layout || {};
         if ((options && options.context != layout.context)
-            || (model && layout.context.get("model") && layout.context.get("model") != model)
+            || (model && layout.context && layout.context.get("model") && layout.context.get("model") != model)
         ) {
             return;
         }
