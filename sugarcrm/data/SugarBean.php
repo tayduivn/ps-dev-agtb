@@ -7099,7 +7099,10 @@ class SugarBean
         $fields_array = array();
 
         //include fields_array file if it exists
-        SugarAutoLoader::requireWithCustom("modules/{$this->module_name}/field_arrays.php");
+        $file = SugarAutoLoader::existingCustomOne("modules/{$this->module_name}/field_arrays.php");
+        if ($file) {
+            include($file);
+        }
 
         //get fields defs to process from either the defined export fields in fields array file, or the bean field array
         if (!empty($fields_array) && !empty($fields_array[$this->object_name]) && !empty($fields_array[$this->object_name]['export_fields'])) {
