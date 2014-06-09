@@ -159,9 +159,6 @@
              * @param {Event} e The `change` event.
              */
             function(e) {
-//                if (e.val === 'create') {
-//                    self.layout.clearFilterEditState();
-//                }
                 self.layout.trigger('filter:change:filter', e.val);
             }
         );
@@ -278,10 +275,7 @@
      * @returns {Boolean} TRUE if filter is editable, FALSE otherwise
      */
     isFilterEditable: function(id) {
-        if (!this.layout.canCreateFilter()) {
-            return false;
-        }
-        if (!this.filterDropdownEnabled || this.layout.showingActivities) {
+        if (!this.layout.canCreateFilter() || !this.filterDropdownEnabled || this.layout.showingActivities) {
             return false;
         }
         if (id === "create" || id === 'all_records') {

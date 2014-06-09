@@ -209,9 +209,9 @@
     },
 
     /**
-     * Saves the current edit state into the cache
+     * Retrieves the current edit state from cache.
      *
-     * @param {Object} filter
+     * @return {Object} The filter attributes if found.
      */
     retrieveFilterEditState: function() {
         var filterOptions = this.context.get('filterOptions') || {};
@@ -390,10 +390,13 @@
         // If the user selects a filter template that gets populated by values
         // passed in the context/metadata, open the filterpanel to show the
         // actual search.
-        if (isIncompleteFilter || filter.get('is_template') ||
-            editState || id === 'create' ||
-            !_.isEmpty(filter.changedAttributes(filter.getSyncedAttributes()))
-            ) {
+        var isTemplateFilter = filter.get('is_template');
+
+        var modelHasChanged = !_.isEmpty(filter.changedAttributes(filter.getSyncedAttributes()));
+
+        if (isIncompleteFilter || isTemplateFilter ||
+            editState || id === 'create' || modelHasChanged
+        ) {
             this.layout.trigger('filter:set:name', '');
             this.trigger('filter:create:open', filter);
             this.layout.trigger('filter:toggle:savestate', true);
@@ -561,27 +564,30 @@
      * @param {String} moduleName The module name.
      * @param {String} [linkName] The related module link name, by default it
      *   will load the last selected filter,
-     * @param {String} [lastFilter] The filter ID to initialize with. By default
+     * @param {String} [filterId] The filter ID to initialize with. By default
      *   it will load the last selected filter or the default filter from
      *   metadata.
      */
-    initializeFilterState: function(moduleName, linkName, lastFilter) {
-        moduleName = moduleName || this.module;
+    initializeFilterState: function(moduleName, linkName, filterId) {
 
-        if (this.layoutType === 'record' && !this.showingActivities) {
-            linkName = linkName || 'all_modules';
-            linkName = app.user.lastState.get(app.user.lastState.key('subpanels-last', this)) || linkName;
-
-            if (linkName !== 'all_modules') {
-                moduleName = app.data.getRelatedModule(moduleName, linkName) || moduleName;
-            }
-        }
         if (this.showingActivities) {
             moduleName = 'Activities';
             linkName = null;
+        } else {
+            moduleName = moduleName || this.module;
+
+            if (this.layoutType === 'record') {
+                linkName = app.user.lastState.get(app.user.lastState.key('subpanels-last', this)) ||
+                    linkName ||
+                    'all_modules';
+
+                if (linkName !== 'all_modules') {
+                    moduleName = app.data.getRelatedModule(moduleName, linkName) || moduleName;
+                }
+            }
         }
 
-        var filterId = lastFilter || this.getLastFilter(moduleName, this.layoutType) || 'all_records';
+        filterId = filterId || this.getLastFilter(moduleName, this.layoutType) || 'all_records';
 
         this.layout.trigger('filterpanel:change:module', moduleName);
         this.trigger('filter:change:module', moduleName, linkName, true);

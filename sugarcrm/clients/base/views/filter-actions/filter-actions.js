@@ -145,7 +145,7 @@
     },
 
     /**
-     * Handler for canceling form edition.
+     * Handler for canceling form editing.
      *
      * @triggers filter:apply to apply the previous filter definition.
      * @triggers filter:select:filter to switch back to the default filter.
@@ -154,11 +154,8 @@
     triggerClose: function() {
         var filter = this.context.editingFilter,
             filterLayout = this.layout.getComponent('filter'),
-            id,
-            changedAttributes;
-
-        id = filter.get('id');
-        changedAttributes = filter.changedAttributes(filter.getSyncedAttributes());
+            id = filter.get('id'),
+            changedAttributes = filter.changedAttributes(filter.getSyncedAttributes());
 
         //Apply the previous filter definition if something has changed meanwhile
         if (changedAttributes && changedAttributes.filter_definition) {
@@ -185,7 +182,7 @@
              * @event
              * See {@link View.Layouts.Base.FilterLayout#filter:create:close}.
              */
-            'filter:create:close', true, filter.get('id'));
+            'filter:create:close');
     },
 
     /**
