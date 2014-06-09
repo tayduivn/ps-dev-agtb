@@ -44,9 +44,10 @@
         this.title = titleTemplate({module: moduleName});
         this._super('_renderHtml');
 
-        this.layout.on('selection:closedrawer:fire', function() {
+        this.layout.on('selection:closedrawer:fire', _.once(_.bind(function() {
+            this.$el.off();
             app.drawer.close();
-        }, this);
+        }, this)));
 
         if (this.isMultiLink) {
             this.layout.on('selection:link:fire', function() {

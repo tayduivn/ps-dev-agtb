@@ -119,8 +119,10 @@
             //close the drawer
             this._animateCloseDrawer(function() {
                 var layout;
-
-                self._components.pop().dispose(); //dispose top-most drawer
+                var topDrawer = self._components.pop();
+                if(topDrawer && topDrawer.dispose) {
+                    topDrawer.dispose(); //dispose top-most drawer
+                }
                 layout = _.last(self._components);
 
                 //scroll both main and sidebar back its original position
@@ -131,8 +133,10 @@
                 } else { //we've returned to base layout
                     app.trigger("app:view:change", app.controller.context.get("layout"), app.controller.context.attributes);
                 }
-
-                (self.onCloseCallback.pop()).apply(this, args); //execute callback
+                var ccb = self.onCloseCallback.pop();
+                if (ccb) {
+                    (ccb).apply(this, args); //execute callback
+                }
             });
         }
     },
@@ -575,7 +579,7 @@
      */
     _scrollBackToOriginal: function(drawerLayout) {
         var scrollPositions = this.scrollTopPositions.pop();
-
+        if (!scrollPositions) return;
         if (drawerLayout) {
             drawerLayout.$('.main-pane').scrollTop(scrollPositions.main);
             drawerLayout.$('.sidebar-content').scrollTop(scrollPositions.side);
