@@ -133,7 +133,7 @@ describe("Twitter View", function() {
         view.model.set('name','test');
         view.context.set('module', 'test');
         view.loadData();
-
+        SugarTest.server.respond();
         expect(apiStub.getCall(4).args[1].indexOf("bob")).toEqual(-1);
     });
 
