@@ -239,7 +239,6 @@
                array(
                    // D3 library
                    'include/javascript/nvd3/lib/d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
-                   'include/SugarCharts/Jit/js/sugarCharts.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/SugarCharts/nvd3/js/sugarCharts.js' => 'include/javascript/sugar_sidecar.min.js',
                    // To add more models to NV D3, run the makefile in include/javascript/nvd3.
                    'include/javascript/nvd3/nv.d3.min.js' => 'include/javascript/sugar_sidecar.min.js',

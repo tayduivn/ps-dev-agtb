@@ -116,7 +116,14 @@ nv.models.funnelChart = function () {
       var wrap = container.selectAll('g.nv-wrap.nv-funnelChart').data([data]),
           gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-funnelChart').append('g'),
           g = wrap.select('g').attr('class', 'nv-chartWrap');
-
+      
+      gEnter.append('rect').attr('class', 'nv-background')
+        .attr('x', -margin.left)
+        .attr('y', -margin.top)
+        .attr('width', availableWidth + margin.left + margin.right)
+        .attr('height', availableHeight + margin.top + margin.bottom)
+        .attr('fill', '#FFF');
+        
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-y nv-axis');
