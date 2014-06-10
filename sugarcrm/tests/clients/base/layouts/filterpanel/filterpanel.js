@@ -98,12 +98,6 @@ describe("Base.Layout.Filterpanel", function(){
                expect(layout.currentModule).toEqual('test');
                expect(layout.currentLink).toEqual('testLink');
            });
-           it('should trigger filter reinit on filter create close and no id', function(){
-               var spy = sinon.spy();
-               layout.on('filter:reinitialize', spy);
-               layout.trigger('filter:create:close','test',false);
-               expect(spy).toHaveBeenCalled();
-           });
         });
 
         describe('applying last filter when a change happens on list view', function() {

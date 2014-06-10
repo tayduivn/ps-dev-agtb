@@ -187,7 +187,6 @@ describe('Base.Layout.Filter', function() {
         it('should remove filters', function () {
             var model = new Backbone.Model({id: '123'});
             var saveFilterCollectionStub = sinon.collection.stub(layout, 'saveFilterCollection'),
-                clearFilterEditStateStub = sinon.collection.stub(layout, 'clearFilterEditState'),
                 clearLastFilterStub = sinon.collection.stub(layout, 'clearLastFilter');
             layout.filters.add(model);
             parentLayout.off();
@@ -200,7 +199,6 @@ describe('Base.Layout.Filter', function() {
             expect(saveFilterCollectionStub).toHaveBeenCalled();
             // triggered filter reinit
             expect(spy).toHaveBeenCalled();
-            expect(clearFilterEditStateStub).toHaveBeenCalled();
             expect(clearLastFilterStub).toHaveBeenCalled();
             expect(clearLastFilterStub).toHaveBeenCalledWith(layout.currentModule, layout.layoutType);
             expect(layout.context.get('currentFilterId')).toEqual(null);
@@ -293,52 +291,40 @@ describe('Base.Layout.Filter', function() {
                 });
 
                 model = new Backbone.Model({id: '123', filter_definition: 'test'});
+                model.getSyncedAttributes = $.noop;
                 layout.filters.add(model);
             });
+
             it('should save last filter into cache', function() {
-                layout.handleFilterChange(model.get('id'), false);
+                layout.handleFilterChange(model.get('id'));
                 expect(stubCache).toHaveBeenCalled();
-                expect(layoutTriggerStub).not.toHaveBeenCalled();
             });
-            it('should not save last filter into cache', function() {
-                layout.handleFilterChange(model.get('id'), true);
-                expect(stubCache).not.toHaveBeenCalled();
-                layout.handleFilterChange(undefined, false);
-                expect(stubCache).not.toHaveBeenCalled();
-            });
+
             describe('preserving last search', function() {
-                it('should open the filter form if the edit state is available and validate', function() {
-                    lastEditState = {name: 'test', filter_definition: [{'$favorite':''}]};
+                it('should open the filter form if the edit state is found for this filter', function() {
+                    lastEditState = {id: model.get('id'), name: 'test', filter_definition: [{'$favorite':''}]};
                     expect(model.toJSON()).not.toEqual(lastEditState);
-                    layout.handleFilterChange(model.get('id'), false);
+                    layout.handleFilterChange(model.get('id'));
                     expect(triggerStub).toHaveBeenCalled();
                     expect(triggerStub).toHaveBeenCalledWith('filter:create:open');
                     expect(layoutTriggerStub).toHaveBeenCalled();
+                    expect(layoutTriggerStub).toHaveBeenCalledWith('filter:set:name');
                     expect(layoutTriggerStub).toHaveBeenCalledWith('filter:toggle:savestate');
                 });
-                it('should validate because the filter definition has changed', function() {
-                    model.set({name: 'test'});
-                    lastEditState = {id: '123', name: 'test', filter_definition: [{'$favorite':''}]};
-                    expect(model.toJSON()).not.toEqual(lastEditState);
-                    layout.handleFilterChange(model.get('id'), false);
-                    expect(triggerStub).toHaveBeenCalled();
-                    expect(triggerStub).toHaveBeenCalledWith('filter:create:open');
-                    expect(layoutTriggerStub).toHaveBeenCalled();
-                });
-                it('should not validate if the filter definition has not changed', function() {
+                xit('should not validate if the filter definition has not changed', function() {
                     model.set({name: 'test', filter_definition: [{'$favorite':''}]});
                     lastEditState = {id: '123', name: 'test', filter_definition: [{'$favorite':''}]};
                     expect(model.toJSON()).toEqual(lastEditState);
                     layout.handleFilterChange(model.get('id'), false);
-                    expect(triggerStub).toHaveBeenCalled();
-                    expect(triggerStub).toHaveBeenCalledWith('filter:create:open');
-                    expect(layoutTriggerStub).not.toHaveBeenCalled();
+                    expect(triggerStub).not.toHaveBeenCalled();
+                    expect(layoutTriggerStub).toHaveBeenCalled();
+                    expect(layoutTriggerStub).toHaveBeenCalledWith('filter:create:close');
                 });
-                it('should not open the filter form if no edit state available', function() {
-                    layout.handleFilterChange(model.get('id'), false);
+                it('should close the filter form if no edit state is found for this filter', function() {
+                    layout.handleFilterChange(model.get('id'));
                     expect(triggerStub).not.toHaveBeenCalledWith('filter:create:open');
-                    expect(layoutTriggerStub).not.toHaveBeenCalled();
-                    expect(layoutTriggerStub).not.toHaveBeenCalledWith('filter:toggle:savestate');
+                    expect(layoutTriggerStub).toHaveBeenCalled();
+                    expect(layoutTriggerStub).toHaveBeenCalledWith('filter:create:close');
                 });
             });
             it('shoud determine if we need to clear the collection(s) and trigger quicksearch if yes', function() {
@@ -661,78 +647,82 @@ describe('Base.Layout.Filter', function() {
         });
 
         describe('initializeFilterState', function() {
-            var lastStateFilter;
+            var lastStateFilter, relatedModule;
             var stubCache, nextCallStub;
+
             beforeEach(function() {
                 lastStateFilter = undefined;
                 stubCache = sinon.collection.stub(app.user.lastState, 'get', function() {
                     return lastStateFilter;
                 });
-                nextCallStub = sinon.collection.stub(layout, 'applyPreviousFilter');
+                nextCallStub = sinon.collection.stub(layout, 'getFilters');
                 // Add the test filter to the filter collection
                 layout.filters.add(new Backbone.Model({'id': 'testFilter'}));
-            });
-            it('should apply last filter and not specify link because not on record layout (ie subpanels)', function() {
-                lastStateFilter = 'testFilter';
 
-                var expected = ['Accounts', undefined, {'filter': 'testFilter'}];
-                layout.initializeFilterState('Accounts');
-                expect(nextCallStub.lastCall.args).toEqual(expected);
+                sinon.collection.stub(app.data, 'getRelatedModule', function() {
+                    return relatedModule;
+                });
             });
-            it('should apply subpanel link and filter when a subpanel filter is specified', function() {
-                layout.layoutType = 'record';
-                layout.showingActivities = false;
-                lastStateFilter = 'testFilter';
 
-                var expected = ['Accounts', 'testFilter', {'link': 'testFilter', 'filter': 'testFilter'}];
-                layout.initializeFilterState('Accounts');
-                expect(nextCallStub.lastCall.args).toEqual(expected);
-            });
-            it('should apply "all_modules" link and  "all_records" filter when last subpanel filter not specified',
-                function() {
-                    layout.layoutType = 'record';
-                    layout.showingActivities = false;
-
-                    var expected = ['Accounts', undefined, {'link': 'all_modules', 'filter': 'all_records'}];
-                    layout.initializeFilterState('Accounts');
-                    expect(nextCallStub.lastCall.args).toEqual(expected);
+            using('different params (layoutType, module, link, filter)', [
+                {
+                    params: ['Accounts'],
+                    layoutType: 'record',
+                    showingActivities: false,
+                    expected: ['Accounts', 'all_records']
+                },
+                {
+                    params: ['Accounts'],
+                    lastStateFilter: 'testFilter',
+                    layoutType: 'record',
+                    showingActivities: false,
+                    expected: ['Accounts', 'testFilter']
+                },
+                {
+                    params: ['Accounts', null, 'anotherFilter'],
+                    lastStateFilter: 'testFilter',
+                    layoutType: 'record',
+                    showingActivities: false,
+                    expected: ['Accounts', 'anotherFilter']
+                },
+                {
+                    params: ['Accounts', 'contacts'],
+                    lastStateFilter: 'testFilter',
+                    relatedModule: 'Contacts',
+                    layoutType: 'record',
+                    showingActivities: false,
+                    expected: ['Contacts', 'testFilter']
+                },
+                {
+                    params: ['Accounts'],
+                    lastStateFilter: 'testFilter',
+                    layoutType: 'record',
+                    showingActivities: true,
+                    expected: ['Activities', 'testFilter']
+                },
+                {
+                    params: ['Accounts'],
+                    lastStateFilter: undefined,
+                    layoutType: 'record',
+                    showingActivities: true,
+                    expected: ['Activities', 'all_records']
                 }
-            );
-            it('should initialize the filter panel with the lastFilter argument', function() {
-                layout.layoutType = 'records';
-                layout.showingActivities = false;
+            ], function(option) {
+                it('should retrieve the module to filter and the filter to select', function() {
+                    option.params = option.params || [];
 
-                layout.initializeFilterState('Accounts', null, 'uniqueID');
-                expect(nextCallStub).toHaveBeenCalledWith('Accounts', null, {'filter': 'uniqueID'});
-            });
-            it('should initialize the filter panel with the lastFilter and linkName args', function() {
-                layout.layoutType = 'record';
-                layout.showingActivities = false;
+                    layout.layoutType = option.layoutType;
+                    layout.showingActivities = option.showingActivities;
 
-                layout.initializeFilterState('Accounts', 'tasks', 'uniqueID');
-                expect(nextCallStub).toHaveBeenCalledWith('Accounts', 'tasks', {'filter': 'uniqueID', 'link': 'tasks'});
+                    lastStateFilter = option.lastStateFilter;
+                    relatedModule = option.relatedModule;
+
+                    layout.initializeFilterState(option.params[0], option.params[1], option.params[2]);
+                    expect(nextCallStub.lastCall.args).toEqual(option.expected);
+                });
             });
         });
 
-        it('should be able to apply the previous filter when not showing activites', function(){
-            var modName = 'Accounts';
-            var linkName = undefined;
-            var data = {'filter':'testFilter'};
-            var expectedTriggerArgs = [modName,linkName,true];
-            var spy = sinon.spy();
-            var getFilterSpy = sinon.collection.stub(layout,'getFilters');
-            layout.off();
-            layout.on('filter:change:module',spy);
-            layout.applyPreviousFilter(modName, linkName, data);
-            expect(getFilterSpy.getCall(0).args).toEqual([modName, data.filter]);
-            expect(spy.getCall(0).args).toEqual(expectedTriggerArgs);
-
-            data = {'link':'testLink','filter':'testFilter'};
-            layout.applyPreviousFilter(modName, 'testLink', data);
-            expectedTriggerArgs = [modName,'testLink',true];
-            expect(getFilterSpy.getCall(1).args).toEqual([modName, data.filter]);
-            expect(spy.getCall(1).args).toEqual(expectedTriggerArgs);
-        });
         it('should get filters from cache', function(){
             var modName = 'Accounts', defaultName = 'testDefault';
             var stubs = {
@@ -901,11 +891,8 @@ describe('Base.Layout.Filter', function() {
             ], function(value) {
                 it('should retrieve the filter or fallback to default on failure', function() {
                     layout.selectFilter(value.asked);
-                    if (value.asked !== value.selected) {
-                        expect(stubs.setLastFilter).toHaveBeenCalled();
-                    }
                     expect(stubs.trigger).toHaveBeenCalledWith('filter:render:filter');
-                    expect(stubs.trigger).toHaveBeenCalledWith('filter:change:filter', value.selected);
+                    expect(stubs.trigger).toHaveBeenCalledWith('filter:select:filter', value.selected);
                 });
             });
         });
@@ -1150,10 +1137,6 @@ describe('Base.Layout.Filter', function() {
                 clearFilterEditStateStub = sinon.collection.stub(layout, 'clearFilterEditState');
                 parentLayoutTriggerStub = sinon.collection.stub(layout.layout, 'trigger');
                 clearLastFilterStub = sinon.collection.stub(layout, 'clearLastFilter');
-            });
-            it('should clear filter edit state from cache', function() {
-                layout.trigger('filter:create:close');
-                expect(clearFilterEditStateStub).toHaveBeenCalled();
             });
             it('should reset "editingFilter" on context', function() {
                 layout.context.editingFilter = 'filter_id';
