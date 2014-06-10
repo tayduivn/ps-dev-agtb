@@ -393,7 +393,6 @@ class SugarQuery
             $bean->table_name
         );
         $joinType = (!empty($options['joinType'])) ? $options['joinType'] : 'INNER';
-        $team_security = (!empty($options['team_security'])) ? $options['team_security'] : true;
         $ignoreRole = (!empty($options['ignoreRole'])) ? $options['ignoreRole'] : false;
 
         if (!$bean->load_relationship($link_name)) {
@@ -412,11 +411,6 @@ class SugarQuery
         }
 
         $bean->$link_name->buildJoinSugarQuery($this, $joinParams);
-
-
-        if ($team_security === true) {
-            $bean->addVisibilityQuery($this, array("table_alias" => $alias, 'as_condition' => true));
-        }
 
         $this->join[$alias]->addLinkName($link_name);
         $this->join[$alias]->on()->equals($alias . '.id', $bean->id);
