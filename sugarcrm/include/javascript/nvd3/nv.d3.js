@@ -188,45 +188,50 @@ d3.scale.quantile = function() {
     container.appendChild(arrow);
     body.appendChild(container);
 
-    nvtooltip.position(container,pos,gravity,dist);
+    nvtooltip.position(container, pos, gravity, dist);
     container.style.opacity = 1;
 
     return container;
   };
 
   nvtooltip.cleanup = function() {
+      // Find the tooltips, mark them for removal by this class
+      // (so others cleanups won't find it)
+      var tooltips = document.getElementsByClassName('tooltip'),
+          purging = [],
+          i = 0;
 
-      // Find the tooltips, mark them for removal by this class (so others cleanups won't find it)
-      var tooltips = document.getElementsByClassName('tooltip');
-      var purging = [];
-      while (tooltips.length) {
-        purging.push(tooltips[0]);
-        tooltips[0].style.transitionDelay = '0 !important';
-        tooltips[0].style.opacity = 0;
-        tooltips[0].className = 'nvtooltip-pending-removal out';
+      while (i < tooltips.length) {
+          if (tooltips[i].className.indexOf('xy-tooltip') !== -1) {
+              purging.push(tooltips[i]);
+              tooltips[i].style.transitionDelay = '0 !important';
+              tooltips[i].style.opacity = 0;
+              tooltips[i].className = 'nvtooltip-pending-removal out';
+          }
+          i += 1;
       }
 
       setTimeout(function() {
-
+          var removeMe;
           while (purging.length) {
-             var removeMe = purging.pop();
+              removeMe = purging.pop();
               removeMe.parentNode.removeChild(removeMe);
           }
       }, 500);
   };
 
-  nvtooltip.position = function(container,pos,gravity,dist) {
+  nvtooltip.position = function(container, pos, gravity, dist) {
     var body = document.getElementsByTagName('body')[0];
     gravity = gravity || 's';
     dist = dist || 10;
 
-    var height = parseInt(container.offsetHeight,10),
-        width = parseInt(container.offsetWidth,10),
+    var height = parseInt(container.offsetHeight, 10),
+        width = parseInt(container.offsetWidth, 10),
         windowWidth = nv.utils.windowSize().width,
         windowHeight = nv.utils.windowSize().height,
         scrollTop = body.scrollTop,
         scrollLeft = body.scrollLeft,
-        class_name = container.className.replace(/ top| right| bottom| left/g,''),
+        class_name = container.className.replace(/ top| right| bottom| left/g, ''),
         left, top;
 
     function alignCenter() {
