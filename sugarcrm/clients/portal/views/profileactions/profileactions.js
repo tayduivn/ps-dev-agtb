@@ -10,7 +10,7 @@
  */
 ({
     extendsFrom: 'ProfileactionsView',
-    plugins: ['Tooltip'],
+    plugins: ['Dropdown', 'Tooltip'],
 
     /**
      * The selector for the tab that contains profile actions.

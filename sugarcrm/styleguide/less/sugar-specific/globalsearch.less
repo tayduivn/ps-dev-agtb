@@ -117,9 +117,12 @@
     }
     .btn {
       margin: 0;
+      &:focus {
+        .tab-focus-light();
+      }
     }
 
-    .globalsearch-adv-wrap {
+    .dropdown-menu.globalsearch-adv-wrap {
       margin-top: 6px;
       border: 1px solid @dropdownBorder;
       .border-radius(2px);

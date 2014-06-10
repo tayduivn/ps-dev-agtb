@@ -10,10 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<ul class="nav megamenu" data-container="module-list">
+<ul class="nav megamenu" role="navigation" data-container="module-list">
     <li class="dropdown hidden more" data-action="more-modules">
         <div class="btn-group">
-            <button type="button" data-toggle="dropdown" class="btn btn-invisible dropdown-toggle" title="{{str 'LBL_LINK_MORE' module}}" track="click:navbar-more-modules"><i class="icon-chevron-down"></i></button>
+            <button type="button" data-toggle="dropdown" class="btn btn-invisible dropdown-toggle" title="{{str 'LBL_LINK_MORE'}}" track="click:navbar-more-modules" aria-label="{{str 'LBL_MORE_MODULES'}}"><i class="icon-chevron-down"></i></button>
             <div class="dropdown-menu scroll" role="menu">
                 <ul data-container="overflow"></ul>
             </div>

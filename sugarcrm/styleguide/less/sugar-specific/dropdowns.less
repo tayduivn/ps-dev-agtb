@@ -13,8 +13,7 @@
     .rtlLeft(@direction,0px);
     .rtlRight(@direction,auto);
   }
-  &.scroll,
-  &.scroll-child > div {
+  &.scroll {
     max-height: 333px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -94,12 +93,17 @@
   // -----------
   li > a:hover,
   li > button:hover,
+  li > button:focus,
   li > span > button:hover,
+  li > span > button:focus,
   li > span > a:hover,
+  li > span > a:focus,
   .active > a,
   .active > span > a,
   .active > a:hover,
-  .active > span > a:hover {
+  .active > a:focus,
+  .active > span > a:hover,
+  .active > span > a:focus {
     color: @dropdownLinkColorHover;
     text-decoration: none;
     //this causes sharp corners on dropdown-menu

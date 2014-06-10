@@ -18,7 +18,7 @@
     </a></li>
 {{/each}}
 {{#if showRecentToggle}}
-    <li><button type="button" class="btn-link btn-invisible toggle-recents" data-toggle="recently-viewed">
+    <li><a href="javascript:void(0);" class="btn-link btn-invisible toggle-recents" data-toggle="recently-viewed" tabindex="-1">
         {{#if open}}{{str 'LBL_SHOW_MORE_RECENTS' module}}{{else}}{{str 'LBL_SHOW_LESS_RECENTS' module}}{{/if}}
-    </button></li>
+    </a></li>
 {{/if}}
