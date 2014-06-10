@@ -27,36 +27,57 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /**
- * Register upgrade with the system
+ * Fix upgrade_history.manifest:
+ *
+ * The format of this column used to be a base64 encoded serialized php array.
+ * Since the new CLI upgrader the content has been json encoded. This script
+ * fixes the formatting and re-encodes in the old way if json is detected.
  */
-class SugarUpgradeRegisterUpgrade extends UpgradeScript
+class SugarUpgradeFixUpgradeHistory extends UpgradeScript
 {
-    public $order = 9900;
+    public $order = 9901;
     public $type = self::UPGRADE_DB;
 
+    /**
+     *
+     * Execute upgrade tasks
+     * @see UpgradeScript::run()
+     */
     public function run()
     {
-	    // if error was encountered, script should have died before now
-		$new_upgrade = new UpgradeHistory();
-		$new_upgrade->filename = $this->context['zip'];
-		if(file_exists($this->context['zip'])) {
-		  $new_upgrade->md5sum = md5_file($this->context['zip']);
-		} else {
-		    // if file is not there, just md5 the filename
-		  $new_upgrade->md5sum = md5($this->context['zip']);
-		}
-        $dup = $this->db->getOne("SELECT id FROM upgrade_history WHERE md5sum='{$new_upgrade->md5sum}'");
-        if($dup) {
-            $this->error("Duplicate install for package, md5: {$new_upgrade->md5sum}");
-            // Not failing it - by now there's no point, we're at the end anyway
-            return;
+        $q = $this->db->query("SELECT id, manifest FROM upgrade_history");
+        while ($row = $this->db->fetchByAssoc($q, false)) {
+            if ($this->isJson($row['manifest'])) {
+                $update = sprintf(
+                    "UPDATE upgrade_history SET manifest = %s WHERE id = %s",
+                    $this->db->quoted($this->reEncode($row['manifest'])),
+                    $this->db->quoted($row['id'])
+                );
+                $this->db->query($update);
+            }
         }
-		$new_upgrade->name = pathinfo($this->context['zip'], PATHINFO_FILENAME);
-		$new_upgrade->description = $this->manifest['description'];
-		$new_upgrade->type = 'patch';
-		$new_upgrade->version = $this->to_version;
-		$new_upgrade->status = "installed";
-		$new_upgrade->manifest = base64_encode(serialize($this->manifest));
-		$new_upgrade->save();
+    }
+
+    /**
+     *
+     * Check if passed in string is json encoded
+     * @param string $string
+     * @return boolean
+     */
+    protected function isJson($string)
+    {
+        json_decode($string);
+        return (json_last_error() == JSON_ERROR_NONE);
+    }
+
+    /**
+     *
+     * Re-encode given string using base64/serialize
+     * @param string $string
+     * @return string
+     */
+    protected function reEncode($string)
+    {
+        return base64_encode(serialize(json_decode($string)));
     }
 }

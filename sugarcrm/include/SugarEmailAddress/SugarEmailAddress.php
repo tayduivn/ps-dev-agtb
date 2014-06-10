@@ -226,41 +226,40 @@ class SugarEmailAddress extends SugarBean
         return;
     }
 
-    function populateLegacyFields(&$bean)
+    /**
+     * Populates legacy email[1..N] fields of parent bean
+     *
+     * @param SugarBean $bean
+     */
+    public function populateLegacyFields(SugarBean $bean)
     {
-        $primary_found = false;
-        $alternate_found = false;
-        $alternate2_found = false;
-        foreach ($this->addresses as $k => $address) {
-            if ($primary_found && $alternate_found)
-                break;
-            if ($address['primary_address'] == 1 && !$primary_found) {
-                $primary_index = $k;
-                $primary_found = true;
-            } elseif (!$alternate_found) {
-                $alternate_index = $k;
-                $alternate_found = true;
-            } elseif (!$alternate2_found) {
-                $alternate2_index = $k;
-                $alternate2_found = true;
+        $primary = null;
+        $alternate = array();
+        foreach ($this->addresses as $address) {
+            if ($address['primary_address'] && $primary === null) {
+                $primary = $address;
+            } else {
+                $alternate[] = $address;
             }
         }
 
-        if ($primary_found) {
-            $bean->email1 = $this->addresses[$primary_index]['email_address'];
-            $bean->email_opt_out = $this->addresses[$primary_index]['opt_out'];
-            $bean->invalid_email = $this->addresses[$primary_index]['invalid_email'];
-            if ($alternate_found) {
-                $bean->email2 = $this->addresses[$alternate_index]['email_address'];
-            }
-        } elseif ($alternate_found) {
-            // Use the first found alternate as email1.
-            $bean->email1 = $this->addresses[$alternate_index]['email_address'];
-            $bean->email_opt_out = $this->addresses[$alternate_index]['opt_out'];
-            $bean->invalid_email = $this->addresses[$alternate_index]['invalid_email'];
-            if ($alternate2_found) {
-                $bean->email2 = $this->addresses[$alternate2_index]['email_address'];
-            }
+        // if primary address is not specified explicitly
+        // the first address becomes primary
+        if ($primary === null && !empty($alternate)) {
+            $primary = array_shift($alternate);
+        }
+
+        // populate primary address properties
+        if ($primary !== null) {
+            $bean->email1        = $primary['email_address'];
+            $bean->email_opt_out = $primary['opt_out'];
+            $bean->invalid_email = $primary['invalid_email'];
+        }
+
+        // populate alternate addresses starting from email2
+        foreach ($alternate as $i => $address) {
+            $property = 'email' . ($i + 2);
+            $bean->$property = $address['email_address'];
         }
     }
 

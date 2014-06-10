@@ -84,37 +84,34 @@ class RelatedValueApi extends SugarApi
                     $ret[$link]['related'][$rfDef['relate']] = "";
 
                     //If we have neither a focus id nor a related record id, we can't retrieve anything
-                    if (!empty($rfDef['relId'])) {
-                        $relBean = null;
-                        if (empty($rfDef['relId']) || empty($rfDef['relModule'])) {
-                            //If the relationship is invalid, just move onto another field
-                            if (!$focus->load_relationship($link)) {
-                                $ret[$link][$type][$rField] = 0;
-                                break;
-                            }
-
-                            $beans = $focus->$link->getBeans(array("enforce_teams" => true));
-                            //No related beans means no value
-                            if (empty($beans)) {
-                                $ret[$link][$type][$rField] = 0;
-                                break;
-                            }
-                            //Grab the first bean on the list
-                            reset($beans);
-                            $relBean = current($beans);
-                        } else {
-                            $relBean = BeanFactory::getBean($rfDef['relModule'], $rfDef['relId']);
+                    $relBean = null;
+                    if (empty($rfDef['relId']) || empty($rfDef['relModule'])) {
+                        //If the relationship is invalid, just move onto another field
+                        if (!$focus->load_relationship($link)) {
+                            break;
                         }
-                        //If we found a bean and the current user has access to the related field, grab a value from it
-                        if (!empty($relBean) && ACLField::hasAccess($rfDef['relate'], $relBean->module_dir, $GLOBALS['current_user']->id, true)) {
-                            $validFields = FormulaHelper::cleanFields($relBean->field_defs, false, true, true);
-                            if (isset($validFields[$rfDef['relate']])) {
-                                $ret[$link]['relId'] = $relBean->id;
-                                $ret[$link]['related'][$rfDef['relate']] =
-                                    FormulaHelper::getFieldValue($relBean, $rfDef['relate']);
-                            }
+
+                        $beans = $focus->$link->getBeans(array("enforce_teams" => true));
+                        //No related beans means no value
+                        if (empty($beans)) {
+                            break;
+                        }
+                        //Grab the first bean on the list
+                        reset($beans);
+                        $relBean = current($beans);
+                    } else {
+                        $relBean = BeanFactory::getBean($rfDef['relModule'], $rfDef['relId']);
+                    }
+                    //If we found a bean and the current user has access to the related field, grab a value from it
+                    if (!empty($relBean) && ACLField::hasAccess($rfDef['relate'], $relBean->module_dir, $GLOBALS['current_user']->id, true)) {
+                        $validFields = FormulaHelper::cleanFields($relBean->field_defs, false, true, true);
+                        if (isset($validFields[$rfDef['relate']])) {
+                            $ret[$link]['relId'] = $relBean->id;
+                            $ret[$link]['related'][$rfDef['relate']] =
+                                FormulaHelper::getFieldValue($relBean, $rfDef['relate']);
                         }
                     }
+
                     break;
                 case "count":
                     if ($focus->load_relationship($link)) {

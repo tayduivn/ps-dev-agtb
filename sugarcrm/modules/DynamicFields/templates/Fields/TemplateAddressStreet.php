@@ -16,8 +16,8 @@ require_once('modules/DynamicFields/templates/Fields/TemplateField.php');
 
 class TemplateAddressStreet extends TemplateField
 {
-    //Set display type to textarea, but stored in db as a varchar
-    var $type = 'textarea';
+    //Set display type to text, but stored in db as a varchar
+    var $type = 'text';
     var $ext3 = 'varchar';
     var $len = 150;
 

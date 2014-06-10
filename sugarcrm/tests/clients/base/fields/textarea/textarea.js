@@ -43,22 +43,37 @@ describe('Base.Field.TextArea', function() {
         using('various field actions', [
             {
                 action: 'list',
+                parent: null,
                 longExists: false
             },
             {
                 action: 'edit',
+                parent: null,
                 longExists: false
             },
             {
                 action: 'disabled',
+                parent: null,
+                longExists: true
+            },
+            {
+                action: 'disabled',
+                parent: {},
                 longExists: false
             },
             {
+                action: 'disabled',
+                parent: {action: 'detail'},
+                longExists: true
+            },
+            {
                 action: 'detail',
+                parent: null,
                 longExists: true
             }
         ], function(value) {
             it('should only set a `long` value if in detail mode', function() {
+                field.parent = value.parent;
                 field.action = value.action;
                 var returnVal = field.format('testvalue');
 

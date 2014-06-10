@@ -3525,18 +3525,20 @@ function display_stack_trace($textOnly=false)
 
 function StackTraceErrorHandler($errno, $errstr, $errfile,$errline, $errcontext)
 {
+    // prevent handling errors suppressed by @-operator
+    // @link http://php.net/set_error_handler#example-470
+    if (!($errno & error_reporting())) {
+        return;
+    }
+
     $error_msg = " $errstr occurred in <b>$errfile</b> on line $errline [" . date("Y-m-d H:i:s") . ']';
     $halt_script = true;
     switch ($errno) {
         case 2048: return; //depricated we have lots of these ignore them
         case E_USER_NOTICE:
         case E_NOTICE:
-            if ( error_reporting() & E_NOTICE ) {
-                $halt_script = false;
-                $type = 'Notice';
-            } else
-
-                return;
+            $halt_script = false;
+            $type = 'Notice';
             break;
         case E_USER_WARNING:
         case E_COMPILE_WARNING:
