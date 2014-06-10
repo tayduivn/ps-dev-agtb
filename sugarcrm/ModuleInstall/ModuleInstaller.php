@@ -2766,6 +2766,9 @@ private function dir_file_count($path){
             // Add in Sidecar upgrader after old style metadata changes are brought over
             $sidecarUpgrader = new SidecarMetaDataUpgrader();
 
+            // Let the upgrader know that this is from installation
+            $sidecarUpgrader->fromInstallation = true;
+
             // Turn off writing to log
             $sidecarUpgrader->toggleWriteToLog();
 

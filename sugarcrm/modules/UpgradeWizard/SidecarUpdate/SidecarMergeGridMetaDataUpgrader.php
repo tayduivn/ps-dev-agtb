@@ -381,11 +381,19 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
         // Load all views for this combined view
         foreach($views[$this->viewtype] as $view => $data) {
             list($file, $lViewtype) = $data;
-            if($this->sidecar) {
+
+            if ($this->sidecar) {
                 $customFilePath = "$dirname/$file/$file.php";
             } else {
                 $customFilePath = "$dirname/$file.php";
             }
+
+            // If this is a history file, add the timestamp back since we need 
+            // that. This should only come into play on history upgrades
+            if ($this->timestamp) {
+                $customFilePath .= '_' . $this->timestamp;
+            }
+
             $originalFilePath = $this->getOriginalFile($customFilePath);
             $origExists = file_exists($originalFilePath);
             $custExists = file_exists($customFilePath);
@@ -523,8 +531,9 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
     {
         $defaultDefs = parent::loadDefaultMetadata();
         if(!empty($defaultDefs) && !empty($this->base_defsfile) && !empty($this->defsfile)) {
-            // if we loaded template one, copy it to base file so we could load the parser
-            if(file_exists($this->base_defsfile) || !file_exists($this->defsfile)) {
+            // If we loaded template one, copy it to base file so we could load the parser
+            // We only do this if the module is deployed though
+            if ((file_exists($this->base_defsfile) || !file_exists($this->defsfile)) && $this->deployed) {
                 $this->logUpgradeStatus("Copying template defs {$this->base_defsfile} to {$this->defsfile}");
                 mkdir_recursive(dirname($this->defsfile));
                 $client = $this->client == 'wireless' ? 'mobile' : $this->client;
@@ -584,7 +593,7 @@ END;
         $defaultDefs = $this->loadDefaultMetadata();
 
         // Get the parser now that default metadata has been fetched
-        $parser = ParserFactory::getParser($this->viewtype, $this->module, null, null, $this->client);
+        $parser = ParserFactory::getParser($this->viewtype, $this->module, $this->package, null, $this->client);
 
         // Get the fields that are on the default defs panels since we may need 
         // those as well
@@ -596,9 +605,9 @@ END;
         foreach($this->legacyViewdefs as $lViewtype => $data) {
             // We will need a parser no matter what
             if($this->sidecar) {
-                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, null, null, $this->client);
+                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, $this->package, null, $this->client);
             } else {
-                $legacyParser = ParserFactory::getParser($lViewtype, $this->module);
+                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, $this->package);
             }
 
             // Step 1, handle tabDef changes
@@ -1039,16 +1048,16 @@ END;
      */
     protected function addNewFieldsToLayout(array $newDefs) {
         $defaultDefs = $this->loadDefaultMetadata();
-        $parser = ParserFactory::getParser($this->viewtype, $this->module, null, null, $this->client);
+        $parser = ParserFactory::getParser($this->viewtype, $this->module, $this->package, null, $this->client);
         $defaultFields = $parser->getFieldsFromPanels($defaultDefs['panels'], $parser->_fielddefs);
         $currentFields = $parser->getFieldsFromPanels($newDefs['panels'], $parser->_fielddefs);
         $origFields = array();
         foreach($this->originalLegacyViewdefs as $lViewtype => $data) {
             // We will need a parser no matter what
             if($this->sidecar) {
-                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, null, null, $this->client);
+                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, $this->package, null, $this->client);
             } else {
-                $legacyParser = ParserFactory::getParser($lViewtype, $this->module);
+                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, $this->package);
             }
             // replace viewdefs with defaults, since parser's viewdefs can be already customized by other parts
             // of the upgrade
