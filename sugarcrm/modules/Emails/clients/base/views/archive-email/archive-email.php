@@ -142,6 +142,7 @@ $viewdefs['Emails']['base']['view']['archive-email'] = array(
                         'script_url' => 'include/javascript/tiny_mce/tiny_mce.js',
                         'height' => '100%',
                         'width' => '100%',
+                        'browser_spellcheck' => true,
                         // General options
                         'theme' => 'advanced',
                         'skin' => 'sugar7',
