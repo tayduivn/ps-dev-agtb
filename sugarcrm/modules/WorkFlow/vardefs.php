@@ -189,7 +189,7 @@ $dictionary['WorkFlow'] = array('table' => 'workflow'
     'source'=>'non-db',
   ),
 ),
-'acls' => array('SugarACLAdminOnly' => true),  
+'acls' => array('SugarACLDeveloperOrAdmin' => true),
 'indices' => array (
        array('name' =>'workflow_k', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_workflow', 'type'=>'index', 'fields'=>array('name','deleted')),

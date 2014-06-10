@@ -175,6 +175,9 @@ class SugarUpgradeScanModules extends UpgradeScript
                     continue;
                 }
             }
+            if (basename($file) == "Forms.php" && filesize($file) === 0) {
+                continue;
+            }
             if(!isset($mbFiles[basename($file)])) {
                 // unknown file, not MB module
                 $this->log("Unknown file $file - $module_name is not MB module");
@@ -189,6 +192,9 @@ class SugarUpgradeScanModules extends UpgradeScript
         foreach(glob("custom/$module_dir/*") as $file) {
             if(isset($hook_files[$file])) {
                 // logic hook files are OK
+                continue;
+            }
+            if (basename($file) == "Forms.php" && filesize($file) === 0) {
                 continue;
             }
             if(!isset($mbFiles[basename($file)])) {

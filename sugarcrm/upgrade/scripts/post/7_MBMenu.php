@@ -49,6 +49,21 @@ class SugarUpgradeMBMenu extends UpgradeScript
                 'acl_module' => $moduleName,
                 'icon' => 'icon-plus',
         );
+
+        // Handle link to vCard
+        if (is_subclass_of(BeanFactory::getBean($moduleName), 'Person')) {
+            $vCardRoute = (in_array($moduleName, $GLOBALS['bwcModules']))
+                ? '#bwc/index.php?' . http_build_query(array('module' => $moduleName, 'action' => 'ImportVCard'))
+                : "#$moduleName/vcard-import";
+            $menu[] = array(
+                'route' => $vCardRoute,
+                'label' => 'LNK_IMPORT_VCARD',
+                'acl_action' => 'create',
+                'acl_module' => $moduleName,
+                'icon' => 'icon-plus',
+            );
+        }
+
         $menu[] = array(
                 'route' => "#$moduleName",
                 'label' => 'LNK_LIST',

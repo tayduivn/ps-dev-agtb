@@ -729,6 +729,7 @@ $mod_strings = array(
 'LBL_EC_EXPORTBTN'=>'Export',
 'LBL_MODULE_DEPLOYED' => 'Module has been deployed.',
 'LBL_UNDEFINED' => 'undefined',
+'LBL_EC_CUSTOMLABEL'=>'customized label(s)',
 
 //AJAX STATUS
 'LBL_AJAX_FAILED_DATA' => 'Failed to retrieve data',
@@ -766,6 +767,10 @@ $mod_strings = array(
 // LBL_JS_DELETE_REQUIRED_DDL_ITEM_(UPPERCASE_ITEM_NAME)
 // Item name should have all special characters removed and spaces converted to
 // underscores
+//BEGIN SUGARCRM flav=ent ONLY
+'LBL_JS_DELETE_REQUIRED_DDL_ITEM_NEW' => 'Are you sure you wish to delete the New sales status? Deleting this status will cause the Opportunities module Revenue Line Item workflow to not work properly.',
+'LBL_JS_DELETE_REQUIRED_DDL_ITEM_IN_PROGRESS' => 'Are you sure you wish to delete the In Progress sales status? Deleting this status will cause the Opportunities module Revenue Line Item workflow to not work properly.',
+//END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 'LBL_JS_DELETE_REQUIRED_DDL_ITEM_CLOSED_WON' => 'Are you sure you wish to delete the Closed Won sales stage? Deleting this stage will cause the Forecasting module to not work properly',
 'LBL_JS_DELETE_REQUIRED_DDL_ITEM_CLOSED_LOST' => 'Are you sure you wish to delete the Closed Lost sales stage? Deleting this stage will cause the Forecasting module to not work properly',

@@ -596,6 +596,14 @@ $renamedefs = array(
             array('name' => 'LBL_REMINDER_TITLE', 'type' => 'singular', 'source' => 'Meetings'),
             array('name' => 'LBL_REVENUELINEITEMS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
         ),
+//BEGIN SUGARCRM flav=ent ONLY
+        'ModuleBuilder' => array(
+            array('name' => 'LBL_JS_DELETE_REQUIRED_DDL_ITEM_NEW', 'type' => 'plural', 'source' => 'Opportunities'),
+            array('name' => 'LBL_JS_DELETE_REQUIRED_DDL_ITEM_NEW', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_JS_DELETE_REQUIRED_DDL_ITEM_IN_PROGRESS', 'type' => 'plural', 'source' => 'Opportunities'),
+            array('name' => 'LBL_JS_DELETE_REQUIRED_DDL_ITEM_IN_PROGRESS', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+        ),
+//END SUGARCRM flav=ent ONLY
         'Notes' => array(
             array('name' => 'ERR_DELETE_RECORD', 'type' => 'singular', 'source' => 'Accounts'),
             array('name' => 'LBL_ACCOUNT_ID', 'type' => 'singular', 'source' => 'Accounts'),

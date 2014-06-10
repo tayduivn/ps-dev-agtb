@@ -73,6 +73,7 @@ class ReportsSugarpdfReports extends Sugarpdf
      */
     public function Header()
     {
+        $ormargins = $this->getOriginalMargins();
         $headerfont = $this->getHeaderFont();
         $headerdata = $this->getHeaderData();
 
