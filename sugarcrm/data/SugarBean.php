@@ -3250,11 +3250,86 @@ class SugarBean
 
         $this->call_custom_logic('after_fetch_query', array('beans' => $beans, 'fields' => $fields, 'rows' => $rawRows));
 
+        if (!empty($options['compensateDistinct'])) {
+            $beans['_distinctCompensation'] = $this->computeDistinctCompensation($rows, $beans);
+        }
+
         if (!empty($options['returnRawRows'])) {
             $beans['_rows'] = $rawRows;
         }
 
         return $beans;
+    }
+
+    /**
+     *
+     * Return count difference between an array of raw SQL rows and and array
+     * of Sugarbeans. This value can be passed back to the API handling the
+     * next offset calculation. In case of a difference, log more details for
+     * later analysis.
+     *
+     * @param array $sqlRows Array of raw SQL rows as returned by SugarQuery::execute()
+     * @param array $beans Array of SugarBeans
+     * @return integer
+     */
+    protected function computeDistinctCompensation(array $sqlRows, array $beans)
+    {
+
+        $compensation = 0;
+        $cntDbSet = count($sqlRows);
+        $cntBeanSet = count($beans);
+
+        // When a count diff is detected which can happen in case of bad
+        // relationship data, log the details for later analysis. In this
+        // case the amount of records being returned to the end user
+        // will not be match the requested amount of rows. However the
+        // the difference can be used to correct the next_offset to get
+        // back on track.
+
+        if ($cntDbSet !== $cntBeanSet) {
+            $compensation = $cntDbSet - $cntBeanSet;
+            $this->logDistinctMismatch($sqlRows, $beans);
+        }
+        return $compensation;
+    }
+
+    /**
+     *
+     * Log handling for distinct compensation mismatches
+     *
+     * @param array $sqlRows
+     * @param array $beans
+     * @return array List of offending record ids (multiple occurences)
+     */
+    protected function logDistinctMismatch(array $sqlRows, array $beans)
+    {
+        // generic warning
+        $msg = sprintf(
+            "Non-distinct result set detected: sqlRows = %s vs beanSet = %s",
+            count($sqlRows),
+            count($beans)
+        );
+        $GLOBALS['log']->error($msg);
+
+        // detailed logging
+        $counts = array();
+        if (LoggerManager::getLogger()->wouldLog('debug')) {
+            foreach ($sqlRows as $row) {
+                if (!empty($row['id'])) {
+                    if (empty($counts[$row['id']])) {
+                        $counts[$row['id']] = 1;
+                    } else {
+                        $counts[$row['id']]++;
+                    }
+                }
+            }
+
+            // get rid of non-offending counts and log details
+            $counts = array_diff($counts, array(1));
+            $msg = "Non-distinct offending record ids: " . implode(', ', array_keys($counts));
+            $GLOBALS['log']->debug($msg);
+        }
+        return $counts;
     }
 
     /**

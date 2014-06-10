@@ -574,4 +574,148 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(19, count($reply['records']));
 
     }
+
+    /**
+     *
+     * Test query exection with distinct/offset compensation
+     *
+     * @covers FilterApi::runQuery
+     * @covers FilterApi::parseQueryResults
+     * @dataProvider providerTestRunQueryOffsetCompensation
+     * @group unit
+     *
+     */
+    public function testRunQueryOffsetCompensation(array $beans, $compensation, $limit, $offset, $expected)
+    {
+        // prepare fetched bean array
+        $beans['_rows'] = $beans;
+        $beans['_distinctCompensation'] = $compensation;
+
+        $query = new SugarQuery();
+
+        // setup seed bean
+        $seed = $this->getMockBuilder('SugarBean')
+            ->setMethods(array('call_custom_logic', 'fetchFromQuery'))
+            ->getMock();
+
+        // expected query options when calling SugarBean::fetchFromQuery
+        $queryOptions = array(
+            'returnRawRows' => true,
+            'compensateDistinct' => true,
+        );
+
+        $seed->expects($this->once())
+            ->method('fetchFromQuery')
+            ->with(
+                $this->equalTo($query),
+                $this->equalTo(array()),
+                $this->equalTo($queryOptions)
+            )
+            ->will($this->returnValue($beans));
+
+        // sut
+        $filterApi = $this->getMockBuilder('FilterApi')
+            ->setMethods(array('populateRelatedFields', 'formatBeans'))
+            ->getMock();
+
+        $options = array('limit' => $limit, 'offset' => $offset);
+        $methodArgs = array($this->serviceMock, array(), $query, $options, $seed);
+        $result = SugarTestReflection::callProtectedMethod($filterApi, 'runQuery', $methodArgs);
+
+        $this->assertEquals(
+            $expected,
+            $result['next_offset'],
+            'Wrong next_offset returned'
+        );
+    }
+
+    public function providerTestRunQueryOffsetCompensation()
+    {
+        return array(
+
+            // bean records less than limit
+            array(
+                array(
+                    'a1' => 'record1',
+                    'a2' => 'record2',
+                ),
+                0, // compensation
+                5, // limit
+                0, // offset
+                -1, // expected next_offset
+            ),
+
+            // bean records equal to limit
+            array(
+                array(
+                    'a1' => 'record1',
+                    'a2' => 'record2',
+                    'a3' => 'record3',
+                    'a4' => 'record4',
+                    'a5' => 'record5',
+                ),
+                0, // compensation
+                5, // limit
+                0, // offset
+                -1, // expected next_offset
+            ),
+
+            // bean records equal to limit + 1
+            array(
+                array(
+                    'a1' => 'record1',
+                    'a2' => 'record2',
+                    'a3' => 'record3',
+                    'a4' => 'record4',
+                    'a5' => 'record5',
+                    'a6' => 'record6',
+                ),
+                0, // compensation
+                5, // limit
+                0, // offset
+                5, // expected next_offset
+            ),
+
+            // bean records equal to limit, but with compensation
+            array(
+                array(
+                    'a1' => 'record1',
+                    'a2' => 'record2',
+                    'a3' => 'record3',
+                    'a4' => 'record4',
+                    'a5' => 'record5',
+                ),
+                1, // compensation
+                5, // limit
+                0, // offset
+                5, // expected next_offset
+            ),
+
+            // bean records less than limit, but with compensation
+            array(
+                array(
+                    'a1' => 'record1',
+                    'a2' => 'record2',
+                    'a3' => 'record3',
+                ),
+                3, // compensation
+                5, // limit
+                0, // offset
+                5, // expected next_offset
+            ),
+
+            // bean records less than limit and combination not reaching threshold
+            array(
+                array(
+                    'a1' => 'record1',
+                    'a2' => 'record2',
+                    'a3' => 'record3',
+                ),
+                2, // compensation
+                5, // limit
+                0, // offset
+                -1, // expected next_offset
+            ),
+        );
+    }
 }

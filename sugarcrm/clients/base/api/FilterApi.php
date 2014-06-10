@@ -313,7 +313,7 @@ class FilterApi extends SugarApi
 
         $q = new SugarQuery();
         $q->from($seed,$queryOptions);
-        $q->distinct(true);
+        $q->distinct(false);
         $fields = array();
         foreach ($options['select'] as $field) {
             // FIXME: convert this to vardefs too?
@@ -335,14 +335,6 @@ class FilterApi extends SugarApi
             if (!empty($seed->field_defs[$field])) {
                 // Set the field into the field list
                 $fields[] = $field;
-
-                // Disable distinct on text type fields, since Oracle doesn't 
-                // allow distinct selects on CLOB types
-                $fieldType = $seed->db->getFieldType($seed->field_defs[$field]);
-                $isTextType = $fieldType ? $seed->db->isTextType($fieldType) : false;
-                if ($isTextType) {
-                    $q->distinct(false);
-                }
             }
         }
         $q->select($fields);
@@ -455,15 +447,18 @@ class FilterApi extends SugarApi
             $fields = $options['select'];
         }
 
-        $beans = $seed->fetchFromQuery($q, $fields, array('returnRawRows' => true));
+        $queryOptions = array(
+            'returnRawRows' => true,
+            'compensateDistinct' => true,
+        );
+        $fetched = $seed->fetchFromQuery($q, $fields, $queryOptions);
 
-        $rows = $beans['_rows'];
-        unset($beans['_rows']);
+        list($beans, $rows, $distinctCompensation) = $this->parseQueryResults($fetched);
 
         $data = array();
         $data['next_offset'] = -1;
 
-        $i = 0;
+        $i = $distinctCompensation;
         foreach ($beans as $bean_id => $bean) {
             if ($i == $options['limit']) {
                 unset($beans[$bean_id]);
@@ -479,6 +474,33 @@ class FilterApi extends SugarApi
         $data['records'] = $this->formatBeans($api, $args, $beans);
 
         return $data;
+    }
+
+    /**
+     *
+     * Parse fetched result set as returned by SugarBean::fetchFromQuery.
+     * Besides an array of beans some additional parameters are passed
+     * which we want to abstract from it and cleanup the actually array.
+     *
+     * @param array $fetched Result set from SugarBean::fetchFromQuery
+     * @return array
+     */
+    protected function parseQueryResults(array $fetched)
+    {
+        $rows = array();
+        $distinctCompensation = 0;
+
+        if (isset($fetched['_rows'])) {
+            $rows = $fetched['_rows'];
+            unset($fetched['_rows']);
+        }
+
+        if (isset($fetched['_distinctCompensation'])) {
+            $distinctCompensation = $fetched['_distinctCompensation'];
+            unset($fetched['_distinctCompensation']);
+        }
+
+        return array($fetched, $rows, $distinctCompensation);
     }
 
     /**
