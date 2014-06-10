@@ -36,6 +36,11 @@ class SugarUpgradeRenameModules extends UpgradeScript
             if (file_exists("include/language/$langKey.lang.php")) {
                 include("include/language/$langKey.lang.php");
 
+                if(empty($app_list_strings['moduleList'])) {
+                    // broken language file
+                    $this->log("Bad language file for $langKey, skipping");
+                    continue;
+                }
                 //Keep only renamed modules
                 $renamedModules = array_diff($strings['moduleList'], $app_list_strings['moduleList']);
 
