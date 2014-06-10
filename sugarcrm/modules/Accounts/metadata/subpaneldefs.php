@@ -196,15 +196,14 @@ $layout_defs['Accounts'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
 		),
-//BEGIN SUGARCRM flav=pro ONLY
         'products' => array(
             'order' => 60,
-            'module' => 'RevenueLineItems',
+            'module' => 'Products',
             'subpanel_name' => 'ForAccounts',
             'sort_order' => 'desc',
             'sort_by' => 'date_purchased',
-            'title_key' => 'LBL_RLI_SUBPANEL_TITLE',
-            'get_subpanel_data' => 'revenuelineitems',
+            'title_key' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'products',
             'top_buttons' => array(
                 array(
                     'widget_class' => 'SubPanelTopButtonQuickCreate',
@@ -216,8 +215,6 @@ $layout_defs['Accounts'] = array(
             ),
 
         ),
-//END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=pro ONLY
 		'quotes' => array(
 			'order' => 50,
 			'sort_order' => 'desc',
@@ -232,7 +229,6 @@ $layout_defs['Accounts'] = array(
 				array('widget_class' => 'SubPanelTopCreateButton'),
 			),
 		),
-//END SUGARCRM flav=pro ONLY
 		'accounts' => array(
 			'order' => 90,
 			'sort_order' => 'asc',
