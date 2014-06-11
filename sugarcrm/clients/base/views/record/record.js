@@ -200,7 +200,7 @@
         // Field labels in headerpane should be hidden on view but displayed in edit and create
         _.each(this.fields, function(field) {
             var toggleLabel = _.bind(function() {
-                this.toggleLabelByField(field);
+                this.toggleLabelByField(field, this.createMode);
             }, this);
 
             field.off('render', toggleLabel);
@@ -541,8 +541,8 @@
      * @param {View.Field} field The field to toggle the label based on current
      *   action.
      */
-    toggleLabelByField: function(field) {
-        if (field.action === 'edit') {
+    toggleLabelByField: function(field, inCreate) {
+        if (field.action === 'edit' || (field.action === 'disabled' && inCreate)) {
             field.$el.closest('.record-cell')
                 .addClass('edit')
                 .find('.record-label')
