@@ -101,6 +101,10 @@ $viewdefs['Bugs']['portal']['view']['record'] = array(
                     'name' => 'work_log',
                     'span' => 12,
                 ),
+                array(
+                    'name' => 'assigned_user_name',
+                    'readonly' => true,
+                ),
             ),
         ),
     ),
