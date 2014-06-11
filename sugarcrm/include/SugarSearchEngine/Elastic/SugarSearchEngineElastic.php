@@ -410,8 +410,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $isValid = false;
         $displayText = "";
         try {
-            $results = $this->_client->request('', \Elastica\Request::GET)->getData();
-            if (!empty($results['status']) && $results['status'] == 200) {
+            $response = $this->_client->request('', \Elastica\Request::GET);
+            if ($response->isOk()) {
                 $isValid = true;
                 if (!empty($GLOBALS['app_strings'])) {
                     $displayText = $app_strings['LBL_EMAIL_SUCCESS'];
