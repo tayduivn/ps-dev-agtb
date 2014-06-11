@@ -34,10 +34,7 @@
         if (!_.isEmpty(this.model.get('lead_id'))){
             var leads = app.data.createBean('Leads', { id: this.model.get('lead_id')});
             leads.fetch({
-                success: _.bind(this.populateLeadCallback, this),
-                error: function() {
-                    app.logger.error.log("error");
-                }
+                success: _.bind(this.populateLeadCallback, this)
             });
         }
     },
