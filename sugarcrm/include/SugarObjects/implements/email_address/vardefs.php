@@ -43,6 +43,7 @@ $vardefs = array(
             'duplicate_on_record_copy' => 'always',
             'len' => 100,
             'sort_on' => 'email1',
+            'importable' => false,
         ),
         'email1' => array(
 			'name'		=> 'email1',
@@ -84,6 +85,7 @@ $vardefs = array(
             'merge_filter' => 'enabled',
 		    'studio' => 'false',
             'duplicate_on_record_copy' => 'always',
+            'importable' => false,
 		),
         'invalid_email' => array(
 			'name'		=> 'invalid_email',
