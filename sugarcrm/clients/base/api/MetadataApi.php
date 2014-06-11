@@ -343,8 +343,10 @@ class MetadataApi extends SugarApi
         // Get the metadata manager we need first
         $mm = $this->getMetaDataManager($api->platform, $public);
 
+        $ordered = empty($args['ordered']) ? false : (bool) $args['ordered'];
+
         // Hangle ETagging
-        $hash = $mm->getLanguageHash($args['lang']);
+        $hash = $mm->getLanguageHash($args['lang'], $ordered);
         if (!empty($hash) && $api->generateETagHeader($hash)) {
             return;
         }
