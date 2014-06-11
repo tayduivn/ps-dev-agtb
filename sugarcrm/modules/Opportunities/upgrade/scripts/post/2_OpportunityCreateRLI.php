@@ -32,7 +32,8 @@ class SugarUpgradeOpportunityCreateRLI extends UpgradeScript
         $this->log("Creating missing RLIs for orphaned Opportunities");
         $sql = "SELECT '' as id, 
                        o.id as opportunity_id, 
-                       o.name, 
+                       o.name,
+                       o.amount as discount_price,
                        o.worst_case, 
                        o.amount, 
                        o.best_case, 
@@ -78,7 +79,8 @@ class SugarUpgradeOpportunityCreateRLI extends UpgradeScript
         $insertSQL = "INSERT INTO revenue_line_items 
                 (id, 
                  opportunity_id, 
-                 name, 
+                 name,
+                 discount_price,
                  worst_case, 
                  likely_case, 
                  best_case, 
