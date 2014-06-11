@@ -111,7 +111,7 @@ class SugarJobSendScheduledReport implements RunnableSchedulerJob
 
             try {
                 $GLOBALS["log"]->debug("-----> Generating Mailer");
-                $mailer = MailerFactory::getMailerForUser($current_user);
+                $mailer = MailerFactory::getSystemDefaultMailer();
 
                 // set the subject of the email
                 $subject = empty($savedReport->name) ? "Report" : $savedReport->name;
