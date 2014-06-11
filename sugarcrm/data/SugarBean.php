@@ -3309,7 +3309,7 @@ class SugarBean
             count($sqlRows),
             count($beans)
         );
-        $GLOBALS['log']->error($msg);
+        $GLOBALS['log']->fatal($msg);
 
         // detailed logging
         $counts = array();
