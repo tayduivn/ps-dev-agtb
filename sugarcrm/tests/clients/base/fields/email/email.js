@@ -355,7 +355,7 @@ describe('Base.Email', function() {
                 ],
                 actual;
 
-            field.def.link = false;
+            field.def.emailLink = false;
             actual = field.format(emails);
             expect(actual[0].hasAnchor).toBeFalsy();
             expect(actual[1].hasAnchor).toBeFalsy();
