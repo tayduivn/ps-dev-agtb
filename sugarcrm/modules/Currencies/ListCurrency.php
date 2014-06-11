@@ -73,7 +73,7 @@ require_once('include/SugarQueue/SugarJobQueue.php');
                 $currency->symbol = $_POST['symbol'];
                 $currency->iso4217 = $_POST['iso4217'];
                 $previousConversionRate = $currency->conversion_rate;
-                $currency->conversion_rate = unformat_number($_POST['conversion_rate']);
+                $currency->conversion_rate = $_POST['conversion_rate'];
                 $currency->save();
                 $this->focus = $currency;
                 // Used to tell calling code that a change was made
