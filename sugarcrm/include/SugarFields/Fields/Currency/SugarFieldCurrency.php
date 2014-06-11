@@ -82,10 +82,24 @@ class SugarFieldCurrency extends SugarFieldFloat
         /** @var Currency $base_currency */
         $base_currency = SugarCurrency::getBaseCurrency();
         $currency_id = $settings->currency_id;
+
+        // Remove the grouping separator
+        $value = str_replace($settings->num_grp_sep, '', $value);
+
+        // change the decimal separator to a . if it's not already one
+        if ($settings->dec_sep != '.') {
+            $value = str_replace($settings->dec_sep, '.', $value);
+        }
+
         if (isset($vardef['convertToBase']) && $vardef['convertToBase']) {
             // convert amount from base
             $value = str_replace($base_currency->symbol, '', $value);
-            $value = SugarCurrency::convertAmountFromBase($value, $settings->currency_id);
+            try {
+                $value = SugarCurrency::convertAmountFromBase($value, $settings->currency_id);
+            } catch (SugarMath_Exception $sme) {
+                $GLOBALS['log']->error('Currency Field Import Error: ' . $sme->getMessage());
+                return false;
+            }
         } elseif (isset($vardef['is_base_currency']) && $vardef['is_base_currency']) {
             $value = str_replace($base_currency->symbol, '', $value);
             $currency_id = $base_currency->id;
@@ -93,9 +107,8 @@ class SugarFieldCurrency extends SugarFieldFloat
             $value = str_replace($settings->currency_symbol, '', $value);
         }
 
-        $value = $settings->float($value, $vardef, $focus);
-
-        if ($value === false) {
+        // last check, if for some reason we get here and the value is not numeric, we should just fail out.
+        if (!is_numeric($value)) {
             return false;
         }
 
