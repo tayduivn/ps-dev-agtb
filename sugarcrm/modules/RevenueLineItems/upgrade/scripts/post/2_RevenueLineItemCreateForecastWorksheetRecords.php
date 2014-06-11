@@ -68,8 +68,6 @@ class SugarUpgradeRevenueLineItemCreateForecastWorksheetRecords extends UpgradeS
 
             $q = $insertSQL . ' (' . join(',', $row) . ');';
 
-            $this->log('Running Insert SQL: ' . $q);
-
             $this->db->query($q);
         };
     }
