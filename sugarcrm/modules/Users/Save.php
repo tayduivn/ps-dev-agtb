@@ -19,13 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Save.php 55192 2010-03-10 19:47:04Z clee $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
 require_once 'include/SugarFields/SugarFieldHandler.php';
 require_once 'modules/MySettings/TabController.php';
@@ -77,17 +70,15 @@ if (empty($focus->user_name)) {
     $newUser = false;
 }
 
-if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('Users')
-    && $current_user->id != $focus->id) {
-    $GLOBALS['log']->fatal("SECURITY:Non-Admin ". $current_user->id . " attempted to change settings for user:". $focus->id);
-    header("Location: index.php?module=Users&action=Logout");
-    exit;
-}
-if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Users')
-    && !empty($_POST['is_admin'])) {
-    $GLOBALS['log']->fatal("SECURITY:Non-Admin ". $current_user->id . " attempted to change is_admin settings for user:". $focus->id);
-    header("Location: index.php?module=Users&action=Logout");
-    exit;
+if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('Users')) {
+    if($current_user->id != $focus->id
+    || !empty($_POST['is_admin'])
+    || (!empty($_POST['UserType']) && $_POST['UserType'] == 'Administrator')
+    ) {
+        $GLOBALS['log']->fatal("SECURITY:Non-Admin ". $current_user->id . " attempted to change settings for user:". $focus->id);
+        header("Location: index.php?module=Users&action=Logout");
+        exit;
+    }
 }
 
     // Populate the custom fields
@@ -354,7 +345,7 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
             // This will more than likely already be true, but force it to be sure
             $focus->update_date_modified = true;
         }
-        
+
         $GLOBALS['sugar_config']['disable_team_access_check'] = true;
         $focus->save();
         $GLOBALS['sugar_config']['disable_team_access_check'] = false;
