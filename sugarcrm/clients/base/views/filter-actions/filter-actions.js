@@ -52,7 +52,7 @@
 
             //shortcut keys
             app.shortcuts.register(
-                'filter_edit',
+                'Filter:Close',
                 ['esc', 'ctrl+opt+l'],
                 function() {
                     this.$('a.filter-close').click();
@@ -60,17 +60,17 @@
                 this
             );
             app.shortcuts.register(
-                'filter_edit',
+                'Filter:Save',
                 ['ctrl+s', 'ctrl+opt+a'],
                 function() {
                     this.$('a.save_button:not(.disabled)').click();
                 },
                 this
             );
-            app.shortcuts.register('filter_edit', 'd', function() {
+            app.shortcuts.register('Filter:Delete', 'd', function() {
                 this.$('a.delete_button:not(.hide)').click();
             }, this);
-            app.shortcuts.register('filter_edit', 'r', function() {
+            app.shortcuts.register('Filter:Reset', 'r', function() {
                 this.$('a.reset_button').click();
             }, this);
         }, this);

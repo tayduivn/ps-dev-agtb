@@ -26,11 +26,8 @@
         'Audit',
         'FindDuplicates',
         'ToggleMoreLess',
-        'Tooltip',
-        'Shortcuts'
+        'Tooltip'
     ],
-
-    shortcuts: app.shortcuts.SCOPE.RECORD,
 
     enableHeaderButtons: true,
 
@@ -1251,61 +1248,64 @@
         this.overflowTabs();
     },
 
+    /**
+     * Register keyboard shortcuts.
+     */
     registerShortcuts: function() {
-        app.shortcuts.register(app.shortcuts.SCOPE.RECORD, ['e','ctrl+alt+i'], function() {
+        app.shortcuts.register('Record:Edit', ['e','ctrl+alt+i'], function() {
             var $editButton = this.$('.headerpane [name=edit_button]');
             if ($editButton.is(':visible') && !$editButton.hasClass('disabled')) {
                 $editButton.click();
             }
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.RECORD, ['d','ctrl+alt+d'], function() {
+        app.shortcuts.register('Record:Delete', ['d','ctrl+alt+d'], function() {
             this.$('.headerpane [data-toggle=dropdown]:visible').click().blur();
             this.$('.headerpane [name=delete_button]:visible').click();
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.RECORD, ['ctrl+s','ctrl+alt+a'], function() {
+        app.shortcuts.register('Record:Save', ['ctrl+s','ctrl+alt+a'], function() {
             var $saveButton = this.$('a[name=save_button]');
             if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
                 $saveButton.click();
             }
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.RECORD, ['esc','ctrl+alt+l'], function() {
+        app.shortcuts.register('Record:Cancel', ['esc','ctrl+alt+l'], function() {
             var $cancelButton = this.$('a[name=cancel_button]');
             if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
                 $cancelButton.click();
             }
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 'h', function() {
+        app.shortcuts.register('Record:Previous', 'h', function() {
             var $previous = this.$('.btn.previous-row');
             if ($previous.is(':visible') && !$previous.hasClass('disabled')) {
                 $previous.click();
             }
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 'l', function() {
+        app.shortcuts.register('Record:Next', 'l', function() {
             var $next = this.$('.btn.next-row');
             if ($next.is(':visible') && !$next.hasClass('disabled')) {
                 $next.click();
             }
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 'f a', function() {
+        app.shortcuts.register('Record:Favorite', 'f a', function() {
             this.$('.headerpane .icon-favorite:visible').click();
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 'f o', function() {
+        app.shortcuts.register('Record:Follow', 'f o', function() {
             this.$('.headerpane [name=follow]:visible').click();
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.RECORD, ['shift+c','ctrl+alt+u'], function() {
+        app.shortcuts.register('Record:Copy', ['shift+c','ctrl+alt+u'], function() {
             this.$('.headerpane [data-toggle=dropdown]:visible').click().blur();
             this.$('.headerpane [name=duplicate_button]:visible').click();
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.RECORD, 'm', function() {
+        app.shortcuts.register('Record:Action:More', 'm', function() {
             var $primaryDropdown = this.$('.headerpane .btn-primary[data-toggle=dropdown]:visible');
             if (($primaryDropdown.length > 0) && !$primaryDropdown.hasClass('disabled')) {
                 $primaryDropdown.click();

@@ -304,7 +304,7 @@
                     'include/javascript/sugar7/plugins/LinkedModel.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ToggleVisibility.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Pagination.js' => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/Shortcuts.js' => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/ShortcutSession.js' => 'include/javascript/sugar_sidecar.min.js',
                     // Support Portal features for Sugar7
                     //BEGIN SUGARCRM flav=ent ONLY
                     'modules/Contacts/clients/base/lib/bean.js' => 'include/javascript/sugar_sidecar.min.js',
@@ -313,8 +313,6 @@
                     'include/javascript/sugar7/plugins/Prettify.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Chart.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/EmailClientLaunch.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/shortcuts.js' => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/mousetrap/mousetrap.min.js' => 'include/javascript/sugar_sidecar.min.js',
                 )
            ),
            //BEGIN SUGARCRM flav=ent ONLY

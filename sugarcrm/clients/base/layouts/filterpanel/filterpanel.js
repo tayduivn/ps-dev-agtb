@@ -72,18 +72,33 @@
             // This debounce method should be in accordance with filter-rows::openForm,
             // so components show up at the same time
             this.$('.filter-options').removeClass('hide');
+
             // "filter:create:open" is triggered even when the edit drawer is
             // being closed, so protect against saving the shortcuts when that
             // happens
-            if (app.shortcuts.currentScope.get() !== 'filter_edit') {
-                app.shortcuts.save();
-                app.shortcuts.activate('filter_edit');
+            var activeShortcutSession = app.shortcuts.getCurrentSession();
+            if (_.isNull(activeShortcutSession)
+                || (activeShortcutSession && activeShortcutSession.layout !== this)) {
+                app.shortcuts.saveSession();
+                app.shortcuts.createSession([
+                    'Filter:Add',
+                    'Filter:Remove',
+                    'Filter:Close',
+                    'Filter:Save',
+                    'Filter:Delete',
+                    'Filter:Reset'
+                ], this);
             }
         }, 100, true), this);
 
         this.on('filter:create:close', function() {
             this.$('.filter-options').addClass('hide');
-            app.shortcuts.restore();
+
+            // "filter:create:close" is triggered even when filter:create:open has not been called
+            var activeShortcutSession = app.shortcuts.getCurrentSession();
+            if (activeShortcutSession && (activeShortcutSession.layout === this)) {
+                app.shortcuts.restoreSession();
+            }
         }, this);
 
         // This is required, for example, if we've disabled the subapanels panel so that app doesn't attempt to render later

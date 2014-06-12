@@ -1,3 +1,4 @@
+{{!
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -8,12 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-({
-    plugins: ['ShortcutSession'],
-
-    shortcuts: [
-        'Headerpane:Cancel',
-        'Headerpane:Save',
-        'Sidebar:Toggle'
-    ]
-})
+}}
+{{#each this}}
+    <tr><td>{{this.keys}}</td><td>{{this.help}}</td></tr>
+{{/each}}

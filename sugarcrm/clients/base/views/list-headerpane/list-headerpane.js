@@ -19,14 +19,12 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
-        this.on('render', function() {
-            //shortcut keys
-            app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'a', function() {
-                var $createButton = this.$('a[name=create_button]');
-                if ($createButton.is(':visible') && !$createButton.hasClass('disabled')) {
-                    $createButton.get(0).click();
-                }
-            }, this);
+        //shortcut keys
+        app.shortcuts.register('List:Headerpane:Create', 'a', function() {
+            var $createButton = this.$('a[name=create_button]');
+            if ($createButton.is(':visible') && !$createButton.hasClass('disabled')) {
+                $createButton.get(0).click();
+            }
         }, this);
     }
 })

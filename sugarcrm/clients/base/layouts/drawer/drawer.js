@@ -54,8 +54,7 @@
         var layout,
             parentContext;
 
-
-        app.shortcuts.save();
+        app.shortcuts.saveSession();
         if (!app.triggerBefore('app:view:change')) {
             return;
         }
@@ -141,7 +140,7 @@
                     app.trigger("app:view:change", app.controller.context.get("layout"), app.controller.context.attributes);
                 }
 
-                app.shortcuts.restore();
+                app.shortcuts.restoreSession();
 
                 (self.onCloseCallback.pop()).apply(this, args); //execute callback
             });
@@ -200,6 +199,11 @@
             drawers;
 
         layout.dispose();
+
+        if (!app.triggerBefore('app:view:change')) {
+            return;
+        }
+
         this._addComponentsFromDef([layoutDef]);
 
         drawers = this._getDrawers(true);
@@ -234,6 +238,18 @@
      */
     isActive: function(el) {
         return ((this.count() === 0) || ($(el).parents('.drawer.active').length > 0));
+    },
+
+    /**
+     * Get currently active drawer layout.
+     * @returns {View.Layout}
+     */
+    getActiveDrawerLayout: function() {
+        if (this.count() === 0) {
+            return app.controller.layout;
+        } else {
+            return _.last(this._components);
+        }
     },
 
     /**

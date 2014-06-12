@@ -22,14 +22,12 @@
         app.view.View.prototype.initialize.call(this, options);
         this.title = app.lang.get(this.meta.title, this.module);
 
-        this.on('render', function() {
-            //shortcut keys
-            app.shortcuts.register(app.shortcuts.SCOPE.LIST, ['esc','ctrl+alt+l'], function() {
-                var $closeButton = this.$('a[name=close_button]');
-                if ($closeButton.is(':visible') && !$closeButton.hasClass('disabled')) {
-                    $closeButton.click();
-                }
-            }, this);
+        //shortcut keys
+        app.shortcuts.register('AuditHeaderPanel:Close', ['esc','ctrl+alt+l'], function() {
+            var $closeButton = this.$('a[name=close_button]');
+            if ($closeButton.is(':visible') && !$closeButton.hasClass('disabled')) {
+                $closeButton.click();
+            }
         }, this);
     },
 

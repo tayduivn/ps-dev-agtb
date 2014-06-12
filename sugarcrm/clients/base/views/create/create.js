@@ -639,14 +639,14 @@
     registerShortcuts: function() {
         this._super('registerShortcuts');
 
-        app.shortcuts.register(app.shortcuts.SCOPE.CREATE, ['ctrl+s','ctrl+alt+a'], function() {
+        app.shortcuts.register('Create:Save', ['ctrl+s','ctrl+alt+a'], function() {
             var $saveButton = this.$('a[name=' + this.saveButtonName + ']');
             if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
                 $saveButton.get(0).click();
             }
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.CREATE, ['esc','ctrl+alt+l'], function() {
+        app.shortcuts.register('Create:Cancel', ['esc','ctrl+alt+l'], function() {
             var $cancelButton = this.$('a[name=' + this.cancelButtonName + ']');
             if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
                 $cancelButton.get(0).click();

@@ -545,10 +545,13 @@
         return fields;
     },
 
+    /**
+     * Register keyboard shortcuts.
+     */
     registerShortcuts: function() {
         this._super('registerShortcuts');
 
-        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'e', function() {
+        app.shortcuts.register('List:Inline:Edit', 'e', function() {
             var self = this;
             if (this.$('.selected [name=inline-cancel]:visible').length === 0) {
                 this.$('.selected [data-toggle=dropdown]:visible').click();
@@ -559,44 +562,44 @@
             }
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'd', function() {
+        app.shortcuts.register('List:Delete', 'd', function() {
             if (this.$('.selected [name=inline-cancel]:visible').length === 0) {
                 this.$('.selected [data-toggle=dropdown]:visible').click().blur();
                 this.$('.selected [name=delete_button]:visible').click();
             }
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.LIST, ['esc','ctrl+alt+l'], function() {
+        app.shortcuts.register('List:Inline:Cancel', ['esc','ctrl+alt+l'], function() {
             var $cancelButton = this.$('.selected [name=inline-cancel]');
             if (($cancelButton.length > 0) && $cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
                 $cancelButton.click();
             }
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.LIST, ['ctrl+s','ctrl+alt+a'], function() {
+        app.shortcuts.register('List:Inline:Save', ['ctrl+s','ctrl+alt+a'], function() {
             var $saveButton = this.$('.selected [name=inline-save]');
             if (($saveButton.length > 0) && $saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
                 $saveButton.click();
             }
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'f a', function() {
+        app.shortcuts.register('List:Favorite', 'f a', function() {
             this.$('.selected .icon-favorite:visible').click();
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'f o', function() {
+        app.shortcuts.register('List:Follow', 'f o', function() {
             this.$('.selected [data-toggle=dropdown]:visible').click().blur();
             this.$('.selected [name=follow_button]:visible').click();
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'p', function() {
+        app.shortcuts.register('List:Preview', 'p', function() {
             var $preview = this.$('.selected [data-event="list:preview:fire"]:visible');
             if ($preview.is(':visible') && !$preview.hasClass('disabled')) {
                 $preview.click();
             }
         }, this);
 
-        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'x', function() {
+        app.shortcuts.register('List:Select', 'x', function() {
             var $checkbox = this.$('.selected input[type=checkbox]:first');
             if ($checkbox.is(':visible') && !$checkbox.hasClass('disabled')) {
                 $checkbox.get(0).click();

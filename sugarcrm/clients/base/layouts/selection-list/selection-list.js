@@ -14,9 +14,12 @@
  * @extends View.Layout
  */
 ({
-    plugins: ['Shortcuts'],
+    plugins: ['ShortcutSession'],
 
-    shortcuts: app.shortcuts.SCOPE.CREATE,
+    shortcuts: [
+        'Headerpane:Cancel',
+        'Sidebar:Toggle'
+    ],
 
     loadData: function(options) {
         var fields = _.union(this.getFieldNames(), (this.context.get('fields') || []));

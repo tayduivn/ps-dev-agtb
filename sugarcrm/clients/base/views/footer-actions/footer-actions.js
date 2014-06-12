@@ -16,6 +16,7 @@
 ({
     // TODO remove the id links in footer and replace to data-attributes (SC-2580)
     events: {
+        'click #shortcuts': 'shortcuts',
         'click #tour': 'showTutorialClick',
         'click #feedback': 'feedback',
         'click #support': 'support',
@@ -101,6 +102,8 @@
         }, this);
 
         this._watchForDashboard();
+
+        app.shortcuts.register(app.shortcuts.GLOBAL + 'Help', '?', this.shortcuts, this);
     },
 
     /**
@@ -213,6 +216,19 @@
 
         if (button) {
             button.toggleClass('active', active);
+        }
+    },
+
+    /**
+     * Open shortcut help.
+     * @param event
+     */
+    shortcuts: function(event) {
+        var activeDrawerLayout = app.drawer.getActiveDrawerLayout();
+        if (activeDrawerLayout.type !== 'shortcuts') {
+            app.drawer.open({
+                layout: 'shortcuts'
+            });
         }
     },
 

@@ -81,6 +81,5 @@ $viewdefs['Home']['base']['layout']['records'] = array(
     'type' => 'records',
     'name' => 'base',
     'span' => 12,
-    'shortcuts' => false,
 );
 

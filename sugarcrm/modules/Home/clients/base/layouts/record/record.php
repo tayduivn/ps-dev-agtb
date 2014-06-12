@@ -37,7 +37,6 @@ $viewdefs['Home']['base']['layout']['record'] = array(
     'method' => 'record',
     'last_state' => array(
         'id' => 'last-visit',
-    ),
-    'shortcuts' => '',
+    )
 );
 

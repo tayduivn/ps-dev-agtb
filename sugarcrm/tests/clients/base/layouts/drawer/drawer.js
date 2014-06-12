@@ -5,8 +5,7 @@ describe("Drawer Layout", function() {
         $drawers,
         drawer,
         components,
-        app,
-        oldController;
+        app;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
@@ -65,21 +64,11 @@ describe("Drawer Layout", function() {
         sinonSandbox.stub(app, 'triggerBefore', function() {
             return true;
         });
-        sinonSandbox.stub(app.shortcuts, 'save');
-        sinonSandbox.stub(app.shortcuts, 'restore');
-
-        oldController = app.controller;
-        app.controller = {
-            layout: {
-                type: 'simple',
-                context: new Backbone.Model()
-            },
-            context: new Backbone.Model()
-        };
+        sinonSandbox.stub(app.shortcuts, 'saveSession');
+        sinonSandbox.stub(app.shortcuts, 'restoreSession');
     });
 
     afterEach(function() {
-        app.controller = oldController;
         SugarTest.testMetadata.dispose();
         sinonSandbox.restore();
         delete SugarTest.app.drawer;
@@ -716,6 +705,49 @@ describe("Drawer Layout", function() {
             });
 
             expect(drawer._isMainAppContent($mainDiv)).toBe(true);
+        });
+    });
+
+    describe('getActiveDrawerLayout()', function() {
+        beforeEach(function() {
+            sinonSandbox.stub(drawer, '_animateOpenDrawer');
+        });
+
+        it('Should return the currently opened drawer layout', function() {
+            drawer.open({
+                layout: {
+                    name: 'foo',
+                    components:[{view: 'record'}]
+                },
+                context: {create: true}
+            });
+
+            drawer.open({
+                layout: {
+                    name: 'bar',
+                    components:[{view: 'record'}]
+                },
+                context: {create: true}
+            });
+
+            expect(drawer.getActiveDrawerLayout().name).toBe('bar');
+        });
+
+        it('Should return the main controller layout when no drawers are open', function() {
+            var result,
+                oldController = app.controller,
+                controllerLayoutStub = sinonSandbox.stub();
+
+            app.controller = {
+                layout: {
+                    name: 'controllerLayout'
+                }
+            };
+
+            result = drawer.getActiveDrawerLayout();
+            expect(result.name).toBe('controllerLayout');
+
+            app.controller = oldController;
         });
     });
 });

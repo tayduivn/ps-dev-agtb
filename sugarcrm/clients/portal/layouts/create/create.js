@@ -9,11 +9,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    plugins: ['ShortcutSession'],
+    extendsFrom: 'CreateLayout',
 
     shortcuts: [
-        'Headerpane:Cancel',
-        'Headerpane:Save',
-        'Sidebar:Toggle'
+        'Sidebar:Toggle',
+        'Create:Save',
+        'Create:Cancel',
+        'Dropdown:More'
     ]
 })

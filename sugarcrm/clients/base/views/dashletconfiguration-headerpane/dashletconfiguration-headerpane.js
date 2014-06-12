@@ -38,20 +38,18 @@
             return this.layout.triggerBefore('dashletconfig:save', model);
         }, this);
 
-        this.on('render', function() {
-            //shortcut keys
-            app.shortcuts.register(app.shortcuts.SCOPE.CREATE, ['esc','ctrl+alt+l'], function() {
-                var $cancelButton = this.$('a[name=cancel_button]');
-                if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
-                    $cancelButton.click();
-                }
-            }, this);
-            app.shortcuts.register(app.shortcuts.SCOPE.CREATE, ['ctrl+s','ctrl+alt+a'], function() {
-                var $saveButton = this.$('a[name=save_button]');
-                if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
-                    $saveButton.click();
-                }
-            }, this);
+        //shortcut keys
+        app.shortcuts.register('Dashlet:Config:Cancel', ['esc','ctrl+alt+l'], function() {
+            var $cancelButton = this.$('a[name=cancel_button]');
+            if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
+                $cancelButton.click();
+            }
+        }, this);
+        app.shortcuts.register('Dashlet:Config:Save', ['ctrl+s','ctrl+alt+a'], function() {
+            var $saveButton = this.$('a[name=save_button]');
+            if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
+                $saveButton.click();
+            }
         }, this);
     },
 

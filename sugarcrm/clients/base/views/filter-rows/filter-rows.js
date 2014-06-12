@@ -109,10 +109,10 @@
         this.saveFilterEditState();
 
         //shortcut keys
-        app.shortcuts.register('filter_edit', '+', function() {
+        app.shortcuts.register('Filter:Add', '+', function() {
             this.$('[data-action=add]').last().click();
         },this);
-        app.shortcuts.register('filter_edit', '-', function() {
+        app.shortcuts.register('Filter:Remove', '-', function() {
             this.$('[data-action=remove]').last().click();
         },this);
     }, 100, true),

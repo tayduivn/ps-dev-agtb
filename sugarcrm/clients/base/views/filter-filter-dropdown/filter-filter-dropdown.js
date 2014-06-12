@@ -131,13 +131,19 @@
             escapeMarkup: function(m) {
                 return m;
             },
+            shouldFocusInput: function() {
+                // We return false here so that we do not refocus on the field once
+                // it has been blurred. If we return true, blur needs to happen
+                // twice before it is really blurred.
+                return false;
+            },
             width: 'off'
         });
 
         // the shortcut keys need to be registered anytime this function is
         // called, not just on render
         app.shortcuts.register(
-            app.shortcuts.SCOPE.LIST,
+            'Filter:Create',
             ['f c', 'ctrl+opt+8'],
             function() {
                 // trigger the change event to open the edit filter drawer
@@ -145,8 +151,11 @@
             },
             this
         );
-        app.shortcuts.register(app.shortcuts.SCOPE.LIST, 'f e', function() {
+        app.shortcuts.register('Filter:Edit', 'f e', function() {
             this.$('.choice-filter.choice-filter-clickable').click();
+        }, this);
+        app.shortcuts.register('Filter:Show', 'f m', function() {
+            this.filterNode.select2('open');
         }, this);
 
         if (!this.filterDropdownEnabled) {
