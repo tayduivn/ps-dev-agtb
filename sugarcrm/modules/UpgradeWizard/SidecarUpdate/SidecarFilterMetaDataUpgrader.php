@@ -112,6 +112,12 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             if(!empty($data['name'])) {
                 $name = $data['name'];
             }
+
+            //BR-1680
+            if ($name == 'assigned_user_id') {
+                $name = 'assigned_user_name';
+            }
+
             // We'll add those later
             if($name == 'favorites_only' || $name == 'current_user_only') continue;
 
