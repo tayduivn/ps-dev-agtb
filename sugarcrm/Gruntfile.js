@@ -2,6 +2,7 @@ var os = require('os');
 
 module.exports = function(grunt) {
     grunt.loadTasks('grunt/tasks');
+    grunt.loadNpmTasks('grunt-jsduck');
 
     var path = grunt.option('path');
     path = path && path.replace(/\/+$/, '') + '/' || os.tmpdir();
@@ -60,6 +61,27 @@ module.exports = function(grunt) {
                     'dots',
                     'junit'
                 ]
+            }
+        },
+        jsduck: {
+            all: {
+                src: [
+                    'clients/**/*.js',
+                    'include/javascript/sugar7/{*,plugins/*}.js',
+                    'modules/*/clients/**/*.js',
+                    'sidecar/src/**/*.js',
+                    'sidecar/lib/sugarapi.js'
+                ],
+
+                dest: 'docs',
+
+                options: {
+                    'title': 'SugarCRM Javascript Documentation',
+                    'color': true,
+                    'head-html': '<link rel="stylesheet" href="../styleguide/assets/css/jsduck.css" type="text/css">',
+                    'builtin-classes': true,
+                    'warnings': ['-all:sugarcrm/sidecar/src', '-all:sugarcrm/sidecar/lib/sugarapi']
+                }
             }
         }
     });
