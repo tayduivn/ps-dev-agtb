@@ -21,6 +21,7 @@
     'include/javascript/sugar7/language.js',
     'include/javascript/sugar7/help.js',
     'include/javascript/sugar7/underscore-mixins.js',
+    'include/javascript/sugar7/utils-filters.js',
 
     // TODO: decide if we're going to only serve or if we should have
     // them all by default
@@ -28,6 +29,7 @@
 
     // FIXME: this should be included by the tests, not here
     'modules/Contacts/clients/base/lib/bean.js',
+    'modules/Contacts/clients/base/plugins/ContactsPortalMetadataFilter.js',
 
     'sidecar/tests/config.js',
 
