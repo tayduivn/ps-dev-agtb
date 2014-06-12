@@ -146,9 +146,11 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 }
                 $fields[$name] = array(
                     'dbFields' => array_filter($searchFields[$name]['db_field'], array($this, "isValidField")),
-                    'type' => isset($searchFields[$name]['type'])?$searchFields[$name]['type']:"text",
                 );
-                if(empty($fields[$name]['dbFields'])) {
+                if (!empty($searchFields[$name]['type'])) {
+                    $fields[$name]['type'] = $searchFields[$name]['type'];
+                }
+                if (empty($fields[$name]['dbFields']) && !$this->isValidField($name)) {
                     unset($fields[$name]);
                     continue;
                 }
