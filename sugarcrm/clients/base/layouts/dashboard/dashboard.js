@@ -438,8 +438,14 @@
      * @private
      */
     _navigate: function(dashboard) {
+        // if we get here and it's disposed, just return out
+        if (this.disposed) {
+            return;
+        }
         var hasParentContext = (this.context && this.context.parent),
-            hasModelId = (dashboard && dashboard.has('id'));
+            hasModelId = (dashboard && dashboard.has('id')),
+            actualModule = (hasParentContext) ? this.context.parent.get('module') : this.module,
+            isHomeModule = (actualModule === 'Home');
 
         if (hasParentContext && hasModelId) {
             // we are on a module and we have an dashboard id
@@ -447,10 +453,10 @@
         } else if (hasParentContext && !hasModelId) {
             // we are on a module but we don't have a dashboard id
             this._navigateLayout('list');
-        } else if (!hasParentContext && hasModelId) {
+        } else if (!hasParentContext && hasModelId && isHomeModule) {
             // we on the Home module and we have a dashboard id
             app.navigate(this.context, dashboard);
-        } else {
+        } else if (isHomeModule) {
             // we on the Home module and we don't have a dashboard
             var route = app.router.buildRoute(this.module);
             app.router.navigate(route, {trigger: true});
