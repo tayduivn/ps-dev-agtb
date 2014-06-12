@@ -277,30 +277,6 @@ class SubPanel
         //bug 42262 (filename with $panel->_instance_properties['get_subpanel_data'] can create problem if had word "function" in it)
         $overrideValue = $filename = $panel->parent_bean->object_name . "_subpanel_" . $panel->name;
         $overrideName = 'override_subpanel_name';
-        // Set a reasonable default value in case we ARE bwc. Without this BWC
-        // $viewName isn't set for BWC modules and throws errors later on.
-        $viewName = $panel->_instance_properties['subpanel_name'];
-
-        if(!isModuleBWC($panel->parent_bean->module_dir)) {
-            require_once 'include/MetaDataManager/MetaDataConverter.php';
-            $mc = new MetaDataConverter();
-            $layoutPath = "custom/Extension/modules/{$panel->parent_bean->module_dir}/Ext/clients/base/layouts/subpanels";
-            $layoutDefsName = "viewdefs['{$panel->parent_bean->module_dir}']['base']['layout']['subpanels']['components'][]";
-            $layoutDefsExtName = "sidecar";
-            $filename = "subpanel-for-{$panel->name}";
-            $overrideName = 'override_subpanel_list_view';
-            if($panel->_instance_properties['subpanel_name'] == 'default') {
-                $viewName = 'subpanel-for-' . strtolower($panel->parent_bean->module_dir);
-            } else {
-                $viewName = $mc->fromLegacySubpanelName($panel->_instance_properties['subpanel_name']);
-            }
-
-            $overrideValue = array(
-                "link" => $panel->name,
-                "view" => $viewName,
-            );
-        }
-
 
         //save the new subpanel
         $name = "subpanel_layout['list_fields']";

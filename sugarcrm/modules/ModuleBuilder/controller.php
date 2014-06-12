@@ -934,12 +934,13 @@ class ModuleBuilderController extends SugarController
             $oldSubpanelParser = new SubpanelMetaDataParser($subpanelName, $_REQUEST ['view_module'], $packageName);
             $oldSubpanelParser->handleSave();
             unset($oldSubpanelParser);
+        }
+        $parser->handleSave();
+        if (empty($packageName) && !empty($subpanelName)) {
             $rr = new RepairAndClear();
             $rr->show_output = false;
             $rr->rebuildExtensions();
         }
-        $parser->handleSave();
-
         // clear the cache for the linked module and requested module
         MetaDataManager::refreshModulesCache($parser->getAffectedModules());
     }
