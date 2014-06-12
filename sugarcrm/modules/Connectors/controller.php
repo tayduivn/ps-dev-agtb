@@ -490,7 +490,7 @@ class ConnectorsController extends SugarController {
 
 		    //Clear mapping file if needed (this happens when all modules are removed from a source
 			foreach($sources as $id) {
-		    	    if(empty($sources_modules[$source])) {
+		    	    if(empty($sources_modules[$source]) &&  isset($connectors[$id])) {
 		    	        //Now write the new mapping entry to the custom folder
 					    $dir = $connectors[$id]['directory'];
 						if(!preg_match('/^custom\//', $dir)) {
@@ -541,6 +541,7 @@ class ConnectorsController extends SugarController {
 
                     } //foreach
 
+                    if (!isset( $connectors[$id]['directory'])) continue;
 				    //Now write the new mapping entry to the custom folder
 				    $dir = $connectors[$id]['directory'];
 					if(!preg_match('/^custom\//', $dir)) {
