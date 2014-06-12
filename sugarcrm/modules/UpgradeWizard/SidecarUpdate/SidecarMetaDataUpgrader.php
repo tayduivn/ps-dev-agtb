@@ -320,13 +320,13 @@ class SidecarMetaDataUpgrader
                 // For deployed modules we need to get
                 if ($deployed) {
                     // Reset the module name to the key_module name format
-                    $module = $package->key . '_' . $module;
+                    $modulename = $package->key . '_' . $module;
 
                     // Get the metadata directory
                     $metadatadir = "$appModulePath/metadata/{$customPath}";
 
                     // Get our upgrade files as base files since these are regular metadata
-                    $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype, 'base', null, true, $subpanels);
+                    $files = $this->getUpgradeableFilesInPath($metadatadir, $modulename, $metatype, 'base', null, true, $subpanels);
                     $count += count($files);
                     $deployedcount += count($files);
                     $this->files = array_merge($this->files, $files);
