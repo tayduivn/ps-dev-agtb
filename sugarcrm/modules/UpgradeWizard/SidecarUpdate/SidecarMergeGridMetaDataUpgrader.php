@@ -594,9 +594,7 @@ END;
         if (!$this->deployed && $this->package) {
             // This is the marker that decides our fate
             $found = false;
-            
-            // This is necessary since this is how the implementation would do it
-            $modulename = $this->getNormalizedModuleName();
+
 
             // The undeployed implementation uses history then working, where 
             // working translates to the base file and history translates to 
@@ -610,7 +608,7 @@ END;
             // implementation, without the overhead of constructing that object 
             // or the parser just yet.
             foreach ($types as $type) {
-                $file = MetaDataFiles::getUndeployedFileName($this->viewtype, $modulename, $this->package, $type, $this->client);
+                $file = MetaDataFiles::getUndeployedFileName($this->viewtype, $this->module, $this->package, $type, $this->client);
                 if (file_exists($file)) {
                     $found = true;
                     break;
