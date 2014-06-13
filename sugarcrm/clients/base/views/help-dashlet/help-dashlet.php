@@ -28,4 +28,24 @@ $viewdefs['base']['view']['help-dashlet'] = array(
             ),
         ),
     ),
+    'custom_toolbar' => array(
+        'buttons' => array(
+            array(
+                'type' => 'dashletaction',
+                'css_class' => 'dashlet-toggle btn btn-invisible minify',
+                'icon' => 'icon-chevron-up',
+                'action' => 'toggleMinify',
+                'tooltip' => 'LBL_DASHLET_TOGGLE',
+            ),
+            array(
+                'dropdown_buttons' => array(
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'editClicked',
+                        'label' => 'LBL_DASHLET_CONFIG_EDIT_LABEL',
+                    )
+                )
+            )
+        )
+    )
 );
