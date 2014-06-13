@@ -44,7 +44,6 @@
         this.emptyFilter = app.data.createBean('Filters', {
             name: '',
             filter_definition: [],
-            filter_template: [],
             editable: true
         });
 
