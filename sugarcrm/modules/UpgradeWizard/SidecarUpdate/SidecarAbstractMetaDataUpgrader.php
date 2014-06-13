@@ -482,13 +482,12 @@ abstract class SidecarAbstractMetaDataUpgrader
      * @return string
      */
     public function getNormalizedModuleName() {
-        // Use module name if there is one set and the module name is not a 
-        // placeholder and the module is deployed OR the module is being installed
-        $useModuleName = isset($this->modulename)
-            && !in_array($this->modulename, MetaDataFiles::getModuleNamePlaceholders())
-            && ($this->deployed || $this->upgrader->fromInstallation);
+        // Use module name if it's set AND the module name is not a placeholder
+        if (isset($this->modulename) && !in_array($this->modulename, MetaDataFiles::getModuleNamePlaceholders())) {
+            return $this->modulename;
+        }
 
-        return $useModuleName ? $this->modulename : $this->module;
+        return $this->module;
     }
 
     /**
@@ -569,9 +568,10 @@ abstract class SidecarAbstractMetaDataUpgrader
                 // See if there are viewdefs defined that we can use
                 if (isset($viewdefs['<module_name>'][$client]['view'][$viewname])) {
                     //Need to perform variable replacement for some field defs
-                    $convertedDefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($this->module, $viewdefs);
-                    if (isset($convertedDefs[$this->module][$client]['view'][$viewname])) {
-                        $newdefs = $convertedDefs[$this->module][$client]['view'][$viewname];
+                    $module = $this->getNormalizedModuleName();
+                    $convertedDefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($module, $viewdefs);
+                    if (isset($convertedDefs[$module][$client]['view'][$viewname])) {
+                        $newdefs = $convertedDefs[$module][$client]['view'][$viewname];
                     } else {
                         $newdefs = $viewdefs['<module_name>'][$client]['view'][$viewname];
                     }

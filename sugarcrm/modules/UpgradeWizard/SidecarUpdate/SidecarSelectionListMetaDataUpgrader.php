@@ -47,7 +47,7 @@ class SidecarSelectionListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrad
             // Twitterizing the assignment of the converted list view defs
             $this->logUpgradeStatus("Setting new {$this->client} selection-list internally for {$this->module}");
             $converted = $sidecarViewDefs[$this->module][$this->client]['view']['list'];
-            $newdefs[$this->module][$this->client]['view']['selection-list'] = $converted;
+            $newdefs[$this->getNormalizedModuleName()][$this->client]['view']['selection-list'] = $converted;
             $this->sidecarViewdefs = $newdefs;
         } else {
             $this->logUpgradeStatus("No selection-list metadata found for {$this->module}");
