@@ -123,7 +123,7 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
                 case 'datetime':
                 case 'time':
                     if (strtoupper($value) == 'NOW()') {
-                        return $forPrepared?TimeDate::getInstance()->nowDb():$db->now();
+                        return $forPrepared ? TimeDate::getInstance()->nowDb() : $db->now();
                     }
                     break;
                 case 'bool':
@@ -141,8 +141,8 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
                     $value = '%' . $value;
                 }
             }
-            return $forPrepared?$value:$db->quoteType($dbtype, $value);
+            return $forPrepared ? $value : $db->quoteType($dbtype, $value);
         }
-        return $forPrepared?$value:$db->quoted($value);
+        return $forPrepared ? $value : $db->quoted($value);
     }
 }

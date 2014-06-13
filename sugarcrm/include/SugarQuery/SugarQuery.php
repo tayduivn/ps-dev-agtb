@@ -126,7 +126,7 @@ class SugarQuery
      * Should we use prepared statements?
      * @var bool
      */
-    public $usePreparedStatements = true;
+    public $usePreparedStatements = false;
 
     /**
      * Prepared statement data

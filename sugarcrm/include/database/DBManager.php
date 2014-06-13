@@ -118,7 +118,7 @@ abstract class DBManager
     /**
      * default state for using Prepared Statements
      */
-    public $usePreparedStatements = true;
+    public $usePreparedStatements = false;
 
 	/**
 	 * TimeDate instance
@@ -587,7 +587,7 @@ protected function checkQuery($sql, $object_name = false)
 	{
 		$tablename =  $bean->getTableName();
 		$msg = "Error inserting into table: $tablename:";
-	    if($this->usePreparedStatements) {
+	    if ($this->usePreparedStatements) {
 	        list($sql, $data) = $this->insertSQL($bean, true);
 	        // Prepare and execute the statement
 	        return $this->preparedQuery($sql, $data, $msg);
