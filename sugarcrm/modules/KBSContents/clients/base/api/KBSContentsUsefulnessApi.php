@@ -25,6 +25,7 @@ class KBSContentsUsefulnessApi extends ModuleApi
                 'pathVars' => array('module', 'record', 'useful'),
                 'method' => 'voteUseful',
                 'shortHelp' => 'This method votes a record of the specified type as a useful',
+                'longHelp' => 'include/api/help/module_get_help.html',
             ),
             'notuseful' => array(
                 'reqType' => 'PUT',
@@ -32,6 +33,7 @@ class KBSContentsUsefulnessApi extends ModuleApi
                 'pathVars' => array('module', 'record', 'notuseful'),
                 'method' => 'voteNotUseful',
                 'shortHelp' => 'This method votes a record of the specified type as a not useful',
+                'longHelp' => 'include/api/help/module_get_help.html',
             ),
         );
     }

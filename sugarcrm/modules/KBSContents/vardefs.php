@@ -328,7 +328,7 @@ $dictionary['KBSContent'] = array(
         ),
 
         'relcases_kbscontents' => array(
-            'name' => 'cases_kbscontents',
+            'name' => 'relcases_kbscontents',
             'type' => 'link',
             'vname' => 'LBL_KBSCASES',
             'relationship' => 'relcases_kbscontents',

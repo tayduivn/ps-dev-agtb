@@ -75,9 +75,9 @@ class TreeApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         parent::setUpBeforeClass();
 
+        SugarTestHelper::setUp('current_user', array(true, 1));
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-
 
         // load test tree
         for ($i = 5; $i > 0; $i--) {
