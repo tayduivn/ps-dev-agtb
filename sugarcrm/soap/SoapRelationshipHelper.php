@@ -226,20 +226,13 @@ function retrieve_modified_relationships($module_name, $related_module, $relatio
 
 	if($has_join == false){
 		$query .= " inner join $mod->table_name m2 on $table_alias.$mod2_key = m2.id AND m2.id = '$current_user->id'";
-		//BEGIN SUGARCRM flav=pro ONLY
-		if(!$mod2->disable_row_level_security && !is_admin($current_user))
-		$query .= "	inner join team_memberships tm2 on tm2.user_id = '$current_user->id' AND tm2.team_id = $table_alias.team_id AND tm2.deleted=0 AND m2.id = '$current_user->id'";
-		//END SUGARCRM flav=pro ONLY
+		$mod2->add_team_security_where_clause($query, 'm2');
 	}
 	else{
 		$query .= " inner join $mod->table_name m1 on rt.$mod_key = m1.id ";
 		$query .= " inner join $mod2->table_name m2 on rt.$mod2_key = m2.id AND m2.id = '$current_user->id'";
-		//BEGIN SUGARCRM flav=pro ONLY
-		if(!$mod->disable_row_level_security && !is_admin($current_user))
-		$query .= "	inner join team_memberships tm1 on tm1.user_id = '$current_user->id' AND tm1.team_id = m1.team_id AND tm1.deleted=0";
-		if(!$mod2->disable_row_level_security && !is_admin($current_user))
-		$query .= "	inner join team_memberships tm2 on tm2.user_id = '$current_user->id' AND tm2.team_id = m2.team_id AND tm2.deleted=0";
-		//END SUGARCRM flav=pro ONLY
+		$mod->add_team_security_where_clause($query, 'm1');
+		$mod2->add_team_security_where_clause($query, 'm2');
 	}
 
 	if(!empty($relationship_query)){
