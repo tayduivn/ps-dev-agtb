@@ -302,9 +302,12 @@ class AbstractRelationship
 		}
         $subpanelDefinition [ 'get_subpanel_data' ] = $source ;
         $subpanelDefinition [ 'top_buttons' ] = array(
-		    array('widget_class' => "SubPanelTopButtonQuickCreate"),
-		    array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
-		);
+            array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
+        );
+        // dont create a quick create link to users. this usually doesn't work
+        if ($sourceModule !== 'Users') {
+            $subpanelDefinition [ 'top_buttons' ][]=array('widget_class' => "SubPanelTopButtonQuickCreate");
+        }
 
         return array ( $subpanelDefinition );
     }
