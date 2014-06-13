@@ -28,10 +28,14 @@
  ********************************************************************************/
 
 // Full text search.
+
+$managerClassPath = SugarAutoLoader::requireWithCustom('include/SugarSearchEngine/SugarSearchEngineQueueManager.php');
+$managerClassName = SugarAutoLoader::customClass('SugarSearchEngineQueueManager');
+
 $hook_array['after_save'][] = array(
     1,
     'fts',
-    'include/SugarSearchEngine/SugarSearchEngineQueueManager.php',
-    'SugarSearchEngineQueueManager',
+    $managerClassPath,
+    $managerClassName,
     'populateIndexQueue'
 );
