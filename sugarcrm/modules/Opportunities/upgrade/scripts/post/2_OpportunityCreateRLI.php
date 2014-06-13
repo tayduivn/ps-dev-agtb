@@ -40,7 +40,7 @@ class SugarUpgradeOpportunityCreateRLI extends UpgradeScript
                        o.amount as cost_price, 
                        1 as quantity, 
                        o.currency_id, 
-                       o.amount_usdollar/o.amount as base_rate, 
+                       o.amount/o.amount_usdollar as base_rate,
                        o.probability, 
                        o.date_closed, 
                        o.date_closed_timestamp, 
