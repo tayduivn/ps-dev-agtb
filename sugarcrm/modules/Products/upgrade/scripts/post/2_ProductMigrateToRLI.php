@@ -72,7 +72,7 @@ class SugarUpgradeProductMigrateToRLI extends UpgradeScript
                            p.discount_usdollar, 
                            p.list_usdollar, 
                            p.currency_id, 
-                           (p.discount_usdollar / p.discount_price) as base_rate,
+                           (p.discount_price/p.discount_usdollar) as base_rate,
                            p.status, 
                            p.tax_class, 
                            p.website, 
