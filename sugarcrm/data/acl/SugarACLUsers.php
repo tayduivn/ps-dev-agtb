@@ -36,6 +36,7 @@ class SugarACLUsers extends SugarACLStrategy
             'status' => true,
             'employee_status' => true,
             'is_admin' => true,
+            'UserType' => true,
         );
 
     public $no_access_fields = array(
