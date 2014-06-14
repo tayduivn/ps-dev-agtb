@@ -20,6 +20,12 @@ class SugarUpgradeRevenueLineItemFixBaseRate extends UpgradeScript
     public function run()
     {
         if (version_compare($this->from_version, '7.2.0', '<=') && $this->toFlavor('ent')) {
+            $sql = "UPDATE revenue_line_items SET base_rate = (discount_price/discount_usdollar)
+                    WHERE discount_price IS NOT NULL AND discount_usdollar IS NOT NULL;";
+            $r = $this->db->query($sql);
+
+            $this->log('Updated base_rate on ' . $this->db->getAffectedRowCount($r) . ' rows');
+
             // update all the usd fields
             $sql = 'UPDATE revenue_line_items SET
                 discount_amount_usdollar = (discount_amount/base_rate),
