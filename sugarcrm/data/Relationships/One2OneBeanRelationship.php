@@ -120,8 +120,7 @@ class One2OneBeanRelationship extends One2MBeanRelationship
 
         $startingTable = isset($options['myAlias']) ? $options['myAlias'] : '';
         if (empty($startingTable)) {
-            $bean = BeanFactory::getBean($link->getRelatedModuleName());
-            $startingTable = $bean->table_name;
+            $startingTable = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_table'];
         }
         $startingKey = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_key'];
 
