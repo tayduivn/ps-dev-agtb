@@ -120,7 +120,7 @@ class One2OneBeanRelationship extends One2MBeanRelationship
 
         $startingTable = isset($options['myAlias']) ? $options['myAlias'] : '';
         if (empty($startingTable)) {
-            $startingTable = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_table'];
+            $startingTable = $linkIsLHS ? $this->def['lhs_table'] : $this->def['rhs_table'];
         }
         $startingKey = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_key'];
 
