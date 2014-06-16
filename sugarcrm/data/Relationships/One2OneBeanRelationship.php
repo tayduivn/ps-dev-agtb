@@ -118,7 +118,8 @@ class One2OneBeanRelationship extends One2MBeanRelationship
             $linkIsLHS = !$linkIsLHS;
         }
 
-        $startingTable = !empty($options['myAlias']) ? $options['myAlias'] : $link->getFocus()->table_name;
+        $bean = BeanFactory::getBean($link->getRelatedModuleName());
+        $startingTable = !empty($options['myAlias']) ? $options['myAlias'] : $bean->table_name;
         $startingKey = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_key'];
 
         $targetTable = $linkIsLHS ? $this->def['rhs_table'] : $this->def['lhs_table'];
