@@ -68,11 +68,6 @@
         this.setButtonStates('edit');
         this.toggleEdit(true);
         this.model.trigger("setMode", "edit");
-
-        // if this is a help dashboard, remove the delete button
-        if (this.model.get('dashboard_type') === 'help-dashboard') {
-            this.$('[name=delete_button]').hide();
-        }
     },
     cancelClicked: function(evt) {
         this.changed = false;
