@@ -106,7 +106,7 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 	            $camplog->related_type = $lead->module_dir;
 	            $camplog->activity_type = "lead";
 	            $camplog->target_type = $lead->module_dir;
-	            $campaign_log->activity_date=$timedate->now();
+	            $camplog->activity_date=$timedate->now();
 	            $camplog->target_id    = $lead->id;
                 if(isset($marketing_data['id']))
                 {
