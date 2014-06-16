@@ -37,13 +37,13 @@ class One2OneBeanRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $link2 = $this->getMockBuilder('Link2')
             ->setMethods(array('getSide', 'getRelatedModuleName', 'getFocus'))
             ->disableOriginalConstructor()
-            ->getMOck();
+            ->getMock();
         $link2->expects($this->any())
             ->method('getSide')
-            ->willReturn(REL_RHS);
+            ->will($this->returnValue(REL_RHS));
         $link2->expects($this->any())
             ->method('getRelatedModuleName')
-            ->willReturn($relDef['rhs_module']);
+            ->will($this->returnValue($relDef['rhs_module']));
         $link2->expects($this->never())
             ->method('getFocus');
         $sq = new SugarQuery();
