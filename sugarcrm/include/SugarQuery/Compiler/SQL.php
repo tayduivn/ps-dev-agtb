@@ -493,7 +493,7 @@ class SugarQuery_Compiler_SQL
                             $val = $condition->field->quoteValue($value, $condition->operator);
                             $sql .= "{$field} {$comparitor} {$val} {$chainWith} ";
                         }
-                        $sql .= rtrim($sql, "$chainWith ");
+                        $sql = rtrim($sql, "$chainWith ");
                         if ($condition->operator === 'DOES NOT CONTAIN') {
                             $sql .= " OR {$field} IS NULL ";
                         }
