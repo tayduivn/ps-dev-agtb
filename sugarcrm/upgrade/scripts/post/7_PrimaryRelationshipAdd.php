@@ -1,5 +1,7 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -36,49 +38,54 @@ class SugarUpgradePrimaryRelationshipAdd extends UpgradeScript
 
     public function run()
     {
-        // Hardcoded for the accounts_contacts relationship for now
-        // Everybody becomes the primary account
-        $this->db->query("UPDATE accounts_contacts "
-                         ."SET primary_account = 1 "
-                         ."WHERE deleted = 0");
-        
-        // Find relationships where there are more than one "primary" record
-        while (true) {
-            $ret = $this->db->limitQuery("SELECT COUNT(id) duplicates, contact_id child_id "
-                                         ."FROM accounts_contacts "
-                                         ."WHERE primary_account = 1 "
-                                         ."AND deleted = 0 "
-                                         ."GROUP BY contact_id "
-                                         ."HAVING COUNT(id) > 1", 0, 200);
-            $fixupRecords = array();
-            
-            while ($row = $this->db->fetchByAssoc($ret)) {
-                $fixupRecords[] = $this->db->quote($row['child_id']);
-            }
-            if (empty($fixupRecords)) {
-                // We have fixed everything
-                break;
-            }
+        if (version_compare($this->from_version, '7.1.5', '<')) {
+            // Hardcoded for the accounts_contacts relationship for now
+            // Everybody becomes the primary account
+            $this->db->query("UPDATE accounts_contacts "
+                    . "SET primary_account = 1 "
+                    . "WHERE deleted = 0"
+            );
 
-            // Find the most recent record for child and we'll unset the rest of them as primary
-            $ret = $this->db->query("SELECT id, contact_id child_id, date_modified "
-                                    ."FROM accounts_contacts WHERE "
-                                    ."contact_id IN ('".implode("','",$fixupRecords)."') "
-                                    ."AND deleted = 0 ORDER BY date_modified DESC");
-            
-            $fixedRecords = array();
-            while ($row = $this->db->fetchByAssoc($ret)) {
-                if (!isset($fixedRecords[$row['child_id']])) {
-                    // First time we've found this child
-                    $fixedRecords[$row['child_id']] = true;
-                    $this->db->query("UPDATE accounts_contacts "
-                                     ."SET primary_account = 0 "
-                                     ."WHERE deleted = 0 "
-                                     ."AND id <> '".$row['id']."' "
-                                     ."AND contact_id = '".$row['child_id']."'");
+            // Find relationships where there are more than one "primary" record
+            while (true) {
+                $ret = $this->db->limitQuery("SELECT COUNT(id) duplicates, contact_id child_id "
+                        . "FROM accounts_contacts "
+                        . "WHERE primary_account = 1 "
+                        . "AND deleted = 0 "
+                        . "GROUP BY contact_id "
+                        . "HAVING COUNT(id) > 1", 0, 200
+                );
+                $fixupRecords = array();
+
+                while ($row = $this->db->fetchByAssoc($ret)) {
+                    $fixupRecords[] = $this->db->quote($row['child_id']);
+                }
+                if (empty($fixupRecords)) {
+                    // We have fixed everything
+                    break;
+                }
+
+                // Find the most recent record for child and we'll unset the rest of them as primary
+                $ret = $this->db->query("SELECT id, contact_id child_id, date_modified "
+                        . "FROM accounts_contacts WHERE "
+                        . "contact_id IN ('" . implode("','", $fixupRecords) . "') "
+                        . "AND deleted = 0 ORDER BY date_modified DESC"
+                );
+
+                $fixedRecords = array();
+                while ($row = $this->db->fetchByAssoc($ret)) {
+                    if (!isset($fixedRecords[$row['child_id']])) {
+                        // First time we've found this child
+                        $fixedRecords[$row['child_id']] = true;
+                        $this->db->query("UPDATE accounts_contacts "
+                                . "SET primary_account = 0 "
+                                . "WHERE deleted = 0 "
+                                . "AND id <> '" . $row['id'] . "' "
+                                . "AND contact_id = '" . $row['child_id'] . "'"
+                        );
+                    }
                 }
             }
-            
         }
     }
 }
