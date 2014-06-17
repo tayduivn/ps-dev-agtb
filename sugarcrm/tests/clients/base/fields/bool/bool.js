@@ -75,6 +75,45 @@ describe('Base.Field.Bool', function() {
         });
     });
 
+    describe('bindDataChange', function() {
+        var field;
+        beforeEach(function() {
+            SugarTest.testMetadata.init();
+        });
+
+        afterEach(function() {
+            SugarTest.testMetadata.dispose();
+        });
+
+        it('should toggle "checked" property upon model change', function() {
+            field = SugarTest.createField('base', 'my_bool', 'bool', 'edit');
+            field.render();
+
+            field.model.set('my_bool', true);
+            expect(field.$(field.fieldTag).val()).toNotEqual('true');
+            expect(field.$(field.fieldTag).prop('checked')).toBeTruthy();
+
+            field.model.set('my_bool', false);
+            expect(field.$(field.fieldTag).val()).toNotEqual('false');
+            expect(field.$(field.fieldTag).prop('checked')).toBeFalsy();
+
+            field.dispose();
+        });
+
+        it('should update dom value to "1" or "0" upon model change if action is massupdate', function() {
+            field = SugarTest.createField('base', 'my_bool', 'bool', 'massupdate');
+            field.render();
+
+            field.model.set('my_bool', true);
+            expect(field.$(field.select2fieldTag).val()).toEqual('1');
+
+            field.model.set('my_bool', false);
+            expect(field.$(field.select2fieldTag).val()).toEqual('0');
+
+            field.dispose();
+        });
+    });
+
     describe('render', function() {
         describe('render detail', function() {
             var field;
