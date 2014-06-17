@@ -819,9 +819,15 @@ function check_special_fields($field_name, $source_object, $use_past_array=false
 		}
 	} elseif($field_name == 'modified_by_name' && $use_past_array) {
         return $source_object->old_modified_by_name;
-    } elseif($field_name == 'assigned_user_name' && $use_past_array) {
-	    // We have to load the user here since fetched_row only has the ID, not the name
-        return get_username_by_id($source_object->fetched_row['assigned_user_id']);
+    } elseif($field_name == 'assigned_user_name') {
+        //load the user for either the current value or past value.
+        // We have to load the user here since fetched_row only has the ID, not the name
+         if($use_past_array) {
+             //return previous assigned user from fetched row
+             return get_username_by_id($source_object->fetched_row['assigned_user_id']);
+         }
+        //return current assigned user in source object
+        return get_username_by_id($source_object->assigned_user_id);
     }
     elseif ($field_name == 'team_name')
     {
