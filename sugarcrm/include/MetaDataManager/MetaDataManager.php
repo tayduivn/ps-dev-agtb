@@ -1707,7 +1707,6 @@ class MetaDataManager
     protected function getConfigs()
     {
         $sugarConfig = $this->getSugarConfig();
-
         $administration = new Administration();
         $administration->retrieveSettings();
 
@@ -1727,9 +1726,13 @@ class MetaDataManager
                 $configs['forgotpasswordON'] = false;
             }
         }
-        $auth = AuthenticationController::getInstance();
-        if($auth->isExternal()) {
-            $configs['externalLogin'] = true;
+
+        if (!empty($sugarConfig['authenticationClass'])) {
+            $auth = new AuthenticationController($sugarConfig['authenticationClass']);
+
+            if($auth->isExternal()) {
+                $configs['externalLogin'] = true;
+            }
         }
 
         if (isset($sugarConfig['analytics'])) {
