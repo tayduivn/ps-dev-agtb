@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+require_once 'data/Relationships/SugarRelationship.php';
 
 class SugarRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -52,6 +53,91 @@ class SugarRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($contact->id, SugarRelationshipTestHook::$log[$opportunity->id]['after_relationship_update'], "Logic hook not triggered for Opportunities:after_relationship_update:Contacts");
         $this->assertEquals($opportunity->id, SugarRelationshipTestHook::$log[$contact->id]['after_relationship_update'], "Logic hook not triggered for Contacts:after_relationship_update:Opportunities");
     }
+
+    /**
+     * Tests getting the optional where clause
+     * 
+     * @param array $options The options array
+     * @param string $where Existing where table
+     * @param SugarBean $related Related bean
+     * @param string $expect Expected result
+     * @dataProvider whereProvider
+     */
+    public function testGetOptionalWhereClause($options, $where, $related, $expect)
+    {
+        $relObj = $this->getMockRelationship();
+        $actual = $relObj->getWhereClause($options, $where, $related);
+        $this->assertEquals($actual, $expect);
+    }
+
+    protected function getMockBean()
+    {
+        // Mocks the related bean used in the relationship
+        $mock = $this->getMockBuilder('Bug')
+                     ->disableOriginalConstructor()
+                     ->getMock();
+        $mock->expects($this->any())
+             ->method('get_custom_table_name')
+             ->will($this->returnValue('bug_foo_c'));
+
+        // Sets certain test field defs to ensure proper functionality
+        $mock->field_defs['foo']['source'] = 'custom_fields';
+        $mock->field_defs['baz']['source'] = 'non-db';
+        $mock->field_defs['zim'] = array();
+
+        return $mock;
+    }
+
+    /**
+     * Gets the mock relationship object, disabling the constructor since we
+     * don't really need it.
+     * @return SugarRelationship
+     */
+    protected function getMockRelationship()
+    {
+        $mock = $this->getMockBuilder('SugarRelationshipMock')
+                     ->disableOriginalConstructor()
+                     ->setMethods(null)
+                     ->getMock();
+
+        return $mock;
+    }
+
+    public function whereProvider()
+    {
+        return array(
+            array(
+                'options' => array(
+                    'lhs_field' => 'foo',
+                    'operator' => '=',
+                    'rhs_value' => 'bar',
+                ),
+                'where' => 'mytable',
+                'related' => $this->getMockBean(),
+                'expect' => "bug_foo_c.foo='bar'",
+            ),
+            array(
+                'options' => array(
+                    'lhs_field' => 'baz',
+                    'operator' => '=',
+                    'rhs_value' => 'zim',
+                ),
+                'where' => 'thattable',
+                'related' => $this->getMockBean(),
+                'expect' => "thattable.baz='zim'",
+            ),
+            array(
+                'options' => array(
+                    'lhs_field' => 'zim',
+                    'operator' => '=',
+                    'rhs_value' => 'car',
+                ),
+                'where' => '',
+                'related' => $this->getMockBean(),
+                'expect' => "zim='car'",
+            ),
+        );
+    }
 }
  
 class SugarRelationshipTestHook
@@ -61,5 +147,16 @@ class SugarRelationshipTestHook
     public function testFunction($bean, $event, $arguments)
     {
         self::$log[$bean->id][$event] = $arguments['related_id'];
+    }
+}
+
+/**
+ * Test class used for exposing protected methods
+ */
+class SugarRelationshipMock extends M2MRelationship
+{
+    public function getWhereClause($options, $where, $related)
+    {
+        return $this->getOptionalWhereClause($options, $where, $related);
     }
 }
