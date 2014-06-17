@@ -26,7 +26,7 @@ $dictionary['audit'] =
 		array ( 'table' => 'audit',
               	'fields' => array (
               	      'id'=> array('name' =>'id', 'type' =>'id', 'len'=>'36','required'=>true), 
-              	      'parent_id'=>array('name' =>'parent_id', 'type' =>'id', 'len'=>'36','required'=>true),               	                   	
+				      'parent_id'=>array('name' =>'parent_id', 'type' =>'id', 'len'=>'36','required'=>true, 'isnull' => false),
 				      'date_created'=>array('name' =>'date_created','type' => 'datetime'),
 				      'created_by'=>array('name' =>'created_by','type' => 'id','len' => 36),				
 					  'field_name'=>array('name' =>'field_name','type' => 'varchar','len' => 100),
