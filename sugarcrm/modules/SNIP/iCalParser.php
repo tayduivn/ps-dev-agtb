@@ -507,6 +507,20 @@ class iCalendar {
 	function createSugarEvents($parent = NULL)
 	{
 		require_once('modules/Meetings/Meeting.php');
+
+                // if email description contains a meeting id that exists, don't create new meeting
+                if (isset($parent) && !empty($parent->description)) {
+                    preg_match('/record=(.*)&gt/', $parent->description, $match);
+                    if (!empty($match[1])) {
+                        $meeting = new Meeting();
+                        $meeting->disable_row_level_security = true;
+                        $prev_meeting = $meeting->retrieve_by_string_fields(array("id" => $match[1]));
+                        if (isset($prev_meeting)) {
+                            return;
+                        }
+                    }
+                }
+
 		foreach ($this->data['calendar'] as $calendar_key=>$calendar_val) {
 			foreach ($calendar_val->stack as $key=>$val) {
 				if(!$val instanceof vEvent) {
