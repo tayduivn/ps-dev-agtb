@@ -28,6 +28,7 @@ $dictionary['CampaignLog'] = array ('audited'=>false,
 			'type' => 'id',
 			'comment' => 'Campaign identifier',
             'reportable' => false,
+            'isnull' => false,
 			),
 		'target_tracker_key' => array (
 			'name' => 'target_tracker_key',
@@ -350,4 +351,3 @@ $dictionary['CampaignLog'] = array ('audited'=>false,
         ),
     )
 );
-
