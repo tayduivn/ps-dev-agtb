@@ -60,14 +60,6 @@ $dictionary['KBSContent'] = array(
             'sortable' => true,
             'studio' => false,
         ),
-        'doc_id' => array(
-            'name' => 'doc_id',
-            'vname' => 'LBL_DOC_ID',
-            'type' => 'id',
-            'sortable' => false,
-            'required' => true,
-            'studio' => false,
-        ),
         'approved' => array(
             'name' => 'approved',
             'vname' => 'LBL_APPROVED',
