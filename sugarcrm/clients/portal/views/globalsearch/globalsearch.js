@@ -104,7 +104,7 @@
         app.api.search(params, {
             success:function(data) {
                 var formattedRecords = [],
-                    modList = app.metadata.getModuleNames({filter: 'display_tab', action: 'create'}),
+                    modList = app.metadata.getModuleNames({filter: 'quick_create', action: 'create'}),
                     moduleIntersection = _.intersection(modList, self.searchModules);
                 _.each(data.records, function(record) {
                     if (!record.id) {
