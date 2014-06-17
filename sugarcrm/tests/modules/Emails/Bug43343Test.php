@@ -43,16 +43,6 @@ class Bug43343Test extends Sugar_PHPUnit_Framework_TestCase
         unset($_REQUEST['searchDateTo']);
     }
     
-    public function testImportSearchDateWhereClause()
-    {
-        $_REQUEST['searchDateFrom'] = '04/04/2010';
-        $_REQUEST['searchDateTo'] = '02/22/2011';
-        $whereClause = $this->email->_generateSearchImportWhereClause();
- 
-        $this->assertTrue( preg_match('/2010-04-04/', $whereClause) == 1 );
-        $this->assertTrue( preg_match('/2011-02-22/', $whereClause) == 1 );
-    }
-    
     public function testEmptyImportSearchDateWhereClause()
     {
         unset($_REQUEST['searchDateFrom']);
