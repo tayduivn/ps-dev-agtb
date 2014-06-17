@@ -101,13 +101,18 @@ class SugarUpgradeForecastsListViewSetup extends UpgradeScript
     {
         $columns = array_unique(array_merge(ForecastsDefaults::getWorksheetColumns($this->from_flavor), array('likely_case', 'best_case', 'worst_case')));
 
-        $map = array('likely_case' => 'show_worksheet_likely', 'best_case' => 'show_worksheet_best', 'worst_case' => 'show_worksheet_worst');
+        $map = array(
+            'likely_case' => 'show_worksheet_likely',
+            'best_case' => 'show_worksheet_best',
+            'worst_case' => 'show_worksheet_worst'
+        );
 
-        $final = array_filter($columns, function($val) {
+        $final = array();
+        foreach($columns as $val) {
             if(!isset($map[$val]) || $config[$map[$val]] == 1) {
-                return(true);
+                $final[] = $val;
             }
-        });
+        }
 
         // save the columns to the worksheet list viewdefs
         $this->client->setWorksheetColumns($this->api, $final, $config['forecast_by']);
