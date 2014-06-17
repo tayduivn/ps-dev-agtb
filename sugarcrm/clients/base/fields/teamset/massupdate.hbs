@@ -33,7 +33,9 @@
         {{/each}}
         {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
     </div>
-    <label class="span3">
-        <input type="checkbox" name="append_team"{{#if appendTeamValue}} checked{{/if}}> {{str 'LBL_SELECT_APPEND_TEAMS'}}
-    </label>
+    <div class="span3">
+        <label>
+            <input type="checkbox" name="append_team"{{#if appendTeamValue}} checked{{/if}}> {{str 'LBL_SELECT_APPEND_TEAMS'}}
+        </label>
+    </div>
 </div>

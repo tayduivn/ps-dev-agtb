@@ -113,6 +113,7 @@ $dictionary['Styleguide'] = array(
             'vname' => 'LBL_BOOLEAN',
             'type' => 'bool',
             'comment' => 'Whether or not to allow calls to contact',
+            'default' => 0,
             'help' => 'Don\'t check this one.',
         ),
         'currency_id' => array(
@@ -151,7 +152,7 @@ $dictionary['Styleguide'] = array(
             'vname' => 'LBL_PHONE_HOME',
             'type' => 'phone',
             'dbType' => 'varchar',
-            'len' => 30,
+            'len' => 100,
             'comment' => 'Don\'t call to this number',
             'help' => 'Don\'t call to this number.',
         ),

@@ -1,4 +1,4 @@
-describe("BaseFilterModuleDropdownView", function () {
+describe('Base.View.FilterModuleDropdown', function() {
     var view, layout, app;
 
     beforeEach(function () {
@@ -79,13 +79,12 @@ describe("BaseFilterModuleDropdownView", function () {
             expect(layoutStub.secondCall.args[0]).toEqual('filter:get');
         });
 
-        it('should trigger filter:create:close if link is not all_modules', function() {
+        it('should unset the current filter id', function() {
+            view.context.set('currentFilterId', 'any_filter_id');
             var silent = true;
             view.handleChange('Cases', 'Contacts', silent);
 
-            expect(layoutStub).toHaveBeenCalled();
-            expect(layoutStub.firstCall.args[0]).toEqual('filter:create:close');
-            expect(layoutStub.secondCall.args[0]).toEqual('subpanel:change');
+            expect(view.context.get('currentFilterId')).toBeNull();
         });
 
         it('should do same as above with filter:get because silent is false', function() {
@@ -93,10 +92,9 @@ describe("BaseFilterModuleDropdownView", function () {
             view.handleChange('Cases', 'Contacts', silent);
 
             expect(layoutStub).toHaveBeenCalled();
-            expect(layoutStub.firstCall.args[0]).toEqual('filter:create:close');
-            expect(layoutStub.secondCall.args[0]).toEqual('subpanel:change');
-            expect(layoutStub.thirdCall.args[0]).toEqual('filter:get');
-            expect(layoutStub.lastCall.args[0]).toEqual('filter:clear:quicksearch');
+            expect(layoutStub.firstCall.args[0]).toEqual('subpanel:change');
+            expect(layoutStub.secondCall.args[0]).toEqual('filter:get');
+            expect(layoutStub.thirdCall.args[0]).toEqual('filter:clear:quicksearch');
         });
     });
 

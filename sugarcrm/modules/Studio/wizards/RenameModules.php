@@ -431,16 +431,91 @@ class RenameModules
 
         $layout_defs = array();
 
-        foreach (SugarAutoLoader::existingCustom('modules/' . $bean->module_dir . '/metadata/subpaneldefs.php') as $file) {
-            require $file;
-        }
+        // Handle things differently for BWC modules
+        if(isModuleBWC($bean->module_dir)) {
+            foreach (SugarAutoLoader::existingCustom('modules/' . $bean->module_dir . '/metadata/subpaneldefs.php') as $file) {
+                require $file;
+            }
 
-        $defs = SugarAutoLoader::loadExtension('layoutdefs', $bean->module_dir);
-        if($defs) {
-            require $defs;
+            $defs = SugarAutoLoader::loadExtension('layoutdefs', $bean->module_dir);
+            if($defs) {
+                require $defs;
+            }
+        } else {
+            // Handle things the new way
+            foreach (SugarAutoLoader::existingCustom('modules/' . $bean->module_dir . '/clients/base/layouts/subpanels/subpanels.php') as $file) {
+                require $file;
+            }
+            
+            // Add in any studio customizations
+            $ext = 'custom/modules/' . $bean->module_dir . '/Ext/clients/base/layouts/subpanels/subpanels.ext.php';
+            if (SugarAutoLoader::fileExists($ext)) {
+                require $ext;
+            }
+
+            // Massage defs to look like old style for use in the rename process
+            if (isset($viewdefs[$bean->module_dir]['base']['layout']['subpanels']['components'])) {
+                $layout_defs = $this->getSidecarSubpanelDefsAsLegacy($viewdefs[$bean->module_dir]['base']['layout']['subpanels']['components'], $bean);
+            }
         }
 
         return isset($layout_defs[$bean->module_dir]['subpanel_setup']) ? $layout_defs[$bean->module_dir]['subpanel_setup'] : $layout_defs;
+    }
+
+    /**
+     * Gets sidecar subpanel layout defs in the BWC format
+     * 
+     * @param Array $components Existing sidecar subpanel layout
+     * @param SugarBean $bean The bean that the subpanels are being scraped for
+     * @return array
+     */
+    protected function getSidecarSubpanelDefsAsLegacy(Array $components, SugarBean $bean) 
+    {
+        $return = array();
+
+        // Used in keeping uniqueness of link name based keys
+        $counter = 0;
+
+        foreach ($components as $component) {
+            // We can only really do this if there is a label and a link
+            if (isset($component['label']) && isset($component['context']['link'])) {
+                // The link is used as an index and a module finder
+                $link = $component['context']['link'];
+
+                // If there is a module on the link field, we are good
+                if (!empty($bean->field_defs[$link]['module'])) {
+                    $def['module'] = $bean->field_defs[$link]['module'];
+                } else {
+                    // If there isn't a module then we need to load the
+                    // relationship to get the related module
+                    $bean->load_relationship($link);
+                    if (!empty($bean->$link)) {
+                        $relMod = $bean->$link->getRelatedModuleName();
+                        if (!empty($relMod)) {
+                            $def['module'] = $relMod;
+                        }
+                    }
+                }
+
+                // If a module was found then proceed to set the def
+                if (!empty($def['module'])) {
+                    // Add the title key in
+                    $def['title_key'] = $component['label'];
+
+                    // Make sure we are not overriding this index
+                    if (isset($return[$bean->module_dir]['subpanel_setup'][$link])) {
+                        // this is actually meaningless in the scope of 
+                        // things so manipulating this isn't a world changer
+                        $link .= '_' . ++$counter;
+                    }
+
+                    // Set the new def into the expected 
+                    $return[$bean->module_dir]['subpanel_setup'][$link] = $def;
+                }
+            }
+        }
+
+        return $return;
     }
 
     /**

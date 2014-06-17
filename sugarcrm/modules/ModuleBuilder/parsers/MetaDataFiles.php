@@ -642,14 +642,29 @@ class MetaDataFiles
     public static function getModuleMetaDataDefsWithReplacements($module, $defs)
     {
         if (!$module instanceof SugarBean) {
-            $module = BeanFactory::getBean($module);
+            // We need to preserve state on $module since we'll fall back to it if
+            // there is no bean for this module. This can happen when upgrading
+            // views for undeployed modules
+            $mod = BeanFactory::getBean($module);
+
+            if ($mod === null) {
+                // No Bean for this $module, so use the module name
+                $m = $o = $module;
+            } else {
+                $m = $mod->module_dir;
+                $o = $mod->object_name;
+            }
+        } else {
+            $m = $module->module_dir;
+            $o = $module->object_name;
         }
+
         $replacements = array(
-            "<object_name>"  => $module->object_name,
-            "<_object_name>" => strtolower($module->object_name),
-            "<OBJECT_NAME>"  => strtoupper($module->object_name),
-            "<module_name>"  => $module->module_dir,
-            '<_module_name>' => strtolower($module->module_dir),
+            "<object_name>"  => $m,
+            "<_object_name>" => strtolower($o),
+            "<OBJECT_NAME>"  => strtoupper($o),
+            "<module_name>"  => $m,
+            '<_module_name>' => strtolower($m),
         );
 
         return self::recursiveVariableReplace($defs, $replacements);

@@ -613,9 +613,9 @@ YAHOO.util.Event.onContentReady("tabListContainerTable", function()
         var tabList = Y.one('#tabList');
         var dashletCtrlsElem = Y.one('#dashletCtrls');
         var contentWidth = content.get('offsetWidth');
-        var dashletCtrlsWidth = dashletCtrlsElem.get('offsetWidth')+10;
+        var dashletCtrlsWidth = (dashletCtrlsElem) ? dashletCtrlsElem.get('offsetWidth') + 10 : 10;
         //BEGIN SUGARCRM flav!=sales ONLY
-        var addPageWidth = addPage.get('offsetWidth')+2;
+        var addPageWidth = (addPage) ? addPage.get('offsetWidth') + 2 : 2;
         //END SUGARCRM flav!=sales ONLY
         var tabListContainerWidth = tabListContainer.get('offsetWidth');
         var tabListWidthElem = tabList.get('offsetWidth');

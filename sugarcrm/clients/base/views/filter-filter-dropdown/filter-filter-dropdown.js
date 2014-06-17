@@ -68,7 +68,7 @@
         this._select2formatSelectionTemplate = app.template.get("filter-filter-dropdown.selection-partial");
         this._select2formatResultTemplate = app.template.get("filter-filter-dropdown.result-partial");
 
-        this.listenTo(this.layout, "filter:change:filter", this.handleChange);
+        this.listenTo(this.layout, "filter:select:filter", this.handleSelect);
         this.listenTo(this.layout, "filter:change:module", this.handleModuleChange);
         this.listenTo(this.layout, "filter:render:filter", this._renderHtml);
     },
@@ -152,49 +152,26 @@
         this.filterNode.on("change",
             /**
              * Called when the user selects a filter in the dropdown
-             * Triggers filter:change:filter on filter layout
              *
-             * @param {Event} e
+             * @triggers filter:change:filter on filter layout to indicate a new
+             *   filter has been selected.
+             *
+             * @param {Event} e The `change` event.
              */
             function(e) {
-                //When user clicks on `Create` we expect to see the form totally empty.
-                if (e.val === 'create') {
-                    self.layout.clearFilterEditState();
-                }
-                self.layout.trigger("filter:change:filter", e.val);
+                self.layout.trigger('filter:change:filter', e.val);
             }
         );
     },
 
     /**
-     * Handler for when the custom filter dropdown value changes.
-     * @param  {String} id      The GUID of the filter to apply.
+     * This handler is useful for other components that trigger
+     * `filter:select:filter` in order to select the dropdown value.
+     *
+     * @param {String} id The id of the filter to select in the dropdown.
      */
-    handleChange: function(id) {
-        var filter;
-        // Figure out if we have an edit state. This would mean user was editing the filter so we want him to retrieve
-        // the filter form in the state he left it.
-        var editState = this.layout.retrieveFilterEditState();
-        if (id === 'create' || (editState && editState.id === id)) {
-            filter = app.data.createBean('Filters');
-            filter.set(editState);
-        } else {
-            filter = this.layout.filters.get(id) || this.layout.emptyFilter;
-        }
-        if (id === "create") {
-            this.layout.layout.trigger("filter:set:name", '');
-            this.layout.trigger("filter:create:open", filter);
-        } else {
-            if (filter.get("editable") === false) {
-                this.layout.trigger("filter:create:close");
-            }
-
-            if (this.layout.createPanelIsOpen()) {
-                this.layout.trigger("filter:create:open", filter);
-            }
-        }
-
-        this.filterNode.select2("val", id);
+    handleSelect: function(id) {
+        this.filterNode.select2('val', id, true);
     },
 
     /**
@@ -298,7 +275,7 @@
      * @returns {Boolean} TRUE if filter is editable, FALSE otherwise
      */
     isFilterEditable: function(id) {
-        if (!this.filterDropdownEnabled || this.layout.showingActivities) {
+        if (!this.layout.canCreateFilter() || !this.filterDropdownEnabled || this.layout.showingActivities) {
             return false;
         }
         if (id === "create" || id === 'all_records') {
@@ -356,7 +333,7 @@
         if (filterId === 'all_records') {
             // Figure out if we have an edit state. This would mean user was editing the filter so we want him to retrieve
             // the filter form in the state he left it.
-            this.layout.trigger("filter:change:filter", 'create');
+            this.layout.trigger("filter:select:filter", 'create');
         } else {
             filterModel = this.layout.filters.get(filterId);
         }
@@ -382,7 +359,7 @@
         //We want to stop propagation so it doesn't bubble up.
         evt.stopPropagation();
         this.layout.clearLastFilter(this.layout.layout.currentModule, this.layout.layoutType);
-        this.layout.trigger('filter:change:filter', this.layout.filters.defaultFilterFromMeta);
+        this.layout.trigger('filter:select:filter', this.layout.filters.defaultFilterFromMeta);
     },
 
     /**

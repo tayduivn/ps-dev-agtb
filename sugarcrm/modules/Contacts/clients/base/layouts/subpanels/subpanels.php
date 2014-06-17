@@ -46,7 +46,7 @@ $viewdefs['Contacts']['base']['layout']['subpanels'] = array (
           'layout' => 'subpanel',
           'label' => 'LBL_TASKS_SUBPANEL_TITLE',
           'context' => array(
-              'link' => 'tasks',
+              'link' => 'all_tasks',
           ),
       ),
       array(

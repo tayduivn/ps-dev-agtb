@@ -52,7 +52,7 @@ describe('Base.View.HistorySummaryPreview', function() {
 
     describe('_renderPreview()', function() {
         it('should use app.api.call not model.fetch', function() {
-            sandbox.spy(app.api, 'call');
+            sandbox.stub(app.api, 'call').returns(true);
 
             var model = new Backbone.Model();
             model.module = 'Notes';

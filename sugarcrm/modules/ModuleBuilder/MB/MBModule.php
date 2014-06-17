@@ -128,6 +128,7 @@ class MBModule
         {
             include ($this->path . '/config.php') ;
             $this->config = $config ;
+            $this->normalizeConfig();
         }
         $label = (!empty ($this->config ['label'])) ? $this->config ['label'] : $this->name;
         $label_singular = !empty($this->config['label_singular']) ? $this->config['label_singular'] : $label;
@@ -147,6 +148,18 @@ class MBModule
 
         $this->verifyMetadata();
 
+    }
+
+    /**
+     * Ensures the config matches current expectations.
+     * The config may or may not match the current expectation if the package was exported from an older version
+     * or existed before a version upgrade.
+     */
+    protected function normalizeConfig()
+    {
+        if (empty($this->config['label_singular']) && !empty($this->config['label'])) {
+            $this->config['label_singular'] = $this->config ['label'];
+        }
     }
 
     function addTemplate ($template)
