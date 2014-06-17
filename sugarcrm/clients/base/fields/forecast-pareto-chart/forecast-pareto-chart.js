@@ -91,7 +91,8 @@
      * @returns {boolean}
      */
     isDashletVisible: function() {
-        return (this.state === 'open' && !this.preview_open && !this.collapsed && !_.isUndefined(this._serverData));
+        return (!this.disposed && this.state === 'open' &&
+                !this.preview_open && !this.collapsed && !_.isUndefined(this._serverData));
     },
 
     /**

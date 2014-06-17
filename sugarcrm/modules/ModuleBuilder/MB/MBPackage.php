@@ -403,15 +403,44 @@ function buildInstall($path){
 
         foreach($modules as $value){
             $custom_module = $this->getCustomModules($value);
-            foreach($custom_module as $va){
-                if ($va == 'language'){
-                    $this->getLanguageManifestForModule($value, $installdefs);
-                    $this->getCustomFieldsManifestForModule($value, $installdefs);
-                }//fi
-                if($va == 'metadata'){
-                    $this->getCustomMetadataManifestForModule($value, $installdefs);
-                }//fi
-            }//foreach
+            foreach($custom_module as $va) {
+                switch ($va) {
+                    case 'language':
+                    case 'Ext';
+                        // Old way
+                        if ($va === 'language') {
+                            $this->getLanguageManifestForModule($value, $installdefs);
+                            $this->getCustomFieldsManifestForModule($value, $installdefs);
+                        } else {
+                            // Build a full path to the Ext directory for the 
+                            // package module
+                            $fullpath = "$path/Extension/modules/$value/Ext/";
+                            $paths = array(
+                                'Vardefs' => 'getCustomFieldsManifestForModule',
+                                'Language' => 'getLanguageManifestForModule',
+                            );
+
+                            // Check to make sure that the directories in question
+                            // exist and are not empty (like when something might
+                            // have been disabled/deleted)
+                            foreach ($paths as $pathKey => $pathMethod) {
+                                $full = $fullpath . $pathKey;
+                                if ($this->isDirectoryExportable($full)) {
+                                    $this->$pathMethod($value, $installdefs);
+                                }
+                            }
+                        }
+                        break;
+
+                    case 'metadata':
+                        $this->getCustomMetadataManifestForModule($value, $installdefs);
+                        break;
+
+                    case 'clients':
+                        $this->getCustomClientMetadata($value, $installdefs);
+                        break;
+                }
+            }
             $relationshipsMetaFiles = $this->getCustomRelationshipsMetaFilesByModuleName($value, true, true,$modules);
             if($relationshipsMetaFiles)
             {
@@ -481,6 +510,24 @@ function buildInstall($path){
     			}//switch
     		}//foreach
     	}//while
+    }
+
+    /**
+     * Gets the custom metadata from inside the clients directory for a module
+     * 
+     * @param string $module The module to scrape
+     * @param array $installdefs The current install defs to append
+     */
+    public function getCustomClientMetadata($module, &$installdefs)
+    {
+        $path = "custom/modules/$module/clients/*/*/*/*.php";
+        $files = glob($path);
+        foreach ($files as $file) {
+            $installdefs['copy'][] = array(
+                'from' => str_replace('custom/modules', '<basepath>/SugarModules/modules', $file),
+                'to'   => $file,
+            );
+        }
     }
 
     private function getCustomMetadataManifestForModule($module, &$installdefs)
@@ -726,14 +773,39 @@ function buildInstall($path){
                     foreach ($custommodules[$value] as $va){
                         switch ($va) {
                         case 'language':
-                                $return[$value][$va] = $mod_strings['LBL_EC_CUSTOMFIELD'];
+                            $return[$value][$va] = $mod_strings['LBL_EC_CUSTOMFIELD'];
                             break;
                         case 'metadata':
-                            $return[$value][$va] = $mod_strings['LBL_EC_CUSTOMLAYOUT'];
+                        case 'clients':
+                            // BWC modules keep metadata in the 'metadata' directory
+                            if (isModuleBWC($value)) {
+                                $return[$value][$va] = $mod_strings['LBL_EC_CUSTOMLAYOUT'];
+                            } else {
+                                // New style pathing
+                                $fullpath = "{$path}$value/$va/";
+                                // Right now only views are customizable in studio
+                                $newfiles = glob("$fullpath/*/views/*");
+                                if (!empty($newfiles)) {
+                                    $return[$value][$va] = $mod_strings['LBL_EC_CUSTOMLAYOUT'];
+                                }
+                            }
                             break;
                         case 'Ext':
+                            // Simply checking the Ext directory isn't enough...
+                            // we need to check certain directories inside of it
+                            // to make sure there are things that are eligible
+                            // to export
+                            $fullpath = "{$path}$value/$va/";
 
-							$return[$value][$va] = $mod_strings['LBL_EC_CUSTOMFIELD'];
+                            // Start first with custom fields
+                            if ($this->isDirectoryExportable("{$fullpath}Vardefs")) {
+                                $return[$value]["$va/Vardefs"] = $mod_strings['LBL_EC_CUSTOMFIELD'];
+                            }
+
+                            // Now check custom labels
+                            if ($this->isDirectoryExportable("{$fullpath}Language")) {
+                                $return[$value]["$va/Language"] = $mod_strings['LBL_EC_CUSTOMLABEL'];
+                            }
                             break;
                         case '':
                             $return[$value . " " . $mod_strings['LBL_EC_EMPTYCUSTOM']] = "";
@@ -750,7 +822,7 @@ function buildInstall($path){
             }
         }
     }
-	
+
     /**
      * Get _custom_ extensions for module.
      * Default path - custom/Extension/modules/$module/Ext.
@@ -1054,6 +1126,22 @@ function buildInstall($path){
         return rmdir_recursive($this->getBuildDir());
     }
 
+    /**
+     * Checks a directory to make sure there is something in it for export
+     * 
+     * @param string $path Directory path to check for files
+     * @return boolean 
+     */
+    public function isDirectoryExportable($path)
+    {
+        if (file_exists($path)) {
+            $list = glob("$path/*");
+            // False/array() means nothing to export
+            return !empty($list);
+        }
+
+        return false;
+    }
+
 }
 
-?>

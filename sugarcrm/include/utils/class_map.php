@@ -46,5 +46,7 @@ $class_map = array(
     'Link2' => 'data/Link2.php',
     'SugarJobQueue' => 'include/SugarQueue/SugarJobQueue.php',
     'EmbedLinkService' => 'include/EmbedLinkService.php',
+    'SugarApi' => 'include/api/SugarApi.php',
+
 );
 

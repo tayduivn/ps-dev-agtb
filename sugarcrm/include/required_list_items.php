@@ -22,6 +22,8 @@ $app_list_strings_required = array(
         'Closed Lost',
     ),
     'sales_status_dom' => array(
+        'New',
+        'In Progress',
         'Closed Won',
         'Closed Lost',
     ),

@@ -33,7 +33,7 @@ class FixAddressStreetFieldsTest extends UpgradeTestCase
             'type' => 'varchar',
         ),
         'alreadyUpgraded_street' => array(
-            'type' => 'textarea',
+            'type' => 'text',
         ),
         'alreadyUpgraded_city' => array(
             'type' => 'varchar',

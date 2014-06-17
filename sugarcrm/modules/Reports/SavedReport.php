@@ -202,7 +202,8 @@ class SavedReport extends SugarBean
 
 	function fill_in_additional_list_fields()
 	{
-	    $this->fill_in_additional_detail_fields();
+        parent::fill_in_additional_detail_fields();
+        $this->get_scheduled_query();
 	}
 
 	function fill_in_additional_detail_fields()

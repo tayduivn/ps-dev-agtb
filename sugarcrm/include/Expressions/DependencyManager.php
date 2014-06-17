@@ -344,6 +344,10 @@ class DependencyManager
             if (!is_array($hooks))
                 $hooks = array($hooks);
             if (in_array('all', $hooks) || in_array($action, $hooks)) {
+                self::filterActionDefinitionsForView($def, $action);
+                if (empty($def['actions']) && empty($def['notActions'])) {
+                    continue; // Skip if no actions left after filtering
+                }
                 $triggerExp = empty($def['trigger']) ? self::$default_trigger : $def['trigger'];
                 $triggerFields = empty($def['triggerFields']) ?
                     Parser::getFieldsFromExpression($triggerExp) :
@@ -367,6 +371,48 @@ class DependencyManager
             }
         }
         return $deps;
+    }
+
+    /**
+     * Update $def with allowed actions/notActions
+     *
+     * @param array $def View definitions
+     * @param String $action name of the action ("edit", "view", "save", ...)
+     */
+    protected static function filterActionDefinitionsForView(&$def, $action)
+    {
+        if (!empty($def['actions']))
+        {
+            $def['actions'] = self::filterActionsForView($def['actions'], $action);
+        }
+        if (!empty($def['notActions']))
+        {
+            $def['notActions'] = self::filterActionsForView($def['notActions'], $action);
+        }
+    }
+
+    /**
+     * Filter Expression Actions for given action
+     *
+     * @param array $expressionActions Array of Expression Actions to be filtered
+     * @param String $action name of the action ("edit", "view", "save", ...)
+     *
+     * @return array Allowed Expression Actions for given action
+     */
+    protected static function filterActionsForView($expressionActions, $action)
+    {
+        $allowedActions = array();
+
+        foreach ($expressionActions as $expressionAction)
+        {
+            $tempAction = ActionFactory::getNewAction($expressionAction['name'], $expressionAction['params']);
+            if (!empty($tempAction) && $tempAction->isActionAllowed($action))
+            {
+                $allowedActions[] = $expressionAction;
+            }
+        }
+
+        return $allowedActions;
     }
 
     private static function getModuleDependencyMetadata($module)

@@ -313,8 +313,15 @@ class RelateRecordApi extends ModuleApi {
         $relObj = $primaryBean->$linkName->getRelationshipObject();
 
         if (!empty($relObj)) {
+            if ($primaryBean->module_name === $relObj->getLHSModule()){
+                $lhsBean = $primaryBean;
+                $rhsBean = $relatedBean;
+            } else {
+                $lhsBean = $relatedBean;
+                $rhsBean = $primaryBean;
+            }
             // If the relationship still exists, we need to save changes to relationship fields
-            if ($relObj->relationship_exists($primaryBean, $relatedBean)) {
+            if ($relObj->relationship_exists($lhsBean, $rhsBean)) {
                 $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
                 // This function add() is actually 'addOrUpdate'. Here we use it for update only.
                 $primaryBean->$linkName->add(array($relatedBean),$relatedData);

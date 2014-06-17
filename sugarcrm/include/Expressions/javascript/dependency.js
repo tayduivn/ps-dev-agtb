@@ -391,7 +391,12 @@ AH.assign = function(variable, value, flash)
 	}
 
 	//Detect field types and add error handling.
-	if (Dom.hasClass(field, "imageUploader"))
+    if (document.DetailView)
+    {
+        field.innerHTML = '';
+        field.appendChild(document.createTextNode(value));
+    }
+    else if (Dom.hasClass(field, "imageUploader"))
 	{
 		var img = Dom.get("img_" + field.id);
 		img.src = value;

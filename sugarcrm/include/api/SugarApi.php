@@ -205,6 +205,10 @@ abstract class SugarApi {
             }
         }
 
+        if ($bean->hasEmails()) {
+            $bean->emailAddress->dontLegacySave = true;
+        }
+
         $bean->save($check_notify);
 
         /*

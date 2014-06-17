@@ -41,7 +41,7 @@
 .record div[data-type="recipients"].controls.btn-fit {
   .btn {
     top: 0;
-    right: 0;
+    right: -36px;
   }
   .select2-container {
     .select2-choices {
@@ -137,7 +137,6 @@
       .border-radius(4px);
     }
   }
-
   .record-cell {
     display: inline-block;
     position: relative;
@@ -150,20 +149,28 @@
       color: lighten(@gray, 12%);
       padding-bottom: 2px;
     }
-
     .normal > span {
       display: block;
     }
-
+    .normal > span.detail {
+      a,
+      button,
+      input,
+      iframe,
+      .btn {
+        position: relative;
+        z-index: 1;
+      }
+    }
+    .normal > span.edit {
+      position: relative;
+      z-index: 1;
+    }
     .ellipsis_inline {
       display: block !important;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-    a.ellipsis_inline {
-      position: relative;
-      z-index: 1;
     }
     input[type="text"],
     input[type="password"],
@@ -305,6 +312,9 @@
       .normal > span {
         white-space: nowrap;
         text-overflow: ellipsis;
+        &.edit {
+          position: static;
+        }
         .select2-container {
           position: absolute;
         }
@@ -319,6 +329,9 @@
           left: auto;
           background: transparent;
         }
+      }
+      .edit {
+        position: static;
       }
     }
     &[data-type="tags"] {
@@ -341,6 +354,15 @@
     &[data-type="parent"] {
       .edit {
         margin-right: -14px;
+      }
+      .input-append.error {
+        .add-on.error-tooltip {
+          position: absolute;
+          top: -2px;
+          right: 24px;
+          left: auto;
+          background: transparent;
+        }
       }
     }
 

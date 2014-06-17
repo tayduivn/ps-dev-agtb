@@ -88,10 +88,10 @@ function checkDupTeamName($focus){
     	return false;
     }
     if((null == $focus->fetched_row) || (null != $focus->fetched_row && 0 == $focus->private)) {
-        $query = "SELECT id from teams WHERE (private = 0 AND name = '" . $db->quote(trim($focus->name)) . "') OR (private = 1 AND " . $contact_result . " = '" . $db->quote(trim($focus->name)) . "')";	
+        $query = "SELECT id from teams WHERE (deleted = 0) AND (private = 0 AND name = '" . $db->quote(trim($focus->name)) . "') OR (private = 1 AND " . $contact_result . " = '" . $db->quote(trim($focus->name)) . "')";
     }
 	else {
-	    $query = "SELECT id from teams WHERE (private = 0 AND name = '" . $db->quote(trim($focus->name) . ' ' . trim($focus->name_2)) . "') OR (private = 1 AND " . $contact_result . " = '" . $db->quote(trim($focus->name) . ' ' . trim($focus->name_2)) . "')";
+	    $query = "SELECT id from teams WHERE (deleted = 0) AND (private = 0 AND name = '" . $db->quote(trim($focus->name) . ' ' . trim($focus->name_2)) . "') OR (private = 1 AND " . $contact_result . " = '" . $db->quote(trim($focus->name) . ' ' . trim($focus->name_2)) . "')";
 	}
     $result = $db->query($query);
     while ($row=$db->fetchByAssoc($result)){

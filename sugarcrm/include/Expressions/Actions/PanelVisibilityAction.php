@@ -24,28 +24,44 @@ class PanelVisibilityAction extends AbstractAction{
 	protected $targetPanel = "";
 	protected $expression = "";
 	
-	function SetPanelVisibilityAction($params) {
-		$this->targetPanel = $params['target'];
-		$this->expression = str_replace("\n", "",$params['value']);
-	}
+	function PanelVisibilityAction($params) {
+        $this->params = $params;
+        if (is_array($params)) {
+            if (isset($params['target'])) {
+                $this->targetPanel = $params['target'];
+            }
+            if (isset($params['value'])) {
+                $this->expression = str_replace("\n", "", $params['value']);
+            }
+        }
+    }
 	
 	/**
-	 * Returns the javascript class equavalent to this php class
+	 * Returns the javascript class equivalent to this php class
 	 *
 	 * @return string javascript.
 	 */
 	static function getJavascriptClass() {
 		return <<<'EOQ'
 /**
- * Comepetely hide or show a panel
+ * Completely hide or show a panel
  */
 SUGAR.forms.SetPanelVisibilityAction = function(target, expr)
 {
     this.afterRender = true;
+
     if (_.isObject(target)){
         expr = target.value;
         target = target.target;
     }
+    //BWC
+    if (_.isString(target) && _.isUndefined(SUGAR.App)) {
+       var parents = $('#' + target).parents('div');
+       if(parents.length) {
+          target = parents.attr('id');
+       }
+    }
+
     this.target = target;
     this.expr   = 'cond(' + expr + ', "", "none")';
 }
@@ -122,9 +138,8 @@ SUGAR.util.extend(SUGAR.forms.SetPanelVisibilityAction, SUGAR.forms.AbstractActi
             }
         } catch (e) {if (console && console.log) console.log(e);}
     },
-
     sidecarExec : function(context) {
-        var visibility = this.evalExpression(this.expr, context),
+        var hide = (this.evalExpression(this.expr, context) === 'none'),
             tab = context.view.$(".tab." + this.target),
             panel = context.view.$("div.record-panel[data-panelname='" + this.target + "']"),
             isActive = tab && tab.hasClass("active");
@@ -133,18 +148,19 @@ SUGAR.util.extend(SUGAR.forms.SetPanelVisibilityAction, SUGAR.forms.AbstractActi
         if (!tab || !tab.length) {
             //Hide/show a panel (No need to worry about the active tab)
             if (panel.length > 0) {
-                if (visibility == 'none') {
+                if (hide) {
                     panel.hide();
                 } else {
                     panel.show();
                 }
+                this.triggerFieldsVisibility(context, this.target, hide);
             } else {
                 //If we got here it means the panel name/id was probably invalid.
                 console.log("unable to find panel " + this.target);
             }
         } else {
             //Hide/show tabs
-            if (visibility == 'none') {
+            if (hide) {
                 tab.hide();
                 //If we are hiding the active tab, show the first visible tab instead.
                 if (isActive) {
@@ -158,7 +174,30 @@ SUGAR.util.extend(SUGAR.forms.SetPanelVisibilityAction, SUGAR.forms.AbstractActi
             } else {
                 tab.show();
             }
+            this.triggerFieldsVisibility(context, this.target, hide);
         }
+
+    },
+    triggerFieldsVisibility : function(context, target, hide) {
+
+        _.each(this.getPanelFieldNames(context, target), function(fieldName) {
+            var field = context.view.getField(fieldName);
+            if (field && _.isUndefined(field.wasRequired)) {
+                field.wasRequired = field.def.required;
+            }
+            context.setFieldDisabled(fieldName, hide);
+            if (field.wasRequired === true)
+                context.setFieldRequired(fieldName, !hide);
+
+        });
+
+    },
+    getPanelFieldNames : function(context, panelName) {
+      var panel = _.find(context.view.meta.panels, function(panel) {
+        return panel.name === panelName;
+      });
+
+      return _.pluck(panel.fields, 'name');
     }
 });
 

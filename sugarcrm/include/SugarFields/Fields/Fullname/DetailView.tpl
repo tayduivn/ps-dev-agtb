@@ -34,10 +34,24 @@
 <span id='{{sugarvar key='name'}}'>{{sugarvar key='value'}}</span>
 &nbsp;&nbsp;
 <span class="id-ff">
-    <a id="btn_vCardButton" title="{$APP.LBL_VCARD}" class="button" href="index.php?module={$module}&action=vCard&record={$fields.id.value}&to_pdf=true">{sugar_getimage alt=$app_strings.LBL_ID_FF_VCARD name="id-ff-vcard" ext=".png"}</a>
+    <a id="btn_vCardButton" title="{$APP.LBL_VCARD}" href="#">{sugar_getimage alt=$app_strings.LBL_ID_FF_VCARD name="id-ff-vcard" ext=".png"}</a>
 </span>
 {{if !empty($displayParams.enableConnectors)}}
 {if !empty($value)}
 {{sugarvar_connector view='DetailView'}}
 {/if}
 {{/if}}
+
+{literal}
+<script type="text/javascript">
+    $("#btn_vCardButton").click(function(e){
+        {/literal}
+        window.location.assign('index.php?module={$module}&action=vCard&record={$fields.id.value}&to_pdf=true');
+        {literal}
+
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+    });
+</script>
+{/literal}

@@ -45,6 +45,7 @@ $vardefs = array(
 			'comment' => 'User ID assigned to record',
             'duplicate_merge'=>'disabled',
             'mandatory_fetch' => true,
+            'massupdate' => false,
 		),
 	 'assigned_user_name' =>
 	 array (
