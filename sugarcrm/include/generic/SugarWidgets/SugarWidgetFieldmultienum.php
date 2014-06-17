@@ -34,8 +34,8 @@ class SugarWidgetFieldMultiEnum extends SugarWidgetFieldEnum {
     	$query = "";
     	foreach($arr as $key=>$val) {
     		$query .= $col_name;
-			$value = preg_replace("/^'/", "'%", $val, 1);
-			$value = preg_replace("/'$/", "%'", $value, 1);
+            $value = preg_replace("/^'/", "'%^", $val, 1);
+            $value = preg_replace("/'$/", "^%'", $value, 1);
 			$query .= $value;
 			if ($key != ($arr_count - 1))
     			$query.= " OR " ;	
@@ -55,8 +55,8 @@ class SugarWidgetFieldMultiEnum extends SugarWidgetFieldEnum {
     	$query = "";
     	foreach($arr as $key=>$val) {
     		$query .= $col_name;
-			$value = preg_replace("/^'/", "'%", $val, 1);
-			$value = preg_replace("/'$/", "%'", $value, 1);
+            $value = preg_replace("/^'/", "'%^", $val, 1);
+            $value = preg_replace("/'$/", "^%'", $value, 1);
 			$query .= $value;
 			if ($key != ($arr_count - 1))
     			$query.= " OR " ;	
