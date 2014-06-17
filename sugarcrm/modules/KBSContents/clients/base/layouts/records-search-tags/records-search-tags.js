@@ -13,6 +13,21 @@
 ({
     initialize: function(options) {
         this._super('initialize', [options]);
+        this._initializeCollectionFilterDef(options);
+    },
+
+    /**
+     * Initialize collection in the sub-sub-component recordlist
+     * with specific filterDef using tags for build recordlist
+     * filtered by tags.
+     *
+     * @param {Object} options
+     * @private
+     */
+    _initializeCollectionFilterDef: function(options) {
+        if (_.isUndefined(options.def.context.tag)) {
+            return;
+        }
 
         var filterDef = {
             filter: [{
