@@ -239,6 +239,8 @@ class ChartDisplay
             } else {
                 $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['numerical_value'] += $row_remap['numerical_value'];
             }
+            $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['raw_value'] = $row_remap['raw_value'];
+            $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']]['group_base_text'] = $row_remap['group_base_text'];
         }
 
         //Determine if the original report def has a grouping level greater than one
@@ -350,6 +352,7 @@ class ChartDisplay
             foreach ($row['cells'] as $cell) {
                 if ($cell['key'] == $second_group_by_key) {
                     $row_remap['group_base_text'] = $cell['val'];
+                    $row_remap['raw_value'] = isset($cell['raw_value']) ? $cell['raw_value'] : '';
                 }
             }
         } else { // single group by
@@ -505,6 +508,7 @@ class ChartDisplay
 
         $sugarChart = $this->getSugarChart();
         if (is_object($sugarChart)) {
+            $sugarChart->reporter = $this->reporter;
             $xmlFile = $this->get_cache_file_name();
             $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
             return $sugarChart->display($guid, $xmlFile, $width, $height);

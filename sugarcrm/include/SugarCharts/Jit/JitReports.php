@@ -99,9 +99,13 @@ class JitReports extends Jit {
 	
 	function processReportGroup($dataset){
 		$super_set = array();
+        $super_set_data = array();
 
         foreach($dataset as $groupBy => $groups){
             $prev_super_set = $super_set;
+            foreach ($groups as $group => $groupData) {
+                $super_set_data[$group] = $groupData;
+            }
             if (count($groups) > count($super_set)){
 	            $super_set = array_keys($groups);
                 foreach($prev_super_set as $prev_group){
@@ -119,10 +123,55 @@ class JitReports extends Jit {
             }       
         }     
         $super_set = array_unique($super_set);
+        $this->super_set_data = $super_set_data;
+
+        $this->handleSort($super_set);
 
 		return $super_set;
 	}
 	
+    /**
+     * Handle sorting for special field types on grouped data. 
+     *
+     * @param array &$super_set Grouped data
+     */
+    protected function handleSort(&$super_set)
+    {
+        if (!isset($this->reporter)) {
+            return;
+        }
+
+        // store last grouped field
+        $lastgroupfield = end($this->group_by);
+
+        switch ($this->reporter->focus->field_defs[$lastgroupfield]['type']) {
+            case "date":
+                usort($super_set, array($this, "runDateSort"));
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Helper function for sorting dates.
+     *
+     * @param DateTime $a Date 1
+     * @param DateTime $b Date 2
+     * @return int an integer LT, EQ, or GT zero if Date 1 is respectively LT, EQ, or GT Date 2
+     */
+    protected function runDateSort($a, $b)
+    {
+        $a = new DateTime($this->super_set_data[$a]['raw_value']);
+        $b = new DateTime($this->super_set_data[$b]['raw_value']);
+
+        if ($a == $b) {
+            return 0;
+        }
+
+        return ($a < $b) ? -1 : 1;
+    }
+
 	function xmlDataReportSingleValue(){
 		$data = '';		
 		foreach ($this->data_set as $key => $dataset){
