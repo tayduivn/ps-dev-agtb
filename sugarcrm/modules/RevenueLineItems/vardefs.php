@@ -79,7 +79,16 @@ $dictionary['RevenueLineItem'] = array(
         ),
         'total_amount' => array(
             'name' => 'total_amount',
-            'formula' => 'currencySubtract(currencyMultiply(ifElse(isNumeric($discount_price), $discount_price, 0), ifElse(isNumeric($quantity), $quantity, 1)), ifElse(isNumeric($discount_amount), $discount_amount, 0))',
+            'formula' => '
+                ifElse(isNumeric($quantity),
+                    currencySubtract(
+                        currencyMultiply(
+                            ifElse(isNumeric($discount_price), $discount_price, 0),
+                            ifElse(isNumeric($quantity), $quantity, 0)
+                        ),
+                    ifElse(isNumeric($discount_amount), $discount_amount, 0)
+                ), 0
+            )',
             'calculated' => true,
             'enforced' => true,
             'vname' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
@@ -433,6 +442,7 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'decimal',
             'len' => 12,
             'precision' => 2,
+            'validation' => array('type' => 'range', 'min' => 0),
             'comment' => 'Quantity in use',
             'default' => 1.0
         ),
