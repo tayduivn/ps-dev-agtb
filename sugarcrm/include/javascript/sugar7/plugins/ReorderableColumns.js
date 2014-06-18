@@ -48,7 +48,7 @@
              *
              * @private
              */
-            _makeColumnReorderable: _.debounce(function() {
+            _makeColumnReorderable: function() {
 
                 if (!this.$('table').hasClass('reorderable-columns')) {
                     app.logger.error('ReorderableColumns plugin expects the table to have .draggable-columns class ' +
@@ -78,7 +78,7 @@
                     tolerance: 'touch',
                     drop: _.bind(this._onColumnDrop, this)
                 });
-            }, 200),
+            },
 
             /**
              * When a column is dropped into a placeholder, we first verify that
@@ -177,7 +177,7 @@
              * On render makes the list view columns reorderable.
              */
             onAttach: function(component, plugin) {
-                this.on('render', this._makeColumnReorderable, this);
+                this.on('render', _.debounce(this._makeColumnReorderable, 200), this);
             }
         });
     });

@@ -1,0 +1,18 @@
+[
+    'modules/Opportunities/clients/**/*.js',
+    'modules/Forecasts/clients/**/*.js',
+    'modules/ForecastManagerWorksheets/clients/**/*.js',
+    'modules/ForecastWorksheets/clients/**/*.js',
+    'modules/Quotes/clients/**/*.js',
+    'modules/Products/clients/**/*.js',
+    'modules/ProductTemplates/clients/**/*.js',
+    'modules/ProductTypes/clients/**/*.js',
+    'modules/ProductCategories/clients/**/*.js',
+    'modules/ProductBundles/clients/**/*.js',
+    'modules/ProductBundleNotes/clients/**/*.js',
+    'modules/RevenueLineItems/clients/**/*.js',
+    'clients/base/views/forecast*/*.js',
+    'clients/base/fields/forecast-pareto-chart/*.js',
+    'clients/base/fields/currency/*.js',
+    'clients/base/fields/chart/*.js'
+]
