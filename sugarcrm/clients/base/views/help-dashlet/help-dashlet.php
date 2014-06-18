@@ -36,15 +36,6 @@ $viewdefs['base']['view']['help-dashlet'] = array(
                 'icon' => 'icon-chevron-up',
                 'action' => 'toggleMinify',
                 'tooltip' => 'LBL_DASHLET_TOGGLE',
-            ),
-            array(
-                'dropdown_buttons' => array(
-                    array(
-                        'type' => 'dashletaction',
-                        'action' => 'editClicked',
-                        'label' => 'LBL_DASHLET_CONFIG_EDIT_LABEL',
-                    )
-                )
             )
         )
     )
