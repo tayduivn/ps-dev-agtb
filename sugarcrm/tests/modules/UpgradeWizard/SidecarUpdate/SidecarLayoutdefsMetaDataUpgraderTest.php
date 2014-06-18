@@ -1,15 +1,13 @@
 <?php
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarLayoutdefsMetaDataUpgrader.php';
@@ -34,25 +32,39 @@ class SidecarLayoutdefsMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_Test
 
     public function setUp()
     {
+        parent::setUp();
+
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user', array(true, 1));
 
-        $file = array(
-            'module' => $this->module,
+        $this->upgrader = new SidecarLayoutdefsMetaDataUpgraderMock(
+            new SidecarMetaDataUpgrader(),
+            array('module' => $this->module)
         );
-        $this->upgrader = new SidecarLayoutdefsMetaDataUpgraderMock(new SidecarMetaDataUpgrader(), $file);
 
         $this->subpanelData = array(
-            'test_relationship' => array(
-                'module' => 'custom_module',
+            'test_module' => array(
+                'module'        => 'module_that_doesnt_exist',
                 'subpanel_name' => 'default',
-                'title_key' => 'LBL_TEST_TITLE_1',
+                'title_key'     => 'LBL_TEST_TITLE_0',
+            ),
+            'test_relationship' => array(
+                'module'            => $this->module,
+                'subpanel_name'     => 'default',
+                'title_key'         => 'LBL_TEST_TITLE_1',
                 'get_subpanel_data' => 'unexisting_relationships',
             ),
             'test_function' => array(
-                'module' => 'custom_module',
-                'subpanel_name' => 'default',
-                'title_key' => 'LBL_TEST_TITLE_2',
+                'module'            => $this->module,
+                'subpanel_name'     => 'default',
+                'title_key'         => 'LBL_TEST_TITLE_2',
                 'get_subpanel_data' => 'function:global_function',
+            ),
+            'test_correct_subpanel' => array(
+                'module'        => $this->module,
+                'subpanel_name' => 'default',
+                'title_key'     => 'LBL_TEST_TITLE_3',
             ),
         );
         $this->upgrader->loadSubpanelData($this->module, $this->subpanelData);
@@ -61,42 +73,56 @@ class SidecarLayoutdefsMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_Test
     public function tearDown()
     {
         SugarTestHelper::tearDown();
+        parent::tearDown();
     }
 
     /**
-     * Should ignore subpanels with 'function:' get_subpanel_data.
+     * @dataProvider convertSubpanelDataProvider
      */
-    public function testConvertSubpanelDataFunction()
+    public function testConvertSubpanelData($key, $expected)
     {
-        $this->upgrader->setLegacyViewdefs(array('test_function' => $this->subpanelData['test_function']));
-
+        $this->upgrader->setLegacyViewdefs(array($key => $this->subpanelData[$key]));
         $this->upgrader->convertLegacyViewDefsToSidecar();
 
-        $actualDefs = $this->upgrader->getSidecarViewDefs();
-
-        $this->assertEmpty($actualDefs);
+        $actual = $this->upgrader->getSidecarViewDefs();
+        $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * Should ignore subpanels with 'relationship' get_subpanel_data, where relationship doesn't exist.
-     */
-    public function testConvertSubpanelDataUnexistingRelationship()
+    public function convertSubpanelDataProvider()
     {
-        $this->upgrader->setLegacyViewdefs(array('test_relationship' => $this->subpanelData['test_relationship']));
-
-        $this->upgrader->convertLegacyViewDefsToSidecar();
-
-        $actualDefs = $this->upgrader->getSidecarViewDefs();
-        $this->assertEmpty($actualDefs);
+        return array(
+            array(
+                'test_module',
+                array(),
+            ), // Test subpanel with link to non-existing module should not be converted
+            array(
+                'test_function',
+                array(),
+            ), // Test get_subpanel_data with "function" should not be converted
+            array(
+                'test_relationship',
+                array(),
+            ), // Test get_subpanel_data with non-existing relationship should not be converted
+            array(
+                'test_correct_subpanel',
+                array(
+                    'label'  => 'LBL_TEST_TITLE_3',
+                    'layout' => 'subpanel',
+                ),
+            ), // Test correct subpanel should be converted to new defs
+        );
     }
 }
 
+/**
+ * Mock SidecarLayoutdefsMetaDataUpgrader for test purposes
+ */
 class SidecarLayoutdefsMetaDataUpgraderMock extends SidecarLayoutdefsMetaDataUpgrader
 {
     /**
      * Fill static subpanel defs.
      *
-     * @param $module Module name.
+     * @param string $module Module name.
      * @param array $data
      */
     public function loadSubpanelData($module, Array $data)
