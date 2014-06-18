@@ -31,6 +31,7 @@
 
 $viewdefs['Activities']['base']['filter']['activity'] = array(
     'create'               => false,
+    'default_filter' => 'all_records',
     'quicksearch_field'    => array(),
     'quicksearch_priority' => 2,
     'filters'              => array(

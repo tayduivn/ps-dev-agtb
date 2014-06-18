@@ -21,21 +21,38 @@ class SidecarSelectionListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrad
 
     public function convertLegacyViewDefsToSidecar()
     {
-        $legacyListViewDefs = $this->upgrader->getUpgradeFileParams(
+        $filedata = $this->upgrader->getUpgradeFileParams(
             "modules/{$this->module}/metadata/listviewdefs.php",
             $this->module,
             $this->client,
-            $this->type
+            $this->type,
+            $this->package,
+            $this->deployed
         );
-        $listViewUpgrader = new SidecarListMetaDataUpgrader($this->upgrader, $legacyListViewDefs);
-        // Load Sidecar ListView defs.
-        $listViewUpgrader->setLegacyViewdefs();
-        $listViewUpgrader->convertLegacyViewDefsToSidecar();
-        $sidecarListViewDefs = $listViewUpgrader->getSidecarViewDefs();
 
-        $this->logUpgradeStatus("Setting new {$this->client} selection-list internally for {$this->module}");
-        $this->sidecarViewdefs[$this->module][$this->client]['view']['selection-list'] =
-            $sidecarListViewDefs[$this->module][$this->client]['view']['list'];
+        // If by some chance the getter returned a false, stop
+        if (!$filedata) {
+            $this->logUpgradeStatus("No upgrade file params found for {$this->module} selection-list");
+            return;
+        }
+
+        $upgrader = new SidecarListMetaDataUpgrader($this->upgrader, $filedata);
+
+        // "Upgrade" list view defs
+        $upgrader->setLegacyViewdefs();
+        $upgrader->convertLegacyViewDefsToSidecar();
+        // Get the converted defs
+        $sidecarViewDefs = $upgrader->getSidecarViewDefs();
+        if ($sidecarViewDefs) {
+            // Twitterizing the assignment of the converted list view defs
+            $this->logUpgradeStatus("Setting new {$this->client} selection-list internally for {$this->module}");
+            $converted = $sidecarViewDefs[$this->module][$this->client]['view']['list'];
+            $newdefs[$this->getNormalizedModuleName()][$this->client]['view']['selection-list'] = $converted;
+            $this->sidecarViewdefs = $newdefs;
+        } else {
+            $this->logUpgradeStatus("No selection-list metadata found for {$this->module}");
+            return;
+        }
     }
 
     /**

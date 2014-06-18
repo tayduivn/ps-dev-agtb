@@ -94,6 +94,10 @@ $viewdefs['Cases']['portal']['view']['record'] = array(
                         ),
                     ),
                 ),
+                array(
+                    'name' => 'assigned_user_name',
+                    'readonly' => true,
+                ),
             ),
         ),
     ),

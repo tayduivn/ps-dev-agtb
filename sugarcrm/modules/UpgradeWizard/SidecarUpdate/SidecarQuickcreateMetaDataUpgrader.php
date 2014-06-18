@@ -126,7 +126,7 @@ class SidecarQuickcreateMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         if(empty($this->legacyViewdefs)) {
             return true;
         }
-        $this->sidecarViewdefs = $this->legacyViewdefs[$this->module]['base']['menu']['quickcreate'];
+        $this->sidecarViewdefs = $this->legacyViewdefs[$this->getNormalizedModuleName()]['base']['menu']['quickcreate'];
     }
 
     /**
@@ -134,7 +134,7 @@ class SidecarQuickcreateMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
      */
     public function handleSave()
     {
-        return $this->handleSaveArray("viewdefs['{$this->module}']['base']['menu']['quickcreate']",
+        return $this->handleSaveArray("viewdefs['{$this->getNormalizedModuleName()}']['base']['menu']['quickcreate']",
             "custom/{$this->fullpath}");
     }
 }

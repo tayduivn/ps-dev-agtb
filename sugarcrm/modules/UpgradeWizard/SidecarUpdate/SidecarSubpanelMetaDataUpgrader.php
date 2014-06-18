@@ -77,7 +77,7 @@ class SidecarSubpanelMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
 
     public function handleSave()
     {
-        return $this->handleSaveArray("viewdefs['{$this->module}']['{$this->client}']['view']['{$this->subpanelName}']",
+        return $this->handleSaveArray("viewdefs['{$this->getNormalizedModuleName()}']['{$this->client}']['view']['{$this->subpanelName}']",
             $this->newPath);
     }
 

@@ -1018,6 +1018,7 @@ $dictionary['RevenueLineItem'] = array(
         array('name' => 'idx_revenuelineitem_probability', 'type' => 'index', 'fields' => array('probability')),
         array('name' => 'idx_revenuelineitem_commit_stage', 'type' => 'index', 'fields' => array('commit_stage')),
         array('name' => 'idx_revenuelineitem_quantity', 'type' => 'index', 'fields' => array('quantity')),
+        array('name' => 'idx_revenuelineitem_oppid', 'type' => 'index', 'fields' => array('opportunity_id')),
     ),
     'relationships' => array(
         'revenuelineitem_currencies' => array(

@@ -43,6 +43,7 @@
 * Contributor(s): ______________________________________..
 ********************************************************************************/
 
+//FILE SUGARCRM flav=ent ONLY
 
 /**
  * Note that we are only supporting LUW 9.7 and higher at this moment

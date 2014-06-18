@@ -255,6 +255,18 @@
         padding: 0;
         position: static;
       }
+      .massupdate {
+        > .span3 {
+          display: table-row;
+          height: 28px;
+          position: relative;
+          > label {
+            display: table-cell;
+            height: inherit;
+            vertical-align: middle;
+          }
+        }
+      }
     }
     .controls[data-filter='value']  {
       .input-prepend.input-append {
@@ -280,6 +292,9 @@
       margin: 0;
       vertical-align: text-bottom;
       display: inline-block;
+      position: absolute;
+      top: 8px;
+      left: 0px;
     }
   }
   // containing divs for create filter
@@ -375,7 +390,6 @@
   // adding this for mass update teamset
   label {
     padding-left: 16px;
-    text-indent: -16px;
     line-height: 10px;
     margin: 0;
   }

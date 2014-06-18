@@ -410,6 +410,15 @@ $dictionary['Contact'] = array(
             'vname' => 'LBL_TASKS',
             'reportable' => false,
         ),
+        'all_tasks' => array(
+            'name' => 'all_tasks',
+            'type' => 'link',
+            'link_file' => 'data/Link/FlexRelateChildrenLink.php',
+            'link_class' => 'FlexRelateChildrenLink',
+            'relationship' => 'contact_tasks',
+            'source' => 'non-db',
+            'vname' => 'LBL_TASKS',
+        ),
         'user_sync' => array(
             'name' => 'user_sync',
             'type' => 'link',

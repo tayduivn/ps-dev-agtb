@@ -71,10 +71,7 @@
             this.$('.filter-options').removeClass('hide');
         }, 100, true), this);
 
-        this.on('filter:create:close', function(reinitialize, id) {
-            if (reinitialize && !id) {
-                this.trigger('filter:reinitialize');
-            }
+        this.on('filter:create:close', function() {
             this.$('.filter-options').addClass('hide');
         }, this);
 
