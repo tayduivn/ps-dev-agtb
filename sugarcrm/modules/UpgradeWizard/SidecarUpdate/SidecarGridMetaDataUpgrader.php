@@ -98,16 +98,21 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
      * 
      * @param array $panel The legacy panel
      * @param integer $maxcols The maximum number of columns for the layout
+     * @param integer $maxspan The maximum number of cells to span for a field
      * @return array
      */
-    public function getConvertedPanelDefs($panel, $maxcols)
+    public function getConvertedPanelDefs($panel, $maxcols, $maxspan = 12)
     {
         $fields = array();
         if (is_array($panel)) {
             foreach ($panel as $rowIndex => $row) {
                 // This is a single panel, most likely mobile or portal
                 if (is_string($row)) {
-                    $fields[] = $row;
+                    // This needs to span the maxcols amount
+                    $fields[] = array(
+                        'name' => $row,
+                        'span' => $maxspan,
+                    );
                     continue;
                 }
 
@@ -116,7 +121,6 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 // Assumption here is that Portal and Wireless will never have
                 // more than 2 columns in the old setup
                 if ($cols == 1) {
-                    $displayParams = array('colspan' => $maxcols);
                     // Either a string field name or an instruction
                     if (is_string($row[0])) {
                         if (!$this->isValidField($row[0])) {
@@ -127,7 +131,7 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                         } else {
                             $fields[] = array(
                                 'name' => $row[0],
-                                'displayParams' => $displayParams
+                                'span' => $maxspan,
                             );
                         }
                     } elseif (is_array($row[0])) {
@@ -142,7 +146,7 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                             $fields[] = array_merge(
                                 array('name' => $field),
                                 $row[0],
-                                $maxcols == 1 ? array() : array('displayParams' => $displayParams)
+                                $maxcols == 1 ? array() : array('span' => $maxspan)
                             );
                         } else {
                             // Fallback... take it as is
@@ -160,6 +164,9 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                                 $fields[] = $rowFields['name'];
                             }
                         } else {
+                            if (!$this->isValidField($rowFields)) {
+                                continue;
+                            }
                             $fields[] = $rowFields;
                         }
                     }

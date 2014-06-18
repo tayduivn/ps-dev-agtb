@@ -64,11 +64,32 @@ class SugarApplication
             return;
         } elseif ($this->controller->action === 'Login' && $this->controller->module === 'Users') {
             // TODO remove this when we are "iFrame free"
+
+            // by default login location is base site URL
+            $location = rtrim($sugar_config['site_url'], '/') . '/';
+            $loginRedirect = $this->getLoginRedirect();
+
+            $loginVars = $this->getLoginVars();
+
+            if (isset($loginVars['module'])) {
+                if (isModuleBWC($loginVars['module'])) {
+                    // in case if login module is BWC, location is the BWC URL (as if the user was already
+                    // logged in), since authentication is managed by Sidecar, not the module itself
+                    $location .= '#bwc/' . $loginRedirect;
+                } else {
+                    // otherwise compose basic Sidecar route
+                    $location .= '#' . rawurlencode($loginVars['module']);
+                    if (isset($loginVars['record'])) {
+                        $location .= '/' . rawurlencode($loginVars['record']);
+                    }
+                }
+            }
+
             echo '<script>
             if (parent.location == window.location) {
-                window.location = "' . $sugar_config['site_url'] . '/#bwc/' . $this->getLoginRedirect() . '";
+                window.location = ' . json_encode($location) . ';
             } else {
-                window.top.SUGAR.App.bwc.login("' . $this->getLoginRedirect() . '");
+                window.top.SUGAR.App.bwc.login(' . json_encode($loginRedirect) . ');
             }
             </script>';
             return;

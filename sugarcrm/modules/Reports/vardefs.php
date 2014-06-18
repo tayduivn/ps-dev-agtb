@@ -46,9 +46,9 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
   array (
   	'name' => 'report_type',
     'vname' => 'LBL_REPORT_TYPE',
-    'type' => 'varchar',
-    'len'=>'36',
-    'required'=>true,
+    'type' => 'enum',
+    'options' => 'dom_report_types',
+    'required' => true,
   ),
   'content' =>
   array (

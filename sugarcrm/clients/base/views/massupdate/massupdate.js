@@ -180,24 +180,6 @@
             //FIXME we should not be faking metadata - (SC-2554)
             var cloneField = app.utils.deepCopy(field);
             cloneField.label = cloneField.label || cloneField.vname;
-            if (cloneField.name === 'team_name') {
-                cloneField.css_class = 'span9';
-                cloneField = {
-                    type: 'fieldset',
-                    name: 'team_name',
-                    label: cloneField.label,
-                    css_class: 'row-fluid',
-                    fields: [
-                        cloneField,
-                        {
-                            'name': 'team_name_type',
-                            'type': 'bool',
-                            'text': 'LBL_SELECT_APPEND_TEAMS',
-                            'css_class': 'span3'
-                        }
-                    ]
-                };
-            }
             if (cloneField.type === 'multienum') {
                 cloneField.type = 'enum';
                 cloneField.css_class = 'span9';
@@ -805,6 +787,8 @@
             );
             if (value.name === 'parent_name') {
                 attributes.push('parent_id', 'parent_type');
+            } else if (value.name === 'team_name') {
+                attributes.push('team_name_type');
             }
         }, this);
         return _.pick(this.model.attributes, attributes);

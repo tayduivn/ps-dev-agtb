@@ -480,9 +480,13 @@
                     var url = app.api.buildURL('Users', 'filter'),
                         post_args = {
                             "filter": [
-                                {"reports_to_id": selectedUser.id}
+                                {
+                                    'reports_to_id': selectedUser.id,
+                                    'status' : 'Active'
+                                }
                             ],
-                            "fields": "full_name"
+                            'fields': 'full_name',
+                            'max_num': 1000
                         },
                         options = {};
                     options.success = _.bind(function(resp, status, xhr) {

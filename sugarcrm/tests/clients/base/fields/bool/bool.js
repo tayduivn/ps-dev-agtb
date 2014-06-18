@@ -7,7 +7,7 @@ describe('Base.Field.Bool', function() {
     afterEach(function() {
         app.cache.cutAll();
         sinon.collection.restore();
-        Handlebars.Templates = {};
+        Handlebars.templates = {};
     });
 
     describe('format & unformat', function() {
@@ -72,6 +72,45 @@ describe('Base.Field.Bool', function() {
             expect(modelSpy).toHaveBeenCalledWith('my_bool', true);
             field.$(field.select2fieldTag).val('0').trigger('change');
             expect(modelSpy).toHaveBeenCalledWith('my_bool', false);
+        });
+    });
+
+    describe('bindDataChange', function() {
+        var field;
+        beforeEach(function() {
+            SugarTest.testMetadata.init();
+        });
+
+        afterEach(function() {
+            SugarTest.testMetadata.dispose();
+        });
+
+        it('should toggle "checked" property upon model change', function() {
+            field = SugarTest.createField('base', 'my_bool', 'bool', 'edit');
+            field.render();
+
+            field.model.set('my_bool', true);
+            expect(field.$(field.fieldTag).val()).toNotEqual('true');
+            expect(field.$(field.fieldTag).prop('checked')).toBeTruthy();
+
+            field.model.set('my_bool', false);
+            expect(field.$(field.fieldTag).val()).toNotEqual('false');
+            expect(field.$(field.fieldTag).prop('checked')).toBeFalsy();
+
+            field.dispose();
+        });
+
+        it('should update dom value to "1" or "0" upon model change if action is massupdate', function() {
+            field = SugarTest.createField('base', 'my_bool', 'bool', 'massupdate');
+            field.render();
+
+            field.model.set('my_bool', true);
+            expect(field.$(field.select2fieldTag).val()).toEqual('1');
+
+            field.model.set('my_bool', false);
+            expect(field.$(field.select2fieldTag).val()).toEqual('0');
+
+            field.dispose();
         });
     });
 

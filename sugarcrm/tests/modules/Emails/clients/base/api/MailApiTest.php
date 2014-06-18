@@ -143,16 +143,6 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             "foo@bar.com",
             "foo",
         );
-
-        $emailRecipientsServiceMock = $this->getMock("EmailRecipientsService", array("isValidEmailAddress"));
-        $emailRecipientsServiceMock->expects($this->exactly(count($args)))
-            ->method("isValidEmailAddress")
-            ->will($this->onConsecutiveCalls(true, false));
-
-        $this->mailApi->expects($this->any())
-            ->method("getEmailRecipientsService")
-            ->will($this->returnValue($emailRecipientsServiceMock));
-
         $actual = $this->mailApi->validateEmailAddresses($this->api, $args);
         $this->assertTrue($actual[$args[0]], "Should have set the value for key '{$args[0]}' to true.");
         $this->assertFalse($actual[$args[1]], "Should have set the value for key '{$args[1]}' to false.");

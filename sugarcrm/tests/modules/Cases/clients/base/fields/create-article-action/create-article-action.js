@@ -7,8 +7,15 @@ describe('BaseCasesCreateArticleActionField', function() {
 
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
-        SugarTest.loadComponent('base', 'field', 'create-article-action', moduleName);
-        field = SugarTest.createField('base', 'create-article-action', 'create-article-action', 'edit', {}, moduleName);
+        field = SugarTest.createField({
+            'client': 'base',
+            'name': 'create-article-action',
+            'type': 'create-article-action',
+            'viewName': 'edit',
+            'fieldDef': {},
+            'module': moduleName,
+            'loadFromModule': true
+        });
     });
 
     afterEach(function() {

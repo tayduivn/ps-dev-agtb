@@ -77,6 +77,7 @@ $mod_strings = array (
   'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
   'LBL_TASK_INFORMATION' => 'Overview',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Notes',
+  'LBL_REVENUELINEITEMS' => 'Revenue Line Items',
   //For export labels
   'LBL_DATE_DUE' => 'Date Due',
   'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',

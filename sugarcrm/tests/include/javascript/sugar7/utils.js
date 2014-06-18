@@ -121,4 +121,32 @@ describe("Sugar7 utils", function() {
                 expect(result).toEqual(testResult);
             });
         });
+
+    describe('getSelectedUsersReportees', function() {
+        describe('as manager', function() {
+            var user;
+            beforeEach(function() {
+                user = {
+                    is_manager: true,
+                    id: 'test_id'
+                };
+            });
+
+            afterEach(function() {
+                sinon.collection.restore();
+                delete user;
+            });
+
+            it('will make an xhr call with status equal to active', function() {
+                var post_args = undefined;
+                sinon.collection.stub(app.api, 'call', function(type, url, args) {
+                    post_args = args;
+                });
+                app.utils.getSelectedUsersReportees(user, {});
+                expect(app.api.call).toHaveBeenCalled();
+                expect(post_args).not.toBeUndefined();
+                expect(post_args.filter[0].status).toEqual('Active');
+            });
+        });
+    });
 });

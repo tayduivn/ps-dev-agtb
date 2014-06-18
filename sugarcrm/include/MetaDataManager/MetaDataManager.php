@@ -63,6 +63,7 @@ class MetaDataManager
     const MM_VIEWS          = 'views';
     const MM_LAYOUTS        = 'layouts';
     const MM_RELATIONSHIPS  = 'relationships';
+    const MM_DATA           = 'datas';
     const MM_CURRENCIES     = 'currencies';
     const MM_JSSOURCE       = 'jssource';
     const MM_SERVERINFO     = 'server_info';
@@ -156,6 +157,7 @@ class MetaDataManager
         self::MM_ORDEREDLABELS  => 'getOrderedStringUrls',
         self::MM_VIEWS          => 'getSugarViews',
         self::MM_LAYOUTS        => 'getSugarLayouts',
+        self::MM_DATA           => 'getSugarData',
         self::MM_RELATIONSHIPS  => 'getRelationshipData',
         self::MM_CURRENCIES     => 'getSystemCurrencies',
         self::MM_JSSOURCE       => false,
@@ -324,6 +326,16 @@ class MetaDataManager
         self::MM_FULLMODULELIST => true,
         self::MM_MODULESINFO => true,
     );
+
+    /**
+     * Explicit flag that tells the queue to run when the run method is called.
+     * In most cases this will never be changed, but in the case of module builder
+     * this will usually be turned off so that the postExecute method can force
+     * it to run explicitly.
+     * 
+     * @var boolean
+     */
+    protected static $runQueueOnCall = true;
 
     /**
      * The constructor for the class. Sets the visibility flag, the visibility
@@ -547,6 +559,18 @@ class MetaDataManager
     }
 
     /**
+     * This method collects all the collection controllers for a module
+     *
+     * @param string $moduleName The name of the sugar module to collect info about.
+     *
+     * @return Array A hash of all collections and models controllers
+     */
+    public function getModuleDatas($moduleName)
+    {
+        return $this->getModuleClientData('data', $moduleName);
+    }
+
+    /**
      * Gets metadata for all modules
      *
      * @return array An array of hashes containing the modules and their
@@ -594,6 +618,7 @@ class MetaDataManager
         $data['fields']['_hash'] = md5(serialize($data['fields']));
         $data['nameFormat'] = isset($vardefs['name_format_map'])?$vardefs['name_format_map']:null;
         $data['views'] = $this->getModuleViews($moduleName);
+        $data['datas'] = $this->getModuleDatas($moduleName);
         $data['layouts'] = $this->getModuleLayouts($moduleName);
         $data['fieldTemplates'] = $this->getModuleFields($moduleName);
         $data['menu'] = $this->getModuleMenu($moduleName);
@@ -903,6 +928,17 @@ class MetaDataManager
     public function getSugarLayouts()
     {
         return $this->getSystemClientData('layout');
+    }
+
+    /**
+     * Gets client models and collection controllers that maybe a platform would like
+     * to override.
+     *
+     * @return array
+     */
+    public function getSugarData()
+    {
+        return $this->getSystemClientData('data');
     }
 
     /**
@@ -1510,40 +1546,70 @@ class MetaDataManager
      */
     public static function runCacheRefreshQueue($disable = true)
     {
-        // Hold on to the queue state until later when we need it
-        $queueState = self::$isQueued;
+        // Only run the runner if the explicit flag allowing it is true
+        if (self::$runQueueOnCall) {
+            // Hold on to the queue state until later when we need it
+            $queueState = self::$isQueued;
 
-        // Temporarily turn off queueing to allow this to happen
-        self::$isQueued = false;
+            // Temporarily turn off queueing to allow this to happen
+            self::$isQueued = false;
 
-        // If full is set, run all cache clears and be done
-        if (isset(self::$queue['full'])) {
-            // Handle the refreshing of the cache and emptying of the queue
-            self::refreshCache(self::$queue['full']);
-            self::$queue = array();
-        }
+            // If full is set, run all cache clears and be done
+            if (isset(self::$queue['full'])) {
+                // Handle the refreshing of the cache and emptying of the queue
+                self::refreshCache(self::$queue['full']);
+                self::$queue = array();
+            }
 
-        // Run modules first
-        foreach (self::$cacheParts as $part => $method) {
-            if (isset(self::$queue[$part])) {
-                if (isset(self::$queue[$part]['platforms'])) {
-                    $platforms = self::$queue[$part]['platforms'];
-                    unset(self::$queue[$part]['platforms']);
-                } else {
-                    $platforms = array();
+            // Run modules first
+            foreach (self::$cacheParts as $part => $method) {
+                if (isset(self::$queue[$part])) {
+                    if (isset(self::$queue[$part]['platforms'])) {
+                        $platforms = self::$queue[$part]['platforms'];
+                        unset(self::$queue[$part]['platforms']);
+                    } else {
+                        $platforms = array();
+                    }
+
+                    self::$method(self::$queue[$part], $platforms);
+                    unset(self::$queue[$part]);
                 }
+            }
 
-                self::$method(self::$queue[$part], $platforms);
-                unset(self::$queue[$part]);
+            // Handle queue state
+            if ($disable) {
+                self::$isQueued = false;
+            } else {
+                self::$isQueued = $queueState;
             }
         }
+    }
 
-        // Handle queue state
-        if ($disable) {
-            self::$isQueued = false;
-        } else {
-            self::$isQueued = $queueState;
-        }
+    /**
+     * Turns off the queue runner. Setting this to false will prevent the queue
+     * from running even if the run method is called.
+     */
+    public static function setRunQueueOnCallOff()
+    {
+        self::setRunQueueOnCall(false);
+    }
+
+    /**
+     * Turns on the queue runner. This is the default state of the runner.
+     */
+    public static function setRunQueueOnCallOn()
+    {
+        self::setRunQueueOnCall(true);
+    }
+
+    /**
+     * Sets the queue runner flag to boolean true or false
+     * 
+     * @param boolean $value Flag that tells the queue runner to run or not
+     */
+    public static function setRunQueueOnCall($value)
+    {
+        self::$runQueueOnCall = (bool) $value;
     }
 
     /**
@@ -1641,7 +1707,6 @@ class MetaDataManager
     protected function getConfigs()
     {
         $sugarConfig = $this->getSugarConfig();
-
         $administration = new Administration();
         $administration->retrieveSettings();
 
@@ -1661,9 +1726,13 @@ class MetaDataManager
                 $configs['forgotpasswordON'] = false;
             }
         }
-        $auth = AuthenticationController::getInstance();
-        if($auth->isExternal()) {
-            $configs['externalLogin'] = true;
+
+        if (!empty($sugarConfig['authenticationClass'])) {
+            $auth = new AuthenticationController($sugarConfig['authenticationClass']);
+
+            if($auth->isExternal()) {
+                $configs['externalLogin'] = true;
+            }
         }
 
         if (isset($sugarConfig['analytics'])) {
@@ -2091,9 +2160,9 @@ class MetaDataManager
         $typeData = array();
 
         if ($isModule) {
-            $types = array('fieldTemplates', 'views', 'layouts');
+            $types = array('fieldTemplates', 'views', 'layouts', 'datas');
         } else {
-            $types = array('fields', 'views', 'layouts');
+            $types = array('fields', 'views', 'layouts', 'datas');
         }
 
         foreach ($types as $mdType) {
@@ -2248,6 +2317,7 @@ class MetaDataManager
      * Get the data element of the language file properties for a language
      *
      * @param  string  $lang   The language to get data for
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return string  A JSON string of langauge data
      */
     protected function getLanguageFileData($lang, $ordered = false)
@@ -2475,7 +2545,7 @@ class MetaDataManager
     /**
      * Returns a list of URL's pointing to json-encoded versions of the strings
      *
-     * @param  array $data The metadata array
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return array
      */
     public function getStringUrls($ordered = false)
@@ -2508,11 +2578,12 @@ class MetaDataManager
      * Public read only accessor for getting a language file hash if there is one
      *
      * @param string $lang The language to get a hash for
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return string The hash if there is one, false otherwise
      */
-    public function getLanguageHash($lang)
+    public function getLanguageHash($lang, $ordered = false)
     {
-        return $this->getCachedLanguageHash($lang);
+        return $this->getCachedLanguageHash($lang, $ordered);
     }
 
     /**
@@ -2551,6 +2622,7 @@ class MetaDataManager
      * Gets a url for a language file
      *
      * @param string $language The language to get the file for
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return string
      */
     protected function getLangUrl($language, $ordered = false)
@@ -2565,6 +2637,7 @@ class MetaDataManager
      * Get the hash element of the language file properties for a language
      *
      * @param  string  $lang   The language to get data for
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return string  The hash of the contents of the language file
      */
     protected function getLanguageFileHash($lang, $ordered = false)
@@ -2577,14 +2650,15 @@ class MetaDataManager
      * Gets the file properties for a language
      *
      * @param  string  $lang   The language to get data for
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return array   Array containing the hash and data for a language file
      */
     protected function getLanguageFileProperties($lang, $ordered = false)
     {
-        $hash = $this->getCachedLanguageHash($lang);
+        $hash = $this->getCachedLanguageHash($lang, $ordered);
         $resp = $this->buildLanguageFile($lang, $this->getModuleList(), $ordered);
         if (empty($hash) || $hash != $resp['hash']) {
-            $this->putCachedLanguageHash($lang, $resp['hash']);
+            $this->putCachedLanguageHash($lang, $resp['hash'], $ordered);
         }
 
         return $resp;
@@ -2594,11 +2668,12 @@ class MetaDataManager
      * Gets a hash for a cached language
      *
      * @param string $lang The lang to get the hash for
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return string
      */
-    protected function getCachedLanguageHash($lang)
+    protected function getCachedLanguageHash($lang, $ordered = false)
     {
-        $key = $this->getLangUrl($lang);
+        $key = $this->getLangUrl($lang, $ordered);
 
         return $this->getFromHashCache($key);
     }
@@ -2608,12 +2683,13 @@ class MetaDataManager
      *
      * @param string $language The language for this file
      * @param array $modules The module list
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      * @return array Array containing the language file contents and the hash for the data
      */
     protected function buildLanguageFile($language, $modules, $ordered = false)
     {
         sugar_mkdir(sugar_cached('api/metadata'), null, true);
-        $filePath = $this->getLangUrl($language);
+        $filePath = $this->getLangUrl($language, $ordered);
         if (SugarAutoLoader::fileExists($filePath)) {
             // Get the contents of the file so that we can get the hash
             $v1data = file_get_contents($filePath);
@@ -2713,10 +2789,11 @@ class MetaDataManager
      *
      * @param string $lang The language string for the language file
      * @param string $hash The hash for the language file
+     * @param boolean $ordered is a flag that determines $app_list_strings should be key => value pairs or tuples
      */
-    protected function putCachedLanguageHash($lang, $hash)
+    protected function putCachedLanguageHash($lang, $hash, $ordered = false)
     {
-        $key = $this->getLangUrl($lang);
+        $key = $this->getLangUrl($lang, $ordered);
         $this->addToHashCache($key, $hash);
     }
 
@@ -2816,19 +2893,21 @@ class MetaDataManager
         @include($path);
 
         // Delete language caches and remove from the hash cache
-        $pattern = $this->getLangUrl('(.*)');
-        foreach ($hashes as $k => $v) {
-            if (preg_match("#^{$pattern}$#", $k, $m)) {
-                // Add the deleted language to the stack
-                $this->deletedLanguageCaches[] = $m[1];
+        foreach (array(true, false) as $ordered) {
+            $pattern = $this->getLangUrl('(.*)', $ordered);
+            foreach ($hashes as $k => $v) {
+                if (preg_match("#^{$pattern}$#", $k, $m)) {
+                    // Add the deleted language to the stack
+                    $this->deletedLanguageCaches[] = $m[1];
 
-                // Remove from the cache
-                unset($hashes[$k]);
+                    // Remove from the cache
+                    unset($hashes[$k]);
 
-                // Delete the file
-                unlink($k);
+                    // Delete the file
+                    unlink($k);
 
-                $deleted = true;
+                    $deleted = true;
+                }
             }
         }
 
@@ -2907,6 +2986,7 @@ class MetaDataManager
             self::MM_FILTERS,
             self::MM_VIEWS,
             self::MM_LAYOUTS,
+            self::MM_DATA,
             self::MM_LABELS,
             self::MM_ORDEREDLABELS,
             self::MM_CONFIG,

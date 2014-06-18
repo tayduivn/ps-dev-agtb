@@ -41,14 +41,7 @@ $viewdefs['Notes']['base']['filter']['default'] = array(
     ),
     'fields' => array(
         'name' => array(),
-        'contact_name' => array(
-            'dbFields' => array(
-                'contact.first_name',
-                'contact.last_name',
-            ),
-            'type' => 'text',
-            'vname' => 'LBL_CONTACT_NAME',
-        ),
+        'contact_name' => array(),
         'date_entered' => array(),
         'date_modified' => array(),
         '$owner' => array(

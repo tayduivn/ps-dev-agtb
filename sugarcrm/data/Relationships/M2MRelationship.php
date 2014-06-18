@@ -66,7 +66,7 @@ class M2MRelationship extends SugarRelationship
         }
         else
         {
-            return FALSE;
+            return false;
         }
     }
 
@@ -127,53 +127,85 @@ class M2MRelationship extends SugarRelationship
         // Test to see if the relationship already exists before attempting to
         // add it again.
         $isUpdate = false;
-        if (!$this->relationship_exists($lhs, $rhs)) {
-
-            //BEGIN SUGARCRM flav=pro ONLY
+        $currentRow = $this->relationship_exists($lhs, $rhs, true);
+        if (!$currentRow) {
             if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes") {
-                //END SUGARCRM flav=pro ONLY
-                $lhs->$lhsLinkName->addBean($rhs);
-                $rhs->$rhsLinkName->addBean($lhs);
-
                 $this->callBeforeAdd($lhs, $rhs, $lhsLinkName);
                 $this->callBeforeAdd($rhs, $lhs, $rhsLinkName);
-                //BEGIN SUGARCRM flav=pro ONLY
             }
-            //END SUGARCRM flav=pro ONLY
-
-            //BEGIN SUGARCRM flav=pro ONLY
-            if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")) {
-                //END SUGARCRM flav=pro ONLY
-                $lhs->$lhsLinkName->addBean($rhs);
-                $rhs->$rhsLinkName->addBean($lhs);
-
-                $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
-                $this->callAfterAdd($rhs, $lhs, $rhsLinkName);
-                //BEGIN SUGARCRM flav=pro ONLY
-            }
-            //END SUGARCRM flav=pro ONLY
-        }
-        else {
+        } else {
             $isUpdate = true;
         }
 
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
         $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
         /**
-         * We still need to update the row even if the relationship is not new because there
-         * may be changes to relationship fields that need to be saved.
-         *
-         * See SP-1043 for other details
+         * We need to do a complete check against all fields in the relationship to ensure that
+         * an update occurs for any additional relationship fields
          * */
-        $this->addRow($dataToInsert);
+        if (!$currentRow || !$this->compareRow($currentRow, $dataToInsert)) {
+            $this->addRow($dataToInsert);
+
+            if ($this->self_referencing) {
+                $this->addSelfReferencing($lhs, $rhs, $additionalFields);
+            }
+            if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")) {
+                $lhs->$lhsLinkName->addBean($rhs);
+                $rhs->$rhsLinkName->addBean($lhs);
+
+                $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
+                $this->callAfterAdd($rhs, $lhs, $rhsLinkName);
+            }
+        }
 
         if ($isUpdate) {
             $this->callAfterUpdate($lhs, $rhs, $lhsLinkName);
             $this->callAfterUpdate($rhs, $lhs, $rhsLinkName);
         }
 
-        if ($this->self_referencing) {
-            $this->addSelfReferencing($lhs, $rhs, $additionalFields);
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function addRow(array $row)
+    {
+        //Need to manage the primary flag if we are going to be updating/inserting data.
+        if (!empty($this->def['primary_flag_column']) && $row[$this->def['primary_flag_column']]) {
+            $rhsKey = $this->def['join_key_rhs'];
+            $lhsKey = $this->def['join_key_lhs'];
+            $db = DBManagerFactory::getInstance();
+            // The primary flag is true, that means we need to block
+            // out the old primary flag
+            $query = "UPDATE {$this->getRelationshipTable()} SET "
+                . "{$this->def['primary_flag_column']} = 0 WHERE ";
+            if ($this->def['primary_flag_side'] == 'rhs') {
+                $query .= "$rhsKey = '" . $db->quote($row[$rhsKey]) . "'";
+            } else {
+                $query .= "$lhsKey = '" . $db->quote($row[$lhsKey]) . "'";
+            }
+            $db->query($query);
+        }
+
+        return parent::addRow($row);
+    }
+
+    /**
+     * Used to check for duplicate rows for this relationship. Compares all fields rather than just id's.
+     *
+     * @param       $currentRow existing row
+     * @param       $dataToInsert new row to be inserted
+     * @param array $ignoreFields fields to ignore for duplicate comparison
+     *
+     * @return bool true if rows are identical.
+     */
+    protected function compareRow($currentRow, $dataToInsert, $ignoreFields = array('id', 'date_modified'))
+    {
+        foreach($dataToInsert as $field => $value) {
+            if (!in_array($field, $ignoreFields) && (!isset($currentRow[$field]) || $currentRow[$field] != $value)) {
+                return false;
+            }
         }
 
         return true;
@@ -214,20 +246,6 @@ class M2MRelationship extends SugarRelationship
                 }
             } else {
                 $row[$this->def['primary_flag_column']] = $additionalFields[$this->def['primary_flag_column']];
-            }
-
-            if ($row[$this->def['primary_flag_column']]) {
-                $db = DBManagerFactory::getInstance();
-                // The primary flag is true, that means we need to block
-                // out the old primary flag
-                $query = "UPDATE {$this->getRelationshipTable()} SET "
-                    ."{$this->def['primary_flag_column']} = 0 WHERE ";
-                if ($this->def['primary_flag_side'] == 'rhs') {
-                    $query .= "{$this->def['join_key_rhs']} = '".$db->quote($rhs->id)."'";
-                } else {
-                    $query .= "{$this->def['join_key_lhs']} = '".$db->quote($lhs->id)."'";
-                }
-                $db->query($query);
             }
         }
         if (!empty($additionalFields))
@@ -408,7 +426,7 @@ class M2MRelationship extends SugarRelationship
         $result = $db->query($query);
         $rows = Array();
         $idField = $link->getSide() == REL_LHS ? $this->def['join_key_rhs'] : $this->def['join_key_lhs'];
-        while ($row = $db->fetchByAssoc($result, FALSE))
+        while ($row = $db->fetchByAssoc($result, false))
         {
             if (empty($row['id']) && empty($row[$idField]))
                 continue;
@@ -727,14 +745,15 @@ class M2MRelationship extends SugarRelationship
      * @param  $rhs
      * @return bool
      */
-    public function relationship_exists($lhs, $rhs)
+    public function relationship_exists($lhs, $rhs, $return_row = false)
     {
-        $query = "SELECT id FROM {$this->getRelationshipTable()} WHERE {$this->join_key_lhs} = '{$lhs->id}' AND {$this->join_key_rhs} = '{$rhs->id}'";
+        $select = $return_row ? "*" : "id";
+        $query = "SELECT {$select} FROM {$this->getRelationshipTable()} WHERE {$this->join_key_lhs} = '{$lhs->id}' AND {$this->join_key_rhs} = '{$rhs->id}'";
 
         //Roles can allow for multiple links between two records with different roles
         $query .= $this->getRoleWhere() . " and deleted = 0";
 
-        return $GLOBALS['db']->getOne($query);
+        return $return_row ? $GLOBALS['db']->fetchOne($query) : $GLOBALS['db']->getOne($query);
     }
 
     /**

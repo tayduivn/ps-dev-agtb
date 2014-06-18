@@ -181,6 +181,7 @@ class Bug51596Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1, $contact->do_not_call);
 
         // ensure that "do_not_call" attribute of Contact2 has not been changed
+        $contact = new Contact();
         $contact->retrieve($this->contact2->id);
         $this->assertEquals(0, $contact->do_not_call);
     }

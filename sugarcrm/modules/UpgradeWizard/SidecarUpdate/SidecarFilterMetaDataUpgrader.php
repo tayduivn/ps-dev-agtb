@@ -112,6 +112,12 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             if(!empty($data['name'])) {
                 $name = $data['name'];
             }
+
+            //BR-1680
+            if ($name == 'assigned_user_id') {
+                $name = 'assigned_user_name';
+            }
+
             // We'll add those later
             if($name == 'favorites_only' || $name == 'current_user_only') continue;
 
@@ -146,9 +152,11 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 }
                 $fields[$name] = array(
                     'dbFields' => array_filter($searchFields[$name]['db_field'], array($this, "isValidField")),
-                    'type' => isset($searchFields[$name]['type'])?$searchFields[$name]['type']:"text",
                 );
-                if(empty($fields[$name]['dbFields'])) {
+                if (!empty($searchFields[$name]['type'])) {
+                    $fields[$name]['type'] = $searchFields[$name]['type'];
+                }
+                if (empty($fields[$name]['dbFields']) && !$this->isValidField($name)) {
                     unset($fields[$name]);
                     continue;
                 }

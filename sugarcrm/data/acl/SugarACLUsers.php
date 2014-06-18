@@ -36,17 +36,20 @@ class SugarACLUsers extends SugarACLStrategy
             'status' => true,
             'employee_status' => true,
             'is_admin' => true,
+            'UserType' => true,
         );
 
     public $no_access_fields = array(
-            'show_on_employees' => true,        
+            'show_on_employees' => true,
             'portal_only' => true,
             'is_group' => true,
             'system_generated_password' => true,
             'external_auth_only' => true,
             'sugar_login' => true,
             'authenticate_id' => true,
-            'pwd_last_changed' => true,  
+            'pwd_last_changed' => true,
+            'user_hash' => true,
+            'password' => true,
         );
 
     public $view_checks = array(
@@ -83,7 +86,7 @@ class SugarACLUsers extends SugarACLStrategy
         $current_user = $this->getCurrentUser($context);
 
         $bean = self::loadBean($module, $context);
-        
+
         $myself = $this->myselfCheck($bean, $current_user);
 
 
@@ -99,14 +102,14 @@ class SugarACLUsers extends SugarACLStrategy
                 // Here's the obvious way to disable yourself
                 return false;
             }
-            if ( $view == 'field' 
+            if ( $view == 'field'
                  && ( $context['action'] == 'edit' || $context['action'] == 'massupdate' || $context['action'] == 'delete' )
                  && ( $context['field'] == 'employee_status' || $context['field'] == 'status' ) ) {
                 // This is another way to disable yourself
                 return false;
             }
         }
-            
+
 
         if($current_user->isAdminForModule($module)) {
             return true;
@@ -132,7 +135,7 @@ class SugarACLUsers extends SugarACLStrategy
                 && !empty($this->no_edit_fields[$context['field']])) {
 
                 return false;
-            }            
+            }
             return true;
         }
 
@@ -174,8 +177,8 @@ class SugarACLUsers extends SugarACLStrategy
             $is_admin = true;
         }
         $bean = self::loadBean($module, $context);
-        
-        $myself = $this->myselfCheck($bean, $current_user);        
+
+        $myself = $this->myselfCheck($bean, $current_user);
         $result = array();
         foreach($field_list as $key => $field) {
             // you can't set your own status
@@ -216,7 +219,7 @@ class SugarACLUsers extends SugarACLStrategy
             $is_admin = true;
         }
         $bean = self::loadBean($module, $context);
-        
+
         $myself = $this->myselfCheck($bean, $current_user);
 
         $result = array();
@@ -247,7 +250,7 @@ class SugarACLUsers extends SugarACLStrategy
     /**
      * Check if the User and the Bean are the same
      * @param object|bool $bean
-     * @param object $current_user 
+     * @param object $current_user
      * @return type
      */
     public function myselfCheck($bean, $current_user)
@@ -256,6 +259,6 @@ class SugarACLUsers extends SugarACLStrategy
         if($bean !== false) {
             $myself = !empty($bean->id) && $bean->id == $current_user->id;
         }
-        return $myself;   
+        return $myself;
     }
 }

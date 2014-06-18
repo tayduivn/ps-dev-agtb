@@ -33,9 +33,9 @@
         options     = options || {};
         options.def = options.def || {};
 
-        // By default, emails should be links.
-        if (_.isUndefined(options.def.link)) {
-            options.def.link = true;
+        // By default, compose email link should be allowed
+        if (_.isUndefined(options.def.emailLink)) {
+            options.def.emailLink = true;
         }
 
         // Check if the email1 field was made required, if-so copy that property to the dynamic field.
@@ -413,7 +413,7 @@
             _.each(value, function(email) {
                 // On render, determine which e-mail addresses need anchor tag included
                 // Needed for handlebars template, can't accomplish this boolean expression with handlebars
-                email.hasAnchor = this.def.link && !email.opt_out && !email.invalid_email;
+                email.hasAnchor = this.def.emailLink && !email.opt_out && !email.invalid_email;
             }, this);
         } else if ((_.isString(value) && value !== "") || this.view.action === 'list') {
             // expected an array with a single address but got a string or an empty array

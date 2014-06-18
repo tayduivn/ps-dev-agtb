@@ -49,25 +49,71 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         if (isset($this->configBackup['disabled_languages'])) {
             $GLOBALS['sugar_config']['disabled_languages'] = $this->configBackup['disabled_languages'];
         }
+
+        MetaDataFiles::clearModuleClientCache();
     }
 
     public function testGetAllLanguages()
     {
-        
+
         $languages = $this->mm->getAllLanguages();
-        
+
         $this->assertArrayHasKey('enabled', $languages, "Enabled languages is missing.");
         $this->assertArrayHasKey('disabled', $languages, "Disabled languages is missing.");
         $this->assertNotEmpty($languages['enabled'], "Enabled languages is empty.");
         $this->assertNotEmpty($languages['disabled'], "Disabled languages is empty");
-        
+
         // Test content of each list
         $this->assertArrayHasKey(2, $languages['enabled'], "Missing element of enabled languages");
         $this->assertArrayHasKey(1, $languages['disabled'], "Missing element of disabled languages");
-        $this->assertEquals('snazzy', $languages['enabled'][2], "Incorret value for disabled language 2");
-        $this->assertEquals('br_ikea', $languages['disabled'][1], "Incorret value for disabled language 1");
+        $this->assertEquals('snazzy', $languages['enabled'][2], "Incorrect value for disabled language 2");
+        $this->assertEquals('br_ikea', $languages['disabled'][1], "Incorrect value for disabled language 1");
     }
-    
+
+    /**
+     * This is a functional test rather than a unit test.
+     * This is due to MetaDataManager and MetaDataFiles not having
+     * any tests.
+     *
+     * This test covers two scenarios,
+     * the first one is if there exists no data, than we should expect
+     * the metadata to not pick up any controllers.
+     *
+     * The second scenario covers metadata manager picking up on
+     * provided collection / model controllers.
+     */
+    public function testFinalMetadataJSSource()
+    {
+
+        // Scenario 1
+        // Create empty module with correct metadata structure.
+        sugar_mkdir("modules/TestModule/clients/base/datas/model", 0700, true);
+
+        $moduleMeta = $this->mm->getModuleDatas('TestModule');
+
+        // We verify our assumptions that we should have an empty set of metadata.
+        $this->assertArrayHasKey("_hash", $moduleMeta, "Metadata does not contain a hash");
+        $this->assertEquals(count($moduleMeta), 1, "Metadata has incorrect amount of elements");
+
+        // Clear our metadata cache.
+        MetaDataFiles::clearModuleClientCache("TestModule");
+
+        // Scenario 2
+        // Add a model controller to our datas directory.
+        SugarAutoLoader::touch("modules/TestModule/clients/base/datas/model/model.js");
+        $moduleMeta = $this->mm->getModuleDatas('TestModule');
+
+        // We now verify if we have additional controller metadata in our return.
+        $this->assertArrayHasKey("model", $moduleMeta, "Metadata does not contain a controller");
+        $this->assertEquals(count($moduleMeta), 2, "Metadata doesn't include the controller");
+
+        // Clean up our test.
+        MetaDataFiles::clearModuleClientCache("TestModule");
+        SugarAutoLoader::unlink("modules/TestModule/clients/base/datas/model/model.js");
+        rmdir_recursive("modules/TestModule/");
+        SugarAutoLoader::buildCache();
+    }
+
     protected function setTestLanguageSettings()
     {
         $GLOBALS['sugar_config']['languages'] = array (

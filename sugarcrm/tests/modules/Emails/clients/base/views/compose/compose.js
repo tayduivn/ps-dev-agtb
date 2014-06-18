@@ -2,15 +2,21 @@ describe("Emails.Views.Compose", function() {
     var app,
         view,
         dataProvider,
-        moduleName,
-        metadata;
+        sandbox;
 
     beforeEach(function() {
+        var context,
+            viewName = 'compose',
+            moduleName = 'Emails';
         app = SugarTest.app;
         app.drawer = { on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop };
 
-        moduleName = 'UserSignatures';
-        metadata = {
+        SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate('compose-senderoptions', 'view', 'base', 'compose-senderoptions', moduleName);
+        SugarTest.loadComponent('base', 'view', 'record');
+
+        // set UserSignatures metadata
+        SugarTest.testMetadata.updateModuleMetadata('UserSignatures', {
             fields: {
                 name: {
                     name: "name",
@@ -24,24 +30,20 @@ describe("Emails.Views.Compose", function() {
             views: [],
             layouts: [],
             _hash: "bc6fc50d9d0d3064f5d522d9e15968fa"
-        };
+        });
 
-        SugarTest.testMetadata.init();
-        SugarTest.loadComponent('base', 'layout', 'drawer');
-        SugarTest.loadComponent('base', 'view', 'record');
-        SugarTest.loadComponent('base', 'view', 'create');
-        SugarTest.loadComponent('base', 'view', 'compose', 'Emails');
-        SugarTest.testMetadata.updateModuleMetadata(moduleName, metadata);
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
-        var context = app.context.getContext();
+        context = app.context.getContext();
         context.set({
-            module: 'Emails',
+            module: moduleName,
             create: true
         });
         context.prepare();
 
-        view = SugarTest.createView('base', 'Emails', 'compose', null, context, true);
+        view = SugarTest.createView('base', moduleName, viewName, null, context, true);
+
+        sandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
@@ -51,130 +53,66 @@ describe("Emails.Views.Compose", function() {
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
+        sandbox.restore();
     });
 
-    it("Intialize - model should not be empty", function() {
+    it("Initialize - model should not be empty", function() {
         expect(view.model.isNotEmpty).toBe(true);
     });
 
     describe('Render', function() {
-        var setTitleStub, hideFieldStub, toggleSenderOptionsStub, prepopulateStub, notificationStub;
+        var setTitleStub, prepopulateStub;
 
         beforeEach(function() {
-            setTitleStub = sinon.stub(view, 'setTitle');
-            hideFieldStub = sinon.stub(view, 'hideField');
-            toggleSenderOptionsStub = sinon.stub(view, 'toggleSenderOptions');
-            prepopulateStub = sinon.stub(view, 'prepopulate');
-        });
-
-        afterEach(function() {
-            setTitleStub.restore();
-            hideFieldStub.restore();
-            toggleSenderOptionsStub.restore();
-            prepopulateStub.restore();
+            setTitleStub = sandbox.stub(view, 'setTitle');
+            prepopulateStub = sandbox.stub(view, 'prepopulate');
         });
 
         it('No prepopulate on context - title should be set no fields pre-populated', function() {
-            notificationStub = sinon.stub(view, 'notifyConfigurationStatus');
+            sandbox.stub(view, 'notifyConfigurationStatus');
             view._render();
             expect(setTitleStub).toHaveBeenCalled();
             expect(prepopulateStub.callCount).toEqual(0);
-
-            notificationStub.restore();
         });
 
         it('prepopulate on context - call is made to populate them', function() {
             var dummyPrepopulate = {subject: 'Foo!'};
 
-            notificationStub = sinon.stub(view, 'notifyConfigurationStatus');
+            sandbox.stub(view, 'notifyConfigurationStatus');
             view.context.set('prepopulate', dummyPrepopulate);
             view._render();
             expect(prepopulateStub.callCount).toEqual(1);
             expect(prepopulateStub.lastCall.args).toEqual([dummyPrepopulate]);
-
-            notificationStub.restore();
         });
 
         it('No email client preference error - should not disable the send button or alert user', function() {
-            var alertShowStub = sinon.stub(app.alert, 'show'),
-                stubAppUserGetPreference = sinon.collection.stub(app.user, 'getPreference');
+            var alertShowStub = sandbox.stub(app.alert, 'show');
 
-            stubAppUserGetPreference.withArgs('email_client_preference').returns({type: 'sugar'});
+            sandbox.stub(app.user, 'getPreference')
+                .withArgs('email_client_preference')
+                .returns({type: 'sugar'});
 
             view._render();
 
             expect(alertShowStub.callCount).toBe(0);
-            stubAppUserGetPreference.restore();
-            alertShowStub.restore();
         });
 
         it('Email client preference error - should disable the send button and alert user', function() {
-            var alertShowStub = sinon.stub(app.alert, 'show'),
-                fieldStub = sinon.stub(view, 'getField'),
+            var alertShowStub = sandbox.stub(app.alert, 'show'),
                 sendField = {setDisabled: $.noop},
-                spyOnField = sinon.spy(sendField, 'setDisabled'),
-                stubAppUserGetPreference = sinon.collection.stub(app.user, 'getPreference');
+                spyOnField = sandbox.spy(sendField, 'setDisabled');
 
-            stubAppUserGetPreference.withArgs('email_client_preference').returns({type: 'sugar', error: {code: 101, message: 'LBL_EMAIL_INVALID_USER_CONFIGURATION'}});
-            fieldStub.withArgs('send_button').returns(sendField);
+            sandbox.stub(app.user, 'getPreference')
+                .withArgs('email_client_preference')
+                .returns({type: 'sugar', error: {code: 101, message: 'LBL_EMAIL_INVALID_USER_CONFIGURATION'}});
+            sandbox.stub(view, 'getField')
+                .withArgs('send_button')
+                .returns(sendField);
 
             view._render();
 
             expect(alertShowStub.callCount).toBe(1);
             expect(spyOnField.calledOnce).toBe(true);
-
-            spyOnField.restore();
-            stubAppUserGetPreference.restore();
-            alertShowStub.restore();
-            fieldStub.restore();
-        });
-
-        dataProvider = [
-            {
-                'testComment': 'no cc or bcc => both hidden with links',
-                'model': null,
-                'hideFieldCount': 2,
-                'hideFieldLastCallArgs': null,
-                'toggleSenderLastCallArgs': ["to_addresses", true, true]
-            },
-            {
-                'testComment': 'has cc => only bcc hidden with link',
-                'model': {'cc_addresses':'foo@bar.com'},
-                'hideFieldCount': 1,
-                'hideFieldLastCallArgs': ['bcc_addresses'],
-                'toggleSenderLastCallArgs': ["to_addresses", false, true]
-            },
-            {
-                'testComment': 'has bcc => only cc hidden with link',
-                'model': {'bcc_addresses':'foo@bar.com'},
-                'hideFieldCount': 1,
-                'hideFieldLastCallArgs': ['cc_addresses'],
-                'toggleSenderLastCallArgs': ["to_addresses", true, false]
-            },
-            {
-                'testComment': 'both cc & bcc => neither hidden, no links',
-                'model': {'cc_addresses':'foo@bar.com','bcc_addresses':'foo@bar.com'},
-                'hideFieldCount': 0,
-                'hideFieldLastCallArgs': null,
-                'toggleSenderLastCallArgs': ["to_addresses", false, false]
-            }
-        ];
-
-        _.each(dataProvider, function(data) {
-            it(data.testComment, function() {
-                notificationStub = sinon.stub(view, 'notifyConfigurationStatus');
-                view.model.off('change');
-                if (data.model) {
-                    view.model.set(data.model);
-                }
-                view._render();
-                expect(hideFieldStub.callCount).toEqual(data.hideFieldCount);
-                if (data.hideFieldLastCallArgs) {
-                    expect(hideFieldStub.lastCall.args).toEqual(data.hideFieldLastCallArgs);
-                }
-                expect(toggleSenderOptionsStub.lastCall.args).toEqual(data.toggleSenderLastCallArgs);
-                notificationStub.restore();
-            });
         });
     });
 
@@ -183,17 +121,12 @@ describe("Emails.Views.Compose", function() {
 
         beforeEach(function() {
             flag = false;
-            populateRelatedStub = sinon.stub(view, 'populateRelated', function() {
+            populateRelatedStub = sandbox.stub(view, 'populateRelated', function() {
                 flag = true;
             });
-            modelSetStub = sinon.stub(view.model, 'set', function() {
+            modelSetStub = sandbox.stub(view.model, 'set', function() {
                 flag = true;
             });
-        });
-
-        afterEach(function() {
-            populateRelatedStub.restore();
-            modelSetStub.restore();
         });
 
         it("Should trigger recipient add on context if to_addresses, cc_addresses, or bcc_addresses value is passed in.", function() {
@@ -244,7 +177,7 @@ describe("Emails.Views.Compose", function() {
     });
 
     describe("populateRelated", function () {
-        var relatedModel, fetchStub, fetchedModel, getFieldStub, parentId, parentValue, inputValues, fetchedValues;
+        var relatedModel, fetchedModel, parentId, parentValue, inputValues, fetchedValues;
 
         beforeEach(function () {
             inputValues = {
@@ -258,10 +191,10 @@ describe("Emails.Views.Compose", function() {
             relatedModel = new Backbone.Model(inputValues);
             fetchedModel = new Backbone.Model(fetchedValues);
             relatedModel.module = fetchedModel.module = 'foo';
-            fetchStub = sinon.stub(relatedModel, 'fetch', function (params) {
+            sandbox.stub(relatedModel, 'fetch', function (params) {
                 params.success(fetchedModel);
             });
-            getFieldStub = sinon.stub(view, 'getField', function () {
+            sandbox.stub(view, 'getField', function () {
                 return {
                     isAvailableParentType: function() {
                         return true;
@@ -275,8 +208,6 @@ describe("Emails.Views.Compose", function() {
         });
 
         afterEach(function () {
-            fetchStub.restore();
-            getFieldStub.restore();
             parentId = undefined;
             parentValue = undefined;
         });
@@ -302,25 +233,108 @@ describe("Emails.Views.Compose", function() {
         });
     });
 
-    describe('saveModel', function() {
-        var apiCallStub, alertShowStub, alertDismissStub, disableButtonStub;
+    describe('Sender Options', function() {
+        var toggleFieldVisibilitySpy,
+            isSenderOptionButtonActive;
 
-        beforeEach(function() {
-            apiCallStub = sinon.stub(app.api, 'call', function(method, myURL, model, options) {
-                options.success(model, null, options);
+        beforeEach(function () {
+            toggleFieldVisibilitySpy = sandbox.spy(view, '_toggleFieldVisibility');
+            sandbox.stub(view, '_renderSenderOptions', function() {
+                var template = app.template.getView("compose-senderoptions", view.module);
+                view.$el.append(template({'module' : view.module}));
             });
-            alertShowStub = sinon.stub(app.alert, 'show');
-            alertDismissStub = sinon.stub(app.alert, 'dismiss');
-            disableButtonStub = sinon.stub(view, 'setMainButtonsDisabled');
-
-            view.model.off('change');
         });
 
-        afterEach(function() {
-            apiCallStub.restore();
-            alertShowStub.restore();
-            alertDismissStub.restore();
-            disableButtonStub.restore();
+        isSenderOptionButtonActive = function(fieldName) {
+            var selector = '[data-toggle-field="' + fieldName + '"]';
+            return view.$(selector).hasClass('active');
+        };
+
+        using('CC/BCC values',
+            [
+                [
+                    {cc_addresses: [], bcc_addresses: []},
+                    {ccActive: false, bccActive: false}
+                ],
+                [
+                    {cc_addresses: ['foo@bar.com'], bcc_addresses: []},
+                    {ccActive: true, bccActive: false}
+                ],
+                [
+                    {cc_addresses: [], bcc_addresses: ['foo@bar.com']},
+                    {ccActive: false, bccActive: true}
+                ],
+                [
+                    {cc_addresses: ['foo@bar.com'], bcc_addresses: ['bar@foo.com']},
+                    {ccActive: true, bccActive: true}
+                ]
+            ],
+            function(value, result) {
+                it('should add sender options on render and initialize cc/bcc fields appropriately', function() {
+                    view.model.set(value);
+                    view._render();
+
+                    // check buttons
+                    expect(isSenderOptionButtonActive('cc_addresses')).toBe(result.ccActive);
+                    expect(isSenderOptionButtonActive('bcc_addresses')).toBe(result.bccActive);
+
+                    // check field visibility
+                    expect(toggleFieldVisibilitySpy.firstCall.args).toEqual(["cc_addresses", result.ccActive]);
+                    expect(toggleFieldVisibilitySpy.secondCall.args).toEqual(["bcc_addresses", result.bccActive]);
+                });
+            }
+        );
+
+        it("should toggle sender option between active/inactive state when active flag not specified", function () {
+            var fieldName = 'cc_addresses';
+            view._render();
+            expect(isSenderOptionButtonActive(fieldName)).toBe(false);
+            view.toggleSenderOption(fieldName);
+            expect(isSenderOptionButtonActive(fieldName)).toBe(true);
+            view.toggleSenderOption(fieldName);
+            expect(isSenderOptionButtonActive(fieldName)).toBe(false);
+        });
+
+        it("should set sender option to active when active flag is true", function () {
+            var fieldName = 'cc_addresses';
+            view._render();
+            expect(isSenderOptionButtonActive(fieldName)).toBe(false);
+            view.toggleSenderOption(fieldName, true);
+            expect(isSenderOptionButtonActive(fieldName)).toBe(true);
+            view.toggleSenderOption(fieldName, true);
+            expect(isSenderOptionButtonActive(fieldName)).toBe(true);
+        });
+
+        it("should set sender option to inactive when active flag is false", function () {
+            var fieldName = 'cc_addresses';
+            view._render();
+            expect(isSenderOptionButtonActive(fieldName)).toBe(false);
+            view.toggleSenderOption(fieldName, false);
+            expect(isSenderOptionButtonActive(fieldName)).toBe(false);
+        });
+
+        it("should toggle sender option between active/inactive state when cc/bcc buttons clicked", function () {
+            view._render();
+            expect(isSenderOptionButtonActive('bcc_addresses')).toBe(false);
+            view.$('[data-toggle-field="bcc_addresses"]').click();
+            expect(isSenderOptionButtonActive('bcc_addresses')).toBe(true);
+            view.$('[data-toggle-field="bcc_addresses"]').click();
+            expect(isSenderOptionButtonActive('bcc_addresses')).toBe(false);
+        });
+    });
+
+    describe('saveModel', function() {
+        var apiCallStub, alertShowStub, alertDismissStub;
+
+        beforeEach(function() {
+            apiCallStub = sandbox.stub(app.api, 'call', function(method, myURL, model, options) {
+                options.success(model, null, options);
+            });
+            alertShowStub = sandbox.stub(app.alert, 'show');
+            alertDismissStub = sandbox.stub(app.alert, 'dismiss');
+            sandbox.stub(view, 'setMainButtonsDisabled');
+
+            view.model.off('change');
         });
 
         it('should call mail api with correctly formatted model', function() {
@@ -340,7 +354,7 @@ describe("Emails.Views.Compose", function() {
             expect(actualModel.get('to_addresses')).toEqual(to_addresses); //email formatted correctly
             expect(actualModel.get('foo')).toEqual('bar'); //any other model attributes passed to api
 
-            delete to_addresses;
+            to_addresses = undefined;
         });
 
         it('should show pending message before call, then after call dismiss that message and show success', function() {
@@ -352,22 +366,17 @@ describe("Emails.Views.Compose", function() {
             expect(alertShowStub.firstCall.args[1].title).toEqual(pending);
             expect(alertDismissStub.firstCall.args[0]).toEqual(alertShowStub.firstCall.args[0]);
             expect(alertShowStub.secondCall.args[1].messages).toEqual(success);
-        })
+        });
     });
 
     describe('Send', function() {
         var saveModelStub, alertShowStub;
 
         beforeEach(function() {
-            saveModelStub = sinon.stub(view, 'saveModel');
-            alertShowStub = sinon.stub(app.alert, 'show');
+            saveModelStub = sandbox.stub(view, 'saveModel');
+            alertShowStub = sandbox.stub(app.alert, 'show');
 
             view.model.off('change');
-        });
-
-        afterEach(function() {
-            saveModelStub.restore();
-            alertShowStub.restore();
         });
 
         it('should send email when to, subject and html_body fields are populated', function() {
@@ -451,19 +460,13 @@ describe("Emails.Views.Compose", function() {
                 updateEditorWithSignatureStub;
 
             beforeEach(function() {
-                insertTemplateAttachmentsStub = sinon.stub(view, 'insertTemplateAttachments');
-                createBeanCollectionStub      = sinon.stub(app.data, 'createBeanCollection', function() {
-                    return {fetch:function(){}}
+                insertTemplateAttachmentsStub = sandbox.stub(view, 'insertTemplateAttachments');
+                createBeanCollectionStub      = sandbox.stub(app.data, 'createBeanCollection', function() {
+                    return {fetch: $.noop};
                 });
-                updateEditorWithSignatureStub = sinon.stub(view, "_updateEditorWithSignature");
+                updateEditorWithSignatureStub = sandbox.stub(view, "_updateEditorWithSignature");
 
                 view.model.off('change');
-            });
-
-            afterEach(function() {
-                insertTemplateAttachmentsStub.restore();
-                createBeanCollectionStub.restore();
-                updateEditorWithSignatureStub.restore();
             });
 
             it('should not populate editor if template parameter is not an object', function() {
@@ -541,7 +544,7 @@ describe("Emails.Views.Compose", function() {
 
                 view.insertTemplate(templateModel);
                 expect(updateEditorWithSignatureStub).toHaveBeenCalledWith(signature);
-            })
+            });
         });
     });
 
@@ -549,12 +552,8 @@ describe("Emails.Views.Compose", function() {
         var ajaxSpy;
 
         beforeEach(function() {
-            ajaxSpy = sinon.spy($, 'ajax');
+            ajaxSpy = sandbox.spy($, 'ajax');
             view.model.off('change');
-        });
-
-        afterEach(function() {
-            ajaxSpy.restore();
         });
 
         it("should retrieve a signature when the signature ID is present", function() {
@@ -788,7 +787,7 @@ describe("Emails.Views.Compose", function() {
     });
 
     describe('ResizeEditor', function() {
-        var $drawer, $editor, getDrawerHeightStub;
+        var $drawer, $editor;
 
         beforeEach(function() {
             var mockHtml = '<div><div class="drawer">' +
@@ -810,13 +809,9 @@ describe("Emails.Views.Compose", function() {
             view.$('.record').height(editorHeight);
             view.$('.show-hide-toggle').height(otherHeight);
 
-            getDrawerHeightStub = sinon.stub(app.drawer, 'getHeight', function() {
+            sandbox.stub(app.drawer, 'getHeight', function() {
                 return $drawer.height();
             });
-        });
-
-        afterEach(function() {
-            getDrawerHeightStub.restore();
         });
 
         it("should increase the height of the editor when drawer height increases", function() {

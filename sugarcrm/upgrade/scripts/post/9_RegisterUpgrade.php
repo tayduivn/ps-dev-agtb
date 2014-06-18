@@ -56,7 +56,7 @@ class SugarUpgradeRegisterUpgrade extends UpgradeScript
 		$new_upgrade->type = 'patch';
 		$new_upgrade->version = $this->to_version;
 		$new_upgrade->status = "installed";
-		$new_upgrade->manifest = json_encode($this->manifest);
+		$new_upgrade->manifest = base64_encode(serialize($this->manifest));
 		$new_upgrade->save();
     }
 }

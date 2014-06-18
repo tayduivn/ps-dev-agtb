@@ -234,12 +234,12 @@ nv.models.pie = function() {
                 return (d.value && percent > labelThreshold) ? getX(d.data) : '';
               });
 
-          var textBox = slice.select('text').node();
-          slice.select('.nv-label rect')
-            .attr('width', textBox.offsetWidth + 10)
-            .attr('height', textBox.offsetHeight + 10)
-            .attr('transform', function() {
-              return 'translate(' + [textBox.x - 5, textBox.y - 5] + ')';
+          var textBox = slice.select('text').node().getBBox();
+          slice.select(".nv-label rect")
+            .attr("width", textBox.width + 10)
+            .attr("height", textBox.height + 10)
+            .attr("transform", function() {
+              return "translate(" + [textBox.x - 5, textBox.y - 5] + ")";
             });
         });
       }

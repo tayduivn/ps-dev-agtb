@@ -221,7 +221,7 @@ $vardefs =array(
 		array (
 			'name' => 'primary_address_street',
 			'vname' => 'LBL_PRIMARY_ADDRESS_STREET',
-			'type' => 'textarea',
+			'type' => 'text',
 			'dbType' => 'varchar',
 			'len' => '150',
 			'comment' => 'The street address used for primary address',
@@ -295,7 +295,7 @@ $vardefs =array(
 		array (
 			'name' => 'alt_address_street',
 			'vname' => 'LBL_ALT_ADDRESS_STREET',
-			'type' => 'textarea',
+			'type' => 'text',
 			'dbType' => 'varchar',
 			'len' => '150',
 			'group'=>'alt_address',

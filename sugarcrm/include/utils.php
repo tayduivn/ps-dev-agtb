@@ -739,43 +739,50 @@ function get_team_name($team_id)
  */
 function get_team_array($add_blank = FALSE)
 {
-    global  $current_user;
+    global $current_user;
     if (empty($current_user) || empty($current_user->id)) {
         return array();
     }
 
-    $team_array = get_register_value('team_array', $add_blank.'ADDBLANK'.$current_user->id);
-
-    if (!empty($team_array)) {
-        return $team_array;
-    }
-
-
     $db = DBManagerFactory::getInstance();
 
     if ($current_user->isAdminForModule('Users')) {
-        $query = 'SELECT t1.id, t1.name, t1.name_2 FROM teams t1 where t1.deleted = 0 ORDER BY t1.private,t1.name ASC';
+        $query = 'SELECT t1.id, t1.name, t1.name_2 FROM teams t1';
+        $where = 't1.deleted = 0';
     } else {
-        $query = 'SELECT t1.id, t1.name, t1.name_2 FROM teams t1, team_memberships t2 where t1.deleted = 0 and t2.deleted = 0 and t1.id=t2.team_id and t2.user_id = '."'".$current_user->id."'".' ORDER BY t1.private,t1.name ASC';
+        $query = 'SELECT t1.id, t1.name, t1.name_2 FROM teams t1, team_memberships t2 ';
+        $where = 't1.deleted = 0 and t2.deleted = 0 and t1.id=t2.team_id and t2.user_id = '
+            . "'" . $current_user->id . "'";
     }
 
-    $GLOBALS['log']->debug("get_team_array query: $query");
-    $result = $db->query($query, true, "Error filling in team array: ");
+    $team = BeanFactory::getBean('Teams');
+    $team->addVisibilityFrom($query);
+    $query .= " WHERE $where ";
+    $team->addVisibilityWhere($query);
+    $query .= ' ORDER BY t1.private, t1.name ASC';
+
+    $key = md5($query . $current_user->id);
+    $team_array = get_register_value('team_array', $key);
+
+    if (empty($team_array)) {
+        $GLOBALS['log']->debug("get_team_array query: $query");
+        $result = $db->query($query, true, "Error filling in team array: ");
+
+        while ($row = $db->fetchByAssoc($result)) {
+
+            if ($current_user->showLastNameFirst()) {
+              $team_array[$row['id']] = trim($row['name_2'] . ' ' . $row['name']);
+            } else {
+              $team_array[$row['id']] = trim($row['name'] . ' ' . $row['name_2']);
+            }
+        }
+
+        set_register_value('team_array', $key, $team_array);
+    }
 
     if ($add_blank) {
-        $team_array[""] = "";
+        $team_array[''] = '';
     }
-
-    while ($row = $db->fetchByAssoc($result)) {
-
-        if ($current_user->showLastNameFirst()) {
-          $team_array[$row['id']] = trim($row['name_2'] . ' ' . $row['name']);
-        } else {
-          $team_array[$row['id']] = trim($row['name'] . ' ' . $row['name_2']);
-        }
-    }
-
-    set_register_value('team_array', $add_blank.'ADDBLANK'.$current_user->id, $team_array);
 
     return $team_array;
 }
@@ -820,43 +827,48 @@ function get_user_name($id)
 function get_user_array($add_blank=true, $status="Active", $user_id='', $use_real_name=false, $user_name_filter='', $portal_filter=' AND portal_only=0 ', $from_cache = true)
 {
     global $locale;
-    global $sugar_config;
 
     if (empty($locale)) {
         $locale = Localization::getObject();
     }
 
+    $db = DBManagerFactory::getInstance();
+
+    // Pre-build query for use as cache key
+    // Including deleted users for now.
+    if (empty($status)) {
+        $query = "SELECT id, first_name, last_name, user_name FROM users ";
+        $where = "1=1" . $portal_filter;
+    } else {
+        $query = "SELECT id, first_name, last_name, user_name FROM users ";
+        $where = "status='$status'" . $portal_filter;
+    }
+
+    $user = BeanFactory::getBean('Users');
+    $user->addVisibilityFrom($query);
+    $query .= " WHERE $where ";
+    $user->addVisibilityWhere($query);
+
+    if (!empty($user_name_filter)) {
+        $user_name_filter = $db->quote($user_name_filter);
+        $query .= " AND user_name LIKE '$user_name_filter%' ";
+    }
+    if (!empty($user_id)) {
+        $query .= " OR id='{$user_id}'";
+    }
+    $query .= ' ORDER BY user_name ASC';
+
     if ($from_cache) {
-        $key_name = $add_blank. $status . $user_id . $use_real_name . $user_name_filter . $portal_filter;
+        $key_name = $query . $status . $user_id . $use_real_name . $user_name_filter . $portal_filter;
         $key_name = md5($key_name);
         $user_array = get_register_value('user_array', $key_name);
     }
 
     if (empty($user_array)) {
-        $db = DBManagerFactory::getInstance();
         $temp_result = Array();
-        // Including deleted users for now.
-        if (empty($status)) {
-            $query = "SELECT id, first_name, last_name, user_name from users WHERE 1=1".$portal_filter;
-        } else {
-            $query = "SELECT id, first_name, last_name, user_name from users WHERE status='$status'".$portal_filter;
-        }
 
-        if (!empty($user_name_filter)) {
-            $user_name_filter = $db->quote($user_name_filter);
-            $query .= " AND user_name LIKE '$user_name_filter%' ";
-        }
-        if (!empty($user_id)) {
-            $query .= " OR id='{$user_id}'";
-        }
-        $query = $query.' ORDER BY user_name ASC';
         $GLOBALS['log']->debug("get_user_array query: $query");
         $result = $db->query($query, true, "Error filling in user array: ");
-
-        if ($add_blank==true) {
-            // Add in a blank row
-            $temp_result[''] = '';
-        }
 
 		// Get the id and the name.
 		while($row = $db->fetchByAssoc($result)) {
@@ -875,6 +887,10 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
         if ($from_cache) {
             set_register_value('user_array', $key_name, $temp_result);
         }
+    }
+
+    if ($add_blank) {
+        $user_array[''] = '';
     }
 
     return $user_array;
@@ -3509,18 +3525,20 @@ function display_stack_trace($textOnly=false)
 
 function StackTraceErrorHandler($errno, $errstr, $errfile,$errline, $errcontext)
 {
+    // prevent handling errors suppressed by @-operator
+    // @link http://php.net/set_error_handler#example-470
+    if (!($errno & error_reporting())) {
+        return;
+    }
+
     $error_msg = " $errstr occurred in <b>$errfile</b> on line $errline [" . date("Y-m-d H:i:s") . ']';
     $halt_script = true;
     switch ($errno) {
         case 2048: return; //depricated we have lots of these ignore them
         case E_USER_NOTICE:
         case E_NOTICE:
-            if ( error_reporting() & E_NOTICE ) {
-                $halt_script = false;
-                $type = 'Notice';
-            } else
-
-                return;
+            $halt_script = false;
+            $type = 'Notice';
             break;
         case E_USER_WARNING:
         case E_COMPILE_WARNING:

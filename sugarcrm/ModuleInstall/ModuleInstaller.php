@@ -545,6 +545,9 @@ class ModuleInstaller{
                 }else {
 				    $target = $this->id_name;
 				}
+
+                $path = $this->subSidecarPlaceHolders($path, $from);
+
 				$disabled_path = $path.'/'.DISABLED_PATH;
                 if (file_exists("$path/$target.php")) {
 					mkdir_recursive($disabled_path, true);
@@ -556,6 +559,57 @@ class ModuleInstaller{
 			}
 		}
 	}
+
+    /**
+     * subs /__PH_PLATFORM__/__PH_TYPE__/__PH_SUBTYPE__ in a path
+     * with sidecar properties from a target so
+     * path 'extension/__PH_PLATFORM__/__PH_TYPE__/__PH_SUBTYPE__/blah.php'
+     * with target
+     * 'extentsion/clients/base/views/blah/'
+     * returns extension/clients/base/views/blah/blah.php
+     * @param $path
+     * @param $from
+     * @return mixed
+     */
+    public function subSidecarPlaceHolders($target, $source) {
+        $outPath = $target;
+        $phIdx = strpos($target,'/__PH_PLATFORM__/__PH_TYPE__/__PH_SUBTYPE__');
+        if ($phIdx !== -1) {
+            $ph2pathKey = array(
+                '__PH_PLATFORM__' => 'platform',
+                '__PH_TYPE__' => 'type',
+                '__PH_SUBTYPE__' => 'subtype',
+            );
+            $fromPathInfo = $this->getSidecarFileInfo($source);
+            foreach($ph2pathKey as $ph => $pathKey) {
+                if (isset($fromPathInfo[$pathKey])) {
+                    $target = str_replace($ph, $fromPathInfo[$pathKey], $target);
+                }
+            }
+        }
+        return $outPath;
+    }
+
+    /**
+     * gets path information about a sidecar file path for example will break
+     * extension/clients/base/views/test/test.php
+     * into array('platform' => 'base', 'type' =>'views', 'subtype' =>'test')
+     * @param $path
+     * @return array
+     */
+    public function getSidecarFileInfo($path = '') {
+        $info = array();
+        $matches = array();
+
+        $regExPattern ='/\/clients\/(.+)\/(.+)\/(.+)\/(.*)/i';
+        if (preg_match($regExPattern, $path, $matches) && count($matches) ===4) {
+            $info['platform'] = $matches[1];
+            $info['type'] = $matches[2];
+            $info['subtype'] = $matches[3];
+        }
+
+        return $info;
+    }
 
 	/**
 	 * Enable generic extension
@@ -1811,17 +1865,14 @@ class ModuleInstaller{
 		$this->silent=$silent;
 		global $sugar_config;
 
-		//Check for new module extensions
-		$this->rebuild_modules();
-
 		$this->rebuild_languages($sugar_config['languages']);
 		$this->rebuild_extensions();
 		$this->rebuild_dashletcontainers();
+		// This will be a time consuming process, particularly if $modules is empty
 		$this->rebuild_relationships($modules);
 		$this->rebuild_tabledictionary();
 		$this->reset_opcodes();
 		sugar_cache_reset();
-		$this->reset_file_cache();
 	}
 
 	function reset_file_cache()
@@ -2305,6 +2356,7 @@ private function dir_file_count($path){
 		                        'enable_extensions',
                                 'enable_global_search',
 		                        'enable_manifest_logichooks',
+                                'install_layoutfields',
 								'reset_opcodes',
 		                        'reset_file_cache',
 		);
@@ -2376,6 +2428,7 @@ private function dir_file_count($path){
 		                    'disable_extensions',
                             'disable_global_search',
 							'disable_manifest_logichooks',
+                            'uninstall_layoutfields',
 							'reset_opcodes',
 		                    'reset_file_cache',
 		            );
@@ -2768,6 +2821,9 @@ private function dir_file_count($path){
         if (isset($this->installdefs['copy'])) {
             // Add in Sidecar upgrader after old style metadata changes are brought over
             $sidecarUpgrader = new SidecarMetaDataUpgrader();
+
+            // Let the upgrader know that this is from installation
+            $sidecarUpgrader->fromInstallation = true;
 
             // Turn off writing to log
             $sidecarUpgrader->toggleWriteToLog();

@@ -90,11 +90,11 @@ class EmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
 	        array("\"John Doe\" <test@sugarcrm.com>", "John Doe", "test@sugarcrm.com"),
 	        array("\"John Doe\" <test@sugarcrm.com>", "John Doe", "test@sugarcrm.com"),
 	        array("\"John Doe (<doe>)\" <test@sugarcrm.com>", "John Doe (doe)", "test@sugarcrm.com"),
+	        array("Test <test@test>", "Test", "test@test"),
 	        // bad ones
 	        array("\"John Doe (<doe>)\"", "John Doe (doe)", ""),
 	        array("John Doe <vlha>", "John Doe vlha", ""),
 	        array("<script>alert(1)</script>", "scriptalert(1)/script", ""),
-	        array("Test <test@test>", "Test test@test", ""),
 	        );
 	}
 

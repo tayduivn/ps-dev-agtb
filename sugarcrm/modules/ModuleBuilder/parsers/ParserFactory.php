@@ -113,7 +113,7 @@ class ParserFactory
                     //BEGIN SUGARCRM flav=ent ONLY
                     if ($lView == MB_PORTALRECORDVIEW || $lView == MB_PORTALDETAILVIEW || $lView == MB_PORTALEDITVIEW) {
                         $client = MB_PORTAL;
-                    }
+                }
                     //END SUGARCRM flav=ent ONLY
                 }
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php';
@@ -129,7 +129,7 @@ class ParserFactory
                     //BEGIN SUGARCRM flav=ent ONLY
                     if ($lView == MB_PORTALLISTVIEW) {
                         $client = MB_PORTAL;
-                    }
+                }
                     //END SUGARCRM flav=ent ONLY
                 }
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
@@ -168,10 +168,15 @@ class ParserFactory
                         return new SidecarListLayoutMetaDataParser (MB_SIDECARLISTVIEW, $moduleName, $packageName, 'base' ) ;
                     }
                 } else {
-                    require_once 'modules/ModuleBuilder/parsers/views/SidecarSubpanelLayoutMetaDataParser.php' ;
-                    // $client can be empty for all other Parsers, however SidecarSubpanelLayout needs it set, therefore if its blank its base
-                    $client = empty($client) ? 'base' : $client;
-                    return new SidecarSubpanelLayoutMetaDataParser($subpanelName, $moduleName, $packageName, $client);
+                    if (isModuleBWC($moduleName)) {
+                        require_once 'modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php' ;
+                        return new SubpanelMetaDataParser($subpanelName, $moduleName, $packageName);
+                    } else {
+                        // $client can be empty for all other Parsers, however SidecarSubpanelLayout needs it set, therefore if its blank its base
+                        $client = empty($client) ? 'base' : $client;
+                        require_once 'modules/ModuleBuilder/parsers/views/SidecarSubpanelLayoutMetaDataParser.php' ;
+                        return new SidecarSubpanelLayoutMetaDataParser($subpanelName, $moduleName, $packageName, $client);
+                    }
                 }
             case MB_DASHLET :
             case MB_DASHLETSEARCH :

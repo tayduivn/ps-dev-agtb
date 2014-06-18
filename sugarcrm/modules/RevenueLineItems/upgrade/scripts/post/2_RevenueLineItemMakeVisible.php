@@ -25,8 +25,11 @@ class SugarUpgradeRevenueLineItemMakeVisible extends UpgradeScript
             return;
         }
 
+        // this should be ran when upgrading from 6.x to 7.x and
         // this should only be ran when upgrading from pro or corp
-        if (!in_array(strtolower($this->from_flavor), array('pro', 'corp'))) {
+        if (!(version_compare($this->from_version, '7', '<') &&
+                version_compare($this->to_version, '7', '>=')) &&
+            !in_array(strtolower($this->from_flavor), array('pro', 'corp'))) {
             return;
         }
         

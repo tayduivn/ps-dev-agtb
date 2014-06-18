@@ -173,7 +173,7 @@ $dictionary['WorkFlowTriggerShell'] = array('table' => 'workflow_triggershells'
     'source'=>'non-db',
   ), 
 ),
-'acls' => array('SugarACLAdminOnly' => true),
+'acls' => array('SugarACLDeveloperOrAdmin' => true),
 'indices' => array (
        array('name' =>'triggershell_k', 'type' =>'primary', 'fields'=>array('id')),
 

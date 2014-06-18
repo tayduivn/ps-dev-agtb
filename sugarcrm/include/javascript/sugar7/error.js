@@ -118,14 +118,23 @@
     };
     
     /**
-     * 404 Not Found handler. 
+     * 404 Not Found handler.
+     * If a model triggered the 404 but the model did not belong to the master layout,
+     * this function will not handle that error.
+     * Those errors should be handled by listeners on the model/collection and the views that
+     * requested the data.
      */
-    app.error.handleNotFoundError = function(error) {
-        var layout = app.controller.layout;
+    app.error.handleNotFoundError = function(error, model, options) {
+        var layout = app.controller.layout || {};
+        if ((options && options.context != layout.context)
+            || (model && layout.context && layout.context.get("model") && layout.context.get("model") != model)
+        ) {
+            return;
+        }
         if (!layout ||
             !_.isObject(layout.error) ||
             !_.isFunction(layout.error.handleNotFoundError) ||
-            layout.error.handleNotFoundError(error) !== false
+            layout.error.handleNotFoundError(error, model, options) !== false
         ) {
             showErrorPage("404");
         }
@@ -155,6 +164,10 @@
             !_.isFunction(layout.error.handleValidationError) ||
             layout.error.handleValidationError(error) !== false
         ) {
+            //Ignore errors triggered from models, they should be handled by the views.
+            if (error instanceof app.data.beanModel) {
+                return;
+            }
             alertUser("validation_error", "LBL_PRECONDITION_MISSING_TITLE", error.message || "LBL_PRECONDITION_MISSING");
             error.handled = true;
         }

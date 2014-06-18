@@ -60,6 +60,27 @@
 
     /**
      * {@inheritDoc}
+     *
+     * Bypass `render` when action is `massupdate` or `edit`.
+     */
+    bindDataChange: function() {
+        if (!this.model) {
+            return;
+        }
+
+        this.model.on('change:' + this.name, function(model, value) {
+            if (this.action === 'massupdate') {
+                this.$(this.select2fieldTag).val(this.format(value) ? '1' : '0');
+            } else if (this.action === 'edit') {
+                this.$(this.fieldTag).prop('checked', this.format(value));
+            } else {
+                this.render();
+            }
+        }, this);
+    },
+
+    /**
+     * {@inheritDoc}
      */
     unbindDom: function() {
         this.$(this.select2fieldTag).off();

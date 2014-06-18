@@ -602,18 +602,22 @@ class MailApi extends ModuleApi
      * @param $api
      * @param $args
      * @return array
+     * @throws SugarApiException
      */
     public function validateEmailAddresses($api, $args)
     {
-        unset($args["__sugar_url"]);
         $validatedEmailAddresses = array();
-        $emailRecipientsService = $this->getEmailRecipientsService();
-        $emailAddresses = $args;
-
-        foreach ($emailAddresses as $emailAddress) {
-            $validatedEmailAddresses[$emailAddress] = $emailRecipientsService->isValidEmailAddress($emailAddress);
+        unset($args["__sugar_url"]);
+        if (!is_array($args)) {
+            throw new SugarApiExceptionInvalidParameter('Invalid argument: cannot validate');
         }
-
+        if (empty($args)) {
+            throw new SugarApiExceptionMissingParameter('Missing email address(es) to validate');
+        }
+        $emailAddresses = $args;
+        foreach ($emailAddresses as $emailAddress) {
+            $validatedEmailAddresses[$emailAddress] = SugarEmailAddress::isValidEmail($emailAddress);
+        }
         return $validatedEmailAddresses;
     }
 

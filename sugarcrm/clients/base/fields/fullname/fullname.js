@@ -52,7 +52,12 @@
         	return fields;
         }, [], this);
         options.def.fields = app.metadata._patchFields(module, meta, options.def.fields);
-		this._super('initialize',[options]);
+
+        this._super('initialize',[options]);
+
+        if (!app.acl.hasAccessToModel('view', this.model) && this.def) {
+            this.def.link = false;
+        }
     },
 
     _loadTemplate: function() {

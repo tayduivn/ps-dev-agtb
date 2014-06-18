@@ -89,6 +89,27 @@ class ModuleBuilderController extends SugarController
     public $metadataApiCacheCleared = false;
 
     /**
+     * Handles processing before the execute process
+     */
+    public function preProcess()
+    {
+        // Turn on the metadata manager queue but turn off the queue runner until
+        // after all processing is done
+        MetaDataManager::enableCacheRefreshQueue();
+        MetaDataManager::setRunQueueOnCallOff();
+    }
+
+    /**
+     * For ModuleBuilder postProcess handles running the metadata cache queue
+     */
+    public function postProcess()
+    {
+        // Turns the queue runner back on and calls it to let it do its thing
+        MetaDataManager::setRunQueueOnCallOn();
+        MetaDataManager::runCacheRefreshQueue();
+    }
+
+    /**
      * Used by the _getModuleTitleParams() method calls in ModuleBuilder views to get the correct string
      * for the section you are in
      *
@@ -375,6 +396,8 @@ class ModuleBuilderController extends SugarController
         // Clear the language cache to make sure the view picks up the latest
         $cache_key = LanguageManager::getLanguageCacheKey($_REQUEST['view_module'], $_REQUEST['selected_lang']);
         sugar_cache_clear($cache_key);
+        MetaDataManager::refreshSectionCache(MetaDataManager::MM_LABELS);
+        MetaDataManager::refreshSectionCache(MetaDataManager::MM_ORDEREDLABELS);
 
         if (isset ($_REQUEST ['view_package'])) { //MODULE BUILDER
             $this->view = 'modulelabels';
@@ -402,6 +425,8 @@ class ModuleBuilderController extends SugarController
                 sugar_cache_clear($cache_key);
 
             }
+            MetaDataManager::refreshSectionCache(MetaDataManager::MM_LABELS);
+            MetaDataManager::refreshSectionCache(MetaDataManager::MM_ORDEREDLABELS);
         }
         $this->view = 'modulefields';
     }
@@ -458,25 +483,33 @@ class ModuleBuilderController extends SugarController
                 $repair = new RepairAndClear();
                 $class_name = $GLOBALS ['beanList'] [$module];
 
-                $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls', 'clearSearchCache'), array($class_name), true, false);
-                if ($module == 'Users') {
-                    $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls', 'clearSearchCache'), array('Employee'), true, false);
+                // Set up an array for repairing modules
+                $repairModules = array($class_name);
+                if ($module === 'Users') {
+                    $repairModules[] = 'Employee';
                 }
+                $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls', 'clearSearchCache'), $repairModules, true, false);
                 //Ensure the vardefs are up to date for this module before we rebuild the cache now.
                 VardefManager::loadVardef($module, $obj, true);
 
                 //BEGIN SUGARCRM flav=pro ONLY
                 //Make sure to clear the vardef for related modules as well.
                 $relatedMods = array();
-                if (!empty($field->dependency))
+                if (!empty($field->dependency)) {
                     $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->dependency));
-                if (!empty($field->formula))
+                }
+                if (!empty($field->formula)) {
                     $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->formula));
+                }
 
+                // But only if there are related modules to work on, otherwise 
+                // we end up handling these processes for ALL THE MODULES
+                if ($relatedMods) {
+                    $repair->repairAndClearAll(array('clearVardefs', 'clearTpls', 'rebuildExtensions'), array_values($relatedMods), true, false);
 
-                $repair->repairAndClearAll(array('clearVardefs', 'clearTpls', 'rebuildExtensions'), array_values($relatedMods), true, false);
-                foreach ($relatedMods as $mName => $oName) {
-                    VardefManager::loadVardef($mName, $oName, true);
+                    foreach ($relatedMods as $mName => $oName) {
+                        VardefManager::loadVardef($mName, $oName, true);
+                    }
                 }
                 //END SUGARCRM flav=pro ONLY
                 //#28707 ,clear all the js files in cache
@@ -672,6 +705,8 @@ class ModuleBuilderController extends SugarController
     {
         $parser = new ParserDropDown ();
         $parser->saveDropDown($_REQUEST);
+        MetaDataManager::refreshSectionCache(MetaDataManager::MM_LABELS);
+        MetaDataManager::refreshSectionCache(MetaDataManager::MM_ORDEREDLABELS);
         $this->view = 'dropdowns';
     }
 
@@ -899,12 +934,13 @@ class ModuleBuilderController extends SugarController
             $oldSubpanelParser = new SubpanelMetaDataParser($subpanelName, $_REQUEST ['view_module'], $packageName);
             $oldSubpanelParser->handleSave();
             unset($oldSubpanelParser);
+        }
+        $parser->handleSave();
+        if (empty($packageName) && !empty($subpanelName)) {
             $rr = new RepairAndClear();
             $rr->show_output = false;
             $rr->rebuildExtensions();
         }
-        $parser->handleSave();
-
         // clear the cache for the linked module and requested module
         MetaDataManager::refreshModulesCache($parser->getAffectedModules());
     }

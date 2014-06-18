@@ -27,6 +27,7 @@ class SugarUpgradeFixRelateFieldsFilterMetadata extends UpgradeScript
 
         $this->cleanUpField('Cases', array('account_name'));
         $this->cleanUpField('Contacts', array('account_name'));
+        $this->cleanUpField('Notes', array('contact_name'));
         $this->cleanUpField('Opportunities', array('account_name'));
         $this->cleanUpField('Quotes', array('account_name'));
         $this->cleanUpField(
@@ -38,6 +39,7 @@ class SugarUpgradeFixRelateFieldsFilterMetadata extends UpgradeScript
                 'category_name'
             )
         );
+        $this->cleanUpField('Tasks', array('contact_name'));
     }
 
     /**

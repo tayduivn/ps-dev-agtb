@@ -19,10 +19,9 @@ describe("ContactsBean", function() {
     });
 
     it("should not extend bean class if Contacts bean does not exist (gonna create infinite loop)", function(){
-        var stub = sinon.stub(app.metadata, 'getModule', function() { return; });
+        app.data.resetModel();
         app.events.trigger('app:sync:complete');
         expect(app.data.getBeanClass("Contacts").prototype._doValidatePortalName).toBeUndefined();
-        stub.restore();
     });
 
     describe("isValid", function(){

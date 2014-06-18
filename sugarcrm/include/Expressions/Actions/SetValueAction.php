@@ -76,9 +76,6 @@ class SetValueAction extends AbstractAction{
 		return  "new SUGAR.forms.SetValueAction('{$this->targetField}','" . addslashes($this->expression) . "')";
 	}
 
-
-
-
 	/**
 	 * Applies the Action to the target.
 	 *

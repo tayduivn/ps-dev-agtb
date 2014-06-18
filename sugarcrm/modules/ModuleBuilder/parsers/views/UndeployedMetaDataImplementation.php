@@ -71,7 +71,11 @@ class UndeployedMetaDataImplementation extends AbstractMetaDataImplementation im
         if(isset($GLOBALS['current_language']) &&!empty($GLOBALS['current_language'])) {
             $selected_lang = $GLOBALS['current_language'];
         }
-        $GLOBALS [ 'mod_strings' ] = array_merge ( $GLOBALS [ 'mod_strings' ], $module->getModStrings ($selected_lang) ) ;
+
+        // Set up global mod strings so that if they are not set up yet - like in
+        // upgrades - calling on the global var will not throw warnings
+        $globalModStrings = empty($GLOBALS['mod_strings']) ? array() : $GLOBALS['mod_strings'];
+        $GLOBALS['mod_strings'] = array_merge($globalModStrings, $module->getModStrings($selected_lang));
 
         //Load relationshhip based fields and labels
         $moduleRels = $pak->getRelationshipsForModule($moduleName);

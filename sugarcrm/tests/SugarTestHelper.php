@@ -149,6 +149,12 @@ require_once 'SugarTestSugarEmailAddressUtilities.php';
 require_once 'SugarTestCaseUtilities.php';
 require_once 'SugarTestDatabaseMock.php';
 
+// custom helper support
+$customHelperIncludeFile = 'custom/tests/SugarTestHelperInclude.php';
+if (file_exists($customHelperIncludeFile)) {
+    require_once $customHelperIncludeFile;
+}
+
 $GLOBALS['db']->commit();
 
 define('CHECK_FILE_MAPS', false);

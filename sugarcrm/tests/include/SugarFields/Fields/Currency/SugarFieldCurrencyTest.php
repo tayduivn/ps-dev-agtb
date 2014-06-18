@@ -22,6 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 require_once('include/SugarFields/SugarFieldHandler.php');
+require_once('modules/Import/ImportFieldSanitize.php');
 
 class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -121,6 +122,71 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $value = $field->getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col);
         $this->assertEquals(self::$currency3->symbol . '4.44', $value);
 
+    }
+
+    public function importSanitizeProvider()
+    {
+        return array(
+            array('$123.123,00', '123123.00', '.', ','),
+            array('$123,123.00', '123123.00', ',', '.'),
+            array('$123A123z00', '123123.00', 'A', 'z'),
+        );
+    }
+
+    /**
+     * @dataProvider importSanitizeProvider
+     */
+    public function testImportSanitize($value, $expected, $group, $decimal)
+    {
+        $currency = SugarTestCurrencyUtilities::createCurrency('My Test Currency', '$', 'MTC', 1);
+        $settings = new ImportFieldSanitize();
+        $settings->currency_symbol = '$';
+        $settings->currency_id = $currency->id;
+        $settings->dec_sep = $decimal;
+        $settings->num_grp_sep = $group;
+
+        $vardef = array();
+
+        /* @var $focus SugarBean */
+        $focus = $this->getMock('Opportunity', array('save'));
+
+        /* @var $field SugarFieldCurrency */
+        $field = SugarFieldHandler::getSugarField('currency');
+        $return = $field->importSanitize($value, $vardef, $focus, $settings);
+
+        $this->assertEquals($expected, $return);
+
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
+    }
+
+    public function testImportSanitizeDoesNotThrowSugarMathException()
+    {
+        try {
+            $vardef = array(
+                'convertToBase' => true,
+            );
+
+            $currency = SugarTestCurrencyUtilities::createCurrency('My Test Currency', '$', 'MTC', 1);
+
+            $settings = new ImportFieldSanitize();
+            $settings->currency_symbol = '$';
+            $settings->currency_id = $currency->id;
+            $settings->dec_sep = '.';
+            $settings->num_grp_sep = ',';
+
+            /* @var $focus SugarBean */
+            $focus = $this->getMock('Opportunity', array('save'));
+
+            /* @var $field SugarFieldCurrency */
+            $field = SugarFieldHandler::getSugarField('currency');
+            $return = $field->importSanitize('$123,123.00A', $vardef, $focus, $settings);
+
+            $this->assertFalse($return);
+        } catch (SugarMath_Exception $sme) {
+            $this->fail($sme->getMessage());
+        }
+
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
     }
 
     /**

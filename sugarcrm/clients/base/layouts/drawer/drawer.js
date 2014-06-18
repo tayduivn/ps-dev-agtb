@@ -68,7 +68,7 @@
             layoutDef.context.forceNew = true;
         }
 
-        if (layoutDef.context.parent instanceof app.Context) {
+        if (!(layoutDef.context instanceof app.Context) && layoutDef.context.parent instanceof app.Context) {
             parentContext = layoutDef.context.parent;
             // Remove the `parent` property to not mess up with the context
             // attributes.

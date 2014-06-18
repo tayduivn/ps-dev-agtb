@@ -88,14 +88,13 @@ class RecentApi extends SugarApi
      */
     private function filterModules(array $modules, $acl = 'list')
     {
-        foreach ($modules as $key => $module) {
-            $seed = BeanFactory::newBean($module);
-            if (!is_subclass_of($seed, 'SugarBean') || !$seed->ACLAccess($acl) || !in_array($module, $GLOBALS['moduleList'])) {
-                unset($modules[$key]);
+        return array_filter($modules, function ($module) use ($acl) {
+            if (in_array($module, $GLOBALS['moduleList']) || $module === 'Employees') {
+                $seed = BeanFactory::newBean($module);
+                return $seed && $seed->ACLAccess($acl);
             }
-        }
-
-        return $modules;
+            return false;
+        });
     }
 
     /**

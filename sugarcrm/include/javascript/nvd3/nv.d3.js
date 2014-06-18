@@ -188,45 +188,50 @@ d3.scale.quantile = function() {
     container.appendChild(arrow);
     body.appendChild(container);
 
-    nvtooltip.position(container,pos,gravity,dist);
+    nvtooltip.position(container, pos, gravity, dist);
     container.style.opacity = 1;
 
     return container;
   };
 
   nvtooltip.cleanup = function() {
+      // Find the tooltips, mark them for removal by this class
+      // (so others cleanups won't find it)
+      var tooltips = document.getElementsByClassName('tooltip'),
+          purging = [],
+          i = 0;
 
-      // Find the tooltips, mark them for removal by this class (so others cleanups won't find it)
-      var tooltips = document.getElementsByClassName('tooltip');
-      var purging = [];
-      while (tooltips.length) {
-        purging.push(tooltips[0]);
-        tooltips[0].style.transitionDelay = '0 !important';
-        tooltips[0].style.opacity = 0;
-        tooltips[0].className = 'nvtooltip-pending-removal out';
+      while (i < tooltips.length) {
+          if (tooltips[i].className.indexOf('xy-tooltip') !== -1) {
+              purging.push(tooltips[i]);
+              tooltips[i].style.transitionDelay = '0 !important';
+              tooltips[i].style.opacity = 0;
+              tooltips[i].className = 'nvtooltip-pending-removal out';
+          }
+          i += 1;
       }
 
       setTimeout(function() {
-
+          var removeMe;
           while (purging.length) {
-             var removeMe = purging.pop();
+              removeMe = purging.pop();
               removeMe.parentNode.removeChild(removeMe);
           }
       }, 500);
   };
 
-  nvtooltip.position = function(container,pos,gravity,dist) {
+  nvtooltip.position = function(container, pos, gravity, dist) {
     var body = document.getElementsByTagName('body')[0];
     gravity = gravity || 's';
     dist = dist || 10;
 
-    var height = parseInt(container.offsetHeight,10),
-        width = parseInt(container.offsetWidth,10),
+    var height = parseInt(container.offsetHeight, 10),
+        width = parseInt(container.offsetWidth, 10),
         windowWidth = nv.utils.windowSize().width,
         windowHeight = nv.utils.windowSize().height,
         scrollTop = body.scrollTop,
         scrollLeft = body.scrollLeft,
-        class_name = container.className.replace(/ top| right| bottom| left/g,''),
+        class_name = container.className.replace(/ top| right| bottom| left/g, ''),
         left, top;
 
     function alignCenter() {
@@ -715,7 +720,8 @@ nv.models.axis = function() {
           maxTickHeight = 0;
       var tickText = g.selectAll('g.tick').select('text');
       tickText.each(function(d, i) {
-        var size = {w: parseInt(this.offsetWidth, 10), h: parseInt(this.offsetHeight / 1.15, 10)};
+        var bbox = this.getBoundingClientRect(),
+            size = {w: parseInt(bbox.width, 10), h: parseInt(bbox.height / 1.15, 10)};
         if (size.w > maxTickWidth) {
           maxTickWidth = size.w;
         }
@@ -780,7 +786,7 @@ nv.models.axis = function() {
                     rows = 1,
                     maxWidth = axis.scale().rangeBand();
 
-                if (this.offsetWidth > maxWidth) {
+                if (this.getBoundingClientRect().width > maxWidth) {
                   this.textContent = '';
 
                   do {
@@ -799,7 +805,7 @@ nv.models.axis = function() {
                     while (i < l) {
                       textString = textSpan.text();
                       textSpan.text(textString + ' ' + textArray[i]);
-                      if (this.offsetWidth <= maxWidth) {
+                      if (this.getBoundingClientRect().width <= maxWidth) {
                         i += 1;
                       } else {
                         textSpan.text(textString);
@@ -929,8 +935,8 @@ nv.models.axis = function() {
 
         axisLabel.each(function(d, i) {
           thickness += orientation === 'horizontal' ?
-            parseInt(this.offsetHeight / 1.15, 10) :
-            parseInt(this.offsetWidth / 1.15, 10);
+            parseInt(this.getBoundingClientRect().height / 1.15, 10) :
+            parseInt(this.getBoundingClientRect().width / 1.15, 10);
         });
       }
 
@@ -987,10 +993,10 @@ nv.models.axis = function() {
               .each(function(d, i) {
                 try {
                   if (i) { // i== 1, max position
-                    maxMinRange.push(scale(d) - this.offsetWidth - 4);  //assuming the max and min labels are as wide as the next tick (with an extra 4 pixels just in case)
+                    maxMinRange.push(scale(d) - this.getBoundingClientRect().width - 4);  //assuming the max and min labels are as wide as the next tick (with an extra 4 pixels just in case)
                   }
                   else { // i==0, min position
-                    maxMinRange.push(scale(d) + this.offsetWidth + 4);
+                    maxMinRange.push(scale(d) + this.getBoundingClientRect().width + 4);
                   }
                 } catch (err) {
                   if (i) { // i== 1, max position
@@ -1404,7 +1410,7 @@ nv.models.legend = function () {
         g .style('display', 'inline');
 
         series.select('text').each(function (d, i) {
-          var textWidth = d3.select(this).node().offsetWidth;
+          var textWidth = d3.select(this).node().getBBox().width;
           keyWidths.push(Math.max(Math.floor(textWidth) + shift, 50));
         });
 
@@ -1415,7 +1421,7 @@ nv.models.legend = function () {
 
       legend.getLineHeight = function () {
         g .style('display', 'inline');
-        var lineHeightBB = Math.floor(series.select('text').node().offsetHeight);
+        var lineHeightBB = Math.floor(series.select('text').node().getBBox().height);
         return lineHeightBB;
       };
 
@@ -2764,7 +2770,7 @@ nv.models.bubbleChart = function () {
               .attr('stroke', 'none')
               .attr('fill', 'black');
 
-          innerMargin.top += parseInt(g.select('.nv-title').node().offsetHeight / 1.15, 10) +
+          innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
             parseInt(g.select('.nv-title').style('margin-top'), 10) +
             parseInt(g.select('.nv-title').style('margin-bottom'), 10);
         }
@@ -3411,7 +3417,7 @@ nv.models.funnel = function() {
         ;
 
       // lblValue.selectAll('text').each(function(d,i){
-      //       var width = this.offsetWidth + 20;
+      //       var width = this.getBBox().width + 20;
       //       if(width > labelBoxWidth) {
       //         labelBoxWidth = width;
       //       }
@@ -3786,7 +3792,7 @@ nv.models.funnelChart = function () {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().offsetHeight / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
       }
@@ -4344,14 +4350,14 @@ nv.models.gauge = function() {
             .style('font-size', prop(0.7)+'em')
           ;
 
-        var textBox = g.select('.nv-odomText').node();
+        var bbox = g.select('.nv-odomText').node().getBBox();
 
         g.select('.nv-odometer')
           .insert('path','.nv-odomText')
           .attr('class', 'nv-odom nv-odomBox')
           .attr("d",
             nv.utils.roundedRectangle(
-              -bbox.width/2, -bbox.offsetHeight+prop(1.5), bbox.offsetWidth+prop(4), bbox.offsetHeight+prop(2), prop(2)
+              -bbox.width/2, -bbox.height+prop(1.5), bbox.width+prop(4), bbox.height+prop(2), prop(2)
             )
           )
           .attr('fill', '#eeffff')
@@ -4675,7 +4681,7 @@ nv.models.gaugeChart = function () {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().offsetHeight / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
       }
@@ -5395,7 +5401,7 @@ nv.models.lineChart = function () {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().offsetHeight / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
       }
@@ -7167,7 +7173,7 @@ nv.models.multiBarChart = function () {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().offsetHeight / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
       }
@@ -7753,7 +7759,7 @@ nv.models.multiBarHorizontalChart = function () {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().offsetHeight / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
       }
@@ -8454,7 +8460,7 @@ nv.models.paretoChart = function () {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().offsetHeight / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBoundingClientRect().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
       }
@@ -8621,7 +8627,7 @@ nv.models.paretoChart = function () {
           .attr('text-anchor', 'end')
           .attr('transform', 'translate(' + -yAxis.tickPadding() + ',' + y(quotaValue) + ')');
 
-        tickTextHeight = Math.round(parseInt(g.select('text.nv-quotaValue').node().offsetHeight, 10) / 1.15);
+        tickTextHeight = Math.round(parseInt(g.select('text.nv-quotaValue').node().getBoundingClientRect().height, 10) / 1.15);
         //check if tick lines overlap quota values, if so, hide the values that overlap
         yAxisWrap.selectAll('g.tick')
           .each(function(d, i) {
@@ -8670,7 +8676,7 @@ nv.models.paretoChart = function () {
           .attr('text-anchor', 'end')
           .attr('transform', 'translate(' + -yAxis.tickPadding() + ',' + y(targetQuotaValue) + ')');
 
-        tickTextHeight = Math.round(parseInt(g.select('text.nv-targetQuotaValue').node().offsetHeight, 10) / 1.15);
+        tickTextHeight = Math.round(parseInt(g.select('text.nv-targetQuotaValue').node().getBoundingClientRect().height, 10) / 1.15);
         //check if tick lines overlap quota values, if so, hide the values that overlap
         yAxisWrap.selectAll('g.tick')
           .each(function(d, i) {
@@ -9320,12 +9326,12 @@ nv.models.pie = function() {
                 return (d.value && percent > labelThreshold) ? getX(d.data) : '';
               });
 
-          var textBox = slice.select('text').node();
-          slice.select('.nv-label rect')
-            .attr('width', textBox.offsetWidth + 10)
-            .attr('height', textBox.offsetHeight + 10)
-            .attr('transform', function() {
-              return 'translate(' + [textBox.x - 5, textBox.y - 5] + ')';
+          var textBox = slice.select('text').node().getBBox();
+          slice.select(".nv-label rect")
+            .attr("width", textBox.width + 10)
+            .attr("height", textBox.height + 10)
+            .attr("transform", function() {
+              return "translate(" + [textBox.x - 5, textBox.y - 5] + ")";
             });
         });
       }
@@ -9675,7 +9681,7 @@ nv.models.pieChart = function () {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().offsetHeight / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
       }
@@ -9725,11 +9731,6 @@ nv.models.pieChart = function () {
           .style('alignment-baseline', 'central');
         holeWrap
           .attr('transform', 'translate('+ (innerMargin.left + innerWidth / 2) + ',' + (innerMargin.top + innerHeight / 2) +')');
-
-        // console.log('getBBox', holeWrap.select('text').node().getBBox());
-        // console.log('offsetHeight', holeWrap.select('text').node().offsetHeight);
-        // console.log('offsetWidth', holeWrap.select('text').node().offsetWidth);
-        // console.log('getBoundingClientRect', holeWrap.select('text').node().getBoundingClientRect());
       }
 
       //============================================================
@@ -10986,7 +10987,7 @@ nv.models.stackedAreaChart = function () {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().offsetHeight / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
       }

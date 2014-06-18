@@ -133,7 +133,7 @@ class AbstractRelationships
         return $list ;
     }
 
-    /*
+    /**
      * Get a relationship by name
      * @param string $relationshipName  The unique name for this relationship, as returned by $relationship->getName()
      * @return AbstractRelationship or false if $relationshipName is not in this set of relationships

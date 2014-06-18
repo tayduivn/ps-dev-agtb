@@ -114,7 +114,7 @@ $vardefs= array (
   array (
     'name' => 'billing_address_street',
     'vname' => 'LBL_BILLING_ADDRESS_STREET',
-    'type' => 'textarea',
+    'type' => 'text',
     'dbType' => 'varchar',
     'len' => '150',
     'comment' => 'The street address used for billing address',
@@ -271,7 +271,7 @@ $vardefs= array (
   array (
     'name' => 'shipping_address_street',
     'vname' => 'LBL_SHIPPING_ADDRESS_STREET',
-    'type' => 'textarea',
+    'type' => 'text',
     'dbType' => 'varchar',
     'len' => 150,
     'group'=>'shipping_address',

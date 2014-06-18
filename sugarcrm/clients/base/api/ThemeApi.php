@@ -30,6 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'vendor/lessphp/lessc.inc.php';
 require_once 'include/SugarTheme/SidecarTheme.php';
+require_once 'include/api/SugarApi.php';
 
 class ThemeApi extends SugarApi
 {
@@ -120,7 +121,7 @@ class ThemeApi extends SugarApi
         $api->setHeader('Content-type', 'text/css');
         $css = $theme->previewCss($minify);
         $api->setHeader('Content-Length', strlen($css));
-        
+
         echo $css;
         return;
     }

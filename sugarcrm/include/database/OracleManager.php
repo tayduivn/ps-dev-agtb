@@ -44,6 +44,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * Contributor(s): ______________________________________..
 ********************************************************************************/
 
+//FILE SUGARCRM flav=ent ONLY
 
 /**
  * Oracle driver

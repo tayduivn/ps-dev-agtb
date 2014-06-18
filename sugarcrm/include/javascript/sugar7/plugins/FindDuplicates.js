@@ -58,7 +58,8 @@
                 endpoint: function(method, model, options, callbacks) {
                     //Dupe Check API requires POST
                     var url = app.api.buildURL(this.module, 'duplicateCheck');
-                    return app.api.call('create', url, this.dupeCheckModel.attributes, callbacks);
+                    var data = app.data.getEditableFields(this.dupeCheckModel);
+                    return app.api.call('create', url, data, callbacks);
                 }
             });
             return collection;

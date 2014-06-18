@@ -276,7 +276,7 @@ nv.models.funnel = function() {
         ;
 
       // lblValue.selectAll('text').each(function(d,i){
-      //       var width = this.offsetWidth + 20;
+      //       var width = this.getBBox().width + 20;
       //       if(width > labelBoxWidth) {
       //         labelBoxWidth = width;
       //       }

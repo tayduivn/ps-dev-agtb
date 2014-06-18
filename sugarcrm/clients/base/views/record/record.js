@@ -200,7 +200,7 @@
         // Field labels in headerpane should be hidden on view but displayed in edit and create
         _.each(this.fields, function(field) {
             var toggleLabel = _.bind(function() {
-                this.toggleLabelByField(field);
+                this.toggleLabelByField(field, this.createMode);
             }, this);
 
             field.off('render', toggleLabel);
@@ -541,8 +541,8 @@
      * @param {View.Field} field The field to toggle the label based on current
      *   action.
      */
-    toggleLabelByField: function(field) {
-        if (field.action === 'edit') {
+    toggleLabelByField: function(field, inCreate) {
+        if (field.action === 'edit' || (field.action === 'disabled' && inCreate)) {
             field.$el.closest('.record-cell')
                 .addClass('edit')
                 .find('.record-label')
@@ -930,19 +930,28 @@
         if (data.id) {
             var list = this.context.get('listCollection'),
                 model = list.get(data.id);
-            switch (data.actionType) {
-                case 'next':
-                    list.getNext(model, this.navigateModel);
-                    break;
-                case 'prev':
-                    list.getPrev(model, this.navigateModel);
-                    break;
-                default:
-                    this._disablePagination(el);
-            }
+            this._doPaginate(model, data.actionType);
         }
     },
-
+    /**
+     * paginates record view depeding on direction and model
+     * @param {Object} model
+     * @param {String} actionType
+     * @private
+     */
+    _doPaginate: function(model, actionType){
+        var list = this.context.get('listCollection');
+        switch (actionType) {
+            case 'next':
+                list.getNext(model, this.navigateModel);
+                break;
+            case 'prev':
+                list.getPrev(model, this.navigateModel);
+                break;
+            default:
+                this._disablePagination(el);
+        }
+    },
     /**
      * Callback for navigate to new model.
      *
@@ -951,7 +960,11 @@
      */
     navigateModel: function(model, actionType) {
         if (model && model.id) {
-            app.router.navigate(app.router.buildRoute(this.module, model.id), {trigger: true});
+            if (app.acl.hasAccessToModel('view', model)) {
+                app.router.navigate(app.router.buildRoute(this.module, model.id), {trigger: true});
+            } else {
+                this._doPaginate(model, actionType);
+            }
         } else {
             var el = this.$el.find('[data-action=scroll][data-action-type=' + actionType + ']');
             this._disablePagination(el);

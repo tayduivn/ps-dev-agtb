@@ -25,18 +25,13 @@ class SugarUpgradeRevenueLineItemAccountSync extends UpgradeScript
             return;
         }
 
-        // ignore ce
-        if (!$this->fromFlavor('pro')) {
-            return;
-        }
-
         $this->log('Syncing Accounts to RLI Table');
 
-        $sql = "UPDATE revenue_line_items rli " .
-               "SET account_id = (SELECT ac.account_id " . 
-                                 "FROM accounts_opportunities ac " .
-                                 "WHERE ac.opportunity_id = rli.opportunity_id) " .
-               "WHERE rli.account_id IS NULL or rli.account_id = ''";
+        $sql = "UPDATE revenue_line_items rli
+               SET account_id = (SELECT ac.account_id
+                                 FROM accounts_opportunities ac
+                                 WHERE ac.opportunity_id = rli.opportunity_id and ac.deleted = 0)
+               WHERE rli.account_id IS NULL or rli.account_id = ''";
 
         $r = $this->db->query($sql);
         $this->log('SQL Ran, Updated ' . $this->db->getAffectedRowCount($r) . ' Rows');

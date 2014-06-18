@@ -52,22 +52,6 @@ describe("Base.View.Massupdate", function() {
         expect(actual).toEqual(expected);
     });
 
-    it("should convert team_name field into a fieldset field", function() {
-        var enumField = _.find(view.meta.panels[0].fields, function(field) {
-            return field.name === 'team_name';
-        });
-
-        expect(enumField).toBeDefined();
-        expect(enumField.type).toEqual('fieldset');
-        expect(enumField.fields).not.toBeEmpty();
-        expect(enumField.fields[0]).toEqual({
-            name: 'team_name',
-            type: 'teamset',
-            massupdate: true,
-            css_class: 'span9'
-        });
-    });
-
     it("should set the default option by the first available fields", function(){
         view.setDefault();
 

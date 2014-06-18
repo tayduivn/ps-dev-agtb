@@ -230,11 +230,11 @@ class Importer
             }
             if ( isset($row[$fieldNum]) )
             {
-                $rowValue = $locale->translateCharset(strip_tags(trim($row[$fieldNum])),$this->importSource->importlocale_charset,$sugar_config['default_charset']);
+                $rowValue = strip_tags(trim($row[$fieldNum]));
             }
             else if( isset($this->sugarToExternalSourceFieldMap[$field]) && isset($row[$this->sugarToExternalSourceFieldMap[$field]]) )
             {
-                $rowValue = $locale->translateCharset(strip_tags(trim($row[$this->sugarToExternalSourceFieldMap[$field]])),$this->importSource->importlocale_charset,$sugar_config['default_charset']);
+                $rowValue = strip_tags(trim($row[$this->sugarToExternalSourceFieldMap[$field]]));
             }
             else
             {

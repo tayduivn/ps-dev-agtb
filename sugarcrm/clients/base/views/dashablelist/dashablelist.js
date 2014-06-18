@@ -135,30 +135,34 @@
 
     /**
      * Check if dashlet can be intelligent.
+     *
+     * A dashlet is considered intelligent when the data relates to the current
+     * record.
+     *
+     * @return {String} Whether or not the dashlet can be intelligent.
      */
-    checkIntelligence: function () {
-        if (app.controller.context.get('layout') !== 'record' ||
-            _. contains(this.moduleBlacklist, app.controller.context.get('module'))
-        ) {
-            this.intelligent = '0';
-        } else {
-            this.intelligent = '1';
-        }
+    checkIntelligence: function() {
+        var isIntelligent = app.controller.context.get('layout') === 'record' &&
+            !_.contains(this.moduleBlacklist, app.controller.context.get('module'));
+        this.intelligent = isIntelligent ? '1' : '0';
+        return this.intelligent;
     },
 
     /**
      * Show/hide `linked_fields` field.
      *
-     * @param {String} visible Show field if `1` or hide otherwise.
-     * @param {String} intelligent Flag displayed if dashlet is in intelligent mode.
+     * @param {String} visible '1' to show the field, '0' to hide it.
+     * @param {String} [intelligent='1'] Whether the dashlet is in intelligent
+     *   mode or not.
      */
     setLinkedFieldVisibility: function(visible, intelligent) {
         var field = this.getField('linked_fields'),
-            fieldEl = this.$('[data-name=linked_fields]');
-        intelligent = intelligent || '1';
+            fieldEl;
         if (!field) {
             return;
         }
+        intelligent = (intelligent === false || intelligent === '0') ? '0' : '1';
+        fieldEl = this.$('[data-name=linked_fields]');
         if (visible === '1' && intelligent === '1' && !_.isEmpty(field.items)) {
             fieldEl.show();
         } else {
@@ -195,14 +199,13 @@
                 this.setLinkedFieldVisibility('1', intelligent);
             }, this);
             this.on('render', function() {
-                if (_.isEmpty(this.settings.get('linked_fields'))) {
-                    this.setLinkedFieldVisibility('0');
-                }
+                var isVisible = !_.isEmpty(this.settings.get('linked_fields')) ? '1' : '0';
+                this.setLinkedFieldVisibility(isVisible, this.settings.get('intelligent'));
             }, this);
         }
         this._initializeSettings();
 
-        if (this.settings.get('intelligent') === '1') {
+        if (this.settings.get('intelligent') == '1') {
 
             var link = this.settings.get('linked_fields'),
                 model = app.controller.context.get('model'),
@@ -359,7 +362,7 @@
                 panel.fields = panel.fields.filter(function(el) {return el.name !== 'intelligent'; });
             }, this);
             this.settings.set('intelligent', '0');
-            this.model.set('intelligent', '0');
+            this.dashModel.set('intelligent', '0');
         } else {
             if (_.isUndefined(this.settings.get('intelligent'))) {
                 this.settings.set('intelligent', this._defaultSettings.intelligent);
@@ -432,14 +435,14 @@
     updateLinkedFields: function(moduleName) {
         var linked = this.getLinkedFields(moduleName),
             displayColumn = this.getField('linked_fields'),
-            intelligent = this.model.get('intelligent');
+            intelligent = this.dashModel.get('intelligent');
         if (displayColumn) {
             displayColumn.items = linked;
             this.setLinkedFieldVisibility('1', intelligent);
         } else {
             this.setLinkedFieldVisibility('0', intelligent);
         }
-        this.settings.set('linked_fields', _.keys(linked));
+        this.settings.set('linked_fields', _.keys(linked)[0]);
     },
 
     /**

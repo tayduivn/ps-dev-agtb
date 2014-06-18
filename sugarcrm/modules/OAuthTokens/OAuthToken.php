@@ -68,6 +68,9 @@ class OAuthToken extends SugarBean
         $this->token = $token;
         $this->secret = $secret;
         $this->setState(self::REQUEST);
+        if(!empty($GLOBALS['current_user']->id)) {
+            $this->addVisibilityStrategy('OwnerVisibility');
+        }
 	}
 
 	/**

@@ -1,13 +1,11 @@
 //email compose recipient select2
-.record div[data-type="recipients"].controls.btn-fit {
-  .btn {
-    top: 0;
-    right: 0;
-  }
-}
 .record div[data-name="to_addresses"].controls.btn-fit {
+  padding-right: 103px;
   .select2-container {
+    margin-bottom: 14px;
     .select2-choices {
+      max-height: 45px;
+      overflow-y: auto;
       .border-radius(@baseBorderRadius);
       &:before {
         content: attr(data-content-before);
@@ -15,6 +13,48 @@
         font-size: @baseFontSize;
         padding: 2px 1px 2px 14px;
         width: auto;
+        color: transparent;
+      }
+    }
+    .select2-search-field input {
+      padding: 0 6px;
+      position: absolute;
+      height: 22px;
+      min-height: 22px;
+    }
+  }
+  .compose-sender-options {
+    padding: 0;
+    top: 0;
+    right: 33px;
+    .btn {
+      position: relative;
+    }
+  }
+}
+.record div[data-name="cc_addresses"].controls.btn-fit,
+.record div[data-name="bcc_addresses"].controls.btn-fit {
+  .select2-container {
+    margin-bottom: 14px;
+  }
+}
+.record div[data-type="recipients"].controls.btn-fit {
+  .btn {
+    top: 0;
+    right: -36px;
+  }
+  .select2-container {
+    .select2-choices {
+      max-height: 45px;
+      overflow-y: auto;
+      .border-radius(@baseBorderRadius);
+      &:before {
+        content: attr(data-content-before);
+        float: right;
+        font-size: @baseFontSize;
+        padding: 2px 1px 2px 14px;
+        width: auto;
+        color: transparent;
       }
     }
     .select2-search-field input {
@@ -97,7 +137,6 @@
       .border-radius(4px);
     }
   }
-
   .record-cell {
     display: inline-block;
     position: relative;
@@ -110,20 +149,28 @@
       color: lighten(@gray, 12%);
       padding-bottom: 2px;
     }
-
     .normal > span {
       display: block;
     }
-
+    .normal > span.detail {
+      a,
+      button,
+      input,
+      iframe,
+      .btn {
+        position: relative;
+        z-index: 1;
+      }
+    }
+    .normal > span.edit {
+      position: relative;
+      z-index: 1;
+    }
     .ellipsis_inline {
       display: block !important;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-    a.ellipsis_inline {
-      position: relative;
-      z-index: 1;
     }
     input[type="text"],
     input[type="password"],
@@ -264,6 +311,9 @@
       .normal > span {
         white-space: nowrap;
         text-overflow: ellipsis;
+        &.edit {
+          position: static;
+        }
         .select2-container {
           position: absolute;
         }
@@ -279,6 +329,9 @@
           background: transparent;
         }
       }
+      .edit {
+        position: static;
+      }
     }
 
     //fix for multi select ui-sortable
@@ -291,6 +344,15 @@
     &[data-type="parent"] {
       .edit {
         margin-right: -14px;
+      }
+      .input-append.error {
+        .add-on.error-tooltip {
+          position: absolute;
+          top: -2px;
+          right: 24px;
+          left: auto;
+          background: transparent;
+        }
       }
     }
 

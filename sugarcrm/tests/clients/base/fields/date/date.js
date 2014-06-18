@@ -196,5 +196,34 @@ describe('Base.Field.Date', function() {
                 expect(field.model.get(field.name)).toBe('1984-01-15');
             });
         });
+
+        describe('massupdate', function() {
+            var field;
+
+            beforeEach(function() {
+                SugarTest.testMetadata.init();
+                SugarTest.loadHandlebarsTemplate('date', 'field', 'base', 'edit');
+                SugarTest.testMetadata.set();
+
+                field = SugarTest.createField('base', 'date', 'date', 'edit');
+
+                sinon.collection.stub(app.user, 'getPreference')
+                    .withArgs('datepref').returns('d/m/Y');
+            });
+
+            afterEach(function() {
+                field.dispose();
+
+                SugarTest.testMetadata.dispose();
+                Handlebars.templates = {};
+            });
+
+            it('will call _setupDatePicker', function() {
+                sinon.collection.spy(field, '_setupDatePicker');
+
+                field.render();
+                expect(field._setupDatePicker).toHaveBeenCalled();
+            });
+        });
     });
 });

@@ -527,4 +527,15 @@ describe('Base.Fields.ForecastParetoChart', function() {
         }
     );
 
+    describe("isDashletVisible()", function() {
+        it("should be false if disposed", function() {
+            field.state = "open";
+            field.preview_open = false;
+            field.collapsed = true;
+            field.setServerData({}, false);
+            field.disposed = true;
+
+            expect(field.isDashletVisible()).toBeFalsy();
+        });
+    });
 });

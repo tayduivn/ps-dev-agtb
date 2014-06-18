@@ -39,7 +39,7 @@
         this._initPlugins();
         this._super('initialize', [options]);
         this._initEvents();
-        this._initDefaultValue()
+        this._initDefaultValue();
     },
 
     /**
@@ -310,7 +310,7 @@
     _render: function() {
         this._super('_render');
 
-        if (this.action !== 'edit') {
+        if (this.action !== 'edit' && this.action !== 'massupdate') {
             return;
         }
 

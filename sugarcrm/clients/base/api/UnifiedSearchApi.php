@@ -58,6 +58,12 @@ class UnifiedSearchApi extends SugarListApi {
         }
         $options = parent::parseArguments($api, $args, $seed);
 
+        // We need to support 'deleted' same as ListApi
+        $options['deleted'] = false;
+        if (isset($args['deleted']) && (strtolower($args['deleted']) == 'true' || $args['deleted'] == '1' )) {
+            $options['deleted'] = true;
+        }
+
         $options['query'] = '';
         if ( isset($args['q']) ) {
             $options['query'] = trim($args['q']);
@@ -430,6 +436,10 @@ class UnifiedSearchApi extends SugarListApi {
             'distinct'=>'DISTINCT', // Needed until we get a query builder
             'return_beans'=>true,
             );
+
+        if (isset($options['deleted'])) {
+            $searchOptions['deleted'] = $options['deleted'];
+        }
 
         $multiModule = false;
         if ( empty($options['moduleList']) || count($options['moduleList']) == 0 || count($options['moduleList']) > 1 ) {

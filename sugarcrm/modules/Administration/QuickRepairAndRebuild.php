@@ -45,22 +45,31 @@ class RepairAndClear
     protected $actions;
     public $execute;
     protected $module_list_from_cache;
+    /**
+     * Stack of called methods that should not be repeated
+     * 
+     * @var array
+     */
+    protected $called = array();
 
     public function repairAndClearAll($selected_actions, $modules, $autoexecute=false, $show_output=true, $metadata_sections=false)
     {
         global $mod_strings;
         $this->module_list= $modules;
         $this->show_output = $show_output;
-        $this->actions = $selected_actions;
-        $this->actions[] = 'repairDatabase';
+        // Add repairDatabase to the actions stack
+        $actions = array_merge($selected_actions, array('repairDatabase'));
+
+        // Unique the action stack to prevent duplicate processing
+        $this->actions = array_unique($actions);
+
         $this->execute=$autoexecute;
 
-        //clear vardefs always..
-        // Since this is called here it should not be in the actions
+        // Clear vardefs and language cache always. Since this is called here it
+        //  should not be in the actions
         $this->clearVardefs();
-        //first  clear the language cache.
         $this->clearLanguageCache();
-        
+
         // Enable the metadata manager cache refresh to queue. This allows the
         // cache refresh processes in metadata manager to be carried out one time
         // at the end of the rebuild instead of continual processing during the
@@ -72,14 +81,19 @@ class RepairAndClear
         switch($current_action)
         {
             case 'repairDatabase':
-                if(in_array($mod_strings['LBL_ALL_MODULES'], $this->module_list))
+                if(in_array($mod_strings['LBL_ALL_MODULES'], $this->module_list)) {
                     $this->repairDatabase();
-                else
+                    // Mark this as called so it doesn't get ran again
+                    $this->called[$current_action] = true;
+                } else {
                     $this->repairDatabaseSelectModules();
+                }
                 break;
             case 'rebuildExtensions':
                 if(in_array($mod_strings['LBL_ALL_MODULES'], $this->module_list)) {
                     $this->rebuildExtensions();
+                    // Mark this as called so it doesn't get ran again
+                    $this->called[$current_action] = true;
                 } else {
                     $this->rebuildExtensions($this->module_list);
                 }
@@ -122,9 +136,7 @@ class RepairAndClear
             case 'clearAll':
                 $this->clearTpls();
                 $this->clearJsFiles();
-                $this->clearVardefs();
                 $this->clearJsLangFiles();
-                $this->clearLanguageCache();
                 $this->clearDashlets();
                 $this->clearSmarty();
                 $this->clearThemeCache();
@@ -136,7 +148,7 @@ class RepairAndClear
                 $this->clearPDFFontCache();
                 //END SUGARCRM flav=pro ONLY
                 $this->rebuildExtensions();
-                $this->rebuildFileMap();     
+                $this->rebuildFileMap();
                 $this->rebuildAuditTables();
                 $this->repairDatabase();
                 //BEGIN SUGARCRM flav=ent ONLY
@@ -145,6 +157,9 @@ class RepairAndClear
                 $this->repairMetadataAPICache($metadata_sections);
                 break;
         }
+
+        // Reset this so that things work properly after this is over
+        $this->called = array();
 
         // Run the metadata cache refresh queue. This will turn queueing off 
         // after it is run
@@ -156,6 +171,12 @@ class RepairAndClear
 
 	public function repairDatabase()
 	{
+        // Repair database may have already been called and doesn't really need 
+        // to be called a second time
+        if (isset($this->called['repairDatabase'])) {
+            return;
+        }
+
 		global $dictionary, $mod_strings;
 		if(false == $this->show_output)
 			$_REQUEST['repair_silent']='1';
@@ -249,6 +270,11 @@ class RepairAndClear
 
 	public function rebuildExtensions($modules = array())
 	{
+        // Rebuild extensions may have already been called. Don't do it again.
+        if (isset($this->called['rebuildExtensions'])) {
+            return;
+        }
+
 		global $mod_strings;
 		if($this->show_output) echo $mod_strings['LBL_QR_REBUILDEXT'];
 		global $current_user;
@@ -425,14 +451,12 @@ class RepairAndClear
     public function clearSearchCache() {
         global $mod_strings, $sugar_config;
         if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARSEARCH']}</h3>";
-        $search_dir=sugar_cached('');
-        $src_file = $search_dir . 'modules/unified_search_modules.php';
-        if(file_exists($src_file)) {
-            unlink( "$src_file" );
-        }
-
         // clear sugar_cache backend for SugarSearchEngine
         SugarSearchEngineMetadataHelper::clearCache();
+        
+        // Clear the cache file AFTER the cache clear, as it will be rebuilt by
+        // clearCache otherwise
+        UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
     }
     public function clearExternalAPICache()
 	{

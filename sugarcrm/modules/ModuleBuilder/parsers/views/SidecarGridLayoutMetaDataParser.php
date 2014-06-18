@@ -69,6 +69,16 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     );
 
     /**
+     * Gets the maximum span units for for a panel
+     * 
+     * @return int
+     */
+    public function getMaxSpan()
+    {
+        return $this->maxSpan;
+    }
+
+    /**
      * Sets the fields that are part of fieldsets. This is used when setting 
      * available fields.
      */
@@ -550,8 +560,8 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             foreach ($panel['fields'] as $field) {
 
                 // figure out the colspan of the current field
-                if (is_array($field) && !empty($field['span'])) {
-                    $colspan = floor($field['span']/$this->maxSpan*$panelColumns);
+                if (is_array($field) && ($span = $this->getFieldSpan($field)) > 0) {
+                    $colspan = floor($span / $this->maxSpan * $panelColumns);
                 } else {
                     // Simple aesthetics... make the name field a full span but
                     // only if this is the header panel
@@ -565,8 +575,8 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
                 // figure out how much space is taken up already by other fields
                 foreach($row as $rowField) {
-                    if (is_array($rowField) && !empty($rowField['span'])) {
-                        $colsTaken = $colsTaken + floor($rowField['span']/$this->maxSpan*$panelColumns);
+                    if (is_array($rowField) && ($span = $this->getFieldSpan($rowField)) > 0) {
+                        $colsTaken = $colsTaken + floor($span / $this->maxSpan * $panelColumns);
                     } else {
                         $colsTaken = $colsTaken + 1;
                     }
@@ -874,5 +884,26 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 $this->unsetAvailableField($availableFields, $field);
             }
         }
+    }
+    
+    /**
+     * Gets a field span attribute if it is set
+     * 
+     * @param array $field A field definition
+     * @return integer
+     */
+    protected function getFieldSpan(array $field)
+    {
+        // Checkout both old and new styles
+        if (!empty($field['span'])) {
+            return $field['span'];
+        }
+
+        if (!empty($field['displayParams']['colspan'])) {
+            return $field['displayParams']['colspan'];
+        }
+
+        // Return a reasonable default
+        return 0;
     }
 }

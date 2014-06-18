@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,39 +22,34 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
-require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
 
+require_once("include/Expressions/Dependency.php");
+require_once("include/Expressions/Trigger.php");
+require_once("include/Expressions/Expression/Parser/Parser.php");
+require_once("include/Expressions/Actions/PanelVisibilityAction.php");
 
-/**
- * @ticket 40068
- */
-class Bug40068Test extends Sugar_PHPUnit_Framework_TestCase
+class PanelVisibilityActionTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function providerEmailAddressRegex()
-	{
-	    return array(
-	        array('john@john.com',true),
-	        array('jo&hn@john.com',true),
-	        array('joh#n@john.com.br',true),
-	        array('&#john@john.com', true),
-	        array('atendimento-hd.@uol.com.br',true),
-	        );
-	}
-    
     /**
-     * @group bug40068
-     * @dataProvider providerEmailAddressRegex
+     * @var PanelVisibilityAction
      */
-	public function testEmailAddressRegex($email, $valid) 
+    private $action;
+
+    public function setUp()
     {
-        $sea = new SugarEmailAddress;
-        
-        if ( $valid ) {
-            $this->assertRegExp($sea->regex,$email);
-        }
-        else {
-            $this->assertNotRegExp($sea->regex,$email);
-        }     
+        $this->action = new PanelVisibilityAction(array('target' => 'a', 'value' => 'b'));
+    }
+
+    public function testGetDefinition()
+    {
+        $this->assertEquals(
+            $this->action->getDefinition(),
+            array('action' => 'SetPanelVisibility', 'params' => array('target' => 'a', 'value' => 'b'))
+        );
+    }
+
+    public function testGetJavascriptFire()
+    {
+        $this->assertEquals($this->action->getJavascriptFire(), "new SUGAR.forms.SetPanelVisibilityAction('a','b')");
     }
 }

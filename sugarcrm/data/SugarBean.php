@@ -1187,112 +1187,83 @@ class SugarBean
      */
     function createRelationshipMeta($key,$db,$tablename,$dictionary,$module_dir,$iscustom=false)
     {
+        global $beanList;
+
         //load the module dictionary if not supplied.
-        if (empty($dictionary) && !empty($module_dir))
-        {
-            if($iscustom)
-            {
+        if (empty($dictionary) && !empty($module_dir)) {
+            if ($iscustom) {
                 $filename='custom/modules/' . $module_dir . '/Ext/Vardefs/vardefs.ext.php';
-            }
-            else
-            {
-                if ($key == 'User')
-                {
+            } else {
+                if ($key == 'User') {
                     // a very special case for the Employees module
                     // this must be done because the Employees/vardefs.php does an include_once on
                     // Users/vardefs.php
                     $filename='modules/Users/vardefs.php';
-                }
-                else
-                {
+                } else {
                     $filename='modules/'. $module_dir . '/vardefs.php';
                 }
             }
 
-            if(file_exists($filename))
-            {
-                include($filename);
+            if (file_exists($filename)) {
+                include $filename;
                 // cn: bug 7679 - dictionary entries defined as $GLOBALS['name'] not found
-                if(empty($dictionary) || !empty($GLOBALS['dictionary'][$key]))
-                {
+                if (empty($dictionary) || !empty($GLOBALS['dictionary'][$key])) {
                     $dictionary = $GLOBALS['dictionary'];
                 }
-            }
-            else
-            {
+            } else {
                 $GLOBALS['log']->debug("createRelationshipMeta: no metadata file found" . $filename);
                 return;
             }
         }
 
-        if (!is_array($dictionary) or !array_key_exists($key, $dictionary))
-        {
+        if (!is_array($dictionary) or !array_key_exists($key, $dictionary)) {
             $GLOBALS['log']->fatal("createRelationshipMeta: Metadata for table ".$tablename. " does not exist");
             display_notice("meta data absent for table ".$tablename." keyed to $key ");
-        }
-        else
-        {
-            if (isset($dictionary[$key]['relationships']))
-            {
-
+        } else {
+            if (isset($dictionary[$key]['relationships'])) {
                 $RelationshipDefs = $dictionary[$key]['relationships'];
-
-                $delimiter=',';
-                global $beanList;
-                $beanList_ucase=array_change_key_case  ( $beanList ,CASE_UPPER);
-                foreach ($RelationshipDefs as $rel_name=>$rel_def)
-                {
+                $beanList_ucase = array_change_key_case($beanList, CASE_UPPER);
+                $seed = BeanFactory::getBean("Relationships");
+                $keys = array_keys($seed->field_defs);
+                foreach ($RelationshipDefs as $rel_name => $rel_def) {
                     if (isset($rel_def['lhs_module']) and !isset($beanList_ucase[strtoupper($rel_def['lhs_module'])])) {
                         $GLOBALS['log']->debug('skipping orphaned relationship record ' . $rel_name . ' lhs module is missing ' . $rel_def['lhs_module']);
                         continue;
                     }
+
                     if (isset($rel_def['rhs_module']) and !isset($beanList_ucase[strtoupper($rel_def['rhs_module'])])) {
                         $GLOBALS['log']->debug('skipping orphaned relationship record ' . $rel_name . ' rhs module is missing ' . $rel_def['rhs_module']);
                         continue;
                     }
 
-
                     //check whether relationship exists or not first.
-                    if (Relationship::exists($rel_name,$db))
-                    {
-                        $GLOBALS['log']->debug('Skipping, reltionship already exists '.$rel_name);
-                    }
-                    else
-                    {
-                        $seed = BeanFactory::getBean("Relationships");
-                        $keys = array_keys($seed->field_defs);
+                    if (Relationship::exists($rel_name, $db)) {
+                        $GLOBALS['log']->debug('Skipping, relationship already exists '.$rel_name);
+                    } else {
                         $toInsert = array();
-                        foreach($keys as $key)
-                        {
-                            if ($key == "id")
-                            {
+                        foreach($keys as $key) {
+                            if ($key == "id") {
                                 $toInsert[$key] = create_guid();
-                            }
-                            else if ($key == "relationship_name")
-                            {
+                            } else if ($key == "relationship_name") {
                                 $toInsert[$key] = $rel_name;
-                            }
-                            else if (isset($rel_def[$key]))
-                            {
+                            } else if (isset($rel_def[$key])) {
                                 $toInsert[$key] = $rel_def[$key];
                             }
                             //todo specify defaults if meta not defined.
                         }
 
-
                         $column_list = implode(",", array_keys($toInsert));
                         $value_list = "'" . implode("','", array_values($toInsert)) . "'";
 
-                        //create the record. todo add error check.
-                        $insert_string = "INSERT into relationships (" .$column_list. ") values (".$value_list.")";
+                        // Create the record.
+                        $insert_string = "INSERT into relationships 
+                                          ($column_list) values 
+                                          ($value_list)";
                         $db->query($insert_string, true);
                     }
                 }
-            }
-            else
-            {
-                //todo
-                //log informational message stating no relationships meta was set for this bean.
+            } else {
+                $GLOBALS['log']->debug("createRelationshipMeta: No relationship metadata set for $module_dir");
             }
         }
     }

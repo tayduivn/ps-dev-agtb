@@ -93,10 +93,15 @@ function upgrade_custom_relationships($modules = array())
 						$layout_defs = array($module => array("subpanel_setup" => array()));
 						$filePath = "custom/Extension/modules/$module/Ext/Layoutdefs/$file";
 						include($filePath);
-						foreach($layout_defs[$module]["subpanel_setup"] as $key => $subDef)
-						{
-							if ($layout_defs[$module]["subpanel_setup"][$key]['get_subpanel_data'] == $relName)
-							{
+
+						$bean = BeanFactory::getBean($module);
+						$fields = $bean->getFieldDefinitions();
+
+						foreach ($layout_defs[$module]["subpanel_setup"] as $key => $subDef) {
+							if ($layout_defs[$module]["subpanel_setup"][$key]['get_subpanel_data'] == $relName &&
+								isset($fields[$relName]) &&
+								$fields[$relName]['type'] != 'link'
+							) {
 								$fileContents = file_get_contents($filePath);
 								$out = preg_replace(
 									'/[\'"]get_subpanel_data[\'"]\s*=>\s*[\'"]' . $relName . '[\'"],/s',

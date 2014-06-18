@@ -33,7 +33,8 @@ $wireless_module_registry = array(
 	'Cases' => array('disable_create' => true),
 	'Calls' => array(),
 	'Tasks' => array(),
-    'Meetings' => array(),
+	'Meetings' => array(),
 	'Employees' => array('disable_create' => true),
+    'Notes' => array(),
 	'Reports' => array('disable_create' => true),
 );
