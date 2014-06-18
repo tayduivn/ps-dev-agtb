@@ -9,6 +9,7 @@ beforeEach(function(){
     }
 
     SugarTest.components = [];
+    SugarTest.datas = [];
     SugarTest._events = {
         context: [],
         model: []
@@ -38,6 +39,10 @@ beforeEach(function(){
 });
 
 afterEach(function() {
+    _.each(SugarTest.datas, function(module) {
+        SugarTest.app.data.resetModel(module);
+        SugarTest.app.data.resetCollection(module);
+    });
     _.each(SugarTest.components, function(component) {
         component.dispose();
     });
