@@ -42,6 +42,7 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        BeanFactory::setBeanClass('Accounts', null);
         SugarTestHelper::tearDown();
     }
 
@@ -315,15 +316,10 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCheckUserAccess()
     {
-        $user = UserHelper::createAnonymousUser();
+        $user = UserHelper::createAnonymousUser(true, 1);
         $account = AccountHelper::createAccount();
 
-        $bf = $this->getMock('BeanFactory', array('retrieveBean'));
-        $bf::staticExpects($this->once())
-            ->method('retrieveBean')
-            ->will($this->returnValue($account));
-
-        $this->assertTrue($account->checkUserAccess($user, get_class($bf)));
+        $this->assertTrue($account->checkUserAccess($user));
     }
 
     /**
@@ -448,13 +444,7 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         $user = UserHelper::createAnonymousUser();
         $account = AccountHelper::createAccount();
 
-        $bf = $this->getMock('BeanFactory', array('retrieveBean'));
-        $bf::staticExpects($this->once())
-            ->method('retrieveBean')
-            // BeanFactory returns null when we cannot retrieve the bean.
-            ->will($this->returnValue(null));
-
-        $this->assertFalse($account->checkUserAccess($user, get_class($bf)));
+        $this->assertFalse($account->checkUserAccess($user));
     }
 
     /**
@@ -464,19 +454,12 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCheckUserAccessWithoutACLAccess()
     {
         $user = UserHelper::createAnonymousUser();
+        BeanFactory::setBeanClass('Accounts', 'NoAccessAccount');
 
-        $mockAccount = $this->getMock('Account', array('ACLAccess'));
-        $mockAccount->id = 'foo';
-        $mockAccount->expects($this->once())
-            ->method('ACLAccess')
-            ->will($this->returnValue(false));
+        $account = BeanFactory::getBean('Accounts');
+        $account->id = 'foo';
 
-        $bf = $this->getMock('BeanFactory', array('retrieveBean'));
-        $bf::staticExpects($this->once())
-            ->method('retrieveBean')
-            ->will($this->returnValue($mockAccount));
-
-        $this->assertFalse($mockAccount->checkUserAccess($user, get_class($bf)));
+        $this->assertFalse($account->checkUserAccess($user));
     }
 
     /**
@@ -550,5 +533,13 @@ class BeanFunctionFieldsMock extends SugarBean
     public static function toUpper($arg)
     {
         return strtoupper($arg);
+    }
+}
+
+class NoAccessAccount extends Account
+{
+    public function ACLAccess()
+    {
+        return false;
     }
 }

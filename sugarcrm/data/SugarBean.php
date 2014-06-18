@@ -7287,10 +7287,9 @@ class SugarBean
      * Determines a user's access to the current bean, taking both team security
      * and ACLs into consideration.
      * @param  User $user
-     * @param  string $bf Do not use. Used for testing only.
      * @return bool       True if $user has access, false otherwise.
      */
-    public function checkUserAccess(User $user = null, $bf = 'BeanFactory')
+    public function checkUserAccess(User $user = null)
     {
         $userHasAccess = false;
         if (is_null($user)) {
@@ -7301,7 +7300,7 @@ class SugarBean
         $GLOBALS['current_user'] = $user;
 
         if (!empty($this->id) && empty($this->new_with_id)) {
-            $newBean = $bf::retrieveBean($this->module_name, $this->id, array('use_cache' => false));
+            $newBean = BeanFactory::retrieveBean($this->module_name, $this->id, array('use_cache' => false));
             if (!empty($newBean)) {
                 $context = array('user' => $user);
                 $userHasAccess = $this->ACLAccess('view', $context);

@@ -139,17 +139,11 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         OutboundEmailConfigurationTestHelper::setUp();
         $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
         $mockMailer = new MockMailer($config);
-
-        $MockMailerFactoryClass = $this->getMockClass('MailerFactory', array('getMailer'));
-        $MockMailerFactoryClass::staticExpects($this->once())
-            ->method('getMailer')
-            ->with($config)
-            ->will($this->returnValue($mockMailer));
+        MockMailerFactory::setMailer($mockMailer);
 
         $em = new Email();
         $em->email2init();
-
-        $em->_setMailerFactoryClassName($MockMailerFactoryClass);
+        $em->_setMailerFactoryClassName('MockMailerFactory');
 
         $em->name = "This is the Subject";
         $em->description_html = "This is the HTML Description";
@@ -182,12 +176,10 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $em->send();
 
         $data = $mockMailer->toArray();
-        //print_r($data);
         $this->assertEquals($em->description_html, $data['htmlBody']);
         $this->assertEquals($em->description, $data['textBody']);
 
         $headers = $mockMailer->getHeaders();
-        // print_r($headers);
         $this->assertEquals($em->name, $headers['Subject']);
         $this->assertEquals($from->getEmail(), $headers['From'][0]);
         $this->assertEquals($from->getName(),  $headers['From'][1]);
@@ -195,7 +187,6 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($replyto->getName(),  $headers['Reply-To'][1]);
 
         $recipients = $mockMailer->getRecipients();
-        // print_r($recipients);
 
         $actual_to=array_values($recipients['to']);
         $this->assertEquals($to->getEmail(), $actual_to[0]->getEmail(), "TO Email Address Incorrect");
@@ -271,4 +262,18 @@ class MockMailer extends SmtpMailer
         return $d;
     }
 }
-?>
+
+class MockMailerFactory extends MailerFactory
+{
+    private static $mailer;
+
+    public static function setMailer(BaseMailer $mailer)
+    {
+        static::$mailer = $mailer;
+    }
+
+    public static function getMailer(OutboundEmailConfiguration $config)
+    {
+        return static::$mailer;
+    }
+}

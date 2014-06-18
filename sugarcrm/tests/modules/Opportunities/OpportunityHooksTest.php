@@ -50,7 +50,7 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $oppMock = $this->getMock('Opportunity', array('get_linked_beans', 'save', 'retrieve'));
 
         /* @var $hookMock OpportunityHooks */
-        $hookMock = $this->getMockClass('OpportunityHooks', array('isForecastSetup'));
+        $hookMock = new MockOpportunityHooks();
 
         $hookMock::setSalesStatus($oppMock, 'before_save', array());
 
@@ -70,7 +70,7 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $oppMock->fetched_row['id'] = 'test';
 
         /* @var $hookMock OpportunityHooks */
-        $hookMock = $this->getMockClass('OpportunityHooks', array('isForecastSetup'));
+        $hookMock = new MockOpportunityHooks();
 
         $closed_won = array('won');
         $closed_lost = array('lost');
@@ -141,7 +141,7 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $oppMock = $this->getMock('Opportunity', array('get_linked_beans', 'save', 'retrieve', 'ACLFieldAccess'));
 
         /* @var $hookMock OpportunityHooks */
-        $hookMock = $this->getMockClass('OpportunityHooks', array('isForecastSetup'));
+        $hookMock = new MockOpportunityHooks();
 
         $closed_won = array('won');
         $closed_lost = array('lost');
@@ -183,11 +183,7 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $oppMock->id = 'test_id';
 
         /* @var $hookMock OpportunityHooks */
-        $hookMock = $this->getMockClass('OpportunityHooks', array('isForecastSetup'));
-
-        $hookMock::staticExpects($this->any())
-            ->method('isForecastSetup')
-            ->will($this->returnValue(true));
+        $hookMock = new MockOpportunityHooks();
 
         $hr = new ReflectionClass($hookMock);
         $hr->setStaticPropertyValue(
@@ -204,5 +200,13 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
         // unset it here
         BeanFactory::setBeanClass('RevenueLineItems');
+    }
+}
+
+class MockOpportunityHooks extends OpportunityHooks
+{
+    public static function isForecastSetup()
+    {
+        return true;
     }
 }

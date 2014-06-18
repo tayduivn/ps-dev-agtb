@@ -216,17 +216,28 @@ class DependencyManagerTest extends Sugar_PHPUnit_Framework_TestCase {
      */
     public function testGetDependenciesForView($type, $view_name)
     {
-        $class = $this->getMockClass(
-            'DependencyManager',
-            array('getModuleDependenciesForAction')
+        $class = new MockDependencyManager();
+
+        $ret = $class::getDependenciesForView(array(), $view_name, 'Accounts');
+
+        $expected = array(
+            'module' => 'Accounts',
+            'type' => $type,
+            'view' => $view_name
         );
 
+        $this->assertEquals($expected, $ret);
+    }
+}
 
-        $class::staticExpects($this->once())
-            ->method('getModuleDependenciesForAction')
-            ->with($this->equalTo('Accounts'), $this->equalTo($type), $this->equalTo($view_name))
-            ->will($this->returnValue(array()));
-
-        $class::getDependenciesForView(array(), $view_name, 'Accounts');
+class MockDependencyManager extends DependencyManager
+{
+    public static function getModuleDependenciesForAction($module, $type, $view)
+    {
+        return array(
+            'module' => $module,
+            'type' => $type,
+            'view' => $view
+        );
     }
 }

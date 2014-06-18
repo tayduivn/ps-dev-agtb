@@ -45,12 +45,9 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $outboundSmtpEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $outboundSmtpEmailConfiguration->setFrom($expected, "Foo Bar");
 
-        $mockMailerFactory = self::getMockClass("MailerFactory", array("getOutboundEmailConfiguration"));
-        $mockMailerFactory::staticExpects(self::any())
-            ->method("getOutboundEmailConfiguration")
-            ->will(self::returnValue($outboundSmtpEmailConfiguration));
+        MailerFactoryTest_MockMailerFactory::$outboundEmailConfiguration = $outboundSmtpEmailConfiguration;
 
-        $mailer = $mockMailerFactory::getMailerForUser($GLOBALS["current_user"]);
+        $mailer = MailerFactoryTest_MockMailerFactory::getMailerForUser($GLOBALS["current_user"]);
         $from   = $mailer->getHeader(EmailHeaders::From);
         $actual = $from->getEmail();
         self::assertEquals(
@@ -75,19 +72,8 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
             "smtp" => $expected,
         );
 
-        $mockMailerFactory = self::getMockClass(
-            "MailerFactory",
-            array(
-                "getOutboundEmailConfiguration",
-                "getStrategies",
-            )
-        );
-        $mockMailerFactory::staticExpects(self::any())
-            ->method("getOutboundEmailConfiguration")
-            ->will(self::returnValue($outboundSmtpEmailConfiguration));
-        $mockMailerFactory::staticExpects(self::any())
-            ->method("getStrategies")
-            ->will(self::returnValue($strategies));
+        MailerFactoryTest_MockMailerFactory::$outboundEmailConfiguration = $outboundSmtpEmailConfiguration;
+        MailerFactoryTest_MockMailerFactory::$strategies = $strategies;
 
         $file = "custom/modules/Mailer/{$expected}.php";
         SugarTestHelper::saveFile($file);
@@ -104,28 +90,17 @@ class {$expected} extends BaseMailer
 PHP;
         SugarAutoLoader::put($file, $customMailer, true);
 
-        $actual = $mockMailerFactory::getMailerForUser($GLOBALS["current_user"]);
+        $actual = MailerFactoryTest_MockMailerFactory::getMailerForUser($GLOBALS["current_user"]);
         self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
     }
 
     /**
      * @group bug59513
      */
-    public function testGetMailerForUser_UserHasNoMailConfigurations_ThrowsMailerException() {
-        // Bug #59513
-        // This test case requires mocking a static method, which requires use of late static binding. Late static
-        // binding is available as of PHP 5.3, which is the minimum supported version for SugarCRM v7.0 and above.
-        // However, test environments are still running PHP 5.2. Even the code the this case tests is specific to 7.0+,
-        // until PHP 5.3 is standard on test environments, this test must be skipped.
-        // Reference about mocking static methods in PHP Unit:
-        // http://sebastian-bergmann.de/archives/883-Stubbing-and-Mocking-Static-Methods.html
-        $mockMailerFactory = self::getMockClass("MailerFactory", array("getOutboundEmailConfiguration"));
-        $mockMailerFactory::staticExpects(self::any())
-            ->method("getOutboundEmailConfiguration")
-            ->will(self::throwException(new MailerException()));
-
-        self::setExpectedException("MailerException");
-        $actual = $mockMailerFactory::getMailerForUser($GLOBALS["current_user"]); // hopefully nothing is actually returned
+    public function testGetMailerForUser_UserHasNoMailConfigurations_ThrowsMailerException()
+    {
+        $this->setExpectedException("MailerException");
+        MockMailerFactoryThrowsException::getMailerForUser($GLOBALS["current_user"]);
     }
 
     public function testGetMailer_ModeIsInvalid_ThrowsException() {
@@ -142,7 +117,7 @@ PHP;
         $mockOutboundEmailConfiguration->setFrom("foo@bar.com");
 
         self::setExpectedException("MailerException");
-        $actual = MailerFactory::getMailer($mockOutboundEmailConfiguration); // hopefully nothing is actually returned
+        MailerFactory::getMailer($mockOutboundEmailConfiguration); // hopefully nothing is actually returned
     }
 
     /**
@@ -166,6 +141,34 @@ PHP;
         $mockOutboundEmailConfiguration->setFrom("foo@bar.com");
 
         self::setExpectedException("MailerException");
-        $actual = MailerFactory::getMailer($mockOutboundEmailConfiguration); // hopefully nothing is actually returned
+        MailerFactory::getMailer($mockOutboundEmailConfiguration); // hopefully nothing is actually returned
+    }
+}
+
+class MailerFactoryTest_MockMailerFactory extends MailerFactory
+{
+    public static $outboundEmailConfiguration;
+    public static $strategies;
+
+    public static function getOutboundEmailConfiguration()
+    {
+        return self::$outboundEmailConfiguration;
+    }
+
+    public static function getStrategies()
+    {
+        if (!self::$strategies) {
+            return parent::getStrategies();
+        }
+
+        return self::$strategies;
+    }
+}
+
+class MockMailerFactoryThrowsException extends MailerFactory
+{
+    public static function getOutboundEmailConfiguration()
+    {
+        throw new MailerException();
     }
 }

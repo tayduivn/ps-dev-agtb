@@ -111,56 +111,33 @@ class QuotaTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetRollupQuota()
     {
-        $quota = SugarTestQuotaUtilities::createQuota(10);
-        $quota->db = $this->getMock("DBManager", array(
-            "quote",
-            "convert",
-            "fromConvert",
-            "query",
-            "limitQuery",
-            "freeDbResult",
-            "renameColumnSQL",
-            "get_indices",
-            "get_columns",
-            "add_drop_constraint",
-            "getFieldsArray",
-            "getTablesArray",
-            "version",
-            "tableExists",
-            "fetchRow",
-            "connect",
-            "changeColumnSQL",
-            "disconnect",
-            "lastDbError",
-            "validateQuery",
-            "valid",
-            "dbExists",
-            "tablesLike",
-            "createDatabase",
-            "dropDatabase",
-            "getDbInfo",
-            "userExists",
-            "createDbUser",
-            "full_text_indexing_installed",
-            "getFulltextQuery",
-            "installConfig",
-            "getGuidSQL",
-            "fetchByAssoc",
-            "createTableSQLParams",
-            "getFromDummyTable",
-        ));
-        $quota->db->expects($this->any())->method('limitQuery')->will($this->returnValue('foo'));
-        $quota->db->expects($this->any())->method('fetchByAssoc')->will($this->returnValue(array(
-            'currency_id' => -99,
-            'amount' => 10,
-        )));
+        $db = new SugarTestDatabaseMock();
+        $db->setUp();
+
+        $test_tp_id = create_guid();
+
+        /* @var $quota Quota */
+        $quota = BeanFactory::getBean('Quotas');
+
+        $db->queries['quota_select'] = array(
+            'match' => '/quotas.timeperiod_id = \'' . $test_tp_id . '\'/',
+            'rows' => array(
+                array(
+                    'currency_id' => -99,
+                    'amount' => 10,
+                )
+            )
+        );
+
         $this->assertEquals(
             array(
                 'currency_id' => -99,
                 'amount' => 10,
                 'formatted_amount' => '$10.00',
             ),
-            $quota->getRollupQuota(1)
+            $quota->getRollupQuota($test_tp_id, 'test_user_id')
         );
+
+        $db->tearDown();
     }
 }
