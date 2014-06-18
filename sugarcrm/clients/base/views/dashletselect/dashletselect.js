@@ -273,7 +273,7 @@
      * {@inheritDoc}
      *
      * Instead of fetching context, it will retrieve all dashable components
-     * based on metadata.
+     * based on metadata. Sorts the components by `title` alphabetically.
      */
     loadData: function() {
         if (this.collection.length) {
@@ -283,6 +283,10 @@
 
         var dashletCollection = _.union(this._addBaseViews(), this._addModuleViews()),
             filteredDashletCollection = this.getFilteredList(dashletCollection);
+
+        this.collection.comparator = function(model) {
+            return model.get('title');
+        };
 
         this.collection.add(filteredDashletCollection);
         this.collection.dataFetched = true;
