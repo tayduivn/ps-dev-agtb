@@ -74,10 +74,12 @@ class RemoveDuplicateAccountsContactsTest extends Sugar_PHPUnit_Framework_TestCa
 
         $script->run();
 
+        $count = $this->db->getOne("SELECT count(*) as c FROM accounts_contacts "
+                                 . "WHERE contact_id = '{$contact_id}' OR account_id = '{$account_id}'");
+
         $results = $db->query("SELECT * FROM accounts_contacts "
                 . "WHERE contact_id = '{$contact_id}' OR account_id = '{$account_id}'"
         );
-        $count = $db->getRowCount($results);
 
         $this->assertEquals(count($expectedRows), $count, "Incorrect number of rows returned");
 
