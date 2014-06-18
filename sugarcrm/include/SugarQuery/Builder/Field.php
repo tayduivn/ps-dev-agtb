@@ -285,4 +285,20 @@ class SugarQuery_Builder_Field
     {
     }
 
+    /**
+     * Gets a field name from a field, which could be already aliased to a table
+     * 
+     * @param string $field The field to get the name from
+     * @return string
+     */
+    public function getTrueFieldNameFromField($field)
+    {
+        if (strpos($field, '.') === false) {
+            return $field;
+        }
+        
+        $parts = explode('.', $field);
+        return $parts[1];
+    }
+
 }
