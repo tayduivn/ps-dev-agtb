@@ -33,36 +33,35 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //utility functions for use with the expression object
 
 
+function translate_operator($operator, $type = "php")
+{
+    $php_operator_array = array(
+        'Equals' => '==',
+        'Is empty' => '==',
+        "Less Than" => "<",
+        "More Than" => ">",
+        "Does not Equal" => "!=",
+        "Is not empty" => "!=",
+    );
 
-function translate_operator($operator, $type="php"){
-	$php_operator_array = array(
-		"More Than" => ">",
-		"Less Than" => "<",
-		"Equals" => "=",
-		"Does not Equal" => "!=",	
-	);
-	
-	$sql_operator_array = array(
-	"More Than" => ">",
-	"Less Than" => "<",
-	"Equals" => "=",
-	"Does not Equal" => "!=",
-	);
-	
-	//two types.  PHP and SQL
-	
-	if($type=="php"){
-		return $php_operator_array[$operator];
-	}
-	if($type=="sql"){
+    $sql_operator_array = array(
+        'Equals' => '=',
+        'Is empty' => '=',
+        "Less Than" => "<",
+        "More Than" => ">",
+        "Does not Equal" => "!=",
+        "Is not empty" => "!=",
+    );
 
-		return $sql_operator_array[$operator];
-	}		
-	
+    //two types.  PHP and SQL
+    if ($type == "php") {
+        return $php_operator_array[$operator];
+    }
 
-	
-//end function translate_operator
-}	
+    if ($type == "sql") {
+        return $sql_operator_array[$operator];
+    }
+}
 
 function setup_filter_records($target_list, $target_exp_array, $type="php"){
 	
