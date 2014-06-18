@@ -86,6 +86,8 @@
         }
         this.layout.on('dashlet:collapse', this.loadNews, this);
         app.events.on('dnbcompinfo:duns_selected', this.collapseDashlet, this);
+        //listen on expand all button click on the dashboard
+        this.layout.layout.context.on('dashboard:collapse:fire', this.loadNews, this);
     },
 
     loadData: function(options) {

@@ -53,6 +53,8 @@
             'content' : null, //used to store the cache key to render content
             'params' : null //used to store the search params, when view is search
         };
+        //listen on expand all button click on the dashboard
+        this.layout.layout.context.on('dashboard:collapse:fire', this.loadContacts, this);
     },
 
     /**
