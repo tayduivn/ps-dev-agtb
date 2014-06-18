@@ -46,6 +46,7 @@ $mod_strings = array (
 	'LBL_STATUS'						=> 'Status:',
 	'LBL_SUBJECT'						=> 'Subject:',
 	'LBL_SYSTEM_ID'						=> 'System ID',
+    'LBL_KBDOCUMENTS_SUBPANEL_TITLE' => 'Knowledge Base',
 	'LBL_LIST_ASSIGNED_TO_NAME' 		=> 'Assigned User',
 	'LBL_LIST_ACCOUNT_NAME'				=> 'Account Name',
 	'LBL_LIST_ASSIGNED'					=> 'Assigned To',

@@ -66,10 +66,24 @@ $xtpl=new XTemplate ('modules/KBDocuments/EditView.html');
 
 $from_case = '';
 
+if (isset($_REQUEST['acase_id']) && isset($_REQUEST['acase_name'])) {
+    $_REQUEST['case_id'] = $_REQUEST['acase_id'];
+    $_REQUEST['case_name'] = $_REQUEST['acase_name'];
+}
+
+if (isset($_REQUEST['parent_type']) && $_REQUEST['parent_type'] == "Cases") {
+    $_REQUEST['case_id'] = $_REQUEST['parent_id'];
+}
+
 if(isset($_REQUEST['case_id']) && !empty($_REQUEST['case_id'])){
 	$from_case = BeanFactory::getBean('Cases', $_REQUEST['case_id']);
 	$xtpl->assign('PARENT_ID',$_REQUEST['case_id']);
 	$xtpl->assign('PARENT_TYPE','Cases');
+    $xtpl->assign("CASE_ID", $from_case->id);
+    $xtpl->assign("CASE_NAME", $from_case->name);
+} elseif (!empty($focus->parent_id) && !empty($focus->case_name)) {
+    $xtpl->assign("CASE_ID", $focus->parent_id);
+    $xtpl->assign("CASE_NAME", $focus->case_name);
 }
 
 if(isset($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'Cases'){
@@ -78,8 +92,6 @@ if(isset($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'Cases'){
 	$xtpl->assign('PARENT_ID',$_REQUEST['record']);
 	$xtpl->assign('PARENT_TYPE','Cases');
   }
-  //set return module to empty
-  $_REQUEST['return_module']='';
 }
 if(isset($_REQUEST['email_id']) && !empty($_REQUEST['email_id'])){
 	$from_email = BeanFactory::getBean('Emails', $_REQUEST['email_id']);
@@ -137,7 +149,14 @@ $popup_request_data = array(
 	);
 $xtpl->assign('encoded_assigned_users_popup_request_data', $json->encode($popup_request_data));
 
-
+$popup_request_data_cases = array(
+    'call_back_function'    => 'set_return',
+    'form_name'             => 'EditView',
+    'field_to_name_array'   => array('id'   => 'case_id',
+                                     'name' => 'case_name',
+    ),
+);
+$xtpl->assign('encoded_case_popup_request_data', $json->encode($popup_request_data_cases));
 
 if (isset($_REQUEST['return_module'])) $xtpl->assign("RETURN_MODULE", $_REQUEST['return_module']);
 if (isset($_REQUEST['return_action'])) $xtpl->assign("RETURN_ACTION", $_REQUEST['return_action']);
@@ -299,6 +318,9 @@ if (isset($focus->status_id)){
 	$xtpl->assign("STATUS_OPTIONS", get_select_options_with_id($app_list_strings['kbdocument_status_dom'], $focus->status_id));
 
 }
+else if (isset($_REQUEST['status_id'])) {
+    $xtpl->assign("STATUS_OPTIONS", get_select_options_with_id($app_list_strings['kbdocument_status_dom'], $_REQUEST['status_id']));
+}
 else{
 	$xtpl->assign("STATUS_OPTIONS", get_select_options_with_id($app_list_strings['kbdocument_status_dom'], ''));
 }
@@ -341,7 +363,7 @@ if(isset($from_email) && !empty($from_email)){
 }
 
 //converting a case into document
-if(isset($from_case) && !empty($from_case)){
+if (empty($focus->id) && !empty($from_case)) {
 	$xtpl->assign("KBDOCUMENT_NAME",$from_case->name);
 	$xtpl->assign("REVISION",1);
 	$revision = 1;

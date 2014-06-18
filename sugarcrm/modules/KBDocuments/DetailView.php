@@ -76,6 +76,10 @@ $xtpl->assign("ID", $focus->id);
 $xtpl->assign("DOCUMENT_NAME", $focus->kbdocument_name);
 //$xtpl->assign("REVISION", $focus->latest_revision);
 $xtpl->assign("REVISION",$focus->kbdocument_revision_number);
+if ($focus->parent_id != null) {
+    $xtpl->assign("CASE_NAME", $focus->case_name);
+    $xtpl->assign("CASE_ID", $focus->parent_id);
+}
 
 
 global $locale;

@@ -121,6 +121,13 @@
 		<strong><input  title="{MOD.LBL_SELECT_TAG_BUTTON_TITLE}" type="button" tabindex='1'
 		class="button" value='{MOD.LBL_SELECT_TAG_BUTTON_TITLE}' name="btn_tags"
 		onclick="javascript:SUGAR.kb.modalInit(); return false;" /></span sugar='slot'>
+       <td scope="row"><span sugar='slot12'>{MOD.LBL_CASE}</span sugar='slot'></td>
+       <td>
+           <span><input class="sqsEnabled" tabindex="1" autocomplete="off" id="case_name" name='case_name' type="text" value="{CASE_NAME}">
+               <input id='case_id' name='case_id' type="hidden" value="{CASE_ID}" />
+               <input title="{APP.LBL_SELECT_BUTTON_TITLE}" type="button" tabindex='1' class="button" value='{APP.LBL_SELECT_BUTTON_LABEL}' name="btn_cases" onclick='open_popup("Cases", 600, 400, "", true, false, {encoded_case_popup_request_data});' />
+           </span>
+       </td> 
    </td></tr>
 
     <tr><td>
