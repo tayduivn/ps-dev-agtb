@@ -292,6 +292,44 @@ describe("Base.Layout.Dashboard", function() {
                 sandbox.restore();
             });
 
+            describe('when on home module and help-dashboard visible', function() {
+                var _renderCalled = false;
+                beforeEach(function() {
+                    layout.module = 'Home';
+                    sandbox.stub(layout, 'isHelpDashboard', function() {
+                        return true;
+                    });
+
+                    sandbox.stub(layout, 'getComponent', function() {
+                        return {
+                            getComponent: function() {
+                                return {
+                                    meta: {
+                                        buttons: [],
+                                        last_state: {}
+                                    },
+                                    render: function() {
+                                        _renderCalled = true;
+                                    }
+                                };
+                            }
+                        };
+                    });
+
+                    sandbox.stub(app.metadata, 'getView', function() {
+                        return {
+                            buttons: [],
+                            last_state: {}
+                        };
+                    });
+                });
+
+                it('should re-render the header pane', function() {
+                    layout.model.trigger('sync');
+                    expect(_renderCalled).toBeTruthy();
+                });
+            });
+
             describe('when sidebar is open', function() {
                 var isHelpStub;
                 beforeEach(function() {

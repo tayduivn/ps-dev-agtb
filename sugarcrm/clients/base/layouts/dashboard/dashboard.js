@@ -110,6 +110,21 @@
         this.model.on('sync', function() {
             if (this.dashboardVisibleState === 'open' && this.isHelpDashboard()) {
                 app.events.trigger('app:help:shown');
+
+                // when on the home page and the dashboard is a help dashboard, we need to hide the edit button
+                // which means we need to re-render the dashboard-headerpane to contain the meta from
+                // the help-dashboard-headerpane view
+                if (this.module === 'Home') {
+                    var list = this.getComponent('list'),
+                        headerpane = (!_.isUndefined(list)) ? list.getComponent('dashboard-headerpane') : undefined;
+
+                    if (headerpane) {
+                        var help_headerpane_meta = app.metadata.getView(this.module, 'help-dashboard-headerpane');
+                        help_headerpane_meta.last_state = headerpane.meta.last_state;
+                        headerpane.meta = help_headerpane_meta;
+                        headerpane.render();
+                    }
+                }
             }
         }, this);
 
