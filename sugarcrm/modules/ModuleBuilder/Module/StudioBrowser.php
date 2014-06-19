@@ -20,13 +20,10 @@ class StudioBrowser{
 	var $modules = array();
 	
 	function loadModules(){
-	    global $current_user, $modInvisList;
+	    global $current_user;
 		$access = $current_user->getDeveloperModules();
 	    $d = dir('modules');
-		while($e = $d->read()){
-            if (($e == "Project" || $e == "ProjectTask") && in_array($e, $modInvisList)) {
-                continue;
-            }
+		while($e = $d->read()){;
 			if(substr($e, 0, 1) == '.' || !is_dir('modules/' . $e))continue;
 			if(file_exists('modules/' . $e . '/metadata/studio.php') && isset($GLOBALS [ 'beanList' ][$e]) && (in_array($e, $access) || $current_user->isAdmin())) // installed modules must also exist in the beanList
 			{
@@ -36,12 +33,8 @@ class StudioBrowser{
 	}
 	
     function loadRelatableModules(){
-        global $modInvisList;
         $d = dir('modules');
         while($e = $d->read()){
-            if (($e == "Project" || $e == "ProjectTask") && in_array($e, $modInvisList)) {
-                continue;
-            }
         	//BEGIN SUGARCRM flav=pro ONLY
         	if( ( (isset($_REQUEST['view_module'])) && ($_REQUEST['view_module'] == 'Project') )
                 && ($e=='ProjectTask') && (isset($_REQUEST['id'])) && $_REQUEST['id']=='relEditor' && $_REQUEST['relationship_name'] == '') continue; //46141 - disabling creating custom relationship between Projects and ProjectTasks in studio

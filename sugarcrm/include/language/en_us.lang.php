@@ -59,6 +59,8 @@ $app_list_strings = array (
     'TaxRates'=>'Tax Rates',
     'ContractTypes' => 'Contract Types',
     'Schedulers'=>'Schedulers',
+    'Project'=>'Projects',
+    'ProjectTask'=>'Project Tasks',
     'Campaigns'=>'Campaigns',
     'CampaignLog'=>'Campaign Log',
     'CampaignTrackers'=>'Campaign Trackers',
@@ -161,6 +163,8 @@ $app_list_strings = array (
     'Schedulers'=>'Scheduler',
     'Campaigns'=>'Campaign',
     'CampaignLog'=>'Campaign Log',
+    'Project'=>'Project',
+    'ProjectTask'=>'Project Task',
     'Prospects' => 'Target',
     'ProspectLists' => 'Target List',
     'Campaigns'=>'Campaign',
@@ -562,7 +566,46 @@ $app_list_strings = array (
     'Yahoo!' => 'Yahoo!',
     'AOL' => 'AOL',
   ),
+    'project_task_priority_options' => array (
+        'High' => 'High',
+        'Medium' => 'Medium',
+        'Low' => 'Low',
+    ),
+    'project_task_priority_default' => 'Medium',
 
+    'project_task_status_options' => array (
+        'Not Started' => 'Not Started',
+        'In Progress' => 'In Progress',
+        'Completed' => 'Completed',
+        'Pending Input' => 'Pending Input',
+        'Deferred' => 'Deferred',
+    ),
+    'project_task_utilization_options' => array (
+        '0' => 'none',
+        '25' => '25',
+        '50' => '50',
+        '75' => '75',
+        '100' => '100',
+    ),
+
+    'project_status_dom' => array (
+        'Draft' => 'Draft',
+        'In Review' => 'In Review',
+        'Published' => 'Published',
+    ),
+    'project_status_default' => 'Draft',
+
+    'project_duration_units_dom' => array (
+        'Days' => 'Days',
+        'Hours' => 'Hours',
+    ),
+
+    'project_priority_options' => array (
+        'High' => 'High',
+        'Medium' => 'Medium',
+        'Low' => 'Low',
+    ),
+    'project_priority_default' => 'Medium',
   //Note:  do not translate record_type_default_key
 //       it is the key for the default record_type_module value
   'record_type_default_key' => 'Accounts',
@@ -578,7 +621,11 @@ $app_list_strings = array (
     'RevenueLineItems' => 'Revenue Line Item',
     'Quotes' => 'Quote',
     'Bugs' => 'Bug',
+    'Project' => 'Project',
+
     'Prospects' => 'Target',
+    'ProjectTask' => 'Project Task',
+
     'Tasks' => 'Task',
   ),
 
@@ -598,6 +645,8 @@ $app_list_strings = array (
     'Emails' => 'Email',
 
     'Bugs' => 'Bug',
+    'Project' => 'Project',
+    'ProjectTask' => 'Project Task',
     'Prospects' => 'Target',
     'Cases' => 'Case',
     'Leads' => 'Lead',
@@ -623,6 +672,9 @@ $app_list_strings = array (
     'Bugs' => 'Bugs',
     'Cases' => 'Case',
     'Leads' => 'Lead',
+
+    'Project' => 'Project',
+    'ProjectTask' => 'Project Task',
 
     'Prospects' => 'Target',
 
@@ -818,6 +870,7 @@ $app_list_strings = array (
     'Product Catalog' => 'Product Catalog',
     'Products' => 'Quoted Line Items',
     'RevenueLineItems' => 'Revenue Line Items',
+    'Projects' => 'Projects',
     'Quotes' => 'Quotes',
     'Releases' => 'Releases',
     'RSS' => 'RSS',
@@ -1595,7 +1648,17 @@ $app_list_strings = array (
 
 
 
+    'projects_priority_options' => array (
+        'high'      => 'High',
+        'medium'    => 'Medium',
+        'low'       => 'Low',
+    ),
 
+    'projects_status_options' => array (
+        'notstarted'    => 'Not Started',
+        'inprogress'    => 'In Progress',
+        'completed'     => 'Completed',
+    ),
     // strings to pass to Flash charts
     'chart_strings' => array (
         'expandlegend'      => 'Expand Legend',
@@ -1816,6 +1879,8 @@ $app_strings = array (
   'LBL_VIEW_INLINE' => 'View' /*for 508 compliance fix*/,
   'LBL_BASIC_SEARCH' => 'Search' /*for 508 compliance fix*/,
   'LBL_BASIC_QUICK_SEARCH' => 'Search...' /*for 508 compliance fix*/,
+  'LBL_PROJECT_MINUS' => 'Remove' /*for 508 compliance fix*/,
+  'LBL_PROJECT_PLUS' => 'Add' /*for 508 compliance fix*/,
   'LBL_Blank' => ' ' /*for 508 compliance fix*/,
   'LBL_ICON_COLUMN_1' => 'Column' /*for 508 compliance fix*/,
   'LBL_ICON_COLUMN_2' => '2 Columns' /*for 508 compliance fix*/,
@@ -5007,6 +5072,12 @@ $app_list_strings['moduleList']['Library'] = 'Library';
 $app_list_strings['moduleListSingular']['Library'] = 'Library';
 $app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');
 $app_list_strings['moduleList']['EmailAddresses'] = 'Email Address';
+$app_list_strings['project_priority_default'] = 'Medium';
+$app_list_strings['project_priority_options'] = array (
+    'High' => 'High',
+    'Medium' => 'Medium',
+    'Low' => 'Low',
+);
 $app_list_strings['moduleListSingular']['EmailAddresses'] = 'Email Address';
 
 
