@@ -575,6 +575,7 @@ class MailApi extends ModuleApi
     protected function initMailRecord($args)
     {
         $mailRecord = new MailRecord();
+        $mailRecord->mailConfig = $args[self::EMAIL_CONFIG];
         $mailRecord->toAddresses = $args[self::TO_ADDRESSES];
         $mailRecord->ccAddresses = $args[self::CC_ADDRESSES];
         $mailRecord->bccAddresses = $args[self::BCC_ADDRESSES];
