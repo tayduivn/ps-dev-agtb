@@ -217,6 +217,62 @@ describe('Base.View.Dashletselect', function() {
         });
     });
 
+    describe('selectDashlet', function() {
+        var metadata;
+        beforeEach(function() {
+            metadata = {
+                'component': 'component',
+                'config': {},
+                'filter': {},
+                'label': 'LBL',
+                'type': 'type'
+            };
+            app.drawer = {
+                'load': $.noop
+            };
+        });
+
+        afterEach(function() {
+            metadata = null;
+        });
+
+        it('should load dashlet configurations in the drawer', function() {
+            var loadSpy = sinon.collection.spy(app.drawer, 'load');
+            view.selectDashlet(metadata);
+
+            expect(loadSpy.calledOnce).toBeTruthy();
+            expect(loadSpy.args[0][0].layout.type).toEqual('dashletconfiguration');
+        });
+    });
+
+    describe('getFields', function() {
+        beforeEach(function() {
+            view.meta = {
+                'panels': [
+                    {
+                        'fields': ['field1', 'field2']
+                    },
+                    {
+                        'fields': ['field3']
+                    },
+                    {
+                        'fields': ['field4', {name: 'field5'}]
+                    }
+                ]
+            };
+        });
+
+        afterEach(function() {
+            view.meta = null;
+        });
+
+        it('should get a flattened list of fields from the metadata', function() {
+            expect(view.getFields()).toEqual(
+                ['field1', 'field2', 'field3', 'field4', {name: 'field5'}]
+            );
+        });
+    });
+
     describe('loadData', function() {
         var dashletCollection;
         beforeEach(function() {
