@@ -759,7 +759,6 @@ function process_advanced_actions(& $focus, $field, $meta_array, & $rel_this){
 	if($meta_array['adv_type']=='value_calc'){
 
 		$jang = get_expression($meta_array['ext1'], $rel_this->$field, $meta_array['value']);
-		echo $jang;
 		return $jang;
 	}
 
