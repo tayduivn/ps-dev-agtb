@@ -479,6 +479,7 @@ $dictionary['User'] = array(
                     'wirelessdetailview' => false,
                     'wirelesseditview' => false,
                 ),
+                'exportable'=> true,
 			),
 			'team_link' =>
 		    array (
