@@ -53,12 +53,22 @@
             }
         });
     },
+    /**
+     * Handle the click from the UI
+     * @param {Object} evt The jQuery Event Object
+     */
     navigateClicked: function(evt) {
-        var id = $(evt.currentTarget).data("id");
-        this.navigate(id);
+        var id = $(evt.currentTarget).data('id'),
+            type = $(evt.currentTarget).data('type');
+        this.navigate(id, type);
     },
-    navigate: function(id) {
-        this.view.layout.navigateLayout(id);
+    /**
+     * Change the Dashboard
+     * @param {String} id The ID of the Dashboard to load
+     * @param {String} [type] The type of dashboard being loaded, default is undefined
+     */
+    navigate: function(id, type) {
+        this.view.layout.navigateLayout(id, type);
     },
     /**
      * Inspect the dashlet's label and convert i18n string only if it's concerned
