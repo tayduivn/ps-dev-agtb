@@ -528,10 +528,10 @@ class MetaDataConverter
      */
     public function getLegacySubpanelFileName(SugarBean $bean, $linkName)
     {
-        $field = $focus->getFieldDefinition($linkName);
+        $field = $bean->getFieldDefinition($linkName);
         if ($field && $field['type'] == 'link') {
             // since we have a valid link, we need to test the relationship to see if it's custom relationship
-            $relationships = new DeployedRelationships($focus->module_name);
+            $relationships = new DeployedRelationships($bean->module_name);
             $relationship = $relationships->get($linkName);
             $relDef = array();
             if ($relationship) {
@@ -543,7 +543,7 @@ class MetaDataConverter
                 $name = !empty($relDef['name']) ? $relDef['name'] : $relDef['relationship_name'];
                 $subpanelFileName = "For{$name}";
             } else {
-                $subpanelFileName = "For{$focus->module_name}";
+                $subpanelFileName = "For{$bean->module_name}";
             }
         }
         return $subpanelFileName;
