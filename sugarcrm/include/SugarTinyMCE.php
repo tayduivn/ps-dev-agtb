@@ -20,6 +20,7 @@ class SugarTinyMCE
 {
     var $jsroot = "include/javascript/tiny_mce/";
     var $customConfigFile = 'custom/include/tinyButtonConfig.php';
+    public $customPluginConfigFile = 'custom/include/tinyPluginConfig.php';
     var $customDefaultConfigFile = 'custom/include/tinyMCEDefaultConfig.php';
     var $buttonConfigs
         = array(
@@ -84,6 +85,7 @@ class SugarTinyMCE
 
         $this->overloadButtonConfigs();
         $this->overloadDefaultConfigs();
+        $this->overloadPluginConfigs();
     }
 
     /**
@@ -205,42 +207,70 @@ eoq;
     {
         if (SugarAutoLoader::existing($this->customConfigFile)) {
             require_once($this->customConfigFile);
+        }
 
-            if (!isset($buttonConfigs)) {
-                return;
-            }
+        $defs = SugarAutoLoader::loadExtension('tinymce');
+        if ($defs) {
+            require($defs);
+        }
 
-            foreach ($buttonConfigs as $k => $v) {
-                if (isset($this->buttonConfigs[$k])) {
-                    $this->buttonConfigs[$k] = $v;
-                }
-            }
+        if (!isset($buttonConfigs)) {
+            return;
+        }
+
+        foreach ($buttonConfigs as $k => $v) {
+            $this->buttonConfigs[$k] = $v;
         }
     }
 
     /**
-     * Reload the default tinyMCE config, preserving our default extended
-     * allowable tag set.
+     * Reload the default tinyMCE plugin config
+     *
+     */
+    private function overloadPluginConfigs()
+    {
+        if (SugarAutoLoader::existing($this->customPluginConfigFile)) {
+            require_once($this->customPluginConfigFile);
+        }
+
+        $defs = SugarAutoLoader::loadExtension('tinymce');
+        if ($defs) {
+            require($defs);
+        }
+
+        if (!isset($pluginsConfig)) {
+            return;
+        }
+
+        foreach ($pluginsConfig as $k => $v) {
+            $this->pluginsConfig[$k] = $v;
+        }
+    }
+
+    /**
+     * Reload the default tinyMCE config
      *
      */
     private function overloadDefaultConfigs()
     {
         if (SugarAutoLoader::existing($this->customDefaultConfigFile)) {
             require_once($this->customDefaultConfigFile);
+        }
 
-            if (!isset($defaultConfig)) {
-                return;
-            }
+        $defs = SugarAutoLoader::loadExtension('tinymce');
+        if ($defs) {
+            require($defs);
+        }
 
-            foreach ($defaultConfig as $k => $v) {
-                if (isset($this->defaultConfig[$k])) {
+        if (!isset($defaultConfig)) {
+            return;
+        }
 
-                    if ($k == "extended_valid_elements") {
-                        $this->defaultConfig[$k] .= "," . $v;
-                    } else {
-                        $this->defaultConfig[$k] = $v;
-                    }
-                }
+        foreach ($defaultConfig as $k => $v) {
+            if ($k == "extended_valid_elements") {
+                $this->defaultConfig[$k] .= "," . $v;
+            } else {
+                $this->defaultConfig[$k] = $v;
             }
         }
     }
