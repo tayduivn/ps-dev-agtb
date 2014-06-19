@@ -169,6 +169,10 @@ class OracleManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     array('foo','add_date',array(5,'year')),
                     "ADD_MONTHS(foo, 5*12)"
                 ),
+                array(
+                    array('1.23','round',array(6)),
+                    "round(1.23, 6)"
+                )
         );
         return $returnArray;
     }

@@ -1223,6 +1223,8 @@ class MssqlManager extends DBManager
                 return "avg($string)";
             case 'substr':
                 return "substring($string, " . implode(', ', $additional_parameters) . ')';
+            case 'round':
+                return "round($string, " . implode(', ', $additional_parameters) . ')';
         }
 
         return "$string";

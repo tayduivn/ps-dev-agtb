@@ -780,6 +780,8 @@ class OracleManager extends DBManager
                 return $avg;
             case 'substr':
                 return "substr($string, " . implode(', ', $additional_parameters) . ')';
+            case 'round':
+                return "round($string, " . implode(', ', $additional_parameters) . ')';
         }
 
         return $string;

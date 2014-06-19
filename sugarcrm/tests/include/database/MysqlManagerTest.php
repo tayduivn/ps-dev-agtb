@@ -157,6 +157,10 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     array('foo','add_date',array(5,'year')),
                     "DATE_ADD(foo, INTERVAL 5 year)"
                 ),
+                array(
+                    array('1.23','round',array(6)),
+                    "round(1.23, 6)"
+                )
         );
         return $returnArray;
     }
