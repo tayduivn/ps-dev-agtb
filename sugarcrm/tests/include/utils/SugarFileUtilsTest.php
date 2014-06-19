@@ -28,6 +28,7 @@ class SugarFileUtilsTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $_filename;
     private $_old_default_permissions;
+    private $testDirectory;
     
     public function setUp() 
     {	
@@ -44,6 +45,8 @@ class SugarFileUtilsTest extends Sugar_PHPUnit_Framework_TestCase
                 'user' => $this->_getCurrentUser(),
                 'group' => $this->_getCurrentGroup(),
               );
+
+        $this->testDirectory = $GLOBALS['sugar_config']['cache_dir'] . md5($GLOBALS['sugar_config']['cache_dir']) . '/';
     }
     
     public function tearDown() 
@@ -51,6 +54,9 @@ class SugarFileUtilsTest extends Sugar_PHPUnit_Framework_TestCase
         if(file_exists($this->_filename)) {
             unlink($this->_filename);
         }
+
+        $this->recursiveRmdir($this->testDirectory);
+
         $GLOBALS['sugar_config']['default_permissions'] = $this->_old_default_permissions;
         SugarConfig::getInstance()->clearCache();
     }
@@ -193,5 +199,34 @@ class SugarFileUtilsTest extends Sugar_PHPUnit_Framework_TestCase
         
         $this->assertEquals(fileowner($this->_filename),$this->_getCurrentUser());
     }
+
+    public function testSugarTouchDirectoryCreation()
+    {
+        $this->recursiveRmdir($this->testDirectory);
+
+        $this->assertEquals(false, is_dir($this->testDirectory), 'Directory exists, though we removed it');
+
+        $file = $this->testDirectory . md5($this->testDirectory);
+        sugar_touch($file);
+
+        $this->assertFileExists($file, "File should be created together with directory");
+    }
+
+    private function recursiveRmdir($dir)
+    {
+        if (is_dir($dir)) {
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != "." && $object != "..") {
+                    if (filetype($dir."/".$object) == "dir") {
+                        $this->recursiveRmdir($dir."/".$object);
+                    } else {
+                        unlink($dir."/".$object);
+                    }
+                }
+            }
+            reset($objects);
+            rmdir($dir);
+        }
+    }
 }
-?>
