@@ -227,22 +227,33 @@ describe('Sugar7 field extensions', function () {
         });
     });
 
+    // TODO this memory leak check should be done in a more appropriate layer
+    // this is calling the app.utils, which should have a separate test
     describe('Error tooltips', function() {
-        it('Should create error tooltips', function() {
+        it('Should create/destroy error tooltips', function() {
             var tooltip = $('<div rel="tooltip"></div>'),
-                field = SugarTest.createField('base', 'name', 'base', 'edit');
+                field = SugarTest.createField('base', 'name', 'base', 'edit'),
+                tooltips = [];
+
+            sinon.collection.stub(app.utils.tooltip, 'get', function(elem) {
+                return _.find(tooltips, function(tooltip) {
+                    return tooltip === elem.get(0);
+                });
+            });
+
+            sinon.collection.stub(app.utils.tooltip, 'destroy', function(elems) {
+                _.each(elems, function(elem) {
+                    tooltips = _.without(tooltips, elem.get(0));
+                });
+            });
+
+            sinon.collection.stub(jQuery.fn, 'tooltip', function() {
+                tooltips.push(this.get(0));
+            });
 
             field.createErrorTooltips(tooltip);
-
             expect(app.utils.tooltip.has(tooltip)).toBe(true);
-        });
-        it('Should destroy error tooltips', function() {
-            var tooltip = $('<div rel="tooltip"></div>'),
-                field = SugarTest.createField('base', 'name', 'base', 'edit');
-
-            field.createErrorTooltips(tooltip);
             field.destroyAllErrorTooltips();
-
             expect(app.utils.tooltip.has(tooltip)).toBe(false);
         });
     });
