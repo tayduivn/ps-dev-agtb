@@ -8,8 +8,6 @@ describe("Contacts Record View", function() {
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
-        SugarTest.loadPlugin('ContactsPortalMetadataFilter', null,
-            '../modules/Contacts/clients/base/plugins/');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.loadComponent('base', 'view', viewName, moduleName);
         SugarTest.testMetadata.addViewDefinition(viewName, {
