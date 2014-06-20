@@ -144,7 +144,7 @@ class SugarCronJobs
      */
     public function unexpectedExit()
     {
-        if(!empty($this->job)) {
+        if (!empty($this->job)) {
             $this->jobFailed($this->job);
             $this->job->failJob(translate('ERR_FAILED', 'SchedulersJobs'));
             $this->job = null;
@@ -161,17 +161,41 @@ class SugarCronJobs
     }
 
     /**
+     * Set hard execution limit
+     * @param int $limit
+     */
+    protected function setTimeLimit($limit)
+    {
+        if (function_exists('pcntl_alarm')) {
+            pcntl_alarm($limit);
+        }
+    }
+
+    /**
+     * Reset execution limit
+     */
+    protected function clearTimeLimit()
+    {
+        if (function_exists('pcntl_alarm')) {
+            pcntl_alarm(0);
+        }
+    }
+
+    /**
      * Execute given job
      * @param SchedulersJob $job
      */
     public function executeJob($job)
     {
-        if(!$this->job->runJob()) {
+        $this->setTimeLimit($this->max_runtime);
+        $res = $this->job->runJob();
+        $this->clearTimeLimit();
+        if (!$res) {
             // if some job fails, change run status
             $this->jobFailed($this->job);
         }
         // If the job produced a session, destroy it - we won't need it anymore
-        if(session_id()) {
+        if (session_id()) {
             session_destroy();
         }
     }
@@ -199,6 +223,7 @@ class SugarCronJobs
         }
         // run jobs
         $cutoff = time()+$this->max_runtime;
+        set_time_limit(2*$this->max_runtime); // allow some space for normal exit
         register_shutdown_function(array($this, "unexpectedExit"));
         $myid = $this->getMyId();
         for($count=0;$count<$this->max_jobs;$count++) {
