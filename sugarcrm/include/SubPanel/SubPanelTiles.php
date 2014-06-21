@@ -346,6 +346,12 @@ EOQ;
 			$widget_data['subpanel_definition'] = $thisPanel;
 			$widget_contents .= '<td class="buttons">' . "\n";
 
+            // don't render subpanel top quick create buttons they don't work
+            if (isset($widget_data['widget_class']) && $widget_data['widget_class'] == 'SubPanelTopButtonQuickCreate'
+                && $widget_data['module'] == 'Users') {
+                continue;
+            }
+
 			if(empty($widget_data['widget_class']))
 			{
 				$buttons[] = "widget_class not defined for top subpanel buttons";
