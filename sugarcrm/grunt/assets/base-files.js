@@ -27,10 +27,11 @@
 
     // TODO: decide if we're going to only serve or if we should have
     // them all by default
-    {pattern: 'include/javascript/sugar7/plugins/*.js', included: true, served: true, watched: false},
+    {pattern: 'include/javascript/sugar7/plugins/*.js', included: true, served: true, watched: true},
 
     // FIXME: this should be included by the tests, not here
     'modules/Contacts/clients/base/lib/bean.js',
+    // FIXME: remove this on SC-3047
     'modules/Contacts/clients/base/plugins/ContactsPortalMetadataFilter.js',
 
     'sidecar/tests/config.js',
@@ -70,6 +71,6 @@
 
     'grunt/environment.js',
 
-    {pattern: 'clients/**/*.js', included: false, served: true, watched: false},
-    {pattern: 'modules/**/clients/**/*.js', included: false, served: true, watched: false}
+    {pattern: 'clients/**/*.js', included: false, served: true, watched: true},
+    {pattern: 'modules/**/clients/**/*.js', included: false, served: true, watched: true}
 ]

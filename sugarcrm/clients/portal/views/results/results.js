@@ -25,10 +25,62 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    extendsFrom:'ResultsView',
+
     plugins: ['Tooltip'],
+
     sidebarClosed: false,
-    closeSidebar: function () {
+
+    fallbackFieldTemplate: "detail",
+
+    events: {
+        'click [name=name]': 'gotoDetail',
+        'click .icon-eye-open': 'loadPreview',
+        'click [name=show_more_button]': 'showMoreResults'
+    },
+
+    /**
+     * Uses MixedBeanCollection to fetch search results.
+     */
+    fireSearchRequest: function (cb, offset) {
+        var self = this, options;
+        var mlist = app.metadata.getModuleNames({filter: 'visible'}); // visible
+        options = {
+            //Show alerts for this request
+            showAlerts: true,
+            query: self.lastQuery,
+            success:function(collection) {
+                cb(collection);
+            },
+            module_list: mlist,
+            error:function(error) {
+                cb(null); // lets callback know to dismiss the alert
+            }
+        };
+        if (offset) options.offset = offset;
+        this.collection.fetch(options);
+    },
+
+    /**
+     * Show more search results
+     */
+    showMoreResults: function() {
+        var self = this, options = {};
+        options.add = true;
+        //Show alerts for this request
+        options.showAlerts = true;
+        options.success = function() {
+            app.view.View.prototype._render.call(self);
+            window.scrollTo(0, document.body.scrollHeight);
+        };
+        this.collection.paginate(options);
+    },
+
+    gotoDetail: function(evt) {
+        var href = this.$(evt.currentTarget).parent().parent().attr('href');
+        window.location = href;
+    },
+
+    closeSidebar: function() {
         if (!this.sidebarClosed) {
             app.controller.context.trigger('toggleSidebar');
             this.sidebarClosed = true;
@@ -45,6 +97,9 @@
         self.fireSearchRequest(function(collection) {
             // Bug 57853: Will brute force dismiss search dropdown if still present.
             $('.search-query').searchahead('hide');
+            if (self.disposed) {
+                return;
+            }
             // Add the records to context's collection
             if(collection && collection.length) {
                 app.view.View.prototype._render.call(self);
@@ -81,7 +136,10 @@
             this.$("li.search[data-id=" + model.get("id") + "]").addClass("on");
         }
     },
-    // Loads the right side preview view when clicking icon for a particular search result.
+
+    /**
+     * Loads the right side preview view when clicking icon for a particular search result.
+     */
     loadPreview: function(e) {
         var searchRow, selectedResultId, model;
         if (this.sidebarClosed) {

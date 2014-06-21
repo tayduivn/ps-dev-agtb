@@ -199,6 +199,16 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/Notifications/clients/base/views/raw/raw.php';
         }
 
+        if (version_compare($this->from_version, '7.2.2', '<')) {
+            $files[] = 'clients/base/layouts/search';
+            $files[] = 'clients/base/views/results';
+            $files[] = 'clients/base/views/subdetail';
+            $files[] = 'clients/base/views/subnav';
+            $files[] = 'clients/portal/views/detail';
+            $files[] = 'clients/portal/views/subdetail';
+            $files[] = 'clients/portal/views/subnav';
+        }
+
         $this->fileToDelete($files);
     }
 }
