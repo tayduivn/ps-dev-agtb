@@ -569,10 +569,29 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
             'relationship' => 'account_leads',
         );
 
+        $link4 = array(
+            'id' => 'a1',
+            'module' => 'Accounts',
+            'related_id' => 'c1',
+            'related_module' => 'Contacts',
+            'link' => 'account',
+            'relationship' => 'account_contacts',
+        );
+
+        $link5 = array(
+            'id' => 'a1',
+            'module' => 'Accounts',
+            'related_id' => 'c2',
+            'related_module' => 'Contacts',
+            'link' => 'account',
+            'relationship' => 'account_contacts',
+        );
+
         return array(
             array($link1, $link2, true),
             array($link1, $link3, false),
             array($link2, $link3, false),
+            array($link4, $link5, false),
         );
     }
 }

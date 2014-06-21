@@ -124,7 +124,8 @@ class ActivityQueueManager
         if ($args1['module'] == $args2['related_module'] && $args1['id'] == $args2['related_id']) {
             return true;
         }
-        if ($args1['module'] == $args2['module'] && $args1['id'] == $args2['id']) {
+        if ($args1['module'] == $args2['module'] && $args1['id'] == $args2['id'] &&
+            $args1['related_id'] == $args2['related_id']) {
             return true;
         }
         return false;
